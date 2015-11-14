@@ -464,7 +464,7 @@ public inline fun <T> List<T>.lastIndexOfRaw(element: Any?): Int {
  */
 public fun <T> Iterable<T>.lastOrNull(): T? {
     when (this) {
-        is List -> return if (isEmpty()) null else this[size() - 1]
+        is List -> return if (isEmpty()) null else this[size - 1]
         else -> {
             val iterator = iterator()
             if (!iterator.hasNext())
@@ -481,7 +481,7 @@ public fun <T> Iterable<T>.lastOrNull(): T? {
  * Returns the last element, or `null` if the list is empty.
  */
 public fun <T> List<T>.lastOrNull(): T? {
-    return if (isEmpty()) null else this[size() - 1]
+    return if (isEmpty()) null else this[size - 1]
 }
 
 /**
@@ -515,7 +515,7 @@ public inline fun <T> List<T>.lastOrNull(predicate: (T) -> Boolean): T? {
  */
 public fun <T> Iterable<T>.single(): T {
     when (this) {
-        is List -> return when (size()) {
+        is List -> return when (size) {
             0 -> throw NoSuchElementException("Collection is empty.")
             1 -> this[0]
             else -> throw IllegalArgumentException("Collection has more than one element.")
@@ -536,7 +536,7 @@ public fun <T> Iterable<T>.single(): T {
  * Returns the single element, or throws an exception if the list is empty or has more than one element.
  */
 public fun <T> List<T>.single(): T {
-    return when (size()) {
+    return when (size) {
         0 -> throw NoSuchElementException("Collection is empty.")
         1 -> this[0]
         else -> throw IllegalArgumentException("Collection has more than one element.")
@@ -565,7 +565,7 @@ public inline fun <T> Iterable<T>.single(predicate: (T) -> Boolean): T {
  */
 public fun <T> Iterable<T>.singleOrNull(): T? {
     when (this) {
-        is List -> return if (size() == 1) this[0] else null
+        is List -> return if (size == 1) this[0] else null
         else -> {
             val iterator = iterator()
             if (!iterator.hasNext())
@@ -582,7 +582,7 @@ public fun <T> Iterable<T>.singleOrNull(): T? {
  * Returns single element, or `null` if the list is empty or has more than one element.
  */
 public fun <T> List<T>.singleOrNull(): T? {
-    return if (size() == 1) this[0] else null
+    return if (size == 1) this[0] else null
 }
 
 /**
@@ -610,12 +610,12 @@ public fun <T> Iterable<T>.drop(n: Int): List<T> {
     if (n == 0) return toList()
     val list: ArrayList<T>
     if (this is Collection<*>) {
-        val resultSize = size() - n
+        val resultSize = size - n
         if (resultSize <= 0)
             return emptyList()
         list = ArrayList<T>(resultSize)
         if (this is List<T>) {
-            for (index in n..size() - 1) {
+            for (index in n..size - 1) {
                 list.add(this[index])
             }
             return list
@@ -636,7 +636,7 @@ public fun <T> Iterable<T>.drop(n: Int): List<T> {
  */
 public fun <T> List<T>.dropLast(n: Int): List<T> {
     require(n >= 0, { "Requested element count $n is less than zero." })
-    return take((size() - n).coerceAtLeast(0))
+    return take((size - n).coerceAtLeast(0))
 }
 
 /**
@@ -756,7 +756,7 @@ public fun <T> List<T>.slice(indices: Iterable<Int>): List<T> {
 public fun <T> Iterable<T>.take(n: Int): List<T> {
     require(n >= 0, { "Requested element count $n is less than zero." })
     if (n == 0) return emptyList()
-    if (this is Collection<T> && n >= size()) return toList()
+    if (this is Collection<T> && n >= size) return toList()
     var count = 0
     val list = ArrayList<T>(n)
     for (item in this) {
@@ -773,7 +773,7 @@ public fun <T> Iterable<T>.take(n: Int): List<T> {
 public fun <T> List<T>.takeLast(n: Int): List<T> {
     require(n >= 0, { "Requested element count $n is less than zero." })
     if (n == 0) return emptyList()
-    val size = size()
+    val size = size
     if (n >= size) return toList()
     val list = ArrayList<T>(n)
     for (index in size - n .. size - 1)
@@ -891,7 +891,7 @@ public fun <T> Iterable<T>.sortedWith(comparator: Comparator<in T>): List<T> {
  * Returns an array of Boolean containing all of the elements of this collection.
  */
 public fun Collection<Boolean>.toBooleanArray(): BooleanArray {
-    val result = BooleanArray(size())
+    val result = BooleanArray(size)
     var index = 0
     for (element in this)
         result[index++] = element
@@ -902,7 +902,7 @@ public fun Collection<Boolean>.toBooleanArray(): BooleanArray {
  * Returns an array of Byte containing all of the elements of this collection.
  */
 public fun Collection<Byte>.toByteArray(): ByteArray {
-    val result = ByteArray(size())
+    val result = ByteArray(size)
     var index = 0
     for (element in this)
         result[index++] = element
@@ -913,7 +913,7 @@ public fun Collection<Byte>.toByteArray(): ByteArray {
  * Returns an array of Char containing all of the elements of this collection.
  */
 public fun Collection<Char>.toCharArray(): CharArray {
-    val result = CharArray(size())
+    val result = CharArray(size)
     var index = 0
     for (element in this)
         result[index++] = element
@@ -924,7 +924,7 @@ public fun Collection<Char>.toCharArray(): CharArray {
  * Returns an array of Double containing all of the elements of this collection.
  */
 public fun Collection<Double>.toDoubleArray(): DoubleArray {
-    val result = DoubleArray(size())
+    val result = DoubleArray(size)
     var index = 0
     for (element in this)
         result[index++] = element
@@ -935,7 +935,7 @@ public fun Collection<Double>.toDoubleArray(): DoubleArray {
  * Returns an array of Float containing all of the elements of this collection.
  */
 public fun Collection<Float>.toFloatArray(): FloatArray {
-    val result = FloatArray(size())
+    val result = FloatArray(size)
     var index = 0
     for (element in this)
         result[index++] = element
@@ -946,7 +946,7 @@ public fun Collection<Float>.toFloatArray(): FloatArray {
  * Returns an array of Int containing all of the elements of this collection.
  */
 public fun Collection<Int>.toIntArray(): IntArray {
-    val result = IntArray(size())
+    val result = IntArray(size)
     var index = 0
     for (element in this)
         result[index++] = element
@@ -957,7 +957,7 @@ public fun Collection<Int>.toIntArray(): IntArray {
  * Returns an array of Long containing all of the elements of this collection.
  */
 public fun Collection<Long>.toLongArray(): LongArray {
-    val result = LongArray(size())
+    val result = LongArray(size)
     var index = 0
     for (element in this)
         result[index++] = element
@@ -968,7 +968,7 @@ public fun Collection<Long>.toLongArray(): LongArray {
  * Returns an array of Short containing all of the elements of this collection.
  */
 public fun Collection<Short>.toShortArray(): ShortArray {
-    val result = ShortArray(size())
+    val result = ShortArray(size)
     var index = 0
     for (element in this)
         result[index++] = element
@@ -1272,7 +1272,7 @@ public inline fun <T> Iterable<T>.any(predicate: (T) -> Boolean): Boolean {
  * Returns the number of elements in this collection.
  */
 public fun <T> Collection<T>.count(): Int {
-    return size()
+    return size
 }
 
 /**
@@ -1543,7 +1543,7 @@ public inline fun <T> Iterable<T>.partition(predicate: (T) -> Boolean): Pair<Lis
  * Returns a list containing all elements of the original collection and then all elements of the given [array].
  */
 public operator fun <T> Collection<T>.plus(array: Array<out T>): List<T> {
-    val result = ArrayList<T>(this.size() + array.size())
+    val result = ArrayList<T>(this.size + array.size)
     result.addAll(this)
     result.addAll(array)
     return result
@@ -1565,7 +1565,7 @@ public operator fun <T> Iterable<T>.plus(array: Array<out T>): List<T> {
  */
 public operator fun <T> Collection<T>.plus(collection: Iterable<T>): List<T> {
     if (collection is Collection) {
-        val result = ArrayList<T>(this.size() + collection.size())
+        val result = ArrayList<T>(this.size + collection.size)
         result.addAll(this)
         result.addAll(collection)
         return result
@@ -1591,7 +1591,7 @@ public operator fun <T> Iterable<T>.plus(collection: Iterable<T>): List<T> {
  * Returns a list containing all elements of the original collection and then the given [element].
  */
 public operator fun <T> Collection<T>.plus(element: T): List<T> {
-    val result = ArrayList<T>(size() + 1)
+    val result = ArrayList<T>(size + 1)
     result.addAll(this)
     result.add(element)
     return result
@@ -1612,7 +1612,7 @@ public operator fun <T> Iterable<T>.plus(element: T): List<T> {
  * Returns a list containing all elements of the original collection and then all elements of the given [sequence].
  */
 public operator fun <T> Collection<T>.plus(sequence: Sequence<T>): List<T> {
-    val result = ArrayList<T>(this.size() + 10)
+    val result = ArrayList<T>(this.size + 10)
     result.addAll(this)
     result.addAll(sequence)
     return result
@@ -1639,7 +1639,7 @@ public fun <T, R> Iterable<T>.zip(array: Array<out R>): List<Pair<T, R>> {
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <T, R, V> Iterable<T>.zip(array: Array<out R>, transform: (T, R) -> V): List<V> {
-    val arraySize = array.size()
+    val arraySize = array.size
     val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in this) {

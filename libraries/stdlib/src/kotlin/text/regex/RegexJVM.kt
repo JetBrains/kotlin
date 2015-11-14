@@ -162,7 +162,7 @@ public class Regex internal constructor(private val nativePattern: Pattern) {
         var match: MatchResult? = find(input) ?: return input.toString()
 
         var lastStart = 0
-        val length = input.length()
+        val length = input.length
         val sb = StringBuilder(length)
         do {
             val foundMatch = match!!
@@ -256,7 +256,7 @@ private class MatcherMatchResult(private val matcher: Matcher, private val input
 
     override fun next(): MatchResult? {
         val nextIndex = matchResult.end() + if (matchResult.end() == matchResult.start()) 1 else 0
-        return if (nextIndex <= input.length()) matcher.findNext(nextIndex, input) else null
+        return if (nextIndex <= input.length) matcher.findNext(nextIndex, input) else null
     }
 }
 

@@ -271,7 +271,7 @@ public class AnnotationProcessingManager(
         modifyCompilerArguments { args ->
             val argIndex = args.indexOfFirst { name == it }
 
-            if (argIndex >= 0 && args.size() > (argIndex + 1)) {
+            if (argIndex >= 0 && args.size > (argIndex + 1)) {
                 args[argIndex + 1] = value(args[argIndex + 1])
             }
             else {
@@ -334,7 +334,7 @@ public class AnnotationProcessingManager(
     }
 
     private fun invokeCoreKaptMethod(methodName: String, vararg args: Any): Any {
-        val array = arrayOfNulls<Class<*>>(args.size())
+        val array = arrayOfNulls<Class<*>>(args.size)
         args.forEachIndexed { i, arg -> array[i] = arg.javaClass }
         val method = getCoreKaptPackageClass().getMethod(methodName, *array)
         return method.invoke(null, *args)

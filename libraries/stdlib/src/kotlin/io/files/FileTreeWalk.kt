@@ -77,7 +77,7 @@ public class FileTreeWalk(private val start: File,
                     failed = true
                 }
             }
-            if (fileList != null && fileIndex < fileList!!.size()) {
+            if (fileList != null && fileIndex < fileList!!.size) {
                 // First visit all files
                 return fileList!![fileIndex++]
             } else if (!rootVisited) {
@@ -108,14 +108,14 @@ public class FileTreeWalk(private val start: File,
                 enter(rootDir)
                 rootVisited = true
                 return rootDir
-            } else if (fileList == null || fileIndex < fileList!!.size()) {
+            } else if (fileList == null || fileIndex < fileList!!.size) {
                 if (fileList == null) {
                     // Then read an array of files, if any
                     fileList = rootDir.listFiles()
                     if (fileList == null) {
                         fail(rootDir, AccessDeniedException(file = rootDir, reason = "Cannot list files in a directory"))
                     }
-                    if (fileList == null || fileList!!.size() == 0) {
+                    if (fileList == null || fileList!!.size == 0) {
                         leave(rootDir)
                         return null
                     }
@@ -175,7 +175,7 @@ public class FileTreeWalk(private val start: File,
             // Check that file/directory matches the filter
             if (!filter(file))
                 return gotoNext()
-            if (file == topState.rootDir || !file.isDirectory() || state.size() >= maxDepth) {
+            if (file == topState.rootDir || !file.isDirectory() || state.size >= maxDepth) {
                 // Proceed to a root directory or a simple file
                 return file
             } else {

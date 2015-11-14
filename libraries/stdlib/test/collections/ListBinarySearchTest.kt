@@ -21,7 +21,7 @@ class ListBinarySearchTest {
 
             if (index > 0) {
                 index.let { from -> assertEquals(notFound(from), list.binarySearch(list.first(), fromIndex = from)) }
-                (list.size() - index).let { to -> assertEquals(notFound(to), list.binarySearch(list.last(), toIndex = to)) }
+                (list.size - index).let { to -> assertEquals(notFound(to), list.binarySearch(list.last(), toIndex = to)) }
             }
         }
     }
@@ -34,7 +34,7 @@ class ListBinarySearchTest {
 
             if (index > 0) {
                 index.let { from -> assertEquals(notFound(from), list.binarySearch(list.first(), fromIndex = from)) }
-                (list.size() - index).let { to -> assertEquals(notFound(to), list.binarySearch(list.last(), toIndex = to)) }
+                (list.size - index).let { to -> assertEquals(notFound(to), list.binarySearch(list.last(), toIndex = to)) }
             }
         }
     }
@@ -50,7 +50,7 @@ class ListBinarySearchTest {
 
             if (index > 0) {
                 index.let { from -> assertEquals(notFound(from), list.binarySearch(list.first(), comparator, fromIndex = from)) }
-                (list.size() - index).let { to -> assertEquals(notFound(to), list.binarySearch(list.last(), comparator, toIndex = to)) }
+                (list.size - index).let { to -> assertEquals(notFound(to), list.binarySearch(list.last(), comparator, toIndex = to)) }
             }
         }
     }
@@ -66,7 +66,7 @@ class ListBinarySearchTest {
 
             if (index > 0) {
                 index.let { from -> assertEquals(notFound(from), list.binarySearchBy(list.first().value, fromIndex = from) { it.value }) }
-                (list.size() - index).let { to -> assertEquals(notFound(to), list.binarySearchBy(list.last().value, toIndex = to) { it.value }) }
+                (list.size - index).let { to -> assertEquals(notFound(to), list.binarySearchBy(list.last().value, toIndex = to) { it.value }) }
             }
         }
     }
@@ -85,7 +85,7 @@ class ListBinarySearchTest {
                 index.let { from ->
                     assertEquals(notFound(from), list.binarySearch(fromIndex = from) { comparator.compare(it.value, list.first().value) })
                 }
-                (list.size() - index).let { to ->
+                (list.size - index).let { to ->
                     assertEquals(notFound(to), list.binarySearch(toIndex = to) { comparator.compare(it.value, list.last().value) })
                 }
             }

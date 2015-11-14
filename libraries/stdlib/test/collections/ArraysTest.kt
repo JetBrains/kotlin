@@ -40,7 +40,7 @@ class ArraysTest {
         val arr = ByteArray(2)
 
         val expected: Byte = 0
-        assertEquals(arr.size(), 2)
+        assertEquals(arr.size, 2)
         assertEquals(expected, arr[0])
         assertEquals(expected, arr[1])
     }
@@ -49,7 +49,7 @@ class ArraysTest {
         val arr = ShortArray(2)
 
         val expected: Short = 0
-        assertEquals(arr.size(), 2)
+        assertEquals(arr.size, 2)
         assertEquals(expected, arr[0])
         assertEquals(expected, arr[1])
     }
@@ -57,7 +57,7 @@ class ArraysTest {
     @test fun intArray() {
         val arr = IntArray(2)
 
-        assertEquals(arr.size(), 2)
+        assertEquals(arr.size, 2)
         assertEquals(0, arr[0])
         assertEquals(0, arr[1])
     }
@@ -66,7 +66,7 @@ class ArraysTest {
         val arr = LongArray(2)
 
         val expected: Long = 0
-        assertEquals(arr.size(), 2)
+        assertEquals(arr.size, 2)
         assertEquals(expected, arr[0])
         assertEquals(expected, arr[1])
     }
@@ -75,7 +75,7 @@ class ArraysTest {
         val arr = FloatArray(2)
 
         val expected: Float = 0.0F
-        assertEquals(arr.size(), 2)
+        assertEquals(arr.size, 2)
         assertEquals(expected, arr[0])
         assertEquals(expected, arr[1])
     }
@@ -83,7 +83,7 @@ class ArraysTest {
     @test fun doubleArray() {
         val arr = DoubleArray(2)
 
-        assertEquals(arr.size(), 2)
+        assertEquals(arr.size, 2)
         assertEquals(0.0, arr[0])
         assertEquals(0.0, arr[1])
     }
@@ -92,14 +92,14 @@ class ArraysTest {
         val arr = CharArray(2)
 
         val expected: Char = '\u0000'
-        assertEquals(arr.size(), 2)
+        assertEquals(arr.size, 2)
         assertEquals(expected, arr[0])
         assertEquals(expected, arr[1])
     }
 
     @test fun booleanArray() {
         val arr = BooleanArray(2)
-        assertEquals(arr.size(), 2)
+        assertEquals(arr.size, 2)
         assertEquals(false, arr[0])
         assertEquals(false, arr[1])
     }
@@ -151,7 +151,7 @@ class ArraysTest {
         expect(1, { arrayOf(1).minBy { it } })
         expect(3, { arrayOf(2, 3).minBy { -it } })
         expect('a', { arrayOf('a', 'b').minBy { "x$it" } })
-        expect("b", { arrayOf("b", "abc").minBy { it.length() } })
+        expect("b", { arrayOf("b", "abc").minBy { it.length } })
     }
 
     @test fun minByInPrimitiveArrays() {
@@ -170,7 +170,7 @@ class ArraysTest {
         expect(1, { arrayOf(1).maxBy { it } })
         expect(2, { arrayOf(2, 3).maxBy { -it } })
         expect('b', { arrayOf('a', 'b').maxBy { "x$it" } })
-        expect("abc", { arrayOf("b", "abc").maxBy { it.length() } })
+        expect("abc", { arrayOf("b", "abc").maxBy { it.length } })
     }
 
     @test fun maxByInPrimitiveArrays() {
@@ -461,7 +461,7 @@ class ArraysTest {
     @test fun toPrimitiveArray() {
         val genericArray: Array<Int> = arrayOf(1, 2, 3)
         val primitiveArray: IntArray = genericArray.toIntArray()
-        expect(3) { primitiveArray.size() }
+        expect(3) { primitiveArray.size }
         assertEquals(genericArray.asList(), primitiveArray.asList())
 
 
@@ -473,7 +473,7 @@ class ArraysTest {
     @test fun toTypedArray() {
         val primitiveArray: LongArray = longArrayOf(1, 2, Long.MAX_VALUE)
         val genericArray: Array<Long> = primitiveArray.toTypedArray()
-        expect(3) { genericArray.size() }
+        expect(3) { genericArray.size }
         assertEquals(primitiveArray.asList(), genericArray.asList())
     }
 

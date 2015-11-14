@@ -23,7 +23,7 @@ fun generators(): List<GenericFunction> {
         }
         body(Collections) {
             """
-            val result = ArrayList<T>(size() + 1)
+            val result = ArrayList<T>(size + 1)
             result.addAll(this)
             result.add(element)
             return result
@@ -36,7 +36,7 @@ fun generators(): List<GenericFunction> {
         doc(Sets) { "Returns a set containing all elements of the original set and then the given [element]." }
         body(Sets) {
             """
-            val result = LinkedHashSet<T>(mapCapacity(size() + 1))
+            val result = LinkedHashSet<T>(mapCapacity(size + 1))
             result.addAll(this)
             result.add(element)
             return result
@@ -70,7 +70,7 @@ fun generators(): List<GenericFunction> {
         body(Collections) {
             """
             if (collection is Collection) {
-                val result = ArrayList<T>(this.size() + collection.size())
+                val result = ArrayList<T>(this.size + collection.size)
                 result.addAll(this)
                 result.addAll(collection)
                 return result
@@ -86,7 +86,7 @@ fun generators(): List<GenericFunction> {
         doc(Sets) { "Returns a set containing all elements both of the original set and the given [collection]." }
         body(Sets) {
             """
-            val result = LinkedHashSet<T>(mapCapacity(collection.collectionSizeOrNull()?.let { this.size() + it } ?: this.size() * 2))
+            val result = LinkedHashSet<T>(mapCapacity(collection.collectionSizeOrNull()?.let { this.size + it } ?: this.size * 2))
             result.addAll(this)
             result.addAll(collection)
             return result
@@ -126,7 +126,7 @@ fun generators(): List<GenericFunction> {
         }
         body(Collections) {
             """
-            val result = ArrayList<T>(this.size() + array.size())
+            val result = ArrayList<T>(this.size + array.size)
             result.addAll(this)
             result.addAll(array)
             return result
@@ -135,7 +135,7 @@ fun generators(): List<GenericFunction> {
         doc(Sets) { "Returns a set containing all elements both of the original set and the given [array]." }
         body(Sets) {
             """
-            val result = LinkedHashSet<T>(mapCapacity(this.size() + array.size()))
+            val result = LinkedHashSet<T>(mapCapacity(this.size + array.size))
             result.addAll(this)
             result.addAll(array)
             return result
@@ -174,7 +174,7 @@ fun generators(): List<GenericFunction> {
         }
         body(Collections) {
             """
-            val result = ArrayList<T>(this.size() + 10)
+            val result = ArrayList<T>(this.size + 10)
             result.addAll(this)
             result.addAll(sequence)
             return result
@@ -185,7 +185,7 @@ fun generators(): List<GenericFunction> {
         doc(Sets) { "Returns a set containing all elements both of the original set and the given [sequence]." }
         body(Sets) {
             """
-            val result = LinkedHashSet<T>(mapCapacity(this.size() * 2))
+            val result = LinkedHashSet<T>(mapCapacity(this.size * 2))
             result.addAll(this)
             result.addAll(sequence)
             return result
@@ -225,7 +225,7 @@ fun generators(): List<GenericFunction> {
         doc(Sets) { "Returns a set containing all elements of the original set except the given [element]." }
         body(Sets) {
             """
-            val result = LinkedHashSet<T>(mapCapacity(size()))
+            val result = LinkedHashSet<T>(mapCapacity(size))
             var removed = false
             return this.filterTo(result) { if (!removed && it == element) { removed = true; false } else true }
             """
@@ -469,7 +469,7 @@ fun generators(): List<GenericFunction> {
         }
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
-            val arraySize = size()
+            val arraySize = size
             val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
             var i = 0
             for (element in other) {
@@ -494,7 +494,7 @@ fun generators(): List<GenericFunction> {
         inline(true)
         body {
             """
-            val arraySize = array.size()
+            val arraySize = array.size
             val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), arraySize))
             var i = 0
             for (element in this) {
@@ -506,7 +506,7 @@ fun generators(): List<GenericFunction> {
         }
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
-            val size = Math.min(size(), array.size())
+            val size = Math.min(size, array.size)
             val list = ArrayList<V>(size)
             for (i in 0..size-1) {
                 list.add(transform(this[i], array[i]))
@@ -529,7 +529,7 @@ fun generators(): List<GenericFunction> {
         inline(true)
         body() {
             """
-            val size = Math.min(size(), array.size())
+            val size = Math.min(size, array.size)
             val list = ArrayList<V>(size)
             for (i in 0..size-1) {
                 list.add(transform(this[i], array[i]))
@@ -569,7 +569,7 @@ fun generators(): List<GenericFunction> {
         inline(true)
         body {
             """
-            val length = Math.min(this.length(), other.length())
+            val length = Math.min(this.length, other.length)
 
             val list = ArrayList<V>(length)
             for (i in 0..length-1) {

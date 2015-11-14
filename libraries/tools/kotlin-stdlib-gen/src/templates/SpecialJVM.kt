@@ -13,7 +13,7 @@ fun specialJVM(): List<GenericFunction> {
         doc { "Returns an array containing all elements of the original array and then the given [element]." }
         body() {
             """
-            val index = size()
+            val index = size
             val result = Arrays.copyOf(this, index + 1)
             result[index] = element
             return result
@@ -29,8 +29,8 @@ fun specialJVM(): List<GenericFunction> {
         doc { "Returns an array containing all elements of the original array and then all elements of the given [collection]." }
         body {
             """
-            var index = size()
-            val result = Arrays.copyOf(this, index + collection.size())
+            var index = size
+            val result = Arrays.copyOf(this, index + collection.size)
             for (element in collection) result[index++] = element
             return result
             """
@@ -46,8 +46,8 @@ fun specialJVM(): List<GenericFunction> {
         returns("SELF")
         body {
             """
-            val thisSize = size()
-            val arraySize = array.size()
+            val thisSize = size
+            val arraySize = array.size
             val result = Arrays.copyOf(this, thisSize + arraySize)
             System.arraycopy(array, 0, result, thisSize, arraySize)
             return result
@@ -72,7 +72,7 @@ fun specialJVM(): List<GenericFunction> {
         returns("SELF")
         annotations(InvariantArraysOfObjects) { """@JvmName("mutableCopyOf")"""}
         body {
-            "return Arrays.copyOf(this, size())"
+            "return Arrays.copyOf(this, size)"
         }
     }
 
@@ -89,7 +89,7 @@ fun specialJVM(): List<GenericFunction> {
         annotations(InvariantArraysOfObjects) { """@JvmName("mutableCopyOf")"""}
     }
 
-    templates add f("fill(element: T, fromIndex: Int = 0, toIndex: Int = size())") {
+    templates add f("fill(element: T, fromIndex: Int = 0, toIndex: Int = size)") {
         only(InvariantArraysOfObjects, ArraysOfPrimitives)
         doc { "Fills original array with the provided value." }
         returns { "Unit" }
@@ -100,7 +100,7 @@ fun specialJVM(): List<GenericFunction> {
         }
     }
 
-    templates add f("binarySearch(element: T, fromIndex: Int = 0, toIndex: Int = size())") {
+    templates add f("binarySearch(element: T, fromIndex: Int = 0, toIndex: Int = size)") {
         only(ArraysOfObjects, ArraysOfPrimitives)
         exclude(PrimitiveType.Boolean)
         doc { "Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted." }
@@ -110,7 +110,7 @@ fun specialJVM(): List<GenericFunction> {
         }
     }
 
-    templates add f("binarySearch(element: T, comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size())") {
+    templates add f("binarySearch(element: T, comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size)") {
         only(ArraysOfObjects)
         doc { "Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted according to the specified [comparator]." }
         returns("Int")
@@ -130,7 +130,7 @@ fun specialJVM(): List<GenericFunction> {
         }
     }
 
-    templates add f("sort(fromIndex: Int = 0, toIndex: Int = size())") {
+    templates add f("sort(fromIndex: Int = 0, toIndex: Int = size)") {
         only(ArraysOfObjects, ArraysOfPrimitives)
         exclude(PrimitiveType.Boolean)
         doc { "Sorts a range in the array in-place." }
@@ -149,7 +149,7 @@ fun specialJVM(): List<GenericFunction> {
         }
     }
 
-    templates add f("sortWith(comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size())") {
+    templates add f("sortWith(comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size)") {
         only(ArraysOfObjects)
         doc { "Sorts a range in the array in-place with the given [comparator]." }
         returns("Unit")
@@ -247,7 +247,7 @@ fun specialJVM(): List<GenericFunction> {
         body(ArraysOfPrimitives) {
             """
             return object : AbstractList<T>(), RandomAccess {
-                override val size: Int get() = this@asList.size()
+                override val size: Int get() = this@asList.size
                 override fun isEmpty(): Boolean = this@asList.isEmpty()
                 override fun contains(o: T): Boolean = this@asList.contains(o)
                 override fun get(index: Int): T = this@asList[index]
@@ -268,7 +268,7 @@ fun specialJVM(): List<GenericFunction> {
         }
         body {
             """
-            val result = arrayOfNulls<T>(size())
+            val result = arrayOfNulls<T>(size)
             for (index in indices)
                 result[index] = this[index]
             return result as Array<T>

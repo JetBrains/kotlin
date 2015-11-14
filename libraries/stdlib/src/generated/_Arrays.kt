@@ -1891,63 +1891,63 @@ public inline fun <T> Array<out T>.lastIndexOfRaw(element: Any?): Int {
  * Returns the last element, or `null` if the array is empty.
  */
 public fun <T> Array<out T>.lastOrNull(): T? {
-    return if (isEmpty()) null else this[size() - 1]
+    return if (isEmpty()) null else this[size - 1]
 }
 
 /**
  * Returns the last element, or `null` if the array is empty.
  */
 public fun BooleanArray.lastOrNull(): Boolean? {
-    return if (isEmpty()) null else this[size() - 1]
+    return if (isEmpty()) null else this[size - 1]
 }
 
 /**
  * Returns the last element, or `null` if the array is empty.
  */
 public fun ByteArray.lastOrNull(): Byte? {
-    return if (isEmpty()) null else this[size() - 1]
+    return if (isEmpty()) null else this[size - 1]
 }
 
 /**
  * Returns the last element, or `null` if the array is empty.
  */
 public fun CharArray.lastOrNull(): Char? {
-    return if (isEmpty()) null else this[size() - 1]
+    return if (isEmpty()) null else this[size - 1]
 }
 
 /**
  * Returns the last element, or `null` if the array is empty.
  */
 public fun DoubleArray.lastOrNull(): Double? {
-    return if (isEmpty()) null else this[size() - 1]
+    return if (isEmpty()) null else this[size - 1]
 }
 
 /**
  * Returns the last element, or `null` if the array is empty.
  */
 public fun FloatArray.lastOrNull(): Float? {
-    return if (isEmpty()) null else this[size() - 1]
+    return if (isEmpty()) null else this[size - 1]
 }
 
 /**
  * Returns the last element, or `null` if the array is empty.
  */
 public fun IntArray.lastOrNull(): Int? {
-    return if (isEmpty()) null else this[size() - 1]
+    return if (isEmpty()) null else this[size - 1]
 }
 
 /**
  * Returns the last element, or `null` if the array is empty.
  */
 public fun LongArray.lastOrNull(): Long? {
-    return if (isEmpty()) null else this[size() - 1]
+    return if (isEmpty()) null else this[size - 1]
 }
 
 /**
  * Returns the last element, or `null` if the array is empty.
  */
 public fun ShortArray.lastOrNull(): Short? {
-    return if (isEmpty()) null else this[size() - 1]
+    return if (isEmpty()) null else this[size - 1]
 }
 
 /**
@@ -2053,7 +2053,7 @@ public inline fun ShortArray.lastOrNull(predicate: (Short) -> Boolean): Short? {
  * Returns the single element, or throws an exception if the array is empty or has more than one element.
  */
 public fun <T> Array<out T>.single(): T {
-    return when (size()) {
+    return when (size) {
         0 -> throw NoSuchElementException("Collection is empty.")
         1 -> this[0]
         else -> throw IllegalArgumentException("Collection has more than one element.")
@@ -2064,7 +2064,7 @@ public fun <T> Array<out T>.single(): T {
  * Returns the single element, or throws an exception if the array is empty or has more than one element.
  */
 public fun BooleanArray.single(): Boolean {
-    return when (size()) {
+    return when (size) {
         0 -> throw NoSuchElementException("Collection is empty.")
         1 -> this[0]
         else -> throw IllegalArgumentException("Collection has more than one element.")
@@ -2075,7 +2075,7 @@ public fun BooleanArray.single(): Boolean {
  * Returns the single element, or throws an exception if the array is empty or has more than one element.
  */
 public fun ByteArray.single(): Byte {
-    return when (size()) {
+    return when (size) {
         0 -> throw NoSuchElementException("Collection is empty.")
         1 -> this[0]
         else -> throw IllegalArgumentException("Collection has more than one element.")
@@ -2086,7 +2086,7 @@ public fun ByteArray.single(): Byte {
  * Returns the single element, or throws an exception if the array is empty or has more than one element.
  */
 public fun CharArray.single(): Char {
-    return when (size()) {
+    return when (size) {
         0 -> throw NoSuchElementException("Collection is empty.")
         1 -> this[0]
         else -> throw IllegalArgumentException("Collection has more than one element.")
@@ -2097,7 +2097,7 @@ public fun CharArray.single(): Char {
  * Returns the single element, or throws an exception if the array is empty or has more than one element.
  */
 public fun DoubleArray.single(): Double {
-    return when (size()) {
+    return when (size) {
         0 -> throw NoSuchElementException("Collection is empty.")
         1 -> this[0]
         else -> throw IllegalArgumentException("Collection has more than one element.")
@@ -2108,7 +2108,7 @@ public fun DoubleArray.single(): Double {
  * Returns the single element, or throws an exception if the array is empty or has more than one element.
  */
 public fun FloatArray.single(): Float {
-    return when (size()) {
+    return when (size) {
         0 -> throw NoSuchElementException("Collection is empty.")
         1 -> this[0]
         else -> throw IllegalArgumentException("Collection has more than one element.")
@@ -2119,7 +2119,7 @@ public fun FloatArray.single(): Float {
  * Returns the single element, or throws an exception if the array is empty or has more than one element.
  */
 public fun IntArray.single(): Int {
-    return when (size()) {
+    return when (size) {
         0 -> throw NoSuchElementException("Collection is empty.")
         1 -> this[0]
         else -> throw IllegalArgumentException("Collection has more than one element.")
@@ -2130,7 +2130,7 @@ public fun IntArray.single(): Int {
  * Returns the single element, or throws an exception if the array is empty or has more than one element.
  */
 public fun LongArray.single(): Long {
-    return when (size()) {
+    return when (size) {
         0 -> throw NoSuchElementException("Collection is empty.")
         1 -> this[0]
         else -> throw IllegalArgumentException("Collection has more than one element.")
@@ -2141,7 +2141,7 @@ public fun LongArray.single(): Long {
  * Returns the single element, or throws an exception if the array is empty or has more than one element.
  */
 public fun ShortArray.single(): Short {
-    return when (size()) {
+    return when (size) {
         0 -> throw NoSuchElementException("Collection is empty.")
         1 -> this[0]
         else -> throw IllegalArgumentException("Collection has more than one element.")
@@ -2305,63 +2305,63 @@ public inline fun ShortArray.single(predicate: (Short) -> Boolean): Short {
  * Returns single element, or `null` if the array is empty or has more than one element.
  */
 public fun <T> Array<out T>.singleOrNull(): T? {
-    return if (size() == 1) this[0] else null
+    return if (size == 1) this[0] else null
 }
 
 /**
  * Returns single element, or `null` if the array is empty or has more than one element.
  */
 public fun BooleanArray.singleOrNull(): Boolean? {
-    return if (size() == 1) this[0] else null
+    return if (size == 1) this[0] else null
 }
 
 /**
  * Returns single element, or `null` if the array is empty or has more than one element.
  */
 public fun ByteArray.singleOrNull(): Byte? {
-    return if (size() == 1) this[0] else null
+    return if (size == 1) this[0] else null
 }
 
 /**
  * Returns single element, or `null` if the array is empty or has more than one element.
  */
 public fun CharArray.singleOrNull(): Char? {
-    return if (size() == 1) this[0] else null
+    return if (size == 1) this[0] else null
 }
 
 /**
  * Returns single element, or `null` if the array is empty or has more than one element.
  */
 public fun DoubleArray.singleOrNull(): Double? {
-    return if (size() == 1) this[0] else null
+    return if (size == 1) this[0] else null
 }
 
 /**
  * Returns single element, or `null` if the array is empty or has more than one element.
  */
 public fun FloatArray.singleOrNull(): Float? {
-    return if (size() == 1) this[0] else null
+    return if (size == 1) this[0] else null
 }
 
 /**
  * Returns single element, or `null` if the array is empty or has more than one element.
  */
 public fun IntArray.singleOrNull(): Int? {
-    return if (size() == 1) this[0] else null
+    return if (size == 1) this[0] else null
 }
 
 /**
  * Returns single element, or `null` if the array is empty or has more than one element.
  */
 public fun LongArray.singleOrNull(): Long? {
-    return if (size() == 1) this[0] else null
+    return if (size == 1) this[0] else null
 }
 
 /**
  * Returns single element, or `null` if the array is empty or has more than one element.
  */
 public fun ShortArray.singleOrNull(): Short? {
-    return if (size() == 1) this[0] else null
+    return if (size == 1) this[0] else null
 }
 
 /**
@@ -2524,10 +2524,10 @@ public fun <T> Array<out T>.drop(n: Int): List<T> {
     require(n >= 0, { "Requested element count $n is less than zero." })
     if (n == 0)
         return toList()
-    if (n >= size())
+    if (n >= size)
         return emptyList()
-    val list = ArrayList<T>(size() - n)
-    for (index in n..size() - 1) {
+    val list = ArrayList<T>(size - n)
+    for (index in n..size - 1) {
         list.add(this[index])
     }
     return list
@@ -2540,10 +2540,10 @@ public fun BooleanArray.drop(n: Int): List<Boolean> {
     require(n >= 0, { "Requested element count $n is less than zero." })
     if (n == 0)
         return toList()
-    if (n >= size())
+    if (n >= size)
         return emptyList()
-    val list = ArrayList<Boolean>(size() - n)
-    for (index in n..size() - 1) {
+    val list = ArrayList<Boolean>(size - n)
+    for (index in n..size - 1) {
         list.add(this[index])
     }
     return list
@@ -2556,10 +2556,10 @@ public fun ByteArray.drop(n: Int): List<Byte> {
     require(n >= 0, { "Requested element count $n is less than zero." })
     if (n == 0)
         return toList()
-    if (n >= size())
+    if (n >= size)
         return emptyList()
-    val list = ArrayList<Byte>(size() - n)
-    for (index in n..size() - 1) {
+    val list = ArrayList<Byte>(size - n)
+    for (index in n..size - 1) {
         list.add(this[index])
     }
     return list
@@ -2572,10 +2572,10 @@ public fun CharArray.drop(n: Int): List<Char> {
     require(n >= 0, { "Requested element count $n is less than zero." })
     if (n == 0)
         return toList()
-    if (n >= size())
+    if (n >= size)
         return emptyList()
-    val list = ArrayList<Char>(size() - n)
-    for (index in n..size() - 1) {
+    val list = ArrayList<Char>(size - n)
+    for (index in n..size - 1) {
         list.add(this[index])
     }
     return list
@@ -2588,10 +2588,10 @@ public fun DoubleArray.drop(n: Int): List<Double> {
     require(n >= 0, { "Requested element count $n is less than zero." })
     if (n == 0)
         return toList()
-    if (n >= size())
+    if (n >= size)
         return emptyList()
-    val list = ArrayList<Double>(size() - n)
-    for (index in n..size() - 1) {
+    val list = ArrayList<Double>(size - n)
+    for (index in n..size - 1) {
         list.add(this[index])
     }
     return list
@@ -2604,10 +2604,10 @@ public fun FloatArray.drop(n: Int): List<Float> {
     require(n >= 0, { "Requested element count $n is less than zero." })
     if (n == 0)
         return toList()
-    if (n >= size())
+    if (n >= size)
         return emptyList()
-    val list = ArrayList<Float>(size() - n)
-    for (index in n..size() - 1) {
+    val list = ArrayList<Float>(size - n)
+    for (index in n..size - 1) {
         list.add(this[index])
     }
     return list
@@ -2620,10 +2620,10 @@ public fun IntArray.drop(n: Int): List<Int> {
     require(n >= 0, { "Requested element count $n is less than zero." })
     if (n == 0)
         return toList()
-    if (n >= size())
+    if (n >= size)
         return emptyList()
-    val list = ArrayList<Int>(size() - n)
-    for (index in n..size() - 1) {
+    val list = ArrayList<Int>(size - n)
+    for (index in n..size - 1) {
         list.add(this[index])
     }
     return list
@@ -2636,10 +2636,10 @@ public fun LongArray.drop(n: Int): List<Long> {
     require(n >= 0, { "Requested element count $n is less than zero." })
     if (n == 0)
         return toList()
-    if (n >= size())
+    if (n >= size)
         return emptyList()
-    val list = ArrayList<Long>(size() - n)
-    for (index in n..size() - 1) {
+    val list = ArrayList<Long>(size - n)
+    for (index in n..size - 1) {
         list.add(this[index])
     }
     return list
@@ -2652,10 +2652,10 @@ public fun ShortArray.drop(n: Int): List<Short> {
     require(n >= 0, { "Requested element count $n is less than zero." })
     if (n == 0)
         return toList()
-    if (n >= size())
+    if (n >= size)
         return emptyList()
-    val list = ArrayList<Short>(size() - n)
-    for (index in n..size() - 1) {
+    val list = ArrayList<Short>(size - n)
+    for (index in n..size - 1) {
         list.add(this[index])
     }
     return list
@@ -2666,7 +2666,7 @@ public fun ShortArray.drop(n: Int): List<Short> {
  */
 public fun <T> Array<out T>.dropLast(n: Int): List<T> {
     require(n >= 0, { "Requested element count $n is less than zero." })
-    return take((size() - n).coerceAtLeast(0))
+    return take((size - n).coerceAtLeast(0))
 }
 
 /**
@@ -2674,7 +2674,7 @@ public fun <T> Array<out T>.dropLast(n: Int): List<T> {
  */
 public fun BooleanArray.dropLast(n: Int): List<Boolean> {
     require(n >= 0, { "Requested element count $n is less than zero." })
-    return take((size() - n).coerceAtLeast(0))
+    return take((size - n).coerceAtLeast(0))
 }
 
 /**
@@ -2682,7 +2682,7 @@ public fun BooleanArray.dropLast(n: Int): List<Boolean> {
  */
 public fun ByteArray.dropLast(n: Int): List<Byte> {
     require(n >= 0, { "Requested element count $n is less than zero." })
-    return take((size() - n).coerceAtLeast(0))
+    return take((size - n).coerceAtLeast(0))
 }
 
 /**
@@ -2690,7 +2690,7 @@ public fun ByteArray.dropLast(n: Int): List<Byte> {
  */
 public fun CharArray.dropLast(n: Int): List<Char> {
     require(n >= 0, { "Requested element count $n is less than zero." })
-    return take((size() - n).coerceAtLeast(0))
+    return take((size - n).coerceAtLeast(0))
 }
 
 /**
@@ -2698,7 +2698,7 @@ public fun CharArray.dropLast(n: Int): List<Char> {
  */
 public fun DoubleArray.dropLast(n: Int): List<Double> {
     require(n >= 0, { "Requested element count $n is less than zero." })
-    return take((size() - n).coerceAtLeast(0))
+    return take((size - n).coerceAtLeast(0))
 }
 
 /**
@@ -2706,7 +2706,7 @@ public fun DoubleArray.dropLast(n: Int): List<Double> {
  */
 public fun FloatArray.dropLast(n: Int): List<Float> {
     require(n >= 0, { "Requested element count $n is less than zero." })
-    return take((size() - n).coerceAtLeast(0))
+    return take((size - n).coerceAtLeast(0))
 }
 
 /**
@@ -2714,7 +2714,7 @@ public fun FloatArray.dropLast(n: Int): List<Float> {
  */
 public fun IntArray.dropLast(n: Int): List<Int> {
     require(n >= 0, { "Requested element count $n is less than zero." })
-    return take((size() - n).coerceAtLeast(0))
+    return take((size - n).coerceAtLeast(0))
 }
 
 /**
@@ -2722,7 +2722,7 @@ public fun IntArray.dropLast(n: Int): List<Int> {
  */
 public fun LongArray.dropLast(n: Int): List<Long> {
     require(n >= 0, { "Requested element count $n is less than zero." })
-    return take((size() - n).coerceAtLeast(0))
+    return take((size - n).coerceAtLeast(0))
 }
 
 /**
@@ -2730,7 +2730,7 @@ public fun LongArray.dropLast(n: Int): List<Long> {
  */
 public fun ShortArray.dropLast(n: Int): List<Short> {
     require(n >= 0, { "Requested element count $n is less than zero." })
-    return take((size() - n).coerceAtLeast(0))
+    return take((size - n).coerceAtLeast(0))
 }
 
 /**
@@ -3616,7 +3616,7 @@ public fun ShortArray.slice(indices: Iterable<Int>): List<Short> {
  * Returns an array containing elements of this array at specified [indices].
  */
 public fun <T> Array<out T>.sliceArray(indices: Collection<Int>): Array<out T> {
-    val result = arrayOfNulls(this, indices.size()) as Array<T>
+    val result = arrayOfNulls(this, indices.size) as Array<T>
     var targetIndex = 0
     for (sourceIndex in indices) {
         result[targetIndex++] = this[sourceIndex]
@@ -3628,7 +3628,7 @@ public fun <T> Array<out T>.sliceArray(indices: Collection<Int>): Array<out T> {
  * Returns an array containing elements of this array at specified [indices].
  */
 public fun BooleanArray.sliceArray(indices: Collection<Int>): BooleanArray {
-    val result = BooleanArray(indices.size())
+    val result = BooleanArray(indices.size)
     var targetIndex = 0
     for (sourceIndex in indices) {
         result[targetIndex++] = this[sourceIndex]
@@ -3640,7 +3640,7 @@ public fun BooleanArray.sliceArray(indices: Collection<Int>): BooleanArray {
  * Returns an array containing elements of this array at specified [indices].
  */
 public fun ByteArray.sliceArray(indices: Collection<Int>): ByteArray {
-    val result = ByteArray(indices.size())
+    val result = ByteArray(indices.size)
     var targetIndex = 0
     for (sourceIndex in indices) {
         result[targetIndex++] = this[sourceIndex]
@@ -3652,7 +3652,7 @@ public fun ByteArray.sliceArray(indices: Collection<Int>): ByteArray {
  * Returns an array containing elements of this array at specified [indices].
  */
 public fun CharArray.sliceArray(indices: Collection<Int>): CharArray {
-    val result = CharArray(indices.size())
+    val result = CharArray(indices.size)
     var targetIndex = 0
     for (sourceIndex in indices) {
         result[targetIndex++] = this[sourceIndex]
@@ -3664,7 +3664,7 @@ public fun CharArray.sliceArray(indices: Collection<Int>): CharArray {
  * Returns an array containing elements of this array at specified [indices].
  */
 public fun DoubleArray.sliceArray(indices: Collection<Int>): DoubleArray {
-    val result = DoubleArray(indices.size())
+    val result = DoubleArray(indices.size)
     var targetIndex = 0
     for (sourceIndex in indices) {
         result[targetIndex++] = this[sourceIndex]
@@ -3676,7 +3676,7 @@ public fun DoubleArray.sliceArray(indices: Collection<Int>): DoubleArray {
  * Returns an array containing elements of this array at specified [indices].
  */
 public fun FloatArray.sliceArray(indices: Collection<Int>): FloatArray {
-    val result = FloatArray(indices.size())
+    val result = FloatArray(indices.size)
     var targetIndex = 0
     for (sourceIndex in indices) {
         result[targetIndex++] = this[sourceIndex]
@@ -3688,7 +3688,7 @@ public fun FloatArray.sliceArray(indices: Collection<Int>): FloatArray {
  * Returns an array containing elements of this array at specified [indices].
  */
 public fun IntArray.sliceArray(indices: Collection<Int>): IntArray {
-    val result = IntArray(indices.size())
+    val result = IntArray(indices.size)
     var targetIndex = 0
     for (sourceIndex in indices) {
         result[targetIndex++] = this[sourceIndex]
@@ -3700,7 +3700,7 @@ public fun IntArray.sliceArray(indices: Collection<Int>): IntArray {
  * Returns an array containing elements of this array at specified [indices].
  */
 public fun LongArray.sliceArray(indices: Collection<Int>): LongArray {
-    val result = LongArray(indices.size())
+    val result = LongArray(indices.size)
     var targetIndex = 0
     for (sourceIndex in indices) {
         result[targetIndex++] = this[sourceIndex]
@@ -3712,7 +3712,7 @@ public fun LongArray.sliceArray(indices: Collection<Int>): LongArray {
  * Returns an array containing elements of this array at specified [indices].
  */
 public fun ShortArray.sliceArray(indices: Collection<Int>): ShortArray {
-    val result = ShortArray(indices.size())
+    val result = ShortArray(indices.size)
     var targetIndex = 0
     for (sourceIndex in indices) {
         result[targetIndex++] = this[sourceIndex]
@@ -3798,7 +3798,7 @@ public fun ShortArray.sliceArray(indices: IntRange): ShortArray {
 public fun <T> Array<out T>.take(n: Int): List<T> {
     require(n >= 0) { "Requested element count $n is less than zero." }
     if (n == 0) return emptyList()
-    if (n >= size()) return toList()
+    if (n >= size) return toList()
     var count = 0
     val list = ArrayList<T>(n)
     for (item in this) {
@@ -3815,7 +3815,7 @@ public fun <T> Array<out T>.take(n: Int): List<T> {
 public fun BooleanArray.take(n: Int): List<Boolean> {
     require(n >= 0) { "Requested element count $n is less than zero." }
     if (n == 0) return emptyList()
-    if (n >= size()) return toList()
+    if (n >= size) return toList()
     var count = 0
     val list = ArrayList<Boolean>(n)
     for (item in this) {
@@ -3832,7 +3832,7 @@ public fun BooleanArray.take(n: Int): List<Boolean> {
 public fun ByteArray.take(n: Int): List<Byte> {
     require(n >= 0) { "Requested element count $n is less than zero." }
     if (n == 0) return emptyList()
-    if (n >= size()) return toList()
+    if (n >= size) return toList()
     var count = 0
     val list = ArrayList<Byte>(n)
     for (item in this) {
@@ -3849,7 +3849,7 @@ public fun ByteArray.take(n: Int): List<Byte> {
 public fun CharArray.take(n: Int): List<Char> {
     require(n >= 0) { "Requested element count $n is less than zero." }
     if (n == 0) return emptyList()
-    if (n >= size()) return toList()
+    if (n >= size) return toList()
     var count = 0
     val list = ArrayList<Char>(n)
     for (item in this) {
@@ -3866,7 +3866,7 @@ public fun CharArray.take(n: Int): List<Char> {
 public fun DoubleArray.take(n: Int): List<Double> {
     require(n >= 0) { "Requested element count $n is less than zero." }
     if (n == 0) return emptyList()
-    if (n >= size()) return toList()
+    if (n >= size) return toList()
     var count = 0
     val list = ArrayList<Double>(n)
     for (item in this) {
@@ -3883,7 +3883,7 @@ public fun DoubleArray.take(n: Int): List<Double> {
 public fun FloatArray.take(n: Int): List<Float> {
     require(n >= 0) { "Requested element count $n is less than zero." }
     if (n == 0) return emptyList()
-    if (n >= size()) return toList()
+    if (n >= size) return toList()
     var count = 0
     val list = ArrayList<Float>(n)
     for (item in this) {
@@ -3900,7 +3900,7 @@ public fun FloatArray.take(n: Int): List<Float> {
 public fun IntArray.take(n: Int): List<Int> {
     require(n >= 0) { "Requested element count $n is less than zero." }
     if (n == 0) return emptyList()
-    if (n >= size()) return toList()
+    if (n >= size) return toList()
     var count = 0
     val list = ArrayList<Int>(n)
     for (item in this) {
@@ -3917,7 +3917,7 @@ public fun IntArray.take(n: Int): List<Int> {
 public fun LongArray.take(n: Int): List<Long> {
     require(n >= 0) { "Requested element count $n is less than zero." }
     if (n == 0) return emptyList()
-    if (n >= size()) return toList()
+    if (n >= size) return toList()
     var count = 0
     val list = ArrayList<Long>(n)
     for (item in this) {
@@ -3934,7 +3934,7 @@ public fun LongArray.take(n: Int): List<Long> {
 public fun ShortArray.take(n: Int): List<Short> {
     require(n >= 0) { "Requested element count $n is less than zero." }
     if (n == 0) return emptyList()
-    if (n >= size()) return toList()
+    if (n >= size) return toList()
     var count = 0
     val list = ArrayList<Short>(n)
     for (item in this) {
@@ -3951,7 +3951,7 @@ public fun ShortArray.take(n: Int): List<Short> {
 public fun <T> Array<out T>.takeLast(n: Int): List<T> {
     require(n >= 0, { "Requested element count $n is less than zero." })
     if (n == 0) return emptyList()
-    val size = size()
+    val size = size
     if (n >= size) return toList()
     val list = ArrayList<T>(n)
     for (index in size - n .. size - 1)
@@ -3965,7 +3965,7 @@ public fun <T> Array<out T>.takeLast(n: Int): List<T> {
 public fun BooleanArray.takeLast(n: Int): List<Boolean> {
     require(n >= 0, { "Requested element count $n is less than zero." })
     if (n == 0) return emptyList()
-    val size = size()
+    val size = size
     if (n >= size) return toList()
     val list = ArrayList<Boolean>(n)
     for (index in size - n .. size - 1)
@@ -3979,7 +3979,7 @@ public fun BooleanArray.takeLast(n: Int): List<Boolean> {
 public fun ByteArray.takeLast(n: Int): List<Byte> {
     require(n >= 0, { "Requested element count $n is less than zero." })
     if (n == 0) return emptyList()
-    val size = size()
+    val size = size
     if (n >= size) return toList()
     val list = ArrayList<Byte>(n)
     for (index in size - n .. size - 1)
@@ -3993,7 +3993,7 @@ public fun ByteArray.takeLast(n: Int): List<Byte> {
 public fun CharArray.takeLast(n: Int): List<Char> {
     require(n >= 0, { "Requested element count $n is less than zero." })
     if (n == 0) return emptyList()
-    val size = size()
+    val size = size
     if (n >= size) return toList()
     val list = ArrayList<Char>(n)
     for (index in size - n .. size - 1)
@@ -4007,7 +4007,7 @@ public fun CharArray.takeLast(n: Int): List<Char> {
 public fun DoubleArray.takeLast(n: Int): List<Double> {
     require(n >= 0, { "Requested element count $n is less than zero." })
     if (n == 0) return emptyList()
-    val size = size()
+    val size = size
     if (n >= size) return toList()
     val list = ArrayList<Double>(n)
     for (index in size - n .. size - 1)
@@ -4021,7 +4021,7 @@ public fun DoubleArray.takeLast(n: Int): List<Double> {
 public fun FloatArray.takeLast(n: Int): List<Float> {
     require(n >= 0, { "Requested element count $n is less than zero." })
     if (n == 0) return emptyList()
-    val size = size()
+    val size = size
     if (n >= size) return toList()
     val list = ArrayList<Float>(n)
     for (index in size - n .. size - 1)
@@ -4035,7 +4035,7 @@ public fun FloatArray.takeLast(n: Int): List<Float> {
 public fun IntArray.takeLast(n: Int): List<Int> {
     require(n >= 0, { "Requested element count $n is less than zero." })
     if (n == 0) return emptyList()
-    val size = size()
+    val size = size
     if (n >= size) return toList()
     val list = ArrayList<Int>(n)
     for (index in size - n .. size - 1)
@@ -4049,7 +4049,7 @@ public fun IntArray.takeLast(n: Int): List<Int> {
 public fun LongArray.takeLast(n: Int): List<Long> {
     require(n >= 0, { "Requested element count $n is less than zero." })
     if (n == 0) return emptyList()
-    val size = size()
+    val size = size
     if (n >= size) return toList()
     val list = ArrayList<Long>(n)
     for (index in size - n .. size - 1)
@@ -4063,7 +4063,7 @@ public fun LongArray.takeLast(n: Int): List<Long> {
 public fun ShortArray.takeLast(n: Int): List<Short> {
     require(n >= 0, { "Requested element count $n is less than zero." })
     if (n == 0) return emptyList()
-    val size = size()
+    val size = size
     if (n >= size) return toList()
     val list = ArrayList<Short>(n)
     for (index in size - n .. size - 1)
@@ -4527,7 +4527,7 @@ public fun ShortArray.reversed(): List<Short> {
  */
 public fun <T> Array<out T>.reversedArray(): Array<out T> {
     if (isEmpty()) return this
-    val result = arrayOfNulls(this, size()) as Array<T>
+    val result = arrayOfNulls(this, size) as Array<T>
     val lastIndex = lastIndex
     for (i in 0..lastIndex)
         result[lastIndex - i] = this[i]
@@ -4539,7 +4539,7 @@ public fun <T> Array<out T>.reversedArray(): Array<out T> {
  */
 public fun BooleanArray.reversedArray(): BooleanArray {
     if (isEmpty()) return this
-    val result = BooleanArray(size())
+    val result = BooleanArray(size)
     val lastIndex = lastIndex
     for (i in 0..lastIndex)
         result[lastIndex - i] = this[i]
@@ -4551,7 +4551,7 @@ public fun BooleanArray.reversedArray(): BooleanArray {
  */
 public fun ByteArray.reversedArray(): ByteArray {
     if (isEmpty()) return this
-    val result = ByteArray(size())
+    val result = ByteArray(size)
     val lastIndex = lastIndex
     for (i in 0..lastIndex)
         result[lastIndex - i] = this[i]
@@ -4563,7 +4563,7 @@ public fun ByteArray.reversedArray(): ByteArray {
  */
 public fun CharArray.reversedArray(): CharArray {
     if (isEmpty()) return this
-    val result = CharArray(size())
+    val result = CharArray(size)
     val lastIndex = lastIndex
     for (i in 0..lastIndex)
         result[lastIndex - i] = this[i]
@@ -4575,7 +4575,7 @@ public fun CharArray.reversedArray(): CharArray {
  */
 public fun DoubleArray.reversedArray(): DoubleArray {
     if (isEmpty()) return this
-    val result = DoubleArray(size())
+    val result = DoubleArray(size)
     val lastIndex = lastIndex
     for (i in 0..lastIndex)
         result[lastIndex - i] = this[i]
@@ -4587,7 +4587,7 @@ public fun DoubleArray.reversedArray(): DoubleArray {
  */
 public fun FloatArray.reversedArray(): FloatArray {
     if (isEmpty()) return this
-    val result = FloatArray(size())
+    val result = FloatArray(size)
     val lastIndex = lastIndex
     for (i in 0..lastIndex)
         result[lastIndex - i] = this[i]
@@ -4599,7 +4599,7 @@ public fun FloatArray.reversedArray(): FloatArray {
  */
 public fun IntArray.reversedArray(): IntArray {
     if (isEmpty()) return this
-    val result = IntArray(size())
+    val result = IntArray(size)
     val lastIndex = lastIndex
     for (i in 0..lastIndex)
         result[lastIndex - i] = this[i]
@@ -4611,7 +4611,7 @@ public fun IntArray.reversedArray(): IntArray {
  */
 public fun LongArray.reversedArray(): LongArray {
     if (isEmpty()) return this
-    val result = LongArray(size())
+    val result = LongArray(size)
     val lastIndex = lastIndex
     for (i in 0..lastIndex)
         result[lastIndex - i] = this[i]
@@ -4623,7 +4623,7 @@ public fun LongArray.reversedArray(): LongArray {
  */
 public fun ShortArray.reversedArray(): ShortArray {
     if (isEmpty()) return this
-    val result = ShortArray(size())
+    val result = ShortArray(size)
     val lastIndex = lastIndex
     for (i in 0..lastIndex)
         result[lastIndex - i] = this[i]
@@ -5297,63 +5297,63 @@ public val ShortArray.indices: IntRange
  * Returns `true` if the array is empty.
  */
 public fun <T> Array<out T>.isEmpty(): Boolean {
-    return size() == 0
+    return size == 0
 }
 
 /**
  * Returns `true` if the array is empty.
  */
 public fun BooleanArray.isEmpty(): Boolean {
-    return size() == 0
+    return size == 0
 }
 
 /**
  * Returns `true` if the array is empty.
  */
 public fun ByteArray.isEmpty(): Boolean {
-    return size() == 0
+    return size == 0
 }
 
 /**
  * Returns `true` if the array is empty.
  */
 public fun CharArray.isEmpty(): Boolean {
-    return size() == 0
+    return size == 0
 }
 
 /**
  * Returns `true` if the array is empty.
  */
 public fun DoubleArray.isEmpty(): Boolean {
-    return size() == 0
+    return size == 0
 }
 
 /**
  * Returns `true` if the array is empty.
  */
 public fun FloatArray.isEmpty(): Boolean {
-    return size() == 0
+    return size == 0
 }
 
 /**
  * Returns `true` if the array is empty.
  */
 public fun IntArray.isEmpty(): Boolean {
-    return size() == 0
+    return size == 0
 }
 
 /**
  * Returns `true` if the array is empty.
  */
 public fun LongArray.isEmpty(): Boolean {
-    return size() == 0
+    return size == 0
 }
 
 /**
  * Returns `true` if the array is empty.
  */
 public fun ShortArray.isEmpty(): Boolean {
-    return size() == 0
+    return size == 0
 }
 
 /**
@@ -5423,61 +5423,61 @@ public fun ShortArray.isNotEmpty(): Boolean {
  * Returns the last valid index for the array.
  */
 public val <T> Array<out T>.lastIndex: Int
-    get() = size() - 1
+    get() = size - 1
 
 /**
  * Returns the last valid index for the array.
  */
 public val BooleanArray.lastIndex: Int
-    get() = size() - 1
+    get() = size - 1
 
 /**
  * Returns the last valid index for the array.
  */
 public val ByteArray.lastIndex: Int
-    get() = size() - 1
+    get() = size - 1
 
 /**
  * Returns the last valid index for the array.
  */
 public val CharArray.lastIndex: Int
-    get() = size() - 1
+    get() = size - 1
 
 /**
  * Returns the last valid index for the array.
  */
 public val DoubleArray.lastIndex: Int
-    get() = size() - 1
+    get() = size - 1
 
 /**
  * Returns the last valid index for the array.
  */
 public val FloatArray.lastIndex: Int
-    get() = size() - 1
+    get() = size - 1
 
 /**
  * Returns the last valid index for the array.
  */
 public val IntArray.lastIndex: Int
-    get() = size() - 1
+    get() = size - 1
 
 /**
  * Returns the last valid index for the array.
  */
 public val LongArray.lastIndex: Int
-    get() = size() - 1
+    get() = size - 1
 
 /**
  * Returns the last valid index for the array.
  */
 public val ShortArray.lastIndex: Int
-    get() = size() - 1
+    get() = size - 1
 
 /**
  * Returns an array of Boolean containing all of the elements of this generic array.
  */
 public fun Array<out Boolean>.toBooleanArray(): BooleanArray {
-    val result = BooleanArray(size())
+    val result = BooleanArray(size)
     for (index in indices)
         result[index] = this[index]
     return result
@@ -5487,7 +5487,7 @@ public fun Array<out Boolean>.toBooleanArray(): BooleanArray {
  * Returns an array of Byte containing all of the elements of this generic array.
  */
 public fun Array<out Byte>.toByteArray(): ByteArray {
-    val result = ByteArray(size())
+    val result = ByteArray(size)
     for (index in indices)
         result[index] = this[index]
     return result
@@ -5497,7 +5497,7 @@ public fun Array<out Byte>.toByteArray(): ByteArray {
  * Returns an array of Char containing all of the elements of this generic array.
  */
 public fun Array<out Char>.toCharArray(): CharArray {
-    val result = CharArray(size())
+    val result = CharArray(size)
     for (index in indices)
         result[index] = this[index]
     return result
@@ -5507,7 +5507,7 @@ public fun Array<out Char>.toCharArray(): CharArray {
  * Returns an array of Double containing all of the elements of this generic array.
  */
 public fun Array<out Double>.toDoubleArray(): DoubleArray {
-    val result = DoubleArray(size())
+    val result = DoubleArray(size)
     for (index in indices)
         result[index] = this[index]
     return result
@@ -5517,7 +5517,7 @@ public fun Array<out Double>.toDoubleArray(): DoubleArray {
  * Returns an array of Float containing all of the elements of this generic array.
  */
 public fun Array<out Float>.toFloatArray(): FloatArray {
-    val result = FloatArray(size())
+    val result = FloatArray(size)
     for (index in indices)
         result[index] = this[index]
     return result
@@ -5527,7 +5527,7 @@ public fun Array<out Float>.toFloatArray(): FloatArray {
  * Returns an array of Int containing all of the elements of this generic array.
  */
 public fun Array<out Int>.toIntArray(): IntArray {
-    val result = IntArray(size())
+    val result = IntArray(size)
     for (index in indices)
         result[index] = this[index]
     return result
@@ -5537,7 +5537,7 @@ public fun Array<out Int>.toIntArray(): IntArray {
  * Returns an array of Long containing all of the elements of this generic array.
  */
 public fun Array<out Long>.toLongArray(): LongArray {
-    val result = LongArray(size())
+    val result = LongArray(size)
     for (index in indices)
         result[index] = this[index]
     return result
@@ -5547,7 +5547,7 @@ public fun Array<out Long>.toLongArray(): LongArray {
  * Returns an array of Short containing all of the elements of this generic array.
  */
 public fun Array<out Short>.toShortArray(): ShortArray {
-    val result = ShortArray(size())
+    val result = ShortArray(size)
     for (index in indices)
         result[index] = this[index]
     return result
@@ -5564,7 +5564,7 @@ public fun <T> Array<out T>.toArrayList(): ArrayList<T> {
  * Returns an [ArrayList] of all elements.
  */
 public fun BooleanArray.toArrayList(): ArrayList<Boolean> {
-    val list = ArrayList<Boolean>(size())
+    val list = ArrayList<Boolean>(size)
     for (item in this) list.add(item)
     return list
 }
@@ -5573,7 +5573,7 @@ public fun BooleanArray.toArrayList(): ArrayList<Boolean> {
  * Returns an [ArrayList] of all elements.
  */
 public fun ByteArray.toArrayList(): ArrayList<Byte> {
-    val list = ArrayList<Byte>(size())
+    val list = ArrayList<Byte>(size)
     for (item in this) list.add(item)
     return list
 }
@@ -5582,7 +5582,7 @@ public fun ByteArray.toArrayList(): ArrayList<Byte> {
  * Returns an [ArrayList] of all elements.
  */
 public fun CharArray.toArrayList(): ArrayList<Char> {
-    val list = ArrayList<Char>(size())
+    val list = ArrayList<Char>(size)
     for (item in this) list.add(item)
     return list
 }
@@ -5591,7 +5591,7 @@ public fun CharArray.toArrayList(): ArrayList<Char> {
  * Returns an [ArrayList] of all elements.
  */
 public fun DoubleArray.toArrayList(): ArrayList<Double> {
-    val list = ArrayList<Double>(size())
+    val list = ArrayList<Double>(size)
     for (item in this) list.add(item)
     return list
 }
@@ -5600,7 +5600,7 @@ public fun DoubleArray.toArrayList(): ArrayList<Double> {
  * Returns an [ArrayList] of all elements.
  */
 public fun FloatArray.toArrayList(): ArrayList<Float> {
-    val list = ArrayList<Float>(size())
+    val list = ArrayList<Float>(size)
     for (item in this) list.add(item)
     return list
 }
@@ -5609,7 +5609,7 @@ public fun FloatArray.toArrayList(): ArrayList<Float> {
  * Returns an [ArrayList] of all elements.
  */
 public fun IntArray.toArrayList(): ArrayList<Int> {
-    val list = ArrayList<Int>(size())
+    val list = ArrayList<Int>(size)
     for (item in this) list.add(item)
     return list
 }
@@ -5618,7 +5618,7 @@ public fun IntArray.toArrayList(): ArrayList<Int> {
  * Returns an [ArrayList] of all elements.
  */
 public fun LongArray.toArrayList(): ArrayList<Long> {
-    val list = ArrayList<Long>(size())
+    val list = ArrayList<Long>(size)
     for (item in this) list.add(item)
     return list
 }
@@ -5627,7 +5627,7 @@ public fun LongArray.toArrayList(): ArrayList<Long> {
  * Returns an [ArrayList] of all elements.
  */
 public fun ShortArray.toArrayList(): ArrayList<Short> {
-    val list = ArrayList<Short>(size())
+    val list = ArrayList<Short>(size)
     for (item in this) list.add(item)
     return list
 }
@@ -5726,63 +5726,63 @@ public fun <C : MutableCollection<in Short>> ShortArray.toCollection(collection:
  * Returns a [HashSet] of all elements.
  */
 public fun <T> Array<out T>.toHashSet(): HashSet<T> {
-    return toCollection(HashSet<T>(mapCapacity(size())))
+    return toCollection(HashSet<T>(mapCapacity(size)))
 }
 
 /**
  * Returns a [HashSet] of all elements.
  */
 public fun BooleanArray.toHashSet(): HashSet<Boolean> {
-    return toCollection(HashSet<Boolean>(mapCapacity(size())))
+    return toCollection(HashSet<Boolean>(mapCapacity(size)))
 }
 
 /**
  * Returns a [HashSet] of all elements.
  */
 public fun ByteArray.toHashSet(): HashSet<Byte> {
-    return toCollection(HashSet<Byte>(mapCapacity(size())))
+    return toCollection(HashSet<Byte>(mapCapacity(size)))
 }
 
 /**
  * Returns a [HashSet] of all elements.
  */
 public fun CharArray.toHashSet(): HashSet<Char> {
-    return toCollection(HashSet<Char>(mapCapacity(size())))
+    return toCollection(HashSet<Char>(mapCapacity(size)))
 }
 
 /**
  * Returns a [HashSet] of all elements.
  */
 public fun DoubleArray.toHashSet(): HashSet<Double> {
-    return toCollection(HashSet<Double>(mapCapacity(size())))
+    return toCollection(HashSet<Double>(mapCapacity(size)))
 }
 
 /**
  * Returns a [HashSet] of all elements.
  */
 public fun FloatArray.toHashSet(): HashSet<Float> {
-    return toCollection(HashSet<Float>(mapCapacity(size())))
+    return toCollection(HashSet<Float>(mapCapacity(size)))
 }
 
 /**
  * Returns a [HashSet] of all elements.
  */
 public fun IntArray.toHashSet(): HashSet<Int> {
-    return toCollection(HashSet<Int>(mapCapacity(size())))
+    return toCollection(HashSet<Int>(mapCapacity(size)))
 }
 
 /**
  * Returns a [HashSet] of all elements.
  */
 public fun LongArray.toHashSet(): HashSet<Long> {
-    return toCollection(HashSet<Long>(mapCapacity(size())))
+    return toCollection(HashSet<Long>(mapCapacity(size)))
 }
 
 /**
  * Returns a [HashSet] of all elements.
  */
 public fun ShortArray.toHashSet(): HashSet<Short> {
-    return toCollection(HashSet<Short>(mapCapacity(size())))
+    return toCollection(HashSet<Short>(mapCapacity(size)))
 }
 
 /**
@@ -5970,7 +5970,7 @@ public inline fun <K> ShortArray.toMap(selector: (Short) -> K): Map<K, Short> {
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <T, K, V> Array<out T>.toMap(selector: (T) -> K, transform: (T) -> V): Map<K, V> {
-    val capacity = (size()/.75f) + 1
+    val capacity = (size/.75f) + 1
     val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), transform(element))
@@ -5983,7 +5983,7 @@ public inline fun <T, K, V> Array<out T>.toMap(selector: (T) -> K, transform: (T
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> BooleanArray.toMap(selector: (Boolean) -> K, transform: (Boolean) -> V): Map<K, V> {
-    val capacity = (size()/.75f) + 1
+    val capacity = (size/.75f) + 1
     val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), transform(element))
@@ -5996,7 +5996,7 @@ public inline fun <K, V> BooleanArray.toMap(selector: (Boolean) -> K, transform:
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> ByteArray.toMap(selector: (Byte) -> K, transform: (Byte) -> V): Map<K, V> {
-    val capacity = (size()/.75f) + 1
+    val capacity = (size/.75f) + 1
     val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), transform(element))
@@ -6009,7 +6009,7 @@ public inline fun <K, V> ByteArray.toMap(selector: (Byte) -> K, transform: (Byte
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> CharArray.toMap(selector: (Char) -> K, transform: (Char) -> V): Map<K, V> {
-    val capacity = (size()/.75f) + 1
+    val capacity = (size/.75f) + 1
     val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), transform(element))
@@ -6022,7 +6022,7 @@ public inline fun <K, V> CharArray.toMap(selector: (Char) -> K, transform: (Char
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> DoubleArray.toMap(selector: (Double) -> K, transform: (Double) -> V): Map<K, V> {
-    val capacity = (size()/.75f) + 1
+    val capacity = (size/.75f) + 1
     val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), transform(element))
@@ -6035,7 +6035,7 @@ public inline fun <K, V> DoubleArray.toMap(selector: (Double) -> K, transform: (
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> FloatArray.toMap(selector: (Float) -> K, transform: (Float) -> V): Map<K, V> {
-    val capacity = (size()/.75f) + 1
+    val capacity = (size/.75f) + 1
     val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), transform(element))
@@ -6048,7 +6048,7 @@ public inline fun <K, V> FloatArray.toMap(selector: (Float) -> K, transform: (Fl
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> IntArray.toMap(selector: (Int) -> K, transform: (Int) -> V): Map<K, V> {
-    val capacity = (size()/.75f) + 1
+    val capacity = (size/.75f) + 1
     val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), transform(element))
@@ -6061,7 +6061,7 @@ public inline fun <K, V> IntArray.toMap(selector: (Int) -> K, transform: (Int) -
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> LongArray.toMap(selector: (Long) -> K, transform: (Long) -> V): Map<K, V> {
-    val capacity = (size()/.75f) + 1
+    val capacity = (size/.75f) + 1
     val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), transform(element))
@@ -6074,7 +6074,7 @@ public inline fun <K, V> LongArray.toMap(selector: (Long) -> K, transform: (Long
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> ShortArray.toMap(selector: (Short) -> K, transform: (Short) -> V): Map<K, V> {
-    val capacity = (size()/.75f) + 1
+    val capacity = (size/.75f) + 1
     val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), transform(element))
@@ -6088,7 +6088,7 @@ public inline fun <K, V> ShortArray.toMap(selector: (Short) -> K, transform: (Sh
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <T, K> Array<out T>.toMapBy(selector: (T) -> K): Map<K, T> {
-    val capacity = (size()/.75f) + 1
+    val capacity = (size/.75f) + 1
     val result = LinkedHashMap<K, T>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), element)
@@ -6102,7 +6102,7 @@ public inline fun <T, K> Array<out T>.toMapBy(selector: (T) -> K): Map<K, T> {
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K> BooleanArray.toMapBy(selector: (Boolean) -> K): Map<K, Boolean> {
-    val capacity = (size()/.75f) + 1
+    val capacity = (size/.75f) + 1
     val result = LinkedHashMap<K, Boolean>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), element)
@@ -6116,7 +6116,7 @@ public inline fun <K> BooleanArray.toMapBy(selector: (Boolean) -> K): Map<K, Boo
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K> ByteArray.toMapBy(selector: (Byte) -> K): Map<K, Byte> {
-    val capacity = (size()/.75f) + 1
+    val capacity = (size/.75f) + 1
     val result = LinkedHashMap<K, Byte>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), element)
@@ -6130,7 +6130,7 @@ public inline fun <K> ByteArray.toMapBy(selector: (Byte) -> K): Map<K, Byte> {
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K> CharArray.toMapBy(selector: (Char) -> K): Map<K, Char> {
-    val capacity = (size()/.75f) + 1
+    val capacity = (size/.75f) + 1
     val result = LinkedHashMap<K, Char>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), element)
@@ -6144,7 +6144,7 @@ public inline fun <K> CharArray.toMapBy(selector: (Char) -> K): Map<K, Char> {
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K> DoubleArray.toMapBy(selector: (Double) -> K): Map<K, Double> {
-    val capacity = (size()/.75f) + 1
+    val capacity = (size/.75f) + 1
     val result = LinkedHashMap<K, Double>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), element)
@@ -6158,7 +6158,7 @@ public inline fun <K> DoubleArray.toMapBy(selector: (Double) -> K): Map<K, Doubl
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K> FloatArray.toMapBy(selector: (Float) -> K): Map<K, Float> {
-    val capacity = (size()/.75f) + 1
+    val capacity = (size/.75f) + 1
     val result = LinkedHashMap<K, Float>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), element)
@@ -6172,7 +6172,7 @@ public inline fun <K> FloatArray.toMapBy(selector: (Float) -> K): Map<K, Float> 
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K> IntArray.toMapBy(selector: (Int) -> K): Map<K, Int> {
-    val capacity = (size()/.75f) + 1
+    val capacity = (size/.75f) + 1
     val result = LinkedHashMap<K, Int>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), element)
@@ -6186,7 +6186,7 @@ public inline fun <K> IntArray.toMapBy(selector: (Int) -> K): Map<K, Int> {
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K> LongArray.toMapBy(selector: (Long) -> K): Map<K, Long> {
-    val capacity = (size()/.75f) + 1
+    val capacity = (size/.75f) + 1
     val result = LinkedHashMap<K, Long>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), element)
@@ -6200,7 +6200,7 @@ public inline fun <K> LongArray.toMapBy(selector: (Long) -> K): Map<K, Long> {
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K> ShortArray.toMapBy(selector: (Short) -> K): Map<K, Short> {
-    val capacity = (size()/.75f) + 1
+    val capacity = (size/.75f) + 1
     val result = LinkedHashMap<K, Short>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), element)
@@ -6212,63 +6212,63 @@ public inline fun <K> ShortArray.toMapBy(selector: (Short) -> K): Map<K, Short> 
  * Returns a [Set] of all elements.
  */
 public fun <T> Array<out T>.toSet(): Set<T> {
-    return toCollection(LinkedHashSet<T>(mapCapacity(size())))
+    return toCollection(LinkedHashSet<T>(mapCapacity(size)))
 }
 
 /**
  * Returns a [Set] of all elements.
  */
 public fun BooleanArray.toSet(): Set<Boolean> {
-    return toCollection(LinkedHashSet<Boolean>(mapCapacity(size())))
+    return toCollection(LinkedHashSet<Boolean>(mapCapacity(size)))
 }
 
 /**
  * Returns a [Set] of all elements.
  */
 public fun ByteArray.toSet(): Set<Byte> {
-    return toCollection(LinkedHashSet<Byte>(mapCapacity(size())))
+    return toCollection(LinkedHashSet<Byte>(mapCapacity(size)))
 }
 
 /**
  * Returns a [Set] of all elements.
  */
 public fun CharArray.toSet(): Set<Char> {
-    return toCollection(LinkedHashSet<Char>(mapCapacity(size())))
+    return toCollection(LinkedHashSet<Char>(mapCapacity(size)))
 }
 
 /**
  * Returns a [Set] of all elements.
  */
 public fun DoubleArray.toSet(): Set<Double> {
-    return toCollection(LinkedHashSet<Double>(mapCapacity(size())))
+    return toCollection(LinkedHashSet<Double>(mapCapacity(size)))
 }
 
 /**
  * Returns a [Set] of all elements.
  */
 public fun FloatArray.toSet(): Set<Float> {
-    return toCollection(LinkedHashSet<Float>(mapCapacity(size())))
+    return toCollection(LinkedHashSet<Float>(mapCapacity(size)))
 }
 
 /**
  * Returns a [Set] of all elements.
  */
 public fun IntArray.toSet(): Set<Int> {
-    return toCollection(LinkedHashSet<Int>(mapCapacity(size())))
+    return toCollection(LinkedHashSet<Int>(mapCapacity(size)))
 }
 
 /**
  * Returns a [Set] of all elements.
  */
 public fun LongArray.toSet(): Set<Long> {
-    return toCollection(LinkedHashSet<Long>(mapCapacity(size())))
+    return toCollection(LinkedHashSet<Long>(mapCapacity(size)))
 }
 
 /**
  * Returns a [Set] of all elements.
  */
 public fun ShortArray.toSet(): Set<Short> {
-    return toCollection(LinkedHashSet<Short>(mapCapacity(size())))
+    return toCollection(LinkedHashSet<Short>(mapCapacity(size)))
 }
 
 /**
@@ -6672,7 +6672,7 @@ public inline fun <K> ShortArray.groupByTo(map: MutableMap<K, MutableList<Short>
  * to each element in the original array.
  */
 public inline fun <T, R> Array<out T>.map(transform: (T) -> R): List<R> {
-    return mapTo(ArrayList<R>(size()), transform)
+    return mapTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -6680,7 +6680,7 @@ public inline fun <T, R> Array<out T>.map(transform: (T) -> R): List<R> {
  * to each element in the original array.
  */
 public inline fun <R> BooleanArray.map(transform: (Boolean) -> R): List<R> {
-    return mapTo(ArrayList<R>(size()), transform)
+    return mapTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -6688,7 +6688,7 @@ public inline fun <R> BooleanArray.map(transform: (Boolean) -> R): List<R> {
  * to each element in the original array.
  */
 public inline fun <R> ByteArray.map(transform: (Byte) -> R): List<R> {
-    return mapTo(ArrayList<R>(size()), transform)
+    return mapTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -6696,7 +6696,7 @@ public inline fun <R> ByteArray.map(transform: (Byte) -> R): List<R> {
  * to each element in the original array.
  */
 public inline fun <R> CharArray.map(transform: (Char) -> R): List<R> {
-    return mapTo(ArrayList<R>(size()), transform)
+    return mapTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -6704,7 +6704,7 @@ public inline fun <R> CharArray.map(transform: (Char) -> R): List<R> {
  * to each element in the original array.
  */
 public inline fun <R> DoubleArray.map(transform: (Double) -> R): List<R> {
-    return mapTo(ArrayList<R>(size()), transform)
+    return mapTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -6712,7 +6712,7 @@ public inline fun <R> DoubleArray.map(transform: (Double) -> R): List<R> {
  * to each element in the original array.
  */
 public inline fun <R> FloatArray.map(transform: (Float) -> R): List<R> {
-    return mapTo(ArrayList<R>(size()), transform)
+    return mapTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -6720,7 +6720,7 @@ public inline fun <R> FloatArray.map(transform: (Float) -> R): List<R> {
  * to each element in the original array.
  */
 public inline fun <R> IntArray.map(transform: (Int) -> R): List<R> {
-    return mapTo(ArrayList<R>(size()), transform)
+    return mapTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -6728,7 +6728,7 @@ public inline fun <R> IntArray.map(transform: (Int) -> R): List<R> {
  * to each element in the original array.
  */
 public inline fun <R> LongArray.map(transform: (Long) -> R): List<R> {
-    return mapTo(ArrayList<R>(size()), transform)
+    return mapTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -6736,7 +6736,7 @@ public inline fun <R> LongArray.map(transform: (Long) -> R): List<R> {
  * to each element in the original array.
  */
 public inline fun <R> ShortArray.map(transform: (Short) -> R): List<R> {
-    return mapTo(ArrayList<R>(size()), transform)
+    return mapTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -6744,7 +6744,7 @@ public inline fun <R> ShortArray.map(transform: (Short) -> R): List<R> {
  * to each element and its index in the original array.
  */
 public inline fun <T, R> Array<out T>.mapIndexed(transform: (Int, T) -> R): List<R> {
-    return mapIndexedTo(ArrayList<R>(size()), transform)
+    return mapIndexedTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -6752,7 +6752,7 @@ public inline fun <T, R> Array<out T>.mapIndexed(transform: (Int, T) -> R): List
  * to each element and its index in the original array.
  */
 public inline fun <R> BooleanArray.mapIndexed(transform: (Int, Boolean) -> R): List<R> {
-    return mapIndexedTo(ArrayList<R>(size()), transform)
+    return mapIndexedTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -6760,7 +6760,7 @@ public inline fun <R> BooleanArray.mapIndexed(transform: (Int, Boolean) -> R): L
  * to each element and its index in the original array.
  */
 public inline fun <R> ByteArray.mapIndexed(transform: (Int, Byte) -> R): List<R> {
-    return mapIndexedTo(ArrayList<R>(size()), transform)
+    return mapIndexedTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -6768,7 +6768,7 @@ public inline fun <R> ByteArray.mapIndexed(transform: (Int, Byte) -> R): List<R>
  * to each element and its index in the original array.
  */
 public inline fun <R> CharArray.mapIndexed(transform: (Int, Char) -> R): List<R> {
-    return mapIndexedTo(ArrayList<R>(size()), transform)
+    return mapIndexedTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -6776,7 +6776,7 @@ public inline fun <R> CharArray.mapIndexed(transform: (Int, Char) -> R): List<R>
  * to each element and its index in the original array.
  */
 public inline fun <R> DoubleArray.mapIndexed(transform: (Int, Double) -> R): List<R> {
-    return mapIndexedTo(ArrayList<R>(size()), transform)
+    return mapIndexedTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -6784,7 +6784,7 @@ public inline fun <R> DoubleArray.mapIndexed(transform: (Int, Double) -> R): Lis
  * to each element and its index in the original array.
  */
 public inline fun <R> FloatArray.mapIndexed(transform: (Int, Float) -> R): List<R> {
-    return mapIndexedTo(ArrayList<R>(size()), transform)
+    return mapIndexedTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -6792,7 +6792,7 @@ public inline fun <R> FloatArray.mapIndexed(transform: (Int, Float) -> R): List<
  * to each element and its index in the original array.
  */
 public inline fun <R> IntArray.mapIndexed(transform: (Int, Int) -> R): List<R> {
-    return mapIndexedTo(ArrayList<R>(size()), transform)
+    return mapIndexedTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -6800,7 +6800,7 @@ public inline fun <R> IntArray.mapIndexed(transform: (Int, Int) -> R): List<R> {
  * to each element and its index in the original array.
  */
 public inline fun <R> LongArray.mapIndexed(transform: (Int, Long) -> R): List<R> {
-    return mapIndexedTo(ArrayList<R>(size()), transform)
+    return mapIndexedTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -6808,7 +6808,7 @@ public inline fun <R> LongArray.mapIndexed(transform: (Int, Long) -> R): List<R>
  * to each element and its index in the original array.
  */
 public inline fun <R> ShortArray.mapIndexed(transform: (Int, Short) -> R): List<R> {
-    return mapIndexedTo(ArrayList<R>(size()), transform)
+    return mapIndexedTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -7470,7 +7470,7 @@ public fun ShortArray.subtract(other: Iterable<Short>): Set<Short> {
  * Returns a mutable set containing all distinct elements from the given array.
  */
 public fun <T> Array<out T>.toMutableSet(): MutableSet<T> {
-    val set = LinkedHashSet<T>(mapCapacity(size()))
+    val set = LinkedHashSet<T>(mapCapacity(size))
     for (item in this) set.add(item)
     return set
 }
@@ -7479,7 +7479,7 @@ public fun <T> Array<out T>.toMutableSet(): MutableSet<T> {
  * Returns a mutable set containing all distinct elements from the given array.
  */
 public fun BooleanArray.toMutableSet(): MutableSet<Boolean> {
-    val set = LinkedHashSet<Boolean>(mapCapacity(size()))
+    val set = LinkedHashSet<Boolean>(mapCapacity(size))
     for (item in this) set.add(item)
     return set
 }
@@ -7488,7 +7488,7 @@ public fun BooleanArray.toMutableSet(): MutableSet<Boolean> {
  * Returns a mutable set containing all distinct elements from the given array.
  */
 public fun ByteArray.toMutableSet(): MutableSet<Byte> {
-    val set = LinkedHashSet<Byte>(mapCapacity(size()))
+    val set = LinkedHashSet<Byte>(mapCapacity(size))
     for (item in this) set.add(item)
     return set
 }
@@ -7497,7 +7497,7 @@ public fun ByteArray.toMutableSet(): MutableSet<Byte> {
  * Returns a mutable set containing all distinct elements from the given array.
  */
 public fun CharArray.toMutableSet(): MutableSet<Char> {
-    val set = LinkedHashSet<Char>(mapCapacity(size()))
+    val set = LinkedHashSet<Char>(mapCapacity(size))
     for (item in this) set.add(item)
     return set
 }
@@ -7506,7 +7506,7 @@ public fun CharArray.toMutableSet(): MutableSet<Char> {
  * Returns a mutable set containing all distinct elements from the given array.
  */
 public fun DoubleArray.toMutableSet(): MutableSet<Double> {
-    val set = LinkedHashSet<Double>(mapCapacity(size()))
+    val set = LinkedHashSet<Double>(mapCapacity(size))
     for (item in this) set.add(item)
     return set
 }
@@ -7515,7 +7515,7 @@ public fun DoubleArray.toMutableSet(): MutableSet<Double> {
  * Returns a mutable set containing all distinct elements from the given array.
  */
 public fun FloatArray.toMutableSet(): MutableSet<Float> {
-    val set = LinkedHashSet<Float>(mapCapacity(size()))
+    val set = LinkedHashSet<Float>(mapCapacity(size))
     for (item in this) set.add(item)
     return set
 }
@@ -7524,7 +7524,7 @@ public fun FloatArray.toMutableSet(): MutableSet<Float> {
  * Returns a mutable set containing all distinct elements from the given array.
  */
 public fun IntArray.toMutableSet(): MutableSet<Int> {
-    val set = LinkedHashSet<Int>(mapCapacity(size()))
+    val set = LinkedHashSet<Int>(mapCapacity(size))
     for (item in this) set.add(item)
     return set
 }
@@ -7533,7 +7533,7 @@ public fun IntArray.toMutableSet(): MutableSet<Int> {
  * Returns a mutable set containing all distinct elements from the given array.
  */
 public fun LongArray.toMutableSet(): MutableSet<Long> {
-    val set = LinkedHashSet<Long>(mapCapacity(size()))
+    val set = LinkedHashSet<Long>(mapCapacity(size))
     for (item in this) set.add(item)
     return set
 }
@@ -7542,7 +7542,7 @@ public fun LongArray.toMutableSet(): MutableSet<Long> {
  * Returns a mutable set containing all distinct elements from the given array.
  */
 public fun ShortArray.toMutableSet(): MutableSet<Short> {
-    val set = LinkedHashSet<Short>(mapCapacity(size()))
+    val set = LinkedHashSet<Short>(mapCapacity(size))
     for (item in this) set.add(item)
     return set
 }
@@ -7848,63 +7848,63 @@ public inline fun ShortArray.any(predicate: (Short) -> Boolean): Boolean {
  * Returns the number of elements in this array.
  */
 public fun <T> Array<out T>.count(): Int {
-    return size()
+    return size
 }
 
 /**
  * Returns the number of elements in this array.
  */
 public fun BooleanArray.count(): Int {
-    return size()
+    return size
 }
 
 /**
  * Returns the number of elements in this array.
  */
 public fun ByteArray.count(): Int {
-    return size()
+    return size
 }
 
 /**
  * Returns the number of elements in this array.
  */
 public fun CharArray.count(): Int {
-    return size()
+    return size
 }
 
 /**
  * Returns the number of elements in this array.
  */
 public fun DoubleArray.count(): Int {
-    return size()
+    return size
 }
 
 /**
  * Returns the number of elements in this array.
  */
 public fun FloatArray.count(): Int {
-    return size()
+    return size
 }
 
 /**
  * Returns the number of elements in this array.
  */
 public fun IntArray.count(): Int {
-    return size()
+    return size
 }
 
 /**
  * Returns the number of elements in this array.
  */
 public fun LongArray.count(): Int {
-    return size()
+    return size
 }
 
 /**
  * Returns the number of elements in this array.
  */
 public fun ShortArray.count(): Int {
-    return size()
+    return size
 }
 
 /**
@@ -9661,7 +9661,7 @@ public fun <R> ShortArray.zip(array: Array<out R>): List<Pair<Short, R>> {
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <T, R, V> Array<out T>.zip(array: Array<out R>, transform: (T, R) -> V): List<V> {
-    val size = Math.min(size(), array.size())
+    val size = Math.min(size, array.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], array[i]))
@@ -9673,7 +9673,7 @@ public inline fun <T, R, V> Array<out T>.zip(array: Array<out R>, transform: (T,
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> BooleanArray.zip(array: Array<out R>, transform: (Boolean, R) -> V): List<V> {
-    val size = Math.min(size(), array.size())
+    val size = Math.min(size, array.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], array[i]))
@@ -9685,7 +9685,7 @@ public inline fun <R, V> BooleanArray.zip(array: Array<out R>, transform: (Boole
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> ByteArray.zip(array: Array<out R>, transform: (Byte, R) -> V): List<V> {
-    val size = Math.min(size(), array.size())
+    val size = Math.min(size, array.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], array[i]))
@@ -9697,7 +9697,7 @@ public inline fun <R, V> ByteArray.zip(array: Array<out R>, transform: (Byte, R)
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> CharArray.zip(array: Array<out R>, transform: (Char, R) -> V): List<V> {
-    val size = Math.min(size(), array.size())
+    val size = Math.min(size, array.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], array[i]))
@@ -9709,7 +9709,7 @@ public inline fun <R, V> CharArray.zip(array: Array<out R>, transform: (Char, R)
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> DoubleArray.zip(array: Array<out R>, transform: (Double, R) -> V): List<V> {
-    val size = Math.min(size(), array.size())
+    val size = Math.min(size, array.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], array[i]))
@@ -9721,7 +9721,7 @@ public inline fun <R, V> DoubleArray.zip(array: Array<out R>, transform: (Double
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> FloatArray.zip(array: Array<out R>, transform: (Float, R) -> V): List<V> {
-    val size = Math.min(size(), array.size())
+    val size = Math.min(size, array.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], array[i]))
@@ -9733,7 +9733,7 @@ public inline fun <R, V> FloatArray.zip(array: Array<out R>, transform: (Float, 
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> IntArray.zip(array: Array<out R>, transform: (Int, R) -> V): List<V> {
-    val size = Math.min(size(), array.size())
+    val size = Math.min(size, array.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], array[i]))
@@ -9745,7 +9745,7 @@ public inline fun <R, V> IntArray.zip(array: Array<out R>, transform: (Int, R) -
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> LongArray.zip(array: Array<out R>, transform: (Long, R) -> V): List<V> {
-    val size = Math.min(size(), array.size())
+    val size = Math.min(size, array.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], array[i]))
@@ -9757,7 +9757,7 @@ public inline fun <R, V> LongArray.zip(array: Array<out R>, transform: (Long, R)
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> ShortArray.zip(array: Array<out R>, transform: (Short, R) -> V): List<V> {
-    val size = Math.min(size(), array.size())
+    val size = Math.min(size, array.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], array[i]))
@@ -9825,7 +9825,7 @@ public fun ShortArray.zip(array: ShortArray): List<Pair<Short, Short>> {
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <V> BooleanArray.zip(array: BooleanArray, transform: (Boolean, Boolean) -> V): List<V> {
-    val size = Math.min(size(), array.size())
+    val size = Math.min(size, array.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], array[i]))
@@ -9837,7 +9837,7 @@ public inline fun <V> BooleanArray.zip(array: BooleanArray, transform: (Boolean,
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <V> ByteArray.zip(array: ByteArray, transform: (Byte, Byte) -> V): List<V> {
-    val size = Math.min(size(), array.size())
+    val size = Math.min(size, array.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], array[i]))
@@ -9849,7 +9849,7 @@ public inline fun <V> ByteArray.zip(array: ByteArray, transform: (Byte, Byte) ->
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <V> CharArray.zip(array: CharArray, transform: (Char, Char) -> V): List<V> {
-    val size = Math.min(size(), array.size())
+    val size = Math.min(size, array.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], array[i]))
@@ -9861,7 +9861,7 @@ public inline fun <V> CharArray.zip(array: CharArray, transform: (Char, Char) ->
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <V> DoubleArray.zip(array: DoubleArray, transform: (Double, Double) -> V): List<V> {
-    val size = Math.min(size(), array.size())
+    val size = Math.min(size, array.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], array[i]))
@@ -9873,7 +9873,7 @@ public inline fun <V> DoubleArray.zip(array: DoubleArray, transform: (Double, Do
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <V> FloatArray.zip(array: FloatArray, transform: (Float, Float) -> V): List<V> {
-    val size = Math.min(size(), array.size())
+    val size = Math.min(size, array.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], array[i]))
@@ -9885,7 +9885,7 @@ public inline fun <V> FloatArray.zip(array: FloatArray, transform: (Float, Float
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <V> IntArray.zip(array: IntArray, transform: (Int, Int) -> V): List<V> {
-    val size = Math.min(size(), array.size())
+    val size = Math.min(size, array.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], array[i]))
@@ -9897,7 +9897,7 @@ public inline fun <V> IntArray.zip(array: IntArray, transform: (Int, Int) -> V):
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <V> LongArray.zip(array: LongArray, transform: (Long, Long) -> V): List<V> {
-    val size = Math.min(size(), array.size())
+    val size = Math.min(size, array.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], array[i]))
@@ -9909,7 +9909,7 @@ public inline fun <V> LongArray.zip(array: LongArray, transform: (Long, Long) ->
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <V> ShortArray.zip(array: ShortArray, transform: (Short, Short) -> V): List<V> {
-    val size = Math.min(size(), array.size())
+    val size = Math.min(size, array.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
         list.add(transform(this[i], array[i]))
@@ -9984,7 +9984,7 @@ public fun <R> ShortArray.zip(other: Iterable<R>): List<Pair<Short, R>> {
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <T, R, V> Array<out T>.zip(other: Iterable<R>, transform: (T, R) -> V): List<V> {
-    val arraySize = size()
+    val arraySize = size
     val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
@@ -9998,7 +9998,7 @@ public inline fun <T, R, V> Array<out T>.zip(other: Iterable<R>, transform: (T, 
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> BooleanArray.zip(other: Iterable<R>, transform: (Boolean, R) -> V): List<V> {
-    val arraySize = size()
+    val arraySize = size
     val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
@@ -10012,7 +10012,7 @@ public inline fun <R, V> BooleanArray.zip(other: Iterable<R>, transform: (Boolea
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> ByteArray.zip(other: Iterable<R>, transform: (Byte, R) -> V): List<V> {
-    val arraySize = size()
+    val arraySize = size
     val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
@@ -10026,7 +10026,7 @@ public inline fun <R, V> ByteArray.zip(other: Iterable<R>, transform: (Byte, R) 
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> CharArray.zip(other: Iterable<R>, transform: (Char, R) -> V): List<V> {
-    val arraySize = size()
+    val arraySize = size
     val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
@@ -10040,7 +10040,7 @@ public inline fun <R, V> CharArray.zip(other: Iterable<R>, transform: (Char, R) 
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> DoubleArray.zip(other: Iterable<R>, transform: (Double, R) -> V): List<V> {
-    val arraySize = size()
+    val arraySize = size
     val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
@@ -10054,7 +10054,7 @@ public inline fun <R, V> DoubleArray.zip(other: Iterable<R>, transform: (Double,
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> FloatArray.zip(other: Iterable<R>, transform: (Float, R) -> V): List<V> {
-    val arraySize = size()
+    val arraySize = size
     val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
@@ -10068,7 +10068,7 @@ public inline fun <R, V> FloatArray.zip(other: Iterable<R>, transform: (Float, R
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> IntArray.zip(other: Iterable<R>, transform: (Int, R) -> V): List<V> {
-    val arraySize = size()
+    val arraySize = size
     val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
@@ -10082,7 +10082,7 @@ public inline fun <R, V> IntArray.zip(other: Iterable<R>, transform: (Int, R) ->
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> LongArray.zip(other: Iterable<R>, transform: (Long, R) -> V): List<V> {
-    val arraySize = size()
+    val arraySize = size
     val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
@@ -10096,7 +10096,7 @@ public inline fun <R, V> LongArray.zip(other: Iterable<R>, transform: (Long, R) 
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
 public inline fun <R, V> ShortArray.zip(other: Iterable<R>, transform: (Short, R) -> V): List<V> {
-    val arraySize = size()
+    val arraySize = size
     val list = ArrayList<V>(Math.min(other.collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in other) {
@@ -10597,7 +10597,7 @@ public fun <T> Array<out T>.asList(): List<T> {
 @kotlin.jvm.JvmVersion
 public fun BooleanArray.asList(): List<Boolean> {
     return object : AbstractList<Boolean>(), RandomAccess {
-        override val size: Int get() = this@asList.size()
+        override val size: Int get() = this@asList.size
         override fun isEmpty(): Boolean = this@asList.isEmpty()
         override fun contains(o: Boolean): Boolean = this@asList.contains(o)
         override fun get(index: Int): Boolean = this@asList[index]
@@ -10612,7 +10612,7 @@ public fun BooleanArray.asList(): List<Boolean> {
 @kotlin.jvm.JvmVersion
 public fun ByteArray.asList(): List<Byte> {
     return object : AbstractList<Byte>(), RandomAccess {
-        override val size: Int get() = this@asList.size()
+        override val size: Int get() = this@asList.size
         override fun isEmpty(): Boolean = this@asList.isEmpty()
         override fun contains(o: Byte): Boolean = this@asList.contains(o)
         override fun get(index: Int): Byte = this@asList[index]
@@ -10627,7 +10627,7 @@ public fun ByteArray.asList(): List<Byte> {
 @kotlin.jvm.JvmVersion
 public fun CharArray.asList(): List<Char> {
     return object : AbstractList<Char>(), RandomAccess {
-        override val size: Int get() = this@asList.size()
+        override val size: Int get() = this@asList.size
         override fun isEmpty(): Boolean = this@asList.isEmpty()
         override fun contains(o: Char): Boolean = this@asList.contains(o)
         override fun get(index: Int): Char = this@asList[index]
@@ -10642,7 +10642,7 @@ public fun CharArray.asList(): List<Char> {
 @kotlin.jvm.JvmVersion
 public fun DoubleArray.asList(): List<Double> {
     return object : AbstractList<Double>(), RandomAccess {
-        override val size: Int get() = this@asList.size()
+        override val size: Int get() = this@asList.size
         override fun isEmpty(): Boolean = this@asList.isEmpty()
         override fun contains(o: Double): Boolean = this@asList.contains(o)
         override fun get(index: Int): Double = this@asList[index]
@@ -10657,7 +10657,7 @@ public fun DoubleArray.asList(): List<Double> {
 @kotlin.jvm.JvmVersion
 public fun FloatArray.asList(): List<Float> {
     return object : AbstractList<Float>(), RandomAccess {
-        override val size: Int get() = this@asList.size()
+        override val size: Int get() = this@asList.size
         override fun isEmpty(): Boolean = this@asList.isEmpty()
         override fun contains(o: Float): Boolean = this@asList.contains(o)
         override fun get(index: Int): Float = this@asList[index]
@@ -10672,7 +10672,7 @@ public fun FloatArray.asList(): List<Float> {
 @kotlin.jvm.JvmVersion
 public fun IntArray.asList(): List<Int> {
     return object : AbstractList<Int>(), RandomAccess {
-        override val size: Int get() = this@asList.size()
+        override val size: Int get() = this@asList.size
         override fun isEmpty(): Boolean = this@asList.isEmpty()
         override fun contains(o: Int): Boolean = this@asList.contains(o)
         override fun get(index: Int): Int = this@asList[index]
@@ -10687,7 +10687,7 @@ public fun IntArray.asList(): List<Int> {
 @kotlin.jvm.JvmVersion
 public fun LongArray.asList(): List<Long> {
     return object : AbstractList<Long>(), RandomAccess {
-        override val size: Int get() = this@asList.size()
+        override val size: Int get() = this@asList.size
         override fun isEmpty(): Boolean = this@asList.isEmpty()
         override fun contains(o: Long): Boolean = this@asList.contains(o)
         override fun get(index: Int): Long = this@asList[index]
@@ -10702,7 +10702,7 @@ public fun LongArray.asList(): List<Long> {
 @kotlin.jvm.JvmVersion
 public fun ShortArray.asList(): List<Short> {
     return object : AbstractList<Short>(), RandomAccess {
-        override val size: Int get() = this@asList.size()
+        override val size: Int get() = this@asList.size
         override fun isEmpty(): Boolean = this@asList.isEmpty()
         override fun contains(o: Short): Boolean = this@asList.contains(o)
         override fun get(index: Int): Short = this@asList[index]
@@ -10715,7 +10715,7 @@ public fun ShortArray.asList(): List<Short> {
  * Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted according to the specified [comparator].
  */
 @kotlin.jvm.JvmVersion
-public fun <T> Array<out T>.binarySearch(element: T, comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size()): Int {
+public fun <T> Array<out T>.binarySearch(element: T, comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size): Int {
     return Arrays.binarySearch(this, fromIndex, toIndex, element, comparator)
 }
 
@@ -10723,7 +10723,7 @@ public fun <T> Array<out T>.binarySearch(element: T, comparator: Comparator<in T
  * Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted.
  */
 @kotlin.jvm.JvmVersion
-public fun <T> Array<out T>.binarySearch(element: T, fromIndex: Int = 0, toIndex: Int = size()): Int {
+public fun <T> Array<out T>.binarySearch(element: T, fromIndex: Int = 0, toIndex: Int = size): Int {
     return Arrays.binarySearch(this, fromIndex, toIndex, element)
 }
 
@@ -10731,7 +10731,7 @@ public fun <T> Array<out T>.binarySearch(element: T, fromIndex: Int = 0, toIndex
  * Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted.
  */
 @kotlin.jvm.JvmVersion
-public fun ByteArray.binarySearch(element: Byte, fromIndex: Int = 0, toIndex: Int = size()): Int {
+public fun ByteArray.binarySearch(element: Byte, fromIndex: Int = 0, toIndex: Int = size): Int {
     return Arrays.binarySearch(this, fromIndex, toIndex, element)
 }
 
@@ -10739,7 +10739,7 @@ public fun ByteArray.binarySearch(element: Byte, fromIndex: Int = 0, toIndex: In
  * Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted.
  */
 @kotlin.jvm.JvmVersion
-public fun CharArray.binarySearch(element: Char, fromIndex: Int = 0, toIndex: Int = size()): Int {
+public fun CharArray.binarySearch(element: Char, fromIndex: Int = 0, toIndex: Int = size): Int {
     return Arrays.binarySearch(this, fromIndex, toIndex, element)
 }
 
@@ -10747,7 +10747,7 @@ public fun CharArray.binarySearch(element: Char, fromIndex: Int = 0, toIndex: In
  * Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted.
  */
 @kotlin.jvm.JvmVersion
-public fun DoubleArray.binarySearch(element: Double, fromIndex: Int = 0, toIndex: Int = size()): Int {
+public fun DoubleArray.binarySearch(element: Double, fromIndex: Int = 0, toIndex: Int = size): Int {
     return Arrays.binarySearch(this, fromIndex, toIndex, element)
 }
 
@@ -10755,7 +10755,7 @@ public fun DoubleArray.binarySearch(element: Double, fromIndex: Int = 0, toIndex
  * Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted.
  */
 @kotlin.jvm.JvmVersion
-public fun FloatArray.binarySearch(element: Float, fromIndex: Int = 0, toIndex: Int = size()): Int {
+public fun FloatArray.binarySearch(element: Float, fromIndex: Int = 0, toIndex: Int = size): Int {
     return Arrays.binarySearch(this, fromIndex, toIndex, element)
 }
 
@@ -10763,7 +10763,7 @@ public fun FloatArray.binarySearch(element: Float, fromIndex: Int = 0, toIndex: 
  * Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted.
  */
 @kotlin.jvm.JvmVersion
-public fun IntArray.binarySearch(element: Int, fromIndex: Int = 0, toIndex: Int = size()): Int {
+public fun IntArray.binarySearch(element: Int, fromIndex: Int = 0, toIndex: Int = size): Int {
     return Arrays.binarySearch(this, fromIndex, toIndex, element)
 }
 
@@ -10771,7 +10771,7 @@ public fun IntArray.binarySearch(element: Int, fromIndex: Int = 0, toIndex: Int 
  * Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted.
  */
 @kotlin.jvm.JvmVersion
-public fun LongArray.binarySearch(element: Long, fromIndex: Int = 0, toIndex: Int = size()): Int {
+public fun LongArray.binarySearch(element: Long, fromIndex: Int = 0, toIndex: Int = size): Int {
     return Arrays.binarySearch(this, fromIndex, toIndex, element)
 }
 
@@ -10779,7 +10779,7 @@ public fun LongArray.binarySearch(element: Long, fromIndex: Int = 0, toIndex: In
  * Searches array or range of array for provided element index using binary search algorithm. Array is expected to be sorted.
  */
 @kotlin.jvm.JvmVersion
-public fun ShortArray.binarySearch(element: Short, fromIndex: Int = 0, toIndex: Int = size()): Int {
+public fun ShortArray.binarySearch(element: Short, fromIndex: Int = 0, toIndex: Int = size): Int {
     return Arrays.binarySearch(this, fromIndex, toIndex, element)
 }
 
@@ -10788,7 +10788,7 @@ public fun ShortArray.binarySearch(element: Short, fromIndex: Int = 0, toIndex: 
  */
 @kotlin.jvm.JvmVersion
 public fun <T> Array<out T>.copyOf(): Array<out T> {
-    return Arrays.copyOf(this, size())
+    return Arrays.copyOf(this, size)
 }
 
 /**
@@ -10796,7 +10796,7 @@ public fun <T> Array<out T>.copyOf(): Array<out T> {
  */
 @kotlin.jvm.JvmVersion
 public fun BooleanArray.copyOf(): BooleanArray {
-    return Arrays.copyOf(this, size())
+    return Arrays.copyOf(this, size)
 }
 
 /**
@@ -10804,7 +10804,7 @@ public fun BooleanArray.copyOf(): BooleanArray {
  */
 @kotlin.jvm.JvmVersion
 public fun ByteArray.copyOf(): ByteArray {
-    return Arrays.copyOf(this, size())
+    return Arrays.copyOf(this, size)
 }
 
 /**
@@ -10812,7 +10812,7 @@ public fun ByteArray.copyOf(): ByteArray {
  */
 @kotlin.jvm.JvmVersion
 public fun CharArray.copyOf(): CharArray {
-    return Arrays.copyOf(this, size())
+    return Arrays.copyOf(this, size)
 }
 
 /**
@@ -10820,7 +10820,7 @@ public fun CharArray.copyOf(): CharArray {
  */
 @kotlin.jvm.JvmVersion
 public fun DoubleArray.copyOf(): DoubleArray {
-    return Arrays.copyOf(this, size())
+    return Arrays.copyOf(this, size)
 }
 
 /**
@@ -10828,7 +10828,7 @@ public fun DoubleArray.copyOf(): DoubleArray {
  */
 @kotlin.jvm.JvmVersion
 public fun FloatArray.copyOf(): FloatArray {
-    return Arrays.copyOf(this, size())
+    return Arrays.copyOf(this, size)
 }
 
 /**
@@ -10836,7 +10836,7 @@ public fun FloatArray.copyOf(): FloatArray {
  */
 @kotlin.jvm.JvmVersion
 public fun IntArray.copyOf(): IntArray {
-    return Arrays.copyOf(this, size())
+    return Arrays.copyOf(this, size)
 }
 
 /**
@@ -10844,7 +10844,7 @@ public fun IntArray.copyOf(): IntArray {
  */
 @kotlin.jvm.JvmVersion
 public fun LongArray.copyOf(): LongArray {
-    return Arrays.copyOf(this, size())
+    return Arrays.copyOf(this, size)
 }
 
 /**
@@ -10852,7 +10852,7 @@ public fun LongArray.copyOf(): LongArray {
  */
 @kotlin.jvm.JvmVersion
 public fun ShortArray.copyOf(): ShortArray {
-    return Arrays.copyOf(this, size())
+    return Arrays.copyOf(this, size)
 }
 
 /**
@@ -10861,7 +10861,7 @@ public fun ShortArray.copyOf(): ShortArray {
 @kotlin.jvm.JvmVersion
 @JvmName("mutableCopyOf")
 public fun <T> Array<T>.copyOf(): Array<T> {
-    return Arrays.copyOf(this, size())
+    return Arrays.copyOf(this, size)
 }
 
 /**
@@ -11030,7 +11030,7 @@ public fun <T> Array<T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<T> {
  * Fills original array with the provided value.
  */
 @kotlin.jvm.JvmVersion
-public fun BooleanArray.fill(element: Boolean, fromIndex: Int = 0, toIndex: Int = size()): Unit {
+public fun BooleanArray.fill(element: Boolean, fromIndex: Int = 0, toIndex: Int = size): Unit {
     Arrays.fill(this, fromIndex, toIndex, element)
 }
 
@@ -11038,7 +11038,7 @@ public fun BooleanArray.fill(element: Boolean, fromIndex: Int = 0, toIndex: Int 
  * Fills original array with the provided value.
  */
 @kotlin.jvm.JvmVersion
-public fun ByteArray.fill(element: Byte, fromIndex: Int = 0, toIndex: Int = size()): Unit {
+public fun ByteArray.fill(element: Byte, fromIndex: Int = 0, toIndex: Int = size): Unit {
     Arrays.fill(this, fromIndex, toIndex, element)
 }
 
@@ -11046,7 +11046,7 @@ public fun ByteArray.fill(element: Byte, fromIndex: Int = 0, toIndex: Int = size
  * Fills original array with the provided value.
  */
 @kotlin.jvm.JvmVersion
-public fun CharArray.fill(element: Char, fromIndex: Int = 0, toIndex: Int = size()): Unit {
+public fun CharArray.fill(element: Char, fromIndex: Int = 0, toIndex: Int = size): Unit {
     Arrays.fill(this, fromIndex, toIndex, element)
 }
 
@@ -11054,7 +11054,7 @@ public fun CharArray.fill(element: Char, fromIndex: Int = 0, toIndex: Int = size
  * Fills original array with the provided value.
  */
 @kotlin.jvm.JvmVersion
-public fun DoubleArray.fill(element: Double, fromIndex: Int = 0, toIndex: Int = size()): Unit {
+public fun DoubleArray.fill(element: Double, fromIndex: Int = 0, toIndex: Int = size): Unit {
     Arrays.fill(this, fromIndex, toIndex, element)
 }
 
@@ -11062,7 +11062,7 @@ public fun DoubleArray.fill(element: Double, fromIndex: Int = 0, toIndex: Int = 
  * Fills original array with the provided value.
  */
 @kotlin.jvm.JvmVersion
-public fun FloatArray.fill(element: Float, fromIndex: Int = 0, toIndex: Int = size()): Unit {
+public fun FloatArray.fill(element: Float, fromIndex: Int = 0, toIndex: Int = size): Unit {
     Arrays.fill(this, fromIndex, toIndex, element)
 }
 
@@ -11070,7 +11070,7 @@ public fun FloatArray.fill(element: Float, fromIndex: Int = 0, toIndex: Int = si
  * Fills original array with the provided value.
  */
 @kotlin.jvm.JvmVersion
-public fun IntArray.fill(element: Int, fromIndex: Int = 0, toIndex: Int = size()): Unit {
+public fun IntArray.fill(element: Int, fromIndex: Int = 0, toIndex: Int = size): Unit {
     Arrays.fill(this, fromIndex, toIndex, element)
 }
 
@@ -11078,7 +11078,7 @@ public fun IntArray.fill(element: Int, fromIndex: Int = 0, toIndex: Int = size()
  * Fills original array with the provided value.
  */
 @kotlin.jvm.JvmVersion
-public fun LongArray.fill(element: Long, fromIndex: Int = 0, toIndex: Int = size()): Unit {
+public fun LongArray.fill(element: Long, fromIndex: Int = 0, toIndex: Int = size): Unit {
     Arrays.fill(this, fromIndex, toIndex, element)
 }
 
@@ -11086,7 +11086,7 @@ public fun LongArray.fill(element: Long, fromIndex: Int = 0, toIndex: Int = size
  * Fills original array with the provided value.
  */
 @kotlin.jvm.JvmVersion
-public fun ShortArray.fill(element: Short, fromIndex: Int = 0, toIndex: Int = size()): Unit {
+public fun ShortArray.fill(element: Short, fromIndex: Int = 0, toIndex: Int = size): Unit {
     Arrays.fill(this, fromIndex, toIndex, element)
 }
 
@@ -11094,7 +11094,7 @@ public fun ShortArray.fill(element: Short, fromIndex: Int = 0, toIndex: Int = si
  * Fills original array with the provided value.
  */
 @kotlin.jvm.JvmVersion
-public fun <T> Array<T>.fill(element: T, fromIndex: Int = 0, toIndex: Int = size()): Unit {
+public fun <T> Array<T>.fill(element: T, fromIndex: Int = 0, toIndex: Int = size): Unit {
     Arrays.fill(this, fromIndex, toIndex, element)
 }
 
@@ -11137,8 +11137,8 @@ public fun <C : MutableCollection<in R>, R> Array<*>.filterIsInstanceTo(destinat
  */
 @kotlin.jvm.JvmVersion
 public operator fun BooleanArray.plus(array: BooleanArray): BooleanArray {
-    val thisSize = size()
-    val arraySize = array.size()
+    val thisSize = size
+    val arraySize = array.size
     val result = Arrays.copyOf(this, thisSize + arraySize)
     System.arraycopy(array, 0, result, thisSize, arraySize)
     return result
@@ -11149,8 +11149,8 @@ public operator fun BooleanArray.plus(array: BooleanArray): BooleanArray {
  */
 @kotlin.jvm.JvmVersion
 public operator fun ByteArray.plus(array: ByteArray): ByteArray {
-    val thisSize = size()
-    val arraySize = array.size()
+    val thisSize = size
+    val arraySize = array.size
     val result = Arrays.copyOf(this, thisSize + arraySize)
     System.arraycopy(array, 0, result, thisSize, arraySize)
     return result
@@ -11161,8 +11161,8 @@ public operator fun ByteArray.plus(array: ByteArray): ByteArray {
  */
 @kotlin.jvm.JvmVersion
 public operator fun CharArray.plus(array: CharArray): CharArray {
-    val thisSize = size()
-    val arraySize = array.size()
+    val thisSize = size
+    val arraySize = array.size
     val result = Arrays.copyOf(this, thisSize + arraySize)
     System.arraycopy(array, 0, result, thisSize, arraySize)
     return result
@@ -11173,8 +11173,8 @@ public operator fun CharArray.plus(array: CharArray): CharArray {
  */
 @kotlin.jvm.JvmVersion
 public operator fun DoubleArray.plus(array: DoubleArray): DoubleArray {
-    val thisSize = size()
-    val arraySize = array.size()
+    val thisSize = size
+    val arraySize = array.size
     val result = Arrays.copyOf(this, thisSize + arraySize)
     System.arraycopy(array, 0, result, thisSize, arraySize)
     return result
@@ -11185,8 +11185,8 @@ public operator fun DoubleArray.plus(array: DoubleArray): DoubleArray {
  */
 @kotlin.jvm.JvmVersion
 public operator fun FloatArray.plus(array: FloatArray): FloatArray {
-    val thisSize = size()
-    val arraySize = array.size()
+    val thisSize = size
+    val arraySize = array.size
     val result = Arrays.copyOf(this, thisSize + arraySize)
     System.arraycopy(array, 0, result, thisSize, arraySize)
     return result
@@ -11197,8 +11197,8 @@ public operator fun FloatArray.plus(array: FloatArray): FloatArray {
  */
 @kotlin.jvm.JvmVersion
 public operator fun IntArray.plus(array: IntArray): IntArray {
-    val thisSize = size()
-    val arraySize = array.size()
+    val thisSize = size
+    val arraySize = array.size
     val result = Arrays.copyOf(this, thisSize + arraySize)
     System.arraycopy(array, 0, result, thisSize, arraySize)
     return result
@@ -11209,8 +11209,8 @@ public operator fun IntArray.plus(array: IntArray): IntArray {
  */
 @kotlin.jvm.JvmVersion
 public operator fun LongArray.plus(array: LongArray): LongArray {
-    val thisSize = size()
-    val arraySize = array.size()
+    val thisSize = size
+    val arraySize = array.size
     val result = Arrays.copyOf(this, thisSize + arraySize)
     System.arraycopy(array, 0, result, thisSize, arraySize)
     return result
@@ -11221,8 +11221,8 @@ public operator fun LongArray.plus(array: LongArray): LongArray {
  */
 @kotlin.jvm.JvmVersion
 public operator fun ShortArray.plus(array: ShortArray): ShortArray {
-    val thisSize = size()
-    val arraySize = array.size()
+    val thisSize = size
+    val arraySize = array.size
     val result = Arrays.copyOf(this, thisSize + arraySize)
     System.arraycopy(array, 0, result, thisSize, arraySize)
     return result
@@ -11233,8 +11233,8 @@ public operator fun ShortArray.plus(array: ShortArray): ShortArray {
  */
 @kotlin.jvm.JvmVersion
 public operator fun <T> Array<T>.plus(array: Array<out T>): Array<T> {
-    val thisSize = size()
-    val arraySize = array.size()
+    val thisSize = size
+    val arraySize = array.size
     val result = Arrays.copyOf(this, thisSize + arraySize)
     System.arraycopy(array, 0, result, thisSize, arraySize)
     return result
@@ -11245,8 +11245,8 @@ public operator fun <T> Array<T>.plus(array: Array<out T>): Array<T> {
  */
 @kotlin.jvm.JvmVersion
 public operator fun BooleanArray.plus(collection: Collection<Boolean>): BooleanArray {
-    var index = size()
-    val result = Arrays.copyOf(this, index + collection.size())
+    var index = size
+    val result = Arrays.copyOf(this, index + collection.size)
     for (element in collection) result[index++] = element
     return result
 }
@@ -11256,8 +11256,8 @@ public operator fun BooleanArray.plus(collection: Collection<Boolean>): BooleanA
  */
 @kotlin.jvm.JvmVersion
 public operator fun ByteArray.plus(collection: Collection<Byte>): ByteArray {
-    var index = size()
-    val result = Arrays.copyOf(this, index + collection.size())
+    var index = size
+    val result = Arrays.copyOf(this, index + collection.size)
     for (element in collection) result[index++] = element
     return result
 }
@@ -11267,8 +11267,8 @@ public operator fun ByteArray.plus(collection: Collection<Byte>): ByteArray {
  */
 @kotlin.jvm.JvmVersion
 public operator fun CharArray.plus(collection: Collection<Char>): CharArray {
-    var index = size()
-    val result = Arrays.copyOf(this, index + collection.size())
+    var index = size
+    val result = Arrays.copyOf(this, index + collection.size)
     for (element in collection) result[index++] = element
     return result
 }
@@ -11278,8 +11278,8 @@ public operator fun CharArray.plus(collection: Collection<Char>): CharArray {
  */
 @kotlin.jvm.JvmVersion
 public operator fun DoubleArray.plus(collection: Collection<Double>): DoubleArray {
-    var index = size()
-    val result = Arrays.copyOf(this, index + collection.size())
+    var index = size
+    val result = Arrays.copyOf(this, index + collection.size)
     for (element in collection) result[index++] = element
     return result
 }
@@ -11289,8 +11289,8 @@ public operator fun DoubleArray.plus(collection: Collection<Double>): DoubleArra
  */
 @kotlin.jvm.JvmVersion
 public operator fun FloatArray.plus(collection: Collection<Float>): FloatArray {
-    var index = size()
-    val result = Arrays.copyOf(this, index + collection.size())
+    var index = size
+    val result = Arrays.copyOf(this, index + collection.size)
     for (element in collection) result[index++] = element
     return result
 }
@@ -11300,8 +11300,8 @@ public operator fun FloatArray.plus(collection: Collection<Float>): FloatArray {
  */
 @kotlin.jvm.JvmVersion
 public operator fun IntArray.plus(collection: Collection<Int>): IntArray {
-    var index = size()
-    val result = Arrays.copyOf(this, index + collection.size())
+    var index = size
+    val result = Arrays.copyOf(this, index + collection.size)
     for (element in collection) result[index++] = element
     return result
 }
@@ -11311,8 +11311,8 @@ public operator fun IntArray.plus(collection: Collection<Int>): IntArray {
  */
 @kotlin.jvm.JvmVersion
 public operator fun LongArray.plus(collection: Collection<Long>): LongArray {
-    var index = size()
-    val result = Arrays.copyOf(this, index + collection.size())
+    var index = size
+    val result = Arrays.copyOf(this, index + collection.size)
     for (element in collection) result[index++] = element
     return result
 }
@@ -11322,8 +11322,8 @@ public operator fun LongArray.plus(collection: Collection<Long>): LongArray {
  */
 @kotlin.jvm.JvmVersion
 public operator fun ShortArray.plus(collection: Collection<Short>): ShortArray {
-    var index = size()
-    val result = Arrays.copyOf(this, index + collection.size())
+    var index = size
+    val result = Arrays.copyOf(this, index + collection.size)
     for (element in collection) result[index++] = element
     return result
 }
@@ -11333,8 +11333,8 @@ public operator fun ShortArray.plus(collection: Collection<Short>): ShortArray {
  */
 @kotlin.jvm.JvmVersion
 public operator fun <T> Array<T>.plus(collection: Collection<T>): Array<T> {
-    var index = size()
-    val result = Arrays.copyOf(this, index + collection.size())
+    var index = size
+    val result = Arrays.copyOf(this, index + collection.size)
     for (element in collection) result[index++] = element
     return result
 }
@@ -11344,7 +11344,7 @@ public operator fun <T> Array<T>.plus(collection: Collection<T>): Array<T> {
  */
 @kotlin.jvm.JvmVersion
 public operator fun BooleanArray.plus(element: Boolean): BooleanArray {
-    val index = size()
+    val index = size
     val result = Arrays.copyOf(this, index + 1)
     result[index] = element
     return result
@@ -11355,7 +11355,7 @@ public operator fun BooleanArray.plus(element: Boolean): BooleanArray {
  */
 @kotlin.jvm.JvmVersion
 public operator fun ByteArray.plus(element: Byte): ByteArray {
-    val index = size()
+    val index = size
     val result = Arrays.copyOf(this, index + 1)
     result[index] = element
     return result
@@ -11366,7 +11366,7 @@ public operator fun ByteArray.plus(element: Byte): ByteArray {
  */
 @kotlin.jvm.JvmVersion
 public operator fun CharArray.plus(element: Char): CharArray {
-    val index = size()
+    val index = size
     val result = Arrays.copyOf(this, index + 1)
     result[index] = element
     return result
@@ -11377,7 +11377,7 @@ public operator fun CharArray.plus(element: Char): CharArray {
  */
 @kotlin.jvm.JvmVersion
 public operator fun DoubleArray.plus(element: Double): DoubleArray {
-    val index = size()
+    val index = size
     val result = Arrays.copyOf(this, index + 1)
     result[index] = element
     return result
@@ -11388,7 +11388,7 @@ public operator fun DoubleArray.plus(element: Double): DoubleArray {
  */
 @kotlin.jvm.JvmVersion
 public operator fun FloatArray.plus(element: Float): FloatArray {
-    val index = size()
+    val index = size
     val result = Arrays.copyOf(this, index + 1)
     result[index] = element
     return result
@@ -11399,7 +11399,7 @@ public operator fun FloatArray.plus(element: Float): FloatArray {
  */
 @kotlin.jvm.JvmVersion
 public operator fun IntArray.plus(element: Int): IntArray {
-    val index = size()
+    val index = size
     val result = Arrays.copyOf(this, index + 1)
     result[index] = element
     return result
@@ -11410,7 +11410,7 @@ public operator fun IntArray.plus(element: Int): IntArray {
  */
 @kotlin.jvm.JvmVersion
 public operator fun LongArray.plus(element: Long): LongArray {
-    val index = size()
+    val index = size
     val result = Arrays.copyOf(this, index + 1)
     result[index] = element
     return result
@@ -11421,7 +11421,7 @@ public operator fun LongArray.plus(element: Long): LongArray {
  */
 @kotlin.jvm.JvmVersion
 public operator fun ShortArray.plus(element: Short): ShortArray {
-    val index = size()
+    val index = size
     val result = Arrays.copyOf(this, index + 1)
     result[index] = element
     return result
@@ -11432,7 +11432,7 @@ public operator fun ShortArray.plus(element: Short): ShortArray {
  */
 @kotlin.jvm.JvmVersion
 public operator fun <T> Array<T>.plus(element: T): Array<T> {
-    val index = size()
+    val index = size
     val result = Arrays.copyOf(this, index + 1)
     result[index] = element
     return result
@@ -11506,7 +11506,7 @@ public fun ShortArray.sort(): Unit {
  * Sorts a range in the array in-place.
  */
 @kotlin.jvm.JvmVersion
-public fun <T> Array<out T>.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
+public fun <T> Array<out T>.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     Arrays.sort(this, fromIndex, toIndex)
 }
 
@@ -11514,7 +11514,7 @@ public fun <T> Array<out T>.sort(fromIndex: Int = 0, toIndex: Int = size()): Uni
  * Sorts a range in the array in-place.
  */
 @kotlin.jvm.JvmVersion
-public fun ByteArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
+public fun ByteArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     Arrays.sort(this, fromIndex, toIndex)
 }
 
@@ -11522,7 +11522,7 @@ public fun ByteArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
  * Sorts a range in the array in-place.
  */
 @kotlin.jvm.JvmVersion
-public fun CharArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
+public fun CharArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     Arrays.sort(this, fromIndex, toIndex)
 }
 
@@ -11530,7 +11530,7 @@ public fun CharArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
  * Sorts a range in the array in-place.
  */
 @kotlin.jvm.JvmVersion
-public fun DoubleArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
+public fun DoubleArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     Arrays.sort(this, fromIndex, toIndex)
 }
 
@@ -11538,7 +11538,7 @@ public fun DoubleArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
  * Sorts a range in the array in-place.
  */
 @kotlin.jvm.JvmVersion
-public fun FloatArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
+public fun FloatArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     Arrays.sort(this, fromIndex, toIndex)
 }
 
@@ -11546,7 +11546,7 @@ public fun FloatArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
  * Sorts a range in the array in-place.
  */
 @kotlin.jvm.JvmVersion
-public fun IntArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
+public fun IntArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     Arrays.sort(this, fromIndex, toIndex)
 }
 
@@ -11554,7 +11554,7 @@ public fun IntArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
  * Sorts a range in the array in-place.
  */
 @kotlin.jvm.JvmVersion
-public fun LongArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
+public fun LongArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     Arrays.sort(this, fromIndex, toIndex)
 }
 
@@ -11562,7 +11562,7 @@ public fun LongArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
  * Sorts a range in the array in-place.
  */
 @kotlin.jvm.JvmVersion
-public fun ShortArray.sort(fromIndex: Int = 0, toIndex: Int = size()): Unit {
+public fun ShortArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     Arrays.sort(this, fromIndex, toIndex)
 }
 
@@ -11578,7 +11578,7 @@ public fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit {
  * Sorts a range in the array in-place with the given [comparator].
  */
 @kotlin.jvm.JvmVersion
-public fun <T> Array<out T>.sortWith(comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size()): Unit {
+public fun <T> Array<out T>.sortWith(comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size): Unit {
     Arrays.sort(this, fromIndex, toIndex, comparator)
 }
 
@@ -11587,7 +11587,7 @@ public fun <T> Array<out T>.sortWith(comparator: Comparator<in T>, fromIndex: In
  */
 @kotlin.jvm.JvmVersion
 public fun BooleanArray.toTypedArray(): Array<Boolean> {
-    val result = arrayOfNulls<Boolean>(size())
+    val result = arrayOfNulls<Boolean>(size)
     for (index in indices)
         result[index] = this[index]
     return result as Array<Boolean>
@@ -11598,7 +11598,7 @@ public fun BooleanArray.toTypedArray(): Array<Boolean> {
  */
 @kotlin.jvm.JvmVersion
 public fun ByteArray.toTypedArray(): Array<Byte> {
-    val result = arrayOfNulls<Byte>(size())
+    val result = arrayOfNulls<Byte>(size)
     for (index in indices)
         result[index] = this[index]
     return result as Array<Byte>
@@ -11609,7 +11609,7 @@ public fun ByteArray.toTypedArray(): Array<Byte> {
  */
 @kotlin.jvm.JvmVersion
 public fun CharArray.toTypedArray(): Array<Char> {
-    val result = arrayOfNulls<Char>(size())
+    val result = arrayOfNulls<Char>(size)
     for (index in indices)
         result[index] = this[index]
     return result as Array<Char>
@@ -11620,7 +11620,7 @@ public fun CharArray.toTypedArray(): Array<Char> {
  */
 @kotlin.jvm.JvmVersion
 public fun DoubleArray.toTypedArray(): Array<Double> {
-    val result = arrayOfNulls<Double>(size())
+    val result = arrayOfNulls<Double>(size)
     for (index in indices)
         result[index] = this[index]
     return result as Array<Double>
@@ -11631,7 +11631,7 @@ public fun DoubleArray.toTypedArray(): Array<Double> {
  */
 @kotlin.jvm.JvmVersion
 public fun FloatArray.toTypedArray(): Array<Float> {
-    val result = arrayOfNulls<Float>(size())
+    val result = arrayOfNulls<Float>(size)
     for (index in indices)
         result[index] = this[index]
     return result as Array<Float>
@@ -11642,7 +11642,7 @@ public fun FloatArray.toTypedArray(): Array<Float> {
  */
 @kotlin.jvm.JvmVersion
 public fun IntArray.toTypedArray(): Array<Int> {
-    val result = arrayOfNulls<Int>(size())
+    val result = arrayOfNulls<Int>(size)
     for (index in indices)
         result[index] = this[index]
     return result as Array<Int>
@@ -11653,7 +11653,7 @@ public fun IntArray.toTypedArray(): Array<Int> {
  */
 @kotlin.jvm.JvmVersion
 public fun LongArray.toTypedArray(): Array<Long> {
-    val result = arrayOfNulls<Long>(size())
+    val result = arrayOfNulls<Long>(size)
     for (index in indices)
         result[index] = this[index]
     return result as Array<Long>
@@ -11664,7 +11664,7 @@ public fun LongArray.toTypedArray(): Array<Long> {
  */
 @kotlin.jvm.JvmVersion
 public fun ShortArray.toTypedArray(): Array<Short> {
-    val result = arrayOfNulls<Short>(size())
+    val result = arrayOfNulls<Short>(size)
     for (index in indices)
         result[index] = this[index]
     return result as Array<Short>

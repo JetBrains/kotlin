@@ -34,7 +34,7 @@ public fun <K, V> emptyMap(): Map<K, V> = EmptyMap as Map<K, V>
  *
  * The returned map is serializable (JVM).
  */
-public fun <K, V> mapOf(vararg values: Pair<K, V>): Map<K, V> = if (values.size() > 0) linkedMapOf(*values) else emptyMap()
+public fun <K, V> mapOf(vararg values: Pair<K, V>): Map<K, V> = if (values.size > 0) linkedMapOf(*values) else emptyMap()
 
 /** Returns an empty read-only map. The returned map is serializable (JVM). */
 public fun <K, V> mapOf(): Map<K, V> = emptyMap()
@@ -53,7 +53,7 @@ public fun <K, V> mapOf(keyValuePair: Pair<K, V>): Map<K, V> = Collections.singl
  * @sample test.collections.MapTest.createUsingPairs
  */
 public fun <K, V> hashMapOf(vararg values: Pair<K, V>): HashMap<K, V> {
-    val answer = HashMap<K, V>(mapCapacity(values.size()))
+    val answer = HashMap<K, V>(mapCapacity(values.size))
     answer.putAll(*values)
     return answer
 }
@@ -66,7 +66,7 @@ public fun <K, V> hashMapOf(vararg values: Pair<K, V>): HashMap<K, V> {
  * @sample test.collections.MapTest.createLinkedMap
  */
 public fun <K, V> linkedMapOf(vararg values: Pair<K, V>): LinkedHashMap<K, V> {
-    val answer = LinkedHashMap<K, V>(mapCapacity(values.size()))
+    val answer = LinkedHashMap<K, V>(mapCapacity(values.size))
     answer.putAll(*values)
     return answer
 }
@@ -350,7 +350,7 @@ public fun <K, V> Iterable<Pair<K, V>>.toMap(): Map<K, V> {
  * Returns a new map containing all key-value pairs from the given array of pairs.
  */
 public fun <K, V> Array<Pair<K, V>>.toMap(): Map<K, V> {
-    val result = LinkedHashMap<K, V>(mapCapacity(size()))
+    val result = LinkedHashMap<K, V>(mapCapacity(size))
     for (element in this) {
         result.put(element.first, element.second)
     }

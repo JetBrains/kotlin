@@ -21,6 +21,6 @@ class SequenceJVMTest {
         assertEquals(src.toList(), anyValues.toArrayList())
 
         val charValues: Sequence<Char> = src.filterIsInstance<Char>()
-        assertEquals(0, charValues.toArrayList().size())
+        assertEquals(0, charValues.toArrayList().size)
     }
 }

@@ -42,11 +42,11 @@ fun mapping(): List<GenericFunction> {
             "return mapIndexedTo(ArrayList<R>(collectionSizeOrDefault(10)), transform)"
         }
         body(ArraysOfObjects, ArraysOfPrimitives) {
-            "return mapIndexedTo(ArrayList<R>(size()), transform)"
+            "return mapIndexedTo(ArrayList<R>(size), transform)"
         }
         deprecate(Strings) { forBinaryCompatibility }
         body(CharSequences, Strings) {
-            "return mapIndexedTo(ArrayList<R>(length()), transform)"
+            "return mapIndexedTo(ArrayList<R>(length), transform)"
         }
         inline(false, Sequences)
         returns(Sequences) { "Sequence<R>" }
@@ -70,11 +70,11 @@ fun mapping(): List<GenericFunction> {
             "return mapTo(ArrayList<R>(collectionSizeOrDefault(10)), transform)"
         }
         body(ArraysOfObjects, ArraysOfPrimitives, Maps) {
-            "return mapTo(ArrayList<R>(size()), transform)"
+            "return mapTo(ArrayList<R>(size), transform)"
         }
         deprecate(Strings) { forBinaryCompatibility }
         body(CharSequences, Strings) {
-            "return mapTo(ArrayList<R>(length()), transform)"
+            "return mapTo(ArrayList<R>(length), transform)"
         }
 
         inline(false, Sequences)

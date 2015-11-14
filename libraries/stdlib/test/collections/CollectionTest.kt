@@ -28,7 +28,7 @@ class CollectionTest {
         val data = listOf(null, "foo", null, "bar")
         val foo = data.filterNotNull()
 
-        assertEquals(2, foo.size())
+        assertEquals(2, foo.size)
         assertEquals(listOf("foo", "bar"), foo)
 
         assertTrue {
@@ -68,7 +68,7 @@ class CollectionTest {
         assertTrue {
             foo.all { it.startsWith("f") }
         }
-        assertEquals(1, foo.size())
+        assertEquals(1, foo.size)
         assertEquals(hashSetOf("foo"), foo)
 
         assertTrue {
@@ -98,7 +98,7 @@ class CollectionTest {
     @test fun foldWithDifferentTypes() {
         expect(7) {
             val numbers = listOf("a", "ab", "abc")
-            numbers.fold(1) { a, b -> a + b.length() }
+            numbers.fold(1) { a, b -> a + b.length }
         }
 
         expect("1234") {
@@ -151,7 +151,7 @@ class CollectionTest {
 
     @test fun partition() {
         val data = listOf("foo", "bar", "something", "xyz")
-        val pair = data.partition { it.length() == 3 }
+        val pair = data.partition { it.length == 3 }
 
         assertEquals(listOf("foo", "bar", "xyz"), pair.first, "pair.first")
         assertEquals(listOf("something"), pair.second, "pair.second")
@@ -185,8 +185,8 @@ class CollectionTest {
 
     @test fun groupBy() {
         val words = listOf("a", "abc", "ab", "def", "abcd")
-        val byLength = words.groupBy { it.length() }
-        assertEquals(4, byLength.size())
+        val byLength = words.groupBy { it.length }
+        assertEquals(4, byLength.size)
 
         // verify that order of keys is preserved
         val listOfPairs = byLength.toList()
@@ -196,7 +196,7 @@ class CollectionTest {
         assertEquals(4, listOfPairs[3].first)
 
         val l3 = byLength.getOrElse(3, { ArrayList<String>() })
-        assertEquals(2, l3.size())
+        assertEquals(2, l3.size)
     }
 
     @test fun plusRanges() {
@@ -350,8 +350,8 @@ class CollectionTest {
     @test fun dropLast() {
         val coll = listOf("foo", "bar", "abc")
         assertEquals(coll, coll.dropLast(0))
-        assertEquals(emptyList<String>(), coll.dropLast(coll.size()))
-        assertEquals(emptyList<String>(), coll.dropLast(coll.size() + 1))
+        assertEquals(emptyList<String>(), coll.dropLast(coll.size))
+        assertEquals(emptyList<String>(), coll.dropLast(coll.size + 1))
         assertEquals(listOf("foo", "bar"), coll.dropLast(1))
         assertEquals(listOf("foo"), coll.dropLast(2))
 
@@ -362,7 +362,7 @@ class CollectionTest {
         val coll = listOf("Foo", "bare", "abc" )
         assertEquals(coll, coll.dropLastWhile { false })
         assertEquals(listOf<String>(), coll.dropLastWhile { true })
-        assertEquals(listOf("Foo", "bare"), coll.dropLastWhile { it.length() < 4 })
+        assertEquals(listOf("Foo", "bare"), coll.dropLastWhile { it.length < 4 })
         assertEquals(listOf("Foo"), coll.dropLastWhile { it.all { it in 'a'..'z' } })
     }
 
@@ -371,8 +371,8 @@ class CollectionTest {
         assertEquals(emptyList<String>(), coll.take(0))
         assertEquals(listOf("foo"), coll.take(1))
         assertEquals(listOf("foo", "bar"), coll.take(2))
-        assertEquals(coll, coll.take(coll.size()))
-        assertEquals(coll, coll.take(coll.size() + 1))
+        assertEquals(coll, coll.take(coll.size))
+        assertEquals(coll, coll.take(coll.size + 1))
 
         assertFails { coll.take(-1) }
     }
@@ -382,7 +382,7 @@ class CollectionTest {
         assertEquals(emptyList<String>(), coll.takeWhile { false })
         assertEquals(coll, coll.takeWhile { true })
         assertEquals(listOf("foo"), coll.takeWhile { it.startsWith("f") })
-        assertEquals(listOf("foo", "bar", "abc"), coll.takeWhile { it.length() == 3 })
+        assertEquals(listOf("foo", "bar", "abc"), coll.takeWhile { it.length == 3 })
     }
 
     @test fun takeLast() {
@@ -391,8 +391,8 @@ class CollectionTest {
         assertEquals(emptyList<String>(), coll.takeLast(0))
         assertEquals(listOf("abc"), coll.takeLast(1))
         assertEquals(listOf("bar", "abc"), coll.takeLast(2))
-        assertEquals(coll, coll.takeLast(coll.size()))
-        assertEquals(coll, coll.takeLast(coll.size() + 1))
+        assertEquals(coll, coll.takeLast(coll.size))
+        assertEquals(coll, coll.takeLast(coll.size + 1))
 
         assertFails { coll.takeLast(-1) }
     }
@@ -409,7 +409,7 @@ class CollectionTest {
         val data = listOf("foo", "bar")
         val arr = data.toTypedArray()
         println("Got array ${arr}")
-        assertEquals(2, arr.size())
+        assertEquals(2, arr.size)
     }
 
     @test fun count() {
@@ -463,7 +463,7 @@ class CollectionTest {
         val indices = data.indices
         assertEquals(0, indices.start)
         assertEquals(1, indices.end)
-        assertEquals(0..data.size() - 1, indices)
+        assertEquals(0..data.size - 1, indices)
     }
 
     @test fun contains() {
@@ -500,7 +500,7 @@ class CollectionTest {
         expect(1, { listOf(1).minBy { it } })
         expect(3, { listOf(2, 3).minBy { -it } })
         expect('a', { listOf('a', 'b').minBy { "x$it" } })
-        expect("b", { listOf("b", "abc").minBy { it.length() } })
+        expect("b", { listOf("b", "abc").minBy { it.length } })
         expect(null, { listOf<Int>().asSequence().minBy { it } })
         expect(3, { listOf(2, 3).asSequence().minBy { -it } })
     }
@@ -510,7 +510,7 @@ class CollectionTest {
         expect(1, { listOf(1).maxBy { it } })
         expect(2, { listOf(2, 3).maxBy { -it } })
         expect('b', { listOf('a', 'b').maxBy { "x$it" } })
-        expect("abc", { listOf("b", "abc").maxBy { it.length() } })
+        expect("abc", { listOf("b", "abc").maxBy { it.length } })
         expect(null, { listOf<Int>().asSequence().maxBy { it } })
         expect(2, { listOf(2, 3).asSequence().maxBy { -it } })
     }
@@ -609,7 +609,7 @@ class CollectionTest {
     }
 
     @test fun sortedByNullable() {
-        fun String.nonEmptyLength() = if (isEmpty()) null else length()
+        fun String.nonEmptyLength() = if (isEmpty()) null else length
         listOf("", "sort", "abc").let {
             assertEquals(listOf("", "abc", "sort"), it.sortedBy { it.nonEmptyLength() })
             assertEquals(listOf("sort", "abc", ""), it.sortedByDescending { it.nonEmptyLength() })

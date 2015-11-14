@@ -157,7 +157,7 @@ class Kotlin2JvmSourceSetProcessor(
                 val subpluginEnvironment = loadSubplugins(project)
                 subpluginEnvironment.addSubpluginArguments(project, kotlinTask)
 
-                if (aptConfiguration.getDependencies().size() > 1 && javaTask is JavaCompile) {
+                if (aptConfiguration.getDependencies().size > 1 && javaTask is JavaCompile) {
                     val (aptOutputDir, aptWorkingDir) = project.getAptDirsForSourceSet(sourceSetName)
 
                     val kaptManager = AnnotationProcessingManager(kotlinTask, javaTask, sourceSetName,
@@ -389,7 +389,7 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
 
                 val aptConfiguration = aptConfigurations[(provider as AndroidSourceSet).getName()]
                 // Ignore if there's only an annotation processor wrapper in dependencies (added by default)
-                if (aptConfiguration != null && aptConfiguration.getDependencies().size() > 1) {
+                if (aptConfiguration != null && aptConfiguration.getDependencies().size > 1) {
                     aptFiles.addAll(aptConfiguration.resolve())
                 }
             }
@@ -598,7 +598,7 @@ private fun compareVersionNumbers(v1: String?, v2: String?): Int {
     val part2 = v2.split(pattern)
 
     var idx = 0
-    while (idx < part1.size() && idx < part2.size()) {
+    while (idx < part1.size && idx < part2.size) {
         val p1 = part1[idx]
         val p2 = part2[idx]
 
@@ -612,13 +612,13 @@ private fun compareVersionNumbers(v1: String?, v2: String?): Int {
         idx++
     }
 
-    if (part1.size() == part2.size()) {
+    if (part1.size == part2.size) {
         return 0
     } else {
-        val left = part1.size() > idx
+        val left = part1.size > idx
         val parts = if (left) part1 else part2
 
-        while (idx < parts.size()) {
+        while (idx < parts.size) {
             val p = parts[idx]
             val cmp: Int
             if (p.matches(digitsPattern)) {

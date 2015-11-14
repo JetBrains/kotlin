@@ -577,7 +577,7 @@ fun elements(): List<GenericFunction> {
         body {
             """
             when (this) {
-                is List -> return if (isEmpty()) null else this[size() - 1]
+                is List -> return if (isEmpty()) null else this[size - 1]
                 else -> {
                     val iterator = iterator()
                     if (!iterator.hasNext())
@@ -604,12 +604,12 @@ fun elements(): List<GenericFunction> {
         deprecate(Strings) { forBinaryCompatibility }
         body(CharSequences, Strings) {
             """
-            return if (isEmpty()) null else this[length() - 1]
+            return if (isEmpty()) null else this[length - 1]
             """
         }
         body(Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
-            return if (isEmpty()) null else this[size() - 1]
+            return if (isEmpty()) null else this[size - 1]
             """
         }
     }
@@ -704,7 +704,7 @@ fun elements(): List<GenericFunction> {
         body {
             """
             when (this) {
-                is List -> return when (size()) {
+                is List -> return when (size) {
                     0 -> throw NoSuchElementException("Collection is empty.")
                     1 -> this[0]
                     else -> throw IllegalArgumentException("Collection has more than one element.")
@@ -735,7 +735,7 @@ fun elements(): List<GenericFunction> {
         deprecate(Strings) { forBinaryCompatibility }
         body(CharSequences, Strings) {
             """
-            return when (length()) {
+            return when (length) {
                 0 -> throw NoSuchElementException("Collection is empty.")
                 1 -> this[0]
                 else -> throw IllegalArgumentException("Collection has more than one element.")
@@ -744,7 +744,7 @@ fun elements(): List<GenericFunction> {
         }
         body(Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
-            return when (size()) {
+            return when (size) {
                 0 -> throw NoSuchElementException("Collection is empty.")
                 1 -> this[0]
                 else -> throw IllegalArgumentException("Collection has more than one element.")
@@ -759,7 +759,7 @@ fun elements(): List<GenericFunction> {
         body {
             """
             when (this) {
-                is List -> return if (size() == 1) this[0] else null
+                is List -> return if (size == 1) this[0] else null
                 else -> {
                     val iterator = iterator()
                     if (!iterator.hasNext())
@@ -786,12 +786,12 @@ fun elements(): List<GenericFunction> {
         deprecate(Strings) { forBinaryCompatibility }
         body(CharSequences, Strings) {
             """
-            return if (length() == 1) this[0] else null
+            return if (length == 1) this[0] else null
             """
         }
         body(Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
-            return if (size() == 1) this[0] else null
+            return if (size == 1) this[0] else null
             """
         }
     }

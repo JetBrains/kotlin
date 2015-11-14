@@ -10,7 +10,7 @@ fun arrays(): List<GenericFunction> {
         doc { "Returns `true` if the array is empty." }
         returns("Boolean")
         body {
-            "return size() == 0"
+            "return size == 0"
         }
     }
 
@@ -41,7 +41,7 @@ fun arrays(): List<GenericFunction> {
         doc { "Returns the last valid index for the array." }
         returns("Int")
         body {
-            "get() = size() - 1"
+            "get() = size - 1"
         }
     }
 
@@ -65,7 +65,7 @@ fun arrays(): List<GenericFunction> {
             // TODO: Use different implementations for JS
             body {
                 """
-                val result = $arrayType(size())
+                val result = $arrayType(size)
                 for (index in indices)
                     result[index] = this[index]
                 return result
@@ -73,7 +73,7 @@ fun arrays(): List<GenericFunction> {
             }
             body(Collections) {
                 """
-                val result = $arrayType(size())
+                val result = $arrayType(size)
                 var index = 0
                 for (element in this)
                     result[index++] = element

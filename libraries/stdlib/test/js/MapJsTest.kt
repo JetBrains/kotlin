@@ -85,7 +85,7 @@ abstract class MapJsTest {
 
         val b = data.getOrElse("foo"){3}
         assertEquals(3, b)
-        assertEquals(0, data.size())
+        assertEquals(0, data.size)
     }
 
     @test fun getOrPut() {
@@ -96,7 +96,7 @@ abstract class MapJsTest {
         val b = data.getOrPut("foo"){3}
         assertEquals(2, b)
 
-        assertEquals(1, data.size())
+        assertEquals(1, data.size)
     }
 
     @test fun emptyMapGet() {
@@ -137,8 +137,8 @@ abstract class MapJsTest {
         assertTrue(data.isEmpty())
         assertTrue(data.none())
 
-        assertEquals(0, data.size())
-        assertEquals(0, data.size())
+        assertEquals(0, data.size)
+        assertEquals(0, data.size)
     }
 
     @test fun sizeAndEmpty() {
@@ -147,7 +147,7 @@ abstract class MapJsTest {
         assertFalse(data.isEmpty())
         assertFalse(data.none())
 
-        assertEquals(KEYS.size(), data.size())
+        assertEquals(KEYS.size, data.size)
     }
 
     // #KT-3035
@@ -208,16 +208,16 @@ abstract class MapJsTest {
         val map = createTestMap()
         val newMap = emptyMutableMap()
         newMap.putAll(map)
-        assertEquals(KEYS.size(), newMap.size())
+        assertEquals(KEYS.size, newMap.size)
     }
 
     @test fun mapRemove() {
         val map = createTestMutableMap()
-        val last = KEYS.size() - 1
+        val last = KEYS.size - 1
         val first = 0
-        val mid = KEYS.size() / 2
+        val mid = KEYS.size / 2
 
-        assertEquals(KEYS.size(), map.size())
+        assertEquals(KEYS.size, map.size)
 
         assertEquals(null, map.remove("foo"))
         assertEquals(VALUES[mid], map.remove(KEYS[mid]))
@@ -225,7 +225,7 @@ abstract class MapJsTest {
         assertEquals(VALUES[last], map.remove(KEYS[last]))
         assertEquals(VALUES[first], map.remove(KEYS[first]))
 
-        assertEquals(KEYS.size() - 3, map.size())
+        assertEquals(KEYS.size - 3, map.size)
     }
 
     @test fun mapClear() {
@@ -264,25 +264,25 @@ abstract class MapJsTest {
     @test fun setViaIndexOperators() {
         val map = HashMap<String, String>()
         assertTrue{ map.isEmpty() }
-        assertEquals(map.size(), 0)
+        assertEquals(map.size, 0)
 
         map["name"] = "James"
 
         assertTrue{ !map.isEmpty() }
-        assertEquals(map.size(), 1)
+        assertEquals(map.size, 1)
         assertEquals("James", map["name"])
     }
 
     @test fun createUsingPairs() {
         val map = mapOf(Pair("a", 1), Pair("b", 2))
-        assertEquals(2, map.size())
+        assertEquals(2, map.size)
         assertEquals(1, map.get("a"))
         assertEquals(2, map.get("b"))
     }
 
     @test fun createUsingTo() {
         val map = mapOf("a" to 1, "b" to 2)
-        assertEquals(2, map.size())
+        assertEquals(2, map.size)
         assertEquals(1, map.get("a"))
         assertEquals(2, map.get("b"))
     }

@@ -159,8 +159,8 @@ public fun File.relativePath(descendant: File): String {
     val prefix = directory.canonicalPath
     val answer = descendant.canonicalPath
     return if (answer.startsWith(prefix)) {
-        val prefixSize = prefix.length()
-        if (answer.length() > prefixSize) {
+        val prefixSize = prefix.length
+        if (answer.length > prefixSize) {
             answer.substring(prefixSize + 1)
         } else ""
     } else {
@@ -368,7 +368,7 @@ public fun File.normalize(): File {
         when (name) {
             "." -> {
             }
-            ".." -> if (!list.isEmpty() && list.get(list.size() - 1) != "..") list.remove(list.size() - 1) else list.add(name)
+            ".." -> if (!list.isEmpty() && list.get(list.size - 1) != "..") list.remove(list.size - 1) else list.add(name)
             else -> list.add(name)
         }
     }

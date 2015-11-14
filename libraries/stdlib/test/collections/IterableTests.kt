@@ -48,7 +48,7 @@ abstract class OrderedIterableTests<T : Iterable<String>>(data: T, empty: T) : I
     @Test
     fun indexOfLast() {
         expect(-1) { data.indexOfLast { it.contains("p") } }
-        expect(1) { data.indexOfLast { it.length() == 3 } }
+        expect(1) { data.indexOfLast { it.length == 3 } }
         expect(-1) { empty.indexOfLast { it.startsWith('f') } }
     }
 
@@ -122,7 +122,7 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
 
     @Test
     fun all() {
-        expect(true) { data.all { it.length() == 3 } }
+        expect(true) { data.all { it.length == 3 } }
         expect(false) { data.all { it.startsWith("b") } }
         expect(true) { empty.all { it.startsWith("b") } }
     }
@@ -131,7 +131,7 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
     fun none() {
         expect(false) { data.none() }
         expect(true) { empty.none() }
-        expect(false) { data.none { it.length() == 3 } }
+        expect(false) { data.none { it.length == 3 } }
         expect(false) { data.none { it.startsWith("b") } }
         expect(true) { data.none { it.startsWith("x") } }
         expect(true) { empty.none { it.startsWith("b") } }
@@ -181,7 +181,7 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
     @Test
     fun forEach() {
         var count = 0
-        data.forEach { count += it.length() }
+        data.forEach { count += it.length }
         assertEquals(6, count)
     }
 
@@ -200,7 +200,7 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
         expect("foo") { data.single { it.startsWith("f") } }
         expect("bar") { data.single { it.startsWith("b") } }
         assertFails {
-            data.single { it.length() == 3 }
+            data.single { it.length == 3 }
         }
     }
 
@@ -211,13 +211,13 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
         expect("foo") { data.singleOrNull { it.startsWith("f") } }
         expect("bar") { data.singleOrNull { it.startsWith("b") } }
         expect(null) {
-            data.singleOrNull { it.length() == 3 }
+            data.singleOrNull { it.length == 3 }
         }
     }
 
     @Test
     fun map() {
-        val lengths = data.map { it.length() }
+        val lengths = data.map { it.length }
         assertTrue {
             lengths.all { it == 3 }
         }
@@ -227,7 +227,7 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
 
     @Test
     fun flatten() {
-        assertEquals(listOf(0, 1, 2, 3, 0, 1, 2, 3), data.map { 0..it.length() }.flatten())
+        assertEquals(listOf(0, 1, 2, 3, 0, 1, 2, 3), data.map { 0..it.length }.flatten())
     }
 
     @Test
@@ -280,11 +280,11 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
 
     @Test
     fun sumBy() {
-        expect(6) { data.sumBy { it.length() } }
-        expect(0) { empty.sumBy { it.length() } }
+        expect(6) { data.sumBy { it.length } }
+        expect(0) { empty.sumBy { it.length } }
 
-        expect(3.0) { data.sumByDouble { it.length().toDouble() / 2 } }
-        expect(0.0) { empty.sumByDouble { it.length().toDouble() / 2 } }
+        expect(3.0) { data.sumByDouble { it.length.toDouble() / 2 } }
+        expect(0.0) { empty.sumByDouble { it.length.toDouble() / 2 } }
     }
 
     @Test
@@ -306,7 +306,7 @@ abstract class IterableTests<T : Iterable<String>>(val data: T, val empty: T) {
     @Test
     fun reduce() {
         val reduced = data.reduce { a, b -> a + b }
-        assertEquals(6, reduced.length())
+        assertEquals(6, reduced.length)
         assertTrue(reduced == "foobar" || reduced == "barfoo")
     }
 

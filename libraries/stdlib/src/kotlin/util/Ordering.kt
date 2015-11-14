@@ -26,7 +26,7 @@ import java.util.Comparator
  * compare as equal, the result of that comparison is returned.
  */
 public fun <T> compareValuesBy(a: T, b: T, vararg selectors: (T) -> Comparable<*>?): Int {
-    require(selectors.size() > 0)
+    require(selectors.size > 0)
     for (fn in selectors) {
         val v1 = fn(a)
         val v2 = fn(b)

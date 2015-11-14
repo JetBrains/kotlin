@@ -29,8 +29,8 @@ fun snapshots(): List<GenericFunction> {
         body { "return toCollection(LinkedHashSet<T>(mapCapacity(collectionSizeOrDefault(12))))" }
         body(Sequences) { "return toCollection(LinkedHashSet<T>())" }
         deprecate(Strings) { forBinaryCompatibility }
-        body(CharSequences, Strings) { "return toCollection(LinkedHashSet<T>(mapCapacity(length())))" }
-        body(ArraysOfObjects, ArraysOfPrimitives) { "return toCollection(LinkedHashSet<T>(mapCapacity(size())))" }
+        body(CharSequences, Strings) { "return toCollection(LinkedHashSet<T>(mapCapacity(length)))" }
+        body(ArraysOfObjects, ArraysOfPrimitives) { "return toCollection(LinkedHashSet<T>(mapCapacity(size)))" }
     }
 
     templates add f("toHashSet()") {
@@ -39,8 +39,8 @@ fun snapshots(): List<GenericFunction> {
         body { "return toCollection(HashSet<T>(mapCapacity(collectionSizeOrDefault(12))))" }
         body(Sequences) { "return toCollection(HashSet<T>())" }
         deprecate(Strings) { forBinaryCompatibility }
-        body(CharSequences, Strings) { "return toCollection(HashSet<T>(mapCapacity(length())))" }
-        body(ArraysOfObjects, ArraysOfPrimitives) { "return toCollection(HashSet<T>(mapCapacity(size())))" }
+        body(CharSequences, Strings) { "return toCollection(HashSet<T>(mapCapacity(length)))" }
+        body(ArraysOfObjects, ArraysOfPrimitives) { "return toCollection(HashSet<T>(mapCapacity(size)))" }
     }
 
     templates add f("toSortedSet()") {
@@ -64,11 +64,11 @@ fun snapshots(): List<GenericFunction> {
         }
         body(Collections) { "return ArrayList(this)" }
         deprecate(Strings) { forBinaryCompatibility }
-        body(CharSequences, Strings) { "return toCollection(ArrayList<T>(length()))" }
+        body(CharSequences, Strings) { "return toCollection(ArrayList<T>(length))" }
         body(ArraysOfObjects) { "return ArrayList(this.asCollection())" }
         body(ArraysOfPrimitives) {
             """
-            val list = ArrayList<T>(size())
+            val list = ArrayList<T>(size)
             for (item in this) list.add(item)
             return list
             """
@@ -81,7 +81,7 @@ fun snapshots(): List<GenericFunction> {
         returns("List<Pair<K, V>>")
         body {
             """
-            val result = ArrayList<Pair<K, V>>(size())
+            val result = ArrayList<Pair<K, V>>(size)
             for (item in this)
                 result.add(item.key to item.value)
             return result
@@ -153,7 +153,7 @@ fun snapshots(): List<GenericFunction> {
         deprecate(Strings) { forBinaryCompatibility }
         body(CharSequences, Strings) {
             """
-            val capacity = (length()/.75f) + 1
+            val capacity = (length/.75f) + 1
             val result = LinkedHashMap<K, T>(Math.max(capacity.toInt(), 16))
             for (element in this) {
                 result.put(selector(element), element)
@@ -163,7 +163,7 @@ fun snapshots(): List<GenericFunction> {
         }
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
-            val capacity = (size()/.75f) + 1
+            val capacity = (size/.75f) + 1
             val result = LinkedHashMap<K, T>(Math.max(capacity.toInt(), 16))
             for (element in this) {
                 result.put(selector(element), element)
@@ -212,7 +212,7 @@ fun snapshots(): List<GenericFunction> {
         deprecate(Strings) { forBinaryCompatibility }
         body(CharSequences, Strings) {
             """
-            val capacity = (length()/.75f) + 1
+            val capacity = (length/.75f) + 1
             val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
             for (element in this) {
                 result.put(selector(element), transform(element))
@@ -222,7 +222,7 @@ fun snapshots(): List<GenericFunction> {
         }
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
-            val capacity = (size()/.75f) + 1
+            val capacity = (size/.75f) + 1
             val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
             for (element in this) {
                 result.put(selector(element), transform(element))

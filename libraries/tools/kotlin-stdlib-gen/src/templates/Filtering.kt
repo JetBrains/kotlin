@@ -30,13 +30,13 @@ fun filtering(): List<GenericFunction> {
             if (n == 0) return toList()
             val list: ArrayList<T>
             if (this is Collection<*>) {
-                val resultSize = size() - n
+                val resultSize = size - n
                 if (resultSize <= 0)
                     return emptyList()
 
                 list = ArrayList<T>(resultSize)
                 if (this is List<T>) {
-                    for (index in n..size() - 1) {
+                    for (index in n..size - 1) {
                         list.add(this[index])
                     }
                     return list
@@ -77,11 +77,11 @@ fun filtering(): List<GenericFunction> {
             require(n >= 0, { "Requested element count $n is less than zero." })
             if (n == 0)
                 return toList()
-            if (n >= size())
+            if (n >= size)
                 return emptyList()
 
-            val list = ArrayList<T>(size() - n)
-            for (index in n..size() - 1) {
+            val list = ArrayList<T>(size - n)
+            for (index in n..size - 1) {
                 list.add(this[index])
             }
             return list
@@ -97,7 +97,7 @@ fun filtering(): List<GenericFunction> {
             """
             require(n >= 0, { "Requested element count $n is less than zero." })
             if (n == 0) return emptyList()
-            if (this is Collection<T> && n >= size()) return toList()
+            if (this is Collection<T> && n >= size) return toList()
             var count = 0
             val list = ArrayList<T>(n)
             for (item in this) {
@@ -132,7 +132,7 @@ fun filtering(): List<GenericFunction> {
             """
             require(n >= 0) { "Requested element count $n is less than zero." }
             if (n == 0) return emptyList()
-            if (n >= size()) return toList()
+            if (n >= size) return toList()
             var count = 0
             val list = ArrayList<T>(n)
             for (item in this) {
@@ -154,7 +154,7 @@ fun filtering(): List<GenericFunction> {
         body {
             """
             require(n >= 0, { "Requested element count $n is less than zero." })
-            return take((size() - n).coerceAtLeast(0))
+            return take((size - n).coerceAtLeast(0))
             """
         }
 
@@ -192,7 +192,7 @@ fun filtering(): List<GenericFunction> {
             """
             require(n >= 0, { "Requested element count $n is less than zero." })
             if (n == 0) return emptyList()
-            val size = size()
+            val size = size
             if (n >= size) return toList()
             val list = ArrayList<T>(n)
             for (index in size - n .. size - 1)
@@ -390,7 +390,7 @@ fun filtering(): List<GenericFunction> {
         deprecate(Strings) { forBinaryCompatibility }
         body(CharSequences, Strings) {
             """
-            for (index in 0..length() - 1) {
+            for (index in 0..length - 1) {
                 val element = get(index)
                 if (predicate(element)) destination.append(element)
             }
@@ -593,7 +593,7 @@ fun filtering(): List<GenericFunction> {
         returns("SELF")
         body(ArraysOfObjects) {
             """
-            val result = arrayOfNulls(this, indices.size()) as Array<T>
+            val result = arrayOfNulls(this, indices.size) as Array<T>
             var targetIndex = 0
             for (sourceIndex in indices) {
                 result[targetIndex++] = this[sourceIndex]
@@ -603,7 +603,7 @@ fun filtering(): List<GenericFunction> {
         }
         body(ArraysOfPrimitives) {
             """
-            val result = SELF(indices.size())
+            val result = SELF(indices.size)
             var targetIndex = 0
             for (sourceIndex in indices) {
                 result[targetIndex++] = this[sourceIndex]

@@ -359,7 +359,7 @@ class FilesTest {
                 basedir.walkTopDown().enter(::beforeVisitDirectory).leave(::afterVisitDirectory).maxDepth(1).
                         forEach { it -> if (it != basedir) visitFile(it) }
                 assert(stack.isEmpty())
-                assert(dirs.size() == 1 && dirs.contains("")) { dirs.size() }
+                assert(dirs.size == 1 && dirs.contains("")) { dirs.size }
                 for (file in arrayOf("1", "6", "7.txt", "8")) {
                     assert(files.contains(file)) { file }
                 }
@@ -372,12 +372,12 @@ class FilesTest {
                         basedir.walkTopDown().enter(::beforeVisitDirectory).leave(::afterVisitDirectory).
                                 fail(::visitDirectoryFailed).forEach { it -> if (!it.isDirectory()) visitFile(it) }
                         assert(stack.isEmpty())
-                        assert(failed.size() == 1 && failed.contains("1")) { failed.size() }
-                        assert(dirs.size() == 4) { dirs.size() }
+                        assert(failed.size == 1 && failed.contains("1")) { failed.size }
+                        assert(dirs.size == 4) { dirs.size }
                         for (dir in arrayOf("", "1", "6", "8")) {
                             assert(dirs.contains(dir)) { dir }
                         }
-                        assert(files.size() == 2) { files.size() }
+                        assert(files.size == 2) { files.size }
                         for (file in arrayOf("7.txt", "8${sep}9.txt")) {
                             assert(files.contains(file)) { file }
                         }
@@ -402,7 +402,7 @@ class FilesTest {
                     visited.add(it)
                 }
                 basedir.walkTopDown().forEach(block)
-                assert(visited.size() == 10) { visited.size() }
+                assert(visited.size == 10) { visited.size }
 
             } finally {
                 basedir.deleteRecursively()
@@ -421,7 +421,7 @@ class FilesTest {
                         visited.add(it)
                     }
                     basedir.walkTopDown().forEach(block)
-                    assert(visited.size() == 6) { visited.size() }
+                    assert(visited.size == 6) { visited.size }
                 }
             } finally {
                 restricted.setReadable(true)
@@ -491,7 +491,7 @@ class FilesTest {
                         found.add(file.getParentFile())
                     }
                 }
-                assert(found.size() == 3)
+                assert(found.size == 3)
             } finally {
                 basedir.deleteRecursively()
             }
@@ -532,10 +532,10 @@ class FilesTest {
 
         // This line works only with Kotlin File.listFiles(filter)
         val result = dir.listFiles { it.getName().endsWith(".kt") }
-        assertEquals(2, result!!.size())
+        assertEquals(2, result!!.size)
         // This line works both with Kotlin File.listFiles(filter) and the same Java function because of SAM
         val result2 = dir.listFiles { it -> it.getName().endsWith(".kt") }
-        assertEquals(2, result2!!.size())
+        assertEquals(2, result2!!.size)
     }
 
     @test fun relativeToTest() {
@@ -602,10 +602,10 @@ class FilesTest {
         var i = 0
         assertEquals(root, f.root)
         for (elem in f.filePathComponents().fileList) {
-            assertTrue(i < elements.size(), i.toString())
+            assertTrue(i < elements.size, i.toString())
             assertEquals(elements[i++], elem.toString())
         }
-        assertEquals(elements.size(), i)
+        assertEquals(elements.size, i)
     }
 
     @test fun fileIterator() {

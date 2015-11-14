@@ -106,10 +106,10 @@ fun aggregates(): List<GenericFunction> {
         deprecate(Strings) { forBinaryCompatibility }
         doc(CharSequences) { "Returns the length of this char sequence."}
         body(CharSequences, Strings) {
-            "return length()"
+            "return length"
         }
         body(Maps, Collections, ArraysOfObjects, ArraysOfPrimitives) {
-            "return size()"
+            "return size"
         }
     }
 

@@ -36,7 +36,7 @@ private fun comparableVersionStr(version: String) =
                 ?.groups
                 ?.drop(1)?.take(2)
                 // checking if two subexpression groups are found and length of each is >0 and <4
-                ?.let { if (it.all { (it?.value?.length() ?: 0).let { it > 0 && it < 4 }}) it else null }
+                ?.let { if (it.all { (it?.value?.length ?: 0).let { it > 0 && it < 4 }}) it else null }
                 ?.joinToString(".", transform = { it!!.value.padStart(3, '0') })
 
 

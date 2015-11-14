@@ -80,8 +80,8 @@ abstract class SetJsTest {
 
     @Test
     fun size() {
-        assertEquals(2, data.size())
-        assertEquals(0, empty.size())
+        assertEquals(2, data.size)
+        assertEquals(0, empty.size)
     }
 
     @Test
@@ -132,9 +132,9 @@ abstract class SetJsTest {
     fun add() {
         val data = createTestMutableSet()
         assertTrue(data.add("baz"))
-        assertEquals(3, data.size())
+        assertEquals(3, data.size)
         assertFalse(data.add("baz"))
-        assertEquals(3, data.size())
+        assertEquals(3, data.size)
         assertTrue(data.containsAll(arrayListOf("foo", "bar", "baz")))
     }
 
@@ -142,9 +142,9 @@ abstract class SetJsTest {
     fun remove() {
         val data = createTestMutableSet()
         assertTrue(data.remove("foo"))
-        assertEquals(1, data.size())
+        assertEquals(1, data.size)
         assertFalse(data.remove("foo"))
-        assertEquals(1, data.size())
+        assertEquals(1, data.size)
         assertTrue(data.contains("bar"))
     }
 
@@ -152,9 +152,9 @@ abstract class SetJsTest {
     fun addAll() {
         val data = createTestMutableSet()
         assertTrue(data.addAll(arrayListOf("foo", "bar", "baz", "boo")))
-        assertEquals(4, data.size())
+        assertEquals(4, data.size)
         assertFalse(data.addAll(arrayListOf("foo", "bar", "baz", "boo")))
-        assertEquals(4, data.size())
+        assertEquals(4, data.size)
         assertTrue(data.containsAll(arrayListOf("foo", "bar", "baz", "boo")))
     }
 
@@ -163,12 +163,12 @@ abstract class SetJsTest {
         val data = createTestMutableSet()
         assertFalse(data.removeAll(arrayListOf("baz")))
         assertTrue(data.containsAll(arrayListOf("foo", "bar")))
-        assertEquals(2, data.size())
+        assertEquals(2, data.size)
         assertTrue(data.removeAll(arrayListOf("foo")))
         assertTrue(data.contains("bar"))
-        assertEquals(1, data.size())
+        assertEquals(1, data.size)
         assertTrue(data.removeAll(arrayListOf("foo", "bar")))
-        assertEquals(0, data.size())
+        assertEquals(0, data.size)
 
         val data2 = createTestMutableSet()
         assertFalse(data.removeAll(arrayListOf("foo", "bar", "baz")))
@@ -184,7 +184,7 @@ abstract class SetJsTest {
         val data2 = createTestMutableSet()
         assertTrue(data2.retainAll(arrayListOf("foo")))
         assertTrue(data2.contains("foo"))
-        assertEquals(1, data2.size())
+        assertEquals(1, data2.size)
     }
 
     @Test

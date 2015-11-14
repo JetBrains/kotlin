@@ -64,7 +64,7 @@ private class MapWithDefaultImpl<K, out V>(public override val map: Map<K,V>, pr
     override fun equals(other: Any?): Boolean = map.equals(other)
     override fun hashCode(): Int = map.hashCode()
     override fun toString(): String = map.toString()
-    override val size: Int get() = map.size()
+    override val size: Int get() = map.size
     override fun isEmpty(): Boolean = map.isEmpty()
     override fun containsKey(key: K): Boolean = map.containsKey(key)
     override fun containsValue(value: @UnsafeVariance V): Boolean = map.containsValue(value)
@@ -80,7 +80,7 @@ private class MutableMapWithDefaultImpl<K, V>(public override val map: MutableMa
     override fun equals(other: Any?): Boolean = map.equals(other)
     override fun hashCode(): Int = map.hashCode()
     override fun toString(): String = map.toString()
-    override val size: Int get() = map.size()
+    override val size: Int get() = map.size
     override fun isEmpty(): Boolean = map.isEmpty()
     override fun containsKey(key: K): Boolean = map.containsKey(key)
     override fun containsValue(value: @UnsafeVariance V): Boolean = map.containsValue(value)

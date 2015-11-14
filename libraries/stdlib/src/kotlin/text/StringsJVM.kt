@@ -75,7 +75,7 @@ public fun String.replaceFirst(oldChar: Char, newChar: Char, ignoreCase: Boolean
  */
 public fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: Boolean = false): String {
     val index = indexOf(oldValue, ignoreCase = ignoreCase)
-    return if (index < 0) this else this.replaceRange(index, index + oldValue.length(), newValue)
+    return if (index < 0) this else this.replaceRange(index, index + oldValue.length, newValue)
 }
 
 /**
@@ -134,7 +134,7 @@ public fun String.startsWith(prefix: String, ignoreCase: Boolean = false): Boole
     if (!ignoreCase)
         return (this as java.lang.String).startsWith(prefix)
     else
-        return regionMatches(0, prefix, 0, prefix.length(), ignoreCase)
+        return regionMatches(0, prefix, 0, prefix.length, ignoreCase)
 }
 
 /**
@@ -144,7 +144,7 @@ public fun String.startsWith(prefix: String, thisOffset: Int, ignoreCase: Boolea
     if (!ignoreCase)
         return (this as java.lang.String).startsWith(prefix, thisOffset)
     else
-        return regionMatches(thisOffset, prefix, 0, prefix.length(), ignoreCase)
+        return regionMatches(thisOffset, prefix, 0, prefix.length, ignoreCase)
 }
 
 /**
@@ -154,7 +154,7 @@ public fun String.endsWith(suffix: String, ignoreCase: Boolean = false): Boolean
     if (!ignoreCase)
         return (this as java.lang.String).endsWith(suffix)
     else
-        return regionMatches(length() - suffix.length(), suffix, 0, suffix.length(), ignoreCase = true)
+        return regionMatches(length - suffix.length, suffix, 0, suffix.length, ignoreCase = true)
 }
 
 // "constructors" for String
@@ -292,7 +292,7 @@ public fun String.intern(): String = (this as java.lang.String).intern()
 /**
  * Returns `true` if this string is empty or consists solely of whitespace characters.
  */
-public fun CharSequence.isBlank(): Boolean = length() == 0 || indices.all { this[it].isWhitespace() }
+public fun CharSequence.isBlank(): Boolean = length == 0 || indices.all { this[it].isWhitespace() }
 
 /**
  * Returns the index within this string that is offset from the given [index] by [codePointOffset] code points.
@@ -440,7 +440,7 @@ public fun CharSequence.repeat(n: Int): String {
     if (n < 0)
         throw IllegalArgumentException("Value should be non-negative, but was $n")
 
-    val sb = StringBuilder(n * length())
+    val sb = StringBuilder(n * length)
     for (i in 1..n) {
         sb.append(this)
     }

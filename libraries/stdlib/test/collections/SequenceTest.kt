@@ -267,7 +267,7 @@ public class SequenceTest {
     @test fun sequenceExtensions() {
         val d = ArrayList<Int>()
         sequenceOf(0, 1, 2, 3, 4, 5).takeWhileTo(d, { i -> i < 4 })
-        assertEquals(4, d.size())
+        assertEquals(4, d.size)
     }
 
     @test fun flatMapAndTakeExtractTheTransformedElements() {
@@ -330,8 +330,8 @@ public class SequenceTest {
 
     @test fun sortedBy() {
         sequenceOf("it", "greater", "less").let {
-            it.sortedBy { it.length() }.iterator().assertSorted { a, b -> compareValuesBy(a, b) { it.length() } <= 0 }
-            it.sortedByDescending { it.length() }.iterator().assertSorted { a, b -> compareValuesBy(a, b) { it.length() } >= 0 }
+            it.sortedBy { it.length }.iterator().assertSorted { a, b -> compareValuesBy(a, b) { it.length } <= 0 }
+            it.sortedByDescending { it.length }.iterator().assertSorted { a, b -> compareValuesBy(a, b) { it.length } >= 0 }
         }
 
         sequenceOf('a', 'd', 'c', null).let {

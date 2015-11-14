@@ -16,7 +16,7 @@ import java.util.Collections // TODO: it's temporary while we have java.util.Col
  * Returns a [List] containing all key-value pairs.
  */
 public fun <K, V> Map<K, V>.toList(): List<Pair<K, V>> {
-    val result = ArrayList<Pair<K, V>>(size())
+    val result = ArrayList<Pair<K, V>>(size)
     for (item in this)
         result.add(item.key to item.value)
     return result
@@ -45,7 +45,7 @@ public inline fun <K, V, R, C : MutableCollection<in R>> Map<K, V>.flatMapTo(des
  * to each entry in the original map.
  */
 public inline fun <K, V, R> Map<K, V>.map(transform: (Map.Entry<K, V>) -> R): List<R> {
-    return mapTo(ArrayList<R>(size()), transform)
+    return mapTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -115,7 +115,7 @@ public inline fun <K, V> Map<K, V>.any(predicate: (Map.Entry<K, V>) -> Boolean):
  * Returns the number of entrys in this map.
  */
 public fun <K, V> Map<K, V>.count(): Int {
-    return size()
+    return size
 }
 
 /**

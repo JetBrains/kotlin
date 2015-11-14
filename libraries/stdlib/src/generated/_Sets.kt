@@ -39,7 +39,7 @@ public operator fun <T> Set<T>.minus(collection: Iterable<T>): Set<T> {
  * Returns a set containing all elements of the original set except the given [element].
  */
 public operator fun <T> Set<T>.minus(element: T): Set<T> {
-    val result = LinkedHashSet<T>(mapCapacity(size()))
+    val result = LinkedHashSet<T>(mapCapacity(size))
     var removed = false
     return this.filterTo(result) { if (!removed && it == element) { removed = true; false } else true }
 }
@@ -57,7 +57,7 @@ public operator fun <T> Set<T>.minus(sequence: Sequence<T>): Set<T> {
  * Returns a set containing all elements both of the original set and the given [array].
  */
 public operator fun <T> Set<T>.plus(array: Array<out T>): Set<T> {
-    val result = LinkedHashSet<T>(mapCapacity(this.size() + array.size()))
+    val result = LinkedHashSet<T>(mapCapacity(this.size + array.size))
     result.addAll(this)
     result.addAll(array)
     return result
@@ -67,7 +67,7 @@ public operator fun <T> Set<T>.plus(array: Array<out T>): Set<T> {
  * Returns a set containing all elements both of the original set and the given [collection].
  */
 public operator fun <T> Set<T>.plus(collection: Iterable<T>): Set<T> {
-    val result = LinkedHashSet<T>(mapCapacity(collection.collectionSizeOrNull()?.let { this.size() + it } ?: this.size() * 2))
+    val result = LinkedHashSet<T>(mapCapacity(collection.collectionSizeOrNull()?.let { this.size + it } ?: this.size * 2))
     result.addAll(this)
     result.addAll(collection)
     return result
@@ -77,7 +77,7 @@ public operator fun <T> Set<T>.plus(collection: Iterable<T>): Set<T> {
  * Returns a set containing all elements of the original set and then the given [element].
  */
 public operator fun <T> Set<T>.plus(element: T): Set<T> {
-    val result = LinkedHashSet<T>(mapCapacity(size() + 1))
+    val result = LinkedHashSet<T>(mapCapacity(size + 1))
     result.addAll(this)
     result.add(element)
     return result
@@ -87,7 +87,7 @@ public operator fun <T> Set<T>.plus(element: T): Set<T> {
  * Returns a set containing all elements both of the original set and the given [sequence].
  */
 public operator fun <T> Set<T>.plus(sequence: Sequence<T>): Set<T> {
-    val result = LinkedHashSet<T>(mapCapacity(this.size() * 2))
+    val result = LinkedHashSet<T>(mapCapacity(this.size * 2))
     result.addAll(this)
     result.addAll(sequence)
     return result

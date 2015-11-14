@@ -25,19 +25,19 @@ public fun <T> CompareContext<List<T>>.listBehavior() {
     compareProperty( { listIterator(0) }, { listIteratorBehavior() })
 
     propertyFails { listIterator(-1) }
-    propertyFails { listIterator(size() + 1) }
+    propertyFails { listIterator(size + 1) }
 
     for (index in expected.indices)
         propertyEquals { this[index] }
 
-    propertyFails { this[size()] }
+    propertyFails { this[size] }
 
     propertyEquals { (this as List<T?>).indexOf(elementAtOrNull(0)) }
     propertyEquals { (this as List<T?>).lastIndexOf(elementAtOrNull(0)) }
 
-    propertyFails { subList(0, size() + 1)}
+    propertyFails { subList(0, size + 1)}
     propertyFails { subList(-1, 0)}
-    propertyEquals { subList(0, size()) }
+    propertyEquals { subList(0, size) }
 }
 
 public fun <T> CompareContext<ListIterator<T>>.listIteratorBehavior() {
@@ -81,7 +81,7 @@ public fun <T> CompareContext<Set<T>>.setBehavior(objectName: String = "") {
 
 public fun <K, V> CompareContext<Map<K, V>>.mapBehavior() {
     equalityBehavior()
-    propertyEquals { size() }
+    propertyEquals { size }
     propertyEquals { isEmpty() }
 
     (object {}).let { propertyEquals { containsKey(it)}  }
@@ -108,7 +108,7 @@ public fun <T> CompareContext<T>.equalityBehavior(objectName: String = "") {
 
 public fun <T> CompareContext<Collection<T>>.collectionBehavior(objectName: String = "") {
     val prefix = objectName +  if (objectName.isNotEmpty()) "." else ""
-    propertyEquals (prefix + "size") { size() }
+    propertyEquals (prefix + "size") { size }
     propertyEquals (prefix + "isEmpty") { isEmpty() }
 
     (object {}).let { propertyEquals { containsRaw(it)}  }

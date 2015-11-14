@@ -289,7 +289,7 @@ public inline fun String.last(predicate: (Char) -> Boolean): Char {
  * Returns the last character, or `null` if the char sequence is empty.
  */
 public fun CharSequence.lastOrNull(): Char? {
-    return if (isEmpty()) null else this[length() - 1]
+    return if (isEmpty()) null else this[length - 1]
 }
 
 /**
@@ -297,7 +297,7 @@ public fun CharSequence.lastOrNull(): Char? {
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun String.lastOrNull(): Char? {
-    return if (isEmpty()) null else this[length() - 1]
+    return if (isEmpty()) null else this[length - 1]
 }
 
 /**
@@ -327,7 +327,7 @@ public inline fun String.lastOrNull(predicate: (Char) -> Boolean): Char? {
  * Returns the single character, or throws an exception if the char sequence is empty or has more than one character.
  */
 public fun CharSequence.single(): Char {
-    return when (length()) {
+    return when (length) {
         0 -> throw NoSuchElementException("Collection is empty.")
         1 -> this[0]
         else -> throw IllegalArgumentException("Collection has more than one element.")
@@ -339,7 +339,7 @@ public fun CharSequence.single(): Char {
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun String.single(): Char {
-    return when (length()) {
+    return when (length) {
         0 -> throw NoSuchElementException("Collection is empty.")
         1 -> this[0]
         else -> throw IllegalArgumentException("Collection has more than one element.")
@@ -385,7 +385,7 @@ public inline fun String.single(predicate: (Char) -> Boolean): Char {
  * Returns single character, or `null` if the char sequence is empty or has more than one character.
  */
 public fun CharSequence.singleOrNull(): Char? {
-    return if (length() == 1) this[0] else null
+    return if (length == 1) this[0] else null
 }
 
 /**
@@ -393,7 +393,7 @@ public fun CharSequence.singleOrNull(): Char? {
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun String.singleOrNull(): Char? {
-    return if (length() == 1) this[0] else null
+    return if (length == 1) this[0] else null
 }
 
 /**
@@ -576,7 +576,7 @@ public inline fun <C : Appendable> String.filterNotTo(destination: C, predicate:
  * Appends all characters matching the given [predicate] to the given [destination].
  */
 public inline fun <C : Appendable> CharSequence.filterTo(destination: C, predicate: (Char) -> Boolean): C {
-    for (index in 0..length() - 1) {
+    for (index in 0..length - 1) {
         val element = get(index)
         if (predicate(element)) destination.append(element)
     }
@@ -588,7 +588,7 @@ public inline fun <C : Appendable> CharSequence.filterTo(destination: C, predica
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public inline fun <C : Appendable> String.filterTo(destination: C, predicate: (Char) -> Boolean): C {
-    for (index in 0..length() - 1) {
+    for (index in 0..length - 1) {
         val element = get(index)
         if (predicate(element)) destination.append(element)
     }
@@ -735,7 +735,7 @@ public fun String.reversed(): String {
  * Returns an [ArrayList] of all characters.
  */
 public fun CharSequence.toArrayList(): ArrayList<Char> {
-    return toCollection(ArrayList<Char>(length()))
+    return toCollection(ArrayList<Char>(length))
 }
 
 /**
@@ -743,7 +743,7 @@ public fun CharSequence.toArrayList(): ArrayList<Char> {
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun String.toArrayList(): ArrayList<Char> {
-    return toCollection(ArrayList<Char>(length()))
+    return toCollection(ArrayList<Char>(length))
 }
 
 /**
@@ -771,7 +771,7 @@ public fun <C : MutableCollection<in Char>> String.toCollection(collection: C): 
  * Returns a [HashSet] of all characters.
  */
 public fun CharSequence.toHashSet(): HashSet<Char> {
-    return toCollection(HashSet<Char>(mapCapacity(length())))
+    return toCollection(HashSet<Char>(mapCapacity(length)))
 }
 
 /**
@@ -779,7 +779,7 @@ public fun CharSequence.toHashSet(): HashSet<Char> {
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun String.toHashSet(): HashSet<Char> {
-    return toCollection(HashSet<Char>(mapCapacity(length())))
+    return toCollection(HashSet<Char>(mapCapacity(length)))
 }
 
 /**
@@ -820,7 +820,7 @@ public inline fun <K> String.toMap(selector: (Char) -> K): Map<K, Char> {
  * If any two characters would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> CharSequence.toMap(selector: (Char) -> K, transform: (Char) -> V): Map<K, V> {
-    val capacity = (length()/.75f) + 1
+    val capacity = (length/.75f) + 1
     val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), transform(element))
@@ -834,7 +834,7 @@ public inline fun <K, V> CharSequence.toMap(selector: (Char) -> K, transform: (C
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public inline fun <K, V> String.toMap(selector: (Char) -> K, transform: (Char) -> V): Map<K, V> {
-    val capacity = (length()/.75f) + 1
+    val capacity = (length/.75f) + 1
     val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), transform(element))
@@ -848,7 +848,7 @@ public inline fun <K, V> String.toMap(selector: (Char) -> K, transform: (Char) -
  * If any two characters would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K> CharSequence.toMapBy(selector: (Char) -> K): Map<K, Char> {
-    val capacity = (length()/.75f) + 1
+    val capacity = (length/.75f) + 1
     val result = LinkedHashMap<K, Char>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), element)
@@ -863,7 +863,7 @@ public inline fun <K> CharSequence.toMapBy(selector: (Char) -> K): Map<K, Char> 
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public inline fun <K> String.toMapBy(selector: (Char) -> K): Map<K, Char> {
-    val capacity = (length()/.75f) + 1
+    val capacity = (length/.75f) + 1
     val result = LinkedHashMap<K, Char>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), element)
@@ -875,7 +875,7 @@ public inline fun <K> String.toMapBy(selector: (Char) -> K): Map<K, Char> {
  * Returns a [Set] of all characters.
  */
 public fun CharSequence.toSet(): Set<Char> {
-    return toCollection(LinkedHashSet<Char>(mapCapacity(length())))
+    return toCollection(LinkedHashSet<Char>(mapCapacity(length)))
 }
 
 /**
@@ -883,7 +883,7 @@ public fun CharSequence.toSet(): Set<Char> {
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun String.toSet(): Set<Char> {
-    return toCollection(LinkedHashSet<Char>(mapCapacity(length())))
+    return toCollection(LinkedHashSet<Char>(mapCapacity(length)))
 }
 
 /**
@@ -984,7 +984,7 @@ public inline fun <K> String.groupByTo(map: MutableMap<K, MutableList<Char>>, to
  * to each character in the original char sequence.
  */
 public inline fun <R> CharSequence.map(transform: (Char) -> R): List<R> {
-    return mapTo(ArrayList<R>(length()), transform)
+    return mapTo(ArrayList<R>(length), transform)
 }
 
 /**
@@ -993,7 +993,7 @@ public inline fun <R> CharSequence.map(transform: (Char) -> R): List<R> {
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public inline fun <R> String.map(transform: (Char) -> R): List<R> {
-    return mapTo(ArrayList<R>(length()), transform)
+    return mapTo(ArrayList<R>(length), transform)
 }
 
 /**
@@ -1001,7 +1001,7 @@ public inline fun <R> String.map(transform: (Char) -> R): List<R> {
  * to each character and its index in the original char sequence.
  */
 public inline fun <R> CharSequence.mapIndexed(transform: (Int, Char) -> R): List<R> {
-    return mapIndexedTo(ArrayList<R>(length()), transform)
+    return mapIndexedTo(ArrayList<R>(length), transform)
 }
 
 /**
@@ -1010,7 +1010,7 @@ public inline fun <R> CharSequence.mapIndexed(transform: (Int, Char) -> R): List
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public inline fun <R> String.mapIndexed(transform: (Int, Char) -> R): List<R> {
-    return mapIndexedTo(ArrayList<R>(length()), transform)
+    return mapIndexedTo(ArrayList<R>(length), transform)
 }
 
 /**
@@ -1161,7 +1161,7 @@ public inline fun String.any(predicate: (Char) -> Boolean): Boolean {
  * Returns the length of this char sequence.
  */
 public fun CharSequence.count(): Int {
-    return length()
+    return length
 }
 
 /**
@@ -1169,7 +1169,7 @@ public fun CharSequence.count(): Int {
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun String.count(): Int {
-    return length()
+    return length
 }
 
 /**
@@ -1584,7 +1584,7 @@ public fun String.zip(other: String): List<Pair<Char, Char>> {
  * Returns a list of values built from characters of both char sequences with same indexes using provided [transform]. List has length of shortest char sequence.
  */
 public inline fun <V> CharSequence.zip(other: String, transform: (Char, Char) -> V): List<V> {
-    val length = Math.min(this.length(), other.length())
+    val length = Math.min(this.length, other.length)
     val list = ArrayList<V>(length)
     for (i in 0..length-1) {
         list.add(transform(this[i], other[i]))
@@ -1597,7 +1597,7 @@ public inline fun <V> CharSequence.zip(other: String, transform: (Char, Char) ->
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public inline fun <V> String.zip(other: String, transform: (Char, Char) -> V): List<V> {
-    val length = Math.min(this.length(), other.length())
+    val length = Math.min(this.length, other.length)
     val list = ArrayList<V>(length)
     for (i in 0..length-1) {
         list.add(transform(this[i], other[i]))
