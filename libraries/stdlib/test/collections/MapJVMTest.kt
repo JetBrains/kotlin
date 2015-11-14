@@ -12,7 +12,7 @@ class MapJVMTest {
         assertEquals(1, map["a"])
         assertEquals(2, map["b"])
         assertEquals(3, map["c"])
-        assertEquals(listOf("a", "b", "c"), map.keySet().toList())
+        assertEquals(listOf("a", "b", "c"), map.keys.toList())
     }
 
     @test fun toSortedMap() {
@@ -21,13 +21,13 @@ class MapJVMTest {
         assertEquals(1, sorted["a"])
         assertEquals(2, sorted["b"])
         assertEquals(3, sorted["c"])
-        assertEquals(listOf("a", "b", "c"), sorted.keySet().toList())
+        assertEquals(listOf("a", "b", "c"), sorted.keys.toList())
     }
 
     @test fun toSortedMapWithComparator() {
         val map = mapOf(Pair("c", 3), Pair("bc", 2), Pair("bd", 4), Pair("abc", 1))
         val sorted = map.toSortedMap(compareBy<String> { it.length } thenBy { it })
-        assertEquals(listOf("c", "bc", "bd", "abc"), sorted.keySet().toList())
+        assertEquals(listOf("c", "bc", "bd", "abc"), sorted.keys.toList())
         assertEquals(1, sorted["abc"])
         assertEquals(2, sorted["bc"])
         assertEquals(3, sorted["c"])

@@ -78,8 +78,8 @@ class MapTest {
         val map = mapOf("beverage" to "beer", "location" to "Mells", "name" to "James")
         val list = arrayListOf<String>()
         for (e in map) {
-            list.add(e.getKey())
-            list.add(e.getValue())
+            list.add(e.key)
+            list.add(e.value)
         }
 
         assertEquals(6, list.size)
@@ -201,7 +201,7 @@ class MapTest {
         assertEquals(1, map["a"])
         assertEquals(2, map["b"])
         assertEquals(3, map["c"])
-        assertEquals(listOf("c", "b", "a"), map.keySet().toList())
+        assertEquals(listOf("c", "b", "a"), map.keys.toList())
     }
 
     @test fun filter() {
@@ -317,7 +317,7 @@ class MapTest {
     fun testMinus(doMinus: (Map<String, Int>) -> Map<String, Int>) {
         val original = mapOf("A" to 1, "B" to 2)
         val shortened = doMinus(original)
-        assertEquals("A" to 1, shortened.entrySet().single().toPair())
+        assertEquals("A" to 1, shortened.entries.single().toPair())
     }
 
     @test fun minus() = testMinus { it - "B" - "C" }
@@ -335,7 +335,7 @@ class MapTest {
     fun testMinusAssign(doMinusAssign: (MutableMap<String, Int>) -> Unit) {
         val original = hashMapOf("A" to 1, "B" to 2)
         doMinusAssign(original)
-        assertEquals("A" to 1, original.entrySet().single().toPair())
+        assertEquals("A" to 1, original.entries.single().toPair())
     }
 
     @test fun minusAssign() = testMinusAssign {

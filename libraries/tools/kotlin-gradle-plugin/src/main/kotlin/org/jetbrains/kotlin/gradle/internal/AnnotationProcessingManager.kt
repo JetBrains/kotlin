@@ -96,7 +96,7 @@ private fun Project.createKotlinAfterJavaTask(
     }
 
     getAllTasks(false)
-            .flatMap { it.getValue() }
+            .flatMap { it.value }
             .filter { javaTask in it.taskDependencies.getDependencies(it) }
             .forEach { it.dependsOn(kotlinAfterJavaTask) }
 

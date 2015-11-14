@@ -15,7 +15,7 @@ class CollectionJVMTest {
     private fun <T> identitySetOf(vararg values: T): MutableSet<T> {
         val map = IdentityHashMap<T, String>()
         values.forEach { map.put(it, "") }
-        return map.keySet()
+        return map.keys
     }
 
     private data class IdentityData(public val value: Int)

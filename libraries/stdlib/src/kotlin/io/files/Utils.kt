@@ -368,7 +368,7 @@ public fun File.normalize(): File {
         when (name) {
             "." -> {
             }
-            ".." -> if (!list.isEmpty() && list.get(list.size - 1) != "..") list.remove(list.size - 1) else list.add(name)
+            ".." -> if (!list.isEmpty() && list.get(list.size - 1) != "..") list.removeAt(list.size - 1) else list.add(name)
             else -> list.add(name)
         }
     }

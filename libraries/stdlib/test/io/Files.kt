@@ -329,7 +329,7 @@ class FilesTest {
 
                 fun afterVisitDirectory(dir: File) {
                     assertEquals(stack.last(), dir)
-                    stack.remove(stack.lastIndex)
+                    stack.removeAt(stack.lastIndex)
                 }
 
                 fun visitFile(file: File) {
@@ -339,7 +339,7 @@ class FilesTest {
 
                 fun visitDirectoryFailed(dir: File, e: IOException) {
                     assertEquals(stack.last(), dir)
-                    stack.remove(stack.lastIndex)
+                    stack.removeAt(stack.lastIndex)
                     failed.add(dir.name)
                 }
                 basedir.walkTopDown().enter(::beforeVisitDirectory).leave(::afterVisitDirectory).

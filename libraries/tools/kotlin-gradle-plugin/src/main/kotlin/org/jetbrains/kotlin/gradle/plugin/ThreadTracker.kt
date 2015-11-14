@@ -10,7 +10,7 @@ public class ThreadTracker {
     val log = Logging.getLogger(this.javaClass)
     private var before: Collection<Thread>? = getThreads()
 
-    private fun getThreads(): Collection<Thread> = Thread.getAllStackTraces().keySet()
+    private fun getThreads(): Collection<Thread> = Thread.getAllStackTraces().keys
 
     public fun checkThreadLeak(gradle: Gradle?) {
         try {

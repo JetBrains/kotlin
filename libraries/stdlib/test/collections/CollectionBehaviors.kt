@@ -87,15 +87,15 @@ public fun <K, V> CompareContext<Map<K, V>>.mapBehavior() {
     (object {}).let { propertyEquals { containsKey(it)}  }
 
     if (expected.isEmpty().not())
-        propertyEquals { contains(keySet().first()) }
+        propertyEquals { contains(keys.first()) }
 
     propertyEquals { containsKeyRaw(keys.firstOrNull()) }
     propertyEquals { containsValueRaw(values.firstOrNull()) }
     propertyEquals { getRaw(null) }
 
-    compareProperty( { keySet() }, { setBehavior("keySet") } )
-    compareProperty( { entrySet() }, { setBehavior("entrySet") } )
-    compareProperty( { values() }, { collectionBehavior("values") })
+    compareProperty( { keys }, { setBehavior("keySet") } )
+    compareProperty( { entries }, { setBehavior("entrySet") } )
+    compareProperty( { values }, { collectionBehavior("values") })
 }
 
 public fun <T> CompareContext<T>.equalityBehavior(objectName: String = "") {

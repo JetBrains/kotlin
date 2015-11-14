@@ -54,7 +54,7 @@ tailrec fun allSuperTypesImpl(roots: List<GenerateTraitOrClass>, all: Map<String
     }
 }
 
-fun standardTypes() = typeMapper.values().map {it.dropNullable()}.toSet()
+fun standardTypes() = typeMapper.values.map {it.dropNullable()}.toSet()
 fun Type.dynamicIfUnknownType(allTypes: Set<String>, standardTypes: Set<Type> = standardTypes()): Type = when {
     this is DynamicType, this is UnitType -> this
 
@@ -110,7 +110,7 @@ private fun mapTypedef(repository: Repository, type: SimpleType): Type {
 private fun GenerateFunction?.allTypes() = if (this != null) sequenceOf(returnType) + arguments.asSequence().map { it.type } else emptySequence()
 
 internal fun collectUnionTypes(allTypes: Map<String, GenerateTraitOrClass>) =
-        allTypes.values().asSequence()
+        allTypes.values.asSequence()
                 .flatMap {
                     it.secondaryConstructors.asSequence().flatMap { it.constructor.allTypes() } +
                     sequenceOf(it.primaryConstructor).filterNotNull().flatMap { it.constructor.allTypes() } +

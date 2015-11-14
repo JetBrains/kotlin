@@ -153,17 +153,17 @@ abstract class MapJsTest {
     // #KT-3035
     @test fun emptyMapValues() {
         val emptyMap = emptyMap()
-        assertTrue(emptyMap.values().isEmpty())
+        assertTrue(emptyMap.values.isEmpty())
     }
 
     @test fun mapValues() {
         val map = createTestMap()
-        assertEquals(VALUES.toNormalizedList(), map.values().toNormalizedList())
+        assertEquals(VALUES.toNormalizedList(), map.values.toNormalizedList())
     }
 
     @test fun mapKeySet() {
         val map = createTestMap()
-        assertEquals(KEYS.toNormalizedList(), map.keySet().toNormalizedList())
+        assertEquals(KEYS.toNormalizedList(), map.keys.toNormalizedList())
     }
 
     @test fun mapEntrySet() {
@@ -171,9 +171,9 @@ abstract class MapJsTest {
 
         val actualKeys = ArrayList<String>()
         val actualValues = ArrayList<Int>()
-        for (e in map.entrySet()) {
-            actualKeys.add(e.getKey())
-            actualValues.add(e.getValue())
+        for (e in map.entries) {
+            actualKeys.add(e.key)
+            actualValues.add(e.value)
         }
 
         assertEquals(KEYS.toNormalizedList(), actualKeys.toNormalizedList())
@@ -293,8 +293,8 @@ abstract class MapJsTest {
         val actualKeys = ArrayList<String>()
         val actualValues = ArrayList<Int>()
         for (e in map) {
-            actualKeys.add(e.getKey())
-            actualValues.add(e.getValue())
+            actualKeys.add(e.key)
+            actualValues.add(e.value)
         }
 
         assertEquals(KEYS.toNormalizedList(), actualKeys.toNormalizedList())
@@ -308,8 +308,8 @@ abstract class MapJsTest {
         val actualValues = ArrayList<Int>()
         val iterator = map.iterator()
         for (e in iterator) {
-            actualKeys.add(e.getKey())
-            actualValues.add(e.getValue())
+            actualKeys.add(e.key)
+            actualValues.add(e.value)
         }
 
         assertEquals(KEYS.toNormalizedList(), actualKeys.toNormalizedList())

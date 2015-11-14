@@ -112,7 +112,7 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
     append(iface.name)
     val primary = iface.primaryConstructor
     if (primary != null && (primary.constructor.arguments.isNotEmpty() || iface.secondaryConstructors.isNotEmpty())) {
-        renderArgumentsDeclaration(primary.constructor.fixRequiredArguments(iface.name).arguments.dynamicIfUnknownType(allTypes.keySet()), false)
+        renderArgumentsDeclaration(primary.constructor.fixRequiredArguments(iface.name).arguments.dynamicIfUnknownType(allTypes.keys), false)
     }
 
     val superCallName = primary?.initTypeCall?.name
@@ -130,7 +130,7 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
     iface.secondaryConstructors.forEach { secondary ->
         indent(false, 1)
         append("constructor")
-        renderArgumentsDeclaration(secondary.constructor.fixRequiredArguments(iface.name).arguments.dynamicIfUnknownType(allTypes.keySet()), false)
+        renderArgumentsDeclaration(secondary.constructor.fixRequiredArguments(iface.name).arguments.dynamicIfUnknownType(allTypes.keys), false)
 
         if (secondary.initTypeCall != null) {
             append(" : ")
@@ -146,9 +146,9 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
     val superSignatures = superAttributes.map { it.signature } merge superFunctions.map { it.signature }
 
     iface.memberAttributes
-            .filter { it !in superAttributes && !it.static && (it.isVar || (it.isVal && superAttributesByName[it.name]?.hasNoVars() ?: true)) }
-            .map { it.dynamicIfUnknownType(allTypes.keySet()) }
-            .groupBy { it.signature }.reduceValues().values().forEach { arg ->
+        .filter { it !in superAttributes && !it.static && (it.isVar || (it.isVal && superAttributesByName[it.name]?.hasNoVars() ?: true)) }
+        .map { it.dynamicIfUnknownType(allTypes.keys) }
+        .groupBy { it.signature }.reduceValues().values.forEach { arg ->
         renderAttributeDeclarationAsProperty(arg,
                 override = arg.signature in superSignatures,
                 open = iface.kind == GenerateDefinitionKind.CLASS && arg.isVal,
@@ -157,7 +157,7 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
                 level = 1
         )
     }
-    iface.memberFunctions.filter { it !in superFunctions && !it.static }.map { it.dynamicIfUnknownType(allTypes.keySet()) }.groupBy { it.signature }.reduceValues(::betterFunction).values().forEach {
+    iface.memberFunctions.filter { it !in superFunctions && !it.static }.map { it.dynamicIfUnknownType(allTypes.keys) }.groupBy { it.signature }.reduceValues(::betterFunction).values.forEach {
         renderFunctionDeclaration(it.fixRequiredArguments(iface.name), it.signature in superSignatures, commented = it.isCommented(iface.name))
     }
 
@@ -185,7 +185,7 @@ fun Appendable.render(allTypes: Map<String, GenerateTraitOrClass>, typeNamesToUn
     appendln()
 
     if (iface.generateBuilderFunction) {
-        renderBuilderFunction(iface, allSuperTypes, allTypes.keySet())
+        renderBuilderFunction(iface, allSuperTypes, allTypes.keys)
     }
 }
 
@@ -232,15 +232,15 @@ fun Appendable.render(namespace: String, ifaces: List<GenerateTraitOrClass>, uni
     val declaredTypes = ifaces.toMap { it.name }
 
     val allTypes = declaredTypes + unions.anonymousUnionsMap + unions.typedefsMarkersMap
-    declaredTypes.values().filter { it.namespace == namespace }.forEach {
+    declaredTypes.values.filter { it.namespace == namespace }.forEach {
         render(allTypes, unions.typeNamesToUnionsMap, it)
     }
 
-    unions.anonymousUnionsMap.values().filter { it.namespace == "" || it.namespace == namespace }.forEach {
+    unions.anonymousUnionsMap.values.filter { it.namespace == "" || it.namespace == namespace }.forEach {
         render(allTypes, emptyMap(), it, markerAnnotation = true)
     }
 
-    unions.typedefsMarkersMap.values().filter { it.namespace == "" || it.namespace == namespace }.forEach {
+    unions.typedefsMarkersMap.values.filter { it.namespace == "" || it.namespace == namespace }.forEach {
         render(allTypes, emptyMap(), it, markerAnnotation = true)
     }
 }

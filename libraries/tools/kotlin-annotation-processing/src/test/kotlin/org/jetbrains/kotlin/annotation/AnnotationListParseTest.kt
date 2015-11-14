@@ -61,8 +61,8 @@ public class AnnotationListParseTest {
 
         val actualAnnotations = StringBuilder()
         parsedAnnotations.forEach {
-            for (element in it.getValue()) {
-                actualAnnotations.append(it.getKey()).append(' ').append(element.classFqName)
+            for (element in it.value) {
+                actualAnnotations.append(it.key).append(' ').append(element.classFqName)
                 when (element) {
                     is AnnotatedMethodDescriptor -> actualAnnotations.append(' ').append(element.methodName)
                     is AnnotatedFieldDescriptor -> actualAnnotations.append(' ').append(element.fieldName)

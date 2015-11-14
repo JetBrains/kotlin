@@ -26,7 +26,7 @@ fun main(args: Array<String>) {
 
     val repository = repositoryPre.copy(typeDefs = repositoryPre.typeDefs.mapValues { it.value.copy(mapType(repositoryPre, it.value.types)) })
 
-    val definitions = mapDefinitions(repository, repository.interfaces.values()).map {
+    val definitions = mapDefinitions(repository, repository.interfaces.values).map {
         if (it.name in relocations) {
             // we need this to get interfaces listed in the relocations in valid package
             // to keep compatibility with DOM Java API
@@ -35,7 +35,7 @@ fun main(args: Array<String>) {
             it
         }
     }
-    val unions = generateUnions(definitions, repository.typeDefs.values())
+    val unions = generateUnions(definitions, repository.typeDefs.values)
     val allPackages = definitions.map { it.namespace }.distinct().sorted()
 
     outDir.deleteRecursively()
