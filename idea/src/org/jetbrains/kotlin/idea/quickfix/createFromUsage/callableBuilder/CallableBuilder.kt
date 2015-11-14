@@ -190,7 +190,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 newTypes.add(EqWrapper(currentFileModule.builtIns.anyType))
             }
 
-            newTypes.map { TypeCandidate(it._type, scope) }.reversed()
+            newTypes.map { TypeCandidate(it._type, scope) }.asReversed()
         }
     }
 

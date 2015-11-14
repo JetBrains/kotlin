@@ -29,11 +29,11 @@ public class RedundantGotoMethodTransformer : MethodTransformer() {
      * Removes redundant GOTO's, i.e. to subsequent labels
      */
     override fun transform(internalClassName: String, methodNode: MethodNode) {
-        val insns = methodNode.instructions.toArray()
+        val insns = methodNode.instructions.toArray().apply { reverse() }
         val insnsToRemove = arrayListOf<AbstractInsnNode>()
 
         val currentLabels = hashSetOf<LabelNode>()
-        for (insn in insns.reversed()) {
+        for (insn in insns) {
             if (insn.isMeaningful) {
                 if (insn.getOpcode() == Opcodes.GOTO && (insn as JumpInsnNode).label in currentLabels) {
                     insnsToRemove.add(insn)

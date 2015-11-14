@@ -211,10 +211,10 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
         }
 
         if (firstSpace != null) {
-            before.remove(before.lastIndex)
+            before.removeAt(before.lastIndex)
         }
 
-        val elements = before.reversed() + atStart
+        val elements = before.asReversed() + atStart
         commentsAndSpacesUsed.addAll(elements)
         return Prefix(elements, lineBreaks)
     }
@@ -233,11 +233,11 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
         if (after.isNotEmpty()) {
             val last = after.last()
             if (last is PsiWhiteSpace) {
-                after.remove(after.lastIndex)
+                after.removeAt(after.lastIndex)
             }
         }
 
-        val result = atEnd.reversed() + after
+        val result = atEnd.asReversed() + after
         commentsAndSpacesUsed.addAll(result)
         return result
     }

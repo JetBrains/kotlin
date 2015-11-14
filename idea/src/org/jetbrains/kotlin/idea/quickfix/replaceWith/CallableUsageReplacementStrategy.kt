@@ -186,7 +186,7 @@ private fun ConstructedExpressionWrapper.processValueParameterUsages(
 
     // process parameters in reverse order because default values can use previous parameters
     val parameters = resolvedCall.resultingDescriptor.valueParameters
-    for (parameter in parameters.reversed()) {
+    for (parameter in parameters.asReversed()) {
         val argument = argumentForParameter(parameter, resolvedCall, bindingContext, project) ?: continue
 
         argument.expression.put(PARAMETER_VALUE_KEY, parameter)
