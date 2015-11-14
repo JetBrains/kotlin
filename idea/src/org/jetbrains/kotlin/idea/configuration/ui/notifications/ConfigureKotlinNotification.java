@@ -24,7 +24,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils;
+import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt;
 import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator;
 import org.jetbrains.kotlin.idea.configuration.ui.NonConfiguredKotlinProjectComponent;
 
@@ -46,7 +46,7 @@ public class ConfigureKotlinNotification extends Notification {
             @Override
             public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
                 if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                    KotlinProjectConfigurator configurator = ConfigureKotlinInProjectUtils.getConfiguratorByName(event.getDescription());
+                    KotlinProjectConfigurator configurator = ConfigureKotlinInProjectUtilsKt.getConfiguratorByName(event.getDescription());
                     if (configurator == null) {
                         throw new AssertionError("Missed action: " + event.getDescription());
                     }
@@ -62,12 +62,12 @@ public class ConfigureKotlinNotification extends Notification {
 
     @NotNull
     public static String getNotificationString(Project project) {
-        Collection<Module> modules = ConfigureKotlinInProjectUtils.getNonConfiguredModules(project);
+        Collection<Module> modules = ConfigureKotlinInProjectUtilsKt.getNonConfiguredModules(project);
 
         final boolean isOnlyOneModule = modules.size() == 1;
 
         String modulesString = isOnlyOneModule ? String.format("'%s' module", first(modules).getName()) : "modules";
-        String links = StringUtil.join(ConfigureKotlinInProjectUtils.getAbleToRunConfigurators(project), new Function<KotlinProjectConfigurator, String>() {
+        String links = StringUtil.join(ConfigureKotlinInProjectUtilsKt.getAbleToRunConfigurators(project), new Function<KotlinProjectConfigurator, String>() {
             @Override
             public String fun(KotlinProjectConfigurator configurator) {
                 return getLink(configurator, isOnlyOneModule);

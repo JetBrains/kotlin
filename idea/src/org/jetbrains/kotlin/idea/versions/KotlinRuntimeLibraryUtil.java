@@ -42,7 +42,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinPluginUtil;
-import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils;
+import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt;
 import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator;
 import org.jetbrains.kotlin.idea.configuration.KotlinJsModuleConfigurator;
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider;
@@ -112,11 +112,11 @@ public class KotlinRuntimeLibraryUtil {
             @Override
             public void run() {
                 KotlinJavaModuleConfigurator kJvmConfigurator = (KotlinJavaModuleConfigurator)
-                        ConfigureKotlinInProjectUtils.getConfiguratorByName(KotlinJavaModuleConfigurator.NAME);
+                        ConfigureKotlinInProjectUtilsKt.getConfiguratorByName(KotlinJavaModuleConfigurator.NAME);
                 assert kJvmConfigurator != null : "Configurator with given name doesn't exists: " + KotlinJavaModuleConfigurator.NAME;
 
                 KotlinJsModuleConfigurator kJsConfigurator = (KotlinJsModuleConfigurator)
-                        ConfigureKotlinInProjectUtils.getConfiguratorByName(KotlinJsModuleConfigurator.NAME);
+                        ConfigureKotlinInProjectUtilsKt.getConfiguratorByName(KotlinJsModuleConfigurator.NAME);
                 assert kJsConfigurator != null : "Configurator with given name doesn't exists: " + KotlinJsModuleConfigurator.NAME;
 
                 for (Library library : libraries) {

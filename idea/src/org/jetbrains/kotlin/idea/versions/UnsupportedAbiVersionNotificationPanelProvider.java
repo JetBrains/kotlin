@@ -49,7 +49,7 @@ import com.intellij.util.messages.MessageBusConnection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinFileType;
-import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils;
+import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt;
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider;
 import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider;
 
@@ -203,7 +203,7 @@ public class UnsupportedAbiVersionNotificationPanelProvider extends EditorNotifi
             Module module = ModuleUtilCore.findModuleForFile(file, project);
             if (module == null) return null;
 
-            if (!ConfigureKotlinInProjectUtils.isModuleConfigured(module)) return null;
+            if (!ConfigureKotlinInProjectUtilsKt.isModuleConfigured(module)) return null;
 
             return checkAndCreate(project);
         }

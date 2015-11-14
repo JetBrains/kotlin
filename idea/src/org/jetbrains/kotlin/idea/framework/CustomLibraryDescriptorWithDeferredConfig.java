@@ -34,7 +34,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils;
+import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt;
 import org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator;
 import org.jetbrains.kotlin.idea.configuration.RuntimeLibraryFiles;
 import org.jetbrains.kotlin.idea.framework.ui.CreateLibraryDialog;
@@ -163,7 +163,7 @@ public abstract class CustomLibraryDescriptorWithDeferredConfig extends CustomLi
     @Override
     public NewLibraryConfiguration createNewLibrary(@NotNull JComponent parentComponent, @Nullable VirtualFile contextDirectory) {
         KotlinWithLibraryConfigurator configurator =
-                (KotlinWithLibraryConfigurator) ConfigureKotlinInProjectUtils.getConfiguratorByName(configuratorName);
+                (KotlinWithLibraryConfigurator) ConfigureKotlinInProjectUtilsKt.getConfiguratorByName(configuratorName);
         assert configurator != null : "Configurator with name " + configuratorName + " should exists";
 
         deferredCopyFileRequests = new DeferredCopyFileRequests(configurator);

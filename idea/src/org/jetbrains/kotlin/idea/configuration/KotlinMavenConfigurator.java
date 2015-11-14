@@ -110,7 +110,7 @@ public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurat
 
     @Override
     public void configure(@NotNull Project project) {
-        List<Module> nonConfiguredModules = ConfigureKotlinInProjectUtils.getNonConfiguredModules(project, this);
+        List<Module> nonConfiguredModules = ConfigureKotlinInProjectUtilsKt.getNonConfiguredModules(project, this);
 
         ConfigureDialogWithModulesAndVersion dialog =
                 new ConfigureDialogWithModulesAndVersion(project, nonConfiguredModules, KOTLIN_VERSIONS);
@@ -169,7 +169,7 @@ public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurat
             }
         }.execute();
 
-        ConfigureKotlinInProjectUtils.showInfoNotification(module.getProject(), virtualFile.getPath() + " was modified");
+        ConfigureKotlinInProjectUtilsKt.showInfoNotification(module.getProject(), virtualFile.getPath() + " was modified");
     }
 
     protected void createExecution(

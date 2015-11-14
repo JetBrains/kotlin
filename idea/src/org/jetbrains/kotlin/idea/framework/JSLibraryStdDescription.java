@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.idea.configuration.RuntimeLibraryFiles;
 import java.util.Collections;
 import java.util.Set;
 
-import static org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils.getConfiguratorByName;
+import static org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt.getConfiguratorByName;
 import static org.jetbrains.kotlin.idea.configuration.KotlinJsModuleConfigurator.NAME;
 
 public class JSLibraryStdDescription extends CustomLibraryDescriptorWithDeferredConfig {

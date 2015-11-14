@@ -14,150 +14,87 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.configuration;
+package org.jetbrains.kotlin.idea.configuration
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.intellij.notification.Notification;
-import com.intellij.notification.NotificationType;
-import com.intellij.notification.Notifications;
-import com.intellij.openapi.extensions.Extensions;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.search.FileTypeIndex;
-import com.intellij.psi.search.GlobalSearchScope;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.KotlinFileType;
+import com.intellij.notification.Notification
+import com.intellij.notification.NotificationType
+import com.intellij.notification.Notifications
+import com.intellij.openapi.extensions.Extensions
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleManager
+import com.intellij.openapi.project.Project
+import com.intellij.psi.search.FileTypeIndex
+import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.idea.KotlinFileType
 
-import java.util.*;
+fun isProjectConfigured(project: Project): Boolean {
+    val modules = getModulesWithKotlinFiles(project)
+    return modules.all { isModuleConfigured(it) }
+}
 
-public class ConfigureKotlinInProjectUtils {
-    public static boolean isProjectConfigured(@NotNull Project project) {
-        Collection<Module> modules = getModulesWithKotlinFiles(project);
-        for (Module module : modules) {
-            if (!isModuleConfigured(module)) {
-                return false;
-            }
-        }
-        return true;
+fun isModuleConfigured(module: Module): Boolean {
+    val configurators = getApplicableConfigurators(module)
+    return configurators.any { it.isConfigured(module) }
+}
+
+fun getModulesWithKotlinFiles(project: Project): Collection<Module> {
+    if (project.isDisposed) {
+        return emptyList()
     }
 
-    public static boolean isModuleConfigured(@NotNull Module module) {
-        Set<KotlinProjectConfigurator> configurators = getApplicableConfigurators(module);
-        for (KotlinProjectConfigurator configurator : configurators) {
-            if (configurator.isConfigured(module)) {
-                return true;
-            }
-        }
-        return false;
+    if (!FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, GlobalSearchScope.projectScope(project))) {
+        return emptyList()
     }
 
-    public static Collection<Module> getModulesWithKotlinFiles(@NotNull Project project) {
-        if (project.isDisposed()) {
-            return Collections.emptyList();
-        }
-
-        if (!FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, GlobalSearchScope.projectScope(project))) {
-            return Collections.emptyList();
-        }
-
-        List<Module> modulesWithKotlin = Lists.newArrayList();
-        for (Module module : ModuleManager.getInstance(project).getModules()) {
-            if (FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, module.getModuleScope(true))) {
-                modulesWithKotlin.add(module);
-            }
-        }
-
-        return modulesWithKotlin;
+    return ModuleManager.getInstance(project).modules.filter { module ->
+        FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, module.getModuleScope(true))
     }
+}
 
-    public static void showConfigureKotlinNotificationIfNeeded(@NotNull Module module) {
-        if (isModuleConfigured(module)) return;
+fun showConfigureKotlinNotificationIfNeeded(module: Module) {
+    if (isModuleConfigured(module)) return
 
-        showConfigureKotlinNotification(module.getProject());
+    showConfigureKotlinNotification(module.project)
+}
+
+fun showConfigureKotlinNotificationIfNeeded(project: Project) {
+    if (isProjectConfigured(project)) return
+
+    showConfigureKotlinNotification(project)
+}
+
+private fun showConfigureKotlinNotification(project: Project) {
+    ConfigureKotlinNotificationManager.notify(project)
+}
+
+fun getAbleToRunConfigurators(project: Project): Collection<KotlinProjectConfigurator> {
+    val modules = getModulesWithKotlinFiles(project)
+
+    return Extensions.getExtensions(KotlinProjectConfigurator.EP_NAME).filter { configurator ->
+        modules.any { module -> configurator.isApplicable(module) && !configurator.isConfigured(module) }
     }
+}
 
-    public static void showConfigureKotlinNotificationIfNeeded(@NotNull Project project) {
-        if (isProjectConfigured(project)) return;
+fun getApplicableConfigurators(module: Module): Collection<KotlinProjectConfigurator> {
+    return Extensions.getExtensions(KotlinProjectConfigurator.EP_NAME).filter { it.isApplicable(module) }
+}
 
-        showConfigureKotlinNotification(project);
+fun getConfiguratorByName(name: String): KotlinProjectConfigurator? {
+    return Extensions.getExtensions(KotlinProjectConfigurator.EP_NAME).firstOrNull { it.name == name }
+}
+
+fun getNonConfiguredModules(project: Project, configurator: KotlinProjectConfigurator): List<Module> {
+    val modules = getModulesWithKotlinFiles(project)
+    return modules.filter { module -> configurator.isApplicable(module) && !configurator.isConfigured(module) }
+}
+
+fun getNonConfiguredModules(project: Project): Collection<Module> {
+    val modulesWithKotlinFiles = getModulesWithKotlinFiles(project)
+    return modulesWithKotlinFiles.filter { module ->
+        getAbleToRunConfigurators(project).any { !it.isConfigured(module) }
     }
+}
 
-    private static void showConfigureKotlinNotification(@NotNull Project project) {
-        ConfigureKotlinNotificationManager.INSTANCE.notify(project);
-    }
-
-    @NotNull
-    public static Collection<KotlinProjectConfigurator> getAbleToRunConfigurators(@NotNull Project project) {
-        Collection<Module> modules = getModulesWithKotlinFiles(project);
-
-        Set<KotlinProjectConfigurator> canRunConfigurators = Sets.newLinkedHashSet();
-        for (KotlinProjectConfigurator configurator : Extensions.getExtensions(KotlinProjectConfigurator.EP_NAME)) {
-            for (Module module : modules) {
-                if (configurator.isApplicable(module) && !configurator.isConfigured(module)) {
-                    canRunConfigurators.add(configurator);
-                    break;
-                }
-            }
-        }
-
-        return canRunConfigurators;
-    }
-
-    @NotNull
-    public static Set<KotlinProjectConfigurator> getApplicableConfigurators(@NotNull Module module) {
-        Set<KotlinProjectConfigurator> applicableConfigurators = Sets.newHashSet();
-        for (KotlinProjectConfigurator configurator : Extensions.getExtensions(KotlinProjectConfigurator.EP_NAME)) {
-            if (configurator.isApplicable(module)) {
-                applicableConfigurators.add(configurator);
-            }
-        }
-        return applicableConfigurators;
-    }
-
-    @Nullable
-    public static KotlinProjectConfigurator getConfiguratorByName(@NotNull String name) {
-        for (KotlinProjectConfigurator configurator : Extensions.getExtensions(KotlinProjectConfigurator.EP_NAME)) {
-            if (configurator.getName().equals(name)) {
-                return configurator;
-            }
-        }
-        return null;
-    }
-
-    public static List<Module> getNonConfiguredModules(@NotNull Project project, @NotNull KotlinProjectConfigurator configurator) {
-        Collection<Module> modules = getModulesWithKotlinFiles(project);
-        List<Module> result = new ArrayList<Module>(modules.size());
-        for (Module module : modules) {
-            if (configurator.isApplicable(module) && !configurator.isConfigured(module)) {
-                result.add(module);
-            }
-        }
-        return result;
-    }
-
-    @NotNull
-    public static Collection<Module> getNonConfiguredModules(@NotNull Project project) {
-        Set<Module> modules = Sets.newHashSet();
-        Collection<Module> modulesWithKotlinFiles = getModulesWithKotlinFiles(project);
-
-        for (KotlinProjectConfigurator configurator : getAbleToRunConfigurators(project)) {
-            for (Module module : modulesWithKotlinFiles) {
-                if (!configurator.isConfigured(module)) {
-                    modules.add(module);
-                }
-            }
-        }
-
-        return modules;
-    }
-
-    private ConfigureKotlinInProjectUtils() {
-    }
-
-    public static void showInfoNotification(@NotNull Project project, @NotNull String message) {
-        Notifications.Bus.notify(new Notification("Configure Kotlin: info notification", "Configure Kotlin", message, NotificationType.INFORMATION), project);
-    }
+fun showInfoNotification(project: Project, message: String) {
+    Notifications.Bus.notify(Notification("Configure Kotlin: info notification", "Configure Kotlin", message, NotificationType.INFORMATION), project)
 }

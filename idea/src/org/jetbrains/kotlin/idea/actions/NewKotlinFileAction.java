@@ -33,7 +33,7 @@ import com.intellij.psi.PsiFile;
 import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.KotlinIcons;
-import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils;
+import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt;
 
 import java.util.Map;
 
@@ -48,7 +48,7 @@ public class NewKotlinFileAction extends CreateFileFromTemplateAction implements
 
         Module module = ModuleUtilCore.findModuleForPsiElement(createdElement);
         if (module != null) {
-            ConfigureKotlinInProjectUtils.showConfigureKotlinNotificationIfNeeded(module);
+            ConfigureKotlinInProjectUtilsKt.showConfigureKotlinNotificationIfNeeded(module);
         }
     }
 

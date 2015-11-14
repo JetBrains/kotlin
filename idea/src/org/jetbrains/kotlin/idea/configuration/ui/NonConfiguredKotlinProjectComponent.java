@@ -22,7 +22,7 @@ import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
-import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils;
+import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt;
 
 public class NonConfiguredKotlinProjectComponent extends AbstractProjectComponent {
     public static final String CONFIGURE_NOTIFICATION_GROUP_ID = "Configure Kotlin in Project";
@@ -44,7 +44,7 @@ public class NonConfiguredKotlinProjectComponent extends AbstractProjectComponen
                 DumbService.getInstance(myProject).smartInvokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        ConfigureKotlinInProjectUtils.showConfigureKotlinNotificationIfNeeded(myProject);
+                        ConfigureKotlinInProjectUtilsKt.showConfigureKotlinNotificationIfNeeded(myProject);
                     }
                 });
             }
