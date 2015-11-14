@@ -528,4 +528,4 @@ fun merge(i1: InterfaceDefinition, i2: InterfaceDefinition): InterfaceDefinition
     )
 }
 
-fun <T> List<T>.merge(other: List<T>) = (this + other).distinct().toList()
+infix fun <T> List<T>.merge(other: List<T>) = (this + other).distinct()

@@ -59,11 +59,9 @@ private fun String.replaceWrongConstants(type: Type) = when {
 private fun String.replaceKeywords() = if (this in keywords) this + "_" else this
 
 private fun Appendable.renderArgumentsDeclaration(args: List<GenerateAttribute>, omitDefaults: Boolean = false) =
-        args.map {
-            StringBuilder {
-                renderAttributeDeclaration(it, it.override, false, omitDefaults)
-            }
-        }.joinTo(this, ", ", "(", ")")
+        args.joinTo(this, ", ", "(", ")") {
+            StringBuilder().apply { renderAttributeDeclaration(it, it.override, false, omitDefaults) }
+        }
 
 private fun renderCall(call: GenerateFunctionCall) = "${call.name.replaceKeywords()}(${call.arguments.joinToString(", ") { it.replaceKeywords() }})"
 

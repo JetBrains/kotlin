@@ -1210,7 +1210,7 @@ public inline fun <T, K> Iterable<T>.distinctBy(keySelector: (T) -> K): List<T> 
 /**
  * Returns a set containing all elements that are contained by both this set and the specified collection.
  */
-public fun <T> Iterable<T>.intersect(other: Iterable<T>): Set<T> {
+public infix fun <T> Iterable<T>.intersect(other: Iterable<T>): Set<T> {
     val set = this.toMutableSet()
     set.retainAll(other)
     return set
@@ -1219,7 +1219,7 @@ public fun <T> Iterable<T>.intersect(other: Iterable<T>): Set<T> {
 /**
  * Returns a set containing all elements that are contained by this set and not contained by the specified collection.
  */
-public fun <T> Iterable<T>.subtract(other: Iterable<T>): Set<T> {
+public infix fun <T> Iterable<T>.subtract(other: Iterable<T>): Set<T> {
     val set = this.toMutableSet()
     set.removeAll(other)
     return set
@@ -1238,7 +1238,7 @@ public fun <T> Iterable<T>.toMutableSet(): MutableSet<T> {
 /**
  * Returns a set containing all distinct elements from both collections.
  */
-public fun <T> Iterable<T>.union(other: Iterable<T>): Set<T> {
+public infix fun <T> Iterable<T>.union(other: Iterable<T>): Set<T> {
     val set = this.toMutableSet()
     set.addAll(other)
     return set
@@ -1631,7 +1631,7 @@ public operator fun <T> Iterable<T>.plus(sequence: Sequence<T>): List<T> {
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public fun <T, R> Iterable<T>.zip(array: Array<out R>): List<Pair<T, R>> {
+public infix fun <T, R> Iterable<T>.zip(array: Array<out R>): List<Pair<T, R>> {
     return zip(array) { t1, t2 -> t1 to t2 }
 }
 
@@ -1652,7 +1652,7 @@ public inline fun <T, R, V> Iterable<T>.zip(array: Array<out R>, transform: (T, 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public fun <T, R> Iterable<T>.zip(other: Iterable<R>): List<Pair<T, R>> {
+public infix fun <T, R> Iterable<T>.zip(other: Iterable<R>): List<Pair<T, R>> {
     return zip(other) { t1, t2 -> t1 to t2 }
 }
 

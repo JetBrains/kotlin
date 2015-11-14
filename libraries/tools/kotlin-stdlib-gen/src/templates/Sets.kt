@@ -90,6 +90,7 @@ fun sets(): List<GenericFunction> {
     }
 
     templates add f("union(other: Iterable<T>)") {
+        infix(true)
         exclude(Strings, Sequences)
         doc { "Returns a set containing all distinct elements from both collections." }
         returns("Set<T>")
@@ -103,6 +104,7 @@ fun sets(): List<GenericFunction> {
     }
 
     templates add f("intersect(other: Iterable<T>)") {
+        infix(true)
         exclude(Strings, Sequences)
         doc { "Returns a set containing all elements that are contained by both this set and the specified collection." }
         returns("Set<T>")
@@ -116,6 +118,7 @@ fun sets(): List<GenericFunction> {
     }
 
     templates add f("subtract(other: Iterable<T>)") {
+        infix(true)
         exclude(Strings, Sequences)
         doc { "Returns a set containing all elements that are contained by this set and not contained by the specified collection." }
         returns("Set<T>")

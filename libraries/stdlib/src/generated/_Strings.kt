@@ -1568,7 +1568,7 @@ public inline fun String.partition(predicate: (Char) -> Boolean): Pair<String, S
 /**
  * Returns a list of pairs built from characters of both char sequences with same indexes. List has length of shortest char sequence.
  */
-public fun CharSequence.zip(other: String): List<Pair<Char, Char>> {
+public infix fun CharSequence.zip(other: String): List<Pair<Char, Char>> {
     return zip(other) { c1, c2 -> c1 to c2 }
 }
 
@@ -1576,7 +1576,7 @@ public fun CharSequence.zip(other: String): List<Pair<Char, Char>> {
  * Returns a list of pairs built from characters of both char sequences with same indexes. List has length of shortest char sequence.
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun String.zip(other: String): List<Pair<Char, Char>> {
+public infix fun String.zip(other: String): List<Pair<Char, Char>> {
     return zip(other) { c1, c2 -> c1 to c2 }
 }
 

@@ -582,6 +582,7 @@ fun generators(): List<GenericFunction> {
 
 
     templates add f("zip(other: Iterable<R>)") {
+        infix(true)
         exclude(Sequences)
         doc {
             """
@@ -598,6 +599,7 @@ fun generators(): List<GenericFunction> {
     }
 
     templates add f("zip(other: String)") {
+        infix(true)
         deprecate(Strings) { forBinaryCompatibility }
         only(CharSequences, Strings)
         doc {
@@ -614,6 +616,7 @@ fun generators(): List<GenericFunction> {
     }
 
     templates add f("zip(array: Array<out R>)") {
+        infix(true)
         exclude(Sequences)
         doc {
             """
@@ -630,6 +633,7 @@ fun generators(): List<GenericFunction> {
     }
 
     templates add f("zip(array: SELF)") {
+        infix(true)
         only(ArraysOfPrimitives)
         doc {
             """
@@ -645,6 +649,7 @@ fun generators(): List<GenericFunction> {
     }
 
     templates add f("zip(sequence: Sequence<R>)") {
+        infix(true)
         only(Sequences)
         doc {
             """

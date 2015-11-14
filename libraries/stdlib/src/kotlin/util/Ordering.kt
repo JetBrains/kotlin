@@ -207,7 +207,7 @@ inline public fun <T> Comparator<T>.thenComparator(crossinline comparison: (T, T
  * Combines this comparator and the given [comparator] such that the latter is applied only
  * when the former considered values equal.
  */
-public fun <T> Comparator<T>.then(comparator: Comparator<in T>): Comparator<T> {
+public infix fun <T> Comparator<T>.then(comparator: Comparator<in T>): Comparator<T> {
     return object : Comparator<T> {
         public override fun compare(a: T, b: T): Int {
             val previousCompare = this@then.compare(a, b)
@@ -220,7 +220,7 @@ public fun <T> Comparator<T>.then(comparator: Comparator<in T>): Comparator<T> {
  * Combines this comparator and the given [comparator] such that the latter is applied only
  * when the former considered values equal.
  */
-public fun <T> Comparator<T>.thenDescending(comparator: Comparator<in T>): Comparator<T> {
+public infix fun <T> Comparator<T>.thenDescending(comparator: Comparator<in T>): Comparator<T> {
     return object : Comparator<T> {
         public override fun compare(a: T, b: T): Int {
             val previousCompare = this@thenDescending.compare(a, b)

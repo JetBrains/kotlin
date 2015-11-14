@@ -7307,7 +7307,7 @@ public inline fun <K> ShortArray.distinctBy(keySelector: (Short) -> K): List<Sho
 /**
  * Returns a set containing all elements that are contained by both this set and the specified collection.
  */
-public fun <T> Array<out T>.intersect(other: Iterable<T>): Set<T> {
+public infix fun <T> Array<out T>.intersect(other: Iterable<T>): Set<T> {
     val set = this.toMutableSet()
     set.retainAll(other)
     return set
@@ -7316,7 +7316,7 @@ public fun <T> Array<out T>.intersect(other: Iterable<T>): Set<T> {
 /**
  * Returns a set containing all elements that are contained by both this set and the specified collection.
  */
-public fun BooleanArray.intersect(other: Iterable<Boolean>): Set<Boolean> {
+public infix fun BooleanArray.intersect(other: Iterable<Boolean>): Set<Boolean> {
     val set = this.toMutableSet()
     set.retainAll(other)
     return set
@@ -7325,7 +7325,7 @@ public fun BooleanArray.intersect(other: Iterable<Boolean>): Set<Boolean> {
 /**
  * Returns a set containing all elements that are contained by both this set and the specified collection.
  */
-public fun ByteArray.intersect(other: Iterable<Byte>): Set<Byte> {
+public infix fun ByteArray.intersect(other: Iterable<Byte>): Set<Byte> {
     val set = this.toMutableSet()
     set.retainAll(other)
     return set
@@ -7334,7 +7334,7 @@ public fun ByteArray.intersect(other: Iterable<Byte>): Set<Byte> {
 /**
  * Returns a set containing all elements that are contained by both this set and the specified collection.
  */
-public fun CharArray.intersect(other: Iterable<Char>): Set<Char> {
+public infix fun CharArray.intersect(other: Iterable<Char>): Set<Char> {
     val set = this.toMutableSet()
     set.retainAll(other)
     return set
@@ -7343,7 +7343,7 @@ public fun CharArray.intersect(other: Iterable<Char>): Set<Char> {
 /**
  * Returns a set containing all elements that are contained by both this set and the specified collection.
  */
-public fun DoubleArray.intersect(other: Iterable<Double>): Set<Double> {
+public infix fun DoubleArray.intersect(other: Iterable<Double>): Set<Double> {
     val set = this.toMutableSet()
     set.retainAll(other)
     return set
@@ -7352,7 +7352,7 @@ public fun DoubleArray.intersect(other: Iterable<Double>): Set<Double> {
 /**
  * Returns a set containing all elements that are contained by both this set and the specified collection.
  */
-public fun FloatArray.intersect(other: Iterable<Float>): Set<Float> {
+public infix fun FloatArray.intersect(other: Iterable<Float>): Set<Float> {
     val set = this.toMutableSet()
     set.retainAll(other)
     return set
@@ -7361,7 +7361,7 @@ public fun FloatArray.intersect(other: Iterable<Float>): Set<Float> {
 /**
  * Returns a set containing all elements that are contained by both this set and the specified collection.
  */
-public fun IntArray.intersect(other: Iterable<Int>): Set<Int> {
+public infix fun IntArray.intersect(other: Iterable<Int>): Set<Int> {
     val set = this.toMutableSet()
     set.retainAll(other)
     return set
@@ -7370,7 +7370,7 @@ public fun IntArray.intersect(other: Iterable<Int>): Set<Int> {
 /**
  * Returns a set containing all elements that are contained by both this set and the specified collection.
  */
-public fun LongArray.intersect(other: Iterable<Long>): Set<Long> {
+public infix fun LongArray.intersect(other: Iterable<Long>): Set<Long> {
     val set = this.toMutableSet()
     set.retainAll(other)
     return set
@@ -7379,7 +7379,7 @@ public fun LongArray.intersect(other: Iterable<Long>): Set<Long> {
 /**
  * Returns a set containing all elements that are contained by both this set and the specified collection.
  */
-public fun ShortArray.intersect(other: Iterable<Short>): Set<Short> {
+public infix fun ShortArray.intersect(other: Iterable<Short>): Set<Short> {
     val set = this.toMutableSet()
     set.retainAll(other)
     return set
@@ -7388,7 +7388,7 @@ public fun ShortArray.intersect(other: Iterable<Short>): Set<Short> {
 /**
  * Returns a set containing all elements that are contained by this set and not contained by the specified collection.
  */
-public fun <T> Array<out T>.subtract(other: Iterable<T>): Set<T> {
+public infix fun <T> Array<out T>.subtract(other: Iterable<T>): Set<T> {
     val set = this.toMutableSet()
     set.removeAll(other)
     return set
@@ -7397,7 +7397,7 @@ public fun <T> Array<out T>.subtract(other: Iterable<T>): Set<T> {
 /**
  * Returns a set containing all elements that are contained by this set and not contained by the specified collection.
  */
-public fun BooleanArray.subtract(other: Iterable<Boolean>): Set<Boolean> {
+public infix fun BooleanArray.subtract(other: Iterable<Boolean>): Set<Boolean> {
     val set = this.toMutableSet()
     set.removeAll(other)
     return set
@@ -7406,7 +7406,7 @@ public fun BooleanArray.subtract(other: Iterable<Boolean>): Set<Boolean> {
 /**
  * Returns a set containing all elements that are contained by this set and not contained by the specified collection.
  */
-public fun ByteArray.subtract(other: Iterable<Byte>): Set<Byte> {
+public infix fun ByteArray.subtract(other: Iterable<Byte>): Set<Byte> {
     val set = this.toMutableSet()
     set.removeAll(other)
     return set
@@ -7415,7 +7415,7 @@ public fun ByteArray.subtract(other: Iterable<Byte>): Set<Byte> {
 /**
  * Returns a set containing all elements that are contained by this set and not contained by the specified collection.
  */
-public fun CharArray.subtract(other: Iterable<Char>): Set<Char> {
+public infix fun CharArray.subtract(other: Iterable<Char>): Set<Char> {
     val set = this.toMutableSet()
     set.removeAll(other)
     return set
@@ -7424,7 +7424,7 @@ public fun CharArray.subtract(other: Iterable<Char>): Set<Char> {
 /**
  * Returns a set containing all elements that are contained by this set and not contained by the specified collection.
  */
-public fun DoubleArray.subtract(other: Iterable<Double>): Set<Double> {
+public infix fun DoubleArray.subtract(other: Iterable<Double>): Set<Double> {
     val set = this.toMutableSet()
     set.removeAll(other)
     return set
@@ -7433,7 +7433,7 @@ public fun DoubleArray.subtract(other: Iterable<Double>): Set<Double> {
 /**
  * Returns a set containing all elements that are contained by this set and not contained by the specified collection.
  */
-public fun FloatArray.subtract(other: Iterable<Float>): Set<Float> {
+public infix fun FloatArray.subtract(other: Iterable<Float>): Set<Float> {
     val set = this.toMutableSet()
     set.removeAll(other)
     return set
@@ -7442,7 +7442,7 @@ public fun FloatArray.subtract(other: Iterable<Float>): Set<Float> {
 /**
  * Returns a set containing all elements that are contained by this set and not contained by the specified collection.
  */
-public fun IntArray.subtract(other: Iterable<Int>): Set<Int> {
+public infix fun IntArray.subtract(other: Iterable<Int>): Set<Int> {
     val set = this.toMutableSet()
     set.removeAll(other)
     return set
@@ -7451,7 +7451,7 @@ public fun IntArray.subtract(other: Iterable<Int>): Set<Int> {
 /**
  * Returns a set containing all elements that are contained by this set and not contained by the specified collection.
  */
-public fun LongArray.subtract(other: Iterable<Long>): Set<Long> {
+public infix fun LongArray.subtract(other: Iterable<Long>): Set<Long> {
     val set = this.toMutableSet()
     set.removeAll(other)
     return set
@@ -7460,7 +7460,7 @@ public fun LongArray.subtract(other: Iterable<Long>): Set<Long> {
 /**
  * Returns a set containing all elements that are contained by this set and not contained by the specified collection.
  */
-public fun ShortArray.subtract(other: Iterable<Short>): Set<Short> {
+public infix fun ShortArray.subtract(other: Iterable<Short>): Set<Short> {
     val set = this.toMutableSet()
     set.removeAll(other)
     return set
@@ -7550,7 +7550,7 @@ public fun ShortArray.toMutableSet(): MutableSet<Short> {
 /**
  * Returns a set containing all distinct elements from both collections.
  */
-public fun <T> Array<out T>.union(other: Iterable<T>): Set<T> {
+public infix fun <T> Array<out T>.union(other: Iterable<T>): Set<T> {
     val set = this.toMutableSet()
     set.addAll(other)
     return set
@@ -7559,7 +7559,7 @@ public fun <T> Array<out T>.union(other: Iterable<T>): Set<T> {
 /**
  * Returns a set containing all distinct elements from both collections.
  */
-public fun BooleanArray.union(other: Iterable<Boolean>): Set<Boolean> {
+public infix fun BooleanArray.union(other: Iterable<Boolean>): Set<Boolean> {
     val set = this.toMutableSet()
     set.addAll(other)
     return set
@@ -7568,7 +7568,7 @@ public fun BooleanArray.union(other: Iterable<Boolean>): Set<Boolean> {
 /**
  * Returns a set containing all distinct elements from both collections.
  */
-public fun ByteArray.union(other: Iterable<Byte>): Set<Byte> {
+public infix fun ByteArray.union(other: Iterable<Byte>): Set<Byte> {
     val set = this.toMutableSet()
     set.addAll(other)
     return set
@@ -7577,7 +7577,7 @@ public fun ByteArray.union(other: Iterable<Byte>): Set<Byte> {
 /**
  * Returns a set containing all distinct elements from both collections.
  */
-public fun CharArray.union(other: Iterable<Char>): Set<Char> {
+public infix fun CharArray.union(other: Iterable<Char>): Set<Char> {
     val set = this.toMutableSet()
     set.addAll(other)
     return set
@@ -7586,7 +7586,7 @@ public fun CharArray.union(other: Iterable<Char>): Set<Char> {
 /**
  * Returns a set containing all distinct elements from both collections.
  */
-public fun DoubleArray.union(other: Iterable<Double>): Set<Double> {
+public infix fun DoubleArray.union(other: Iterable<Double>): Set<Double> {
     val set = this.toMutableSet()
     set.addAll(other)
     return set
@@ -7595,7 +7595,7 @@ public fun DoubleArray.union(other: Iterable<Double>): Set<Double> {
 /**
  * Returns a set containing all distinct elements from both collections.
  */
-public fun FloatArray.union(other: Iterable<Float>): Set<Float> {
+public infix fun FloatArray.union(other: Iterable<Float>): Set<Float> {
     val set = this.toMutableSet()
     set.addAll(other)
     return set
@@ -7604,7 +7604,7 @@ public fun FloatArray.union(other: Iterable<Float>): Set<Float> {
 /**
  * Returns a set containing all distinct elements from both collections.
  */
-public fun IntArray.union(other: Iterable<Int>): Set<Int> {
+public infix fun IntArray.union(other: Iterable<Int>): Set<Int> {
     val set = this.toMutableSet()
     set.addAll(other)
     return set
@@ -7613,7 +7613,7 @@ public fun IntArray.union(other: Iterable<Int>): Set<Int> {
 /**
  * Returns a set containing all distinct elements from both collections.
  */
-public fun LongArray.union(other: Iterable<Long>): Set<Long> {
+public infix fun LongArray.union(other: Iterable<Long>): Set<Long> {
     val set = this.toMutableSet()
     set.addAll(other)
     return set
@@ -7622,7 +7622,7 @@ public fun LongArray.union(other: Iterable<Long>): Set<Long> {
 /**
  * Returns a set containing all distinct elements from both collections.
  */
-public fun ShortArray.union(other: Iterable<Short>): Set<Short> {
+public infix fun ShortArray.union(other: Iterable<Short>): Set<Short> {
     val set = this.toMutableSet()
     set.addAll(other)
     return set
@@ -9597,63 +9597,63 @@ public inline fun ShortArray.partition(predicate: (Short) -> Boolean): Pair<List
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public fun <T, R> Array<out T>.zip(array: Array<out R>): List<Pair<T, R>> {
+public infix fun <T, R> Array<out T>.zip(array: Array<out R>): List<Pair<T, R>> {
     return zip(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public fun <R> BooleanArray.zip(array: Array<out R>): List<Pair<Boolean, R>> {
+public infix fun <R> BooleanArray.zip(array: Array<out R>): List<Pair<Boolean, R>> {
     return zip(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public fun <R> ByteArray.zip(array: Array<out R>): List<Pair<Byte, R>> {
+public infix fun <R> ByteArray.zip(array: Array<out R>): List<Pair<Byte, R>> {
     return zip(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public fun <R> CharArray.zip(array: Array<out R>): List<Pair<Char, R>> {
+public infix fun <R> CharArray.zip(array: Array<out R>): List<Pair<Char, R>> {
     return zip(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public fun <R> DoubleArray.zip(array: Array<out R>): List<Pair<Double, R>> {
+public infix fun <R> DoubleArray.zip(array: Array<out R>): List<Pair<Double, R>> {
     return zip(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public fun <R> FloatArray.zip(array: Array<out R>): List<Pair<Float, R>> {
+public infix fun <R> FloatArray.zip(array: Array<out R>): List<Pair<Float, R>> {
     return zip(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public fun <R> IntArray.zip(array: Array<out R>): List<Pair<Int, R>> {
+public infix fun <R> IntArray.zip(array: Array<out R>): List<Pair<Int, R>> {
     return zip(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public fun <R> LongArray.zip(array: Array<out R>): List<Pair<Long, R>> {
+public infix fun <R> LongArray.zip(array: Array<out R>): List<Pair<Long, R>> {
     return zip(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public fun <R> ShortArray.zip(array: Array<out R>): List<Pair<Short, R>> {
+public infix fun <R> ShortArray.zip(array: Array<out R>): List<Pair<Short, R>> {
     return zip(array) { t1, t2 -> t1 to t2 }
 }
 
@@ -9768,56 +9768,56 @@ public inline fun <R, V> ShortArray.zip(array: Array<out R>, transform: (Short, 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public fun BooleanArray.zip(array: BooleanArray): List<Pair<Boolean, Boolean>> {
+public infix fun BooleanArray.zip(array: BooleanArray): List<Pair<Boolean, Boolean>> {
     return zip(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public fun ByteArray.zip(array: ByteArray): List<Pair<Byte, Byte>> {
+public infix fun ByteArray.zip(array: ByteArray): List<Pair<Byte, Byte>> {
     return zip(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public fun CharArray.zip(array: CharArray): List<Pair<Char, Char>> {
+public infix fun CharArray.zip(array: CharArray): List<Pair<Char, Char>> {
     return zip(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public fun DoubleArray.zip(array: DoubleArray): List<Pair<Double, Double>> {
+public infix fun DoubleArray.zip(array: DoubleArray): List<Pair<Double, Double>> {
     return zip(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public fun FloatArray.zip(array: FloatArray): List<Pair<Float, Float>> {
+public infix fun FloatArray.zip(array: FloatArray): List<Pair<Float, Float>> {
     return zip(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public fun IntArray.zip(array: IntArray): List<Pair<Int, Int>> {
+public infix fun IntArray.zip(array: IntArray): List<Pair<Int, Int>> {
     return zip(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public fun LongArray.zip(array: LongArray): List<Pair<Long, Long>> {
+public infix fun LongArray.zip(array: LongArray): List<Pair<Long, Long>> {
     return zip(array) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public fun ShortArray.zip(array: ShortArray): List<Pair<Short, Short>> {
+public infix fun ShortArray.zip(array: ShortArray): List<Pair<Short, Short>> {
     return zip(array) { t1, t2 -> t1 to t2 }
 }
 
@@ -9920,63 +9920,63 @@ public inline fun <V> ShortArray.zip(array: ShortArray, transform: (Short, Short
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public fun <T, R> Array<out T>.zip(other: Iterable<R>): List<Pair<T, R>> {
+public infix fun <T, R> Array<out T>.zip(other: Iterable<R>): List<Pair<T, R>> {
     return zip(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public fun <R> BooleanArray.zip(other: Iterable<R>): List<Pair<Boolean, R>> {
+public infix fun <R> BooleanArray.zip(other: Iterable<R>): List<Pair<Boolean, R>> {
     return zip(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public fun <R> ByteArray.zip(other: Iterable<R>): List<Pair<Byte, R>> {
+public infix fun <R> ByteArray.zip(other: Iterable<R>): List<Pair<Byte, R>> {
     return zip(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public fun <R> CharArray.zip(other: Iterable<R>): List<Pair<Char, R>> {
+public infix fun <R> CharArray.zip(other: Iterable<R>): List<Pair<Char, R>> {
     return zip(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public fun <R> DoubleArray.zip(other: Iterable<R>): List<Pair<Double, R>> {
+public infix fun <R> DoubleArray.zip(other: Iterable<R>): List<Pair<Double, R>> {
     return zip(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public fun <R> FloatArray.zip(other: Iterable<R>): List<Pair<Float, R>> {
+public infix fun <R> FloatArray.zip(other: Iterable<R>): List<Pair<Float, R>> {
     return zip(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public fun <R> IntArray.zip(other: Iterable<R>): List<Pair<Int, R>> {
+public infix fun <R> IntArray.zip(other: Iterable<R>): List<Pair<Int, R>> {
     return zip(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public fun <R> LongArray.zip(other: Iterable<R>): List<Pair<Long, R>> {
+public infix fun <R> LongArray.zip(other: Iterable<R>): List<Pair<Long, R>> {
     return zip(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public fun <R> ShortArray.zip(other: Iterable<R>): List<Pair<Short, R>> {
+public infix fun <R> ShortArray.zip(other: Iterable<R>): List<Pair<Short, R>> {
     return zip(other) { t1, t2 -> t1 to t2 }
 }
 

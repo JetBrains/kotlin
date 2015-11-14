@@ -1010,7 +1010,7 @@ public operator fun <T> Sequence<T>.plus(sequence: Sequence<T>): Sequence<T> {
  * Returns a sequence of pairs built from elements of both collections with same indexes.
  * Resulting sequence has length of shortest input sequence.
  */
-public fun <T, R> Sequence<T>.zip(sequence: Sequence<R>): Sequence<Pair<T, R>> {
+public infix fun <T, R> Sequence<T>.zip(sequence: Sequence<R>): Sequence<Pair<T, R>> {
     return MergingSequence(this, sequence) { t1, t2 -> t1 to t2 }
 }
 
