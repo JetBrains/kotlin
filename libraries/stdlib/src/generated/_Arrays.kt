@@ -3428,7 +3428,7 @@ public inline fun <C : MutableCollection<in Short>> ShortArray.filterTo(destinat
  */
 public fun <T> Array<out T>.slice(indices: IntRange): List<T> {
     if (indices.isEmpty()) return listOf()
-    return copyOfRange(indices.start, indices.end + 1).asList()
+    return copyOfRange(indices.start, indices.endInclusive + 1).asList()
 }
 
 /**
@@ -3436,7 +3436,7 @@ public fun <T> Array<out T>.slice(indices: IntRange): List<T> {
  */
 public fun BooleanArray.slice(indices: IntRange): List<Boolean> {
     if (indices.isEmpty()) return listOf()
-    return copyOfRange(indices.start, indices.end + 1).asList()
+    return copyOfRange(indices.start, indices.endInclusive + 1).asList()
 }
 
 /**
@@ -3444,7 +3444,7 @@ public fun BooleanArray.slice(indices: IntRange): List<Boolean> {
  */
 public fun ByteArray.slice(indices: IntRange): List<Byte> {
     if (indices.isEmpty()) return listOf()
-    return copyOfRange(indices.start, indices.end + 1).asList()
+    return copyOfRange(indices.start, indices.endInclusive + 1).asList()
 }
 
 /**
@@ -3452,7 +3452,7 @@ public fun ByteArray.slice(indices: IntRange): List<Byte> {
  */
 public fun CharArray.slice(indices: IntRange): List<Char> {
     if (indices.isEmpty()) return listOf()
-    return copyOfRange(indices.start, indices.end + 1).asList()
+    return copyOfRange(indices.start, indices.endInclusive + 1).asList()
 }
 
 /**
@@ -3460,7 +3460,7 @@ public fun CharArray.slice(indices: IntRange): List<Char> {
  */
 public fun DoubleArray.slice(indices: IntRange): List<Double> {
     if (indices.isEmpty()) return listOf()
-    return copyOfRange(indices.start, indices.end + 1).asList()
+    return copyOfRange(indices.start, indices.endInclusive + 1).asList()
 }
 
 /**
@@ -3468,7 +3468,7 @@ public fun DoubleArray.slice(indices: IntRange): List<Double> {
  */
 public fun FloatArray.slice(indices: IntRange): List<Float> {
     if (indices.isEmpty()) return listOf()
-    return copyOfRange(indices.start, indices.end + 1).asList()
+    return copyOfRange(indices.start, indices.endInclusive + 1).asList()
 }
 
 /**
@@ -3476,7 +3476,7 @@ public fun FloatArray.slice(indices: IntRange): List<Float> {
  */
 public fun IntArray.slice(indices: IntRange): List<Int> {
     if (indices.isEmpty()) return listOf()
-    return copyOfRange(indices.start, indices.end + 1).asList()
+    return copyOfRange(indices.start, indices.endInclusive + 1).asList()
 }
 
 /**
@@ -3484,7 +3484,7 @@ public fun IntArray.slice(indices: IntRange): List<Int> {
  */
 public fun LongArray.slice(indices: IntRange): List<Long> {
     if (indices.isEmpty()) return listOf()
-    return copyOfRange(indices.start, indices.end + 1).asList()
+    return copyOfRange(indices.start, indices.endInclusive + 1).asList()
 }
 
 /**
@@ -3492,7 +3492,7 @@ public fun LongArray.slice(indices: IntRange): List<Long> {
  */
 public fun ShortArray.slice(indices: IntRange): List<Short> {
     if (indices.isEmpty()) return listOf()
-    return copyOfRange(indices.start, indices.end + 1).asList()
+    return copyOfRange(indices.start, indices.endInclusive + 1).asList()
 }
 
 /**
@@ -3725,7 +3725,7 @@ public fun ShortArray.sliceArray(indices: Collection<Int>): ShortArray {
  */
 public fun <T> Array<out T>.sliceArray(indices: IntRange): Array<out T> {
     if (indices.isEmpty()) return copyOfRange(0, 0)
-    return copyOfRange(indices.start, indices.end + 1)
+    return copyOfRange(indices.start, indices.endInclusive + 1)
 }
 
 /**
@@ -3733,7 +3733,7 @@ public fun <T> Array<out T>.sliceArray(indices: IntRange): Array<out T> {
  */
 public fun BooleanArray.sliceArray(indices: IntRange): BooleanArray {
     if (indices.isEmpty()) return BooleanArray(0)
-    return copyOfRange(indices.start, indices.end + 1)
+    return copyOfRange(indices.start, indices.endInclusive + 1)
 }
 
 /**
@@ -3741,7 +3741,7 @@ public fun BooleanArray.sliceArray(indices: IntRange): BooleanArray {
  */
 public fun ByteArray.sliceArray(indices: IntRange): ByteArray {
     if (indices.isEmpty()) return ByteArray(0)
-    return copyOfRange(indices.start, indices.end + 1)
+    return copyOfRange(indices.start, indices.endInclusive + 1)
 }
 
 /**
@@ -3749,7 +3749,7 @@ public fun ByteArray.sliceArray(indices: IntRange): ByteArray {
  */
 public fun CharArray.sliceArray(indices: IntRange): CharArray {
     if (indices.isEmpty()) return CharArray(0)
-    return copyOfRange(indices.start, indices.end + 1)
+    return copyOfRange(indices.start, indices.endInclusive + 1)
 }
 
 /**
@@ -3757,7 +3757,7 @@ public fun CharArray.sliceArray(indices: IntRange): CharArray {
  */
 public fun DoubleArray.sliceArray(indices: IntRange): DoubleArray {
     if (indices.isEmpty()) return DoubleArray(0)
-    return copyOfRange(indices.start, indices.end + 1)
+    return copyOfRange(indices.start, indices.endInclusive + 1)
 }
 
 /**
@@ -3765,7 +3765,7 @@ public fun DoubleArray.sliceArray(indices: IntRange): DoubleArray {
  */
 public fun FloatArray.sliceArray(indices: IntRange): FloatArray {
     if (indices.isEmpty()) return FloatArray(0)
-    return copyOfRange(indices.start, indices.end + 1)
+    return copyOfRange(indices.start, indices.endInclusive + 1)
 }
 
 /**
@@ -3773,7 +3773,7 @@ public fun FloatArray.sliceArray(indices: IntRange): FloatArray {
  */
 public fun IntArray.sliceArray(indices: IntRange): IntArray {
     if (indices.isEmpty()) return IntArray(0)
-    return copyOfRange(indices.start, indices.end + 1)
+    return copyOfRange(indices.start, indices.endInclusive + 1)
 }
 
 /**
@@ -3781,7 +3781,7 @@ public fun IntArray.sliceArray(indices: IntRange): IntArray {
  */
 public fun LongArray.sliceArray(indices: IntRange): LongArray {
     if (indices.isEmpty()) return LongArray(0)
-    return copyOfRange(indices.start, indices.end + 1)
+    return copyOfRange(indices.start, indices.endInclusive + 1)
 }
 
 /**
@@ -3789,7 +3789,7 @@ public fun LongArray.sliceArray(indices: IntRange): LongArray {
  */
 public fun ShortArray.sliceArray(indices: IntRange): ShortArray {
     if (indices.isEmpty()) return ShortArray(0)
-    return copyOfRange(indices.start, indices.end + 1)
+    return copyOfRange(indices.start, indices.endInclusive + 1)
 }
 
 /**

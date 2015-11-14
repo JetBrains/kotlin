@@ -734,7 +734,7 @@ public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterTo(destinat
  */
 public fun <T> List<T>.slice(indices: IntRange): List<T> {
     if (indices.isEmpty()) return listOf()
-    return this.subList(indices.start, indices.end + 1).toList()
+    return this.subList(indices.start, indices.endInclusive + 1).toList()
 }
 
 /**

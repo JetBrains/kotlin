@@ -567,13 +567,13 @@ fun filtering(): List<GenericFunction> {
         body(Lists) {
             """
             if (indices.isEmpty()) return listOf()
-            return this.subList(indices.start, indices.end + 1).toList()
+            return this.subList(indices.start, indices.endInclusive + 1).toList()
             """
         }
         body(ArraysOfPrimitives, ArraysOfObjects) {
             """
             if (indices.isEmpty()) return listOf()
-            return copyOfRange(indices.start, indices.end + 1).asList()
+            return copyOfRange(indices.start, indices.endInclusive + 1).asList()
             """
         }
 
@@ -620,13 +620,13 @@ fun filtering(): List<GenericFunction> {
         body(ArraysOfObjects) {
             """
             if (indices.isEmpty()) return copyOfRange(0, 0)
-            return copyOfRange(indices.start, indices.end + 1)
+            return copyOfRange(indices.start, indices.endInclusive + 1)
             """
         }
         body(ArraysOfPrimitives) {
             """
             if (indices.isEmpty()) return SELF(0)
-            return copyOfRange(indices.start, indices.end + 1)
+            return copyOfRange(indices.start, indices.endInclusive + 1)
             """
         }
     }

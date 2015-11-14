@@ -168,7 +168,7 @@ public class Regex internal constructor(private val nativePattern: Pattern) {
             val foundMatch = match!!
             sb.append(input, lastStart, foundMatch.range.start)
             sb.append(transform(foundMatch))
-            lastStart = foundMatch.range.end + 1
+            lastStart = foundMatch.range.endInclusive + 1
             match = foundMatch.next()
         } while (lastStart < length && match != null)
 

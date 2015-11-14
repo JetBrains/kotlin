@@ -279,12 +279,12 @@ public fun CharSequence.hasSurrogatePairAt(index: Int): Boolean {
 /**
  * Returns a substring specified by the given [range].
  */
-public fun String.substring(range: IntRange): String = substring(range.start, range.end + 1)
+public fun String.substring(range: IntRange): String = substring(range.start, range.endInclusive + 1)
 
 /**
  * Returns a subsequence of this char sequence specified by the given [range].
  */
-public fun CharSequence.subSequence(range: IntRange): CharSequence = subSequence(range.start, range.end + 1)
+public fun CharSequence.subSequence(range: IntRange): CharSequence = subSequence(range.start, range.endInclusive + 1)
 
 /**
  * Returns a substring of chars from a range of this char sequence specified by [start] and [end] indices.
@@ -294,7 +294,7 @@ public fun CharSequence.substring(start: Int, end: Int = length): String = subSe
 /**
  * Returns a substring of chars from a [range] of this char sequence.
  */
-public fun CharSequence.substring(range: IntRange): String = subSequence(range.start, range.end + 1).toString()
+public fun CharSequence.substring(range: IntRange): String = subSequence(range.start, range.endInclusive + 1).toString()
 
 /**
  * Returns a substring before the first occurrence of [delimiter].
@@ -399,7 +399,7 @@ public fun String.replaceRange(firstIndex: Int, lastIndex: Int, replacement: Cha
  * The end index of the [range] is included in the part to be replaced.
  */
 public fun CharSequence.replaceRange(range: IntRange, replacement: CharSequence): CharSequence
-        = replaceRange(range.start, range.end + 1, replacement)
+        = replaceRange(range.start, range.endInclusive + 1, replacement)
 
 /**
  * Replace the part of string at the given [range] with the [replacement] string.
@@ -407,7 +407,7 @@ public fun CharSequence.replaceRange(range: IntRange, replacement: CharSequence)
  * The end index of the [range] is included in the part to be replaced.
  */
 public fun String.replaceRange(range: IntRange, replacement: CharSequence): String
-        = replaceRange(range.start, range.end + 1, replacement)
+        = replaceRange(range.start, range.endInclusive + 1, replacement)
 
 /**
  * Returns a char sequence with content of this char sequence where its part at the given range is removed.
@@ -445,14 +445,14 @@ public fun String.removeRange(firstIndex: Int, lastIndex: Int): String
  *
  * The end index of the [range] is included in the removed part.
  */
-public fun CharSequence.removeRange(range: IntRange): CharSequence = removeRange(range.start, range.end + 1)
+public fun CharSequence.removeRange(range: IntRange): CharSequence = removeRange(range.start, range.endInclusive + 1)
 
 /**
  * Removes the part of a string at the given [range].
  *
  * The end index of the [range] is included in the removed part.
  */
-public fun String.removeRange(range: IntRange): String = removeRange(range.start, range.end + 1)
+public fun String.removeRange(range: IntRange): String = removeRange(range.start, range.endInclusive + 1)
 
 /**
  * If this char sequence starts with the given [prefix], returns a new char sequence
