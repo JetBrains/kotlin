@@ -733,7 +733,7 @@ class FilesTest {
             srcFile.copyTo(dstFile)
             assert(false)
         } catch (e: FileAlreadyExistsException) {
-            println(e.getMessage())
+            println(e.message)
         }
 
         var len = srcFile.copyTo(dstFile, overwrite = true)

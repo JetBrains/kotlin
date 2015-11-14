@@ -11,7 +11,7 @@ class TestJVMTest {
             block()
         }
         catch (e: AssertionError) {
-            checkAssertion(e.getMessage())
+            checkAssertion(e.message)
             return
         }
         fail("Expected AssertionError to be thrown.")

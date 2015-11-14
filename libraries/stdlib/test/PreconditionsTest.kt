@@ -17,14 +17,14 @@ class PreconditionsTest() {
         val error = assertFailsWith(IllegalArgumentException::class) {
             require(false)
         }
-        assertNotNull(error.getMessage())
+        assertNotNull(error.message)
     }
 
     @test fun failingRequireWithLazyMessage() {
         val error = assertFailsWith(IllegalArgumentException::class) {
             require(false) { "Hello" }
         }
-        assertEquals("Hello", error.getMessage())
+        assertEquals("Hello", error.message)
     }
 
     @test fun passingCheck() {
@@ -39,14 +39,14 @@ class PreconditionsTest() {
         val error = assertFailsWith(IllegalStateException::class) {
             check(false)
         }
-        assertNotNull(error.getMessage())
+        assertNotNull(error.message)
     }
 
     @test fun failingCheckWithLazyMessage() {
         val error = assertFailsWith(IllegalStateException::class) {
             check(false) { "Hello" }
         }
-        assertEquals("Hello", error.getMessage())
+        assertEquals("Hello", error.message)
     }
 
     @test fun requireNotNull() {
@@ -67,7 +67,7 @@ class PreconditionsTest() {
             val obj: Any? = null
             requireNotNull(obj) { "Message" }
         }
-        assertEquals("Message", error.getMessage())
+        assertEquals("Message", error.message)
 
         var lazyCalled: Boolean = false
         requireNotNull("not null") {
@@ -104,7 +104,7 @@ class PreconditionsTest() {
             assert(false)
         }
         if (error is AssertionError) {
-            assertEquals("Assertion failed", error.getMessage())
+            assertEquals("Assertion failed", error.message)
         } else {
             fail("Invalid exception type: " + error)
         }
@@ -115,7 +115,7 @@ class PreconditionsTest() {
             error("There was a problem")
         }
         if (error is IllegalStateException) {
-            assertEquals("There was a problem", error.getMessage())
+            assertEquals("There was a problem", error.message)
         } else {
             fail("Invalid exception type: " + error)
         }
@@ -130,7 +130,7 @@ class PreconditionsTest() {
             assert(false) { "Hello" }
         }
         if (error is AssertionError) {
-            assertEquals("Hello", error.getMessage())
+            assertEquals("Hello", error.message)
         } else {
             fail("Invalid exception type: " + error)
         }
@@ -141,7 +141,7 @@ class PreconditionsTest() {
             assert(false) { "Hello" }
         }
         if (error is AssertionError) {
-            assertEquals("Hello", error.getMessage())
+            assertEquals("Hello", error.message)
         } else {
             fail("Invalid exception type: " + error)
         }
