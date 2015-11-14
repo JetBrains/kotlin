@@ -41,7 +41,7 @@ class ListBinarySearchTest {
 
     @Test
     fun binarySearchWithComparator() {
-        val list = values map { IncomparableDataItem(it) }
+        val list = values.map { IncomparableDataItem(it) }
 
         list.forEachIndexed { index, item ->
             assertEquals(index, list.binarySearch(item, comparator))
@@ -57,7 +57,7 @@ class ListBinarySearchTest {
 
     @Test
     fun binarySearchByKey() {
-        val list = values map { IncomparableDataItem(it) }
+        val list = values.map { IncomparableDataItem(it) }
 
         list.forEachIndexed { index, item ->
             assertEquals(index, list.binarySearchBy(item.value) { it.value })
@@ -74,7 +74,7 @@ class ListBinarySearchTest {
 
     @Test
     fun binarySearchByKeyWithComparator() {
-        val list = values map { IncomparableDataItem(IncomparableDataItem(it)) }
+        val list = values.map { IncomparableDataItem(IncomparableDataItem(it)) }
 
         list.forEachIndexed { index, item ->
             assertEquals(index, list.binarySearch { comparator.compare(it.value, item.value) } )

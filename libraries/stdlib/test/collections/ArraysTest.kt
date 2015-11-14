@@ -238,44 +238,44 @@ class ArraysTest {
     }
 
     @test fun indexOfInPrimitiveArrays() {
-        expect(-1) { byteArrayOf(1, 2, 3) indexOf 0 }
-        expect(0) { byteArrayOf(1, 2, 3) indexOf 1 }
-        expect(1) { byteArrayOf(1, 2, 3) indexOf 2 }
-        expect(2) { byteArrayOf(1, 2, 3) indexOf 3 }
+        expect(-1) { byteArrayOf(1, 2, 3).indexOf(0) }
+        expect(0) { byteArrayOf(1, 2, 3).indexOf(1) }
+        expect(1) { byteArrayOf(1, 2, 3).indexOf(2) }
+        expect(2) { byteArrayOf(1, 2, 3).indexOf(3) }
 
-        expect(-1) { shortArrayOf(1, 2, 3) indexOf 0 }
-        expect(0) { shortArrayOf(1, 2, 3) indexOf 1 }
-        expect(1) { shortArrayOf(1, 2, 3) indexOf 2 }
-        expect(2) { shortArrayOf(1, 2, 3) indexOf 3 }
+        expect(-1) { shortArrayOf(1, 2, 3).indexOf(0) }
+        expect(0) { shortArrayOf(1, 2, 3).indexOf(1) }
+        expect(1) { shortArrayOf(1, 2, 3).indexOf(2) }
+        expect(2) { shortArrayOf(1, 2, 3).indexOf(3) }
 
-        expect(-1) { intArrayOf(1, 2, 3) indexOf 0 }
-        expect(0) { intArrayOf(1, 2, 3) indexOf 1 }
-        expect(1) { intArrayOf(1, 2, 3) indexOf 2 }
-        expect(2) { intArrayOf(1, 2, 3) indexOf 3 }
+        expect(-1) { intArrayOf(1, 2, 3).indexOf(0) }
+        expect(0) { intArrayOf(1, 2, 3).indexOf(1) }
+        expect(1) { intArrayOf(1, 2, 3).indexOf(2) }
+        expect(2) { intArrayOf(1, 2, 3).indexOf(3) }
 
-        expect(-1) { longArrayOf(1, 2, 3) indexOf 0 }
-        expect(0) { longArrayOf(1, 2, 3) indexOf 1 }
-        expect(1) { longArrayOf(1, 2, 3) indexOf 2 }
-        expect(2) { longArrayOf(1, 2, 3) indexOf 3 }
+        expect(-1) { longArrayOf(1, 2, 3).indexOf(0) }
+        expect(0) { longArrayOf(1, 2, 3).indexOf(1) }
+        expect(1) { longArrayOf(1, 2, 3).indexOf(2) }
+        expect(2) { longArrayOf(1, 2, 3).indexOf(3) }
 
-        expect(-1) { floatArrayOf(1.0f, 2.0f, 3.0f) indexOf 0f }
-        expect(0) { floatArrayOf(1.0f, 2.0f, 3.0f) indexOf 1.0f }
-        expect(1) { floatArrayOf(1.0f, 2.0f, 3.0f) indexOf 2.0f }
-        expect(2) { floatArrayOf(1.0f, 2.0f, 3.0f) indexOf 3.0f }
+        expect(-1) { floatArrayOf(1.0f, 2.0f, 3.0f).indexOf(0f) }
+        expect(0) { floatArrayOf(1.0f, 2.0f, 3.0f).indexOf(1.0f) }
+        expect(1) { floatArrayOf(1.0f, 2.0f, 3.0f).indexOf(2.0f) }
+        expect(2) { floatArrayOf(1.0f, 2.0f, 3.0f).indexOf(3.0f) }
 
-        expect(-1) { doubleArrayOf(1.0, 2.0, 3.0) indexOf 0.0 }
-        expect(0) { doubleArrayOf(1.0, 2.0, 3.0) indexOf 1.0 }
-        expect(1) { doubleArrayOf(1.0, 2.0, 3.0) indexOf 2.0 }
-        expect(2) { doubleArrayOf(1.0, 2.0, 3.0) indexOf 3.0 }
+        expect(-1) { doubleArrayOf(1.0, 2.0, 3.0).indexOf(0.0) }
+        expect(0) { doubleArrayOf(1.0, 2.0, 3.0).indexOf(1.0) }
+        expect(1) { doubleArrayOf(1.0, 2.0, 3.0).indexOf(2.0) }
+        expect(2) { doubleArrayOf(1.0, 2.0, 3.0).indexOf(3.0) }
 
-        expect(-1) { charArrayOf('a', 'b', 'c') indexOf 'z' }
-        expect(0) { charArrayOf('a', 'b', 'c') indexOf 'a' }
-        expect(1) { charArrayOf('a', 'b', 'c') indexOf 'b' }
-        expect(2) { charArrayOf('a', 'b', 'c') indexOf 'c' }
+        expect(-1) { charArrayOf('a', 'b', 'c').indexOf('z') }
+        expect(0) { charArrayOf('a', 'b', 'c').indexOf('a') }
+        expect(1) { charArrayOf('a', 'b', 'c').indexOf('b') }
+        expect(2) { charArrayOf('a', 'b', 'c').indexOf('c') }
 
-        expect(0) { booleanArrayOf(true, false) indexOf true }
-        expect(1) { booleanArrayOf(true, false) indexOf false }
-        expect(-1) { booleanArrayOf(true) indexOf false }
+        expect(0) { booleanArrayOf(true, false).indexOf(true) }
+        expect(1) { booleanArrayOf(true, false).indexOf(false) }
+        expect(-1) { booleanArrayOf(true).indexOf(false) }
     }
 
     @test fun indexOf() {
@@ -516,15 +516,15 @@ class ArraysTest {
 
 
     @test fun reduce() {
-        expect(-4) { intArrayOf(1, 2, 3) reduce { a, b -> a - b } }
-        expect(-4.toLong()) { longArrayOf(1, 2, 3) reduce { a, b -> a - b } }
-        expect(-4F) { floatArrayOf(1F, 2F, 3F) reduce { a, b -> a - b } }
-        expect(-4.0) { doubleArrayOf(1.0, 2.0, 3.0) reduce { a, b -> a - b } }
-        expect('3') { charArrayOf('1', '3', '2') reduce { a, b -> if (a > b) a else b } }
-        expect(false) { booleanArrayOf(true, true, false) reduce { a, b -> a && b } }
-        expect(true) { booleanArrayOf(true, true) reduce { a, b -> a && b } }
-        expect(0.toByte()) { byteArrayOf(3, 2, 1) reduce { a, b -> (a - b).toByte() } }
-        expect(0.toShort()) { shortArrayOf(3, 2, 1) reduce { a, b -> (a - b).toShort() } }
+        expect(-4) { intArrayOf(1, 2, 3).reduce { a, b -> a - b } }
+        expect(-4.toLong()) { longArrayOf(1, 2, 3).reduce { a, b -> a - b } }
+        expect(-4F) { floatArrayOf(1F, 2F, 3F).reduce { a, b -> a - b } }
+        expect(-4.0) { doubleArrayOf(1.0, 2.0, 3.0).reduce { a, b -> a - b } }
+        expect('3') { charArrayOf('1', '3', '2').reduce { a, b -> if (a > b) a else b } }
+        expect(false) { booleanArrayOf(true, true, false).reduce { a, b -> a && b } }
+        expect(true) { booleanArrayOf(true, true).reduce { a, b -> a && b } }
+        expect(0.toByte()) { byteArrayOf(3, 2, 1).reduce { a, b -> (a - b).toByte() } }
+        expect(0.toShort()) { shortArrayOf(3, 2, 1).reduce { a, b -> (a - b).toShort() } }
 
         assertTrue(assertFails {
             intArrayOf().reduce { a, b -> a + b }
@@ -532,15 +532,15 @@ class ArraysTest {
     }
 
     @test fun reduceRight() {
-        expect(2) { intArrayOf(1, 2, 3) reduceRight { a, b -> a - b } }
-        expect(2.toLong()) { longArrayOf(1, 2, 3) reduceRight { a, b -> a - b } }
-        expect(2F) { floatArrayOf(1F, 2F, 3F) reduceRight { a, b -> a - b } }
-        expect(2.0) { doubleArrayOf(1.0, 2.0, 3.0) reduceRight { a, b -> a - b } }
-        expect('3') { charArrayOf('1', '3', '2') reduceRight { a, b -> if (a > b) a else b } }
-        expect(false) { booleanArrayOf(true, true, false) reduceRight { a, b -> a && b } }
-        expect(true) { booleanArrayOf(true, true) reduceRight { a, b -> a && b } }
-        expect(2.toByte()) { byteArrayOf(1, 2, 3) reduceRight { a, b -> (a - b).toByte() } }
-        expect(2.toShort()) { shortArrayOf(1, 2, 3) reduceRight { a, b -> (a - b).toShort() } }
+        expect(2) { intArrayOf(1, 2, 3).reduceRight { a, b -> a - b } }
+        expect(2.toLong()) { longArrayOf(1, 2, 3).reduceRight { a, b -> a - b } }
+        expect(2F) { floatArrayOf(1F, 2F, 3F).reduceRight { a, b -> a - b } }
+        expect(2.0) { doubleArrayOf(1.0, 2.0, 3.0).reduceRight { a, b -> a - b } }
+        expect('3') { charArrayOf('1', '3', '2').reduceRight { a, b -> if (a > b) a else b } }
+        expect(false) { booleanArrayOf(true, true, false).reduceRight { a, b -> a && b } }
+        expect(true) { booleanArrayOf(true, true).reduceRight { a, b -> a && b } }
+        expect(2.toByte()) { byteArrayOf(1, 2, 3).reduceRight { a, b -> (a - b).toByte() } }
+        expect(2.toShort()) { shortArrayOf(1, 2, 3).reduceRight { a, b -> (a - b).toShort() } }
 
         assertTrue(assertFails {
             intArrayOf().reduceRight { a, b -> a + b }

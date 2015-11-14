@@ -207,7 +207,7 @@ class CollectionTest {
     }
 
     @test fun mapRanges() {
-        val range = 1..3 map { it * 2 }
+        val range = (1..3).map { it * 2 }
         assertEquals(listOf(2, 4, 6), range)
     }
 
@@ -553,14 +553,14 @@ class CollectionTest {
     }
 
     @test fun takeReturnsFirstNElements() {
-        expect(listOf(1, 2, 3, 4, 5)) { (1..10) take 5 }
+        expect(listOf(1, 2, 3, 4, 5)) { (1..10).take(5) }
         expect(listOf(1, 2, 3, 4, 5)) { (1..10).toList().take(5) }
-        expect(listOf(1, 2)) { (1..10) take 2 }
+        expect(listOf(1, 2)) { (1..10).take(2) }
         expect(listOf(1, 2)) { (1..10).toList().take(2) }
         expect(true) { (0L..5L).take(0).none() }
         expect(true) { listOf(1L).take(0).none() }
-        expect(listOf(1)) { (1..1) take 10 }
-        expect(listOf(1)) { listOf(1) take 10 }
+        expect(listOf(1)) { (1..1).take(10) }
+        expect(listOf(1)) { listOf(1).take(10) }
     }
 
     @test fun sortInPlace() {
