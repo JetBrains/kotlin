@@ -235,7 +235,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
             KtExpression calleeExpression = task.call.getCalleeExpression();
             if (calleeExpression == null) return Collections.emptyList();
 
-            ExpressionReceiver variableReceiver = ExpressionReceiver.create(
+            ExpressionReceiver variableReceiver = ExpressionReceiver.Companion.create(
                     calleeExpression, variableResolvedCall.getResultingDescriptor().getType(), context.trace.getBindingContext());
             Call functionCall = new CallForImplicitInvoke(context.explicitExtensionReceiverForInvoke, variableReceiver, task.call);
 

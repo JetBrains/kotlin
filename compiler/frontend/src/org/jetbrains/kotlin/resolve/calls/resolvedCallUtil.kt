@@ -58,7 +58,7 @@ private fun ResolvedCall<*>.hasThisOrNoDispatchReceiver(
         dispatchReceiverDescriptor = dispatchReceiverValue.getDeclarationDescriptor()
     }
     else if (dispatchReceiverValue is ExpressionReceiver && considerExplicitReceivers) {
-        val expression = KtPsiUtil.deparenthesize(dispatchReceiverValue.getExpression())
+        val expression = KtPsiUtil.deparenthesize(dispatchReceiverValue.expression)
         if (expression is KtThisExpression) {
             // this.foo() -- explicit receiver
             dispatchReceiverDescriptor = context.get(BindingContext.REFERENCE_TARGET, expression.getInstanceReference())

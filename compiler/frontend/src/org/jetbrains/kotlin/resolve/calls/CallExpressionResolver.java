@@ -349,7 +349,7 @@ public class CallExpressionResolver {
             QualifierReceiver qualifierReceiver = (QualifierReceiver) context.trace.get(BindingContext.QUALIFIER, element.getReceiver());
 
             ReceiverValue receiver = qualifierReceiver == null ?
-                                     ExpressionReceiver.create(element.getReceiver(), receiverType, context.trace.getBindingContext()) :
+                                     ExpressionReceiver.Companion.create(element.getReceiver(), receiverType, context.trace.getBindingContext()) :
                                      qualifierReceiver;
 
             boolean lastStage = element.getQualified() == expression;

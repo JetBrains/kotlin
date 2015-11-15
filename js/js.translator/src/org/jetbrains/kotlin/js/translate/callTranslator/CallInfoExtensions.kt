@@ -41,7 +41,7 @@ fun CallInfo.isNative(): Boolean = AnnotationsUtils.isNativeObject(callableDescr
 
 fun CallInfo.isSuperInvocation(): Boolean {
     val dispatchReceiver = resolvedCall.getDispatchReceiver()
-    return dispatchReceiver is ExpressionReceiver && dispatchReceiver.getExpression() is KtSuperExpression
+    return dispatchReceiver is ExpressionReceiver && dispatchReceiver.expression is KtSuperExpression
 }
 
 val VariableAccessInfo.variableDescriptor: VariableDescriptor

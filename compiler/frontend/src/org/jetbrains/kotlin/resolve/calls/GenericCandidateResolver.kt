@@ -99,7 +99,7 @@ class GenericCandidateResolver(
             else
                 receiverArgument.getType()
             if (receiverArgument is ExpressionReceiver) {
-                receiverType = updateResultTypeForSmartCasts(receiverType, receiverArgument.getExpression(), context)
+                receiverType = updateResultTypeForSmartCasts(receiverType, receiverArgument.expression, context)
             }
             constraintSystem.addSubtypeConstraint(receiverType, receiverParameter.getType(), RECEIVER_POSITION.position())
         }

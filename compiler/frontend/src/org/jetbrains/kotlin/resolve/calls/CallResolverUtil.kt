@@ -133,7 +133,7 @@ public fun isInvokeCallOnVariable(call: Call): Boolean {
     if (call.getCallType() !== Call.CallType.INVOKE) return false
     val dispatchReceiver = call.getDispatchReceiver()
     //calleeExpressionAsDispatchReceiver for invoke is always ExpressionReceiver, see CallForImplicitInvoke
-    val expression = (dispatchReceiver as ExpressionReceiver).getExpression()
+    val expression = (dispatchReceiver as ExpressionReceiver).expression
     return expression is KtSimpleNameExpression
 }
 
@@ -143,7 +143,7 @@ public fun isInvokeCallOnExpressionWithBothReceivers(call: Call): Boolean {
 }
 
 public fun getSuperCallExpression(call: Call): KtSuperExpression? {
-    return (call.getExplicitReceiver() as? ExpressionReceiver)?.getExpression() as? KtSuperExpression
+    return (call.getExplicitReceiver() as? ExpressionReceiver)?.expression as? KtSuperExpression
 }
 
 public fun getEffectiveExpectedType(parameterDescriptor: ValueParameterDescriptor, argument: ValueArgument): KotlinType {

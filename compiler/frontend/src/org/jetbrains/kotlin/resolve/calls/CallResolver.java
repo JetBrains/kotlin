@@ -315,7 +315,7 @@ public class CallResolver {
         }
         KotlinType calleeType = expressionTypingServices.safeGetType(
                 context.scope, calleeExpression, expectedType, context.dataFlowInfo, context.trace);
-        ExpressionReceiver expressionReceiver = ExpressionReceiver.create(calleeExpression, calleeType, context.trace.getBindingContext());
+        ExpressionReceiver expressionReceiver = ExpressionReceiver.Companion.create(calleeExpression, calleeType, context.trace.getBindingContext());
 
         Call call = new CallTransformer.CallForImplicitInvoke(context.call.getExplicitReceiver(), expressionReceiver, context.call);
         TracingStrategyForInvoke tracingForInvoke = new TracingStrategyForInvoke(calleeExpression, call, calleeType);

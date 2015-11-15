@@ -79,7 +79,7 @@ public class ExpressionTypingUtils {
     ) {
         KotlinType type = facade.getTypeInfo(expression, context).getType();
         if (type == null) return null;
-        return ExpressionReceiver.create(expression, type, context.trace.getBindingContext());
+        return ExpressionReceiver.Companion.create(expression, type, context.trace.getBindingContext());
     }
 
     @NotNull
@@ -89,7 +89,7 @@ public class ExpressionTypingUtils {
             ExpressionTypingContext context
     ) {
         KotlinType type = safeGetType(facade.safeGetTypeInfo(expression, context));
-        return ExpressionReceiver.create(expression, type, context.trace.getBindingContext());
+        return ExpressionReceiver.Companion.create(expression, type, context.trace.getBindingContext());
     }
 
     @NotNull

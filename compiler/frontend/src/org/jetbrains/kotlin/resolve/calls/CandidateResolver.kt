@@ -285,7 +285,7 @@ public class CandidateResolver(
 
     private fun getReceiverSuper(receiver: ReceiverValue): KtSuperExpression? {
         if (receiver is ExpressionReceiver) {
-            val expression = receiver.getExpression()
+            val expression = receiver.expression
             if (expression is KtSuperExpression) {
                 return expression
             }

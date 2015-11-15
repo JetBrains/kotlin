@@ -180,7 +180,7 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
                 actualMayBeNull ->
                 val reportOn =
                         if (receiverArgument is ExpressionReceiver)
-                            receiverArgument.getExpression()
+                            receiverArgument.expression
                         else
                             c.call.getCalleeExpression() ?: c.call.getCallElement()
 

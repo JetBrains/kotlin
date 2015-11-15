@@ -76,7 +76,7 @@ public abstract class AbstractResolvedCallsTest : KotlinLiteFixture() {
 }
 
 private fun ReceiverValue.getText() = when (this) {
-    is ExpressionReceiver -> "${getExpression().getText()} {${getType()}}"
+    is ExpressionReceiver -> "${expression.getText()} {${getType()}}"
     is ClassReceiver -> "Class{${getType()}}"
     is ExtensionReceiver -> "${getType()}Ext{${getDeclarationDescriptor().getText()}}"
     else -> toString()
