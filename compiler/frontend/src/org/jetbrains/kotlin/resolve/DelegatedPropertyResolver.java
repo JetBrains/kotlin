@@ -145,7 +145,7 @@ public class DelegatedPropertyResolver {
 
         KtPsiFactory psiFactory = KtPsiFactory(delegateExpression);
         List<KtExpression> arguments = Collections.singletonList(createExpressionForProperty(psiFactory));
-        ExpressionReceiver receiver = new ExpressionReceiver(delegateExpression, delegateType);
+        ExpressionReceiver receiver = ExpressionReceiver.create(delegateExpression, delegateType, trace.getBindingContext());
 
         Pair<Call, OverloadResolutionResults<FunctionDescriptor>> resolutionResult =
                 fakeCallResolver.makeAndResolveFakeCallInContext(receiver, context, arguments, PROPERTY_DELEGATED_FUNCTION_NAME, delegateExpression);
@@ -261,7 +261,7 @@ public class DelegatedPropertyResolver {
         }
 
         Name functionName = isGet ? GETTER_NAME : SETTER_NAME;
-        ExpressionReceiver receiver = new ExpressionReceiver(delegateExpression, delegateType);
+        ExpressionReceiver receiver = ExpressionReceiver.create(delegateExpression, delegateType, trace.getBindingContext());
 
         Pair<Call, OverloadResolutionResults<FunctionDescriptor>> resolutionResult =
                 fakeCallResolver.makeAndResolveFakeCallInContext(receiver, context, arguments, functionName, delegateExpression);

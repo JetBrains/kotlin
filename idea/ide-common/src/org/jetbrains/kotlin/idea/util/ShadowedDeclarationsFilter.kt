@@ -63,7 +63,7 @@ public class ShadowedDeclarationsFilter(
 
             val explicitReceiverValue = receiverExpression?.let {
                 val type = bindingContext.getType(it) ?: return null
-                ExpressionReceiver(it, type)
+                ExpressionReceiver.create(it, type, bindingContext)
             } ?: ReceiverValue.NO_RECEIVER
             return ShadowedDeclarationsFilter(bindingContext, resolutionFacade, context, explicitReceiverValue)
         }

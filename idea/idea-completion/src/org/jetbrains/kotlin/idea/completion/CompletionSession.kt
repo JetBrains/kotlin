@@ -370,7 +370,8 @@ abstract class CompletionSession(
         val runtimeType = evaluator(explicitReceiver)
         if (runtimeType == null || runtimeType == type) return null
 
-        val (variants, notImportedExtensions) = collectReferenceVariants(descriptorKindFilter!!, nameExpression!!, ExpressionReceiver(explicitReceiver, runtimeType))
+        val expressionReceiver = ExpressionReceiver.create(explicitReceiver, runtimeType, bindingContext)
+        val (variants, notImportedExtensions) = collectReferenceVariants(descriptorKindFilter!!, nameExpression!!, expressionReceiver)
         val filteredVariants = filterVariantsForRuntimeReceiverType(variants, referenceVariants.imported)
         val filteredNotImportedExtensions = filterVariantsForRuntimeReceiverType(notImportedExtensions, referenceVariants.notImportedExtensions)
 

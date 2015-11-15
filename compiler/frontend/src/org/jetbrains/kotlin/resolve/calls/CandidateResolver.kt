@@ -364,7 +364,7 @@ public class CandidateResolver(
             expectedType: KotlinType,
             actualType: KotlinType,
             context: ResolutionContext<*>): KotlinType? {
-        val receiverToCast = ExpressionReceiver(KtPsiUtil.safeDeparenthesize(expression), actualType)
+        val receiverToCast = ExpressionReceiver.create(KtPsiUtil.safeDeparenthesize(expression), actualType, context.trace.bindingContext)
         val variants = smartCastManager.getSmartCastVariantsExcludingReceiver(context, receiverToCast)
         for (possibleType in variants) {
             if (KotlinTypeChecker.DEFAULT.isSubtypeOf(possibleType, expectedType)) {

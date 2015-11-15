@@ -18,9 +18,18 @@ package org.jetbrains.kotlin.resolve.scopes.receivers;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.types.KotlinType;
 
 public class ExpressionReceiver extends AbstractReceiverValue implements ReceiverValue {
+
+    public static ExpressionReceiver create(
+            @NotNull KtExpression expression,
+            @NotNull KotlinType type,
+            @NotNull BindingContext bindingContext
+    ) {
+        return new ExpressionReceiver(expression, type);
+    }
 
     private final KtExpression expression;
 

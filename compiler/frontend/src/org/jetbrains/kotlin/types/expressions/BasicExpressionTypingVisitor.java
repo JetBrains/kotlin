@@ -760,7 +760,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         // Type check the base expression
         KotlinTypeInfo typeInfo = facade.safeGetTypeInfo(baseExpression, context);
         KotlinType type = ExpressionTypingUtils.safeGetType(typeInfo);
-        ExpressionReceiver receiver = new ExpressionReceiver(baseExpression, type);
+        ExpressionReceiver receiver = ExpressionReceiver.create(baseExpression, type, context.trace.getBindingContext());
 
         Call call = CallMaker.makeCall(receiver, expression);
 
@@ -1495,7 +1495,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         KotlinType arrayType = ExpressionTypingUtils.safeGetType(arrayTypeInfo);
 
         ExpressionTypingContext context = oldContext.replaceDataFlowInfo(arrayTypeInfo.getDataFlowInfo());
-        ExpressionReceiver receiver = new ExpressionReceiver(arrayExpression, arrayType);
+        ExpressionReceiver receiver = ExpressionReceiver.create(arrayExpression, arrayType, context.trace.getBindingContext());
         if (!isGet) assert rightHandSide != null;
 
         Call call = isGet

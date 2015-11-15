@@ -250,7 +250,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             temporary.commit();
             return rightInfo.clearType();
         }
-        ExpressionReceiver receiver = new ExpressionReceiver(left, leftType);
+        ExpressionReceiver receiver = ExpressionReceiver.create(left, leftType, context.trace.getBindingContext());
 
         // We check that defined only one of '+=' and '+' operations, and call it (in the case '+' we then also assign)
         // Check for '+='

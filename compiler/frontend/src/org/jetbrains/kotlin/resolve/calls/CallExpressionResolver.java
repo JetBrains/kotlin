@@ -348,7 +348,9 @@ public class CallExpressionResolver {
             }
             QualifierReceiver qualifierReceiver = (QualifierReceiver) context.trace.get(BindingContext.QUALIFIER, element.getReceiver());
 
-            ReceiverValue receiver = qualifierReceiver == null ? new ExpressionReceiver(element.getReceiver(), receiverType) : qualifierReceiver;
+            ReceiverValue receiver = qualifierReceiver == null ?
+                                     ExpressionReceiver.create(element.getReceiver(), receiverType, context.trace.getBindingContext()) :
+                                     qualifierReceiver;
 
             boolean lastStage = element.getQualified() == expression;
             assert lastStage == (element == elementChain.getLast());
