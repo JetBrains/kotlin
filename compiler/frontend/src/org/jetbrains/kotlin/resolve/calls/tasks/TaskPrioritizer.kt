@@ -99,12 +99,9 @@ public class TaskPrioritizer(
             qualifierReceiver: QualifierReceiver,
             taskPrioritizerContext: TaskPrioritizerContext<D, F>
     ) {
-        val classObjectReceiver = qualifierReceiver.getClassObjectReceiver()
-        if (!classObjectReceiver.exists()) {
-            return
-        }
+        val companionObject = qualifierReceiver.companionObjectReceiver ?: return
         val classifierDescriptor = qualifierReceiver.classifier
-        doComputeTasks(classObjectReceiver, taskPrioritizerContext.filterCollectors {
+        doComputeTasks(companionObject, taskPrioritizerContext.filterCollectors {
             when {
                 classifierDescriptor is ClassDescriptor && classifierDescriptor.getCompanionObjectDescriptor() != null -> {
                     // nested classes and objects should not be accessible via short reference to companion object

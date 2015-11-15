@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentQualifiedExpressionForSelector
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContext.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
@@ -70,9 +71,7 @@ abstract class QualifierReceiver(
 
     override var resultingDescriptor: DeclarationDescriptor by Delegates.notNull()
 
-    fun getClassObjectReceiver(): ReceiverValue =
-            (classifier as? ClassDescriptor)?.classObjectType?.let { ExpressionReceiver(referenceExpression, it) }
-            ?: ReceiverValue.NO_RECEIVER
+    abstract val companionObjectReceiver: ReceiverValue?
 
     abstract fun getNestedClassesAndPackageMembersScope(): MemberScope
 
@@ -93,11 +92,15 @@ class PackageQualifier(
     override fun getNestedClassesAndPackageMembersScope(): MemberScope = packageView.memberScope
 
     override fun toString() = "Package{$packageView}"
+
+    override val companionObjectReceiver: ReceiverValue?
+        get() = null
 }
 
 class ClassifierQualifier(
         referenceExpression: KtSimpleNameExpression,
-        override val classifier: ClassifierDescriptor
+        override val classifier: ClassifierDescriptor,
+        override val companionObjectReceiver: ReceiverValue?
 ) : QualifierReceiver(referenceExpression) {
 
     override val packageView: PackageViewDescriptor? get() = null
@@ -142,6 +145,17 @@ class ClassifierQualifier(
     override fun toString() = "Classifier{$classifier}"
 }
 
+fun createClassifierQualifier(
+        referenceExpression: KtSimpleNameExpression,
+        classifier: ClassifierDescriptor,
+        bindingContext: BindingContext
+): ClassifierQualifier {
+    val companionObjectReceiver = (classifier as? ClassDescriptor)?.classObjectType?.let {
+        ExpressionReceiver.create(referenceExpression, it, bindingContext)
+    }
+    return ClassifierQualifier(referenceExpression, classifier, companionObjectReceiver)
+}
+
 
 fun createQualifier(
         expression: KtSimpleNameExpression,
@@ -167,10 +181,10 @@ fun createQualifier(
                 if (packageViewDescriptor != null)
                     PackageQualifier(expression, packageViewDescriptor)
                 else
-                    ClassifierQualifier(expression, classifierDescriptor!!)
+                    createClassifierQualifier(expression, classifierDescriptor!!, context.trace.bindingContext)
             else
                 if (classifierDescriptor != null)
-                    ClassifierQualifier(expression, classifierDescriptor)
+                    createClassifierQualifier(expression, classifierDescriptor, context.trace.bindingContext)
                 else
                     PackageQualifier(expression, packageViewDescriptor!!)
 

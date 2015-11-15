@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassifierQualifier
 import org.jetbrains.kotlin.resolve.scopes.receivers.PackageQualifier
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.receivers.createClassifierQualifier
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
@@ -442,7 +443,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
         val qualifier =
                 when (descriptor) {
                     is PackageViewDescriptor -> PackageQualifier(referenceExpression, descriptor)
-                    is ClassifierDescriptor -> ClassifierQualifier(referenceExpression, descriptor)
+                    is ClassifierDescriptor -> createClassifierQualifier(referenceExpression, descriptor, trace.bindingContext)
                     else -> return
                 }
 
