@@ -558,7 +558,7 @@ public class KotlinTypeCheckerTest extends KotlinLiteFixture {
         KotlinType thisType = makeType(contextType);
         ReceiverParameterDescriptorImpl receiverParameterDescriptor = new ReceiverParameterDescriptorImpl(
                 scopeWithImports.getOwnerDescriptor(),
-                new ExpressionReceiver(KtPsiFactoryKt.KtPsiFactory(getProject()).createExpression(expression), thisType)
+                new ExpressionReceiver.Companion.ExpressionReceiverImpl(KtPsiFactoryKt.KtPsiFactory(getProject()).createExpression(expression), thisType)
         );
 
         LexicalScope scope = new LexicalScopeImpl(scopeWithImports, scopeWithImports.getOwnerDescriptor(), false,

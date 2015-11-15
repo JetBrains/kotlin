@@ -167,7 +167,7 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
         KtExpression receiverExpression = KtPsiFactoryKt
                 .KtPsiFactory(state.getProject()).createExpression("callableReferenceFakeReceiver");
         codegen.tempVariables.put(receiverExpression, receiverParameterStackValue(signature));
-        return new ExpressionReceiver(receiverExpression, receiver.getType());
+        return new ExpressionReceiver.Companion.ExpressionReceiverImpl(receiverExpression, receiver.getType());
     }
 
     @NotNull

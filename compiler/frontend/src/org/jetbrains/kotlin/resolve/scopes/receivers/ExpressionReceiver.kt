@@ -20,17 +20,22 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.KotlinType
 
-class ExpressionReceiver(val expression: KtExpression, type: KotlinType) : AbstractReceiverValue(type), ReceiverValue {
-
-    override fun toString() = "$type {$expression: ${expression.text}}"
+interface ExpressionReceiver :  ReceiverValue {
+    val expression: KtExpression
 
     companion object {
+        class ExpressionReceiverImpl(
+                override val expression: KtExpression, type: KotlinType
+        ): AbstractReceiverValue(type), ExpressionReceiver {
+            override fun toString() = "$type {$expression: ${expression.text}}"
+        }
 
         fun create(
                 expression: KtExpression,
                 type: KotlinType,
-                bindingContext: BindingContext): ExpressionReceiver {
-            return ExpressionReceiver(expression, type)
+                bindingContext: BindingContext
+        ): ExpressionReceiver {
+            return ExpressionReceiverImpl(expression, type)
         }
     }
 }
