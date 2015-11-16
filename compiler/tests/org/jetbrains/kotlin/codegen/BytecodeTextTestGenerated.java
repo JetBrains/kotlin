@@ -402,6 +402,45 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/builtinFunctions/size.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("compiler/testData/codegen/bytecodeText/builtinFunctions/genericParameterBridge")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class GenericParameterBridge extends AbstractBytecodeTextTest {
+            @TestMetadata("abstractList.kt")
+            public void testAbstractList() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/builtinFunctions/genericParameterBridge/abstractList.kt");
+                doTest(fileName);
+            }
+
+            public void testAllFilesPresentInGenericParameterBridge() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/builtinFunctions/genericParameterBridge"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("IntMC.kt")
+            public void testIntMC() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/builtinFunctions/genericParameterBridge/IntMC.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("mutableCollection.kt")
+            public void testMutableCollection() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/builtinFunctions/genericParameterBridge/mutableCollection.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("mutableSetInterfaces.kt")
+            public void testMutableSetInterfaces() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/builtinFunctions/genericParameterBridge/mutableSetInterfaces.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nullableAnyMC.kt")
+            public void testNullableAnyMC() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/builtinFunctions/genericParameterBridge/nullableAnyMC.kt");
+                doTest(fileName);
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/conditions")
