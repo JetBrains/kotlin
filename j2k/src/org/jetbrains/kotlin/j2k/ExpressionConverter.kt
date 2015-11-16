@@ -419,7 +419,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
 
         var identifier = Identifier(referenceName, isNullable).assignNoPrototype()
         if (qualifier != null && qualifier.getType() is PsiArrayType && referenceName == "length") {
-            identifier = Identifier("size()", isNullable).assignNoPrototype()
+            identifier = Identifier("size", isNullable).assignNoPrototype()
         }
         else if (qualifier != null) {
             if (target is KtLightField && target.getOrigin() is KtObjectDeclaration) {
