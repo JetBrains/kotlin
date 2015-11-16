@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.psi.psiUtil.isInsideOf
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.isSynthesizedInvoke
@@ -270,6 +271,7 @@ private fun suggestParameterType(
                                             originalDescriptor.valueParameters.map { it.type },
                                             originalDescriptor.returnType ?: builtIns.defaultReturnType)
                }
+
                parameterExpression != null ->
                    (if (useSmartCastsIfPossible) bindingContext[BindingContext.SMARTCAST, parameterExpression] else null)
                    ?: bindingContext.getType(parameterExpression)
@@ -277,17 +279,19 @@ private fun suggestParameterType(
                        (bindingContext[BindingContext.REFERENCE_TARGET, it] as? CallableDescriptor)?.returnType
                    }
                    ?: if (receiverToExtract.exists()) receiverToExtract.type else null
+
                receiverToExtract is ImplicitReceiver -> {
                    val calleeExpression = resolvedCall!!.call.calleeExpression
                    val typeByDataFlowInfo = if (useSmartCastsIfPossible) {
-                       bindingContext[BindingContext.EXPRESSION_TYPE_INFO, calleeExpression]?.dataFlowInfo?.let { dataFlowInfo ->
-                           val possibleTypes = dataFlowInfo.getPossibleTypes(DataFlowValueFactory.createDataFlowValueForStableReceiver(receiverToExtract))
-                           if (possibleTypes.isNotEmpty()) CommonSupertypes.commonSupertype(possibleTypes) else null
-                       }
+                       val dataFlowInfo = bindingContext.getDataFlowInfo(resolvedCall!!.call.callElement)
+                       val possibleTypes = dataFlowInfo.getPossibleTypes(DataFlowValueFactory.createDataFlowValueForStableReceiver(receiverToExtract))
+                       if (possibleTypes.isNotEmpty()) CommonSupertypes.commonSupertype(possibleTypes) else null
                    } else null
                    typeByDataFlowInfo ?: receiverToExtract.type
                }
+
                receiverToExtract.exists() -> receiverToExtract.type
+
                else -> null
            } ?: builtIns.defaultParameterType
 }
