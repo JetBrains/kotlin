@@ -108,7 +108,7 @@ object BuiltinMethodsWithSpecialGenericSignature {
             ERASED_VALUE_PARAMETERS_FQ_NAMES.map { it.shortName() }.toSet()
 
     private val CallableMemberDescriptor.hasErasedValueParametersInJava: Boolean
-        get() = fqNameOrNull() in ERASED_VALUE_PARAMETERS_FQ_NAMES
+        get() = ERASED_VALUE_PARAMETERS_FQ_NAMES.containsRaw(fqNameOrNull())
 
     @JvmStatic
     fun getOverriddenBuiltinFunctionWithErasedValueParametersInJava(
@@ -225,15 +225,15 @@ fun getJvmMethodNameIfSpecial(callableMemberDescriptor: CallableMemberDescriptor
                 && containingDeclaration.kind == ClassKind.ENUM_CLASS) return DescriptorUtils.ENUM_VALUES.asString()
     }
 
-    val builtinOverridden = getBuiltinOverriddenThatAffectsJvmName(callableMemberDescriptor)?.propertyIfAccessor
-            ?: return null
-    return when (builtinOverridden) {
-        is PropertyDescriptor -> builtinOverridden.getBuiltinSpecialPropertyGetterName()
-        else -> BuiltinMethodsWithDifferentJvmName.getJvmName(builtinOverridden)?.asString()
+    val overriddenBuiltin = getOverriddenBuiltinThatAffectsJvmName(callableMemberDescriptor)?.propertyIfAccessor
+                            ?: return null
+    return when (overriddenBuiltin) {
+        is PropertyDescriptor -> overriddenBuiltin.getBuiltinSpecialPropertyGetterName()
+        else -> BuiltinMethodsWithDifferentJvmName.getJvmName(overriddenBuiltin)?.asString()
     }
 }
 
-private fun getBuiltinOverriddenThatAffectsJvmName(
+private fun getOverriddenBuiltinThatAffectsJvmName(
         callableMemberDescriptor: CallableMemberDescriptor
 ): CallableMemberDescriptor? {
     val overriddenBuiltin = callableMemberDescriptor.getOverriddenBuiltinWithDifferentJvmName() ?: return null
