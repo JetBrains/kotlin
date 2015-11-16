@@ -276,7 +276,7 @@ fun specialJVM(): List<GenericFunction> {
         }
     }
 
-    templates.forEach { it.jvmOnly(true) }
+    templates.forEach { it.apply { jvmOnly(true) } }
 
     return templates
 }

@@ -1,7 +1,6 @@
 package templates
 
 import templates.Family.*
-import templates.DocExtensions.collection
 
 fun generators(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()

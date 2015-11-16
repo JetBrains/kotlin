@@ -77,18 +77,20 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
                 }
         }
 
-        operator fun invoke(vararg keys: TKey, valueBuilder: (TKey) -> TValue) = set(keys.asList(), valueBuilder)
-        operator fun invoke(value: TValue, vararg keys: TKey) = set(keys.asList(), { value })
-
         protected open fun onKeySet(key: TKey) {}
     }
+
+    operator fun <TKey: Any, TValue : Any> SpecializedProperty<TKey, TValue>.invoke(vararg keys: TKey, valueBuilder: (TKey) -> TValue) = set(keys.asList(), valueBuilder)
+    operator fun <TKey: Any, TValue : Any> SpecializedProperty<TKey, TValue>.invoke(value: TValue, vararg keys: TKey) = set(keys.asList(), { value })
 
     open class FamilyProperty<TValue: Any>() : SpecializedProperty<Family, TValue>()
     open class PrimitiveProperty<TValue: Any>() : SpecializedProperty<PrimitiveType, TValue>()
 
-    class DeprecationProperty() : FamilyProperty<Deprecation>() {
-        operator fun invoke(value: String, vararg keys: Family) = set(keys.asList(), { Deprecation(value) })
-    }
+    class DeprecationProperty() : FamilyProperty<Deprecation>()
+    operator fun DeprecationProperty.invoke(value: String, vararg keys: Family) = set(keys.asList(), { Deprecation(value) })
+
+    class DocProperty() : FamilyProperty<String>()
+    operator fun DocProperty.invoke(vararg keys: Family, valueBuilder: DocExtensions.(Family) -> String) = set(keys.asList(), { f -> valueBuilder(DocExtensions, f) })
 
 
 
@@ -107,7 +109,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
     val customReceiver = FamilyProperty<String>()
     val customSignature = FamilyProperty<String>()
     val deprecate = DeprecationProperty()
-    val doc = FamilyProperty<String>()
+    val doc = DocProperty()
     val platformName = PrimitiveProperty<String>()
     val inline = FamilyProperty<Boolean>()
     val jvmOnly = FamilyProperty<Boolean>()

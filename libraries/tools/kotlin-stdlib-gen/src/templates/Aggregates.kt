@@ -1,8 +1,6 @@
 package templates
 
 import templates.Family.*
-import templates.DocExtensions.element
-import templates.DocExtensions.collection
 
 fun aggregates(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()

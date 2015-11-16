@@ -1,7 +1,6 @@
 package templates
 
 import templates.Family.*
-import templates.DocExtensions.collection
 
 fun numeric(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()

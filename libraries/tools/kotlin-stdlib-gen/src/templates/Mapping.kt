@@ -1,9 +1,6 @@
 package templates
 
 import templates.Family.*
-import templates.DocExtensions.element
-import templates.DocExtensions.collection
-import templates.DocExtensions.mapResult
 
 fun mapping(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
