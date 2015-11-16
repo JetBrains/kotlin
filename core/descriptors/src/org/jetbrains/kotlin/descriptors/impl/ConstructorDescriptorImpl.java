@@ -149,7 +149,7 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
     public ConstructorDescriptor copy(DeclarationDescriptor newOwner, Modality modality, Visibility visibility, Kind kind, boolean copyOverrides) {
         return (ConstructorDescriptor) doSubstitute(
                 TypeSubstitutor.EMPTY, newOwner, modality, visibility,
-                isOperator(), isInfix(), isExternal(), isInline(), isTailrec(),
+                isOperator(), isInfix(), isExternal(), isInline(), isTailrec(), hasStableParameterNames(), hasSynthesizedParameterNames(),
                 null, copyOverrides, kind
         );
     }
