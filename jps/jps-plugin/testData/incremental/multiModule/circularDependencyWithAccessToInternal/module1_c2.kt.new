@@ -1,0 +1,5 @@
+package c
+
+internal fun internalFun() {}
+
+fun newFun() {}

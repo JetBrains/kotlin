@@ -55,6 +55,12 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("circularDependencyWithAccessToInternal")
+        public void testCircularDependencyWithAccessToInternal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/circularDependencyWithAccessToInternal/");
+            doTest(fileName);
+        }
+
         @TestMetadata("constantValueChanged")
         public void testConstantValueChanged() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/constantValueChanged/");
