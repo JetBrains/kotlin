@@ -1226,12 +1226,12 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         boolean multiDeclaration = at(LPAR);
 
-        errorIf(receiver, multiDeclaration && receiverTypeDeclared, "Receiver type is not allowed on a multi-declaration");
+        errorIf(receiver, multiDeclaration && receiverTypeDeclared, "Receiver type is not allowed on a destructuring declaration");
 
         if (multiDeclaration) {
             PsiBuilder.Marker multiDecl = mark();
             parseMultiDeclarationName(propertyNameFollow);
-            errorIf(multiDecl, !local, "Multi-declarations are only allowed for local variables/values");
+            errorIf(multiDecl, !local, "Destructuring declarations are only allowed for local variables/values");
         }
         else {
             parseFunctionOrPropertyName(receiverTypeDeclared, "property", propertyNameFollow, /*nameRequired = */ false);
@@ -1243,7 +1243,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             PsiBuilder.Marker type = mark();
             advance(); // COLON
             parseTypeRef();
-            errorIf(type, multiDeclaration, "Type annotations are not allowed on multi-declarations");
+            errorIf(type, multiDeclaration, "Type annotations are not allowed on destructuring declarations");
         }
 
         parseTypeConstraintsGuarded(typeParametersDeclared);
