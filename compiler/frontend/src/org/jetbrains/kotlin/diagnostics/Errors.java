@@ -507,7 +507,7 @@ public interface Errors {
     DiagnosticFactory0<KtExpression> CLASS_LITERAL_LHS_NOT_A_CLASS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtExpression> ARRAY_CLASS_LITERAL_REQUIRES_ARGUMENT = DiagnosticFactory0.create(ERROR);
 
-    // Multi-declarations
+    // Destructuring-declarations
 
     DiagnosticFactory0<KtMultiDeclaration> INITIALIZER_REQUIRED_FOR_MULTIDECLARATION = DiagnosticFactory0.create(ERROR, DEFAULT);
     DiagnosticFactory2<KtExpression, Name, KotlinType> COMPONENT_FUNCTION_MISSING = DiagnosticFactory2.create(ERROR, DEFAULT);
