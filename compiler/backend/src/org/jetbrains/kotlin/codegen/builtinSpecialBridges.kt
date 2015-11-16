@@ -88,6 +88,16 @@ object BuiltinSpecialBridgesUtil {
 
         return bridges
     }
+
+    @JvmStatic
+    public fun <Signature> FunctionDescriptor.shouldHaveTypeSafeBarrier(
+            signatureByDescriptor: (FunctionDescriptor) -> Signature
+    ): Boolean {
+        if (BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(this) == null) return false
+
+        val builtin = getOverriddenBuiltinWithDifferentJvmDescriptor()!!
+        return signatureByDescriptor(this) == signatureByDescriptor(builtin)
+    }
 }
 
 

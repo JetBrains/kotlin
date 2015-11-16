@@ -435,6 +435,18 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("notNullAnyMC.kt")
+            public void testNotNullAnyMC() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/builtinFunctions/genericParameterBridge/notNullAnyMC.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("notNullParamMC.kt")
+            public void testNotNullParamMC() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/builtinFunctions/genericParameterBridge/notNullParamMC.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("nullableAnyMC.kt")
             public void testNullableAnyMC() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/builtinFunctions/genericParameterBridge/nullableAnyMC.kt");

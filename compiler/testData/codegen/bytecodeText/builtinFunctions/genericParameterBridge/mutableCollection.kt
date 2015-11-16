@@ -23,3 +23,5 @@ abstract class A2 : MutableCollection<String> {
 // 1 public final bridge contains\(Ljava/lang/Object;\)Z
 // 1 public final bridge remove\(Ljava/lang/Object;\)Z
 // 1 INVOKEVIRTUAL A[0-9]\.contains \(Ljava/lang/String;\)Z
+/* 2 INSTANCEOF: one for 'remove', one for 'contains' type-safe bridges */
+// 2 INSTANCEOF

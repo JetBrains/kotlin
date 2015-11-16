@@ -6,3 +6,5 @@ abstract class A8 : MutableCollection<Any?> {
 
 // 1 bridge
 // 1 public final bridge size
+// 0 INSTANCEOF
+// 0 NULL

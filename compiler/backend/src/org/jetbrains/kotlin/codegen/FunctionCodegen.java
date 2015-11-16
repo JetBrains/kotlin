@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.bridges.Bridge;
 import org.jetbrains.kotlin.backend.common.bridges.ImplKt;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.annotation.AnnotatedWithOnlyTargetedAnnotations;
 import org.jetbrains.kotlin.codegen.context.*;
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics;
@@ -59,6 +60,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
@@ -355,6 +357,10 @@ public class FunctionCodegen {
         mv.visitLabel(methodBegin);
 
         JetTypeMapper typeMapper = parentCodegen.typeMapper;
+        if (BuiltinSpecialBridgesUtil.shouldHaveTypeSafeBarrier(functionDescriptor, getSignatureMapper(typeMapper))) {
+            generateTypeCheckBarrierIfNeeded(
+                    new InstructionAdapter(mv), functionDescriptor, signature.getReturnType(), /* delegateParameterType = */null);
+        }
 
         Label methodEnd;
 
@@ -556,12 +562,7 @@ public class FunctionCodegen {
         if (!isSpecial) {
             bridgesToGenerate = ImplKt.generateBridgesForFunctionDescriptor(
                     descriptor,
-                    new Function1<FunctionDescriptor, Method>() {
-                        @Override
-                        public Method invoke(FunctionDescriptor descriptor) {
-                            return typeMapper.mapSignature(descriptor).getAsmMethod();
-                        }
-                    }
+                    getSignatureMapper(typeMapper)
             );
             if (!bridgesToGenerate.isEmpty()) {
                 PsiElement origin = descriptor.getKind() == DECLARATION ? getSourceFromDescriptor(descriptor) : null;
@@ -576,12 +577,7 @@ public class FunctionCodegen {
         else {
             Set<BridgeForBuiltinSpecial<Method>> specials = BuiltinSpecialBridgesUtil.generateBridgesForBuiltinSpecial(
                     descriptor,
-                    new Function1<FunctionDescriptor, Method>() {
-                        @Override
-                        public Method invoke(FunctionDescriptor descriptor) {
-                            return typeMapper.mapSignature(descriptor).getAsmMethod();
-                        }
-                    }
+                    getSignatureMapper(typeMapper)
             );
 
             if (!specials.isEmpty()) {
@@ -602,6 +598,16 @@ public class FunctionCodegen {
                 v.newMethod(JvmDeclarationOriginKt.OtherOrigin(overridden), flags, method.getName(), method.getDescriptor(), null, null);
             }
         }
+    }
+
+    @NotNull
+    private static Function1<FunctionDescriptor, Method> getSignatureMapper(final @NotNull  JetTypeMapper typeMapper) {
+        return new Function1<FunctionDescriptor, Method>() {
+            @Override
+            public Method invoke(FunctionDescriptor descriptor) {
+                return typeMapper.mapSignature(descriptor).getAsmMethod();
+            }
+        };
     }
 
     private static boolean isMethodOfAny(@NotNull FunctionDescriptor descriptor) {
@@ -852,7 +858,9 @@ public class FunctionCodegen {
         InstructionAdapter iv = new InstructionAdapter(mv);
         MemberCodegen.markLineNumberForSyntheticFunction(owner.getThisDescriptor(), iv);
 
-        generateInstanceOfBarrierIfNeeded(iv, descriptor, bridge, delegateTo);
+        if (delegateTo.getArgumentTypes().length == 1 && isSpecialBridge) {
+            generateTypeCheckBarrierIfNeeded(iv, descriptor, bridge.getReturnType(), delegateTo.getArgumentTypes()[0]);
+        }
 
         iv.load(0, OBJECT_TYPE);
         for (int i = 0, reg = 1; i < argTypes.length; i++) {
@@ -877,11 +885,11 @@ public class FunctionCodegen {
         endVisit(mv, "bridge method", origin);
     }
 
-    private static void generateInstanceOfBarrierIfNeeded(
+    private static void generateTypeCheckBarrierIfNeeded(
             @NotNull InstructionAdapter iv,
             @NotNull FunctionDescriptor descriptor,
-            @NotNull Method bridge,
-            @NotNull final Method delegateTo
+            @NotNull Type returnType,
+            @Nullable final Type delegateParameterType
     ) {
         BuiltinMethodsWithSpecialGenericSignature.DefaultValue defaultValue =
                 BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(descriptor);
@@ -889,24 +897,30 @@ public class FunctionCodegen {
 
         assert descriptor.getValueParameters().size() == 1 : "Should be descriptor with one value parameter, but found: " + descriptor;
 
-        if (bridge.getArgumentTypes()[0].getSort() != Type.OBJECT) return;
+        boolean isCheckForAny = delegateParameterType == null || OBJECT_TYPE.equals(delegateParameterType);
+
+        final KotlinType kotlinType = descriptor.getValueParameters().get(0).getType();
+
+        if (isCheckForAny && TypeUtils.isNullableType(kotlinType)) return;
 
         iv.load(1, OBJECT_TYPE);
 
-        final KotlinType kotlinType = descriptor.getValueParameters().get(0).getType();
-        CodegenUtilKt.generateIsCheck(iv, kotlinType, new Function1<InstructionAdapter, Unit>() {
-            @Override
-            public Unit invoke(InstructionAdapter adapter) {
-                TypeIntrinsics.instanceOf(adapter, kotlinType, boxType(delegateTo.getArgumentTypes()[0]));
-                return Unit.INSTANCE;
-            }
-        });
-
         Label afterBarrier = new Label();
 
-        iv.ifne(afterBarrier);
-
-        Type returnType = bridge.getReturnType();
+        if (isCheckForAny) {
+            assert !TypeUtils.isNullableType(kotlinType) : "Only bridges for not-nullable types are necessary";
+            iv.ifnonnull(afterBarrier);
+        }
+        else {
+            CodegenUtilKt.generateIsCheck(iv, kotlinType, new Function1<InstructionAdapter, Unit>() {
+                @Override
+                public Unit invoke(InstructionAdapter adapter) {
+                    TypeIntrinsics.instanceOf(adapter, kotlinType, boxType(delegateParameterType));
+                    return Unit.INSTANCE;
+                }
+            });
+            iv.ifne(afterBarrier);
+        }
 
         StackValue.constant(defaultValue.getValue(), returnType).put(returnType, iv);
         iv.areturn(returnType);

@@ -7315,6 +7315,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/specialBuiltins"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("bridgeNotEmptyMap.kt")
+        public void testBridgeNotEmptyMap() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/specialBuiltins/bridgeNotEmptyMap.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("bridges.kt")
         public void testBridges() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/specialBuiltins/bridges.kt");
@@ -7372,6 +7378,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("noSpecialBridgeInSuperClass.kt")
         public void testNoSpecialBridgeInSuperClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/specialBuiltins/noSpecialBridgeInSuperClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notEmptyListAny.kt")
+        public void testNotEmptyListAny() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/specialBuiltins/notEmptyListAny.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notEmptyMap.kt")
+        public void testNotEmptyMap() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/specialBuiltins/notEmptyMap.kt");
             doTest(fileName);
         }
 
