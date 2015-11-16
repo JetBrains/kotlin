@@ -1,0 +1,9 @@
+kotlin-data-container
+Module 'module' production
+    format-version.txt
+    kotlin/inline-functions.tab
+    kotlin/inlined-to.tab
+    kotlin/package-parts.tab
+    kotlin/proto.tab
+    kotlin/source-to-classes.tab
+Module 'module' tests
