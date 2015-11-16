@@ -72,10 +72,26 @@ import java.util.*
 
 public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     companion object {
+        // TODO add description to string
+        private val TARGETS_WITH_CLEARED_CACHES = Key<Set<ModuleBuildTarget>>("")
+
         public val KOTLIN_BUILDER_NAME: String = "Kotlin Builder"
         public val LOOKUP_TRACKER: JpsElementChildRoleBase<JpsSimpleElement<out LookupTracker>> = JpsElementChildRoleBase.create("lookup tracker")
-
         val LOG = Logger.getInstance("#org.jetbrains.kotlin.jps.build.KotlinBuilder")
+
+        private fun registerTargetsWithClearedCaches(context: CompileContext, targets: Set<ModuleBuildTarget>) {
+            synchronized(TARGETS_WITH_CLEARED_CACHES) {
+                val data = (context.getUserData(TARGETS_WITH_CLEARED_CACHES) ?: setOf()) + targets
+                context.putUserData(TARGETS_WITH_CLEARED_CACHES, data)
+            }
+        }
+
+        private fun unregisterTargetsWithClearedCaches(context: CompileContext, targets: Set<ModuleBuildTarget>) {
+            synchronized(TARGETS_WITH_CLEARED_CACHES) {
+                val data = (context.getUserData(TARGETS_WITH_CLEARED_CACHES) ?: setOf()) - targets
+                context.putUserData(TARGETS_WITH_CLEARED_CACHES, data)
+            }
+        }
     }
 
     private val statisticsLogger = TeamcityStatisticsLogger()
@@ -106,9 +122,14 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val messageCollector = MessageCollectorAdapter(context)
 
         try {
-            val result = doBuild(chunk, context, dirtyFilesHolder, messageCollector, outputConsumer)
-            LOG.debug("Build result: " + result)
-            return result
+            val exitCode = doBuild(chunk, context, dirtyFilesHolder, messageCollector, outputConsumer)
+            LOG.debug("Build result: " + exitCode)
+
+            if (exitCode != ExitCode.CHUNK_REBUILD_REQUIRED && exitCode != ABORT) {
+                saveVersions(context, chunk)
+            }
+
+            return exitCode
         }
         catch (e: StopBuildException) {
             LOG.debug("Caught exception: " + e)
@@ -139,17 +160,21 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         }
 
         val projectDescriptor = context.projectDescriptor
-
         val dataManager = projectDescriptor.dataManager
+        val targets = chunk.targets
+        val requestedToRebuild = context.getUserData(TARGETS_WITH_CLEARED_CACHES) ?: setOf()
+        val isFullRebuild = JavaBuilderUtil.isForcedRecompilationAllJavaModules(context)
 
-        if (chunk.targets.any { dataManager.dataPaths.getKotlinCacheVersion(it).isIncompatible() }) {
-            LOG.info("Clearing caches for " + chunk.targets.joinToString { it.presentableName })
-            chunk.targets.forEach { dataManager.getKotlinCache(it).clean() }
-            return CHUNK_REBUILD_REQUIRED
+        if (!isFullRebuild && !requestedToRebuild.containsAll(targets)) {
+            val exitCode = checkVersions(context, dataManager, targets)
+
+            if (exitCode != null) return exitCode
         }
 
-        if (!dirtyFilesHolder.hasDirtyFiles() && !dirtyFilesHolder.hasRemovedFiles()
-            || !hasKotlinDirtyOrRemovedFiles(dirtyFilesHolder, chunk)) {
+        if (!dirtyFilesHolder.hasDirtyFiles() &&
+            !dirtyFilesHolder.hasRemovedFiles() ||
+            !hasKotlinDirtyOrRemovedFiles(dirtyFilesHolder, chunk)
+        ) {
             return NOTHING_DONE
         }
 
@@ -200,16 +225,21 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             return OK
         }
 
+        val generatedClasses = generatedFiles.filterIsInstance<GeneratedJvmClass>()
+        updateJavaMappings(chunk, compilationErrors, context, dirtyFilesHolder, filesToCompile, generatedClasses)
+
         if (!IncrementalCompilation.isEnabled()) {
             return OK
         }
 
         context.checkCanceled()
 
-        val generatedClasses = generatedFiles.filterIsInstance<GeneratedJvmClass>()
-        val changesInfo = updateKotlinIncrementalCache(compilationErrors, incrementalCaches, generatedFiles, chunk)
-        updateJavaMappings(chunk, compilationErrors, context, dirtyFilesHolder, filesToCompile, generatedClasses)
+        val changesInfo = updateKotlinIncrementalCache(compilationErrors, incrementalCaches, generatedFiles)
         updateLookupStorage(chunk, lookupTracker, dataManager, dirtyFilesHolder, filesToCompile)
+
+        if (isFullRebuild) {
+            return OK
+        }
 
         val caches = filesToCompile.keySet().map { incrementalCaches[it]!! }
         processChanges(context, chunk, filesToCompile.values(), allCompiledFiles, dataManager, caches, changesInfo)
@@ -298,6 +328,77 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         else {
             compilationResult.doProcessChanges()
         }
+    }
+
+
+    private fun checkVersions(context: CompileContext, dataManager: BuildDataManager, targets: MutableSet<ModuleBuildTarget>): ExitCode? {
+        val cacheVersionsProvider = CacheVersionProvider(dataManager.dataPaths)
+        val allVersions = cacheVersionsProvider.allVersions(targets)
+        val actions = allVersions.map { it.checkVersion() }.toSet().sorted()
+
+        fun cleanNormalCaches() {
+            LOG.info("Clearing caches for " + targets.joinToString { it.presentableName })
+            targets.forEach { dataManager.getKotlinCache(it).clean() }
+        }
+
+        for (status in actions) {
+            when (status) {
+                CacheVersion.Action.REBUILD_ALL_KOTLIN -> {
+                    LOG.info("Kotlin global lookup map format changed, so rebuild all kotlin")
+                    val project = context.projectDescriptor.project
+                    val sourceRoots = project.modules.flatMap { it.sourceRoots }
+
+                    for (sourceRoot in sourceRoots) {
+                        val ktFiles = sourceRoot.file.walk().filter { KotlinSourceFileCollector.isKotlinSourceFile(it) }
+                        ktFiles.forEach { kt ->
+                            FSOperations.markDirty(context, CompilationRound.NEXT, kt)
+                        }
+                    }
+
+                    val buildTargetIndex = context.projectDescriptor.buildTargetIndex
+                    val allTargets = buildTargetIndex.allTargets.filterIsInstance<ModuleBuildTarget>().toSet()
+
+                    for (target in targets) {
+                        dataManager.getKotlinCache(target).clean()
+                    }
+
+                    dataManager.getStorage(KotlinDataContainerTarget, LookupStorageProvider).clean()
+                    registerTargetsWithClearedCaches(context, allTargets)
+
+                    return CHUNK_REBUILD_REQUIRED
+                }
+                CacheVersion.Action.REBUILD_CHUNK -> {
+                    cleanNormalCaches()
+                    registerTargetsWithClearedCaches(context, targets)
+                    return CHUNK_REBUILD_REQUIRED
+                }
+                CacheVersion.Action.CLEAN_NORMAL_CACHES -> {
+                    cleanNormalCaches()
+                }
+                CacheVersion.Action.CLEAN_EXPERIMENTAL_CACHES -> {
+                    LOG.info("Clearing experimental caches for " + targets.joinToString { it.presentableName })
+                    targets.forEach { dataManager.getKotlinCache(it).cleanExperimental() }
+                }
+                CacheVersion.Action.CLEAN_DATA_CONTAINER -> {
+                    LOG.info("Clearing lookup cache")
+                    dataManager.getStorage(KotlinDataContainerTarget, LookupStorageProvider).clean()
+                    cacheVersionsProvider.dataContainerVersion().clean()
+                }
+                else -> {
+                    assert(status == CacheVersion.Action.DO_NOTHING) { "Unknown version status $status" }
+                }
+            }
+        }
+
+        return null
+    }
+
+    private fun saveVersions(context: CompileContext, chunk: ModuleChunk) {
+        val dataManager = context.projectDescriptor.dataManager
+        val targets = chunk.targets
+        val cacheVersionsProvider = CacheVersionProvider(dataManager.dataPaths)
+        cacheVersionsProvider.allVersions(targets).forEach { it.saveIfNeeded() }
+        unregisterTargetsWithClearedCaches(context, targets)
     }
 
     private fun doCompileModuleChunk(
@@ -414,8 +515,6 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             filesToCompile: MultiMap<ModuleBuildTarget, File>,
             generatedClasses: List<GeneratedJvmClass>
     ) {
-        assert(IncrementalCompilation.isEnabled()) { "updateJavaMappings should not be called when incremental compilation disabled" }
-
         val previousMappings = context.getProjectDescriptor().dataManager.getMappings()
         val delta = previousMappings.createDelta()
         val callback = delta.getCallback()
@@ -442,13 +541,10 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
     private fun updateKotlinIncrementalCache(
             compilationErrors: Boolean,
             incrementalCaches: Map<ModuleBuildTarget, IncrementalCacheImpl>,
-            generatedFiles: List<GeneratedFile>,
-            chunk: ModuleChunk
+            generatedFiles: List<GeneratedFile>
     ): CompilationResult {
 
         assert(IncrementalCompilation.isEnabled()) { "updateKotlinIncrementalCache should not be called when incremental compilation disabled" }
-
-        chunk.targets.forEach { incrementalCaches[it]!!.saveCacheFormatVersion() }
 
         var changesInfo = CompilationResult.NO_CHANGES
         for (generatedFile in generatedFiles) {
@@ -704,6 +800,7 @@ private fun getIncrementalCaches(chunk: ModuleChunk, context: CompileContext): M
     return caches
 }
 
+// TODO: investigate thread safety
 private val ALL_COMPILED_FILES_KEY = Key.create<MutableSet<File>>("_all_kotlin_compiled_files_")
 private fun getAllCompiledFilesContainer(context: CompileContext): MutableSet<File> {
     var allCompiledFiles = ALL_COMPILED_FILES_KEY.get(context)
@@ -714,6 +811,7 @@ private fun getAllCompiledFilesContainer(context: CompileContext): MutableSet<Fi
     return allCompiledFiles
 }
 
+// TODO: investigate thread safety
 private val PROCESSED_TARGETS_WITH_REMOVED_FILES = Key.create<MutableSet<ModuleBuildTarget>>("_processed_targets_with_removed_files_")
 private fun getProcessedTargetsWithRemovedFilesContainer(context: CompileContext): MutableSet<ModuleBuildTarget> {
     var set = PROCESSED_TARGETS_WITH_REMOVED_FILES.get(context)
