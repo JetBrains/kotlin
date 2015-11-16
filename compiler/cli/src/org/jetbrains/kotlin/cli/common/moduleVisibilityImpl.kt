@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.load.kotlin.getSourceElement
 import org.jetbrains.kotlin.load.kotlin.isContainedByCompiledPartOfOurModule
+import org.jetbrains.kotlin.load.kotlin.isFromIncrementalPackageFragment
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
@@ -58,6 +59,10 @@ class ModuleVisibilityHelperImpl : ModuleVisibilityHelper {
         }
 
         if (modules.isEmpty()) return false
+
+        // Hack for incremental compilation (now there is no way to determine the module of descriptor in case of incremental package fragment)
+        // TODO Implement full check for access to internal for incremental compilation
+        if (what.isFromIncrementalPackageFragment) return true
 
         return findModule(from, modules) === findModule(what, modules)
     }
