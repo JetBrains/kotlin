@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.scopes.receivers
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
@@ -32,10 +31,6 @@ import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.FilteringScope
 import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
-import org.jetbrains.kotlin.resolve.scopes.utils.findPackage
-import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
@@ -78,9 +73,6 @@ class PackageQualifier(
     override fun getNestedClassesAndPackageMembersScope(): MemberScope = packageView.memberScope
 
     override fun toString() = "Package{$packageView}"
-
-    override val companionObjectReceiver: ReceiverValue?
-        get() = null
 }
 
 abstract class ClassifierQualifier(referenceExpression: KtSimpleNameExpression) : QualifierReceiver(referenceExpression) {
@@ -143,9 +135,6 @@ class ClassQualifier(
         return ChainedScope("Static scope for $name as class or object", *scopes.toTypedArray())
     }
 
-    fun getClassObjectReceiver(): ReceiverValue =
-            classifier.classObjectType?.let { ExpressionReceiver(referenceExpression, it) } ?: ReceiverValue.NO_RECEIVER
-
     override fun toString() = "Class{$classifier}"
 }
 
@@ -157,5 +146,8 @@ fun createClassifierQualifier(
     val companionObjectReceiver = (classifier as? ClassDescriptor)?.companionObjectType?.let {
         ExpressionReceiver.create(referenceExpression, it, bindingContext)
     }
-    return ClassQualifier(referenceExpression, classifier, companionObjectReceiver)
+    return if (classifier is ClassDescriptor)
+        ClassQualifier(referenceExpression, classifier, companionObjectReceiver)
+    else
+        ClassifierQualifierWithEmptyScope(referenceExpression, classifier)
 }

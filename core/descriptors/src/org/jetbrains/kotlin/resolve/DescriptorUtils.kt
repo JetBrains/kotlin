@@ -73,21 +73,24 @@ public val ClassDescriptor.classId: ClassId
 
 public val ClassDescriptor.hasCompanionObject: Boolean get() = companionObjectType != null
 
+public val ClassDescriptor.classValueDescriptor: ClassDescriptor?
+    get() = if (kind.isSingleton) this else companionObjectDescriptor
+
+public val ClassDescriptor.classValueTypeDescriptor: ClassDescriptor?
+    get() = when (kind) {
+        OBJECT -> this
+        ENUM_ENTRY -> {
+            // enum entry has the type of enum class
+            val container = this.containingDeclaration
+            assert(container is ClassDescriptor && container.getKind() == ENUM_CLASS)
+            container as ClassDescriptor
+        }
+        else -> companionObjectDescriptor
+    }
+
 /** If a literal of this class can be used as a value, returns the type of this value */
 public val ClassDescriptor.companionObjectType: KotlinType?
-    get() {
-        val correspondingDescriptor = when (this.getKind()) {
-            OBJECT -> this
-            // enum entry has the type of enum class
-            ENUM_ENTRY -> {
-                val container = this.getContainingDeclaration()
-                assert(container is ClassDescriptor && container.getKind() == ENUM_CLASS)
-                container as ClassDescriptor
-            }
-            else -> getCompanionObjectDescriptor()
-        }
-        return correspondingDescriptor?.getDefaultType()
-    }
+    get() = classValueTypeDescriptor?.getDefaultType()
 
 public val DeclarationDescriptorWithVisibility.isEffectivelyPublicApi: Boolean
     get() {

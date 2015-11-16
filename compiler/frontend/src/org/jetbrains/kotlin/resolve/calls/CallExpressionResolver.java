@@ -137,13 +137,6 @@ public class CallExpressionResolver {
             }
         }
 
-        //// Generate some diagnostics for qualifier in unexpected position
-        //DeclarationDescriptor qualifierDescriptor =
-        //        QualifiedExpressionResolveUtilKt.getQualifierDescriptorOrNull(nameExpression, receiver, context);
-        //if (qualifierDescriptor != null) {
-        //    QualifiedExpressionResolveUtilKt.checkQualifierAsStandaloneExpression(qualifierDescriptor, nameExpression, context);
-        //}
-
         temporaryForVariable.commit();
         result[0] = !resolutionResult.isNothing();
         return resolutionResult.isSingleResult() ? resolutionResult.getResultingDescriptor().getReturnType() : null;

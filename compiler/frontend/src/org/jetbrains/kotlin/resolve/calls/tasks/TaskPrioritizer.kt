@@ -99,15 +99,15 @@ public class TaskPrioritizer(
             taskPrioritizerContext: TaskPrioritizerContext<D, F>
     ) {
         if (qualifier is ClassQualifier) {
-            val companionObject = qualifierReceiver.companionObjectReceiver ?: return
-            val classifierDescriptor = qualifierReceiver.classifier
+            val companionObject = qualifier.companionObjectReceiver ?: return
+            val classifierDescriptor = qualifier.classifier
             doComputeTasks(companionObject, taskPrioritizerContext.filterCollectors {
                 when {
                     classifierDescriptor is ClassDescriptor && classifierDescriptor.getCompanionObjectDescriptor() != null -> {
                         // nested classes and objects should not be accessible via short reference to companion object
                         it !is ConstructorDescriptor && it !is FakeCallableDescriptorForObject
                     }
-                    classifierDescriptor != null && DescriptorUtils.isEnumEntry(classifierDescriptor) -> {
+                    DescriptorUtils.isEnumEntry(classifierDescriptor) -> {
                         // objects nested in enum should not be accessible via enum entries reference
                         it !is FakeCallableDescriptorForObject
                     }
