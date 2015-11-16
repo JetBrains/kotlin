@@ -55,13 +55,23 @@ public class KtPsiFactory(private val project: Project) {
         return (createExpression("a?.b") as KtSafeQualifiedExpression).getOperationTokenNode()
     }
 
-    public fun createExpression(text: String): KtExpression {
+    private fun doCreateExpression(text: String): KtExpression {
         //TODO: '\n' below if important - some strange code indenting problems appear without it
         val expression = createProperty("val x =\n$text").getInitializer() ?: error("Failed to create expression from text: '$text'")
+        return expression
+    }
+
+    public fun createExpression(text: String): KtExpression {
+        val expression = doCreateExpression(text)
         assert(expression.getText() == text) {
             "Failed to create expression from text: '$text', resulting expression's text was: '${expression.getText()}'"
         }
         return expression
+    }
+
+    public fun createExpressionIfPossible(text: String): KtExpression? {
+        val expression = doCreateExpression(text)
+        return if (expression.getText() == text) expression else null
     }
 
     public fun createClassLiteral(className: String): KtClassLiteralExpression =
@@ -290,6 +300,8 @@ public class KtPsiFactory(private val project: Project) {
         val stringTemplateExpression = createExpression("\"\$$name\"") as KtStringTemplateExpression
         return stringTemplateExpression.getEntries()[0] as KtStringTemplateEntryWithExpression
     }
+
+    public fun createStringTemplate(content: String) = createExpression("\"$content\"") as KtStringTemplateExpression
 
     public fun createPackageDirective(fqName: FqName): KtPackageDirective {
         return createFile("package ${fqName.asString()}").getPackageDirective()!!

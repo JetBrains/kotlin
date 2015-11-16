@@ -23,6 +23,8 @@ import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.core.refactoring.getContextForContainingDeclarationBody
+import org.jetbrains.kotlin.idea.refactoring.introduce.ExtractableSubstringInfo
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractableSubstringInfo
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange.Empty
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnificationResult.*
@@ -60,7 +62,7 @@ public interface UnificationResult {
             override fun and(other: Status): Status = this
         };
 
-        public abstract fun and(other: Status): Status
+        public abstract infix fun and(other: Status): Status
     }
 
     object Unmatched : UnificationResult {
@@ -111,6 +113,7 @@ public class KotlinPsiUnifier(
         val declarationPatternsToTargets = MultiMap<DeclarationDescriptor, DeclarationDescriptor>()
         val weakMatches = HashMap<KtElement, KtElement>()
         var checkEquivalence: Boolean = false
+        var targetSubstringInfo: ExtractableSubstringInfo? = null
 
         private fun KotlinPsiRange.getBindingContext(): BindingContext {
             val element = (this as? KotlinPsiRange.ListRange)?.startElement as? KtElement
@@ -702,7 +705,73 @@ public class KotlinPsiUnifier(
             return targetElementType != null && KotlinTypeChecker.DEFAULT.isSubtypeOf(targetElementType, parameter.expectedType)
         }
 
+        private fun doUnifyStringTemplateFragments(target: KtStringTemplateExpression, pattern: ExtractableSubstringInfo): Status {
+            val prefixLength = pattern.prefix.length
+            val suffixLength = pattern.suffix.length
+            val targetEntries = target.entries
+            val patternEntries = pattern.entries.toList()
+            for ((index, targetEntry) in targetEntries.withIndex()) {
+                if (index + patternEntries.size > targetEntries.size) return UNMATCHED
+
+                val targetEntryText = targetEntry.text
+
+                if (pattern.startEntry == pattern.endEntry && (prefixLength > 0 || suffixLength > 0)) {
+                    if (targetEntry !is KtLiteralStringTemplateEntry) continue
+
+                    val patternText = with(pattern.startEntry.text) { substring(prefixLength, length - suffixLength) }
+                    val i = targetEntryText.indexOf(patternText)
+                    if (i < 0) continue
+                    val targetPrefix = targetEntryText.substring(0, i)
+                    val targetSuffix = targetEntryText.substring(i + patternText.length)
+                    targetSubstringInfo = ExtractableSubstringInfo(targetEntry, targetEntry, targetPrefix, targetSuffix, pattern.type)
+                    return MATCHED
+                }
+
+                val matchStartByText = pattern.startEntry is KtLiteralStringTemplateEntry
+                val matchEndByText = pattern.endEntry is KtLiteralStringTemplateEntry
+
+                val targetPrefix = if (matchStartByText) {
+                    if (targetEntry !is KtLiteralStringTemplateEntry) continue
+
+                    val patternText = pattern.startEntry.text.substring(prefixLength)
+                    if (!targetEntryText.endsWith(patternText)) continue
+                    targetEntryText.substring(0, targetEntryText.length - patternText.length)
+                }
+                else ""
+
+                val lastTargetEntry = targetEntries[index + patternEntries.lastIndex]
+
+                val targetSuffix = if (matchEndByText) {
+                    if (lastTargetEntry !is KtLiteralStringTemplateEntry) continue
+
+                    val patternText = with(pattern.endEntry.text) { substring(0, length - suffixLength) }
+                    val lastTargetEntryText = lastTargetEntry.text
+                    if (!lastTargetEntryText.startsWith(patternText)) continue
+                    lastTargetEntryText.substring(patternText.length)
+                }
+                else ""
+
+                val fromIndex = if (matchStartByText) 1 else 0
+                val toIndex = if (matchEndByText) patternEntries.lastIndex - 1 else patternEntries.lastIndex
+                val status = (fromIndex..toIndex).fold(MATCHED) { s, patternEntryIndex ->
+                    val targetEntryToUnify = targetEntries[index + patternEntryIndex]
+                    val patternEntryToUnify = patternEntries[patternEntryIndex]
+                    if (s != UNMATCHED) s and doUnify(targetEntryToUnify, patternEntryToUnify) else s
+                }
+                if (status == UNMATCHED) continue
+                targetSubstringInfo = ExtractableSubstringInfo(targetEntry, lastTargetEntry, targetPrefix, targetSuffix, pattern.type)
+                return status
+            }
+
+            return UNMATCHED
+        }
+
         fun doUnify(target: KotlinPsiRange, pattern: KotlinPsiRange): Status {
+            (pattern.elements.singleOrNull() as? KtExpression)?.extractableSubstringInfo?.let {
+                val targetTemplate = target.elements.singleOrNull() as? KtStringTemplateExpression ?: return UNMATCHED
+                return doUnifyStringTemplateFragments(targetTemplate, it)
+            }
+
             val targetElements = target.elements
             val patternElements = pattern.elements
             if (targetElements.size() != patternElements.size()) return UNMATCHED
@@ -828,8 +897,14 @@ public class KotlinPsiUnifier(
             when {
                 substitution.size() != descriptorToParameter.size() ->
                     Unmatched
-                status == MATCHED ->
-                    if (weakMatches.isEmpty()) StronglyMatched(target, substitution) else WeaklyMatched(target, substitution, weakMatches)
+                status == MATCHED -> {
+                    val targetRange = targetSubstringInfo?.createExpression()?.toRange() ?: target
+                    if (weakMatches.isEmpty()) {
+                        StronglyMatched(targetRange, substitution)
+                    } else {
+                        WeaklyMatched(targetRange, substitution, weakMatches)
+                    }
+                }
                 else ->
                     Unmatched
             }

@@ -20,17 +20,16 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtil
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
-import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
-import org.jetbrains.kotlin.psi.psiUtil.getOutermostParentContainedIn
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.*
 
 fun showErrorHint(project: Project, editor: Editor, message: String, title: String) {
     CodeInsightUtils.showErrorHint(project, editor, message, title, null)
@@ -48,8 +47,9 @@ fun selectElementsWithTargetSibling(
         continuation: (elements: List<PsiElement>, targetSibling: PsiElement) -> Unit
 ) {
     fun onSelectionComplete(elements: List<PsiElement>, targetContainer: PsiElement) {
-        val parent = PsiTreeUtil.findCommonParent(elements)
-                     ?: throw AssertionError("Should have at least one parent: ${elements.joinToString("\n")}")
+        val physicalElements = elements.map { it.substringContextOrThis }
+        val parent = PsiTreeUtil.findCommonParent(physicalElements)
+                     ?: throw AssertionError("Should have at least one parent: ${physicalElements.joinToString("\n")}")
 
         if (parent == targetContainer) {
             continuation(elements, elements.first())
@@ -80,8 +80,9 @@ fun selectElementsWithTargetParent(
     }
 
     fun selectTargetContainer(elements: List<PsiElement>) {
-        val parent = PsiTreeUtil.findCommonParent(elements)
-            ?: throw AssertionError("Should have at least one parent: ${elements.joinToString("\n")}")
+        val physicalElements = elements.map { it.substringContextOrThis }
+        val parent = PsiTreeUtil.findCommonParent(physicalElements)
+            ?: throw AssertionError("Should have at least one parent: ${physicalElements.joinToString("\n")}")
 
         val containers = getContainers(elements, parent)
         if (containers.isEmpty()) {
@@ -146,4 +147,30 @@ fun PsiElement.findExpressionsByCopyableDataAndClearIt(key: Key<Boolean>): List<
     val results = collectDescendantsOfType<KtExpression> { it.getCopyableUserData(key) != null }
     results.forEach { it.putCopyableUserData(key, null) }
     return results
+}
+
+fun findExpressionOrStringFragment(file: KtFile, startOffset: Int, endOffset: Int): KtExpression? {
+    CodeInsightUtils.findExpression(file, startOffset, endOffset)?.let { return it }
+
+    val entry1 = file.findElementAt(startOffset)?.getNonStrictParentOfType<KtStringTemplateEntry>() ?: return null
+    val entry2 = file.findElementAt(endOffset - 1)?.getNonStrictParentOfType<KtStringTemplateEntry>() ?: return null
+
+    if (entry1 == entry2 && entry1 is KtStringTemplateEntryWithExpression) return entry1.expression
+
+    val stringTemplate = entry1.parent as? KtStringTemplateExpression ?: return null
+    if (entry2.parent != stringTemplate) return null
+
+    val templateOffset = stringTemplate.startOffset
+    if (stringTemplate.getContentRange().equalsToRange(startOffset - templateOffset, endOffset - templateOffset)) return stringTemplate
+
+    val prefixOffset = startOffset - entry1.startOffset
+    if (entry1 !is KtLiteralStringTemplateEntry && prefixOffset > 0) return null
+
+    val suffixOffset = endOffset - entry2.startOffset
+    if (entry2 !is KtLiteralStringTemplateEntry && suffixOffset < entry2.textLength) return null
+
+    val prefix = entry1.text.substring(0, prefixOffset)
+    val suffix = entry2.text.substring(suffixOffset)
+
+    return ExtractableSubstringInfo(entry1, entry2, prefix, suffix).createExpression()
 }

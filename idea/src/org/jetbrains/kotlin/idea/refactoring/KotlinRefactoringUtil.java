@@ -45,8 +45,8 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
+import org.jetbrains.kotlin.idea.refactoring.introduce.IntroduceUtilKt;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.string.StringUtilKt;
 import org.jetbrains.kotlin.psi.*;
@@ -489,7 +489,7 @@ public class KotlinRefactoringUtil {
     private static KtExpression findExpression(
             @NotNull KtFile file, int startOffset, int endOffset, boolean failOnNoExpression
     ) throws IntroduceRefactoringException {
-        KtExpression element = CodeInsightUtils.findExpression(file, startOffset, endOffset);
+        KtExpression element = IntroduceUtilKt.findExpressionOrStringFragment(file, startOffset, endOffset);
         if (element == null) {
             //todo: if it's infix expression => add (), then commit document then return new created expression
 

@@ -1,0 +1,6 @@
+fun foo(a: Int): String {
+    val s = "c$a:${a + 1}d"
+    val x = "_${s}_"
+    val y = "_$a:${a + 1}d_"
+    return "ab${s}ef"
+}
