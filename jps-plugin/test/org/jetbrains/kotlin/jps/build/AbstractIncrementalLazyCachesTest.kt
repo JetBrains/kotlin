@@ -17,20 +17,26 @@
 package org.jetbrains.kotlin.jps.build
 
 import com.intellij.testFramework.UsefulTestCase
+import org.jetbrains.jps.builders.BuildTarget
+import org.jetbrains.jps.builders.storage.BuildDataPaths
 import org.jetbrains.kotlin.config.IncrementalCompilation
-import org.jetbrains.kotlin.jps.incremental.getCacheDirectoryName
-import org.jetbrains.kotlin.jps.incremental.getKotlinCacheVersion
+import org.jetbrains.kotlin.jps.incremental.CacheVersion
+import org.jetbrains.kotlin.jps.incremental.CacheVersionProvider
+import org.jetbrains.kotlin.jps.incremental.KotlinDataContainerTarget
 import org.jetbrains.kotlin.jps.incremental.storage.BasicMapsOwner
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
 public abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJpsTest() {
+    protected open val expectedCachesFileName: String
+        get() = "expected-kotlin-caches.txt"
+
     override fun doTest(testDataPath: String) {
         try {
             super.doTest(testDataPath)
 
             val actual = dumpKotlinCachesFileNames()
-            val expectedFile = File(testDataPath, "expected-kotlin-caches.txt")
+            val expectedFile = File(testDataPath, expectedCachesFileName)
             UsefulTestCase.assertSameLinesWithFile(expectedFile.canonicalPath, actual)
         }
         finally {
@@ -41,28 +47,37 @@ public abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJps
     override fun performAdditionalModifications(modifications: List<AbstractIncrementalJpsTest.Modification>) {
         super.performAdditionalModifications(modifications)
 
-        var modified = 0
-
         for (modification in modifications) {
-            if (!modification.path.endsWith("incremental_compilation_off")) continue
+            if (modification !is AbstractIncrementalJpsTest.ModifyContent) continue
 
-            when (modification) {
-                is AbstractIncrementalJpsTest.ModifyContent -> {
-                    IncrementalCompilation.disableIncrementalCompilation()
+            when (File(modification.path).name) {
+                "incremental-compilation" -> {
+                    if (modification.dataFile.readAsBool()) {
+                        IncrementalCompilation.enableIncrementalCompilation()
+                    }
+                    else {
+                        IncrementalCompilation.disableIncrementalCompilation()
+                    }
                 }
-                is AbstractIncrementalJpsTest.DeleteFile -> {
-                    IncrementalCompilation.enableIncrementalCompilation()
-                }
-                else -> {
-                    throw IllegalStateException("Unknown modification type: ${modification.javaClass}")
+                "experimental-compilation" -> {
+                    if (modification.dataFile.readAsBool()) {
+                        IncrementalCompilation.enableExperimental()
+                    }
+                    else {
+                        IncrementalCompilation.disableExperimental()
+                    }
                 }
             }
-
-            modified++
         }
+    }
 
-        if (modified > 1) {
-            throw IllegalStateException("Incremental compilation was enabled/disable more than once")
+    fun File.readAsBool(): Boolean {
+        val content = this.readText()
+
+        return when (content.trim()) {
+            "on" -> true
+            "off" -> false
+            else -> throw IllegalStateException("$this content is expected to be 'on' or 'off'")
         }
     }
 
@@ -71,32 +86,44 @@ public abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJps
         val p = Printer(sb)
         val targets = projectDescriptor.allModuleTargets
         val paths = projectDescriptor.dataManager.dataPaths
+        val versionProvider = CacheVersionProvider(paths)
+
+        dumpCachesForTarget(p, paths, KotlinDataContainerTarget, versionProvider.dataContainerVersion())
 
         for (target in targets.sortedBy { it.presentableName }) {
-            p.println(target)
-            p.pushIndent()
-
-            val cacheVersion = paths.getKotlinCacheVersion(target)
-            if (cacheVersion.formatVersionFile.exists()) {
-                p.println(cacheVersion.formatVersionFile.name)
-            }
-
-            val dataRoot = paths.getTargetDataRoot(target)
-            val cacheNames = kotlinCacheNames(dataRoot)
-            cacheNames.sorted().forEach { p.println(it) }
-
-            p.popIndent()
+            dumpCachesForTarget(p, paths, target, versionProvider.normalVersion(target), versionProvider.experimentalVersion(target))
         }
 
         return sb.toString()
     }
 
+    private fun dumpCachesForTarget(p: Printer, paths: BuildDataPaths, target: BuildTarget<*>, vararg cacheVersions: CacheVersion) {
+        p.println(target)
+        p.pushIndent()
+
+        val dataRoot = paths.getTargetDataRoot(target)
+
+        cacheVersions
+                .map { it.formatVersionFile }
+                .filter { it.exists() }
+                .sortedBy { it.name }
+                .forEach { p.println(it.relativeTo(dataRoot)) }
+
+        val cacheNames = kotlinCacheNames(dataRoot)
+        cacheNames.sorted().forEach { p.println(it) }
+
+        p.popIndent()
+    }
+
     private fun kotlinCacheNames(dataRoot: File): List<String> {
-        val cacheDir = File(dataRoot, getCacheDirectoryName())
-        val fileNames = cacheDir.list() ?: arrayOf()
-        val cacheFiles = fileNames
-                .map { File(cacheDir, it) }
-                .filter { it.isFile && it.extension == BasicMapsOwner.CACHE_EXTENSION }
-        return cacheFiles.map { it.name }
+        val result = arrayListOf<String>()
+
+        for (file in dataRoot.walk()) {
+            if (file.isFile && file.extension == BasicMapsOwner.CACHE_EXTENSION) {
+                result.add(file.relativeTo(dataRoot))
+            }
+        }
+
+        return result
     }
 }
