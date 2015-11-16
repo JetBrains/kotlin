@@ -5211,6 +5211,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("NotForQualifier.kt")
+        public void testNotForQualifier() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importMember/NotForQualifier.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ObjectMethod.kt")
         public void testObjectMethod() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/importMember/ObjectMethod.kt");
