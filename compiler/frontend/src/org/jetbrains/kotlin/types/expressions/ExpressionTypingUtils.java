@@ -31,12 +31,13 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
+import org.jetbrains.kotlin.resolve.ObservableBindingTrace;
+import org.jetbrains.kotlin.resolve.TraceBasedRedeclarationHandler;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
@@ -48,28 +49,6 @@ import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.PROCESSED;
 
 public class ExpressionTypingUtils {
-
-    @NotNull
-    public static ReceiverValue normalizeReceiverValueForVisibility(@NotNull ReceiverValue receiverValue, @NotNull BindingContext trace) {
-        if (receiverValue instanceof ExpressionReceiver) {
-            KtExpression expression = ((ExpressionReceiver) receiverValue).getExpression();
-            KtReferenceExpression referenceExpression = null;
-            if (expression instanceof KtThisExpression) {
-                referenceExpression = ((KtThisExpression) expression).getInstanceReference();
-            }
-            else if (expression instanceof KtConstructorDelegationReferenceExpression) {
-                referenceExpression = (KtReferenceExpression) expression;
-            }
-
-            if (referenceExpression != null) {
-                DeclarationDescriptor descriptor = trace.get(BindingContext.REFERENCE_TARGET, referenceExpression);
-                if (descriptor instanceof ClassDescriptor) {
-                    return new ClassReceiver((ClassDescriptor) descriptor.getOriginal());
-                }
-            }
-        }
-        return receiverValue;
-    }
 
     @Nullable
     public static ExpressionReceiver getExpressionReceiver(

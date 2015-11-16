@@ -420,8 +420,7 @@ public class JetFlowInformationProvider {
             ResolvedCall<? extends CallableDescriptor> resolvedCall = CallUtilKt.getResolvedCall(expression, trace.getBindingContext());
             ReceiverValue receiverValue = ReceiverValue.IRRELEVANT_RECEIVER;
             if (resolvedCall != null) {
-                receiverValue = ExpressionTypingUtils
-                        .normalizeReceiverValueForVisibility(resolvedCall.getDispatchReceiver(), trace.getBindingContext());
+                receiverValue = resolvedCall.getDispatchReceiver();
 
             }
             if (Visibilities.isVisible(receiverValue, variableDescriptor, descriptor) && setterDescriptor != null

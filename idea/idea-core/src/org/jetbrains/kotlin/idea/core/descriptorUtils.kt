@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 
 fun DeclarationDescriptorWithVisibility.isVisible(
         from: DeclarationDescriptor,
@@ -47,15 +46,13 @@ fun DeclarationDescriptorWithVisibility.isVisible(
     val explicitReceiver = type?.let { ExpressionReceiver.create(receiver!!, it, bindingContext) }
 
     if (explicitReceiver != null) {
-        val normalizeReceiver = ExpressionTypingUtils.normalizeReceiverValueForVisibility(explicitReceiver, bindingContext)
-        return Visibilities.isVisible(normalizeReceiver, this, from)
+        return Visibilities.isVisible(explicitReceiver, this, from)
     }
 
     val resolutionScope = element.getResolutionScope(bindingContext, element.getResolutionFacade())
     val implicitReceivers = resolutionScope.getImplicitReceiversHierarchy()
     for (implicitReceiver in implicitReceivers) {
-        val normalizeReceiver = ExpressionTypingUtils.normalizeReceiverValueForVisibility(implicitReceiver.getValue(), bindingContext)
-        if (Visibilities.isVisible(normalizeReceiver, this, from)) return true
+        if (Visibilities.isVisible(implicitReceiver.value, this, from)) return true
     }
     return false
 }

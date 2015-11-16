@@ -235,7 +235,7 @@ public class TaskPrioritizer(
 
                     val dispatchReceiver =
                             if (explicitReceiver.value is ClassReceiver && type != explicitReceiver.value.type) {
-                                CastClassReceiver(explicitReceiver.value.declarationDescriptor, type)
+                                CastClassReceiver(explicitReceiver.value.classDescriptor, type)
                             }
                             else {
                                 explicitReceiver.value
@@ -485,8 +485,7 @@ public class TaskPrioritizer(
             if (candidate == null) return false
             val candidateDescriptor = candidate.getDescriptor()
             if (ErrorUtils.isError(candidateDescriptor)) return true
-            val receiverValue = ExpressionTypingUtils.normalizeReceiverValueForVisibility(candidate.getDispatchReceiver(), context.trace.getBindingContext())
-            return Visibilities.isVisible(receiverValue, candidateDescriptor, context.scope.ownerDescriptor)
+            return Visibilities.isVisible(candidate.dispatchReceiver, candidateDescriptor, context.scope.ownerDescriptor)
         }
 
         private fun hasLowPriority(candidate: ResolutionCandidate<D>?): Boolean {

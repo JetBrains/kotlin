@@ -16,7 +16,11 @@
 
 package org.jetbrains.kotlin.resolve.scopes.receivers
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.psi.KtConstructorDelegationReferenceExpression
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtReferenceExpression
+import org.jetbrains.kotlin.psi.KtThisExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -24,17 +28,38 @@ interface ExpressionReceiver :  ReceiverValue {
     val expression: KtExpression
 
     companion object {
-        class ExpressionReceiverImpl(
+        open class ExpressionReceiverImpl(
                 override val expression: KtExpression, type: KotlinType
         ): AbstractReceiverValue(type), ExpressionReceiver {
             override fun toString() = "$type {$expression: ${expression.text}}"
         }
+
+        private class ThisExpressionClassReceiver(
+                override val classDescriptor: ClassDescriptor,
+                expression: KtExpression,
+                type: KotlinType
+        ) : ExpressionReceiverImpl(expression, type), ExpressionOrImplicitClassReceiver
 
         fun create(
                 expression: KtExpression,
                 type: KotlinType,
                 bindingContext: BindingContext
         ): ExpressionReceiver {
+            var referenceExpression: KtReferenceExpression? = null
+            if (expression is KtThisExpression) {
+                referenceExpression = expression.instanceReference
+            }
+            else if (expression is KtConstructorDelegationReferenceExpression) { // todo check this
+                referenceExpression = expression
+            }
+
+            if (referenceExpression != null) {
+                val descriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, referenceExpression)
+                if (descriptor is ClassDescriptor) {
+                    return ThisExpressionClassReceiver(descriptor.original as ClassDescriptor, expression, type)
+                }
+            }
+
             return ExpressionReceiverImpl(expression, type)
         }
     }

@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import java.util.*
 
@@ -136,8 +135,7 @@ public fun Call.resolveCandidates(
 
     if (filterOutByVisibility) {
         candidates = candidates.filter {
-            val thisReceiver = ExpressionTypingUtils.normalizeReceiverValueForVisibility(it.dispatchReceiver, bindingContext)
-            Visibilities.isVisible(thisReceiver, it.resultingDescriptor, inDescriptor)
+            Visibilities.isVisible(it.dispatchReceiver, it.resultingDescriptor, inDescriptor)
         }
     }
 
