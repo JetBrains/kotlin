@@ -31,6 +31,14 @@ abstract class AbstractExperimentalIncrementalLazyCachesTest : AbstractIncrement
         get() = "experimental-expected-kotlin-caches.txt"
 }
 
+abstract class AbstractExperimentalChangeIncrementalOptionTest : AbstractIncrementalLazyCachesTest() {
+    override fun setUp() {
+        super.setUp()
+        IncrementalCompilation.enableIncrementalCompilation()
+        IncrementalCompilation.disableExperimental()
+    }
+}
+
 abstract class AbstractExperimentalIncrementalCacheVersionChangedTest : AbstractIncrementalCacheVersionChangedTest() {
     override val enableExperimentalIncrementalCompilation = true
 

@@ -1,0 +1,20 @@
+Cleaning output files:
+out/production/module/META-INF/module.kotlin_module
+out/production/module/foo/AKt.class
+End of files
+Compiling files:
+src/a.kt
+src/b.kt
+src/c.kt
+End of files
+
+
+Cleaning output files:
+out/production/module/META-INF/module.kotlin_module
+out/production/module/foo/AKt.class
+End of files
+Compiling files:
+src/a.kt
+src/b.kt
+src/c.kt
+End of files

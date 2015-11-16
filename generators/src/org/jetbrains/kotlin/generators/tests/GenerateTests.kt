@@ -925,6 +925,10 @@ fun main(args: Array<String>) {
         testClass<AbstractDataContainerVersionChangedTest>() {
             model("incremental/cacheVersionChanged", extension = null, excludeParentDirs = true)
         }
+
+        testClass<AbstractExperimentalChangeIncrementalOptionTest>() {
+            model("incremental/changeIncrementalOption", extension = null, excludeParentDirs = true)
+        }
     }
 
     testGroup("jps-plugin/test", "jps-plugin/testData") {
