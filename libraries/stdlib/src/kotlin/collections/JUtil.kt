@@ -22,12 +22,12 @@ internal object EmptyList : List<Nothing>, Serializable {
 
     override val size: Int get() = 0
     override fun isEmpty(): Boolean = true
-    override fun contains(o: Nothing): Boolean = false
-    override fun containsAll(c: Collection<Nothing>): Boolean = c.isEmpty()
+    override fun contains(element: Nothing): Boolean = false
+    override fun containsAll(elements: Collection<Nothing>): Boolean = elements.isEmpty()
 
     override fun get(index: Int): Nothing = throw IndexOutOfBoundsException("Index $index is out of bound of empty list.")
-    override fun indexOf(o: Nothing): Int = -1
-    override fun lastIndexOf(o: Nothing): Int = -1
+    override fun indexOf(element: Nothing): Int = -1
+    override fun lastIndexOf(element: Nothing): Int = -1
 
     override fun iterator(): Iterator<Nothing> = EmptyIterator
     override fun listIterator(): ListIterator<Nothing> = EmptyIterator
@@ -49,8 +49,8 @@ internal fun <T> Array<out T>.asCollection(): Collection<T> = ArrayAsCollection(
 private class ArrayAsCollection<T>(val values: Array<out T>): Collection<T> {
     override val size: Int get() = values.size
     override fun isEmpty(): Boolean = values.isEmpty()
-    override fun contains(o: T): Boolean = values.contains(o)
-    override fun containsAll(c: Collection<T>): Boolean = c.all { contains(it) }
+    override fun contains(element: T): Boolean = values.contains(element)
+    override fun containsAll(elements: Collection<T>): Boolean = elements.all { contains(it) }
     override fun iterator(): Iterator<T> = values.iterator()
     // override hidden toArray implementation to prevent copying of values array
     public fun toArray(): Array<out Any?> = values.varargToArrayOfAny()
@@ -60,32 +60,32 @@ private class ArrayAsCollection<T>(val values: Array<out T>): Collection<T> {
 public fun <T> emptyList(): List<T> = EmptyList
 
 /** Returns a new read-only list of given elements.  The returned list is serializable (JVM). */
-public fun <T> listOf(vararg values: T): List<T> = if (values.size > 0) values.asList() else emptyList()
+public fun <T> listOf(vararg elements: T): List<T> = if (elements.size > 0) elements.asList() else emptyList()
 
 /** Returns an empty read-only list.  The returned list is serializable (JVM). */
 public fun <T> listOf(): List<T> = emptyList()
 
 /**
- * Returns an immutable list containing only the specified object [value].
+ * Returns an immutable list containing only the specified object [element].
  * The returned list is serializable.
  */
 @JvmVersion
-public fun <T> listOf(value: T): List<T> = Collections.singletonList(value)
+public fun <T> listOf(element: T): List<T> = Collections.singletonList(element)
 
 /** Returns a new [LinkedList] with the given elements. */
 @JvmVersion
-public fun <T> linkedListOf(vararg values: T): LinkedList<T>
-        = if (values.size == 0) LinkedList() else LinkedList(ArrayAsCollection(values))
+public fun <T> linkedListOf(vararg elements: T): LinkedList<T>
+        = if (elements.size == 0) LinkedList() else LinkedList(ArrayAsCollection(elements))
 
 /** Returns a new [ArrayList] with the given elements. */
-public fun <T> arrayListOf(vararg values: T): ArrayList<T>
-        = if (values.size == 0) ArrayList() else ArrayList(ArrayAsCollection(values))
+public fun <T> arrayListOf(vararg elements: T): ArrayList<T>
+        = if (elements.size == 0) ArrayList() else ArrayList(ArrayAsCollection(elements))
 
 /** Returns a new read-only list either of single given element, if it is not null, or empty list it the element is null. The returned list is serializable (JVM). */
-public fun <T : Any> listOfNotNull(value: T?): List<T> = if (value != null) listOf(value) else emptyList()
+public fun <T : Any> listOfNotNull(element: T?): List<T> = if (element != null) listOf(element) else emptyList()
 
 /** Returns a new read-only list only of those given elements, that are not null.  The returned list is serializable (JVM). */
-public fun <T : Any> listOfNotNull(vararg values: T?): List<T> = values.filterNotNull()
+public fun <T : Any> listOfNotNull(vararg elements: T?): List<T> = elements.filterNotNull()
 
 /**
  * Returns an [IntRange] of the valid indices for this collection.

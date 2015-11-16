@@ -11,7 +11,7 @@ import java.util.*
  * Allows to overcome type-safety restriction of `containsAll` that requires to pass a collection of type `Collection<E>`.
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun Collection<*>.containsAllRaw(collection: Collection<Any?>): Boolean = (this as Collection<Any?>).containsAll(collection)
+public inline fun Collection<*>.containsAllRaw(elements: Collection<Any?>): Boolean = (this as Collection<Any?>).containsAll(elements)
 
 /**
  * Removes a single instance of the specified element from this
@@ -32,7 +32,7 @@ public inline fun <E> MutableCollection<E>.removeRaw(element: Any?): Boolean = (
  * @return `true` if any of the specified elements was removed from the collection, `false` if the collection was not modified.
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun <E> MutableCollection<E>.removeAllRaw(collection: Collection<Any?>): Boolean = (this as MutableCollection<Any?>).removeAll(collection)
+public inline fun <E> MutableCollection<E>.removeAllRaw(elements: Collection<Any?>): Boolean = (this as MutableCollection<Any?>).removeAll(elements)
 
 /**
  * Retains only the elements in this collection that are contained in the specified collection.
@@ -42,7 +42,7 @@ public inline fun <E> MutableCollection<E>.removeAllRaw(collection: Collection<A
  * @return `true` if any element was removed from the collection, `false` if the collection was not modified.
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun <E> MutableCollection<E>.retainAllRaw(collection: Collection<Any?>): Boolean = (this as MutableCollection<Any?>).retainAll(collection)
+public inline fun <E> MutableCollection<E>.retainAllRaw(elements: Collection<Any?>): Boolean = (this as MutableCollection<Any?>).retainAll(elements)
 
 
 
@@ -123,24 +123,24 @@ public operator fun <T> MutableCollection<in T>.plusAssign(element: T) {
 }
 
 /**
- * Adds all elements of the given [collection] to this mutable collection.
+ * Adds all elements of the given [elements] collection to this mutable collection.
  */
-public operator fun <T> MutableCollection<in T>.plusAssign(collection: Iterable<T>) {
-    this.addAll(collection)
+public operator fun <T> MutableCollection<in T>.plusAssign(elements: Iterable<T>) {
+    this.addAll(elements)
 }
 
 /**
- * Adds all elements of the given [array] to this mutable collection.
+ * Adds all elements of the given [elements] array to this mutable collection.
  */
-public operator fun <T> MutableCollection<in T>.plusAssign(array: Array<T>) {
-    this.addAll(array)
+public operator fun <T> MutableCollection<in T>.plusAssign(elements: Array<T>) {
+    this.addAll(elements)
 }
 
 /**
- * Adds all elements of the given [sequence] to this mutable collection.
+ * Adds all elements of the given [elements] sequence to this mutable collection.
  */
-public operator fun <T> MutableCollection<in T>.plusAssign(sequence: Sequence<T>) {
-    this.addAll(sequence)
+public operator fun <T> MutableCollection<in T>.plusAssign(elements: Sequence<T>) {
+    this.addAll(elements)
 }
 
 /**
@@ -151,99 +151,99 @@ public operator fun <T> MutableCollection<in T>.minusAssign(element: T) {
 }
 
 /**
- * Removes all elements contained in the given [collection] from this mutable collection.
+ * Removes all elements contained in the given [elements] collection from this mutable collection.
  */
-public operator fun <T> MutableCollection<in T>.minusAssign(collection: Iterable<T>) {
-    this.removeAll(collection)
+public operator fun <T> MutableCollection<in T>.minusAssign(elements: Iterable<T>) {
+    this.removeAll(elements)
 }
 
 /**
- * Removes all elements contained in the given [array] from this mutable collection.
+ * Removes all elements contained in the given [elements] array from this mutable collection.
  */
-public operator fun <T> MutableCollection<in T>.minusAssign(array: Array<T>) {
-    this.removeAll(array)
+public operator fun <T> MutableCollection<in T>.minusAssign(elements: Array<T>) {
+    this.removeAll(elements)
 }
 
 /**
- * Removes all elements contained in the given [sequence] from this mutable collection.
+ * Removes all elements contained in the given [elements] sequence from this mutable collection.
  */
-public operator fun <T> MutableCollection<in T>.minusAssign(sequence: Sequence<T>) {
-    this.removeAll(sequence)
+public operator fun <T> MutableCollection<in T>.minusAssign(elements: Sequence<T>) {
+    this.removeAll(elements)
 }
 
 /**
- * Adds all elements of the given [iterable] to this [MutableCollection].
+ * Adds all elements of the given [elements] collection to this [MutableCollection].
  */
-public fun <T> MutableCollection<in T>.addAll(iterable: Iterable<T>) {
-    when (iterable) {
-        is Collection -> addAll(iterable)
-        else -> for (item in iterable) add(item)
+public fun <T> MutableCollection<in T>.addAll(elements: Iterable<T>) {
+    when (elements) {
+        is Collection -> addAll(elements)
+        else -> for (item in elements) add(item)
     }
 }
 
 /**
- * Adds all elements of the given [sequence] to this [MutableCollection].
+ * Adds all elements of the given [elements] sequence to this [MutableCollection].
  */
-public fun <T> MutableCollection<in T>.addAll(sequence: Sequence<T>) {
-    for (item in sequence) add(item)
+public fun <T> MutableCollection<in T>.addAll(elements: Sequence<T>) {
+    for (item in elements) add(item)
 }
 
 /**
- * Adds all elements of the given [array] to this [MutableCollection].
+ * Adds all elements of the given [elements] array to this [MutableCollection].
  */
-public fun <T> MutableCollection<in T>.addAll(array: Array<out T>) {
-    addAll(array.asList())
+public fun <T> MutableCollection<in T>.addAll(elements: Array<out T>) {
+    addAll(elements.asList())
 }
 
 /**
- * Removes all elements from this [MutableCollection] that are also contained in the given [iterable].
+ * Removes all elements from this [MutableCollection] that are also contained in the given [elements] collection.
  */
-public fun <T> MutableCollection<in T>.removeAll(iterable: Iterable<T>) {
-    removeAll(iterable.convertToSetForSetOperationWith(this))
+public fun <T> MutableCollection<in T>.removeAll(elements: Iterable<T>) {
+    removeAll(elements.convertToSetForSetOperationWith(this))
 }
 
 /**
- * Removes all elements from this [MutableCollection] that are also contained in the given [sequence].
+ * Removes all elements from this [MutableCollection] that are also contained in the given [elements] sequence.
  */
-public fun <T> MutableCollection<in T>.removeAll(sequence: Sequence<T>) {
-    val set = sequence.toHashSet()
+public fun <T> MutableCollection<in T>.removeAll(elements: Sequence<T>) {
+    val set = elements.toHashSet()
     if (set.isNotEmpty())
         removeAll(set)
 }
 
 /**
- * Removes all elements from this [MutableCollection] that are also contained in the given [array].
+ * Removes all elements from this [MutableCollection] that are also contained in the given [elements] array.
  */
-public fun <T> MutableCollection<in T>.removeAll(array: Array<out T>) {
-    if (array.isNotEmpty())
-        removeAll(array.toHashSet())
+public fun <T> MutableCollection<in T>.removeAll(elements: Array<out T>) {
+    if (elements.isNotEmpty())
+        removeAll(elements.toHashSet())
 //    else
 //        removeAll(emptyList())
 }
 
 /**
- * Retains only elements of this [MutableCollection] that are contained in the given [iterable].
+ * Retains only elements of this [MutableCollection] that are contained in the given [elements] collection.
  */
-public fun <T> MutableCollection<in T>.retainAll(iterable: Iterable<T>) {
-    retainAll(iterable.convertToSetForSetOperationWith(this))
+public fun <T> MutableCollection<in T>.retainAll(elements: Iterable<T>) {
+    retainAll(elements.convertToSetForSetOperationWith(this))
 }
 
 /**
- * Retains only elements of this [MutableCollection] that are contained in the given [array].
+ * Retains only elements of this [MutableCollection] that are contained in the given [elements] array.
  */
-public fun <T> MutableCollection<in T>.retainAll(array: Array<out T>) {
-    if (array.isNotEmpty())
-        retainAll(array.toHashSet())
+public fun <T> MutableCollection<in T>.retainAll(elements: Array<out T>) {
+    if (elements.isNotEmpty())
+        retainAll(elements.toHashSet())
     else
         clear()
 //        retainAll(emptyList())
 }
 
 /**
- * Retains only elements of this [MutableCollection] that are contained in the given [sequence].
+ * Retains only elements of this [MutableCollection] that are contained in the given [elements] sequence.
  */
-public fun <T> MutableCollection<in T>.retainAll(sequence: Sequence<T>) {
-    val set = sequence.toHashSet()
+public fun <T> MutableCollection<in T>.retainAll(elements: Sequence<T>) {
+    val set = elements.toHashSet()
     if (set.isNotEmpty())
         retainAll(set)
     else
