@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.resolve.descriptorUtil.classObjectType
+import org.jetbrains.kotlin.resolve.descriptorUtil.companionObjectType
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.sure
@@ -141,7 +141,7 @@ public class EnumValue(
 ) : ConstantValue<ClassDescriptor>(value) {
 
     override val type: KotlinType
-        get() = value.classObjectType.sure { "Enum entry must have a class object type: " + value }
+        get() = value.companionObjectType.sure { "Enum entry must have a class object type: " + value }
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitEnumValue(this, data)
 

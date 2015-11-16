@@ -71,10 +71,10 @@ public val ClassDescriptor.classId: ClassId
         throw IllegalStateException("Illegal container: $owner")
     }
 
-public val ClassDescriptor.hasClassObjectType: Boolean get() = classObjectType != null
+public val ClassDescriptor.hasCompanionObject: Boolean get() = companionObjectType != null
 
 /** If a literal of this class can be used as a value, returns the type of this value */
-public val ClassDescriptor.classObjectType: KotlinType?
+public val ClassDescriptor.companionObjectType: KotlinType?
     get() {
         val correspondingDescriptor = when (this.getKind()) {
             OBJECT -> this

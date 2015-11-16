@@ -17,9 +17,9 @@
 package org.jetbrains.kotlin.resolve.calls.util
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.classObjectType
+import org.jetbrains.kotlin.resolve.descriptorUtil.companionObjectType
 import org.jetbrains.kotlin.resolve.descriptorUtil.getClassObjectReferenceTarget
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassObjectType
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasCompanionObject
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.Collections
 
@@ -28,7 +28,7 @@ public class FakeCallableDescriptorForObject(
 ) : DeclarationDescriptorWithVisibility by classDescriptor.getClassObjectReferenceTarget(), VariableDescriptor {
 
     init {
-        assert(classDescriptor.hasClassObjectType) {
+        assert(classDescriptor.hasCompanionObject) {
             "FakeCallableDescriptorForObject can be created only for objects, classes with companion object or enum entries: $classDescriptor"
         }
 
@@ -52,7 +52,7 @@ public class FakeCallableDescriptorForObject(
 
     override fun getOverriddenDescriptors(): Set<CallableDescriptor> = Collections.emptySet()
 
-    override fun getType(): KotlinType = classDescriptor.classObjectType!!
+    override fun getType(): KotlinType = classDescriptor.companionObjectType!!
 
     override fun isVar() = false
 

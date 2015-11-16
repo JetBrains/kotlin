@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContext.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
-import org.jetbrains.kotlin.resolve.descriptorUtil.classObjectType
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassObjectType
+import org.jetbrains.kotlin.resolve.descriptorUtil.companionObjectType
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasCompanionObject
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.FilteringScope
 import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils
@@ -112,7 +112,7 @@ class ClassifierQualifier(
 
         val scopes = ArrayList<MemberScope>(3)
 
-        val classObjectTypeScope = classifier.classObjectType?.memberScope?.let {
+        val classObjectTypeScope = classifier.companionObjectType?.memberScope?.let {
             FilteringScope(it) { it !is ClassDescriptor }
         }
         scopes.addIfNotNull(classObjectTypeScope)
@@ -150,7 +150,7 @@ fun createClassifierQualifier(
         classifier: ClassifierDescriptor,
         bindingContext: BindingContext
 ): ClassifierQualifier {
-    val companionObjectReceiver = (classifier as? ClassDescriptor)?.classObjectType?.let {
+    val companionObjectReceiver = (classifier as? ClassDescriptor)?.companionObjectType?.let {
         ExpressionReceiver.create(referenceExpression, it, bindingContext)
     }
     return ClassifierQualifier(referenceExpression, classifier, companionObjectReceiver)
@@ -202,7 +202,7 @@ fun QualifierReceiver.resolveAsStandaloneExpression(
     if (classifier is TypeParameterDescriptor) {
         context.trace.report(TYPE_PARAMETER_IS_NOT_AN_EXPRESSION.on(referenceExpression, classifier))
     }
-    else if (classifier is ClassDescriptor && !classifier.hasClassObjectType) {
+    else if (classifier is ClassDescriptor && !classifier.hasCompanionObject) {
         context.trace.report(NO_COMPANION_OBJECT.on(referenceExpression, classifier))
     }
     else if (packageView != null) {
@@ -222,8 +222,8 @@ fun QualifierReceiver.resolveAsReceiverInQualifiedExpression(
     if (classifier is TypeParameterDescriptor) {
         context.trace.report(TYPE_PARAMETER_ON_LHS_OF_DOT.on(referenceExpression, classifier))
     }
-    else if (classifier is ClassDescriptor && classifier.hasClassObjectType) {
-        context.trace.recordType(expression, classifier.classObjectType)
+    else if (classifier is ClassDescriptor && classifier.hasCompanionObject) {
+        context.trace.recordType(expression, classifier.companionObjectType)
     }
 }
 
@@ -265,7 +265,7 @@ private fun QualifierReceiver.resolveReferenceTarget(
     if (declarationDescriptor is ClassifierDescriptor)
         symbolUsageValidator.validateTypeUsage(declarationDescriptor, context.trace, referenceExpression)
 
-    if (isCallableWithReceiver && classifier is ClassDescriptor && classifier.hasClassObjectType) {
+    if (isCallableWithReceiver && classifier is ClassDescriptor && classifier.hasCompanionObject) {
         val companionObjectDescriptor = classifier.getCompanionObjectDescriptor()
         if (companionObjectDescriptor != null) {
             context.trace.record(SHORT_REFERENCE_TO_COMPANION_OBJECT, referenceExpression, classifier)

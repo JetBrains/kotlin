@@ -426,7 +426,7 @@ public abstract class AnnotationCodegen {
                     for (ConstantValue<?> value : values) {
                         if (value instanceof EnumValue) {
                             ClassDescriptor enumEntry = ((EnumValue) value).getValue();
-                            KotlinType classObjectType = DescriptorUtilsKt.getClassObjectType(enumEntry);
+                            KotlinType classObjectType = DescriptorUtilsKt.getCompanionObjectType(enumEntry);
                             if (classObjectType != null) {
                                 if ("java/lang/annotation/ElementType".equals(typeMapper.mapType(classObjectType).getInternalName())) {
                                     result.add(ElementType.valueOf(enumEntry.getName().asString()));
@@ -454,7 +454,7 @@ public abstract class AnnotationCodegen {
                 ConstantValue<?> compileTimeConstant = valueArguments.iterator().next();
                 if (compileTimeConstant instanceof EnumValue) {
                     ClassDescriptor enumEntry = ((EnumValue) compileTimeConstant).getValue();
-                    KotlinType classObjectType = DescriptorUtilsKt.getClassObjectType(enumEntry);
+                    KotlinType classObjectType = DescriptorUtilsKt.getCompanionObjectType(enumEntry);
                     if (classObjectType != null) {
                         if ("java/lang/annotation/RetentionPolicy".equals(typeMapper.mapType(classObjectType).getInternalName())) {
                             return RetentionPolicy.valueOf(enumEntry.getName().asString());
