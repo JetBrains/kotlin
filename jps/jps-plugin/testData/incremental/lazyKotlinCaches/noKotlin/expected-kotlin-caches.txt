@@ -1,2 +1,4 @@
+kotlin-data-container
 Module 'module' production
+    format-version.txt
 Module 'module' tests

@@ -16,20 +16,17 @@
 
 package org.jetbrains.kotlin.jps.build
 
-import org.jetbrains.kotlin.jps.incremental.getKotlinCacheVersion
+import org.jetbrains.jps.incremental.ModuleBuildTarget
+import org.jetbrains.kotlin.jps.incremental.CacheVersionProvider
 
 abstract class AbstractIncrementalCacheVersionChangedTest : AbstractIncrementalJpsTest(allowNoFilesWithSuffixInTestData = true) {
     override fun performAdditionalModifications(modifications: List<AbstractIncrementalJpsTest.Modification>) {
-        val targets = projectDescriptor.allModuleTargets
-        val paths = projectDescriptor.dataManager.dataPaths
-
-        for (target in targets) {
-            val cacheVersion = paths.getKotlinCacheVersion(target)
-            val cacheVersionFile = cacheVersion.formatVersionFile
-
-            if (cacheVersionFile.exists()) {
-                cacheVersionFile.writeText("777")
-            }
-        }
+        val cacheVersionProvider = CacheVersionProvider(projectDescriptor.dataManager.dataPaths)
+        val versions = getVersions(cacheVersionProvider, projectDescriptor.allModuleTargets)
+        val versionFiles = versions.map { it.formatVersionFile }.filter { it.exists() }
+        versionFiles.forEach { it.writeText("777") }
     }
+
+    protected open fun getVersions(cacheVersionProvider: CacheVersionProvider, targets: Iterable<ModuleBuildTarget>) =
+            targets.map { cacheVersionProvider.normalVersion(it) }
 }
