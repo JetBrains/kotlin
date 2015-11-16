@@ -63,6 +63,12 @@ public class KotlinColorSettingsPage : ColorSettingsPage {
     }
 }
 
+fun Int?.bar() {
+    if (this != null) {
+        println(<SMART_CAST_RECEIVER>toString</SMART_CAST_RECEIVER>())
+    }
+}
+
 var <PROPERTY_WITH_BACKING_FIELD><PACKAGE_PROPERTY><MUTABLE_VARIABLE>globalCounter</MUTABLE_VARIABLE></PACKAGE_PROPERTY></PROPERTY_WITH_BACKING_FIELD> : Int = 5
     <KEYWORD>get</KEYWORD>() {
         return <BACKING_FIELD_VARIABLE><LOCAL_VARIABLE><MUTABLE_VARIABLE>field</MUTABLE_VARIABLE></LOCAL_VARIABLE></BACKING_FIELD_VARIABLE>
@@ -146,6 +152,7 @@ var <PROPERTY_WITH_BACKING_FIELD><PACKAGE_PROPERTY><MUTABLE_VARIABLE>globalCount
                        KotlinBundle.message("options.kotlin.attribute.descriptor.variable.as.function.like.call") to KotlinHighlightingColors.VARIABLE_AS_FUNCTION_LIKE_CALL,
                        OptionsBundle.message("options.java.attribute.descriptor.bad.character") to KotlinHighlightingColors.BAD_CHARACTER,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.smart.cast") to KotlinHighlightingColors.SMART_CAST_VALUE,
+                       KotlinBundle.message("options.kotlin.attribute.descriptor.smart.cast.receiver") to KotlinHighlightingColors.SMART_CAST_RECEIVER,
                        KotlinBundle.message("options.kotlin.attribute.descriptor.label") to KotlinHighlightingColors.LABEL)
     }
 

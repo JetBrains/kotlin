@@ -69,16 +69,20 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
 
     @Override
     public void visitExpression(@NotNull KtExpression expression) {
+        KotlinType implicitSmartCast = bindingContext.get(IMPLICIT_RECEIVER_SMARTCAST, expression);
+        if (implicitSmartCast != null) {
+            holder.createInfoAnnotation(expression, "Implicit receiver smart cast to " +
+                                                    DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(implicitSmartCast))
+                  .setTextAttributes(KotlinHighlightingColors.SMART_CAST_RECEIVER);
+        }
+
         KotlinType smartCast = bindingContext.get(SMARTCAST, expression);
         if (smartCast != null) {
-            holder.createInfoAnnotation(expression, "Smart cast to " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(smartCast)).setTextAttributes(
-                    KotlinHighlightingColors.SMART_CAST_VALUE);
+            holder.createInfoAnnotation(expression, "Smart cast to " +
+                                                    DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(smartCast))
+                  .setTextAttributes(KotlinHighlightingColors.SMART_CAST_VALUE);
         }
-        smartCast = bindingContext.get(IMPLICIT_RECEIVER_SMARTCAST, expression);
-        if (smartCast != null) {
-            holder.createInfoAnnotation(expression, "Implicit receiver smart cast to " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(smartCast)).setTextAttributes(
-                    KotlinHighlightingColors.SMART_CAST_VALUE);
-        }
+
         super.visitExpression(expression);
     }
 
