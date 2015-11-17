@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.types.KotlinType;
 
-public class ScriptReceiver implements ThisReceiver {
+public class ScriptReceiver implements ImplicitReceiver {
     private final ScriptDescriptor scriptDescriptor;
 
     public ScriptReceiver(@NotNull ScriptDescriptor scriptDescriptor) {

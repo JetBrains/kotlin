@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.resolve.scopes.utils.findPackage
 import java.util.*
@@ -358,7 +358,7 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
                                       ExplicitReceiverKind.BOTH_RECEIVERS, ExplicitReceiverKind.EXTENSION_RECEIVER -> newCall.getExtensionReceiver()
                                       ExplicitReceiverKind.DISPATCH_RECEIVER -> newCall.getDispatchReceiver()
                                       else -> return false
-                                  } as? ThisReceiver ?: return false
+                                  } as? ImplicitReceiver ?: return false
 
                 val thisTarget = receiver.getInstanceReference().targets(bindingContext).singleOrNull()
                 if (newReceiver.declarationDescriptor.asString() != thisTarget?.asString()) return false

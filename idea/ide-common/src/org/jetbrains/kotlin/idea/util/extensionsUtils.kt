@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
@@ -109,7 +109,7 @@ public fun ReceiverValue.getThisReceiverOwner(bindingContext: BindingContext): D
             bindingContext[BindingContext.REFERENCE_TARGET, thisRef]
         }
 
-        is ThisReceiver -> this.declarationDescriptor
+        is ImplicitReceiver -> this.declarationDescriptor
 
         else -> null
     }

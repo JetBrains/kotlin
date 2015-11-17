@@ -22,7 +22,7 @@ interface ExpressionOrImplicitClassReceiver : ReceiverValue {
     val classDescriptor: ClassDescriptor
 }
 
-open class ClassReceiver(override val classDescriptor: ClassDescriptor) : ExpressionOrImplicitClassReceiver, ThisReceiver {
+open class ClassReceiver(override val classDescriptor: ClassDescriptor) : ExpressionOrImplicitClassReceiver, ImplicitReceiver {
 
     override fun exists() = true
 

@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
 import org.jetbrains.kotlin.resolve.lazy.descriptors.ClassResolutionScopesSupport
 import org.jetbrains.kotlin.resolve.scopes.*
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.chainImportingScopes
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -140,7 +140,7 @@ object ReplaceWithAnnotationAnalyzer {
                         resolvedCall.extensionReceiver
                     else
                         resolvedCall.dispatchReceiver
-                    if (receiver is ThisReceiver) {
+                    if (receiver is ImplicitReceiver) {
                         val receiverExpression = receiver.asExpression(scope, psiFactory)
                         if (receiverExpression != null) {
                             receiversToAdd.add(expression to receiverExpression)

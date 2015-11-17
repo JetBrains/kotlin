@@ -21,6 +21,6 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 /**
  * Describes an implicit "this" receiver
  */
-interface ThisReceiver : ReceiverValue {
+interface ImplicitReceiver : ReceiverValue {
     val declarationDescriptor: DeclarationDescriptor
 }

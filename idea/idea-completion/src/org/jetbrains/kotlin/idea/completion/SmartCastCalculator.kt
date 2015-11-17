@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
@@ -61,7 +61,7 @@ class SmartCastCalculator(
 
     fun types(thisReceiverParameter: ReceiverParameterDescriptor): Collection<KotlinType> {
         val type = thisReceiverParameter.type
-        val thisReceiver = thisReceiverParameter.value as? ThisReceiver ?: return listOf(type)
+        val thisReceiver = thisReceiverParameter.value as? ImplicitReceiver ?: return listOf(type)
         return entityType(thisReceiver, type)
     }
 
@@ -97,12 +97,12 @@ class SmartCastCalculator(
             dataFlowValueToEntity = fun (value: DataFlowValue): Any? {
                 val id = value.id
                 when(id) {
-                    is VariableDescriptor, is ThisReceiver -> return id
+                    is VariableDescriptor, is ImplicitReceiver -> return id
 
                     is Pair<*, *> -> {
                         val first = id.first
                         val second = id.second
-                        if (first !is ThisReceiver || second !is VariableDescriptor) return null
+                        if (first !is ImplicitReceiver || second !is VariableDescriptor) return null
                         if (resolutionScope?.findNearestReceiverForVariable(second)?.value != first) return null
                         return second
                     }

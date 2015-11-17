@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.types.KotlinType;
 
-public class ExtensionReceiver extends AbstractReceiverValue implements ThisReceiver {
+public class ExtensionReceiver extends AbstractReceiverValue implements ImplicitReceiver {
 
     private final CallableDescriptor descriptor;
 

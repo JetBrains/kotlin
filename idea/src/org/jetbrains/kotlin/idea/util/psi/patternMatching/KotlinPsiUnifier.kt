@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -133,7 +133,7 @@ public class KotlinPsiUnifier(
                 rv1 is ExpressionReceiver && rv2 is ExpressionReceiver ->
                     doUnify(rv1.expression, rv2.expression) == MATCHED
 
-                rv1 is ThisReceiver && rv2 is ThisReceiver ->
+                rv1 is ImplicitReceiver && rv2 is ImplicitReceiver ->
                     matchDescriptors(rv1.declarationDescriptor, rv2.declarationDescriptor)
 
                 else ->
@@ -200,11 +200,11 @@ public class KotlinPsiUnifier(
                 val (implicitReceiver, explicitReceiver) =
                         when (explicitCall.getExplicitReceiverKind()) {
                             ExplicitReceiverKind.EXTENSION_RECEIVER ->
-                                (implicitCall.getExtensionReceiver() as? ThisReceiver) to
+                                (implicitCall.getExtensionReceiver() as? ImplicitReceiver) to
                                         (explicitCall.getExtensionReceiver() as? ExpressionReceiver)
 
                             ExplicitReceiverKind.DISPATCH_RECEIVER ->
-                                (implicitCall.getDispatchReceiver() as? ThisReceiver) to
+                                (implicitCall.getDispatchReceiver() as? ImplicitReceiver) to
                                         (explicitCall.getDispatchReceiver() as? ExpressionReceiver)
 
                             else ->

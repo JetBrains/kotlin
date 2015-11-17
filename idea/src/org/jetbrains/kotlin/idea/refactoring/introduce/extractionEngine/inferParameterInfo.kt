@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.findFunction
 import org.jetbrains.kotlin.types.CommonSupertypes
 import org.jetbrains.kotlin.types.KotlinType
@@ -125,7 +125,7 @@ private fun ExtractionData.extractReceiver(
 ) {
     val (originalRef, originalDeclaration, originalDescriptor, resolvedCall) = refInfo.resolveResult
 
-    val thisDescriptor = (receiverToExtract as? ThisReceiver)?.declarationDescriptor
+    val thisDescriptor = (receiverToExtract as? ImplicitReceiver)?.declarationDescriptor
     val hasThisReceiver = thisDescriptor != null
     val thisExpr = refInfo.refExpr.parent as? KtThisExpression
 
@@ -277,7 +277,7 @@ private fun suggestParameterType(
                        (bindingContext[BindingContext.REFERENCE_TARGET, it] as? CallableDescriptor)?.returnType
                    }
                    ?: if (receiverToExtract.exists()) receiverToExtract.type else null
-               receiverToExtract is ThisReceiver -> {
+               receiverToExtract is ImplicitReceiver -> {
                    val calleeExpression = resolvedCall!!.call.calleeExpression
                    val typeByDataFlowInfo = if (useSmartCastsIfPossible) {
                        bindingContext[BindingContext.EXPRESSION_TYPE_INFO, calleeExpression]?.dataFlowInfo?.let { dataFlowInfo ->

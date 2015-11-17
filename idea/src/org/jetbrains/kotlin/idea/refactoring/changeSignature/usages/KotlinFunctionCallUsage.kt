@@ -47,7 +47,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.sure
@@ -503,7 +503,7 @@ class KotlinFunctionCallUsage(
         private fun getReceiverExpression(receiver: ReceiverValue, psiFactory: KtPsiFactory): KtExpression? {
             return when (receiver) {
                 is ExpressionReceiver -> receiver.expression
-                is ThisReceiver -> {
+                is ImplicitReceiver -> {
                     val descriptor = receiver.declarationDescriptor
                     val thisText = if (descriptor is ClassDescriptor) "this@" + descriptor.name.asString() else "this"
                     psiFactory.createExpression(thisText)

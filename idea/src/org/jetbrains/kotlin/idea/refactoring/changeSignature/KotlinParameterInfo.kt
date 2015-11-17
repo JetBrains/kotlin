@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
@@ -81,7 +81,7 @@ public class KotlinParameterInfo @JvmOverloads constructor (
                                     return null
                                 }
 
-                                private fun selfReceiverOrNull(receiver: ThisReceiver?): DeclarationDescriptor? {
+                                private fun selfReceiverOrNull(receiver: ImplicitReceiver?): DeclarationDescriptor? {
                                     return selfReceiverOrNull(receiver?.declarationDescriptor)
                                 }
 
@@ -104,8 +104,8 @@ public class KotlinParameterInfo @JvmOverloads constructor (
                                         return if (selfReceiverOrNull(it.getContainingDeclaration()) != null) it else null
                                     }
 
-                                    selfReceiverOrNull(resolvedCall.getExtensionReceiver() as? ThisReceiver)?.let { return it }
-                                    selfReceiverOrNull(resolvedCall.getDispatchReceiver() as? ThisReceiver)?.let { return it }
+                                    selfReceiverOrNull(resolvedCall.getExtensionReceiver() as? ImplicitReceiver)?.let { return it }
+                                    selfReceiverOrNull(resolvedCall.getDispatchReceiver() as? ImplicitReceiver)?.let { return it }
 
                                     return null
                                 }

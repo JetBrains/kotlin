@@ -54,7 +54,7 @@ import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
@@ -1553,7 +1553,7 @@ public class JetControlFlowProcessor {
         ) {
             if (!receiver.exists() || receiverValues.containsValue(receiver)) return receiverValues;
 
-            if (receiver instanceof ThisReceiver) {
+            if (receiver instanceof ImplicitReceiver) {
                 receiverValues = receiverValues.plus(createSyntheticValue(callElement, MagicKind.IMPLICIT_RECEIVER), receiver);
             }
             else if (receiver instanceof ExpressionReceiver) {

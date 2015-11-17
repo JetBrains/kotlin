@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverVa
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.isSynthesizedInvoke
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
@@ -177,7 +177,7 @@ data class ExtractionData(
     fun getPossibleTypes(expression: KtExpression, resolvedCall: ResolvedCall<*>?, context: BindingContext): Set<KotlinType> {
         val typeInfo = context[BindingContext.EXPRESSION_TYPE_INFO, expression] ?: return emptySet()
 
-        (resolvedCall?.getImplicitReceiverValue() as? ThisReceiver)?.let {
+        (resolvedCall?.getImplicitReceiverValue() as? ImplicitReceiver)?.let {
             return typeInfo.dataFlowInfo.getPossibleTypes(DataFlowValueFactory.createDataFlowValueForStableReceiver(it))
         }
 
@@ -210,7 +210,7 @@ data class ExtractionData(
                 smartCast = originalContext[BindingContext.SMARTCAST, smartCastTarget]
                 possibleTypes = getPossibleTypes(smartCastTarget, originalResolveResult.resolvedCall, originalContext)
                 val receiverDescriptor =
-                        (originalResolveResult.resolvedCall?.getDispatchReceiver() as? ThisReceiver)?.declarationDescriptor
+                        (originalResolveResult.resolvedCall?.getDispatchReceiver() as? ImplicitReceiver)?.declarationDescriptor
                 if (smartCast == null
                     && !DescriptorUtils.isCompanionObject(receiverDescriptor)
                     && qualifiedExpression.getReceiverExpression() !is KtSuperExpression) continue

@@ -63,7 +63,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -1220,7 +1220,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
 
             private void lookupReceiver(@NotNull ReceiverValue value) {
-                if (value instanceof ThisReceiver) {
+                if (value instanceof ImplicitReceiver) {
                     if (value instanceof ExtensionReceiver) {
                         ReceiverParameterDescriptor parameter =
                                 ((ExtensionReceiver) value).getDeclarationDescriptor().getExtensionReceiverParameter();
@@ -1228,7 +1228,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         lookupInContext(parameter);
                     }
                     else {
-                        lookupInContext(((ThisReceiver) value).getDeclarationDescriptor());
+                        lookupInContext(((ImplicitReceiver) value).getDeclarationDescriptor());
                     }
                 }
             }

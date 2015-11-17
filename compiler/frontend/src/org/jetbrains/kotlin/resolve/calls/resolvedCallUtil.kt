@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.descriptorUtil.getOwnerForEffectiveDispatchReceiverParameter
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 
 // it returns true if call has no dispatch receiver (e.g. resulting descriptor is top-level function or local variable)
 // or call receiver is effectively `this` instance (explicitly or implicitly) of resulting descriptor
@@ -53,7 +53,7 @@ private fun ResolvedCall<*>.hasThisOrNoDispatchReceiver(
     if (getResultingDescriptor().getDispatchReceiverParameter() == null || !dispatchReceiverValue.exists()) return returnForNoReceiver
 
     var dispatchReceiverDescriptor: DeclarationDescriptor? = null
-    if (dispatchReceiverValue is ThisReceiver) {
+    if (dispatchReceiverValue is ImplicitReceiver) {
         // foo() -- implicit receiver
         dispatchReceiverDescriptor = dispatchReceiverValue.declarationDescriptor
     }

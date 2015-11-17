@@ -293,8 +293,8 @@ public class DataFlowValueFactory {
 
     @Nullable
     private static IdentifierInfo getIdForImplicitReceiver(@NotNull ReceiverValue receiverValue, @Nullable KtExpression expression) {
-        if (receiverValue instanceof ThisReceiver) {
-            return getIdForThisReceiver(((ThisReceiver) receiverValue).getDeclarationDescriptor());
+        if (receiverValue instanceof ImplicitReceiver) {
+            return getIdForThisReceiver(((ImplicitReceiver) receiverValue).getDeclarationDescriptor());
         }
         else {
             assert !(receiverValue instanceof TransientReceiver)

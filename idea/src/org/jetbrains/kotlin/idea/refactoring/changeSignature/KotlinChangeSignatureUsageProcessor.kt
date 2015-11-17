@@ -75,7 +75,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
@@ -186,11 +186,11 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
                         val callElement = resolvedCall.call.callElement
 
                         var receiver = resolvedCall.extensionReceiver
-                        if (receiver !is ThisReceiver) {
+                        if (receiver !is ImplicitReceiver) {
                             receiver = resolvedCall.dispatchReceiver
                         }
 
-                        if (receiver is ThisReceiver) {
+                        if (receiver is ImplicitReceiver) {
                             result.add(KotlinImplicitThisUsage(callElement, receiver.declarationDescriptor))
                         }
                         else if (!receiver.exists()) {
@@ -349,8 +349,8 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
 
                     private fun processImplicitThis(
                             callElement: KtElement,
-                            receiverValue: ThisReceiver) {
-                        val targetDescriptor = receiverValue.declarationDescriptor
+                            implicitReceiver: ImplicitReceiver) {
+                        val targetDescriptor = implicitReceiver.declarationDescriptor
                         if (compareDescriptors(callElement.project, targetDescriptor, callableDescriptor)) {
                             assert(originalReceiverInfo != null) { "No original receiver info provided: " + functionUsageInfo.declaration.text }
                             result.add(KotlinImplicitThisToParameterUsage(callElement, originalReceiverInfo!!, functionUsageInfo))
@@ -373,7 +373,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
                         if (!receiverValue.exists()) {
                             receiverValue = resolvedCall.dispatchReceiver
                         }
-                        if (receiverValue is ThisReceiver) {
+                        if (receiverValue is ImplicitReceiver) {
                             processImplicitThis(resolvedCall.call.callElement, receiverValue)
                         }
 

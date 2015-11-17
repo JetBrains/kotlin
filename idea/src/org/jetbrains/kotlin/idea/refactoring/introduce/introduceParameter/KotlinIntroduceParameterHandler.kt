@@ -58,7 +58,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.supertypes
@@ -394,8 +394,8 @@ private fun findInternalUsagesOfParametersAndReceiver(
                         val bindingContext = element.analyze()
                         val resolvedCall = element.getResolvedCall(bindingContext) ?: return
 
-                        if ((resolvedCall.getExtensionReceiver() as? ThisReceiver)?.declarationDescriptor == targetDescriptor ||
-                            (resolvedCall.getDispatchReceiver() as? ThisReceiver)?.declarationDescriptor == targetDescriptor) {
+                        if ((resolvedCall.getExtensionReceiver() as? ImplicitReceiver)?.declarationDescriptor == targetDescriptor ||
+                            (resolvedCall.getDispatchReceiver() as? ImplicitReceiver)?.declarationDescriptor == targetDescriptor) {
                             usages.putValue(receiverTypeRef, resolvedCall.getCall().getCallElement())
                         }
                     }
