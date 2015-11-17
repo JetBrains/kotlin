@@ -57,9 +57,9 @@ public object KotlinCompilerClient {
 
         val flagFile = System.getProperty(COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY)
                      ?.let { it.trimQuotes() }
-                     ?.ifOrNull { !isBlank() }
+                     ?.ifOrNull { !it.isBlank() }
                      ?.let { File(it) }
-                     ?.ifOrNull { exists() }
+                     ?.ifOrNull { it.exists() }
                      ?: newFlagFile()
         return connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, reportingTargets, autostart)
     }
@@ -254,14 +254,17 @@ public object KotlinCompilerClient {
 
 
     private fun tryFindSuitableDaemonOrNewOpts(registryDir: File, compilerId: CompilerId, daemonJVMOptions: DaemonJVMOptions, report: (DaemonReportCategory, String) -> Unit): Pair<CompileService?, DaemonJVMOptions> {
-        val aliveWithOpts = walkDaemons(registryDir, compilerId, report)
+        val aliveWithOpts = walkDaemons(registryDir, compilerId, report = report)
                 .map { Pair(it, it.getDaemonJVMOptions()) }
                 .filter { it.second.isGood }
-        // TODO: consider to sort the found daemons by memory settings and take the largest (rather that the first found), but carefully analyze possible situations first
+                .sortedWith(compareBy(DaemonJVMOptionsMemoryComparator().reversed(), { it.second.get() }))
         val opts = daemonJVMOptions.copy()
-        return aliveWithOpts.firstOrNull { daemonJVMOptions memorywiseFitsInto it.second.get() }
-                    ?.let { Pair(it.first, opts.updateMemoryUpperBounds(it.second.get())) }
-               ?: Pair(null, aliveWithOpts.fold(daemonJVMOptions, { opts, d -> opts.updateMemoryUpperBounds(d.second.get()) }))
+        // if required options fit into fattest running daemon - return the daemon and required options with memory params set to actual ones in the daemon
+        return aliveWithOpts.firstOrNull()?.ifOrNull { daemonJVMOptions memorywiseFitsInto it.second.get() }?.let {
+                Pair(it.first, opts.updateMemoryUpperBounds(it.second.get()))
+            }
+            // else combine all options from running daemon to get fattest option for a new daemon to run
+            ?: Pair(null, aliveWithOpts.fold(daemonJVMOptions, { opts, d -> opts.updateMemoryUpperBounds(d.second.get()) }))
     }
 
 
@@ -351,4 +354,5 @@ internal fun isProcessAlive(process: Process) =
             true
         }
 
-internal fun<T> T.ifOrNull(pred: T.() -> Boolean): T? = if (this.pred()) this else null
+internal inline fun<T> T.ifOrNull(pred: (T) -> Boolean): T? = if (pred(this)) this else null
+

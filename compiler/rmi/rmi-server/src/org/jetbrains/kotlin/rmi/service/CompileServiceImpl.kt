@@ -67,7 +67,7 @@ class CompileServiceImpl(
         val compilerId: CompilerId,
         val daemonOptions: DaemonOptions,
         val daemonJVMOptions: DaemonJVMOptions,
-        port: Int,
+        val port: Int,
         val timer: Timer,
         val onShutdown: () -> Unit
 ) : CompileService {
@@ -79,16 +79,27 @@ class CompileServiceImpl(
         val isAlive: Boolean get() = aliveFlagPath?.let { File(it).exists() } ?: true // assuming that if no file was given, the client is alive
     }
 
-    private val clientProxies: MutableSet<ClientOrSessionProxy> = hashSetOf()
-    private val sessions: MutableMap<Int, ClientOrSessionProxy> = hashMapOf()
-
     private val sessionsIdCounter = AtomicInteger(0)
+    private val compilationsCounter = AtomicInteger(0)
     private val internalRng = Random()
 
     private val classpathWatcher = LazyClasspathWatcher(compilerId.compilerClasspath)
 
-    private val compilationsCounter = AtomicInteger(0)
-    private val shutdownQueued = AtomicBoolean(false)
+    enum class Aliveness(val value: Int) {
+        // ordering of values is used in state comparison
+        Alive(2), LastSession(1), Dying(0)
+    }
+
+    // TODO: encapsulate operations on state here
+    private val state = object {
+
+        val clientProxies: MutableSet<ClientOrSessionProxy> = hashSetOf()
+        val sessions: MutableMap<Int, ClientOrSessionProxy> = hashMapOf()
+
+        val delayedShutdownQueued = AtomicBoolean(false)
+
+        var alive = AtomicInteger(Aliveness.Alive.value)
+    }
 
     @Volatile private var _lastUsedSeconds = nowSeconds()
     public val lastUsedSeconds: Long get() = if (rwlock.isWriteLocked || rwlock.readLockCount - rwlock.readHoldCount > 0) nowSeconds() else _lastUsedSeconds
@@ -96,12 +107,11 @@ class CompileServiceImpl(
     val log by lazy { Logger.getLogger("compiler") }
 
     private val rwlock = ReentrantReadWriteLock()
-    private var alive = false
 
     private var runFile: File
 
     init {
-        val runFileDir = File(if (daemonOptions.runFilesPath.isBlank()) COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH else daemonOptions.runFilesPath)
+        val runFileDir = File(daemonOptions.runFilesPathOrDefault)
         runFileDir.mkdirs()
         runFile = File(runFileDir,
                            makeRunFilenameString(timestamp = "%tFT%<tH-%<tM-%<tS.%<tLZ".format(Calendar.getInstance(TimeZone.getTimeZone("Z"))),
@@ -122,21 +132,27 @@ class CompileServiceImpl(
     override fun getDaemonJVMOptions(): CompileService.CallResult<DaemonJVMOptions> = ifAlive { daemonJVMOptions }
 
     override fun registerClient(aliveFlagPath: String?): CompileService.CallResult<Nothing> = ifAlive_Nothing {
-        synchronized(clientProxies) {
-            clientProxies.add(ClientOrSessionProxy(aliveFlagPath))
+        synchronized(state.clientProxies) {
+            state.clientProxies.add(ClientOrSessionProxy(aliveFlagPath))
+        }
+    }
+
+    override fun getClients(): CompileService.CallResult<List<String>> = ifAlive {
+        synchronized(state.clientProxies) {
+            state.clientProxies.map { it.aliveFlagPath }.filterNotNull()
         }
     }
 
     // TODO: consider tying a session to a client and use this info to cleanup
-    override fun leaseCompileSession(aliveFlagPath: String?): CompileService.CallResult<Int> = ifAlive {
+    override fun leaseCompileSession(aliveFlagPath: String?): CompileService.CallResult<Int> = ifAlive(minAliveness = Aliveness.Alive) {
         // fighting hypothetical integer wrapping
         var newId = sessionsIdCounter.incrementAndGet()
         val session = ClientOrSessionProxy(aliveFlagPath)
         for (attempt in 1..100) {
             if (newId != CompileService.NO_SESSION) {
-                synchronized(sessions) {
-                    if (!sessions.containsKey(newId)) {
-                        sessions.put(newId, session)
+                synchronized(state.sessions) {
+                    if (!state.sessions.containsKey(newId)) {
+                        state.sessions.put(newId, session)
                         return@ifAlive newId
                     }
                 }
@@ -147,15 +163,17 @@ class CompileServiceImpl(
         throw Exception("Invalid state or algorithm error")
     }
 
-    override fun releaseCompileSession(sessionId: Int) {
-        synchronized(sessions) {
-            sessions.remove(sessionId)
+    override fun releaseCompileSession(sessionId: Int) = ifAlive_Nothing(minAliveness = Aliveness.LastSession) {
+        synchronized(state.sessions) {
+            state.sessions.remove(sessionId)
             // TODO: some cleanup goes here
-            if (sessions.isEmpty()) {
+            if (state.sessions.isEmpty()) {
                 // TODO: and some goes here
             }
         }
-        periodicAndAfterSessionCheck()
+        timer.schedule(0) {
+            periodicAndAfterSessionCheck()
+        }
     }
 
     override fun checkCompilerId(expectedCompilerId: CompilerId): Boolean =
@@ -165,14 +183,25 @@ class CompileServiceImpl(
 
     override fun getUsedMemory(): CompileService.CallResult<Long> = ifAlive { usedMemory(withGC = true) }
 
-    override fun shutdown() {
-        ifAliveExclusive(ignoreCompilerChanged = true) {
-            log.info("Shutdown started")
-            alive = false
-            UnicastRemoteObject.unexportObject(this, true)
-            log.info("Shutdown complete")
-            onShutdown()
+    override fun shutdown(): CompileService.CallResult<Nothing>  = ifAliveExclusive_Nothing(minAliveness = Aliveness.LastSession, ignoreCompilerChanged = true) {
+        shutdownImpl()
+    }
+
+    override fun scheduleShutdown(graceful: Boolean): CompileService.CallResult<Boolean> = ifAlive(minAliveness = Aliveness.Alive) {
+        if (!graceful || state.alive.compareAndSet(Aliveness.Alive.value, Aliveness.LastSession.value)) {
+            timer.schedule(0) {
+                ifAliveExclusive(minAliveness = Aliveness.LastSession, ignoreCompilerChanged = true) {
+                    if (!graceful || state.sessions.isEmpty()) {
+                        shutdownImpl()
+                    }
+                    else {
+                        log.info("Some sessions are active, waiting for them to finish")
+                    }
+                }
+            }
+            true
         }
+        else false
     }
 
     override fun remoteCompile(sessionId: Int,
@@ -234,8 +263,10 @@ class CompileServiceImpl(
 
         val stub = UnicastRemoteObject.exportObject(this, port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory) as CompileService
         registry.rebind (COMPILER_SERVICE_RMI_NAME, stub);
-        alive = true
 
+        timer.schedule(0) {
+            initiateElections()
+        }
         timer.schedule(delay = DAEMON_PERIODIC_CHECK_INTERVAL_MS, period = DAEMON_PERIODIC_CHECK_INTERVAL_MS) {
             try {
                 periodicAndAfterSessionCheck()
@@ -248,45 +279,99 @@ class CompileServiceImpl(
         }
     }
 
+
     private fun periodicAndAfterSessionCheck() {
 
-        // 1. check if unused for a timeout - shutdown
-        if (shutdownCondition({ daemonOptions.autoshutdownUnusedSeconds != COMPILE_DAEMON_TIMEOUT_INFINITE_S && compilationsCounter.get() == 0 && nowSeconds() - lastUsedSeconds > daemonOptions.autoshutdownUnusedSeconds },
-                              "Unused timeout exceeded ${daemonOptions.autoshutdownUnusedSeconds}s, shutting down")) {
-            shutdown()
-        }
-        else {
-            synchronized(sessions) {
-                // 2. check if any session hanged - clean
-                // making copy of the list before calling release
-                sessions.filterValues { !it.isAlive }.keys.toArrayList()
-            }.forEach { releaseCompileSession(it) }
+        ifAlive_Nothing(minAliveness = Aliveness.LastSession) {
 
-            // 3. clean dead clients, then check if any left - conditional shutdown (with small delay)
-            synchronized(clientProxies) { clientProxies.removeAll( clientProxies.filter{ !it.isAlive }) }
-            if (clientProxies.none() && compilationsCounter.get() > 0 && !shutdownQueued.get()) {
-                log.info("No more clients left, delayed shutdown in ${daemonOptions.shutdownDelayMilliseconds}ms")
-                shutdownWithDelay()
-            }
-            // 4. check idle timeout - shutdown
-            if (shutdownCondition({ daemonOptions.autoshutdownIdleSeconds != COMPILE_DAEMON_TIMEOUT_INFINITE_S && nowSeconds() - lastUsedSeconds > daemonOptions.autoshutdownIdleSeconds },
-                                  "Idle timeout exceeded ${daemonOptions.autoshutdownIdleSeconds}s, shutting down") ||
-                // 5. discovery file removed - shutdown
-                shutdownCondition({ !runFile.exists() }, "Run file removed, shutting down") ||
-                // 6. compiler changed (seldom check) - shutdown
-                // TODO: could be too expensive anyway, consider removing this check
-                shutdownCondition({ classpathWatcher.isChanged }, "Compiler changed"))
-            {
+            // 1. check if unused for a timeout - shutdown
+            if (shutdownCondition({ daemonOptions.autoshutdownUnusedSeconds != COMPILE_DAEMON_TIMEOUT_INFINITE_S && compilationsCounter.get() == 0 && nowSeconds() - lastUsedSeconds > daemonOptions.autoshutdownUnusedSeconds },
+                                  "Unused timeout exceeded ${daemonOptions.autoshutdownUnusedSeconds}s, shutting down")) {
                 shutdown()
+            }
+            else {
+                synchronized(state.sessions) {
+                    // 2. check if any session hanged - clean
+                    // making copy of the list before calling release
+                    state.sessions.filterValues { !it.isAlive }.keys.toArrayList()
+                }.forEach { releaseCompileSession(it) }
+
+                // 3. check if in graceful shutdown state and all sessions are closed
+                if (shutdownCondition({state.alive.get() == Aliveness.LastSession.value && state.sessions.none()}, "All sessions finished, shutting down")) {
+                    shutdown()
+                }
+
+                // 4. clean dead clients, then check if any left - conditional shutdown (with small delay)
+                    synchronized(state.clientProxies) { state.clientProxies.removeAll(state.clientProxies.filter { !it.isAlive }) }
+                if (state.clientProxies.none() && compilationsCounter.get() > 0 && !state.delayedShutdownQueued.get()) {
+                    log.info("No more clients left, delayed shutdown in ${daemonOptions.shutdownDelayMilliseconds}ms")
+                    shutdownWithDelay()
+                }
+                // 5. check idle timeout - shutdown
+                if (shutdownCondition({ daemonOptions.autoshutdownIdleSeconds != COMPILE_DAEMON_TIMEOUT_INFINITE_S && nowSeconds() - lastUsedSeconds > daemonOptions.autoshutdownIdleSeconds },
+                                      "Idle timeout exceeded ${daemonOptions.autoshutdownIdleSeconds}s, shutting down") ||
+                    // 6. discovery file removed - shutdown
+                    shutdownCondition({ !runFile.exists() }, "Run file removed, shutting down") ||
+                    // 7. compiler changed (seldom check) - shutdown
+                    // TODO: could be too expensive anyway, consider removing this check
+                    shutdownCondition({ classpathWatcher.isChanged }, "Compiler changed")) {
+                    shutdown()
+                }
             }
         }
     }
 
+
+    private fun initiateElections() {
+
+        ifAlive_Nothing {
+
+            val aliveWithOpts = walkDaemons(File(daemonOptions.runFilesPathOrDefault), compilerId, filter = { f, p -> p != port }, report = { lvl, msg -> log.info(msg) })
+                    .map { Pair(it, it.getDaemonJVMOptions()) }
+                    .filter { it.second.isGood }
+                    .sortedWith(compareBy(DaemonJVMOptionsMemoryComparator().reversed(), { it.second.get() }))
+            if (aliveWithOpts.any()) {
+                val fattestOpts = aliveWithOpts.first().second.get()
+                // second part of the condition means that we prefer other daemon if is "equal" to the current one
+                if (fattestOpts memorywiseFitsInto daemonJVMOptions && !(daemonJVMOptions memorywiseFitsInto fattestOpts)) {
+                    // all others are smaller that me, take overs' clients and shut them down
+                    aliveWithOpts.forEach {
+                        it.first.getClients().ifOrNull { it.isGood }?.let {
+                            it.get().forEach { registerClient(it) }
+                        }
+                        it.first.scheduleShutdown(true)
+                    }
+                }
+                else if (daemonJVMOptions memorywiseFitsInto fattestOpts) {
+                    // there is at least one bigger, handover my clients to it and shutdown
+                    scheduleShutdown(true)
+                    aliveWithOpts.first().first.let { fattest ->
+                        getClients().ifOrNull { it.isGood }?.let {
+                            it.get().forEach { fattest.registerClient(it) }
+                        }
+                    }
+                }
+                // else - do nothing, all daemons are staying
+                // TODO: implement some behaviour here, e.g.:
+                //   - shutdown/takeover smaller daemosn
+                //   - run (or better persuade client to run) a bigger daemon (in fact may be even simple shutdown will do, because of client's daemon choosing logic)
+            }
+        }
+    }
+
+    private fun shutdownImpl() {
+        log.info("Shutdown started")
+        state.alive.set(Aliveness.Dying.value)
+        UnicastRemoteObject.unexportObject(this, true)
+        log.info("Shutdown complete")
+        onShutdown()
+    }
+
     private fun shutdownWithDelay() {
-        shutdownQueued.set(true)
+        state.delayedShutdownQueued.set(true)
         val currentCompilationsCount = compilationsCounter.get()
         timer.schedule(daemonOptions.shutdownDelayMilliseconds) {
-            shutdownQueued.set(false)
+            state.delayedShutdownQueued.set(false)
             if (currentCompilationsCount == compilationsCounter.get()) {
                 log.fine("Execute delayed shutdown")
                 shutdown()
@@ -388,28 +473,37 @@ class CompileServiceImpl(
         }
     }
 
-    private fun<R> ifAlive(ignoreCompilerChanged: Boolean = false, body: () -> R): CompileService.CallResult<R> = rwlock.read {
-        ifAliveChecksImpl(ignoreCompilerChanged) { CompileService.CallResult.Good(body()) }
+    private fun<R> ifAlive(minAliveness: Aliveness = Aliveness.Alive, ignoreCompilerChanged: Boolean = false, body: () -> R): CompileService.CallResult<R> = rwlock.read {
+        ifAliveChecksImpl(minAliveness, ignoreCompilerChanged) { CompileService.CallResult.Good(body()) }
     }
 
     // TODO: find how to implement it without using unique name for this variant; making name deliberately ugly meanwhile
-    private fun ifAlive_Nothing(ignoreCompilerChanged: Boolean = false, body: () -> Unit): CompileService.CallResult<Nothing> = rwlock.read {
-        ifAliveChecksImpl(ignoreCompilerChanged) {
+    private fun ifAlive_Nothing(minAliveness: Aliveness = Aliveness.Alive, ignoreCompilerChanged: Boolean = false, body: () -> Unit): CompileService.CallResult<Nothing> = rwlock.read {
+        ifAliveChecksImpl(minAliveness, ignoreCompilerChanged) {
             body()
             CompileService.CallResult.Ok()
         }
     }
 
-    private fun<R> ifAliveExclusive(ignoreCompilerChanged: Boolean = false, body: () -> R): CompileService.CallResult<R> = rwlock.write {
-        ifAliveChecksImpl(ignoreCompilerChanged) { CompileService.CallResult.Good(body()) }
+    private fun<R> ifAliveExclusive(minAliveness: Aliveness = Aliveness.Alive, ignoreCompilerChanged: Boolean = false, body: () -> R): CompileService.CallResult<R> = rwlock.write {
+        ifAliveChecksImpl(minAliveness, ignoreCompilerChanged) { CompileService.CallResult.Good(body()) }
     }
 
-    inline private fun<R> ifAliveChecksImpl(ignoreCompilerChanged: Boolean = false, body: () -> CompileService.CallResult<R>): CompileService.CallResult<R> =
+    // see comment to ifAliveNothing
+    private fun<R> ifAliveExclusive_Nothing(minAliveness: Aliveness = Aliveness.Alive, ignoreCompilerChanged: Boolean = false, body: () -> Unit): CompileService.CallResult<R> = rwlock.write {
+        ifAliveChecksImpl(minAliveness, ignoreCompilerChanged) {
+            body()
+            CompileService.CallResult.Ok()
+
+        }
+    }
+
+    inline private fun<R> ifAliveChecksImpl(minAliveness: Aliveness = Aliveness.Alive, ignoreCompilerChanged: Boolean = false, body: () -> CompileService.CallResult<R>): CompileService.CallResult<R> =
         when {
-            !alive -> CompileService.CallResult.Dying()
+            state.alive.get() < minAliveness.value -> CompileService.CallResult.Dying()
             !ignoreCompilerChanged && classpathWatcher.isChanged -> {
                 log.info("Compiler changed, scheduling shutdown")
-                timer.schedule(1) { shutdown() }
+                timer.schedule(0) { shutdown() }
                 CompileService.CallResult.Dying()
             }
             else -> {
@@ -424,3 +518,6 @@ class CompileServiceImpl(
         }
 
 }
+
+internal inline fun<T> T.ifOrNull(pred: (T) -> Boolean): T? = if (pred(this)) this else null
+
