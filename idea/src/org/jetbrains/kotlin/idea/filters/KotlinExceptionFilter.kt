@@ -20,9 +20,24 @@ import com.intellij.execution.filters.ExceptionFilter
 import com.intellij.execution.filters.Filter
 import com.intellij.execution.filters.HyperlinkInfo
 import com.intellij.execution.filters.OpenFileHyperlinkInfo
+import com.intellij.openapi.compiler.CompilerPaths
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ProjectFileIndex
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.codegen.inline.FileMapping
+import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
+import org.jetbrains.kotlin.codegen.inline.SMAPParser
+import org.jetbrains.kotlin.idea.core.refactoring.getLineCount
+import org.jetbrains.kotlin.idea.core.refactoring.toPsiFile
 import org.jetbrains.kotlin.idea.util.DebuggerUtils
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.name.tail
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.utils.addToStdlib.check
+import org.jetbrains.org.objectweb.asm.ClassReader
+import org.jetbrains.org.objectweb.asm.ClassVisitor
+import java.io.File
 import java.util.regex.Pattern
 
 class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter {
@@ -49,8 +64,66 @@ class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter
 
         val virtualFile = file.virtualFile ?: return null
 
-        return OpenFileHyperlinkInfo(project, virtualFile, lineNumber)
+        return virtualFileForInlineCall(jvmClassName, virtualFile, lineNumber + 1, project) ?:
+                                OpenFileHyperlinkInfo(project, virtualFile, lineNumber)
     }
+
+    private fun virtualFileForInlineCall(jvmName: JvmClassName, file: VirtualFile, lineNumber: Int, project: Project): OpenFileHyperlinkInfo? {
+        if (!ProjectRootsUtil.isInContent(project, file, true, false, false)) return null
+
+        val linesInFile = file.toPsiFile(project)?.getLineCount() ?: return null
+        if (lineNumber <= linesInFile) return null
+
+        val className = jvmName.fqNameForClassNameWithoutDollars.tail(jvmName.packageFqName).asString().replace('.', '$')
+
+        val module = ProjectFileIndex.SERVICE.getInstance(project).getModuleForFile(file)
+        val outputDir = CompilerPaths.getModuleOutputDirectory(module, /*forTests = */ false) ?: return null
+
+        val classByByDirectory = findClassFileByPath(jvmName.packageFqName.asString(), className, outputDir) ?: return null
+
+        return readDebugInfoForInlineFun(classByByDirectory, lineNumber, project)
+    }
+
+    private fun findClassFileByPath(packageName: String, className: String, outputDir: VirtualFile): File? {
+        val outDirFile = File(outputDir.path).check { it.exists() } ?: return null
+
+        val parentDirectory = File(outDirFile, packageName.replace(".", File.separator))
+        if (!parentDirectory.exists()) return null
+
+        val classFile = File(parentDirectory, className + ".class")
+        if (classFile.exists()) {
+            return classFile
+        }
+
+        return null
+    }
+
+    private fun readDebugInfoForInlineFun(classFile: File, line: Int, project: Project): OpenFileHyperlinkInfo? {
+        val debugInfo = readDebugInfo(classFile) ?: return null
+
+        val mappings = SMAPParser.parse(debugInfo)
+
+        val mappingInfo = mappings.fileMappings.firstOrNull {
+            it.getIntervalIfContains(line) != null
+        } ?: return null
+
+        val newJvmName = JvmClassName.byInternalName(mappingInfo.path)
+        val newSourceFile = DebuggerUtils.findSourceFileForClass(project, searchScope, newJvmName, mappingInfo.name) ?: return null
+        return OpenFileHyperlinkInfo(project, newSourceFile.virtualFile, mappingInfo.getIntervalIfContains(line)!!.map(line) - 1)
+    }
+
+    private fun readDebugInfo(classFile: File): String? {
+        val cr = ClassReader(classFile.readBytes());
+        var debugInfo: String? = null
+        cr.accept(object : ClassVisitor(InlineCodegenUtil.API) {
+            override fun visitSource(source: String?, debug: String?) {
+                debugInfo = debug
+            }
+        }, ClassReader.SKIP_FRAMES and ClassReader.SKIP_CODE)
+        return debugInfo
+    }
+
+    private fun FileMapping.getIntervalIfContains(destLine: Int) = lineMappings.firstOrNull { it.contains(destLine) }
 
     private fun patchResult(result: Filter.Result, line: String): Filter.Result {
         val newHyperlinkInfo = createHyperlinkInfo(line) ?: return result

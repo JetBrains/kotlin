@@ -73,6 +73,7 @@ import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractCommonDecompiled
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractJsDecompiledTextFromJsMetadataTest
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractJvmDecompiledTextTest
 import org.jetbrains.kotlin.idea.editor.quickDoc.AbstractQuickDocProviderTest
+import org.jetbrains.kotlin.idea.filters.AbstractKotlinExceptionFilterTest
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyTest
 import org.jetbrains.kotlin.idea.highlighter.*
@@ -677,6 +678,10 @@ fun main(args: Array<String>) {
         testClass<AbstractPositionManagerTest>() {
             model("debugger/positionManager", recursive = false, extension = "kt", testClassName = "SingleFile")
             model("debugger/positionManager", recursive = false, extension = null, testClassName = "MultiFile")
+        }
+
+        testClass<AbstractKotlinExceptionFilterTest>() {
+            model("debugger/exceptionFilter", pattern = """^([^\.]+)$""", recursive = false)
         }
 
         testClass<AbstractSmartStepIntoTest>() {
