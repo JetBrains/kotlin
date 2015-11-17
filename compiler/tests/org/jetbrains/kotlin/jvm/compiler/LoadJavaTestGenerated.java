@@ -2710,12 +2710,6 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledKotlin(fileName);
             }
 
-            @TestMetadata("TraitFinalFun.kt")
-            public void testTraitFinalFun() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/classFun/TraitFinalFun.kt");
-                doTestCompiledKotlin(fileName);
-            }
-
             @TestMetadata("TraitOpenFun.kt")
             public void testTraitOpenFun() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/classFun/TraitOpenFun.kt");

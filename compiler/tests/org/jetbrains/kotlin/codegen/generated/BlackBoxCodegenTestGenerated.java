@@ -7804,12 +7804,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("finalMethod.kt")
-        public void testFinalMethod() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/finalMethod.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("genericMethod.kt")
         public void testGenericMethod() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/genericMethod.kt");

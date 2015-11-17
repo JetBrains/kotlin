@@ -5229,12 +5229,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
-        @TestMetadata("overridingWritableAndNotWritableFinalMembers.kt")
-        public void testOverridingWritableAndNotWritableFinalMembers() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/override/overridingWritableAndNotWritableFinalMembers.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("parameterNameChangedAmbiguousRename.kt")
         public void testParameterNameChangedAmbiguousRename() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/override/parameterNameChangedAmbiguousRename.kt");

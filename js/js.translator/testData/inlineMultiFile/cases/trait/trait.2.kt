@@ -7,7 +7,7 @@ package test
 
 internal interface InlineTrait {
 
-    public inline final fun finalInline(s: () -> String): String {
+    public fun finalInline(s: () -> String): String {
         return s()
     }
 

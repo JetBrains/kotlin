@@ -799,12 +799,6 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
             doTest(fileName);
         }
 
-        @TestMetadata("TraitFinalFun.kt")
-        public void testTraitFinalFun() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/classFun/TraitFinalFun.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("TraitOpenFun.kt")
         public void testTraitOpenFun() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/classFun/TraitOpenFun.kt");

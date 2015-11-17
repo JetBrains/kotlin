@@ -104,12 +104,13 @@ public object ModifierCheckerCore {
                                             ENUM_CLASS, ENUM_ENTRY, FILE),
             PRIVATE_KEYWORD   to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, OBJECT, OBJECT_LITERAL,
                                             INTERFACE, ENUM_CLASS, ENUM_ENTRY, FILE),
-            COMPANION_KEYWORD to EnumSet.of(CLASS_ONLY, ENUM_CLASS, INTERFACE)
+            COMPANION_KEYWORD to EnumSet.of(CLASS_ONLY, ENUM_CLASS, INTERFACE),
+            FINAL_KEYWORD     to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, OBJECT, OBJECT_LITERAL,
+                                            ENUM_CLASS, ENUM_ENTRY, ANNOTATION_CLASS, FILE)
     )
 
     val deprecatedParentTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>(
             // Deprecated in M15
-            FINAL_KEYWORD     to EnumSet.of(INTERFACE),
             PROTECTED_KEYWORD to EnumSet.of(OBJECT)
     )
 

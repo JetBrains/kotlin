@@ -7,8 +7,6 @@ package foo
 
 import test.*
 
-// CHECK_CONTAINS_NO_CALLS: testFinalInline
-// CHECK_CONTAINS_NO_CALLS: testFinalInline2
 // CHECK_CONTAINS_NO_CALLS: testClassObject
 
 internal fun testFinalInline(): String {
