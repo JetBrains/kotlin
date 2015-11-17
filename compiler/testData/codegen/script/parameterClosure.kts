@@ -2,6 +2,6 @@
 
 fun addX(y: Int) = x + y
 
-addX(3)
+val rv = addX(3)
 
 // expected: rv: 13

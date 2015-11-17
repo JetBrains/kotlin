@@ -69,10 +69,8 @@ public class ScriptGenTest extends CodegenTestCase {
         Method resultMethod = aClass.getDeclaredMethod("getResult");
         assertTrue((resultMethod.getModifiers() & Opcodes.ACC_FINAL) != 0);
         assertTrue((resultMethod.getModifiers() & Opcodes.ACC_PUBLIC) != 0);
-        Field rv = aClass.getField("rv");
         assertTrue((result.getModifiers() & Opcodes.ACC_PRIVATE) != 0);
         Object script = constructor.newInstance();
-        assertEquals(12, rv.get(script));
         assertEquals(8, result.get(script));
         assertEquals(8, resultMethod.invoke(script));
     }

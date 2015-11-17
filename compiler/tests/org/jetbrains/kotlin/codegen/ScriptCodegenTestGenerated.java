@@ -31,6 +31,12 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class ScriptCodegenTestGenerated extends AbstractScriptCodegenTest {
+    @TestMetadata("adder.kts")
+    public void testAdder() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/adder.kts");
+        doTest(fileName);
+    }
+
     public void testAllFilesPresentInScript() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/script"), Pattern.compile("^(.+)\\.kts$"), true);
     }
