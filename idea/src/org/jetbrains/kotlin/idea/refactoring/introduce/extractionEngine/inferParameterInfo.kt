@@ -281,7 +281,7 @@ private fun suggestParameterType(
                    val calleeExpression = resolvedCall!!.call.calleeExpression
                    val typeByDataFlowInfo = if (useSmartCastsIfPossible) {
                        bindingContext[BindingContext.EXPRESSION_TYPE_INFO, calleeExpression]?.dataFlowInfo?.let { dataFlowInfo ->
-                           val possibleTypes = dataFlowInfo.getPossibleTypes(DataFlowValueFactory.createDataFlowValue(receiverToExtract))
+                           val possibleTypes = dataFlowInfo.getPossibleTypes(DataFlowValueFactory.createDataFlowValueForStableReceiver(receiverToExtract))
                            if (possibleTypes.isNotEmpty()) CommonSupertypes.commonSupertype(possibleTypes) else null
                        }
                    } else null

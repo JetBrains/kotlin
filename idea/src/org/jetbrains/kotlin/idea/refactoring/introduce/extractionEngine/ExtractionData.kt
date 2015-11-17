@@ -178,7 +178,7 @@ data class ExtractionData(
         val typeInfo = context[BindingContext.EXPRESSION_TYPE_INFO, expression] ?: return emptySet()
 
         (resolvedCall?.getImplicitReceiverValue() as? ThisReceiver)?.let {
-            return typeInfo.dataFlowInfo.getPossibleTypes(DataFlowValueFactory.createDataFlowValue(it))
+            return typeInfo.dataFlowInfo.getPossibleTypes(DataFlowValueFactory.createDataFlowValueForStableReceiver(it))
         }
 
         val type = resolvedCall?.resultingDescriptor?.returnType ?: return emptySet()

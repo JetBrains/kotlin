@@ -104,7 +104,7 @@ public class DataFlowValueFactory {
     }
 
     @NotNull
-    public static DataFlowValue createDataFlowValue(@NotNull ThisReceiver receiver) {
+    public static DataFlowValue createDataFlowValueForStableReceiver(@NotNull ReceiverValue receiver) {
         KotlinType type = receiver.getType();
         return new DataFlowValue(receiver, type, STABLE_VALUE, getImmanentNullability(type));
     }
@@ -124,12 +124,11 @@ public class DataFlowValueFactory {
             @NotNull BindingContext bindingContext,
             @NotNull DeclarationDescriptor containingDeclarationOrModule
     ) {
-        if (receiverValue instanceof TransientReceiver || receiverValue instanceof ScriptReceiver) {
-            KotlinType type = receiverValue.getType();
-            return new DataFlowValue(receiverValue, type, STABLE_VALUE, getImmanentNullability(type));
-        }
-        else if (receiverValue instanceof ClassReceiver || receiverValue instanceof ExtensionReceiver) {
-            return createDataFlowValue((ThisReceiver) receiverValue);
+        if (receiverValue instanceof TransientReceiver ||
+            receiverValue instanceof ScriptReceiver ||
+            receiverValue instanceof ClassReceiver ||
+            receiverValue instanceof ExtensionReceiver) {
+            return createDataFlowValueForStableReceiver(receiverValue);
         }
         else if (receiverValue instanceof ExpressionReceiver) {
             return createDataFlowValue(((ExpressionReceiver) receiverValue).getExpression(),
