@@ -52,7 +52,7 @@ import org.jetbrains.kotlin.psi.psiUtil.effectiveDeclarations
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.scopes.receivers.ClassReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import java.util.*
 
 public class KotlinFindClassUsagesHandler(
@@ -163,8 +163,8 @@ public class KotlinFindClassUsagesHandler(
 
                     val bindingContext = element.analyze()
                     val resolvedCall = bindingContext[BindingContext.CALL, element]?.getResolvedCall(bindingContext) ?: return
-                    if ((resolvedCall.getDispatchReceiver() as? ClassReceiver)?.declarationDescriptor == companionObjectDescriptor
-                        || (resolvedCall.getExtensionReceiver() as? ClassReceiver)?.declarationDescriptor == companionObjectDescriptor) {
+                    if ((resolvedCall.getDispatchReceiver() as? ImplicitClassReceiver)?.declarationDescriptor == companionObjectDescriptor
+                        || (resolvedCall.getExtensionReceiver() as? ImplicitClassReceiver)?.declarationDescriptor == companionObjectDescriptor) {
                         element.getReferences().forEach {
                             if (!stop && !processor.process(it)) {
                                 stop = true

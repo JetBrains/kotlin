@@ -19,16 +19,16 @@ package org.jetbrains.kotlin.descriptors.impl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ClassReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 
 public class LazyClassReceiverParameterDescriptor extends AbstractReceiverParameterDescriptor {
     private final ClassDescriptor descriptor;
-    private final ClassReceiver receiverValue;
+    private final ImplicitClassReceiver receiverValue;
 
     public LazyClassReceiverParameterDescriptor(@NotNull ClassDescriptor descriptor) {
         this.descriptor = descriptor;
-        this.receiverValue = new ClassReceiver(descriptor);
+        this.receiverValue = new ImplicitClassReceiver(descriptor);
     }
 
     @NotNull

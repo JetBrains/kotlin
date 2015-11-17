@@ -126,7 +126,7 @@ public class DataFlowValueFactory {
     ) {
         if (receiverValue instanceof TransientReceiver ||
             receiverValue instanceof ScriptReceiver ||
-            receiverValue instanceof ClassReceiver ||
+            receiverValue instanceof ImplicitClassReceiver ||
             receiverValue instanceof ExtensionReceiver) {
             return createDataFlowValueForStableReceiver(receiverValue);
         }

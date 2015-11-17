@@ -17,8 +17,28 @@
 package org.jetbrains.kotlin.resolve.scopes.receivers
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.types.KotlinType
 
-// ClassReceiver cast to given target type
-// NB: equals / hashCode are inherited from ClassReceiver (as designed)
-class CastClassReceiver(originalDescriptor: ClassDescriptor, val targetType: KotlinType) : ClassReceiver(originalDescriptor)
+/**
+ * Describes any "this" receiver inside a class
+ */
+interface ThisClassReceiver : ReceiverValue {
+    val classDescriptor: ClassDescriptor
+}
+
+/**
+ * Same but implicit only
+ */
+open class ImplicitClassReceiver(override val classDescriptor: ClassDescriptor) : ThisClassReceiver, ImplicitReceiver {
+
+    override fun exists() = true
+
+    override fun getType() = classDescriptor.defaultType
+
+    override val declarationDescriptor = classDescriptor
+
+    override fun equals(other: Any?) = classDescriptor == (other as? ImplicitClassReceiver)?.classDescriptor
+
+    override fun hashCode() = classDescriptor.hashCode()
+
+    override fun toString() = "Class{$type}"
+}

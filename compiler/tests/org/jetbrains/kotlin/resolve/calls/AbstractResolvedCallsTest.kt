@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getParentResolvedCall
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.resolve.scopes.receivers.ClassReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -77,7 +77,7 @@ public abstract class AbstractResolvedCallsTest : KotlinLiteFixture() {
 
 private fun ReceiverValue.getText() = when (this) {
     is ExpressionReceiver -> "${expression.getText()} {${getType()}}"
-    is ClassReceiver -> "Class{${getType()}}"
+    is ImplicitClassReceiver -> "Class{${getType()}}"
     is ExtensionReceiver -> "${getType()}Ext{${declarationDescriptor.getText()}}"
     else -> toString()
 }

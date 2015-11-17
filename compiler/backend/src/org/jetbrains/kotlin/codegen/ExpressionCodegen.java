@@ -2484,8 +2484,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @NotNull
     public StackValue generateReceiverValue(@NotNull ReceiverValue receiverValue, boolean isSuper) {
-        if (receiverValue instanceof ClassReceiver) {
-            ClassDescriptor receiverDescriptor = ((ClassReceiver) receiverValue).getDeclarationDescriptor();
+        if (receiverValue instanceof ImplicitClassReceiver) {
+            ClassDescriptor receiverDescriptor = ((ImplicitClassReceiver) receiverValue).getDeclarationDescriptor();
             if (DescriptorUtils.isCompanionObject(receiverDescriptor)) {
                 CallableMemberDescriptor contextDescriptor = context.getContextDescriptor();
                 if (contextDescriptor instanceof FunctionDescriptor && receiverDescriptor == contextDescriptor.getContainingDeclaration()) {
@@ -2497,7 +2497,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             }
             else {
                 return StackValue.thisOrOuter(this, receiverDescriptor, isSuper,
-                                              receiverValue instanceof CastClassReceiver || isEnumEntry(receiverDescriptor));
+                                              receiverValue instanceof CastImplicitClassReceiver || isEnumEntry(receiverDescriptor));
             }
         }
         else if (receiverValue instanceof ScriptReceiver) {
@@ -3371,7 +3371,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 if (dispatchReceiver != null) {
                     Type receiverType = typeMapper.mapType(dispatchReceiver.getType());
                     ReceiverValue receiver = resolvedCall.getDispatchReceiver();
-                    boolean callSuper = containingDeclaration.isInner() && receiver instanceof ClassReceiver;
+                    boolean callSuper = containingDeclaration.isInner() && receiver instanceof ImplicitClassReceiver;
                     generateReceiverValue(receiver, callSuper).put(receiverType, v);
                 }
 
