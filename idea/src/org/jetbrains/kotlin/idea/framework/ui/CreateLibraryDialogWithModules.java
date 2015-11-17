@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.framework.ui;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator;
 
 import java.awt.*;
 import java.util.List;
@@ -29,7 +30,7 @@ public class CreateLibraryDialogWithModules extends CreateLibraryDialogBase {
 
     public CreateLibraryDialogWithModules(
             @NotNull Project project,
-            @NotNull List<Module> modules,
+            @NotNull KotlinProjectConfigurator configurator,
             @NotNull String defaultPath,
             boolean showPathPanel,
             @NotNull String title,
@@ -37,7 +38,7 @@ public class CreateLibraryDialogWithModules extends CreateLibraryDialogBase {
     ) {
         super(project, defaultPath, title, libraryCaption);
 
-        chooseModulePanel = new ChooseModulePanel(project, modules);
+        chooseModulePanel = new ChooseModulePanel(project, configurator);
         chooseModulesPanelPlace.add(chooseModulePanel.getContentPane(), BorderLayout.CENTER);
 
         chooseLibraryPathPlace.setVisible(showPathPanel);

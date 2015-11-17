@@ -18,26 +18,23 @@ package org.jetbrains.kotlin.idea.actions
 
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
-import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator
-import org.jetbrains.kotlin.idea.configuration.getAbleToRunConfigurators
-import org.jetbrains.kotlin.idea.configuration.isProjectConfigured
-import org.jetbrains.kotlin.idea.configuration.showConfigureKotlinNotificationIfNeeded
+import org.jetbrains.kotlin.idea.configuration.*
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.utils.ifEmpty
 
 abstract class ConfigureKotlinInProjectAction : AnAction() {
 
     abstract fun getApplicableConfigurators(project: Project): Collection<KotlinProjectConfigurator>
 
     override fun actionPerformed(e: AnActionEvent) {
-        val project = CommonDataKeys.PROJECT.getData(e.dataContext)
-        if (project == null) return
+        val project = e.project ?: return
 
-        if (isProjectConfigured(project)) {
-            Messages.showInfoMessage("All modules with kotlin files are configured", e.presentation.getText()!!)
+        val modules = getModulesWithKotlinFiles(project).ifEmpty { project.allModules() }
+        if (modules.all { isModuleConfigured(it) }) {
+            Messages.showInfoMessage("All modules with Kotlin files are configured", e.presentation.text!!)
             return
         }
 
@@ -47,7 +44,7 @@ abstract class ConfigureKotlinInProjectAction : AnAction() {
             configurators.size == 1 -> configurators.first().configure(project)
             configurators.isEmpty() -> Messages.showErrorDialog("There aren't configurators available", e.presentation.text!!)
             else -> {
-                Messages.showErrorDialog("More than one configurator is available", e.presentation.getText()!!)
+                Messages.showErrorDialog("More than one configurator is available", e.presentation.text!!)
                 showConfigureKotlinNotificationIfNeeded(project)
             }
         }

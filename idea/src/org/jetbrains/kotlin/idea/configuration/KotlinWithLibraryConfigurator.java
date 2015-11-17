@@ -89,7 +89,7 @@ public abstract class KotlinWithLibraryConfigurator implements KotlinProjectConf
 
         if (nonConfiguredModules.size() > 1 || showPathToJarPanel) {
             CreateLibraryDialogWithModules dialog = new CreateLibraryDialogWithModules(
-                    project, nonConfiguredModules, defaultPathToJar, showPathToJarPanel,
+                    project, this, defaultPathToJar, showPathToJarPanel,
                     getDialogTitle(),
                     getLibraryCaption());
 

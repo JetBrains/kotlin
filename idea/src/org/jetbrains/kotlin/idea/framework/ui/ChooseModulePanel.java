@@ -22,6 +22,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt;
+import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -34,14 +36,17 @@ public class ChooseModulePanel {
     private JRadioButton allModulesWithKtRadioButton;
     private JRadioButton singleModuleRadioButton;
     private JComboBox singleModuleComboBox;
-    private JTextField allModulesNames;
+    private JTextField allModulesWithKtNames;
+    private JRadioButton allModulesRadioButton;
 
     @NotNull private final Project project;
     @NotNull private final List<Module> modules;
+    @NotNull private final List<Module> modulesWithKtFiles;
 
-    public ChooseModulePanel(@NotNull Project project, @NotNull List<Module> modules) {
+    public ChooseModulePanel(@NotNull Project project, @NotNull KotlinProjectConfigurator configurator) {
         this.project = project;
-        this.modules = modules;
+        this.modules = ConfigureKotlinInProjectUtilsKt.getNonConfiguredModules(project, configurator);
+        this.modulesWithKtFiles = ConfigureKotlinInProjectUtilsKt.getNonConfiguredModulesWithKotlinFiles(project, configurator);
 
         DefaultComboBoxModel comboBoxModel = new DefaultComboBoxModel();
 
@@ -49,19 +54,21 @@ public class ChooseModulePanel {
             comboBoxModel.addElement(module.getName());
         }
 
+        if (modulesWithKtFiles.isEmpty()) {
+            allModulesWithKtRadioButton.setVisible(false);
+            allModulesWithKtNames.setVisible(false);
+        }
+
         singleModuleComboBox.setModel(comboBoxModel);
-        singleModuleRadioButton.addActionListener(new ActionListener() {
+        ActionListener listener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 updateComponents();
             }
-        });
-        allModulesWithKtRadioButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                updateComponents();
-            }
-        });
+        };
+        singleModuleRadioButton.addActionListener(listener);
+        allModulesWithKtRadioButton.addActionListener(listener);
+        allModulesRadioButton.addActionListener(listener);
 
         String fullList = StringUtil.join(modules, new Function<Module, String>() {
             @Override
@@ -69,13 +76,20 @@ public class ChooseModulePanel {
                 return module.getName();
             }
         }, ", ");
-        allModulesNames.setText(fullList);
-        allModulesNames.setBorder(null);
+        allModulesWithKtNames.setText(fullList);
+        allModulesWithKtNames.setBorder(null);
 
         ButtonGroup modulesGroup = new ButtonGroup();
+        modulesGroup.add(allModulesRadioButton);
         modulesGroup.add(allModulesWithKtRadioButton);
         modulesGroup.add(singleModuleRadioButton);
-        allModulesWithKtRadioButton.setSelected(true);
+
+        if (allModulesWithKtRadioButton.isVisible()) {
+            allModulesWithKtRadioButton.setSelected(true);
+        }
+        else {
+            allModulesRadioButton.setSelected(true);
+        }
 
         updateComponents();
     }
@@ -89,7 +103,8 @@ public class ChooseModulePanel {
     }
 
     public List<Module> getModulesToConfigure() {
-        if (allModulesWithKtRadioButton.isSelected()) return modules;
+        if (allModulesRadioButton.isSelected()) return modules;
+        if (allModulesWithKtRadioButton.isSelected()) return modulesWithKtFiles;
         String selectedItem = (String) singleModuleComboBox.getSelectedItem();
         return Collections.singletonList(ModuleManager.getInstance(project).findModuleByName(selectedItem));
     }

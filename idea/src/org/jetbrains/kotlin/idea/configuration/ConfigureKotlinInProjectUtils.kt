@@ -26,11 +26,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.utils.ifEmpty
 
 fun isProjectConfigured(project: Project): Boolean {
     val modules = getModulesWithKotlinFiles(project)
     return modules.all { isModuleConfigured(it) }
 }
+
+fun Project.allModules() = ModuleManager.getInstance(this).modules.toList()
 
 fun isModuleConfigured(module: Module): Boolean {
     val configurators = getApplicableConfigurators(module)
@@ -46,7 +49,7 @@ fun getModulesWithKotlinFiles(project: Project): Collection<Module> {
         return emptyList()
     }
 
-    return ModuleManager.getInstance(project).modules.filter { module ->
+    return project.allModules().filter { module ->
         FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, module.getModuleScope(true))
     }
 }
@@ -68,7 +71,7 @@ private fun showConfigureKotlinNotification(project: Project) {
 }
 
 fun getAbleToRunConfigurators(project: Project): Collection<KotlinProjectConfigurator> {
-    val modules = getModulesWithKotlinFiles(project)
+    val modules = getModulesWithKotlinFiles(project).ifEmpty { project.allModules() }
 
     return Extensions.getExtensions(KotlinProjectConfigurator.EP_NAME).filter { configurator ->
         modules.any { module -> configurator.isApplicable(module) && !configurator.isConfigured(module) }
@@ -84,6 +87,10 @@ fun getConfiguratorByName(name: String): KotlinProjectConfigurator? {
 }
 
 fun getNonConfiguredModules(project: Project, configurator: KotlinProjectConfigurator): List<Module> {
+    return project.allModules().filter { module -> configurator.isApplicable(module) && !configurator.isConfigured(module) }
+}
+
+fun getNonConfiguredModulesWithKotlinFiles(project: Project, configurator: KotlinProjectConfigurator): List<Module> {
     val modules = getModulesWithKotlinFiles(project)
     return modules.filter { module -> configurator.isApplicable(module) && !configurator.isConfigured(module) }
 }

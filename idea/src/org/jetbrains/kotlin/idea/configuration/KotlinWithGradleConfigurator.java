@@ -49,7 +49,6 @@ import org.jetbrains.plugins.groovy.lang.psi.api.statements.expressions.path.GrM
 import org.jetbrains.plugins.groovy.lang.psi.api.util.GrStatementOwner;
 
 import java.io.File;
-import java.util.List;
 
 import static org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt.showInfoNotification;
 
@@ -86,10 +85,8 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
 
     @Override
     public void configure(@NotNull Project project) {
-        List<Module> nonConfiguredModules = ConfigureKotlinInProjectUtilsKt.getNonConfiguredModules(project, this);
-
         ConfigureDialogWithModulesAndVersion dialog =
-                new ConfigureDialogWithModulesAndVersion(project, nonConfiguredModules, KOTLIN_VERSIONS);
+                new ConfigureDialogWithModulesAndVersion(project, this, KOTLIN_VERSIONS);
 
         dialog.show();
         if (!dialog.isOK()) return;

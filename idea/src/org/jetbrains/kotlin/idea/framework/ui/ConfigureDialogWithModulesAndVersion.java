@@ -33,6 +33,7 @@ import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator;
 
 import javax.swing.*;
 import java.awt.*;
@@ -60,7 +61,7 @@ public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
 
     public ConfigureDialogWithModulesAndVersion(
             @NotNull Project project,
-            @NotNull List<Module> modules,
+            @NotNull KotlinProjectConfigurator configurator,
             @NotNull final String[] kotlinVersions
     ) {
         super(project);
@@ -89,7 +90,7 @@ public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
         processIcon.resume();
         infoPanel.add(processIcon, BorderLayout.CENTER);
 
-        chooseModulePanel = new ChooseModulePanel(project, modules);
+        chooseModulePanel = new ChooseModulePanel(project, configurator);
         chooseModulesPanelPlace.add(chooseModulePanel.getContentPane(), BorderLayout.CENTER);
 
         updateComponents();
