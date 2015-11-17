@@ -8,7 +8,7 @@ import java.util.LinkedHashSet
 
 class ComplexSetJsTest : SetJsTest() {
     // Helper function with generic parameter to force to use ComlpexHashMap
-    fun doTest<T>() {
+    fun <T> doTest() {
         HashSet<T>()
         HashSet<T>(3)
         HashSet<T>(3, 0.5f)
@@ -257,5 +257,5 @@ abstract class SetJsTest {
         return set
     }
 
-    fun genericHashSetOf<T>(vararg values: T) = hashSetOf(*values)
+    fun <T> genericHashSetOf(vararg values: T) = hashSetOf(*values)
 }

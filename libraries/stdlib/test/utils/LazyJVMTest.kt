@@ -86,7 +86,7 @@ class LazyJVMTest {
     }
 
 
-    private fun serializeAndDeserialize<T>(value: T): T {
+    private fun <T> serializeAndDeserialize(value: T): T {
         val outputStream = ByteArrayOutputStream()
         val objectOutputStream = ObjectOutputStream(outputStream)
 

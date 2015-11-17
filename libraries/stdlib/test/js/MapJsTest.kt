@@ -8,7 +8,7 @@ import org.junit.Test as test
 
 class ComplexMapJsTest : MapJsTest() {
     // Helper function with generic parameter to force to use ComlpexHashMap
-    fun doTest<K : kotlin.Comparable<K>>() {
+    fun <K : kotlin.Comparable<K>> doTest() {
         HashMap<K, Int>()
         HashMap<K, Int>(3)
         HashMap<K, Int>(3, 0.5f)
@@ -488,5 +488,5 @@ abstract class MapJsTest {
         return map
     }
 
-    fun genericHashMapOf<K, V>(vararg values: Pair<K, V>) = hashMapOf(*values)
+    fun <K, V> genericHashMapOf(vararg values: Pair<K, V>) = hashMapOf(*values)
 }
