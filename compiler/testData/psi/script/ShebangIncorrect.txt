@@ -5,30 +5,32 @@ JetFile: ShebangIncorrect.kts
     <empty list>
   SCRIPT
     BLOCK
-      CALL_EXPRESSION
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('println')
-        VALUE_ARGUMENT_LIST
-          PsiElement(LPAR)('(')
-          VALUE_ARGUMENT
-            INTEGER_CONSTANT
-              PsiElement(INTEGER_LITERAL)('1')
-          PsiElement(RPAR)(')')
+      ANONYMOUS_INITIALIZER
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('println')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            VALUE_ARGUMENT
+              INTEGER_CONSTANT
+                PsiElement(INTEGER_LITERAL)('1')
+            PsiElement(RPAR)(')')
       PsiElement(SEMICOLON)(';')
       PsiWhiteSpace(' ')
       PsiErrorElement:Expecting an element
         PsiElement(HASH)('#')
-      BINARY_EXPRESSION
-        PREFIX_EXPRESSION
+      ANONYMOUS_INITIALIZER
+        BINARY_EXPRESSION
+          PREFIX_EXPRESSION
+            OPERATION_REFERENCE
+              PsiElement(EXCL)('!')
+            PsiErrorElement:Expecting an element
+              PsiElement(DIV)('/')
           OPERATION_REFERENCE
-            PsiElement(EXCL)('!')
+            PsiElement(IDENTIFIER)('usr')
+          PsiWhiteSpace('\n\n')
           PsiErrorElement:Expecting an element
-            PsiElement(DIV)('/')
-        OPERATION_REFERENCE
-          PsiElement(IDENTIFIER)('usr')
-        PsiWhiteSpace('\n\n')
-        PsiErrorElement:Expecting an element
-          PsiElement(HASH)('#')
+            PsiElement(HASH)('#')
       PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
         PsiElement(EXCL)('!')
         PsiElement(DIV)('/')

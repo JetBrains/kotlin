@@ -1181,13 +1181,21 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      *   : SEMI* statement{SEMI+} SEMI*
      */
     public void parseStatements() {
+        parseStatements(false);
+    }
+
+    /*
+         * expressions
+         *   : SEMI* statement{SEMI+} SEMI*
+         */
+    public void parseStatements(boolean isScriptTopLevel) {
         while (at(SEMICOLON)) advance(); // SEMICOLON
         while (!eof() && !at(RBRACE)) {
             if (!atSet(STATEMENT_FIRST)) {
                 errorAndAdvance("Expecting an element");
             }
             if (atSet(STATEMENT_FIRST)) {
-                parseStatement();
+                parseStatement(isScriptTopLevel);
             }
             if (at(SEMICOLON)) {
                 while (at(SEMICOLON)) advance(); // SEMICOLON
@@ -1214,10 +1222,15 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      *  : declaration
      *  ;
      */
-    private void parseStatement() {
+    private void parseStatement(boolean isScriptTopLevel) {
         if (!parseLocalDeclaration()) {
             if (!atSet(EXPRESSION_FIRST)) {
                 errorAndAdvance("Expecting a statement");
+            }
+            else if (isScriptTopLevel){
+                PsiBuilder.Marker scriptInitializer = mark();
+                parseExpression();
+                scriptInitializer.done(ANONYMOUS_INITIALIZER);
             }
             else {
                 parseExpression();

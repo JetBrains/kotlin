@@ -42,6 +42,12 @@ public abstract class AbstractParsingTest extends ParsingTestCase {
     }
 
     @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        getProject().registerService(KotlinScriptDefinitionProvider.class);
+    }
+
+    @Override
     protected String getTestDataPath() {
         return KotlinTestUtils.getHomeDirectory();
     }

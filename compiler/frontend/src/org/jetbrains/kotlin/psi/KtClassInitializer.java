@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -58,5 +59,16 @@ public class KtClassInitializer extends KtDeclarationStub<KotlinPlaceHolderStub<
     @Nullable
     public PsiElement getInitKeyword() {
         return findChildByType(KtTokens.INIT_KEYWORD);
+    }
+
+    @NotNull
+    public KtDeclaration getContainingDeclaration() {
+        KtClassOrObject classOrObject = PsiTreeUtil.getParentOfType(this, KtClassOrObject.class, true);
+        if (classOrObject != null) {
+            return classOrObject;
+        }
+        KtScript type = PsiTreeUtil.getParentOfType(this, KtScript.class, true);
+        assert type != null : "Should only be present in class, object or script";
+        return type;
     }
 }

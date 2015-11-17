@@ -160,7 +160,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
         PsiBuilder.Marker blockMarker = mark();
 
-        myExpressionParsing.parseStatements();
+        myExpressionParsing.parseStatements(/*isScriptTopLevel = */true);
 
         checkForUnexpectedSymbols();
 
