@@ -198,7 +198,7 @@ public class LiveTemplatesTest extends KotlinLightCodeInsightFixtureTestCase {
     public void testIter() {
         start();
 
-        assertStringItems("args", "myList", "str", "stream");
+        assertStringItems("args", "myList", "o", "str", "stream");
         type("args");
         nextTab(2);
 

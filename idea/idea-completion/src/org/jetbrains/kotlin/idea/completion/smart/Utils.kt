@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.completion.handlers.WithExpressionPrefixInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
+import org.jetbrains.kotlin.idea.core.SmartCastCalculator
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.resolve.callableReferences.getReflectionTypeForCandidateDescriptor

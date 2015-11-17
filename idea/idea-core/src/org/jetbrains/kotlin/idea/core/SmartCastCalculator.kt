@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.completion
+package org.jetbrains.kotlin.idea.core
 
 import com.intellij.openapi.util.Pair
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.getImplicitReceiversWithInstance
+import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
-import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
@@ -43,15 +42,14 @@ import java.util.*
 class SmartCastCalculator(
         val bindingContext: BindingContext,
         val containingDeclarationOrModule: DeclarationDescriptor,
-        expression: KtExpression,
+        contextElement: PsiElement,
+        receiver: KtExpression?,
         resolutionFacade: ResolutionFacade
 ) {
-    private val receiver = if (expression is KtSimpleNameExpression) expression.getReceiverExpression() else null
-
     // keys are VariableDescriptor's and ThisReceiver's
     private val entityToSmartCastInfo: Map<Any, SmartCastInfo> = processDataFlowInfo(
-            bindingContext.getDataFlowInfo(expression),
-            expression.getResolutionScope(bindingContext, resolutionFacade),
+            bindingContext.getDataFlowInfo(contextElement),
+            contextElement.getResolutionScope(bindingContext, resolutionFacade),
             receiver)
 
     fun types(descriptor: VariableDescriptor): Collection<KotlinType> {
@@ -114,7 +112,7 @@ class SmartCastCalculator(
 
         val entityToInfo = HashMap<Any, SmartCastInfo>()
 
-        for ((dataFlowValue, types) in dataFlowInfo.completeTypeInfo.asMap().entrySet()) {
+        for ((dataFlowValue, types) in dataFlowInfo.completeTypeInfo.asMap().entries) {
             val entity = dataFlowValueToEntity.invoke(dataFlowValue)
             if (entity != null) {
                 entityToInfo[entity] = SmartCastInfo(types, false)

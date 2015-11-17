@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.IterableTypesDetection
 import org.jetbrains.kotlin.idea.core.IterableTypesDetector
+import org.jetbrains.kotlin.idea.core.SmartCastCalculator
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 class IterableVariableMacro : BaseKotlinVariableMacro() {
     private companion object {
         val ITERABLE_TYPES_DETECTOR_KEY = Key<IterableTypesDetector>("ITERABLE_TYPES_DETECTOR_KEY")
+        val SMART_CAST_CALCULATOR_KEY = Key<SmartCastCalculator>("SMART_CAST_CALCULATOR_KEY")
     }
 
     override fun getName() = "kotlinIterableVariable"
@@ -39,12 +41,15 @@ class IterableVariableMacro : BaseKotlinVariableMacro() {
         val resolutionFacade = contextElement.getResolutionFacade()
         val scope = contextElement.getResolutionScope(bindingContext, resolutionFacade)
         val detector = resolutionFacade.getIdeService(IterableTypesDetection::class.java).createDetector(scope)
+        val smartCastCalculator = SmartCastCalculator(bindingContext, scope.ownerDescriptor, contextElement, null, resolutionFacade)
         userData.putUserData(ITERABLE_TYPES_DETECTOR_KEY, detector)
+        userData.putUserData(SMART_CAST_CALCULATOR_KEY, smartCastCalculator)
     }
 
     override fun isSuitable(variableDescriptor: VariableDescriptor, project: Project, userData: UserDataHolder): Boolean {
         val detector = userData.getUserData(ITERABLE_TYPES_DETECTOR_KEY)!!
-        //TODO: smart-casts
-        return detector.isIterable(variableDescriptor.type, null)
+        val smartCastCalculator = userData.getUserData(SMART_CAST_CALCULATOR_KEY)!!
+        val types = smartCastCalculator.types(variableDescriptor)
+        return types.any { detector.isIterable(it, null) }
     }
 }

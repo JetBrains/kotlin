@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.KotlinDescriptorIconProvider
 import org.jetbrains.kotlin.idea.completion.ArgumentPositionData
 import org.jetbrains.kotlin.idea.completion.ExpectedInfo
-import org.jetbrains.kotlin.idea.completion.SmartCastCalculator
+import org.jetbrains.kotlin.idea.core.SmartCastCalculator
 import org.jetbrains.kotlin.idea.completion.Tail
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.getResolutionScope

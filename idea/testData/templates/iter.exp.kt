@@ -7,12 +7,14 @@ class MyClass {
     public var collection : HashSet<Int>? = null
     private var isAlive : Boolean = false
 
-    fun main(args : Array<String>, v : Int) {
+    fun main(args : Array<String>, v : Int, o: Any) {
         var str = ""
         val myList = ArrayList<String>()
         val stream = FileInputStream(".")
-        for (collection in args) {
-            <caret>
+        if (o is String) {
+            for (collection in args) {
+                <caret>
+            }
         }
     }
 }

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
+import org.jetbrains.kotlin.idea.core.SmartCastCalculator
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.FuzzyType
@@ -81,7 +82,7 @@ class SmartCompletion(
     private val callableTypeExpectedInfo = expectedInfos.filterCallableExpected()
 
     public val smartCastCalculator: SmartCastCalculator by lazy(LazyThreadSafetyMode.NONE) {
-        SmartCastCalculator(bindingContext, resolutionFacade.moduleDescriptor, expression, resolutionFacade)
+        SmartCastCalculator(bindingContext, resolutionFacade.moduleDescriptor, expression, callTypeAndReceiver.receiver as? KtExpression, resolutionFacade)
     }
 
     public val descriptorFilter: ((DeclarationDescriptor, AbstractLookupElementFactory) -> Collection<LookupElement>)? =
