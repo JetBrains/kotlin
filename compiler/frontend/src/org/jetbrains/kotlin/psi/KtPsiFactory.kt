@@ -180,6 +180,15 @@ public class KtPsiFactory(private val project: Project) {
         return createDeclaration(text)
     }
 
+    public fun createPropertyGetter(expression: KtExpression): KtPropertyAccessor {
+        val property = createProperty("val x get() = 1")
+        val getter = property.getter!!
+        val bodyExpression = getter.bodyExpression!!
+
+        bodyExpression.replace(expression)
+        return getter
+    }
+
     public fun <TDeclaration : KtDeclaration> createDeclaration(text: String): TDeclaration {
         val file = createFile(text)
         val declarations = file.getDeclarations()

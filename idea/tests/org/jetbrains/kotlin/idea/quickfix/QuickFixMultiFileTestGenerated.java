@@ -1506,6 +1506,16 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/properties")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Properties extends AbstractQuickFixMultiFileTest {
+        public void testAllFilesPresentInProperties() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/properties"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), true);
+        }
+
+    }
+
     @TestMetadata("idea/testData/quickfix/suppress")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
