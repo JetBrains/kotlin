@@ -71,13 +71,19 @@ public interface CompileService : Remote {
     // TODO: consider adding another client alive checking mechanism, e.g. socket/port
 
     @Throws(RemoteException::class)
+    public fun getClients(): CallResult<List<String>>
+
+    @Throws(RemoteException::class)
     public fun leaseCompileSession(aliveFlagPath: String?): CallResult<Int>
 
     @Throws(RemoteException::class)
-    public fun releaseCompileSession(sessionId: Int): Unit
+    public fun releaseCompileSession(sessionId: Int): CallResult<Nothing>
 
     @Throws(RemoteException::class)
-    public fun shutdown(): Unit
+    public fun shutdown(): CallResult<Nothing>
+
+    @Throws(RemoteException::class)
+    public fun scheduleShutdown(graceful: Boolean): CallResult<Boolean>
 
     // TODO: consider adding async version of shutdown and release
 

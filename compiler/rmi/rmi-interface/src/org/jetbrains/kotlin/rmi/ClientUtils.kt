@@ -40,11 +40,15 @@ fun String.extractPortFromRunFilename(digest: String): Int =
         ?: 0
 
 
-fun walkDaemons(registryDir: File, compilerId: CompilerId, report: (DaemonReportCategory, String) -> Unit): Sequence<CompileService> {
+fun walkDaemons(registryDir: File,
+                compilerId: CompilerId,
+                filter: (File, Int) -> Boolean = { f,p -> true },
+                report: (DaemonReportCategory, String) -> Unit = { cat, msg -> ; }
+): Sequence<CompileService> {
     val classPathDigest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest().toHexString()
     return registryDir.walk()
             .map { Pair(it, it.name.extractPortFromRunFilename(classPathDigest)) }
-            .filter { it.second != 0 }
+            .filter { it.second != 0 && filter(it.first, it.second) }
             .map {
                 assert(it.second > 0 && it.second < MAX_PORT_NUMBER)
                 report(DaemonReportCategory.DEBUG, "found daemon on port ${it.second}, trying to connect")

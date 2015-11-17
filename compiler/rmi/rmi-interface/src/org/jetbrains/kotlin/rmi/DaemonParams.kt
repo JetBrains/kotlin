@@ -21,6 +21,7 @@ import java.io.File
 import java.io.Serializable
 import java.lang.management.ManagementFactory
 import java.security.MessageDigest
+import java.util.*
 import kotlin.reflect.KMutableProperty1
 import kotlin.text.RegexOption
 
@@ -224,6 +225,10 @@ public data class DaemonOptions(
                        BoolPropMapper(this, DaemonOptions::reportPerf))
 }
 
+// TODO: consider implementing generic approach to it or may be replace getters with ones returning default if necessary
+val DaemonOptions.runFilesPathOrDefault: String
+    get() = if (runFilesPath.isBlank()) COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH else runFilesPath
+
 
 fun Iterable<String>.distinctStringsDigest(): ByteArray =
         MessageDigest.getInstance(CLASSPATH_ID_DIGEST)
@@ -324,17 +329,31 @@ fun String.memToBytes(): Long? =
                 }
 
 
-private fun daemonJVMOptionsMemoryProps() =
+private val daemonJVMOptionsMemoryProps: List<KMutableProperty1<DaemonJVMOptions, String>> by lazy {
     listOf(DaemonJVMOptions::maxMemory, DaemonJVMOptions::maxPermSize, DaemonJVMOptions::reservedCodeCacheSize)
-
+}
 
 infix fun DaemonJVMOptions.memorywiseFitsInto(other: DaemonJVMOptions): Boolean =
-        daemonJVMOptionsMemoryProps()
+        daemonJVMOptionsMemoryProps
             .all { (it.get(this).memToBytes() ?: 0) <= (it.get(other).memToBytes() ?: 0) }
+
+fun compareDaemonJVMOptionsMemory(left: DaemonJVMOptions, right: DaemonJVMOptions): Int {
+    val props = daemonJVMOptionsMemoryProps.map { Pair(it.get(left).memToBytes() ?: 0, it.get(right).memToBytes() ?: 0) }
+    return when {
+        props.all { it.first == it.second } -> 0
+        props.all { it.first <= it.second } -> -1
+        props.all { it.first >= it.second } -> 1
+        else -> 0
+    }
+}
+
+class DaemonJVMOptionsMemoryComparator : Comparator<DaemonJVMOptions> {
+    override fun compare(left: DaemonJVMOptions, right: DaemonJVMOptions): Int = compareDaemonJVMOptionsMemory(left, right)
+}
 
 
 fun DaemonJVMOptions.updateMemoryUpperBounds(other: DaemonJVMOptions): DaemonJVMOptions {
-    daemonJVMOptionsMemoryProps()
+    daemonJVMOptionsMemoryProps
         .forEach { if ((it.get(this).memToBytes() ?: 0) < (it.get(other).memToBytes() ?: 0)) it.set(this, it.get(other)) }
     return this
 }
