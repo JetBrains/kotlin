@@ -124,10 +124,7 @@ public class DataFlowValueFactory {
             @NotNull BindingContext bindingContext,
             @NotNull DeclarationDescriptor containingDeclarationOrModule
     ) {
-        if (receiverValue instanceof TransientReceiver ||
-            receiverValue instanceof ScriptReceiver ||
-            receiverValue instanceof ImplicitClassReceiver ||
-            receiverValue instanceof ExtensionReceiver) {
+        if (receiverValue instanceof TransientReceiver || receiverValue instanceof ImplicitReceiver) {
             return createDataFlowValueForStableReceiver(receiverValue);
         }
         else if (receiverValue instanceof ExpressionReceiver) {
