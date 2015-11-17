@@ -92,7 +92,7 @@ public abstract class AbstractReplInterpreterTest : UsefulTestCase() {
             }
 
             val actual = when (lineResult.getType()) {
-                ReplInterpreter.LineResultType.SUCCESS -> lineResult.getValue()?.toString() ?: ""
+                ReplInterpreter.LineResultType.SUCCESS -> if (!lineResult.isUnit) "${lineResult.value}" else ""
                 ReplInterpreter.LineResultType.RUNTIME_ERROR,
                 ReplInterpreter.LineResultType.COMPILE_ERROR -> lineResult.getErrorText()
                 ReplInterpreter.LineResultType.INCOMPLETE -> INCOMPLETE_LINE_MESSAGE
