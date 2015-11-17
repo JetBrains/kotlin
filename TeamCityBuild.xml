@@ -133,7 +133,10 @@
         <zipPlugin filename="${bare.plugin.zip}" dir="BareKotlin"/>
 
         <zip destfile="${android-extensions.zip}">
-            <zipfileset prefix="KotlinAndroidExtensions" dir="${artifact.output.path}/KotlinAndroidExtensions"/>
+            <zipfileset prefix="KotlinAndroidExtensions" dir="${artifact.output.path}/KotlinAndroidExtensions">
+                <exclude name="**/kotlin-runtime.jar"/>
+                <exclude name="**/kotlin-reflect.jar"/>
+            </zipfileset>
         </zip>
         <delete dir="${artifact.output.path}/KotlinAndroidExtensions" quiet="true"/>
     </target>
