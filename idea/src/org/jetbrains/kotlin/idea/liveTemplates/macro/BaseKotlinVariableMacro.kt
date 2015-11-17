@@ -24,103 +24,65 @@ import com.intellij.codeInsight.template.Macro
 import com.intellij.codeInsight.template.Result
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiNamedElement
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
 import org.jetbrains.kotlin.idea.core.IterableTypesDetection
 import org.jetbrains.kotlin.idea.core.IterableTypesDetector
+import org.jetbrains.kotlin.idea.core.isVisible
+import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.idea.util.getResolutionScope
-import org.jetbrains.kotlin.idea.util.substituteExtensionIfCallableWithImplicitReceiver
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.resolve.scopes.utils.collectDescriptorsFiltered
-import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import java.util.*
 
 abstract class BaseKotlinVariableMacro : Macro() {
-    private fun getVariables(params: Array<Expression>, context: ExpressionContext): Collection<KtNamedDeclaration> {
+    private fun getVariables(params: Array<Expression>, context: ExpressionContext): Collection<PsiNamedElement> {
         if (params.size != 0) return emptyList()
 
         val project = context.project
-        PsiDocumentManager.getInstance(project).commitAllDocuments()
+        val psiDocumentManager = PsiDocumentManager.getInstance(project)
+        psiDocumentManager.commitAllDocuments()
 
-        val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(context.editor!!.document) as? KtFile ?: return emptyList()
+        val psiFile = psiDocumentManager.getPsiFile(context.editor!!.document) as? KtFile ?: return emptyList()
 
-        val contextExpression = findContextExpression(psiFile, context.startOffset) ?: return emptyList()
+        val contextElement = psiFile.findElementAt(context.startOffset)?.getNonStrictParentOfType<KtElement>() ?: return emptyList()
 
-        val resolutionFacade = contextExpression.getResolutionFacade()
+        val resolutionFacade = psiFile.getResolutionFacade()
 
-        val bindingContext = resolutionFacade.analyze(contextExpression, BodyResolveMode.FULL)
-        val scope = contextExpression.getResolutionScope(bindingContext, resolutionFacade)
+        val bindingContext = resolutionFacade.analyze(contextElement, BodyResolveMode.PARTIAL_FOR_COMPLETION)
 
+        fun isVisible(descriptor: DeclarationDescriptor): Boolean {
+            return descriptor !is DeclarationDescriptorWithVisibility || descriptor.isVisible(contextElement, null, bindingContext, resolutionFacade)
+        }
+
+        val scope = contextElement.getResolutionScope(bindingContext, resolutionFacade)
         val detector = resolutionFacade.getIdeService(IterableTypesDetection::class.java).createDetector(scope)
 
-        val dataFlowInfo = bindingContext.getDataFlowInfo(contextExpression)
+        val helper = ReferenceVariantsHelper(bindingContext, resolutionFacade, resolutionFacade.moduleDescriptor, ::isVisible)
+        val variants = helper
+                .getReferenceVariants(contextElement, CallTypeAndReceiver.DEFAULT, DescriptorKindFilter.VARIABLES, { true })
+                .filter { isSuitable(it as VariableDescriptor, project, detector) }
 
-        val filteredDescriptors = ArrayList<VariableDescriptor>()
-        for (declarationDescriptor in getAllVariables(scope)) {
-            if (declarationDescriptor is VariableDescriptor) {
-
-                if (declarationDescriptor.extensionReceiverParameter != null && declarationDescriptor.substituteExtensionIfCallableWithImplicitReceiver(scope, bindingContext, dataFlowInfo).isEmpty()) {
-                    continue
-                }
-
-                if (isSuitable(declarationDescriptor, project, detector)) {
-                    filteredDescriptors.add(declarationDescriptor)
-                }
-            }
+        val declarations = ArrayList<PsiNamedElement>()
+        for (descriptor in variants) {
+            val declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as? PsiNamedElement ?: continue
+            declarations.add(declaration)
         }
-
-
-        val declarations = ArrayList<KtNamedDeclaration>()
-        for (declarationDescriptor in filteredDescriptors) {
-            val declaration = DescriptorToSourceUtils.descriptorToDeclaration(declarationDescriptor)
-            assert(declaration == null || declaration is PsiNamedElement)
-
-            if (declaration is KtProperty) {
-                declarations.add(declaration)
-            }
-            else if (declaration is KtParameter) {
-                declarations.add(declaration)
-            }
-        }
-
         return declarations
-    }
-
-    private fun getAllVariables(scope: LexicalScope): Collection<DeclarationDescriptor> {
-        val result = ContainerUtil.newArrayList<DeclarationDescriptor>()
-        result.addAll(scope.collectDescriptorsFiltered(DescriptorKindFilter.VARIABLES, MemberScope.ALL_NAME_FILTER))
-        for (implicitReceiver in scope.getImplicitReceiversHierarchy()) {
-            result.addAll(DescriptorUtils.getAllDescriptors(implicitReceiver.type.memberScope))
-        }
-        return result
     }
 
     protected abstract fun isSuitable(
             variableDescriptor: VariableDescriptor,
             project: Project,
             iterableTypesDetector: IterableTypesDetector): Boolean
-
-    private fun findContextExpression(psiFile: PsiFile, startOffset: Int): KtExpression? {
-        var e = psiFile.findElementAt(startOffset)
-        while (e != null) {
-            if (e is KtExpression) {
-                return e
-            }
-            e = e.parent
-        }
-        return null
-    }
 
     override fun calculateResult(params: Array<Expression>, context: ExpressionContext): Result? {
         val vars = getVariables(params, context)
