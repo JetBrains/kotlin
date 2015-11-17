@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
-import org.jetbrains.kotlin.resolve.descriptorUtil.companionObjectType
+import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -252,7 +252,7 @@ public fun CallTypeAndReceiver<*, *>.receiverTypes(
         val receiverType =
                 bindingContext.getType(receiverExpression) ?:
                 (bindingContext.get(BindingContext.QUALIFIER, receiverExpression) as? ClassQualifier)?.let {
-                    it.classifier.companionObjectType
+                    it.classifier.classValueType
                 } ?:
                 return emptyList()
         listOf(ExpressionReceiver.create(receiverExpression, receiverType, bindingContext))

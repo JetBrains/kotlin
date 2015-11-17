@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.companionObjectType
+import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassQualifier
 import org.jetbrains.kotlin.resolve.scopes.receivers.Qualifier
 import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
@@ -114,7 +114,7 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
                 if (qualifierType != null) return TypeInfo(qualifierType, Variance.IN_VARIANCE)
 
                 if (receiver !is ClassQualifier) return null
-                val classifierType = receiver.classifier.companionObjectType
+                val classifierType = receiver.classifier.classValueType
                 if (classifierType != null) return TypeInfo(classifierType, Variance.IN_VARIANCE)
 
                 val javaClassifier = receiver.classifier as? JavaClassDescriptor ?: return null

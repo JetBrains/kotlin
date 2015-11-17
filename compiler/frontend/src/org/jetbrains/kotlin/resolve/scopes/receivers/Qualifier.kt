@@ -22,11 +22,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentQualifiedExpressionForSelector
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingContext.*
-import org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName
-import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
-import org.jetbrains.kotlin.resolve.descriptorUtil.companionObjectType
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasCompanionObject
+import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.FilteringScope
 import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils
@@ -105,7 +101,7 @@ class ClassQualifier(
 
         val scopes = ArrayList<MemberScope>(3)
 
-        val classObjectTypeScope = classifier.companionObjectType?.memberScope?.let {
+        val classObjectTypeScope = classifier.classValueType?.memberScope?.let {
             FilteringScope(it) { it !is ClassDescriptor }
         }
         scopes.addIfNotNull(classObjectTypeScope)
@@ -143,7 +139,7 @@ fun createClassifierQualifier(
         classifier: ClassifierDescriptor,
         bindingContext: BindingContext
 ): ClassifierQualifier {
-    val companionObjectReceiver = (classifier as? ClassDescriptor)?.companionObjectType?.let {
+    val companionObjectReceiver = (classifier as? ClassDescriptor)?.classValueType?.let {
         ExpressionReceiver.create(referenceExpression, it, bindingContext)
     }
     return if (classifier is ClassDescriptor)

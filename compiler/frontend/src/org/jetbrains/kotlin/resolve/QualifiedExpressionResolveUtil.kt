@@ -19,14 +19,14 @@ package org.jetbrains.kotlin.resolve
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueDescriptor
-import org.jetbrains.kotlin.resolve.descriptorUtil.companionObjectType
+import org.jetbrains.kotlin.resolve.descriptorUtil.classValueTypeDescriptor
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasCompanionObject
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassQualifier
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassifierQualifier
 import org.jetbrains.kotlin.resolve.scopes.receivers.PackageQualifier
 import org.jetbrains.kotlin.resolve.scopes.receivers.Qualifier
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
-
 
 public fun resolveQualifierAsReceiverInExpression(
         qualifier: Qualifier,
@@ -96,17 +96,20 @@ private fun resolveQualifierReferenceTarget(
         val classifier = qualifier.classifier
         val selectorIsCallable = selector is CallableDescriptor &&
                                  (selector.dispatchReceiverParameter != null || selector.extensionReceiverParameter != null)
-        val referenceTarget = classifier.classValueDescriptor
-        if (selectorIsCallable && referenceTarget != null) {
-            val classObjectType = classifier.companionObjectType!!
-            val classObjectDescriptor = DescriptorUtils.getClassDescriptorForType(classObjectType)
-            context.trace.record(BindingContext.REFERENCE_TARGET, qualifier.referenceExpression, referenceTarget)
-            context.trace.recordType(qualifier.expression, classObjectType)
-            if (classifier.companionObjectDescriptor != null) {
+        // TODO simplify this code.
+        // Given a class qualifier in expression position,
+        // it should provide a proper REFERENCE_TARGET (with type),
+        // and, in case of implicit companion object reference, SHORT_REFERENCE_TO_COMPANION_OBJECT.
+        val classValueDescriptor = classifier.classValueDescriptor
+        if (selectorIsCallable && classValueDescriptor != null) {
+            val classValueTypeDescriptor = classifier.classValueTypeDescriptor!!
+            context.trace.record(BindingContext.REFERENCE_TARGET, qualifier.referenceExpression, classValueDescriptor)
+            context.trace.recordType(qualifier.expression, classValueTypeDescriptor.defaultType)
+            if (classifier.hasCompanionObject) {
                 context.trace.record(BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, qualifier.referenceExpression, classifier)
-                symbolUsageValidator.validateTypeUsage(referenceTarget, context.trace, qualifier.referenceExpression)
+                symbolUsageValidator.validateTypeUsage(classValueDescriptor, context.trace, qualifier.referenceExpression)
             }
-            return classObjectDescriptor
+            return classValueTypeDescriptor
         }
     }
 

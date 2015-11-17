@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils.isStaticNestedClass
 import org.jetbrains.kotlin.resolve.LibrarySourceHacks
 import org.jetbrains.kotlin.resolve.calls.tasks.createSynthesizedInvokes
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasCompanionObject
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassValueDescriptor
 import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalChainedScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
@@ -187,13 +187,13 @@ private object VariableCollector : CallableDescriptorCollector<VariableDescripto
 
     private fun getContributedFakeDescriptorForObject(scope: LexicalScope, name: Name, location: LookupLocation): VariableDescriptor? {
         val classifier = scope.getContributedClassifier(name, location)
-        if (classifier !is ClassDescriptor || !classifier.hasCompanionObject) return null
+        if (classifier !is ClassDescriptor || !classifier.hasClassValueDescriptor) return null
         return FakeCallableDescriptorForObject(classifier)
     }
 
     private fun findFakeDescriptorForObject(scope: HierarchicalScope, name: Name, location: LookupLocation): VariableDescriptor? {
         val classifier = scope.findClassifier(name, location)
-        if (classifier !is ClassDescriptor || !classifier.hasCompanionObject) return null
+        if (classifier !is ClassDescriptor || !classifier.hasClassValueDescriptor) return null
 
         return FakeCallableDescriptorForObject(classifier)
     }

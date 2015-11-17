@@ -71,7 +71,9 @@ public val ClassDescriptor.classId: ClassId
         throw IllegalStateException("Illegal container: $owner")
     }
 
-public val ClassDescriptor.hasCompanionObject: Boolean get() = companionObjectType != null
+public val ClassDescriptor.hasCompanionObject: Boolean get() = companionObjectDescriptor != null
+
+public val ClassDescriptor.hasClassValueDescriptor: Boolean get() = classValueDescriptor != null
 
 public val ClassDescriptor.classValueDescriptor: ClassDescriptor?
     get() = if (kind.isSingleton) this else companionObjectDescriptor
@@ -89,7 +91,7 @@ public val ClassDescriptor.classValueTypeDescriptor: ClassDescriptor?
     }
 
 /** If a literal of this class can be used as a value, returns the type of this value */
-public val ClassDescriptor.companionObjectType: KotlinType?
+public val ClassDescriptor.classValueType: KotlinType?
     get() = classValueTypeDescriptor?.getDefaultType()
 
 public val DeclarationDescriptorWithVisibility.isEffectivelyPublicApi: Boolean
