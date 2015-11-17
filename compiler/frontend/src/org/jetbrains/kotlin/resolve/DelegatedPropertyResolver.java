@@ -374,7 +374,7 @@ public class DelegatedPropertyResolver {
                     if (returnTypeOfGetMethod != null && !TypeUtils.noExpectedType(expectedType)) {
                         KotlinType returnTypeInSystem = typeVariableSubstitutor.substitute(returnTypeOfGetMethod, Variance.INVARIANT);
                         if (returnTypeInSystem != null) {
-                            constraintSystem.addSupertypeConstraint(expectedType, returnTypeInSystem, FROM_COMPLETER.position());
+                            constraintSystem.addSubtypeConstraint(returnTypeInSystem, expectedType, FROM_COMPLETER.position());
                         }
                     }
                     addConstraintForThisValue(constraintSystem, typeVariableSubstitutor, descriptor);

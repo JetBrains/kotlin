@@ -107,10 +107,6 @@ class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
     internal fun getNestedTypeVariables(type: KotlinType): List<TypeVariable> =
             type.getNestedTypeParameters().map { getMyTypeVariable(it) }.filterNotNull()
 
-    override fun addSupertypeConstraint(constrainingType: KotlinType, subjectType: KotlinType, constraintPosition: ConstraintPosition) {
-        addConstraint(SUB_TYPE, subjectType, constrainingType, ConstraintContext(constraintPosition, initial = true))
-    }
-
     override fun addSubtypeConstraint(constrainingType: KotlinType?, subjectType: KotlinType?, constraintPosition: ConstraintPosition) {
         addConstraint(SUB_TYPE, constrainingType, subjectType, ConstraintContext(constraintPosition, initial = true))
     }
