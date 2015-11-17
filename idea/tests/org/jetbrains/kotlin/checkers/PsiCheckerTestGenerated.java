@@ -563,6 +563,39 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         }
     }
 
+    @TestMetadata("idea/testData/checker/scripts")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Scripts extends AbstractPsiCheckerTest {
+        public void testAllFilesPresentInScripts() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/checker/scripts"), Pattern.compile("^(.+)\\.kts$"), true);
+        }
+
+        @TestMetadata("if.kts")
+        public void testIf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/scripts/if.kts");
+            doTest(fileName);
+        }
+
+        @TestMetadata("packageStatement.kts")
+        public void testPackageStatement() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/scripts/packageStatement.kts");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kts")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/scripts/simple.kts");
+            doTest(fileName);
+        }
+
+        @TestMetadata("uninitializedVariable.kts")
+        public void testUninitializedVariable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/scripts/uninitializedVariable.kts");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/checker/duplicateJvmSignature")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

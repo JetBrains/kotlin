@@ -377,6 +377,7 @@ fun main(args: Array<String>) {
             model("checker/regression")
             model("checker/recovery")
             model("checker/rendering")
+            model("checker/scripts", extension = "kts")
             model("checker/duplicateJvmSignature")
             model("checker/infos", testMethod = "doTestWithInfos")
         }
