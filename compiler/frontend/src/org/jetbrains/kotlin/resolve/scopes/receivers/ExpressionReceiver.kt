@@ -38,7 +38,7 @@ interface ExpressionReceiver :  ReceiverValue {
                 override val classDescriptor: ClassDescriptor,
                 expression: KtExpression,
                 type: KotlinType
-        ) : ExpressionReceiverImpl(expression, type), ExpressionOrImplicitClassReceiver
+        ) : ExpressionReceiverImpl(expression, type), ThisClassReceiver
 
         fun create(
                 expression: KtExpression,

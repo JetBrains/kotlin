@@ -18,11 +18,14 @@ package org.jetbrains.kotlin.resolve.scopes.receivers
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 
-interface ExpressionOrImplicitClassReceiver : ReceiverValue {
+/**
+ * Describes any "this" receiver inside a class
+ */
+interface ThisClassReceiver : ReceiverValue {
     val classDescriptor: ClassDescriptor
 }
 
-open class ClassReceiver(override val classDescriptor: ClassDescriptor) : ExpressionOrImplicitClassReceiver, ImplicitReceiver {
+open class ClassReceiver(override val classDescriptor: ClassDescriptor) : ThisClassReceiver, ImplicitReceiver {
 
     override fun exists() = true
 

@@ -21,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionOrImplicitClassReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ThisClassReceiver;
 import org.jetbrains.kotlin.util.ModuleVisibilityHelper;
 import org.jetbrains.kotlin.utils.CollectionsKt;
 
@@ -76,8 +76,8 @@ public class Visibilities {
             if (PRIVATE.isVisible(thisObject, what, from)) {
                 DeclarationDescriptor classDescriptor = DescriptorUtils.getParentOfType(what, ClassDescriptor.class);
 
-                if (classDescriptor != null && thisObject instanceof ExpressionOrImplicitClassReceiver) {
-                    return ((ExpressionOrImplicitClassReceiver) thisObject).getClassDescriptor().getOriginal().equals(classDescriptor.getOriginal());
+                if (classDescriptor != null && thisObject instanceof ThisClassReceiver) {
+                    return ((ThisClassReceiver) thisObject).getClassDescriptor().getOriginal().equals(classDescriptor.getOriginal());
                 }
             }
             return false;
