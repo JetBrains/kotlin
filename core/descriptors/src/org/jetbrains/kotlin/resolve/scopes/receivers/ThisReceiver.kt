@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve.scopes.receivers;
+package org.jetbrains.kotlin.resolve.scopes.receivers
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 
 /**
- * Describes a "this" receiver
+ * Describes an implicit "this" receiver
  */
-public interface ThisReceiver extends ReceiverValue {
-    @NotNull
-    DeclarationDescriptor getDeclarationDescriptor();
+interface ThisReceiver : ReceiverValue {
+    val declarationDescriptor: DeclarationDescriptor
 }
-

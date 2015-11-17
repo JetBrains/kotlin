@@ -394,8 +394,8 @@ private fun findInternalUsagesOfParametersAndReceiver(
                         val bindingContext = element.analyze()
                         val resolvedCall = element.getResolvedCall(bindingContext) ?: return
 
-                        if ((resolvedCall.getExtensionReceiver() as? ThisReceiver)?.getDeclarationDescriptor() == targetDescriptor ||
-                            (resolvedCall.getDispatchReceiver() as? ThisReceiver)?.getDeclarationDescriptor() == targetDescriptor) {
+                        if ((resolvedCall.getExtensionReceiver() as? ThisReceiver)?.declarationDescriptor == targetDescriptor ||
+                            (resolvedCall.getDispatchReceiver() as? ThisReceiver)?.declarationDescriptor == targetDescriptor) {
                             usages.putValue(receiverTypeRef, resolvedCall.getCall().getCallElement())
                         }
                     }

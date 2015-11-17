@@ -28,7 +28,7 @@ open class ClassReceiver(override val classDescriptor: ClassDescriptor) : Expres
 
     override fun getType() = classDescriptor.defaultType
 
-    override fun getDeclarationDescriptor() = classDescriptor
+    override val declarationDescriptor = classDescriptor
 
     override fun equals(other: Any?) = classDescriptor == (other as? ClassReceiver)?.classDescriptor
 

@@ -82,7 +82,7 @@ public class KotlinParameterInfo @JvmOverloads constructor (
                                 }
 
                                 private fun selfReceiverOrNull(receiver: ThisReceiver?): DeclarationDescriptor? {
-                                    return selfReceiverOrNull(receiver?.getDeclarationDescriptor())
+                                    return selfReceiverOrNull(receiver?.declarationDescriptor)
                                 }
 
                                 private fun getRelevantDescriptor(

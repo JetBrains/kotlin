@@ -361,7 +361,7 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
                                   } as? ThisReceiver ?: return false
 
                 val thisTarget = receiver.getInstanceReference().targets(bindingContext).singleOrNull()
-                if (newReceiver.getDeclarationDescriptor().asString() != thisTarget?.asString()) return false
+                if (newReceiver.declarationDescriptor.asString() != thisTarget?.asString()) return false
             }
 
             if (!targetsMatch && targetsWhenShort.any { it !is ClassDescriptor && it !is PackageViewDescriptor }) {

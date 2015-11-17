@@ -134,7 +134,7 @@ public class KotlinPsiUnifier(
                     doUnify(rv1.expression, rv2.expression) == MATCHED
 
                 rv1 is ThisReceiver && rv2 is ThisReceiver ->
-                    matchDescriptors(rv1.getDeclarationDescriptor(), rv2.getDeclarationDescriptor())
+                    matchDescriptors(rv1.declarationDescriptor, rv2.declarationDescriptor)
 
                 else ->
                     rv1 == rv2
@@ -215,7 +215,7 @@ public class KotlinPsiUnifier(
                 if (implicitReceiver == null || thisExpression == null) return false
 
                 return matchDescriptors(
-                        implicitReceiver.getDeclarationDescriptor(),
+                        implicitReceiver.declarationDescriptor,
                         thisExpression.getAdjustedResolvedCall()?.getCandidateDescriptor()?.getContainingDeclaration()
                 )
             }

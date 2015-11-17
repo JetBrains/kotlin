@@ -163,8 +163,8 @@ public class KotlinFindClassUsagesHandler(
 
                     val bindingContext = element.analyze()
                     val resolvedCall = bindingContext[BindingContext.CALL, element]?.getResolvedCall(bindingContext) ?: return
-                    if ((resolvedCall.getDispatchReceiver() as? ClassReceiver)?.getDeclarationDescriptor() == companionObjectDescriptor
-                        || (resolvedCall.getExtensionReceiver() as? ClassReceiver)?.getDeclarationDescriptor() == companionObjectDescriptor) {
+                    if ((resolvedCall.getDispatchReceiver() as? ClassReceiver)?.declarationDescriptor == companionObjectDescriptor
+                        || (resolvedCall.getExtensionReceiver() as? ClassReceiver)?.declarationDescriptor == companionObjectDescriptor) {
                         element.getReferences().forEach {
                             if (!stop && !processor.process(it)) {
                                 stop = true

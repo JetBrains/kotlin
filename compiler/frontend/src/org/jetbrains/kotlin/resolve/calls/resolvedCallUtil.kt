@@ -55,7 +55,7 @@ private fun ResolvedCall<*>.hasThisOrNoDispatchReceiver(
     var dispatchReceiverDescriptor: DeclarationDescriptor? = null
     if (dispatchReceiverValue is ThisReceiver) {
         // foo() -- implicit receiver
-        dispatchReceiverDescriptor = dispatchReceiverValue.getDeclarationDescriptor()
+        dispatchReceiverDescriptor = dispatchReceiverValue.declarationDescriptor
     }
     else if (dispatchReceiverValue is ExpressionReceiver && considerExplicitReceivers) {
         val expression = KtPsiUtil.deparenthesize(dispatchReceiverValue.expression)

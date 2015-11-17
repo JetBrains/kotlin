@@ -91,7 +91,7 @@ public fun Call.mapArgumentsToParameters(targetDescriptor: CallableDescriptor): 
 public fun ThisReceiver.asExpression(resolutionScope: LexicalScope, psiFactory: KtPsiFactory): KtExpression? {
     val expressionFactory = resolutionScope.getImplicitReceiversWithInstanceToExpression()
                                     .entrySet()
-                                    .firstOrNull { it.key.getContainingDeclaration() == this.getDeclarationDescriptor() }
+                                    .firstOrNull { it.key.getContainingDeclaration() == this.declarationDescriptor }
                                     ?.value ?: return null
     return expressionFactory.createExpression(psiFactory)
 }

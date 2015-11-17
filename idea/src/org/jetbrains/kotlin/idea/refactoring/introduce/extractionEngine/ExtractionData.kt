@@ -210,7 +210,7 @@ data class ExtractionData(
                 smartCast = originalContext[BindingContext.SMARTCAST, smartCastTarget]
                 possibleTypes = getPossibleTypes(smartCastTarget, originalResolveResult.resolvedCall, originalContext)
                 val receiverDescriptor =
-                        (originalResolveResult.resolvedCall?.getDispatchReceiver() as? ThisReceiver)?.getDeclarationDescriptor()
+                        (originalResolveResult.resolvedCall?.getDispatchReceiver() as? ThisReceiver)?.declarationDescriptor
                 if (smartCast == null
                     && !DescriptorUtils.isCompanionObject(receiverDescriptor)
                     && qualifiedExpression.getReceiverExpression() !is KtSuperExpression) continue

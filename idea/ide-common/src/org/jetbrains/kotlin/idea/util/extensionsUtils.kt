@@ -109,7 +109,7 @@ public fun ReceiverValue.getThisReceiverOwner(bindingContext: BindingContext): D
             bindingContext[BindingContext.REFERENCE_TARGET, thisRef]
         }
 
-        is ThisReceiver -> this.getDeclarationDescriptor()
+        is ThisReceiver -> this.declarationDescriptor
 
         else -> null
     }
