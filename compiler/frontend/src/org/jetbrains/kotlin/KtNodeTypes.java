@@ -154,7 +154,7 @@ public interface KtNodeTypes {
 
     IElementType PACKAGE_DIRECTIVE = KtStubElementTypes.PACKAGE_DIRECTIVE;
 
-    KtNodeType SCRIPT = new KtNodeType("SCRIPT", KtScript.class);
+    IElementType SCRIPT = KtStubElementTypes.SCRIPT;
 
     IFileElementType TYPE_CODE_FRAGMENT = new KtTypeCodeFragmentType();
     IFileElementType EXPRESSION_CODE_FRAGMENT = new KtExpressionCodeFragmentType();

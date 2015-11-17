@@ -44,6 +44,9 @@ public open class StubIndexService protected constructor() {
     public open fun indexAnnotation(stub: KotlinAnnotationEntryStub, sink: IndexSink) {
     }
 
+    public open fun indexScript(stub: KotlinScriptStub, sink: IndexSink) {
+    }
+
     public open fun createFileStub(file: KtFile): KotlinFileStub {
         return KotlinFileStubImpl(file, file.packageFqNameByTree.asString(), file.isScriptByTree)
     }

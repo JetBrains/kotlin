@@ -116,6 +116,8 @@ public interface KtStubElementTypes {
     KtPlaceHolderStubElementType<KtConstructorCalleeExpression> CONSTRUCTOR_CALLEE =
             new KtPlaceHolderStubElementType<KtConstructorCalleeExpression>("CONSTRUCTOR_CALLEE", KtConstructorCalleeExpression.class);
 
+    KtScriptElementType SCRIPT = new KtScriptElementType("SCRIPT");
+
     TokenSet DECLARATION_TYPES =
             TokenSet.create(CLASS, OBJECT_DECLARATION, FUNCTION, PROPERTY, ANONYMOUS_INITIALIZER, SECONDARY_CONSTRUCTOR, ENUM_ENTRY);
 

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.psi.KtScript;
 import org.jetbrains.kotlin.psi.stubs.*;
 import org.jetbrains.kotlin.psi.stubs.elements.StubIndexService;
 import org.jetbrains.kotlin.util.TypeIndexUtilKt;
@@ -185,6 +186,11 @@ public class IdeStubIndexService extends StubIndexService {
             parent = parent.getParentStub();
         }
         return null;
+    }
+
+    @Override
+    public void indexScript(@NotNull KotlinScriptStub stub, @NotNull IndexSink sink) {
+        sink.occurrence(KotlinScriptFqnIndex.getInstance().getKey(), stub.getFqName().asString());
     }
 
     @NotNull

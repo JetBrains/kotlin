@@ -124,3 +124,7 @@ public interface KotlinTypeProjectionStub : StubElement<KtTypeProjection> {
 public interface KotlinUserTypeStub : StubElement<KtUserType> {
     public fun isAbsoluteInRootPackage(): Boolean
 }
+
+public interface KotlinScriptStub : KotlinStubWithFqName<KtScript> {
+    override fun getFqName(): FqName
+}
