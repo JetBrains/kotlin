@@ -368,13 +368,6 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             iv.invokestatic(REFLECTION, "getOrCreateKotlinPackage",
                             Type.getMethodDescriptor(K_DECLARATION_CONTAINER_TYPE, getType(Class.class), getType(String.class)), false);
         }
-        else if (container instanceof ScriptDescriptor) {
-            // TODO: correct container for scripts (KScript?)
-            StackValue value = generateClassLiteralReference(
-                    state.getTypeMapper(), ((ScriptDescriptor) container).getClassDescriptor().getDefaultType()
-            );
-            value.put(K_CLASS_TYPE, iv);
-        }
         else {
             iv.aconst(null);
         }

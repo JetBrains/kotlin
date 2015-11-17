@@ -98,7 +98,7 @@ abstract class LightClassDataProvider<T : WithFileStubAndExtraDiagnostics>(
                     /*disableOptimization=*/false,
                     /*useTypeTableInSerializer=*/false,
                     forExtraDiagnostics)
-            KotlinCodegenFacade.prepareForCompilation(state)
+            state.beforeCompile()
 
             bindingContext = state.bindingContext
 

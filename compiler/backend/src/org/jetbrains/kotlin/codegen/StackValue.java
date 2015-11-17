@@ -235,8 +235,8 @@ public abstract class StackValue {
     }
 
     @NotNull
-    private static Field field(@NotNull FieldInfo info) {
-        return field(info.getFieldType(), Type.getObjectType(info.getOwnerInternalName()), info.getFieldName(), true, none());
+    public static Field field(@NotNull FieldInfo info, @NotNull StackValue receiver) {
+        return field(info.getFieldType(), Type.getObjectType(info.getOwnerInternalName()), info.getFieldName(), info.isStatic(), receiver);
     }
 
     @NotNull
@@ -593,15 +593,15 @@ public abstract class StackValue {
 
     @NotNull
     public static Field singleton(@NotNull ClassDescriptor classDescriptor, @NotNull JetTypeMapper typeMapper) {
-        return field(FieldInfo.createForSingleton(classDescriptor, typeMapper));
+        return field(FieldInfo.createForSingleton(classDescriptor, typeMapper), none());
     }
 
     public static Field singletonViaInstance(ClassDescriptor classDescriptor, JetTypeMapper typeMapper) {
-        return field(FieldInfo.createSingletonViaInstance(classDescriptor, typeMapper, false));
+        return field(FieldInfo.createSingletonViaInstance(classDescriptor, typeMapper, false), none());
     }
 
     public static Field oldSingleton(ClassDescriptor classDescriptor, JetTypeMapper typeMapper) {
-        return field(FieldInfo.createForSingleton(classDescriptor, typeMapper, true));
+        return field(FieldInfo.createForSingleton(classDescriptor, typeMapper, true), none());
     }
 
     public static StackValue operation(Type type, Function1<InstructionAdapter, Unit> lambda) {

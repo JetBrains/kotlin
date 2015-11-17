@@ -273,13 +273,8 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         String outerClassInternalName = null;
         if (containing instanceof ClassDescriptor) {
             outerClassInternalName = typeMapper.mapClass((ClassDescriptor) containing).getInternalName();
-        } /* disabled cause of KT-7775
-        else if (containing instanceof ScriptDescriptor) {
-            outerClassInternalName = asmTypeForScriptDescriptor(bindingContext, (ScriptDescriptor) containing).getInternalName();
-        }*/
-
+        }
         String innerName = innerClass.getName().isSpecial() ? null : innerClass.getName().asString();
-
         String innerClassInternalName = typeMapper.mapClass(innerClass).getInternalName();
         v.visitInnerClass(innerClassInternalName, outerClassInternalName, innerName, calculateInnerClassAccessFlags(innerClass));
     }
@@ -320,10 +315,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
                 return FileClasses.getFileClassType(fileClassesProvider, element.getContainingKtFile());
             }
         }
-        /*disabled cause of KT-7775
-        else if (outermost instanceof ScriptContext) {
-            return asmTypeForScriptDescriptor(bindingContext, ((ScriptContext) outermost).getScriptDescriptor());
-        }*/
+
         return null;
     }
 

@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegen;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenUtil;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.impl.ScriptCodeDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.diagnostics.Errors;
@@ -311,7 +310,26 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     public void gen(KtElement expr, Type type) {
         StackValue value = Type.VOID_TYPE.equals(type) ? genStatement(expr) : gen(expr);
+        // for repl store the result of the last line into special field
+        if (value.type != Type.VOID_TYPE && state.getShouldGenerateScriptResultValue()) {
+            ScriptContext context = getScriptContext();
+            if (expr == context.getLastStatement()) {
+                StackValue.Field resultValue = StackValue.field(context.getResultFieldInfo(), StackValue.LOCAL_0);
+                resultValue.store(value, v);
+                return;
+            }
+        }
+
         value.put(type, v);
+    }
+
+    @NotNull
+    private ScriptContext getScriptContext() {
+        CodegenContext context = getContext();
+        while (!(context instanceof ScriptContext)) {
+            context = context.getParentContext();
+        }
+        return (ScriptContext) context;
     }
 
     public StackValue genLazy(KtElement expr, Type type) {
@@ -1968,21 +1986,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (localOrCaptured != null) {
             return localOrCaptured;
         }
-
-        DeclarationDescriptor container = descriptor.getContainingDeclaration();
-        if (descriptor instanceof ValueParameterDescriptor && container instanceof ScriptCodeDescriptor) {
-            ScriptCodeDescriptor scriptCodeDescriptor = (ScriptCodeDescriptor) container;
-            ScriptDescriptor scriptDescriptor = (ScriptDescriptor) scriptCodeDescriptor.getContainingDeclaration();
-            Type scriptClassType = asmTypeForScriptDescriptor(bindingContext, scriptDescriptor);
-            ValueParameterDescriptor valueParameterDescriptor = (ValueParameterDescriptor) descriptor;
-            ClassDescriptor scriptClass = bindingContext.get(CLASS_FOR_SCRIPT, scriptDescriptor);
-            //noinspection ConstantConditions
-            StackValue script = StackValue.thisOrOuter(this, scriptClass, false, false);
-            Type fieldType = typeMapper.mapType(valueParameterDescriptor);
-            return StackValue.field(fieldType, scriptClassType, valueParameterDescriptor.getName().getIdentifier(), false, script,
-                                    valueParameterDescriptor);
-        }
-
         throw new UnsupportedOperationException("don't know how to generate reference " + descriptor);
     }
 
@@ -2496,13 +2499,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                     return StackValue.singleton(receiverDescriptor, typeMapper);
                 }
             }
+            else if (receiverDescriptor instanceof ScriptDescriptor) {
+                return generateScriptReceiver
+                        ((ScriptDescriptor) receiverDescriptor);
+            }
             else {
                 return StackValue.thisOrOuter(this, receiverDescriptor, isSuper,
                                               receiverValue instanceof CastImplicitClassReceiver || isEnumEntry(receiverDescriptor));
             }
-        }
-        else if (receiverValue instanceof ScriptReceiver) {
-            return generateScript((ScriptReceiver) receiverValue);
         }
         else if (receiverValue instanceof ExtensionReceiver) {
             return generateReceiver(((ExtensionReceiver) receiverValue).getDeclarationDescriptor());
@@ -2520,7 +2524,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         return context.generateReceiver(descriptor, state, false);
     }
 
-    private StackValue generateScript(@NotNull ScriptReceiver receiver) {
+    @NotNull
+    private StackValue generateScriptReceiver(@NotNull ScriptDescriptor receiver) {
         CodegenContext cur = context;
         StackValue result = StackValue.LOCAL_0;
         boolean inStartConstructorContext = cur instanceof ConstructorContext;
@@ -2532,17 +2537,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             if (cur instanceof ScriptContext) {
                 ScriptContext scriptContext = (ScriptContext) cur;
 
-                ScriptDescriptor receiverDeclarationDescriptor = receiver.getDeclarationDescriptor();
-                if (scriptContext.getScriptDescriptor() == receiverDeclarationDescriptor) {
+                if (scriptContext.getScriptDescriptor() == receiver) {
                     //TODO lazy
                     return result;
                 }
-                else {
-                    Type currentScriptType = asmTypeForScriptDescriptor(bindingContext, scriptContext.getScriptDescriptor());
-                    Type classType = asmTypeForScriptDescriptor(bindingContext, receiverDeclarationDescriptor);
-                    String fieldName = scriptContext.getScriptFieldName(receiverDeclarationDescriptor);
-                    return StackValue.field(classType, currentScriptType, fieldName, false, result, receiverDeclarationDescriptor);
-                }
+                Type currentScriptType = typeMapper.mapType(scriptContext.getScriptDescriptor());
+                Type classType = typeMapper.mapType(receiver);
+                String fieldName = scriptContext.getScriptFieldName(receiver);
+                return StackValue.field(classType, currentScriptType, fieldName, false, result, receiver);
             }
 
             result = cur.getOuterExpression(result, false);
@@ -2557,7 +2559,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         throw new UnsupportedOperationException();
     }
-
 
     @NotNull
     public StackValue generateThisOrOuter(@NotNull ClassDescriptor calleeContainingClass, boolean isSuper) {
@@ -3321,19 +3322,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         Type varType = asmType(variableDescriptor.getType());
 
-        StackValue storeTo;
-        if (KtPsiUtil.isScriptDeclaration(variableDeclaration)) {
-            KtScript scriptPsi = KtPsiUtil.getScript(variableDeclaration);
-            assert scriptPsi != null;
-            Type scriptClassType = asmTypeForScriptPsi(bindingContext, scriptPsi);
-            storeTo = StackValue.field(varType, scriptClassType, variableDeclaration.getName(), false, StackValue.LOCAL_0, variableDescriptor);
-        }
-        else if (sharedVarType == null) {
-            storeTo = StackValue.local(index, varType);
-        }
-        else {
-            storeTo = StackValue.shared(index, varType);
-        }
+        StackValue storeTo = sharedVarType == null ? StackValue.local(index, varType) : StackValue.shared(index, varType);
 
         storeTo.store(initializer, v);
     }

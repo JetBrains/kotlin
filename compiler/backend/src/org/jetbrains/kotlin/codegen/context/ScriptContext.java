@@ -16,35 +16,62 @@
 
 package org.jetbrains.kotlin.codegen.context;
 
+import kotlin.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.codegen.FieldInfo;
 import org.jetbrains.kotlin.codegen.OwnerKind;
-import org.jetbrains.kotlin.codegen.binding.MutableClosure;
+import org.jetbrains.kotlin.codegen.state.GenerationState;
+import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
+import org.jetbrains.kotlin.psi.KtClassInitializer;
+import org.jetbrains.kotlin.psi.KtDeclaration;
+import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.psi.KtScript;
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 
 import java.util.List;
 
-public class ScriptContext extends FieldOwnerContext<ClassDescriptor> {
+public class ScriptContext extends ClassContext {
     private final ScriptDescriptor scriptDescriptor;
     private final List<ScriptDescriptor> earlierScripts;
+    private final KtExpression lastStatement;
 
     public ScriptContext(
+            @NotNull JetTypeMapper typeMapper,
             @NotNull ScriptDescriptor scriptDescriptor,
             @NotNull List<ScriptDescriptor> earlierScripts,
             @NotNull ClassDescriptor contextDescriptor,
-            @NotNull OwnerKind contextKind,
-            @Nullable CodegenContext parentContext,
-            @Nullable MutableClosure closure
+            @Nullable CodegenContext parentContext
     ) {
-        super(contextDescriptor, contextKind, parentContext, closure, contextDescriptor, null);
+        super(typeMapper, contextDescriptor, OwnerKind.IMPLEMENTATION, parentContext, null);
         this.scriptDescriptor = scriptDescriptor;
         this.earlierScripts = earlierScripts;
+        KtScript script = (KtScript) DescriptorToSourceUtils.getSourceFromDescriptor(scriptDescriptor);
+        assert script != null : "Declaration should be present for script: " + scriptDescriptor;
+        KtDeclaration lastDeclaration = CollectionsKt.lastOrNull(script.getDeclarations());
+        if (lastDeclaration instanceof KtClassInitializer) {
+            this.lastStatement = ((KtClassInitializer) lastDeclaration).getBody();
+        }
+        else {
+            this.lastStatement = null;
+        }
     }
 
     @NotNull
     public ScriptDescriptor getScriptDescriptor() {
         return scriptDescriptor;
+    }
+
+    @NotNull
+    public FieldInfo getResultFieldInfo() {
+        assert getState().getShouldGenerateScriptResultValue() : "Should not be called unless 'scriptResultFieldName' is set";
+        GenerationState state = getState();
+        String scriptResultFieldName = state.getScriptResultFieldName();
+        assert scriptResultFieldName != null;
+        return FieldInfo.createForHiddenField(state.getTypeMapper().mapClass(scriptDescriptor), AsmTypes.OBJECT_TYPE, scriptResultFieldName);
     }
 
     @NotNull
@@ -59,6 +86,11 @@ public class ScriptContext extends FieldOwnerContext<ClassDescriptor> {
             throw new IllegalStateException("Unregistered script: " + scriptDescriptor);
         }
         return "script$" + (index + 1);
+    }
+
+    @Nullable
+    public KtExpression getLastStatement() {
+        return lastStatement;
     }
 
     @Override

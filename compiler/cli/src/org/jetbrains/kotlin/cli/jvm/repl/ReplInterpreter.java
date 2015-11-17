@@ -22,7 +22,6 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.CharsetToolkit;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.psi.search.ProjectScope;
@@ -30,7 +29,6 @@ import com.intellij.testFramework.LightVirtualFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport;
 import org.jetbrains.kotlin.cli.common.messages.DiagnosticMessageReporter;
 import org.jetbrains.kotlin.cli.jvm.compiler.CliLightClassGenerationSupport;
@@ -67,8 +65,8 @@ import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.kotlin.resolve.lazy.declarations.*;
+import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
-import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.org.objectweb.asm.Type;
 
@@ -85,10 +83,10 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClasses;
-import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.registerClassNameForScript;
-import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 
 public class ReplInterpreter {
+    private static final String SCRIPT_RESULT_FIELD_NAME = "$$result";
+
     private int lineNumber = 0;
 
     @Nullable
@@ -309,13 +307,14 @@ public class ReplInterpreter {
         List<Pair<ScriptDescriptor, Type>> earlierScripts = Lists.newArrayList();
 
         for (EarlierLine earlierLine : earlierLines) {
+            //TODO_R: not needed
             earlierScripts.add(Pair.create(earlierLine.getScriptDescriptor(), earlierLine.getClassType()));
         }
 
         GenerationState state = new GenerationState(psiFile.getProject(), ClassBuilderFactories.BINARIES,
                                                     module, trace.getBindingContext(), Collections.singletonList(psiFile));
 
-        compileScript(psiFile.getScript(), scriptClassType, earlierScripts, state, CompilationErrorHandler.THROW_EXCEPTION);
+        compileScript(psiFile.getScript(), earlierScripts, state, CompilationErrorHandler.THROW_EXCEPTION);
 
         for (OutputFile outputFile : state.getFactory().asList()) {
             if(outputFile.getRelativePath().endsWith(".class")) {
@@ -347,14 +346,13 @@ public class ReplInterpreter {
                 setReplScriptExecuting(false);
             }
 
-            Field rvField = scriptClass.getDeclaredField("rv");
+            Field rvField = scriptClass.getDeclaredField(SCRIPT_RESULT_FIELD_NAME);
             rvField.setAccessible(true);
             Object rv = rvField.get(scriptInstance);
 
             earlierLines.add(new EarlierLine(line, scriptDescriptor, scriptClass, scriptInstance, scriptClassType));
 
-            KotlinType returnType = scriptDescriptor.getScriptCodeDescriptor().getReturnType();
-            return LineResult.successful(rv, returnType != null && KotlinBuiltIns.isUnit(returnType));
+            return LineResult.successful(rv, false);
         }
         catch (Throwable e) {
             @SuppressWarnings("UseOfSystemOutOrSystemErr")
@@ -415,12 +413,8 @@ public class ReplInterpreter {
             return null;
         }
 
-        ScriptDescriptor scriptDescriptor = context.getScripts().get(psiFile.getScript());
-        lastLineScope = trace.get(BindingContext.SCRIPT_SCOPE, scriptDescriptor);
-        if (lastLineScope == null) {
-            throw new IllegalStateException("last line scope is not initialized");
-        }
-
+        LazyScriptDescriptor scriptDescriptor = context.getScripts().get(psiFile.getScript());
+        lastLineScope = scriptDescriptor.getScopeForInitializerResolution();
         return scriptDescriptor;
     }
 
@@ -435,26 +429,19 @@ public class ReplInterpreter {
         List<ScriptDescriptor> earlierScriptDescriptors = new ArrayList<ScriptDescriptor>(earlierScripts.size());
         for (Pair<ScriptDescriptor, Type> pair : earlierScripts) {
             ScriptDescriptor earlierDescriptor = pair.first;
-            Type earlierClassType = pair.second;
-
-            PsiElement jetScript = descriptorToDeclaration(earlierDescriptor);
-            if (jetScript != null) {
-                registerClassNameForScript(state.getBindingTrace(), (KtScript) jetScript, earlierClassType, state.getFileClassesProvider());
-                earlierScriptDescriptors.add(earlierDescriptor);
-            }
+            earlierScriptDescriptors.add(earlierDescriptor);
         }
         state.setEarlierScriptsForReplInterpreter(earlierScriptDescriptors);
     }
 
     public static void compileScript(
             @NotNull KtScript script,
-            @NotNull Type classType,
             @NotNull List<Pair<ScriptDescriptor, Type>> earlierScripts,
             @NotNull GenerationState state,
             @NotNull CompilationErrorHandler errorHandler
     ) {
+        state.setScriptResultFieldName(SCRIPT_RESULT_FIELD_NAME);
         registerEarlierScripts(state, earlierScripts);
-        registerClassNameForScript(state.getBindingTrace(), script, classType, state.getFileClassesProvider());
 
         state.beforeCompile();
         KotlinCodegenFacade.generatePackage(

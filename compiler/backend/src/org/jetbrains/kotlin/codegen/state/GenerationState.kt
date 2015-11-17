@@ -101,6 +101,8 @@ public class GenerationState @JvmOverloads constructor(
     public val inlineCycleReporter: InlineCycleReporter = InlineCycleReporter(diagnostics)
     public val mappingsClassesForWhenByEnum: MappingsClassesForWhenByEnum = MappingsClassesForWhenByEnum(this)
     public var earlierScriptsForReplInterpreter: List<ScriptDescriptor>? = null
+    public var scriptResultFieldName: String? = null
+    public val shouldGenerateScriptResultValue: Boolean get() = scriptResultFieldName != null
     public val reflectionTypes: ReflectionTypes = ReflectionTypes(module)
     public val jvmRuntimeTypes: JvmRuntimeTypes = JvmRuntimeTypes()
     public val factory: ClassFileFactory

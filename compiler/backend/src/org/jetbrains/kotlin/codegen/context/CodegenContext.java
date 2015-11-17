@@ -315,9 +315,10 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     public ScriptContext intoScript(
             @NotNull ScriptDescriptor script,
             @NotNull List<ScriptDescriptor> earlierScripts,
-            @NotNull ClassDescriptor classDescriptor
+            @NotNull ClassDescriptor classDescriptor,
+            @NotNull JetTypeMapper typeMapper
     ) {
-        return new ScriptContext(script, earlierScripts, classDescriptor, OwnerKind.IMPLEMENTATION, this, closure);
+        return new ScriptContext(typeMapper, script, earlierScripts, classDescriptor, this);
     }
 
     @NotNull

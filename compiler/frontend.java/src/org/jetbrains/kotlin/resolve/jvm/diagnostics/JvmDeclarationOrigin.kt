@@ -51,6 +51,7 @@ public class JvmDeclarationOrigin(
         public val descriptor: DeclarationDescriptor?
 ) {
     companion object {
+        @JvmField
         public val NO_ORIGIN: JvmDeclarationOrigin = JvmDeclarationOrigin(OTHER, null, null)
     }
 }

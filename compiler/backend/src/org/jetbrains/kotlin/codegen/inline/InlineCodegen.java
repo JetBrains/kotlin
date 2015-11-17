@@ -62,7 +62,6 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.getMethodAsmFlags;
 import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
-import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLASS_FOR_SCRIPT;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.addInlineMarker;
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.getConstant;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral;
@@ -598,17 +597,15 @@ public class InlineCodegen extends CallGenerator {
 
         CodegenContext parent = getContext(descriptor.getContainingDeclaration(), state, sourceFile);
 
-        if (descriptor instanceof ClassDescriptor) {
-            OwnerKind kind = DescriptorUtils.isInterface(descriptor) ? OwnerKind.DEFAULT_IMPLS : OwnerKind.IMPLEMENTATION;
-            return parent.intoClass((ClassDescriptor) descriptor, kind, state);
-        }
-        else if (descriptor instanceof ScriptDescriptor) {
-            ClassDescriptor classDescriptorForScript = state.getBindingContext().get(CLASS_FOR_SCRIPT, (ScriptDescriptor) descriptor);
-            assert classDescriptorForScript != null : "Can't find class for script: " + descriptor;
+        if (descriptor instanceof ScriptDescriptor) {
             List<ScriptDescriptor> earlierScripts = state.getEarlierScriptsForReplInterpreter();
             return parent.intoScript((ScriptDescriptor) descriptor,
                                      earlierScripts == null ? Collections.emptyList() : earlierScripts,
-                                     classDescriptorForScript);
+                                     (ClassDescriptor) descriptor, state.getTypeMapper());
+        }
+        else if (descriptor instanceof ClassDescriptor) {
+            OwnerKind kind = DescriptorUtils.isInterface(descriptor) ? OwnerKind.DEFAULT_IMPLS : OwnerKind.IMPLEMENTATION;
+            return parent.intoClass((ClassDescriptor) descriptor, kind, state);
         }
         else if (descriptor instanceof FunctionDescriptor) {
             return parent.intoFunction((FunctionDescriptor) descriptor);

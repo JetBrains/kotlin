@@ -169,9 +169,6 @@ public class JetTypeMapper {
         else if (container instanceof ClassDescriptor) {
             return mapClass((ClassDescriptor) container);
         }
-        else if (container instanceof ScriptDescriptor) {
-            return asmTypeForScriptDescriptor(bindingContext, (ScriptDescriptor) container);
-        }
         else {
             throw new UnsupportedOperationException("Don't know how to map owner for " + descriptor);
         }
@@ -578,10 +575,6 @@ public class JetTypeMapper {
         if (container instanceof PackageFragmentDescriptor) {
             FqName fqName = ((PackageFragmentDescriptor) container).getFqName();
             return fqName.isRoot() ? name : fqName.asString().replace('.', '/') + '/' + name;
-        }
-
-        if (container instanceof ScriptDescriptor) {
-            return asmTypeForScriptDescriptor(bindingContext, (ScriptDescriptor) container).getInternalName() + "$" + name;
         }
 
         assert container instanceof ClassDescriptor : "Unexpected container: " + container + " for " + klass;
@@ -1392,12 +1385,10 @@ public class JetTypeMapper {
         sw.writeParametersStart();
 
         for (ScriptDescriptor importedScript : importedScripts) {
-            ClassDescriptor descriptor = bindingContext.get(CLASS_FOR_SCRIPT, importedScript);
-            assert descriptor != null : "Script not found: " + importedScript;
-            writeParameter(sw, descriptor.getDefaultType());
+            writeParameter(sw, importedScript.getDefaultType());
         }
 
-        for (ValueParameterDescriptor valueParameter : script.getScriptCodeDescriptor().getValueParameters()) {
+        for (ValueParameterDescriptor valueParameter : script.getUnsubstitutedPrimaryConstructor().getValueParameters()) {
             writeParameter(sw, valueParameter.getType());
         }
 
