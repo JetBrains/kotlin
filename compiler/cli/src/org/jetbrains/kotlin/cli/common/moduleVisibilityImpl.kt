@@ -64,6 +64,8 @@ class ModuleVisibilityHelperImpl : ModuleVisibilityHelper {
         // TODO Implement full check for access to internal for incremental compilation
         if (what.isFromIncrementalPackageFragment) return true
 
+        if (modules.size == 1 && isContainedByCompiledPartOfOurModule(what, File(modules.single().getOutputDirectory()))) return true
+
         return findModule(from, modules) === findModule(what, modules)
     }
 
