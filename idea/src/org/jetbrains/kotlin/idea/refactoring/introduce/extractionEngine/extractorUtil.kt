@@ -35,8 +35,8 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputVa
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange
-import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange.Match
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiUnifier
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnificationResult
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnificationResult.StronglyMatched
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnificationResult.WeaklyMatched
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnifierParameter
@@ -154,10 +154,10 @@ class DuplicateInfo(
 )
 
 fun ExtractableCodeDescriptor.findDuplicates(): List<DuplicateInfo> {
-    fun processWeakMatch(match: Match, newControlFlow: ControlFlow): Boolean {
+    fun processWeakMatch(match: UnificationResult.WeaklyMatched, newControlFlow: ControlFlow): Boolean {
         val valueCount = controlFlow.outputValues.size
 
-        val weakMatches = HashMap((match.result as WeaklyMatched).weakMatches)
+        val weakMatches = HashMap(match.weakMatches)
         val currentValuesToNew = HashMap<OutputValue, OutputValue>()
 
         fun matchValues(currentValue: OutputValue, newValue: OutputValue): Boolean {
@@ -184,7 +184,7 @@ fun ExtractableCodeDescriptor.findDuplicates(): List<DuplicateInfo> {
         return currentValuesToNew.size == valueCount && weakMatches.isEmpty()
     }
 
-    fun getControlFlowIfMatched(match: Match): ControlFlow? {
+    fun getControlFlowIfMatched(match: UnificationResult.Matched): ControlFlow? {
         val analysisResult = extractionData.copy(originalRange = match.range).performAnalysis()
         if (analysisResult.status != AnalysisResult.Status.SUCCESS) return null
 
@@ -192,10 +192,10 @@ fun ExtractableCodeDescriptor.findDuplicates(): List<DuplicateInfo> {
         if (newControlFlow.outputValues.isEmpty()) return newControlFlow
         if (controlFlow.outputValues.size != newControlFlow.outputValues.size) return null
 
-        val matched = when (match.result) {
+        val matched = when (match) {
             is StronglyMatched -> true
             is WeaklyMatched -> processWeakMatch(match, newControlFlow)
-            else -> throw AssertionError("Unexpected unification result: ${match.result}")
+            else -> throw AssertionError("Unexpected unification result: $match")
         }
 
         return if (matched) newControlFlow else null
@@ -214,7 +214,7 @@ fun ExtractableCodeDescriptor.findDuplicates(): List<DuplicateInfo> {
             .filter { !(it.range.getTextRange() intersects originalTextRange) }
             .mapNotNull { match ->
                 val controlFlow = getControlFlowIfMatched(match)
-                controlFlow?.let { DuplicateInfo(match.range, it, unifierParameters.map { match.result.substitution[it]!!.text!! }) }
+                controlFlow?.let { DuplicateInfo(match.range, it, unifierParameters.map { match.substitution[it]!!.text!! }) }
             }
             .toList()
 }

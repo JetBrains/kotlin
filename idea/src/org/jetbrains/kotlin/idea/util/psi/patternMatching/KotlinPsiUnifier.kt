@@ -68,13 +68,18 @@ public interface UnificationResult {
     }
 
     interface Matched: UnificationResult {
+        val range: KotlinPsiRange
         val substitution: Map<UnifierParameter, KtExpression>
         override val status: Status get() = MATCHED
     }
 
-    class StronglyMatched(override val substitution: Map<UnifierParameter, KtExpression>): Matched
+    class StronglyMatched(
+            override val range: KotlinPsiRange,
+            override val substitution: Map<UnifierParameter, KtExpression>
+    ): Matched
 
     class WeaklyMatched(
+            override val range: KotlinPsiRange,
             override val substitution: Map<UnifierParameter, KtExpression>,
             val weakMatches: Map<KtElement, KtElement>
     ): Matched
@@ -824,7 +829,7 @@ public class KotlinPsiUnifier(
                 substitution.size() != descriptorToParameter.size() ->
                     Unmatched
                 status == MATCHED ->
-                    if (weakMatches.isEmpty()) StronglyMatched(substitution) else WeaklyMatched(substitution, weakMatches)
+                    if (weakMatches.isEmpty()) StronglyMatched(target, substitution) else WeaklyMatched(target, substitution, weakMatches)
                 else ->
                     Unmatched
             }

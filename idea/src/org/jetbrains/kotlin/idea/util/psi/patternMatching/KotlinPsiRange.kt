@@ -47,8 +47,6 @@ public interface KotlinPsiRange {
         }
     }
 
-    public class Match(val range: KotlinPsiRange, val result: UnificationResult.Matched)
-
     val elements: List<PsiElement>
 
     fun getTextRange(): TextRange
@@ -59,11 +57,11 @@ public interface KotlinPsiRange {
 
     fun contains(element: PsiElement): Boolean = getTextRange().contains(element.getTextRange() ?: TextRange.EMPTY_RANGE)
 
-    fun match(scope: PsiElement, unifier: KotlinPsiUnifier): List<Match> {
+    fun match(scope: PsiElement, unifier: KotlinPsiUnifier): List<UnificationResult.Matched> {
         val elements = elements.filter(SIGNIFICANT_FILTER)
         if (elements.isEmpty()) return Collections.emptyList()
 
-        val matches = ArrayList<Match>()
+        val matches = ArrayList<UnificationResult.Matched>()
         scope.accept(
                 object: KtTreeVisitorVoid() {
                     override fun visitKtElement(element: KtElement) {
@@ -77,13 +75,13 @@ public interface KotlinPsiRange {
                         val result = unifier.unify(range, this@KotlinPsiRange)
 
                         if (result is UnificationResult.StronglyMatched) {
-                            matches.add(Match(range, result))
+                            matches.add(result)
                         }
                         else {
                             val matchCountSoFar = matches.size()
                             super.visitKtElement(element)
                             if (result is UnificationResult.WeaklyMatched && matches.size() == matchCountSoFar) {
-                                matches.add(Match(range, result))
+                                matches.add(result)
                             }
                         }
                     }
