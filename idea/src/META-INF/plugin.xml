@@ -1226,7 +1226,7 @@
                      level="WARNING"
     />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedImportInspection"
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinUnusedImportInspection"
                      displayName="Unused import directive"
                      groupName="Kotlin"
                      enabledByDefault="true"

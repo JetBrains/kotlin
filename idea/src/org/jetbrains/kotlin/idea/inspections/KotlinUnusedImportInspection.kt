@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.ImportPath
 import java.util.*
 
-class UnusedImportInspection : AbstractKotlinInspection() {
+class KotlinUnusedImportInspection : AbstractKotlinInspection() {
     override fun runForWholeFile() = true
 
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<out ProblemDescriptor>? {
