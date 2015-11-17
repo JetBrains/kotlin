@@ -287,6 +287,9 @@ public class KotlinCoreEnvironment private constructor(
             return KotlinCoreEnvironment(parentDisposable, createApplicationEnvironment(parentDisposable, configuration, extensionConfigs), configuration)
         }
 
+        // used in the daemon for jar cache cleanup
+        public val applicationEnvironment: JavaCoreApplicationEnvironment? get() = ourApplicationEnvironment
+
         private fun getOrCreateApplicationEnvironmentForProduction(configuration: CompilerConfiguration, configFilePaths: List<String>): JavaCoreApplicationEnvironment {
             synchronized (APPLICATION_LOCK) {
                 if (ourApplicationEnvironment != null)

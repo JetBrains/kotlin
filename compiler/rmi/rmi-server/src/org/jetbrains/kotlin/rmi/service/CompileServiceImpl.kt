@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.rmi.service
 
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
@@ -166,7 +167,8 @@ class CompileServiceImpl(
     override fun releaseCompileSession(sessionId: Int) = ifAlive_Nothing(minAliveness = Aliveness.LastSession) {
         synchronized(state.sessions) {
             state.sessions.remove(sessionId)
-            // TODO: some cleanup goes here
+            log.info("cleaning after session")
+            clearJarCache()
             if (state.sessions.isEmpty()) {
                 // TODO: and some goes here
             }
@@ -471,6 +473,43 @@ class CompileServiceImpl(
             log.info("Error: $e")
             throw e
         }
+    }
+
+    private fun clearJarCache() {
+        callVoidStaticMethod("com.intellij.openapi.vfs.impl.ZipHandler", "clearFileAccessorCache")
+        val classloader = javaClass.classLoader
+        // TODO: replace the following code with direct call to CoreJarFileSystem.<clearCache> as soon as it will be available (hopefully in 15.02)
+        try {
+            KotlinCoreEnvironment.applicationEnvironment?.jarFileSystem.let { jarfs ->
+                val jarfsClass = classloader.loadClass("com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem")
+                val privateHandlersField = jarfsClass.getDeclaredField("myHandlers")
+                privateHandlersField.isAccessible = true
+                privateHandlersField.get(jarfs)?.let {
+                    val clearMethod = privateHandlersField.type.getMethod("clear")
+                    if (clearMethod != null) {
+                        clearMethod.invoke(it)
+                        log.info("successfully cleared com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem.myHandlers")
+                    }
+                    else {
+                        log.info("unable to access com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem.myHandlers.clear")
+                    }
+                } ?: log.info("unable to access CoreJarFileSystem.myHandlers (${privateHandlersField.get(jarfs)})")
+            }
+        }
+        catch (e: Exception) {
+            log.log(Level.SEVERE, "error clearing CoreJarFileSystem", e)
+        }
+    }
+
+    // copied (with edit) from gradle plugin
+    private fun callVoidStaticMethod(classFqName: String, methodName: String) {
+        // compiler classloader == current classloader for now
+        // TODO: consider abstracting classloader, for easier changing it for a compiler
+        val cls = this.javaClass.classLoader.loadClass(classFqName)
+
+        val method = cls.getMethod(methodName)
+
+        method.invoke(null)
     }
 
     private fun<R> ifAlive(minAliveness: Aliveness = Aliveness.Alive, ignoreCompilerChanged: Boolean = false, body: () -> R): CompileService.CallResult<R> = rwlock.read {
