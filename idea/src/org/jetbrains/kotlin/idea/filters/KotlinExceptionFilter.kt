@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.idea.util.DebuggerUtils
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.tail
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.utils.addToStdlib.check
@@ -71,9 +72,13 @@ class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter
     }
 
     private fun virtualFileForInlineCall(jvmName: JvmClassName, file: VirtualFile, lineNumber: Int, project: Project): OpenFileHyperlinkInfo? {
+        val fqNameWithInners = jvmName.fqNameForClassNameWithoutDollars.tail(jvmName.packageFqName)
+
         if (ProjectRootsUtil.isInContent(project, file, false, true, false)) {
+            val classId = ClassId(jvmName.packageFqName, Name.identifier(fqNameWithInners.asString()))
+
             val fileFinder = JvmVirtualFileFinder.SERVICE.getInstance(project)
-            val classFile = fileFinder.findVirtualFileWithHeader(ClassId(jvmName.packageFqName, jvmName.fqNameForClassNameWithoutDollars.shortName())) ?: return null
+            val classFile = fileFinder.findVirtualFileWithHeader(classId) ?: return null
             return readDebugInfoForInlineFun(classFile.contentsToByteArray(), lineNumber, project)
         }
 
@@ -82,11 +87,11 @@ class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter
         val linesInFile = file.toPsiFile(project)?.getLineCount() ?: return null
         if (lineNumber <= linesInFile) return null
 
-        val className = jvmName.fqNameForClassNameWithoutDollars.tail(jvmName.packageFqName).asString().replace('.', '$')
 
         val module = ProjectFileIndex.SERVICE.getInstance(project).getModuleForFile(file)
         val outputDir = CompilerPaths.getModuleOutputDirectory(module, /*forTests = */ false) ?: return null
 
+        val className = fqNameWithInners.asString().replace('.', '$')
         val classByByDirectory = findClassFileByPath(jvmName.packageFqName.asString(), className, outputDir) ?: return null
 
         return readDebugInfoForInlineFun(classByByDirectory.readBytes(), lineNumber, project)
