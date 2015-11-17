@@ -75,7 +75,7 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
             val logFile = createTempFile("kotlin-daemon-test.", ".log")
 
-            val daemonJVMOptions = configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.absolutePath}\"",
+            val daemonJVMOptions = configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
                                                              inheritMemoryLimits = false, inheritAdditionalProperties = false)
             var daemonShotDown = false
 
@@ -154,11 +154,11 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
             val logFile1 = createTempFile("kotlin-daemon1-test", ".log")
             val logFile2 = createTempFile("kotlin-daemon2-test", ".log")
             val daemonJVMOptions1 =
-                    configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile1.absolutePath}\"",
+                    configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile1.loggerCompatiblePath}\"",
                                               inheritMemoryLimits = false, inheritAdditionalProperties = false)
 
             val daemonJVMOptions2 =
-                    configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile2.absolutePath}\"",
+                    configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile2.loggerCompatiblePath}\"",
                                               inheritMemoryLimits = false, inheritAdditionalProperties = false)
 
             TestCase.assertTrue(logFile1.length() == 0L && logFile2.length() == 0L)
@@ -191,7 +191,7 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
             val logFile = createTempFile("kotlin-daemon-test", ".log")
             val daemonJVMOptions =
-                    configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.absolutePath}\"",
+                    configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
                                               inheritMemoryLimits = false, inheritAdditionalProperties = false)
 
             val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true)
@@ -218,7 +218,7 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
             val logFile = createTempFile("kotlin-daemon-test", ".log")
             val daemonJVMOptions =
-                    configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.absolutePath}\"",
+                    configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
                                               inheritMemoryLimits = false, inheritAdditionalProperties = false)
 
             val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true)
@@ -249,7 +249,7 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
             val logFile = createTempFile("kotlin-daemon-test", ".log")
             val daemonJVMOptions =
-                    configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.absolutePath}\"",
+                    configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
                                               inheritMemoryLimits = false, inheritAdditionalProperties = false)
 
             val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true)
@@ -427,3 +427,11 @@ internal inline fun witFlagFile(prefix: String, suffix: String? = null, body: (F
         file.delete()
     }
 }
+
+// java.util.logger used in the daemon silently forgets to log into a file specified in the config on Windows,
+// if file path is given in windows form (using backslash as a separator); the reason is unknown
+// this function makes a path with forward slashed, that works on windows too
+internal val File.loggerCompatiblePath: String
+    get() =
+        if (OSKind.current == OSKind.Windows) absolutePath.replace('\\', '/')
+        else absolutePath

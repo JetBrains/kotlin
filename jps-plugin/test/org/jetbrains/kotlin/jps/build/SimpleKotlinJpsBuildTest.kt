@@ -18,10 +18,7 @@ package org.jetbrains.kotlin.jps.build
 
 import com.intellij.util.PathUtil
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
-import org.jetbrains.kotlin.rmi.COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY
-import org.jetbrains.kotlin.rmi.COMPILE_DAEMON_ENABLED_PROPERTY
-import org.jetbrains.kotlin.rmi.COMPILE_DAEMON_LOG_PATH_PROPERTY
-import org.jetbrains.kotlin.rmi.COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY
+import org.jetbrains.kotlin.rmi.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
@@ -75,7 +72,7 @@ public class SimpleKotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         val flagFile = File.createTempFile("kotlin-jps - tests-", "-is-running");
         val logFile = File.createTempFile("kotlin-daemon", ".log")
         System.setProperty(COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY, flagFile.absolutePath)
-        System.setProperty(COMPILE_DAEMON_LOG_PATH_PROPERTY, logFile.absolutePath)
+        System.setProperty(COMPILE_DAEMON_LOG_PATH_PROPERTY, logFile.loggerCompatiblePath)
         try {
             testLoadingKotlinFromDifferentModules()
         }
@@ -88,3 +85,13 @@ public class SimpleKotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         }
     }
 }
+
+// copied from CompilerDaemonTest.kt
+// TODO: find shared place for this function
+// java.util.logger used in the daemon silently forgets to log into a file specified in the config on Windows,
+// if file path is given in windows form (using backslash as a separator); the reason is unknown
+// this function makes a path with forward slashed, that works on windows too
+internal val File.loggerCompatiblePath: String
+    get() =
+    if (OSKind.current == OSKind.Windows) absolutePath.replace('\\', '/')
+    else absolutePath
