@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.idea.core.refactoring.getLineCount
 import org.jetbrains.kotlin.idea.core.refactoring.toPsiFile
 import org.jetbrains.kotlin.idea.util.DebuggerUtils
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.tail
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.utils.addToStdlib.check
@@ -69,6 +71,12 @@ class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter
     }
 
     private fun virtualFileForInlineCall(jvmName: JvmClassName, file: VirtualFile, lineNumber: Int, project: Project): OpenFileHyperlinkInfo? {
+        if (ProjectRootsUtil.isInContent(project, file, false, true, false)) {
+            val fileFinder = JvmVirtualFileFinder.SERVICE.getInstance(project)
+            val classFile = fileFinder.findVirtualFileWithHeader(ClassId(jvmName.packageFqName, jvmName.fqNameForClassNameWithoutDollars.shortName())) ?: return null
+            return readDebugInfoForInlineFun(classFile.contentsToByteArray(), lineNumber, project)
+        }
+
         if (!ProjectRootsUtil.isInContent(project, file, true, false, false)) return null
 
         val linesInFile = file.toPsiFile(project)?.getLineCount() ?: return null
@@ -81,7 +89,7 @@ class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter
 
         val classByByDirectory = findClassFileByPath(jvmName.packageFqName.asString(), className, outputDir) ?: return null
 
-        return readDebugInfoForInlineFun(classByByDirectory, lineNumber, project)
+        return readDebugInfoForInlineFun(classByByDirectory.readBytes(), lineNumber, project)
     }
 
     private fun findClassFileByPath(packageName: String, className: String, outputDir: VirtualFile): File? {
@@ -98,8 +106,8 @@ class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter
         return null
     }
 
-    private fun readDebugInfoForInlineFun(classFile: File, line: Int, project: Project): OpenFileHyperlinkInfo? {
-        val debugInfo = readDebugInfo(classFile) ?: return null
+    private fun readDebugInfoForInlineFun(bytes: ByteArray, line: Int, project: Project): OpenFileHyperlinkInfo? {
+        val debugInfo = readDebugInfo(bytes) ?: return null
 
         val mappings = SMAPParser.parse(debugInfo)
 
@@ -112,8 +120,8 @@ class KotlinExceptionFilter(private val searchScope: GlobalSearchScope) : Filter
         return OpenFileHyperlinkInfo(project, newSourceFile.virtualFile, mappingInfo.getIntervalIfContains(line)!!.map(line) - 1)
     }
 
-    private fun readDebugInfo(classFile: File): String? {
-        val cr = ClassReader(classFile.readBytes());
+    private fun readDebugInfo(bytes: ByteArray): String? {
+        val cr = ClassReader(bytes);
         var debugInfo: String? = null
         cr.accept(object : ClassVisitor(InlineCodegenUtil.API) {
             override fun visitSource(source: String?, debug: String?) {

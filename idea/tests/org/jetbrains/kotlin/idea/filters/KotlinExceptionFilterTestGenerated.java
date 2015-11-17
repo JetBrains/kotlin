@@ -41,9 +41,27 @@ public class KotlinExceptionFilterTestGenerated extends AbstractKotlinExceptionF
         doTest(fileName);
     }
 
+    @TestMetadata("inlineFunCallInLibrary")
+    public void testInlineFunCallInLibrary() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/exceptionFilter/inlineFunCallInLibrary/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("inlineFunFromLibrary")
+    public void testInlineFunFromLibrary() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/exceptionFilter/inlineFunFromLibrary/");
+        doTest(fileName);
+    }
+
     @TestMetadata("inlineFunctionAnotherFile")
     public void testInlineFunctionAnotherFile() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/exceptionFilter/inlineFunctionAnotherFile/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("inlineFunctionInnerClass")
+    public void testInlineFunctionInnerClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/exceptionFilter/inlineFunctionInnerClass/");
         doTest(fileName);
     }
 

@@ -109,11 +109,11 @@ public abstract class AbstractKotlinExceptionFilterTest: KotlinCodeInsightTestCa
                                         ?: throw AssertionError("Couldn't find file: name = $expectedFileName")
         val expectedLineNumber = InTextDirectivesUtils.getPrefixedInt(fileText, "// LINE: ")!!
 
-        // TODO compare virtual files
-        assertEquals("Wrong fileName for line $stackTraceElement", expectedFileName, descriptor.file.name)
 
         val document = FileDocumentManager.getInstance().getDocument(expectedVirtualFile)!!
         val expectedOffset = document.getLineStartOffset(expectedLineNumber - 1)
-        assertEquals("Wrong offset for line $stackTraceElement", expectedOffset, descriptor.offset)
+
+        // TODO compare virtual files
+        assertEquals("Wrong result for line $stackTraceElement", expectedFileName + ":" + expectedOffset, descriptor.file.name + ":" + descriptor.offset)
     }
 }
