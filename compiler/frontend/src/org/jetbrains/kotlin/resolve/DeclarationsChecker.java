@@ -683,9 +683,6 @@ public class DeclarationsChecker {
             if (!error && property.getTypeReference() == null) {
                 trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(property));
             }
-            if (inTrait && property.hasModifier(KtTokens.FINAL_KEYWORD) && backingFieldRequired) {
-                trace.report(FINAL_PROPERTY_IN_INTERFACE.on(property));
-            }
             return;
         }
 

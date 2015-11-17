@@ -361,7 +361,6 @@ public interface Errors {
     DiagnosticFactory0<KtExpression> EXTENSION_PROPERTY_WITH_BACKING_FIELD = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtExpression> PROPERTY_INITIALIZER_NO_BACKING_FIELD = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtExpression> PROPERTY_INITIALIZER_IN_INTERFACE = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<KtProperty> FINAL_PROPERTY_IN_INTERFACE = DiagnosticFactory0.create(ERROR, FINAL_MODIFIER);
     DiagnosticFactory0<KtProperty> PRIVATE_PROPERTY_IN_INTERFACE = DiagnosticFactory0.create(ERROR, PRIVATE_MODIFIER);
     DiagnosticFactory0<KtProperty> BACKING_FIELD_IN_INTERFACE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
 
