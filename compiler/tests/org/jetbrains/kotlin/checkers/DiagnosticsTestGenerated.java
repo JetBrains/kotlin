@@ -14961,6 +14961,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ifExprNonNull.kt")
+            public void testIfExprNonNull() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/ifExprNonNull.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("implicitReceiver.kt")
             public void testImplicitReceiver() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/implicitReceiver.kt");
@@ -15288,6 +15294,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("varInsideLocalFun.kt")
             public void testVarInsideLocalFun() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varInsideLocalFun.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("whenExprNonNull.kt")
+            public void testWhenExprNonNull() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/whenExprNonNull.kt");
                 doTest(fileName);
             }
 

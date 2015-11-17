@@ -114,6 +114,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
         Set<KotlinType> expressionTypes = Sets.newHashSet();
         DataFlowInfo commonDataFlowInfo = null;
         DataFlowInfo elseDataFlowInfo = context.dataFlowInfo;
+        DataFlowValue whenValue = DataFlowValueFactory.createDataFlowValue(expression, components.builtIns.getNullableAnyType(), context);
         for (KtWhenEntry whenEntry : expression.getEntries()) {
             DataFlowInfos infosForCondition = getDataFlowInfosForEntryCondition(
                     whenEntry, context.replaceDataFlowInfo(elseDataFlowInfo), subjectExpression, subjectType, subjectDataFlowValue);
@@ -131,6 +132,8 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
                 KotlinType type = typeInfo.getType();
                 if (type != null) {
                     expressionTypes.add(type);
+                    DataFlowValue entryValue = DataFlowValueFactory.createDataFlowValue(bodyExpression, type, context);
+                    typeInfo = typeInfo.replaceDataFlowInfo(typeInfo.getDataFlowInfo().assign(whenValue, entryValue));
                 }
                 if (commonDataFlowInfo == null) {
                     commonDataFlowInfo = typeInfo.getDataFlowInfo();
@@ -150,9 +153,14 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             commonDataFlowInfo = commonDataFlowInfo.or(context.dataFlowInfo);
         }
 
+        KotlinType resultType = expressionTypes.isEmpty() ? null : CommonSupertypes.commonSupertype(expressionTypes);
+        if (resultType != null) {
+            DataFlowValue resultValue = DataFlowValueFactory.createDataFlowValue(expression, resultType, context);
+            commonDataFlowInfo = commonDataFlowInfo.assign(resultValue, whenValue);
+        }
         return TypeInfoFactoryKt.createTypeInfo(expressionTypes.isEmpty() ? null : components.dataFlowAnalyzer.checkType(
                                                              components.dataFlowAnalyzer.checkImplicitCast(
-                                                                     CommonSupertypes.commonSupertype(expressionTypes), expression,
+                                                                     resultType, expression,
                                                                      contextWithExpectedType, isStatement),
                                                              expression, contextWithExpectedType),
                                                 commonDataFlowInfo,

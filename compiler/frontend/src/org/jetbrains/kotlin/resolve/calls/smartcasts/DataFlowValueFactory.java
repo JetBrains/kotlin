@@ -96,6 +96,10 @@ public class DataFlowValueFactory {
                                      Nullability.NOT_NULL);
         }
 
+        if (expression instanceof KtBlockExpression || expression instanceof KtIfExpression || expression instanceof KtWhenExpression) {
+            return createDataFlowValueForComplexExpression(expression, type);
+        }
+
         IdentifierInfo result = getIdForStableIdentifier(expression, bindingContext, containingDeclarationOrModule);
         return new DataFlowValue(result == NO_IDENTIFIER_INFO ? expression : result.id,
                                  type,
@@ -153,6 +157,14 @@ public class DataFlowValueFactory {
                                  variableKind(variableDescriptor, usageContainingModule,
                                               bindingContext, property),
                                  getImmanentNullability(type));
+    }
+
+    @NotNull
+    private static DataFlowValue createDataFlowValueForComplexExpression(
+            @NotNull KtExpression expression,
+            @NotNull KotlinType type
+    ) {
+        return new DataFlowValue(expression, type, Kind.STABLE_COMPLEX_EXPRESSION, getImmanentNullability(type));
     }
 
     @NotNull
