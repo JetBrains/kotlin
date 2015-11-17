@@ -2,7 +2,7 @@
 package a
 
 interface T {
-    <!FINAL_FUNCTION_WITH_NO_BODY, WRONG_MODIFIER_CONTAINING_DECLARATION!>final<!> fun foo()
+    <!WRONG_MODIFIER_CONTAINING_DECLARATION!>final<!> fun foo()
     <!WRONG_MODIFIER_CONTAINING_DECLARATION!>final<!> val b : Int
 
     <!WRONG_MODIFIER_CONTAINING_DECLARATION!>final<!> fun bar() {}

@@ -70,7 +70,6 @@ public class QuickFixRegistrar : QuickFixContributor {
         MUST_BE_INITIALIZED_OR_BE_ABSTRACT.registerFactory(InitializePropertyQuickFixFactory)
         MUST_BE_INITIALIZED.registerFactory(InitializePropertyQuickFixFactory)
 
-        val removeFinalModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(FINAL_KEYWORD)
         val addAbstractToClassFactory = AddModifierFix.createFactory(ABSTRACT_KEYWORD, javaClass<KtClass>())
         ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.registerFactory(removeAbstractModifierFactory, addAbstractToClassFactory)
 
@@ -78,8 +77,6 @@ public class QuickFixRegistrar : QuickFixContributor {
 
         val removeFunctionBodyFactory = RemoveFunctionBodyFix.createFactory()
         ABSTRACT_FUNCTION_WITH_BODY.registerFactory(removeAbstractModifierFactory, removeFunctionBodyFactory)
-
-        FINAL_FUNCTION_WITH_NO_BODY.registerFactory(removeFinalModifierFactory)
 
         val addFunctionBodyFactory = AddFunctionBodyFix.createFactory()
         NON_ABSTRACT_FUNCTION_WITH_NO_BODY.registerFactory(addAbstractModifierFactory, addFunctionBodyFactory)

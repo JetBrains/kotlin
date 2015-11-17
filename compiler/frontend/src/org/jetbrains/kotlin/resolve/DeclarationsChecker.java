@@ -751,9 +751,6 @@ public class DeclarationsChecker {
                 trace.report(ABSTRACT_FUNCTION_WITH_BODY.on(function, functionDescriptor));
             }
             if (!hasBody && inTrait) {
-                if (function.hasModifier(KtTokens.FINAL_KEYWORD) && !hasExternalModifier) {
-                    trace.report(FINAL_FUNCTION_WITH_NO_BODY.on(function, functionDescriptor));
-                }
                 if (function.hasModifier(KtTokens.PRIVATE_KEYWORD)) {
                     trace.report(PRIVATE_FUNCTION_WITH_NO_BODY.on(function, functionDescriptor));
                 }

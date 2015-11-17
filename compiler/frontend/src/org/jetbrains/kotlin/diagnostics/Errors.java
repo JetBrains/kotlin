@@ -381,7 +381,6 @@ public interface Errors {
     DiagnosticFactory1<KtFunction, SimpleFunctionDescriptor> ABSTRACT_FUNCTION_WITH_BODY = DiagnosticFactory1.create(ERROR, ABSTRACT_MODIFIER);
     DiagnosticFactory1<KtFunction, SimpleFunctionDescriptor> NON_ABSTRACT_FUNCTION_WITH_NO_BODY =
             DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE);
-    DiagnosticFactory1<KtFunction, SimpleFunctionDescriptor> FINAL_FUNCTION_WITH_NO_BODY = DiagnosticFactory1.create(ERROR, FINAL_MODIFIER);
     DiagnosticFactory1<KtFunction, SimpleFunctionDescriptor> PRIVATE_FUNCTION_WITH_NO_BODY = DiagnosticFactory1.create(ERROR, PRIVATE_MODIFIER);
 
     DiagnosticFactory1<KtFunction, SimpleFunctionDescriptor> NON_MEMBER_FUNCTION_NO_BODY =

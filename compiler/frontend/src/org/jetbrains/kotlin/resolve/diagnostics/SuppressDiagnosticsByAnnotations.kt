@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
 
 public val FUNCTION_NO_BODY_ERRORS: List<DiagnosticFactory1<KtFunction, SimpleFunctionDescriptor>> =
-        listOf(Errors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY, Errors.NON_MEMBER_FUNCTION_NO_BODY, Errors.FINAL_FUNCTION_WITH_NO_BODY)
+        listOf(Errors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY, Errors.NON_MEMBER_FUNCTION_NO_BODY)
 
 public val PROPERTY_NOT_INITIALIZED_ERRORS: List<DiagnosticFactory0<KtProperty>> =
         listOf(Errors.MUST_BE_INITIALIZED, Errors.MUST_BE_INITIALIZED_OR_BE_ABSTRACT)
