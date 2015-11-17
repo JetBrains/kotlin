@@ -1,4 +1,4 @@
-class KotlinClass : JavaClass<String>() {
+internal class KotlinClass : JavaClass<String>() {
     fun doIt(): String {
         var result = ""
         execute("") {

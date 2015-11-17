@@ -3,4 +3,4 @@
 // ACTION: Convert to block body
 // ERROR: Unresolved reference: Foo
 
-fun test(): A = <caret>Foo(2, "2")
+internal fun test(): A = <caret>Foo(2, "2")

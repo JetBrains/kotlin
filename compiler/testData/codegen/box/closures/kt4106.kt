@@ -1,5 +1,5 @@
 class Foo(private val s: String) {
-    private inner class Inner {
+    inner class Inner {
         private val x = {
             this@Foo.s
         }()

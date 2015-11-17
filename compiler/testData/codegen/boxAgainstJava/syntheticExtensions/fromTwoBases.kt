@@ -2,4 +2,4 @@ fun box(): String {
     return f(JavaClass())
 }
 
-fun f(c: C) = c.ok
+internal fun f(c: C) = c.ok

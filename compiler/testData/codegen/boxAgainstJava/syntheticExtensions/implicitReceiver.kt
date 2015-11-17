@@ -2,7 +2,7 @@ fun box(): String {
     return JavaClass().doIt()
 }
 
-fun JavaClass.doIt(): String {
+internal fun JavaClass.doIt(): String {
     x = "OK"
     return x
 }

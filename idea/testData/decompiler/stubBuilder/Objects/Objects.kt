@@ -20,7 +20,7 @@ public object Objects {
         }
     }
 
-    internal open class NestedClass
+    public open class NestedClass
 
 
 }

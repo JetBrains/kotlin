@@ -5,3 +5,6 @@ Cannot access 'InternalClass2': it is 'internal' in 'test' at line 19, column 15
 Cannot access 'InternalClassAnnotation': it is 'internal' in 'test' at line 10, column 2
 Cannot access 'InternalFileAnnotation': it is 'internal' in 'test' at line 1, column 7
 Cannot access 'member': it is 'invisible_fake' in 'ClassAA1' at line 27, column 25
+Subclass effective visibility 'public' should be the same or less permissive than its superclass effective visibility 'internal' at line 18, column 36
+Subclass effective visibility 'public' should be the same or less permissive than its superclass effective visibility 'internal' at line 19, column 15
+Subclass effective visibility 'public' should be the same or less permissive than its superclass effective visibility 'internal' at line 8, column 36

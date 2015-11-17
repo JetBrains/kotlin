@@ -43,7 +43,7 @@ PsiJetFileStubImpl[package=]
                   REFERENCE_EXPRESSION:[referencedName=kotlin]
                 REFERENCE_EXPRESSION:[referencedName=Unit]
       CLASS:[fqName=Objects.NestedClass, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=NestedClass, superNames=[]]
-        MODIFIER_LIST:[open internal]
+        MODIFIER_LIST:[open public]
         PRIMARY_CONSTRUCTOR:
           MODIFIER_LIST:[public]
           VALUE_PARAMETER_LIST:

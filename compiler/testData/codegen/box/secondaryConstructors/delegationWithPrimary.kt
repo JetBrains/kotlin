@@ -6,7 +6,7 @@ internal class B : A {
     override fun foo() = "OK"
 }
 
-val global = B()
+internal val global = B()
 
 internal class C(x: Int) : A by global {
     constructor(): this(1)

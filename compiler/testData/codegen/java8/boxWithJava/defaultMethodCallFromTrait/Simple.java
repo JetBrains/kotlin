@@ -1,4 +1,4 @@
-interface Simple {
+public interface Simple {
     default String test(String s) {
         return s + "K";
     }

@@ -24,7 +24,7 @@ public class M {
     public fun applyM<T>(arg: T, func: (T)->T): T = func(arg)
 }
 
-private class N {
+internal class N {
     inline
     public fun applyN<T>(arg: T, func: (T)->T): T = func(arg)
 }

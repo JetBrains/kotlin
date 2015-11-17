@@ -1,6 +1,6 @@
 // "Create secondary constructor" "true"
 // ERROR: Too many arguments for public/*package*/ constructor J() defined in J
 
-class B: J(1) {
+internal class B: J(1) {
 
 }

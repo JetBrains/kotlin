@@ -9,7 +9,7 @@ class ListBinarySearchTest {
 
     fun notFound(index: Int) = -(index + 1)
 
-    val comparator = compareBy<IncomparableDataItem<Int>?> { it?.value }
+    private val comparator = compareBy<IncomparableDataItem<Int>?> { it?.value }
 
     @Test
     fun binarySearchByElement() {
