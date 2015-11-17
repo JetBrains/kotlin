@@ -92,6 +92,7 @@ class DataFlowValue(val id: Any?, val type: KotlinType, val kind: DataFlowValue.
                 Object(), builtIns.nullableNothingType, Kind.OTHER, Nullability.NULL
         )
 
+        @JvmField
         val ERROR = DataFlowValue(Object(), ErrorUtils.createErrorType("Error type for data flow"), Kind.OTHER, Nullability.IMPOSSIBLE)
     }
 }
