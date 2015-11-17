@@ -16,22 +16,21 @@
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction
 
-import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.psi.PsiFile
 import com.intellij.openapi.editor.Editor
-import com.intellij.psi.PsiElement
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.refactoring.RefactoringActionHandler
 import org.jetbrains.kotlin.idea.core.refactoring.getExtractionContainers
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui.KotlinExtractFunctionDialog
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtBlockExpression
-import kotlin.test.fail
-import org.jetbrains.kotlin.psi.KtFunctionLiteral
-import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
-import org.jetbrains.kotlin.idea.refactoring.introduce.*
+import org.jetbrains.kotlin.idea.refactoring.introduce.selectElementsWithTargetSibling
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
+import org.jetbrains.kotlin.psi.KtBlockExpression
+import org.jetbrains.kotlin.psi.KtFile
+import kotlin.test.fail
 
 public class ExtractKotlinFunctionHandler(
         public val allContainersEnabled: Boolean = false,
@@ -63,7 +62,7 @@ public class ExtractKotlinFunctionHandler(
         }
     }
 
-    fun selectElements(editor: Editor, file: PsiFile, continuation: (elements: List<PsiElement>, targetSibling: PsiElement) -> Unit) {
+    fun selectElements(editor: Editor, file: KtFile, continuation: (elements: List<PsiElement>, targetSibling: PsiElement) -> Unit) {
         selectElementsWithTargetSibling(
                 EXTRACT_FUNCTION,
                 editor,

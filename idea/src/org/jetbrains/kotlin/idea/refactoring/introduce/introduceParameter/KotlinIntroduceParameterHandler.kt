@@ -171,7 +171,7 @@ private fun isObjectOrNonInnerClass(e: PsiElement): Boolean = e is KtObjectDecla
 
 fun selectNewParameterContext(
         editor: Editor,
-        file: PsiFile,
+        file: KtFile,
         continuation: (elements: List<PsiElement>, targetParent: PsiElement) -> Unit
 ) {
     selectElementsWithTargetParent(

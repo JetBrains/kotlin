@@ -579,6 +579,7 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
     }
 
     override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext) {
+        if (file !is KtFile) return
         try {
             KotlinRefactoringUtil.selectExpression(editor, file) { doRefactoring(project, editor, it, null, null) }
         }
