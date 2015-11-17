@@ -598,7 +598,7 @@ public class InlineCodegen extends CallGenerator {
         CodegenContext parent = getContext(descriptor.getContainingDeclaration(), state, sourceFile);
 
         if (descriptor instanceof ScriptDescriptor) {
-            List<ScriptDescriptor> earlierScripts = state.getEarlierScriptsForReplInterpreter();
+            List<ScriptDescriptor> earlierScripts = state.getReplSpecific().getEarlierScriptsForReplInterpreter();
             return parent.intoScript((ScriptDescriptor) descriptor,
                                      earlierScripts == null ? Collections.emptyList() : earlierScripts,
                                      (ClassDescriptor) descriptor, state.getTypeMapper());

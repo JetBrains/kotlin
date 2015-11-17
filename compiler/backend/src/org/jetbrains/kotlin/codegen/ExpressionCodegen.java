@@ -311,11 +311,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     public void gen(KtElement expr, Type type) {
         StackValue value = Type.VOID_TYPE.equals(type) ? genStatement(expr) : gen(expr);
         // for repl store the result of the last line into special field
-        if (value.type != Type.VOID_TYPE && state.getShouldGenerateScriptResultValue()) {
+        if (value.type != Type.VOID_TYPE && state.getReplSpecific().getShouldGenerateScriptResultValue()) {
             ScriptContext context = getScriptContext();
             if (expr == context.getLastStatement()) {
                 StackValue.Field resultValue = StackValue.field(context.getResultFieldInfo(), StackValue.LOCAL_0);
                 resultValue.store(value, v);
+                state.getReplSpecific().setHasResult(true);
                 return;
             }
         }

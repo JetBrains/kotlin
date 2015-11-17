@@ -56,7 +56,7 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
 
         ClassBuilder builder = state.getFactory().newVisitor(JvmDeclarationOriginKt.OtherOrigin(declaration, scriptDescriptor),
                                                              classType, declaration.getContainingFile());
-        List<ScriptDescriptor> earlierScripts = state.getEarlierScriptsForReplInterpreter();
+        List<ScriptDescriptor> earlierScripts = state.getReplSpecific().getEarlierScriptsForReplInterpreter();
         ScriptContext scriptContext = parentContext.intoScript(
                 scriptDescriptor,
                 earlierScripts == null ? Collections.<ScriptDescriptor>emptyList() : earlierScripts,
@@ -115,7 +115,7 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
     ) {
         JvmMethodSignature jvmSignature = typeMapper.mapScriptSignature(scriptDescriptor, context.getEarlierScripts());
 
-        if (state.getShouldGenerateScriptResultValue()) {
+        if (state.getReplSpecific().getShouldGenerateScriptResultValue()) {
             FieldInfo resultFieldInfo = context.getResultFieldInfo();
             classBuilder.newField(
                     JvmDeclarationOrigin.NO_ORIGIN,

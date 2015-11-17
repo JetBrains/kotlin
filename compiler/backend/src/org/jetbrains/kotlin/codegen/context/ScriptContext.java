@@ -67,9 +67,9 @@ public class ScriptContext extends ClassContext {
 
     @NotNull
     public FieldInfo getResultFieldInfo() {
-        assert getState().getShouldGenerateScriptResultValue() : "Should not be called unless 'scriptResultFieldName' is set";
+        assert getState().getReplSpecific().getShouldGenerateScriptResultValue() : "Should not be called unless 'scriptResultFieldName' is set";
         GenerationState state = getState();
-        String scriptResultFieldName = state.getScriptResultFieldName();
+        String scriptResultFieldName = state.getReplSpecific().getScriptResultFieldName();
         assert scriptResultFieldName != null;
         return FieldInfo.createForHiddenField(state.getTypeMapper().mapClass(scriptDescriptor), AsmTypes.OBJECT_TYPE, scriptResultFieldName);
     }

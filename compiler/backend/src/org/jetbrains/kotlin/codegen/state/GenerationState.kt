@@ -100,14 +100,21 @@ public class GenerationState @JvmOverloads constructor(
     public val samWrapperClasses: SamWrapperClasses = SamWrapperClasses(this)
     public val inlineCycleReporter: InlineCycleReporter = InlineCycleReporter(diagnostics)
     public val mappingsClassesForWhenByEnum: MappingsClassesForWhenByEnum = MappingsClassesForWhenByEnum(this)
-    public var earlierScriptsForReplInterpreter: List<ScriptDescriptor>? = null
-    public var scriptResultFieldName: String? = null
-    public val shouldGenerateScriptResultValue: Boolean get() = scriptResultFieldName != null
     public val reflectionTypes: ReflectionTypes = ReflectionTypes(module)
     public val jvmRuntimeTypes: JvmRuntimeTypes = JvmRuntimeTypes()
     public val factory: ClassFileFactory
     private val interceptedBuilderFactory: ClassBuilderFactory
     private var used = false
+
+    public val replSpecific = ForRepl()
+
+    //TODO: should be refactored out
+    public class ForRepl {
+        public var earlierScriptsForReplInterpreter: List<ScriptDescriptor>? = null
+        public var scriptResultFieldName: String? = null
+        public val shouldGenerateScriptResultValue: Boolean get() = scriptResultFieldName != null
+        public var hasResult: Boolean = false
+    }
 
     public val isCallAssertionsEnabled: Boolean = !disableCallAssertions
         @JvmName("isCallAssertionsEnabled") get

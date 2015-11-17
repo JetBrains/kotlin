@@ -352,7 +352,7 @@ public class ReplInterpreter {
 
             earlierLines.add(new EarlierLine(line, scriptDescriptor, scriptClass, scriptInstance, scriptClassType));
 
-            return LineResult.successful(rv, false);
+            return LineResult.successful(rv, !state.getReplSpecific().getHasResult());
         }
         catch (Throwable e) {
             @SuppressWarnings("UseOfSystemOutOrSystemErr")
@@ -431,7 +431,7 @@ public class ReplInterpreter {
             ScriptDescriptor earlierDescriptor = pair.first;
             earlierScriptDescriptors.add(earlierDescriptor);
         }
-        state.setEarlierScriptsForReplInterpreter(earlierScriptDescriptors);
+        state.getReplSpecific().setEarlierScriptsForReplInterpreter(earlierScriptDescriptors);
     }
 
     public static void compileScript(
@@ -440,7 +440,7 @@ public class ReplInterpreter {
             @NotNull GenerationState state,
             @NotNull CompilationErrorHandler errorHandler
     ) {
-        state.setScriptResultFieldName(SCRIPT_RESULT_FIELD_NAME);
+        state.getReplSpecific().setScriptResultFieldName(SCRIPT_RESULT_FIELD_NAME);
         registerEarlierScripts(state, earlierScripts);
 
         state.beforeCompile();
