@@ -16,8 +16,8 @@ class E private constructor() {
     }
 }
 
-val a = <!INVISIBLE_MEMBER, FUNCTION_CALL_EXPECTED!>A<!>
+val a = <!NO_COMPANION_OBJECT!>A<!>
 <!EXPOSED_PROPERTY_TYPE!>val b = <!INVISIBLE_MEMBER!>B<!><!>
-val c = <!NO_VALUE_FOR_PARAMETER, FUNCTION_CALL_EXPECTED!>C<!>
+val c = <!NO_COMPANION_OBJECT!>C<!>
 val d = D
 val e = E(42)
