@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.types.lowerIfFlexible
 import org.jetbrains.org.objectweb.asm.Label
@@ -248,7 +250,7 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
         context.generateClearCacheFunction()
 
         if (androidClassType.fragment) {
-            val classMembers = descriptor.unsubstitutedMemberScope.getContributedDescriptors()
+            val classMembers = descriptor.unsubstitutedMemberScope.getDescriptorsWithReflection()
             val onDestroy = classMembers.firstOrNull { it is FunctionDescriptor && it.isOnDestroyFunction() }
             if (onDestroy == null) {
                 context.generateOnDestroyFunctionForFragment()
@@ -256,6 +258,18 @@ public class AndroidExpressionCodegenExtension : ExpressionCodegenExtension {
         }
 
         classBuilder.newField(JvmDeclarationOrigin.NO_ORIGIN, ACC_PRIVATE, PROPERTY_NAME, "Ljava/util/HashMap;", null, null)
+    }
+
+    private fun MemberScope.getDescriptorsWithReflection(): Collection<DeclarationDescriptor> {
+        val gcDescriptorsMethod = javaClass.declaredMethods.firstOrNull { it.name == "getContributedDescriptors" } ?: return emptyList()
+        val memberScopeCompanionClass = MemberScope.Companion::class.java
+        val allNameFilterField = memberScopeCompanionClass.declaredMethods.firstOrNull { it.name == "getALL_NAME_FILTER" }
+                                 ?: return emptyList()
+        val memberScopeCompanion = memberScopeCompanionClass.getDeclaredField("INSTANCE").get(null)
+        val allNameFilter = allNameFilterField.invoke(memberScopeCompanion)
+
+        @Suppress("UNCHECKED_CAST")
+        return gcDescriptorsMethod.invoke(this, DescriptorKindFilter.ALL, allNameFilter) as? Collection<DeclarationDescriptor> ?: emptyList()
     }
 
     private fun FunctionDescriptor.isOnDestroyFunction(): Boolean {
