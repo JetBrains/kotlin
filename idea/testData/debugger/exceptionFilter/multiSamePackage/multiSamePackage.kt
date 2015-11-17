@@ -1,6 +1,9 @@
 package multiSameName
 
-fun foo(x: Int) {
+fun box() {
     val f = { null!! }
     f()
 }
+
+// FILE: multiSamePackage.kt
+// LINE: 4

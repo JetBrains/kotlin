@@ -35,6 +35,12 @@ public class KotlinExceptionFilterTestGenerated extends AbstractKotlinExceptionF
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/exceptionFilter"), Pattern.compile("^([^\\.]+)$"), false);
     }
 
+    @TestMetadata("breakpointReachedAt")
+    public void testBreakpointReachedAt() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/exceptionFilter/breakpointReachedAt/");
+        doTest(fileName);
+    }
+
     @TestMetadata("inlineFunctionAnotherFile")
     public void testInlineFunctionAnotherFile() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/exceptionFilter/inlineFunctionAnotherFile/");
@@ -44,6 +50,36 @@ public class KotlinExceptionFilterTestGenerated extends AbstractKotlinExceptionF
     @TestMetadata("inlineFunctionSameFile")
     public void testInlineFunctionSameFile() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/exceptionFilter/inlineFunctionSameFile/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kotlinClass")
+    public void testKotlinClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/exceptionFilter/kotlinClass/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kt2489")
+    public void testKt2489() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/exceptionFilter/kt2489/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("kt2489_2")
+    public void testKt2489_2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/exceptionFilter/kt2489_2/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("multiSamePackage")
+    public void testMultiSamePackage() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/exceptionFilter/multiSamePackage/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("simple")
+    public void testSimple() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/exceptionFilter/simple/");
         doTest(fileName);
     }
 }

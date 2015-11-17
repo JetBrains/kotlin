@@ -1,6 +1,6 @@
 package multiSameName
 
-fun foo() {
+fun box(x: Int) {
     val f = { null!! }
     f()
 }
