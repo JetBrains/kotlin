@@ -22,6 +22,7 @@ import kotlin.reflect.*;
  * This class serves as a facade to the actual reflection implementation. JVM back-end generates calls to static methods of this class
  * on any reflection-using construct.
  */
+@SuppressWarnings("unused")
 public class Reflection {
     private static final ReflectionFactory factory;
 
@@ -103,23 +104,5 @@ public class Reflection {
 
     public static KMutableProperty2 mutableProperty2(MutablePropertyReference2 p) {
         return factory.mutableProperty2(p);
-    }
-
-    // Deprecated
-    // TODO: drop before 1.0
-
-    @Deprecated
-    public static KPackage createKotlinPackage(Class javaClass, String moduleName) {
-        return (KPackage) factory.getOrCreateKotlinPackage(javaClass, moduleName);
-    }
-
-    @Deprecated
-    public static KClass foreignKotlinClass(Class javaClass) {
-        return getOrCreateKotlinClass(javaClass);
-    }
-
-    @Deprecated
-    public static KClass[] foreignKotlinClasses(Class[] javaClasses) {
-        return getOrCreateKotlinClasses(javaClasses);
     }
 }

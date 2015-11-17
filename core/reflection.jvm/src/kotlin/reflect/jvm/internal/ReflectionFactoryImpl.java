@@ -87,16 +87,4 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
     public KMutableProperty2 mutableProperty2(MutablePropertyReference2 p) {
         return p instanceof MutablePropertyReference2Impl ? new KMutableProperty2Augmented(p) : new KMutableProperty2FromReferenceImpl(p);
     }
-
-    // Deprecated
-
-    @Override
-    public KClass foreignKotlinClass(Class javaClass) {
-        return getOrCreateKotlinClass(javaClass);
-    }
-
-    @Override
-    public KPackage createKotlinPackage(Class javaClass, String moduleName) {
-        return new KPackageImpl(javaClass, moduleName);
-    }
 }
