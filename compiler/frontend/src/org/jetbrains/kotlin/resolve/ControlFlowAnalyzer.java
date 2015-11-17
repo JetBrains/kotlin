@@ -46,6 +46,9 @@ public class ControlFlowAnalyzer {
         for (KtClassOrObject aClass : c.getDeclaredClasses().keySet()) {
             checkDeclarationContainer(c, aClass);
         }
+        for (KtScript script : c.getScripts().keySet()) {
+            checkDeclarationContainer(c, script);
+        }
         for (KtSecondaryConstructor constructor : c.getSecondaryConstructors().keySet()) {
             checkSecondaryConstructor(constructor);
         }

@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
+import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.utils.addToStdlib.check
 
@@ -491,8 +492,7 @@ public class ResolveElementCache(
     private fun initializerAdditionalResolve(resolveSession: ResolveSession, classInitializer: KtClassInitializer, file: KtFile, statementFilter: StatementFilter): BindingTrace {
         val trace = createDelegatingTrace(classInitializer)
 
-        val classOrObject = classInitializer.getParentOfType<KtClassOrObject>(true)!!
-        val classOrObjectDescriptor = resolveSession.resolveToDescriptor(classOrObject) as LazyClassDescriptor
+        val classOrObjectDescriptor = resolveSession.resolveToDescriptor(classInitializer.containingDeclaration) as LazyClassDescriptor
 
         val bodyResolver = createBodyResolver(resolveSession, trace, file, statementFilter)
         bodyResolver.resolveAnonymousInitializer(DataFlowInfo.EMPTY, classInitializer, classOrObjectDescriptor)
@@ -550,7 +550,7 @@ public class ResolveElementCache(
 
         override fun getDeclaringScope(declaration: KtDeclaration): LexicalScope? = declaringScopes(declaration)
 
-        override fun getScripts(): MutableMap<KtScript, ScriptDescriptor> = hashMapOf()
+        override fun getScripts(): MutableMap<KtScript, LazyScriptDescriptor> = hashMapOf()
 
         override fun getOuterDataFlowInfo(): DataFlowInfo = DataFlowInfo.EMPTY
 

@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
+import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker
 import java.util.*
 
@@ -69,26 +70,22 @@ public class LazyTopDownAnalyzer(
                     throw IllegalArgumentException("Unsupported declaration: " + dcl + " " + dcl.getText())
                 }
 
+                override fun visitScript(script: KtScript) {
+                    c.getScripts().put(
+                            script,
+                            lazyDeclarationResolver.getScriptDescriptor(script, KotlinLookupLocation(script)) as LazyScriptDescriptor
+                    )
+                    registerDeclarations(script.declarations)
+                }
+
                 override fun visitKtFile(file: KtFile) {
-                    if (file.isScript()) {
-                        val script = file.getScript() ?: throw AssertionError("getScript() is null for file: $file")
-
-                        DescriptorResolver.registerFileInPackage(trace, file)
-                        c.getScripts().put(script, topLevelDescriptorProvider.getScriptDescriptor(script))
-                    }
-                    else {
-                        val packageDirective = file.getPackageDirective()
-                        assert(packageDirective != null) { "No package in a non-script file: " + file }
-
-                        c.addFile(file)
-
-                        packageDirective!!.accept(this)
-                        DescriptorResolver.registerFileInPackage(trace, file)
-
-                        registerDeclarations(file.getDeclarations())
-
-                        topLevelFqNames.put(file.getPackageFqName(), packageDirective)
-                    }
+                    DescriptorResolver.registerFileInPackage(trace, file)
+                    registerDeclarations(file.declarations)
+                    val packageDirective = file.packageDirective
+                    assert(file.isScript || packageDirective != null) { "No package in a non-script file: " + file }
+                    packageDirective?.accept(this)
+                    c.addFile(file)
+                    topLevelFqNames.put(file.packageFqName, packageDirective)
                 }
 
                 override fun visitPackageDirective(directive: KtPackageDirective) {
@@ -158,8 +155,8 @@ public class LazyTopDownAnalyzer(
                 }
 
                 override fun visitAnonymousInitializer(initializer: KtClassInitializer) {
-                    val classOrObject = PsiTreeUtil.getParentOfType<KtClassOrObject>(initializer, javaClass<KtClassOrObject>())!!
-                    c.getAnonymousInitializers().put(initializer, lazyDeclarationResolver.resolveToDescriptor(classOrObject) as ClassDescriptorWithResolutionScopes)
+                    val containerDescriptor = lazyDeclarationResolver.resolveToDescriptor(initializer.containingDeclaration) as ClassDescriptorWithResolutionScopes
+                    c.getAnonymousInitializers().put(initializer, containerDescriptor)
                 }
 
                 override fun visitTypedef(typedef: KtTypedef) {

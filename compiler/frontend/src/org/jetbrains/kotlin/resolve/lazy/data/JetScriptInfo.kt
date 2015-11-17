@@ -34,14 +34,5 @@ public class JetScriptInfo(
     override fun getPrimaryConstructorParameters() = listOf<KtParameter>()
     override fun getClassKind() = ClassKind.CLASS
     override fun getDeclarations() = script.getDeclarations()
-            .filter(::shouldBeScriptClassMember)
     override fun getDanglingAnnotations() = listOf<KtAnnotationEntry>()
-}
-
-public fun shouldBeScriptClassMember(declaration: KtDeclaration): Boolean {
-    // To avoid the necessity to always analyze the whole body of a script even if just its class descriptor is needed
-    // we only add those vals, vars and funs that have explicitly specified return types
-    // (or implicit Unit for function with block body)
-    return declaration is KtCallableDeclaration && declaration.getTypeReference() != null
-           || declaration is KtNamedFunction && declaration.hasBlockBody()
 }

@@ -213,7 +213,7 @@ public interface BindingContext {
 
     WritableSlice[] DECLARATIONS_TO_DESCRIPTORS = new WritableSlice[] {
             CLASS, TYPE_PARAMETER, FUNCTION, CONSTRUCTOR, VARIABLE, VALUE_PARAMETER, PROPERTY_ACCESSOR,
-            PRIMARY_CONSTRUCTOR_PARAMETER
+            PRIMARY_CONSTRUCTOR_PARAMETER, SCRIPT
     };
 
     @SuppressWarnings("unchecked")

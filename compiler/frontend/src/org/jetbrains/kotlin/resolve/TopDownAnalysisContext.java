@@ -18,13 +18,13 @@ package org.jetbrains.kotlin.resolve;
 
 import com.google.common.collect.Maps;
 import kotlin.CollectionsKt;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.lazy.DeclarationScopeProvider;
+import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 
 import java.io.PrintStream;
@@ -47,7 +47,7 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
     private final Map<KtParameter, PropertyDescriptor> primaryConstructorParameterProperties = Maps.newHashMap();
     private Map<KtCallableDeclaration, CallableMemberDescriptor> members = null;
 
-    private final Map<KtScript, ScriptDescriptor> scripts = Maps.newLinkedHashMap();
+    private final Map<KtScript, LazyScriptDescriptor> scripts = Maps.newLinkedHashMap();
 
     private final TopDownAnalysisMode topDownAnalysisMode;
     private final DeclarationScopeProvider declarationScopeProvider;
@@ -115,7 +115,7 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
 
     @Override
     @NotNull
-    public Map<KtScript, ScriptDescriptor> getScripts() {
+    public Map<KtScript, LazyScriptDescriptor> getScripts() {
         return scripts;
     }
 
@@ -158,15 +158,6 @@ public class TopDownAnalysisContext implements BodiesResolveContext {
 
     @NotNull
     public Collection<ClassDescriptorWithResolutionScopes> getAllClasses() {
-        Collection<ClassDescriptorWithResolutionScopes> scriptClasses = CollectionsKt.map(
-                getScripts().values(),
-                new Function1<ScriptDescriptor, ClassDescriptorWithResolutionScopes>() {
-                    @Override
-                    public ClassDescriptorWithResolutionScopes invoke(ScriptDescriptor scriptDescriptor) {
-                        return (ClassDescriptorWithResolutionScopes) scriptDescriptor.getClassDescriptor();
-                    }
-                }
-        );
-        return CollectionsKt.plus(getDeclaredClasses().values(), scriptClasses);
+        return CollectionsKt.plus(getDeclaredClasses().values(), getScripts().values());
     }
 }

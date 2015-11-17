@@ -17,24 +17,11 @@
 package org.jetbrains.kotlin.descriptors;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.descriptors.impl.ScriptCodeDescriptor;
-import org.jetbrains.kotlin.name.Name;
 
-public interface ScriptDescriptor extends DeclarationDescriptorNonRoot {
-    String LAST_EXPRESSION_VALUE_FIELD_NAME = "rv";
-    Name NAME = Name.special("<script>");
-
+public interface ScriptDescriptor extends ClassDescriptor {
     int getPriority();
 
     @NotNull
-    ScriptCodeDescriptor getScriptCodeDescriptor();
-
-    @NotNull
-    ReceiverParameterDescriptor getThisAsReceiverParameter();
-
-    @NotNull
-    ClassDescriptor getClassDescriptor();
-
-    @NotNull
-    PropertyDescriptor getScriptResultProperty();
+    @Override
+    ConstructorDescriptor getUnsubstitutedPrimaryConstructor();
 }

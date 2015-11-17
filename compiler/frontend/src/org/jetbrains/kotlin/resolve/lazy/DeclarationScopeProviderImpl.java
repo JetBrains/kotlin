@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor;
+import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 
 public class DeclarationScopeProviderImpl implements DeclarationScopeProvider {
@@ -70,6 +71,11 @@ public class DeclarationScopeProviderImpl implements DeclarationScopeProvider {
             }
 
             return classDescriptor.getScopeForMemberDeclarationResolution();
+        }
+        //TODO: this is not how it works for classes and for exact parity we can try to use the code above
+        if (parentDeclaration instanceof KtScript) {
+            LazyScriptDescriptor scriptDescriptor = (LazyScriptDescriptor) lazyDeclarationResolver.resolveToDescriptor(parentDeclaration);
+            return scriptDescriptor.getScopeForInitializerResolution();
         }
 
         throw new IllegalStateException("Don't call this method for local declarations: " + ktDeclaration + "\n" +

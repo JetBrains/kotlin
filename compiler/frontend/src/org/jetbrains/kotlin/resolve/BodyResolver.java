@@ -60,7 +60,6 @@ import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class BodyResolver {
-    @NotNull private final ScriptBodyResolver scriptBodyResolverResolver;
     @NotNull private final AnnotationChecker annotationChecker;
     @NotNull private final ExpressionTypingServices expressionTypingServices;
     @NotNull private final CallResolver callResolver;
@@ -82,7 +81,6 @@ public class BodyResolver {
             @NotNull DelegatedPropertyResolver delegatedPropertyResolver,
             @NotNull ExpressionTypingServices expressionTypingServices,
             @NotNull FunctionAnalyzerExtension functionAnalyzerExtension,
-            @NotNull ScriptBodyResolver scriptBodyResolverResolver,
             @NotNull BindingTrace trace,
             @NotNull ValueParameterResolver valueParameterResolver,
             @NotNull AnnotationChecker annotationChecker
@@ -95,7 +93,6 @@ public class BodyResolver {
         this.delegatedPropertyResolver = delegatedPropertyResolver;
         this.expressionTypingServices = expressionTypingServices;
         this.functionAnalyzerExtension = functionAnalyzerExtension;
-        this.scriptBodyResolverResolver = scriptBodyResolverResolver;
         this.annotationChecker = annotationChecker;
         this.trace = new ObservableBindingTrace(trace);
         this.valueParameterResolver = valueParameterResolver;
@@ -111,8 +108,6 @@ public class BodyResolver {
         resolveSecondaryConstructors(c);
 
         resolveFunctionBodies(c);
-
-        scriptBodyResolverResolver.resolveScriptBodies(c);
 
         if (!c.getTopDownAnalysisMode().isLocalDeclarations()) {
             computeDeferredTypes();
@@ -523,7 +518,9 @@ public class BodyResolver {
             if (body != null) {
                 PreliminaryDeclarationVisitor.Companion.createForDeclaration(
                         (KtDeclaration) anonymousInitializer.getParent().getParent(), trace);
-                expressionTypingServices.getType(scopeForInitializers, body, NO_EXPECTED_TYPE, outerDataFlowInfo, trace);
+                expressionTypingServices.getTypeInfo(
+                        scopeForInitializers, body, NO_EXPECTED_TYPE, outerDataFlowInfo, trace, /*isStatement = */true
+                );
             }
             processModifiersOnInitializer(anonymousInitializer, scopeForInitializers);
         }

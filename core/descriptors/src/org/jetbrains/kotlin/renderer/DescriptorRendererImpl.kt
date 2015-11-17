@@ -872,10 +872,6 @@ internal class DescriptorRendererImpl(
 
 
     /* OTHER */
-    private fun renderModuleOrScript(moduleOrScript: DeclarationDescriptor, builder: StringBuilder) {
-        renderName(moduleOrScript, builder)
-    }
-
     private fun renderPackageView(packageView: PackageViewDescriptor, builder: StringBuilder) {
         builder.append(renderKeyword("package")).append(" ")
         builder.append(renderFqName(packageView.fqName.toUnsafe()))
@@ -962,11 +958,11 @@ internal class DescriptorRendererImpl(
         }
 
         override fun visitModuleDeclaration(descriptor: ModuleDescriptor, builder: StringBuilder) {
-            renderModuleOrScript(descriptor, builder)
+            renderName(descriptor, builder)
         }
 
         override fun visitScriptDescriptor(scriptDescriptor: ScriptDescriptor, builder: StringBuilder) {
-            renderModuleOrScript(scriptDescriptor, builder)
+            visitClassDescriptor(scriptDescriptor, builder)
         }
 
         override fun visitClassDescriptor(descriptor: ClassDescriptor, builder: StringBuilder) {

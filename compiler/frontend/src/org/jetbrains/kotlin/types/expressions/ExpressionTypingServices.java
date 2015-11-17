@@ -159,13 +159,6 @@ public class ExpressionTypingServices {
         List<KtExpression> block = StatementFilterKt.filterStatements(statementFilter, expression);
 
         DeclarationDescriptor containingDescriptor = context.scope.getOwnerDescriptor();
-        if (containingDescriptor instanceof ScriptDescriptor) {
-            if (!(expression.getParent() instanceof KtScript)) {
-                // top level script declarations should have ScriptDescriptor parent
-                // and lower level script declarations should be ScriptCodeDescriptor parent
-                containingDescriptor = ((ScriptDescriptor) containingDescriptor).getScriptCodeDescriptor();
-            }
-        }
         LexicalWritableScope scope = new LexicalWritableScope(context.scope, containingDescriptor, false, null,
                                                               new TraceBasedRedeclarationHandler(context.trace), "getBlockReturnedType");
         scope.changeLockLevel(LexicalWritableScope.LockLevel.BOTH);

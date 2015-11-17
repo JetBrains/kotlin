@@ -1318,7 +1318,7 @@ public class JetControlFlowProcessor {
         @Override
         public void visitObjectDeclaration(@NotNull KtObjectDeclaration objectDeclaration) {
             generateHeaderDelegationSpecifiers(objectDeclaration);
-            generateClassOrObjectInitializers(objectDeclaration);
+            generateInitializersForScriptClassOrObject(objectDeclaration);
             generateDeclarationForLocalClassOrObjectIfNeeded(objectDeclaration);
         }
 
@@ -1353,7 +1353,7 @@ public class JetControlFlowProcessor {
             }
         }
 
-        private void generateClassOrObjectInitializers(@NotNull KtClassOrObject classOrObject) {
+        private void generateInitializersForScriptClassOrObject(@NotNull KtDeclarationContainer classOrObject) {
             for (KtDeclaration declaration : classOrObject.getDeclarations()) {
                 if (declaration instanceof KtProperty || declaration instanceof KtClassInitializer) {
                     generateInstructions(declaration);
@@ -1368,10 +1368,15 @@ public class JetControlFlowProcessor {
 
                 // delegation specifiers of primary constructor, anonymous class and property initializers
                 generateHeaderDelegationSpecifiers(klass);
-                generateClassOrObjectInitializers(klass);
+                generateInitializersForScriptClassOrObject(klass);
             }
 
             generateDeclarationForLocalClassOrObjectIfNeeded(klass);
+        }
+
+        @Override
+        public void visitScript(@NotNull KtScript script) {
+            generateInitializersForScriptClassOrObject(script);
         }
 
         private void generateDeclarationForLocalClassOrObjectIfNeeded(@NotNull KtClassOrObject classOrObject) {
@@ -1402,7 +1407,7 @@ public class JetControlFlowProcessor {
             generateCallOrMarkUnresolved(constructor.getDelegationCall());
 
             if (!constructor.getDelegationCall().isCallToThis()) {
-                generateClassOrObjectInitializers(classOrObject);
+                generateInitializersForScriptClassOrObject(classOrObject);
             }
 
             generateInstructions(constructor.getBodyExpression());
