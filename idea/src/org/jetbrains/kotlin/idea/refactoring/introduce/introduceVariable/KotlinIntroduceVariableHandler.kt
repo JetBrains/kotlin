@@ -439,7 +439,7 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
                     calculateAnchor(commonParent, commonContainer, allReplaces),
                     NewDeclarationNameValidator.Target.VARIABLES
             )
-            val suggestedNames = KotlinNameSuggester.suggestNamesByExpressionAndType(expression, bindingContext, validator, "value")
+            val suggestedNames = KotlinNameSuggester.suggestNamesByExpressionAndType(expression, null, bindingContext, validator, "value")
             val introduceVariableContext = IntroduceVariableContext(
                     expression, suggestedNames.iterator().next(), allReplaces, commonContainer, commonParent,
                     replaceOccurrence, noTypeInference, expressionType, bindingContext, resolutionFacade

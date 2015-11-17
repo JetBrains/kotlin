@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.core
 
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.psi.psiUtil.getOutermostParenthesizerOrThis
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParentResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -37,15 +35,19 @@ import java.util.*
 import java.util.regex.Pattern
 
 public object KotlinNameSuggester {
-
-    public fun suggestNamesByExpressionAndType(expression: KtExpression, bindingContext: BindingContext, validator: (String) -> Boolean, defaultName: String?): Collection<String> {
+    public fun suggestNamesByExpressionAndType(
+            expression: KtExpression,
+            type: KotlinType?,
+            bindingContext: BindingContext?,
+            validator: (String) -> Boolean,
+            defaultName: String?
+    ): Collection<String> {
         val result = LinkedHashSet<String>()
 
         result.addNamesByExpression(expression, bindingContext, validator)
 
-        val type = bindingContext.getType(expression)
-        if (type != null) {
-            result.addNamesByType(type, validator)
+        (type ?: bindingContext?.getType(expression))?.let {
+            result.addNamesByType(it, validator)
         }
 
         if (result.isEmpty()) {

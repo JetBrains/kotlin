@@ -78,7 +78,7 @@ public class KotlinNameSuggesterTest : LightCodeInsightFixtureTestCase() {
             }
             KotlinRefactoringUtil.selectExpression(myFixture.getEditor(), file, object : KotlinRefactoringUtil.SelectExpressionCallback {
                 override fun run(expression: KtExpression?) {
-                    val names = KotlinNameSuggester.suggestNamesByExpressionAndType(expression!!, expression.analyze(BodyResolveMode.PARTIAL), { true }, "value").sorted()
+                    val names = KotlinNameSuggester.suggestNamesByExpressionAndType(expression!!, null, expression.analyze(BodyResolveMode.PARTIAL), { true }, "value").sorted()
                     val result = StringUtil.join(names, "\n").trim()
                     assertEquals(expectedResultText, result)
                 }

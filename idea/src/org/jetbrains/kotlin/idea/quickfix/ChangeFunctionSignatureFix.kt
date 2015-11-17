@@ -69,7 +69,7 @@ abstract class ChangeFunctionSignatureFix(
         }
         else if (expression != null) {
             val bindingContext = expression.analyze(BodyResolveMode.PARTIAL)
-            return KotlinNameSuggester.suggestNamesByExpressionAndType(expression, bindingContext, validator, "param").first()
+            return KotlinNameSuggester.suggestNamesByExpressionAndType(expression, null, bindingContext, validator, "param").first()
         }
         else {
             return KotlinNameSuggester.suggestNameByName("param", validator)

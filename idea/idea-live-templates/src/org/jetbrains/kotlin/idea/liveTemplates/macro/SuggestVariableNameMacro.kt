@@ -63,7 +63,7 @@ class SuggestVariableNameMacro : Macro() {
         val initializer = (declaration as? KtWithExpressionInitializer)?.initializer
         if (initializer != null) {
             val bindingContext = initializer.analyze(BodyResolveMode.PARTIAL)
-            return KotlinNameSuggester.suggestNamesByExpressionAndType(initializer, bindingContext, nameValidator, null)
+            return KotlinNameSuggester.suggestNamesByExpressionAndType(initializer, null, bindingContext, nameValidator, null)
         }
 
         val parent = declaration.parent
