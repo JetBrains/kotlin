@@ -28,7 +28,7 @@ interface ExpressionReceiver :  ReceiverValue {
     val expression: KtExpression
 
     companion object {
-        open class ExpressionReceiverImpl(
+        private open class ExpressionReceiverImpl(
                 override val expression: KtExpression, type: KotlinType
         ): AbstractReceiverValue(type), ExpressionReceiver {
             override fun toString() = "$type {$expression: ${expression.text}}"

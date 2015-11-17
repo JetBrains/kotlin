@@ -22,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.calls.model.DelegatingResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -167,7 +168,7 @@ public class FunctionReferenceGenerationStrategy extends FunctionGenerationStrat
         KtExpression receiverExpression = KtPsiFactoryKt
                 .KtPsiFactory(state.getProject()).createExpression("callableReferenceFakeReceiver");
         codegen.tempVariables.put(receiverExpression, receiverParameterStackValue(signature));
-        return new ExpressionReceiver.Companion.ExpressionReceiverImpl(receiverExpression, receiver.getType());
+        return ExpressionReceiver.Companion.create(receiverExpression, receiver.getType(), BindingContext.EMPTY);
     }
 
     @NotNull
