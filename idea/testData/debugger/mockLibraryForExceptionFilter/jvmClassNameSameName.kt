@@ -2,5 +2,5 @@
 package renamed
 
 fun foo() {
-
+   null!!
 }

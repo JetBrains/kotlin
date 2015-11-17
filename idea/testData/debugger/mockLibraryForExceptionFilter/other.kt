@@ -1,5 +1,5 @@
 package test
 
 fun other() {
-    println("")
+    null!!
 }

@@ -2,9 +2,10 @@ package test
 
 class Foo {
     fun member() {
+        null!!
     }
 }
 
 fun foo() {
-    println()
+    null!!
 }

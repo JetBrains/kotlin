@@ -1,0 +1,3 @@
+package renamed
+
+fun bar() { }

@@ -71,6 +71,30 @@ public class KotlinExceptionFilterTestGenerated extends AbstractKotlinExceptionF
         doTest(fileName);
     }
 
+    @TestMetadata("librarySources1")
+    public void testLibrarySources1() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/exceptionFilter/librarySources1/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("librarySources2")
+    public void testLibrarySources2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/exceptionFilter/librarySources2/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("librarySources3")
+    public void testLibrarySources3() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/exceptionFilter/librarySources3/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("librarySources4")
+    public void testLibrarySources4() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/exceptionFilter/librarySources4/");
+        doTest(fileName);
+    }
+
     @TestMetadata("multiSamePackage")
     public void testMultiSamePackage() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/exceptionFilter/multiSamePackage/");

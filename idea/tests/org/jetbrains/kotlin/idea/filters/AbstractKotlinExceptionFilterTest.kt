@@ -17,7 +17,11 @@
 package org.jetbrains.kotlin.idea.filters
 
 import com.intellij.execution.filters.FileHyperlinkInfo
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.PsiTestUtil
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
@@ -25,6 +29,7 @@ import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
 import org.jetbrains.kotlin.fileClasses.getFileClassFqName
 import org.jetbrains.kotlin.idea.core.refactoring.toVirtualFile
 import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
@@ -32,6 +37,9 @@ import java.io.File
 import java.lang.reflect.InvocationTargetException
 import java.net.URL
 import java.net.URLClassLoader
+
+private var MOCK_LIBRARY_JAR: File? = null
+private val MOCK_LIBRARY_SOURCES = PluginTestCaseBase.getTestDataPathBase() + "/debugger/mockLibraryForExceptionFilter"
 
 public abstract class AbstractKotlinExceptionFilterTest: KotlinCodeInsightTestCase() {
     override fun getTestDataPath() = ""
@@ -44,14 +52,43 @@ public abstract class AbstractKotlinExceptionFilterTest: KotlinCodeInsightTestCa
 
         val fileText = file.text
 
-        val outDir = project.baseDir.createChildDirectory(this, "out")
+        val outDir = project.baseDir.findChild("out") ?: project.baseDir.createChildDirectory(this, "out")
         PsiTestUtil.setCompilerOutputPath(module, outDir.url, false)
 
-        MockLibraryUtil.compileKotlin(path, File(outDir.path))
+        val classLoader: URLClassLoader
+        if (InTextDirectivesUtils.getPrefixedBoolean(fileText, "// WITH_MOCK_LIBRARY: ") ?: false) {
+            if (MOCK_LIBRARY_JAR == null) {
+                MOCK_LIBRARY_JAR = MockLibraryUtil.compileLibraryToJar(MOCK_LIBRARY_SOURCES, "mockLibrary", true)
+            }
+
+            val mockLibraryJar = MOCK_LIBRARY_JAR
+            val mockLibraryPath = FileUtilRt.toSystemIndependentName(mockLibraryJar.canonicalPath)
+            val libRootUrl = "jar://$mockLibraryPath!/"
+
+            ApplicationManager.getApplication().runWriteAction {
+                val moduleModel = ModuleRootManager.getInstance(myModule).modifiableModel
+                with(moduleModel.moduleLibraryTable.modifiableModel.createLibrary("mockLibrary").modifiableModel) {
+                    addRoot(libRootUrl, OrderRootType.CLASSES)
+                    addRoot(libRootUrl + "src/", OrderRootType.SOURCES)
+                    commit()
+                }
+                moduleModel.commit()
+            }
+            MockLibraryUtil.compileKotlin(path, File(outDir.path), mockLibraryPath)
+            classLoader = URLClassLoader(
+                    arrayOf(URL(outDir.url + "/"), mockLibraryJar.toURI().toURL()),
+                    ForTestCompileRuntime.runtimeJarClassLoader())
+        }
+        else {
+            MockLibraryUtil.compileKotlin(path, File(outDir.path))
+            classLoader = URLClassLoader(
+                    arrayOf(URL(outDir.url + "/")),
+                    ForTestCompileRuntime.runtimeJarClassLoader())
+        }
 
         val stackTraceElement = try {
             val className = NoResolveFileClassesProvider.getFileClassFqName(file as KtFile)
-            val clazz = URLClassLoader(arrayOf(URL(outDir.url + "/")), ForTestCompileRuntime.runtimeJarClassLoader()).loadClass(className.asString())
+            val clazz = classLoader.loadClass(className.asString())
             clazz.getMethod("box")?.invoke(null)
             throw AssertionError("class ${className.asString()} should have box() method and throw exception")
         }
@@ -67,14 +104,16 @@ public abstract class AbstractKotlinExceptionFilterTest: KotlinCodeInsightTestCa
         val descriptor = info.descriptor!!
 
         val expectedFileName = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// FILE: ")!!
-        val expectedVirtualFile = File(rootDir, expectedFileName).toVirtualFile() ?: throw AssertionError("Couldn't find file: name = $expectedFileName")
+        val expectedVirtualFile = File(rootDir, expectedFileName).toVirtualFile()
+                                        ?: File(MOCK_LIBRARY_SOURCES, expectedFileName).toVirtualFile()
+                                        ?: throw AssertionError("Couldn't find file: name = $expectedFileName")
         val expectedLineNumber = InTextDirectivesUtils.getPrefixedInt(fileText, "// LINE: ")!!
 
         // TODO compare virtual files
-        assertEquals(expectedFileName, descriptor.file.name)
+        assertEquals("Wrong fileName for line $stackTraceElement", expectedFileName, descriptor.file.name)
 
         val document = FileDocumentManager.getInstance().getDocument(expectedVirtualFile)!!
         val expectedOffset = document.getLineStartOffset(expectedLineNumber - 1)
-        assertEquals(expectedOffset, descriptor.offset)
+        assertEquals("Wrong offset for line $stackTraceElement", expectedOffset, descriptor.offset)
     }
 }
