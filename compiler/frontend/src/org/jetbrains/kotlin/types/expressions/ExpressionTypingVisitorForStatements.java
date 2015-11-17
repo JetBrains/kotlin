@@ -166,7 +166,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
         KtExpression initializer = multiDeclaration.getInitializer();
         if (initializer == null) {
-            context.trace.report(INITIALIZER_REQUIRED_FOR_MULTIDECLARATION.on(multiDeclaration));
+            context.trace.report(INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION.on(multiDeclaration));
             return TypeInfoFactoryKt.noTypeInfo(context);
         }
         ExpressionReceiver expressionReceiver = ExpressionTypingUtils.getExpressionReceiver(
