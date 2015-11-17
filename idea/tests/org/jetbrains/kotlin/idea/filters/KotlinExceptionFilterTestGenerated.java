@@ -71,6 +71,12 @@ public class KotlinExceptionFilterTestGenerated extends AbstractKotlinExceptionF
         doTest(fileName);
     }
 
+    @TestMetadata("inlineFunctionObjectLiteral")
+    public void testInlineFunctionObjectLiteral() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/exceptionFilter/inlineFunctionObjectLiteral/");
+        doTest(fileName);
+    }
+
     @TestMetadata("inlineFunctionSameFile")
     public void testInlineFunctionSameFile() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/exceptionFilter/inlineFunctionSameFile/");
