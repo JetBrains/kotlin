@@ -17,17 +17,14 @@
 package org.jetbrains.kotlin.idea.liveTemplates.macro
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.UserDataHolder
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.idea.core.IterableTypesDetector
 
 class SuggestVariableNameMacro : BaseKotlinVariableMacro() {
     override fun getName() = "kotlinSuggestVariableName"
     override fun getPresentableName() = "kotlinSuggestVariableName()"
 
-    override fun isSuitable(
-            variableDescriptor: VariableDescriptor,
-            project: Project,
-            iterableTypesDetector: IterableTypesDetector): Boolean {
+    override fun isSuitable(variableDescriptor: VariableDescriptor, project: Project, userData: UserDataHolder): Boolean {
         return variableDescriptor.type.isMarkedNullable
     }
 }

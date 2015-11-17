@@ -23,6 +23,7 @@ import com.intellij.codeInsight.template.ExpressionContext
 import com.intellij.codeInsight.template.Macro
 import com.intellij.codeInsight.template.Result
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.UserDataHolder
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -30,17 +31,16 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
-import org.jetbrains.kotlin.idea.core.IterableTypesDetection
-import org.jetbrains.kotlin.idea.core.IterableTypesDetector
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
-import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.util.slicedMap.UserDataHolderImpl
 import java.util.*
 
 abstract class BaseKotlinVariableMacro : Macro() {
@@ -63,13 +63,13 @@ abstract class BaseKotlinVariableMacro : Macro() {
             return descriptor !is DeclarationDescriptorWithVisibility || descriptor.isVisible(contextElement, null, bindingContext, resolutionFacade)
         }
 
-        val scope = contextElement.getResolutionScope(bindingContext, resolutionFacade)
-        val detector = resolutionFacade.getIdeService(IterableTypesDetection::class.java).createDetector(scope)
+        val userData = UserDataHolderImpl()
+        initUserData(userData, contextElement, bindingContext)
 
         val helper = ReferenceVariantsHelper(bindingContext, resolutionFacade, resolutionFacade.moduleDescriptor, ::isVisible)
         val variants = helper
                 .getReferenceVariants(contextElement, CallTypeAndReceiver.DEFAULT, DescriptorKindFilter.VARIABLES, { true })
-                .filter { isSuitable(it as VariableDescriptor, project, detector) }
+                .filter { isSuitable(it as VariableDescriptor, project, userData) }
 
         val declarations = ArrayList<PsiNamedElement>()
         for (descriptor in variants) {
@@ -79,10 +79,13 @@ abstract class BaseKotlinVariableMacro : Macro() {
         return declarations
     }
 
+    protected open fun initUserData(userData: UserDataHolder, contextElement: KtElement, bindingContext: BindingContext) {
+    }
+
     protected abstract fun isSuitable(
             variableDescriptor: VariableDescriptor,
             project: Project,
-            iterableTypesDetector: IterableTypesDetector): Boolean
+            userData: UserDataHolder): Boolean
 
     override fun calculateResult(params: Array<Expression>, context: ExpressionContext): Result? {
         val vars = getVariables(params, context)

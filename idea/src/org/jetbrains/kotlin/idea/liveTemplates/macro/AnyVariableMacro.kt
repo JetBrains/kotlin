@@ -17,12 +17,12 @@
 package org.jetbrains.kotlin.idea.liveTemplates.macro
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.UserDataHolder
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.idea.core.IterableTypesDetector
 
 class AnyVariableMacro : BaseKotlinVariableMacro() {
     override fun getName() = "kotlinVariable"
     override fun getPresentableName() = "kotlinVariable()"
 
-    override fun isSuitable(variableDescriptor: VariableDescriptor, project: Project, iterableTypesDetector: IterableTypesDetector) = true
+    override fun isSuitable(variableDescriptor: VariableDescriptor, project: Project, userData: UserDataHolder) = true
 }
