@@ -32,6 +32,9 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
+import org.jetbrains.kotlin.idea.core.ExpectedInfo
+import org.jetbrains.kotlin.idea.core.Tail
+import org.jetbrains.kotlin.idea.core.fuzzyType
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.FuzzyType

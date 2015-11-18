@@ -21,6 +21,8 @@ import com.intellij.codeInsight.lookup.LookupElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.completion.handlers.*
+import org.jetbrains.kotlin.idea.core.ExpectedInfo
+import org.jetbrains.kotlin.idea.core.fuzzyType
 import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.fuzzyReturnType
 import org.jetbrains.kotlin.types.KotlinType

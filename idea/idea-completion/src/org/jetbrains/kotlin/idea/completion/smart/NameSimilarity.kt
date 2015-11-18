@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.idea.completion.smart
 
-import com.intellij.openapi.util.Key
-import com.intellij.codeInsight.lookup.LookupElementWeigher
 import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.codeInsight.lookup.LookupElementWeigher
 import com.intellij.codeInsight.lookup.WeighingContext
-import org.jetbrains.kotlin.idea.completion.ExpectedInfo
+import com.intellij.openapi.util.Key
 import com.intellij.psi.codeStyle.NameUtil
+import org.jetbrains.kotlin.idea.core.ExpectedInfo
 
 val NAME_SIMILARITY_KEY = Key<Int>("NAME_SIMILARITY_KEY")
 

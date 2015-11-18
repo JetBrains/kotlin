@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.completion.smart
+package org.jetbrains.kotlin.idea.core
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.idea.completion.HeuristicSignatures
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.ideService
 import org.jetbrains.kotlin.idea.util.FuzzyType
@@ -32,7 +31,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import java.util.*
 
-class TypesWithContainsDetector(
+internal class TypesWithContainsDetector(
         private val scope: LexicalScope,
         private val argumentType: KotlinType,
         private val resolutionFacade: ResolutionFacade

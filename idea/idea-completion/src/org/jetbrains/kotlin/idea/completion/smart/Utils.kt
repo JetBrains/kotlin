@@ -26,10 +26,11 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
-import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.completion.handlers.WithExpressionPrefixInsertHandler
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
-import org.jetbrains.kotlin.idea.core.SmartCastCalculator
+import org.jetbrains.kotlin.idea.completion.shortenReferences
+import org.jetbrains.kotlin.idea.completion.suppressAutoInsertion
+import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.resolve.callableReferences.getReflectionTypeForCandidateDescriptor

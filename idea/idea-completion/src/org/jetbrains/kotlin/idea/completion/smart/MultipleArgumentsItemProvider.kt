@@ -23,10 +23,10 @@ import com.intellij.ui.LayeredIcon
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.KotlinDescriptorIconProvider
-import org.jetbrains.kotlin.idea.completion.ArgumentPositionData
-import org.jetbrains.kotlin.idea.completion.ExpectedInfo
+import org.jetbrains.kotlin.idea.core.ArgumentPositionData
+import org.jetbrains.kotlin.idea.core.ExpectedInfo
 import org.jetbrains.kotlin.idea.core.SmartCastCalculator
-import org.jetbrains.kotlin.idea.completion.Tail
+import org.jetbrains.kotlin.idea.core.Tail
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.getVariableFromImplicitReceivers

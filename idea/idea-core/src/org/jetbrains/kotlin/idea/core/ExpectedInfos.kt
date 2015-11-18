@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.completion
+package org.jetbrains.kotlin.idea.core
 
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.completion.smart.TypesWithContainsDetector
-import org.jetbrains.kotlin.idea.core.IterableTypesDetection
-import org.jetbrains.kotlin.idea.util.getResolutionScope
-import org.jetbrains.kotlin.idea.core.mapArgumentsToParameters
-import org.jetbrains.kotlin.idea.core.resolveCandidates
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.ideService
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.fuzzyReturnType
+import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*

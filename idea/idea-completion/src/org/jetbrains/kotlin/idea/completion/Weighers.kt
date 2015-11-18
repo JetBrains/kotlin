@@ -25,6 +25,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.psi.util.proximity.PsiProximityComparator
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.completion.smart.*
+import org.jetbrains.kotlin.idea.core.ExpectedInfo
 import org.jetbrains.kotlin.idea.core.ImportableFqNameClassifier
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.core.completion.PackageLookupObject

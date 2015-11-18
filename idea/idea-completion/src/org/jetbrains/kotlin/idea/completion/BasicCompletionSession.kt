@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.idea.completion.smart.ExpectedInfoMatch
 import org.jetbrains.kotlin.idea.completion.smart.SMART_COMPLETION_ITEM_PRIORITY_KEY
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletionItemPriority
+import org.jetbrains.kotlin.idea.core.ExpectedInfo
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.quickfix.moveCaret
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil

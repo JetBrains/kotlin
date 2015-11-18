@@ -24,6 +24,8 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.completion.*
+import org.jetbrains.kotlin.idea.core.ExpectedInfo
+import org.jetbrains.kotlin.idea.core.ExpectedInfos
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude

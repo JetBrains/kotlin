@@ -23,9 +23,9 @@ import com.intellij.codeInsight.lookup.LookupElementPresentation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.completion.BasicLookupElementFactory
-import org.jetbrains.kotlin.idea.completion.ExpectedInfo
 import org.jetbrains.kotlin.idea.completion.createLookupElementForType
-import org.jetbrains.kotlin.idea.completion.fuzzyType
+import org.jetbrains.kotlin.idea.core.ExpectedInfo
+import org.jetbrains.kotlin.idea.core.fuzzyType
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.quickfix.moveCaret
 import org.jetbrains.kotlin.types.KotlinType

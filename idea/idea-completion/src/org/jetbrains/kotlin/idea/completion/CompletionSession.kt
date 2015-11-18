@@ -29,10 +29,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
-import org.jetbrains.kotlin.idea.core.ImportableFqNameClassifier
-import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
-import org.jetbrains.kotlin.idea.core.compareDescriptors
-import org.jetbrains.kotlin.idea.core.isVisible
+import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.references.mainReference

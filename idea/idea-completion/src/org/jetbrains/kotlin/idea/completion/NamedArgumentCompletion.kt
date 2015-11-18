@@ -22,6 +22,8 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.completion.handlers.WithTailInsertHandler
+import org.jetbrains.kotlin.idea.core.ArgumentPositionData
+import org.jetbrains.kotlin.idea.core.ExpectedInfo
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression

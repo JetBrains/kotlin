@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.completion
+package org.jetbrains.kotlin.idea.core
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -28,13 +28,15 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.TypeResolver
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.SubstitutionUtils
+import org.jetbrains.kotlin.types.TypeConstructorSubstitution
+import org.jetbrains.kotlin.types.Variance
 import java.util.*
 
-public class HeuristicSignatures(
+internal class HeuristicSignatures(
         private val moduleDescriptor: ModuleDescriptor,
         private val project: Project,
         private val typeResolver: TypeResolver
@@ -76,8 +78,8 @@ public class HeuristicSignatures(
         val typeRef = KtPsiFactory(project).createType(text)
         val rootPackagesScope = SubpackagesScope(moduleDescriptor, FqName.ROOT).memberScopeAsImportingScope()
         val scope = LexicalScopeImpl(rootPackagesScope, moduleDescriptor, false, null, "Root packages + type parameters") {
-                        typeParameters.forEach { addClassifierDescriptor(it) }
-                    }
+            typeParameters.forEach { addClassifierDescriptor(it) }
+        }
         val type = typeResolver.resolveType(scope, typeRef, BindingTraceContext(), false)
         assert(!type.isError()) { "No type resolved from '$text'" }
         return type

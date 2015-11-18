@@ -20,11 +20,11 @@ import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.idea.completion.ExpectedInfo
-import org.jetbrains.kotlin.idea.completion.fuzzyType
 import org.jetbrains.kotlin.idea.completion.handlers.insertLambdaTemplate
 import org.jetbrains.kotlin.idea.completion.handlers.lambdaPresentation
 import org.jetbrains.kotlin.idea.completion.suppressAutoInsertion
+import org.jetbrains.kotlin.idea.core.ExpectedInfo
+import org.jetbrains.kotlin.idea.core.fuzzyType
 import java.util.*
 
 object LambdaItems {

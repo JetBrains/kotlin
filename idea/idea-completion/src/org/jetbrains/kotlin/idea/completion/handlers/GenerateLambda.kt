@@ -27,9 +27,9 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.completion.ExpectedInfos
-import org.jetbrains.kotlin.idea.completion.fuzzyType
+import org.jetbrains.kotlin.idea.core.ExpectedInfos
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
+import org.jetbrains.kotlin.idea.core.fuzzyType
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.KtExpression

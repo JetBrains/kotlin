@@ -18,10 +18,10 @@ package org.jetbrains.kotlin.idea.completion.smart
 
 import com.intellij.codeInsight.lookup.LookupElement
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.completion.ExpectedInfo
 import org.jetbrains.kotlin.idea.completion.LookupElementFactory
 import org.jetbrains.kotlin.idea.completion.decorateAsStaticMember
-import org.jetbrains.kotlin.idea.completion.fuzzyType
+import org.jetbrains.kotlin.idea.core.ExpectedInfo
+import org.jetbrains.kotlin.idea.core.fuzzyType
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.fuzzyReturnType
