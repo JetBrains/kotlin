@@ -413,9 +413,15 @@ public class CallExpressionResolver {
 
             boolean lastStage = element.getQualified() == expression;
             // Drop NO_EXPECTED_TYPE / INDEPENDENT at last stage
-            // But receiver data flow info changes should be always applied, while we are inside call chain
             ExpressionTypingContext baseContext = lastStage ? context : currentContext;
-            contextForSelector = baseContext.replaceDataFlowInfo(receiverDataFlowInfo);
+            if (TypeUtils.isNullableType(receiverType) && !element.getSafe()) {
+                // Call with nullable receiver: take unconditional data flow info
+                contextForSelector = baseContext.replaceDataFlowInfo(unconditionalDataFlowInfo);
+            }
+            else {
+                // Take data flow info from the current receiver
+                contextForSelector = baseContext.replaceDataFlowInfo(receiverDataFlowInfo);
+            }
 
             if (receiver.exists() && receiver instanceof ReceiverValue) {
                 DataFlowValue receiverDataFlowValue = DataFlowValueFactory.createDataFlowValue((ReceiverValue) receiver, context);

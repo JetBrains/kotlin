@@ -15608,6 +15608,30 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("nullableReceiver.kt")
+                public void testNullableReceiver() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/safecalls/nullableReceiver.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("nullableReceiverInLongChain.kt")
+                public void testNullableReceiverInLongChain() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/safecalls/nullableReceiverInLongChain.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("nullableReceiverWithExclExcl.kt")
+                public void testNullableReceiverWithExclExcl() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/safecalls/nullableReceiverWithExclExcl.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("nullableReceiverWithFlexible.kt")
+                public void testNullableReceiverWithFlexible() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/safecalls/nullableReceiverWithFlexible.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("property.kt")
                 public void testProperty() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/safecalls/property.kt");
