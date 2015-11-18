@@ -19,6 +19,9 @@
     <property name="plugin.zip" value="${artifact.output.path}/kotlin-plugin-${build.number}.zip"/>
     <property name="bare.plugin.zip" value="${artifact.output.path}/kotlin-bare-plugin-${build.number}.zip"/>
 
+    <property name="kotlin.bare.plugin.xml" value="jps-plugin/bare-plugin/src/META-INF/plugin.xml"/>
+    <property name="kotlin.bare.plugin.xml.bk" value="${version_substitute_dir}/kotlin.bare.plugin.xml.bk"/>
+
     <macrodef name="echoprop">
         <attribute name="prop"/>
         <sequential>
@@ -86,11 +89,18 @@
                 target.file.bk="${compiler.version.java.bk}"
                 target.file.versioned="${compiler.version.java.versioned}"
                 test.string="public static final String VERSION = &quot;@snapshot@&quot;;"/>
-    </target>
+
+        <substituteVersionInFile
+                target.file="${kotlin.bare.plugin.xml}"
+                target.file.bk="${kotlin.bare.plugin.xml.bk}"
+                test.string="&lt;version&gt;@snapshot@&lt;/version&gt;"/>
+
+        </target>
 
     <target name="revertTemplateFiles">
         <copy file="${plugin.xml.bk}" tofile="${plugin.xml}" overwrite="true"/>
         <copy file="${compiler.version.java.bk}" tofile="${compiler.version.java}" overwrite="true"/>
+        <copy file="${kotlin.bare.plugin.xml.bk}" tofile="${kotlin.bare.plugin.xml}" overwrite="true"/>
 
         <delete dir="${version_substitute_dir}" quiet="true"/>
     </target>
