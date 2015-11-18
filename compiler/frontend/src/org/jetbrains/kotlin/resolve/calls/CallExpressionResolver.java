@@ -227,8 +227,7 @@ public class CallExpressionResolver {
                 context, "trace to resolve as function call", callExpression);
         ResolvedCall<FunctionDescriptor> resolvedCall = getResolvedCallForFunction(
                 call,
-                // It's possible start of a call so we should reset safe call chain
-                context.replaceTraceAndCache(temporaryForFunction).replaceInsideCallChain(false),
+                context.replaceTraceAndCache(temporaryForFunction),
                 CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS, result);
         if (result[0]) {
             FunctionDescriptor functionDescriptor = resolvedCall != null ? resolvedCall.getResultingDescriptor() : null;

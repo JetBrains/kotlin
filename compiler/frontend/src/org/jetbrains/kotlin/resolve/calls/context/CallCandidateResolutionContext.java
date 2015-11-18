@@ -59,12 +59,11 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull Receiver explicitExtensionReceiverForInvoke,
             @NotNull CandidateResolveMode candidateResolveMode,
             boolean isAnnotationContext,
-            boolean collectAllCandidates,
-            boolean insideSafeCallChain
+            boolean collectAllCandidates
     ) {
         super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
               dataFlowInfoForArguments, callChecker, statementFilter, isAnnotationContext,
-              collectAllCandidates, insideSafeCallChain);
+              collectAllCandidates);
         this.candidateCall = candidateCall;
         this.tracing = tracing;
         this.explicitExtensionReceiverForInvoke = explicitExtensionReceiverForInvoke;
@@ -81,7 +80,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
                 context.dataFlowInfo, context.contextDependency, context.checkArguments,
                 context.resolutionResultsCache, context.dataFlowInfoForArguments,
                 context.callChecker, context.statementFilter, explicitExtensionReceiverForInvoke,
-                candidateResolveMode, context.isAnnotationContext, context.collectAllCandidates, context.insideCallChain);
+                candidateResolveMode, context.isAnnotationContext, context.collectAllCandidates);
     }
 
     @NotNull
@@ -92,7 +91,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
                 candidateCall, tracing, context.trace, context.scope, context.call, context.expectedType,
                 context.dataFlowInfo, context.contextDependency, context.checkArguments, context.resolutionResultsCache,
                 context.dataFlowInfoForArguments, context.callChecker, context.statementFilter,
-                ReceiverValue.NO_RECEIVER, CandidateResolveMode.FULLY, context.isAnnotationContext, context.collectAllCandidates, context.insideCallChain);
+                ReceiverValue.NO_RECEIVER, CandidateResolveMode.FULLY, context.isAnnotationContext, context.collectAllCandidates);
     }
 
     @Override
@@ -104,12 +103,11 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull StatementFilter statementFilter,
-            boolean collectAllCandidates,
-            boolean insideSafeCallChain
+            boolean collectAllCandidates
     ) {
         return new CallCandidateResolutionContext<D>(
                 candidateCall, tracing, trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
                 resolutionResultsCache, dataFlowInfoForArguments, callChecker, statementFilter,
-                explicitExtensionReceiverForInvoke, candidateResolveMode, isAnnotationContext, collectAllCandidates, insideSafeCallChain);
+                explicitExtensionReceiverForInvoke, candidateResolveMode, isAnnotationContext, collectAllCandidates);
     }
 }

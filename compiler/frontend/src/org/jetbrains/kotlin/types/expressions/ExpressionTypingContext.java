@@ -61,7 +61,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
                 context.contextDependency, context.resolutionResultsCache,
                 context.callChecker,
                 context.statementFilter,
-                context.isAnnotationContext, context.collectAllCandidates, context.insideCallChain
+                context.isAnnotationContext, context.collectAllCandidates
         );
     }
 
@@ -79,7 +79,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
     ) {
         return new ExpressionTypingContext(
                 trace, scope, dataFlowInfo, expectedType, contextDependency, resolutionResultsCache, callChecker,
-                statementFilter, isAnnotationContext, false, false);
+                statementFilter, isAnnotationContext, false);
     }
 
     private ExpressionTypingContext(
@@ -92,12 +92,11 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull CallChecker callChecker,
             @NotNull StatementFilter statementFilter,
             boolean isAnnotationContext,
-            boolean collectAllCandidates,
-            boolean insideSafeCallChain
+            boolean collectAllCandidates
     ) {
         super(trace, scope, expectedType, dataFlowInfo, contextDependency, resolutionResultsCache,
               callChecker,
-              statementFilter, isAnnotationContext, collectAllCandidates, insideSafeCallChain);
+              statementFilter, isAnnotationContext, collectAllCandidates);
     }
 
     @Override
@@ -109,12 +108,11 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull StatementFilter statementFilter,
-            boolean collectAllCandidates,
-            boolean insideSafeCallChain
+            boolean collectAllCandidates
     ) {
         return new ExpressionTypingContext(trace, scope, dataFlowInfo,
                                            expectedType, contextDependency, resolutionResultsCache,
                                            callChecker,
-                                           statementFilter, isAnnotationContext, collectAllCandidates, insideSafeCallChain);
+                                           statementFilter, isAnnotationContext, collectAllCandidates);
     }
 }
