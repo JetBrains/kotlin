@@ -35,10 +35,16 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 
 public class OverloadResolver {
     @NotNull private final BindingTrace trace;
+    @NotNull private final OverloadFilter overloadFilter;
     @NotNull private final MainFunctionDetector mainFunctionDetector;
 
-    public OverloadResolver(@NotNull BindingTrace trace) {
+    public OverloadResolver(
+            @NotNull BindingTrace trace,
+            @NotNull OverloadFilter overloadFilter
+    ) {
         this.trace = trace;
+        this.overloadFilter = overloadFilter;
+
         mainFunctionDetector = new MainFunctionDetector(trace.getBindingContext());
     }
 
@@ -88,7 +94,8 @@ public class OverloadResolver {
             @NotNull BodiesResolveContext c,
             @NotNull MultiMap<FqNameUnsafe, ConstructorDescriptor> inPackages
     ) {
-        MultiMap<FqNameUnsafe, CallableMemberDescriptor> membersByName = OverloadUtil.groupModulePackageMembersByFqName(c, inPackages);
+        MultiMap<FqNameUnsafe, CallableMemberDescriptor> membersByName =
+                OverloadUtil.groupModulePackageMembersByFqName(c, inPackages, overloadFilter);
 
         for (Map.Entry<FqNameUnsafe, Collection<CallableMemberDescriptor>> e : membersByName.entrySet()) {
             FqNameUnsafe fqName = e.getKey().parent();

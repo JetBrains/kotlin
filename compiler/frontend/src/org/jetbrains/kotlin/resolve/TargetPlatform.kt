@@ -44,7 +44,8 @@ abstract class TargetPlatform(
         override val builtIns: KotlinBuiltIns
             get() = DefaultBuiltIns.Instance
         override val defaultModuleParameters = ModuleParameters.Empty
-        override val platformConfigurator = PlatformConfigurator(DynamicTypesSettings(), listOf(), listOf(), listOf(), listOf(), listOf(), IdentifierChecker.DEFAULT)
+        override val platformConfigurator = PlatformConfigurator(DynamicTypesSettings(), listOf(), listOf(), listOf(), listOf(), listOf(),
+                                                                 IdentifierChecker.DEFAULT, OverloadFilter.DEFAULT)
     }
 }
 
@@ -69,7 +70,8 @@ open class PlatformConfigurator(
         additionalTypeCheckers: List<AdditionalTypeChecker>,
         additionalSymbolUsageValidators: List<SymbolUsageValidator>,
         private val additionalAnnotationCheckers: List<AdditionalAnnotationChecker>,
-        private val identifierChecker: IdentifierChecker
+        private val identifierChecker: IdentifierChecker,
+        private val overloadFilter: OverloadFilter
 ) {
 
     private val declarationCheckers: List<DeclarationChecker> = DEFAULT_DECLARATION_CHECKERS + additionalDeclarationCheckers
@@ -86,6 +88,7 @@ open class PlatformConfigurator(
             useInstance(symbolUsageValidator)
             additionalAnnotationCheckers.forEach { useInstance(it) }
             useInstance(identifierChecker)
+            useInstance(overloadFilter)
         }
     }
 }

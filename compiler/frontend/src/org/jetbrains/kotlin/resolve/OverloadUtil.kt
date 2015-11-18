@@ -82,16 +82,17 @@ object OverloadUtil {
 
     public @JvmStatic fun groupModulePackageMembersByFqName(
             c: BodiesResolveContext,
-            constructorsInPackages: MultiMap<FqNameUnsafe, ConstructorDescriptor>
+            constructorsInPackages: MultiMap<FqNameUnsafe, ConstructorDescriptor>,
+            overloadFilter: OverloadFilter
     ): MultiMap<FqNameUnsafe, CallableMemberDescriptor> {
         val packageMembersByName = MultiMap<FqNameUnsafe, CallableMemberDescriptor>()
 
-        collectModulePackageMembersWithSameName(packageMembersByName, c.functions.values) {
+        collectModulePackageMembersWithSameName(packageMembersByName, c.functions.values, overloadFilter) {
             scope, name ->
             scope.getContributedFunctions(name, NoLookupLocation.WHEN_CHECK_REDECLARATIONS)
         }
 
-        collectModulePackageMembersWithSameName(packageMembersByName, c.properties.values) {
+        collectModulePackageMembersWithSameName(packageMembersByName, c.properties.values, overloadFilter) {
             scope, name ->
             scope.getContributedVariables(name, NoLookupLocation.WHEN_CHECK_REDECLARATIONS).filterIsInstance<CallableMemberDescriptor>()
         }
@@ -105,6 +106,7 @@ object OverloadUtil {
     private inline fun collectModulePackageMembersWithSameName(
             packageMembersByName: MultiMap<FqNameUnsafe, CallableMemberDescriptor>,
             interestingDescriptors: Collection<CallableMemberDescriptor>,
+            overloadFilter: OverloadFilter,
             getMembersByName: (MemberScope, Name) -> Collection<CallableMemberDescriptor>
     ) {
         val observedFQNs = hashSetOf<FqNameUnsafe>()
@@ -115,13 +117,14 @@ object OverloadUtil {
             if (observedFQNs.contains(descriptorFQN)) continue
             observedFQNs.add(descriptorFQN)
 
-            val packageMembersWithSameName = getModulePackageMembersWithSameName(descriptor, getMembersByName)
+            val packageMembersWithSameName = getModulePackageMembersWithSameName(descriptor, overloadFilter, getMembersByName)
             packageMembersByName.putValues(descriptorFQN, packageMembersWithSameName)
         }
     }
 
     private inline fun getModulePackageMembersWithSameName(
             packageMember: CallableMemberDescriptor,
+            overloadFilter: OverloadFilter,
             getMembersByName: (MemberScope, Name) -> Collection<CallableMemberDescriptor>
     ): Collection<CallableMemberDescriptor> {
         val containingPackage = packageMember.containingDeclaration
@@ -132,10 +135,13 @@ object OverloadUtil {
         val containingModule = DescriptorUtils.getContainingModuleOrNull(packageMember) ?: return listOf(packageMember)
 
         val containingPackageScope = containingModule.getPackage(containingPackage.fqName).memberScope
-        val possibleOverloads = getMembersByName(containingPackageScope, packageMember.name)
+        val possibleOverloads =
+                getMembersByName(containingPackageScope, packageMember.name).filter {
+                    // NB memberScope for PackageViewDescriptor includes module dependencies
+                    DescriptorUtils.getContainingModule(it) == containingModule
+                }
 
-        // NB memberScope for PackageViewDescriptor includes module dependencies
-        return possibleOverloads.filter { DescriptorUtils.getContainingModule(it) == containingModule }
+        return overloadFilter.filterPackageMemberOverloads(possibleOverloads)
     }
 
     private fun MemberDescriptor.isPrivate() = Visibilities.isPrivate(this.visibility)

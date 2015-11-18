@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.js.resolve.diagnostics.JsCallChecker
 import org.jetbrains.kotlin.resolve.IdentifierChecker
+import org.jetbrains.kotlin.resolve.OverloadFilter
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.types.DynamicTypesAllowed
 
@@ -30,7 +31,8 @@ public object JsPlatformConfigurator : PlatformConfigurator(
         additionalTypeCheckers = listOf(),
         additionalSymbolUsageValidators = listOf(),
         additionalAnnotationCheckers = listOf(),
-        identifierChecker = IdentifierChecker.DEFAULT
+        identifierChecker = IdentifierChecker.DEFAULT,
+        overloadFilter = OverloadFilter.DEFAULT
 ) {
     override fun configure(container: StorageComponentContainer) {
         super.configure(container)
