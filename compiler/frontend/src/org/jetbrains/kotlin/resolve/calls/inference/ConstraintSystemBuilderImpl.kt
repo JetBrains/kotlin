@@ -359,6 +359,30 @@ class ConstraintSystemBuilderImpl : ConstraintSystem.Builder {
         addBound(typeVariable, value, TypeBounds.BoundKind.EXACT_BOUND, ConstraintContext(ConstraintPositionKind.FROM_COMPLETER.position()))
     }
 
+    override fun add(other: ConstraintSystem.Builder) {
+        if (other !is ConstraintSystemBuilderImpl) {
+            throw IllegalArgumentException("Unknown constraint system builder implementation: $other")
+        }
+        if (!Collections.disjoint(typeVariableSubstitutors.keys, other.typeVariableSubstitutors.keys)) {
+            throw IllegalArgumentException(
+                    "Combining two constraint systems only makes sense when they were created for different calls. " +
+                    "Calls of the first system: ${typeVariableSubstitutors.keys}, second: ${other.typeVariableSubstitutors.keys}"
+            )
+        }
+        if (!Collections.disjoint(other.allTypeParameterBounds.keys, allTypeParameterBounds.keys)) {
+            throw IllegalArgumentException(
+                    "Combining two constraint systems only makes sense when they have no common variables. " +
+                    "First system variables: ${allTypeParameterBounds.keys}, second: ${other.allTypeParameterBounds.keys}"
+            )
+        }
+
+        allTypeParameterBounds.putAll(other.allTypeParameterBounds)
+        usedInBounds.putAll(other.usedInBounds)
+        errors.addAll(other.errors)
+        initialConstraints.addAll(other.initialConstraints)
+        typeVariableSubstitutors.putAll(other.typeVariableSubstitutors)
+    }
+
     override fun fixVariables() {
         // todo variables should be fixed in the right order
         val (external, functionTypeParameters) = allTypeParameterBounds.keys.partition { it.isExternal }

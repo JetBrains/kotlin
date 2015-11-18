@@ -56,8 +56,8 @@ interface ConstraintSystem {
 
     interface Builder {
         /**
-         * Registers variables in a constraint system. Returns a substitutor which maps type parameter descriptors given as parameters
-         * to the corresponding type variables of the system. Use that substitutor to provide constraints to the system
+         * Registers variables in a constraint system. Returns a substitutor which maps type parameter descriptors passed as parameters
+         * to the corresponding types of variables of the system. Use that substitutor to provide constraints to the system
          */
         fun registerTypeVariables(
                 call: CallHandle, typeParameters: Collection<TypeParameterDescriptor>, external: Boolean = false
@@ -78,6 +78,12 @@ interface ConstraintSystem {
          * Those are the same substitutors that are returned by [registerTypeVariables] at the time of variable registration.
          */
         val typeVariableSubstitutors: Map<CallHandle, TypeSubstitutor>
+
+        /**
+         * Add all variables and constraints from the other system to this one. The other system may not have any common variables
+         * with this one, or even variables registered for calls, for which this system also has some registered variables
+         */
+        fun add(other: Builder)
 
         fun fixVariables()
 
