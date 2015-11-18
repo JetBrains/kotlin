@@ -22,7 +22,7 @@ package kotlin
 /**
  * Concatenates this Char and a String.
  */
-public operator fun Char.plus(string: String) : String = this.toString() + string
+public operator fun Char.plus(other: String) : String = this.toString() + other
 
 /**
  * Returns `true` if this character is equal to the [other] character, optionally ignoring character case.

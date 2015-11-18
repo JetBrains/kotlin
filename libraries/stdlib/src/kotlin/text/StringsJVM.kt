@@ -30,17 +30,17 @@ internal fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): Int = (this as 
 internal fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int = (this as java.lang.String).lastIndexOf(str, fromIndex)
 
 /**
- * Returns `true` if this string is equal to [anotherString], optionally ignoring character case.
+ * Returns `true` if this string is equal to [other], optionally ignoring character case.
  *
  * @param ignoreCase `true` to ignore character case when comparing strings. By default `false`.
  */
-public fun String?.equals(anotherString: String?, ignoreCase: Boolean = false): Boolean {
+public fun String?.equals(other: String?, ignoreCase: Boolean = false): Boolean {
     if (this === null)
-        return anotherString === null
+        return other === null
     return if (!ignoreCase)
-        (this as java.lang.String).equals(anotherString)
+        (this as java.lang.String).equals(other)
     else
-        (this as java.lang.String).equalsIgnoreCase(anotherString)
+        (this as java.lang.String).equalsIgnoreCase(other)
 }
 
 /**
@@ -120,12 +120,12 @@ public fun CharSequence.split(regex: Pattern, limit: Int = 0): List<String>
 /**
  * Returns a substring of this string starting with the specified index.
  */
-public fun String.substring(beginIndex: Int): String = (this as java.lang.String).substring(beginIndex)
+public fun String.substring(startIndex: Int): String = (this as java.lang.String).substring(startIndex)
 
 /**
  * Returns the substring of this string starting and ending at the specified indices.
  */
-public fun String.substring(beginIndex: Int, endIndex: Int): String = (this as java.lang.String).substring(beginIndex, endIndex)
+public fun String.substring(startIndex: Int, endIndex: Int): String = (this as java.lang.String).substring(startIndex, endIndex)
 
 /**
  * Returns `true` if this string starts with the specified prefix.
@@ -138,13 +138,13 @@ public fun String.startsWith(prefix: String, ignoreCase: Boolean = false): Boole
 }
 
 /**
- * Returns `true` if a substring of this string starting at the specified offset [thisOffset] starts with the specified prefix.
+ * Returns `true` if a substring of this string starting at the specified offset [startIndex] starts with the specified prefix.
  */
-public fun String.startsWith(prefix: String, thisOffset: Int, ignoreCase: Boolean = false): Boolean {
+public fun String.startsWith(prefix: String, startIndex: Int, ignoreCase: Boolean = false): Boolean {
     if (!ignoreCase)
-        return (this as java.lang.String).startsWith(prefix, thisOffset)
+        return (this as java.lang.String).startsWith(prefix, startIndex)
     else
-        return regionMatches(thisOffset, prefix, 0, prefix.length, ignoreCase)
+        return regionMatches(startIndex, prefix, 0, prefix.length, ignoreCase)
 }
 
 /**
@@ -262,17 +262,18 @@ public fun String.compareTo(other: String, ignoreCase: Boolean = false): Int {
 /**
  * Returns a new string obtained by concatenating this string and the specified string.
  */
-public fun String.concat(str: String): String = (this as java.lang.String).concat(str)
+// TODO: Deprecated in favor of operator plus, when it would be as efficient as concat
+public fun String.concat(other: String): String = (this as java.lang.String).concat(other)
 
 /**
  * Returns `true` if this string is equal to the contents of the specified CharSequence.
  */
-public fun String.contentEquals(cs: CharSequence): Boolean = (this as java.lang.String).contentEquals(cs)
+public fun String.contentEquals(charSequence: CharSequence): Boolean = (this as java.lang.String).contentEquals(charSequence)
 
 /**
  * Returns `true` if this string is equal to the contents of the specified StringBuffer.
  */
-public fun String.contentEquals(sb: StringBuffer): Boolean = (this as java.lang.String).contentEquals(sb)
+public fun String.contentEquals(stringBuilder: StringBuffer): Boolean = (this as java.lang.String).contentEquals(stringBuilder)
 
 /**
  * Copies the characters from a substring of this string into the specified character array.
@@ -388,6 +389,7 @@ public fun String.toCharList(): List<Char> = toCharArray().toList()
  * @param start the start index (inclusive).
  * @param end the end index (exclusive).
  */
+@Deprecated("Use subSequence(start, end) instead.", ReplaceWith("subSequence(start, end)"))
 public operator fun CharSequence.get(start: Int, end: Int): CharSequence = subSequence(start, end)
 
 /**
