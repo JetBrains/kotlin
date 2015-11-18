@@ -22,14 +22,14 @@ import kotlin.text.Regex
 /**
  * holder of a [regex] and optional [matchCheck] for additional checks on match result
  */
-internal class LinePattern(val regex: Regex, val matchCheck: (MatchResult) -> Boolean = { true })
-internal fun LinePattern(regex: String, matchCheck: (MatchResult) -> Boolean = { true }) = LinePattern(regex.toRegex(), matchCheck)
+class LinePattern(val regex: Regex, val matchCheck: (MatchResult) -> Boolean = { true })
+fun LinePattern(regex: String, matchCheck: (MatchResult) -> Boolean = { true }) = LinePattern(regex.toRegex(), matchCheck)
 
 /**
  * calls [body] if receiver does not contain complete sequence of lines matched by [patternsIter], separated by any number of other lines
  * [body] receives first unmatched pattern and index of last matched line in the sequence
  */
-internal fun Sequence<String>.ifNotContainsSequence(patternsIter: Iterator<LinePattern>,
+fun Sequence<String>.ifNotContainsSequence(patternsIter: Iterator<LinePattern>,
                                                     body: (LinePattern, Int) -> Unit) : Unit {
     class Accumulator(it: Iterator<LinePattern>) {
         val iter = EndBoundIteratorWithValue(it)
@@ -56,7 +56,7 @@ internal fun Sequence<String>.ifNotContainsSequence(patternsIter: Iterator<LineP
  * calls [body] if receiver does not contain complete sequence of lines matched by [patterns], separated by any number of other lines
  * [body] receives first unmatched pattern and index of last matched line in the sequence
  */
-internal fun Sequence<String>.ifNotContainsSequence(patterns: List<LinePattern>,
+fun Sequence<String>.ifNotContainsSequence(patterns: List<LinePattern>,
                                                     body: (LinePattern, Int) -> Unit): Unit {
     ifNotContainsSequence(patterns.iterator(), body)
 }
@@ -66,7 +66,7 @@ internal fun Sequence<String>.ifNotContainsSequence(patterns: List<LinePattern>,
  * calls [body] if receiver does not contain complete sequence of lines matched by [patterns], separated by any number of other lines
  * [body] receives first unmatched pattern and index of last matched line in the sequence
  */
-internal fun Sequence<String>.ifNotContainsSequence(vararg patterns: LinePattern,
+fun Sequence<String>.ifNotContainsSequence(vararg patterns: LinePattern,
                                                     body: (LinePattern, Int) -> Unit): Unit {
     ifNotContainsSequence(patterns.iterator(), body)
 }

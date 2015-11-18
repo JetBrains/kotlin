@@ -142,7 +142,8 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
     }
 
     public fun testDaemonInstancesSimple() {
-        val jar = tmpdir.absolutePath + File.separator + "hello1.jar"
+        val jar1 = tmpdir.absolutePath + File.separator + "hello1.jar"
+        val jar2 = tmpdir.absolutePath + File.separator + "hello2.jar"
         witFlagFile(getTestName(true), ".alive") { flagFile ->
             val daemonOptions = DaemonOptions(runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
             val compilerId2 = CompilerId.makeCompilerId(compilerClassPath +
@@ -163,13 +164,13 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
             TestCase.assertTrue(logFile1.length() == 0L && logFile2.length() == 0L)
 
-            val res1 = compileOnDaemon(flagFile, compilerId, daemonJVMOptions1, daemonOptions, "-include-runtime")
+            val res1 = compileOnDaemon(flagFile, compilerId, daemonJVMOptions1, daemonOptions, "-include-runtime", File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar1)
             TestCase.assertEquals("first compilation failed:\n${res1.out}", 0, res1.resultCode)
 
             logFile1.assertLogContainsSequence("Starting compilation with args: ")
             TestCase.assertEquals("expecting '${logFile2.absolutePath}' to be empty", 0L, logFile2.length())
 
-            val res2 = compileOnDaemon(flagFile, compilerId2, daemonJVMOptions2, daemonOptions, "-include-runtime")
+            val res2 = compileOnDaemon(flagFile, compilerId2, daemonJVMOptions2, daemonOptions, "-include-runtime", File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar2)
             TestCase.assertEquals("second compilation failed:\n${res2.out}", 0, res1.resultCode)
 
             logFile2.assertLogContainsSequence("Starting compilation with args: ")
@@ -212,6 +213,7 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
     }
 
     public fun testDaemonAutoshutdownOnIdle() {
+        val jar = tmpdir.absolutePath + File.separator + "hello1.jar"
         witFlagFile(getTestName(true), ".alive") { flagFile ->
             val daemonOptions = DaemonOptions(autoshutdownIdleSeconds = 1, runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
             KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
@@ -225,7 +227,7 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
             TestCase.assertNotNull("failed to connect daemon", daemon)
             daemon?.registerClient(flagFile.absolutePath)
             val strm = ByteArrayOutputStream()
-            val code = KotlinCompilerClient.compile(daemon!!, CompileService.NO_SESSION, CompileService.TargetPlatform.JVM, arrayOf("-include-runtime"), strm)
+            val code = KotlinCompilerClient.compile(daemon!!, CompileService.NO_SESSION, CompileService.TargetPlatform.JVM, arrayOf("-include-runtime", File(getHelloAppBaseDir(), "hello.kt").absolutePath, "-d", jar), strm)
             TestCase.assertEquals("compilation failed:\n${strm.toString()}", 0, code)
 
             logFile.assertLogContainsSequence("Starting compilation with args: ")
