@@ -73,6 +73,7 @@ public class InlineCodegenUtil {
     public static final String INLINE_MARKER_FINALLY_START = "finallyStart";
     public static final String INLINE_MARKER_FINALLY_END = "finallyEnd";
     public static final String INLINE_TRANSFORMATION_SUFFIX = "$inlined";
+    public static final String INLINE_FUN_THIS_0_SUFFIX = "$inline_fun";
 
     @Nullable
     public static SMAPAndMethodNode getMethodNode(
@@ -486,5 +487,9 @@ public class InlineCodegenUtil {
 
     public static boolean isFakeLocalVariableForInline(@NotNull String name) {
         return name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) || name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT);
+    }
+
+    public static boolean isThis0(String name) {
+        return THIS$0.equals(name);
     }
 }

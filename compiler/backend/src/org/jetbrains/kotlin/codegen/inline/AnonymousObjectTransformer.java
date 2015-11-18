@@ -35,6 +35,7 @@ import org.jetbrains.org.objectweb.asm.tree.VarInsnNode;
 
 import java.util.*;
 
+import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil.isThis0;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
 
 public class AnonymousObjectTransformer {
@@ -399,7 +400,8 @@ public class AnonymousObjectTransformer {
         while (cur != null) {
             if (cur instanceof FieldInsnNode) {
                 FieldInsnNode fieldNode = (FieldInsnNode) cur;
-                if (fieldNode.getOpcode() == Opcodes.PUTFIELD && InlineCodegenUtil.isCapturedFieldName(fieldNode.name)) {
+                String fieldName = fieldNode.name;
+                if (fieldNode.getOpcode() == Opcodes.PUTFIELD && InlineCodegenUtil.isCapturedFieldName(fieldName)) {
 
                     boolean isPrevVarNode = fieldNode.getPrevious() instanceof VarInsnNode;
                     boolean isPrevPrevVarNode = isPrevVarNode && fieldNode.getPrevious().getPrevious() instanceof VarInsnNode;
@@ -410,7 +412,8 @@ public class AnonymousObjectTransformer {
                             VarInsnNode previous = (VarInsnNode) fieldNode.getPrevious();
                             int varIndex = previous.var;
                             LambdaInfo lambdaInfo = indexToLambda.get(varIndex);
-                            CapturedParamInfo info = capturedParamBuilder.addCapturedParam(owner, fieldNode.name, Type.getType(fieldNode.desc), lambdaInfo != null, null);
+                            String newFieldName = isThis0(fieldName) && shouldRenameThis0(parentFieldRemapper, indexToLambda.values()) ? getNewFieldName(fieldName, true) : fieldName;
+                            CapturedParamInfo info = capturedParamBuilder.addCapturedParam(owner, fieldName, newFieldName, Type.getType(fieldNode.desc), lambdaInfo != null, null);
                             if (lambdaInfo != null) {
                                 info.setLambda(lambdaInfo);
                                 capturedLambdas.add(lambdaInfo);
@@ -459,7 +462,7 @@ public class AnonymousObjectTransformer {
         for (LambdaInfo info : capturedLambdas) {
             if (addCapturedNotAddOuter) {
                 for (CapturedParamDesc desc : info.getCapturedVars()) {
-                    CapturedParamInfo recapturedParamInfo = capturedParamBuilder.addCapturedParam(desc, getNewFieldName(desc.getFieldName()));
+                    CapturedParamInfo recapturedParamInfo = capturedParamBuilder.addCapturedParam(desc, getNewFieldName(desc.getFieldName(), false));
                     StackValue composed = StackValue.field(desc.getType(),
                                                            oldObjectType, /*TODO owner type*/
                                                            recapturedParamInfo.getNewFieldName(),
@@ -486,7 +489,7 @@ public class AnonymousObjectTransformer {
                     return ownerType;
                 }
             }, InlineCodegenUtil.THIS, ownerType);
-            CapturedParamInfo recapturedParamInfo = capturedParamBuilder.addCapturedParam(desc, InlineCodegenUtil.THIS$0);
+            CapturedParamInfo recapturedParamInfo = capturedParamBuilder.addCapturedParam(desc, InlineCodegenUtil.THIS$0/*outer lambda/object*/);
             StackValue composed = StackValue.LOCAL_0;
             recapturedParamInfo.setRemapValue(composed);
             allRecapturedParameters.add(desc);
@@ -494,19 +497,34 @@ public class AnonymousObjectTransformer {
             constructorParamBuilder.addCapturedParam(recapturedParamInfo, recapturedParamInfo.getNewFieldName()).setRemapValue(composed);
         }
 
-
-
         anonymousObjectGen.setAllRecapturedParameters(allRecapturedParameters);
         anonymousObjectGen.setCapturedLambdasToInline(capturedLambdasToInline);
 
         return constructorAdditionalFakeParams;
     }
 
+    private static boolean shouldRenameThis0(@NotNull FieldRemapper parentFieldRemapper, Collection<LambdaInfo> values) {
+        if (isFirstDeclSiteLambdaFieldRemapper(parentFieldRemapper)) {
+            for (LambdaInfo value : values) {
+                for (CapturedParamDesc desc : value.getCapturedVars()) {
+                    if (isThis0(desc.getFieldName())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     @NotNull
-    public String getNewFieldName(@NotNull String oldName) {
+    public String getNewFieldName(@NotNull String oldName, boolean originalField) {
         if (InlineCodegenUtil.THIS$0.equals(oldName)) {
-            //"this$0" couldn't clash and we should keep this name invariant for further transformations
-            return oldName;
+            if (!originalField) {
+                return oldName;
+            } else {
+                //rename original 'this$0' in declaration site lambda (inside inline function) to use this$0 only for outer lambda/object access on call site
+                return addUniqueField(oldName + InlineCodegenUtil.INLINE_FUN_THIS_0_SUFFIX);
+            }
         }
         return addUniqueField(oldName + InlineCodegenUtil.INLINE_TRANSFORMATION_SUFFIX);
     }
@@ -522,5 +540,9 @@ public class AnonymousObjectTransformer {
         String newName = name + suffix;
         existNames.add(newName);
         return newName;
+    }
+
+    private static boolean isFirstDeclSiteLambdaFieldRemapper(FieldRemapper parentRemapper) {
+        return !(parentRemapper instanceof RegeneratedLambdaFieldRemapper) && !(parentRemapper instanceof InlinedLambdaRemapper);
     }
 }

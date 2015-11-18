@@ -77,10 +77,11 @@ internal class ParametersBuilder private constructor(){
     fun addCapturedParam(
             containingLambda: CapturedParamOwner,
             fieldName: String,
+            newFieldName: String,
             type: Type,
             skipped: Boolean,
             original: ParameterInfo?): CapturedParamInfo {
-        val info = CapturedParamInfo(CapturedParamDesc.createDesc(containingLambda, fieldName, type), skipped, nextCapturedIndex(),
+        val info = CapturedParamInfo(CapturedParamDesc.createDesc(containingLambda, fieldName, type), newFieldName, skipped, nextCapturedIndex(),
                                      if (original != null) original.getIndex() else -1)
         if (original != null) {
             info.setLambda(original.getLambda())
