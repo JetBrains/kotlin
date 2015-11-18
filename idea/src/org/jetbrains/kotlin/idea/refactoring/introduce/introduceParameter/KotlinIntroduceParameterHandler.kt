@@ -38,14 +38,13 @@ import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.core.moveInsideParenthesesAndReplaceWith
+import org.jetbrains.kotlin.idea.core.refactoring.removeTemplateEntryBracesIfPossible
 import org.jetbrains.kotlin.idea.core.refactoring.runRefactoringWithPostprocessing
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
-import org.jetbrains.kotlin.idea.refactoring.introduce.KotlinIntroduceHandlerBase
+import org.jetbrains.kotlin.idea.refactoring.introduce.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
-import org.jetbrains.kotlin.idea.refactoring.introduce.selectElementsWithTargetParent
-import org.jetbrains.kotlin.idea.refactoring.introduce.showErrorHint
-import org.jetbrains.kotlin.idea.refactoring.introduce.showErrorHintByKey
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeCommand
@@ -205,9 +204,10 @@ public open class KotlinIntroduceParameterHandler(
         val helper: KotlinIntroduceParameterHelper = KotlinIntroduceParameterHelper.Default
 ): KotlinIntroduceHandlerBase() {
     open fun invoke(project: Project, editor: Editor, expression: KtExpression, targetParent: KtNamedDeclaration) {
-        val context = expression.analyze()
+        val physicalExpression = expression.substringContextOrThis
+        val context = physicalExpression.analyze()
 
-        val expressionType = context.getType(expression)
+        val expressionType = expression.extractableSubstringInfo?.type ?: context.getType(physicalExpression)
         if (expressionType == null) {
             showErrorHint(project, editor, "Expression has no type", INTRODUCE_PARAMETER)
             return
@@ -246,7 +246,7 @@ public open class KotlinIntroduceParameterHandler(
         val occurrencesToReplace = expression.toRange()
                 .match(body, KotlinPsiUnifier.DEFAULT)
                 .filterNot {
-                    val textRange = it.range.getTextRange()
+                    val textRange = it.range.getPhysicalTextRange()
                     forbiddenRanges.any { it.intersects(textRange) }
                 }
                 .mapNotNull {
@@ -267,7 +267,10 @@ public open class KotlinIntroduceParameterHandler(
                     val haveLambdaArgumentsToReplace = occurrencesToReplace.any {
                         it.elements.any { it is KtFunctionLiteralExpression && it.parent is KtFunctionLiteralArgument }
                     }
-                    val inplaceIsAvailable = editor.settings.isVariableInplaceRenameEnabled && !isTestMode && !haveLambdaArgumentsToReplace
+                    val inplaceIsAvailable = editor.settings.isVariableInplaceRenameEnabled
+                                             && !isTestMode
+                                             && !haveLambdaArgumentsToReplace
+                                             && expression.extractableSubstringInfo == null
 
                     val originalExpression = KtPsiUtil.safeDeparenthesize(expression)
                     val psiFactory = KtPsiFactory(project)
@@ -286,14 +289,17 @@ public open class KotlinIntroduceParameterHandler(
                                             occurrenceReplacer = {
                                                 val expressionToReplace = it.elements.single() as KtExpression
                                                 val replacingExpression = psiFactory.createExpression(newParameterName)
-                                                if (expressionToReplace.isFunctionLiteralOutsideParentheses()) {
-                                                    expressionToReplace
-                                                            .getStrictParentOfType<KtFunctionLiteralArgument>()!!
-                                                            .moveInsideParenthesesAndReplaceWith(replacingExpression, context)
+                                                val substringInfo = expressionToReplace.extractableSubstringInfo
+                                                val result = when {
+                                                    expressionToReplace.isFunctionLiteralOutsideParentheses() -> {
+                                                        expressionToReplace
+                                                                .getStrictParentOfType<KtFunctionLiteralArgument>()!!
+                                                                .moveInsideParenthesesAndReplaceWith(replacingExpression, context)
+                                                    }
+                                                    substringInfo != null -> substringInfo.replaceWith(replacingExpression)
+                                                    else -> expressionToReplace.replaced(replacingExpression)
                                                 }
-                                                else {
-                                                    expressionToReplace.replace(replacingExpression)
-                                                }
+                                                result.removeTemplateEntryBracesIfPossible()
                                             }
                                     )
                             )

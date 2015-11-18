@@ -3294,6 +3294,111 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/while.kt");
             doIntroduceSimpleParameterTest(fileName);
         }
+
+        @TestMetadata("idea/testData/refactoring/introduceParameter/stringTemplates")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class StringTemplates extends AbstractExtractionTest {
+            public void testAllFilesPresentInStringTemplates() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/introduceParameter/stringTemplates"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("brokenEntryWithBlockExpr.kt")
+            public void testBrokenEntryWithBlockExpr() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/stringTemplates/brokenEntryWithBlockExpr.kt");
+                doIntroduceSimpleParameterTest(fileName);
+            }
+
+            @TestMetadata("brokenEntryWithExpr.kt")
+            public void testBrokenEntryWithExpr() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/stringTemplates/brokenEntryWithExpr.kt");
+                doIntroduceSimpleParameterTest(fileName);
+            }
+
+            @TestMetadata("brokenEscapeEntry.kt")
+            public void testBrokenEscapeEntry() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/stringTemplates/brokenEscapeEntry.kt");
+                doIntroduceSimpleParameterTest(fileName);
+            }
+
+            @TestMetadata("extractFalse.kt")
+            public void testExtractFalse() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/stringTemplates/extractFalse.kt");
+                doIntroduceSimpleParameterTest(fileName);
+            }
+
+            @TestMetadata("extractIntegerLiteral.kt")
+            public void testExtractIntegerLiteral() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/stringTemplates/extractIntegerLiteral.kt");
+                doIntroduceSimpleParameterTest(fileName);
+            }
+
+            @TestMetadata("extractTrue.kt")
+            public void testExtractTrue() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/stringTemplates/extractTrue.kt");
+                doIntroduceSimpleParameterTest(fileName);
+            }
+
+            @TestMetadata("fullContent.kt")
+            public void testFullContent() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/stringTemplates/fullContent.kt");
+                doIntroduceSimpleParameterTest(fileName);
+            }
+
+            @TestMetadata("fullEntryWithBlockExpr.kt")
+            public void testFullEntryWithBlockExpr() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/stringTemplates/fullEntryWithBlockExpr.kt");
+                doIntroduceSimpleParameterTest(fileName);
+            }
+
+            @TestMetadata("fullEntryWithSimpleName.kt")
+            public void testFullEntryWithSimpleName() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/stringTemplates/fullEntryWithSimpleName.kt");
+                doIntroduceSimpleParameterTest(fileName);
+            }
+
+            @TestMetadata("multipleEntriesWithPrefix.kt")
+            public void testMultipleEntriesWithPrefix() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/stringTemplates/multipleEntriesWithPrefix.kt");
+                doIntroduceSimpleParameterTest(fileName);
+            }
+
+            @TestMetadata("multipleEntriesWithSubstring.kt")
+            public void testMultipleEntriesWithSubstring() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/stringTemplates/multipleEntriesWithSubstring.kt");
+                doIntroduceSimpleParameterTest(fileName);
+            }
+
+            @TestMetadata("multipleEntriesWithSuffix.kt")
+            public void testMultipleEntriesWithSuffix() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/stringTemplates/multipleEntriesWithSuffix.kt");
+                doIntroduceSimpleParameterTest(fileName);
+            }
+
+            @TestMetadata("rawTemplateWithSubstring.kt")
+            public void testRawTemplateWithSubstring() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/stringTemplates/rawTemplateWithSubstring.kt");
+                doIntroduceSimpleParameterTest(fileName);
+            }
+
+            @TestMetadata("singleEntryPrefix.kt")
+            public void testSingleEntryPrefix() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/stringTemplates/singleEntryPrefix.kt");
+                doIntroduceSimpleParameterTest(fileName);
+            }
+
+            @TestMetadata("singleEntrySubstring.kt")
+            public void testSingleEntrySubstring() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/stringTemplates/singleEntrySubstring.kt");
+                doIntroduceSimpleParameterTest(fileName);
+            }
+
+            @TestMetadata("singleEntrySuffix.kt")
+            public void testSingleEntrySuffix() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/stringTemplates/singleEntrySuffix.kt");
+                doIntroduceSimpleParameterTest(fileName);
+            }
+        }
     }
 
     @TestMetadata("idea/testData/refactoring/introduceLambdaParameter")
