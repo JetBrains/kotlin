@@ -4,8 +4,7 @@ package test
 
 fun commonFun2() {}
 
-// TODO uncomment when generated value will also be private in bytecode
-//private val addedVal2: Int = 20
+private val addedVal2: Int = 20
 
 private fun addedFun2(): Int = 50
 
