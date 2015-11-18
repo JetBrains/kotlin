@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.jps.incremental
 
 import com.google.protobuf.MessageLite
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.io.FileUtil.toSystemIndependentName
 import com.intellij.util.io.BooleanDataDescriptor
 import com.intellij.util.io.EnumeratorStringDescriptor
 import com.intellij.util.io.IOUtil
@@ -137,7 +138,7 @@ public class IncrementalCacheImpl(
     }
 
     override fun getClassFilePath(internalClassName: String): String {
-        return File(outputDir, "$internalClassName.class").canonicalPath
+        return toSystemIndependentName(File(outputDir, "$internalClassName.class").canonicalPath)
     }
 
     public fun saveCacheFormatVersion() {
