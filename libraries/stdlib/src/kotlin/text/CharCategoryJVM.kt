@@ -154,6 +154,11 @@ public enum class CharCategory(public val value: Int, public val code: String) {
      */
     FINAL_QUOTE_PUNCTUATION(Character.FINAL_QUOTE_PUNCTUATION.toInt(), "Pf");
 
+    /**
+     * Returns `true` if [char] character belongs to this category.
+     */
+    public operator fun contains(char: Char): Boolean = Character.getType(char) == this.value
+
 
     public companion object {
         private val categoryMap by lazy { CharCategory.values().toMap { it.value } }
