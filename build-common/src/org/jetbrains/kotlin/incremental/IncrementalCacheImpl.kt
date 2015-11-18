@@ -160,7 +160,7 @@ open class IncrementalCacheImpl<Target>(
                 packagePartMap.addPackagePart(className)
 
                 protoMap.process(kotlinClass, isPackage = true) +
-                constantsMap.process(kotlinClass) +
+                constantsMap.process(kotlinClass, isPackage = true) +
                 inlineFunctionsMap.process(kotlinClass, isPackage = true)
             }
             KotlinClassHeader.Kind.MULTIFILE_CLASS -> {
@@ -175,7 +175,7 @@ open class IncrementalCacheImpl<Target>(
                 classFqNameToSourceMap.remove(className.fqNameForClassNameWithoutDollars)
 
                 // TODO NO_CHANGES? (delegates only)
-                constantsMap.process(kotlinClass) +
+                constantsMap.process(kotlinClass, isPackage = true) +
                 inlineFunctionsMap.process(kotlinClass, isPackage = true)
             }
             KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
@@ -184,7 +184,7 @@ open class IncrementalCacheImpl<Target>(
                 partToMultifileFacade.set(className.internalName, header.multifileClassName!!)
 
                 protoMap.process(kotlinClass, isPackage = true) +
-                constantsMap.process(kotlinClass) +
+                constantsMap.process(kotlinClass, isPackage = true) +
                 inlineFunctionsMap.process(kotlinClass, isPackage = true)
             }
             KotlinClassHeader.Kind.CLASS -> {
@@ -192,7 +192,7 @@ open class IncrementalCacheImpl<Target>(
                 addToClassStorage(kotlinClass, sourceFiles.first())
 
                 protoMap.process(kotlinClass, isPackage = false) +
-                constantsMap.process(kotlinClass) +
+                constantsMap.process(kotlinClass, isPackage = true) +
                 inlineFunctionsMap.process(kotlinClass, isPackage = false)
             }
             else -> CompilationResult.NO_CHANGES
@@ -426,11 +426,11 @@ open class IncrementalCacheImpl<Target>(
         operator fun contains(className: JvmClassName): Boolean =
                 className.internalName in storage
 
-        fun process(kotlinClass: LocalFileKotlinClass): CompilationResult {
-            return put(kotlinClass.className, getConstantsMap(kotlinClass.fileContents))
+        fun process(kotlinClass: LocalFileKotlinClass, isPackage: Boolean): CompilationResult {
+            return put(kotlinClass.className, getConstantsMap(kotlinClass.fileContents), isPackage)
         }
 
-        private fun put(className: JvmClassName, constantsMap: Map<String, Any>?): CompilationResult {
+        private fun put(className: JvmClassName, constantsMap: Map<String, Any>?, isPackage: Boolean): CompilationResult {
             val key = className.internalName
 
             val oldMap = storage[key]
@@ -440,14 +440,30 @@ open class IncrementalCacheImpl<Target>(
                 storage[key] = constantsMap
             }
             else {
-                storage.remove(key)
+                remove(className)
             }
 
-            return CompilationResult(constantsChanged = true)
+            val changes =
+                    if (!IncrementalCompilation.isExperimental() ||
+                        constantsMap == null || constantsMap.isEmpty() ||
+                        oldMap == null || oldMap.isEmpty()
+                    ) {
+                        emptySequence<ChangeInfo>()
+                    }
+                    else {
+                        // we need only changed constants everything other should be covered by diff
+                        val changedNames = oldMap.filter { constantsMap.containsKey(it.key) && constantsMap[it.key] != it.value }.map { it.key }
+
+                        val fqName = if (isPackage) className.packageFqName else className.fqNameForClassNameWithoutDollars
+
+                        sequenceOf(ChangeInfo.MembersChanged(fqName, changedNames))
+                    }
+
+            return CompilationResult(constantsChanged = true, changes = changes)
         }
 
         fun remove(className: JvmClassName) {
-            put(className, null)
+            storage.remove(className.internalName)
         }
 
         override fun dumpValue(value: Map<String, Any>): String =
