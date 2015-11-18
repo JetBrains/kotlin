@@ -73,7 +73,7 @@ public class KotlinReferenceImporter : ReferenceImporter {
             return false
         }
 
-        protected fun hasUnresolvedImportWhichCanImport(file: KtFile, name: String): Boolean {
+        private fun hasUnresolvedImportWhichCanImport(file: KtFile, name: String): Boolean {
             return file.importDirectives.any {
                 it.targetDescriptors().isEmpty() && (it.isAllUnder || it.importPath?.importedName?.asString() == name)
             }
