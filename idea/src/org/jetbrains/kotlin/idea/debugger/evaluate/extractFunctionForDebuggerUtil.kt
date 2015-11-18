@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 fun getFunctionForExtractedFragment(
         codeFragment: KtCodeFragment,
@@ -138,12 +140,7 @@ private fun addImportsToFile(newImportList: KtImportList?, tmpFile: KtFile) {
 }
 
 private fun KtFile.getElementInCopy(e: PsiElement): PsiElement? {
-    val offset = e.textRange?.startOffset ?: return null
-    var elementAt = this.findElementAt(offset)
-    while (elementAt == null || elementAt.textRange?.endOffset != e.textRange?.endOffset) {
-        elementAt = elementAt?.parent
-    }
-    return elementAt
+    return CodeInsightUtils.findElementOfClassAtRange(this, e.startOffset, e.endOffset, e.javaClass)
 }
 
 private fun getExpressionToAddDebugExpressionBefore(tmpFile: KtFile, contextElement: PsiElement?, line: Int): PsiElement? {
