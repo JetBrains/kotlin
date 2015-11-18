@@ -100,6 +100,12 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
     // Should be SourceDirectorySet or File
     val srcDirsSources = HashSet<Any>()
 
+    private val testsMap = mapOf(
+            "compileTestKotlin" to  "compileKotlin",
+            "compileDebugUnitTestKotlin" to  "compileDebugKotlin",
+            "compileReleaseUnitTestKotlin" to  "compileReleaseKotlin"
+            )
+
     override fun populateTargetSpecificArgs(args: K2JVMCompilerArguments) {
         // show kotlin compiler where to look for java source files
         args.freeArgs = (args.freeArgs + getJavaSourceRoots().map { it.getAbsolutePath() }).toSet().toList()
@@ -149,13 +155,10 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
             }
         }
 
-        if (this.name == "compileTestKotlin") {
-            addFriendPathForTestTask("compileKotlin")
+        testsMap.get(this.name)?.let {
+            addFriendPathForTestTask(it)
         }
-        if (this.name == "compileDebugUnitTestKotlin") {
-            addFriendPathForTestTask("compileDebugKotlin")
-        }
-
+9
         getLogger().kotlinDebug("args.moduleName = ${args.moduleName}")
     }
 
