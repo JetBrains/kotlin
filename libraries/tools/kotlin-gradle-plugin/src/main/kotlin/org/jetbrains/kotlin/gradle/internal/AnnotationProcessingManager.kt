@@ -313,7 +313,7 @@ public class AnnotationProcessingManager(
 
         fun processLines(lines: Sequence<String>) {
             for (line in lines) {
-                if (line.isBlank() || !JAVA_FQNAME_PATTERN.matcher(line).matches()) continue
+                if (line.isBlank() || !JAVA_FQNAME_PATTERN.matches(line)) continue
                 annotationProcessors.add(line)
             }
         }

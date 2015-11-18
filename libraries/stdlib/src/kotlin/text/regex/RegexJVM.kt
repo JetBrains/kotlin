@@ -116,7 +116,7 @@ public class Regex internal constructor(private val nativePattern: Pattern) {
     /** The set of options that were used to create this regular expression.  */
     public val options: Set<RegexOption> = fromInt(nativePattern.flags())
 
-    @Deprecated("To get the Matcher from java.util.regex.Pattern use toPattern to convert string to Pattern, or migrate to Regex API")
+    @Deprecated("To get the Matcher from java.util.regex.Pattern use toPattern to convert string to Pattern, or migrate to Regex API", ReplaceWith("toPattern().matcher(input)"), DeprecationLevel.ERROR)
     public fun matcher(input: CharSequence): Matcher = nativePattern.matcher(input)
 
     /** Indicates whether the regular expression matches the entire [input]. */
