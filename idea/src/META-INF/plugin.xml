@@ -91,6 +91,12 @@
       <add-to-group group-id="KotlinToolsGroup"/>
     </action>
 
+    <action id="KotlinCheckForUpdates" class="org.jetbrains.kotlin.idea.actions.CheckPluginUpdatesAction"
+            text="Check for Kotlin plugin updates"
+            description="Check if a new version of the Kotlin plugin is available and prompt to install it">
+      <add-to-group group-id="KotlinToolsGroup"/>
+    </action>
+
     <action id="ShowKotlinBytecode" class="org.jetbrains.kotlin.idea.actions.ShowKotlinBytecodeAction"
             text="Show Kotlin Bytecode">
       <add-to-group group-id="KotlinToolsGroup"/>

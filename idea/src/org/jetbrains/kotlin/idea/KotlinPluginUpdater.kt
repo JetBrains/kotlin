@@ -58,18 +58,18 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
         }
     }
 
-    private fun queueUpdateCheck() {
+    fun queueUpdateCheck(reportNoUpdates: Boolean = false) {
         if (ApplicationManager.getApplication().isUnitTestMode) return
 
         ApplicationManager.getApplication().assertIsDispatchThread()
         if (!checkQueued) {
             checkQueued = true
-            alarm.addRequest({ updateCheck() }, updateDelay)
+            alarm.addRequest({ updateCheck(reportNoUpdates) }, updateDelay)
             updateDelay *= 2 // exponential backoff
         }
     }
 
-    private fun updateCheck() {
+    private fun updateCheck(reportNoUpdates: Boolean) {
         try {
             var (mainRepoUpdateSuccess, latestVersionInRepository) = getPluginVersionFromMainRepository()
             var descriptorToInstall: IdeaPluginDescriptor? = null
@@ -99,6 +99,15 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
                 if (latestVersionInRepository != null && VersionComparatorUtil.compare(latestVersionInRepository, KotlinPluginUtil.getPluginVersion()) > 0) {
                     ApplicationManager.getApplication().invokeLater {
                         notifyPluginUpdateAvailable(latestVersionInRepository!!, descriptorToInstall, hostToInstallFrom)
+                    }
+                }
+                else if (reportNoUpdates) {
+                    ApplicationManager.getApplication().invokeLater {
+                        val notification = notificationGroup.createNotification(
+                                "Kotlin",
+                                "You have the latest version of the Kotlin plugin",
+                                NotificationType.INFORMATION, null)
+                        notification.notify(null)
                     }
                 }
             }
