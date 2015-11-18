@@ -68,6 +68,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getJavaMemberDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.getPackage
+import org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateIntention
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.string.collapseSpaces
@@ -750,4 +751,13 @@ fun <ListType : KtElement> replaceListPsiAndKeepDelimiters(
 
 fun <T> Pass(body: (T) -> Unit) = object: Pass<T>() {
     override fun pass(t: T) = body(t)
+}
+
+fun KtExpression.removeTemplateEntryBracesIfPossible(): KtExpression {
+    val parent = parent
+    if (parent !is KtBlockStringTemplateEntry) return this
+
+    val intention = RemoveCurlyBracesFromTemplateIntention()
+    val newEntry = if (intention.isApplicableTo(parent)) intention.applyTo(parent) else parent
+    return newEntry.expression!!
 }

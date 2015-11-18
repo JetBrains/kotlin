@@ -387,7 +387,7 @@ enum class ExtractionTarget(val targetName: String) {
         }
 
         fun checkSimpleBody(descriptor: ExtractableCodeDescriptor): Boolean {
-            val expression = descriptor.extractionData.getExpressions().singleOrNull()
+            val expression = descriptor.extractionData.expressions.singleOrNull()
             return expression != null && expression !is KtDeclaration && expression !is KtBlockExpression
         }
 

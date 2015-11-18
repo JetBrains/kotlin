@@ -127,11 +127,11 @@ private fun List<Instruction>.getVarDescriptorsAccessedAfterwards(bindingContext
 private fun List<Instruction>.getExitPoints(): List<Instruction> =
         filter { localInstruction -> localInstruction.nextInstructions.any { it !in this } }
 
-private fun List<Instruction>.getResultTypeAndExpressions(
+private fun ExtractionData.getResultTypeAndExpressions(
+        instructions: List<Instruction>,
         bindingContext: BindingContext,
         targetScope: LexicalScope?,
-        options: ExtractionOptions,
-        module: ModuleDescriptor
+        options: ExtractionOptions, module: ModuleDescriptor
 ): Pair<KotlinType, List<KtExpression>> {
     fun instructionToExpression(instruction: Instruction, unwrapReturn: Boolean): KtExpression? {
         return when (instruction) {
@@ -146,6 +146,10 @@ private fun List<Instruction>.getResultTypeAndExpressions(
     fun instructionToType(instruction: Instruction): KotlinType? {
         val expression = instructionToExpression(instruction, true) ?: return null
 
+        substringInfo?.let {
+            if (it.template == expression) return it.type
+        }
+
         if (options.inferUnitTypeForUnusedValues && expression.isUsedAsStatement(bindingContext)) return null
 
         return bindingContext.getType(expression)
@@ -154,11 +158,11 @@ private fun List<Instruction>.getResultTypeAndExpressions(
                }
     }
 
-    val resultTypes = mapNotNull(::instructionToType)
+    val resultTypes = instructions.mapNotNull(::instructionToType)
     val commonSupertype = if (resultTypes.isNotEmpty()) CommonSupertypes.commonSupertype(resultTypes) else module.builtIns.defaultReturnType
     val resultType = if (options.allowSpecialClassNames) commonSupertype else commonSupertype.approximateWithResolvableType(targetScope, false)
 
-    val expressions = mapNotNull { instructionToExpression(it, false) }
+    val expressions = instructions.mapNotNull { instructionToExpression(it, false) }
 
     return resultType to expressions
 }
@@ -210,7 +214,7 @@ private fun ExtractionData.getLocalDeclarationsWithNonLocalUsages(
         if (instruction !in localInstructions) {
             instruction.getPrimaryDeclarationDescriptorIfAny(bindingContext)?.let { descriptor ->
                 val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
-                if (declaration is KtNamedDeclaration && declaration.isInsideOf(originalElements)) {
+                if (declaration is KtNamedDeclaration && declaration.isInsideOf(physicalElements)) {
                     declarations.add(declaration)
                 }
             }
@@ -279,8 +283,8 @@ private fun ExtractionData.analyzeControlFlow(
     val nonLocallyUsedDeclarations = getLocalDeclarationsWithNonLocalUsages(pseudocode, localInstructions, bindingContext)
     val (declarationsToCopy, declarationsToReport) = nonLocallyUsedDeclarations.partition { it is KtProperty && it.isLocal }
 
-    val (typeOfDefaultFlow, defaultResultExpressions) = defaultExits.getResultTypeAndExpressions(bindingContext, targetScope, options, module)
-    val (returnValueType, valuedReturnExpressions) = valuedReturnExits.getResultTypeAndExpressions(bindingContext, targetScope, options, module)
+    val (typeOfDefaultFlow, defaultResultExpressions) = getResultTypeAndExpressions(defaultExits, bindingContext, targetScope, options, module)
+    val (returnValueType, valuedReturnExpressions) = getResultTypeAndExpressions(valuedReturnExits, bindingContext, targetScope, options, module)
 
     val emptyControlFlow =
             ControlFlow(Collections.emptyList(), { OutputValueBoxer.AsTuple(it, module) }, declarationsToCopy)
@@ -586,7 +590,7 @@ private fun ExtractionData.checkDeclarationsMovingOutOfScope(
                 override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
                     val target = expression.mainReference.resolve()
                     if (target is KtNamedDeclaration
-                        && target.isInsideOf(originalElements)
+                        && target.isInsideOf(physicalElements)
                         && target.getStrictParentOfType<KtDeclaration>() == enclosingDeclaration) {
                         declarationsOutOfScope.add(target)
                     }
@@ -605,7 +609,7 @@ private fun ExtractionData.checkDeclarationsMovingOutOfScope(
 private fun ExtractionData.getLocalInstructions(pseudocode: Pseudocode): List<Instruction> {
     val instructions = ArrayList<Instruction>()
     pseudocode.traverse(TraversalOrder.FORWARD) {
-        if (it is JetElementInstruction && it.element.isInsideOf(originalElements)) {
+        if (it is JetElementInstruction && it.element.isInsideOf(physicalElements)) {
             instructions.add(it)
         }
     }
@@ -725,7 +729,7 @@ private fun ExtractionData.suggestFunctionNames(returnType: KotlinType): List<St
         functionNames.addAll(KotlinNameSuggester.suggestNamesByType(returnType, validator))
     }
 
-    getExpressions().singleOrNull()?.let { expr ->
+    expressions.singleOrNull()?.let { expr ->
         val property = expr.getStrictParentOfType<KtProperty>()
         if (property?.initializer == expr) {
             property?.name?.let { functionNames.add(KotlinNameSuggester.suggestNameByName("get" + it.capitalize(), validator)) }
@@ -806,7 +810,7 @@ fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts
 
     fun validateBody() {
         for ((originalOffset, resolveResult) in extractionData.refOffsetToDeclaration) {
-            if (resolveResult.declaration.isInsideOf(extractionData.originalElements)) continue
+            if (resolveResult.declaration.isInsideOf(extractionData.physicalElements)) continue
 
             val currentRefExprs = result.nameByOffset[originalOffset].mapNotNull {
                 (it as? KtThisExpression)?.instanceReference ?: it as? KtSimpleNameExpression

@@ -25,6 +25,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.refactoring.chooseContainerElementIfNecessary
+import org.jetbrains.kotlin.idea.core.refactoring.removeTemplateEntryBracesIfPossible
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtil
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange
@@ -52,7 +53,7 @@ fun selectElementsWithTargetSibling(
                      ?: throw AssertionError("Should have at least one parent: ${physicalElements.joinToString("\n")}")
 
         if (parent == targetContainer) {
-            continuation(elements, elements.first())
+            continuation(elements, physicalElements.first())
             return
         }
 
@@ -84,7 +85,7 @@ fun selectElementsWithTargetParent(
         val parent = PsiTreeUtil.findCommonParent(physicalElements)
             ?: throw AssertionError("Should have at least one parent: ${physicalElements.joinToString("\n")}")
 
-        val containers = getContainers(elements, parent)
+        val containers = getContainers(physicalElements, parent)
         if (containers.isEmpty()) {
             showErrorHintByKey("cannot.refactor.no.container")
             return
@@ -173,4 +174,26 @@ fun findExpressionOrStringFragment(file: KtFile, startOffset: Int, endOffset: In
     val suffix = entry2.text.substring(suffixOffset)
 
     return ExtractableSubstringInfo(entry1, entry2, prefix, suffix).createExpression()
+}
+
+fun KotlinPsiRange.getPhysicalTextRange(): TextRange {
+    return (elements.singleOrNull() as? KtExpression)?.extractableSubstringInfo?.contentRange ?: getTextRange()
+}
+
+fun ExtractableSubstringInfo.replaceWith(replacement: KtExpression): KtExpression {
+    return with(this) {
+        val psiFactory = KtPsiFactory(replacement)
+        val parent = startEntry.parent
+
+        psiFactory.createStringTemplate(prefix).entries.singleOrNull()?.let { parent.addBefore(it, startEntry) }
+
+        val refEntry = psiFactory.createBlockStringTemplateEntry(replacement)
+        val addedRefEntry = parent.addBefore(refEntry, startEntry) as KtStringTemplateEntryWithExpression
+
+        psiFactory.createStringTemplate(suffix).entries.singleOrNull()?.let { parent.addAfter(it, endEntry) }
+
+        parent.deleteChildRange(startEntry, endEntry)
+
+        addedRefEntry.expression!!
+    }
 }

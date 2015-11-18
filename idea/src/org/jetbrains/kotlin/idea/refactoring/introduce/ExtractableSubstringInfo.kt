@@ -69,6 +69,9 @@ class ExtractableSubstringInfo(
     val contentRange: TextRange
         get() = TextRange(startEntry.startOffset + prefix.length, endEntry.endOffset - suffix.length)
 
+    val relativeContentRange: TextRange
+        get() = contentRange.shiftRight(-template.startOffset)
+
     val entries: Sequence<KtStringTemplateEntry>
         get() = sequence(startEntry) { if (it != endEntry) it.nextSiblingOfSameType() else null }
 

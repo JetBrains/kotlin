@@ -42,8 +42,8 @@ import org.jetbrains.kotlin.idea.core.compareDescriptors
 import org.jetbrains.kotlin.idea.core.moveInsideParenthesesAndReplaceWith
 import org.jetbrains.kotlin.idea.core.refactoring.Pass
 import org.jetbrains.kotlin.idea.core.refactoring.chooseContainerElementIfNecessary
+import org.jetbrains.kotlin.idea.core.refactoring.removeTemplateEntryBracesIfPossible
 import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyIntention
-import org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateIntention
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtil
 import org.jetbrains.kotlin.idea.refactoring.introduce.*
@@ -108,37 +108,17 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
 
             val replacement = psiFactory.createExpression(nameSuggestion)
             val substringInfo = expressionToReplace.extractableSubstringInfo
-            var result = if (expressionToReplace.isFunctionLiteralOutsideParentheses()) {
-                val functionLiteralArgument = expressionToReplace.getStrictParentOfType<KtFunctionLiteralArgument>()!!
-                val newCallExpression = functionLiteralArgument.moveInsideParenthesesAndReplaceWith(replacement, bindingContext)
-                newCallExpression.valueArguments.last().getArgumentExpression()!!
-            }
-            else if (substringInfo != null) {
-                with(substringInfo) {
-                    val parent = startEntry.parent
-
-                    psiFactory.createStringTemplate(prefix).entries.singleOrNull()?.let { parent.addBefore(it, startEntry) }
-
-                    val refEntry = psiFactory.createBlockStringTemplateEntry(replacement)
-                    val addedRefEntry = parent.addBefore(refEntry, startEntry) as KtStringTemplateEntryWithExpression
-
-                    psiFactory.createStringTemplate(suffix).entries.singleOrNull()?.let { parent.addAfter(it, endEntry) }
-
-                    parent.deleteChildRange(startEntry, endEntry)
-
-                    addedRefEntry.expression!!
+            var result = when {
+                expressionToReplace.isFunctionLiteralOutsideParentheses() -> {
+                    val functionLiteralArgument = expressionToReplace.getStrictParentOfType<KtFunctionLiteralArgument>()!!
+                    val newCallExpression = functionLiteralArgument.moveInsideParenthesesAndReplaceWith(replacement, bindingContext)
+                    newCallExpression.valueArguments.last().getArgumentExpression()!!
                 }
-            }
-            else {
-                expressionToReplace.replace(replacement) as KtExpression
+                substringInfo != null -> substringInfo.replaceWith(replacement)
+                else -> expressionToReplace.replace(replacement) as KtExpression
             }
 
-            val parent = result.parent
-            if (parent is KtBlockStringTemplateEntry) {
-                val intention = RemoveCurlyBracesFromTemplateIntention()
-                val newEntry = if (intention.isApplicableTo(parent)) intention.applyTo(parent) else parent
-                result = newEntry.expression!!
-            }
+            result = result.removeTemplateEntryBracesIfPossible()
 
             if (addToReferences) references.addIfNotNull(result)
 

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.util.PsiTreeUtil
@@ -28,12 +27,13 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.KotlinFileReferencesResolver
 import org.jetbrains.kotlin.idea.core.compareDescriptors
 import org.jetbrains.kotlin.idea.core.refactoring.getContextForContainingDeclarationBody
+import org.jetbrains.kotlin.idea.refactoring.introduce.ExtractableSubstringInfo
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractableSubstringInfo
+import org.jetbrains.kotlin.idea.refactoring.introduce.substringContextOrThis
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.isInsideOf
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -87,35 +87,31 @@ data class ExtractionData(
 ) {
     val project: Project = originalFile.getProject()
     val originalElements: List<PsiElement> = originalRange.elements
+    val physicalElements = originalElements.map { it.substringContextOrThis }
+
+    val substringInfo: ExtractableSubstringInfo?
+        get() = (originalElements.singleOrNull() as? KtExpression)?.extractableSubstringInfo
 
     val insertBefore: Boolean = options.extractAsProperty
                                 || targetSibling.getStrictParentOfType<KtDeclaration>()?.let {
                                     it is KtDeclarationWithBody || it is KtAnonymousInitializer
                                 } ?: false
 
-    fun getExpressions(): List<KtExpression> = originalElements.filterIsInstance<KtExpression>()
-
-    private fun getCodeFragmentTextRange(): TextRange? {
-        val originalElements = originalElements
-        return when (originalElements.size()) {
-            0 -> null
-            1 -> originalElements.first().getTextRange()
-            else -> {
-                val from = originalElements.first().getTextRange()!!.getStartOffset()
-                val to = originalElements.last().getTextRange()!!.getEndOffset()
-                TextRange(from, to)
-            }
-        }
-    }
+    val expressions = originalElements.filterIsInstance<KtExpression>()
 
     val codeFragmentText: String by lazy {
-        getCodeFragmentTextRange()?.let { originalFile.getText()?.substring(it.getStartOffset(), it.getEndOffset()) } ?: ""
+        val originalElements = originalElements
+        when (originalElements.size) {
+            0 -> ""
+            1 -> originalElements.first().text
+            else -> originalFile.text.substring(originalElements.first().startOffset, originalElements.last().endOffset)
+        }
     }
 
     val originalStartOffset: Int?
         get() = originalElements.firstOrNull()?.let { e -> e.getTextRange()!!.getStartOffset() }
 
-    val commonParent = PsiTreeUtil.findCommonParent(originalElements) as KtElement
+    val commonParent = PsiTreeUtil.findCommonParent(physicalElements) as KtElement
 
     val bindingContext: BindingContext? by lazy { commonParent.getContextForContainingDeclarationBody() }
 
@@ -126,7 +122,7 @@ data class ExtractionData(
         fun isExtractableIt(descriptor: DeclarationDescriptor, context: BindingContext): Boolean {
             if (!(descriptor is ValueParameterDescriptor && (context[BindingContext.AUTO_CREATED_IT, descriptor] ?: false))) return false
             val function = DescriptorToSourceUtils.descriptorToDeclaration(descriptor.getContainingDeclaration()) as? KtFunctionLiteral
-            return function == null || !function.isInsideOf(originalElements)
+            return function == null || !function.isInsideOf(physicalElements)
         }
 
         tailrec fun getDeclaration(descriptor: DeclarationDescriptor, context: BindingContext): PsiNameIdentifierOwner? {
@@ -157,18 +153,26 @@ data class ExtractionData(
                 }
 
                 override fun visitSimpleNameExpression(ref: KtSimpleNameExpression) {
-                    if (ref !is KtSimpleNameExpression) return
                     if (ref.getParent() is KtValueArgumentName) return
 
-                    val resolvedCall = ref.getResolvedCall(context)
-                    val descriptor = context[BindingContext.REFERENCE_TARGET, ref] ?: return
+                    val physicalRef = substringInfo?.let {
+                        // If substring contains some references it must be extracted as a string template
+                        val physicalExpression = expressions.single() as KtStringTemplateExpression
+                        val extractedContentOffset = physicalExpression.getContentRange().startOffset + physicalExpression.startOffset
+                        val offsetInExtracted = ref.startOffset - extractedContentOffset
+                        val offsetInTemplate = it.relativeContentRange.startOffset + offsetInExtracted
+                        it.template.findElementAt(offsetInTemplate)!!.getStrictParentOfType<KtSimpleNameExpression>()
+                    } ?: ref
+
+                    val resolvedCall = physicalRef.getResolvedCall(context)
+                    val descriptor = context[BindingContext.REFERENCE_TARGET, physicalRef] ?: return
                     val declaration = getDeclaration(descriptor, context) ?: return
 
                     val offset = ref.getTextRange()!!.getStartOffset() - originalStartOffset
-                    resultMap[offset] = ResolveResult(ref, declaration, descriptor, resolvedCall)
+                    resultMap[offset] = ResolveResult(physicalRef, declaration, descriptor, resolvedCall)
                 }
             }
-            getExpressions().forEach { it.accept(visitor) }
+            expressions.forEach { it.accept(visitor) }
 
             resultMap
         }
@@ -230,7 +234,7 @@ data class ExtractionData(
             val isBadRef = !(compareDescriptors(project, originalResolveResult.descriptor, descriptor)
                              && originalContext.diagnostics.forElement(originalResolveResult.originalRefExpr) == context.diagnostics.forElement(ref))
                            || smartCast != null
-            if (isBadRef && !originalResolveResult.declaration.isInsideOf(originalElements)) {
+            if (isBadRef && !originalResolveResult.declaration.isInsideOf(physicalElements)) {
                 val originalResolvedCall = originalResolveResult.resolvedCall as? VariableAsFunctionResolvedCall
                 val originalFunctionCall = originalResolvedCall?.functionCall
                 val originalVariableCall = originalResolvedCall?.variableCall

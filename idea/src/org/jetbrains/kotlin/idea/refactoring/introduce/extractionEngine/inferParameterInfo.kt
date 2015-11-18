@@ -88,7 +88,7 @@ internal fun ExtractionData.inferParametersInfo(
 
     val varNameValidator = NewDeclarationNameValidator(
             commonParent.getNonStrictParentOfType<KtExpression>()!!,
-            originalElements.firstOrNull(),
+            physicalElements.firstOrNull(),
             NewDeclarationNameValidator.Target.VARIABLES
     )
 
@@ -131,7 +131,7 @@ private fun ExtractionData.extractReceiver(
     val thisExpr = refInfo.refExpr.parent as? KtThisExpression
 
     if (hasThisReceiver
-        && DescriptorToSourceUtilsIde.getAllDeclarations(project, thisDescriptor!!).all { it.isInsideOf(originalElements) }) {
+        && DescriptorToSourceUtilsIde.getAllDeclarations(project, thisDescriptor!!).all { it.isInsideOf(physicalElements) }) {
         return
     }
 

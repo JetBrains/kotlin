@@ -26,20 +26,22 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.core.refactoring.isMultiLine
+import org.jetbrains.kotlin.idea.core.refactoring.removeTemplateEntryBracesIfPossible
 import org.jetbrains.kotlin.idea.intentions.ConvertToExpressionBodyIntention
 import org.jetbrains.kotlin.idea.intentions.InfixCallToOrdinaryIntention
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractableSubstringInfo
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValueBoxer.AsTuple
+import org.jetbrains.kotlin.idea.refactoring.introduce.getPhysicalTextRange
+import org.jetbrains.kotlin.idea.refactoring.introduce.replaceWith
+import org.jetbrains.kotlin.idea.refactoring.introduce.substringContextOrThis
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
-import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange
-import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiUnifier
-import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnificationResult
+import org.jetbrains.kotlin.idea.util.psi.patternMatching.*
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnificationResult.StronglyMatched
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnificationResult.WeaklyMatched
-import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnifierParameter
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.KtPsiFactory.CallableBuilder
 import org.jetbrains.kotlin.psi.codeFragmentUtil.DEBUG_TYPE_REFERENCE_STRING
@@ -206,15 +208,18 @@ fun ExtractableCodeDescriptor.findDuplicates(): List<DuplicateInfo> {
     val unifier = KotlinPsiUnifier(unifierParameters, true)
 
     val scopeElement = getOccurrenceContainer() ?: return Collections.emptyList()
-    val originalTextRange = extractionData.originalRange.getTextRange()
+    val originalTextRange = extractionData.originalRange.getPhysicalTextRange()
     return extractionData
             .originalRange
             .match(scopeElement, unifier)
             .asSequence()
-            .filter { !(it.range.getTextRange() intersects originalTextRange) }
+            .filter { !(it.range.getPhysicalTextRange() intersects originalTextRange) }
             .mapNotNull { match ->
                 val controlFlow = getControlFlowIfMatched(match)
-                controlFlow?.let { DuplicateInfo(match.range, it, unifierParameters.map { match.substitution[it]!!.text!! }) }
+                val range = with(match.range) {
+                    (elements.singleOrNull() as? KtStringTemplateEntryWithExpression)?.expression?.toRange() ?: this
+                }
+                controlFlow?.let { DuplicateInfo(range, it, unifierParameters.map { match.substitution[it]!!.text!! }) }
             }
             .toList()
 }
@@ -229,16 +234,15 @@ private fun makeCall(
         controlFlow: ControlFlow,
         rangeToReplace: KotlinPsiRange,
         arguments: List<String>) {
-    fun insertCall(anchor: PsiElement, wrappedCall: KtExpression) {
+    fun insertCall(anchor: PsiElement, wrappedCall: KtExpression): KtExpression? {
         val firstExpression = rangeToReplace.elements.firstOrNull { it is KtExpression } as? KtExpression
         if (firstExpression?.isFunctionLiteralOutsideParentheses() ?: false) {
             val functionLiteralArgument = firstExpression?.getStrictParentOfType<KtFunctionLiteralArgument>()!!
-            functionLiteralArgument.moveInsideParenthesesAndReplaceWith(wrappedCall, extractableDescriptor.originalContext)
-            return
+            return functionLiteralArgument.moveInsideParenthesesAndReplaceWith(wrappedCall, extractableDescriptor.originalContext)
         }
 
         if (anchor is KtOperationReferenceExpression) {
-            val operationExpression = anchor.parent as? KtOperationExpression ?: return
+            val operationExpression = anchor.parent as? KtOperationExpression ?: return null
             val newNameExpression = when (operationExpression) {
                 is KtUnaryExpression -> OperatorToFunctionIntention.convert(operationExpression).second
                 is KtBinaryExpression -> {
@@ -246,11 +250,14 @@ private fun makeCall(
                 }
                 else -> null
             }
-            newNameExpression?.replace(wrappedCall)
-            return
+            return newNameExpression?.replaced(wrappedCall)
         }
 
-        anchor.replace(wrappedCall)
+        (anchor as? KtExpression)?.extractableSubstringInfo?.let {
+            return it.replaceWith(wrappedCall)
+        }
+
+        return anchor.replaced(wrappedCall)
     }
 
     if (rangeToReplace !is KotlinPsiRange.ListRange) return
@@ -393,7 +400,7 @@ private fun makeCall(
         if (!inlinableCall) {
             block.addBefore(newLine, anchorInBlock)
         }
-        insertCall(anchor, wrapCall(it, unboxingExpressions[it]!!).first() as KtExpression)
+        insertCall(anchor, wrapCall(it, unboxingExpressions[it]!!).first() as KtExpression)?.removeTemplateEntryBracesIfPossible()
     }
 
     if (anchor.isValid) {
@@ -617,7 +624,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
     val anchor = with(descriptor.extractionData) {
         val targetParent = targetSibling.parent
 
-        val anchorCandidates = duplicates.mapTo(ArrayList<PsiElement>()) { it.range.elements.first() }
+        val anchorCandidates = duplicates.mapTo(ArrayList<PsiElement>()) { it.range.elements.first().substringContextOrThis }
         anchorCandidates.add(targetSibling)
         if (targetSibling is KtEnumEntry) {
             anchorCandidates.add(targetSibling.siblings().last { it is KtEnumEntry })
