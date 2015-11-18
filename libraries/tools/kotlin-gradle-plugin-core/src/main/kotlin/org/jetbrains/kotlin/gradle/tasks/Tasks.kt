@@ -135,18 +135,25 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
         args.noParamAssertions = kotlinOptions.noParamAssertions
         args.moduleName = kotlinOptions.moduleName ?: extraProperties.getOrNull<String>("defaultModuleName")
 
-        if (this.name == "compileTestKotlin") {
-            getLogger().kotlinDebug("try to determine the output directory of corresponding compileKotlin task")
-            val tasks = project.getTasksByName("compileKotlin", false)
-            getLogger().kotlinDebug("tasks for compileKotlin: ${tasks}")
+        fun  addFriendPathForTestTask(taskName: String) {
+            logger.kotlinDebug("try to determine the output directory of corresponding $taskName task")
+            val tasks = project.getTasksByName("$taskName", false)
+            logger.kotlinDebug("tasks for $taskName: ${tasks}")
             if (tasks.size == 1) {
                 val task = tasks.firstOrNull() as? KotlinCompile
                 if (task != null) {
-                    getLogger().kotlinDebug("destinantion directory for production = ${task.destinationDir}")
+                    logger.kotlinDebug("destinantion directory for production = ${task.destinationDir}")
                     args.friendPaths = arrayOf(task.destinationDir.absolutePath)
                     args.moduleName = task.kotlinOptions.moduleName ?: task.extensions.extraProperties.getOrNull<String>("defaultModuleName")
                 }
             }
+        }
+
+        if (this.name == "compileTestKotlin") {
+            addFriendPathForTestTask("compileKotlin")
+        }
+        if (this.name == "compileDebugUnitTestKotlin") {
+            addFriendPathForTestTask("compileDebugKotlin")
         }
 
         getLogger().kotlinDebug("args.moduleName = ${args.moduleName}")
