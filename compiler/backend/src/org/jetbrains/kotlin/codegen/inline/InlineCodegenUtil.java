@@ -62,6 +62,7 @@ public class InlineCodegenUtil {
 
     public static final String CAPTURED_FIELD_PREFIX = "$";
     public static final String THIS$0 = "this$0";
+    public static final String THIS = "this";
     public static final String RECEIVER$0 = "receiver$0";
     public static final String NON_LOCAL_RETURN = "$$$$$NON_LOCAL_RETURN$$$$$";
     public static final String FIRST_FUN_LABEL = "$$$$$ROOT$$$$$";
@@ -71,6 +72,7 @@ public class InlineCodegenUtil {
     public static final String INLINE_MARKER_AFTER_METHOD_NAME = "afterInlineCall";
     public static final String INLINE_MARKER_FINALLY_START = "finallyStart";
     public static final String INLINE_MARKER_FINALLY_END = "finallyEnd";
+    public static final String INLINE_TRANSFORMATION_SUFFIX = "$inlined";
 
     @Nullable
     public static SMAPAndMethodNode getMethodNode(

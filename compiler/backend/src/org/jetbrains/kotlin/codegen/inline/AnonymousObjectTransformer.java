@@ -179,7 +179,7 @@ public class AnonymousObjectTransformer {
         ParametersBuilder constructorParamBuilder = ParametersBuilder.newBuilder();
         List<CapturedParamInfo> additionalFakeParams =
                 extractParametersMappingAndPatchConstructor(constructor, allCapturedParamBuilder, constructorParamBuilder,
-                                                            anonymousObjectGen);
+                                                            anonymousObjectGen, parentRemapper);
         List<MethodVisitor> deferringMethods = new ArrayList();
 
         for (MethodNode next : methodsToTransform) {
@@ -378,7 +378,8 @@ public class AnonymousObjectTransformer {
             @NotNull MethodNode constructor,
             @NotNull ParametersBuilder capturedParamBuilder,
             @NotNull ParametersBuilder constructorParamBuilder,
-            @NotNull final AnonymousObjectGeneration anonymousObjectGen
+            @NotNull final AnonymousObjectGeneration anonymousObjectGen,
+            @NotNull FieldRemapper parentFieldRemapper
     ) {
 
         CapturedParamOwner owner = new CapturedParamOwner() {
@@ -454,20 +455,43 @@ public class AnonymousObjectTransformer {
         //TODO: some of such parameters could be skipped - we should perform additional analysis
         Map<String, LambdaInfo> capturedLambdasToInline = new HashMap<String, LambdaInfo>(); //captured var of inlined parameter
         List<CapturedParamDesc> allRecapturedParameters = new ArrayList<CapturedParamDesc>();
+        boolean addCapturedNotAddOuter = parentFieldRemapper.isRoot() || (parentFieldRemapper instanceof InlinedLambdaRemapper && parentFieldRemapper.getParent().isRoot());
         for (LambdaInfo info : capturedLambdas) {
-            for (CapturedParamDesc desc : info.getCapturedVars()) {
-                CapturedParamInfo recapturedParamInfo = capturedParamBuilder.addCapturedParam(desc, getNewFieldName(desc.getFieldName()));
-                StackValue composed = StackValue.field(desc.getType(),
-                                                       oldObjectType, /*TODO owner type*/
-                                                       recapturedParamInfo.getNewFieldName(),
-                                                       false,
-                                                       StackValue.LOCAL_0);
-                recapturedParamInfo.setRemapValue(composed);
-                allRecapturedParameters.add(desc);
+            if (addCapturedNotAddOuter) {
+                for (CapturedParamDesc desc : info.getCapturedVars()) {
+                    CapturedParamInfo recapturedParamInfo = capturedParamBuilder.addCapturedParam(desc, getNewFieldName(desc.getFieldName()));
+                    StackValue composed = StackValue.field(desc.getType(),
+                                                           oldObjectType, /*TODO owner type*/
+                                                           recapturedParamInfo.getNewFieldName(),
+                                                           false,
+                                                           StackValue.LOCAL_0);
+                    recapturedParamInfo.setRemapValue(composed);
+                    allRecapturedParameters.add(desc);
 
-                constructorParamBuilder.addCapturedParam(recapturedParamInfo, recapturedParamInfo.getNewFieldName()).setRemapValue(composed);
+                    constructorParamBuilder.addCapturedParam(recapturedParamInfo, recapturedParamInfo.getNewFieldName()).setRemapValue(composed);
+                }
             }
             capturedLambdasToInline.put(info.getLambdaClassType().getInternalName(), info);
+        }
+
+        if (parentFieldRemapper instanceof InlinedLambdaRemapper && !capturedLambdas.isEmpty() && !addCapturedNotAddOuter) {
+            //lambda with non InlinedLambdaRemapper already have outer
+            FieldRemapper parent = parentFieldRemapper.getParent();
+            assert parent instanceof RegeneratedLambdaFieldRemapper;
+            final Type ownerType = Type.getObjectType(parent.getLambdaInternalName());
+
+            CapturedParamDesc desc = new CapturedParamDesc(new CapturedParamOwner() {
+                @Override
+                public Type getType() {
+                    return ownerType;
+                }
+            }, InlineCodegenUtil.THIS, ownerType);
+            CapturedParamInfo recapturedParamInfo = capturedParamBuilder.addCapturedParam(desc, InlineCodegenUtil.THIS$0);
+            StackValue composed = StackValue.LOCAL_0;
+            recapturedParamInfo.setRemapValue(composed);
+            allRecapturedParameters.add(desc);
+
+            constructorParamBuilder.addCapturedParam(recapturedParamInfo, recapturedParamInfo.getNewFieldName()).setRemapValue(composed);
         }
 
 
@@ -484,7 +508,7 @@ public class AnonymousObjectTransformer {
             //"this$0" couldn't clash and we should keep this name invariant for further transformations
             return oldName;
         }
-        return addUniqueField(oldName + "$inlined");
+        return addUniqueField(oldName + InlineCodegenUtil.INLINE_TRANSFORMATION_SUFFIX);
     }
 
     @NotNull

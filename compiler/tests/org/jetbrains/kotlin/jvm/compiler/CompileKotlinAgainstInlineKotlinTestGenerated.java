@@ -150,6 +150,171 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/kt9877_2.1.kt");
             doBoxTestWithInlineCheck(fileName);
         }
+
+        @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/properRecapturing")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ProperRecapturing extends AbstractCompileKotlinAgainstInlineKotlinTest {
+            public void testAllFilesPresentInProperRecapturing() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/properRecapturing"), Pattern.compile("^(.+)\\.1.kt$"), true);
+            }
+
+            @TestMetadata("inlineChain.1.kt")
+            public void testInlineChain() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/properRecapturing/inlineChain.1.kt");
+                doBoxTestWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("lambdaChain.1.kt")
+            public void testLambdaChain() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/properRecapturing/lambdaChain.1.kt");
+                doBoxTestWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("lambdaChainSimple.1.kt")
+            public void testLambdaChainSimple() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/properRecapturing/lambdaChainSimple.1.kt");
+                doBoxTestWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("lambdaChain_2.1.kt")
+            public void testLambdaChain_2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/properRecapturing/lambdaChain_2.1.kt");
+                doBoxTestWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("lambdaChain_3.1.kt")
+            public void testLambdaChain_3() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/properRecapturing/lambdaChain_3.1.kt");
+                doBoxTestWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("noInlineLambda.1.kt")
+            public void testNoInlineLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/properRecapturing/noInlineLambda.1.kt");
+                doBoxTestWithInlineCheck(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ProperRecapturingInClass extends AbstractCompileKotlinAgainstInlineKotlinTest {
+            public void testAllFilesPresentInProperRecapturingInClass() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass"), Pattern.compile("^(.+)\\.1.kt$"), true);
+            }
+
+            @TestMetadata("inlineChain.1.kt")
+            public void testInlineChain() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass/inlineChain.1.kt");
+                doBoxTestWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("inlinelambdaChain.1.kt")
+            public void testInlinelambdaChain() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass/inlinelambdaChain.1.kt");
+                doBoxTestWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("lambdaChain.1.kt")
+            public void testLambdaChain() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass/lambdaChain.1.kt");
+                doBoxTestWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("lambdaChainSimple.1.kt")
+            public void testLambdaChainSimple() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass/lambdaChainSimple.1.kt");
+                doBoxTestWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("lambdaChainSimple_2.1.kt")
+            public void testLambdaChainSimple_2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass/lambdaChainSimple_2.1.kt");
+                doBoxTestWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("lambdaChain_2.1.kt")
+            public void testLambdaChain_2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass/lambdaChain_2.1.kt");
+                doBoxTestWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("lambdaChain_3.1.kt")
+            public void testLambdaChain_3() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass/lambdaChain_3.1.kt");
+                doBoxTestWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("noCapturedThisOnCallSite.1.kt")
+            public void testNoCapturedThisOnCallSite() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass/noCapturedThisOnCallSite.1.kt");
+                doBoxTestWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("noInlineLambda.1.kt")
+            public void testNoInlineLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass/noInlineLambda.1.kt");
+                doBoxTestWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("twoInlineLambda.1.kt")
+            public void testTwoInlineLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass/twoInlineLambda.1.kt");
+                doBoxTestWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("twoInlineLambdaComplex.1.kt")
+            public void testTwoInlineLambdaComplex() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass/twoInlineLambdaComplex.1.kt");
+                doBoxTestWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("twoInlineLambdaComplex_2.1.kt")
+            public void testTwoInlineLambdaComplex_2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass/twoInlineLambdaComplex_2.1.kt");
+                doBoxTestWithInlineCheck(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class TwoCapturedReceivers extends AbstractCompileKotlinAgainstInlineKotlinTest {
+            public void testAllFilesPresentInTwoCapturedReceivers() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers"), Pattern.compile("^(.+)\\.1.kt$"), true);
+            }
+
+            @TestMetadata("kt8668.1.kt")
+            public void testKt8668() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers/kt8668.1.kt");
+                doBoxTestWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("kt8668_2.1.kt")
+            public void testKt8668_2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers/kt8668_2.1.kt");
+                doBoxTestWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("kt8668_3.1.kt")
+            public void testKt8668_3() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers/kt8668_3.1.kt");
+                doBoxTestWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("twoDifferentDispatchReceivers.1.kt")
+            public void testTwoDifferentDispatchReceivers() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers/twoDifferentDispatchReceivers.1.kt");
+                doBoxTestWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("twoExtensionReceivers.1.kt")
+            public void testTwoExtensionReceivers() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers/twoExtensionReceivers.1.kt");
+                doBoxTestWithInlineCheck(fileName);
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/boxInline/argumentOrder")
