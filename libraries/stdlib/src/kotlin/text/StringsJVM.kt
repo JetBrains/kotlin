@@ -94,6 +94,19 @@ public fun String.toLowerCase(): String = (this as java.lang.String).toLowerCase
 public fun String.toCharArray(): CharArray = (this as java.lang.String).toCharArray()
 
 /**
+ * Copies characters from this string into the [destination] character array and returns that array.
+ *
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the array to copy to.
+ * @param startIndex the start offset (inclusive) of the substring to copy.
+ * @param endIndex the end offset (exclusive) of the substring to copy.
+ */
+public fun String.toCharArray(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = length): CharArray {
+    (this as java.lang.String).getChars(startIndex, endIndex, destination, destinationOffset)
+    return destination
+}
+
+/**
  * Uses this string as a format string and returns a string obtained by substituting the specified arguments,
  * using the default locale.
  */
@@ -282,6 +295,7 @@ public fun String.contentEquals(stringBuilder: StringBuffer): Boolean = (this as
  * @param dst the array to copy to.
  * @param dstBegin the position in the array to copy to.
  */
+@Deprecated("Use toCharArray() instead.", ReplaceWith("toCharArray(dst, dstBegin, srcBegin, srcEnd)"))
 public fun String.getChars(srcBegin: Int, srcEnd: Int, dst: CharArray, dstBegin: Int): Unit = (this as java.lang.String).getChars(srcBegin, srcEnd, dst, dstBegin)
 
 

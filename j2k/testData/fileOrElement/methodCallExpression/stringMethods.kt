@@ -61,9 +61,6 @@ internal class A {
 
         s.toString()
         s.toCharArray()
-
-        val chars = CharArray(10)
-        s.getChars(1, 11, chars, 0)
     }
 
     @Throws(Exception::class)
@@ -88,6 +85,9 @@ internal class A {
         s.toByteArray()
         s.toByteArray(Charset.forName("utf-8"))
         s.toByteArray("utf-8")
+
+        val chars = CharArray(10)
+        s.toCharArray(chars, 0, 1, 11)
     }
 
     fun staticMethods() {

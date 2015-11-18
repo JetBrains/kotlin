@@ -292,6 +292,12 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
                 = MethodCallExpression.build(codeConverter.convertExpression(qualifier), "toByteArray", codeConverter.convertExpressions(arguments), emptyList(), false)
     },
 
+    STRING_GET_CHARS(JAVA_LANG_STRING, "getChars", 4) {
+        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
+                // reorder parameters: srcBegin(0), srcEnd(1), dst(2), dstOffset(3) -> destination(2), destinationOffset(3), startIndex(0), endIndex(1)
+                = MethodCallExpression.buildNotNull(codeConverter.convertExpression(qualifier), "toCharArray", codeConverter.convertExpressions(arguments.slice(listOf(2, 3, 0, 1))))
+    },
+
     STRING_FORMAT_WITH_LOCALE(JAVA_LANG_STRING, "format", null) {
         override fun matches(method: PsiMethod, superMethodsSearcher: SuperMethodsSearcher): Boolean
                 = super.matches(method, superMethodsSearcher) &&
