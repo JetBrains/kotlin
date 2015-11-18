@@ -80,13 +80,19 @@ public class MainFunctionDetector {
             return false;
         }
 
-        FunctionDescriptor functionDescriptor = getFunctionDescriptor.fun(function);
+        return isMain(getFunctionDescriptor.fun(function));
+    }
+
+    public static boolean isMain(@NotNull DeclarationDescriptor descriptor) {
+        if (!(descriptor instanceof FunctionDescriptor)) return false;
+
+        FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
         if (!getJVMFunctionName(functionDescriptor).equals("main")) {
             return false;
         }
 
         List<ValueParameterDescriptor> parameters = functionDescriptor.getValueParameters();
-        if (parameters.size() != 1) return false;
+        if (parameters.size() != 1 || !functionDescriptor.getTypeParameters().isEmpty()) return false;
 
         ValueParameterDescriptor parameter = parameters.get(0);
         KotlinType parameterType = parameter.getType();
