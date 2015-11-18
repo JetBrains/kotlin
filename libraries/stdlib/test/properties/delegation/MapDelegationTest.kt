@@ -8,6 +8,7 @@ import kotlin.test.*
 
 data class B(val a: Int)
 
+
 class MapValWithDifferentTypesTest() {
     val map = hashMapOf("a" to "a", "b" to 1, "c" to B(1), "d" to null)
     val a by Delegates.mapVal<String>(map)
@@ -75,11 +76,13 @@ class MapValWithDefaultTest() {
     val a: String by Delegates.mapVal(map, default = { ref, desc -> "aDefault" })
     val b: String by FixedMapVal(map, default = { ref: MapValWithDefaultTest, desc: String -> "bDefault" }, key = {"b"})
     val c: String by FixedMapVal(map, default = { ref: MapValWithDefaultTest, desc: String -> "cDefault" }, key = { desc -> desc.name })
+    val d: String by Delegates.mapVal(map, default = { ref, name -> ref.c })
 
     @test fun doTest() {
-        assertTrue(a == "aDefault", "fail at 'a'")
-        assertTrue(b == "bDefault", "fail at 'b'")
-        assertTrue(c == "cDefault", "fail at 'c'")
+        assertEquals("aDefault", a, "fail at 'a'")
+        assertEquals("bDefault", b, "fail at 'b'")
+        assertEquals("cDefault", c, "fail at 'c'")
+        assertEquals(c, d, "'d' must have the default value equal to 'c'")
     }
 }
 
@@ -88,17 +91,20 @@ class MapVarWithDefaultTest() {
     var a: String by Delegates.mapVar(map, default = {ref, desc -> "aDefault" })
     var b: String by FixedMapVar(map, default = {ref: Any?, desc: String -> "bDefault" }, key = {"b"})
     var c: String by FixedMapVar(map, default = {ref: Any?, desc: String -> "cDefault" }, key = { desc -> desc.name })
+    var d: String by Delegates.mapVar(map, default = { ref, name -> ref.c })
 
     @test fun doTest() {
-        assertTrue(a == "aDefault", "fail at 'a'")
-        assertTrue(b == "bDefault", "fail at 'b'")
-        assertTrue(c == "cDefault", "fail at 'c'")
+        assertEquals("aDefault", a, "fail at 'a'")
+        assertEquals("bDefault", b, "fail at 'b'")
+        assertEquals("cDefault", c, "fail at 'c'")
+        assertEquals(c, d, "'d' must have the default value equal to 'c'")
         a = "a"
         b = "b"
         c = "c"
-        assertTrue(a == "a", "fail at 'a' after set")
-        assertTrue(b == "b", "fail at 'b' after set")
-        assertTrue(c == "c", "fail at 'c' after set")
+        assertEquals("a", a, "fail at 'a' after set")
+        assertEquals("b", b, "fail at 'b' after set")
+        assertEquals("c", c, "fail at 'c' after set")
+        assertEquals(c, d, "'d' must still have the default value equal to 'c'")
     }
 }
 
@@ -123,6 +129,15 @@ class MapPropertyFunctionTest() {
         b = "c"
         assertTrue(a == "a", "fail at 'a'")
         assertTrue(b == "c", "fail at 'b' after set")
+    }
+}
+
+@Suppress("ALWAYS_NULL")
+private val topLevel: String by Delegates.mapVal(emptyMap(), default = { ref, name -> ref.toString() })
+
+class MapTopLevelVarWithDefaultTest() {
+    @test fun doTest() {
+        assertEquals("null", topLevel)
     }
 }
 
@@ -152,14 +167,14 @@ val mapValWithDefault = object : MapVal<MapPropertyCustomWithDefaultTest, String
     override fun map(ref: MapPropertyCustomWithDefaultTest) = ref.map
     override fun key(property: KProperty<*>) = property.name
 
-    override fun default(ref: MapPropertyCustomWithDefaultTest, key: KProperty<*>) = "default"
+    override fun default(ref: MapPropertyCustomWithDefaultTest, property: KProperty<*>) = "default"
 }
 
 val mapVarWithDefault = object : MapVar<MapPropertyCustomWithDefaultTest, String, String>() {
     override fun map(ref: MapPropertyCustomWithDefaultTest) = ref.map
     override fun key(property: KProperty<*>) = property.name
 
-    override fun default(ref: MapPropertyCustomWithDefaultTest, key: KProperty<*>) = "default"
+    override fun default(ref: MapPropertyCustomWithDefaultTest, property: KProperty<*>) = "default"
 }
 
 class MapPropertyCustomWithDefaultTest() {

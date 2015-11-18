@@ -55,9 +55,9 @@ public object Delegates {
      * @param map the map where the property values are stored.
      * @param default the function returning the value of the property for a given object if it's missing from the given map.
      */
-    public fun <T> mapVar(map: MutableMap<in String, Any?>,
-                          default: (thisRef: Any?, desc: String) -> T): ReadWriteProperty<Any?, T> {
-        return FixedMapVar<Any?, String, T>(map, propertyNameSelector, default)
+    public fun <R, T> mapVar(map: MutableMap<in String, Any?>,
+                             default: (thisRef: R, propertyName: String) -> T): ReadWriteProperty<R, T> {
+        return FixedMapVar<R, String, T>(map, propertyNameSelector, default)
     }
 
     /**
@@ -76,9 +76,9 @@ public object Delegates {
      * @param map the map where the property values are stored.
      * @param default the function returning the value of the property for a given object if it's missing from the given map.
      */
-    public fun <T> mapVal(map: Map<in String, Any?>,
-                          default: (thisRef: Any?, desc: String) -> T): ReadOnlyProperty<Any?, T> {
-        return FixedMapVal<Any?, String, T>(map, propertyNameSelector, default)
+    public fun <R, T> mapVal(map: Map<in String, Any?>,
+                             default: (thisRef: R, propertyName: String) -> T): ReadOnlyProperty<R, T> {
+        return FixedMapVal<R, String, T>(map, propertyNameSelector, default)
     }
 }
 
