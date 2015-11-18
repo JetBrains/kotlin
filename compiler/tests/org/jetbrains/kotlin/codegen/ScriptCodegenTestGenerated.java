@@ -41,6 +41,12 @@ public class ScriptCodegenTestGenerated extends AbstractScriptCodegenTest {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/script"), Pattern.compile("^(.+)\\.kts$"), true);
     }
 
+    @TestMetadata("classLiteralInsideFunction.kts")
+    public void testClassLiteralInsideFunction() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/classLiteralInsideFunction.kts");
+        doTest(fileName);
+    }
+
     @TestMetadata("empty.kts")
     public void testEmpty() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/empty.kts");
@@ -56,6 +62,12 @@ public class ScriptCodegenTestGenerated extends AbstractScriptCodegenTest {
     @TestMetadata("inline.kts")
     public void testInline() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/inline.kts");
+        doTest(fileName);
+    }
+
+    @TestMetadata("localFunction.kts")
+    public void testLocalFunction() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/localFunction.kts");
         doTest(fileName);
     }
 
