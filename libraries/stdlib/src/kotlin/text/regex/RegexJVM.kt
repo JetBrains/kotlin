@@ -16,8 +16,9 @@
 
 package kotlin.text
 
-import java.util.regex.Pattern
+import java.util.*
 import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 private interface FlagEnum {
     public val value: Int
@@ -25,8 +26,15 @@ private interface FlagEnum {
 }
 private fun Iterable<FlagEnum>.toInt(): Int =
         this.fold(0, { value, option -> value or option.value })
-private fun <T: FlagEnum> fromInt(value: Int, allValues: Array<T>): Set<T> =
-        allValues.filter({ value and it.mask == it.value }).toSet()
+private inline fun <reified T> fromInt(value: Int): Set<T> where T : FlagEnum, T: Enum<T> =
+        Collections.unmodifiableSet(EnumSet.allOf(T::class.java).apply {
+            // TODO: use removeAll with predicate
+            with (iterator()) {
+                while (hasNext())
+                    if (next().let { value and it.mask != it.value })
+                        remove()
+            }
+        })
 
 /**
  * Provides enumeration values to use to set regular expression options.
@@ -106,7 +114,7 @@ public class Regex internal constructor(private val nativePattern: Pattern) {
         get() = nativePattern.pattern()
 
     /** The set of options that were used to create this regular expression.  */
-    public val options: Set<RegexOption> = fromInt(nativePattern.flags(), RegexOption.values())
+    public val options: Set<RegexOption> = fromInt(nativePattern.flags())
 
     @Deprecated("To get the Matcher from java.util.regex.Pattern use toPattern to convert string to Pattern, or migrate to Regex API")
     public fun matcher(input: CharSequence): Matcher = nativePattern.matcher(input)
