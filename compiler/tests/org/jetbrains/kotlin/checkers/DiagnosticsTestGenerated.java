@@ -14922,6 +14922,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("whenSubjectImpossible.kt")
+            public void testWhenSubjectImpossible() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/whenSubjectImpossible.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("whenSubjectImpossibleJava.kt")
+            public void testWhenSubjectImpossibleJava() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/whenSubjectImpossibleJava.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/smartCasts/inference")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

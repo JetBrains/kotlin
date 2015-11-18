@@ -1,0 +1,11 @@
+package
+
+public fun foo(/*0*/ my: My): kotlin.Unit
+
+public open class My {
+    public constructor My()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public/*package*/ open fun getSomething(): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

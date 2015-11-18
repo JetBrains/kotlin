@@ -25,13 +25,11 @@ import org.jetbrains.kotlin.cfg.WhenChecker;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.PossiblyBareType;
-import org.jetbrains.kotlin.resolve.TypeResolutionContext;
+import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
+import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastResult;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.types.*;
@@ -92,8 +90,15 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
             subjectType = typeInfo.getType();
             assert subjectType != null;
             if (TypeUtils.isNullableType(subjectType) && !WhenChecker.containsNullCase(expression, context.trace)) {
-                ExpressionTypingContext subjectContext = context.replaceExpectedType(TypeUtils.makeNotNullable(subjectType));
-                components.dataFlowAnalyzer.checkPossibleCast(subjectType, KtPsiUtil.safeDeparenthesize(subjectExpression), subjectContext);
+                TemporaryBindingTrace trace = TemporaryBindingTrace.create(context.trace, "Temporary trace for when subject nullability");
+                ExpressionTypingContext subjectContext =
+                        context.replaceExpectedType(TypeUtils.makeNotNullable(subjectType)).replaceBindingTrace(trace);
+                SmartCastResult castResult = components.dataFlowAnalyzer.checkPossibleCast(
+                        subjectType, KtPsiUtil.safeDeparenthesize(subjectExpression), subjectContext
+                );
+                if (castResult != null && castResult.isCorrect()) {
+                    trace.commit();
+                }
             }
             context = context.replaceDataFlowInfo(typeInfo.getDataFlowInfo());
         }
