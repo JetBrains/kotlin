@@ -20,7 +20,6 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
@@ -68,7 +67,6 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.*;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
-import org.jetbrains.org.objectweb.asm.Type;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -81,8 +79,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static org.jetbrains.kotlin.codegen.AsmUtil.asmTypeByFqNameWithoutInnerClasses;
 
 public class ReplInterpreter {
     private static final String SCRIPT_RESULT_FIELD_NAME = "$$result";
@@ -260,7 +256,6 @@ public class ReplInterpreter {
         ++lineNumber;
 
         FqName scriptFqName = new FqName("Line" + lineNumber);
-        Type scriptClassType = asmTypeByFqNameWithoutInnerClasses(scriptFqName);
 
         StringBuilder fullText = new StringBuilder();
         for (String prevLine : previousIncompleteLines) {
@@ -304,11 +299,10 @@ public class ReplInterpreter {
             return LineResult.compileError(errorHolder.getRenderedDiagnostics());
         }
 
-        List<Pair<ScriptDescriptor, Type>> earlierScripts = Lists.newArrayList();
+        List<ScriptDescriptor> earlierScripts = Lists.newArrayList();
 
         for (EarlierLine earlierLine : earlierLines) {
-            //TODO_R: not needed
-            earlierScripts.add(Pair.create(earlierLine.getScriptDescriptor(), earlierLine.getClassType()));
+            earlierScripts.add(earlierLine.getScriptDescriptor());
         }
 
         GenerationState state = new GenerationState(psiFile.getProject(), ClassBuilderFactories.BINARIES,
@@ -350,7 +344,7 @@ public class ReplInterpreter {
             rvField.setAccessible(true);
             Object rv = rvField.get(scriptInstance);
 
-            earlierLines.add(new EarlierLine(line, scriptDescriptor, scriptClass, scriptInstance, scriptClassType));
+            earlierLines.add(new EarlierLine(line, scriptDescriptor, scriptClass, scriptInstance));
 
             return LineResult.successful(rv, !state.getReplSpecific().getHasResult());
         }
@@ -422,26 +416,14 @@ public class ReplInterpreter {
         classLoader.dumpClasses(out);
     }
 
-    private static void registerEarlierScripts(
-            @NotNull GenerationState state,
-            @NotNull List<Pair<ScriptDescriptor, Type>> earlierScripts
-    ) {
-        List<ScriptDescriptor> earlierScriptDescriptors = new ArrayList<ScriptDescriptor>(earlierScripts.size());
-        for (Pair<ScriptDescriptor, Type> pair : earlierScripts) {
-            ScriptDescriptor earlierDescriptor = pair.first;
-            earlierScriptDescriptors.add(earlierDescriptor);
-        }
-        state.getReplSpecific().setEarlierScriptsForReplInterpreter(earlierScriptDescriptors);
-    }
-
     public static void compileScript(
             @NotNull KtScript script,
-            @NotNull List<Pair<ScriptDescriptor, Type>> earlierScripts,
+            @NotNull List<ScriptDescriptor> earlierScripts,
             @NotNull GenerationState state,
             @NotNull CompilationErrorHandler errorHandler
     ) {
         state.getReplSpecific().setScriptResultFieldName(SCRIPT_RESULT_FIELD_NAME);
-        registerEarlierScripts(state, earlierScripts);
+        state.getReplSpecific().setEarlierScriptsForReplInterpreter(new ArrayList<ScriptDescriptor>(earlierScripts));
 
         state.beforeCompile();
         KotlinCodegenFacade.generatePackage(
