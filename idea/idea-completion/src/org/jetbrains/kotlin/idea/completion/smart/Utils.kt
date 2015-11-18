@@ -166,8 +166,10 @@ fun<TDescriptor: DeclarationDescriptor?> MutableCollection<LookupElement>.addLoo
         lookupElementFactory: (TDescriptor) -> Collection<LookupElement>
 ) {
     class ItemData(val descriptor: TDescriptor, val itemOptions: ItemOptions) {
+        @Suppress("UNCHECKED_CAST")
         override fun equals(other: Any?)
-                = other is ItemData && descriptorsEqualWithSubstitution(this.descriptor, other.descriptor) && itemOptions == other.itemOptions
+                = descriptorsEqualWithSubstitution(this.descriptor, (other as? ItemData)?.descriptor) && itemOptions ==
+                (other as? ItemData)?.itemOptions
         override fun hashCode() = if (this.descriptor != null) this.descriptor.getOriginal().hashCode() else 0
     }
 
