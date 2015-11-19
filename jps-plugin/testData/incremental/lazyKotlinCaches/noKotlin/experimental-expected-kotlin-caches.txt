@@ -1,6 +1,3 @@
 kotlin-data-container
-    data-container-format-version.txt
 Module 'module' production
-    experimental-format-version.txt
-    format-version.txt
 Module 'module' tests

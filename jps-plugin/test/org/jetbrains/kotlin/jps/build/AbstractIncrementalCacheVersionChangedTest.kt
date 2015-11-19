@@ -21,10 +21,20 @@ import org.jetbrains.kotlin.jps.incremental.CacheVersionProvider
 
 abstract class AbstractIncrementalCacheVersionChangedTest : AbstractIncrementalJpsTest(allowNoFilesWithSuffixInTestData = true) {
     override fun performAdditionalModifications(modifications: List<AbstractIncrementalJpsTest.Modification>) {
-        val cacheVersionProvider = CacheVersionProvider(projectDescriptor.dataManager.dataPaths)
-        val versions = getVersions(cacheVersionProvider, projectDescriptor.allModuleTargets)
-        val versionFiles = versions.map { it.formatVersionFile }.filter { it.exists() }
-        versionFiles.forEach { it.writeText("777") }
+        val modifiedFiles = modifications.filterIsInstance<ModifyContent>().map { it.path }
+        val paths = projectDescriptor.dataManager.dataPaths
+        val targets = projectDescriptor.allModuleTargets
+
+        if (modifiedFiles.any { it.endsWith("clear-has-kotlin") }) {
+            targets.forEach { KotlinBuilder.clearHasKotlin(it, paths) }
+        }
+
+        if (modifiedFiles.none { it.endsWith("do-not-change-cache-versions") }) {
+            val cacheVersionProvider = CacheVersionProvider(paths)
+            val versions = getVersions(cacheVersionProvider, targets)
+            val versionFiles = versions.map { it.formatVersionFile }.filter { it.exists() }
+            versionFiles.forEach { it.writeText("777") }
+        }
     }
 
     protected open fun getVersions(cacheVersionProvider: CacheVersionProvider, targets: Iterable<ModuleBuildTarget>) =

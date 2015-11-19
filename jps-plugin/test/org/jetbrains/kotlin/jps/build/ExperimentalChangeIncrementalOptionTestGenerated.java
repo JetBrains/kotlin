@@ -41,6 +41,18 @@ public class ExperimentalChangeIncrementalOptionTestGenerated extends AbstractEx
         doTest(fileName);
     }
 
+    @TestMetadata("experimentalOnJavaChanged")
+    public void testExperimentalOnJavaChanged() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/changeIncrementalOption/experimentalOnJavaChanged/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("experimentalOnJavaOnly")
+    public void testExperimentalOnJavaOnly() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/changeIncrementalOption/experimentalOnJavaOnly/");
+        doTest(fileName);
+    }
+
     @TestMetadata("experimentalOnOff")
     public void testExperimentalOnOff() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/changeIncrementalOption/experimentalOnOff/");

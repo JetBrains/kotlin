@@ -28,6 +28,8 @@ import org.jetbrains.jps.builders.impl.BuildTargetRegistryImpl
 import org.jetbrains.jps.builders.impl.TargetOutputIndexImpl
 import org.jetbrains.jps.builders.java.JavaBuilderUtil
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
+import org.jetbrains.jps.builders.java.dependencyView.Mappings
+import org.jetbrains.jps.builders.storage.BuildDataPaths
 import org.jetbrains.jps.incremental.*
 import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.*
 import org.jetbrains.jps.incremental.fs.CompilationRound
@@ -73,6 +75,7 @@ import java.util.*
 public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     companion object {
         private val TARGETS_WITH_CLEARED_CACHES = Key<Set<ModuleBuildTarget>>("Targets with cleared Kotlin caches")
+        private val HAS_KOTLIN_FILE_NAME = "has-kotlin.txt"
 
         public val KOTLIN_BUILDER_NAME: String = "Kotlin Builder"
         public val LOOKUP_TRACKER: JpsElementChildRoleBase<JpsSimpleElement<out LookupTracker>> = JpsElementChildRoleBase.create("lookup tracker")
@@ -90,6 +93,21 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                 val data = (context.getUserData(TARGETS_WITH_CLEARED_CACHES) ?: setOf()) - targets
                 context.putUserData(TARGETS_WITH_CLEARED_CACHES, data)
             }
+        }
+
+        private fun hasKotlin(target: ModuleBuildTarget, paths: BuildDataPaths): Boolean {
+            val hasKotlinFile = File(paths.getTargetDataRoot(target), HAS_KOTLIN_FILE_NAME)
+            return hasKotlinFile.exists()
+        }
+
+        private fun setHasKotlin(target: ModuleBuildTarget, paths: BuildDataPaths) {
+            val hasKotlinFile = File(paths.getTargetDataRoot(target), HAS_KOTLIN_FILE_NAME)
+            hasKotlinFile.createNewFile()
+        }
+
+        fun clearHasKotlin(target: ModuleBuildTarget, paths: BuildDataPaths) {
+            val hasKotlinFile = File(paths.getTargetDataRoot(target), HAS_KOTLIN_FILE_NAME)
+            hasKotlinFile.delete()
         }
     }
 
@@ -123,11 +141,6 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         try {
             val exitCode = doBuild(chunk, context, dirtyFilesHolder, messageCollector, outputConsumer)
             LOG.debug("Build result: " + exitCode)
-
-            if (exitCode != ExitCode.CHUNK_REBUILD_REQUIRED && exitCode != ABORT) {
-                saveVersions(context, chunk)
-            }
-
             return exitCode
         }
         catch (e: StopBuildException) {
@@ -163,17 +176,22 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val targets = chunk.targets
         val requestedToRebuild = context.getUserData(TARGETS_WITH_CLEARED_CACHES) ?: setOf()
         val isFullRebuild = JavaBuilderUtil.isForcedRecompilationAllJavaModules(context)
+        val hasDirtyKotlin = (dirtyFilesHolder.hasDirtyFiles() || dirtyFilesHolder.hasRemovedFiles()) &&
+                             hasKotlinDirtyOrRemovedFiles(dirtyFilesHolder, chunk)
 
-        if (!isFullRebuild && !requestedToRebuild.containsAll(targets)) {
-            val exitCode = checkVersions(context, dataManager, targets)
-
-            if (exitCode != null) return exitCode
+        if (!isFullRebuild &&
+            !requestedToRebuild.containsAll(targets) &&
+            (hasDirtyKotlin || targets.any { hasKotlin(it, dataManager.dataPaths) }) &&
+            shouldRebuildBecauseVersionChanged(context, dataManager, targets)
+        ) {
+            FSOperations.markDirtyRecursively(context, CompilationRound.NEXT, chunk) { KotlinSourceFileCollector.isKotlinSourceFile(it) }
+            return CHUNK_REBUILD_REQUIRED
         }
 
-        if (!dirtyFilesHolder.hasDirtyFiles() &&
-            !dirtyFilesHolder.hasRemovedFiles() ||
-            !hasKotlinDirtyOrRemovedFiles(dirtyFilesHolder, chunk)
-        ) {
+        if (hasDirtyKotlin) {
+            targets.forEach { setHasKotlin(it, dataManager.dataPaths) }
+        }
+        else {
             return NOTHING_DONE
         }
 
@@ -218,6 +236,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val generatedFiles = getGeneratedFiles(chunk, outputItemCollector)
 
         registerOutputItems(outputConsumer, generatedFiles)
+        saveVersions(context, chunk)
 
         if (JpsUtils.isJsKotlinModule(chunk.representativeTarget())) {
             copyJsLibraryFilesIfNeeded(chunk, project)
@@ -330,15 +349,12 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
     }
 
 
-    private fun checkVersions(context: CompileContext, dataManager: BuildDataManager, targets: MutableSet<ModuleBuildTarget>): ExitCode? {
+    private fun shouldRebuildBecauseVersionChanged(context: CompileContext, dataManager: BuildDataManager, targets: MutableSet<ModuleBuildTarget>): Boolean {
         val cacheVersionsProvider = CacheVersionProvider(dataManager.dataPaths)
         val allVersions = cacheVersionsProvider.allVersions(targets)
         val actions = allVersions.map { it.checkVersion() }.toSet().sorted()
-
-        fun cleanNormalCaches() {
-            LOG.info("Clearing caches for " + targets.joinToString { it.presentableName })
-            targets.forEach { dataManager.getKotlinCache(it).clean() }
-        }
+        val buildTargetIndex = context.projectDescriptor.buildTargetIndex
+        val allTargets = buildTargetIndex.allTargets.filterIsInstance<ModuleBuildTarget>().toSet()
 
         for (status in actions) {
             when (status) {
@@ -354,29 +370,37 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                         }
                     }
 
-                    val buildTargetIndex = context.projectDescriptor.buildTargetIndex
-                    val allTargets = buildTargetIndex.allTargets.filterIsInstance<ModuleBuildTarget>().toSet()
-
-                    for (target in targets) {
+                    for (target in allTargets) {
                         dataManager.getKotlinCache(target).clean()
+
+                        // prevents excessive version checking in parallel compilation (user data is not shared in parallel compilation)
+                        clearHasKotlin(target, dataManager.dataPaths)
                     }
 
                     dataManager.getStorage(KotlinDataContainerTarget, LookupStorageProvider).clean()
                     registerTargetsWithClearedCaches(context, allTargets)
 
-                    return CHUNK_REBUILD_REQUIRED
+                    return true
                 }
                 CacheVersion.Action.REBUILD_CHUNK -> {
-                    cleanNormalCaches()
+                    LOG.info("Clearing caches for " + targets.joinToString { it.presentableName })
+                    targets.forEach { dataManager.getKotlinCache(it).clean() }
                     registerTargetsWithClearedCaches(context, targets)
-                    return CHUNK_REBUILD_REQUIRED
+                    return true
                 }
                 CacheVersion.Action.CLEAN_NORMAL_CACHES -> {
-                    cleanNormalCaches()
+                    LOG.info("Clearing caches for all targets")
+
+                    for (target in allTargets) {
+                        dataManager.getKotlinCache(target).clean()
+                    }
                 }
                 CacheVersion.Action.CLEAN_EXPERIMENTAL_CACHES -> {
-                    LOG.info("Clearing experimental caches for " + targets.joinToString { it.presentableName })
-                    targets.forEach { dataManager.getKotlinCache(it).cleanExperimental() }
+                    LOG.info("Clearing experimental caches for all targets")
+
+                    for (target in allTargets) {
+                        dataManager.getKotlinCache(target).cleanExperimental()
+                    }
                 }
                 CacheVersion.Action.CLEAN_DATA_CONTAINER -> {
                     LOG.info("Clearing lookup cache")
@@ -389,7 +413,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             }
         }
 
-        return null
+        return false
     }
 
     private fun saveVersions(context: CompileContext, chunk: ModuleChunk) {

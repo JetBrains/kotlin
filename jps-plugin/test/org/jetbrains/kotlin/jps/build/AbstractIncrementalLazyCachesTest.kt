@@ -51,8 +51,10 @@ public abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJps
         for (modification in modifications) {
             if (modification !is AbstractIncrementalJpsTest.ModifyContent) continue
 
-            when (File(modification.path).name) {
-                "incremental-compilation" -> {
+            val name = File(modification.path).name
+
+            when {
+                name.endsWith("incremental-compilation") -> {
                     if (modification.dataFile.readAsBool()) {
                         IncrementalCompilation.enableIncrementalCompilation()
                     }
@@ -60,7 +62,7 @@ public abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJps
                         IncrementalCompilation.disableIncrementalCompilation()
                     }
                 }
-                "experimental-compilation" -> {
+                name.endsWith("experimental-compilation") -> {
                     if (modification.dataFile.readAsBool()) {
                         IncrementalCompilation.enableExperimental()
                     }
