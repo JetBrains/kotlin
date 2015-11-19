@@ -440,10 +440,7 @@ public class JetTypeMapper {
                 arrayElementType = boxType(mapType(memberType, mode));
                 if (signatureVisitor != null) {
                     signatureVisitor.writeArrayType();
-                    TypeMappingMode newMode = mode.isForAnnotationParameter() ?
-                                              TypeMappingMode.GENERIC_TYPE_PARAMETER_FOR_ANNOTATION_PARAMETER :
-                                              TypeMappingMode.GENERIC_TYPE;
-                    mapType(memberType, signatureVisitor, newMode, memberProjection.getProjectionKind());
+                    mapType(memberType, signatureVisitor, mode.toGenericArgumentMode());
                     signatureVisitor.writeArrayEnd();
                 }
             }
@@ -649,7 +646,7 @@ public class JetTypeMapper {
                         getEffectiveVariance(parameter.getVariance(), argument.getProjectionKind(), howThisTypeIsUsed, mode);
                 signatureVisitor.writeTypeArgument(projectionKind);
 
-                mapType(argument.getType(), signatureVisitor, TypeMappingMode.GENERIC_TYPE);
+                mapType(argument.getType(), signatureVisitor, mode.toGenericArgumentMode());
                 signatureVisitor.writeTypeArgumentEnd();
             }
         }

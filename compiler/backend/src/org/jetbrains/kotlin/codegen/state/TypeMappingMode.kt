@@ -24,7 +24,9 @@ internal enum class TypeMappingMode(
     /**
      * kotlin.Int is mapped to I
      */
-    DEFAULT(),
+    DEFAULT() {
+        override fun toGenericArgumentMode(): TypeMappingMode = GENERIC_TYPE
+    },
     /**
      * kotlin.Int is mapped to Ljava/lang/Integer;
      */
@@ -33,15 +35,21 @@ internal enum class TypeMappingMode(
      * kotlin.Int is mapped to Ljava/lang/Integer;
      * No projections allowed in immediate arguments
      */
-    SUPER_TYPE(needPrimitiveBoxing = true, writeDeclarationSiteProjections = false),
+    SUPER_TYPE(needPrimitiveBoxing = true, writeDeclarationSiteProjections = false) {
+        override fun toGenericArgumentMode(): TypeMappingMode = GENERIC_TYPE
+    },
     /**
      * kotlin.reflect.KClass mapped to java.lang.Class
      * Other types mapped as DEFAULT
      */
-    VALUE_FOR_ANNOTATION(isForAnnotationParameter = true),
+    VALUE_FOR_ANNOTATION(isForAnnotationParameter = true) {
+        override fun toGenericArgumentMode(): TypeMappingMode = GENERIC_TYPE_PARAMETER_FOR_ANNOTATION_PARAMETER
+    },
     /**
      * kotlin.reflect.KClass mapped to java.lang.Class
      * Other types mapped as GENERIC_TYPE
      */
     GENERIC_TYPE_PARAMETER_FOR_ANNOTATION_PARAMETER(isForAnnotationParameter = true, needPrimitiveBoxing = true);
+
+    open fun toGenericArgumentMode(): TypeMappingMode = this
 }
