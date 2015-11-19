@@ -116,7 +116,7 @@ public class JetTypeMapper {
         /**
          * kotlin.Int is mapped to I
          */
-        VALUE,
+        DEFAULT,
         /**
          * kotlin.Int is mapped to Ljava/lang/Integer;
          */
@@ -128,7 +128,7 @@ public class JetTypeMapper {
         SUPER_TYPE,
         /**
          * kotlin.reflect.KClass mapped to java.lang.Class
-         * Other types mapped as VALUE
+         * Other types mapped as DEFAULT
          */
         VALUE_FOR_ANNOTATION,
         /**
@@ -364,7 +364,7 @@ public class JetTypeMapper {
             return mapType(descriptor.getReturnType(), sw, JetTypeMapperMode.VALUE_FOR_ANNOTATION);
         }
         else {
-            return mapType(returnType, sw, JetTypeMapperMode.VALUE, Variance.OUT_VARIANCE);
+            return mapType(returnType, sw, JetTypeMapperMode.DEFAULT, Variance.OUT_VARIANCE);
         }
     }
 
@@ -385,12 +385,12 @@ public class JetTypeMapper {
 
     @NotNull
     public Type mapClass(@NotNull ClassifierDescriptor classifier) {
-        return mapType(classifier.getDefaultType(), null, JetTypeMapperMode.VALUE);
+        return mapType(classifier.getDefaultType(), null, JetTypeMapperMode.DEFAULT);
     }
 
     @NotNull
     public Type mapType(@NotNull KotlinType jetType) {
-        return mapType(jetType, null, JetTypeMapperMode.VALUE);
+        return mapType(jetType, null, JetTypeMapperMode.DEFAULT);
     }
 
     @NotNull
@@ -1132,7 +1132,7 @@ public class JetTypeMapper {
     @Nullable
     public String mapFieldSignature(@NotNull KotlinType backingFieldType) {
         BothSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.TYPE);
-        mapType(backingFieldType, sw, JetTypeMapperMode.VALUE);
+        mapType(backingFieldType, sw, JetTypeMapperMode.DEFAULT);
         return sw.makeJavaGenericSignature();
     }
 
@@ -1223,7 +1223,7 @@ public class JetTypeMapper {
 
     private void writeParameter(@NotNull BothSignatureWriter sw, @NotNull JvmMethodParameterKind kind, @NotNull KotlinType type) {
         sw.writeParameterType(kind);
-        mapType(type, sw, JetTypeMapperMode.VALUE);
+        mapType(type, sw, JetTypeMapperMode.DEFAULT);
         sw.writeParameterTypeEnd();
     }
 
