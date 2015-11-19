@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.codeInsight;
+package org.jetbrains.kotlin.idea.liveTemplates;
 
 import com.intellij.codeInsight.lookup.LookupElement;
 import com.intellij.codeInsight.lookup.LookupEx;
@@ -30,6 +30,7 @@ import com.intellij.openapi.editor.actionSystem.EditorActionManager;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ui.UIUtil;
+import junit.framework.TestCase;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
@@ -260,7 +261,7 @@ public class LiveTemplatesTest extends KotlinLightCodeInsightFixtureTestCase {
     }
 
     private void checkAfter() {
-        assertNull(getTemplateState());
+        TestCase.assertNull(getTemplateState());
         myFixture.checkResultByFile(getTestName(true) + ".exp.kt", true);
     }
 
@@ -315,12 +316,12 @@ public class LiveTemplatesTest extends KotlinLightCodeInsightFixtureTestCase {
     }
 
     private void assertStringItems(@NonNls String... items) {
-        assertEquals(Arrays.asList(items), Arrays.asList(getItemStringsSorted()));
+        TestCase.assertEquals(Arrays.asList(items), Arrays.asList(getItemStringsSorted()));
     }
 
     private String[] getItemStrings() {
         LookupEx lookup = LookupManager.getActiveLookup(myFixture.getEditor());
-        assertNotNull(lookup);
+        TestCase.assertNotNull(lookup);
         ArrayList<String> result = new ArrayList<String>();
         for (LookupElement element : lookup.getItems()) {
             result.add(element.getLookupString());

@@ -20,5 +20,6 @@
     <orderEntry type="library" name="kotlin-runtime" level="project" />
     <orderEntry type="module" module-name="idea-test-framework" scope="TEST" />
     <orderEntry type="module" module-name="frontend.java" scope="TEST" />
+    <orderEntry type="module" module-name="idea-live-templates" scope="TEST" />
   </component>
 </module>

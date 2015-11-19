@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.codeInsight
+package org.jetbrains.kotlin.idea.liveTemplates
 
 import com.intellij.codeInsight.template.TemplateContextType
 import com.intellij.testFramework.UsefulTestCase
-import org.jetbrains.kotlin.idea.liveTemplates.KotlinTemplateContextType
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import java.io.File
