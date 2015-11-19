@@ -73,6 +73,7 @@
     <modules>
         <module>tools/kotlin-compiler</module>
         <module>tools/kotlin-compiler-embeddable</module>
+        <module>tools/kotlin-build</module>
         <module>tools/kotlin-jdk-annotations</module>
         <module>tools/kotlin-android-sdk-annotations</module>
         <module>tools/kotlin-maven-plugin</module>

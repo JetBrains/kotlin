@@ -37,6 +37,8 @@ public class PathUtil {
     public static final String KOTLIN_TEST_JAR = "kotlin-test.jar";
     public static final String KOTLIN_JAVA_RUNTIME_SRC_JAR = "kotlin-runtime-sources.jar";
     public static final String KOTLIN_COMPILER_JAR = "kotlin-compiler.jar";
+    public static final String KOTLIN_COMPILER_EMBEDDABLE_JAR = "kotlin-compiler-embeddable.jar";
+    public static final String KOTLIN_DAEMON_CLIENT_JAR = "kotlin-daemon-client.jar";
 
     public static final String HOME_FOLDER_NAME = "kotlinc";
     private static final File NO_PATH = new File("<no_path>");

@@ -40,12 +40,12 @@ public class CompilerRunnerUtil {
     @NotNull
     private static synchronized ClassLoader getOrCreateClassLoader(
             @NotNull CompilerEnvironment environment,
-            @NotNull File libPath
+            @NotNull File compilerJar
     ) throws IOException {
         ClassLoader classLoader = ourClassLoaderRef.get();
         if (classLoader == null) {
             classLoader = ClassPreloadingUtils.preloadClasses(
-                    Collections.singletonList(new File(libPath, "kotlin-compiler.jar")),
+                    Collections.singletonList(compilerJar),
                     Preloader.DEFAULT_CLASS_NUMBER_ESTIMATE,
                     CompilerRunnerUtil.class.getClassLoader(),
                     environment.getClassesToLoadByParent()
@@ -56,13 +56,14 @@ public class CompilerRunnerUtil {
     }
 
     @Nullable
-    public static File getLibPath(@NotNull KotlinPaths paths, @NotNull MessageCollector messageCollector) {
-        File libs = paths.getLibPath();
-        if (libs.exists() && !libs.isFile()) return libs;
+    public static File getCompilerPath(@NotNull KotlinPaths paths, @NotNull MessageCollector messageCollector) {
+        File compilerPath = paths.getCompilerPath();
+        // TODO: use more reliable criteria
+        if (compilerPath.exists() && compilerPath.isFile()) return compilerPath;
 
         messageCollector.report(
                 ERROR,
-                "Broken compiler at '" + libs.getAbsolutePath() + "'. Make sure plugin is properly installed",
+                "Broken compiler at '" + compilerPath.getAbsolutePath() + "'. Make sure plugin is properly installed",
                 NO_LOCATION
         );
 
@@ -77,10 +78,11 @@ public class CompilerRunnerUtil {
             @NotNull MessageCollector messageCollector,
             @NotNull PrintStream out
     ) throws Exception {
-        File libPath = getLibPath(environment.getKotlinPaths(), messageCollector);
-        if (libPath == null) return null;
+        // TODO: after conversion to kotlin, reimplement getOrCreateClassLoader to accept compilerPath generator, to calculate compilerPath lazily
+        File compilerPath = getCompilerPath(environment.getKotlinPaths(), messageCollector);
+        if (compilerPath == null) return null;
 
-        ClassLoader classLoader = getOrCreateClassLoader(environment, libPath);
+        ClassLoader classLoader = getOrCreateClassLoader(environment, compilerPath);
 
         Class<?> kompiler = Class.forName(compilerClassName, true, classLoader);
         Method exec = kompiler.getMethod(

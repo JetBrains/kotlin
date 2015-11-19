@@ -14,6 +14,7 @@ import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.compile.AbstractCompile
+import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -24,8 +25,16 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.build.*
+import org.jetbrains.kotlin.incremental.*
+import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.modules.TargetId
+import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.LibraryUtils
+import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.*
 
@@ -46,9 +55,24 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
     private val logger = Logging.getLogger(this.javaClass)
     override fun getLogger() = logger
 
-    @TaskAction
     override fun compile() {
+        assert(false, { "unexpected call to compile()" })
+    }
+
+    @TaskAction
+    fun execute(inputs: IncrementalTaskInputs): Unit {
         getLogger().debug("Starting ${javaClass} task")
+        getLogger().kotlinDebug("all sources ${getSource().joinToString { it.path }}")
+        logger.kotlinDebug("is incremental == ${inputs.isIncremental}")
+        val modified = arrayListOf<File>()
+        val removed = arrayListOf<File>()
+        if (inputs.isIncremental) {
+            inputs.outOfDate { modified.add(it.file) }
+            inputs.removed { removed.add(it.file) }
+        }
+        getLogger().kotlinDebug("modified ${modified.joinToString { it.path }}")
+        getLogger().kotlinDebug("removed ${removed.joinToString { it.path }}")
+        var commonArgs = createBlankArgs()
         val args = createBlankArgs()
         val sources = getKotlinSources()
         if (sources.isEmpty()) {
@@ -56,30 +80,37 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
             return
         }
 
-        populateCommonArgs(args, sources)
+        populateCommonArgs(args)
         populateTargetSpecificArgs(args)
-        callCompiler(args)
+        val cachesDir = File("caches")
+        callCompiler(args, sources, inputs.isIncremental, modified, removed, cachesDir)
         afterCompileHook(args)
     }
 
     private fun getKotlinSources(): List<File> = (getSource() as Iterable<File>).filter { it.isKotlinFile() }
 
-    private fun File.isKotlinFile(): Boolean {
+    protected fun File.isKotlinFile(): Boolean {
         return when (FilenameUtils.getExtension(getName()).toLowerCase()) {
             "kt", "kts" -> true
             else -> false
         }
     }
 
-    private fun populateCommonArgs(args: T, sources: List<File>) {
+    private fun populateSources(args:T, sources: List<File>) {
         args.freeArgs = sources.map { it.getAbsolutePath() }
+    }
+
+    private fun populateCommonArgs(args: T) {
         args.suppressWarnings = kotlinOptions.suppressWarnings
         args.verbose = kotlinOptions.verbose
         args.version = kotlinOptions.version
         args.noInline = kotlinOptions.noInline
     }
 
-    private fun callCompiler(args: T) {
+    protected open fun callCompiler(args: T, sources: List<File>, isIncremental: Boolean, modified: List<File>, removed: List<File>, cachesBaseDir: File) {
+
+        populateSources(args, sources)
+
         val messageCollector = GradleMessageCollector(getLogger())
         getLogger().debug("Calling compiler")
         val exitCode = compiler.exec(messageCollector, Services.EMPTY, args)
@@ -108,7 +139,7 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
 
     override fun populateTargetSpecificArgs(args: K2JVMCompilerArguments) {
         // show kotlin compiler where to look for java source files
-        args.freeArgs = (args.freeArgs + getJavaSourceRoots().map { it.getAbsolutePath() }).toSet().toList()
+//        args.freeArgs = (args.freeArgs + getJavaSourceRoots().map { it.getAbsolutePath() }).toSet().toList()
         getLogger().kotlinDebug("args.freeArgs = ${args.freeArgs}")
 
         if (StringUtils.isEmpty(kotlinOptions.classpath)) {
@@ -149,7 +180,7 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
             if (tasks.size == 1) {
                 val task = tasks.firstOrNull() as? KotlinCompile
                 if (task != null) {
-                    logger.kotlinDebug("destinantion directory for production = ${task.destinationDir}")
+                    logger.kotlinDebug("destination directory for production = ${task.destinationDir}")
                     args.friendPaths = arrayOf(task.destinationDir.absolutePath)
                     args.moduleName = task.kotlinOptions.moduleName ?: task.extensions.extraProperties.getOrNull<String>("defaultModuleName")
                 }
@@ -162,6 +193,114 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
 
         getLogger().kotlinDebug("args.moduleName = ${args.moduleName}")
     }
+
+    override fun callCompiler(args: K2JVMCompilerArguments, sources: List<File>, isIncremental: Boolean, modified: List<File>, removed: List<File>, cachesBaseDir: File) {
+        val targetType = "java-production"
+        val moduleName = args.moduleName
+        val targets = listOf(TargetId(moduleName, targetType))
+        val outputDir = File(args.destination)
+        val modifiedSources = modified.filter { it.isKotlinFile() }
+        var sourcesToCompile = if (isIncremental && modifiedSources.any()) modifiedSources else sources
+        val caches = hashMapOf<TargetId, IncrementalCacheImpl<TargetId>>()
+        val lookupStorage = LookupStorage(File(cachesBaseDir, "lookups"))
+        val lookupTracker = makeLookupTracker()
+        var currentRemoved = removed
+
+        fun getOrCreateIncrementalCache(target: TargetId): IncrementalCacheImpl<TargetId> {
+            val cacheDir = File(cachesBaseDir, "increCache.${target.name}")
+            getLogger().kotlinDebug("incr cache for ${target.name} = $cacheDir")
+            cacheDir.mkdirs()
+            return IncrementalCacheImpl(targetDataRoot = cacheDir, targetOutputDir = outputDir, target = target)
+        }
+
+        while (true) {
+            getLogger().kotlinDebug("compile iteration: ${sourcesToCompile.joinToString(", ")}")
+
+            val generatedFiles = compileChanged(
+                    targets = targets,
+                    sourcesToCompile = sourcesToCompile,
+                    outputDir = outputDir,
+                    args = args,
+                    getIncrementalCache = { caches.getOrPut(it, { getOrCreateIncrementalCache(it) }) },
+                    lookupTracker = lookupTracker)
+
+            // processing the results
+            val compilationErrors = false // TODO
+            // save versions?
+
+            val changes = updateKotlinIncrementalCache(
+                    targets = targets,
+                    compilationErrors = compilationErrors,
+                    getIncrementalCache = { caches[it]!! },
+                    generatedFiles = generatedFiles)
+
+            caches.values.forEach { it.cleanDirtyInlineFunctions() }
+
+            lookupStorage.update(lookupTracker, sourcesToCompile, currentRemoved)
+
+            getLogger().kotlinDebug("generated ${generatedFiles.joinToString { it.outputFile.path }}")
+            getLogger().kotlinDebug("changes: ${changes.changes.joinToString { it.fqName.toString() }}")
+            getLogger().kotlinDebug("dirty: ${changes.dirtyFiles(lookupStorage).joinToString()}")
+
+            // TODO: consider using some order-preserving set for sourcesToCompile instead
+            val sourcesSet = sourcesToCompile.toHashSet()
+            val dirty = changes.dirtyFiles(lookupStorage).filterNot { it in sourcesSet }
+            if (dirty.none())
+                break
+            sourcesToCompile = dirty.toList()
+            if (currentRemoved.any()) {
+                currentRemoved = listOf()
+            }
+        }
+        lookupStorage.flush(false)
+        lookupStorage.close()
+        caches.values.forEach { it.flush(false); it.close() }
+    }
+
+    private fun compileChanged(targets: List<TargetId>,
+                               sourcesToCompile: List<File>,
+                               outputDir: File,
+                               args: K2JVMCompilerArguments,
+                               getIncrementalCache: (TargetId) -> IncrementalCacheImpl<TargetId>,
+                               lookupTracker: LookupTracker)
+            : List<GeneratedFile<TargetId>>
+    {
+        val kotlinPaths = GradleKotlinPaths(compiler.javaClass)
+        val moduleName = args.moduleName
+
+        val outputItemCollector = OutputItemsCollectorImpl()
+
+        compileChanged<TargetId>(
+                kotlinPaths,
+                moduleName = moduleName,
+                isTest = false,
+                targets = targets,
+                getDependencies = { listOf<TargetId>() },
+                commonArguments = args,
+                k2JvmArguments = args,
+                additionalArguments = listOf(),
+                outputDir = outputDir,
+                sourcesToCompile = sourcesToCompile,
+                javaSourceRoots = getJavaSourceRoots(),
+                classpath = args.classpath.split(File.pathSeparator).map { File(it) },
+                friendDirs = listOf(),
+                compilationCanceledStatus = object : CompilationCanceledStatus {
+                    override fun checkCanceled() { }
+                },
+                getIncrementalCache = getIncrementalCache,
+                lookupTracker = lookupTracker,
+                getTargetId = { this },
+                messageCollector = GradleMessageCollector(logger),
+                outputItemCollector = outputItemCollector)
+
+        return getGeneratedFiles(
+                targets = targets,
+                representativeTarget = targets.first(),
+                getSources = { sourcesToCompile },
+                getOutputDir = { outputDir },
+                outputItemCollector = outputItemCollector)
+    }
+
 
     private fun handleKaptProperties(extraProperties: ExtraPropertiesExtension, pluginOptions: MutableList<String>) {
         val kaptAnnotationsFile = extraProperties.getOrNull<File>("kaptAnnotationsFile")
@@ -354,6 +493,33 @@ class GradleMessageCollector(val logger: Logger) : MessageCollector {
             else -> throw IllegalArgumentException("Unknown CompilerMessageSeverity: $severity")
         }
     }
+}
+
+class GradleKotlinPaths(val compilerJar: File = PathUtil.getResourcePathForClass(CommonCompilerArguments::class.java)) : KotlinPaths {
+
+    constructor(compilerClass: java.lang.Class<*>) : this(PathUtil.getResourcePathForClass(compilerClass))
+
+    override fun getJsStdLibJarPath(): File { throw UnsupportedOperationException() }
+
+    override fun getReflectPath(): File { throw UnsupportedOperationException() }
+
+    override fun getAndroidSdkAnnotationsPath(): File { throw UnsupportedOperationException() }
+
+    override fun getRuntimePath(): File { throw UnsupportedOperationException() }
+
+    override fun getCompilerPath(): File = compilerJar
+
+    override fun getHomePath(): File { throw UnsupportedOperationException() }
+
+    override fun getJdkAnnotationsPath(): File { throw UnsupportedOperationException() }
+
+    override fun getDaemonClientPath(): File { throw UnsupportedOperationException() }
+
+    override fun getLibPath(): File { throw UnsupportedOperationException() }
+
+    override fun getRuntimeSourcesPath(): File { throw UnsupportedOperationException() }
+
+    override fun getJsStdLibSrcJarPath(): File { throw UnsupportedOperationException() }
 }
 
 fun Logger.kotlinDebug(message: String) {

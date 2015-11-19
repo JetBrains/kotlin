@@ -55,8 +55,10 @@ public object KotlinCompilerRunner {
             environment: CompilerEnvironment,
             moduleFile: File,
             collector: OutputItemsCollector) {
+        println("k2jvmargs: ${k2jvmArguments.module}")
         val arguments = mergeBeans(commonArguments, k2jvmArguments)
         setupK2JvmArguments(moduleFile, arguments)
+        println("args: ${arguments.moduleName}")
 
         runCompiler(K2JVM_COMPILER, arguments, additionalArguments, messageCollector, collector, environment)
     }
@@ -102,10 +104,15 @@ public object KotlinCompilerRunner {
             collector: OutputItemsCollector,
             environment: CompilerEnvironment) {
         try {
-            messageCollector.report(INFO, "Using kotlin-home = " + environment.kotlinPaths.homePath, CompilerMessageLocation.NO_LOCATION)
+//            messageCollector.report(INFO, "Using kotlin-home = " + environment.kotlinPaths.homePath, CompilerMessageLocation.NO_LOCATION)
 
             val argumentsList = ArgumentUtils.convertArgumentsToStringList(arguments)
             argumentsList.addAll(additionalArguments)
+
+            println("running the compiler with args: ${argumentsList.joinToString(" ")}")
+
+            if (argumentsList.isEmpty())
+                throw IllegalArgumentException("no arguments passed to the compiler")
 
             val argsArray = argumentsList.toTypedArray()
 
@@ -140,36 +147,42 @@ public object KotlinCompilerRunner {
 
         @Synchronized operator fun invoke(environment: CompilerEnvironment, messageCollector: MessageCollector): DaemonConnection {
             if (connection == null) {
-                val libPath = CompilerRunnerUtil.getLibPath(environment.kotlinPaths, messageCollector)
-                val compilerId = CompilerId.makeCompilerId(File(libPath, "kotlin-compiler.jar"))
-                val daemonOptions = configureDaemonOptions()
-                val daemonJVMOptions = configureDaemonJVMOptions(inheritMemoryLimits = true, inheritAdditionalProperties = true)
-                // the property should be set by default for daemon builds to avoid parallel building problems
-                // but it cannot be currently set by default globally, because it seems breaks many tests
-                // TODO: find out how to get rid of the property and make it the default behavior
-                daemonJVMOptions.jvmParams.add("D$KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY")
+                val compilerPath = CompilerRunnerUtil.getCompilerPath(environment.kotlinPaths, messageCollector)
+                if (compilerPath == null) {
+                    connection = DaemonConnection(null)
+                }
+                else {
+                    val compilerId = CompilerId.makeCompilerId(compilerPath)
+                    val daemonOptions = configureDaemonOptions()
+                    val daemonJVMOptions = configureDaemonJVMOptions(inheritMemoryLimits = true, inheritAdditionalProperties = true)
+                    // the property should be set by default for daemon builds to avoid parallel building problems
+                    // but it cannot be currently set by default globally, because it seems breaks many tests
+                    // TODO: find out how to get rid of the property and make it the default behavior
+                    daemonJVMOptions.jvmParams.add("D$KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY")
 
-                val daemonReportMessages = ArrayList<DaemonReportMessage>()
+                    val daemonReportMessages = ArrayList<DaemonReportMessage>()
 
-                val profiler = if (daemonOptions.reportPerf) WallAndThreadAndMemoryTotalProfiler(withGC = false) else DummyProfiler()
+                    val profiler = if (daemonOptions.reportPerf) WallAndThreadAndMemoryTotalProfiler(withGC = false) else DummyProfiler()
 
-                profiler.withMeasure(null) {
-                    fun newFlagFile(): File {
-                        val flagFile = File.createTempFile("kotlin-compiler-jps-session-", "-is-running")
-                        flagFile.deleteOnExit()
-                        return flagFile
+                    profiler.withMeasure(null) {
+                        fun newFlagFile(): File {
+                            val flagFile = File.createTempFile("kotlin-compiler-jps-session-", "-is-running")
+                            flagFile.deleteOnExit()
+                            return flagFile
+                        }
+
+                        val daemon = KotlinCompilerClient.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions, DaemonReportingTargets(null, daemonReportMessages), true, true)
+                        connection = DaemonConnection(daemon, daemon?.leaseCompileSession(newFlagFile().absolutePath)?.get() ?: CompileService.NO_SESSION)
                     }
-                    val daemon = KotlinCompilerClient.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions, DaemonReportingTargets(null, daemonReportMessages), true, true)
-                    connection = DaemonConnection(daemon, daemon?.leaseCompileSession(newFlagFile().absolutePath)?.get() ?: CompileService.NO_SESSION)
-                }
 
-                for (msg in daemonReportMessages) {
-                    messageCollector.report(CompilerMessageSeverity.INFO,
-                                            (if (msg.category == DaemonReportCategory.EXCEPTION && connection?.daemon == null)  "Falling  back to compilation without daemon due to error: " else "") + msg.message,
-                                            CompilerMessageLocation.NO_LOCATION)
-                }
+                    for (msg in daemonReportMessages) {
+                        messageCollector.report(CompilerMessageSeverity.INFO,
+                                                (if (msg.category == DaemonReportCategory.EXCEPTION && connection?.daemon == null) "Falling  back to compilation without daemon due to error: " else "") + msg.message,
+                                                CompilerMessageLocation.NO_LOCATION)
+                    }
 
-                reportTotalAndThreadPerf("Daemon connect", daemonOptions, messageCollector, profiler)
+                    reportTotalAndThreadPerf("Daemon connect", daemonOptions, messageCollector, profiler)
+                }
             }
             return connection!!
         }

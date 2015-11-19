@@ -33,17 +33,15 @@ import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.incremental.IncrementalCompilationComponentsImpl
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.utils.KotlinPaths
-import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.keysToMap
 import java.io.File
-
+import java.util.*
 
 fun<Target> compileChanged(
         kotlinPaths: KotlinPaths,
@@ -61,14 +59,16 @@ fun<Target> compileChanged(
         friendDirs: Iterable<File>,
         compilationCanceledStatus: CompilationCanceledStatus,
         getIncrementalCache: (Target) -> IncrementalCacheImpl<Target>,
+        lookupTracker: LookupTracker,
         getTargetId: Target.() -> TargetId,
-        messageCollector: MessageCollector)
+        messageCollector: MessageCollector, outputItemCollector: OutputItemsCollectorImpl
+)
 {
-    val outputItemCollector = OutputItemsCollectorImpl()
     val moduleFile = makeModuleFile(moduleName, isTest, outputDir, sourcesToCompile, javaSourceRoots, classpath, friendDirs)
+    println("module file created: $moduleFile")
+    println(moduleFile.readText())
 
     val incrementalCaches = getIncrementalCaches(targets, getDependencies, getIncrementalCache, getTargetId)
-    val lookupTracker = getLookupTracker()
     val environment = createCompileEnvironment(kotlinPaths, incrementalCaches, lookupTracker, compilationCanceledStatus)
 
     commonArguments.verbose = true // Make compiler report source to output files mapping
@@ -147,7 +147,7 @@ private fun createCompileEnvironment(
 }
 
 
-private fun getLookupTracker(parentLookupTracker: LookupTracker = LookupTracker.DO_NOTHING): LookupTracker =
+fun makeLookupTracker(parentLookupTracker: LookupTracker = LookupTracker.DO_NOTHING): LookupTracker =
         if (IncrementalCompilation.isExperimental()) LookupTrackerImpl(parentLookupTracker)
         else parentLookupTracker
 
@@ -183,37 +183,29 @@ private fun<Target> getIncrementalCaches(
 }
 
 
-private fun<Target> updateKotlinIncrementalCache(
+fun<Target> updateKotlinIncrementalCache(
         targets: Iterable<Target>,
         compilationErrors: Boolean,
-        incrementalCaches: Map<Target, IncrementalCacheImpl<Target>>,
+        getIncrementalCache: (Target) -> IncrementalCacheImpl<Target>,
         generatedFiles: List<GeneratedFile<Target>>
 ): CompilationResult {
 
     assert(IncrementalCompilation.isEnabled()) { "updateKotlinIncrementalCache should not be called when incremental compilation disabled" }
 
-    targets.forEach { incrementalCaches[it]!!.saveCacheFormatVersion() }
+    targets.forEach { getIncrementalCache(it).saveCacheFormatVersion() }
 
     var changesInfo = CompilationResult.NO_CHANGES
     for (generatedFile in generatedFiles) {
-        val ic = incrementalCaches[generatedFile.target]!!
-        val newChangesInfo =
-                if (generatedFile is GeneratedJvmClass<Target>) {
-                    ic.saveFileToCache(generatedFile)
-                }
-                else if (generatedFile.outputFile.isModuleMappingFile()) {
-                    ic.saveModuleMappingToCache(generatedFile.sourceFiles, generatedFile.outputFile)
-                }
-                else {
-                    continue
-                }
-
-        changesInfo += newChangesInfo
+        val ic = getIncrementalCache(generatedFile.target)
+        when {
+            generatedFile is GeneratedJvmClass<Target> -> changesInfo += ic.saveFileToCache(generatedFile)
+            generatedFile.outputFile.isModuleMappingFile() -> changesInfo += ic.saveModuleMappingToCache(generatedFile.sourceFiles, generatedFile.outputFile)
+        }
     }
 
     if (!compilationErrors) {
-        incrementalCaches.values().forEach {
-            val newChangesInfo = it.clearCacheForRemovedClasses()
+        targets.forEach {
+            val newChangesInfo = getIncrementalCache(it).clearCacheForRemovedClasses()
             changesInfo += newChangesInfo
         }
     }
@@ -222,10 +214,10 @@ private fun<Target> updateKotlinIncrementalCache(
 }
 
 
-private fun LookupStorage.update(
+fun LookupStorage.update(
         lookupTracker: LookupTracker,
-        filesToCompile: Sequence<File>,
-        removedFiles: Sequence<File>
+        filesToCompile: Iterable<File>,
+        removedFiles: Iterable<File>
 ) {
     if (!IncrementalCompilation.isExperimental()) return
 
@@ -236,4 +228,53 @@ private fun LookupStorage.update(
 
     lookupTracker.lookups.entrySet().forEach { this.add(it.key, it.value) }
 }
+
+
+fun<Target> getGeneratedFiles(
+        targets: Collection<Target>,
+        representativeTarget: Target,
+        getSources: (Target) -> Iterable<File>,
+        getOutputDir: (Target) -> File?,
+        outputItemCollector: OutputItemsCollectorImpl
+): List<GeneratedFile<Target>> {
+    // If there's only one target, this map is empty: get() always returns null, and the representativeTarget will be used below
+    val sourceToTarget = HashMap<File, Target>()
+    if (targets.size > 1) {
+        for (target in targets) {
+            for (file in getSources(target)) {
+                sourceToTarget.put(file, target)
+            }
+        }
+    }
+
+    val result = ArrayList<GeneratedFile<Target>>()
+
+    for (outputItem in outputItemCollector.outputs) {
+        val sourceFiles = outputItem.sourceFiles
+        val outputFile = outputItem.outputFile
+        val target =
+                sourceFiles.firstOrNull()?.let { sourceToTarget[it] } ?:
+                targets.filter { getOutputDir(it)?.let { outputFile.startsWith(it) } ?: false }.singleOrNull() ?:
+                representativeTarget
+
+        if (outputFile.getName().endsWith(".class")) {
+            result.add(GeneratedJvmClass(target, sourceFiles, outputFile))
+        }
+        else {
+            result.add(GeneratedFile(target, sourceFiles, outputFile))
+        }
+    }
+    return result
+}
+
+
+fun CompilationResult.dirtyFiles(lookupStorage: LookupStorage) =
+    // TODO group by fqName?
+    changes.mapNotNull { it as? ChangeInfo.MembersChanged }
+           .flatMap { change ->
+               change.names.asSequence()
+                       .flatMap { lookupStorage.get(LookupSymbol(it, change.fqName.asString())).asSequence() }
+                       .map(::File)
+           }
+
 
