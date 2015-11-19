@@ -41,6 +41,8 @@ public class JsLibraryStdDetectionUtil {
     }
 
     public static boolean hasJsStdlibJar(@NotNull Library library) {
+        if (!KotlinJavaScriptLibraryDetectionUtil.isKotlinJavaScriptLibrary(library)) return false;
+
         List<VirtualFile> classes = Arrays.asList(library.getFiles(OrderRootType.CLASSES));
         return getJsLibraryStdVersion(classes, false) != null;
     }
