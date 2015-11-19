@@ -112,40 +112,6 @@ public class JetTypeMapper {
         return bindingContext;
     }
 
-    private enum JetTypeMapperMode {
-        /**
-         * kotlin.Int is mapped to I
-         */
-        DEFAULT,
-        /**
-         * kotlin.Int is mapped to Ljava/lang/Integer;
-         */
-        TYPE_PARAMETER,
-        /**
-         * kotlin.Int is mapped to Ljava/lang/Integer;
-         * No projections allowed in immediate arguments
-         */
-        SUPER_TYPE,
-        /**
-         * kotlin.reflect.KClass mapped to java.lang.Class
-         * Other types mapped as DEFAULT
-         */
-        VALUE_FOR_ANNOTATION,
-        /**
-         * kotlin.reflect.KClass mapped to java.lang.Class
-         * Other types mapped as TYPE_PARAMETER
-         */
-        TYPE_PARAMETER_FOR_ANNOTATION;
-
-        private boolean isForAnnotation() {
-            return this == VALUE_FOR_ANNOTATION || this == TYPE_PARAMETER_FOR_ANNOTATION;
-        }
-
-        private boolean needPrimitiveBoxing() {
-            return this == TYPE_PARAMETER || this == SUPER_TYPE || this == TYPE_PARAMETER_FOR_ANNOTATION;
-        }
-    }
-
     @NotNull
     public Type mapOwner(@NotNull DeclarationDescriptor descriptor) {
         return mapOwner(descriptor, true);
@@ -357,40 +323,40 @@ public class JetTypeMapper {
         else if (descriptor instanceof FunctionDescriptor && forceBoxedReturnType((FunctionDescriptor) descriptor)) {
             // TYPE_PARAMETER is a hack to automatically box the return type
             //noinspection ConstantConditions
-            return mapType(descriptor.getReturnType(), sw, JetTypeMapperMode.TYPE_PARAMETER);
+            return mapType(descriptor.getReturnType(), sw, TypeMappingMode.TYPE_PARAMETER);
         }
         else if (DescriptorUtils.isAnnotationClass(descriptor.getContainingDeclaration())) {
             //noinspection ConstantConditions
-            return mapType(descriptor.getReturnType(), sw, JetTypeMapperMode.VALUE_FOR_ANNOTATION);
+            return mapType(descriptor.getReturnType(), sw, TypeMappingMode.VALUE_FOR_ANNOTATION);
         }
         else {
-            return mapType(returnType, sw, JetTypeMapperMode.DEFAULT, Variance.OUT_VARIANCE);
+            return mapType(returnType, sw, TypeMappingMode.DEFAULT, Variance.OUT_VARIANCE);
         }
     }
 
     @NotNull
-    private Type mapType(@NotNull KotlinType jetType, @NotNull JetTypeMapperMode mode) {
+    private Type mapType(@NotNull KotlinType jetType, @NotNull TypeMappingMode mode) {
         return mapType(jetType, null, mode);
     }
 
     @NotNull
     public Type mapSupertype(@NotNull KotlinType jetType, @Nullable BothSignatureWriter signatureVisitor) {
-        return mapType(jetType, signatureVisitor, JetTypeMapperMode.SUPER_TYPE);
+        return mapType(jetType, signatureVisitor, TypeMappingMode.SUPER_TYPE);
     }
 
     @NotNull
     public Type mapTypeParameter(@NotNull KotlinType jetType, @Nullable BothSignatureWriter signatureVisitor) {
-        return mapType(jetType, signatureVisitor, JetTypeMapperMode.TYPE_PARAMETER);
+        return mapType(jetType, signatureVisitor, TypeMappingMode.TYPE_PARAMETER);
     }
 
     @NotNull
     public Type mapClass(@NotNull ClassifierDescriptor classifier) {
-        return mapType(classifier.getDefaultType(), null, JetTypeMapperMode.DEFAULT);
+        return mapType(classifier.getDefaultType(), null, TypeMappingMode.DEFAULT);
     }
 
     @NotNull
     public Type mapType(@NotNull KotlinType jetType) {
-        return mapType(jetType, null, JetTypeMapperMode.DEFAULT);
+        return mapType(jetType, null, TypeMappingMode.DEFAULT);
     }
 
     @NotNull
@@ -403,7 +369,7 @@ public class JetTypeMapper {
     public JvmMethodSignature mapAnnotationParameterSignature(@NotNull PropertyDescriptor descriptor) {
         BothSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.METHOD);
         sw.writeReturnType();
-        mapType(descriptor.getType(), sw, JetTypeMapperMode.VALUE_FOR_ANNOTATION);
+        mapType(descriptor.getType(), sw, TypeMappingMode.VALUE_FOR_ANNOTATION);
         sw.writeReturnTypeEnd();
         return sw.makeJvmMethodSignature(descriptor.getName().asString(), false);
     }
@@ -414,7 +380,7 @@ public class JetTypeMapper {
     }
 
     @NotNull
-    private Type mapType(@NotNull KotlinType jetType, @Nullable BothSignatureWriter signatureVisitor, @NotNull JetTypeMapperMode mode) {
+    private Type mapType(@NotNull KotlinType jetType, @Nullable BothSignatureWriter signatureVisitor, @NotNull TypeMappingMode mode) {
         return mapType(jetType, signatureVisitor, mode, Variance.INVARIANT);
     }
 
@@ -422,14 +388,14 @@ public class JetTypeMapper {
     private Type mapType(
             @NotNull KotlinType jetType,
             @Nullable BothSignatureWriter signatureVisitor,
-            @NotNull JetTypeMapperMode kind,
+            @NotNull TypeMappingMode kind,
             @NotNull Variance howThisTypeIsUsed
     ) {
         Type builtinType = mapBuiltinType(jetType);
 
-        boolean projectionsAllowed = kind != JetTypeMapperMode.SUPER_TYPE;
+        boolean projectionsAllowed = kind != TypeMappingMode.SUPER_TYPE;
         if (builtinType != null) {
-            Type asmType = kind.needPrimitiveBoxing() ? boxType(builtinType) : builtinType;
+            Type asmType = kind.getNeedPrimitiveBoxing() ? boxType(builtinType) : builtinType;
             writeGenericType(jetType, asmType, signatureVisitor, howThisTypeIsUsed, projectionsAllowed);
             return asmType;
         }
@@ -475,9 +441,9 @@ public class JetTypeMapper {
                 arrayElementType = boxType(mapType(memberType, kind));
                 if (signatureVisitor != null) {
                     signatureVisitor.writeArrayType();
-                    JetTypeMapperMode newMode = kind.isForAnnotation() ?
-                                                JetTypeMapperMode.TYPE_PARAMETER_FOR_ANNOTATION :
-                                                JetTypeMapperMode.TYPE_PARAMETER;
+                    TypeMappingMode newMode = kind.isForAnnotationParameter() ?
+                                              TypeMappingMode.TYPE_PARAMETER_FOR_ANNOTATION :
+                                              TypeMappingMode.TYPE_PARAMETER;
                     mapType(memberType, signatureVisitor, newMode, memberProjection.getProjectionKind());
                     signatureVisitor.writeArrayEnd();
                 }
@@ -487,7 +453,7 @@ public class JetTypeMapper {
         }
 
         if (descriptor instanceof ClassDescriptor) {
-            Type asmType = kind.isForAnnotation() && KotlinBuiltIns.isKClass((ClassDescriptor) descriptor) ?
+            Type asmType = kind.isForAnnotationParameter() && KotlinBuiltIns.isKClass((ClassDescriptor) descriptor) ?
                            AsmTypes.JAVA_CLASS_TYPE :
                            computeAsmType((ClassDescriptor) descriptor.getOriginal());
             writeGenericType(jetType, asmType, signatureVisitor, howThisTypeIsUsed, projectionsAllowed);
@@ -689,7 +655,7 @@ public class JetTypeMapper {
                                           : Variance.INVARIANT;
                 signatureVisitor.writeTypeArgument(projectionKind);
 
-                mapType(argument.getType(), signatureVisitor, JetTypeMapperMode.TYPE_PARAMETER);
+                mapType(argument.getType(), signatureVisitor, TypeMappingMode.TYPE_PARAMETER);
                 signatureVisitor.writeTypeArgumentEnd();
             }
         }
@@ -1132,7 +1098,7 @@ public class JetTypeMapper {
     @Nullable
     public String mapFieldSignature(@NotNull KotlinType backingFieldType) {
         BothSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.TYPE);
-        mapType(backingFieldType, sw, JetTypeMapperMode.DEFAULT);
+        mapType(backingFieldType, sw, TypeMappingMode.DEFAULT);
         return sw.makeJavaGenericSignature();
     }
 
@@ -1184,7 +1150,7 @@ public class JetTypeMapper {
             for (KotlinType jetType : typeParameterDescriptor.getUpperBounds()) {
                 if (jetType.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor) {
                     if (!isJvmInterface(jetType)) {
-                        mapType(jetType, sw, JetTypeMapperMode.TYPE_PARAMETER);
+                        mapType(jetType, sw, TypeMappingMode.TYPE_PARAMETER);
                         break classBound;
                     }
                 }
@@ -1202,13 +1168,13 @@ public class JetTypeMapper {
             if (classifier instanceof ClassDescriptor) {
                 if (isJvmInterface(jetType)) {
                     sw.writeInterfaceBound();
-                    mapType(jetType, sw, JetTypeMapperMode.TYPE_PARAMETER);
+                    mapType(jetType, sw, TypeMappingMode.TYPE_PARAMETER);
                     sw.writeInterfaceBoundEnd();
                 }
             }
             else if (classifier instanceof TypeParameterDescriptor) {
                 sw.writeInterfaceBound();
-                mapType(jetType, sw, JetTypeMapperMode.TYPE_PARAMETER);
+                mapType(jetType, sw, TypeMappingMode.TYPE_PARAMETER);
                 sw.writeInterfaceBoundEnd();
             }
             else {
@@ -1223,7 +1189,7 @@ public class JetTypeMapper {
 
     private void writeParameter(@NotNull BothSignatureWriter sw, @NotNull JvmMethodParameterKind kind, @NotNull KotlinType type) {
         sw.writeParameterType(kind);
-        mapType(type, sw, JetTypeMapperMode.DEFAULT);
+        mapType(type, sw, TypeMappingMode.DEFAULT);
         sw.writeParameterTypeEnd();
     }
 
