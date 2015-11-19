@@ -37,3 +37,13 @@ enum E {
     override fun equals(other: Any?) = true
     override fun hashCode() = 0
 }
+
+abstract class T
+
+object O4 : A() {
+    override fun equals(other: Any?) = true
+}
+
+object O5 : A() {
+    override fun hashCode() = 0
+}
