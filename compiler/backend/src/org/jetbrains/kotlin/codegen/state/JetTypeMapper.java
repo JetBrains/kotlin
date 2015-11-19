@@ -114,10 +114,6 @@ public class JetTypeMapper {
 
     private enum JetTypeMapperMode {
         /**
-         * foo.Bar is mapped to Lfoo/Bar;
-         */
-        IMPL,
-        /**
          * kotlin.Int is mapped to I
          */
         VALUE,
@@ -141,8 +137,12 @@ public class JetTypeMapper {
          */
         TYPE_PARAMETER_FOR_ANNOTATION;
 
-        boolean isForAnnotation() {
+        private boolean isForAnnotation() {
             return this == VALUE_FOR_ANNOTATION || this == TYPE_PARAMETER_FOR_ANNOTATION;
+        }
+
+        private boolean needPrimitiveBoxing() {
+            return this == TYPE_PARAMETER || this == SUPER_TYPE || this == TYPE_PARAMETER_FOR_ANNOTATION;
         }
     }
 
@@ -385,7 +385,7 @@ public class JetTypeMapper {
 
     @NotNull
     public Type mapClass(@NotNull ClassifierDescriptor classifier) {
-        return mapType(classifier.getDefaultType(), null, JetTypeMapperMode.IMPL);
+        return mapType(classifier.getDefaultType(), null, JetTypeMapperMode.VALUE);
     }
 
     @NotNull
@@ -425,25 +425,13 @@ public class JetTypeMapper {
             @NotNull JetTypeMapperMode kind,
             @NotNull Variance howThisTypeIsUsed
     ) {
-        Type known = mapBuiltinType(jetType);
+        Type builtinType = mapBuiltinType(jetType);
 
         boolean projectionsAllowed = kind != JetTypeMapperMode.SUPER_TYPE;
-        if (known != null) {
-            if (kind == JetTypeMapperMode.VALUE || kind == JetTypeMapperMode.VALUE_FOR_ANNOTATION) {
-                return mapKnownAsmType(jetType, known, signatureVisitor, howThisTypeIsUsed);
-            }
-            else if (kind == JetTypeMapperMode.TYPE_PARAMETER || kind == JetTypeMapperMode.SUPER_TYPE ||
-                     kind == JetTypeMapperMode.TYPE_PARAMETER_FOR_ANNOTATION) {
-                return mapKnownAsmType(jetType, boxType(known), signatureVisitor, howThisTypeIsUsed, projectionsAllowed);
-            }
-            else if (kind == JetTypeMapperMode.IMPL) {
-                // TODO: enable and fix tests
-                //throw new IllegalStateException("must not map known type to IMPL when not compiling builtins: " + jetType);
-                return mapKnownAsmType(jetType, known, signatureVisitor, howThisTypeIsUsed);
-            }
-            else {
-                throw new IllegalStateException("unknown kind: " + kind);
-            }
+        if (builtinType != null) {
+            Type asmType = kind.needPrimitiveBoxing() ? boxType(builtinType) : builtinType;
+            writeGenericType(jetType, asmType, signatureVisitor, howThisTypeIsUsed, projectionsAllowed);
+            return asmType;
         }
 
         TypeConstructor constructor = jetType.getConstructor();
@@ -502,7 +490,7 @@ public class JetTypeMapper {
             Type asmType = kind.isForAnnotation() && KotlinBuiltIns.isKClass((ClassDescriptor) descriptor) ?
                            AsmTypes.JAVA_CLASS_TYPE :
                            computeAsmType((ClassDescriptor) descriptor.getOriginal());
-            writeGenericType(signatureVisitor, asmType, jetType, howThisTypeIsUsed, projectionsAllowed);
+            writeGenericType(jetType, asmType, signatureVisitor, howThisTypeIsUsed, projectionsAllowed);
             return asmType;
         }
 
@@ -620,10 +608,10 @@ public class JetTypeMapper {
     }
 
     private void writeGenericType(
-            BothSignatureWriter signatureVisitor,
-            Type asmType,
-            KotlinType type,
-            Variance howThisTypeIsUsed,
+            @NotNull KotlinType type,
+            @NotNull Type asmType,
+            @Nullable BothSignatureWriter signatureVisitor,
+            @NotNull Variance howThisTypeIsUsed,
             boolean projectionsAllowed
     ) {
         if (signatureVisitor != null) {
@@ -742,33 +730,6 @@ public class JetTypeMapper {
         // In<out X> = In<*>
         // Out<in X> = Out<*>
         return Variance.OUT_VARIANCE;
-    }
-
-    private Type mapKnownAsmType(
-            KotlinType jetType,
-            Type asmType,
-            @Nullable BothSignatureWriter signatureVisitor,
-            @NotNull Variance howThisTypeIsUsed
-    ) {
-        return mapKnownAsmType(jetType, asmType, signatureVisitor, howThisTypeIsUsed, true);
-    }
-
-    private Type mapKnownAsmType(
-            KotlinType jetType,
-            Type asmType,
-            @Nullable BothSignatureWriter signatureVisitor,
-            @NotNull Variance howThisTypeIsUsed,
-            boolean allowProjections
-    ) {
-        if (signatureVisitor != null) {
-            if (jetType.getArguments().isEmpty()) {
-                signatureVisitor.writeAsmType(asmType);
-            }
-            else {
-                writeGenericType(signatureVisitor, asmType, jetType, howThisTypeIsUsed, allowProjections);
-            }
-        }
-        return asmType;
     }
 
     @NotNull
