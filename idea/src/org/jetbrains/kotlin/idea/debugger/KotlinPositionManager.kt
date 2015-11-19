@@ -80,7 +80,7 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
     }
 
     override fun createStackFrame(frame: StackFrameProxyImpl, debugProcess: DebugProcessImpl, location: Location): XStackFrame? {
-        if (location.declaringType().availableStrata().contains("Kotlin")) {
+        if (location.declaringType().containsKotlinStrata()) {
             return KotlinStackFrame(frame)
         }
         return null
@@ -93,7 +93,7 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
 
         val psiFile = getPsiFileByLocation(location)
         if (psiFile == null) {
-            val isKotlinStrataAvailable = location.declaringType().availableStrata().contains("Kotlin")
+            val isKotlinStrataAvailable = location.declaringType().containsKotlinStrata()
             if (isKotlinStrataAvailable) {
                 try {
                     val javaSourceFileName = location.sourceName("Java")
@@ -182,7 +182,7 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
 
         val referenceInternalName: String
         try {
-            if (location.declaringType().availableStrata().contains("Kotlin")) {
+            if (location.declaringType().containsKotlinStrata()) {
                 //replace is required for windows
                 referenceInternalName = location.sourcePath().replace('\\','/')
             } else {
@@ -494,4 +494,6 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
             result
         }
     }
+
+    private fun ReferenceType.containsKotlinStrata() = availableStrata().contains("Kotlin")
 }
