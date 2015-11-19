@@ -17,34 +17,31 @@
 package org.jetbrains.kotlin.idea.liveTemplates.macro
 
 import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.codeInsight.lookup.LookupElementBuilder
-import com.intellij.codeInsight.template.Expression
-import com.intellij.codeInsight.template.ExpressionContext
-import com.intellij.codeInsight.template.Macro
-import com.intellij.codeInsight.template.Result
+import com.intellij.codeInsight.template.*
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.UserDataHolder
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
+import org.jetbrains.kotlin.idea.completion.BasicLookupElementFactory
+import org.jetbrains.kotlin.idea.completion.InsertHandlerProvider
 import org.jetbrains.kotlin.idea.core.isVisible
+import org.jetbrains.kotlin.idea.util.CallType
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.util.slicedMap.UserDataHolderImpl
-import java.util.*
 
 abstract class BaseKotlinVariableMacro : Macro() {
-    private fun getVariables(params: Array<Expression>, context: ExpressionContext): Collection<PsiNamedElement> {
+    private fun getVariables(params: Array<Expression>, context: ExpressionContext): Collection<VariableDescriptor> {
         if (params.size != 0) return emptyList()
 
         val project = context.project
@@ -67,16 +64,10 @@ abstract class BaseKotlinVariableMacro : Macro() {
         initUserData(userData, contextElement, bindingContext)
 
         val helper = ReferenceVariantsHelper(bindingContext, resolutionFacade, resolutionFacade.moduleDescriptor, ::isVisible)
-        val variants = helper
+        return helper
                 .getReferenceVariants(contextElement, CallTypeAndReceiver.DEFAULT, DescriptorKindFilter.VARIABLES, { true })
-                .filter { isSuitable(it as VariableDescriptor, project, userData) }
-
-        val declarations = ArrayList<PsiNamedElement>()
-        for (descriptor in variants) {
-            val declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as? PsiNamedElement ?: continue
-            declarations.add(declaration)
-        }
-        return declarations
+                .map { it as VariableDescriptor }
+                .filter { isSuitable(it, project, userData) }
     }
 
     protected open fun initUserData(userData: UserDataHolder, contextElement: KtElement, bindingContext: BindingContext) {
@@ -90,12 +81,13 @@ abstract class BaseKotlinVariableMacro : Macro() {
     override fun calculateResult(params: Array<Expression>, context: ExpressionContext): Result? {
         val vars = getVariables(params, context)
         if (vars.isEmpty()) return null
-        return KotlinPsiElementResult(vars.first())
+        return vars.firstOrNull()?.let { TextResult(it.name.render()) }
     }
 
     override fun calculateLookupItems(params: Array<Expression>, context: ExpressionContext): Array<LookupElement>? {
         val vars = getVariables(params, context)
         if (vars.size < 2) return null
-        return vars.map { LookupElementBuilder.create(it) }.toTypedArray()
+        val lookupElementFactory = BasicLookupElementFactory(context.project, InsertHandlerProvider(CallType.DEFAULT, { emptyList() }))
+        return vars.map { lookupElementFactory.createLookupElement(it) }.toTypedArray()
     }
 }

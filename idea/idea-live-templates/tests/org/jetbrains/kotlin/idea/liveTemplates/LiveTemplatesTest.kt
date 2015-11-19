@@ -85,7 +85,7 @@ class LiveTemplatesTest : KotlinLightCodeInsightFixtureTestCase() {
     fun testSoutv() {
         start()
 
-        assertStringItems("args", "x", "y")
+        assertStringItems("ASSERTIONS_ENABLED", "args", "defaultBlockSize", "defaultBufferSize", "minimumBlockSize", "x", "y")
         typeAndNextTab("y")
 
         checkAfter()
