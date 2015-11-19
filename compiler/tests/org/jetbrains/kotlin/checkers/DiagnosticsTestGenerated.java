@@ -1619,6 +1619,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("annotationClassConstructor.kt")
+                public void testAnnotationClassConstructor() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/annotationClassConstructor.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("callableRefrenceOnNestedObject.kt")
                 public void testCallableRefrenceOnNestedObject() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/function/callableRefrenceOnNestedObject.kt");

@@ -719,8 +719,12 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             context.trace.report(CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS.on(reference));
         }
 
-        if (DescriptorUtils.isObject(descriptor.getContainingDeclaration())) {
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+        if (DescriptorUtils.isObject(containingDeclaration)) {
             context.trace.report(CALLABLE_REFERENCE_TO_OBJECT_MEMBER.on(reference));
+        }
+        if (descriptor instanceof ConstructorDescriptor && DescriptorUtils.isAnnotationClass(containingDeclaration)) {
+            context.trace.report(CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR.on(reference));
         }
 
         return CallableReferencesResolutionUtilsKt.createReflectionTypeForResolvedCallableReference(
