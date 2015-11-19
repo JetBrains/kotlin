@@ -21,6 +21,7 @@ import org.jetbrains.jps.builders.BuildTarget
 import org.jetbrains.jps.builders.storage.BuildDataPaths
 import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.kotlin.config.IncrementalCompilation
+import org.jetbrains.kotlin.jps.incremental.CacheVersion.Action
 import org.jetbrains.kotlin.load.java.JvmAbi
 import java.io.File
 
@@ -32,13 +33,15 @@ private val NORMAL_VERSION_FILE_NAME = "format-version.txt"
 private val EXPERIMENTAL_VERSION_FILE_NAME = "experimental-format-version.txt"
 private val DATA_CONTAINER_VERSION_FILE_NAME = "data-container-format-version.txt"
 
-sealed class CacheVersion {
-    protected abstract val ownVersion: Int
-    protected abstract val versionFile: File
-    protected abstract val isEnabled: Boolean
-    protected abstract val whenVersionChanged: CacheVersion.Action
-    protected abstract val whenTurnedOn: CacheVersion.Action
-    protected abstract val whenTurnedOff: CacheVersion.Action
+class CacheVersion(
+        private val ownVersion: Int,
+        private val versionFile: File,
+        private val whenVersionChanged: CacheVersion.Action,
+        private val whenTurnedOn: CacheVersion.Action,
+        private val whenTurnedOff: CacheVersion.Action,
+        isEnabled: ()->Boolean
+) {
+    private val isEnabled by lazy(isEnabled)
 
     private val actualVersion: Int
         get() = versionFile.readText().toInt()
@@ -81,65 +84,35 @@ sealed class CacheVersion {
         CLEAN_DATA_CONTAINER,
         DO_NOTHING
     }
-
-    class Normal(dir: File) : CacheVersion() {
-        override val ownVersion = NORMAL_VERSION
-
-        override val versionFile = File(dir, NORMAL_VERSION_FILE_NAME)
-
-        override val isEnabled: Boolean
-            get() = IncrementalCompilation.isEnabled()
-
-        override val whenVersionChanged = Action.REBUILD_CHUNK
-
-        override val whenTurnedOn = Action.REBUILD_CHUNK
-
-        override val whenTurnedOff = Action.CLEAN_NORMAL_CACHES
-    }
-
-    class Experimental(dir: File) : CacheVersion() {
-        override val ownVersion = EXPERIMENTAL_VERSION
-
-        override val versionFile = File(dir, EXPERIMENTAL_VERSION_FILE_NAME)
-
-        override val isEnabled: Boolean
-            get() = IncrementalCompilation.isExperimental()
-
-        override val whenVersionChanged = Action.REBUILD_CHUNK
-
-        override val whenTurnedOn = Action.REBUILD_CHUNK
-
-        override val whenTurnedOff = Action.CLEAN_EXPERIMENTAL_CACHES
-    }
-
-    class DataContainer(dir: File) : CacheVersion() {
-        override val ownVersion = DATA_CONTAINER_VERSION
-
-        override val versionFile = File(dir, DATA_CONTAINER_VERSION_FILE_NAME)
-
-        override val isEnabled: Boolean
-            get() = IncrementalCompilation.isExperimental()
-
-        override val whenVersionChanged = Action.REBUILD_ALL_KOTLIN
-
-        override val whenTurnedOn = Action.REBUILD_ALL_KOTLIN
-
-        override val whenTurnedOff = Action.CLEAN_DATA_CONTAINER
-    }
 }
 
 class CacheVersionProvider(private val paths: BuildDataPaths) {
-    protected val BuildTarget<*>.dataRoot: File
+    private val BuildTarget<*>.dataRoot: File
         get() = paths.getTargetDataRoot(this)
 
     fun normalVersion(target: ModuleBuildTarget): CacheVersion =
-            CacheVersion.Normal(target.dataRoot)
+            CacheVersion(ownVersion = NORMAL_VERSION,
+                         versionFile = File(target.dataRoot, NORMAL_VERSION_FILE_NAME),
+                         whenVersionChanged = Action.REBUILD_CHUNK,
+                         whenTurnedOn = Action.REBUILD_CHUNK,
+                         whenTurnedOff = Action.CLEAN_NORMAL_CACHES,
+                         isEnabled = { IncrementalCompilation.isEnabled() })
 
     fun experimentalVersion(target: ModuleBuildTarget): CacheVersion =
-            CacheVersion.Experimental(target.dataRoot)
+            CacheVersion(ownVersion = EXPERIMENTAL_VERSION,
+                         versionFile = File(target.dataRoot, EXPERIMENTAL_VERSION_FILE_NAME),
+                         whenVersionChanged = Action.REBUILD_CHUNK,
+                         whenTurnedOn = Action.REBUILD_CHUNK,
+                         whenTurnedOff = Action.CLEAN_EXPERIMENTAL_CACHES,
+                         isEnabled = { IncrementalCompilation.isExperimental() })
 
     fun dataContainerVersion(): CacheVersion =
-            CacheVersion.DataContainer(KotlinDataContainerTarget.dataRoot)
+            CacheVersion(ownVersion = DATA_CONTAINER_VERSION,
+                         versionFile = File(KotlinDataContainerTarget.dataRoot, DATA_CONTAINER_VERSION_FILE_NAME),
+                         whenVersionChanged = Action.REBUILD_ALL_KOTLIN,
+                         whenTurnedOn = Action.REBUILD_ALL_KOTLIN,
+                         whenTurnedOff = Action.CLEAN_DATA_CONTAINER,
+                         isEnabled = { IncrementalCompilation.isExperimental() })
 
     fun allVersions(targets: Iterable<ModuleBuildTarget>): Iterable<CacheVersion> {
         val versions = arrayListOf<CacheVersion>()
