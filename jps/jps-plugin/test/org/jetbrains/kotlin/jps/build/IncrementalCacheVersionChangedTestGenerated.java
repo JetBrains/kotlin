@@ -35,9 +35,21 @@ public class IncrementalCacheVersionChangedTestGenerated extends AbstractIncreme
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("jps-plugin/testData/incremental/cacheVersionChanged"), Pattern.compile("^([^\\.]+)$"), true);
     }
 
+    @TestMetadata("clearedHasKotlin")
+    public void testClearedHasKotlin() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/cacheVersionChanged/clearedHasKotlin/");
+        doTest(fileName);
+    }
+
     @TestMetadata("exportedModule")
     public void testExportedModule() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/cacheVersionChanged/exportedModule/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("javaOnlyModulesAreNotAffected")
+    public void testJavaOnlyModulesAreNotAffected() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/cacheVersionChanged/javaOnlyModulesAreNotAffected/");
         doTest(fileName);
     }
 
@@ -71,9 +83,21 @@ public class IncrementalCacheVersionChangedTestGenerated extends AbstractIncreme
         doTest(fileName);
     }
 
+    @TestMetadata("touchedOnlyJavaFile")
+    public void testTouchedOnlyJavaFile() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/cacheVersionChanged/touchedOnlyJavaFile/");
+        doTest(fileName);
+    }
+
     @TestMetadata("untouchedFiles")
     public void testUntouchedFiles() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/cacheVersionChanged/untouchedFiles/");
+        doTest(fileName);
+    }
+
+    @TestMetadata("withError")
+    public void testWithError() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/cacheVersionChanged/withError/");
         doTest(fileName);
     }
 
