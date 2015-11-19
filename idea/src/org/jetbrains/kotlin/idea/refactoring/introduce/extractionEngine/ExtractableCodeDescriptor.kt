@@ -414,7 +414,7 @@ data class ExtractionGeneratorOptions(
         val inTempFile: Boolean = false,
         val target: ExtractionTarget = ExtractionTarget.FUNCTION,
         val flexibleTypesAllowed: Boolean = false,
-        val allowDummyName: Boolean = false,
+        val dummyName: String? = null,
         val allowExpressionBody: Boolean = true,
         val delayInitialOccurrenceReplacement: Boolean = false
 ) {

@@ -93,7 +93,7 @@ fun ExtractionGeneratorConfiguration.getDeclarationText(
             builder.receiver(if (isFunctionType) "($receiverTypeAsString)" else receiverTypeAsString)
         }
 
-        builder.name(if (descriptor.name == "" && generatorOptions.allowDummyName) "myFun" else descriptor.name)
+        builder.name(generatorOptions.dummyName ?: descriptor.name)
 
         descriptor.parameters.forEach { parameter ->
             builder.param(parameter.name,

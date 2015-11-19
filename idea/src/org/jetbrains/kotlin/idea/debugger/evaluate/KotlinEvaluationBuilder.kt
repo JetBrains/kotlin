@@ -81,7 +81,8 @@ import java.util.*
 
 internal val RECEIVER_NAME = "\$receiver"
 internal val THIS_NAME = "this"
-val LOG = Logger.getInstance("#org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluator")
+internal val LOG = Logger.getInstance("#org.jetbrains.kotlin.idea.debugger.evaluate.KotlinEvaluator")
+internal val GENERATED_FUNCTION_NAME = "generated_for_debugger_kotlin_rulezzzz"
 
 private val DEBUG_MODE = false
 
@@ -197,9 +198,6 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 }
             }
 
-            val funName = runReadAction { extractedFunction.name }
-                                        ?: throw IllegalStateException("Extracted function should have a name: ${extractedFunction.text}")
-
             val additionalFiles = if (outputFiles.size < 2) emptyList()
                                   else outputFiles.subList(1, outputFiles.size).map { getClassName(it.relativePath) to it.asByteArray() }
 
@@ -207,7 +205,6 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                     outputFiles.first().asByteArray(),
                     additionalFiles,
                     sourcePosition,
-                    funName,
                     parametersDescriptor)
         }
 
@@ -225,7 +222,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             var resultValue: InterpreterResult? = null
             ClassReader(compiledData.bytecodes).accept(object : ClassVisitor(ASM5) {
                 override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
-                    if (name == compiledData.funName) {
+                    if (name == GENERATED_FUNCTION_NAME) {
                         val argumentTypes = Type.getArgumentTypes(desc)
                         val args = context.getArgumentsForEval4j(compiledData.parameters, argumentTypes)
 
@@ -255,7 +252,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 }
             }, 0)
 
-            return resultValue ?: throw IllegalStateException("resultValue is null: cannot find method ${compiledData.funName}")
+            return resultValue ?: throw IllegalStateException("resultValue is null: cannot find method " + GENERATED_FUNCTION_NAME)
         }
 
         private fun boxOrUnboxArgumentIfNeeded(eval: JDIEval, argumentValue: Value, parameterType: Type): Value {
@@ -469,7 +466,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
 }
 
 private val template = """
-package packageForDebugger
+!PACKAGE!
 
 !IMPORT_LIST!
 
@@ -481,16 +478,16 @@ private fun createFileForDebugger(codeFragment: KtCodeFragment,
 ): KtFile {
     val containingContextFile = codeFragment.getContextContainingFile()
     val importsFromContextFile = containingContextFile?.importList?.let { it.text + "\n" } ?: ""
-    val packageFromContextFile = containingContextFile?.packageName?.let {
-        if (it.isNotBlank()) "import $it.*\n" else null
-    } ?: ""
 
     var fileText = template.replace(
             "!IMPORT_LIST!",
-            packageFromContextFile
-                    + importsFromContextFile
-                    + codeFragment.importsToString().split(KtCodeFragment.IMPORT_SEPARATOR).joinToString("\n")
+            importsFromContextFile + codeFragment.importsToString().split(KtCodeFragment.IMPORT_SEPARATOR).joinToString("\n")
     )
+
+    val packageFromContextFile = containingContextFile?.packageName?.let {
+        if (it.isNotBlank()) "package $it" else ""
+    } ?: ""
+    fileText = fileText.replace("!PACKAGE!", packageFromContextFile)
 
     val extractedFunctionText = extractedFunction.text
     assert(extractedFunctionText != null) { "Text of extracted function shouldn't be null" }
