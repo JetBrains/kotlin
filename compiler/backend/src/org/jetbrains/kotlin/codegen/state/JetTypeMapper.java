@@ -321,9 +321,9 @@ public class JetTypeMapper {
             return Type.VOID_TYPE;
         }
         else if (descriptor instanceof FunctionDescriptor && forceBoxedReturnType((FunctionDescriptor) descriptor)) {
-            // TYPE_PARAMETER is a hack to automatically box the return type
+            // GENERIC_TYPE is a hack to automatically box the return type
             //noinspection ConstantConditions
-            return mapType(descriptor.getReturnType(), sw, TypeMappingMode.TYPE_PARAMETER);
+            return mapType(descriptor.getReturnType(), sw, TypeMappingMode.GENERIC_TYPE);
         }
         else if (DescriptorUtils.isAnnotationClass(descriptor.getContainingDeclaration())) {
             //noinspection ConstantConditions
@@ -346,7 +346,7 @@ public class JetTypeMapper {
 
     @NotNull
     public Type mapTypeParameter(@NotNull KotlinType jetType, @Nullable BothSignatureWriter signatureVisitor) {
-        return mapType(jetType, signatureVisitor, TypeMappingMode.TYPE_PARAMETER);
+        return mapType(jetType, signatureVisitor, TypeMappingMode.GENERIC_TYPE);
     }
 
     @NotNull
@@ -441,8 +441,8 @@ public class JetTypeMapper {
                 if (signatureVisitor != null) {
                     signatureVisitor.writeArrayType();
                     TypeMappingMode newMode = mode.isForAnnotationParameter() ?
-                                              TypeMappingMode.TYPE_PARAMETER_FOR_ANNOTATION :
-                                              TypeMappingMode.TYPE_PARAMETER;
+                                              TypeMappingMode.GENERIC_TYPE_PARAMETER_FOR_ANNOTATION_PARAMETER :
+                                              TypeMappingMode.GENERIC_TYPE;
                     mapType(memberType, signatureVisitor, newMode, memberProjection.getProjectionKind());
                     signatureVisitor.writeArrayEnd();
                 }
@@ -649,7 +649,7 @@ public class JetTypeMapper {
                         getEffectiveVariance(parameter.getVariance(), argument.getProjectionKind(), howThisTypeIsUsed, mode);
                 signatureVisitor.writeTypeArgument(projectionKind);
 
-                mapType(argument.getType(), signatureVisitor, TypeMappingMode.TYPE_PARAMETER);
+                mapType(argument.getType(), signatureVisitor, TypeMappingMode.GENERIC_TYPE);
                 signatureVisitor.writeTypeArgumentEnd();
             }
         }
@@ -1151,7 +1151,7 @@ public class JetTypeMapper {
             for (KotlinType jetType : typeParameterDescriptor.getUpperBounds()) {
                 if (jetType.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor) {
                     if (!isJvmInterface(jetType)) {
-                        mapType(jetType, sw, TypeMappingMode.TYPE_PARAMETER);
+                        mapType(jetType, sw, TypeMappingMode.GENERIC_TYPE);
                         break classBound;
                     }
                 }
@@ -1169,13 +1169,13 @@ public class JetTypeMapper {
             if (classifier instanceof ClassDescriptor) {
                 if (isJvmInterface(jetType)) {
                     sw.writeInterfaceBound();
-                    mapType(jetType, sw, TypeMappingMode.TYPE_PARAMETER);
+                    mapType(jetType, sw, TypeMappingMode.GENERIC_TYPE);
                     sw.writeInterfaceBoundEnd();
                 }
             }
             else if (classifier instanceof TypeParameterDescriptor) {
                 sw.writeInterfaceBound();
-                mapType(jetType, sw, TypeMappingMode.TYPE_PARAMETER);
+                mapType(jetType, sw, TypeMappingMode.GENERIC_TYPE);
                 sw.writeInterfaceBoundEnd();
             }
             else {

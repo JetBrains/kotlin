@@ -28,7 +28,7 @@ internal enum class TypeMappingMode(
     /**
      * kotlin.Int is mapped to Ljava/lang/Integer;
      */
-    TYPE_PARAMETER(needPrimitiveBoxing = true),
+    GENERIC_TYPE(needPrimitiveBoxing = true),
     /**
      * kotlin.Int is mapped to Ljava/lang/Integer;
      * No projections allowed in immediate arguments
@@ -41,7 +41,7 @@ internal enum class TypeMappingMode(
     VALUE_FOR_ANNOTATION(isForAnnotationParameter = true),
     /**
      * kotlin.reflect.KClass mapped to java.lang.Class
-     * Other types mapped as TYPE_PARAMETER
+     * Other types mapped as GENERIC_TYPE
      */
-    TYPE_PARAMETER_FOR_ANNOTATION(isForAnnotationParameter = true, needPrimitiveBoxing = true);
+    GENERIC_TYPE_PARAMETER_FOR_ANNOTATION_PARAMETER(isForAnnotationParameter = true, needPrimitiveBoxing = true);
 }
