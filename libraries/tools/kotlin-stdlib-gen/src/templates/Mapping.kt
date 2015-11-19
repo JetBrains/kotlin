@@ -284,29 +284,29 @@ fun mapping(): List<GenericFunction> {
         }
     }
 
-    templates add f("groupBy(toKey: (T) -> K)") {
+    templates add f("groupBy(selector: (T) -> K)") {
         inline(true)
 
         deprecate(Strings) { forBinaryCompatibility }
         include(CharSequences, Strings)
-        doc { f -> "Returns a map of the ${f.element}s in original ${f.collection} grouped by the result of given [toKey] function." }
+        doc { f -> "Returns a map of the ${f.element}s in original ${f.collection} grouped by the key returned by the given [selector] function." }
         typeParam("K")
         returns("Map<K, List<T>>")
-        body { "return groupByTo(LinkedHashMap<K, MutableList<T>>(), toKey)" }
+        body { "return groupByTo(LinkedHashMap<K, MutableList<T>>(), selector)" }
     }
 
-    templates add f("groupByTo(map: MutableMap<K, MutableList<T>>, toKey: (T) -> K)") {
+    templates add f("groupByTo(map: MutableMap<K, MutableList<T>>, selector: (T) -> K)") {
         inline(true)
 
         deprecate(Strings) { forBinaryCompatibility }
         include(CharSequences, Strings)
         typeParam("K")
-        doc { f -> "Appends ${f.element}s from original ${f.collection} grouped by the result of given [toKey] function to the given [map]." }
+        doc { f -> "Appends ${f.element}s from original ${f.collection} grouped by the key returned by the given [selector] function to the given [map]." }
         returns("Map<K, MutableList<T>>")
         body {
             """
                 for (element in this) {
-                    val key = toKey(element)
+                    val key = selector(element)
                     val list = map.getOrPut(key) { ArrayList<T>() }
                     list.add(element)
                 }

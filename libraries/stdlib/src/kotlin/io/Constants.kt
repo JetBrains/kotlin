@@ -5,7 +5,7 @@ package kotlin.io
 
 /**
  * Returns the default buffer size when working with buffered streams.
- */
+*/
 public val defaultBufferSize: Int = 64 * 1024
 /**
  * Returns the default block size for forEachBlock().

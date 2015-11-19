@@ -480,7 +480,7 @@ fun generators(): List<GenericFunction> {
         }
     }
 
-    templates add f("zip(array: Array<out R>, transform: (T, R) -> V)") {
+    templates add f("zip(other: Array<out R>, transform: (T, R) -> V)") {
         exclude(Sequences)
         doc {
             """
@@ -493,22 +493,22 @@ fun generators(): List<GenericFunction> {
         inline(true)
         body {
             """
-            val arraySize = array.size
+            val arraySize = other.size
             val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), arraySize))
             var i = 0
             for (element in this) {
                 if (i >= arraySize) break
-                list.add(transform(element, array[i++]))
+                list.add(transform(element, other[i++]))
             }
             return list
             """
         }
         body(ArraysOfObjects, ArraysOfPrimitives) {
             """
-            val size = Math.min(size, array.size)
+            val size = Math.min(size, other.size)
             val list = ArrayList<V>(size)
             for (i in 0..size-1) {
-                list.add(transform(this[i], array[i]))
+                list.add(transform(this[i], other[i]))
             }
             return list
             """
@@ -516,7 +516,7 @@ fun generators(): List<GenericFunction> {
 
     }
 
-    templates add f("zip(array: SELF, transform: (T, T) -> V)") {
+    templates add f("zip(other: SELF, transform: (T, T) -> V)") {
         only(ArraysOfPrimitives)
         doc {
             """
@@ -528,17 +528,17 @@ fun generators(): List<GenericFunction> {
         inline(true)
         body() {
             """
-            val size = Math.min(size, array.size)
+            val size = Math.min(size, other.size)
             val list = ArrayList<V>(size)
             for (i in 0..size-1) {
-                list.add(transform(this[i], array[i]))
+                list.add(transform(this[i], other[i]))
             }
             return list
             """
         }
     }
 
-    templates add f("zip(sequence: Sequence<R>, transform: (T, R) -> V)") {
+    templates add f("zip(other: Sequence<R>, transform: (T, R) -> V)") {
         only(Sequences)
         doc {
             """
@@ -550,7 +550,7 @@ fun generators(): List<GenericFunction> {
         returns("Sequence<V>")
         body {
             """
-            return MergingSequence(this, sequence, transform)
+            return MergingSequence(this, other, transform)
             """
         }
     }
@@ -614,7 +614,7 @@ fun generators(): List<GenericFunction> {
         }
     }
 
-    templates add f("zip(array: Array<out R>)") {
+    templates add f("zip(other: Array<out R>)") {
         infix(true)
         exclude(Sequences)
         doc {
@@ -626,12 +626,12 @@ fun generators(): List<GenericFunction> {
         returns("List<Pair<T, R>>")
         body {
             """
-            return zip(array) { t1, t2 -> t1 to t2 }
+            return zip(other) { t1, t2 -> t1 to t2 }
             """
         }
     }
 
-    templates add f("zip(array: SELF)") {
+    templates add f("zip(other: SELF)") {
         infix(true)
         only(ArraysOfPrimitives)
         doc {
@@ -642,17 +642,17 @@ fun generators(): List<GenericFunction> {
         returns("List<Pair<T, T>>")
         body {
             """
-            return zip(array) { t1, t2 -> t1 to t2 }
+            return zip(other) { t1, t2 -> t1 to t2 }
             """
         }
     }
 
-    templates add f("zip(sequence: Sequence<R>)") {
+    templates add f("zip(other: Sequence<R>)") {
         infix(true)
         only(Sequences)
         doc {
             """
-            Returns a sequence of pairs built from elements of both collections with same indexes.
+            Returns a sequence of pairs built from elements of both sequences with same indexes.
             Resulting sequence has length of shortest input sequence.
             """
         }
@@ -660,7 +660,7 @@ fun generators(): List<GenericFunction> {
         returns("Sequence<Pair<T, R>>")
         body {
             """
-            return MergingSequence(this, sequence) { t1, t2 -> t1 to t2 }
+            return MergingSequence(this, other) { t1, t2 -> t1 to t2 }
             """
         }
     }

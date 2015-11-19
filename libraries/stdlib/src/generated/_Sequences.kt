@@ -488,13 +488,13 @@ public fun <T> Sequence<T>.toArrayList(): ArrayList<T> {
 }
 
 /**
- * Appends all elements to the given [collection].
+ * Appends all elements to the given [destination] collection.
  */
-public fun <T, C : MutableCollection<in T>> Sequence<T>.toCollection(collection: C): C {
+public fun <T, C : MutableCollection<in T>> Sequence<T>.toCollection(destination: C): C {
     for (item in this) {
-        collection.add(item)
+        destination.add(item)
     }
-    return collection
+    return destination
 }
 
 /**
@@ -582,18 +582,18 @@ public inline fun <T, R, C : MutableCollection<in R>> Sequence<T>.flatMapTo(dest
 }
 
 /**
- * Returns a map of the elements in original sequence grouped by the result of given [toKey] function.
+ * Returns a map of the elements in original sequence grouped by the key returned by the given [selector] function.
  */
-public inline fun <T, K> Sequence<T>.groupBy(toKey: (T) -> K): Map<K, List<T>> {
-    return groupByTo(LinkedHashMap<K, MutableList<T>>(), toKey)
+public inline fun <T, K> Sequence<T>.groupBy(selector: (T) -> K): Map<K, List<T>> {
+    return groupByTo(LinkedHashMap<K, MutableList<T>>(), selector)
 }
 
 /**
- * Appends elements from original sequence grouped by the result of given [toKey] function to the given [map].
+ * Appends elements from original sequence grouped by the key returned by the given [selector] function to the given [map].
  */
-public inline fun <T, K> Sequence<T>.groupByTo(map: MutableMap<K, MutableList<T>>, toKey: (T) -> K): Map<K, MutableList<T>> {
+public inline fun <T, K> Sequence<T>.groupByTo(map: MutableMap<K, MutableList<T>>, selector: (T) -> K): Map<K, MutableList<T>> {
     for (element in this) {
-        val key = toKey(element)
+        val key = selector(element)
         val list = map.getOrPut(key) { ArrayList<T>() }
         list.add(element)
     }
@@ -687,11 +687,12 @@ public fun <T> Sequence<T>.distinct(): Sequence<T> {
 }
 
 /**
- * Returns a sequence containing only distinct elements from the given sequence according to the [keySelector].
+ * Returns a sequence containing only elements from the given sequence
+ * having distinct keys returned by the given [selector] function.
  * The elements in the resulting sequence are in the same order as they were in the source sequence.
  */
-public fun <T, K> Sequence<T>.distinctBy(keySelector: (T) -> K): Sequence<T> {
-    return DistinctSequence(this, keySelector)
+public fun <T, K> Sequence<T>.distinctBy(selector: (T) -> K): Sequence<T> {
+    return DistinctSequence(this, selector)
 }
 
 /**
@@ -755,18 +756,18 @@ public inline fun <T, R> Sequence<T>.fold(initial: R, operation: (R, T) -> R): R
 }
 
 /**
- * Performs the given [operation] on each element.
+ * Performs the given [action] on each element.
  */
-public inline fun <T> Sequence<T>.forEach(operation: (T) -> Unit): Unit {
-    for (element in this) operation(element)
+public inline fun <T> Sequence<T>.forEach(action: (T) -> Unit): Unit {
+    for (element in this) action(element)
 }
 
 /**
- * Performs the given [operation] on each element, providing sequential index with the element.
+ * Performs the given [action] on each element, providing sequential index with the element.
  */
-public inline fun <T> Sequence<T>.forEachIndexed(operation: (Int, T) -> Unit): Unit {
+public inline fun <T> Sequence<T>.forEachIndexed(action: (Int, T) -> Unit): Unit {
     var index = 0
-    for (item in this) operation(index++, item)
+    for (item in this) action(index++, item)
 }
 
 /**
@@ -786,14 +787,14 @@ public fun <T : Comparable<T>> Sequence<T>.max(): T? {
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
-public inline fun <R : Comparable<R>, T : Any> Sequence<T>.maxBy(f: (T) -> R): T? {
+public inline fun <R : Comparable<R>, T : Any> Sequence<T>.maxBy(selector: (T) -> R): T? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
     var maxElem = iterator.next()
-    var maxValue = f(maxElem)
+    var maxValue = selector(maxElem)
     while (iterator.hasNext()) {
         val e = iterator.next()
-        val v = f(e)
+        val v = selector(e)
         if (maxValue < v) {
             maxElem = e
             maxValue = v
@@ -819,14 +820,14 @@ public fun <T : Comparable<T>> Sequence<T>.min(): T? {
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
-public inline fun <R : Comparable<R>, T : Any> Sequence<T>.minBy(f: (T) -> R): T? {
+public inline fun <R : Comparable<R>, T : Any> Sequence<T>.minBy(selector: (T) -> R): T? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
     var minElem = iterator.next()
-    var minValue = f(minElem)
+    var minValue = selector(minElem)
     while (iterator.hasNext()) {
         val e = iterator.next()
-        val v = f(e)
+        val v = selector(e)
         if (minValue > v) {
             minElem = e
             minValue = v
@@ -865,23 +866,23 @@ public inline fun <S, T: S> Sequence<T>.reduce(operation: (S, T) -> S): S {
 }
 
 /**
- * Returns the sum of all values produced by [transform] function applied to each element in the sequence.
+ * Returns the sum of all values produced by [selector] function applied to each element in the sequence.
  */
-public inline fun <T> Sequence<T>.sumBy(transform: (T) -> Int): Int {
+public inline fun <T> Sequence<T>.sumBy(selector: (T) -> Int): Int {
     var sum: Int = 0
     for (element in this) {
-        sum += transform(element)
+        sum += selector(element)
     }
     return sum
 }
 
 /**
- * Returns the sum of all values produced by [transform] function applied to each element in the sequence.
+ * Returns the sum of all values produced by [selector] function applied to each element in the sequence.
  */
-public inline fun <T> Sequence<T>.sumByDouble(transform: (T) -> Double): Double {
+public inline fun <T> Sequence<T>.sumByDouble(selector: (T) -> Double): Double {
     var sum: Double = 0.0
     for (element in this) {
-        sum += transform(element)
+        sum += selector(element)
     }
     return sum
 }
@@ -1007,18 +1008,18 @@ public operator fun <T> Sequence<T>.plus(sequence: Sequence<T>): Sequence<T> {
 }
 
 /**
- * Returns a sequence of pairs built from elements of both collections with same indexes.
+ * Returns a sequence of pairs built from elements of both sequences with same indexes.
  * Resulting sequence has length of shortest input sequence.
  */
-public infix fun <T, R> Sequence<T>.zip(sequence: Sequence<R>): Sequence<Pair<T, R>> {
-    return MergingSequence(this, sequence) { t1, t2 -> t1 to t2 }
+public infix fun <T, R> Sequence<T>.zip(other: Sequence<R>): Sequence<Pair<T, R>> {
+    return MergingSequence(this, other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a sequence of values built from elements of both collections with same indexes using provided [transform]. Resulting sequence has length of shortest input sequences.
  */
-public fun <T, R, V> Sequence<T>.zip(sequence: Sequence<R>, transform: (T, R) -> V): Sequence<V> {
-    return MergingSequence(this, sequence, transform)
+public fun <T, R, V> Sequence<T>.zip(other: Sequence<R>, transform: (T, R) -> V): Sequence<V> {
+    return MergingSequence(this, other, transform)
 }
 
 /**

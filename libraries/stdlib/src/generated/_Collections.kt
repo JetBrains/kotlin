@@ -992,13 +992,13 @@ public fun <T> Iterable<T>.toArrayList(): ArrayList<T> {
 }
 
 /**
- * Appends all elements to the given [collection].
+ * Appends all elements to the given [destination] collection.
  */
-public fun <T, C : MutableCollection<in T>> Iterable<T>.toCollection(collection: C): C {
+public fun <T, C : MutableCollection<in T>> Iterable<T>.toCollection(destination: C): C {
     for (item in this) {
-        collection.add(item)
+        destination.add(item)
     }
-    return collection
+    return destination
 }
 
 /**
@@ -1088,18 +1088,18 @@ public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(dest
 }
 
 /**
- * Returns a map of the elements in original collection grouped by the result of given [toKey] function.
+ * Returns a map of the elements in original collection grouped by the key returned by the given [selector] function.
  */
-public inline fun <T, K> Iterable<T>.groupBy(toKey: (T) -> K): Map<K, List<T>> {
-    return groupByTo(LinkedHashMap<K, MutableList<T>>(), toKey)
+public inline fun <T, K> Iterable<T>.groupBy(selector: (T) -> K): Map<K, List<T>> {
+    return groupByTo(LinkedHashMap<K, MutableList<T>>(), selector)
 }
 
 /**
- * Appends elements from original collection grouped by the result of given [toKey] function to the given [map].
+ * Appends elements from original collection grouped by the key returned by the given [selector] function to the given [map].
  */
-public inline fun <T, K> Iterable<T>.groupByTo(map: MutableMap<K, MutableList<T>>, toKey: (T) -> K): Map<K, MutableList<T>> {
+public inline fun <T, K> Iterable<T>.groupByTo(map: MutableMap<K, MutableList<T>>, selector: (T) -> K): Map<K, MutableList<T>> {
     for (element in this) {
-        val key = toKey(element)
+        val key = selector(element)
         val list = map.getOrPut(key) { ArrayList<T>() }
         list.add(element)
     }
@@ -1193,14 +1193,15 @@ public fun <T> Iterable<T>.distinct(): List<T> {
 }
 
 /**
- * Returns a list containing only distinct elements from the given collection according to the [keySelector].
+ * Returns a list containing only elements from the given collection
+ * having distinct keys returned by the given [selector] function.
  * The elements in the resulting list are in the same order as they were in the source collection.
  */
-public inline fun <T, K> Iterable<T>.distinctBy(keySelector: (T) -> K): List<T> {
+public inline fun <T, K> Iterable<T>.distinctBy(selector: (T) -> K): List<T> {
     val set = HashSet<K>()
     val list = ArrayList<T>()
     for (e in this) {
-        val key = keySelector(e)
+        val key = selector(e)
         if (set.add(key))
             list.add(e)
     }
@@ -1315,18 +1316,18 @@ public inline fun <T, R> List<T>.foldRight(initial: R, operation: (T, R) -> R): 
 }
 
 /**
- * Performs the given [operation] on each element.
+ * Performs the given [action] on each element.
  */
-public inline fun <T> Iterable<T>.forEach(operation: (T) -> Unit): Unit {
-    for (element in this) operation(element)
+public inline fun <T> Iterable<T>.forEach(action: (T) -> Unit): Unit {
+    for (element in this) action(element)
 }
 
 /**
- * Performs the given [operation] on each element, providing sequential index with the element.
+ * Performs the given [action] on each element, providing sequential index with the element.
  */
-public inline fun <T> Iterable<T>.forEachIndexed(operation: (Int, T) -> Unit): Unit {
+public inline fun <T> Iterable<T>.forEachIndexed(action: (Int, T) -> Unit): Unit {
     var index = 0
-    for (item in this) operation(index++, item)
+    for (item in this) action(index++, item)
 }
 
 /**
@@ -1346,14 +1347,14 @@ public fun <T : Comparable<T>> Iterable<T>.max(): T? {
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
-public inline fun <R : Comparable<R>, T : Any> Iterable<T>.maxBy(f: (T) -> R): T? {
+public inline fun <R : Comparable<R>, T : Any> Iterable<T>.maxBy(selector: (T) -> R): T? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
     var maxElem = iterator.next()
-    var maxValue = f(maxElem)
+    var maxValue = selector(maxElem)
     while (iterator.hasNext()) {
         val e = iterator.next()
-        val v = f(e)
+        val v = selector(e)
         if (maxValue < v) {
             maxElem = e
             maxValue = v
@@ -1379,14 +1380,14 @@ public fun <T : Comparable<T>> Iterable<T>.min(): T? {
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
-public inline fun <R : Comparable<R>, T : Any> Iterable<T>.minBy(f: (T) -> R): T? {
+public inline fun <R : Comparable<R>, T : Any> Iterable<T>.minBy(selector: (T) -> R): T? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
     var minElem = iterator.next()
-    var minValue = f(minElem)
+    var minValue = selector(minElem)
     while (iterator.hasNext()) {
         val e = iterator.next()
-        val v = f(e)
+        val v = selector(e)
         if (minValue > v) {
             minElem = e
             minValue = v
@@ -1438,23 +1439,23 @@ public inline fun <S, T: S> List<T>.reduceRight(operation: (T, S) -> S): S {
 }
 
 /**
- * Returns the sum of all values produced by [transform] function applied to each element in the collection.
+ * Returns the sum of all values produced by [selector] function applied to each element in the collection.
  */
-public inline fun <T> Iterable<T>.sumBy(transform: (T) -> Int): Int {
+public inline fun <T> Iterable<T>.sumBy(selector: (T) -> Int): Int {
     var sum: Int = 0
     for (element in this) {
-        sum += transform(element)
+        sum += selector(element)
     }
     return sum
 }
 
 /**
- * Returns the sum of all values produced by [transform] function applied to each element in the collection.
+ * Returns the sum of all values produced by [selector] function applied to each element in the collection.
  */
-public inline fun <T> Iterable<T>.sumByDouble(transform: (T) -> Double): Double {
+public inline fun <T> Iterable<T>.sumByDouble(selector: (T) -> Double): Double {
     var sum: Double = 0.0
     for (element in this) {
-        sum += transform(element)
+        sum += selector(element)
     }
     return sum
 }
@@ -1631,20 +1632,20 @@ public operator fun <T> Iterable<T>.plus(sequence: Sequence<T>): List<T> {
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public infix fun <T, R> Iterable<T>.zip(array: Array<out R>): List<Pair<T, R>> {
-    return zip(array) { t1, t2 -> t1 to t2 }
+public infix fun <T, R> Iterable<T>.zip(other: Array<out R>): List<Pair<T, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public inline fun <T, R, V> Iterable<T>.zip(array: Array<out R>, transform: (T, R) -> V): List<V> {
-    val arraySize = array.size
+public inline fun <T, R, V> Iterable<T>.zip(other: Array<out R>, transform: (T, R) -> V): List<V> {
+    val arraySize = other.size
     val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in this) {
         if (i >= arraySize) break
-        list.add(transform(element, array[i++]))
+        list.add(transform(element, other[i++]))
     }
     return list
 }

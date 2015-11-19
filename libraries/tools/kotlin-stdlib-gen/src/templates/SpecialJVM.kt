@@ -244,15 +244,16 @@ fun specialJVM(): List<GenericFunction> {
             """
         }
 
+        // TODO: Use own readonly kotlin.AbstractList
         body(ArraysOfPrimitives) {
             """
             return object : AbstractList<T>(), RandomAccess {
                 override val size: Int get() = this@asList.size
                 override fun isEmpty(): Boolean = this@asList.isEmpty()
-                override fun contains(o: T): Boolean = this@asList.contains(o)
+                override fun contains(element: T): Boolean = this@asList.contains(element)
                 override fun get(index: Int): T = this@asList[index]
-                override fun indexOf(o: T): Int = this@asList.indexOf(o)
-                override fun lastIndexOf(o: T): Int = this@asList.lastIndexOf(o)
+                override fun indexOf(element: T): Int = this@asList.indexOf(element)
+                override fun lastIndexOf(element: T): Int = this@asList.lastIndexOf(element)
             }
             """
         }

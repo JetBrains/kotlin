@@ -50,11 +50,12 @@ fun sets(): List<GenericFunction> {
         body(Sequences) { "return this.distinctBy { it }" }
     }
 
-    templates add f("distinctBy(keySelector: (T) -> K)") {
+    templates add f("distinctBy(selector: (T) -> K)") {
         exclude(Strings)
         doc { f ->
             """
-                Returns a ${f.mapResult} containing only distinct ${f.element}s from the given ${f.collection} according to the [keySelector].
+                Returns a ${f.mapResult} containing only ${f.element}s from the given ${f.collection}
+                having distinct keys returned by the given [selector] function.
 
                 The ${f.element}s in the resulting ${f.mapResult} are in the same order as they were in the source ${f.collection}.
                 """
@@ -68,7 +69,7 @@ fun sets(): List<GenericFunction> {
             val set = HashSet<K>()
             val list = ArrayList<T>()
             for (e in this) {
-                val key = keySelector(e)
+                val key = selector(e)
                 if (set.add(key))
                     list.add(e)
             }
@@ -80,7 +81,7 @@ fun sets(): List<GenericFunction> {
         returns(Sequences) { "Sequence<T>" }
         body(Sequences) {
             """
-            return DistinctSequence(this, keySelector)
+            return DistinctSequence(this, selector)
             """
         }
 

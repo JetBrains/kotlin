@@ -5633,93 +5633,93 @@ public fun ShortArray.toArrayList(): ArrayList<Short> {
 }
 
 /**
- * Appends all elements to the given [collection].
+ * Appends all elements to the given [destination] collection.
  */
-public fun <T, C : MutableCollection<in T>> Array<out T>.toCollection(collection: C): C {
+public fun <T, C : MutableCollection<in T>> Array<out T>.toCollection(destination: C): C {
     for (item in this) {
-        collection.add(item)
+        destination.add(item)
     }
-    return collection
+    return destination
 }
 
 /**
- * Appends all elements to the given [collection].
+ * Appends all elements to the given [destination] collection.
  */
-public fun <C : MutableCollection<in Boolean>> BooleanArray.toCollection(collection: C): C {
+public fun <C : MutableCollection<in Boolean>> BooleanArray.toCollection(destination: C): C {
     for (item in this) {
-        collection.add(item)
+        destination.add(item)
     }
-    return collection
+    return destination
 }
 
 /**
- * Appends all elements to the given [collection].
+ * Appends all elements to the given [destination] collection.
  */
-public fun <C : MutableCollection<in Byte>> ByteArray.toCollection(collection: C): C {
+public fun <C : MutableCollection<in Byte>> ByteArray.toCollection(destination: C): C {
     for (item in this) {
-        collection.add(item)
+        destination.add(item)
     }
-    return collection
+    return destination
 }
 
 /**
- * Appends all elements to the given [collection].
+ * Appends all elements to the given [destination] collection.
  */
-public fun <C : MutableCollection<in Char>> CharArray.toCollection(collection: C): C {
+public fun <C : MutableCollection<in Char>> CharArray.toCollection(destination: C): C {
     for (item in this) {
-        collection.add(item)
+        destination.add(item)
     }
-    return collection
+    return destination
 }
 
 /**
- * Appends all elements to the given [collection].
+ * Appends all elements to the given [destination] collection.
  */
-public fun <C : MutableCollection<in Double>> DoubleArray.toCollection(collection: C): C {
+public fun <C : MutableCollection<in Double>> DoubleArray.toCollection(destination: C): C {
     for (item in this) {
-        collection.add(item)
+        destination.add(item)
     }
-    return collection
+    return destination
 }
 
 /**
- * Appends all elements to the given [collection].
+ * Appends all elements to the given [destination] collection.
  */
-public fun <C : MutableCollection<in Float>> FloatArray.toCollection(collection: C): C {
+public fun <C : MutableCollection<in Float>> FloatArray.toCollection(destination: C): C {
     for (item in this) {
-        collection.add(item)
+        destination.add(item)
     }
-    return collection
+    return destination
 }
 
 /**
- * Appends all elements to the given [collection].
+ * Appends all elements to the given [destination] collection.
  */
-public fun <C : MutableCollection<in Int>> IntArray.toCollection(collection: C): C {
+public fun <C : MutableCollection<in Int>> IntArray.toCollection(destination: C): C {
     for (item in this) {
-        collection.add(item)
+        destination.add(item)
     }
-    return collection
+    return destination
 }
 
 /**
- * Appends all elements to the given [collection].
+ * Appends all elements to the given [destination] collection.
  */
-public fun <C : MutableCollection<in Long>> LongArray.toCollection(collection: C): C {
+public fun <C : MutableCollection<in Long>> LongArray.toCollection(destination: C): C {
     for (item in this) {
-        collection.add(item)
+        destination.add(item)
     }
-    return collection
+    return destination
 }
 
 /**
- * Appends all elements to the given [collection].
+ * Appends all elements to the given [destination] collection.
  */
-public fun <C : MutableCollection<in Short>> ShortArray.toCollection(collection: C): C {
+public fun <C : MutableCollection<in Short>> ShortArray.toCollection(destination: C): C {
     for (item in this) {
-        collection.add(item)
+        destination.add(item)
     }
-    return collection
+    return destination
 }
 
 /**
@@ -6497,74 +6497,74 @@ public inline fun <R, C : MutableCollection<in R>> ShortArray.flatMapTo(destinat
 }
 
 /**
- * Returns a map of the elements in original array grouped by the result of given [toKey] function.
+ * Returns a map of the elements in original array grouped by the key returned by the given [selector] function.
  */
-public inline fun <T, K> Array<out T>.groupBy(toKey: (T) -> K): Map<K, List<T>> {
-    return groupByTo(LinkedHashMap<K, MutableList<T>>(), toKey)
+public inline fun <T, K> Array<out T>.groupBy(selector: (T) -> K): Map<K, List<T>> {
+    return groupByTo(LinkedHashMap<K, MutableList<T>>(), selector)
 }
 
 /**
- * Returns a map of the elements in original array grouped by the result of given [toKey] function.
+ * Returns a map of the elements in original array grouped by the key returned by the given [selector] function.
  */
-public inline fun <K> BooleanArray.groupBy(toKey: (Boolean) -> K): Map<K, List<Boolean>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Boolean>>(), toKey)
+public inline fun <K> BooleanArray.groupBy(selector: (Boolean) -> K): Map<K, List<Boolean>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Boolean>>(), selector)
 }
 
 /**
- * Returns a map of the elements in original array grouped by the result of given [toKey] function.
+ * Returns a map of the elements in original array grouped by the key returned by the given [selector] function.
  */
-public inline fun <K> ByteArray.groupBy(toKey: (Byte) -> K): Map<K, List<Byte>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Byte>>(), toKey)
+public inline fun <K> ByteArray.groupBy(selector: (Byte) -> K): Map<K, List<Byte>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Byte>>(), selector)
 }
 
 /**
- * Returns a map of the elements in original array grouped by the result of given [toKey] function.
+ * Returns a map of the elements in original array grouped by the key returned by the given [selector] function.
  */
-public inline fun <K> CharArray.groupBy(toKey: (Char) -> K): Map<K, List<Char>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Char>>(), toKey)
+public inline fun <K> CharArray.groupBy(selector: (Char) -> K): Map<K, List<Char>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Char>>(), selector)
 }
 
 /**
- * Returns a map of the elements in original array grouped by the result of given [toKey] function.
+ * Returns a map of the elements in original array grouped by the key returned by the given [selector] function.
  */
-public inline fun <K> DoubleArray.groupBy(toKey: (Double) -> K): Map<K, List<Double>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Double>>(), toKey)
+public inline fun <K> DoubleArray.groupBy(selector: (Double) -> K): Map<K, List<Double>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Double>>(), selector)
 }
 
 /**
- * Returns a map of the elements in original array grouped by the result of given [toKey] function.
+ * Returns a map of the elements in original array grouped by the key returned by the given [selector] function.
  */
-public inline fun <K> FloatArray.groupBy(toKey: (Float) -> K): Map<K, List<Float>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Float>>(), toKey)
+public inline fun <K> FloatArray.groupBy(selector: (Float) -> K): Map<K, List<Float>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Float>>(), selector)
 }
 
 /**
- * Returns a map of the elements in original array grouped by the result of given [toKey] function.
+ * Returns a map of the elements in original array grouped by the key returned by the given [selector] function.
  */
-public inline fun <K> IntArray.groupBy(toKey: (Int) -> K): Map<K, List<Int>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Int>>(), toKey)
+public inline fun <K> IntArray.groupBy(selector: (Int) -> K): Map<K, List<Int>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Int>>(), selector)
 }
 
 /**
- * Returns a map of the elements in original array grouped by the result of given [toKey] function.
+ * Returns a map of the elements in original array grouped by the key returned by the given [selector] function.
  */
-public inline fun <K> LongArray.groupBy(toKey: (Long) -> K): Map<K, List<Long>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Long>>(), toKey)
+public inline fun <K> LongArray.groupBy(selector: (Long) -> K): Map<K, List<Long>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Long>>(), selector)
 }
 
 /**
- * Returns a map of the elements in original array grouped by the result of given [toKey] function.
+ * Returns a map of the elements in original array grouped by the key returned by the given [selector] function.
  */
-public inline fun <K> ShortArray.groupBy(toKey: (Short) -> K): Map<K, List<Short>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Short>>(), toKey)
+public inline fun <K> ShortArray.groupBy(selector: (Short) -> K): Map<K, List<Short>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Short>>(), selector)
 }
 
 /**
- * Appends elements from original array grouped by the result of given [toKey] function to the given [map].
+ * Appends elements from original array grouped by the key returned by the given [selector] function to the given [map].
  */
-public inline fun <T, K> Array<out T>.groupByTo(map: MutableMap<K, MutableList<T>>, toKey: (T) -> K): Map<K, MutableList<T>> {
+public inline fun <T, K> Array<out T>.groupByTo(map: MutableMap<K, MutableList<T>>, selector: (T) -> K): Map<K, MutableList<T>> {
     for (element in this) {
-        val key = toKey(element)
+        val key = selector(element)
         val list = map.getOrPut(key) { ArrayList<T>() }
         list.add(element)
     }
@@ -6572,11 +6572,11 @@ public inline fun <T, K> Array<out T>.groupByTo(map: MutableMap<K, MutableList<T
 }
 
 /**
- * Appends elements from original array grouped by the result of given [toKey] function to the given [map].
+ * Appends elements from original array grouped by the key returned by the given [selector] function to the given [map].
  */
-public inline fun <K> BooleanArray.groupByTo(map: MutableMap<K, MutableList<Boolean>>, toKey: (Boolean) -> K): Map<K, MutableList<Boolean>> {
+public inline fun <K> BooleanArray.groupByTo(map: MutableMap<K, MutableList<Boolean>>, selector: (Boolean) -> K): Map<K, MutableList<Boolean>> {
     for (element in this) {
-        val key = toKey(element)
+        val key = selector(element)
         val list = map.getOrPut(key) { ArrayList<Boolean>() }
         list.add(element)
     }
@@ -6584,11 +6584,11 @@ public inline fun <K> BooleanArray.groupByTo(map: MutableMap<K, MutableList<Bool
 }
 
 /**
- * Appends elements from original array grouped by the result of given [toKey] function to the given [map].
+ * Appends elements from original array grouped by the key returned by the given [selector] function to the given [map].
  */
-public inline fun <K> ByteArray.groupByTo(map: MutableMap<K, MutableList<Byte>>, toKey: (Byte) -> K): Map<K, MutableList<Byte>> {
+public inline fun <K> ByteArray.groupByTo(map: MutableMap<K, MutableList<Byte>>, selector: (Byte) -> K): Map<K, MutableList<Byte>> {
     for (element in this) {
-        val key = toKey(element)
+        val key = selector(element)
         val list = map.getOrPut(key) { ArrayList<Byte>() }
         list.add(element)
     }
@@ -6596,11 +6596,11 @@ public inline fun <K> ByteArray.groupByTo(map: MutableMap<K, MutableList<Byte>>,
 }
 
 /**
- * Appends elements from original array grouped by the result of given [toKey] function to the given [map].
+ * Appends elements from original array grouped by the key returned by the given [selector] function to the given [map].
  */
-public inline fun <K> CharArray.groupByTo(map: MutableMap<K, MutableList<Char>>, toKey: (Char) -> K): Map<K, MutableList<Char>> {
+public inline fun <K> CharArray.groupByTo(map: MutableMap<K, MutableList<Char>>, selector: (Char) -> K): Map<K, MutableList<Char>> {
     for (element in this) {
-        val key = toKey(element)
+        val key = selector(element)
         val list = map.getOrPut(key) { ArrayList<Char>() }
         list.add(element)
     }
@@ -6608,11 +6608,11 @@ public inline fun <K> CharArray.groupByTo(map: MutableMap<K, MutableList<Char>>,
 }
 
 /**
- * Appends elements from original array grouped by the result of given [toKey] function to the given [map].
+ * Appends elements from original array grouped by the key returned by the given [selector] function to the given [map].
  */
-public inline fun <K> DoubleArray.groupByTo(map: MutableMap<K, MutableList<Double>>, toKey: (Double) -> K): Map<K, MutableList<Double>> {
+public inline fun <K> DoubleArray.groupByTo(map: MutableMap<K, MutableList<Double>>, selector: (Double) -> K): Map<K, MutableList<Double>> {
     for (element in this) {
-        val key = toKey(element)
+        val key = selector(element)
         val list = map.getOrPut(key) { ArrayList<Double>() }
         list.add(element)
     }
@@ -6620,11 +6620,11 @@ public inline fun <K> DoubleArray.groupByTo(map: MutableMap<K, MutableList<Doubl
 }
 
 /**
- * Appends elements from original array grouped by the result of given [toKey] function to the given [map].
+ * Appends elements from original array grouped by the key returned by the given [selector] function to the given [map].
  */
-public inline fun <K> FloatArray.groupByTo(map: MutableMap<K, MutableList<Float>>, toKey: (Float) -> K): Map<K, MutableList<Float>> {
+public inline fun <K> FloatArray.groupByTo(map: MutableMap<K, MutableList<Float>>, selector: (Float) -> K): Map<K, MutableList<Float>> {
     for (element in this) {
-        val key = toKey(element)
+        val key = selector(element)
         val list = map.getOrPut(key) { ArrayList<Float>() }
         list.add(element)
     }
@@ -6632,11 +6632,11 @@ public inline fun <K> FloatArray.groupByTo(map: MutableMap<K, MutableList<Float>
 }
 
 /**
- * Appends elements from original array grouped by the result of given [toKey] function to the given [map].
+ * Appends elements from original array grouped by the key returned by the given [selector] function to the given [map].
  */
-public inline fun <K> IntArray.groupByTo(map: MutableMap<K, MutableList<Int>>, toKey: (Int) -> K): Map<K, MutableList<Int>> {
+public inline fun <K> IntArray.groupByTo(map: MutableMap<K, MutableList<Int>>, selector: (Int) -> K): Map<K, MutableList<Int>> {
     for (element in this) {
-        val key = toKey(element)
+        val key = selector(element)
         val list = map.getOrPut(key) { ArrayList<Int>() }
         list.add(element)
     }
@@ -6644,11 +6644,11 @@ public inline fun <K> IntArray.groupByTo(map: MutableMap<K, MutableList<Int>>, t
 }
 
 /**
- * Appends elements from original array grouped by the result of given [toKey] function to the given [map].
+ * Appends elements from original array grouped by the key returned by the given [selector] function to the given [map].
  */
-public inline fun <K> LongArray.groupByTo(map: MutableMap<K, MutableList<Long>>, toKey: (Long) -> K): Map<K, MutableList<Long>> {
+public inline fun <K> LongArray.groupByTo(map: MutableMap<K, MutableList<Long>>, selector: (Long) -> K): Map<K, MutableList<Long>> {
     for (element in this) {
-        val key = toKey(element)
+        val key = selector(element)
         val list = map.getOrPut(key) { ArrayList<Long>() }
         list.add(element)
     }
@@ -6656,11 +6656,11 @@ public inline fun <K> LongArray.groupByTo(map: MutableMap<K, MutableList<Long>>,
 }
 
 /**
- * Appends elements from original array grouped by the result of given [toKey] function to the given [map].
+ * Appends elements from original array grouped by the key returned by the given [selector] function to the given [map].
  */
-public inline fun <K> ShortArray.groupByTo(map: MutableMap<K, MutableList<Short>>, toKey: (Short) -> K): Map<K, MutableList<Short>> {
+public inline fun <K> ShortArray.groupByTo(map: MutableMap<K, MutableList<Short>>, selector: (Short) -> K): Map<K, MutableList<Short>> {
     for (element in this) {
-        val key = toKey(element)
+        val key = selector(element)
         val list = map.getOrPut(key) { ArrayList<Short>() }
         list.add(element)
     }
@@ -7170,14 +7170,15 @@ public fun ShortArray.distinct(): List<Short> {
 }
 
 /**
- * Returns a list containing only distinct elements from the given array according to the [keySelector].
+ * Returns a list containing only elements from the given array
+ * having distinct keys returned by the given [selector] function.
  * The elements in the resulting list are in the same order as they were in the source array.
  */
-public inline fun <T, K> Array<out T>.distinctBy(keySelector: (T) -> K): List<T> {
+public inline fun <T, K> Array<out T>.distinctBy(selector: (T) -> K): List<T> {
     val set = HashSet<K>()
     val list = ArrayList<T>()
     for (e in this) {
-        val key = keySelector(e)
+        val key = selector(e)
         if (set.add(key))
             list.add(e)
     }
@@ -7185,14 +7186,15 @@ public inline fun <T, K> Array<out T>.distinctBy(keySelector: (T) -> K): List<T>
 }
 
 /**
- * Returns a list containing only distinct elements from the given array according to the [keySelector].
+ * Returns a list containing only elements from the given array
+ * having distinct keys returned by the given [selector] function.
  * The elements in the resulting list are in the same order as they were in the source array.
  */
-public inline fun <K> BooleanArray.distinctBy(keySelector: (Boolean) -> K): List<Boolean> {
+public inline fun <K> BooleanArray.distinctBy(selector: (Boolean) -> K): List<Boolean> {
     val set = HashSet<K>()
     val list = ArrayList<Boolean>()
     for (e in this) {
-        val key = keySelector(e)
+        val key = selector(e)
         if (set.add(key))
             list.add(e)
     }
@@ -7200,14 +7202,15 @@ public inline fun <K> BooleanArray.distinctBy(keySelector: (Boolean) -> K): List
 }
 
 /**
- * Returns a list containing only distinct elements from the given array according to the [keySelector].
+ * Returns a list containing only elements from the given array
+ * having distinct keys returned by the given [selector] function.
  * The elements in the resulting list are in the same order as they were in the source array.
  */
-public inline fun <K> ByteArray.distinctBy(keySelector: (Byte) -> K): List<Byte> {
+public inline fun <K> ByteArray.distinctBy(selector: (Byte) -> K): List<Byte> {
     val set = HashSet<K>()
     val list = ArrayList<Byte>()
     for (e in this) {
-        val key = keySelector(e)
+        val key = selector(e)
         if (set.add(key))
             list.add(e)
     }
@@ -7215,14 +7218,15 @@ public inline fun <K> ByteArray.distinctBy(keySelector: (Byte) -> K): List<Byte>
 }
 
 /**
- * Returns a list containing only distinct elements from the given array according to the [keySelector].
+ * Returns a list containing only elements from the given array
+ * having distinct keys returned by the given [selector] function.
  * The elements in the resulting list are in the same order as they were in the source array.
  */
-public inline fun <K> CharArray.distinctBy(keySelector: (Char) -> K): List<Char> {
+public inline fun <K> CharArray.distinctBy(selector: (Char) -> K): List<Char> {
     val set = HashSet<K>()
     val list = ArrayList<Char>()
     for (e in this) {
-        val key = keySelector(e)
+        val key = selector(e)
         if (set.add(key))
             list.add(e)
     }
@@ -7230,14 +7234,15 @@ public inline fun <K> CharArray.distinctBy(keySelector: (Char) -> K): List<Char>
 }
 
 /**
- * Returns a list containing only distinct elements from the given array according to the [keySelector].
+ * Returns a list containing only elements from the given array
+ * having distinct keys returned by the given [selector] function.
  * The elements in the resulting list are in the same order as they were in the source array.
  */
-public inline fun <K> DoubleArray.distinctBy(keySelector: (Double) -> K): List<Double> {
+public inline fun <K> DoubleArray.distinctBy(selector: (Double) -> K): List<Double> {
     val set = HashSet<K>()
     val list = ArrayList<Double>()
     for (e in this) {
-        val key = keySelector(e)
+        val key = selector(e)
         if (set.add(key))
             list.add(e)
     }
@@ -7245,14 +7250,15 @@ public inline fun <K> DoubleArray.distinctBy(keySelector: (Double) -> K): List<D
 }
 
 /**
- * Returns a list containing only distinct elements from the given array according to the [keySelector].
+ * Returns a list containing only elements from the given array
+ * having distinct keys returned by the given [selector] function.
  * The elements in the resulting list are in the same order as they were in the source array.
  */
-public inline fun <K> FloatArray.distinctBy(keySelector: (Float) -> K): List<Float> {
+public inline fun <K> FloatArray.distinctBy(selector: (Float) -> K): List<Float> {
     val set = HashSet<K>()
     val list = ArrayList<Float>()
     for (e in this) {
-        val key = keySelector(e)
+        val key = selector(e)
         if (set.add(key))
             list.add(e)
     }
@@ -7260,14 +7266,15 @@ public inline fun <K> FloatArray.distinctBy(keySelector: (Float) -> K): List<Flo
 }
 
 /**
- * Returns a list containing only distinct elements from the given array according to the [keySelector].
+ * Returns a list containing only elements from the given array
+ * having distinct keys returned by the given [selector] function.
  * The elements in the resulting list are in the same order as they were in the source array.
  */
-public inline fun <K> IntArray.distinctBy(keySelector: (Int) -> K): List<Int> {
+public inline fun <K> IntArray.distinctBy(selector: (Int) -> K): List<Int> {
     val set = HashSet<K>()
     val list = ArrayList<Int>()
     for (e in this) {
-        val key = keySelector(e)
+        val key = selector(e)
         if (set.add(key))
             list.add(e)
     }
@@ -7275,14 +7282,15 @@ public inline fun <K> IntArray.distinctBy(keySelector: (Int) -> K): List<Int> {
 }
 
 /**
- * Returns a list containing only distinct elements from the given array according to the [keySelector].
+ * Returns a list containing only elements from the given array
+ * having distinct keys returned by the given [selector] function.
  * The elements in the resulting list are in the same order as they were in the source array.
  */
-public inline fun <K> LongArray.distinctBy(keySelector: (Long) -> K): List<Long> {
+public inline fun <K> LongArray.distinctBy(selector: (Long) -> K): List<Long> {
     val set = HashSet<K>()
     val list = ArrayList<Long>()
     for (e in this) {
-        val key = keySelector(e)
+        val key = selector(e)
         if (set.add(key))
             list.add(e)
     }
@@ -7290,14 +7298,15 @@ public inline fun <K> LongArray.distinctBy(keySelector: (Long) -> K): List<Long>
 }
 
 /**
- * Returns a list containing only distinct elements from the given array according to the [keySelector].
+ * Returns a list containing only elements from the given array
+ * having distinct keys returned by the given [selector] function.
  * The elements in the resulting list are in the same order as they were in the source array.
  */
-public inline fun <K> ShortArray.distinctBy(keySelector: (Short) -> K): List<Short> {
+public inline fun <K> ShortArray.distinctBy(selector: (Short) -> K): List<Short> {
     val set = HashSet<K>()
     val list = ArrayList<Short>()
     for (e in this) {
-        val key = keySelector(e)
+        val key = selector(e)
         if (set.add(key))
             list.add(e)
     }
@@ -8178,138 +8187,138 @@ public inline fun <R> ShortArray.foldRight(initial: R, operation: (Short, R) -> 
 }
 
 /**
- * Performs the given [operation] on each element.
+ * Performs the given [action] on each element.
  */
-public inline fun <T> Array<out T>.forEach(operation: (T) -> Unit): Unit {
-    for (element in this) operation(element)
+public inline fun <T> Array<out T>.forEach(action: (T) -> Unit): Unit {
+    for (element in this) action(element)
 }
 
 /**
- * Performs the given [operation] on each element.
+ * Performs the given [action] on each element.
  */
-public inline fun BooleanArray.forEach(operation: (Boolean) -> Unit): Unit {
-    for (element in this) operation(element)
+public inline fun BooleanArray.forEach(action: (Boolean) -> Unit): Unit {
+    for (element in this) action(element)
 }
 
 /**
- * Performs the given [operation] on each element.
+ * Performs the given [action] on each element.
  */
-public inline fun ByteArray.forEach(operation: (Byte) -> Unit): Unit {
-    for (element in this) operation(element)
+public inline fun ByteArray.forEach(action: (Byte) -> Unit): Unit {
+    for (element in this) action(element)
 }
 
 /**
- * Performs the given [operation] on each element.
+ * Performs the given [action] on each element.
  */
-public inline fun CharArray.forEach(operation: (Char) -> Unit): Unit {
-    for (element in this) operation(element)
+public inline fun CharArray.forEach(action: (Char) -> Unit): Unit {
+    for (element in this) action(element)
 }
 
 /**
- * Performs the given [operation] on each element.
+ * Performs the given [action] on each element.
  */
-public inline fun DoubleArray.forEach(operation: (Double) -> Unit): Unit {
-    for (element in this) operation(element)
+public inline fun DoubleArray.forEach(action: (Double) -> Unit): Unit {
+    for (element in this) action(element)
 }
 
 /**
- * Performs the given [operation] on each element.
+ * Performs the given [action] on each element.
  */
-public inline fun FloatArray.forEach(operation: (Float) -> Unit): Unit {
-    for (element in this) operation(element)
+public inline fun FloatArray.forEach(action: (Float) -> Unit): Unit {
+    for (element in this) action(element)
 }
 
 /**
- * Performs the given [operation] on each element.
+ * Performs the given [action] on each element.
  */
-public inline fun IntArray.forEach(operation: (Int) -> Unit): Unit {
-    for (element in this) operation(element)
+public inline fun IntArray.forEach(action: (Int) -> Unit): Unit {
+    for (element in this) action(element)
 }
 
 /**
- * Performs the given [operation] on each element.
+ * Performs the given [action] on each element.
  */
-public inline fun LongArray.forEach(operation: (Long) -> Unit): Unit {
-    for (element in this) operation(element)
+public inline fun LongArray.forEach(action: (Long) -> Unit): Unit {
+    for (element in this) action(element)
 }
 
 /**
- * Performs the given [operation] on each element.
+ * Performs the given [action] on each element.
  */
-public inline fun ShortArray.forEach(operation: (Short) -> Unit): Unit {
-    for (element in this) operation(element)
+public inline fun ShortArray.forEach(action: (Short) -> Unit): Unit {
+    for (element in this) action(element)
 }
 
 /**
- * Performs the given [operation] on each element, providing sequential index with the element.
+ * Performs the given [action] on each element, providing sequential index with the element.
  */
-public inline fun <T> Array<out T>.forEachIndexed(operation: (Int, T) -> Unit): Unit {
+public inline fun <T> Array<out T>.forEachIndexed(action: (Int, T) -> Unit): Unit {
     var index = 0
-    for (item in this) operation(index++, item)
+    for (item in this) action(index++, item)
 }
 
 /**
- * Performs the given [operation] on each element, providing sequential index with the element.
+ * Performs the given [action] on each element, providing sequential index with the element.
  */
-public inline fun BooleanArray.forEachIndexed(operation: (Int, Boolean) -> Unit): Unit {
+public inline fun BooleanArray.forEachIndexed(action: (Int, Boolean) -> Unit): Unit {
     var index = 0
-    for (item in this) operation(index++, item)
+    for (item in this) action(index++, item)
 }
 
 /**
- * Performs the given [operation] on each element, providing sequential index with the element.
+ * Performs the given [action] on each element, providing sequential index with the element.
  */
-public inline fun ByteArray.forEachIndexed(operation: (Int, Byte) -> Unit): Unit {
+public inline fun ByteArray.forEachIndexed(action: (Int, Byte) -> Unit): Unit {
     var index = 0
-    for (item in this) operation(index++, item)
+    for (item in this) action(index++, item)
 }
 
 /**
- * Performs the given [operation] on each element, providing sequential index with the element.
+ * Performs the given [action] on each element, providing sequential index with the element.
  */
-public inline fun CharArray.forEachIndexed(operation: (Int, Char) -> Unit): Unit {
+public inline fun CharArray.forEachIndexed(action: (Int, Char) -> Unit): Unit {
     var index = 0
-    for (item in this) operation(index++, item)
+    for (item in this) action(index++, item)
 }
 
 /**
- * Performs the given [operation] on each element, providing sequential index with the element.
+ * Performs the given [action] on each element, providing sequential index with the element.
  */
-public inline fun DoubleArray.forEachIndexed(operation: (Int, Double) -> Unit): Unit {
+public inline fun DoubleArray.forEachIndexed(action: (Int, Double) -> Unit): Unit {
     var index = 0
-    for (item in this) operation(index++, item)
+    for (item in this) action(index++, item)
 }
 
 /**
- * Performs the given [operation] on each element, providing sequential index with the element.
+ * Performs the given [action] on each element, providing sequential index with the element.
  */
-public inline fun FloatArray.forEachIndexed(operation: (Int, Float) -> Unit): Unit {
+public inline fun FloatArray.forEachIndexed(action: (Int, Float) -> Unit): Unit {
     var index = 0
-    for (item in this) operation(index++, item)
+    for (item in this) action(index++, item)
 }
 
 /**
- * Performs the given [operation] on each element, providing sequential index with the element.
+ * Performs the given [action] on each element, providing sequential index with the element.
  */
-public inline fun IntArray.forEachIndexed(operation: (Int, Int) -> Unit): Unit {
+public inline fun IntArray.forEachIndexed(action: (Int, Int) -> Unit): Unit {
     var index = 0
-    for (item in this) operation(index++, item)
+    for (item in this) action(index++, item)
 }
 
 /**
- * Performs the given [operation] on each element, providing sequential index with the element.
+ * Performs the given [action] on each element, providing sequential index with the element.
  */
-public inline fun LongArray.forEachIndexed(operation: (Int, Long) -> Unit): Unit {
+public inline fun LongArray.forEachIndexed(action: (Int, Long) -> Unit): Unit {
     var index = 0
-    for (item in this) operation(index++, item)
+    for (item in this) action(index++, item)
 }
 
 /**
- * Performs the given [operation] on each element, providing sequential index with the element.
+ * Performs the given [action] on each element, providing sequential index with the element.
  */
-public inline fun ShortArray.forEachIndexed(operation: (Int, Short) -> Unit): Unit {
+public inline fun ShortArray.forEachIndexed(action: (Int, Short) -> Unit): Unit {
     var index = 0
-    for (item in this) operation(index++, item)
+    for (item in this) action(index++, item)
 }
 
 /**
@@ -8419,13 +8428,13 @@ public fun ShortArray.max(): Short? {
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
-public inline fun <R : Comparable<R>, T : Any> Array<out T>.maxBy(f: (T) -> R): T? {
+public inline fun <R : Comparable<R>, T : Any> Array<out T>.maxBy(selector: (T) -> R): T? {
     if (isEmpty()) return null
     var maxElem = this[0]
-    var maxValue = f(maxElem)
+    var maxValue = selector(maxElem)
     for (i in 1..lastIndex) {
         val e = this[i]
-        val v = f(e)
+        val v = selector(e)
         if (maxValue < v) {
             maxElem = e
             maxValue = v
@@ -8437,13 +8446,13 @@ public inline fun <R : Comparable<R>, T : Any> Array<out T>.maxBy(f: (T) -> R): 
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
-public inline fun <R : Comparable<R>> BooleanArray.maxBy(f: (Boolean) -> R): Boolean? {
+public inline fun <R : Comparable<R>> BooleanArray.maxBy(selector: (Boolean) -> R): Boolean? {
     if (isEmpty()) return null
     var maxElem = this[0]
-    var maxValue = f(maxElem)
+    var maxValue = selector(maxElem)
     for (i in 1..lastIndex) {
         val e = this[i]
-        val v = f(e)
+        val v = selector(e)
         if (maxValue < v) {
             maxElem = e
             maxValue = v
@@ -8455,13 +8464,13 @@ public inline fun <R : Comparable<R>> BooleanArray.maxBy(f: (Boolean) -> R): Boo
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
-public inline fun <R : Comparable<R>> ByteArray.maxBy(f: (Byte) -> R): Byte? {
+public inline fun <R : Comparable<R>> ByteArray.maxBy(selector: (Byte) -> R): Byte? {
     if (isEmpty()) return null
     var maxElem = this[0]
-    var maxValue = f(maxElem)
+    var maxValue = selector(maxElem)
     for (i in 1..lastIndex) {
         val e = this[i]
-        val v = f(e)
+        val v = selector(e)
         if (maxValue < v) {
             maxElem = e
             maxValue = v
@@ -8473,13 +8482,13 @@ public inline fun <R : Comparable<R>> ByteArray.maxBy(f: (Byte) -> R): Byte? {
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
-public inline fun <R : Comparable<R>> CharArray.maxBy(f: (Char) -> R): Char? {
+public inline fun <R : Comparable<R>> CharArray.maxBy(selector: (Char) -> R): Char? {
     if (isEmpty()) return null
     var maxElem = this[0]
-    var maxValue = f(maxElem)
+    var maxValue = selector(maxElem)
     for (i in 1..lastIndex) {
         val e = this[i]
-        val v = f(e)
+        val v = selector(e)
         if (maxValue < v) {
             maxElem = e
             maxValue = v
@@ -8491,13 +8500,13 @@ public inline fun <R : Comparable<R>> CharArray.maxBy(f: (Char) -> R): Char? {
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
-public inline fun <R : Comparable<R>> DoubleArray.maxBy(f: (Double) -> R): Double? {
+public inline fun <R : Comparable<R>> DoubleArray.maxBy(selector: (Double) -> R): Double? {
     if (isEmpty()) return null
     var maxElem = this[0]
-    var maxValue = f(maxElem)
+    var maxValue = selector(maxElem)
     for (i in 1..lastIndex) {
         val e = this[i]
-        val v = f(e)
+        val v = selector(e)
         if (maxValue < v) {
             maxElem = e
             maxValue = v
@@ -8509,13 +8518,13 @@ public inline fun <R : Comparable<R>> DoubleArray.maxBy(f: (Double) -> R): Doubl
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
-public inline fun <R : Comparable<R>> FloatArray.maxBy(f: (Float) -> R): Float? {
+public inline fun <R : Comparable<R>> FloatArray.maxBy(selector: (Float) -> R): Float? {
     if (isEmpty()) return null
     var maxElem = this[0]
-    var maxValue = f(maxElem)
+    var maxValue = selector(maxElem)
     for (i in 1..lastIndex) {
         val e = this[i]
-        val v = f(e)
+        val v = selector(e)
         if (maxValue < v) {
             maxElem = e
             maxValue = v
@@ -8527,13 +8536,13 @@ public inline fun <R : Comparable<R>> FloatArray.maxBy(f: (Float) -> R): Float? 
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
-public inline fun <R : Comparable<R>> IntArray.maxBy(f: (Int) -> R): Int? {
+public inline fun <R : Comparable<R>> IntArray.maxBy(selector: (Int) -> R): Int? {
     if (isEmpty()) return null
     var maxElem = this[0]
-    var maxValue = f(maxElem)
+    var maxValue = selector(maxElem)
     for (i in 1..lastIndex) {
         val e = this[i]
-        val v = f(e)
+        val v = selector(e)
         if (maxValue < v) {
             maxElem = e
             maxValue = v
@@ -8545,13 +8554,13 @@ public inline fun <R : Comparable<R>> IntArray.maxBy(f: (Int) -> R): Int? {
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
-public inline fun <R : Comparable<R>> LongArray.maxBy(f: (Long) -> R): Long? {
+public inline fun <R : Comparable<R>> LongArray.maxBy(selector: (Long) -> R): Long? {
     if (isEmpty()) return null
     var maxElem = this[0]
-    var maxValue = f(maxElem)
+    var maxValue = selector(maxElem)
     for (i in 1..lastIndex) {
         val e = this[i]
-        val v = f(e)
+        val v = selector(e)
         if (maxValue < v) {
             maxElem = e
             maxValue = v
@@ -8563,13 +8572,13 @@ public inline fun <R : Comparable<R>> LongArray.maxBy(f: (Long) -> R): Long? {
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
-public inline fun <R : Comparable<R>> ShortArray.maxBy(f: (Short) -> R): Short? {
+public inline fun <R : Comparable<R>> ShortArray.maxBy(selector: (Short) -> R): Short? {
     if (isEmpty()) return null
     var maxElem = this[0]
-    var maxValue = f(maxElem)
+    var maxValue = selector(maxElem)
     for (i in 1..lastIndex) {
         val e = this[i]
-        val v = f(e)
+        val v = selector(e)
         if (maxValue < v) {
             maxElem = e
             maxValue = v
@@ -8685,13 +8694,13 @@ public fun ShortArray.min(): Short? {
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
-public inline fun <R : Comparable<R>, T : Any> Array<out T>.minBy(f: (T) -> R): T? {
+public inline fun <R : Comparable<R>, T : Any> Array<out T>.minBy(selector: (T) -> R): T? {
     if (isEmpty()) return null
     var minElem = this[0]
-    var minValue = f(minElem)
+    var minValue = selector(minElem)
     for (i in 1..lastIndex) {
         val e = this[i]
-        val v = f(e)
+        val v = selector(e)
         if (minValue > v) {
             minElem = e
             minValue = v
@@ -8703,13 +8712,13 @@ public inline fun <R : Comparable<R>, T : Any> Array<out T>.minBy(f: (T) -> R): 
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
-public inline fun <R : Comparable<R>> BooleanArray.minBy(f: (Boolean) -> R): Boolean? {
+public inline fun <R : Comparable<R>> BooleanArray.minBy(selector: (Boolean) -> R): Boolean? {
     if (isEmpty()) return null
     var minElem = this[0]
-    var minValue = f(minElem)
+    var minValue = selector(minElem)
     for (i in 1..lastIndex) {
         val e = this[i]
-        val v = f(e)
+        val v = selector(e)
         if (minValue > v) {
             minElem = e
             minValue = v
@@ -8721,13 +8730,13 @@ public inline fun <R : Comparable<R>> BooleanArray.minBy(f: (Boolean) -> R): Boo
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
-public inline fun <R : Comparable<R>> ByteArray.minBy(f: (Byte) -> R): Byte? {
+public inline fun <R : Comparable<R>> ByteArray.minBy(selector: (Byte) -> R): Byte? {
     if (isEmpty()) return null
     var minElem = this[0]
-    var minValue = f(minElem)
+    var minValue = selector(minElem)
     for (i in 1..lastIndex) {
         val e = this[i]
-        val v = f(e)
+        val v = selector(e)
         if (minValue > v) {
             minElem = e
             minValue = v
@@ -8739,13 +8748,13 @@ public inline fun <R : Comparable<R>> ByteArray.minBy(f: (Byte) -> R): Byte? {
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
-public inline fun <R : Comparable<R>> CharArray.minBy(f: (Char) -> R): Char? {
+public inline fun <R : Comparable<R>> CharArray.minBy(selector: (Char) -> R): Char? {
     if (isEmpty()) return null
     var minElem = this[0]
-    var minValue = f(minElem)
+    var minValue = selector(minElem)
     for (i in 1..lastIndex) {
         val e = this[i]
-        val v = f(e)
+        val v = selector(e)
         if (minValue > v) {
             minElem = e
             minValue = v
@@ -8757,13 +8766,13 @@ public inline fun <R : Comparable<R>> CharArray.minBy(f: (Char) -> R): Char? {
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
-public inline fun <R : Comparable<R>> DoubleArray.minBy(f: (Double) -> R): Double? {
+public inline fun <R : Comparable<R>> DoubleArray.minBy(selector: (Double) -> R): Double? {
     if (isEmpty()) return null
     var minElem = this[0]
-    var minValue = f(minElem)
+    var minValue = selector(minElem)
     for (i in 1..lastIndex) {
         val e = this[i]
-        val v = f(e)
+        val v = selector(e)
         if (minValue > v) {
             minElem = e
             minValue = v
@@ -8775,13 +8784,13 @@ public inline fun <R : Comparable<R>> DoubleArray.minBy(f: (Double) -> R): Doubl
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
-public inline fun <R : Comparable<R>> FloatArray.minBy(f: (Float) -> R): Float? {
+public inline fun <R : Comparable<R>> FloatArray.minBy(selector: (Float) -> R): Float? {
     if (isEmpty()) return null
     var minElem = this[0]
-    var minValue = f(minElem)
+    var minValue = selector(minElem)
     for (i in 1..lastIndex) {
         val e = this[i]
-        val v = f(e)
+        val v = selector(e)
         if (minValue > v) {
             minElem = e
             minValue = v
@@ -8793,13 +8802,13 @@ public inline fun <R : Comparable<R>> FloatArray.minBy(f: (Float) -> R): Float? 
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
-public inline fun <R : Comparable<R>> IntArray.minBy(f: (Int) -> R): Int? {
+public inline fun <R : Comparable<R>> IntArray.minBy(selector: (Int) -> R): Int? {
     if (isEmpty()) return null
     var minElem = this[0]
-    var minValue = f(minElem)
+    var minValue = selector(minElem)
     for (i in 1..lastIndex) {
         val e = this[i]
-        val v = f(e)
+        val v = selector(e)
         if (minValue > v) {
             minElem = e
             minValue = v
@@ -8811,13 +8820,13 @@ public inline fun <R : Comparable<R>> IntArray.minBy(f: (Int) -> R): Int? {
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
-public inline fun <R : Comparable<R>> LongArray.minBy(f: (Long) -> R): Long? {
+public inline fun <R : Comparable<R>> LongArray.minBy(selector: (Long) -> R): Long? {
     if (isEmpty()) return null
     var minElem = this[0]
-    var minValue = f(minElem)
+    var minValue = selector(minElem)
     for (i in 1..lastIndex) {
         val e = this[i]
-        val v = f(e)
+        val v = selector(e)
         if (minValue > v) {
             minElem = e
             minValue = v
@@ -8829,13 +8838,13 @@ public inline fun <R : Comparable<R>> LongArray.minBy(f: (Long) -> R): Long? {
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
-public inline fun <R : Comparable<R>> ShortArray.minBy(f: (Short) -> R): Short? {
+public inline fun <R : Comparable<R>> ShortArray.minBy(selector: (Short) -> R): Short? {
     if (isEmpty()) return null
     var minElem = this[0]
-    var minValue = f(minElem)
+    var minValue = selector(minElem)
     for (i in 1..lastIndex) {
         val e = this[i]
-        val v = f(e)
+        val v = selector(e)
         if (minValue > v) {
             minElem = e
             minValue = v
@@ -9223,199 +9232,199 @@ public inline fun ShortArray.reduceRight(operation: (Short, Short) -> Short): Sh
 }
 
 /**
- * Returns the sum of all values produced by [transform] function applied to each element in the array.
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public inline fun <T> Array<out T>.sumBy(transform: (T) -> Int): Int {
+public inline fun <T> Array<out T>.sumBy(selector: (T) -> Int): Int {
     var sum: Int = 0
     for (element in this) {
-        sum += transform(element)
+        sum += selector(element)
     }
     return sum
 }
 
 /**
- * Returns the sum of all values produced by [transform] function applied to each element in the array.
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public inline fun BooleanArray.sumBy(transform: (Boolean) -> Int): Int {
+public inline fun BooleanArray.sumBy(selector: (Boolean) -> Int): Int {
     var sum: Int = 0
     for (element in this) {
-        sum += transform(element)
+        sum += selector(element)
     }
     return sum
 }
 
 /**
- * Returns the sum of all values produced by [transform] function applied to each element in the array.
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public inline fun ByteArray.sumBy(transform: (Byte) -> Int): Int {
+public inline fun ByteArray.sumBy(selector: (Byte) -> Int): Int {
     var sum: Int = 0
     for (element in this) {
-        sum += transform(element)
+        sum += selector(element)
     }
     return sum
 }
 
 /**
- * Returns the sum of all values produced by [transform] function applied to each element in the array.
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public inline fun CharArray.sumBy(transform: (Char) -> Int): Int {
+public inline fun CharArray.sumBy(selector: (Char) -> Int): Int {
     var sum: Int = 0
     for (element in this) {
-        sum += transform(element)
+        sum += selector(element)
     }
     return sum
 }
 
 /**
- * Returns the sum of all values produced by [transform] function applied to each element in the array.
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public inline fun DoubleArray.sumBy(transform: (Double) -> Int): Int {
+public inline fun DoubleArray.sumBy(selector: (Double) -> Int): Int {
     var sum: Int = 0
     for (element in this) {
-        sum += transform(element)
+        sum += selector(element)
     }
     return sum
 }
 
 /**
- * Returns the sum of all values produced by [transform] function applied to each element in the array.
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public inline fun FloatArray.sumBy(transform: (Float) -> Int): Int {
+public inline fun FloatArray.sumBy(selector: (Float) -> Int): Int {
     var sum: Int = 0
     for (element in this) {
-        sum += transform(element)
+        sum += selector(element)
     }
     return sum
 }
 
 /**
- * Returns the sum of all values produced by [transform] function applied to each element in the array.
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public inline fun IntArray.sumBy(transform: (Int) -> Int): Int {
+public inline fun IntArray.sumBy(selector: (Int) -> Int): Int {
     var sum: Int = 0
     for (element in this) {
-        sum += transform(element)
+        sum += selector(element)
     }
     return sum
 }
 
 /**
- * Returns the sum of all values produced by [transform] function applied to each element in the array.
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public inline fun LongArray.sumBy(transform: (Long) -> Int): Int {
+public inline fun LongArray.sumBy(selector: (Long) -> Int): Int {
     var sum: Int = 0
     for (element in this) {
-        sum += transform(element)
+        sum += selector(element)
     }
     return sum
 }
 
 /**
- * Returns the sum of all values produced by [transform] function applied to each element in the array.
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public inline fun ShortArray.sumBy(transform: (Short) -> Int): Int {
+public inline fun ShortArray.sumBy(selector: (Short) -> Int): Int {
     var sum: Int = 0
     for (element in this) {
-        sum += transform(element)
+        sum += selector(element)
     }
     return sum
 }
 
 /**
- * Returns the sum of all values produced by [transform] function applied to each element in the array.
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public inline fun <T> Array<out T>.sumByDouble(transform: (T) -> Double): Double {
+public inline fun <T> Array<out T>.sumByDouble(selector: (T) -> Double): Double {
     var sum: Double = 0.0
     for (element in this) {
-        sum += transform(element)
+        sum += selector(element)
     }
     return sum
 }
 
 /**
- * Returns the sum of all values produced by [transform] function applied to each element in the array.
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public inline fun BooleanArray.sumByDouble(transform: (Boolean) -> Double): Double {
+public inline fun BooleanArray.sumByDouble(selector: (Boolean) -> Double): Double {
     var sum: Double = 0.0
     for (element in this) {
-        sum += transform(element)
+        sum += selector(element)
     }
     return sum
 }
 
 /**
- * Returns the sum of all values produced by [transform] function applied to each element in the array.
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public inline fun ByteArray.sumByDouble(transform: (Byte) -> Double): Double {
+public inline fun ByteArray.sumByDouble(selector: (Byte) -> Double): Double {
     var sum: Double = 0.0
     for (element in this) {
-        sum += transform(element)
+        sum += selector(element)
     }
     return sum
 }
 
 /**
- * Returns the sum of all values produced by [transform] function applied to each element in the array.
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public inline fun CharArray.sumByDouble(transform: (Char) -> Double): Double {
+public inline fun CharArray.sumByDouble(selector: (Char) -> Double): Double {
     var sum: Double = 0.0
     for (element in this) {
-        sum += transform(element)
+        sum += selector(element)
     }
     return sum
 }
 
 /**
- * Returns the sum of all values produced by [transform] function applied to each element in the array.
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public inline fun DoubleArray.sumByDouble(transform: (Double) -> Double): Double {
+public inline fun DoubleArray.sumByDouble(selector: (Double) -> Double): Double {
     var sum: Double = 0.0
     for (element in this) {
-        sum += transform(element)
+        sum += selector(element)
     }
     return sum
 }
 
 /**
- * Returns the sum of all values produced by [transform] function applied to each element in the array.
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public inline fun FloatArray.sumByDouble(transform: (Float) -> Double): Double {
+public inline fun FloatArray.sumByDouble(selector: (Float) -> Double): Double {
     var sum: Double = 0.0
     for (element in this) {
-        sum += transform(element)
+        sum += selector(element)
     }
     return sum
 }
 
 /**
- * Returns the sum of all values produced by [transform] function applied to each element in the array.
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public inline fun IntArray.sumByDouble(transform: (Int) -> Double): Double {
+public inline fun IntArray.sumByDouble(selector: (Int) -> Double): Double {
     var sum: Double = 0.0
     for (element in this) {
-        sum += transform(element)
+        sum += selector(element)
     }
     return sum
 }
 
 /**
- * Returns the sum of all values produced by [transform] function applied to each element in the array.
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public inline fun LongArray.sumByDouble(transform: (Long) -> Double): Double {
+public inline fun LongArray.sumByDouble(selector: (Long) -> Double): Double {
     var sum: Double = 0.0
     for (element in this) {
-        sum += transform(element)
+        sum += selector(element)
     }
     return sum
 }
 
 /**
- * Returns the sum of all values produced by [transform] function applied to each element in the array.
+ * Returns the sum of all values produced by [selector] function applied to each element in the array.
  */
-public inline fun ShortArray.sumByDouble(transform: (Short) -> Double): Double {
+public inline fun ShortArray.sumByDouble(selector: (Short) -> Double): Double {
     var sum: Double = 0.0
     for (element in this) {
-        sum += transform(element)
+        sum += selector(element)
     }
     return sum
 }
@@ -9597,74 +9606,74 @@ public inline fun ShortArray.partition(predicate: (Short) -> Boolean): Pair<List
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public infix fun <T, R> Array<out T>.zip(array: Array<out R>): List<Pair<T, R>> {
-    return zip(array) { t1, t2 -> t1 to t2 }
+public infix fun <T, R> Array<out T>.zip(other: Array<out R>): List<Pair<T, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public infix fun <R> BooleanArray.zip(array: Array<out R>): List<Pair<Boolean, R>> {
-    return zip(array) { t1, t2 -> t1 to t2 }
+public infix fun <R> BooleanArray.zip(other: Array<out R>): List<Pair<Boolean, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public infix fun <R> ByteArray.zip(array: Array<out R>): List<Pair<Byte, R>> {
-    return zip(array) { t1, t2 -> t1 to t2 }
+public infix fun <R> ByteArray.zip(other: Array<out R>): List<Pair<Byte, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public infix fun <R> CharArray.zip(array: Array<out R>): List<Pair<Char, R>> {
-    return zip(array) { t1, t2 -> t1 to t2 }
+public infix fun <R> CharArray.zip(other: Array<out R>): List<Pair<Char, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public infix fun <R> DoubleArray.zip(array: Array<out R>): List<Pair<Double, R>> {
-    return zip(array) { t1, t2 -> t1 to t2 }
+public infix fun <R> DoubleArray.zip(other: Array<out R>): List<Pair<Double, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public infix fun <R> FloatArray.zip(array: Array<out R>): List<Pair<Float, R>> {
-    return zip(array) { t1, t2 -> t1 to t2 }
+public infix fun <R> FloatArray.zip(other: Array<out R>): List<Pair<Float, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public infix fun <R> IntArray.zip(array: Array<out R>): List<Pair<Int, R>> {
-    return zip(array) { t1, t2 -> t1 to t2 }
+public infix fun <R> IntArray.zip(other: Array<out R>): List<Pair<Int, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public infix fun <R> LongArray.zip(array: Array<out R>): List<Pair<Long, R>> {
-    return zip(array) { t1, t2 -> t1 to t2 }
+public infix fun <R> LongArray.zip(other: Array<out R>): List<Pair<Long, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public infix fun <R> ShortArray.zip(array: Array<out R>): List<Pair<Short, R>> {
-    return zip(array) { t1, t2 -> t1 to t2 }
+public infix fun <R> ShortArray.zip(other: Array<out R>): List<Pair<Short, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public inline fun <T, R, V> Array<out T>.zip(array: Array<out R>, transform: (T, R) -> V): List<V> {
-    val size = Math.min(size, array.size)
+public inline fun <T, R, V> Array<out T>.zip(other: Array<out R>, transform: (T, R) -> V): List<V> {
+    val size = Math.min(size, other.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
+        list.add(transform(this[i], other[i]))
     }
     return list
 }
@@ -9672,11 +9681,11 @@ public inline fun <T, R, V> Array<out T>.zip(array: Array<out R>, transform: (T,
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public inline fun <R, V> BooleanArray.zip(array: Array<out R>, transform: (Boolean, R) -> V): List<V> {
-    val size = Math.min(size, array.size)
+public inline fun <R, V> BooleanArray.zip(other: Array<out R>, transform: (Boolean, R) -> V): List<V> {
+    val size = Math.min(size, other.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
+        list.add(transform(this[i], other[i]))
     }
     return list
 }
@@ -9684,11 +9693,11 @@ public inline fun <R, V> BooleanArray.zip(array: Array<out R>, transform: (Boole
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public inline fun <R, V> ByteArray.zip(array: Array<out R>, transform: (Byte, R) -> V): List<V> {
-    val size = Math.min(size, array.size)
+public inline fun <R, V> ByteArray.zip(other: Array<out R>, transform: (Byte, R) -> V): List<V> {
+    val size = Math.min(size, other.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
+        list.add(transform(this[i], other[i]))
     }
     return list
 }
@@ -9696,11 +9705,11 @@ public inline fun <R, V> ByteArray.zip(array: Array<out R>, transform: (Byte, R)
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public inline fun <R, V> CharArray.zip(array: Array<out R>, transform: (Char, R) -> V): List<V> {
-    val size = Math.min(size, array.size)
+public inline fun <R, V> CharArray.zip(other: Array<out R>, transform: (Char, R) -> V): List<V> {
+    val size = Math.min(size, other.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
+        list.add(transform(this[i], other[i]))
     }
     return list
 }
@@ -9708,11 +9717,11 @@ public inline fun <R, V> CharArray.zip(array: Array<out R>, transform: (Char, R)
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public inline fun <R, V> DoubleArray.zip(array: Array<out R>, transform: (Double, R) -> V): List<V> {
-    val size = Math.min(size, array.size)
+public inline fun <R, V> DoubleArray.zip(other: Array<out R>, transform: (Double, R) -> V): List<V> {
+    val size = Math.min(size, other.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
+        list.add(transform(this[i], other[i]))
     }
     return list
 }
@@ -9720,11 +9729,11 @@ public inline fun <R, V> DoubleArray.zip(array: Array<out R>, transform: (Double
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public inline fun <R, V> FloatArray.zip(array: Array<out R>, transform: (Float, R) -> V): List<V> {
-    val size = Math.min(size, array.size)
+public inline fun <R, V> FloatArray.zip(other: Array<out R>, transform: (Float, R) -> V): List<V> {
+    val size = Math.min(size, other.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
+        list.add(transform(this[i], other[i]))
     }
     return list
 }
@@ -9732,11 +9741,11 @@ public inline fun <R, V> FloatArray.zip(array: Array<out R>, transform: (Float, 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public inline fun <R, V> IntArray.zip(array: Array<out R>, transform: (Int, R) -> V): List<V> {
-    val size = Math.min(size, array.size)
+public inline fun <R, V> IntArray.zip(other: Array<out R>, transform: (Int, R) -> V): List<V> {
+    val size = Math.min(size, other.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
+        list.add(transform(this[i], other[i]))
     }
     return list
 }
@@ -9744,11 +9753,11 @@ public inline fun <R, V> IntArray.zip(array: Array<out R>, transform: (Int, R) -
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public inline fun <R, V> LongArray.zip(array: Array<out R>, transform: (Long, R) -> V): List<V> {
-    val size = Math.min(size, array.size)
+public inline fun <R, V> LongArray.zip(other: Array<out R>, transform: (Long, R) -> V): List<V> {
+    val size = Math.min(size, other.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
+        list.add(transform(this[i], other[i]))
     }
     return list
 }
@@ -9756,163 +9765,11 @@ public inline fun <R, V> LongArray.zip(array: Array<out R>, transform: (Long, R)
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public inline fun <R, V> ShortArray.zip(array: Array<out R>, transform: (Short, R) -> V): List<V> {
-    val size = Math.min(size, array.size)
+public inline fun <R, V> ShortArray.zip(other: Array<out R>, transform: (Short, R) -> V): List<V> {
+    val size = Math.min(size, other.size)
     val list = ArrayList<V>(size)
     for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
-    }
-    return list
-}
-
-/**
- * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
- */
-public infix fun BooleanArray.zip(array: BooleanArray): List<Pair<Boolean, Boolean>> {
-    return zip(array) { t1, t2 -> t1 to t2 }
-}
-
-/**
- * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
- */
-public infix fun ByteArray.zip(array: ByteArray): List<Pair<Byte, Byte>> {
-    return zip(array) { t1, t2 -> t1 to t2 }
-}
-
-/**
- * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
- */
-public infix fun CharArray.zip(array: CharArray): List<Pair<Char, Char>> {
-    return zip(array) { t1, t2 -> t1 to t2 }
-}
-
-/**
- * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
- */
-public infix fun DoubleArray.zip(array: DoubleArray): List<Pair<Double, Double>> {
-    return zip(array) { t1, t2 -> t1 to t2 }
-}
-
-/**
- * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
- */
-public infix fun FloatArray.zip(array: FloatArray): List<Pair<Float, Float>> {
-    return zip(array) { t1, t2 -> t1 to t2 }
-}
-
-/**
- * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
- */
-public infix fun IntArray.zip(array: IntArray): List<Pair<Int, Int>> {
-    return zip(array) { t1, t2 -> t1 to t2 }
-}
-
-/**
- * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
- */
-public infix fun LongArray.zip(array: LongArray): List<Pair<Long, Long>> {
-    return zip(array) { t1, t2 -> t1 to t2 }
-}
-
-/**
- * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
- */
-public infix fun ShortArray.zip(array: ShortArray): List<Pair<Short, Short>> {
-    return zip(array) { t1, t2 -> t1 to t2 }
-}
-
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
-public inline fun <V> BooleanArray.zip(array: BooleanArray, transform: (Boolean, Boolean) -> V): List<V> {
-    val size = Math.min(size, array.size)
-    val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
-    }
-    return list
-}
-
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
-public inline fun <V> ByteArray.zip(array: ByteArray, transform: (Byte, Byte) -> V): List<V> {
-    val size = Math.min(size, array.size)
-    val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
-    }
-    return list
-}
-
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
-public inline fun <V> CharArray.zip(array: CharArray, transform: (Char, Char) -> V): List<V> {
-    val size = Math.min(size, array.size)
-    val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
-    }
-    return list
-}
-
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
-public inline fun <V> DoubleArray.zip(array: DoubleArray, transform: (Double, Double) -> V): List<V> {
-    val size = Math.min(size, array.size)
-    val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
-    }
-    return list
-}
-
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
-public inline fun <V> FloatArray.zip(array: FloatArray, transform: (Float, Float) -> V): List<V> {
-    val size = Math.min(size, array.size)
-    val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
-    }
-    return list
-}
-
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
-public inline fun <V> IntArray.zip(array: IntArray, transform: (Int, Int) -> V): List<V> {
-    val size = Math.min(size, array.size)
-    val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
-    }
-    return list
-}
-
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
-public inline fun <V> LongArray.zip(array: LongArray, transform: (Long, Long) -> V): List<V> {
-    val size = Math.min(size, array.size)
-    val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
-    }
-    return list
-}
-
-/**
- * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
- */
-public inline fun <V> ShortArray.zip(array: ShortArray, transform: (Short, Short) -> V): List<V> {
-    val size = Math.min(size, array.size)
-    val list = ArrayList<V>(size)
-    for (i in 0..size-1) {
-        list.add(transform(this[i], array[i]))
+        list.add(transform(this[i], other[i]))
     }
     return list
 }
@@ -10102,6 +9959,158 @@ public inline fun <R, V> ShortArray.zip(other: Iterable<R>, transform: (Short, R
     for (element in other) {
         if (i >= arraySize) break
         list.add(transform(this[i++], element))
+    }
+    return list
+}
+
+/**
+ * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ */
+public infix fun BooleanArray.zip(other: BooleanArray): List<Pair<Boolean, Boolean>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
+
+/**
+ * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ */
+public infix fun ByteArray.zip(other: ByteArray): List<Pair<Byte, Byte>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
+
+/**
+ * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ */
+public infix fun CharArray.zip(other: CharArray): List<Pair<Char, Char>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
+
+/**
+ * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ */
+public infix fun DoubleArray.zip(other: DoubleArray): List<Pair<Double, Double>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
+
+/**
+ * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ */
+public infix fun FloatArray.zip(other: FloatArray): List<Pair<Float, Float>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
+
+/**
+ * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ */
+public infix fun IntArray.zip(other: IntArray): List<Pair<Int, Int>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
+
+/**
+ * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ */
+public infix fun LongArray.zip(other: LongArray): List<Pair<Long, Long>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
+
+/**
+ * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
+ */
+public infix fun ShortArray.zip(other: ShortArray): List<Pair<Short, Short>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <V> BooleanArray.zip(other: BooleanArray, transform: (Boolean, Boolean) -> V): List<V> {
+    val size = Math.min(size, other.size)
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], other[i]))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <V> ByteArray.zip(other: ByteArray, transform: (Byte, Byte) -> V): List<V> {
+    val size = Math.min(size, other.size)
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], other[i]))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <V> CharArray.zip(other: CharArray, transform: (Char, Char) -> V): List<V> {
+    val size = Math.min(size, other.size)
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], other[i]))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <V> DoubleArray.zip(other: DoubleArray, transform: (Double, Double) -> V): List<V> {
+    val size = Math.min(size, other.size)
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], other[i]))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <V> FloatArray.zip(other: FloatArray, transform: (Float, Float) -> V): List<V> {
+    val size = Math.min(size, other.size)
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], other[i]))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <V> IntArray.zip(other: IntArray, transform: (Int, Int) -> V): List<V> {
+    val size = Math.min(size, other.size)
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], other[i]))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <V> LongArray.zip(other: LongArray, transform: (Long, Long) -> V): List<V> {
+    val size = Math.min(size, other.size)
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], other[i]))
+    }
+    return list
+}
+
+/**
+ * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
+ */
+public inline fun <V> ShortArray.zip(other: ShortArray, transform: (Short, Short) -> V): List<V> {
+    val size = Math.min(size, other.size)
+    val list = ArrayList<V>(size)
+    for (i in 0..size-1) {
+        list.add(transform(this[i], other[i]))
     }
     return list
 }
@@ -10599,10 +10608,10 @@ public fun BooleanArray.asList(): List<Boolean> {
     return object : AbstractList<Boolean>(), RandomAccess {
         override val size: Int get() = this@asList.size
         override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(o: Boolean): Boolean = this@asList.contains(o)
+        override fun contains(element: Boolean): Boolean = this@asList.contains(element)
         override fun get(index: Int): Boolean = this@asList[index]
-        override fun indexOf(o: Boolean): Int = this@asList.indexOf(o)
-        override fun lastIndexOf(o: Boolean): Int = this@asList.lastIndexOf(o)
+        override fun indexOf(element: Boolean): Int = this@asList.indexOf(element)
+        override fun lastIndexOf(element: Boolean): Int = this@asList.lastIndexOf(element)
     }
 }
 
@@ -10614,10 +10623,10 @@ public fun ByteArray.asList(): List<Byte> {
     return object : AbstractList<Byte>(), RandomAccess {
         override val size: Int get() = this@asList.size
         override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(o: Byte): Boolean = this@asList.contains(o)
+        override fun contains(element: Byte): Boolean = this@asList.contains(element)
         override fun get(index: Int): Byte = this@asList[index]
-        override fun indexOf(o: Byte): Int = this@asList.indexOf(o)
-        override fun lastIndexOf(o: Byte): Int = this@asList.lastIndexOf(o)
+        override fun indexOf(element: Byte): Int = this@asList.indexOf(element)
+        override fun lastIndexOf(element: Byte): Int = this@asList.lastIndexOf(element)
     }
 }
 
@@ -10629,10 +10638,10 @@ public fun CharArray.asList(): List<Char> {
     return object : AbstractList<Char>(), RandomAccess {
         override val size: Int get() = this@asList.size
         override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(o: Char): Boolean = this@asList.contains(o)
+        override fun contains(element: Char): Boolean = this@asList.contains(element)
         override fun get(index: Int): Char = this@asList[index]
-        override fun indexOf(o: Char): Int = this@asList.indexOf(o)
-        override fun lastIndexOf(o: Char): Int = this@asList.lastIndexOf(o)
+        override fun indexOf(element: Char): Int = this@asList.indexOf(element)
+        override fun lastIndexOf(element: Char): Int = this@asList.lastIndexOf(element)
     }
 }
 
@@ -10644,10 +10653,10 @@ public fun DoubleArray.asList(): List<Double> {
     return object : AbstractList<Double>(), RandomAccess {
         override val size: Int get() = this@asList.size
         override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(o: Double): Boolean = this@asList.contains(o)
+        override fun contains(element: Double): Boolean = this@asList.contains(element)
         override fun get(index: Int): Double = this@asList[index]
-        override fun indexOf(o: Double): Int = this@asList.indexOf(o)
-        override fun lastIndexOf(o: Double): Int = this@asList.lastIndexOf(o)
+        override fun indexOf(element: Double): Int = this@asList.indexOf(element)
+        override fun lastIndexOf(element: Double): Int = this@asList.lastIndexOf(element)
     }
 }
 
@@ -10659,10 +10668,10 @@ public fun FloatArray.asList(): List<Float> {
     return object : AbstractList<Float>(), RandomAccess {
         override val size: Int get() = this@asList.size
         override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(o: Float): Boolean = this@asList.contains(o)
+        override fun contains(element: Float): Boolean = this@asList.contains(element)
         override fun get(index: Int): Float = this@asList[index]
-        override fun indexOf(o: Float): Int = this@asList.indexOf(o)
-        override fun lastIndexOf(o: Float): Int = this@asList.lastIndexOf(o)
+        override fun indexOf(element: Float): Int = this@asList.indexOf(element)
+        override fun lastIndexOf(element: Float): Int = this@asList.lastIndexOf(element)
     }
 }
 
@@ -10674,10 +10683,10 @@ public fun IntArray.asList(): List<Int> {
     return object : AbstractList<Int>(), RandomAccess {
         override val size: Int get() = this@asList.size
         override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(o: Int): Boolean = this@asList.contains(o)
+        override fun contains(element: Int): Boolean = this@asList.contains(element)
         override fun get(index: Int): Int = this@asList[index]
-        override fun indexOf(o: Int): Int = this@asList.indexOf(o)
-        override fun lastIndexOf(o: Int): Int = this@asList.lastIndexOf(o)
+        override fun indexOf(element: Int): Int = this@asList.indexOf(element)
+        override fun lastIndexOf(element: Int): Int = this@asList.lastIndexOf(element)
     }
 }
 
@@ -10689,10 +10698,10 @@ public fun LongArray.asList(): List<Long> {
     return object : AbstractList<Long>(), RandomAccess {
         override val size: Int get() = this@asList.size
         override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(o: Long): Boolean = this@asList.contains(o)
+        override fun contains(element: Long): Boolean = this@asList.contains(element)
         override fun get(index: Int): Long = this@asList[index]
-        override fun indexOf(o: Long): Int = this@asList.indexOf(o)
-        override fun lastIndexOf(o: Long): Int = this@asList.lastIndexOf(o)
+        override fun indexOf(element: Long): Int = this@asList.indexOf(element)
+        override fun lastIndexOf(element: Long): Int = this@asList.lastIndexOf(element)
     }
 }
 
@@ -10704,10 +10713,10 @@ public fun ShortArray.asList(): List<Short> {
     return object : AbstractList<Short>(), RandomAccess {
         override val size: Int get() = this@asList.size
         override fun isEmpty(): Boolean = this@asList.isEmpty()
-        override fun contains(o: Short): Boolean = this@asList.contains(o)
+        override fun contains(element: Short): Boolean = this@asList.contains(element)
         override fun get(index: Int): Short = this@asList[index]
-        override fun indexOf(o: Short): Int = this@asList.indexOf(o)
-        override fun lastIndexOf(o: Short): Int = this@asList.lastIndexOf(o)
+        override fun indexOf(element: Short): Int = this@asList.indexOf(element)
+        override fun lastIndexOf(element: Short): Int = this@asList.lastIndexOf(element)
     }
 }
 

@@ -747,24 +747,24 @@ public fun String.toArrayList(): ArrayList<Char> {
 }
 
 /**
- * Appends all characters to the given [collection].
+ * Appends all characters to the given [destination] collection.
  */
-public fun <C : MutableCollection<in Char>> CharSequence.toCollection(collection: C): C {
+public fun <C : MutableCollection<in Char>> CharSequence.toCollection(destination: C): C {
     for (item in this) {
-        collection.add(item)
+        destination.add(item)
     }
-    return collection
+    return destination
 }
 
 /**
- * Appends all characters to the given [collection].
+ * Appends all characters to the given [destination] collection.
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun <C : MutableCollection<in Char>> String.toCollection(collection: C): C {
+public fun <C : MutableCollection<in Char>> String.toCollection(destination: C): C {
     for (item in this) {
-        collection.add(item)
+        destination.add(item)
     }
-    return collection
+    return destination
 }
 
 /**
@@ -940,26 +940,26 @@ public inline fun <R, C : MutableCollection<in R>> String.flatMapTo(destination:
 }
 
 /**
- * Returns a map of the characters in original char sequence grouped by the result of given [toKey] function.
+ * Returns a map of the characters in original char sequence grouped by the key returned by the given [selector] function.
  */
-public inline fun <K> CharSequence.groupBy(toKey: (Char) -> K): Map<K, List<Char>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Char>>(), toKey)
+public inline fun <K> CharSequence.groupBy(selector: (Char) -> K): Map<K, List<Char>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Char>>(), selector)
 }
 
 /**
- * Returns a map of the characters in original string grouped by the result of given [toKey] function.
+ * Returns a map of the characters in original string grouped by the key returned by the given [selector] function.
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun <K> String.groupBy(toKey: (Char) -> K): Map<K, List<Char>> {
-    return groupByTo(LinkedHashMap<K, MutableList<Char>>(), toKey)
+public inline fun <K> String.groupBy(selector: (Char) -> K): Map<K, List<Char>> {
+    return groupByTo(LinkedHashMap<K, MutableList<Char>>(), selector)
 }
 
 /**
- * Appends characters from original char sequence grouped by the result of given [toKey] function to the given [map].
+ * Appends characters from original char sequence grouped by the key returned by the given [selector] function to the given [map].
  */
-public inline fun <K> CharSequence.groupByTo(map: MutableMap<K, MutableList<Char>>, toKey: (Char) -> K): Map<K, MutableList<Char>> {
+public inline fun <K> CharSequence.groupByTo(map: MutableMap<K, MutableList<Char>>, selector: (Char) -> K): Map<K, MutableList<Char>> {
     for (element in this) {
-        val key = toKey(element)
+        val key = selector(element)
         val list = map.getOrPut(key) { ArrayList<Char>() }
         list.add(element)
     }
@@ -967,12 +967,12 @@ public inline fun <K> CharSequence.groupByTo(map: MutableMap<K, MutableList<Char
 }
 
 /**
- * Appends characters from original string grouped by the result of given [toKey] function to the given [map].
+ * Appends characters from original string grouped by the key returned by the given [selector] function to the given [map].
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun <K> String.groupByTo(map: MutableMap<K, MutableList<Char>>, toKey: (Char) -> K): Map<K, MutableList<Char>> {
+public inline fun <K> String.groupByTo(map: MutableMap<K, MutableList<Char>>, selector: (Char) -> K): Map<K, MutableList<Char>> {
     for (element in this) {
-        val key = toKey(element)
+        val key = selector(element)
         val list = map.getOrPut(key) { ArrayList<Char>() }
         list.add(element)
     }
@@ -1236,35 +1236,35 @@ public inline fun <R> String.foldRight(initial: R, operation: (Char, R) -> R): R
 }
 
 /**
- * Performs the given [operation] on each character.
+ * Performs the given [action] on each character.
  */
-public inline fun CharSequence.forEach(operation: (Char) -> Unit): Unit {
-    for (element in this) operation(element)
+public inline fun CharSequence.forEach(action: (Char) -> Unit): Unit {
+    for (element in this) action(element)
 }
 
 /**
- * Performs the given [operation] on each character.
+ * Performs the given [action] on each character.
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun String.forEach(operation: (Char) -> Unit): Unit {
-    for (element in this) operation(element)
+public inline fun String.forEach(action: (Char) -> Unit): Unit {
+    for (element in this) action(element)
 }
 
 /**
- * Performs the given [operation] on each character, providing sequential index with the character.
+ * Performs the given [action] on each character, providing sequential index with the character.
  */
-public inline fun CharSequence.forEachIndexed(operation: (Int, Char) -> Unit): Unit {
+public inline fun CharSequence.forEachIndexed(action: (Int, Char) -> Unit): Unit {
     var index = 0
-    for (item in this) operation(index++, item)
+    for (item in this) action(index++, item)
 }
 
 /**
- * Performs the given [operation] on each character, providing sequential index with the character.
+ * Performs the given [action] on each character, providing sequential index with the character.
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun String.forEachIndexed(operation: (Int, Char) -> Unit): Unit {
+public inline fun String.forEachIndexed(action: (Int, Char) -> Unit): Unit {
     var index = 0
-    for (item in this) operation(index++, item)
+    for (item in this) action(index++, item)
 }
 
 /**
@@ -1297,13 +1297,13 @@ public fun String.max(): Char? {
 /**
  * Returns the first character yielding the largest value of the given function or `null` if there are no characters.
  */
-public inline fun <R : Comparable<R>> CharSequence.maxBy(f: (Char) -> R): Char? {
+public inline fun <R : Comparable<R>> CharSequence.maxBy(selector: (Char) -> R): Char? {
     if (isEmpty()) return null
     var maxElem = this[0]
-    var maxValue = f(maxElem)
+    var maxValue = selector(maxElem)
     for (i in 1..lastIndex) {
         val e = this[i]
-        val v = f(e)
+        val v = selector(e)
         if (maxValue < v) {
             maxElem = e
             maxValue = v
@@ -1316,13 +1316,13 @@ public inline fun <R : Comparable<R>> CharSequence.maxBy(f: (Char) -> R): Char? 
  * Returns the first character yielding the largest value of the given function or `null` if there are no characters.
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun <R : Comparable<R>> String.maxBy(f: (Char) -> R): Char? {
+public inline fun <R : Comparable<R>> String.maxBy(selector: (Char) -> R): Char? {
     if (isEmpty()) return null
     var maxElem = this[0]
-    var maxValue = f(maxElem)
+    var maxValue = selector(maxElem)
     for (i in 1..lastIndex) {
         val e = this[i]
-        val v = f(e)
+        val v = selector(e)
         if (maxValue < v) {
             maxElem = e
             maxValue = v
@@ -1361,13 +1361,13 @@ public fun String.min(): Char? {
 /**
  * Returns the first character yielding the smallest value of the given function or `null` if there are no characters.
  */
-public inline fun <R : Comparable<R>> CharSequence.minBy(f: (Char) -> R): Char? {
+public inline fun <R : Comparable<R>> CharSequence.minBy(selector: (Char) -> R): Char? {
     if (isEmpty()) return null
     var minElem = this[0]
-    var minValue = f(minElem)
+    var minValue = selector(minElem)
     for (i in 1..lastIndex) {
         val e = this[i]
-        val v = f(e)
+        val v = selector(e)
         if (minValue > v) {
             minElem = e
             minValue = v
@@ -1380,13 +1380,13 @@ public inline fun <R : Comparable<R>> CharSequence.minBy(f: (Char) -> R): Char? 
  * Returns the first character yielding the smallest value of the given function or `null` if there are no characters.
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun <R : Comparable<R>> String.minBy(f: (Char) -> R): Char? {
+public inline fun <R : Comparable<R>> String.minBy(selector: (Char) -> R): Char? {
     if (isEmpty()) return null
     var minElem = this[0]
-    var minValue = f(minElem)
+    var minValue = selector(minElem)
     for (i in 1..lastIndex) {
         val e = this[i]
-        val v = f(e)
+        val v = selector(e)
         if (minValue > v) {
             minElem = e
             minValue = v
@@ -1484,47 +1484,47 @@ public inline fun String.reduceRight(operation: (Char, Char) -> Char): Char {
 }
 
 /**
- * Returns the sum of all values produced by [transform] function applied to each character in the char sequence.
+ * Returns the sum of all values produced by [selector] function applied to each character in the char sequence.
  */
-public inline fun CharSequence.sumBy(transform: (Char) -> Int): Int {
+public inline fun CharSequence.sumBy(selector: (Char) -> Int): Int {
     var sum: Int = 0
     for (element in this) {
-        sum += transform(element)
+        sum += selector(element)
     }
     return sum
 }
 
 /**
- * Returns the sum of all values produced by [transform] function applied to each character in the string.
+ * Returns the sum of all values produced by [selector] function applied to each character in the string.
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun String.sumBy(transform: (Char) -> Int): Int {
+public inline fun String.sumBy(selector: (Char) -> Int): Int {
     var sum: Int = 0
     for (element in this) {
-        sum += transform(element)
+        sum += selector(element)
     }
     return sum
 }
 
 /**
- * Returns the sum of all values produced by [transform] function applied to each character in the char sequence.
+ * Returns the sum of all values produced by [selector] function applied to each character in the char sequence.
  */
-public inline fun CharSequence.sumByDouble(transform: (Char) -> Double): Double {
+public inline fun CharSequence.sumByDouble(selector: (Char) -> Double): Double {
     var sum: Double = 0.0
     for (element in this) {
-        sum += transform(element)
+        sum += selector(element)
     }
     return sum
 }
 
 /**
- * Returns the sum of all values produced by [transform] function applied to each character in the string.
+ * Returns the sum of all values produced by [selector] function applied to each character in the string.
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public inline fun String.sumByDouble(transform: (Char) -> Double): Double {
+public inline fun String.sumByDouble(selector: (Char) -> Double): Double {
     var sum: Double = 0.0
     for (element in this) {
-        sum += transform(element)
+        sum += selector(element)
     }
     return sum
 }

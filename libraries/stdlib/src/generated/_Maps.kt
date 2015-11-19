@@ -128,23 +128,23 @@ public inline fun <K, V> Map<K, V>.count(predicate: (Map.Entry<K, V>) -> Boolean
 }
 
 /**
- * Performs the given [operation] on each entry.
+ * Performs the given [action] on each entry.
  */
-public inline fun <K, V> Map<K, V>.forEach(operation: (Map.Entry<K, V>) -> Unit): Unit {
-    for (element in this) operation(element)
+public inline fun <K, V> Map<K, V>.forEach(action: (Map.Entry<K, V>) -> Unit): Unit {
+    for (element in this) action(element)
 }
 
 /**
  * Returns the first map entry yielding the largest value of the given function or `null` if there are no entries.
  */
-public inline fun <K, V, R : Comparable<R>> Map<K, V>.maxBy(f: (Map.Entry<K, V>) -> R): Map.Entry<K, V>? {
+public inline fun <K, V, R : Comparable<R>> Map<K, V>.maxBy(selector: (Map.Entry<K, V>) -> R): Map.Entry<K, V>? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
     var maxElem = iterator.next()
-    var maxValue = f(maxElem)
+    var maxValue = selector(maxElem)
     while (iterator.hasNext()) {
         val e = iterator.next()
-        val v = f(e)
+        val v = selector(e)
         if (maxValue < v) {
             maxElem = e
             maxValue = v
@@ -156,14 +156,14 @@ public inline fun <K, V, R : Comparable<R>> Map<K, V>.maxBy(f: (Map.Entry<K, V>)
 /**
  * Returns the first map entry yielding the smallest value of the given function or `null` if there are no entries.
  */
-public inline fun <K, V, R : Comparable<R>> Map<K, V>.minBy(f: (Map.Entry<K, V>) -> R): Map.Entry<K, V>? {
+public inline fun <K, V, R : Comparable<R>> Map<K, V>.minBy(selector: (Map.Entry<K, V>) -> R): Map.Entry<K, V>? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
     var minElem = iterator.next()
-    var minValue = f(minElem)
+    var minValue = selector(minElem)
     while (iterator.hasNext()) {
         val e = iterator.next()
-        val v = f(e)
+        val v = selector(e)
         if (minValue > v) {
             minElem = e
             minValue = v

@@ -5,18 +5,18 @@ import templates.Family.*
 fun snapshots(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
-    templates add f("toCollection(collection: C)") {
+    templates add f("toCollection(destination: C)") {
         deprecate(Strings) { forBinaryCompatibility }
         include(CharSequences, Strings)
-        doc { f -> "Appends all ${f.element}s to the given [collection]." }
+        doc { f -> "Appends all ${f.element}s to the given [destination] collection." }
         returns("C")
         typeParam("C : MutableCollection<in T>")
         body {
             """
             for (item in this) {
-                collection.add(item)
+                destination.add(item)
             }
-            return collection
+            return destination
             """
         }
     }
