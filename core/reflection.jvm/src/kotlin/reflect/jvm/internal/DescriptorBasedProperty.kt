@@ -19,7 +19,6 @@ package kotlin.reflect.jvm.internal
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import java.lang.reflect.Field
-import kotlin.reflect.KProperty
 import kotlin.reflect.jvm.internal.JvmPropertySignature.JavaField
 import kotlin.reflect.jvm.internal.JvmPropertySignature.KotlinProperty
 
@@ -40,11 +39,13 @@ internal abstract class DescriptorBasedProperty<out R> protected constructor(
             descriptor
     )
 
-    override val descriptor: PropertyDescriptor by ReflectProperties.lazySoft<PropertyDescriptor>(descriptorInitialValue) {
+    private val descriptor_ = ReflectProperties.lazySoft<PropertyDescriptor>(descriptorInitialValue) {
         container.findPropertyDescriptor(name, signature)
     }
 
-    val javaField: Field? by ReflectProperties.lazySoft {
+    override val descriptor: PropertyDescriptor get() = descriptor_()
+
+    private val javaField_ = ReflectProperties.lazySoft {
         val jvmSignature = RuntimeTypeMapper.mapPropertySignature(descriptor)
         when (jvmSignature) {
             is KotlinProperty -> {
@@ -55,6 +56,9 @@ internal abstract class DescriptorBasedProperty<out R> protected constructor(
             is JavaField -> jvmSignature.field
         }
     }
+
+    // Used in subclasses as an implementation of an irrelevant property from KPropertyImpl
+    val javaField: Field? get() = javaField_()
 
     override fun equals(other: Any?): Boolean {
         val that = other.asKPropertyImpl() ?: return false

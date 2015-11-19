@@ -33,10 +33,10 @@ class DataFlowValue(val id: Any?, val type: KotlinType, val kind: DataFlowValue.
         STABLE_VALUE("stable"),
         // Member value with open / custom getter
         // Smart casts are not safe
-        MEMBER_VALUE_WITH_GETTER("custom getter", "member value that has open or custom getter"),
+        PROPERTY_WITH_GETTER("custom getter", "property that has open or custom getter"),
         // Protected / public member value from another module
         // Smart casts are not safe
-        ALIEN_PUBLIC_VALUE("alien public", "public API member value declared in different module"),
+        ALIEN_PUBLIC_PROPERTY("alien public", "public API property declared in different module"),
         // Local variable not yet captured by a changing closure
         // Smart casts are safe but possible changes in loops / closures ahead must be taken into account
         PREDICTABLE_VARIABLE("predictable", "local variable that can be changed since the check in a loop"),
@@ -45,7 +45,7 @@ class DataFlowValue(val id: Any?, val type: KotlinType, val kind: DataFlowValue.
         UNPREDICTABLE_VARIABLE("unpredictable", "local variable that is captured by a changing closure"),
         // Member variable regardless of its visibility
         // Smart casts are not safe
-        MEMBER_VARIABLE("member", "member variable that can be changed from another thread"),
+        MUTABLE_PROPERTY("member", "mutable property that could have been changed by this time"),
         // Some complex expression
         // Smart casts are not safe
         OTHER("other", "complex expression");

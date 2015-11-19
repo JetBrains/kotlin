@@ -377,13 +377,13 @@ public class DataFlowValueFactory {
     }
 
     private static Kind propertyKind(@NotNull PropertyDescriptor propertyDescriptor, @Nullable ModuleDescriptor usageModule) {
-        if (propertyDescriptor.isVar()) return MEMBER_VARIABLE;
-        if (!isFinal(propertyDescriptor)) return MEMBER_VALUE_WITH_GETTER;
-        if (!hasDefaultGetter(propertyDescriptor)) return MEMBER_VALUE_WITH_GETTER;
+        if (propertyDescriptor.isVar()) return MUTABLE_PROPERTY;
+        if (!isFinal(propertyDescriptor)) return PROPERTY_WITH_GETTER;
+        if (!hasDefaultGetter(propertyDescriptor)) return PROPERTY_WITH_GETTER;
         if (!invisibleFromOtherModules(propertyDescriptor)) {
             ModuleDescriptor declarationModule = DescriptorUtils.getContainingModule(propertyDescriptor);
             if (usageModule == null || !usageModule.equals(declarationModule)) {
-                return ALIEN_PUBLIC_VALUE;
+                return ALIEN_PUBLIC_PROPERTY;
             }
         }
         return STABLE_VALUE;
@@ -400,7 +400,7 @@ public class DataFlowValueFactory {
         }
         if (!(variableDescriptor instanceof LocalVariableDescriptor) && !(variableDescriptor instanceof ParameterDescriptor)) return OTHER;
         if (!variableDescriptor.isVar()) return STABLE_VALUE;
-        if (variableDescriptor instanceof SyntheticFieldDescriptor) return MEMBER_VARIABLE;
+        if (variableDescriptor instanceof SyntheticFieldDescriptor) return MUTABLE_PROPERTY;
 
         // Local variable classification: PREDICTABLE or UNPREDICTABLE
         PreliminaryDeclarationVisitor preliminaryVisitor =

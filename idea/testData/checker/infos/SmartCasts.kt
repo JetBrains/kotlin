@@ -228,13 +228,13 @@ class Mutable(var <info descr="This property has a backing field">x</info>: Stri
 
     fun foo(): String {
         if (x is String) {
-            return <error descr="[SMARTCAST_IMPOSSIBLE] Smart cast to 'kotlin.String' is impossible, because 'x' is a member variable that can be changed from another thread">x</error>
+            return <error descr="[SMARTCAST_IMPOSSIBLE] Smart cast to 'kotlin.String' is impossible, because 'x' is a mutable property that could have been changed by this time">x</error>
         }
         if (x != null) {
-            return <error descr="[SMARTCAST_IMPOSSIBLE] Smart cast to 'kotlin.String' is impossible, because 'x' is a member variable that can be changed from another thread">x</error>
+            return <error descr="[SMARTCAST_IMPOSSIBLE] Smart cast to 'kotlin.String' is impossible, because 'x' is a mutable property that could have been changed by this time">x</error>
         }
         if (xx is String) {
-            return <error descr="[SMARTCAST_IMPOSSIBLE] Smart cast to 'kotlin.String' is impossible, because 'xx' is a member value that has open or custom getter">xx</error>
+            return <error descr="[SMARTCAST_IMPOSSIBLE] Smart cast to 'kotlin.String' is impossible, because 'xx' is a property that has open or custom getter">xx</error>
         }
         return ""
     }
