@@ -388,15 +388,14 @@ public class JetTypeMapper {
     private Type mapType(
             @NotNull KotlinType jetType,
             @Nullable BothSignatureWriter signatureVisitor,
-            @NotNull TypeMappingMode kind,
+            @NotNull TypeMappingMode mode,
             @NotNull Variance howThisTypeIsUsed
     ) {
         Type builtinType = mapBuiltinType(jetType);
 
-        boolean projectionsAllowed = kind != TypeMappingMode.SUPER_TYPE;
         if (builtinType != null) {
-            Type asmType = kind.getNeedPrimitiveBoxing() ? boxType(builtinType) : builtinType;
-            writeGenericType(jetType, asmType, signatureVisitor, howThisTypeIsUsed, projectionsAllowed);
+            Type asmType = mode.getNeedPrimitiveBoxing() ? boxType(builtinType) : builtinType;
+            writeGenericType(jetType, asmType, signatureVisitor, howThisTypeIsUsed, mode);
             return asmType;
         }
 
@@ -438,10 +437,10 @@ public class JetTypeMapper {
                 }
             }
             else {
-                arrayElementType = boxType(mapType(memberType, kind));
+                arrayElementType = boxType(mapType(memberType, mode));
                 if (signatureVisitor != null) {
                     signatureVisitor.writeArrayType();
-                    TypeMappingMode newMode = kind.isForAnnotationParameter() ?
+                    TypeMappingMode newMode = mode.isForAnnotationParameter() ?
                                               TypeMappingMode.TYPE_PARAMETER_FOR_ANNOTATION :
                                               TypeMappingMode.TYPE_PARAMETER;
                     mapType(memberType, signatureVisitor, newMode, memberProjection.getProjectionKind());
@@ -453,15 +452,15 @@ public class JetTypeMapper {
         }
 
         if (descriptor instanceof ClassDescriptor) {
-            Type asmType = kind.isForAnnotationParameter() && KotlinBuiltIns.isKClass((ClassDescriptor) descriptor) ?
+            Type asmType = mode.isForAnnotationParameter() && KotlinBuiltIns.isKClass((ClassDescriptor) descriptor) ?
                            AsmTypes.JAVA_CLASS_TYPE :
                            computeAsmType((ClassDescriptor) descriptor.getOriginal());
-            writeGenericType(jetType, asmType, signatureVisitor, howThisTypeIsUsed, projectionsAllowed);
+            writeGenericType(jetType, asmType, signatureVisitor, howThisTypeIsUsed, mode);
             return asmType;
         }
 
         if (descriptor instanceof TypeParameterDescriptor) {
-            Type type = mapType(getRepresentativeUpperBound((TypeParameterDescriptor) descriptor), kind);
+            Type type = mapType(getRepresentativeUpperBound((TypeParameterDescriptor) descriptor), mode);
             if (signatureVisitor != null) {
                 signatureVisitor.writeTypeVariable(descriptor.getName(), type);
             }
@@ -578,7 +577,7 @@ public class JetTypeMapper {
             @NotNull Type asmType,
             @Nullable BothSignatureWriter signatureVisitor,
             @NotNull Variance howThisTypeIsUsed,
-            boolean projectionsAllowed
+            @NotNull TypeMappingMode mode
     ) {
         if (signatureVisitor != null) {
             if (hasNothingInArguments(type) || type.getArguments().isEmpty()) {
@@ -605,7 +604,7 @@ public class JetTypeMapper {
             writeGenericArguments(
                     signatureVisitor,
                     outermostInnerType.getArguments(), outermostClass.getDeclaredTypeParameters(),
-                    howThisTypeIsUsed, projectionsAllowed);
+                    howThisTypeIsUsed, mode);
 
             for (PossiblyInnerType innerPart : innerTypesAsList.subList(1, innerTypesAsList.size())) {
                 ClassDescriptor classDescriptor = innerPart.getClassDescriptor();
@@ -613,7 +612,7 @@ public class JetTypeMapper {
                 writeGenericArguments(
                         signatureVisitor, innerPart.getArguments(),
                         classDescriptor.getDeclaredTypeParameters(),
-                        howThisTypeIsUsed, projectionsAllowed
+                        howThisTypeIsUsed, mode
                 );
             }
 
@@ -632,27 +631,22 @@ public class JetTypeMapper {
     }
 
     private void writeGenericArguments(
-            BothSignatureWriter signatureVisitor,
-            List<? extends TypeProjection> arguments,
-            List<? extends TypeParameterDescriptor> parameters,
-            Variance howThisTypeIsUsed,
-            boolean projectionsAllowed
+            @NotNull BothSignatureWriter signatureVisitor,
+            @NotNull List<? extends TypeProjection> arguments,
+            @NotNull List<? extends TypeParameterDescriptor> parameters,
+            @NotNull Variance howThisTypeIsUsed,
+            @NotNull TypeMappingMode mode
     ) {
         for (Pair<? extends TypeParameterDescriptor, ? extends TypeProjection> item : CollectionsKt.zip(parameters, arguments)) {
             TypeParameterDescriptor parameter = item.getFirst();
             TypeProjection argument = item.getSecond();
 
-            if (projectionsAllowed && argument.isStarProjection()) {
+            if (argument.isStarProjection()) {
                 signatureVisitor.writeUnboundedWildcard();
             }
             else {
-                Variance projectionKind = projectionsAllowed
-                                          ? getEffectiveVariance(
-                        parameter.getVariance(),
-                        argument.getProjectionKind(),
-                        howThisTypeIsUsed
-                )
-                                          : Variance.INVARIANT;
+                Variance projectionKind =
+                        getEffectiveVariance(parameter.getVariance(), argument.getProjectionKind(), howThisTypeIsUsed, mode);
                 signatureVisitor.writeTypeArgument(projectionKind);
 
                 mapType(argument.getType(), signatureVisitor, TypeMappingMode.TYPE_PARAMETER);
@@ -679,7 +673,14 @@ public class JetTypeMapper {
         });
     }
 
-    private static Variance getEffectiveVariance(Variance parameterVariance, Variance projectionKind, Variance howThisTypeIsUsed) {
+    private static Variance getEffectiveVariance(
+            Variance parameterVariance,
+            Variance projectionKind,
+            Variance howThisTypeIsUsed,
+            TypeMappingMode mode
+    ) {
+        if (!mode.getWriteDeclarationSiteProjections() && projectionKind == Variance.INVARIANT) return Variance.INVARIANT;
+
         // Return type must not contain wildcards
         if (howThisTypeIsUsed == Variance.OUT_VARIANCE) return projectionKind;
 

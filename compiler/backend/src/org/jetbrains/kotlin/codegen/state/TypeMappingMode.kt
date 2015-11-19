@@ -18,7 +18,8 @@ package org.jetbrains.kotlin.codegen.state
 
 internal enum class TypeMappingMode(
         val needPrimitiveBoxing: Boolean = false,
-        val isForAnnotationParameter: Boolean = false
+        val isForAnnotationParameter: Boolean = false,
+        val writeDeclarationSiteProjections: Boolean = true
 ) {
     /**
      * kotlin.Int is mapped to I
@@ -32,7 +33,7 @@ internal enum class TypeMappingMode(
      * kotlin.Int is mapped to Ljava/lang/Integer;
      * No projections allowed in immediate arguments
      */
-    SUPER_TYPE(needPrimitiveBoxing = true),
+    SUPER_TYPE(needPrimitiveBoxing = true, writeDeclarationSiteProjections = false),
     /**
      * kotlin.reflect.KClass mapped to java.lang.Class
      * Other types mapped as DEFAULT
