@@ -24,6 +24,8 @@
     <property name="protobuf.jar" value="${idea.sdk}/lib/protobuf-2.5.0.jar"/>
     <property name="protobuf-lite.jar" value="${basedir}/dependencies/protobuf-2.5.0-lite.jar"/>
     <property name="javax.inject.jar" value="${basedir}/lib/javax.inject.jar"/>
+    <property name="intellij.util.jar" value="${idea.sdk}/lib/util.jar"/>
+    <property name="trove4j.jar" value="${idea.sdk}/jps/trove4j.jar"/>
 
     <property name="java.target" value="1.6"/>
 
@@ -603,6 +605,34 @@
     <target name="daemon-client">
         <cleandir dir="${output}/classes/daemon-client"/>
 
+    <target name="kotlin-build"
+            depends="kotlinr,preloader">
+        <cleandir dir="${output}/classes/kotlin-build"/>
+
+        <kotlinc output="${output}/classes/kotlin-build" modulename="kotlin-build">
+            <src>
+                <pathelement path="build/src"/>
+            </src>
+            <classpath>
+                <pathelement path="${bootstrap.runtime}"/>
+                <pathelement path="${bootstrap.reflect}"/>
+                <pathelement path="${intellij.util.jar}"/>
+                <pathelement path="${trove4j.jar}"/>
+                <pathelement path="${kotlin-home}/lib/kotlin-preloader.jar"/>
+                <pathelement path="${kotlin-home}/lib/kotlin-compiler.jar"/>
+                <pathelement path="${kotlin-home}/lib/kotlinr.jar"/>
+            </classpath>
+        </kotlinc>
+
+        <jar destfile="${kotlin-home}/lib/kotlin-build.jar">
+            <fileset dir="${output}/classes/kotlin-build"/>
+            <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
+        </jar>
+    </target>
+
+    <target name="kotlinr">
+        <cleandir dir="${output}/classes/kotlinr"/>
+
         <kotlinc output="${output}/classes/daemon-client" modulename="client">
             <src>
                 <pathelement path="compiler/daemon/daemon-client/src"/>
@@ -978,7 +1008,7 @@
             depends="builtins,stdlib,core,reflection,pack-runtime,pack-runtime-sources"/>
 
     <target name="dist"
-            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin.test,pack-kotlin-test,kotlin-js-stdlib,android-compiler-plugin,daemon-client"
+            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,kotlin-build,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin.test,pack-kotlin-test,kotlin-js-stdlib,android-compiler-plugin,daemon-client"
             description="Builds redistributables from sources"/>
 
     <target name="dist-quick"
