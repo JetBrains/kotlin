@@ -73,6 +73,8 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
     }
 
     public KotlinTypeInfo visitWhenExpression(KtWhenExpression expression, ExpressionTypingContext contextWithExpectedType, boolean isStatement) {
+        WhenChecker.checkDeprecatedWhenSyntax(contextWithExpectedType.trace, expression);
+
         components.dataFlowAnalyzer.recordExpectedType(contextWithExpectedType.trace, expression, contextWithExpectedType.expectedType);
 
         ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);

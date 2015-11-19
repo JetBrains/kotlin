@@ -351,5 +351,7 @@ public class QuickFixRegistrar : QuickFixContributor {
         DEPRECATED_UNARY_PLUS_MINUS.registerFactory(DeprecatedFunctionConventionFix)
 
         INVOKE_ON_EXTENSION_FUNCTION_WITH_EXPLICIT_DISPATCH_RECEIVER.registerFactory(InvokeOnExtensionFunctionWithExplicitReceiverFix)
+
+        COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT.registerFactory(CommaInWhenConditionWithoutArgumentFix)
     }
 }

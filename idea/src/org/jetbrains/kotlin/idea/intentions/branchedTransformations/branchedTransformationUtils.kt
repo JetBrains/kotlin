@@ -145,3 +145,15 @@ public fun KtWhenExpression.introduceSubject(): KtWhenExpression {
 
     return replaced(whenExpression)
 }
+
+fun KtPsiFactory.combineWhenConditions(conditions: Array<KtWhenCondition>, subject: KtExpression?): KtExpression? {
+    when (conditions.size) {
+        0 -> return null
+        1 -> return conditions[0].toExpression(subject)
+        else -> {
+            return buildExpression {
+                appendExpressions(conditions.map { it.toExpression(subject) }, separator = "||")
+            }
+        }
+    }
+}

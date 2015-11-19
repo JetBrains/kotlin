@@ -16,10 +16,17 @@
 
 package org.jetbrains.kotlin.cfg;
 
+import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.ClassKind;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.Modality;
+import org.jetbrains.kotlin.diagnostics.Errors;
+import org.jetbrains.kotlin.lexer.KtToken;
+import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
@@ -33,8 +40,8 @@ import org.jetbrains.kotlin.types.TypeUtils;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumClass;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
 
 public final class WhenChecker {
     private WhenChecker() {
@@ -267,4 +274,19 @@ public final class WhenChecker {
         }
         return null;
     }
+
+    public static void checkDeprecatedWhenSyntax(@NotNull BindingTrace trace, @NotNull KtWhenExpression expression) {
+        if (expression.getSubjectExpression() != null) return;
+
+        for (KtWhenEntry entry : expression.getEntries()) {
+            if (entry.isElse()) continue;
+            for (PsiElement child = entry.getFirstChild(); child != null; child = child.getNextSibling()) {
+                if (child.getNode().getElementType() == KtTokens.COMMA) {
+                    trace.report(Errors.COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT.on(child));
+                }
+                if (child.getNode().getElementType() == KtTokens.ARROW) break;
+            }
+        }
+    }
+
 }
