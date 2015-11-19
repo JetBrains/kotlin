@@ -38,9 +38,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.typeUtil.containsError
-import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
-import org.jetbrains.kotlin.types.typeUtil.makeNullable
+import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
@@ -399,16 +397,27 @@ class ExpectedInfos(
                 if (otherOperand != null) {
                     var expectedType = bindingContext.getType(otherOperand) ?: return null
 
+                    val expectedName = expectedNameFromExpression(otherOperand)
+
+                    if (expectedType.isNullableNothing()) { // other operand is 'null'
+                        return listOf(ExpectedInfo(NullableTypesFilter, expectedName, null))
+                    }
+
                     // if we complete argument of == or !=, make types in expected info's nullable to allow nullable items too
                     if (operationToken in COMPARISON_TOKENS) {
                         expectedType = expectedType.makeNullable()
                     }
 
-                    return listOf(ExpectedInfo(expectedType, expectedNameFromExpression(otherOperand), null))
+                    return listOf(ExpectedInfo(expectedType, expectedName, null))
                 }
             }
         }
         return null
+    }
+
+    private object NullableTypesFilter : ByTypeFilter {
+        override fun matchingSubstitutor(descriptorType: FuzzyType)
+                = if (descriptorType.type.nullability() != TypeNullability.NOT_NULL) TypeSubstitutor.EMPTY else null
     }
 
     private fun calculateForIf(expressionWithType: KtExpression): Collection<ExpectedInfo>? {

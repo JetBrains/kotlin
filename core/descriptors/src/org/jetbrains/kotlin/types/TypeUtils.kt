@@ -51,6 +51,7 @@ fun KotlinType.immediateSupertypes(): Collection<KotlinType> = TypeUtils.getImme
 fun KotlinType.supertypes(): Collection<KotlinType> = TypeUtils.getAllSupertypes(this)
 
 fun KotlinType.isNothing(): Boolean = KotlinBuiltIns.isNothing(this)
+fun KotlinType.isNullableNothing(): Boolean = KotlinBuiltIns.isNullableNothing(this)
 fun KotlinType.isUnit(): Boolean = KotlinBuiltIns.isUnit(this)
 fun KotlinType.isAnyOrNullableAny(): Boolean = KotlinBuiltIns.isAnyOrNullableAny(this)
 fun KotlinType.isBoolean(): Boolean = KotlinBuiltIns.isBoolean(this)

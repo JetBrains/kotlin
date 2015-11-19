@@ -51,7 +51,7 @@
     <template resource-bundle="org.jetbrains.kotlin.idea.KotlinBundle" key="livetemplate.description.ifn"
               name="ifn" toReformat="true" toShortenFQNames="true"
               value="if ($VAR$ == null) {&#10;$END$&#10;}">
-      <variable alwaysStopAt="true" defaultValue="&quot;i&quot;" expression="kotlinSuggestVariableName()" name="VAR" />
+      <variable alwaysStopAt="true" defaultValue="&quot;i&quot;" expression="kotlinVariable()" name="VAR" />
       <context>
         <option name="KOTLIN_EXPRESSION" value="true" />
       </context>
@@ -59,7 +59,7 @@
     <template resource-bundle="org.jetbrains.kotlin.idea.KotlinBundle" key="livetemplate.description.inn"
               name="inn" toReformat="true" toShortenFQNames="true"
               value="if ($VAR$ != null) {&#10;$END$&#10;}">
-      <variable alwaysStopAt="true" defaultValue="&quot;i&quot;" expression="kotlinSuggestVariableName()" name="VAR" />
+      <variable alwaysStopAt="true" defaultValue="&quot;i&quot;" expression="kotlinVariable()" name="VAR" />
       <context>
         <option name="KOTLIN_EXPRESSION" value="true" />
       </context>
