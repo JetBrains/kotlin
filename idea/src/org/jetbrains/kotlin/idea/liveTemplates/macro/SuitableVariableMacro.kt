@@ -21,35 +21,46 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.UserDataHolder
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.core.IterableTypesDetection
-import org.jetbrains.kotlin.idea.core.IterableTypesDetector
+import org.jetbrains.kotlin.idea.core.ExpectedInfo
+import org.jetbrains.kotlin.idea.core.ExpectedInfos
 import org.jetbrains.kotlin.idea.core.SmartCastCalculator
+import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
+import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 
-class IterableVariableMacro : BaseKotlinVariableMacro() {
+class SuitableVariableMacro : BaseKotlinVariableMacro() {
     private companion object {
-        val ITERABLE_TYPES_DETECTOR_KEY = Key<IterableTypesDetector>("ITERABLE_TYPES_DETECTOR_KEY")
+        val EXPECTED_INFOS_KEY = Key<Collection<ExpectedInfo>>("EXPECTED_INFOS_KEY")
         val SMART_CAST_CALCULATOR_KEY = Key<SmartCastCalculator>("SMART_CAST_CALCULATOR_KEY")
     }
 
-    override fun getName() = "kotlinIterableVariable"
-    override fun getPresentableName() = "kotlinIterableVariable()"
+    override fun getName() = "kotlinVariable"
+    override fun getPresentableName() = "kotlinVariable()"
 
     override fun initUserData(userData: UserDataHolder, contextElement: KtElement, bindingContext: BindingContext) {
         val resolutionFacade = contextElement.getResolutionFacade()
-        val scope = contextElement.getResolutionScope(bindingContext, resolutionFacade)
-        val detector = resolutionFacade.getIdeService(IterableTypesDetection::class.java).createDetector(scope)
-        val smartCastCalculator = SmartCastCalculator(bindingContext, scope.ownerDescriptor, contextElement, null, resolutionFacade)
-        userData.putUserData(ITERABLE_TYPES_DETECTOR_KEY, detector)
-        userData.putUserData(SMART_CAST_CALCULATOR_KEY, smartCastCalculator)
+        if (contextElement is KtNameReferenceExpression) {
+            val callTypeAndReceiver = CallTypeAndReceiver.detect(contextElement)
+            if (callTypeAndReceiver is CallTypeAndReceiver.DEFAULT) {
+                val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade).calculate(contextElement)
+                if (expectedInfos.isNotEmpty()) {
+                    userData.putUserData(EXPECTED_INFOS_KEY, expectedInfos)
+
+                    val scope = contextElement.getResolutionScope(bindingContext, resolutionFacade)
+                    val smartCastCalculator = SmartCastCalculator(bindingContext, scope.ownerDescriptor, contextElement, null, resolutionFacade)
+                    userData.putUserData(SMART_CAST_CALCULATOR_KEY, smartCastCalculator)
+                }
+            }
+        }
     }
 
     override fun isSuitable(variableDescriptor: VariableDescriptor, project: Project, userData: UserDataHolder): Boolean {
-        val detector = userData.getUserData(ITERABLE_TYPES_DETECTOR_KEY)!!
+        val expectedInfos = userData.getUserData(EXPECTED_INFOS_KEY) ?: return true
         val smartCastCalculator = userData.getUserData(SMART_CAST_CALCULATOR_KEY)!!
         val types = smartCastCalculator.types(variableDescriptor)
-        return types.any { detector.isIterable(it, null) }
+        return expectedInfos.any { expectedInfo -> types.any { expectedInfo.filter.matchingSubstitutor(FuzzyType(it, emptyList())) != null } }
     }
 }

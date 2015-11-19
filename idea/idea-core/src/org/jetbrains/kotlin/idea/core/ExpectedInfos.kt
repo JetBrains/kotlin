@@ -139,10 +139,10 @@ class WhenEntryAdditionalData(val whenWithSubject: Boolean) : ExpectedInfo.Addit
 object IfConditionAdditionalData : ExpectedInfo.AdditionalData
 
 class ExpectedInfos(
-        val bindingContext: BindingContext,
-        val resolutionFacade: ResolutionFacade,
-        val useHeuristicSignatures: Boolean = true,
-        val useOuterCallsExpectedTypeCount: Int = 0
+        private val bindingContext: BindingContext,
+        private val resolutionFacade: ResolutionFacade,
+        private val useHeuristicSignatures: Boolean = true,
+        private val useOuterCallsExpectedTypeCount: Int = 0
 ) {
     public fun calculate(expressionWithType: KtExpression): Collection<ExpectedInfo> {
         val expectedInfos = calculateForArgument(expressionWithType)

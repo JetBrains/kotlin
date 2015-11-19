@@ -21,8 +21,8 @@ import com.intellij.openapi.util.UserDataHolder
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 
 class AnyVariableMacro : BaseKotlinVariableMacro() {
-    override fun getName() = "kotlinVariable"
-    override fun getPresentableName() = "kotlinVariable()"
+    override fun getName() = "kotlinAnyVariable"
+    override fun getPresentableName() = "kotlinAnyVariable()"
 
     override fun isSuitable(variableDescriptor: VariableDescriptor, project: Project, userData: UserDataHolder) = true
 }
