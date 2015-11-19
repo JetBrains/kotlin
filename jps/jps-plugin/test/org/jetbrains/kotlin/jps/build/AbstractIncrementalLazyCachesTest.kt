@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.jps.incremental.CacheVersion
 import org.jetbrains.kotlin.jps.incremental.CacheVersionProvider
 import org.jetbrains.kotlin.jps.incremental.KotlinDataContainerTarget
+import org.jetbrains.kotlin.jps.incremental.getCacheDirectoryName
 import org.jetbrains.kotlin.jps.incremental.storage.BasicMapsOwner
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
@@ -86,41 +87,46 @@ public abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJps
         val p = Printer(sb)
         val targets = projectDescriptor.allModuleTargets
         val paths = projectDescriptor.dataManager.dataPaths
-        val versionProvider = CacheVersionProvider(paths)
+        val versions = CacheVersionProvider(paths)
 
-        dumpCachesForTarget(p, paths, KotlinDataContainerTarget, versionProvider.dataContainerVersion())
+        dumpCachesForTarget(p, paths, KotlinDataContainerTarget, versions.dataContainerVersion())
 
         for (target in targets.sortedBy { it.presentableName }) {
-            dumpCachesForTarget(p, paths, target, versionProvider.normalVersion(target), versionProvider.experimentalVersion(target))
+            dumpCachesForTarget(p, paths, target, versions.normalVersion(target), versions.experimentalVersion(target),
+                                subdirectory = getCacheDirectoryName())
         }
 
         return sb.toString()
     }
 
-    private fun dumpCachesForTarget(p: Printer, paths: BuildDataPaths, target: BuildTarget<*>, vararg cacheVersions: CacheVersion) {
+    private fun dumpCachesForTarget(
+            p: Printer,
+            paths: BuildDataPaths,
+            target: BuildTarget<*>,
+            vararg cacheVersions: CacheVersion,
+            subdirectory: String? = null
+    ) {
         p.println(target)
         p.pushIndent()
 
-        val dataRoot = paths.getTargetDataRoot(target)
-
+        val dataRoot = paths.getTargetDataRoot(target).let { if (subdirectory != null) File(it, subdirectory) else it }
         cacheVersions
                 .map { it.formatVersionFile }
                 .filter { it.exists() }
                 .sortedBy { it.name }
-                .forEach { p.println(it.relativeTo(dataRoot)) }
+                .forEach { p.println(it.name) }
 
-        val cacheNames = kotlinCacheNames(dataRoot)
-        cacheNames.sorted().forEach { p.println(it) }
+        kotlinCacheNames(dataRoot).sorted().forEach { p.println(it) }
 
         p.popIndent()
     }
 
-    private fun kotlinCacheNames(dataRoot: File): List<String> {
+    private fun kotlinCacheNames(dir: File): List<String> {
         val result = arrayListOf<String>()
 
-        for (file in dataRoot.walk()) {
+        for (file in dir.walk()) {
             if (file.isFile && file.extension == BasicMapsOwner.CACHE_EXTENSION) {
-                result.add(file.relativeTo(dataRoot))
+                result.add(file.name)
             }
         }
 
