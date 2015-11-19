@@ -479,7 +479,7 @@ package packageForDebugger
 private fun createFileForDebugger(codeFragment: KtCodeFragment,
                                   extractedFunction: KtNamedFunction
 ): KtFile {
-    val containingContextFile = (codeFragment.context as? KtElement)?.getContainingKtFile()
+    val containingContextFile = codeFragment.getContextContainingFile()
     val importsFromContextFile = containingContextFile?.importList?.let { it.text + "\n" } ?: ""
     val packageFromContextFile = containingContextFile?.packageName?.let {
         if (it.isNotBlank()) "import $it.*\n" else null
