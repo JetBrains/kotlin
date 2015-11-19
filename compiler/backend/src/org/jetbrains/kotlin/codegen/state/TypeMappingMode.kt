@@ -16,40 +16,43 @@
 
 package org.jetbrains.kotlin.codegen.state
 
-internal enum class TypeMappingMode(
+internal class TypeMappingMode private constructor(
         val needPrimitiveBoxing: Boolean = false,
         val isForAnnotationParameter: Boolean = false,
-        val writeDeclarationSiteProjections: Boolean = true
+        val writeDeclarationSiteProjections: Boolean = true,
+        val genericArgumentMode: TypeMappingMode? = null
 ) {
-    /**
-     * kotlin.Int is mapped to I
-     */
-    DEFAULT() {
-        override fun toGenericArgumentMode(): TypeMappingMode = GENERIC_TYPE
-    },
-    /**
-     * kotlin.Int is mapped to Ljava/lang/Integer;
-     */
-    GENERIC_TYPE(needPrimitiveBoxing = true),
-    /**
-     * kotlin.Int is mapped to Ljava/lang/Integer;
-     * No projections allowed in immediate arguments
-     */
-    SUPER_TYPE(needPrimitiveBoxing = true, writeDeclarationSiteProjections = false) {
-        override fun toGenericArgumentMode(): TypeMappingMode = GENERIC_TYPE
-    },
-    /**
-     * kotlin.reflect.KClass mapped to java.lang.Class
-     * Other types mapped as DEFAULT
-     */
-    VALUE_FOR_ANNOTATION(isForAnnotationParameter = true) {
-        override fun toGenericArgumentMode(): TypeMappingMode = GENERIC_TYPE_PARAMETER_FOR_ANNOTATION_PARAMETER
-    },
-    /**
-     * kotlin.reflect.KClass mapped to java.lang.Class
-     * Other types mapped as GENERIC_TYPE
-     */
-    GENERIC_TYPE_PARAMETER_FOR_ANNOTATION_PARAMETER(isForAnnotationParameter = true, needPrimitiveBoxing = true);
+    companion object {
+        /**
+         * kotlin.Int is mapped to Ljava/lang/Integer;
+         */
+        @JvmField
+        val GENERIC_TYPE = TypeMappingMode(needPrimitiveBoxing = true)
 
-    open fun toGenericArgumentMode(): TypeMappingMode = this
+        /**
+         * kotlin.Int is mapped to I
+         */
+        @JvmField
+        val DEFAULT = TypeMappingMode(genericArgumentMode = GENERIC_TYPE)
+
+
+        /**
+         * kotlin.Int is mapped to Ljava/lang/Integer;
+         * No projections allowed in immediate arguments
+         */
+        @JvmField
+        val SUPER_TYPE = TypeMappingMode(needPrimitiveBoxing = true, writeDeclarationSiteProjections = false, genericArgumentMode = GENERIC_TYPE)
+
+        /**
+         * kotlin.reflect.KClass mapped to java.lang.Class
+         * Other types mapped as DEFAULT
+         */
+        @JvmField
+        val VALUE_FOR_ANNOTATION = TypeMappingMode(
+                isForAnnotationParameter = true,
+                genericArgumentMode = TypeMappingMode(isForAnnotationParameter = true, needPrimitiveBoxing = true))
+
+    }
+
+    fun toGenericArgumentMode(): TypeMappingMode = genericArgumentMode ?: this
 }
