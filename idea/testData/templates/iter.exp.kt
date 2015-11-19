@@ -12,7 +12,7 @@ class MyClass {
         val myList = ArrayList<String>()
         val stream = FileInputStream(".")
         if (o is String) {
-            for (collection in args) {
+            for (arg in args) {
                 <caret>
             }
         }

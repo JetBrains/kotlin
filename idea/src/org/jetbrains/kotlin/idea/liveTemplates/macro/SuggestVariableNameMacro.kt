@@ -16,15 +16,73 @@
 
 package org.jetbrains.kotlin.idea.liveTemplates.macro
 
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.UserDataHolder
+import com.intellij.codeInsight.lookup.LookupElement
+import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.codeInsight.template.*
+import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.core.IterableTypesDetection
+import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
+import org.jetbrains.kotlin.idea.resolve.ideService
+import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtForExpression
+import org.jetbrains.kotlin.psi.KtWithExpressionInitializer
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-class SuggestVariableNameMacro : BaseKotlinVariableMacro() {
+class SuggestVariableNameMacro : Macro() {
     override fun getName() = "kotlinSuggestVariableName"
     override fun getPresentableName() = "kotlinSuggestVariableName()"
 
-    override fun isSuitable(variableDescriptor: VariableDescriptor, project: Project, userData: UserDataHolder): Boolean {
-        return variableDescriptor.type.isMarkedNullable
+    override fun calculateResult(params: Array<out Expression>, context: ExpressionContext): Result? {
+        return nameSuggestions(context).firstOrNull()?.let { TextResult(it) }
+    }
+
+    override fun calculateLookupItems(params: Array<out Expression>, context: ExpressionContext): Array<out LookupElement>? {
+        val suggestions = nameSuggestions(context)
+        if (suggestions.size < 2) return null
+        return suggestions.map { LookupElementBuilder.create(it) }.toTypedArray()
+    }
+
+    private fun nameSuggestions(context: ExpressionContext): Collection<String> {
+        val project = context.project
+        val psiDocumentManager = PsiDocumentManager.getInstance(project)
+        psiDocumentManager.commitAllDocuments()
+
+        val psiFile = psiDocumentManager.getPsiFile(context.editor!!.document) as? KtFile ?: return emptyList()
+        val token = psiFile.findElementAt(context.startOffset) ?: return emptyList()
+        val declaration = token.parent as? KtCallableDeclaration ?: return emptyList()
+        if (token != declaration.nameIdentifier) return emptyList()
+
+        val nameValidator: (String) -> Boolean = { true }
+
+        val initializer = (declaration as? KtWithExpressionInitializer)?.initializer
+        if (initializer != null) {
+            val bindingContext = initializer.analyze(BodyResolveMode.PARTIAL)
+            return KotlinNameSuggester.suggestNamesByExpressionAndType(initializer, bindingContext, nameValidator, null)
+        }
+
+        val parent = declaration.parent
+        if (parent is KtForExpression && declaration == parent.loopParameter) {
+            iterationVariableNameSuggestions(parent, nameValidator)?.let { return it }
+        }
+
+        val descriptor = declaration.resolveToDescriptor() as? VariableDescriptor ?: return emptyList()
+        return KotlinNameSuggester.suggestNamesByType(descriptor.type, nameValidator, null)
+    }
+
+    private fun iterationVariableNameSuggestions(forExpression: KtForExpression, nameValidator: (String) -> Boolean): Collection<String>? {
+        val loopRange = forExpression.loopRange ?: return null
+        val resolutionFacade = forExpression.getResolutionFacade()
+        val bindingContext = resolutionFacade.analyze(loopRange, BodyResolveMode.PARTIAL)
+        val type = bindingContext.getType(loopRange) ?: return null
+        val scope = loopRange.getResolutionScope(bindingContext, resolutionFacade)
+        val detector = resolutionFacade.ideService<IterableTypesDetection>().createDetector(scope)
+        val elementType = detector.elementType(type)?.type ?: return null
+        return KotlinNameSuggester.suggestIterationVariableNames(loopRange, elementType, bindingContext, nameValidator, null)
     }
 }
