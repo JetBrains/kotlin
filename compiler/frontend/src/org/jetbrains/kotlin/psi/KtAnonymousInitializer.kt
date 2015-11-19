@@ -23,23 +23,23 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.utils.sure
 
-class KtAnonymousInitializer : KtDeclarationStub<KotlinPlaceHolderStub<KtAnonymousInitializer>>, KtStatementExpression {
+class KtClassInitializer : KtDeclarationStub<KotlinPlaceHolderStub<KtClassInitializer>>, KtAnonymousInitializer {
     constructor(node: ASTNode) : super(node)
 
-    constructor(stub: KotlinPlaceHolderStub<KtAnonymousInitializer>) : super(stub, KtStubElementTypes.ANONYMOUS_INITIALIZER)
+    constructor(stub: KotlinPlaceHolderStub<KtClassInitializer>) : super(stub, KtStubElementTypes.ANONYMOUS_INITIALIZER)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitAnonymousInitializer(this, data)
 
-    val body: KtExpression?
+    override val body: KtExpression?
         get() = findChildByClass(KtExpression::class.java)
 
-    val openBraceNode: PsiElement?
+    override val openBraceNode: PsiElement?
         get() {
             val body = body
-            return if ((body is KtBlockExpression)) body.lBrace else null
+            return if (body is KtBlockExpression) body.lBrace else null
         }
 
-    val containingDeclaration: KtDeclaration
+    override val containingDeclaration: KtDeclaration
         get() {
             val classOrObject = PsiTreeUtil.getParentOfType(this, KtClassOrObject::class.java, true)
             if (classOrObject != null) {
@@ -48,4 +48,10 @@ class KtAnonymousInitializer : KtDeclarationStub<KotlinPlaceHolderStub<KtAnonymo
             val type = PsiTreeUtil.getParentOfType(this, KtScript::class.java, true)
             return type.sure { "Should only be present in class, object or script" }
         }
+}
+
+public interface KtAnonymousInitializer : KtDeclaration, KtStatementExpression {
+    val containingDeclaration: KtDeclaration
+    val body: KtExpression?
+    val openBraceNode: PsiElement?
 }
