@@ -19,12 +19,11 @@ package org.jetbrains.kotlin.idea.liveTemplates
 import com.intellij.codeInsight.template.TemplateContextType
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import java.io.File
 
 public class LiveTemplatesContextTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath(): String =
-            File(PluginTestCaseBase.getTestDataPathBase(), "/templates/context").getPath() + File.separator
+            File(TEST_DATA_BASE_PATH, "/context").path + File.separator
 
     public fun testInDocComment() {
         myFixture.configureByFile(getTestName(false) + ".kt")
