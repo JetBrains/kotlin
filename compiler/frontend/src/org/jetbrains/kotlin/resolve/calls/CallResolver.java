@@ -26,7 +26,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.*;
@@ -60,10 +59,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions;
 import org.jetbrains.kotlin.util.PerformanceCounter;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS;
@@ -144,7 +140,7 @@ public class CallResolver {
         CallableDescriptorCollectors<VariableDescriptor> callableDescriptorCollectors = CallableDescriptorCollectors.VARIABLES;
         return computeTasksAndResolveCall(
                 context, referencedName, nameExpression,
-                callableDescriptorCollectors, CallTransformer.VARIABLE_CALL_TRANSFORMER);
+                callableDescriptorCollectors, CallTransformer.VARIABLE_CALL_TRANSFORMER, ResolveKind.VARIABLE);
     }
 
     @NotNull
@@ -154,7 +150,7 @@ public class CallResolver {
     ) {
         return computeTasksAndResolveCall(
                 context, nameExpression.getReferencedNameAsName(), nameExpression,
-                CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES, CallTransformer.MEMBER_CALL_TRANSFORMER);
+                CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES, CallTransformer.MEMBER_CALL_TRANSFORMER, ResolveKind.CALLABLE_REFERENCE);
     }
 
     @NotNull
@@ -167,7 +163,7 @@ public class CallResolver {
         BasicCallResolutionContext callResolutionContext = BasicCallResolutionContext.create(context, call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS);
         return computeTasksAndResolveCall(
                 callResolutionContext, name, functionReference,
-                CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES, CallTransformer.FUNCTION_CALL_TRANSFORMER);
+                CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES, CallTransformer.FUNCTION_CALL_TRANSFORMER, ResolveKind.FUNCTION);
     }
 
     @NotNull
@@ -177,7 +173,8 @@ public class CallResolver {
     ) {
         return computeTasksAndResolveCall(
                 context, OperatorNameConventions.INVOKE, tracing,
-                CallableDescriptorCollectors.FUNCTIONS, CallTransformer.FUNCTION_CALL_TRANSFORMER);
+                CallableDescriptorCollectors.FUNCTIONS, CallTransformer.FUNCTION_CALL_TRANSFORMER,
+                ResolveKind.INVOKE);
     }
 
     @NotNull
@@ -186,10 +183,11 @@ public class CallResolver {
             @NotNull Name name,
             @NotNull KtReferenceExpression referenceExpression,
             @NotNull CallableDescriptorCollectors<D> collectors,
-            @NotNull CallTransformer<D, F> callTransformer
+            @NotNull CallTransformer<D, F> callTransformer,
+            @NotNull ResolveKind kind
     ) {
         TracingStrategy tracing = TracingStrategyImpl.create(referenceExpression, context.call);
-        return computeTasksAndResolveCall(context, name, tracing, collectors, callTransformer);
+        return computeTasksAndResolveCall(context, name, tracing, collectors, callTransformer, kind);
     }
 
     @NotNull
@@ -198,13 +196,21 @@ public class CallResolver {
             @NotNull final Name name,
             @NotNull final TracingStrategy tracing,
             @NotNull final CallableDescriptorCollectors<D> collectors,
-            @NotNull final CallTransformer<D, F> callTransformer
+            @NotNull final CallTransformer<D, F> callTransformer,
+            @NotNull final ResolveKind kind
     ) {
         return callResolvePerfCounter.time(new Function0<OverloadResolutionResults<F>>() {
             @Override
             public OverloadResolutionResults<F> invoke() {
-                List<ResolutionTask<D, F>> tasks = taskPrioritizer.<D, F>computePrioritizedTasks(context, name, tracing, collectors);
-                return doResolveCallOrGetCachedResults(context, tasks, callTransformer, tracing);
+                TaskContextForMigration<D, F> contextForMigration = new TaskContextForMigration<D, F>(
+                        kind, callTransformer, name, null,
+                        new Function0<List<ResolutionTask<D, F>>>() {
+                            @Override
+                            public List<ResolutionTask<D, F>> invoke() {
+                                return taskPrioritizer.<D, F>computePrioritizedTasks(context, name, tracing, collectors);
+                            }
+                        });
+                return doResolveCallOrGetCachedResults(context, contextForMigration, tracing);
             }
         });
     }
@@ -230,9 +236,16 @@ public class CallResolver {
         return callResolvePerfCounter.time(new Function0<OverloadResolutionResults<F>>() {
             @Override
             public OverloadResolutionResults<F> invoke() {
-                List<ResolutionTask<D, F>> prioritizedTasks =
-                        taskPrioritizer.<D, F>computePrioritizedTasksFromCandidates(context, candidates, tracing);
-                return doResolveCallOrGetCachedResults(context, prioritizedTasks, callTransformer, tracing);
+                TaskContextForMigration<D, F> contextForMigration = new TaskContextForMigration<D, F>(
+                        ResolveKind.GIVEN_CANDIDATES, callTransformer, null, candidates,
+                        new Function0<List<ResolutionTask<D, F>>>() {
+                            @Override
+                            public List<ResolutionTask<D, F>> invoke() {
+                                return taskPrioritizer.<D, F>computePrioritizedTasksFromCandidates(
+                                        context, candidates, tracing);
+                            }
+                        });
+                return doResolveCallOrGetCachedResults(context, contextForMigration, tracing);
             }
         });
     }
@@ -279,7 +292,9 @@ public class CallResolver {
             KtArrayAccessExpression arrayAccessExpression = (KtArrayAccessExpression) context.call.getCallElement();
             return computeTasksAndResolveCall(
                     context, name, arrayAccessExpression,
-                    CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES, CallTransformer.FUNCTION_CALL_TRANSFORMER);
+                    CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES,
+                    CallTransformer.FUNCTION_CALL_TRANSFORMER,
+                    ResolveKind.FUNCTION);
         }
 
         KtExpression calleeExpression = context.call.getCalleeExpression();
@@ -287,7 +302,7 @@ public class CallResolver {
             KtSimpleNameExpression expression = (KtSimpleNameExpression) calleeExpression;
             return computeTasksAndResolveCall(
                     context, expression.getReferencedNameAsName(), expression,
-                    CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES, CallTransformer.FUNCTION_CALL_TRANSFORMER);
+                    CallableDescriptorCollectors.FUNCTIONS_AND_VARIABLES, CallTransformer.FUNCTION_CALL_TRANSFORMER, ResolveKind.FUNCTION);
         }
         else if (calleeExpression instanceof KtConstructorCalleeExpression) {
             return resolveCallForConstructor(context, (KtConstructorCalleeExpression) calleeExpression);
@@ -458,21 +473,33 @@ public class CallResolver {
         return callResolvePerfCounter.time(new Function0<OverloadResolutionResults<FunctionDescriptor>>() {
             @Override
             public OverloadResolutionResults<FunctionDescriptor> invoke() {
-                BasicCallResolutionContext basicCallResolutionContext =
+                final BasicCallResolutionContext basicCallResolutionContext =
                         BasicCallResolutionContext.create(context, call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS, dataFlowInfoForArguments);
 
-                List<ResolutionTask<CallableDescriptor, FunctionDescriptor>> tasks =
-                        taskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasksFromCandidates(
-                                basicCallResolutionContext, Collections.singleton(candidate), tracing);
-                return doResolveCallOrGetCachedResults(basicCallResolutionContext, tasks, CallTransformer.FUNCTION_CALL_TRANSFORMER, tracing);
+                final Set<ResolutionCandidate<CallableDescriptor>> candidates = Collections.singleton(candidate);
+
+                TaskContextForMigration<CallableDescriptor, FunctionDescriptor> contextForMigration =
+                        new TaskContextForMigration<CallableDescriptor, FunctionDescriptor>(
+                                ResolveKind.GIVEN_CANDIDATES, CallTransformer.FUNCTION_CALL_TRANSFORMER, null, candidates,
+                                new Function0<List<ResolutionTask<CallableDescriptor, FunctionDescriptor>>>() {
+                                    @Override
+                                    public List<ResolutionTask<CallableDescriptor, FunctionDescriptor>> invoke() {
+
+                                        return taskPrioritizer.<CallableDescriptor, FunctionDescriptor>computePrioritizedTasksFromCandidates(
+                                                basicCallResolutionContext, candidates, tracing);
+                                    }
+                                }
+                        );
+
+
+                return doResolveCallOrGetCachedResults(basicCallResolutionContext, contextForMigration, tracing);
             }
         });
     }
 
     private <D extends CallableDescriptor, F extends D> OverloadResolutionResultsImpl<F> doResolveCallOrGetCachedResults(
             @NotNull BasicCallResolutionContext context,
-            @NotNull List<ResolutionTask<D, F>> prioritizedTasks,
-            @NotNull CallTransformer<D, F> callTransformer,
+            @NotNull TaskContextForMigration<D, F> contextForMigration,
             @NotNull TracingStrategy tracing
     ) {
         Call call = context.call;
@@ -484,7 +511,7 @@ public class CallResolver {
         BindingContextUtilsKt.recordScope(newContext.trace, newContext.scope, newContext.call.getCalleeExpression());
         BindingContextUtilsKt.recordDataFlowInfo(newContext, newContext.call.getCalleeExpression());
 
-        OverloadResolutionResultsImpl<F> results = doResolveCall(newContext, prioritizedTasks, callTransformer, tracing);
+        OverloadResolutionResultsImpl<F> results = doResolveCall(newContext, contextForMigration, tracing);
         DelegatingBindingTrace deltasTraceForTypeInference = ((OverloadResolutionResultsImpl) results).getTrace();
         if (deltasTraceForTypeInference != null) {
             deltasTraceForTypeInference.addOwnDataTo(traceToResolveCall);
@@ -544,8 +571,7 @@ public class CallResolver {
     @NotNull
     private <D extends CallableDescriptor, F extends D> OverloadResolutionResultsImpl<F> doResolveCall(
             @NotNull BasicCallResolutionContext context,
-            @NotNull List<ResolutionTask<D, F>> prioritizedTasks, // high to low priority
-            @NotNull CallTransformer<D, F> callTransformer,
+            @NotNull TaskContextForMigration<D, F> contextForMigration,
             @NotNull TracingStrategy tracing
     ) {
         if (context.checkArguments == CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS) {
@@ -566,6 +592,16 @@ public class CallResolver {
             }
         }
 
+        return doResolveCall(context, contextForMigration.lazyTasks.invoke(), contextForMigration.callTransformer, tracing);
+    }
+
+    @NotNull
+    private <D extends CallableDescriptor, F extends D> OverloadResolutionResultsImpl<F> doResolveCall(
+            @NotNull BasicCallResolutionContext context,
+            @NotNull List<ResolutionTask<D, F>> prioritizedTasks, // high to low priority
+            @NotNull CallTransformer<D, F> callTransformer,
+            @NotNull TracingStrategy tracing
+    ) {
         Collection<ResolvedCall<F>> allCandidates = Lists.newArrayList();
         OverloadResolutionResultsImpl<F> successfulResults = null;
         TemporaryBindingTrace traceForFirstNonemptyCandidateSet = null;
@@ -692,5 +728,43 @@ public class CallResolver {
             task.tracing.bindResolvedCall(trace, resolvedCall);
             task.addResolvedCall(resolvedCall);
         }
+    }
+
+    private static class TaskContextForMigration<D extends CallableDescriptor, F extends D> {
+        @NotNull
+        final Function0<List<ResolutionTask<D, F>>> lazyTasks;
+
+        @NotNull
+        final CallTransformer<D, F> callTransformer;
+
+        @Nullable
+        final Name name;
+
+        @Nullable
+        final Collection<ResolutionCandidate<D>> givenCandidates;
+
+        @NotNull
+        final ResolveKind resolveKind;
+
+        private TaskContextForMigration(
+                @NotNull ResolveKind kind,
+                @NotNull CallTransformer<D, F> transformer,
+                @Nullable Name name,
+                @Nullable Collection<ResolutionCandidate<D>> candidates, @NotNull Function0<List<ResolutionTask<D, F>>> tasks
+        ) {
+            lazyTasks = tasks;
+            callTransformer = transformer;
+            this.name = name;
+            givenCandidates = candidates;
+            resolveKind = kind;
+        }
+    }
+
+    public enum ResolveKind {
+        FUNCTION,
+        INVOKE,
+        VARIABLE,
+        CALLABLE_REFERENCE,
+        GIVEN_CANDIDATES,
     }
 }
