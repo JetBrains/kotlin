@@ -365,8 +365,8 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
                     initializeProperty(codegen.invoke(), (KtProperty) declaration);
                 }
             }
-            else if (declaration instanceof KtClassInitializer) {
-                KtExpression body = ((KtClassInitializer) declaration).getBody();
+            else if (declaration instanceof KtAnonymousInitializer) {
+                KtExpression body = ((KtAnonymousInitializer) declaration).getBody();
                 if (body != null) {
                     codegen.invoke().gen(body, Type.VOID_TYPE);
                 }

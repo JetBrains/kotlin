@@ -130,7 +130,7 @@ public class KotlinStructureViewElement implements StructureViewTreeElement, Que
         }
 
         final KtDeclaration declaration = (KtDeclaration) element;
-        if (declaration instanceof KtClassInitializer) {
+        if (declaration instanceof KtAnonymousInitializer) {
             return null;
         }
 

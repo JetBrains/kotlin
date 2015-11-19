@@ -1264,8 +1264,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     initializer.accept(visitor);
                 }
             }
-            else if (declaration instanceof KtClassInitializer) {
-                KtClassInitializer initializer = (KtClassInitializer) declaration;
+            else if (declaration instanceof KtAnonymousInitializer) {
+                KtAnonymousInitializer initializer = (KtAnonymousInitializer) declaration;
                 initializer.accept(visitor);
             }
             else if (declaration instanceof KtSecondaryConstructor) {

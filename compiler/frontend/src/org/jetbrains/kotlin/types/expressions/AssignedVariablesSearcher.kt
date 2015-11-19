@@ -38,7 +38,7 @@ abstract class AssignedVariablesSearcher: KtTreeVisitorVoid() {
         if (declaration is KtDeclarationWithBody || declaration is KtClassOrObject) {
             currentDeclaration = declaration
         }
-        else if (declaration is KtClassInitializer) {
+        else if (declaration is KtAnonymousInitializer) {
             // Go to class declaration: init -> body -> class
             currentDeclaration = declaration.parent.parent as KtDeclaration
         }

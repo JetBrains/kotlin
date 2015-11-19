@@ -62,7 +62,7 @@ public class DeclarationScopeProviderImpl implements DeclarationScopeProvider {
         if (parentDeclaration instanceof KtClassOrObject) {
             KtClassOrObject classOrObject = (KtClassOrObject) parentDeclaration;
             LazyClassDescriptor classDescriptor = (LazyClassDescriptor) lazyDeclarationResolver.getClassDescriptor(classOrObject, NoLookupLocation.WHEN_GET_DECLARATION_SCOPE);
-            if (ktDeclaration instanceof KtClassInitializer || ktDeclaration instanceof KtProperty) {
+            if (ktDeclaration instanceof KtAnonymousInitializer || ktDeclaration instanceof KtProperty) {
                 return classDescriptor.getScopeForInitializerResolution();
             }
             if (ktDeclaration instanceof KtObjectDeclaration

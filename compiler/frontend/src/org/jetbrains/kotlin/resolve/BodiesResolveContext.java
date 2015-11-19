@@ -39,7 +39,7 @@ public interface BodiesResolveContext {
     @Mutable
     Map<KtClassOrObject, ClassDescriptorWithResolutionScopes> getDeclaredClasses();
     @Mutable
-    Map<KtClassInitializer, ClassDescriptorWithResolutionScopes> getAnonymousInitializers();
+    Map<KtAnonymousInitializer, ClassDescriptorWithResolutionScopes> getAnonymousInitializers();
     @Mutable
     Map<KtSecondaryConstructor, ConstructorDescriptor> getSecondaryConstructors();
     @Mutable

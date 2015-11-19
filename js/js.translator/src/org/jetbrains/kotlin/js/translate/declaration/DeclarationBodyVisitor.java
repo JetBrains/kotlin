@@ -120,7 +120,7 @@ public class DeclarationBodyVisitor extends TranslatorVisitor<Void> {
     }
 
     @Override
-    public Void visitAnonymousInitializer(@NotNull KtClassInitializer expression, TranslationContext context) {
+    public Void visitAnonymousInitializer(@NotNull KtAnonymousInitializer expression, TranslationContext context) {
         // parsed it in initializer visitor => no additional actions are needed
         return null;
     }

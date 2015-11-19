@@ -722,7 +722,7 @@ private fun ExtractionData.suggestFunctionNames(returnType: KotlinType): List<St
     val validator =
             NewDeclarationNameValidator(
                     targetSibling.parent,
-                    if (targetSibling is KtClassInitializer) targetSibling.parent else targetSibling,
+                    if (targetSibling is KtAnonymousInitializer) targetSibling.parent else targetSibling,
                     if (options.extractAsProperty) NewDeclarationNameValidator.Target.VARIABLES else NewDeclarationNameValidator.Target.FUNCTIONS_AND_CLASSES
             )
     if (!returnType.isDefault()) {

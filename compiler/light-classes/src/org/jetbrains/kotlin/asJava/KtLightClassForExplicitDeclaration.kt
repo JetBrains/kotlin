@@ -93,7 +93,7 @@ public open class KtLightClassForExplicitDeclaration(
                 KtNamedFunction::class.java,
                 KtConstructor::class.java,
                 KtProperty::class.java,
-                KtClassInitializer::class.java,
+                KtAnonymousInitializer::class.java,
                 KtParameter::class.java)
 
         if (declaration is KtParameter) {
@@ -109,7 +109,7 @@ public open class KtLightClassForExplicitDeclaration(
             return getParentByPsiMethod(LightClassUtil.getLightClassPropertyMethods(declaration).getter, declaration.name, true)
         }
 
-        if (declaration is KtClassInitializer) {
+        if (declaration is KtAnonymousInitializer) {
             val parent = declaration.parent
             val grandparent = parent.parent
 

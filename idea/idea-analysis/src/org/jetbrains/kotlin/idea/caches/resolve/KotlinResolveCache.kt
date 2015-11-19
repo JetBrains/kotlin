@@ -111,7 +111,7 @@ internal class PerFileAnalysisCache(val file: KtFile, val componentProvider: Com
 private object KotlinResolveDataProvider {
     private val topmostElementTypes = arrayOf<Class<out PsiElement?>?>(
             javaClass<KtNamedFunction>(),
-            javaClass<KtClassInitializer>(),
+            javaClass<KtAnonymousInitializer>(),
             javaClass<KtProperty>(),
             javaClass<KtImportDirective>(),
             javaClass<KtPackageDirective>(),

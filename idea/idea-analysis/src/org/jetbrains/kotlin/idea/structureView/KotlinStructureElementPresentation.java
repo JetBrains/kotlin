@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.idea.KotlinDescriptorIconProvider;
-import org.jetbrains.kotlin.psi.KtClassInitializer;
+import org.jetbrains.kotlin.psi.KtAnonymousInitializer;
 import org.jetbrains.kotlin.psi.KtModifierListOwner;
 import org.jetbrains.kotlin.psi.KtPsiUtil;
 
@@ -128,7 +128,7 @@ class KotlinStructureElementPresentation implements ColoredItemPresentation, Loc
             return text;
         }
 
-        if (navigatablePsiElement instanceof KtClassInitializer) {
+        if (navigatablePsiElement instanceof KtAnonymousInitializer) {
             return "<class initializer>";
         }
 

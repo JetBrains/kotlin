@@ -551,7 +551,7 @@ class PartialBodyResolveFilter(
                         true
                 }
 
-                is KtClassInitializer -> false
+                is KtAnonymousInitializer -> false
 
                 else -> true
             }

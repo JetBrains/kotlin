@@ -243,7 +243,7 @@ public class KtPsiFactory(private val project: Project) {
         return createFunction("fun foo() {}").getBodyExpression() as KtBlockExpression
     }
 
-    public fun createAnonymousInitializer(): KtClassInitializer {
+    public fun createAnonymousInitializer(): KtAnonymousInitializer {
         return createClass("class A { init {} }").getAnonymousInitializers().first()
     }
 

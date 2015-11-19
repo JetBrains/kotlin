@@ -325,7 +325,7 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
         super.visitInitializerList(list, null);
     }
 
-    public void visitAnonymousInitializer(@NotNull KtClassInitializer initializer) {
+    public void visitAnonymousInitializer(@NotNull KtAnonymousInitializer initializer) {
         super.visitAnonymousInitializer(initializer, null);
     }
 
@@ -889,7 +889,7 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
     }
 
     @Override
-    public final Void visitAnonymousInitializer(@NotNull KtClassInitializer initializer, Void data) {
+    public final Void visitAnonymousInitializer(@NotNull KtAnonymousInitializer initializer, Void data) {
         visitAnonymousInitializer(initializer);
         return null;
     }

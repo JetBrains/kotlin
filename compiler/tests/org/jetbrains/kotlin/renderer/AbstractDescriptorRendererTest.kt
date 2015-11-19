@@ -108,7 +108,7 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
                 accessor.acceptChildren(this)
             }
 
-            override fun visitAnonymousInitializer(initializer: KtClassInitializer) {
+            override fun visitAnonymousInitializer(initializer: KtAnonymousInitializer) {
                 initializer.acceptChildren(this)
             }
 

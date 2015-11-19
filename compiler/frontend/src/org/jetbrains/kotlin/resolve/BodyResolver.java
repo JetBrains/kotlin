@@ -500,8 +500,8 @@ public class BodyResolver {
     }
 
     private void resolveAnonymousInitializers(@NotNull BodiesResolveContext c) {
-        for (Map.Entry<KtClassInitializer, ClassDescriptorWithResolutionScopes> entry : c.getAnonymousInitializers().entrySet()) {
-            KtClassInitializer initializer = entry.getKey();
+        for (Map.Entry<KtAnonymousInitializer, ClassDescriptorWithResolutionScopes> entry : c.getAnonymousInitializers().entrySet()) {
+            KtAnonymousInitializer initializer = entry.getKey();
             ClassDescriptorWithResolutionScopes descriptor = entry.getValue();
             resolveAnonymousInitializer(c.getOuterDataFlowInfo(), initializer, descriptor);
         }
@@ -509,7 +509,7 @@ public class BodyResolver {
 
     public void resolveAnonymousInitializer(
             @NotNull DataFlowInfo outerDataFlowInfo,
-            @NotNull KtClassInitializer anonymousInitializer,
+            @NotNull KtAnonymousInitializer anonymousInitializer,
             @NotNull ClassDescriptorWithResolutionScopes classDescriptor
     ) {
         LexicalScope scopeForInitializers = classDescriptor.getScopeForInitializerResolution();

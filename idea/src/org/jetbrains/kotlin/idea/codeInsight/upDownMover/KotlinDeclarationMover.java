@@ -87,7 +87,7 @@ public class KotlinDeclarationMover extends AbstractKotlinUpDownMover {
         declaration.accept(
                 new KtVisitorVoid() {
                     @Override
-                    public void visitAnonymousInitializer(@NotNull KtClassInitializer initializer) {
+                    public void visitAnonymousInitializer(@NotNull KtAnonymousInitializer initializer) {
                         PsiElement brace = initializer.getOpenBraceNode();
                         if (brace != null) {
                             memberSuspects.add(brace);
@@ -130,7 +130,7 @@ public class KotlinDeclarationMover extends AbstractKotlinUpDownMover {
     }
 
     private static final Class[] DECLARATION_CONTAINER_CLASSES =
-            {KtClassBody.class, KtClassInitializer.class, KtFunction.class, KtPropertyAccessor.class, KtFile.class};
+            {KtClassBody.class, KtAnonymousInitializer.class, KtFunction.class, KtPropertyAccessor.class, KtFile.class};
 
     private static final Class[] CLASSBODYLIKE_DECLARATION_CONTAINER_CLASSES = {KtClassBody.class, KtFile.class};
 
@@ -245,7 +245,7 @@ public class KotlinDeclarationMover extends AbstractKotlinUpDownMover {
         }
 
         if (nextParent != null) {
-            if (target instanceof KtClassInitializer && !(nextParent instanceof KtClassBody)) return null;
+            if (target instanceof KtAnonymousInitializer && !(nextParent instanceof KtClassBody)) return null;
 
             if (target instanceof KtEnumEntry) {
                 if (!(nextParent instanceof KtClassBody)) return null;

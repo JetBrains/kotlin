@@ -370,7 +370,7 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
                         return PositionedElement(asmType.internalName, element)
                     }
                 }
-                element is KtClassInitializer -> {
+                element is KtAnonymousInitializer -> {
                     val parent = getElementToCalculateClassName(element.parent)
                     // Class-object initializer
                     if (parent is KtObjectDeclaration && parent.isCompanion()) {
@@ -417,7 +417,7 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
                         KtFunctionLiteral::class.java,
                         KtNamedFunction::class.java,
                         KtProperty::class.java,
-                        KtClassInitializer::class.java)
+                        KtAnonymousInitializer::class.java)
 
         private fun getElementToCalculateClassName(notPositionedElement: PsiElement?): KtElement? {
             if (notPositionedElement?.javaClass in TYPES_TO_CALCULATE_CLASSNAME ) return notPositionedElement as KtElement

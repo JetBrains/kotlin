@@ -660,7 +660,7 @@ public class KotlinPsiUnifier(
                 e1 is KtMultiDeclaration && e2 is KtMultiDeclaration ->
                     if (matchMultiDeclarations(e1, e2)) null else UNMATCHED
 
-                e1 is KtClassInitializer && e2 is KtClassInitializer ->
+                e1 is KtAnonymousInitializer && e2 is KtAnonymousInitializer ->
                     null
 
                 e1 is KtDeclaration ->

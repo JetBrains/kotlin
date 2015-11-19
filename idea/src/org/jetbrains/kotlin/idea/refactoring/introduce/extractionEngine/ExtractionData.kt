@@ -89,7 +89,7 @@ data class ExtractionData(
 
     val insertBefore: Boolean = options.extractAsProperty
                                 || targetSibling.getStrictParentOfType<KtDeclaration>()?.let {
-                                    it is KtDeclarationWithBody || it is KtClassInitializer
+                                    it is KtDeclarationWithBody || it is KtAnonymousInitializer
                                 } ?: false
 
     fun getExpressions(): List<KtExpression> = originalElements.filterIsInstance<KtExpression>()

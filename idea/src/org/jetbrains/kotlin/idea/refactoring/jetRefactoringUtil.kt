@@ -160,7 +160,7 @@ public fun PsiElement.getExtractionContainers(strict: Boolean = true, includeAll
         return (if (strict) element.parents else element.parentsWithSelf)
                 .filter {
                     (it is KtDeclarationWithBody && it !is KtFunctionLiteral)
-                    || it is KtClassInitializer
+                    || it is KtAnonymousInitializer
                     || it is KtClassBody
                     || it is KtFile
                 }
@@ -170,7 +170,7 @@ public fun PsiElement.getExtractionContainers(strict: Boolean = true, includeAll
     if (includeAll) return getAllExtractionContainers(strict)
 
     val enclosingDeclaration = getEnclosingDeclaration(this, strict)?.let {
-        if (it is KtDeclarationWithBody || it is KtClassInitializer) getEnclosingDeclaration(it, true) else it
+        if (it is KtDeclarationWithBody || it is KtAnonymousInitializer) getEnclosingDeclaration(it, true) else it
     }
 
     return when (enclosingDeclaration) {
@@ -179,7 +179,7 @@ public fun PsiElement.getExtractionContainers(strict: Boolean = true, includeAll
         else -> {
             val targetContainer = when (enclosingDeclaration) {
                 is KtDeclarationWithBody -> enclosingDeclaration.getBodyExpression()
-                is KtClassInitializer -> enclosingDeclaration.getBody()
+                is KtAnonymousInitializer -> enclosingDeclaration.getBody()
                 else -> null
             }
             if (targetContainer is KtBlockExpression) Collections.singletonList(targetContainer) else Collections.emptyList()
@@ -328,7 +328,7 @@ public fun KtElement.getContextForContainingDeclarationBody(): BindingContext? {
         is KtWithExpressionInitializer -> enclosingDeclaration.getInitializer()
         is KtMultiDeclaration -> enclosingDeclaration.getInitializer()
         is KtParameter -> enclosingDeclaration.getDefaultValue()
-        is KtClassInitializer -> enclosingDeclaration.getBody()
+        is KtAnonymousInitializer -> enclosingDeclaration.getBody()
         is KtClass -> {
             val delegationSpecifierList = enclosingDeclaration.getDelegationSpecifierList()
             if (delegationSpecifierList.isAncestor(this)) this else null

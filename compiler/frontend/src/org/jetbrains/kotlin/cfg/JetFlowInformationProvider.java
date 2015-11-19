@@ -760,7 +760,7 @@ public class JetFlowInformationProvider {
                         //noinspection unchecked
                         KtExpression parent = PsiTreeUtil.getParentOfType(
                                 element,
-                                KtTryExpression.class, KtFunction.class, KtClassInitializer.class
+                                KtTryExpression.class, KtFunction.class, KtAnonymousInitializer.class
                         );
 
                         if (parent instanceof KtTryExpression) {

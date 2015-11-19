@@ -71,7 +71,7 @@ public class KotlinCalleeMethodsTreeStructure extends KotlinCallTreeStructure {
 
             KtClassBody body = classOrObject.getBody();
             if (body != null) {
-                for (KtClassInitializer initializer : body.getAnonymousInitializers()) {
+                for (KtAnonymousInitializer initializer : body.getAnonymousInitializers()) {
                     KtExpression initializerBody = initializer.getBody();
                     if (initializerBody != null) {
                         elementsToAnalyze.add(initializerBody);

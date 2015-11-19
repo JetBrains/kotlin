@@ -322,7 +322,7 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
         super.visitInitializerList(list, data);
     }
 
-    public void visitAnonymousInitializerVoid(@NotNull KtClassInitializer initializer, P data) {
+    public void visitAnonymousInitializerVoid(@NotNull KtAnonymousInitializer initializer, P data) {
         super.visitAnonymousInitializer(initializer, data);
     }
 
@@ -864,7 +864,7 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
     }
 
     @Override
-    public final Void visitAnonymousInitializer(@NotNull KtClassInitializer initializer, P data) {
+    public final Void visitAnonymousInitializer(@NotNull KtAnonymousInitializer initializer, P data) {
         visitAnonymousInitializerVoid(initializer, data);
     	return null;
     }

@@ -193,7 +193,7 @@ public class ResolveElementCache(
         }
 
         val declaration = contextElement.getParentOfType<KtDeclaration>(false)
-        if (declaration != null && declaration !is KtClassInitializer) {
+        if (declaration != null && declaration !is KtAnonymousInitializer) {
             // Activate descriptor resolution
             resolveSession.resolveToDescriptor(declaration)
         }
@@ -205,7 +205,7 @@ public class ResolveElementCache(
         val elementOfAdditionalResolve = KtPsiUtil.getTopmostParentOfTypes(
                 element,
                 javaClass<KtNamedFunction>(),
-                javaClass<KtClassInitializer>(),
+                javaClass<KtAnonymousInitializer>(),
                 javaClass<KtSecondaryConstructor>(),
                 javaClass<KtProperty>(),
                 javaClass<KtParameter>(),
@@ -263,7 +263,7 @@ public class ResolveElementCache(
         val trace: BindingTrace = when (resolveElement) {
             is KtNamedFunction -> functionAdditionalResolve(resolveSession, resolveElement, file, createStatementFilter())
 
-            is KtClassInitializer -> initializerAdditionalResolve(resolveSession, resolveElement, file, createStatementFilter())
+            is KtAnonymousInitializer -> initializerAdditionalResolve(resolveSession, resolveElement, file, createStatementFilter())
 
             is KtSecondaryConstructor -> secondaryConstructorAdditionalResolve(resolveSession, resolveElement, file, createStatementFilter())
 
@@ -489,15 +489,15 @@ public class ResolveElementCache(
         return trace
     }
 
-    private fun initializerAdditionalResolve(resolveSession: ResolveSession, classInitializer: KtClassInitializer, file: KtFile, statementFilter: StatementFilter): BindingTrace {
-        val trace = createDelegatingTrace(classInitializer)
+    private fun initializerAdditionalResolve(resolveSession: ResolveSession, anonymousInitializer: KtAnonymousInitializer, file: KtFile, statementFilter: StatementFilter): BindingTrace {
+        val trace = createDelegatingTrace(anonymousInitializer)
 
-        val classOrObjectDescriptor = resolveSession.resolveToDescriptor(classInitializer.containingDeclaration) as LazyClassDescriptor
+        val classOrObjectDescriptor = resolveSession.resolveToDescriptor(anonymousInitializer.containingDeclaration) as LazyClassDescriptor
 
         val bodyResolver = createBodyResolver(resolveSession, trace, file, statementFilter)
-        bodyResolver.resolveAnonymousInitializer(DataFlowInfo.EMPTY, classInitializer, classOrObjectDescriptor)
+        bodyResolver.resolveAnonymousInitializer(DataFlowInfo.EMPTY, anonymousInitializer, classOrObjectDescriptor)
 
-        forceResolveAnnotationsInside(classInitializer)
+        forceResolveAnnotationsInside(anonymousInitializer)
 
         return trace
     }
@@ -540,7 +540,7 @@ public class ResolveElementCache(
 
         override fun getDeclaredClasses(): MutableMap<KtClassOrObject, ClassDescriptorWithResolutionScopes> = hashMapOf()
 
-        override fun getAnonymousInitializers(): MutableMap<KtClassInitializer, ClassDescriptorWithResolutionScopes> = hashMapOf()
+        override fun getAnonymousInitializers(): MutableMap<KtAnonymousInitializer, ClassDescriptorWithResolutionScopes> = hashMapOf()
 
         override fun getSecondaryConstructors(): MutableMap<KtSecondaryConstructor, ConstructorDescriptor> = hashMapOf()
 

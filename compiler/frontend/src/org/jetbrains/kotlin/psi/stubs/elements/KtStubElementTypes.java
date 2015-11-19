@@ -31,8 +31,8 @@ public interface KtStubElementTypes {
 
     KtClassElementType ENUM_ENTRY = new KtClassElementType("ENUM_ENTRY");
     KtObjectElementType OBJECT_DECLARATION = new KtObjectElementType("OBJECT_DECLARATION");
-    KtPlaceHolderStubElementType<KtClassInitializer> ANONYMOUS_INITIALIZER =
-            new KtPlaceHolderStubElementType<KtClassInitializer>("ANONYMOUS_INITIALIZER", KtClassInitializer.class);
+    KtPlaceHolderStubElementType<KtAnonymousInitializer> ANONYMOUS_INITIALIZER =
+            new KtPlaceHolderStubElementType<KtAnonymousInitializer>("ANONYMOUS_INITIALIZER", KtAnonymousInitializer.class);
     KtPlaceHolderStubElementType<KtSecondaryConstructor> SECONDARY_CONSTRUCTOR =
             new KtPlaceHolderStubElementType<KtSecondaryConstructor>("SECONDARY_CONSTRUCTOR", KtSecondaryConstructor.class);
     KtPlaceHolderStubElementType<KtPrimaryConstructor> PRIMARY_CONSTRUCTOR =

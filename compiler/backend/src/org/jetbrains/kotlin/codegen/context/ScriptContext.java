@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
-import org.jetbrains.kotlin.psi.KtClassInitializer;
+import org.jetbrains.kotlin.psi.KtAnonymousInitializer;
 import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtScript;
@@ -52,8 +52,8 @@ public class ScriptContext extends ClassContext {
         KtScript script = (KtScript) DescriptorToSourceUtils.getSourceFromDescriptor(scriptDescriptor);
         assert script != null : "Declaration should be present for script: " + scriptDescriptor;
         KtDeclaration lastDeclaration = CollectionsKt.lastOrNull(script.getDeclarations());
-        if (lastDeclaration instanceof KtClassInitializer) {
-            this.lastStatement = ((KtClassInitializer) lastDeclaration).getBody();
+        if (lastDeclaration instanceof KtAnonymousInitializer) {
+            this.lastStatement = ((KtAnonymousInitializer) lastDeclaration).getBody();
         }
         else {
             this.lastStatement = null;

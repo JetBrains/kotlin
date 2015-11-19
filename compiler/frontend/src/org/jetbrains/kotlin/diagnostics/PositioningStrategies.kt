@@ -267,7 +267,7 @@ public object PositioningStrategies {
             val elementToMark = when (element) {
                 is KtObjectDeclaration -> element.getObjectKeyword()
                 is KtPropertyAccessor -> element.getNamePlaceholder()
-                is KtClassInitializer -> element
+                is KtAnonymousInitializer -> element
                 else -> throw IllegalArgumentException(
                         "Can't find text range for element '${element.javaClass.getCanonicalName()}' with the text '${element.getText()}'")
             }

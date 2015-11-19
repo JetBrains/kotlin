@@ -755,8 +755,8 @@ public class KtPsiUtil {
         while (current != null) {
             PsiElement parent = PsiTreeUtil.getStubOrPsiParent(current);
             if (parent instanceof KtScript) return null;
-            if (current instanceof KtClassInitializer) {
-                return ((KtClassInitializer) current).getBody();
+            if (current instanceof KtAnonymousInitializer) {
+                return ((KtAnonymousInitializer) current).getBody();
             }
             if (current instanceof KtProperty || current instanceof KtFunction) {
                 if (parent instanceof KtFile) {

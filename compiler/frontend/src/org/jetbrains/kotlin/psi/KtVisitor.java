@@ -338,7 +338,7 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitKtElement(list, data);
     }
 
-    public R visitAnonymousInitializer(@NotNull KtClassInitializer initializer, D data) {
+    public R visitAnonymousInitializer(@NotNull KtAnonymousInitializer initializer, D data) {
         return visitDeclaration(initializer, data);
     }
 

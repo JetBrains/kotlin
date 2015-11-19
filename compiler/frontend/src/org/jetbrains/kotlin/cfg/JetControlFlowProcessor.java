@@ -1343,7 +1343,7 @@ public class JetControlFlowProcessor {
         }
 
         @Override
-        public void visitAnonymousInitializer(@NotNull KtClassInitializer classInitializer) {
+        public void visitAnonymousInitializer(@NotNull KtAnonymousInitializer classInitializer) {
             generateInstructions(classInitializer.getBody());
         }
 
@@ -1355,7 +1355,7 @@ public class JetControlFlowProcessor {
 
         private void generateInitializersForScriptClassOrObject(@NotNull KtDeclarationContainer classOrObject) {
             for (KtDeclaration declaration : classOrObject.getDeclarations()) {
-                if (declaration instanceof KtProperty || declaration instanceof KtClassInitializer) {
+                if (declaration instanceof KtProperty || declaration instanceof KtAnonymousInitializer) {
                     generateInstructions(declaration);
                 }
             }
@@ -1384,7 +1384,7 @@ public class JetControlFlowProcessor {
                 for (KtDeclaration declaration : classOrObject.getDeclarations()) {
                     if (declaration instanceof KtSecondaryConstructor ||
                         declaration instanceof KtProperty ||
-                        declaration instanceof KtClassInitializer) {
+                        declaration instanceof KtAnonymousInitializer) {
                         continue;
                     }
                     generateInstructions(declaration);

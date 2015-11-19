@@ -183,7 +183,7 @@ private object DebugTextBuildingVisitor : KtVisitor<String, Unit>() {
         return renderChildren(nullableType, "", "", "?")
     }
 
-    override fun visitAnonymousInitializer(initializer: KtClassInitializer, data: Unit?): String? {
+    override fun visitAnonymousInitializer(initializer: KtAnonymousInitializer, data: Unit?): String? {
         val containingDeclaration = KtStubbedPsiUtil.getContainingDeclaration(initializer)
         return "initializer in " + (containingDeclaration?.getDebugText() ?: "...")
     }

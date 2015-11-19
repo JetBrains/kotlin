@@ -88,7 +88,7 @@ public data class IntroduceParameterDescriptor(
                 when {
                     it.getParent() != callable.getBody() ->
                         false
-                    it is KtClassInitializer ->
+                    it is KtAnonymousInitializer ->
                         true
                     it is KtProperty && it.getInitializer()?.getTextRange()?.intersects(originalRange.getTextRange()) ?: false ->
                         true

@@ -185,7 +185,7 @@ private fun addDebugExpressionBeforeContextElement(codeFragment: KtCodeFragment,
 
     fun insertNewInitializer(classBody: KtClassBody): PsiElement? {
         val initializer = psiFactory.createAnonymousInitializer()
-        val newInitializer = (classBody.addAfter(initializer, classBody.firstChild) as KtClassInitializer)
+        val newInitializer = (classBody.addAfter(initializer, classBody.firstChild) as KtAnonymousInitializer)
         val block = newInitializer.body as KtBlockExpression?
         return block?.lastChild
     }

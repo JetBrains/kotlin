@@ -39,7 +39,7 @@ public class MoveAssignmentToInitializerIntention :
         val rightExpression = element.right ?: return false
 
         val initializer = PsiTreeUtil.getParentOfType(element,
-                                                      KtClassInitializer::class.java,
+                                                      KtAnonymousInitializer::class.java,
                                                       KtSecondaryConstructor::class.java) ?: return false
 
         val target = findTargetProperty(element)
@@ -54,7 +54,7 @@ public class MoveAssignmentToInitializerIntention :
         val initializer = element.right ?: return
         val newInitializer = property.setInitializer(initializer)!!
 
-        val initializerBlock = element.getStrictParentOfType<KtClassInitializer>()
+        val initializerBlock = element.getStrictParentOfType<KtAnonymousInitializer>()
         element.delete()
         if (initializerBlock != null && (initializerBlock.body as? KtBlockExpression)?.isEmpty() == true) {
             initializerBlock.delete()

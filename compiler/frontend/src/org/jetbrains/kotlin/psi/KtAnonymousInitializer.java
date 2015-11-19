@@ -25,12 +25,12 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
-public class KtClassInitializer extends KtDeclarationStub<KotlinPlaceHolderStub<KtClassInitializer>> implements KtStatementExpression {
-    public KtClassInitializer(@NotNull ASTNode node) {
+public class KtAnonymousInitializer extends KtDeclarationStub<KotlinPlaceHolderStub<KtAnonymousInitializer>> implements KtStatementExpression {
+    public KtAnonymousInitializer(@NotNull ASTNode node) {
         super(node);
     }
 
-    public KtClassInitializer(@NotNull KotlinPlaceHolderStub<KtClassInitializer> stub) {
+    public KtAnonymousInitializer(@NotNull KotlinPlaceHolderStub<KtAnonymousInitializer> stub) {
         super(stub, KtStubElementTypes.ANONYMOUS_INITIALIZER);
     }
 

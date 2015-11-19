@@ -154,7 +154,7 @@ public class LazyTopDownAnalyzer(
                     visitClassOrObject(declaration)
                 }
 
-                override fun visitAnonymousInitializer(initializer: KtClassInitializer) {
+                override fun visitAnonymousInitializer(initializer: KtAnonymousInitializer) {
                     val containerDescriptor = lazyDeclarationResolver.resolveToDescriptor(initializer.containingDeclaration) as ClassDescriptorWithResolutionScopes
                     c.getAnonymousInitializers().put(initializer, containerDescriptor)
                 }
