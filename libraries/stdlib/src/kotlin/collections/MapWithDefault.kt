@@ -20,30 +20,30 @@ public fun <K, V> Map<K, V>.getOrImplicitDefault(key: K): V {
 }
 
 /**
- * Returns a wrapper of this read-only map, having the implicit default value provided with the specified function [default].
+ * Returns a wrapper of this read-only map, having the implicit default value provided with the specified function [defaultValue].
  * This implicit default value is used when [getOrImplicitDefault] is called on the returned map,
  * and that map doesn't contain value for the key specified.
  *
  * When this map already have an implicit default value provided with a former call to [withDefault], it is being replaced by this call.
  */
-public fun <K, V> Map<K, V>.withDefault(default: (key: K) -> V): Map<K, V> =
+public fun <K, V> Map<K, V>.withDefault(defaultValue: (key: K) -> V): Map<K, V> =
         when (this) {
-            is MapWithDefault -> this.map.withDefault(default)
-            else -> MapWithDefaultImpl(this, default)
+            is MapWithDefault -> this.map.withDefault(defaultValue)
+            else -> MapWithDefaultImpl(this, defaultValue)
         }
 
 /**
- * Returns a wrapper of this mutable map, having the implicit default value provided with the specified function [default].
+ * Returns a wrapper of this mutable map, having the implicit default value provided with the specified function [defaultValue].
  * This implicit default value is used when [getOrImplicitDefault] is called on the returned map,
  * and that map doesn't contain value for the key specified.
  *
  * When this map already have an implicit default value provided with a former call to [withDefault], it is being replaced by this call.
  */
 @kotlin.jvm.JvmName("withDefaultMutable")
-public fun <K, V> MutableMap<K, V>.withDefault(default: (key: K) -> V): MutableMap<K, V> =
+public fun <K, V> MutableMap<K, V>.withDefault(defaultValue: (key: K) -> V): MutableMap<K, V> =
         when (this) {
-            is MutableMapWithDefault -> this.map.withDefault(default)
-            else -> MutableMapWithDefaultImpl(this, default)
+            is MutableMapWithDefault -> this.map.withDefault(defaultValue)
+            else -> MutableMapWithDefaultImpl(this, defaultValue)
         }
 
 
