@@ -10,7 +10,7 @@ PsiJetFileStubImpl[package=test]
             USER_TYPE:[isAbsoluteInRootPackage=false]
               REFERENCE_EXPRESSION:[referencedName=Boolean]
     CLASS_BODY:
-      ANONYMOUS_INITIALIZER:
+      CLASS_INITIALIZER:
       SECONDARY_CONSTRUCTOR:
         MODIFIER_LIST:[]
           ANNOTATION_ENTRY:[hasValueArguments=false, shortName=anno]
@@ -23,7 +23,7 @@ PsiJetFileStubImpl[package=test]
             TYPE_REFERENCE:
               USER_TYPE:[isAbsoluteInRootPackage=false]
                 REFERENCE_EXPRESSION:[referencedName=String]
-      ANONYMOUS_INITIALIZER:
+      CLASS_INITIALIZER:
       SECONDARY_CONSTRUCTOR:
         MODIFIER_LIST:[private]
         VALUE_PARAMETER_LIST:

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.findDocComment.FindDocCommentKt;
 import java.util.Collections;
 import java.util.List;
 
-abstract class KtDeclarationImpl extends KtExpressionImpl implements KtDeclaration {
+public abstract class KtDeclarationImpl extends KtExpressionImpl implements KtDeclaration {
     public KtDeclarationImpl(@NotNull ASTNode node) {
         super(node);
     }

@@ -7,7 +7,7 @@ JetFile: Shebang.kts
   PsiWhiteSpace('\n\n')
   SCRIPT
     BLOCK
-      ANONYMOUS_INITIALIZER
+      SCRIPT_INITIALIZER
         CALL_EXPRESSION
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('println')

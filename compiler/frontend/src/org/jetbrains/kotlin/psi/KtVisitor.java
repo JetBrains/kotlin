@@ -342,6 +342,14 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitDeclaration(initializer, data);
     }
 
+    public R visitScriptInitializer(@NotNull KtScriptInitializer initializer, D data) {
+        return visitAnonymousInitializer(initializer, data);
+    }
+
+    public R visitClassInitializer(@NotNull KtClassInitializer initializer, D data) {
+        return visitAnonymousInitializer(initializer, data);
+    }
+
     public R visitPropertyAccessor(@NotNull KtPropertyAccessor accessor, D data) {
         return visitDeclaration(accessor, data);
     }

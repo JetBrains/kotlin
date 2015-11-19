@@ -58,7 +58,7 @@ JetFile: ComplexScript.kts
           PsiWhiteSpace('\n')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n')
-      ANONYMOUS_INITIALIZER
+      SCRIPT_INITIALIZER
         IF
           PsiElement(if)('if')
           PsiWhiteSpace(' ')
@@ -98,7 +98,7 @@ JetFile: ComplexScript.kts
               PsiWhiteSpace('\n')
               PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n')
-      ANONYMOUS_INITIALIZER
+      SCRIPT_INITIALIZER
         FOR
           PsiElement(for)('for')
           PsiWhiteSpace(' ')

@@ -11,7 +11,7 @@ JetFile: initRecovery.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      ANONYMOUS_INITIALIZER
+      CLASS_INITIALIZER
         PsiElement(init)('init')
         PsiErrorElement:Expecting '{' after 'init'
           <empty list>
@@ -26,7 +26,7 @@ JetFile: initRecovery.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      ANONYMOUS_INITIALIZER
+      CLASS_INITIALIZER
         MODIFIER_LIST
           ANNOTATION_ENTRY
             PsiElement(AT)('@')
@@ -50,7 +50,7 @@ JetFile: initRecovery.kt
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n    ')
-      ANONYMOUS_INITIALIZER
+      CLASS_INITIALIZER
         PsiElement(init)('init')
         PsiErrorElement:Expecting '{' after 'init'
           <empty list>
@@ -67,17 +67,17 @@ JetFile: initRecovery.kt
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
-      ANONYMOUS_INITIALIZER
+      CLASS_INITIALIZER
         PsiElement(init)('init')
         PsiErrorElement:Expecting '{' after 'init'
           <empty list>
       PsiWhiteSpace('\n    ')
-      ANONYMOUS_INITIALIZER
+      CLASS_INITIALIZER
         PsiElement(init)('init')
         PsiErrorElement:Expecting '{' after 'init'
           <empty list>
       PsiWhiteSpace('\n    ')
-      ANONYMOUS_INITIALIZER
+      CLASS_INITIALIZER
         PsiElement(init)('init')
         PsiWhiteSpace(' ')
         BLOCK

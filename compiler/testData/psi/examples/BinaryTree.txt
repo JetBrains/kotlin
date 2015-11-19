@@ -1808,7 +1808,7 @@ JetFile: BinaryTree.kt
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('TreeNode')
               PsiWhiteSpace('\n\n    ')
-              ANONYMOUS_INITIALIZER
+              CLASS_INITIALIZER
                 PsiElement(init)('init')
                 PsiWhiteSpace(' ')
                 BLOCK

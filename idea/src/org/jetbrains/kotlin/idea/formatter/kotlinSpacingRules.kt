@@ -49,7 +49,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
 
     return rules(settings) {
         val DECLARATIONS =
-                TokenSet.create(PROPERTY, FUN, CLASS, OBJECT_DECLARATION, ENUM_ENTRY, SECONDARY_CONSTRUCTOR, ANONYMOUS_INITIALIZER)
+                TokenSet.create(PROPERTY, FUN, CLASS, OBJECT_DECLARATION, ENUM_ENTRY, SECONDARY_CONSTRUCTOR, CLASS_INITIALIZER)
 
         custom {
             inPosition(left = CLASS, right = CLASS).emptyLinesIfLineBreakInLeft(1)
@@ -102,7 +102,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
 
             between(OBJECT_DECLARATION, DECLARATIONS).blankLines(1)
             between(SECONDARY_CONSTRUCTOR, DECLARATIONS).blankLines(1)
-            between(ANONYMOUS_INITIALIZER, DECLARATIONS).blankLines(1)
+            between(CLASS_INITIALIZER, DECLARATIONS).blankLines(1)
 
             // ENUM_ENTRY - ENUM_ENTRY is exception
             between(ENUM_ENTRY, DECLARATIONS).blankLines(1)
@@ -292,7 +292,7 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
 
             inPosition(parent = FUN, right = BLOCK).customRule(leftBraceRule())
             inPosition(parent = SECONDARY_CONSTRUCTOR, right = BLOCK).customRule(leftBraceRule())
-            inPosition(parent = ANONYMOUS_INITIALIZER, right = BLOCK).customRule(leftBraceRule())
+            inPosition(parent = CLASS_INITIALIZER, right = BLOCK).customRule(leftBraceRule())
             inPosition(parent = PROPERTY_ACCESSOR, right = BLOCK).customRule(leftBraceRule())
 
             inPosition(right = CLASS_BODY).customRule(leftBraceRule(blockType = CLASS_BODY))

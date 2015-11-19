@@ -38,7 +38,7 @@ class KtClassBody : KtElementImplStub<KotlinPlaceHolderStub<KtClassBody>>, KtDec
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitClassBody(this, data)
 
     val anonymousInitializers: List<KtAnonymousInitializer>
-        get() = findChildrenByType(KtNodeTypes.ANONYMOUS_INITIALIZER)
+        get() = findChildrenByType(KtNodeTypes.CLASS_INITIALIZER)
 
     internal val secondaryConstructors: List<KtSecondaryConstructor>
         get() = getStubOrPsiChildrenAsList(KtStubElementTypes.SECONDARY_CONSTRUCTOR)

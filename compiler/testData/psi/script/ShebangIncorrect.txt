@@ -5,7 +5,7 @@ JetFile: ShebangIncorrect.kts
     <empty list>
   SCRIPT
     BLOCK
-      ANONYMOUS_INITIALIZER
+      SCRIPT_INITIALIZER
         CALL_EXPRESSION
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('println')
@@ -19,7 +19,7 @@ JetFile: ShebangIncorrect.kts
       PsiWhiteSpace(' ')
       PsiErrorElement:Expecting an element
         PsiElement(HASH)('#')
-      ANONYMOUS_INITIALIZER
+      SCRIPT_INITIALIZER
         BINARY_EXPRESSION
           PREFIX_EXPRESSION
             OPERATION_REFERENCE

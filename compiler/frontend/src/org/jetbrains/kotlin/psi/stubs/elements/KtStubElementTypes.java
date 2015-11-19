@@ -31,8 +31,8 @@ public interface KtStubElementTypes {
 
     KtClassElementType ENUM_ENTRY = new KtClassElementType("ENUM_ENTRY");
     KtObjectElementType OBJECT_DECLARATION = new KtObjectElementType("OBJECT_DECLARATION");
-    KtPlaceHolderStubElementType<KtClassInitializer> ANONYMOUS_INITIALIZER =
-            new KtPlaceHolderStubElementType<KtClassInitializer>("ANONYMOUS_INITIALIZER", KtClassInitializer.class);
+    KtPlaceHolderStubElementType<KtClassInitializer> CLASS_INITIALIZER =
+            new KtPlaceHolderStubElementType<KtClassInitializer>("CLASS_INITIALIZER", KtClassInitializer.class);
     KtPlaceHolderStubElementType<KtSecondaryConstructor> SECONDARY_CONSTRUCTOR =
             new KtPlaceHolderStubElementType<KtSecondaryConstructor>("SECONDARY_CONSTRUCTOR", KtSecondaryConstructor.class);
     KtPlaceHolderStubElementType<KtPrimaryConstructor> PRIMARY_CONSTRUCTOR =
@@ -119,7 +119,7 @@ public interface KtStubElementTypes {
     KtScriptElementType SCRIPT = new KtScriptElementType("SCRIPT");
 
     TokenSet DECLARATION_TYPES =
-            TokenSet.create(CLASS, OBJECT_DECLARATION, FUNCTION, PROPERTY, ANONYMOUS_INITIALIZER, SECONDARY_CONSTRUCTOR, ENUM_ENTRY);
+            TokenSet.create(CLASS, OBJECT_DECLARATION, FUNCTION, PROPERTY, CLASS_INITIALIZER, SECONDARY_CONSTRUCTOR, ENUM_ENTRY);
 
     TokenSet DELEGATION_SPECIFIER_TYPES = TokenSet.create(DELEGATOR_BY, DELEGATOR_SUPER_CALL, DELEGATOR_SUPER_CLASS);
 

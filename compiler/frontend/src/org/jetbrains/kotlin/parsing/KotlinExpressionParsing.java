@@ -1230,7 +1230,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             else if (isScriptTopLevel){
                 PsiBuilder.Marker scriptInitializer = mark();
                 parseExpression();
-                scriptInitializer.done(ANONYMOUS_INITIALIZER);
+                scriptInitializer.done(SCRIPT_INITIALIZER);
             }
             else {
                 parseExpression();

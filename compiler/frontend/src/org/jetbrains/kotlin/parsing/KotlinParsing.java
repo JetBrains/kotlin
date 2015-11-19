@@ -1083,7 +1083,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             else {
                 mark().error("Expecting '{' after 'init'");
             }
-            declType = ANONYMOUS_INITIALIZER;
+            declType = CLASS_INITIALIZER;
         }
         else if (at(CONSTRUCTOR_KEYWORD)) {
             parseSecondaryConstructor();

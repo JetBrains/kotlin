@@ -11,14 +11,14 @@ JetFile: anonymousInitializer.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      ANONYMOUS_INITIALIZER
+      CLASS_INITIALIZER
         PsiElement(init)('init')
         PsiWhiteSpace(' ')
         BLOCK
           PsiElement(LBRACE)('{')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
-      ANONYMOUS_INITIALIZER
+      CLASS_INITIALIZER
         MODIFIER_LIST
           PsiElement(private)('private')
         PsiWhiteSpace(' ')
@@ -42,7 +42,7 @@ JetFile: anonymousInitializer.kt
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
       PsiWhiteSpace('\n    ')
-      ANONYMOUS_INITIALIZER
+      CLASS_INITIALIZER
         PsiElement(init)('init')
         PsiWhiteSpace(' ')
         BLOCK
