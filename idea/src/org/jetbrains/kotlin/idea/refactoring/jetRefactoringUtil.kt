@@ -179,7 +179,7 @@ public fun PsiElement.getExtractionContainers(strict: Boolean = true, includeAll
         else -> {
             val targetContainer = when (enclosingDeclaration) {
                 is KtDeclarationWithBody -> enclosingDeclaration.getBodyExpression()
-                is KtAnonymousInitializer -> enclosingDeclaration.getBody()
+                is KtAnonymousInitializer -> enclosingDeclaration.body
                 else -> null
             }
             if (targetContainer is KtBlockExpression) Collections.singletonList(targetContainer) else Collections.emptyList()
@@ -328,7 +328,7 @@ public fun KtElement.getContextForContainingDeclarationBody(): BindingContext? {
         is KtWithExpressionInitializer -> enclosingDeclaration.getInitializer()
         is KtMultiDeclaration -> enclosingDeclaration.getInitializer()
         is KtParameter -> enclosingDeclaration.getDefaultValue()
-        is KtAnonymousInitializer -> enclosingDeclaration.getBody()
+        is KtAnonymousInitializer -> enclosingDeclaration.body
         is KtClass -> {
             val delegationSpecifierList = enclosingDeclaration.getDelegationSpecifierList()
             if (delegationSpecifierList.isAncestor(this)) this else null
