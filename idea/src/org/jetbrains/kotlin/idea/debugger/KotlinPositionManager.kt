@@ -80,7 +80,10 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
     }
 
     override fun createStackFrame(frame: StackFrameProxyImpl, debugProcess: DebugProcessImpl, location: Location): XStackFrame? {
-         return KotlinStackFrame(frame)
+        if (location.declaringType().availableStrata().contains("Kotlin")) {
+            return KotlinStackFrame(frame)
+        }
+        return null
     }
 
     override fun getSourcePosition(location: Location?): SourcePosition? {
