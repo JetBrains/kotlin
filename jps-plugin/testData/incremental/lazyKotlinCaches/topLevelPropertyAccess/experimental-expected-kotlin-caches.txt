@@ -7,7 +7,7 @@ kotlin-data-container
 Module 'module' production
     experimental-format-version.txt
     format-version.txt
-    kotlin/package-parts.tab
-    kotlin/proto.tab
-    kotlin/source-to-classes.tab
+    package-parts.tab
+    proto.tab
+    source-to-classes.tab
 Module 'module' tests

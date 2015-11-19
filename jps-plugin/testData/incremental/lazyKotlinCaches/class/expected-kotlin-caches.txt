@@ -1,6 +1,6 @@
 kotlin-data-container
 Module 'module' production
     format-version.txt
-    kotlin/proto.tab
-    kotlin/source-to-classes.tab
+    proto.tab
+    source-to-classes.tab
 Module 'module' tests
