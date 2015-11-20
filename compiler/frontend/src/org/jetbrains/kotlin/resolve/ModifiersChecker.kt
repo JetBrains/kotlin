@@ -88,6 +88,12 @@ public object ModifierCheckerCore {
             INFIX_KEYWORD     to EnumSet.of(FUNCTION)
     )
 
+    // NOTE: deprecated targets must be possible!
+    private val deprecatedTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>(
+            // Deprecated in 1.0 beta 3
+            SEALED_KEYWORD    to EnumSet.of(LOCAL_CLASS)
+    )
+
     // NOTE: redundant targets must be possible!
     private val redundantTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>(
             ABSTRACT_KEYWORD  to EnumSet.of(INTERFACE),
@@ -227,8 +233,12 @@ public object ModifierCheckerCore {
             trace.report(Errors.WRONG_MODIFIER_TARGET.on(node.psi, modifier, actualTargets.firstOrNull()?.description ?: "this"))
             return false
         }
+        val deprecatedTargets = deprecatedTargetMap[modifier] ?: emptySet()
         val redundantTargets = redundantTargetMap[modifier] ?: emptySet()
-        if (actualTargets.any { it in redundantTargets}) {
+        if (actualTargets.any { it in deprecatedTargets }) {
+            trace.report(Errors.DEPRECATED_MODIFIER_FOR_TARGET.on(node.psi, modifier, actualTargets.firstOrNull()?.description ?: "this"))
+        }
+        else if (actualTargets.any { it in redundantTargets }) {
             trace.report(Errors.REDUNDANT_MODIFIER_FOR_TARGET.on(node.psi, modifier, actualTargets.firstOrNull()?.description ?: "this"))
         }
         return true
