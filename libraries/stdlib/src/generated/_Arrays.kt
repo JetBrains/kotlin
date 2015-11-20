@@ -6274,7 +6274,7 @@ public fun ShortArray.toSet(): Set<Short> {
 /**
  * Returns a [SortedSet] of all elements.
  */
-public fun <T> Array<out T>.toSortedSet(): SortedSet<T> {
+public fun <T: Comparable<T>> Array<out T>.toSortedSet(): SortedSet<T> {
     return toCollection(TreeSet<T>())
 }
 
@@ -6332,6 +6332,15 @@ public fun LongArray.toSortedSet(): SortedSet<Long> {
  */
 public fun ShortArray.toSortedSet(): SortedSet<Short> {
     return toCollection(TreeSet<Short>())
+}
+
+/**
+ * Returns a [SortedSet] of all elements.
+ * Elements in the set returned are sorted according to the given [comparator].
+ */
+@kotlin.jvm.JvmVersion
+public fun <T> Array<out T>.toSortedSet(comparator: Comparator<in T>): SortedSet<T> {
+    return toCollection(TreeSet<T>(comparator))
 }
 
 /**

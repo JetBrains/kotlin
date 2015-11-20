@@ -1065,8 +1065,17 @@ public fun <T> Iterable<T>.toSet(): Set<T> {
 /**
  * Returns a [SortedSet] of all elements.
  */
-public fun <T> Iterable<T>.toSortedSet(): SortedSet<T> {
+public fun <T: Comparable<T>> Iterable<T>.toSortedSet(): SortedSet<T> {
     return toCollection(TreeSet<T>())
+}
+
+/**
+ * Returns a [SortedSet] of all elements.
+ * Elements in the set returned are sorted according to the given [comparator].
+ */
+@kotlin.jvm.JvmVersion
+public fun <T> Iterable<T>.toSortedSet(comparator: Comparator<in T>): SortedSet<T> {
+    return toCollection(TreeSet<T>(comparator))
 }
 
 /**

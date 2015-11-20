@@ -44,9 +44,24 @@ fun snapshots(): List<GenericFunction> {
     templates add f("toSortedSet()") {
         deprecate(Strings) { forBinaryCompatibility }
         include(CharSequences, Strings)
+        typeParam("T: Comparable<T>")
         doc { f -> "Returns a [SortedSet] of all ${f.element}s." }
         returns("SortedSet<T>")
         body { "return toCollection(TreeSet<T>())" }
+    }
+
+    templates add f("toSortedSet(comparator: Comparator<in T>)") {
+        only(Iterables, ArraysOfObjects, Sequences)
+        jvmOnly(true)
+        doc { f ->
+            """
+                Returns a [SortedSet] of all ${f.element}s.
+
+                Elements in the set returned are sorted according to the given [comparator].
+            """
+        }
+        returns("SortedSet<T>")
+        body { "return toCollection(TreeSet<T>(comparator))" }
     }
 
     templates add f("toArrayList()") {

@@ -68,7 +68,7 @@ public fun <K, V> Map<K, V>.toSortedMap(comparator: Comparator<in K>): SortedMap
  *
  * @sample test.collections.MapJVMTest.createSortedMap
  */
-public fun <K, V> sortedMapOf(vararg pairs: Pair<K, V>): SortedMap<K, V>
+public fun <K : Comparable<K>, V> sortedMapOf(vararg pairs: Pair<K, V>): SortedMap<K, V>
         = TreeMap<K, V>().apply { putAll(pairs) }
 
 

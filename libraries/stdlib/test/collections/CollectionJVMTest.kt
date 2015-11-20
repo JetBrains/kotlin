@@ -128,6 +128,18 @@ class CollectionJVMTest {
         }
     }
 
+    @test fun toSortedSet() {
+        val data = listOf("foo", "Foo", "bar")
+        val set1 = data.toSortedSet()
+        assertEquals(listOf("Foo", "bar", "foo"), set1.toList())
+
+        val set2 = data.toSortedSet(reverseOrder())
+        assertEquals(listOf("foo", "bar", "Foo"), set2.toList())
+
+        val set3 = data.toSortedSet(String.CASE_INSENSITIVE_ORDER)
+        assertEquals(listOf("bar", "foo"), set3.toList())
+    }
+
     @test fun takeReturnsFirstNElements() {
         expect(setOf(1, 2)) { sortedSetOf(1, 2, 3, 4, 5).take(2).toSet() }
     }
