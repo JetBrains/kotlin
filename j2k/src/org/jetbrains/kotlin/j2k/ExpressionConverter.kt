@@ -480,9 +480,21 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             result = MethodCallExpression.buildNotNull(operandConverted, typeConversion)
         }
         else {
-            val typeConverted = typeConverter.convertType(castType.getType(),
-                                                          if (operandConverted.isNullable) Nullability.Nullable else Nullability.NotNull)
+            val nullability = if (operandConverted.isNullable && !expression.isQualifier())
+                Nullability.Nullable
+            else
+                Nullability.NotNull
+            val typeConverted = typeConverter.convertType(castType.type, nullability)
             result = TypeCastExpression(typeConverted, operandConverted)
+        }
+    }
+
+    private fun PsiExpression.isQualifier(): Boolean {
+        val parent = parent
+        when (parent) {
+            is PsiParenthesizedExpression -> return parent.isQualifier()
+            is PsiReferenceExpression -> return this == parent.qualifierExpression
+            else -> return false
         }
     }
 
