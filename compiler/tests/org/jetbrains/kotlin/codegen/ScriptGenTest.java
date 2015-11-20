@@ -18,30 +18,40 @@ package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
-import org.jetbrains.kotlin.script.ScriptParameter;
 import org.jetbrains.kotlin.script.KotlinScriptDefinition;
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider;
+import org.jetbrains.kotlin.script.ScriptParameter;
+import org.jetbrains.kotlin.scripts.TestScriptDefinition;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Collections;
 
 import static java.util.Collections.singletonList;
 
 public class ScriptGenTest extends CodegenTestCase {
     private static final KotlinScriptDefinition FIB_SCRIPT_DEFINITION =
-            new KotlinScriptDefinition(
+            new TestScriptDefinition(
                     ".lang.kt",
                     singletonList(new ScriptParameter(Name.identifier("num"), JvmPlatform.INSTANCE$.getBuiltIns().getIntType()))
+            );
+    private static final KotlinScriptDefinition NO_PARAM_SCRIPT_DEFINITION =
+            new TestScriptDefinition(
+                    ".kts",
+                    Collections.<ScriptParameter>emptyList()
             );
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        KotlinScriptDefinitionProvider.getInstance(myEnvironment.getProject()).addScriptDefinition(FIB_SCRIPT_DEFINITION);
+        KotlinScriptDefinitionProvider.getInstance(myEnvironment.getProject()).setScriptDefinitions(
+                Arrays.asList(FIB_SCRIPT_DEFINITION, NO_PARAM_SCRIPT_DEFINITION)
+        );
     }
 
     public void testLanguage() throws Exception {

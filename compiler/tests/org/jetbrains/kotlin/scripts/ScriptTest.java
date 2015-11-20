@@ -25,16 +25,15 @@ import org.jetbrains.kotlin.cli.common.messages.*;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
-import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.codegen.CompilationException;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.ContentRootsKt;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
-import org.jetbrains.kotlin.script.ScriptParameter;
 import org.jetbrains.kotlin.script.KotlinScriptDefinition;
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider;
+import org.jetbrains.kotlin.script.ScriptParameter;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
@@ -49,22 +48,21 @@ import java.util.List;
 public class ScriptTest {
     @Test
     public void testScript() throws Exception {
-        Class<?> aClass = compileScript("fib.kts", numIntParam(), Collections.<KotlinScriptDefinition>emptyList());
+        Class<?> aClass = compileScript("fib.kts", new TestScriptDefinition(".kts", numIntParam()));
         Assert.assertNotNull(aClass);
         aClass.getConstructor(int.class).newInstance(4);
     }
 
     @Test
     public void testScriptWithPackage() throws Exception {
-        Class<?> aClass = compileScript("fib.pkg.kts", numIntParam(), Collections.<KotlinScriptDefinition>emptyList());
+        Class<?> aClass = compileScript("fib.pkg.kts", new TestScriptDefinition(".kts", numIntParam()));
         Assert.assertNotNull(aClass);
         aClass.getConstructor(int.class).newInstance(4);
     }
 
     @Test
     public void testScriptWithScriptDefinition() throws Exception {
-        Class<?> aClass = compileScript("fib.fib.kt", null,
-                                        Collections.singletonList(new KotlinScriptDefinition(".fib.kt", numIntParam())));
+        Class<?> aClass = compileScript("fib.fib.kt", new TestScriptDefinition(".fib.kt", numIntParam()));
         Assert.assertNotNull(aClass);
         aClass.getConstructor(int.class).newInstance(4);
     }
@@ -72,8 +70,7 @@ public class ScriptTest {
     @Nullable
     private static Class<?> compileScript(
             @NotNull String scriptPath,
-            @Nullable List<ScriptParameter> scriptParameters,
-            @NotNull List<KotlinScriptDefinition> scriptDefinitions
+            @NotNull KotlinScriptDefinition scriptDefinition
     ) {
         KotlinPaths paths = PathUtil.getKotlinPathsForDistDirectory();
         MessageCollector messageCollector = PrintingMessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR;
@@ -84,14 +81,12 @@ public class ScriptTest {
                     KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.JDK_ONLY, TestJdkKind.FULL_JDK);
             configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
             ContentRootsKt.addKotlinSourceRoot(configuration, "compiler/testData/script/" + scriptPath);
-            configuration.addAll(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY, scriptDefinitions);
-            configuration.put(JVMConfigurationKeys.SCRIPT_PARAMETERS, scriptParameters);
+            configuration.add(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY, scriptDefinition);
 
             KotlinCoreEnvironment environment =
                     KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
 
             try {
-                KotlinScriptDefinitionProvider.getInstance(environment.getProject()).markFileAsScript(environment.getSourceFiles().get(0));
                 return KotlinToJVMBytecodeCompiler.compileScript(configuration, paths, environment);
             }
             catch (CompilationException e) {
@@ -111,6 +106,6 @@ public class ScriptTest {
 
     @NotNull
     private static List<ScriptParameter> numIntParam() {
-        return Collections.singletonList(new ScriptParameter(Name.identifier("num"), JvmPlatform.INSTANCE$.getBuiltIns().getIntType()));
+        return Collections.singletonList(new ScriptParameter(Name.identifier("num"), JvmPlatform.INSTANCE.getBuiltIns().getIntType()));
     }
 }

@@ -23,8 +23,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.ContentRootsKt;
+import org.jetbrains.kotlin.script.StandardScriptDefinition;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinLiteFixture;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -66,6 +68,7 @@ public abstract class KotlinMultiFileTestWithWithJava<M, F> extends KotlinLiteFi
     protected KotlinCoreEnvironment createEnvironment() {
         File javaFilesDir = createJavaFilesDir();
         CompilerConfiguration configuration = createCompilerConfiguration(javaFilesDir);
+        configuration.add(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY, StandardScriptDefinition.INSTANCE);
         File kotlinSourceRoot = getKotlinSourceRoot();
         if (kotlinSourceRoot != null) {
             ContentRootsKt.addKotlinSourceRoot(configuration, kotlinSourceRoot.getPath());

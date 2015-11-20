@@ -21,6 +21,7 @@ import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.CharsetToolkit;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.psi.search.ProjectScope;
@@ -47,6 +48,7 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactories;
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler;
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
+import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.context.MutableModuleContext;
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor;
@@ -54,6 +56,7 @@ import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtScript;
@@ -66,7 +69,7 @@ import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.kotlin.resolve.lazy.declarations.*;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
-import org.jetbrains.kotlin.script.ScriptPriorities;
+import org.jetbrains.kotlin.script.*;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
@@ -103,6 +106,24 @@ public class ReplInterpreter {
 
     private final boolean ideMode;
     private final ReplSystemInWrapper replReader;
+    private final static KotlinScriptDefinition REPL_LINE_AS_SCRIPT_DEFINITION = new KotlinScriptDefinition() {
+        @NotNull
+        @Override
+        public List<ScriptParameter> getScriptParameters(@NotNull ScriptDescriptor scriptDescriptor) {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public boolean isScript(@NotNull PsiFile file) {
+            return StandardScriptDefinition.INSTANCE.isScript(file);
+        }
+
+        @NotNull
+        @Override
+        public Name getScriptName(@NotNull KtScript script) {
+            return StandardScriptDefinition.INSTANCE.getScriptName(script);
+        }
+    };
 
     public ReplInterpreter(
             @NotNull Disposable disposable,
@@ -110,9 +131,12 @@ public class ReplInterpreter {
             boolean ideMode,
             @Nullable ReplSystemInWrapper replReader
     ) {
+        configuration.add(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY, REPL_LINE_AS_SCRIPT_DEFINITION);
+
         KotlinCoreEnvironment environment =
                 KotlinCoreEnvironment.createForProduction(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
         Project project = environment.getProject();
+
         this.psiFileFactory = (PsiFileFactoryImpl) PsiFileFactory.getInstance(project);
         this.trace = new CliLightClassGenerationSupport.NoScopeRecordCliBindingTrace();
         MutableModuleContext moduleContext = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, ModuleNameKt

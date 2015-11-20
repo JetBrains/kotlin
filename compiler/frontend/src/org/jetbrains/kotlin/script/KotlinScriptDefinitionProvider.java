@@ -20,42 +20,28 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.parsing.KotlinParserDefinition;
-import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.annotations.TestOnly;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class KotlinScriptDefinitionProvider {
-    private final Map<String, KotlinScriptDefinition> scripts = new HashMap<String, KotlinScriptDefinition>();
-    private final Set<PsiFile> scriptsFiles = new HashSet<PsiFile>();
-
-    private static final KotlinScriptDefinition
-            standardScript = new KotlinScriptDefinition(KotlinParserDefinition.STD_SCRIPT_EXT, Collections.<ScriptParameter>emptyList());
+    private final List<KotlinScriptDefinition> definitions = new ArrayList<KotlinScriptDefinition>();
 
     public static KotlinScriptDefinitionProvider getInstance(Project project) {
         return ServiceManager.getService(project, KotlinScriptDefinitionProvider.class);
     }
 
     public KotlinScriptDefinitionProvider() {
-        // .kts will take analyzer parameters explicitly specified on compilation
-        addScriptDefinition(standardScript);
-    }
-
-    public void markFileAsScript(KtFile file) {
-        scriptsFiles.add(file);
+        definitions.add(StandardScriptDefinition.INSTANCE);
     }
 
     public KotlinScriptDefinition findScriptDefinition(PsiFile psiFile) {
-        boolean force = scriptsFiles.contains(psiFile);
-
-        String name = psiFile.getName();
-        for (Map.Entry<String, KotlinScriptDefinition> e : scripts.entrySet()) {
-            if (name.endsWith(e.getKey())) {
-                return e.getValue();
+        for (KotlinScriptDefinition definition : definitions) {
+            if (definition.isScript(psiFile)) {
+                return definition;
             }
         }
-        if(force)
-            return standardScript;
 
         return null;
     }
@@ -64,13 +50,13 @@ public class KotlinScriptDefinitionProvider {
         return findScriptDefinition(psiFile) != null;
     }
 
+    @TestOnly
     public void addScriptDefinition(@NotNull KotlinScriptDefinition scriptDefinition) {
-        scripts.put(scriptDefinition.getExtension(), scriptDefinition);
+        definitions.add(0, scriptDefinition);
     }
 
-    public void addScriptDefinitions(List<KotlinScriptDefinition> definitions) {
-        for (KotlinScriptDefinition definition : definitions) {
-            addScriptDefinition(definition);
-        }
+    public void setScriptDefinitions(@NotNull List<KotlinScriptDefinition> definitions) {
+        this.definitions.clear();
+        this.definitions.addAll(definitions);
     }
 }

@@ -17,9 +17,8 @@
 package org.jetbrains.kotlin.script;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtPackageDirective;
 import org.jetbrains.kotlin.psi.KtScript;
 
 public class ScriptNameUtil {
@@ -27,27 +26,24 @@ public class ScriptNameUtil {
     }
 
     @NotNull
-    public static FqName classNameForScript(KtScript script) {
+    public static Name fileNameWithExtensionStripped(@NotNull KtScript script, @NotNull String extension) {
         KtFile file = script.getContainingKtFile();
-        KotlinScriptDefinition scriptDefinition = KotlinScriptDefinitionProvider.getInstance(file.getProject()).findScriptDefinition(file);
-
         String name = file.getName();
         int index = name.lastIndexOf('/');
-        if(index != -1)
-            name = name.substring(index+1);
-        if(name.endsWith(scriptDefinition.getExtension()))
-            name = name.substring(0, name.length()-scriptDefinition.getExtension().length());
+        if (index != -1) {
+            name = name.substring(index + 1);
+        }
+        if (name.endsWith(extension)) {
+            name = name.substring(0, name.length() - extension.length());
+        }
         else {
             index = name.indexOf('.');
-            if(index != -1)
-                name = name.substring(0,index);
+            if (index != -1) {
+                name = name.substring(0, index);
+            }
         }
         name = Character.toUpperCase(name.charAt(0)) + (name.length() == 0 ? "" : name.substring(1));
         name = name.replace('.', '_');
-        KtPackageDirective directive = file.getPackageDirective();
-        if(directive != null && directive.getQualifiedName().length() > 0) {
-            name = directive.getQualifiedName() + "." + name;
-        }
-        return new FqName(name);
+        return Name.identifier(name);
     }
 }

@@ -33,13 +33,10 @@ import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.PluginCliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.cliPluginUsageString
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.IncrementalCompilation
-import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.config.addKotlinSourceRoot
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
-import org.jetbrains.kotlin.script.ScriptParameter
+import org.jetbrains.kotlin.script.StandardScriptDefinition
 import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
@@ -126,10 +123,9 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             return ExitCode.OK
         }
 
-        configuration.put<List<ScriptParameter>>(JVMConfigurationKeys.SCRIPT_PARAMETERS, if (arguments.script)
-            CommandLineScriptUtils.scriptParameters()
-        else
-            emptyList<ScriptParameter>())
+        if (arguments.script) {
+            configuration.add(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY, StandardScriptDefinition)
+        }
 
         putAdvancedOptions(configuration, arguments)
 

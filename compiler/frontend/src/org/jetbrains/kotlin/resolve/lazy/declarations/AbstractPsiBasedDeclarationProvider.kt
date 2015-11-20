@@ -52,7 +52,7 @@ public abstract class AbstractPsiBasedDeclarationProvider(storageManager: Storag
             }
             else if (declaration is KtScript) {
                 val scriptInfo = JetScriptInfo(declaration)
-                classesAndObjects.put(scriptInfo.script.nameAsSafeName, scriptInfo)
+                classesAndObjects.put(scriptInfo.script.nameAsName, scriptInfo)
             }
             else if (declaration is KtParameter || declaration is KtTypedef || declaration is KtMultiDeclaration) {
                 // Do nothing, just put it into allDeclarations is enough

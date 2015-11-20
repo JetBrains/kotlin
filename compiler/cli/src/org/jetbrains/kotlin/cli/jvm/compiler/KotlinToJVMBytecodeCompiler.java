@@ -60,9 +60,6 @@ import org.jetbrains.kotlin.psi.KtScript;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
-import org.jetbrains.kotlin.script.ScriptParameter;
-import org.jetbrains.kotlin.script.KotlinScriptDefinition;
-import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider;
 import org.jetbrains.kotlin.util.PerformanceCounter;
 import org.jetbrains.kotlin.utils.KotlinPaths;
 
@@ -274,12 +271,6 @@ public class KotlinToJVMBytecodeCompiler {
             @NotNull KotlinPaths paths,
             @NotNull KotlinCoreEnvironment environment
     ) {
-        List<ScriptParameter> scriptParameters = environment.getConfiguration().getList(JVMConfigurationKeys.SCRIPT_PARAMETERS);
-        if (!scriptParameters.isEmpty()) {
-            KotlinScriptDefinitionProvider.getInstance(environment.getProject()).addScriptDefinition(
-                    new KotlinScriptDefinition(".kts", scriptParameters)
-            );
-        }
         GenerationState state = analyzeAndGenerate(environment);
         if (state == null) {
             return null;
