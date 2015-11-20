@@ -4,5 +4,5 @@ fun f(){
     foo(<caret>)
 }
 
-// EXIST: { lookupString: "arrayOf", tailText: "(vararg t: String) (kotlin)", typeText: "Array<String>" }
+// EXIST: { lookupString: "arrayOf", tailText: "(vararg elements: String) (kotlin)", typeText: "Array<String>" }
 // ABSENT: arrayOfNulls
