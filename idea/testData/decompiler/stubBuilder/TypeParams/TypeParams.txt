@@ -57,22 +57,16 @@ PsiJetFileStubImpl[package=test]
             USER_TYPE:[isAbsoluteInRootPackage=false]
               USER_TYPE:[isAbsoluteInRootPackage=false]
                 REFERENCE_EXPRESSION:[referencedName=kotlin]
-              REFERENCE_EXPRESSION:[referencedName=Any]
-      TYPE_CONSTRAINT:
-        REFERENCE_EXPRESSION:[referencedName=T1]
-        TYPE_REFERENCE:
-          NULLABLE_TYPE:
-            USER_TYPE:[isAbsoluteInRootPackage=false]
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                REFERENCE_EXPRESSION:[referencedName=kotlin]
-              REFERENCE_EXPRESSION:[referencedName=Int]
+              REFERENCE_EXPRESSION:[referencedName=Cloneable]
       TYPE_CONSTRAINT:
         REFERENCE_EXPRESSION:[referencedName=T1]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
             USER_TYPE:[isAbsoluteInRootPackage=false]
-              REFERENCE_EXPRESSION:[referencedName=kotlin]
-            REFERENCE_EXPRESSION:[referencedName=Int]
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                REFERENCE_EXPRESSION:[referencedName=java]
+              REFERENCE_EXPRESSION:[referencedName=io]
+            REFERENCE_EXPRESSION:[referencedName=Serializable]
       TYPE_CONSTRAINT:
         REFERENCE_EXPRESSION:[referencedName=T7]
         TYPE_REFERENCE:
@@ -371,8 +365,10 @@ PsiJetFileStubImpl[package=test]
               NULLABLE_TYPE:
                 USER_TYPE:[isAbsoluteInRootPackage=false]
                   USER_TYPE:[isAbsoluteInRootPackage=false]
-                    REFERENCE_EXPRESSION:[referencedName=kotlin]
-                  REFERENCE_EXPRESSION:[referencedName=String]
+                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                      REFERENCE_EXPRESSION:[referencedName=java]
+                    REFERENCE_EXPRESSION:[referencedName=io]
+                  REFERENCE_EXPRESSION:[referencedName=Serializable]
       FUN:[fqName=test.TypeParams.withOwnParamsClashing, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, name=withOwnParamsClashing]
         MODIFIER_LIST:[public final]
         TYPE_PARAMETER_LIST:

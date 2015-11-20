@@ -60,8 +60,10 @@ PsiJetFileStubImpl[package=test]
             TYPE_REFERENCE:
               USER_TYPE:[isAbsoluteInRootPackage=false]
                 USER_TYPE:[isAbsoluteInRootPackage=false]
-                  REFERENCE_EXPRESSION:[referencedName=kotlin]
-                REFERENCE_EXPRESSION:[referencedName=Number]
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    REFERENCE_EXPRESSION:[referencedName=java]
+                  REFERENCE_EXPRESSION:[referencedName=io]
+                REFERENCE_EXPRESSION:[referencedName=Serializable]
         CLASS_BODY:
           SECONDARY_CONSTRUCTOR:
             MODIFIER_LIST:[public]

@@ -21,6 +21,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import kotlin.CollectionsKt;
+import kotlin.Pair;
 import kotlin.SetsKt;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
@@ -534,18 +535,25 @@ public class DescriptorResolver {
         if (tasks.isEmpty()) return;
 
         Set<Name> classBoundEncountered = new HashSet<Name>();
+        Set<Pair<Name, TypeConstructor>> allBounds = new HashSet<Pair<Name, TypeConstructor>>();
+
         for (UpperBoundCheckerTask checkerTask : tasks) {
             Name typeParameterName = checkerTask.typeParameterName;
             KotlinType upperBound = checkerTask.upperBoundType;
             KtTypeReference upperBoundElement = checkerTask.upperBound;
 
             if (!upperBound.isError()) {
-                ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(upperBound);
-                if (classDescriptor != null) {
-                    ClassKind kind = classDescriptor.getKind();
-                    if (kind == ClassKind.CLASS || kind == ClassKind.ENUM_CLASS || kind == ClassKind.OBJECT) {
-                        if (!classBoundEncountered.add(typeParameterName)) {
-                            trace.report(ONLY_ONE_CLASS_BOUND_ALLOWED.on(upperBoundElement));
+                if (!allBounds.add(new Pair<Name, TypeConstructor>(typeParameterName, upperBound.getConstructor()))) {
+                    trace.report(REPEATED_BOUND.on(upperBoundElement));
+                }
+                else {
+                    ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(upperBound);
+                    if (classDescriptor != null) {
+                        ClassKind kind = classDescriptor.getKind();
+                        if (kind == ClassKind.CLASS || kind == ClassKind.ENUM_CLASS || kind == ClassKind.OBJECT) {
+                            if (!classBoundEncountered.add(typeParameterName)) {
+                                trace.report(ONLY_ONE_CLASS_BOUND_ALLOWED.on(upperBoundElement));
+                            }
                         }
                     }
                 }

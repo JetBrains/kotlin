@@ -1,5 +1,7 @@
 package test
 
+import java.io.Serializable
+
 class SecondaryConstructors(x: Boolean) {
     init {
     }
@@ -13,7 +15,7 @@ class SecondaryConstructors(x: Boolean) {
     private constructor(x: Int) : this(x < 0) {
     }
 
-    inner class Inner<T : String, G : Int> where G : Number {
+    inner class Inner<T : String, G : Int> where G : Serializable {
         constructor(x: T, g: G) {
         }
     }

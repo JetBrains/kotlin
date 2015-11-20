@@ -17022,6 +17022,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("repeatedBound.kt")
+            public void testRepeatedBound() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typeParameters/repeatedBound.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("upperBoundCannotBeArray.kt")
             public void testUpperBoundCannotBeArray() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/typeParameters/upperBoundCannotBeArray.kt");
