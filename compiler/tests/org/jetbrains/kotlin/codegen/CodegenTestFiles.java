@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
-import org.jetbrains.kotlin.script.AnalyzerScriptParameter;
+import org.jetbrains.kotlin.script.ScriptParameter;
 import org.jetbrains.kotlin.script.KotlinScriptDefinition;
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -117,7 +117,7 @@ public class CodegenTestFiles {
             expectedValues.add(Pair.create(fieldName, expectedValue));
         }
 
-        List<AnalyzerScriptParameter> scriptParameterTypes = Lists.newArrayList();
+        List<ScriptParameter> scriptParameterTypes = Lists.newArrayList();
         List<Object> scriptParameterValues = Lists.newArrayList();
 
         if (file.isScript()) {
@@ -152,7 +152,7 @@ public class CodegenTestFiles {
                     throw new AssertionError("TODO: " + type);
                 }
 
-                scriptParameterTypes.add(new AnalyzerScriptParameter(Name.identifier(name), jetType));
+                scriptParameterTypes.add(new ScriptParameter(Name.identifier(name), jetType));
                 scriptParameterValues.add(value);
             }
 

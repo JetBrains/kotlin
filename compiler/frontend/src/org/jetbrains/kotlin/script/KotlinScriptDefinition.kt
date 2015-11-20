@@ -16,4 +16,9 @@
 
 package org.jetbrains.kotlin.script
 
-class KotlinScriptDefinition(val extension: String, val scriptParameters: List<AnalyzerScriptParameter>)
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.KotlinType
+
+class KotlinScriptDefinition(val extension: String, val scriptParameters: List<ScriptParameter>)
+
+class ScriptParameter(val name: Name, val type: KotlinType)

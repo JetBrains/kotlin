@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
-import org.jetbrains.kotlin.script.AnalyzerScriptParameter
+import org.jetbrains.kotlin.script.ScriptParameter
 import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
@@ -126,10 +126,10 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             return ExitCode.OK
         }
 
-        configuration.put<List<AnalyzerScriptParameter>>(JVMConfigurationKeys.SCRIPT_PARAMETERS, if (arguments.script)
+        configuration.put<List<ScriptParameter>>(JVMConfigurationKeys.SCRIPT_PARAMETERS, if (arguments.script)
             CommandLineScriptUtils.scriptParameters()
         else
-            emptyList<AnalyzerScriptParameter>())
+            emptyList<ScriptParameter>())
 
         putAdvancedOptions(configuration, arguments)
 

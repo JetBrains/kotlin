@@ -57,7 +57,7 @@ public class LazyScriptClassMemberScope(
         val scriptDefinition = KotlinScriptDefinitionProvider.getInstance(file.project).findScriptDefinition(file)
         return scriptDefinition.scriptParameters.mapIndexed { index, scriptParameter ->
             ValueParameterDescriptorImpl(
-                    constructor, null, index, Annotations.EMPTY, scriptParameter.getName(), scriptParameter.getType(),
+                    constructor, null, index, Annotations.EMPTY, scriptParameter.name, scriptParameter.type,
                     /* declaresDefaultValue = */ false,
                     /* isCrossinline = */ false,
                     /* isNoinline = */ false,

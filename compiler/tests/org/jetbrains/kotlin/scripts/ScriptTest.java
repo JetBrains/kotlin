@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.ContentRootsKt;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
-import org.jetbrains.kotlin.script.AnalyzerScriptParameter;
+import org.jetbrains.kotlin.script.ScriptParameter;
 import org.jetbrains.kotlin.script.KotlinScriptDefinition;
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider;
 import org.jetbrains.kotlin.test.ConfigurationKind;
@@ -72,7 +72,7 @@ public class ScriptTest {
     @Nullable
     private static Class<?> compileScript(
             @NotNull String scriptPath,
-            @Nullable List<AnalyzerScriptParameter> scriptParameters,
+            @Nullable List<ScriptParameter> scriptParameters,
             @NotNull List<KotlinScriptDefinition> scriptDefinitions
     ) {
         KotlinPaths paths = PathUtil.getKotlinPathsForDistDirectory();
@@ -110,7 +110,7 @@ public class ScriptTest {
     }
 
     @NotNull
-    private static List<AnalyzerScriptParameter> numIntParam() {
-        return Collections.singletonList(new AnalyzerScriptParameter(Name.identifier("num"), JvmPlatform.INSTANCE$.getBuiltIns().getIntType()));
+    private static List<ScriptParameter> numIntParam() {
+        return Collections.singletonList(new ScriptParameter(Name.identifier("num"), JvmPlatform.INSTANCE$.getBuiltIns().getIntType()));
     }
 }

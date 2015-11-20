@@ -30,7 +30,7 @@ public class KotlinScriptDefinitionProvider {
     private final Set<PsiFile> scriptsFiles = new HashSet<PsiFile>();
 
     private static final KotlinScriptDefinition
-            standardScript = new KotlinScriptDefinition(KotlinParserDefinition.STD_SCRIPT_EXT, Collections.<AnalyzerScriptParameter>emptyList());
+            standardScript = new KotlinScriptDefinition(KotlinParserDefinition.STD_SCRIPT_EXT, Collections.<ScriptParameter>emptyList());
 
     public static KotlinScriptDefinitionProvider getInstance(Project project) {
         return ServiceManager.getService(project, KotlinScriptDefinitionProvider.class);
