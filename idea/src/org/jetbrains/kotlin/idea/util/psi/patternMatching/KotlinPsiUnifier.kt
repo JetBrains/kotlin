@@ -823,7 +823,7 @@ public class KotlinPsiUnifier(
             if (targetElementUnwrapped == patternElementUnwrapped) return MATCHED
             if (targetElementUnwrapped == null || patternElementUnwrapped == null) return UNMATCHED
 
-            if (!checkEquivalence) {
+            if (!checkEquivalence && targetElementUnwrapped !is KtBlockExpression) {
                 val referencedPatternDescriptor = (patternElementUnwrapped as? KtReferenceExpression)?.let {
                     it.bindingContext[BindingContext.REFERENCE_TARGET, it]
                 }

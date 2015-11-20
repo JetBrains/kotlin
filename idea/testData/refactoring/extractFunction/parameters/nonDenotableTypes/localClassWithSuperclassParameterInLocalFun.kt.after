@@ -9,7 +9,7 @@ fun foo(): T {
 
     // SIBLING:
     fun bar(): T {
-        val a = A()
+        val a = a(A())
         return a(a)
     }
 }
