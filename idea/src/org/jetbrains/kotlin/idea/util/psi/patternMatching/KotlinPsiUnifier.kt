@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -827,8 +828,9 @@ public class KotlinPsiUnifier(
                 val referencedPatternDescriptor = (patternElementUnwrapped as? KtReferenceExpression)?.let {
                     it.bindingContext[BindingContext.REFERENCE_TARGET, it]
                 }
-                val parameter = descriptorToParameter[referencedPatternDescriptor]
-                if (parameter != null) {
+                val referencedPatternDeclaration = (referencedPatternDescriptor as? DeclarationDescriptorWithSource)?.source?.getPsi()
+                val parameter = descriptorToParameter[referencedPatternDeclaration]
+                if (referencedPatternDeclaration != null && parameter != null) {
                     if (targetElementUnwrapped !is KtExpression) return UNMATCHED
                     if (!targetElementUnwrapped.checkType(parameter)) return UNMATCHED
 
@@ -876,7 +878,9 @@ public class KotlinPsiUnifier(
         }
     }
 
-    private val descriptorToParameter = ContainerUtil.newMapFromValues(parameters.iterator()) { it!!.descriptor }
+    private val descriptorToParameter = ContainerUtil.newMapFromValues(parameters.iterator()) {
+        (it!!.descriptor as? DeclarationDescriptorWithSource)?.source?.getPsi()
+    }
 
     private fun PsiElement.unwrap(): PsiElement? {
         return when (this) {
