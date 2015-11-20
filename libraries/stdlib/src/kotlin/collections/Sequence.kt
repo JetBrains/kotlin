@@ -473,29 +473,28 @@ private class DistinctIterator<T, K>(private val source : Iterator<T>, private v
 
 private class GeneratorSequence<T: Any>(private val getInitialValue: () -> T?, private val getNextValue: (T) -> T?): Sequence<T> {
     override fun iterator(): Iterator<T> = object : Iterator<T> {
-        var nextItem: T? = getInitialValue()
-        var nextState: Int = if (nextItem == null) 0 else 1 // -1 for unknown, 0 for done, 1 for continue
+        var nextItem: T? = null
+        var nextState: Int = -2 // -2 for initial unknown, -1 for next unknown, 0 for done, 1 for continue
 
         private fun calcNext() {
-            nextItem = getNextValue(nextItem!!)
+            nextItem = if (nextState == -2) getInitialValue() else getNextValue(nextItem!!)
             nextState = if (nextItem == null) 0 else 1
         }
 
         override fun next(): T {
-            if (nextState == -1)
+            if (nextState < 0)
                 calcNext()
+
             if (nextState == 0)
                 throw NoSuchElementException()
             val result = nextItem as T
-            // Clean next to avoid keeping reference on yielded instance
-            // need to keep state
-            // nextItem = null
+            // Do not clean nextItem (to avoid keeping reference on yielded instance) -- need to keep state for getNextValue
             nextState = -1
             return result
         }
 
         override fun hasNext(): Boolean {
-            if (nextState == -1)
+            if (nextState < 0)
                 calcNext()
             return nextState == 1
         }
@@ -530,7 +529,10 @@ public fun <T : Any> sequence(nextFunction: () -> T?): Sequence<T> {
  *
  * The sequence can be iterated multiple times, each time starting with the [initialValue].
  */
-public /*inline*/ fun <T : Any> sequence(initialValue: T, nextFunction: (T) -> T?): Sequence<T> =
+public fun <T : Any> sequence(initialValue: T?, nextFunction: (T) -> T?): Sequence<T> =
+    if (initialValue == null)
+        EmptySequence
+    else
         GeneratorSequence({ initialValue }, nextFunction)
 
 /**
