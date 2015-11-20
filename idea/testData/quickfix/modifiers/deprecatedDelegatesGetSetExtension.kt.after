@@ -1,7 +1,9 @@
 // "Rename to 'getValue'" "true"
+import kotlin.reflect.KProperty
+
 class CustomDelegate
 
-operator fun CustomDelegate.getValue(thisRef: Any?, prop: PropertyMetadata): String = ""
+operator fun CustomDelegate.getValue(thisRef: Any?, prop: KProperty<*>): String = ""
 
 class Example {
     val a: String by CustomDelegate()

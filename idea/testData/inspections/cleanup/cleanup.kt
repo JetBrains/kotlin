@@ -1,6 +1,7 @@
 import pack.oldFun1
 import pack.oldFun2 // should not be removed for non-deprecated overload used
 import pack.oldFun3
+import kotlin.reflect.KProperty
 
 class A private()
 
@@ -40,8 +41,8 @@ annotation class Fancy(val param: Int)
 @Fancy(<caret>i) class D
 
 class CustomDelegate {
-    operator fun get(thisRef: Any?, prop: PropertyMetadata): String = ""
-    operator fun set(thisRef: Any?, prop: PropertyMetadata, value: String) {}
+    operator fun get(thisRef: Any?, prop: KProperty<*>): String = ""
+    operator fun set(thisRef: Any?, prop: KProperty<*>, value: String) {}
 }
 
 class B {

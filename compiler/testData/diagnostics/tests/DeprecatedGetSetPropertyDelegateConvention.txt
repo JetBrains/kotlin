@@ -1,9 +1,9 @@
 package
 
-public operator fun OkDelegate.get(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.PropertyMetadata): kotlin.Int
-public operator fun CustomDelegate3.getValue(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.PropertyMetadata): kotlin.Int
-public operator fun OkDelegate.set(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.PropertyMetadata, /*2*/ value: kotlin.Int): kotlin.Unit
-public operator fun CustomDelegate3.setValue(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.PropertyMetadata, /*2*/ value: kotlin.Int): kotlin.Unit
+public operator fun OkDelegate.get(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.reflect.KProperty<*>): kotlin.Int
+public operator fun CustomDelegate3.getValue(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.reflect.KProperty<*>): kotlin.Int
+public operator fun OkDelegate.set(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.reflect.KProperty<*>, /*2*/ value: kotlin.Int): kotlin.Unit
+public operator fun CustomDelegate3.setValue(/*0*/ thisRef: kotlin.Any?, /*1*/ prop: kotlin.reflect.KProperty<*>, /*2*/ value: kotlin.Int): kotlin.Unit
 
 public final class CustomDelegate {
     public constructor CustomDelegate()

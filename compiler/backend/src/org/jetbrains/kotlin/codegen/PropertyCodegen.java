@@ -58,7 +58,7 @@ import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
-import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.PROPERTY_METADATA_TYPE;
+import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.K_PROPERTY_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.hasJvmFieldAnnotation;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
@@ -521,13 +521,15 @@ public class PropertyCodegen {
 
         codegen.tempVariables.put(
                 resolvedCall.getCall().getValueArguments().get(propertyMetadataArgumentIndex).asElement(),
-                new StackValue(PROPERTY_METADATA_TYPE) {
+                new StackValue(K_PROPERTY_TYPE) {
                     @Override
                     public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
-                        Field array = StackValue
-                                .field(Type.getType("[" + PROPERTY_METADATA_TYPE), owner, JvmAbi.DELEGATED_PROPERTIES_ARRAY_NAME, true,
-                                       StackValue.none());
-                        StackValue.arrayElement(PROPERTY_METADATA_TYPE, array, StackValue.constant(indexInPropertyMetadataArray, Type.INT_TYPE)).put(type, v);
+                        Field array = StackValue.field(
+                                Type.getType("[" + K_PROPERTY_TYPE), owner, JvmAbi.DELEGATED_PROPERTIES_ARRAY_NAME, true, StackValue.none()
+                        );
+                        StackValue.arrayElement(
+                                K_PROPERTY_TYPE, array, StackValue.constant(indexInPropertyMetadataArray, Type.INT_TYPE)
+                        ).put(type, v);
                     }
                 }
         );

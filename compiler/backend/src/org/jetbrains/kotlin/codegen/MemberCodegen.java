@@ -484,13 +484,13 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         if (delegatedProperties.isEmpty()) return;
 
         v.newField(NO_ORIGIN, ACC_PRIVATE | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC, JvmAbi.DELEGATED_PROPERTIES_ARRAY_NAME,
-                   "[" + PROPERTY_METADATA_TYPE, null, null);
+                   "[" + K_PROPERTY_TYPE, null, null);
 
         if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) return;
 
         InstructionAdapter iv = createOrGetClInitCodegen().v;
         iv.iconst(delegatedProperties.size());
-        iv.newarray(PROPERTY_METADATA_TYPE);
+        iv.newarray(K_PROPERTY_TYPE);
 
         for (int i = 0, size = delegatedProperties.size(); i < size; i++) {
             PropertyDescriptor property =
@@ -529,12 +529,12 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
                 );
             }
 
-            value.put(PROPERTY_METADATA_TYPE, iv);
+            value.put(K_PROPERTY_TYPE, iv);
 
-            iv.astore(PROPERTY_METADATA_TYPE);
+            iv.astore(K_PROPERTY_TYPE);
         }
 
-        iv.putstatic(thisAsmType.getInternalName(), JvmAbi.DELEGATED_PROPERTIES_ARRAY_NAME, "[" + PROPERTY_METADATA_TYPE);
+        iv.putstatic(thisAsmType.getInternalName(), JvmAbi.DELEGATED_PROPERTIES_ARRAY_NAME, "[" + K_PROPERTY_TYPE);
     }
 
     public String getClassName() {

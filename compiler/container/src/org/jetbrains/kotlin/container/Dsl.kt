@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.container
 
+import kotlin.reflect.KProperty
+
 public fun createContainer(id: String, init: StorageComponentContainer.() -> Unit): StorageComponentContainer {
     val c = StorageComponentContainer(id)
     c.init()
@@ -24,11 +26,11 @@ public fun createContainer(id: String, init: StorageComponentContainer.() -> Uni
 }
 
 public inline fun <reified T : Any> StorageComponentContainer.useImpl() {
-    registerSingleton(javaClass<T>())
+    registerSingleton(T::class.java)
 }
 
 public inline fun <reified T : Any> ComponentProvider.get(): T {
-    return getService(javaClass<T>())
+    return getService(T::class.java)
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -40,6 +42,6 @@ public fun StorageComponentContainer.useInstance(instance: Any) {
     registerInstance(instance)
 }
 
-inline operator fun <reified T : Any> ComponentProvider.getValue(thisRef: Any?, desc: PropertyMetadata): T {
-    return getService(javaClass<T>())
+inline operator fun <reified T : Any> ComponentProvider.getValue(thisRef: Any?, desc: KProperty<*>): T {
+    return getService(T::class.java)
 }

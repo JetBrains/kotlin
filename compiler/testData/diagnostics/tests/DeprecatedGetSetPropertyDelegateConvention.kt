@@ -25,11 +25,11 @@ class CustomDelegate3 {
     operator fun set(thisRef: Any?, prop: KProperty<*>, value: String) {}
 }
 
-operator fun OkDelegate.get(thisRef: Any?, prop: <!DEPRECATION!>PropertyMetadata<!>): Int = 4
-operator fun OkDelegate.set(thisRef: Any?, prop: <!DEPRECATION!>PropertyMetadata<!>, value: Int) {}
+operator fun OkDelegate.get(thisRef: Any?, prop: KProperty<*>): Int = 4
+operator fun OkDelegate.set(thisRef: Any?, prop: KProperty<*>, value: Int) {}
 
-operator fun CustomDelegate3.getValue(thisRef: Any?, prop: <!DEPRECATION!>PropertyMetadata<!>): Int = 4
-operator fun CustomDelegate3.setValue(thisRef: Any?, prop: <!DEPRECATION!>PropertyMetadata<!>, value: Int) {}
+operator fun CustomDelegate3.getValue(thisRef: Any?, prop: KProperty<*>): Int = 4
+operator fun CustomDelegate3.setValue(thisRef: Any?, prop: KProperty<*>, value: Int) {}
 
 class Example {
 

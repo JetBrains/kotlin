@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.types.*
 import java.util.*
+import kotlin.reflect.KProperty
 
 val KOTLIN_REFLECT_FQ_NAME = FqName("kotlin.reflect")
 
@@ -43,7 +44,7 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
     }
 
     private object ClassLookup {
-        operator fun getValue(types: ReflectionTypes, property: PropertyMetadata): ClassDescriptor {
+        operator fun getValue(types: ReflectionTypes, property: KProperty<*>): ClassDescriptor {
             return types.find(property.name.capitalize())
         }
     }
@@ -75,7 +76,7 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
     ): KotlinType {
         val arguments = KotlinBuiltIns.getFunctionTypeArgumentProjections(receiverType, parameterTypes, returnType)
 
-        val classDescriptor = getKFunction(arguments.size() - 1 /* return type */)
+        val classDescriptor = getKFunction(arguments.size - 1 /* return type */)
 
         if (ErrorUtils.isError(classDescriptor)) {
             return classDescriptor.defaultType
