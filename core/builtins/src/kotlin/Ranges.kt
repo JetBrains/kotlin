@@ -29,7 +29,7 @@ public class ByteRange(start: Byte, endInclusive: Byte) : ByteProgression(start,
     override val start: Byte get() = first
     override val endInclusive: Byte get() = last
 
-    override fun contains(item: Byte): Boolean = start <= item && item <= endInclusive
+    override fun contains(value: Byte): Boolean = start <= value && value <= endInclusive
 
     override fun isEmpty(): Boolean = start > endInclusive
 
@@ -58,7 +58,7 @@ public class CharRange(start: Char, endInclusive: Char) : CharProgression(start,
     override val start: Char get() = first
     override val endInclusive: Char get() = last
 
-    override fun contains(item: Char): Boolean = start <= item && item <= endInclusive
+    override fun contains(value: Char): Boolean = start <= value && value <= endInclusive
 
     override fun isEmpty(): Boolean = start > endInclusive
 
@@ -88,7 +88,7 @@ public class ShortRange(start: Short, endInclusive: Short) : ShortProgression(st
     override val start: Short get() = first
     override val endInclusive: Short get() = last
 
-    override fun contains(item: Short): Boolean = start <= item && item <= endInclusive
+    override fun contains(value: Short): Boolean = start <= value && value <= endInclusive
 
     override fun isEmpty(): Boolean = start > endInclusive
 
@@ -117,7 +117,7 @@ public class IntRange(start: Int, endInclusive: Int) : IntProgression(start, end
     override val start: Int get() = first
     override val endInclusive: Int get() = last
 
-    override fun contains(item: Int): Boolean = start <= item && item <= endInclusive
+    override fun contains(value: Int): Boolean = start <= value && value <= endInclusive
 
     override fun isEmpty(): Boolean = start > endInclusive
 
@@ -146,7 +146,7 @@ public class LongRange(start: Long, endInclusive: Long) : LongProgression(start,
     override val start: Long get() = first
     override val endInclusive: Long get() = last
 
-    override fun contains(item: Long): Boolean = start <= item && item <= endInclusive
+    override fun contains(value: Long): Boolean = start <= value && value <= endInclusive
 
     override fun isEmpty(): Boolean = start > endInclusive
 

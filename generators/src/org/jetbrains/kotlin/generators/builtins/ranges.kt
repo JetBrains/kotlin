@@ -83,7 +83,7 @@ public class $range(start: $t, endInclusive: $t) : ${t}Progression(start, endInc
     override val endInclusive: $t get() = last
 """ else "") +
 """
-    override fun contains(item: $t): Boolean = start <= item && item <= endInclusive
+    override fun contains(value: $t): Boolean = start <= value && value <= endInclusive
 
     override fun isEmpty(): Boolean = start > endInclusive
 
