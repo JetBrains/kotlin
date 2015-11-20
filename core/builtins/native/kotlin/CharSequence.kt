@@ -33,8 +33,8 @@ public interface CharSequence {
     /**
      * Returns a subsequence of this sequence.
      *
-     * @param start the start index (inclusive).
-     * @param end the end index (exclusive).
+     * @param startIndex the start index (inclusive).
+     * @param endIndex the end index (exclusive).
      */
-    public fun subSequence(start: Int, end: Int): CharSequence
+    public fun subSequence(startIndex: Int, endIndex: Int): CharSequence
 }
