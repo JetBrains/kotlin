@@ -21,35 +21,35 @@ fun specialJVM(): List<GenericFunction> {
         }
     }
 
-    templates add f("plus(collection: Collection<T>)") {
+    templates add f("plus(elements: Collection<T>)") {
         operator(true)
 
         only(InvariantArraysOfObjects, ArraysOfPrimitives)
         returns("SELF")
-        doc { "Returns an array containing all elements of the original array and then all elements of the given [collection]." }
+        doc { "Returns an array containing all elements of the original array and then all elements of the given [elements] collection." }
         body {
             """
             var index = size
-            val result = Arrays.copyOf(this, index + collection.size)
-            for (element in collection) result[index++] = element
+            val result = Arrays.copyOf(this, index + elements.size)
+            for (element in elements) result[index++] = element
             return result
             """
         }
     }
 
-    templates add f("plus(array: SELF)") {
+    templates add f("plus(elements: SELF)") {
         operator(true)
 
         only(InvariantArraysOfObjects, ArraysOfPrimitives)
-        customSignature(InvariantArraysOfObjects) { "plus(array: Array<out T>)" }
-        doc { "Returns an array containing all elements of the original array and then all elements of the given [array]." }
+        customSignature(InvariantArraysOfObjects) { "plus(elements: Array<out T>)" }
+        doc { "Returns an array containing all elements of the original array and then all elements of the given [elements] array." }
         returns("SELF")
         body {
             """
             val thisSize = size
-            val arraySize = array.size
+            val arraySize = elements.size
             val result = Arrays.copyOf(this, thisSize + arraySize)
-            System.arraycopy(array, 0, result, thisSize, arraySize)
+            System.arraycopy(elements, 0, result, thisSize, arraySize)
             return result
             """
         }

@@ -1494,25 +1494,6 @@ public fun <T : Any> List<T?>.requireNoNulls(): List<T> {
 }
 
 /**
- * Returns a list containing all elements of the original collection except the elements contained in the given [array].
- */
-public operator fun <T> Iterable<T>.minus(array: Array<out T>): List<T> {
-    if (array.isEmpty()) return this.toList()
-    val other = array.toHashSet()
-    return this.filterNot { it in other }
-}
-
-/**
- * Returns a list containing all elements of the original collection except the elements contained in the given [collection].
- */
-public operator fun <T> Iterable<T>.minus(collection: Iterable<T>): List<T> {
-    val other = collection.convertToSetForSetOperationWith(this)
-    if (other.isEmpty())
-        return this.toList()
-    return this.filterNot { it in other }
-}
-
-/**
  * Returns a list containing all elements of the original collection without the first occurrence of the given [element].
  */
 public operator fun <T> Iterable<T>.minus(element: T): List<T> {
@@ -1522,10 +1503,29 @@ public operator fun <T> Iterable<T>.minus(element: T): List<T> {
 }
 
 /**
- * Returns a list containing all elements of the original collection except the elements contained in the given [sequence].
+ * Returns a list containing all elements of the original collection except the elements contained in the given [elements] array.
  */
-public operator fun <T> Iterable<T>.minus(sequence: Sequence<T>): List<T> {
-    val other = sequence.toHashSet()
+public operator fun <T> Iterable<T>.minus(elements: Array<out T>): List<T> {
+    if (elements.isEmpty()) return this.toList()
+    val other = elements.toHashSet()
+    return this.filterNot { it in other }
+}
+
+/**
+ * Returns a list containing all elements of the original collection except the elements contained in the given [elements] collection.
+ */
+public operator fun <T> Iterable<T>.minus(elements: Iterable<T>): List<T> {
+    val other = elements.convertToSetForSetOperationWith(this)
+    if (other.isEmpty())
+        return this.toList()
+    return this.filterNot { it in other }
+}
+
+/**
+ * Returns a list containing all elements of the original collection except the elements contained in the given [elements] sequence.
+ */
+public operator fun <T> Iterable<T>.minus(elements: Sequence<T>): List<T> {
+    val other = elements.toHashSet()
     if (other.isEmpty())
         return this.toList()
     return this.filterNot { it in other }
@@ -1550,54 +1550,6 @@ public inline fun <T> Iterable<T>.partition(predicate: (T) -> Boolean): Pair<Lis
 }
 
 /**
- * Returns a list containing all elements of the original collection and then all elements of the given [array].
- */
-public operator fun <T> Collection<T>.plus(array: Array<out T>): List<T> {
-    val result = ArrayList<T>(this.size + array.size)
-    result.addAll(this)
-    result.addAll(array)
-    return result
-}
-
-/**
- * Returns a list containing all elements of the original collection and then all elements of the given [array].
- */
-public operator fun <T> Iterable<T>.plus(array: Array<out T>): List<T> {
-    if (this is Collection) return this.plus(array)
-    val result = ArrayList<T>()
-    result.addAll(this)
-    result.addAll(array)
-    return result
-}
-
-/**
- * Returns a list containing all elements of the original collection and then all elements of the given [collection].
- */
-public operator fun <T> Collection<T>.plus(collection: Iterable<T>): List<T> {
-    if (collection is Collection) {
-        val result = ArrayList<T>(this.size + collection.size)
-        result.addAll(this)
-        result.addAll(collection)
-        return result
-    } else {
-        val result = ArrayList<T>(this)
-        result.addAll(collection)
-        return result
-    }
-}
-
-/**
- * Returns a list containing all elements of the original collection and then all elements of the given [collection].
- */
-public operator fun <T> Iterable<T>.plus(collection: Iterable<T>): List<T> {
-    if (this is Collection) return this.plus(collection)
-    val result = ArrayList<T>()
-    result.addAll(this)
-    result.addAll(collection)
-    return result
-}
-
-/**
  * Returns a list containing all elements of the original collection and then the given [element].
  */
 public operator fun <T> Collection<T>.plus(element: T): List<T> {
@@ -1619,22 +1571,70 @@ public operator fun <T> Iterable<T>.plus(element: T): List<T> {
 }
 
 /**
- * Returns a list containing all elements of the original collection and then all elements of the given [sequence].
+ * Returns a list containing all elements of the original collection and then all elements of the given [elements] array.
  */
-public operator fun <T> Collection<T>.plus(sequence: Sequence<T>): List<T> {
-    val result = ArrayList<T>(this.size + 10)
+public operator fun <T> Collection<T>.plus(elements: Array<out T>): List<T> {
+    val result = ArrayList<T>(this.size + elements.size)
     result.addAll(this)
-    result.addAll(sequence)
+    result.addAll(elements)
     return result
 }
 
 /**
- * Returns a list containing all elements of the original collection and then all elements of the given [sequence].
+ * Returns a list containing all elements of the original collection and then all elements of the given [elements] array.
  */
-public operator fun <T> Iterable<T>.plus(sequence: Sequence<T>): List<T> {
+public operator fun <T> Iterable<T>.plus(elements: Array<out T>): List<T> {
+    if (this is Collection) return this.plus(elements)
     val result = ArrayList<T>()
     result.addAll(this)
-    result.addAll(sequence)
+    result.addAll(elements)
+    return result
+}
+
+/**
+ * Returns a list containing all elements of the original collection and then all elements of the given [elements] collection.
+ */
+public operator fun <T> Collection<T>.plus(elements: Iterable<T>): List<T> {
+    if (elements is Collection) {
+        val result = ArrayList<T>(this.size + elements.size)
+        result.addAll(this)
+        result.addAll(elements)
+        return result
+    } else {
+        val result = ArrayList<T>(this)
+        result.addAll(elements)
+        return result
+    }
+}
+
+/**
+ * Returns a list containing all elements of the original collection and then all elements of the given [elements] collection.
+ */
+public operator fun <T> Iterable<T>.plus(elements: Iterable<T>): List<T> {
+    if (this is Collection) return this.plus(elements)
+    val result = ArrayList<T>()
+    result.addAll(this)
+    result.addAll(elements)
+    return result
+}
+
+/**
+ * Returns a list containing all elements of the original collection and then all elements of the given [elements] sequence.
+ */
+public operator fun <T> Collection<T>.plus(elements: Sequence<T>): List<T> {
+    val result = ArrayList<T>(this.size + 10)
+    result.addAll(this)
+    result.addAll(elements)
+    return result
+}
+
+/**
+ * Returns a list containing all elements of the original collection and then all elements of the given [elements] sequence.
+ */
+public operator fun <T> Iterable<T>.plus(elements: Sequence<T>): List<T> {
+    val result = ArrayList<T>()
+    result.addAll(this)
+    result.addAll(elements)
     return result
 }
 

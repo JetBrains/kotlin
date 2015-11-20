@@ -904,38 +904,6 @@ public fun <T : Any> Sequence<T?>.requireNoNulls(): Sequence<T> {
 }
 
 /**
- * Returns a sequence containing all elements of original sequence except the elements contained in the given [array].
- * Note that the source sequence and the array being subtracted are iterated only when an `iterator` is requested from
- * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
- */
-public operator fun <T> Sequence<T>.minus(array: Array<out T>): Sequence<T> {
-    if (array.isEmpty()) return this
-    return object: Sequence<T> {
-        override fun iterator(): Iterator<T> {
-            val other = array.toHashSet()
-            return this@minus.filterNot { it in other }.iterator()
-        }
-    }
-}
-
-/**
- * Returns a sequence containing all elements of original sequence except the elements contained in the given [collection].
- * Note that the source sequence and the collection being subtracted are iterated only when an `iterator` is requested from
- * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
- */
-public operator fun <T> Sequence<T>.minus(collection: Iterable<T>): Sequence<T> {
-    return object: Sequence<T> {
-        override fun iterator(): Iterator<T> {
-            val other = collection.convertToSetForSetOperation()
-            if (other.isEmpty())
-                return this@minus.iterator()
-            else
-                return this@minus.filterNot { it in other }.iterator()
-        }
-    }
-}
-
-/**
  * Returns a sequence containing all elements of the original sequence without the first occurrence of the given [element].
  */
 public operator fun <T> Sequence<T>.minus(element: T): Sequence<T> {
@@ -948,14 +916,46 @@ public operator fun <T> Sequence<T>.minus(element: T): Sequence<T> {
 }
 
 /**
- * Returns a sequence containing all elements of original sequence except the elements contained in the given [sequence].
+ * Returns a sequence containing all elements of original sequence except the elements contained in the given [elements] array.
+ * Note that the source sequence and the array being subtracted are iterated only when an `iterator` is requested from
+ * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
+ */
+public operator fun <T> Sequence<T>.minus(elements: Array<out T>): Sequence<T> {
+    if (elements.isEmpty()) return this
+    return object: Sequence<T> {
+        override fun iterator(): Iterator<T> {
+            val other = elements.toHashSet()
+            return this@minus.filterNot { it in other }.iterator()
+        }
+    }
+}
+
+/**
+ * Returns a sequence containing all elements of original sequence except the elements contained in the given [elements] collection.
+ * Note that the source sequence and the collection being subtracted are iterated only when an `iterator` is requested from
+ * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
+ */
+public operator fun <T> Sequence<T>.minus(elements: Iterable<T>): Sequence<T> {
+    return object: Sequence<T> {
+        override fun iterator(): Iterator<T> {
+            val other = elements.convertToSetForSetOperation()
+            if (other.isEmpty())
+                return this@minus.iterator()
+            else
+                return this@minus.filterNot { it in other }.iterator()
+        }
+    }
+}
+
+/**
+ * Returns a sequence containing all elements of original sequence except the elements contained in the given [elements] sequence.
  * Note that the source sequence and the sequence being subtracted are iterated only when an `iterator` is requested from
  * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
  */
-public operator fun <T> Sequence<T>.minus(sequence: Sequence<T>): Sequence<T> {
+public operator fun <T> Sequence<T>.minus(elements: Sequence<T>): Sequence<T> {
     return object: Sequence<T> {
         override fun iterator(): Iterator<T> {
-            val other = sequence.toHashSet()
+            val other = elements.toHashSet()
             if (other.isEmpty())
                 return this@minus.iterator()
             else
@@ -983,24 +983,6 @@ public inline fun <T> Sequence<T>.partition(predicate: (T) -> Boolean): Pair<Lis
 }
 
 /**
- * Returns a sequence containing all elements of original sequence and then all elements of the given [array].
- * Note that the source sequence and the array being added are iterated only when an `iterator` is requested from
- * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
- */
-public operator fun <T> Sequence<T>.plus(array: Array<out T>): Sequence<T> {
-    return this.plus(array.asList())
-}
-
-/**
- * Returns a sequence containing all elements of original sequence and then all elements of the given [collection].
- * Note that the source sequence and the collection being added are iterated only when an `iterator` is requested from
- * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
- */
-public operator fun <T> Sequence<T>.plus(collection: Iterable<T>): Sequence<T> {
-    return sequenceOf(this, collection.asSequence()).flatten()
-}
-
-/**
  * Returns a sequence containing all elements of the original sequence and then the given [element].
  */
 public operator fun <T> Sequence<T>.plus(element: T): Sequence<T> {
@@ -1008,12 +990,30 @@ public operator fun <T> Sequence<T>.plus(element: T): Sequence<T> {
 }
 
 /**
- * Returns a sequence containing all elements of original sequence and then all elements of the given [sequence].
+ * Returns a sequence containing all elements of original sequence and then all elements of the given [elements] array.
+ * Note that the source sequence and the array being added are iterated only when an `iterator` is requested from
+ * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
+ */
+public operator fun <T> Sequence<T>.plus(elements: Array<out T>): Sequence<T> {
+    return this.plus(elements.asList())
+}
+
+/**
+ * Returns a sequence containing all elements of original sequence and then all elements of the given [elements] collection.
+ * Note that the source sequence and the collection being added are iterated only when an `iterator` is requested from
+ * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
+ */
+public operator fun <T> Sequence<T>.plus(elements: Iterable<T>): Sequence<T> {
+    return sequenceOf(this, elements.asSequence()).flatten()
+}
+
+/**
+ * Returns a sequence containing all elements of original sequence and then all elements of the given [elements] sequence.
  * Note that the source sequence and the sequence being added are iterated only when an `iterator` is requested from
  * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
  */
-public operator fun <T> Sequence<T>.plus(sequence: Sequence<T>): Sequence<T> {
-    return sequenceOf(this, sequence).flatten()
+public operator fun <T> Sequence<T>.plus(elements: Sequence<T>): Sequence<T> {
+    return sequenceOf(this, elements).flatten()
 }
 
 /**
