@@ -29,6 +29,8 @@ import javax.xml.parsers.DocumentBuilderFactory
 public class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
     override fun getExtraArguments(moduleBuildTarget: ModuleBuildTarget, context: CompileContext): List<String> {
         val module = moduleBuildTarget.module
+        if (!hasAndroidJpsPlugin() || isAndroidModuleWithoutGradle(module)) return emptyList()
+
         val pluginId = ANDROID_COMPILER_PLUGIN_ID
         val resPath = getAndroidResPath(module)
         val applicationId = getAndroidManifest(module)?.let { getApplicationPackageFromManifest(it) }
@@ -38,10 +40,28 @@ public class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
                     getPluginOptionString(pluginId, VARIANT_OPTION_NAME, "main;$resPath"),
                     getPluginOptionString(pluginId, PACKAGE_OPTION_NAME, applicationId))
         }
-        else listOf()
+        else emptyList()
+    }
+
+    private fun isAndroidModuleWithoutGradle(module: JpsModule): Boolean {
+        val androidFacet = AndroidJpsUtil.getExtension(module) ?: return false
+        return !androidFacet.isGradleProject
+    }
+
+    private fun hasAndroidJpsPlugin(): Boolean {
+        try {
+            Class.forName(ANDROID_JPS_UTIL_CLASS_FQNAME)
+            return true
+        }
+        catch (e: ClassNotFoundException) {
+            return false
+        }
     }
 
     override fun getClasspath(moduleBuildTarget: ModuleBuildTarget, context: CompileContext): List<String> {
+        val module = moduleBuildTarget.module
+        if (!hasAndroidJpsPlugin() || isAndroidModuleWithoutGradle(module)) return emptyList()
+
         val inJar = File(PathUtil.getJarPathForClass(javaClass)).isFile
         val manifestFile = getAndroidManifest(moduleBuildTarget.module)
         return if (manifestFile != null) {
@@ -55,7 +75,7 @@ public class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
                         File(kotlinProjectDirectory, "dist/kotlinc/lib/$JAR_FILE_NAME").absolutePath
                     })
         }
-        else listOf()
+        else emptyList()
     }
 
     private fun getAndroidResPath(module: JpsModule): String? {
@@ -69,6 +89,8 @@ public class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
     }
 
     companion object {
+        private val ANDROID_JPS_UTIL_CLASS_FQNAME = "org.jetbrains.jps.android.AndroidJpsUtil"
+
         private val JAR_FILE_NAME = "android-compiler-plugin.jar"
         private val ANDROID_COMPILER_PLUGIN_ID = "org.jetbrains.kotlin.android"
 
