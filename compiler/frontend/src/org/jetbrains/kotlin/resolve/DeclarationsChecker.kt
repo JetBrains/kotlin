@@ -23,19 +23,19 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.typeUtil.*
-
-import java.util.*
-
-import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.resolve.BindingContext.TYPE
 import org.jetbrains.kotlin.resolve.BindingContext.TYPE_PARAMETER
 import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractMembers
 import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveOpenMembers
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.SubstitutionUtils
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.isNothing
+import java.util.*
 
 fun KtDeclaration.checkTypeReferences(trace: BindingTrace) {
     if (this is KtCallableDeclaration) {
@@ -147,38 +147,35 @@ class DeclarationsChecker(
     }
 
     private fun checkTypesInClassHeader(classOrObject: KtClassOrObject) {
+        fun KtTypeReference.type(): KotlinType? = trace.bindingContext.get(TYPE, this)
+
         for (delegationSpecifier in classOrObject.getDelegationSpecifiers()) {
-            delegationSpecifier.typeReference?.check(checkBoundsForTypeInClassHeader = true)
+            val typeReference = delegationSpecifier.typeReference ?: continue
+            typeReference.type()?.let { DescriptorResolver.checkBounds(typeReference, it, trace) }
+            typeReference.checkNotEnumEntry(trace)
         }
 
         if (classOrObject !is KtClass) return
 
-        for (jetTypeParameter in classOrObject.typeParameters) {
-            jetTypeParameter.extendsBound?.check(checkBoundsForTypeInClassHeader = true, checkFinalUpperBounds = true)
+        val tasks = ArrayList<DescriptorResolver.UpperBoundCheckerTask>()
+
+        for (typeParameter in classOrObject.typeParameters) {
+            val typeReference = typeParameter.extendsBound ?: continue
+            val type = typeReference.type() ?: continue
+            tasks.add(DescriptorResolver.UpperBoundCheckerTask(typeParameter.nameAsName, typeReference, type))
         }
 
         for (constraint in classOrObject.typeConstraints) {
-            constraint.boundTypeReference?.check(checkBoundsForTypeInClassHeader = true, checkFinalUpperBounds = true)
+            val typeReference = constraint.boundTypeReference ?: continue
+            val type = typeReference.type() ?: continue
+            val name = constraint.subjectTypeParameterName?.getReferencedNameAsName() ?: continue
+            tasks.add(DescriptorResolver.UpperBoundCheckerTask(name, typeReference, type))
         }
-    }
 
-    private fun KtTypeReference.checkBoundsForTypeInClassHeader() {
-        trace.bindingContext.get(TYPE, this)?.let { DescriptorResolver.checkBounds(this, it, trace) }
-    }
+        DescriptorResolver.checkUpperBoundTypes(trace, tasks)
 
-    private fun KtTypeReference.checkFinalUpperBounds() {
-        trace.bindingContext.get(TYPE, this)?.let { DescriptorResolver.checkUpperBoundType(this, it, trace) }
-    }
-
-    private fun KtTypeReference.check(checkBoundsForTypeInClassHeader: Boolean = false, checkFinalUpperBounds: Boolean = false) {
-        if (checkFinalUpperBounds) {
-            checkFinalUpperBounds()
-        }
-        else {
-            checkNotEnumEntry(trace)
-        }
-        if (checkBoundsForTypeInClassHeader) {
-            checkBoundsForTypeInClassHeader()
+        for (task in tasks) {
+            DescriptorResolver.checkBounds(task.upperBound, task.upperBoundType, trace)
         }
     }
 

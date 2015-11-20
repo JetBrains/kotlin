@@ -458,10 +458,12 @@ public class DescriptorResolver {
     }
 
     static final class UpperBoundCheckerTask {
-        KtTypeReference upperBound;
-        KotlinType upperBoundType;
+        public final Name typeParameterName;
+        public final KtTypeReference upperBound;
+        public final KotlinType upperBoundType;
 
-        private UpperBoundCheckerTask(KtTypeReference upperBound, KotlinType upperBoundType) {
+        UpperBoundCheckerTask(Name typeParameterName, KtTypeReference upperBound, KotlinType upperBoundType) {
+            this.typeParameterName = typeParameterName;
             this.upperBound = upperBound;
             this.upperBoundType = upperBoundType;
         }
@@ -479,16 +481,16 @@ public class DescriptorResolver {
         List<KtTypeParameter> typeParameters = declaration.getTypeParameters();
         Map<Name, TypeParameterDescriptorImpl> parameterByName = Maps.newHashMap();
         for (int i = 0; i < typeParameters.size(); i++) {
-            KtTypeParameter jetTypeParameter = typeParameters.get(i);
+            KtTypeParameter ktTypeParameter = typeParameters.get(i);
             TypeParameterDescriptorImpl typeParameterDescriptor = parameters.get(i);
 
             parameterByName.put(typeParameterDescriptor.getName(), typeParameterDescriptor);
 
-            KtTypeReference extendsBound = jetTypeParameter.getExtendsBound();
+            KtTypeReference extendsBound = ktTypeParameter.getExtendsBound();
             if (extendsBound != null) {
                 KotlinType type = typeResolver.resolveType(scope, extendsBound, trace, false);
                 typeParameterDescriptor.addUpperBound(type);
-                deferredUpperBoundCheckerTasks.add(new UpperBoundCheckerTask(extendsBound, type));
+                deferredUpperBoundCheckerTasks.add(new UpperBoundCheckerTask(ktTypeParameter.getNameAsName(), extendsBound, type));
             }
         }
         for (KtTypeConstraint constraint : declaration.getTypeConstraints()) {
@@ -502,7 +504,7 @@ public class DescriptorResolver {
             KotlinType bound = null;
             if (boundTypeReference != null) {
                 bound = typeResolver.resolveType(scope, boundTypeReference, trace, false);
-                deferredUpperBoundCheckerTasks.add(new UpperBoundCheckerTask(boundTypeReference, bound));
+                deferredUpperBoundCheckerTasks.add(new UpperBoundCheckerTask(referencedName, boundTypeReference, bound));
             }
 
             if (typeParameterDescriptor != null) {
@@ -523,11 +525,33 @@ public class DescriptorResolver {
         }
 
         if (!(declaration instanceof KtClass)) {
-            for (UpperBoundCheckerTask checkerTask : deferredUpperBoundCheckerTasks) {
-                checkUpperBoundType(checkerTask.upperBound, checkerTask.upperBoundType, trace);
+            checkUpperBoundTypes(trace, deferredUpperBoundCheckerTasks);
+            checkNamesInConstraints(declaration, descriptor, scope, trace);
+        }
+    }
+
+    public static void checkUpperBoundTypes(@NotNull BindingTrace trace, @NotNull List<UpperBoundCheckerTask> tasks) {
+        if (tasks.isEmpty()) return;
+
+        Set<Name> classBoundEncountered = new HashSet<Name>();
+        for (UpperBoundCheckerTask checkerTask : tasks) {
+            Name typeParameterName = checkerTask.typeParameterName;
+            KotlinType upperBound = checkerTask.upperBoundType;
+            KtTypeReference upperBoundElement = checkerTask.upperBound;
+
+            if (!upperBound.isError()) {
+                ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(upperBound);
+                if (classDescriptor != null) {
+                    ClassKind kind = classDescriptor.getKind();
+                    if (kind == ClassKind.CLASS || kind == ClassKind.ENUM_CLASS || kind == ClassKind.OBJECT) {
+                        if (!classBoundEncountered.add(typeParameterName)) {
+                            trace.report(ONLY_ONE_CLASS_BOUND_ALLOWED.on(upperBoundElement));
+                        }
+                    }
+                }
             }
 
-            checkNamesInConstraints(declaration, descriptor, scope, trace);
+            checkUpperBoundType(upperBoundElement, upperBound, trace);
         }
     }
 
