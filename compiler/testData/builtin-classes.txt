@@ -180,7 +180,7 @@ internal final class ByteProgressionIterator : kotlin.ByteIterator {
         public final override /*1*/ /*fake_override*/ fun <get-last>(): kotlin.Byte
     public open override /*2*/ val start: kotlin.Byte
         public open override /*2*/ fun <get-start>(): kotlin.Byte
-    public open override /*1*/ fun contains(/*0*/ item: kotlin.Byte): kotlin.Boolean
+    public open override /*1*/ fun contains(/*0*/ value: kotlin.Byte): kotlin.Boolean
     public open override /*2*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun iterator(): kotlin.ByteIterator
 
@@ -282,7 +282,7 @@ public final class CharRange : kotlin.CharProgression, kotlin.ClosedRange<kotlin
         public final override /*1*/ /*fake_override*/ fun <get-last>(): kotlin.Char
     public open override /*2*/ val start: kotlin.Char
         public open override /*2*/ fun <get-start>(): kotlin.Char
-    public open override /*1*/ fun contains(/*0*/ item: kotlin.Char): kotlin.Boolean
+    public open override /*1*/ fun contains(/*0*/ value: kotlin.Char): kotlin.Boolean
     public open override /*2*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun iterator(): kotlin.CharIterator
 
@@ -297,7 +297,7 @@ public interface CharSequence {
     public abstract val length: kotlin.Int
         public abstract fun <get-length>(): kotlin.Int
     public abstract operator fun get(/*0*/ index: kotlin.Int): kotlin.Char
-    public abstract fun subSequence(/*0*/ start: kotlin.Int, /*1*/ end: kotlin.Int): kotlin.CharSequence
+    public abstract fun subSequence(/*0*/ startIndex: kotlin.Int, /*1*/ endIndex: kotlin.Int): kotlin.CharSequence
 }
 
 public interface Cloneable {
@@ -311,7 +311,7 @@ public interface ClosedRange</*0*/ T : kotlin.Comparable<T>> : kotlin.Range<T> {
         public abstract fun <get-endInclusive>(): T
     public abstract override /*1*/ val start: T
         public abstract override /*1*/ fun <get-start>(): T
-    public open override /*1*/ fun contains(/*0*/ item: T): kotlin.Boolean
+    public open override /*1*/ fun contains(/*0*/ value: T): kotlin.Boolean
     public open override /*1*/ fun isEmpty(): kotlin.Boolean
 }
 
@@ -701,7 +701,7 @@ public final class IntRange : kotlin.IntProgression, kotlin.ClosedRange<kotlin.I
         public final override /*1*/ /*fake_override*/ fun <get-last>(): kotlin.Int
     public open override /*2*/ val start: kotlin.Int
         public open override /*2*/ fun <get-start>(): kotlin.Int
-    public open override /*1*/ fun contains(/*0*/ item: kotlin.Int): kotlin.Boolean
+    public open override /*1*/ fun contains(/*0*/ value: kotlin.Int): kotlin.Boolean
     public open override /*2*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun iterator(): kotlin.IntIterator
 
@@ -891,7 +891,7 @@ public final class LongRange : kotlin.LongProgression, kotlin.ClosedRange<kotlin
         public final override /*1*/ /*fake_override*/ fun <get-last>(): kotlin.Long
     public open override /*2*/ val start: kotlin.Long
         public open override /*2*/ fun <get-start>(): kotlin.Long
-    public open override /*1*/ fun contains(/*0*/ item: kotlin.Long): kotlin.Boolean
+    public open override /*1*/ fun contains(/*0*/ value: kotlin.Long): kotlin.Boolean
     public open override /*2*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun iterator(): kotlin.LongIterator
 
@@ -1063,7 +1063,7 @@ public abstract class Number {
         public abstract fun <get-end>(): T
     public abstract val start: T
         public abstract fun <get-start>(): T
-    public abstract operator fun contains(/*0*/ item: T): kotlin.Boolean
+    public abstract operator fun contains(/*0*/ value: T): kotlin.Boolean
     public open fun isEmpty(): kotlin.Boolean
 }
 
@@ -1216,7 +1216,7 @@ internal final class ShortProgressionIterator : kotlin.ShortIterator {
         public final override /*1*/ /*fake_override*/ fun <get-last>(): kotlin.Short
     public open override /*2*/ val start: kotlin.Short
         public open override /*2*/ fun <get-start>(): kotlin.Short
-    public open override /*1*/ fun contains(/*0*/ item: kotlin.Short): kotlin.Boolean
+    public open override /*1*/ fun contains(/*0*/ value: kotlin.Short): kotlin.Boolean
     public open override /*2*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun iterator(): kotlin.ShortIterator
 
