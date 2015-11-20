@@ -832,7 +832,7 @@ public class DeclarationsChecker {
                 if (propertyDescriptor.getModality() == Modality.ABSTRACT
                     && accessorDescriptor.getVisibility() == Visibilities.PRIVATE
                     && propertyDescriptor.getVisibility() != Visibilities.PRIVATE) {
-                    reportVisibilityModifierDiagnostics(tokens.values(), Errors.ACCESSOR_VISIBILITY_FOR_ABSTRACT_PROPERTY);
+                    reportVisibilityModifierDiagnostics(tokens.values(), Errors.PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY);
                 }
                 else if (propertyDescriptor.isLateInit() && accessorDescriptor.getVisibility() != propertyDescriptor.getVisibility()) {
                     reportVisibilityModifierDiagnostics(tokens.values(), Errors.SETTER_VISIBILITY_DIFFERS_FROM_LATEINIT_VISIBILITY);
