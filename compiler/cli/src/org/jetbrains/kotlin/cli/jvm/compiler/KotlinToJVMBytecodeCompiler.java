@@ -56,13 +56,13 @@ import org.jetbrains.kotlin.modules.TargetIdKt;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.psi.KtScript;
+import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.kotlin.script.AnalyzerScriptParameter;
 import org.jetbrains.kotlin.script.KotlinScriptDefinition;
 import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider;
-import org.jetbrains.kotlin.script.ScriptNameUtil;
 import org.jetbrains.kotlin.util.PerformanceCounter;
 import org.jetbrains.kotlin.utils.KotlinPaths;
 
@@ -296,7 +296,9 @@ public class KotlinToJVMBytecodeCompiler {
                                                    new URLClassLoader(classPaths.toArray(new URL[classPaths.size()]), null)
             );
 
-            FqName nameForScript = ScriptNameUtil.classNameForScript(environment.getSourceFiles().get(0).getScript());
+            KtScript script = environment.getSourceFiles().get(0).getScript();
+            assert script != null : "Script must be parsed";
+            FqName nameForScript = script.getFqName();
             return classLoader.loadClass(nameForScript.asString());
         }
         catch (Exception e) {

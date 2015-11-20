@@ -17,18 +17,15 @@
 package org.jetbrains.kotlin.resolve.lazy.data
 
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtScript
-import org.jetbrains.kotlin.script.ScriptNameUtil
 
 public class JetScriptInfo(
         val script: KtScript
 ) : JetClassLikeInfo {
-    public val fqName: FqName = ScriptNameUtil.classNameForScript(script)
-    override fun getContainingPackageFqName() = fqName.parent()
+    override fun getContainingPackageFqName() = script.fqName.parent()
     override fun getModifierList() = null
     override fun getCompanionObjects() = listOf<KtObjectDeclaration>()
     override fun getScopeAnchor() = script

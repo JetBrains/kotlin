@@ -17,16 +17,16 @@
 package org.jetbrains.kotlin.resolve.lazy.declarations
 
 import com.google.common.collect.ArrayListMultimap
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
+import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils.safeNameForLazyResolve
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassInfoUtil
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo
 import org.jetbrains.kotlin.resolve.lazy.data.JetScriptInfo
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils.safeNameForLazyResolve
-import java.util.ArrayList
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.storage.StorageManager
+import java.util.*
 
 public abstract class AbstractPsiBasedDeclarationProvider(storageManager: StorageManager) : DeclarationProvider {
 
@@ -52,7 +52,7 @@ public abstract class AbstractPsiBasedDeclarationProvider(storageManager: Storag
             }
             else if (declaration is KtScript) {
                 val scriptInfo = JetScriptInfo(declaration)
-                classesAndObjects.put(scriptInfo.fqName.shortName(), scriptInfo)
+                classesAndObjects.put(scriptInfo.script.nameAsSafeName, scriptInfo)
             }
             else if (declaration is KtParameter || declaration is KtTypedef || declaration is KtMultiDeclaration) {
                 // Do nothing, just put it into allDeclarations is enough

@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.script.ScriptNameUtil;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
@@ -37,7 +36,7 @@ public abstract class AbstractScriptCodegenTest extends CodegenTestCase {
         loadFileByFullPath(filename);
 
         try {
-            FqName fqName = ScriptNameUtil.classNameForScript(myFiles.getPsiFile().getScript());
+            FqName fqName = myFiles.getPsiFile().getScript().getFqName();
             Class<?> scriptClass = generateClass(fqName.asString());
 
             Constructor constructor = getTheOnlyConstructor(scriptClass);

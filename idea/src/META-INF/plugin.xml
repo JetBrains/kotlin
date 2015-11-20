@@ -227,8 +227,8 @@
     <projectService serviceInterface="org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer"
                     serviceImplementation="org.jetbrains.kotlin.resolve.DummyCodeAnalyzerInitializer"/>
 
-    <projectService serviceInterface="org.jetbrains.kotlin.parsing.KotlinScriptDefinitionProvider"
-                    serviceImplementation="org.jetbrains.kotlin.parsing.KotlinScriptDefinitionProvider"/>
+    <projectService serviceInterface="org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider"
+                    serviceImplementation="org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.idea.configuration.ModuleTypeCacheManager"
                     serviceImplementation="org.jetbrains.kotlin.idea.configuration.ModuleTypeCacheManager"/>

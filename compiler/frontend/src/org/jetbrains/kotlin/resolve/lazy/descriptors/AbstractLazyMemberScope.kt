@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
-import org.jetbrains.kotlin.script.ScriptNameUtil
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.Printer
@@ -155,7 +154,7 @@ protected constructor(
                 }
             }
             else if (declaration is KtScript) {
-                val name = ScriptNameUtil.classNameForScript(declaration).shortName()
+                val name = declaration.nameAsSafeName
                 if (nameFilter(name)) {
                     result.addAll(classDescriptors(name))
                 }
