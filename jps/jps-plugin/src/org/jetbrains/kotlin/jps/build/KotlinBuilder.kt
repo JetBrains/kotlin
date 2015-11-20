@@ -28,7 +28,6 @@ import org.jetbrains.jps.builders.impl.BuildTargetRegistryImpl
 import org.jetbrains.jps.builders.impl.TargetOutputIndexImpl
 import org.jetbrains.jps.builders.java.JavaBuilderUtil
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
-import org.jetbrains.jps.builders.java.dependencyView.Mappings
 import org.jetbrains.jps.incremental.*
 import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.*
 import org.jetbrains.jps.incremental.fs.CompilationRound
@@ -53,18 +52,16 @@ import org.jetbrains.kotlin.config.CompilerRunnerConstants
 import org.jetbrains.kotlin.config.CompilerRunnerConstants.INTERNAL_ERROR_PREFIX
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.daemon.common.isDaemonEnabled
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
 import org.jetbrains.kotlin.jps.incremental.*
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.progress.CompilationCanceledException
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.daemon.common.isDaemonEnabled
 import org.jetbrains.kotlin.utils.LibraryUtils
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.keysToMap
@@ -417,20 +414,6 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             filesToCompile: MultiMap<ModuleBuildTarget, File>,
             generatedClasses: List<GeneratedJvmClass>
     ) {
-        fun getOldSourceFiles(generatedClass: GeneratedJvmClass, previousMappings: Mappings): Collection<File> {
-            if (!generatedClass.outputFile.getName().endsWith(PackageClassUtils.PACKAGE_CLASS_NAME_SUFFIX + ".class")) return emptySet()
-
-            val classInternalName = JvmClassName.byClassId(generatedClass.outputClass.getClassId()).getInternalName()
-            val oldClassSources = previousMappings.getClassSources(previousMappings.getName(classInternalName))
-            if (oldClassSources == null) return emptySet()
-
-            val sources = THashSet(FileUtil.FILE_HASHING_STRATEGY)
-            sources.addAll(oldClassSources)
-            sources.removeAll(filesToCompile[generatedClass.target])
-            sources.removeAll(dirtyFilesHolder.getRemovedFiles(generatedClass.target).map { File(it) })
-            return sources
-        }
-
         assert(IncrementalCompilation.isEnabled()) { "updateJavaMappings should not be called when incremental compilation disabled" }
 
         val previousMappings = context.getProjectDescriptor().dataManager.getMappings()
@@ -438,15 +421,10 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val callback = delta.getCallback()
 
         for (generatedClass in generatedClasses) {
-            val outputFile = generatedClass.outputFile
-            val outputClass = generatedClass.outputClass
-
-            // For package facade classes: we need to report all source files for it, not only currently compiled
-            val allSourcesIncludingOld = getOldSourceFiles(generatedClass, previousMappings) + generatedClass.sourceFiles
-
-            callback.associate(FileUtil.toSystemIndependentName(outputFile.getAbsolutePath()),
-                               allSourcesIncludingOld.map { FileUtil.toSystemIndependentName(it.getAbsolutePath()) },
-                               ClassReader(outputClass.getFileContents())
+            callback.associate(
+                    FileUtil.toSystemIndependentName(generatedClass.outputFile.getAbsolutePath()),
+                    generatedClass.sourceFiles.map { FileUtil.toSystemIndependentName(it.getAbsolutePath()) },
+                    ClassReader(generatedClass.outputClass.getFileContents())
             )
         }
 
