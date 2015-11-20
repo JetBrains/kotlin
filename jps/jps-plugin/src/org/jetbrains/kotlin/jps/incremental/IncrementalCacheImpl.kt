@@ -36,7 +36,10 @@ import org.jetbrains.kotlin.jps.build.GeneratedJvmClass
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import org.jetbrains.kotlin.jps.incremental.storage.*
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
-import org.jetbrains.kotlin.load.kotlin.header.*
+import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
+import org.jetbrains.kotlin.load.kotlin.header.isCompatibleFileFacadeKind
+import org.jetbrains.kotlin.load.kotlin.header.isCompatibleMultifileClassKind
+import org.jetbrains.kotlin.load.kotlin.header.isCompatibleMultifileClassPartKind
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.name.FqName
@@ -165,24 +168,20 @@ public class IncrementalCacheImpl(
 
         val header = kotlinClass.classHeader
         val changesInfo = when {
-            header.isCompatiblePackageFacadeKind() ->
-                protoMap.process(kotlinClass, isPackage = true)
             header.isCompatibleFileFacadeKind() -> {
                 assert(sourceFiles.size() == 1) { "Package part from several source files: $sourceFiles" }
                 packagePartMap.addPackagePart(className)
 
-                val isPackage = true
-
-                protoMap.process(kotlinClass, isPackage) +
+                protoMap.process(kotlinClass, isPackage = true) +
                 constantsMap.process(kotlinClass) +
-                inlineFunctionsMap.process(kotlinClass, isPackage)
+                inlineFunctionsMap.process(kotlinClass, isPackage = true)
             }
             header.isCompatibleMultifileClassKind() -> {
                 val partNames = kotlinClass.classHeader.filePartClassNames?.toList()
                                 ?: throw AssertionError("Multifile class has no parts: ${kotlinClass.className}")
                 multifileClassFacadeMap.add(className, partNames)
 
-                // TODO NO_CHANGES? (delegates only, see package facade)
+                // TODO NO_CHANGES? (delegates only)
                 constantsMap.process(kotlinClass) +
                 inlineFunctionsMap.process(kotlinClass, isPackage = true)
             }
@@ -191,18 +190,14 @@ public class IncrementalCacheImpl(
                 packagePartMap.addPackagePart(className)
                 multifileClassPartMap.add(className.internalName, header.multifileClassName!!)
 
-                val isPackage = true
-
-                protoMap.process(kotlinClass, isPackage) +
+                protoMap.process(kotlinClass, isPackage = true) +
                 constantsMap.process(kotlinClass) +
-                inlineFunctionsMap.process(kotlinClass, isPackage)
+                inlineFunctionsMap.process(kotlinClass, isPackage = true)
             }
             header.isCompatibleClassKind() && !header.isLocalClass -> {
-                val isPackage = false
-
-                protoMap.process(kotlinClass, isPackage) +
+                protoMap.process(kotlinClass, isPackage = false) +
                 constantsMap.process(kotlinClass) +
-                inlineFunctionsMap.process(kotlinClass, isPackage)
+                inlineFunctionsMap.process(kotlinClass, isPackage = false)
             }
             else -> CompilationResult.NO_CHANGES
         }
@@ -674,7 +669,7 @@ data class CompilationResult(
         public val NO_CHANGES: CompilationResult = CompilationResult()
     }
 
-    public operator fun plus(other: CompilationResult): CompilationResult =
+    operator fun plus(other: CompilationResult): CompilationResult =
             CompilationResult(protoChanged || other.protoChanged,
                         constantsChanged || other.constantsChanged,
                         inlineChanged || other.inlineChanged,
