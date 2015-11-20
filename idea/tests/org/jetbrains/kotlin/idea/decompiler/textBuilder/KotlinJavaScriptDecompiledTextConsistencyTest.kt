@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinStdJSProjectDescriptor
 import org.jetbrains.kotlin.idea.vfilefinder.JsVirtualFileFinder
 import org.jetbrains.kotlin.js.resolve.JsPlatform
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
+import org.jetbrains.kotlin.load.kotlin.OldPackageFacadeClassUtils
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
@@ -65,6 +65,6 @@ public class KotlinJavaScriptDecompiledTextConsistencyTest : TextConsistencyBase
     override fun isFromFacade(descriptor: CallableMemberDescriptor, facadeFqName: FqName): Boolean {
         val containingDeclaration = descriptor.containingDeclaration
         return containingDeclaration is PackageFragmentDescriptor &&
-               facadeFqName == PackageClassUtils.getPackageClassFqName(containingDeclaration.fqName)
+               facadeFqName == OldPackageFacadeClassUtils.getPackageClassFqName(containingDeclaration.fqName)
     }
 }

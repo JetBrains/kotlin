@@ -19,8 +19,6 @@ package org.jetbrains.kotlin.jvm.compiler
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.backend.common.output.OutputFile
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.org.objectweb.asm.ClassReader

@@ -22,16 +22,12 @@ import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.getImplClassNameForDeserialized
 import org.jetbrains.kotlin.load.java.descriptors.getImplClassNameForProto
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
-
 
 public object JvmFileClassUtil {
     public val JVM_NAME: FqName = FqName("kotlin.jvm.JvmName")

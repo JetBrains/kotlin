@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils;
-import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 

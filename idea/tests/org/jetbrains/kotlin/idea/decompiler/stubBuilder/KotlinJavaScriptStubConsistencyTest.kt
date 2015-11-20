@@ -20,7 +20,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledTextFromJsMetadata
 import org.jetbrains.kotlin.idea.test.KotlinStdJSProjectDescriptor
 import org.jetbrains.kotlin.idea.vfilefinder.JsVirtualFileFinder
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
+import org.jetbrains.kotlin.load.kotlin.OldPackageFacadeClassUtils
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.FqName
 
@@ -28,7 +28,7 @@ public class KotlinJavaScriptStubConsistencyTest : StubConsistencyBaseTest() {
     override fun getFileIds() = listOf(
             "java.util", "jquery", "jquery.ui",
             "kotlin", "kotlin.browser", "kotlin.dom", "kotlin.js"
-    ).map { PackageClassUtils.getPackageClassId(FqName(it)) }
+    ).map { OldPackageFacadeClassUtils.getPackageClassId(FqName(it)) }
 
     override fun getVirtualFileFinder(): VirtualFileFinder =
         JsVirtualFileFinder.SERVICE.getInstance(getProject())

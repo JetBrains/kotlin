@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.decompiler.findMultifileClassParts
 import org.jetbrains.kotlin.idea.decompiler.navigation.JsMetaFileUtils
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
+import org.jetbrains.kotlin.load.kotlin.OldPackageFacadeClassUtils
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleFileFacadeKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleMultifileClassKind
@@ -100,7 +100,7 @@ public fun buildDecompiledTextFromJsMetadata(
 }
 
 private fun resolveDeclarationsInPackage(packageFqName: FqName, resolver: ResolverForDecompiler) =
-        ArrayList(resolver.resolveDeclarationsInFacade(PackageClassUtils.getPackageClassFqName(packageFqName)))
+        ArrayList(resolver.resolveDeclarationsInFacade(OldPackageFacadeClassUtils.getPackageClassFqName(packageFqName)))
 
 private val DECOMPILED_CODE_COMMENT = "/* compiled code */"
 private val DECOMPILED_COMMENT_FOR_PARAMETER = "/* = compiled code */"
