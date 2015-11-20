@@ -191,6 +191,14 @@ public inline fun <K, V> MutableMap<K, V>.getOrPut(key: K, defaultValue: () -> V
 public operator fun <K, V> Map<K, V>.iterator(): Iterator<Map.Entry<K, V>> = entries.iterator()
 
 /**
+ * Returns a [MutableIterator] over the mutable entries in the [MutableMap].
+ *
+ */
+@JvmVersion
+@JvmName("mutableIterator")
+public operator fun <K, V> MutableMap<K, V>.iterator(): MutableIterator<MutableMap.MutableEntry<K, V>> = entries.iterator()
+
+/**
  * Populates the given `destination` [Map] with entries having the keys of this map and the values obtained
  * by applying the `transform` function to each entry in this [Map].
  */

@@ -41,6 +41,17 @@ class MapJVMTest {
         assertEquals("B", prop.getProperty("b", "fail"))
     }
 
+    @test fun iterateAndRemove() {
+        val map = (1..5).toMap({ it }, { 'a' + it }).toLinkedMap()
+        val iterator = map.iterator()
+        while (iterator.hasNext()) {
+            if (iterator.next().key % 2 == 0)
+                iterator.remove()
+        }
+        assertEquals(listOf(1, 3, 5), map.keys.toList())
+        assertEquals(listOf('b', 'd', 'f'), map.values.toList())
+    }
+
     @test fun getOrPutFailsOnConcurrentMap() {
         val map = ConcurrentHashMap<String, Int>()
 
