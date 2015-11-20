@@ -97,6 +97,15 @@ public class K2JsCliTest extends CliBaseTest {
 
         Assert.assertTrue(new File(tmpdir.getTmpDir(), "jslib-example.meta.js").isFile());
         Assert.assertTrue(new File(tmpdir.getTmpDir(), "jslib-example.js").isFile());
+        Assert.assertTrue(new File(tmpdir.getTmpDir(), "jslib-example/library/sample/classA.kjsm").isFile());
+    }
+
+    @Test
+    public void createKjsm() throws Exception {
+        executeCompilerCompareOutputJS();
+
+        Assert.assertTrue(new File(tmpdir.getTmpDir(), "jslib-example.js").isFile());
+        Assert.assertTrue(new File(tmpdir.getTmpDir(), "jslib-example/library/sample/classA.kjsm").isFile());
     }
 
     @Test

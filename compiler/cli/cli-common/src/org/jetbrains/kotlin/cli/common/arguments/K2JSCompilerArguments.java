@@ -41,6 +41,9 @@ public class K2JSCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "meta-info", description = "Generate metadata")
     public boolean metaInfo;
 
+    @Argument(value = "kjsm", description = "Generate kjsm-files (for creating libraries)")
+    public boolean kjsm;
+
     @Argument(value = "target", description = "Generate JS files for specific ECMA version (only ECMA 5 is supported)")
     @ValueDescription("<version>")
     public String target;

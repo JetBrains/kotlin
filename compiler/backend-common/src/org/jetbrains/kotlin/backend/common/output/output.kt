@@ -45,3 +45,14 @@ public class SimpleOutputFile(
 
     override fun toString() = "$relativePath (compiled from $sourceFiles)"
 }
+
+public class SimpleOutputBinaryFile(
+        override val sourceFiles: List<File>,
+        override val relativePath: String,
+        private val content: ByteArray
+) : OutputFile {
+    override fun asByteArray(): ByteArray = content
+    override fun asText(): String = String(content)
+
+    override fun toString() = "$relativePath (compiled from $sourceFiles)"
+}
