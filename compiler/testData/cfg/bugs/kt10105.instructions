@@ -1,0 +1,23 @@
+== foo ==
+fun foo() {
+    int x = ()()
+}
+---------------------
+L0:
+  1 <START>
+  2 mark({ int x = ()() })
+    magic[UNRESOLVED_CALL](int) -> <v0>
+    mark(= ())
+    magic[UNRESOLVED_CALL](= ()) -> <v1>
+    mark(= ()())
+    call(= ()(), <ERROR FUNCTION>|<v1>) -> <v2>
+    magic[VALUE_CONSUMER](= ()()|<v2>) -> <v3>
+    mark(int x = ()())
+    call(int x = ()(), <ERROR FUNCTION>|<v0>) -> <v4>
+L1:
+  1 <END>                                                NEXT:[<SINK>]
+error:
+    <ERROR>                                              PREV:[]
+sink:
+    <SINK>                                               PREV:[<ERROR>, <END>]
+=====================

@@ -1,0 +1,12 @@
+== foo ==
+fun foo() {
+    int x = ()()
+}
+---------------------
+                   <v3>: *   NEW: magic[VALUE_CONSUMER](= ()()|<v2>) -> <v3>
+int                <v0>: *   NEW: magic[UNRESOLVED_CALL](int) -> <v0>
+= ()               <v1>: *   NEW: magic[UNRESOLVED_CALL](= ()) -> <v1>
+= ()()             <v2>: *   NEW: call(= ()(), <ERROR FUNCTION>|<v1>) -> <v2>
+int x = ()()       <v4>: *   NEW: call(int x = ()(), <ERROR FUNCTION>|<v0>) -> <v4>
+{ int x = ()() }   <v4>: *   COPY
+=====================

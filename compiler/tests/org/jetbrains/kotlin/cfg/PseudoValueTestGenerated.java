@@ -147,6 +147,12 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("kt10105.kt")
+            public void testKt10105() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg/bugs/kt10105.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt7761.kt")
             public void testKt7761() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg/bugs/kt7761.kt");
