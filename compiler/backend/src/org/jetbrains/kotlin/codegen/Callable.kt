@@ -45,8 +45,7 @@ public interface Callable {
         }
     }
 
-    public fun beforeParameterGeneration(v: InstructionAdapter, value: StackValue?) {
-
+    public fun afterReceiverGeneration(v: InstructionAdapter) {
     }
 
 }

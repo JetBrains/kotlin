@@ -27,7 +27,6 @@ import com.intellij.util.containers.Stack;
 import kotlin.CollectionsKt;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
-import kotlin.jvm.functions.Function2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
@@ -2394,11 +2393,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @NotNull CallGenerator callGenerator,
             @NotNull ArgumentGenerator argumentGenerator
     ) {
-        callableMethod.beforeParameterGeneration(v, null);
-
         if (!(resolvedCall.getResultingDescriptor() instanceof ConstructorDescriptor)) { // otherwise already
             receiver = StackValue.receiver(resolvedCall, receiver, this, callableMethod);
             receiver.put(receiver.type, v);
+            callableMethod.afterReceiverGeneration(v);
         }
 
         callGenerator.putHiddenParams();

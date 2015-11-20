@@ -2707,6 +2707,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("safeCallRangeTo.kt")
+        public void testSafeCallRangeTo() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/ranges/safeCallRangeTo.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("compiler/testData/codegen/boxWithStdlib/ranges/expression")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

@@ -44,10 +44,19 @@ public class RangeTo : IntrinsicMethod() {
                 nullOr(method.dispatchReceiverType, argType),
                 nullOr(method.extensionReceiverType, argType)
         ) {
-            override fun beforeParameterGeneration(v: InstructionAdapter, value: StackValue?) {
+            override fun afterReceiverGeneration(v: InstructionAdapter) {
                 v.anew(returnType)
-                v.dup()
-                value?.moveToTopOfStack(value.type, v, 2)
+                when (argType.size) {
+                    1 -> {
+                        v.dupX1()
+                        v.swap()
+                    }
+                    2 -> {
+                        v.dup()
+                        v.dup2X2()
+                        v.pop2()
+                    }
+                }
             }
 
             override fun invokeIntrinsic(v: InstructionAdapter) {
