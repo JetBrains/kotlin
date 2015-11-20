@@ -34,7 +34,6 @@ class KotlinClassHeader(
 
     enum class Kind {
         CLASS,
-        PACKAGE_FACADE,
         FILE_FACADE,
         MULTIFILE_CLASS,
         MULTIFILE_CLASS_PART,
@@ -49,7 +48,6 @@ class KotlinClassHeader(
 }
 
 fun KotlinClassHeader.isCompatibleClassKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.CLASS
-fun KotlinClassHeader.isCompatiblePackageFacadeKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.PACKAGE_FACADE
 fun KotlinClassHeader.isCompatibleFileFacadeKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.FILE_FACADE
 fun KotlinClassHeader.isCompatibleMultifileClassKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.MULTIFILE_CLASS
 fun KotlinClassHeader.isCompatibleMultifileClassPartKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART

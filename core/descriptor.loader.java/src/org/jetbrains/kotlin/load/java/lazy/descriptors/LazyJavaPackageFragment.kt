@@ -22,8 +22,6 @@ import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryPackageSourceElement
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.getValue
@@ -37,10 +35,6 @@ class LazyJavaPackageFragment(
     private val topLevelClasses = c.storageManager.createMemoizedFunctionWithNullableValues {
         javaClass: JavaClass ->
         LazyJavaClassDescriptor(c, this, javaClass.fqName!!, javaClass)
-    }
-
-    internal val oldPackageFacade by c.storageManager.createNullableLazyValue {
-        c.components.kotlinClassFinder.findKotlinClass(PackageClassUtils.getPackageClassId(fqName))
     }
 
     internal val kotlinBinaryClasses by c.storageManager.createLazyValue {

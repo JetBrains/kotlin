@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 
 class ClsStubBuilderForWrongAbiVersionTest : AbstractClsStubBuilderTest() {
 
-    fun testPackage() = testStubsForFileWithWrongAbiVersion("WrongPackage")
+    fun testPackage() = testStubsForFileWithWrongAbiVersion("Wrong_packageKt")
 
     fun testClass() = testStubsForFileWithWrongAbiVersion("ClassWithWrongAbiVersion")
 

@@ -27,9 +27,10 @@ import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleFileFacadeKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleMultifileClassKind
-import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.renderer.*
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
+import org.jetbrains.kotlin.renderer.ExcludedTypeAnnotations
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
@@ -66,7 +67,6 @@ public fun buildDecompiledText(
                             .replace(FILE_ABI_VERSION_MARKER, classHeader.version.toString()),
                     mapOf())
         }
-        classHeader.isCompatiblePackageFacadeKind(),
         classHeader.isCompatibleFileFacadeKind() ->
             buildDecompiledText(packageFqName, ArrayList(resolver.resolveDeclarationsInFacade(classId.asSingleFqName())))
         classHeader.isCompatibleClassKind() ->

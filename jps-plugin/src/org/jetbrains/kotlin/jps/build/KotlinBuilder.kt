@@ -58,7 +58,6 @@ import org.jetbrains.kotlin.jps.JpsKotlinCompilerSettings
 import org.jetbrains.kotlin.jps.incremental.*
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
-import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.TargetId
@@ -421,10 +420,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         fun getOldSourceFiles(generatedClass: GeneratedJvmClass, previousMappings: Mappings): Collection<File> {
             if (!generatedClass.outputFile.getName().endsWith(PackageClassUtils.PACKAGE_CLASS_NAME_SUFFIX + ".class")) return emptySet()
 
-            val kotlinClass = generatedClass.outputClass
-            if (!kotlinClass.getClassHeader().isCompatiblePackageFacadeKind()) return emptySet()
-
-            val classInternalName = JvmClassName.byClassId(kotlinClass.getClassId()).getInternalName()
+            val classInternalName = JvmClassName.byClassId(generatedClass.outputClass.getClassId()).getInternalName()
             val oldClassSources = previousMappings.getClassSources(previousMappings.getName(classInternalName))
             if (oldClassSources == null) return emptySet()
 

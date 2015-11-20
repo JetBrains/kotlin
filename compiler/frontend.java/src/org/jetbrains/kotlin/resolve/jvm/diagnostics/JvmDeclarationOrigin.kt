@@ -17,16 +17,12 @@
 package org.jetbrains.kotlin.resolve.jvm.diagnostics
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.*
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.*
 
 public enum class MemberKind { FIELD, METHOD }
 
@@ -34,7 +30,6 @@ public data class RawSignature(public val name: String, public val desc: String,
 
 public enum class JvmDeclarationOriginKind {
     OTHER,
-    PACKAGE_FACADE,
     PACKAGE_PART,
     INTERFACE_DEFAULT_IMPL,
     DELEGATION_TO_DEFAULT_IMPLS,
@@ -68,7 +63,6 @@ public fun OtherOrigin(descriptor: DeclarationDescriptor): JvmDeclarationOrigin 
 public fun Bridge(descriptor: DeclarationDescriptor, element: PsiElement? = DescriptorToSourceUtils.descriptorToDeclaration(descriptor)): JvmDeclarationOrigin =
         JvmDeclarationOrigin(BRIDGE, element, descriptor)
 
-public fun PackageFacade(descriptor: PackageFragmentDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(PACKAGE_FACADE, null, descriptor)
 public fun PackagePart(file: KtFile, descriptor: PackageFragmentDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(PACKAGE_PART, file, descriptor)
 
 /**

@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.jps.incremental.storage.ProtoMapValue
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleFileFacadeKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleMultifileClassPartKind
-import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
@@ -94,16 +93,15 @@ public abstract class AbstractProtoComparisonTest : UsefulTestCase() {
         val newProtoBytes = BitEncoding.decodeBytes(newClassHeader.annotationData!!)
 
         val oldProto = ProtoMapValue(
-                oldClassHeader.isCompatiblePackageFacadeKind() || oldClassHeader.isCompatibleFileFacadeKind() || oldClassHeader.isCompatibleMultifileClassPartKind(),
+                oldClassHeader.isCompatibleFileFacadeKind() || oldClassHeader.isCompatibleMultifileClassPartKind(),
                 oldProtoBytes, oldClassHeader.strings!!
         )
         val newProto = ProtoMapValue(
-                newClassHeader.isCompatiblePackageFacadeKind() || newClassHeader.isCompatibleFileFacadeKind() || newClassHeader.isCompatibleMultifileClassPartKind(),
+                newClassHeader.isCompatibleFileFacadeKind() || newClassHeader.isCompatibleMultifileClassPartKind(),
                 newProtoBytes, newClassHeader.strings!!
         )
 
         val diff = when {
-            newClassHeader.isCompatiblePackageFacadeKind(),
             newClassHeader.isCompatibleClassKind(),
             newClassHeader.isCompatibleFileFacadeKind(),
             newClassHeader.isCompatibleMultifileClassPartKind() ->

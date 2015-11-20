@@ -1,6 +1,6 @@
 /*
 To regenerate this test:
-  1. Change JvmAbi.VERSION to -1
+  1. Change JvmAbi.VERSION to an incompatible one, e.g. 0.30.0
   2. Run 'ant dist'
   3. Compile files with the newly built compiler from dist/
 

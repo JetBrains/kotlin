@@ -17,18 +17,18 @@
 package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.*
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.ConflictingJvmDeclarationsData
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.*
-import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory.cast
+import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ConflictingJvmDeclarationsData
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.*
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.*
 
 public fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostics, moduleScope: GlobalSearchScope): Diagnostics? {
     fun getDiagnosticsForFileFacade(file: KtFile): Diagnostics? {
@@ -118,8 +118,8 @@ class FilteredJvmDiagnostics(val jvmDiagnostics: Diagnostics, val otherDiagnosti
                                         // in case of implementation copied from a super trait there will be both diagnostics on the same signature
                                         other.factory == ErrorsJvm.CONFLICTING_JVM_DECLARATIONS && (me.factory == ACCIDENTAL_OVERRIDE ||
                                                                                                     me.factory == CONFLICTING_INHERITED_JVM_DECLARATIONS)
-                                        // there are paris of corresponding signatures that frequently clash simultaneously: package facade & part, trait and trait-impl
-                                        || other.data() higherThan me.data()
+                                        // there are paris of corresponding signatures that frequently clash simultaneously: multifile class & part, trait and trait-impl
+                                        || other.data().higherThan(me.data())
                                         )
                             }
                         }
@@ -140,7 +140,6 @@ class FilteredJvmDiagnostics(val jvmDiagnostics: Diagnostics, val otherDiagnosti
 
 private infix fun ConflictingJvmDeclarationsData.higherThan(other: ConflictingJvmDeclarationsData): Boolean {
     return when (other.classOrigin.originKind) {
-        PACKAGE_PART -> this.classOrigin.originKind == PACKAGE_FACADE
         INTERFACE_DEFAULT_IMPL -> this.classOrigin.originKind != INTERFACE_DEFAULT_IMPL
         MULTIFILE_CLASS_PART -> this.classOrigin.originKind == MULTIFILE_CLASS
         else -> false

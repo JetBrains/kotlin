@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import kotlin.jvm.internal.KotlinPackage
 import kotlin.reflect.KCallable
 
 internal class KPackageImpl(override val jClass: Class<*>, val moduleName: String) : KDeclarationContainerImpl() {
@@ -55,10 +54,7 @@ internal class KPackageImpl(override val jClass: Class<*>, val moduleName: Strin
             jClass.hashCode()
 
     override fun toString(): String {
-        val name = jClass.name
-        return "package " + if (jClass.isAnnotationPresent(KotlinPackage::class.java)) {
-            if (name == "_DefaultPackage") "<default>" else name.substringBeforeLast(".")
-        }
-        else name
+        val fqName = jClass.classId.packageFqName
+        return "package " + (if (fqName.isRoot) "<default>" else fqName.asString())
     }
 }
