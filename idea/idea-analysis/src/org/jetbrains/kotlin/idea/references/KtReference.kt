@@ -36,7 +36,7 @@ public interface KtReference : PsiPolyVariantReference {
     override fun getElement(): KtElement
 }
 
-public abstract class AbstractJetReference<T : KtElement>(element: T)
+public abstract class AbstractKtReference<T : KtElement>(element: T)
 : PsiPolyVariantReferenceBase<T>(element), KtReference {
 
     public val expression: T
@@ -120,8 +120,8 @@ public abstract class AbstractJetReference<T : KtElement>(element: T)
     override fun toString() = javaClass.getSimpleName() + ": " + expression.getText()
 }
 
-public abstract class KtSimpleReference<T : KtReferenceExpression>(expression: T) : AbstractJetReference<T>(expression) {
+public abstract class KtSimpleReference<T : KtReferenceExpression>(expression: T) : AbstractKtReference<T>(expression) {
     override fun getTargetDescriptors(context: BindingContext) = expression.getReferenceTargets(context)
 }
 
-public abstract class KtMultiReference<T : KtElement>(expression: T) : AbstractJetReference<T>(expression)
+public abstract class KtMultiReference<T : KtElement>(expression: T) : AbstractKtReference<T>(expression)

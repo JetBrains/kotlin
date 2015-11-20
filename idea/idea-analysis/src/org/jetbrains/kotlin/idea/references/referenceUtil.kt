@@ -120,7 +120,7 @@ private fun PsiElement.isConstructorOf(unwrappedCandidate: PsiElement) =
     // call to Kotlin constructor
     (this is KtConstructor<*> && getContainingClassOrObject() == unwrappedCandidate)
 
-fun AbstractJetReference<out KtExpression>.renameImplicitConventionalCall(newName: String?): KtExpression {
+fun AbstractKtReference<out KtExpression>.renameImplicitConventionalCall(newName: String?): KtExpression {
     if (newName == null) return expression
 
     val (newExpression, newNameElement) = OperatorToFunctionIntention.convert(expression)

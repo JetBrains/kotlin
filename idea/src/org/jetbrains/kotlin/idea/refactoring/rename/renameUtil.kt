@@ -23,7 +23,7 @@ import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
-import org.jetbrains.kotlin.idea.references.AbstractJetReference
+import org.jetbrains.kotlin.idea.references.AbstractKtReference
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import java.util.*
@@ -34,7 +34,7 @@ fun checkConflictsAndReplaceUsageInfos(result: MutableList<UsageInfo>) {
 
     for (usageInfo in result) {
         val ref = usageInfo.getReference()
-        if (usageInfo !is MoveRenameUsageInfo || ref !is AbstractJetReference<*> || ref.canRename()) continue
+        if (usageInfo !is MoveRenameUsageInfo || ref !is AbstractKtReference<*> || ref.canRename()) continue
 
         val refElement = usageInfo.getElement()
         val referencedElement = usageInfo.getReferencedElement()
