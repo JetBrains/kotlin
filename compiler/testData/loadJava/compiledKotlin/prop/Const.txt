@@ -5,8 +5,8 @@ private const val topLevel: kotlin.Int = 1
 
 public object A {
     /*primary*/ private constructor A()
-    protected const final val inObject: kotlin.Int = 2
-        protected final fun <get-inObject>(): kotlin.Int
+    internal const final val inObject: kotlin.Int = 2
+        internal final fun <get-inObject>(): kotlin.Int
 }
 
 public final class B {

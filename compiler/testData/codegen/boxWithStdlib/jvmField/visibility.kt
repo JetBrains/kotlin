@@ -46,14 +46,12 @@ class AWithCompanion {
 object Object {
     @JvmField public val publicField = "OK";
     @JvmField internal val internalField = "OK";
-    @JvmField protected val protectedfield = "OK";
 
     operator fun get(name: String) = Object::class.members.single { it.name == name } as KProperty<*>
 
     fun testVisibilities() {
         checkVisibility(this["publicField"].javaField!!, Modifier.PUBLIC)
         checkVisibility(this["internalField"].javaField!!, Modifier.PUBLIC)
-        checkVisibility(this["protectedfield"].javaField!!, Modifier.PROTECTED)
     }
 }
 

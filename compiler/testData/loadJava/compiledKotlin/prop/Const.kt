@@ -4,7 +4,7 @@ package test
 const private val topLevel = 1
 
 object A {
-    const protected val inObject = 2
+    const internal val inObject = 2
 }
 
 class B {

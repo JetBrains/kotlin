@@ -99,7 +99,7 @@ public object ModifierCheckerCore {
             INNER_KEYWORD     to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, ENUM_CLASS),
             OVERRIDE_KEYWORD  to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, OBJECT, OBJECT_LITERAL,
                                             INTERFACE, ENUM_CLASS, ENUM_ENTRY),
-            PROTECTED_KEYWORD to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, ENUM_CLASS, OBJECT),
+            PROTECTED_KEYWORD to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, ENUM_CLASS, COMPANION_OBJECT),
             INTERNAL_KEYWORD  to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, OBJECT, OBJECT_LITERAL,
                                             ENUM_CLASS, ENUM_ENTRY, FILE),
             PRIVATE_KEYWORD   to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, OBJECT, OBJECT_LITERAL,
@@ -109,10 +109,7 @@ public object ModifierCheckerCore {
                                             ENUM_CLASS, ENUM_ENTRY, ANNOTATION_CLASS, FILE)
     )
 
-    val deprecatedParentTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>(
-            // Deprecated in M15
-            PROTECTED_KEYWORD to EnumSet.of(OBJECT)
-    )
+    val deprecatedParentTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>()
 
     // First modifier in pair should be also first in declaration
     private val mutualCompatibility = buildCompatibilityMap()

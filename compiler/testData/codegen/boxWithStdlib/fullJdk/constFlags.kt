@@ -6,7 +6,6 @@ public const val publicConst: Int = 3
 
 public object A {
     private const val privateConst: Int = 1
-    protected const val protectedConst: Int = 2
     public const val publicConst: Int = 3
 }
 
@@ -39,7 +38,7 @@ fun check(clazz: Class<*>, expectProtected: Boolean = true) {
 }
 
 fun box(): String {
-    check(A::class.java)
+    check(A::class.java, false)
     check(B::class.java)
     check(Class.forName("XYZ"), false)
 
