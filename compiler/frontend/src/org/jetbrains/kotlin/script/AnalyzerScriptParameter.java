@@ -14,18 +14,30 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve;
+package org.jetbrains.kotlin.script;
 
-import com.intellij.openapi.util.Key;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.KtScript;
+import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.types.KotlinType;
 
-public class ScriptPriorities {
+public class AnalyzerScriptParameter {
+    @NotNull
+    private final Name name;
+    @NotNull
+    private final KotlinType type;
 
-    public static final Key<Integer> PRIORITY_KEY = Key.create(KtScript.class.getName() + ".priority");
+    public AnalyzerScriptParameter(@NotNull Name name, @NotNull KotlinType type) {
+        this.name = name;
+        this.type = type;
+    }
 
-    public static int getScriptPriority(@NotNull KtScript script) {
-        Integer priority = script.getUserData(PRIORITY_KEY);
-        return priority == null ? 0 : priority;
+    @NotNull
+    public Name getName() {
+        return name;
+    }
+
+    @NotNull
+    public KotlinType getType() {
+        return type;
     }
 }

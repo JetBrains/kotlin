@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
-import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter
+import org.jetbrains.kotlin.script.AnalyzerScriptParameter
 import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir

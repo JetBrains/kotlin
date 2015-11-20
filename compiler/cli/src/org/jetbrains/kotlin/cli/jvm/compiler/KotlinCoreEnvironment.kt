@@ -28,7 +28,8 @@ import com.intellij.mock.MockApplication
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.extensions.*
+import com.intellij.openapi.extensions.Extensions
+import com.intellij.openapi.extensions.ExtensionsArea
 import com.intellij.openapi.fileTypes.FileTypeExtensionPoint
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.project.Project
@@ -78,7 +79,6 @@ import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
-import org.jetbrains.kotlin.parsing.KotlinScriptDefinitionProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
@@ -86,6 +86,7 @@ import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExten
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.resolve.lazy.declarations.CliDeclarationProviderFactoryService
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
+import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.*

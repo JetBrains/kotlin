@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.cli.jvm.config;
 
-import org.jetbrains.kotlin.modules.Module;
 import org.jetbrains.kotlin.cli.jvm.compiler.CompilerJarLocator;
 import org.jetbrains.kotlin.config.CompilerConfigurationKey;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
-import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter;
+import org.jetbrains.kotlin.modules.Module;
+import org.jetbrains.kotlin.script.AnalyzerScriptParameter;
 
 import java.util.List;
 

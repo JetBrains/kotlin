@@ -14,8 +14,18 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.parsing
+package org.jetbrains.kotlin.script;
 
-import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter
+import com.intellij.openapi.util.Key;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.psi.KtScript;
 
-class KotlinScriptDefinition(val extension: String, val scriptParameters: List<AnalyzerScriptParameter>)
+public class ScriptPriorities {
+
+    public static final Key<Integer> PRIORITY_KEY = Key.create(KtScript.class.getName() + ".priority");
+
+    public static int getScriptPriority(@NotNull KtScript script) {
+        Integer priority = script.getUserData(PRIORITY_KEY);
+        return priority == null ? 0 : priority;
+    }
+}

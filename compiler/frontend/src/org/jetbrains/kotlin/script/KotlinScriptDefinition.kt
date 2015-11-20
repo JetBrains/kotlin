@@ -14,30 +14,6 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve;
+package org.jetbrains.kotlin.script
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.types.KotlinType;
-
-public class AnalyzerScriptParameter {
-    @NotNull
-    private final Name name;
-    @NotNull
-    private final KotlinType type;
-
-    public AnalyzerScriptParameter(@NotNull Name name, @NotNull KotlinType type) {
-        this.name = name;
-        this.type = type;
-    }
-
-    @NotNull
-    public Name getName() {
-        return name;
-    }
-
-    @NotNull
-    public KotlinType getType() {
-        return type;
-    }
-}
+class KotlinScriptDefinition(val extension: String, val scriptParameters: List<AnalyzerScriptParameter>)

@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.ScriptNameUtil
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.data.JetScriptInfo
@@ -34,6 +33,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
+import org.jetbrains.kotlin.script.ScriptNameUtil
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.Printer

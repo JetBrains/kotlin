@@ -16,15 +16,17 @@
 
 package org.jetbrains.kotlin.resolve.lazy.descriptors
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorVisitor
+import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.ScriptPriorities
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.data.JetScriptInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.source.toSourceElement
+import org.jetbrains.kotlin.script.ScriptPriorities
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
 public class LazyScriptDescriptor(

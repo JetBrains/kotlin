@@ -17,10 +17,10 @@
 package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.parsing.KotlinScriptDefinition;
-import org.jetbrains.kotlin.parsing.KotlinScriptDefinitionProvider;
-import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
+import org.jetbrains.kotlin.script.AnalyzerScriptParameter;
+import org.jetbrains.kotlin.script.KotlinScriptDefinition;
+import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 

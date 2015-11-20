@@ -24,10 +24,10 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.parsing.KotlinScriptDefinitionProvider
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
+import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider
 import org.jetbrains.kotlin.utils.toReadOnlyList
 
 public class LazyScriptClassMemberScope(

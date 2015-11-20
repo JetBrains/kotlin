@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.parsing;
+package org.jetbrains.kotlin.script;
 
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.parsing.KotlinParserDefinition;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter;
 
 import java.util.*;
 

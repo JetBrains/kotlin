@@ -66,6 +66,7 @@ import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo;
 import org.jetbrains.kotlin.resolve.lazy.declarations.*;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
+import org.jetbrains.kotlin.script.ScriptPriorities;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;

@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve;
+package org.jetbrains.kotlin.script;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.parsing.KotlinScriptDefinition;
-import org.jetbrains.kotlin.parsing.KotlinScriptDefinitionProvider;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtPackageDirective;
 import org.jetbrains.kotlin.psi.KtScript;

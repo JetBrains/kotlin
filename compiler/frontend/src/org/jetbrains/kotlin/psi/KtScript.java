@@ -20,10 +20,9 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.stubs.KotlinScriptStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
-import org.jetbrains.kotlin.resolve.ScriptNameUtil;
+import org.jetbrains.kotlin.script.ScriptNameUtil;
 
 import java.util.List;
 

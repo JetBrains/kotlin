@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.cli.jvm.compiler;
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
+import org.jetbrains.kotlin.script.AnalyzerScriptParameter;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Collections;
