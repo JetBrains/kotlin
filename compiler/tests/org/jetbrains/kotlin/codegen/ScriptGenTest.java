@@ -28,10 +28,14 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import static java.util.Collections.singletonList;
+
 public class ScriptGenTest extends CodegenTestCase {
     private static final KotlinScriptDefinition FIB_SCRIPT_DEFINITION =
-            new KotlinScriptDefinition(".lang.kt",
-                                       new AnalyzerScriptParameter(Name.identifier("num"), JvmPlatform.INSTANCE$.getBuiltIns().getIntType()));
+            new KotlinScriptDefinition(
+                    ".lang.kt",
+                    singletonList(new AnalyzerScriptParameter(Name.identifier("num"), JvmPlatform.INSTANCE$.getBuiltIns().getIntType()))
+            );
 
     @Override
     protected void setUp() throws Exception {
