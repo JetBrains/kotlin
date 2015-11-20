@@ -474,7 +474,7 @@ public open class KotlinIntroduceLambdaParameterHandler(
                     is KtClass -> targetParent.getBody()
                     else -> null
                 } ?: throw AssertionError("Body element is not found: ${targetParent.getElementTextWithContext()}")
-        val extractionData = ExtractionData(expression.getContainingKtFile(),
+        val extractionData = ExtractionData(targetParent.getContainingKtFile(),
                                             expression.toRange(),
                                             targetParent,
                                             duplicateContainer,
