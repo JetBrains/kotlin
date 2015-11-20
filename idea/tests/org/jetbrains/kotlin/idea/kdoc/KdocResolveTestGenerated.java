@@ -60,6 +60,12 @@ public class KdocResolveTestGenerated extends AbstractReferenceResolveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("CompanionObjectMember.kt")
+    public void testCompanionObjectMember() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/CompanionObjectMember.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ConstructorParamReference.kt")
     public void testConstructorParamReference() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/ConstructorParamReference.kt");

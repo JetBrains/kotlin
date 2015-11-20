@@ -138,10 +138,17 @@ private fun getClassInnerScope(outerScope: LexicalScope, descriptor: ClassDescri
             addFunctionDescriptor(constructor)
         }
     }
+
+    val scopeChain = arrayListOf(descriptor.defaultType.memberScope,
+                            descriptor.staticScope)
+
+    descriptor.companionObjectDescriptor?.let {
+        scopeChain.add(it.defaultType.memberScope)
+    }
+
     return LexicalChainedScope(headerScope, descriptor, false, null,
                                "Class ${descriptor.name} scope",
-                               descriptor.defaultType.memberScope,
-                               descriptor.staticScope)
+                               *scopeChain.toTypedArray())
 }
 
 public fun getResolutionScope(resolutionFacade: ResolutionFacade, descriptor: DeclarationDescriptor): LexicalScope {
