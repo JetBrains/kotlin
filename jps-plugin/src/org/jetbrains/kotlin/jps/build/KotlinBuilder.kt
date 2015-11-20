@@ -72,8 +72,7 @@ import java.util.*
 
 public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     companion object {
-        // TODO add description to string
-        private val TARGETS_WITH_CLEARED_CACHES = Key<Set<ModuleBuildTarget>>("")
+        private val TARGETS_WITH_CLEARED_CACHES = Key<Set<ModuleBuildTarget>>("Targets with cleared Kotlin caches")
 
         public val KOTLIN_BUILDER_NAME: String = "Kotlin Builder"
         public val LOOKUP_TRACKER: JpsElementChildRoleBase<JpsSimpleElement<out LookupTracker>> = JpsElementChildRoleBase.create("lookup tracker")
