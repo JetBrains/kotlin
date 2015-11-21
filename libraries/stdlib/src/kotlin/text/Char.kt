@@ -61,35 +61,41 @@ public fun Char.isSurrogate(): Boolean = this in Char.MIN_SURROGATE..Char.MAX_SU
 /**
  * The minimum value of a Unicode high-surrogate code unit.
  */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public val Char.Companion.MIN_HIGH_SURROGATE: Char
     get() = '\uD800'
 
 /**
  * The maximum value of a Unicode high-surrogate code unit.
  */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public val Char.Companion.MAX_HIGH_SURROGATE: Char
     get() = '\uDBFF'
 
 /**
  * The minimum value of a Unicode low-surrogate code unit.
  */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public val Char.Companion.MIN_LOW_SURROGATE: Char
     get() = '\uDC00'
 
 /**
  * The maximum value of a Unicode low-surrogate code unit.
  */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public val Char.Companion.MAX_LOW_SURROGATE: Char
     get() = '\uDFFF'
 
 /**
  * The minimum value of a Unicode surrogate code unit.
  */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public val Char.Companion.MIN_SURROGATE: Char
     get() = MIN_HIGH_SURROGATE
 
 /**
  * The maximum value of a Unicode surrogate code unit.
  */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public val Char.Companion.MAX_SURROGATE: Char
     get() = MAX_LOW_SURROGATE

@@ -233,6 +233,18 @@ public final class Char : kotlin.Comparable<kotlin.Char> {
 
     public companion object Companion {
         /*primary*/ private constructor Companion()
+        public const final val MAX_HIGH_SURROGATE: kotlin.Char
+            public final fun <get-MAX_HIGH_SURROGATE>(): kotlin.Char
+        public const final val MAX_LOW_SURROGATE: kotlin.Char
+            public final fun <get-MAX_LOW_SURROGATE>(): kotlin.Char
+        public const final val MAX_SURROGATE: kotlin.Char
+            public final fun <get-MAX_SURROGATE>(): kotlin.Char
+        public const final val MIN_HIGH_SURROGATE: kotlin.Char
+            public final fun <get-MIN_HIGH_SURROGATE>(): kotlin.Char
+        public const final val MIN_LOW_SURROGATE: kotlin.Char
+            public final fun <get-MIN_LOW_SURROGATE>(): kotlin.Char
+        public const final val MIN_SURROGATE: kotlin.Char
+            public final fun <get-MIN_SURROGATE>(): kotlin.Char
     }
 }
 

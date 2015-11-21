@@ -21,7 +21,6 @@ package kotlin
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `char`.
  */
 public class Char private () : Comparable<Char> {
-    companion object {}
 
     /**
      * Compares this value with the specified value for order.
@@ -60,5 +59,38 @@ public class Char private () : Comparable<Char> {
     public override fun toFloat(): Float
     /** Returns the value of this character as a `Double`. */
     public override fun toDouble(): Double
+
+    companion object {
+        /**
+         * The minimum value of a Unicode high-surrogate code unit.
+         */
+        public const val MIN_HIGH_SURROGATE: Char = '\uD800'
+
+        /**
+         * The maximum value of a Unicode high-surrogate code unit.
+         */
+        public const val MAX_HIGH_SURROGATE: Char = '\uDBFF'
+
+        /**
+         * The minimum value of a Unicode low-surrogate code unit.
+         */
+        public const val MIN_LOW_SURROGATE: Char = '\uDC00'
+
+        /**
+         * The maximum value of a Unicode low-surrogate code unit.
+         */
+        public const val MAX_LOW_SURROGATE: Char = '\uDFFF'
+
+        /**
+         * The minimum value of a Unicode surrogate code unit.
+         */
+        public const val MIN_SURROGATE: Char = MIN_HIGH_SURROGATE
+
+        /**
+         * The maximum value of a Unicode surrogate code unit.
+         */
+        public const val MAX_SURROGATE: Char = MAX_LOW_SURROGATE
+    }
+
 }
 

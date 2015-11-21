@@ -52,7 +52,14 @@ private object ByteCompanionObject {
     val MAX_VALUE: Byte = 127
 }
 
-private object CharCompanionObject {}
+private object CharCompanionObject {
+    public const val MIN_HIGH_SURROGATE: Char = '\uD800'
+    public const val MAX_HIGH_SURROGATE: Char = '\uDBFF'
+    public const val MIN_LOW_SURROGATE: Char = '\uDC00'
+    public const val MAX_LOW_SURROGATE: Char = '\uDFFF'
+    public const val MIN_SURROGATE: Char = MIN_HIGH_SURROGATE
+    public const val MAX_SURROGATE: Char = MAX_LOW_SURROGATE
+}
 
 private object StringCompanionObject {}
 private object EnumCompanionObject {}
