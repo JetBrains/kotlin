@@ -17,8 +17,8 @@
 package org.jetbrains.kotlin.idea
 
 import junit.framework.TestCase
-import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtil
 import org.jetbrains.kotlin.idea.versions.OutdatedKotlinRuntimeNotification
+import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.junit.Assert
 
 
@@ -87,15 +87,15 @@ class KotlinRuntimeLibraryUtilTest : TestCase() {
 
     private fun outdated(plugin: String, library: String) {
         Assert.assertTrue("Should be outdated: plugin=$plugin, library=$library",
-                OutdatedKotlinRuntimeNotification.isRuntimeOutdated(library, KotlinRuntimeLibraryUtil.bundledRuntimeVersion(plugin)))
+                OutdatedKotlinRuntimeNotification.isRuntimeOutdated(library, bundledRuntimeVersion(plugin)))
     }
 
     private fun notOutdated(plugin: String, library: String) {
         Assert.assertFalse("Should NOT be outdated: plugin=$plugin, library=$library",
-                OutdatedKotlinRuntimeNotification.isRuntimeOutdated(library, KotlinRuntimeLibraryUtil.bundledRuntimeVersion(plugin)))
+                OutdatedKotlinRuntimeNotification.isRuntimeOutdated(library, bundledRuntimeVersion(plugin)))
     }
 
     private fun test(version: String, expected: String) {
-        Assert.assertEquals(expected, KotlinRuntimeLibraryUtil.bundledRuntimeVersion(version))
+        Assert.assertEquals(expected, bundledRuntimeVersion(version))
     }
 }

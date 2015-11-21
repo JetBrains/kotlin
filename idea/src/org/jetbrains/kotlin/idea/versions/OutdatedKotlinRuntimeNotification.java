@@ -132,7 +132,7 @@ public class OutdatedKotlinRuntimeNotification extends AbstractProjectComponent 
                             if ("update".equals(event.getDescription())) {
                                 Collection<VersionedLibrary> versionedOutdatedLibraries = findOutdatedKotlinLibraries(myProject);
                                 Collection<Library> outdatedLibraries = extractLibraries(versionedOutdatedLibraries);
-                                KotlinRuntimeLibraryUtil.updateLibraries(myProject, outdatedLibraries);
+                                KotlinRuntimeLibraryUtilKt.updateLibraries(myProject, outdatedLibraries);
                                 suggestDeleteKotlinJsIfNeeded(outdatedLibraries);
                             }
                             else if ("ignore".equals(event.getDescription())) {
@@ -232,7 +232,7 @@ public class OutdatedKotlinRuntimeNotification extends AbstractProjectComponent 
     private static Collection<VersionedLibrary> findOutdatedKotlinLibraries(@NotNull Project project) {
         List<VersionedLibrary> outdatedLibraries = Lists.newArrayList();
 
-        for (Library library : KotlinRuntimeLibraryUtil.findKotlinLibraries(project)) {
+        for (Library library : KotlinRuntimeLibraryUtilKt.findKotlinLibraries(project)) {
             LibraryVersionProperties libraryVersionProperties =
                     LibraryPresentationProviderUtil.getLibraryProperties(JavaRuntimePresentationProvider.getInstance(), library);
             if (libraryVersionProperties == null) {
@@ -244,7 +244,7 @@ public class OutdatedKotlinRuntimeNotification extends AbstractProjectComponent 
             }
             String libraryVersion = libraryVersionProperties.getVersionString();
 
-            String runtimeVersion = KotlinRuntimeLibraryUtil.bundledRuntimeVersion();
+            String runtimeVersion = KotlinRuntimeLibraryUtilKt.bundledRuntimeVersion();
 
             boolean isOutdated = isRuntimeOutdated(libraryVersion, runtimeVersion);
 

@@ -103,13 +103,13 @@ public class UnsupportedAbiVersionNotificationPanelProvider extends EditorNotifi
     private EditorNotificationPanel doCreate(final Collection<VirtualFile> badRoots) {
         EditorNotificationPanel answer = new ErrorNotificationPanel();
 
-        Collection<Library> kotlinLibraries = KotlinRuntimeLibraryUtil.findKotlinLibraries(project);
+        Collection<Library> kotlinLibraries = KotlinRuntimeLibraryUtilKt.findKotlinLibraries(project);
         final Collection<Library> badRuntimeLibraries = Collections2.filter(kotlinLibraries, new Predicate<Library>() {
             @Override
             public boolean apply(@Nullable Library library) {
                 assert library != null : "library should be non null";
-                VirtualFile runtimeJar = KotlinRuntimeLibraryUtil.getLocalJar(JavaRuntimePresentationProvider.getRuntimeJar(library));
-                VirtualFile jsLibJar = KotlinRuntimeLibraryUtil.getLocalJar(JSLibraryStdPresentationProvider.getJsStdLibJar(library));
+                VirtualFile runtimeJar = KotlinRuntimeLibraryUtilKt.getLocalJar(JavaRuntimePresentationProvider.getRuntimeJar(library));
+                VirtualFile jsLibJar = KotlinRuntimeLibraryUtilKt.getLocalJar(JSLibraryStdPresentationProvider.getJsStdLibJar(library));
                 return badRoots.contains(runtimeJar) || badRoots.contains(jsLibJar);
             }
         });
@@ -130,7 +130,7 @@ public class UnsupportedAbiVersionNotificationPanelProvider extends EditorNotifi
             answer.createActionLabel(actionLabelText, new Runnable() {
                 @Override
                 public void run() {
-                    KotlinRuntimeLibraryUtil.updateLibraries(project, badRuntimeLibraries);
+                    KotlinRuntimeLibraryUtilKt.updateLibraries(project, badRuntimeLibraries);
                 }
             });
             if (otherBadRootsCount > 0) {
@@ -278,8 +278,8 @@ public class UnsupportedAbiVersionNotificationPanelProvider extends EditorNotifi
 
     @NotNull
     private static Collection<VirtualFile> collectBadRoots(@NotNull Project project) {
-        Collection<VirtualFile> badJVMRoots = KotlinRuntimeLibraryUtil.getLibraryRootsWithAbiIncompatibleKotlinClasses(project);
-        Collection<VirtualFile> badJSRoots = KotlinRuntimeLibraryUtil.getLibraryRootsWithAbiIncompatibleForKotlinJs(project);
+        Collection<VirtualFile> badJVMRoots = KotlinRuntimeLibraryUtilKt.getLibraryRootsWithAbiIncompatibleKotlinClasses(project);
+        Collection<VirtualFile> badJSRoots = KotlinRuntimeLibraryUtilKt.getLibraryRootsWithAbiIncompatibleForKotlinJs(project);
 
         if (badJVMRoots.isEmpty() && badJSRoots.isEmpty()) return Collections.emptyList();
 

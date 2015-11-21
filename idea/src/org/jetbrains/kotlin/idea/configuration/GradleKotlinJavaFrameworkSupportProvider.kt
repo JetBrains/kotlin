@@ -22,7 +22,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ModifiableModelsProvider
 import com.intellij.openapi.roots.ModifiableRootModel
 import org.jetbrains.kotlin.idea.KotlinIcons
-import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtil
+import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
 import org.jetbrains.plugins.gradle.frameworkSupport.GradleFrameworkSupportProvider
 import javax.swing.Icon
@@ -40,7 +40,7 @@ class GradleKotlinJavaFrameworkSupportProvider() : GradleFrameworkSupportProvide
                             rootModel: ModifiableRootModel,
                             modifiableModelsProvider: ModifiableModelsProvider,
                             buildScriptData: BuildScriptDataBuilder) {
-        var kotlinVersion = KotlinRuntimeLibraryUtil.bundledRuntimeVersion()
+        var kotlinVersion = bundledRuntimeVersion()
         if (kotlinVersion == "@snapshot@") {
             kotlinVersion = "0.1-SNAPSHOT"
 

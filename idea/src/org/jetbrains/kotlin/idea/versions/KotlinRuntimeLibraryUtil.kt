@@ -14,319 +14,247 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.versions;
+package org.jetbrains.kotlin.idea.versions
 
-import com.google.common.collect.Sets;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.LibraryOrderEntry;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.OrderEntry;
-import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.JarFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.ProjectScope;
-import com.intellij.util.CommonProcessors;
-import com.intellij.util.indexing.FileBasedIndex;
-import com.intellij.util.indexing.ID;
-import com.intellij.util.indexing.ScalarIndexExtension;
-import kotlin.collections.ArraysKt;
-import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.KotlinPluginUtil;
-import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt;
-import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator;
-import org.jetbrains.kotlin.idea.configuration.KotlinJsModuleConfigurator;
-import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider;
-import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider;
-import org.jetbrains.kotlin.idea.framework.LibraryPresentationProviderUtil;
-import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
-import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion;
-import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils;
-import org.jetbrains.kotlin.utils.KotlinPaths;
-import org.jetbrains.kotlin.utils.PathUtil;
+import com.google.common.collect.Sets
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.LibraryOrderEntry
+import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.ProjectFileIndex
+import com.intellij.openapi.roots.libraries.Library
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.JarFileSystem
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.ProjectScope
+import com.intellij.util.CommonProcessors
+import com.intellij.util.PathUtil.getLocalFile
+import com.intellij.util.PathUtil.getLocalPath
+import com.intellij.util.indexing.FileBasedIndex
+import com.intellij.util.indexing.ID
+import com.intellij.util.indexing.ScalarIndexExtension
+import org.jetbrains.kotlin.idea.KotlinPluginUtil
+import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator
+import org.jetbrains.kotlin.idea.configuration.KotlinJsModuleConfigurator
+import org.jetbrains.kotlin.idea.configuration.getConfiguratorByName
+import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider
+import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider
+import org.jetbrains.kotlin.idea.framework.LibraryPresentationProviderUtil
+import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
+import org.jetbrains.kotlin.idea.versions.OutdatedKotlinRuntimeNotification.showRuntimeJarNotFoundDialog
+import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
+import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
+import org.jetbrains.kotlin.utils.PathUtil
+import java.io.File
+import java.io.IOException
+import java.util.*
 
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
+fun getLibraryRootsWithAbiIncompatibleKotlinClasses(project: Project): Collection<VirtualFile> {
+    return getLibraryRootsWithAbiIncompatibleVersion(
+            project, KotlinMetadataVersionIndex,
+            { module -> ProjectStructureUtil.isJavaKotlinModule(module) },
+            { version -> !version.isCompatible() })
+}
 
-import static com.intellij.util.PathUtil.getLocalFile;
-import static com.intellij.util.PathUtil.getLocalPath;
-import static org.jetbrains.kotlin.idea.versions.OutdatedKotlinRuntimeNotification.showRuntimeJarNotFoundDialog;
-
-public class KotlinRuntimeLibraryUtil {
-    private KotlinRuntimeLibraryUtil() {
-    }
-
-    @NotNull
-    public static Collection<VirtualFile> getLibraryRootsWithAbiIncompatibleKotlinClasses(@NotNull Project project) {
-        return getLibraryRootsWithAbiIncompatibleVersion(
-                project, KotlinMetadataVersionIndex.INSTANCE,
-                new Function1<Module, Boolean>() {
-                    @Override
-                    public Boolean invoke(@Nullable Module module) {
-                        return module != null && ProjectStructureUtil.isJavaKotlinModule(module);
-                    }
-                },
-                new Function1<BinaryVersion, Boolean>() {
-                    @Override
-                    public Boolean invoke(@NotNull BinaryVersion version) {
-                        return !version.isCompatible();
-                    }
-                });
-    }
-
-    @NotNull
-    public static Collection<VirtualFile> getLibraryRootsWithAbiIncompatibleForKotlinJs(@NotNull Project project) {
-        return getLibraryRootsWithAbiIncompatibleVersion(
-                project, KotlinJavaScriptAbiVersionIndex.INSTANCE,
-                new Function1<Module, Boolean>() {
-                    @Override
-                    public Boolean invoke(@Nullable Module module) {
-                        return module != null && ProjectStructureUtil.isJsKotlinModule(module);
-                    }
-                },
-                new Function1<BinaryVersion, Boolean>() {
-                    @Override
-                    public Boolean invoke(@NotNull BinaryVersion version) {
-                        // TODO: support major.minor.patch version in JS metadata
-                        return !KotlinJavascriptMetadataUtils.isAbiVersionCompatible(version.getMinor());
-                    }
-                });
-    }
+fun getLibraryRootsWithAbiIncompatibleForKotlinJs(project: Project): Collection<VirtualFile> {
+    return getLibraryRootsWithAbiIncompatibleVersion(
+            project, KotlinJavaScriptAbiVersionIndex,
+            { module -> ProjectStructureUtil.isJsKotlinModule(module) },
+            { version ->  !KotlinJavascriptMetadataUtils.isAbiVersionCompatible(version.minor) })       // TODO: support major.minor.patch version in JS metadata
+}
 
 
-    public static void updateLibraries(
-            @NotNull final Project project,
-            @NotNull final Collection<Library> libraries
-    ) {
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                KotlinJavaModuleConfigurator kJvmConfigurator = (KotlinJavaModuleConfigurator)
-                        ConfigureKotlinInProjectUtilsKt.getConfiguratorByName(KotlinJavaModuleConfigurator.NAME);
-                assert kJvmConfigurator != null : "Configurator with given name doesn't exists: " + KotlinJavaModuleConfigurator.NAME;
+fun updateLibraries(
+        project: Project,
+        libraries: Collection<Library>) {
+    ApplicationManager.getApplication().invokeLater {
+        val kJvmConfigurator = getConfiguratorByName(KotlinJavaModuleConfigurator.NAME) as KotlinJavaModuleConfigurator?
+        assert(kJvmConfigurator != null) { "Configurator with given name doesn't exists: " + KotlinJavaModuleConfigurator.NAME }
 
-                KotlinJsModuleConfigurator kJsConfigurator = (KotlinJsModuleConfigurator)
-                        ConfigureKotlinInProjectUtilsKt.getConfiguratorByName(KotlinJsModuleConfigurator.NAME);
-                assert kJsConfigurator != null : "Configurator with given name doesn't exists: " + KotlinJsModuleConfigurator.NAME;
+        val kJsConfigurator = getConfiguratorByName(KotlinJsModuleConfigurator.NAME) as KotlinJsModuleConfigurator?
+        assert(kJsConfigurator != null) { "Configurator with given name doesn't exists: " + KotlinJsModuleConfigurator.NAME }
 
-                for (Library library : libraries) {
-                    if (LibraryPresentationProviderUtil.isDetected(JavaRuntimePresentationProvider.getInstance(), library)) {
-                        updateJar(project, JavaRuntimePresentationProvider.getRuntimeJar(library), LibraryJarDescriptor.RUNTIME_JAR);
-                        updateJar(project, JavaRuntimePresentationProvider.getReflectJar(library), LibraryJarDescriptor.REFLECT_JAR);
+        for (library in libraries) {
+            if (LibraryPresentationProviderUtil.isDetected(JavaRuntimePresentationProvider.getInstance(), library)) {
+                updateJar(project, JavaRuntimePresentationProvider.getRuntimeJar(library), LibraryJarDescriptor.RUNTIME_JAR)
+                updateJar(project, JavaRuntimePresentationProvider.getReflectJar(library), LibraryJarDescriptor.REFLECT_JAR)
 
-                        if (kJvmConfigurator.changeOldSourcesPathIfNeeded(project, library)) {
-                            kJvmConfigurator.copySourcesToPathFromLibrary(project, library);
-                        }
-                        else {
-                            updateJar(project, JavaRuntimePresentationProvider.getRuntimeSrcJar(library), LibraryJarDescriptor.RUNTIME_SRC_JAR);
-                        }
-                    }
-                    else if (LibraryPresentationProviderUtil.isDetected(JSLibraryStdPresentationProvider.getInstance(), library)) {
-                        updateJar(project, JSLibraryStdPresentationProvider.getJsStdLibJar(library), LibraryJarDescriptor.JS_STDLIB_JAR);
-
-                        if (kJsConfigurator.changeOldSourcesPathIfNeeded(project, library)) {
-                            kJsConfigurator.copySourcesToPathFromLibrary(project, library);
-                        }
-                        else {
-                            updateJar(project, JSLibraryStdPresentationProvider.getJsStdLibSrcJar(library), LibraryJarDescriptor.JS_STDLIB_SRC_JAR);
-                        }
-                    }
+                if (kJvmConfigurator!!.changeOldSourcesPathIfNeeded(project, library)) {
+                    kJvmConfigurator.copySourcesToPathFromLibrary(project, library)
+                }
+                else {
+                    updateJar(project, JavaRuntimePresentationProvider.getRuntimeSrcJar(library), LibraryJarDescriptor.RUNTIME_SRC_JAR)
                 }
             }
-        });
-    }
+            else if (LibraryPresentationProviderUtil.isDetected(JSLibraryStdPresentationProvider.getInstance(), library)) {
+                updateJar(project, JSLibraryStdPresentationProvider.getJsStdLibJar(library), LibraryJarDescriptor.JS_STDLIB_JAR)
 
-    private static void updateJar(
-            @NotNull Project project,
-            @Nullable VirtualFile fileToReplace,
-            @NotNull LibraryJarDescriptor libraryJarDescriptor
-    ) {
-        if (fileToReplace == null && !libraryJarDescriptor.shouldExist) {
-            return;
-        }
-
-        KotlinPaths paths = PathUtil.getKotlinPathsForIdeaPlugin();
-        File jarPath;
-        switch (libraryJarDescriptor) {
-            case RUNTIME_JAR: jarPath = paths.getRuntimePath(); break;
-            case REFLECT_JAR: jarPath = paths.getReflectPath(); break;
-            case RUNTIME_SRC_JAR: jarPath = paths.getRuntimeSourcesPath(); break;
-            case JS_STDLIB_JAR: jarPath = paths.getJsStdLibJarPath(); break;
-            case JS_STDLIB_SRC_JAR: jarPath = paths.getJsStdLibSrcJarPath(); break;
-            default: jarPath = null; break;
-        }
-
-        if (!jarPath.exists()) {
-            showRuntimeJarNotFoundDialog(project, libraryJarDescriptor.jarName).run();
-            return;
-        }
-
-        VirtualFile localJar = getLocalJar(fileToReplace);
-        assert localJar != null;
-
-        replaceFile(jarPath, localJar);
-    }
-
-    @NotNull
-    public static Collection<Library> findKotlinLibraries(@NotNull Project project) {
-        Set<Library> libraries = Sets.newHashSet();
-
-        for (Module module : ModuleManager.getInstance(project).getModules()) {
-            ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
-
-            for (OrderEntry entry : moduleRootManager.getOrderEntries()) {
-                if (entry instanceof LibraryOrderEntry) {
-                    LibraryOrderEntry libraryOrderEntry = (LibraryOrderEntry) entry;
-                    Library library = libraryOrderEntry.getLibrary();
-
-                    if (library == null) {
-                        continue;
-                    }
-
-                    libraries.add(library);
-
-                    // TODO: search js libraries as well
+                if (kJsConfigurator!!.changeOldSourcesPathIfNeeded(project, library)) {
+                    kJsConfigurator.copySourcesToPathFromLibrary(project, library)
+                }
+                else {
+                    updateJar(project, JSLibraryStdPresentationProvider.getJsStdLibSrcJar(library), LibraryJarDescriptor.JS_STDLIB_SRC_JAR)
                 }
             }
         }
+    }
+}
 
-        return libraries;
+private fun updateJar(
+        project: Project,
+        fileToReplace: VirtualFile?,
+        libraryJarDescriptor: LibraryJarDescriptor) {
+    if (fileToReplace == null && !libraryJarDescriptor.shouldExist) {
+        return
     }
 
-    private enum LibraryJarDescriptor {
-        RUNTIME_JAR(PathUtil.KOTLIN_JAVA_RUNTIME_JAR, true),
-        REFLECT_JAR(PathUtil.KOTLIN_JAVA_REFLECT_JAR, false),
-        RUNTIME_SRC_JAR(PathUtil.KOTLIN_JAVA_RUNTIME_SRC_JAR, false),
-        JS_STDLIB_JAR(PathUtil.JS_LIB_JAR_NAME, true),
-        JS_STDLIB_SRC_JAR(PathUtil.JS_LIB_SRC_JAR_NAME, false);
-
-        public final String jarName;
-        private final boolean shouldExist;
-
-        LibraryJarDescriptor(@NotNull String jarName, boolean shouldExist) {
-            this.jarName = jarName;
-            this.shouldExist = shouldExist;
-        }
+    val paths = PathUtil.getKotlinPathsForIdeaPlugin()
+    val jarPath: File = when (libraryJarDescriptor) {
+        LibraryJarDescriptor.RUNTIME_JAR -> paths.runtimePath
+        LibraryJarDescriptor.REFLECT_JAR -> paths.reflectPath
+        LibraryJarDescriptor.RUNTIME_SRC_JAR -> paths.runtimeSourcesPath
+        LibraryJarDescriptor.JS_STDLIB_JAR -> paths.jsStdLibJarPath
+        LibraryJarDescriptor.JS_STDLIB_SRC_JAR -> paths.jsStdLibSrcJarPath
     }
 
-    @NotNull
-    public static String bundledRuntimeVersion() {
-        return bundledRuntimeVersion(KotlinPluginUtil.getPluginVersion());
+    if (!jarPath.exists()) {
+        showRuntimeJarNotFoundDialog(project, libraryJarDescriptor.jarName).run()
+        return
     }
 
-    @NotNull
-    public static String bundledRuntimeVersion(@NotNull String pluginVersion) {
-        int placeToSplit = -1;
+    val localJar = getLocalJar(fileToReplace)
+    assert(localJar != null)
 
-        int ideaPatternIndex = StringUtil.indexOf(pluginVersion, "Idea");
-        if (ideaPatternIndex >= 2 && Character.isDigit(pluginVersion.charAt(ideaPatternIndex - 2))) {
-            placeToSplit = ideaPatternIndex - 1;
-        }
+    replaceFile(jarPath, localJar!!)
+}
 
-        int ijPatternIndex = StringUtil.indexOf(pluginVersion, "IJ");
-        if (ijPatternIndex >= 2 && Character.isDigit(pluginVersion.charAt(ijPatternIndex - 2))) {
-            placeToSplit = ijPatternIndex - 1;
-        }
+fun findKotlinLibraries(project: Project): Collection<Library> {
+    val libraries = Sets.newHashSet<Library>()
 
-        if (placeToSplit == -1) {
-            for (int i = 1; i < pluginVersion.length(); i++) {
-                char ch = pluginVersion.charAt(i);
-                if (Character.isLetter(ch) && pluginVersion.charAt(i - 1) == '.') {
-                    placeToSplit = i - 1;
-                    break;
-                }
+    for (module in ModuleManager.getInstance(project).modules) {
+        val moduleRootManager = ModuleRootManager.getInstance(module)
+
+        for (entry in moduleRootManager.orderEntries) {
+            if (entry is LibraryOrderEntry) {
+                val library = entry.library ?: continue
+
+                libraries.add(library)
+
+                // TODO: search js libraries as well
             }
         }
-
-        return placeToSplit != - 1 ? pluginVersion.substring(0, placeToSplit) : pluginVersion;
     }
 
-    @Nullable
-    public static VirtualFile getLocalJar(@Nullable VirtualFile kotlinRuntimeJar) {
-        if (kotlinRuntimeJar == null) return null;
+    return libraries
+}
 
-        VirtualFile localJarFile = JarFileSystem.getInstance().getVirtualFileForJar(kotlinRuntimeJar);
-        if (localJarFile != null) {
-            return localJarFile;
-        }
-        return kotlinRuntimeJar;
+private enum class LibraryJarDescriptor private constructor(val jarName: String, val shouldExist: Boolean) {
+    RUNTIME_JAR(PathUtil.KOTLIN_JAVA_RUNTIME_JAR, true),
+    REFLECT_JAR(PathUtil.KOTLIN_JAVA_REFLECT_JAR, false),
+    RUNTIME_SRC_JAR(PathUtil.KOTLIN_JAVA_RUNTIME_SRC_JAR, false),
+    JS_STDLIB_JAR(PathUtil.JS_LIB_JAR_NAME, true),
+    JS_STDLIB_SRC_JAR(PathUtil.JS_LIB_SRC_JAR_NAME, false)
+}
+
+@JvmOverloads fun bundledRuntimeVersion(pluginVersion: String = KotlinPluginUtil.getPluginVersion()): String {
+    var placeToSplit = -1
+
+    val ideaPatternIndex = StringUtil.indexOf(pluginVersion, "Idea")
+    if (ideaPatternIndex >= 2 && Character.isDigit(pluginVersion[ideaPatternIndex - 2])) {
+        placeToSplit = ideaPatternIndex - 1
     }
 
-    static void replaceFile(File updatedFile, VirtualFile replacedJarFile) {
-        try {
-            VirtualFile replacedFile = getLocalFile(replacedJarFile);
-
-            String localPath = getLocalPath(replacedFile);
-            assert localPath != null : "Should be called for replacing valid root file: " + replacedJarFile;
-
-            File libraryJarPath = new File(localPath);
-
-            if (FileUtil.filesEqual(updatedFile, libraryJarPath)) {
-                return;
-            }
-
-            FileUtil.copy(updatedFile, libraryJarPath);
-            replacedFile.refresh(false, true);
-        }
-        catch (IOException e) {
-            throw new AssertionError(e);
-        }
+    val ijPatternIndex = StringUtil.indexOf(pluginVersion, "IJ")
+    if (ijPatternIndex >= 2 && Character.isDigit(pluginVersion[ijPatternIndex - 2])) {
+        placeToSplit = ijPatternIndex - 1
     }
 
-    @NotNull
-    private static Collection<VirtualFile> getLibraryRootsWithAbiIncompatibleVersion(
-            @NotNull Project project,
-            @NotNull ScalarIndexExtension<BinaryVersion> index,
-            @NotNull Function1<Module, Boolean> checkModule,
-            @NotNull Function1<BinaryVersion, Boolean> checkVersion
-    ) {
-        ID<BinaryVersion, Void> id = index.getName();
-
-        Module[] modules = ModuleManager.getInstance(project).getModules();
-
-        List<Module> modulesToCheck = ArraysKt.filter(modules, checkModule);
-        if (modulesToCheck.isEmpty()) return Collections.emptyList();
-
-        Collection<BinaryVersion> versions = collectAllKeys(id, modulesToCheck);
-        Set<BinaryVersion> badVersions = Sets.newHashSet(CollectionsKt.filter(versions, checkVersion));
-        Set<VirtualFile> badRoots = Sets.newHashSet();
-        ProjectFileIndex fileIndex = ProjectFileIndex.SERVICE.getInstance(project);
-
-        for (BinaryVersion version : badVersions) {
-            Collection<VirtualFile> indexedFiles = FileBasedIndex.getInstance().getContainingFiles(
-                    id, version, ProjectScope.getLibrariesScope(project));
-
-            for (VirtualFile indexedFile : indexedFiles) {
-                VirtualFile libraryRoot = fileIndex.getClassRootForFile(indexedFile);
-                assert libraryRoot != null : "Only library roots were requested, " +
-                                             "and only class files should be indexed with KotlinAbiVersionIndex key. " +
-                                             "File: " + indexedFile.getPath();
-                badRoots.add(getLocalFile(libraryRoot));
+    if (placeToSplit == -1) {
+        for (i in 1..pluginVersion.length - 1) {
+            val ch = pluginVersion[i]
+            if (Character.isLetter(ch) && pluginVersion[i - 1] == '.') {
+                placeToSplit = i - 1
+                break
             }
         }
-
-        return badRoots;
     }
 
-    @NotNull
-    private static <T> Collection<T> collectAllKeys(@NotNull ID<T, Void> id, @NotNull List<Module> modules) {
-        Set<T> allKeys = new HashSet<T>();
+    return if (placeToSplit != -1) pluginVersion.substring(0, placeToSplit) else pluginVersion
+}
 
-        for (Module module : modules) {
-            GlobalSearchScope scope = GlobalSearchScope.moduleWithLibrariesScope(module);
-            FileBasedIndex.getInstance().processAllKeys(id, new CommonProcessors.CollectProcessor<T>(allKeys), scope, null);
+fun getLocalJar(kotlinRuntimeJar: VirtualFile?): VirtualFile? {
+    if (kotlinRuntimeJar == null) return null
+
+    val localJarFile = JarFileSystem.getInstance().getVirtualFileForJar(kotlinRuntimeJar)
+    if (localJarFile != null) {
+        return localJarFile
+    }
+    return kotlinRuntimeJar
+}
+
+internal fun replaceFile(updatedFile: File, replacedJarFile: VirtualFile) {
+    try {
+        val replacedFile = getLocalFile(replacedJarFile)
+
+        val localPath = getLocalPath(replacedFile)
+        assert(localPath != null) { "Should be called for replacing valid root file: " + replacedJarFile }
+
+        val libraryJarPath = File(localPath)
+
+        if (FileUtil.filesEqual(updatedFile, libraryJarPath)) {
+            return
         }
 
-        return allKeys;
+        FileUtil.copy(updatedFile, libraryJarPath)
+        replacedFile.refresh(false, true)
     }
+    catch (e: IOException) {
+        throw AssertionError(e)
+    }
+}
+
+private fun getLibraryRootsWithAbiIncompatibleVersion(
+        project: Project,
+        index: ScalarIndexExtension<BinaryVersion>,
+        checkModule: (Module) -> Boolean,
+        checkVersion: (BinaryVersion) -> Boolean): Collection<VirtualFile> {
+    val id = index.name
+
+    val modules = ModuleManager.getInstance(project).modules
+
+    val modulesToCheck = modules.filter(checkModule)
+    if (modulesToCheck.isEmpty()) return emptyList()
+
+    val versions = collectAllKeys(id, modulesToCheck)
+    val badVersions = versions.filter(checkVersion).toHashSet()
+    val badRoots = Sets.newHashSet<VirtualFile>()
+    val fileIndex = ProjectFileIndex.SERVICE.getInstance(project)
+
+    for (version in badVersions) {
+        val indexedFiles = FileBasedIndex.getInstance().getContainingFiles(
+                id, version, ProjectScope.getLibrariesScope(project))
+
+        for (indexedFile in indexedFiles) {
+            val libraryRoot = fileIndex.getClassRootForFile(indexedFile)
+            assert(libraryRoot != null) { "Only library roots were requested, " + "and only class files should be indexed with KotlinAbiVersionIndex key. " + "File: " + indexedFile.path }
+            badRoots.add(getLocalFile(libraryRoot!!))
+        }
+    }
+
+    return badRoots
+}
+
+private fun <T> collectAllKeys(id: ID<T, Void>, modules: List<Module>): Collection<T> {
+    val allKeys = HashSet<T>()
+
+    for (module in modules) {
+        val scope = GlobalSearchScope.moduleWithLibrariesScope(module)
+        FileBasedIndex.getInstance().processAllKeys(id, CommonProcessors.CollectProcessor(allKeys), scope, null)
+    }
+
+    return allKeys
 }

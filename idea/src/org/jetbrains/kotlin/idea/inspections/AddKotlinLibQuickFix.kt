@@ -43,7 +43,8 @@ import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionForFirstParentOfType
-import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtil
+import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
+import org.jetbrains.kotlin.idea.versions.findKotlinLibraries
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -155,7 +156,7 @@ abstract class AddKotlinLibQuickFix(element: KtElement) : KotlinQuickFixAction<K
         val configurator = Extensions.getExtensions(KotlinProjectConfigurator.EP_NAME)
                                    .firstIsInstanceOrNull<KotlinJavaModuleConfigurator>() ?: return
 
-        for (library in KotlinRuntimeLibraryUtil.findKotlinLibraries(project)) {
+        for (library in findKotlinLibraries(project)) {
             val runtimeJar = JavaRuntimePresentationProvider.getRuntimeJar(library) ?: continue
             if (hasLibJarInLibrary(library)) continue
 
@@ -194,7 +195,7 @@ abstract class AddKotlinLibQuickFix(element: KtElement) : KotlinQuickFixAction<K
                 }
             }
 
-            val pluginVersion = KotlinRuntimeLibraryUtil.bundledRuntimeVersion()
+            val pluginVersion = bundledRuntimeVersion()
             if ("@snapshot@" == pluginVersion) {
                 return "0.1-SNAPSHOT"
             }
