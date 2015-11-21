@@ -37,7 +37,7 @@ class CollectionJVMTest {
 
     @test fun flatMap() {
         val data = listOf("", "foo", "bar", "x", "")
-        val characters = data.flatMap { it.toCharList() }
+        val characters = data.flatMap { it.toList() }
         println("Got list of characters ${characters}")
         assertEquals(7, characters.size)
         val text = characters.joinToString("")

@@ -395,6 +395,7 @@ public fun String.toDouble(): Double = java.lang.Double.parseDouble(this)
 /**
  * Returns the list of all characters in this string.
  */
+@Deprecated("Use toList() instead.", ReplaceWith("toList()"))
 public fun String.toCharList(): List<Char> = toCharArray().toList()
 
 /**
