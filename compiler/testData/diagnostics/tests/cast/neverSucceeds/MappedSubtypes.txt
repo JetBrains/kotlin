@@ -18,6 +18,6 @@ public final class Sub : kotlin.CharSequence {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ index: kotlin.Int): kotlin.Char
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public abstract override /*1*/ /*fake_override*/ fun subSequence(/*0*/ start: kotlin.Int, /*1*/ end: kotlin.Int): kotlin.CharSequence
+    public abstract override /*1*/ /*fake_override*/ fun subSequence(/*0*/ startIndex: kotlin.Int, /*1*/ endIndex: kotlin.Int): kotlin.CharSequence
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
