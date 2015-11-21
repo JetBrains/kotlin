@@ -25,6 +25,7 @@ import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.roots.libraries.Library
+import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.JarFileSystem
@@ -45,7 +46,6 @@ import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider
 import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider
 import org.jetbrains.kotlin.idea.framework.LibraryPresentationProviderUtil
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
-import org.jetbrains.kotlin.idea.versions.OutdatedKotlinRuntimeNotification.showRuntimeJarNotFoundDialog
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import org.jetbrains.kotlin.utils.PathUtil
@@ -122,7 +122,7 @@ private fun updateJar(
     }
 
     if (!jarPath.exists()) {
-        showRuntimeJarNotFoundDialog(project, libraryJarDescriptor.jarName).run()
+        showRuntimeJarNotFoundDialog(project, libraryJarDescriptor.jarName)
         return
     }
 
@@ -257,4 +257,10 @@ private fun <T> collectAllKeys(id: ID<T, Void>, modules: List<Module>): Collecti
     }
 
     return allKeys
+}
+
+fun showRuntimeJarNotFoundDialog(project: Project, jarName: String) {
+    Messages.showErrorDialog(project,
+                             jarName + " is not found. Make sure plugin is properly installed.",
+                             "No Runtime Found")
 }
