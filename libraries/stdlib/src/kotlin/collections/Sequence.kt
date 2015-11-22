@@ -68,9 +68,21 @@ private object EmptySequence : Sequence<Nothing> {
 /**
  * Returns a sequence of all elements from all sequences in this sequence.
  */
-public fun <T> Sequence<Sequence<T>>.flatten(): Sequence<T> {
-    return MultiSequence(this)
+public fun <T> Sequence<Sequence<T>>.flatten(): Sequence<T> = flatten { it.iterator() }
+
+/**
+ * Returns a sequence of all elements from all iterables in this sequence.
+ */
+@kotlin.jvm.JvmName("flattenSequenceOfIterable")
+public fun <T> Sequence<Iterable<T>>.flatten(): Sequence<T> = flatten { it.iterator() }
+
+private fun <T, R> Sequence<T>.flatten(iterator: (T) -> Iterator<R>): Sequence<R> {
+    if (this is TransformingSequence<*, *>) {
+        return (this as TransformingSequence<*, T>).flatten(iterator)
+    }
+    return FlatteningSequence(this, { it }, iterator)
 }
+
 /**
  * Returns a pair of lists, where
  * *first* list is built from the first values of each pair from this sequence,
@@ -151,6 +163,10 @@ constructor(private val sequence: Sequence<T>, private val transformer: (T) -> R
             return iterator.hasNext()
         }
     }
+
+    internal fun <E> flatten(iterator: (R) -> Iterator<E>): Sequence<E> {
+        return FlatteningSequence<T, R, E>(sequence, transformer, iterator)
+    }
 }
 
 /**
@@ -215,15 +231,17 @@ internal class MergingSequence<T1, T2, V>
     }
 }
 
-internal class FlatteningSequence<T, R>
-                                     constructor(private val sequence: Sequence<T>,
-                                      private val transformer: (T) -> Sequence<R>
-                                     ) : Sequence<R> {
-    override fun iterator(): Iterator<R> = object : Iterator<R> {
+internal class FlatteningSequence<T, R, E>
+    constructor(
+        private val sequence: Sequence<T>,
+        private val transformer: (T) -> R,
+        private val iterator: (R) -> Iterator<E>
+    ) : Sequence<E> {
+    override fun iterator(): Iterator<E> = object : Iterator<E> {
         val iterator = sequence.iterator()
-        var itemIterator: Iterator<R>? = null
+        var itemIterator: Iterator<E>? = null
 
-        override fun next(): R {
+        override fun next(): E {
             if (!ensureItemIterator())
                 throw NoSuchElementException()
             return itemIterator!!.next()
@@ -242,44 +260,7 @@ internal class FlatteningSequence<T, R>
                     return false
                 } else {
                     val element = iterator.next()
-                    val nextItemIterator = transformer(element).iterator()
-                    if (nextItemIterator.hasNext()) {
-                        itemIterator = nextItemIterator
-                        return true
-                    }
-                }
-            }
-            return true
-        }
-    }
-}
-
-internal class MultiSequence<T>
-constructor(private val sequence: Sequence<Sequence<T>>) : Sequence<T> {
-    override fun iterator(): Iterator<T> = object : Iterator<T> {
-        val iterator = sequence.iterator()
-        var itemIterator: Iterator<T>? = null
-
-        override fun next(): T {
-            if (!ensureItemIterator())
-                throw NoSuchElementException()
-            return itemIterator!!.next()
-        }
-
-        override fun hasNext(): Boolean {
-            return ensureItemIterator()
-        }
-
-        private fun ensureItemIterator(): Boolean {
-            if (itemIterator?.hasNext() == false)
-                itemIterator = null
-
-            while (itemIterator == null) {
-                if (!iterator.hasNext()) {
-                    return false
-                } else {
-                    val element = iterator.next()
-                    val nextItemIterator = element.iterator()
+                    val nextItemIterator = iterator(transformer(element))
                     if (nextItemIterator.hasNext()) {
                         itemIterator = nextItemIterator
                         return true

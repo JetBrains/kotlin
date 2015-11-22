@@ -235,7 +235,7 @@ fun mapping(): List<GenericFunction> {
         typeParam("R")
         returns("Sequence<R>")
         body {
-            "return FlatteningSequence(this, transform)"
+            "return FlatteningSequence(this, transform, { it.iterator() })"
         }
     }
 

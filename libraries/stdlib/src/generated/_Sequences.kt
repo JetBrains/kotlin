@@ -568,7 +568,7 @@ public fun <T> Sequence<T>.toSortedSet(comparator: Comparator<in T>): SortedSet<
  * Returns a single sequence of all elements from results of [transform] function being invoked on each element of original sequence.
  */
 public fun <T, R> Sequence<T>.flatMap(transform: (T) -> Sequence<R>): Sequence<R> {
-    return FlatteningSequence(this, transform)
+    return FlatteningSequence(this, transform, { it.iterator() })
 }
 
 /**
