@@ -174,6 +174,19 @@ public operator fun <T> MutableCollection<in T>.minusAssign(elements: Sequence<T
 /**
  * Adds all elements of the given [elements] collection to this [MutableCollection].
  */
+public fun <T> MutableCollection<in T>.addAll(elements: Iterable<T>): Boolean {
+    when (elements) {
+        is Collection -> return addAll(elements)
+        else -> {
+            var result: Boolean = false
+            for (item in elements)
+                if (add(item)) result = true
+            return result
+        }
+    }
+}
+
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun <T> MutableCollection<in T>.addAll(elements: Iterable<T>) {
     when (elements) {
         is Collection -> addAll(elements)
@@ -184,6 +197,15 @@ public fun <T> MutableCollection<in T>.addAll(elements: Iterable<T>) {
 /**
  * Adds all elements of the given [elements] sequence to this [MutableCollection].
  */
+public fun <T> MutableCollection<in T>.addAll(elements: Sequence<T>): Boolean {
+    var result: Boolean = false
+    for (item in elements) {
+        if (add(item)) result = true
+    }
+    return result
+}
+
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun <T> MutableCollection<in T>.addAll(elements: Sequence<T>) {
     for (item in elements) add(item)
 }
@@ -191,6 +213,11 @@ public fun <T> MutableCollection<in T>.addAll(elements: Sequence<T>) {
 /**
  * Adds all elements of the given [elements] array to this [MutableCollection].
  */
+public fun <T> MutableCollection<in T>.addAll(elements: Array<out T>): Boolean {
+    return addAll(elements.asList())
+}
+
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun <T> MutableCollection<in T>.addAll(elements: Array<out T>) {
     addAll(elements.asList())
 }
@@ -198,6 +225,12 @@ public fun <T> MutableCollection<in T>.addAll(elements: Array<out T>) {
 /**
  * Removes all elements from this [MutableCollection] that are also contained in the given [elements] collection.
  */
+
+public fun <T> MutableCollection<in T>.removeAll(elements: Iterable<T>): Boolean {
+    return removeAll(elements.convertToSetForSetOperationWith(this))
+}
+
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun <T> MutableCollection<in T>.removeAll(elements: Iterable<T>) {
     removeAll(elements.convertToSetForSetOperationWith(this))
 }
@@ -205,6 +238,12 @@ public fun <T> MutableCollection<in T>.removeAll(elements: Iterable<T>) {
 /**
  * Removes all elements from this [MutableCollection] that are also contained in the given [elements] sequence.
  */
+public fun <T> MutableCollection<in T>.removeAll(elements: Sequence<T>): Boolean {
+    val set = elements.toHashSet()
+    return set.isNotEmpty() && removeAll(set)
+}
+
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun <T> MutableCollection<in T>.removeAll(elements: Sequence<T>) {
     val set = elements.toHashSet()
     if (set.isNotEmpty())
@@ -214,6 +253,11 @@ public fun <T> MutableCollection<in T>.removeAll(elements: Sequence<T>) {
 /**
  * Removes all elements from this [MutableCollection] that are also contained in the given [elements] array.
  */
+public fun <T> MutableCollection<in T>.removeAll(elements: Array<out T>): Boolean {
+    return elements.isNotEmpty() && removeAll(elements.toHashSet())
+}
+
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun <T> MutableCollection<in T>.removeAll(elements: Array<out T>) {
     if (elements.isNotEmpty())
         removeAll(elements.toHashSet())
@@ -224,6 +268,11 @@ public fun <T> MutableCollection<in T>.removeAll(elements: Array<out T>) {
 /**
  * Retains only elements of this [MutableCollection] that are contained in the given [elements] collection.
  */
+public fun <T> MutableCollection<in T>.retainAll(elements: Iterable<T>): Boolean {
+    return retainAll(elements.convertToSetForSetOperationWith(this))
+}
+
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun <T> MutableCollection<in T>.retainAll(elements: Iterable<T>) {
     retainAll(elements.convertToSetForSetOperationWith(this))
 }
@@ -231,6 +280,14 @@ public fun <T> MutableCollection<in T>.retainAll(elements: Iterable<T>) {
 /**
  * Retains only elements of this [MutableCollection] that are contained in the given [elements] array.
  */
+public fun <T> MutableCollection<in T>.retainAll(elements: Array<out T>): Boolean {
+    if (elements.isNotEmpty())
+        return retainAll(elements.toHashSet())
+    else
+        return retainNothing()
+}
+
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun <T> MutableCollection<in T>.retainAll(elements: Array<out T>) {
     if (elements.isNotEmpty())
         retainAll(elements.toHashSet())
@@ -242,12 +299,27 @@ public fun <T> MutableCollection<in T>.retainAll(elements: Array<out T>) {
 /**
  * Retains only elements of this [MutableCollection] that are contained in the given [elements] sequence.
  */
+public fun <T> MutableCollection<in T>.retainAll(elements: Sequence<T>): Boolean {
+    val set = elements.toHashSet()
+    if (set.isNotEmpty())
+        return retainAll(set)
+    else
+        return retainNothing()
+}
+
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun <T> MutableCollection<in T>.retainAll(elements: Sequence<T>) {
     val set = elements.toHashSet()
     if (set.isNotEmpty())
         retainAll(set)
     else
         clear()
+}
+
+private fun MutableCollection<*>.retainNothing(): Boolean {
+    val result = isNotEmpty()
+    clear()
+    return result
 }
 
 /**
