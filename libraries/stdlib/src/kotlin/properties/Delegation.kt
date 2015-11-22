@@ -55,6 +55,7 @@ public object Delegates {
      * @param map the map where the property values are stored.
      * @param default the function returning the value of the property for a given object if it's missing from the given map.
      */
+    @Deprecated("Complex scenarios of delegation to map are deprecated. Delegate to map itself.")
     public fun <R, T> mapVar(map: MutableMap<in String, Any?>,
                              default: (thisRef: R, propertyName: String) -> T): ReadWriteProperty<R, T> {
         return FixedMapVar<R, String, T>(map, propertyNameSelector, default)
@@ -76,6 +77,7 @@ public object Delegates {
      * @param map the map where the property values are stored.
      * @param default the function returning the value of the property for a given object if it's missing from the given map.
      */
+    @Deprecated("Complex scenarios of delegation to map are deprecated. Delegate to map itself.")
     public fun <R, T> mapVal(map: Map<in String, Any?>,
                              default: (thisRef: R, propertyName: String) -> T): ReadOnlyProperty<R, T> {
         return FixedMapVal<R, String, T>(map, propertyNameSelector, default)
@@ -136,6 +138,7 @@ public abstract class ObservableProperty<T>(initialValue: T) : ReadWriteProperty
  * @param K the type of key in the map.
  * @param V the type of the property value.
  */
+@Deprecated("Complex scenarios of delegation to map are deprecated. Delegate to map itself.")
 public abstract class MapVal<T, K, out V>() : ReadOnlyProperty<T, V> {
     /**
      * Returns the map used to store the values of the properties of the given object instance.
@@ -171,6 +174,7 @@ public abstract class MapVal<T, K, out V>() : ReadOnlyProperty<T, V> {
  * @param K the type of key in the map.
  * @param V the type of the property value.
  */
+@Deprecated("Complex scenarios of delegation to map are deprecated. Delegate to map itself.")
 public abstract class MapVar<T, K, V>() : MapVal<T, K, V>(), ReadWriteProperty<T, V> {
     protected abstract override fun map(ref: T): MutableMap<in K, Any?>
 
@@ -194,6 +198,7 @@ private val throwKeyNotFound: (Any?, Any?) -> Nothing = {thisRef, key -> throw N
  * @param key the function to calculate the map key from a property metadata object.
  * @param default the function returning the value of the property for a given object if it's missing from the given map.
  */
+@Deprecated("Complex scenarios of delegation to map are deprecated. Delegate to map itself.")
 public open class FixedMapVal<T, K, out V>(
         private val map: Map<in K, Any?>,
         private val key: (KProperty<*>) -> K,
@@ -219,6 +224,7 @@ public open class FixedMapVal<T, K, out V>(
  * @param key the function to calculate the map key from a property metadata object.
  * @param default the function returning the value of the property for a given object if it's missing from the given map.
  */
+@Deprecated("Complex scenarios of delegation to map are deprecated. Delegate to map itself.")
 public open class FixedMapVar<T, K, V>(
         private val map: MutableMap<in K, Any?>,
         private val key: (KProperty<*>) -> K,
