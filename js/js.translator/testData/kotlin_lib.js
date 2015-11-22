@@ -594,10 +594,14 @@
                 this.array.splice(index, 0, element);
             },
             addAll_4fm7v2$: function (collection) {
+                if (collection.size == 0) {
+                    return false;
+                }
                 var it = collection.iterator();
                 for (var i = this.array.length, n = collection.size; n-- > 0;) {
                     this.array[i++] = it.next();
                 }
+                return true;
             },
             removeAt_za3lpa$: function (index) {
                 this.checkRange(index);
