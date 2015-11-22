@@ -55,17 +55,6 @@ fun strings(): List<GenericFunction> {
         }
     }
 
-    templates add f("joinTo(buffer: A, separator: String = \", \", prefix: String = \"\", postfix: String = \"\", limit: Int = -1, truncated: String = \"...\", transform: ((T) -> String)? = null)") {
-        deprecate { forBinaryCompatibility }
-        typeParam("A : Appendable")
-        returns { "A" }
-        body {
-            """
-            return joinTo(buffer, separator, prefix, postfix, limit, truncated, transform)
-            """
-        }
-    }
-
     templates add f("joinToString(separator: CharSequence = \", \", prefix: CharSequence = \"\", postfix: CharSequence = \"\", limit: Int = -1, truncated: CharSequence = \"...\", transform: ((T) -> CharSequence)? = null)") {
         doc {
             """
@@ -77,16 +66,6 @@ fun strings(): List<GenericFunction> {
         }
 
         exclude(Strings)
-        returns("String")
-        body {
-            """
-            return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
-            """
-        }
-    }
-
-    templates add f("joinToString(separator: String = \", \", prefix: String = \"\", postfix: String = \"\", limit: Int = -1, truncated: String = \"...\", transform: ((T) -> String)? = null)") {
-        deprecate { forBinaryCompatibility }
         returns("String")
         body {
             """

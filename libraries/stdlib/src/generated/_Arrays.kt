@@ -10322,51 +10322,6 @@ public fun <A : Appendable> ShortArray.joinTo(buffer: A, separator: CharSequence
     return buffer
 }
 
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun <T, A : Appendable> Array<out T>.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((T) -> String)? = null): A {
-    return joinTo(buffer, separator, prefix, postfix, limit, truncated, transform)
-}
-
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun <A : Appendable> BooleanArray.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Boolean) -> String)? = null): A {
-    return joinTo(buffer, separator, prefix, postfix, limit, truncated, transform)
-}
-
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun <A : Appendable> ByteArray.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Byte) -> String)? = null): A {
-    return joinTo(buffer, separator, prefix, postfix, limit, truncated, transform)
-}
-
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun <A : Appendable> CharArray.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Char) -> String)? = null): A {
-    return joinTo(buffer, separator, prefix, postfix, limit, truncated, transform)
-}
-
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun <A : Appendable> DoubleArray.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Double) -> String)? = null): A {
-    return joinTo(buffer, separator, prefix, postfix, limit, truncated, transform)
-}
-
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun <A : Appendable> FloatArray.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Float) -> String)? = null): A {
-    return joinTo(buffer, separator, prefix, postfix, limit, truncated, transform)
-}
-
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun <A : Appendable> IntArray.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Int) -> String)? = null): A {
-    return joinTo(buffer, separator, prefix, postfix, limit, truncated, transform)
-}
-
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun <A : Appendable> LongArray.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Long) -> String)? = null): A {
-    return joinTo(buffer, separator, prefix, postfix, limit, truncated, transform)
-}
-
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun <A : Appendable> ShortArray.joinTo(buffer: A, separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Short) -> String)? = null): A {
-    return joinTo(buffer, separator, prefix, postfix, limit, truncated, transform)
-}
-
 /**
  * Creates a string from all the elements separated using [separator] and using the given [prefix] and [postfix] if supplied.
  * If the collection could be huge, you can specify a non-negative value of [limit], in which case only the first [limit]
@@ -10445,51 +10400,6 @@ public fun LongArray.joinToString(separator: CharSequence = ", ", prefix: CharSe
  * elements will be appended, followed by the [truncated] string (which defaults to "...").
  */
 public fun ShortArray.joinToString(separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "", limit: Int = -1, truncated: CharSequence = "...", transform: ((Short) -> CharSequence)? = null): String {
-    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
-}
-
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun <T> Array<out T>.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((T) -> String)? = null): String {
-    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
-}
-
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun BooleanArray.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Boolean) -> String)? = null): String {
-    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
-}
-
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun ByteArray.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Byte) -> String)? = null): String {
-    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
-}
-
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun CharArray.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Char) -> String)? = null): String {
-    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
-}
-
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun DoubleArray.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Double) -> String)? = null): String {
-    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
-}
-
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun FloatArray.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Float) -> String)? = null): String {
-    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
-}
-
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun IntArray.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Int) -> String)? = null): String {
-    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
-}
-
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun LongArray.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Long) -> String)? = null): String {
-    return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
-}
-
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public fun ShortArray.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Short) -> String)? = null): String {
     return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
 }
 
