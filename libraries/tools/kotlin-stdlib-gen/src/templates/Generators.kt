@@ -555,7 +555,7 @@ fun generators(): List<GenericFunction> {
         }
     }
 
-    templates add f("zip(other: String, transform: (Char, Char) -> V)") {
+    templates add f("zip(other: CharSequence, transform: (Char, Char) -> V)") {
         only(CharSequences)
         doc {
             """
@@ -597,6 +597,18 @@ fun generators(): List<GenericFunction> {
     }
 
     templates add f("zip(other: String)") {
+        infix(true)
+        only(CharSequences)
+        deprecate { forBinaryCompatibility }
+        returns("List<Pair<Char, Char>>")
+        body {
+            """
+            return zip(other) { c1, c2 -> c1 to c2 }
+            """
+        }
+    }
+
+    templates add f("zip(other: CharSequence)") {
         infix(true)
         only(CharSequences)
         doc {
