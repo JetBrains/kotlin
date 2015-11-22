@@ -316,8 +316,11 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
         fun String.renderType(): String = renderType(this, receiver)
 
         fun effectiveTypeParams(): List<String> {
+            fun removeAnnotations(typeParam: String) =
+                    typeParam.replace("""^(@[\w\.]+\s+)+""".toRegex(), "")
+
             fun getGenericTypeParameters(genericType: String) =
-                genericType
+                removeAnnotations(genericType)
                     .dropWhile { it != '<' }
                     .drop(1)
                     .takeWhile { it != '>' }
@@ -328,7 +331,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
             val types = ArrayList(typeParams)
             if (f == Generic) {
                 // ensure type parameter T, if it's not added to typeParams before
-                if (!types.any { it == "T" || it.startsWith("T:")}) {
+                if (!types.any { removeAnnotations(it).let { it == "T" || it.startsWith("T:") } }) {
                     types.add("T")
                 }
                 return types
@@ -336,7 +339,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
             else if (primitive == null && f != Strings && f != CharSequences) {
                 val implicitTypeParameters = getGenericTypeParameters(receiver) + types.flatMap { getGenericTypeParameters(it) }
                 for (implicit in implicitTypeParameters.reversed()) {
-                    if (implicit != "*" && !types.any { it.startsWith(implicit) || it.startsWith("reified " + implicit) }) {
+                    if (implicit != "*" && !types.any { removeAnnotations(it).let { it.startsWith(implicit) || it.startsWith("reified " + implicit) } }) {
                         types.add(0, implicit)
                     }
                 }
@@ -345,7 +348,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
             } else {
                 // remove T as parameter
                 // TODO: Substitute primitive or String instead of T in other parameters from effective types not from original typeParams
-                return typeParams.filter { !it.startsWith("T") }
+                return typeParams.filterNot { removeAnnotations(it).startsWith("T") }
             }
         }
 

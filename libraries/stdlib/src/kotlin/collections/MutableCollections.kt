@@ -10,8 +10,16 @@ import java.util.*
  *
  * Allows to overcome type-safety restriction of `containsAll` that requires to pass a collection of type `Collection<E>`.
  */
+public fun <@kotlin.internal.OnlyInputTypes T> Collection<T>.containsAll(elements: Collection<T>): Boolean = this.containsAll(elements)
+
 @Suppress("NOTHING_TO_INLINE")
-public inline fun Collection<*>.containsAllRaw(elements: Collection<Any?>): Boolean = (this as Collection<Any?>).containsAll(elements)
+@Deprecated("Collections have incompatible types. Upcast either to Collection<Any?> if you're sure.", ReplaceWith("containsAll(elements as Collection<Any?>)"))
+public inline fun Collection<*>.containsAllRaw(elements: Collection<Any?>): Boolean = containsAll(elements)
+
+@Deprecated("Collections have incompatible types. Upcast either to Collection<Any?> if you're sure.", ReplaceWith("containsAll(elements as Collection<Any?>)"))
+@kotlin.jvm.JvmName("containsAllOfAny")
+@kotlin.internal.LowPriorityInOverloadResolution
+public fun <E> Collection<E>.containsAll(elements: Collection<Any?>): Boolean = containsAll(elements)
 
 /**
  * Removes a single instance of the specified element from this
@@ -21,8 +29,16 @@ public inline fun Collection<*>.containsAllRaw(elements: Collection<Any?>): Bool
  *
  * @return `true` if the element has been successfully removed; `false` if it was not present in the collection.
  */
+public fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.remove(element: T): Boolean = (this as MutableCollection<T>).remove(element)
+
 @Suppress("NOTHING_TO_INLINE")
-public inline fun <E> MutableCollection<E>.removeRaw(element: Any?): Boolean = (this as MutableCollection<Any?>).remove(element)
+@Deprecated("Collection and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("remove(element as Any?)"))
+public inline fun <E> MutableCollection<E>.removeRaw(element: Any?): Boolean = remove(element)
+
+@Deprecated("Collection and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("remove(element as Any?)"))
+@kotlin.jvm.JvmName("removeAny")
+@kotlin.internal.LowPriorityInOverloadResolution
+public fun <E> MutableCollection<E>.remove(element: Any?): Boolean = remove(element)
 
 /**
  * Removes all of this collection's elements that are also contained in the specified collection.
@@ -31,8 +47,16 @@ public inline fun <E> MutableCollection<E>.removeRaw(element: Any?): Boolean = (
  *
  * @return `true` if any of the specified elements was removed from the collection, `false` if the collection was not modified.
  */
+public fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.removeAll(elements: Collection<T>): Boolean = (this as MutableCollection<T>).removeAll(elements)
+
 @Suppress("NOTHING_TO_INLINE")
-public inline fun <E> MutableCollection<E>.removeAllRaw(elements: Collection<Any?>): Boolean = (this as MutableCollection<Any?>).removeAll(elements)
+@Deprecated("Collections have incompatible types. Upcast elements to Collection<Any?> if you're sure.", ReplaceWith("removeAll(elements as Collection<Any?>)"))
+public inline fun <E> MutableCollection<E>.removeAllRaw(elements: Collection<Any?>): Boolean = removeAll(elements)
+
+@Deprecated("Collections have incompatible types. Upcast elements to Collection<Any?> if you're sure.", ReplaceWith("removeAll(elements as Collection<Any?>)"))
+@kotlin.jvm.JvmName("removeAllOfAny")
+@kotlin.internal.LowPriorityInOverloadResolution
+public fun <E> MutableCollection<E>.removeAll(elements: Collection<Any?>): Boolean = removeAll(elements)
 
 /**
  * Retains only the elements in this collection that are contained in the specified collection.
@@ -41,9 +65,41 @@ public inline fun <E> MutableCollection<E>.removeAllRaw(elements: Collection<Any
  *
  * @return `true` if any element was removed from the collection, `false` if the collection was not modified.
  */
-@Suppress("NOTHING_TO_INLINE")
-public inline fun <E> MutableCollection<E>.retainAllRaw(elements: Collection<Any?>): Boolean = (this as MutableCollection<Any?>).retainAll(elements)
+public fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.retainAll(elements: Collection<T>): Boolean = (this as MutableCollection<T>).retainAll(elements)
 
+@Suppress("NOTHING_TO_INLINE")
+@Deprecated("Collections have incompatible types. Upcast elements to Collection<Any?> if you're sure.", ReplaceWith("retainAll(elements as Collection<Any?>)"))
+public inline fun <E> MutableCollection<E>.retainAllRaw(elements: Collection<Any?>): Boolean = retainAll(elements)
+
+@Deprecated("Collections have incompatible types. Upcast elements to Collection<Any?> if you're sure.", ReplaceWith("retainAll(elements as Collection<Any?>)"))
+@kotlin.jvm.JvmName("retainAllOfAny")
+@kotlin.internal.LowPriorityInOverloadResolution
+public fun <E> MutableCollection<E>.retainAll(elements: Collection<Any?>): Boolean = retainAll(elements as Collection<Any?>)
+
+
+/**
+ * Returns the index of the first occurrence of the specified element in the list, or -1 if the specified
+ * element is not contained in the list.
+ * Allows to overcome type-safety restriction of `indexOf` that requires to pass an element of type `T`.
+ */
+public fun <@kotlin.internal.OnlyInputTypes T> List<T>.indexOf(element: T): Int = indexOf(element)
+
+@Deprecated("List and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("indexOf(element as Any?)"))
+@kotlin.jvm.JvmName("indexOfAny")
+@kotlin.internal.LowPriorityInOverloadResolution
+public fun <E> List<E>.indexOf(element: Any?): Int = indexOf(element as Any?)
+
+/**
+ * Returns the index of the last occurrence of the specified element in the list, or -1 if the specified
+ * element is not contained in the list.
+ * Allows to overcome type-safety restriction of `lastIndexOf` that requires to pass an element of type `T`.
+ */
+public fun <@kotlin.internal.OnlyInputTypes T> List<T>.lastIndexOf(element: T): Int = lastIndexOf(element)
+
+@Deprecated("List and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("lastIndexOf(element as Any?)"))
+@kotlin.jvm.JvmName("lastIndexOfAny")
+@kotlin.internal.LowPriorityInOverloadResolution
+public fun <E> List<E>.lastIndexOf(element: Any?): Int = lastIndexOf(element as Any?)
 
 
 @Deprecated("Use operator 'get' instead", ReplaceWith("this[index]"))
@@ -58,8 +114,6 @@ public inline fun Map<*, *>.size() = size
 @Deprecated("Use property 'key' instead", ReplaceWith("key"))
 public fun <K, V> Map.Entry<K, V>.getKey(): K = key
 
-@Deprecated("Use containsAllRaw() instead.", ReplaceWith("containsAllRaw(collection)"))
-public fun <E> Collection<E>.containsAll(collection: Collection<Any?>): Boolean = containsAllRaw(collection)
 
 @Deprecated("Use property 'value' instead.", ReplaceWith("value"))
 public fun <K, V> Map.Entry<K, V>.getValue(): V = value
@@ -67,32 +121,23 @@ public fun <K, V> Map.Entry<K, V>.getValue(): V = value
 @Deprecated("Use 'removeAt' instead.", ReplaceWith("removeAt(index)"))
 public fun <E> MutableList<E>.remove(index: Int): E = removeAt(index)
 
-@Deprecated("Use 'removeRaw' instead.", ReplaceWith("removeRaw(o)"))
-public fun <E> MutableCollection<E>.remove(o: Any?): Boolean = removeRaw(o)
 
-@Deprecated("Use 'removeAllRaw' instead.", ReplaceWith("removeAllRaw(c)"))
-public fun <E> MutableCollection<E>.removeAll(c: Collection<Any?>): Boolean = removeAllRaw(c)
 
-@Deprecated("Use 'retainAllRaw' instead.", ReplaceWith("retainAllRaw(c)"))
-public fun <E> MutableCollection<E>.retainAll(c: Collection<Any?>): Boolean = retainAllRaw(c)
-
-@Deprecated("Use 'indexOfRaw' instead.", ReplaceWith("indexOfRaw(o)"))
-public fun <E> List<E>.indexOf(o: Any?): Int = indexOfRaw(o)
-
-@Deprecated("Use 'lastIndexOfRaw' instead.", ReplaceWith("lastIndexOfRaw(o)"))
-public fun <E> List<E>.lastIndexOf(o: Any?): Int = lastIndexOfRaw(o)
 
 @Deprecated("Use property 'length' instead.", ReplaceWith("length"))
 public fun CharSequence.length(): Int = length
 
-@Deprecated("Use 'getRaw' instead.", ReplaceWith("getRaw(key)"))
-public inline operator fun <K, V> Map<K, V>.get(key: Any?): V? = getRaw(key)
+@Deprecated("Map and key have incompatible types. Upcast key to Any? if you're sure.", ReplaceWith("get(key as Any?)"))
+@kotlin.internal.LowPriorityInOverloadResolution
+public inline operator fun <K, V> Map<K, V>.get(key: Any?): V? = get(key)
 
-@Deprecated("Use 'containsKeyRaw' instead.", ReplaceWith("containsKeyRaw(key)"))
-public inline fun <K, V> Map<K, V>.containsKey(key: Any?): Boolean = containsKeyRaw(key)
+@Deprecated("Map and key have incompatible types. Upcast key to Any? if you're sure.", ReplaceWith("containsKey(key as Any?)"))
+@kotlin.internal.LowPriorityInOverloadResolution
+public inline fun <K, V> Map<K, V>.containsKey(key: Any?): Boolean = containsKey(key)
 
-@Deprecated("Use 'containsValueRaw' instead.", ReplaceWith("containsValueRaw(value)"))
-public inline fun <K, V> Map<K, V>.containsValue(value: Any?): Boolean = containsValueRaw(value)
+@Deprecated("Map and value have incompatible types. Upcast value to Any? if you're sure.", ReplaceWith("containsValue(value as Any?)"))
+@kotlin.internal.LowPriorityInOverloadResolution
+public inline fun <K, V> Map<K, V>.containsValue(value: Any?): Boolean = containsValue(value as Any?)
 
 @Deprecated("Use property 'keys' instead.", ReplaceWith("keys"))
 public inline fun <K, V> Map<K, V>.keySet(): Set<K> = keys

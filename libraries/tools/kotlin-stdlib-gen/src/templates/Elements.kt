@@ -12,7 +12,7 @@ fun elements(): List<GenericFunction> {
 
         only(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives)
         doc { f -> "Returns `true` if [element] is found in the ${f.collection}." }
-        customSignature(Iterables, ArraysOfObjects, Sequences) { "contains(element: @kotlin.internal.NoInfer T)" }
+        typeParam("@kotlin.internal.OnlyInputTypes T")
         returns("Boolean")
         body(Iterables) {
             """
@@ -34,7 +34,7 @@ fun elements(): List<GenericFunction> {
         only(Iterables, Sequences, ArraysOfObjects)
         doc { "Returns `true` if [element] is found in the collection." }
         returns("Boolean")
-        deprecate(Deprecation("Use 'containsRaw' instead.", "containsRaw(element)"))
+        deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure.", "contains(element as Any?)") } }
         annotations("""
             @kotlin.jvm.JvmName("containsAny")
             @kotlin.internal.LowPriorityInOverloadResolution
@@ -51,15 +51,15 @@ fun elements(): List<GenericFunction> {
         }
         receiverAsterisk(Iterables, Sequences) { true }
         inline(true)
+        deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure.", "contains(element as Any?)") } }
         annotations("""@Suppress("NOTHING_TO_INLINE")""")
         returns("Boolean")
-        body { "return contains<Any?>(element)" }
     }
 
     templates add f("indexOf(element: T)") {
         only(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives)
         doc { f -> "Returns first index of [element], or -1 if the ${f.collection} does not contain element." }
-        customSignature(Iterables, ArraysOfObjects, Sequences) { "indexOf(element: @kotlin.internal.NoInfer T)" }
+        typeParam("@kotlin.internal.OnlyInputTypes T")
         returns("Int")
         body { f ->
             """
@@ -108,7 +108,7 @@ fun elements(): List<GenericFunction> {
         only(Iterables, Sequences, ArraysOfObjects)
         doc { "Returns first index of [element], or -1 if the collection does not contain element." }
         returns("Int")
-        deprecate(Deprecation("Use 'indexOfRaw' instead.", "indexOfRaw(element)"))
+        deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure.", "indexOf(element as Any?)") } }
         annotations("""
             @kotlin.jvm.JvmName("indexOfAny")
             @kotlin.internal.LowPriorityInOverloadResolution
@@ -126,16 +126,16 @@ fun elements(): List<GenericFunction> {
         }
         receiverAsterisk(Iterables, Sequences) { true }
         inline(true)
+        deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure.", "indexOf(element as Any?)") } }
         annotations("""@Suppress("NOTHING_TO_INLINE")""")
         returns("Int")
-        body { "return indexOf<Any?>(element)" }
         body(Lists) { "return (this as List<Any?>).indexOf(element)" }
     }
 
     templates add f("lastIndexOf(element: T)") {
         only(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives)
         doc { f -> "Returns last index of [element], or -1 if the ${f.collection} does not contain element." }
-        customSignature(Iterables, ArraysOfObjects, Sequences) { "lastIndexOf(element: @kotlin.internal.NoInfer T)" }
+        typeParam("@kotlin.internal.OnlyInputTypes T")
         returns("Int")
         body { f ->
             """
@@ -185,7 +185,7 @@ fun elements(): List<GenericFunction> {
         only(Iterables, Sequences, ArraysOfObjects)
         doc { "Returns last index of [element], or -1 if the collection does not contain element." }
         returns("Int")
-        deprecate(Deprecation("Use 'indexOfRaw' instead.", "indexOfRaw(element)"))
+        deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure.", "lastIndexOf(element as Any?)") } }
         annotations("""
             @kotlin.jvm.JvmName("lastIndexOfAny")
             @kotlin.internal.LowPriorityInOverloadResolution
@@ -203,9 +203,9 @@ fun elements(): List<GenericFunction> {
         }
         receiverAsterisk(Iterables, Sequences) { true }
         inline(true)
+        deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure.", "lastIndexOf(element as Any?)") } }
         annotations("""@Suppress("NOTHING_TO_INLINE")""")
         returns("Int")
-        body { "return lastIndexOf<Any?>(element)" }
         body(Lists) { "return (this as List<Any?>).lastIndexOf(element)" }
     }
 

@@ -96,31 +96,53 @@ public fun <K,V> Map<K,V>?.orEmpty() : Map<K,V> = this ?: emptyMap()
  * Checks if the map contains the given key. This method allows to use the `x in map` syntax for checking
  * whether an object is contained in the map.
  */
-public operator fun <K,V> Map<K,V>.contains(key : K) : Boolean = containsKey(key)
+public operator fun <@kotlin.internal.OnlyInputTypes K, V> Map<out K, V>.contains(key: K) : Boolean = containsKey(key)
 
 /**
  * Returns the value corresponding to the given [key], or `null` if such a key is not present in the map.
+ */
+public operator fun <@kotlin.internal.OnlyInputTypes K, V> Map<out K, V>.get(key: K): V? = (this as Map<K, V>).get(key)
 
- * Allows to overcome type-safety restriction of `get` that requires to pass a key of type `Key`.
+/**
+ * Returns the value corresponding to the given [key], or `null` if such a key is not present in the map.
+ *
+ * Allows to overcome type-safety restriction of `get` that requires to pass a key of type `K`.
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun <K, V> Map<K, V>.getRaw(key: Any?): V? = (this as Map<Any?, V>).get(key)
+@Deprecated("Map and key have incompatible types. Upcast key to Any? if you're sure.", ReplaceWith("get(key as Any?)"))
+public inline fun <K, V> Map<K, V>.getRaw(key: Any?): V? = get(key as Any?)
 
 /**
  * Returns `true` if the map contains the specified [key].
  *
- * Allows to overcome type-safety restriction of `containsKey` that requires to pass a key of type `Key`.
+ * Allows to overcome type-safety restriction of `containsKey` that requires to pass a key of type `K`.
  */
+public fun <@kotlin.internal.OnlyInputTypes K> Map<out K, *>.containsKey(key: K): Boolean = (this as Map<K, *>).containsKey(key)
+
 @Suppress("NOTHING_TO_INLINE")
-public inline fun <K> Map<K, *>.containsKeyRaw(key: Any?): Boolean = (this as Map<Any?, *>).containsKey(key)
+@Deprecated("Map and key have incompatible types. Upcast key to Any? if you're sure.", ReplaceWith("containsKey(key as Any?)"))
+public inline fun <K> Map<K, *>.containsKeyRaw(key: Any?): Boolean = containsKey(key)
 
 /**
  * Returns `true` if the map maps one or more keys to the specified [value].
  *
  * Allows to overcome type-safety restriction of `containsValue` that requires to pass a value of type `V`.
  */
+public fun <K, @kotlin.internal.OnlyInputTypes V> Map<K, V>.containsValue(value: V): Boolean = this.containsValue(value)
+
 @Suppress("NOTHING_TO_INLINE")
-public inline fun <K> Map<K, *>.containsValueRaw(value: Any?): Boolean = (this as Map<K, Any?>).containsValue(value)
+@Deprecated("Map and value have incompatible types. Upcast value to Any? if you're sure.", ReplaceWith("containsValue(value as Any?)"))
+public inline fun <K> Map<K, *>.containsValueRaw(value: Any?): Boolean = containsValue(value)
+
+
+/**
+ * Removes the specified key and its corresponding value from this map.
+ *
+ * @return the previous value associated with the key, or `null` if the key was not present in the map.
+
+ * Allows to overcome type-safety restriction of `remove` that requires to pass a key of type `K`.
+ */
+public fun <@kotlin.internal.OnlyInputTypes K, V> MutableMap<out K, V>.remove(key: K): V? = (this as MutableMap<K, V>).remove(key)
 
 /**
  * Returns the key component of the map entry.
