@@ -28,12 +28,7 @@ private fun Iterable<FlagEnum>.toInt(): Int =
         this.fold(0, { value, option -> value or option.value })
 private inline fun <reified T> fromInt(value: Int): Set<T> where T : FlagEnum, T: Enum<T> =
         Collections.unmodifiableSet(EnumSet.allOf(T::class.java).apply {
-            // TODO: use removeAll with predicate
-            with (iterator()) {
-                while (hasNext())
-                    if (next().let { value and it.mask != it.value })
-                        remove()
-            }
+            retainAll { value and it.mask == it.value }
         })
 
 /**

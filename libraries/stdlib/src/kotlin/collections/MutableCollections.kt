@@ -223,9 +223,63 @@ public fun <T> MutableCollection<in T>.addAll(elements: Array<out T>) {
 }
 
 /**
+ * Removes all elements from this [MutableIterable] that match the given [predicate].
+ */
+public fun <T> MutableIterable<T>.removeAll(predicate: (T) -> Boolean): Boolean = filterInPlace(predicate, true)
+
+/**
+ * Retains only elements of this [MutableIterable] that match the given [predicate].
+ */
+public fun <T> MutableIterable<T>.retainAll(predicate: (T) -> Boolean): Boolean = filterInPlace(predicate, false)
+
+private fun <T> MutableIterable<T>.filterInPlace(predicate: (T) -> Boolean, predicateResultToRemove: Boolean): Boolean {
+    var result = false
+    with (iterator()) {
+        while (hasNext())
+            if (predicate(next()) == predicateResultToRemove) {
+                remove()
+                result = true
+            }
+    }
+    return result
+}
+
+/**
+ * Removes all elements from this [MutableList] that match the given [predicate].
+ */
+public fun <T> MutableList<T>.removeAll(predicate: (T) -> Boolean): Boolean = filterInPlace(predicate, true)
+
+/**
+ * Retains only elements of this [MutableList] that match the given [predicate].
+ */
+public fun <T> MutableList<T>.retainAll(predicate: (T) -> Boolean): Boolean = filterInPlace(predicate, false)
+
+private fun <T> MutableList<T>.filterInPlace(predicate: (T) -> Boolean, predicateResultToRemove: Boolean): Boolean {
+    var writeIndex: Int = 0
+    for (readIndex in 0..lastIndex) {
+        val element = this[readIndex]
+        if (predicate(element) == predicateResultToRemove)
+            continue
+
+        if (writeIndex != readIndex)
+            this[writeIndex] = element
+
+        writeIndex++
+    }
+    if (writeIndex < size) {
+        for (removeIndex in lastIndex downTo writeIndex)
+            removeAt(removeIndex)
+
+        return true
+    }
+    else {
+        return false
+    }
+}
+
+/**
  * Removes all elements from this [MutableCollection] that are also contained in the given [elements] collection.
  */
-
 public fun <T> MutableCollection<in T>.removeAll(elements: Iterable<T>): Boolean {
     return removeAll(elements.convertToSetForSetOperationWith(this))
 }
