@@ -7,53 +7,94 @@ import java.util.*
 import org.junit.Test as test
 
 class MutableCollectionTest {
+    fun <T, C: MutableCollection<T>> testOperation(before: List<T>, after: List<T>, expectedModified: Boolean, toMutableCollection: (List<T>) -> C)
+            = fun(operation: (C.() -> Boolean)) {
+                val list = toMutableCollection(before)
+                assertEquals(expectedModified, list.operation())
+                assertEquals(toMutableCollection(after), list)
+            }
+
+    fun <T> testOperation(before: List<T>, after: List<T>, expectedModified: Boolean)
+            = testOperation(before, after, expectedModified, { it.toArrayList() })
+
 
     @test fun addAll() {
         val data = listOf("foo", "bar")
 
-        fun assertAdd(f: MutableList<String>.() -> Unit) = assertEquals(data, arrayListOf<String>().apply(f))
+        testOperation(emptyList(), data, true).let { assertAdd ->
+            assertAdd { addAll(data) }
+            assertAdd { addAll(data.toTypedArray()) }
+            assertAdd { addAll(data.toTypedArray().asIterable()) }
+            assertAdd { addAll(data.asSequence()) }
+        }
 
-        assertAdd { addAll(data) }
-        assertAdd { addAll(data.toTypedArray()) }
-        assertAdd { addAll(data.toTypedArray().asIterable()) }
-        assertAdd { addAll(data.asSequence()) }
+        testOperation(data, data, false, { it.toCollection(LinkedHashSet()) }).let { assertAdd ->
+            assertAdd { addAll(data) }
+            assertAdd { addAll(data.toTypedArray()) }
+            assertAdd { addAll(data.toTypedArray().asIterable()) }
+            assertAdd { addAll(data.asSequence()) }
+        }
     }
 
     @test fun removeAll() {
-        val content = arrayOf("foo", "bar", "bar")
+        val content = listOf("foo", "bar", "bar")
         val data = listOf("bar")
         val expected = listOf("foo")
 
-        fun assertRemove(f: MutableList<String>.() -> Unit) = assertEquals(expected, content.toArrayList().apply(f))
+        testOperation(content, expected, true).let { assertRemove ->
+            assertRemove { removeAll(data) }
+            assertRemove { removeAll(data.toTypedArray()) }
+            assertRemove { removeAll(data.toTypedArray().asIterable()) }
+            assertRemove { removeAll { it in data } }
+            assertRemove { (this as MutableIterable<String>).removeAll { it in data } }
+            val predicate = { cs: CharSequence -> cs.first() == 'b' }
+            assertRemove { removeAll(predicate) }
+        }
 
-        assertRemove { removeAll(data) }
-        assertRemove { removeAll(data.toTypedArray()) }
-        assertRemove { removeAll(data.toTypedArray().asIterable()) }
-        assertRemove { removeAll(data.asSequence()) }
-        assertRemove { removeAll { it in data } }
-        assertRemove { (this as MutableIterable<String>).removeAll { it in data } }
 
-        val predicate = { cs: CharSequence -> cs.first() == 'b' }
-        assertRemove { removeAll(predicate) }
+        testOperation(content, content, false).let { assertRemove ->
+            assertRemove { removeAll(emptyList()) }
+            assertRemove { removeAll(emptyArray()) }
+            assertRemove { removeAll(emptySequence()) }
+            assertRemove { removeAll { false } }
+            assertRemove { (this as MutableIterable<String>).removeAll { false } }
+        }
     }
 
-
     @test fun retainAll() {
-        val content = arrayOf("foo", "bar", "bar")
-        val data = listOf("bar")
+        val content = listOf("foo", "bar", "bar")
         val expected = listOf("bar", "bar")
 
-        fun assertRetain(f: MutableList<String>.() -> Unit) = assertEquals(expected, content.toArrayList().apply(f))
+        testOperation(content, expected, true).let { assertRetain ->
+            val data = listOf("bar")
+            assertRetain { retainAll(data) }
+            assertRetain { retainAll(data.toTypedArray()) }
+            assertRetain { retainAll(data.toTypedArray().asIterable()) }
+            assertRetain { retainAll(data.asSequence()) }
+            assertRetain { retainAll { it in data } }
+            assertRetain { (this as MutableIterable<String>).retainAll { it in data } }
 
-        assertRetain { retainAll(data) }
-        assertRetain { retainAll(data.toTypedArray()) }
-        assertRetain { retainAll(data.toTypedArray().asIterable()) }
-        assertRetain { retainAll(data.asSequence()) }
-        assertRetain { retainAll { it in data } }
-        assertRetain { (this as MutableIterable<String>).retainAll { it in data } }
-
-        val predicate = { cs: CharSequence -> cs.first() == 'b' }
-        assertRetain { retainAll(predicate) }
+            val predicate = { cs: CharSequence -> cs.first() == 'b' }
+            assertRetain { retainAll(predicate) }
+        }
+        testOperation(content, emptyList(), true).let { assertRetain ->
+            val data = emptyList<String>()
+            assertRetain { retainAll(data) }
+            assertRetain { retainAll(data.toTypedArray()) }
+            assertRetain { retainAll(data.toTypedArray().asIterable()) }
+            assertRetain { retainAll(data.asSequence()) }
+            assertRetain { retainAll { it in data } }
+            assertRetain { (this as MutableIterable<String>).retainAll { it in data } }
+        }
+        testOperation(emptyList<String>(), emptyList(), false).let { assertRetain ->
+            val data = emptyList<String>()
+            assertRetain { retainAll(data) }
+            assertRetain { retainAll(data.toTypedArray()) }
+            assertRetain { retainAll(data.toTypedArray().asIterable()) }
+            assertRetain { retainAll(data.asSequence()) }
+            assertRetain { retainAll { it in data } }
+            assertRetain { (this as MutableIterable<String>).retainAll { it in data } }
+        }
     }
 
 }
