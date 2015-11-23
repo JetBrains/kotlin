@@ -6,9 +6,8 @@ import java.io.*
 import java.nio.charset.Charset
 import java.util.NoSuchElementException
 
-/** Returns an [Iterator] of bytes in this input stream. */
-@Deprecated("It's not recommended to iterate through input stream bytes")
-public fun InputStream.iterator(): ByteIterator =
+/** Returns an [Iterator] of bytes read from this input stream. */
+public operator fun BufferedInputStream.iterator(): ByteIterator =
         object : ByteIterator() {
 
             var nextByte = -1
@@ -60,7 +59,7 @@ public fun ByteArray.inputStream(offset: Int, length: Int) : ByteArrayInputStrea
  * Creates a buffered input stream wrapping this stream.
  * @param bufferSize the buffer size to use.
  */
-public fun InputStream.buffered(bufferSize: Int = defaultBufferSize): InputStream
+public fun InputStream.buffered(bufferSize: Int = defaultBufferSize): BufferedInputStream
         = if (this is BufferedInputStream) this else BufferedInputStream(this, bufferSize)
 
 /** Creates a reader on this input stream using UTF-8 or the specified [charset]. */

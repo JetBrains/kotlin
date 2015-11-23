@@ -25,7 +25,7 @@ class OldStdlibTest() {
             x [index] = index.toByte()
         }
 
-        x.inputStream().use { stream ->
+        x.inputStream().buffered().use { stream ->
             for(b in stream) {
                 println(b)
             }
