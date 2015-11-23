@@ -121,12 +121,8 @@ public class DescriptorFactory {
 
     @NotNull
     public static SimpleFunctionDescriptor createEnumValuesMethod(@NotNull ClassDescriptor enumClass) {
-        AnnotationsImpl annotations = AnnotationsImpl.createWithNoTarget(
-                AnnotationUtilKt.createDeprecatedAnnotation(getBuiltIns(enumClass), "Use 'values' property instead", "this.values")
-        );
-
         SimpleFunctionDescriptorImpl values =
-                SimpleFunctionDescriptorImpl.create(enumClass, annotations, DescriptorUtils.ENUM_VALUES,
+                SimpleFunctionDescriptorImpl.create(enumClass, Annotations.Companion.getEMPTY(), DescriptorUtils.ENUM_VALUES,
                                                     CallableMemberDescriptor.Kind.SYNTHESIZED, enumClass.getSource());
         return values.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
                                  Collections.<ValueParameterDescriptor>emptyList(),
@@ -136,9 +132,13 @@ public class DescriptorFactory {
 
     @NotNull
     public static PropertyDescriptor createEnumValuesProperty(@NotNull ClassDescriptor enumClass) {
+        AnnotationsImpl annotations = AnnotationsImpl.createWithNoTarget(
+                AnnotationUtilKt.createDeprecatedAnnotation(getBuiltIns(enumClass), "Use 'values()' function instead", "this.values()")
+        );
+
         PropertyDescriptorImpl values =
                 PropertyDescriptorImpl.create(
-                        enumClass, Annotations.Companion.getEMPTY(), Modality.FINAL, Visibilities.PUBLIC, /* isVar */ false,
+                        enumClass, annotations, Modality.FINAL, Visibilities.PUBLIC, /* isVar */ false,
                         DescriptorUtils.ENUM_VALUES, CallableMemberDescriptor.Kind.SYNTHESIZED, enumClass.getSource(),
                         /* lateInit = */ false, /* isConst = */ false
                 );
