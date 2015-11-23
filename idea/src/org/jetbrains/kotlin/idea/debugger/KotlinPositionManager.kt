@@ -452,7 +452,8 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
             val element = getElementToCreateTypeMapperForLibraryFile(notPositionedElement)
             val analysisResult = element!!.analyzeAndGetResult()
 
-            val state = GenerationState(file.project, ClassBuilderFactories.THROW_EXCEPTION, analysisResult.moduleDescriptor, analysisResult.bindingContext, listOf(file))
+            val state = GenerationState(file.project, ClassBuilderFactories.THROW_EXCEPTION,
+                                        analysisResult.moduleDescriptor, analysisResult.bindingContext, listOf(file))
             state.beforeCompile()
             return state.typeMapper
         }

@@ -85,9 +85,15 @@ public class DelegatingBindingTrace implements BindingTrace {
     };
 
     public DelegatingBindingTrace(BindingContext parentContext, String debugName) {
+        this(parentContext, true, debugName);
+    }
+
+    public DelegatingBindingTrace(BindingContext parentContext, boolean withParentDiagnostics, String debugName) {
         this.parentContext = parentContext;
         this.name = debugName;
-        this.mutableDiagnostics = new MutableDiagnosticsWithSuppression(bindingContext, parentContext.getDiagnostics());
+        this.mutableDiagnostics = withParentDiagnostics ?
+                                  new MutableDiagnosticsWithSuppression(bindingContext, parentContext.getDiagnostics()) :
+                                  new MutableDiagnosticsWithSuppression(bindingContext);
     }
 
     public DelegatingBindingTrace(BindingContext parentContext, String debugName, @Nullable Object resolutionSubjectForMessage) {

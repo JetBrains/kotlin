@@ -39,7 +39,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.Stack
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler
-import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -51,7 +50,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTraceContext
+import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -81,9 +80,12 @@ abstract class LightClassDataProvider<T : WithFileStubAndExtraDiagnostics>(
 
         val javaFileStub = createJavaFileStub(packageFqName, files)
         val bindingContext: BindingContext
-        val forExtraDiagnostics = BindingTraceContext()
+        val forExtraDiagnostics = DelegatingBindingTrace(context.bindingContext, false, "For extra diagnostics in ${this.javaClass}")
+
         try {
             val stubStack = Stack<StubElement<PsiElement>>()
+
+            @Suppress("UNCHECKED_CAST")
             stubStack.push(javaFileStub as StubElement<PsiElement>)
 
             val state = GenerationState(
@@ -92,12 +94,13 @@ abstract class LightClassDataProvider<T : WithFileStubAndExtraDiagnostics>(
                     context.module,
                     context.bindingContext,
                     Lists.newArrayList(files),
-                    /*disable not-null assertions*/false, false,
-                    /*generateClassFilter=*/generateClassFilter,
-                    /*disableInline=*/false,
-                    /*disableOptimization=*/false,
-                    /*useTypeTableInSerializer=*/false,
-                    forExtraDiagnostics)
+                    disableCallAssertions = false,
+                    disableParamAssertions = false,
+                    generateDeclaredClassFilter = generateClassFilter,
+                    disableInline = false,
+                    disableOptimization = false,
+                    useTypeTableInSerializer = false,
+                    diagnostics = forExtraDiagnostics)
             state.beforeCompile()
 
             bindingContext = state.bindingContext

@@ -58,10 +58,7 @@ import org.jetbrains.kotlin.parsing.KotlinScriptDefinition;
 import org.jetbrains.kotlin.parsing.KotlinScriptDefinitionProvider;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter;
-import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.BindingTraceContext;
-import org.jetbrains.kotlin.resolve.ScriptNameUtil;
+import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.kotlin.util.PerformanceCounter;
@@ -401,7 +398,7 @@ public class KotlinToJVMBytecodeCompiler {
                 obsoleteMultifileClasses.add(JvmClassName.byInternalName(obsoleteFacadeInternalName).getFqNameForClassNameWithoutDollars());
             }
         }
-        BindingTraceContext diagnosticHolder = new BindingTraceContext();
+        BindingTrace diagnosticHolder = new DelegatingBindingTrace(result.getBindingContext(), false, "For extra diagnostics in ${this.javaClass}");
         GenerationState generationState = new GenerationState(
                 environment.getProject(),
                 ClassBuilderFactories.BINARIES,
