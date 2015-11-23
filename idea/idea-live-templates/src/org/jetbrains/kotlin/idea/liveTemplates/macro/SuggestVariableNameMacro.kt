@@ -39,16 +39,16 @@ class SuggestVariableNameMacro : Macro() {
     override fun getPresentableName() = "kotlinSuggestVariableName()"
 
     override fun calculateResult(params: Array<out Expression>, context: ExpressionContext): Result? {
-        return nameSuggestions(context).firstOrNull()?.let { TextResult(it) }
+        return suggestNames(context).firstOrNull()?.let { TextResult(it) }
     }
 
     override fun calculateLookupItems(params: Array<out Expression>, context: ExpressionContext): Array<out LookupElement>? {
-        val suggestions = nameSuggestions(context)
+        val suggestions = suggestNames(context)
         if (suggestions.size < 2) return null
         return suggestions.map { LookupElementBuilder.create(it) }.toTypedArray()
     }
 
-    private fun nameSuggestions(context: ExpressionContext): Collection<String> {
+    private fun suggestNames(context: ExpressionContext): Collection<String> {
         val project = context.project
         val psiDocumentManager = PsiDocumentManager.getInstance(project)
         psiDocumentManager.commitAllDocuments()
@@ -68,14 +68,14 @@ class SuggestVariableNameMacro : Macro() {
 
         val parent = declaration.parent
         if (parent is KtForExpression && declaration == parent.loopParameter) {
-            iterationVariableNameSuggestions(parent, nameValidator)?.let { return it }
+            suggestIterationVariableName(parent, nameValidator)?.let { return it }
         }
 
         val descriptor = declaration.resolveToDescriptor() as? VariableDescriptor ?: return emptyList()
         return KotlinNameSuggester.suggestNamesByType(descriptor.type, nameValidator, null)
     }
 
-    private fun iterationVariableNameSuggestions(forExpression: KtForExpression, nameValidator: (String) -> Boolean): Collection<String>? {
+    private fun suggestIterationVariableName(forExpression: KtForExpression, nameValidator: (String) -> Boolean): Collection<String>? {
         val loopRange = forExpression.loopRange ?: return null
         val resolutionFacade = forExpression.getResolutionFacade()
         val bindingContext = resolutionFacade.analyze(loopRange, BodyResolveMode.PARTIAL)
