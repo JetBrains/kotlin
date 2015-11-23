@@ -125,6 +125,7 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         if (arguments.script) {
             configuration.add(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY, StandardScriptDefinition)
+            shouldReportPerf = false
         }
 
         putAdvancedOptions(configuration, arguments)
@@ -232,6 +233,7 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         // allows to track GC time for each run when repeated compilation is used
         private val elapsedGCTime = hashMapOf<String, Long>()
         private var elapsedJITTime = 0L
+        private var shouldReportPerf = true
 
         public fun resetInitStartTime() {
             if (initStartNanos == 0L) {
@@ -245,6 +247,8 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         }
 
         public fun reportPerf(configuration: CompilerConfiguration, message: String) {
+            if (!shouldReportPerf) return
+
             val collector = configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]!!
             collector.report(CompilerMessageSeverity.INFO, "PERF: " + message, CompilerMessageLocation.NO_LOCATION)
         }
