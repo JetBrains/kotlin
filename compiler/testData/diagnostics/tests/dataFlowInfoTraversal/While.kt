@@ -3,7 +3,7 @@ fun bar(x: Int): Int = x + 1
 fun foo() {
     val x: Int? = null
     while (x == null) {
-        bar(<!ALWAYS_NULL, TYPE_MISMATCH!>x<!>)
+        bar(<!TYPE_MISMATCH, DEBUG_INFO_CONSTANT!>x<!>)
     }
     bar(<!DEBUG_INFO_SMARTCAST!>x<!>)
     
@@ -11,11 +11,11 @@ fun foo() {
     while (y != null) {
         bar(<!DEBUG_INFO_SMARTCAST!>y<!>)
     }
-    bar(<!ALWAYS_NULL, TYPE_MISMATCH!>y<!>)
+    bar(<!TYPE_MISMATCH, DEBUG_INFO_CONSTANT!>y<!>)
     
     val z: Int? = null
     while (z == null) {
-        bar(<!ALWAYS_NULL, TYPE_MISMATCH!>z<!>)
+        bar(<!TYPE_MISMATCH, DEBUG_INFO_CONSTANT!>z<!>)
         break
     }
     bar(<!TYPE_MISMATCH!>z<!>)

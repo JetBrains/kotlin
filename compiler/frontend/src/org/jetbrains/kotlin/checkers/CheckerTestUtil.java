@@ -80,9 +80,9 @@ public class CheckerTestUtil {
     private static final String SHOULD_BE_ESCAPED = "\\)\\(;";
     private static final String DIAGNOSTIC_PARAMETER = "(?:(?:\\\\[" + SHOULD_BE_ESCAPED + "])|[^" + SHOULD_BE_ESCAPED + "])+";
     private static final String INDIVIDUAL_DIAGNOSTIC = "(\\w+)(\\(" + DIAGNOSTIC_PARAMETER + "(;\\s*" + DIAGNOSTIC_PARAMETER + ")*\\))?";
-    private static final Pattern RANGE_START_OR_END_PATTERN = Pattern.compile("(<!"+
-                                                                              INDIVIDUAL_DIAGNOSTIC +"(,\\s*"+
-                                                                              INDIVIDUAL_DIAGNOSTIC +")*!>)|(<!>)");
+    private static final Pattern RANGE_START_OR_END_PATTERN = Pattern.compile("(<!" +
+                                                                              INDIVIDUAL_DIAGNOSTIC + "(,\\s*" +
+                                                                              INDIVIDUAL_DIAGNOSTIC + ")*!>)|(<!>)");
     private static final Pattern INDIVIDUAL_DIAGNOSTIC_PATTERN = Pattern.compile(INDIVIDUAL_DIAGNOSTIC);
     private static final Pattern INDIVIDUAL_PARAMETER_PATTERN = Pattern.compile(DIAGNOSTIC_PARAMETER);
 
@@ -98,7 +98,7 @@ public class CheckerTestUtil {
                                                new Predicate<Diagnostic>() {
                                                    @Override
                                                    public boolean apply(Diagnostic diagnostic) {
-                                                       return  PsiTreeUtil.isAncestor(root, diagnostic.getPsiElement(), false);
+                                                       return PsiTreeUtil.isAncestor(root, diagnostic.getPsiElement(), false);
                                                    }
                                                }));
         for (PsiErrorElement errorElement : AnalyzingUtils.getSyntaxErrorRanges(root)) {
@@ -109,6 +109,7 @@ public class CheckerTestUtil {
         return diagnostics;
     }
 
+    @SuppressWarnings("TestOnlyProblems")
     @NotNull
     private static List<Diagnostic> getDebugInfoDiagnostics(
             @NotNull PsiElement root,
@@ -149,16 +150,19 @@ public class CheckerTestUtil {
             }
         });
         // this code is used in tests and in internal action 'copy current file as diagnostic test'
-        //noinspection TestOnlyProblems
         for (KtExpression expression : bindingContext.getSliceContents(BindingContext.SMARTCAST).keySet()) {
             if (PsiTreeUtil.isAncestor(root, expression, false)) {
                 debugAnnotations.add(new DebugInfoDiagnostic(expression, DebugInfoDiagnosticFactory.SMARTCAST));
             }
         }
-        //noinspection TestOnlyProblems
         for (KtExpression expression : bindingContext.getSliceContents(BindingContext.IMPLICIT_RECEIVER_SMARTCAST).keySet()) {
             if (PsiTreeUtil.isAncestor(root, expression, false)) {
                 debugAnnotations.add(new DebugInfoDiagnostic(expression, DebugInfoDiagnosticFactory.IMPLICIT_RECEIVER_SMARTCAST));
+            }
+        }
+        for (KtExpression expression : bindingContext.getSliceContents(BindingContext.SMARTCAST_NULL).keySet()) {
+            if (PsiTreeUtil.isAncestor(root, expression, false)) {
+                debugAnnotations.add(new DebugInfoDiagnostic(expression, DebugInfoDiagnosticFactory.CONSTANT));
             }
         }
         return debugAnnotations;
@@ -166,7 +170,9 @@ public class CheckerTestUtil {
 
     public interface DiagnosticDiffCallbacks {
         void missingDiagnostic(TextDiagnostic diagnostic, int expectedStart, int expectedEnd);
+
         void wrongParametersDiagnostic(TextDiagnostic expectedDiagnostic, TextDiagnostic actualDiagnostic, int start, int end);
+
         void unexpectedDiagnostic(TextDiagnostic diagnostic, int actualStart, int actualEnd);
     }
 
@@ -298,7 +304,8 @@ public class CheckerTestUtil {
         for (Diagnostic diagnostic : actual) {
             List<TextRange> textRanges = diagnostic.getTextRanges();
             for (TextRange textRange : textRanges) {
-                callbacks.unexpectedDiagnostic(TextDiagnostic.asTextDiagnostic(diagnostic), textRange.getStartOffset(), textRange.getEndOffset());
+                callbacks.unexpectedDiagnostic(TextDiagnostic.asTextDiagnostic(diagnostic), textRange.getStartOffset(),
+                                               textRange.getEndOffset());
             }
         }
     }
@@ -343,14 +350,15 @@ public class CheckerTestUtil {
         matcher.reset();
         return matcher.replaceAll("");
     }
-    
+
     public static StringBuffer addDiagnosticMarkersToText(@NotNull PsiFile psiFile, @NotNull Collection<Diagnostic> diagnostics) {
-        return addDiagnosticMarkersToText(psiFile, diagnostics, Collections.<Diagnostic, TextDiagnostic>emptyMap(), new Function<PsiFile, String>() {
-            @Override
-            public String fun(PsiFile file) {
-                return file.getText();
-            }
-        });
+        return addDiagnosticMarkersToText(psiFile, diagnostics, Collections.<Diagnostic, TextDiagnostic>emptyMap(),
+                                          new Function<PsiFile, String>() {
+                                              @Override
+                                              public String fun(PsiFile file) {
+                                                  return file.getText();
+                                              }
+                                          });
     }
 
     public static StringBuffer addDiagnosticMarkersToText(
@@ -397,21 +405,20 @@ public class CheckerTestUtil {
                 }
                 result.append(c);
             }
-            
+
             if (currentDescriptor != null) {
                 assert currentDescriptor.start == text.length();
                 assert currentDescriptor.end == text.length();
                 openDiagnosticsString(result, currentDescriptor, diagnosticToExpectedDiagnostic);
                 opened.push(currentDescriptor);
             }
-            
+
             while (!opened.isEmpty() && text.length() == opened.peek().end) {
                 closeDiagnosticString(result);
                 opened.pop();
             }
 
             assert opened.isEmpty() : "Stack is not empty: " + opened;
-
         }
         else {
             result.append(text);
@@ -432,10 +439,12 @@ public class CheckerTestUtil {
                 TextDiagnostic actualTextDiagnostic = TextDiagnostic.asTextDiagnostic(diagnostic);
                 if (compareTextDiagnostic(expectedDiagnostic, actualTextDiagnostic)) {
                     result.append(expectedDiagnostic.asString());
-                } else {
+                }
+                else {
                     result.append(actualTextDiagnostic.asString());
                 }
-            } else {
+            }
+            else {
                 result.append(diagnostic.getFactory().getName());
             }
             if (iterator.hasNext()) {
@@ -517,12 +526,14 @@ public class CheckerTestUtil {
     public static class DebugInfoDiagnosticFactory extends DiagnosticFactory<DebugInfoDiagnostic> {
         public static final DebugInfoDiagnosticFactory SMARTCAST = new DebugInfoDiagnosticFactory("SMARTCAST");
         public static final DebugInfoDiagnosticFactory IMPLICIT_RECEIVER_SMARTCAST = new DebugInfoDiagnosticFactory("IMPLICIT_RECEIVER_SMARTCAST");
+        public static final DebugInfoDiagnosticFactory CONSTANT = new DebugInfoDiagnosticFactory("CONSTANT");
         public static final DebugInfoDiagnosticFactory ELEMENT_WITH_ERROR_TYPE = new DebugInfoDiagnosticFactory("ELEMENT_WITH_ERROR_TYPE");
         public static final DebugInfoDiagnosticFactory UNRESOLVED_WITH_TARGET = new DebugInfoDiagnosticFactory("UNRESOLVED_WITH_TARGET");
         public static final DebugInfoDiagnosticFactory MISSING_UNRESOLVED = new DebugInfoDiagnosticFactory("MISSING_UNRESOLVED");
         public static final DebugInfoDiagnosticFactory DYNAMIC = new DebugInfoDiagnosticFactory("DYNAMIC");
 
         private final String name;
+
         private DebugInfoDiagnosticFactory(String name, Severity severity) {
             super(severity);
             this.name = name;
@@ -729,7 +740,7 @@ public class CheckerTestUtil {
         public void setEnd(int end) {
             this.end = end;
         }
-        
+
         public void addDiagnostic(String diagnostic) {
             diagnostics.add(TextDiagnostic.parseDiagnostic(diagnostic));
         }

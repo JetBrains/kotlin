@@ -76,6 +76,12 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
                   .setTextAttributes(KotlinHighlightingColors.SMART_CAST_RECEIVER);
         }
 
+        boolean nullSmartCast = bindingContext.get(SMARTCAST_NULL, expression) == Boolean.TRUE;
+        if (nullSmartCast) {
+            holder.createInfoAnnotation(expression, "Always null")
+                  .setTextAttributes(KotlinHighlightingColors.SMART_CONSTANT);
+        }
+
         KotlinType smartCast = bindingContext.get(SMARTCAST, expression);
         if (smartCast != null) {
             holder.createInfoAnnotation(expression, "Smart cast to " +

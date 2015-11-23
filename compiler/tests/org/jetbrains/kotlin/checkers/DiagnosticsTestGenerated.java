@@ -14580,6 +14580,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("alwaysNullWithJava.kt")
+            public void testAlwaysNullWithJava() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/alwaysNullWithJava.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("classObjectMember.kt")
             public void testClassObjectMember() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/classObjectMember.kt");

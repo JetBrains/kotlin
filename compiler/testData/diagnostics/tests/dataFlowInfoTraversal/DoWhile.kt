@@ -12,5 +12,5 @@ fun foo() {
     do {
         bar(<!TYPE_MISMATCH!>y<!>)
     } while (y != null)
-    bar(<!ALWAYS_NULL, TYPE_MISMATCH!>y<!>)
+    bar(<!TYPE_MISMATCH, DEBUG_INFO_CONSTANT!>y<!>)
 }

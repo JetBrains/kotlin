@@ -30,6 +30,11 @@
       <option name="BACKGROUND" value="223c23" />
     </value>
   </option>
+  <option name="KOTLIN_SMART_CONSTANT">
+    <value>
+      <option name="BACKGROUND" value="223c23" />
+    </value>
+  </option>
   <option name="KOTLIN_SMART_CAST_RECEIVER">
     <value>
       <option name="BACKGROUND" value="223c23" />

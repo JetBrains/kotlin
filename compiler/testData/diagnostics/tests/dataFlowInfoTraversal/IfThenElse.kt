@@ -6,7 +6,7 @@ fun foo() {
     bar(if (x == null) 0 else <!DEBUG_INFO_SMARTCAST!>x<!>)
 
     if (x == null) {
-        bar(<!ALWAYS_NULL, TYPE_MISMATCH!>x<!>)
+        bar(<!TYPE_MISMATCH, DEBUG_INFO_CONSTANT!>x<!>)
         return
     } else {
         bar(<!DEBUG_INFO_SMARTCAST!>x<!>)
