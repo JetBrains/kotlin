@@ -249,6 +249,8 @@ public open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArgumen
     override fun createBlankArgs(): K2JSCompilerArguments {
         val args = K2JSCompilerArguments()
         args.libraryFiles = arrayOf<String>()  // defaults to null
+        args.metaInfo = true
+        args.kjsm = true
         return args
     }
 
@@ -280,6 +282,7 @@ public open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArgumen
         args.outputPrefix = kotlinOptions.outputPrefix
         args.outputPostfix = kotlinOptions.outputPostfix
         args.metaInfo = kotlinOptions.metaInfo
+        args.kjsm = kotlinOptions.kjsm
 
         val kotlinJsLibsFromDependencies =
                 getProject().getConfigurations().getByName("compile")

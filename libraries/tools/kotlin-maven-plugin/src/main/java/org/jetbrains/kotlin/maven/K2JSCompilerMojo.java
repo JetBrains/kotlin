@@ -63,6 +63,12 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
     private boolean metaInfo;
 
     /**
+     * Flag enables or disables kjsm generation
+     */
+    @Parameter(defaultValue = "true")
+    private boolean kjsm;
+
+    /**
      * Flags enables or disable source map generation
      */
     @Parameter(defaultValue = "false")
@@ -73,6 +79,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
         arguments.outputFile = outputFile;
         arguments.noStdlib = true;
         arguments.metaInfo = metaInfo;
+        arguments.kjsm = kjsm;
 
         List<String> libraries = getKotlinJavascriptLibraryFiles();
         getLog().debug("libraryFiles: " + libraries);

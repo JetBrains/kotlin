@@ -294,6 +294,7 @@
                 <arg value="@{output}"/>
                 <arg value="-no-stdlib"/>
                 <arg value="-meta-info"/>
+                <arg value="-kjsm"/>
                 <arg line="-main noCall"/>
             </java>
         </sequential>
@@ -308,13 +309,13 @@
 
         <kotlin-pp src="libraries/stdlib/src" output="${intermediate-sources}/stdlib/js" profile="JS" />
 
-        <new-kotlin2js output="${output}/${compiled.builtins.js}">
+        <new-kotlin2js output="${output}/js/${compiled.builtins.js}">
             <src>
                 <fileset refid="kotlin.builtin.files"/>
             </src>
         </new-kotlin2js>
 
-        <new-kotlin2js output="${output}/${compiled.stdlib.js}">
+        <new-kotlin2js output="${output}/js/${compiled.stdlib.js}">
             <src>
                 <resources refid="js.lib.files"/>
             </src>
@@ -334,7 +335,7 @@
             prettyprint="true"
             languagein="ECMASCRIPT5_STRICT"
             warning="${warningLevel}"
-            output="${output}/kotlin.js">
+            output="${output}/js/kotlin.js">
 
             <sources dir="${stdlib.js.dir}">
                 <file name="kotlin_lib_ecma5.js"/>
@@ -343,11 +344,11 @@
                 <file name="long.js"/>
             </sources>
 
-            <sources dir="${output}">
+            <sources dir="${output}/js">
                 <file name="${compiled.builtins.js}"/>
             </sources>
 
-            <sources dir="${output}">
+            <sources dir="${output}/js">
                 <file name="${compiled.stdlib.js}"/>
             </sources>
 
@@ -362,8 +363,11 @@
 
         <jar jarfile="${kotlin-home}/lib/kotlin-jslib.jar" duplicate="fail">
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
-            <zipfileset file="${output}/kotlin.js" prefix=""/>
-            <zipfileset file="${output}/${compiled.stdlib.meta.js}" prefix=""/>
+            <zipfileset dir="${output}/js" prefix="">
+                <include name="kotlin.js"/>
+                <include name="${compiled.stdlib.meta.js}"/>
+                <include name="stdlib/**"/>
+            </zipfileset>
 
             <manifest>
                 <attribute name="Built-By" value="${manifest.impl.vendor}"/>
