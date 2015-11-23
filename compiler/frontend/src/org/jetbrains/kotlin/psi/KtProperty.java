@@ -243,7 +243,14 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
                 return (KtExpression) oldInitializer.replace(initializer);
             }
             else {
-                deleteChildRange(findChildByType(EQ), oldInitializer);
+                PsiElement nextSibling = oldInitializer.getNextSibling();
+                PsiElement last =
+                        nextSibling != null
+                        && nextSibling.getNode() != null
+                        && nextSibling.getNode().getElementType() == KtTokens.SEMICOLON
+                        ? nextSibling : oldInitializer;
+
+                deleteChildRange(findChildByType(EQ), last);
                 return null;
             }
         }
