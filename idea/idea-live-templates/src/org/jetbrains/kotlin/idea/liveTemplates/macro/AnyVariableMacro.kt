@@ -17,12 +17,16 @@
 package org.jetbrains.kotlin.idea.liveTemplates.macro
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.UserDataHolder
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.resolve.BindingContext
 
-class AnyVariableMacro : BaseKotlinVariableMacro() {
+class AnyVariableMacro : BaseKotlinVariableMacro<Unit>() {
     override fun getName() = "kotlinAnyVariable"
     override fun getPresentableName() = "kotlinAnyVariable()"
 
-    override fun isSuitable(variableDescriptor: VariableDescriptor, project: Project, userData: UserDataHolder) = true
+    override fun initState(contextElement: KtElement, bindingContext: BindingContext) {
+    }
+
+    override fun isSuitable(variableDescriptor: VariableDescriptor, project: Project, state: Unit) = true
 }

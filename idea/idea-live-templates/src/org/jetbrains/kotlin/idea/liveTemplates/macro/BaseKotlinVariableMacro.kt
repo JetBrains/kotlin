@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.liveTemplates.macro
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.template.*
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.UserDataHolder
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
@@ -38,9 +37,8 @@ import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.util.slicedMap.UserDataHolderImpl
 
-abstract class BaseKotlinVariableMacro : Macro() {
+abstract class BaseKotlinVariableMacro<TState> : Macro() {
     private fun getVariables(params: Array<Expression>, context: ExpressionContext): Collection<VariableDescriptor> {
         if (params.size != 0) return emptyList()
 
@@ -60,23 +58,21 @@ abstract class BaseKotlinVariableMacro : Macro() {
             return descriptor !is DeclarationDescriptorWithVisibility || descriptor.isVisible(contextElement, null, bindingContext, resolutionFacade)
         }
 
-        val userData = UserDataHolderImpl()
-        initUserData(userData, contextElement, bindingContext)
+        val state = initState(contextElement, bindingContext)
 
         val helper = ReferenceVariantsHelper(bindingContext, resolutionFacade, resolutionFacade.moduleDescriptor, ::isVisible)
         return helper
                 .getReferenceVariants(contextElement, CallTypeAndReceiver.DEFAULT, DescriptorKindFilter.VARIABLES, { true })
                 .map { it as VariableDescriptor }
-                .filter { isSuitable(it, project, userData) }
+                .filter { isSuitable(it, project, state) }
     }
 
-    protected open fun initUserData(userData: UserDataHolder, contextElement: KtElement, bindingContext: BindingContext) {
-    }
+    protected abstract fun initState(contextElement: KtElement, bindingContext: BindingContext): TState
 
     protected abstract fun isSuitable(
             variableDescriptor: VariableDescriptor,
             project: Project,
-            userData: UserDataHolder): Boolean
+            state: TState): Boolean
 
     override fun calculateResult(params: Array<Expression>, context: ExpressionContext): Result? {
         val vars = getVariables(params, context)
