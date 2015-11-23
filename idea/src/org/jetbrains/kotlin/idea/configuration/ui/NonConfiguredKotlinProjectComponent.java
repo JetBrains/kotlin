@@ -19,10 +19,14 @@ package org.jetbrains.kotlin.idea.configuration.ui;
 import com.intellij.notification.NotificationDisplayType;
 import com.intellij.notification.NotificationsConfiguration;
 import com.intellij.openapi.components.AbstractProjectComponent;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt;
+import org.jetbrains.kotlin.idea.versions.OutdatedKotlinRuntimeNotificationKt;
+
+import java.util.List;
 
 public class NonConfiguredKotlinProjectComponent extends AbstractProjectComponent {
     public static final String CONFIGURE_NOTIFICATION_GROUP_ID = "Configure Kotlin in Project";
@@ -44,7 +48,8 @@ public class NonConfiguredKotlinProjectComponent extends AbstractProjectComponen
                 DumbService.getInstance(myProject).smartInvokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        ConfigureKotlinInProjectUtilsKt.showConfigureKotlinNotificationIfNeeded(myProject);
+                        List<Module> modulesWithOutdatedRuntime = OutdatedKotlinRuntimeNotificationKt.checkOutdatedKotlinRuntime(myProject);
+                        ConfigureKotlinInProjectUtilsKt.showConfigureKotlinNotificationIfNeeded(myProject, modulesWithOutdatedRuntime);
                     }
                 });
             }

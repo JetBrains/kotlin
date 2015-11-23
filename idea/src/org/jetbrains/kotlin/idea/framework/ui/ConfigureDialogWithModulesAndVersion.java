@@ -62,7 +62,8 @@ public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
     public ConfigureDialogWithModulesAndVersion(
             @NotNull Project project,
             @NotNull KotlinProjectConfigurator configurator,
-            @NotNull final String[] kotlinVersions
+            @NotNull final String[] kotlinVersions,
+            @NotNull Collection<Module> excludeModules
     ) {
         super(project);
 
@@ -90,7 +91,7 @@ public class ConfigureDialogWithModulesAndVersion extends DialogWrapper {
         processIcon.resume();
         infoPanel.add(processIcon, BorderLayout.CENTER);
 
-        chooseModulePanel = new ChooseModulePanel(project, configurator);
+        chooseModulePanel = new ChooseModulePanel(project, configurator, excludeModules);
         chooseModulesPanelPlace.add(chooseModulePanel.getContentPane(), BorderLayout.CENTER);
 
         updateComponents();

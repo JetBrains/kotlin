@@ -30,19 +30,19 @@ import org.jetbrains.kotlin.idea.configuration.ui.NonConfiguredKotlinProjectComp
 
 import javax.swing.event.HyperlinkEvent;
 import java.util.Collection;
+import java.util.List;
 
 import static kotlin.collections.CollectionsKt.first;
 
 public class ConfigureKotlinNotification extends Notification {
     private static final String TITLE = "Configure Kotlin";
 
-    @NotNull private final String notificationText;
-
     public ConfigureKotlinNotification(
             @NotNull final Project project,
-            @NotNull String notificationText
+            @NotNull final List<Module> excludeModules
     ) {
-        super(NonConfiguredKotlinProjectComponent.CONFIGURE_NOTIFICATION_GROUP_ID, TITLE, notificationText, NotificationType.WARNING, new NotificationListener() {
+        super(NonConfiguredKotlinProjectComponent.CONFIGURE_NOTIFICATION_GROUP_ID, TITLE, getNotificationString(project,excludeModules),
+              NotificationType.WARNING, new NotificationListener() {
             @Override
             public void hyperlinkUpdate(@NotNull Notification notification, @NotNull HyperlinkEvent event) {
                 if (event.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
@@ -52,17 +52,15 @@ public class ConfigureKotlinNotification extends Notification {
                     }
                     notification.expire();
 
-                    configurator.configure(project);
+                    configurator.configure(project, excludeModules);
                 }
             }
         });
-
-        this.notificationText = notificationText;
     }
 
     @NotNull
-    public static String getNotificationString(Project project) {
-        Collection<Module> modules = ConfigureKotlinInProjectUtilsKt.getNonConfiguredModules(project);
+    public static String getNotificationString(Project project, Collection<Module> excludeModules) {
+        Collection<Module> modules = ConfigureKotlinInProjectUtilsKt.getNonConfiguredModules(project, excludeModules);
 
         final boolean isOnlyOneModule = modules.size() == 1;
 
@@ -92,13 +90,13 @@ public class ConfigureKotlinNotification extends Notification {
 
         ConfigureKotlinNotification that = (ConfigureKotlinNotification) o;
 
-        if (!notificationText.equals(that.notificationText)) return false;
+        if (!getContent().equals(that.getContent())) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return notificationText.hashCode();
+        return getContent().hashCode();
     }
 }

@@ -57,17 +57,14 @@ fun getModulesWithKotlinFiles(project: Project): Collection<Module> {
 fun showConfigureKotlinNotificationIfNeeded(module: Module) {
     if (isModuleConfigured(module)) return
 
-    showConfigureKotlinNotification(module.project)
+    ConfigureKotlinNotificationManager.notify(module.project)
 }
 
-fun showConfigureKotlinNotificationIfNeeded(project: Project) {
-    if (isProjectConfigured(project)) return
+fun showConfigureKotlinNotificationIfNeeded(project: Project, excludeModules: List<Module> = emptyList()) {
+    val modules = getModulesWithKotlinFiles(project) - excludeModules
+    if (modules.all { isModuleConfigured(it) }) return
 
-    showConfigureKotlinNotification(project)
-}
-
-private fun showConfigureKotlinNotification(project: Project) {
-    ConfigureKotlinNotificationManager.notify(project)
+    ConfigureKotlinNotificationManager.notify(project, excludeModules)
 }
 
 fun getAbleToRunConfigurators(project: Project): Collection<KotlinProjectConfigurator> {
@@ -95,8 +92,8 @@ fun getNonConfiguredModulesWithKotlinFiles(project: Project, configurator: Kotli
     return modules.filter { module -> configurator.isApplicable(module) && !configurator.isConfigured(module) }
 }
 
-fun getNonConfiguredModules(project: Project): Collection<Module> {
-    val modulesWithKotlinFiles = getModulesWithKotlinFiles(project)
+fun getNonConfiguredModules(project: Project, excludeModules: Collection<Module> = emptyList()): Collection<Module> {
+    val modulesWithKotlinFiles = getModulesWithKotlinFiles(project) - excludeModules
     return modulesWithKotlinFiles.filter { module ->
         getAbleToRunConfigurators(project).any { !it.isConfigured(module) }
     }

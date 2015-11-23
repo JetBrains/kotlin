@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionForFirstParentOfType
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
-import org.jetbrains.kotlin.idea.versions.findKotlinLibraries
+import org.jetbrains.kotlin.idea.versions.findAllUsedLibraries
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -156,7 +156,7 @@ abstract class AddKotlinLibQuickFix(element: KtElement) : KotlinQuickFixAction<K
         val configurator = Extensions.getExtensions(KotlinProjectConfigurator.EP_NAME)
                                    .firstIsInstanceOrNull<KotlinJavaModuleConfigurator>() ?: return
 
-        for (library in findKotlinLibraries(project)) {
+        for (library in findAllUsedLibraries(project).keySet()) {
             val runtimeJar = JavaRuntimePresentationProvider.getRuntimeJar(library) ?: continue
             if (hasLibJarInLibrary(library)) continue
 

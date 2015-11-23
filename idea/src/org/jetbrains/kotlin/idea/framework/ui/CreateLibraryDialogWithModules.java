@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator;
 
 import java.awt.*;
+import java.util.Collection;
 import java.util.List;
 
 public class CreateLibraryDialogWithModules extends CreateLibraryDialogBase {
@@ -34,11 +35,12 @@ public class CreateLibraryDialogWithModules extends CreateLibraryDialogBase {
             @NotNull String defaultPath,
             boolean showPathPanel,
             @NotNull String title,
-            @NotNull String libraryCaption
+            @NotNull String libraryCaption,
+            @NotNull Collection<Module> excludeModules
     ) {
         super(project, defaultPath, title, libraryCaption);
 
-        chooseModulePanel = new ChooseModulePanel(project, configurator);
+        chooseModulePanel = new ChooseModulePanel(project, configurator, excludeModules);
         chooseModulesPanelPlace.add(chooseModulePanel.getContentPane(), BorderLayout.CENTER);
 
         chooseLibraryPathPlace.setVisible(showPathPanel);

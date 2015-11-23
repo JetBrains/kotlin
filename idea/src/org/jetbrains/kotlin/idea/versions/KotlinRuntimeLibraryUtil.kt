@@ -35,6 +35,7 @@ import com.intellij.psi.search.ProjectScope
 import com.intellij.util.CommonProcessors
 import com.intellij.util.PathUtil.getLocalFile
 import com.intellij.util.PathUtil.getLocalPath
+import com.intellij.util.containers.MultiMap
 import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.util.indexing.ID
 import com.intellij.util.indexing.ScalarIndexExtension
@@ -132,20 +133,18 @@ private fun updateJar(
     replaceFile(jarPath, localJar!!)
 }
 
-fun findKotlinLibraries(project: Project): Collection<Library> {
-    val libraries = Sets.newHashSet<Library>()
+fun findAllUsedLibraries(project: Project): MultiMap<Library, Module> {
+    val libraries = MultiMap<Library, Module>()
 
     for (module in ModuleManager.getInstance(project).modules) {
         val moduleRootManager = ModuleRootManager.getInstance(module)
 
-        for (entry in moduleRootManager.orderEntries) {
-            if (entry is LibraryOrderEntry) {
-                val library = entry.library ?: continue
+        for (entry in moduleRootManager.orderEntries.filterIsInstance<LibraryOrderEntry>()) {
+            val library = entry.library ?: continue
 
-                libraries.add(library)
+            libraries.putValue(library, module)
 
-                // TODO: search js libraries as well
-            }
+            // TODO: search js libraries as well
         }
     }
 

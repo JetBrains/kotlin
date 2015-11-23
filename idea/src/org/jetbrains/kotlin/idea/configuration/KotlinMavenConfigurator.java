@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.cli.common.KotlinVersion;
 import org.jetbrains.kotlin.idea.KotlinPluginUtil;
 import org.jetbrains.kotlin.idea.framework.ui.ConfigureDialogWithModulesAndVersion;
 
+import java.util.Collection;
 import java.util.List;
 
 public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurator {
@@ -109,9 +110,9 @@ public abstract class KotlinMavenConfigurator implements KotlinProjectConfigurat
     }
 
     @Override
-    public void configure(@NotNull Project project) {
+    public void configure(@NotNull Project project, Collection<Module> excludeModules) {
         ConfigureDialogWithModulesAndVersion dialog =
-                new ConfigureDialogWithModulesAndVersion(project, this, KOTLIN_VERSIONS);
+                new ConfigureDialogWithModulesAndVersion(project, this, KOTLIN_VERSIONS, excludeModules);
 
         dialog.show();
         if (!dialog.isOK()) return;

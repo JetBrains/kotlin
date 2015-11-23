@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class ChooseModulePanel {
     @NotNull private final List<Module> modules;
     @NotNull private final List<Module> modulesWithKtFiles;
 
-    public ChooseModulePanel(@NotNull Project project, @NotNull KotlinProjectConfigurator configurator) {
+    public ChooseModulePanel(@NotNull Project project, @NotNull KotlinProjectConfigurator configurator, Collection<Module> excludeModules) {
         this.project = project;
         this.modules = ConfigureKotlinInProjectUtilsKt.getNonConfiguredModules(project, configurator);
         this.modulesWithKtFiles = ConfigureKotlinInProjectUtilsKt.getNonConfiguredModulesWithKotlinFiles(project, configurator);

@@ -103,7 +103,7 @@ public class UnsupportedAbiVersionNotificationPanelProvider extends EditorNotifi
     private EditorNotificationPanel doCreate(final Collection<VirtualFile> badRoots) {
         EditorNotificationPanel answer = new ErrorNotificationPanel();
 
-        Collection<Library> kotlinLibraries = KotlinRuntimeLibraryUtilKt.findKotlinLibraries(project);
+        Collection<Library> kotlinLibraries = KotlinRuntimeLibraryUtilKt.findAllUsedLibraries(project).keySet();
         final Collection<Library> badRuntimeLibraries = Collections2.filter(kotlinLibraries, new Predicate<Library>() {
             @Override
             public boolean apply(@Nullable Library library) {

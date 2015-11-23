@@ -127,7 +127,7 @@ public class ConfigureKotlinTest extends PlatformTestCase {
                 new File(JAVA_CONFIGURATOR.getDefaultPathToJarFile(getProject()) + "/kotlin-runtime.jar"));
 
         assertNotConfigured(module, JAVA_CONFIGURATOR);
-        JAVA_CONFIGURATOR.configure(myProject);
+        JAVA_CONFIGURATOR.configure(myProject, Collections.<Module>emptyList());
         assertProperlyConfigured(module, JAVA_CONFIGURATOR);
     }
 
@@ -181,7 +181,7 @@ public class ConfigureKotlinTest extends PlatformTestCase {
             assertNotConfigured(module, configurator);
         }
 
-        configurator.configure(myProject);
+        configurator.configure(myProject, Collections.<Module>emptyList());
 
         assertNoFilesInDefaultPaths();
 
