@@ -18,9 +18,11 @@
 package org.jetbrains.kotlin.codegen.state
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES as BUILTIN_NAMES
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.firstOverridden
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
@@ -80,10 +82,11 @@ val CallableDescriptor?.isMethodWithDeclarationSiteWildcards: Boolean
         } != null
     }
 
+private fun FqName.child(name: String): FqName = child(Name.identifier(name))
 private val METHODS_WITH_DECLARATION_SITE_WILDCARDS = setOf(
-        FqName("kotlin.MutableCollection.addAll"),
-        FqName("kotlin.MutableList.addAll"),
-        FqName("kotlin.MutableMap.putAll")
+        BUILTIN_NAMES.mutableCollection.child("addAll"),
+        BUILTIN_NAMES.mutableList.child("addAll"),
+        BUILTIN_NAMES.mutableMap.child("putAll")
 )
 
 internal fun TypeMappingMode.updateArgumentModeFromAnnotations(type: KotlinType): TypeMappingMode {

@@ -63,7 +63,7 @@
     function hashSetEquals(o) {
         if (o == null || this.size !== o.size) return false;
 
-        return this.containsAll_4fm7v2$(o);
+        return this.containsAll_wtfk93$(o);
     }
 
     function hashSetHashCode() {
@@ -424,11 +424,11 @@
         /**
          * @param {Hashtable.<Key, Value>} hashtable
          */
-        this.putAll_48yl7j$ = hashMapPutAll;
+        this.putAll_r12sna$ = hashMapPutAll;
 
         this.clone = function () {
             var clone = new Hashtable(hashingFunctionParam, equalityFunctionParam);
-            clone.putAll_48yl7j$(that);
+            clone.putAll_r12sna$(that);
             return clone;
         };
 
@@ -515,7 +515,7 @@
 
     lazyInitClasses.HashMap = Kotlin.createClass(
         function () {
-            return [Kotlin.modules['builtins'].kotlin.MutableMap];
+            return [Kotlin.modules['builtins'].kotlin.collections.MutableMap];
         },
         function () {
             Kotlin.HashTable.call(this);
@@ -535,7 +535,7 @@
      */
     lazyInitClasses.PrimitiveHashMapValuesIterator = Kotlin.createClass(
         function () {
-            return [Kotlin.modules['builtins'].kotlin.Iterator];
+            return [Kotlin.modules['builtins'].kotlin.collections.Iterator];
         },
         function (map, keys) {
             this.map = map;
@@ -645,7 +645,7 @@
                 this.$size = 0;
                 this.map = {};
             },
-            putAll_48yl7j$: hashMapPutAll,
+            putAll_r12sna$: hashMapPutAll,
             entries: {
                 get: function () {
                     var result = new Kotlin.ComplexHashSet();
@@ -840,7 +840,7 @@
 
     lazyInitClasses.LinkedHashSet = Kotlin.createClass(
         function () {
-            return [Kotlin.modules['builtins'].kotlin.MutableSet, Kotlin.HashSet];
+            return [Kotlin.modules['builtins'].kotlin.collections.MutableSet, Kotlin.HashSet];
         },
         /** @constructs */
         function () {
@@ -882,7 +882,7 @@
      */
     lazyInitClasses.SetIterator = Kotlin.createClass(
         function () {
-            return [Kotlin.modules['builtins'].kotlin.MutableIterator];
+            return [Kotlin.modules['builtins'].kotlin.collections.MutableIterator];
         },
         function (set) {
             this.set = set;
@@ -1027,10 +1027,10 @@
     function HashSet(hashingFunction, equalityFunction) {
         var hashTable = new Kotlin.HashTable(hashingFunction, equalityFunction);
 
-        this.addAll_4fm7v2$ = Kotlin.AbstractCollection.prototype.addAll_4fm7v2$;
-        this.removeAll_4fm7v2$ = Kotlin.AbstractCollection.prototype.removeAll_4fm7v2$;
-        this.retainAll_4fm7v2$ = Kotlin.AbstractCollection.prototype.retainAll_4fm7v2$;
-        this.containsAll_4fm7v2$ = Kotlin.AbstractCollection.prototype.containsAll_4fm7v2$;
+        this.addAll_wtfk93$ = Kotlin.AbstractCollection.prototype.addAll_wtfk93$;
+        this.removeAll_wtfk93$ = Kotlin.AbstractCollection.prototype.removeAll_wtfk93$;
+        this.retainAll_wtfk93$ = Kotlin.AbstractCollection.prototype.retainAll_wtfk93$;
+        this.containsAll_wtfk93$ = Kotlin.AbstractCollection.prototype.containsAll_wtfk93$;
 
         this.add_za3rmp$ = function (o) {
             return !hashTable.put_wn2jw4$(o, true);
@@ -1067,7 +1067,7 @@
 
         this.clone = function () {
             var h = new HashSet(hashingFunction, equalityFunction);
-            h.addAll_4fm7v2$(hashTable.keys());
+            h.addAll_wtfk93$(hashTable.keys());
             return h;
         };
 
@@ -1129,7 +1129,7 @@
 
     lazyInitClasses.HashSet = Kotlin.createClass(
         function () {
-            return [Kotlin.modules['builtins'].kotlin.MutableSet, Kotlin.AbstractCollection];
+            return [Kotlin.modules['builtins'].kotlin.collections.MutableSet, Kotlin.AbstractCollection];
         },
         function () {
             HashSet.call(this);

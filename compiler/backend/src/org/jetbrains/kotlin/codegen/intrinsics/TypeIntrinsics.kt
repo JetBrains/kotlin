@@ -115,14 +115,14 @@ object TypeIntrinsics {
             Type.getMethodDescriptor(Type.BOOLEAN_TYPE, Type.getObjectType("java/lang/Object"), Type.INT_TYPE)
 
     private val IS_MUTABLE_COLLECTION_METHOD_NAME = hashMapOf(
-            "kotlin.MutableIterator" to "isMutableIterator",
-            "kotlin.MutableIterable" to "isMutableIterable",
-            "kotlin.MutableCollection" to "isMutableCollection",
-            "kotlin.MutableList" to "isMutableList",
-            "kotlin.MutableListIterator" to "isMutableListIterator",
-            "kotlin.MutableSet" to "isMutableSet",
-            "kotlin.MutableMap" to "isMutableMap",
-            "kotlin.MutableMap.MutableEntry" to "isMutableMapEntry"
+            "kotlin.collections.MutableIterator" to "isMutableIterator",
+            "kotlin.collections.MutableIterable" to "isMutableIterable",
+            "kotlin.collections.MutableCollection" to "isMutableCollection",
+            "kotlin.collections.MutableList" to "isMutableList",
+            "kotlin.collections.MutableListIterator" to "isMutableListIterator",
+            "kotlin.collections.MutableSet" to "isMutableSet",
+            "kotlin.collections.MutableMap" to "isMutableMap",
+            "kotlin.collections.MutableMap.MutableEntry" to "isMutableMapEntry"
     )
 
     private val IS_MUTABLE_COLLECTION_METHOD_DESCRIPTOR =
@@ -155,14 +155,14 @@ object TypeIntrinsics {
             IS_MUTABLE_COLLECTION_METHOD_NAME[getClassFqName(jetType)]
 
     private val CHECKCAST_METHOD_NAME = hashMapOf(
-            "kotlin.MutableIterator" to "asMutableIterator",
-            "kotlin.MutableIterable" to "asMutableIterable",
-            "kotlin.MutableCollection" to "asMutableCollection",
-            "kotlin.MutableList" to "asMutableList",
-            "kotlin.MutableListIterator" to "asMutableListIterator",
-            "kotlin.MutableSet" to "asMutableSet",
-            "kotlin.MutableMap" to "asMutableMap",
-            "kotlin.MutableMap.MutableEntry" to "asMutableMapEntry"
+            "kotlin.collections.MutableIterator" to "asMutableIterator",
+            "kotlin.collections.MutableIterable" to "asMutableIterable",
+            "kotlin.collections.MutableCollection" to "asMutableCollection",
+            "kotlin.collections.MutableList" to "asMutableList",
+            "kotlin.collections.MutableListIterator" to "asMutableListIterator",
+            "kotlin.collections.MutableSet" to "asMutableSet",
+            "kotlin.collections.MutableMap" to "asMutableMap",
+            "kotlin.collections.MutableMap.MutableEntry" to "asMutableMapEntry"
     )
 
     private fun getAsMutableCollectionMethodName(jetType: KotlinType): String? {

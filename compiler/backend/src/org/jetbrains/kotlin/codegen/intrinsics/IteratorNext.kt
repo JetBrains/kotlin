@@ -16,10 +16,11 @@
 
 package org.jetbrains.kotlin.codegen.intrinsics
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns.COLLECTIONS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.CallableMethod
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -45,7 +46,7 @@ class IteratorNext : IntrinsicMethod() {
             override fun invokeIntrinsic(v: InstructionAdapter) {
                 val name = getIteratorName(returnType)
                 v.invokevirtual(
-                        BUILT_INS_PACKAGE_FQ_NAME.asString() + "/" + name + "Iterator",
+                        COLLECTIONS_PACKAGE_FQ_NAME.child(Name.identifier(name + "Iterator")) .asString().replace('.', '/'),
                         "next$name",
                         "()" + returnType.descriptor,
                         false

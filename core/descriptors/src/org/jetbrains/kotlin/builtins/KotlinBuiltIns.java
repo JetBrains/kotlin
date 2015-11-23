@@ -127,6 +127,7 @@ public abstract class KotlinBuiltIns {
         public final FqNameUnsafe cloneable = fqNameUnsafe("Cloneable");
         public final FqNameUnsafe suppress = fqNameUnsafe("Suppress");
         public final FqNameUnsafe unit = fqNameUnsafe("Unit");
+        public final FqNameUnsafe charSequence = fqNameUnsafe("CharSequence");
         public final FqNameUnsafe string = fqNameUnsafe("String");
         public final FqNameUnsafe array = fqNameUnsafe("Array");
 
@@ -138,11 +139,11 @@ public abstract class KotlinBuiltIns {
         public final FqNameUnsafe _long = fqNameUnsafe("Long");
         public final FqNameUnsafe _float = fqNameUnsafe("Float");
         public final FqNameUnsafe _double = fqNameUnsafe("Double");
+        public final FqNameUnsafe number = fqNameUnsafe("Number");
 
-        public final FqNameUnsafe _collection = fqNameUnsafe("Collection");
-        public final FqNameUnsafe _list = fqNameUnsafe("List");
-        public final FqNameUnsafe _set = fqNameUnsafe("Set");
-        public final FqNameUnsafe _iterable = fqNameUnsafe("Iterable");
+        public final FqNameUnsafe _enum = fqNameUnsafe("Enum");
+
+
 
         public final FqName throwable = fqName("Throwable");
 
@@ -157,9 +158,23 @@ public abstract class KotlinBuiltIns {
         public final FqName mustBeDocumented = annotationName("MustBeDocumented");
         public final FqName unsafeVariance = fqName("UnsafeVariance");
 
-        public final FqName mutableList = fqName("MutableList");
-        public final FqName mutableSet = fqName("MutableSet");
-        public final FqName mutableMap = fqName("MutableMap");
+        public final FqName iterator = collectionsFqName("Iterator");
+        public final FqName iterable = collectionsFqName("Iterable");
+        public final FqName collection = collectionsFqName("Collection");
+        public final FqName list = collectionsFqName("List");
+        public final FqName set = collectionsFqName("Set");
+        public final FqName map = collectionsFqName("Map");
+        public final FqName mutableIterator = collectionsFqName("MutableIterator");
+        public final FqName mutableIterable = collectionsFqName("MutableIterable");
+        public final FqName mutableCollection = collectionsFqName("MutableCollection");
+        public final FqName mutableList = collectionsFqName("MutableList");
+        public final FqName mutableSet = collectionsFqName("MutableSet");
+        public final FqName mutableMap = collectionsFqName("MutableMap");
+
+        private final FqNameUnsafe _collection = collection.toUnsafe();
+        private final FqNameUnsafe _list = list.toUnsafe();
+        private final FqNameUnsafe _set = set.toUnsafe();
+        private final FqNameUnsafe _iterable = iterable.toUnsafe();
 
         public final FqNameUnsafe kClass = reflect("KClass");
         public final FqNameUnsafe kCallable = reflect("KCallable");
@@ -190,6 +205,11 @@ public abstract class KotlinBuiltIns {
         }
 
         @NotNull
+        private static FqName collectionsFqName(@NotNull String simpleName) {
+            return COLLECTIONS_PACKAGE_FQ_NAME.child(Name.identifier(simpleName));
+        }
+
+        @NotNull
         private static FqNameUnsafe reflect(@NotNull String simpleName) {
             return ReflectionTypesKt.getKOTLIN_REFLECT_FQ_NAME().child(Name.identifier(simpleName)).toUnsafe();
         }
@@ -212,6 +232,21 @@ public abstract class KotlinBuiltIns {
         return builtinsPackageFragment;
     }
 
+    @NotNull
+    public BuiltinsPackageFragment getCollectionsPackageFragment() {
+        return collectionsPackageFragment;
+    }
+
+    @NotNull
+    public BuiltinsPackageFragment getRangesPackageFragment() {
+        return rangesPackageFragment;
+    }
+
+    @NotNull
+    public BuiltinsPackageFragment getAnnotationPackageFragment() {
+        return annotationPackageFragment;
+    }
+
     public boolean isBuiltInPackageFragment(@Nullable PackageFragmentDescriptor packageFragment) {
         return packageFragment != null && packageFragment.getContainingDeclaration() == getBuiltInsModule();
     }
@@ -219,11 +254,6 @@ public abstract class KotlinBuiltIns {
     @NotNull
     public MemberScope getBuiltInsPackageScope() {
         return builtinsPackageFragment.getMemberScope();
-    }
-
-    @NotNull
-    public MemberScope getAnnotationPackageScope() {
-        return annotationPackageFragment.getMemberScope();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -493,62 +523,62 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public ClassDescriptor getIterator() {
-        return getBuiltInClassByName("Iterator");
+        return getBuiltInClassByName("Iterator", collectionsPackageFragment);
     }
 
     @NotNull
     public ClassDescriptor getIterable() {
-        return getBuiltInClassByName("Iterable");
+        return getBuiltInClassByName("Iterable", collectionsPackageFragment);
     }
 
     @NotNull
     public ClassDescriptor getMutableIterable() {
-        return getBuiltInClassByName("MutableIterable");
+        return getBuiltInClassByName("MutableIterable", collectionsPackageFragment);
     }
 
     @NotNull
     public ClassDescriptor getMutableIterator() {
-        return getBuiltInClassByName("MutableIterator");
+        return getBuiltInClassByName("MutableIterator", collectionsPackageFragment);
     }
 
     @NotNull
     public ClassDescriptor getCollection() {
-        return getBuiltInClassByName("Collection");
+        return getBuiltInClassByName("Collection", collectionsPackageFragment);
     }
 
     @NotNull
     public ClassDescriptor getMutableCollection() {
-        return getBuiltInClassByName("MutableCollection");
+        return getBuiltInClassByName("MutableCollection", collectionsPackageFragment);
     }
 
     @NotNull
     public ClassDescriptor getList() {
-        return getBuiltInClassByName("List");
+        return getBuiltInClassByName("List", collectionsPackageFragment);
     }
 
     @NotNull
     public ClassDescriptor getMutableList() {
-        return getBuiltInClassByName("MutableList");
+        return getBuiltInClassByName("MutableList", collectionsPackageFragment);
     }
 
     @NotNull
     public ClassDescriptor getSet() {
-        return getBuiltInClassByName("Set");
+        return getBuiltInClassByName("Set", collectionsPackageFragment);
     }
 
     @NotNull
     public ClassDescriptor getMutableSet() {
-        return getBuiltInClassByName("MutableSet");
+        return getBuiltInClassByName("MutableSet", collectionsPackageFragment);
     }
 
     @NotNull
     public ClassDescriptor getMap() {
-        return getBuiltInClassByName("Map");
+        return getBuiltInClassByName("Map", collectionsPackageFragment);
     }
 
     @NotNull
     public ClassDescriptor getMutableMap() {
-        return getBuiltInClassByName("MutableMap");
+        return getBuiltInClassByName("MutableMap", collectionsPackageFragment);
     }
 
     @NotNull
@@ -567,12 +597,12 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public ClassDescriptor getListIterator() {
-        return getBuiltInClassByName("ListIterator");
+        return getBuiltInClassByName("ListIterator", collectionsPackageFragment);
     }
 
     @NotNull
     public ClassDescriptor getMutableListIterator() {
-        return getBuiltInClassByName("MutableListIterator");
+        return getBuiltInClassByName("MutableListIterator", collectionsPackageFragment);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

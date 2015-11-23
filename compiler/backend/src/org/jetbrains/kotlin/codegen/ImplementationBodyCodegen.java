@@ -280,23 +280,23 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private static final Map<String, String> KOTLIN_MARKER_INTERFACES = new HashMap<String, String>();
     static {
-        KOTLIN_MARKER_INTERFACES.put("kotlin.Iterator", "kotlin/jvm/internal/markers/KMappedMarker");
-        KOTLIN_MARKER_INTERFACES.put("kotlin.Iterable", "kotlin/jvm/internal/markers/KMappedMarker");
-        KOTLIN_MARKER_INTERFACES.put("kotlin.Collection", "kotlin/jvm/internal/markers/KMappedMarker");
-        KOTLIN_MARKER_INTERFACES.put("kotlin.List", "kotlin/jvm/internal/markers/KMappedMarker");
-        KOTLIN_MARKER_INTERFACES.put("kotlin.ListIterator", "kotlin/jvm/internal/markers/KMappedMarker");
-        KOTLIN_MARKER_INTERFACES.put("kotlin.Set", "kotlin/jvm/internal/markers/KMappedMarker");
-        KOTLIN_MARKER_INTERFACES.put("kotlin.Map", "kotlin/jvm/internal/markers/KMappedMarker");
-        KOTLIN_MARKER_INTERFACES.put("kotlin.Map.Entry", "kotlin/jvm/internal/markers/KMappedMarker");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.collections.Iterator", "kotlin/jvm/internal/markers/KMappedMarker");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.collections.Iterable", "kotlin/jvm/internal/markers/KMappedMarker");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.collections.Collection", "kotlin/jvm/internal/markers/KMappedMarker");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.collections.List", "kotlin/jvm/internal/markers/KMappedMarker");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.collections.ListIterator", "kotlin/jvm/internal/markers/KMappedMarker");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.collections.Set", "kotlin/jvm/internal/markers/KMappedMarker");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.collections.Map", "kotlin/jvm/internal/markers/KMappedMarker");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.collections.Map.Entry", "kotlin/jvm/internal/markers/KMappedMarker");
 
-        KOTLIN_MARKER_INTERFACES.put("kotlin.MutableIterator", "kotlin/jvm/internal/markers/KMutableIterator");
-        KOTLIN_MARKER_INTERFACES.put("kotlin.MutableIterable", "kotlin/jvm/internal/markers/KMutableIterable");
-        KOTLIN_MARKER_INTERFACES.put("kotlin.MutableCollection", "kotlin/jvm/internal/markers/KMutableCollection");
-        KOTLIN_MARKER_INTERFACES.put("kotlin.MutableList", "kotlin/jvm/internal/markers/KMutableList");
-        KOTLIN_MARKER_INTERFACES.put("kotlin.MutableListIterator", "kotlin/jvm/internal/markers/KMutableListIterator");
-        KOTLIN_MARKER_INTERFACES.put("kotlin.MutableSet", "kotlin/jvm/internal/markers/KMutableSet");
-        KOTLIN_MARKER_INTERFACES.put("kotlin.MutableMap", "kotlin/jvm/internal/markers/KMutableMap");
-        KOTLIN_MARKER_INTERFACES.put("kotlin.MutableMap.MutableEntry", "kotlin/jvm/internal/markers/KMutableMap$Entry");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.collections.MutableIterator", "kotlin/jvm/internal/markers/KMutableIterator");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.collections.MutableIterable", "kotlin/jvm/internal/markers/KMutableIterable");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.collections.MutableCollection", "kotlin/jvm/internal/markers/KMutableCollection");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.collections.MutableList", "kotlin/jvm/internal/markers/KMutableList");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.collections.MutableListIterator", "kotlin/jvm/internal/markers/KMutableListIterator");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.collections.MutableSet", "kotlin/jvm/internal/markers/KMutableSet");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.collections.MutableMap", "kotlin/jvm/internal/markers/KMutableMap");
+        KOTLIN_MARKER_INTERFACES.put("kotlin.collections.MutableMap.MutableEntry", "kotlin/jvm/internal/markers/KMutableMap$Entry");
     }
 
     @NotNull

@@ -175,7 +175,7 @@ class LazyJavaClassDescriptor(
                                           ?: FakePureImplementationsProvider.getPurelyImplementedInterface(fqName)
                                           ?: return null
 
-            if (purelyImplementedFqName.isRoot || purelyImplementedFqName.parent() != KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) return null
+            if (purelyImplementedFqName.isRoot || !purelyImplementedFqName.toUnsafe().startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME)) return null
 
             val classDescriptor = c.module.builtIns.getBuiltInClassByNameNullable(purelyImplementedFqName.shortName()) ?: return null
 

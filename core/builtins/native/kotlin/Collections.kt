@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kotlin
+package kotlin.collections
 
 /**
  * Classes that inherit from this interface can be represented as a sequence of elements that can

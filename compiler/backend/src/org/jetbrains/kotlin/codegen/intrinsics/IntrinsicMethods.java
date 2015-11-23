@@ -29,7 +29,9 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
+import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES;
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME;
+import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.COLLECTIONS_PACKAGE_FQ_NAME;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class IntrinsicMethods {
@@ -76,29 +78,29 @@ public class IntrinsicMethods {
         ImmutableList<Name> primitiveCastMethods = OperatorConventions.NUMBER_CONVERSIONS.asList();
         for (Name method : primitiveCastMethods) {
             String methodName = method.asString();
-            declareIntrinsicFunction("Number", methodName, 0, NUMBER_CAST);
+            declareIntrinsicFunction(FQ_NAMES.number, methodName, 0, NUMBER_CAST);
             for (PrimitiveType type : PrimitiveType.NUMBER_TYPES) {
-                declareIntrinsicFunction(type.getTypeName().asString(), methodName, 0, NUMBER_CAST);
+                declareIntrinsicFunction(type.getTypeFqName(), methodName, 0, NUMBER_CAST);
             }
         }
 
         for (PrimitiveType type : PrimitiveType.NUMBER_TYPES) {
-            String typeName = type.getTypeName().asString();
-            declareIntrinsicFunction(typeName, "plus", 0, UNARY_PLUS);
-            declareIntrinsicFunction(typeName, "unaryPlus", 0, UNARY_PLUS);
-            declareIntrinsicFunction(typeName, "minus", 0, UNARY_MINUS);
-            declareIntrinsicFunction(typeName, "unaryMinus", 0, UNARY_MINUS);
-            declareIntrinsicFunction(typeName, "inv", 0, INV);
-            declareIntrinsicFunction(typeName, "rangeTo", 1, RANGE_TO);
-            declareIntrinsicFunction(typeName, "inc", 0, INC);
-            declareIntrinsicFunction(typeName, "dec", 0, DEC);
+            FqName typeFqName = type.getTypeFqName();
+            declareIntrinsicFunction(typeFqName, "plus", 0, UNARY_PLUS);
+            declareIntrinsicFunction(typeFqName, "unaryPlus", 0, UNARY_PLUS);
+            declareIntrinsicFunction(typeFqName, "minus", 0, UNARY_MINUS);
+            declareIntrinsicFunction(typeFqName, "unaryMinus", 0, UNARY_MINUS);
+            declareIntrinsicFunction(typeFqName, "inv", 0, INV);
+            declareIntrinsicFunction(typeFqName, "rangeTo", 1, RANGE_TO);
+            declareIntrinsicFunction(typeFqName, "inc", 0, INC);
+            declareIntrinsicFunction(typeFqName, "dec", 0, DEC);
         }
 
         for (PrimitiveType type : PrimitiveType.values()) {
-            String typeName = type.getTypeName().asString();
-            declareIntrinsicFunction(typeName, "equals", 1, EQUALS);
-            declareIntrinsicFunction(typeName, "hashCode", 0, HASH_CODE);
-            declareIntrinsicFunction(typeName, "toString", 0, TO_STRING);
+            FqName typeFqName = type.getTypeFqName();
+            declareIntrinsicFunction(typeFqName, "equals", 1, EQUALS);
+            declareIntrinsicFunction(typeFqName, "hashCode", 0, HASH_CODE);
+            declareIntrinsicFunction(typeFqName, "toString", 0, TO_STRING);
 
             intrinsicsMap.registerIntrinsic(
                     BUILT_INS_PACKAGE_FQ_NAME, null, StringsKt.decapitalize(type.getArrayTypeName().asString()) + "Of", 1, new JavaClassArray()
@@ -117,12 +119,12 @@ public class IntrinsicMethods {
         declareBinaryOp("or", IOR);
         declareBinaryOp("xor", IXOR);
 
-        declareIntrinsicFunction("Boolean", "not", 0, new Not());
+        declareIntrinsicFunction(FQ_NAMES._boolean, "not", 0, new Not());
 
-        declareIntrinsicFunction("String", "plus", 1, new Concat());
-        declareIntrinsicFunction("String", "get", 1, new StringGetChar());
+        declareIntrinsicFunction(FQ_NAMES.string, "plus", 1, new Concat());
+        declareIntrinsicFunction(FQ_NAMES.string, "get", 1, new StringGetChar());
 
-        declareIntrinsicFunction("Cloneable", "clone", 0, CLONE);
+        declareIntrinsicFunction(FQ_NAMES.cloneable, "clone", 0, CLONE);
 
         intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, KotlinBuiltIns.FQ_NAMES.any, "toString", 0, TO_STRING);
         intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, KotlinBuiltIns.FQ_NAMES.any, "identityEquals", 1, IDENTITY_EQUALS);
@@ -130,9 +132,8 @@ public class IntrinsicMethods {
         intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "arrayOfNulls", 1, new NewArray());
 
         for (PrimitiveType type : PrimitiveType.values()) {
-            String typeName = type.getTypeName().asString();
-            declareIntrinsicFunction(typeName, "compareTo", 1, new CompareTo());
-            declareIntrinsicFunction(typeName + "Iterator", "next", 0, ITERATOR_NEXT);
+            declareIntrinsicFunction(type.getTypeFqName(), "compareTo", 1, new CompareTo());
+            declareIntrinsicFunction(COLLECTIONS_PACKAGE_FQ_NAME.child(Name.identifier(type.getTypeName().asString() + "Iterator")), "next", 0, ITERATOR_NEXT);
         }
 
         declareArrayMethods();
@@ -140,44 +141,42 @@ public class IntrinsicMethods {
 
     private void declareArrayMethods() {
         for (JvmPrimitiveType jvmPrimitiveType : JvmPrimitiveType.values()) {
-            declareArrayMethodsForPrimitive(jvmPrimitiveType);
+            declareArrayMethods(jvmPrimitiveType.getPrimitiveType().getArrayTypeFqName());
         }
-
-        declareIntrinsicFunction("Array", "size", -1, ARRAY_SIZE);
-        declareIntrinsicFunction("Array", "set", 2, ARRAY_SET);
-        declareIntrinsicFunction("Array", "get", 1, ARRAY_GET);
-        declareIntrinsicFunction("Array", "clone", 0, CLONE);
-        declareIterator("Array");
+        declareArrayMethods(FQ_NAMES.array.toSafe());
     }
 
-    private void declareArrayMethodsForPrimitive(@NotNull JvmPrimitiveType jvmPrimitiveType) {
-        String arrayTypeName = jvmPrimitiveType.getPrimitiveType().getArrayTypeName().asString();
-        declareIntrinsicFunction(arrayTypeName, "size", -1, ARRAY_SIZE);
-        declareIntrinsicFunction(arrayTypeName, "set", 2, ARRAY_SET);
-        declareIntrinsicFunction(arrayTypeName, "get", 1, ARRAY_GET);
-        declareIntrinsicFunction(arrayTypeName, "clone", 0, CLONE);
-        declareIterator(arrayTypeName);
-    }
-
-    private void declareIterator(@NotNull String arrayClassName) {
-        declareIntrinsicFunction(arrayClassName, "iterator", 0, ARRAY_ITERATOR);
+    private void declareArrayMethods(@NotNull FqName arrayTypeFqName) {
+        declareIntrinsicFunction(arrayTypeFqName, "size", -1, ARRAY_SIZE);
+        declareIntrinsicFunction(arrayTypeFqName, "set", 2, ARRAY_SET);
+        declareIntrinsicFunction(arrayTypeFqName, "get", 1, ARRAY_GET);
+        declareIntrinsicFunction(arrayTypeFqName, "clone", 0, CLONE);
+        declareIntrinsicFunction(arrayTypeFqName, "iterator", 0, ARRAY_ITERATOR);
     }
 
     private void declareBinaryOp(@NotNull String methodName, int opcode) {
         BinaryOp op = new BinaryOp(opcode);
         for (PrimitiveType type : PrimitiveType.values()) {
-            declareIntrinsicFunction(type.getTypeName().asString(), methodName, 1, op);
+            declareIntrinsicFunction(type.getTypeFqName(), methodName, 1, op);
         }
     }
 
     private void declareIntrinsicFunction(
-            @NotNull String className,
+            @NotNull FqName classFqName,
             @NotNull String methodName,
             int arity,
             @NotNull IntrinsicMethod implementation
     ) {
-        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier(className)),
-                                        null, methodName, arity, implementation);
+        intrinsicsMap.registerIntrinsic(classFqName, null, methodName, arity, implementation);
+    }
+
+    private void declareIntrinsicFunction(
+            @NotNull FqNameUnsafe classFqName,
+            @NotNull String methodName,
+            int arity,
+            @NotNull IntrinsicMethod implementation
+    ) {
+        intrinsicsMap.registerIntrinsic(classFqName.toSafe(), null, methodName, arity, implementation);
     }
 
     @Nullable

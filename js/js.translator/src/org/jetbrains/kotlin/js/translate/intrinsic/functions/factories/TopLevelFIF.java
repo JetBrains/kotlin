@@ -147,8 +147,8 @@ public final class TopLevelFIF extends CompositeFIF {
         add(pattern("kotlin", "arrayOfNulls"), new KotlinFunctionIntrinsic("nullArray"));
         add(pattern("kotlin", "iterator").isExtensionOf("kotlin.Iterator"), RETURN_RECEIVER_INTRINSIC);
 
-        add(pattern("kotlin", "Map", "get").checkOverridden(), NATIVE_MAP_GET);
-        add(pattern("kotlin.js", "set").isExtensionOf("kotlin.MutableMap"), NATIVE_MAP_SET);
+        add(pattern("kotlin.collections", "Map", "get").checkOverridden(), NATIVE_MAP_GET);
+        add(pattern("kotlin.js", "set").isExtensionOf("kotlin.collections.MutableMap"), NATIVE_MAP_SET);
 
         add(pattern("java.util", "HashMap", "<init>"), new MapSelectImplementationIntrinsic(false));
         add(pattern("java.util", "HashSet", "<init>"), new MapSelectImplementationIntrinsic(true));
