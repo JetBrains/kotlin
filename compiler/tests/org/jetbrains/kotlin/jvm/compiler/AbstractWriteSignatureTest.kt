@@ -67,7 +67,7 @@ public abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
         expectations.check()
     }
 
-    private class SignatureExpectation(val header: String, val name: String, expectedJvmSignature: String, expectedGenericSignature: String) {
+    private class SignatureExpectation(val header: String, val name: String, val expectedJvmSignature: String?, expectedGenericSignature: String) {
         private var checked = false
         private val expectedSignature = formatSignature(header, expectedJvmSignature, expectedGenericSignature)
 
@@ -76,7 +76,7 @@ public abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
         fun check(name: String, actualJvmSignature: String, actualGenericSignature: String) {
             if (this.name == name) {
                 checked = true
-                val actualSignature = formatSignature(header, actualJvmSignature, actualGenericSignature)
+                val actualSignature = formatSignature(header, expectedJvmSignature?.let { actualJvmSignature }, actualGenericSignature)
                 Assert.assertEquals(expectedSignature, actualSignature)
             }
         }
@@ -167,15 +167,15 @@ public abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
             }
         }
 
-        fun addClassExpectation(name: String, jvmSignature: String, genericSignature: String) {
+        fun addClassExpectation(name: String, jvmSignature: String?, genericSignature: String) {
             classExpectations.add(SignatureExpectation("class: $name", name, jvmSignature, genericSignature))
         }
 
-        fun addFieldExpectation(className: String, memberName: String, jvmSignature: String, genericSignature: String) {
+        fun addFieldExpectation(className: String, memberName: String, jvmSignature: String?, genericSignature: String) {
             fieldExpectations.add(SignatureExpectation("field: $className::$memberName", memberName, jvmSignature, genericSignature))
         }
 
-        fun addMethodExpectation(className: String, memberName: String, jvmSignature: String, genericSignature: String) {
+        fun addMethodExpectation(className: String, memberName: String, jvmSignature: String?, genericSignature: String) {
             methodExpectations.add(SignatureExpectation("method: $className::$memberName", memberName, jvmSignature, genericSignature))
         }
     }
@@ -199,10 +199,11 @@ public abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
                 }
 
                 val jvmSignatureMatch = jvmSignatureRegex.matchExact(lines[lineNo+1])
-                val genericSignatureMatch = genericSignatureRegex.matchExact(lines[lineNo+2])
+                val genericSignatureMatch = genericSignatureRegex.matchExact(lines[lineNo+1])
+                                            ?: genericSignatureRegex.matchExact(lines[lineNo+2])
 
-                if (jvmSignatureMatch != null && genericSignatureMatch != null) {
-                    val jvmSignature = jvmSignatureMatch.group(1)
+                if (genericSignatureMatch != null) {
+                    val jvmSignature = jvmSignatureMatch?.group(1)
                     val genericSignature = genericSignatureMatch.group(1)
 
                     val classSuite = expectations.getOrCreateClassSuite(className)
@@ -230,10 +231,13 @@ public abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
     }
 
     companion object {
-        fun formatSignature(header: String, jvmSignature: String, genericSignature: String): String =
-                """// $header
-// jvm signature: $jvmSignature
-// generic signature: $genericSignature"""
+        fun formatSignature(header: String, jvmSignature: String?, genericSignature: String): String {
+            return listOf(
+                    "$header",
+                    jvmSignature?.let { "jvm signature: $it" },
+                    "generic signature: $genericSignature"
+            ).filterNotNull().joinToString("\n") { "// $it" }
+        }
 
         val expectationRegex = Regex("^// (class|method|field): *([^:]+)(::(.+))? *(//.*)?")
         val jvmSignatureRegex = Regex("^// jvm signature: *(.+) *(//.*)?")
