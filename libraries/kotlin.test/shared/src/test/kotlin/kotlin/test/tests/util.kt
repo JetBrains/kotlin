@@ -20,5 +20,3 @@ internal fun <T> setOf(vararg elements: T): Set<T> {
     return result
 }
 
-internal operator fun String.contains(sub: String) = (this as java.lang.String).contains(sub)
-
