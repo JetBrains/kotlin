@@ -17,18 +17,17 @@
 package org.jetbrains.kotlin.codegen.intrinsics
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.genInvokeAppendMethod
 import org.jetbrains.kotlin.codegen.AsmUtil.genStringBuilderConstructor
-import org.jetbrains.kotlin.codegen.Callable
-import org.jetbrains.kotlin.codegen.CallableMethod
-import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
+import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE
+import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
@@ -41,11 +40,11 @@ public class Concat : IntrinsicMethod() {
             arguments: List<KtExpression>,
             receiver: StackValue
     ): Type {
-        if (element is KtBinaryExpression && element.getOperationReference().getReferencedNameElementType() == KtTokens.PLUS) {
+        if (element is KtBinaryExpression && element.operationReference.getReferencedNameElementType() == KtTokens.PLUS) {
             // LHS + RHS
             genStringBuilderConstructor(v)
-            codegen.invokeAppend(element.getLeft())
-            codegen.invokeAppend(element.getRight())
+            codegen.invokeAppend(element.left)
+            codegen.invokeAppend(element.right)
         }
         else {
             // LHS?.plus(RHS)
@@ -60,7 +59,6 @@ public class Concat : IntrinsicMethod() {
         return JAVA_STRING_TYPE
     }
 
-
     override fun toCallable(method: CallableMethod): Callable =
             object : IntrinsicCallable(method) {
                 override fun invokeMethodWithArguments(
@@ -68,16 +66,37 @@ public class Concat : IntrinsicMethod() {
                         receiver: StackValue,
                         codegen: ExpressionCodegen
                 ): StackValue {
+                    if (resolvedCall.call.callElement.parent is KtCallableReferenceExpression) {
+                        // NB we come here only in case of inlined callable reference to String::plus.
+                        // This will map arguments properly, invoking callbacks defined in Callable.
+                        return super.invokeMethodWithArguments(resolvedCall, receiver, codegen)
+                    }
                     return StackValue.operation(returnType) {
-                        val arguments = resolvedCall.getCall().getValueArguments().map { it.getArgumentExpression()!! }
+                        val arguments = resolvedCall.call.valueArguments.map { it.getArgumentExpression()!! }
                         val actualType = generateImpl(
                                 codegen, it, returnType,
-                                resolvedCall.getCall().getCallElement(),
+                                resolvedCall.call.callElement,
                                 arguments,
                                 StackValue.receiver(resolvedCall, receiver, codegen, this)
                         )
                         StackValue.coerce(actualType, returnType, it)
                     }
+                }
+
+                override fun afterReceiverGeneration(v: InstructionAdapter) {
+                    v.visitTypeInsn(Opcodes.NEW, "java/lang/StringBuilder")
+                    v.dupX1()
+                    v.swap()
+                    v.invokespecial("java/lang/StringBuilder", "<init>", "(Ljava/lang/String;)V", false)
+                }
+
+                override fun invokeIntrinsic(v: InstructionAdapter) {
+                    // String::plus has type String.(Any?) -> String, thus we have no argument type information
+                    // in case of callable reference passed to a generic function, e.g.:
+                    //      charArrayOf('O', 'K').fold("", String::plus)
+                    // TODO Make String::plus generic, and invoke proper StringBuilder#append.
+                    AsmUtil.genInvokeAppendMethod(v, AsmTypes.OBJECT_TYPE)
+                    v.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false)
                 }
             }
 }

@@ -37,17 +37,17 @@ public abstract class IntrinsicMethod {
     }
 
     @NotNull
-    public Callable toCallable(@NotNull CallableMethod method, boolean isSuper, @NotNull ResolvedCall resolvedCall) {
+    protected Callable toCallable(@NotNull CallableMethod method, boolean isSuper, @NotNull ResolvedCall resolvedCall) {
         return toCallable(method, isSuper);
     }
 
     @NotNull
-    public Callable toCallable(@NotNull CallableMethod method, boolean isSuperCall) {
+    protected Callable toCallable(@NotNull CallableMethod method, boolean isSuperCall) {
         return toCallable(method);
     }
 
     @NotNull
-    public Callable toCallable(@NotNull CallableMethod method) {
+    protected Callable toCallable(@NotNull CallableMethod method) {
         throw new UnsupportedOperationException("Not implemented");
     }
 
