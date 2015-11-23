@@ -14,279 +14,226 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.versions;
+package org.jetbrains.kotlin.idea.versions
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.intellij.ProjectTopics;
-import com.intellij.icons.AllIcons;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.compiler.CompilerManager;
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.fileEditor.OpenFileDescriptor;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtilCore;
-import com.intellij.openapi.progress.ProcessCanceledException;
-import com.intellij.openapi.project.DumbService;
-import com.intellij.openapi.project.IndexNotReadyException;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModuleRootAdapter;
-import com.intellij.openapi.roots.ModuleRootEvent;
-import com.intellij.openapi.roots.libraries.Library;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
-import com.intellij.openapi.ui.popup.ListPopup;
-import com.intellij.openapi.ui.popup.PopupStep;
-import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
-import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.util.Key;
-import com.intellij.openapi.util.Ref;
-import com.intellij.openapi.vfs.VfsUtilCore;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.EditorNotificationPanel;
-import com.intellij.ui.EditorNotifications;
-import com.intellij.util.messages.MessageBusConnection;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.KotlinFileType;
-import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtilsKt;
-import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider;
-import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider;
+import com.google.common.base.Predicate
+import com.google.common.collect.Collections2
+import com.intellij.ProjectTopics
+import com.intellij.icons.AllIcons
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.compiler.CompilerManager
+import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.fileEditor.FileEditor
+import com.intellij.openapi.fileEditor.OpenFileDescriptor
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleUtilCore
+import com.intellij.openapi.progress.ProcessCanceledException
+import com.intellij.openapi.project.DumbService
+import com.intellij.openapi.project.IndexNotReadyException
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ModuleRootAdapter
+import com.intellij.openapi.roots.ModuleRootEvent
+import com.intellij.openapi.roots.libraries.Library
+import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.openapi.ui.popup.ListPopup
+import com.intellij.openapi.ui.popup.PopupStep
+import com.intellij.openapi.ui.popup.util.BaseListPopupStep
+import com.intellij.openapi.util.Computable
+import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.Ref
+import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.ui.EditorNotificationPanel
+import com.intellij.ui.EditorNotifications
+import com.intellij.util.messages.MessageBusConnection
+import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.configuration.*
+import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider
+import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider
 
-import javax.swing.*;
-import java.awt.*;
-import java.text.MessageFormat;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
+import javax.swing.*
+import java.awt.*
+import java.text.MessageFormat
+import java.util.Collections
+import java.util.HashSet
 
-public class UnsupportedAbiVersionNotificationPanelProvider extends EditorNotifications.Provider<EditorNotificationPanel> {
-    private static final Key<EditorNotificationPanel> KEY = Key.create("unsupported.abi.version");
+class UnsupportedAbiVersionNotificationPanelProvider(private val project: Project) : EditorNotifications.Provider<EditorNotificationPanel>() {
 
-    private final Project project;
-
-    public UnsupportedAbiVersionNotificationPanelProvider(@NotNull Project project) {
-        this.project = project;
-        MessageBusConnection connection = project.getMessageBus().connect();
-        connection.subscribe(ProjectTopics.PROJECT_ROOTS, new ModuleRootAdapter() {
-            @Override
-            public void rootsChanged(ModuleRootEvent event) {
-                updateNotifications();
+    init {
+        val connection = project.messageBus.connect()
+        connection.subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootAdapter() {
+            override fun rootsChanged(event: ModuleRootEvent?) {
+                updateNotifications()
             }
-        });
-        connection.subscribe(DumbService.DUMB_MODE, new DumbService.DumbModeListener() {
-            @Override
-            public void enteredDumbMode() {}
-
-            @Override
-            public void exitDumbMode() {
-                updateNotifications();
+        })
+        connection.subscribe(DumbService.DUMB_MODE, object : DumbService.DumbModeListener {
+            override fun enteredDumbMode() {
             }
-        });
+
+            override fun exitDumbMode() {
+                updateNotifications()
+            }
+        })
     }
 
-    @Nullable
-    public static EditorNotificationPanel checkAndCreate(@NotNull Project project) {
-        SuppressNotificationState state = ServiceManager.getService(project, SuppressNotificationState.class).getState();
-        if (state != null && state.isSuppressed) {
-            return null;
+    private fun doCreate(badRoots: Collection<VirtualFile>): EditorNotificationPanel {
+        val answer = ErrorNotificationPanel()
+
+        val kotlinLibraries = findAllUsedLibraries(project).keySet()
+        val badRuntimeLibraries = Collections2.filter(kotlinLibraries) { library ->
+            assert(library != null) { "library should be non null" }
+            val runtimeJar = getLocalJar(JavaRuntimePresentationProvider.getRuntimeJar(library))
+            val jsLibJar = getLocalJar(JSLibraryStdPresentationProvider.getJsStdLibJar(library))
+            badRoots.contains(runtimeJar) || badRoots.contains(jsLibJar)
         }
-
-        Collection<VirtualFile> badRoots = collectBadRoots(project);
-        if (!badRoots.isEmpty()) {
-            return new UnsupportedAbiVersionNotificationPanelProvider(project).doCreate(badRoots);
-        }
-
-        return null;
-    }
-
-    private EditorNotificationPanel doCreate(final Collection<VirtualFile> badRoots) {
-        EditorNotificationPanel answer = new ErrorNotificationPanel();
-
-        Collection<Library> kotlinLibraries = KotlinRuntimeLibraryUtilKt.findAllUsedLibraries(project).keySet();
-        final Collection<Library> badRuntimeLibraries = Collections2.filter(kotlinLibraries, new Predicate<Library>() {
-            @Override
-            public boolean apply(@Nullable Library library) {
-                assert library != null : "library should be non null";
-                VirtualFile runtimeJar = KotlinRuntimeLibraryUtilKt.getLocalJar(JavaRuntimePresentationProvider.getRuntimeJar(library));
-                VirtualFile jsLibJar = KotlinRuntimeLibraryUtilKt.getLocalJar(JSLibraryStdPresentationProvider.getJsStdLibJar(library));
-                return badRoots.contains(runtimeJar) || badRoots.contains(jsLibJar);
-            }
-        });
 
         if (!badRuntimeLibraries.isEmpty()) {
-            int otherBadRootsCount = badRoots.size() - badRuntimeLibraries.size();
+            val otherBadRootsCount = badRoots.size - badRuntimeLibraries.size
 
-            String text = MessageFormat.format("<html><b>{0,choice,0#|1#|1<Some }Kotlin runtime librar{0,choice,0#|1#y|1<ies}</b>" +
-                                               "{1,choice,0#|1# and one other jar|1< and {1} other jars} " +
-                                               "{1,choice,0#has|0<have} an unsupported format</html>",
-                                               badRuntimeLibraries.size(),
-                                               otherBadRootsCount);
+            val text = MessageFormat.format("<html><b>{0,choice,0#|1#|1<Some }Kotlin runtime librar{0,choice,0#|1#y|1<ies}</b>" + "{1,choice,0#|1# and one other jar|1< and {1} other jars} " + "{1,choice,0#has|0<have} an unsupported format</html>",
+                                            badRuntimeLibraries.size,
+                                            otherBadRootsCount)
 
-            String actionLabelText = MessageFormat.format("Update {0,choice,0#|1#|1<all }Kotlin runtime librar{0,choice,0#|1#y|1<ies} ",
-                                                badRuntimeLibraries.size());
+            val actionLabelText = MessageFormat.format("Update {0,choice,0#|1#|1<all }Kotlin runtime librar{0,choice,0#|1#y|1<ies} ",
+                                                       badRuntimeLibraries.size)
 
-            answer.setText(text);
-            answer.createActionLabel(actionLabelText, new Runnable() {
-                @Override
-                public void run() {
-                    KotlinRuntimeLibraryUtilKt.updateLibraries(project, badRuntimeLibraries);
-                }
-            });
+            answer.setText(text)
+            answer.createActionLabel(actionLabelText) { updateLibraries(project, badRuntimeLibraries) }
             if (otherBadRootsCount > 0) {
-                createShowPathsActionLabel(answer, "Show all");
+                createShowPathsActionLabel(answer, "Show all")
             }
         }
-        else if (badRoots.size() == 1) {
-            final VirtualFile root = badRoots.iterator().next();
-            String presentableName = root.getPresentableName();
-            answer.setText("<html>Kotlin library <b>'" + presentableName + "'</b> " +
-                           "has an unsupported format. Please update the library or the plugin</html>");
+        else if (badRoots.size == 1) {
+            val root = badRoots.iterator().next()
+            val presentableName = root.presentableName
+            answer.setText("<html>Kotlin library <b>'$presentableName'</b> has an unsupported format. Please update the library or the plugin</html>")
 
-            answer.createActionLabel("Go to " + presentableName, new Runnable() {
-                @Override
-                public void run() {
-                    navigateToLibraryRoot(project, root);
-                }
-            });
+            answer.createActionLabel("Go to " + presentableName) { navigateToLibraryRoot(project, root) }
         }
         else {
-            answer.setText("Some Kotlin libraries attached to this project have unsupported format. Please update the libraries or the plugin");
-            createShowPathsActionLabel(answer, "Show paths");
+            answer.setText("Some Kotlin libraries attached to this project have unsupported format. Please update the libraries or the plugin")
+            createShowPathsActionLabel(answer, "Show paths")
         }
-        return answer;
+        return answer
     }
 
-    private static void navigateToLibraryRoot(Project project, @NotNull VirtualFile root) {
-        new OpenFileDescriptor(project, root).navigate(true);
+    private fun createShowPathsActionLabel(answer: EditorNotificationPanel, labelText: String) {
+        val label = Ref<Component>(null)
+        val action = Runnable {
+            DumbService.getInstance(project).tryRunReadActionInSmartMode({
+                                                                             val badRoots = collectBadRoots(project)
+                                                                             assert(!badRoots.isEmpty()) { "This action should only be called when bad roots are present" }
+
+                                                                             val listPopupModel = LibraryRootsPopupModel("Unsupported format", project, badRoots)
+                                                                             val popup = JBPopupFactory.getInstance().createListPopup(listPopupModel)
+                                                                             popup.showUnderneathOf(label.get())
+
+                                                                             null
+                                                                         }, "Can't show all paths during index update")
+        }
+        label.set(answer.createActionLabel(labelText, action))
     }
 
-    private void createShowPathsActionLabel(EditorNotificationPanel answer, String labelText) {
-        final Ref<Component> label = new Ref<Component>(null);
-        Runnable action = new Runnable() {
-            @Override
-            public void run() {
-                DumbService.getInstance(project).tryRunReadActionInSmartMode(new Computable<Object>() {
-                    @Override
-                    public Object compute() {
-                        Collection<VirtualFile> badRoots = collectBadRoots(project);
-                        assert !badRoots.isEmpty() : "This action should only be called when bad roots are present";
-
-                        LibraryRootsPopupModel listPopupModel = new LibraryRootsPopupModel("Unsupported format", project, badRoots);
-                        ListPopup popup = JBPopupFactory.getInstance().createListPopup(listPopupModel);
-                        popup.showUnderneathOf(label.get());
-
-                        return null;
-                    }
-                }, "Can't show all paths during index update");
-            }
-        };
-        label.set(answer.createActionLabel(labelText, action));
+    override fun getKey(): Key<EditorNotificationPanel> {
+        return KEY
     }
 
-    @NotNull
-    @Override
-    public Key<EditorNotificationPanel> getKey() {
-        return KEY;
-    }
-
-    @Nullable
-    @Override
-    public EditorNotificationPanel createNotificationPanel(@NotNull VirtualFile file, @NotNull FileEditor fileEditor) {
+    override fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor): EditorNotificationPanel? {
         try {
-            if (DumbService.isDumb(project)) return null;
-            if (ApplicationManager.getApplication().isUnitTestMode()) return null;
-            if (file.getFileType() != KotlinFileType.INSTANCE) return null;
+            if (DumbService.isDumb(project)) return null
+            if (ApplicationManager.getApplication().isUnitTestMode) return null
+            if (file.fileType !== KotlinFileType.INSTANCE) return null
 
-            if (CompilerManager.getInstance(project).isExcludedFromCompilation(file)) return null;
+            if (CompilerManager.getInstance(project).isExcludedFromCompilation(file)) return null
 
-            Module module = ModuleUtilCore.findModuleForFile(file, project);
-            if (module == null) return null;
+            val module = ModuleUtilCore.findModuleForFile(file, project) ?: return null
 
-            if (!ConfigureKotlinInProjectUtilsKt.isModuleConfigured(module)) return null;
+            if (!isModuleConfigured(module)) return null
 
-            return checkAndCreate(project);
+            return checkAndCreate(project)
         }
-        catch (ProcessCanceledException e) {
+        catch (e: ProcessCanceledException) {
             // Ignore
         }
-        catch (IndexNotReadyException e) {
-            DumbService.getInstance(project).runWhenSmart(updateNotifications);
+        catch (e: IndexNotReadyException) {
+            DumbService.getInstance(project).runWhenSmart(updateNotifications)
         }
 
-        return null;
+        return null
     }
 
-    private static class LibraryRootsPopupModel extends BaseListPopupStep<VirtualFile> {
-        private final Project project;
+    private class LibraryRootsPopupModel(title: String, private val project: Project, roots: Collection<VirtualFile>) : BaseListPopupStep<VirtualFile>(title, roots.toArray<VirtualFile>(arrayOfNulls<VirtualFile>(roots.size))) {
 
-        public LibraryRootsPopupModel(@NotNull String title, @NotNull Project project, @NotNull Collection<VirtualFile> roots) {
-            super(title, roots.toArray(new VirtualFile[roots.size()]));
-            this.project = project;
+        override fun getTextFor(root: VirtualFile): String {
+            val relativePath = VfsUtilCore.getRelativePath(root, project.baseDir, '/')
+            return relativePath ?: root.path
         }
 
-        @NotNull
-        @Override
-        public String getTextFor(VirtualFile root) {
-            String relativePath = VfsUtilCore.getRelativePath(root, project.getBaseDir(), '/');
-            return relativePath != null ? relativePath : root.getPath();
-        }
-
-        @Override
-        public Icon getIconFor(VirtualFile aValue) {
-            if (aValue.isDirectory()) {
-                return AllIcons.Nodes.Folder;
+        override fun getIconFor(aValue: VirtualFile): Icon? {
+            if (aValue.isDirectory) {
+                return AllIcons.Nodes.Folder
             }
-            return AllIcons.FileTypes.Archive;
+            return AllIcons.FileTypes.Archive
         }
 
-        @Override
-        public PopupStep onChosen(VirtualFile selectedValue, boolean finalChoice) {
-            navigateToLibraryRoot(project, selectedValue);
-            return FINAL_CHOICE;
+        override fun onChosen(selectedValue: VirtualFile?, finalChoice: Boolean): PopupStep<Any>? {
+            navigateToLibraryRoot(project, selectedValue)
+            return PopupStep.FINAL_CHOICE
         }
 
-        @Override
-        public boolean isSpeedSearchEnabled() {
-            return true;
+        override fun isSpeedSearchEnabled(): Boolean {
+            return true
         }
     }
 
-    private static class ErrorNotificationPanel extends EditorNotificationPanel {
-        public ErrorNotificationPanel() {
-            myLabel.setIcon(AllIcons.General.Error);
+    private class ErrorNotificationPanel : EditorNotificationPanel() {
+        init {
+            myLabel.icon = AllIcons.General.Error
         }
     }
 
-    private final Runnable updateNotifications = new Runnable() {
-        @Override
-        public void run() {
-            updateNotifications();
-        }
-    };
+    private val updateNotifications = Runnable { updateNotifications() }
 
-    private void updateNotifications() {
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                if (!project.isDisposed()) {
-                    EditorNotifications.getInstance(project).updateAllNotifications();
-                }
+    private fun updateNotifications() {
+        ApplicationManager.getApplication().invokeLater {
+            if (!project.isDisposed) {
+                EditorNotifications.getInstance(project).updateAllNotifications()
             }
-        });
+        }
     }
 
-    @NotNull
-    private static Collection<VirtualFile> collectBadRoots(@NotNull Project project) {
-        Collection<VirtualFile> badJVMRoots = KotlinRuntimeLibraryUtilKt.getLibraryRootsWithAbiIncompatibleKotlinClasses(project);
-        Collection<VirtualFile> badJSRoots = KotlinRuntimeLibraryUtilKt.getLibraryRootsWithAbiIncompatibleForKotlinJs(project);
+    companion object {
+        private val KEY = Key.create<EditorNotificationPanel>("unsupported.abi.version")
 
-        if (badJVMRoots.isEmpty() && badJSRoots.isEmpty()) return Collections.emptyList();
+        fun checkAndCreate(project: Project): EditorNotificationPanel? {
+            val state = ServiceManager.getService(project, SuppressNotificationState::class.java).state
+            if (state != null && state.isSuppressed) {
+                return null
+            }
 
-        Collection<VirtualFile> badRoots = new HashSet<VirtualFile>();
-        badRoots.addAll(badJVMRoots);
-        badRoots.addAll(badJSRoots);
+            val badRoots = collectBadRoots(project)
+            if (!badRoots.isEmpty()) {
+                return UnsupportedAbiVersionNotificationPanelProvider(project).doCreate(badRoots)
+            }
 
-        return badRoots;
+            return null
+        }
+
+        private fun navigateToLibraryRoot(project: Project, root: VirtualFile) {
+            OpenFileDescriptor(project, root).navigate(true)
+        }
+
+        private fun collectBadRoots(project: Project): Collection<VirtualFile> {
+            val badJVMRoots = getLibraryRootsWithAbiIncompatibleKotlinClasses(project)
+            val badJSRoots = getLibraryRootsWithAbiIncompatibleForKotlinJs(project)
+
+            if (badJVMRoots.isEmpty() && badJSRoots.isEmpty()) return emptyList()
+
+            val badRoots = HashSet<VirtualFile>()
+            badRoots.addAll(badJVMRoots)
+            badRoots.addAll(badJSRoots)
+
+            return badRoots
+        }
     }
 }
