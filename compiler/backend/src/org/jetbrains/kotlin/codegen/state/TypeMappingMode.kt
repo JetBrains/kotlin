@@ -16,11 +16,17 @@
 
 package org.jetbrains.kotlin.codegen.state
 
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.Variance
+
 internal class TypeMappingMode private constructor(
         val needPrimitiveBoxing: Boolean = false,
         val isForAnnotationParameter: Boolean = false,
-        val writeDeclarationSiteProjections: Boolean = true,
-        val genericArgumentMode: TypeMappingMode? = null
+        // Here DeclarationSiteWildcards means wildcard generated because of declaration-site variance
+        val skipDeclarationSiteWildcards: Boolean = false,
+        val skipDeclarationSiteWildcardsIfPossible: Boolean = false,
+        private val genericArgumentMode: TypeMappingMode? = null,
+        private val genericContravariantArgumentMode: TypeMappingMode? = genericArgumentMode
 ) {
     companion object {
         /**
@@ -35,13 +41,12 @@ internal class TypeMappingMode private constructor(
         @JvmField
         val DEFAULT = TypeMappingMode(genericArgumentMode = GENERIC_TYPE)
 
-
         /**
          * kotlin.Int is mapped to Ljava/lang/Integer;
          * No projections allowed in immediate arguments
          */
         @JvmField
-        val SUPER_TYPE = TypeMappingMode(needPrimitiveBoxing = true, writeDeclarationSiteProjections = false, genericArgumentMode = GENERIC_TYPE)
+        val SUPER_TYPE = TypeMappingMode(needPrimitiveBoxing = true, skipDeclarationSiteWildcards = true, genericArgumentMode = GENERIC_TYPE)
 
         /**
          * kotlin.reflect.KClass mapped to java.lang.Class
@@ -50,9 +55,49 @@ internal class TypeMappingMode private constructor(
         @JvmField
         val VALUE_FOR_ANNOTATION = TypeMappingMode(
                 isForAnnotationParameter = true,
-                genericArgumentMode = TypeMappingMode(isForAnnotationParameter = true, needPrimitiveBoxing = true))
+                genericArgumentMode = TypeMappingMode(isForAnnotationParameter = true, needPrimitiveBoxing = true, genericArgumentMode = GENERIC_TYPE))
 
+
+        @JvmStatic
+        fun getOptimalModeForValueParameter(
+                type: KotlinType
+        ) = getOptimalModeForSignaturePart(type, isForAnnotationParameter = false, canBeUsedInSupertypePosition = true)
+
+        @JvmStatic
+        fun getOptimalModeForReturnType(
+                type: KotlinType,
+                isAnnotationMethod: Boolean
+        ) = getOptimalModeForSignaturePart(type, isForAnnotationParameter = isAnnotationMethod, canBeUsedInSupertypePosition = false)
+
+        private fun getOptimalModeForSignaturePart(
+                type: KotlinType,
+                isForAnnotationParameter: Boolean,
+                canBeUsedInSupertypePosition: Boolean
+        ): TypeMappingMode {
+            if (type.arguments.isEmpty()) return DEFAULT
+
+            val contravariantArgumentMode =
+                if (!canBeUsedInSupertypePosition)
+                    TypeMappingMode(
+                            needPrimitiveBoxing = true,
+                            isForAnnotationParameter = isForAnnotationParameter,
+                            skipDeclarationSiteWildcards = false,
+                            skipDeclarationSiteWildcardsIfPossible = true)
+                else
+                    null
+
+            return TypeMappingMode(
+                    needPrimitiveBoxing = true,
+                    isForAnnotationParameter = isForAnnotationParameter,
+                    skipDeclarationSiteWildcards = !canBeUsedInSupertypePosition,
+                    skipDeclarationSiteWildcardsIfPossible = true,
+                    genericContravariantArgumentMode = contravariantArgumentMode)
+        }
     }
 
-    fun toGenericArgumentMode(): TypeMappingMode = genericArgumentMode ?: this
+    fun toGenericArgumentMode(effectiveVariance: Variance): TypeMappingMode =
+            when (effectiveVariance) {
+                Variance.IN_VARIANCE -> genericContravariantArgumentMode ?: this
+                else -> genericArgumentMode ?: this
+            }
 }
