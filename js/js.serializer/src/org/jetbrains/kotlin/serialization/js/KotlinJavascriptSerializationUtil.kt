@@ -133,7 +133,7 @@ public object KotlinJavascriptSerializationUtil {
         strings.serializeTo(nameStream)
         val stringBytes = nameStream.toByteArray()
 
-        if (!stringBytes.isEmpty()) {
+        if (!stringBytes.isEmpty() && !Arrays.equals(stringBytes, STRING_TABLE_DEFAULT_BYTES)) {
             writeFun(KotlinJavascriptSerializedResourcePaths.getStringTableFilePath(fqName), stringBytes)
         }
     }
