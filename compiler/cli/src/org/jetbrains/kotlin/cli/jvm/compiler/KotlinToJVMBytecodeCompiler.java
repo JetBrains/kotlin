@@ -61,9 +61,13 @@ import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.kotlin.util.PerformanceCounter;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.KotlinPaths;
 
 import java.io.File;
+import java.io.PrintStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
@@ -253,15 +257,39 @@ public class KotlinToJVMBytecodeCompiler {
     ) {
         Class<?> scriptClass = compileScript(configuration, paths, environment);
         if (scriptClass == null) return;
+        Constructor<?> scriptConstructor = getScriptConstructor(scriptClass);
 
         try {
-            scriptClass.getConstructor(String[].class).newInstance(new Object[] {ArrayUtil.toStringArray(scriptArgs)});
+            scriptConstructor.newInstance(new Object[] {ArrayUtil.toStringArray(scriptArgs)});
         }
-        catch (RuntimeException e) {
-            throw e;
+        catch (Throwable e) {
+            reportExceptionFromScript(e);
         }
-        catch (Exception e) {
-            throw new RuntimeException("Failed to evaluate script: " + e, e);
+    }
+
+    private static void reportExceptionFromScript(@NotNull  Throwable exception) {
+        // expecting InvocationTargetException from constructor invocation with cause that describes the actual cause
+        PrintStream stream = System.err;
+        Throwable cause = exception.getCause();
+        if (!(exception instanceof InvocationTargetException) || cause == null) {
+            exception.printStackTrace(stream);
+            return;
+        }
+        stream.println(cause);
+        StackTraceElement[] fullTrace = cause.getStackTrace();
+        int relevantEntries = fullTrace.length - exception.getStackTrace().length;
+        for (int i = 0; i < relevantEntries; i++) {
+            stream.println("\tat " + fullTrace[i]);
+        }
+    }
+
+    @NotNull
+    private static Constructor<?> getScriptConstructor(Class<?> scriptClass) {
+        try {
+            return scriptClass.getConstructor(String[].class);
+        }
+        catch (NoSuchMethodException e) {
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 
