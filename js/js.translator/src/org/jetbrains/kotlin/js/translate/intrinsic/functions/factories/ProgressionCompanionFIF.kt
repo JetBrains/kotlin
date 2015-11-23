@@ -34,7 +34,7 @@ object ProgressionCompanionFIF : CompositeFIF() {
         add(methodPattern("CharProgression"), CallProgressionConstructorIntrinsic("CharProgression"))
     }
 
-    private fun methodPattern(builtinProgressionName: String) = pattern("kotlin", builtinProgressionName, "Companion", "fromClosedRange")
+    private fun methodPattern(builtinProgressionName: String) = pattern("kotlin.ranges", builtinProgressionName, "Companion", "fromClosedRange")
 
     private class CallProgressionConstructorIntrinsic(val libraryProgressionName: String) : FunctionIntrinsic() {
         override fun apply(receiver: JsExpression?, arguments: MutableList<JsExpression>, context: TranslationContext): JsExpression

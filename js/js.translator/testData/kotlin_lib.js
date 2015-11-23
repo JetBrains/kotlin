@@ -888,7 +888,7 @@
 
     lazyInitClasses.NumberRange = Kotlin.createClass(
         function() {
-            return [Kotlin.modules['builtins'].kotlin.ClosedRange, Kotlin.NumberProgression]
+            return [Kotlin.modules['builtins'].kotlin.ranges.ClosedRange, Kotlin.NumberProgression]
         },
         function $fun(start, endInclusive) {
             $fun.baseInitializer.call(this, start, endInclusive, 1);
@@ -976,7 +976,7 @@
 
     lazyInitClasses.LongRange = Kotlin.createClass(
         function () {
-            return [Kotlin.modules['builtins'].kotlin.ClosedRange, Kotlin.LongProgression];
+            return [Kotlin.modules['builtins'].kotlin.ranges.ClosedRange, Kotlin.LongProgression];
         },
         function $fun(start, endInclusive) {
             $fun.baseInitializer.call(this, start, endInclusive, Kotlin.Long.ONE);
@@ -1058,7 +1058,7 @@
 
     lazyInitClasses.CharRange = Kotlin.createClass(
         function() {
-            return [Kotlin.modules['builtins'].kotlin.ClosedRange, Kotlin.CharProgression]
+            return [Kotlin.modules['builtins'].kotlin.ranges.ClosedRange, Kotlin.CharProgression]
         },
         function $fun(start, endInclusive) {
             $fun.baseInitializer.call(this, start, endInclusive, 1);

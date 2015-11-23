@@ -76,6 +76,7 @@ internal class ${t}ProgressionIterator(start: $t, val end: $t, val increment: $t
 }
 
 class GenerateProgressionIterators(out: PrintWriter) : BuiltInsSourceGenerator(out) {
+    override fun getPackage() = "kotlin.ranges"
     override fun generateBody() {
         for (kind in ProgressionKind.values()) {
             if (kind != FLOAT && kind != DOUBLE) {

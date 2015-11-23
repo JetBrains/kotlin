@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.generators.builtins.ProgressionKind.*
 import java.io.PrintWriter
 
 class GenerateRanges(out: PrintWriter) : BuiltInsSourceGenerator(out) {
+    override fun getPackage() = "kotlin.ranges"
     override fun generateBody() {
         for (kind in ProgressionKind.values()) {
             val t = kind.capitalized

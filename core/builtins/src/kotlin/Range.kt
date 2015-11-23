@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kotlin
+package kotlin.ranges
 
 /**
  * Represents a range of values (for example, numbers or characters).

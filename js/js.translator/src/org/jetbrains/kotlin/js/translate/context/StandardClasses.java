@@ -98,15 +98,15 @@ public final class StandardClasses {
             if (type == PrimitiveType.CHAR || type == PrimitiveType.LONG) continue;
 
             String typeName = type.getTypeName().asString();
-            standardClasses.declare().forFQ("kotlin." + typeName + "Range").kotlinClass("NumberRange");
-            standardClasses.declare().forFQ("kotlin." + typeName + "Progression").kotlinClass("NumberProgression");
+            standardClasses.declare().forFQ("kotlin.ranges." + typeName + "Range").kotlinClass("NumberRange");
+            standardClasses.declare().forFQ("kotlin.ranges." + typeName + "Progression").kotlinClass("NumberProgression");
         }
 
-        standardClasses.declare().forFQ("kotlin.LongRange").kotlinClass("LongRange");
-        standardClasses.declare().forFQ("kotlin.CharRange").kotlinClass("CharRange");
+        standardClasses.declare().forFQ("kotlin.ranges.LongRange").kotlinClass("LongRange");
+        standardClasses.declare().forFQ("kotlin.ranges.CharRange").kotlinClass("CharRange");
 
-        standardClasses.declare().forFQ("kotlin.LongProgression").kotlinClass("LongProgression");
-        standardClasses.declare().forFQ("kotlin.CharProgression").kotlinClass("CharProgression");
+        standardClasses.declare().forFQ("kotlin.ranges.LongProgression").kotlinClass("LongProgression");
+        standardClasses.declare().forFQ("kotlin.ranges.CharProgression").kotlinClass("CharProgression");
 
         standardClasses.declare().forFQ("kotlin.Enum").kotlinClass("Enum");
 

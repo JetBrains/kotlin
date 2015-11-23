@@ -23,6 +23,7 @@ import java.io.PrintWriter
 
 class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
+    override fun getPackage() = "kotlin.ranges"
     private fun generateDiscreteBody(kind: ProgressionKind) {
         require(kind != FLOAT && kind != DOUBLE)
 

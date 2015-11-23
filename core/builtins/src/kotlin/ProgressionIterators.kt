@@ -16,7 +16,7 @@
 
 // Auto-generated file. DO NOT EDIT!
 
-package kotlin
+package kotlin.ranges
 
 /**
  * An iterator over a progression of values of type `Byte`.

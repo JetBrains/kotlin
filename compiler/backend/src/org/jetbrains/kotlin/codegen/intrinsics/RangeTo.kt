@@ -24,20 +24,23 @@ import org.jetbrains.org.objectweb.asm.Type.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 class RangeTo : IntrinsicMethod() {
-    private fun nameToPrimitive(name: String): Type =
-            when (name) {
-                "Double" -> DOUBLE_TYPE
-                "Float" -> FLOAT_TYPE
-                "Long" -> LONG_TYPE
-                "Int" -> INT_TYPE
-                "Short" -> SHORT_TYPE
-                "Char" -> CHAR_TYPE
-                "Byte" -> BYTE_TYPE
-                else -> throw IllegalStateException("RangeTo intrinsic can only work for primitive types: $name")
-            }
+    private fun rangeTypeToPrimitiveType(rangeType: Type): Type {
+        val fqName = rangeType.internalName
+        val name = fqName.substringAfter("kotlin/ranges/").substringBefore("Range")
+        return when (name) {
+            "Double" -> DOUBLE_TYPE
+            "Float" -> FLOAT_TYPE
+            "Long" -> LONG_TYPE
+            "Int" -> INT_TYPE
+            "Short" -> SHORT_TYPE
+            "Char" -> CHAR_TYPE
+            "Byte" -> BYTE_TYPE
+            else -> throw IllegalStateException("RangeTo intrinsic can only work for primitive types: $fqName")
+        }
+    }
 
     override fun toCallable(method: CallableMethod): Callable {
-        val argType = nameToPrimitive(method.returnType.internalName.substringAfter("kotlin/").substringBefore("Range"))
+        val argType = rangeTypeToPrimitiveType(method.returnType)
         return object : IntrinsicCallable(
                 method.returnType,
                 method.valueParameterTypes.map { argType },

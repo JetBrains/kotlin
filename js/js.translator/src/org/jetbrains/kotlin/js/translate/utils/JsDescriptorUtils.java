@@ -156,7 +156,7 @@ public final class JsDescriptorUtils {
 
     public static boolean isBuiltin(@NotNull DeclarationDescriptor descriptor) {
         PackageFragmentDescriptor containingPackageFragment = DescriptorUtils.getParentOfType(descriptor, PackageFragmentDescriptor.class);
-        return containingPackageFragment == org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns(descriptor).getBuiltInsPackageFragment();
+        return org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns(descriptor).isBuiltInPackageFragment(containingPackageFragment);
     }
 
     @Nullable

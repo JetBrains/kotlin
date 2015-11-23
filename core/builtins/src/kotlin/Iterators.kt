@@ -16,7 +16,7 @@
 
 // Auto-generated file. DO NOT EDIT!
 
-package kotlin
+package kotlin.collections
 
 /** An iterator over a sequence of values of type `Byte`. */
 public abstract class ByteIterator : Iterator<Byte> {

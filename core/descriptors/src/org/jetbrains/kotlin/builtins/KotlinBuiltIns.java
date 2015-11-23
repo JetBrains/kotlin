@@ -50,15 +50,21 @@ public abstract class KotlinBuiltIns {
     public static final Name BUILT_INS_PACKAGE_NAME = Name.identifier("kotlin");
     public static final FqName BUILT_INS_PACKAGE_FQ_NAME = FqName.topLevel(BUILT_INS_PACKAGE_NAME);
     public static final FqName ANNOTATION_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("annotation"));
+    public static final FqName COLLECTIONS_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("collections"));
+    public static final FqName RANGES_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("ranges"));
 
     public static final Set<FqName> BUILT_INS_PACKAGE_FQ_NAMES = setOf(
             BUILT_INS_PACKAGE_FQ_NAME,
+            COLLECTIONS_PACKAGE_FQ_NAME,
+            RANGES_PACKAGE_FQ_NAME,
             ANNOTATION_PACKAGE_FQ_NAME,
             ReflectionTypesKt.getKOTLIN_REFLECT_FQ_NAME()
     );
 
     protected final ModuleDescriptorImpl builtInsModule;
     private final BuiltinsPackageFragment builtinsPackageFragment;
+    private final BuiltinsPackageFragment collectionsPackageFragment;
+    private final BuiltinsPackageFragment rangesPackageFragment;
     private final BuiltinsPackageFragment annotationPackageFragment;
 
     private final Map<PrimitiveType, KotlinType> primitiveTypeToArrayKotlinType;
@@ -89,6 +95,8 @@ public abstract class KotlinBuiltIns {
         builtInsModule.setDependencies(builtInsModule);
 
         builtinsPackageFragment = (BuiltinsPackageFragment) single(packageFragmentProvider.getPackageFragments(BUILT_INS_PACKAGE_FQ_NAME));
+        collectionsPackageFragment = (BuiltinsPackageFragment) single(packageFragmentProvider.getPackageFragments(COLLECTIONS_PACKAGE_FQ_NAME));
+        rangesPackageFragment = (BuiltinsPackageFragment) single(packageFragmentProvider.getPackageFragments(RANGES_PACKAGE_FQ_NAME));
         annotationPackageFragment = (BuiltinsPackageFragment) single(packageFragmentProvider.getPackageFragments(ANNOTATION_PACKAGE_FQ_NAME));
 
         primitiveTypeToArrayKotlinType = new EnumMap<PrimitiveType, KotlinType>(PrimitiveType.class);
@@ -204,6 +212,10 @@ public abstract class KotlinBuiltIns {
         return builtinsPackageFragment;
     }
 
+    public boolean isBuiltInPackageFragment(@Nullable PackageFragmentDescriptor packageFragment) {
+        return packageFragment != null && packageFragment.getContainingDeclaration() == getBuiltInsModule();
+    }
+
     @NotNull
     public MemberScope getBuiltInsPackageScope() {
         return builtinsPackageFragment.getMemberScope();
@@ -222,24 +234,32 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public ClassDescriptor getAnnotationClassByName(@NotNull Name simpleName) {
-        ClassifierDescriptor classifier = annotationPackageFragment.getMemberScope().getContributedClassifier(simpleName,
-                                                                                                              NoLookupLocation.FROM_BUILTINS);
-        assert classifier instanceof ClassDescriptor : "Must be a class descriptor " + simpleName + ", but was " +
-                                                       (classifier == null ? "null" : classifier.toString());
-        return (ClassDescriptor) classifier;
+        return getBuiltInClassByName(simpleName, annotationPackageFragment);
     }
 
     @NotNull
     public ClassDescriptor getBuiltInClassByName(@NotNull Name simpleName) {
-        ClassDescriptor classDescriptor = getBuiltInClassByNameNullable(simpleName);
+        return getBuiltInClassByName(simpleName, getBuiltInsPackageFragment());
+    }
+
+    @NotNull
+    private static ClassDescriptor getBuiltInClassByName(@NotNull Name simpleName, @NotNull PackageFragmentDescriptor packageFragment) {
+        ClassDescriptor classDescriptor = getBuiltInClassByNameNullable(simpleName, packageFragment);
         assert classDescriptor != null : "Built-in class " + simpleName + " is not found";
         return classDescriptor;
     }
 
     @Nullable
     public ClassDescriptor getBuiltInClassByNameNullable(@NotNull Name simpleName) {
-        ClassifierDescriptor classifier = getBuiltInsPackageFragment().getMemberScope().getContributedClassifier(simpleName,
-                                                                                                                 NoLookupLocation.FROM_BUILTINS);
+        return getBuiltInClassByNameNullable(simpleName, getBuiltInsPackageFragment());
+    }
+
+    @Nullable
+    private static ClassDescriptor getBuiltInClassByNameNullable(@NotNull Name simpleName, @NotNull PackageFragmentDescriptor packageFragment) {
+        ClassifierDescriptor classifier = packageFragment.getMemberScope().getContributedClassifier(
+                simpleName,
+                NoLookupLocation.FROM_BUILTINS);
+
         assert classifier == null ||
                classifier instanceof ClassDescriptor : "Must be a class descriptor " + simpleName + ", but was " + classifier;
         return (ClassDescriptor) classifier;
@@ -249,6 +269,13 @@ public abstract class KotlinBuiltIns {
     private ClassDescriptor getBuiltInClassByName(@NotNull String simpleName) {
         return getBuiltInClassByName(Name.identifier(simpleName));
     }
+
+    @NotNull
+    private static ClassDescriptor getBuiltInClassByName(@NotNull String simpleName, PackageFragmentDescriptor packageFragment) {
+        return getBuiltInClassByName(Name.identifier(simpleName), packageFragment);
+    }
+
+
 
     // Special
 
@@ -314,10 +341,10 @@ public abstract class KotlinBuiltIns {
     @NotNull
     public Set<DeclarationDescriptor> getIntegralRanges() {
         return SetsKt.<DeclarationDescriptor>setOf(
-                getBuiltInClassByName("ByteRange"),
-                getBuiltInClassByName("ShortRange"),
-                getBuiltInClassByName("CharRange"),
-                getBuiltInClassByName("IntRange")
+                getBuiltInClassByName("ByteRange", rangesPackageFragment),
+                getBuiltInClassByName("ShortRange", rangesPackageFragment),
+                getBuiltInClassByName("CharRange", rangesPackageFragment),
+                getBuiltInClassByName("IntRange", rangesPackageFragment)
         );
     }
 

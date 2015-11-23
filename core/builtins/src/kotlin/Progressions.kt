@@ -16,7 +16,7 @@
 
 // Auto-generated file. DO NOT EDIT!
 
-package kotlin
+package kotlin.ranges
 
 import kotlin.internal.getProgressionLastElement
 

@@ -16,7 +16,7 @@
 
 // Auto-generated file. DO NOT EDIT!
 
-package kotlin
+package kotlin.ranges
 
 @Deprecated("Use IntRange instead.", ReplaceWith("IntRange"), level = DeprecationLevel.WARNING)
 /**
