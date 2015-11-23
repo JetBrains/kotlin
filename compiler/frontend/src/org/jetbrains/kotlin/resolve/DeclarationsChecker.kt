@@ -37,6 +37,35 @@ import org.jetbrains.kotlin.resolve.BindingContext.TYPE_PARAMETER
 import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractMembers
 import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveOpenMembers
 
+fun KtDeclaration.checkTypeReferences(trace: BindingTrace) {
+    if (this is KtCallableDeclaration) {
+        typeReference?.checkNotEnumEntry(trace)
+        receiverTypeReference?.checkNotEnumEntry(trace)
+    }
+    if (this is KtDeclarationWithBody) {
+        for (parameter in valueParameters) {
+            parameter.typeReference?.checkNotEnumEntry(trace)
+        }
+    }
+}
+
+fun KtTypeReference.checkNotEnumEntry(trace: BindingTrace): Boolean {
+    var result = false
+    trace.bindingContext.get(TYPE, this)?.let {
+        val targetDescriptor = TypeUtils.getClassDescriptor(it)
+        if (targetDescriptor != null && DescriptorUtils.isEnumEntry(targetDescriptor)) {
+            trace.report(ENUM_ENTRY_AS_TYPE.on(this))
+            result = true
+        }
+    }
+    typeElement?.let {
+        for (typeArgument in it.typeArgumentsAsTypes) {
+            typeArgument?.checkNotEnumEntry(trace)
+        }
+    }
+    return result
+}
+
 class DeclarationsChecker(
         private val descriptorResolver: DescriptorResolver,
         modifiersChecker: ModifiersChecker,
@@ -45,6 +74,8 @@ class DeclarationsChecker(
         private val trace: BindingTrace) {
 
     private val modifiersChecker = modifiersChecker.withTrace(trace)
+
+    fun KtDeclaration.checkTypeReferences() = checkTypeReferences(trace)
 
     fun process(bodiesResolveContext: BodiesResolveContext) {
         for (file in bodiesResolveContext.files) {
@@ -69,6 +100,7 @@ class DeclarationsChecker(
 
             checkPrimaryConstructor(classOrObject, classDescriptor)
 
+            classOrObject.checkTypeReferences()
             modifiersChecker.checkModifiersForDeclaration(classOrObject, classDescriptor)
             identifierChecker.checkDeclaration(classOrObject, trace)
             checkClassExposedType(classOrObject, classDescriptor)
@@ -76,12 +108,14 @@ class DeclarationsChecker(
 
         for ((function, functionDescriptor) in bodiesResolveContext.functions.entries) {
             checkFunction(function, functionDescriptor)
+            function.checkTypeReferences()
             modifiersChecker.checkModifiersForDeclaration(function, functionDescriptor)
             identifierChecker.checkDeclaration(function, trace)
         }
 
         for ((property, propertyDescriptor) in bodiesResolveContext.properties.entries) {
             checkProperty(property, propertyDescriptor)
+            property.checkTypeReferences()
             modifiersChecker.checkModifiersForDeclaration(property, propertyDescriptor)
             identifierChecker.checkDeclaration(property, trace)
         }
@@ -93,6 +127,7 @@ class DeclarationsChecker(
     }
 
     private fun checkConstructorDeclaration(constructorDescriptor: ConstructorDescriptor, declaration: KtDeclaration) {
+        declaration.checkTypeReferences()
         modifiersChecker.checkModifiersForDeclaration(declaration, constructorDescriptor)
         identifierChecker.checkDeclaration(declaration, trace)
     }
@@ -113,19 +148,17 @@ class DeclarationsChecker(
 
     private fun checkTypesInClassHeader(classOrObject: KtClassOrObject) {
         for (delegationSpecifier in classOrObject.getDelegationSpecifiers()) {
-            delegationSpecifier.typeReference?.checkBoundsForTypeInClassHeader()
+            delegationSpecifier.typeReference?.check(checkBoundsForTypeInClassHeader = true)
         }
 
         if (classOrObject !is KtClass) return
 
         for (jetTypeParameter in classOrObject.typeParameters) {
-            jetTypeParameter.extendsBound?.checkBoundsForTypeInClassHeader()
-            jetTypeParameter.extendsBound?.checkFinalUpperBounds()
+            jetTypeParameter.extendsBound?.check(checkBoundsForTypeInClassHeader = true, checkFinalUpperBounds = true)
         }
 
         for (constraint in classOrObject.typeConstraints) {
-            constraint.boundTypeReference?.checkBoundsForTypeInClassHeader()
-            constraint.boundTypeReference?.checkFinalUpperBounds()
+            constraint.boundTypeReference?.check(checkBoundsForTypeInClassHeader = true, checkFinalUpperBounds = true)
         }
     }
 
@@ -135,6 +168,18 @@ class DeclarationsChecker(
 
     private fun KtTypeReference.checkFinalUpperBounds() {
         trace.bindingContext.get(TYPE, this)?.let { DescriptorResolver.checkUpperBoundType(this, it, trace) }
+    }
+
+    private fun KtTypeReference.check(checkBoundsForTypeInClassHeader: Boolean = false, checkFinalUpperBounds: Boolean = false) {
+        if (checkFinalUpperBounds) {
+            checkFinalUpperBounds()
+        }
+        else {
+            checkNotEnumEntry(trace)
+        }
+        if (checkBoundsForTypeInClassHeader) {
+            checkBoundsForTypeInClassHeader()
+        }
     }
 
     private fun checkSupertypesForConsistency(
@@ -151,7 +196,7 @@ class DeclarationsChecker(
                 removeDuplicateTypes(conflictingTypes)
                 if (conflictingTypes.size > 1) {
                     val containingDeclaration = typeParameterDescriptor.containingDeclaration as? ClassDescriptor
-                            ?: throw AssertionError("Not a class descriptor : " + typeParameterDescriptor.containingDeclaration)
+                                                ?: throw AssertionError("Not a class descriptor : " + typeParameterDescriptor.containingDeclaration)
                     if (sourceElement is KtClassOrObject) {
                         val delegationSpecifierList = sourceElement.getDelegationSpecifierList() ?: continue
                         trace.report(INCONSISTENT_TYPE_PARAMETER_VALUES.on(delegationSpecifierList,
@@ -593,6 +638,7 @@ class DeclarationsChecker(
         for (accessor in property.accessors) {
             val propertyAccessorDescriptor = (if (accessor.isGetter) propertyDescriptor.getter else propertyDescriptor.setter)
                                              ?: throw AssertionError("No property accessor descriptor for ${property.text}")
+            accessor.checkTypeReferences()
             modifiersChecker.checkModifiersForDeclaration(accessor, propertyAccessorDescriptor)
             identifierChecker.checkDeclaration(accessor, trace)
         }
@@ -613,7 +659,7 @@ class DeclarationsChecker(
         if (accessor == null || accessorDescriptor == null) return
         val accessorModifierList = accessor.modifierList ?: return
         val tokens = modifiersChecker.getTokensCorrespondingToModifiers(accessorModifierList,
-                Sets.newHashSet(KtTokens.PUBLIC_KEYWORD, KtTokens.PROTECTED_KEYWORD, KtTokens.PRIVATE_KEYWORD, KtTokens.INTERNAL_KEYWORD))
+                                                                        Sets.newHashSet(KtTokens.PUBLIC_KEYWORD, KtTokens.PROTECTED_KEYWORD, KtTokens.PRIVATE_KEYWORD, KtTokens.INTERNAL_KEYWORD))
         if (accessor.isGetter) {
             if (accessorDescriptor.visibility != propertyDescriptor.visibility) {
                 reportVisibilityModifierDiagnostics(tokens.values, Errors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY)

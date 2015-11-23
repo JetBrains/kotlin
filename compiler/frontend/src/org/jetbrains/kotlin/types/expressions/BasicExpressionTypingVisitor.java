@@ -237,6 +237,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     ) {
         if (actualType == null || noExpectedType(targetType) || targetType.isError()) return;
 
+        DeclarationsCheckerKt.checkNotEnumEntry(expression.getRight(), context.trace);
+
         if (DynamicTypesKt.isDynamic(targetType)) {
             KtTypeReference right = expression.getRight();
             assert right != null : "We know target is dynamic, but RHS is missing";

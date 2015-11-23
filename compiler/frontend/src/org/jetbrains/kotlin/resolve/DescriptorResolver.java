@@ -579,6 +579,7 @@ public class DescriptorResolver {
             @NotNull KotlinType upperBoundType,
             BindingTrace trace
     ) {
+        if (DeclarationsCheckerKt.checkNotEnumEntry(upperBound, trace)) return;
         if (!TypeUtils.canHaveSubtypes(KotlinTypeChecker.DEFAULT, upperBoundType)) {
             ClassifierDescriptor descriptor = upperBoundType.getConstructor().getDeclarationDescriptor();
             if (descriptor instanceof ClassDescriptor) {

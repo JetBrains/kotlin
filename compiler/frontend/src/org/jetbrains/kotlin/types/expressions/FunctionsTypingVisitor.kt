@@ -100,6 +100,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
                 function.getValueParameters(), functionDescriptor.getValueParameters(), context.scope, context.dataFlowInfo, context.trace
         )
 
+        function.checkTypeReferences(context.trace)
         components.modifiersChecker.withTrace(context.trace).checkModifiersForLocalDeclaration(function, functionDescriptor)
         components.identifierChecker.checkDeclaration(function, context.trace)
         if (!function.hasBody() && !function.hasModifier(KtTokens.EXTERNAL_KEYWORD)) {

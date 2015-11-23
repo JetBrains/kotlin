@@ -141,7 +141,8 @@ public class BodyResolver {
                             new Function1<LexicalScope, DataFlowInfo>() {
                                 @Override
                                 public DataFlowInfo invoke(@NotNull LexicalScope headerInnerScope) {
-                                    return resolveSecondaryConstructorDelegationCall(outerDataFlowInfo, trace, headerInnerScope, constructor, descriptor,
+                                    return resolveSecondaryConstructorDelegationCall(outerDataFlowInfo, trace, headerInnerScope,
+                                                                                     constructor, descriptor,
                                                                                      callChecker);
                                 }
                             },
@@ -187,9 +188,9 @@ public class BodyResolver {
 
             // if next delegation call is super or primary constructor or already visited
             if (!constructorDescriptor.getContainingDeclaration().equals(delegatedConstructorDescriptor.getContainingDeclaration()) ||
-                    delegatedConstructorDescriptor.isPrimary() ||
-                    visitedConstructors.contains(delegatedConstructorDescriptor)) {
-                 break;
+                delegatedConstructorDescriptor.isPrimary() ||
+                visitedConstructors.contains(delegatedConstructorDescriptor)) {
+                break;
             }
 
             if (visitedInCurrentChain.contains(delegatedConstructorDescriptor)) {
@@ -214,7 +215,8 @@ public class BodyResolver {
 
             currentConstructor = getDelegatedConstructor(currentConstructor);
             assert currentConstructor != null : "Delegated constructor should not be null in cycle";
-        } while (startConstructor != currentConstructor);
+        }
+        while (startConstructor != currentConstructor);
     }
 
     @Nullable
@@ -251,7 +253,8 @@ public class BodyResolver {
             @NotNull LexicalScope scopeForSupertypeResolution,
             @NotNull final LexicalScope scopeForMemberResolution
     ) {
-        final LexicalScope scopeForConstructor = primaryConstructor == null
+        final LexicalScope scopeForConstructor =
+                primaryConstructor == null
                 ? null
                 : FunctionDescriptorUtil.getFunctionInnerScope(scopeForSupertypeResolution, primaryConstructor, trace);
         final ExpressionTypingServices typeInferrer = expressionTypingServices; // TODO : flow
@@ -477,7 +480,9 @@ public class BodyResolver {
             }
 
             if (classDescriptor != null && classDescriptor.getKind().isSingleton()) {
-                trace.report(SINGLETON_IN_SUPERTYPE.on(typeReference));
+                if (!DescriptorUtils.isEnumEntry(classDescriptor)) {
+                    trace.report(SINGLETON_IN_SUPERTYPE.on(typeReference));
+                }
             }
             else if (constructor.isFinal() && !allowedFinalSupertypes.contains(constructor)) {
                 if (classDescriptor.getModality() == Modality.SEALED) {
@@ -565,7 +570,8 @@ public class BodyResolver {
                                     new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
                                         @Override
                                         public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {
-                                            for (ValueParameterDescriptor valueParameterDescriptor : unsubstitutedPrimaryConstructor.getValueParameters()) {
+                                            for (ValueParameterDescriptor
+                                                    valueParameterDescriptor : unsubstitutedPrimaryConstructor.getValueParameters()) {
                                                 handler.addVariableDescriptor(valueParameterDescriptor);
                                             }
                                             return Unit.INSTANCE$;
@@ -662,11 +668,19 @@ public class BodyResolver {
     }
 
     private ObservableBindingTrace createFieldTrackingTrace(final PropertyDescriptor propertyDescriptor) {
-        return new ObservableBindingTrace(trace).addHandler(BindingContext.REFERENCE_TARGET, new ObservableBindingTrace.RecordHandler<KtReferenceExpression, DeclarationDescriptor>() {
+        return new ObservableBindingTrace(trace).addHandler(
+                BindingContext.REFERENCE_TARGET,
+                new ObservableBindingTrace.RecordHandler<KtReferenceExpression, DeclarationDescriptor>() {
             @Override
-            public void handleRecord(WritableSlice<KtReferenceExpression, DeclarationDescriptor> slice, KtReferenceExpression expression, DeclarationDescriptor descriptor) {
-                if (expression instanceof KtSimpleNameExpression && descriptor instanceof SyntheticFieldDescriptor) {
-                    trace.record(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor);
+            public void handleRecord(
+                    WritableSlice<KtReferenceExpression, DeclarationDescriptor> slice,
+                    KtReferenceExpression expression,
+                    DeclarationDescriptor descriptor
+            ) {
+                if (expression instanceof KtSimpleNameExpression &&
+                    descriptor instanceof SyntheticFieldDescriptor) {
+                    trace.record(BindingContext.BACKING_FIELD_REQUIRED,
+                                 propertyDescriptor);
                 }
             }
         });
@@ -858,7 +872,11 @@ public class BodyResolver {
         final Queue<DeferredType> queue = new Queue<DeferredType>(deferredTypes.size() + 1);
         trace.addHandler(DEFERRED_TYPE, new ObservableBindingTrace.RecordHandler<Box<DeferredType>, Boolean>() {
             @Override
-            public void handleRecord(WritableSlice<Box<DeferredType>, Boolean> deferredTypeKeyDeferredTypeWritableSlice, Box<DeferredType> key, Boolean value) {
+            public void handleRecord(
+                    WritableSlice<Box<DeferredType>, Boolean> deferredTypeKeyDeferredTypeWritableSlice,
+                    Box<DeferredType> key,
+                    Boolean value
+            ) {
                 queue.addLast(key.getData());
             }
         });
