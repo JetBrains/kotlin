@@ -76,7 +76,7 @@ public class DiagnosticsWithSuppression implements Diagnostics {
             return !isSuppressed(diagnostic);
         }
     };
-    private final DiagnosticsElementsCache elementsCache = new DiagnosticsElementsCache(this);
+    private final DiagnosticsElementsCache elementsCache = new DiagnosticsElementsCache(this, filter);
 
     public DiagnosticsWithSuppression(@NotNull BindingContext context, @NotNull Collection<Diagnostic> diagnostics) {
         this.context = context;

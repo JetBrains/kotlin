@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.diagnostics
 
+import com.intellij.openapi.util.Condition
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import java.util.ArrayList
@@ -23,7 +24,9 @@ import java.util.ArrayList
 public class SimpleDiagnostics(diagnostics: Collection<Diagnostic>) : Diagnostics {
     //copy to prevent external change
     private val diagnostics = ArrayList(diagnostics)
-    private val elementsCache = DiagnosticsElementsCache(this)
+
+    @Suppress("UNCHECKED_CAST")
+    private val elementsCache = DiagnosticsElementsCache(this, Condition.TRUE as Condition<Diagnostic>?)
 
     override fun all() = diagnostics
 
