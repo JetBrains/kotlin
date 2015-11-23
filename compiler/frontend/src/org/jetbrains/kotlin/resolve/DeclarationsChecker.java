@@ -829,10 +829,15 @@ public class DeclarationsChecker {
                 }
             }
             else {
-                if (propertyDescriptor.getModality() == Modality.ABSTRACT
+                if (propertyDescriptor.getModality() != Modality.FINAL
                     && accessorDescriptor.getVisibility() == Visibilities.PRIVATE
                     && propertyDescriptor.getVisibility() != Visibilities.PRIVATE) {
-                    reportVisibilityModifierDiagnostics(tokens.values(), Errors.PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY);
+                    if (propertyDescriptor.getModality() == Modality.ABSTRACT) {
+                        reportVisibilityModifierDiagnostics(tokens.values(), Errors.PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY);
+                    }
+                    else {
+                        reportVisibilityModifierDiagnostics(tokens.values(), Errors.PRIVATE_SETTER_FOR_OPEN_PROPERTY);
+                    }
                 }
                 else if (propertyDescriptor.isLateInit() && accessorDescriptor.getVisibility() != propertyDescriptor.getVisibility()) {
                     reportVisibilityModifierDiagnostics(tokens.values(), Errors.SETTER_VISIBILITY_DIFFERS_FROM_LATEINIT_VISIBILITY);

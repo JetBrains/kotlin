@@ -15,4 +15,7 @@ abstract class My {
 
     abstract var u: Int
         protected set
+
+    open var t: Int = 0
+        <!PRIVATE_SETTER_FOR_OPEN_PROPERTY!>private<!> set
 }

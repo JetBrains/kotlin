@@ -8,7 +8,7 @@ interface MyTrait {
     <!ABSTRACT_MODIFIER_IN_INTERFACE!>abstract<!> val a3: Int = <!ABSTRACT_PROPERTY_WITH_INITIALIZER!>1<!>
 
     var b: Int                                                                                              <!PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY!>private<!> set
-    var b1: Int = <!PROPERTY_INITIALIZER_IN_INTERFACE!>0<!>;                                                private set
+    var b1: Int = <!PROPERTY_INITIALIZER_IN_INTERFACE!>0<!>;                                                <!PRIVATE_SETTER_FOR_OPEN_PROPERTY!>private<!> set
     <!ABSTRACT_MODIFIER_IN_INTERFACE!>abstract<!> var b2: Int                                               <!PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY!>private<!> set
     <!ABSTRACT_MODIFIER_IN_INTERFACE!>abstract<!> var b3: Int = <!ABSTRACT_PROPERTY_WITH_INITIALIZER!>0<!>; <!PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY!>private<!> set
 
