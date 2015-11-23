@@ -19,21 +19,14 @@ package org.jetbrains.kotlin.idea.decompiler.textBuilder
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.decompiler.KotlinJavascriptMetaFile
-import org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryManager
+import org.jetbrains.kotlin.idea.decompiler.navigation.NavigateToDecompiledLibraryTest
 import org.jetbrains.kotlin.idea.test.ModuleKind
 import org.jetbrains.kotlin.idea.test.configureAs
-import org.jetbrains.kotlin.idea.vfilefinder.JsVirtualFileFinder
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import kotlin.test.assertTrue
 
 public abstract class AbstractDecompiledTextFromJsMetadataTest(baseDirectory: String) : AbstractDecompiledTextBaseTest(baseDirectory, true) {
-    protected override fun getFileToDecompile(): VirtualFile {
-        val className = getTestName(false)
-        val virtualFileFinder = JsVirtualFileFinder.SERVICE.getInstance(project)
-        val classId = ClassId(FqName(TEST_PACKAGE), FqName(className), false)
-        return virtualFileFinder.findVirtualFileWithHeader(classId)!!
-    }
+    protected override fun getFileToDecompile(): VirtualFile =
+            NavigateToDecompiledLibraryTest.getKjsmFile(TEST_PACKAGE, getTestName(false), myModule!!)
 
     protected override fun checkPsiFile(psiFile: PsiFile) =
             assertTrue(psiFile is KotlinJavascriptMetaFile, "Expecting decompiled kotlin javascript file, was: " + psiFile.javaClass)
@@ -41,7 +34,6 @@ public abstract class AbstractDecompiledTextFromJsMetadataTest(baseDirectory: St
     override fun setUp() {
         super.setUp()
         myModule!!.configureAs(ModuleKind.KOTLIN_JAVASCRIPT)
-        KotlinJavaScriptLibraryManager.getInstance(project).syncUpdateProjectLibrary()
     }
 }
 

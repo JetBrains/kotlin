@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.LibraryModificationTracker
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.decompiler.KotlinClassFileViewProvider
 import org.jetbrains.kotlin.idea.decompiler.KtClsFile
-import org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryManager
 import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver
 import org.jetbrains.kotlin.psi.KtFile
 import java.util.*
@@ -68,7 +67,6 @@ public fun Module.configureAs(kind: ModuleKind) {
             this.configureAs(ProjectDescriptorWithStdlibSources.INSTANCE)
         ModuleKind.KOTLIN_JAVASCRIPT -> {
             this.configureAs(KotlinStdJSProjectDescriptor.instance)
-            KotlinJavaScriptLibraryManager.getInstance(this.getProject()).syncUpdateProjectLibrary()
         }
 
         else -> throw IllegalArgumentException("Unknown kind=$kind")

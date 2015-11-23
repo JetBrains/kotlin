@@ -40,7 +40,6 @@ import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLightQuickFixTestCase;
-import org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryManager;
 import org.jetbrains.kotlin.idea.quickfix.utils.QuickfixTestUtilsKt;
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils;
@@ -168,7 +167,6 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
             FileBasedIndex.getInstance().requestRebuild(StubUpdatingIndex.INDEX_ID);
 
             ConfigLibraryUtil.configureKotlinJsRuntimeAndSdk(getModule(), getFullJavaJDK());
-            KotlinJavaScriptLibraryManager.getInstance(getProject()).syncUpdateProjectLibrary();
         }
         else if (beforeFileName.endsWith("Runtime.kt")) {
             ConfigLibraryUtil.configureKotlinRuntimeAndSdk(getModule(), getFullJavaJDK());
