@@ -114,7 +114,7 @@ public object PositioningStrategies {
         }
     }
 
-    public val DECLARATION_SIGNATURE: PositioningStrategy<KtDeclaration> = object : DeclarationHeader<KtDeclaration>() {
+    @JvmField public val DECLARATION_SIGNATURE: PositioningStrategy<KtDeclaration> = object : DeclarationHeader<KtDeclaration>() {
         override fun mark(element: KtDeclaration): List<TextRange> {
             when (element) {
                 is KtConstructor<*> -> {
@@ -162,7 +162,7 @@ public object PositioningStrategies {
         }
     }
 
-    public val DECLARATION_SIGNATURE_OR_DEFAULT: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
+    @JvmField public val DECLARATION_SIGNATURE_OR_DEFAULT: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
             return if (element is KtDeclaration)
                 DECLARATION_SIGNATURE.mark(element)
@@ -190,7 +190,7 @@ public object PositioningStrategies {
         }
     }
 
-    public val ABSTRACT_MODIFIER: PositioningStrategy<KtModifierListOwner> = modifierSetPosition(KtTokens.ABSTRACT_KEYWORD)
+    @JvmField public val ABSTRACT_MODIFIER: PositioningStrategy<KtModifierListOwner> = modifierSetPosition(KtTokens.ABSTRACT_KEYWORD)
 
     public val OVERRIDE_MODIFIER: PositioningStrategy<KtModifierListOwner> = modifierSetPosition(KtTokens.OVERRIDE_KEYWORD)
 

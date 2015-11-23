@@ -63,14 +63,11 @@ public interface ErrorsJvm {
     DiagnosticFactory0<KtDeclaration> EXTERNAL_DECLARATION_CANNOT_BE_INLINED = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
 
     DiagnosticFactory0<KtExpression> POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<KtElement> DEPRECATED_ANNOTATION_METHOD_CALL = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory1<KtAnnotationEntry, FqName> DEPRECATED_JAVA_ANNOTATION = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory0<KtAnnotationEntry> NON_SOURCE_REPEATED_ANNOTATION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<KtAnnotationEntry, FqName> ANNOTATION_IS_NOT_APPLICABLE_TO_MULTIFILE_CLASSES = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory0<KtElement> INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER = DiagnosticFactory0.create(ERROR);
-
-    DiagnosticFactory0<KtElement> INAPPLICABLE_PUBLIC_FIELD = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<KtElement> NO_REFLECTION_IN_CLASS_PATH = DiagnosticFactory0.create(WARNING);
 
@@ -95,7 +92,7 @@ public interface ErrorsJvm {
             public String toString() {
                 return "Java";
             }
-        };
+        }
     }
 
     DiagnosticFactory2<KtElement, NullabilityInformationSource, NullabilityInformationSource> NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS = DiagnosticFactory2.create(WARNING);
