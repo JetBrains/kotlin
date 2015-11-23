@@ -9,7 +9,7 @@ fun main(args: Array<String>) {
 
     // RESUME: 1
     val b = simpleFunInt {
-        // STEP_OVER: 3
+        // STEP_OVER: 2
         //Breakpoint!
         1
     }
@@ -23,7 +23,7 @@ fun main(args: Array<String>) {
 
     // RESUME: 1
     val d = simpleFunVoid {
-        // STEP_OVER: 4
+        // STEP_OVER: 3
         //Breakpoint!
         val aa = 1
     }

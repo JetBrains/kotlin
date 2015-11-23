@@ -265,6 +265,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepIntoTest(fileName);
         }
 
+        @TestMetadata("syntheticMethodsSkip.kt")
+        public void testSyntheticMethodsSkip() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepInto/syntheticMethodsSkip.kt");
+            doStepIntoTest(fileName);
+        }
+
         @TestMetadata("traits.kt")
         public void testTraits() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepInto/traits.kt");

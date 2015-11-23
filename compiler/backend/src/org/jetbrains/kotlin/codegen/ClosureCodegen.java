@@ -275,7 +275,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         if (bridge.equals(delegate)) return;
 
         MethodVisitor mv =
-                v.newMethod(JvmDeclarationOriginKt.OtherOrigin(element, funDescriptor), ACC_PUBLIC | ACC_BRIDGE,
+                v.newMethod(JvmDeclarationOriginKt.OtherOrigin(element, funDescriptor), ACC_PUBLIC | ACC_BRIDGE | ACC_SYNTHETIC,
                             bridge.getName(), bridge.getDescriptor(), null, ArrayUtil.EMPTY_STRING_ARRAY);
 
         if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
