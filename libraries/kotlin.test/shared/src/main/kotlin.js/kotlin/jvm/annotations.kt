@@ -11,7 +11,7 @@ package kotlin.jvm
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FILE)
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
-public annotation class JvmName(public val name: String)
+internal annotation class JvmName(public val name: String)
 
 /**
  * Instructs the Kotlin compiler to generate a multifile class with top-level functions and properties declared in this file as one of its parts.
@@ -20,6 +20,6 @@ public annotation class JvmName(public val name: String)
 @Target(AnnotationTarget.FILE)
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
-public annotation class JvmMultifileClass
+internal annotation class JvmMultifileClass
 
 
