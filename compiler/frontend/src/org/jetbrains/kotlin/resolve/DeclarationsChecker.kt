@@ -14,854 +14,716 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve;
+package org.jetbrains.kotlin.resolve
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Sets;
-import com.intellij.psi.PsiElement;
-import kotlin.jvm.functions.Function1;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
-import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
-import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.types.*;
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
-import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
+import com.google.common.collect.ImmutableSet
+import com.google.common.collect.Sets
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
+import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.*
 
-import java.util.*;
+import java.util.*
 
-import static org.jetbrains.kotlin.diagnostics.Errors.*;
-import static org.jetbrains.kotlin.resolve.BindingContext.TYPE;
-import static org.jetbrains.kotlin.resolve.BindingContext.TYPE_PARAMETER;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractMembers;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveOpenMembers;
+import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.resolve.BindingContext.TYPE
+import org.jetbrains.kotlin.resolve.BindingContext.TYPE_PARAMETER
+import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractMembers
+import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveOpenMembers
 
-public class DeclarationsChecker {
-    @NotNull private final BindingTrace trace;
-    @NotNull private final ModifiersChecker.ModifiersCheckingProcedure modifiersChecker;
-    @NotNull private final DescriptorResolver descriptorResolver;
-    @NotNull private final AnnotationChecker annotationChecker;
-    @NotNull private final IdentifierChecker identifierChecker;
+class DeclarationsChecker(
+        private val descriptorResolver: DescriptorResolver,
+        modifiersChecker: ModifiersChecker,
+        private val annotationChecker: AnnotationChecker,
+        private val identifierChecker: IdentifierChecker,
+        private val trace: BindingTrace) {
 
-    public DeclarationsChecker(
-            @NotNull DescriptorResolver descriptorResolver,
-            @NotNull ModifiersChecker modifiersChecker,
-            @NotNull AnnotationChecker annotationChecker,
-            @NotNull IdentifierChecker identifierChecker,
-            @NotNull BindingTrace trace
-    ) {
-        this.descriptorResolver = descriptorResolver;
-        this.modifiersChecker = modifiersChecker.withTrace(trace);
-        this.annotationChecker = annotationChecker;
-        this.identifierChecker = identifierChecker;
-        this.trace = trace;
-    }
+    private val modifiersChecker = modifiersChecker.withTrace(trace)
 
-    public void process(@NotNull BodiesResolveContext bodiesResolveContext) {
-        for (KtFile file : bodiesResolveContext.getFiles()) {
-            checkModifiersAndAnnotationsInPackageDirective(file);
-            annotationChecker.check(file, trace, null);
+    fun process(bodiesResolveContext: BodiesResolveContext) {
+        for (file in bodiesResolveContext.files) {
+            checkModifiersAndAnnotationsInPackageDirective(file)
+            annotationChecker.check(file, trace, null)
         }
 
-        Map<KtClassOrObject, ClassDescriptorWithResolutionScopes> classes = bodiesResolveContext.getDeclaredClasses();
-        for (Map.Entry<KtClassOrObject, ClassDescriptorWithResolutionScopes> entry : classes.entrySet()) {
-            KtClassOrObject classOrObject = entry.getKey();
-            ClassDescriptorWithResolutionScopes classDescriptor = entry.getValue();
+        for ((classOrObject, classDescriptor) in bodiesResolveContext.declaredClasses.entries) {
+            checkSupertypesForConsistency(classDescriptor, classOrObject)
+            checkTypesInClassHeader(classOrObject)
 
-            checkSupertypesForConsistency(classOrObject, classDescriptor);
-            checkTypesInClassHeader(classOrObject);
-
-            if (classOrObject instanceof KtClass) {
-                KtClass ktClass = (KtClass) classOrObject;
-                checkClass(bodiesResolveContext, ktClass, classDescriptor);
-                descriptorResolver.checkNamesInConstraints(
-                        ktClass, classDescriptor, classDescriptor.getScopeForClassHeaderResolution(), trace);
-            }
-            else if (classOrObject instanceof KtObjectDeclaration) {
-                checkObject((KtObjectDeclaration) classOrObject, classDescriptor);
+            when (classOrObject) {
+                is KtClass -> {
+                    checkClass(classOrObject, classDescriptor)
+                    descriptorResolver.checkNamesInConstraints(
+                            classOrObject, classDescriptor, classDescriptor.scopeForClassHeaderResolution, trace)
+                }
+                is KtObjectDeclaration -> {
+                    checkObject(classOrObject, classDescriptor)
+                }
             }
 
-            checkPrimaryConstructor(classOrObject, classDescriptor);
+            checkPrimaryConstructor(classOrObject, classDescriptor)
 
-            modifiersChecker.checkModifiersForDeclaration(classOrObject, classDescriptor);
-            identifierChecker.checkDeclaration(classOrObject, trace);
-            checkClassExposedType(classOrObject, classDescriptor);
+            modifiersChecker.checkModifiersForDeclaration(classOrObject, classDescriptor)
+            identifierChecker.checkDeclaration(classOrObject, trace)
+            checkClassExposedType(classOrObject, classDescriptor)
         }
 
-        Map<KtNamedFunction, SimpleFunctionDescriptor> functions = bodiesResolveContext.getFunctions();
-        for (Map.Entry<KtNamedFunction, SimpleFunctionDescriptor> entry : functions.entrySet()) {
-            KtNamedFunction function = entry.getKey();
-            SimpleFunctionDescriptor functionDescriptor = entry.getValue();
-
-            checkFunction(function, functionDescriptor);
-            modifiersChecker.checkModifiersForDeclaration(function, functionDescriptor);
-            identifierChecker.checkDeclaration(function, trace);
+        for ((function, functionDescriptor) in bodiesResolveContext.functions.entries) {
+            checkFunction(function, functionDescriptor)
+            modifiersChecker.checkModifiersForDeclaration(function, functionDescriptor)
+            identifierChecker.checkDeclaration(function, trace)
         }
 
-        Map<KtProperty, PropertyDescriptor> properties = bodiesResolveContext.getProperties();
-        for (Map.Entry<KtProperty, PropertyDescriptor> entry : properties.entrySet()) {
-            KtProperty property = entry.getKey();
-            PropertyDescriptor propertyDescriptor = entry.getValue();
-
-            checkProperty(property, propertyDescriptor);
-            modifiersChecker.checkModifiersForDeclaration(property, propertyDescriptor);
-            identifierChecker.checkDeclaration(property, trace);
+        for ((property, propertyDescriptor) in bodiesResolveContext.properties.entries) {
+            checkProperty(property, propertyDescriptor)
+            modifiersChecker.checkModifiersForDeclaration(property, propertyDescriptor)
+            identifierChecker.checkDeclaration(property, trace)
         }
 
-        for (Map.Entry<KtSecondaryConstructor, ConstructorDescriptor> entry : bodiesResolveContext.getSecondaryConstructors().entrySet()) {
-            ConstructorDescriptor constructorDescriptor = entry.getValue();
-            KtSecondaryConstructor declaration = entry.getKey();
-            checkConstructorDeclaration(constructorDescriptor, declaration);
-            checkFunctionExposedType(declaration, constructorDescriptor);
+        for ((declaration, constructorDescriptor) in bodiesResolveContext.secondaryConstructors.entries) {
+            checkConstructorDeclaration(constructorDescriptor, declaration)
+            checkFunctionExposedType(declaration, constructorDescriptor)
         }
     }
 
-    private void checkConstructorDeclaration(ConstructorDescriptor constructorDescriptor, KtDeclaration declaration) {
-        modifiersChecker.checkModifiersForDeclaration(declaration, constructorDescriptor);
-        identifierChecker.checkDeclaration(declaration, trace);
+    private fun checkConstructorDeclaration(constructorDescriptor: ConstructorDescriptor, declaration: KtDeclaration) {
+        modifiersChecker.checkModifiersForDeclaration(declaration, constructorDescriptor)
+        identifierChecker.checkDeclaration(declaration, trace)
     }
 
-    private void checkModifiersAndAnnotationsInPackageDirective(KtFile file) {
-        KtPackageDirective packageDirective = file.getPackageDirective();
-        if (packageDirective == null) return;
+    private fun checkModifiersAndAnnotationsInPackageDirective(file: KtFile) {
+        val packageDirective = file.packageDirective ?: return
+        val modifierList = packageDirective.modifierList ?: return
 
-        KtModifierList modifierList = packageDirective.getModifierList();
-        if (modifierList == null) return;
-
-        for (KtAnnotationEntry annotationEntry : modifierList.getAnnotationEntries()) {
-            KtConstructorCalleeExpression calleeExpression = annotationEntry.getCalleeExpression();
+        for (annotationEntry in modifierList.annotationEntries) {
+            val calleeExpression = annotationEntry.calleeExpression
             if (calleeExpression != null) {
-                KtReferenceExpression reference = calleeExpression.getConstructorReferenceExpression();
-                if (reference != null) {
-                    trace.report(UNRESOLVED_REFERENCE.on(reference, reference));
-                }
+                calleeExpression.constructorReferenceExpression?.let { trace.report(UNRESOLVED_REFERENCE.on(it, it)) }
             }
         }
-        annotationChecker.check(packageDirective, trace, null);
-        ModifierCheckerCore.INSTANCE$.check(packageDirective, trace, null);
+        annotationChecker.check(packageDirective, trace, null)
+        ModifierCheckerCore.check(packageDirective, trace, null)
     }
 
-    private void checkTypesInClassHeader(@NotNull KtClassOrObject classOrObject) {
-        for (KtDelegationSpecifier delegationSpecifier : classOrObject.getDelegationSpecifiers()) {
-            checkBoundsForTypeInClassHeader(delegationSpecifier.getTypeReference());
+    private fun checkTypesInClassHeader(classOrObject: KtClassOrObject) {
+        for (delegationSpecifier in classOrObject.getDelegationSpecifiers()) {
+            delegationSpecifier.typeReference?.checkBoundsForTypeInClassHeader()
         }
 
-        if (!(classOrObject instanceof KtClass)) return;
-        KtClass ktClass = (KtClass) classOrObject;
+        if (classOrObject !is KtClass) return
 
-        for (KtTypeParameter jetTypeParameter : ktClass.getTypeParameters()) {
-            checkBoundsForTypeInClassHeader(jetTypeParameter.getExtendsBound());
-            checkFinalUpperBounds(jetTypeParameter.getExtendsBound());
+        for (jetTypeParameter in classOrObject.typeParameters) {
+            jetTypeParameter.extendsBound?.checkBoundsForTypeInClassHeader()
+            jetTypeParameter.extendsBound?.checkFinalUpperBounds()
         }
 
-        for (KtTypeConstraint constraint : ktClass.getTypeConstraints()) {
-            checkBoundsForTypeInClassHeader(constraint.getBoundTypeReference());
-            checkFinalUpperBounds(constraint.getBoundTypeReference());
-        }
-    }
-
-    private void checkBoundsForTypeInClassHeader(@Nullable KtTypeReference typeReference) {
-        if (typeReference != null) {
-            KotlinType type = trace.getBindingContext().get(TYPE, typeReference);
-            if (type != null) {
-                DescriptorResolver.checkBounds(typeReference, type, trace);
-            }
+        for (constraint in classOrObject.typeConstraints) {
+            constraint.boundTypeReference?.checkBoundsForTypeInClassHeader()
+            constraint.boundTypeReference?.checkFinalUpperBounds()
         }
     }
 
-    private void checkFinalUpperBounds(@Nullable KtTypeReference typeReference) {
-        if (typeReference != null) {
-            KotlinType type = trace.getBindingContext().get(TYPE, typeReference);
-            if (type != null) {
-                DescriptorResolver.checkUpperBoundType(typeReference, type, trace);
-            }
-        }
+    private fun KtTypeReference.checkBoundsForTypeInClassHeader() {
+        trace.bindingContext.get(TYPE, this)?.let { DescriptorResolver.checkBounds(this, it, trace) }
     }
 
-    private void checkSupertypesForConsistency(
-            @NotNull KtClassOrObject classOrObject,
-            @NotNull ClassDescriptor classDescriptor
-    ) {
-        checkSupertypesForConsistency(classDescriptor, classOrObject);
+    private fun KtTypeReference.checkFinalUpperBounds() {
+        trace.bindingContext.get(TYPE, this)?.let { DescriptorResolver.checkUpperBoundType(this, it, trace) }
     }
 
-    private void checkSupertypesForConsistency(
-            @NotNull KtTypeParameter typeParameter,
-            @NotNull TypeParameterDescriptor typeParameterDescriptor
-    ) {
-        checkSupertypesForConsistency(typeParameterDescriptor, typeParameter);
-    }
-
-    private void checkSupertypesForConsistency(
-            @NotNull ClassifierDescriptor classifierDescriptor,
-            @NotNull PsiElement sourceElement
-    ) {
-        Multimap<TypeParameterDescriptor, TypeProjection> multimap =
-                SubstitutionUtils.buildDeepSubstitutionMultimap(classifierDescriptor.getDefaultType());
-        for (Map.Entry<TypeParameterDescriptor, Collection<TypeProjection>> entry : multimap.asMap().entrySet()) {
-            Collection<TypeProjection> projections = entry.getValue();
-            if (projections.size() > 1) {
-                TypeParameterDescriptor typeParameterDescriptor = entry.getKey();
-
+    private fun checkSupertypesForConsistency(
+            classifierDescriptor: ClassifierDescriptor,
+            sourceElement: PsiElement) {
+        val multimap = SubstitutionUtils.buildDeepSubstitutionMultimap(classifierDescriptor.defaultType)
+        for ((typeParameterDescriptor, projections) in multimap.asMap().entries) {
+            if (projections.size > 1) {
                 // Immediate arguments of supertypes cannot be projected
-                Set<KotlinType> conflictingTypes = Sets.newLinkedHashSet();
-                for (TypeProjection projection : projections) {
-                    conflictingTypes.add(projection.getType());
+                val conflictingTypes = Sets.newLinkedHashSet<KotlinType>()
+                for (projection in projections) {
+                    conflictingTypes.add(projection.type)
                 }
-                removeDuplicateTypes(conflictingTypes);
-                if (conflictingTypes.size() > 1) {
-                    DeclarationDescriptor containingDeclaration = typeParameterDescriptor.getContainingDeclaration();
-                    assert containingDeclaration instanceof ClassDescriptor : containingDeclaration;
-                    if (sourceElement instanceof KtClassOrObject) {
-                        KtDelegationSpecifierList delegationSpecifierList = ((KtClassOrObject) sourceElement).getDelegationSpecifierList();
-                        assert delegationSpecifierList != null;
-                        //                        trace.getErrorHandler().genericError(delegationSpecifierList.getNode(), "Type parameter " + typeParameterDescriptor.getName() + " of " + containingDeclaration.getName() + " has inconsistent values: " + conflictingTypes);
-                        trace.report(INCONSISTENT_TYPE_PARAMETER_VALUES
-                                             .on(delegationSpecifierList, typeParameterDescriptor, (ClassDescriptor) containingDeclaration,
-                                                 conflictingTypes));
+                removeDuplicateTypes(conflictingTypes)
+                if (conflictingTypes.size > 1) {
+                    val containingDeclaration = typeParameterDescriptor.containingDeclaration as? ClassDescriptor
+                            ?: throw AssertionError("Not a class descriptor : " + typeParameterDescriptor.containingDeclaration)
+                    if (sourceElement is KtClassOrObject) {
+                        val delegationSpecifierList = sourceElement.getDelegationSpecifierList() ?: continue
+                        trace.report(INCONSISTENT_TYPE_PARAMETER_VALUES.on(delegationSpecifierList,
+                                                                           typeParameterDescriptor,
+                                                                           containingDeclaration,
+                                                                           conflictingTypes))
                     }
-                    else if (sourceElement instanceof KtTypeParameter) {
-                        trace.report(INCONSISTENT_TYPE_PARAMETER_BOUNDS
-                                             .on((KtTypeParameter) sourceElement, typeParameterDescriptor, (ClassDescriptor) containingDeclaration,
-                                                 conflictingTypes));
+                    else if (sourceElement is KtTypeParameter) {
+                        trace.report(INCONSISTENT_TYPE_PARAMETER_BOUNDS.on(sourceElement,
+                                                                           typeParameterDescriptor,
+                                                                           containingDeclaration,
+                                                                           conflictingTypes))
                     }
                 }
             }
         }
     }
 
-    private void checkClassExposedType(@NotNull KtClassOrObject klass, @NotNull ClassDescriptor classDescriptor) {
-        checkExposedSupertypes(klass, classDescriptor);
-        checkExposedParameterBounds(klass, classDescriptor);
+    private fun checkClassExposedType(klass: KtClassOrObject, classDescriptor: ClassDescriptor) {
+        checkExposedSupertypes(klass, classDescriptor)
+        checkExposedParameterBounds(klass, classDescriptor)
 
-        if (classDescriptor.getUnsubstitutedPrimaryConstructor() != null && klass.getPrimaryConstructor() != null) {
-            checkFunctionExposedType(klass.getPrimaryConstructor(), classDescriptor.getUnsubstitutedPrimaryConstructor());
-        }
+        val constructor = klass.getPrimaryConstructor() ?: return
+        val constructorDescriptor = classDescriptor.unsubstitutedPrimaryConstructor ?: return
+        checkFunctionExposedType(constructor, constructorDescriptor)
     }
 
-    private void checkExposedParameterBounds(@NotNull KtClassOrObject klass, @NotNull ClassDescriptor classDescriptor) {
-        EffectiveVisibility classVisibility = EffectiveVisibility.Companion.forClass(classDescriptor);
-        List<KtTypeParameter> typeParameterList = klass.getTypeParameters();
-        int i = 0;
-        for (TypeParameterDescriptor typeParameterDescriptor : classDescriptor.getDeclaredTypeParameters()) {
-            if (i >= typeParameterList.size()) return;
-            for (KotlinType upperBound : typeParameterDescriptor.getUpperBounds()) {
-                EffectiveVisibility upperBoundVisibility = EffectiveVisibility.Companion.forType(upperBound);
+    private fun checkExposedParameterBounds(klass: KtClassOrObject, classDescriptor: ClassDescriptor) {
+        val classVisibility = classDescriptor.effectiveVisibility()
+        val typeParameterList = klass.typeParameters
+        classDescriptor.declaredTypeParameters.forEachIndexed { i, typeParameterDescriptor ->
+            if (i >= typeParameterList.size) return
+            for (upperBound in typeParameterDescriptor.upperBounds) {
+                val upperBoundVisibility = upperBound.effectiveVisibility()
                 if (!upperBoundVisibility.sameOrMorePermissive(classVisibility)) {
-                    KtTypeParameter typeParameter = typeParameterList.get(i);
-                    trace.report(EXPOSED_TYPE_PARAMETER_BOUND.on(typeParameter, classVisibility, upperBoundVisibility));
-                    break;
+                    trace.report(EXPOSED_TYPE_PARAMETER_BOUND.on(typeParameterList[i], classVisibility, upperBoundVisibility))
+                    break
                 }
             }
-            i++;
         }
     }
 
-    private void checkExposedSupertypes(@NotNull KtClassOrObject klass, @NotNull ClassDescriptor classDescriptor) {
-        EffectiveVisibility classVisibility = EffectiveVisibility.Companion.forClass(classDescriptor);
-        boolean isInterface = classDescriptor.getKind() == ClassKind.INTERFACE;
-        List<KtDelegationSpecifier> delegationList = klass.getDelegationSpecifiers();
-        int i = -1;
-        for (KotlinType superType : classDescriptor.getTypeConstructor().getSupertypes()) {
-            i++;
-            if (i >= delegationList.size()) return;
-            ClassDescriptor superDescriptor = TypeUtils.getClassDescriptor(superType);
-            if (superDescriptor == null) {
-                continue;
-            }
-            boolean superIsInterface = superDescriptor.getKind() == ClassKind.INTERFACE;
+    private fun checkExposedSupertypes(klass: KtClassOrObject, classDescriptor: ClassDescriptor) {
+        val classVisibility = classDescriptor.effectiveVisibility()
+        val isInterface = classDescriptor.kind == ClassKind.INTERFACE
+        val delegationList = klass.getDelegationSpecifiers()
+        classDescriptor.typeConstructor.supertypes.forEachIndexed { i, superType ->
+            if (i >= delegationList.size) return
+            val superDescriptor = TypeUtils.getClassDescriptor(superType) ?: return@forEachIndexed
+            val superIsInterface = superDescriptor.kind == ClassKind.INTERFACE
             if (superIsInterface != isInterface) {
-                continue;
+                return@forEachIndexed
             }
-            EffectiveVisibility superTypeVisibility = EffectiveVisibility.Companion.forType(superType);
+            val superTypeVisibility = superType.effectiveVisibility()
             if (!superTypeVisibility.sameOrMorePermissive(classVisibility)) {
                 if (isInterface) {
-                    trace.report(EXPOSED_SUPER_INTERFACE.on(delegationList.get(i), classVisibility, superTypeVisibility));
+                    trace.report(EXPOSED_SUPER_INTERFACE.on(delegationList[i], classVisibility, superTypeVisibility))
                 }
                 else {
-                    trace.report(EXPOSED_SUPER_CLASS.on(delegationList.get(i), classVisibility, superTypeVisibility));
+                    trace.report(EXPOSED_SUPER_CLASS.on(delegationList[i], classVisibility, superTypeVisibility))
                 }
             }
         }
     }
 
-    private static void removeDuplicateTypes(Set<KotlinType> conflictingTypes) {
-        for (Iterator<KotlinType> iterator = conflictingTypes.iterator(); iterator.hasNext(); ) {
-            KotlinType type = iterator.next();
-            for (KotlinType otherType : conflictingTypes) {
-                boolean subtypeOf = KotlinTypeChecker.DEFAULT.equalTypes(type, otherType);
-                if (type != otherType && subtypeOf) {
-                    iterator.remove();
-                    break;
-                }
-            }
+    private fun checkObject(declaration: KtObjectDeclaration, classDescriptor: ClassDescriptor) {
+        if (declaration.isLocal() && !declaration.isCompanion() && !declaration.isObjectLiteral()) {
+            trace.report(LOCAL_OBJECT_NOT_ALLOWED.on(declaration, classDescriptor))
         }
     }
 
-    private void checkObject(KtObjectDeclaration declaration, ClassDescriptor classDescriptor) {
-        if  (declaration.isLocal() && !declaration.isCompanion() && !declaration.isObjectLiteral()) {
-            trace.report(LOCAL_OBJECT_NOT_ALLOWED.on(declaration, classDescriptor));
-        }
-    }
-
-    private void checkClass(BodiesResolveContext c, KtClass aClass, ClassDescriptorWithResolutionScopes classDescriptor) {
-        checkOpenMembers(classDescriptor);
-        checkTypeParameters(aClass);
-        checkTypeParameterConstraints(aClass);
-        FiniteBoundRestrictionChecker.check(aClass, classDescriptor, trace);
-        NonExpansiveInheritanceRestrictionChecker.check(aClass, classDescriptor, trace);
+    private fun checkClass(aClass: KtClass, classDescriptor: ClassDescriptorWithResolutionScopes) {
+        checkOpenMembers(classDescriptor)
+        checkTypeParameters(aClass)
+        checkTypeParameterConstraints(aClass)
+        FiniteBoundRestrictionChecker.check(aClass, classDescriptor, trace)
+        NonExpansiveInheritanceRestrictionChecker.check(aClass, classDescriptor, trace)
 
         if (aClass.isInterface()) {
-            checkConstructorInInterface(aClass);
-            checkMethodsOfAnyInInterface(classDescriptor);
-            if (aClass.isLocal() && !(classDescriptor.getContainingDeclaration() instanceof ClassDescriptor)) {
-                trace.report(LOCAL_INTERFACE_NOT_ALLOWED.on(aClass, classDescriptor));
+            checkConstructorInInterface(aClass)
+            checkMethodsOfAnyInInterface(classDescriptor)
+            if (aClass.isLocal() && classDescriptor.containingDeclaration !is ClassDescriptor) {
+                trace.report(LOCAL_INTERFACE_NOT_ALLOWED.on(aClass, classDescriptor))
             }
         }
-        else if (classDescriptor.getKind() == ClassKind.ANNOTATION_CLASS) {
-            checkAnnotationClassWithBody(aClass);
-            checkValOnAnnotationParameter(aClass);
+        else if (classDescriptor.kind == ClassKind.ANNOTATION_CLASS) {
+            checkAnnotationClassWithBody(aClass)
+            checkValOnAnnotationParameter(aClass)
         }
-        else if (aClass instanceof KtEnumEntry) {
-            checkEnumEntry((KtEnumEntry) aClass, classDescriptor);
+        else if (aClass is KtEnumEntry) {
+            checkEnumEntry(aClass, classDescriptor)
         }
-        for (CallableMemberDescriptor memberDescriptor : classDescriptor.getDeclaredCallableMembers()) {
-            if (memberDescriptor.getKind() != CallableMemberDescriptor.Kind.DECLARATION) continue;
-            KtNamedDeclaration member = (KtNamedDeclaration) DescriptorToSourceUtils.descriptorToDeclaration(memberDescriptor);
-            if (member instanceof KtFunction && memberDescriptor instanceof FunctionDescriptor) {
-                checkFunctionExposedType((KtFunction) member, (FunctionDescriptor) memberDescriptor);
+        for (memberDescriptor in classDescriptor.declaredCallableMembers) {
+            if (memberDescriptor.kind != CallableMemberDescriptor.Kind.DECLARATION) continue
+            val member = DescriptorToSourceUtils.descriptorToDeclaration(memberDescriptor) as? KtFunction
+            if (member != null && memberDescriptor is FunctionDescriptor) {
+                checkFunctionExposedType(member, memberDescriptor)
             }
         }
     }
 
-    private void checkPrimaryConstructor(KtClassOrObject classOrObject, ClassDescriptor classDescriptor) {
-        ConstructorDescriptor primaryConstructor = classDescriptor.getUnsubstitutedPrimaryConstructor();
-        KtPrimaryConstructor declaration = classOrObject.getPrimaryConstructor();
-        if (primaryConstructor == null || declaration == null) return;
+    private fun checkPrimaryConstructor(classOrObject: KtClassOrObject, classDescriptor: ClassDescriptor) {
+        val primaryConstructor = classDescriptor.unsubstitutedPrimaryConstructor ?: return
+        val declaration = classOrObject.getPrimaryConstructor() ?: return
 
-        for (KtParameter parameter : declaration.getValueParameters()) {
-            PropertyDescriptor propertyDescriptor = trace.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter);
-            if (propertyDescriptor != null) {
-                modifiersChecker.checkModifiersForDeclaration(parameter, propertyDescriptor);
-                checkPropertyLateInit(parameter, propertyDescriptor);
+        for (parameter in declaration.valueParameters) {
+            trace.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter)?.let {
+                modifiersChecker.checkModifiersForDeclaration(parameter, it)
+                checkPropertyLateInit(parameter, it)
             }
         }
 
-        if (declaration.getModifierList() != null && !declaration.hasConstructorKeyword()) {
-            trace.report(MISSING_CONSTRUCTOR_KEYWORD.on(declaration.getModifierList()));
+        if (!declaration.hasConstructorKeyword()) {
+            declaration.modifierList?.let { trace.report(MISSING_CONSTRUCTOR_KEYWORD.on(it)) }
         }
 
-        if (!(classOrObject instanceof KtClass)) {
-            trace.report(CONSTRUCTOR_IN_OBJECT.on(declaration));
+        if (classOrObject !is KtClass) {
+            trace.report(CONSTRUCTOR_IN_OBJECT.on(declaration))
         }
 
-        checkConstructorDeclaration(primaryConstructor, declaration);
+        checkConstructorDeclaration(primaryConstructor, declaration)
     }
 
-    private void checkTypeParameters(KtTypeParameterListOwner typeParameterListOwner) {
+    private fun checkTypeParameters(typeParameterListOwner: KtTypeParameterListOwner) {
         // TODO: Support annotation for type parameters
-        for (KtTypeParameter jetTypeParameter : typeParameterListOwner.getTypeParameters()) {
-            AnnotationResolver.reportUnsupportedAnnotationForTypeParameter(jetTypeParameter, trace);
+        for (jetTypeParameter in typeParameterListOwner.typeParameters) {
+            AnnotationResolver.reportUnsupportedAnnotationForTypeParameter(jetTypeParameter, trace)
 
-            TypeParameterDescriptor typeParameter = trace.get(TYPE_PARAMETER, jetTypeParameter);
-            if (typeParameter != null) {
-                DescriptorResolver.checkConflictingUpperBounds(trace, typeParameter, jetTypeParameter);
-            }
+            trace.get(TYPE_PARAMETER, jetTypeParameter)?.let { DescriptorResolver.checkConflictingUpperBounds(trace, it, jetTypeParameter) }
         }
     }
 
-    private void checkTypeParameterConstraints(KtTypeParameterListOwner typeParameterListOwner) {
-        List<KtTypeConstraint> constraints = typeParameterListOwner.getTypeConstraints();
+    private fun checkTypeParameterConstraints(typeParameterListOwner: KtTypeParameterListOwner) {
+        val constraints = typeParameterListOwner.typeConstraints
         if (!constraints.isEmpty()) {
-            for (KtTypeParameter typeParameter : typeParameterListOwner.getTypeParameters()) {
-                if (typeParameter.getExtendsBound() != null && hasConstraints(typeParameter, constraints)) {
-                    trace.report(MISPLACED_TYPE_PARAMETER_CONSTRAINTS.on(typeParameter));
+            for (typeParameter in typeParameterListOwner.typeParameters) {
+                if (typeParameter.extendsBound != null && hasConstraints(typeParameter, constraints)) {
+                    trace.report(MISPLACED_TYPE_PARAMETER_CONSTRAINTS.on(typeParameter))
                 }
-                TypeParameterDescriptor descriptor = trace.get(TYPE_PARAMETER, typeParameter);
-                if (descriptor != null) {
-                    checkSupertypesForConsistency(typeParameter, descriptor);
-                }
+                trace.get(TYPE_PARAMETER, typeParameter)?.let { checkSupertypesForConsistency(it, typeParameter) }
             }
         }
     }
 
-    private static boolean hasConstraints(KtTypeParameter typeParameter, List<KtTypeConstraint> constraints) {
-        for (KtTypeConstraint constraint : constraints) {
-            KtSimpleNameExpression parameterName = constraint.getSubjectTypeParameterName();
-            if (parameterName != null && parameterName.getText().equals(typeParameter.getName())) {
-                return true;
-            }
-        }
-        return false;
+    private fun checkConstructorInInterface(klass: KtClass) {
+        klass.getPrimaryConstructor()?.let { trace.report(CONSTRUCTOR_IN_INTERFACE.on(it)) }
     }
 
-    private void checkConstructorInInterface(KtClass klass) {
-        KtPrimaryConstructor primaryConstructor = klass.getPrimaryConstructor();
-        if (primaryConstructor != null) {
-            trace.report(CONSTRUCTOR_IN_INTERFACE.on(primaryConstructor));
-        }
-    }
+    private fun checkMethodsOfAnyInInterface(classDescriptor: ClassDescriptorWithResolutionScopes) {
+        for (declaredCallableMember in classDescriptor.declaredCallableMembers) {
+            if (declaredCallableMember !is FunctionDescriptor) continue
 
-    private void checkMethodsOfAnyInInterface(ClassDescriptorWithResolutionScopes classDescriptor) {
-        for (CallableMemberDescriptor declaredCallableMember : classDescriptor.getDeclaredCallableMembers()) {
-            if (!(declaredCallableMember instanceof FunctionDescriptor)) continue;
-            FunctionDescriptor functionDescriptor = (FunctionDescriptor) declaredCallableMember;
+            val declaration = DescriptorToSourceUtils.descriptorToDeclaration(declaredCallableMember)
+            if (declaration !is KtNamedFunction) continue
 
-            PsiElement declaration = DescriptorToSourceUtils.descriptorToDeclaration(functionDescriptor);
-            if (!(declaration instanceof KtNamedFunction)) continue;
-            KtNamedFunction functionDeclaration = (KtNamedFunction) declaration;
-
-            if (isHidingParentMemberIfPresent(declaredCallableMember)) continue;
+            if (isHidingParentMemberIfPresent(declaredCallableMember)) continue
 
             if (isImplementingMethodOfAny(declaredCallableMember)) {
-                trace.report(METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE.on(functionDeclaration));
+                trace.report(METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE.on(declaration))
             }
         }
     }
 
-    private static final Set<String> METHOD_OF_ANY_NAMES = ImmutableSet.of("toString", "hashCode", "equals");
-
-    private static boolean isImplementingMethodOfAny(CallableMemberDescriptor member) {
-        if (!METHOD_OF_ANY_NAMES.contains(member.getName().asString())) return false;
-        if (member.getModality() == Modality.ABSTRACT) return false;
-
-        return isImplementingMethodOfAnyInternal(member, new HashSet<ClassDescriptor>());
+    private fun checkAnnotationClassWithBody(classOrObject: KtClassOrObject) {
+        classOrObject.getBody()?.let { trace.report(ANNOTATION_CLASS_WITH_BODY.on(it)) }
     }
 
-    private static boolean isImplementingMethodOfAnyInternal(CallableMemberDescriptor member, Set<ClassDescriptor> visitedClasses) {
-        for (CallableMemberDescriptor overridden : member.getOverriddenDescriptors()) {
-            DeclarationDescriptor containingDeclaration = overridden.getContainingDeclaration();
-            if (!(containingDeclaration instanceof ClassDescriptor)) continue;
-            ClassDescriptor containingClass = (ClassDescriptor) containingDeclaration;
-            if (visitedClasses.contains(containingClass)) continue;
-
-            if (DescriptorUtils.getFqName(containingClass).equals(KotlinBuiltIns.FQ_NAMES.any)) {
-                return true;
-            }
-
-            if (isHidingParentMemberIfPresent(overridden)) continue;
-
-            visitedClasses.add(containingClass);
-
-            if (isImplementingMethodOfAnyInternal(overridden, visitedClasses)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private static boolean isHidingParentMemberIfPresent(CallableMemberDescriptor member) {
-        KtNamedDeclaration declaration = (KtNamedDeclaration) DescriptorToSourceUtils.descriptorToDeclaration(member);
-        if (declaration != null) {
-            KtModifierList modifierList = declaration.getModifierList();
-            return modifierList == null || !modifierList.hasModifier(KtTokens.OVERRIDE_KEYWORD);
-        }
-        return false;
-    }
-
-    private void checkAnnotationClassWithBody(KtClassOrObject classOrObject) {
-        if (classOrObject.getBody() != null) {
-            trace.report(ANNOTATION_CLASS_WITH_BODY.on(classOrObject.getBody()));
-        }
-    }
-
-    private void checkValOnAnnotationParameter(KtClass aClass) {
-        for (KtParameter parameter : aClass.getPrimaryConstructorParameters()) {
+    private fun checkValOnAnnotationParameter(aClass: KtClass) {
+        for (parameter in aClass.getPrimaryConstructorParameters()) {
             if (!parameter.hasValOrVar()) {
-                trace.report(MISSING_VAL_ON_ANNOTATION_PARAMETER.on(parameter));
+                trace.report(MISSING_VAL_ON_ANNOTATION_PARAMETER.on(parameter))
             }
         }
     }
 
-    private void checkOpenMembers(ClassDescriptorWithResolutionScopes classDescriptor) {
-        if (classCanHaveOpenMembers(classDescriptor)) return;
+    private fun checkOpenMembers(classDescriptor: ClassDescriptorWithResolutionScopes) {
+        if (classCanHaveOpenMembers(classDescriptor)) return
 
-        for (CallableMemberDescriptor memberDescriptor : classDescriptor.getDeclaredCallableMembers()) {
-            if (memberDescriptor.getKind() != CallableMemberDescriptor.Kind.DECLARATION) continue;
-            KtNamedDeclaration member = (KtNamedDeclaration) DescriptorToSourceUtils.descriptorToDeclaration(memberDescriptor);
+        for (memberDescriptor in classDescriptor.declaredCallableMembers) {
+            if (memberDescriptor.kind != CallableMemberDescriptor.Kind.DECLARATION) continue
+            val member = DescriptorToSourceUtils.descriptorToDeclaration(memberDescriptor) as? KtNamedDeclaration
             if (member != null && member.hasModifier(KtTokens.OPEN_KEYWORD)) {
-                trace.report(NON_FINAL_MEMBER_IN_FINAL_CLASS.on(member));
+                trace.report(NON_FINAL_MEMBER_IN_FINAL_CLASS.on(member))
             }
         }
     }
 
-    private void checkProperty(KtProperty property, PropertyDescriptor propertyDescriptor) {
-        DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
-        if (containingDeclaration instanceof ClassDescriptor) {
-            checkPropertyAbstractness(property, propertyDescriptor, (ClassDescriptor) containingDeclaration);
+    private fun checkProperty(property: KtProperty, propertyDescriptor: PropertyDescriptor) {
+        val containingDeclaration = propertyDescriptor.containingDeclaration
+        if (containingDeclaration is ClassDescriptor) {
+            checkPropertyAbstractness(property, propertyDescriptor, containingDeclaration)
         }
-        checkPropertyLateInit(property, propertyDescriptor);
-        checkPropertyInitializer(property, propertyDescriptor);
-        checkAccessors(property, propertyDescriptor);
-        checkTypeParameterConstraints(property);
-        checkPropertyExposedType(property, propertyDescriptor);
-        checkPropertyTypeParametersAreUsedInReceiverType(propertyDescriptor);
+        checkPropertyLateInit(property, propertyDescriptor)
+        checkPropertyInitializer(property, propertyDescriptor)
+        checkAccessors(property, propertyDescriptor)
+        checkTypeParameterConstraints(property)
+        checkPropertyExposedType(property, propertyDescriptor)
+        checkPropertyTypeParametersAreUsedInReceiverType(propertyDescriptor)
     }
 
-    private void checkPropertyTypeParametersAreUsedInReceiverType(@NotNull PropertyDescriptor descriptor) {
-        for (TypeParameterDescriptor typeParameter : descriptor.getTypeParameters()) {
-            if (isTypeParameterUsedInReceiverType(typeParameter, descriptor)) continue;
+    private fun checkPropertyTypeParametersAreUsedInReceiverType(descriptor: PropertyDescriptor) {
+        for (typeParameter in descriptor.typeParameters) {
+            if (isTypeParameterUsedInReceiverType(typeParameter, descriptor)) continue
 
-            PsiElement typeParameterPsi = DescriptorToSourceUtils.getSourceFromDescriptor(typeParameter);
-            if (typeParameterPsi instanceof KtTypeParameter) {
-                trace.report(TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER.on((KtTypeParameter) typeParameterPsi));
+            val typeParameterPsi = DescriptorToSourceUtils.getSourceFromDescriptor(typeParameter)
+            if (typeParameterPsi is KtTypeParameter) {
+                trace.report(TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER.on(typeParameterPsi))
             }
         }
     }
 
-    private static boolean isTypeParameterUsedInReceiverType(
-            @NotNull final TypeParameterDescriptor parameter,
-            @NotNull PropertyDescriptor descriptor
-    ) {
-        ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
-        if (receiverParameter == null) return false;
+    private fun checkPropertyLateInit(property: KtCallableDeclaration, propertyDescriptor: PropertyDescriptor) {
+        val modifierList = property.modifierList ?: return
+        val modifier = modifierList.getModifier(KtTokens.LATEINIT_KEYWORD) ?: return
 
-        return TypeUtils.containsSpecialType(receiverParameter.getType(), new Function1<KotlinType, Boolean>() {
-            @Override
-            public Boolean invoke(KotlinType type) {
-                return parameter.equals(type.getConstructor().getDeclarationDescriptor());
-            }
-        });
-    }
-
-    private void checkPropertyLateInit(@NotNull KtCallableDeclaration property, @NotNull PropertyDescriptor propertyDescriptor) {
-        KtModifierList modifierList = property.getModifierList();
-        if (modifierList == null) return;
-        PsiElement modifier = modifierList.getModifier(KtTokens.LATEINIT_KEYWORD);
-        if (modifier == null) return;
-
-        if (!propertyDescriptor.isVar()) {
-            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is allowed only on mutable properties"));
+        if (!propertyDescriptor.isVar) {
+            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is allowed only on mutable properties"))
         }
 
-        boolean returnTypeIsNullable = true;
-        boolean returnTypeIsPrimitive = true;
+        var returnTypeIsNullable = true
+        var returnTypeIsPrimitive = true
 
-        KotlinType returnType = propertyDescriptor.getReturnType();
+        val returnType = propertyDescriptor.returnType
         if (returnType != null) {
-            returnTypeIsNullable = TypeUtils.isNullableType(returnType);
-            returnTypeIsPrimitive = KotlinBuiltIns.isPrimitiveType(returnType);
+            returnTypeIsNullable = TypeUtils.isNullableType(returnType)
+            returnTypeIsPrimitive = KotlinBuiltIns.isPrimitiveType(returnType)
         }
 
         if (returnTypeIsNullable) {
-            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on nullable properties"));
+            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on nullable properties"))
         }
 
         if (returnTypeIsPrimitive) {
-            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on primitive type properties"));
+            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on primitive type properties"))
         }
 
-        boolean isAbstract = propertyDescriptor.getModality() == Modality.ABSTRACT;
+        val isAbstract = propertyDescriptor.modality == Modality.ABSTRACT
         if (isAbstract) {
-            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on abstract properties"));
+            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on abstract properties"))
         }
 
-        if (property instanceof KtParameter) {
-            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on primary constructor parameters"));
+        if (property is KtParameter) {
+            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on primary constructor parameters"))
         }
 
-        boolean hasDelegateExpressionOrInitializer = false;
-        if (property instanceof KtProperty) {
-            hasDelegateExpressionOrInitializer = ((KtProperty) property).hasDelegateExpressionOrInitializer();
-            if (hasDelegateExpressionOrInitializer) {
-                trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier,
-                        "is not allowed on properties with initializer or on delegated properties"));
-            }
+        var hasDelegateExpressionOrInitializer = false
+        if (property is KtProperty && property.hasDelegateExpressionOrInitializer()) {
+            hasDelegateExpressionOrInitializer = true
+            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier,
+                                                           "is not allowed on properties with initializer or on delegated properties"))
         }
 
-        PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
-        PropertySetterDescriptor setter = propertyDescriptor.getSetter();
+        val hasAccessorImplementation = propertyDescriptor.hasAccessorImplementation()
 
-        boolean customGetterOrSetter = false;
-        if (getter != null) {
-            customGetterOrSetter = getter.hasBody();
-        }
-        if (setter != null) {
-            customGetterOrSetter |= setter.hasBody();
+        if (!hasDelegateExpressionOrInitializer && hasAccessorImplementation) {
+            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on properties with a custom getter or setter"))
         }
 
-        if (!hasDelegateExpressionOrInitializer && customGetterOrSetter) {
-            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on properties with a custom getter or setter"));
+        val hasBackingField = trace.bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor) ?: false
+
+        if (!isAbstract && !hasAccessorImplementation && !hasDelegateExpressionOrInitializer && !hasBackingField) {
+            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on properties without backing field"))
         }
 
-        boolean hasBackingField =
-                Boolean.TRUE.equals(trace.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor));
-
-        if (!isAbstract && !customGetterOrSetter && !hasDelegateExpressionOrInitializer && !hasBackingField) {
-            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on properties without backing field"));
-        }
-
-        if (propertyDescriptor.getExtensionReceiverParameter() != null) {
-            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on extension properties"));
+        if (propertyDescriptor.extensionReceiverParameter != null) {
+            trace.report(INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on extension properties"))
         }
     }
 
-    private void checkPropertyAbstractness(
-            @NotNull KtProperty property,
-            @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull ClassDescriptor classDescriptor
-    ) {
-        KtPropertyAccessor getter = property.getGetter();
-        KtPropertyAccessor setter = property.getSetter();
-        KtModifierList modifierList = property.getModifierList();
+    private fun checkPropertyAbstractness(
+            property: KtProperty,
+            propertyDescriptor: PropertyDescriptor,
+            classDescriptor: ClassDescriptor) {
+        val modifierList = property.modifierList
 
-        if (modifierList != null && modifierList.hasModifier(KtTokens.ABSTRACT_KEYWORD)) { //has abstract modifier
+        if (modifierList != null && modifierList.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
+            //has abstract modifier
             if (!classCanHaveAbstractMembers(classDescriptor)) {
-                String name = property.getName();
-                trace.report(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.on(property, name != null ? name : "", classDescriptor));
-                return;
+                trace.report(ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.on(property, property.name ?: "", classDescriptor))
+                return
             }
-            if (classDescriptor.getKind() == ClassKind.INTERFACE) {
-                trace.report(ABSTRACT_MODIFIER_IN_INTERFACE.on(property));
+            if (classDescriptor.kind == ClassKind.INTERFACE) {
+                trace.report(ABSTRACT_MODIFIER_IN_INTERFACE.on(property))
             }
         }
 
-        if (propertyDescriptor.getModality() == Modality.ABSTRACT) {
-            KtExpression initializer = property.getInitializer();
-            if (initializer != null) {
-                trace.report(ABSTRACT_PROPERTY_WITH_INITIALIZER.on(initializer));
-            }
-            KtPropertyDelegate delegate = property.getDelegate();
-            if (delegate != null) {
-                trace.report(ABSTRACT_DELEGATED_PROPERTY.on(delegate));
-            }
+        if (propertyDescriptor.modality == Modality.ABSTRACT) {
+            property.initializer?.let { trace.report(ABSTRACT_PROPERTY_WITH_INITIALIZER.on(it)) }
+            property.delegate?.let { trace.report(ABSTRACT_DELEGATED_PROPERTY.on(it)) }
+            val getter = property.getter
             if (getter != null && getter.hasBody()) {
-                trace.report(ABSTRACT_PROPERTY_WITH_GETTER.on(getter));
+                trace.report(ABSTRACT_PROPERTY_WITH_GETTER.on(getter))
             }
+            val setter = property.setter
             if (setter != null && setter.hasBody()) {
-                trace.report(ABSTRACT_PROPERTY_WITH_SETTER.on(setter));
+                trace.report(ABSTRACT_PROPERTY_WITH_SETTER.on(setter))
             }
         }
     }
 
-    private void checkPropertyInitializer(@NotNull KtProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
-        KtPropertyAccessor getter = property.getGetter();
-        KtPropertyAccessor setter = property.getSetter();
-        boolean hasAccessorImplementation = (getter != null && getter.hasBody()) ||
-                                            (setter != null && setter.hasBody());
+    private fun checkPropertyInitializer(property: KtProperty, propertyDescriptor: PropertyDescriptor) {
+        val hasAccessorImplementation = propertyDescriptor.hasAccessorImplementation()
 
-        DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
-        boolean inTrait = containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor)containingDeclaration).getKind() == ClassKind.INTERFACE;
-        if (propertyDescriptor.getModality() == Modality.ABSTRACT) {
-            if (!property.hasDelegateExpressionOrInitializer() && property.getTypeReference() == null) {
-                trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(property));
+        val containingDeclaration = propertyDescriptor.containingDeclaration
+        val inTrait = containingDeclaration is ClassDescriptor && containingDeclaration.kind == ClassKind.INTERFACE
+        if (propertyDescriptor.modality == Modality.ABSTRACT) {
+            if (!property.hasDelegateExpressionOrInitializer() && property.typeReference == null) {
+                trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(property))
             }
             if (inTrait && property.hasModifier(KtTokens.PRIVATE_KEYWORD) && !property.hasModifier(KtTokens.ABSTRACT_KEYWORD)) {
-                trace.report(PRIVATE_PROPERTY_IN_INTERFACE.on(property));
+                trace.report(PRIVATE_PROPERTY_IN_INTERFACE.on(property))
             }
-            return;
+            return
         }
-        KtExpression initializer = property.getInitializer();
-        KtPropertyDelegate delegate = property.getDelegate();
-        boolean backingFieldRequired =
-                Boolean.TRUE.equals(trace.getBindingContext().get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor));
 
+        val backingFieldRequired = trace.bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor) ?: false
         if (inTrait && backingFieldRequired && hasAccessorImplementation) {
-            trace.report(BACKING_FIELD_IN_INTERFACE.on(property));
+            trace.report(BACKING_FIELD_IN_INTERFACE.on(property))
         }
 
-        if (initializer == null && delegate == null) {
-            boolean error = false;
-            if (backingFieldRequired && !inTrait && !propertyDescriptor.isLateInit() &&
-                Boolean.TRUE.equals(trace.getBindingContext().get(BindingContext.IS_UNINITIALIZED, propertyDescriptor))) {
-                if (!(containingDeclaration instanceof ClassDescriptor) || hasAccessorImplementation) {
-                    error = true;
-                    trace.report(MUST_BE_INITIALIZED.on(property));
-                }
-                else {
-                    error = true;
-                    trace.report(MUST_BE_INITIALIZED_OR_BE_ABSTRACT.on(property));
-                }
-            }
-            if (!error && property.getTypeReference() == null) {
-                trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(property));
-            }
-            return;
-        }
-
-        if (inTrait) {
-            if (delegate != null) {
-                trace.report(DELEGATED_PROPERTY_IN_INTERFACE.on(delegate));
+        val initializer = property.initializer
+        val delegate = property.delegate
+        if (initializer != null) {
+            if (inTrait) {
+                trace.report(PROPERTY_INITIALIZER_IN_INTERFACE.on(initializer))
             }
             else {
-                trace.report(PROPERTY_INITIALIZER_IN_INTERFACE.on(initializer));
-            }
-        }
-        else if (delegate == null) {
-            if (!backingFieldRequired) {
-                trace.report(PROPERTY_INITIALIZER_NO_BACKING_FIELD.on(initializer));
-            }
-            else if (property.getReceiverTypeReference() != null) {
-                trace.report(EXTENSION_PROPERTY_WITH_BACKING_FIELD.on(initializer));
-            }
-        }
-    }
-
-    private void checkMemberReceiverExposedType(@Nullable KtTypeReference typeReference, @NotNull CallableMemberDescriptor memberDescriptor) {
-        if (typeReference == null) return;
-        ReceiverParameterDescriptor receiverParameterDescriptor = memberDescriptor.getExtensionReceiverParameter();
-        if (receiverParameterDescriptor == null) return;
-        EffectiveVisibility memberVisibility = EffectiveVisibility.Companion.forMember(memberDescriptor);
-        EffectiveVisibility receiverTypeVisibility = EffectiveVisibility.Companion.forType(receiverParameterDescriptor.getType());
-        if (!receiverTypeVisibility.sameOrMorePermissive(memberVisibility)) {
-            trace.report(EXPOSED_RECEIVER_TYPE.on(typeReference, memberVisibility, receiverTypeVisibility));
-        }
-    }
-
-    private void checkPropertyExposedType(@NotNull KtProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
-        EffectiveVisibility propertyVisibility = EffectiveVisibility.Companion.forMember(propertyDescriptor);
-        EffectiveVisibility typeVisibility = EffectiveVisibility.Companion.forType(propertyDescriptor.getType());
-        if (!typeVisibility.sameOrMorePermissive(propertyVisibility)) {
-            trace.report(EXPOSED_PROPERTY_TYPE.on(property, propertyVisibility, typeVisibility));
-        }
-        checkMemberReceiverExposedType(property.getReceiverTypeReference(), propertyDescriptor);
-    }
-
-    protected void checkFunction(KtNamedFunction function, SimpleFunctionDescriptor functionDescriptor) {
-        KtTypeParameterList typeParameterList = function.getTypeParameterList();
-        PsiElement nameIdentifier = function.getNameIdentifier();
-        if (typeParameterList != null && nameIdentifier != null &&
-            typeParameterList.getTextRange().getStartOffset() > nameIdentifier.getTextRange().getStartOffset()) {
-            trace.report(DEPRECATED_TYPE_PARAMETER_SYNTAX.on(typeParameterList));
-        }
-        checkTypeParameterConstraints(function);
-
-        DeclarationDescriptor containingDescriptor = functionDescriptor.getContainingDeclaration();
-        boolean hasAbstractModifier = function.hasModifier(KtTokens.ABSTRACT_KEYWORD);
-        boolean hasExternalModifier = function.hasModifier(KtTokens.EXTERNAL_KEYWORD);
-
-        if (containingDescriptor instanceof ClassDescriptor) {
-            ClassDescriptor classDescriptor = (ClassDescriptor) containingDescriptor;
-            boolean inTrait = classDescriptor.getKind() == ClassKind.INTERFACE;
-            if (hasAbstractModifier && !classCanHaveAbstractMembers(classDescriptor)) {
-                trace.report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(function, functionDescriptor.getName().asString(), classDescriptor));
-            }
-            if (hasAbstractModifier && inTrait) {
-                trace.report(ABSTRACT_MODIFIER_IN_INTERFACE.on(function));
-            }
-            boolean hasBody = function.hasBody();
-            if (hasBody && hasAbstractModifier) {
-                trace.report(ABSTRACT_FUNCTION_WITH_BODY.on(function, functionDescriptor));
-            }
-            if (!hasBody && inTrait) {
-                if (function.hasModifier(KtTokens.PRIVATE_KEYWORD)) {
-                    trace.report(PRIVATE_FUNCTION_WITH_NO_BODY.on(function, functionDescriptor));
+                if (!backingFieldRequired) {
+                    trace.report(PROPERTY_INITIALIZER_NO_BACKING_FIELD.on(initializer))
                 }
-            }
-            if (!hasBody && !hasAbstractModifier && !hasExternalModifier && !inTrait) {
-                trace.report(NON_ABSTRACT_FUNCTION_WITH_NO_BODY.on(function, functionDescriptor));
-            }
-            return;
-        }
-        if (!function.hasBody() && !hasAbstractModifier && !hasExternalModifier) {
-            trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor));
-        }
-        if (TypeUtilsKt.isNothing(functionDescriptor.getReturnType()) && !function.hasDeclaredReturnType()) {
-            trace.report(IMPLICIT_NOTHING_RETURN_TYPE.on(function.getNameIdentifier() != null ? function.getNameIdentifier() : function));
-        }
-        checkFunctionExposedType(function, functionDescriptor);
-    }
-
-    private void checkFunctionExposedType(@NotNull KtFunction function, @NotNull FunctionDescriptor functionDescriptor) {
-        EffectiveVisibility functionVisibility = EffectiveVisibility.Companion.forMember(functionDescriptor);
-        if (!(function instanceof KtConstructor)) {
-            EffectiveVisibility returnTypeVisibility = EffectiveVisibility.Companion.forType(functionDescriptor.getReturnType());
-            if (!returnTypeVisibility.sameOrMorePermissive(functionVisibility)) {
-                PsiElement reportOn = function.getNameIdentifier();
-                if (reportOn == null) {
-                    reportOn = function;
-                }
-                trace.report(EXPOSED_FUNCTION_RETURN_TYPE.on(reportOn, functionVisibility, returnTypeVisibility));
-            }
-        }
-        int i = 0;
-        for (ValueParameterDescriptor parameterDescriptor : functionDescriptor.getValueParameters()) {
-            EffectiveVisibility typeVisibility = EffectiveVisibility.Companion.forType(parameterDescriptor.getType());
-            if (!typeVisibility.sameOrMorePermissive(functionVisibility) && i < function.getValueParameters().size()) {
-                trace.report(EXPOSED_PARAMETER_TYPE.on(function.getValueParameters().get(i), functionVisibility, typeVisibility));
-            }
-            i++;
-        }
-        checkMemberReceiverExposedType(function.getReceiverTypeReference(), functionDescriptor);
-    }
-
-    private void checkAccessors(@NotNull KtProperty property, @NotNull PropertyDescriptor propertyDescriptor) {
-        for (KtPropertyAccessor accessor : property.getAccessors()) {
-            PropertyAccessorDescriptor propertyAccessorDescriptor = accessor.isGetter() ? propertyDescriptor.getGetter() : propertyDescriptor.getSetter();
-            assert propertyAccessorDescriptor != null : "No property accessor descriptor for " + property.getText();
-            modifiersChecker.checkModifiersForDeclaration(accessor, propertyAccessorDescriptor);
-            identifierChecker.checkDeclaration(accessor, trace);
-        }
-        checkAccessor(propertyDescriptor, property.getGetter(), propertyDescriptor.getGetter());
-        checkAccessor(propertyDescriptor, property.getSetter(), propertyDescriptor.getSetter());
-    }
-
-    private void reportVisibilityModifierDiagnostics(Collection<PsiElement> tokens, DiagnosticFactory0<PsiElement> diagnostic) {
-        for (PsiElement token : tokens) {
-            trace.report(diagnostic.on(token));
-        }
-    }
-
-    private void checkAccessor(
-            @NotNull PropertyDescriptor propertyDescriptor,
-            @Nullable KtPropertyAccessor accessor,
-            @Nullable PropertyAccessorDescriptor accessorDescriptor
-    ) {
-        if (accessor == null) return;
-        KtModifierList accessorModifierList = accessor.getModifierList();
-        if (accessorModifierList != null && accessorDescriptor != null) {
-            Map<KtModifierKeywordToken, PsiElement> tokens = modifiersChecker.getTokensCorrespondingToModifiers(accessorModifierList, Sets
-                    .newHashSet(KtTokens.PUBLIC_KEYWORD, KtTokens.PROTECTED_KEYWORD, KtTokens.PRIVATE_KEYWORD,
-                                KtTokens.INTERNAL_KEYWORD));
-            if (accessor.isGetter()) {
-                if (accessorDescriptor.getVisibility() != propertyDescriptor.getVisibility()) {
-                    reportVisibilityModifierDiagnostics(tokens.values(), Errors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY);
-                }
-                else {
-                    reportVisibilityModifierDiagnostics(tokens.values(), Errors.REDUNDANT_MODIFIER_IN_GETTER);
-                }
-            }
-            else {
-                if (propertyDescriptor.getModality() != Modality.FINAL
-                    && accessorDescriptor.getVisibility() == Visibilities.PRIVATE
-                    && propertyDescriptor.getVisibility() != Visibilities.PRIVATE) {
-                    if (propertyDescriptor.getModality() == Modality.ABSTRACT) {
-                        reportVisibilityModifierDiagnostics(tokens.values(), Errors.PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY);
-                    }
-                    else {
-                        reportVisibilityModifierDiagnostics(tokens.values(), Errors.PRIVATE_SETTER_FOR_OPEN_PROPERTY);
-                    }
-                }
-                else if (propertyDescriptor.isLateInit() && accessorDescriptor.getVisibility() != propertyDescriptor.getVisibility()) {
-                    reportVisibilityModifierDiagnostics(tokens.values(), Errors.SETTER_VISIBILITY_DIFFERS_FROM_LATEINIT_VISIBILITY);
+                else if (property.receiverTypeReference != null) {
+                    trace.report(EXTENSION_PROPERTY_WITH_BACKING_FIELD.on(initializer))
                 }
             }
         }
-    }
-
-    private void checkEnumEntry(@NotNull KtEnumEntry enumEntry, @NotNull ClassDescriptor classDescriptor) {
-        DeclarationDescriptor declaration = classDescriptor.getContainingDeclaration();
-        if (DescriptorUtils.isEnumClass(declaration)) {
-            if (!enumEntry.hasInitializer() && !hasDefaultConstructor((ClassDescriptor) declaration)) {
-                trace.report(ENUM_ENTRY_SHOULD_BE_INITIALIZED.on(enumEntry));
+        else if (delegate != null) {
+            if (inTrait) {
+                trace.report(DELEGATED_PROPERTY_IN_INTERFACE.on(delegate))
             }
         }
         else {
-            assert DescriptorUtils.isInterface(declaration) : "Enum entry should be declared in enum class: " + classDescriptor;
+            if (backingFieldRequired && !inTrait && !propertyDescriptor.isLateInit && java.lang.Boolean.TRUE == trace.bindingContext.get(BindingContext.IS_UNINITIALIZED, propertyDescriptor)) {
+                if (containingDeclaration !is ClassDescriptor || hasAccessorImplementation) {
+                    trace.report(MUST_BE_INITIALIZED.on(property))
+                }
+                else {
+                    trace.report(MUST_BE_INITIALIZED_OR_BE_ABSTRACT.on(property))
+                }
+            }
+            else if (property.typeReference == null) {
+                trace.report(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER.on(property))
+            }
         }
     }
 
-    private static boolean hasDefaultConstructor(@NotNull ClassDescriptor classDescriptor) {
-        for (ConstructorDescriptor constructor : classDescriptor.getConstructors()) {
-            if (constructor.getValueParameters().isEmpty()) return true;
+    private fun checkMemberReceiverExposedType(typeReference: KtTypeReference?, memberDescriptor: CallableMemberDescriptor) {
+        if (typeReference == null) return
+        val receiverParameterDescriptor = memberDescriptor.extensionReceiverParameter ?: return
+        val memberVisibility = memberDescriptor.effectiveVisibility()
+        val receiverTypeVisibility = receiverParameterDescriptor.type.effectiveVisibility()
+        if (!receiverTypeVisibility.sameOrMorePermissive(memberVisibility)) {
+            trace.report(EXPOSED_RECEIVER_TYPE.on(typeReference, memberVisibility, receiverTypeVisibility))
         }
-        return false;
+    }
+
+    private fun checkPropertyExposedType(property: KtProperty, propertyDescriptor: PropertyDescriptor) {
+        val propertyVisibility = propertyDescriptor.effectiveVisibility()
+        val typeVisibility = propertyDescriptor.type.effectiveVisibility()
+        if (!typeVisibility.sameOrMorePermissive(propertyVisibility)) {
+            trace.report(EXPOSED_PROPERTY_TYPE.on(property, propertyVisibility, typeVisibility))
+        }
+        checkMemberReceiverExposedType(property.receiverTypeReference, propertyDescriptor)
+    }
+
+    private fun checkFunction(function: KtNamedFunction, functionDescriptor: SimpleFunctionDescriptor) {
+        val typeParameterList = function.typeParameterList
+        val nameIdentifier = function.nameIdentifier
+        if (typeParameterList != null && nameIdentifier != null &&
+            typeParameterList.textRange.startOffset > nameIdentifier.textRange.startOffset) {
+            trace.report(DEPRECATED_TYPE_PARAMETER_SYNTAX.on(typeParameterList))
+        }
+        checkTypeParameterConstraints(function)
+
+        val containingDescriptor = functionDescriptor.containingDeclaration
+        val hasAbstractModifier = function.hasModifier(KtTokens.ABSTRACT_KEYWORD)
+        val hasExternalModifier = function.hasModifier(KtTokens.EXTERNAL_KEYWORD)
+
+        if (containingDescriptor is ClassDescriptor) {
+            val inTrait = containingDescriptor.kind == ClassKind.INTERFACE
+            if (hasAbstractModifier && !classCanHaveAbstractMembers(containingDescriptor)) {
+                trace.report(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.on(function, functionDescriptor.name.asString(), containingDescriptor))
+            }
+            if (hasAbstractModifier && inTrait) {
+                trace.report(ABSTRACT_MODIFIER_IN_INTERFACE.on(function))
+            }
+            val hasBody = function.hasBody()
+            if (hasBody && hasAbstractModifier) {
+                trace.report(ABSTRACT_FUNCTION_WITH_BODY.on(function, functionDescriptor))
+            }
+            if (!hasBody && inTrait) {
+                if (function.hasModifier(KtTokens.PRIVATE_KEYWORD)) {
+                    trace.report(PRIVATE_FUNCTION_WITH_NO_BODY.on(function, functionDescriptor))
+                }
+            }
+            if (!hasBody && !hasAbstractModifier && !hasExternalModifier && !inTrait) {
+                trace.report(NON_ABSTRACT_FUNCTION_WITH_NO_BODY.on(function, functionDescriptor))
+            }
+            return
+        }
+        if (!function.hasBody() && !hasAbstractModifier && !hasExternalModifier) {
+            trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor))
+        }
+        functionDescriptor.returnType?.let {
+            if (it.isNothing() && !function.hasDeclaredReturnType()) {
+                trace.report(IMPLICIT_NOTHING_RETURN_TYPE.on(nameIdentifier ?: function))
+            }
+        }
+        checkFunctionExposedType(function, functionDescriptor)
+    }
+
+    private fun checkFunctionExposedType(function: KtFunction, functionDescriptor: FunctionDescriptor) {
+        val functionVisibility = functionDescriptor.effectiveVisibility()
+        if (function !is KtConstructor<*>) {
+            val returnTypeVisibility = functionDescriptor.returnType?.effectiveVisibility()
+            if (returnTypeVisibility != null && !returnTypeVisibility.sameOrMorePermissive(functionVisibility)) {
+                trace.report(EXPOSED_FUNCTION_RETURN_TYPE.on(function.nameIdentifier ?: function, functionVisibility, returnTypeVisibility))
+            }
+        }
+        functionDescriptor.valueParameters.forEachIndexed { i, parameterDescriptor ->
+            val typeVisibility = parameterDescriptor.type.effectiveVisibility()
+            if (!typeVisibility.sameOrMorePermissive(functionVisibility) && i < function.valueParameters.size) {
+                trace.report(EXPOSED_PARAMETER_TYPE.on(function.valueParameters[i], functionVisibility, typeVisibility))
+            }
+        }
+        checkMemberReceiverExposedType(function.receiverTypeReference, functionDescriptor)
+    }
+
+    private fun checkAccessors(property: KtProperty, propertyDescriptor: PropertyDescriptor) {
+        for (accessor in property.accessors) {
+            val propertyAccessorDescriptor = (if (accessor.isGetter) propertyDescriptor.getter else propertyDescriptor.setter)
+                                             ?: throw AssertionError("No property accessor descriptor for ${property.text}")
+            modifiersChecker.checkModifiersForDeclaration(accessor, propertyAccessorDescriptor)
+            identifierChecker.checkDeclaration(accessor, trace)
+        }
+        checkAccessor(propertyDescriptor, property.getter, propertyDescriptor.getter)
+        checkAccessor(propertyDescriptor, property.setter, propertyDescriptor.setter)
+    }
+
+    private fun reportVisibilityModifierDiagnostics(tokens: Collection<PsiElement>, diagnostic: DiagnosticFactory0<PsiElement>) {
+        for (token in tokens) {
+            trace.report(diagnostic.on(token))
+        }
+    }
+
+    private fun checkAccessor(
+            propertyDescriptor: PropertyDescriptor,
+            accessor: KtPropertyAccessor?,
+            accessorDescriptor: PropertyAccessorDescriptor?) {
+        if (accessor == null || accessorDescriptor == null) return
+        val accessorModifierList = accessor.modifierList ?: return
+        val tokens = modifiersChecker.getTokensCorrespondingToModifiers(accessorModifierList,
+                Sets.newHashSet(KtTokens.PUBLIC_KEYWORD, KtTokens.PROTECTED_KEYWORD, KtTokens.PRIVATE_KEYWORD, KtTokens.INTERNAL_KEYWORD))
+        if (accessor.isGetter) {
+            if (accessorDescriptor.visibility != propertyDescriptor.visibility) {
+                reportVisibilityModifierDiagnostics(tokens.values, Errors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY)
+            }
+            else {
+                reportVisibilityModifierDiagnostics(tokens.values, Errors.REDUNDANT_MODIFIER_IN_GETTER)
+            }
+        }
+        else {
+            if (propertyDescriptor.modality != Modality.FINAL
+                && accessorDescriptor.visibility == Visibilities.PRIVATE
+                && propertyDescriptor.visibility != Visibilities.PRIVATE) {
+                if (propertyDescriptor.modality == Modality.ABSTRACT) {
+                    reportVisibilityModifierDiagnostics(tokens.values, Errors.PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY)
+                }
+                else {
+                    reportVisibilityModifierDiagnostics(tokens.values, Errors.PRIVATE_SETTER_FOR_OPEN_PROPERTY)
+                }
+            }
+            else if (propertyDescriptor.isLateInit && accessorDescriptor.visibility != propertyDescriptor.visibility) {
+                reportVisibilityModifierDiagnostics(tokens.values, Errors.SETTER_VISIBILITY_DIFFERS_FROM_LATEINIT_VISIBILITY)
+            }
+        }
+    }
+
+    private fun checkEnumEntry(enumEntry: KtEnumEntry, classDescriptor: ClassDescriptor) {
+        val declaration = classDescriptor.containingDeclaration
+        if (DescriptorUtils.isEnumClass(declaration)) {
+            if (!enumEntry.hasInitializer() && !hasDefaultConstructor(declaration as ClassDescriptor)) {
+                trace.report(ENUM_ENTRY_SHOULD_BE_INITIALIZED.on(enumEntry))
+            }
+        }
+        else {
+            assert(DescriptorUtils.isInterface(declaration)) { "Enum entry should be declared in enum class: " + classDescriptor }
+        }
+    }
+
+    companion object {
+
+        private fun removeDuplicateTypes(conflictingTypes: MutableSet<KotlinType>) {
+            val iterator = conflictingTypes.iterator()
+            while (iterator.hasNext()) {
+                val type = iterator.next()
+                for (otherType in conflictingTypes) {
+                    val subtypeOf = KotlinTypeChecker.DEFAULT.equalTypes(type, otherType)
+                    if (type !== otherType && subtypeOf) {
+                        iterator.remove()
+                        break
+                    }
+                }
+            }
+        }
+
+        private fun hasConstraints(typeParameter: KtTypeParameter, constraints: List<KtTypeConstraint>): Boolean {
+            if (typeParameter.name == null) return false
+            return constraints.any { it.subjectTypeParameterName?.text == typeParameter.name }
+        }
+
+        private val METHOD_OF_ANY_NAMES = ImmutableSet.of("toString", "hashCode", "equals")
+
+        private fun isImplementingMethodOfAny(member: CallableMemberDescriptor): Boolean {
+            if (!METHOD_OF_ANY_NAMES.contains(member.name.asString())) return false
+            if (member.modality == Modality.ABSTRACT) return false
+
+            return isImplementingMethodOfAnyInternal(member, HashSet<ClassDescriptor>())
+        }
+
+        private fun isImplementingMethodOfAnyInternal(member: CallableMemberDescriptor, visitedClasses: MutableSet<ClassDescriptor>): Boolean {
+            for (overridden in member.overriddenDescriptors) {
+                val containingDeclaration = overridden.containingDeclaration
+                if (containingDeclaration !is ClassDescriptor) continue
+                if (visitedClasses.contains(containingDeclaration)) continue
+
+                if (DescriptorUtils.getFqName(containingDeclaration) == KotlinBuiltIns.FQ_NAMES.any) {
+                    return true
+                }
+
+                if (isHidingParentMemberIfPresent(overridden)) continue
+
+                visitedClasses.add(containingDeclaration)
+
+                if (isImplementingMethodOfAnyInternal(overridden, visitedClasses)) {
+                    return true
+                }
+            }
+
+            return false
+        }
+
+        private fun isHidingParentMemberIfPresent(member: CallableMemberDescriptor): Boolean {
+            val declaration = DescriptorToSourceUtils.descriptorToDeclaration(member) as? KtNamedDeclaration ?: return false
+            val modifierList = declaration.modifierList ?: return true
+            return !modifierList.hasModifier(KtTokens.OVERRIDE_KEYWORD)
+        }
+
+        private fun isTypeParameterUsedInReceiverType(
+                parameter: TypeParameterDescriptor,
+                descriptor: PropertyDescriptor): Boolean {
+            val receiverParameter = descriptor.extensionReceiverParameter ?: return false
+
+            return TypeUtils.containsSpecialType(receiverParameter.type) { parameter == it.constructor.declarationDescriptor }
+        }
+
+        private fun hasDefaultConstructor(classDescriptor: ClassDescriptor) =
+                classDescriptor.constructors.any { it.valueParameters.isEmpty() }
+
+        private fun PropertyDescriptor.hasAccessorImplementation(): Boolean {
+            getter?.let { if (it.hasBody()) return true }
+            setter?.let { if (it.hasBody()) return true }
+            return false
+        }
     }
 }
