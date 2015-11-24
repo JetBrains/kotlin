@@ -30,7 +30,7 @@ public abstract class TypeSubstitution {
         }
     }
 
-    public abstract fun get(key: KotlinType): TypeProjection?
+    public abstract operator fun get(key: KotlinType): TypeProjection?
 
     public open fun isEmpty(): Boolean = false
 

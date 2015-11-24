@@ -373,10 +373,10 @@ public class IncrementalCacheImpl(
             return CompilationResult(protoChanged = diff != DifferenceKind.NONE, changes = changes)
         }
 
-        public fun contains(className: JvmClassName): Boolean =
+        operator fun contains(className: JvmClassName): Boolean =
                 className.internalName in storage
 
-        public fun get(className: JvmClassName): ProtoMapValue? =
+        operator fun get(className: JvmClassName): ProtoMapValue? =
                 storage[className.internalName]
 
         public fun remove(className: JvmClassName) {
@@ -405,7 +405,7 @@ public class IncrementalCacheImpl(
             return if (result.isEmpty()) null else result
         }
 
-        fun contains(className: JvmClassName): Boolean =
+        operator fun contains(className: JvmClassName): Boolean =
                 className.internalName in storage
 
         public fun process(kotlinClass: LocalFileKotlinClass): CompilationResult {
@@ -572,7 +572,7 @@ public class IncrementalCacheImpl(
             storage.append(sourceFile.absolutePath, { out -> IOUtil.writeUTF(out, className.internalName) })
         }
 
-        public fun get(sourceFile: File): Collection<JvmClassName> =
+        public operator fun get(sourceFile: File): Collection<JvmClassName> =
                 storage[sourceFile.absolutePath].orEmpty().map { JvmClassName.byInternalName(it) }
 
         override fun dumpValue(value: List<String>) = value.toString()
@@ -633,7 +633,7 @@ public class IncrementalCacheImpl(
             }
         }
 
-        public fun get(sourcePath: String, jvmSignature: String): Collection<String> {
+        public operator fun get(sourcePath: String, jvmSignature: String): Collection<String> {
             val key = PathFunctionPair(sourcePath, jvmSignature)
             return storage[key] ?: emptySet()
         }
@@ -674,7 +674,7 @@ data class CompilationResult(
         public val NO_CHANGES: CompilationResult = CompilationResult()
     }
 
-    public fun plus(other: CompilationResult): CompilationResult =
+    public operator fun plus(other: CompilationResult): CompilationResult =
             CompilationResult(protoChanged || other.protoChanged,
                         constantsChanged || other.constantsChanged,
                         inlineChanged || other.inlineChanged,

@@ -40,6 +40,6 @@ public fun StorageComponentContainer.useInstance(instance: Any) {
     registerInstance(instance)
 }
 
-public inline fun <reified T : Any> ComponentProvider.get(thisRef: Any?, desc: PropertyMetadata): T {
+inline operator fun <reified T : Any> ComponentProvider.getValue(thisRef: Any?, desc: PropertyMetadata): T {
     return getService(javaClass<T>())
 }

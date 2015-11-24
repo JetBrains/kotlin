@@ -88,13 +88,13 @@ public class FunctionReader(private val context: TranslationContext) {
                 readFunction(descriptor).sure { "Could not read function: $descriptor" }
     }
 
-    public fun contains(descriptor: CallableDescriptor): Boolean {
+    operator fun contains(descriptor: CallableDescriptor): Boolean {
         val moduleName = getExternalModuleName(descriptor)
         val currentModuleName = context.getConfig().getModuleId()
         return currentModuleName != moduleName && moduleName != null && moduleName in moduleJsDefinition
     }
 
-    public fun get(descriptor: CallableDescriptor): JsFunction = functionCache.get(descriptor)
+    operator fun get(descriptor: CallableDescriptor): JsFunction = functionCache.get(descriptor)
     
     private fun readFunction(descriptor: CallableDescriptor): JsFunction? {
         if (descriptor !in this) return null

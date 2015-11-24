@@ -164,7 +164,7 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
     }
 
     private data class Prefix(val elements: List<PsiElement>, val lineBreaksBefore: Int) {
-        fun plus(other: Prefix): Prefix {
+        operator fun plus(other: Prefix): Prefix {
             return when {
                 isEmpty() -> other
                 other.isEmpty() -> this

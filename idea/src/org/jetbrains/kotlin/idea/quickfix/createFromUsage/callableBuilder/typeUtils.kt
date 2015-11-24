@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import java.util.*
 
-internal fun KotlinType.contains(inner: KotlinType): Boolean {
+internal operator fun KotlinType.contains(inner: KotlinType): Boolean {
     return KotlinTypeChecker.DEFAULT.equalTypes(this, inner) || getArguments().any { inner in it.getType() }
 }
 

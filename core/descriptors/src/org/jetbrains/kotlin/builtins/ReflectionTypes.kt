@@ -43,7 +43,7 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
     }
 
     private object ClassLookup {
-        fun getValue(types: ReflectionTypes, property: PropertyMetadata): ClassDescriptor {
+        operator fun getValue(types: ReflectionTypes, property: PropertyMetadata): ClassDescriptor {
             return types.find(property.name.capitalize())
         }
     }

@@ -55,7 +55,7 @@ public interface KotlinPsiRange {
 
     val empty: Boolean get() = this is Empty
 
-    fun contains(element: PsiElement): Boolean = getTextRange().contains(element.getTextRange() ?: TextRange.EMPTY_RANGE)
+    operator fun contains(element: PsiElement): Boolean = getTextRange().contains(element.getTextRange() ?: TextRange.EMPTY_RANGE)
 
     fun match(scope: PsiElement, unifier: KotlinPsiUnifier): List<UnificationResult.Matched> {
         val elements = elements.filter(SIGNIFICANT_FILTER)
