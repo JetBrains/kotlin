@@ -38,36 +38,36 @@ public fun <reified T> Collection<T>.toTypedArray(): Array<T> = noImpl
 /**
  * Returns an immutable list containing only the specified object [element].
  */
-public fun listOf<T>(element: T): List<T> = arrayListOf(element)
+public fun <T> listOf(element: T): List<T> = arrayListOf(element)
 
 /**
  * Returns an immutable set containing only the specified object [element].
  */
-public fun setOf<T>(element: T): Set<T> = hashSetOf(element)
+public fun <T> setOf(element: T): Set<T> = hashSetOf(element)
 
 /**
  * Returns an immutable map, mapping only the specified key to the
  * specified value.
  */
-public fun mapOf<K, V>(pair: Pair<K, V>): Map<K, V> = hashMapOf(pair)
+public fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = hashMapOf(pair)
 
 /**
  * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer].
  */
-public fun lazy<T>(initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)
+public fun <T> lazy(initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)
 
 /**
  * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer].
  *
  * The [mode] parameter is ignored. */
-public fun lazy<T>(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)
+public fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)
 
 /**
  * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer].
  *
  * The [lock] parameter is ignored.
  */
-public fun lazy<T>(lock: Any?, initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)
+public fun <T> lazy(lock: Any?, initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)
 
 
 internal fun <T> arrayOfNulls(reference: Array<out T>, size: Int): Array<T> {

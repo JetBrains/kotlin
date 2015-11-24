@@ -21,11 +21,11 @@ import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 
-public fun runReadAction<T>(action: () -> T): T {
+public fun <T> runReadAction(action: () -> T): T {
     return ApplicationManager.getApplication().runReadAction<T>(action)
 }
 
-public fun runWriteAction<T>(action: () -> T): T {
+public fun <T> runWriteAction(action: () -> T): T {
     return ApplicationManager.getApplication().runWriteAction<T>(action)
 }
 

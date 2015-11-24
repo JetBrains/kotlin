@@ -342,7 +342,7 @@ public fun KtElement.getContextForContainingDeclarationBody(): BindingContext? {
     return bodyElement?.let { it.analyze() }
 }
 
-public fun chooseContainerElement<T>(
+public fun <T> chooseContainerElement(
         containers: List<T>,
         editor: Editor,
         title: String,
@@ -415,7 +415,7 @@ public fun chooseContainerElement<T>(
     ).showInBestPositionFor(editor)
 }
 
-public fun chooseContainerElementIfNecessary<T>(
+public fun <T> chooseContainerElementIfNecessary(
         containers: List<T>,
         editor: Editor,
         title: String,
@@ -462,7 +462,7 @@ private fun copyModifierListItems(from: PsiModifierList, to: PsiModifierList, wi
     }
 }
 
-private fun copyTypeParameters<T>(
+private fun <T> copyTypeParameters(
         from: T,
         to: T,
         inserter: (T, PsiTypeParameterList) -> Unit

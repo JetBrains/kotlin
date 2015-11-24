@@ -238,7 +238,7 @@ public class JavaToKotlinConverter(
         private var fraction = 0.0
         private var pass = 1
 
-        fun processItems<TInputItem, TOutputItem>(
+        fun <TInputItem, TOutputItem> processItems(
                 fractionPortion: Double,
                 inputItems: Iterable<TInputItem>,
                 processItem: (TInputItem) -> TOutputItem

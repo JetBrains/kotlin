@@ -4,7 +4,7 @@ import java.lang.*
 import java.util.*
 
 public object Collections {
-    public fun max<T>(col: Collection<T>, comp: Comparator<in T>): T = java.util.max(col, comp)
+    public fun <T> max(col: Collection<T>, comp: Comparator<in T>): T = java.util.max(col, comp)
 
     @Deprecated("Use list.sort() instead.", ReplaceWith("list.sort()"))
     public fun <T: Comparable<T>> sort(list: MutableList<T>): Unit = java.util.sort(list, naturalOrder())
@@ -25,7 +25,7 @@ public object Collections {
 }
 
 @library("collectionsMax")
-private fun max<T>(col: Collection<T>, comp: Comparator<in T>): T = noImpl
+private fun <T> max(col: Collection<T>, comp: Comparator<in T>): T = noImpl
 
 @library("collectionsSort")
 private fun <T> sort(list: MutableList<T>, comparator: Comparator<in T>): Unit = noImpl

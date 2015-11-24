@@ -16,18 +16,18 @@
 
 package java.util
 
-public fun HashSet<E>(c: Collection<E>): HashSet<E>
+public fun <E> HashSet(c: Collection<E>): HashSet<E>
         = HashSet<E>(c.size()).apply { addAll(c) }
 
-public fun LinkedHashSet<E>(c: Collection<E>): HashSet<E>
+public fun <E> LinkedHashSet(c: Collection<E>): HashSet<E>
         = LinkedHashSet<E>(c.size()).apply { addAll(c) }
 
-public fun HashMap<K, V>(m: Map<K, V>): HashMap<K, V>
+public fun <K, V> HashMap(m: Map<K, V>): HashMap<K, V>
         = HashMap<K, V>(m.size()).apply { putAll(m) }
 
-public fun LinkedHashMap<K, V>(m: Map<K, V>): LinkedHashMap<K, V>
+public fun <K, V> LinkedHashMap(m: Map<K, V>): LinkedHashMap<K, V>
         = LinkedHashMap<K, V>(m.size()).apply { putAll(m) }
 
-public fun ArrayList<E>(c: Collection<E>): ArrayList<E>
+public fun <E> ArrayList(c: Collection<E>): ArrayList<E>
         = ArrayList<E>().apply { asDynamic().array = c.toTypedArray<Any?>() } // black dynamic magic
 

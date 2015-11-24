@@ -522,7 +522,7 @@ public class KotlinPsiUnifier(
             return (!decl1.isNameRelevant() && !decl2.isNameRelevant()) || desc1.getName() == desc2.getName()
         }
 
-        private fun matchContainedDescriptors<T: DeclarationDescriptor>(
+        private fun <T: DeclarationDescriptor> matchContainedDescriptors(
                 declarations1: List<T>,
                 declarations2: List<T>,
                 matchPair: (Pair<T, T>) -> Boolean
