@@ -511,6 +511,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doCustomTest(fileName);
         }
 
+        @TestMetadata("functionCallStoredToVariable.kt")
+        public void testFunctionCallStoredToVariable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/functionCallStoredToVariable.kt");
+            doCustomTest(fileName);
+        }
+
         @TestMetadata("fwAbstractProperty.kt")
         public void testFwAbstractProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/fwAbstractProperty.kt");

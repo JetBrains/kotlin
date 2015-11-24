@@ -3323,7 +3323,12 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         StackValue storeTo = sharedVarType == null ? StackValue.local(index, varType) : StackValue.shared(index, varType);
 
-        storeTo.store(initializer, v);
+        storeTo.putReceiver(v, false);
+        initializer.put(initializer.type, v);
+
+        markLineNumber(variableDeclaration, false);
+
+        storeTo.storeSelector(initializer.type, v);
     }
 
     @NotNull
