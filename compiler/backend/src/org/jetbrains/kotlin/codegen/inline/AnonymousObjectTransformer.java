@@ -285,26 +285,23 @@ public class AnonymousObjectTransformer {
             }
         }
 
-        List<Pair<String, Type>> capturedFieldsToGenerate = new ArrayList<Pair<String, Type>>();
-        for (CapturedParamInfo capturedParamInfo : allCapturedBuilder.listCaptured()) {
-            if (capturedParamInfo.getLambda() == null) { //not inlined
-                capturedFieldsToGenerate.add(new Pair<String, Type>(capturedParamInfo.getNewFieldName(), capturedParamInfo.getType()));
-            }
-        }
-
         String constructorDescriptor = Type.getMethodDescriptor(Type.VOID_TYPE, descTypes.toArray(new Type[descTypes.size()]));
-
         MethodVisitor constructorVisitor = classBuilder.newMethod(NO_ORIGIN,
                                                                   AsmUtil.NO_FLAG_PACKAGE_PRIVATE,
                                                                   "<init>", constructorDescriptor,
                                                                   null, ArrayUtil.EMPTY_STRING_ARRAY);
 
         //initialize captured fields
-        List<FieldInfo> fields = AsmUtil.transformCapturedParams(capturedFieldsToGenerate, newLambdaType);
+        List<NewJavaField> newFieldsWithSkipped = TransformationUtilsKt.getNewFieldsToGenerate(allCapturedBuilder.listCaptured());
+        List<FieldInfo> fieldInfoWithSkipped = TransformationUtilsKt.transformToFieldInfo(newLambdaType, newFieldsWithSkipped);
+
         int paramIndex = 0;
         InstructionAdapter capturedFieldInitializer = new InstructionAdapter(constructorVisitor);
-        for (FieldInfo fieldInfo : fields) {
-            AsmUtil.genAssignInstanceFieldFromParam(fieldInfo, capturedIndexes[paramIndex], capturedFieldInitializer);
+        for (int i = 0; i < fieldInfoWithSkipped.size(); i++) {
+            FieldInfo fieldInfo = fieldInfoWithSkipped.get(i);
+            if (!newFieldsWithSkipped.get(i).getSkip()) {
+                AsmUtil.genAssignInstanceFieldFromParam(fieldInfo, capturedIndexes[paramIndex], capturedFieldInitializer);
+            }
             paramIndex++;
         }
 
@@ -328,8 +325,7 @@ public class AnonymousObjectTransformer {
 
         inlineMethodAndUpdateGlobalResult(anonymousObjectGen, parentRemapper, capturedFieldInitializer, constructor, constructorInlineBuilder, true);
         constructorVisitor.visitEnd();
-
-        AsmUtil.genClosureFields(capturedFieldsToGenerate, classBuilder);
+        AsmUtil.genClosureFields(TransformationUtilsKt.toNameTypePair(TransformationUtilsKt.filterSkipped(newFieldsWithSkipped)), classBuilder);
         //TODO for inline method make public class
         anonymousObjectGen.setNewConstructorDescriptor(constructorDescriptor);
     }
@@ -390,7 +386,7 @@ public class AnonymousObjectTransformer {
             }
         };
 
-        List<LambdaInfo> capturedLambdas = new ArrayList<LambdaInfo>(); //captured var of inlined parameter
+        Set<LambdaInfo> capturedLambdas = new LinkedHashSet<LambdaInfo>(); //captured var of inlined parameter
         List<CapturedParamInfo> constructorAdditionalFakeParams = new ArrayList<CapturedParamInfo>();
         Map<Integer, LambdaInfo> indexToLambda = anonymousObjectGen.getLambdasToInline();
         Set<Integer> capturedParams = new HashSet<Integer>();
@@ -459,10 +455,16 @@ public class AnonymousObjectTransformer {
         Map<String, LambdaInfo> capturedLambdasToInline = new HashMap<String, LambdaInfo>(); //captured var of inlined parameter
         List<CapturedParamDesc> allRecapturedParameters = new ArrayList<CapturedParamDesc>();
         boolean addCapturedNotAddOuter = parentFieldRemapper.isRoot() || (parentFieldRemapper instanceof InlinedLambdaRemapper && parentFieldRemapper.getParent().isRoot());
+        Map<String, CapturedParamInfo> alreadyAdded = new HashMap<String, CapturedParamInfo>();
         for (LambdaInfo info : capturedLambdas) {
             if (addCapturedNotAddOuter) {
                 for (CapturedParamDesc desc : info.getCapturedVars()) {
-                    CapturedParamInfo recapturedParamInfo = capturedParamBuilder.addCapturedParam(desc, getNewFieldName(desc.getFieldName(), false));
+                    String key = desc.getFieldName() + "$$$" + desc.getType().getClassName();
+                    CapturedParamInfo alreadyAddedParam = alreadyAdded.get(key);
+
+                    CapturedParamInfo recapturedParamInfo = capturedParamBuilder.addCapturedParam(
+                            desc,
+                            alreadyAddedParam != null ? alreadyAddedParam.getNewFieldName() : getNewFieldName(desc.getFieldName(), false));
                     StackValue composed = StackValue.field(desc.getType(),
                                                            oldObjectType, /*TODO owner type*/
                                                            recapturedParamInfo.getNewFieldName(),
@@ -472,6 +474,13 @@ public class AnonymousObjectTransformer {
                     allRecapturedParameters.add(desc);
 
                     constructorParamBuilder.addCapturedParam(recapturedParamInfo, recapturedParamInfo.getNewFieldName()).setRemapValue(composed);
+                    if (alreadyAddedParam != null) {
+                        recapturedParamInfo.setSkipInConstructor(true);
+                    }
+
+                    if (isThis0(desc.getFieldName())) {
+                        alreadyAdded.put(key, recapturedParamInfo);
+                    }
                 }
             }
             capturedLambdasToInline.put(info.getLambdaClassType().getInternalName(), info);

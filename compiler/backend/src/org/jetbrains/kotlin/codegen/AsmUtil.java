@@ -449,14 +449,6 @@ public class AsmUtil {
         }
     }
 
-    public static List<FieldInfo> transformCapturedParams(List<Pair<String, Type>> allFields, Type owner) {
-        List<FieldInfo> result = new ArrayList<FieldInfo>();
-        for (Pair<String, Type> field : allFields) {
-            result.add(FieldInfo.createForHiddenField(owner, field.second, field.first));
-        }
-        return result;
-    }
-
     public static int genAssignInstanceFieldFromParam(FieldInfo info, int index, InstructionAdapter iv) {
         assert !info.isStatic();
         Type fieldType = info.getFieldType();

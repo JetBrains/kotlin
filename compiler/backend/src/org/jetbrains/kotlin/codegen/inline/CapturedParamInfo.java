@@ -33,6 +33,8 @@ public class CapturedParamInfo extends ParameterInfo {
 
     private final String newFieldName;
 
+    private boolean skipInConstructor;
+
     public CapturedParamInfo(@NotNull CapturedParamDesc desc, boolean skipped, int index, int remapIndex) {
         this(desc, desc.getFieldName(), skipped, index, remapIndex);
     }
@@ -68,11 +70,20 @@ public class CapturedParamInfo extends ParameterInfo {
     public CapturedParamInfo clone(int newIndex, StackValue newRamapIndex) {
         CapturedParamInfo capturedParamInfo = new CapturedParamInfo(desc, newFieldName, isSkipped, newIndex, newRamapIndex);
         capturedParamInfo.setLambda(lambda);
+        capturedParamInfo.setSkipInConstructor(skipInConstructor);
         return capturedParamInfo;
     }
 
     @NotNull
     public String getContainingLambdaName() {
         return desc.getContainingLambdaName();
+    }
+
+    public boolean isSkipInConstructor() {
+        return skipInConstructor;
+    }
+
+    public void setSkipInConstructor(boolean skipInConstructor) {
+        this.skipInConstructor = skipInConstructor;
     }
 }
