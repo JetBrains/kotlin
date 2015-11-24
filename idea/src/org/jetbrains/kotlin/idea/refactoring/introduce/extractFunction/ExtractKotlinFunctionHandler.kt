@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.selectElementsWithTargetS
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtFile
-import kotlin.test.fail
 
 public class ExtractKotlinFunctionHandler(
         public val allContainersEnabled: Boolean = false,
@@ -78,7 +77,7 @@ public class ExtractKotlinFunctionHandler(
     }
 
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext?) {
-        fail("Extract Function can only be invoked from editor")
+        throw AssertionError("Extract Function can only be invoked from editor")
     }
 }
 
