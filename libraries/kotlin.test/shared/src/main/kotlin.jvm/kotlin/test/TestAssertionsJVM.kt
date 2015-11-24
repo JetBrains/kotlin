@@ -12,7 +12,7 @@ fun <T : Throwable> failsWith(exceptionClass: Class<T>, block: () -> Any): T = a
 fun <T : Throwable> assertFailsWith(exceptionClass: Class<T>, block: () -> Unit): T = assertFailsWith(exceptionClass, null, block)
 
 /** Asserts that a [block] fails with a specific exception being thrown. */
-fun <T : Throwable> assertFailsWith(exceptionClass: Class<T>, message: String?, block: () -> Unit): T {
+fun <T : Throwable> assertFailsWith(exceptionClass: Class<T>, message: String? = null, block: () -> Unit): T {
     try {
         block()
     } catch (e: Throwable) {
