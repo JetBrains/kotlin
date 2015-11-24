@@ -27,8 +27,8 @@ public class NavigateToStdlibSourceRegressionTest extends NavigateToLibraryRegre
      * Regression test against KT-3186
      */
     public void testRefToAssertEquals() {
-        PsiElement navigationElement = configureAndResolve("import kotlin.test.assertEquals; val x = <caret>assertEquals(1, 2)");
-        assertEquals("Test.kt", navigationElement.getContainingFile().getName());
+        PsiElement navigationElement = configureAndResolve("import kotlin.io.createTempDir; val x = <caret>createTempDir()");
+        assertEquals("Utils.kt", navigationElement.getContainingFile().getName());
     }
 
     @Override

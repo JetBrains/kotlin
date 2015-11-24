@@ -6,11 +6,13 @@ import java.util.ArrayList
 import java.util.HashMap
 import kotlin.test.asserter
 import kotlin.test.Asserter
+import kotlin.Charsets
 import kotlin.Assertions
 import kotlin.util.measureTimeMillis
 
 class Action {
     fun test() {
+        val chs = Charsets.UTF8
         // val traait : Asserter = asserter
         val traait : Asserter? = null
         val objectImport : Assertions? = null
