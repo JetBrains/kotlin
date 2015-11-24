@@ -84,7 +84,7 @@ public object KotlinJavascriptSerializationUtil {
 
     public fun contentMapToByteArray(contentMap: Map<String, ByteArray>): ByteArray {
         val contentBuilder = JsProtoBuf.Library.newBuilder()
-        contentMap forEach {
+        contentMap.forEach {
             val entry = JsProtoBuf.Library.FileEntry.newBuilder().setPath(it.getKey()).setContent(ByteString.copyFrom(it.getValue())).build()
             contentBuilder.addEntry(entry)
         }

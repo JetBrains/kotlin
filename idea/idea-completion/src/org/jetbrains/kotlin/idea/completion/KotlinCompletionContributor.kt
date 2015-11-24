@@ -215,7 +215,7 @@ public class KotlinCompletionContributor : CompletionContributor() {
                 if (tokenType == KtTokens.FUN_KEYWORD) {
                     tail += "()"
                 }
-                builder append tail
+                builder.append(tail)
 
                 val text = builder.toString()
                 val file = KtPsiFactory(tokenBefore.getProject()).createFile(text)

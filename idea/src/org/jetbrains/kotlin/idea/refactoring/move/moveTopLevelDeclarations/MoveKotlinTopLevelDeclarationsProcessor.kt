@@ -301,7 +301,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
                     oldToNewElementsMapping[sourceFile] = newDeclaration.getContainingKtFile()
 
                     getTransaction()!!.getElementListener(oldDeclaration).elementMoved(newDeclaration)
-                    for ((oldElement, newElement) in oldLightElements.asSequence() zip newDeclaration.toLightElements().asSequence()) {
+                    for ((oldElement, newElement) in oldLightElements.asSequence().zip(newDeclaration.toLightElements().asSequence())) {
                         oldToNewElementsMapping[oldElement] = newElement
                     }
                 }

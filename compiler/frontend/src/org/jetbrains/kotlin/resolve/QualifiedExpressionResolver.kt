@@ -118,7 +118,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
         while (userType != null) {
             val referenceExpression = userType.referenceExpression
             if (referenceExpression != null) {
-                result add QualifierPart(referenceExpression.getReferencedNameAsName(), referenceExpression, userType.typeArgumentList)
+                result.add(QualifierPart(referenceExpression.getReferencedNameAsName(), referenceExpression, userType.typeArgumentList))
             }
             else {
                 hasError = true
@@ -261,12 +261,12 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
         loop@ while (expression != null) {
             when (expression) {
                 is KtSimpleNameExpression -> {
-                    result add QualifierPart(expression.getReferencedNameAsName(), expression)
+                    result.add(QualifierPart(expression.getReferencedNameAsName(), expression))
                     break@loop
                 }
                 is KtQualifiedExpression -> {
                     (expression.selectorExpression as? KtSimpleNameExpression)?.let {
-                        result add QualifierPart(it.getReferencedNameAsName(), it)
+                        result.add(QualifierPart(it.getReferencedNameAsName(), it))
                     }
                     expression = expression.receiverExpression
                     if (expression is KtSafeQualifiedExpression) {

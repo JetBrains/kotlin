@@ -213,7 +213,7 @@ fun ExtractableCodeDescriptor.findDuplicates(): List<DuplicateInfo> {
             .originalRange
             .match(scopeElement, unifier)
             .asSequence()
-            .filter { !(it.range.getPhysicalTextRange() intersects originalTextRange) }
+            .filter { !(it.range.getPhysicalTextRange().intersects(originalTextRange)) }
             .mapNotNull { match ->
                 val controlFlow = getControlFlowIfMatched(match)
                 val range = with(match.range) {

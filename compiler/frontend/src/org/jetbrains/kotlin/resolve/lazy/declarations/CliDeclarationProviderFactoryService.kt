@@ -36,7 +36,7 @@ public class CliDeclarationProviderFactoryService(private val sourceFiles: Colle
             val vFile = it.getVirtualFile().sure { "Source files should be physical files" }
             filesScope.contains(vFile)
         }
-        allFiles addAll syntheticFiles
+        allFiles.addAll(syntheticFiles)
         return FileBasedDeclarationProviderFactory(storageManager, allFiles)
     }
 }

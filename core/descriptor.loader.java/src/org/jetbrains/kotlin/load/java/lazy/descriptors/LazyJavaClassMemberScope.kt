@@ -83,7 +83,7 @@ public class LazyJavaClassMemberScope(
         }
         
         enhanceSignatures(
-                result ifEmpty { emptyOrSingletonList(createDefaultConstructor()) }
+                result.ifEmpty { emptyOrSingletonList(createDefaultConstructor()) }
         ).toReadOnlyList()
     }
 

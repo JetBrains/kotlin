@@ -255,9 +255,9 @@ object DynamicInvokeAndBracketAccessCallCase : FunctionCallCase() {
 object DynamicOperatorCallCase : FunctionCallCase() {
     fun canApply(callInfo: FunctionCallInfo): Boolean =
             callInfo.callableDescriptor.isDynamic() &&
-            callInfo.resolvedCall.getCall().getCallElement() let {
+            callInfo.resolvedCall.getCall().getCallElement().let {
                 it is KtOperationExpression &&
-                PsiUtils.getOperationToken(it) let { (it == KtTokens.NOT_IN || OperatorTable.hasCorrespondingOperator(it)) }
+                PsiUtils.getOperationToken(it).let { (it == KtTokens.NOT_IN || OperatorTable.hasCorrespondingOperator(it)) }
             }
 
     override fun FunctionCallInfo.dispatchReceiver(): JsExpression {

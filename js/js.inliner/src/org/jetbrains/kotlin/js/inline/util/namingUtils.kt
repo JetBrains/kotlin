@@ -29,7 +29,7 @@ public fun aliasArgumentsIfNeeded(
 ) {
     assertTrue { arguments.size() <= parameters.size() }
 
-    for ((arg, param) in arguments zip parameters) {
+    for ((arg, param) in arguments.zip(parameters)) {
         val paramName = param.getName()
         val replacement =
                 if (arg.needToAlias()) {

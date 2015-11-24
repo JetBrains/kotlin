@@ -429,7 +429,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         }
         else {
             if (target is PsiClass) {
-                if (PrimitiveType.values() any { it.getTypeName().asString() == target.getName() }) {
+                if (PrimitiveType.values().any { it.getTypeName().asString() == target.getName() }) {
                     result = Identifier(target.getQualifiedName()!!, false)
                     return
                 }

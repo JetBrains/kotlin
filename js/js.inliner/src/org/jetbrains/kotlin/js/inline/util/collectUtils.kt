@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.js.inline.util.collectors.PropertyCollector
 import org.jetbrains.kotlin.js.translate.expression.*
 
 public fun collectFunctionReferencesInside(scope: JsNode): List<JsName> =
-    collectReferencesInside(scope) filter { it.staticRef is JsFunction }
+     collectReferencesInside(scope).filter { it.staticRef is JsFunction }
 
 public fun collectReferencesInside(scope: JsNode): List<JsName> {
     return with(ReferenceNameCollector()) {

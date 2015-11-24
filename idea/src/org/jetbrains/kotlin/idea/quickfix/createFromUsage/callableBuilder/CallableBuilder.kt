@@ -377,7 +377,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 fakeFunction: FunctionDescriptor,
                 typeArguments: Set<KotlinType>,
                 result: MutableMap<KotlinType, KotlinType>) {
-            for ((typeArgument, typeParameter) in typeArguments zip fakeFunction.getTypeParameters()) {
+            for ((typeArgument, typeParameter) in typeArguments.zip(fakeFunction.getTypeParameters())) {
                 result[typeArgument] = typeParameter.getDefaultType()
             }
         }

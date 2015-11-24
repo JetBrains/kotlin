@@ -337,7 +337,7 @@ public open class KotlinChangeInfo(
             if (!(isPrimaryMethodUpdated
                   && originalBaseFunctionDescriptor is FunctionDescriptor
                   && originalBaseFunctionDescriptor.hasJvmOverloadsAnnotation())) {
-                return (originalPsiMethods zip currentPsiMethods).toMap()
+                return (originalPsiMethods.zip(currentPsiMethods)).toMap()
             }
 
             if (originalPsiMethods.isEmpty() || currentPsiMethods.isEmpty()) return emptyMap()

@@ -58,7 +58,7 @@ public abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
     }
 
     private fun getFakeFiles(path: String): Collection<String> {
-        return FileUtil.findFilesByMask(Pattern.compile("^Fake.*\\.kt$"), File(path.replace(getTestName(true), ""))) map { relativePath(it) }
+        return FileUtil.findFilesByMask(Pattern.compile("^Fake.*\\.kt$"), File(path.replace(getTestName(true), ""))).map { relativePath(it) }
     }
 
     private fun needsInvocationTest(path: String): Boolean {

@@ -194,12 +194,12 @@ public class KotlinPsiUnifier(
                 if (args1.size() != args2.size()) return UNMATCHED
                 if (rc1.getCall().getValueArguments().size() != args1.size() || rc2.getCall().getValueArguments().size() != args2.size()) return null
 
-                return (args1.asSequence() zip args2.asSequence()).fold(MATCHED) { s, p ->
+                return (args1.asSequence().zip(args2.asSequence())).fold(MATCHED) { s, p ->
                     val (arg1, arg2) = p
                     s and when {
                         arg1 == arg2 -> MATCHED
                         arg1 == null || arg2 == null -> UNMATCHED
-                        else -> (arg1.getArguments().asSequence() zip arg2.getArguments().asSequence()).fold(MATCHED) { s, p ->
+                        else -> (arg1.getArguments().asSequence().zip(arg2.getArguments().asSequence())).fold(MATCHED) { s, p ->
                             s and matchArguments(p.first, p.second)
                         }
                     }
@@ -250,7 +250,7 @@ public class KotlinPsiUnifier(
                 val typeArgs2 = rc2.getTypeArguments().toList()
                 if (typeArgs1.size() != typeArgs2.size()) return UNMATCHED
 
-                for ((typeArg1, typeArg2) in (typeArgs1 zip typeArgs2)) {
+                for ((typeArg1, typeArg2) in (typeArgs1.zip(typeArgs2))) {
                     if (!matchDescriptors(typeArg1.first, typeArg2.first)) return UNMATCHED
 
                     val s = matchTypes(typeArg1.second, typeArg2.second)
@@ -354,7 +354,7 @@ public class KotlinPsiUnifier(
             fun sortTypes(types: Collection<KotlinType>) = types.sortedBy { DescriptorRenderer.DEBUG_TEXT.renderType(it) }
 
             if (types1.size() != types2.size()) return false
-            return (sortTypes(types1) zip sortTypes(types2)).all { matchTypes(it.first, it.second) == MATCHED }
+            return (sortTypes(types1).zip(sortTypes(types2))).all { matchTypes(it.first, it.second) == MATCHED }
         }
 
         private fun KtElement.shouldIgnoreResolvedCall(): Boolean {
@@ -527,7 +527,7 @@ public class KotlinPsiUnifier(
                 declarations2: List<T>,
                 matchPair: (Pair<T, T>) -> Boolean
         ): Boolean {
-            val zippedParams = declarations1 zip declarations2
+            val zippedParams = declarations1.zip(declarations2)
             if (declarations1.size() != declarations2.size() || !zippedParams.all { matchPair(it) }) return false
 
             zippedParams.forEach { declarationPatternsToTargets.putValue(it.first, it.second) }
@@ -777,7 +777,7 @@ public class KotlinPsiUnifier(
             val patternElements = pattern.elements
             if (targetElements.size() != patternElements.size()) return UNMATCHED
 
-            return (targetElements.asSequence() zip patternElements.asSequence()).fold(MATCHED) { s, p ->
+            return (targetElements.asSequence().zip(patternElements.asSequence())).fold(MATCHED) { s, p ->
                 if (s != UNMATCHED) s and doUnify(p.first, p.second) else s
             }
         }

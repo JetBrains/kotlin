@@ -109,7 +109,7 @@ public abstract class CallableRefactoring<T: CallableDescriptor>(
 
     public fun run(): Boolean {
         fun buttonPressed(code: Int, dialogButtons: List<String>, button: String): Boolean {
-            return code == dialogButtons indexOf button && button in dialogButtons
+            return code == dialogButtons.indexOf(button) && button in dialogButtons
         }
 
         fun performForWholeHierarchy(dialogButtons: List<String>, code: Int): Boolean {

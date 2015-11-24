@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.cli.jvm.repl.ReplFromTerminal
 import java.io.File
 
 public class ConsoleReplCommandReader : ReplCommandReader {
-    private val consoleReader = ConsoleReader("kotlin", System.`in`, System.`out`, null) apply {
+    private val consoleReader = ConsoleReader("kotlin", System.`in`, System.`out`, null).apply {
         isHistoryEnabled = true
         expandEvents = false
         history = FileHistory(File(File(System.getProperty("user.home")), ".kotlin_history"))

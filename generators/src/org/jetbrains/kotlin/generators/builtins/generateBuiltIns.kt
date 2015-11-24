@@ -82,7 +82,7 @@ fun main(args: Array<String>) {
     generateBuiltIns { file, generator ->
         println("generating $file")
         file.getParentFile()?.mkdirs()
-        PrintWriter(file) use {
+        PrintWriter(file).use {
             generator(it).generate()
         }
     }

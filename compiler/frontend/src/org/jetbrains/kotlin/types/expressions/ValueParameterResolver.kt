@@ -49,7 +49,7 @@ public class ValueParameterResolver(
 
         val contextForDefaultValue = ExpressionTypingContext.newContext(trace, scopeForDefaultValue, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE, callChecker)
 
-        for ((descriptor, parameter) in valueParameterDescriptors zip valueParameters) {
+        for ((descriptor, parameter) in valueParameterDescriptors.zip(valueParameters)) {
             ForceResolveUtil.forceResolveAllContents(descriptor.getAnnotations())
             resolveDefaultValue(descriptor, parameter, contextForDefaultValue)
         }

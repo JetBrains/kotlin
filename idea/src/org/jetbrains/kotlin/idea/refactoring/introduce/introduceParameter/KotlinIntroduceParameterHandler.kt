@@ -179,7 +179,7 @@ fun selectNewParameterContext(
             file = file,
             getContainers = { elements, parent ->
                 val parents = parent.parents
-                val stopAt = (parent.parents zip parent.parents.drop(1))
+                val stopAt = (parent.parents.zip(parent.parents.drop(1)))
                         .firstOrNull { isObjectOrNonInnerClass(it.first) }
                         ?.second
 

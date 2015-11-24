@@ -158,7 +158,7 @@ public class KotlinChangeSignature(project: Project,
         // TODO: Support visibility change
         val visibility = VisibilityUtil.getVisibilityModifier(originalMethod.getModifierList())
         val returnType = CanonicalTypes.createTypeWrapper(preview.getReturnType() ?: PsiType.VOID)
-        val params = (preview.getParameterList().getParameters() zip ktChangeInfo.getNewParameters()).map {
+        val params = (preview.getParameterList().getParameters().zip(ktChangeInfo.getNewParameters())).map {
             val (param, paramInfo) = it
             // Keep original default value for proper update of Kotlin usages
             KotlinAwareJavaParameterInfoImpl(paramInfo.getOldIndex(), param.getName()!!, param.getType(), paramInfo.defaultValueForCall)

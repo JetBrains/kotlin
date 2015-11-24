@@ -28,7 +28,7 @@ class GenerateBuiltInsTest : UsefulTestCase() {
     fun testBuiltInsAreUpToDate() {
         generateBuiltIns { file, generator ->
             val sw = StringWriter()
-            PrintWriter(sw) use {
+            PrintWriter(sw).use {
                 generator(it).generate()
             }
 

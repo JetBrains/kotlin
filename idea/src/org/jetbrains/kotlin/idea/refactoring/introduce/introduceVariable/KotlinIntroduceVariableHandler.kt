@@ -337,7 +337,7 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
     private fun KtElement.getContainer(): KtElement? {
         if (this is KtBlockExpression) return this
 
-        return (parentsWithSelf zip parents).firstOrNull {
+        return (parentsWithSelf.zip(parents)).firstOrNull {
             val (place, parent) = it
             when (parent) {
                 is KtContainerNode -> !parent.isBadContainerNode(place)
@@ -361,7 +361,7 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
 
     private fun KtExpression.getOccurrenceContainer(): KtElement? {
         var result: KtElement? = null
-        for ((place, parent) in parentsWithSelf zip parents) {
+        for ((place, parent) in parentsWithSelf.zip(parents)) {
             when {
                 parent is KtContainerNode && place !is KtBlockExpression && !parent.isBadContainerNode(place) -> result = parent
                 parent is KtClassBody, parent is KtFile -> return result

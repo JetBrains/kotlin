@@ -192,6 +192,6 @@ class VarianceChecker(private val trace: BindingTrace) {
             return noError
         }
 
-        private fun Boolean.and(other: Boolean?) = if (other == null) this else this and other
+        private infix fun Boolean.and(other: Boolean?) = if (other == null) this else this and other
     }
 }

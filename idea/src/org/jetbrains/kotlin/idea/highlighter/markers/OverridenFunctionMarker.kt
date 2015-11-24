@@ -85,7 +85,7 @@ public fun getOverriddenMethodTooltip(method: PsiMethod): String? {
 
     val comparator = MethodCellRenderer(false).getComparator()
 
-    val overridingJavaMethods = processor.getCollection().filter { !it.isMethodWithDeclarationInOtherClass() } sortedWith (comparator)
+    val overridingJavaMethods = processor.getCollection().filter { !it.isMethodWithDeclarationInOtherClass() }.sortedWith(comparator)
     if (overridingJavaMethods.isEmpty()) return null
 
     val start = if (isAbstract) DaemonBundle.message("method.is.implemented.header") else DaemonBundle.message("method.is.overriden.header")
