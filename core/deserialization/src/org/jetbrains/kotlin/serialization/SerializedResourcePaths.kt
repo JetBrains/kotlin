@@ -20,23 +20,12 @@ import com.google.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-public abstract class SerializedResourcePaths {
-    public abstract val extensionRegistry: ExtensionRegistryLite
+abstract class SerializedResourcePaths {
+    abstract val extensionRegistry: ExtensionRegistryLite
 
-    public abstract fun getClassMetadataPath(classId: ClassId): String
+    abstract fun getClassMetadataPath(classId: ClassId): String
 
-    public abstract fun getPackageFilePath(fqName: FqName): String
+    abstract fun getPackageFilePath(fqName: FqName): String
 
-    public abstract fun getStringTableFilePath(fqName: FqName): String
-
-    // TODO: remove this after M12
-    public object FallbackPaths {
-        public fun getPackageFilePath(fqName: FqName): String =
-                fqName.asString().replace('.', '/') + "/.kotlin_package"
-
-        public fun getStringTableFilePath(fqName: FqName): String =
-                fqName.asString().replace('.', '/') + "/.kotlin_string_table"
-    }
-
-    public val fallbackPaths: FallbackPaths = FallbackPaths
+    abstract fun getStringTableFilePath(fqName: FqName): String
 }
