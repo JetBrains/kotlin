@@ -199,6 +199,10 @@ public class KtPsiFactory(private val project: Project) {
         return getter
     }
 
+    public fun createMultiDeclaration(text: String): KtMultiDeclaration {
+        return (createFunction("fun foo() {$text}").bodyExpression as KtBlockExpression).statements.first() as KtMultiDeclaration
+    }
+
     public fun <TDeclaration : KtDeclaration> createDeclaration(text: String): TDeclaration {
         val file = createFile(text)
         val declarations = file.getDeclarations()

@@ -1,0 +1,5 @@
+// WITH_RUNTIME
+fun test() {
+    val pair = 1 to 2
+    pair.first
+}

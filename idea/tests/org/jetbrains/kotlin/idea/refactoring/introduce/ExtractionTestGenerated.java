@@ -508,6 +508,45 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             }
         }
 
+        @TestMetadata("idea/testData/refactoring/introduceVariable/multiDeclarations")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class MultiDeclarations extends AbstractExtractionTest {
+            public void testAllFilesPresentInMultiDeclarations() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/introduceVariable/multiDeclarations"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("notOperators.kt")
+            public void testNotOperators() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/multiDeclarations/notOperators.kt");
+                doIntroduceVariableTest(fileName);
+            }
+
+            @TestMetadata("singleComponent.kt")
+            public void testSingleComponent() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/multiDeclarations/singleComponent.kt");
+                doIntroduceVariableTest(fileName);
+            }
+
+            @TestMetadata("unresolvedComponent3.kt")
+            public void testUnresolvedComponent3() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/multiDeclarations/unresolvedComponent3.kt");
+                doIntroduceVariableTest(fileName);
+            }
+
+            @TestMetadata("unusedExpr.kt")
+            public void testUnusedExpr() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/multiDeclarations/unusedExpr.kt");
+                doIntroduceVariableTest(fileName);
+            }
+
+            @TestMetadata("usedExpr.kt")
+            public void testUsedExpr() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/multiDeclarations/usedExpr.kt");
+                doIntroduceVariableTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/refactoring/introduceVariable/stringTemplates")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

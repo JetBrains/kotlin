@@ -16,30 +16,31 @@
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable
 
+import com.intellij.codeInsight.lookup.LookupElementBuilder
+import com.intellij.codeInsight.template.*
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.command.impl.FinishMarkAction
+import com.intellij.openapi.command.impl.StartMarkAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.introduce.inplace.OccurrencesChooser
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.analysis.computeTypeInfoInContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
-import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
-import org.jetbrains.kotlin.idea.core.compareDescriptors
-import org.jetbrains.kotlin.idea.core.moveInsideParenthesesAndReplaceWith
+import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
+import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.core.refactoring.Pass
 import org.jetbrains.kotlin.idea.core.refactoring.chooseContainerElementIfNecessary
 import org.jetbrains.kotlin.idea.core.refactoring.removeTemplateEntryBracesIfPossible
@@ -51,6 +52,7 @@ import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.application.executeCommand
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiUnifier
@@ -68,6 +70,7 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import org.jetbrains.kotlin.utils.ifEmpty
 import org.jetbrains.kotlin.utils.sure
 import java.util.*
@@ -83,19 +86,20 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
 
     private class IntroduceVariableContext(
             private val expression: KtExpression,
-            private val nameSuggestion: String,
+            private val nameSuggestions: List<Collection<String>>,
             private val allReplaces: List<KtExpression>,
             private val commonContainer: PsiElement,
             private val commonParent: PsiElement,
             private val replaceOccurrence: Boolean,
             private val noTypeInference: Boolean,
             private val expressionType: KotlinType?,
+            private val componentFunctions: List<FunctionDescriptor>,
             private val bindingContext: BindingContext,
             private val resolutionFacade: ResolutionFacade
     ) {
         private val psiFactory = KtPsiFactory(expression)
 
-        var propertyRef: KtProperty? = null
+        var propertyRef: KtDeclaration? = null
         var reference: KtExpression? = null
         val references = ArrayList<KtExpression>()
 
@@ -106,7 +110,7 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
         private fun replaceExpression(expressionToReplace: KtExpression, addToReferences: Boolean): KtExpression {
             val isActualExpression = expression == expressionToReplace
 
-            val replacement = psiFactory.createExpression(nameSuggestion)
+            val replacement = psiFactory.createExpression(nameSuggestions.single().first())
             val substringInfo = expressionToReplace.extractableSubstringInfo
             var result = when {
                 expressionToReplace.isFunctionLiteralOutsideParentheses() -> {
@@ -133,22 +137,31 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
                 commonParent: PsiElement,
                 allReplaces: List<KtExpression>
         ) {
-            val variableText = StringBuilder("val ").apply {
-                append(nameSuggestion)
-                if (noTypeInference) {
-                    val typeToRender = expressionType ?: resolutionFacade.moduleDescriptor.builtIns.anyType
-                    append(": ").append(IdeDescriptorRenderers.SOURCE_CODE.renderType(typeToRender))
-                }
-                append(" = ")
-
-                append(((expression as? KtParenthesizedExpression)?.expression ?: expression).text)
-            }.toString()
-            var property = psiFactory.createProperty(variableText)
+            val initializer = (expression as? KtParenthesizedExpression)?.expression ?: expression
+            var property: KtDeclaration = if (componentFunctions.isNotEmpty()) {
+                buildString {
+                    componentFunctions.indices.joinTo(this, prefix = "val (", postfix = ")") { nameSuggestions[it].first() }
+                    append(" = ")
+                    append(initializer.text)
+                }.let { psiFactory.createMultiDeclaration(it) }
+            }
+            else {
+                buildString {
+                    append("val ")
+                    append(nameSuggestions.single().first())
+                    if (noTypeInference) {
+                        val typeToRender = expressionType ?: resolutionFacade.moduleDescriptor.builtIns.anyType
+                        append(": ").append(IdeDescriptorRenderers.SOURCE_CODE.renderType(typeToRender))
+                    }
+                    append(" = ")
+                    append(initializer.text)
+                }.let { psiFactory.createProperty(it) }
+            }
 
             var anchor = calculateAnchor(commonParent, commonContainer, allReplaces) ?: return
             val needBraces = commonContainer !is KtBlockExpression
             if (!needBraces) {
-                property = commonContainer.addBefore(property, anchor) as KtProperty
+                property = commonContainer.addBefore(property, anchor) as KtDeclaration
                 commonContainer.addBefore(psiFactory.createNewLine(), anchor)
             }
             else {
@@ -365,6 +378,70 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
         CommonRefactoringUtil.showErrorHint(project, editor, message, INTRODUCE_VARIABLE, HelpID.INTRODUCE_VARIABLE)
     }
 
+    private fun KtExpression.chooseApplicableComponentFunctions(haveOccurrencesToReplace: Boolean): List<FunctionDescriptor>? {
+        if (haveOccurrencesToReplace) return emptyList()
+
+        val functions = getApplicableComponentFunctions(this)
+        if (functions.size <= 1) return emptyList()
+
+        return functions
+    }
+
+    private fun executeMultiDeclarationTemplate(
+            project: Project,
+            editor: Editor,
+            declaration: KtMultiDeclaration,
+            suggestedNames: List<Collection<String>>) {
+        StartMarkAction.canStart(project)?.let { return }
+
+        val builder = TemplateBuilderImpl(declaration)
+        for ((index, entry) in declaration.entries.withIndex()) {
+            val templateExpression = object : Expression() {
+                private val lookupItems = suggestedNames[index].map { LookupElementBuilder.create(it) }.toTypedArray()
+
+                override fun calculateQuickResult(context: ExpressionContext?) = TextResult(suggestedNames[index].first())
+
+                override fun calculateResult(context: ExpressionContext?) = calculateQuickResult(context)
+
+                override fun calculateLookupItems(context: ExpressionContext?) = lookupItems
+            }
+            builder.replaceElement(entry, templateExpression)
+        }
+
+        val startMarkAction = StartMarkAction.start(editor, project, INTRODUCE_VARIABLE)
+        editor.caretModel.moveToOffset(declaration.startOffset)
+
+        project.executeWriteCommand(INTRODUCE_VARIABLE) {
+            TemplateManager.getInstance(project).startTemplate(
+                    editor,
+                    builder.buildInlineTemplate(),
+                    object: TemplateEditingAdapter() {
+                        private fun finishMarkAction() {
+                            FinishMarkAction.finish(project, editor, startMarkAction)
+                        }
+
+                        override fun templateFinished(template: Template?, brokenOff: Boolean) {
+                            finishMarkAction()
+                        }
+
+                        override fun templateCancelled(template: Template?) {
+                            finishMarkAction()
+                        }
+                    }
+            )
+        }
+    }
+
+    private fun suggestNamesForComponent(descriptor: FunctionDescriptor, project: Project, validator: (String) -> Boolean): Set<String> {
+        return LinkedHashSet<String>().apply {
+            descriptor.returnType?.let { addAll(KotlinNameSuggester.suggestNamesByType(it, validator)) }
+
+            val componentName = (DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) as? PsiNamedElement)?.name
+                                ?: descriptor.name.asString()
+            add(KotlinNameSuggester.suggestNameByName(componentName, validator))
+        }
+    }
+
     fun doRefactoring(
             project: Project,
             editor: Editor?,
@@ -374,7 +451,7 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
             resolutionFacade: ResolutionFacade,
             bindingContext: BindingContext,
             occurrencesToReplace: List<KtExpression>?,
-            onNonInteractiveFinish: ((KtProperty) -> Unit)?
+            onNonInteractiveFinish: ((KtDeclaration) -> Unit)?
     ) {
         val substringInfo = expression.extractableSubstringInfo
         val physicalExpression = expression.substringContextOrThis
@@ -440,19 +517,27 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
                 commonContainer = container
             }
 
+            val componentFunctions = physicalExpression.chooseApplicableComponentFunctions(replaceOccurrence) ?: return@Pass
+
             val validator = NewDeclarationNameValidator(
                     commonContainer,
                     calculateAnchor(commonParent, commonContainer, allReplaces),
                     NewDeclarationNameValidator.Target.VARIABLES
             )
-            val suggestedNames = KotlinNameSuggester.suggestNamesByExpressionAndType(expression,
-                                                                                     substringInfo?.type,
-                                                                                     bindingContext,
-                                                                                     validator,
-                                                                                     "value")
+            val suggestedNames = if (componentFunctions.isNotEmpty()) {
+                val collectingValidator = CollectingNameValidator(filter = validator)
+                componentFunctions.map { suggestNamesForComponent(it, project, collectingValidator) }
+            }
+            else {
+                KotlinNameSuggester.suggestNamesByExpressionAndType(expression,
+                                                                    substringInfo?.type,
+                                                                    bindingContext,
+                                                                    validator,
+                                                                    "value").singletonList()
+            }
             val introduceVariableContext = IntroduceVariableContext(
-                    expression, suggestedNames.iterator().next(), allReplaces, commonContainer, commonParent,
-                    replaceOccurrence, noTypeInference, expressionType, bindingContext, resolutionFacade
+                    expression, suggestedNames, allReplaces, commonContainer, commonParent,
+                    replaceOccurrence, noTypeInference, expressionType, componentFunctions, bindingContext, resolutionFacade
             )
             project.executeCommand(INTRODUCE_VARIABLE, null) {
                 runWriteAction { introduceVariableContext.runRefactoring() }
@@ -471,18 +556,29 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
 
                 PsiDocumentManager.getInstance(project).commitDocument(editor.document)
                 PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)
-                KotlinVariableInplaceIntroducer(
-                        property,
-                        introduceVariableContext.reference,
-                        introduceVariableContext.references.toTypedArray(),
-                        suggestedNames,
-                        /*todo*/ false,
-                        /*todo*/ false,
-                        expressionType,
-                        noTypeInference,
-                        project,
-                        editor
-                ).startInplaceIntroduceTemplate()
+
+                when (property) {
+                    is KtProperty -> {
+                        KotlinVariableInplaceIntroducer(
+                                property,
+                                introduceVariableContext.reference,
+                                introduceVariableContext.references.toTypedArray(),
+                                suggestedNames.single(),
+                                /*todo*/ false,
+                                /*todo*/ false,
+                                expressionType,
+                                noTypeInference,
+                                project,
+                                editor
+                        ).startInplaceIntroduceTemplate()
+                    }
+
+                    is KtMultiDeclaration -> {
+                        executeMultiDeclarationTemplate(project, editor, property, suggestedNames)
+                    }
+
+                    else -> throw AssertionError("Unexpected declaration: ${property.getElementTextWithContext()}")
+                }
             }
         }
 
@@ -568,7 +664,7 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
             editor: Editor?,
             expressionToExtract: KtExpression?,
             occurrencesToReplace: List<KtExpression>?,
-            onNonInteractiveFinish: ((KtProperty) -> Unit)?
+            onNonInteractiveFinish: ((KtDeclaration) -> Unit)?
     ) {
         val expression = expressionToExtract?.let { KtPsiUtil.safeDeparenthesize(it) }
                          ?: return showErrorHint(project, editor, KotlinRefactoringBundle.message("cannot.refactor.no.expression"))
