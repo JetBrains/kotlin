@@ -350,6 +350,7 @@ public class CallExpressionResolver {
             @NotNull KtQualifiedExpression expression, @NotNull final ExpressionTypingContext context
     ) {
         ExpressionTypingContext currentContext = context.replaceExpectedType(NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT);
+        BindingTrace trace = currentContext.trace;
 
         Function1<KtSimpleNameExpression, Boolean> isValueFunction = new Function1<KtSimpleNameExpression, Boolean>() {
             @Override
@@ -381,7 +382,7 @@ public class CallExpressionResolver {
 
         CallExpressionElement firstElement = elementChain.iterator().next();
         KtExpression firstReceiver = firstElement.getReceiver();
-        Qualifier firstQualifier = context.trace.get(BindingContext.QUALIFIER, firstReceiver);
+        Qualifier firstQualifier = trace.get(BindingContext.QUALIFIER, firstReceiver);
         if (firstQualifier == null) {
             receiverTypeInfo = expressionTypingServices.getTypeInfo(firstReceiver, currentContext);
             receiverType = receiverTypeInfo.getType();
@@ -398,46 +399,49 @@ public class CallExpressionResolver {
 
         boolean unconditional = true;
         DataFlowInfo unconditionalDataFlowInfo = receiverDataFlowInfo;
+        ExpressionTypingContext contextForSelector = currentContext;
 
         for (CallExpressionElement element : elementChain) {
             if (receiverType == null) {
                 receiverType = ErrorUtils.createErrorType("Type for " + expression.getText());
             }
-            QualifierReceiver qualifierReceiver = (QualifierReceiver) context.trace.get(BindingContext.QUALIFIER, element.getReceiver());
+            QualifierReceiver qualifierReceiver = (QualifierReceiver) trace.get(BindingContext.QUALIFIER, element.getReceiver());
 
             Receiver receiver = qualifierReceiver == null
-                                ? ExpressionReceiver.Companion.create(element.getReceiver(), receiverType, context.trace.getBindingContext())
+                                ? ExpressionReceiver.Companion.create(element.getReceiver(), receiverType, trace.getBindingContext())
                                 : qualifierReceiver;
 
             boolean lastStage = element.getQualified() == expression;
             // Drop NO_EXPECTED_TYPE / INDEPENDENT at last stage
             // But receiver data flow info changes should be always applied, while we are inside call chain
             ExpressionTypingContext baseContext = lastStage ? context : currentContext;
-            currentContext = baseContext.replaceDataFlowInfo(receiverDataFlowInfo);
+            contextForSelector = baseContext.replaceDataFlowInfo(receiverDataFlowInfo);
 
             if (receiver.exists() && receiver instanceof ReceiverValue) {
                 DataFlowValue receiverDataFlowValue = DataFlowValueFactory.createDataFlowValue((ReceiverValue) receiver, context);
                 // Additional "receiver != null" information
                 // Should be applied if we consider a safe call
                 if (element.getSafe()) {
-                    DataFlowInfo dataFlowInfo = currentContext.dataFlowInfo;
-                    if (!dataFlowInfo.getNullability(receiverDataFlowValue).canBeNull()) {
-                        reportUnnecessarySafeCall(context.trace, receiverType, element.getNode(), receiver);
+                    DataFlowInfo dataFlowInfo = contextForSelector.dataFlowInfo;
+                    if (dataFlowInfo.getNullability(receiverDataFlowValue).canBeNull()) {
+                        contextForSelector = contextForSelector.replaceDataFlowInfo(
+                                dataFlowInfo.disequate(receiverDataFlowValue, DataFlowValue.nullValue(builtIns)));
                     }
-                    currentContext = currentContext.replaceDataFlowInfo(
-                            dataFlowInfo.disequate(receiverDataFlowValue, DataFlowValue.nullValue(builtIns)));
+                    else {
+                        reportUnnecessarySafeCall(trace, receiverType, element.getNode(), receiver);
+                    }
                 }
             }
 
             KtExpression selectorExpression = element.getSelector();
             KotlinTypeInfo selectorReturnTypeInfo =
-                    getSelectorReturnTypeInfo(receiver, element.getNode(), selectorExpression, currentContext);
+                    getSelectorReturnTypeInfo(receiver, element.getNode(), selectorExpression, contextForSelector);
             KotlinType selectorReturnType = selectorReturnTypeInfo.getType();
 
             if (qualifierReceiver != null) {
-                resolveDeferredReceiverInQualifiedExpression(qualifierReceiver, element.getQualified(), currentContext);
+                resolveDeferredReceiverInQualifiedExpression(qualifierReceiver, element.getQualified(), contextForSelector);
             }
-            checkNestedClassAccess(element.getQualified(), currentContext);
+            checkNestedClassAccess(element.getQualified(), contextForSelector);
 
             boolean safeCall = element.getSafe();
             if (safeCall && selectorReturnType != null && TypeUtils.isNullableType(receiverType)) {
@@ -447,16 +451,17 @@ public class CallExpressionResolver {
 
             // TODO : this is suspicious: remove this code?
             if (selectorExpression != null && selectorReturnType != null) {
-                currentContext.trace.recordType(selectorExpression, selectorReturnType);
+                trace.recordType(selectorExpression, selectorReturnType);
             }
             resultTypeInfo = selectorReturnTypeInfo;
-            CompileTimeConstant<?> value = constantExpressionEvaluator.evaluateExpression(element.getQualified(), currentContext.trace, currentContext.expectedType);
+            CompileTimeConstant<?> value = constantExpressionEvaluator.evaluateExpression(
+                    element.getQualified(), trace, contextForSelector.expectedType);
             if (value != null && value.isPure()) {
-                resultTypeInfo =  dataFlowAnalyzer.createCompileTimeConstantTypeInfo(value, element.getQualified(), currentContext);
+                resultTypeInfo =  dataFlowAnalyzer.createCompileTimeConstantTypeInfo(value, element.getQualified(), contextForSelector);
                 if (lastStage) return resultTypeInfo;
             }
-            if (currentContext.contextDependency == INDEPENDENT) {
-                dataFlowAnalyzer.checkType(resultTypeInfo.getType(), element.getQualified(), currentContext);
+            if (contextForSelector.contextDependency == INDEPENDENT) {
+                dataFlowAnalyzer.checkType(resultTypeInfo.getType(), element.getQualified(), contextForSelector);
             }
             // For the next stage, if any, current stage selector is the receiver!
             receiverTypeInfo = selectorReturnTypeInfo;
@@ -470,14 +475,15 @@ public class CallExpressionResolver {
                 unconditionalDataFlowInfo = receiverDataFlowInfo;
             }
             //noinspection ConstantConditions
-            if (!lastStage && !currentContext.trace.get(BindingContext.PROCESSED, element.getQualified())) {
+            if (!lastStage && !trace.get(BindingContext.PROCESSED, element.getQualified())) {
                 // Store type information (to prevent problems in call completer)
-                currentContext.trace.record(BindingContext.PROCESSED, element.getQualified());
-                currentContext.trace.record(BindingContext.EXPRESSION_TYPE_INFO, element.getQualified(),
+                trace.record(BindingContext.PROCESSED, element.getQualified());
+                trace.record(BindingContext.EXPRESSION_TYPE_INFO, element.getQualified(),
                                             resultTypeInfo.replaceDataFlowInfo(unconditionalDataFlowInfo));
                 // save scope before analyze and fix debugger: see CodeFragmentAnalyzer.correctContextForExpression
-                BindingContextUtilsKt.recordScope(currentContext.trace, currentContext.scope, element.getQualified());
-                BindingContextUtilsKt.recordDataFlowInfo(currentContext.replaceDataFlowInfo(unconditionalDataFlowInfo), element.getQualified());
+                BindingContextUtilsKt.recordScope(trace, contextForSelector.scope, element.getQualified());
+                BindingContextUtilsKt.recordDataFlowInfo(contextForSelector.replaceDataFlowInfo(unconditionalDataFlowInfo),
+                                                         element.getQualified());
             }
         }
         // if we are at last stage, we should just take result type info and set unconditional data flow info
