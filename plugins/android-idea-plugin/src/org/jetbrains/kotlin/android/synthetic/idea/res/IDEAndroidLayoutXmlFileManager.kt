@@ -24,9 +24,9 @@ import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import org.jetbrains.android.facet.AndroidFacet
-import org.jetbrains.kotlin.android.synthetic.idea.AndroidXmlVisitor
 import org.jetbrains.kotlin.android.synthetic.AndroidConst.SYNTHETIC_PACKAGE_PATH_LENGTH
 import org.jetbrains.kotlin.android.synthetic.idea.AndroidPsiTreeChangePreprocessor
+import org.jetbrains.kotlin.android.synthetic.idea.AndroidXmlVisitor
 import org.jetbrains.kotlin.android.synthetic.res.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -100,12 +100,28 @@ public class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutX
     private fun AndroidFacet.toAndroidModuleInfo(): AndroidModule? {
         val applicationPackage = manifest?.`package`?.toString()
 
-        return if (applicationPackage != null) {
+        if (applicationPackage != null) {
+            // This code is needed for compatibility with AS 2.0 and IDEA 15.0, because of difference in android plugins
+            val modelClass = try {
+                Class.forName("com.android.tools.idea.gradle.AndroidGradleModel")
+            }
+            catch(e: ClassNotFoundException) {
+                null
+            }
             val mainVariant = mainSourceProvider.toVariant()
-            val flavorVariants = flavorSourceProviders?.map { it.toVariant() } ?: listOf()
-            AndroidModule(applicationPackage, listOf(mainVariant) + flavorVariants)
+            if (modelClass == null) {
+                val flavorVariants = flavorSourceProviders?.map { it.toVariant() } ?: listOf()
+                return AndroidModule(applicationPackage, listOf(mainVariant) + flavorVariants)
+            }
+            else {
+                val model = modelClass.getDeclaredMethod("get", Module::class.java).invoke(null, module)
+                if (model != null) {
+                    val sourceProviders = modelClass.getDeclaredMethod("getFlavorSourceProviders").invoke(model) as List<SourceProvider>
+                    return AndroidModule(applicationPackage, listOf(mainVariant) + sourceProviders.map { it.toVariant() })
+                }
+            }
         }
-        else null
+        return null
     }
 
 }
