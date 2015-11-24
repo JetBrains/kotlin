@@ -361,6 +361,8 @@ public fun chooseContainerElement<T>(
                 }
 
                 private fun PsiElement.renderDeclaration(): String? {
+                    if (this is KtFunctionLiteral || isFunctionalExpression()) return renderText()
+
                     val descriptor = when {
                         this is KtFile -> getName()
                         this is KtElement -> analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, this]
