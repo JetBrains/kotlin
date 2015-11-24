@@ -1886,6 +1886,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (!endsWithReturn(expr)) {
             markLineNumber(expr, true);
 
+            if (isLambdaVoidBody(expr, returnType)) {
+                markLineNumber((KtFunctionLiteral) expr.getParent(), true);
+            }
+
             if (isBlockedNamedFunction && !Type.VOID_TYPE.equals(expressionType(expr))) {
                 StackValue.none().put(returnType, v);
             }
@@ -1901,6 +1905,17 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         }
 
         return bodyExpression instanceof KtReturnExpression;
+    }
+
+    private static boolean isLambdaVoidBody(KtElement bodyExpression, Type returnType) {
+        if (bodyExpression instanceof KtBlockExpression) {
+            PsiElement parent = bodyExpression.getParent();
+            if (parent instanceof KtFunctionLiteral) {
+                return Type.VOID_TYPE.equals(returnType);
+            }
+        }
+
+        return false;
     }
 
     @Override

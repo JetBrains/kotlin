@@ -16,14 +16,14 @@ fun main(args: Array<String>) {
 
     // RESUME: 1
     val c = inlineFunVoid {
-        // STEP_OVER: 1
+        // STEP_OVER: 2
         //Breakpoint!
         val aa = 1
     }
 
     // RESUME: 1
     val d = simpleFunVoid {
-        // STEP_OVER: 3
+        // STEP_OVER: 4
         //Breakpoint!
         val aa = 1
     }

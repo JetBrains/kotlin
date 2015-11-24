@@ -8,7 +8,7 @@ fun main(args: Array<String>) {
     test(3)
 }
 
-inline fun f1(f: () -> Unit) {
+inline fun f1(f: () -> Int) {
     val a = 1
     f2 {
         f()
@@ -16,10 +16,10 @@ inline fun f1(f: () -> Unit) {
     val b = 2
 }
 
-inline fun f2(f: () -> Unit) {
+inline fun f2(f: () -> Int): Int {
     val a = 1
     f()
-    val b = 2
+    return 2
 }
 
 fun test(i: Int) = 1
