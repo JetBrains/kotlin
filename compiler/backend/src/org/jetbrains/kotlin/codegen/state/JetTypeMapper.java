@@ -1200,7 +1200,18 @@ public class JetTypeMapper {
             @NotNull CallableDescriptor callableDescriptor
     ) {
         sw.writeParameterType(kind);
-        mapType(type, sw, TypeMappingMode.getOptimalModeForValueParameter(type));
+
+        TypeMappingMode typeMappingMode;
+
+        if (TypeMappingUtil.isMethodWithDeclarationSiteWildcards(callableDescriptor) && !type.getArguments().isEmpty()) {
+            typeMappingMode = TypeMappingMode.GENERIC_TYPE; // Render all wildcards
+        }
+        else {
+            typeMappingMode = TypeMappingMode.getOptimalModeForValueParameter(type);
+        }
+
+        mapType(type, sw, typeMappingMode);
+
         sw.writeParameterTypeEnd();
     }
 

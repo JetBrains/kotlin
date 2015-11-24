@@ -287,6 +287,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             doTestWithJava(fileName);
         }
 
+        @TestMetadata("readOnlyList")
+        public void testReadOnlyList() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/collections/readOnlyList/");
+            doTestWithJava(fileName);
+        }
+
         @TestMetadata("removeAtInt")
         public void testRemoveAtInt() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/collections/removeAtInt/");

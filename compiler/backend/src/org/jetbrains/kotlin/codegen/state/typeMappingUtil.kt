@@ -18,8 +18,11 @@
 package org.jetbrains.kotlin.codegen.state
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.descriptorUtil.firstOverridden
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
+import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 
@@ -67,3 +70,16 @@ public fun getEffectiveVariance(parameterVariance: Variance, projectionKind: Var
     return Variance.OUT_VARIANCE
 }
 
+val CallableDescriptor.isMethodWithDeclarationSiteWildcards: Boolean
+    get() {
+        if (this !is CallableMemberDescriptor) return false
+        return firstOverridden {
+            METHODS_WITH_DECLARATION_SITE_WILDCARDS.containsRaw(it.propertyIfAccessor.fqNameOrNull())
+        } != null
+    }
+
+private val METHODS_WITH_DECLARATION_SITE_WILDCARDS = setOf(
+        FqName("kotlin.MutableCollection.addAll"),
+        FqName("kotlin.MutableList.addAll"),
+        FqName("kotlin.MutableMap.putAll")
+)

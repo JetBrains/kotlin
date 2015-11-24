@@ -27,13 +27,8 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
-import org.jetbrains.kotlin.utils.DFS
-import org.jetbrains.kotlin.utils.addToStdlib.check
 
 object BuiltinSpecialProperties {
     private val PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP = mapOf(
@@ -278,33 +273,6 @@ private fun CallableMemberDescriptor.isFromBuiltins(): Boolean {
     val fqName = propertyIfAccessor.fqNameOrNull() ?: return false
     return fqName.toUnsafe().startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME) &&
             this.module == this.builtIns.builtInsModule
-}
-
-private val CallableMemberDescriptor.propertyIfAccessor: CallableMemberDescriptor
-    get() = if (this is PropertyAccessorDescriptor) correspondingProperty else this
-
-private fun CallableDescriptor.fqNameOrNull(): FqName? = fqNameUnsafe.check { it.isSafe }?.toSafe()
-
-public fun CallableMemberDescriptor.firstOverridden(
-        predicate: (CallableMemberDescriptor) -> Boolean
-): CallableMemberDescriptor? {
-    var result: CallableMemberDescriptor? = null
-    return DFS.dfs(listOf(this),
-        object : DFS.Neighbors<CallableMemberDescriptor> {
-            override fun getNeighbors(current: CallableMemberDescriptor?): Iterable<CallableMemberDescriptor> {
-                return current?.overriddenDescriptors ?: emptyList()
-            }
-        },
-        object : DFS.AbstractNodeHandler<CallableMemberDescriptor, CallableMemberDescriptor?>() {
-            override fun beforeChildren(current: CallableMemberDescriptor) = result == null
-            override fun afterChildren(current: CallableMemberDescriptor) {
-                if (result == null && predicate(current)) {
-                    result = current
-                }
-            }
-            override fun result(): CallableMemberDescriptor? = result
-        }
-    )
 }
 
 public fun CallableMemberDescriptor.isFromJavaOrBuiltins() = isFromJava || isFromBuiltins()

@@ -1,4 +1,4 @@
-open class KList : MutableList<String> {
+abstract class KList : MutableList<String> {
     override val size: Int
         get() = throw UnsupportedOperationException()
 
