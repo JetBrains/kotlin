@@ -2015,6 +2015,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference/resolve"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
+                @TestMetadata("ambiguousWithVararg.kt")
+                public void testAmbiguousWithVararg() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/resolve/ambiguousWithVararg.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("byArgType.kt")
                 public void testByArgType() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/resolve/byArgType.kt");
@@ -2036,6 +2042,24 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("constructor.kt")
                 public void testConstructor() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/resolve/constructor.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("kt9601.kt")
+                public void testKt9601() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/resolve/kt9601.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("moreSpecificAmbiguousExtensions.kt")
+                public void testMoreSpecificAmbiguousExtensions() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/resolve/moreSpecificAmbiguousExtensions.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("moreSpecificSimple.kt")
+                public void testMoreSpecificSimple() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/callableReference/resolve/moreSpecificSimple.kt");
                     doTest(fileName);
                 }
 

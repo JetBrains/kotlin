@@ -48,8 +48,6 @@ public class ResolutionResultsHandler {
             @NotNull TracingStrategy tracing,
             @NotNull Collection<MutableResolvedCall<D>> candidates
     ) {
-        boolean resolveOverloads = context.checkArguments == CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS; // todo rename CheckArgumentTypesMode
-
         Set<MutableResolvedCall<D>> successfulCandidates = Sets.newLinkedHashSet();
         Set<MutableResolvedCall<D>> failedCandidates = Sets.newLinkedHashSet();
         Set<MutableResolvedCall<D>> incompleteCandidates = Sets.newLinkedHashSet();
@@ -73,10 +71,10 @@ public class ResolutionResultsHandler {
         // TODO : maybe it's better to filter overrides out first, and only then look for the maximally specific
 
         if (!successfulCandidates.isEmpty() || !incompleteCandidates.isEmpty()) {
-            return computeSuccessfulResult(context, tracing, successfulCandidates, incompleteCandidates, resolveOverloads);
+            return computeSuccessfulResult(context, tracing, successfulCandidates, incompleteCandidates, context.checkArguments);
         }
         else if (!failedCandidates.isEmpty()) {
-            return computeFailedResult(tracing, context.trace, failedCandidates, resolveOverloads);
+            return computeFailedResult(tracing, context.trace, failedCandidates, context.checkArguments);
         }
         if (!candidatesWithWrongReceiver.isEmpty()) {
             tracing.unresolvedReferenceWrongReceiver(context.trace, candidatesWithWrongReceiver);
@@ -92,12 +90,12 @@ public class ResolutionResultsHandler {
             @NotNull TracingStrategy tracing,
             @NotNull Set<MutableResolvedCall<D>> successfulCandidates,
             @NotNull Set<MutableResolvedCall<D>> incompleteCandidates,
-            boolean resolveOverloads
+            @NotNull CheckArgumentTypesMode checkArgumentsMode
     ) {
         Set<MutableResolvedCall<D>> successfulAndIncomplete = Sets.newLinkedHashSet();
         successfulAndIncomplete.addAll(successfulCandidates);
         successfulAndIncomplete.addAll(incompleteCandidates);
-        OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(successfulAndIncomplete, true, resolveOverloads);
+        OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(successfulAndIncomplete, true, checkArgumentsMode);
         if (results.isSingleResult()) {
             MutableResolvedCall<D> resultingCall = results.getResultingCall();
             resultingCall.getTrace().moveAllMyDataTo(context.trace);
@@ -131,7 +129,7 @@ public class ResolutionResultsHandler {
             @NotNull TracingStrategy tracing,
             @NotNull BindingTrace trace,
             @NotNull Set<MutableResolvedCall<D>> failedCandidates,
-            boolean resolveOverloads
+            @NotNull CheckArgumentTypesMode checkArgumentsMode
     ) {
         if (failedCandidates.size() != 1) {
             // This is needed when there are several overloads some of which are OK but for nullability of the receiver,
@@ -148,7 +146,7 @@ public class ResolutionResultsHandler {
                     if (severityLevel.contains(ARGUMENTS_MAPPING_ERROR)) {
                         return recordFailedInfo(tracing, trace, thisLevel);
                     }
-                    OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(thisLevel, false, resolveOverloads);
+                    OverloadResolutionResultsImpl<D> results = chooseAndReportMaximallySpecific(thisLevel, false, checkArgumentsMode);
                     return recordFailedInfo(tracing, trace, results.getResultingCalls());
                 }
             }
@@ -189,7 +187,7 @@ public class ResolutionResultsHandler {
     private <D extends CallableDescriptor> OverloadResolutionResultsImpl<D> chooseAndReportMaximallySpecific(
             @NotNull Set<MutableResolvedCall<D>> candidates,
             boolean discriminateGenerics,
-            boolean resolveOverloads
+            @NotNull CheckArgumentTypesMode checkArgumentsMode
     ) {
         if (candidates.size() == 1) {
             return OverloadResolutionResultsImpl.success(candidates.iterator().next());
@@ -199,18 +197,15 @@ public class ResolutionResultsHandler {
         if (noOverrides.size() == 1) {
             return OverloadResolutionResultsImpl.success(noOverrides.iterator().next());
         }
-        else if (!resolveOverloads) {
-            return OverloadResolutionResultsImpl.ambiguity(noOverrides);
-        }
 
-        MutableResolvedCall<D> maximallySpecific = overloadingConflictResolver.findMaximallySpecific(noOverrides, false);
+        MutableResolvedCall<D> maximallySpecific = overloadingConflictResolver.findMaximallySpecific(noOverrides, false, checkArgumentsMode);
         if (maximallySpecific != null) {
             return OverloadResolutionResultsImpl.success(maximallySpecific);
         }
 
         if (discriminateGenerics) {
             MutableResolvedCall<D> maximallySpecificGenericsDiscriminated = overloadingConflictResolver.findMaximallySpecific(
-                    noOverrides, true);
+                    noOverrides, true, checkArgumentsMode);
             if (maximallySpecificGenericsDiscriminated != null) {
                 return OverloadResolutionResultsImpl.success(maximallySpecificGenericsDiscriminated);
             }

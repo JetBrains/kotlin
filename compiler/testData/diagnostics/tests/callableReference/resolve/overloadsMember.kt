@@ -11,6 +11,6 @@ class B: A() {
 }
 
 fun test() {
-    B::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
-    B::<!OVERLOAD_RESOLUTION_AMBIGUITY!>fas<!>
+    B::foo
+    B::fas
 }

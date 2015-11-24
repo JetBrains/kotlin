@@ -1,0 +1,11 @@
+package
+
+public val ref1: [ERROR : Type for ::fun1]
+public val ref2: [ERROR : Type for ::fun2]
+public val ref3: [ERROR : Type for ::fun3]
+public fun fun1(): kotlin.Unit
+public fun fun1(/*0*/ x: kotlin.Int): kotlin.Unit
+public fun fun2(/*0*/ x: kotlin.Int): kotlin.Unit
+public fun fun2(/*0*/ vararg x: kotlin.Int /*kotlin.IntArray*/): kotlin.Unit
+public fun fun3(/*0*/ x0: kotlin.Int, /*1*/ vararg xs: kotlin.Int /*kotlin.IntArray*/): kotlin.Unit
+public fun fun3(/*0*/ x0: kotlin.String, /*1*/ vararg xs: kotlin.String /*kotlin.Array<out kotlin.String>*/): kotlin.Unit
