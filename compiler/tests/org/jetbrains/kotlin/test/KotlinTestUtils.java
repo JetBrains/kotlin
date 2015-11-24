@@ -446,6 +446,7 @@ public class KotlinTestUtils {
 
         if (configurationKind.getWithRuntime()) {
             JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.runtimeJarForTests());
+            JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.kotlinTestJarForTests());
         }
         if (configurationKind.getWithReflection()) {
             JvmContentRootsKt.addJvmClasspathRoot(configuration, ForTestCompileRuntime.reflectJarForTests());

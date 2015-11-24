@@ -41,6 +41,7 @@ import java.util.List;
  */
 public class ConfigLibraryUtil {
     private static final String DEFAULT_JAVA_RUNTIME_LIB_NAME = "JAVA_RUNTIME_LIB_NAME";
+    private static final String DEFAULT_KOTLIN_TEST_LIB_NAME = "KOTLIN_TEST_LIB_NAME";
     private static final String DEFAULT_KOTLIN_JS_STDLIB_NAME = "KOTLIN_JS_STDLIB_NAME";
 
     private ConfigLibraryUtil() {
@@ -67,6 +68,8 @@ public class ConfigLibraryUtil {
     public static void configureKotlinRuntime(Module module) {
         addLibrary(getKotlinRuntimeLibEditor(DEFAULT_JAVA_RUNTIME_LIB_NAME, PathUtil.getKotlinPathsForDistDirectory().getRuntimePath()),
                    module);
+        addLibrary(getKotlinRuntimeLibEditor(DEFAULT_KOTLIN_TEST_LIB_NAME, PathUtil.getKotlinPathsForDistDirectory().getKotlinTestPath()),
+                   module);
     }
 
     public static void configureKotlinJsRuntime(Module module) {
@@ -76,6 +79,7 @@ public class ConfigLibraryUtil {
 
     public static void unConfigureKotlinRuntime(Module module) {
         removeLibrary(module, DEFAULT_JAVA_RUNTIME_LIB_NAME);
+        removeLibrary(module, DEFAULT_KOTLIN_TEST_LIB_NAME);
     }
 
     public static void unConfigureKotlinRuntimeAndSdk(Module module, Sdk sdk) {
