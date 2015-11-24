@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.context.CodegenContextUtil;
 import org.jetbrains.kotlin.codegen.context.MethodContext;
+import org.jetbrains.kotlin.codegen.optimization.common.UtilKt;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
@@ -491,5 +492,23 @@ public class InlineCodegenUtil {
 
     public static boolean isThis0(String name) {
         return THIS$0.equals(name);
+    }
+
+    @Nullable
+    public static AbstractInsnNode getPrevMeaningful(@NotNull AbstractInsnNode node) {
+        AbstractInsnNode result = node.getPrevious();
+        while (result != null && !UtilKt.isMeaningful(result)) {
+            result = result.getPrevious();
+        }
+        return result;
+    }
+
+    public static void removeInterval(@NotNull MethodNode node, @NotNull AbstractInsnNode startInc, @NotNull AbstractInsnNode endInc) {
+        while (startInc != endInc) {
+            AbstractInsnNode next = startInc.getNext();
+            node.instructions.remove(startInc);
+            startInc = next;
+        }
+        node.instructions.remove(startInc);
     }
 }
