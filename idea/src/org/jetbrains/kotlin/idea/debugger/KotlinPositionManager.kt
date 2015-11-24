@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
 import org.jetbrains.kotlin.fileClasses.getFileClassInternalName
-import org.jetbrains.kotlin.fileClasses.getInternalName
+import org.jetbrains.kotlin.fileClasses.internalNameWithoutInnerClasses
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
@@ -224,7 +224,8 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
         if (psiFile is ClsFileImpl) {
             val decompiledPsiFile = runReadAction { psiFile.decompiledPsiFile }
             if (decompiledPsiFile is KtClsFile && sourcePosition.line == -1) {
-                val className = JvmFileClassUtil.getFileClassInfoNoResolve(decompiledPsiFile).fileClassFqName.getInternalName()
+                val className =
+                        JvmFileClassUtil.getFileClassInfoNoResolve(decompiledPsiFile).fileClassFqName.internalNameWithoutInnerClasses
                 return myDebugProcess.virtualMachineProxy.classesByName(className)
             }
         }
