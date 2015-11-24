@@ -1006,8 +1006,9 @@ public class JetTypeMapper {
             SpecialSignatureInfo specialSignatureInfo = BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo(f);
 
             if (specialSignatureInfo != null) {
-                return new JvmMethodSignature(
-                        signature.getAsmMethod(), specialSignatureInfo.getSignature(), signature.getValueParameters());
+                String newGenericSignature = CodegenUtilKt.replaceValueParametersIn(
+                        specialSignatureInfo, signature.getGenericsSignature());
+                return new JvmMethodSignature(signature.getAsmMethod(), newGenericSignature, signature.getValueParameters());
             }
         }
 

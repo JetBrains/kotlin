@@ -17,6 +17,7 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.SpecialSignatureInfo
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -49,3 +50,7 @@ fun generateIsCheck(
         generateInstanceOfInstruction(v)
     }
 }
+
+
+public fun SpecialSignatureInfo.replaceValueParametersIn(sourceSignature: String?): String?
+        = valueParametersSignature?.let { sourceSignature?.replace("^\\(.*\\)".toRegex(), "($it)") }

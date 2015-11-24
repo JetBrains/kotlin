@@ -108,15 +108,13 @@ class CollectionStubMethodGenerator(
                         val genericSignatureInfo = overriddenMethod.getSpecialSignatureInfo()
 
                         val specialGenericSignature =
-                                if (genericSignatureInfo != null)
-                                    genericSignatureInfo.signature
-                                else
-                                    overriddenMethodSignature.genericsSignature
+                                genericSignatureInfo?.replaceValueParametersIn(overriddenMethodSignature.genericsSignature)
+                                ?: overriddenMethodSignature.genericsSignature
 
                         val (asmMethod, valueParameters) =
-                                // if remove(E) in Kotlin -> remove(Object) in Java
-                                // so choose original signature
-                                if (genericSignatureInfo == SpecialSignatureInfo.GENERIC_PARAMETER)
+                                // if current method has special generic signature,
+                                // like `Collection.remove(E): Boolean` in Kotlin, use original signature to obtain `remove(Object)`
+                                if (genericSignatureInfo?.isObjectReplacedWithTypeParameter ?: false)
                                     Pair(originalSignature.asmMethod, originalSignature.valueParameters)
                                 else
                                     Pair(overriddenMethodSignature.asmMethod, overriddenMethodSignature.valueParameters)

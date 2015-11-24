@@ -124,14 +124,15 @@ object BuiltinMethodsWithSpecialGenericSignature {
     val Name.sameAsBuiltinMethodWithErasedValueParameters: Boolean
         get () = this in ERASED_VALUE_PARAMETERS_SHORT_NAMES
 
-    enum class SpecialSignatureInfo(val signature: String?) {
-        ONE_COLLECTION_PARAMETER("(Ljava/util/Collection<+Ljava/lang/Object;>;)Z"),
-        GENERIC_PARAMETER(null)
+    enum class SpecialSignatureInfo(val valueParametersSignature: String?, val isObjectReplacedWithTypeParameter: Boolean) {
+        ONE_COLLECTION_PARAMETER("Ljava/util/Collection<+Ljava/lang/Object;>;", false),
+        OBJECT_PARAMETER_NON_GENERIC(null, true),
+        OBJECT_PARAMETER_GENERIC("Ljava/lang/Object;", true)
     }
 
     fun CallableMemberDescriptor.isBuiltinWithSpecialDescriptorInJvm(): Boolean {
         if (!isFromBuiltins()) return false
-        return getSpecialSignatureInfo() == SpecialSignatureInfo.GENERIC_PARAMETER || doesOverrideBuiltinWithDifferentJvmName()
+        return getSpecialSignatureInfo()?.isObjectReplacedWithTypeParameter ?: false || doesOverrideBuiltinWithDifferentJvmName()
     }
 
     @JvmStatic
@@ -139,11 +140,15 @@ object BuiltinMethodsWithSpecialGenericSignature {
         val builtinFqName = firstOverridden { it is FunctionDescriptor && it.hasErasedValueParametersInJava }?.fqNameOrNull()
                 ?: return null
 
-        return when (builtinFqName) {
-            in ERASED_COLLECTION_PARAMETER_FQ_NAMES -> SpecialSignatureInfo.ONE_COLLECTION_PARAMETER
-            in GENERIC_PARAMETERS_METHODS_TO_DEFAULT_VALUES_MAP -> SpecialSignatureInfo.GENERIC_PARAMETER
-            else -> error("Unexpected kind of special builtin: $builtinFqName")
-        }
+        if (builtinFqName in ERASED_COLLECTION_PARAMETER_FQ_NAMES) return SpecialSignatureInfo.ONE_COLLECTION_PARAMETER
+
+        val defaultValue = GENERIC_PARAMETERS_METHODS_TO_DEFAULT_VALUES_MAP[builtinFqName]!!
+
+        return if (defaultValue == DefaultValue.NULL)
+                    // return type is some generic type as 'Map.get'
+                    SpecialSignatureInfo.OBJECT_PARAMETER_GENERIC
+                else
+                    SpecialSignatureInfo.OBJECT_PARAMETER_NON_GENERIC
     }
 }
 
@@ -207,8 +212,7 @@ fun <T : CallableMemberDescriptor> T.getOverriddenBuiltinWithDifferentJvmDescrip
     if (!name.sameAsBuiltinMethodWithErasedValueParameters) return null
 
     return firstOverridden {
-        it.isFromBuiltins()
-                && it.getSpecialSignatureInfo() == BuiltinMethodsWithSpecialGenericSignature.SpecialSignatureInfo.GENERIC_PARAMETER
+        it.isFromBuiltins() && it.getSpecialSignatureInfo()?.isObjectReplacedWithTypeParameter ?: false
     }?.original as T?
 }
 

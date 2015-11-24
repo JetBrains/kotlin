@@ -153,12 +153,7 @@ public fun isValueArgumentForCallToMethodWithTypeCheckBarrier(
     if (KtPsiUtil.deparenthesize(argumentExpression) !== element) return false
 
     val candidateDescriptor = parentCall.getResolvedCall(bindingContext)?.candidateDescriptor as CallableMemberDescriptor?
-                                ?: return false
+                              ?: return false
 
-
-    if (candidateDescriptor.getSpecialSignatureInfo() == BuiltinMethodsWithSpecialGenericSignature.SpecialSignatureInfo.GENERIC_PARAMETER) {
-        return true
-    }
-
-    return false
+    return candidateDescriptor.getSpecialSignatureInfo()?.isObjectReplacedWithTypeParameter ?: false
 }
