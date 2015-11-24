@@ -476,12 +476,6 @@ public class CandidateResolver(
             return UNSAFE_CALL_ERROR
         }
 
-        val bindingContext = trace.bindingContext
-        val receiverValue = DataFlowValueFactory.createDataFlowValue(receiverArgument, bindingContext, scope.ownerDescriptor)
-        if (safeAccess && !dataFlowInfo.getPredictableNullability(receiverValue).canBeNull()) {
-            tracing.unnecessarySafeCall(trace, receiverArgument.type)
-        }
-
         additionalTypeCheckers.forEach { it.checkReceiver(receiverParameter, receiverArgument, safeAccess, this) }
 
         return SUCCESS

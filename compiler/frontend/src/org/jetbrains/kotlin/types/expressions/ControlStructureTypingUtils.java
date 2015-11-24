@@ -535,13 +535,6 @@ public class ControlStructureTypingUtils {
         }
 
         @Override
-        public void unnecessarySafeCall(
-                @NotNull BindingTrace trace, @NotNull KotlinType type
-        ) {
-            logError();
-        }
-
-        @Override
         public void invisibleMember(
                 @NotNull BindingTrace trace, @NotNull DeclarationDescriptorWithVisibility descriptor
         ) {

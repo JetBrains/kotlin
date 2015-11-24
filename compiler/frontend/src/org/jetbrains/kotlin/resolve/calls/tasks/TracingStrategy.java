@@ -92,9 +92,6 @@ public interface TracingStrategy {
         public void unsafeCall(@NotNull BindingTrace trace, @NotNull KotlinType type, boolean isCallForImplicitInvoke) {}
 
         @Override
-        public void unnecessarySafeCall(@NotNull BindingTrace trace, @NotNull KotlinType type) {}
-
-        @Override
         public void invisibleMember(@NotNull BindingTrace trace, @NotNull DeclarationDescriptorWithVisibility descriptor) {}
 
         @Override
@@ -146,8 +143,6 @@ public interface TracingStrategy {
     );
 
     void unsafeCall(@NotNull BindingTrace trace, @NotNull KotlinType type, boolean isCallForImplicitInvoke);
-
-    void unnecessarySafeCall(@NotNull BindingTrace trace, @NotNull KotlinType type);
 
     void invisibleMember(@NotNull BindingTrace trace, @NotNull DeclarationDescriptorWithVisibility descriptor);
 

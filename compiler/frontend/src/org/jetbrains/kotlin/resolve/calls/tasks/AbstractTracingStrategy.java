@@ -187,19 +187,6 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
     }
 
     @Override
-    public void unnecessarySafeCall(@NotNull BindingTrace trace, @NotNull KotlinType type) {
-        ASTNode callOperationNode = call.getCallOperationNode();
-        assert callOperationNode != null;
-        Receiver explicitReceiver = call.getExplicitReceiver();
-        if (explicitReceiver instanceof ExpressionReceiver && ((ExpressionReceiver)explicitReceiver).getExpression() instanceof KtSuperExpression) {
-            trace.report(UNEXPECTED_SAFE_CALL.on(callOperationNode.getPsi()));
-        }
-        else {
-            trace.report(UNNECESSARY_SAFE_CALL.on(callOperationNode.getPsi(), type));
-        }
-    }
-
-    @Override
     public void invisibleMember(@NotNull BindingTrace trace, @NotNull DeclarationDescriptorWithVisibility descriptor) {
         trace.report(INVISIBLE_MEMBER.on(call.getCallElement(), descriptor, descriptor.getVisibility(), descriptor));
     }

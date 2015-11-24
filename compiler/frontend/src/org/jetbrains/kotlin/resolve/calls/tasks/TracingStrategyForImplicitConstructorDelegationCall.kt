@@ -113,10 +113,6 @@ public class TracingStrategyForImplicitConstructorDelegationCall(
         unexpectedError("unsafeCall")
     }
 
-    override fun unnecessarySafeCall(trace: BindingTrace, type: KotlinType) {
-        unexpectedError("unnecessarySafeCall")
-    }
-
     override fun missingReceiver(trace: BindingTrace, expectedReceiver: ReceiverParameterDescriptor) {
         unexpectedError("missingReceiver")
     }

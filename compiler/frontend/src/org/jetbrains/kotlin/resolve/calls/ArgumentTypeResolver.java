@@ -320,21 +320,7 @@ public class ArgumentTypeResolver {
     ) {
         MutableDataFlowInfoForArguments infoForArguments = context.dataFlowInfoForArguments;
         Call call = context.call;
-        Receiver receiver = call.getExplicitReceiver();
-        DataFlowInfo initialDataFlowInfo = context.dataFlowInfo;
-        // QualifierReceiver is a thing like Collections. which has no type or value
-        if (receiver.exists() && receiver instanceof ReceiverValue) {
-            DataFlowValue receiverDataFlowValue = DataFlowValueFactory.createDataFlowValue((ReceiverValue) receiver, context);
-            // Additional "receiver != null" information for KT-5840
-            // Should be applied if we consider a safe call
-            // For an unsafe call, we should not do it,
-            // otherwise not-null will propagate to successive statements
-            // Sample: x?.foo(x.bar()) // Inside foo call, x is not-nullable
-            if (CallUtilKt.isSafeCall(call)) {
-                initialDataFlowInfo = initialDataFlowInfo.disequate(receiverDataFlowValue, DataFlowValue.nullValue(builtIns));
-            }
-        }
-        infoForArguments.setInitialDataFlowInfo(initialDataFlowInfo);
+        infoForArguments.setInitialDataFlowInfo(context.dataFlowInfo);
 
         for (ValueArgument argument : call.getValueArguments()) {
             KtExpression expression = argument.getArgumentExpression();

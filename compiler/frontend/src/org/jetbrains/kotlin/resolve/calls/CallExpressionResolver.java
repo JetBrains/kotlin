@@ -153,16 +153,6 @@ public class CallExpressionResolver {
                 context, "trace to resolve as variable", nameExpression);
         KotlinType type =
                 getVariableType(nameExpression, receiver, callOperationNode, context.replaceTraceAndCache(temporaryForVariable), result);
-        // NB: we have duplicating code in ArgumentTypeResolver.
-        // It would be better to do it in getSelectorTypeInfo, but it breaks call expression analysis
-        // (all safe calls become unnecessary after it)
-        // QualifierReceiver is a thing like Collections. which has no type or value
-        if (receiver.exists() && receiver instanceof ReceiverValue) {
-            DataFlowValue receiverDataFlowValue = DataFlowValueFactory.createDataFlowValue((ReceiverValue) receiver, context);
-            if (callOperationNode != null && callOperationNode.getElementType() == KtTokens.SAFE_ACCESS) {
-                context = context.replaceDataFlowInfo(context.dataFlowInfo.disequate(receiverDataFlowValue, DataFlowValue.nullValue(builtIns)));
-            }
-        }
 
         if (result[0]) {
             temporaryForVariable.commit();
@@ -326,6 +316,19 @@ public class CallExpressionResolver {
         return TypeInfoFactoryKt.noTypeInfo(context);
     }
 
+    public static void reportUnnecessarySafeCall(
+            @NotNull BindingTrace trace, @NotNull KotlinType type,
+            @NotNull ASTNode callOperationNode, @Nullable Receiver explicitReceiver
+    ) {
+        if (explicitReceiver instanceof ExpressionReceiver &&
+            ((ExpressionReceiver) explicitReceiver).getExpression() instanceof KtSuperExpression) {
+            trace.report(UNEXPECTED_SAFE_CALL.on(callOperationNode.getPsi()));
+        }
+        else {
+            trace.report(UNNECESSARY_SAFE_CALL.on(callOperationNode.getPsi(), type));
+        }
+    }
+
     /**
      * Visits a qualified expression like x.y or x?.z controlling data flow information changes.
      *
@@ -400,6 +403,20 @@ public class CallExpressionResolver {
             // But receiver data flow info changes should be always applied, while we are inside call chain
             ExpressionTypingContext baseContext = lastStage ? context : currentContext;
             currentContext = baseContext.replaceDataFlowInfo(receiverDataFlowInfo);
+
+            if (receiver.exists() && receiver instanceof ReceiverValue) {
+                DataFlowValue receiverDataFlowValue = DataFlowValueFactory.createDataFlowValue((ReceiverValue) receiver, context);
+                // Additional "receiver != null" information
+                // Should be applied if we consider a safe call
+                if (element.getSafe()) {
+                    DataFlowInfo dataFlowInfo = currentContext.dataFlowInfo;
+                    if (!dataFlowInfo.getNullability(receiverDataFlowValue).canBeNull()) {
+                        reportUnnecessarySafeCall(context.trace, receiverType, element.getNode(), receiver);
+                    }
+                    currentContext = currentContext.replaceDataFlowInfo(
+                            dataFlowInfo.disequate(receiverDataFlowValue, DataFlowValue.nullValue(builtIns)));
+                }
+            }
 
             KtExpression selectorExpression = element.getSelector();
             KotlinTypeInfo selectorReturnTypeInfo =
