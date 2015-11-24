@@ -88,7 +88,19 @@ private fun String.amendNextLinesIfNeeded(reader: OutputLineReader): String {
         nextLine = reader.readLine()
     }
 
-    if (nextLine != null) reader.pushBack(nextLine)
+    if (nextLine != null) {
+        // This code is needed for compatibility with AS 2.0 and IDEA 15.0, because of difference in android plugins
+        val positionField = try {
+            reader.javaClass.getDeclaredField("myPosition")
+        }
+        catch(e: Throwable) {
+            null
+        }
+        if (positionField != null) {
+            positionField.isAccessible = true
+            positionField.setInt(reader, positionField.getInt(reader) - 1)
+        }
+    }
 
     return builder.toString()
 }
