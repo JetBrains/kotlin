@@ -20,9 +20,9 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jetbrains.kotlinx</groupId>
-            <artifactId>kotlinx.testing.jvm</artifactId>
-            <version>[0.1.0,0.2.0)</version>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin.test.jvm</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -57,15 +57,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <repositories>
-        <repository>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>bintray-kotlin-kotlinx.html</id>
-            <name>bintray</name>
-            <url>http://dl.bintray.com/kotlin/kotlinx.testing</url>
-        </repository>
-    </repositories>
 </project>

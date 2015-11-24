@@ -1,0 +1,14 @@
+{
+  "name": "karma-tests",
+  "version": "0.0.0",
+  "devDependencies": {
+    "karma": "*",
+    "qunitjs": "*",
+    "karma-qunit": "*",
+    "karma-junit-reporter": "~0.2",
+    "karma-sourcemap-loader": "~0.3",
+    "karma-teamcity-reporter": "*",
+    "karma-phantomjs-launcher": "*",
+    "phantomjs": "1.9.13"
+  }
+}
