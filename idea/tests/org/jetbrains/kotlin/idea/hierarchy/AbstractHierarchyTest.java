@@ -202,8 +202,14 @@ public abstract class AbstractHierarchyTest extends KotlinHierarchyViewTestBase 
             super.doHierarchyTest(treeStructureComputable, fileNames);
         }
         catch (RefactoringErrorHintException e) {
-            String expectedMessage = FileUtil.loadFile(new File(folderName, "messages.txt"), true);
-            assertEquals(expectedMessage, e.getLocalizedMessage());
+            File file = new File(folderName, "messages.txt");
+            if (file.exists()) {
+                String expectedMessage = FileUtil.loadFile(file, true);
+                assertEquals(expectedMessage, e.getLocalizedMessage());
+            }
+            else {
+                fail("Unexpected error: " + e.getLocalizedMessage());
+            }
         }
     }
 

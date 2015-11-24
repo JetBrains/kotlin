@@ -526,10 +526,6 @@
     <callHierarchyProvider
         language="kotlin"
         implementationClass="org.jetbrains.kotlin.idea.hierarchy.calls.KotlinCallHierarchyProvider" />
-    <callHierarchyProvider
-        language="JAVA"
-        implementationClass="org.jetbrains.kotlin.idea.hierarchy.calls.KotlinCallHierarchyProvider"
-        order="first" />
     <methodHierarchyProvider
         language="kotlin"
         implementationClass="org.jetbrains.kotlin.idea.hierarchy.overrides.KotlinOverrideHierarchyProvider" />
