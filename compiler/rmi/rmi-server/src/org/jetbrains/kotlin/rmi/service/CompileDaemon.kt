@@ -55,7 +55,7 @@ class LogStream(name: String) : OutputStream() {
 }
 
 
-public object CompileDaemon {
+object CompileDaemon {
 
     init {
         val logTime: String = SimpleDateFormat("yyyy-MM-dd.HH-mm-ss-SSS").format(Date())
@@ -90,7 +90,7 @@ public object CompileDaemon {
     }
 
     @JvmStatic
-    public fun main(args: Array<String>) {
+    fun main(args: Array<String>) {
 
         log.info("Kotlin compiler daemon version " + (loadVersionFromResource() ?: "<unknown>"))
         log.info("daemon JVM args: " + ManagementFactory.getRuntimeMXBean().inputArguments.joinToString(" "))
@@ -165,7 +165,7 @@ public object CompileDaemon {
             System.setOut(PrintStream(LogStream("stdout")))
         }
         catch (e: Exception) {
-            System.err.println("Exception: " + e.getMessage())
+            System.err.println("Exception: " + e.message)
             e.printStackTrace(System.err)
             // repeating it to log for the cases when stderr is not redirected yet
             log.log(Level.INFO, "Exception: ", e)

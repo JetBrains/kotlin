@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.rmi.LoopbackNetworkInterface
 import org.jetbrains.kotlin.rmi.SOCKET_ANY_FREE_PORT
 
 
-public class CompilerCallbackServicesFacadeServer(
+class CompilerCallbackServicesFacadeServer(
         val incrementalCompilationComponents: IncrementalCompilationComponents? = null,
         val compilationCancelledStatus: CompilationCanceledStatus? = null,
         port: Int = SOCKET_ANY_FREE_PORT

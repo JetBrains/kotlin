@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.rmi
 
 import java.io.File
 
-public enum class OSKind {
+enum class OSKind {
     Windows,
     OSX,
     Unix,
@@ -54,7 +54,7 @@ private fun String?.orDefault(v: String): String =
 // unix (freedesktop): http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
 // OS X: https://developer.apple.com/library/mac/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/AccessingFilesandDirectories/AccessingFilesandDirectories.html
 
-public object FileSystem {
+object FileSystem {
 
     val userHomePath: String get() = System.getProperty("user.home")
     val tempPath: String get() = System.getProperty("java.io.tmpdir")

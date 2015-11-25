@@ -28,45 +28,45 @@ import java.rmi.RemoteException
  * the reason for having common facade is attempt to reduce number of connections between client and daemon
  * Note: non-standard naming convention used to denote combining several entities in one facade - prefix <entityName>_ is used for every function belonging to the entity
  */
-public interface CompilerCallbackServicesFacade : Remote {
+interface CompilerCallbackServicesFacade : Remote {
 
     @Throws(RemoteException::class)
-    public fun hasIncrementalCaches(): Boolean
+    fun hasIncrementalCaches(): Boolean
 
     @Throws(RemoteException::class)
-    public fun hasLookupTracker(): Boolean
+    fun hasLookupTracker(): Boolean
 
     @Throws(RemoteException::class)
-    public fun hasCompilationCanceledStatus(): Boolean
+    fun hasCompilationCanceledStatus(): Boolean
 
     // ----------------------------------------------------
     // IncrementalCache
     @Throws(RemoteException::class)
-    public fun incrementalCache_getObsoletePackageParts(target: TargetId): Collection<String>
+    fun incrementalCache_getObsoletePackageParts(target: TargetId): Collection<String>
 
     @Throws(RemoteException::class)
-    public fun incrementalCache_getObsoleteMultifileClassFacades(target: TargetId): Collection<String>
+    fun incrementalCache_getObsoleteMultifileClassFacades(target: TargetId): Collection<String>
 
     @Throws(RemoteException::class)
-    public fun incrementalCache_getMultifileFacade(target: TargetId, partInternalName: String): String?
+    fun incrementalCache_getMultifileFacade(target: TargetId, partInternalName: String): String?
 
     @Throws(RemoteException::class)
-    public fun incrementalCache_getPackagePartData(target: TargetId, fqName: String): JvmPackagePartProto?
+    fun incrementalCache_getPackagePartData(target: TargetId, fqName: String): JvmPackagePartProto?
 
     @Throws(RemoteException::class)
-    public fun incrementalCache_getModuleMappingData(target: TargetId): ByteArray?
+    fun incrementalCache_getModuleMappingData(target: TargetId): ByteArray?
 
     @Throws(RemoteException::class)
-    public fun incrementalCache_registerInline(target: TargetId, fromPath: String, jvmSignature: String, toPath: String)
+    fun incrementalCache_registerInline(target: TargetId, fromPath: String, jvmSignature: String, toPath: String)
 
     @Throws(RemoteException::class)
     fun incrementalCache_getClassFilePath(target: TargetId, internalClassName: String): String
 
     @Throws(RemoteException::class)
-    public fun incrementalCache_close(target: TargetId)
+    fun incrementalCache_close(target: TargetId)
 
     @Throws(RemoteException::class)
-    public fun incrementalCache_getMultifileFacadeParts(target: TargetId, internalName: String): Collection<String>?
+    fun incrementalCache_getMultifileFacadeParts(target: TargetId, internalName: String): Collection<String>?
 
     // ----------------------------------------------------
     // LookupTracker
