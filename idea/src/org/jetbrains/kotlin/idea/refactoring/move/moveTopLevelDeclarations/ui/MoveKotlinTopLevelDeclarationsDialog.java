@@ -390,7 +390,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     }
 
     private boolean isFullFileMove() {
-        Map<KtFile, List<? extends KtNamedDeclaration>> fileToElements = CollectionsKt.groupBy(
+        Map<KtFile, List<KtNamedDeclaration>> fileToElements = (Map) CollectionsKt.groupBy(
                 getSelectedElementsToMove(),
                 new Function1<KtNamedDeclaration, KtFile>() {
                     @Override
@@ -399,7 +399,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                     }
                 }
         );
-        for (Map.Entry<KtFile, List<? extends KtNamedDeclaration>> entry : fileToElements.entrySet()) {
+        for (Map.Entry<KtFile, List<KtNamedDeclaration>> entry : fileToElements.entrySet()) {
             if (entry.getKey().getDeclarations().size() != entry.getValue().size()) return false;
         }
         return true;

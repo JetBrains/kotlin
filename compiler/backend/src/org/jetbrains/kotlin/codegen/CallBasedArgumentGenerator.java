@@ -90,7 +90,7 @@ public class CallBasedArgumentGenerator extends ArgumentGenerator {
     }
 
     @Override
-    protected void reorderArgumentsIfNeeded(@NotNull List<? extends ArgumentAndDeclIndex> actualArgsWithDeclIndex) {
+    protected void reorderArgumentsIfNeeded(@NotNull List actualArgsWithDeclIndex) {
         callGenerator.reorderArgumentsIfNeeded(actualArgsWithDeclIndex, valueParameterTypes);
     }
 }

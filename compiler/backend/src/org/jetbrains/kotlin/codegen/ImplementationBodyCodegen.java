@@ -1559,7 +1559,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         @Override
-        protected void reorderArgumentsIfNeeded(@NotNull List<? extends ArgumentAndDeclIndex> args) {
+        protected void reorderArgumentsIfNeeded(@NotNull List args) {
 
         }
     }
