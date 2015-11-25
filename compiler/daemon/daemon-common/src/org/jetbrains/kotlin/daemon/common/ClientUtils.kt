@@ -54,7 +54,7 @@ fun walkDaemons(registryDir: File,
     return registryDir.walk()
             .map { Pair(it, portExtractor(it.name)) }
             .filter { it.second != null && filter(it.first, it.second!!) }
-            .map {
+            .mapNotNull {
                 assert(it.second!! > 0 && it.second!! < MAX_PORT_NUMBER)
                 report(DaemonReportCategory.DEBUG, "found daemon on port ${it.second}, trying to connect")
                 val daemon = tryConnectToDaemon(it.second!!, report)
@@ -64,7 +64,6 @@ fun walkDaemons(registryDir: File,
                 }
                 daemon
             }
-            .filterNotNull()
 }
 
 
