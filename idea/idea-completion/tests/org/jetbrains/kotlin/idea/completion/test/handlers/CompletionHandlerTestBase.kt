@@ -28,7 +28,6 @@ import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import org.jetbrains.kotlin.idea.completion.test.ExpectedCompletionUtils
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import kotlin.test.fail
 
 public abstract class CompletionHandlerTestBase() : KotlinLightCodeInsightFixtureTestCase() {
     protected val fixture: JavaCodeInsightTestFixture
