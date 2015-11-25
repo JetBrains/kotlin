@@ -135,7 +135,7 @@ public object KotlinCompilerRunner {
     internal object getDaemonConnection {
         private @Volatile var connection: DaemonConnection? = null
 
-        @Synchronized operator fun invoke(environment: CompilerEnvironment, messageCollector: MessageCollector): DaemonConnection? {
+        @Synchronized operator fun invoke(environment: CompilerEnvironment, messageCollector: MessageCollector): DaemonConnection {
             if (connection == null) {
                 val libPath = CompilerRunnerUtil.getLibPath(environment.kotlinPaths, messageCollector)
                 val compilerId = CompilerId.makeCompilerId(File(libPath, "kotlin-compiler.jar"))
@@ -157,7 +157,7 @@ public object KotlinCompilerRunner {
                         return flagFile
                     }
                     val daemon = KotlinCompilerClient.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions, DaemonReportingTargets(null, daemonReportMessages), true, true)
-                    connection = DaemonConnection(daemon, daemon?.leaseCompileSession(newFlagFile().absolutePath)?.get() ?:CompileService.NO_SESSION)
+                    connection = DaemonConnection(daemon, daemon?.leaseCompileSession(newFlagFile().absolutePath)?.get() ?: CompileService.NO_SESSION)
                 }
 
                 for (msg in daemonReportMessages) {
@@ -168,7 +168,7 @@ public object KotlinCompilerRunner {
 
                 reportTotalAndThreadPerf("Daemon connect", daemonOptions, messageCollector, profiler)
             }
-            return connection
+            return connection!!
         }
     }
 

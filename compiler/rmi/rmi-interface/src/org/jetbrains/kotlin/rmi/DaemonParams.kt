@@ -313,25 +313,26 @@ public fun configureDaemonOptions(opts: DaemonOptions): DaemonOptions {
 public fun configureDaemonOptions(): DaemonOptions = configureDaemonOptions(DaemonOptions())
 
 
-fun String.memToBytes(): Long? =
-        "(\\d+)([kmg]?)".toRegex()
-                .matchEntire(this.trim().toLowerCase())
-                ?.groups?.let { match ->
-                    match.get(1)?.value?.let {
-                        it.toLong() *
-                        when (match.get(2)?.value) {
-                            "k" -> 1 shl 10
-                            "m" -> 1 shl 20
-                            "g" -> 1 shl 30
-                            else -> 1
-                        }
+private val humanizedMemorySizeRegex = "(\\d+)([kmg]?)".toRegex()
+
+private fun String.memToBytes(): Long? =
+        humanizedMemorySizeRegex
+            .matchEntire(this.trim().toLowerCase())
+            ?.groups?.let { match ->
+                match[1]?.value?.let {
+                    it.toLong() *
+                    when (match[2]?.value) {
+                        "k" -> 1 shl 10
+                        "m" -> 1 shl 20
+                        "g" -> 1 shl 30
+                        else -> 1
                     }
                 }
+            }
 
 
-private val daemonJVMOptionsMemoryProps: List<KMutableProperty1<DaemonJVMOptions, String>> by lazy {
+private val daemonJVMOptionsMemoryProps =
     listOf(DaemonJVMOptions::maxMemory, DaemonJVMOptions::maxPermSize, DaemonJVMOptions::reservedCodeCacheSize)
-}
 
 infix fun DaemonJVMOptions.memorywiseFitsInto(other: DaemonJVMOptions): Boolean =
         daemonJVMOptionsMemoryProps
