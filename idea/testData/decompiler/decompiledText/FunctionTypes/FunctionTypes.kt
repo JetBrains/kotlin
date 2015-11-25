@@ -21,9 +21,9 @@ class FunctionTypes {
     public fun f2(f: Function2<Int, *, String>) {
     }
 
-    public fun f3(f: @Extension Function2<Int, Int, Unit>) {
+    public fun f3(f: @ExtensionFunctionType Function2<Int, Int, Unit>) {
     }
 
-    public fun f4(f: List<@Extension Function1<*, *>>) {
+    public fun f4(f: List<@ExtensionFunctionType Function1<*, *>>) {
     }
 }

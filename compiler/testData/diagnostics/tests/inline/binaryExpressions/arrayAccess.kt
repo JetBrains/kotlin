@@ -12,7 +12,7 @@ operator fun <T, U, V> Function2<T, U, V>.get(index : Int) {
 
 }
 
-operator fun <T, U, V, W> @Extension Function3<T, U, V, W>.get(index : Int) {
+operator fun <T, U, V, W> @ExtensionFunctionType Function3<T, U, V, W>.get(index : Int) {
 
 }
 

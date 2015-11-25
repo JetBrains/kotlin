@@ -5,18 +5,18 @@ var v4: Function1<Int, String>
 var v4: (() -> Int, (String) -> Unit) -> String
 var v5: Int.() -> Int
 var v6 : Int.(String, Int) -> Unit
-var v7 : @Extension Function2<Int, String, Boolean>
+var v7 : @ExtensionFunctionType Function2<Int, String, Boolean>
 
 class F: Function0<Unit>
 var v8: F
 
-class EF: @Extension Function1<String, Unit>
+class EF: @ExtensionFunctionType Function1<String, Unit>
 var v9: EF
 
 class GF<T>: Function0<T>
 var v10: GF<Any>
 
-class GEF<A, B>: @Extension Function1<A, B>
+class GEF<A, B>: @ExtensionFunctionType Function1<A, B>
 var v11: GEF<Any, Any>
 
 var v12: (() -> Unit).() -> Unit

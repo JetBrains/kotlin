@@ -9,8 +9,8 @@ inline fun <T, U, V> inlineFunWithInvoke(s: (p: T) -> U) {
 operator fun <T, U, V> Function2<T, U, V>.component1() = 1
 operator fun <T, U, V> Function2<T, U, V>.component2() = 2
 
-operator fun <T, U, V, W> @Extension Function3<T, U, V, W>.component1() = 1
-operator fun <T, U, V, W> @Extension Function3<T, U, V, W>.component2() = 2
+operator fun <T, U, V, W> @ExtensionFunctionType Function3<T, U, V, W>.component1() = 1
+operator fun <T, U, V, W> @ExtensionFunctionType Function3<T, U, V, W>.component2() = 2
 
 inline fun <T, U, V, W> inlineFunWithInvoke(s: (p: T, l: U) -> V, ext: T.(p: U, l: V) -> W) {
     val (d1, e1) = <!USAGE_IS_NOT_INLINABLE, USAGE_IS_NOT_INLINABLE!>s<!>
