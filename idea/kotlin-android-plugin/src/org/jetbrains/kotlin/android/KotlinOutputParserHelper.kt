@@ -25,7 +25,6 @@ import java.io.File
 import java.lang.reflect.Constructor
 import java.util.*
 import java.util.regex.Pattern
-import kotlin.reflect.jvm.*
 import java.lang.reflect.Array as RArray
 
 fun parse(line: String, reader: OutputLineReader, messages: MutableList<Any>, logger: ILogger): Boolean {
@@ -107,7 +106,8 @@ private fun String.amendNextLinesIfNeeded(reader: OutputLineReader): String {
 
 private fun String.isNextMessage(): Boolean {
     val colonIndex1 = indexOf(COLON)
-    return (colonIndex1 >= 0 && substring(0, colonIndex1).startsWithSeverityPrefix())
+    return colonIndex1 == 0
+           || (colonIndex1 >= 0 && substring(0, colonIndex1).startsWithSeverityPrefix()) // Next Kotlin message
            || StringUtil.containsIgnoreCase(this, "FAILURE")
            || StringUtil.containsIgnoreCase(this, "FAILED")
 }
