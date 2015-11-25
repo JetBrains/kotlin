@@ -27,6 +27,7 @@ import com.intellij.util.Range
 import com.intellij.util.containers.OrderedSet
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
@@ -64,7 +65,6 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
 
         // TODO support class initializers, local functions, delegated properties with specified type, setter for properties
         element.accept(object: KtTreeVisitorVoid() {
-
             override fun visitFunctionLiteralExpression(expression: KtFunctionLiteralExpression) {
                 recordFunctionLiteral(expression.functionLiteral)
             }
@@ -175,14 +175,20 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                 val resolvedCall = expression.getResolvedCall(bindingContext) ?: return
 
                 val descriptor = resolvedCall.getResultingDescriptor()
-                if (descriptor is CallableMemberDescriptor && !isIntrinsic(descriptor)) {
-                    val function = DescriptorToSourceUtilsIde.getAnyDeclaration(file.getProject(), descriptor)
-                    if (function is KtNamedFunction || function is KtSecondaryConstructor) {
+                if (descriptor is FunctionDescriptor && !isIntrinsic(descriptor)) {
+                    val resolvedElement = DescriptorToSourceUtilsIde.getAnyDeclaration(file.getProject(), descriptor)
+                    if (resolvedElement is KtNamedFunction || resolvedElement is KtConstructor<*>) {
                         val label = KotlinMethodSmartStepTarget.calcLabel(descriptor)
-                        result.add(KotlinMethodSmartStepTarget(function as KtFunction, label, expression, lines))
+                        result.add(KotlinMethodSmartStepTarget(resolvedElement as KtFunction, label, expression, lines))
                     }
-                    else if (function is PsiMethod) {
-                        result.add(MethodSmartStepTarget(function, null, expression, false, lines))
+                    else if (resolvedElement is PsiMethod) {
+                        result.add(MethodSmartStepTarget(resolvedElement, null, expression, false, lines))
+                    }
+                    else if (resolvedElement is KtClass) {
+                         resolvedElement.getAnonymousInitializers().firstOrNull()?.let {
+                             val label = KotlinMethodSmartStepTarget.calcLabel(descriptor)
+                             result.add(KotlinMethodSmartStepTarget(it, label, expression, lines))
+                         }
                     }
                 }
             }

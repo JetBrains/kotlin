@@ -53,6 +53,12 @@ public class SmartStepIntoTestGenerated extends AbstractSmartStepIntoTest {
         doTest(fileName);
     }
 
+    @TestMetadata("constructor.kt")
+    public void testConstructor() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/smartStepInto/constructor.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("conventionMethod.kt")
     public void testConventionMethod() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/smartStepInto/conventionMethod.kt");
