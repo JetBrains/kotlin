@@ -13,7 +13,7 @@ inline fun <T, U, V> inlineFunWithInvoke(s: (p: T) -> U) {
 
 operator fun <T, U, V> Function2<T, U, V>.contains(p: Function2<T, U, V>): Boolean = false
 
-operator fun <T, U, V, W> @Extension Function3<T, U, V, W>.contains(ext: @Extension Function3<T, U, V, W>): Boolean = false
+operator fun <T, U, V, W> @ExtensionFunctionType Function3<T, U, V, W>.contains(ext: @ExtensionFunctionType Function3<T, U, V, W>): Boolean = false
 
 inline fun <T, U, V> inlineFunWithInvoke(s: (p: T, l: U) -> U, ext: T.(p: U, l: U) -> V) {
     <!USAGE_IS_NOT_INLINABLE!>s<!> in <!USAGE_IS_NOT_INLINABLE!>s<!>

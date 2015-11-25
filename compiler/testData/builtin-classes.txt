@@ -483,8 +483,12 @@ public abstract class Enum</*0*/ E : kotlin.Enum<E>> : kotlin.Comparable<E> {
     }
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) @kotlin.annotation.MustBeDocumented() public final annotation class Extension : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) @kotlin.annotation.MustBeDocumented() @kotlin.Deprecated(message = "Use @ExtensionFunctionType instead.", replaceWith = kotlin.ReplaceWith(expression = "@ExtensionFunctionType", imports = {})) public final annotation class Extension : kotlin.Annotation {
     /*primary*/ public constructor Extension()
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) @kotlin.annotation.MustBeDocumented() public final annotation class ExtensionFunctionType : kotlin.Annotation {
+    /*primary*/ public constructor ExtensionFunctionType()
 }
 
 public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {

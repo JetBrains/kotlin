@@ -10,4 +10,4 @@ Int.() -> String
 
 (m: Int) -> kotlin.String
 
-@Extension Function1<Int, String>
+@ExtensionFunctionType Function1<Int, String>

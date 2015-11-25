@@ -4,4 +4,4 @@ val c: <selection>() -> String</selection> = { "" }
 val d: () -> kotlin.String = { "" }
 val e: () -> Unit = {  }
 val f: Any.() -> String = { "" }
-val g: @Extension Function1<String, String> = { "" }
+val g: @ExtensionFunctionType Function1<String, String> = { "" }
