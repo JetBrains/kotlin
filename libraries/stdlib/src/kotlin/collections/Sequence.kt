@@ -42,6 +42,7 @@ public fun <T> sequenceOf(vararg elements: T): Sequence<T> = if (elements.isEmpt
 /**
  * Creates a sequence that returns all values in the specified [progression].
  */
+@Deprecated("Use progression.asSequence() instead.", ReplaceWith("progression.asSequence()"))
 public fun <T : Any> sequenceOf(progression: Progression<T>): Sequence<T> = object : Sequence<T> {
     override fun iterator(): Iterator<T> = progression.iterator()
 }

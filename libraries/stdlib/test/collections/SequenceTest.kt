@@ -304,17 +304,17 @@ public class SequenceTest {
     }
 
     @test fun flatMap() {
-        val result = sequenceOf(1, 2).flatMap { sequenceOf(0..it) }
+        val result = sequenceOf(1, 2).flatMap { (0..it).asSequence() }
         assertEquals(listOf(0, 1, 0, 1, 2), result.toList())
     }
 
     @test fun flatMapOnEmpty() {
-        val result = sequenceOf<Int>().flatMap { sequenceOf(0..it) }
+        val result = sequenceOf<Int>().flatMap { (0..it).asSequence() }
         assertTrue(result.none())
     }
 
     @test fun flatMapWithEmptyItems() {
-        val result = sequenceOf(1, 2, 4).flatMap { if (it == 2) sequenceOf<Int>() else sequenceOf(it - 1..it) }
+        val result = sequenceOf(1, 2, 4).flatMap { if (it == 2) sequenceOf<Int>() else (it - 1..it).asSequence() }
         assertEquals(listOf(0, 1, 3, 4), result.toList())
     }
 
