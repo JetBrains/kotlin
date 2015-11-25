@@ -6,10 +6,12 @@ import kotlin.jvm.internal.*
 import kotlin.reflect.*
 
 @Deprecated("Use assertFailsWith instead.", ReplaceWith("assertFailsWith(exceptionClass, block)"), kotlin.DeprecationLevel.ERROR)
-fun <T : Throwable> failsWith(exceptionClass: Class<T>, block: () -> Any): T = assertFailsWith(exceptionClass, { block() })
+fun <T : Throwable> failsWith(exceptionClass: Class<T>, block: () -> Any): T = assertFailsWith(exceptionClass) { block() }
 
 /** Asserts that a [block] fails with a specific exception being thrown. */
-fun <T : Throwable> assertFailsWith(exceptionClass: Class<T>, block: () -> Unit): T = assertFailsWith(exceptionClass, null, block)
+fun <T : Throwable> assertFailsWith(exceptionClass: Class<T>, block: () -> Unit): T {
+    return assertFailsWith(exceptionClass, null, block)
+}
 
 /** Asserts that a [block] fails with a specific exception being thrown. */
 fun <T : Throwable> assertFailsWith(exceptionClass: Class<T>, message: String?, block: () -> Unit): T {
@@ -29,8 +31,11 @@ fun <T : Throwable> assertFailsWith(exceptionClass: Class<T>, message: String?, 
 }
 
 /** Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown. */
+fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, block: () -> Unit): T = assertFailsWith(exceptionClass, null, block)
+
+/** Asserts that a [block] fails with a specific exception of type [exceptionClass] being thrown. */
 @Suppress("DEPRECATION")
-fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String? = null, block: () -> Unit): T = assertFailsWith(exceptionClass.javaClass, message, block)
+fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?, block: () -> Unit): T = assertFailsWith(exceptionClass.javaClass, message, block)
 
 /** Asserts that a [block] fails with a specific exception of type [T] being thrown.
  *  Since inline method doesn't allow to trace where it was invoked, it is required to pass a [message] to distinguish this method call from others.

@@ -22,7 +22,7 @@
         </dependency>
         <dependency>
         	<groupId>org.jetbrains.kotlin</groupId>
-        	<artifactId>kotlin.test.jvm</artifactId>
+        	<artifactId>kotlin.test.junit</artifactId>
         	<version>${project.version}</version>
         	<scope>test</scope>
         </dependency>
