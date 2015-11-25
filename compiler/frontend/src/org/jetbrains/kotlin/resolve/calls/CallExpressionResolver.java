@@ -284,14 +284,25 @@ public class CallExpressionResolver {
         //noinspection unchecked
         PsiElement parent = PsiTreeUtil.getParentOfType(expression, KtValueArgument.class, KtParameter.class);
         if (parent instanceof KtValueArgument) {
-            return PsiTreeUtil.getParentOfType(parent, KtAnnotationEntry.class) != null;
+            if (PsiTreeUtil.getParentOfType(parent, KtAnnotationEntry.class) != null) {
+                return true;
+            }
+            parent = PsiTreeUtil.getParentOfType(parent, KtParameter.class);
+            if (parent != null) {
+                return isUnderAnnotationClassDeclaration(trace, parent);
+            }
         }
         else if (parent instanceof KtParameter) {
-            KtClass ktClass = PsiTreeUtil.getParentOfType(parent, KtClass.class);
-            if (ktClass != null) {
-                DeclarationDescriptor descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, ktClass);
-                return DescriptorUtils.isAnnotationClass(descriptor);
-            }
+            return isUnderAnnotationClassDeclaration(trace, parent);
+        }
+        return false;
+    }
+
+    private static boolean isUnderAnnotationClassDeclaration(@NotNull BindingTrace trace, PsiElement parent) {
+        KtClass ktClass = PsiTreeUtil.getParentOfType(parent, KtClass.class);
+        if (ktClass != null) {
+            DeclarationDescriptor descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, ktClass);
+            return DescriptorUtils.isAnnotationClass(descriptor);
         }
         return false;
     }
