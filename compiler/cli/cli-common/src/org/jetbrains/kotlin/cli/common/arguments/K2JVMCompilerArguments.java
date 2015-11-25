@@ -64,6 +64,9 @@ public class K2JVMCompilerArguments extends CommonCompilerArguments {
     @Argument(value = "Xreport-perf", description = "Report detailed performance statistics")
     public boolean reportPerf;
 
+    @Argument(value = "Xmultifile-facades-open", description = "Compile multifile facade classes as open")
+    public boolean multifileFacadesOpen;
+
     // Paths to output directories for friend modules.
     public String[] friendPaths;
 

@@ -438,7 +438,8 @@ public class KotlinToJVMBytecodeCompiler {
                 targetId,
                 moduleName,
                 outputDirectory,
-                incrementalCompilationComponents
+                incrementalCompilationComponents,
+                configuration.get(JVMConfigurationKeys.MULTIFILE_FACADES_OPEN, false)
         );
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 

@@ -66,6 +66,7 @@ public class GenerationState @JvmOverloads constructor(
         // TODO: get rid of it with the proper module infrastructure
         public val outDirectory: File? = null,
         public val incrementalCompilationComponents: IncrementalCompilationComponents? = null,
+        public val generateOpenMultifileClasses: Boolean = false,
         public val progress: Progress = Progress.DEAF
 ) {
     public abstract class GenerateClassFilter {
