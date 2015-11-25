@@ -16,23 +16,17 @@
 
 package org.jetbrains.kotlin.idea.run
 
-import com.intellij.execution.Executor
 import com.intellij.execution.Location
 import com.intellij.execution.PsiLocation
-import com.intellij.execution.RunManagerEx
 import com.intellij.execution.actions.ConfigurationContext
-import com.intellij.execution.configurations.JavaCommandLine
-import com.intellij.execution.configurations.JavaParameters
-import com.intellij.execution.configurations.RunConfiguration
-import com.intellij.execution.configurations.RunProfile
-import com.intellij.execution.executors.DefaultRunExecutor
-import com.intellij.execution.runners.ExecutionEnvironment
-import com.intellij.execution.runners.ExecutionEnvironmentBuilder
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.*
+import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiComment
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiManager
 import com.intellij.refactoring.RefactoringFactory
 import com.intellij.testFramework.MapDataContext
 import com.intellij.testFramework.PlatformTestCase
@@ -43,8 +37,6 @@ import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil.configureKotlinJsRuntimeAndSdk
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil.configureKotlinRuntimeAndSdk
 import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -216,24 +208,13 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
     private fun createConfigurationFromMain(mainFqn: String): JetRunConfiguration {
         val mainFunction = KotlinTopLevelFunctionFqnNameIndex.getInstance().get(mainFqn, getTestProject(), getTestProject().allScope()).first()
 
-        return createConfigurationFromElement(mainFunction)
+        return createConfigurationFromElement(mainFunction) as JetRunConfiguration
     }
 
     private fun createConfigurationFromObject(objectFqn: String, save: Boolean = false): JetRunConfiguration {
         val obj = KotlinFullClassNameIndex.getInstance().get(objectFqn, getTestProject(), getTestProject().allScope()).single()
         val mainFunction = obj.getDeclarations().single { it is KtFunction && it.getName() == "main" }
-        return createConfigurationFromElement(mainFunction, save)
-    }
-
-    private fun createConfigurationFromElement(element: PsiElement?, save: Boolean = false): JetRunConfiguration {
-        val dataContext = MapDataContext()
-        dataContext.put(Location.DATA_KEY, PsiLocation(getTestProject(), element))
-
-        val runnerAndConfigurationSettings = ConfigurationContext.getFromContext(dataContext).getConfiguration()
-        if (save) {
-            RunManagerEx.getInstanceEx(myProject).setTemporaryConfiguration(runnerAndConfigurationSettings)
-        }
-        return runnerAndConfigurationSettings!!.getConfiguration() as JetRunConfiguration
+        return createConfigurationFromElement(mainFunction, save) as JetRunConfiguration
     }
 
     private fun configureModule(moduleDir: String, outputParentDir: VirtualFile, configModule: Module = getModule()): CreateModuleResult {
@@ -264,16 +245,6 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
 
     private fun moduleDirPath(moduleName: String) = "${getTestDataPath()}${getTestName(false)}/$moduleName"
 
-    private fun getJavaRunParameters(configuration: RunConfiguration): JavaParameters {
-        val state = configuration.getState(MockExecutor, ExecutionEnvironmentBuilder.create(myProject!!, MockExecutor, MockProfile).build())
-
-        Assert.assertNotNull(state)
-        Assert.assertTrue(state is JavaCommandLine)
-
-        configuration.checkConfiguration()
-        return (state as JavaCommandLine).getJavaParameters()!!
-    }
-
     override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/run/"
     override fun getTestProjectJdk() = PluginTestCaseBase.mockJdk()
 
@@ -283,14 +254,4 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
             val srcOutputDir: VirtualFile,
             val testOutputDir: VirtualFile
     )
-
-    private object MockExecutor : DefaultRunExecutor() {
-        override fun getId() = DefaultRunExecutor.EXECUTOR_ID
-    }
-
-    private object MockProfile : RunProfile {
-        override fun getState(executor: Executor, env: ExecutionEnvironment) = null
-        override fun getIcon() = null
-        override fun getName() = null
-    }
 }
