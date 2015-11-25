@@ -130,9 +130,9 @@ public fun PsiElement.getUsageContext(): PsiElement {
 public fun PsiElement.isInJavaSourceRoot(): Boolean =
         !JavaProjectRootsUtil.isOutsideJavaSourceRoot(getContainingFile())
 
-public inline fun KtFile.createTempCopy(textTransform: (String) -> String): KtFile {
-    val tmpFile = KtPsiFactory(this).createAnalyzableFile(getName(), textTransform(getText() ?: ""), this)
-    tmpFile.setOriginalFile(this)
+public fun KtFile.createTempCopy(text: String? = null): KtFile {
+    val tmpFile = KtPsiFactory(this).createAnalyzableFile(name, text ?: this.text ?: "", this)
+    tmpFile.originalFile = this
     tmpFile.suppressDiagnosticsInDebugMode = suppressDiagnosticsInDebugMode
     return tmpFile
 }

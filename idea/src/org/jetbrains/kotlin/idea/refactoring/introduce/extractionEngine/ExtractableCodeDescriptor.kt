@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.util.containers.ContainerUtil
@@ -97,7 +98,7 @@ class RenameReplacement(override val parameter: Parameter): ParameterReplacement
 class WrapInWithReplacement(override val parameter: Parameter): ParameterReplacement {
     override fun invoke(descriptor: ExtractableCodeDescriptor, e: KtElement): KtElement {
         val call = e.parents.firstIsInstance<KtCallExpression>().getQualifiedExpressionForSelectorOrThis()
-        val replacingExpression = KtPsiFactory(e).createExpressionByPattern("with($0) { $1 }", parameter.name, call.text)
+        val replacingExpression = KtPsiFactory(e).createExpressionByPattern("with($0) { $1 }", parameter.name, call)
         val replace = call.replace(replacingExpression)
         return (replace as KtCallExpression).functionLiteralArguments.first().getFunctionLiteral().bodyExpression!!.statements.first()
     }
@@ -112,7 +113,7 @@ class AddPrefixReplacement(override val parameter: Parameter): ParameterReplacem
         if (descriptor.receiverParameter == parameter) return e
 
         val selector = (e.parent as? KtCallExpression) ?: e
-        val replacingExpression = KtPsiFactory(e).createExpression("${parameter.nameForRef}.${selector.text}")
+        val replacingExpression = KtPsiFactory(e).createExpressionByPattern("${parameter.nameForRef}.$0", selector)
         val newExpr = (selector.replace(replacingExpression) as KtQualifiedExpression).selectorExpression!!
         return (newExpr as? KtCallExpression)?.calleeExpression ?: newExpr
     }
@@ -170,13 +171,13 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
 
     abstract val returnType: KotlinType
 
-    protected abstract fun getBoxingExpressionText(arguments: List<String>): String?
+    protected abstract fun getBoxingExpressionPattern(arguments: List<KtExpression>): String?
 
     abstract val boxingRequired: Boolean
 
-    fun getReturnExpression(arguments: List<String>, psiFactory: KtPsiFactory): KtReturnExpression? {
-        val expressionText = getBoxingExpressionText(arguments) ?: return null
-        return psiFactory.createExpression("return $expressionText") as KtReturnExpression
+    fun getReturnExpression(arguments: List<KtExpression>, psiFactory: KtPsiFactory): KtReturnExpression? {
+        val expressionPattern = getBoxingExpressionPattern(arguments) ?: return null
+        return psiFactory.createExpressionByPattern("return $expressionPattern", *arguments.toTypedArray()) as KtReturnExpression
     }
 
     protected abstract fun extractExpressionByIndex(boxedExpression: KtExpression, index: Int): KtExpression?
@@ -230,13 +231,13 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
 
         override val boxingRequired: Boolean = outputValues.size() > 1
 
-        override fun getBoxingExpressionText(arguments: List<String>): String? {
-            return when (arguments.size()) {
+        override fun getBoxingExpressionPattern(arguments: List<KtExpression>): String? {
+            return when (arguments.size) {
                 0 -> null
-                1 -> arguments.first()
+                1 -> "$0"
                 else -> {
-                    val constructorName = DescriptorUtils.getFqName(returnType.getConstructor().getDeclarationDescriptor()!!).asString()
-                    return arguments.joinToString(prefix = "$constructorName(", separator = ", ", postfix = ")")
+                    val constructorName = DescriptorUtils.getFqName(returnType.constructor.declarationDescriptor!!).asString()
+                    return arguments.indices.joinToString(prefix = "$constructorName(", separator = ", ", postfix = ")") { "\$$it" }
                 }
             }
         }
@@ -270,9 +271,9 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
 
         override val boxingRequired: Boolean = outputValues.size() > 0
 
-        override fun getBoxingExpressionText(arguments: List<String>): String? {
+        override fun getBoxingExpressionPattern(arguments: List<KtExpression>): String? {
             if (arguments.isEmpty()) return null
-            return arguments.joinToString(prefix = "kotlin.listOf(", separator = ", ", postfix = ")")
+            return arguments.indices.joinToString(prefix = "kotlin.listOf(", separator = ", ", postfix = ")") { "\$$it" }
         }
 
         override fun extractExpressionByIndex(boxedExpression: KtExpression, index: Int): KtExpression? {
@@ -324,7 +325,14 @@ val ControlFlow.possibleReturnTypes: List<KotlinType>
     }
 
 fun ControlFlow.toDefault(): ControlFlow =
-        copy(outputValues = outputValues.filterNot { it is OutputValue.Jump || it is OutputValue.ExpressionValue })
+        copy(outputValues = outputValues.filterNot { it is Jump || it is ExpressionValue })
+
+fun ControlFlow.copy(oldToNewParameters: Map<Parameter, Parameter>): ControlFlow {
+    val newOutputValues = outputValues.map {
+        if (it is ParameterUpdate) ParameterUpdate(oldToNewParameters[it.parameter]!!, it.originalExpressions) else it
+    }
+    return copy(outputValues = newOutputValues)
+}
 
 data class ExtractableCodeDescriptor(
         val extractionData: ExtractionData,
@@ -334,12 +342,45 @@ data class ExtractableCodeDescriptor(
         val parameters: List<Parameter>,
         val receiverParameter: Parameter?,
         val typeParameters: List<TypeParameter>,
-        val replacementMap: MultiMap<Int, Replacement>,
+        val replacementMap: MultiMap<KtSimpleNameExpression, Replacement>,
         val controlFlow: ControlFlow,
         val returnType: KotlinType
 ) {
     val name: String get() = suggestedNames.firstOrNull() ?: ""
     val duplicates: List<DuplicateInfo> by lazy { findDuplicates() }
+}
+
+fun ExtractableCodeDescriptor.copy(
+        newName: String,
+        newVisibility: String,
+        oldToNewParameters: Map<Parameter, Parameter>,
+        newReceiver: Parameter?,
+        returnType: KotlinType?
+): ExtractableCodeDescriptor {
+    val newReplacementMap = MultiMap.create<KtSimpleNameExpression, Replacement>()
+    for ((ref, replacements) in replacementMap.entrySet()) {
+        val newReplacements = replacements.map {
+            if (it is ParameterReplacement) {
+                val parameter = it.parameter
+                val newParameter = oldToNewParameters[parameter] ?: return@map it
+                it.copy(newParameter)
+            }
+            else it
+        }
+        newReplacementMap.putValues(ref, newReplacements)
+    }
+
+    return ExtractableCodeDescriptor(
+            extractionData,
+            originalContext,
+            listOf(newName),
+            newVisibility,
+            parameters.map { oldToNewParameters[it]!! },
+            newReceiver,
+            typeParameters,
+            newReplacementMap,
+            controlFlow.copy(oldToNewParameters),
+            returnType ?: this.returnType)
 }
 
 enum class ExtractionTarget(val targetName: String) {
@@ -431,9 +472,10 @@ data class ExtractionGeneratorConfiguration(
 data class ExtractionResult(
         val config: ExtractionGeneratorConfiguration,
         val declaration: KtNamedDeclaration,
-        val duplicateReplacers: Map<KotlinPsiRange, () -> Unit>,
-        val nameByOffset: MultiMap<Int, KtElement>
-)
+        val duplicateReplacers: Map<KotlinPsiRange, () -> Unit>
+) : Disposable {
+    override fun dispose() = unmarkReferencesInside(declaration)
+}
 
 class AnalysisResult (
         val descriptor: ExtractableCodeDescriptor?,

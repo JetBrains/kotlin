@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.util.RefactoringUIUtil
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -55,10 +56,7 @@ import org.jetbrains.kotlin.idea.util.approximateWithResolvableType
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.isResolvableInScope
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.isInsideOf
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -374,39 +372,35 @@ private fun ExtractionData.analyzeControlFlow(
     return controlFlow to null
 }
 
-fun ExtractionData.createTemporaryDeclaration(functionText: String): KtNamedDeclaration {
-    val textRange = targetSibling.textRange!!
+fun ExtractionData.createTemporaryDeclaration(pattern: String): KtNamedDeclaration {
+    val targetSiblingMarker = Any()
+    PsiTreeUtil.mark(targetSibling, targetSiblingMarker)
+    val tmpFile = originalFile.createTempCopy("")
+    tmpFile.deleteChildRange(tmpFile.firstChild, tmpFile.lastChild)
+    tmpFile.addRange(originalFile.firstChild, originalFile.lastChild)
+    val newTargetSibling = PsiTreeUtil.releaseMark(tmpFile, targetSiblingMarker)!!
+    val newTargetParent = newTargetSibling.parent
 
-    val insertText: String
-    val insertPosition: Int
-    val lookupPosition: Int
-    if (insertBefore) {
-        insertPosition = textRange.startOffset
-        lookupPosition = insertPosition
-        insertText = functionText
+    val declaration = KtPsiFactory(originalFile).createDeclarationByPattern<KtNamedDeclaration>(
+            pattern,
+            PsiChildRange(originalElements.firstOrNull(), originalElements.lastOrNull())
+    )
+    return if (insertBefore) {
+        newTargetParent.addBefore(declaration, newTargetSibling) as KtNamedDeclaration
     }
     else {
-        insertPosition = textRange.endOffset
-        lookupPosition = insertPosition + 1
-        insertText = "\n$functionText"
+        newTargetParent.addAfter(declaration, newTargetSibling) as KtNamedDeclaration
     }
-
-    val tmpFile = originalFile.createTempCopy { text ->
-        StringBuilder(text).insert(insertPosition, insertText).toString()
-    }
-    return tmpFile.findElementAt(lookupPosition)?.getNonStrictParentOfType<KtNamedDeclaration>()!!
 }
 
 internal fun ExtractionData.createTemporaryCodeBlock(): KtBlockExpression =
-        (createTemporaryDeclaration("fun() {\n$codeFragmentText\n}\n") as KtNamedFunction).bodyExpression as KtBlockExpression
+        (createTemporaryDeclaration("fun() {\n$0\n}\n") as KtNamedFunction).bodyExpression as KtBlockExpression
 
 private fun KotlinType.collectReferencedTypes(processTypeArguments: Boolean): List<KotlinType> {
     if (!processTypeArguments) return Collections.singletonList(this)
     return DFS.dfsFromNode(
             this,
-            object: Neighbors<KotlinType> {
-                override fun getNeighbors(current: KotlinType): Iterable<KotlinType> = current.arguments.map { it.type }
-            },
+            Neighbors<KotlinType> { current -> current.arguments.map { it.type } },
             VisitedWithSet(),
             object: CollectingNodeHandler<KotlinType, KotlinType, ArrayList<KotlinType>>(ArrayList()) {
                 override fun afterChildren(current: KotlinType) {
@@ -567,17 +561,6 @@ private class DelegatingParameter(
     override fun copy(name: String, parameterType: KotlinType): Parameter = DelegatingParameter(original, name, parameterType)
     override fun getParameterType(allowSpecialClassNames: Boolean) = parameterType
 }
-
-internal class ParametersInfo {
-    var errorMessage: ErrorMessage? = null
-    val replacementMap: MultiMap<Int, Replacement> = MultiMap.create()
-    val originalRefToParameter: MultiMap<KtSimpleNameExpression, MutableParameter> = MultiMap.create()
-    val parameters: MutableSet<MutableParameter> = HashSet()
-    val typeParameters: MutableSet<TypeParameter> = HashSet()
-    val nonDenotableTypes: MutableSet<KotlinType> = HashSet()
-}
-
-
 
 private fun ExtractionData.checkDeclarationsMovingOutOfScope(
         enclosingDeclaration: KtDeclaration,
@@ -773,7 +756,8 @@ fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts
     val body = result.declaration.getGeneratedBody()
     val bindingContext = body.analyzeFully()
 
-    fun processReference(resolveResult: ResolveResult, currentRefExpr: KtReferenceExpression) {
+    fun processReference(currentRefExpr: KtSimpleNameExpression) {
+        val resolveResult = currentRefExpr.resolveResult ?: return
         if (currentRefExpr.parent is KtThisExpression) return
 
         val diagnostics = bindingContext.diagnostics.forElement(currentRefExpr)
@@ -808,18 +792,6 @@ fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts
         }
     }
 
-    fun validateBody() {
-        for ((originalOffset, resolveResult) in extractionData.refOffsetToDeclaration) {
-            if (resolveResult.declaration.isInsideOf(extractionData.physicalElements)) continue
-
-            val currentRefExprs = result.nameByOffset[originalOffset].mapNotNull {
-                (it as? KtThisExpression)?.instanceReference ?: it as? KtSimpleNameExpression
-            }
-
-            currentRefExprs.forEach { processReference(resolveResult, it) }
-        }
-    }
-
     result.declaration.accept(
             object : KtTreeVisitorVoid() {
                 override fun visitUserType(userType: KtUserType) {
@@ -831,12 +803,8 @@ fun ExtractableCodeDescriptor.validate(): ExtractableCodeDescriptorWithConflicts
                     }
                 }
 
-                override fun visitKtElement(element: KtElement) {
-                    if (element == body) {
-                        validateBody()
-                        return
-                    }
-                    super.visitKtElement(element)
+                override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
+                    processReference(expression)
                 }
             }
     )

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine
 
 import com.intellij.psi.PsiElement
+import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.SingleType
 import org.jetbrains.kotlin.cfg.pseudocode.getElementValuesRecursively
@@ -50,6 +51,15 @@ import org.jetbrains.kotlin.types.CommonSupertypes
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import java.util.*
+
+internal class ParametersInfo {
+    var errorMessage: AnalysisResult.ErrorMessage? = null
+    val originalRefToParameter = MultiMap.create<KtSimpleNameExpression, MutableParameter>()
+    val parameters = HashSet<MutableParameter>()
+    val typeParameters = HashSet<TypeParameter>()
+    val nonDenotableTypes = HashSet<KotlinType>()
+    val replacementMap = MultiMap.create<KtSimpleNameExpression, Replacement>()
+}
 
 internal fun ExtractionData.inferParametersInfo(
         commonParent: PsiElement,
@@ -158,7 +168,7 @@ private fun ExtractionData.extractReceiver(
         )) return
 
         if (referencedClassifierDescriptor is ClassDescriptor) {
-            info.replacementMap.putValue(refInfo.offsetInBody, FqNameReplacement(originalDescriptor.getImportableDescriptor().fqNameSafe))
+            info.replacementMap.putValue(originalRef, FqNameReplacement(originalDescriptor.getImportableDescriptor().fqNameSafe))
         }
     }
     else {
@@ -244,12 +254,12 @@ private fun ExtractionData.extractReceiver(
                 }
             }
 
-            info.replacementMap.putValue(refInfo.offsetInBody,
-                    when {
-                        isMemberExtensionFunction -> WrapInWithReplacement(parameter)
-                        hasThisReceiver && extractThis -> AddPrefixReplacement(parameter)
-                        else -> RenameReplacement(parameter)
-                    })
+            val replacement = when {
+                isMemberExtensionFunction -> WrapInWithReplacement(parameter)
+                hasThisReceiver && extractThis -> AddPrefixReplacement(parameter)
+                else -> RenameReplacement(parameter)
+            }
+            info.replacementMap.putValue(originalRef, replacement)
         }
     }
 }
@@ -281,7 +291,6 @@ private fun suggestParameterType(
                    ?: if (receiverToExtract.exists()) receiverToExtract.type else null
 
                receiverToExtract is ImplicitReceiver -> {
-                   val calleeExpression = resolvedCall!!.call.calleeExpression
                    val typeByDataFlowInfo = if (useSmartCastsIfPossible) {
                        val dataFlowInfo = bindingContext.getDataFlowInfo(resolvedCall!!.call.callElement)
                        val possibleTypes = dataFlowInfo.getPossibleTypes(DataFlowValueFactory.createDataFlowValueForStableReceiver(receiverToExtract))

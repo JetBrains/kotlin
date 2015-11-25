@@ -16,21 +16,18 @@
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine
 
-import com.intellij.psi.*
-import org.jetbrains.kotlin.psi.*
-import com.intellij.openapi.editor.*
-import org.jetbrains.kotlin.idea.util.psi.patternMatching.*
-import com.intellij.openapi.application.*
-import com.intellij.refactoring.*
-import org.jetbrains.kotlin.idea.util.application.*
-import org.jetbrains.kotlin.idea.refactoring.*
-import org.jetbrains.kotlin.idea.refactoring.introduce.*
-import com.intellij.ui.awt.*
-import com.intellij.openapi.ui.popup.*
-import com.intellij.openapi.ui.*
-import javax.swing.event.*
-import com.intellij.openapi.project.*
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.MessageType
+import com.intellij.openapi.ui.popup.Balloon
+import com.intellij.openapi.ui.popup.JBPopupFactory
+import com.intellij.refactoring.BaseRefactoringProcessor
+import com.intellij.ui.awt.RelativePoint
 import org.jetbrains.kotlin.idea.core.refactoring.checkConflictsInteractively
+import org.jetbrains.kotlin.idea.refactoring.introduce.showErrorHint
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import javax.swing.event.HyperlinkEvent
 
 public abstract class ExtractionEngineHelper(val operationName: String) {
     open fun adjustExtractionData(data: ExtractionData): ExtractionData = data
@@ -66,7 +63,15 @@ public class ExtractionEngine(
         fun validateAndRefactor() {
             val validationResult = analysisResult.descriptor!!.validate()
             project.checkConflictsInteractively(validationResult.conflicts) {
-                helper.configureAndRun(project, editor, validationResult, onFinish)
+                helper.configureAndRun(project, editor, validationResult) {
+                    try {
+                        onFinish(it)
+                    }
+                    finally {
+                        it.dispose()
+                        extractionData.dispose()
+                    }
+                }
             }
         }
 

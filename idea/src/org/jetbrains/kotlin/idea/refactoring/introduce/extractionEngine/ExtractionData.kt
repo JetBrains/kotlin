@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.intellij.psi.util.PsiTreeUtil
@@ -72,11 +74,12 @@ data class ResolveResult(
 
 data class ResolvedReferenceInfo(
         val refExpr: KtSimpleNameExpression,
-        val offsetInBody: Int,
         val resolveResult: ResolveResult,
         val smartCast: KotlinType?,
         val possibleTypes: Set<KotlinType>
 )
+
+internal var KtSimpleNameExpression.resolveResult: ResolveResult? by CopyableUserDataProperty(Key.create("RESOLVE_RESULT"))
 
 data class ExtractionData(
         val originalFile: KtFile,
@@ -84,8 +87,8 @@ data class ExtractionData(
         val targetSibling: PsiElement,
         val duplicateContainer: PsiElement? = null,
         val options: ExtractionOptions = ExtractionOptions.DEFAULT
-) {
-    val project: Project = originalFile.getProject()
+) : Disposable {
+    val project: Project = originalFile.project
     val originalElements: List<PsiElement> = originalRange.elements
     val physicalElements = originalElements.map { it.substringContextOrThis }
 
@@ -108,9 +111,6 @@ data class ExtractionData(
         }
     }
 
-    val originalStartOffset: Int?
-        get() = originalElements.firstOrNull()?.let { e -> e.getTextRange()!!.getStartOffset() }
-
     val commonParent = PsiTreeUtil.findCommonParent(physicalElements) as KtElement
 
     val bindingContext: BindingContext? by lazy { commonParent.getContextForContainingDeclarationBody() }
@@ -118,65 +118,63 @@ data class ExtractionData(
     private val itFakeDeclaration by lazy { KtPsiFactory(originalFile).createParameter("it: Any?") }
     private val synthesizedInvokeDeclaration by lazy { KtPsiFactory(originalFile).createFunction("fun invoke() {}") }
 
-    val refOffsetToDeclaration by lazy {
-        fun isExtractableIt(descriptor: DeclarationDescriptor, context: BindingContext): Boolean {
-            if (!(descriptor is ValueParameterDescriptor && (context[BindingContext.AUTO_CREATED_IT, descriptor] ?: false))) return false
-            val function = DescriptorToSourceUtils.descriptorToDeclaration(descriptor.getContainingDeclaration()) as? KtFunctionLiteral
-            return function == null || !function.isInsideOf(physicalElements)
+    init {
+        markReferences()
+    }
+
+    private fun isExtractableIt(descriptor: DeclarationDescriptor, context: BindingContext): Boolean {
+        if (!(descriptor is ValueParameterDescriptor && (context[BindingContext.AUTO_CREATED_IT, descriptor] ?: false))) return false
+        val function = DescriptorToSourceUtils.descriptorToDeclaration(descriptor.containingDeclaration) as? KtFunctionLiteral
+        return function == null || !function.isInsideOf(physicalElements)
+    }
+
+    private tailrec fun getDeclaration(descriptor: DeclarationDescriptor, context: BindingContext): PsiNameIdentifierOwner? {
+        (DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) as? PsiNameIdentifierOwner)?.let { return it }
+
+        return when {
+            isExtractableIt(descriptor, context) -> itFakeDeclaration
+            isSynthesizedInvoke(descriptor) -> synthesizedInvokeDeclaration
+            descriptor is SyntheticJavaPropertyDescriptor -> getDeclaration(descriptor.getMethod, context)
+            else -> null
         }
+    }
 
-        tailrec fun getDeclaration(descriptor: DeclarationDescriptor, context: BindingContext): PsiNameIdentifierOwner? {
-            (DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) as? PsiNameIdentifierOwner)?.let { return it }
-
-            return when {
-                isExtractableIt(descriptor, context) -> itFakeDeclaration
-                isSynthesizedInvoke(descriptor) -> synthesizedInvokeDeclaration
-                descriptor is SyntheticJavaPropertyDescriptor -> getDeclaration(descriptor.getMethod, context)
-                else -> null
-            }
-        }
-
-        val originalStartOffset = originalStartOffset
-        val context = bindingContext
-
-        if (originalStartOffset != null && context != null) {
-            val resultMap = HashMap<Int, ResolveResult>()
-
-            val visitor = object: KtTreeVisitorVoid() {
-                override fun visitQualifiedExpression(expression: KtQualifiedExpression) {
-                    if (context[BindingContext.SMARTCAST, expression] != null) {
-                        expression.getSelectorExpression()?.accept(this)
-                        return
-                    }
-
-                    super.visitQualifiedExpression(expression)
+    private fun markReferences() {
+        val context = bindingContext ?: return
+        val visitor = object : KtTreeVisitorVoid() {
+            override fun visitQualifiedExpression(expression: KtQualifiedExpression) {
+                if (context[BindingContext.SMARTCAST, expression] != null) {
+                    expression.selectorExpression?.accept(this)
+                    return
                 }
 
-                override fun visitSimpleNameExpression(ref: KtSimpleNameExpression) {
-                    if (ref.getParent() is KtValueArgumentName) return
+                super.visitQualifiedExpression(expression)
+            }
 
-                    val physicalRef = substringInfo?.let {
-                        // If substring contains some references it must be extracted as a string template
-                        val physicalExpression = expressions.single() as KtStringTemplateExpression
-                        val extractedContentOffset = physicalExpression.getContentRange().startOffset + physicalExpression.startOffset
-                        val offsetInExtracted = ref.startOffset - extractedContentOffset
-                        val offsetInTemplate = it.relativeContentRange.startOffset + offsetInExtracted
-                        it.template.findElementAt(offsetInTemplate)!!.getStrictParentOfType<KtSimpleNameExpression>()
-                    } ?: ref
+            override fun visitSimpleNameExpression(ref: KtSimpleNameExpression) {
+                if (ref.parent is KtValueArgumentName) return
 
-                    val resolvedCall = physicalRef.getResolvedCall(context)
-                    val descriptor = context[BindingContext.REFERENCE_TARGET, physicalRef] ?: return
-                    val declaration = getDeclaration(descriptor, context) ?: return
+                val physicalRef = substringInfo?.let {
+                    // If substring contains some references it must be extracted as a string template
+                    val physicalExpression = expressions.single() as KtStringTemplateExpression
+                    val extractedContentOffset = physicalExpression.getContentRange().startOffset + physicalExpression.startOffset
+                    val offsetInExtracted = ref.startOffset - extractedContentOffset
+                    val offsetInTemplate = it.relativeContentRange.startOffset + offsetInExtracted
+                    it.template.findElementAt(offsetInTemplate)!!.getStrictParentOfType<KtSimpleNameExpression>()
+                } ?: ref
 
-                    val offset = ref.getTextRange()!!.getStartOffset() - originalStartOffset
-                    resultMap[offset] = ResolveResult(physicalRef, declaration, descriptor, resolvedCall)
+                val resolvedCall = physicalRef.getResolvedCall(context)
+                val descriptor = context[BindingContext.REFERENCE_TARGET, physicalRef] ?: return
+                val declaration = getDeclaration(descriptor, context) ?: return
+
+                val resolveResult = ResolveResult(physicalRef, declaration, descriptor, resolvedCall)
+                physicalRef.resolveResult = resolveResult
+                if (ref != physicalRef) {
+                    ref.resolveResult = resolveResult
                 }
             }
-            expressions.forEach { it.accept(visitor) }
-
-            resultMap
         }
-        else Collections.emptyMap<Int, ResolveResult>()
+        expressions.forEach { it.accept(visitor) }
     }
 
     fun getPossibleTypes(expression: KtExpression, resolvedCall: ResolvedCall<*>?, context: BindingContext): Set<KotlinType> {
@@ -195,75 +193,72 @@ data class ExtractionData(
     fun getBrokenReferencesInfo(body: KtBlockExpression): List<ResolvedReferenceInfo> {
         val originalContext = bindingContext ?: return listOf()
 
-        val startOffset = body.getBlockContentOffset()
+        val newReferences = body.collectDescendantsOfType<KtSimpleNameExpression> { it.resolveResult != null }
 
         val referencesInfo = ArrayList<ResolvedReferenceInfo>()
         val refToContextMap = KotlinFileReferencesResolver.resolve(body)
-        for ((ref, context) in refToContextMap) {
-            if (ref !is KtSimpleNameExpression) continue
-
-            val offset = ref.getTextRange()!!.getStartOffset() - startOffset
-            val originalResolveResult = refOffsetToDeclaration[offset] ?: continue
+        for (newRef in newReferences) {
+            val context = refToContextMap[newRef] ?: continue
+            val originalResolveResult = newRef.resolveResult ?: continue
 
             val smartCast: KotlinType?
             val possibleTypes: Set<KotlinType>
 
             // Qualified property reference: a.b
-            val qualifiedExpression = ref.getQualifiedExpressionForSelector()
+            val qualifiedExpression = newRef.getQualifiedExpressionForSelector()
             if (qualifiedExpression != null) {
-                val smartCastTarget = originalResolveResult.originalRefExpr.getParent() as KtExpression
+                val smartCastTarget = originalResolveResult.originalRefExpr.parent as KtExpression
                 smartCast = originalContext[BindingContext.SMARTCAST, smartCastTarget]
                 possibleTypes = getPossibleTypes(smartCastTarget, originalResolveResult.resolvedCall, originalContext)
                 val receiverDescriptor =
-                        (originalResolveResult.resolvedCall?.getDispatchReceiver() as? ImplicitReceiver)?.declarationDescriptor
+                        (originalResolveResult.resolvedCall?.dispatchReceiver as? ImplicitReceiver)?.declarationDescriptor
                 if (smartCast == null
                     && !DescriptorUtils.isCompanionObject(receiverDescriptor)
-                    && qualifiedExpression.getReceiverExpression() !is KtSuperExpression) continue
+                    && qualifiedExpression.receiverExpression !is KtSuperExpression) continue
             }
             else {
                 smartCast = originalContext[BindingContext.SMARTCAST, originalResolveResult.originalRefExpr]
                 possibleTypes = getPossibleTypes(originalResolveResult.originalRefExpr, originalResolveResult.resolvedCall, originalContext)
             }
 
-            val parent = ref.getParent()
+            val parent = newRef.parent
 
             // Skip P in type references like 'P.Q'
-            if (parent is KtUserType && (parent.getParent() as? KtUserType)?.getQualifier() == parent) continue
+            if (parent is KtUserType && (parent.parent as? KtUserType)?.qualifier == parent) continue
 
-            val descriptor = context[BindingContext.REFERENCE_TARGET, ref]
+            val descriptor = context[BindingContext.REFERENCE_TARGET, newRef]
             val isBadRef = !(compareDescriptors(project, originalResolveResult.descriptor, descriptor)
-                             && originalContext.diagnostics.forElement(originalResolveResult.originalRefExpr) == context.diagnostics.forElement(ref))
+                             && originalContext.diagnostics.forElement(originalResolveResult.originalRefExpr) == context.diagnostics.forElement(newRef))
                            || smartCast != null
             if (isBadRef && !originalResolveResult.declaration.isInsideOf(physicalElements)) {
                 val originalResolvedCall = originalResolveResult.resolvedCall as? VariableAsFunctionResolvedCall
                 val originalFunctionCall = originalResolvedCall?.functionCall
                 val originalVariableCall = originalResolvedCall?.variableCall
-                val invokeDescriptor = originalFunctionCall?.getResultingDescriptor()
+                val invokeDescriptor = originalFunctionCall?.resultingDescriptor
                 if (invokeDescriptor != null && isSynthesizedInvoke(invokeDescriptor) && invokeDescriptor.isExtension) {
                     val variableResolveResult = originalResolveResult.copy(resolvedCall = originalVariableCall!!,
-                                                                           descriptor = originalVariableCall.getResultingDescriptor())
+                                                                           descriptor = originalVariableCall.resultingDescriptor)
                     val functionResolveResult = originalResolveResult.copy(resolvedCall = originalFunctionCall!!,
-                                                                           descriptor = originalFunctionCall.getResultingDescriptor(),
+                                                                           descriptor = originalFunctionCall.resultingDescriptor,
                                                                            declaration = synthesizedInvokeDeclaration)
-                    referencesInfo.add(ResolvedReferenceInfo(ref, offset, variableResolveResult, smartCast, possibleTypes))
-                    referencesInfo.add(ResolvedReferenceInfo(ref, offset, functionResolveResult, smartCast, possibleTypes))
+                    referencesInfo.add(ResolvedReferenceInfo(newRef, variableResolveResult, smartCast, possibleTypes))
+                    referencesInfo.add(ResolvedReferenceInfo(newRef, functionResolveResult, smartCast, possibleTypes))
                 }
                 else {
-                    referencesInfo.add(ResolvedReferenceInfo(ref, offset, originalResolveResult, smartCast, possibleTypes))
+                    referencesInfo.add(ResolvedReferenceInfo(newRef, originalResolveResult, smartCast, possibleTypes))
                 }
             }
         }
 
         return referencesInfo
     }
+
+    override fun dispose() {
+        expressions.forEach { unmarkReferencesInside(it) }
+    }
 }
 
-// Hack:
-// we can't get first element offset through getStatement()/getChildren() since they skip comments and whitespaces
-// So we take offset of the left brace instead and increase it by 2 (which is length of "{\n" separating block start and its first element)
-internal fun KtExpression.getBlockContentOffset(): Int {
-    (this as? KtBlockExpression)?.getLBrace()?.let {
-        return it.getTextRange()!!.getStartOffset() + 2
-    }
-    return getTextRange()!!.getStartOffset()
+fun unmarkReferencesInside(root: PsiElement) {
+    if (!root.isValid) return
+    root.forEachDescendantOfType<KtSimpleNameExpression> { it.resolveResult = null }
 }

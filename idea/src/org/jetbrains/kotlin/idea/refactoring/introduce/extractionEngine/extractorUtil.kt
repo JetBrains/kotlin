@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine
 
+import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
+import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.BaseRefactoringProcessor
-import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.core.*
@@ -56,8 +56,65 @@ import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import java.util.*
 
-fun ExtractionGeneratorConfiguration.getDeclarationText(
-        withBody: Boolean = true,
+private fun buildSignature(config: ExtractionGeneratorConfiguration, renderer: DescriptorRenderer): CallableBuilder {
+    val extractionTarget = config.generatorOptions.target
+    if (!extractionTarget.isAvailable(config.descriptor)) {
+        val message = "Can't generate ${extractionTarget.targetName}: ${config.descriptor.extractionData.codeFragmentText}"
+        throw BaseRefactoringProcessor.ConflictsInTestsException(listOf(message))
+    }
+
+    val builderTarget = when (extractionTarget) {
+        ExtractionTarget.FUNCTION, ExtractionTarget.FAKE_LAMBDALIKE_FUNCTION -> CallableBuilder.Target.FUNCTION
+        else -> CallableBuilder.Target.READ_ONLY_PROPERTY
+    }
+    return CallableBuilder(builderTarget).apply {
+        modifier(config.descriptor.visibility)
+
+        typeParams(
+                config.descriptor.typeParameters.map {
+                    val typeParameter = it.originalDeclaration
+                    val bound = typeParameter.extendsBound
+                    typeParameter.name + (bound?.let { " : " + it.text } ?: "")
+                }
+        )
+
+        fun KotlinType.typeAsString(): String {
+            return if (config.descriptor.extractionData.options.allowSpecialClassNames && isSpecial()) {
+                DEBUG_TYPE_REFERENCE_STRING
+            } else {
+                renderer.renderType(this)
+            }
+        }
+
+        config.descriptor.receiverParameter?.let {
+            val receiverType = it.getParameterType(config.descriptor.extractionData.options.allowSpecialClassNames)
+            val receiverTypeAsString = receiverType.typeAsString()
+            val isFunctionType = KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(receiverType)
+            receiver(if (isFunctionType) "($receiverTypeAsString)" else receiverTypeAsString)
+        }
+
+        name(config.generatorOptions.dummyName ?: config.descriptor.name)
+
+        config.descriptor.parameters.forEach { parameter ->
+            param(parameter.name,
+                       parameter.getParameterType(config.descriptor.extractionData.options.allowSpecialClassNames).typeAsString())
+        }
+
+        with(config.descriptor.returnType) {
+            if (isDefault() || isError || extractionTarget == ExtractionTarget.PROPERTY_WITH_INITIALIZER) {
+                noReturnType()
+            } else {
+                returnType(typeAsString())
+            }
+        }
+
+        typeConstraints(config.descriptor.typeParameters.flatMap { it.originalConstraints }.map { it.text!! })
+    }
+}
+
+fun ExtractionGeneratorConfiguration.getSignaturePreview(renderer: DescriptorRenderer) = buildSignature(this, renderer).asString()
+
+fun ExtractionGeneratorConfiguration.getDeclarationPattern(
         descriptorRenderer: DescriptorRenderer = if (generatorOptions.flexibleTypesAllowed)
                                                     DescriptorRenderer.FLEXIBLE_TYPES_FOR_CODE
                                                  else IdeDescriptorRenderers.SOURCE_CODE
@@ -67,58 +124,20 @@ fun ExtractionGeneratorConfiguration.getDeclarationText(
         throw BaseRefactoringProcessor.ConflictsInTestsException(listOf("Can't generate ${extractionTarget.targetName}: ${descriptor.extractionData.codeFragmentText}"))
     }
 
-    val builderTarget = when (extractionTarget) {
-        ExtractionTarget.FUNCTION, ExtractionTarget.FAKE_LAMBDALIKE_FUNCTION -> CallableBuilder.Target.FUNCTION
-        else -> CallableBuilder.Target.READ_ONLY_PROPERTY
-    }
-    return CallableBuilder(builderTarget).let { builder ->
-        builder.modifier(descriptor.visibility)
-
-        builder.typeParams(
-                descriptor.typeParameters.map {
-                    val typeParameter = it.originalDeclaration
-                    val bound = typeParameter.extendsBound
-                    typeParameter.name + (bound?.let { " : " + it.text } ?: "")
-                }
-        )
-
-        fun KotlinType.typeAsString(): String {
-            return if (descriptor.extractionData.options.allowSpecialClassNames && isSpecial()) DEBUG_TYPE_REFERENCE_STRING else descriptorRenderer.renderType(this)
-        }
-
-        descriptor.receiverParameter?.let {
-            val receiverType = it.getParameterType(descriptor.extractionData.options.allowSpecialClassNames)
-            val receiverTypeAsString = receiverType.typeAsString()
-            val isFunctionType = KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(receiverType)
-            builder.receiver(if (isFunctionType) "($receiverTypeAsString)" else receiverTypeAsString)
-        }
-
-        builder.name(generatorOptions.dummyName ?: descriptor.name)
-
-        descriptor.parameters.forEach { parameter ->
-            builder.param(parameter.name,
-                          parameter.getParameterType(descriptor.extractionData.options.allowSpecialClassNames).typeAsString())
-        }
-
-        with(descriptor.returnType) {
-            if (isDefault() || isError || extractionTarget == ExtractionTarget.PROPERTY_WITH_INITIALIZER) {
-                builder.noReturnType()
-            } else {
-                builder.returnType(typeAsString())
+    return buildSignature(this, descriptorRenderer).let { builder ->
+        builder.transform {
+            for (i in sequence(indexOf('$')) { indexOf('$', it + 2) }) {
+                if (i < 0) break
+                insert(i + 1, '$')
             }
         }
 
-        builder.typeConstraints(descriptor.typeParameters.flatMap { it.originalConstraints }.map { it.text!! })
-
-        if (withBody) {
-            val bodyText = descriptor.extractionData.codeFragmentText
-            when (extractionTarget) {
-                ExtractionTarget.FUNCTION,
-                ExtractionTarget.FAKE_LAMBDALIKE_FUNCTION,
-                ExtractionTarget.PROPERTY_WITH_GETTER -> builder.blockBody(bodyText)
-                ExtractionTarget.PROPERTY_WITH_INITIALIZER -> builder.initializer(bodyText)
-                ExtractionTarget.LAZY_PROPERTY -> builder.lazyBody(bodyText)
-            }
+        when (extractionTarget) {
+            ExtractionTarget.FUNCTION,
+            ExtractionTarget.FAKE_LAMBDALIKE_FUNCTION,
+            ExtractionTarget.PROPERTY_WITH_GETTER -> builder.blockBody("$0")
+            ExtractionTarget.PROPERTY_WITH_INITIALIZER -> builder.initializer("$0")
+            ExtractionTarget.LAZY_PROPERTY -> builder.lazyBody("$0")
         }
 
         builder.asString()
@@ -131,22 +150,7 @@ fun KotlinType.isSpecial(): Boolean {
 }
 
 fun createNameCounterpartMap(from: KtElement, to: KtElement): Map<KtSimpleNameExpression, KtSimpleNameExpression> {
-    val map = HashMap<KtSimpleNameExpression, KtSimpleNameExpression>()
-
-    val fromOffset = from.textRange!!.startOffset
-    from.accept(
-            object : KtTreeVisitorVoid() {
-                override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
-                    val offset = expression.textRange!!.startOffset - fromOffset
-                    val newExpression = to.findElementAt(offset)?.getNonStrictParentOfType<KtSimpleNameExpression>()
-                    assert(newExpression != null) { "Couldn't find expression at $offset in '${to.text}'" }
-
-                    map[expression] = newExpression!!
-                }
-            }
-    )
-
-    return map
+    return from.collectDescendantsOfType<KtSimpleNameExpression>().zip(to.collectDescendantsOfType<KtSimpleNameExpression>()).toMap()
 }
 
 class DuplicateInfo(
@@ -408,131 +412,94 @@ private fun makeCall(
     }
 }
 
+private var KtExpression.isJumpElementToReplace: Boolean
+        by NotNullableCopyableUserDataProperty(Key.create("IS_JUMP_ELEMENT_TO_REPLACE"), false)
+
+private var KtReturnExpression.isReturnForLabelRemoval: Boolean
+        by NotNullableCopyableUserDataProperty(Key.create("IS_RETURN_FOR_LABEL_REMOVAL"), false)
+
 fun ExtractionGeneratorConfiguration.generateDeclaration(
         declarationToReplace: KtNamedDeclaration? = null
 ): ExtractionResult{
     val psiFactory = KtPsiFactory(descriptor.extractionData.originalFile)
-    val nameByOffset = MultiMap<Int, KtElement>()
+
+    fun getReturnsForLabelRemoval() = descriptor.controlFlow.outputValues
+            .flatMapTo(ArrayList<KtReturnExpression>()) { it.originalExpressions.filterIsInstance<KtReturnExpression>() }
 
     fun createDeclaration(): KtNamedDeclaration {
+        descriptor.controlFlow.jumpOutputValue?.elementsToReplace?.forEach { it.isJumpElementToReplace = true }
+        getReturnsForLabelRemoval().forEach { it.isReturnForLabelRemoval = true }
+
         return with(descriptor.extractionData) {
             if (generatorOptions.inTempFile) {
-                createTemporaryDeclaration("${getDeclarationText()}\n")
+                createTemporaryDeclaration("${getDeclarationPattern()}\n")
             }
             else {
-                psiFactory.createDeclaration(getDeclarationText())
+                psiFactory.createDeclarationByPattern(
+                        getDeclarationPattern(),
+                        PsiChildRange(originalElements.firstOrNull(), originalElements.lastOrNull())
+                )
             }
         }
     }
 
-    fun getReturnArguments(resultExpression: KtExpression?): List<String> {
+    fun getReturnArguments(resultExpression: KtExpression?): List<KtExpression> {
         return descriptor.controlFlow.outputValues
                 .mapNotNull {
                     when (it) {
-                        is ExpressionValue -> resultExpression?.text
-                        is Jump -> if (it.conditional) "false" else null
-                        is ParameterUpdate -> it.parameter.nameForRef
-                        is Initializer -> it.initializedDeclaration.name
+                        is ExpressionValue -> resultExpression
+                        is Jump -> if (it.conditional) psiFactory.createExpression("false") else null
+                        is ParameterUpdate -> psiFactory.createExpression(it.parameter.nameForRef)
+                        is Initializer -> psiFactory.createExpression(it.initializedDeclaration.name!!)
                         else -> throw IllegalArgumentException("Unknown output value: $it")
                     }
                 }
     }
 
-    fun replaceWithReturn(
-            originalExpression: KtExpression,
-            replacingExpression: KtReturnExpression,
-            expressionToUnifyWith: KtExpression?
-    ) {
-        val currentResultExpression =
-                (if (originalExpression is KtReturnExpression) originalExpression.returnedExpression else originalExpression) ?: return
-
-        val newResultExpression = descriptor.controlFlow.defaultOutputValue?.let {
-            val boxedExpression = originalExpression.replaced(replacingExpression).returnedExpression!!
+    fun KtExpression.replaceWithReturn(replacingExpression: KtReturnExpression) {
+        descriptor.controlFlow.defaultOutputValue?.let {
+            val boxedExpression = replaced(replacingExpression).returnedExpression!!
             descriptor.controlFlow.outputValueBoxer.extractExpressionByValue(boxedExpression, it)
-        }
-
-        @Suppress
-        if (newResultExpression == null) {
-            throw AssertionError("Can' replace '${originalExpression.text}' with '${replacingExpression.text}'")
-        }
-
-        val counterpartMap = createNameCounterpartMap(currentResultExpression, expressionToUnifyWith ?: newResultExpression)
-        counterpartMap.entries.forEach {
-            val (cmOriginalExpr, cmNewExpr) = it
-            nameByOffset.entrySet().find { cmOriginalExpr in it.value }?.let {
-                nameByOffset.remove(it.key, cmOriginalExpr)
-                nameByOffset.putValue(it.key, cmNewExpr)
-            }
-        }
-    }
-
-    fun getCounterparts<T : KtExpression>(originalExpressions: Collection<T>,
-                                                                   body: KtExpression,
-                                                                   bodyOffset: Int,
-                                                                   file: PsiFile): List<T> {
-        return originalExpressions.map { originalExpression ->
-            val offsetInBody = originalExpression.textRange!!.startOffset - descriptor.extractionData.originalStartOffset!!
-            file.findElementAt(bodyOffset + offsetInBody)?.getNonStrictParentOfType(originalExpression.javaClass)
-            ?: throw AssertionError("Couldn't find expression at $offsetInBody in '${body.text}'")
         }
     }
 
     fun adjustDeclarationBody(declaration: KtNamedDeclaration) {
         val body = declaration.getGeneratedBody()
 
-        val exprReplacementMap = MultiMap<KtElement, (ExtractableCodeDescriptor, KtElement) -> KtElement>()
-        val originalOffsetByExpr = LinkedHashMap<KtElement, Int>()
+        val jumpValue = descriptor.controlFlow.jumpOutputValue
+        if (jumpValue != null) {
+            val replacingReturn = psiFactory.createExpression(if (jumpValue.conditional) "return true" else "return")
+            body.collectDescendantsOfType<KtExpression> { it.isJumpElementToReplace }.forEach {
+                it.replace(replacingReturn)
+                it.isJumpElementToReplace = false
+            }
+        }
 
-        val bodyOffset = body.getBlockContentOffset()
-        val file = body.containingFile!!
+        body.collectDescendantsOfType<KtReturnExpression> { it.isReturnForLabelRemoval }.forEach {
+            it.getTargetLabel()?.delete()
+            it.isReturnForLabelRemoval = false
+        }
 
         /*
          * Sort by descending position so that internals of value/type arguments in calls and qualified types are replaced
          * before calls/types themselves
          */
-        for ((offsetInBody, resolveResult) in descriptor.extractionData.refOffsetToDeclaration.entries.sortedByDescending { it.key }) {
-            val expr = file.findElementAt(bodyOffset + offsetInBody)?.getNonStrictParentOfType<KtSimpleNameExpression>()
-            assert(expr != null) { "Couldn't find expression at $offsetInBody in '${body.text}'" }
+        val currentRefs = body
+                .collectDescendantsOfType<KtSimpleNameExpression> { it.resolveResult != null }
+                .sortedByDescending { it.startOffset }
 
-            originalOffsetByExpr[expr!!] = offsetInBody
-
-            descriptor.replacementMap[offsetInBody].let { replacements ->
-                replacements.forEach {
-                    exprReplacementMap.putValue(expr, it)
-                }
+        currentRefs.forEach {
+            val resolveResult = it.resolveResult!!
+            val currentRef = if (it.isValid) {
+                it
             }
-        }
-
-        val replacingReturn: KtExpression?
-        val expressionsToReplaceWithReturn: List<KtElement>
-
-        val returnsForLabelRemoval = descriptor.controlFlow.outputValues
-                .flatMapTo(ArrayList<KtReturnExpression>()) { it.originalExpressions.filterIsInstance<KtReturnExpression>() }
-
-        val jumpValue = descriptor.controlFlow.jumpOutputValue
-        if (jumpValue != null) {
-            replacingReturn = psiFactory.createExpression(if (jumpValue.conditional) "return true" else "return")
-            returnsForLabelRemoval.removeAll(jumpValue.elementsToReplace)
-            expressionsToReplaceWithReturn = getCounterparts(jumpValue.elementsToReplace, body, bodyOffset, file)
-        }
-        else {
-            replacingReturn = null
-            expressionsToReplaceWithReturn = Collections.emptyList()
-        }
-
-        if (replacingReturn != null) {
-            for (expr in expressionsToReplaceWithReturn) {
-                expr.replace(replacingReturn)
+            else {
+                body.findDescendantOfType<KtSimpleNameExpression> { it.resolveResult == resolveResult } ?: return@forEach
             }
-        }
-
-        getCounterparts(returnsForLabelRemoval, body, bodyOffset, file).forEach { it.getTargetLabel()?.delete() }
-
-        for ((expr, originalOffset) in originalOffsetByExpr) {
-            if (expr.isValid) {
-                val replacements = exprReplacementMap[expr].mapNotNull { it?.invoke(descriptor, expr) }
-                nameByOffset.put(originalOffset, if (replacements.isEmpty()) arrayListOf(expr) else replacements)
-            }
+            val originalRef = resolveResult.originalRefExpr
+            val newRef = descriptor.replacementMap[originalRef]
+                    .fold(currentRef as KtElement) { currentRef, replacement -> replacement(descriptor, currentRef) }
+            (newRef as? KtSimpleNameExpression)?.resolveResult = resolveResult
         }
 
         if (generatorOptions.target == ExtractionTarget.PROPERTY_WITH_INITIALIZER) return
@@ -554,20 +521,19 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
         val lastExpression = body.statements.lastOrNull()
         if (lastExpression is KtReturnExpression) return
 
-        val (defaultExpression, expressionToUnifyWith) =
+        val defaultExpression =
                 if (!generatorOptions.inTempFile && defaultValue != null && descriptor.controlFlow.outputValueBoxer.boxingRequired && lastExpression!!.isMultiLine()) {
                     val varNameValidator = NewDeclarationNameValidator(body, lastExpression, NewDeclarationNameValidator.Target.VARIABLES)
                     val resultVal = KotlinNameSuggester.suggestNamesByType(defaultValue.valueType, varNameValidator, null).first()
-                    val newDecl = body.addBefore(psiFactory.createDeclaration("val $resultVal = ${lastExpression.text}"), lastExpression) as KtProperty
+                    body.addBefore(psiFactory.createDeclaration("val $resultVal = ${lastExpression.text}"), lastExpression)
                     body.addBefore(psiFactory.createNewLine(), lastExpression)
-                    psiFactory.createExpression(resultVal) to newDecl.initializer!!
+                    psiFactory.createExpression(resultVal)
                 }
-                else {
-                    lastExpression to null
-                }
+                else lastExpression
 
         val returnExpression = descriptor.controlFlow.outputValueBoxer.getReturnExpression(getReturnArguments(defaultExpression), psiFactory) ?: return
 
+        @Suppress("NON_EXHAUSTIVE_WHEN")
         when(generatorOptions.target) {
             ExtractionTarget.LAZY_PROPERTY, ExtractionTarget.FAKE_LAMBDALIKE_FUNCTION -> {
                 // In the case of lazy property absence of default value means that output values are of OutputValue.Initializer type
@@ -580,11 +546,8 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
         }
 
         when {
-            defaultValue == null ->
-                body.appendElement(returnExpression)
-
-            !defaultValue.callSiteReturn ->
-                replaceWithReturn(lastExpression!!, returnExpression, expressionToUnifyWith)
+            defaultValue == null -> body.appendElement(returnExpression)
+            !defaultValue.callSiteReturn -> lastExpression!!.replaceWithReturn(returnExpression)
         }
 
         if (generatorOptions.allowExpressionBody) {
@@ -657,7 +620,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
         }
     }
 
-    if (generatorOptions.inTempFile) return ExtractionResult(this, declaration, Collections.emptyMap(), nameByOffset)
+    if (generatorOptions.inTempFile) return ExtractionResult(this, declaration, Collections.emptyMap())
 
     val replaceInitialOccurrence = {
         val arguments = descriptor.parameters.map { it.argumentText }
@@ -670,7 +633,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
         ShortenReferences.DEFAULT.process(declaration)
     }
 
-    if (generatorOptions.inTempFile) return ExtractionResult(this, declaration, emptyMap(), nameByOffset)
+    if (generatorOptions.inTempFile) return ExtractionResult(this, declaration, emptyMap())
 
     val duplicateReplacers = HashMap<KotlinPsiRange, () -> Unit>().apply {
         if (generatorOptions.delayInitialOccurrenceReplacement) {
@@ -688,5 +651,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
         }
     }
 
-    return ExtractionResult(this, declaration, duplicateReplacers, nameByOffset)
+    CodeStyleManager.getInstance(descriptor.extractionData.project).reformat(declaration)
+
+    return ExtractionResult(this, declaration, duplicateReplacers)
 }

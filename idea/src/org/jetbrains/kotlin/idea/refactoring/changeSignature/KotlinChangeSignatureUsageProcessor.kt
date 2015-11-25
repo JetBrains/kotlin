@@ -671,7 +671,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             }
 
             val psiFactory = KtPsiFactory(callable.project)
-            val tempFile = (callable.containingFile as KtFile).createTempCopy { it }
+            val tempFile = (callable.containingFile as KtFile).createTempCopy()
             val functionWithReceiver = tempFile.findElementAt(callable.textOffset)?.getNonStrictParentOfType<KtNamedFunction>() ?: return
             val receiverTypeRef = psiFactory.createType(newReceiverInfo.currentTypeText)
             functionWithReceiver.setReceiverTypeReference(receiverTypeRef)
