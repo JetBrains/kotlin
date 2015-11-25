@@ -20,23 +20,23 @@ import java.io.Serializable
 import java.rmi.Remote
 import java.rmi.RemoteException
 
-public interface CompileService : Remote {
+interface CompileService : Remote {
 
-    public enum class OutputFormat : Serializable {
+    enum class OutputFormat : Serializable {
         PLAIN,
         XML
     }
 
-    public enum class TargetPlatform : Serializable {
+    enum class TargetPlatform : Serializable {
         JVM,
         JS
     }
 
     companion object {
-        public val NO_SESSION: Int = 0
+        val NO_SESSION: Int = 0
     }
 
-    public sealed class CallResult<out R> : Serializable {
+    sealed class CallResult<out R> : Serializable {
 
         class Good<R>(val result: R) : CallResult<R>() {
             override fun get(): R = result
@@ -66,41 +66,41 @@ public interface CompileService : Remote {
 
     // TODO: remove!
     @Throws(RemoteException::class)
-    public fun checkCompilerId(expectedCompilerId: CompilerId): Boolean
+    fun checkCompilerId(expectedCompilerId: CompilerId): Boolean
 
     @Throws(RemoteException::class)
-    public fun getUsedMemory(): CallResult<Long>
+    fun getUsedMemory(): CallResult<Long>
 
     @Throws(RemoteException::class)
-    public fun getDaemonOptions(): CallResult<DaemonOptions>
+    fun getDaemonOptions(): CallResult<DaemonOptions>
 
     @Throws(RemoteException::class)
-    public fun getDaemonJVMOptions(): CallResult<DaemonJVMOptions>
+    fun getDaemonJVMOptions(): CallResult<DaemonJVMOptions>
 
     @Throws(RemoteException::class)
-    public fun registerClient(aliveFlagPath: String?): CallResult<Nothing>
+    fun registerClient(aliveFlagPath: String?): CallResult<Nothing>
 
     // TODO: consider adding another client alive checking mechanism, e.g. socket/port
 
     @Throws(RemoteException::class)
-    public fun getClients(): CallResult<List<String>>
+    fun getClients(): CallResult<List<String>>
 
     @Throws(RemoteException::class)
-    public fun leaseCompileSession(aliveFlagPath: String?): CallResult<Int>
+    fun leaseCompileSession(aliveFlagPath: String?): CallResult<Int>
 
     @Throws(RemoteException::class)
-    public fun releaseCompileSession(sessionId: Int): CallResult<Nothing>
+    fun releaseCompileSession(sessionId: Int): CallResult<Nothing>
 
     @Throws(RemoteException::class)
-    public fun shutdown(): CallResult<Nothing>
+    fun shutdown(): CallResult<Nothing>
 
     @Throws(RemoteException::class)
-    public fun scheduleShutdown(graceful: Boolean): CallResult<Boolean>
+    fun scheduleShutdown(graceful: Boolean): CallResult<Boolean>
 
     // TODO: consider adding async version of shutdown and release
 
     @Throws(RemoteException::class)
-    public fun remoteCompile(
+    fun remoteCompile(
             sessionId: Int,
             targetPlatform: TargetPlatform,
             args: Array<out String>,
@@ -112,7 +112,7 @@ public interface CompileService : Remote {
     ): CallResult<Int>
 
     @Throws(RemoteException::class)
-    public fun remoteIncrementalCompile(
+    fun remoteIncrementalCompile(
             sessionId: Int,
             targetPlatform: TargetPlatform,
             args: Array<out String>,

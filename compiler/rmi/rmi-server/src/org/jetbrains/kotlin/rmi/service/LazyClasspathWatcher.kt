@@ -40,9 +40,9 @@ val DEFAULT_CLASSPATH_DIGEST_WATCH_PERIOD_MS = 300000L // 5 min
  * poor-man watcher in the absence of NIO
  * TODO: replace with NIO watching when switching to java 7+
  */
-public class LazyClasspathWatcher(classpath: Iterable<String>,
-                                  val chackPeriod: Long = DEFAULT_CLASSPATH_WATCH_PERIOD_MS,
-                                  val digestCheckPeriod: Long = DEFAULT_CLASSPATH_DIGEST_WATCH_PERIOD_MS) {
+class LazyClasspathWatcher(classpath: Iterable<String>,
+                           val checkPeriod: Long = DEFAULT_CLASSPATH_WATCH_PERIOD_MS,
+                           val digestCheckPeriod: Long = DEFAULT_CLASSPATH_DIGEST_WATCH_PERIOD_MS) {
 
     private data class FileId(val file: File, val lastModified: Long, val digest: ByteArray)
 
@@ -78,10 +78,10 @@ public class LazyClasspathWatcher(classpath: Iterable<String>,
         }
     }
 
-    public val isChanged: Boolean get() {
+    val isChanged: Boolean get() {
         if (lastChangedStatus.get()) return true
         val nowMs = TimeUnit.MILLISECONDS.toMillis(System.nanoTime())
-        if (nowMs - lastUpdate.get() < chackPeriod) return false
+        if (nowMs - lastUpdate.get() < checkPeriod) return false
 
         val checkDigest = nowMs - lastDigestUpdate.get() > digestCheckPeriod
         // making sure that fieldIds are initialized

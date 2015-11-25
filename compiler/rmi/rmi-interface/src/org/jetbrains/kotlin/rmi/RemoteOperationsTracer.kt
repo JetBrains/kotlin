@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.rmi
 import java.rmi.Remote
 import java.rmi.RemoteException
 
-public interface RemoteOperationsTracer : Remote {
+interface RemoteOperationsTracer : Remote {
 
     @Throws(RemoteException::class)
-    public fun before(id: String)
+    fun before(id: String)
 
     @Throws(RemoteException::class)
-    public fun after(id: String)
+    fun after(id: String)
 }

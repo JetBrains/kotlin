@@ -29,13 +29,13 @@ import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 
 
-public class CompilationServices(
+class CompilationServices(
         val incrementalCompilationComponents: IncrementalCompilationComponents? = null,
         val compilationCanceledStatus: CompilationCanceledStatus? = null
 )
 
 
-public object KotlinCompilerClient {
+object KotlinCompilerClient {
 
     val DAEMON_DEFAULT_STARTUP_TIMEOUT_MS = 10000L
     val DAEMON_CONNECT_CYCLE_ATTEMPTS = 3
@@ -43,7 +43,7 @@ public object KotlinCompilerClient {
     val verboseReporting = System.getProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY) != null
 
 
-    public fun connectToCompileService(compilerId: CompilerId,
+    fun connectToCompileService(compilerId: CompilerId,
                                        daemonJVMOptions: DaemonJVMOptions,
                                        daemonOptions: DaemonOptions,
                                        reportingTargets: DaemonReportingTargets,
@@ -65,7 +65,7 @@ public object KotlinCompilerClient {
         return connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, reportingTargets, autostart)
     }
 
-    public fun connectToCompileService(compilerId: CompilerId,
+    fun connectToCompileService(compilerId: CompilerId,
                                        clientAliveFlagFile: File,
                                        daemonJVMOptions: DaemonJVMOptions,
                                        daemonOptions: DaemonOptions,
@@ -97,18 +97,18 @@ public object KotlinCompilerClient {
     }
 
 
-    public fun shutdownCompileService(compilerId: CompilerId, daemonOptions: DaemonOptions): Unit {
+    fun shutdownCompileService(compilerId: CompilerId, daemonOptions: DaemonOptions): Unit {
         KotlinCompilerClient.connectToCompileService(compilerId, DaemonJVMOptions(), daemonOptions, DaemonReportingTargets(out = System.out), autostart = false, checkId = false)
                 ?.shutdown()
     }
 
 
-    public fun shutdownCompileService(compilerId: CompilerId): Unit {
+    fun shutdownCompileService(compilerId: CompilerId): Unit {
         shutdownCompileService(compilerId, DaemonOptions())
     }
 
 
-    public fun compile(compilerService: CompileService,
+    fun compile(compilerService: CompileService,
                        sessionId: Int,
                        targetPlatform: CompileService.TargetPlatform,
                        args: Array<out String>,
@@ -121,7 +121,7 @@ public object KotlinCompilerClient {
     }
 
 
-    public fun incrementalCompile(compileService: CompileService,
+    fun incrementalCompile(compileService: CompileService,
                                   sessionId: Int,
                                   targetPlatform: CompileService.TargetPlatform,
                                   args: Array<out String>,
@@ -145,9 +145,9 @@ public object KotlinCompilerClient {
                     operationsTracer).get()
     }
 
-    public val COMPILE_DAEMON_CLIENT_OPTIONS_PROPERTY: String = "kotlin.daemon.client.options"
+    val COMPILE_DAEMON_CLIENT_OPTIONS_PROPERTY: String = "kotlin.daemon.client.options"
     data class ClientOptions(
-            public var stop: Boolean = false
+            var stop: Boolean = false
     ) : OptionsGroup {
         override val mappers: List<PropMapper<*, *, *>>
             get() = listOf(BoolPropMapper(this, ClientOptions::stop))
@@ -168,7 +168,7 @@ public object KotlinCompilerClient {
 
 
     @JvmStatic
-    public fun main(vararg args: String) {
+    fun main(vararg args: String) {
         val compilerId = CompilerId()
         val daemonOptions = configureDaemonOptions()
         val daemonLaunchingOptions = configureDaemonJVMOptions(inheritMemoryLimits = true, inheritAdditionalProperties = true)
@@ -231,7 +231,7 @@ public object KotlinCompilerClient {
         }
     }
 
-    public fun detectCompilerClasspath(): List<String>? =
+    fun detectCompilerClasspath(): List<String>? =
             System.getProperty("java.class.path")
             ?.split(File.pathSeparator)
             ?.map { File(it).parentFile }
@@ -339,9 +339,9 @@ public object KotlinCompilerClient {
 }
 
 
-public data class DaemonReportMessage(public val category: DaemonReportCategory, public val message: String)
+data class DaemonReportMessage(public val category: DaemonReportCategory, public val message: String)
 
-public class DaemonReportingTargets(public val out: PrintStream? = null, public val messages: MutableCollection<DaemonReportMessage>? = null)
+class DaemonReportingTargets(public val out: PrintStream? = null, public val messages: MutableCollection<DaemonReportMessage>? = null)
 
 
 internal fun isProcessAlive(process: Process) =

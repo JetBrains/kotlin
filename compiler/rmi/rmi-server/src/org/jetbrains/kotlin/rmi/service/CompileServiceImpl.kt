@@ -104,7 +104,7 @@ class CompileServiceImpl(
     }
 
     @Volatile private var _lastUsedSeconds = nowSeconds()
-    public val lastUsedSeconds: Long get() = if (rwlock.isWriteLocked || rwlock.readLockCount - rwlock.readHoldCount > 0) nowSeconds() else _lastUsedSeconds
+    val lastUsedSeconds: Long get() = if (rwlock.isWriteLocked || rwlock.readLockCount - rwlock.readHoldCount > 0) nowSeconds() else _lastUsedSeconds
 
     private val log by lazy { Logger.getLogger("compiler") }
 

@@ -23,7 +23,7 @@ import java.io.OutputStream
 
 class RemoteOutputStreamClient(val remote: RemoteOutputStream, val profiler: Profiler = DummyProfiler()): OutputStream() {
     override fun write(data: ByteArray) {
-        profiler.withMeasure(this) { remote.write(data, 0, data.size()) }
+        profiler.withMeasure(this) { remote.write(data, 0, data.size) }
     }
 
     override fun write(data: ByteArray, offset: Int, length: Int) {

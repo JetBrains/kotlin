@@ -23,36 +23,33 @@ import java.lang.management.ManagementFactory
 import java.security.MessageDigest
 import java.util.*
 import kotlin.reflect.KMutableProperty1
-import kotlin.text.RegexOption
 
 
-public val COMPILER_JAR_NAME: String = "kotlin-compiler.jar"
-public val COMPILER_SERVICE_RMI_NAME: String = "KotlinJvmCompilerService"
-public val COMPILER_DAEMON_CLASS_FQN: String = "org.jetbrains.kotlin.rmi.service.CompileDaemon"
-public val COMPILE_DAEMON_FIND_PORT_ATTEMPTS: Int = 10
-public val COMPILE_DAEMON_PORTS_RANGE_START: Int = 17001
-public val COMPILE_DAEMON_PORTS_RANGE_END: Int = 18000
-public val COMPILE_DAEMON_STARTUP_LOCK_TIMEOUT_MS: Long = 10000L
-public val COMPILE_DAEMON_STARTUP_LOCK_TIMEOUT_CHECK_MS: Long = 100L
-public val COMPILE_DAEMON_ENABLED_PROPERTY: String = "kotlin.daemon.enabled"
-public val COMPILE_DAEMON_JVM_OPTIONS_PROPERTY: String = "kotlin.daemon.jvm.options"
-public val COMPILE_DAEMON_OPTIONS_PROPERTY: String = "kotlin.daemon.options"
-public val COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY: String = "kotlin.daemon.client.alive.path"
-public val COMPILE_DAEMON_LOG_PATH_PROPERTY: String = "kotlin.daemon.log.path"
-public val COMPILE_DAEMON_REPORT_PERF_PROPERTY: String = "kotlin.daemon.perf"
-public val COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY: String = "kotlin.daemon.verbose"
-public val COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX: String = "--daemon-"
-public val COMPILE_DAEMON_STARTUP_TIMEOUT_PROPERTY: String = "kotlin.daemon.startup.timeout"
-public val COMPILE_DAEMON_DEFAULT_FILES_PREFIX: String = "kotlin-daemon"
-public val COMPILE_DAEMON_TIMEOUT_INFINITE_S: Int = 0
-public val COMPILE_DAEMON_DEFAULT_IDLE_TIMEOUT_S: Int = 7200 // 2 hours
-public val COMPILE_DAEMON_DEFAULT_UNUSED_TIMEOUT_S: Int = 60
-public val COMPILE_DAEMON_DEFAULT_SHUTDOWN_DELAY_MS: Long = 1000L // 1 sec
-public val COMPILE_DAEMON_MEMORY_THRESHOLD_INFINITE: Long = 0L
-public val COMPILE_DAEMON_FORCE_SHUTDOWN_DEFAULT_TIMEOUT_MS: Long = 10000L // 10 secs
-public val COMPILE_DAEMON_TIMEOUT_INFINITE_MS: Long = 0L
+val COMPILER_JAR_NAME: String = "kotlin-compiler.jar"
+val COMPILER_SERVICE_RMI_NAME: String = "KotlinJvmCompilerService"
+val COMPILER_DAEMON_CLASS_FQN: String = "org.jetbrains.kotlin.rmi.service.CompileDaemon"
+val COMPILE_DAEMON_FIND_PORT_ATTEMPTS: Int = 10
+val COMPILE_DAEMON_PORTS_RANGE_START: Int = 17001
+val COMPILE_DAEMON_PORTS_RANGE_END: Int = 18000
+val COMPILE_DAEMON_ENABLED_PROPERTY: String = "kotlin.daemon.enabled"
+val COMPILE_DAEMON_JVM_OPTIONS_PROPERTY: String = "kotlin.daemon.jvm.options"
+val COMPILE_DAEMON_OPTIONS_PROPERTY: String = "kotlin.daemon.options"
+val COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY: String = "kotlin.daemon.client.alive.path"
+val COMPILE_DAEMON_LOG_PATH_PROPERTY: String = "kotlin.daemon.log.path"
+val COMPILE_DAEMON_REPORT_PERF_PROPERTY: String = "kotlin.daemon.perf"
+val COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY: String = "kotlin.daemon.verbose"
+val COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX: String = "--daemon-"
+val COMPILE_DAEMON_STARTUP_TIMEOUT_PROPERTY: String = "kotlin.daemon.startup.timeout"
+val COMPILE_DAEMON_DEFAULT_FILES_PREFIX: String = "kotlin-daemon"
+val COMPILE_DAEMON_TIMEOUT_INFINITE_S: Int = 0
+val COMPILE_DAEMON_DEFAULT_IDLE_TIMEOUT_S: Int = 7200 // 2 hours
+val COMPILE_DAEMON_DEFAULT_UNUSED_TIMEOUT_S: Int = 60
+val COMPILE_DAEMON_DEFAULT_SHUTDOWN_DELAY_MS: Long = 1000L // 1 sec
+val COMPILE_DAEMON_MEMORY_THRESHOLD_INFINITE: Long = 0L
+val COMPILE_DAEMON_FORCE_SHUTDOWN_DEFAULT_TIMEOUT_MS: Long = 10000L // 10 secs
+val COMPILE_DAEMON_TIMEOUT_INFINITE_MS: Long = 0L
 
-public val COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH: String get() =
+val COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH: String get() =
     FileSystem.getRuntimeStateFilesPath("kotlin", "daemon")
 
 val CLASSPATH_ID_DIGEST = "MD5"
@@ -173,22 +170,22 @@ fun Iterable<String>.filterExtractProps(propMappers: List<PropMapper<*, *, *>>, 
 }
 
 
-public fun String.trimQuotes() = trim('"','\'')
+fun String.trimQuotes() = trim('"','\'')
 
 
-public interface OptionsGroup : Serializable {
-    public val mappers: List<PropMapper<*, *, *>>
+interface OptionsGroup : Serializable {
+    val mappers: List<PropMapper<*, *, *>>
 }
 
-public fun Iterable<String>.filterExtractProps(vararg groups: OptionsGroup, prefix: String): Iterable<String> =
+fun Iterable<String>.filterExtractProps(vararg groups: OptionsGroup, prefix: String): Iterable<String> =
         filterExtractProps(groups.flatMap { it.mappers }, prefix)
 
 
-public data class DaemonJVMOptions(
-        public var maxMemory: String = "",
-        public var maxPermSize: String = "",
-        public var reservedCodeCacheSize: String = "",
-        public var jvmParams: MutableCollection<String> = arrayListOf()
+data class DaemonJVMOptions(
+        var maxMemory: String = "",
+        var maxPermSize: String = "",
+        var reservedCodeCacheSize: String = "",
+        var jvmParams: MutableCollection<String> = arrayListOf()
 ) : OptionsGroup {
 
     override val mappers: List<PropMapper<*, *, *>>
@@ -202,15 +199,15 @@ public data class DaemonJVMOptions(
 }
 
 
-public data class DaemonOptions(
-        public var runFilesPath: String = COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH,
-        public var autoshutdownMemoryThreshold: Long = COMPILE_DAEMON_MEMORY_THRESHOLD_INFINITE,
-        public var autoshutdownIdleSeconds: Int = COMPILE_DAEMON_DEFAULT_IDLE_TIMEOUT_S,
-        public var autoshutdownUnusedSeconds: Int = COMPILE_DAEMON_DEFAULT_UNUSED_TIMEOUT_S,
-        public var shutdownDelayMilliseconds: Long = COMPILE_DAEMON_DEFAULT_SHUTDOWN_DELAY_MS,
-        public var forceShutdownTimeoutMilliseconds: Long = COMPILE_DAEMON_FORCE_SHUTDOWN_DEFAULT_TIMEOUT_MS,
-        public var verbose: Boolean = false,
-        public var reportPerf: Boolean = false
+data class DaemonOptions(
+        var runFilesPath: String = COMPILE_DAEMON_DEFAULT_RUN_DIR_PATH,
+        var autoshutdownMemoryThreshold: Long = COMPILE_DAEMON_MEMORY_THRESHOLD_INFINITE,
+        var autoshutdownIdleSeconds: Int = COMPILE_DAEMON_DEFAULT_IDLE_TIMEOUT_S,
+        var autoshutdownUnusedSeconds: Int = COMPILE_DAEMON_DEFAULT_UNUSED_TIMEOUT_S,
+        var shutdownDelayMilliseconds: Long = COMPILE_DAEMON_DEFAULT_SHUTDOWN_DELAY_MS,
+        var forceShutdownTimeoutMilliseconds: Long = COMPILE_DAEMON_FORCE_SHUTDOWN_DEFAULT_TIMEOUT_MS,
+        var verbose: Boolean = false,
+        var reportPerf: Boolean = false
 ) : OptionsGroup {
 
     override val mappers: List<PropMapper<*, *, *>>
@@ -237,9 +234,9 @@ fun Iterable<String>.distinctStringsDigest(): ByteArray =
 fun ByteArray.toHexString(): String = joinToString("", transform = { "%02x".format(it) })
 
 
-public data class CompilerId(
-        public var compilerClasspath: List<String> = listOf(),
-        public var compilerVersion: String = ""
+data class CompilerId(
+        var compilerClasspath: List<String> = listOf(),
+        var compilerVersion: String = ""
 ) : OptionsGroup {
 
     override val mappers: List<PropMapper<*, *, *>>
@@ -248,19 +245,19 @@ public data class CompilerId(
 
     companion object {
         @JvmStatic
-        public fun makeCompilerId(vararg paths: File): CompilerId = makeCompilerId(paths.asIterable())
+        fun makeCompilerId(vararg paths: File): CompilerId = makeCompilerId(paths.asIterable())
 
         @JvmStatic
-        public fun makeCompilerId(paths: Iterable<File>): CompilerId =
+        fun makeCompilerId(paths: Iterable<File>): CompilerId =
                 CompilerId(compilerClasspath = paths.map { it.absolutePath })
     }
 }
 
 
-public fun isDaemonEnabled(): Boolean = System.getProperty(COMPILE_DAEMON_ENABLED_PROPERTY) != null
+fun isDaemonEnabled(): Boolean = System.getProperty(COMPILE_DAEMON_ENABLED_PROPERTY) != null
 
 
-public fun configureDaemonJVMOptions(opts: DaemonJVMOptions,
+fun configureDaemonJVMOptions(opts: DaemonJVMOptions,
                                      vararg additionalParams: String,
                                      inheritMemoryLimits: Boolean,
                                      inheritAdditionalProperties: Boolean
@@ -286,7 +283,7 @@ public fun configureDaemonJVMOptions(opts: DaemonJVMOptions,
 }
 
 
-public fun configureDaemonJVMOptions(vararg additionalParams: String,
+fun configureDaemonJVMOptions(vararg additionalParams: String,
                                      inheritMemoryLimits: Boolean,
                                      inheritAdditionalProperties: Boolean
 ): DaemonJVMOptions =
@@ -296,7 +293,7 @@ public fun configureDaemonJVMOptions(vararg additionalParams: String,
                                   inheritAdditionalProperties = inheritAdditionalProperties)
 
 
-public fun configureDaemonOptions(opts: DaemonOptions): DaemonOptions {
+fun configureDaemonOptions(opts: DaemonOptions): DaemonOptions {
     System.getProperty(COMPILE_DAEMON_OPTIONS_PROPERTY)?.let {
         val unrecognized = it.trimQuotes().split(",").filterExtractProps(opts.mappers, "")
         if (unrecognized.any())
@@ -310,7 +307,7 @@ public fun configureDaemonOptions(opts: DaemonOptions): DaemonOptions {
 }
 
 
-public fun configureDaemonOptions(): DaemonOptions = configureDaemonOptions(DaemonOptions())
+fun configureDaemonOptions(): DaemonOptions = configureDaemonOptions(DaemonOptions())
 
 
 private val humanizedMemorySizeRegex = "(\\d+)([kmg]?)".toRegex()

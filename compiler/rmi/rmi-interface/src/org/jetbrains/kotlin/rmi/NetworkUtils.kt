@@ -29,9 +29,9 @@ import java.rmi.server.RMIServerSocketFactory
 import java.util.*
 
 
-public val SOCKET_ANY_FREE_PORT  = 0
+val SOCKET_ANY_FREE_PORT  = 0
 
-public object LoopbackNetworkInterface {
+object LoopbackNetworkInterface {
 
     val IPV4_LOOPBACK_INET_ADDRESS = "127.0.0.1"
     val IPV6_LOOPBACK_INET_ADDRESS = "::1"
@@ -39,11 +39,11 @@ public object LoopbackNetworkInterface {
     val SERVER_SOCKET_BACKLOG_SIZE = 10 // size of the requests queue for daemon services, so far seems that we don't need any big numbers here
                                         // but if we'll start getting "connection refused" errors, that could be the first place to try to fix it
 
-    public val serverLoopbackSocketFactory by lazy { ServerLoopbackSocketFactory() }
-    public val clientLoopbackSocketFactory by lazy { ClientLoopbackSocketFactory() }
+    val serverLoopbackSocketFactory by lazy { ServerLoopbackSocketFactory() }
+    val clientLoopbackSocketFactory by lazy { ClientLoopbackSocketFactory() }
 
     // TODO switch to InetAddress.getLoopbackAddress on java 7+
-    public val loopbackInetAddressName by lazy {
+    val loopbackInetAddressName by lazy {
         try {
             if (java.net.InetAddress.getLocalHost() is java.net.Inet6Address) IPV6_LOOPBACK_INET_ADDRESS else IPV4_LOOPBACK_INET_ADDRESS
         }
@@ -59,6 +59,7 @@ public object LoopbackNetworkInterface {
 
     class ServerLoopbackSocketFactory : RMIServerSocketFactory, Serializable {
         override fun equals(other: Any?): Boolean = other === this || super.equals(other)
+        override fun hashCode(): Int = super.hashCode()
 
         @Throws(IOException::class)
         override fun createServerSocket(port: Int): ServerSocket = ServerSocket(port, SERVER_SOCKET_BACKLOG_SIZE, InetAddress.getByName(loopbackInetAddressName))
@@ -67,6 +68,7 @@ public object LoopbackNetworkInterface {
 
     class ClientLoopbackSocketFactory : RMIClientSocketFactory, Serializable {
         override fun equals(other: Any?): Boolean = other === this || super.equals(other)
+        override fun hashCode(): Int = super.hashCode()
 
         @Throws(IOException::class)
         override fun createSocket(host: String, port: Int): Socket = Socket(InetAddress.getByName(loopbackInetAddressName), port)
@@ -76,7 +78,7 @@ public object LoopbackNetworkInterface {
 
 private val portSelectionRng = Random()
 
-public fun findPortAndCreateRegistry(attempts: Int, portRangeStart: Int, portRangeEnd: Int) : Pair<Registry, Int> {
+fun findPortAndCreateRegistry(attempts: Int, portRangeStart: Int, portRangeEnd: Int) : Pair<Registry, Int> {
     var i = 0
     var lastException: RemoteException? = null
 
