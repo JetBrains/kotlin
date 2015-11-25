@@ -41,25 +41,25 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil
 
 public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
 
-    override fun isAvailable(position: SourcePosition?) = position?.getFile() is KtFile
+    override fun isAvailable(position: SourcePosition?) = position?.file is KtFile
 
     override fun findSmartStepTargets(position: SourcePosition): List<SmartStepTarget> {
-        if (position.getLine() < 0) return emptyList()
+        if (position.line < 0) return emptyList()
 
-        val file = position.getFile()
+        val file = position.file
 
-        val lineStart = CodeInsightUtils.getStartLineOffset(file, position.getLine()) ?: return emptyList()
+        val lineStart = CodeInsightUtils.getStartLineOffset(file, position.line) ?: return emptyList()
 
         val elementAtOffset = file.findElementAt(lineStart) ?: return emptyList()
 
         val element = CodeInsightUtils.getTopmostElementAtOffset(elementAtOffset, lineStart)
         if (element !is KtElement) return emptyList()
 
-        val elementTextRange = element.getTextRange() ?: return emptyList()
+        val elementTextRange = element.textRange ?: return emptyList()
 
-        val doc = PsiDocumentManager.getInstance(file.getProject()).getDocument(file) ?: return emptyList()
+        val doc = PsiDocumentManager.getInstance(file.project).getDocument(file) ?: return emptyList()
 
-        val lines = Range(doc.getLineNumber(elementTextRange.getStartOffset()), doc.getLineNumber(elementTextRange.getEndOffset()))
+        val lines = Range(doc.getLineNumber(elementTextRange.startOffset), doc.getLineNumber(elementTextRange.endOffset))
         val bindingContext = element.analyzeFully()
         val result = OrderedSet<SmartStepTarget>()
 
@@ -98,23 +98,23 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
             }
 
             override fun visitIfExpression(expression: KtIfExpression) {
-                expression.getCondition()?.accept(this)
+                expression.condition?.accept(this)
             }
 
             override fun visitWhileExpression(expression: KtWhileExpression) {
-                expression.getCondition()?.accept(this)
+                expression.condition?.accept(this)
             }
 
             override fun visitDoWhileExpression(expression: KtDoWhileExpression) {
-                expression.getCondition()?.accept(this)
+                expression.condition?.accept(this)
             }
 
             override fun visitForExpression(expression: KtForExpression) {
-                expression.getLoopRange()?.accept(this)
+                expression.loopRange?.accept(this)
             }
 
             override fun visitWhenExpression(expression: KtWhenExpression) {
-                expression.getSubjectExpression()?.accept(this)
+                expression.subjectExpression?.accept(this)
             }
 
             override fun visitArrayAccessExpression(expression: KtArrayAccessExpression) {
@@ -123,17 +123,17 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
             }
 
             override fun visitUnaryExpression(expression: KtUnaryExpression) {
-                recordFunction(expression.getOperationReference())
+                recordFunction(expression.operationReference)
                 super.visitUnaryExpression(expression)
             }
 
             override fun visitBinaryExpression(expression: KtBinaryExpression) {
-                recordFunction(expression.getOperationReference())
+                recordFunction(expression.operationReference)
                 super.visitBinaryExpression(expression)
             }
 
             override fun visitCallExpression(expression: KtCallExpression) {
-                val calleeExpression = expression.getCalleeExpression()
+                val calleeExpression = expression.calleeExpression
                 if (calleeExpression != null) {
                     recordFunction(calleeExpression)
                 }
@@ -143,24 +143,24 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
             override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
                 val resolvedCall = expression.getResolvedCall(bindingContext)
                 if (resolvedCall != null) {
-                    val propertyDescriptor = resolvedCall.getResultingDescriptor()
+                    val propertyDescriptor = resolvedCall.resultingDescriptor
                     if (propertyDescriptor is PropertyDescriptor) {
-                        val getterDescriptor = propertyDescriptor.getGetter()
-                        if (getterDescriptor != null && !getterDescriptor.isDefault()) {
+                        val getterDescriptor = propertyDescriptor.getter
+                        if (getterDescriptor != null && !getterDescriptor.isDefault) {
                             val delegatedResolvedCall = bindingContext[BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, getterDescriptor]
                             if (delegatedResolvedCall == null) {
-                                val getter = DescriptorToSourceUtilsIde.getAnyDeclaration(file.getProject(), getterDescriptor)
-                                if (getter is KtPropertyAccessor && (getter.getBodyExpression() != null || getter.getEqualsToken() != null)) {
+                                val getter = DescriptorToSourceUtilsIde.getAnyDeclaration(file.project, getterDescriptor)
+                                if (getter is KtPropertyAccessor && (getter.bodyExpression != null || getter.equalsToken != null)) {
                                     val label = KotlinMethodSmartStepTarget.calcLabel(getterDescriptor)
                                     result.add(KotlinMethodSmartStepTarget(getter, label, expression, lines))
                                 }
                             }
                             else {
-                                val delegatedPropertyGetterDescriptor = delegatedResolvedCall.getResultingDescriptor()
+                                val delegatedPropertyGetterDescriptor = delegatedResolvedCall.resultingDescriptor
                                 if (delegatedPropertyGetterDescriptor is CallableMemberDescriptor) {
-                                    val function = DescriptorToSourceUtilsIde.getAnyDeclaration(file.getProject(), delegatedPropertyGetterDescriptor)
+                                    val function = DescriptorToSourceUtilsIde.getAnyDeclaration(file.project, delegatedPropertyGetterDescriptor)
                                     if (function is KtNamedFunction || function is KtSecondaryConstructor) {
-                                        val label = "${propertyDescriptor.getName()}." + KotlinMethodSmartStepTarget.calcLabel(delegatedPropertyGetterDescriptor)
+                                        val label = "${propertyDescriptor.name}." + KotlinMethodSmartStepTarget.calcLabel(delegatedPropertyGetterDescriptor)
                                         result.add(KotlinMethodSmartStepTarget(function as KtFunction, label, expression, lines))
                                     }
                                 }
@@ -174,9 +174,9 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
             private fun recordFunction(expression: KtExpression) {
                 val resolvedCall = expression.getResolvedCall(bindingContext) ?: return
 
-                val descriptor = resolvedCall.getResultingDescriptor()
+                val descriptor = resolvedCall.resultingDescriptor
                 if (descriptor is FunctionDescriptor && !isIntrinsic(descriptor)) {
-                    val resolvedElement = DescriptorToSourceUtilsIde.getAnyDeclaration(file.getProject(), descriptor)
+                    val resolvedElement = DescriptorToSourceUtilsIde.getAnyDeclaration(file.project, descriptor)
                     if (resolvedElement is KtNamedFunction || resolvedElement is KtConstructor<*>) {
                         val label = KotlinMethodSmartStepTarget.calcLabel(descriptor)
                         result.add(KotlinMethodSmartStepTarget(resolvedElement as KtFunction, label, expression, lines))
@@ -199,8 +199,8 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
 
     override fun createMethodFilter(stepTarget: SmartStepTarget?): MethodFilter? {
         return when (stepTarget) {
-            is KotlinMethodSmartStepTarget -> KotlinBasicStepMethodFilter(stepTarget.resolvedElement, stepTarget.getCallingExpressionLines()!!)
-            is KotlinLambdaSmartStepTarget -> KotlinLambdaMethodFilter(stepTarget.getLambda(), stepTarget.getCallingExpressionLines()!!, stepTarget.isInline)
+            is KotlinMethodSmartStepTarget -> KotlinBasicStepMethodFilter(stepTarget.resolvedElement, stepTarget.callingExpressionLines!!)
+            is KotlinLambdaSmartStepTarget -> KotlinLambdaMethodFilter(stepTarget.getLambda(), stepTarget.callingExpressionLines!!, stepTarget.isInline)
             else -> super.createMethodFilter(stepTarget)
         }
     }
