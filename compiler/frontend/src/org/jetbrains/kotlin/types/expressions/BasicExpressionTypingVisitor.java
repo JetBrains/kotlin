@@ -98,12 +98,24 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         super(facade);
     }
 
-    private static boolean isLValue(@NotNull KtSimpleNameExpression expression) {
+    private static boolean isLValueOrUnsafeReceiver(@NotNull KtSimpleNameExpression expression) {
         PsiElement parent = PsiTreeUtil.skipParentsOfType(expression, KtParenthesizedExpression.class);
-        if (!(parent instanceof KtBinaryExpression)) return false;
-        KtBinaryExpression binaryExpression = (KtBinaryExpression) parent;
-        if (!KtTokens.ALL_ASSIGNMENTS.contains(binaryExpression.getOperationToken())) return false;
-        return PsiTreeUtil.isAncestor(binaryExpression.getLeft(), expression, false);
+        if (parent instanceof KtQualifiedExpression) {
+            KtQualifiedExpression qualifiedExpression = (KtQualifiedExpression) parent;
+            // See KT-10175: receiver of unsafe call is always not-null at resolver
+            // so we have to analyze its nullability here
+            return qualifiedExpression.getOperationSign() == KtTokens.DOT &&
+                   qualifiedExpression.getReceiverExpression() == KtPsiUtil.deparenthesize(expression);
+        }
+        if (parent instanceof KtBinaryExpression) {
+            KtBinaryExpression binaryExpression = (KtBinaryExpression) parent;
+            if (!OperatorConventions.BINARY_OPERATION_NAMES.containsKey(binaryExpression.getOperationToken()) &&
+                !KtTokens.ALL_ASSIGNMENTS.contains(binaryExpression.getOperationToken())) {
+                return false;
+            }
+            return PsiTreeUtil.isAncestor(binaryExpression.getLeft(), expression, false);
+        }
+        return false;
     }
 
     private static boolean isDangerousWithNull(@NotNull KtSimpleNameExpression expression, @NotNull ExpressionTypingContext context) {
@@ -120,12 +132,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return type != null && !type.isMarkedNullable() &&
                    binaryExpression.getOperationReference().getReferencedNameElementType() == KtTokens.AS_KEYWORD;
         }
-        // . is also sensitive, but at receiver only and not for extension functions with nullable receiver
-        if (parent instanceof KtQualifiedExpression) {
-            KtQualifiedExpression qualifiedExpression = (KtQualifiedExpression) parent;
-            return qualifiedExpression.getOperationSign() == KtTokens.DOT &&
-                   qualifiedExpression.getReceiverExpression() == KtPsiUtil.deparenthesize(expression);
-        }
         return false;
     }
 
@@ -134,7 +140,8 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             @NotNull ExpressionTypingContext context,
             @Nullable KotlinType type
     ) {
-        if (type != null && !type.isError() && !isLValue(expression)) {
+        // Receivers are normally analyzed at resolve, with an exception of KT-10175
+        if (type != null && !type.isError() && !isLValueOrUnsafeReceiver(expression)) {
             DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, type, context);
             Nullability nullability = context.dataFlowInfo.getPredictableNullability(dataFlowValue);
             if (!nullability.canBeNonNull() && nullability.canBeNull()) {

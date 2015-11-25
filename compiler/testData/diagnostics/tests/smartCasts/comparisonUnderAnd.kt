@@ -15,12 +15,12 @@ fun foo(x : String?, y : String?) {
     else {
         // y == null but x != y
         <!DEBUG_INFO_SMARTCAST!>x<!>.length
-        <!ALWAYS_NULL!>y<!><!UNSAFE_CALL!>.<!>length
+        <!DEBUG_INFO_CONSTANT!>y<!><!UNSAFE_CALL!>.<!>length
     }
     if (y == null && x != <!DEBUG_INFO_CONSTANT!>y<!>) {
         // y == null but x != y
         <!DEBUG_INFO_SMARTCAST!>x<!>.length
-        <!ALWAYS_NULL!>y<!><!UNSAFE_CALL!>.<!>length
+        <!DEBUG_INFO_CONSTANT!>y<!><!UNSAFE_CALL!>.<!>length
     }
     else {
         x<!UNSAFE_CALL!>.<!>length

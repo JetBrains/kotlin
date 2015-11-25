@@ -50,8 +50,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.noExpectedType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
-import org.jetbrains.kotlin.utils.sure
 import java.util.*
 
 public class CandidateResolver(
@@ -60,7 +58,7 @@ public class CandidateResolver(
         private val reflectionTypes: ReflectionTypes,
         private val additionalTypeCheckers: Iterable<AdditionalTypeChecker>,
         private val smartCastManager: SmartCastManager
-){
+) {
 
     public fun <D : CallableDescriptor, F : D> performResolutionForCandidateCall(
             context: CallCandidateResolutionContext<D>,
@@ -451,10 +449,19 @@ public class CandidateResolver(
         val smartCastNeeded = !ArgumentTypeResolver.isSubtypeOfForArgumentType(receiverArgument.type, expectedReceiverParameterType)
         var reportUnsafeCall = false
 
-        if (smartCastNeeded) {
+        val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverArgument, this)
+        val nullability = dataFlowInfo.getPredictableNullability(dataFlowValue)
+        val expression = (receiverArgument as? ExpressionReceiver)?.expression
+        if (nullability.canBeNull() && !nullability.canBeNonNull()) {
+            if (!TypeUtils.isNullableType(expectedReceiverParameterType)) {
+                reportUnsafeCall = true
+            }
+            if (dataFlowValue.immanentNullability.canBeNonNull()) {
+                expression?.let { trace.record(BindingContext.SMARTCAST_NULL, it) }
+            }
+        }
+        else if (smartCastNeeded) {
             // Look if smart cast has some useful nullability info
-            val expression = (receiverArgument as? ExpressionReceiver)?.expression
-            val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverArgument, this)
 
             val smartCastResult = SmartCastManager.checkAndRecordPossibleCast(
                     dataFlowValue, expectedReceiverParameterType, expression, this, candidateCall.call.calleeExpression, /*recordType =*/true

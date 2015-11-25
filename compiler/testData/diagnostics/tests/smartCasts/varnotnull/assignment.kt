@@ -4,7 +4,7 @@ fun foo() {
     v = "abc"
     <!DEBUG_INFO_SMARTCAST!>v<!>.length
     v = null
-    <!ALWAYS_NULL!>v<!><!UNSAFE_CALL!>.<!>length
+    <!DEBUG_INFO_CONSTANT!>v<!><!UNSAFE_CALL!>.<!>length
     v = "abc"
     <!DEBUG_INFO_SMARTCAST!>v<!>.length
 }
