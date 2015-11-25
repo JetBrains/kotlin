@@ -48,7 +48,7 @@ public class TypeIntrinsics {
 
     public static Iterator asMutableIterator(Object obj) {
         if (obj instanceof KMappedMarker && !(obj instanceof KMutableIterator)) {
-            throwCce(obj, "kotlin.MutableIterator");
+            throwCce(obj, "kotlin.collections.MutableIterator");
         }
         return castToIterator(obj);
     }
@@ -76,7 +76,7 @@ public class TypeIntrinsics {
 
     public static ListIterator asMutableListIterator(Object obj) {
         if (obj instanceof KMappedMarker && !(obj instanceof KMutableListIterator)) {
-            throwCce(obj, "kotlin.MutableListIterator");
+            throwCce(obj, "kotlin.collections.MutableListIterator");
         }
         return castToListIterator(obj);
     }
@@ -104,7 +104,7 @@ public class TypeIntrinsics {
 
     public static Iterable asMutableIterable(Object obj) {
         if (obj instanceof KMappedMarker && !(obj instanceof KMutableIterable)) {
-            throwCce(obj, "kotlin.MutableIterable");
+            throwCce(obj, "kotlin.collections.MutableIterable");
         }
         return castToIterable(obj);
     }
@@ -132,7 +132,7 @@ public class TypeIntrinsics {
 
     public static Collection asMutableCollection(Object obj) {
         if (obj instanceof KMappedMarker && !(obj instanceof KMutableCollection)) {
-            throwCce(obj, "kotlin.MutableCollection");
+            throwCce(obj, "kotlin.collections.MutableCollection");
         }
         return castToCollection(obj);
     }
@@ -160,7 +160,7 @@ public class TypeIntrinsics {
 
     public static List asMutableList(Object obj) {
         if (obj instanceof KMappedMarker && !(obj instanceof KMutableList)) {
-            throwCce(obj, "kotlin.MutableList");
+            throwCce(obj, "kotlin.collections.MutableList");
         }
         return castToList(obj);
     }
@@ -188,7 +188,7 @@ public class TypeIntrinsics {
 
     public static Set asMutableSet(Object obj) {
         if (obj instanceof KMappedMarker && !(obj instanceof KMutableSet)) {
-            throwCce(obj, "kotlin.MutableSet");
+            throwCce(obj, "kotlin.collections.MutableSet");
         }
         return castToSet(obj);
     }
@@ -216,7 +216,7 @@ public class TypeIntrinsics {
 
     public static Map asMutableMap(Object obj) {
         if (obj instanceof KMappedMarker && !(obj instanceof KMutableMap)) {
-            throwCce(obj, "kotlin.MutableMap");
+            throwCce(obj, "kotlin.collections.MutableMap");
         }
         return castToMap(obj);
     }
@@ -244,7 +244,7 @@ public class TypeIntrinsics {
 
     public static Map.Entry asMutableMapEntry(Object obj) {
         if (obj instanceof KMappedMarker && !(obj instanceof KMutableMap.Entry)) {
-            throwCce(obj, "kotlin.MutableMap.MutableEntry");
+            throwCce(obj, "kotlin.collections.MutableMap.MutableEntry");
         }
         return castToMapEntry(obj);
     }

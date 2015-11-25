@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.core
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES as BUILTIN_NAMES
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
@@ -89,24 +90,24 @@ internal class HeuristicSignatures(
         private val signatures = HashMap<Pair<FqName, Name>, List<String>>()
 
         init {
-            registerSignature("kotlin.Collection", "contains", "E")
-            registerSignature("kotlin.Collection", "containsAll", "kotlin.Collection<E>")
-            registerSignature("kotlin.MutableCollection", "remove", "E")
-            registerSignature("kotlin.MutableCollection", "removeAll", "kotlin.Collection<E>")
-            registerSignature("kotlin.MutableCollection", "retainAll", "kotlin.Collection<E>")
-            registerSignature("kotlin.List", "indexOf", "E")
-            registerSignature("kotlin.List", "lastIndexOf", "E")
-            registerSignature("kotlin.Map", "get", "K")
-            registerSignature("kotlin.Map", "containsKey", "K")
-            registerSignature("kotlin.Map", "containsValue", "V")
-            registerSignature("kotlin.MutableMap", "remove", "K")
+            registerSignature(BUILTIN_NAMES.collection, "contains", "E")
+            registerSignature(BUILTIN_NAMES.collection, "containsAll", BUILTIN_NAMES.collection.asString() + "<E>")
+            registerSignature(BUILTIN_NAMES.mutableCollection, "remove", "E")
+            registerSignature(BUILTIN_NAMES.mutableCollection, "removeAll", BUILTIN_NAMES.collection.asString() + "<E>")
+            registerSignature(BUILTIN_NAMES.mutableCollection, "retainAll", BUILTIN_NAMES.collection.asString() + "<E>")
+            registerSignature(BUILTIN_NAMES.list, "indexOf", "E")
+            registerSignature(BUILTIN_NAMES.list, "lastIndexOf", "E")
+            registerSignature(BUILTIN_NAMES.map, "get", "K")
+            registerSignature(BUILTIN_NAMES.map, "containsKey", "K")
+            registerSignature(BUILTIN_NAMES.map, "containsValue", "V")
+            registerSignature(BUILTIN_NAMES.mutableMap, "remove", "K")
         }
 
         private fun registerSignature(
-                classFqName: String,
+                classFqName: FqName,
                 name: String,
                 vararg parameterTypes: String) {
-            signatures[FqName(classFqName) to Name.identifier(name)] = parameterTypes.toList()
+            signatures[classFqName to Name.identifier(name)] = parameterTypes.toList()
         }
     }
 }
