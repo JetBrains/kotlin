@@ -708,9 +708,21 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 doTest(fileName);
             }
 
+            @TestMetadata("noInferAndLowPriority.kt")
+            public void testNoInferAndLowPriority() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/noInferAndLowPriority.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("noInferAnnotation.kt")
             public void testNoInferAnnotation() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/noInferAnnotation.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("onlyInputTypesAndLowPriority.kt")
+            public void testOnlyInputTypesAndLowPriority() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/onlyInputTypesAndLowPriority.kt");
                 doTest(fileName);
             }
 

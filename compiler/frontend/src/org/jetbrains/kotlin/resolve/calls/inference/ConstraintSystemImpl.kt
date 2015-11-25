@@ -49,6 +49,35 @@ internal class ConstraintSystemImpl(
 
         override fun hasContradiction() = hasParameterConstraintError() || hasConflictingConstraints()
                                           || hasCannotCaptureTypesError() || hasTypeInferenceIncorporationError()
+                                          // hacks for library migration todo: remove its later
+                                          || hasTypeParameterWithUnsatisfiedOnlyInputTypesError()
+
+        /**
+         * Hacks above are needed for the following example:
+         *
+         * @kotlin.jvm.JvmName("containsAny")
+         * @kotlin.internal.LowPriorityInOverloadResolution
+         * public operator fun <T> Iterable<T>.contains(element: T): Boolean
+         *
+         * public operator fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.contains(element: T): Boolean
+         *
+         * fun test() = listOf(1).contains("")
+         *
+         * When we resolve call `contains`, we should choose candidate before we complete inference.
+         * Because of this we can't check OnlyInputTypes when we trying choose candidate.
+         * Now we do this check in this moment, but it is incorrect and we should remove it later.
+         *
+         * Call !satisfyInitialConstraints() in hasTypeInferenceIncorporationError() is needed for this example:
+         * @kotlin.jvm.JvmName("containsAny")
+         * @kotlin.internal.LowPriorityInOverloadResolution
+         * public operator fun <T> Iterable<T>.contains(element: T): Boolean
+         *
+         * public operator fun <T> Iterable<T>.contains(element: @kotlin.internal.NoInfer T)
+         *
+         * fun test() = listOf(1).contains("")
+         *
+         * It is also incorrect, because we can get additional constraints on T after we resolve call `contains`.
+         */
 
         override fun hasViolatedUpperBound() = !isSuccessful() && filterConstraintsOut(TYPE_BOUND_POSITION).status.isSuccessful()
 
