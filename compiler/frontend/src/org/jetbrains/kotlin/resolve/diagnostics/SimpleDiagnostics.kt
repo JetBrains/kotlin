@@ -26,7 +26,7 @@ public class SimpleDiagnostics(diagnostics: Collection<Diagnostic>) : Diagnostic
     private val diagnostics = ArrayList(diagnostics)
 
     @Suppress("UNCHECKED_CAST")
-    private val elementsCache = DiagnosticsElementsCache(this, Condition.TRUE as Condition<Diagnostic>?)
+    private val elementsCache = DiagnosticsElementsCache(this, { true })
 
     override fun all() = diagnostics
 

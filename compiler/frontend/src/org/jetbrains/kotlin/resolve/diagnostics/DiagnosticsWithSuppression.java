@@ -24,8 +24,9 @@ import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.containers.ConcurrentWeakValueHashMap;
-import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.FilteringIterator;
+import kotlin.CollectionsKt;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -70,12 +71,13 @@ public class DiagnosticsWithSuppression implements Diagnostics {
     // The cache is weak: we're OK with losing it
     private final Map<KtAnnotated, Suppressor> suppressors = new ConcurrentWeakValueHashMap<KtAnnotated, Suppressor>();
 
-    private final Condition<Diagnostic> filter = new Condition<Diagnostic>() {
+    private final Function1<Diagnostic, Boolean> filter = new Function1<Diagnostic, Boolean>() {
         @Override
-        public boolean value(Diagnostic diagnostic) {
+        public Boolean invoke(Diagnostic diagnostic) {
             return !isSuppressed(diagnostic);
         }
     };
+
     private final DiagnosticsElementsCache elementsCache = new DiagnosticsElementsCache(this, filter);
 
     public DiagnosticsWithSuppression(@NotNull BindingContext context, @NotNull Collection<Diagnostic> diagnostics) {
@@ -92,13 +94,18 @@ public class DiagnosticsWithSuppression implements Diagnostics {
     @NotNull
     @Override
     public Iterator<Diagnostic> iterator() {
-        return new FilteringIterator<Diagnostic, Diagnostic>(diagnostics.iterator(), filter);
+        return new FilteringIterator<Diagnostic, Diagnostic>(diagnostics.iterator(), new Condition<Diagnostic>() {
+            @Override
+            public boolean value(Diagnostic diagnostic) {
+                return filter.invoke(diagnostic);
+            }
+        });
     }
 
     @NotNull
     @Override
     public Collection<Diagnostic> all() {
-        return ContainerUtil.filter(diagnostics, filter);
+        return CollectionsKt.filter(diagnostics, filter);
     }
 
     @NotNull
