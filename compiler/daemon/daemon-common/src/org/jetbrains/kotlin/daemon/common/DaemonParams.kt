@@ -27,7 +27,7 @@ import kotlin.reflect.KMutableProperty1
 
 val COMPILER_JAR_NAME: String = "kotlin-compiler.jar"
 val COMPILER_SERVICE_RMI_NAME: String = "KotlinJvmCompilerService"
-val COMPILER_DAEMON_CLASS_FQN: String = "org.jetbrains.kotlin.daemon.CompileDaemon"
+val COMPILER_DAEMON_CLASS_FQN: String = "org.jetbrains.kotlin.daemon.KotlinCompileDaemon"
 val COMPILE_DAEMON_FIND_PORT_ATTEMPTS: Int = 10
 val COMPILE_DAEMON_PORTS_RANGE_START: Int = 17001
 val COMPILE_DAEMON_PORTS_RANGE_END: Int = 18000
