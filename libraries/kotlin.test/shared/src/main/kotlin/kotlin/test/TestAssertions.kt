@@ -175,13 +175,3 @@ interface AsserterContributor {
     fun contribute(): Asserter?
 }
 
-internal fun <T, R> T.let(block: (T) -> R): R = block(this)
-
-internal fun <T> Iterable<T>.firstOrNull(predicate: (T) -> Boolean): T? {
-    for (e in this) {
-        if (predicate(e)) {
-            return e
-        }
-    }
-    return null
-}

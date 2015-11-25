@@ -24,6 +24,13 @@ class BasicAssertionsJVMTest {
             throw IllegalArgumentException()
         }
     }
+    @Test
+    fun testFailsWithClassMessage() {
+        @Suppress("UNCHECKED_CAST")
+        assertFailsWith(Class.forName("java.lang.IllegalArgumentException") as Class<Throwable>) {
+            throw IllegalArgumentException()
+        }
+    }
 
     @Test
     fun testToDo() {

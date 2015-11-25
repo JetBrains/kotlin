@@ -7,13 +7,14 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>kotlin.test.jvm</artifactId>
+    <artifactId>kotlin.test.junit</artifactId>
 
     <dependencies>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>(4,5)</version>
+            <optional>true</optional>
 		</dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>

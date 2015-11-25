@@ -12,6 +12,7 @@
     <property name="bootstrap.compiler.home" value="${bootstrap.home}/Kotlin/kotlinc"/>
     <property name="bootstrap.runtime" value="${bootstrap.compiler.home}/lib/kotlin-runtime.jar"/>
     <property name="bootstrap.reflect" value="${bootstrap.compiler.home}/lib/kotlin-reflect.jar"/>
+    <property name="bootstrap.kotlin.test" value="${bootstrap.compiler.home}/lib/kotlin-test.jar" />
 
     <property name="output" value="${basedir}/dist"/>
     <property name="js.stdlib.output.dir" value="${output}/js"/>
@@ -56,6 +57,7 @@
 
     <path id="classpath">
         <file file="${bootstrap.runtime}"/>
+        <file file="${bootstrap.kotlin.test}" />
         <file file="${bootstrap.reflect}"/>
         <fileset dir="${idea.sdk}" includes="core/*.jar"/>
         <pathelement location="${protobuf.jar}"/>
@@ -178,7 +180,13 @@
         <sequential if:true="${bootstrap.or.local.build}">
             <copy file="${bootstrap.runtime}" tofile="${kotlin-home}/lib/kotlin-runtime-internal-bootstrap.jar"/>
             <copy file="${bootstrap.reflect}" tofile="${kotlin-home}/lib/kotlin-reflect-internal-bootstrap.jar"/>
+            <copy file="${bootstrap.kotlin.test}" tofile="${kotlin-home}/lib/kotlin-test-internal-bootstrap.jar" failonerror="false"/>
             <jar destfile="${kotlin-home}/lib/kotlin-reflect-internal-bootstrap.jar" update="true">
+                <manifest>
+                    <attribute name="Class-Path" value="kotlin-runtime-internal-bootstrap.jar"/>
+                </manifest>
+            </jar>
+            <jar destfile="${kotlin-home}/lib/kotlin-test-internal-bootstrap.jar" update="true">
                 <manifest>
                     <attribute name="Class-Path" value="kotlin-runtime-internal-bootstrap.jar"/>
                 </manifest>
@@ -188,6 +196,7 @@
         <sequential unless:true="${bootstrap.or.local.build}">
             <copy file="${bootstrap.runtime}" todir="${kotlin-home}/lib"/>
             <copy file="${bootstrap.reflect}" todir="${kotlin-home}/lib"/>
+            <copy file="${bootstrap.kotlin.test}" todir="${kotlin-home}/lib"/>
         </sequential>
     </target>
 
@@ -792,6 +801,20 @@
         </new-kotlinc>
     </target>
 
+    <target name="kotlin.test">
+        <new-kotlinc output="${output}/classes/kotlin.test" moduleName="kotlin-test">
+            <src>
+                <include name="libraries/kotlin.test/shared/src/main/kotlin" />
+                <include name="libraries/kotlin.test/shared/src/main/kotlin.jvm" />
+                <include name="libraries/kotlin.test/junit/src/main/kotlin" />
+            </src>
+            <class-path>
+                <pathelement path="${output}/classes/builtins"/>
+                <pathelement path="libraries/lib/junit-4.11.jar"/>
+            </class-path>
+        </new-kotlinc>
+    </target>
+
     <target name="core">
         <new-kotlinc output="${output}/classes/core" moduleName="kotlin-core">
             <src>
@@ -936,15 +959,23 @@
         </pack-runtime-jar>
     </target>
 
+    <target name="pack-kotlin-test">
+        <pack-runtime-jar jar-name="kotlin-test.jar" implementation-title="${manifest.impl.title.kotlin.test}">
+            <jar-content>
+                <fileset dir="${output}/classes/kotlin.test" includes="**/*"/>
+            </jar-content>
+        </pack-runtime-jar>
+    </target>
+
     <target name="runtime"
             depends="builtins,stdlib,core,reflection,pack-runtime,pack-runtime-sources"/>
 
     <target name="dist"
-            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib,android-compiler-plugin,daemon-client"
+            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin.test,pack-kotlin-test,kotlin-js-stdlib,android-compiler-plugin,daemon-client"
             description="Builds redistributables from sources"/>
 
     <target name="dist-quick"
-            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib,android-compiler-plugin"
+            depends="clean,init,prepare-dist,preloader,serialize-builtins,compiler-quick,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin.test,pack-kotlin-test,kotlin-js-stdlib,android-compiler-plugin"
             description="Builds everything, but classes are reused from project out dir, doesn't run proguard and javadoc"/>
 
     <target name="dist-quick-compiler-only"
