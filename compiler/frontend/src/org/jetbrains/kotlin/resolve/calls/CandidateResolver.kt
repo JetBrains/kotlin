@@ -21,6 +21,7 @@ import com.google.common.collect.Sets
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.SUPER_CANT_BE_EXTENSION_RECEIVER
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.*
@@ -348,6 +349,15 @@ public class CandidateResolver(
                     }
                     else if (ErrorUtils.containsUninferredParameter(expectedType)) {
                         matchStatus = ArgumentMatchStatus.MATCH_MODULO_UNINFERRED_TYPES
+                    }
+
+                    val spreadElement = argument.getSpreadElement()
+                    if (spreadElement != null && !type.isFlexible() && type.isMarkedNullable) {
+                        val dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, type, context)
+                        val smartCastResult = SmartCastManager.checkAndRecordPossibleCast(dataFlowValue, expectedType, expression, context, null, false)
+                        if (smartCastResult == null || !smartCastResult.isCorrect) {
+                            context.trace.report(Errors.SPREAD_OF_NULLABLE.on(spreadElement));
+                        }
                     }
                 }
                 argumentTypes.add(resultingType)

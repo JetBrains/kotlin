@@ -16995,6 +16995,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("NullableTypeForVarargArgument.kt")
+            public void testNullableTypeForVarargArgument() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/varargs/NullableTypeForVarargArgument.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("UnaryVsVararg.kt")
             public void testUnaryVsVararg() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/varargs/UnaryVsVararg.kt");

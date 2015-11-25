@@ -119,6 +119,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         doTestWithJava(fileName);
     }
 
+    @TestMetadata("varargs")
+    public void testVarargs() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/varargs/");
+        doTestWithJava(fileName);
+    }
+
     @TestMetadata("compiler/testData/codegen/boxWithJava/annotatedFileClasses")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -722,4 +728,5 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         }
 
     }
+
 }
