@@ -43,7 +43,7 @@ public final class JetScopeUtils {
             @NotNull final PropertyDescriptor propertyDescriptor
     ) {
         return new LexicalScopeImpl(parent, propertyDescriptor, false, null, LexicalScopeKind.PROPERTY_HEADER,
-                                    // redeclaration on type parameters should be reported early. see: DescriptorResolver.resolvePropertyDescriptor()
+                                    // redeclaration on type parameters should be reported early, see: DescriptorResolver.resolvePropertyDescriptor()
                                     RedeclarationHandler.DO_NOTHING,
                                     new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
                                         @Override

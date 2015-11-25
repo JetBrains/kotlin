@@ -27,15 +27,12 @@ import org.jetbrains.kotlin.resolve.NoSubpackagesInPackageScope
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
-import org.jetbrains.kotlin.resolve.scopes.BaseLexicalScope
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.resolve.scopes.utils.withParent
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
-import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.sure
 
 public open class FileScopeProviderImpl(
@@ -106,14 +103,7 @@ public open class FileScopeProviderImpl(
 
         scope = LazyImportScope(scope, aliasImportResolver, LazyImportScope.FilteringKind.ALL, "Alias imports in $debugName")
 
-        val lexicalScope = object : BaseLexicalScope(scope, packageFragment) {
-            override val kind: LexicalScopeKind
-                get() = LexicalScopeKind.FILE
-
-            override fun printStructure(p: Printer) {
-                p.println("File top-level scope (empty)")
-            }
-        }
+        val lexicalScope = LexicalScope.empty(scope, packageFragment)
 
         bindingTrace.recordScope(lexicalScope, file)
 

@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.*;
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
 import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor;
 import org.jetbrains.kotlin.types.expressions.ValueParameterResolver;
@@ -636,7 +635,7 @@ public class BodyResolver {
         assert accessorDeclaringScope != null : "Scope for accessor " + accessor.getText() + " should exists";
         LexicalScope headerScope = JetScopeUtils.makeScopeForPropertyHeader(accessorDeclaringScope, descriptor);
         return new LexicalScopeImpl(headerScope, descriptor, true, descriptor.getExtensionReceiverParameter(),
-                                    LexicalScopeKind.PROPERTY_ACCESSOR);
+                                    LexicalScopeKind.PROPERTY_ACCESSOR_BODY);
     }
 
     private void resolvePropertyAccessors(
@@ -796,7 +795,7 @@ public class BodyResolver {
             KtProperty property = (KtProperty) function.getParent();
             final SyntheticFieldDescriptor fieldDescriptor = new SyntheticFieldDescriptor(accessorDescriptor, property);
             innerScope = new LexicalScopeImpl(innerScope, functionDescriptor, true, null,
-                                              LexicalScopeKind.PROPERTY_ACCESSOR,
+                                              LexicalScopeKind.PROPERTY_ACCESSOR_BODY,
                                               RedeclarationHandler.DO_NOTHING, new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
                 @Override
                 public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {

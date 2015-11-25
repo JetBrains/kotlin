@@ -260,7 +260,7 @@ object ReplaceWithAnnotationAnalyzer {
             is PropertyDescriptor -> {
                 val outerScope = getResolutionScope(descriptor.containingDeclaration, ownerDescriptor, additionalScopes) ?: return null
                 val propertyHeader = JetScopeUtils.makeScopeForPropertyHeader(outerScope, descriptor)
-                LexicalScopeImpl(propertyHeader, descriptor, false, descriptor.extensionReceiverParameter, LexicalScopeKind.PROPERTY_ACCESSOR)
+                LexicalScopeImpl(propertyHeader, descriptor, false, descriptor.extensionReceiverParameter, LexicalScopeKind.PROPERTY_ACCESSOR_BODY)
             }
 
             else -> return null // something local, should not work with ReplaceWith

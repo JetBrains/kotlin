@@ -53,7 +53,7 @@ interface LexicalScope: HierarchicalScope {
     }
 }
 
-enum class LexicalScopeKind(val local: Boolean) {
+enum class LexicalScopeKind(val withLocalDescriptors: Boolean) {
     EMPTY(false),
 
     CLASS_HEADER(false),
@@ -67,7 +67,7 @@ enum class LexicalScopeKind(val local: Boolean) {
 
     PROPERTY_HEADER(false),
     PROPERTY_INITIALIZER_OR_DELEGATE(true),
-    PROPERTY_ACCESSOR(true),
+    PROPERTY_ACCESSOR_BODY(true),
     PROPERTY_DELEGATE_METHOD(false),
 
     FUNCTION_HEADER(false),
@@ -80,13 +80,12 @@ enum class LexicalScopeKind(val local: Boolean) {
 
     THEN(true),
     ELSE(true),
-    DO_WHILE(true),
+    DO_WHILE_BODY(true),
     CATCH(true),
     FOR(true),
-    WHILE(true),
+    WHILE_BODY(true),
     WHEN(true),
 
-    FILE(false),
     CALLABLE_REFERENCE(false),
 
     // for tests, KDoc & IDE
