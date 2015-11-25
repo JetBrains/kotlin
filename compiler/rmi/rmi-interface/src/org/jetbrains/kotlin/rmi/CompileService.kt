@@ -37,19 +37,31 @@ public interface CompileService : Remote {
     }
 
     public sealed class CallResult<out R> : Serializable {
-        class Good<R>(val result: R) : CallResult<R>()
-        class Ok : CallResult<Nothing>()
-        class Dying : CallResult<Nothing>()
-        class Error(val message: String) : CallResult<Nothing>()
+
+        class Good<R>(val result: R) : CallResult<R>() {
+            override fun get(): R = result
+            override fun equals(other: Any?): Boolean = other is Good<*> && this.result == other.result
+            override fun hashCode(): Int = this.javaClass.hashCode() + (result?.hashCode() ?: 1)
+        }
+        class Ok : CallResult<Nothing>() {
+            override fun get(): Nothing = throw IllegalStateException("Gey is inapplicable to Ok call result")
+            override fun equals(other: Any?): Boolean = other is Ok
+            override fun hashCode(): Int = this.javaClass.hashCode() + 1 // avoiding clash with the hash of class itself
+        }
+        class Dying : CallResult<Nothing>() {
+            override fun get(): Nothing = throw IllegalStateException("Service is dying")
+            override fun equals(other: Any?): Boolean = other is Dying
+            override fun hashCode(): Int = this.javaClass.hashCode() + 1 // see comment to Ok.hashCode
+        }
+        class Error(val message: String) : CallResult<Nothing>() {
+            override fun get(): Nothing = throw Exception(message)
+            override fun equals(other: Any?): Boolean = other is Error && this.message == other.message
+            override fun hashCode(): Int = this.javaClass.hashCode() + message.hashCode()
+        }
 
         val isGood: Boolean get() = this is Good<*>
 
-        fun get(): R = when (this) {
-            is Good<R> -> this.result
-            is Dying -> throw IllegalStateException("Service is dying")
-            is Error -> throw IllegalStateException(this.message)
-            else -> throw IllegalStateException("Unknown state")
-        }
+        abstract fun get(): R
     }
 
     // TODO: remove!
