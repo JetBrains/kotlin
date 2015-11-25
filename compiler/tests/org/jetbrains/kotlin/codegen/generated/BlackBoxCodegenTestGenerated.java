@@ -5545,6 +5545,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("classCallsProtectedInheritedByCompanion.kt")
+        public void testClassCallsProtectedInheritedByCompanion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/classCallsProtectedInheritedByCompanion.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("flist.kt")
         public void testFlist() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/flist.kt");
@@ -5668,6 +5674,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("methodOnObject.kt")
         public void testMethodOnObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/methodOnObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nestedDerivedClassCallsProtectedFromCompanion.kt")
+        public void testNestedDerivedClassCallsProtectedFromCompanion() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/objects/nestedDerivedClassCallsProtectedFromCompanion.kt");
             doTest(fileName);
         }
 

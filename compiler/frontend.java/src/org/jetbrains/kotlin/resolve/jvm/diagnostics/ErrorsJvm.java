@@ -68,6 +68,7 @@ public interface ErrorsJvm {
     DiagnosticFactory1<KtAnnotationEntry, FqName> ANNOTATION_IS_NOT_APPLICABLE_TO_MULTIFILE_CLASSES = DiagnosticFactory1.create(ERROR);
 
     DiagnosticFactory0<KtElement> INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtElement> SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<KtElement> NO_REFLECTION_IN_CLASS_PATH = DiagnosticFactory0.create(WARNING);
 
