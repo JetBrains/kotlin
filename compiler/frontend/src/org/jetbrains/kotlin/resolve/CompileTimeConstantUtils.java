@@ -48,8 +48,15 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumClass;
 public class CompileTimeConstantUtils {
 
     private final static Set<String> ARRAY_CALL_NAMES = SetsKt.hashSetOf(
-            "kotlin.arrayOf", "kotlin.doubleArrayOf", "kotlin.floatArrayOf", "kotlin.longArrayOf", "kotlin.intArrayOf", "kotlin.charArrayOf",
-            "kotlin.shortArrayOf", "kotlin.byteArrayOf", "kotlin.booleanArrayOf"
+            "kotlin.arrayOf",
+            "kotlin.doubleArrayOf",
+            "kotlin.floatArrayOf",
+            "kotlin.longArrayOf",
+            "kotlin.intArrayOf",
+            "kotlin.charArrayOf",
+            "kotlin.shortArrayOf",
+            "kotlin.byteArrayOf",
+            "kotlin.booleanArrayOf"
     );
 
     public static void checkConstructorParametersType(@NotNull List<KtParameter> parameters, @NotNull BindingTrace trace) {
