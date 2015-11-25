@@ -142,7 +142,7 @@ class CompileServiceImpl(
 
     override fun getClients(): CompileService.CallResult<List<String>> = ifAlive {
         synchronized(state.clientProxies) {
-            state.clientProxies.map { it.aliveFlagPath }.filterNotNull()
+            state.clientProxies.mapNotNull { it.aliveFlagPath }
         }
     }
 
