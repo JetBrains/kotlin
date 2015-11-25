@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.descriptors.ModuleParameters;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
@@ -53,8 +54,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import static org.jetbrains.kotlin.builtins.BuiltInsPackageFragmentProviderKt.createBuiltInPackageFragmentProvider;
-import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME;
-import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAMES;
+import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.*;
 
 public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
     @Override
@@ -80,28 +80,31 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
                         )
                 );
 
-        PackageFragmentDescriptor deserialized = createBuiltInsPackageFragment();
+        PackageFragmentProvider packageFragmentProvider = createBuiltInsPackageFragmentProvider();
 
         List<KtFile> files = KotlinTestUtils.loadToJetFiles(getEnvironment(), ContainerUtil.concat(
                 allFilesUnder("core/builtins/native"),
                 allFilesUnder("core/builtins/src")
         ));
 
-        ModuleDescriptor module = LazyResolveTestUtil.resolveLazily(files, getEnvironment(), false);
-        List<PackageFragmentDescriptor> fragments = module.getPackage(BUILT_INS_PACKAGE_FQ_NAME).getFragments();
-        for (PackageFragmentDescriptor fromLazyResolve : fragments) {
+        final ModuleDescriptor module = LazyResolveTestUtil.resolveLazily(files, getEnvironment(), false);
+
+        for (FqName packageFqName : CollectionsKt.listOf(BUILT_INS_PACKAGE_FQ_NAME, COLLECTIONS_PACKAGE_FQ_NAME, RANGES_PACKAGE_FQ_NAME)) {
+            PackageFragmentDescriptor fromLazyResolve =
+                    CollectionsKt.single(module.getPackage(packageFqName).getFragments());
             if (fromLazyResolve instanceof LazyPackageDescriptor) {
+                PackageFragmentDescriptor deserialized =
+                        CollectionsKt.single(packageFragmentProvider.getPackageFragments(packageFqName));
                 RecursiveDescriptorComparator.validateAndCompareDescriptors(
                         fromLazyResolve, deserialized, configuration,
-                        new File("compiler/testData/builtin-classes.txt")
+                        new File("compiler/testData/builtin-classes-" + packageFqName.asString().replace('.', '-') + ".txt")
                 );
-                break;
             }
         }
     }
 
     @NotNull
-    private static PackageFragmentDescriptor createBuiltInsPackageFragment() {
+    private static PackageFragmentProvider createBuiltInsPackageFragmentProvider() {
         LockBasedStorageManager storageManager = new LockBasedStorageManager();
         ModuleDescriptorImpl builtInsModule = new ModuleDescriptorImpl(
                 Name.special("<built-ins module>"), storageManager, ModuleParameters.Empty.INSTANCE, DefaultBuiltIns.getInstance()
@@ -122,7 +125,7 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
         builtInsModule.initialize(packageFragmentProvider);
         builtInsModule.setDependencies(builtInsModule);
 
-        return CollectionsKt.single(packageFragmentProvider.getPackageFragments(BUILT_INS_PACKAGE_FQ_NAME));
+        return packageFragmentProvider;
     }
 
     @NotNull
