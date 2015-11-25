@@ -133,6 +133,9 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : BaseImportingSc
                 descriptor.initialize(receiverType, null, typeParameters, valueParameters, returnType,
                                       Modality.FINAL, visibility)
 
+                descriptor.isOperator = sourceFunction.isOperator
+                descriptor.isInfix = sourceFunction.isInfix
+
                 return descriptor
             }
         }
