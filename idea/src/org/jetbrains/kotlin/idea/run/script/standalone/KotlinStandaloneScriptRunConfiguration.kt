@@ -34,7 +34,9 @@ import com.intellij.refactoring.listeners.RefactoringElementAdapter
 import com.intellij.refactoring.listeners.RefactoringElementListener
 import org.jdom.Element
 import org.jetbrains.kotlin.idea.run.script.standalone.KotlinStandaloneScriptRunConfigurationProducer.Companion.pathFromPsiElement
+import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.script.ScriptNameUtil
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.*
@@ -98,7 +100,7 @@ class KotlinStandaloneScriptRunConfiguration(
 
     override fun getState(executor: Executor, environment: ExecutionEnvironment): RunProfileState = ScriptCommandLineState(environment, this)
 
-    override fun suggestedName() = filePath?.let { File(it).nameWithoutExtension }
+    override fun suggestedName() = filePath?.let { ScriptNameUtil.generateNameByFileName(it, KotlinParserDefinition.STD_SCRIPT_EXT) }
 
     override fun getConfigurationEditor(): SettingsEditor<out RunConfiguration> {
         val group = SettingsEditorGroup<KotlinStandaloneScriptRunConfiguration>()

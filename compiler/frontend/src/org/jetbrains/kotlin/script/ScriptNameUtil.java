@@ -28,22 +28,26 @@ public class ScriptNameUtil {
     @NotNull
     public static Name fileNameWithExtensionStripped(@NotNull KtScript script, @NotNull String extension) {
         KtFile file = script.getContainingKtFile();
-        String name = file.getName();
-        int index = name.lastIndexOf('/');
+        return Name.identifier(generateNameByFileName(file.getName(), extension));
+    }
+
+    @NotNull
+    public static String generateNameByFileName(@NotNull String fileName, @NotNull String extension) {
+        int index = fileName.lastIndexOf('/');
         if (index != -1) {
-            name = name.substring(index + 1);
+            fileName = fileName.substring(index + 1);
         }
-        if (name.endsWith(extension)) {
-            name = name.substring(0, name.length() - extension.length());
+        if (fileName.endsWith(extension)) {
+            fileName = fileName.substring(0, fileName.length() - extension.length());
         }
         else {
-            index = name.indexOf('.');
+            index = fileName.indexOf('.');
             if (index != -1) {
-                name = name.substring(0, index);
+                fileName = fileName.substring(0, index);
             }
         }
-        name = Character.toUpperCase(name.charAt(0)) + (name.length() == 0 ? "" : name.substring(1));
-        name = name.replace('.', '_');
-        return Name.identifier(name);
+        fileName = Character.toUpperCase(fileName.charAt(0)) + (fileName.length() == 0 ? "" : fileName.substring(1));
+        fileName = fileName.replace('.', '_');
+        return fileName;
     }
 }
