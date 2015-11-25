@@ -50,7 +50,6 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -80,7 +79,8 @@ abstract class LightClassDataProvider<T : WithFileStubAndExtraDiagnostics>(
 
         val javaFileStub = createJavaFileStub(packageFqName, files)
         val bindingContext: BindingContext
-        val forExtraDiagnostics = DelegatingBindingTrace(context.bindingContext, false, "For extra diagnostics in ${this.javaClass}")
+
+        val state: GenerationState
 
         try {
             val stubStack = Stack<StubElement<PsiElement>>()
@@ -88,7 +88,7 @@ abstract class LightClassDataProvider<T : WithFileStubAndExtraDiagnostics>(
             @Suppress("UNCHECKED_CAST")
             stubStack.push(javaFileStub as StubElement<PsiElement>)
 
-            val state = GenerationState(
+            state = GenerationState(
                     project,
                     KotlinLightClassBuilderFactory(stubStack),
                     context.module,
@@ -99,8 +99,7 @@ abstract class LightClassDataProvider<T : WithFileStubAndExtraDiagnostics>(
                     generateDeclaredClassFilter = generateClassFilter,
                     disableInline = false,
                     disableOptimization = false,
-                    useTypeTableInSerializer = false,
-                    diagnostics = forExtraDiagnostics)
+                    useTypeTableInSerializer = false)
             state.beforeCompile()
 
             bindingContext = state.bindingContext
@@ -122,9 +121,8 @@ abstract class LightClassDataProvider<T : WithFileStubAndExtraDiagnostics>(
             throw e
         }
 
-        val extraDiagnostics = forExtraDiagnostics.bindingContext.diagnostics
         return CachedValueProvider.Result.create(
-                createLightClassData(javaFileStub, bindingContext, extraDiagnostics),
+                createLightClassData(javaFileStub, bindingContext, state.collectedExtraJvmDiagnostics),
                 if (isLocal) PsiModificationTracker.MODIFICATION_COUNT else PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
         )
     }

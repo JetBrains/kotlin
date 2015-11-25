@@ -57,7 +57,6 @@ public class CodegenTestUtil {
         analysisResult.throwIfError();
         AnalyzingUtils.throwExceptionOnErrors(analysisResult.getBindingContext());
         CompilerConfiguration configuration = environment.getConfiguration();
-        BindingTrace forExtraDiagnostics = new DelegatingBindingTrace(analysisResult.getBindingContext(), false, "For extra diagnostics in ${this.javaClass}");
         GenerationState state = new GenerationState(
                 environment.getProject(), ClassBuilderFactories.TEST,
                 analysisResult.getModuleDescriptor(), analysisResult.getBindingContext(), files.getPsiFiles(),
@@ -66,13 +65,12 @@ public class CodegenTestUtil {
                 GenerationState.GenerateClassFilter.GENERATE_ALL,
                 configuration.get(JVMConfigurationKeys.DISABLE_INLINE, false),
                 configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false),
-                /* useTypeTableInSerializer = */ false,
-                forExtraDiagnostics
+                /* useTypeTableInSerializer = */ false
         );
         KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
 
         // For JVM-specific errors
-        AnalyzingUtils.throwExceptionOnErrors(forExtraDiagnostics.getBindingContext());
+        AnalyzingUtils.throwExceptionOnErrors(state.getCollectedExtraJvmDiagnostics());
 
         return state.getFactory();
     }

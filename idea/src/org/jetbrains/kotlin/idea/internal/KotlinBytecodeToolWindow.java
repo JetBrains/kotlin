@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.codegen.CompilationErrorHandler;
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade;
@@ -57,10 +56,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
-import java.util.Scanner;
 
 public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
     private static final int UPDATE_DELAY = 1000;
@@ -195,7 +192,6 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
             boolean enableOptimization
     ) {
         GenerationState state;
-        DiagnosticSink.CollectAll sink = new DiagnosticSink.CollectAll();
         try {
             ResolutionFacade resolutionFacade = ResolutionUtils.getResolutionFacade(jetFile);
 
@@ -211,22 +207,22 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
             GenerationState.GenerateClassFilter generateClassFilter = new GenerationState.GenerateClassFilter() {
 
                 @Override
-                public boolean shouldGeneratePackagePart(KtFile file) {
+                public boolean shouldGeneratePackagePart(@NotNull KtFile file) {
                     return file == jetFile;
                 }
 
                 @Override
-                public boolean shouldAnnotateClass(KtClassOrObject classOrObject) {
+                public boolean shouldAnnotateClass(@NotNull KtClassOrObject classOrObject) {
                     return true;
                 }
 
                 @Override
-                public boolean shouldGenerateClass(KtClassOrObject classOrObject) {
+                public boolean shouldGenerateClass(@NotNull KtClassOrObject classOrObject) {
                     return classOrObject.getContainingKtFile() == jetFile;
                 }
 
                 @Override
-                public boolean shouldGenerateScript(KtScript script) {
+                public boolean shouldGenerateScript(@NotNull KtScript script) {
                     return script.getContainingKtFile() == jetFile;
                 }
             };
@@ -239,8 +235,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
                                         generateClassFilter,
                                         !enableInline,
                                         !enableOptimization,
-                                        /*useTypeTableInSerializer=*/false,
-                                        sink);
+                                        /*useTypeTableInSerializer=*/false);
             KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
         }
         catch (ProcessCanceledException e) {
@@ -252,7 +247,7 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
 
         StringBuilder answer = new StringBuilder();
 
-        List<Diagnostic> diagnostics = sink.getDiagnostics();
+        Collection<Diagnostic> diagnostics = state.getCollectedExtraJvmDiagnostics().all();
         if (!diagnostics.isEmpty()) {
             answer.append("// Backend Errors: \n");
             answer.append("// ================\n");

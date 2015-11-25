@@ -32,21 +32,6 @@ public interface DiagnosticSink {
         }
     };
 
-    class CollectAll implements DiagnosticSink {
-
-        List<Diagnostic> diagnostics = new ArrayList<Diagnostic>();
-
-        @Override
-        public void report(@NotNull Diagnostic diagnostic) {
-            diagnostics.add(diagnostic);
-        }
-
-        @NotNull
-        public List<Diagnostic> getDiagnostics() {
-            return Collections.unmodifiableList(diagnostics);
-        }
-    };
-
     DiagnosticSink THROW_EXCEPTION = new DiagnosticSink() {
         @Override
         public void report(@NotNull Diagnostic diagnostic) {

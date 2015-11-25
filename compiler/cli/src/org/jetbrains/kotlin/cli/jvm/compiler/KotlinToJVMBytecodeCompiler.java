@@ -398,7 +398,6 @@ public class KotlinToJVMBytecodeCompiler {
                 obsoleteMultifileClasses.add(JvmClassName.byInternalName(obsoleteFacadeInternalName).getFqNameForClassNameWithoutDollars());
             }
         }
-        BindingTrace diagnosticHolder = new DelegatingBindingTrace(result.getBindingContext(), false, "For extra diagnostics in ${this.javaClass}");
         GenerationState generationState = new GenerationState(
                 environment.getProject(),
                 ClassBuilderFactories.BINARIES,
@@ -411,7 +410,6 @@ public class KotlinToJVMBytecodeCompiler {
                 configuration.get(JVMConfigurationKeys.DISABLE_INLINE, false),
                 configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false),
                 /* useTypeTableInSerializer = */ false,
-                diagnosticHolder,
                 packagesWithObsoleteParts,
                 obsoleteMultifileClasses,
                 targetId,
@@ -434,7 +432,7 @@ public class KotlinToJVMBytecodeCompiler {
 
         AnalyzerWithCompilerReport.reportDiagnostics(
                 new FilteredJvmDiagnostics(
-                        diagnosticHolder.getBindingContext().getDiagnostics(),
+                        generationState.getCollectedExtraJvmDiagnostics(),
                         result.getBindingContext().getDiagnostics()
                 ),
                 environment.getConfiguration().get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)

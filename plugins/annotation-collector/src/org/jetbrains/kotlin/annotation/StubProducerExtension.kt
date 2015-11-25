@@ -38,8 +38,6 @@ public class StubProducerExtension(val stubsOutputDir: File) : AnalysisCompleted
             bindingContext: BindingContext,
             files: Collection<KtFile>
     ): AnalysisResult? {
-        val forExtraDiagnostics = DelegatingBindingTrace(bindingContext, false, "For extra diagnostics in ${this.javaClass}")
-
         val generationState = GenerationState(
                 project,
                 StubClassBuilderFactory(),
@@ -47,8 +45,7 @@ public class StubProducerExtension(val stubsOutputDir: File) : AnalysisCompleted
                 bindingContext,
                 files.toArrayList(),
                 disableCallAssertions = false,
-                disableParamAssertions = false,
-                diagnostics = forExtraDiagnostics)
+                disableParamAssertions = false)
 
         KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION)
 
