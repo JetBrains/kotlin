@@ -65,6 +65,6 @@ object CreateSetFunctionActionFactory : CreateCallableMemberFromUsageFactory<KtA
         parameters.add(ParameterInfo(valType, "value"))
 
         val returnType = TypeInfo(builtIns.unitType, Variance.OUT_VARIANCE)
-        return FunctionInfo("set", arrayType, returnType, Collections.emptyList(), parameters)
+        return FunctionInfo("set", arrayType, returnType, Collections.emptyList(), parameters, isOperator = true)
     }
 }

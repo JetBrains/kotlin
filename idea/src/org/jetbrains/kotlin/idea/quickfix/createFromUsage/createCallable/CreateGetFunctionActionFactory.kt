@@ -37,6 +37,6 @@ object CreateGetFunctionActionFactory : CreateCallableMemberFromUsageFactory<KtA
         val arrayType = TypeInfo(arrayExpr, Variance.IN_VARIANCE)
         val parameters = element.indexExpressions.map { ParameterInfo(TypeInfo(it, Variance.IN_VARIANCE)) }
         val returnType = TypeInfo(element, Variance.OUT_VARIANCE)
-        return FunctionInfo("get", arrayType, returnType, Collections.emptyList(), parameters)
+        return FunctionInfo("get", arrayType, returnType, Collections.emptyList(), parameters, isOperator = true)
     }
 }
