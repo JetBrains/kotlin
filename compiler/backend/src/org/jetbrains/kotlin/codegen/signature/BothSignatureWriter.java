@@ -263,13 +263,13 @@ public class BothSignatureWriter {
     }
 
     @NotNull
-    public JvmMethodSignature makeJvmMethodSignature(@NotNull String name) {
+    public JvmMethodSignature makeJvmMethodSignature(@NotNull String name, boolean skipGenericSignature) {
         List<Type> types = new ArrayList<Type>(kotlinParameterTypes.size());
         for (JvmMethodParameterSignature parameter : kotlinParameterTypes) {
             types.add(parameter.getAsmType());
         }
         Method asmMethod = new Method(name, jvmReturnType, types.toArray(new Type[types.size()]));
-        return new JvmMethodSignature(asmMethod, makeJavaGenericSignature(), kotlinParameterTypes);
+        return new JvmMethodSignature(asmMethod, !skipGenericSignature ? makeJavaGenericSignature() : null, kotlinParameterTypes);
     }
 
     public int getCurrentSignatureSize() {

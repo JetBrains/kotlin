@@ -405,7 +405,7 @@ public class JetTypeMapper {
         sw.writeReturnType();
         mapType(descriptor.getType(), sw, JetTypeMapperMode.VALUE_FOR_ANNOTATION);
         sw.writeReturnTypeEnd();
-        return sw.makeJvmMethodSignature(descriptor.getName().asString());
+        return sw.makeJvmMethodSignature(descriptor.getName().asString(), false);
     }
 
     @NotNull
@@ -1071,8 +1071,7 @@ public class JetTypeMapper {
             sw.writeReturnTypeEnd();
         }
 
-        JvmMethodSignature signature = sw.makeJvmMethodSignature(mapFunctionName(f));
-
+        JvmMethodSignature signature = sw.makeJvmMethodSignature(mapFunctionName(f), f instanceof AccessorForCallableDescriptor);
 
         if (kind != OwnerKind.DEFAULT_IMPLS) {
             SpecialSignatureInfo specialSignatureInfo = BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo(f);
@@ -1394,7 +1393,7 @@ public class JetTypeMapper {
 
         writeVoidReturn(sw);
 
-        return sw.makeJvmMethodSignature("<init>");
+        return sw.makeJvmMethodSignature("<init>", false);
     }
 
     public Type getSharedVarType(DeclarationDescriptor descriptor) {
