@@ -13,15 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package kotlin.jvm
 
-import kotlin.jvm.internal.Intrinsic
-
-/**
- * Checks if array can contain element of type [T].
- */
-@Intrinsic("kotlin.jvm.isArrayOf")
-@Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")
-public fun <reified T : Any> Array<*>.isArrayOf(): Boolean =
-        T::class.java.isAssignableFrom(this.javaClass.componentType)
+@Target(AnnotationTarget.FILE, AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.SOURCE)
+internal annotation class JvmVersion(public val minimum: Int = 6, public val maximum: Int = 100)

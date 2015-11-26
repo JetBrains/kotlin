@@ -87,10 +87,6 @@ public annotation class JvmSynthetic
 public annotation class Throws(public vararg val exceptionClasses: KClass<out Throwable>)
 
 
-@Target(AnnotationTarget.FILE, AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION)
-@Retention(AnnotationRetention.SOURCE)
-internal annotation class JvmVersion(public val minimum: Int = 6, public val maximum: Int = 100)
-
 /**
  * Instructs the Kotlin compiler not to generate getters/setters for this property and expose it as a field.
  */
