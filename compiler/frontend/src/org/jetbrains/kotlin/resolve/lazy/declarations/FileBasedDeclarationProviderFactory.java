@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve.lazy.declarations;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import kotlin.jvm.functions.Function0;
@@ -36,7 +36,7 @@ import java.util.Set;
 public class FileBasedDeclarationProviderFactory extends AbstractDeclarationProviderFactory  {
 
     private static class Index {
-        private final Multimap<FqName, KtFile> filesByPackage = HashMultimap.create();
+        private final Multimap<FqName, KtFile> filesByPackage = LinkedHashMultimap.create();
         private final Set<FqName> declaredPackages = Sets.newHashSet();
     }
 
