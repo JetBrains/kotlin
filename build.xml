@@ -200,6 +200,13 @@
         </sequential>
     </target>
 
+    <target name="copy-dist-to-bootstrap">
+        <delete dir="${basedir}/dependencies/bootstrap-compiler/Kotlin/kotlinc" />
+        <copy todir="${basedir}/dependencies/bootstrap-compiler/Kotlin/kotlinc">
+            <fileset dir="${basedir}/dist/kotlinc" />
+        </copy>
+    </target>
+
     <target name="compiler-sources">
         <jar jarfile="${output}/kotlin-compiler-sources.jar">
             <!-- TODO How to convert it from pathset or dirset ? -->
