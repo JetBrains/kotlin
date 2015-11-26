@@ -20,7 +20,7 @@
     <orderEntry type="library" name="asm" level="project" />
     <orderEntry type="module" module-name="util" />
     <orderEntry type="module" module-name="preloader" />
-    <orderEntry type="module" module-name="kotlinr" />
-    <orderEntry type="module" module-name="rmi-interface" />
+    <orderEntry type="module" module-name="daemon-client" />
+    <orderEntry type="module" module-name="daemon-common" />
   </component>
 </module>

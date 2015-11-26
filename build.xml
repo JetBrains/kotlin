@@ -91,8 +91,8 @@
         <include name="compiler/frontend.java/src"/>
         <include name="compiler/light-classes/src"/>
         <include name="compiler/plugin-api/src"/>
-        <include name="compiler/rmi/rmi-server/src"/>
-        <include name="compiler/rmi/rmi-interface/src"/>
+        <include name="compiler/daemon/src"/>
+        <include name="compiler/daemon/daemon-common/src"/>
         <include name="compiler/serialization/src"/>
         <include name="compiler/util/src"/>
         <include name="js/js.dart-ast/src"/>
@@ -118,8 +118,7 @@
         <include name="cli/**"/>
         <include name="cli-common/**"/>
         <include name="conditional-preprocessor/**"/>
-        <include name="rmi-server/**"/>
-        <include name="rmi-interface/**"/>
+        <include name="daemon/**"/>
         <include name="util/**"/>
         <include name="util.runtime/**"/>
         <include name="light-classes/**"/>
@@ -204,8 +203,8 @@
             <fileset dir="compiler/cli/src"/>
             <fileset dir="compiler/cli/cli-common/src"/>
             <fileset dir="compiler/conditional-preprocessor/src"/>
-            <fileset dir="compiler/rmi/rmi-server/src"/>
-            <fileset dir="compiler/rmi/rmi-interface/src"/>
+            <fileset dir="compiler/daemon/src"/>
+            <fileset dir="compiler/daemon/daemon-common/src"/>
             <fileset dir="compiler/container/src"/>
             <fileset dir="compiler/frontend/src"/>
             <fileset dir="compiler/frontend.java/src"/>
@@ -584,12 +583,12 @@
         </jar>
     </target>
 
-    <target name="kotlinr">
-        <cleandir dir="${output}/classes/kotlinr"/>
+    <target name="daemon-client">
+        <cleandir dir="${output}/classes/daemon-client"/>
 
-        <kotlinc output="${output}/classes/kotlinr" modulename="kotlin-rmi">
+        <kotlinc output="${output}/classes/daemon-client" modulename="client">
             <src>
-                <pathelement path="compiler/rmi/kotlinr/src"/>
+                <pathelement path="compiler/daemon/daemon-client/src"/>
             </src>
             <classpath>
                 <pathelement path="${bootstrap.runtime}"/>
@@ -599,8 +598,8 @@
             </classpath>
         </kotlinc>
 
-        <jar destfile="${kotlin-home}/lib/kotlinr.jar">
-            <fileset dir="${output}/classes/kotlinr"/>
+        <jar destfile="${kotlin-home}/lib/kotlin-daemon-client.jar">
+            <fileset dir="${output}/classes/daemon-client"/>
             <zipfileset src="${dependencies.dir}/native-platform-uberjar.jar" includes="**" />
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
         </jar>
@@ -940,7 +939,7 @@
             depends="builtins,stdlib,core,reflection,pack-runtime,pack-runtime-sources"/>
 
     <target name="dist"
-            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib,android-compiler-plugin,kotlinr"
+            depends="clean,init,prepare-dist,preloader,runner,serialize-builtins,compiler,compiler-sources,ant-tools,jdk-annotations,android-sdk-annotations,runtime,kotlin-js-stdlib,android-compiler-plugin,daemon-client"
             description="Builds redistributables from sources"/>
 
     <target name="dist-quick"
