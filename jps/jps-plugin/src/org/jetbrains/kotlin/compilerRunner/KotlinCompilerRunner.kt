@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
 import org.jetbrains.kotlin.config.CompilerSettings
+import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.rmi.*
@@ -108,6 +109,7 @@ public object KotlinCompilerRunner {
 
             if (!tryCompileWithDaemon(compilerClassName, argsArray, environment, messageCollector, collector)) {
                 // otherwise fallback to in-process
+                KotlinBuilder.LOG.info("Compile in-process")
 
                 val stream = ByteArrayOutputStream()
                 val out = PrintStream(stream)
@@ -176,9 +178,12 @@ public object KotlinCompilerRunner {
 
         if (isDaemonEnabled()) {
 
+            KotlinBuilder.LOG.debug("Try to connect to daemon")
             val connection = getDaemonConnection(environment, messageCollector)
 
             if (connection?.daemon != null) {
+                KotlinBuilder.LOG.info("Connected to daemon")
+
                 val compilerOut = ByteArrayOutputStream()
                 val daemonOut = ByteArrayOutputStream()
 
@@ -199,6 +204,8 @@ public object KotlinCompilerRunner {
                 }
                 return true
             }
+
+            KotlinBuilder.LOG.info("Daemon not found")
         }
         return false
     }
