@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.android.synthetic.res.AndroidPackageFragmentProvider
 import org.jetbrains.kotlin.android.synthetic.res.AndroidSyntheticPackageFragmentProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -45,7 +46,9 @@ public abstract class AbstractAndroidSyntheticPropertyDescriptorTest : UsefulTes
 
         val renderer = DescriptorRenderer.COMPACT_WITH_MODIFIERS
         val expected = fragmentProvider.packageFragments.sortedBy { it.fqName.asString() }.map {
-            val descriptors = it.getMemberScope().getContributedDescriptors().map { "    " + renderer.render(it) }.joinToString("\n")
+            val descriptors = it.getMemberScope().getContributedDescriptors()
+                    .sortedWith(MemberComparator.INSTANCE)
+                    .map { "    " + renderer.render(it) }.joinToString("\n")
             it.fqName.asString() + (if (descriptors.isNotEmpty()) "\n\n" + descriptors else "")
         }.joinToString("\n\n\n")
 
