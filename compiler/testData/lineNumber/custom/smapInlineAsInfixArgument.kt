@@ -1,4 +1,4 @@
-fun String.execute(p: String) = this + p
+infix fun String.execute(p: String) = this + p
 
 fun box(){
     test() execute

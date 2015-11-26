@@ -36,7 +36,7 @@ class Field(
             liveCount(i + 1, j + 1)
 
     // You can say field[i, j], and this function gets called
-    fun get(i: Int, j: Int) = live[i][j]
+    operator fun get(i: Int, j: Int) = live[i][j]
 }
 
 /**

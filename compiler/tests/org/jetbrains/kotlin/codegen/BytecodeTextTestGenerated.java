@@ -952,12 +952,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             doTest(fileName);
         }
 
-        @TestMetadata("infixPlus.kt")
-        public void testInfixPlus() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/stringOperations/infixPlus.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("interpolation.kt")
         public void testInterpolation() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/stringOperations/interpolation.kt");

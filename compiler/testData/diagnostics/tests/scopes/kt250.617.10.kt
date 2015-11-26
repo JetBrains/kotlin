@@ -21,7 +21,7 @@ abstract class Tag(val name : String) {
 }
 
 abstract class TagWithText(name : String) : Tag(name) {
-  fun String.plus() {
+  operator fun String.unaryPlus() {
     children.add(TextElement(this))
   }
 }

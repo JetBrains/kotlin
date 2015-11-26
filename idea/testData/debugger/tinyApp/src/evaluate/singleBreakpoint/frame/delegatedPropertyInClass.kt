@@ -15,11 +15,11 @@ class A {
 }
 
 class MyDelegate {
-    fun getValue(t: Any?, p: KProperty<*>): Int = 1
+    operator fun getValue(t: Any?, p: KProperty<*>): Int = 1
 }
 
 class MyDelegateThrowsException {
-    fun getValue(t: Any?, p: KProperty<*>): Int = throw IllegalStateException()
+    operator fun getValue(t: Any?, p: KProperty<*>): Int = throw IllegalStateException()
 }
 
 // PRINT_FRAME

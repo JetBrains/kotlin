@@ -5,8 +5,8 @@ package foo
 
 class A(val a: Int, val b: Int)
 
-inline fun A.component1(): Int = a
-inline fun A.component2(): Int = b
+inline operator fun A.component1(): Int = a
+inline operator fun A.component2(): Int = b
 
 fun box(): String {
     val (a, b) = A(1, 2)

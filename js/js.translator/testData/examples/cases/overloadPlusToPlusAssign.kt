@@ -7,7 +7,7 @@ class ArrayWrapper<T>() {
         contents.add(item)
     }
 
-    fun plus(rhs: ArrayWrapper<T>): ArrayWrapper<T> {
+    operator fun plus(rhs: ArrayWrapper<T>): ArrayWrapper<T> {
         val result = ArrayWrapper<T>()
         result.contents.addAll(contents)
         result.contents.addAll(rhs.contents)

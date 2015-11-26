@@ -5,13 +5,13 @@ import a.A
 fun A.ext() {
 }
 
-fun A.infix(a: A) {
+infix fun A.infix(a: A) {
 }
 
-fun A.plus(a: A) {
+operator fun A.plus(a: A) {
 }
 
-fun A.minus() {
+operator fun A.unaryMinus() {
 }
 
 val A.p: Int

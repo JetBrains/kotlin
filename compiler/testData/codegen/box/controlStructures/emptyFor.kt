@@ -1,7 +1,7 @@
 var index = 0
 
 interface IterableIterator : Iterator<Int> {
-    fun iterator(): Iterator<Int> = this
+    operator fun iterator(): Iterator<Int> = this
 }
 
 val iterator = object : IterableIterator {

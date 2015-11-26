@@ -7759,12 +7759,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
-        @TestMetadata("compareTo.kt")
-        public void testCompareTo() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/swapBinaryExpression/compareTo.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("conjunction.kt")
         public void testConjunction() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/swapBinaryExpression/conjunction.kt");
@@ -7801,21 +7795,9 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
-        @TestMetadata("divideLiteral.kt")
-        public void testDivideLiteral() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/swapBinaryExpression/divideLiteral.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("equals.kt")
         public void testEquals() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/swapBinaryExpression/equals.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("equalsLiteral.kt")
-        public void testEqualsLiteral() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/swapBinaryExpression/equalsLiteral.kt");
             doTest(fileName);
         }
 
@@ -7834,12 +7816,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("identityEquals.kt")
         public void testIdentityEquals() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/swapBinaryExpression/identityEquals.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("identityEqualsLiteral.kt")
-        public void testIdentityEqualsLiteral() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/swapBinaryExpression/identityEqualsLiteral.kt");
             doTest(fileName);
         }
 
@@ -7882,12 +7858,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("minusAssign.kt")
         public void testMinusAssign() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/swapBinaryExpression/minusAssign.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("minusLiteral.kt")
-        public void testMinusLiteral() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/swapBinaryExpression/minusLiteral.kt");
             doTest(fileName);
         }
 
@@ -7999,12 +7969,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
-        @TestMetadata("plusLiteral.kt")
-        public void testPlusLiteral() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/swapBinaryExpression/plusLiteral.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("plusMinus.kt")
         public void testPlusMinus() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/swapBinaryExpression/plusMinus.kt");
@@ -8014,12 +7978,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("rangeTo.kt")
         public void testRangeTo() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/swapBinaryExpression/rangeTo.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("rangeToLiteral.kt")
-        public void testRangeToLiteral() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/swapBinaryExpression/rangeToLiteral.kt");
             doTest(fileName);
         }
 
@@ -8044,12 +8002,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("timesAssign.kt")
         public void testTimesAssign() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/swapBinaryExpression/timesAssign.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("timesLiteral.kt")
-        public void testTimesLiteral() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/swapBinaryExpression/timesLiteral.kt");
             doTest(fileName);
         }
 

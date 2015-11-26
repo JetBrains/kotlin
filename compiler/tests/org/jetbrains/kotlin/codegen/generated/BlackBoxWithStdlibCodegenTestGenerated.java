@@ -1534,12 +1534,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
-        @TestMetadata("infixCallBinary.kt")
-        public void testInfixCallBinary() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/evaluate/infixCallBinary.kt");
-            doTestWithStdlib(fileName);
-        }
-
         @TestMetadata("intrincics.kt")
         public void testIntrincics() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/evaluate/intrincics.kt");

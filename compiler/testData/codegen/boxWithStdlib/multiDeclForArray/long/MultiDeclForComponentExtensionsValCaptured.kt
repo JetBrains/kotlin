@@ -1,5 +1,5 @@
-fun Long.component1() = this + 1
-fun Long.component2() = this + 2
+operator fun Long.component1() = this + 1
+operator fun Long.component2() = this + 2
 
 fun doTest(l : Array<Long>): String {
     var s = ""

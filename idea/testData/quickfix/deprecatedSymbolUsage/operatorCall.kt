@@ -3,7 +3,7 @@
 interface I
 
 @Deprecated("", ReplaceWith("newFun(p, this)"))
-fun I.plus(p: Int) {
+operator fun I.plus(p: Int) {
     newFun(p, this)
 }
 

@@ -1,4 +1,4 @@
-fun Int.contains(i : Int) = true
+operator fun Int.contains(i : Int) = true
 
 fun box(): String {
     when (1) {

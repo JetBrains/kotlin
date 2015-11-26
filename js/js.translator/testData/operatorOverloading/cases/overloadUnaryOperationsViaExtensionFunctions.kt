@@ -4,8 +4,8 @@ class A(val c: Int) {
 }
 
 
-fun A.inc() = A(5)
-fun A.dec() = A(10)
+operator fun A.inc() = A(5)
+operator fun A.dec() = A(10)
 
 fun box(): Boolean {
     var a = A(1)

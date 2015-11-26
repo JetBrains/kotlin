@@ -1,4 +1,4 @@
-fun Int.plus(s: String) : String {
+operator fun Int.plus(s: String) : String {
   System.out?.println("Int.plus(s: String) called")
   return s
 }

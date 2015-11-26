@@ -1,17 +1,17 @@
 class Range(val from : C, val to: C) {
-    fun iterator() = It(from, to)
+    operator fun iterator() = It(from, to)
 }
 
 class It(val from: C, val to: C) {
     var c = from.i
 
-    fun next(): C {
+    operator fun next(): C {
         val next = C(c)
         c++
         return next
     }
 
-    fun hasNext(): Boolean = c <= to.i
+    operator fun hasNext(): Boolean = c <= to.i
 }
 
 class C(val i : Int) {
@@ -19,8 +19,8 @@ class C(val i : Int) {
 }
 
 class M {
-  fun C.component1() = i + 1
-  fun C.component2() = i + 2
+  operator fun C.component1() = i + 1
+  operator fun C.component2() = i + 2
 
   fun doTest(): String {
       var s = ""

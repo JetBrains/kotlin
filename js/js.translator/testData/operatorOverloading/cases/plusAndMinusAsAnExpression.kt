@@ -2,8 +2,8 @@ package foo
 
 class A() {
 
-    fun plus() = "hooray"
-    fun minus() = "not really"
+    operator fun unaryPlus() = "hooray"
+    operator fun unaryMinus() = "not really"
 
 }
 

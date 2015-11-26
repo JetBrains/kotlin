@@ -1,8 +1,8 @@
-fun String.get(vararg value: Any) : String {
+operator fun String.get(vararg value: Any) : String {
     return if (value[0] == 44 && value[1] == "example") "OK" else "fail"
 }
 
-fun Int.get(vararg value: Any) : Int {
+operator fun Int.get(vararg value: Any) : Int {
     return if (value[0] == 44 && value[1] == "example") 1 else 0
 }
 fun main(args: Array<String>) {

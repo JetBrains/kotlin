@@ -7,10 +7,10 @@ interface WithNumber {
 }
 
 class IncNumber(val inc: Int) {
-    fun getValue(withNumber: WithNumber, property: KProperty<*>): Int {
+    operator fun getValue(withNumber: WithNumber, property: KProperty<*>): Int {
         return withNumber.number + inc;
     }
-    fun setValue(withNumber: WithNumber, property: KProperty<*>, value: Int) {
+    operator fun setValue(withNumber: WithNumber, property: KProperty<*>, value: Int) {
         withNumber.number = value;
     }
 }

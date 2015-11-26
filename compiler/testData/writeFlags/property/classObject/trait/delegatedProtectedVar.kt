@@ -1,11 +1,11 @@
 import kotlin.reflect.KProperty
 
 class TestDelegate() {
-    fun getValue(thisRef: Any?, desc: KProperty<*>): Int {
+    operator fun getValue(thisRef: Any?, desc: KProperty<*>): Int {
         return 10
     }
 
-    public open fun setValue(thisRef: Any?, desc: KProperty<*>, svalue : Int) {
+    operator open fun setValue(thisRef: Any?, desc: KProperty<*>, svalue : Int) {
 
     }
 }

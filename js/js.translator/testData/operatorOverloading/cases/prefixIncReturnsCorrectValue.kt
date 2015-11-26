@@ -3,7 +3,7 @@ package foo
 class MyInt() {
     var b = 0
 
-    fun dec(): MyInt {
+    operator fun dec(): MyInt {
         b = b + 1;
         return this;
     }

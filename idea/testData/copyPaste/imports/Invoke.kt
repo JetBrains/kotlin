@@ -3,7 +3,7 @@ package a
 class A {
 }
 
-fun A.invoke() {
+operator fun A.invoke() {
 }
 
 <selection>fun f(a: A) {

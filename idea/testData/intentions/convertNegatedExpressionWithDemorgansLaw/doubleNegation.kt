@@ -1,4 +1,4 @@
-fun String.not(): Boolean {
+operator fun String.not(): Boolean {
     return length == 0
 }
 

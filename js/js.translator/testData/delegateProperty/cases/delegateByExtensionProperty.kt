@@ -10,12 +10,12 @@ fun format(event: String, property: String, value: Int): String
 object LoggerDelegate {
     var log = ""
 
-    fun getValue(state: State, desc: KProperty<*>): Int {
+    operator fun getValue(state: State, desc: KProperty<*>): Int {
         log += format("get", desc.name, state.realValue)
         return state.realValue
     }
 
-    fun setValue(state: State, desc: KProperty<*>, value: Int) {
+    operator fun setValue(state: State, desc: KProperty<*>, value: Int) {
         log += format("set", desc.name, value)
         state.realValue = value
     }

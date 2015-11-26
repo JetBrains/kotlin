@@ -2,7 +2,7 @@ var result = "Fail"
 
 class A
 
-fun A.inc(s: String = "OK"): A {
+operator fun A.inc(s: String = "OK"): A {
     result = s
     return this
 }

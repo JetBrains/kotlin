@@ -3,14 +3,14 @@ package foo
 @native
 class Function(vararg argsAndCode: String) {
     @nativeInvoke
-    fun invoke(a: Any?): Any? = noImpl
+    operator fun invoke(a: Any?): Any? = noImpl
 
     @nativeInvoke
     fun baz(a: Any?, b: Any?): Any? = noImpl
 }
 
 @nativeInvoke
-fun Function.invoke(a: Any?, b: Any?): Any? = noImpl
+operator fun Function.invoke(a: Any?, b: Any?): Any? = noImpl
 
 @nativeInvoke
 fun Function.bar(a: Any?, b: Any?): Any? = noImpl

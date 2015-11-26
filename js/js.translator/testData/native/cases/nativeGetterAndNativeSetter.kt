@@ -3,10 +3,10 @@ package foo
 @native("Object")
 class JsObject {
     @nativeGetter
-    fun get(a: String): Any? = noImpl
+    operator fun get(a: String): Any? = noImpl
 
     @nativeSetter
-    fun set(a: String, v: Any?): Unit = noImpl
+    operator fun set(a: String, v: Any?): Unit = noImpl
 
     @nativeGetter
     fun take(a: Int): Any? = noImpl
@@ -16,10 +16,10 @@ class JsObject {
 }
 
 @nativeGetter
-fun JsObject.get(a: Int): Any? = noImpl
+operator fun JsObject.get(a: Int): Any? = noImpl
 
 @nativeSetter
-fun JsObject.set(a: Int, v: Any?): Unit = noImpl
+operator fun JsObject.set(a: Int, v: Any?): Unit = noImpl
 
 @nativeGetter
 fun JsObject.take(a: String): Any? = noImpl

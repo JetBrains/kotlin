@@ -7,7 +7,7 @@ class A {
 }
 
 object NumberDecrypter {
-    fun getValue(instance: Any?, data: KProperty<*>) = when (data.name) {
+    operator fun getValue(instance: Any?, data: KProperty<*>) = when (data.name) {
         "four" -> 4
         "two" -> 2
         else -> throw AssertionError()

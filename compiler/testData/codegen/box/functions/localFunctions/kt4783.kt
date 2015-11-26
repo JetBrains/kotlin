@@ -3,7 +3,7 @@ class T(val value: Int) {
 
 fun local() : Int {
 
-    fun T.get(s: Int): Int {
+    operator fun T.get(s: Int): Int {
         return s * this.value
     }
 

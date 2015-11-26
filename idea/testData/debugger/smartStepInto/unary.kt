@@ -1,9 +1,9 @@
 class A {
-    fun plus() {}
-    fun minus() {}
+    operator fun unaryPlus() {}
+    operator fun unaryMinus() {}
 }
 
 fun foo() {
-    +A() || A()-<caret>
+    <caret>+A() || -A()
 }
-// EXISTS: plus(), minus()
+// EXISTS: unaryPlus(), unaryMinus()

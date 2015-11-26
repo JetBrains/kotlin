@@ -28,7 +28,7 @@ public fun<TItem> Iterable<TItem>.lazy() : Iterable<TItem>
             }
         }
 
-fun<TItem> Iterable<TItem>.where(predicate : (TItem)->Boolean) : Iterable<TItem>
+infix fun<TItem> Iterable<TItem>.where(predicate : (TItem)->Boolean) : Iterable<TItem>
         {
             return YieldingIterable {
                 val iterator = this.iterator()
@@ -45,7 +45,7 @@ fun<TItem> Iterable<TItem>.where(predicate : (TItem)->Boolean) : Iterable<TItem>
             }
         }
 
-fun<TItem, TResult> Iterable<TItem>.select(selector : (TItem)->TResult) : Iterable<TResult>
+infix fun<TItem, TResult> Iterable<TItem>.select(selector : (TItem)->TResult) : Iterable<TResult>
         {
             return YieldingIterable {
                 val iterator = this.iterator();

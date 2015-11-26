@@ -13,7 +13,7 @@ class ThreadTest {
 
         val pool = Executors.newFixedThreadPool(1)
         val countDown = CountDownLatch(1)
-        pool execute {
+        pool.execute {
             countDown.countDown()
         }
         assertTrue(countDown.await(2, SECONDS), "Count down is executed")

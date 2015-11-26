@@ -25,5 +25,5 @@ fun box(): String {
 
     f.set(a, ":)")
 
-    return if (f[a] != ":)") "Fail: ${f[a]}" else "OK"
+    return if (f.get(a) != ":)") "Fail: ${f.get(a)}" else "OK"
 }

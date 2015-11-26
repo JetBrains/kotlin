@@ -6,7 +6,7 @@ fun box(): String {
 
 
     fun selectMetaRunnerId(): String {
-        fun Int?.inc() = (this ?: 0) + 1
+        operator fun Int?.inc() = (this ?: 0) + 1
         var counter: Int? = null
         fun path(metaRunnerId: String) = counter != 2
 

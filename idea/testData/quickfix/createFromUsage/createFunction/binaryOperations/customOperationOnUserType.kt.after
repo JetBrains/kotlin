@@ -1,4 +1,5 @@
 // "Create member function 'foo'" "true"
+// ERROR: infix modifier is required on 'foo' in 'A'
 
 class A<T>(val n: T) {
     infix fun foo(t: T): A<T> {

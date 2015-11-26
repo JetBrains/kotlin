@@ -1,7 +1,7 @@
 import kotlin.reflect.KProperty
 
 class Delegate {
-    fun getValue(t: Any?, p: KProperty<*>): String {
+    operator fun getValue(t: Any?, p: KProperty<*>): String {
         p.parameters
         p.returnType
         p.annotations

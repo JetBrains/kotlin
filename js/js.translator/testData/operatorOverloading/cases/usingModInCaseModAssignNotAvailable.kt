@@ -2,7 +2,7 @@ package foo
 
 class A() {
     var p = "yeah"
-    fun mod(other: A): A {
+    operator fun mod(other: A): A {
         return A();
     }
 }

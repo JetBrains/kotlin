@@ -1,5 +1,6 @@
 // FILE: first.before.kt
 // "Import" "true"
+// ERROR: operator modifier is required on 'get' in 'some.Some'
 
 package testing
 
@@ -26,6 +27,7 @@ operator fun Some.get(s: String) {}
 
 // FILE: first.after.kt
 // "Import" "true"
+// ERROR: operator modifier is required on 'get' in 'some.Some'
 
 package testing
 

@@ -148,7 +148,7 @@ class Kotlin2JvmSourceSetProcessor(
 
         val aptConfiguration = project.createAptConfiguration(sourceSet.getName(), kotlinAnnotationProcessingDep)
 
-        project afterEvaluate { project ->
+        project.afterEvaluate { project ->
             if (project != null) {
                 for (dir in sourceSet.getJava().getSrcDirs()) {
                     kotlinDirSet?.srcDir(dir)
@@ -318,7 +318,7 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
 
         project.createKaptExtension()
 
-        project afterEvaluate { project ->
+        project.afterEvaluate { project ->
             if (project != null) {
                 val plugin = (project.getPlugins().findPlugin("android")
                                 ?: project.getPlugins().findPlugin("android-library")) as BasePlugin
@@ -405,7 +405,7 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
 
             subpluginEnvironment.addSubpluginArguments(project, kotlinTask)
 
-            kotlinTask doFirst {
+            kotlinTask.doFirst {
                 val androidRT = project.files(AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt))
                 val fullClasspath = (javaTask.getClasspath() + androidRT) - project.files(kotlinTask.property("kotlinDestinationDir"))
                 (it as AbstractCompile).setClasspath(fullClasspath)
@@ -431,7 +431,7 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
                 }
             }
 
-            javaTask doFirst {
+            javaTask.doFirst {
                 javaTask.setClasspath(javaTask.getClasspath() + project.files(kotlinTask.property("kotlinDestinationDir")))
             }
         }
@@ -514,7 +514,7 @@ open class GradleUtils(val scriptHandler: ScriptHandler, val project: ProjectInt
         val dependencyHandler: DependencyHandler = scriptHandler.getDependencies()
         val configurationsContainer: ConfigurationContainer = scriptHandler.getConfigurations()
 
-        val deps = coordinates map { dependencyHandler.create(it) }
+        val deps = coordinates.map { dependencyHandler.create(it) }
         val configuration = configurationsContainer.detachedConfiguration(*deps.toTypedArray())
 
         return configuration.getResolvedConfiguration().getFiles { true }

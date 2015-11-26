@@ -1,6 +1,6 @@
 // "Create member function 'set'" "true"
 class A {
-    fun get(s: String): Int = 1
+    operator fun get(s: String): Int = 1
 }
 
 fun foo() {

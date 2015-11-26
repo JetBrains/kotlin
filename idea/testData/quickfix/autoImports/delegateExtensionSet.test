@@ -19,8 +19,8 @@ class DelegateImpl<T> {
     val value: T = null!!
 }
 
-public fun <T> DelegateImpl<T>.getValue(thisRef: Any?, property: PropertyMetadata): T = value
-public fun <T> DelegateImpl<T>.setValue(thisRef: Any, propertyMetadata: PropertyMetadata, t: T) {}
+operator fun <T> DelegateImpl<T>.getValue(thisRef: Any?, property: PropertyMetadata): T = value
+operator fun <T> DelegateImpl<T>.setValue(thisRef: Any, propertyMetadata: PropertyMetadata, t: T) {}
 
 
 

@@ -10,12 +10,12 @@ fun box(): String {
     val c = a
     if (!c.identityEquals(a)) return "c = a; c !== a"
 
-    if (X() identityEquals a) return "X() identityEquals a"
+    if (X().identityEquals(a)) return "X() identityEquals a"
 
-    val t = !(X() identityEquals a)
+    val t = !(X().identityEquals(a))
     if (!t) return "t = !(X() identityEquals a); t == false"
 
-    val f = !!(X() identityEquals a)
+    val f = !!(X().identityEquals(a))
     if (f) return "f = !!(X() identityEquals null); f == true"
     return "OK";
 }

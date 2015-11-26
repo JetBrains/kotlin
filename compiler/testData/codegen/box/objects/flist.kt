@@ -16,7 +16,7 @@ public abstract class FList<T>() {
         }
     }
 
-    public fun plus(head: T): FList<T> = object : FList<T>() {
+    operator fun plus(head: T): FList<T> = object : FList<T>() {
         override public val head: T
             get() = head
 
@@ -33,7 +33,7 @@ public fun <T> emptyFList(): FList<T> = FList.emptyFList as FList<T>
 public fun <T> FList<T>.reverse(where: FList<T> = emptyFList<T>()) : FList<T> =
         if(empty) where else tail.reverse(where + head)
 
-public fun <T> FList<T>.iterator(): Iterator<T> = object: Iterator<T> {
+operator fun <T> FList<T>.iterator(): Iterator<T> = object: Iterator<T> {
     private var cur: FList<T> = this@iterator
 
     override public fun next(): T {

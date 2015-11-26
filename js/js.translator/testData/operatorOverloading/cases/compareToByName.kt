@@ -3,7 +3,7 @@ package foo
 
 class A(t: Int) {
     var i = t
-    fun compareTo(other: A) = (this.i - other.i)
+    infix operator fun compareTo(other: A) = (this.i - other.i)
 }
 
 fun box(): Boolean =

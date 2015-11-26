@@ -7,7 +7,7 @@ fun foo1() {
 }
 
 fun foo2() {
-    fun A.component1(): Int = a + 1
+    operator fun A.component1(): Int = a + 1
 
     val (aa, bb) = A(1, "2")
     val (uu, vv) = A(2, "2")

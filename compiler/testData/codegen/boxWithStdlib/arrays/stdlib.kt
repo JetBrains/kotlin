@@ -17,15 +17,15 @@ class MyIterator<T>(val array : ReadOnlyArray<T>) : javaUtilIterator<T> {
 }
 
 interface ReadOnlyArray<out T> : ISized, Iterable<T> {
-  fun get(index : Int) : T
+  operator fun get(index : Int) : T
 
   override fun iterator() : Iterator<T> = MyIterator<T>(this)
 }
 
 interface WriteOnlyArray<in T> : ISized {
-  fun set(index : Int, value : T) : Unit
+  operator fun set(index : Int, value : T) : Unit
 
-  fun set(from: Int, count: Int, value: T) {
+  operator fun set(from: Int, count: Int, value: T) {
     for(i in from..from+count-1) {
         set(i, value)
     }

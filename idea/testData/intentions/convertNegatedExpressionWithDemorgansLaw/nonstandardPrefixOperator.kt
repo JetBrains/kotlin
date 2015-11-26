@@ -1,4 +1,4 @@
-fun Boolean.plus(): Boolean {
+operator fun Boolean.unaryPlus(): Boolean {
     return false
 }
 

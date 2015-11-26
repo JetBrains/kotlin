@@ -147,10 +147,6 @@ public class FunctionTest extends AbstractExpressionTest {
         checkFooBoxIsOk();
     }
 
-    public void testInfixCall() throws Exception {
-        checkFooBoxIsOk();
-    }
-
     public void testLambdaOrLocalFunInsideEnumMethod() throws Exception {
         checkFooBoxIsOk();
     }

@@ -349,24 +349,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("infixCall.kt")
-        public void testInfixCall() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/infixCall.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("infixCallAny.kt")
-        public void testInfixCallAny() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/infixCallAny.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("infixCallNullable.kt")
-        public void testInfixCallNullable() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/infixCallNullable.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("intrinsic.kt")
         public void testIntrinsic() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/binaryOp/intrinsic.kt");
@@ -4624,12 +4606,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("innerInfixCall.kt")
-        public void testInnerInfixCall() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/innerInfixCall.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("innerLabeledThis.kt")
         public void testInnerLabeledThis() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/innerNested/innerLabeledThis.kt");
@@ -4741,12 +4717,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/intrinsics"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
-        @TestMetadata("compareTo.kt")
-        public void testCompareTo() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/intrinsics/compareTo.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("ea35953.kt")
         public void testEa35953() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/intrinsics/ea35953.kt");
@@ -4756,12 +4726,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("incWithLabel.kt")
         public void testIncWithLabel() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/intrinsics/incWithLabel.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("infixCall.kt")
-        public void testInfixCall() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/intrinsics/infixCall.kt");
             doTest(fileName);
         }
 
@@ -6919,12 +6883,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("kt3173.kt")
-        public void testKt3173() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/kt3173.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("kt3421.kt")
         public void testKt3421() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/kt3421.kt");
@@ -6940,12 +6898,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("kt3903.kt")
         public void testKt3903() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/kt3903.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("kt3999.kt")
-        public void testKt3999() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/kt3999.kt");
             doTest(fileName);
         }
 

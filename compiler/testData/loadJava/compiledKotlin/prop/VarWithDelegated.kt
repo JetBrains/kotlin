@@ -8,6 +8,6 @@ class A {
 }
 
 class MyProperty<T> {
-    fun getValue(t: T, p: KProperty<*>): Int = 42
-    fun setValue(t: T, p: KProperty<*>, i: Int) {}
+    operator fun getValue(t: T, p: KProperty<*>): Int = 42
+    operator fun setValue(t: T, p: KProperty<*>, i: Int) {}
 }

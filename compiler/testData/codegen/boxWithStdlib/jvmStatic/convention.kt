@@ -8,7 +8,7 @@ object A {
         v += B(1000)
     }
 
-    @JvmStatic fun B.plusAssign(b: B) {
+    @JvmStatic operator fun B.plusAssign(b: B) {
         this.s += b.s
     }
 }

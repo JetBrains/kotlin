@@ -1,5 +1,5 @@
 class MyNumber(val i: Int) {
-    fun inc(): MyNumber = MyNumber(i+1)
+    operator fun inc(): MyNumber = MyNumber(i+1)
 }
 
 class MNR(var ref: MyNumber) {}
@@ -53,12 +53,12 @@ fun test6() : Boolean {
 class MyArrayList<T>() {
     private var value17: T? = null
     private var value39: T? = null
-    fun get(index: Int): T {
+    operator fun get(index: Int): T {
         if (index == 17) return value17!!
         if (index == 39) return value39!!
         throw Exception()
     }
-    fun set(index: Int, value: T): T? {
+    operator fun set(index: Int, value: T): T? {
         if (index == 17) value17 = value
         else if (index == 39) value39 = value
         else throw Exception()

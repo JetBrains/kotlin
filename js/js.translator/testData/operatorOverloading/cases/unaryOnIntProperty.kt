@@ -2,7 +2,7 @@ package foo
 
 class MyInt(i: Int) {
     var b = i
-    fun inc(): MyInt {
+    operator fun inc(): MyInt {
         b = b++;
         return this;
     }

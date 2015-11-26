@@ -1,5 +1,5 @@
 public object Globals{
-    public fun get(key: String, remove: Boolean = true): String {
+    operator fun get(key: String, remove: Boolean = true): String {
         return "OK"
     }
 }

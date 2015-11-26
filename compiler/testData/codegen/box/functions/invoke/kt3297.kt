@@ -1,6 +1,6 @@
 //KT-3297 Calling the wrong function inside an extension method to the Function0 class
 
-fun <R> Function0<R>.or(alt: () -> R): R {
+infix fun <R> Function0<R>.or(alt: () -> R): R {
     try {
         return this()
     } catch (e: Exception) {

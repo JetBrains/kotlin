@@ -1,6 +1,6 @@
 class C
 
-fun C.compareTo(o: C) : Int {
+operator fun C.compareTo(o: C) : Int {
     if (this == o) return 0
     if (o >= o) {
         return 1

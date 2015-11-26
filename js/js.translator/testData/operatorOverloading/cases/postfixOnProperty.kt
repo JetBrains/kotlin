@@ -5,7 +5,7 @@ var a = MyInt()
 class MyInt() {
     var b = 0
 
-    fun inc(): MyInt {
+    operator fun inc(): MyInt {
         b = b + 1;
         return this;
     }

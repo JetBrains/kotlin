@@ -3,8 +3,8 @@ import java.util.*
 class Template() {
     val collected = ArrayList<String>()
 
-    fun String.plus() {
-       collected.add(this@plus)
+    operator fun String.unaryPlus() {
+       collected.add(this@unaryPlus)
     }
 
     fun test() {

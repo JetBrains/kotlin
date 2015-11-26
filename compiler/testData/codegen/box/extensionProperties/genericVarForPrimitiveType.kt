@@ -12,7 +12,7 @@ class A {
     var char: Char = '0'
     var bool: Boolean = false
 
-    fun invoke() {
+    operator fun invoke() {
         int.varProp = int
         long.varProp = long
         short.varProp = short

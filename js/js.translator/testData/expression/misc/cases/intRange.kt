@@ -4,7 +4,7 @@ class RangeIterator(val start: Int, var count: Int, val reversed: Boolean) {
 
     var i = start
 
-    fun next(): Int {
+    operator fun next(): Int {
         --count
         if (reversed) {
             i--
@@ -17,7 +17,7 @@ class RangeIterator(val start: Int, var count: Int, val reversed: Boolean) {
     }
 
 
-    fun hasNext() = (count > 0);
+    operator fun hasNext() = (count > 0);
 }
 
 class NumberRange(val start: Int, val size: Int, val reversed: Boolean) {
@@ -34,7 +34,7 @@ class NumberRange(val start: Int, val size: Int, val reversed: Boolean) {
         }
     }
 
-    fun iterator() = RangeIterator(start, size, reversed);
+    operator fun iterator() = RangeIterator(start, size, reversed);
 }
 
 

@@ -11,5 +11,5 @@ class Bad(val a: () -> Int) {
 
     fun test(): Int = a()
 
-    fun invoke(): Int = 2
+    operator fun invoke(): Int = 2
 }

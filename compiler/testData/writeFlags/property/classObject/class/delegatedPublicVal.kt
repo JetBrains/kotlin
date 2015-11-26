@@ -1,7 +1,7 @@
 import kotlin.reflect.KProperty
 
 class TestDelegate() {
-    fun getValue(thisRef: Any?, desc: KProperty<*>): Int {
+    operator fun getValue(thisRef: Any?, desc: KProperty<*>): Int {
         return 10
     }
 }

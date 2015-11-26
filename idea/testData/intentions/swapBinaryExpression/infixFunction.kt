@@ -1,6 +1,6 @@
 // IS_APPLICABLE: false
 class Foo() {
-    fun cat(x: Int): Int {return x}
+    infix fun cat(x: Int): Int {return x}
 }
 
 fun main() {

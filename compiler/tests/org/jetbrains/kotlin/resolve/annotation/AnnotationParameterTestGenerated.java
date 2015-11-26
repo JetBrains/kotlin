@@ -151,12 +151,6 @@ public class AnnotationParameterTestGenerated extends AbstractAnnotationParamete
             doTest(fileName);
         }
 
-        @TestMetadata("infixCallBinary.kt")
-        public void testInfixCallBinary() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/infixCallBinary.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("intrincics.kt")
         public void testIntrincics() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/resolveAnnotations/parameters/expressions/intrincics.kt");

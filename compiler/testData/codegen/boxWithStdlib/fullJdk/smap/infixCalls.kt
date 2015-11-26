@@ -53,7 +53,7 @@ inline fun test(): String {
     return "123"
 }
 
-fun String.fail(p: String): String {
+infix fun String.fail(p: String): String {
     throw AssertionError("fail")
 }
 

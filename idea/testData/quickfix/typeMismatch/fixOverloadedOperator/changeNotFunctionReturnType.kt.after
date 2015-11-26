@@ -1,7 +1,7 @@
 // "Change 'A.not' function return type to 'A'" "true"
 interface A {
-    fun not(): A
-    fun times(a: A): A
+    operator fun not(): A
+    operator fun times(a: A): A
 }
 
 fun foo(a: A): A = a * <caret>!(if (true) a else a)

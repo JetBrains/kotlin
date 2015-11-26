@@ -1,6 +1,6 @@
 class M {
-  fun Int.component1() = this + 1
-  fun Int.component2() = this + 2
+  operator fun Int.component1() = this + 1
+  operator fun Int.component2() = this + 2
 }
 
 fun M.doTest(): String {

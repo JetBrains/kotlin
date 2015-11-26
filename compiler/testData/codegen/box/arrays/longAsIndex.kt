@@ -1,5 +1,5 @@
-fun IntArray.set(index: Long, elem: Int) { this[index.toInt()] = elem }
-fun IntArray.get(index: Long) = this[index.toInt()]
+operator fun IntArray.set(index: Long, elem: Int) { this[index.toInt()] = elem }
+operator fun IntArray.get(index: Long) = this[index.toInt()]
 
 fun box(): String {
     var l = IntArray(1)

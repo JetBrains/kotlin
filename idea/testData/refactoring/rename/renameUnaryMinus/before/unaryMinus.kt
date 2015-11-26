@@ -1,8 +1,8 @@
 class A(val n: Int) {
-    operator fun minus(): A = this
+    operator fun unaryMinus(): A = this
 }
 
 fun test() {
-    A(1).minus()
+    A(1).unaryMinus()
     -A(1)
 }

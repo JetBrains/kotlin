@@ -32,4 +32,4 @@ public fun Input.copyTo(output: Output, size: Int): Int {
     return output.doOutput(this.data())
 }
 
-public inline fun with2<T>(receiver : T, crossinline body :  T.() -> Unit) : Unit = {receiver.body()}()
+public inline fun <T> with2(receiver : T, crossinline body :  T.() -> Unit) : Unit = {receiver.body()}()

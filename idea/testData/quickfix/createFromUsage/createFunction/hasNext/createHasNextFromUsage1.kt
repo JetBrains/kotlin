@@ -1,11 +1,11 @@
 // "Create member function 'hasNext'" "true"
 class FooIterator<T> {
-    fun next(): Int {
+    operator fun next(): Int {
         throw Exception("not implemented")
     }
 }
 class Foo<T> {
-    fun iterator(): FooIterator<String> {
+    operator fun iterator(): FooIterator<String> {
         throw Exception("not implemented")
     }
 }

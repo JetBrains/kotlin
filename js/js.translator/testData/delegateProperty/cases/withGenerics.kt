@@ -8,13 +8,13 @@ interface Getter<T> {
 
 class Delegate<T>(val getter: Getter<T>) {
     var t: T? = null
-    fun getValue(obj: Any, property: KProperty<*>): T {
+    operator fun getValue(obj: Any, property: KProperty<*>): T {
         if (t != null) {
             return t!!
         }
         return getter.get()
     }
-    fun setValue(obj: Any, property: KProperty<*>, value: T) {
+    operator fun setValue(obj: Any, property: KProperty<*>, value: T) {
         t = value
     }
 }

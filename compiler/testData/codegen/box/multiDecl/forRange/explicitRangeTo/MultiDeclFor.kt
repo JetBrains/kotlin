@@ -1,23 +1,23 @@
 class Range(val from : C, val to: C) {
-    fun iterator() = It(from, to)
+    operator fun iterator() = It(from, to)
 }
 
 class It(val from: C, val to: C) {
     var c = from.i
 
-    fun next(): C {
+    operator fun next(): C {
         val next = C(c)
         c++
         return next
     }
 
-    fun hasNext(): Boolean = c <= to.i
+    operator fun hasNext(): Boolean = c <= to.i
 }
 
 class C(val i : Int) {
-    fun component1() = i + 1
-    fun component2() = i + 2
-    fun rangeTo(c: C) = Range(this, c)
+    operator fun component1() = i + 1
+    operator fun component2() = i + 2
+    infix fun rangeTo(c: C) = Range(this, c)
 }
 
 fun doTest(): String {

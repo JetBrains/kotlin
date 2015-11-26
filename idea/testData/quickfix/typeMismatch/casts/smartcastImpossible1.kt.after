@@ -1,7 +1,7 @@
 // "Cast expression 'a' to 'Foo'" "true"
 
 interface Foo {
-    fun plus(x: Any) : Foo
+    operator fun plus(x: Any) : Foo
 }
 
 open class MyClass {

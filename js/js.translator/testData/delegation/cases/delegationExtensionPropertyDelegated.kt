@@ -9,9 +9,9 @@ interface Base {
 }
 
 class Delegate(val multiplier: Int) {
-    fun getValue(state: State, desc: KProperty<*>): Int  = multiplier * state.value
+    operator fun getValue(state: State, desc: KProperty<*>): Int  = multiplier * state.value
 
-    fun setValue(state: State, desc: KProperty<*>, value: Int) {
+    operator fun setValue(state: State, desc: KProperty<*>, value: Int) {
         state.value = value / multiplier
     }
 

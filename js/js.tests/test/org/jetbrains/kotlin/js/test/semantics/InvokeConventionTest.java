@@ -54,10 +54,6 @@ public final class InvokeConventionTest extends AbstractExpressionTest {
         fooBoxTest();
     }
 
-    public void testInfixCall() throws Exception {
-        checkFooBoxIsOk();
-    }
-
     public void testInheritFromFunctionTraits() throws Exception {
         checkFooBoxIsOk();
     }

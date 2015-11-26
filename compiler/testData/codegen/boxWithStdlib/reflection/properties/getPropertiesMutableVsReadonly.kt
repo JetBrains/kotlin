@@ -13,7 +13,7 @@ fun box(): String {
 
     val a = A("")
     mutable as KMutableProperty1<A, String>
-    assert(mutable[a] == "before") { "Fail 3: ${mutable.get(a)}" }
-    mutable[a] = "OK"
+    assert(mutable.get(a) == "before") { "Fail 3: ${mutable.get(a)}" }
+    mutable.set(a, "OK")
     return mutable.get(a)
 }

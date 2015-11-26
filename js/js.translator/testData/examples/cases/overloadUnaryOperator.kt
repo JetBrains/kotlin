@@ -7,7 +7,7 @@ class ArrayWrapper<T>() {
         contents.add(item)
     }
 
-    fun minus(): ArrayWrapper<T> {
+    operator fun unaryMinus(): ArrayWrapper<T> {
         val result = ArrayWrapper<T>()
         result.contents.addAll(contents)
         var i = contents.size();
@@ -17,7 +17,7 @@ class ArrayWrapper<T>() {
         return result
     }
 
-    fun get(index: Int): T {
+    operator fun get(index: Int): T {
         return contents.get(index)
     }
 }

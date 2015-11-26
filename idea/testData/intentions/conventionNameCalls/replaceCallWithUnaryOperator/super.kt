@@ -1,7 +1,7 @@
 // IS_APPLICABLE: false
 
 open class Base {
-    open fun unaryMinus() = this
+    open operator fun unaryMinus() = this
 }
 
 class C : Base() {

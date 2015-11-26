@@ -5,7 +5,7 @@ open class A {
 }
 
 class B {
-    fun invoke(f: B.() -> Unit) = 2
+    operator fun invoke(f: B.() -> Unit) = 2
 }
 
 open class C

@@ -1,7 +1,7 @@
 // "Cast expression 'a' to 'Foo'" "true"
 
 interface Foo {
-    fun not() : Foo
+    operator fun not() : Foo
 }
 
 open class MyClass {

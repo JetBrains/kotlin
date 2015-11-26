@@ -1,7 +1,7 @@
 import java.util.*
 
 class A() {
-    fun <T> ArrayList<T>.add3(el: T) = add(el)
+    infix fun <T> ArrayList<T>.add3(el: T) = add(el)
 
     fun test(list: ArrayList<Int>) {
         for (i in 1..10) {
@@ -10,12 +10,12 @@ class A() {
     }
 }
 
-fun <T> ArrayList<T>.add2(el: T) = add(el)
+infix fun <T> ArrayList<T>.add2(el: T) = add(el)
 
 fun box() : String{
     var list = ArrayList<Int>()
     for (i in 1..10) {
-      list add  i
+      list.add(i)
       list add2 i
     }
     A().test(list)

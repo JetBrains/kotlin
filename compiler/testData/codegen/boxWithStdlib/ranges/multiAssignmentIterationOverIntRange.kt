@@ -1,8 +1,8 @@
-fun Int.component1(): String {
+operator fun Int.component1(): String {
     return arrayListOf("zero", "one", "two", "three")[this]
 }
 
-fun Int.component2(): Int {
+operator fun Int.component2(): Int {
     return arrayListOf(0, 1, 4, 9)[this]
 }
 

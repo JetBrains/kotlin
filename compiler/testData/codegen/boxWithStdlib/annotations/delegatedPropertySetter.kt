@@ -9,11 +9,11 @@ class MyClass() {
 }
 
 class Delegate {
-    fun getValue(t: Any?, p: KProperty<*>): String {
+    operator fun getValue(t: Any?, p: KProperty<*>): String {
         return "OK"
     }
 
-    fun setValue(t: Any?, p: KProperty<*>, i: String) {}
+    operator fun setValue(t: Any?, p: KProperty<*>, i: String) {}
 }
 
 fun box(): String {

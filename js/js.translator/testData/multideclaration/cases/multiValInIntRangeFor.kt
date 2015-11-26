@@ -1,10 +1,10 @@
 package foo
 
-fun Int.component1(): Int {
+operator fun Int.component1(): Int {
     return this + 10;
 }
 
-fun Int.component2(): String = "b"
+operator fun Int.component2(): String = "b"
 
 fun box(): String {
     var i = 0;

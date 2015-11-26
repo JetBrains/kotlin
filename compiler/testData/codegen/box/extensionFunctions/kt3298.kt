@@ -2,7 +2,7 @@ var result = ""
 fun result(r: String) { result = r }
 
 object Foo {
-    private fun String.plus() = "(" + this + ")"
+    private operator fun String.unaryPlus() = "(" + this + ")"
 
     fun foo() = { result(+"Stuff") }()
 }

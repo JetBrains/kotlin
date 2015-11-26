@@ -803,12 +803,6 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxCod
                     doTestAgainstJava(fileName);
                 }
 
-                @TestMetadata("infixCall.kt")
-                public void testInfixCall() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/sam/adapters/operators/infixCall.kt");
-                    doTestAgainstJava(fileName);
-                }
-
                 @TestMetadata("invoke.kt")
                 public void testInvoke() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/sam/adapters/operators/invoke.kt");

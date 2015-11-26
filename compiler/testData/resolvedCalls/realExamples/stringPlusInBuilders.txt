@@ -13,7 +13,7 @@ abstract class Tag(val name: String): Element {
 }
 
 abstract class TagWithText(name: String): Tag(name) {
-    fun String.plus() {}
+    operator fun String.unaryPlus() {}
 }
 
 class HTML(): TagWithText("html") {
@@ -42,7 +42,7 @@ val fail: Nothing get() = throw Exception()
 
 Resolved call:
 
-Resulting descriptor: fun String.plus(): Unit defined in Title
+Resulting descriptor: fun String.unaryPlus(): Unit defined in Title
 
 Explicit receiver kind = EXTENSION_RECEIVER
 Dispatch receiver = TitleExt{fun Title.<anonymous>(): Unit defined in result.<anonymous>.<anonymous>}

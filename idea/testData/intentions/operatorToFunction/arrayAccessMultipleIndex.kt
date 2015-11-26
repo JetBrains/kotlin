@@ -1,5 +1,5 @@
 class Bar {
-    fun get(vararg args: Int) {}
+    operator fun get(vararg args: Int) {}
 }
 
 fun foo(a: Bar, i: Int) {

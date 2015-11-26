@@ -26,7 +26,7 @@ class MapJVMTest {
 
     @test fun toSortedMapWithComparator() {
         val map = mapOf(Pair("c", 3), Pair("bc", 2), Pair("bd", 4), Pair("abc", 1))
-        val sorted = map.toSortedMap(compareBy<String> { it.length } thenBy { it })
+        val sorted = map.toSortedMap(compareBy<String> { it.length }.thenBy { it })
         assertEquals(listOf("c", "bc", "bd", "abc"), sorted.keys.toList())
         assertEquals(1, sorted["abc"])
         assertEquals(2, sorted["bc"])

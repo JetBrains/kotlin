@@ -16,12 +16,12 @@ fun get1(): Int {
 
 class A() {
     var p = 0
-    fun get(i: Int): Int {
+    operator fun get(i: Int): Int {
         c1++
         return 0
     }
 
-    fun set(i: Int, value: Int) {
+    operator fun set(i: Int, value: Int) {
         c2++
     }
 }

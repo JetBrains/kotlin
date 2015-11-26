@@ -4,12 +4,12 @@ import kotlin.reflect.*
 val properties = HashSet<KProperty<*>>()
 
 object Delegate {
-    fun getValue(t: Any?, p: KProperty<*>): String {
+    operator fun getValue(t: Any?, p: KProperty<*>): String {
         properties.add(p)
         return ""
     }
 
-    fun setValue(t: Any?, p: KProperty<*>, v: String) {
+    operator fun setValue(t: Any?, p: KProperty<*>, v: String) {
         properties.add(p)
     }
 }

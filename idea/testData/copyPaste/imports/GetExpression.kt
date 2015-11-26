@@ -3,7 +3,7 @@ package a
 class A {
 }
 
-fun A.get(s: String) {
+operator fun A.get(s: String) {
 }
 
 <selection>fun f() {

@@ -9,7 +9,7 @@ class ArrayWrapper<T>() {
         contents.add(item)
     }
 
-    fun plusAssign(rhs: ArrayWrapper<T>) {
+    operator fun plusAssign(rhs: ArrayWrapper<T>) {
         contents.addAll(rhs.contents)
     }
 

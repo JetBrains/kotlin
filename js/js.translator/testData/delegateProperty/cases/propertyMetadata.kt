@@ -7,10 +7,10 @@ interface WithName {
 }
 
 class GetPropertyName() {
-    fun getValue(withName: WithName, property: KProperty<*>): String {
+    operator fun getValue(withName: WithName, property: KProperty<*>): String {
         return withName.name + ":" + property.name;
     }
-    fun setValue(withName: WithName, property: KProperty<*>, value: String) {
+    operator fun setValue(withName: WithName, property: KProperty<*>, value: String) {
         withName.name = value + ":" + property.name
     }
 }

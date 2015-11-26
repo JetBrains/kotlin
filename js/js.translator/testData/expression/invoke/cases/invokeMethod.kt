@@ -1,7 +1,7 @@
 package foo
 
 class Foo(val postfix: String) {
-    public fun invoke(text: String): String {
+    operator fun invoke(text: String): String {
         return text + postfix
     }
 }

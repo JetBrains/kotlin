@@ -72,7 +72,7 @@ class Image(val src: String, override var pos: Vector, var imageSize: Vector) : 
                                 imageSize.x, imageSize.y)
     }
 
-    fun contains(mousePos: Vector): Boolean = mousePos.isInRect(pos, imageSize)
+    operator fun contains(mousePos: Vector): Boolean = mousePos.isInRect(pos, imageSize)
 }
 
 class Button(val src: String, override var pos: Vector, var imageSize: Vector) : Shape() {
@@ -121,7 +121,7 @@ class Button(val src: String, override var pos: Vector, var imageSize: Vector) :
     }
 
 
-    fun contains(mousePos: Vector): Boolean = mousePos.isInRect(pos, imageSize)
+    operator fun contains(mousePos: Vector): Boolean = mousePos.isInRect(pos, imageSize)
 }
 
 class Border() : Shape() {
@@ -484,9 +484,9 @@ abstract class Shape() {
 
 class Vector(val x: Double = 0.0, val y: Double = 0.0) {
     operator fun plus(v: Vector) = v(x + v.x, y + v.y)
-    operator fun minus() = v(-x, -y)
+    operator fun unaryMinus() = v(-x, -y)
     operator fun minus(v: Vector) = v(x - v.x, y - v.y)
-    fun times(koef: Double) = v(x * koef, y * koef)
+    operator fun times(koef: Double) = v(x * koef, y * koef)
     fun distanceTo(v: Vector) = Math.sqrt((this - v).sqr)
     fun rotatedBy(theta: Double): Vector {
         val sin = Math.sin(theta)

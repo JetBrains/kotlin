@@ -3,10 +3,10 @@ package foo
 open class Foo<out T>(open val value: T)
 open class MutableFoo<T>(override var value: T): Foo<T>(value)
 
-fun <T> Foo<T>.plus(x: T): Foo<T> = Foo(x)
+operator fun <T> Foo<T>.plus(x: T): Foo<T> = Foo(x)
 
 // overloading:
-fun <T> MutableFoo<T>.plus(x: T): MutableFoo<T> = MutableFoo(x)
+operator fun <T> MutableFoo<T>.plus(x: T): MutableFoo<T> = MutableFoo(x)
 
 
 fun box(): Boolean {

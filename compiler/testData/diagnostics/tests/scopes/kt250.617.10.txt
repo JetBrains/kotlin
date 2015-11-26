@@ -26,7 +26,7 @@ package kt_250_617_10 {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun kotlin.String.plus(): kotlin.Unit
+        public final override /*1*/ /*fake_override*/ fun kotlin.String.unaryPlus(): kotlin.Unit
     }
 
     public final class Body1 : kt_250_617_10.BodyTag {
@@ -37,7 +37,7 @@ package kt_250_617_10 {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun kotlin.String.plus(): kotlin.Unit
+        public final override /*1*/ /*fake_override*/ fun kotlin.String.unaryPlus(): kotlin.Unit
     }
 
     public open class BodyTag : kt_250_617_10.TagWithText {
@@ -48,7 +48,7 @@ package kt_250_617_10 {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        public final override /*1*/ /*fake_override*/ fun kotlin.String.plus(): kotlin.Unit
+        public final override /*1*/ /*fake_override*/ fun kotlin.String.unaryPlus(): kotlin.Unit
     }
 
     public open class Element {
@@ -92,7 +92,7 @@ package kt_250_617_10 {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-        public final fun kotlin.String.plus(): kotlin.Unit
+        public final operator fun kotlin.String.unaryPlus(): kotlin.Unit
     }
 
     public final class TextElement : kt_250_617_10.Element {

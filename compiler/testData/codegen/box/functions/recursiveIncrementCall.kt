@@ -1,4 +1,4 @@
-fun String.inc() : String {
+operator fun String.inc() : String {
     if (this == "") {
         return "done"
     }

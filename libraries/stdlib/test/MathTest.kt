@@ -18,7 +18,7 @@ class MathTest {
         assertEquals(BigInteger("0"), a / b)
         assertEquals(BigInteger("-2"), -a)
         assertEquals(BigInteger("1"), -a % b)
-        assertEquals(BigInteger("-2"), -a remainder b)
+        assertEquals(BigInteger("-2"), (-a).remainder(b))
     }
 
     @test fun testBigDecimal() {

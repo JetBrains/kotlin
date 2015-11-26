@@ -1,11 +1,11 @@
 class X(var value: Long)
 
-fun X.inc(): X {
+operator fun X.inc(): X {
     this.value++
     return this
 }
 
-fun X.dec(): X {
+operator fun X.dec(): X {
     this.value--
     return this
 }

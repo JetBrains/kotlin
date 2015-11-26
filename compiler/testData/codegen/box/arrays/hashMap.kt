@@ -1,6 +1,6 @@
 import java.util.HashMap
 
-fun HashMap<String, Int?>.set(index: String, elem: Int?) {
+operator fun HashMap<String, Int?>.set(index: String, elem: Int?) {
     this.put(index, elem)
 }
 

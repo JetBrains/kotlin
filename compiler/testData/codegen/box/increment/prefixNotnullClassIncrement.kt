@@ -1,7 +1,7 @@
 class MyClass
 
 // In principle it is not correct, MyClass? is not a subtype of MyClass
-fun MyClass.inc(): MyClass? = null
+operator fun MyClass.inc(): MyClass? = null
 
 public fun box() : String {
     var i : MyClass? 

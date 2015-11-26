@@ -1,4 +1,4 @@
-fun Any.get(a: Int) {
+operator fun Any.get(a: Int) {
     if (a > 0) {
         <lineMarker descr="Recursive call">this[a - 1]</lineMarker>
     }
@@ -10,32 +10,32 @@ class A {
         return true
     }
 
-    fun inc(): A {
+    operator fun inc(): A {
         this<lineMarker descr="Recursive call">++</lineMarker>
         <lineMarker descr="Recursive call">++</lineMarker>this
         return this
     }
 
-    fun component1(): Int {
+    operator fun component1(): Int {
         // TODO: should be recursion marker too
         val (a) = this
         return 1
     }
 
-    fun unaryPlus() {
+    operator fun unaryPlus() {
         <lineMarker descr="Recursive call">+</lineMarker>this
     }
 
-    fun unaryMinus() {
+    operator fun unaryMinus() {
         <lineMarker descr="Recursive call">-</lineMarker>this
     }
 
-    fun plus(a: Int) {
+    operator fun plus(a: Int) {
         this <lineMarker descr="Recursive call">+</lineMarker> 1
         this += 1
     }
 
-    fun invoke() {
+    operator fun invoke() {
         val a = A()
         a()
         a.invoke()
@@ -46,7 +46,7 @@ class A {
 }
 
 class B
-fun B.invoke() {
+operator fun B.invoke() {
     <lineMarker descr="Recursive call">this</lineMarker>()
     <lineMarker descr="Recursive call">invoke</lineMarker>()
 }

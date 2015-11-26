@@ -38,11 +38,6 @@ fun box(): String {
     testTrue { a.equals(12) }
     testFalse { a.equals("12") }
 
-    testFalse { a equals 34 }
-    testFalse { a equals "34" }
-    testTrue { a equals 12 }
-    testFalse { a equals "12" }
-
     val ff: dynamic = f
     testFalse { ff.equals(v) }
     assertTrue(f.equalsCalled, "f.equalsCalled")

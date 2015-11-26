@@ -6,11 +6,11 @@ class MyClass() {
 }
 
 class Delegate {
-    fun getValue(t: Any?, p: KProperty<*>): Int {
+    operator fun getValue(t: Any?, p: KProperty<*>): Int {
         return 1
     }
 
-    fun setValue(t: Any?, p: KProperty<*>, i: Int) {}
+    operator fun setValue(t: Any?, p: KProperty<*>, i: Int) {}
 }
 
 // TESTED_OBJECT_KIND: function

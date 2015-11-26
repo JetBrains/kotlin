@@ -1,11 +1,11 @@
 // "Replace with 'newFun(p)'" "true"
 
 @Deprecated("", ReplaceWith("newFun(p)"))
-fun String.oldFun(p: Int) {
+infix fun String.oldFun(p: Int) {
     newFun(p)
 }
 
-fun String.newFun(p: Int) {
+infix fun String.newFun(p: Int) {
 }
 
 fun foo() {

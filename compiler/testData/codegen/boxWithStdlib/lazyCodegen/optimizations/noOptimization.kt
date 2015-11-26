@@ -3,12 +3,12 @@ class B
 
 var holder = 0
 
-fun A.not(): A {
+operator fun A.not(): A {
     holder++
     return this;
 }
 
-fun B.not(): Boolean {
+operator fun B.not(): Boolean {
     holder++
     return false;
 }

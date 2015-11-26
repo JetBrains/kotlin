@@ -19,7 +19,7 @@ fun main(args: Array<String>) {
         Repository(
                 interfaces = acc.interfaces.mergeReduce(fileRepository.interfaces, ::merge),
                 typeDefs = acc.typeDefs + fileRepository.typeDefs,
-                externals = acc.externals merge fileRepository.externals,
+                externals = acc.externals.merge(fileRepository.externals),
                 enums = acc.enums + fileRepository.enums
         )
     }

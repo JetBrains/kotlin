@@ -1,5 +1,5 @@
 class Bar {
-    fun plusAssign(arg: Bar) {}
+    operator fun plusAssign(arg: Bar) {}
 }
 
 fun foo(b: Bar) {
