@@ -77,31 +77,6 @@ public inline fun <E> MutableCollection<E>.retainAllRaw(elements: Collection<Any
 public fun <E> MutableCollection<E>.retainAll(elements: Collection<Any?>): Boolean = retainAll(elements as Collection<Any?>)
 
 
-/**
- * Returns the index of the first occurrence of the specified element in the list, or -1 if the specified
- * element is not contained in the list.
- * Allows to overcome type-safety restriction of `indexOf` that requires to pass an element of type `T`.
- */
-public fun <@kotlin.internal.OnlyInputTypes T> List<T>.indexOf(element: T): Int = indexOf(element)
-
-@Deprecated("List and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("indexOf(element as Any?)"))
-@kotlin.jvm.JvmName("indexOfAny")
-@kotlin.internal.LowPriorityInOverloadResolution
-public fun <E> List<E>.indexOf(element: Any?): Int = indexOf(element as Any?)
-
-/**
- * Returns the index of the last occurrence of the specified element in the list, or -1 if the specified
- * element is not contained in the list.
- * Allows to overcome type-safety restriction of `lastIndexOf` that requires to pass an element of type `T`.
- */
-public fun <@kotlin.internal.OnlyInputTypes T> List<T>.lastIndexOf(element: T): Int = lastIndexOf(element)
-
-@Deprecated("List and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("lastIndexOf(element as Any?)"))
-@kotlin.jvm.JvmName("lastIndexOfAny")
-@kotlin.internal.LowPriorityInOverloadResolution
-public fun <E> List<E>.lastIndexOf(element: Any?): Int = lastIndexOf(element as Any?)
-
-
 @Deprecated("Use operator 'get' instead", ReplaceWith("this[index]"))
 public fun CharSequence.charAt(index: Int): Char = this[index]
 

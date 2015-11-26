@@ -57,7 +57,7 @@ fun elements(): List<GenericFunction> {
     }
 
     templates add f("indexOf(element: T)") {
-        only(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives)
+        only(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives, Lists)
         doc { f -> "Returns first index of [element], or -1 if the ${f.collection} does not contain element." }
         typeParam("@kotlin.internal.OnlyInputTypes T")
         returns("Int")
@@ -102,10 +102,11 @@ fun elements(): List<GenericFunction> {
             return -1
            """
         }
+        body(Lists) { "return indexOf(element)" }
     }
 
     templates add f("indexOf(element: T)") {
-        only(Iterables, Sequences, ArraysOfObjects)
+        only(Iterables, Sequences, ArraysOfObjects, Lists)
         doc { "Returns first index of [element], or -1 if the collection does not contain element." }
         returns("Int")
         deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure.", "indexOf(element as Any?)") } }
@@ -133,7 +134,7 @@ fun elements(): List<GenericFunction> {
     }
 
     templates add f("lastIndexOf(element: T)") {
-        only(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives)
+        only(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives, Lists)
         doc { f -> "Returns last index of [element], or -1 if the ${f.collection} does not contain element." }
         typeParam("@kotlin.internal.OnlyInputTypes T")
         returns("Int")
@@ -179,10 +180,11 @@ fun elements(): List<GenericFunction> {
             return -1
            """
         }
+        body(Lists) { "return lastIndexOf(element)" }
     }
 
     templates add f("lastIndexOf(element: T)") {
-        only(Iterables, Sequences, ArraysOfObjects)
+        only(Iterables, Sequences, ArraysOfObjects, Lists)
         doc { "Returns last index of [element], or -1 if the collection does not contain element." }
         returns("Int")
         deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure.", "lastIndexOf(element as Any?)") } }
