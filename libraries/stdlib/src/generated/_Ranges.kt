@@ -577,7 +577,7 @@ public operator fun ClosedRange<Float>.contains(item: Short): Boolean {
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
+ * Returns a progression from this value down to the specified [to] value with the step -1.
  * The [to] value has to be less than this value.
  */
 public infix fun Int.downTo(to: Byte): IntProgression {
@@ -585,7 +585,7 @@ public infix fun Int.downTo(to: Byte): IntProgression {
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
+ * Returns a progression from this value down to the specified [to] value with the step -1.
  * The [to] value has to be less than this value.
  */
 public infix fun Long.downTo(to: Byte): LongProgression {
@@ -593,7 +593,7 @@ public infix fun Long.downTo(to: Byte): LongProgression {
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
+ * Returns a progression from this value down to the specified [to] value with the step -1.
  * The [to] value has to be less than this value.
  */
 public infix fun Byte.downTo(to: Byte): IntProgression {
@@ -601,7 +601,7 @@ public infix fun Byte.downTo(to: Byte): IntProgression {
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
+ * Returns a progression from this value down to the specified [to] value with the step -1.
  * The [to] value has to be less than this value.
  */
 public infix fun Short.downTo(to: Byte): IntProgression {
@@ -609,7 +609,7 @@ public infix fun Short.downTo(to: Byte): IntProgression {
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
+ * Returns a progression from this value down to the specified [to] value with the step -1.
  * The [to] value has to be less than this value.
  */
 public infix fun Char.downTo(to: Char): CharProgression {
@@ -617,7 +617,7 @@ public infix fun Char.downTo(to: Char): CharProgression {
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
+ * Returns a progression from this value down to the specified [to] value with the step -1.
  * The [to] value has to be less than this value.
  */
 public infix fun Int.downTo(to: Int): IntProgression {
@@ -625,7 +625,7 @@ public infix fun Int.downTo(to: Int): IntProgression {
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
+ * Returns a progression from this value down to the specified [to] value with the step -1.
  * The [to] value has to be less than this value.
  */
 public infix fun Long.downTo(to: Int): LongProgression {
@@ -633,7 +633,7 @@ public infix fun Long.downTo(to: Int): LongProgression {
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
+ * Returns a progression from this value down to the specified [to] value with the step -1.
  * The [to] value has to be less than this value.
  */
 public infix fun Byte.downTo(to: Int): IntProgression {
@@ -641,7 +641,7 @@ public infix fun Byte.downTo(to: Int): IntProgression {
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
+ * Returns a progression from this value down to the specified [to] value with the step -1.
  * The [to] value has to be less than this value.
  */
 public infix fun Short.downTo(to: Int): IntProgression {
@@ -649,7 +649,7 @@ public infix fun Short.downTo(to: Int): IntProgression {
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
+ * Returns a progression from this value down to the specified [to] value with the step -1.
  * The [to] value has to be less than this value.
  */
 public infix fun Int.downTo(to: Long): LongProgression {
@@ -657,7 +657,7 @@ public infix fun Int.downTo(to: Long): LongProgression {
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
+ * Returns a progression from this value down to the specified [to] value with the step -1.
  * The [to] value has to be less than this value.
  */
 public infix fun Long.downTo(to: Long): LongProgression {
@@ -665,7 +665,7 @@ public infix fun Long.downTo(to: Long): LongProgression {
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
+ * Returns a progression from this value down to the specified [to] value with the step -1.
  * The [to] value has to be less than this value.
  */
 public infix fun Byte.downTo(to: Long): LongProgression {
@@ -673,7 +673,7 @@ public infix fun Byte.downTo(to: Long): LongProgression {
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
+ * Returns a progression from this value down to the specified [to] value with the step -1.
  * The [to] value has to be less than this value.
  */
 public infix fun Short.downTo(to: Long): LongProgression {
@@ -681,7 +681,7 @@ public infix fun Short.downTo(to: Long): LongProgression {
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
+ * Returns a progression from this value down to the specified [to] value with the step -1.
  * The [to] value has to be less than this value.
  */
 public infix fun Int.downTo(to: Short): IntProgression {
@@ -689,7 +689,7 @@ public infix fun Int.downTo(to: Short): IntProgression {
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
+ * Returns a progression from this value down to the specified [to] value with the step -1.
  * The [to] value has to be less than this value.
  */
 public infix fun Long.downTo(to: Short): LongProgression {
@@ -697,7 +697,7 @@ public infix fun Long.downTo(to: Short): LongProgression {
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
+ * Returns a progression from this value down to the specified [to] value with the step -1.
  * The [to] value has to be less than this value.
  */
 public infix fun Byte.downTo(to: Short): IntProgression {
@@ -705,7 +705,7 @@ public infix fun Byte.downTo(to: Short): IntProgression {
 }
 
 /**
- * Returns a progression from this value down to the specified [to] value with the increment -1.
+ * Returns a progression from this value down to the specified [to] value with the step -1.
  * The [to] value has to be less than this value.
  */
 public infix fun Short.downTo(to: Short): IntProgression {
@@ -716,21 +716,21 @@ public infix fun Short.downTo(to: Short): IntProgression {
  * Returns a progression that goes over the same range in the opposite direction with the same step.
  */
 public fun CharProgression.reversed(): CharProgression {
-    return CharProgression.fromClosedRange(last, first, -increment)
+    return CharProgression.fromClosedRange(last, first, -step)
 }
 
 /**
  * Returns a progression that goes over the same range in the opposite direction with the same step.
  */
 public fun IntProgression.reversed(): IntProgression {
-    return IntProgression.fromClosedRange(last, first, -increment)
+    return IntProgression.fromClosedRange(last, first, -step)
 }
 
 /**
  * Returns a progression that goes over the same range in the opposite direction with the same step.
  */
 public fun LongProgression.reversed(): LongProgression {
-    return LongProgression.fromClosedRange(last, first, -increment)
+    return LongProgression.fromClosedRange(last, first, -step)
 }
 
 /**
@@ -763,7 +763,7 @@ public fun LongRange.reversed(): LongProgression {
 @Deprecated("This range implementation has unclear semantics and will be removed soon.")
 @Suppress("DEPRECATION_ERROR")
 public fun ByteProgression.reversed(): ByteProgression {
-    return ByteProgression.fromClosedRange(last, first, -increment)
+    return ByteProgression.fromClosedRange(last, first, -step)
 }
 
 /**
@@ -772,7 +772,7 @@ public fun ByteProgression.reversed(): ByteProgression {
 @Deprecated("This range implementation has unclear semantics and will be removed soon.")
 @Suppress("DEPRECATION_ERROR")
 public fun ShortProgression.reversed(): ShortProgression {
-    return ShortProgression.fromClosedRange(last, first, -increment)
+    return ShortProgression.fromClosedRange(last, first, -step)
 }
 
 /**
@@ -798,7 +798,7 @@ public fun ShortRange.reversed(): ShortProgression {
  */
 public infix fun CharProgression.step(step: Int): CharProgression {
     checkStepIsPositive(step > 0, step)
-    return CharProgression.fromClosedRange(first, last, if (increment > 0) step else -step)
+    return CharProgression.fromClosedRange(first, last, if (this.step > 0) step else -step)
 }
 
 /**
@@ -806,7 +806,7 @@ public infix fun CharProgression.step(step: Int): CharProgression {
  */
 public infix fun IntProgression.step(step: Int): IntProgression {
     checkStepIsPositive(step > 0, step)
-    return IntProgression.fromClosedRange(first, last, if (increment > 0) step else -step)
+    return IntProgression.fromClosedRange(first, last, if (this.step > 0) step else -step)
 }
 
 /**
@@ -814,7 +814,7 @@ public infix fun IntProgression.step(step: Int): IntProgression {
  */
 public infix fun LongProgression.step(step: Long): LongProgression {
     checkStepIsPositive(step > 0, step)
-    return LongProgression.fromClosedRange(first, last, if (increment > 0) step else -step)
+    return LongProgression.fromClosedRange(first, last, if (this.step > 0) step else -step)
 }
 
 /**
@@ -851,7 +851,7 @@ public infix fun LongRange.step(step: Long): LongProgression {
 @Suppress("DEPRECATION_ERROR")
 public infix fun ByteProgression.step(step: Int): ByteProgression {
     checkStepIsPositive(step > 0, step)
-    return ByteProgression.fromClosedRange(first, last, if (increment > 0) step else -step)
+    return ByteProgression.fromClosedRange(first, last, if (this.step > 0) step else -step)
 }
 
 /**
@@ -861,7 +861,7 @@ public infix fun ByteProgression.step(step: Int): ByteProgression {
 @Suppress("DEPRECATION_ERROR")
 public infix fun ShortProgression.step(step: Int): ShortProgression {
     checkStepIsPositive(step > 0, step)
-    return ShortProgression.fromClosedRange(first, last, if (increment > 0) step else -step)
+    return ShortProgression.fromClosedRange(first, last, if (this.step > 0) step else -step)
 }
 
 /**

@@ -42,26 +42,26 @@ public fun getProgressionFinalElement(start: Int, end: Int, increment: Int): Int
 
 /**
  * Calculates the final element of a bounded arithmetic progression, i.e. the last element of the progression which is in the range
- * from [start] to [end] in case of a positive [increment], or from [end] to [start] in case of a negative
- * increment.
+ * from [start] to [end] in case of a positive [step], or from [end] to [start] in case of a negative
+ * [step].
  *
  * No validation on passed parameters is performed. The given parameters should satisfy the condition: either
- * `increment > 0` and `start >= end`, or `increment < 0` and`start >= end`.
+ * `step > 0` and `start >= end`, or `step < 0` and`start >= end`.
  * @param start first element of the progression
  * @param end ending bound for the progression
- * @param increment increment, or difference of successive elements in the progression
+ * @param step increment, or difference of successive elements in the progression
  * @return the final element of the progression
  * @suppress
  */
-internal fun getProgressionLastElement(start: Int, end: Int, increment: Int): Int {
-    if (increment > 0) {
-        return end - differenceModulo(end, start, increment)
+internal fun getProgressionLastElement(start: Int, end: Int, step: Int): Int {
+    if (step > 0) {
+        return end - differenceModulo(end, start, step)
     }
-    else if (increment < 0) {
-        return end + differenceModulo(start, end, -increment)
+    else if (step < 0) {
+        return end + differenceModulo(start, end, -step)
     }
     else {
-        throw IllegalArgumentException("Increment is zero.")
+        throw IllegalArgumentException("Step is zero.")
     }
 }
 
@@ -69,25 +69,25 @@ internal fun getProgressionLastElement(start: Int, end: Int, increment: Int): In
 public fun getProgressionFinalElement(start: Long, end: Long, increment: Long): Long = getProgressionLastElement(start, end, increment)
 /**
  * Calculates the final element of a bounded arithmetic progression, i.e. the last element of the progression which is in the range
- * from [start] to [end] in case of a positive [increment], or from [end] to [start] in case of a negative
- * increment.
+ * from [start] to [end] in case of a positive [step], or from [end] to [start] in case of a negative
+ * [step].
  *
  * No validation on passed parameters is performed. The given parameters should satisfy the condition: either
- * `increment > 0` and `start >= end`, or `increment < 0` and`start >= end`.
+ * `step > 0` and `start >= end`, or `step < 0` and`start >= end`.
  * @param start first element of the progression
  * @param end ending bound for the progression
- * @param increment increment, or difference of successive elements in the progression
+ * @param step increment, or difference of successive elements in the progression
  * @return the final element of the progression
  * @suppress
  */
-internal fun getProgressionLastElement(start: Long, end: Long, increment: Long): Long {
-    if (increment > 0) {
-        return end - differenceModulo(end, start, increment)
+internal fun getProgressionLastElement(start: Long, end: Long, step: Long): Long {
+    if (step > 0) {
+        return end - differenceModulo(end, start, step)
     }
-    else if (increment < 0) {
-        return end + differenceModulo(start, end, -increment)
+    else if (step < 0) {
+        return end + differenceModulo(start, end, -step)
     }
     else {
-        throw IllegalArgumentException("Increment is zero.")
+        throw IllegalArgumentException("Step is zero.")
     }
 }

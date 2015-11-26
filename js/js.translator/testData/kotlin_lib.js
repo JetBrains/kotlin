@@ -771,19 +771,19 @@
         function () {
             return [Kotlin.modules['builtins'].kotlin.Iterator];
         },
-        function (start, end, increment) {
+        function (start, end, step) {
             this.start = start;
             this.end = end;
-            this.increment = increment;
+            this.step = step;
             this.i = start;
         }, {
             next: function () {
                 var value = this.i;
-                this.i = this.i + this.increment;
+                this.i = this.i + this.step;
                 return value;
             },
             hasNext: function () {
-                if (this.increment > 0)
+                if (this.step > 0)
                     return this.i <= this.end;
                 else
                     return this.i >= this.end;
@@ -794,7 +794,7 @@
         var classObject = this.constructor;
         if (this instanceof classObject && other instanceof classObject) {
             return this.isEmpty() && other.isEmpty() ||
-                (this.first === other.first && this.last === other.last && this.increment === other.increment);
+                (this.first === other.first && this.last === other.last && this.step === other.step);
         }
         return false;
     }
@@ -803,13 +803,13 @@
         var classObject = this.constructor;
         if (this instanceof classObject && other instanceof classObject) {
             return this.isEmpty() && other.isEmpty() ||
-                   (this.first.equals_za3rmp$(other.first) && this.last.equals_za3rmp$(other.last) && this.increment.equals_za3rmp$(other.increment));
+                   (this.first.equals_za3rmp$(other.first) && this.last.equals_za3rmp$(other.last) && this.step.equals_za3rmp$(other.step));
         }
         return false;
     }
 
     // reference implementation in core/builtins/src/kotlin/internal/progressionUtil.kt
-    function getProgressionFinalElement(start, end, increment) {
+    function getProgressionFinalElement(start, end, step) {
         function mod(a, b) {
             var mod = a % b;
             return mod >= 0 ? mod : mod + b;
@@ -818,19 +818,19 @@
             return mod(mod(a, c) - mod(b, c), c);
         }
 
-        if (increment > 0) {
-            return end - differenceModulo(end, start, increment);
+        if (step > 0) {
+            return end - differenceModulo(end, start, step);
         }
-        else if (increment < 0) {
-            return end + differenceModulo(start, end, -increment);
+        else if (step < 0) {
+            return end + differenceModulo(start, end, -step);
         }
         else {
-            throw new Kotlin.IllegalArgumentException('Increment is zero.');
+            throw new Kotlin.IllegalArgumentException('Step is zero.');
         }
     }
 
     // reference implementation in core/builtins/src/kotlin/internal/progressionUtil.kt
-    function getProgressionFinalElementLong(start, end, increment) {
+    function getProgressionFinalElementLong(start, end, step) {
         function mod(a, b) {
             var mod = a.modulo(b);
             return !mod.isNegative() ? mod : mod.add(b);
@@ -840,16 +840,16 @@
         }
 
         var diff;
-        if (increment.compareTo_za3rmp$(Kotlin.Long.ZERO) > 0) {
-            diff = differenceModulo(end, start, increment);
+        if (step.compareTo_za3rmp$(Kotlin.Long.ZERO) > 0) {
+            diff = differenceModulo(end, start, step);
             return diff.isZero() ? end : end.subtract(diff);
         }
-        else if (increment.compareTo_za3rmp$(Kotlin.Long.ZERO) < 0) {
-            diff = differenceModulo(start, end, increment.unaryMinus());
+        else if (step.compareTo_za3rmp$(Kotlin.Long.ZERO) < 0) {
+            diff = differenceModulo(start, end, step.unaryMinus());
             return diff.isZero() ? end : end.add(diff);
         }
         else {
-            throw new Kotlin.IllegalArgumentException('Increment is zero.');
+            throw new Kotlin.IllegalArgumentException('Step is zero.');
         }
     }
 
@@ -857,30 +857,31 @@
         function () {
             return [Kotlin.modules['builtins'].kotlin.Iterable];
         },
-        function (start, end, increment) {
+        function (start, end, step) {
             this.start = start;
             this.endInclusive = end;
             this.first = start;
-            this.last = getProgressionFinalElement(start, end, increment);
-            this.increment = increment;
-            if (this.increment === 0)
-                throw new Kotlin.IllegalArgumentException('Increment must be non-zero');
+            this.last = getProgressionFinalElement(start, end, step);
+            this.step = step;
+            this.increment = step;
+            if (this.step === 0)
+                throw new Kotlin.IllegalArgumentException('Step must be non-zero');
         }, {
             end: { get: function () {
                 return this.endInclusive;
             }},
             iterator: function () {
-                return new Kotlin.RangeIterator(this.first, this.last, this.increment);
+                return new Kotlin.RangeIterator(this.first, this.last, this.step);
             },
             isEmpty: function () {
-                return this.increment > 0 ? this.first > this.last : this.first < this.last;
+                return this.step > 0 ? this.first > this.last : this.first < this.last;
             },
             hashCode: function () {
-                return this.isEmpty() ? -1 : 31 * (31 * this.first + this.last) + this.increment;
+                return this.isEmpty() ? -1 : 31 * (31 * this.first + this.last) + this.step;
             },
             equals_za3rmp$: isSameNotNullRanges,
             toString: function () {
-                return this.increment > 0 ? this.first.toString() + '..' + this.last + ' step ' + this.increment : this.first.toString() + ' downTo ' + this.last + ' step ' + -this.increment;
+                return this.step > 0 ? this.first.toString() + '..' + this.last + ' step ' + this.step : this.first.toString() + ' downTo ' + this.last + ' step ' + -this.step;
             }
         });
 
@@ -921,19 +922,19 @@
         function () {
             return [Kotlin.modules['builtins'].kotlin.Iterator];
         },
-         function (start, end, increment) {
+         function (start, end, step) {
              this.start = start;
              this.end = end;
-             this.increment = increment;
+             this.step = step;
              this.i = start;
          }, {
              next: function () {
                  var value = this.i;
-                 this.i = this.i.add(this.increment);
+                 this.i = this.i.add(this.step);
                  return value;
              },
              hasNext: function () {
-                 if (this.increment.isNegative())
+                 if (this.step.isNegative())
                      return this.i.compare(this.end) >= 0;
                  else
                      return this.i.compare(this.end) <= 0;
@@ -944,30 +945,31 @@
         function () {
             return [Kotlin.modules['builtins'].kotlin.Iterable];
         },
-        function (start, end, increment) {
+        function (start, end, step) {
             this.start = start;
             this.endInclusive = end;
             this.first = start;
-            this.last = getProgressionFinalElementLong(start, end, increment);
-            this.increment = increment;
-            if (this.increment.isZero())
-                throw new Kotlin.IllegalArgumentException('Increment must be non-zero');
+            this.last = getProgressionFinalElementLong(start, end, step);
+            this.step = step;
+            this.increment = step;
+            if (this.step.isZero())
+                throw new Kotlin.IllegalArgumentException('Step must be non-zero');
         }, {
             end: { get: function () {
                 return this.endInclusive;
             }},
             iterator: function () {
-                return new Kotlin.LongRangeIterator(this.first, this.last, this.increment);
+                return new Kotlin.LongRangeIterator(this.first, this.last, this.step);
             },
             isEmpty: function() {
-                return this.increment.isNegative() ? this.first.compare(this.last) < 0 : this.first.compare(this.last) > 0;
+                return this.step.isNegative() ? this.first.compare(this.last) < 0 : this.first.compare(this.last) > 0;
             },
             hashCode: function() {
-                return this.isEmpty() ? -1 : (31 * (31 * this.first.toInt() + this.last.toInt()) + this.increment.toInt());
+                return this.isEmpty() ? -1 : (31 * (31 * this.first.toInt() + this.last.toInt()) + this.step.toInt());
             },
             equals_za3rmp$: isSameLongRanges,
             toString: function () {
-                return !this.increment.isNegative() ? this.first.toString() + '..' + this.last + ' step ' + this.increment : this.first.toString() + ' downTo ' + this.last + ' step ' + this.increment.unaryMinus();
+                return !this.step.isNegative() ? this.first.toString() + '..' + this.last + ' step ' + this.step : this.first.toString() + ' downTo ' + this.last + ' step ' + this.step.unaryMinus();
             }
         });
 
@@ -1008,12 +1010,12 @@
         function () {
             return [Kotlin.RangeIterator];
         },
-        function (start, end, increment) {
-            Kotlin.RangeIterator.call(this, start, end, increment);
+        function (start, end, step) {
+            Kotlin.RangeIterator.call(this, start, end, step);
         }, {
             next: function () {
                 var value = this.i;
-                this.i = this.i + this.increment;
+                this.i = this.i + this.step;
                 return String.fromCharCode(value);
             }
     });
@@ -1022,14 +1024,15 @@
         function () {
             return [Kotlin.modules['builtins'].kotlin.Iterable];
         },
-        function (start, end, increment) {
+        function (start, end, step) {
             this.start = start;
             this.endInclusive = end;
             this.first = start;
             this.startCode = start.charCodeAt(0);
-            this.endCode = getProgressionFinalElement(this.startCode, end.charCodeAt(0), increment);
+            this.endCode = getProgressionFinalElement(this.startCode, end.charCodeAt(0), step);
             this.last = String.fromCharCode(this.endCode);
-            this.increment = increment;
+            this.step = step;
+            this.increment = step;
             if (this.increment === 0)
                 throw new Kotlin.IllegalArgumentException('Increment must be non-zero');
         }, {
@@ -1037,17 +1040,17 @@
                 return this.endInclusive;
             }},
             iterator: function () {
-                return new Kotlin.CharRangeIterator(this.startCode, this.endCode, this.increment);
+                return new Kotlin.CharRangeIterator(this.startCode, this.endCode, this.step);
             },
             isEmpty: function() {
-                return this.increment > 0 ? this.startCode > this.endCode : this.startCode < this.endCode;
+                return this.step > 0 ? this.startCode > this.endCode : this.startCode < this.endCode;
             },
             hashCode: function() {
-                return this.isEmpty() ? -1 : (31 * (31 * this.startCode|0 + this.endCode|0) + this.increment|0);
+                return this.isEmpty() ? -1 : (31 * (31 * this.startCode|0 + this.endCode|0) + this.step|0);
             },
             equals_za3rmp$: isSameNotNullRanges,
             toString: function () {
-                return this.increment > 0 ? this.first.toString() + '..' + this.last + ' step ' + this.increment : this.first.toString() + ' downTo ' + this.last + ' step ' + -this.increment;
+                return this.step > 0 ? this.first.toString() + '..' + this.last + ' step ' + this.step : this.first.toString() + ' downTo ' + this.last + ' step ' + -this.step;
             }
     });
 

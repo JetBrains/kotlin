@@ -19,17 +19,17 @@ public open class RangeIterationTestBase {
             is IntProgression -> {
                 first = sequence.first
                 last = sequence.last
-                increment = sequence.increment
+                increment = sequence.step
             }
             is LongProgression -> {
                 first = sequence.first
                 last = sequence.last
-                increment = sequence.increment
+                increment = sequence.step
             }
             is CharProgression -> {
                 first = sequence.first
                 last = sequence.last
-                increment = sequence.increment
+                increment = sequence.step
             }
             // TODO: Drop this branch
             is Progression -> {

@@ -36,15 +36,15 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             LONG -> "0L"
             else -> "0"
         }
-        val checkZero = "if (increment == $zero) throw IllegalArgumentException(\"Increment must be non-zero\")"
+        val checkZero = "if (step == $zero) throw IllegalArgumentException(\"Step must be non-zero\")"
 
         val hashCode = "=\n" + when (kind) {
             BYTE, CHAR, SHORT ->
-                "        if (isEmpty()) -1 else (31 * (31 * first.toInt() + last.toInt()) + increment)"
+                "        if (isEmpty()) -1 else (31 * (31 * first.toInt() + last.toInt()) + step)"
             INT ->
-                "        if (isEmpty()) -1 else (31 * (31 * first + last) + increment)"
+                "        if (isEmpty()) -1 else (31 * (31 * first + last) + step)"
             LONG ->
-                "        if (isEmpty()) -1 else (31 * (31 * ${hashLong("first")} + ${hashLong("last")}) + ${hashLong("increment")}).toInt()"
+                "        if (isEmpty()) -1 else (31 * (31 * ${hashLong("first")} + ${hashLong("last")}) + ${hashLong("step")}).toInt()"
             else -> throw IllegalArgumentException()
         }
 
@@ -56,12 +56,12 @@ class GenerateProgressions(out: PrintWriter) : BuiltInsSourceGenerator(out) {
  * A progression of values of type `$t`.
  */
 public open class $progression
-    @Deprecated("This constructor will become private soon. Use $progression.fromClosedRange() instead.", ReplaceWith("$progression.fromClosedRange(start, endInclusive, increment)"))
+    @Deprecated("This constructor will become private soon. Use $progression.fromClosedRange() instead.", ReplaceWith("$progression.fromClosedRange(start, endInclusive, step)"))
     public constructor
     (
             start: $t,
             endInclusive: $t,
-            override val increment: $incrementType
+            step: $incrementType
     ) : Progression<$t> /*, Iterable<$t> */ {
     init {
         $checkZero
@@ -71,12 +71,18 @@ public open class $progression
      * The first element in the progression.
      */
     public val first: $t = start
+
     /**
      * The last element in the progression.
      */
-    public val last: $t = getProgressionLastElement(start.to$incrementType(), endInclusive.to$incrementType(), increment).to$t()
+    public val last: $t = getProgressionLastElement(start.to$incrementType(), endInclusive.to$incrementType(), step).to$t()
 
-    @Deprecated("Use first instead.", ReplaceWith("first"))
+    /**
+     * The step of the progression.
+     */
+    public val step: $incrementType = step
+
+    @Deprecated("Use 'first' property instead.", ReplaceWith("first"))
     public override val start: $t get() = first
 
     /**
@@ -85,18 +91,22 @@ public open class $progression
     @Deprecated("Use 'last' property instead.")
     public override val end: $t = endInclusive
 
-    override fun iterator(): ${t}Iterator = ${t}ProgressionIterator(first, last, increment)
+    @Deprecated("Use 'step' property instead.", ReplaceWith("step"))
+    public override val increment: $incrementType get() = step
+
+
+    override fun iterator(): ${t}Iterator = ${t}ProgressionIterator(first, last, step)
 
     /** Checks if the progression is empty. */
-    public open fun isEmpty(): Boolean = if (increment > 0) first > last else first < last
+    public open fun isEmpty(): Boolean = if (step > 0) first > last else first < last
 
     override fun equals(other: Any?): Boolean =
         other is $progression && (isEmpty() && other.isEmpty() ||
-        ${compare("first")} && ${compare("last")} && ${compare("increment")})
+        ${compare("first")} && ${compare("last")} && ${compare("step")})
 
     override fun hashCode(): Int $hashCode
 
-    override fun toString(): String = ${"if (increment > 0) \"\$first..\$last step \$increment\" else \"\$first downTo \$last step \${-increment}\""}
+    override fun toString(): String = ${"if (step > 0) \"\$first..\$last step \$step\" else \"\$first downTo \$last step \${-step}\""}
 
     companion object {
         /**

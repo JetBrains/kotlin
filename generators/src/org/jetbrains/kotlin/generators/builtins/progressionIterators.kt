@@ -33,12 +33,12 @@ fun integerProgressionIterator(kind: ProgressionKind): String {
 
     return """/**
  * An iterator over a progression of values of type `$t`.
- * @property increment the number by which the value is incremented on each step.
+ * @property step the number by which the value is incremented on each step.
  */
-internal class ${t}ProgressionIterator(first: $t, last: $t, val increment: $incrementType) : ${t}Iterator() {
+internal class ${t}ProgressionIterator(first: $t, last: $t, val step: $incrementType) : ${t}Iterator() {
     private var next = first$toInt
     private val finalElement = last$toInt
-    private var hasNext: Boolean = if (increment > 0) first <= last else first >= last
+    private var hasNext: Boolean = if (step > 0) first <= last else first >= last
 
     override fun hasNext(): Boolean = hasNext
 
@@ -48,7 +48,7 @@ internal class ${t}ProgressionIterator(first: $t, last: $t, val increment: $incr
             hasNext = false
         }
         else {
-            next += increment
+            next += step
         }
         return value$toType
     }
