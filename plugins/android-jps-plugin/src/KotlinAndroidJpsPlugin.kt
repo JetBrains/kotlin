@@ -29,7 +29,7 @@ import javax.xml.parsers.DocumentBuilderFactory
 public class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
     override fun getExtraArguments(moduleBuildTarget: ModuleBuildTarget, context: CompileContext): List<String> {
         val module = moduleBuildTarget.module
-        if (!hasAndroidJpsPlugin() || isAndroidModuleWithoutGradle(module)) return emptyList()
+        if (!hasAndroidJpsPlugin() || !isAndroidModuleWithoutGradle(module)) return emptyList()
 
         val pluginId = ANDROID_COMPILER_PLUGIN_ID
         val resPath = getAndroidResPath(module)
@@ -60,7 +60,7 @@ public class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
 
     override fun getClasspath(moduleBuildTarget: ModuleBuildTarget, context: CompileContext): List<String> {
         val module = moduleBuildTarget.module
-        if (!hasAndroidJpsPlugin() || isAndroidModuleWithoutGradle(module)) return emptyList()
+        if (!hasAndroidJpsPlugin() || !isAndroidModuleWithoutGradle(module)) return emptyList()
 
         val inJar = File(PathUtil.getJarPathForClass(javaClass)).isFile
         val manifestFile = getAndroidManifest(moduleBuildTarget.module)
@@ -91,7 +91,7 @@ public class KotlinAndroidJpsPlugin : KotlinJpsCompilerArgumentsProvider {
     companion object {
         private val ANDROID_JPS_UTIL_CLASS_FQNAME = "org.jetbrains.jps.android.AndroidJpsUtil"
 
-        private val JAR_FILE_NAME = "android-compiler-plugin.jar"
+        private val JAR_FILE_NAME = "kotlin-android-extensions-compiler-plugin.jar"
         private val ANDROID_COMPILER_PLUGIN_ID = "org.jetbrains.kotlin.android"
 
         private val VARIANT_OPTION_NAME = "variant"
