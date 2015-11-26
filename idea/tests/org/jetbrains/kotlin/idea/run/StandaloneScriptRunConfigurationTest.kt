@@ -16,12 +16,18 @@
 
 package org.jetbrains.kotlin.idea.run
 
+import com.intellij.openapi.vfs.VfsUtil
+import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiFile
 import com.intellij.refactoring.RefactoringFactory
+import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesProcessor
+import com.intellij.util.ActionRunner
 import org.jetbrains.kotlin.idea.run.script.standalone.KotlinStandaloneScriptRunConfiguration
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinScriptFqnIndex
 import org.jetbrains.kotlin.idea.test.KotlinCodeInsightTestCase
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.psi.KtScript
 import org.junit.Assert
 import kotlin.test.assertNotEquals
 
@@ -48,15 +54,85 @@ class StandaloneScriptRunConfigurationTest : KotlinCodeInsightTestCase() {
         val runConfiguration = createConfigurationFromElement(script, save = true) as KotlinStandaloneScriptRunConfiguration
 
         Assert.assertEquals("SimpleScript", runConfiguration.name)
-        val originalPath = script.containingFile.virtualFile.canonicalPath
+        val scriptVirtualFileBefore = script.containingFile.virtualFile
+        val originalPath = scriptVirtualFileBefore.canonicalPath
+        val originalWorkingDirectory = scriptVirtualFileBefore.parent.canonicalPath
         assertEquals(originalPath, runConfiguration.filePath)
+        assertEquals(originalWorkingDirectory, runConfiguration.workingDirectory)
 
         RefactoringFactory.getInstance(project).createRename(script.containingFile, "renamedScript.kts").run()
 
         Assert.assertEquals("RenamedScript", runConfiguration.name)
-        assertEquals(script.containingFile.virtualFile.canonicalPath, runConfiguration.filePath)
+        val scriptVirtualFileAfter = script.containingFile.virtualFile
+
+        assertEquals(scriptVirtualFileAfter.canonicalPath, runConfiguration.filePath)
         assertNotEquals(originalPath, runConfiguration.filePath)
+
+        assertEquals(scriptVirtualFileAfter.parent.canonicalPath, runConfiguration.workingDirectory)
+        assertEquals(originalWorkingDirectory, runConfiguration.workingDirectory)
     }
+
+    fun testOnFileMoveWithDefaultWorkingDir() {
+        configureByFile("move/script.kts")
+        val script = KotlinScriptFqnIndex.instance.get("foo.Script", project, project.allScope()).single()
+        val runConfiguration = createConfigurationFromElement(script, save = true) as KotlinStandaloneScriptRunConfiguration
+
+        Assert.assertEquals("Script", runConfiguration.name)
+        val scriptVirtualFileBefore = script.containingFile.virtualFile
+        val originalPath = scriptVirtualFileBefore.canonicalPath
+        val originalWorkingDirectory = scriptVirtualFileBefore.parent.canonicalPath
+        assertEquals(originalPath, runConfiguration.filePath)
+        assertEquals(originalWorkingDirectory, runConfiguration.workingDirectory)
+
+        moveScriptFile(script.containingFile)
+
+        Assert.assertEquals("Script", runConfiguration.name)
+        val scriptVirtualFileAfter = script.containingFile.virtualFile
+
+        assertEquals(scriptVirtualFileAfter.canonicalPath, runConfiguration.filePath)
+        assertNotEquals(originalPath, runConfiguration.filePath)
+
+        assertEquals(scriptVirtualFileAfter.parent.canonicalPath, runConfiguration.workingDirectory)
+        assertNotEquals(originalWorkingDirectory, runConfiguration.workingDirectory)
+    }
+
+    fun testOnFileMoveWithNonDefaultWorkingDir() {
+        configureByFile("move/script.kts")
+        val script = KotlinScriptFqnIndex.instance.get("foo.Script", project, project.allScope()).single()
+        val runConfiguration = createConfigurationFromElement(script, save = true) as KotlinStandaloneScriptRunConfiguration
+
+        Assert.assertEquals("Script", runConfiguration.name)
+        runConfiguration.workingDirectory = runConfiguration.workingDirectory + "/customWorkingDirectory"
+        val scriptVirtualFileBefore = script.containingFile.virtualFile
+        val originalPath = scriptVirtualFileBefore.canonicalPath
+        val originalWorkingDirectory = scriptVirtualFileBefore.parent.canonicalPath + "/customWorkingDirectory"
+
+        assertEquals(originalPath, runConfiguration.filePath)
+        assertEquals(originalWorkingDirectory, runConfiguration.workingDirectory)
+
+        moveScriptFile(script.containingFile)
+
+        Assert.assertEquals("Script", runConfiguration.name)
+        val scriptVirtualFileAfter = script.containingFile.virtualFile
+
+        assertEquals(scriptVirtualFileAfter.canonicalPath, runConfiguration.filePath)
+        assertNotEquals(originalPath, runConfiguration.filePath)
+
+        assertNotEquals(scriptVirtualFileAfter.parent.canonicalPath, runConfiguration.workingDirectory)
+        assertEquals(originalWorkingDirectory, runConfiguration.workingDirectory)
+    }
+
+    fun moveScriptFile(scriptFile: PsiFile) {
+        ActionRunner.runInsideWriteAction { VfsUtil.createDirectoryIfMissing(scriptFile.virtualFile.parent, "dest") }
+
+        MoveFilesOrDirectoriesProcessor(
+                project,
+                arrayOf(scriptFile),
+                JavaPsiFacade.getInstance(project).findPackage("dest")!!.getDirectories()[0],
+                false, true, null, null
+        ).run()
+    }
+
 
     override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/run/StandaloneScript/"
     override fun getTestProjectJdk() = PluginTestCaseBase.mockJdk()

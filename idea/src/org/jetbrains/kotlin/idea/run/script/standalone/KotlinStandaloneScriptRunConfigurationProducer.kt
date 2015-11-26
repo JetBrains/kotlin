@@ -30,7 +30,7 @@ public class KotlinStandaloneScriptRunConfigurationProducer :
             context: ConfigurationContext?,
             sourceElement: Ref<PsiElement>?
     ): Boolean {
-        configuration.filePath = pathFromContext(context) ?: return false
+        configuration.setupFilePath(pathFromContext(context) ?: return false)
         configuration.setGeneratedName()
         return true
     }

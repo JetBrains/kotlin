@@ -158,15 +158,26 @@ class KotlinStandaloneScriptRunConfiguration(
 
         return object : RefactoringElementAdapter() {
             override fun undoElementMovedOrRenamed(newElement: PsiElement, oldQualifiedName: String) {
-                filePath = pathFromPsiElement(newElement)
+                setupFilePath(pathFromPsiElement(newElement) ?: return)
             }
 
             override fun elementRenamedOrMoved(newElement: PsiElement) {
-                filePath = pathFromPsiElement(newElement)
+                setupFilePath(pathFromPsiElement(newElement) ?: return)
             }
         }
     }
 
+    fun defaultWorkingDirectory(): String? {
+        return com.intellij.util.PathUtil.getParentPath(filePath ?: return null)
+    }
+
+    fun setupFilePath(filePath: String) {
+        val wasDefaultWorkingDirectory = workingDirectory == null || workingDirectory == defaultWorkingDirectory()
+        this.filePath = filePath
+        if (wasDefaultWorkingDirectory) {
+            this.workingDirectory = defaultWorkingDirectory()
+        }
+    }
 }
 
 private class ScriptCommandLineState(environment: ExecutionEnvironment, configuration: KotlinStandaloneScriptRunConfiguration) :
