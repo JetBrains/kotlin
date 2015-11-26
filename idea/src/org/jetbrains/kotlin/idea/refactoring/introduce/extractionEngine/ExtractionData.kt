@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.isSynthesizedInvoke
-import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
@@ -235,12 +234,13 @@ data class ExtractionData(
                 val originalFunctionCall = originalResolvedCall?.functionCall
                 val originalVariableCall = originalResolvedCall?.variableCall
                 val invokeDescriptor = originalFunctionCall?.resultingDescriptor
-                if (invokeDescriptor != null && isSynthesizedInvoke(invokeDescriptor) && invokeDescriptor.isExtension) {
+                if (invokeDescriptor != null) {
+                    val invokeDeclaration = getDeclaration(invokeDescriptor, context) ?: synthesizedInvokeDeclaration
                     val variableResolveResult = originalResolveResult.copy(resolvedCall = originalVariableCall!!,
                                                                            descriptor = originalVariableCall.resultingDescriptor)
                     val functionResolveResult = originalResolveResult.copy(resolvedCall = originalFunctionCall!!,
                                                                            descriptor = originalFunctionCall.resultingDescriptor,
-                                                                           declaration = synthesizedInvokeDeclaration)
+                                                                           declaration = invokeDeclaration)
                     referencesInfo.add(ResolvedReferenceInfo(newRef, variableResolveResult, smartCast, possibleTypes))
                     referencesInfo.add(ResolvedReferenceInfo(newRef, functionResolveResult, smartCast, possibleTypes))
                 }

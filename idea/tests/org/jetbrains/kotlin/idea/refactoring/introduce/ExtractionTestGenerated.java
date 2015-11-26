@@ -2270,6 +2270,18 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
                     doExtractFunctionTest(fileName);
                 }
 
+                @TestMetadata("propertyWithExplicitInvoke.kt")
+                public void testPropertyWithExplicitInvoke() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/propertyWithExplicitInvoke.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
+                @TestMetadata("propertyWithImplicitInvoke.kt")
+                public void testPropertyWithImplicitInvoke() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/propertyWithImplicitInvoke.kt");
+                    doExtractFunctionTest(fileName);
+                }
+
                 @TestMetadata("qualifiedThis.kt")
                 public void testQualifiedThis() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/parameters/extractThis/qualifiedThis.kt");
