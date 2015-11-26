@@ -191,8 +191,8 @@ internal class AutoImportFix(expression: KtSimpleNameExpression) : AutoImportFix
             if (conventionName != null) {
                 if (element is KtOperationReferenceExpression) {
                     val elementType = element.firstChild.node.elementType
-                    if (OperatorConventions.ASSIGNMENT_OPERATIONS.containsKeyRaw(elementType)) {
-                        val counterpart = OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS.getRaw(elementType)
+                    if (elementType in OperatorConventions.ASSIGNMENT_OPERATIONS) {
+                        val counterpart = OperatorConventions.ASSIGNMENT_OPERATION_COUNTERPARTS[elementType]
                         val counterpartName = OperatorConventions.BINARY_OPERATION_NAMES.get(counterpart)
                         if (counterpartName != null) {
                             return@run listOf(conventionName, counterpartName)

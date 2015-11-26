@@ -68,8 +68,8 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
     private val LOG = Logger.getInstance(javaClass<KotlinCopyPasteReferenceProcessor>())
 
     private val IGNORE_REFERENCES_INSIDE: Array<Class<out KtElement>> = arrayOf(
-            javaClass<KtImportList>(),
-            javaClass<KtPackageDirective>()
+            KtImportList::class.java,
+            KtPackageDirective::class.java
     )
 
     override fun extractTransferableData(content: Transferable): List<KotlinReferenceTransferableData> {
@@ -139,7 +139,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
     ) {
         if (PsiTreeUtil.getNonStrictParentOfType(element, *IGNORE_REFERENCES_INSIDE) != null) return
 
-        element.forEachDescendantOfType<KtElement>(canGoInside = { it.javaClass !in IGNORE_REFERENCES_INSIDE }) { element ->
+        element.forEachDescendantOfType<KtElement>(canGoInside = { it.javaClass as Class<*> !in IGNORE_REFERENCES_INSIDE }) { element ->
             val reference = element.mainReference ?: return@forEachDescendantOfType
 
             val descriptors = reference.resolveToDescriptors(element.analyze()) //TODO: we could use partial body resolve for all references together

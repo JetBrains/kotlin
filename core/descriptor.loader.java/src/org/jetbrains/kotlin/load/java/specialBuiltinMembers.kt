@@ -60,7 +60,7 @@ object BuiltinSpecialProperties {
     }
 
     private fun CallableMemberDescriptor.hasBuiltinSpecialPropertyFqNameImpl(): Boolean {
-        if (FQ_NAMES.containsRaw(fqNameOrNull())) return true
+        if (fqNameOrNull() in FQ_NAMES) return true
         if (!isFromBuiltins()) return false
 
         return overriddenDescriptors.any { hasBuiltinSpecialPropertyFqName(it) }
@@ -108,7 +108,7 @@ object BuiltinMethodsWithSpecialGenericSignature {
             ERASED_VALUE_PARAMETERS_FQ_NAMES.map { it.shortName() }.toSet()
 
     private val CallableMemberDescriptor.hasErasedValueParametersInJava: Boolean
-        get() = ERASED_VALUE_PARAMETERS_FQ_NAMES.containsRaw(fqNameOrNull())
+        get() = fqNameOrNull() in ERASED_VALUE_PARAMETERS_FQ_NAMES
 
     @JvmStatic
     fun getOverriddenBuiltinFunctionWithErasedValueParametersInJava(
@@ -122,7 +122,7 @@ object BuiltinMethodsWithSpecialGenericSignature {
     fun getDefaultValueForOverriddenBuiltinFunction(functionDescriptor: FunctionDescriptor): DefaultValue? {
         if (functionDescriptor.name !in ERASED_VALUE_PARAMETERS_SHORT_NAMES) return null
         return functionDescriptor.firstOverridden {
-            GENERIC_PARAMETERS_METHODS_TO_DEFAULT_VALUES_MAP.keys.containsRaw(it.fqNameOrNull())
+            it.fqNameOrNull() in GENERIC_PARAMETERS_METHODS_TO_DEFAULT_VALUES_MAP.keys
         }?.let { GENERIC_PARAMETERS_METHODS_TO_DEFAULT_VALUES_MAP[it.fqNameSafe] }
     }
 

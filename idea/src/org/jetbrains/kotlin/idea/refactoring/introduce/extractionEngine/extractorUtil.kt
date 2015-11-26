@@ -459,7 +459,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
         val counterpartMap = createNameCounterpartMap(currentResultExpression, expressionToUnifyWith ?: newResultExpression)
         counterpartMap.entries.forEach {
             val (cmOriginalExpr, cmNewExpr) = it
-            nameByOffset.entrySet().find { it.value.containsRaw(cmOriginalExpr) }?.let {
+            nameByOffset.entrySet().find { cmOriginalExpr in it.value }?.let {
                 nameByOffset.remove(it.key, cmOriginalExpr)
                 nameByOffset.putValue(it.key, cmNewExpr)
             }
@@ -512,7 +512,7 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
         val jumpValue = descriptor.controlFlow.jumpOutputValue
         if (jumpValue != null) {
             replacingReturn = psiFactory.createExpression(if (jumpValue.conditional) "return true" else "return")
-            returnsForLabelRemoval.removeAllRaw(jumpValue.elementsToReplace)
+            returnsForLabelRemoval.removeAll(jumpValue.elementsToReplace)
             expressionsToReplaceWithReturn = getCounterparts(jumpValue.elementsToReplace, body, bodyOffset, file)
         }
         else {

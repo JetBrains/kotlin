@@ -420,7 +420,7 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
                         KtAnonymousInitializer::class.java)
 
         private fun getElementToCalculateClassName(notPositionedElement: PsiElement?): KtElement? {
-            if (notPositionedElement?.javaClass in TYPES_TO_CALCULATE_CLASSNAME ) return notPositionedElement as KtElement
+            if (notPositionedElement?.javaClass as Class<*> in TYPES_TO_CALCULATE_CLASSNAME) return notPositionedElement as KtElement
 
             return PsiTreeUtil.getParentOfType(notPositionedElement, *TYPES_TO_CALCULATE_CLASSNAME)
         }
