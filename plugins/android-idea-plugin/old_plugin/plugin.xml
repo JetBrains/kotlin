@@ -1,0 +1,13 @@
+<idea-plugin version="2" url="http://kotlinlang.org">
+    <id>org.jetbrains.kotlin.android</id>
+
+    <name>Kotlin Extensions For Android (obsolete)</name>
+    <description>This plugin is obsolete. Android Extensions are now inside the main Kotlin plugin.</description>
+    <version>1.0-obsolete</version>
+    <vendor url="http://www.jetbrains.com">JetBrains s.r.o.</vendor>
+
+    <idea-version since-build="141.1009" until-build="199.9999"/>
+
+    <depends optional="false">org.jetbrains.kotlin</depends>
+    <depends optional="false">org.jetbrains.android</depends>
+</idea-plugin>
