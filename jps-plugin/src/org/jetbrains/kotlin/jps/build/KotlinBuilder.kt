@@ -65,6 +65,7 @@ import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.progress.CompilationCanceledException
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.rmi.isDaemonEnabled
 import org.jetbrains.kotlin.utils.LibraryUtils
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.keysToMap
@@ -91,6 +92,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         LOG.debug("==========================================")
         LOG.info("is Kotlin incremental compilation enabled: ${IncrementalCompilation.isEnabled()}")
         LOG.info("is Kotlin experimental incremental compilation enabled: ${IncrementalCompilation.isExperimental()}")
+        LOG.info("is Kotlin compiler daemon enabled: ${isDaemonEnabled()}")
 
         val historyLabel = context.getBuilderParameter("history label")
         if (historyLabel != null) {
@@ -108,12 +110,17 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val messageCollector = MessageCollectorAdapter(context)
 
         try {
-            return doBuild(chunk, context, dirtyFilesHolder, messageCollector, outputConsumer)
+            val result = doBuild(chunk, context, dirtyFilesHolder, messageCollector, outputConsumer)
+            LOG.debug("Build result: " + result)
+            return result
         }
         catch (e: StopBuildException) {
+            LOG.debug("Caught exception: " + e)
             throw e
         }
         catch (e: Throwable) {
+            LOG.debug("Caught exception: " + e)
+
             messageCollector.report(
                     CompilerMessageSeverity.EXCEPTION,
                     OutputMessageUtil.renderException(e),
