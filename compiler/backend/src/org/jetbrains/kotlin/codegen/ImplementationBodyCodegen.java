@@ -958,10 +958,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                                                 DefaultParameterValueLoader.DEFAULT, null);
 
         new DefaultParameterValueSubstitutor(state).generatePrimaryConstructorOverloadsIfNeeded(constructorDescriptor, v, kind, myClass);
-
-        if (isCompanionObject(descriptor)) {
-            context.recordSyntheticAccessorIfNeeded(constructorDescriptor, bindingContext);
-        }
     }
 
     private void generateSecondaryConstructor(@NotNull ConstructorDescriptor constructorDescriptor) {

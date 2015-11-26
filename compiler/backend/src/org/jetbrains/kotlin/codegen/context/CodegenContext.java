@@ -37,7 +37,6 @@ import org.jetbrains.org.objectweb.asm.Type;
 import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.getVisibilityAccessFlag;
-import static org.jetbrains.kotlin.resolve.BindingContext.NEED_SYNTHETIC_ACCESSOR;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PROTECTED;
 
@@ -521,13 +520,6 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         }
 
         return accessibleDescriptorIfNeeded(descriptor, superCallTarget, isInliningContext);
-    }
-
-    public void recordSyntheticAccessorIfNeeded(@NotNull CallableMemberDescriptor descriptor, @NotNull BindingContext bindingContext) {
-        if (hasThisDescriptor() && Boolean.TRUE.equals(bindingContext.get(NEED_SYNTHETIC_ACCESSOR, descriptor))) {
-            // Not a super call because neither constructors nor private members can be targets of super calls
-            accessibleDescriptorIfNeeded(descriptor, /* superCallTarget = */ null, false);
-        }
     }
 
     @SuppressWarnings("unchecked")

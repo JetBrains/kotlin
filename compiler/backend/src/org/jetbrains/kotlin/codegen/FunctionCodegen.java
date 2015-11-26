@@ -221,8 +221,6 @@ public class FunctionCodegen {
         }
 
         endVisit(mv, null, origin.getElement());
-
-        methodContext.recordSyntheticAccessorIfNeeded(functionDescriptor, bindingContext);
     }
 
     private void generateMethodAnnotations(
