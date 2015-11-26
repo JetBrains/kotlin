@@ -2558,6 +2558,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("inBinaryOperation.kt")
+                public void testInBinaryOperation() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/localVariable/inBinaryOperation.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("inClass.kt")
                 public void testInClass() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/localVariable/inClass.kt");
@@ -2573,6 +2579,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("inFunWithExpressionBody.kt")
                 public void testInFunWithExpressionBody() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/localVariable/inFunWithExpressionBody.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("inLabelRef.kt")
+                public void testInLabelRef() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/localVariable/inLabelRef.kt");
                     doTest(fileName);
                 }
 
@@ -2723,6 +2735,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("inBinaryOperation.kt")
+                public void testInBinaryOperation() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/inBinaryOperation.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("inClassInitializer.kt")
                 public void testInClassInitializer() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/inClassInitializer.kt");
@@ -2774,6 +2792,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("inGenFunInGenClass.kt")
                 public void testInGenFunInGenClass() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/inGenFunInGenClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("inLabelRef.kt")
+                public void testInLabelRef() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/inLabelRef.kt");
                     doTest(fileName);
                 }
 
@@ -3038,6 +3062,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("extensionRefInImport.kt")
                 public void testExtensionRefInImport() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/extensionRefInImport.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("inBinaryOperation.kt")
+                public void testInBinaryOperation() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/inBinaryOperation.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("inLabelRef.kt")
+                public void testInLabelRef() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/inLabelRef.kt");
                     doTest(fileName);
                 }
 

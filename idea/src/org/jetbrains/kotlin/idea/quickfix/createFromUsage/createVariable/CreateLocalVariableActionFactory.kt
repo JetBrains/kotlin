@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.CreateFromUsageFixBase
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.kotlin.idea.util.application.executeCommand
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
@@ -38,9 +37,8 @@ import java.util.*
 
 object CreateLocalVariableActionFactory: KotlinSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-        val refExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtSimpleNameExpression>()) ?: return null
+        val refExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtNameReferenceExpression>()) ?: return null
         if (refExpr.getQualifiedElement() != refExpr) return null
-        if (refExpr.getReferencedNameElementType() != KtTokens.IDENTIFIER) return null
 
         val propertyName = refExpr.getReferencedName()
 
@@ -54,7 +52,7 @@ object CreateLocalVariableActionFactory: KotlinSingleIntentionActionFactory() {
             override fun invoke(project: Project, editor: Editor?, file: KtFile) {
                 val assignment = refExpr.getAssignmentByLHS()
                 val varExpected = assignment != null
-                var originalElement = assignment ?: refExpr
+                var originalElement: KtExpression = assignment ?: refExpr
 
                 val actualContainer = when (container) {
                     is KtBlockExpression -> container
