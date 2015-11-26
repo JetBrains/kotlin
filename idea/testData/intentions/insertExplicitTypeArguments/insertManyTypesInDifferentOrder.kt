@@ -3,4 +3,4 @@ fun foo() {
       val z = <caret>bar("1", 1, 2, "x")
 }
 
-fun bar<R, K, T, V>(t: T, v: V, r: R, k: K): Int = 2
+fun <R, K, T, V> bar(t: T, v: V, r: R, k: K): Int = 2

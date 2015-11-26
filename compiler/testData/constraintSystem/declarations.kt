@@ -1,4 +1,4 @@
-fun foo<T, P, E>() = 42
+fun <T, P, E> foo() = 42
 
 interface A
 interface B : A

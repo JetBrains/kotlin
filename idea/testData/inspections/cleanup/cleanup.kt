@@ -64,7 +64,7 @@ class C {
     fun willBeInfix(i: Int) {}
 }
 
-fun typed<T>() {
+fun <T> typed() {
 }
 
 fun <T : Cloneable> withTypeParameters() where T : Comparable<T> {

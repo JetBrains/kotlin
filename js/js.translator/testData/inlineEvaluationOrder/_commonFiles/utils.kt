@@ -14,13 +14,13 @@ fun pullLog(): String {
     return string
 }
 
-fun fizz<T>(x: T): T {
+fun <T> fizz(x: T): T {
     log("fizz($x)")
     return x
 }
 
 inline
-fun buzz<T>(x: T): T {
+fun <T> buzz(x: T): T {
     log("buzz($x)")
     return x
 }

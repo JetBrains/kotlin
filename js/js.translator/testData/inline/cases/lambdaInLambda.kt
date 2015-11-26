@@ -4,7 +4,7 @@ package foo
 // CHECK_NOT_CALLED_IN_SCOPE: scope=multiplyBy2 function=multiplyBy2$f_0
 // CHECK_NOT_CALLED_IN_SCOPE: scope=multiplyBy2 function=run
 
-internal inline fun runLambdaInLambda<T>(noinline inner: (T) -> T, outer: ((T) -> T, T) -> T, arg: T): T {
+internal inline fun <T> runLambdaInLambda(noinline inner: (T) -> T, outer: ((T) -> T, T) -> T, arg: T): T {
     return outer(inner, arg)
 }
 

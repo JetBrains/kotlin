@@ -7,7 +7,7 @@ interface DataEx
 
 // SIBLING:
 class A<T: Data>(val t: T) where T: DataEx {
-    fun foo<V: Data>(v: V): Int {
+    fun <V: Data> foo(v: V): Int {
         return <selection>t.x + v.x</selection>
     }
 }

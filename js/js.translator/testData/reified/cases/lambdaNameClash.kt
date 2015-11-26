@@ -6,9 +6,9 @@ package foo
 class X
 class Y
 
-fun doRun<R>(fn: ()->R): R = fn()
+fun <R> doRun(fn: ()->R): R = fn()
 
-inline fun test<reified A, reified B>(x: Any, y: Any): Boolean =
+inline fun <reified A, reified B> test(x: Any, y: Any): Boolean =
         doRun {
             val isA = null
             x is A

@@ -8,7 +8,7 @@ class A {
 
 class B
 
-fun with<T>(o: T, body: T.() -> Unit) {
+fun <T> with(o: T, body: T.() -> Unit) {
     o.body()
 }
 

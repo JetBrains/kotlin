@@ -12,27 +12,27 @@ package foo
 // CHECK_HAS_NO_INLINE_METADATA: applyO_hiyix$
 
 inline
-public fun apply<T>(arg: T, func: (T)->T): T = func(arg)
+public fun <T> apply(arg: T, func: (T)->T): T = func(arg)
 
 public open class L {
     inline
-    protected fun applyL<T>(arg: T, func: (T)->T): T = func(arg)
+    protected fun <T> applyL(arg: T, func: (T)->T): T = func(arg)
 }
 
 public class M {
     inline
-    public fun applyM<T>(arg: T, func: (T)->T): T = func(arg)
+    public fun <T> applyM(arg: T, func: (T)->T): T = func(arg)
 }
 
 internal class N {
     inline
-    public fun applyN<T>(arg: T, func: (T)->T): T = func(arg)
+    public fun <T> applyN(arg: T, func: (T)->T): T = func(arg)
 }
 
 private object O {
     public object OInner {
         inline
-        public fun applyO<T>(arg: T, func: (T)->T): T = func(arg)
+        public fun <T> applyO(arg: T, func: (T)->T): T = func(arg)
     }
 }
 

@@ -1,6 +1,6 @@
 fun test() {
     class Test {
-        fun invoke<T>(a: Int) {}
+        fun <T> invoke(a: Int) {}
     }
     val test = Test()
     test<Int>(0)

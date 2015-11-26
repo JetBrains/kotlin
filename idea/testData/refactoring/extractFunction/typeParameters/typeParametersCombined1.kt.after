@@ -9,7 +9,7 @@ open class Data(val x: Int)
 // SIBLING:
 class A<T: Data>(val t: T) {
     inner class B<U: Data>(val u: U) {
-        fun foo<V: Data>(v: V): Int {
+        fun <V: Data> foo(v: V): Int {
             return i(this@A, this@B, v)
         }
     }

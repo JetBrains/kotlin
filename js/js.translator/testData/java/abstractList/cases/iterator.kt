@@ -7,7 +7,7 @@ class MyList<T>(vararg val data: T) : AbstractList<T>() {
     override val size: Int get() = data.size()
 }
 
-fun test<T>(expected: String, list: List<T>) {
+fun <T> test(expected: String, list: List<T>) {
     var s = ""
     for (e in list) {
         s += "$e,"

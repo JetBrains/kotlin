@@ -273,12 +273,13 @@ JetFile: Comparison.kt
   FUN
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('asMatchableComparison')
     TYPE_PARAMETER_LIST
       PsiElement(LT)('<')
       TYPE_PARAMETER
         PsiElement(IDENTIFIER)('T')
       PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('asMatchableComparison')
     VALUE_PARAMETER_LIST
       PsiElement(LPAR)('(')
       VALUE_PARAMETER

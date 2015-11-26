@@ -19,7 +19,7 @@ c<t>.
 
 //-----------
 class A<X> {
-    fun foo<Y>() {
+    fun <Y> foo() {
     }
 }
 

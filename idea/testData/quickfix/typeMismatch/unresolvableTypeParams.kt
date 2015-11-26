@@ -3,6 +3,6 @@ fun foo(n: Int) {
 
 }
 
-fun bar<T>(t: T) {
+fun <T> bar(t: T) {
     foo(<caret>t)
 }

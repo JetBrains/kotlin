@@ -422,20 +422,3 @@ PsiJetFileStubImpl[package=test]
             USER_TYPE:[isAbsoluteInRootPackage=false]
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Unit]
-      FUN:[fqName=test.TypeParams.withOwnParamExtensionAfterName, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, name=withOwnParamExtensionAfterName]
-        MODIFIER_LIST:[public final]
-        TYPE_PARAMETER_LIST:
-          TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=T1]
-        TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
-            REFERENCE_EXPRESSION:[referencedName=T1]
-        VALUE_PARAMETER_LIST:
-          VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p]
-            TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                REFERENCE_EXPRESSION:[referencedName=T1]
-        TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
-            USER_TYPE:[isAbsoluteInRootPackage=false]
-              REFERENCE_EXPRESSION:[referencedName=kotlin]
-            REFERENCE_EXPRESSION:[referencedName=Unit]

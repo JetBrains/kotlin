@@ -4,9 +4,9 @@ class A
 class B
 class C
 
-inline fun test<reified T, reified R>(x: Any): String = test1<R, T>(x)
+inline fun <reified T, reified R> test(x: Any): String = test1<R, T>(x)
 
-inline fun test1<reified R, reified T>(x: Any): String =
+inline fun <reified R, reified T> test1(x: Any): String =
     when (x) {
         is R -> "R"
         is T -> "T"

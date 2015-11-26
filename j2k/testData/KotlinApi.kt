@@ -29,7 +29,7 @@ public interface KotlinTrait {
 
 public fun globalFunction(s: String): String = s
 public fun nullableGlobalFunction(s: String?): String? = s
-public fun globalGenericFunction<T>(t: T): T = t
+public fun <T> globalGenericFunction(t: T): T = t
 
 public fun Int.extensionFunction(): String = toString()
 

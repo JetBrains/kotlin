@@ -65,20 +65,20 @@ public class KotlinOverloadTest extends KotlinLiteFixture {
                 "fun a() : Any");
 
         assertNotOverloadable(
-                "fun a<T1>() : T1",
-                "fun a<T>() : T");
+                "fun <T1> a() : T1",
+                "fun <T> a() : T");
 
         assertNotOverloadable(
-                "fun a<T1>(a : T1) : T1",
-                "fun a<T>(a : T) : T");
+                "fun <T1> a(a : T1) : T1",
+                "fun <T> a(a : T) : T");
 
         assertNotOverloadable(
-                "fun a<T1, X : T1>(a : T1) : T1",
-                "fun a<T, Y : T>(a : T) : T");
+                "fun <T1, X : T1> a(a : T1) : T1",
+                "fun <T, Y : T> a(a : T) : T");
 
         assertNotOverloadable(
-                "fun a<T1, X : T1>(a : T1) : T1",
-                "fun a<T, Y : T>(a : T) : Y");
+                "fun <T1, X : T1> a(a : T1) : T1",
+                "fun <T, Y : T> a(a : T) : Y");
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -100,50 +100,50 @@ public class KotlinOverloadTest extends KotlinLiteFixture {
                 "fun a(a : Int) : Int");
 
         assertNotOverloadable(
-                "fun a<T>(a : Int) : Int",
+                "fun <T> a(a : Int) : Int",
                 "fun a(a : Int) : Int");
 
         // TODO
         /*
         assertOverloadable(
-                "fun a<T1, X : T1>(a : T1) : T1",
-                "fun a<T, Y>(a : T) : T");
+                "fun <T1, X : T1> a(a : T1) : T1",
+                "fun <T, Y> a(a : T) : T");
         */
 
         assertOverloadable(
-                "fun a<T1, X : T1>(a : T1) : T1",
-                "fun a<T, Y : T>(a : Y) : T");
+                "fun <T1, X : T1> a(a : T1) : T1",
+                "fun <T, Y : T> a(a : Y) : T");
 
         assertNotOverloadable(
-                "fun a<T1, X : T1>(a : T1) : X",
-                "fun a<T, Y : T>(a : T) : T");
+                "fun <T1, X : T1> a(a : T1) : X",
+                "fun <T, Y : T> a(a : T) : T");
 
         // TODO
         /*
         assertNotOverloadable(
-                "fun a<T1, X : Array<out T1>>(a : Array<in T1>) : T1",
-                "fun a<T, Y : Array<out T>>(a : Array<in T>) : T");
+                "fun <T1, X : Array<out T1>> a(a : Array<in T1>) : T1",
+                "fun <T, Y : Array<out T>> a(a : Array<in T>) : T");
         */
 
         assertOverloadable(
-                "fun a<T1, X : Array<T1>>(a : Array<in T1>) : T1",
-                "fun a<T, Y : Array<out T>>(a : Array<in T>) : T");
+                "fun <T1, X : Array<T1>> a(a : Array<in T1>) : T1",
+                "fun <T, Y : Array<out T>> a(a : Array<in T>) : T");
 
         assertOverloadable(
-                "fun a<T1, X : Array<out T1>>(a : Array<in T1>) : T1",
-                "fun a<T, Y : Array<in T>>(a : Array<in T>) : T");
+                "fun <T1, X : Array<out T1>> a(a : Array<in T1>) : T1",
+                "fun <T, Y : Array<in T>> a(a : Array<in T>) : T");
 
         assertOverloadable(
-                "fun a<T1, X : Array<out T1>>(a : Array<in T1>) : T1",
-                "fun a<T, Y : Array<*>>(a : Array<in T>) : T");
+                "fun <T1, X : Array<out T1>> a(a : Array<in T1>) : T1",
+                "fun <T, Y : Array<*>> a(a : Array<in T>) : T");
 
         assertOverloadable(
-                "fun a<T1, X : Array<out T1>>(a : Array<in T1>) : T1",
-                "fun a<T, Y : Array<out T>>(a : Array<out T>) : T");
+                "fun <T1, X : Array<out T1>> a(a : Array<in T1>) : T1",
+                "fun <T, Y : Array<out T>> a(a : Array<out T>) : T");
 
         assertOverloadable(
-                "fun a<T1, X : Array<out T1>>(a : Array<*>) : T1",
-                "fun a<T, Y : Array<out T>>(a : Array<in T>) : T");
+                "fun <T1, X : Array<out T1>> a(a : Array<*>) : T1",
+                "fun <T, Y : Array<out T>> a(a : Array<in T>) : T");
 
         assertOverloadable(
                 "fun ff() : Int",

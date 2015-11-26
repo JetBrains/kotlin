@@ -2,4 +2,4 @@ fun foo() {
     <spot>bar("x")</spot>
 }
 
-fun bar<T>(t: T) : T = t
+fun <T> bar(t: T) : T = t

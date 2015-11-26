@@ -1,6 +1,6 @@
 fun test() {
     class Test {
-        fun invoke<T>(fn: () -> T) {}
+        fun <T> invoke(fn: () -> T) {}
     }
     val test = Test()
     test.i<caret>nvoke<Int> { 0 }

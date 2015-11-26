@@ -5,7 +5,7 @@
 
 package foo
 
-fun myRun<R>(f: () -> R) = f()
+fun <R> myRun(f: () -> R) = f()
 
 fun test0() {
     val a = aa@ 1

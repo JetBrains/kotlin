@@ -3,4 +3,4 @@ fun foo() {
     val x = <caret>bar<String>("x")
 }
 
-fun bar<T>(t: T): Int = 1
+fun <T> bar(t: T): Int = 1

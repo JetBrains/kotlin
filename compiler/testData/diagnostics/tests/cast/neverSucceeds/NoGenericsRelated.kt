@@ -8,7 +8,7 @@ class FC1: OC2(), T3
 interface T4: <!INTERFACE_WITH_SUPERCLASS!>OC1<!>
 interface T5: T2
 
-fun test<TP1: OC1, TP2: T2, TP3: OC2>(
+fun <TP1: OC1, TP2: T2, TP3: OC2> test(
     t2: T2,
     t4: T4,
     fc1: FC1,

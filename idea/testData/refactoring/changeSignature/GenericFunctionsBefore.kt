@@ -1,4 +1,4 @@
-fun foo<T: Any>(<caret>x1: T? = null, x2: Double, x3: ((T) -> T)?) {
+fun <T: Any> foo(<caret>x1: T? = null, x2: Double, x3: ((T) -> T)?) {
     foo(2, 3.5, null);
     val y1 = x1;
     val y2 = x2;

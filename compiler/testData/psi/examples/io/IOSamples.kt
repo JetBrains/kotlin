@@ -8,7 +8,7 @@ open class ICloseable {
 
 abstract class JavaCloseableWrapper(closeable : java.io.Closeable) : ICloseable(closeable)
 
-fun streamCopy<T>(from : IIterable<T>, to : IAdder<T>) {
+fun <T> streamCopy(from : IIterable<T>, to : IAdder<T>) {
   for (item in from) t.add(item)
 }
 

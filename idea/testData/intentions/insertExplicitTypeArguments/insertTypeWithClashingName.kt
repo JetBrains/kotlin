@@ -7,4 +7,4 @@ fun test() {
 
 fun foo(vararg x: String) = x
 
-fun bar<T>(vararg ts: T) {}
+fun <T> bar(vararg ts: T) {}

@@ -1,7 +1,7 @@
 // "Remove initializer from property" "true"
 package a
 
-public fun emptyList<T>(): List<T> = null!!
+public fun <T> emptyList(): List<T> = null!!
 
 class M {
     interface A {

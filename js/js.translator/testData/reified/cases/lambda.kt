@@ -25,7 +25,7 @@ fun <T> Array<T>.doFilter(fn: (T)->Boolean): List<T> {
     return filtered
 }
 
-inline fun<reified T> filterIsInstance(arrayOfAnys: Array<Any>): List<T> {
+inline fun <reified T> filterIsInstance(arrayOfAnys: Array<Any>): List<T> {
     return arrayOfAnys.doFilter { it is T }.map { it as T }
 }
 

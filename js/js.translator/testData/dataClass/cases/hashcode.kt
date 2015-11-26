@@ -9,7 +9,7 @@ data class Dat(val start: String, val end: String)
 
 class Obj(val start: String, val end: String)
 
-fun assertSomeNotEqual<T>(c: Iterable<T>) {
+fun <T> assertSomeNotEqual(c: Iterable<T>) {
     val it = c.iterator()
     val first = it.next()
     while (it.hasNext()) {
@@ -21,7 +21,7 @@ fun assertSomeNotEqual<T>(c: Iterable<T>) {
     throw Exception("All elements are the same: $first")
 }
 
-fun assertAllEqual<T>(c: Iterable<out T>) {
+fun <T> assertAllEqual(c: Iterable<out T>) {
     val it = c.iterator()
     val first = it.next()
     while (it.hasNext()) {

@@ -945,7 +945,7 @@ class ArraysTest {
 
     @test fun sortedWith() {
         val comparator = compareBy { it: Int -> it % 3 }.thenByDescending { it }
-        fun arrayData<A, T>(array: A, comparator: Comparator<T>) = ArraySortedChecker<A, T>(array, comparator)
+        fun <A, T> arrayData(array: A, comparator: Comparator<T>) = ArraySortedChecker<A, T>(array, comparator)
 
         arrayData(intArrayOf(0, 1, 2, 3, 4, 5), comparator)
                 .checkSorted<List<Int>>( { sortedWith(comparator) }, { sortedWith(comparator.reversed()) }, { iterator() })

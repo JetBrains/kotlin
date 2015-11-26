@@ -1,1 +1,1 @@
-fun foo<T : Any>(t: T) = t
+fun <T : Any> foo(t: T) = t

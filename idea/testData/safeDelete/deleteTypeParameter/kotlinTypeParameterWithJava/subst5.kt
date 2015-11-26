@@ -1,5 +1,5 @@
 class A<X> {
-    fun foo<Y, <caret>Z>() {
+    fun <Y, <caret>Z> foo() {
 
     }
 }

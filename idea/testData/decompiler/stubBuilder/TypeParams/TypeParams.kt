@@ -24,9 +24,6 @@ class TypeParams<in T1 : Any, out T2, T3 : (Int) -> Int, T4, T5 : Any?, T6 : T5,
     fun <T1> T1.withOwnParamExtension(p: T1) {
     }
 
-    fun T1.withOwnParamExtensionAfterName<T1>(p: T1) {
-    }
-
     val <G1> G1.withOwnParam: G1
         get() = throw IllegalStateException()
 

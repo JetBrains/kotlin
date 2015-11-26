@@ -1,7 +1,7 @@
 class U<A>
 
 interface T<A, B> {
-    fun foofoofoo<C>(a: List<C>, b: A?, c: U<B>): U<C>?
+    fun <C> foofoofoo(a: List<C>, b: A?, c: U<B>): U<C>?
 }
 
 abstract class T1<X, Y> : T<U<X>, U<Y>> {
@@ -17,7 +17,7 @@ abstract class T2<X> : T1<X, String>() {
 }
 
 class T3 : T2<Any>() {
-    override fun foofoofoo<D>(a: List<D>, b: U<Any>?, c: U<U<String>>): U<D>? {
+    override fun <D> foofoofoo(a: List<D>, b: U<Any>?, c: U<U<String>>): U<D>? {
         throw UnsupportedOperationException()
     }
 }

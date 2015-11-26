@@ -125,8 +125,8 @@ public class DebugTextByStubTest : LightCodeInsightFixtureTestCase() {
     fun testFunction() {
         function("fun foo()")
         function("fun <T> foo()")
-        function("fun foo<T>()")
-        function("fun foo<T, G>()")
+        function("fun <T> foo()")
+        function("fun <T, G> foo()")
         function("fun foo(a: Int, b: String)")
         function("fun Int.foo()")
         function("fun foo(): String")

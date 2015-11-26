@@ -2,7 +2,7 @@ fun maybeFoo(): String? {
     return "foo"
 }
 
-fun doSomething<T>(a: T) {}
+fun <T> doSomething(a: T) {}
 
 fun main(args: Array<String>) {
     val foo = maybeFoo()

@@ -1,9 +1,9 @@
 // SUGGESTED_NAMES: i, getA
 // PARAM_DESCRIPTOR: value-parameter val t: T defined in test
 // PARAM_TYPES: T
-fun foo<U>(u: U) = 1
+fun <U> foo(u: U) = 1
 
-fun test<T>(t: T) {
+fun <T> test(t: T) {
     val a = i(t)
 }
 

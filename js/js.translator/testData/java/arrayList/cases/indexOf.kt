@@ -2,7 +2,7 @@ package foo
 
 import java.util.ArrayList;
 
-fun test<T>(list: List<T>, elements: List<T>, expected: List<Int>, method: List<T>.(T) -> Int, methodName: String): String? {
+fun <T> test(list: List<T>, elements: List<T>, expected: List<Int>, method: List<T>.(T) -> Int, methodName: String): String? {
     for (i in 0..elements.size() - 1) {
         val actual = list.method(elements[i])
         if (actual != expected[i]) return "$methodName failed when find: ${elements[i]}, expected: ${expected[i]}, actual: $actual"

@@ -6,7 +6,7 @@
 // PARAM_DESCRIPTOR: value-parameter val b: B defined in foo
 // PARAM_DESCRIPTOR: var c: kotlin.Int defined in foo
 // SIBLING:
-fun foo<A: Any, B: A>(b: B): Int {
+fun <A: Any, B: A> foo(b: B): Int {
     var a: A? = null
     var c: Int = 1
 

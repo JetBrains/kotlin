@@ -5,4 +5,4 @@ fun foo() {
 
 fun baz(x: Int): Int = x
 
-fun bar<T>(t: T): Int = 1
+fun <T> bar(t: T): Int = 1

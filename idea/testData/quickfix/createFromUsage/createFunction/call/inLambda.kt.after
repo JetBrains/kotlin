@@ -1,6 +1,6 @@
 // "Create function 'foo'" "true"
 
-fun run<T>(f: () -> T) = f()
+fun <T> run(f: () -> T) = f()
 
 fun test() {
     run { foo() }

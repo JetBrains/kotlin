@@ -9,10 +9,10 @@ class B
 class C : A()
 
 interface TypePredicate {
-    fun invoke(x: Any): Boolean
+    operator fun invoke(x: Any): Boolean
 }
 
-inline fun typePredicate<reified T>(): TypePredicate =
+inline fun <reified T> typePredicate(): TypePredicate =
         object : TypePredicate {
             override fun invoke(x: Any): Boolean = x is T
         }

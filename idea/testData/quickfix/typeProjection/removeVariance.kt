@@ -1,2 +1,2 @@
 // "Remove 'out' modifier" "true"
-fun foo<out<caret> String>() { }
+fun <out<caret> String> foo() { }

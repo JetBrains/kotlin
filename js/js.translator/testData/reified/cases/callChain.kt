@@ -6,9 +6,9 @@ package foo
 class A
 class B
 
-inline fun test<reified T>(x: Any): Boolean = test1<T>(x)
+inline fun <reified T> test(x: Any): Boolean = test1<T>(x)
 
-inline fun test1<reified R>(x: Any): Boolean = x is R
+inline fun <reified R> test1(x: Any): Boolean = x is R
 
 fun box(): String {
     assertEquals(true, test<A>(A()), "test<A>(A())")

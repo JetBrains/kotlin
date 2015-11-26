@@ -1,5 +1,5 @@
 class A<<caret>X> {
-    fun foo<Y, Z>() where Y: X {
+    fun <Y, Z> foo() where Y: X {
 
     }
 }

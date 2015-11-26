@@ -4,14 +4,14 @@
 
 package i
 
-fun foo<R, T: List<R>>(r: R, list: T) {}
+fun <R, T: List<R>> foo(r: R, list: T) {}
 
 fun test1(i: Int, collection: Collection<Int>) {
     foo(i, collection) //error
 }
 
 //--------------
-fun bar<V : U, U>(v: V, u: MutableSet<U>) = u
+fun <V : U, U> bar(v: V, u: MutableSet<U>) = u
 
 fun test2(a: Any, s: MutableSet<String>) {
     bar(a, s) //error
@@ -21,7 +21,7 @@ fun test2(a: Any, s: MutableSet<String>) {
 interface A
 class B
 
-fun baz<T: R, R: B>(t: T, r: R) where T: A {
+fun <T: R, R: B> baz(t: T, r: R) where T: A {
 
 }
 

@@ -2,7 +2,7 @@ package test
 
 class MembersReferenceOuterTP<P> {
     inner class Inner {
-        fun f<Q : P>() {}
+        fun <Q : P> f() {}
         fun g(p: P): P = null!!
 
         val v: P = null!!

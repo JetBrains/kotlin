@@ -3,6 +3,6 @@ fun foo() {
     bar<String> <caret>{ it.toString() }
 }
 
-fun bar<T>(a: (Int)->T): T {
+fun <T> bar(a: (Int)->T): T {
     return a(1)
 }
