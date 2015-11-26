@@ -765,13 +765,6 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             v.invokevirtual(loopRangeType.getInternalName(), getterName, "()" + elementType.getDescriptor(), false);
             v.store(varToStore, elementType);
         }
-
-        protected void generateRangeOrProgressionBoxedProperty(Type loopRangeType, String getterName, Type elementType, int varToStore) {
-            Type boxedType = boxType(elementType);
-            v.invokevirtual(loopRangeType.getInternalName(), getterName, "()" + boxedType.getDescriptor(), false);
-            StackValue.coerce(boxedType, elementType, v);
-            v.store(varToStore, elementType);
-        }
     }
 
     private void generateLoopBody(@Nullable KtExpression body) {
@@ -1084,7 +1077,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
             generateRangeOrProgressionProperty(asmLoopRangeType, "getFirst", asmElementType, loopParameterVar);
             generateRangeOrProgressionProperty(asmLoopRangeType, "getLast", asmElementType, endVar);
-            generateRangeOrProgressionBoxedProperty(asmLoopRangeType, "getIncrement", incrementType, incrementVar);
+            generateRangeOrProgressionProperty(asmLoopRangeType, "getStep", incrementType, incrementVar);
         }
 
         @Override

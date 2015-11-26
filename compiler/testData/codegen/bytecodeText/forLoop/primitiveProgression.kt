@@ -8,4 +8,4 @@ fun f() {
 // 0 iterator
 // 2 getFirst
 // 2 getLast
-// 2 getIncrement
+// 2 getStep
