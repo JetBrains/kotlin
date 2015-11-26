@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import java.util.*
 
-private val DECLARATION_KEYWORDS = listOf("interface", "class", "enum class", "object", "fun", "val", "var")
+private val DECLARATION_KEYWORDS = listOf("interface", "class", "enum class", "object", "fun", "operator fun", "val", "var")
 private val DECLARATION_STARTS_WITH = DECLARATION_KEYWORDS.map { it + " " }
 
 abstract class AbstractLookupTrackerTest : AbstractIncrementalJpsTest(
