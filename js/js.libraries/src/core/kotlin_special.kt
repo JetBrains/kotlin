@@ -285,7 +285,7 @@ public inline fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArr
  * Returns an array containing all elements of the original array and then the given [element].
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun <T> Array<out T>.plus(element: T): Array<T> {
+public inline operator fun <T> Array<out T>.plus(element: T): Array<T> {
     return this.asDynamic().concat(arrayOf(element))
 }
 
@@ -293,7 +293,7 @@ public inline fun <T> Array<out T>.plus(element: T): Array<T> {
  * Returns an array containing all elements of the original array and then the given [element].
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun BooleanArray.plus(element: Boolean): BooleanArray {
+public inline operator fun BooleanArray.plus(element: Boolean): BooleanArray {
     return this.asDynamic().concat(arrayOf(element))
 }
 
@@ -301,7 +301,7 @@ public inline fun BooleanArray.plus(element: Boolean): BooleanArray {
  * Returns an array containing all elements of the original array and then the given [element].
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun ByteArray.plus(element: Byte): ByteArray {
+public inline operator fun ByteArray.plus(element: Byte): ByteArray {
     return this.asDynamic().concat(arrayOf(element))
 }
 
@@ -309,7 +309,7 @@ public inline fun ByteArray.plus(element: Byte): ByteArray {
  * Returns an array containing all elements of the original array and then the given [element].
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun CharArray.plus(element: Char): CharArray {
+public inline operator fun CharArray.plus(element: Char): CharArray {
     return this.asDynamic().concat(arrayOf(element))
 }
 
@@ -317,7 +317,7 @@ public inline fun CharArray.plus(element: Char): CharArray {
  * Returns an array containing all elements of the original array and then the given [element].
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun DoubleArray.plus(element: Double): DoubleArray {
+public inline operator fun DoubleArray.plus(element: Double): DoubleArray {
     return this.asDynamic().concat(arrayOf(element))
 }
 
@@ -325,7 +325,7 @@ public inline fun DoubleArray.plus(element: Double): DoubleArray {
  * Returns an array containing all elements of the original array and then the given [element].
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun FloatArray.plus(element: Float): FloatArray {
+public inline operator fun FloatArray.plus(element: Float): FloatArray {
     return this.asDynamic().concat(arrayOf(element))
 }
 
@@ -333,7 +333,7 @@ public inline fun FloatArray.plus(element: Float): FloatArray {
  * Returns an array containing all elements of the original array and then the given [element].
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun IntArray.plus(element: Int): IntArray {
+public inline operator fun IntArray.plus(element: Int): IntArray {
     return this.asDynamic().concat(arrayOf(element))
 }
 
@@ -341,7 +341,7 @@ public inline fun IntArray.plus(element: Int): IntArray {
  * Returns an array containing all elements of the original array and then the given [element].
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun LongArray.plus(element: Long): LongArray {
+public inline operator fun LongArray.plus(element: Long): LongArray {
     return this.asDynamic().concat(arrayOf(element))
 }
 
@@ -349,70 +349,70 @@ public inline fun LongArray.plus(element: Long): LongArray {
  * Returns an array containing all elements of the original array and then the given [element].
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun ShortArray.plus(element: Short): ShortArray {
+public inline operator fun ShortArray.plus(element: Short): ShortArray {
     return this.asDynamic().concat(arrayOf(element))
 }
 
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
-public fun <T> Array<out T>.plus(elements: Collection<T>): Array<T> {
+public operator fun <T> Array<out T>.plus(elements: Collection<T>): Array<T> {
     return arrayPlusCollection(this, elements)
 }
 
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
-public fun BooleanArray.plus(elements: Collection<Boolean>): BooleanArray {
+public operator fun BooleanArray.plus(elements: Collection<Boolean>): BooleanArray {
     return arrayPlusCollection(this, elements)
 }
 
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
-public fun ByteArray.plus(elements: Collection<Byte>): ByteArray {
+public operator fun ByteArray.plus(elements: Collection<Byte>): ByteArray {
     return arrayPlusCollection(this, elements)
 }
 
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
-public fun CharArray.plus(elements: Collection<Char>): CharArray {
+public operator fun CharArray.plus(elements: Collection<Char>): CharArray {
     return arrayPlusCollection(this, elements)
 }
 
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
-public fun DoubleArray.plus(elements: Collection<Double>): DoubleArray {
+public operator fun DoubleArray.plus(elements: Collection<Double>): DoubleArray {
     return arrayPlusCollection(this, elements)
 }
 
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
-public fun FloatArray.plus(elements: Collection<Float>): FloatArray {
+public operator fun FloatArray.plus(elements: Collection<Float>): FloatArray {
     return arrayPlusCollection(this, elements)
 }
 
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
-public fun IntArray.plus(elements: Collection<Int>): IntArray {
+public operator fun IntArray.plus(elements: Collection<Int>): IntArray {
     return arrayPlusCollection(this, elements)
 }
 
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
-public fun LongArray.plus(elements: Collection<Long>): LongArray {
+public operator fun LongArray.plus(elements: Collection<Long>): LongArray {
     return arrayPlusCollection(this, elements)
 }
 
 /**
  * Returns an array containing all elements of the original array and then all elements of the given [elements] collection.
  */
-public fun ShortArray.plus(elements: Collection<Short>): ShortArray {
+public operator fun ShortArray.plus(elements: Collection<Short>): ShortArray {
     return arrayPlusCollection(this, elements)
 }
 
@@ -420,7 +420,7 @@ public fun ShortArray.plus(elements: Collection<Short>): ShortArray {
  * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun <T> Array<out T>.plus(elements: Array<out T>): Array<T> {
+public inline operator fun <T> Array<out T>.plus(elements: Array<out T>): Array<T> {
     return this.asDynamic().concat(elements)
 }
 
@@ -428,7 +428,7 @@ public inline fun <T> Array<out T>.plus(elements: Array<out T>): Array<T> {
  * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun BooleanArray.plus(elements: BooleanArray): BooleanArray {
+public inline operator fun BooleanArray.plus(elements: BooleanArray): BooleanArray {
     return this.asDynamic().concat(elements)
 }
 
@@ -436,7 +436,7 @@ public inline fun BooleanArray.plus(elements: BooleanArray): BooleanArray {
  * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun ByteArray.plus(elements: ByteArray): ByteArray {
+public inline operator fun ByteArray.plus(elements: ByteArray): ByteArray {
     return this.asDynamic().concat(elements)
 }
 
@@ -444,7 +444,7 @@ public inline fun ByteArray.plus(elements: ByteArray): ByteArray {
  * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun CharArray.plus(elements: CharArray): CharArray {
+public inline operator fun CharArray.plus(elements: CharArray): CharArray {
     return this.asDynamic().concat(elements)
 }
 
@@ -452,7 +452,7 @@ public inline fun CharArray.plus(elements: CharArray): CharArray {
  * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun DoubleArray.plus(elements: DoubleArray): DoubleArray {
+public inline operator fun DoubleArray.plus(elements: DoubleArray): DoubleArray {
     return this.asDynamic().concat(elements)
 }
 
@@ -460,7 +460,7 @@ public inline fun DoubleArray.plus(elements: DoubleArray): DoubleArray {
  * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun FloatArray.plus(elements: FloatArray): FloatArray {
+public inline operator fun FloatArray.plus(elements: FloatArray): FloatArray {
     return this.asDynamic().concat(elements)
 }
 
@@ -468,7 +468,7 @@ public inline fun FloatArray.plus(elements: FloatArray): FloatArray {
  * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun IntArray.plus(elements: IntArray): IntArray {
+public inline operator fun IntArray.plus(elements: IntArray): IntArray {
     return this.asDynamic().concat(elements)
 }
 
@@ -476,7 +476,7 @@ public inline fun IntArray.plus(elements: IntArray): IntArray {
  * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun LongArray.plus(elements: LongArray): LongArray {
+public inline operator fun LongArray.plus(elements: LongArray): LongArray {
     return this.asDynamic().concat(elements)
 }
 
@@ -484,7 +484,7 @@ public inline fun LongArray.plus(elements: LongArray): LongArray {
  * Returns an array containing all elements of the original array and then all elements of the given [elements] array.
  */
 @Suppress("NOTHING_TO_INLINE")
-public inline fun ShortArray.plus(elements: ShortArray): ShortArray {
+public inline operator fun ShortArray.plus(elements: ShortArray): ShortArray {
     return this.asDynamic().concat(elements)
 }
 
