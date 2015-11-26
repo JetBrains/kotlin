@@ -361,6 +361,6 @@ public abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : 
     }
 
     protected fun recordLookup(name: Name, from: LookupLocation) {
-        c.components.lookupTracker.record(from, ownerDescriptor, this, name)
+        c.components.lookupTracker.record(from, ownerDescriptor, name)
     }
 }
