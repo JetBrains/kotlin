@@ -146,7 +146,8 @@ class FunctionInfo(name: String,
                    possibleContainers: List<KtElement> = Collections.emptyList(),
                    override val parameterInfos: List<ParameterInfo> = Collections.emptyList(),
                    typeParameterInfos: List<TypeInfo> = Collections.emptyList(),
-                   val isOperator: Boolean = false
+                   val isOperator: Boolean = false,
+                   val isInfix: Boolean = false
 ) : CallableInfo(name, receiverTypeInfo, returnTypeInfo, possibleContainers, typeParameterInfos) {
     override val kind: CallableKind get() = CallableKind.FUNCTION
 }

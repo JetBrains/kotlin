@@ -463,7 +463,8 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         }
                         if (callableInfo is FunctionInfo) {
                             val operatorModifier = if (callableInfo.isOperator) "operator " else ""
-                            psiFactory.createFunction("${modifiers}${operatorModifier}fun<> $header $body")
+                            val infixModifier = if (callableInfo.isInfix) "infix " else ""
+                            psiFactory.createFunction("$modifiers$infixModifier${operatorModifier}fun<> $header $body")
                         }
                         else {
                             psiFactory.createSecondaryConstructor("${modifiers}constructor$paramList $body")
