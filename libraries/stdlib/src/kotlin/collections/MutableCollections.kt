@@ -35,10 +35,10 @@ public fun <@kotlin.internal.OnlyInputTypes T> MutableCollection<out T>.remove(e
 @Deprecated("Collection and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("remove(element as Any?)"))
 public inline fun <E> MutableCollection<E>.removeRaw(element: Any?): Boolean = remove(element)
 
-@Deprecated("Collection and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("remove(element as Any?)"))
+@Deprecated("Collection and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("remove(element as T)"))
 @kotlin.jvm.JvmName("removeAny")
 @kotlin.internal.LowPriorityInOverloadResolution
-public fun <E> MutableCollection<E>.remove(element: Any?): Boolean = remove(element)
+public fun <T> MutableCollection<out T>.remove(element: T): Boolean = remove(element)
 
 /**
  * Removes all of this collection's elements that are also contained in the specified collection.
@@ -102,17 +102,17 @@ public fun <E> MutableList<E>.remove(index: Int): E = removeAt(index)
 @Deprecated("Use property 'length' instead.", ReplaceWith("length"))
 public fun CharSequence.length(): Int = length
 
-@Deprecated("Map and key have incompatible types. Upcast key to Any? if you're sure.", ReplaceWith("get(key as Any?)"))
+@Deprecated("Map and key have incompatible types. Upcast key to Any? if you're sure.", ReplaceWith("get(key as K)"))
 @kotlin.internal.LowPriorityInOverloadResolution
-public inline operator fun <K, V> Map<K, V>.get(key: Any?): V? = get(key)
+public inline operator fun <K, V> Map<out K, V>.get(key: K): V? = get(key)
 
-@Deprecated("Map and key have incompatible types. Upcast key to Any? if you're sure.", ReplaceWith("containsKey(key as Any?)"))
+@Deprecated("Map and key have incompatible types. Upcast key to Any? if you're sure.", ReplaceWith("containsKey(key as K)"))
 @kotlin.internal.LowPriorityInOverloadResolution
-public inline fun <K, V> Map<K, V>.containsKey(key: Any?): Boolean = containsKey(key)
+public inline fun <K, V> Map<out K, V>.containsKey(key: K): Boolean = containsKey(key)
 
-@Deprecated("Map and value have incompatible types. Upcast value to Any? if you're sure.", ReplaceWith("containsValue(value as Any?)"))
+@Deprecated("Map and value have incompatible types. Upcast value to Any? if you're sure.", ReplaceWith("containsValue(value as V)"))
 @kotlin.internal.LowPriorityInOverloadResolution
-public inline fun <K, V> Map<K, V>.containsValue(value: Any?): Boolean = containsValue(value as Any?)
+public inline fun <K, V> Map<K, V>.containsValue(value: V): Boolean = containsValue(value as Any?)
 
 @Deprecated("Use property 'keys' instead.", ReplaceWith("keys"))
 public inline fun <K, V> Map<K, V>.keySet(): Set<K> = keys

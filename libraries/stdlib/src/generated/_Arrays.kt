@@ -438,11 +438,11 @@ public operator fun ShortArray.contains(element: Short): Boolean {
 /**
  * Returns `true` if [element] is found in the collection.
  */
-@Deprecated("Array and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("contains(element as Any?)"))
+@Deprecated("Array and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("contains(element as T)"))
 @kotlin.jvm.JvmName("containsAny")
 @kotlin.internal.LowPriorityInOverloadResolution
 public operator fun <T> Array<out T>.contains(element: T): Boolean {
-    return contains(element as Any?)
+    return contains(element as T)
 }
 
 /**
@@ -1321,12 +1321,12 @@ public fun ShortArray.indexOf(element: Short): Int {
 /**
  * Returns first index of [element], or -1 if the collection does not contain element.
  */
-@Deprecated("Array and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("indexOf(element as Any?)"))
+@Deprecated("Array and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("indexOf(element as T)"))
 @kotlin.jvm.JvmName("indexOfAny")
 @kotlin.internal.LowPriorityInOverloadResolution
 @Suppress("NOTHING_TO_INLINE")
 public fun <T> Array<out T>.indexOf(element: T): Int {
-    return indexOf(element as Any?)
+    return indexOf(element as T)
 }
 
 /**
@@ -1872,12 +1872,12 @@ public fun ShortArray.lastIndexOf(element: Short): Int {
 /**
  * Returns last index of [element], or -1 if the collection does not contain element.
  */
-@Deprecated("Array and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("lastIndexOf(element as Any?)"))
+@Deprecated("Array and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("lastIndexOf(element as T)"))
 @kotlin.jvm.JvmName("lastIndexOfAny")
 @kotlin.internal.LowPriorityInOverloadResolution
 @Suppress("NOTHING_TO_INLINE")
 public fun <T> Array<out T>.lastIndexOf(element: T): Int {
-    return lastIndexOf(element as Any?)
+    return lastIndexOf(element as T)
 }
 
 /**

@@ -64,11 +64,11 @@ public operator fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.contains(ele
 /**
  * Returns `true` if [element] is found in the collection.
  */
-@Deprecated("Collection and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("contains(element as Any?)"))
+@Deprecated("Collection and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("contains(element as T)"))
 @kotlin.jvm.JvmName("containsAny")
 @kotlin.internal.LowPriorityInOverloadResolution
 public operator fun <T> Iterable<T>.contains(element: T): Boolean {
-    return contains(element as Any?)
+    return contains(element as T)
 }
 
 /**
@@ -281,23 +281,23 @@ public fun <@kotlin.internal.OnlyInputTypes T> List<T>.indexOf(element: T): Int 
 /**
  * Returns first index of [element], or -1 if the collection does not contain element.
  */
-@Deprecated("Collection and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("indexOf(element as Any?)"))
+@Deprecated("Collection and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("indexOf(element as T)"))
 @kotlin.jvm.JvmName("indexOfAny")
 @kotlin.internal.LowPriorityInOverloadResolution
 @Suppress("NOTHING_TO_INLINE")
 public fun <T> Iterable<T>.indexOf(element: T): Int {
-    return indexOf(element as Any?)
+    return indexOf(element as T)
 }
 
 /**
  * Returns first index of [element], or -1 if the collection does not contain element.
  */
-@Deprecated("List and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("indexOf(element as Any?)"))
+@Deprecated("List and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("indexOf(element as T)"))
 @kotlin.jvm.JvmName("indexOfAny")
 @kotlin.internal.LowPriorityInOverloadResolution
 @Suppress("NOTHING_TO_INLINE")
 public fun <T> List<T>.indexOf(element: T): Int {
-    return indexOf(element as Any?)
+    return indexOf(element as T)
 }
 
 /**
@@ -461,23 +461,23 @@ public fun <@kotlin.internal.OnlyInputTypes T> List<T>.lastIndexOf(element: T): 
 /**
  * Returns last index of [element], or -1 if the collection does not contain element.
  */
-@Deprecated("Collection and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("lastIndexOf(element as Any?)"))
+@Deprecated("Collection and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("lastIndexOf(element as T)"))
 @kotlin.jvm.JvmName("lastIndexOfAny")
 @kotlin.internal.LowPriorityInOverloadResolution
 @Suppress("NOTHING_TO_INLINE")
 public fun <T> Iterable<T>.lastIndexOf(element: T): Int {
-    return lastIndexOf(element as Any?)
+    return lastIndexOf(element as T)
 }
 
 /**
  * Returns last index of [element], or -1 if the collection does not contain element.
  */
-@Deprecated("List and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("lastIndexOf(element as Any?)"))
+@Deprecated("List and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("lastIndexOf(element as T)"))
 @kotlin.jvm.JvmName("lastIndexOfAny")
 @kotlin.internal.LowPriorityInOverloadResolution
 @Suppress("NOTHING_TO_INLINE")
 public fun <T> List<T>.lastIndexOf(element: T): Int {
-    return lastIndexOf(element as Any?)
+    return lastIndexOf(element as T)
 }
 
 /**

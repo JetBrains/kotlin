@@ -34,7 +34,7 @@ fun elements(): List<GenericFunction> {
         only(Iterables, Sequences, ArraysOfObjects)
         doc { "Returns `true` if [element] is found in the collection." }
         returns("Boolean")
-        deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure.", "contains(element as Any?)") } }
+        deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure.", "contains(element as T)") } }
         annotations("""
             @kotlin.jvm.JvmName("containsAny")
             @kotlin.internal.LowPriorityInOverloadResolution
@@ -109,7 +109,7 @@ fun elements(): List<GenericFunction> {
         only(Iterables, Sequences, ArraysOfObjects, Lists)
         doc { "Returns first index of [element], or -1 if the collection does not contain element." }
         returns("Int")
-        deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure.", "indexOf(element as Any?)") } }
+        deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure.", "indexOf(element as T)") } }
         annotations("""
             @kotlin.jvm.JvmName("indexOfAny")
             @kotlin.internal.LowPriorityInOverloadResolution
@@ -187,7 +187,7 @@ fun elements(): List<GenericFunction> {
         only(Iterables, Sequences, ArraysOfObjects, Lists)
         doc { "Returns last index of [element], or -1 if the collection does not contain element." }
         returns("Int")
-        deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure.", "lastIndexOf(element as Any?)") } }
+        deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure.", "lastIndexOf(element as T)") } }
         annotations("""
             @kotlin.jvm.JvmName("lastIndexOfAny")
             @kotlin.internal.LowPriorityInOverloadResolution
