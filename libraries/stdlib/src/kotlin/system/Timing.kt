@@ -1,10 +1,10 @@
-@file:kotlin.jvm.JvmName("TimingUtilsKt")
-package kotlin.util
+@file:kotlin.jvm.JvmName("TimingKt")
+package kotlin.system
 
 /**
  * Executes the given block and returns elapsed time in milliseconds.
  */
-public fun measureTimeMillis(block: () -> Unit) : Long {
+public inline fun measureTimeMillis(block: () -> Unit) : Long {
     val start = System.currentTimeMillis()
     block()
     return System.currentTimeMillis() - start
@@ -13,7 +13,7 @@ public fun measureTimeMillis(block: () -> Unit) : Long {
 /**
  * Executes the given block and returns elapsed time in nanoseconds.
  */
-public fun measureTimeNano(block: () -> Unit) : Long {
+public inline fun measureTimeNano(block: () -> Unit) : Long {
     val start = System.nanoTime()
     block()
     return System.nanoTime() - start

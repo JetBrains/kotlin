@@ -1,5 +1,5 @@
 @file:kotlin.jvm.JvmName("MapAccessorsKt")
-package kotlin.properties
+package kotlin.collections
 
 import kotlin.reflect.KProperty
 import kotlin.internal.Exact
