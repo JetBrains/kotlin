@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.math.BigInteger
 import java.util.*
@@ -340,8 +341,26 @@ private class ConstantExpressionEvaluatorVisitor(
         else null
     }
 
-    override fun visitBinaryWithTypeRHSExpression(expression: KtBinaryExpressionWithTypeRHS, expectedType: KotlinType?): CompileTimeConstant<*>? =
-            evaluate(expression.getLeft(), expectedType)
+    override fun visitBinaryWithTypeRHSExpression(expression: KtBinaryExpressionWithTypeRHS, expectedType: KotlinType?): CompileTimeConstant<*>? {
+        val compileTimeConstant = evaluate(expression.left, expectedType)
+        if (compileTimeConstant != null) {
+            if (expectedType != null && !TypeUtils.noExpectedType(expectedType)) {
+                val constantType = when(compileTimeConstant) {
+                    is TypedCompileTimeConstant<*> ->
+                            compileTimeConstant.type
+                    is IntegerValueTypeConstant ->
+                        compileTimeConstant.getType(expectedType)
+                    else ->
+                            throw IllegalStateException("Unexpected compileTimeConstant class: ${compileTimeConstant.javaClass.canonicalName}")
+
+                }
+                if (!constantType.isSubtypeOf(expectedType)) return null
+
+            }
+        }
+
+        return compileTimeConstant
+    }
 
     override fun visitBinaryExpression(expression: KtBinaryExpression, expectedType: KotlinType?): CompileTimeConstant<*>? {
         val leftExpression = expression.getLeft() ?: return null
