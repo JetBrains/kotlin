@@ -32,8 +32,8 @@ public fun <T> CompareContext<List<T>>.listBehavior() {
 
     propertyFails { this[size] }
 
-    propertyEquals { (this as List<T?>).indexOf(elementAtOrNull(0)) }
-    propertyEquals { (this as List<T?>).lastIndexOf(elementAtOrNull(0)) }
+    propertyEquals { indexOf(elementAtOrNull(0)) }
+    propertyEquals { lastIndexOf(elementAtOrNull(0)) }
 
     propertyFails { subList(0, size + 1)}
     propertyFails { subList(-1, 0)}
@@ -84,14 +84,14 @@ public fun <K, V> CompareContext<Map<K, V>>.mapBehavior() {
     propertyEquals { size }
     propertyEquals { isEmpty() }
 
-    (object {}).let { propertyEquals { containsKey(it)}  }
+    (object {}).let { propertyEquals { containsKey(it as Any?) }  }
 
     if (expected.isEmpty().not())
         propertyEquals { contains(keys.first()) }
 
-    propertyEquals { containsKeyRaw(keys.firstOrNull()) }
-    propertyEquals { containsValueRaw(values.firstOrNull()) }
-    propertyEquals { getRaw(null) }
+    propertyEquals { containsKey(keys.firstOrNull()) }
+    propertyEquals { containsValue(values.firstOrNull()) }
+    propertyEquals { get(null as Any?) }
 
     compareProperty( { keys }, { setBehavior("keySet") } )
     compareProperty( { entries }, { setBehavior("entrySet") } )
@@ -111,8 +111,8 @@ public fun <T> CompareContext<Collection<T>>.collectionBehavior(objectName: Stri
     propertyEquals (prefix + "size") { size }
     propertyEquals (prefix + "isEmpty") { isEmpty() }
 
-    (object {}).let { propertyEquals { containsRaw(it)}  }
-    propertyEquals { contains<T?>(firstOrNull()) }
+    (object {}).let { propertyEquals { contains(it as Any?) }  }
+    propertyEquals { contains(firstOrNull()) }
     propertyEquals { containsAll(this) }
 }
 

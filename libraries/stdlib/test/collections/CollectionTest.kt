@@ -4,6 +4,7 @@ import java.util.*
 import kotlin.test.*
 import org.junit.Test as test
 import test.collections.behaviors.*
+import java.io.Serializable
 
 class CollectionTest {
 
