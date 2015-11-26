@@ -5,9 +5,9 @@
         <extensionPoint name="defaultErrorMessages"
                         interface="org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages$Extension"/>
         <extensionPoint name="suppressStringProvider"
-                        interface="org.jetbrains.kotlin.resolve.diagnostics.DiagnosticsWithSuppression$SuppressStringProvider"/>
+                        interface="org.jetbrains.kotlin.resolve.diagnostics.SuppressStringProvider"/>
         <extensionPoint name="diagnosticSuppressor"
-                        interface="org.jetbrains.kotlin.resolve.diagnostics.DiagnosticsWithSuppression$DiagnosticSuppressor"/>
+                        interface="org.jetbrains.kotlin.resolve.diagnostics.DiagnosticSuppressor"/>
         <extensionPoint name="externalDeclarationsProvider"
                         interface="org.jetbrains.kotlin.extensions.ExternalDeclarationsProvider"
                         area="IDEA_PROJECT"/>

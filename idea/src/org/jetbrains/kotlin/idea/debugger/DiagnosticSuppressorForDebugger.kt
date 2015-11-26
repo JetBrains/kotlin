@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
-import org.jetbrains.kotlin.resolve.diagnostics.DiagnosticsWithSuppression
+import org.jetbrains.kotlin.resolve.diagnostics.DiagnosticSuppressor
 
-public class DiagnosticSuppressorForDebugger : DiagnosticsWithSuppression.DiagnosticSuppressor {
+public class DiagnosticSuppressorForDebugger : DiagnosticSuppressor {
     override fun isSuppressed(diagnostic: Diagnostic): Boolean {
         val element = diagnostic.getPsiElement()
         val containingFile = element.getContainingFile()

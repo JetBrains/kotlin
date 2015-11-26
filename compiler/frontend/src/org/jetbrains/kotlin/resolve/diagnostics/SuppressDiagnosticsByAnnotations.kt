@@ -37,7 +37,7 @@ public val PROPERTY_NOT_INITIALIZED_ERRORS: List<DiagnosticFactory0<KtProperty>>
 public abstract class SuppressDiagnosticsByAnnotations(
         diagnosticsToSuppress: List<DiagnosticFactory<out Diagnostic>>,
         vararg annotationsFqName: FqName
-) : DiagnosticsWithSuppression.SuppressStringProvider {
+) : SuppressStringProvider {
 
     private val annotationsFqName = annotationsFqName
     private val stringsToSuppress = diagnosticsToSuppress.map { it.getName().toLowerCase() }
