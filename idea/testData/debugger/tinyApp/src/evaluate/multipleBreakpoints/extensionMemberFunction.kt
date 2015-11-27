@@ -14,7 +14,7 @@ class MemberClass {
 
         with(extClass) {
             // EXPRESSION: testPublic()
-            // RESULT: Following declarations are unavailable in debug scope: testPublic
+            // RESULT: 1: I
             //Breakpoint!
             testPublic()
         }
@@ -26,7 +26,7 @@ class MemberClass {
 
         with(extClass) {
             // EXPRESSION: testPrivate()
-            // RESULT: Following declarations are unavailable in debug scope: testPrivate
+            // RESULT: 1: I
             //Breakpoint!
             testPrivate()
         }
@@ -36,22 +36,22 @@ class MemberClass {
 
     fun ExtClass.testExtMember() {
         // EXPRESSION: testPublic()
-        // RESULT: Following declarations are unavailable in debug scope: testPublic
+        // RESULT: 1: I
         //Breakpoint!
         testPublic()
 
         // EXPRESSION: this.testPublic()
-        // RESULT: A receiver of type extensionMemberFunction.ExtClass is required
+        // RESULT: 1: I
         //Breakpoint!
         this.testPublic()
 
         // EXPRESSION: testPrivate()
-        // RESULT: Following declarations are unavailable in debug scope: testPrivate
+        // RESULT: 1: I
         //Breakpoint!
         testPrivate()
 
         // EXPRESSION: this.testPrivate()
-        // RESULT: A receiver of type extensionMemberFunction.ExtClass is required
+        // RESULT: 1: I
         //Breakpoint!
         this.testPrivate()
     }
@@ -71,7 +71,7 @@ class MemberClass {
 
             with(extClass) {
                 // EXPRESSION: testCompPublic()
-                // RESULT: Following declarations are unavailable in debug scope: testCompPublic
+                // RESULT: 1: I
                 //Breakpoint!
                 testCompPublic()
             }
@@ -83,7 +83,7 @@ class MemberClass {
 
             with(extClass) {
                 // EXPRESSION: testCompPrivate()
-                // RESULT: Following declarations are unavailable in debug scope: testCompPrivate
+                // RESULT: 1: I
                 //Breakpoint!
                 testCompPrivate()
             }
@@ -93,22 +93,22 @@ class MemberClass {
 
         fun ExtClass.testExtCompanion() {
             // EXPRESSION: testCompPublic()
-            // RESULT: Following declarations are unavailable in debug scope: testCompPublic
+            // RESULT: 1: I
             //Breakpoint!
             testCompPublic()
 
             // EXPRESSION: this.testCompPublic()
-            // RESULT: A receiver of type extensionMemberFunction.ExtClass is required
+            // RESULT: 1: I
             //Breakpoint!
             this.testCompPublic()
 
             // EXPRESSION: testCompPrivate()
-            // RESULT: Following declarations are unavailable in debug scope: testCompPrivate
+            // RESULT: 1: I
             //Breakpoint!
             testCompPrivate()
 
             // EXPRESSION: this.testCompPrivate()
-            // RESULT: A receiver of type extensionMemberFunction.ExtClass is required
+            // RESULT: 1: I
             //Breakpoint!
             this.testCompPrivate()
         }

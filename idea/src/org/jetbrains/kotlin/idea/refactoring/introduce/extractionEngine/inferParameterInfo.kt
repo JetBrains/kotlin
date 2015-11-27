@@ -307,7 +307,7 @@ private fun suggestParameterType(
 
 private fun isMemberExtensionFunction(resolvedCall: ResolvedCall<*>, ref: KtSimpleNameExpression): Boolean {
     // TODO temporary hack because we couldn't correctly extract member extension function with two explicit receivers
-    if (ref.parent !is KtCallExpression || ref.parent.parent !is KtQualifiedExpression) return false
+    if (ref.parent !is KtCallExpression) return false
 
     val resultingDescriptor = resolvedCall.resultingDescriptor
     return resultingDescriptor is FunctionDescriptor && resolvedCall.extensionReceiver != ReceiverValue.NO_RECEIVER && resolvedCall.dispatchReceiver != ReceiverValue.NO_RECEIVER
