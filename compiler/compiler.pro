@@ -37,6 +37,7 @@ messages/**)
 -dontwarn org.objectweb.asm.** # this is ASM3, the old version that we do not use
 -dontwarn com.sun.jna.NativeString
 -dontwarn com.sun.jna.WString
+-dontwarn com.intellij.psi.util.PsiClassUtil
 
 -libraryjars '<rtjar>'
 -libraryjars '<jssejar>'
