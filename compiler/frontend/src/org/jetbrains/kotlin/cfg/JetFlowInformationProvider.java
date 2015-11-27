@@ -126,6 +126,8 @@ public class JetFlowInformationProvider {
 
         markUnusedExpressions();
 
+        markIfWithoutElse();
+
         markWhenWithoutElse();
     }
 
@@ -686,6 +688,28 @@ public class JetFlowInformationProvider {
                         boolean isUsedAsExpression = !pseudocode.getUsages(value).isEmpty();
                         for (KtElement element : pseudocode.getValueElements(value)) {
                             trace.record(BindingContext.USED_AS_EXPRESSION, element, isUsedAsExpression);
+                        }
+                    }
+                }
+        );
+    }
+
+    public void markIfWithoutElse() {
+        PseudocodeTraverserKt.traverse(
+                pseudocode, FORWARD, new JetFlowInformationProvider.FunctionVoid1<Instruction>() {
+                    @Override
+                    public void execute(@NotNull Instruction instruction) {
+                        PseudoValue value = instruction instanceof InstructionWithValue
+                                            ? ((InstructionWithValue) instruction).getOutputValue()
+                                            : null;
+                        for (KtElement element : instruction.getOwner().getValueElements(value)) {
+                            if (!(element instanceof KtIfExpression)) continue;
+                            KtIfExpression ifExpression = (KtIfExpression) element;
+                            if (ifExpression.getThen() != null && ifExpression.getElse() != null) continue;
+
+                            if (BindingContextUtilsKt.isUsedAsExpression(ifExpression, trace.getBindingContext())) {
+                                trace.report(INVALID_IF_AS_EXPRESSION.on(ifExpression));
+                            }
                         }
                     }
                 }
