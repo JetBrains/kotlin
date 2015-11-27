@@ -1,5 +1,5 @@
 fun foo(x: Int) {
-    return when (x) {
+    return <!NO_ELSE_IN_WHEN!>when<!> (x) {
         2 -> {}
         3 -> {}
     }

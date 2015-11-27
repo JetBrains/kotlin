@@ -27,8 +27,20 @@ public val xx4: kotlin.Unit
 public val xx5: kotlin.Unit
 public val xx6: kotlin.Unit
 public val xx7: kotlin.String
+public fun f1(): kotlin.Unit
+public fun f2(): kotlin.Unit
+public fun f3(): kotlin.Unit
+public fun f4(): kotlin.Unit
+public fun f5(): kotlin.Unit
+public fun f6(): kotlin.Unit
 public fun foo1(/*0*/ x: kotlin.String?): kotlin.Unit
 public fun foo2(): kotlin.Unit
+public fun g1(): kotlin.Unit
+public fun g2(): kotlin.Boolean
+public fun g3(): kotlin.Int
+public fun g4(): kotlin.Unit
+public fun g5(): kotlin.Unit
+public fun g6(): kotlin.Unit
 public fun </*0*/ T> id(/*0*/ x: T): T
 public fun idAny(/*0*/ x: kotlin.Any): kotlin.Any
 public fun idUnit(/*0*/ x: kotlin.Unit): kotlin.Unit

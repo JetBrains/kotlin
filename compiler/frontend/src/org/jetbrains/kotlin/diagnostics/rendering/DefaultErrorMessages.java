@@ -416,7 +416,7 @@ public class DefaultErrorMessages {
         MAP.put(ELSE_MISPLACED_IN_WHEN, "'else' entry must be the last one in a when-expression");
         MAP.put(COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT, "Deprecated syntax. Use '||' instead of commas in when-condition for 'when' without argument");
 
-        MAP.put(NO_ELSE_IN_WHEN, "'when' expression must contain 'else' branch");
+        MAP.put(NO_ELSE_IN_WHEN, "'when' expression must be exhaustive or contain an 'else' branch");
         MAP.put(NON_EXHAUSTIVE_WHEN, "'when' expression contains only some variants and no 'else' branch");
 
         MAP.put(TYPE_MISMATCH_IN_RANGE, "Type mismatch: incompatible types of range and element checked in it");

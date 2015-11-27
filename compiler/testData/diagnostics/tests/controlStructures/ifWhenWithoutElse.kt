@@ -19,10 +19,10 @@ val xx6 = null ?: <!INVALID_IF_AS_EXPRESSION!>if (true) 42<!>
 val xx7 = "" + <!INVALID_IF_AS_EXPRESSION!>if (true) 42<!>
 
 val wxx1 = <!NO_ELSE_IN_WHEN!>when<!> { true -> 42 }
-val wxx2: Unit = when { true -> <!CONSTANT_EXPECTED_TYPE_MISMATCH!>42<!> }
+val wxx2: Unit = <!NO_ELSE_IN_WHEN!>when<!> { true -> <!CONSTANT_EXPECTED_TYPE_MISMATCH!>42<!> }
 val wxx3 = idAny(<!NO_ELSE_IN_WHEN!>when<!> { true -> 42 })
 val wxx4 = id(<!NO_ELSE_IN_WHEN!>when<!> { true -> 42 })
-val wxx5 = idUnit(when { true -> 42 }) // TODO illegal expression
+val wxx5 = idUnit(<!NO_ELSE_IN_WHEN!>when<!> { true -> 42 })
 val wxx6 = null ?: <!NO_ELSE_IN_WHEN!>when<!> { true -> 42 }
 val wxx7 = "" + <!NO_ELSE_IN_WHEN!>when<!> { true -> 42 }
 
@@ -40,11 +40,24 @@ val ufn4: () -> Unit = { when { true -> <!UNUSED_EXPRESSION!>42<!> } }
 val ufn5: () -> Unit = { when { true -> mlist.add() } }
 val ufn6: () -> Unit = { when { true -> work() } }
 
+fun f1() = <!INVALID_IF_AS_EXPRESSION!>if (true) work()<!>
+fun f2() = <!INVALID_IF_AS_EXPRESSION!>if (true) mlist.add()<!>
+fun f3() = <!INVALID_IF_AS_EXPRESSION!>if (true) 42<!>
+fun f4(): Unit = <!INVALID_IF_AS_EXPRESSION!>if (true) work()<!>
+fun f5(): Unit = <!INVALID_IF_AS_EXPRESSION!>if (true) mlist.add()<!>
+fun f6(): Unit = <!INVALID_IF_AS_EXPRESSION!>if (true) 42<!>
+fun g1() = <!IMPLICIT_CAST_TO_UNIT_OR_ANY!><!NO_ELSE_IN_WHEN!>when<!> { true -> work() }<!>
+fun g2() = <!NO_ELSE_IN_WHEN!>when<!> { true -> mlist.add() }
+fun g3() = <!NO_ELSE_IN_WHEN!>when<!> { true -> 42 }
+fun g4(): Unit = <!NO_ELSE_IN_WHEN!>when<!> { true -> work() }
+fun g5(): Unit = <!NO_ELSE_IN_WHEN!>when<!> { true -> <!TYPE_MISMATCH!>mlist.add()<!> }
+fun g6(): Unit = <!NO_ELSE_IN_WHEN!>when<!> { true -> <!CONSTANT_EXPECTED_TYPE_MISMATCH!>42<!> }
+
 fun foo1(x: String?) {
     "" + <!INVALID_IF_AS_EXPRESSION!>if (true) 42<!>
     w@while (true) {
         x ?: if (true) break
-        x ?: <!NO_ELSE_IN_WHEN!>when<!> { true -> break@w }
+        x ?: when { true -> break@w }
     }
 }
 
