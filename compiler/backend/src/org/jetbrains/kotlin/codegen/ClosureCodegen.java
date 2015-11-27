@@ -283,7 +283,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         mv.visitCode();
 
         InstructionAdapter iv = new InstructionAdapter(mv);
-        MemberCodegen.markLineNumberForSyntheticFunction(DescriptorUtils.getParentOfType(funDescriptor, ClassDescriptor.class), iv);
+        MemberCodegen.markLineNumberForDescriptor(DescriptorUtils.getParentOfType(funDescriptor, ClassDescriptor.class), iv);
 
         iv.load(0, asmType);
 

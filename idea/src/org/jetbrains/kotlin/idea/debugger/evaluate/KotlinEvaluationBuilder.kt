@@ -176,7 +176,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             codeFragment.checkForErrors(false)
 
             val extractionResult = getFunctionForExtractedFragment(codeFragment, sourcePosition.file, sourcePosition.line)
-                                            ?: throw IllegalStateException("Code fragment cannot be extracted to function")
+                                            ?: throw IllegalStateException("Code fragment cannot be extracted to function: ${codeFragment.text}")
             val parametersDescriptor = extractionResult.getParametersForDebugger(codeFragment)
             val extractedFunction = extractionResult.declaration as KtNamedFunction
 

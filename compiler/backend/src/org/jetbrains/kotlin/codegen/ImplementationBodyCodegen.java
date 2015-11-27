@@ -851,7 +851,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
             // Invoke the object constructor but ignore the result because INSTANCE$ will be initialized in the first line of <init>
             InstructionAdapter v = createOrGetClInitCodegen().v;
-            markLineNumberForSyntheticFunction(element, v);
+            markLineNumberForElement(element, v);
             v.anew(classAsmType);
             v.invokespecial(classAsmType.getInternalName(), "<init>", "()V", false);
 
@@ -942,14 +942,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor);
 
-        KtPrimaryConstructor primaryConstructor = myClass.getPrimaryConstructor();
+        final KtPrimaryConstructor primaryConstructor = myClass.getPrimaryConstructor();
         JvmDeclarationOrigin origin = JvmDeclarationOriginKt
                 .OtherOrigin(primaryConstructor != null ? primaryConstructor : myClass, constructorDescriptor);
         functionCodegen.generateMethod(origin, constructorDescriptor, constructorContext,
                    new FunctionGenerationStrategy.CodegenBased<ConstructorDescriptor>(state, constructorDescriptor) {
                        @Override
                        public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
-                           generatePrimaryConstructorImpl(callableDescriptor, codegen, delegationFieldsInfo);
+                           generatePrimaryConstructorImpl(callableDescriptor, codegen, delegationFieldsInfo, primaryConstructor);
                        }
                    }
         );
@@ -993,9 +993,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generatePrimaryConstructorImpl(
             @NotNull ConstructorDescriptor constructorDescriptor,
             @NotNull ExpressionCodegen codegen,
-            @NotNull DelegationFieldsInfo fieldsInfo
+            @NotNull DelegationFieldsInfo fieldsInfo,
+            @Nullable KtPrimaryConstructor primaryConstructor
     ) {
         InstructionAdapter iv = codegen.v;
+
+        markLineNumberForConstructor(constructorDescriptor, primaryConstructor, codegen);
 
         generateClosureInitialization(iv);
 
@@ -1053,6 +1056,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     ) {
         InstructionAdapter iv = codegen.v;
 
+        KtSecondaryConstructor constructor =
+                (KtSecondaryConstructor) DescriptorToSourceUtils.descriptorToDeclaration(constructorDescriptor);
+
+        markLineNumberForConstructor(constructorDescriptor, constructor, codegen);
+
         ResolvedCall<ConstructorDescriptor> constructorDelegationCall =
                 getDelegationConstructorCall(bindingContext, constructorDescriptor);
         ConstructorDescriptor delegateConstructor = constructorDelegationCall == null ? null :
@@ -1065,14 +1073,35 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             generateInitializers(codegen);
         }
 
-        KtSecondaryConstructor constructor =
-                (KtSecondaryConstructor) DescriptorToSourceUtils.descriptorToDeclaration(constructorDescriptor);
         assert constructor != null;
         if (constructor.hasBody()) {
             codegen.gen(constructor.getBodyExpression(), Type.VOID_TYPE);
         }
 
         iv.visitInsn(RETURN);
+    }
+
+    private static void markLineNumberForConstructor(
+            @NotNull ConstructorDescriptor descriptor,
+            @Nullable KtConstructor constructor,
+            @NotNull ExpressionCodegen codegen
+    ) {
+        if (constructor == null) {
+            markLineNumberForDescriptor(descriptor.getContainingDeclaration(), codegen.v);
+        }
+        else if (constructor.hasBody() && !(constructor instanceof KtSecondaryConstructor && !((KtSecondaryConstructor) constructor).hasImplicitDelegationCall())) {
+            KtBlockExpression bodyExpression = constructor.getBodyExpression();
+            List<KtExpression> statements = bodyExpression != null ? bodyExpression.getStatements() : Collections.<KtExpression>emptyList();
+            if (!statements.isEmpty()) {
+                codegen.markStartLineNumber(statements.iterator().next());
+            }
+            else {
+                codegen.markStartLineNumber(bodyExpression != null ? bodyExpression : constructor);
+            }
+        }
+        else {
+            codegen.markStartLineNumber(constructor);
+        }
     }
 
     private void generateInitializers(@NotNull final ExpressionCodegen codegen) {

@@ -144,18 +144,18 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         return null;
     }
 
-    public static void markLineNumberForSyntheticFunction(@Nullable ClassDescriptor declarationDescriptor, @NotNull InstructionAdapter v) {
+    public static void markLineNumberForDescriptor(@Nullable ClassDescriptor declarationDescriptor, @NotNull InstructionAdapter v) {
         if (declarationDescriptor == null) {
             return;
         }
 
         PsiElement classElement = DescriptorToSourceUtils.getSourceFromDescriptor(declarationDescriptor);
         if (classElement != null) {
-            markLineNumberForSyntheticFunction(classElement, v);
+            markLineNumberForElement(classElement, v);
         }
     }
 
-    public static void markLineNumberForSyntheticFunction(@NotNull PsiElement element, @NotNull InstructionAdapter v) {
+    public static void markLineNumberForElement(@NotNull PsiElement element, @NotNull InstructionAdapter v) {
         Integer lineNumber = CodegenUtil.getLineNumberForElement(element, false);
         if (lineNumber != null) {
             Label label = new Label();
@@ -601,7 +601,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
                     new FunctionGenerationStrategy.CodegenBased<FunctionDescriptor>(state, accessor) {
                         @Override
                         public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
-                            markLineNumberForSyntheticFunction(element, codegen.v);
+                            markLineNumberForElement(element, codegen.v);
 
                             generateMethodCallTo(original, accessor, codegen.v);
                             codegen.v.areturn(signature.getReturnType());
@@ -631,7 +631,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
 
                     InstructionAdapter iv = codegen.v;
 
-                    markLineNumberForSyntheticFunction(element, iv);
+                    markLineNumberForElement(element, iv);
 
                     Type[] argTypes = signature.getAsmMethod().getArgumentTypes();
                     for (int i = 0, reg = 0; i < argTypes.length; i++) {

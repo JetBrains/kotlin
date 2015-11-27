@@ -188,6 +188,12 @@ public class CodegenUtil {
                 return null;
             }
         }
+
+        if (statement instanceof KtConstructorDelegationReferenceExpression && statement.getTextLength() == 0) {
+            // PsiElement for constructor delegation reference is always generated, so we shouldn't mark it's line number if it's empty
+            return null;
+        }
+
         Document document = file.getViewProvider().getDocument();
         return document != null ? document.getLineNumber(markEndOffset ? statement.getTextRange().getEndOffset() : statement.getTextOffset()) + 1 : null;
     }

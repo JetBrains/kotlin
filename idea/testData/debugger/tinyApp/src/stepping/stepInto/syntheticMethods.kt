@@ -46,3 +46,4 @@ class A {
 
 // STEP_INTO: 26
 // SKIP_SYNTHETIC_METHODS: false
+// SKIP_CONSTRUCTORS: true

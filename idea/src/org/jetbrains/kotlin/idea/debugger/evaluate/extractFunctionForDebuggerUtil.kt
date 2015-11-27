@@ -216,7 +216,7 @@ private fun addDebugExpressionBeforeContextElement(codeFragment: KtCodeFragment,
             insertNewInitializer(classOrObject.getOrCreateBody())
         }
         contextElement is KtClassOrObject -> {
-            insertNewInitializer(contextElement.getBody()!!)
+            insertNewInitializer(contextElement.getOrCreateBody())
         }
         contextElement is KtFunctionLiteral -> {
             val block = contextElement.bodyExpression!!
