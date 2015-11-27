@@ -588,16 +588,6 @@ class FilesTest {
         }
     }
 
-    @test fun relativePath() {
-        val file1 = File("src")
-        val file2 = File(file1, "kotlin")
-        val file3 = File("test")
-
-        assertEquals("kotlin", file1.relativePath(file2))
-        assertEquals("", file1.relativePath(file1))
-        assertEquals(file3.canonicalPath, file1.relativePath(file3))
-    }
-
     private fun checkFileElements(f: File, root: File?, elements: List<String>) {
         var i = 0
         assertEquals(root, f.root)
