@@ -464,7 +464,25 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
         }
 
         override fun shortenElement(element: KtDotQualifiedExpression): KtElement {
-            return element.replace(element.getReceiverExpression()) as KtElement
+            val receiver = element.receiverExpression
+            val selector = element.selectorExpression ?: return element
+
+            return when (receiver) {
+                is KtSimpleNameExpression -> {
+                    val identifier = receiver.getIdentifier() ?: return element
+                    (selector.getCalleeExpressionIfAny() as? KtSimpleNameExpression)?.getIdentifier()?.replace(identifier)
+                    element.replace(selector) as KtExpression
+                }
+
+                is KtQualifiedExpression -> {
+                    val identifier = (receiver.selectorExpression as? KtSimpleNameExpression)?.getIdentifier() ?: return element
+                    (selector.getCalleeExpressionIfAny() as? KtSimpleNameExpression)?.getIdentifier()?.replace(identifier)
+                    receiver.selectorExpression?.replace(selector)
+                    element.replace(receiver) as KtExpression
+                }
+
+                else -> element
+            }
         }
     }
 }
