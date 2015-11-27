@@ -88,7 +88,7 @@ public class SimpleKotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
 // copied from CompilerDaemonTest.kt
 // TODO: find shared place for this function
-// java.util.logger used in the daemon silently forgets to log into a file specified in the config on Windows,
+// java.util.Logger used in the daemon silently forgets to log into a file specified in the config on Windows,
 // if file path is given in windows form (using backslash as a separator); the reason is unknown
 // this function makes a path with forward slashed, that works on windows too
 internal val File.loggerCompatiblePath: String

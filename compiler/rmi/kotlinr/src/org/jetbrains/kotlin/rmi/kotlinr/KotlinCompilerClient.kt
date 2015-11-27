@@ -20,6 +20,7 @@ import net.rubygrapefruit.platform.ProcessLauncher
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.rmi.*
+import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.io.File
 import java.io.OutputStream
 import java.io.PrintStream
@@ -57,9 +58,9 @@ public object KotlinCompilerClient {
 
         val flagFile = System.getProperty(COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY)
                      ?.let { it.trimQuotes() }
-                     ?.ifOrNull { !it.isBlank() }
+                     ?.check { !it.isBlank() }
                      ?.let { File(it) }
-                     ?.ifOrNull { it.exists() }
+                     ?.check { it.exists() }
                      ?: newFlagFile()
         return connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, reportingTargets, autostart)
     }
@@ -82,13 +83,11 @@ public object KotlinCompilerClient {
                     reportingTargets.report(DaemonReportCategory.DEBUG, "connected to the daemon")
                     return service
                 }
-                else {
-                    if (!autostart) return null
-                    reportingTargets.report(DaemonReportCategory.DEBUG, "no suitable daemon found, starting a new one")
+                reportingTargets.report(DaemonReportCategory.DEBUG, "no suitable daemon found")
+                if (autostart) {
+                    startDaemon(compilerId, newJVMOptions, daemonOptions, reportingTargets)
+                    reportingTargets.report(DaemonReportCategory.DEBUG, "new daemon started, trying to find it")
                 }
-
-                startDaemon(compilerId, newJVMOptions, daemonOptions, reportingTargets)
-                reportingTargets.report(DaemonReportCategory.DEBUG, "daemon started, trying to find it")
             }
         }
         catch (e: Exception) {
@@ -258,13 +257,13 @@ public object KotlinCompilerClient {
                 .map { Pair(it, it.getDaemonJVMOptions()) }
                 .filter { it.second.isGood }
                 .sortedWith(compareBy(DaemonJVMOptionsMemoryComparator().reversed(), { it.second.get() }))
-        val opts = daemonJVMOptions.copy()
+        val optsCopy = daemonJVMOptions.copy()
         // if required options fit into fattest running daemon - return the daemon and required options with memory params set to actual ones in the daemon
-        return aliveWithOpts.firstOrNull()?.ifOrNull { daemonJVMOptions memorywiseFitsInto it.second.get() }?.let {
-                Pair(it.first, opts.updateMemoryUpperBounds(it.second.get()))
+        return aliveWithOpts.firstOrNull()?.check { daemonJVMOptions memorywiseFitsInto it.second.get() }?.let {
+                Pair(it.first, optsCopy.updateMemoryUpperBounds(it.second.get()))
             }
             // else combine all options from running daemon to get fattest option for a new daemon to run
-            ?: Pair(null, aliveWithOpts.fold(daemonJVMOptions, { opts, d -> opts.updateMemoryUpperBounds(d.second.get()) }))
+            ?: Pair(null, aliveWithOpts.fold(optsCopy, { opts, d -> opts.updateMemoryUpperBounds(d.second.get()) }))
     }
 
 
@@ -353,6 +352,3 @@ internal fun isProcessAlive(process: Process) =
         catch (e: IllegalThreadStateException) {
             true
         }
-
-internal inline fun<T> T.ifOrNull(pred: (T) -> Boolean): T? = if (pred(this)) this else null
-

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.rmi.*
+import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.PrintStream
@@ -86,9 +87,9 @@ class CompileServiceImpl(
 
     private val classpathWatcher = LazyClasspathWatcher(compilerId.compilerClasspath)
 
-    enum class Aliveness(val value: Int) {
-        // ordering of values is used in state comparison
-        Alive(2), LastSession(1), Dying(0)
+    enum class Aliveness {
+        // !!! ordering of values is used in state comparison
+        Dying, LastSession, Alive
     }
 
     // TODO: encapsulate operations on state here
@@ -99,13 +100,13 @@ class CompileServiceImpl(
 
         val delayedShutdownQueued = AtomicBoolean(false)
 
-        var alive = AtomicInteger(Aliveness.Alive.value)
+        var alive = AtomicInteger(Aliveness.Alive.ordinal)
     }
 
     @Volatile private var _lastUsedSeconds = nowSeconds()
     public val lastUsedSeconds: Long get() = if (rwlock.isWriteLocked || rwlock.readLockCount - rwlock.readHoldCount > 0) nowSeconds() else _lastUsedSeconds
 
-    val log by lazy { Logger.getLogger("compiler") }
+    private val log by lazy { Logger.getLogger("compiler") }
 
     private val rwlock = ReentrantReadWriteLock()
 
@@ -154,6 +155,7 @@ class CompileServiceImpl(
                 synchronized(state.sessions) {
                     if (!state.sessions.containsKey(newId)) {
                         state.sessions.put(newId, session)
+                        log.info("leased a new session $newId, client alive file: $aliveFlagPath")
                         return@ifAlive newId
                     }
                 }
@@ -161,13 +163,13 @@ class CompileServiceImpl(
             // assuming wrap, jumping to random number to reduce probability of further clashes
             newId = sessionsIdCounter.addAndGet(internalRng.nextInt())
         }
-        throw Exception("Invalid state or algorithm error")
+        throw IllegalStateException("Invalid state or algorithm error")
     }
 
     override fun releaseCompileSession(sessionId: Int) = ifAlive_Nothing(minAliveness = Aliveness.LastSession) {
         synchronized(state.sessions) {
             state.sessions.remove(sessionId)
-            log.info("cleaning after session")
+            log.info("cleaning after session $sessionId")
             clearJarCache()
             if (state.sessions.isEmpty()) {
                 // TODO: and some goes here
@@ -190,7 +192,7 @@ class CompileServiceImpl(
     }
 
     override fun scheduleShutdown(graceful: Boolean): CompileService.CallResult<Boolean> = ifAlive(minAliveness = Aliveness.Alive) {
-        if (!graceful || state.alive.compareAndSet(Aliveness.Alive.value, Aliveness.LastSession.value)) {
+        if (!graceful || state.alive.compareAndSet(Aliveness.Alive.ordinal, Aliveness.LastSession.ordinal)) {
             timer.schedule(0) {
                 ifAliveExclusive(minAliveness = Aliveness.LastSession, ignoreCompilerChanged = true) {
                     if (!graceful || state.sessions.isEmpty()) {
@@ -299,13 +301,13 @@ class CompileServiceImpl(
                 }.forEach { releaseCompileSession(it) }
 
                 // 3. check if in graceful shutdown state and all sessions are closed
-                if (shutdownCondition({state.alive.get() == Aliveness.LastSession.value && state.sessions.none()}, "All sessions finished, shutting down")) {
+                if (shutdownCondition({state.alive.get() == Aliveness.LastSession.ordinal && state.sessions.none()}, "All sessions finished, shutting down")) {
                     shutdown()
                 }
 
                 // 4. clean dead clients, then check if any left - conditional shutdown (with small delay)
                     synchronized(state.clientProxies) { state.clientProxies.removeAll(state.clientProxies.filter { !it.isAlive }) }
-                if (state.clientProxies.none() && compilationsCounter.get() > 0 && !state.delayedShutdownQueued.get()) {
+                if (state.clientProxies.isEmpty() && compilationsCounter.get() > 0 && !state.delayedShutdownQueued.get()) {
                     log.info("No more clients left, delayed shutdown in ${daemonOptions.shutdownDelayMilliseconds}ms")
                     shutdownWithDelay()
                 }
@@ -338,7 +340,7 @@ class CompileServiceImpl(
                 if (fattestOpts memorywiseFitsInto daemonJVMOptions && !(daemonJVMOptions memorywiseFitsInto fattestOpts)) {
                     // all others are smaller that me, take overs' clients and shut them down
                     aliveWithOpts.forEach {
-                        it.first.getClients().ifOrNull { it.isGood }?.let {
+                        it.first.getClients().check { it.isGood }?.let {
                             it.get().forEach { registerClient(it) }
                         }
                         it.first.scheduleShutdown(true)
@@ -348,14 +350,14 @@ class CompileServiceImpl(
                     // there is at least one bigger, handover my clients to it and shutdown
                     scheduleShutdown(true)
                     aliveWithOpts.first().first.let { fattest ->
-                        getClients().ifOrNull { it.isGood }?.let {
+                        getClients().check { it.isGood }?.let {
                             it.get().forEach { fattest.registerClient(it) }
                         }
                     }
                 }
                 // else - do nothing, all daemons are staying
                 // TODO: implement some behaviour here, e.g.:
-                //   - shutdown/takeover smaller daemosn
+                //   - shutdown/takeover smaller daemon
                 //   - run (or better persuade client to run) a bigger daemon (in fact may be even simple shutdown will do, because of client's daemon choosing logic)
             }
         }
@@ -363,7 +365,7 @@ class CompileServiceImpl(
 
     private fun shutdownImpl() {
         log.info("Shutdown started")
-        state.alive.set(Aliveness.Dying.value)
+        state.alive.set(Aliveness.Dying.ordinal)
         UnicastRemoteObject.unexportObject(this, true)
         log.info("Shutdown complete")
         onShutdown()
@@ -384,7 +386,7 @@ class CompileServiceImpl(
         }
     }
 
-    private fun shutdownCondition(check: () -> Boolean, message: String): Boolean {
+    private inline fun shutdownCondition(check: () -> Boolean, message: String): Boolean {
         val res = check()
         if (res) {
             log.info(message)
@@ -476,7 +478,7 @@ class CompileServiceImpl(
     }
 
     private fun clearJarCache() {
-        callVoidStaticMethod("com.intellij.openapi.vfs.impl.ZipHandler", "clearFileAccessorCache")
+        com.intellij.openapi.vfs.impl.ZipHandler.clearFileAccessorCache()
         val classloader = javaClass.classLoader
         // TODO: replace the following code with direct call to CoreJarFileSystem.<clearCache> as soon as it will be available (hopefully in 15.02)
         try {
@@ -539,7 +541,7 @@ class CompileServiceImpl(
 
     inline private fun<R> ifAliveChecksImpl(minAliveness: Aliveness = Aliveness.Alive, ignoreCompilerChanged: Boolean = false, body: () -> CompileService.CallResult<R>): CompileService.CallResult<R> =
         when {
-            state.alive.get() < minAliveness.value -> CompileService.CallResult.Dying()
+            state.alive.get() < minAliveness.ordinal -> CompileService.CallResult.Dying()
             !ignoreCompilerChanged && classpathWatcher.isChanged -> {
                 log.info("Compiler changed, scheduling shutdown")
                 timer.schedule(0) { shutdown() }
@@ -555,8 +557,4 @@ class CompileServiceImpl(
                 }
             }
         }
-
 }
-
-internal inline fun<T> T.ifOrNull(pred: (T) -> Boolean): T? = if (pred(this)) this else null
-

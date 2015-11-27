@@ -29,30 +29,33 @@ enum class DaemonReportCategory {
 }
 
 
-fun makeRunFilenameString(timestamp: String, digest: String, port: String, escapeSequence: String = ""): String = "$COMPILE_DAEMON_DEFAULT_FILES_PREFIX$escapeSequence.$timestamp$escapeSequence.$digest$escapeSequence.$port$escapeSequence.run"
+fun makeRunFilenameString(timestamp: String, digest: String, port: String, escapeSequence: String = ""): String =
+        "$COMPILE_DAEMON_DEFAULT_FILES_PREFIX$escapeSequence.$timestamp$escapeSequence.$digest$escapeSequence.$port$escapeSequence.run"
 
 
-fun String.extractPortFromRunFilename(digest: String): Int =
-        makeRunFilenameString(timestamp = "[0-9TZ:\\.\\+-]+", digest = digest, port = "(\\d+)", escapeSequence = "\\").toRegex()
-                .find(this)
-                ?.groups?.get(1)
-                ?.value?.toInt()
-        ?: 0
+fun makePortFromRunFilenameExtractor(digest: String): (String) -> Int? {
+    val regex = makeRunFilenameString(timestamp = "[0-9TZ:\\.\\+-]+", digest = digest, port = "(\\d+)", escapeSequence = "\\").toRegex()
+    return { regex.find(it)
+             ?.groups?.get(1)
+             ?.value?.toInt()
+    }
+}
 
 
 fun walkDaemons(registryDir: File,
                 compilerId: CompilerId,
-                filter: (File, Int) -> Boolean = { f,p -> true },
-                report: (DaemonReportCategory, String) -> Unit = { cat, msg -> ; }
+                filter: (File, Int) -> Boolean = { f, p -> true },
+                report: (DaemonReportCategory, String) -> Unit = { cat, msg -> }
 ): Sequence<CompileService> {
     val classPathDigest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest().toHexString()
+    val portExtractor = makePortFromRunFilenameExtractor(classPathDigest)
     return registryDir.walk()
-            .map { Pair(it, it.name.extractPortFromRunFilename(classPathDigest)) }
-            .filter { it.second != 0 && filter(it.first, it.second) }
+            .map { Pair(it, portExtractor(it.name)) }
+            .filter { it.second != null && filter(it.first, it.second!!) }
             .map {
-                assert(it.second > 0 && it.second < MAX_PORT_NUMBER)
+                assert(it.second!! > 0 && it.second!! < MAX_PORT_NUMBER)
                 report(DaemonReportCategory.DEBUG, "found daemon on port ${it.second}, trying to connect")
-                val daemon = tryConnectToDaemon(it.second, report)
+                val daemon = tryConnectToDaemon(it.second!!, report)
                 // cleaning orphaned file; note: daemon should shut itself down if it detects that the run file is deleted
                 if (daemon == null && !it.first.delete()) {
                     report(DaemonReportCategory.INFO, "WARNING: unable to delete seemingly orphaned file '${it.first.absolutePath}', cleanup recommended")
