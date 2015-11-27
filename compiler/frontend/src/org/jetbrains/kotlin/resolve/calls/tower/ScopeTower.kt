@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -32,6 +33,8 @@ interface ScopeTower {
     val implicitReceivers: List<ReceiverValue>
 
     val lexicalScope: LexicalScope
+
+    val dynamicScope: MemberScope
 
     val location: LookupLocation
 
@@ -91,6 +94,8 @@ class UsedSmartCastForDispatchReceiver(val smartCastType: KotlinType): Resolutio
 
 object ErrorDescriptorDiagnostic : ResolutionDiagnostic(ResolutionCandidateApplicability.INAPPLICABLE)
 object SynthesizedDescriptorDiagnostic: ResolutionDiagnostic(ResolutionCandidateApplicability.RESOLVED_SYNTHESIZED)
+object DynamicDescriptorDiagnostic: ResolutionDiagnostic(ResolutionCandidateApplicability.RESOLVED_SYNTHESIZED)
 object UnstableSmartCastDiagnostic: ResolutionDiagnostic(ResolutionCandidateApplicability.MAY_THROW_RUNTIME_ERROR)
+object ExtensionWithStaticTypeWithDynamicReceiver: ResolutionDiagnostic(ResolutionCandidateApplicability.INAPPLICABLE)
 
 

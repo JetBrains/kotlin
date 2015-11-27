@@ -35,10 +35,13 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallImpl
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCallImpl
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionResultsHandler
+import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
+import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallableDescriptors
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategyForInvoke
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
+import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.utils.sure
@@ -46,7 +49,8 @@ import org.jetbrains.kotlin.utils.sure
 class NewResolveOldInference(
         val candidateResolver: CandidateResolver,
         val towerResolver: TowerResolver,
-        val resolutionResultsHandler: ResolutionResultsHandler
+        val resolutionResultsHandler: ResolutionResultsHandler,
+        val dynamicCallableDescriptors: DynamicCallableDescriptors
 ) {
 
     fun runResolve(
@@ -57,7 +61,8 @@ class NewResolveOldInference(
     ): OverloadResolutionResultsImpl<*> {
         val explicitReceiver = context.call.explicitReceiver.check { it.exists() }
 
-        val scopeTower = ScopeTowerImpl(context, explicitReceiver, context.call.createLookupLocation())
+        val dynamicScope = dynamicCallableDescriptors.createDynamicDescriptorScope(context.call, context.scope.ownerDescriptor)
+        val scopeTower = ScopeTowerImpl(context, dynamicScope, explicitReceiver, context.call.createLookupLocation())
 
         val baseContext = Context(scopeTower, name, context, tracing)
 
@@ -74,7 +79,7 @@ class NewResolveOldInference(
                     val call = (context.call as? CallTransformer.CallForImplicitInvoke).sure {
                         "Call should be CallForImplicitInvoke, but it is: ${context.call}"
                     }
-                    createCollectorWithReceiverValueOrEmpty(explicitReceiver) {
+                    createProcessorWithReceiverValueOrEmpty(explicitReceiver) {
                         createCallTowerProcessorForExplicitInvoke(baseContext, call.dispatchReceiver, it)
                     }
                 }
@@ -87,7 +92,7 @@ class NewResolveOldInference(
         return convertToOverloadResults(candidates, tracing, context)
     }
 
-    private fun createCollectorWithReceiverValueOrEmpty(
+    private fun createProcessorWithReceiverValueOrEmpty(
             explicitReceiver: Receiver?,
             create: (ReceiverValue?) -> ScopeTowerProcessor<Candidate>
     ): ScopeTowerProcessor<Candidate> {
@@ -100,7 +105,6 @@ class NewResolveOldInference(
         }
     }
 
-
     private fun createFunctionTowerProcessor(baseContext: Context, explicitReceiver: Receiver?): CompositeScopeTowerProcessor<Candidate> {
         // a.foo() -- simple function call
         val simpleFunction = createFunctionProcessor(baseContext, explicitReceiver)
@@ -109,7 +113,7 @@ class NewResolveOldInference(
         val invokeProcessor = InvokeTowerProcessor(baseContext, explicitReceiver)
 
         // a.foo() -- property foo is extension function with receiver a -- a.invoke()
-        val invokeExtensionProcessor = createCollectorWithReceiverValueOrEmpty(explicitReceiver) { InvokeExtensionTowerProcessor(baseContext, it) }
+        val invokeExtensionProcessor = createProcessorWithReceiverValueOrEmpty(explicitReceiver) { InvokeExtensionTowerProcessor(baseContext, it) }
 
         return CompositeScopeTowerProcessor(simpleFunction, invokeProcessor, invokeExtensionProcessor)
     }
@@ -178,6 +182,14 @@ class NewResolveOldInference(
                     explicitReceiverKind, null, candidateTrace, tracing,
                     basicCallContext.dataFlowInfoForArguments // todo may be we should create new mutable info for arguments
             )
+
+            // see spec-docs/dynamic-types.md
+            if (extensionReceiver != null && extensionReceiver.type.isDynamic()
+                && !towerCandidate.descriptor.extensionReceiverParameter!!.value.type.isDynamic()) {
+                candidateCall.addStatus(ResolutionStatus.RECEIVER_PRESENCE_ERROR)
+                return Candidate(ResolutionCandidateStatus(listOf(ExtensionWithStaticTypeWithDynamicReceiver)), candidateCall)
+            }
+
             val callCandidateResolutionContext = CallCandidateResolutionContext.create(
                     candidateCall, basicCallContext, candidateTrace, tracing, basicCallContext.call,
                     ReceiverValue.NO_RECEIVER, CandidateResolveMode.FULLY // todo
