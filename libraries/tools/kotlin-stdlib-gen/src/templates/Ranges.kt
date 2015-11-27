@@ -238,7 +238,7 @@ fun ranges(): List<GenericFunction> {
     templates addAll integralPermutations.map { until(it.first, it.second) }
     templates addAll listOf(PrimitiveType.Byte, PrimitiveType.Short).permutations().map { untilDeprecated(it.first, it.second) }
 
-    fun containsDeprecated(rangeType: PrimitiveType, itemType: PrimitiveType) = f("contains(item: $itemType)") {
+    fun containsDeprecated(rangeType: PrimitiveType, itemType: PrimitiveType) = f("contains(value: $itemType)") {
         operator(true)
 
         deprecate("Range<T> is deprecated. Use ClosedRange<T> instead.")
@@ -248,11 +248,11 @@ fun ranges(): List<GenericFunction> {
         onlyPrimitives(Ranges, rangeType)
         platformName("${rangeType.name.decapitalize()}RangeContains")
         returns("Boolean")
-        doc { "Checks if the specified [item] belongs to this range." }
-        body { "return start <= item && item <= end" }
+        doc { "Checks if the specified [value] belongs to this range." }
+        body { "return start <= value && value <= end" }
     }
 
-    fun contains(rangeType: PrimitiveType, itemType: PrimitiveType) = f("contains(item: $itemType)") {
+    fun contains(rangeType: PrimitiveType, itemType: PrimitiveType) = f("contains(value: $itemType)") {
         operator(true)
 
         check(rangeType.isNumeric() == itemType.isNumeric()) { "Required rangeType and itemType both to be numeric or both not, got: $rangeType, $itemType" }
@@ -261,8 +261,8 @@ fun ranges(): List<GenericFunction> {
         customReceiver("ClosedRange<T>")
         platformName("${rangeType.name.decapitalize()}RangeContains")
         returns("Boolean")
-        doc { "Checks if the specified [item] belongs to this range." }
-        body { "return start <= item && item <= endInclusive" }
+        doc { "Checks if the specified [value] belongs to this range." }
+        body { "return start <= value && value <= endInclusive" }
     }
 
 
