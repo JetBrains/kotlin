@@ -41,14 +41,17 @@ interface TowerContext<C> {
     fun contextForInvoke(variable: C, useExplicitReceiver: Boolean): Pair<ReceiverValue, TowerContext<C>>
 }
 
+internal sealed class TowerData {
+    object Empty : TowerData()
+    class OnlyImplicitReceiver(val implicitReceiver: ReceiverValue): TowerData()
+    class TowerLevel(val level: ScopeTowerLevel) : TowerData()
+    class BothTowerLevelAndImplicitReceiver(val level: ScopeTowerLevel, val implicitReceiver: ReceiverValue) : TowerData()
+}
+
 internal interface ScopeTowerProcessor<C> {
-
-    fun processTowerLevel(level: ScopeTowerLevel)
-    fun processImplicitReceiver(implicitReceiver: ReceiverValue)
-
     // Candidates with matched receivers (dispatch receiver was already matched in ScopeTowerLevel)
     // Candidates in one groups have same priority, first group has highest priority.
-    fun getCandidatesGroups(): List<Collection<C>>
+    fun process(data: TowerData): List<Collection<C>>
 }
 
 class TowerResolver {
@@ -60,13 +63,12 @@ class TowerResolver {
 
         val resultCollector = ResultCollector<C> { context.getStatus(it) }
 
-        fun collectCandidates(action: ScopeTowerProcessor<C>.() -> Unit): Collection<C>? {
-            processor.action()
+        fun collectCandidates(data: TowerData): Collection<C>? {
             val candidatesGroups = if (useOrder) {
-                    processor.getCandidatesGroups()
+                    processor.process(data)
                 }
                 else {
-                    listOf(processor.getCandidatesGroups().flatMap { it })
+                    listOf(processor.process(data).flatMap { it })
                 }
 
             for (candidatesGroup in candidatesGroups) {
@@ -77,13 +79,16 @@ class TowerResolver {
         }
 
         // possible there is explicit member
-        collectCandidates { /* do nothing */ }?.let { return it }
+        collectCandidates(TowerData.Empty)?.let { return it }
+        for (implicitReceiver in context.scopeTower.implicitReceivers) {
+            collectCandidates(TowerData.OnlyImplicitReceiver(implicitReceiver))?.let { return it }
+        }
 
         for (level in context.scopeTower.levels) {
-            collectCandidates { processTowerLevel(level) }?.let { return it }
+            collectCandidates(TowerData.TowerLevel(level))?.let { return it }
 
             for (implicitReceiver in context.scopeTower.implicitReceivers) {
-                collectCandidates { processImplicitReceiver(implicitReceiver) }?.let { return it }
+                collectCandidates(TowerData.BothTowerLevelAndImplicitReceiver(level, implicitReceiver))?.let { return it }
             }
         }
 

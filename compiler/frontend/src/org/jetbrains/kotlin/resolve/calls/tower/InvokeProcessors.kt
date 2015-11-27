@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
-import com.intellij.util.SmartList
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -32,73 +31,57 @@ internal abstract class AbstractInvokeTowerProcessor<C>(
         private val variableProcessor: ScopeTowerProcessor<C>
 ) : ScopeTowerProcessor<C> {
     // todo optimize it
-    private val previousActions = ArrayList<ScopeTowerProcessor<C>.() -> Unit>()
-    private val candidateGroups: MutableList<Collection<C>> = ArrayList()
-
+    private val previousData = ArrayList<TowerData>()
     private val invokeProcessors: MutableList<Collection<VariableInvokeProcessor>> = ArrayList()
 
+    private inner class VariableInvokeProcessor(val variableCandidate: C): ScopeTowerProcessor<C> {
+        val invokeProcessor: ScopeTowerProcessor<C> = createInvokeProcessor(variableCandidate)
 
-    private inner class VariableInvokeProcessor(
-            val variableCandidate: C,
-            val invokeProcessor: ScopeTowerProcessor<C> = createInvokeProcessor(variableCandidate)
-    ): ScopeTowerProcessor<C> by invokeProcessor {
-        override fun getCandidatesGroups(): List<Collection<C>>
-                = invokeProcessor.getCandidatesGroups().map { candidateGroup ->
+        override fun process(data: TowerData)
+                = invokeProcessor.process(data).map { candidateGroup ->
                     candidateGroup.map { functionContext.transformCandidate(variableCandidate, it) }
                 }
     }
 
     protected abstract fun createInvokeProcessor(variableCandidate: C): ScopeTowerProcessor<C>
 
-    private fun findVariablesAndCreateNewInvokeCandidates() {
-        for (variableCandidates in variableProcessor.getCandidatesGroups()) {
+    override fun process(data: TowerData): List<Collection<C>> {
+        previousData.add(data)
+
+        val candidateGroups = ArrayList<Collection<C>>(0)
+
+        for (processorsGroup in invokeProcessors) {
+            candidateGroups.addAll(processorsGroup.processVariableGroup(data))
+        }
+
+        for (variableCandidates in variableProcessor.process(data)) {
             val successfulVariables = variableCandidates.filter {
                 functionContext.getStatus(it).resultingApplicability.isSuccess
             }
 
             if (successfulVariables.isNotEmpty()) {
-                val processors = successfulVariables.map { VariableInvokeProcessor(it) }
-                invokeProcessors.add(processors)
+                val variableProcessors = successfulVariables.map { VariableInvokeProcessor(it) }
+                invokeProcessors.add(variableProcessors)
 
-                for (previousAction in previousActions) {
-                    processors.forEach(previousAction)
-                    candidateGroups.addAll(processors.collectCandidateGroups())
+                for (oldData in previousData) {
+                    candidateGroups.addAll(variableProcessors.processVariableGroup(oldData))
                 }
             }
         }
+
+        return candidateGroups
     }
 
-    private fun Collection<VariableInvokeProcessor>.collectCandidateGroups(): List<Collection<C>> {
+    private fun Collection<VariableInvokeProcessor>.processVariableGroup(data: TowerData): List<Collection<C>> {
         return when (size) {
             0 -> emptyList()
-            1 -> single().getCandidatesGroups()
-            // overload on variables see KT-10093 Resolve depends on the order of declaration for variable with implicit invoke
+            1 -> single().process(data)
+        // overload on variables see KT-10093 Resolve depends on the order of declaration for variable with implicit invoke
 
-            else -> listOf(this.flatMap { it.getCandidatesGroups().flatten() })
+            else -> listOf(this.flatMap { it.process(data).flatten() })
         }
     }
 
-    private fun proceed(action: ScopeTowerProcessor<C>.() -> Unit) {
-        candidateGroups.clear()
-        previousActions.add(action)
-
-        for (processorsGroup in invokeProcessors) {
-            processorsGroup.forEach(action)
-            candidateGroups.addAll(processorsGroup.collectCandidateGroups())
-        }
-
-        variableProcessor.action()
-        findVariablesAndCreateNewInvokeCandidates()
-    }
-
-    init { proceed { /* do nothing */ } }
-
-    override fun processTowerLevel(level: ScopeTowerLevel) = proceed { this.processTowerLevel(level) }
-
-    override fun processImplicitReceiver(implicitReceiver: ReceiverValue)
-            = proceed { this.processImplicitReceiver(implicitReceiver) }
-
-    override fun getCandidatesGroups(): List<Collection<C>> = SmartList(candidateGroups)
 }
 
 // todo KT-9522 Allow invoke convention for synthetic property
@@ -135,33 +118,20 @@ internal class InvokeExtensionTowerProcessor<C>(
 
 private class InvokeExtensionScopeTowerProcessor<C>(
         context: TowerContext<C>,
-        val invokeCandidateDescriptor: CandidateWithBoundDispatchReceiver<FunctionDescriptor>,
-        val explicitReceiver: ReceiverValue?
-) : AbstractScopeTowerProcessor<C>(context) {
-    override var candidates: Collection<C> = resolve(explicitReceiver)
+        private val invokeCandidateDescriptor: CandidateWithBoundDispatchReceiver<FunctionDescriptor>,
+        private val explicitReceiver: ReceiverValue?
+) : AbstractSimpleScopeTowerProcessor<C>(context) {
 
-    private fun resolve(extensionReceiver: ReceiverValue?): Collection<C> {
-        if (extensionReceiver == null) return emptyList()
-
-        // todo
-        val explicitReceiverKind = if (explicitReceiver != null) ExplicitReceiverKind.BOTH_RECEIVERS else ExplicitReceiverKind.DISPATCH_RECEIVER
-
-        val candidate = context.createCandidate(invokeCandidateDescriptor, explicitReceiverKind, extensionReceiver)
-        return listOf(candidate)
-    }
-
-    override fun processTowerLevel(level: ScopeTowerLevel) {
-        candidates = emptyList()
-    }
-
-    // todo optimize
-    override fun processImplicitReceiver(implicitReceiver: ReceiverValue) {
-        if (explicitReceiver == null) {
-            candidates = resolve(implicitReceiver)
+    override fun simpleProcess(data: TowerData): Collection<C> {
+        if (explicitReceiver != null && data == TowerData.Empty) {
+            return listOf(context.createCandidate(invokeCandidateDescriptor, ExplicitReceiverKind.BOTH_RECEIVERS, explicitReceiver))
         }
-        else {
-            candidates = emptyList()
+
+        if (explicitReceiver == null && data is TowerData.OnlyImplicitReceiver) {
+            return listOf(context.createCandidate(invokeCandidateDescriptor, ExplicitReceiverKind.DISPATCH_RECEIVER, data.implicitReceiver))
         }
+
+        return emptyList()
     }
 }
 
