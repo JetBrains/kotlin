@@ -390,6 +390,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
                 doSingleBreakpointTest(fileName);
             }
 
+            @TestMetadata("evFunctionDeclaration.kt")
+            public void testEvFunctionDeclaration() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/extraVariables/evFunctionDeclaration.kt");
+                doSingleBreakpointTest(fileName);
+            }
+
             @TestMetadata("evLineRange.kt")
             public void testEvLineRange() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/extraVariables/evLineRange.kt");

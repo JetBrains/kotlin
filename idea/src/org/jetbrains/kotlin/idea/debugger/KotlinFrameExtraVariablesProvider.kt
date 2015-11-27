@@ -34,9 +34,12 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.idea.core.refactoring.getLineEndOffset
+import org.jetbrains.kotlin.idea.core.refactoring.getLineStartOffset
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
 public class KotlinFrameExtraVariablesProvider : FrameExtraVariablesProvider {
@@ -61,8 +64,7 @@ private fun findAdditionalExpressions(position: SourcePosition): Set<TextWithImp
         return emptySet()
     }
 
-    val offset = doc.getLineStartOffset(line)
-    if (offset < 0) return emptySet()
+    val offset = file.getLineStartOffset(line)?.check { it > 0 } ?: return emptySet()
 
     val elem = file.findElementAt(offset)
     val containingElement = getContainingElement(elem!!) ?: elem ?: return emptySet()
@@ -79,8 +81,8 @@ private fun findAdditionalExpressions(position: SourcePosition): Set<TextWithImp
         endLine++
     }
 
-    val startOffset = doc.getLineStartOffset(startLine)
-    val endOffset = doc.getLineEndOffset(endLine)
+    val startOffset = file.getLineStartOffset(startLine) ?: return emptySet()
+    val endOffset = file.getLineEndOffset(endLine) ?: return emptySet()
 
     if (startOffset >= endOffset) return emptySet()
 
