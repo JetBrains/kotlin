@@ -305,7 +305,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
             ArraysOfObjects -> "Array<${isAsteriskOrT.replace("T", "out T")}>"
             Strings -> "String"
             CharSequences -> "CharSequence"
-            Ranges -> "Range<$isAsteriskOrT>"
+            Ranges -> "ClosedRange<$isAsteriskOrT>"
             ArraysOfPrimitives -> primitive?.let { it.name + "Array" } ?: throw IllegalArgumentException("Primitive array should specify primitive type")
             RangesOfPrimitives -> primitive?.let { it.name + "Range" } ?: throw IllegalArgumentException("Primitive range should specify primitive type")
             ProgressionsOfPrimitives -> primitive?.let { it.name + "Progression" } ?: throw IllegalArgumentException("Primitive progression should specify primitive type")
