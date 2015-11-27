@@ -13,60 +13,6 @@ import java.util.*
 
 import java.util.Collections // TODO: it's temporary while we have java.util.Collections in js
 
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-@[kotlin.jvm.JvmName("downTo") kotlin.jvm.JvmVersion]
-public fun Byte.`-downTo`(to: Byte): ByteProgression {
-    return ByteProgression.fromClosedRange(this, to, -1)
-}
-
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-@[kotlin.jvm.JvmName("downTo") kotlin.jvm.JvmVersion]
-public fun Short.`-downTo`(to: Byte): ShortProgression {
-    return ShortProgression.fromClosedRange(this, to.toShort(), -1)
-}
-
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-@[kotlin.jvm.JvmName("downTo") kotlin.jvm.JvmVersion]
-public fun Byte.`-downTo`(to: Short): ShortProgression {
-    return ShortProgression.fromClosedRange(this.toShort(), to, -1)
-}
-
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-@[kotlin.jvm.JvmName("downTo") kotlin.jvm.JvmVersion]
-public fun Short.`-downTo`(to: Short): ShortProgression {
-    return ShortProgression.fromClosedRange(this, to, -1)
-}
-
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-@[kotlin.jvm.JvmName("until") kotlin.jvm.JvmVersion]
-public fun Byte.`-until`(to: Byte): ByteRange {
-    val to_  = (to - 1).toByte()
-    if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
-    return ByteRange(this, to_)
-}
-
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-@[kotlin.jvm.JvmName("until") kotlin.jvm.JvmVersion]
-public fun Short.`-until`(to: Byte): ShortRange {
-    return ShortRange(this, (to.toShort() - 1).toShort())
-}
-
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-@[kotlin.jvm.JvmName("until") kotlin.jvm.JvmVersion]
-public fun Byte.`-until`(to: Short): ShortRange {
-    val to_  = (to - 1).toShort()
-    if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
-    return ShortRange(this.toShort(), to_)
-}
-
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-@[kotlin.jvm.JvmName("until") kotlin.jvm.JvmVersion]
-public fun Short.`-until`(to: Short): ShortRange {
-    val to_  = (to - 1).toShort()
-    if (to_ > to) throw IllegalArgumentException("The to argument value '$to' was too small.")
-    return ShortRange(this, to_)
-}
-
 /**
  * Checks if the specified [value] belongs to this range.
  */
@@ -489,42 +435,6 @@ public fun LongRange.reversed(): LongProgression {
 }
 
 /**
- * Returns a progression that goes over the same range in the opposite direction with the same step.
- */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
-@Suppress("DEPRECATION_ERROR")
-public fun ByteProgression.reversed(): ByteProgression {
-    return ByteProgression.fromClosedRange(last, first, -step)
-}
-
-/**
- * Returns a progression that goes over the same range in the opposite direction with the same step.
- */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
-@Suppress("DEPRECATION_ERROR")
-public fun ShortProgression.reversed(): ShortProgression {
-    return ShortProgression.fromClosedRange(last, first, -step)
-}
-
-/**
- * Returns a progression that goes over this range in reverse direction.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-@Suppress("DEPRECATION_ERROR")
-public fun ByteRange.reversed(): ByteProgression {
-    return ByteProgression.fromClosedRange(last, first, -1)
-}
-
-/**
- * Returns a progression that goes over this range in reverse direction.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-@Suppress("DEPRECATION_ERROR")
-public fun ShortRange.reversed(): ShortProgression {
-    return ShortProgression.fromClosedRange(last, first, -1)
-}
-
-/**
  * Returns a progression that goes over the same range with the given step.
  */
 public infix fun CharProgression.step(step: Int): CharProgression {
@@ -573,46 +483,6 @@ public infix fun IntRange.step(step: Int): IntProgression {
 public infix fun LongRange.step(step: Long): LongProgression {
     checkStepIsPositive(step > 0, step)
     return LongProgression.fromClosedRange(first, last, step)
-}
-
-/**
- * Returns a progression that goes over the same range with the given step.
- */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
-@Suppress("DEPRECATION_ERROR")
-public infix fun ByteProgression.step(step: Int): ByteProgression {
-    checkStepIsPositive(step > 0, step)
-    return ByteProgression.fromClosedRange(first, last, if (this.step > 0) step else -step)
-}
-
-/**
- * Returns a progression that goes over the same range with the given step.
- */
-@Deprecated("This range implementation has unclear semantics and will be removed soon.")
-@Suppress("DEPRECATION_ERROR")
-public infix fun ShortProgression.step(step: Int): ShortProgression {
-    checkStepIsPositive(step > 0, step)
-    return ShortProgression.fromClosedRange(first, last, if (this.step > 0) step else -step)
-}
-
-/**
- * Returns a progression that goes over this range with given step.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-@Suppress("DEPRECATION_ERROR")
-public infix fun ByteRange.step(step: Int): ByteProgression {
-    checkStepIsPositive(step > 0, step)
-    return ByteProgression.fromClosedRange(first, last, step)
-}
-
-/**
- * Returns a progression that goes over this range with given step.
- */
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-@Suppress("DEPRECATION_ERROR")
-public infix fun ShortRange.step(step: Int): ShortProgression {
-    checkStepIsPositive(step > 0, step)
-    return ShortProgression.fromClosedRange(first, last, step)
 }
 
 /**

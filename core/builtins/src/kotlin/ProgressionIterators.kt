@@ -19,29 +19,6 @@
 package kotlin.ranges
 
 /**
- * An iterator over a progression of values of type `Byte`.
- * @property step the number by which the value is incremented on each step.
- */
-internal class ByteProgressionIterator(first: Byte, last: Byte, val step: Int) : ByteIterator() {
-    private var next = first.toInt()
-    private val finalElement = last.toInt()
-    private var hasNext: Boolean = if (step > 0) first <= last else first >= last
-
-    override fun hasNext(): Boolean = hasNext
-
-    override fun nextByte(): Byte {
-        val value = next
-        if (value == finalElement) {
-            hasNext = false
-        }
-        else {
-            next += step
-        }
-        return value.toByte()
-    }
-}
-
-/**
  * An iterator over a progression of values of type `Char`.
  * @property step the number by which the value is incremented on each step.
  */
@@ -61,29 +38,6 @@ internal class CharProgressionIterator(first: Char, last: Char, val step: Int) :
             next += step
         }
         return value.toChar()
-    }
-}
-
-/**
- * An iterator over a progression of values of type `Short`.
- * @property step the number by which the value is incremented on each step.
- */
-internal class ShortProgressionIterator(first: Short, last: Short, val step: Int) : ShortIterator() {
-    private var next = first.toInt()
-    private val finalElement = last.toInt()
-    private var hasNext: Boolean = if (step > 0) first <= last else first >= last
-
-    override fun hasNext(): Boolean = hasNext
-
-    override fun nextShort(): Short {
-        val value = next
-        if (value == finalElement) {
-            hasNext = false
-        }
-        else {
-            next += step
-        }
-        return value.toShort()
     }
 }
 

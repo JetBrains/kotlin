@@ -57,8 +57,6 @@ public class RangeIterationTest : RangeIterationTestBase() {
 
     @test fun emptyConstant() {
         doTest(IntRange.EMPTY, 1, 0, 1, listOf())
-        doTest(ByteRange.EMPTY, 1.toByte(), 0.toByte(), 1, listOf())
-        doTest(ShortRange.EMPTY, 1.toShort(), 0.toShort(), 1, listOf())
         doTest(LongRange.EMPTY, 1.toLong(), 0.toLong(), 1.toLong(), listOf())
 
         doTest(CharRange.EMPTY, 1.toChar(), 0.toChar(), 1, listOf())

@@ -18,36 +18,6 @@
 
 package kotlin.ranges
 
-@Deprecated("Use IntRange instead.", ReplaceWith("IntRange"), level = DeprecationLevel.WARNING)
-/**
- * A range of values of type `Byte`.
- */
-public class ByteRange(start: Byte, endInclusive: Byte) : ByteProgression(start, endInclusive, 1), ClosedRange<Byte> {
-    @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
-    override val end: Byte get() = endInclusive
-
-    override val start: Byte get() = first
-    override val endInclusive: Byte get() = last
-
-    override fun contains(value: Byte): Boolean = start <= value && value <= endInclusive
-
-    override fun isEmpty(): Boolean = start > endInclusive
-
-    override fun equals(other: Any?): Boolean =
-        other is ByteRange && (isEmpty() && other.isEmpty() ||
-        start == other.start && endInclusive == other.endInclusive)
-
-    override fun hashCode(): Int =
-        if (isEmpty()) -1 else (31 * start.toInt() + endInclusive.toInt())
-
-    override fun toString(): String = "$start..$endInclusive"
-
-    companion object {
-        /** An empty range of values of type Byte. */
-        public val EMPTY: ByteRange = ByteRange(1, 0)
-    }
-}
-
 /**
  * A range of values of type `Char`.
  */
@@ -74,36 +44,6 @@ public class CharRange(start: Char, endInclusive: Char) : CharProgression(start,
     companion object {
         /** An empty range of values of type Char. */
         public val EMPTY: CharRange = CharRange(1.toChar(), 0.toChar())
-    }
-}
-
-@Deprecated("Use IntRange instead.", ReplaceWith("IntRange"), level = DeprecationLevel.WARNING)
-/**
- * A range of values of type `Short`.
- */
-public class ShortRange(start: Short, endInclusive: Short) : ShortProgression(start, endInclusive, 1), ClosedRange<Short> {
-    @Deprecated("Use endInclusive instead.", ReplaceWith("endInclusive"))
-    override val end: Short get() = endInclusive
-
-    override val start: Short get() = first
-    override val endInclusive: Short get() = last
-
-    override fun contains(value: Short): Boolean = start <= value && value <= endInclusive
-
-    override fun isEmpty(): Boolean = start > endInclusive
-
-    override fun equals(other: Any?): Boolean =
-        other is ShortRange && (isEmpty() && other.isEmpty() ||
-        start == other.start && endInclusive == other.endInclusive)
-
-    override fun hashCode(): Int =
-        if (isEmpty()) -1 else (31 * start.toInt() + endInclusive.toInt())
-
-    override fun toString(): String = "$start..$endInclusive"
-
-    companion object {
-        /** An empty range of values of type Short. */
-        public val EMPTY: ShortRange = ShortRange(1, 0)
     }
 }
 
