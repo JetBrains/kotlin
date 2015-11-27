@@ -93,6 +93,16 @@ internal class TypeMappingMode private constructor(
                     skipDeclarationSiteWildcardsIfPossible = true,
                     genericContravariantArgumentMode = contravariantArgumentMode)
         }
+
+        @JvmStatic
+        fun createWithConstantDeclarationSiteWildcardsMode(
+                skipDeclarationSiteWildcards: Boolean,
+                isForAnnotationParameter: Boolean,
+                fallbackMode: TypeMappingMode? = null
+        ) = TypeMappingMode(
+                isForAnnotationParameter = isForAnnotationParameter,
+                skipDeclarationSiteWildcards = skipDeclarationSiteWildcards,
+                genericArgumentMode = fallbackMode)
     }
 
     fun toGenericArgumentMode(effectiveVariance: Variance): TypeMappingMode =

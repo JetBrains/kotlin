@@ -7,11 +7,12 @@ public abstract class AImpl {
         throw UnsupportedOperationException()
     }
 
+    @JvmSuppressWildcards(suppress = false)
     fun addAll(elements: Collection<String>): Boolean {
         throw UnsupportedOperationException()
     }
 
-    fun addAll(index: Int, elements: Collection<String>): Boolean {
+    fun addAll(index: Int, elements: Collection<@JvmWildcard String>): Boolean {
         throw UnsupportedOperationException()
     }
 

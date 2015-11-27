@@ -19,9 +19,11 @@ package org.jetbrains.kotlin.codegen.state
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.firstOverridden
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
+import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
@@ -83,3 +85,45 @@ private val METHODS_WITH_DECLARATION_SITE_WILDCARDS = setOf(
         FqName("kotlin.MutableList.addAll"),
         FqName("kotlin.MutableMap.putAll")
 )
+
+internal fun TypeMappingMode.updateArgumentModeFromAnnotations(type: KotlinType): TypeMappingMode {
+    type.suppressWildcardsMode()?.let {
+        return TypeMappingMode.createWithConstantDeclarationSiteWildcardsMode(
+                skipDeclarationSiteWildcards = it, isForAnnotationParameter = isForAnnotationParameter)
+    }
+
+    if (type.annotations.hasAnnotation(JVM_WILDCARD_ANNOTATION_FQ_NAME)) {
+        return TypeMappingMode.createWithConstantDeclarationSiteWildcardsMode(
+                skipDeclarationSiteWildcards = false, isForAnnotationParameter = isForAnnotationParameter, fallbackMode = this)
+    }
+
+    return this
+}
+
+internal fun extractTypeMappingModeFromAnnotation(
+        callableDescriptor: CallableDescriptor,
+        outerType: KotlinType,
+        isForAnnotationParameter: Boolean
+): TypeMappingMode? =
+        (outerType.suppressWildcardsMode() ?: callableDescriptor.suppressWildcardsMode())?.let {
+            if (outerType.arguments.isNotEmpty())
+                TypeMappingMode.createWithConstantDeclarationSiteWildcardsMode(
+                        skipDeclarationSiteWildcards = it, isForAnnotationParameter = isForAnnotationParameter)
+            else
+                TypeMappingMode.DEFAULT
+        }
+
+private fun DeclarationDescriptor.suppressWildcardsMode(): Boolean? =
+        parentsWithSelf.mapNotNull {
+            it.annotations.findAnnotation(JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME)
+        }.firstOrNull().suppressWildcardsMode()
+
+private fun KotlinType.suppressWildcardsMode(): Boolean? =
+        annotations.findAnnotation(JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME).suppressWildcardsMode()
+
+private fun AnnotationDescriptor?.suppressWildcardsMode(): Boolean? {
+    return (this ?: return null).allValueArguments.values.firstOrNull()?.value as? Boolean ?: true
+}
+
+private val JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmSuppressWildcards")
+private val JVM_WILDCARD_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmWildcard")

@@ -326,9 +326,16 @@ public class JetTypeMapper {
             return mapType(descriptor.getReturnType(), sw, TypeMappingMode.GENERIC_TYPE);
         }
         else {
+            boolean isAnnotationMethod = DescriptorUtils.isAnnotationClass(descriptor.getContainingDeclaration());
+            TypeMappingMode typeMappingModeFromAnnotation =
+                    TypeMappingUtil.extractTypeMappingModeFromAnnotation(descriptor, returnType, isAnnotationMethod);
+            if (typeMappingModeFromAnnotation != null) {
+                return mapType(returnType, sw, typeMappingModeFromAnnotation);
+            }
+
             TypeMappingMode mappingMode = TypeMappingMode.getOptimalModeForReturnType(
                     returnType,
-                    /* isAnnotationMethod = */ DescriptorUtils.isAnnotationClass(descriptor.getContainingDeclaration()));
+                    /* isAnnotationMethod = */ isAnnotationMethod);
 
             return mapType(returnType, sw, mappingMode);
         }
@@ -631,11 +638,13 @@ public class JetTypeMapper {
                 signatureVisitor.writeUnboundedWildcard();
             }
             else {
-                Variance projectionKind = getVarianceForWildcard(parameter, argument, mode);
+                TypeMappingMode argumentMode = TypeMappingUtil.updateArgumentModeFromAnnotations(mode, argument.getType());
+                Variance projectionKind = getVarianceForWildcard(parameter, argument, argumentMode);
+
                 signatureVisitor.writeTypeArgument(projectionKind);
 
                 mapType(argument.getType(), signatureVisitor,
-                        mode.toGenericArgumentMode(
+                        argumentMode.toGenericArgumentMode(
                                 TypeMappingUtil.getEffectiveVariance(parameter.getVariance(), argument.getProjectionKind())));
 
                 signatureVisitor.writeTypeArgumentEnd();
@@ -1204,7 +1213,13 @@ public class JetTypeMapper {
 
         TypeMappingMode typeMappingMode;
 
-        if (TypeMappingUtil.isMethodWithDeclarationSiteWildcards(callableDescriptor) && !type.getArguments().isEmpty()) {
+        TypeMappingMode typeMappingModeFromAnnotation =
+                TypeMappingUtil.extractTypeMappingModeFromAnnotation(callableDescriptor, type, /* isForAnnotationParameter = */ false);
+
+        if (typeMappingModeFromAnnotation != null) {
+            typeMappingMode = typeMappingModeFromAnnotation;
+        }
+        else if (TypeMappingUtil.isMethodWithDeclarationSiteWildcards(callableDescriptor) && !type.getArguments().isEmpty()) {
             typeMappingMode = TypeMappingMode.GENERIC_TYPE; // Render all wildcards
         }
         else {

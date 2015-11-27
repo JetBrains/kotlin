@@ -35,6 +35,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithJava"), Pattern.compile("^([^\\.]+)$"), true);
     }
 
+    @TestMetadata("allWildcardsOnClass")
+    public void testAllWildcardsOnClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/allWildcardsOnClass/");
+        doTestWithJava(fileName);
+    }
+
     @TestMetadata("annotatedSamFunExpression")
     public void testAnnotatedSamFunExpression() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/annotatedSamFunExpression/");
@@ -56,6 +62,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
     @TestMetadata("classObjectAccessor")
     public void testClassObjectAccessor() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/classObjectAccessor/");
+        doTestWithJava(fileName);
+    }
+
+    @TestMetadata("covariantOverrideWithDeclarationSiteProjection")
+    public void testCovariantOverrideWithDeclarationSiteProjection() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/covariantOverrideWithDeclarationSiteProjection/");
         doTestWithJava(fileName);
     }
 

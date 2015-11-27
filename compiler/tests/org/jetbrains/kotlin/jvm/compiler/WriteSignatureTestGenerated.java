@@ -373,6 +373,33 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
             doTest(fileName);
         }
 
+        @TestMetadata("compiler/testData/writeSignature/declarationSiteVariance/jvmWildcardAnnotations")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class JvmWildcardAnnotations extends AbstractWriteSignatureTest {
+            public void testAllFilesPresentInJvmWildcardAnnotations() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/declarationSiteVariance/jvmWildcardAnnotations"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("onFunction.kt")
+            public void testOnFunction() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/jvmWildcardAnnotations/onFunction.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("onTypes.kt")
+            public void testOnTypes() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/jvmWildcardAnnotations/onTypes.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("primitiveTypes.kt")
+            public void testPrimitiveTypes() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/jvmWildcardAnnotations/primitiveTypes.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/writeSignature/declarationSiteVariance/wildcardOptimization")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
