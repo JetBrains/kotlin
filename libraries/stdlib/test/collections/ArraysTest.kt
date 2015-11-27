@@ -877,7 +877,7 @@ class ArraysTest {
         assertArrayNotSameButEquals(arrayOf("all", "Foo", "9", "80"), strArr)
     }
 
-    @test fun sorted() {
+    @test fun sortedTests() {
         assertTrue(arrayOf<Long>().sorted().none())
         assertEquals(listOf(1), arrayOf(1).sorted())
 
@@ -935,7 +935,7 @@ class ArraysTest {
     }
 
     @test fun sortedNullableBy() {
-        fun String.nullIfEmpty() = if (isEmpty()) null else this
+        fun String.nullIfEmpty() = if (this.isEmpty()) null else this
         arrayOf(null, "").let {
             expect(listOf(null, "")) { it.sortedWith(nullsFirst(compareBy { it })) }
             expect(listOf("", null)) { it.sortedWith(nullsLast(compareByDescending { it })) }
