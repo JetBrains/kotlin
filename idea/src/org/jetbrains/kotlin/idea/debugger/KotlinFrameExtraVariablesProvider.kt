@@ -16,33 +16,33 @@
 
 package org.jetbrains.kotlin.idea.debugger
 
-import com.intellij.debugger.engine.FrameExtraVariablesProvider
 import com.intellij.debugger.SourcePosition
+import com.intellij.debugger.engine.FrameExtraVariablesProvider
+import com.intellij.debugger.engine.evaluation.CodeFragmentKind
 import com.intellij.debugger.engine.evaluation.EvaluationContext
 import com.intellij.debugger.engine.evaluation.TextWithImports
-import com.intellij.debugger.settings.DebuggerSettings
 import com.intellij.debugger.engine.evaluation.TextWithImportsImpl
-import com.intellij.debugger.engine.evaluation.CodeFragmentKind
-import com.intellij.openapi.fileEditor.FileDocumentManager
-import com.intellij.psi.PsiElement
-import com.intellij.openapi.util.TextRange
+import com.intellij.debugger.settings.DebuggerSettings
 import com.intellij.openapi.editor.Document
+import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.util.text.CharArrayUtil
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.resolve.BindingContext
+import com.intellij.util.text.CharArrayUtil
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import java.util.LinkedHashSet
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
+import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import java.util.*
 
 public class KotlinFrameExtraVariablesProvider : FrameExtraVariablesProvider {
     override fun isAvailable(sourcePosition: SourcePosition, evalContext: EvaluationContext): Boolean {
-        if (sourcePosition.getLine() < 0) return false
-        return sourcePosition.getFile().getFileType() == KotlinFileType.INSTANCE && DebuggerSettings.getInstance().AUTO_VARIABLES_MODE
+        if (sourcePosition.line < 0) return false
+        return sourcePosition.file.fileType == KotlinFileType.INSTANCE && DebuggerSettings.getInstance().AUTO_VARIABLES_MODE
     }
 
     override fun collectVariables(
@@ -52,12 +52,12 @@ public class KotlinFrameExtraVariablesProvider : FrameExtraVariablesProvider {
 }
 
 private fun findAdditionalExpressions(position: SourcePosition): Set<TextWithImports> {
-    val line = position.getLine()
-    val file = position.getFile()
+    val line = position.line
+    val file = position.file
 
-    val vFile = file.getVirtualFile()
+    val vFile = file.virtualFile
     val doc = if (vFile != null) FileDocumentManager.getInstance().getDocument(vFile) else null
-    if (doc == null || doc.getLineCount() == 0 || line > (doc.getLineCount() - 1)) {
+    if (doc == null || doc.lineCount == 0 || line > (doc.lineCount - 1)) {
         return emptySet()
     }
 
@@ -65,19 +65,17 @@ private fun findAdditionalExpressions(position: SourcePosition): Set<TextWithImp
     if (offset < 0) return emptySet()
 
     val elem = file.findElementAt(offset)
-    val containingElement = getContainingElement(elem!!) ?: elem
-
-    if (containingElement == null) return emptySet()
+    val containingElement = getContainingElement(elem!!) ?: elem ?: return emptySet()
 
     val limit = getLineRangeForElement(containingElement, doc)
 
-    var startLine = Math.max(limit.getStartOffset(), line)
-    while (startLine - 1 > limit.getStartOffset() && shouldSkipLine(file, doc, startLine - 1)) {
+    var startLine = Math.max(limit.startOffset, line)
+    while (startLine - 1 > limit.startOffset && shouldSkipLine(file, doc, startLine - 1)) {
         startLine--
     }
 
-    var endLine = Math.min(limit.getEndOffset(), line)
-    while (endLine + 1 < limit.getEndOffset() && shouldSkipLine(file, doc, endLine + 1)) {
+    var endLine = Math.min(limit.endOffset, line)
+    while (endLine + 1 < limit.endOffset && shouldSkipLine(file, doc, endLine + 1)) {
         endLine++
     }
 
@@ -87,7 +85,7 @@ private fun findAdditionalExpressions(position: SourcePosition): Set<TextWithImp
     if (startOffset >= endOffset) return emptySet()
 
     val lineRange = TextRange(startOffset, endOffset)
-    if (lineRange.isEmpty()) return emptySet()
+    if (lineRange.isEmpty) return emptySet()
 
     val expressions = LinkedHashSet<TextWithImports>()
 
@@ -98,27 +96,27 @@ private fun findAdditionalExpressions(position: SourcePosition): Set<TextWithImp
 }
 
 private fun getContainingElement(element: PsiElement): KtElement? {
-    val contElement = PsiTreeUtil.getParentOfType(element, javaClass<KtDeclaration>()) ?: PsiTreeUtil.getParentOfType(element, javaClass<KtElement>())
-    if (contElement is KtProperty && contElement.isLocal()) {
-        val parent = contElement.getParent()
+    val contElement = PsiTreeUtil.getParentOfType(element, KtDeclaration::class.java) ?: PsiTreeUtil.getParentOfType(element, KtElement::class.java)
+    if (contElement is KtProperty && contElement.isLocal) {
+        val parent = contElement.parent
         if (parent != null) {
             return getContainingElement(parent)
         }
     }
 
     if (contElement is KtDeclarationWithBody) {
-        return contElement.getBodyExpression()
+        return contElement.bodyExpression
     }
     return contElement
 }
 
 private fun getLineRangeForElement(containingElement: PsiElement, doc: Document): TextRange {
-    val elemRange = containingElement.getTextRange()
-    return TextRange(doc.getLineNumber(elemRange.getStartOffset()), doc.getLineNumber(elemRange.getEndOffset()))
+    val elemRange = containingElement.textRange
+    return TextRange(doc.getLineNumber(elemRange.startOffset), doc.getLineNumber(elemRange.endOffset))
 }
 
 private fun shouldSkipLine(file: PsiFile, doc: Document, line: Int): Boolean {
-    val start = CharArrayUtil.shiftForward(doc.getCharsSequence(), doc.getLineStartOffset(line), " \n\t")
+    val start = CharArrayUtil.shiftForward(doc.charsSequence, doc.getLineStartOffset(line), " \n\t")
     val end = doc.getLineEndOffset(line)
     if (start >= end) {
         return true
@@ -142,7 +140,7 @@ private class VariablesCollector(
 
     override fun visitQualifiedExpression(expression: KtQualifiedExpression) {
         if (expression.isInRange()) {
-            val selector = expression.getSelectorExpression()
+            val selector = expression.selectorExpression
             if (selector is KtReferenceExpression) {
                 if (isRefToProperty(selector)) {
                     myExpressions.add(expression.createText())
@@ -157,9 +155,9 @@ private class VariablesCollector(
         val context = expression.analyzeFully()
         val descriptor = context[BindingContext.REFERENCE_TARGET, expression]
         if (descriptor is PropertyDescriptor) {
-            val getter = descriptor.getGetter()
+            val getter = descriptor.getter
             return (getter == null || context[BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, getter] == null) &&
-                   descriptor.getCompileTimeInitializer() == null
+                   descriptor.compileTimeInitializer == null
         }
         return false
     }
@@ -173,8 +171,8 @@ private class VariablesCollector(
         super.visitReferenceExpression(expression)
     }
 
-    private fun KtElement.isInRange(): Boolean = myLineRange.intersects(this.getTextRange())
-    private fun KtElement.createText(): TextWithImports = TextWithImportsImpl(CodeFragmentKind.EXPRESSION, this.getText())
+    private fun KtElement.isInRange(): Boolean = myLineRange.intersects(this.textRange)
+    private fun KtElement.createText(): TextWithImports = TextWithImportsImpl(CodeFragmentKind.EXPRESSION, this.text)
 
     override fun visitClass(klass: KtClass) {
         // Do not show expressions used in local classes
