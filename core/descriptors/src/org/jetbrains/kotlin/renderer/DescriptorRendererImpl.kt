@@ -222,15 +222,16 @@ internal class DescriptorRendererImpl(
             return lowerRendered + "!"
         }
 
-        val kotlinPrefix = if (nameShortness != NameShortness.SHORT) "kotlin." else ""
+        val kotlinCollectionsPrefix = if (nameShortness != NameShortness.SHORT) "kotlin.collections." else ""
         val mutablePrefix = "Mutable"
         // java.util.List<Foo> -> (Mutable)List<Foo!>!
-        val simpleCollection = replacePrefixes(lowerRendered, kotlinPrefix + mutablePrefix, upperRendered, kotlinPrefix, kotlinPrefix + "(" + mutablePrefix + ")")
+        val simpleCollection = replacePrefixes(lowerRendered, kotlinCollectionsPrefix + mutablePrefix, upperRendered, kotlinCollectionsPrefix, kotlinCollectionsPrefix + "(" + mutablePrefix + ")")
         if (simpleCollection != null) return simpleCollection
         // java.util.Map.Entry<Foo, Bar> -> (Mutable)Map.(Mutable)Entry<Foo!, Bar!>!
-        val mutableEntry = replacePrefixes(lowerRendered, kotlinPrefix + "MutableMap.MutableEntry", upperRendered, kotlinPrefix + "Map.Entry", kotlinPrefix + "(Mutable)Map.(Mutable)Entry")
+        val mutableEntry = replacePrefixes(lowerRendered, kotlinCollectionsPrefix + "MutableMap.MutableEntry", upperRendered, kotlinCollectionsPrefix + "Map.Entry", kotlinCollectionsPrefix + "(Mutable)Map.(Mutable)Entry")
         if (mutableEntry != null) return mutableEntry
 
+        val kotlinPrefix = if (nameShortness != NameShortness.SHORT) "kotlin." else ""
         // Foo[] -> Array<(out) Foo!>!
         val array = replacePrefixes(lowerRendered, kotlinPrefix + escape("Array<"), upperRendered, kotlinPrefix + escape("Array<out "), kotlinPrefix + escape("Array<(out) "))
         if (array != null) return array
