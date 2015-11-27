@@ -316,7 +316,7 @@ public fun KtClassOrObject.effectiveDeclarations(): List<KtDeclaration> {
     }
 }
 
-public fun KtDeclaration.isExtensionDeclaration(): Boolean {
+public fun PsiElement.isExtensionDeclaration(): Boolean {
     val callable: KtCallableDeclaration? = when (this) {
         is KtNamedFunction, is KtProperty -> this as KtCallableDeclaration
         is KtPropertyAccessor -> getNonStrictParentOfType<KtProperty>()
