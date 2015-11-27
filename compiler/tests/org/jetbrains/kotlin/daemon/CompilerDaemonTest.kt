@@ -16,12 +16,11 @@
 
 package org.jetbrains.kotlin.daemon
 
-import junit.framework.TestCase
 import org.jetbrains.kotlin.cli.CliBaseTest
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
-import org.jetbrains.kotlin.rmi.*
-import org.jetbrains.kotlin.rmi.kotlinr.DaemonReportingTargets
-import org.jetbrains.kotlin.rmi.kotlinr.KotlinCompilerClient
+import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
+import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
+import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -39,7 +38,7 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
     val compilerClassPath = listOf(
             File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-compiler.jar"))
-    val daemonClientClassPath = listOf( File(KotlinIntegrationTestBase.getCompilerLib(), "kotlinr.jar"),
+    val daemonClientClassPath = listOf( File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-daemon-client.jar"),
                                         File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-compiler.jar"))
     val compilerId by lazy(LazyThreadSafetyMode.NONE) { CompilerId.makeCompilerId(compilerClassPath) }
 
@@ -76,7 +75,7 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
             val logFile = createTempFile("kotlin-daemon-test.", ".log")
 
-            val daemonJVMOptions = configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
+            val daemonJVMOptions = configureDaemonJVMOptions("D${COMPILE_DAEMON_LOG_PATH_PROPERTY}=\"${logFile.loggerCompatiblePath}\"",
                                                              inheritMemoryLimits = false, inheritAdditionalProperties = false)
             var daemonShotDown = false
 
@@ -154,11 +153,11 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
             val logFile1 = createTempFile("kotlin-daemon1-test", ".log")
             val logFile2 = createTempFile("kotlin-daemon2-test", ".log")
             val daemonJVMOptions1 =
-                    configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile1.loggerCompatiblePath}\"",
+                    configureDaemonJVMOptions("D${COMPILE_DAEMON_LOG_PATH_PROPERTY}=\"${logFile1.loggerCompatiblePath}\"",
                                               inheritMemoryLimits = false, inheritAdditionalProperties = false)
 
             val daemonJVMOptions2 =
-                    configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile2.loggerCompatiblePath}\"",
+                    configureDaemonJVMOptions("D${COMPILE_DAEMON_LOG_PATH_PROPERTY}=\"${logFile2.loggerCompatiblePath}\"",
                                               inheritMemoryLimits = false, inheritAdditionalProperties = false)
 
             assertTrue(logFile1.length() == 0L && logFile2.length() == 0L)
@@ -193,7 +192,7 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
             val logFile = createTempFile("kotlin-daemon-test", ".log")
             val daemonJVMOptions =
-                    configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
+                    configureDaemonJVMOptions("D${COMPILE_DAEMON_LOG_PATH_PROPERTY}=\"${logFile.loggerCompatiblePath}\"",
                                               inheritMemoryLimits = false, inheritAdditionalProperties = false)
 
             val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true)
@@ -220,7 +219,7 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
             val logFile = createTempFile("kotlin-daemon-test", ".log")
             val daemonJVMOptions =
-                    configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
+                    configureDaemonJVMOptions("D${COMPILE_DAEMON_LOG_PATH_PROPERTY}=\"${logFile.loggerCompatiblePath}\"",
                                               inheritMemoryLimits = false, inheritAdditionalProperties = false)
 
             val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true)
@@ -252,7 +251,7 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
             val logFile = createTempFile("kotlin-daemon-test", ".log")
             val daemonJVMOptions =
-                    configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
+                    configureDaemonJVMOptions("D${COMPILE_DAEMON_LOG_PATH_PROPERTY}=\"${logFile.loggerCompatiblePath}\"",
                                               inheritMemoryLimits = false, inheritAdditionalProperties = false)
 
             val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true)
@@ -298,11 +297,11 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
         val daemonOptions = DaemonOptions(runFilesPath = runFilesPath)
         val jar = tmpdir.absolutePath + File.separator + "hello.jar"
         val args = listOf(
-                        File(File(System.getProperty("java.home"), "bin"), "java").absolutePath,
-                        "-D$COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY",
-                        "-cp",
-                        daemonClientClassPath.joinToString(File.pathSeparator) { it.absolutePath },
-                        KotlinCompilerClient::class.qualifiedName!!) +
+                File(File(System.getProperty("java.home"), "bin"), "java").absolutePath,
+                "-D${COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY}",
+                "-cp",
+                daemonClientClassPath.joinToString(File.pathSeparator) { it.absolutePath },
+                KotlinCompilerClient::class.qualifiedName!!) +
                    daemonOptions.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) } +
                    compilerId.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) } +
                    File(getHelloAppBaseDir(), "hello.kt").absolutePath +

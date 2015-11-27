@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.jps.build
 
 import com.intellij.util.PathUtil
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
-import org.jetbrains.kotlin.rmi.*
+import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
@@ -66,7 +66,7 @@ public class SimpleKotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
     // TODO: add JS tests
     public fun testDaemon() {
-        System.setProperty(COMPILE_DAEMON_ENABLED_PROPERTY,"")
+        System.setProperty(COMPILE_DAEMON_ENABLED_PROPERTY, "")
         System.setProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY, "")
         // spaces in the name to test proper file name handling
         val flagFile = File.createTempFile("kotlin-jps - tests-", "-is-running");

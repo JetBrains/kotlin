@@ -32,7 +32,7 @@ public class KotlinBuildProcessParametersProvider(private val compilerWorkspaceS
         }
         kotlinPluginStartupComponent.aliveFlagPath.let {
             if (!it.isBlank()) {
-                // TODO: consider taking the property name from compiler/rmi-interface (check whether dependency will be not too heavy)
+                // TODO: consider taking the property name from compiler/daemon/common (check whether dependency will be not too heavy)
                 res.add("-Dkotlin.daemon.client.alive.path=\"$it\"")
             }
         }

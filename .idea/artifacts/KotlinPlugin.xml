@@ -43,7 +43,7 @@
           <element id="module-output" name="idea-completion" />
           <element id="module-output" name="idea-core" />
           <element id="module-output" name="container" />
-          <element id="module-output" name="rmi-interface" />
+          <element id="module-output" name="daemon-common" />
           <element id="module-output" name="idea-repl" />
           <element id="module-output" name="idea-live-templates" />
         </element>

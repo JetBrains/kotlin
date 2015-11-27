@@ -26,7 +26,7 @@
     <orderEntry type="module" module-name="js.serializer" />
     <orderEntry type="module" module-name="js.translator" scope="TEST" />
     <orderEntry type="module" module-name="util" />
-    <orderEntry type="module" module-name="kotlinr" />
-    <orderEntry type="module" module-name="rmi-interface" />
+    <orderEntry type="module" module-name="daemon-client" />
+    <orderEntry type="module" module-name="daemon-common" />
   </component>
 </module>
