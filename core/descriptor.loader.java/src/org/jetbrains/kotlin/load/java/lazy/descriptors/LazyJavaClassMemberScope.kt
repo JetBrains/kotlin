@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
+import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -583,10 +584,11 @@ public class LazyJavaClassMemberScope(
         if (jNestedClass == null) {
             val field = enumEntryIndex()[name]
             if (field != null) {
+                val createLazyValue: NotNullLazyValue<Collection<Name>> = c.storageManager.createLazyValue {
+                    memberIndex().getAllFieldNames() + memberIndex().getMethodNames({ true })
+                }
                 EnumEntrySyntheticClassDescriptor.create(c.storageManager, ownerDescriptor, name,
-                                                         c.storageManager.createLazyValue {
-                                                             memberIndex().getAllFieldNames() + memberIndex().getMethodNames({ true })
-                                                         }, c.resolveAnnotations(field), c.components.sourceElementFactory.source(field))
+                                                         createLazyValue, c.resolveAnnotations(field), c.components.sourceElementFactory.source(field))
             }
             else null
         }
