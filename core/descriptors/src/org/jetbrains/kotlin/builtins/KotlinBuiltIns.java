@@ -229,7 +229,7 @@ public abstract class KotlinBuiltIns {
     @NotNull
     public ClassDescriptor getBuiltInClassByName(@NotNull Name simpleName) {
         ClassDescriptor classDescriptor = getBuiltInClassByNameNullable(simpleName);
-        assert classDescriptor != null : "Must be a class descriptor " + simpleName + ", but was null";
+        assert classDescriptor != null : "Built-in class " + simpleName + " is not found";
         return classDescriptor;
     }
 
