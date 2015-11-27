@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 
 internal class TypeMappingMode private constructor(
-        val needPrimitiveBoxing: Boolean = false,
+        val needPrimitiveBoxing: Boolean = true,
         val isForAnnotationParameter: Boolean = false,
         // Here DeclarationSiteWildcards means wildcard generated because of declaration-site variance
         val skipDeclarationSiteWildcards: Boolean = false,
@@ -33,13 +33,13 @@ internal class TypeMappingMode private constructor(
          * kotlin.Int is mapped to Ljava/lang/Integer;
          */
         @JvmField
-        val GENERIC_TYPE = TypeMappingMode(needPrimitiveBoxing = true)
+        val GENERIC_TYPE = TypeMappingMode()
 
         /**
          * kotlin.Int is mapped to I
          */
         @JvmField
-        val DEFAULT = TypeMappingMode(genericArgumentMode = GENERIC_TYPE)
+        val DEFAULT = TypeMappingMode(genericArgumentMode = GENERIC_TYPE, needPrimitiveBoxing = false)
 
         /**
          * kotlin.Int is mapped to Ljava/lang/Integer;
@@ -55,7 +55,8 @@ internal class TypeMappingMode private constructor(
         @JvmField
         val VALUE_FOR_ANNOTATION = TypeMappingMode(
                 isForAnnotationParameter = true,
-                genericArgumentMode = TypeMappingMode(isForAnnotationParameter = true, needPrimitiveBoxing = true, genericArgumentMode = GENERIC_TYPE))
+                needPrimitiveBoxing = false,
+                genericArgumentMode = TypeMappingMode(isForAnnotationParameter = true, genericArgumentMode = GENERIC_TYPE))
 
 
         @JvmStatic
@@ -79,7 +80,6 @@ internal class TypeMappingMode private constructor(
             val contravariantArgumentMode =
                 if (!canBeUsedInSupertypePosition)
                     TypeMappingMode(
-                            needPrimitiveBoxing = true,
                             isForAnnotationParameter = isForAnnotationParameter,
                             skipDeclarationSiteWildcards = false,
                             skipDeclarationSiteWildcardsIfPossible = true)
@@ -87,7 +87,6 @@ internal class TypeMappingMode private constructor(
                     null
 
             return TypeMappingMode(
-                    needPrimitiveBoxing = true,
                     isForAnnotationParameter = isForAnnotationParameter,
                     skipDeclarationSiteWildcards = !canBeUsedInSupertypePosition,
                     skipDeclarationSiteWildcardsIfPossible = true,
