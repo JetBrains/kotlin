@@ -233,8 +233,9 @@ class NewResolveOldInference(
             val variableReceiver = ExpressionReceiver.create(calleeExpression!!,
                                                              (variableDescriptor as VariableDescriptor).type,
                                                              basicCallContext.trace.bindingContext)
-
-            // todo hack
+            // used for smartCasts, see: DataFlowValueFactory.getIdForSimpleNameExpression
+            tracing.bindReference(variable.resolvedCall.trace, variable.resolvedCall)
+            // todo hacks
             val functionCall = CallTransformer.CallForImplicitInvoke(
                     basicCallContext.call.explicitReceiver.check { useExplicitReceiver } ?: ReceiverValue.NO_RECEIVER,
                     variableReceiver, basicCallContext.call)
