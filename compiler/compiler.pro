@@ -31,6 +31,8 @@ messages/**)
 -dontwarn org.xerial.snappy.SnappyBundleActivator
 -dontwarn com.intellij.util.CompressionUtil
 -dontwarn com.intellij.util.SnappyInitializer
+-dontwarn com.intellij.util.SVGLoader
+-dontwarn com.intellij.util.SVGLoader$MyTranscoder
 -dontwarn net.sf.cglib.**
 -dontwarn org.objectweb.asm.** # this is ASM3, the old version that we do not use
 -dontwarn com.sun.jna.NativeString
