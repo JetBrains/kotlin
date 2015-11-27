@@ -268,6 +268,7 @@ LONG_TEMPLATE_ENTRY_START=\$\{
 \!in{IDENTIFIER_PART}        { yypushback(3); return KtTokens.EXCL; }
 \!is{IDENTIFIER_PART}        { yypushback(3); return KtTokens.EXCL; }
 
+"..."        { return KtTokens.RESERVED  ; }
 "==="        { return KtTokens.EQEQEQ    ; }
 "!=="        { return KtTokens.EXCLEQEQEQ; }
 "!in"        { return KtTokens.NOT_IN; }

@@ -715,6 +715,12 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("TripleDot.kt")
+        public void testTripleDot() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/TripleDot.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("TryRecovery.kt")
         public void testTryRecovery() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/TryRecovery.kt");

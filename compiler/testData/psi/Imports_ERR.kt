@@ -33,8 +33,8 @@ import -
 import ^_^
 import .
 import ---; import +++
-import ..{...
-import ..}...
+import ..{.. .
+import ..}.. .
 import foo
 
 fun foo() {

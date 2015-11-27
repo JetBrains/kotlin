@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.psi.KtPsiUtil;
 public interface KtTokens {
     KtToken EOF   = new KtToken("EOF");
 
+    KtToken RESERVED    = new KtToken("RESERVED");
+
     KtToken BLOCK_COMMENT     = new KtToken("BLOCK_COMMENT");
     KtToken EOL_COMMENT       = new KtToken("EOL_COMMENT");
     KtToken SHEBANG_COMMENT   = new KtToken("SHEBANG_COMMENT");
