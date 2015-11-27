@@ -3,8 +3,6 @@ package parametersOfInlineFun
 
 fun main(args: Array<String>) {
     val a = A(1)
-    // RESUME: 1
-    //Breakpoint!
     a.foo { 1 + 1 }
 }
 
@@ -13,6 +11,7 @@ inline fun A.foo(f: (i: Int) -> Unit) {
     val array = arrayOf(1)
     val str = "str"
     val list = listOf("str")
+    //Breakpoint!
     f(1)
 }
 

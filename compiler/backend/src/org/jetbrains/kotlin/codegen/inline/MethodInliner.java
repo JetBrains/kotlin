@@ -353,7 +353,8 @@ public class MethodInliner {
                     @NotNull String name, @NotNull String desc, String signature, @NotNull Label start, @NotNull Label end, int index
             ) {
                 if (isInliningLambda || InlineCodegenUtil.GENERATE_SMAP) {
-                    super.visitLocalVariable(name, desc, signature, start, end, getNewIndex(index));
+                    String varSuffix = inliningContext.isRoot() && !InlineCodegenUtil.isFakeLocalVariableForInline(name) ? INLINE_FUN_VAR_SUFFIX : "";
+                    super.visitLocalVariable(name + varSuffix, desc, signature, start, end, getNewIndex(index));
                 }
             }
         };
