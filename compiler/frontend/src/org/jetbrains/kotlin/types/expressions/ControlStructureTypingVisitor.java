@@ -39,10 +39,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
-import org.jetbrains.kotlin.types.CommonSupertypes;
-import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeUtils;
+import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.ResolveConstruct;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
@@ -478,8 +475,13 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
 
                 VariableDescriptor variableDescriptor = components.descriptorResolver.resolveLocalVariableDescriptor(
                         context.scope, catchParameter, context.trace);
+                KotlinType catchParameterType = variableDescriptor.getType();
+                if (TypeUtils.isReifiedTypeParameter(catchParameterType)) {
+                    context.trace.report(REIFIED_TYPE_IN_CATCH_CLAUSE.on(catchParameter));
+                }
+
                 KotlinType throwableType = components.builtIns.getThrowable().getDefaultType();
-                components.dataFlowAnalyzer.checkType(variableDescriptor.getType(), catchParameter, context.replaceExpectedType(throwableType));
+                components.dataFlowAnalyzer.checkType(catchParameterType, catchParameter, context.replaceExpectedType(throwableType));
                 if (catchBody != null) {
                     LexicalWritableScope catchScope = newWritableScopeImpl(context, LexicalScopeKind.CATCH);
                     catchScope.addVariableDescriptor(variableDescriptor);

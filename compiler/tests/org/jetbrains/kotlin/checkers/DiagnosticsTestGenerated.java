@@ -3240,6 +3240,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/controlStructures"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("catchGenerics.kt")
+            public void testCatchGenerics() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/catchGenerics.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("commonSupertypeOfT.kt")
             public void testCommonSupertypeOfT() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/commonSupertypeOfT.kt");
