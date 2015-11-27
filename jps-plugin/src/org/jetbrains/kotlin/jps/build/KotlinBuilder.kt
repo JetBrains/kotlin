@@ -74,26 +74,11 @@ import java.util.*
 
 public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     companion object {
-        private val TARGETS_WITH_CLEARED_CACHES = Key<Set<ModuleBuildTarget>>("Targets with cleared Kotlin caches")
         private val HAS_KOTLIN_FILE_NAME = "has-kotlin.txt"
 
         public val KOTLIN_BUILDER_NAME: String = "Kotlin Builder"
         public val LOOKUP_TRACKER: JpsElementChildRoleBase<JpsSimpleElement<out LookupTracker>> = JpsElementChildRoleBase.create("lookup tracker")
         val LOG = Logger.getInstance("#org.jetbrains.kotlin.jps.build.KotlinBuilder")
-
-        private fun registerTargetsWithClearedCaches(context: CompileContext, targets: Set<ModuleBuildTarget>) {
-            synchronized(TARGETS_WITH_CLEARED_CACHES) {
-                val data = (context.getUserData(TARGETS_WITH_CLEARED_CACHES) ?: setOf()) + targets
-                context.putUserData(TARGETS_WITH_CLEARED_CACHES, data)
-            }
-        }
-
-        private fun unregisterTargetsWithClearedCaches(context: CompileContext, targets: Set<ModuleBuildTarget>) {
-            synchronized(TARGETS_WITH_CLEARED_CACHES) {
-                val data = (context.getUserData(TARGETS_WITH_CLEARED_CACHES) ?: setOf()) - targets
-                context.putUserData(TARGETS_WITH_CLEARED_CACHES, data)
-            }
-        }
 
         private fun hasKotlin(target: ModuleBuildTarget, paths: BuildDataPaths): Boolean {
             val hasKotlinFile = File(paths.getTargetDataRoot(target), HAS_KOTLIN_FILE_NAME)
@@ -174,21 +159,21 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val projectDescriptor = context.projectDescriptor
         val dataManager = projectDescriptor.dataManager
         val targets = chunk.targets
-        val requestedToRebuild = context.getUserData(TARGETS_WITH_CLEARED_CACHES) ?: setOf()
         val isFullRebuild = JavaBuilderUtil.isForcedRecompilationAllJavaModules(context)
-        val hasDirtyKotlin = (dirtyFilesHolder.hasDirtyFiles() || dirtyFilesHolder.hasRemovedFiles()) &&
-                             hasKotlinDirtyOrRemovedFiles(dirtyFilesHolder, chunk)
 
         if (!isFullRebuild &&
-            !requestedToRebuild.containsAll(targets) &&
-            (hasDirtyKotlin || targets.any { hasKotlin(it, dataManager.dataPaths) }) &&
+            targets.any { hasKotlin(it, dataManager.dataPaths) } &&
             shouldRebuildBecauseVersionChanged(context, dataManager, targets)
         ) {
             FSOperations.markDirtyRecursively(context, CompilationRound.NEXT, chunk) { KotlinSourceFileCollector.isKotlinSourceFile(it) }
+            val targetsWithDependents = getIncrementalCaches(chunk, context).keys
+            targetsWithDependents.forEach { clearHasKotlin(it, dataManager.dataPaths) }
             return CHUNK_REBUILD_REQUIRED
         }
 
-        if (hasDirtyKotlin) {
+        if ((dirtyFilesHolder.hasDirtyFiles() || dirtyFilesHolder.hasRemovedFiles()) &&
+            hasKotlinDirtyOrRemovedFiles(dirtyFilesHolder, chunk)
+        ) {
             targets.forEach { setHasKotlin(it, dataManager.dataPaths) }
         }
         else {
@@ -372,20 +357,15 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
                     for (target in allTargets) {
                         dataManager.getKotlinCache(target).clean()
-
-                        // prevents excessive version checking in parallel compilation (user data is not shared in parallel compilation)
-                        clearHasKotlin(target, dataManager.dataPaths)
                     }
 
                     dataManager.getStorage(KotlinDataContainerTarget, LookupStorageProvider).clean()
-                    registerTargetsWithClearedCaches(context, allTargets)
 
                     return true
                 }
                 CacheVersion.Action.REBUILD_CHUNK -> {
                     LOG.info("Clearing caches for " + targets.joinToString { it.presentableName })
                     targets.forEach { dataManager.getKotlinCache(it).clean() }
-                    registerTargetsWithClearedCaches(context, targets)
                     return true
                 }
                 CacheVersion.Action.CLEAN_NORMAL_CACHES -> {
@@ -421,7 +401,6 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val targets = chunk.targets
         val cacheVersionsProvider = CacheVersionProvider(dataManager.dataPaths)
         cacheVersionsProvider.allVersions(targets).forEach { it.saveIfNeeded() }
-        unregisterTargetsWithClearedCaches(context, targets)
     }
 
     private fun doCompileModuleChunk(
