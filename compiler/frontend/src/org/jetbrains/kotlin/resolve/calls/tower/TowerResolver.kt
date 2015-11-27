@@ -112,11 +112,12 @@ class TowerResolver {
         fun getFinalCandidates() = getResolved() ?: getSyntheticResolved() ?: getErrors() ?: emptyList()
 
         fun pushCandidates(candidates: Collection<C>) {
-            if (candidates.isEmpty()) return
-            val minimalLevel = candidates.map { getStatus(it).resultingApplicability }.min()!!
+            val filteredCandidates = candidates.filter { getStatus(it).resultingApplicability != ResolutionCandidateApplicability.HIDDEN }
+            if (filteredCandidates.isEmpty()) return
+            val minimalLevel = filteredCandidates.map { getStatus(it).resultingApplicability }.min()!!
             if (currentLevel == null || currentLevel!! > minimalLevel) {
                 currentLevel = minimalLevel
-                currentCandidates = candidates.filter { getStatus(it).resultingApplicability == minimalLevel }
+                currentCandidates = filteredCandidates.filter { getStatus(it).resultingApplicability == minimalLevel }
             }
         }
     }

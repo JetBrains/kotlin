@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallableDescriptors
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategyForInvoke
+import org.jetbrains.kotlin.resolve.isAnnotatedAsHidden
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -186,8 +187,11 @@ class NewResolveOldInference(
             // see spec-docs/dynamic-types.md
             if (extensionReceiver != null && extensionReceiver.type.isDynamic()
                 && !towerCandidate.descriptor.extensionReceiverParameter!!.value.type.isDynamic()) {
-                candidateCall.addStatus(ResolutionStatus.RECEIVER_PRESENCE_ERROR)
                 return Candidate(ResolutionCandidateStatus(listOf(ExtensionWithStaticTypeWithDynamicReceiver)), candidateCall)
+            }
+
+            if (towerCandidate.descriptor.isAnnotatedAsHidden()) {
+                return Candidate(ResolutionCandidateStatus(listOf(HiddenDescriptor)), candidateCall)
             }
 
             val callCandidateResolutionContext = CallCandidateResolutionContext.create(

@@ -79,7 +79,8 @@ enum class ResolutionCandidateApplicability {
     MAY_THROW_RUNTIME_ERROR, // unsafe call or unstable smart cast
     RUNTIME_ERROR, // problems with visibility
     IMPOSSIBLE_TO_GENERATE, // access to outer class from nested
-    INAPPLICABLE // arguments not matched
+    INAPPLICABLE, // arguments not matched
+    HIDDEN, // removed from resolve
     // todo wrong receiver
 }
 
@@ -96,6 +97,7 @@ object ErrorDescriptorDiagnostic : ResolutionDiagnostic(ResolutionCandidateAppli
 object SynthesizedDescriptorDiagnostic: ResolutionDiagnostic(ResolutionCandidateApplicability.RESOLVED_SYNTHESIZED)
 object DynamicDescriptorDiagnostic: ResolutionDiagnostic(ResolutionCandidateApplicability.RESOLVED_SYNTHESIZED)
 object UnstableSmartCastDiagnostic: ResolutionDiagnostic(ResolutionCandidateApplicability.MAY_THROW_RUNTIME_ERROR)
-object ExtensionWithStaticTypeWithDynamicReceiver: ResolutionDiagnostic(ResolutionCandidateApplicability.INAPPLICABLE)
+object ExtensionWithStaticTypeWithDynamicReceiver: ResolutionDiagnostic(ResolutionCandidateApplicability.HIDDEN)
+object HiddenDescriptor: ResolutionDiagnostic(ResolutionCandidateApplicability.HIDDEN)
 
 
