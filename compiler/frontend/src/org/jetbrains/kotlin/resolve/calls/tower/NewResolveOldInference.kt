@@ -89,6 +89,13 @@ class NewResolveOldInference(
                 }
             }
 
+        if (context.collectAllCandidates) {
+            val allCandidates = towerResolver.collectAllCandidates(baseContext, processor)
+            val result = OverloadResolutionResultsImpl.nameNotFound<CallableDescriptor>()
+            result.allCandidates = allCandidates.map { it.resolvedCall as MutableResolvedCall<CallableDescriptor> }
+            return result
+        }
+
         val candidates = towerResolver.runResolve(baseContext, processor, useOrder = kind != CallResolver.ResolveKind.CALLABLE_REFERENCE)
         return convertToOverloadResults(candidates, tracing, context)
     }
