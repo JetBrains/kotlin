@@ -55,6 +55,13 @@ fun KotlinType.isAnyOrNullableAny(): Boolean = KotlinBuiltIns.isAnyOrNullableAny
 fun KotlinType.isBoolean(): Boolean = KotlinBuiltIns.isBoolean(this)
 fun KotlinType.isBooleanOrNullableBoolean(): Boolean = KotlinBuiltIns.isBooleanOrNullableBoolean(this)
 
+fun KotlinType?.isArrayOfNothing(): Boolean {
+    if (this == null || !KotlinBuiltIns.isArray(this)) return false
+
+    val typeArg = arguments.firstOrNull()?.type
+    return typeArg != null && KotlinBuiltIns.isNothingOrNullableNothing(typeArg)
+}
+
 private fun KotlinType.getContainedTypeParameters(): Collection<TypeParameterDescriptor> {
     val declarationDescriptor = getConstructor().getDeclarationDescriptor()
     if (declarationDescriptor is TypeParameterDescriptor) return listOf(declarationDescriptor)

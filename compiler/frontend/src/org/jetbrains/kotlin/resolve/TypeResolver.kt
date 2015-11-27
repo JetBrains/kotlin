@@ -33,14 +33,15 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallableDescriptors
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.LazyScopeAdapter
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Variance.*
+import org.jetbrains.kotlin.types.typeUtil.isArrayOfNothing
 
 public class TypeResolver(
         private val annotationResolver: AnnotationResolver,
@@ -347,6 +348,10 @@ public class TypeResolver(
                     DescriptorResolver.checkBounds(typeReference, argument, parameter, substitutor, c.trace)
                 }
             }
+        }
+
+        if (resultingType.isArrayOfNothing()) {
+            c.trace.report(UNSUPPORTED.on(type, "Array<Nothing> is illegal"))
         }
 
         return type(resultingType)
