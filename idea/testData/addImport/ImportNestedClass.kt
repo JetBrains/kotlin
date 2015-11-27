@@ -1,1 +1,1 @@
-// IMPORT: kotlin.Map.Entry
+// IMPORT: kotlin.collections.Map.Entry

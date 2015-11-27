@@ -41,27 +41,27 @@ public class BoundsSubstitutorTest extends KotlinTestWithEnvironment {
 
     public void testSimpleSubstitution() throws Exception {
         doTest("fun <T> f(l: List<T>): T",
-               "fun <T> f(l: kotlin.List<kotlin.Any?>): kotlin.Any?");
+               "fun <T> f(l: kotlin.collections.List<kotlin.Any?>): kotlin.Any?");
     }
 
     public void testParameterInBound() throws Exception {
         doTest("fun <T, R : List<T>> f(l: List<R>): R",
-               "fun <T, R : kotlin.List<kotlin.Any?>> f(l: kotlin.List<kotlin.List<kotlin.Any?>>): kotlin.List<kotlin.Any?>");
+               "fun <T, R : kotlin.collections.List<kotlin.Any?>> f(l: kotlin.collections.List<kotlin.collections.List<kotlin.Any?>>): kotlin.collections.List<kotlin.Any?>");
     }
 
     public void testWithWhere() throws Exception {
         doTest("fun <T> f(l: List<T>): T where T : Any",
-               "fun <T : kotlin.Any> f(l: kotlin.List<kotlin.Any>): kotlin.Any");
+               "fun <T : kotlin.Any> f(l: kotlin.collections.List<kotlin.Any>): kotlin.Any");
     }
 
     public void testWithWhereTwoBounds() throws Exception {
         doTest("fun <T, R> f(l: List<R>): R where T : List<R>, R : Any",
-               "fun <T : kotlin.List<kotlin.Any>, R : kotlin.Any> f(l: kotlin.List<kotlin.Any>): kotlin.Any");
+               "fun <T : kotlin.collections.List<kotlin.Any>, R : kotlin.Any> f(l: kotlin.collections.List<kotlin.Any>): kotlin.Any");
     }
 
     public void testWithWhereTwoBoundsReversed() throws Exception {
         doTest("fun <T, R> f(l: List<R>): R where T : Any, R : List<T>",
-               "fun <T : kotlin.Any, R : kotlin.List<kotlin.Any>> f(l: kotlin.List<kotlin.List<kotlin.Any>>): kotlin.List<kotlin.Any>");
+               "fun <T : kotlin.Any, R : kotlin.collections.List<kotlin.Any>> f(l: kotlin.collections.List<kotlin.collections.List<kotlin.Any>>): kotlin.collections.List<kotlin.Any>");
     }
 
     //public void testWithWhereTwoBoundsLoop() throws Exception {

@@ -6,7 +6,7 @@ package a {
     public fun doAction(/*0*/ action: () -> kotlin.Unit): kotlin.Unit
     public fun foo(): kotlin.Unit
     public fun test(): kotlin.Unit
-    public fun testWithoutInference(/*0*/ col: kotlin.MutableCollection<kotlin.Int>): kotlin.Unit
+    public fun testWithoutInference(/*0*/ col: kotlin.collections.MutableCollection<kotlin.Int>): kotlin.Unit
 
     public final class Y</*0*/ TItem> {
         public constructor Y</*0*/ TItem>(/*0*/ itemToString: (TItem) -> kotlin.String)

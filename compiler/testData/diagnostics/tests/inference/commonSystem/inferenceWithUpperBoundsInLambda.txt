@@ -1,11 +1,11 @@
 package
 
-public fun </*0*/ F : Foo> test(/*0*/ map: kotlin.MutableMap<kotlin.String, Bar<F>>): kotlin.Unit
-public fun </*0*/ K, /*1*/ V> kotlin.MutableMap<K, V>.getOrPut1(/*0*/ key: K, /*1*/ defaultValue: () -> V): V
+public fun </*0*/ F : Foo> test(/*0*/ map: kotlin.collections.MutableMap<kotlin.String, Bar<F>>): kotlin.Unit
+public fun </*0*/ K, /*1*/ V> kotlin.collections.MutableMap<K, V>.getOrPut1(/*0*/ key: K, /*1*/ defaultValue: () -> V): V
 
 public final class Bar</*0*/ B : Foo> {
-    public constructor Bar</*0*/ B : Foo>(/*0*/ list: kotlin.MutableList<B>)
-    public final val list: kotlin.MutableList<B>
+    public constructor Bar</*0*/ B : Foo>(/*0*/ list: kotlin.collections.MutableList<B>)
+    public final val list: kotlin.collections.MutableList<B>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

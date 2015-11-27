@@ -1,4 +1,4 @@
-Resolve target: value-parameter val c: kotlin.Collection<kotlin.String>
+Resolve target: value-parameter val c: kotlin.collections.Collection<kotlin.String>
 ----------------------------------------------
 fun foo(c: Collection<String>): Collection<String> {
     return <caret>c.filter {

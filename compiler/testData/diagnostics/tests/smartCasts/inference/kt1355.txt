@@ -1,14 +1,14 @@
 package
 
 package a {
-    public fun </*0*/ T> arrayListOf(/*0*/ vararg values: T /*kotlin.Array<out T>*/): kotlin.MutableList<T>
-    public fun foo(/*0*/ map: kotlin.MutableMap<kotlin.Int, kotlin.String>, /*1*/ value: kotlin.String?): kotlin.Unit
-    public operator fun </*0*/ K, /*1*/ V> kotlin.MutableMap<K, V>.set(/*0*/ key: K, /*1*/ value: V): V?
+    public fun </*0*/ T> arrayListOf(/*0*/ vararg values: T /*kotlin.Array<out T>*/): kotlin.collections.MutableList<T>
+    public fun foo(/*0*/ map: kotlin.collections.MutableMap<kotlin.Int, kotlin.String>, /*1*/ value: kotlin.String?): kotlin.Unit
+    public operator fun </*0*/ K, /*1*/ V> kotlin.collections.MutableMap<K, V>.set(/*0*/ key: K, /*1*/ value: V): V?
 
     public final data class Tag {
         public constructor Tag(/*0*/ tagName: kotlin.String)
-        public final val attributes: kotlin.MutableMap<kotlin.String, kotlin.String>
-        public final val contents: kotlin.MutableList<a.Tag>
+        public final val attributes: kotlin.collections.MutableMap<kotlin.String, kotlin.String>
+        public final val contents: kotlin.collections.MutableList<a.Tag>
         public final var id: kotlin.String?
         public final var tagName: kotlin.String
         public final operator /*synthesized*/ fun component1(): kotlin.String

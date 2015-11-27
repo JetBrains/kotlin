@@ -80,13 +80,13 @@ public final class Int private constructor() : kotlin.Number, kotlin.Comparable<
 
     public final operator fun plus(other: kotlin.Short): kotlin.Int { /* compiled code */ }
 
-    public final operator fun rangeTo(other: kotlin.Byte): kotlin.IntRange { /* compiled code */ }
+    public final operator fun rangeTo(other: kotlin.Byte): kotlin.ranges.IntRange { /* compiled code */ }
 
-    public final operator fun rangeTo(other: kotlin.Int): kotlin.IntRange { /* compiled code */ }
+    public final operator fun rangeTo(other: kotlin.Int): kotlin.ranges.IntRange { /* compiled code */ }
 
-    public final operator fun rangeTo(other: kotlin.Long): kotlin.LongRange { /* compiled code */ }
+    public final operator fun rangeTo(other: kotlin.Long): kotlin.ranges.LongRange { /* compiled code */ }
 
-    public final operator fun rangeTo(other: kotlin.Short): kotlin.IntRange { /* compiled code */ }
+    public final operator fun rangeTo(other: kotlin.Short): kotlin.ranges.IntRange { /* compiled code */ }
 
     public final infix fun shl(bitCount: kotlin.Int): kotlin.Int { /* compiled code */ }
 

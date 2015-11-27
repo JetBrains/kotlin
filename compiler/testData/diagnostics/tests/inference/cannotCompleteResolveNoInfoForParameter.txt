@@ -1,8 +1,8 @@
 package
 
 package f {
-    public fun </*0*/ T> emptyList(): kotlin.List<T>
-    public fun </*0*/ T> f(/*0*/ a: kotlin.Any, /*1*/ l: kotlin.List<T>): kotlin.Collection<T>
-    public fun </*0*/ T> f(/*0*/ i: kotlin.Int, /*1*/ c: kotlin.Collection<T>): kotlin.List<T>
-    public fun </*0*/ T> test(/*0*/ l: kotlin.List<T>): kotlin.Unit
+    public fun </*0*/ T> emptyList(): kotlin.collections.List<T>
+    public fun </*0*/ T> f(/*0*/ a: kotlin.Any, /*1*/ l: kotlin.collections.List<T>): kotlin.collections.Collection<T>
+    public fun </*0*/ T> f(/*0*/ i: kotlin.Int, /*1*/ c: kotlin.collections.Collection<T>): kotlin.collections.List<T>
+    public fun </*0*/ T> test(/*0*/ l: kotlin.collections.List<T>): kotlin.Unit
 }

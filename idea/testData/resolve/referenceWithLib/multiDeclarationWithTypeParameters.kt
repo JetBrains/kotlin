@@ -7,7 +7,7 @@ fun <Int> f(l: List<Int>) {
 }
 
 // MULTIRESOLVE
-// REF: (for kotlin.List<T> in dependency).component1()
-// REF: (for kotlin.List<T> in dependency).component2()
-// REF: (for kotlin.List<T> in dependency).component3()
+// REF: (for kotlin.collections.List<T> in dependency).component1()
+// REF: (for kotlin.collections.List<T> in dependency).component2()
+// REF: (for kotlin.collections.List<T> in dependency).component3()
 

@@ -2,6 +2,6 @@ package
 
 package i {
     public fun a(): kotlin.Unit
-    public fun </*0*/ TItem, /*1*/ TResult> select(/*0*/ yielder: () -> kotlin.Iterable<TItem>, /*1*/ selector: (TItem) -> TResult): () -> kotlin.Iterable<TResult>
-    public infix fun </*0*/ TItem> kotlin.Iterable<TItem>.where(/*0*/ predicate: (TItem) -> kotlin.Boolean): () -> kotlin.Iterable<TItem>
+    public fun </*0*/ TItem, /*1*/ TResult> select(/*0*/ yielder: () -> kotlin.collections.Iterable<TItem>, /*1*/ selector: (TItem) -> TResult): () -> kotlin.collections.Iterable<TResult>
+    public infix fun </*0*/ TItem> kotlin.collections.Iterable<TItem>.where(/*0*/ predicate: (TItem) -> kotlin.Boolean): () -> kotlin.collections.Iterable<TItem>
 }

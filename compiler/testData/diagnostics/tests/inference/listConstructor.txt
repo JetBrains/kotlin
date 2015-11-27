@@ -2,8 +2,8 @@ package
 
 package a {
     public fun </*0*/ T> arrayList(/*0*/ vararg values: T /*kotlin.Array<out T>*/): java.util.ArrayList<T>
-    public fun </*0*/ A> cons(/*0*/ x: A, /*1*/ xs: kotlin.List<A>): kotlin.List<A>
-    public fun </*0*/ B> nil(): kotlin.List<B>
+    public fun </*0*/ A> cons(/*0*/ x: A, /*1*/ xs: kotlin.collections.List<A>): kotlin.collections.List<A>
+    public fun </*0*/ B> nil(): kotlin.collections.List<B>
     public fun test(): kotlin.Unit
-    public fun </*0*/ T, /*1*/ C : kotlin.MutableCollection<in T>> kotlin.Array<T>.toCollection(/*0*/ result: C): C
+    public fun </*0*/ T, /*1*/ C : kotlin.collections.MutableCollection<in T>> kotlin.Array<T>.toCollection(/*0*/ result: C): C
 }

@@ -1,4 +1,4 @@
 package
 
-public fun test(/*0*/ list: kotlin.List<kotlin.Int>): kotlin.Unit
-public fun </*0*/ T, /*1*/ C : kotlin.MutableCollection<T>> kotlin.Iterable<T>.toCollection(/*0*/ result: C): C
+public fun test(/*0*/ list: kotlin.collections.List<kotlin.Int>): kotlin.Unit
+public fun </*0*/ T, /*1*/ C : kotlin.collections.MutableCollection<T>> kotlin.collections.Iterable<T>.toCollection(/*0*/ result: C): C

@@ -1,4 +1,4 @@
 package
 
-public fun calc(/*0*/ x: kotlin.List<kotlin.String>?): kotlin.Int
+public fun calc(/*0*/ x: kotlin.collections.List<kotlin.String>?): kotlin.Int
 public fun kotlin.String.foo(/*0*/ y: kotlin.Int): kotlin.Int

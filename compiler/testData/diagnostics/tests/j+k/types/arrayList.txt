@@ -3,7 +3,7 @@ package
 public open class J</*0*/ T : kotlin.Any!> : ML<T!> {
     public constructor J</*0*/ T : kotlin.Any!>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ fun foo(): kotlin.MutableList<T!>
+    public open override /*1*/ fun foo(): kotlin.collections.MutableList<T!>
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
@@ -11,14 +11,14 @@ public open class J</*0*/ T : kotlin.Any!> : ML<T!> {
 public final class K : J<kotlin.String>, ML<kotlin.String> {
     public constructor K()
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*2*/ /*fake_override*/ fun foo(): kotlin.MutableList<kotlin.String!>
+    public open override /*2*/ /*fake_override*/ fun foo(): kotlin.collections.MutableList<kotlin.String!>
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public interface ML</*0*/ T> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract fun foo(): kotlin.MutableList<T>
+    public abstract fun foo(): kotlin.collections.MutableList<T>
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

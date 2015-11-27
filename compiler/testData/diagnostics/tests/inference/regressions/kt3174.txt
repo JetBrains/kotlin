@@ -2,7 +2,7 @@ package
 
 package a {
     public fun foo(/*0*/ a: kotlin.Any?): kotlin.Any?
-    public fun test(/*0*/ s: kotlin.String?, /*1*/ l: kotlin.MutableList<kotlin.String>): kotlin.Unit
-    public fun </*0*/ T> T.fff(/*0*/ l: kotlin.MutableList<T>): kotlin.Boolean
+    public fun test(/*0*/ s: kotlin.String?, /*1*/ l: kotlin.collections.MutableList<kotlin.String>): kotlin.Unit
+    public fun </*0*/ T> T.fff(/*0*/ l: kotlin.collections.MutableList<T>): kotlin.Boolean
     public fun </*0*/ T : kotlin.Any> T.test(): T
 }

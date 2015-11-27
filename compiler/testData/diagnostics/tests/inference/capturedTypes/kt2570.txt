@@ -1,4 +1,4 @@
 package
 
-public fun </*0*/ T> foo(/*0*/ l: kotlin.MutableList<T>): kotlin.MutableList<T>
-public fun test(/*0*/ l: kotlin.MutableList<out kotlin.Int>): kotlin.Unit
+public fun </*0*/ T> foo(/*0*/ l: kotlin.collections.MutableList<T>): kotlin.collections.MutableList<T>
+public fun test(/*0*/ l: kotlin.collections.MutableList<out kotlin.Int>): kotlin.Unit

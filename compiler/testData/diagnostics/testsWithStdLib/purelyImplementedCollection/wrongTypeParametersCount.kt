@@ -3,7 +3,7 @@
 import java.util.*
 
 // FILE: A.java
-@kotlin.jvm.PurelyImplements("kotlin.MutableList")
+@kotlin.jvm.PurelyImplements("kotlin.collections.MutableList")
 class A<T, V> extends AbstractList<T> {
     @Override
     public T get(int index) {

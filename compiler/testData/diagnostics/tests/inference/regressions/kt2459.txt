@@ -5,8 +5,8 @@ package b {
     public fun </*0*/ T> f(/*0*/ x: T): b.B<T>
 
     public final class B</*0*/ T> {
-        public constructor B</*0*/ T>(/*0*/ x: kotlin.List<T>)
-        public final val x: kotlin.List<T>
+        public constructor B</*0*/ T>(/*0*/ x: kotlin.collections.List<T>)
+        public final val x: kotlin.collections.List<T>
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

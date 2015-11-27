@@ -6,5 +6,5 @@ public final class B</*0*/ T> {
     public final operator fun </*0*/ S> get(/*0*/ s: kotlin.String): S
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    public final fun </*0*/ S> x(/*0*/ y: B<kotlin.Iterable<S>>): kotlin.Unit
+    public final fun </*0*/ S> x(/*0*/ y: B<kotlin.collections.Iterable<S>>): kotlin.Unit
 }

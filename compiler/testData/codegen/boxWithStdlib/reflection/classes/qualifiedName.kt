@@ -14,7 +14,7 @@ fun box(): String {
     assertEquals("kotlin.Int", Int::class.qualifiedName)
     assertEquals("kotlin.Int.Companion", Int.Companion::class.qualifiedName)
     assertEquals("kotlin.IntArray", IntArray::class.qualifiedName)
-    assertEquals("kotlin.List", List::class.qualifiedName)
+    assertEquals("kotlin.collections.List", List::class.qualifiedName)
     assertEquals("kotlin.String", String::class.qualifiedName)
     assertEquals("kotlin.String", java.lang.String::class.qualifiedName)
 

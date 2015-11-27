@@ -9,6 +9,6 @@ public open class InnerClassesInGeneric</*0*/ P : kotlin.Any!, /*1*/ Q : kotlin.
 
     public open inner class Inner2 /*captured type parameters: /*0*/ P : kotlin.Any!, /*1*/ Q : kotlin.Any!*/ : test.InnerClassesInGeneric<P!, Q!>.Inner {
         public constructor Inner2()
-        public open operator fun iterator(): kotlin.(Mutable)Iterator<P!>!
+        public open operator fun iterator(): kotlin.collections.(Mutable)Iterator<P!>!
     }
 }

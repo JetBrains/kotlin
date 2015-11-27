@@ -1,10 +1,10 @@
 package
 
 package i {
-    public val kotlin.Collection<*>.size: kotlin.Int
+    public val kotlin.collections.Collection<*>.size: kotlin.Int
     public fun </*0*/ T> arrayList(/*0*/ vararg values: T /*kotlin.Array<out T>*/): java.util.ArrayList<T>
     public fun test(): kotlin.Unit
-    public fun </*0*/ T, /*1*/ R> kotlin.Collection<T>.map(/*0*/ transform: (T) -> R): kotlin.List<R>
-    public fun </*0*/ T, /*1*/ R, /*2*/ C : kotlin.MutableCollection<in R>> kotlin.Collection<T>.mapTo(/*0*/ result: C, /*1*/ transform: (T) -> R): C
-    public fun </*0*/ T, /*1*/ C : kotlin.MutableCollection<in T>> kotlin.Array<T>.toCollection(/*0*/ result: C): C
+    public fun </*0*/ T, /*1*/ R> kotlin.collections.Collection<T>.map(/*0*/ transform: (T) -> R): kotlin.collections.List<R>
+    public fun </*0*/ T, /*1*/ R, /*2*/ C : kotlin.collections.MutableCollection<in R>> kotlin.collections.Collection<T>.mapTo(/*0*/ result: C, /*1*/ transform: (T) -> R): C
+    public fun </*0*/ T, /*1*/ C : kotlin.collections.MutableCollection<in T>> kotlin.Array<T>.toCollection(/*0*/ result: C): C
 }

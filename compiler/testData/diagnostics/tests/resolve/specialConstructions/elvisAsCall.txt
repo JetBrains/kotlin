@@ -2,10 +2,10 @@ package
 
 package a {
     public fun doInt(/*0*/ i: kotlin.Int): kotlin.Int
-    public fun doList(/*0*/ l: kotlin.List<kotlin.Int>): kotlin.List<kotlin.Int>
-    public fun </*0*/ T : a.A> emptyListOfA(): kotlin.List<T>
-    public fun getList(): kotlin.List<kotlin.Int>?
-    public fun </*0*/ T> strangeList(/*0*/ f: (T) -> kotlin.Unit): kotlin.List<T>
+    public fun doList(/*0*/ l: kotlin.collections.List<kotlin.Int>): kotlin.collections.List<kotlin.Int>
+    public fun </*0*/ T : a.A> emptyListOfA(): kotlin.collections.List<T>
+    public fun getList(): kotlin.collections.List<kotlin.Int>?
+    public fun </*0*/ T> strangeList(/*0*/ f: (T) -> kotlin.Unit): kotlin.collections.List<T>
     public fun testDataFlowInfo1(/*0*/ a: kotlin.Int?, /*1*/ b: kotlin.Int?): kotlin.Unit
     public fun testDataFlowInfo2(/*0*/ a: kotlin.Int?, /*1*/ b: kotlin.Int?): kotlin.Unit
     public fun testElvis(/*0*/ a: kotlin.Int?, /*1*/ b: kotlin.Int?): kotlin.Unit

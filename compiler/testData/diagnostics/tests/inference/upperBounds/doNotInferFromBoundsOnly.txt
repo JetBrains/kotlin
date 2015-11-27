@@ -1,13 +1,13 @@
 package
 
 package a {
-    public fun </*0*/ T> emptyList(): kotlin.List<T>
-    public fun </*0*/ T : a.A> emptyListOfA(): kotlin.List<T>
-    public fun </*0*/ T : a.A, /*1*/ R : T> emptyStrangeMap(): kotlin.Map<T, R>
-    public fun </*0*/ T, /*1*/ R : T> emptyStrangeMap1(/*0*/ t: T): kotlin.Map<T, R>
-    public fun </*0*/ T : a.A, /*1*/ R : T> emptyStrangeMap2(/*0*/ t: T): kotlin.Map<T, R>
-    public fun </*0*/ T : a.A, /*1*/ R : T> emptyStrangeMap3(/*0*/ r: R): kotlin.Map<T, R>
-    public fun </*0*/ T, /*1*/ R : T> emptyStrangeMap4(/*0*/ l: kotlin.MutableList<T>): kotlin.Map<T, R>
+    public fun </*0*/ T> emptyList(): kotlin.collections.List<T>
+    public fun </*0*/ T : a.A> emptyListOfA(): kotlin.collections.List<T>
+    public fun </*0*/ T : a.A, /*1*/ R : T> emptyStrangeMap(): kotlin.collections.Map<T, R>
+    public fun </*0*/ T, /*1*/ R : T> emptyStrangeMap1(/*0*/ t: T): kotlin.collections.Map<T, R>
+    public fun </*0*/ T : a.A, /*1*/ R : T> emptyStrangeMap2(/*0*/ t: T): kotlin.collections.Map<T, R>
+    public fun </*0*/ T : a.A, /*1*/ R : T> emptyStrangeMap3(/*0*/ r: R): kotlin.collections.Map<T, R>
+    public fun </*0*/ T, /*1*/ R : T> emptyStrangeMap4(/*0*/ l: kotlin.collections.MutableList<T>): kotlin.collections.Map<T, R>
     public fun </*0*/ U, /*1*/ V : U> foo(): U
     public fun test1(): kotlin.Unit
     public fun test2(): kotlin.Unit
@@ -15,8 +15,8 @@ package a {
     public fun test4(): kotlin.Unit
     public fun test5(/*0*/ a: a.A): kotlin.Unit
     public fun test6(/*0*/ a: a.A): kotlin.Unit
-    public fun test7(): kotlin.Map<a.A, a.A>
-    public fun test7(/*0*/ list: kotlin.MutableList<kotlin.Int>): kotlin.Unit
+    public fun test7(): kotlin.collections.Map<a.A, a.A>
+    public fun test7(/*0*/ list: kotlin.collections.MutableList<kotlin.Int>): kotlin.Unit
     public fun test8(): kotlin.Int
 
     public interface A {

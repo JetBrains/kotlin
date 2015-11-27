@@ -1,10 +1,10 @@
 package
 
 @kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ R> bar(/*0*/ r: R, /*1*/ f: (R) -> kotlin.Unit): kotlin.Nothing
-@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ R> foo(/*0*/ t: R): kotlin.List<R>
+@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ R> foo(/*0*/ t: R): kotlin.collections.List<R>
 public fun test(): kotlin.Unit
-public fun test(/*0*/ list: kotlin.List<kotlin.Int>): kotlin.Unit
+public fun test(/*0*/ list: kotlin.collections.List<kotlin.Int>): kotlin.Unit
 public fun test1(): kotlin.Unit
-@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ R> kotlin.Iterable<*>.filterIsInstance1(): kotlin.List<R>
-@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ R> kotlin.List<*>.filterIsInstance2(): kotlin.List<R>
-@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ R> kotlin.List<R>.foo(): R
+@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ R> kotlin.collections.Iterable<*>.filterIsInstance1(): kotlin.collections.List<R>
+@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ R> kotlin.collections.List<*>.filterIsInstance2(): kotlin.collections.List<R>
+@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ R> kotlin.collections.List<R>.foo(): R

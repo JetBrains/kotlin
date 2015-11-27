@@ -8,8 +8,8 @@ package i {
     public val i.C.foo: i.C.D
     public val i.A.foo1: kotlin.Int
     public val i.C.foo1: i.C.D
-    public val </*0*/ T> kotlin.List<T>.length: [ERROR : Type for size]
-    public val </*0*/ T> kotlin.List<T>.length1: kotlin.Int
+    public val </*0*/ T> kotlin.collections.List<T>.length: [ERROR : Type for size]
+    public val </*0*/ T> kotlin.collections.List<T>.length1: kotlin.Int
 
     public final class A {
         public constructor A()

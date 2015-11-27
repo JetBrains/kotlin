@@ -1,6 +1,6 @@
 package
 
-public val a: () -> kotlin.List<kotlin.Int>
+public val a: () -> kotlin.collections.List<kotlin.Int>
 public val flag: kotlin.Boolean = true
-public fun </*0*/ T> listOf(): kotlin.List<T>
-public fun </*0*/ T> listOf(/*0*/ vararg values: T /*kotlin.Array<out T>*/): kotlin.List<T>
+public fun </*0*/ T> listOf(): kotlin.collections.List<T>
+public fun </*0*/ T> listOf(/*0*/ vararg values: T /*kotlin.Array<out T>*/): kotlin.collections.List<T>

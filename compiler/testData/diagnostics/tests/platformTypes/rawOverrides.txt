@@ -2,21 +2,21 @@ package
 
 public interface A</*0*/ T : kotlin.Any!> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract fun </*0*/ E : kotlin.CharSequence!> foo(/*0*/ x: T!, /*1*/ y: (kotlin.MutableList<out T!>..kotlin.List<T!>?)): E!
+    public abstract fun </*0*/ E : kotlin.CharSequence!> foo(/*0*/ x: T!, /*1*/ y: (kotlin.collections.MutableList<out T!>..kotlin.collections.List<T!>?)): E!
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public interface B : A<kotlin.Any!> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any(raw)?): kotlin.Boolean(raw)
-    @java.lang.Override() public abstract override /*1*/ fun foo(/*0*/ x: kotlin.Any!, /*1*/ y: kotlin.(Mutable)List<(raw) kotlin.Any?>!): kotlin.String!
+    @java.lang.Override() public abstract override /*1*/ fun foo(/*0*/ x: kotlin.Any!, /*1*/ y: kotlin.collections.(Mutable)List<(raw) kotlin.Any?>!): kotlin.String!
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int(raw)
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String(raw)
 }
 
 public abstract class C {
     public constructor C()
-    public/*package*/ open fun </*0*/ E : kotlin.CharSequence!, /*1*/ F : E!> bar(/*0*/ x: F!, /*1*/ y: kotlin.(Mutable)List<kotlin.(Mutable)Map<E!, F!>!>!): E!
+    public/*package*/ open fun </*0*/ E : kotlin.CharSequence!, /*1*/ F : E!> bar(/*0*/ x: F!, /*1*/ y: kotlin.collections.(Mutable)List<kotlin.collections.(Mutable)Map<E!, F!>!>!): E!
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -24,7 +24,7 @@ public abstract class C {
 
 public open class D : C {
     public constructor D()
-    @java.lang.Override() public open override /*1*/ fun bar(/*0*/ x: kotlin.CharSequence!, /*1*/ y: kotlin.(Mutable)List<(raw) kotlin.Any?>!): kotlin.String!
+    @java.lang.Override() public open override /*1*/ fun bar(/*0*/ x: kotlin.CharSequence!, /*1*/ y: kotlin.collections.(Mutable)List<(raw) kotlin.Any?>!): kotlin.String!
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -32,9 +32,9 @@ public open class D : C {
 
 public final class E : D, B {
     public constructor E()
-    public open override /*1*/ fun bar(/*0*/ x: kotlin.CharSequence?, /*1*/ y: kotlin.List<*>?): kotlin.String
+    public open override /*1*/ fun bar(/*0*/ x: kotlin.CharSequence?, /*1*/ y: kotlin.collections.List<*>?): kotlin.String
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ fun foo(/*0*/ x: kotlin.Any, /*1*/ y: kotlin.List<kotlin.Any?>): kotlin.String
+    public open override /*1*/ fun foo(/*0*/ x: kotlin.Any, /*1*/ y: kotlin.collections.List<kotlin.Any?>): kotlin.String
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
@@ -42,15 +42,15 @@ public final class E : D, B {
 public final class E2 : B {
     public constructor E2()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any(raw)?): kotlin.Boolean(raw)
-    public open fun foo(/*0*/ x: kotlin.Any, /*1*/ y: kotlin.List<kotlin.String?>): kotlin.String
-    @java.lang.Override() public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ x: kotlin.Any!, /*1*/ y: kotlin.(Mutable)List<(raw) kotlin.Any?>!): kotlin.String!
+    public open fun foo(/*0*/ x: kotlin.Any, /*1*/ y: kotlin.collections.List<kotlin.String?>): kotlin.String
+    @java.lang.Override() public abstract override /*1*/ /*fake_override*/ fun foo(/*0*/ x: kotlin.Any!, /*1*/ y: kotlin.collections.(Mutable)List<(raw) kotlin.Any?>!): kotlin.String!
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int(raw)
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String(raw)
 }
 
 public final class F : D {
     public constructor F()
-    @java.lang.Override() public open override /*1*/ /*fake_override*/ fun bar(/*0*/ x: kotlin.CharSequence!, /*1*/ y: kotlin.(Mutable)List<(raw) kotlin.Any?>!): kotlin.String!
+    @java.lang.Override() public open override /*1*/ /*fake_override*/ fun bar(/*0*/ x: kotlin.CharSequence!, /*1*/ y: kotlin.collections.(Mutable)List<(raw) kotlin.Any?>!): kotlin.String!
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

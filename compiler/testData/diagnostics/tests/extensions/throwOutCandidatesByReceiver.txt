@@ -2,15 +2,15 @@ package
 
 package bar {
     public fun test1(/*0*/ i: kotlin.Int?): kotlin.Unit
-    public fun </*0*/ R> test2(/*0*/ c: kotlin.Collection<R>): kotlin.Unit
+    public fun </*0*/ R> test2(/*0*/ c: kotlin.collections.Collection<R>): kotlin.Unit
     public fun test3(/*0*/ s: kotlin.String?): kotlin.Unit
     public fun test4(): kotlin.Unit
     public fun test5(): kotlin.Unit
-    public fun </*0*/ T> test6(/*0*/ l: kotlin.List<T>?): kotlin.Unit
-    public fun test7(/*0*/ l: kotlin.List<kotlin.String?>): kotlin.Unit
-    public fun test8(/*0*/ l: kotlin.List<kotlin.Any>?): kotlin.Unit
-    public fun </*0*/ R> kotlin.List<R>.a(): kotlin.Unit
-    public fun kotlin.List<kotlin.String>.b(): kotlin.Unit
+    public fun </*0*/ T> test6(/*0*/ l: kotlin.collections.List<T>?): kotlin.Unit
+    public fun test7(/*0*/ l: kotlin.collections.List<kotlin.String?>): kotlin.Unit
+    public fun test8(/*0*/ l: kotlin.collections.List<kotlin.Any>?): kotlin.Unit
+    public fun </*0*/ R> kotlin.collections.List<R>.a(): kotlin.Unit
+    public fun kotlin.collections.List<kotlin.String>.b(): kotlin.Unit
     public fun </*0*/ T : bar.A> T.c(): kotlin.Unit
     public fun kotlin.Int.foo(): kotlin.Unit
     public fun </*0*/ R : kotlin.Any> R?.sure(): R

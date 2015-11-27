@@ -21,7 +21,9 @@ PsiJetFileStubImpl[package=test]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
             USER_TYPE:[isAbsoluteInRootPackage=false]
-              REFERENCE_EXPRESSION:[referencedName=kotlin]
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                REFERENCE_EXPRESSION:[referencedName=kotlin]
+              REFERENCE_EXPRESSION:[referencedName=collections]
             REFERENCE_EXPRESSION:[referencedName=List]
             TYPE_ARGUMENT_LIST:
               TYPE_PROJECTION:[projectionKind=NONE]

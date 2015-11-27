@@ -2,6 +2,6 @@ package
 
 package n {
     public fun </*0*/ T> expected(/*0*/ t: T, /*1*/ f: () -> T): T
-    public fun test(/*0*/ arrayList: java.util.ArrayList<kotlin.Int>, /*1*/ list: kotlin.List<kotlin.Int>): kotlin.Unit
-    public fun </*0*/ T> kotlin.List<T>.reverse(): kotlin.List<T>
+    public fun test(/*0*/ arrayList: java.util.ArrayList<kotlin.Int>, /*1*/ list: kotlin.collections.List<kotlin.Int>): kotlin.Unit
+    public fun </*0*/ T> kotlin.collections.List<T>.reverse(): kotlin.collections.List<T>
 }

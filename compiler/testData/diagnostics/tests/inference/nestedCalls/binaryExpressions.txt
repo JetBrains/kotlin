@@ -7,7 +7,7 @@ package h {
     public fun test1(/*0*/ z: h.Z): kotlin.Unit
     public fun test2(/*0*/ z: h.Z): kotlin.Unit
     public fun test3(/*0*/ z: h.Z): kotlin.Unit
-    public fun test4(/*0*/ collection: kotlin.Collection<h.A<*>>): kotlin.Unit
+    public fun test4(/*0*/ collection: kotlin.collections.Collection<h.A<*>>): kotlin.Unit
     public fun test5(): kotlin.Unit
     public fun </*0*/ T> toBeOrNot(): kotlin.Boolean
     public fun use(/*0*/ vararg a: kotlin.Any? /*kotlin.Array<out kotlin.Any?>*/): kotlin.Array<out kotlin.Any?>

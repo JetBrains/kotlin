@@ -19,7 +19,7 @@ fun box(): String {
     assertToString("val top: kotlin.Int", ::top)
     assertToString("var top2: kotlin.Int", ::top2)
     assertToString("val kotlin.String.ext: kotlin.Int", String::ext)
-    assertToString("var kotlin.IntRange?.ext2: kotlin.Int", IntRange::ext2)
+    assertToString("var kotlin.ranges.IntRange?.ext2: kotlin.Int", IntRange::ext2)
     assertToString("val test.A.mem: kotlin.String", A::mem)
     assertToString("var test.B.mem: kotlin.String", B::mem)
     return "OK"

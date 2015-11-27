@@ -1,8 +1,8 @@
 package
 
 public fun </*0*/ T> f(/*0*/ a: Out<T>, /*1*/ b: Out<T>, /*2*/ c: Out<T>): T
-public fun </*0*/ T> out(/*0*/ t: T): Out<kotlin.MutableList<T>>
-public fun test(/*0*/ a: Out<kotlin.Nothing>, /*1*/ b: Out<kotlin.MutableList<p.J>>): kotlin.Unit
+public fun </*0*/ T> out(/*0*/ t: T): Out<kotlin.collections.MutableList<T>>
+public fun test(/*0*/ a: Out<kotlin.Nothing>, /*1*/ b: Out<kotlin.collections.MutableList<p.J>>): kotlin.Unit
 
 public interface Out</*0*/ out T1> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

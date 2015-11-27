@@ -4,12 +4,12 @@ public fun foo(/*0*/ m: MyMap): kotlin.Unit
 
 public abstract class MyMap : java.util.AbstractMap<kotlin.Double!, kotlin.CharSequence!> {
     public constructor MyMap()
-    public abstract override /*1*/ /*fake_override*/ val entries: kotlin.MutableSet<kotlin.MutableMap.MutableEntry<kotlin.Double!, kotlin.CharSequence!>>
-    invisible_fake final override /*1*/ /*fake_override*/ var keySet: kotlin.(Mutable)Set<kotlin.Double!>!
-    public open override /*1*/ /*fake_override*/ val keys: kotlin.MutableSet<kotlin.Double!>
+    public abstract override /*1*/ /*fake_override*/ val entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Double!, kotlin.CharSequence!>>
+    invisible_fake final override /*1*/ /*fake_override*/ var keySet: kotlin.collections.(Mutable)Set<kotlin.Double!>!
+    public open override /*1*/ /*fake_override*/ val keys: kotlin.collections.MutableSet<kotlin.Double!>
     public open override /*1*/ /*fake_override*/ val size: kotlin.Int
-    invisible_fake final override /*1*/ /*fake_override*/ var values: kotlin.(Mutable)Collection<kotlin.CharSequence!>!
-    public open override /*1*/ /*fake_override*/ val values: kotlin.MutableCollection<kotlin.CharSequence!>
+    invisible_fake final override /*1*/ /*fake_override*/ var values: kotlin.collections.(Mutable)Collection<kotlin.CharSequence!>!
+    public open override /*1*/ /*fake_override*/ val values: kotlin.collections.MutableCollection<kotlin.CharSequence!>
     public open override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
     protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun clone(): kotlin.Any!
     public open override /*1*/ /*fake_override*/ fun containsKey(/*0*/ key: kotlin.Double!): kotlin.Boolean
@@ -19,7 +19,7 @@ public abstract class MyMap : java.util.AbstractMap<kotlin.Double!, kotlin.CharS
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun put(/*0*/ key: kotlin.Double!, /*1*/ value: kotlin.CharSequence!): kotlin.CharSequence?
-    public open override /*1*/ /*fake_override*/ fun putAll(/*0*/ from: kotlin.Map<out kotlin.Double!, kotlin.CharSequence!>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun putAll(/*0*/ from: kotlin.collections.Map<out kotlin.Double!, kotlin.CharSequence!>): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun remove(/*0*/ key: kotlin.Double!): kotlin.CharSequence?
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 

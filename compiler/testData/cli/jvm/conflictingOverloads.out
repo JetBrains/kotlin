@@ -1,7 +1,7 @@
-compiler/testData/cli/jvm/conflictingOverloads.kt:1:1: error: 'public fun a(): kotlin.List<kotlin.Int>' is already defined in root package
+compiler/testData/cli/jvm/conflictingOverloads.kt:1:1: error: 'public fun a(): kotlin.collections.List<kotlin.Int>' is already defined in root package
 fun a(): List<Int> = null!!
 ^
-compiler/testData/cli/jvm/conflictingOverloads.kt:2:1: error: 'public fun a(): kotlin.List<kotlin.String>' is already defined in root package
+compiler/testData/cli/jvm/conflictingOverloads.kt:2:1: error: 'public fun a(): kotlin.collections.List<kotlin.String>' is already defined in root package
 fun a(): List<String> = null!!
 ^
 COMPILATION_ERROR

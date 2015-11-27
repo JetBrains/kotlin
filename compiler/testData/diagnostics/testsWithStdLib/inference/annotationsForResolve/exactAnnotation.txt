@@ -1,4 +1,4 @@
 package
 
-public fun test1(/*0*/ l: kotlin.List<kotlin.Number>): kotlin.Unit
-@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ T, /*1*/ U : T> kotlin.List<T>.firstTyped(): U
+public fun test1(/*0*/ l: kotlin.collections.List<kotlin.Number>): kotlin.Unit
+@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ T, /*1*/ U : T> kotlin.collections.List<T>.firstTyped(): U

@@ -3,8 +3,8 @@ package
 package a {
     public fun bar(/*0*/ a: kotlin.Any): kotlin.Any
     public fun bar(/*0*/ i: kotlin.Int): kotlin.Int
-    public fun </*0*/ T> emptyList(): kotlin.List<T>
-    public fun foo(/*0*/ l: kotlin.List<kotlin.Int>): kotlin.Int
+    public fun </*0*/ T> emptyList(): kotlin.collections.List<T>
+    public fun foo(/*0*/ l: kotlin.collections.List<kotlin.Int>): kotlin.Int
     public fun </*0*/ T : kotlin.Any> makeNullable(/*0*/ t: T): T?
     public fun test(/*0*/ array: kotlin.Array<kotlin.Int>): kotlin.Unit
 }

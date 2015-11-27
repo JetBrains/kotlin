@@ -1,10 +1,10 @@
 package
 
 @kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ T> assertEquals1(/*0*/ e1: T, /*1*/ e2: T): kotlin.Boolean
-public fun test(/*0*/ i: kotlin.Int?, /*1*/ a: kotlin.Any, /*2*/ l: kotlin.List<kotlin.Int>): kotlin.Unit
+public fun test(/*0*/ i: kotlin.Int?, /*1*/ a: kotlin.Any, /*2*/ l: kotlin.collections.List<kotlin.Int>): kotlin.Unit
 public fun test(/*0*/ s: kotlin.String): kotlin.Unit
 @kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ T> test1(/*0*/ t1: T, /*1*/ t2: T): T
 @kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ T> test3(/*0*/ t1: T): T
 public fun usage(): kotlin.Unit
-@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ T> kotlin.List<T>.contains1(/*0*/ e: T): kotlin.Boolean
+@kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ T> kotlin.collections.List<T>.contains1(/*0*/ e: T): kotlin.Boolean
 @kotlin.Suppress(names = {"INVISIBLE_MEMBER", "INVISIBLE_REFERENCE"}) public fun </*0*/ T> T.test2(/*0*/ t1: T): T

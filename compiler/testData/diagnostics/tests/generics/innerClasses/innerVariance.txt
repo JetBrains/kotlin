@@ -14,8 +14,8 @@ public final class Outer</*0*/ out E, /*1*/ in F> {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         public final fun unsafe1(/*0*/ x: E): kotlin.Unit
-        public final fun unsafe2(/*0*/ x: kotlin.Collection<E?>): kotlin.Unit
+        public final fun unsafe2(/*0*/ x: kotlin.collections.Collection<E?>): kotlin.Unit
         public final fun unsafe3(): F?
-        public final fun unsafe4(): kotlin.Collection<F>?
+        public final fun unsafe4(): kotlin.collections.Collection<F>?
     }
 }

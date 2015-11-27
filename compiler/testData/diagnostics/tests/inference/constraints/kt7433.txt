@@ -1,4 +1,4 @@
 package
 
-public fun test(/*0*/ ints: kotlin.List<kotlin.Int>): kotlin.Unit
-public inline fun </*0*/ S, /*1*/ T : S> kotlin.Iterable<T>.reduce1(/*0*/ operation: (S, T) -> S): S
+public fun test(/*0*/ ints: kotlin.collections.List<kotlin.Int>): kotlin.Unit
+public inline fun </*0*/ S, /*1*/ T : S> kotlin.collections.Iterable<T>.reduce1(/*0*/ operation: (S, T) -> S): S

@@ -1,6 +1,6 @@
 package
 
 package qualified_expressions {
-    public fun test(/*0*/ s: kotlin.IntRange?): kotlin.Unit
+    public fun test(/*0*/ s: kotlin.ranges.IntRange?): kotlin.Unit
     public fun kotlin.String.startsWith(/*0*/ s: kotlin.String): kotlin.Boolean
 }

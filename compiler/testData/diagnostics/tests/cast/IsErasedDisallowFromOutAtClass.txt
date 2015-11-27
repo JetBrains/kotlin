@@ -1,3 +1,3 @@
 package
 
-public fun f(/*0*/ a: kotlin.List<kotlin.Any>): kotlin.Boolean
+public fun f(/*0*/ a: kotlin.collections.List<kotlin.Any>): kotlin.Boolean

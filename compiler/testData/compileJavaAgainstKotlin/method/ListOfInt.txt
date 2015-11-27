@@ -1,6 +1,6 @@
 package test
 
-public fun ggg(/*0*/ kotlin.List<kotlin.Int>): kotlin.List<kotlin.Int>
+public fun ggg(/*0*/ kotlin.collections.List<kotlin.Int>): kotlin.collections.List<kotlin.Int>
 
 public/*package*/ open class ListOfInt {
     public/*package*/ constructor ListOfInt()

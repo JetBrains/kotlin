@@ -15,7 +15,7 @@ fun box(): String {
                     "kotlin.Int",
                     "kotlin.Array<kotlin.Int>",
                     "kotlin.IntArray",
-                    "kotlin.List<kotlin.Map<kotlin.Any, A<*>>>"
+                    "kotlin.collections.List<kotlin.collections.Map<kotlin.Any, A<*>>>"
             ),
             String?::foo.parameters.map { it.type.toString() }
     )

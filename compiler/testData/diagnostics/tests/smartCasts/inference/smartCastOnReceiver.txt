@@ -27,6 +27,6 @@ public final class Test {
     public constructor Test()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final fun test(/*0*/ a: A?, /*1*/ b: B, /*2*/ list: kotlin.MutableList<Pair<A, B>>): kotlin.Unit
+    public final fun test(/*0*/ a: A?, /*1*/ b: B, /*2*/ list: kotlin.collections.MutableList<Pair<A, B>>): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

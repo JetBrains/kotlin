@@ -1,6 +1,6 @@
 package test
 
-public fun gg(/*0*/ kotlin.List<kotlin.String>, /*1*/ vararg kotlin.Int /*kotlin.IntArray*/): kotlin.List<kotlin.String>
+public fun gg(/*0*/ kotlin.collections.List<kotlin.String>, /*1*/ vararg kotlin.Int /*kotlin.IntArray*/): kotlin.collections.List<kotlin.String>
 
 public/*package*/ open class Vararg {
     public/*package*/ constructor Vararg()

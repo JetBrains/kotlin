@@ -56,8 +56,8 @@ public open class B3 : A3 {
 public final class C {
     public constructor C()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @kotlin.jvm.JvmName(name = "foo1") public final fun foo(/*0*/ list: kotlin.List<kotlin.Int>): kotlin.Unit
-    @kotlin.jvm.JvmName(name = "foo1") public final fun foo(/*0*/ list: kotlin.List<kotlin.String>): kotlin.Unit
+    @kotlin.jvm.JvmName(name = "foo1") public final fun foo(/*0*/ list: kotlin.collections.List<kotlin.Int>): kotlin.Unit
+    @kotlin.jvm.JvmName(name = "foo1") public final fun foo(/*0*/ list: kotlin.collections.List<kotlin.String>): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

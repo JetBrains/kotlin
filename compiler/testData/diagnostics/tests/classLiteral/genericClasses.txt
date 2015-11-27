@@ -9,9 +9,9 @@ public val b2: kotlin.reflect.KClass<kotlin.Nothing>
 public val i1: kotlin.reflect.KClass<A<*>.Inner<*>>
 public val i2: [ERROR : Unresolved class]
 public val i3: [ERROR : Unresolved class]
-public val m1: kotlin.reflect.KClass<kotlin.Map<*, *>>
+public val m1: kotlin.reflect.KClass<kotlin.collections.Map<*, *>>
 public val m2: [ERROR : Unresolved class]
-public val m3: kotlin.reflect.KClass<kotlin.Map.Entry<*, *>>
+public val m3: kotlin.reflect.KClass<kotlin.collections.Map.Entry<*, *>>
 public val n1: kotlin.reflect.KClass<A.Nested<*>>
 public val n2: [ERROR : Unresolved class]
 

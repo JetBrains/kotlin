@@ -10,7 +10,7 @@ public final class FunctionTypes public constructor() {
 
     public final fun f3(f: kotlin.Int.(kotlin.Int) -> kotlin.Unit): kotlin.Unit { /* compiled code */ }
 
-    public final fun f4(f: kotlin.List<@kotlin.ExtensionFunctionType kotlin.Function1<*, *>>): kotlin.Unit { /* compiled code */ }
+    public final fun f4(f: kotlin.collections.List<@kotlin.ExtensionFunctionType kotlin.Function1<*, *>>): kotlin.Unit { /* compiled code */ }
 
     public final fun <A> (A.(A) -> A)?.bar(): kotlin.Unit { /* compiled code */ }
 

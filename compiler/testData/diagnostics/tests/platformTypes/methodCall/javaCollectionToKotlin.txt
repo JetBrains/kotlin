@@ -1,4 +1,4 @@
 package
 
-public fun takeJ(/*0*/ map: kotlin.Map<kotlin.Any, kotlin.Any>): kotlin.Unit
+public fun takeJ(/*0*/ map: kotlin.collections.Map<kotlin.Any, kotlin.Any>): kotlin.Unit
 public fun test(): kotlin.Unit

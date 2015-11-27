@@ -2,10 +2,10 @@ package
 
 public final class A</*0*/ T> {
     public constructor A</*0*/ T>()
-    public final fun </*0*/ U> bar(/*0*/ s: U): kotlin.List<T>
+    public final fun </*0*/ U> bar(/*0*/ s: U): kotlin.collections.List<T>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final fun </*0*/ S> foo(/*0*/ s: S): S
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final fun test(): kotlin.List<T>
+    public final fun test(): kotlin.collections.List<T>
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

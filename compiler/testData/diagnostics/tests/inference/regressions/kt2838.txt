@@ -1,8 +1,8 @@
 package
 
 package a {
-    public fun </*0*/ T> bar(/*0*/ a: T, /*1*/ b: kotlin.Map<T, kotlin.String>): kotlin.String?
-    public fun </*0*/ T> foo(/*0*/ a: T, /*1*/ b: kotlin.Map<T, kotlin.String>?): kotlin.String?
+    public fun </*0*/ T> bar(/*0*/ a: T, /*1*/ b: kotlin.collections.Map<T, kotlin.String>): kotlin.String?
+    public fun </*0*/ T> foo(/*0*/ a: T, /*1*/ b: kotlin.collections.Map<T, kotlin.String>?): kotlin.String?
     public fun test(/*0*/ a: kotlin.Int): kotlin.Unit
     public fun test1(/*0*/ a: kotlin.Int): kotlin.Unit
     public fun test2(/*0*/ a: kotlin.Int): kotlin.Unit

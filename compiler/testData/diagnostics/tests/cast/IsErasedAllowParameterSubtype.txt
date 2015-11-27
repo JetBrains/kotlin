@@ -1,6 +1,6 @@
 package
 
-public fun ff(/*0*/ l: kotlin.MutableCollection<B>): kotlin.Boolean
+public fun ff(/*0*/ l: kotlin.collections.MutableCollection<B>): kotlin.Boolean
 
 public open class A {
     public constructor A()

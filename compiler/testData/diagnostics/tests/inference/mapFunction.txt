@@ -3,6 +3,6 @@ package
 package a {
     @kotlin.Suppress(names = {"UNCHECKED_CAST"}) public fun </*0*/ T> array(/*0*/ vararg t: T /*kotlin.Array<out T>*/): kotlin.Array<T>
     public fun foo(): kotlin.Unit
-    public infix fun </*0*/ T, /*1*/ R> kotlin.Array<T>.map(/*0*/ transform: (T) -> R): kotlin.List<R>
-    public infix fun </*0*/ T, /*1*/ R> kotlin.Iterable<T>.map(/*0*/ transform: (T) -> R): kotlin.List<R>
+    public infix fun </*0*/ T, /*1*/ R> kotlin.Array<T>.map(/*0*/ transform: (T) -> R): kotlin.collections.List<R>
+    public infix fun </*0*/ T, /*1*/ R> kotlin.collections.Iterable<T>.map(/*0*/ transform: (T) -> R): kotlin.collections.List<R>
 }

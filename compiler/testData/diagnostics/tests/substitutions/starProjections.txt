@@ -11,7 +11,7 @@ public interface A</*0*/ R, /*1*/ T : A<R, T>> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public interface B</*0*/ R, /*1*/ T : B<kotlin.List<R>, T>> {
+public interface B</*0*/ R, /*1*/ T : B<kotlin.collections.List<R>, T>> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public abstract fun r(): R

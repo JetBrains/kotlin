@@ -3,7 +3,7 @@
 
 package test
 
-public abstract class SimpleClass public constructor() : dependency.D<dependency.Tr, kotlin.Int>, dependency.Tr, kotlin.List<kotlin.String> {
+public abstract class SimpleClass public constructor() : dependency.D<dependency.Tr, kotlin.Int>, dependency.Tr, kotlin.collections.List<kotlin.String> {
     public final val a: dependency.A /* compiled code */
 
     public final var b: dependency.B /* compiled code */
@@ -14,7 +14,7 @@ public abstract class SimpleClass public constructor() : dependency.D<dependency
 
     public final fun f(): kotlin.Unit { /* compiled code */ }
 
-    public final fun g(d: dependency.D<kotlin.String, dependency.Tr>): kotlin.List<dependency.D<dependency.A, kotlin.Int>> { /* compiled code */ }
+    public final fun g(d: dependency.D<kotlin.String, dependency.Tr>): kotlin.collections.List<dependency.D<dependency.A, kotlin.Int>> { /* compiled code */ }
 
     private final fun privateFun(): kotlin.Unit { /* compiled code */ }
 

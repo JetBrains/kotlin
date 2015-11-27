@@ -1,4 +1,4 @@
 package
 
-public fun testArrays(/*0*/ ci: kotlin.List<kotlin.Int>): kotlin.Unit
-public fun </*0*/ E> kotlin.List<*>.toArray(/*0*/ ar: kotlin.Array<E>): kotlin.Array<E>
+public fun testArrays(/*0*/ ci: kotlin.collections.List<kotlin.Int>): kotlin.Unit
+public fun </*0*/ E> kotlin.collections.List<*>.toArray(/*0*/ ar: kotlin.Array<E>): kotlin.Array<E>

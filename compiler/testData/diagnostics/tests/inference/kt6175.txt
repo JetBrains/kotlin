@@ -1,8 +1,8 @@
 package
 
 public fun </*0*/ T, /*1*/ R> bar(/*0*/ body: (R) -> T): T
-public fun </*0*/ T, /*1*/ R> baz(/*0*/ body: (kotlin.List<R>) -> T): T
-public fun </*0*/ T, /*1*/ R : kotlin.Any> brr(/*0*/ body: (kotlin.List<R?>) -> T): T
+public fun </*0*/ T, /*1*/ R> baz(/*0*/ body: (kotlin.collections.List<R>) -> T): T
+public fun </*0*/ T, /*1*/ R : kotlin.Any> brr(/*0*/ body: (kotlin.collections.List<R?>) -> T): T
 public fun fail(): kotlin.Nothing
 public fun </*0*/ T, /*1*/ R : kotlin.Any> foo(/*0*/ body: (R?) -> T): T
 public fun test1(): kotlin.Unit

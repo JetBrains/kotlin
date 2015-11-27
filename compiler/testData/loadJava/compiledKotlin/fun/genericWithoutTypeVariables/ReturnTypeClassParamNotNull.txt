@@ -1,3 +1,3 @@
 package test
 
-public fun ffgg(): kotlin.List<kotlin.CharSequence>
+public fun ffgg(): kotlin.collections.List<kotlin.CharSequence>

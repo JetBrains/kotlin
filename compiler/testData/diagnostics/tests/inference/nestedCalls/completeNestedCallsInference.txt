@@ -1,7 +1,7 @@
 package
 
 package a {
-    public fun </*0*/ T> kotlin.Iterable<T>.withIndices(): kotlin.List<a.Pair<kotlin.Int, T>>
+    public fun </*0*/ T> kotlin.collections.Iterable<T>.withIndices(): kotlin.collections.List<a.Pair<kotlin.Int, T>>
 
     public final class Pair</*0*/ out A, /*1*/ out B> {
         public constructor Pair</*0*/ out A, /*1*/ out B>(/*0*/ first: A, /*1*/ second: B)

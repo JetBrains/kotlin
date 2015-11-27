@@ -16,6 +16,6 @@ public final class C {
     public constructor C()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final operator fun iterator(): kotlin.Iterator<A>
+    public final operator fun iterator(): kotlin.collections.Iterator<A>
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

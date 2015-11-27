@@ -2,10 +2,10 @@ package
 
 package a {
     public fun doInt(/*0*/ i: kotlin.Int): kotlin.Int
-    public fun doList(/*0*/ l: kotlin.List<kotlin.Int>): kotlin.List<kotlin.Int>
-    public fun </*0*/ T : a.A> emptyNullableListOfA(): kotlin.List<T>?
+    public fun doList(/*0*/ l: kotlin.collections.List<kotlin.Int>): kotlin.collections.List<kotlin.Int>
+    public fun </*0*/ T : a.A> emptyNullableListOfA(): kotlin.collections.List<T>?
     public fun </*0*/ T> id(/*0*/ t: T): T
-    public fun </*0*/ T> strangeNullableList(/*0*/ f: (T) -> kotlin.Unit): kotlin.List<T>?
+    public fun </*0*/ T> strangeNullableList(/*0*/ f: (T) -> kotlin.Unit): kotlin.collections.List<T>?
     public fun testDataFlowInfoAfterExclExcl(/*0*/ a: kotlin.Int?): kotlin.Unit
     public fun testExclExcl(): kotlin.Unit
     public fun testUnnecessaryExclExcl(/*0*/ a: kotlin.Int): kotlin.Unit

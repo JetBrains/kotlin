@@ -1,4 +1,4 @@
 package
 
 public fun foo(): kotlin.Unit
-public fun </*0*/ T : kotlin.Any> iterate(/*0*/ initialValue: T, /*1*/ nextFunction: (T) -> T?): kotlin.Iterator<T>
+public fun </*0*/ T : kotlin.Any> iterate(/*0*/ initialValue: T, /*1*/ nextFunction: (T) -> T?): kotlin.collections.Iterator<T>

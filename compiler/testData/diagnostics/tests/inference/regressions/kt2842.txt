@@ -2,11 +2,11 @@ package
 
 package c {
     public fun foo(): kotlin.Boolean
-    public fun getNullableList(): kotlin.List<kotlin.String>?
+    public fun getNullableList(): kotlin.collections.List<kotlin.String>?
     public fun test(/*0*/ a: c.A<kotlin.Int>?): kotlin.Unit
-    public fun test(/*0*/ nullabilityInfoMap: kotlin.Map<kotlin.Int, kotlin.Any>?): kotlin.Unit
+    public fun test(/*0*/ nullabilityInfoMap: kotlin.collections.Map<kotlin.Int, kotlin.Any>?): kotlin.Unit
     public fun </*0*/ R> c.A<R>.foo(): kotlin.Unit
-    public fun </*0*/ K, /*1*/ V> kotlin.Map<K, V>.iterator(): kotlin.Iterator<kotlin.Map.Entry<K, V>>
+    public fun </*0*/ K, /*1*/ V> kotlin.collections.Map<K, V>.iterator(): kotlin.collections.Iterator<kotlin.collections.Map.Entry<K, V>>
 
     public interface A</*0*/ T> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

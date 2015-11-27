@@ -1,4 +1,4 @@
 package
 
-public fun </*0*/ T> kotlin.Iterable<T>.join(/*0*/ separator: kotlin.String?): kotlin.String
+public fun </*0*/ T> kotlin.collections.Iterable<T>.join(/*0*/ separator: kotlin.String?): kotlin.String
 public fun </*0*/ T : kotlin.Any> T?.npe(): T

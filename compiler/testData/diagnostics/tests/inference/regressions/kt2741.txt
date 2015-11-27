@@ -1,9 +1,9 @@
 package
 
 package a {
-    public fun </*0*/ T> _arrayList(/*0*/ vararg values: T /*kotlin.Array<out T>*/): kotlin.List<T>
+    public fun </*0*/ T> _arrayList(/*0*/ vararg values: T /*kotlin.Array<out T>*/): kotlin.collections.List<T>
     public fun test(): kotlin.Unit
-    public fun </*0*/ T, /*1*/ R : kotlin.Comparable<R>> kotlin.Iterable<T>._sortBy(/*0*/ f: (T) -> R): kotlin.List<T>
+    public fun </*0*/ T, /*1*/ R : kotlin.Comparable<R>> kotlin.collections.Iterable<T>._sortBy(/*0*/ f: (T) -> R): kotlin.collections.List<T>
 
     public final class _Pair</*0*/ A> {
         public constructor _Pair</*0*/ A>(/*0*/ a: A)

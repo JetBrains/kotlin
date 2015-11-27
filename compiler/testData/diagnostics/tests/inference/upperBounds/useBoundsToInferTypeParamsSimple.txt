@@ -1,11 +1,11 @@
 package
 
 package a {
-    public fun </*0*/ T> arrayListOf(/*0*/ vararg t: T /*kotlin.Array<out T>*/): kotlin.MutableList<T>
+    public fun </*0*/ T> arrayListOf(/*0*/ vararg t: T /*kotlin.Array<out T>*/): kotlin.collections.MutableList<T>
     public fun </*0*/ U, /*1*/ V : U> bar(/*0*/ v: V, /*1*/ u: U): U
-    public fun </*0*/ V : U, /*1*/ U> baz(/*0*/ v: V, /*1*/ u: kotlin.MutableSet<U>): kotlin.MutableSet<U>
-    public fun </*0*/ T> checkItIsExactlyAny(/*0*/ t: T, /*1*/ l: kotlin.MutableList<T>): kotlin.Unit
+    public fun </*0*/ V : U, /*1*/ U> baz(/*0*/ v: V, /*1*/ u: kotlin.collections.MutableSet<U>): kotlin.collections.MutableSet<U>
+    public fun </*0*/ T> checkItIsExactlyAny(/*0*/ t: T, /*1*/ l: kotlin.collections.MutableList<T>): kotlin.Unit
     public fun </*0*/ V : U, /*1*/ U> foo(/*0*/ v: V, /*1*/ u: U): U
-    public fun test(/*0*/ a: kotlin.Any, /*1*/ s: kotlin.MutableSet<kotlin.String>): kotlin.Unit
     public fun test(/*0*/ a: kotlin.Any, /*1*/ s: kotlin.String): kotlin.Unit
+    public fun test(/*0*/ a: kotlin.Any, /*1*/ s: kotlin.collections.MutableSet<kotlin.String>): kotlin.Unit
 }

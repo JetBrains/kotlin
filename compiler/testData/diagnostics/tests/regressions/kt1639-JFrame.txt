@@ -18,7 +18,7 @@ package test {
         invisible_fake final override /*1*/ /*fake_override*/ var bufferStrategy: [ERROR : Unresolved java classifier: BufferStrategy]!
         invisible_fake final override /*1*/ /*fake_override*/ var changeSupport: [ERROR : Unresolved java classifier: PropertyChangeSupport]!
         invisible_fake final override /*1*/ /*fake_override*/ var coalescingEnabled: kotlin.Boolean
-        invisible_fake final override /*1*/ /*fake_override*/ var component: kotlin.(Mutable)List<java.awt.Component!>!
+        invisible_fake final override /*1*/ /*fake_override*/ var component: kotlin.collections.(Mutable)List<java.awt.Component!>!
         invisible_fake final override /*1*/ /*fake_override*/ var componentListener: [ERROR : Unresolved java classifier: ComponentListener]!
         invisible_fake final override /*1*/ /*fake_override*/ var componentOrientation: [ERROR : Unresolved java classifier: ComponentOrientation]!
         invisible_fake final override /*1*/ /*fake_override*/ var componentSerializedDataVersion: kotlin.Int
@@ -37,7 +37,7 @@ package test {
         invisible_fake final override /*1*/ /*fake_override*/ var focusCycleRoot: kotlin.Boolean
         invisible_fake final override /*1*/ /*fake_override*/ var focusListener: [ERROR : Unresolved java classifier: FocusListener]!
         invisible_fake final override /*1*/ /*fake_override*/ var focusMgr: [ERROR : Unresolved java classifier: FocusManager]!
-        invisible_fake final override /*1*/ /*fake_override*/ var focusTraversalKeys: kotlin.Array<(out) kotlin.(Mutable)Set<(raw) kotlin.Any?>!>!
+        invisible_fake final override /*1*/ /*fake_override*/ var focusTraversalKeys: kotlin.Array<(out) kotlin.collections.(Mutable)Set<(raw) kotlin.Any?>!>!
         invisible_fake final override /*1*/ /*fake_override*/ var focusTraversalKeysEnabled: kotlin.Boolean
         invisible_fake final override /*1*/ /*fake_override*/ var focusTraversalPolicy: [ERROR : Unresolved java classifier: FocusTraversalPolicy]!
         invisible_fake final override /*1*/ /*fake_override*/ var focusTraversalPolicyProvider: kotlin.Boolean
@@ -50,7 +50,7 @@ package test {
         invisible_fake final override /*1*/ /*fake_override*/ var height: kotlin.Int
         invisible_fake final override /*1*/ /*fake_override*/ var hierarchyBoundsListener: [ERROR : Unresolved java classifier: HierarchyBoundsListener]!
         invisible_fake final override /*1*/ /*fake_override*/ var hierarchyListener: [ERROR : Unresolved java classifier: HierarchyListener]!
-        invisible_fake final override /*1*/ /*fake_override*/ var icons: kotlin.(Mutable)List<[ERROR : Unresolved java classifier: Image]!>!
+        invisible_fake final override /*1*/ /*fake_override*/ var icons: kotlin.collections.(Mutable)List<[ERROR : Unresolved java classifier: Image]!>!
         invisible_fake final override /*1*/ /*fake_override*/ var ignoreRepaint: kotlin.Boolean
         invisible_fake final override /*1*/ /*fake_override*/ var inputContext: [ERROR : Unresolved java classifier: InputContext]!
         invisible_fake final override /*1*/ /*fake_override*/ var inputContextLock: kotlin.Any!
@@ -98,7 +98,7 @@ package test {
         invisible_fake final override /*1*/ /*fake_override*/ var prefSizeSet: kotlin.Boolean
         invisible_fake final override /*1*/ /*fake_override*/ var preserveBackgroundColor: [ERROR : Unresolved java classifier: Color]!
         invisible_fake final override /*1*/ /*fake_override*/ var printing: kotlin.Boolean
-        invisible_fake final override /*1*/ /*fake_override*/ var printingThreads: kotlin.(Mutable)Set<(raw) kotlin.Any?>!
+        invisible_fake final override /*1*/ /*fake_override*/ var printingThreads: kotlin.collections.(Mutable)Set<(raw) kotlin.Any?>!
         invisible_fake final override /*1*/ /*fake_override*/ var resizable: kotlin.Boolean
         protected/*protected and package*/ final override /*1*/ /*fake_override*/ var rootPane: [ERROR : Unresolved java classifier: JRootPane]!
         protected/*protected and package*/ final override /*1*/ /*fake_override*/ var rootPaneCheckingEnabled: kotlin.Boolean
@@ -288,9 +288,9 @@ package test {
         public final override /*1*/ /*fake_override*/ fun getFocusCycleRootAncestor(): java.awt.Container!
         public open override /*1*/ /*fake_override*/ fun getFocusListeners(): kotlin.Array<(out) [ERROR : Unresolved java classifier: FocusListener]!>!
         public open override /*1*/ /*fake_override*/ fun getFocusOwner(): java.awt.Component!
-        public open override /*1*/ /*fake_override*/ fun getFocusTraversalKeys(/*0*/ p0: kotlin.Int): kotlin.(Mutable)Set<java.awt.AWTKeyStroke!>!
+        public open override /*1*/ /*fake_override*/ fun getFocusTraversalKeys(/*0*/ p0: kotlin.Int): kotlin.collections.(Mutable)Set<java.awt.AWTKeyStroke!>!
         public open override /*1*/ /*fake_override*/ fun getFocusTraversalKeysEnabled(): kotlin.Boolean
-        invisible_fake final override /*1*/ /*fake_override*/ fun getFocusTraversalKeys_NoIDCheck(/*0*/ p0: kotlin.Int): kotlin.(Mutable)Set<(raw) kotlin.Any?>!
+        invisible_fake final override /*1*/ /*fake_override*/ fun getFocusTraversalKeys_NoIDCheck(/*0*/ p0: kotlin.Int): kotlin.collections.(Mutable)Set<(raw) kotlin.Any?>!
         public open override /*1*/ /*fake_override*/ fun getFocusTraversalPolicy(): [ERROR : Unresolved java classifier: FocusTraversalPolicy]!
         public open override /*1*/ /*fake_override*/ fun getFocusableWindowState(): kotlin.Boolean
         @[ERROR : java.beans.Transient]() public open override /*1*/ /*fake_override*/ fun getFont(): [ERROR : Unresolved java classifier: Font]!
@@ -308,7 +308,7 @@ package test {
         public open override /*1*/ /*fake_override*/ fun getHierarchyBoundsListeners(): kotlin.Array<(out) [ERROR : Unresolved java classifier: HierarchyBoundsListener]!>!
         public open override /*1*/ /*fake_override*/ fun getHierarchyListeners(): kotlin.Array<(out) [ERROR : Unresolved java classifier: HierarchyListener]!>!
         public open override /*1*/ /*fake_override*/ fun getIconImage(): [ERROR : Unresolved java classifier: Image]!
-        public open override /*1*/ /*fake_override*/ fun getIconImages(): kotlin.(Mutable)List<[ERROR : Unresolved java classifier: Image]!>!
+        public open override /*1*/ /*fake_override*/ fun getIconImages(): kotlin.collections.(Mutable)List<[ERROR : Unresolved java classifier: Image]!>!
         public open override /*1*/ /*fake_override*/ fun getIgnoreRepaint(): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun getInputContext(): [ERROR : Unresolved java classifier: InputContext]!
         public open override /*1*/ /*fake_override*/ fun getInputMethodListeners(): kotlin.Array<(out) [ERROR : Unresolved java classifier: InputMethodListener]!>!
@@ -587,9 +587,9 @@ package test {
         public open override /*1*/ /*fake_override*/ fun setEnabled(/*0*/ p0: kotlin.Boolean): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun setExtendedState(/*0*/ p0: kotlin.Int): kotlin.Unit
         public final override /*1*/ /*fake_override*/ fun setFocusCycleRoot(/*0*/ p0: kotlin.Boolean): kotlin.Unit
-        public open override /*1*/ /*fake_override*/ fun setFocusTraversalKeys(/*0*/ p0: kotlin.Int, /*1*/ p1: (kotlin.MutableSet<out java.awt.AWTKeyStroke!>..kotlin.Set<java.awt.AWTKeyStroke!>?)): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun setFocusTraversalKeys(/*0*/ p0: kotlin.Int, /*1*/ p1: (kotlin.collections.MutableSet<out java.awt.AWTKeyStroke!>..kotlin.collections.Set<java.awt.AWTKeyStroke!>?)): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun setFocusTraversalKeysEnabled(/*0*/ p0: kotlin.Boolean): kotlin.Unit
-        invisible_fake final override /*1*/ /*fake_override*/ fun setFocusTraversalKeys_NoIDCheck(/*0*/ p0: kotlin.Int, /*1*/ p1: (kotlin.MutableSet<out java.awt.AWTKeyStroke!>..kotlin.Set<java.awt.AWTKeyStroke!>?)): kotlin.Unit
+        invisible_fake final override /*1*/ /*fake_override*/ fun setFocusTraversalKeys_NoIDCheck(/*0*/ p0: kotlin.Int, /*1*/ p1: (kotlin.collections.MutableSet<out java.awt.AWTKeyStroke!>..kotlin.collections.Set<java.awt.AWTKeyStroke!>?)): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun setFocusTraversalPolicy(/*0*/ p0: [ERROR : Unresolved java classifier: FocusTraversalPolicy]!): kotlin.Unit
         public final override /*1*/ /*fake_override*/ fun setFocusTraversalPolicyProvider(/*0*/ p0: kotlin.Boolean): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun setFocusable(/*0*/ p0: kotlin.Boolean): kotlin.Unit
@@ -599,7 +599,7 @@ package test {
         public open override /*1*/ /*fake_override*/ fun setGlassPane(/*0*/ p0: java.awt.Component!): kotlin.Unit
         invisible_fake open override /*1*/ /*fake_override*/ fun setGraphicsConfiguration(/*0*/ p0: [ERROR : Unresolved java classifier: GraphicsConfiguration]!): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun setIconImage(/*0*/ p0: [ERROR : Unresolved java classifier: Image]!): kotlin.Unit
-        public open override /*1*/ /*fake_override*/ fun setIconImages(/*0*/ p0: (kotlin.MutableList<out [ERROR : Unresolved java classifier: Image]!>..kotlin.List<[ERROR : Unresolved java classifier: Image]!>?)): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun setIconImages(/*0*/ p0: (kotlin.collections.MutableList<out [ERROR : Unresolved java classifier: Image]!>..kotlin.collections.List<[ERROR : Unresolved java classifier: Image]!>?)): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun setIgnoreRepaint(/*0*/ p0: kotlin.Boolean): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun setJMenuBar(/*0*/ p0: [ERROR : Unresolved java classifier: JMenuBar]!): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun setLayeredPane(/*0*/ p0: [ERROR : Unresolved java classifier: JLayeredPane]!): kotlin.Unit

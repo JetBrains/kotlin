@@ -1,11 +1,11 @@
 package
 
-public fun </*0*/ T> test(/*0*/ l: kotlin.List<T>): kotlin.Unit
+public fun </*0*/ T> test(/*0*/ l: kotlin.collections.List<T>): kotlin.Unit
 
 package bar {
-    public fun </*0*/ T> f(/*0*/ l: kotlin.List<T>): kotlin.Unit
+    public fun </*0*/ T> f(/*0*/ l: kotlin.collections.List<T>): kotlin.Unit
 }
 
 package foo {
-    public fun </*0*/ T> f(/*0*/ l: kotlin.List<T>): kotlin.Unit
+    public fun </*0*/ T> f(/*0*/ l: kotlin.collections.List<T>): kotlin.Unit
 }

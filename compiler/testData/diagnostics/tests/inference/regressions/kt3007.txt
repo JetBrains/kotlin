@@ -2,11 +2,11 @@ package
 
 package a {
     public fun tempFun(): a.SomeEnum
-    public fun </*0*/ T, /*1*/ R> kotlin.Iterable<T>.fold(/*0*/ initial: R, /*1*/ operation: (R, T) -> R): R
-    public fun kotlin.Iterable<kotlin.Int>.some(): kotlin.Unit
-    public fun kotlin.Iterable<kotlin.Int>.someInt(): kotlin.Unit
-    public fun kotlin.Iterable<kotlin.Int>.someSimple(): kotlin.Unit
-    public fun kotlin.Iterable<kotlin.Int>.someSimpleWithFun(): kotlin.Unit
+    public fun </*0*/ T, /*1*/ R> kotlin.collections.Iterable<T>.fold(/*0*/ initial: R, /*1*/ operation: (R, T) -> R): R
+    public fun kotlin.collections.Iterable<kotlin.Int>.some(): kotlin.Unit
+    public fun kotlin.collections.Iterable<kotlin.Int>.someInt(): kotlin.Unit
+    public fun kotlin.collections.Iterable<kotlin.Int>.someSimple(): kotlin.Unit
+    public fun kotlin.collections.Iterable<kotlin.Int>.someSimpleWithFun(): kotlin.Unit
 
     public final enum class SomeEnum : kotlin.Enum<a.SomeEnum> {
         enum entry FIRST

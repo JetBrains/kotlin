@@ -1,6 +1,6 @@
 package
 
-public fun commonSystemFailed(/*0*/ a: kotlin.List<kotlin.Int>): kotlin.Unit
-public fun </*0*/ T> listOf(): kotlin.List<T>
-public fun </*0*/ T> listOf(/*0*/ vararg values: T /*kotlin.Array<out T>*/): kotlin.List<T>
-public fun </*0*/ T, /*1*/ R> kotlin.Iterable<T>.map(/*0*/ transform: (T) -> R): kotlin.List<R>
+public fun commonSystemFailed(/*0*/ a: kotlin.collections.List<kotlin.Int>): kotlin.Unit
+public fun </*0*/ T> listOf(): kotlin.collections.List<T>
+public fun </*0*/ T> listOf(/*0*/ vararg values: T /*kotlin.Array<out T>*/): kotlin.collections.List<T>
+public fun </*0*/ T, /*1*/ R> kotlin.collections.Iterable<T>.map(/*0*/ transform: (T) -> R): kotlin.collections.List<R>

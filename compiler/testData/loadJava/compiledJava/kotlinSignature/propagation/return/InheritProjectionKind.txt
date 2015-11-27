@@ -4,11 +4,11 @@ public interface InheritProjectionKind {
 
     public interface Sub : test.InheritProjectionKind.Super {
         public abstract override /*1*/ /*fake_override*/ fun dummy(): kotlin.Unit
-        public abstract override /*1*/ fun foo(): kotlin.(Mutable)List<kotlin.Number!>!
+        public abstract override /*1*/ fun foo(): kotlin.collections.(Mutable)List<kotlin.Number!>!
     }
 
     public interface Super {
         public abstract fun dummy(): kotlin.Unit
-        public abstract fun foo(): kotlin.(Mutable)Collection<kotlin.Number!>!
+        public abstract fun foo(): kotlin.collections.(Mutable)Collection<kotlin.Number!>!
     }
 }

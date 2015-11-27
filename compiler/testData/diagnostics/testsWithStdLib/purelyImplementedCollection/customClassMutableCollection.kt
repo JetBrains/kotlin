@@ -3,7 +3,7 @@
 import java.util.*
 
 // FILE: A.java
-@kotlin.jvm.PurelyImplements("kotlin.MutableCollection")
+@kotlin.jvm.PurelyImplements("kotlin.collections.MutableCollection")
 class A<T> extends AbstractCollection<T> {
     @Override
     public Iterator<T> iterator() {

@@ -3,7 +3,7 @@ package
 package std {
 
     package std.util {
-        public fun </*0*/ T, /*1*/ U : kotlin.MutableCollection<in T>> kotlin.Iterator<T>.to(/*0*/ container: U): U
-        public fun </*0*/ T> kotlin.Iterator<T>.toArrayList(): java.util.ArrayList<T>
+        public fun </*0*/ T, /*1*/ U : kotlin.collections.MutableCollection<in T>> kotlin.collections.Iterator<T>.to(/*0*/ container: U): U
+        public fun </*0*/ T> kotlin.collections.Iterator<T>.toArrayList(): java.util.ArrayList<T>
     }
 }

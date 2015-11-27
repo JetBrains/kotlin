@@ -1,13 +1,13 @@
 package
 
-public fun foo(/*0*/ x: A<kotlin.String, kotlin.Any?>, /*1*/ cs: kotlin.CharSequence, /*2*/ ls: kotlin.List<kotlin.CharSequence>): kotlin.Unit
+public fun foo(/*0*/ x: A<kotlin.String, kotlin.Any?>, /*1*/ cs: kotlin.CharSequence, /*2*/ ls: kotlin.collections.List<kotlin.CharSequence>): kotlin.Unit
 
 public final class A</*0*/ out T, /*1*/ in E> {
     public constructor A</*0*/ out T, /*1*/ in E>()
-    public final fun bar(): kotlin.List<@kotlin.UnsafeVariance() E>
+    public final fun bar(): kotlin.collections.List<@kotlin.UnsafeVariance() E>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final fun foo(/*0*/ x: @kotlin.UnsafeVariance() T): kotlin.Unit
-    public final fun foo(/*0*/ x: @kotlin.UnsafeVariance() T, /*1*/ y: kotlin.List<@kotlin.UnsafeVariance() T>): @kotlin.UnsafeVariance() E
+    public final fun foo(/*0*/ x: @kotlin.UnsafeVariance() T, /*1*/ y: kotlin.collections.List<@kotlin.UnsafeVariance() T>): @kotlin.UnsafeVariance() E
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

@@ -1,3 +1,3 @@
 package
 
-public val ab: kotlin.List<kotlin.Int>?
+public val ab: kotlin.collections.List<kotlin.Int>?

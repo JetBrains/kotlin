@@ -1,3 +1,3 @@
 package
 
-public fun test(/*0*/ d: kotlin.Any, /*1*/ dl: kotlin.Collection<dynamic>): kotlin.Unit
+public fun test(/*0*/ d: kotlin.Any, /*1*/ dl: kotlin.collections.Collection<dynamic>): kotlin.Unit

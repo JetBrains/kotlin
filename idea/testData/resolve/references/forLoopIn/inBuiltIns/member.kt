@@ -3,6 +3,6 @@ fun main() {
 }
 
 // MULTIRESOLVE
-// REF: (in kotlin.IntIterator).next()
-// REF: (in kotlin.IntProgression).iterator()
-// REF: (in kotlin.Iterator).hasNext()
+// REF: (in kotlin.collections.IntIterator).next()
+// REF: (in kotlin.ranges.IntProgression).iterator()
+// REF: (in kotlin.collections.Iterator).hasNext()

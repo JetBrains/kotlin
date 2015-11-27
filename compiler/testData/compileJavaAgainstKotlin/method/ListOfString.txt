@@ -1,6 +1,6 @@
 package test
 
-public fun ff(/*0*/ kotlin.List<kotlin.String>): kotlin.Int
+public fun ff(/*0*/ kotlin.collections.List<kotlin.String>): kotlin.Int
 
 public/*package*/ open class ListString {
     public/*package*/ constructor ListString()

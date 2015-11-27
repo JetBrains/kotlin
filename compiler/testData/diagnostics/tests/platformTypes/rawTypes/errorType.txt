@@ -3,7 +3,7 @@ package
 public open class A</*0*/ T : kotlin.Any!> {
     public constructor A</*0*/ T : kotlin.Any!>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open fun foo(/*0*/ x: [ERROR : Unresolved java classifier: Err<String>]!, /*1*/ y: kotlin.(Mutable)List<kotlin.String!>!): kotlin.Unit
+    public open fun foo(/*0*/ x: [ERROR : Unresolved java classifier: Err<String>]!, /*1*/ y: kotlin.collections.(Mutable)List<kotlin.String!>!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
@@ -11,7 +11,7 @@ public open class A</*0*/ T : kotlin.Any!> {
 public open class B : A<kotlin.Any!> {
     public constructor B()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any(raw)?): kotlin.Boolean(raw)
-    public open override /*1*/ /*fake_override*/ fun foo(/*0*/ x: [ERROR : Unresolved java classifier: Err<String>]!, /*1*/ y: kotlin.(Mutable)List<(raw) kotlin.Any?>!): kotlin.Unit(raw)
+    public open override /*1*/ /*fake_override*/ fun foo(/*0*/ x: [ERROR : Unresolved java classifier: Err<String>]!, /*1*/ y: kotlin.collections.(Mutable)List<(raw) kotlin.Any?>!): kotlin.Unit(raw)
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int(raw)
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String(raw)
 }

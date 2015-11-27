@@ -1,7 +1,7 @@
 package
 
 package kt1066 {
-    public fun foo(/*0*/ excluded: kotlin.Set<kotlin.Char>): kotlin.Unit
+    public fun foo(/*0*/ excluded: kotlin.collections.Set<kotlin.Char>): kotlin.Unit
     public fun randomDigit(): kotlin.Char
     public fun test(): kotlin.Unit
 }

@@ -1,6 +1,6 @@
 package
 
-public fun f(/*0*/ l: kotlin.List<X>): kotlin.Unit
+public fun f(/*0*/ l: kotlin.collections.List<X>): kotlin.Unit
 
 public final class X {
     public constructor X()

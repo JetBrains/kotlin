@@ -1,5 +1,5 @@
 package
 
-public fun autolabel(/*0*/ l: kotlin.List<kotlin.Int>): kotlin.List<kotlin.Int>
-public fun unresolvedMapLabel(/*0*/ l: kotlin.List<kotlin.Int>): kotlin.List<kotlin.Int>
-public fun </*0*/ T, /*1*/ R> kotlin.Iterable<T>.map(/*0*/ transform: (T) -> R): kotlin.List<R>
+public fun autolabel(/*0*/ l: kotlin.collections.List<kotlin.Int>): kotlin.collections.List<kotlin.Int>
+public fun unresolvedMapLabel(/*0*/ l: kotlin.collections.List<kotlin.Int>): kotlin.collections.List<kotlin.Int>
+public fun </*0*/ T, /*1*/ R> kotlin.collections.Iterable<T>.map(/*0*/ transform: (T) -> R): kotlin.collections.List<R>

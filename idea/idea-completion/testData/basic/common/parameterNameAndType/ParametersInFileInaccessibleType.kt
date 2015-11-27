@@ -15,5 +15,5 @@ class X {
 fun foo(neste<caret>)
 
 // EXIST: { itemText: "nested: X.PublicNested", tailText: " (ppp)" }
-// EXIST: { itemText: "nestedList: List<X.PublicNested>", tailText: " (kotlin)" }
+// EXIST: { itemText: "nestedList: List<X.PublicNested>", tailText: " (kotlin.collections)" }
 // NOTHING_ELSE

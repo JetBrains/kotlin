@@ -18,7 +18,7 @@ fun assertToString(s: String, x: Any) {
 fun box(): String {
     assertToString("fun top(): kotlin.Int", ::top)
     assertToString("fun kotlin.String.ext(): kotlin.Int", String::ext)
-    assertToString("fun kotlin.IntRange?.ext2(): kotlin.Array<kotlin.Int?>", IntRange::ext2)
+    assertToString("fun kotlin.ranges.IntRange?.ext2(): kotlin.Array<kotlin.Int?>", IntRange::ext2)
     assertToString("fun test.A.mem(): kotlin.String", A::mem)
     return "OK"
 }

@@ -2,6 +2,6 @@ package
 
 public val a: (kotlin.Int) -> kotlin.Unit
 public val b: (kotlin.Int) -> kotlin.Unit
-public fun </*0*/ T> listOf(): kotlin.List<T>
+public fun </*0*/ T> listOf(): kotlin.collections.List<T>
 public fun test(/*0*/ a: (kotlin.Int) -> kotlin.Int): kotlin.Unit
-public fun test2(/*0*/ a: () -> kotlin.List<kotlin.Int>): kotlin.Unit
+public fun test2(/*0*/ a: () -> kotlin.collections.List<kotlin.Int>): kotlin.Unit

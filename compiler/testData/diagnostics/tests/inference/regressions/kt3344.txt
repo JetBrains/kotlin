@@ -12,8 +12,8 @@ package i {
     }
 
     public final class Foo {
-        public constructor Foo(/*0*/ attributes: kotlin.Map<kotlin.String, kotlin.String>)
-        public final val attributes: kotlin.Map<kotlin.String, kotlin.String>
+        public constructor Foo(/*0*/ attributes: kotlin.collections.Map<kotlin.String, kotlin.String>)
+        public final val attributes: kotlin.collections.Map<kotlin.String, kotlin.String>
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

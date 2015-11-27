@@ -1,12 +1,12 @@
 package
 
-public val doubleList: kotlin.List<kotlin.Double?>
+public val doubleList: kotlin.collections.List<kotlin.Double?>
 public fun main(): kotlin.Unit
 
 public/*package*/ open class A</*0*/ T : kotlin.Any!> {
     public/*package*/ constructor A</*0*/ T : kotlin.Any!>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @org.jetbrains.annotations.NotNull() public/*package*/ open fun foo(/*0*/ @org.jetbrains.annotations.NotNull() x: T, /*1*/ @org.jetbrains.annotations.Nullable() y: kotlin.(Mutable)List<kotlin.String>?): kotlin.(Mutable)List<kotlin.String?>
+    @org.jetbrains.annotations.NotNull() public/*package*/ open fun foo(/*0*/ @org.jetbrains.annotations.NotNull() x: T, /*1*/ @org.jetbrains.annotations.Nullable() y: kotlin.collections.(Mutable)List<kotlin.String>?): kotlin.collections.(Mutable)List<kotlin.String?>
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
@@ -20,7 +20,7 @@ public/*package*/ open class Test {
     public/*package*/ open class DerivedRawA : A<kotlin.Any!> {
         public/*package*/ constructor DerivedRawA()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any(raw)?): kotlin.Boolean(raw)
-        @org.jetbrains.annotations.NotNull() public/*package*/ open override /*1*/ /*fake_override*/ fun foo(/*0*/ @org.jetbrains.annotations.NotNull() x: kotlin.Any(raw), /*1*/ @org.jetbrains.annotations.Nullable() y: kotlin.(Mutable)List<(raw) kotlin.Any?>?): kotlin.(Mutable)List<(raw) kotlin.Any?>
+        @org.jetbrains.annotations.NotNull() public/*package*/ open override /*1*/ /*fake_override*/ fun foo(/*0*/ @org.jetbrains.annotations.NotNull() x: kotlin.Any(raw), /*1*/ @org.jetbrains.annotations.Nullable() y: kotlin.collections.(Mutable)List<(raw) kotlin.Any?>?): kotlin.collections.(Mutable)List<(raw) kotlin.Any?>
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int(raw)
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String(raw)
     }

@@ -1,4 +1,4 @@
 package
 
 public fun </*0*/ T> bar(/*0*/ f: () -> T): T
-public fun test(/*0*/ map: kotlin.MutableMap<kotlin.Int, kotlin.Int>): kotlin.Unit
+public fun test(/*0*/ map: kotlin.collections.MutableMap<kotlin.Int, kotlin.Int>): kotlin.Unit
