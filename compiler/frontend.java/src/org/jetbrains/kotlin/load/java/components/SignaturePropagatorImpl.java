@@ -30,16 +30,16 @@ import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.List;
 
-public class TraceBasedExternalSignatureResolver implements ExternalSignatureResolver {
+public class SignaturePropagatorImpl implements SignaturePropagator {
     private final BindingTrace trace;
 
-    public TraceBasedExternalSignatureResolver(@NotNull BindingTrace trace) {
+    public SignaturePropagatorImpl(@NotNull BindingTrace trace) {
         this.trace = trace;
     }
 
     @Override
     @NotNull
-    public AlternativeMethodSignature resolvePropagatedSignature(
+    public PropagatedSignature resolvePropagatedSignature(
             @NotNull JavaMethod method,
             @NotNull ClassDescriptor owner,
             @NotNull KotlinType returnType,
@@ -49,7 +49,7 @@ public class TraceBasedExternalSignatureResolver implements ExternalSignatureRes
     ) {
         SignaturesPropagationData data =
                 new SignaturesPropagationData(owner, returnType, receiverType, valueParameters, typeParameters, method);
-        return new AlternativeMethodSignature(
+        return new PropagatedSignature(
                 returnType, data.getModifiedReceiverType(), data.getModifiedValueParameters(),
                 typeParameters, data.getSignatureErrors(), data.getModifiedHasStableParameterNames()
         );

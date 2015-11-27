@@ -56,7 +56,7 @@ public fun StorageComponentContainer.configureJavaTopDownAnalysis(moduleContentS
     useInstance(JvmVirtualFileFinderFactory.SERVICE.getInstance(project).create(moduleContentScope))
 
     useImpl<JavaClassFinderImpl>()
-    useImpl<TraceBasedExternalSignatureResolver>()
+    useImpl<SignaturePropagatorImpl>()
     useImpl<LazyResolveBasedCache>()
     useImpl<TraceBasedErrorReporter>()
     useImpl<PsiBasedExternalAnnotationResolver>()

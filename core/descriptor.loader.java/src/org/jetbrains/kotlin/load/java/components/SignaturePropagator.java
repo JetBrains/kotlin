@@ -28,11 +28,11 @@ import org.jetbrains.kotlin.types.KotlinType;
 import java.util.Collections;
 import java.util.List;
 
-public interface ExternalSignatureResolver {
-    ExternalSignatureResolver DO_NOTHING = new ExternalSignatureResolver() {
+public interface SignaturePropagator {
+    SignaturePropagator DO_NOTHING = new SignaturePropagator() {
         @NotNull
         @Override
-        public AlternativeMethodSignature resolvePropagatedSignature(
+        public PropagatedSignature resolvePropagatedSignature(
                 @NotNull JavaMethod method,
                 @NotNull ClassDescriptor owner,
                 @NotNull KotlinType returnType,
@@ -40,7 +40,7 @@ public interface ExternalSignatureResolver {
                 @NotNull List<ValueParameterDescriptor> valueParameters,
                 @NotNull List<TypeParameterDescriptor> typeParameters
         ) {
-            return new AlternativeMethodSignature(
+            return new PropagatedSignature(
                     returnType, receiverType, valueParameters, typeParameters, Collections.<String>emptyList(), false
             );
         }
@@ -51,7 +51,7 @@ public interface ExternalSignatureResolver {
         }
     };
 
-    class AlternativeMethodSignature {
+    class PropagatedSignature {
         private final KotlinType returnType;
         private final KotlinType receiverType;
         private final List<ValueParameterDescriptor> valueParameters;
@@ -59,7 +59,7 @@ public interface ExternalSignatureResolver {
         private final List<String> signatureErrors;
         private final boolean hasStableParameterNames;
 
-        public AlternativeMethodSignature(
+        public PropagatedSignature(
                 @NotNull KotlinType returnType,
                 @Nullable KotlinType receiverType,
                 @NotNull List<ValueParameterDescriptor> valueParameters,
@@ -106,7 +106,7 @@ public interface ExternalSignatureResolver {
     }
 
     @NotNull
-    AlternativeMethodSignature resolvePropagatedSignature(
+    PropagatedSignature resolvePropagatedSignature(
             @NotNull JavaMethod method,
             @NotNull ClassDescriptor owner,
             @NotNull KotlinType returnType,

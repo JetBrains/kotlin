@@ -138,7 +138,7 @@ public abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : 
         functionDescriptorImpl.setParameterNamesStatus(effectiveSignature.hasStableParameterNames, valueParameters.hasSynthesizedNames)
 
         if (effectiveSignature.errors.isNotEmpty()) {
-            c.components.externalSignatureResolver.reportSignatureErrors(functionDescriptorImpl, effectiveSignature.errors)
+            c.components.signaturePropagator.reportSignatureErrors(functionDescriptorImpl, effectiveSignature.errors)
         }
 
         return functionDescriptorImpl

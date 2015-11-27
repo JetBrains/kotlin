@@ -422,7 +422,7 @@ public class LazyJavaClassMemberScope(
             method: JavaMethod, methodTypeParameters: List<TypeParameterDescriptor>, returnType: KotlinType,
             valueParameters: List<ValueParameterDescriptor>
     ): LazyJavaScope.MethodSignatureData {
-        val propagated = c.components.externalSignatureResolver.resolvePropagatedSignature(
+        val propagated = c.components.signaturePropagator.resolvePropagatedSignature(
                 method, ownerDescriptor, returnType, null, valueParameters, methodTypeParameters
         )
         return LazyJavaScope.MethodSignatureData(
