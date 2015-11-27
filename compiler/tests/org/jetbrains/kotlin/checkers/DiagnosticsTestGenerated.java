@@ -14700,6 +14700,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("doubleLambdaArgument.kt")
+            public void testDoubleLambdaArgument() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/doubleLambdaArgument.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("elvisExclExcl.kt")
             public void testElvisExclExcl() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/elvisExclExcl.kt");
@@ -14877,6 +14883,48 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("lambdaAndArgumentFun.kt")
             public void testLambdaAndArgumentFun() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/lambdaAndArgumentFun.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("lambdaArgumentNoSubstitutedReturn.kt")
+            public void testLambdaArgumentNoSubstitutedReturn() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/lambdaArgumentNoSubstitutedReturn.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("lambdaArgumentWithBoundWithoutType.kt")
+            public void testLambdaArgumentWithBoundWithoutType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/lambdaArgumentWithBoundWithoutType.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("lambdaArgumentWithExpectedGenericType.kt")
+            public void testLambdaArgumentWithExpectedGenericType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/lambdaArgumentWithExpectedGenericType.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("lambdaArgumentWithoutType.kt")
+            public void testLambdaArgumentWithoutType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/lambdaArgumentWithoutType.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("lambdaArgumentWithoutTypeIf.kt")
+            public void testLambdaArgumentWithoutTypeIf() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/lambdaArgumentWithoutTypeIf.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("lambdaArgumentWithoutTypeIfMerge.kt")
+            public void testLambdaArgumentWithoutTypeIfMerge() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/lambdaArgumentWithoutTypeIfMerge.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("lambdaArgumentWithoutTypeWhen.kt")
+            public void testLambdaArgumentWithoutTypeWhen() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/lambdaArgumentWithoutTypeWhen.kt");
                 doTest(fileName);
             }
 

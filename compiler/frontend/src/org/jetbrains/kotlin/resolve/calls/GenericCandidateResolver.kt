@@ -210,7 +210,8 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
             for (valueArgument in resolvedValueArgument.arguments) {
                 valueArgument.getArgumentExpression()?.let { argumentExpression ->
                     ArgumentTypeResolver.getFunctionLiteralArgumentIfAny(argumentExpression, context)?.let { functionLiteral ->
-                        addConstraintForFunctionLiteral(functionLiteral, valueArgument, valueParameterDescriptor, constraintSystem, context)
+                        addConstraintForFunctionLiteralArgument(functionLiteral, valueArgument, valueParameterDescriptor, constraintSystem, context,
+                                                                resolvedCall.candidateDescriptor.returnType)
                     }
                     ArgumentTypeResolver.getCallableReferenceExpressionIfAny(argumentExpression, context)?.let { callableReference ->
                         addConstraintForCallableReference(callableReference, valueArgument, valueParameterDescriptor, constraintSystem, context)
@@ -223,12 +224,30 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
         resolvedCall.setResultingSubstitutor(resultingSystem.resultingSubstitutor)
     }
 
-    private fun <D : CallableDescriptor> addConstraintForFunctionLiteral(
+    // See KT-5385
+    // When literal returns T, and it's an argument of a function that also returns T,
+    // and we have some expected type Type, we can expected from literal to return Type
+    // Otherwise we do not care about literal's exact return type
+    private fun estimateLiteralReturnType(
+            context: CallCandidateResolutionContext<*>,
+            literalExpectedType: KotlinType,
+            ownerReturnType: KotlinType?
+    ) = if (!TypeUtils.noExpectedType(context.expectedType) &&
+            ownerReturnType != null &&
+            TypeUtils.isTypeParameter(ownerReturnType) &&
+            KotlinBuiltIns.isFunctionOrExtensionFunctionType(literalExpectedType) &&
+            getReturnTypeForCallable(literalExpectedType) == ownerReturnType)
+
+             context.expectedType
+        else DONT_CARE
+
+    private fun <D : CallableDescriptor> addConstraintForFunctionLiteralArgument(
             functionLiteral: KtFunction,
             valueArgument: ValueArgument,
             valueParameterDescriptor: ValueParameterDescriptor,
             constraintSystem: ConstraintSystem.Builder,
-            context: CallCandidateResolutionContext<D>
+            context: CallCandidateResolutionContext<D>,
+            argumentOwnerReturnType: KotlinType?
     ) {
         val argumentExpression = valueArgument.getArgumentExpression() ?: return
 
@@ -269,8 +288,9 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
                 return
             }
         }
-        val expectedTypeWithoutReturnType = replaceReturnTypeByUnknown(expectedType)
-        val newContext = context.replaceExpectedType(expectedTypeWithoutReturnType).replaceDataFlowInfo(dataFlowInfoForArgument)
+        val estimatedReturnType = estimateLiteralReturnType(context, effectiveExpectedType, argumentOwnerReturnType)
+        val expectedTypeWithEstimatedReturnType = replaceReturnTypeForCallable(expectedType, estimatedReturnType)
+        val newContext = context.replaceExpectedType(expectedTypeWithEstimatedReturnType).replaceDataFlowInfo(dataFlowInfoForArgument)
                 .replaceContextDependency(INDEPENDENT)
         val type = argumentTypeResolver.getFunctionLiteralTypeInfo(argumentExpression, functionLiteral, newContext, RESOLVE_FUNCTION_ARGUMENTS).type
         constraintSystem.addSubtypeConstraint(type, effectiveExpectedTypeInSystem, position)

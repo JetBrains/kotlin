@@ -52,13 +52,15 @@ public fun hasUnknownReturnType(type: KotlinType): Boolean {
     return ErrorUtils.containsErrorType(getReturnTypeForCallable(type))
 }
 
-public fun replaceReturnTypeByUnknown(type: KotlinType): KotlinType {
+public fun replaceReturnTypeForCallable(type: KotlinType, given: KotlinType): KotlinType {
     assert(ReflectionTypes.isCallableType(type)) { "type $type is not a function or property" }
     val newArguments = Lists.newArrayList<TypeProjection>()
     newArguments.addAll(getParameterArgumentsOfCallableType(type))
-    newArguments.add(TypeProjectionImpl(Variance.INVARIANT, DONT_CARE))
+    newArguments.add(TypeProjectionImpl(Variance.INVARIANT, given))
     return replaceTypeArguments(type, newArguments)
 }
+
+public fun replaceReturnTypeByUnknown(type: KotlinType) = replaceReturnTypeForCallable(type, DONT_CARE)
 
 private fun replaceTypeArguments(type: KotlinType, newArguments: List<TypeProjection>) =
         KotlinTypeImpl.create(type.getAnnotations(), type.getConstructor(), type.isMarkedNullable(), newArguments, type.getMemberScope())
@@ -66,7 +68,7 @@ private fun replaceTypeArguments(type: KotlinType, newArguments: List<TypeProjec
 private fun getParameterArgumentsOfCallableType(type: KotlinType) =
         type.getArguments().dropLast(1)
 
-private fun getReturnTypeForCallable(type: KotlinType) =
+fun getReturnTypeForCallable(type: KotlinType) =
         type.getArguments().last().getType()
 
 private fun CallableDescriptor.hasReturnTypeDependentOnUninferredParams(constraintSystem: ConstraintSystem): Boolean {

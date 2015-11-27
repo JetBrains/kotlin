@@ -7270,6 +7270,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("lambdaArgumentWithoutType.kt")
+        public void testLambdaArgumentWithoutType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/smartCasts/lambdaArgumentWithoutType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("nullSmartCast.kt")
         public void testNullSmartCast() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/smartCasts/nullSmartCast.kt");
