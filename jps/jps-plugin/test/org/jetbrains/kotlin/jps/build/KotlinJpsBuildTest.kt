@@ -235,7 +235,7 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         val buildResult = makeAll()
         buildResult.assertSuccessful()
         val warnings = buildResult.getMessages(BuildMessage.Kind.WARNING)
-        assertEquals("Warning about invalid package prefix in module 2 is expected: $warnings", 1, warnings.size)
+        assertEquals("Warning about invalid package prefix in module 2 is expected: $warnings", 2, warnings.size)
         assertEquals("Invalid package prefix name is ignored: invalid-prefix.test", warnings.first().messageText)
     }
 
