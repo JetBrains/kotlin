@@ -1,5 +1,4 @@
 // "Create member function 'get'" "true"
-// ERROR: operator modifier is required on 'get' in 'Foo'
 
 import java.util.ArrayList
 

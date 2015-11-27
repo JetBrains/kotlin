@@ -1,5 +1,4 @@
 // "Create member function 'get'" "true"
-// ERROR: operator modifier is required on 'get' in 'Foo'
 
 class Foo<T> {
     operator fun get(s: String, w: T): T {
