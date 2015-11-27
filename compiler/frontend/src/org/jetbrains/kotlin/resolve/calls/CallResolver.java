@@ -87,7 +87,7 @@ public class CallResolver {
     private static final PerformanceCounter callResolvePerfCounter = PerformanceCounter.Companion.create("Call resolve", ExpressionTypingVisitorDispatcher.typeInfoPerfCounter);
     private static final PerformanceCounter candidatePerfCounter = PerformanceCounter.Companion.create("Call resolve candidate analysis", true);
 
-    public static boolean useNewResolve = System.getProperty("kotlin.internal.new_resolve") != null;
+    public static boolean useNewResolve = !"false".equals(System.getProperty("kotlin.internal.new_resolve"));
 
     public CallResolver(
             @NotNull TaskPrioritizer taskPrioritizer,
