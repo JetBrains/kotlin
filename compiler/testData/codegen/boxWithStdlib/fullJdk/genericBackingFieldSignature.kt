@@ -58,23 +58,23 @@ fun box(): String {
 
     val classField3 = clz.getDeclaredField("classField3");
 
-    if (classField3.getGenericType().toString() != "Zout<? extends java.lang.String>")
+    if (classField3.getGenericType().toString() != "Zout<java.lang.String>")
         return "fail3:" + classField3.getGenericType();
 
 
     val classField4 = clz.getDeclaredField("classField4");
 
-    if (classField4.getGenericType().toString() != "Zin<? super TParam>")
+    if (classField4.getGenericType().toString() != "Zin<TParam>")
         return "fail4:" + classField4.getGenericType();
 
     val classField5 = clz.getDeclaredField("delegateLazy\$delegate");
 
-    if (classField5.getGenericType().toString() != "kotlin.Lazy<? extends Z<TParam>>")
+    if (classField5.getGenericType().toString() != "kotlin.Lazy<Z<TParam>>")
         return "fail5:" + classField5.getGenericType();
 
     val classField6 = clz.getDeclaredField("delegateNotNull\$delegate");
 
-    if (classField6.getGenericType().toString() != "kotlin.properties.ReadWriteProperty<? super java.lang.Object, Z<TParam>>")
+    if (classField6.getGenericType().toString() != "kotlin.properties.ReadWriteProperty<java.lang.Object, Z<TParam>>")
         return "fail6:" + classField6.getGenericType();
 
 

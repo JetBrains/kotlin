@@ -325,20 +325,24 @@ public class JetTypeMapper {
             //noinspection ConstantConditions
             return mapType(descriptor.getReturnType(), sw, TypeMappingMode.GENERIC_TYPE);
         }
-        else {
-            boolean isAnnotationMethod = DescriptorUtils.isAnnotationClass(descriptor.getContainingDeclaration());
-            TypeMappingMode typeMappingModeFromAnnotation =
-                    TypeMappingUtil.extractTypeMappingModeFromAnnotation(descriptor, returnType, isAnnotationMethod);
-            if (typeMappingModeFromAnnotation != null) {
-                return mapType(returnType, sw, typeMappingModeFromAnnotation);
-            }
 
-            TypeMappingMode mappingMode = TypeMappingMode.getOptimalModeForReturnType(
-                    returnType,
-                    /* isAnnotationMethod = */ isAnnotationMethod);
+        return mapReturnType(descriptor, sw, returnType);
+    }
 
-            return mapType(returnType, sw, mappingMode);
+    @NotNull
+    private Type mapReturnType(@NotNull CallableDescriptor descriptor, @Nullable BothSignatureWriter sw, @NotNull KotlinType returnType) {
+        boolean isAnnotationMethod = DescriptorUtils.isAnnotationClass(descriptor.getContainingDeclaration());
+        TypeMappingMode typeMappingModeFromAnnotation =
+                TypeMappingUtil.extractTypeMappingModeFromAnnotation(descriptor, returnType, isAnnotationMethod);
+        if (typeMappingModeFromAnnotation != null) {
+            return mapType(returnType, sw, typeMappingModeFromAnnotation);
         }
+
+        TypeMappingMode mappingMode = TypeMappingMode.getOptimalModeForReturnType(
+                returnType,
+                /* isAnnotationMethod = */ isAnnotationMethod);
+
+        return mapType(returnType, sw, mappingMode);
     }
 
     @NotNull
@@ -1108,9 +1112,16 @@ public class JetTypeMapper {
     }
 
     @Nullable
-    public String mapFieldSignature(@NotNull KotlinType backingFieldType) {
+    public String mapFieldSignature(@NotNull KotlinType backingFieldType, @NotNull PropertyDescriptor propertyDescriptor) {
         BothSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.TYPE);
-        mapType(backingFieldType, sw, TypeMappingMode.DEFAULT);
+
+        if (!propertyDescriptor.isVar()) {
+            mapReturnType(propertyDescriptor, sw, backingFieldType);
+        }
+        else {
+            writeParameterType(sw, backingFieldType, propertyDescriptor);
+        }
+
         return sw.makeJavaGenericSignature();
     }
 
@@ -1211,6 +1222,16 @@ public class JetTypeMapper {
     ) {
         sw.writeParameterType(kind);
 
+        writeParameterType(sw, type, callableDescriptor);
+
+        sw.writeParameterTypeEnd();
+    }
+
+    private void writeParameterType(
+            @NotNull BothSignatureWriter sw,
+            @NotNull KotlinType type,
+            @NotNull CallableDescriptor callableDescriptor
+    ) {
         TypeMappingMode typeMappingMode;
 
         TypeMappingMode typeMappingModeFromAnnotation =
@@ -1227,8 +1248,6 @@ public class JetTypeMapper {
         }
 
         mapType(type, sw, typeMappingMode);
-
-        sw.writeParameterTypeEnd();
     }
 
     private static void writeParameter(@NotNull BothSignatureWriter sw, @NotNull JvmMethodParameterKind kind, @NotNull Type type) {

@@ -432,6 +432,12 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("fields.kt")
+            public void testFields() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/wildcardOptimization/fields.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("finalReturnType.kt")
             public void testFinalReturnType() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/wildcardOptimization/finalReturnType.kt");
