@@ -224,10 +224,13 @@ class NewResolveOldInference(
         }
 
         override fun contextForInvoke(variable: Candidate, useExplicitReceiver: Boolean): Pair<ReceiverValue, TowerContext<Candidate>> {
-            assert(variable.resolvedCall.status.isSuccess)
+            assert(variable.resolvedCall.status.possibleTransformToSuccess()) {
+                "Incorrect status: ${variable.resolvedCall.status} for variable call: ${variable.resolvedCall} " +
+                "and descriptor: ${variable.resolvedCall.candidateDescriptor}"
+            }
             val calleeExpression = variable.resolvedCall.call.calleeExpression
             val variableDescriptor = variable.resolvedCall.resultingDescriptor
-            assert(variable.resolvedCall.status.isSuccess && calleeExpression != null && variableDescriptor is VariableDescriptor) {
+            assert(variable.resolvedCall.status.possibleTransformToSuccess() && calleeExpression != null && variableDescriptor is VariableDescriptor) {
                 "Unexpected varialbe candidate: $variable"
             }
             val variableReceiver = ExpressionReceiver.create(calleeExpression!!,

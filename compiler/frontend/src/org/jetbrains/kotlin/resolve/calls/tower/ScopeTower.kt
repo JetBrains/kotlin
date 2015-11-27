@@ -67,7 +67,7 @@ interface CandidateWithBoundDispatchReceiver<out D : CallableDescriptor> {
     val dispatchReceiver: ReceiverValue?
 }
 
-class ResolutionCandidateStatus(val diagnostics: List<ResolutionDiagnostic>) {
+data class ResolutionCandidateStatus(val diagnostics: List<ResolutionDiagnostic>) {
     val resultingApplicability: ResolutionCandidateApplicability = diagnostics.asSequence().map { it.candidateLevel }.max()
                                                                    ?: ResolutionCandidateApplicability.RESOLVED
 }
