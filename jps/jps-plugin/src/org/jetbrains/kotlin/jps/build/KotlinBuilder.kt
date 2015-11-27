@@ -171,9 +171,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             return CHUNK_REBUILD_REQUIRED
         }
 
-        if ((dirtyFilesHolder.hasDirtyFiles() || dirtyFilesHolder.hasRemovedFiles()) &&
-            hasKotlinDirtyOrRemovedFiles(dirtyFilesHolder, chunk)
-        ) {
+        if (hasKotlinDirtyOrRemovedFiles(dirtyFilesHolder, chunk)) {
             targets.forEach { setHasKotlin(it, dataManager.dataPaths) }
         }
         else {
@@ -828,11 +826,11 @@ private fun hasKotlinDirtyOrRemovedFiles(
         dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
         chunk: ModuleChunk
 ): Boolean {
-    if (!KotlinSourceFileCollector.getDirtySourceFiles(dirtyFilesHolder).isEmpty()) {
-        return true
-    }
+    if (!dirtyFilesHolder.hasDirtyFiles() && !dirtyFilesHolder.hasRemovedFiles()) return false
 
-    return chunk.getTargets().any { !KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, it).isEmpty() }
+    if (!KotlinSourceFileCollector.getDirtySourceFiles(dirtyFilesHolder).isEmpty) return true
+
+    return chunk.targets.any { KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, it).isNotEmpty() }
 }
 
 public open class GeneratedFile internal constructor(
