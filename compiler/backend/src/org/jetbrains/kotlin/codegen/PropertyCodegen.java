@@ -118,16 +118,7 @@ public class PropertyCodegen {
         if (CodegenContextUtil.isImplClassOwner(context)) {
             assert declaration != null : "Declaration is null for different context: " + context;
 
-            boolean hasBackingField = hasBackingField(declaration, descriptor);
-
-            AnnotationSplitter annotationSplitter = AnnotationSplitter.create(LockBasedStorageManager.NO_LOCKS,
-                    descriptor.getAnnotations(), AnnotationSplitter.getTargetSet(false, descriptor.isVar(), hasBackingField));
-
-            Annotations fieldAnnotations = annotationSplitter.getAnnotationsForTarget(AnnotationUseSiteTarget.FIELD);
-            Annotations propertyAnnotations = annotationSplitter.getAnnotationsForTarget(AnnotationUseSiteTarget.PROPERTY);
-
-            generateBackingField(declaration, descriptor, fieldAnnotations);
-            generateSyntheticMethodIfNeeded(descriptor, propertyAnnotations);
+            genBackingFieldAndAnnotations(declaration, descriptor, false);
         }
 
         if (isAccessorNeeded(declaration, descriptor, getter)) {
@@ -138,6 +129,21 @@ public class PropertyCodegen {
         }
 
         context.recordSyntheticAccessorIfNeeded(descriptor, bindingContext);
+    }
+
+    private void genBackingFieldAndAnnotations(@NotNull KtNamedDeclaration declaration, @NotNull PropertyDescriptor descriptor, boolean isParameter) {
+        boolean hasBackingField = hasBackingField(declaration, descriptor);
+
+        AnnotationSplitter annotationSplitter =
+                AnnotationSplitter.create(LockBasedStorageManager.NO_LOCKS,
+                                          descriptor.getAnnotations(),
+                                          AnnotationSplitter.getTargetSet(isParameter, descriptor.isVar(), hasBackingField));
+
+        Annotations fieldAnnotations = annotationSplitter.getAnnotationsForTarget(AnnotationUseSiteTarget.FIELD);
+        Annotations propertyAnnotations = annotationSplitter.getAnnotationsForTarget(AnnotationUseSiteTarget.PROPERTY);
+
+        generateBackingField(declaration, descriptor, fieldAnnotations);
+        generateSyntheticMethodIfNeeded(descriptor, propertyAnnotations);
     }
 
     /**
@@ -174,21 +180,20 @@ public class PropertyCodegen {
         return true;
     }
 
-    public void generatePrimaryConstructorProperty(KtParameter p, PropertyDescriptor descriptor) {
-        AnnotationSplitter annotationSplitter = AnnotationSplitter.create(LockBasedStorageManager.NO_LOCKS,
-                descriptor.getAnnotations(), AnnotationSplitter.getTargetSet(true, descriptor.isVar(), hasBackingField(p, descriptor)));
+    private static boolean areAccessorsNeededForPrimaryConstructorProperty(
+            @NotNull PropertyDescriptor descriptor
+    ) {
+        if (hasJvmFieldAnnotation(descriptor)) return false;
 
-        Annotations fieldAnnotations = annotationSplitter.getAnnotationsForTarget(AnnotationUseSiteTarget.FIELD);
-        Annotations propertyAnnotations = annotationSplitter.getAnnotationsForTarget(AnnotationUseSiteTarget.PROPERTY);
+        return !Visibilities.isPrivate(descriptor.getVisibility());
+    }
 
-        generateBackingField(p, descriptor, fieldAnnotations);
-        generateSyntheticMethodIfNeeded(descriptor, propertyAnnotations);
+    public void generatePrimaryConstructorProperty(@NotNull KtParameter p, @NotNull PropertyDescriptor descriptor) {
+        genBackingFieldAndAnnotations(p, descriptor, true);
 
-        if (!Visibilities.isPrivate(descriptor.getVisibility())) {
+        if (areAccessorsNeededForPrimaryConstructorProperty(descriptor)) {
             generateGetter(p, descriptor, null);
-            if (descriptor.isVar()) {
-                generateSetter(p, descriptor, null);
-            }
+            generateSetter(p, descriptor, null);
         }
     }
 

@@ -393,6 +393,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithJava/jvmField"), Pattern.compile("^([^\\.]+)$"), true);
         }
 
+        @TestMetadata("constructorProperty")
+        public void testConstructorProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/jvmField/constructorProperty/");
+            doTestWithJava(fileName);
+        }
+
         @TestMetadata("simple")
         public void testSimple() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/jvmField/simple/");
