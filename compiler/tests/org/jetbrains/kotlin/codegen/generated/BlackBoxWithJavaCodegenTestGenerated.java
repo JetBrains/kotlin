@@ -673,6 +673,28 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
 
     }
 
+    @TestMetadata("compiler/testData/codegen/boxWithJava/reified")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Reified extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInReified() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithJava/reified"), Pattern.compile("^([^\\.]+)$"), true);
+        }
+
+        @TestMetadata("asCheck")
+        public void testAsCheck() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/reified/asCheck/");
+            doTestWithJava(fileName);
+        }
+
+        @TestMetadata("isCheck")
+        public void testIsCheck() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/reified/isCheck/");
+            doTestWithJava(fileName);
+        }
+
+    }
+
     @TestMetadata("compiler/testData/codegen/boxWithJava/secondaryConstructors")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

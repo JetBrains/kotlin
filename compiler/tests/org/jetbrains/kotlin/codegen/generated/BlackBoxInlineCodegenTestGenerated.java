@@ -1293,6 +1293,78 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/packages.1.kt");
             doTestMultiFileWithInlineCheck(fileName);
         }
+
+        @TestMetadata("compiler/testData/codegen/boxInline/reified/checkCast")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class CheckCast extends AbstractBlackBoxInlineCodegenTest {
+            public void testAllFilesPresentInCheckCast() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/reified/checkCast"), Pattern.compile("^(.+)\\.1.kt$"), true);
+            }
+
+            @TestMetadata("chain.1.kt")
+            public void testChain() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/checkCast/chain.1.kt");
+                doTestMultiFileWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("kt8043.1.kt")
+            public void testKt8043() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/checkCast/kt8043.1.kt");
+                doTestMultiFileWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("maxStack.1.kt")
+            public void testMaxStack() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/checkCast/maxStack.1.kt");
+                doTestMultiFileWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("nullable.1.kt")
+            public void testNullable() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/checkCast/nullable.1.kt");
+                doTestMultiFileWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("simple.1.kt")
+            public void testSimple() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/checkCast/simple.1.kt");
+                doTestMultiFileWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("simpleSafe.1.kt")
+            public void testSimpleSafe() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/checkCast/simpleSafe.1.kt");
+                doTestMultiFileWithInlineCheck(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/boxInline/reified/isCheck")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class IsCheck extends AbstractBlackBoxInlineCodegenTest {
+            public void testAllFilesPresentInIsCheck() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/reified/isCheck"), Pattern.compile("^(.+)\\.1.kt$"), true);
+            }
+
+            @TestMetadata("chain.1.kt")
+            public void testChain() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/isCheck/chain.1.kt");
+                doTestMultiFileWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("nullable.1.kt")
+            public void testNullable() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/isCheck/nullable.1.kt");
+                doTestMultiFileWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("simple.1.kt")
+            public void testSimple() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/reified/isCheck/simple.1.kt");
+                doTestMultiFileWithInlineCheck(fileName);
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/boxInline/simple")

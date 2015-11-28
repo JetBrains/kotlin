@@ -18,16 +18,17 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.SpecialSignatureInfo
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 fun generateIsCheck(
         v: InstructionAdapter,
-        type: KotlinType,
+        isNullable: Boolean,
         generateInstanceOfInstruction: (InstructionAdapter) -> Unit
 ) {
-    if (type.isMarkedNullable) {
+    if (isNullable) {
         val nope = Label()
         val end = Label()
 
@@ -51,6 +52,19 @@ fun generateIsCheck(
     }
 }
 
+fun generateNullCheckForNonSafeAs(
+        v: InstructionAdapter,
+        type: KotlinType
+) {
+    with(v) {
+        dup()
+        val nonnull = Label()
+        ifnonnull(nonnull)
+        AsmUtil.genThrow(v, "kotlin/TypeCastException", "null cannot be cast to non-null type " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type))
+        mark(nonnull)
+    }
+}
 
 public fun SpecialSignatureInfo.replaceValueParametersIn(sourceSignature: String?): String?
         = valueParametersSignature?.let { sourceSignature?.replace("^\\(.*\\)".toRegex(), "($it)") }
+

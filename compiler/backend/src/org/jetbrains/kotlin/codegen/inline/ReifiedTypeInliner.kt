@@ -18,15 +18,21 @@ package org.jetbrains.kotlin.codegen.inline
 
 import com.google.common.collect.ImmutableSet
 import org.jetbrains.kotlin.codegen.context.MethodContext
+import org.jetbrains.kotlin.codegen.generateIsCheck
+import org.jetbrains.kotlin.codegen.generateNullCheckForNonSafeAs
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.signature.SignatureReader
 import org.jetbrains.org.objectweb.asm.signature.SignatureWriter
 import org.jetbrains.org.objectweb.asm.tree.*
+
+private class ParameterNameAndNullability(val name: String, val nullable: Boolean)
 
 public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParameterMappings?) {
 
@@ -64,15 +70,23 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
                     Type.getMethodDescriptor(Type.VOID_TYPE), false
             );
         }
+
+        @JvmStatic
+        public fun isNullableMarkerInstruction(marker: String) = INSTANCEOF_MARKER_METHOD_NAME == marker ||
+                                                                 CHECKCAST_MARKER_METHOD_NAME == marker
     }
+
+    private var maxStackSize = 0
 
     /**
      * @return set of type parameters' identifiers contained in markers that should be reified further
      * e.g. when we're generating inline function containing reified T
      * and another function containing reifiable parts is inlined into that function
      */
-    public fun reifyInstructions(instructions: InsnList): ReifiedTypeParametersUsages {
+    public fun reifyInstructions(node: MethodNode): ReifiedTypeParametersUsages {
         if (parametersMapping == null) return ReifiedTypeParametersUsages()
+        val instructions = node.instructions
+        maxStackSize = 0
         var result = ReifiedTypeParametersUsages()
         for (insn in instructions.toArray()) {
             if (isParametrisedReifiedMarker(insn)) {
@@ -83,6 +97,7 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
             }
         }
 
+        node.maxStack = node.maxStack + maxStackSize
         return result
     }
 
@@ -127,20 +142,25 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
      * or null if it shouldn't
      */
     private fun processReifyMarker(insn: MethodInsnNode, instructions: InsnList): String? {
-        val mapping = getTypeParameterMapping(insn) ?: return null
+        val parameter = getParameter(insn) ?: return null
+        val mapping = parametersMapping?.get(parameter.name) ?: return null
+        val kotlinType =
+                if (isNullableMarkerInstruction(insn.name) && parameter.nullable)
+                    TypeUtils.makeNullable(mapping.type)
+                else
+                    mapping.type
+
 
         val asmType = mapping.asmType
         if (asmType != null) {
-            val jetType = mapping.type ?: return null
-
             // process* methods return false if marker should be reified further
             // or it's invalid (may be emitted explicitly in code)
             // they return true if instruction is reified and marker can be deleted
             if (when (insn.name) {
                 NEW_ARRAY_MARKER_METHOD_NAME -> processNewArray(insn, asmType)
-                CHECKCAST_MARKER_METHOD_NAME -> processCheckcast(insn, instructions, jetType, asmType, safe = false)
-                SAFE_CHECKCAST_MARKER_METHOD_NAME -> processCheckcast(insn, instructions, jetType, asmType, safe = true)
-                INSTANCEOF_MARKER_METHOD_NAME -> processInstanceof(insn, instructions, jetType, asmType)
+                CHECKCAST_MARKER_METHOD_NAME -> processCheckcast(insn, instructions, kotlinType, asmType, safe = false)
+                SAFE_CHECKCAST_MARKER_METHOD_NAME -> processCheckcast(insn, instructions, kotlinType, asmType, safe = true)
+                INSTANCEOF_MARKER_METHOD_NAME -> processInstanceof(insn, instructions, kotlinType, asmType)
                 JAVA_CLASS_MARKER_METHOD_NAME -> processJavaClass(insn, asmType)
                 else -> false
             }) {
@@ -150,7 +170,8 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
 
             return null
         } else {
-            instructions.set(insn.getPrevious()!!, LdcInsnNode(mapping.newName))
+            val nullableSuffix = if (isNullableMarkerInstruction(insn.name) && kotlinType.isMarkedNullable) "?" else ""
+            instructions.set(insn.previous!!, LdcInsnNode(mapping.newName + nullableSuffix))
             return mapping.newName
         }
     }
@@ -158,19 +179,65 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
     private fun processNewArray(insn: MethodInsnNode, parameter: Type) =
             processNextTypeInsn(insn, parameter, Opcodes.ANEWARRAY)
 
-    private fun processCheckcast(insn: MethodInsnNode, instructions: InsnList, jetType: KotlinType, asmType: Type, safe: Boolean) =
+    private fun processCheckcast(insn: MethodInsnNode,
+                                 instructions: InsnList,
+                                 jetType: KotlinType,
+                                 asmType: Type,
+                                 safe: Boolean) =
             rewriteNextTypeInsn(insn, Opcodes.CHECKCAST) { instanceofInsn: AbstractInsnNode ->
                 if (instanceofInsn !is TypeInsnNode) return false
+
+                addNullCheckForAsIfNeeded(insn.previous!!, instructions, jetType, safe)
                 TypeIntrinsics.checkcast(instanceofInsn, instructions, jetType, asmType, safe)
                 return true
             }
 
+    private fun addNullCheckForAsIfNeeded(insn: AbstractInsnNode, instructions: InsnList, jetType: KotlinType, safe: Boolean) {
+        if (!safe && !TypeUtils.isNullableType(jetType)) {
+            val methodNode = MethodNode(InlineCodegenUtil.API)
+            generateNullCheckForNonSafeAs(InstructionAdapter(methodNode), jetType)
+
+            InlineCodegenUtil.insertNodeBefore(methodNode, instructions, insn)
+            maxStackSize = Math.max(maxStackSize, 4)
+        }
+    }
+
     private fun processInstanceof(insn: MethodInsnNode, instructions: InsnList, jetType: KotlinType, asmType: Type) =
             rewriteNextTypeInsn(insn, Opcodes.INSTANCEOF) { instanceofInsn: AbstractInsnNode ->
                 if (instanceofInsn !is TypeInsnNode) return false
+
+                addNullCheckForIsIfNeeded(insn, instructions, jetType)
                 TypeIntrinsics.instanceOf(instanceofInsn, instructions, jetType, asmType)
                 return true
             }
+
+    private fun addNullCheckForIsIfNeeded(insn: AbstractInsnNode, instructions: InsnList, type: KotlinType) {
+        if (TypeUtils.isNullableType(type)) {
+            val instanceOf = insn.next
+            insertNullCheckAround(instructions, insn.previous!!, instanceOf)
+            maxStackSize = Math.max(maxStackSize, 2)
+        }
+    }
+
+    private fun insertNullCheckAround(instructions: InsnList, start: AbstractInsnNode, end: AbstractInsnNode) {
+        val methodNode = MethodNode(InlineCodegenUtil.API)
+        var splitIndex: Int = -1
+        generateIsCheck(InstructionAdapter(methodNode), true) {
+            splitIndex = methodNode.instructions.size()
+        }
+        assert(splitIndex >= 0) {
+            "Split index should be non-negative, but $splitIndex"
+        }
+
+        val nullCheckInsns = methodNode.instructions.toArray()
+        nullCheckInsns.take(splitIndex).forEach {
+            instructions.insertBefore(start, it)
+        }
+
+        nullCheckInsns.drop(splitIndex).reversed().forEach {
+            instructions.insert(end, it)
+        }
+    }
 
     inline private fun rewriteNextTypeInsn(
             marker: MethodInsnNode,
@@ -195,17 +262,16 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
         return true
     }
 
-    private fun getParameterName(insn: MethodInsnNode): String? {
+    private fun getParameter(insn: MethodInsnNode): ParameterNameAndNullability? {
         val prev = insn.getPrevious()!!
 
-        return when (prev.getOpcode()) {
+        val parameterNameWithFlag = when (prev.getOpcode()) {
             Opcodes.LDC -> (prev as LdcInsnNode).cst as String
-            else -> null
+            else -> return null
         }
-    }
 
-    private fun getTypeParameterMapping(insn: MethodInsnNode): ReifiedTypeParameterMapping? {
-        return parametersMapping?.get(getParameterName(insn) ?: return null)
+        val parameterName = if (parameterNameWithFlag.endsWith("?")) parameterNameWithFlag.dropLast(1) else parameterNameWithFlag
+        return ParameterNameAndNullability(parameterName, parameterName !== parameterNameWithFlag)
     }
 }
 
@@ -216,8 +282,8 @@ public class ReifiedTypeParameterMappings() {
         mappingsByName[name] =  ReifiedTypeParameterMapping(name, type, asmType, newName = null, signature = signature)
     }
 
-    public fun addParameterMappingToNewParameter(name: String, newName: String) {
-        mappingsByName[name] = ReifiedTypeParameterMapping(name, type = null, asmType = null, newName = newName, signature = null)
+    public fun addParameterMappingToNewParameter(name: String, type: KotlinType, newName: String) {
+        mappingsByName[name] = ReifiedTypeParameterMapping(name, type = type, asmType = null, newName = newName, signature = null)
     }
 
     operator fun get(name: String): ReifiedTypeParameterMapping? {
@@ -226,7 +292,7 @@ public class ReifiedTypeParameterMappings() {
 }
 
 public class ReifiedTypeParameterMapping(
-        val name: String, val type: KotlinType?, val asmType: Type?, val newName: String?, val signature: String?
+        val name: String, val type: KotlinType, val asmType: Type?, val newName: String?, val signature: String?
 )
 
 public class ReifiedTypeParametersUsages {
