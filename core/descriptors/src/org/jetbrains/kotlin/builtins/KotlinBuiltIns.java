@@ -70,6 +70,7 @@ public abstract class KotlinBuiltIns {
     private final Map<PrimitiveType, KotlinType> primitiveTypeToArrayKotlinType;
     private final Map<KotlinType, KotlinType> primitiveKotlinTypeToKotlinArrayType;
     private final Map<KotlinType, KotlinType> kotlinArrayTypeToPrimitiveKotlinType;
+    private final Map<FqName, BuiltinsPackageFragment> packageNameToPackageFragment;
 
     public static final FqNames FQ_NAMES = new FqNames();
 
@@ -94,10 +95,12 @@ public abstract class KotlinBuiltIns {
         builtInsModule.initialize(packageFragmentProvider);
         builtInsModule.setDependencies(builtInsModule);
 
-        builtinsPackageFragment = (BuiltinsPackageFragment) single(packageFragmentProvider.getPackageFragments(BUILT_INS_PACKAGE_FQ_NAME));
-        collectionsPackageFragment = (BuiltinsPackageFragment) single(packageFragmentProvider.getPackageFragments(COLLECTIONS_PACKAGE_FQ_NAME));
-        rangesPackageFragment = (BuiltinsPackageFragment) single(packageFragmentProvider.getPackageFragments(RANGES_PACKAGE_FQ_NAME));
-        annotationPackageFragment = (BuiltinsPackageFragment) single(packageFragmentProvider.getPackageFragments(ANNOTATION_PACKAGE_FQ_NAME));
+        packageNameToPackageFragment = new HashMap<FqName, BuiltinsPackageFragment>();
+
+        builtinsPackageFragment = getBuiltinsPackageFragment(packageFragmentProvider, packageNameToPackageFragment, BUILT_INS_PACKAGE_FQ_NAME);
+        collectionsPackageFragment = getBuiltinsPackageFragment(packageFragmentProvider, packageNameToPackageFragment, COLLECTIONS_PACKAGE_FQ_NAME);
+        rangesPackageFragment = getBuiltinsPackageFragment(packageFragmentProvider, packageNameToPackageFragment, RANGES_PACKAGE_FQ_NAME);
+        annotationPackageFragment = getBuiltinsPackageFragment(packageFragmentProvider, packageNameToPackageFragment, ANNOTATION_PACKAGE_FQ_NAME);
 
         primitiveTypeToArrayKotlinType = new EnumMap<PrimitiveType, KotlinType>(PrimitiveType.class);
         primitiveKotlinTypeToKotlinArrayType = new HashMap<KotlinType, KotlinType>();
@@ -119,6 +122,18 @@ public abstract class KotlinBuiltIns {
         primitiveTypeToArrayKotlinType.put(primitiveType, arrayType);
         primitiveKotlinTypeToKotlinArrayType.put(type, arrayType);
         kotlinArrayTypeToPrimitiveKotlinType.put(arrayType, type);
+    }
+
+
+    @NotNull
+    private BuiltinsPackageFragment getBuiltinsPackageFragment(
+            PackageFragmentProvider fragmentProvider,
+            Map<FqName, BuiltinsPackageFragment> packageNameToPackageFragment,
+            FqName packageFqName
+    ) {
+        BuiltinsPackageFragment packageFragment = (BuiltinsPackageFragment) single(fragmentProvider.getPackageFragments(packageFqName));
+        packageNameToPackageFragment.put(packageFqName, packageFragment);
+        return packageFragment;
     }
 
     public static class FqNames {
@@ -286,6 +301,18 @@ public abstract class KotlinBuiltIns {
     @Nullable
     public ClassDescriptor getBuiltInClassByNameNullable(@NotNull Name simpleName) {
         return getBuiltInClassByNameNullable(simpleName, getBuiltInsPackageFragment());
+    }
+
+    @Nullable
+    public ClassDescriptor getBuiltInClassByFqNameNullable(@NotNull FqName fqName) {
+        if (!fqName.isRoot()) {
+            FqName parent = fqName.parent();
+            BuiltinsPackageFragment packageFragment = packageNameToPackageFragment.get(parent);
+            if (packageFragment != null) {
+                return getBuiltInClassByNameNullable(fqName.shortName(), packageFragment);
+            }
+        }
+        return null;
     }
 
     @Nullable
