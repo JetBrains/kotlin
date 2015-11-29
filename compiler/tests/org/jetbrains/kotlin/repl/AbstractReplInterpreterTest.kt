@@ -57,7 +57,7 @@ public abstract class AbstractReplInterpreterTest : UsefulTestCase() {
 
     override fun tearDown() {
         super.tearDown()
-        exchangeSystemProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, oldKeepaliveValue)
+//        exchangeSystemProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, oldKeepaliveValue)
     }
 
     private fun loadLines(file: File): List<OneLine> {

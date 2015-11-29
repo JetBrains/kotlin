@@ -79,7 +79,7 @@ public abstract class KotlinLightCodeInsightFixtureTestCase : LightCodeInsightFi
         unInvalidateBuiltinsAndStdLib(getProject()) {
             super.tearDown()
         }
-        exchangeSystemProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, oldKeepaliveValue)
+//        exchangeSystemProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, oldKeepaliveValue)
 
         if (exceptions.isNotEmpty()) {
             exceptions.forEach { it.printStackTrace() }
