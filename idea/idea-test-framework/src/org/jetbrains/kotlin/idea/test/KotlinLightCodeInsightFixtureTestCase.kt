@@ -49,6 +49,8 @@ public abstract class KotlinLightCodeInsightFixtureTestCase : LightCodeInsightFi
     private var oldKeepaliveValue: String? = null
 
     override fun setUp() {
+        oldKeepaliveValue = exchangeSystemProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, null)
+
         super.setUp()
         (StartupManager.getInstance(getProject()) as StartupManagerImpl).runPostStartupActivities()
         VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
@@ -66,12 +68,9 @@ public abstract class KotlinLightCodeInsightFixtureTestCase : LightCodeInsightFi
                 super.processError(message, t, details, logger)
             }
         })
-
-        oldKeepaliveValue = exchangeSystemProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, null)
     }
 
     override fun tearDown() {
-        exchangeSystemProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, oldKeepaliveValue)
         LoggedErrorProcessor.restoreDefaultProcessor()
 
         KotlinInternalMode.enabled = kotlinInternalModeOriginalValue
@@ -80,6 +79,7 @@ public abstract class KotlinLightCodeInsightFixtureTestCase : LightCodeInsightFi
         unInvalidateBuiltinsAndStdLib(getProject()) {
             super.tearDown()
         }
+        exchangeSystemProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, oldKeepaliveValue)
 
         if (exceptions.isNotEmpty()) {
             exceptions.forEach { it.printStackTrace() }

@@ -51,13 +51,13 @@ public abstract class AbstractReplInterpreterTest : UsefulTestCase() {
     private data class OneLine(val code: String, val expected: String)
 
     override fun setUp() {
-        super.setUp()
         oldKeepaliveValue = exchangeSystemProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, null)
+        super.setUp()
     }
 
     override fun tearDown() {
-        exchangeSystemProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, oldKeepaliveValue)
         super.tearDown()
+        exchangeSystemProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, oldKeepaliveValue)
     }
 
     private fun loadLines(file: File): List<OneLine> {
