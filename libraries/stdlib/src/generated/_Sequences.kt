@@ -1076,6 +1076,15 @@ public fun <T> Sequence<T>.joinToString(separator: String = ", ", prefix: String
 }
 
 /**
+ * Creates an [Iterable] instance that wraps the original sequence returning its elements when being iterated.
+ */
+public fun <T> Sequence<T>.asIterable(): Iterable<T> {
+    return object : Iterable<T> {
+        override fun iterator(): Iterator<T> = this@asIterable.iterator()
+    }
+}
+
+/**
  * Returns a sequence from the given collection.
  */
 public fun <T> Sequence<T>.asSequence(): Sequence<T> {

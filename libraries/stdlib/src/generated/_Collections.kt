@@ -1762,6 +1762,13 @@ public fun <T> Iterable<T>.joinToString(separator: String = ", ", prefix: String
 }
 
 /**
+ * Returns this collection as an [Iterable].
+ */
+public fun <T> Iterable<T>.asIterable(): Iterable<T> {
+    return this
+}
+
+/**
  * Returns a sequence from the given collection.
  */
 public fun <T> Iterable<T>.asSequence(): Sequence<T> {

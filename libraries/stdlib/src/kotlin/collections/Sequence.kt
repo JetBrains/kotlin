@@ -20,7 +20,7 @@ public interface Sequence<out T> {
 }
 
 /**
- * Creates a sequence that returns all values from this iterator. The sequence is constrained to be iterated only once.
+ * Creates a sequence that returns all elements from this iterator. The sequence is constrained to be iterated only once.
  */
 public fun <T> Iterator<T>.asSequence(): Sequence<T> {
     val iteratorSequence = object : Sequence<T> {
@@ -45,15 +45,6 @@ public fun <T> sequenceOf(vararg elements: T): Sequence<T> = if (elements.isEmpt
 @Deprecated("Use progression.asSequence() instead.", ReplaceWith("progression.asSequence()"))
 public fun <T : Any> sequenceOf(progression: Progression<T>): Sequence<T> = object : Sequence<T> {
     override fun iterator(): Iterator<T> = progression.iterator()
-}
-
-/**
- * Returns an [Iterable] instance that wraps the original sequence.
- */
-public fun <T> Sequence<T>.asIterable(): Iterable<T> {
-    return object : Iterable<T> {
-        override fun iterator(): Iterator<T> = this@asIterable.iterator()
-    }
 }
 
 /**

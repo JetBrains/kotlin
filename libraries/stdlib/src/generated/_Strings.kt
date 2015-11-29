@@ -1608,6 +1608,16 @@ public infix fun String.zip(other: String): List<Pair<Char, Char>> {
 }
 
 /**
+ * Creates an [Iterable] instance that wraps the original char sequence returning its characters when being iterated.
+ */
+public fun CharSequence.asIterable(): Iterable<Char> {
+    if (this is String && isEmpty()) return emptyList()
+    return object : Iterable<Char> {
+        override fun iterator(): Iterator<Char> = this@asIterable.iterator()
+    }
+}
+
+/**
  * Returns a sequence from the given collection.
  */
 public fun CharSequence.asSequence(): Sequence<Char> {

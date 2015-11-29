@@ -189,6 +189,13 @@ public inline fun <K, V> Map<K, V>.none(predicate: (Map.Entry<K, V>) -> Boolean)
 }
 
 /**
+ * Creates an [Iterable] instance that wraps the original map returning its entrys when being iterated.
+ */
+public fun <K, V> Map<K, V>.asIterable(): Iterable<Map.Entry<K, V>> {
+    return entries
+}
+
+/**
  * Returns a sequence from the given collection.
  */
 public fun <K, V> Map<K, V>.asSequence(): Sequence<Map.Entry<K, V>> {

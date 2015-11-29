@@ -5162,87 +5162,6 @@ public fun ShortArray.sortedWith(comparator: Comparator<in Short>): List<Short> 
 }
 
 /**
- * Returns the Iterable that wraps the original array.
- */
-public fun <T> Array<out T>.asIterable(): Iterable<T> {
-    return object : Iterable<T> {
-        override fun iterator(): Iterator<T> = this@asIterable.iterator()
-    }
-}
-
-/**
- * Returns the Iterable that wraps the original array.
- */
-public fun BooleanArray.asIterable(): Iterable<Boolean> {
-    return object : Iterable<Boolean> {
-        override fun iterator(): Iterator<Boolean> = this@asIterable.iterator()
-    }
-}
-
-/**
- * Returns the Iterable that wraps the original array.
- */
-public fun ByteArray.asIterable(): Iterable<Byte> {
-    return object : Iterable<Byte> {
-        override fun iterator(): Iterator<Byte> = this@asIterable.iterator()
-    }
-}
-
-/**
- * Returns the Iterable that wraps the original array.
- */
-public fun CharArray.asIterable(): Iterable<Char> {
-    return object : Iterable<Char> {
-        override fun iterator(): Iterator<Char> = this@asIterable.iterator()
-    }
-}
-
-/**
- * Returns the Iterable that wraps the original array.
- */
-public fun DoubleArray.asIterable(): Iterable<Double> {
-    return object : Iterable<Double> {
-        override fun iterator(): Iterator<Double> = this@asIterable.iterator()
-    }
-}
-
-/**
- * Returns the Iterable that wraps the original array.
- */
-public fun FloatArray.asIterable(): Iterable<Float> {
-    return object : Iterable<Float> {
-        override fun iterator(): Iterator<Float> = this@asIterable.iterator()
-    }
-}
-
-/**
- * Returns the Iterable that wraps the original array.
- */
-public fun IntArray.asIterable(): Iterable<Int> {
-    return object : Iterable<Int> {
-        override fun iterator(): Iterator<Int> = this@asIterable.iterator()
-    }
-}
-
-/**
- * Returns the Iterable that wraps the original array.
- */
-public fun LongArray.asIterable(): Iterable<Long> {
-    return object : Iterable<Long> {
-        override fun iterator(): Iterator<Long> = this@asIterable.iterator()
-    }
-}
-
-/**
- * Returns the Iterable that wraps the original array.
- */
-public fun ShortArray.asIterable(): Iterable<Short> {
-    return object : Iterable<Short> {
-        override fun iterator(): Iterator<Short> = this@asIterable.iterator()
-    }
-}
-
-/**
  * Returns the range of valid indices for the array.
  */
 public val <T> Array<out T>.indices: IntRange
@@ -10494,6 +10413,96 @@ public fun LongArray.joinToString(separator: String = ", ", prefix: String = "",
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun ShortArray.joinToString(separator: String = ", ", prefix: String = "", postfix: String = "", limit: Int = -1, truncated: String = "...", transform: ((Short) -> String)? = null): String {
     return joinTo(StringBuilder(), separator, prefix, postfix, limit, truncated, transform).toString()
+}
+
+/**
+ * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
+ */
+public fun <T> Array<out T>.asIterable(): Iterable<T> {
+    if (isEmpty()) return emptyList()
+    return object : Iterable<T> {
+        override fun iterator(): Iterator<T> = this@asIterable.iterator()
+    }
+}
+
+/**
+ * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
+ */
+public fun BooleanArray.asIterable(): Iterable<Boolean> {
+    if (isEmpty()) return emptyList()
+    return object : Iterable<Boolean> {
+        override fun iterator(): Iterator<Boolean> = this@asIterable.iterator()
+    }
+}
+
+/**
+ * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
+ */
+public fun ByteArray.asIterable(): Iterable<Byte> {
+    if (isEmpty()) return emptyList()
+    return object : Iterable<Byte> {
+        override fun iterator(): Iterator<Byte> = this@asIterable.iterator()
+    }
+}
+
+/**
+ * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
+ */
+public fun CharArray.asIterable(): Iterable<Char> {
+    if (isEmpty()) return emptyList()
+    return object : Iterable<Char> {
+        override fun iterator(): Iterator<Char> = this@asIterable.iterator()
+    }
+}
+
+/**
+ * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
+ */
+public fun DoubleArray.asIterable(): Iterable<Double> {
+    if (isEmpty()) return emptyList()
+    return object : Iterable<Double> {
+        override fun iterator(): Iterator<Double> = this@asIterable.iterator()
+    }
+}
+
+/**
+ * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
+ */
+public fun FloatArray.asIterable(): Iterable<Float> {
+    if (isEmpty()) return emptyList()
+    return object : Iterable<Float> {
+        override fun iterator(): Iterator<Float> = this@asIterable.iterator()
+    }
+}
+
+/**
+ * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
+ */
+public fun IntArray.asIterable(): Iterable<Int> {
+    if (isEmpty()) return emptyList()
+    return object : Iterable<Int> {
+        override fun iterator(): Iterator<Int> = this@asIterable.iterator()
+    }
+}
+
+/**
+ * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
+ */
+public fun LongArray.asIterable(): Iterable<Long> {
+    if (isEmpty()) return emptyList()
+    return object : Iterable<Long> {
+        override fun iterator(): Iterator<Long> = this@asIterable.iterator()
+    }
+}
+
+/**
+ * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
+ */
+public fun ShortArray.asIterable(): Iterable<Short> {
+    if (isEmpty()) return emptyList()
+    return object : Iterable<Short> {
+        override fun iterator(): Iterator<Short> = this@asIterable.iterator()
+    }
 }
 
 /**
