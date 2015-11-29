@@ -25,3 +25,16 @@ fun String?.toBooleanLenient(): Boolean? = when (this?.toLowerCase()) {
     in listOf("no", "false", "off", "n") -> false
     else -> null
 }
+
+fun exchangeSystemProperty(name: String, newValue: String?): String? {
+    val oldValue = System.getProperty(name)
+    if (oldValue != newValue) {
+        if (oldValue != null && newValue == null) {
+            System.clearProperty(name)
+        }
+        else {
+            System.setProperty(name, newValue)
+        }
+    }
+    return oldValue
+}

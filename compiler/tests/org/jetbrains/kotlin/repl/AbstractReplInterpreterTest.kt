@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.repl
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
-import org.jetbrains.kotlin.cli.common.toBooleanLenient
+import org.jetbrains.kotlin.cli.common.exchangeSystemProperty
 import org.jetbrains.kotlin.cli.jvm.repl.ReplInterpreter
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -41,6 +41,9 @@ private val TRAILING_NEWLINE_REGEX = Regex("\n$")
 private val INCOMPLETE_LINE_MESSAGE = "incomplete line"
 
 public abstract class AbstractReplInterpreterTest : UsefulTestCase() {
+
+    private var oldKeepaliveValue: String? = null
+
     init {
         System.setProperty("java.awt.headless", "true")
     }
@@ -49,9 +52,12 @@ public abstract class AbstractReplInterpreterTest : UsefulTestCase() {
 
     override fun setUp() {
         super.setUp()
-        // set to false if not present or set to true or unknown (empty considered true)
-        if (System.getProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY)?.let { it.toBooleanLenient() ?: true } ?: true )
-            System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "false")
+        oldKeepaliveValue = exchangeSystemProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, null)
+    }
+
+    override fun tearDown() {
+        exchangeSystemProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, oldKeepaliveValue)
+        super.tearDown()
     }
 
     private fun loadLines(file: File): List<OneLine> {

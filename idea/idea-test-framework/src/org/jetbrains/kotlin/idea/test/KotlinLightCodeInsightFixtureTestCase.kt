@@ -32,7 +32,7 @@ import com.intellij.testFramework.LoggedErrorProcessor
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.apache.log4j.Logger
 import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
-import org.jetbrains.kotlin.cli.common.toBooleanLenient
+import org.jetbrains.kotlin.cli.common.exchangeSystemProperty
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -46,6 +46,7 @@ public abstract class KotlinLightCodeInsightFixtureTestCase : LightCodeInsightFi
     private var kotlinInternalModeOriginalValue = false
 
     private val exceptions = ArrayList<Throwable>()
+    private var oldKeepaliveValue: String? = null
 
     override fun setUp() {
         super.setUp()
@@ -66,12 +67,11 @@ public abstract class KotlinLightCodeInsightFixtureTestCase : LightCodeInsightFi
             }
         })
 
-        // set to false if not present or set to true or unknown (empty considered true)
-        if (System.getProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY)?.let { it.toBooleanLenient() ?: true } ?: true )
-            System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "false")
+        oldKeepaliveValue = exchangeSystemProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, null)
     }
 
     override fun tearDown() {
+        exchangeSystemProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, oldKeepaliveValue)
         LoggedErrorProcessor.restoreDefaultProcessor()
 
         KotlinInternalMode.enabled = kotlinInternalModeOriginalValue
