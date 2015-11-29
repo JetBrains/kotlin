@@ -556,7 +556,8 @@ fun generators(): List<GenericFunction> {
     }
 
     templates add f("zip(other: CharSequence, transform: (Char, Char) -> V)") {
-        only(CharSequences)
+        deprecate(Strings) { forBinaryCompatibility }
+        only(CharSequences, Strings)
         doc {
             """
             Returns a list of values built from characters of both char sequences with same indexes using provided [transform]. List has length of shortest char sequence.
@@ -598,7 +599,8 @@ fun generators(): List<GenericFunction> {
 
     templates add f("zip(other: String)") {
         infix(true)
-        only(CharSequences)
+        deprecate(Strings) { forBinaryCompatibility }
+        only(CharSequences, Strings)
         deprecate { forBinaryCompatibility }
         returns("List<Pair<Char, Char>>")
         body {

@@ -6,7 +6,8 @@ fun mapping(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
     templates add f("withIndex()") {
-        include(CharSequences)
+        deprecate(Strings) { forBinaryCompatibility }
+        include(CharSequences, Strings)
         doc {  f -> "Returns a ${if (f == Sequences) f.mapResult else "lazy [Iterable]"} of [IndexedValue] for each ${f.element} of the original ${f.collection}." }
         returns("Iterable<IndexedValue<T>>")
         body {
@@ -40,7 +41,8 @@ fun mapping(): List<GenericFunction> {
         body(ArraysOfObjects, ArraysOfPrimitives) {
             "return mapIndexedTo(ArrayList<R>(size), transform)"
         }
-        body(CharSequences) {
+        deprecate(Strings) { forBinaryCompatibility }
+        body(CharSequences, Strings) {
             "return mapIndexedTo(ArrayList<R>(length), transform)"
         }
         inline(false, Sequences)
@@ -67,7 +69,8 @@ fun mapping(): List<GenericFunction> {
         body(ArraysOfObjects, ArraysOfPrimitives, Maps) {
             "return mapTo(ArrayList<R>(size), transform)"
         }
-        body(CharSequences) {
+        deprecate(Strings) { forBinaryCompatibility }
+        body(CharSequences, Strings) {
             "return mapTo(ArrayList<R>(length), transform)"
         }
 
@@ -146,7 +149,8 @@ fun mapping(): List<GenericFunction> {
                 return destination
             """
         }
-        include(Maps, CharSequences)
+        deprecate(Strings) { forBinaryCompatibility }
+        include(Maps, CharSequences, Strings)
     }
 
     templates add f("mapIndexedTo(destination: C, transform: (Int, T) -> R)") {
@@ -170,8 +174,9 @@ fun mapping(): List<GenericFunction> {
                 return destination
             """
         }
+        deprecate(Strings) { forBinaryCompatibility }
         deprecate(Maps) { Deprecation("Use entries.mapIndexedTo instead.", replaceWith = "this.entries.mapIndexedTo(destination, transform)") }
-        include(Maps, CharSequences)
+        include(Maps, CharSequences, Strings)
     }
 
     templates add f("mapNotNullTo(destination: C, transform: (T) -> R?)") {
@@ -226,7 +231,8 @@ fun mapping(): List<GenericFunction> {
         body {
             "return flatMapTo(ArrayList<R>(), transform)"
         }
-        include(Maps, CharSequences)
+        deprecate(Strings) { forBinaryCompatibility }
+        include(Maps, CharSequences, Strings)
     }
 
     templates add f("flatMap(transform: (T) -> Sequence<R>)") {
@@ -255,7 +261,8 @@ fun mapping(): List<GenericFunction> {
                 return destination
             """
         }
-        include(Maps, CharSequences)
+        deprecate(Strings) { forBinaryCompatibility }
+        include(Maps, CharSequences, Strings)
     }
 
     templates add f("flatMapTo(destination: C, transform: (T) -> Sequence<R>)") {
@@ -280,7 +287,8 @@ fun mapping(): List<GenericFunction> {
     templates add f("groupBy(selector: (T) -> K)") {
         inline(true)
 
-        include(CharSequences)
+        deprecate(Strings) { forBinaryCompatibility }
+        include(CharSequences, Strings)
         doc { f -> "Returns a map of the ${f.element}s in original ${f.collection} grouped by the key returned by the given [selector] function." }
         typeParam("K")
         returns("Map<K, List<T>>")
@@ -290,7 +298,8 @@ fun mapping(): List<GenericFunction> {
     templates add f("groupByTo(map: MutableMap<K, MutableList<T>>, selector: (T) -> K)") {
         inline(true)
 
-        include(CharSequences)
+        deprecate(Strings) { forBinaryCompatibility }
+        include(CharSequences, Strings)
         typeParam("K")
         doc { f -> "Appends ${f.element}s from original ${f.collection} grouped by the key returned by the given [selector] function to the given [map]." }
         returns("Map<K, MutableList<T>>")

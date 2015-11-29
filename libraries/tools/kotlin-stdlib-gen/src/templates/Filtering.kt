@@ -384,7 +384,8 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        body(CharSequences) {
+        deprecate(Strings) { forBinaryCompatibility }
+        body(CharSequences, Strings) {
             """
             for (index in 0..length - 1) {
                 val element = get(index)
@@ -479,8 +480,9 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
+        deprecate(Strings) { forBinaryCompatibility }
         doc(CharSequences) { "Appends all characters not matching the given [predicate] to the given [destination]." }
-        body(CharSequences) {
+        body(CharSequences, Strings) {
             """
             for (element in this) if (!predicate(element)) destination.append(element)
             return destination

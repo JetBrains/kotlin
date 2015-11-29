@@ -6,7 +6,8 @@ fun snapshots(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
     templates add f("toCollection(destination: C)") {
-        include(CharSequences)
+        deprecate(Strings) { forBinaryCompatibility }
+        include(CharSequences, Strings)
         doc { f -> "Appends all ${f.element}s to the given [destination] collection." }
         returns("C")
         typeParam("C : MutableCollection<in T>")
@@ -25,7 +26,8 @@ fun snapshots(): List<GenericFunction> {
         returns("Set<T>")
         body { "return toCollection(LinkedHashSet<T>(mapCapacity(collectionSizeOrDefault(12))))" }
         body(Sequences) { "return toCollection(LinkedHashSet<T>())" }
-        body(CharSequences) { "return toCollection(LinkedHashSet<T>(mapCapacity(length)))" }
+        deprecate(Strings) { forBinaryCompatibility }
+        body(CharSequences, Strings) { "return toCollection(LinkedHashSet<T>(mapCapacity(length)))" }
         body(ArraysOfObjects, ArraysOfPrimitives) { "return toCollection(LinkedHashSet<T>(mapCapacity(size)))" }
     }
 
@@ -34,12 +36,14 @@ fun snapshots(): List<GenericFunction> {
         returns("HashSet<T>")
         body { "return toCollection(HashSet<T>(mapCapacity(collectionSizeOrDefault(12))))" }
         body(Sequences) { "return toCollection(HashSet<T>())" }
-        body(CharSequences) { "return toCollection(HashSet<T>(mapCapacity(length)))" }
+        deprecate(Strings) { forBinaryCompatibility }
+        body(CharSequences, Strings) { "return toCollection(HashSet<T>(mapCapacity(length)))" }
         body(ArraysOfObjects, ArraysOfPrimitives) { "return toCollection(HashSet<T>(mapCapacity(size)))" }
     }
 
     templates add f("toSortedSet()") {
-        include(CharSequences)
+        deprecate(Strings) { forBinaryCompatibility }
+        include(CharSequences, Strings)
         typeParam("T: Comparable<T>")
         doc { f -> "Returns a [SortedSet] of all ${f.element}s." }
         returns("SortedSet<T>")
@@ -72,7 +76,8 @@ fun snapshots(): List<GenericFunction> {
             """
         }
         body(Collections) { "return ArrayList(this)" }
-        body(CharSequences) { "return toCollection(ArrayList<T>(length))" }
+        deprecate(Strings) { forBinaryCompatibility }
+        body(CharSequences, Strings) { "return toCollection(ArrayList<T>(length))" }
         body(ArraysOfObjects) { "return ArrayList(this.asCollection())" }
         body(ArraysOfPrimitives) {
             """
@@ -98,7 +103,8 @@ fun snapshots(): List<GenericFunction> {
     }
 
     templates add f("toList()") {
-        include(CharSequences)
+        deprecate(Strings) { forBinaryCompatibility }
+        include(CharSequences, Strings)
         doc { f -> "Returns a [List] containing all ${f.element}s." }
         returns("List<T>")
         body { "return this.toArrayList()" }
@@ -106,7 +112,9 @@ fun snapshots(): List<GenericFunction> {
 
     templates add f("toMap(selector: (T) -> K)") {
         inline(true)
-        include(CharSequences)
+        deprecate(Strings) { forBinaryCompatibility }
+        body(Strings) { "return toMapBy(selector)" }
+        include(CharSequences, Strings)
         typeParam("K")
         returns("Map<K, T>")
         deprecate(Deprecation("Use toMapBy instead.", replaceWith = "toMapBy(selector)"))
@@ -148,7 +156,8 @@ fun snapshots(): List<GenericFunction> {
             return result
             """
         }
-        body(CharSequences) {
+        deprecate(Strings) { forBinaryCompatibility }
+        body(CharSequences, Strings) {
             """
             val capacity = (length/.75f) + 1
             val result = LinkedHashMap<K, T>(Math.max(capacity.toInt(), 16))
@@ -206,7 +215,8 @@ fun snapshots(): List<GenericFunction> {
             return result
             """
         }
-        body(CharSequences) {
+        deprecate(Strings) { forBinaryCompatibility }
+        body(CharSequences, Strings) {
             """
             val capacity = (length/.75f) + 1
             val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))

@@ -18,6 +18,10 @@ public operator fun <K, V> MutableMap<K, V>.set(key: K, value: V): Unit {
     put(key, value)
 }
 
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+@JvmName("set")
+public fun <K, V> MutableMap<K, V>.set(key: K, value: V): V? = put(key, value)
+
 /**
  * getOrPut is not supported on [ConcurrentMap] since it cannot be implemented correctly in terms of concurrency.
  * Use [concurrentGetOrPut] instead, or cast this to a [MutableMap] if you want to sacrifice the concurrent-safety.

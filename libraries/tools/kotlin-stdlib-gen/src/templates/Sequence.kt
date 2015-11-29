@@ -30,7 +30,8 @@ fun sequences(): List<GenericFunction> {
             """
         }
 
-        body(CharSequences) {
+        deprecate(Strings) { forBinaryCompatibility }
+        body(CharSequences, Strings) {
             """
             if (this is String && isEmpty()) return emptySequence()
             return object : Sequence<T> {
