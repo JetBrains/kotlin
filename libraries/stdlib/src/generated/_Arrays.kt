@@ -10506,7 +10506,7 @@ public fun ShortArray.asIterable(): Iterable<Short> {
 }
 
 /**
- * Returns a sequence from the given collection.
+ * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
  */
 public fun <T> Array<out T>.asSequence(): Sequence<T> {
     if (isEmpty()) return emptySequence()
@@ -10518,7 +10518,7 @@ public fun <T> Array<out T>.asSequence(): Sequence<T> {
 }
 
 /**
- * Returns a sequence from the given collection.
+ * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
  */
 public fun BooleanArray.asSequence(): Sequence<Boolean> {
     if (isEmpty()) return emptySequence()
@@ -10530,7 +10530,7 @@ public fun BooleanArray.asSequence(): Sequence<Boolean> {
 }
 
 /**
- * Returns a sequence from the given collection.
+ * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
  */
 public fun ByteArray.asSequence(): Sequence<Byte> {
     if (isEmpty()) return emptySequence()
@@ -10542,7 +10542,7 @@ public fun ByteArray.asSequence(): Sequence<Byte> {
 }
 
 /**
- * Returns a sequence from the given collection.
+ * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
  */
 public fun CharArray.asSequence(): Sequence<Char> {
     if (isEmpty()) return emptySequence()
@@ -10554,7 +10554,7 @@ public fun CharArray.asSequence(): Sequence<Char> {
 }
 
 /**
- * Returns a sequence from the given collection.
+ * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
  */
 public fun DoubleArray.asSequence(): Sequence<Double> {
     if (isEmpty()) return emptySequence()
@@ -10566,7 +10566,7 @@ public fun DoubleArray.asSequence(): Sequence<Double> {
 }
 
 /**
- * Returns a sequence from the given collection.
+ * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
  */
 public fun FloatArray.asSequence(): Sequence<Float> {
     if (isEmpty()) return emptySequence()
@@ -10578,7 +10578,7 @@ public fun FloatArray.asSequence(): Sequence<Float> {
 }
 
 /**
- * Returns a sequence from the given collection.
+ * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
  */
 public fun IntArray.asSequence(): Sequence<Int> {
     if (isEmpty()) return emptySequence()
@@ -10590,7 +10590,7 @@ public fun IntArray.asSequence(): Sequence<Int> {
 }
 
 /**
- * Returns a sequence from the given collection.
+ * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
  */
 public fun LongArray.asSequence(): Sequence<Long> {
     if (isEmpty()) return emptySequence()
@@ -10602,7 +10602,7 @@ public fun LongArray.asSequence(): Sequence<Long> {
 }
 
 /**
- * Returns a sequence from the given collection.
+ * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
  */
 public fun ShortArray.asSequence(): Sequence<Short> {
     if (isEmpty()) return emptySequence()

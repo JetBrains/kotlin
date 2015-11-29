@@ -1085,7 +1085,7 @@ public fun <T> Sequence<T>.asIterable(): Iterable<T> {
 }
 
 /**
- * Returns a sequence from the given collection.
+ * Returns this sequence as a [Sequence].
  */
 public fun <T> Sequence<T>.asSequence(): Sequence<T> {
     return this

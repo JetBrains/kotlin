@@ -28,10 +28,15 @@ fun sequences(): List<GenericFunction> {
 
     templates add f("asSequence()") {
         include(Maps)
-        doc { "Returns a sequence from the given collection." }
+        doc { f -> "Creates a [Sequence] instance that wraps the original ${f.collection} returning its ${f.element}s when being iterated." }
         returns("Sequence<T>")
-        body {
+        body { f ->
             """
+            ${ when(f) {
+                ArraysOfObjects, ArraysOfPrimitives -> "if (isEmpty()) return emptySequence()"
+                CharSequences -> "if (this is String && isEmpty()) return emptySequence()"
+                else -> ""
+            }}
             return object : Sequence<T> {
                 override fun iterator(): Iterator<T> {
                     return this@asSequence.iterator()
@@ -40,16 +45,7 @@ fun sequences(): List<GenericFunction> {
             """
         }
 
-        body(ArraysOfObjects, ArraysOfPrimitives) {
-            """
-            if (isEmpty()) return emptySequence()
-            return object : Sequence<T> {
-                override fun iterator(): Iterator<T> {
-                    return this@asSequence.iterator()
-                }
-            }
-            """
-        }
+        // TODO: Drop special case
 
         deprecate(Strings) { forBinaryCompatibility }
         body(CharSequences, Strings) {
@@ -63,11 +59,8 @@ fun sequences(): List<GenericFunction> {
             """
         }
 
-        body(Sequences) {
-            """
-            return this
-            """
-        }
+        doc(Sequences) { "Returns this sequence as a [Sequence]."}
+        body(Sequences) { "return this" }
     }
 
     return templates

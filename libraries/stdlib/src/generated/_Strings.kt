@@ -1618,7 +1618,7 @@ public fun CharSequence.asIterable(): Iterable<Char> {
 }
 
 /**
- * Returns a sequence from the given collection.
+ * Creates a [Sequence] instance that wraps the original char sequence returning its characters when being iterated.
  */
 public fun CharSequence.asSequence(): Sequence<Char> {
     if (this is String && isEmpty()) return emptySequence()
@@ -1630,7 +1630,7 @@ public fun CharSequence.asSequence(): Sequence<Char> {
 }
 
 /**
- * Returns a sequence from the given collection.
+ * Creates a [Sequence] instance that wraps the original string returning its characters when being iterated.
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public fun String.asSequence(): Sequence<Char> {

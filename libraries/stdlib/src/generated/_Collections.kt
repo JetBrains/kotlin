@@ -1769,7 +1769,7 @@ public fun <T> Iterable<T>.asIterable(): Iterable<T> {
 }
 
 /**
- * Returns a sequence from the given collection.
+ * Creates a [Sequence] instance that wraps the original collection returning its elements when being iterated.
  */
 public fun <T> Iterable<T>.asSequence(): Sequence<T> {
     return object : Sequence<T> {

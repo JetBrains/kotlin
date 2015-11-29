@@ -196,7 +196,7 @@ public fun <K, V> Map<K, V>.asIterable(): Iterable<Map.Entry<K, V>> {
 }
 
 /**
- * Returns a sequence from the given collection.
+ * Creates a [Sequence] instance that wraps the original map returning its entrys when being iterated.
  */
 public fun <K, V> Map<K, V>.asSequence(): Sequence<Map.Entry<K, V>> {
     return object : Sequence<Map.Entry<K, V>> {
