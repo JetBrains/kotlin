@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.repl
 
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.testFramework.UsefulTestCase
+import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
+import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.repl.ReplInterpreter
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -44,6 +46,13 @@ public abstract class AbstractReplInterpreterTest : UsefulTestCase() {
     }
 
     private data class OneLine(val code: String, val expected: String)
+
+    override fun setUp() {
+        super.setUp()
+        // set to false if not present or set to true or unknown (empty considered true)
+        if (System.getProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY)?.let { it.toBooleanLenient() ?: true } ?: true )
+            System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "false")
+    }
 
     private fun loadLines(file: File): List<OneLine> {
         val lines = ArrayDeque(file.readLines())
