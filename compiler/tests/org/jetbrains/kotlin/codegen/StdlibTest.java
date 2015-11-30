@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.test.TestJdkKind;
 import java.io.File;
 import java.lang.reflect.Modifier;
 
-public class TestlibTest extends KotlinTestWithEnvironment {
+public class StdlibTest extends KotlinTestWithEnvironment {
     @Override
     protected KotlinCoreEnvironment createEnvironment() {
         CompilerConfiguration configuration = KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.FULL_JDK);
@@ -73,7 +73,7 @@ public class TestlibTest extends KotlinTestWithEnvironment {
             @Override
             public Class<?> loadClass(@NotNull String name) throws ClassNotFoundException {
                 if (name.startsWith("junit.") || name.startsWith("org.junit.")) {
-                    return TestlibTest.class.getClassLoader().loadClass(name);
+                    return StdlibTest.class.getClassLoader().loadClass(name);
                 }
                 return super.loadClass(name);
             }
