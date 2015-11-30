@@ -21,9 +21,6 @@ class A(val prop: Int)
 // EXPRESSION: primitive
 // RESULT: 1: I
 
-// EXPRESSION: it
-// RESULT: 1: I
-
 // EXPRESSION: array
 // RESULT: instance of java.lang.Integer[1] (id=ID): [Ljava/lang/Integer;
 
@@ -33,5 +30,5 @@ class A(val prop: Int)
 // EXPRESSION: list
 // RESULT: instance of java.util.Collections$SingletonList(id=ID): Ljava/util/Collections$SingletonList;
 
-// EXPRESSION: `$receiver`.prop
+// EXPRESSION: this.prop
 // RESULT: 1: I
