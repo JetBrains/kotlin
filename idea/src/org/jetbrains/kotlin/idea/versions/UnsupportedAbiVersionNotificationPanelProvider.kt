@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.idea.versions
 
-import com.google.common.base.Predicate
-import com.google.common.collect.Collections2
 import com.intellij.ProjectTopics
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.application.ApplicationManager
@@ -25,7 +23,6 @@ import com.intellij.openapi.compiler.CompilerManager
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.DumbService
@@ -33,29 +30,22 @@ import com.intellij.openapi.project.IndexNotReadyException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootAdapter
 import com.intellij.openapi.roots.ModuleRootEvent
-import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.ui.popup.JBPopupFactory
-import com.intellij.openapi.ui.popup.ListPopup
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
-import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.EditorNotifications
-import com.intellij.util.messages.MessageBusConnection
+import com.intellij.ui.HyperlinkLabel
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.configuration.*
+import org.jetbrains.kotlin.idea.configuration.isModuleConfigured
 import org.jetbrains.kotlin.idea.framework.JSLibraryStdPresentationProvider
 import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider
-
-import javax.swing.*
-import java.awt.*
 import java.text.MessageFormat
-import java.util.Collections
-import java.util.HashSet
+import javax.swing.Icon
 
 class UnsupportedAbiVersionNotificationPanelProvider(private val project: Project) : EditorNotifications.Provider<EditorNotificationPanel>() {
 
@@ -80,8 +70,7 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
         val answer = ErrorNotificationPanel()
 
         val kotlinLibraries = findAllUsedLibraries(project).keySet()
-        val badRuntimeLibraries = Collections2.filter(kotlinLibraries) { library ->
-            assert(library != null) { "library should be non null" }
+        val badRuntimeLibraries = kotlinLibraries.filter { library ->
             val runtimeJar = getLocalJar(JavaRuntimePresentationProvider.getRuntimeJar(library))
             val jsLibJar = getLocalJar(JSLibraryStdPresentationProvider.getJsStdLibJar(library))
             badRoots.contains(runtimeJar) || badRoots.contains(jsLibJar)
@@ -118,25 +107,23 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
     }
 
     private fun createShowPathsActionLabel(answer: EditorNotificationPanel, labelText: String) {
-        val label = Ref<Component>(null)
+        val label: Ref<HyperlinkLabel> = Ref.create()
         val action = Runnable {
             DumbService.getInstance(project).tryRunReadActionInSmartMode({
-                                                                             val badRoots = collectBadRoots(project)
-                                                                             assert(!badRoots.isEmpty()) { "This action should only be called when bad roots are present" }
+                val badRoots = collectBadRoots(project)
+                assert(!badRoots.isEmpty()) { "This action should only be called when bad roots are present" }
 
-                                                                             val listPopupModel = LibraryRootsPopupModel("Unsupported format", project, badRoots)
-                                                                             val popup = JBPopupFactory.getInstance().createListPopup(listPopupModel)
-                                                                             popup.showUnderneathOf(label.get())
+                val listPopupModel = LibraryRootsPopupModel("Unsupported format", project, badRoots)
+                val popup = JBPopupFactory.getInstance().createListPopup(listPopupModel)
+                popup.showUnderneathOf(label.get())
 
-                                                                             null
-                                                                         }, "Can't show all paths during index update")
+                null
+            }, "Can't show all paths during index update")
         }
         label.set(answer.createActionLabel(labelText, action))
     }
 
-    override fun getKey(): Key<EditorNotificationPanel> {
-        return KEY
-    }
+    override fun getKey(): Key<EditorNotificationPanel> = KEY
 
     override fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor): EditorNotificationPanel? {
         try {
@@ -162,7 +149,8 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
         return null
     }
 
-    private class LibraryRootsPopupModel(title: String, private val project: Project, roots: Collection<VirtualFile>) : BaseListPopupStep<VirtualFile>(title, roots.toArray<VirtualFile>(arrayOfNulls<VirtualFile>(roots.size))) {
+    private class LibraryRootsPopupModel(title: String, private val project: Project, roots: Collection<VirtualFile>)
+        : BaseListPopupStep<VirtualFile>(title, *roots.toTypedArray()) {
 
         override fun getTextFor(root: VirtualFile): String {
             val relativePath = VfsUtilCore.getRelativePath(root, project.baseDir, '/')
@@ -176,14 +164,12 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
             return AllIcons.FileTypes.Archive
         }
 
-        override fun onChosen(selectedValue: VirtualFile?, finalChoice: Boolean): PopupStep<Any>? {
+        override fun onChosen(selectedValue: VirtualFile, finalChoice: Boolean): PopupStep<Any>? {
             navigateToLibraryRoot(project, selectedValue)
             return PopupStep.FINAL_CHOICE
         }
 
-        override fun isSpeedSearchEnabled(): Boolean {
-            return true
-        }
+        override fun isSpeedSearchEnabled(): Boolean = true
     }
 
     private class ErrorNotificationPanel : EditorNotificationPanel() {
@@ -229,11 +215,7 @@ class UnsupportedAbiVersionNotificationPanelProvider(private val project: Projec
 
             if (badJVMRoots.isEmpty() && badJSRoots.isEmpty()) return emptyList()
 
-            val badRoots = HashSet<VirtualFile>()
-            badRoots.addAll(badJVMRoots)
-            badRoots.addAll(badJSRoots)
-
-            return badRoots
+            return (badJVMRoots + badJSRoots).toHashSet()
         }
     }
 }
