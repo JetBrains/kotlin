@@ -1,15 +1,11 @@
 // See KT-9816, KT-9742
 
 // Not allowed in Java
-open class ZException<T>(val p: T) : Exception() 
+class ZException<!GENERIC_THROWABLE_SUBCLASS!><T><!>(val p: T) : Exception()
 
-fun foo(): String {
-    try {
-        throw ZException(11)
-    } catch (e: ZException<String>) {
-        return e.p
-    }
-}
+class YException<!GENERIC_THROWABLE_SUBCLASS!><T><!>(val p: T): java.lang.RuntimeException()
+
+class XException<!GENERIC_THROWABLE_SUBCLASS!><T><!>(val p: T): Throwable()
 
 fun bar() {
     try {

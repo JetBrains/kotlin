@@ -107,6 +107,7 @@ public interface Errors {
     DiagnosticFactory0<KtTypeArgumentList> TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<KtParameter> REIFIED_TYPE_IN_CATCH_CLAUSE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtTypeParameterList> GENERIC_THROWABLE_SUBCLASS = DiagnosticFactory0.create(ERROR);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -67,6 +67,7 @@ public class BodyResolver {
     @NotNull private final FunctionAnalyzerExtension functionAnalyzerExtension;
     @NotNull private final ValueParameterResolver valueParameterResolver;
     @NotNull private final BodyResolveCache bodyResolveCache;
+    @NotNull private final KotlinBuiltIns builtIns;
 
     public BodyResolver(
             @NotNull AnnotationResolver annotationResolver,
@@ -79,7 +80,8 @@ public class BodyResolver {
             @NotNull FunctionAnalyzerExtension functionAnalyzerExtension,
             @NotNull BindingTrace trace,
             @NotNull ValueParameterResolver valueParameterResolver,
-            @NotNull AnnotationChecker annotationChecker
+            @NotNull AnnotationChecker annotationChecker,
+            @NotNull KotlinBuiltIns builtIns
     ) {
         this.annotationResolver = annotationResolver;
         this.bodyResolveCache = bodyResolveCache;
@@ -92,6 +94,7 @@ public class BodyResolver {
         this.annotationChecker = annotationChecker;
         this.trace = new ObservableBindingTrace(trace);
         this.valueParameterResolver = valueParameterResolver;
+        this.builtIns = builtIns;
     }
 
     private void resolveBehaviorDeclarationBodies(@NotNull BodiesResolveContext c) {
@@ -455,6 +458,11 @@ public class BodyResolver {
                     }
                     else if (jetClass.hasModifier(KtTokens.DATA_KEYWORD)) {
                         trace.report(DATA_CLASS_CANNOT_HAVE_CLASS_SUPERTYPES.on(typeReference));
+                        addSupertype = false;
+                    }
+                    else if (DescriptorUtils.isSubclass(classDescriptor, builtIns.getThrowable()) &&
+                             !supertypeOwner.getDeclaredTypeParameters().isEmpty()) {
+                        trace.report(GENERIC_THROWABLE_SUBCLASS.on(jetClass.getTypeParameterList()));
                         addSupertype = false;
                     }
 

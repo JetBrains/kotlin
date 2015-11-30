@@ -1,10 +1,31 @@
 package
 
 public fun bar(): kotlin.Unit
-public fun foo(): kotlin.String
 public inline fun </*0*/ reified E : java.lang.Exception, /*1*/ R> tryCatch(/*0*/ lazy: () -> R, /*1*/ failure: (E) -> R): R
 
-public open class ZException</*0*/ T> : java.lang.Exception {
+public final class XException</*0*/ T> : kotlin.Throwable {
+    public constructor XException</*0*/ T>(/*0*/ p: T)
+    public final override /*1*/ /*fake_override*/ val cause: kotlin.Throwable?
+    public final override /*1*/ /*fake_override*/ val message: kotlin.String?
+    public final val p: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun printStackTrace(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class YException</*0*/ T> : java.lang.RuntimeException {
+    public constructor YException</*0*/ T>(/*0*/ p: T)
+    public final override /*1*/ /*fake_override*/ val cause: kotlin.Throwable?
+    public final override /*1*/ /*fake_override*/ val message: kotlin.String?
+    public final val p: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun printStackTrace(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class ZException</*0*/ T> : java.lang.Exception {
     public constructor ZException</*0*/ T>(/*0*/ p: T)
     public final override /*1*/ /*fake_override*/ val cause: kotlin.Throwable?
     public final override /*1*/ /*fake_override*/ val message: kotlin.String?
