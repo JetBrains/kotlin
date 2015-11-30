@@ -51,7 +51,7 @@ public abstract class AbstractReplInterpreterTest : UsefulTestCase() {
     private data class OneLine(val code: String, val expected: String)
 
     override fun setUp() {
-        oldKeepaliveValue = exchangeSystemProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, null)
+//        oldKeepaliveValue = exchangeSystemProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, null)
         super.setUp()
     }
 

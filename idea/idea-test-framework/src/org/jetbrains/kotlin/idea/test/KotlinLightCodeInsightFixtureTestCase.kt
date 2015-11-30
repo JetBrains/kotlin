@@ -49,7 +49,7 @@ public abstract class KotlinLightCodeInsightFixtureTestCase : LightCodeInsightFi
     private var oldKeepaliveValue: String? = null
 
     override fun setUp() {
-        oldKeepaliveValue = exchangeSystemProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, null)
+//        oldKeepaliveValue = exchangeSystemProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, null)
 
         super.setUp()
         (StartupManager.getInstance(getProject()) as StartupManagerImpl).runPostStartupActivities()
