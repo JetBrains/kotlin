@@ -603,7 +603,8 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
                         public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
                             markLineNumberForElement(element, codegen.v);
 
-                            generateMethodCallTo(original, accessor, codegen.v);
+                            generateMethodCallTo(original, accessor, codegen.v).coerceTo(signature.getReturnType(), codegen.v);
+
                             codegen.v.areturn(signature.getReturnType());
                         }
                     }
@@ -642,7 +643,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
                     }
 
                     if (callableDescriptor instanceof PropertyGetterDescriptor) {
-                        property.put(property.type, iv);
+                        property.put(signature.getReturnType(), iv);
                     }
                     else {
                         property.store(StackValue.onStack(property.type), iv, true);
@@ -672,7 +673,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         }
     }
 
-    private void generateMethodCallTo(
+    private StackValue generateMethodCallTo(
             @NotNull FunctionDescriptor functionDescriptor,
             @Nullable FunctionDescriptor accessorDescriptor,
             @NotNull InstructionAdapter iv
@@ -708,5 +709,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         }
 
         callableMethod.genInvokeInstruction(iv);
+
+        return StackValue.onStack(callableMethod.getReturnType());
     }
 }
