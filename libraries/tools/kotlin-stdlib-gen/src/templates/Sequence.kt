@@ -7,7 +7,7 @@ fun sequences(): List<GenericFunction> {
 
     templates add f("asIterable()") {
         only(Iterables, ArraysOfObjects, ArraysOfPrimitives, Sequences, CharSequences, Maps)
-        doc { f -> "Creates an [Iterable] instance that wraps the original ${f.collection} returning its ${f.element}s when being iterated." }
+        doc { f -> "Creates an [Iterable] instance that wraps the original ${f.collection} returning its ${f.element.pluralize()} when being iterated." }
         returns("Iterable<T>")
         body { f ->
             """
@@ -28,7 +28,7 @@ fun sequences(): List<GenericFunction> {
 
     templates add f("asSequence()") {
         include(Maps)
-        doc { f -> "Creates a [Sequence] instance that wraps the original ${f.collection} returning its ${f.element}s when being iterated." }
+        doc { f -> "Creates a [Sequence] instance that wraps the original ${f.collection} returning its ${f.element.pluralize()} when being iterated." }
         returns("Sequence<T>")
         body { f ->
             """

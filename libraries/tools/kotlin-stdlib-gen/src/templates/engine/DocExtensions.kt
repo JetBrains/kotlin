@@ -27,6 +27,11 @@ object DocExtensions {
 
     private fun String.singularize() = removeSuffix("s")
 
+    public fun String.pluralize() = when {
+        this.endsWith("y") -> this.dropLast(1) + "ies"
+        else -> this + "s"
+    }
+
     fun String.prefixWithArticle() = (if ("aeiou".any { this.startsWith(it, ignoreCase = true) }) "an " else "a ").concat(this)
 
 }

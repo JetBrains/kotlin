@@ -8,7 +8,7 @@ fun snapshots(): List<GenericFunction> {
     templates add f("toCollection(destination: C)") {
         deprecate(Strings) { forBinaryCompatibility }
         include(CharSequences, Strings)
-        doc { f -> "Appends all ${f.element}s to the given [destination] collection." }
+        doc { f -> "Appends all ${f.element.pluralize()} to the given [destination] collection." }
         returns("C")
         typeParam("C : MutableCollection<in T>")
         body {
@@ -22,7 +22,7 @@ fun snapshots(): List<GenericFunction> {
     }
 
     templates add f("toSet()") {
-        doc { f -> "Returns a [Set] of all ${f.element}s." }
+        doc { f -> "Returns a [Set] of all ${f.element.pluralize()}." }
         returns("Set<T>")
         body { "return toCollection(LinkedHashSet<T>(mapCapacity(collectionSizeOrDefault(12))))" }
         body(Sequences) { "return toCollection(LinkedHashSet<T>())" }
@@ -32,7 +32,7 @@ fun snapshots(): List<GenericFunction> {
     }
 
     templates add f("toHashSet()") {
-        doc { f -> "Returns a [HashSet] of all ${f.element}s." }
+        doc { f -> "Returns a [HashSet] of all ${f.element.pluralize()}." }
         returns("HashSet<T>")
         body { "return toCollection(HashSet<T>(mapCapacity(collectionSizeOrDefault(12))))" }
         body(Sequences) { "return toCollection(HashSet<T>())" }
@@ -45,7 +45,7 @@ fun snapshots(): List<GenericFunction> {
         deprecate(Strings) { forBinaryCompatibility }
         include(CharSequences, Strings)
         typeParam("T: Comparable<T>")
-        doc { f -> "Returns a [SortedSet] of all ${f.element}s." }
+        doc { f -> "Returns a [SortedSet] of all ${f.element.pluralize()}." }
         returns("SortedSet<T>")
         body { "return toCollection(TreeSet<T>())" }
     }
@@ -55,7 +55,7 @@ fun snapshots(): List<GenericFunction> {
         jvmOnly(true)
         doc { f ->
             """
-                Returns a [SortedSet] of all ${f.element}s.
+                Returns a [SortedSet] of all ${f.element.pluralize()}.
 
                 Elements in the set returned are sorted according to the given [comparator].
             """
@@ -65,7 +65,7 @@ fun snapshots(): List<GenericFunction> {
     }
 
     templates add f("toArrayList()") {
-        doc { f -> "Returns an [ArrayList] of all ${f.element}s." }
+        doc { f -> "Returns an [ArrayList] of all ${f.element.pluralize()}." }
         returns("ArrayList<T>")
         body { "return toCollection(ArrayList<T>())" }
         body(Iterables) {
@@ -105,7 +105,7 @@ fun snapshots(): List<GenericFunction> {
     templates add f("toList()") {
         deprecate(Strings) { forBinaryCompatibility }
         include(CharSequences, Strings)
-        doc { f -> "Returns a [List] containing all ${f.element}s." }
+        doc { f -> "Returns a [List] containing all ${f.element.pluralize()}." }
         returns("List<T>")
         body { "return this.toArrayList()" }
     }
@@ -132,9 +132,9 @@ fun snapshots(): List<GenericFunction> {
         typeParam("K")
         doc { f ->
             """
-            Returns Map containing the ${f.element}s from the given ${f.collection} indexed by the key
+            Returns Map containing the ${f.element.pluralize()} from the given ${f.collection} indexed by the key
             returned from [selector] function applied to each ${f.element}.
-            If any two ${f.element}s would have the same key returned by [selector] the last one gets added to the map.
+            If any two ${f.element.pluralize()} would have the same key returned by [selector] the last one gets added to the map.
             """
         }
         returns("Map<K, T>")
@@ -192,8 +192,8 @@ fun snapshots(): List<GenericFunction> {
         typeParam("V")
         doc { f ->
             """
-            Returns Map containing the values provided by [transform] and indexed by [selector] functions applied to ${f.element}s of the given ${f.collection}.
-            If any two ${f.element}s would have the same key returned by [selector] the last one gets added to the map.
+            Returns Map containing the values provided by [transform] and indexed by [selector] functions applied to ${f.element.pluralize()} of the given ${f.collection}.
+            If any two ${f.element.pluralize()} would have the same key returned by [selector] the last one gets added to the map.
             """
         }
         returns("Map<K, V>")

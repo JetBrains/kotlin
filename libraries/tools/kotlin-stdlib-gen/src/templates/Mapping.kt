@@ -289,7 +289,7 @@ fun mapping(): List<GenericFunction> {
 
         deprecate(Strings) { forBinaryCompatibility }
         include(CharSequences, Strings)
-        doc { f -> "Returns a map of the ${f.element}s in original ${f.collection} grouped by the key returned by the given [selector] function." }
+        doc { f -> "Returns a map of the ${f.element.pluralize()} in original ${f.collection} grouped by the key returned by the given [selector] function." }
         typeParam("K")
         returns("Map<K, List<T>>")
         body { "return groupByTo(LinkedHashMap<K, MutableList<T>>(), selector)" }
@@ -301,7 +301,7 @@ fun mapping(): List<GenericFunction> {
         deprecate(Strings) { forBinaryCompatibility }
         include(CharSequences, Strings)
         typeParam("K")
-        doc { f -> "Appends ${f.element}s from original ${f.collection} grouped by the key returned by the given [selector] function to the given [map]." }
+        doc { f -> "Appends ${f.element.pluralize()} from original ${f.collection} grouped by the key returned by the given [selector] function to the given [map]." }
         returns("Map<K, MutableList<T>>")
         body {
             """

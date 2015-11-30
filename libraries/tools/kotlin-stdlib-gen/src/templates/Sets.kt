@@ -7,7 +7,7 @@ fun sets(): List<GenericFunction> {
 
     templates add f("toMutableSet()") {
         exclude(Strings)
-        doc { f -> "Returns a mutable set containing all distinct ${f.element}s from the given ${f.collection}." }
+        doc { f -> "Returns a mutable set containing all distinct ${f.element.pluralize()} from the given ${f.collection}." }
         returns("MutableSet<T>")
         body {
             """
@@ -38,9 +38,9 @@ fun sets(): List<GenericFunction> {
         exclude(Strings)
         doc { f ->
             """
-                Returns a ${f.mapResult} containing only distinct ${f.element}s from the given ${f.collection}.
+                Returns a ${f.mapResult} containing only distinct ${f.element.pluralize()} from the given ${f.collection}.
 
-                The ${f.element}s in the resulting ${f.mapResult} are in the same order as they were in the source ${f.collection}.
+                The ${f.element.pluralize()} in the resulting ${f.mapResult} are in the same order as they were in the source ${f.collection}.
                 """
         }
 
@@ -54,10 +54,10 @@ fun sets(): List<GenericFunction> {
         exclude(Strings)
         doc { f ->
             """
-                Returns a ${f.mapResult} containing only ${f.element}s from the given ${f.collection}
+                Returns a ${f.mapResult} containing only ${f.element.pluralize()} from the given ${f.collection}
                 having distinct keys returned by the given [selector] function.
 
-                The ${f.element}s in the resulting ${f.mapResult} are in the same order as they were in the source ${f.collection}.
+                The ${f.element.pluralize()} in the resulting ${f.mapResult} are in the same order as they were in the source ${f.collection}.
                 """
         }
 
