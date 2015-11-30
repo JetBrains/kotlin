@@ -319,7 +319,7 @@ public abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTe
         val extraFiles = mainFile.getParentFile().listFiles { file, name ->
             name != mainFileName && name.startsWith("$mainFileBaseName.") && (name.endsWith(".kt") || name.endsWith(".java"))
         }
-        val extraFilesToPsi = extraFiles.toMap { fixture.configureByFile(it.getName()) }
+        val extraFilesToPsi = extraFiles.toMapBy { fixture.configureByFile(it.getName()) }
         val file = fixture.configureByFile(mainFileName)
 
         val addKotlinRuntime = InTextDirectivesUtils.findStringWithPrefixes(file.getText(), "// WITH_RUNTIME") != null
