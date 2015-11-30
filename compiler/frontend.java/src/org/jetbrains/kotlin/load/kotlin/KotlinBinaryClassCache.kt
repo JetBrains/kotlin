@@ -14,68 +14,62 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.load.kotlin;
+package org.jetbrains.kotlin.load.kotlin
 
-import com.intellij.ide.highlighter.JavaClassFileType;
-import com.intellij.openapi.Disposable;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.components.ServiceManager;
-import com.intellij.openapi.util.Computable;
-import com.intellij.openapi.vfs.VirtualFile;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.intellij.ide.highlighter.JavaClassFileType
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.util.Computable
+import com.intellij.openapi.vfs.VirtualFile
 
-public final class KotlinBinaryClassCache implements Disposable {
-    private static class RequestCache {
-        VirtualFile virtualFile;
-        long modificationStamp;
-        VirtualFileKotlinClass virtualFileKotlinClass;
+class KotlinBinaryClassCache : Disposable {
+    private class RequestCache {
+        internal lateinit var virtualFile: VirtualFile
+        internal var modificationStamp: Long = 0
+        internal var virtualFileKotlinClass: VirtualFileKotlinClass? = null
 
-        public VirtualFileKotlinClass cache(VirtualFile file, VirtualFileKotlinClass aClass) {
-            virtualFile = file;
-            virtualFileKotlinClass = aClass;
-            modificationStamp = file.getModificationStamp();
+        fun cache(file: VirtualFile, aClass: VirtualFileKotlinClass?): VirtualFileKotlinClass? {
+            virtualFile = file
+            virtualFileKotlinClass = aClass
+            modificationStamp = file.modificationStamp
 
-            return aClass;
+            return aClass
         }
     }
 
-    private final ThreadLocal<RequestCache> cache =
-            new ThreadLocal<RequestCache>() {
-                @Override
-                protected RequestCache initialValue() {
-                    return new RequestCache();
-                }
-            };
-
-    @Nullable
-    public static KotlinJvmBinaryClass getKotlinBinaryClass(@NotNull final VirtualFile file) {
-        if (file.getFileType() != JavaClassFileType.INSTANCE) return null;
-
-        KotlinBinaryClassCache service = ServiceManager.getService(KotlinBinaryClassCache.class);
-        RequestCache requestCache = service.cache.get();
-
-        if (file.getModificationStamp() == requestCache.modificationStamp && file.equals(requestCache.virtualFile)) {
-            return requestCache.virtualFileKotlinClass;
-        }
-        else {
-            VirtualFileKotlinClass aClass = ApplicationManager.getApplication().runReadAction(new Computable<VirtualFileKotlinClass>() {
-                @Override
-                public VirtualFileKotlinClass compute() {
-                    //noinspection deprecation
-                    return VirtualFileKotlinClass.Factory.create(file);
-                }
-            });
-
-            return requestCache.cache(file, aClass);
+    private val cache = object : ThreadLocal<RequestCache>() {
+        override fun initialValue(): RequestCache {
+            return RequestCache()
         }
     }
 
-    @Override
-    public void dispose() {
+    override fun dispose() {
         // This is only relevant for tests. We create a new instance of Application for each test, and so a new instance of this service is
         // also created for each test. However all tests share the same event dispatch thread, which would collect all instances of this
         // thread-local if they're not removed properly. Each instance would transitively retain VFS resulting in OutOfMemoryError
-        cache.remove();
+        cache.remove()
+    }
+
+    companion object {
+
+        fun getKotlinBinaryClass(file: VirtualFile): KotlinJvmBinaryClass? {
+            if (file.fileType !== JavaClassFileType.INSTANCE) return null
+
+            val service = ServiceManager.getService(KotlinBinaryClassCache::class.java)
+            val requestCache = service.cache.get()
+
+            if (file.modificationStamp == requestCache.modificationStamp && file == requestCache.virtualFile) {
+                return requestCache.virtualFileKotlinClass
+            }
+            else {
+                val aClass = ApplicationManager.getApplication().runReadAction(Computable {
+                    //noinspection deprecation
+                    VirtualFileKotlinClass.create(file)
+                })
+
+                return requestCache.cache(file, aClass)
+            }
+        }
     }
 }
