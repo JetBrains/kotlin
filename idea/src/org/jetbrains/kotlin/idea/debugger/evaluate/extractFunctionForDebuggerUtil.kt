@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.debugger.evaluate
 
 import com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil
+import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
@@ -24,7 +25,6 @@ import com.intellij.psi.impl.PsiModificationTrackerImpl
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import org.jetbrains.kotlin.idea.core.refactoring.createTempCopy
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
@@ -34,8 +34,7 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 
 fun getFunctionForExtractedFragment(
         codeFragment: KtCodeFragment,
@@ -109,14 +108,23 @@ fun getFunctionForExtractedFragment(
 }
 
 fun addDebugExpressionIntoTmpFileForExtractFunction(originalFile: KtFile, codeFragment: KtCodeFragment, line: Int): List<KtExpression> {
-    val tmpFile = originalFile.createTempCopy { it }
+    val context = codeFragment.getOriginalContext()
+    context?.IS_CONTEXT_ELEMENT = true
+    val tmpFile = originalFile.copy() as KtFile
     tmpFile.suppressDiagnosticsInDebugMode = true
+    context?.IS_CONTEXT_ELEMENT = false
 
-    val contextElement = getExpressionToAddDebugExpressionBefore(tmpFile, codeFragment.context, line) ?: return emptyList()
+    val contextElement = getExpressionToAddDebugExpressionBefore(tmpFile, context, line) ?: return emptyList()
 
     addImportsToFile(codeFragment.importsAsImportList(), tmpFile)
 
     return addDebugExpressionBeforeContextElement(codeFragment, contextElement)
+}
+
+private var PsiElement.IS_CONTEXT_ELEMENT: Boolean by NotNullableCopyableUserDataProperty(Key.create("IS_CONTEXT_ELEMENT"), false)
+
+private fun KtFile.findContextElement(): KtElement? {
+    return this.findDescendantOfType { it.IS_CONTEXT_ELEMENT == true }
 }
 
 private fun addImportsToFile(newImportList: KtImportList?, tmpFile: KtFile) {
@@ -139,10 +147,6 @@ private fun addImportsToFile(newImportList: KtImportList?, tmpFile: KtFile) {
     }
 }
 
-private fun KtFile.getElementInCopy(e: PsiElement): PsiElement? {
-    return CodeInsightUtils.findElementOfClassAtRange(this, e.startOffset, e.endOffset, e.javaClass)
-}
-
 private fun getExpressionToAddDebugExpressionBefore(tmpFile: KtFile, contextElement: PsiElement?, line: Int): PsiElement? {
     if (contextElement == null) {
         val lineStart = CodeInsightUtils.getStartLineOffset(tmpFile, line) ?: return null
@@ -152,14 +156,9 @@ private fun getExpressionToAddDebugExpressionBefore(tmpFile: KtFile, contextElem
         return CodeInsightUtils.getTopmostElementAtOffset(elementAtOffset, lineStart) ?: elementAtOffset
     }
 
-    val containingFile = contextElement.containingFile
-    if (containingFile is KtCodeFragment) {
-        return getExpressionToAddDebugExpressionBefore(tmpFile, containingFile.context, line)
-    }
-
     fun shouldStop(el: PsiElement?, p: PsiElement?) = p is KtBlockExpression || el is KtDeclaration || el is KtFile
 
-    var elementAt = tmpFile.getElementInCopy(contextElement)
+    var elementAt = tmpFile.findContextElement()
 
     var parent = elementAt?.parent
     if (shouldStop(elementAt, parent)) {
