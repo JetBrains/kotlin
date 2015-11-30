@@ -52,10 +52,12 @@ class CommaInWhenConditionWithoutArgumentFix(element: PsiElement) : KotlinQuickF
 
         private fun replaceCommasWithOrsInWhenExpression(whenExpression: KtWhenExpression) {
             for (whenEntry in whenExpression.entries) {
-                val conditionsData = getConditionsDataOrNull(whenEntry) ?: return
-                val replacement = KtPsiFactory(whenEntry).combineWhenConditions(conditionsData.conditions, null) ?: return
-                whenEntry.deleteChildRange(conditionsData.first, conditionsData.last)
-                whenEntry.addBefore(replacement, conditionsData.arrow)
+                if (whenEntry.conditions.size > 1) {
+                    val conditionsData = getConditionsDataOrNull(whenEntry) ?: return
+                    val replacement = KtPsiFactory(whenEntry).combineWhenConditions(conditionsData.conditions, null) ?: return
+                    whenEntry.deleteChildRange(conditionsData.first, conditionsData.last)
+                    whenEntry.addBefore(replacement, conditionsData.arrow)
+                }
             }
         }
 

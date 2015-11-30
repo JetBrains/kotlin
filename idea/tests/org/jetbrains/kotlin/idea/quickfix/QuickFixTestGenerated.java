@@ -4506,6 +4506,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/commasInWhenWithoutArgument/commasInConditionWithNoArguments.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("commasInConditionWithNoArguments2.kt")
+            public void testCommasInConditionWithNoArguments2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/commasInWhenWithoutArgument/commasInConditionWithNoArguments2.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("idea/testData/quickfix/migration/conflictingExtension")
@@ -7272,6 +7278,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("commasInConditionWithNoArguments.kt")
         public void testCommasInConditionWithNoArguments() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/when/commasInConditionWithNoArguments.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("commasInConditionWithNoArguments2.kt")
+        public void testCommasInConditionWithNoArguments2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/when/commasInConditionWithNoArguments2.kt");
             doTest(fileName);
         }
 
