@@ -135,41 +135,17 @@ public inline fun <K, V> Map<K, V>.forEach(action: (Map.Entry<K, V>) -> Unit): U
 }
 
 /**
- * Returns the first map entry yielding the largest value of the given function or `null` if there are no entries.
+ * Returns the first entry yielding the largest value of the given function or `null` if there are no entries.
  */
 public inline fun <K, V, R : Comparable<R>> Map<K, V>.maxBy(selector: (Map.Entry<K, V>) -> R): Map.Entry<K, V>? {
-    val iterator = iterator()
-    if (!iterator.hasNext()) return null
-    var maxElem = iterator.next()
-    var maxValue = selector(maxElem)
-    while (iterator.hasNext()) {
-        val e = iterator.next()
-        val v = selector(e)
-        if (maxValue < v) {
-            maxElem = e
-            maxValue = v
-        }
-    }
-    return maxElem
+    return entries.maxBy(selector)
 }
 
 /**
- * Returns the first map entry yielding the smallest value of the given function or `null` if there are no entries.
+ * Returns the first entry yielding the smallest value of the given function or `null` if there are no entries.
  */
 public inline fun <K, V, R : Comparable<R>> Map<K, V>.minBy(selector: (Map.Entry<K, V>) -> R): Map.Entry<K, V>? {
-    val iterator = iterator()
-    if (!iterator.hasNext()) return null
-    var minElem = iterator.next()
-    var minValue = selector(minElem)
-    while (iterator.hasNext()) {
-        val e = iterator.next()
-        val v = selector(e)
-        if (minValue > v) {
-            minElem = e
-            minValue = v
-        }
-    }
-    return minElem
+    return entries.minBy(selector)
 }
 
 /**

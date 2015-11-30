@@ -181,7 +181,6 @@ fun aggregates(): List<GenericFunction> {
         inline(true)
 
         doc { f -> "Returns the first ${f.element} yielding the smallest value of the given function or `null` if there are no ${f.element.pluralize()}." }
-        typeParam("T")
         typeParam("R : Comparable<R>")
         returns("T?")
         body {
@@ -220,33 +219,7 @@ fun aggregates(): List<GenericFunction> {
             return minElem
             """
         }
-    }
-
-    templates add f("minBy(selector: (T) -> R)") {
-        inline(true)
-
-        only(Maps)
-        doc { "Returns the first map entry yielding the smallest value of the given function or `null` if there are no entries." }
-        typeParam("R : Comparable<R>")
-        returns("T?")
-        body {
-            """
-            val iterator = iterator()
-            if (!iterator.hasNext()) return null
-
-            var minElem = iterator.next()
-            var minValue = selector(minElem)
-            while (iterator.hasNext()) {
-                val e = iterator.next()
-                val v = selector(e)
-                if (minValue > v) {
-                    minElem = e
-                    minValue = v
-                }
-            }
-            return minElem
-            """
-        }
+        body(Maps) { "return entries.minBy(selector)" }
     }
 
     templates add f("max()") {
@@ -287,7 +260,6 @@ fun aggregates(): List<GenericFunction> {
         inline(true)
 
         doc { f -> "Returns the first ${f.element} yielding the largest value of the given function or `null` if there are no ${f.element.pluralize()}." }
-        typeParam("T")
         typeParam("R : Comparable<R>")
         returns("T?")
         body {
@@ -326,33 +298,7 @@ fun aggregates(): List<GenericFunction> {
             return maxElem
             """
         }
-    }
-
-    templates add f("maxBy(selector: (T) -> R)") {
-        inline(true)
-
-        only(Maps)
-        doc { "Returns the first map entry yielding the largest value of the given function or `null` if there are no entries." }
-        typeParam("R : Comparable<R>")
-        returns("T?")
-        body {
-            """
-            val iterator = iterator()
-            if (!iterator.hasNext()) return null
-
-            var maxElem = iterator.next()
-            var maxValue = selector(maxElem)
-            while (iterator.hasNext()) {
-                val e = iterator.next()
-                val v = selector(e)
-                if (maxValue < v) {
-                    maxElem = e
-                    maxValue = v
-                }
-            }
-            return maxElem
-            """
-        }
+        body(Maps) { "return entries.maxBy(selector)" }
     }
 
     templates add f("fold(initial: R, operation: (R, T) -> R)") {
