@@ -6624,6 +6624,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("InconsistentTypeParameterBounds.kt")
+            public void testInconsistentTypeParameterBounds() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/InconsistentTypeParameterBounds.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("kt1575-Class.kt")
             public void testKt1575_Class() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/kt1575-Class.kt");
