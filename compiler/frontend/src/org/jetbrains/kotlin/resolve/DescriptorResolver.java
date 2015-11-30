@@ -47,7 +47,10 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
-import org.jetbrains.kotlin.resolve.scopes.*;
+import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
+import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.storage.StorageManager;
@@ -458,12 +461,12 @@ public class DescriptorResolver {
         return constructorDescriptor;
     }
 
-    static final class UpperBoundCheckerTask {
+    static final class UpperBoundCheckRequest {
         public final Name typeParameterName;
         public final KtTypeReference upperBound;
         public final KotlinType upperBoundType;
 
-        UpperBoundCheckerTask(Name typeParameterName, KtTypeReference upperBound, KotlinType upperBoundType) {
+        UpperBoundCheckRequest(Name typeParameterName, KtTypeReference upperBound, KotlinType upperBoundType) {
             this.typeParameterName = typeParameterName;
             this.upperBound = upperBound;
             this.upperBoundType = upperBoundType;
@@ -477,7 +480,7 @@ public class DescriptorResolver {
             List<TypeParameterDescriptorImpl> parameters,
             BindingTrace trace
     ) {
-        List<UpperBoundCheckerTask> deferredUpperBoundCheckerTasks = Lists.newArrayList();
+        List<UpperBoundCheckRequest> upperBoundCheckRequests = Lists.newArrayList();
 
         List<KtTypeParameter> typeParameters = declaration.getTypeParameters();
         Map<Name, TypeParameterDescriptorImpl> parameterByName = Maps.newHashMap();
@@ -491,7 +494,7 @@ public class DescriptorResolver {
             if (extendsBound != null) {
                 KotlinType type = typeResolver.resolveType(scope, extendsBound, trace, false);
                 typeParameterDescriptor.addUpperBound(type);
-                deferredUpperBoundCheckerTasks.add(new UpperBoundCheckerTask(ktTypeParameter.getNameAsName(), extendsBound, type));
+                upperBoundCheckRequests.add(new UpperBoundCheckRequest(ktTypeParameter.getNameAsName(), extendsBound, type));
             }
         }
         for (KtTypeConstraint constraint : declaration.getTypeConstraints()) {
@@ -505,7 +508,7 @@ public class DescriptorResolver {
             KotlinType bound = null;
             if (boundTypeReference != null) {
                 bound = typeResolver.resolveType(scope, boundTypeReference, trace, false);
-                deferredUpperBoundCheckerTasks.add(new UpperBoundCheckerTask(referencedName, boundTypeReference, bound));
+                upperBoundCheckRequests.add(new UpperBoundCheckRequest(referencedName, boundTypeReference, bound));
             }
 
             if (typeParameterDescriptor != null) {
@@ -526,21 +529,21 @@ public class DescriptorResolver {
         }
 
         if (!(declaration instanceof KtClass)) {
-            checkUpperBoundTypes(trace, deferredUpperBoundCheckerTasks);
+            checkUpperBoundTypes(trace, upperBoundCheckRequests);
             checkNamesInConstraints(declaration, descriptor, scope, trace);
         }
     }
 
-    public static void checkUpperBoundTypes(@NotNull BindingTrace trace, @NotNull List<UpperBoundCheckerTask> tasks) {
-        if (tasks.isEmpty()) return;
+    public static void checkUpperBoundTypes(@NotNull BindingTrace trace, @NotNull List<UpperBoundCheckRequest> requests) {
+        if (requests.isEmpty()) return;
 
         Set<Name> classBoundEncountered = new HashSet<Name>();
         Set<Pair<Name, TypeConstructor>> allBounds = new HashSet<Pair<Name, TypeConstructor>>();
 
-        for (UpperBoundCheckerTask checkerTask : tasks) {
-            Name typeParameterName = checkerTask.typeParameterName;
-            KotlinType upperBound = checkerTask.upperBoundType;
-            KtTypeReference upperBoundElement = checkerTask.upperBound;
+        for (UpperBoundCheckRequest request : requests) {
+            Name typeParameterName = request.typeParameterName;
+            KotlinType upperBound = request.upperBoundType;
+            KtTypeReference upperBoundElement = request.upperBound;
 
             if (!upperBound.isError()) {
                 if (!allBounds.add(new Pair<Name, TypeConstructor>(typeParameterName, upperBound.getConstructor()))) {

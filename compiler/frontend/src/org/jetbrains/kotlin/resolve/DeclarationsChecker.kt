@@ -157,25 +157,25 @@ class DeclarationsChecker(
 
         if (classOrObject !is KtClass) return
 
-        val tasks = ArrayList<DescriptorResolver.UpperBoundCheckerTask>()
+        val upperBoundCheckRequests = ArrayList<DescriptorResolver.UpperBoundCheckRequest>()
 
         for (typeParameter in classOrObject.typeParameters) {
             val typeReference = typeParameter.extendsBound ?: continue
             val type = typeReference.type() ?: continue
-            tasks.add(DescriptorResolver.UpperBoundCheckerTask(typeParameter.nameAsName, typeReference, type))
+            upperBoundCheckRequests.add(DescriptorResolver.UpperBoundCheckRequest(typeParameter.nameAsName, typeReference, type))
         }
 
         for (constraint in classOrObject.typeConstraints) {
             val typeReference = constraint.boundTypeReference ?: continue
             val type = typeReference.type() ?: continue
             val name = constraint.subjectTypeParameterName?.getReferencedNameAsName() ?: continue
-            tasks.add(DescriptorResolver.UpperBoundCheckerTask(name, typeReference, type))
+            upperBoundCheckRequests.add(DescriptorResolver.UpperBoundCheckRequest(name, typeReference, type))
         }
 
-        DescriptorResolver.checkUpperBoundTypes(trace, tasks)
+        DescriptorResolver.checkUpperBoundTypes(trace, upperBoundCheckRequests)
 
-        for (task in tasks) {
-            DescriptorResolver.checkBounds(task.upperBound, task.upperBoundType, trace)
+        for (request in upperBoundCheckRequests) {
+            DescriptorResolver.checkBounds(request.upperBound, request.upperBoundType, trace)
         }
     }
 
