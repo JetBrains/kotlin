@@ -27,6 +27,7 @@ import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
 import org.jetbrains.plugins.gradle.frameworkSupport.GradleFrameworkSupportProvider
 import javax.swing.Icon
 
+/*
 public class GradleKotlinJavaFrameworkSupportProvider() : GradleFrameworkSupportProvider() {
     override fun getFrameworkType(): FrameworkTypeEx = object : FrameworkTypeEx("KOTLIN") {
         override fun getIcon(): Icon = KotlinIcons.FILE
@@ -60,3 +61,4 @@ public class GradleKotlinJavaFrameworkSupportProvider() : GradleFrameworkSupport
                 .addBuildscriptDependencyNotation(KotlinWithGradleConfigurator.CLASSPATH.replace("\$kotlin_version", kotlinVersion))
     }
 }
+*/
