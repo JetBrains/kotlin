@@ -30,13 +30,13 @@ import java.util.Collection;
 import java.util.Iterator;
 
 public class DiagnosticsWithSuppression implements Diagnostics {
-    private final SuppressionManager suppressionManager;
+    private final BindingContextSuppressionManager suppressionManager;
     private final Collection<Diagnostic> diagnostics;
     private final DiagnosticsElementsCache elementsCache;
 
     public DiagnosticsWithSuppression(@NotNull BindingContext context, @NotNull Collection<Diagnostic> diagnostics) {
         this.diagnostics = diagnostics;
-        this.suppressionManager = new SuppressionManager(context);
+        this.suppressionManager = new BindingContextSuppressionManager(context);
         this.elementsCache = new DiagnosticsElementsCache(this, suppressionManager.getFilter());
     }
 
