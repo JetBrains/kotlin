@@ -11370,6 +11370,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("delegateByComplexInheritance.kt")
+            public void testDelegateByComplexInheritance() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/delegateByComplexInheritance.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("dereference.kt")
             public void testDereference() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/dereference.kt");

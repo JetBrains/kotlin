@@ -147,10 +147,14 @@ public class ConstructorDescriptorImpl extends FunctionDescriptorImpl implements
     @NotNull
     @Override
     public ConstructorDescriptor copy(DeclarationDescriptor newOwner, Modality modality, Visibility visibility, Kind kind, boolean copyOverrides) {
+        //noinspection ConstantConditions
         return (ConstructorDescriptor) doSubstitute(
-                TypeSubstitutor.EMPTY, newOwner, modality, visibility,
-                isOperator(), isInfix(), isExternal(), isInline(), isTailrec(), hasStableParameterNames(), hasSynthesizedParameterNames(),
-                null, copyOverrides, kind
+                newCopyBuilder()
+                        .setOwner(newOwner)
+                        .setModality(modality)
+                        .setVisibility(visibility)
+                        .setKind(kind)
+                        .setCopyOverrides(copyOverrides)
         );
     }
 }

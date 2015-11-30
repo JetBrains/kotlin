@@ -157,45 +157,17 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : BaseImportingSc
             }
         }
 
-        override fun doSubstitute(
-                originalSubstitutor: TypeSubstitutor,
-                newOwner: DeclarationDescriptor,
-                newModality: Modality,
-                newVisibility: Visibility,
-                isOperator: Boolean,
-                isInfix: Boolean,
-                isExternal: Boolean,
-                isInline: Boolean,
-                isTailrec: Boolean,
-                hasStableParameterNames: Boolean,
-                hasSynthesizedParameterNames: Boolean,
-                original: FunctionDescriptor?,
-                copyOverrides: Boolean,
-                kind: CallableMemberDescriptor.Kind,
-                newValueParameterDescriptors: MutableList<ValueParameterDescriptor>,
-                newExtensionReceiverParameterType: KotlinType?,
-                newReturnType: KotlinType,
-                name: Name?,
-                preserveSource: Boolean,
-                signatureChange: Boolean
-        ): FunctionDescriptor? {
-            val descriptor = super.doSubstitute(
-                    originalSubstitutor, newOwner, newModality, newVisibility,
-                    isOperator, isInfix, isExternal, isInline, isTailrec, hasStableParameterNames, hasSynthesizedParameterNames, original,
-                    copyOverrides, kind, newValueParameterDescriptors, newExtensionReceiverParameterType, newReturnType, name,
-                    preserveSource, signatureChange)
-                    as MyFunctionDescriptor? ?: return null
-
-            if (original == null) {
-                throw UnsupportedOperationException("doSubstitute with no original should not be called for synthetic extension")
-            }
+        override fun doSubstitute(configuration: CopyConfiguration): FunctionDescriptor? {
+            val descriptor = super.doSubstitute(configuration) as MyFunctionDescriptor? ?: return null
+            val original = configuration.original
+                           ?: throw UnsupportedOperationException("doSubstitute with no original should not be called for synthetic extension")
 
             original as MyFunctionDescriptor
             assert(original.original == original) { "original in doSubstitute should have no other original" }
 
             val substitutionMap = HashMap<TypeConstructor, TypeProjection>()
             for (typeParameter in original.typeParameters) {
-                val typeProjection = originalSubstitutor.substitution[typeParameter.defaultType] ?: continue
+                val typeProjection = configuration.originalSubstitutor.substitution[typeParameter.defaultType] ?: continue
                 val sourceTypeParameter = original.toSourceFunctionTypeParameters!![typeParameter]!!
                 substitutionMap[sourceTypeParameter.typeConstructor] = typeProjection
 
