@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import com.intellij.util.xmlb.XmlSerializerUtil
+import org.jetbrains.jps.api.GlobalOptions
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -110,7 +111,8 @@ public object KotlinCompilerRunner {
 
             val argsArray = argumentsList.toTypedArray()
 
-            System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
+            if (java.lang.Boolean.parseBoolean(System.getProperty(GlobalOptions.COMPILE_PARALLEL_OPTION, "false")))
+                System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
 
             if (!tryCompileWithDaemon(compilerClassName, argsArray, environment, messageCollector, collector)) {
                 // otherwise fallback to in-process
