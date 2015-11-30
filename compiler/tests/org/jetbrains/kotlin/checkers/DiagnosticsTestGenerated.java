@@ -16376,6 +16376,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/suppress/allWarnings"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
+                @TestMetadata("suppressWarningsOnAnonymousObjectInVariable.kt")
+                public void testSuppressWarningsOnAnonymousObjectInVariable() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/suppress/allWarnings/suppressWarningsOnAnonymousObjectInVariable.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("suppressWarningsOnClass.kt")
                 public void testSuppressWarningsOnClass() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/suppress/allWarnings/suppressWarningsOnClass.kt");
@@ -16391,6 +16397,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("suppressWarningsOnExpression.kt")
                 public void testSuppressWarningsOnExpression() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/suppress/allWarnings/suppressWarningsOnExpression.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("suppressWarningsOnFile.kt")
+                public void testSuppressWarningsOnFile() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/suppress/allWarnings/suppressWarningsOnFile.kt");
                     doTest(fileName);
                 }
 

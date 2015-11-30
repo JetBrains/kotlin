@@ -1,0 +1,3 @@
+package
+
+@kotlin.Suppress(names = {"warnings"}) public val anonymous: kotlin.Any
