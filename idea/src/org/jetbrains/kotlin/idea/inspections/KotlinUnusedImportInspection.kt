@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.idea.imports.KotlinImportOptimizer
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.ImportPath
 import java.util.*
@@ -54,7 +55,7 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
     override fun runForWholeFile() = true
 
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<out ProblemDescriptor>? {
-        if (file !is KtFile) return null
+        if (file !is KtFile || file is KtCodeFragment) return null
         if (!file.manager.isInProject(file)) return null
         if (file.importDirectives.isEmpty()) return null
 
