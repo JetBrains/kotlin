@@ -323,7 +323,7 @@ public class JetTypeMapper {
         else if (descriptor instanceof FunctionDescriptor && forceBoxedReturnType((FunctionDescriptor) descriptor)) {
             // GENERIC_TYPE is a hack to automatically box the return type
             //noinspection ConstantConditions
-            return mapType(descriptor.getReturnType(), sw, TypeMappingMode.GENERIC_TYPE);
+            return mapType(descriptor.getReturnType(), sw, TypeMappingMode.GENERIC_ARGUMENT);
         }
 
         return mapReturnType(descriptor, sw, returnType);
@@ -357,7 +357,7 @@ public class JetTypeMapper {
 
     @NotNull
     public Type mapTypeParameter(@NotNull KotlinType jetType, @Nullable BothSignatureWriter signatureVisitor) {
-        return mapType(jetType, signatureVisitor, TypeMappingMode.GENERIC_TYPE);
+        return mapType(jetType, signatureVisitor, TypeMappingMode.GENERIC_ARGUMENT);
     }
 
     @NotNull
@@ -1173,7 +1173,7 @@ public class JetTypeMapper {
             for (KotlinType jetType : typeParameterDescriptor.getUpperBounds()) {
                 if (jetType.getConstructor().getDeclarationDescriptor() instanceof ClassDescriptor) {
                     if (!isJvmInterface(jetType)) {
-                        mapType(jetType, sw, TypeMappingMode.GENERIC_TYPE);
+                        mapType(jetType, sw, TypeMappingMode.GENERIC_ARGUMENT);
                         break classBound;
                     }
                 }
@@ -1191,13 +1191,13 @@ public class JetTypeMapper {
             if (classifier instanceof ClassDescriptor) {
                 if (isJvmInterface(jetType)) {
                     sw.writeInterfaceBound();
-                    mapType(jetType, sw, TypeMappingMode.GENERIC_TYPE);
+                    mapType(jetType, sw, TypeMappingMode.GENERIC_ARGUMENT);
                     sw.writeInterfaceBoundEnd();
                 }
             }
             else if (classifier instanceof TypeParameterDescriptor) {
                 sw.writeInterfaceBound();
-                mapType(jetType, sw, TypeMappingMode.GENERIC_TYPE);
+                mapType(jetType, sw, TypeMappingMode.GENERIC_ARGUMENT);
                 sw.writeInterfaceBoundEnd();
             }
             else {
@@ -1209,7 +1209,7 @@ public class JetTypeMapper {
     private void writeParameter(
             @NotNull BothSignatureWriter sw,
             @NotNull KotlinType type,
-            @NotNull CallableDescriptor callableDescriptor
+            @Nullable CallableDescriptor callableDescriptor
     ) {
         writeParameter(sw, JvmMethodParameterKind.VALUE, type, callableDescriptor);
     }
@@ -1218,7 +1218,7 @@ public class JetTypeMapper {
             @NotNull BothSignatureWriter sw,
             @NotNull JvmMethodParameterKind kind,
             @NotNull KotlinType type,
-            @NotNull CallableDescriptor callableDescriptor
+            @Nullable CallableDescriptor callableDescriptor
     ) {
         sw.writeParameterType(kind);
 
@@ -1230,7 +1230,7 @@ public class JetTypeMapper {
     private void writeParameterType(
             @NotNull BothSignatureWriter sw,
             @NotNull KotlinType type,
-            @NotNull CallableDescriptor callableDescriptor
+            @Nullable CallableDescriptor callableDescriptor
     ) {
         TypeMappingMode typeMappingMode;
 
@@ -1241,7 +1241,7 @@ public class JetTypeMapper {
             typeMappingMode = typeMappingModeFromAnnotation;
         }
         else if (TypeMappingUtil.isMethodWithDeclarationSiteWildcards(callableDescriptor) && !type.getArguments().isEmpty()) {
-            typeMappingMode = TypeMappingMode.GENERIC_TYPE; // Render all wildcards
+            typeMappingMode = TypeMappingMode.GENERIC_ARGUMENT; // Render all wildcards
         }
         else {
             typeMappingMode = TypeMappingMode.getOptimalModeForValueParameter(type);
@@ -1370,11 +1370,11 @@ public class JetTypeMapper {
         sw.writeParametersStart();
 
         for (ScriptDescriptor importedScript : importedScripts) {
-            writeParameter(sw, importedScript.getDefaultType(), script.getUnsubstitutedPrimaryConstructor());
+            writeParameter(sw, importedScript.getDefaultType(), /* callableDescriptor = */ null);
         }
 
         for (ValueParameterDescriptor valueParameter : script.getUnsubstitutedPrimaryConstructor().getValueParameters()) {
-            writeParameter(sw, valueParameter.getType(), script.getUnsubstitutedPrimaryConstructor());
+            writeParameter(sw, valueParameter.getType(), /* callableDescriptor = */ null);
         }
 
         writeVoidReturn(sw);

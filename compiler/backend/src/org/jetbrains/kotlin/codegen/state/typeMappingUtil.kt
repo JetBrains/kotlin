@@ -72,7 +72,7 @@ public fun getEffectiveVariance(parameterVariance: Variance, projectionKind: Var
     return Variance.OUT_VARIANCE
 }
 
-val CallableDescriptor.isMethodWithDeclarationSiteWildcards: Boolean
+val CallableDescriptor?.isMethodWithDeclarationSiteWildcards: Boolean
     get() {
         if (this !is CallableMemberDescriptor) return false
         return firstOverridden {
@@ -101,11 +101,11 @@ internal fun TypeMappingMode.updateArgumentModeFromAnnotations(type: KotlinType)
 }
 
 internal fun extractTypeMappingModeFromAnnotation(
-        callableDescriptor: CallableDescriptor,
+        callableDescriptor: CallableDescriptor?,
         outerType: KotlinType,
         isForAnnotationParameter: Boolean
 ): TypeMappingMode? =
-        (outerType.suppressWildcardsMode() ?: callableDescriptor.suppressWildcardsMode())?.let {
+        (outerType.suppressWildcardsMode() ?: callableDescriptor?.suppressWildcardsMode())?.let {
             if (outerType.arguments.isNotEmpty())
                 TypeMappingMode.createWithConstantDeclarationSiteWildcardsMode(
                         skipDeclarationSiteWildcards = it, isForAnnotationParameter = isForAnnotationParameter)

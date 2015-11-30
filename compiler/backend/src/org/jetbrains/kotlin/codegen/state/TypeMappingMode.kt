@@ -33,20 +33,20 @@ internal class TypeMappingMode private constructor(
          * kotlin.Int is mapped to Ljava/lang/Integer;
          */
         @JvmField
-        val GENERIC_TYPE = TypeMappingMode()
+        val GENERIC_ARGUMENT = TypeMappingMode()
 
         /**
          * kotlin.Int is mapped to I
          */
         @JvmField
-        val DEFAULT = TypeMappingMode(genericArgumentMode = GENERIC_TYPE, needPrimitiveBoxing = false)
+        val DEFAULT = TypeMappingMode(genericArgumentMode = GENERIC_ARGUMENT, needPrimitiveBoxing = false)
 
         /**
          * kotlin.Int is mapped to Ljava/lang/Integer;
          * No projections allowed in immediate arguments
          */
         @JvmField
-        val SUPER_TYPE = TypeMappingMode(needPrimitiveBoxing = true, skipDeclarationSiteWildcards = true, genericArgumentMode = GENERIC_TYPE)
+        val SUPER_TYPE = TypeMappingMode(skipDeclarationSiteWildcards = true, genericArgumentMode = GENERIC_ARGUMENT)
 
         /**
          * kotlin.reflect.KClass mapped to java.lang.Class
@@ -56,7 +56,7 @@ internal class TypeMappingMode private constructor(
         val VALUE_FOR_ANNOTATION = TypeMappingMode(
                 isForAnnotationParameter = true,
                 needPrimitiveBoxing = false,
-                genericArgumentMode = TypeMappingMode(isForAnnotationParameter = true, genericArgumentMode = GENERIC_TYPE))
+                genericArgumentMode = TypeMappingMode(isForAnnotationParameter = true, genericArgumentMode = GENERIC_ARGUMENT))
 
 
         @JvmStatic
