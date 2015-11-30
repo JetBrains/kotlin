@@ -181,8 +181,8 @@ fun aggregates(): List<GenericFunction> {
         inline(true)
 
         doc { f -> "Returns the first ${f.element} yielding the smallest value of the given function or `null` if there are no ${f.element.pluralize()}." }
+        typeParam("T")
         typeParam("R : Comparable<R>")
-        typeParam("T : Any")
         returns("T?")
         body {
             """
@@ -287,8 +287,8 @@ fun aggregates(): List<GenericFunction> {
         inline(true)
 
         doc { f -> "Returns the first ${f.element} yielding the largest value of the given function or `null` if there are no ${f.element.pluralize()}." }
+        typeParam("T")
         typeParam("R : Comparable<R>")
-        typeParam("T : Any")
         returns("T?")
         body {
             """

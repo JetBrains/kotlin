@@ -8359,7 +8359,7 @@ public fun ShortArray.max(): Short? {
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
-public inline fun <R : Comparable<R>, T : Any> Array<out T>.maxBy(selector: (T) -> R): T? {
+public inline fun <T, R : Comparable<R>> Array<out T>.maxBy(selector: (T) -> R): T? {
     if (isEmpty()) return null
     var maxElem = this[0]
     var maxValue = selector(maxElem)
@@ -8625,7 +8625,7 @@ public fun ShortArray.min(): Short? {
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
-public inline fun <R : Comparable<R>, T : Any> Array<out T>.minBy(selector: (T) -> R): T? {
+public inline fun <T, R : Comparable<R>> Array<out T>.minBy(selector: (T) -> R): T? {
     if (isEmpty()) return null
     var minElem = this[0]
     var minValue = selector(minElem)
