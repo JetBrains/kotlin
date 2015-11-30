@@ -6005,6 +6005,132 @@ public inline fun <K, V> ShortArray.toMap(selector: (Short) -> K, transform: (Sh
 }
 
 /**
+ * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+@kotlin.jvm.JvmName("toMapOfPairs")
+public inline fun <T, K, V> Array<out T>.toMap(transform: (T) -> Pair<K, V>): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result += transform(element)
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+@kotlin.jvm.JvmName("toMapOfPairs")
+public inline fun <K, V> BooleanArray.toMap(transform: (Boolean) -> Pair<K, V>): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result += transform(element)
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+@kotlin.jvm.JvmName("toMapOfPairs")
+public inline fun <K, V> ByteArray.toMap(transform: (Byte) -> Pair<K, V>): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result += transform(element)
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+@kotlin.jvm.JvmName("toMapOfPairs")
+public inline fun <K, V> CharArray.toMap(transform: (Char) -> Pair<K, V>): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result += transform(element)
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+@kotlin.jvm.JvmName("toMapOfPairs")
+public inline fun <K, V> DoubleArray.toMap(transform: (Double) -> Pair<K, V>): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result += transform(element)
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+@kotlin.jvm.JvmName("toMapOfPairs")
+public inline fun <K, V> FloatArray.toMap(transform: (Float) -> Pair<K, V>): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result += transform(element)
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+@kotlin.jvm.JvmName("toMapOfPairs")
+public inline fun <K, V> IntArray.toMap(transform: (Int) -> Pair<K, V>): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result += transform(element)
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+@kotlin.jvm.JvmName("toMapOfPairs")
+public inline fun <K, V> LongArray.toMap(transform: (Long) -> Pair<K, V>): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result += transform(element)
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given array.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+@kotlin.jvm.JvmName("toMapOfPairs")
+public inline fun <K, V> ShortArray.toMap(transform: (Short) -> Pair<K, V>): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result += transform(element)
+    }
+    return result
+}
+
+/**
  * Returns a [Map] containing the elements from the given array indexed by the key
  * returned from [selector] function applied to each element.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.

@@ -127,6 +127,60 @@ fun snapshots(): List<GenericFunction> {
         deprecate(Deprecation("Use toMapBy instead.", replaceWith = "toMapBy(selector)", level = DeprecationLevel.HIDDEN))
     }
 
+    templates add f("toMap(transform: (T) -> Pair<K, V>)") {
+        inline(true)
+        include(CharSequences)
+        typeParam("K")
+        typeParam("V")
+        returns("Map<K, V>")
+        annotations("""@kotlin.jvm.JvmName("toMapOfPairs")""")
+        doc { f ->
+            """
+            Returns a [Map] containing key-value pairs provided by [transform] function applied to ${f.element}s of the given ${f.collection}.
+            If any of two pairs would have the same key the last one gets added to the map.
+            """
+        }
+        body {
+            """
+            val capacity = (collectionSizeOrDefault(10)/.75f) + 1
+            val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+            for (element in this) {
+                result += transform(element)
+            }
+            return result
+            """
+        }
+        body(Sequences) {
+            """
+            val result = LinkedHashMap<K, V>()
+            for (element in this) {
+                result += transform(element)
+            }
+            return result
+            """
+        }
+        body(CharSequences) {
+            """
+            val capacity = (length/.75f) + 1
+            val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+            for (element in this) {
+                result += transform(element)
+            }
+            return result
+            """
+        }
+        body(ArraysOfObjects, ArraysOfPrimitives) {
+            """
+            val capacity = (size/.75f) + 1
+            val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+            for (element in this) {
+                result += transform(element)
+            }
+            return result
+            """
+        }
+    }
+
     templates add f("toMapBy(selector: (T) -> K)") {
         inline(true)
         typeParam("K")

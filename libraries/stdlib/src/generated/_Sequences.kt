@@ -540,6 +540,19 @@ public inline fun <T, K, V> Sequence<T>.toMap(selector: (T) -> K, transform: (T)
 }
 
 /**
+ * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given sequence.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+@kotlin.jvm.JvmName("toMapOfPairs")
+public inline fun <T, K, V> Sequence<T>.toMap(transform: (T) -> Pair<K, V>): Map<K, V> {
+    val result = LinkedHashMap<K, V>()
+    for (element in this) {
+        result += transform(element)
+    }
+    return result
+}
+
+/**
  * Returns a [Map] containing the elements from the given sequence indexed by the key
  * returned from [selector] function applied to each element.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.

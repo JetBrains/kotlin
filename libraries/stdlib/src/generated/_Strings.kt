@@ -843,6 +843,20 @@ public inline fun <K, V> String.toMap(selector: (Char) -> K, transform: (Char) -
 }
 
 /**
+ * Returns a [Map] containing key-value pairs provided by [transform] function applied to characters of the given char sequence.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+@kotlin.jvm.JvmName("toMapOfPairs")
+public inline fun <K, V> CharSequence.toMap(transform: (Char) -> Pair<K, V>): Map<K, V> {
+    val capacity = (length/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result += transform(element)
+    }
+    return result
+}
+
+/**
  * Returns a [Map] containing the characters from the given char sequence indexed by the key
  * returned from [selector] function applied to each character.
  * If any two characters would have the same key returned by [selector] the last one gets added to the map.
