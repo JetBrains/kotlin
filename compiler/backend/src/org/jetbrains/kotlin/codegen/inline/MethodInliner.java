@@ -354,7 +354,8 @@ public class MethodInliner {
             ) {
                 if (isInliningLambda || InlineCodegenUtil.GENERATE_SMAP) {
                     String varSuffix = inliningContext.isRoot() && !InlineCodegenUtil.isFakeLocalVariableForInline(name) ? INLINE_FUN_VAR_SUFFIX : "";
-                    super.visitLocalVariable(name + varSuffix, desc, signature, start, end, getNewIndex(index));
+                    String varName = !varSuffix.isEmpty() && name.equals("this") ? name + "_" : name;
+                    super.visitLocalVariable(varName + varSuffix, desc, signature, start, end, getNewIndex(index));
                 }
             }
         };
