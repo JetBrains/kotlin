@@ -225,12 +225,12 @@ public class JDIEval(
         if (_class !is ClassType) throwBrokenCodeException(NoSuchMethodError("Static method is a non-class type: $method"))
 
         val args = mapArguments(arguments, method.safeArgumentTypes())
-        args.disableCollection()
 
         if (shouldInvokeMethodWithReflection(method, args)) {
             return invokeMethodWithReflection(_class.asType(), NULL_VALUE, args, methodDesc)
         }
 
+        args.disableCollection()
         val result = mayThrow { _class.invokeMethod(thread, method, args, invokePolicy) }
         args.enableCollection()
         return result.asValue()
@@ -296,12 +296,12 @@ public class JDIEval(
 
         fun doInvokeMethod(obj: ObjectReference, method: Method, policy: Int): Value {
             val args = mapArguments(arguments, method.safeArgumentTypes())
-            args.disableCollection()
 
             if (shouldInvokeMethodWithReflection(method, args)) {
                 return invokeMethodWithReflection(instance.asmType, instance, args, methodDesc)
             }
 
+            args.disableCollection()
             val result = mayThrow { obj.invokeMethod(thread, method, args, policy) }
             args.enableCollection()
             return result.asValue()
