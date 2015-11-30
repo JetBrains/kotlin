@@ -838,6 +838,20 @@ public inline fun <T, R : Comparable<R>> Sequence<T>.maxBy(selector: (T) -> R): 
 }
 
 /**
+ * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
+ */
+public fun <T> Sequence<T>.maxWith(comparator: Comparator<in T>): T? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var max = iterator.next()
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        if (comparator.compare(max, e) < 0) max = e
+    }
+    return max
+}
+
+/**
  * Returns the smallest element or `null` if there are no elements.
  */
 public fun <T : Comparable<T>> Sequence<T>.min(): T? {
@@ -868,6 +882,20 @@ public inline fun <T, R : Comparable<R>> Sequence<T>.minBy(selector: (T) -> R): 
         }
     }
     return minElem
+}
+
+/**
+ * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
+ */
+public fun <T> Sequence<T>.minWith(comparator: Comparator<in T>): T? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var min = iterator.next()
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        if (comparator.compare(min, e) > 0) min = e
+    }
+    return min
 }
 
 /**

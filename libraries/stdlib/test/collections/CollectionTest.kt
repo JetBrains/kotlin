@@ -4,6 +4,7 @@ import java.util.*
 import kotlin.test.*
 import org.junit.Test as test
 import test.collections.behaviors.*
+import test.compare.STRING_CASE_INSENSITIVE_ORDER
 import java.io.Serializable
 
 class CollectionTest {
@@ -494,6 +495,20 @@ class CollectionTest {
         expect("b", { listOf("a", "b").max() })
         expect(null, { listOf<Int>().asSequence().max() })
         expect(3, { listOf(2, 3).asSequence().max() })
+    }
+
+    @test fun minWith() {
+        expect(null, { listOf<Int>().minWith(naturalOrder()) })
+        expect(1, { listOf(1).minWith(naturalOrder()) })
+        expect("a", { listOf("a", "B").minWith(STRING_CASE_INSENSITIVE_ORDER) })
+        expect("a", { listOf("a", "B").asSequence().minWith(STRING_CASE_INSENSITIVE_ORDER) })
+    }
+
+    @test fun maxWith() {
+        expect(null, { listOf<Int>().maxWith(naturalOrder()) })
+        expect(1, { listOf(1).maxWith(naturalOrder()) })
+        expect("B", { listOf("a", "B").maxWith(STRING_CASE_INSENSITIVE_ORDER) })
+        expect("B", { listOf("a", "B").asSequence().maxWith(STRING_CASE_INSENSITIVE_ORDER) })
     }
 
     @test fun minBy() {

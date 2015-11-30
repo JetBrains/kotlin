@@ -142,10 +142,24 @@ public inline fun <K, V, R : Comparable<R>> Map<K, V>.maxBy(selector: (Map.Entry
 }
 
 /**
+ * Returns the first entry having the largest value according to the provided [comparator] or `null` if there are no entries.
+ */
+public fun <K, V> Map<K, V>.maxWith(comparator: Comparator<in Map.Entry<K, V>>): Map.Entry<K, V>? {
+    return entries.maxWith(comparator)
+}
+
+/**
  * Returns the first entry yielding the smallest value of the given function or `null` if there are no entries.
  */
 public inline fun <K, V, R : Comparable<R>> Map<K, V>.minBy(selector: (Map.Entry<K, V>) -> R): Map.Entry<K, V>? {
     return entries.minBy(selector)
+}
+
+/**
+ * Returns the first entry having the smallest value according to the provided [comparator] or `null` if there are no entries.
+ */
+public fun <K, V> Map<K, V>.minWith(comparator: Comparator<in Map.Entry<K, V>>): Map.Entry<K, V>? {
+    return entries.minWith(comparator)
 }
 
 /**

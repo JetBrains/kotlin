@@ -1350,6 +1350,19 @@ public inline fun <R : Comparable<R>> String.maxBy(selector: (Char) -> R): Char?
 }
 
 /**
+ * Returns the first character having the largest value according to the provided [comparator] or `null` if there are no characters.
+ */
+public fun CharSequence.maxWith(comparator: Comparator<in Char>): Char? {
+    if (isEmpty()) return null
+    var max = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(max, e) < 0) max = e
+    }
+    return max
+}
+
+/**
  * Returns the smallest character or `null` if there are no characters.
  */
 public fun CharSequence.min(): Char? {
@@ -1411,6 +1424,19 @@ public inline fun <R : Comparable<R>> String.minBy(selector: (Char) -> R): Char?
         }
     }
     return minElem
+}
+
+/**
+ * Returns the first character having the smallest value according to the provided [comparator] or `null` if there are no characters.
+ */
+public fun CharSequence.minWith(comparator: Comparator<in Char>): Char? {
+    if (isEmpty()) return null
+    var min = this[0]
+    for (i in 1..lastIndex) {
+        val e = this[i]
+        if (comparator.compare(min, e) > 0) min = e
+    }
+    return min
 }
 
 /**
