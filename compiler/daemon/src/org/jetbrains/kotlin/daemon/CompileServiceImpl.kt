@@ -479,7 +479,7 @@ class CompileServiceImpl(
     }
 
     private fun clearJarCache() {
-        ZipHandler.clearFileAccessorCache()
+//        ZipHandler.clearFileAccessorCache()
         val classloader = javaClass.classLoader
         // TODO: replace the following code with direct call to CoreJarFileSystem.<clearCache> as soon as it will be available (hopefully in 15.02)
         try {
