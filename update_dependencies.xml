@@ -4,10 +4,10 @@
     <property name="ideaVersion" value="143.1015.7"/>
 
 
-    <property name="kotlin.bootstrap.branch" value=""/>
-    <property name="kotlin.bootstrap.branch.locator" value=""/>
-    <property name="kotlin.bootstrap.locator" value="buildType:bt345,tag:bootstrap,status:SUCCESS${kotlin.bootstrap.branch.locator}"/>
-    <property name="kotlin.bootstrap.locator.force" value="false"/>
+    <property name="kotlin.bootstrap.branch" value="beta3"/>
+    <property name="kotlin.bootstrap.branch.locator" value=",branch:beta3"/>
+    <property name="kotlin.bootstrap.locator" value="buildType:bt345,tag:pre_release,status:SUCCESS${kotlin.bootstrap.branch.locator}"/>
+    <property name="kotlin.bootstrap.locator.force" value="true"/>
 
     <property name="markdown.locator" value="buildType:IntelliJMarkdownParser_Build,status:SUCCESS"/>
 
