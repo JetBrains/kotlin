@@ -403,6 +403,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("NumberPrefixAndSuffix.kt")
+        public void testNumberPrefixAndSuffix() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/NumberPrefixAndSuffix.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ObjectWithConstructor.kt")
         public void testObjectWithConstructor() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/ObjectWithConstructor.kt");

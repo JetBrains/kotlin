@@ -1,0 +1,9 @@
+package
+
+public fun test(/*0*/ a: kotlin.Any): kotlin.Unit
+public infix fun kotlin.Any?.Loo(/*0*/ a: kotlin.Any): kotlin.Unit
+public operator fun kotlin.Any?.contains(/*0*/ a: kotlin.Any): kotlin.Boolean
+public infix fun kotlin.Any?.ddoo(/*0*/ a: kotlin.Any): kotlin.Unit
+public infix fun kotlin.Any?.doo(/*0*/ a: kotlin.Any): kotlin.Unit
+public infix fun kotlin.Any?.foo(/*0*/ a: kotlin.Any): kotlin.Unit
+public infix fun kotlin.Any?.zoo(/*0*/ a: kotlin.Any): kotlin.Unit
