@@ -179,35 +179,37 @@ class DeclarationsChecker(
         }
     }
 
-    private fun checkSupertypesForConsistency(
-            classifierDescriptor: ClassifierDescriptor,
-            sourceElement: PsiElement) {
-        val multimap = SubstitutionUtils.buildDeepSubstitutionMultimap(classifierDescriptor.defaultType)
-        for ((typeParameterDescriptor, projections) in multimap.asMap().entries) {
-            if (projections.size > 1) {
-                // Immediate arguments of supertypes cannot be projected
-                val conflictingTypes = Sets.newLinkedHashSet<KotlinType>()
-                for (projection in projections) {
-                    conflictingTypes.add(projection.type)
-                }
-                removeDuplicateTypes(conflictingTypes)
-                if (conflictingTypes.size > 1) {
-                    val containingDeclaration = typeParameterDescriptor.containingDeclaration as? ClassDescriptor
-                                                ?: throw AssertionError("Not a class descriptor : " + typeParameterDescriptor.containingDeclaration)
-                    if (sourceElement is KtClassOrObject) {
-                        val delegationSpecifierList = sourceElement.getDelegationSpecifierList() ?: continue
-                        trace.report(INCONSISTENT_TYPE_PARAMETER_VALUES.on(delegationSpecifierList,
-                                                                           typeParameterDescriptor,
-                                                                           containingDeclaration,
-                                                                           conflictingTypes))
-                    }
-                    else if (sourceElement is KtTypeParameter) {
-                        trace.report(INCONSISTENT_TYPE_PARAMETER_BOUNDS.on(sourceElement,
-                                                                           typeParameterDescriptor,
-                                                                           containingDeclaration,
-                                                                           conflictingTypes))
-                    }
-                }
+    private fun checkSupertypesForConsistency(classifier: ClassifierDescriptor, sourceElement: PsiElement) {
+        if (classifier is TypeParameterDescriptor) {
+            val immediateUpperBounds = classifier.upperBounds.map { it.constructor }
+            if (immediateUpperBounds.size != immediateUpperBounds.toSet().size) {
+                // If there are duplicate type constructors among the _immediate_ upper bounds,
+                // then the REPEATED_BOUNDS diagnostic would be already reported for those bounds of this type parameter
+                return
+            }
+        }
+
+        val multiMap = SubstitutionUtils.buildDeepSubstitutionMultimap(classifier.defaultType)
+        for ((typeParameterDescriptor, projections) in multiMap.asMap()) {
+            if (projections.size <= 1) continue
+
+            // Immediate arguments of supertypes cannot be projected
+            val conflictingTypes = projections.map { it.type }.toMutableSet()
+            removeDuplicateTypes(conflictingTypes)
+            if (conflictingTypes.size <= 1) continue
+
+            val containingDeclaration = typeParameterDescriptor.containingDeclaration as? ClassDescriptor
+                                        ?: throw AssertionError("Not a class descriptor: " + typeParameterDescriptor.containingDeclaration)
+            if (sourceElement is KtClassOrObject) {
+                val delegationSpecifierList = sourceElement.getDelegationSpecifierList() ?: continue
+                trace.report(INCONSISTENT_TYPE_PARAMETER_VALUES.on(
+                        delegationSpecifierList, typeParameterDescriptor, containingDeclaration, conflictingTypes
+                ))
+            }
+            else if (sourceElement is KtTypeParameter) {
+                trace.report(INCONSISTENT_TYPE_PARAMETER_BOUNDS.on(
+                        sourceElement, typeParameterDescriptor, containingDeclaration, conflictingTypes
+                ))
             }
         }
     }
