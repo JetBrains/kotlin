@@ -25,7 +25,7 @@ import com.intellij.openapi.vfs.VirtualFile
 
 class KotlinBinaryClassCache : Disposable {
     private class RequestCache {
-        internal lateinit var virtualFile: VirtualFile
+        internal var virtualFile: VirtualFile? = null
         internal var modificationStamp: Long = 0
         internal var virtualFileKotlinClass: VirtualFileKotlinClass? = null
 
@@ -53,7 +53,7 @@ class KotlinBinaryClassCache : Disposable {
 
     companion object {
 
-        fun getKotlinBinaryClass(file: VirtualFile): KotlinJvmBinaryClass? {
+        fun getKotlinBinaryClass(file: VirtualFile, fileContent: ByteArray? = null): KotlinJvmBinaryClass? {
             if (file.fileType !== JavaClassFileType.INSTANCE) return null
 
             val service = ServiceManager.getService(KotlinBinaryClassCache::class.java)
@@ -65,7 +65,7 @@ class KotlinBinaryClassCache : Disposable {
             else {
                 val aClass = ApplicationManager.getApplication().runReadAction(Computable {
                     //noinspection deprecation
-                    VirtualFileKotlinClass.create(file)
+                    VirtualFileKotlinClass.create(file, fileContent)
                 })
 
                 return requestCache.cache(file, aClass)
