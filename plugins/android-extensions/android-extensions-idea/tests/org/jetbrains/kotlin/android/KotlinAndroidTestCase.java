@@ -213,14 +213,14 @@ public abstract class KotlinAndroidTestCase extends KotlinAndroidTestCaseBase {
     public void tearDown() throws Exception {
         KotlinInternalMode.Instance.setEnabled(kotlinInternalModeOriginalValue);
 
-        super.tearDown();
-
-        Field listenersField = PsiProjectListener.class.getDeclaredField("ourListeners");
+        Field listenersField = PsiProjectListener.class.getDeclaredField("myListeners");
         listenersField.setAccessible(true);
-        Map listeners = (Map)listenersField.get(null);
+        Map listeners = (Map)listenersField.get(PsiProjectListener.getInstance(getProject()));
         listeners.clear();
 
         VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory());
+
+        super.tearDown();
 
         myModule = null;
         myAdditionalModules = null;
