@@ -11903,6 +11903,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("errorType.kt")
+                public void testErrorType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/rawTypes/errorType.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("genericInnerClass.kt")
                 public void testGenericInnerClass() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/rawTypes/genericInnerClass.kt");
