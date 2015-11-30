@@ -69,11 +69,6 @@ public enum class DeprecationLevel {
  */
 @Target(TYPE)
 @MustBeDocumented
-public annotation class ExtensionFunctionType
-
-@Target(TYPE)
-@MustBeDocumented
-@Deprecated("Use @ExtensionFunctionType instead.", replaceWith = ReplaceWith("@ExtensionFunctionType"))
 public annotation class Extension
 
 /**
