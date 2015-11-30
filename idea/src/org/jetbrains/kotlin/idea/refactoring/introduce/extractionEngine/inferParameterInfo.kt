@@ -35,8 +35,10 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.psi.psiUtil.isInsideOf
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.hasBothReceivers
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.isSynthesizedInvoke
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -44,8 +46,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.utils.findFunction
 import org.jetbrains.kotlin.types.CommonSupertypes
 import org.jetbrains.kotlin.types.KotlinType
@@ -90,9 +92,22 @@ internal fun ExtractionData.inferParametersInfo(
             else -> extensionReceiver
         } as? ReceiverValue) ?: ReceiverValue.NO_RECEIVER
 
-        extractReceiver(receiverToExtract, info, targetScope, refInfo, extractedDescriptorToParameter, pseudocode, bindingContext, false)
-        if (options.canWrapInWith && resolvedCall != null && isMemberExtensionFunction(resolvedCall, ref)) {
-            extractReceiver(resolvedCall.dispatchReceiver, info, targetScope, refInfo, extractedDescriptorToParameter, pseudocode, bindingContext, true)
+        val twoReceivers = resolvedCall != null && resolvedCall.hasBothReceivers()
+        val dispatchReceiverDescriptor = (resolvedCall?.dispatchReceiver as? ImplicitReceiver)?.declarationDescriptor
+        if (twoReceivers
+            && resolvedCall!!.extensionReceiver is ExpressionReceiver
+            && DescriptorUtils.isCompanionObject(dispatchReceiverDescriptor)) {
+            info.replacementMap.putValue(refInfo.resolveResult.originalRefExpr,
+                                         WrapCompanionInWithReplacement(dispatchReceiverDescriptor as ClassDescriptor))
+            continue
+        }
+
+        if (!refInfo.shouldSkipPrimaryReceiver) {
+            extractReceiver(receiverToExtract, info, targetScope, refInfo, extractedDescriptorToParameter, pseudocode, bindingContext, false)
+        }
+
+        if (options.canWrapInWith && twoReceivers) {
+            extractReceiver(resolvedCall!!.dispatchReceiver, info, targetScope, refInfo, extractedDescriptorToParameter, pseudocode, bindingContext, true)
         }
     }
 
@@ -132,7 +147,7 @@ private fun ExtractionData.extractReceiver(
         extractedDescriptorToParameter: HashMap<DeclarationDescriptor, MutableParameter>,
         pseudocode: Pseudocode,
         bindingContext: BindingContext,
-        isMemberExtensionFunction: Boolean
+        isMemberExtension: Boolean
 ) {
     val (originalRef, originalDeclaration, originalDescriptor, resolvedCall) = refInfo.resolveResult
 
@@ -162,12 +177,17 @@ private fun ExtractionData.extractReceiver(
         } as? ClassifierDescriptor
     }
 
-    if (referencedClassifierDescriptor != null && !(isMemberExtensionFunction && options.canWrapInWith)) {
+    if (referencedClassifierDescriptor != null) {
         if (!referencedClassifierDescriptor.defaultType.processTypeIfExtractable(
                 info.typeParameters, info.nonDenotableTypes, options, targetScope, referencedClassifierDescriptor is TypeParameterDescriptor
         )) return
 
-        if (referencedClassifierDescriptor is ClassDescriptor) {
+        if (options.canWrapInWith
+            && resolvedCall != null
+            && resolvedCall.hasBothReceivers()
+            && DescriptorUtils.isCompanionObject(referencedClassifierDescriptor)) {
+            info.replacementMap.putValue(originalRef, WrapCompanionInWithReplacement(referencedClassifierDescriptor as ClassDescriptor))
+        } else if (referencedClassifierDescriptor is ClassDescriptor) {
             info.replacementMap.putValue(originalRef, FqNameReplacement(originalDescriptor.getImportableDescriptor().fqNameSafe))
         }
     }
@@ -255,7 +275,7 @@ private fun ExtractionData.extractReceiver(
             }
 
             val replacement = when {
-                isMemberExtensionFunction -> WrapInWithReplacement(parameter)
+                isMemberExtension -> WrapParameterInWithReplacement(parameter)
                 hasThisReceiver && extractThis -> AddPrefixReplacement(parameter)
                 else -> RenameReplacement(parameter)
             }
@@ -303,12 +323,4 @@ private fun suggestParameterType(
 
                else -> null
            } ?: builtIns.defaultParameterType
-}
-
-private fun isMemberExtensionFunction(resolvedCall: ResolvedCall<*>, ref: KtSimpleNameExpression): Boolean {
-    // TODO temporary hack because we couldn't correctly extract member extension function with two explicit receivers
-    if (ref.parent !is KtCallExpression) return false
-
-    val resultingDescriptor = resolvedCall.resultingDescriptor
-    return resultingDescriptor is FunctionDescriptor && resolvedCall.extensionReceiver != ReceiverValue.NO_RECEIVER && resolvedCall.dispatchReceiver != ReceiverValue.NO_RECEIVER
 }

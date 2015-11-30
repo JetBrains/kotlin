@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
+import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.hasBothReceivers
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tasks.isSynthesizedInvoke
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
@@ -75,7 +76,8 @@ data class ResolvedReferenceInfo(
         val refExpr: KtSimpleNameExpression,
         val resolveResult: ResolveResult,
         val smartCast: KotlinType?,
-        val possibleTypes: Set<KotlinType>
+        val possibleTypes: Set<KotlinType>,
+        val shouldSkipPrimaryReceiver: Boolean
 )
 
 internal var KtSimpleNameExpression.resolveResult: ResolveResult? by CopyableUserDataProperty(Key.create("RESOLVE_RESULT"))
@@ -202,6 +204,7 @@ data class ExtractionData(
 
             val smartCast: KotlinType?
             val possibleTypes: Set<KotlinType>
+            val shouldSkipPrimaryReceiver: Boolean
 
             // Qualified property reference: a.b
             val qualifiedExpression = newRef.getQualifiedExpressionForSelector()
@@ -211,13 +214,15 @@ data class ExtractionData(
                 possibleTypes = getPossibleTypes(smartCastTarget, originalResolveResult.resolvedCall, originalContext)
                 val receiverDescriptor =
                         (originalResolveResult.resolvedCall?.dispatchReceiver as? ImplicitReceiver)?.declarationDescriptor
-                if (smartCast == null
-                    && !DescriptorUtils.isCompanionObject(receiverDescriptor)
-                    && qualifiedExpression.receiverExpression !is KtSuperExpression) continue
+                shouldSkipPrimaryReceiver = smartCast == null
+                                            && !DescriptorUtils.isCompanionObject(receiverDescriptor)
+                                            && qualifiedExpression.receiverExpression !is KtSuperExpression
+                if (shouldSkipPrimaryReceiver && !(originalResolveResult.resolvedCall?.hasBothReceivers() ?: false)) continue
             }
             else {
                 smartCast = originalContext[BindingContext.SMARTCAST, originalResolveResult.originalRefExpr]
                 possibleTypes = getPossibleTypes(originalResolveResult.originalRefExpr, originalResolveResult.resolvedCall, originalContext)
+                shouldSkipPrimaryReceiver = false
             }
 
             val parent = newRef.parent
@@ -241,11 +246,11 @@ data class ExtractionData(
                     val functionResolveResult = originalResolveResult.copy(resolvedCall = originalFunctionCall!!,
                                                                            descriptor = originalFunctionCall.resultingDescriptor,
                                                                            declaration = invokeDeclaration)
-                    referencesInfo.add(ResolvedReferenceInfo(newRef, variableResolveResult, smartCast, possibleTypes))
-                    referencesInfo.add(ResolvedReferenceInfo(newRef, functionResolveResult, smartCast, possibleTypes))
+                    referencesInfo.add(ResolvedReferenceInfo(newRef, variableResolveResult, smartCast, possibleTypes, shouldSkipPrimaryReceiver))
+                    referencesInfo.add(ResolvedReferenceInfo(newRef, functionResolveResult, smartCast, possibleTypes, shouldSkipPrimaryReceiver))
                 }
                 else {
-                    referencesInfo.add(ResolvedReferenceInfo(newRef, originalResolveResult, smartCast, possibleTypes))
+                    referencesInfo.add(ResolvedReferenceInfo(newRef, originalResolveResult, smartCast, possibleTypes, shouldSkipPrimaryReceiver))
                 }
             }
         }

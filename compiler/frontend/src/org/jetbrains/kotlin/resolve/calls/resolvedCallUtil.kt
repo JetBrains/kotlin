@@ -84,3 +84,5 @@ public fun ResolvedCall<*>.getImplicitReceiverValue(): ReceiverValue {
         else -> ReceiverValue.NO_RECEIVER
     }
 }
+
+public fun ResolvedCall<*>.hasBothReceivers() = dispatchReceiver.exists() && extensionReceiver.exists()

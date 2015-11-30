@@ -22,6 +22,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.Analysis
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.*
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference.ShorteningMode
 import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.approximateFlexibleTypes
 import org.jetbrains.kotlin.idea.util.isAnnotatedNotNull
 import org.jetbrains.kotlin.idea.util.isAnnotatedNullable
@@ -39,14 +41,16 @@ import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.isUnit
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import java.util.*
 
 interface Parameter {
@@ -95,15 +99,27 @@ class RenameReplacement(override val parameter: Parameter): ParameterReplacement
     }
 }
 
-class WrapInWithReplacement(override val parameter: Parameter): ParameterReplacement {
+abstract class WrapInWithReplacement : Replacement {
+    abstract val argumentText: String
+
     override fun invoke(descriptor: ExtractableCodeDescriptor, e: KtElement): KtElement {
-        val call = e.parents.firstIsInstance<KtCallExpression>().getQualifiedExpressionForSelectorOrThis()
-        val replacingExpression = KtPsiFactory(e).createExpressionByPattern("with($0) { $1 }", parameter.name, call)
+        val call = (e as? KtSimpleNameExpression)?.getQualifiedElement() ?: return e
+        val replacingExpression = KtPsiFactory(e).createExpressionByPattern("with($0) { $1 }", argumentText, call)
         val replace = call.replace(replacingExpression)
         return (replace as KtCallExpression).functionLiteralArguments.first().getFunctionLiteral().bodyExpression!!.statements.first()
     }
+}
 
-    override fun copy(parameter: Parameter) = WrapInWithReplacement(parameter)
+class WrapParameterInWithReplacement(override val parameter: Parameter): WrapInWithReplacement(), ParameterReplacement {
+    override val argumentText: String
+        get() = parameter.name
+
+    override fun copy(parameter: Parameter) = WrapParameterInWithReplacement(parameter)
+}
+
+class WrapCompanionInWithReplacement(val descriptor: ClassDescriptor): WrapInWithReplacement() {
+    override val argumentText: String
+        get() = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(descriptor)
 }
 
 class AddPrefixReplacement(override val parameter: Parameter): ParameterReplacement {
