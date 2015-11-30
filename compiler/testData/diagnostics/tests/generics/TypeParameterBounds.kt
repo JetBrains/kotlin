@@ -16,12 +16,6 @@ interface IncorrectH<<!MISPLACED_TYPE_PARAMETER_CONSTRAINTS!>T : G<D<A>><!>> whe
 
 interface CorrectH<T> where T : G<D<A>>, T : <!REPEATED_BOUND!>G<D<B>><!>
 
-interface I<T : G<D<T>>> {
-    fun <<!MISPLACED_TYPE_PARAMETER_CONSTRAINTS, INCONSISTENT_TYPE_PARAMETER_BOUNDS!>S : T?<!>> incorrectFoo() where S : G<D<S>>
-
-    fun <<!INCONSISTENT_TYPE_PARAMETER_BOUNDS!>S<!>> correctFoo() where S : T?, S : G<D<S>>
-}
-
 interface incorrectJ<<!MISPLACED_TYPE_PARAMETER_CONSTRAINTS!>T: G<D<T>><!>> where T : <!REPEATED_BOUND!>G<D<T?>><!>
 
 interface correctJ<T> where T : G<D<T>>, T : <!REPEATED_BOUND!>G<D<T?>><!>

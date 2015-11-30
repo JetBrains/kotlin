@@ -179,6 +179,17 @@ class DeclarationsChecker(
         }
     }
 
+    private fun checkOnlyOneTypeParameterBound(descriptor: TypeParameterDescriptor, declaration: KtTypeParameter) {
+        val upperBounds = descriptor.upperBounds
+        val (boundsWhichAreTypeParameters, otherBounds) = upperBounds
+                .map { type -> type.constructor }
+                .partition { constructor -> constructor.declarationDescriptor is TypeParameterDescriptor }
+                .let { pair -> pair.first.toSet() to pair.second.toSet() }
+        if (boundsWhichAreTypeParameters.size > 1 || (boundsWhichAreTypeParameters.isNotEmpty() && otherBounds.isNotEmpty())) {
+            trace.report(BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER.on(declaration))
+        }
+    }
+
     private fun checkSupertypesForConsistency(classifier: ClassifierDescriptor, sourceElement: PsiElement) {
         if (classifier is TypeParameterDescriptor) {
             val immediateUpperBounds = classifier.upperBounds.map { it.constructor }
@@ -330,13 +341,15 @@ class DeclarationsChecker(
 
     private fun checkTypeParameterConstraints(typeParameterListOwner: KtTypeParameterListOwner) {
         val constraints = typeParameterListOwner.typeConstraints
-        if (!constraints.isEmpty()) {
-            for (typeParameter in typeParameterListOwner.typeParameters) {
-                if (typeParameter.extendsBound != null && hasConstraints(typeParameter, constraints)) {
-                    trace.report(MISPLACED_TYPE_PARAMETER_CONSTRAINTS.on(typeParameter))
-                }
-                trace.get(TYPE_PARAMETER, typeParameter)?.let { checkSupertypesForConsistency(it, typeParameter) }
+        if (constraints.isEmpty()) return
+
+        for (typeParameter in typeParameterListOwner.typeParameters) {
+            if (typeParameter.extendsBound != null && hasConstraints(typeParameter, constraints)) {
+                trace.report(MISPLACED_TYPE_PARAMETER_CONSTRAINTS.on(typeParameter))
             }
+            val typeParameterDescriptor = trace.get(TYPE_PARAMETER, typeParameter) ?: continue
+            checkSupertypesForConsistency(typeParameterDescriptor, typeParameter)
+            checkOnlyOneTypeParameterBound(typeParameterDescriptor, typeParameter)
         }
     }
 

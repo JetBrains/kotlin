@@ -1,62 +1,46 @@
 package
 
-public fun </*0*/ T : D<A>> bar(): kotlin.Unit where T : D<B>
+public fun </*0*/ K, /*1*/ V : K> f1(): kotlin.Unit where V : K
+public fun </*0*/ K, /*1*/ V, /*2*/ W : K> f2(): kotlin.Unit where W : V
 
-public interface A {
+public interface A1</*0*/ K, /*1*/ V : K> where V : K {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public interface B {
+public interface A2</*0*/ K, /*1*/ V, /*2*/ W : K> where W : V {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public interface CorrectF</*0*/ T : D<A>> where T : D<B> {
+public interface A3</*0*/ K, /*1*/ V : I1> where V : K, V : I2 {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public interface CorrectH</*0*/ T : G<D<A>>> where T : G<D<B>> {
+public interface A4</*0*/ K : I1, /*1*/ V : I2> where K : I2, K : C, K : V, V : I1 {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public interface D</*0*/ T> {
+public open class C {
+    public constructor C()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public interface G</*0*/ T> {
+public interface I1 {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public interface IncorrectF</*0*/ T : D<A>> where T : D<B> {
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-}
-
-public interface IncorrectH</*0*/ T : G<D<A>>> where T : G<D<T>> {
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-}
-
-public interface correctJ</*0*/ T : G<D<T>>> where T : G<D<T?>> {
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-}
-
-public interface incorrectJ</*0*/ T : G<D<T>>> where T : G<D<T?>> {
+public interface I2 {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

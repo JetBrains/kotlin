@@ -5,7 +5,7 @@ package a {
     public fun </*0*/ T : a.A> emptyListOfA(): kotlin.List<T>
     public fun </*0*/ T : a.A, /*1*/ R : T> emptyStrangeMap(): kotlin.Map<T, R>
     public fun </*0*/ T, /*1*/ R : T> emptyStrangeMap1(/*0*/ t: T): kotlin.Map<T, R>
-    public fun </*0*/ T : a.A, /*1*/ R : T> emptyStrangeMap2(/*0*/ t: T): kotlin.Map<T, R> where R : a.A
+    public fun </*0*/ T : a.A, /*1*/ R : T> emptyStrangeMap2(/*0*/ t: T): kotlin.Map<T, R>
     public fun </*0*/ T : a.A, /*1*/ R : T> emptyStrangeMap3(/*0*/ r: R): kotlin.Map<T, R>
     public fun </*0*/ T, /*1*/ R : T> emptyStrangeMap4(/*0*/ l: kotlin.MutableList<T>): kotlin.Map<T, R>
     public fun </*0*/ U, /*1*/ V : U> foo(): U

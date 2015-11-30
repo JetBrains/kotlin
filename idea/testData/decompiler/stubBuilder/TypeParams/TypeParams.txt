@@ -43,9 +43,7 @@ PsiJetFileStubImpl[package=test]
       TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=T7]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
-            USER_TYPE:[isAbsoluteInRootPackage=false]
-              REFERENCE_EXPRESSION:[referencedName=kotlin]
-            REFERENCE_EXPRESSION:[referencedName=Any]
+            REFERENCE_EXPRESSION:[referencedName=T6]
     PRIMARY_CONSTRUCTOR:
       MODIFIER_LIST:[public]
       VALUE_PARAMETER_LIST:
@@ -67,11 +65,6 @@ PsiJetFileStubImpl[package=test]
                 REFERENCE_EXPRESSION:[referencedName=java]
               REFERENCE_EXPRESSION:[referencedName=io]
             REFERENCE_EXPRESSION:[referencedName=Serializable]
-      TYPE_CONSTRAINT:
-        REFERENCE_EXPRESSION:[referencedName=T7]
-        TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
-            REFERENCE_EXPRESSION:[referencedName=T6]
     CLASS_BODY:
       PROPERTY:[fqName=test.TypeParams.useSomeParam, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=useSomeParam]
         MODIFIER_LIST:[public final]
@@ -315,6 +308,12 @@ PsiJetFileStubImpl[package=test]
           TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=G3]
             TYPE_REFERENCE:
               USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=kotlin]
+                REFERENCE_EXPRESSION:[referencedName=String]
+          TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=G4]
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
                 REFERENCE_EXPRESSION:[referencedName=G1]
         VALUE_PARAMETER_LIST:
           VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
@@ -352,13 +351,6 @@ PsiJetFileStubImpl[package=test]
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Unit]
         TYPE_CONSTRAINT_LIST:
-          TYPE_CONSTRAINT:
-            REFERENCE_EXPRESSION:[referencedName=G3]
-            TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                USER_TYPE:[isAbsoluteInRootPackage=false]
-                  REFERENCE_EXPRESSION:[referencedName=kotlin]
-                REFERENCE_EXPRESSION:[referencedName=String]
           TYPE_CONSTRAINT:
             REFERENCE_EXPRESSION:[referencedName=G3]
             TYPE_REFERENCE:
