@@ -7,7 +7,7 @@ fun paramCount(vararg a: Int): Int = noImpl
 fun anotherParamCount(vararg a: Int): Int = noImpl
 
 @native("paramCount")
-fun genericParamCount<T>(vararg a: T): Int = noImpl
+fun <T> genericParamCount(vararg a: T): Int = noImpl
 
 // test spread operator
 fun count(vararg a: Int) = paramCount(*a)
@@ -66,7 +66,7 @@ fun sumOfParameters(x: Int, y: Int, vararg a: Int): Int = noImpl
 fun sumFunValuesOnParameters(x: Int, y: Int, vararg a: Int, f: (Int) -> Int): Int = noImpl
 
 @native
-fun idArrayVarArg<T>(vararg a: Array<T>): Array<T> = noImpl
+fun <T> idArrayVarArg(vararg a: Array<T>): Array<T> = noImpl
 
 fun box(): String {
     if (paramCount() != 0)

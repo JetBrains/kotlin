@@ -13,4 +13,4 @@ class A {
 }
 
 // SKIP_CONSTRUCTORS: false
-// STEP_INTO: 2
+// STEP_INTO: 3

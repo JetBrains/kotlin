@@ -91,4 +91,6 @@ public interface ConstraintSystemStatus {
     public fun hasTypeInferenceIncorporationError(): Boolean
 
     public fun hasTypeParameterWithUnsatisfiedOnlyInputTypesError(): Boolean
+
+    public val constraintErrors: List<ConstraintError>
 }

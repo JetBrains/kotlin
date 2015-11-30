@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.descriptorUtil.getOwnerForEffectiveDispatchReceiverParameter
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 
 // it returns true if call has no dispatch receiver (e.g. resulting descriptor is top-level function or local variable)
 // or call receiver is effectively `this` instance (explicitly or implicitly) of resulting descriptor
@@ -53,12 +53,12 @@ private fun ResolvedCall<*>.hasThisOrNoDispatchReceiver(
     if (getResultingDescriptor().getDispatchReceiverParameter() == null || !dispatchReceiverValue.exists()) return returnForNoReceiver
 
     var dispatchReceiverDescriptor: DeclarationDescriptor? = null
-    if (dispatchReceiverValue is ThisReceiver) {
+    if (dispatchReceiverValue is ImplicitReceiver) {
         // foo() -- implicit receiver
-        dispatchReceiverDescriptor = dispatchReceiverValue.getDeclarationDescriptor()
+        dispatchReceiverDescriptor = dispatchReceiverValue.declarationDescriptor
     }
     else if (dispatchReceiverValue is ExpressionReceiver && considerExplicitReceivers) {
-        val expression = KtPsiUtil.deparenthesize(dispatchReceiverValue.getExpression())
+        val expression = KtPsiUtil.deparenthesize(dispatchReceiverValue.expression)
         if (expression is KtThisExpression) {
             // this.foo() -- explicit receiver
             dispatchReceiverDescriptor = context.get(BindingContext.REFERENCE_TARGET, expression.getInstanceReference())
@@ -70,16 +70,16 @@ private fun ResolvedCall<*>.hasThisOrNoDispatchReceiver(
 
 public fun ResolvedCall<*>.getExplicitReceiverValue(): ReceiverValue {
     return when (getExplicitReceiverKind()) {
-        ExplicitReceiverKind.DISPATCH_RECEIVER -> getDispatchReceiver()
-        ExplicitReceiverKind.EXTENSION_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS -> getExtensionReceiver()
+        ExplicitReceiverKind.DISPATCH_RECEIVER -> dispatchReceiver
+        ExplicitReceiverKind.EXTENSION_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS -> extensionReceiver as ReceiverValue
         else -> ReceiverValue.NO_RECEIVER
     }
 }
 
 public fun ResolvedCall<*>.getImplicitReceiverValue(): ReceiverValue {
     return when (getExplicitReceiverKind()) {
-        ExplicitReceiverKind.NO_EXPLICIT_RECEIVER -> if (extensionReceiver.exists()) extensionReceiver else dispatchReceiver
-        ExplicitReceiverKind.DISPATCH_RECEIVER -> extensionReceiver
+        ExplicitReceiverKind.NO_EXPLICIT_RECEIVER -> if (extensionReceiver.exists()) extensionReceiver as ReceiverValue else dispatchReceiver
+        ExplicitReceiverKind.DISPATCH_RECEIVER -> extensionReceiver as ReceiverValue
         ExplicitReceiverKind.EXTENSION_RECEIVER -> dispatchReceiver
         else -> ReceiverValue.NO_RECEIVER
     }

@@ -1,0 +1,14 @@
+// "Initialize with constructor parameter" "true"
+open class A(s: String, n: Int) {
+    var n: Int = n
+        get() = 1
+
+    constructor(): this("", 0)
+    constructor(a: Int): this("" + a, 0)
+}
+
+class B : A("", 0)
+
+fun test() {
+    val a = A("", 0)
+}

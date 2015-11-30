@@ -40,6 +40,7 @@ import com.intellij.openapi.ui.popup.JBPopupAdapter
 import com.intellij.openapi.ui.popup.LightweightWindowEvent
 import com.intellij.openapi.ui.popup.PopupChooserBuilder
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.util.Pass
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.LocalFileSystem
@@ -58,6 +59,7 @@ import com.intellij.util.VisibilityUtil
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.KtLightMethod
 import org.jetbrains.kotlin.asJava.LightClassUtil
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -67,11 +69,13 @@ import org.jetbrains.kotlin.idea.caches.resolve.getJavaMemberDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.getPackage
+import org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateIntention
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.string.collapseSpaces
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
@@ -160,7 +164,7 @@ public fun PsiElement.getExtractionContainers(strict: Boolean = true, includeAll
         return (if (strict) element.parents else element.parentsWithSelf)
                 .filter {
                     (it is KtDeclarationWithBody && it !is KtFunctionLiteral)
-                    || it is KtClassInitializer
+                    || it is KtAnonymousInitializer
                     || it is KtClassBody
                     || it is KtFile
                 }
@@ -170,7 +174,7 @@ public fun PsiElement.getExtractionContainers(strict: Boolean = true, includeAll
     if (includeAll) return getAllExtractionContainers(strict)
 
     val enclosingDeclaration = getEnclosingDeclaration(this, strict)?.let {
-        if (it is KtDeclarationWithBody || it is KtClassInitializer) getEnclosingDeclaration(it, true) else it
+        if (it is KtDeclarationWithBody || it is KtAnonymousInitializer) getEnclosingDeclaration(it, true) else it
     }
 
     return when (enclosingDeclaration) {
@@ -179,7 +183,7 @@ public fun PsiElement.getExtractionContainers(strict: Boolean = true, includeAll
         else -> {
             val targetContainer = when (enclosingDeclaration) {
                 is KtDeclarationWithBody -> enclosingDeclaration.getBodyExpression()
-                is KtClassInitializer -> enclosingDeclaration.getBody()
+                is KtAnonymousInitializer -> enclosingDeclaration.body
                 else -> null
             }
             if (targetContainer is KtBlockExpression) Collections.singletonList(targetContainer) else Collections.emptyList()
@@ -328,7 +332,7 @@ public fun KtElement.getContextForContainingDeclarationBody(): BindingContext? {
         is KtWithExpressionInitializer -> enclosingDeclaration.getInitializer()
         is KtMultiDeclaration -> enclosingDeclaration.getInitializer()
         is KtParameter -> enclosingDeclaration.getDefaultValue()
-        is KtClassInitializer -> enclosingDeclaration.getBody()
+        is KtAnonymousInitializer -> enclosingDeclaration.body
         is KtClass -> {
             val delegationSpecifierList = enclosingDeclaration.getDelegationSpecifierList()
             if (delegationSpecifierList.isAncestor(this)) this else null
@@ -338,7 +342,7 @@ public fun KtElement.getContextForContainingDeclarationBody(): BindingContext? {
     return bodyElement?.let { it.analyze() }
 }
 
-public fun chooseContainerElement<T>(
+public fun <T> chooseContainerElement(
         containers: List<T>,
         editor: Editor,
         title: String,
@@ -360,6 +364,8 @@ public fun chooseContainerElement<T>(
                 }
 
                 private fun PsiElement.renderDeclaration(): String? {
+                    if (this is KtFunctionLiteral || isFunctionalExpression()) return renderText()
+
                     val descriptor = when {
                         this is KtFile -> getName()
                         this is KtElement -> analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, this]
@@ -409,7 +415,7 @@ public fun chooseContainerElement<T>(
     ).showInBestPositionFor(editor)
 }
 
-public fun chooseContainerElementIfNecessary<T>(
+public fun <T> chooseContainerElementIfNecessary(
         containers: List<T>,
         editor: Editor,
         title: String,
@@ -456,7 +462,7 @@ private fun copyModifierListItems(from: PsiModifierList, to: PsiModifierList, wi
     }
 }
 
-private fun copyTypeParameters<T>(
+private fun <T> copyTypeParameters(
         from: T,
         to: T,
         inserter: (T, PsiTypeParameterList) -> Unit
@@ -743,4 +749,24 @@ fun <ListType : KtElement> replaceListPsiAndKeepDelimiters(
     }
 
     return originalList
+}
+
+fun <T> Pass(body: (T) -> Unit) = object: Pass<T>() {
+    override fun pass(t: T) = body(t)
+}
+
+fun KtExpression.removeTemplateEntryBracesIfPossible(): KtExpression {
+    val parent = parent
+    if (parent !is KtBlockStringTemplateEntry) return this
+
+    val intention = RemoveCurlyBracesFromTemplateIntention()
+    val newEntry = if (intention.isApplicableTo(parent)) intention.applyTo(parent) else parent
+    return newEntry.expression!!
+}
+
+fun dropOverrideKeywordIfNecessary(element: KtNamedDeclaration) {
+    val callableDescriptor = element.resolveToDescriptor() as? CallableDescriptor ?: return
+    if (callableDescriptor.overriddenDescriptors.isEmpty()) {
+        element.removeModifier(KtTokens.OVERRIDE_KEYWORD)
+    }
 }

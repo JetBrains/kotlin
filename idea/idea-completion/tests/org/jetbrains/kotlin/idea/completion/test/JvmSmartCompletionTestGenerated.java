@@ -131,6 +131,12 @@ public class JvmSmartCompletionTestGenerated extends AbstractJvmSmartCompletionT
         doTest(fileName);
     }
 
+    @TestMetadata("ExtensionFunctionTypeVariables.kt")
+    public void testExtensionFunctionTypeVariables() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/ExtensionFunctionTypeVariables.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("FilterTo.kt")
     public void testFilterTo() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/smart/FilterTo.kt");

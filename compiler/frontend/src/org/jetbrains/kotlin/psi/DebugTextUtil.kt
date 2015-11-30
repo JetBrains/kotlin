@@ -183,7 +183,7 @@ private object DebugTextBuildingVisitor : KtVisitor<String, Unit>() {
         return renderChildren(nullableType, "", "", "?")
     }
 
-    override fun visitAnonymousInitializer(initializer: KtClassInitializer, data: Unit?): String? {
+    override fun visitAnonymousInitializer(initializer: KtAnonymousInitializer, data: Unit?): String? {
         val containingDeclaration = KtStubbedPsiUtil.getContainingDeclaration(initializer)
         return "initializer in " + (containingDeclaration?.getDebugText() ?: "...")
     }
@@ -282,8 +282,8 @@ private object DebugTextBuildingVisitor : KtVisitor<String, Unit>() {
     }
 
     fun renderChildren(element: KtElementImplStub<*>, separator: String, prefix: String = "", postfix: String = ""): String? {
-        val childrenTexts = element.getStub()?.getChildrenStubs()?.map { (it?.getPsi() as? KtElement)?.getDebugText() }
-        return childrenTexts?.filterNotNull()?.joinToString(separator, prefix, postfix) ?: element.getText()
+        val childrenTexts = element.getStub()?.getChildrenStubs()?.mapNotNull { (it?.getPsi() as? KtElement)?.getDebugText() }
+        return childrenTexts?.joinToString(separator, prefix, postfix) ?: element.getText()
     }
 
     fun render(element: KtElementImplStub<*>, vararg relevantChildren: KtElement?): String? {

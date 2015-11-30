@@ -58,7 +58,7 @@ import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
-import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.PROPERTY_METADATA_TYPE;
+import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.K_PROPERTY_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.hasJvmFieldAnnotation;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
@@ -118,16 +118,7 @@ public class PropertyCodegen {
         if (CodegenContextUtil.isImplClassOwner(context)) {
             assert declaration != null : "Declaration is null for different context: " + context;
 
-            boolean hasBackingField = hasBackingField(declaration, descriptor);
-
-            AnnotationSplitter annotationSplitter = AnnotationSplitter.create(LockBasedStorageManager.NO_LOCKS,
-                    descriptor.getAnnotations(), AnnotationSplitter.getTargetSet(false, descriptor.isVar(), hasBackingField));
-
-            Annotations fieldAnnotations = annotationSplitter.getAnnotationsForTarget(AnnotationUseSiteTarget.FIELD);
-            Annotations propertyAnnotations = annotationSplitter.getAnnotationsForTarget(AnnotationUseSiteTarget.PROPERTY);
-
-            generateBackingField(declaration, descriptor, fieldAnnotations);
-            generateSyntheticMethodIfNeeded(descriptor, propertyAnnotations);
+            genBackingFieldAndAnnotations(declaration, descriptor, false);
         }
 
         if (isAccessorNeeded(declaration, descriptor, getter)) {
@@ -138,6 +129,21 @@ public class PropertyCodegen {
         }
 
         context.recordSyntheticAccessorIfNeeded(descriptor, bindingContext);
+    }
+
+    private void genBackingFieldAndAnnotations(@NotNull KtNamedDeclaration declaration, @NotNull PropertyDescriptor descriptor, boolean isParameter) {
+        boolean hasBackingField = hasBackingField(declaration, descriptor);
+
+        AnnotationSplitter annotationSplitter =
+                AnnotationSplitter.create(LockBasedStorageManager.NO_LOCKS,
+                                          descriptor.getAnnotations(),
+                                          AnnotationSplitter.getTargetSet(isParameter, descriptor.isVar(), hasBackingField));
+
+        Annotations fieldAnnotations = annotationSplitter.getAnnotationsForTarget(AnnotationUseSiteTarget.FIELD);
+        Annotations propertyAnnotations = annotationSplitter.getAnnotationsForTarget(AnnotationUseSiteTarget.PROPERTY);
+
+        generateBackingField(declaration, descriptor, fieldAnnotations);
+        generateSyntheticMethodIfNeeded(descriptor, propertyAnnotations);
     }
 
     /**
@@ -174,21 +180,20 @@ public class PropertyCodegen {
         return true;
     }
 
-    public void generatePrimaryConstructorProperty(KtParameter p, PropertyDescriptor descriptor) {
-        AnnotationSplitter annotationSplitter = AnnotationSplitter.create(LockBasedStorageManager.NO_LOCKS,
-                descriptor.getAnnotations(), AnnotationSplitter.getTargetSet(true, descriptor.isVar(), hasBackingField(p, descriptor)));
+    private static boolean areAccessorsNeededForPrimaryConstructorProperty(
+            @NotNull PropertyDescriptor descriptor
+    ) {
+        if (hasJvmFieldAnnotation(descriptor)) return false;
 
-        Annotations fieldAnnotations = annotationSplitter.getAnnotationsForTarget(AnnotationUseSiteTarget.FIELD);
-        Annotations propertyAnnotations = annotationSplitter.getAnnotationsForTarget(AnnotationUseSiteTarget.PROPERTY);
+        return !Visibilities.isPrivate(descriptor.getVisibility());
+    }
 
-        generateBackingField(p, descriptor, fieldAnnotations);
-        generateSyntheticMethodIfNeeded(descriptor, propertyAnnotations);
+    public void generatePrimaryConstructorProperty(@NotNull KtParameter p, @NotNull PropertyDescriptor descriptor) {
+        genBackingFieldAndAnnotations(p, descriptor, true);
 
-        if (!Visibilities.isPrivate(descriptor.getVisibility())) {
+        if (areAccessorsNeededForPrimaryConstructorProperty(descriptor)) {
             generateGetter(p, descriptor, null);
-            if (descriptor.isVar()) {
-                generateSetter(p, descriptor, null);
-            }
+            generateSetter(p, descriptor, null);
         }
     }
 
@@ -521,13 +526,15 @@ public class PropertyCodegen {
 
         codegen.tempVariables.put(
                 resolvedCall.getCall().getValueArguments().get(propertyMetadataArgumentIndex).asElement(),
-                new StackValue(PROPERTY_METADATA_TYPE) {
+                new StackValue(K_PROPERTY_TYPE) {
                     @Override
                     public void putSelector(@NotNull Type type, @NotNull InstructionAdapter v) {
-                        Field array = StackValue
-                                .field(Type.getType("[" + PROPERTY_METADATA_TYPE), owner, JvmAbi.DELEGATED_PROPERTIES_ARRAY_NAME, true,
-                                       StackValue.none());
-                        StackValue.arrayElement(PROPERTY_METADATA_TYPE, array, StackValue.constant(indexInPropertyMetadataArray, Type.INT_TYPE)).put(type, v);
+                        Field array = StackValue.field(
+                                Type.getType("[" + K_PROPERTY_TYPE), owner, JvmAbi.DELEGATED_PROPERTIES_ARRAY_NAME, true, StackValue.none()
+                        );
+                        StackValue.arrayElement(
+                                K_PROPERTY_TYPE, array, StackValue.constant(indexInPropertyMetadataArray, Type.INT_TYPE)
+                        ).put(type, v);
                     }
                 }
         );

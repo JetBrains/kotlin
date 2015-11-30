@@ -3,71 +3,71 @@ package kotlin
 import java.util.*
 
 @library
-public fun <T> arrayOf(vararg value : T): Array<T> = noImpl
+public fun <T> arrayOf(vararg elements: T): Array<T> = noImpl
 
 // "constructors" for primitive types array
 
 @library
-public fun doubleArrayOf(vararg content : Double): DoubleArray    = noImpl
+public fun doubleArrayOf(vararg elements: Double): DoubleArray    = noImpl
 
 @library
-public fun floatArrayOf(vararg content : Float): FloatArray       = noImpl
+public fun floatArrayOf(vararg elements: Float): FloatArray       = noImpl
 
 @library
-public fun longArrayOf(vararg content : Long): LongArray          = noImpl
+public fun longArrayOf(vararg elements: Long): LongArray          = noImpl
 
 @library
-public fun intArrayOf(vararg content : Int): IntArray             = noImpl
+public fun intArrayOf(vararg elements: Int): IntArray             = noImpl
 
 @library
-public fun charArrayOf(vararg content : Char): CharArray          = noImpl
+public fun charArrayOf(vararg elements: Char): CharArray          = noImpl
 
 @library
-public fun shortArrayOf(vararg content : Short): ShortArray       = noImpl
+public fun shortArrayOf(vararg elements: Short): ShortArray       = noImpl
 
 @library
-public fun byteArrayOf(vararg content : Byte): ByteArray          = noImpl
+public fun byteArrayOf(vararg elements: Byte): ByteArray          = noImpl
 
 @library
-public fun booleanArrayOf(vararg content : Boolean): BooleanArray = noImpl
+public fun booleanArrayOf(vararg elements: Boolean): BooleanArray = noImpl
 
 @library("copyToArray")
 public fun <reified T> Collection<T>.toTypedArray(): Array<T> = noImpl
 
 
 /**
- * Returns an immutable list containing only the specified object [value].
+ * Returns an immutable list containing only the specified object [element].
  */
-public fun listOf<T>(value: T): List<T> = arrayListOf(value)
+public fun <T> listOf(element: T): List<T> = arrayListOf(element)
 
 /**
- * Returns an immutable set containing only the specified object [value].
+ * Returns an immutable set containing only the specified object [element].
  */
-public fun setOf<T>(value: T): Set<T> = hashSetOf(value)
+public fun <T> setOf(element: T): Set<T> = hashSetOf(element)
 
 /**
  * Returns an immutable map, mapping only the specified key to the
  * specified value.
  */
-public fun mapOf<K, V>(keyValuePair: Pair<K, V>): Map<K, V> = hashMapOf(keyValuePair)
+public fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = hashMapOf(pair)
 
 /**
  * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer].
  */
-public fun lazy<T>(initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)
+public fun <T> lazy(initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)
 
 /**
  * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer].
  *
  * The [mode] parameter is ignored. */
-public fun lazy<T>(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)
+public fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)
 
 /**
  * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer].
  *
  * The [lock] parameter is ignored.
  */
-public fun lazy<T>(lock: Any?, initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)
+public fun <T> lazy(lock: Any?, initializer: () -> T): Lazy<T> = UnsafeLazyImpl(initializer)
 
 
 internal fun <T> arrayOfNulls(reference: Array<out T>, size: Int): Array<T> {

@@ -2,9 +2,9 @@
 
 public class A(val s: String) {
 
-    public fun get(i: Int) : A = A("$s + $i")
+    operator fun get(i: Int) : A = A("$s + $i")
 
-    public fun invoke(builder : A.() -> String): String = builder()
+    operator fun invoke(builder : A.() -> String): String = builder()
 }
 fun x(y : String) : A = A(y)
 

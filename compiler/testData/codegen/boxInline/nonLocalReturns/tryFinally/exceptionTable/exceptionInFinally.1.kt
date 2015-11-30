@@ -6,7 +6,7 @@ import kotlin.test.fail
 class MyException(message: String) : Exception(message)
 
 class Holder(var value: String) {
-    public fun plusAssign(s: String?) {
+    operator fun plusAssign(s: String?) {
         value += s
         if (s != "closed") {
             value += "->"

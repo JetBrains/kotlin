@@ -41,9 +41,8 @@ public annotation class JvmOverloads
 public annotation class JvmStatic
 
 /**
- * Specifies the name for the Java class or method
- * which is generated from this element.
- * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/java-interop.html#handling-signature-clashes-with-platformname)
+ * Specifies the name for the Java class or method which is generated from this element.
+ * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/java-interop.html#handling-signature-clashes-with-jvmname)
  * for more information.
  * @property name the name of the element.
  */

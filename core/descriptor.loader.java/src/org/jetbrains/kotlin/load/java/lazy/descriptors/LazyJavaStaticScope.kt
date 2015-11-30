@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.load.java.lazy.descriptors
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
 import org.jetbrains.kotlin.name.FqName
@@ -30,16 +31,13 @@ public abstract class LazyJavaStaticScope(c: LazyJavaResolverContext) : LazyJava
 
     // Package fragments are not nested
     override fun getPackage(name: Name) = null
+
     abstract fun getSubPackages(): Collection<FqName>
 
     override fun resolveMethodSignature(
             method: JavaMethod, methodTypeParameters: List<TypeParameterDescriptor>, returnType: KotlinType,
-            valueParameters: LazyJavaScope.ResolvedValueParameters
-    ): LazyJavaScope.MethodSignatureData {
-        val effectiveSignature = c.components.externalSignatureResolver.resolveAlternativeMethodSignature(
-                method, false, returnType, null, valueParameters.descriptors, methodTypeParameters, false)
-        return LazyJavaScope.MethodSignatureData(effectiveSignature, effectiveSignature.getErrors())
-    }
+            valueParameters: List<ValueParameterDescriptor>
+    ) = LazyJavaScope.MethodSignatureData(returnType, null, valueParameters, methodTypeParameters, false, emptyList())
 
     override fun computeNonDeclaredProperties(name: Name, result: MutableCollection<PropertyDescriptor>) {
         //no undeclared properties

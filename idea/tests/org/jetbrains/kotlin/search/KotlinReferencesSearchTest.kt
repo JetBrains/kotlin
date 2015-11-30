@@ -52,7 +52,7 @@ public class KotlinReferencesSearchTest(): AbstractSearcherTest() {
     // workaround for KT-9788 AssertionError from backand when we read field from inline function
     private val myFixtureProxy: JavaCodeInsightTestFixture get() = myFixture
 
-    private inline fun doTest<reified T: PsiElement>(): List<PsiReference> {
+    private inline fun <reified T: PsiElement> doTest(): List<PsiReference> {
         myFixtureProxy.configureByFile(getFileName())
         val func = myFixtureProxy.getElementAtCaret().getParentOfType<T>(false)!!
         return ReferencesSearch.search(func).findAll().sortedBy { it.getElement().getTextRange().getStartOffset() }

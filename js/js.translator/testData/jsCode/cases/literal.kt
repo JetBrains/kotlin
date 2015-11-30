@@ -4,7 +4,7 @@ package foo
     val name: String
 }
 
-fun assertArrayEquals<T>(expected: Array<T>, actual: Array<T>) {
+fun <T> assertArrayEquals(expected: Array<T>, actual: Array<T>) {
     val expectedSize = expected.size()
     val actualSize = actual.size()
 

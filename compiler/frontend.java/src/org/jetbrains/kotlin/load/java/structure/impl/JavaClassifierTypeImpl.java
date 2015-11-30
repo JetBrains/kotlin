@@ -17,13 +17,12 @@
 package org.jetbrains.kotlin.load.java.structure.impl;
 
 import com.intellij.psi.*;
+import com.intellij.psi.util.PsiUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.load.java.structure.*;
 
 import java.util.*;
-
-import static org.jetbrains.kotlin.load.java.structure.impl.JavaElementCollectionFromPsiArrayUtil.types;
 
 public class JavaClassifierTypeImpl extends JavaTypeImpl<PsiClassType> implements JavaClassifierType {
     private static class ResolutionResult {
@@ -110,6 +109,33 @@ public class JavaClassifierTypeImpl extends JavaTypeImpl<PsiClassType> implement
     @Override
     @NotNull
     public List<JavaType> getTypeArguments() {
-        return types(getPsi().getParameters());
+        JavaClassifier classifier = getClassifier();
+
+        // parameters including ones from outer class
+        Iterable<PsiTypeParameter> parameters = classifier instanceof JavaClassImpl
+                     ? getReversedTypeParameters((JavaClassImpl) classifier)
+                     : Collections.<PsiTypeParameter>emptyList();
+
+        JavaTypeSubstitutor substitutor = getSubstitutor();
+
+        List<JavaType> result = new ArrayList<JavaType>();
+        for (PsiTypeParameter typeParameter : parameters) {
+            result.add(substitutor.substitute(new JavaTypeParameterImpl(typeParameter)));
+        }
+
+        return result;
+    }
+
+    private static Collection<PsiTypeParameter> getReversedTypeParameters(@NotNull JavaClassImpl classifier) {
+        Iterable<PsiTypeParameter> parameters = PsiUtil.typeParametersIterable(classifier.getPsi());
+        List<PsiTypeParameter> result = new ArrayList<PsiTypeParameter>();
+
+        for (PsiTypeParameter parameter : parameters) {
+            result.add(parameter);
+        }
+
+        Collections.reverse(result);
+
+        return result;
     }
 }

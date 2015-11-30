@@ -18,26 +18,24 @@
 
 package kotlin
 
-import kotlin.internal.getProgressionFinalElement
-
 /**
  * An iterator over a progression of values of type `Byte`.
- * @property increment the number by which the value is incremented on each step.
+ * @property step the number by which the value is incremented on each step.
  */
-internal class ByteProgressionIterator(start: Byte, end: Byte, val increment: Int) : ByteIterator() {
-    private var next = start.toInt()
-    private val finalElement: Byte = getProgressionFinalElement(start.toInt(), end.toInt(), increment).toByte()
-    private var hasNext: Boolean = if (increment > 0) start <= end else start >= end
+internal class ByteProgressionIterator(first: Byte, last: Byte, val step: Int) : ByteIterator() {
+    private var next = first.toInt()
+    private val finalElement = last.toInt()
+    private var hasNext: Boolean = if (step > 0) first <= last else first >= last
 
     override fun hasNext(): Boolean = hasNext
 
     override fun nextByte(): Byte {
         val value = next
-        if (value == finalElement.toInt()) {
+        if (value == finalElement) {
             hasNext = false
         }
         else {
-            next += increment
+            next += step
         }
         return value.toByte()
     }
@@ -45,22 +43,22 @@ internal class ByteProgressionIterator(start: Byte, end: Byte, val increment: In
 
 /**
  * An iterator over a progression of values of type `Char`.
- * @property increment the number by which the value is incremented on each step.
+ * @property step the number by which the value is incremented on each step.
  */
-internal class CharProgressionIterator(start: Char, end: Char, val increment: Int) : CharIterator() {
-    private var next = start.toInt()
-    private val finalElement: Char = getProgressionFinalElement(start.toInt(), end.toInt(), increment).toChar()
-    private var hasNext: Boolean = if (increment > 0) start <= end else start >= end
+internal class CharProgressionIterator(first: Char, last: Char, val step: Int) : CharIterator() {
+    private var next = first.toInt()
+    private val finalElement = last.toInt()
+    private var hasNext: Boolean = if (step > 0) first <= last else first >= last
 
     override fun hasNext(): Boolean = hasNext
 
     override fun nextChar(): Char {
         val value = next
-        if (value == finalElement.toInt()) {
+        if (value == finalElement) {
             hasNext = false
         }
         else {
-            next += increment
+            next += step
         }
         return value.toChar()
     }
@@ -68,22 +66,22 @@ internal class CharProgressionIterator(start: Char, end: Char, val increment: In
 
 /**
  * An iterator over a progression of values of type `Short`.
- * @property increment the number by which the value is incremented on each step.
+ * @property step the number by which the value is incremented on each step.
  */
-internal class ShortProgressionIterator(start: Short, end: Short, val increment: Int) : ShortIterator() {
-    private var next = start.toInt()
-    private val finalElement: Short = getProgressionFinalElement(start.toInt(), end.toInt(), increment).toShort()
-    private var hasNext: Boolean = if (increment > 0) start <= end else start >= end
+internal class ShortProgressionIterator(first: Short, last: Short, val step: Int) : ShortIterator() {
+    private var next = first.toInt()
+    private val finalElement = last.toInt()
+    private var hasNext: Boolean = if (step > 0) first <= last else first >= last
 
     override fun hasNext(): Boolean = hasNext
 
     override fun nextShort(): Short {
         val value = next
-        if (value == finalElement.toInt()) {
+        if (value == finalElement) {
             hasNext = false
         }
         else {
-            next += increment
+            next += step
         }
         return value.toShort()
     }
@@ -91,12 +89,12 @@ internal class ShortProgressionIterator(start: Short, end: Short, val increment:
 
 /**
  * An iterator over a progression of values of type `Int`.
- * @property increment the number by which the value is incremented on each step.
+ * @property step the number by which the value is incremented on each step.
  */
-internal class IntProgressionIterator(start: Int, end: Int, val increment: Int) : IntIterator() {
-    private var next = start
-    private val finalElement: Int = getProgressionFinalElement(start, end, increment)
-    private var hasNext: Boolean = if (increment > 0) start <= end else start >= end
+internal class IntProgressionIterator(first: Int, last: Int, val step: Int) : IntIterator() {
+    private var next = first
+    private val finalElement = last
+    private var hasNext: Boolean = if (step > 0) first <= last else first >= last
 
     override fun hasNext(): Boolean = hasNext
 
@@ -106,7 +104,7 @@ internal class IntProgressionIterator(start: Int, end: Int, val increment: Int) 
             hasNext = false
         }
         else {
-            next += increment
+            next += step
         }
         return value
     }
@@ -114,12 +112,12 @@ internal class IntProgressionIterator(start: Int, end: Int, val increment: Int) 
 
 /**
  * An iterator over a progression of values of type `Long`.
- * @property increment the number by which the value is incremented on each step.
+ * @property step the number by which the value is incremented on each step.
  */
-internal class LongProgressionIterator(start: Long, end: Long, val increment: Long) : LongIterator() {
-    private var next = start
-    private val finalElement: Long = getProgressionFinalElement(start, end, increment)
-    private var hasNext: Boolean = if (increment > 0) start <= end else start >= end
+internal class LongProgressionIterator(first: Long, last: Long, val step: Long) : LongIterator() {
+    private var next = first
+    private val finalElement = last
+    private var hasNext: Boolean = if (step > 0) first <= last else first >= last
 
     override fun hasNext(): Boolean = hasNext
 
@@ -129,7 +127,7 @@ internal class LongProgressionIterator(start: Long, end: Long, val increment: Lo
             hasNext = false
         }
         else {
-            next += increment
+            next += step
         }
         return value
     }

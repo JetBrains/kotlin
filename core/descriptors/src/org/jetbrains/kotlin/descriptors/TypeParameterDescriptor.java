@@ -46,4 +46,15 @@ public interface TypeParameterDescriptor extends ClassifierDescriptor {
     TypeParameterDescriptor substitute(@NotNull TypeSubstitutor substitutor);
 
     int getIndex();
+
+    /**
+     * Is current parameter just a copy of another type parameter (getOriginal) from outer declaration
+     * to be used for type constructor of inner declaration (i.e. inner class).
+     *
+     * If this method returns true:
+     * 1. Containing declaration for current parameter is the inner one
+     * 2. 'getOriginal' returns original type parameter from outer declaration
+     * 3. 'getTypeConstructor' is the same as for original declaration (at least in means of 'equals')
+     */
+    boolean isCapturedFromOuterDeclaration();
 }

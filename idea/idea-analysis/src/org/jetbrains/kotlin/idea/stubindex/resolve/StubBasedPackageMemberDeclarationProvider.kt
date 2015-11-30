@@ -22,19 +22,14 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.lazy.declarations.PackageMemberDeclarationProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
-import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassInfoUtil
 import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
 import java.util.ArrayList
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionByPackageIndex
 import com.intellij.psi.stubs.StringStubIndexExtension
-import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelPropertyByPackageIndex
-import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelPropertyFqnNameIndex
-import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelFunctionFqnNameIndex
-import org.jetbrains.kotlin.idea.stubindex.KotlinTopLevelClassByPackageIndex
+import org.jetbrains.kotlin.idea.stubindex.*
+import org.jetbrains.kotlin.resolve.lazy.data.JetScriptInfo
 
 public class StubBasedPackageMemberDeclarationProvider(
         private val fqName: FqName,
@@ -65,8 +60,13 @@ public class StubBasedPackageMemberDeclarationProvider(
     }
 
     override fun getClassOrObjectDeclarations(name: Name): Collection<JetClassLikeInfo> {
-        return KotlinFullClassNameIndex.getInstance().get(childName(name), project, searchScope)
-                .map { JetClassInfoUtil.createClassLikeInfo(it) }
+        val result = ArrayList<JetClassLikeInfo>()
+        KotlinFullClassNameIndex.getInstance().get(childName(name), project, searchScope)
+                .mapTo(result) { JetClassInfoUtil.createClassLikeInfo(it) }
+
+        KotlinScriptFqnIndex.instance.get(childName(name), project, searchScope)
+                .mapTo(result) { JetScriptInfo(it) }
+        return result
     }
 
     override fun getFunctionDeclarations(name: Name): Collection<KtNamedFunction> {

@@ -1,5 +1,5 @@
 class bar() {
-    fun invoke(i: Any?, j: Any?) : Boolean {
+    operator fun invoke(i: Any?, j: Any?) : Boolean {
         return true
     }
 }

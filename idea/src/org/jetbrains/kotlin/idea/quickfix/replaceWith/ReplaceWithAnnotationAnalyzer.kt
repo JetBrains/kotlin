@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.FileScopeProvider
 import org.jetbrains.kotlin.resolve.lazy.descriptors.ClassResolutionScopesSupport
 import org.jetbrains.kotlin.resolve.scopes.*
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.chainImportingScopes
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -140,7 +140,7 @@ object ReplaceWithAnnotationAnalyzer {
                         resolvedCall.extensionReceiver
                     else
                         resolvedCall.dispatchReceiver
-                    if (receiver is ThisReceiver) {
+                    if (receiver is ImplicitReceiver) {
                         val receiverExpression = receiver.asExpression(scope, psiFactory)
                         if (receiverExpression != null) {
                             receiversToAdd.add(expression to receiverExpression)
@@ -151,7 +151,7 @@ object ReplaceWithAnnotationAnalyzer {
         }
 
         // add receivers in reverse order because arguments of a call were processed after the callee's name
-        for ((expr, receiverExpression) in receiversToAdd.reversed()) {
+        for ((expr, receiverExpression) in receiversToAdd.asReversed()) {
             val expressionToReplace = expr.parent as? KtCallExpression ?: expr
             val newExpr = expressionToReplace.replaced(psiFactory.createExpressionByPattern("$0.$1", receiverExpression, expressionToReplace))
             if (expressionToReplace == expression) {
@@ -259,7 +259,8 @@ object ReplaceWithAnnotationAnalyzer {
 
             is PropertyDescriptor -> {
                 val outerScope = getResolutionScope(descriptor.containingDeclaration, ownerDescriptor, additionalScopes) ?: return null
-                JetScopeUtils.getPropertyDeclarationInnerScope(descriptor, outerScope, RedeclarationHandler.DO_NOTHING)
+                val propertyHeader = JetScopeUtils.makeScopeForPropertyHeader(outerScope, descriptor)
+                LexicalScopeImpl(propertyHeader, descriptor, false, descriptor.extensionReceiverParameter, LexicalScopeKind.PROPERTY_ACCESSOR_BODY)
             }
 
             else -> return null // something local, should not work with ReplaceWith

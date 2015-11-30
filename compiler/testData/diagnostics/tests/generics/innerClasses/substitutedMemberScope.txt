@@ -1,0 +1,26 @@
+package
+
+public fun foo(): kotlin.Unit
+public fun topLevel(): Outer<kotlin.String>
+
+public final class Outer</*0*/ E> {
+    public constructor Outer</*0*/ E>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun outerE(): E
+    public final fun setE(/*0*/ e: E): kotlin.Unit
+    public final fun setInner(/*0*/ inner: Outer<E>.Inner<kotlin.Int>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final inner class Inner</*0*/ F> /*captured type parameters: /*1*/ E*/ {
+        public constructor Inner</*0*/ F>()
+        public final fun act(): kotlin.Unit
+        public final fun bar(/*0*/ e: E, /*1*/ f: F): kotlin.Unit
+        public final fun baz(): F
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final fun foo(): E
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final fun instance(): Outer<E>
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

@@ -14,7 +14,7 @@ class OldStdlibTest() {
 
     @test fun testCollectionSize() {
         assertTrue {
-            listOf(0, 1, 2).size() == 3
+            listOf(0, 1, 2).size == 3
         }
     }
 
@@ -25,7 +25,7 @@ class OldStdlibTest() {
             x [index] = index.toByte()
         }
 
-        x.inputStream().use { stream ->
+        x.inputStream().buffered().use { stream ->
             for(b in stream) {
                 println(b)
             }

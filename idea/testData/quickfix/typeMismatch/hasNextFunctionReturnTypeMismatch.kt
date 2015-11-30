@@ -1,8 +1,8 @@
 // "Change 'A.hasNext' function return type to 'Boolean'" "true"
 abstract class A {
-    abstract fun hasNext(): Int
-    abstract fun next(): Int
-    abstract fun iterator(): A
+    abstract operator fun hasNext(): Int
+    abstract operator fun next(): Int
+    abstract operator fun iterator(): A
 }
 
 fun test(notRange: A) {

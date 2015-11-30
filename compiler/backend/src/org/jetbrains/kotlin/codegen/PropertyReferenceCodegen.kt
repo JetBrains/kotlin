@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.resolve.scopes.receivers.ScriptReceiver
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
@@ -52,15 +51,7 @@ public class PropertyReferenceCodegen(
 ) : MemberCodegen<KtElement>(state, parentCodegen, context, expression, classBuilder) {
     private val asmType = typeMapper.mapClass(classDescriptor)
 
-    private val dispatchReceiverType =
-            when {
-                dispatchReceiver is ScriptReceiver -> {
-                    // TODO: fix receiver for scripts, see ScriptReceiver#getType
-                    dispatchReceiver.declarationDescriptor.classDescriptor.defaultType
-                }
-                dispatchReceiver.exists() -> dispatchReceiver.type
-                else -> null
-            }
+    private val dispatchReceiverType = if (dispatchReceiver.exists()) dispatchReceiver.type else null
 
     private val extensionReceiverType = target.extensionReceiverParameter?.type
 
@@ -136,7 +127,7 @@ public class PropertyReferenceCodegen(
                     StackValue.singleton(containingObject, typeMapper).put(typeMapper.mapClass(containingObject), this)
                 }
 
-                for ((index, type) in listOf(dispatchReceiverType, extensionReceiverType).filterNotNull().withIndex()) {
+                for ((index, type) in listOfNotNull(dispatchReceiverType, extensionReceiverType).withIndex()) {
                     StackValue.local(index + 1, OBJECT_TYPE).put(typeMapper.mapType(type), this)
                 }
 

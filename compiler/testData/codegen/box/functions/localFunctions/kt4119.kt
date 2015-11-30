@@ -3,10 +3,10 @@ fun foo(f: (Int?) -> Int): Int {
 }
 
 fun box() : String {
-    fun Int?.plus(a:Int) : Int = a!! + 2
+    infix operator fun Int?.plus(a: Int) : Int = a!! + 2
 
-    if (foo { it + 1} != 3) return "Fail 1"
-    if (foo { it plus 1} != 3) return "Fail 2"
+    if (foo { it + 1 } != 3) return "Fail 1"
+    if (foo { it plus 1 } != 3) return "Fail 2"
 
     return "OK"
 }

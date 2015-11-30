@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.descriptors.impl;
 
+import kotlin.CollectionsKt;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
@@ -33,7 +35,8 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     private final ClassDescriptor original;
     private final TypeSubstitutor originalSubstitutor;
     private TypeSubstitutor newSubstitutor;
-    private List<TypeParameterDescriptor> typeParameters;
+    private List<TypeParameterDescriptor> typeConstructorParameters;
+    private List<TypeParameterDescriptor> declaredTypeParameters;
     private TypeConstructor typeConstructor;
 
     public LazySubstitutingClassDescriptor(ClassDescriptor descriptor, TypeSubstitutor substitutor) {
@@ -48,10 +51,17 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
             }
             else {
                 List<TypeParameterDescriptor> originalTypeParameters = original.getTypeConstructor().getParameters();
-                typeParameters = new ArrayList<TypeParameterDescriptor>(originalTypeParameters.size());
+                typeConstructorParameters = new ArrayList<TypeParameterDescriptor>(originalTypeParameters.size());
                 newSubstitutor = DescriptorSubstitutor.substituteTypeParameters(
-                        originalTypeParameters, originalSubstitutor.getSubstitution(), this, typeParameters
+                        originalTypeParameters, originalSubstitutor.getSubstitution(), this, typeConstructorParameters
                 );
+
+                declaredTypeParameters = CollectionsKt.filter(typeConstructorParameters, new Function1<TypeParameterDescriptor, Boolean>() {
+                    @Override
+                    public Boolean invoke(TypeParameterDescriptor descriptor) {
+                        return !descriptor.isCapturedFromOuterDeclaration();
+                    }
+                });
             }
         }
         return newSubstitutor;
@@ -79,7 +89,7 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
                     originalTypeConstructor.getAnnotations(),
                     originalTypeConstructor.isFinal(),
                     originalTypeConstructor.toString(),
-                    typeParameters,
+                    typeConstructorParameters,
                     supertypes
             );
         }
@@ -147,7 +157,9 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
         Collection<ConstructorDescriptor> originalConstructors = original.getConstructors();
         Collection<ConstructorDescriptor> result = new ArrayList<ConstructorDescriptor>(originalConstructors.size());
         for (ConstructorDescriptor constructor : originalConstructors) {
-            result.add((ConstructorDescriptor) constructor.substitute(getSubstitutor()));
+            ConstructorDescriptor copy =
+                    constructor.copy(this, constructor.getModality(), constructor.getVisibility(), constructor.getKind(), false);
+            result.add(copy.substitute(getSubstitutor()));
         }
         return result;
     }
@@ -247,5 +259,12 @@ public class LazySubstitutingClassDescriptor implements ClassDescriptor {
     @Override
     public SourceElement getSource() {
         return SourceElement.NO_SOURCE;
+    }
+
+    @NotNull
+    @Override
+    public List<TypeParameterDescriptor> getDeclaredTypeParameters() {
+        getSubstitutor();
+        return declaredTypeParameters;
     }
 }

@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.types.expressions.CoercionStrategy.COERCION_TO_UNIT
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : ExpressionTypingVisitor(facade) {
+internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : ExpressionTypingVisitor(facade) {
 
     override fun visitNamedFunction(function: KtNamedFunction, data: ExpressionTypingContext): KotlinTypeInfo {
         return visitNamedFunction(function, data, false, null)
@@ -100,6 +100,7 @@ public class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Express
                 function.getValueParameters(), functionDescriptor.getValueParameters(), context.scope, context.dataFlowInfo, context.trace
         )
 
+        function.checkTypeReferences(context.trace)
         components.modifiersChecker.withTrace(context.trace).checkModifiersForLocalDeclaration(function, functionDescriptor)
         components.identifierChecker.checkDeclaration(function, context.trace)
         if (!function.hasBody() && !function.hasModifier(KtTokens.EXTERNAL_KEYWORD)) {

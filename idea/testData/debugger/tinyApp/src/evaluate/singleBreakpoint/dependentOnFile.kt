@@ -27,7 +27,7 @@ val Int.testExtVal: Int get() = 1
 val testDelVal by Delegate()
 
 class Delegate {
-    fun getValue(a: Any?, b: KProperty<*>) = 1
+    operator fun getValue(a: Any?, b: KProperty<*>) = 1
 }
 
 // EXPRESSION: TestClass().testFun()

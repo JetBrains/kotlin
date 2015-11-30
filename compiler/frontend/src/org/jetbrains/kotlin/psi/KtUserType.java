@@ -50,6 +50,7 @@ public class KtUserType extends KtElementImplStub<KotlinUserTypeStub> implements
         return visitor.visitUserType(this, data);
     }
 
+    @Nullable
     public KtTypeArgumentList getTypeArgumentList() {
         return getStubOrPsiChild(KtStubElementTypes.TYPE_ARGUMENT_LIST);
     }

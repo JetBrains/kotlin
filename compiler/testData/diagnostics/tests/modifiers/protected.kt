@@ -5,7 +5,7 @@ class My(protected val x: Int) {
 }
 
 object Your {
-    <!DEPRECATED_MODIFIER_CONTAINING_DECLARATION!>protected<!> fun foo() = 3
+    <!WRONG_MODIFIER_CONTAINING_DECLARATION!>protected<!> fun foo() = 3
 }
 
 annotation class His(<!WRONG_MODIFIER_CONTAINING_DECLARATION!>protected<!> val x: Int)

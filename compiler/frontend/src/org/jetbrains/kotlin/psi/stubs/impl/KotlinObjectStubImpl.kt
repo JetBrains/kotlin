@@ -37,7 +37,7 @@ public class KotlinObjectStubImpl(
 ) : KotlinStubBaseImpl<KtObjectDeclaration>(parent, KtStubElementTypes.OBJECT_DECLARATION), KotlinObjectStub {
     override fun getFqName() = fqName
     override fun getName() = StringRef.toString(name)
-    override fun getSuperNames() = superNames map { it.toString() }
+    override fun getSuperNames() = superNames.map { it.toString() }
     override fun isTopLevel() = isTopLevel
     override fun isCompanion() = isDefault
     override fun isObjectLiteral() = isObjectLiteral

@@ -77,18 +77,20 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
                 }
         }
 
-        operator fun invoke(vararg keys: TKey, valueBuilder: (TKey) -> TValue) = set(keys.asList(), valueBuilder)
-        operator fun invoke(value: TValue, vararg keys: TKey) = set(keys.asList(), { value })
-
         protected open fun onKeySet(key: TKey) {}
     }
+
+    operator fun <TKey: Any, TValue : Any> SpecializedProperty<TKey, TValue>.invoke(vararg keys: TKey, valueBuilder: (TKey) -> TValue) = set(keys.asList(), valueBuilder)
+    operator fun <TKey: Any, TValue : Any> SpecializedProperty<TKey, TValue>.invoke(value: TValue, vararg keys: TKey) = set(keys.asList(), { value })
 
     open class FamilyProperty<TValue: Any>() : SpecializedProperty<Family, TValue>()
     open class PrimitiveProperty<TValue: Any>() : SpecializedProperty<PrimitiveType, TValue>()
 
-    class DeprecationProperty() : FamilyProperty<Deprecation>() {
-        operator fun invoke(value: String, vararg keys: Family) = set(keys.asList(), { Deprecation(value) })
-    }
+    class DeprecationProperty() : FamilyProperty<Deprecation>()
+    operator fun DeprecationProperty.invoke(value: String, vararg keys: Family) = set(keys.asList(), { Deprecation(value) })
+
+    class DocProperty() : FamilyProperty<String>()
+    operator fun DocProperty.invoke(vararg keys: Family, valueBuilder: DocExtensions.(Family) -> String) = set(keys.asList(), { f -> valueBuilder(DocExtensions, f) })
 
 
 
@@ -107,7 +109,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
     val customReceiver = FamilyProperty<String>()
     val customSignature = FamilyProperty<String>()
     val deprecate = DeprecationProperty()
-    val doc = FamilyProperty<String>()
+    val doc = DocProperty()
     val platformName = PrimitiveProperty<String>()
     val inline = FamilyProperty<Boolean>()
     val jvmOnly = FamilyProperty<Boolean>()
@@ -314,8 +316,11 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
         fun String.renderType(): String = renderType(this, receiver)
 
         fun effectiveTypeParams(): List<String> {
+            fun removeAnnotations(typeParam: String) =
+                    typeParam.replace("""^(@[\w\.]+\s+)+""".toRegex(), "")
+
             fun getGenericTypeParameters(genericType: String) =
-                genericType
+                removeAnnotations(genericType)
                     .dropWhile { it != '<' }
                     .drop(1)
                     .takeWhile { it != '>' }
@@ -326,7 +331,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
             val types = ArrayList(typeParams)
             if (f == Generic) {
                 // ensure type parameter T, if it's not added to typeParams before
-                if (!types.any { it == "T" || it.startsWith("T:")}) {
+                if (!types.any { removeAnnotations(it).let { it == "T" || it.startsWith("T:") } }) {
                     types.add("T")
                 }
                 return types
@@ -334,7 +339,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
             else if (primitive == null && f != Strings && f != CharSequences) {
                 val implicitTypeParameters = getGenericTypeParameters(receiver) + types.flatMap { getGenericTypeParameters(it) }
                 for (implicit in implicitTypeParameters.reversed()) {
-                    if (implicit != "*" && !types.any { it.startsWith(implicit) || it.startsWith("reified " + implicit) }) {
+                    if (implicit != "*" && !types.any { removeAnnotations(it).let { it.startsWith(implicit) || it.startsWith("reified " + implicit) } }) {
                         types.add(0, implicit)
                     }
                 }
@@ -343,7 +348,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
             } else {
                 // remove T as parameter
                 // TODO: Substitute primitive or String instead of T in other parameters from effective types not from original typeParams
-                return typeParams.filter { !it.startsWith("T") }
+                return typeParams.filterNot { removeAnnotations(it).startsWith("T") }
             }
         }
 
@@ -424,7 +429,7 @@ class GenericFunction(val signature: String, val keyword: String = "fun") {
 }
 
 infix fun MutableList<GenericFunction>.add(item: GenericFunction) = add(item)
-infix fun MutableList<GenericFunction>.addAll(items: Iterable<GenericFunction>) = this.addAll(iterable = items)
+infix fun MutableList<GenericFunction>.addAll(items: Iterable<GenericFunction>) = this.addAll(elements = items)
 
 fun f(signature: String, init: GenericFunction.() -> Unit) = GenericFunction(signature).apply(init)
 

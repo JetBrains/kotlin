@@ -22,7 +22,7 @@ public abstract class Lazy<out T> internal constructor() {
 /**
  * Creates a new instance of the [Lazy] that is already initialized with the specified [value].
  */
-public fun lazyOf<T>(value: T): Lazy<T> = InitializedLazyImpl(value)
+public fun <T> lazyOf(value: T): Lazy<T> = InitializedLazyImpl(value)
 
 /**
  * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer]
@@ -34,7 +34,7 @@ public fun lazyOf<T>(value: T): Lazy<T> = InitializedLazyImpl(value)
  * the returned instance as it may cause accidental deadlock. Also this behavior can be changed in the future.
  */
 @kotlin.jvm.JvmVersion
-public fun lazy<T>(initializer: () -> T): Lazy<T> = SynchronizedLazyImpl(initializer)
+public fun <T> lazy(initializer: () -> T): Lazy<T> = SynchronizedLazyImpl(initializer)
 
 /**
  * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer]
@@ -47,7 +47,7 @@ public fun lazy<T>(initializer: () -> T): Lazy<T> = SynchronizedLazyImpl(initial
  * Also this behavior can be changed in the future.
  */
 @kotlin.jvm.JvmVersion
-public fun lazy<T>(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> =
+public fun <T> lazy(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> =
         when (mode) {
             LazyThreadSafetyMode.SYNCHRONIZED -> SynchronizedLazyImpl(initializer)
             LazyThreadSafetyMode.PUBLICATION -> SafePublicationLazyImpl(initializer)
@@ -66,7 +66,7 @@ public fun lazy<T>(mode: LazyThreadSafetyMode, initializer: () -> T): Lazy<T> =
  * Also this behavior can be changed in the future.
  */
 @kotlin.jvm.JvmVersion
-public fun lazy<T>(lock: Any?, initializer: () -> T): Lazy<T> = SynchronizedLazyImpl(initializer, lock)
+public fun <T> lazy(lock: Any?, initializer: () -> T): Lazy<T> = SynchronizedLazyImpl(initializer, lock)
 
 /**
  * An extension to delegate a read-only property of type [T] to an instance of [Lazy].

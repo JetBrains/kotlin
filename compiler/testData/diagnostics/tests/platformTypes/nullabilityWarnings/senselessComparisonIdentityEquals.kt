@@ -31,10 +31,10 @@ fun test() {
 
     if (platformN !== null) {}
     if (platformN === null) {}
-    if (a === null && platformN === <!ALWAYS_NULL!>a<!>) {}
+    if (a === null && platformN === <!DEBUG_INFO_CONSTANT!>a<!>) {}
 
     if (platformJ !== null) {}
     if (platformJ === null) {}
-    if (a === null && platformJ === <!ALWAYS_NULL!>a<!>) {}
+    if (a === null && platformJ === <!DEBUG_INFO_CONSTANT!>a<!>) {}
 }
 

@@ -1,8 +1,8 @@
 package foo
 
 class A {
-    fun invoke() = "##"
-    fun invoke(i: Int) = "#${i}"
+    operator fun invoke() = "##"
+    operator fun invoke(i: Int) = "#${i}"
 }
 
 fun foo() = A()

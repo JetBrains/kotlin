@@ -1,4 +1,4 @@
-class KotlinClass(): JavaClass(null) {
+internal class KotlinClass(): JavaClass(null) {
 }
 
 fun box(): String {

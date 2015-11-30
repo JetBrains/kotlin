@@ -114,7 +114,7 @@ public class KotlinPullUpDialog(
             val targetPsiClass = targetClass as? PsiClass ?: (targetClass as KtClass).toLightClass()
             return PullUpProcessor(sourceClass.toLightClass(),
                                    targetPsiClass,
-                                   memberInfos.map { it.toJavaMemberInfo() }.filterNotNull().toTypedArray(),
+                                   memberInfos.mapNotNull { it.toJavaMemberInfo() }.toTypedArray(),
                                    DocCommentPolicy<PsiComment>(JavaRefactoringSettings.getInstance().PULL_UP_MEMBERS_JAVADOC))
         }
     }

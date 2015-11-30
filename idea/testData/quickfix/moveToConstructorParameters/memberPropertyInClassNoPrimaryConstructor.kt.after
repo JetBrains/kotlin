@@ -1,0 +1,9 @@
+// "Move to constructor parameters" "true"
+open class A(val n: Int) {
+}
+
+class B : A(0)
+
+fun test() {
+    val a = A(0)
+}

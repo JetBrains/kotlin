@@ -501,9 +501,9 @@ class KotlinPullUpHelper(
     override fun moveFieldInitializations(movedFields: LinkedHashSet<PsiField>) {
         val psiFactory = KtPsiFactory(data.sourceClass)
 
-        fun KtClassOrObject.getOrCreateClassInitializer(): KtClassInitializer {
-            getOrCreateBody().declarations.lastOrNull { it is KtClassInitializer }?.let { return it as KtClassInitializer }
-            return addDeclaration(psiFactory.createAnonymousInitializer()) as KtClassInitializer
+        fun KtClassOrObject.getOrCreateClassInitializer(): KtAnonymousInitializer {
+            getOrCreateBody().declarations.lastOrNull { it is KtAnonymousInitializer }?.let { return it as KtAnonymousInitializer }
+            return addDeclaration(psiFactory.createAnonymousInitializer()) as KtAnonymousInitializer
         }
 
         fun KtElement.getConstructorBodyBlock(): KtBlockExpression? {

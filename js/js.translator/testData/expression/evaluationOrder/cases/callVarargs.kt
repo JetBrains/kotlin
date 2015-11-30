@@ -2,16 +2,16 @@ package foo
 
 var global: String = ""
 
-fun bar<T>(s: String, value: T): T {
+fun <T> bar(s: String, value: T): T {
     global += s
     return value
 }
 
-fun baz<T>(vararg args: T): String {
+fun <T> baz(vararg args: T): String {
     return "baz: ${args.size()}"
 }
 
-fun idVarArg<T>(vararg a: T) = a
+fun <T> idVarArg(vararg a: T) = a
 
 fun box(): String {
     baz(bar("A", 10), try { global += "B"; 20} finally {})

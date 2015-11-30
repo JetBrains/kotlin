@@ -124,7 +124,7 @@ JetFile: PropertiesFollowedByInitializers.kt
         PROPERTY_ACCESSOR
           PsiElement(get)('get')
       PsiWhiteSpace('\n  ')
-      ANONYMOUS_INITIALIZER
+      CLASS_INITIALIZER
         PsiElement(init)('init')
         PsiWhiteSpace(' ')
         BLOCK
@@ -180,7 +180,7 @@ JetFile: PropertiesFollowedByInitializers.kt
           PsiElement(get)('get')
         PsiElement(SEMICOLON)(';')
       PsiWhiteSpace(' ')
-      ANONYMOUS_INITIALIZER
+      CLASS_INITIALIZER
         PsiElement(init)('init')
         PsiWhiteSpace(' ')
         BLOCK

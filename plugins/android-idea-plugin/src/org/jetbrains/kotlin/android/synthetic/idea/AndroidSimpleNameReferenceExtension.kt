@@ -17,30 +17,25 @@
 package org.jetbrains.kotlin.android.synthetic.idea
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.xml.XmlAttributeValue
 import org.jetbrains.android.dom.wrappers.ValueResourceElementWrapper
-import org.jetbrains.kotlin.android.synthetic.isAndroidSyntheticElement
+import org.jetbrains.android.util.AndroidResourceUtil
+import org.jetbrains.kotlin.android.synthetic.androidIdToName
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension
-import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
-public class AndroidSimpleNameReferenceExtension : SimpleNameReferenceExtension {
-    override fun isReferenceTo(reference: KtSimpleNameReference, element: PsiElement): Boolean? {
-        val resolvedElement = reference.resolve() as? KtProperty ?: return null
+class AndroidSimpleNameReferenceExtension : SimpleNameReferenceExtension {
 
-        if (isAndroidSyntheticElement(resolvedElement)) {
-            if (element is ValueResourceElementWrapper) {
-                val resource = element.value
-                return resolvedElement.name == resource.substring(resource.indexOf('/') + 1)
-            }
-        }
-        return null
+    override fun isReferenceTo(reference: KtSimpleNameReference, element: PsiElement): Boolean {
+        return element is ValueResourceElementWrapper && AndroidResourceUtil.isIdDeclaration(element)
     }
 
     override fun handleElementRename(reference: KtSimpleNameReference, psiFactory: KtPsiFactory, newElementName: String): PsiElement? {
-        return if (newElementName.startsWith("@+id/"))
-            psiFactory.createNameIdentifier(newElementName.substring(newElementName.indexOf('/') + 1))
-        else
-            null
+        val resolvedElement = reference.resolve()
+        if (resolvedElement !is XmlAttributeValue || !AndroidResourceUtil.isIdDeclaration(resolvedElement)) return null
+        val newSyntheticPropertyName = androidIdToName(newElementName) ?: return null
+
+        return psiFactory.createNameIdentifier(newSyntheticPropertyName)
     }
 }

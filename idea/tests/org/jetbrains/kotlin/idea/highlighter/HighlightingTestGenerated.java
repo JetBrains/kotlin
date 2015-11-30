@@ -89,6 +89,12 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
         doTest(fileName);
     }
 
+    @TestMetadata("SmartCast.kt")
+    public void testSmartCast() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/SmartCast.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Todo.kt")
     public void testTodo() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/highlighter/Todo.kt");

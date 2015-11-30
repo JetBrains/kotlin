@@ -372,7 +372,7 @@ JetFile: PropertiesWithFunctionReceiversRecovery.kt
   MULTI_VARIABLE_DECLARATION
     PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    PsiErrorElement:Receiver type is not allowed on a multi-declaration
+    PsiErrorElement:Receiver type is not allowed on a destructuring declaration
       TYPE_REFERENCE
         ANNOTATION
           PsiElement(AT)('@')
@@ -414,7 +414,7 @@ JetFile: PropertiesWithFunctionReceiversRecovery.kt
               PsiElement(DOT)('.')
       PsiErrorElement:Expecting '.' before a property name
         PsiElement(IDENTIFIER)('foo')
-    PsiErrorElement:Multi-declarations are only allowed for local variables/values
+    PsiErrorElement:Destructuring declarations are only allowed for local variables/values
       PsiElement(LPAR)('(')
       PsiErrorElement:Expecting a name
         <empty list>

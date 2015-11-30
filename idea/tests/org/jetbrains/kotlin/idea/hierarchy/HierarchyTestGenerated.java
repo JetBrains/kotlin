@@ -286,18 +286,6 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/calls/callers"), Pattern.compile("^([^\\.]+)$"), false);
         }
 
-        @TestMetadata("javaConstructor")
-        public void testJavaConstructor() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/javaConstructor/");
-            doCallerHierarchyTest(fileName);
-        }
-
-        @TestMetadata("javaMethod")
-        public void testJavaMethod() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/javaMethod/");
-            doCallerHierarchyTest(fileName);
-        }
-
         @TestMetadata("kotlinClass")
         public void testKotlinClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callers/kotlinClass/");
@@ -421,18 +409,6 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/calls/callees"), Pattern.compile("^([^\\.]+)$"), false);
         }
 
-        @TestMetadata("javaConstructor")
-        public void testJavaConstructor() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callees/javaConstructor/");
-            doCalleeHierarchyTest(fileName);
-        }
-
-        @TestMetadata("javaMethod")
-        public void testJavaMethod() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callees/javaMethod/");
-            doCalleeHierarchyTest(fileName);
-        }
-
         @TestMetadata("kotlinAnonymousObject")
         public void testKotlinAnonymousObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/calls/callees/kotlinAnonymousObject/");
@@ -518,18 +494,6 @@ public class HierarchyTestGenerated extends AbstractHierarchyTest {
     public static class Overrides extends AbstractHierarchyTest {
         public void testAllFilesPresentInOverrides() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/hierarchy/overrides"), Pattern.compile("^([^\\.]+)$"), false);
-        }
-
-        @TestMetadata("javaMethodInClass")
-        public void testJavaMethodInClass() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/overrides/javaMethodInClass/");
-            doOverrideHierarchyTest(fileName);
-        }
-
-        @TestMetadata("javaMethodInInterface")
-        public void testJavaMethodInInterface() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/hierarchy/overrides/javaMethodInInterface/");
-            doOverrideHierarchyTest(fileName);
         }
 
         @TestMetadata("kotlinFunctionInClass")

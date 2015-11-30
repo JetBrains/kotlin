@@ -110,7 +110,7 @@ public class Regex(pattern: String, options: Set<RegexOption>) {
      * replacement for that match.
      */
     public inline fun replace(input: CharSequence, transform: (MatchResult) -> CharSequence): String {
-        var match = match(input)
+        var match = find(input)
         if (match == null) return input.toString()
 
         var lastStart = 0
@@ -148,7 +148,7 @@ public class Regex(pattern: String, options: Set<RegexOption>) {
      */
     public fun split(input: CharSequence, limit: Int = 0): List<String> {
         require(limit >= 0, { "Limit must be non-negative, but was $limit" } )
-        val matches = matchAll(input).let { if (limit == 0) it else it.take(limit - 1) }
+        val matches = findAll(input).let { if (limit == 0) it else it.take(limit - 1) }
         val result = ArrayList<String>()
         var lastStart = 0
 

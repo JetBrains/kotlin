@@ -20,7 +20,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import kotlin.CollectionsKt;
 import kotlin.Pair;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
@@ -100,19 +102,27 @@ public abstract class AbstractLineNumberTest extends TestCaseWithTmpdir {
 
         GenerationState state = GenerationUtils.compileFileGetGenerationStateForTest(psiFile, environment);
 
-        List<Integer> expectedLineNumbers;
-        List<Integer> actualLineNumbers;
         if (custom) {
-            expectedLineNumbers = extractCustomLineNumbersFromSource(psiFile);
-            actualLineNumbers = extractActualLineNumbersFromBytecode(state, false);
-            assertEquals(expectedLineNumbers, actualLineNumbers);
+            List<Integer> actualLineNumbers = extractActualLineNumbersFromBytecode(state, false);
+            String text = psiFile.getText();
+            String newFileText = text.substring(0, text.indexOf("// ")) + getActualLineNumbersAsString(actualLineNumbers);
+            KotlinTestUtils.assertEqualsToFile(new File(filename), newFileText);
         }
         else {
-            expectedLineNumbers = extractSelectedLineNumbersFromSource(psiFile);
-            actualLineNumbers = extractActualLineNumbersFromBytecode(state, true);
+            List<Integer> expectedLineNumbers = extractSelectedLineNumbersFromSource(psiFile);
+            List<Integer> actualLineNumbers = extractActualLineNumbersFromBytecode(state, true);
             assertSameElements(actualLineNumbers, expectedLineNumbers);
         }
 
+    }
+
+    private static String getActualLineNumbersAsString(List<Integer> list) {
+        return CollectionsKt.joinToString(list, " ", "// ", "", -1, "...", new Function1<Integer, CharSequence>() {
+            @Override
+            public CharSequence invoke(Integer integer) {
+                return integer.toString();
+            }
+        });
     }
 
     @NotNull
@@ -140,24 +150,6 @@ public abstract class AbstractLineNumberTest extends TestCaseWithTmpdir {
 
     protected void doTestCustom(String path) {
         doTest(path, true);
-    }
-
-    @NotNull
-    private static List<Integer> extractCustomLineNumbersFromSource(@NotNull KtFile file) {
-        String fileContent = file.getText();
-        List<Integer> lineNumbers = Lists.newArrayList();
-        String[] lines = StringUtil.convertLineSeparators(fileContent).split("\n");
-
-        for (String line : lines) {
-            if (line.startsWith("//")) {
-                String[] numbers = line.substring("//".length()).trim().split(" +");
-                for (String number : numbers) {
-                    lineNumbers.add(Integer.parseInt(number));
-                }
-            }
-        }
-
-        return lineNumbers;
     }
 
     @NotNull

@@ -6,11 +6,11 @@ class A() {
 class B() {
 }
 
-fun B.next(): Int = 3
+operator fun B.next(): Int = 3
 
-fun B.hasNext(): Boolean = false
+operator fun B.hasNext(): Boolean = false
 
-<selection>fun A.iterator() = B()
+<selection>operator fun A.iterator() = B()
 
 fun f() {
     for (i in A()) {

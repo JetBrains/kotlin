@@ -7,5 +7,5 @@ fun ((T) -> G)?.foo()
 fun ((T) -> G)??.foo()
 
 //--------------
-fun f<T>()
+fun <T> f()
 a.b class C

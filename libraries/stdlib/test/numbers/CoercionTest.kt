@@ -9,12 +9,12 @@ class CoercionTest {
     fun usage() {
         val n = 1
         // infix usage
-        val n1 = n coerceAtLeast  2
+        val n1 = n.coerceAtLeast(2)
         // function usage
         val n2 = n.coerceAtLeast(2)
 
         // infix with range
-        val n3 = n coerceIn 2..5
+        val n3 = n.coerceIn(2..5)
     }
 
     @Test
@@ -32,8 +32,8 @@ class CoercionTest {
             expect(value.coerceAtLeast(min)) { value.coerceIn(min, null) }
             expect(value.coerceAtMost(max)) { value.coerceIn(null, max) }
             expect(value.coerceAtLeast(min).coerceAtMost(max)) { value.coerceIn(min, max) }
-            expect(value.coerceAtMost(max).coerceAtLeast(min)) { value coerceIn range }
-            assertTrue((value coerceIn range) in range)
+            expect(value.coerceAtMost(max).coerceAtLeast(min)) { value.coerceIn(range) }
+            assertTrue((value.coerceIn(range)) in range)
         }
 
         assertFails { 1.coerceIn(1, 0) }
@@ -55,8 +55,8 @@ class CoercionTest {
             expect(value.coerceAtLeast(min)) { value.coerceIn(min, null) }
             expect(value.coerceAtMost(max)) { value.coerceIn(null, max) }
             expect(value.coerceAtLeast(min).coerceAtMost(max)) { value.coerceIn(min, max) }
-            expect(value.coerceAtMost(max).coerceAtLeast(min)) { value coerceIn range }
-            assertTrue((value coerceIn range) in range)
+            expect(value.coerceAtMost(max).coerceAtLeast(min)) { value.coerceIn(range) }
+            assertTrue((value.coerceIn(range)) in range)
         }
 
         assertFails { 1L.coerceIn(1L, 0L) }
@@ -80,8 +80,8 @@ class CoercionTest {
             expect(value.coerceAtLeast(min)) { value.coerceIn(min, null) }
             expect(value.coerceAtMost(max)) { value.coerceIn(null, max) }
             expect(value.coerceAtLeast(min).coerceAtMost(max)) { value.coerceIn(min, max) }
-            expect(value.coerceAtMost(max).coerceAtLeast(min)) { value coerceIn range }
-            assertTrue((value coerceIn range) in range)
+            expect(value.coerceAtMost(max).coerceAtLeast(min)) { value.coerceIn(range) }
+            assertTrue((value.coerceIn(range)) in range)
         }
 
         assertFails { 1.0.coerceIn(1.0, 0.0) }
@@ -91,7 +91,7 @@ class CoercionTest {
     @Test
     @Suppress("DEPRECATION_ERROR")
     fun coercionsComparable() {
-        val v = 0..10 map { ComparableNumber(it) }
+        val v = (0..10).map { ComparableNumber(it) }
 
         expect(5) { v[5].coerceAtLeast(v[1]).value }
         expect(5) { v[1].coerceAtLeast(v[5]).value }
@@ -109,8 +109,8 @@ class CoercionTest {
             expect(value.coerceAtLeast(min)) { value.coerceIn(min, null) }
             expect(value.coerceAtMost(max)) { value.coerceIn(null, max) }
             expect(value.coerceAtLeast(min).coerceAtMost(max)) { value.coerceIn(min, max) }
-            expect(value.coerceAtMost(max).coerceAtLeast(min)) { value coerceIn range }
-            assertTrue((value coerceIn range) in range)
+            expect(value.coerceAtMost(max).coerceAtLeast(min)) { value.coerceIn(range) }
+            assertTrue((value.coerceIn(range)) in range)
         }
 
         assertFails { v[1].coerceIn(v[1], v[0]) }

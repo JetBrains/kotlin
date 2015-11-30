@@ -7,5 +7,3 @@ class Foo {
 fun test() {
     Foo.<caret>baz
 }
-
-

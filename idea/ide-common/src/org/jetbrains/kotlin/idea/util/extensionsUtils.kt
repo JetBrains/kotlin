@@ -28,19 +28,19 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.TypeNullability
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.nullability
 
-public fun CallableDescriptor.substituteExtensionIfCallable(
+public fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCallable(
         receivers: Collection<ReceiverValue>,
         context: BindingContext,
         dataFlowInfo: DataFlowInfo,
         callType: CallType<*>,
         containingDeclarationOrModule: DeclarationDescriptor
-): Collection<CallableDescriptor> {
+): Collection<TCallable> {
     val sequence = receivers.asSequence().flatMap { substituteExtensionIfCallable(it, callType, context, dataFlowInfo, containingDeclarationOrModule).asSequence() }
     if (getTypeParameters().isEmpty()) { // optimization for non-generic callables
         return sequence.firstOrNull()?.let { listOf(it) } ?: listOf()
@@ -50,32 +50,32 @@ public fun CallableDescriptor.substituteExtensionIfCallable(
     }
 }
 
-public fun CallableDescriptor.substituteExtensionIfCallableWithImplicitReceiver(
+public fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCallableWithImplicitReceiver(
         scope: LexicalScope,
         context: BindingContext,
         dataFlowInfo: DataFlowInfo
-): Collection<CallableDescriptor> {
+): Collection<TCallable> {
     val receiverValues = scope.getImplicitReceiversWithInstance().map { it.getValue() }
     return substituteExtensionIfCallable(receiverValues, context, dataFlowInfo, CallType.DEFAULT, scope.ownerDescriptor)
 }
 
-public fun CallableDescriptor.substituteExtensionIfCallable(
+public fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCallable(
         receiver: ReceiverValue,
         callType: CallType<*>,
         bindingContext: BindingContext,
         dataFlowInfo: DataFlowInfo,
         containingDeclarationOrModule: DeclarationDescriptor
-): Collection<CallableDescriptor> {
+): Collection<TCallable> {
     if (!receiver.exists()) return listOf()
 
     var types = SmartCastManager().getSmartCastVariants(receiver, bindingContext, containingDeclarationOrModule, dataFlowInfo)
     return substituteExtensionIfCallable(types, callType)
 }
 
-public fun CallableDescriptor.substituteExtensionIfCallable(
+public fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCallable(
         receiverTypes: Collection<KotlinType>,
         callType: CallType<*>
-): Collection<CallableDescriptor> {
+): Collection<TCallable> {
     if (!callType.descriptorKindFilter.accepts(this)) return listOf()
 
     var types = receiverTypes.asSequence()
@@ -85,7 +85,7 @@ public fun CallableDescriptor.substituteExtensionIfCallable(
 
     val extensionReceiverType = fuzzyExtensionReceiverType()!!
     val substitutors = types
-            .map {
+            .mapNotNull {
                 var substitutor = extensionReceiverType.checkIsSuperTypeOf(it)
                 // check if we may fail due to receiver expression being nullable
                 if (substitutor == null && it.nullability() == TypeNullability.NULLABLE && extensionReceiverType.nullability() == TypeNullability.NOT_NULL) {
@@ -93,23 +93,22 @@ public fun CallableDescriptor.substituteExtensionIfCallable(
                 }
                 substitutor
             }
-            .filterNotNull()
     if (getTypeParameters().isEmpty()) { // optimization for non-generic callables
         return if (substitutors.any()) listOf(this) else listOf()
     }
     else {
-        return substitutors.map { substitute(it)!! }.toList()
+        return substitutors.map { @Suppress("UNCHECKED_CAST") (substitute(it) as TCallable) }.toList()
     }
 }
 
 public fun ReceiverValue.getThisReceiverOwner(bindingContext: BindingContext): DeclarationDescriptor? {
     return when (this) {
         is ExpressionReceiver -> {
-            val thisRef = (KtPsiUtil.deparenthesize(this.getExpression()) as? KtThisExpression)?.getInstanceReference() ?: return null
+            val thisRef = (KtPsiUtil.deparenthesize(this.expression) as? KtThisExpression)?.getInstanceReference() ?: return null
             bindingContext[BindingContext.REFERENCE_TARGET, thisRef]
         }
 
-        is ThisReceiver -> this.getDeclarationDescriptor()
+        is ImplicitReceiver -> this.declarationDescriptor
 
         else -> null
     }

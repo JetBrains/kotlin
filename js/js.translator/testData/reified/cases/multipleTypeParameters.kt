@@ -4,7 +4,7 @@ class X
 class Y
 class Z
 
-inline fun test<reified A, B, reified C>(x: Any): String =
+inline fun <reified A, B, reified C> test(x: Any): String =
         when (x) {
             is A -> "A"
             is C -> "C"

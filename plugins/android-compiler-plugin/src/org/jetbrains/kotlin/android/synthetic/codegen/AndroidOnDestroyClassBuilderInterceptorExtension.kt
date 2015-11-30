@@ -45,7 +45,7 @@ public class AndroidOnDestroyClassBuilderInterceptorExtension : ClassBuilderInte
             return AndroidOnDestroyCollectorClassBuilder(delegateFactory.newClassBuilder(origin), bindingContext)
         }
 
-        override fun getClassBuilderMode() = delegateFactory.getClassBuilderMode()
+        override fun getClassBuilderMode() = delegateFactory.classBuilderMode
 
         override fun asText(builder: ClassBuilder?): String? {
             return delegateFactory.asText((builder as AndroidOnDestroyCollectorClassBuilder).delegateClassBuilder)

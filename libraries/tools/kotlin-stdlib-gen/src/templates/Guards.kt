@@ -1,12 +1,11 @@
 package templates
 
-import java.util.ArrayList
 import templates.Family.*
 
 fun guards(): List<GenericFunction> {
     val THIS = "\$this"
 
-    val templates = ArrayList<GenericFunction>()
+    val templates = arrayListOf<GenericFunction>()
 
     templates add f("requireNoNulls()") {
         include(Lists)

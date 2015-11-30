@@ -87,4 +87,8 @@ public class CompilerSmokeTest extends KotlinIntegrationTestBase {
     public void testScriptWithClasspath() throws Exception {
         runCompiler("script", "-cp", new File("lib/javax.inject.jar").getAbsolutePath(), "-script", "script.kts");
     }
+
+    public void testScriptException() throws Exception {
+        runCompiler("script", "-script", "script.kts");
+    }
 }

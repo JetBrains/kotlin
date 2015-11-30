@@ -7,11 +7,11 @@ class ArrayWrapper<T>() {
         contents.add(item)
     }
 
-    fun plusAssign(rhs: ArrayWrapper<T>) {
+    operator fun plusAssign(rhs: ArrayWrapper<T>) {
         contents.addAll(rhs.contents)
     }
 
-    fun get(index: Int): T {
+    operator fun get(index: Int): T {
         return contents.get(index)!!
     }
 }

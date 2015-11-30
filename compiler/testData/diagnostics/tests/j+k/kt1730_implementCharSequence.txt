@@ -6,7 +6,7 @@ public open class C : kotlin.CharSequence {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     @java.lang.Override() public open override /*1*/ fun get(/*0*/ index: kotlin.Int): kotlin.Char
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    @java.lang.Override() public open override /*1*/ fun subSequence(/*0*/ start: kotlin.Int, /*1*/ end: kotlin.Int): kotlin.CharSequence
+    @java.lang.Override() public open override /*1*/ fun subSequence(/*0*/ startIndex: kotlin.Int, /*1*/ endIndex: kotlin.Int): kotlin.CharSequence
     @java.lang.Override() public open override /*1*/ fun toString(): kotlin.String
 }
 
@@ -16,6 +16,6 @@ public final class T : C {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     @java.lang.Override() public open override /*1*/ /*fake_override*/ fun get(/*0*/ index: kotlin.Int): kotlin.Char
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    @java.lang.Override() public open override /*1*/ /*fake_override*/ fun subSequence(/*0*/ start: kotlin.Int, /*1*/ end: kotlin.Int): kotlin.CharSequence
+    @java.lang.Override() public open override /*1*/ /*fake_override*/ fun subSequence(/*0*/ startIndex: kotlin.Int, /*1*/ endIndex: kotlin.Int): kotlin.CharSequence
     @java.lang.Override() public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

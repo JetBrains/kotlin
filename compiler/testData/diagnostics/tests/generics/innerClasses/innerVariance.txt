@@ -1,0 +1,21 @@
+package
+
+public final class Outer</*0*/ out E, /*1*/ in F> {
+    public constructor Outer</*0*/ out E, /*1*/ in F>()
+    public final fun bar(): Outer<E, F>.Inner?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun foo(/*0*/ x: Outer<E, F>.Inner): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final inner class Inner /*captured type parameters: /*0*/ out E, /*1*/ in F*/ {
+        public constructor Inner()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        public final fun unsafe1(/*0*/ x: E): kotlin.Unit
+        public final fun unsafe2(/*0*/ x: kotlin.Collection<E?>): kotlin.Unit
+        public final fun unsafe3(): F?
+        public final fun unsafe4(): kotlin.Collection<F>?
+    }
+}

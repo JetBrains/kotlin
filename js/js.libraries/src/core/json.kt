@@ -1,8 +1,8 @@
 package kotlin.js
 
 @native public class Json() {
-    public fun get(propertyName: String): Any? = noImpl
-    public fun set(propertyName: String, value: Any?): Unit = noImpl
+    operator fun get(propertyName: String): Any? = noImpl
+    operator fun set(propertyName: String, value: Any?): Unit = noImpl
 }
 
 public fun json(vararg pairs: Pair<String, Any?>): Json {
@@ -26,8 +26,8 @@ public interface JsonClass {
     public fun stringify(o: Any, replacer: Array<String>, space: Int): String
     public fun stringify(o: Any, replacer: Array<String>, space: String): String
 
-    public fun parse<T>(text: String): T
-    public fun parse<T>(text: String, reviver: ((key: String, value: Any?)->Any?)): T
+    public fun <T> parse(text: String): T
+    public fun <T> parse(text: String, reviver: ((key: String, value: Any?)->Any?)): T
 }
 
 @native

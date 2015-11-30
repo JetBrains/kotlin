@@ -189,8 +189,7 @@ private class PropertyDetector(
         dropPropertiesWithConflictingAccessors(memberToPropertyInfo)
 
         val mappedFields = memberToPropertyInfo.values()
-                .map { it.field }
-                .filterNotNull()
+                .mapNotNull { it.field }
                 .toSet()
 
         // map all other fields
@@ -249,7 +248,7 @@ private class PropertyDetector(
     private fun dropPropertiesWithConflictingAccessors(memberToPropertyInfo: MutableMap<PsiMember, PropertyInfo>) {
         val propertyInfos = memberToPropertyInfo.values().distinct()
 
-        val mappedMethods = propertyInfos.map { it.getMethod }.filterNotNull().toSet() + propertyInfos.map { it.setMethod }.filterNotNull().toSet()
+        val mappedMethods = propertyInfos.mapNotNull { it.getMethod }.toSet() + propertyInfos.mapNotNull { it.setMethod }.toSet()
 
         //TODO: bases
         val prohibitedSignatures = psiClass.methods
@@ -317,8 +316,7 @@ private class PropertyDetector(
             modifiers.addIfNotNull(fieldModifiers.accessModifier())
         }
 
-        val prototypes = listOf<PsiElement?>(field, getMethod, setMethod)
-                .filterNotNull()
+        val prototypes = listOfNotNull<PsiElement>(field, getMethod, setMethod)
                 .map { PrototypeInfo(it, CommentsAndSpacesInheritance.NO_SPACES) }
         return Modifiers(modifiers).assignPrototypes(*prototypes.toTypedArray())
     }

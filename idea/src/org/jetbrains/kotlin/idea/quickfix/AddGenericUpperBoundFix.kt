@@ -29,10 +29,10 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintsUtil
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
+import org.jetbrains.kotlin.resolve.calls.inference.filterConstraintsOut
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
@@ -77,19 +77,18 @@ public class AddGenericUpperBoundFix(
         }
 
         private fun createActionsByInferenceData(inferenceData: InferenceErrorData): List<IntentionAction> {
-            val successfulConstraintSystem = (inferenceData.constraintSystem as? ConstraintSystemImpl)
-                                             ?.filterConstraintsOut(ConstraintPositionKind.TYPE_BOUND_POSITION)
-                                             ?: return emptyList()
+            val successfulConstraintSystem = inferenceData.constraintSystem.filterConstraintsOut(ConstraintPositionKind.TYPE_BOUND_POSITION)
 
-            if (!successfulConstraintSystem.getStatus().isSuccessful()) return emptyList()
+            if (!successfulConstraintSystem.status.isSuccessful()) return emptyList()
 
-            val resultingSubstitutor = successfulConstraintSystem.getResultingSubstitutor()
+            val resultingSubstitutor = successfulConstraintSystem.resultingSubstitutor
 
-            return inferenceData.descriptor.typeParameters.map factory@{
+            return inferenceData.descriptor.typeParameters.mapNotNull factory@{
                 typeParameterDescriptor ->
 
                 if (ConstraintsUtil.checkUpperBoundIsSatisfied(
-                        successfulConstraintSystem, typeParameterDescriptor, /* substituteOtherTypeParametersInBound */ true
+                        successfulConstraintSystem, typeParameterDescriptor, inferenceData.call,
+                        /* substituteOtherTypeParametersInBound */ true
                 )) return@factory null
 
                 val upperBound = typeParameterDescriptor.upperBounds.singleOrNull() ?: return@factory null
@@ -97,7 +96,7 @@ public class AddGenericUpperBoundFix(
                                ?: return@factory null
 
                 createAction(argument, upperBound)
-            }.filterNotNull()
+            }
         }
 
         private fun createAction(argument: KotlinType, upperBound: KotlinType): IntentionAction? {

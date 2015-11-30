@@ -1,6 +1,6 @@
 package test;
 
-class C extends JavaClass {
+public class C extends JavaClass {
     public void foo(JavaClass javaClass) {
         javaClass.field++;
         --javaClass.field;

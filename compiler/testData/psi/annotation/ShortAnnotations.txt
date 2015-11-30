@@ -613,7 +613,7 @@ JetFile: ShortAnnotations.kt
       PsiErrorElement:Expecting member declaration
         PsiElement(IDENTIFIER)('zoo')
       PsiWhiteSpace(' ')
-      ANONYMOUS_INITIALIZER
+      CLASS_INITIALIZER
         PsiElement(init)('init')
         PsiWhiteSpace(' ')
         BLOCK

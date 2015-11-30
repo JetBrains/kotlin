@@ -3,7 +3,7 @@ package android.support.v4.app
 import android.app.Activity
 import android.os.Bundle
 import java.io.File
-import kotlinx.android.synthetic.layout.*
+import kotlinx.android.synthetic.main.layout.*
 
 open class FragmentManager {
     open fun findFragmentById(id: Int): Fragment = throw Exception("Function getFragmentById() is not overriden")
@@ -27,6 +27,6 @@ public class MyFragment : Fragment() {
 
 // 1 INVOKEVIRTUAL android/support/v4/app/FragmentActivity\.getSupportFragmentManager
 // 1 INVOKEVIRTUAL android/support/v4/app/Fragment\.getFragmentManager
-// 2 GETSTATIC com/myapp/R\$id\.fragm
+// 2 GETSTATIC test/R\$id\.fragm
 // 2 INVOKEVIRTUAL android/support/v4/app/FragmentManager\.findFragmentById
 // 2 CHECKCAST android/support/v4/app/Fragment

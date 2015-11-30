@@ -82,7 +82,7 @@ public class SeleniumQUnit(val driver: WebDriver) {
         }
     }
 
-    private fun WebElement.get(id: String): String? = getAttribute(id)
+    private operator fun WebElement.get(id: String): String? = getAttribute(id)
 
     private val WebElement.classAttribute: String?
         get() = this["class"]

@@ -24,10 +24,10 @@ import com.intellij.psi.search.SearchScope
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.KtFile
 
-public fun SearchScope.and(otherScope: SearchScope): SearchScope = intersectWith(otherScope)
-public fun SearchScope.or(otherScope: SearchScope): SearchScope = union(otherScope)
-public fun SearchScope.minus(otherScope: GlobalSearchScope): SearchScope = this and !otherScope
-public fun GlobalSearchScope.not(): GlobalSearchScope = GlobalSearchScope.notScope(this)
+infix fun SearchScope.and(otherScope: SearchScope): SearchScope = intersectWith(otherScope)
+infix fun SearchScope.or(otherScope: SearchScope): SearchScope = union(otherScope)
+operator fun SearchScope.minus(otherScope: GlobalSearchScope): SearchScope = this and !otherScope
+operator fun GlobalSearchScope.not(): GlobalSearchScope = GlobalSearchScope.notScope(this)
 
 public fun Project.allScope(): GlobalSearchScope = GlobalSearchScope.allScope(this)
 

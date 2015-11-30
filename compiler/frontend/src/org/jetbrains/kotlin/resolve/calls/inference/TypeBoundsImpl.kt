@@ -16,22 +16,17 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference
 
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.Bound
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.*
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasOnlyInputTypesAnnotation
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
-public class TypeBoundsImpl(
-        override val typeVariable: TypeParameterDescriptor,
-        override val varianceOfPosition: Variance
-) : TypeBounds {
+public class TypeBoundsImpl(override val typeVariable: TypeVariable) : TypeBounds {
     override val bounds = ArrayList<Bound>()
 
     private var resultValues: Collection<KotlinType>? = null
@@ -46,7 +41,7 @@ public class TypeBoundsImpl(
     public fun addBound(bound: Bound) {
         resultValues = null
         assert(bound.typeVariable == typeVariable) {
-            "$bound is added for incorrect type variable ${bound.typeVariable.getName()}. Expected: ${typeVariable.getName()}"
+            "$bound is added for incorrect type variable ${bound.typeVariable.name}. Expected: ${typeVariable.name}"
         }
         bounds.add(bound)
     }
@@ -67,7 +62,7 @@ public class TypeBoundsImpl(
     }
 
     public fun filter(condition: (ConstraintPosition) -> Boolean): TypeBoundsImpl {
-        val result = TypeBoundsImpl(typeVariable, varianceOfPosition)
+        val result = TypeBoundsImpl(typeVariable)
         result.bounds.addAll(bounds.filter { condition(it.position) })
         return result
     }

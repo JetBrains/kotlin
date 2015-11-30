@@ -13,7 +13,7 @@ private class PartiallyImplementedClass {
         if (!switch)
             TODO("what if false")
         else {
-            if (value.length() < 3)
+            if (value.length < 3)
                 throw TODO("write message")
         }
 
@@ -33,7 +33,7 @@ class TODOTest {
     private fun assertNotImplementedWithMessage(message: String, block: () -> Unit) {
         val e = assertFails(block)
         assertTrue(e is NotImplementedError)
-        assertTrue(message in e!!.getMessage()!!)
+        assertTrue(message in e!!.message!!)
     }
 
 

@@ -1,9 +1,9 @@
 public interface Trait {
     @org.jetbrains.annotations.NotNull
-    java.lang.String notNull(@org.jetbrains.annotations.NotNull java.lang.String a);
+    java.lang.String notNull(@org.jetbrains.annotations.NotNull java.lang.String p);
 
     @org.jetbrains.annotations.Nullable
-    java.lang.String nullable(@org.jetbrains.annotations.Nullable java.lang.String a);
+    java.lang.String nullable(@org.jetbrains.annotations.Nullable java.lang.String p);
 
     @org.jetbrains.annotations.NotNull
     java.lang.String notNullWithNN();
@@ -34,7 +34,4 @@ public interface Trait {
     java.lang.String getNotNullVar();
 
     void setNotNullVar(@org.jetbrains.annotations.NotNull java.lang.String p);
-
-    final class DefaultImpls {
-    }
 }

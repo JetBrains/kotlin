@@ -8,4 +8,4 @@ fun factorial(n: Int): Int {
     return product
 }
 
-factorial(10)
+val rv = factorial(10)

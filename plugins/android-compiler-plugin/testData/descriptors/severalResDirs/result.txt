@@ -1,0 +1,47 @@
+kotlinx
+
+
+kotlinx.android
+
+
+kotlinx.android.synthetic
+
+    public fun android.app.Activity.clearFindViewByIdCache(): kotlin.Unit
+    public fun android.app.Fragment.clearFindViewByIdCache(): kotlin.Unit
+
+
+kotlinx.android.synthetic.main
+
+
+kotlinx.android.synthetic.main.test
+
+    public val android.app.Activity.button: android.view.View!
+    public val android.app.Fragment.button: android.view.View!
+    public val android.app.Activity.button2: android.widget.Button!
+    public val android.app.Fragment.button2: android.widget.Button!
+    public val android.app.Activity.button3: android.widget.Button!
+    public val android.app.Fragment.button3: android.widget.Button!
+
+
+kotlinx.android.synthetic.main.test.view
+
+    public val android.view.View.button: android.view.View!
+    public val android.view.View.button2: android.widget.Button!
+    public val android.view.View.button3: android.widget.Button!
+
+
+kotlinx.android.synthetic.test
+
+    public val android.app.Activity.button: android.view.View!
+    public val android.app.Fragment.button: android.view.View!
+    public val android.app.Activity.button2: android.widget.Button!
+    public val android.app.Fragment.button2: android.widget.Button!
+    public val android.app.Activity.button3: android.widget.Button!
+    public val android.app.Fragment.button3: android.widget.Button!
+
+
+kotlinx.android.synthetic.test.view
+
+    public val android.view.View.button: android.view.View!
+    public val android.view.View.button2: android.widget.Button!
+    public val android.view.View.button3: android.widget.Button!

@@ -2,7 +2,7 @@ import kotlin.jvm.JvmStatic
 
 <error descr="[WRONG_ANNOTATION_TARGET] This annotation is not applicable to target 'class'">@JvmStatic</error>
 class A {
-    <error descr="[WRONG_ANNOTATION_TARGET] This annotation is not applicable to target 'object'">@JvmStatic</error>
+    <error descr="[WRONG_ANNOTATION_TARGET] This annotation is not applicable to target 'companion object'">@JvmStatic</error>
     companion object {
         @JvmStatic fun a1() {
 

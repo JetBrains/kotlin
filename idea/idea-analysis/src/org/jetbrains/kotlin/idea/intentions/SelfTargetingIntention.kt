@@ -73,7 +73,7 @@ public abstract class SelfTargetingIntention<TElement : KtElement>(
         for (element in elementsToCheck) {
             @Suppress("UNCHECKED_CAST")
             if (elementType.isInstance(element) && isApplicableTo(element as TElement, offset)) {
-                return element as TElement
+                return element
             }
             if (!allowCaretInsideElement(element) && element.getTextRange().containsInside(offset)) break
         }

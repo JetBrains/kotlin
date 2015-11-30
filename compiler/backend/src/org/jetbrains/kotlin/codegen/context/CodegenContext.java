@@ -315,9 +315,10 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     public ScriptContext intoScript(
             @NotNull ScriptDescriptor script,
             @NotNull List<ScriptDescriptor> earlierScripts,
-            @NotNull ClassDescriptor classDescriptor
+            @NotNull ClassDescriptor classDescriptor,
+            @NotNull JetTypeMapper typeMapper
     ) {
-        return new ScriptContext(script, earlierScripts, classDescriptor, OwnerKind.IMPLEMENTATION, this, closure);
+        return new ScriptContext(typeMapper, script, earlierScripts, classDescriptor, this);
     }
 
     @NotNull
@@ -511,20 +512,21 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             @Nullable ClassDescriptor superCallTarget
     ) {
         DeclarationDescriptor enclosing = descriptor.getContainingDeclaration();
-        if (!isInlineMethodContext() && (
+        boolean isInliningContext = isInlineMethodContext();
+        if (!isInliningContext && (
                 !hasThisDescriptor() ||
                 enclosing == getThisDescriptor() ||
                 enclosing == getClassOrPackageParentContext().getContextDescriptor())) {
             return descriptor;
         }
 
-        return accessibleDescriptorIfNeeded(descriptor, superCallTarget);
+        return accessibleDescriptorIfNeeded(descriptor, superCallTarget, isInliningContext);
     }
 
     public void recordSyntheticAccessorIfNeeded(@NotNull CallableMemberDescriptor descriptor, @NotNull BindingContext bindingContext) {
         if (hasThisDescriptor() && Boolean.TRUE.equals(bindingContext.get(NEED_SYNTHETIC_ACCESSOR, descriptor))) {
             // Not a super call because neither constructors nor private members can be targets of super calls
-            accessibleDescriptorIfNeeded(descriptor, /* superCallTarget = */ null);
+            accessibleDescriptorIfNeeded(descriptor, /* superCallTarget = */ null, false);
         }
     }
 
@@ -532,7 +534,8 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     @NotNull
     private <D extends CallableMemberDescriptor> D accessibleDescriptorIfNeeded(
             @NotNull D descriptor,
-            @Nullable ClassDescriptor superCallTarget
+            @Nullable ClassDescriptor superCallTarget,
+            boolean withinInliningContext
     ) {
         CallableMemberDescriptor unwrappedDescriptor = DescriptorUtils.unwrapFakeOverride(descriptor);
 
@@ -553,10 +556,14 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             superCallTarget = (ClassDescriptor) enclosed;
         }
 
+        if (descriptorContext == null && withinInliningContext && superCallTarget != null) {
+            //generate super calls within inline function through synthetic accessors
+            descriptorContext = ExpressionCodegen.getParentContextSubclassOf((ClassDescriptor) enclosed, this);
+        }
+
         if (descriptorContext == null) {
             return descriptor;
         }
-
         if (descriptor instanceof PropertyDescriptor) {
             PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
             int propertyAccessFlag = getVisibilityAccessFlag(descriptor);
@@ -564,12 +571,14 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
             int getterAccessFlag = getter == null ? propertyAccessFlag
                                                   : propertyAccessFlag | getVisibilityAccessFlag(getter);
-            boolean getterAccessorRequired = isAccessorRequired(getterAccessFlag, unwrappedDescriptor, descriptorContext);
+            boolean getterAccessorRequired = isAccessorRequired(getterAccessFlag, unwrappedDescriptor, descriptorContext,
+                                                                withinInliningContext, superCallTarget != null);
 
             PropertySetterDescriptor setter = propertyDescriptor.getSetter();
             int setterAccessFlag = setter == null ? propertyAccessFlag
                                                   : propertyAccessFlag | getVisibilityAccessFlag(setter);
-            boolean setterAccessorRequired = isAccessorRequired(setterAccessFlag, unwrappedDescriptor, descriptorContext);
+            boolean setterAccessorRequired = isAccessorRequired(setterAccessFlag, unwrappedDescriptor, descriptorContext,
+                                                                withinInliningContext, superCallTarget != null);
 
             if (!getterAccessorRequired && !setterAccessorRequired) {
                 return descriptor;
@@ -578,7 +587,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         }
         else {
             int flag = getVisibilityAccessFlag(unwrappedDescriptor);
-            if (!isAccessorRequired(flag, unwrappedDescriptor, descriptorContext)) {
+            if (!isAccessorRequired(flag, unwrappedDescriptor, descriptorContext, withinInliningContext, superCallTarget != null)) {
                 return descriptor;
             }
             return (D) descriptorContext.getAccessor(descriptor, superCallTarget);
@@ -588,10 +597,14 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     private static boolean isAccessorRequired(
             int accessFlag,
             @NotNull CallableMemberDescriptor unwrappedDescriptor,
-            @NotNull CodegenContext descriptorContext
+            @NotNull CodegenContext descriptorContext,
+            boolean withinInline,
+            boolean isSuperCall
     ) {
-        return (accessFlag & ACC_PRIVATE) != 0 ||
-               ((accessFlag & ACC_PROTECTED) != 0 && !isInSamePackage(unwrappedDescriptor, descriptorContext.getContextDescriptor()));
+        return isSuperCall && withinInline ||
+               (accessFlag & ACC_PRIVATE) != 0 ||
+               ((accessFlag & ACC_PROTECTED) != 0 &&
+                (withinInline || !isInSamePackage(unwrappedDescriptor, descriptorContext.getContextDescriptor())));
     }
 
     private static boolean isInSamePackage(DeclarationDescriptor descriptor1, DeclarationDescriptor descriptor2) {

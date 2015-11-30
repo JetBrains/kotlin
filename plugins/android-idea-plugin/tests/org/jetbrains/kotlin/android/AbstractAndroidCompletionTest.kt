@@ -61,6 +61,6 @@ public abstract class AbstractAndroidCompletionTest : KotlinAndroidTestCase() {
         settings.AUTOCOMPLETE_ON_CODE_COMPLETION = codeCompletionOldValue
         settings.AUTOCOMPLETE_ON_SMART_TYPE_COMPLETION = smartTypeCompletionOldValue
 
-        super<KotlinAndroidTestCase>.tearDown()
+        super.tearDown()
     }
 }

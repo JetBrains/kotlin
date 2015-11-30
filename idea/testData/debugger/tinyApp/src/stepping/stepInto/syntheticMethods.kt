@@ -23,26 +23,27 @@ class Derived: Base<String>() {
 class A {
     fun test() {
         lambda {
-            val a = 1
+            1
         }
     }
 
-    fun lambda(f: () -> Unit) {
-        f()
+    fun lambda(f: () -> Int): Int {
+        return f()
     }
 
     companion object {
         fun test() {
             lambda {
-                val a = 1
+                1
             }
         }
 
-        fun lambda(f: () -> Unit) {
-            f()
+        fun lambda(f: () -> Int): Int {
+            return f()
         }
     }
 }
 
 // STEP_INTO: 26
 // SKIP_SYNTHETIC_METHODS: false
+// SKIP_CONSTRUCTORS: true

@@ -4,6 +4,7 @@ class A {
 }
 
 
+
 Resolved call:
 
 Resulting descriptor: constructor A(x: Int) defined in A

@@ -17,16 +17,12 @@
 package org.jetbrains.kotlin.resolve.lazy
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor
 
 public interface TopLevelDescriptorProvider {
     fun getPackageFragment(fqName: FqName): LazyPackageDescriptor?
-
-    fun getScriptDescriptor(script: KtScript): ScriptDescriptor
 
     fun getTopLevelClassDescriptors(fqName: FqName, location: LookupLocation): Collection<ClassDescriptor>
 }
@@ -35,10 +31,6 @@ public object NoTopLevelDescriptorProvider : TopLevelDescriptorProvider {
     private fun shouldNotBeCalled(): Nothing = throw UnsupportedOperationException("Should not be called")
 
     override fun getPackageFragment(fqName: FqName): LazyPackageDescriptor? {
-        shouldNotBeCalled()
-    }
-
-    override fun getScriptDescriptor(script: KtScript): ScriptDescriptor {
         shouldNotBeCalled()
     }
 

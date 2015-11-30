@@ -1,8 +1,8 @@
-package com.myapp
+package test
 
 import android.app.Fragment
 import java.io.File
-import kotlinx.android.synthetic.layout.*
+import kotlinx.android.synthetic.main.layout.*
 
 public class MyFragemnt : Fragment() {
     override fun onResume() {}

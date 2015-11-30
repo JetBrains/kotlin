@@ -3,18 +3,18 @@ package foo
 var log = ""
 
 class T(val id: Int) {
-    fun component1(): Int {
+    operator fun component1(): Int {
         log += "($id).component1();"
         return 1
     }
-    fun component2(): String {
+    operator fun component2(): String {
         log += "($id).component2();"
         return "1"
     }
 }
 
 class C {
-    fun iterator(): Iterator<T> = object: Iterator<T> {
+    operator fun iterator(): Iterator<T> = object: Iterator<T> {
         var i = 0
         var data = arrayOf(T(3), T(1), T(2))
         override fun hasNext(): Boolean {

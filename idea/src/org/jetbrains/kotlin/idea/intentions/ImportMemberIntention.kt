@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.idea.util.ImportDescriptorResult
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -65,8 +65,7 @@ class ImportMemberIntention : SelfTargetingOffsetIndependentIntention<KtNameRefe
     }
 
     private fun qualifiedExpression(element: KtNameReferenceExpression): KtDotQualifiedExpression? {
-        val parent = element.parent
-        return (if (parent is KtCallExpression) parent.parent else parent) as? KtDotQualifiedExpression
+        return element.getQualifiedElement() as? KtDotQualifiedExpression
     }
 
     private fun targetFqName(qualifiedExpression: KtDotQualifiedExpression): FqName? {

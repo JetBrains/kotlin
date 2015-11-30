@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.resolve.*
 
 public interface ExpressionCodegenExtension {
-    companion object : ProjectExtensionDescriptor<ExpressionCodegenExtension>("org.jetbrains.kotlin.expressionCodegenExtension", javaClass<ExpressionCodegenExtension>())
+    companion object : ProjectExtensionDescriptor<ExpressionCodegenExtension>(
+            "org.jetbrains.kotlin.expressionCodegenExtension", ExpressionCodegenExtension::class.java)
 
     public class Context(
             public val typeMapper: JetTypeMapper,
@@ -42,10 +42,10 @@ public interface ExpressionCodegenExtension {
     public fun applyProperty(receiver: StackValue, resolvedCall: ResolvedCall<*>, c: Context): StackValue? = null
 
     /**
-     *  Used for generating custom byte code for the function call. This function has non-lazy semantics.
-     *  Returns true if the stack was modified.
+     *  Used for generating custom byte code for the function call. This function has lazy semantics.
+     *  Returns new stack value.
      */
-    public fun applyFunction(receiver: StackValue, resolvedCall: ResolvedCall<*>, c: Context): Boolean = false
+    public fun applyFunction(receiver: StackValue, resolvedCall: ResolvedCall<*>, c: Context): StackValue? = null
 
     public fun generateClassSyntheticParts(
             classBuilder: ClassBuilder,

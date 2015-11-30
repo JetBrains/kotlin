@@ -54,20 +54,20 @@ import org.jetbrains.kotlin.modules.Module;
 import org.jetbrains.kotlin.modules.TargetId;
 import org.jetbrains.kotlin.modules.TargetIdKt;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.parsing.KotlinScriptDefinition;
-import org.jetbrains.kotlin.parsing.KotlinScriptDefinitionProvider;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter;
+import org.jetbrains.kotlin.psi.KtScript;
 import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.BindingTraceContext;
-import org.jetbrains.kotlin.resolve.ScriptNameUtil;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.kotlin.util.PerformanceCounter;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.KotlinPaths;
 
 import java.io.File;
+import java.io.PrintStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
@@ -257,15 +257,39 @@ public class KotlinToJVMBytecodeCompiler {
     ) {
         Class<?> scriptClass = compileScript(configuration, paths, environment);
         if (scriptClass == null) return;
+        Constructor<?> scriptConstructor = getScriptConstructor(scriptClass);
 
         try {
-            scriptClass.getConstructor(String[].class).newInstance(new Object[] {ArrayUtil.toStringArray(scriptArgs)});
+            scriptConstructor.newInstance(new Object[] {ArrayUtil.toStringArray(scriptArgs)});
         }
-        catch (RuntimeException e) {
-            throw e;
+        catch (Throwable e) {
+            reportExceptionFromScript(e);
         }
-        catch (Exception e) {
-            throw new RuntimeException("Failed to evaluate script: " + e, e);
+    }
+
+    private static void reportExceptionFromScript(@NotNull  Throwable exception) {
+        // expecting InvocationTargetException from constructor invocation with cause that describes the actual cause
+        PrintStream stream = System.err;
+        Throwable cause = exception.getCause();
+        if (!(exception instanceof InvocationTargetException) || cause == null) {
+            exception.printStackTrace(stream);
+            return;
+        }
+        stream.println(cause);
+        StackTraceElement[] fullTrace = cause.getStackTrace();
+        int relevantEntries = fullTrace.length - exception.getStackTrace().length;
+        for (int i = 0; i < relevantEntries; i++) {
+            stream.println("\tat " + fullTrace[i]);
+        }
+    }
+
+    @NotNull
+    private static Constructor<?> getScriptConstructor(Class<?> scriptClass) {
+        try {
+            return scriptClass.getConstructor(String[].class);
+        }
+        catch (NoSuchMethodException e) {
+            throw ExceptionUtilsKt.rethrow(e);
         }
     }
 
@@ -275,12 +299,6 @@ public class KotlinToJVMBytecodeCompiler {
             @NotNull KotlinPaths paths,
             @NotNull KotlinCoreEnvironment environment
     ) {
-        List<AnalyzerScriptParameter> scriptParameters = environment.getConfiguration().getList(JVMConfigurationKeys.SCRIPT_PARAMETERS);
-        if (!scriptParameters.isEmpty()) {
-            KotlinScriptDefinitionProvider.getInstance(environment.getProject()).addScriptDefinition(
-                    new KotlinScriptDefinition(".kts", scriptParameters)
-            );
-        }
         GenerationState state = analyzeAndGenerate(environment);
         if (state == null) {
             return null;
@@ -297,7 +315,9 @@ public class KotlinToJVMBytecodeCompiler {
                                                    new URLClassLoader(classPaths.toArray(new URL[classPaths.size()]), null)
             );
 
-            FqName nameForScript = ScriptNameUtil.classNameForScript(environment.getSourceFiles().get(0).getScript());
+            KtScript script = environment.getSourceFiles().get(0).getScript();
+            assert script != null : "Script must be parsed";
+            FqName nameForScript = script.getFqName();
             return classLoader.loadClass(nameForScript.asString());
         }
         catch (Exception e) {
@@ -401,7 +421,6 @@ public class KotlinToJVMBytecodeCompiler {
                 obsoleteMultifileClasses.add(JvmClassName.byInternalName(obsoleteFacadeInternalName).getFqNameForClassNameWithoutDollars());
             }
         }
-        BindingTraceContext diagnosticHolder = new BindingTraceContext();
         GenerationState generationState = new GenerationState(
                 environment.getProject(),
                 ClassBuilderFactories.BINARIES,
@@ -414,7 +433,6 @@ public class KotlinToJVMBytecodeCompiler {
                 configuration.get(JVMConfigurationKeys.DISABLE_INLINE, false),
                 configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false),
                 /* useTypeTableInSerializer = */ false,
-                diagnosticHolder,
                 packagesWithObsoleteParts,
                 obsoleteMultifileClasses,
                 targetId,
@@ -437,7 +455,7 @@ public class KotlinToJVMBytecodeCompiler {
 
         AnalyzerWithCompilerReport.reportDiagnostics(
                 new FilteredJvmDiagnostics(
-                        diagnosticHolder.getBindingContext().getDiagnostics(),
+                        generationState.getCollectedExtraJvmDiagnostics(),
                         result.getBindingContext().getDiagnostics()
                 ),
                 environment.getConfiguration().get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)

@@ -20,6 +20,7 @@ import com.intellij.openapi.util.AtomicNotNullLazyValue;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.containers.ConcurrentMultiMap;
 import com.intellij.util.containers.MultiMap;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 
@@ -27,17 +28,19 @@ import java.util.Collection;
 
 public class DiagnosticsElementsCache {
     private final Diagnostics diagnostics;
+    private final Function1<Diagnostic, Boolean> filter;
 
     private final AtomicNotNullLazyValue<MultiMap<PsiElement, Diagnostic>> elementToDiagnostic = new AtomicNotNullLazyValue<MultiMap<PsiElement, Diagnostic>>() {
         @NotNull
         @Override
         protected MultiMap<PsiElement, Diagnostic> compute() {
-            return buildElementToDiagnosticCache(diagnostics);
+            return buildElementToDiagnosticCache(diagnostics, filter);
         }
     };
 
-    public DiagnosticsElementsCache(Diagnostics diagnostics) {
+    public DiagnosticsElementsCache(Diagnostics diagnostics, Function1<Diagnostic, Boolean> filter) {
         this.diagnostics = diagnostics;
+        this.filter = filter;
     }
 
     @NotNull
@@ -45,10 +48,12 @@ public class DiagnosticsElementsCache {
         return elementToDiagnostic.getValue().get(psiElement);
     }
 
-    private static MultiMap<PsiElement, Diagnostic> buildElementToDiagnosticCache(Diagnostics diagnostics) {
+    private static MultiMap<PsiElement, Diagnostic> buildElementToDiagnosticCache(Diagnostics diagnostics, Function1<Diagnostic, Boolean> filter) {
         MultiMap<PsiElement, Diagnostic> elementToDiagnostic = new ConcurrentMultiMap<PsiElement, Diagnostic>();
         for (Diagnostic diagnostic : diagnostics) {
-            elementToDiagnostic.putValue(diagnostic.getPsiElement(), diagnostic);
+            if (filter.invoke(diagnostic)) {
+                elementToDiagnostic.putValue(diagnostic.getPsiElement(), diagnostic);
+            }
         }
 
         return elementToDiagnostic;

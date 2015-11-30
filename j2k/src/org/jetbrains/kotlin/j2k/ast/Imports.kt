@@ -40,7 +40,7 @@ class ImportList(public var imports: List<Import>) : Element() {
 }
 
 public fun Converter.convertImportList(importList: PsiImportList): ImportList =
-        ImportList(importList.getAllImportStatements().map { convertImport(it, true) }.filterNotNull()).assignPrototype(importList)
+        ImportList(importList.getAllImportStatements().mapNotNull { convertImport(it, true) }).assignPrototype(importList)
 
 public fun Converter.convertImport(anImport: PsiImportStatementBase, filter: Boolean): Import? {
     fun doConvert(): Import? {

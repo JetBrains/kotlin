@@ -88,6 +88,12 @@ public object ModifierCheckerCore {
             INFIX_KEYWORD     to EnumSet.of(FUNCTION)
     )
 
+    // NOTE: deprecated targets must be possible!
+    private val deprecatedTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>(
+            // Deprecated in 1.0 beta 3
+            SEALED_KEYWORD    to EnumSet.of(LOCAL_CLASS)
+    )
+
     // NOTE: redundant targets must be possible!
     private val redundantTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>(
             ABSTRACT_KEYWORD  to EnumSet.of(INTERFACE),
@@ -96,22 +102,20 @@ public object ModifierCheckerCore {
     )
 
     val possibleParentTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>(
-            INNER_KEYWORD     to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, ENUM_CLASS, ENUM_ENTRY),
+            INNER_KEYWORD     to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, ENUM_CLASS),
             OVERRIDE_KEYWORD  to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, OBJECT, OBJECT_LITERAL,
                                             INTERFACE, ENUM_CLASS, ENUM_ENTRY),
-            PROTECTED_KEYWORD to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, ENUM_CLASS, OBJECT),
+            PROTECTED_KEYWORD to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, ENUM_CLASS, COMPANION_OBJECT),
             INTERNAL_KEYWORD  to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, OBJECT, OBJECT_LITERAL,
                                             ENUM_CLASS, ENUM_ENTRY, FILE),
             PRIVATE_KEYWORD   to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, OBJECT, OBJECT_LITERAL,
                                             INTERFACE, ENUM_CLASS, ENUM_ENTRY, FILE),
-            COMPANION_KEYWORD to EnumSet.of(CLASS_ONLY, ENUM_CLASS, INTERFACE)
+            COMPANION_KEYWORD to EnumSet.of(CLASS_ONLY, ENUM_CLASS, INTERFACE),
+            FINAL_KEYWORD     to EnumSet.of(CLASS_ONLY, INNER_CLASS, LOCAL_CLASS, OBJECT, OBJECT_LITERAL,
+                                            ENUM_CLASS, ENUM_ENTRY, ANNOTATION_CLASS, FILE)
     )
 
-    val deprecatedParentTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>(
-            // Deprecated in M15
-            FINAL_KEYWORD     to EnumSet.of(INTERFACE),
-            PROTECTED_KEYWORD to EnumSet.of(OBJECT)
-    )
+    val deprecatedParentTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>()
 
     // First modifier in pair should be also first in declaration
     private val mutualCompatibility = buildCompatibilityMap()
@@ -229,8 +233,12 @@ public object ModifierCheckerCore {
             trace.report(Errors.WRONG_MODIFIER_TARGET.on(node.psi, modifier, actualTargets.firstOrNull()?.description ?: "this"))
             return false
         }
+        val deprecatedTargets = deprecatedTargetMap[modifier] ?: emptySet()
         val redundantTargets = redundantTargetMap[modifier] ?: emptySet()
-        if (actualTargets.any { it in redundantTargets}) {
+        if (actualTargets.any { it in deprecatedTargets }) {
+            trace.report(Errors.DEPRECATED_MODIFIER_FOR_TARGET.on(node.psi, modifier, actualTargets.firstOrNull()?.description ?: "this"))
+        }
+        else if (actualTargets.any { it in redundantTargets }) {
             trace.report(Errors.REDUNDANT_MODIFIER_FOR_TARGET.on(node.psi, modifier, actualTargets.firstOrNull()?.description ?: "this"))
         }
         return true

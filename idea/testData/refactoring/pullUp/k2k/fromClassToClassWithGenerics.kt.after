@@ -22,7 +22,7 @@ abstract class A<T: I, U: I, V>(x: T, y: Any?) {
     abstract val foo8: Z<Any?>
 
     // INFO: {"checked": "true"}
-    fun foo<S>(x1: T, x2: Z<T>, y1: Any?, y2: Z<Any?>, w1: I, w2: Z<I>, s1: S, s2: Z<S>) {
+    fun <S> foo(x1: T, x2: Z<T>, y1: Any?, y2: Z<Any?>, w1: I, w2: Z<I>, s1: S, s2: Z<S>) {
 
     }
 

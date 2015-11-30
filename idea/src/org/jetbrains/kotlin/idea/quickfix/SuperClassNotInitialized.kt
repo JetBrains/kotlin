@@ -39,8 +39,8 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.types.IndexedParametersSubstitution
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
@@ -68,7 +68,7 @@ public object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
         if (classOrObjectDeclaration is KtClass) {
             val superType = classDescriptor.getTypeConstructor().getSupertypes().firstOrNull { it.getConstructor().getDeclarationDescriptor() == superClass }
             if (superType != null) {
-                val substitutor = IndexedParametersSubstitution(superClass.typeConstructor, superType.arguments).buildSubstitutor()
+                val substitutor = TypeConstructorSubstitution.create(superClass.typeConstructor, superType.arguments).buildSubstitutor()
 
                 val substitutedConstructors = constructors
                         .filter { it.getValueParameters().isNotEmpty() }

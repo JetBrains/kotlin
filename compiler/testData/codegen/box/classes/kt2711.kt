@@ -1,9 +1,9 @@
 class IntRange {
-    fun contains(a: Int) = (1..2).contains(a)
+    operator fun contains(a: Int) = (1..2).contains(a)
 }
 
 class C() {
-    fun rangeTo(i: Int) = IntRange()
+    operator fun rangeTo(i: Int) = IntRange()
 }
 
 

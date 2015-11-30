@@ -70,9 +70,10 @@ public class LibrarySourcesConfig extends Config {
             boolean sourceMap,
             boolean inlineEnabled,
             boolean isUnitTestConfig,
-            boolean metaInfo
+            boolean metaInfo,
+            boolean kjsm
     ) {
-        super(project, moduleId, ecmaVersion, sourceMap, inlineEnabled, metaInfo);
+        super(project, moduleId, ecmaVersion, sourceMap, inlineEnabled, metaInfo, kjsm);
         this.files = files;
         this.isUnitTestConfig = isUnitTestConfig;
     }
@@ -197,6 +198,7 @@ public class LibrarySourcesConfig extends Config {
         boolean inlineEnabled = true;
         boolean isUnitTestConfig = false;
         boolean metaInfo = false;
+        boolean kjsm = false;
 
         public Builder(@NotNull Project project, @NotNull String moduleId, @NotNull List<String> files) {
             this.project = project;
@@ -229,8 +231,13 @@ public class LibrarySourcesConfig extends Config {
             return this;
         }
 
+        public Builder kjsm(boolean kjsm) {
+            this.kjsm = kjsm;
+            return this;
+        }
+
         public Config build() {
-            return new LibrarySourcesConfig(project, moduleId, files, ecmaVersion, sourceMap, inlineEnabled, isUnitTestConfig, metaInfo);
+            return new LibrarySourcesConfig(project, moduleId, files, ecmaVersion, sourceMap, inlineEnabled, isUnitTestConfig, metaInfo, kjsm);
         }
     }
 

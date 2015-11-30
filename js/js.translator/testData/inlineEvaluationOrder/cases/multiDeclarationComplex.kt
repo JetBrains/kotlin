@@ -6,18 +6,15 @@ package foo
 
 class A(val a: Int, val b: Int, val c: Int, val d: Int, val e: Int)
 
-fun A.component1(): Int = fizz(a)
+operator fun A.component1(): Int = fizz(a)
 
-inline
-fun A.component2(): Int = buzz(b)
+inline operator fun A.component2(): Int = buzz(b)
 
-inline
-fun A.component3(): Int = buzz(c)
+inline operator fun A.component3(): Int = buzz(c)
 
-fun A.component4(): Int = fizz(d)
+operator fun A.component4(): Int = fizz(d)
 
-inline
-fun A.component5(): Int = buzz(e)
+inline operator fun A.component5(): Int = buzz(e)
 
 fun box(): String {
     val (a, b, c, d, e) = A(1, 2, 3, 4, 5)

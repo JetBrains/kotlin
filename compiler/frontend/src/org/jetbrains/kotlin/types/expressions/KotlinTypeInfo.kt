@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.types.KotlinType
  * At the end current data flow info is x != null && y != null, but jump data flow info is x != null only.
  * Both break and continue are counted as possible jump outside of a loop, but return is not.
  */
-class KotlinTypeInfo(
+class KotlinTypeInfo @JvmOverloads constructor(
         val type: KotlinType?,
         val dataFlowInfo: DataFlowInfo,
         val jumpOutPossible: Boolean = false,

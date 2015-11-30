@@ -103,6 +103,7 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
         return (SimpleFunctionDescriptorImpl) doSubstitute(
                 TypeSubstitutor.EMPTY, newOwner, modality, visibility,
                 isOperator(), isInfix(), isExternal(), isInline(), isTailrec(),
+                hasStableParameterNames(), hasSynthesizedParameterNames(),
                 null, copyOverrides, kind
         );
     }
@@ -113,7 +114,7 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
         //noinspection ConstantConditions
         return (SimpleFunctionDescriptorImpl) doSubstitute(
                 TypeSubstitutor.EMPTY, getContainingDeclaration(), getModality(), getVisibility(),
-                isOperator(), isInfix(), isExternal(), isInline(), isTailrec(),
+                isOperator(), isInfix(), isExternal(), isInline(), isTailrec(), hasStableParameterNames(), hasSynthesizedParameterNames(),
                 null, /* copyOverrides = */ true, getKind(), getValueParameters(), getExtensionReceiverParameterType(), getReturnType(), name,
                 /* preserveSource = */ true, /* signatureChange = */ true);
     }
@@ -124,7 +125,7 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
         //noinspection ConstantConditions
         return (SimpleFunctionDescriptorImpl) doSubstitute(
                 TypeSubstitutor.EMPTY, getContainingDeclaration(), getModality(), getVisibility(),
-                isOperator(), isInfix(), isExternal(), isInline(), isTailrec(),
+                isOperator(), isInfix(), isExternal(), isInline(), isTailrec(), hasStableParameterNames(), hasSynthesizedParameterNames(),
                 null, /* copyOverrides = */ true, getKind(), valueParameters, getExtensionReceiverParameterType(), getReturnType(), null,
                 /* preserveSource = */ true, /* signatureChange = */ true);
     }

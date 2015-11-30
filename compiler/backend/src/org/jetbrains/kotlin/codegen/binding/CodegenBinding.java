@@ -24,17 +24,13 @@ import org.jetbrains.kotlin.codegen.SamType;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.when.WhenByEnumsMapping;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassesProvider;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.resolve.scopes.MemberScope;
-import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.util.slicedMap.BasicWritableSlice;
 import org.jetbrains.kotlin.util.slicedMap.Slices;
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
@@ -43,14 +39,11 @@ import org.jetbrains.org.objectweb.asm.Type;
 import java.util.*;
 
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
-import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.descriptorToDeclaration;
 
 public class CodegenBinding {
     public static final WritableSlice<ClassDescriptor, MutableClosure> CLOSURE = Slices.createSimpleSlice();
 
     public static final WritableSlice<CallableDescriptor, ClassDescriptor> CLASS_FOR_CALLABLE = Slices.createSimpleSlice();
-
-    public static final WritableSlice<ScriptDescriptor, ClassDescriptor> CLASS_FOR_SCRIPT = Slices.createSimpleSlice();
 
     public static final WritableSlice<ClassDescriptor, Type> ASM_TYPE = Slices.createSimpleSlice();
 
@@ -87,22 +80,6 @@ public class CodegenBinding {
 
     public static boolean enumEntryNeedSubclass(BindingContext bindingContext, ClassDescriptor classDescriptor) {
         return Boolean.TRUE.equals(bindingContext.get(ENUM_ENTRY_CLASS_NEED_SUBCLASS, classDescriptor));
-    }
-
-    @NotNull
-    public static Type asmTypeForScriptDescriptor(BindingContext bindingContext, @NotNull ScriptDescriptor scriptDescriptor) {
-        ClassDescriptor classDescriptor = bindingContext.get(CLASS_FOR_SCRIPT, scriptDescriptor);
-        //noinspection ConstantConditions
-        return getAsmType(bindingContext, classDescriptor);
-    }
-
-    @NotNull
-    public static Type asmTypeForScriptPsi(BindingContext bindingContext, @NotNull KtScript script) {
-        ScriptDescriptor scriptDescriptor = bindingContext.get(SCRIPT, script);
-        if (scriptDescriptor == null) {
-            throw new IllegalStateException("Script descriptor not found by PSI " + script);
-        }
-        return asmTypeForScriptDescriptor(bindingContext, scriptDescriptor);
     }
 
     @NotNull
@@ -163,7 +140,7 @@ public class CodegenBinding {
             @NotNull Type asmType,
             @NotNull JvmFileClassesProvider fileClassesManager
     ) {
-        KtElement element = (KtElement) descriptorToDeclaration(classDescriptor);
+        KtElement element = (KtElement) DescriptorToSourceUtils.descriptorToDeclaration(classDescriptor);
         assert element != null : "No source element for " + classDescriptor;
 
         MutableClosure closure = new MutableClosure(classDescriptor, enclosing);
@@ -194,29 +171,6 @@ public class CodegenBinding {
             bindingTrace.record(INNER_CLASSES, outer, innerClasses);
         }
         innerClasses.add(inner);
-    }
-
-    public static void registerClassNameForScript(
-            @NotNull BindingTrace trace,
-            @NotNull KtScript script,
-            @NotNull Type asmType,
-            @NotNull JvmFileClassesProvider fileClassesManager
-    ) {
-        ScriptDescriptor descriptor = trace.getBindingContext().get(SCRIPT, script);
-        if (descriptor == null) {
-            throw new IllegalStateException("Script descriptor is not found for PSI: " + PsiUtilsKt.getElementTextWithContext(script));
-        }
-
-        String simpleName = asmType.getInternalName().substring(asmType.getInternalName().lastIndexOf('/') + 1);
-        ClassDescriptorImpl classDescriptor =
-                new ClassDescriptorImpl(descriptor, Name.special("<script-" + simpleName + ">"), Modality.FINAL,
-                                        Collections.singleton(DescriptorUtilsKt.getBuiltIns(descriptor).getAnyType()),
-                                        KotlinSourceElementKt.toSourceElement(script));
-        classDescriptor.initialize(MemberScope.Empty.INSTANCE, Collections.<ConstructorDescriptor>emptySet(), null);
-
-        recordClosure(trace, classDescriptor, null, asmType, fileClassesManager);
-
-        trace.record(CLASS_FOR_SCRIPT, descriptor, classDescriptor);
     }
 
     @NotNull

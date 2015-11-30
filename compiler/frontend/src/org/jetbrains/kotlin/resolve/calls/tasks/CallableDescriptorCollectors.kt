@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.tasks.collectors
 
+import com.intellij.util.SmartList
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.descriptors.*
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils.isStaticNestedClass
 import org.jetbrains.kotlin.resolve.LibrarySourceHacks
 import org.jetbrains.kotlin.resolve.calls.tasks.createSynthesizedInvokes
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassObjectType
+import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassValueDescriptor
 import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalChainedScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.resolve.scopes.utils.*
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 public interface CallableDescriptorCollector<D : CallableDescriptor> {
 
@@ -165,7 +167,11 @@ private object FunctionCollector : CallableDescriptorCollector<FunctionDescripto
 
 private object VariableCollector : CallableDescriptorCollector<VariableDescriptor> {
     override fun getLocalNonExtensionsByName(lexicalScope: LexicalScope, name: Name, location: LookupLocation): Collection<VariableDescriptor> {
-        return listOfNotNull(lexicalScope.findLocalVariable(name))
+        val result = SmartList<VariableDescriptor>()
+        result.addIfNotNull(lexicalScope.findLocalVariable(name))
+        // Although local objects are prohibited, we'll include objects declared in current scope so that their usages are still resolved.
+        result.addIfNotNull(getContributedFakeDescriptorForObject(lexicalScope, name, location))
+        return result
     }
 
     override fun getStaticInheritanceByName(lexicalScope: LexicalScope, name: Name, location: LookupLocation): Collection<VariableDescriptor> {
@@ -179,23 +185,29 @@ private object VariableCollector : CallableDescriptorCollector<VariableDescripto
         }
     }
 
-    private fun getFakeDescriptorForObject(scope: HierarchicalScope, name: Name, location: LookupLocation): VariableDescriptor? {
+    private fun getContributedFakeDescriptorForObject(scope: LexicalScope, name: Name, location: LookupLocation): VariableDescriptor? {
+        val classifier = scope.getContributedClassifier(name, location)
+        if (classifier !is ClassDescriptor || !classifier.hasClassValueDescriptor) return null
+        return FakeCallableDescriptorForObject(classifier)
+    }
+
+    private fun findFakeDescriptorForObject(scope: HierarchicalScope, name: Name, location: LookupLocation): VariableDescriptor? {
         val classifier = scope.findClassifier(name, location)
-        if (classifier !is ClassDescriptor || !classifier.hasClassObjectType) return null
+        if (classifier !is ClassDescriptor || !classifier.hasClassValueDescriptor) return null
 
         return FakeCallableDescriptorForObject(classifier)
     }
 
     override fun getNonExtensionsByName(scope: HierarchicalScope, name: Name, location: LookupLocation): Collection<VariableDescriptor> {
         val properties = scope.collectVariables(name, location).filter { it.extensionReceiverParameter == null }
-        val fakeDescriptor = getFakeDescriptorForObject(scope, name, location)
+        val fakeDescriptor = findFakeDescriptorForObject(scope, name, location)
         return if (fakeDescriptor != null) properties + fakeDescriptor else properties
     }
 
     override fun getMembersByName(receiver: KotlinType, name: Name, location: LookupLocation): Collection<VariableDescriptor> {
         val memberScope = receiver.memberScope
         val properties = memberScope.getContributedVariables(name, location)
-        val fakeDescriptor = getFakeDescriptorForObject(memberScope.memberScopeAsImportingScope(), name, location)
+        val fakeDescriptor = findFakeDescriptorForObject(memberScope.memberScopeAsImportingScope(), name, location)
         return if (fakeDescriptor != null) properties + fakeDescriptor else properties
     }
 

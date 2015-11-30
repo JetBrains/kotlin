@@ -46,9 +46,7 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
-import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils;
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
-import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
+import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.storage.StorageManager;
@@ -579,6 +577,7 @@ public class DescriptorResolver {
             @NotNull KotlinType upperBoundType,
             BindingTrace trace
     ) {
+        if (DeclarationsCheckerKt.checkNotEnumEntry(upperBound, trace)) return;
         if (!TypeUtils.canHaveSubtypes(KotlinTypeChecker.DEFAULT, upperBoundType)) {
             ClassifierDescriptor descriptor = upperBoundType.getConstructor().getDeclarationDescriptor();
             if (descriptor instanceof ClassDescriptor) {
@@ -777,7 +776,7 @@ public class DescriptorResolver {
             else {
                 LexicalWritableScope writableScope = new LexicalWritableScope(
                         scope, containingDeclaration, false, null, new TraceBasedRedeclarationHandler(trace),
-                        "Scope with type parameters of a property");
+                        LexicalScopeKind.PROPERTY_HEADER);
                 typeParameterDescriptors = resolveTypeParametersForCallableDescriptor(
                         propertyDescriptor, writableScope, scope, typeParameters, trace);
                 writableScope.changeLockLevel(LexicalWritableScope.LockLevel.READING);
@@ -794,12 +793,9 @@ public class DescriptorResolver {
         ReceiverParameterDescriptor receiverDescriptor =
                 DescriptorFactory.createExtensionReceiverParameterForCallable(propertyDescriptor, receiverType);
 
-        ReceiverParameterDescriptor implicitInitializerReceiver = property.hasDelegate() ? null : receiverDescriptor;
-
-        LexicalScope propertyScope = JetScopeUtils.getPropertyDeclarationInnerScope(propertyDescriptor, scope, typeParameterDescriptors,
-                                                                                    implicitInitializerReceiver, trace);
-
-        KotlinType type = getVariableType(propertyDescriptor, propertyScope, property, dataFlowInfo, true, trace);
+        KotlinType type = getVariableType(propertyDescriptor,
+                                          JetScopeUtils.makeScopeForPropertyInitializer(scopeWithTypeParameters, propertyDescriptor),
+                                          property, dataFlowInfo, true, trace);
 
         propertyDescriptor.setType(type, typeParameterDescriptors, getDispatchReceiverParameterIfNeeded(containingDeclaration),
                                    receiverDescriptor);
@@ -834,7 +830,7 @@ public class DescriptorResolver {
     @NotNull
     private KotlinType getVariableType(
             @NotNull final VariableDescriptorWithInitializerImpl variableDescriptor,
-            @NotNull final LexicalScope scope,
+            @NotNull final LexicalScope scopeForInitializer,
             @NotNull final KtVariableDeclaration variable,
             @NotNull final DataFlowInfo dataFlowInfo,
             boolean notLocal,
@@ -854,7 +850,7 @@ public class DescriptorResolver {
                                 new Function0<KotlinType>() {
                                     @Override
                                     public KotlinType invoke() {
-                                        return resolveDelegatedPropertyType(property, (PropertyDescriptor) variableDescriptor, scope,
+                                        return resolveDelegatedPropertyType(property, (PropertyDescriptor) variableDescriptor, scopeForInitializer,
                                                                             property.getDelegateExpression(), dataFlowInfo, trace);
                                     }
                                 });
@@ -875,23 +871,23 @@ public class DescriptorResolver {
                                 public KotlinType invoke() {
                                     PreliminaryDeclarationVisitor.Companion.createForDeclaration(variable, trace);
                                     KotlinType
-                                            initializerType = resolveInitializerType(scope, variable.getInitializer(), dataFlowInfo, trace);
-                                    setConstantForVariableIfNeeded(variableDescriptor, scope, variable, dataFlowInfo, initializerType, trace);
+                                            initializerType = resolveInitializerType(scopeForInitializer, variable.getInitializer(), dataFlowInfo, trace);
+                                    setConstantForVariableIfNeeded(variableDescriptor, scopeForInitializer, variable, dataFlowInfo, initializerType, trace);
                                     return transformAnonymousTypeIfNeeded(variableDescriptor, variable, initializerType, trace);
                                 }
                             }
                     );
                 }
                 else {
-                    KotlinType initializerType = resolveInitializerType(scope, variable.getInitializer(), dataFlowInfo, trace);
-                    setConstantForVariableIfNeeded(variableDescriptor, scope, variable, dataFlowInfo, initializerType, trace);
+                    KotlinType initializerType = resolveInitializerType(scopeForInitializer, variable.getInitializer(), dataFlowInfo, trace);
+                    setConstantForVariableIfNeeded(variableDescriptor, scopeForInitializer, variable, dataFlowInfo, initializerType, trace);
                     return initializerType;
                 }
             }
         }
         else {
-            KotlinType type = typeResolver.resolveType(scope, propertyTypeRef, trace, true);
-            setConstantForVariableIfNeeded(variableDescriptor, scope, variable, dataFlowInfo, type, trace);
+            KotlinType type = typeResolver.resolveType(scopeForInitializer, propertyTypeRef, trace, true);
+            setConstantForVariableIfNeeded(variableDescriptor, scopeForInitializer, variable, dataFlowInfo, type, trace);
             return type;
         }
     }
@@ -933,19 +929,19 @@ public class DescriptorResolver {
     private KotlinType resolveDelegatedPropertyType(
             @NotNull KtProperty property,
             @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull LexicalScope scope,
+            @NotNull LexicalScope scopeForInitializer,
             @NotNull KtExpression delegateExpression,
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull BindingTrace trace
     ) {
-        LexicalScope accessorScope = JetScopeUtils.makeScopeForPropertyAccessor(propertyDescriptor, scope, trace);
 
         KotlinType type = delegatedPropertyResolver.resolveDelegateExpression(
-                delegateExpression, property, propertyDescriptor, scope, accessorScope, trace, dataFlowInfo);
+                delegateExpression, property, propertyDescriptor, scopeForInitializer, trace, dataFlowInfo);
 
         if (type != null) {
+            LexicalScope delegateFunctionsScope = JetScopeUtils.makeScopeForDelegateConventionFunctions(scopeForInitializer, propertyDescriptor);
             KotlinType getterReturnType = delegatedPropertyResolver
-                    .getDelegatedPropertyGetMethodReturnType(propertyDescriptor, delegateExpression, type, trace, accessorScope);
+                    .getDelegatedPropertyGetMethodReturnType(propertyDescriptor, delegateExpression, type, trace, delegateFunctionsScope);
             if (getterReturnType != null) {
                 return getterReturnType;
             }
@@ -990,7 +986,7 @@ public class DescriptorResolver {
 
     @Nullable
     private PropertySetterDescriptor resolvePropertySetterDescriptor(
-            @NotNull LexicalScope scope,
+            @NotNull LexicalScope scopeWithTypeParameters,
             @NotNull KtProperty property,
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull AnnotationSplitter annotationSplitter,
@@ -1001,7 +997,7 @@ public class DescriptorResolver {
         if (setter != null) {
             Annotations annotations = new CompositeAnnotations(CollectionsKt.listOf(
                     annotationSplitter.getAnnotationsForTarget(PROPERTY_SETTER),
-                    annotationResolver.resolveAnnotationsWithoutArguments(scope, setter.getModifierList(), trace)));
+                    annotationResolver.resolveAnnotationsWithoutArguments(scopeWithTypeParameters, setter.getModifierList(), trace)));
             KtParameter parameter = setter.getParameter();
 
             setterDescriptor = new PropertySetterDescriptorImpl(propertyDescriptor, annotations,
@@ -1012,7 +1008,7 @@ public class DescriptorResolver {
                                                                         .toSourceElement(setter));
             KtTypeReference returnTypeReference = setter.getReturnTypeReference();
             if (returnTypeReference != null) {
-                KotlinType returnType = typeResolver.resolveType(scope, returnTypeReference, trace, true);
+                KotlinType returnType = typeResolver.resolveType(scopeWithTypeParameters, returnTypeReference, trace, true);
                 if (!KotlinBuiltIns.isUnit(returnType)) {
                     trace.report(WRONG_SETTER_RETURN_TYPE.on(returnTypeReference));
                 }
@@ -1031,7 +1027,7 @@ public class DescriptorResolver {
                     type = propertyDescriptor.getType(); // TODO : this maybe unknown at this point
                 }
                 else {
-                    type = typeResolver.resolveType(scope, typeReference, trace, true);
+                    type = typeResolver.resolveType(scopeWithTypeParameters, typeReference, trace, true);
                     KotlinType inType = propertyDescriptor.getType();
                     if (inType != null) {
                         if (!TypeUtils.equalTypes(type, inType)) {
@@ -1044,7 +1040,7 @@ public class DescriptorResolver {
                 }
 
                 ValueParameterDescriptorImpl valueParameterDescriptor =
-                        resolveValueParameterDescriptor(scope, setterDescriptor, parameter, 0, type, trace);
+                        resolveValueParameterDescriptor(scopeWithTypeParameters, setterDescriptor, parameter, 0, type, trace);
                 setterDescriptor.initialize(valueParameterDescriptor);
             }
             else {
@@ -1070,7 +1066,7 @@ public class DescriptorResolver {
 
     @Nullable
     private PropertyGetterDescriptorImpl resolvePropertyGetterDescriptor(
-            @NotNull LexicalScope scope,
+            @NotNull LexicalScope scopeWithTypeParameters,
             @NotNull KtProperty property,
             @NotNull PropertyDescriptor propertyDescriptor,
             @NotNull AnnotationSplitter annotationSplitter,
@@ -1081,13 +1077,13 @@ public class DescriptorResolver {
         if (getter != null) {
             Annotations getterAnnotations = new CompositeAnnotations(CollectionsKt.listOf(
                     annotationSplitter.getAnnotationsForTarget(PROPERTY_GETTER),
-                    annotationResolver.resolveAnnotationsWithoutArguments(scope, getter.getModifierList(), trace)));
+                    annotationResolver.resolveAnnotationsWithoutArguments(scopeWithTypeParameters, getter.getModifierList(), trace)));
 
             KotlinType outType = propertyDescriptor.getType();
             KotlinType returnType = outType;
             KtTypeReference returnTypeReference = getter.getReturnTypeReference();
             if (returnTypeReference != null) {
-                returnType = typeResolver.resolveType(scope, returnTypeReference, trace, true);
+                returnType = typeResolver.resolveType(scopeWithTypeParameters, returnTypeReference, trace, true);
                 if (outType != null && !TypeUtils.equalTypes(returnType, outType)) {
                     trace.report(WRONG_GETTER_RETURN_TYPE.on(returnTypeReference, propertyDescriptor.getReturnType(), outType));
                 }
@@ -1199,7 +1195,7 @@ public class DescriptorResolver {
             return;
         }
 
-        assert jetTypeArguments.size() == arguments.size() : typeElement.getText() + ": " + jetTypeArguments + " - " + arguments;
+        assert jetTypeArguments.size() <= arguments.size() : typeElement.getText() + ": " + jetTypeArguments + " - " + arguments;
 
         TypeSubstitutor substitutor = TypeSubstitutor.create(type);
         for (int i = 0; i < jetTypeArguments.size(); i++) {

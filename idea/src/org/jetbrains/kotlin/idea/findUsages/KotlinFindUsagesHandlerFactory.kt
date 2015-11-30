@@ -89,8 +89,7 @@ public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandle
                                 assert(parameterIndex < parametersCount)
                                 val overridingParameters = OverridingMethodsSearch.search(psiMethod, true)
                                         .filter { it.parameterList.parametersCount == parametersCount }
-                                        .map { it.parameterList.parameters[parameterIndex].unwrapped }
-                                        .filterNotNull()
+                                        .mapNotNull { it.parameterList.parameters[parameterIndex].unwrapped }
                                 return handlerForMultiple(element, listOf(element) + overridingParameters)
                             }
                         }

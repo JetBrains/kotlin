@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ClassQualifier;
 import org.jetbrains.kotlin.resolve.scopes.receivers.Qualifier;
 import org.jetbrains.kotlin.types.KotlinType;
 
@@ -47,7 +48,7 @@ public class CodeInsightUtils {
 
     @Nullable
     public static KtExpression findExpression(@NotNull PsiFile file, int startOffset, int endOffset) {
-        PsiElement element = findElementOfClassAtRange(file, startOffset, endOffset, KtExpression.class);
+        KtExpression element = findElementOfClassAtRange(file, startOffset, endOffset, KtExpression.class);
         if (element == null) return null;
 
         // TODO: Support binary operations in "Introduce..." refactorings
@@ -72,14 +73,17 @@ public class CodeInsightUtils {
             }
         }
 
-        KtExpression expression = (KtExpression) element;
+        KtExpression expression = element;
 
         BindingContext context = ResolutionUtils.analyze(expression);
 
         Qualifier qualifier = context.get(BindingContext.QUALIFIER, expression);
         if (qualifier != null) {
-            ClassifierDescriptor classifier = qualifier.getClassifier();
-            if (!(classifier instanceof ClassDescriptor) || ((ClassDescriptor) classifier).getKind() != ClassKind.OBJECT) return null;
+            if (!(qualifier instanceof ClassQualifier)) return null;
+            ClassifierDescriptor classifier = ((ClassQualifier) qualifier).getClassifier();
+            if (!(classifier instanceof ClassDescriptor) || ((ClassDescriptor) classifier).getKind() != ClassKind.OBJECT) {
+                return null;
+            }
         }
 
         return expression;
@@ -132,7 +136,7 @@ public class CodeInsightUtils {
     }
 
     @Nullable
-    public static PsiElement findElementOfClassAtRange(@NotNull PsiFile file, int startOffset, int endOffset, Class<KtExpression> aClass) {
+    public static <T extends PsiElement> T findElementOfClassAtRange(@NotNull PsiFile file, int startOffset, int endOffset, Class<T> aClass) {
         // When selected range is this@Fo<select>o</select> we'd like to return `@Foo`
         // But it's PSI looks like: (AT IDENTIFIER):JetLabel
         // So if we search parent starting exactly at IDENTIFIER then we find nothing
@@ -145,13 +149,13 @@ public class CodeInsightUtils {
         startOffset = element1.getTextRange().getStartOffset();
         endOffset = element2.getTextRange().getEndOffset();
 
-        KtExpression ktExpression = PsiTreeUtil.findElementOfClassAtRange(file, startOffset, endOffset, aClass);
-        if (ktExpression == null ||
-            ktExpression.getTextRange().getStartOffset() != startOffset ||
-            ktExpression.getTextRange().getEndOffset() != endOffset) {
+        T newElement = PsiTreeUtil.findElementOfClassAtRange(file, startOffset, endOffset, aClass);
+        if (newElement == null ||
+            newElement.getTextRange().getStartOffset() != startOffset ||
+            newElement.getTextRange().getEndOffset() != endOffset) {
             return null;
         }
-        return ktExpression;
+        return newElement;
     }
 
     private static PsiElement getParentLabelOrElement(@Nullable PsiElement element) {

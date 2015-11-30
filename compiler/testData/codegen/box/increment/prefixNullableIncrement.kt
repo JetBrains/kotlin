@@ -1,4 +1,4 @@
-fun Int?.inc(): Int? = this
+operator fun Int?.inc(): Int? = this
 
 fun init(): Int? { return 10 }
 

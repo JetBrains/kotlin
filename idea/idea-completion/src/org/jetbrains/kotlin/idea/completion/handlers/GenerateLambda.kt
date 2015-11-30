@@ -27,9 +27,9 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.completion.ExpectedInfos
-import org.jetbrains.kotlin.idea.completion.fuzzyType
+import org.jetbrains.kotlin.idea.core.ExpectedInfos
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
+import org.jetbrains.kotlin.idea.core.fuzzyType
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.KtExpression
@@ -82,8 +82,7 @@ private fun needExplicitParameterTypes(context: InsertionContext, placeholderRan
     val expectedInfos = ExpectedInfos(bindingContext, resolutionFacade, useHeuristicSignatures = false).calculate(expression)
 
     val functionTypes = expectedInfos
-            .map { it.fuzzyType?.type }
-            .filterNotNull()
+            .mapNotNull { it.fuzzyType?.type }
             .filter { KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(it) }
             .toSet()
     if (functionTypes.size() <= 1) return false

@@ -1,0 +1,25 @@
+kotlinx
+
+
+kotlinx.android
+
+
+kotlinx.android.synthetic
+
+    public fun android.app.Activity.clearFindViewByIdCache(): kotlin.Unit
+    public fun android.app.Fragment.clearFindViewByIdCache(): kotlin.Unit
+
+
+kotlinx.android.synthetic.main
+
+
+kotlinx.android.synthetic.main.test
+
+
+kotlinx.android.synthetic.main.test.view
+
+
+kotlinx.android.synthetic.test
+
+
+kotlinx.android.synthetic.test.view

@@ -1,7 +1,7 @@
 class A() {
   fun action() = "OK"
 
-  fun infix(a: String) = "O" + a
+  infix fun infix(a: String) = "O" + a
 
   val property = "OK"
 

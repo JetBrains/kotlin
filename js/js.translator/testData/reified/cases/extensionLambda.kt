@@ -3,9 +3,9 @@ package foo
 class A
 class B
 
-fun apply<T, R>(x: T, fn: T.()->R): R = x.fn()
+fun <T, R> apply(x: T, fn: T.()->R): R = x.fn()
 
-inline fun test<reified T, reified R>(x: Any, y: Any): Boolean =
+inline fun <reified T, reified R> test(x: Any, y: Any): Boolean =
         x is T && apply(y) { this is R }
 
 fun box(): String {

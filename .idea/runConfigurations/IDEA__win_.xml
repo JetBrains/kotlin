@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="IDEA (win)" type="Application" factoryName="Application">
     <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
@@ -17,9 +16,7 @@
       <option name="BuildArtifacts" enabled="true">
         <artifact name="KotlinPlugin" />
       </option>
-      <option name="BuildArtifacts" enabled="true">
-        <artifact name="KotlinAndroidExtensions" />
-      </option>
+      <option name="BuildArtifacts" enabled="true" />
       <option name="AntTarget" enabled="true" antfile="file://$PROJECT_DIR$/idea-runner/runner.xml" target="force-enable-kotlin-plugin" />
     </method>
   </configuration>

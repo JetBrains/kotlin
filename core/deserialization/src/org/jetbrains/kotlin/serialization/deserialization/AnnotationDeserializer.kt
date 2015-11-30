@@ -122,7 +122,7 @@ public class AnnotationDeserializer(private val module: ModuleDescriptor) {
             else -> error("Unsupported annotation argument type: ${value.getType()} (expected $expectedType)")
         }
 
-        if (result.type isSubtypeOf expectedType) {
+        if (result.type.isSubtypeOf(expectedType)) {
             return result
         }
         else {

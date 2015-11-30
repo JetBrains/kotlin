@@ -1,0 +1,9 @@
+// WITH_RUNTIME
+fun foo() {
+    if (!true) {
+        throw AssertionError({
+            val value = 1
+            "text and $value"
+        }())
+    }
+}

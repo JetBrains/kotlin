@@ -60,9 +60,9 @@ fun getReceiverTypePredicate(resolvedCall: ResolvedCall<*>, receiverValue: Recei
         }
         resolvedCall.getDispatchReceiver() -> {
             val rootCallableDescriptors = callableDescriptor.findTopMostOverriddenDescriptors()
-            return or(rootCallableDescriptors.map {
+            return or(rootCallableDescriptors.mapNotNull {
                 it.getDispatchReceiverParameter()?.getType()?.let { TypeUtils.makeNullableIfNeeded(it, resolvedCall.isSafeCall()) }?.getSubtypesPredicate()
-            }.filterNotNull())
+            })
         }
     }
 

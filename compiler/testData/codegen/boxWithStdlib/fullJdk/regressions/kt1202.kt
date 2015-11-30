@@ -45,14 +45,14 @@ class Error(text : String) : Token("[Error: $text]")
 fun tokenize(text : String) : Deque<Token> {
     val result = LinkedList<Token>()
     for (c in text) {
-        result add when (c) {
+        result.add(when (c) {
             '(' -> LPAR
             ')' -> RPAR
             '+' -> PLUS
             '*' -> TIMES
             in '0'..'9' -> Number(c.toString())
             else -> Error(c.toString())
-        }
+        })
     }
     result.add(EOF)
     return result

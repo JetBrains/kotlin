@@ -93,7 +93,7 @@ public open class KtLightClassForExplicitDeclaration(
                 KtNamedFunction::class.java,
                 KtConstructor::class.java,
                 KtProperty::class.java,
-                KtClassInitializer::class.java,
+                KtAnonymousInitializer::class.java,
                 KtParameter::class.java)
 
         if (declaration is KtParameter) {
@@ -109,7 +109,7 @@ public open class KtLightClassForExplicitDeclaration(
             return getParentByPsiMethod(LightClassUtil.getLightClassPropertyMethods(declaration).getter, declaration.name, true)
         }
 
-        if (declaration is KtClassInitializer) {
+        if (declaration is KtAnonymousInitializer) {
             val parent = declaration.parent
             val grandparent = parent.parent
 
@@ -365,13 +365,13 @@ public open class KtLightClassForExplicitDeclaration(
     override fun toString() = "${KtLightClass::class.java.simpleName}:$classFqName"
 
     override fun getOwnInnerClasses(): List<PsiClass> {
-        val result = ArrayList<PsiClass?>()
-        classOrObject.declarations.filterIsInstance<KtClassOrObject>().mapTo(result) { create(it) }
+        val result = ArrayList<PsiClass>()
+        classOrObject.declarations.filterIsInstance<KtClassOrObject>().mapNotNullTo(result) { create(it) }
 
         if (classOrObject.hasInterfaceDefaultImpls) {
             result.add(KtLightClassForInterfaceDefaultImpls(classFqName.defaultImplsChild(), classOrObject))
         }
-        return result.filterNotNull()
+        return result
     }
 
     override fun getUseScope(): SearchScope = getOrigin().useScope

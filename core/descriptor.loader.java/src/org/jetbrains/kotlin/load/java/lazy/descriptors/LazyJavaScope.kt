@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.incremental.record
-import org.jetbrains.kotlin.load.java.components.ExternalSignatureResolver
 import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
@@ -38,7 +37,6 @@ import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
 import org.jetbrains.kotlin.load.java.typeEnhacement.enhanceSignatures
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.jvm.PLATFORM_TYPES
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude.NonExtensions
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -97,7 +95,11 @@ public abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : 
     open protected fun JavaMethodDescriptor.isVisibleAsFunction() = true
 
     protected data class MethodSignatureData(
-            val effectiveSignature: ExternalSignatureResolver.AlternativeMethodSignature,
+            val returnType: KotlinType,
+            val receiverType: KotlinType?,
+            val valueParameters: List<ValueParameterDescriptor>,
+            val typeParameters: List<TypeParameterDescriptor>,
+            val hasStableParameterNames: Boolean,
             val errors: List<String>
     )
 
@@ -105,7 +107,8 @@ public abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : 
             method: JavaMethod,
             methodTypeParameters: List<TypeParameterDescriptor>,
             returnType: KotlinType,
-            valueParameters: ResolvedValueParameters): MethodSignatureData
+            valueParameters: List<ValueParameterDescriptor>
+    ): MethodSignatureData
 
     fun resolveMethodToFunctionDescriptor(method: JavaMethod): JavaMethodDescriptor {
         val annotations = c.resolveAnnotations(method)
@@ -120,22 +123,22 @@ public abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : 
 
         val returnType = computeMethodReturnType(method, annotations, c)
 
-        val (effectiveSignature, signatureErrors) = resolveMethodSignature(method, methodTypeParameters, returnType, valueParameters)
+        val effectiveSignature = resolveMethodSignature(method, methodTypeParameters, returnType, valueParameters.descriptors)
 
         functionDescriptorImpl.initialize(
-                effectiveSignature.getReceiverType(),
+                effectiveSignature.receiverType,
                 getDispatchReceiverParameter(),
-                effectiveSignature.getTypeParameters(),
-                effectiveSignature.getValueParameters(),
-                effectiveSignature.getReturnType(),
+                effectiveSignature.typeParameters,
+                effectiveSignature.valueParameters,
+                effectiveSignature.returnType,
                 Modality.convertFromFlags(method.isAbstract(), !method.isFinal()),
                 method.getVisibility()
         )
 
-        functionDescriptorImpl.setParameterNamesStatus(effectiveSignature.hasStableParameterNames(), valueParameters.hasSynthesizedNames)
+        functionDescriptorImpl.setParameterNamesStatus(effectiveSignature.hasStableParameterNames, valueParameters.hasSynthesizedNames)
 
-        if (signatureErrors.isNotEmpty()) {
-            c.components.externalSignatureResolver.reportSignatureErrors(functionDescriptorImpl, signatureErrors)
+        if (effectiveSignature.errors.isNotEmpty()) {
+            c.components.signaturePropagator.reportSignatureErrors(functionDescriptorImpl, effectiveSignature.errors)
         }
 
         return functionDescriptorImpl
@@ -241,18 +244,12 @@ public abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : 
     }
 
     private fun resolveProperty(field: JavaField): PropertyDescriptor {
-        val isVar = !field.isFinal()
         val propertyDescriptor = createPropertyDescriptor(field)
         propertyDescriptor.initialize(null, null)
 
         val propertyType = getPropertyType(field, propertyDescriptor.getAnnotations())
-        val effectiveSignature = c.components.externalSignatureResolver.resolveAlternativeFieldSignature(field, propertyType, isVar)
-        val signatureErrors = effectiveSignature.getErrors()
-        if (!signatureErrors.isEmpty()) {
-            c.components.externalSignatureResolver.reportSignatureErrors(propertyDescriptor, signatureErrors)
-        }
 
-        propertyDescriptor.setType(effectiveSignature.getReturnType(), listOf(), getDispatchReceiverParameter(), null as KotlinType?)
+        propertyDescriptor.setType(propertyType, listOf(), getDispatchReceiverParameter(), null as KotlinType?)
 
         if (DescriptorUtils.shouldRecordInitializerForProperty(propertyDescriptor, propertyDescriptor.getType())) {
             propertyDescriptor.setCompileTimeInitializer(
@@ -280,15 +277,14 @@ public abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : 
         get() = isFinal && isStatic
 
     private fun getPropertyType(field: JavaField, annotations: Annotations): KotlinType {
-        // Fields do not have their own generic parameters
-        val finalStatic = field.isFinalStatic
-        // simple static constants should not have flexible types:
-        val allowFlexible = PLATFORM_TYPES && !(finalStatic && c.components.javaPropertyInitializerEvaluator.isNotNullCompileTimeConstant(field))
+        // Fields do not have their own generic parameters.
+        // Simple static constants should not have flexible types.
+        val allowFlexible = !(field.isFinalStatic && c.components.javaPropertyInitializerEvaluator.isNotNullCompileTimeConstant(field))
         val propertyType = c.typeResolver.transformJavaType(
-                field.getType(),
+                field.type,
                 LazyJavaTypeAttributes(TypeUsage.MEMBER_SIGNATURE_INVARIANT, annotations, allowFlexible)
         )
-        if ((!allowFlexible || !PLATFORM_TYPES) && finalStatic) {
+        if (!allowFlexible) {
             return TypeUtils.makeNotNullable(propertyType)
         }
 
@@ -361,6 +357,6 @@ public abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : 
     }
 
     protected fun recordLookup(name: Name, from: LookupLocation) {
-        c.components.lookupTracker.record(from, ownerDescriptor, this, name)
+        c.components.lookupTracker.record(from, ownerDescriptor, name)
     }
 }

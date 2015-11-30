@@ -625,6 +625,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             doTest(fileName);
         }
 
+        @TestMetadata("PreferLessParameters.kt")
+        public void testPreferLessParameters() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/PreferLessParameters.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("PrivatesInSecondPressCompletion.kt")
         public void testPrivatesInSecondPressCompletion() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/PrivatesInSecondPressCompletion.kt");
@@ -1191,6 +1197,39 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
             @TestMetadata("SyntheticExtensions.kt")
             public void testSyntheticExtensions() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/callableReference/SyntheticExtensions.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/idea-completion/testData/basic/common/extensionFunctionTypeValues")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ExtensionFunctionTypeValues extends AbstractJSBasicCompletionTest {
+            public void testAllFilesPresentInExtensionFunctionTypeValues() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/extensionFunctionTypeValues"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("ImplicitReceiver.kt")
+            public void testImplicitReceiver() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensionFunctionTypeValues/ImplicitReceiver.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SafeCall.kt")
+            public void testSafeCall() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensionFunctionTypeValues/SafeCall.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("Simple.kt")
+            public void testSimple() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensionFunctionTypeValues/Simple.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("SmartCast.kt")
+            public void testSmartCast() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/extensionFunctionTypeValues/SmartCast.kt");
                 doTest(fileName);
             }
         }
@@ -2344,6 +2383,12 @@ public class JSBasicCompletionTestGenerated extends AbstractJSBasicCompletionTes
         public static class Visibility extends AbstractJSBasicCompletionTest {
             public void testAllFilesPresentInVisibility() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/basic/common/visibility"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("KT9970.kt")
+            public void testKT9970() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/idea-completion/testData/basic/common/visibility/KT9970.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("VisibilityClassMembersFromExternal.kt")

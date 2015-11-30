@@ -2,7 +2,7 @@ open class A(val s: Int) {
 
 }
 
-fun Int.foo(s: Int): Int {
+infix fun Int.foo(s: Int): Int {
     return this + s
 }
 

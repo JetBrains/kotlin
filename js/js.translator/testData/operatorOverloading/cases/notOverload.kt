@@ -2,7 +2,7 @@ package foo
 
 class A() {
 
-    fun not() = "hooray"
+    operator fun not() = "hooray"
 
 }
 

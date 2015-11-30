@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.core.*
+import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.intentions.setType
 import org.jetbrains.kotlin.idea.util.*
@@ -43,7 +44,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.findLocalVariable
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
@@ -65,8 +66,14 @@ class CallableUsageReplacementStrategy(
         if (!callTypeHandler.precheckReplacementPattern(replacement)) return null
 
         return {
-            // copy replacement expression because it is modified by performCallReplacement
-            performCallReplacement(usage, bindingContext, resolvedCall, callElement, callTypeHandler, replacement.copy())
+            if (usage is KtOperationReferenceExpression && usage.getReferencedNameElementType() != KtTokens.IDENTIFIER) {
+                val nameExpression = OperatorToFunctionIntention.convert(usage.parent as KtExpression).second
+                createReplacer(nameExpression)!!.invoke()
+            }
+            else {
+                // copy replacement expression because it is modified by performCallReplacement
+                performCallReplacement(usage, bindingContext, resolvedCall, callElement, callTypeHandler, replacement.copy())
+            }
         }
     }
 
@@ -102,7 +109,7 @@ private fun performCallReplacement(
     if (receiver == null) {
         val receiverValue = if (descriptor.isExtension) resolvedCall.extensionReceiver else resolvedCall.dispatchReceiver
         val resolutionScope = elementToBeReplaced.getResolutionScope(bindingContext, elementToBeReplaced.getResolutionFacade())
-        if (receiverValue is ThisReceiver) {
+        if (receiverValue is ImplicitReceiver) {
             receiver = receiverValue.asExpression(resolutionScope, psiFactory)
             receiverType = receiverValue.type
         }
@@ -179,7 +186,7 @@ private fun ConstructedExpressionWrapper.processValueParameterUsages(
 
     // process parameters in reverse order because default values can use previous parameters
     val parameters = resolvedCall.resultingDescriptor.valueParameters
-    for (parameter in parameters.reversed()) {
+    for (parameter in parameters.asReversed()) {
         val argument = argumentForParameter(parameter, resolvedCall, bindingContext, project) ?: continue
 
         argument.expression.put(PARAMETER_VALUE_KEY, parameter)
@@ -645,7 +652,7 @@ private class ConstructedExpressionWrapperWithIntroduceFeature(
             val name = if (nameSuggestion != null)
                 KotlinNameSuggester.suggestNameByName(nameSuggestion, validator)
             else
-                KotlinNameSuggester.suggestNamesByExpressionOnly(value, validator, "t").first()
+                KotlinNameSuggester.suggestNamesByExpressionOnly(value, bindingContext, validator, "t").first()
             return Name.identifier(name)
         }
 

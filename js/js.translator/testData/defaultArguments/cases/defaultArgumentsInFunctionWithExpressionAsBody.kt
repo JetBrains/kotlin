@@ -1,7 +1,7 @@
 // KT-6037: KT-6037 Javascript default function arguments fill code generated in wrong order on method without "return keyword"
 package foo
 
-inline fun id<T>(x: T) = x
+inline fun <T> id(x: T) = x
 
 fun test(arg: Int = 10) = id(arg)
 

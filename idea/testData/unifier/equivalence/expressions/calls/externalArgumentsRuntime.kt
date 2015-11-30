@@ -1,4 +1,4 @@
-fun Int.contains(n: Int): Boolean = n < this
+operator fun Int.contains(n: Int): Boolean = n < this
 
 fun foo(n: Int): Int {
     if (n in 1) {

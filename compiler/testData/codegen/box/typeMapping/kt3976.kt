@@ -4,11 +4,11 @@ import kotlin.reflect.KProperty
 
 var currentAccountId: Int? by SessionAccessor()
 class SessionAccessor<T> {
-    fun getValue(o : Nothing?, desc: KProperty<*>): T {
+    operator fun getValue(o : Nothing?, desc: KProperty<*>): T {
         return null as T
     }
 
-    fun setValue(o : Nothing?, desc: KProperty<*>, value: T) {
+    operator fun setValue(o : Nothing?, desc: KProperty<*>, value: T) {
 
     }
 }

@@ -123,7 +123,7 @@ public class MockLibraryUtil {
             File outDir = new File(contentDir, "out");
             File outputFile = new File(outDir, jarName + ".js");
             File outputMetaFile = new File(outDir, jarName + ".meta.js");
-            compileKotlin2JS(sourcesPath, outputFile, outputMetaFile);
+            compileKotlin2JS(sourcesPath, outputFile, outputMetaFile, true);
 
             return createJarFile(contentDir, outDir, sourcesPath, jarName, addSources);
         }
@@ -186,10 +186,13 @@ public class MockLibraryUtil {
         runJvmCompiler(args);
     }
 
-    public static void compileKotlin2JS(@NotNull String sourcesPath, @NotNull File outputFile, @Nullable File metaFile) {
+    public static void compileKotlin2JS(@NotNull String sourcesPath, @NotNull File outputFile, @Nullable File metaFile, boolean kjsm) {
         List<String> args = new ArrayList<String>();
         if (metaFile != null) {
             args.add("-meta-info");
+        }
+        if (kjsm) {
+            args.add("-kjsm");
         }
 
         args.add("-output");

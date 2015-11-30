@@ -11,11 +11,11 @@ fun bar2() = {
 //properties
 //in a class
 class A() {
-    val x = { <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>x<!> }
+    val x = { <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM, UNINITIALIZED_VARIABLE!>x<!> }
 }
 
 //in a package
-val x = { <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>x<!> }
+val x = { <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM, UNINITIALIZED_VARIABLE!>x<!> }
 
 //KT-787 AssertionError on code 'val x = x'
 val z = <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM, UNINITIALIZED_VARIABLE!>z<!>

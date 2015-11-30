@@ -1,3 +1,4 @@
+// ERROR: Modifier 'protected' is not applicable inside 'object'
 internal object Outer {
     private class Nested1() {
 

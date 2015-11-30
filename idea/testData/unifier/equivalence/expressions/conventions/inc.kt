@@ -1,4 +1,4 @@
-fun String.inc() = this + "+"
+operator fun String.inc() = this + "+"
 
 class Foo {
     init {

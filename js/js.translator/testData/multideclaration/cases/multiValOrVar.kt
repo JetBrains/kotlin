@@ -1,18 +1,18 @@
 package foo
 
 class A {
-    fun component1(): Int = 1
+    operator fun component1(): Int = 1
 }
-fun A.component2(): String = "n"
+operator fun A.component2(): String = "n"
 
 class B {
-    fun component1(): Int = 1
-    fun component2(): Int = 2
-    fun component3(): Int = 3
+    operator fun component1(): Int = 1
+    operator fun component2(): Int = 2
+    operator fun component3(): Int = 3
 }
 
 class C {
-    fun component1(): Int = 42
+    operator fun component1(): Int = 42
 }
 
 fun box(): String {

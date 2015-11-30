@@ -1,7 +1,7 @@
 interface Base
 class Derived: Base
 class Another: Base
-fun Base.inc(): Derived { return Derived() }
+operator fun Base.inc(): Derived { return Derived() }
 
 public fun box() : String {
     var i : Base

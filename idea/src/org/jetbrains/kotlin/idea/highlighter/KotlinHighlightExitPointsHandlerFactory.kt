@@ -91,7 +91,7 @@ private fun KtExpression.getRelevantFunction(): KtFunction? {
     }
     for (parent in parents) {
         if (InlineUtil.canBeInlineArgument(parent) && !InlineUtil.isInlinedArgument(parent as KtFunction, parent.analyze(), false)) {
-            return parent as KtFunction
+            return parent
         }
     }
     return null

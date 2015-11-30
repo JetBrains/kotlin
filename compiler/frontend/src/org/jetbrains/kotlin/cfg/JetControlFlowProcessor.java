@@ -54,7 +54,7 @@ import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
@@ -1318,7 +1318,7 @@ public class JetControlFlowProcessor {
         @Override
         public void visitObjectDeclaration(@NotNull KtObjectDeclaration objectDeclaration) {
             generateHeaderDelegationSpecifiers(objectDeclaration);
-            generateClassOrObjectInitializers(objectDeclaration);
+            generateInitializersForScriptClassOrObject(objectDeclaration);
             generateDeclarationForLocalClassOrObjectIfNeeded(objectDeclaration);
         }
 
@@ -1343,7 +1343,7 @@ public class JetControlFlowProcessor {
         }
 
         @Override
-        public void visitAnonymousInitializer(@NotNull KtClassInitializer classInitializer) {
+        public void visitAnonymousInitializer(@NotNull KtAnonymousInitializer classInitializer) {
             generateInstructions(classInitializer.getBody());
         }
 
@@ -1353,9 +1353,9 @@ public class JetControlFlowProcessor {
             }
         }
 
-        private void generateClassOrObjectInitializers(@NotNull KtClassOrObject classOrObject) {
+        private void generateInitializersForScriptClassOrObject(@NotNull KtDeclarationContainer classOrObject) {
             for (KtDeclaration declaration : classOrObject.getDeclarations()) {
-                if (declaration instanceof KtProperty || declaration instanceof KtClassInitializer) {
+                if (declaration instanceof KtProperty || declaration instanceof KtAnonymousInitializer) {
                     generateInstructions(declaration);
                 }
             }
@@ -1368,10 +1368,15 @@ public class JetControlFlowProcessor {
 
                 // delegation specifiers of primary constructor, anonymous class and property initializers
                 generateHeaderDelegationSpecifiers(klass);
-                generateClassOrObjectInitializers(klass);
+                generateInitializersForScriptClassOrObject(klass);
             }
 
             generateDeclarationForLocalClassOrObjectIfNeeded(klass);
+        }
+
+        @Override
+        public void visitScript(@NotNull KtScript script) {
+            generateInitializersForScriptClassOrObject(script);
         }
 
         private void generateDeclarationForLocalClassOrObjectIfNeeded(@NotNull KtClassOrObject classOrObject) {
@@ -1379,7 +1384,7 @@ public class JetControlFlowProcessor {
                 for (KtDeclaration declaration : classOrObject.getDeclarations()) {
                     if (declaration instanceof KtSecondaryConstructor ||
                         declaration instanceof KtProperty ||
-                        declaration instanceof KtClassInitializer) {
+                        declaration instanceof KtAnonymousInitializer) {
                         continue;
                     }
                     generateInstructions(declaration);
@@ -1402,7 +1407,7 @@ public class JetControlFlowProcessor {
             generateCallOrMarkUnresolved(constructor.getDelegationCall());
 
             if (!constructor.getDelegationCall().isCallToThis()) {
-                generateClassOrObjectInitializers(classOrObject);
+                generateInitializersForScriptClassOrObject(classOrObject);
             }
 
             generateInstructions(constructor.getBodyExpression());
@@ -1530,7 +1535,7 @@ public class JetControlFlowProcessor {
                         break;
                     case EXTENSION_RECEIVER:
                     case BOTH_RECEIVERS:
-                        explicitReceiver = resolvedCall.getExtensionReceiver();
+                        explicitReceiver = (ReceiverValue) resolvedCall.getExtensionReceiver();
                         break;
                 }
             }
@@ -1541,7 +1546,7 @@ public class JetControlFlowProcessor {
             }
             KtElement callElement = resolvedCall.getCall().getCallElement();
             receiverValues = getReceiverValues(callElement, resolvedCall.getDispatchReceiver(), receiverValues);
-            receiverValues = getReceiverValues(callElement, resolvedCall.getExtensionReceiver(), receiverValues);
+            receiverValues = getReceiverValues(callElement, (ReceiverValue) resolvedCall.getExtensionReceiver(), receiverValues);
             return receiverValues;
         }
 
@@ -1553,7 +1558,7 @@ public class JetControlFlowProcessor {
         ) {
             if (!receiver.exists() || receiverValues.containsValue(receiver)) return receiverValues;
 
-            if (receiver instanceof ThisReceiver) {
+            if (receiver instanceof ImplicitReceiver) {
                 receiverValues = receiverValues.plus(createSyntheticValue(callElement, MagicKind.IMPLICIT_RECEIVER), receiver);
             }
             else if (receiver instanceof ExpressionReceiver) {

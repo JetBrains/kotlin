@@ -38,7 +38,7 @@ public class KtForLoopInReference(element: KtForExpression) : KtMultiReference<K
         if (loopRange == null) {
             return Collections.emptyList()
         }
-        return LOOP_RANGE_KEYS.map { key -> context.get(key, loopRange)?.getCandidateDescriptor() }.filterNotNull()
+        return LOOP_RANGE_KEYS.mapNotNull { key -> context.get(key, loopRange)?.getCandidateDescriptor() }
     }
 
     companion object {

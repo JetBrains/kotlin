@@ -79,7 +79,12 @@ public fun BindingTrace.recordScope(scope: LexicalScope, element: KtElement?) {
 
 public fun BindingContext.getDataFlowInfo(position: PsiElement): DataFlowInfo {
     for (element in position.parentsWithSelf) {
-        (element as? KtExpression)?.let { this[BindingContext.EXPRESSION_TYPE_INFO, it] }?.let { return it.dataFlowInfo }
+        (element as? KtExpression)?.let {
+            val parent = it.parent
+            //TODO: it's a hack because KotlinTypeInfo with wrong DataFlowInfo stored for call expression after qualifier
+            if (parent is KtQualifiedExpression && it == parent.selectorExpression) return@let null
+            this[BindingContext.EXPRESSION_TYPE_INFO, it]
+        }?.let { return it.dataFlowInfo }
     }
     return DataFlowInfo.EMPTY
 }

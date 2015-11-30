@@ -15,27 +15,28 @@ import java.util.Collections // TODO: it's temporary while we have java.util.Col
 /**
  * Returns `true` if [element] is found in the sequence.
  */
-public operator fun <T> Sequence<T>.contains(element: @kotlin.internal.NoInfer T): Boolean {
+public operator fun <@kotlin.internal.OnlyInputTypes T> Sequence<T>.contains(element: T): Boolean {
     return indexOf(element) >= 0
 }
 
 /**
  * Returns `true` if [element] is found in the collection.
  */
-@Deprecated("Use 'containsRaw' instead.", ReplaceWith("containsRaw(element)"))
+@Deprecated("Sequence and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("contains(element as T)"))
 @kotlin.jvm.JvmName("containsAny")
 @kotlin.internal.LowPriorityInOverloadResolution
 public operator fun <T> Sequence<T>.contains(element: T): Boolean {
-    return containsRaw(element)
+    return contains(element as T)
 }
 
 /**
  * Returns `true` if [element] is found in the sequence.
  * Allows to overcome type-safety restriction of `contains` that requires to pass an element of type `T`.
  */
+@Deprecated("Sequence and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("contains(element as Any?)"))
 @Suppress("NOTHING_TO_INLINE")
 public inline fun Sequence<*>.containsRaw(element: Any?): Boolean {
-    return contains<Any?>(element)
+    return contains(element as Any?)
 }
 
 /**
@@ -132,7 +133,7 @@ public inline fun <T> Sequence<T>.firstOrNull(predicate: (T) -> Boolean): T? {
 /**
  * Returns first index of [element], or -1 if the sequence does not contain element.
  */
-public fun <T> Sequence<T>.indexOf(element: @kotlin.internal.NoInfer T): Int {
+public fun <@kotlin.internal.OnlyInputTypes T> Sequence<T>.indexOf(element: T): Int {
     var index = 0
     for (item in this) {
         if (element == item)
@@ -145,12 +146,12 @@ public fun <T> Sequence<T>.indexOf(element: @kotlin.internal.NoInfer T): Int {
 /**
  * Returns first index of [element], or -1 if the collection does not contain element.
  */
-@Deprecated("Use 'indexOfRaw' instead.", ReplaceWith("indexOfRaw(element)"))
+@Deprecated("Sequence and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("indexOf(element as T)"))
 @kotlin.jvm.JvmName("indexOfAny")
 @kotlin.internal.LowPriorityInOverloadResolution
 @Suppress("NOTHING_TO_INLINE")
 public fun <T> Sequence<T>.indexOf(element: T): Int {
-    return indexOfRaw(element)
+    return indexOf(element as T)
 }
 
 /**
@@ -184,9 +185,10 @@ public inline fun <T> Sequence<T>.indexOfLast(predicate: (T) -> Boolean): Int {
  * Returns first index of [element], or -1 if the sequence does not contain element.
  * Allows to overcome type-safety restriction of `indexOf` that requires to pass an element of type `T`.
  */
+@Deprecated("Sequence and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("indexOf(element as Any?)"))
 @Suppress("NOTHING_TO_INLINE")
 public inline fun Sequence<*>.indexOfRaw(element: Any?): Int {
-    return indexOf<Any?>(element)
+    return indexOf(element as Any?)
 }
 
 /**
@@ -223,7 +225,7 @@ public inline fun <T> Sequence<T>.last(predicate: (T) -> Boolean): T {
 /**
  * Returns last index of [element], or -1 if the sequence does not contain element.
  */
-public fun <T> Sequence<T>.lastIndexOf(element: @kotlin.internal.NoInfer T): Int {
+public fun <@kotlin.internal.OnlyInputTypes T> Sequence<T>.lastIndexOf(element: T): Int {
     var lastIndex = -1
     var index = 0
     for (item in this) {
@@ -237,21 +239,22 @@ public fun <T> Sequence<T>.lastIndexOf(element: @kotlin.internal.NoInfer T): Int
 /**
  * Returns last index of [element], or -1 if the collection does not contain element.
  */
-@Deprecated("Use 'indexOfRaw' instead.", ReplaceWith("indexOfRaw(element)"))
+@Deprecated("Sequence and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("lastIndexOf(element as T)"))
 @kotlin.jvm.JvmName("lastIndexOfAny")
 @kotlin.internal.LowPriorityInOverloadResolution
 @Suppress("NOTHING_TO_INLINE")
 public fun <T> Sequence<T>.lastIndexOf(element: T): Int {
-    return indexOfRaw(element)
+    return lastIndexOf(element as T)
 }
 
 /**
  * Returns last index of [element], or -1 if the sequence does not contain element.
  * Allows to overcome type-safety restriction of `lastIndexOf` that requires to pass an element of type `T`.
  */
+@Deprecated("Sequence and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("lastIndexOf(element as Any?)"))
 @Suppress("NOTHING_TO_INLINE")
 public inline fun Sequence<*>.lastIndexOfRaw(element: Any?): Int {
-    return lastIndexOf<Any?>(element)
+    return lastIndexOf(element as Any?)
 }
 
 /**
@@ -488,13 +491,13 @@ public fun <T> Sequence<T>.toArrayList(): ArrayList<T> {
 }
 
 /**
- * Appends all elements to the given [collection].
+ * Appends all elements to the given [destination] collection.
  */
-public fun <T, C : MutableCollection<in T>> Sequence<T>.toCollection(collection: C): C {
+public fun <T, C : MutableCollection<in T>> Sequence<T>.toCollection(destination: C): C {
     for (item in this) {
-        collection.add(item)
+        destination.add(item)
     }
-    return collection
+    return destination
 }
 
 /**
@@ -559,15 +562,24 @@ public fun <T> Sequence<T>.toSet(): Set<T> {
 /**
  * Returns a [SortedSet] of all elements.
  */
-public fun <T> Sequence<T>.toSortedSet(): SortedSet<T> {
+public fun <T: Comparable<T>> Sequence<T>.toSortedSet(): SortedSet<T> {
     return toCollection(TreeSet<T>())
+}
+
+/**
+ * Returns a [SortedSet] of all elements.
+ * Elements in the set returned are sorted according to the given [comparator].
+ */
+@kotlin.jvm.JvmVersion
+public fun <T> Sequence<T>.toSortedSet(comparator: Comparator<in T>): SortedSet<T> {
+    return toCollection(TreeSet<T>(comparator))
 }
 
 /**
  * Returns a single sequence of all elements from results of [transform] function being invoked on each element of original sequence.
  */
 public fun <T, R> Sequence<T>.flatMap(transform: (T) -> Sequence<R>): Sequence<R> {
-    return FlatteningSequence(this, transform)
+    return FlatteningSequence(this, transform, { it.iterator() })
 }
 
 /**
@@ -582,18 +594,18 @@ public inline fun <T, R, C : MutableCollection<in R>> Sequence<T>.flatMapTo(dest
 }
 
 /**
- * Returns a map of the elements in original sequence grouped by the result of given [toKey] function.
+ * Returns a map of the elements in original sequence grouped by the key returned by the given [selector] function.
  */
-public inline fun <T, K> Sequence<T>.groupBy(toKey: (T) -> K): Map<K, List<T>> {
-    return groupByTo(LinkedHashMap<K, MutableList<T>>(), toKey)
+public inline fun <T, K> Sequence<T>.groupBy(selector: (T) -> K): Map<K, List<T>> {
+    return groupByTo(LinkedHashMap<K, MutableList<T>>(), selector)
 }
 
 /**
- * Appends elements from original sequence grouped by the result of given [toKey] function to the given [map].
+ * Appends elements from original sequence grouped by the key returned by the given [selector] function to the given [map].
  */
-public inline fun <T, K> Sequence<T>.groupByTo(map: MutableMap<K, MutableList<T>>, toKey: (T) -> K): Map<K, MutableList<T>> {
+public inline fun <T, K> Sequence<T>.groupByTo(map: MutableMap<K, MutableList<T>>, selector: (T) -> K): Map<K, MutableList<T>> {
     for (element in this) {
-        val key = toKey(element)
+        val key = selector(element)
         val list = map.getOrPut(key) { ArrayList<T>() }
         list.add(element)
     }
@@ -687,11 +699,12 @@ public fun <T> Sequence<T>.distinct(): Sequence<T> {
 }
 
 /**
- * Returns a sequence containing only distinct elements from the given sequence according to the [keySelector].
+ * Returns a sequence containing only elements from the given sequence
+ * having distinct keys returned by the given [selector] function.
  * The elements in the resulting sequence are in the same order as they were in the source sequence.
  */
-public fun <T, K> Sequence<T>.distinctBy(keySelector: (T) -> K): Sequence<T> {
-    return DistinctSequence(this, keySelector)
+public fun <T, K> Sequence<T>.distinctBy(selector: (T) -> K): Sequence<T> {
+    return DistinctSequence(this, selector)
 }
 
 /**
@@ -755,18 +768,18 @@ public inline fun <T, R> Sequence<T>.fold(initial: R, operation: (R, T) -> R): R
 }
 
 /**
- * Performs the given [operation] on each element.
+ * Performs the given [action] on each element.
  */
-public inline fun <T> Sequence<T>.forEach(operation: (T) -> Unit): Unit {
-    for (element in this) operation(element)
+public inline fun <T> Sequence<T>.forEach(action: (T) -> Unit): Unit {
+    for (element in this) action(element)
 }
 
 /**
- * Performs the given [operation] on each element, providing sequential index with the element.
+ * Performs the given [action] on each element, providing sequential index with the element.
  */
-public inline fun <T> Sequence<T>.forEachIndexed(operation: (Int, T) -> Unit): Unit {
+public inline fun <T> Sequence<T>.forEachIndexed(action: (Int, T) -> Unit): Unit {
     var index = 0
-    for (item in this) operation(index++, item)
+    for (item in this) action(index++, item)
 }
 
 /**
@@ -786,14 +799,14 @@ public fun <T : Comparable<T>> Sequence<T>.max(): T? {
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
-public inline fun <R : Comparable<R>, T : Any> Sequence<T>.maxBy(f: (T) -> R): T? {
+public inline fun <R : Comparable<R>, T : Any> Sequence<T>.maxBy(selector: (T) -> R): T? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
     var maxElem = iterator.next()
-    var maxValue = f(maxElem)
+    var maxValue = selector(maxElem)
     while (iterator.hasNext()) {
         val e = iterator.next()
-        val v = f(e)
+        val v = selector(e)
         if (maxValue < v) {
             maxElem = e
             maxValue = v
@@ -819,14 +832,14 @@ public fun <T : Comparable<T>> Sequence<T>.min(): T? {
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
-public inline fun <R : Comparable<R>, T : Any> Sequence<T>.minBy(f: (T) -> R): T? {
+public inline fun <R : Comparable<R>, T : Any> Sequence<T>.minBy(selector: (T) -> R): T? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
     var minElem = iterator.next()
-    var minValue = f(minElem)
+    var minValue = selector(minElem)
     while (iterator.hasNext()) {
         val e = iterator.next()
-        val v = f(e)
+        val v = selector(e)
         if (minValue > v) {
             minElem = e
             minValue = v
@@ -865,23 +878,23 @@ public inline fun <S, T: S> Sequence<T>.reduce(operation: (S, T) -> S): S {
 }
 
 /**
- * Returns the sum of all values produced by [transform] function applied to each element in the sequence.
+ * Returns the sum of all values produced by [selector] function applied to each element in the sequence.
  */
-public inline fun <T> Sequence<T>.sumBy(transform: (T) -> Int): Int {
+public inline fun <T> Sequence<T>.sumBy(selector: (T) -> Int): Int {
     var sum: Int = 0
     for (element in this) {
-        sum += transform(element)
+        sum += selector(element)
     }
     return sum
 }
 
 /**
- * Returns the sum of all values produced by [transform] function applied to each element in the sequence.
+ * Returns the sum of all values produced by [selector] function applied to each element in the sequence.
  */
-public inline fun <T> Sequence<T>.sumByDouble(transform: (T) -> Double): Double {
+public inline fun <T> Sequence<T>.sumByDouble(selector: (T) -> Double): Double {
     var sum: Double = 0.0
     for (element in this) {
-        sum += transform(element)
+        sum += selector(element)
     }
     return sum
 }
@@ -891,38 +904,6 @@ public inline fun <T> Sequence<T>.sumByDouble(transform: (T) -> Double): Double 
  */
 public fun <T : Any> Sequence<T?>.requireNoNulls(): Sequence<T> {
     return map { it ?: throw IllegalArgumentException("null element found in $this.") }
-}
-
-/**
- * Returns a sequence containing all elements of original sequence except the elements contained in the given [array].
- * Note that the source sequence and the array being subtracted are iterated only when an `iterator` is requested from
- * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
- */
-public operator fun <T> Sequence<T>.minus(array: Array<out T>): Sequence<T> {
-    if (array.isEmpty()) return this
-    return object: Sequence<T> {
-        override fun iterator(): Iterator<T> {
-            val other = array.toHashSet()
-            return this@minus.filterNot { it in other }.iterator()
-        }
-    }
-}
-
-/**
- * Returns a sequence containing all elements of original sequence except the elements contained in the given [collection].
- * Note that the source sequence and the collection being subtracted are iterated only when an `iterator` is requested from
- * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
- */
-public operator fun <T> Sequence<T>.minus(collection: Iterable<T>): Sequence<T> {
-    return object: Sequence<T> {
-        override fun iterator(): Iterator<T> {
-            val other = collection.convertToSetForSetOperation()
-            if (other.isEmpty())
-                return this@minus.iterator()
-            else
-                return this@minus.filterNot { it in other }.iterator()
-        }
-    }
 }
 
 /**
@@ -938,14 +919,46 @@ public operator fun <T> Sequence<T>.minus(element: T): Sequence<T> {
 }
 
 /**
- * Returns a sequence containing all elements of original sequence except the elements contained in the given [sequence].
+ * Returns a sequence containing all elements of original sequence except the elements contained in the given [elements] array.
+ * Note that the source sequence and the array being subtracted are iterated only when an `iterator` is requested from
+ * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
+ */
+public operator fun <T> Sequence<T>.minus(elements: Array<out T>): Sequence<T> {
+    if (elements.isEmpty()) return this
+    return object: Sequence<T> {
+        override fun iterator(): Iterator<T> {
+            val other = elements.toHashSet()
+            return this@minus.filterNot { it in other }.iterator()
+        }
+    }
+}
+
+/**
+ * Returns a sequence containing all elements of original sequence except the elements contained in the given [elements] collection.
+ * Note that the source sequence and the collection being subtracted are iterated only when an `iterator` is requested from
+ * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
+ */
+public operator fun <T> Sequence<T>.minus(elements: Iterable<T>): Sequence<T> {
+    return object: Sequence<T> {
+        override fun iterator(): Iterator<T> {
+            val other = elements.convertToSetForSetOperation()
+            if (other.isEmpty())
+                return this@minus.iterator()
+            else
+                return this@minus.filterNot { it in other }.iterator()
+        }
+    }
+}
+
+/**
+ * Returns a sequence containing all elements of original sequence except the elements contained in the given [elements] sequence.
  * Note that the source sequence and the sequence being subtracted are iterated only when an `iterator` is requested from
  * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
  */
-public operator fun <T> Sequence<T>.minus(sequence: Sequence<T>): Sequence<T> {
+public operator fun <T> Sequence<T>.minus(elements: Sequence<T>): Sequence<T> {
     return object: Sequence<T> {
         override fun iterator(): Iterator<T> {
-            val other = sequence.toHashSet()
+            val other = elements.toHashSet()
             if (other.isEmpty())
                 return this@minus.iterator()
             else
@@ -973,24 +986,6 @@ public inline fun <T> Sequence<T>.partition(predicate: (T) -> Boolean): Pair<Lis
 }
 
 /**
- * Returns a sequence containing all elements of original sequence and then all elements of the given [array].
- * Note that the source sequence and the array being added are iterated only when an `iterator` is requested from
- * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
- */
-public operator fun <T> Sequence<T>.plus(array: Array<out T>): Sequence<T> {
-    return this.plus(array.asList())
-}
-
-/**
- * Returns a sequence containing all elements of original sequence and then all elements of the given [collection].
- * Note that the source sequence and the collection being added are iterated only when an `iterator` is requested from
- * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
- */
-public operator fun <T> Sequence<T>.plus(collection: Iterable<T>): Sequence<T> {
-    return sequenceOf(this, collection.asSequence()).flatten()
-}
-
-/**
  * Returns a sequence containing all elements of the original sequence and then the given [element].
  */
 public operator fun <T> Sequence<T>.plus(element: T): Sequence<T> {
@@ -998,27 +993,45 @@ public operator fun <T> Sequence<T>.plus(element: T): Sequence<T> {
 }
 
 /**
- * Returns a sequence containing all elements of original sequence and then all elements of the given [sequence].
- * Note that the source sequence and the sequence being added are iterated only when an `iterator` is requested from
+ * Returns a sequence containing all elements of original sequence and then all elements of the given [elements] array.
+ * Note that the source sequence and the array being added are iterated only when an `iterator` is requested from
  * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
  */
-public operator fun <T> Sequence<T>.plus(sequence: Sequence<T>): Sequence<T> {
-    return sequenceOf(this, sequence).flatten()
+public operator fun <T> Sequence<T>.plus(elements: Array<out T>): Sequence<T> {
+    return this.plus(elements.asList())
 }
 
 /**
- * Returns a sequence of pairs built from elements of both collections with same indexes.
+ * Returns a sequence containing all elements of original sequence and then all elements of the given [elements] collection.
+ * Note that the source sequence and the collection being added are iterated only when an `iterator` is requested from
+ * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
+ */
+public operator fun <T> Sequence<T>.plus(elements: Iterable<T>): Sequence<T> {
+    return sequenceOf(this, elements.asSequence()).flatten()
+}
+
+/**
+ * Returns a sequence containing all elements of original sequence and then all elements of the given [elements] sequence.
+ * Note that the source sequence and the sequence being added are iterated only when an `iterator` is requested from
+ * the resulting sequence. Changing any of them between successive calls to `iterator` may affect the result.
+ */
+public operator fun <T> Sequence<T>.plus(elements: Sequence<T>): Sequence<T> {
+    return sequenceOf(this, elements).flatten()
+}
+
+/**
+ * Returns a sequence of pairs built from elements of both sequences with same indexes.
  * Resulting sequence has length of shortest input sequence.
  */
-public fun <T, R> Sequence<T>.zip(sequence: Sequence<R>): Sequence<Pair<T, R>> {
-    return MergingSequence(this, sequence) { t1, t2 -> t1 to t2 }
+public infix fun <T, R> Sequence<T>.zip(other: Sequence<R>): Sequence<Pair<T, R>> {
+    return MergingSequence(this, other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a sequence of values built from elements of both collections with same indexes using provided [transform]. Resulting sequence has length of shortest input sequences.
  */
-public fun <T, R, V> Sequence<T>.zip(sequence: Sequence<R>, transform: (T, R) -> V): Sequence<V> {
-    return MergingSequence(this, sequence, transform)
+public fun <T, R, V> Sequence<T>.zip(other: Sequence<R>, transform: (T, R) -> V): Sequence<V> {
+    return MergingSequence(this, other, transform)
 }
 
 /**

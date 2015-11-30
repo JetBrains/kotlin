@@ -6,10 +6,10 @@ var c2 = 0
 
 class A() {
     var p = 0
-    fun divAssign(a: Int) {
+    operator fun divAssign(a: Int) {
         c1++;
     }
-    fun times(a: Int): A {
+    operator fun times(a: Int): A {
         c2++;
         return this;
     }

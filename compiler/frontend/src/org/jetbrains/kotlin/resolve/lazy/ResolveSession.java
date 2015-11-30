@@ -35,13 +35,13 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo;
+import org.jetbrains.kotlin.resolve.lazy.data.JetClassOrObjectInfo;
 import org.jetbrains.kotlin.resolve.lazy.data.JetScriptInfo;
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory;
 import org.jetbrains.kotlin.resolve.lazy.declarations.PackageMemberDeclarationProvider;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotations;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationsContextImpl;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
-import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.storage.*;
@@ -63,8 +63,6 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private final MemoizedFunctionToNullable<FqName, LazyPackageDescriptor> packages;
     private final PackageFragmentProvider packageFragmentProvider;
 
-    private final MemoizedFunctionToNotNull<KtScript, LazyScriptDescriptor> scriptDescriptors;
-
     private final MemoizedFunctionToNotNull<KtFile, LazyAnnotations> fileAnnotations;
     private final MemoizedFunctionToNotNull<KtFile, LazyAnnotations> danglingAnnotations;
 
@@ -73,7 +71,6 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private DescriptorResolver descriptorResolver;
     private FunctionDescriptorResolver functionDescriptorResolver;
     private TypeResolver typeResolver;
-    private ScriptBodyResolver scriptBodyResolver;
     private LazyDeclarationResolver lazyDeclarationResolver;
     private FileScopeProvider fileScopeProvider;
     private DeclarationScopeProvider declarationScopeProvider;
@@ -104,11 +101,6 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Inject
     public void setTypeResolver(TypeResolver typeResolver) {
         this.typeResolver = typeResolver;
-    }
-
-    @Inject
-    public void setScriptBodyResolver(ScriptBodyResolver scriptBodyResolver) {
-        this.scriptBodyResolver = scriptBodyResolver;
     }
 
     @Inject
@@ -178,20 +170,6 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
                 return packageDescriptor.getDeclarationProvider().getAllDeclaredSubPackages(nameFilter);
             }
         };
-
-        this.scriptDescriptors = storageManager.createMemoizedFunction(
-                new Function1<KtScript, LazyScriptDescriptor>() {
-                    @Override
-                    public LazyScriptDescriptor invoke(KtScript script) {
-                        return new LazyScriptDescriptor(
-                                ResolveSession.this,
-                                scriptBodyResolver,
-                                script,
-                                ScriptPriorities.getScriptPriority(script)
-                        );
-                    }
-                }
-        );
 
         fileAnnotations = storageManager.createMemoizedFunction(new Function1<KtFile, LazyAnnotations>() {
             @Override
@@ -267,12 +245,18 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
                 new Function<JetClassLikeInfo, ClassDescriptor>() {
                     @Override
                     public ClassDescriptor fun(JetClassLikeInfo classLikeInfo) {
-                        if (classLikeInfo instanceof JetScriptInfo) {
-                            return getClassDescriptorForScript(((JetScriptInfo) classLikeInfo).getScript());
+                        if (classLikeInfo instanceof JetClassOrObjectInfo) {
+                            //noinspection RedundantCast
+                            return getClassDescriptor(((JetClassOrObjectInfo) classLikeInfo).getCorrespondingClassOrObject(), location);
                         }
-                        KtClassOrObject classOrObject = classLikeInfo.getCorrespondingClassOrObject();
-                        if (classOrObject == null) return null;
-                        return getClassDescriptor(classOrObject, location);
+                        else if (classLikeInfo instanceof JetScriptInfo) {
+                            return getScriptDescriptor(((JetScriptInfo) classLikeInfo).getScript());
+                        }
+                        else {
+                            throw new IllegalStateException(
+                                    "Unexpected " + classLikeInfo + " of type " + classLikeInfo.getClass().getName()
+                            );
+                        }
                     }
                 }
         );
@@ -285,18 +269,8 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     }
 
     @NotNull
-    public ClassDescriptor getClassDescriptorForScript(@NotNull KtScript script) {
-        MemberScope memberScope = lazyDeclarationResolver.getMemberScopeDeclaredIn(script, NoLookupLocation.FOR_SCRIPT);
-        FqName fqName = ScriptNameUtil.classNameForScript(script);
-        ClassifierDescriptor classifier = memberScope.getContributedClassifier(fqName.shortName(), NoLookupLocation.FOR_SCRIPT);
-        assert classifier != null : "No descriptor for " + fqName + " in file " + script.getContainingFile();
-        return (ClassDescriptor) classifier;
-    }
-
-    @Override
-    @NotNull
     public ScriptDescriptor getScriptDescriptor(@NotNull KtScript script) {
-        return scriptDescriptors.invoke(script);
+        return lazyDeclarationResolver.getScriptDescriptor(script, NoLookupLocation.FOR_SCRIPT);
     }
 
     @Override

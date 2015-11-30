@@ -1,12 +1,12 @@
 package demo_range
 
-fun Int?.plus() : Int = this!!.plus()
-fun Int?.dec() : Int = this!!.dec()
-fun Int?.inc() : Int = this!!.inc()
-fun Int?.minus() : Int = this!!.minus()
+operator fun Int?.unaryPlus() : Int = this!!.unaryPlus()
+operator fun Int?.dec() : Int = this!!.dec()
+operator fun Int?.inc() : Int = this!!.inc()
+operator fun Int?.unaryMinus() : Int = this!!.unaryMinus()
 
 fun box() : String {
     val x : Int? = 10
-    System.out?.println(x?.inv())// * x?.plus() * x?.dec() * x?.minus() as Number)
+    System.out?.println(x?.inv())// * x?.unaryPlus() * x?.dec() * x?.unaryMinus() as Number)
     return "OK"
 }

@@ -177,9 +177,9 @@ public class KotlinCacheService(val project: Project) {
         return ResolutionFacadeImpl(projectFacade, file.getModuleInfo())
     }
 
-    private fun findSyntheticFiles(files: Collection<KtFile>) = files.map {
+    private fun findSyntheticFiles(files: Collection<KtFile>) = files.mapNotNull {
         if (it is KtCodeFragment) it.getContextFile() else it
-    }.filterNotNull().filter {
+    }.filter {
         !ProjectRootsUtil.isInProjectSource(it)
     }.toSet()
 

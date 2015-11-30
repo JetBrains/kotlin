@@ -41,6 +41,10 @@ interface ModuleVisibilityManager {
     }
 }
 
+public val DeclarationDescriptor.isFromIncrementalPackageFragment: Boolean
+    get() =
+        DescriptorUtils.getParentOfType(this, PackageFragmentDescriptor::class.java, false) is IncrementalPackageFragmentProvider.IncrementalPackageFragment
+
 public fun isContainedByCompiledPartOfOurModule(descriptor: DeclarationDescriptor, outDirectory: File?): Boolean {
     val packageFragment = DescriptorUtils.getParentOfType(descriptor, PackageFragmentDescriptor::class.java, false)
 

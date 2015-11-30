@@ -29,16 +29,18 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemCompleter;
+import org.jetbrains.kotlin.resolve.calls.inference.TypeVariableKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
+import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
 import org.jetbrains.kotlin.resolve.validation.OperatorValidator;
 import org.jetbrains.kotlin.resolve.validation.SymbolUsageValidator;
-import org.jetbrains.kotlin.types.DeferredType;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeUtils;
+import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices;
@@ -88,9 +90,9 @@ public class DelegatedPropertyResolver {
             @NotNull KtExpression delegateExpression,
             @NotNull KotlinType delegateType,
             @NotNull BindingTrace trace,
-            @NotNull LexicalScope scope
+            @NotNull LexicalScope delegateFunctionsScope
     ) {
-        resolveDelegatedPropertyConventionMethod(propertyDescriptor, delegateExpression, delegateType, trace, scope, true);
+        resolveDelegatedPropertyConventionMethod(propertyDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope, true);
         ResolvedCall<FunctionDescriptor> resolvedCall =
                 trace.getBindingContext().get(DELEGATED_PROPERTY_RESOLVED_CALL, propertyDescriptor.getGetter());
         return resolvedCall != null ? resolvedCall.getResultingDescriptor().getReturnType() : null;
@@ -101,10 +103,10 @@ public class DelegatedPropertyResolver {
             @NotNull KtExpression delegateExpression,
             @NotNull KotlinType delegateType,
             @NotNull BindingTrace trace,
-            @NotNull LexicalScope scope
+            @NotNull LexicalScope delegateFunctionsScope
     ) {
         KotlinType returnType = getDelegatedPropertyGetMethodReturnType(
-                propertyDescriptor, delegateExpression, delegateType, trace, scope);
+                propertyDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope);
         KotlinType propertyType = propertyDescriptor.getType();
 
         /* Do not check return type of get() method of delegate for properties with DeferredType because property type is taken from it */
@@ -121,9 +123,9 @@ public class DelegatedPropertyResolver {
             @NotNull KtExpression delegateExpression,
             @NotNull KotlinType delegateType,
             @NotNull BindingTrace trace,
-            @NotNull LexicalScope scope
+            @NotNull LexicalScope delegateFunctionsScope
     ) {
-        resolveDelegatedPropertyConventionMethod(propertyDescriptor, delegateExpression, delegateType, trace, scope, false);
+        resolveDelegatedPropertyConventionMethod(propertyDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope, false);
     }
 
     @NotNull
@@ -136,16 +138,16 @@ public class DelegatedPropertyResolver {
             @NotNull KtExpression delegateExpression,
             @NotNull KotlinType delegateType,
             @NotNull BindingTrace trace,
-            @NotNull LexicalScope scope
+            @NotNull LexicalScope delegateFunctionsScope
     ) {
         TemporaryBindingTrace traceToResolvePDMethod = TemporaryBindingTrace.create(trace, "Trace to resolve propertyDelegated method in delegated property");
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                traceToResolvePDMethod, scope,
+                traceToResolvePDMethod, delegateFunctionsScope,
                 DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE);
 
         KtPsiFactory psiFactory = KtPsiFactory(delegateExpression);
         List<KtExpression> arguments = Collections.singletonList(createExpressionForProperty(psiFactory));
-        ExpressionReceiver receiver = new ExpressionReceiver(delegateExpression, delegateType);
+        ExpressionReceiver receiver = ExpressionReceiver.Companion.create(delegateExpression, delegateType, trace.getBindingContext());
 
         Pair<Call, OverloadResolutionResults<FunctionDescriptor>> resolutionResult =
                 fakeCallResolver.makeAndResolveFakeCallInContext(receiver, context, arguments, PROPERTY_DELEGATED_FUNCTION_NAME, delegateExpression);
@@ -174,7 +176,7 @@ public class DelegatedPropertyResolver {
             @NotNull KtExpression delegateExpression,
             @NotNull KotlinType delegateType,
             @NotNull BindingTrace trace,
-            @NotNull LexicalScope scope,
+            @NotNull LexicalScope delegateFunctionsScope,
             boolean isGet
     ) {
         PropertyAccessorDescriptor accessor = isGet ? propertyDescriptor.getGetter() : propertyDescriptor.getSetter();
@@ -183,7 +185,7 @@ public class DelegatedPropertyResolver {
         if (trace.getBindingContext().get(DELEGATED_PROPERTY_CALL, accessor) != null) return;
 
         OverloadResolutionResults<FunctionDescriptor> functionResults = getDelegatedPropertyConventionMethod(
-                propertyDescriptor, delegateExpression, delegateType, trace, scope, isGet, true);
+                propertyDescriptor, delegateExpression, delegateType, trace, delegateFunctionsScope, isGet, true);
         Call call = trace.getBindingContext().get(DELEGATED_PROPERTY_CALL, accessor);
         assert call != null : "'getDelegatedPropertyConventionMethod' didn't record a call";
 
@@ -230,7 +232,7 @@ public class DelegatedPropertyResolver {
             @NotNull KtExpression delegateExpression,
             @NotNull KotlinType delegateType,
             @NotNull BindingTrace trace,
-            @NotNull LexicalScope scope,
+            @NotNull LexicalScope delegateFunctionsScope,
             boolean isGet,
             boolean isComplete
     ) {
@@ -241,7 +243,7 @@ public class DelegatedPropertyResolver {
                                ? propertyDescriptor.getType() : TypeUtils.NO_EXPECTED_TYPE;
 
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
-                trace, scope,
+                trace, delegateFunctionsScope,
                 DataFlowInfo.EMPTY, expectedType);
 
         boolean hasThis = propertyDescriptor.getExtensionReceiverParameter() != null || propertyDescriptor.getDispatchReceiverParameter() != null;
@@ -261,7 +263,7 @@ public class DelegatedPropertyResolver {
         }
 
         Name functionName = isGet ? GETTER_NAME : SETTER_NAME;
-        ExpressionReceiver receiver = new ExpressionReceiver(delegateExpression, delegateType);
+        ExpressionReceiver receiver = ExpressionReceiver.Companion.create(delegateExpression, delegateType, trace.getBindingContext());
 
         Pair<Call, OverloadResolutionResults<FunctionDescriptor>> resolutionResult =
                 fakeCallResolver.makeAndResolveFakeCallInContext(receiver, context, arguments, functionName, delegateExpression);
@@ -312,24 +314,23 @@ public class DelegatedPropertyResolver {
         return builder.toString();
     }
 
-    @Nullable
+    @NotNull
     public KotlinType resolveDelegateExpression(
             @NotNull KtExpression delegateExpression,
-            @NotNull KtProperty jetProperty,
+            @NotNull KtProperty property,
             @NotNull PropertyDescriptor propertyDescriptor,
-            @NotNull LexicalScope propertyDeclarationInnerScope,
-            @NotNull LexicalScope accessorScope,
+            @NotNull LexicalScope scopeForDelegate,
             @NotNull BindingTrace trace,
             @NotNull DataFlowInfo dataFlowInfo
     ) {
         TemporaryBindingTrace traceToResolveDelegatedProperty = TemporaryBindingTrace.create(trace, "Trace to resolve delegated property");
         KtExpression calleeExpression = CallUtilKt.getCalleeExpressionIfAny(delegateExpression);
         ConstraintSystemCompleter completer = createConstraintSystemCompleter(
-                jetProperty, propertyDescriptor, delegateExpression, accessorScope, trace);
+                property, propertyDescriptor, delegateExpression, scopeForDelegate, trace);
         if (calleeExpression != null) {
             traceToResolveDelegatedProperty.record(CONSTRAINT_SYSTEM_COMPLETER, calleeExpression, completer);
         }
-        KotlinType delegateType = expressionTypingServices.safeGetType(propertyDeclarationInnerScope, delegateExpression, NO_EXPECTED_TYPE,
+        KotlinType delegateType = expressionTypingServices.safeGetType(scopeForDelegate, delegateExpression, NO_EXPECTED_TYPE,
                                                                        dataFlowInfo, traceToResolveDelegatedProperty);
         traceToResolveDelegatedProperty.commit(new TraceEntryFilter() {
             @Override
@@ -345,33 +346,41 @@ public class DelegatedPropertyResolver {
             @NotNull KtProperty property,
             @NotNull final PropertyDescriptor propertyDescriptor,
             @NotNull final KtExpression delegateExpression,
-            @NotNull final LexicalScope accessorScope,
+            @NotNull LexicalScope scopeForDelegate,
             @NotNull final BindingTrace trace
     ) {
+        final LexicalScope delegateFunctionsScope = JetScopeUtils.makeScopeForDelegateConventionFunctions(scopeForDelegate, propertyDescriptor);
         final KotlinType expectedType = property.getTypeReference() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
         return new ConstraintSystemCompleter() {
             @Override
             public void completeConstraintSystem(
-                    @NotNull ConstraintSystem constraintSystem, @NotNull ResolvedCall<?> resolvedCall
+                    @NotNull ConstraintSystem.Builder constraintSystem, @NotNull ResolvedCall<?> resolvedCall
             ) {
                 KotlinType returnType = resolvedCall.getCandidateDescriptor().getReturnType();
                 if (returnType == null) return;
+
+                TypeSubstitutor typeVariableSubstitutor =
+                        constraintSystem.getTypeVariableSubstitutors().get(TypeVariableKt.toHandle(resolvedCall.getCall()));
+                assert typeVariableSubstitutor != null : "No substitutor in the system for call: " + resolvedCall.getCall();
 
                 TemporaryBindingTrace traceToResolveConventionMethods =
                         TemporaryBindingTrace.create(trace, "Trace to resolve delegated property convention methods");
                 OverloadResolutionResults<FunctionDescriptor>
                         getMethodResults = getDelegatedPropertyConventionMethod(
-                                propertyDescriptor, delegateExpression, returnType, traceToResolveConventionMethods, accessorScope,
+                                propertyDescriptor, delegateExpression, returnType, traceToResolveConventionMethods, delegateFunctionsScope,
                                 true, false
                         );
 
                 if (conventionMethodFound(getMethodResults)) {
                     FunctionDescriptor descriptor = getMethodResults.getResultingDescriptor();
                     KotlinType returnTypeOfGetMethod = descriptor.getReturnType();
-                    if (returnTypeOfGetMethod != null) {
-                        constraintSystem.addSupertypeConstraint(expectedType, returnTypeOfGetMethod, FROM_COMPLETER.position());
+                    if (returnTypeOfGetMethod != null && !TypeUtils.noExpectedType(expectedType)) {
+                        KotlinType returnTypeInSystem = typeVariableSubstitutor.substitute(returnTypeOfGetMethod, Variance.INVARIANT);
+                        if (returnTypeInSystem != null) {
+                            constraintSystem.addSubtypeConstraint(returnTypeInSystem, expectedType, FROM_COMPLETER.position());
+                        }
                     }
-                    addConstraintForThisValue(constraintSystem, descriptor);
+                    addConstraintForThisValue(constraintSystem, typeVariableSubstitutor, descriptor);
                 }
                 if (!propertyDescriptor.isVar()) return;
 
@@ -382,7 +391,7 @@ public class DelegatedPropertyResolver {
 
                 OverloadResolutionResults<FunctionDescriptor>
                         setMethodResults = getDelegatedPropertyConventionMethod(
-                                propertyDescriptor, delegateExpression, returnType, traceToResolveConventionMethods, accessorScope,
+                                propertyDescriptor, delegateExpression, returnType, traceToResolveConventionMethods, delegateFunctionsScope,
                                 false, false
                         );
 
@@ -394,9 +403,12 @@ public class DelegatedPropertyResolver {
 
                         if (!noExpectedType(expectedType)) {
                             constraintSystem.addSubtypeConstraint(
-                                    expectedType, valueParameterForThis.getType(), FROM_COMPLETER.position());
+                                    expectedType,
+                                    typeVariableSubstitutor.substitute(valueParameterForThis.getType(), Variance.INVARIANT),
+                                    FROM_COMPLETER.position()
+                            );
                         }
-                        addConstraintForThisValue(constraintSystem, descriptor);
+                        addConstraintForThisValue(constraintSystem, typeVariableSubstitutor, descriptor);
                     }
                 }
             }
@@ -407,7 +419,11 @@ public class DelegatedPropertyResolver {
                         results.getResultCode() == OverloadResolutionResults.Code.SINGLE_CANDIDATE_ARGUMENT_MISMATCH);
             }
 
-            private void addConstraintForThisValue(ConstraintSystem constraintSystem, FunctionDescriptor resultingDescriptor) {
+            private void addConstraintForThisValue(
+                    ConstraintSystem.Builder constraintSystem,
+                    TypeSubstitutor typeVariableSubstitutor,
+                    FunctionDescriptor resultingDescriptor
+            ) {
                 ReceiverParameterDescriptor extensionReceiver = propertyDescriptor.getExtensionReceiverParameter();
                 ReceiverParameterDescriptor dispatchReceiver = propertyDescriptor.getDispatchReceiverParameter();
                 KotlinType typeOfThis =
@@ -419,7 +435,11 @@ public class DelegatedPropertyResolver {
                 if (valueParameters.isEmpty()) return;
                 ValueParameterDescriptor valueParameterForThis = valueParameters.get(0);
 
-                constraintSystem.addSubtypeConstraint(typeOfThis, valueParameterForThis.getType(), FROM_COMPLETER.position());
+                constraintSystem.addSubtypeConstraint(
+                        typeOfThis,
+                        typeVariableSubstitutor.substitute(valueParameterForThis.getType(), Variance.INVARIANT),
+                        FROM_COMPLETER.position()
+                );
             }
         };
     }

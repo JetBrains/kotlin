@@ -8,6 +8,6 @@ val classes: Map<String, Any> = noImpl
 val classesMutable: HashMap<String, String> = noImpl
 
 fun box(): Boolean {
-    classesMutable["why"] = "?"
-    return classes["answer"] == 42 && classesMutable["why"] == "?"
+    classesMutable.set("why", "?")
+    return classes.get("answer") == 42 && classesMutable.get("why") == "?"
 }

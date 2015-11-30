@@ -11,12 +11,12 @@
       <maximumHeapSize value="512" />
     </buildFile>
     <buildFile url="file://$PROJECT_DIR$/idea-runner/runner.xml" />
-    <buildFile url="file://$PROJECT_DIR$/replicate_versions.xml" />
     <buildFile url="file://$PROJECT_DIR$/libraries/build-docs.xml">
       <maximumHeapSize value="1024" />
       <properties>
         <property name="dokka.path" value="../../dokka" />
       </properties>
     </buildFile>
+    <buildFile url="file://$PROJECT_DIR$/TeamCityRelay.xml" />
   </component>
 </project>

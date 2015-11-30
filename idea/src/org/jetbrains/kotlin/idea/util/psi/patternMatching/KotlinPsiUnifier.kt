@@ -23,6 +23,8 @@ import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.core.refactoring.getContextForContainingDeclarationBody
+import org.jetbrains.kotlin.idea.refactoring.introduce.ExtractableSubstringInfo
+import org.jetbrains.kotlin.idea.refactoring.introduce.extractableSubstringInfo
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange.Empty
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.UnificationResult.*
@@ -40,8 +42,10 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -59,7 +63,7 @@ public interface UnificationResult {
             override fun and(other: Status): Status = this
         };
 
-        public abstract fun and(other: Status): Status
+        public abstract infix fun and(other: Status): Status
     }
 
     object Unmatched : UnificationResult {
@@ -67,13 +71,18 @@ public interface UnificationResult {
     }
 
     interface Matched: UnificationResult {
+        val range: KotlinPsiRange
         val substitution: Map<UnifierParameter, KtExpression>
         override val status: Status get() = MATCHED
     }
 
-    class StronglyMatched(override val substitution: Map<UnifierParameter, KtExpression>): Matched
+    class StronglyMatched(
+            override val range: KotlinPsiRange,
+            override val substitution: Map<UnifierParameter, KtExpression>
+    ): Matched
 
     class WeaklyMatched(
+            override val range: KotlinPsiRange,
             override val substitution: Map<UnifierParameter, KtExpression>,
             val weakMatches: Map<KtElement, KtElement>
     ): Matched
@@ -105,6 +114,7 @@ public class KotlinPsiUnifier(
         val declarationPatternsToTargets = MultiMap<DeclarationDescriptor, DeclarationDescriptor>()
         val weakMatches = HashMap<KtElement, KtElement>()
         var checkEquivalence: Boolean = false
+        var targetSubstringInfo: ExtractableSubstringInfo? = null
 
         private fun KotlinPsiRange.getBindingContext(): BindingContext {
             val element = (this as? KotlinPsiRange.ListRange)?.startElement as? KtElement
@@ -128,13 +138,13 @@ public class KotlinPsiUnifier(
             return false
         }
 
-        private fun matchReceivers(rv1: ReceiverValue, rv2: ReceiverValue): Boolean {
+        private fun matchReceivers(rv1: Receiver, rv2: Receiver): Boolean {
             return when {
                 rv1 is ExpressionReceiver && rv2 is ExpressionReceiver ->
-                    doUnify(rv1.getExpression(), rv2.getExpression()) == MATCHED
+                    doUnify(rv1.expression, rv2.expression) == MATCHED
 
-                rv1 is ThisReceiver && rv2 is ThisReceiver ->
-                    matchDescriptors(rv1.getDeclarationDescriptor(), rv2.getDeclarationDescriptor())
+                rv1 is ImplicitReceiver && rv2 is ImplicitReceiver ->
+                    matchDescriptors(rv1.declarationDescriptor, rv2.declarationDescriptor)
 
                 else ->
                     rv1 == rv2
@@ -184,12 +194,12 @@ public class KotlinPsiUnifier(
                 if (args1.size() != args2.size()) return UNMATCHED
                 if (rc1.getCall().getValueArguments().size() != args1.size() || rc2.getCall().getValueArguments().size() != args2.size()) return null
 
-                return (args1.asSequence() zip args2.asSequence()).fold(MATCHED) { s, p ->
+                return (args1.asSequence().zip(args2.asSequence())).fold(MATCHED) { s, p ->
                     val (arg1, arg2) = p
                     s and when {
                         arg1 == arg2 -> MATCHED
                         arg1 == null || arg2 == null -> UNMATCHED
-                        else -> (arg1.getArguments().asSequence() zip arg2.getArguments().asSequence()).fold(MATCHED) { s, p ->
+                        else -> (arg1.getArguments().asSequence().zip(arg2.getArguments().asSequence())).fold(MATCHED) { s, p ->
                             s and matchArguments(p.first, p.second)
                         }
                     }
@@ -200,22 +210,22 @@ public class KotlinPsiUnifier(
                 val (implicitReceiver, explicitReceiver) =
                         when (explicitCall.getExplicitReceiverKind()) {
                             ExplicitReceiverKind.EXTENSION_RECEIVER ->
-                                (implicitCall.getExtensionReceiver() as? ThisReceiver) to
+                                (implicitCall.getExtensionReceiver() as? ImplicitReceiver) to
                                         (explicitCall.getExtensionReceiver() as? ExpressionReceiver)
 
                             ExplicitReceiverKind.DISPATCH_RECEIVER ->
-                                (implicitCall.getDispatchReceiver() as? ThisReceiver) to
+                                (implicitCall.getDispatchReceiver() as? ImplicitReceiver) to
                                         (explicitCall.getDispatchReceiver() as? ExpressionReceiver)
 
                             else ->
                                 null to null
                         }
 
-                val thisExpression = explicitReceiver?.getExpression() as? KtThisExpression
+                val thisExpression = explicitReceiver?.expression as? KtThisExpression
                 if (implicitReceiver == null || thisExpression == null) return false
 
                 return matchDescriptors(
-                        implicitReceiver.getDeclarationDescriptor(),
+                        implicitReceiver.declarationDescriptor,
                         thisExpression.getAdjustedResolvedCall()?.getCandidateDescriptor()?.getContainingDeclaration()
                 )
             }
@@ -240,7 +250,7 @@ public class KotlinPsiUnifier(
                 val typeArgs2 = rc2.getTypeArguments().toList()
                 if (typeArgs1.size() != typeArgs2.size()) return UNMATCHED
 
-                for ((typeArg1, typeArg2) in (typeArgs1 zip typeArgs2)) {
+                for ((typeArg1, typeArg2) in (typeArgs1.zip(typeArgs2))) {
                     if (!matchDescriptors(typeArg1.first, typeArg2.first)) return UNMATCHED
 
                     val s = matchTypes(typeArg1.second, typeArg2.second)
@@ -344,7 +354,7 @@ public class KotlinPsiUnifier(
             fun sortTypes(types: Collection<KotlinType>) = types.sortedBy { DescriptorRenderer.DEBUG_TEXT.renderType(it) }
 
             if (types1.size() != types2.size()) return false
-            return (sortTypes(types1) zip sortTypes(types2)).all { matchTypes(it.first, it.second) == MATCHED }
+            return (sortTypes(types1).zip(sortTypes(types2))).all { matchTypes(it.first, it.second) == MATCHED }
         }
 
         private fun KtElement.shouldIgnoreResolvedCall(): Boolean {
@@ -512,12 +522,12 @@ public class KotlinPsiUnifier(
             return (!decl1.isNameRelevant() && !decl2.isNameRelevant()) || desc1.getName() == desc2.getName()
         }
 
-        private fun matchContainedDescriptors<T: DeclarationDescriptor>(
+        private fun <T: DeclarationDescriptor> matchContainedDescriptors(
                 declarations1: List<T>,
                 declarations2: List<T>,
                 matchPair: (Pair<T, T>) -> Boolean
         ): Boolean {
-            val zippedParams = declarations1 zip declarations2
+            val zippedParams = declarations1.zip(declarations2)
             if (declarations1.size() != declarations2.size() || !zippedParams.all { matchPair(it) }) return false
 
             zippedParams.forEach { declarationPatternsToTargets.putValue(it.first, it.second) }
@@ -659,7 +669,7 @@ public class KotlinPsiUnifier(
                 e1 is KtMultiDeclaration && e2 is KtMultiDeclaration ->
                     if (matchMultiDeclarations(e1, e2)) null else UNMATCHED
 
-                e1 is KtClassInitializer && e2 is KtClassInitializer ->
+                e1 is KtAnonymousInitializer && e2 is KtAnonymousInitializer ->
                     null
 
                 e1 is KtDeclaration ->
@@ -696,18 +706,84 @@ public class KotlinPsiUnifier(
             return targetElementType != null && KotlinTypeChecker.DEFAULT.isSubtypeOf(targetElementType, parameter.expectedType)
         }
 
+        private fun doUnifyStringTemplateFragments(target: KtStringTemplateExpression, pattern: ExtractableSubstringInfo): Status {
+            val prefixLength = pattern.prefix.length
+            val suffixLength = pattern.suffix.length
+            val targetEntries = target.entries
+            val patternEntries = pattern.entries.toList()
+            for ((index, targetEntry) in targetEntries.withIndex()) {
+                if (index + patternEntries.size > targetEntries.size) return UNMATCHED
+
+                val targetEntryText = targetEntry.text
+
+                if (pattern.startEntry == pattern.endEntry && (prefixLength > 0 || suffixLength > 0)) {
+                    if (targetEntry !is KtLiteralStringTemplateEntry) continue
+
+                    val patternText = with(pattern.startEntry.text) { substring(prefixLength, length - suffixLength) }
+                    val i = targetEntryText.indexOf(patternText)
+                    if (i < 0) continue
+                    val targetPrefix = targetEntryText.substring(0, i)
+                    val targetSuffix = targetEntryText.substring(i + patternText.length)
+                    targetSubstringInfo = ExtractableSubstringInfo(targetEntry, targetEntry, targetPrefix, targetSuffix, pattern.type)
+                    return MATCHED
+                }
+
+                val matchStartByText = pattern.startEntry is KtLiteralStringTemplateEntry
+                val matchEndByText = pattern.endEntry is KtLiteralStringTemplateEntry
+
+                val targetPrefix = if (matchStartByText) {
+                    if (targetEntry !is KtLiteralStringTemplateEntry) continue
+
+                    val patternText = pattern.startEntry.text.substring(prefixLength)
+                    if (!targetEntryText.endsWith(patternText)) continue
+                    targetEntryText.substring(0, targetEntryText.length - patternText.length)
+                }
+                else ""
+
+                val lastTargetEntry = targetEntries[index + patternEntries.lastIndex]
+
+                val targetSuffix = if (matchEndByText) {
+                    if (lastTargetEntry !is KtLiteralStringTemplateEntry) continue
+
+                    val patternText = with(pattern.endEntry.text) { substring(0, length - suffixLength) }
+                    val lastTargetEntryText = lastTargetEntry.text
+                    if (!lastTargetEntryText.startsWith(patternText)) continue
+                    lastTargetEntryText.substring(patternText.length)
+                }
+                else ""
+
+                val fromIndex = if (matchStartByText) 1 else 0
+                val toIndex = if (matchEndByText) patternEntries.lastIndex - 1 else patternEntries.lastIndex
+                val status = (fromIndex..toIndex).fold(MATCHED) { s, patternEntryIndex ->
+                    val targetEntryToUnify = targetEntries[index + patternEntryIndex]
+                    val patternEntryToUnify = patternEntries[patternEntryIndex]
+                    if (s != UNMATCHED) s and doUnify(targetEntryToUnify, patternEntryToUnify) else s
+                }
+                if (status == UNMATCHED) continue
+                targetSubstringInfo = ExtractableSubstringInfo(targetEntry, lastTargetEntry, targetPrefix, targetSuffix, pattern.type)
+                return status
+            }
+
+            return UNMATCHED
+        }
+
         fun doUnify(target: KotlinPsiRange, pattern: KotlinPsiRange): Status {
+            (pattern.elements.singleOrNull() as? KtExpression)?.extractableSubstringInfo?.let {
+                val targetTemplate = target.elements.singleOrNull() as? KtStringTemplateExpression ?: return UNMATCHED
+                return doUnifyStringTemplateFragments(targetTemplate, it)
+            }
+
             val targetElements = target.elements
             val patternElements = pattern.elements
             if (targetElements.size() != patternElements.size()) return UNMATCHED
 
-            return (targetElements.asSequence() zip patternElements.asSequence()).fold(MATCHED) { s, p ->
+            return (targetElements.asSequence().zip(patternElements.asSequence())).fold(MATCHED) { s, p ->
                 if (s != UNMATCHED) s and doUnify(p.first, p.second) else s
             }
         }
 
         private fun ASTNode.getChildrenRange(): KotlinPsiRange =
-                getChildren(null).map { it.getPsi() }.filterNotNull().toRange()
+                getChildren(null).mapNotNull { it.getPsi() }.toRange()
 
         private fun PsiElement.unwrapWeakly(): KtElement? {
             return when {
@@ -748,12 +824,13 @@ public class KotlinPsiUnifier(
             if (targetElementUnwrapped == patternElementUnwrapped) return MATCHED
             if (targetElementUnwrapped == null || patternElementUnwrapped == null) return UNMATCHED
 
-            if (!checkEquivalence) {
+            if (!checkEquivalence && targetElementUnwrapped !is KtBlockExpression) {
                 val referencedPatternDescriptor = (patternElementUnwrapped as? KtReferenceExpression)?.let {
                     it.bindingContext[BindingContext.REFERENCE_TARGET, it]
                 }
-                val parameter = descriptorToParameter[referencedPatternDescriptor]
-                if (parameter != null) {
+                val referencedPatternDeclaration = (referencedPatternDescriptor as? DeclarationDescriptorWithSource)?.source?.getPsi()
+                val parameter = descriptorToParameter[referencedPatternDeclaration]
+                if (referencedPatternDeclaration != null && parameter != null) {
                     if (targetElementUnwrapped !is KtExpression) return UNMATCHED
                     if (!targetElementUnwrapped.checkType(parameter)) return UNMATCHED
 
@@ -801,7 +878,9 @@ public class KotlinPsiUnifier(
         }
     }
 
-    private val descriptorToParameter = ContainerUtil.newMapFromValues(parameters.iterator()) { it!!.descriptor }
+    private val descriptorToParameter = ContainerUtil.newMapFromValues(parameters.iterator()) {
+        (it!!.descriptor as? DeclarationDescriptorWithSource)?.source?.getPsi()
+    }
 
     private fun PsiElement.unwrap(): PsiElement? {
         return when (this) {
@@ -822,8 +901,14 @@ public class KotlinPsiUnifier(
             when {
                 substitution.size() != descriptorToParameter.size() ->
                     Unmatched
-                status == MATCHED ->
-                    if (weakMatches.isEmpty()) StronglyMatched(substitution) else WeaklyMatched(substitution, weakMatches)
+                status == MATCHED -> {
+                    val targetRange = targetSubstringInfo?.createExpression()?.toRange() ?: target
+                    if (weakMatches.isEmpty()) {
+                        StronglyMatched(targetRange, substitution)
+                    } else {
+                        WeaklyMatched(targetRange, substitution, weakMatches)
+                    }
+                }
                 else ->
                     Unmatched
             }

@@ -34,12 +34,12 @@ public fun String.replaceIndentByMargin(newIndent: String = "", marginPrefix: St
     require(marginPrefix.isNotBlank()) { "marginPrefix should be non blank string but it is '$marginPrefix'" }
     val lines = lines()
 
-    return lines.reindent(length() + newIndent.length() * lines.size(), getIndentFunction(newIndent), { line ->
+    return lines.reindent(length + newIndent.length * lines.size, getIndentFunction(newIndent), { line ->
         val firstNonWhitespaceIndex = line.indexOfFirst { !it.isWhitespace() }
 
         when {
             firstNonWhitespaceIndex == -1 -> null
-            line.startsWith(marginPrefix, firstNonWhitespaceIndex) -> line.substring(firstNonWhitespaceIndex + marginPrefix.length())
+            line.startsWith(marginPrefix, firstNonWhitespaceIndex) -> line.substring(firstNonWhitespaceIndex + marginPrefix.length)
             else -> null
         }
     })
@@ -80,7 +80,7 @@ public fun String.replaceIndent(newIndent: String = ""): String {
             .map { it.indentWidth() }
             .min() ?: 0
 
-    return lines.reindent(length() + newIndent.length() * lines.size(), getIndentFunction(newIndent), { line -> line.drop(minCommonIndent) })
+    return lines.reindent(length + newIndent.length * lines.size, getIndentFunction(newIndent), { line -> line.drop(minCommonIndent) })
 }
 
 /**
@@ -92,7 +92,7 @@ public fun String.prependIndent(indent: String = "    "): String =
         when {
             it.isBlank() -> {
                 when {
-                    it.length() < indent.length() -> indent
+                    it.length < indent.length -> indent
                     else -> it
                 }
             }
@@ -101,7 +101,7 @@ public fun String.prependIndent(indent: String = "    "): String =
     }
     .joinToString("\n")
 
-private fun String.indentWidth(): Int = indexOfFirst { !it.isWhitespace() }.let { if (it == -1) length() else it }
+private fun String.indentWidth(): Int = indexOfFirst { !it.isWhitespace() }.let { if (it == -1) length else it }
 
 private fun getIndentFunction(indent: String) = when {
     indent.isEmpty() -> { line: String -> line }
@@ -110,14 +110,12 @@ private fun getIndentFunction(indent: String) = when {
 
 private inline fun List<String>.reindent(resultSizeEstimate: Int, indentAddFunction: (String) -> String, indentCutFunction: (String) -> String?): String {
     val lastIndex = lastIndex
-    // TODO: Use mapNotNullIndexed
-    return mapIndexed { index, value ->
+    return mapIndexedNotNull { index, value ->
             if ((index == 0 || index == lastIndex) && value.isBlank())
                 null
             else
                 indentCutFunction(value)?.let { cutted -> indentAddFunction(cutted) } ?: value
         }
-        .filterNotNull()
         .joinTo(StringBuilder(resultSizeEstimate), "\n")
         .toString()
 }

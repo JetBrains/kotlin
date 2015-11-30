@@ -1,7 +1,7 @@
 package a
 
 fun foo() {
-    <caret>assert(true, "text")
+    <caret>assert(true, { "text" })
 }
 
 class AssertionError

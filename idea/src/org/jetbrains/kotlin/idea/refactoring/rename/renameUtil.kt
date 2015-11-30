@@ -20,12 +20,8 @@ import com.intellij.psi.PsiElement
 import com.intellij.refactoring.rename.UnresolvableCollisionUsageInfo
 import com.intellij.refactoring.util.MoveRenameUsageInfo
 import com.intellij.usageView.UsageInfo
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
-import org.jetbrains.kotlin.idea.references.AbstractJetReference
-import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.idea.references.AbstractKtReference
 import java.util.*
 
 fun checkConflictsAndReplaceUsageInfos(result: MutableList<UsageInfo>) {
@@ -34,7 +30,7 @@ fun checkConflictsAndReplaceUsageInfos(result: MutableList<UsageInfo>) {
 
     for (usageInfo in result) {
         val ref = usageInfo.getReference()
-        if (usageInfo !is MoveRenameUsageInfo || ref !is AbstractJetReference<*> || ref.canRename()) continue
+        if (usageInfo !is MoveRenameUsageInfo || ref !is AbstractKtReference<*> || ref.canRename()) continue
 
         val refElement = usageInfo.getElement()
         val referencedElement = usageInfo.getReferencedElement()
@@ -53,10 +49,4 @@ class UnresolvableConventionViolationUsageInfo(
         referencedElement: PsiElement
 ) : UnresolvableCollisionUsageInfo(element, referencedElement) {
     override fun getDescription(): String = KotlinRefactoringBundle.message("naming.convention.will.be.violated.after.rename")
-}
-
-fun dropOverrideKeywordIfNecessary(element: KtNamedDeclaration) {
-    if ((element.resolveToDescriptor() as CallableDescriptor).overriddenDescriptors.isEmpty()) {
-        element.removeModifier(KtTokens.OVERRIDE_KEYWORD)
-    }
 }

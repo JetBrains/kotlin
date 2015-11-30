@@ -31,7 +31,7 @@ public class SwapBinaryExpressionIntention : SelfTargetingIntention<KtBinaryExpr
     companion object {
         private val SUPPORTED_OPERATIONS = setOf(PLUS, MUL, OROR, ANDAND, EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ, GT, LT, GTEQ, LTEQ)
 
-        private val SUPPORTED_OPERATION_NAMES = SUPPORTED_OPERATIONS.map { OperatorConventions.BINARY_OPERATION_NAMES[it]?.asString() }.toSet().filterNotNull() +
+        private val SUPPORTED_OPERATION_NAMES = SUPPORTED_OPERATIONS.mapNotNull { OperatorConventions.BINARY_OPERATION_NAMES[it]?.asString() }.toSet() +
                                         setOf("xor", "or", "and", "equals", "identityEquals")
     }
 

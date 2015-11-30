@@ -2,8 +2,8 @@ class C(val i: Int) {
 }
 
 class M {
-  fun C.component1() = i + 1
-  fun C.component2() = i + 2
+  operator fun C.component1() = i + 1
+  operator fun C.component2() = i + 2
 
   fun doTest(l : java.util.ArrayList<C>): String {
       var s = ""

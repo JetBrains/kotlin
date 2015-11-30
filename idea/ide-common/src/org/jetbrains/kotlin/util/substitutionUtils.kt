@@ -26,7 +26,7 @@ public fun getTypeSubstitution(baseType: KotlinType, derivedType: KotlinType): L
     val substitutedType = TypeCheckingProcedure.findCorrespondingSupertype(derivedType, baseType) ?: return null
 
     val substitution = LinkedHashMap<TypeConstructor, TypeProjection>(substitutedType.getArguments().size())
-    for ((param, arg) in baseType.getConstructor().getParameters() zip substitutedType.getArguments()) {
+    for ((param, arg) in baseType.getConstructor().getParameters().zip(substitutedType.getArguments())) {
         substitution[param.getTypeConstructor()] = arg
     }
 
@@ -41,7 +41,7 @@ public fun getCallableSubstitution(
     val derivedClass = derivedCallable.getContainingDeclaration() as? ClassDescriptor ?: return null
     val substitution = getTypeSubstitution(baseClass.getDefaultType(), derivedClass.getDefaultType()) ?: return null
 
-    for ((baseParam, derivedParam) in baseCallable.getTypeParameters() zip derivedCallable.getTypeParameters()) {
+    for ((baseParam, derivedParam) in baseCallable.getTypeParameters().zip(derivedCallable.getTypeParameters())) {
         substitution[baseParam.getTypeConstructor()] = TypeProjectionImpl(derivedParam.getDefaultType())
     }
 

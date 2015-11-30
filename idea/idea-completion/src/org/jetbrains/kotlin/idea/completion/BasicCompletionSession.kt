@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.idea.completion.smart.ExpectedInfoMatch
 import org.jetbrains.kotlin.idea.completion.smart.SMART_COMPLETION_ITEM_PRIORITY_KEY
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletion
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletionItemPriority
+import org.jetbrains.kotlin.idea.core.ExpectedInfo
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.quickfix.moveCaret
 import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
@@ -207,6 +208,15 @@ class BasicCompletionSession(
 
             val contextVariablesProvider = RealContextVariablesProvider(referenceVariantsHelper, position)
             withContextVariablesProvider(contextVariablesProvider) { lookupElementFactory ->
+                if (receiverTypes != null) {
+                    ExtensionFunctionTypeValueCompletion(receiverTypes, callTypeAndReceiver.callType, lookupElementFactory)
+                            .processVariables(contextVariablesProvider)
+                            .forEach {
+                                val lookupElements = it.factory.createStandardLookupElementsForDescriptor(it.invokeDescriptor, useReceiverTypes = true)
+                                collector.addElements(lookupElements)
+                            }
+                }
+
                 if (contextVariableTypesForSmartCompletion.any { contextVariablesProvider.functionTypeVariables(it).isNotEmpty() }) {
                     completeWithSmartCompletion(lookupElementFactory)
                 }
@@ -491,8 +501,7 @@ class BasicCompletionSession(
             val classOrObject = position.parents.firstIsInstanceOrNull<KtClassOrObject>() ?: return
             val classDescriptor = resolutionFacade.resolveToDescriptor(classOrObject) as ClassDescriptor
             var superClasses = classDescriptor.defaultType.constructor.supertypesWithAny()
-                    .map { it.constructor.declarationDescriptor as? ClassDescriptor }
-                    .filterNotNull()
+                    .mapNotNull { it.constructor.declarationDescriptor as? ClassDescriptor }
 
             if (callTypeAndReceiver.receiver != null) {
                 val referenceVariantsSet = referenceVariants!!.imported.toSet()

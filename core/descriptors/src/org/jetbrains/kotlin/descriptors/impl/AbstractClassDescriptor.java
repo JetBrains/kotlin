@@ -89,7 +89,7 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
                                                                                      + " for " + getTypeConstructor() + " " + getTypeConstructor().getParameters();
         if (typeArguments.isEmpty()) return getUnsubstitutedMemberScope();
 
-        TypeSubstitutor substitutor = new IndexedParametersSubstitution(getTypeConstructor(), typeArguments).buildSubstitutor();
+        TypeSubstitutor substitutor = TypeConstructorSubstitution.create(getTypeConstructor(), typeArguments).buildSubstitutor();
         return new SubstitutingScope(getUnsubstitutedMemberScope(), substitutor);
     }
 

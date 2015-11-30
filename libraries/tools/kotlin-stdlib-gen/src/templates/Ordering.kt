@@ -1,13 +1,12 @@
 package templates
 
 import templates.Family.*
-import templates.DocExtensions.collection
 
 fun ordering(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
 
     templates add f("reverse()") {
-        doc { f -> "Reverses elements in the ${f.collection} in-place." }
+        doc { f -> "Reverses ${f.element}s in the ${f.collection} in-place." }
         only(Lists, ArraysOfObjects, ArraysOfPrimitives)
         customReceiver(Lists) { "MutableList<T>" }
         returns { "Unit" }
@@ -68,7 +67,7 @@ fun ordering(): List<GenericFunction> {
         body(ArraysOfObjects) {
             """
             if (isEmpty()) return this
-            val result = arrayOfNulls(this, size()) as Array<T>
+            val result = arrayOfNulls(this, size) as Array<T>
             val lastIndex = lastIndex
             for (i in 0..lastIndex)
                 result[lastIndex - i] = this[i]
@@ -78,7 +77,7 @@ fun ordering(): List<GenericFunction> {
         body(ArraysOfPrimitives) {
             """
             if (isEmpty()) return this
-            val result = SELF(size())
+            val result = SELF(size)
             val lastIndex = lastIndex
             for (i in 0..lastIndex)
                 result[lastIndex - i] = this[i]

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.context.CodegenContextUtil;
 import org.jetbrains.kotlin.codegen.context.MethodContext;
+import org.jetbrains.kotlin.codegen.optimization.common.UtilKt;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
@@ -62,6 +63,7 @@ public class InlineCodegenUtil {
 
     public static final String CAPTURED_FIELD_PREFIX = "$";
     public static final String THIS$0 = "this$0";
+    public static final String THIS = "this";
     public static final String RECEIVER$0 = "receiver$0";
     public static final String NON_LOCAL_RETURN = "$$$$$NON_LOCAL_RETURN$$$$$";
     public static final String FIRST_FUN_LABEL = "$$$$$ROOT$$$$$";
@@ -71,6 +73,8 @@ public class InlineCodegenUtil {
     public static final String INLINE_MARKER_AFTER_METHOD_NAME = "afterInlineCall";
     public static final String INLINE_MARKER_FINALLY_START = "finallyStart";
     public static final String INLINE_MARKER_FINALLY_END = "finallyEnd";
+    public static final String INLINE_TRANSFORMATION_SUFFIX = "$inlined";
+    public static final String INLINE_FUN_THIS_0_SUFFIX = "$inline_fun";
 
     @Nullable
     public static SMAPAndMethodNode getMethodNode(
@@ -117,7 +121,7 @@ public class InlineCodegenUtil {
             }
         }, ClassReader.SKIP_FRAMES | (GENERATE_SMAP ? 0 : ClassReader.SKIP_DEBUG));
 
-        SMAP smap = SMAPParser.parseOrCreateDefault(debugInfo[1], debugInfo[0], classId.toString(), lines[0], lines[1]);
+        SMAP smap = SMAPParser.parseOrCreateDefault(debugInfo[1], debugInfo[0], classId.asString(), lines[0], lines[1]);
         return new SMAPAndMethodNode(node[0], smap);
     }
 
@@ -484,5 +488,27 @@ public class InlineCodegenUtil {
 
     public static boolean isFakeLocalVariableForInline(@NotNull String name) {
         return name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) || name.startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT);
+    }
+
+    public static boolean isThis0(String name) {
+        return THIS$0.equals(name);
+    }
+
+    @Nullable
+    public static AbstractInsnNode getPrevMeaningful(@NotNull AbstractInsnNode node) {
+        AbstractInsnNode result = node.getPrevious();
+        while (result != null && !UtilKt.isMeaningful(result)) {
+            result = result.getPrevious();
+        }
+        return result;
+    }
+
+    public static void removeInterval(@NotNull MethodNode node, @NotNull AbstractInsnNode startInc, @NotNull AbstractInsnNode endInc) {
+        while (startInc != endInc) {
+            AbstractInsnNode next = startInc.getNext();
+            node.instructions.remove(startInc);
+            startInc = next;
+        }
+        node.instructions.remove(startInc);
     }
 }

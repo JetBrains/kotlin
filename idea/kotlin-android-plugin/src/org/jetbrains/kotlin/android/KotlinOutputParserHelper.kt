@@ -25,7 +25,6 @@ import java.io.File
 import java.lang.reflect.Constructor
 import java.util.*
 import java.util.regex.Pattern
-import kotlin.reflect.jvm.*
 import java.lang.reflect.Array as RArray
 
 fun parse(line: String, reader: OutputLineReader, messages: MutableList<Any>, logger: ILogger): Boolean {
@@ -88,14 +87,27 @@ private fun String.amendNextLinesIfNeeded(reader: OutputLineReader): String {
         nextLine = reader.readLine()
     }
 
-    if (nextLine != null) reader.pushBack(nextLine)
+    if (nextLine != null) {
+        // This code is needed for compatibility with AS 2.0 and IDEA 15.0, because of difference in android plugins
+        val positionField = try {
+            reader.javaClass.getDeclaredField("myPosition")
+        }
+        catch(e: Throwable) {
+            null
+        }
+        if (positionField != null) {
+            positionField.isAccessible = true
+            positionField.setInt(reader, positionField.getInt(reader) - 1)
+        }
+    }
 
     return builder.toString()
 }
 
 private fun String.isNextMessage(): Boolean {
     val colonIndex1 = indexOf(COLON)
-    return (colonIndex1 >= 0 && substring(0, colonIndex1).startsWithSeverityPrefix())
+    return colonIndex1 == 0
+           || (colonIndex1 >= 0 && substring(0, colonIndex1).startsWithSeverityPrefix()) // Next Kotlin message
            || StringUtil.containsIgnoreCase(this, "FAILURE")
            || StringUtil.containsIgnoreCase(this, "FAILED")
 }

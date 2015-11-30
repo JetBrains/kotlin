@@ -9,6 +9,7 @@ class A<T1, T2 : T1> : B<T1, T2> {
 }
 
 
+
 Resolved call:
 
 Candidate descriptor: constructor B<X, Y : X>(x: X, y: Y) defined in B

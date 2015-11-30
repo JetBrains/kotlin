@@ -8,10 +8,10 @@ fun foo(): Int {
     if (x != null) return x
     
     val y: Int? = null
-    if (y == null) return if (<!ALWAYS_NULL!>y<!> != null) y else <!ALWAYS_NULL, TYPE_MISMATCH!>y<!>
+    if (y == null) return if (<!SENSELESS_COMPARISON!><!DEBUG_INFO_CONSTANT!>y<!> != null<!>) y else <!TYPE_MISMATCH, DEBUG_INFO_CONSTANT!>y<!>
     
     val z: Int? = null
     if (z != null) return if (<!SENSELESS_COMPARISON!>z == null<!>) z else z
     
-    return <!ALWAYS_NULL, TYPE_MISMATCH!>z<!>
+    return <!TYPE_MISMATCH, DEBUG_INFO_CONSTANT!>z<!>
 }

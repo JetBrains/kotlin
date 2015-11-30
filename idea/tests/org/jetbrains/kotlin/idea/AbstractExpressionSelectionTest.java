@@ -31,7 +31,7 @@ public abstract class AbstractExpressionSelectionTest extends LightCodeInsightTe
         final String expectedExpression = KotlinTestUtils.getLastCommentInFile((KtFile) getFile());
 
         try {
-            KotlinRefactoringUtil.selectExpression(getEditor(), getFile(), new KotlinRefactoringUtil.SelectExpressionCallback() {
+            KotlinRefactoringUtil.selectExpression(getEditor(), (KtFile) getFile(), new KotlinRefactoringUtil.SelectExpressionCallback() {
                 @Override
                 public void run(@Nullable KtExpression expression) {
                     assertNotNull("Selected expression mustn't be null", expression);

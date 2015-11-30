@@ -67,7 +67,7 @@ public abstract class BasicTest extends KotlinTestWithEnvironment {
     private static final boolean DELETE_OUT = false;
 
     public static final String TEST_DATA_DIR_PATH = "js/js.translator/testData/";
-    public static final String DIST_DIR_PATH = "dist/";
+    public static final String DIST_DIR_JS_PATH = "dist/js/";
 
     private static final String CASES = "cases/";
     private static final String OUT = "out/";

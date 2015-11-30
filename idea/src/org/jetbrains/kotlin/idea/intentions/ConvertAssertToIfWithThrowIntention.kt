@@ -23,8 +23,12 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.utils.addToStdlib.check
 
 public class ConvertAssertToIfWithThrowIntention : SelfTargetingIntention<KtCallExpression>(javaClass(), "Replace 'assert' with 'if' statement"), LowPriorityAction {
     override fun isApplicableTo(element: KtCallExpression, caretOffset: Int): Boolean {
@@ -44,16 +48,20 @@ public class ConvertAssertToIfWithThrowIntention : SelfTargetingIntention<KtCall
     override fun applyTo(element: KtCallExpression, editor: Editor) {
         val args = element.getValueArguments()
         val conditionText = args[0]?.getArgumentExpression()?.getText() ?: return
-        val functionLiteral = element.getFunctionLiteralArguments().singleOrNull()
-        val messageIsFunction = messageIsFunction(element)
-
+        val functionLiteralArgument = element.functionLiteralArguments.singleOrNull()
+        val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
         val psiFactory = KtPsiFactory(element)
 
-        val messageExpr = when {
-            args.size() == 2 -> args[1]?.getArgumentExpression() ?: return
-            functionLiteral != null -> functionLiteral!!
-            else -> psiFactory.createExpression("\"Assertion failed\"")
+        val messageFunctionExpr = when {
+            args.size == 2 -> args[1]?.getArgumentExpression() ?: return
+            functionLiteralArgument != null -> functionLiteralArgument.getFunctionLiteral()
+            else -> null
         }
+
+        val extractedMessageSingleExpr = (messageFunctionExpr as? KtFunctionLiteralExpression)?.let { extractMessageSingleExpression(it, bindingContext) }
+
+        val messageIsFunction = extractedMessageSingleExpr == null && messageIsFunction(element, bindingContext)
+        val messageExpr = extractedMessageSingleExpr ?: messageFunctionExpr ?: psiFactory.createExpression("\"Assertion failed\"")
 
         val ifExpression = replaceWithIfThenThrowExpression(element)
 
@@ -85,8 +93,14 @@ public class ConvertAssertToIfWithThrowIntention : SelfTargetingIntention<KtCall
         simplifyConditionIfPossible(ifExpression)
     }
 
-    private fun messageIsFunction(callExpr: KtCallExpression): Boolean {
-        val resolvedCall = callExpr.getResolvedCall(callExpr.analyze()) ?: return false
+    private fun extractMessageSingleExpression(functionLiteral: KtFunctionLiteralExpression, bindingContext: BindingContext): KtExpression? {
+        return functionLiteral.bodyExpression?.statements?.singleOrNull()?.let { singleStatement ->
+            singleStatement.check { it.isUsedAsExpression(bindingContext) }
+        }
+    }
+
+    private fun messageIsFunction(callExpr: KtCallExpression, bindingContext: BindingContext): Boolean {
+        val resolvedCall = callExpr.getResolvedCall(bindingContext) ?: return false
         val valParameters = resolvedCall.getResultingDescriptor().getValueParameters()
         return valParameters.size() > 1 && !KotlinBuiltIns.isAny(valParameters[1].type)
     }

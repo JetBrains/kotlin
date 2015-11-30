@@ -16,12 +16,11 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.intellij.testFramework.UsefulTestCase;
-import junit.extensions.TestSetup;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import com.intellij.testFramework.TestRunnerUtil;
+import junit.framework.*;
+import junit.textui.TestRunner;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys;
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
@@ -30,7 +29,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.ContentRootsKt;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
@@ -39,53 +37,20 @@ import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
+import org.jetbrains.kotlin.resolve.lazy.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
-import org.jetbrains.kotlin.types.KotlinType;
 
 import java.io.File;
 import java.lang.reflect.Modifier;
 
-import static org.jetbrains.kotlin.types.TypeUtils.getAllSupertypes;
-
-@SuppressWarnings("JUnitTestCaseWithNoTests")
-public class TestlibTest extends UsefulTestCase {
-    public static Test suite() {
-        return new TestlibTest().buildTestSuite();
-    }
-
-    private TestSuite suite;
-    private File junitJar;
-    private GeneratedClassLoader classLoader;
-    private JetTypeMapper typeMapper;
-    private GenerationState generationState;
-    private KotlinCoreEnvironment myEnvironment;
-
-    private Test buildTestSuite() {
-        suite = new TestSuite("stdlib_test");
-
-        return new TestSetup(suite) {
-            @Override
-            protected void setUp() throws Exception {
-                TestlibTest.this.setUp();
-            }
-
-            @Override
-            protected void tearDown() throws Exception {
-                TestlibTest.this.tearDown();
-            }
-        };
-    }
-
+public class TestlibTest extends KotlinTestWithEnvironment {
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
+    protected KotlinCoreEnvironment createEnvironment() {
         CompilerConfiguration configuration = KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.FULL_JDK);
-        JvmContentRootsKt.addJvmClasspathRoot(configuration, KotlinTestUtils.getAnnotationsJar());
 
-        junitJar = new File("libraries/lib/junit-4.11.jar");
+        File junitJar = new File("libraries/lib/junit-4.11.jar");
         assertTrue(junitJar.exists());
         JvmContentRootsKt.addJvmClasspathRoot(configuration, junitJar);
 
@@ -93,74 +58,73 @@ public class TestlibTest extends UsefulTestCase {
         ContentRootsKt.addKotlinSourceRoot(configuration, KotlinTestUtils.getHomeDirectory() + "/libraries/kunit/src");
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, PrintingMessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR);
 
-        myEnvironment = KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
+        return KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
+    }
 
-        generationState = KotlinToJVMBytecodeCompiler.analyzeAndGenerate(myEnvironment);
-        if (generationState == null) {
-            throw new RuntimeException("There were compilation errors");
+    public void testStdlib() throws ClassNotFoundException {
+        GenerationState state = KotlinToJVMBytecodeCompiler.analyzeAndGenerate(getEnvironment());
+        if (state == null) {
+            fail("There were compilation errors");
         }
 
-        classLoader = new GeneratedClassLoader(generationState.getFactory(), ForTestCompileRuntime.runtimeAndReflectJarClassLoader()) {
+        GeneratedClassLoader classLoader = new GeneratedClassLoader(
+                state.getFactory(), ForTestCompileRuntime.runtimeAndReflectJarClassLoader()
+        ) {
             @Override
             public Class<?> loadClass(@NotNull String name) throws ClassNotFoundException {
                 if (name.startsWith("junit.") || name.startsWith("org.junit.")) {
-                    //In other way we don't find any test cause will have two different TestCase classes!
                     return TestlibTest.class.getClassLoader().loadClass(name);
                 }
                 return super.loadClass(name);
             }
         };
 
-        typeMapper = generationState.getTypeMapper();
+        TestSuite tests = new TestSuite("Standard Library Tests");
 
-        for (KtFile jetFile : myEnvironment.getSourceFiles()) {
-            for (KtDeclaration declaration : jetFile.getDeclarations()) {
+        for (KtFile file : getEnvironment().getSourceFiles()) {
+            // Skip JS tests
+            if (file.getVirtualFile().getPath().contains("/js/")) continue;
+
+            for (KtDeclaration declaration : file.getDeclarations()) {
                 if (!(declaration instanceof KtClass)) continue;
 
-                ClassDescriptor descriptor = (ClassDescriptor) BindingContextUtils.getNotNull(generationState.getBindingContext(),
-                                                                                              BindingContext.DECLARATION_TO_DESCRIPTOR,
-                                                                                              declaration);
+                ClassDescriptor descriptor = (ClassDescriptor) BindingContextUtils.getNotNull(
+                        state.getBindingContext(), BindingContext.DECLARATION_TO_DESCRIPTOR, declaration
+                );
 
-                for (KotlinType superType : getAllSupertypes(descriptor.getDefaultType())) {
-                    if (!"junit/framework/Test".equals(typeMapper.mapType(superType).getInternalName())) continue;
+                Test test = createTest(classLoader, state.getTypeMapper().mapClass(descriptor).getClassName());
 
-                    String name = typeMapper.mapClass(descriptor).getInternalName();
-
-                    System.out.println(name);
-
-                    @SuppressWarnings("unchecked")
-                    Class<TestCase> aClass = (Class<TestCase>) classLoader.loadClass(name.replace('/', '.'));
-
-                    if (!Modifier.isAbstract(aClass.getModifiers()) && Modifier.isPublic(aClass.getModifiers())) {
-                        try {
-                            if (Modifier.isPublic(aClass.getConstructor().getModifiers())) {
-                                suite.addTestSuite(aClass);
-                            }
-                        }
-                        catch (NoSuchMethodException e) {
-                            // Ignore test classes we can't instantiate
-                        }
-                    }
-
-                    break;
+                if (test != null) {
+                    tests.addTest(test);
                 }
             }
         }
+
+        TestResult result = new TestRunner(System.err).doRun(tests);
+        if (!result.wasSuccessful()) {
+            fail("Some stdlib tests failed, see stderr for details");
+        }
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        typeMapper = null;
+    @Nullable
+    private static Test createTest(@NotNull ClassLoader classLoader, @NotNull String className) {
+        try {
+            Class<?> aClass = classLoader.loadClass(className);
+            if (Modifier.isAbstract(aClass.getModifiers()) ||
+                !Modifier.isPublic(aClass.getModifiers()) ||
+                !Modifier.isPublic(aClass.getConstructor().getModifiers())) {
+                return null;
+            }
 
-        classLoader.dispose();
-        classLoader = null;
-
-        generationState = null;
-
-        myEnvironment = null;
-
-        junitJar = null;
-
-        super.tearDown();
+            return TestCase.class.isAssignableFrom(aClass) ? new TestSuite(aClass) :
+                   TestRunnerUtil.isJUnit4TestClass(aClass) ? new JUnit4TestAdapter(aClass) : null;
+        }
+        catch (NoSuchMethodException e) {
+            // Ignore test classes we can't instantiate
+            return null;
+        }
+        catch (ClassNotFoundException e) {
+            return null;
+        }
     }
 }

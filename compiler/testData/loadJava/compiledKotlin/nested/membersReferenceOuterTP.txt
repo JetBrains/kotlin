@@ -3,7 +3,7 @@ package test
 public final class MembersReferenceOuterTP</*0*/ P> {
     /*primary*/ public constructor MembersReferenceOuterTP</*0*/ P>()
 
-    public final inner class Inner {
+    public final inner class Inner /*captured type parameters: /*0*/ P*/ {
         /*primary*/ public constructor Inner()
         public final val v: P
             public final fun <get-v>(): P

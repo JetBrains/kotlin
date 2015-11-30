@@ -207,8 +207,8 @@ public class DataFlowAnalyzer {
             return expressionType;
         }
 
-        KotlinType possibleType = checkPossibleCast(expressionType, expression, c);
-        if (possibleType != null) return possibleType;
+        SmartCastResult castResult = checkPossibleCast(expressionType, expression, c);
+        if (castResult != null) return castResult.getResultType();
 
         c.trace.report(TYPE_MISMATCH.on(expression, c.expectedType, expressionType));
         if (hasError != null) hasError.set(true);
@@ -245,15 +245,14 @@ public class DataFlowAnalyzer {
     }
 
     @Nullable
-    public KotlinType checkPossibleCast(
+    public SmartCastResult checkPossibleCast(
             @NotNull KotlinType expressionType,
             @NotNull KtExpression expression,
             @NotNull ResolutionContext c
     ) {
         DataFlowValue dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, expressionType, c);
 
-        SmartCastResult result = SmartCastManager.checkAndRecordPossibleCast(dataFlowValue, c.expectedType, expression, c, false);
-        return result != null ? result.getResultType() : null;
+        return SmartCastManager.checkAndRecordPossibleCast(dataFlowValue, c.expectedType, expression, c, null, false);
     }
 
     public void recordExpectedType(@NotNull BindingTrace trace, @NotNull KtExpression expression, @NotNull KotlinType expectedType) {

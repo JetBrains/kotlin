@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.jetbrains.kotlin.diagnostics.Errors.SMARTCAST_IMPOSSIBLE;
+import static org.jetbrains.kotlin.resolve.BindingContext.IMPLICIT_RECEIVER_SMARTCAST;
 import static org.jetbrains.kotlin.resolve.BindingContext.SMARTCAST;
 
 public class SmartCastManager {
@@ -174,12 +175,16 @@ public class SmartCastManager {
             @NotNull KotlinType expectedType,
             @Nullable KtExpression expression,
             @NotNull ResolutionContext c,
+            @Nullable KtExpression calleeExpression,
             boolean recordExpressionType
     ) {
         for (KotlinType possibleType : c.dataFlowInfo.getPossibleTypes(dataFlowValue)) {
             if (ArgumentTypeResolver.isSubtypeOfForArgumentType(possibleType, expectedType)) {
                 if (expression != null) {
                     recordCastOrError(expression, possibleType, c.trace, dataFlowValue, recordExpressionType);
+                }
+                else if (calleeExpression != null && dataFlowValue.isPredictable()) {
+                    c.trace.record(IMPLICIT_RECEIVER_SMARTCAST, calleeExpression, possibleType);
                 }
                 return new SmartCastResult(possibleType, dataFlowValue.isPredictable());
             }
@@ -211,7 +216,7 @@ public class SmartCastManager {
 
                 return new SmartCastResult(dataFlowValue.getType(), immanentlyNotNull || dataFlowValue.isPredictable());
             }
-            return checkAndRecordPossibleCast(dataFlowValue, nullableExpectedType, expression, c, recordExpressionType);
+            return checkAndRecordPossibleCast(dataFlowValue, nullableExpectedType, expression, c, calleeExpression, recordExpressionType);
         }
 
         return null;

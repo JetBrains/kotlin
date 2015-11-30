@@ -133,6 +133,12 @@ public class ReplInterpreterTestGenerated extends AbstractReplInterpreterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("classReferencesVal.repl")
+        public void testClassReferencesVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/classes/classReferencesVal.repl");
+            doTest(fileName);
+        }
+
         @TestMetadata("emptyClass.repl")
         public void testEmptyClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/repl/classes/emptyClass.repl");

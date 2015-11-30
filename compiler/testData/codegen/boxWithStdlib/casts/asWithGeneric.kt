@@ -4,7 +4,7 @@ fun <T> test2(): T {
    return a as T
 }
 
-fun test3<T: Any>() = null as T
+fun <T: Any> test3() = null as T
 
 fun box(): String {
     if (test1<Int?>() != null) return "fail: test1"

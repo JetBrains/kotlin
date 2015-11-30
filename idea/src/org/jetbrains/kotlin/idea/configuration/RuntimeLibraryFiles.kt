@@ -23,7 +23,7 @@ class RuntimeLibraryFiles(
         val reflectJar: File?,
         val runtimeSourcesJar: File
 ) {
-    fun getAllJars(): List<File> = listOf(runtimeJar, reflectJar, runtimeSourcesJar).filterNotNull()
+    fun getAllJars(): List<File> = listOfNotNull(runtimeJar, reflectJar, runtimeSourcesJar)
 
     fun getRuntimeDestination(dirToCopyJar: String): File =
             File(dirToCopyJar + "/" + runtimeJar.name)

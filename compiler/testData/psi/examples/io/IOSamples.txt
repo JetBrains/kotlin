@@ -117,12 +117,13 @@ JetFile: IOSamples.kt
   FUN
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('streamCopy')
     TYPE_PARAMETER_LIST
       PsiElement(LT)('<')
       TYPE_PARAMETER
         PsiElement(IDENTIFIER)('T')
       PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('streamCopy')
     VALUE_PARAMETER_LIST
       PsiElement(LPAR)('(')
       VALUE_PARAMETER

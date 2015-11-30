@@ -16,19 +16,16 @@
 
 package org.jetbrains.kotlin.android.synthetic
 
-import com.intellij.openapi.util.Key
-import org.jetbrains.kotlin.lexer.KtKeywordToken
-import org.jetbrains.kotlin.lexer.KtTokens
 
 public object AndroidConst {
-    val ANDROID_USER_PACKAGE: Key<String> = Key.create<String>("ANDROID_USER_PACKAGE")
-
-    val SYNTHETIC_FILENAME_PREFIX: String = "ANDROIDXML_"
-    val LAYOUT_POSTFIX: String = "_LAYOUT"
-    val VIEW_LAYOUT_POSTFIX: String = "_VIEW"
-
     val SYNTHETIC_PACKAGE: String = "kotlinx.android.synthetic"
     val SYNTHETIC_PACKAGE_PATH_LENGTH = SYNTHETIC_PACKAGE.count { it == '.' } + 1
+
+    val SYNTHETIC_SUBPACKAGES: List<String> = SYNTHETIC_PACKAGE.split('.').fold(arrayListOf<String>()) { list, segment ->
+        val prevSegment = list.lastOrNull()?.let { "$it." } ?: ""
+        list += "$prevSegment$segment"
+        list
+    }
 
     val ANDROID_NAMESPACE: String = "android"
     val ID_ATTRIBUTE_NO_NAMESPACE: String = "id"
@@ -41,7 +38,12 @@ public object AndroidConst {
 
     val CLEAR_FUNCTION_NAME = "clearFindViewByIdCache"
 
+
+    //TODO FqName / ClassId
+
     val VIEW_FQNAME = "android.view.View"
+    val VIEWSTUB_FQNAME = "android.view.ViewStub"
+
     val ACTIVITY_FQNAME = "android.app.Activity"
     val FRAGMENT_FQNAME = "android.app.Fragment"
     val SUPPORT_V4_PACKAGE = "android.support.v4"
@@ -50,17 +52,14 @@ public object AndroidConst {
 
     val IGNORED_XML_WIDGET_TYPES = setOf("requestFocus", "merge", "tag", "check", "blink")
 
-    val ESCAPED_IDENTIFIERS = (KtTokens.KEYWORDS.types + KtTokens.SOFT_KEYWORDS.types)
-            .map { it as? KtKeywordToken }.filterNotNull().map { it.value }.toSet()
-
     val FQNAME_RESOLVE_PACKAGES = listOf("android.widget", "android.webkit", "android.view")
 }
 
-public fun nameToIdDeclaration(name: String): String = AndroidConst.ID_DECLARATION_PREFIX + name
-
-public fun idToName(id: String): String? {
+public fun androidIdToName(id: String): String? {
     for (prefix in AndroidConst.XML_ID_PREFIXES) {
-        if (id.startsWith(prefix)) return escapeAndroidIdentifier(id.replace(prefix, ""))
+        if (id.startsWith(prefix)) {
+            return id.substring(prefix.length)
+        }
     }
     return null
 }
@@ -69,6 +68,11 @@ public fun isWidgetTypeIgnored(xmlType: String): Boolean {
     return (xmlType.isEmpty() || xmlType in AndroidConst.IGNORED_XML_WIDGET_TYPES)
 }
 
-fun escapeAndroidIdentifier(id: String): String {
-    return if (id in AndroidConst.ESCAPED_IDENTIFIERS) "`$id`" else id
+internal fun <T> List<T>.forEachUntilLast(operation: (T) -> Unit) {
+    val lastIndex = lastIndex
+    forEachIndexed { i, t ->
+        if (i < lastIndex) {
+            operation(t)
+        }
+    }
 }

@@ -17,18 +17,18 @@
 package org.jetbrains.kotlin.codegen.serialization;
 
 import com.intellij.openapi.util.Pair;
-import kotlin.jvm.functions.Function3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
-import org.jetbrains.kotlin.util.slicedMap.*;
+import org.jetbrains.kotlin.util.slicedMap.BasicWritableSlice;
+import org.jetbrains.kotlin.util.slicedMap.MutableSlicedMap;
+import org.jetbrains.kotlin.util.slicedMap.SlicedMapImpl;
+import org.jetbrains.kotlin.util.slicedMap.Slices;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.Method;
-
-import java.util.Collection;
 
 public final class JvmSerializationBindings {
     public static final SerializationMappingSlice<FunctionDescriptor, Method> METHOD_FOR_FUNCTION =
@@ -70,32 +70,7 @@ public final class JvmSerializationBindings {
         BasicWritableSlice.initSliceDebugNames(JvmSerializationBindings.class);
     }
 
-    private final MutableSlicedMap map;
-
-    private JvmSerializationBindings(@NotNull MutableSlicedMap map) {
-        this.map = map;
-    }
-
-    public JvmSerializationBindings() {
-        this(SlicedMapImpl.create());
-    }
-
-    @NotNull
-    public static JvmSerializationBindings union(@NotNull Collection<JvmSerializationBindings> bindings) {
-        final MutableSlicedMap result = SlicedMapImpl.create();
-
-        for (JvmSerializationBindings binding : bindings) {
-            binding.map.forEach(new Function3<WritableSlice, Object, Object, Void>() {
-                @Override
-                public Void invoke(WritableSlice slice, Object key, Object value) {
-                    result.put(slice, key, value);
-                    return null;
-                }
-            });
-        }
-
-        return new JvmSerializationBindings(result);
-    }
+    private final MutableSlicedMap map = SlicedMapImpl.create();
 
     public <K, V> void put(@NotNull SerializationMappingSlice<K, V> slice, @NotNull K key, @NotNull V value) {
         map.put(slice, key, value);

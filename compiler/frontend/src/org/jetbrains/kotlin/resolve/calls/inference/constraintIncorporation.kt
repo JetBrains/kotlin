@@ -16,36 +16,36 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference
 
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.EQUAL
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl.ConstraintKind.SUB_TYPE
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl.ConstraintKind.EQUAL
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl.ConstraintKind.SUB_TYPE
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.Bound
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind
-import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.EXACT_BOUND
-import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.LOWER_BOUND
-import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.UPPER_BOUND
+import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.*
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.CompoundConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeProjectionImpl
+import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.Variance.INVARIANT
-import org.jetbrains.kotlin.types.typeUtil.getNestedArguments
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
 import java.util.*
 
 data class ConstraintContext(
         val position: ConstraintPosition,
         // see TypeBounds.Bound.derivedFrom
-        val derivedFrom: Set<TypeParameterDescriptor>? = null,
+        val derivedFrom: Set<TypeVariable>? = null,
         val initial: Boolean = false)
 
-fun ConstraintSystemImpl.incorporateBound(newBound: Bound) {
+fun ConstraintSystemBuilderImpl.incorporateBound(newBound: Bound) {
     val typeVariable = newBound.typeVariable
     val typeBounds = getTypeBounds(typeVariable)
 
+    // Here and afterwards we're iterating indices of the original bounds list to prevent ConcurrentModificationException
     for (oldBoundIndex in typeBounds.bounds.indices) {
         addConstraintFromBounds(typeBounds.bounds[oldBoundIndex], newBound)
     }
-    val boundsUsedIn = getBoundsUsedIn(typeVariable)
+    val boundsUsedIn = usedInBounds[typeVariable] ?: emptyList<Bound>()
     for (index in boundsUsedIn.indices) {
         val boundUsedIn = boundsUsedIn[index]
         generateNewBound(boundUsedIn, newBound)
@@ -54,10 +54,11 @@ fun ConstraintSystemImpl.incorporateBound(newBound: Bound) {
     val constrainingType = newBound.constrainingType
     if (isMyTypeVariable(constrainingType)) {
         val context = ConstraintContext(newBound.position, newBound.derivedFrom)
-        addBound(getMyTypeVariable(constrainingType)!!, typeVariable.correspondingType, newBound.kind.reverse(), context)
+        addBound(getMyTypeVariable(constrainingType)!!, typeVariable.type, newBound.kind.reverse(), context)
         return
     }
-    constrainingType.getNestedTypeVariables().forEach {
+
+    getNestedTypeVariables(constrainingType).forEach {
         val boundsForNestedVariable = getTypeBounds(it).bounds
         for (index in boundsForNestedVariable.indices) {
             generateNewBound(newBound, boundsForNestedVariable[index])
@@ -65,7 +66,7 @@ fun ConstraintSystemImpl.incorporateBound(newBound: Bound) {
     }
 }
 
-private fun ConstraintSystemImpl.addConstraintFromBounds(old: Bound, new: Bound) {
+private fun ConstraintSystemBuilderImpl.addConstraintFromBounds(old: Bound, new: Bound) {
     if (old == new) return
 
     val oldType = old.constrainingType
@@ -73,13 +74,13 @@ private fun ConstraintSystemImpl.addConstraintFromBounds(old: Bound, new: Bound)
     val context = ConstraintContext(CompoundConstraintPosition(old.position, new.position), old.derivedFrom + new.derivedFrom)
 
     when {
-        old.kind.ordinal() < new.kind.ordinal() -> addConstraint(SUB_TYPE, oldType, newType, context)
-        old.kind.ordinal() > new.kind.ordinal() -> addConstraint(SUB_TYPE, newType, oldType, context)
+        old.kind.ordinal < new.kind.ordinal -> addConstraint(SUB_TYPE, oldType, newType, context)
+        old.kind.ordinal > new.kind.ordinal -> addConstraint(SUB_TYPE, newType, oldType, context)
         old.kind == new.kind && old.kind == EXACT_BOUND -> addConstraint(EQUAL, oldType, newType, context)
     }
 }
 
-private fun ConstraintSystemImpl.generateNewBound(bound: Bound, substitution: Bound) {
+private fun ConstraintSystemBuilderImpl.generateNewBound(bound: Bound, substitution: Bound) {
     // Let's have a bound 'T <=> My<R>', and a substitution 'R <=> Type'.
     // Here <=> means lower_bound, upper_bound or exact_bound constraint.
     // Then a new bound 'T <=> My<_/in/out Type>' can be generated.
@@ -91,15 +92,14 @@ private fun ConstraintSystemImpl.generateNewBound(bound: Bound, substitution: Bo
     }
 
     val newTypeProjection = TypeProjectionImpl(substitutedType)
-    val substitutor = TypeSubstitutor.create(mapOf(substitution.typeVariable.getTypeConstructor() to newTypeProjection))
+    val substitutor = TypeSubstitutor.create(mapOf(substitution.typeVariable.type.constructor to newTypeProjection))
     val type = substitutor.substitute(bound.constrainingType, INVARIANT) ?: return
 
     val position = CompoundConstraintPosition(bound.position, substitution.position)
 
     fun addNewBound(newConstrainingType: KotlinType, newBoundKind: BoundKind) {
         // We don't generate new recursive constraints
-        val nestedTypeVariables = newConstrainingType.getNestedTypeVariables(original = false)
-        if (nestedTypeVariables.contains(bound.typeVariable)) return
+        if (bound.typeVariable in getNestedTypeVariables(newConstrainingType)) return
 
         // We don't generate constraint if a type variable was substituted twice
         val derivedFrom = HashSet(bound.derivedFrom + substitution.derivedFrom)
@@ -118,7 +118,7 @@ private fun ConstraintSystemImpl.generateNewBound(bound: Bound, substitution: Bo
     // if we allow non-trivial type projections, we bump into errors like
     // "Empty intersection for types [MutableCollection<in ('Int'..'Int?')>, MutableCollection<out Any?>, MutableCollection<in Int>]"
     fun KotlinType.containsConstrainingTypeWithoutProjection() = this.getNestedArguments().any {
-        it.getType().getConstructor() == substitution.constrainingType.getConstructor() && it.getProjectionKind() == Variance.INVARIANT
+        it.type.constructor == substitution.constrainingType.constructor && it.projectionKind == Variance.INVARIANT
     }
     if (approximationBounds.upper.containsConstrainingTypeWithoutProjection() && bound.kind != LOWER_BOUND) {
         addNewBound(approximationBounds.upper, UPPER_BOUND)

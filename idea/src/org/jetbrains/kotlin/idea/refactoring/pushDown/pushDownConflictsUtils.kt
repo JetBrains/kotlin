@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForReceiver
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.scopes.receivers.Qualifier
 import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.source.getPsi
@@ -43,7 +44,7 @@ import java.util.ArrayList
 
 fun analyzePushDownConflicts(context: KotlinPushDownContext,
                              usages: Array<out UsageInfo>): MultiMap<PsiElement, String> {
-    val targetClasses = usages.map { it.element?.unwrapped }.filterNotNull()
+    val targetClasses = usages.mapNotNull { it.element?.unwrapped }
 
     val conflicts = MultiMap<PsiElement, String>()
 
@@ -180,7 +181,7 @@ private fun checkExternalUsages(
         val resolvedCall = calleeExpr.getResolvedCall(context.resolutionFacade.analyze(calleeExpr)) ?: continue
         val callElement = resolvedCall.call.callElement
         val dispatchReceiver = resolvedCall.dispatchReceiver
-        if (!dispatchReceiver.exists() || dispatchReceiver is QualifierReceiver) continue
+        if (!dispatchReceiver.exists() || dispatchReceiver is Qualifier) continue
         val receiverClassDescriptor = dispatchReceiver.type.constructor.declarationDescriptor as? ClassDescriptor ?: continue
         if (!DescriptorUtils.isSubclass(receiverClassDescriptor, targetClassDescriptor)) {
             conflicts.putValue(callElement, "Pushed member won't be available in '${callElement.text}'")

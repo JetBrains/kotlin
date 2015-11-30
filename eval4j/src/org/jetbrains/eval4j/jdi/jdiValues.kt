@@ -40,7 +40,7 @@ public fun makeInitialFrame(methodNode: MethodNode, arguments: List<Value>): Fra
     val isStatic = (methodNode.access and ACC_STATIC) != 0
 
     val params = Type.getArgumentTypes(methodNode.desc)
-    assert(arguments.size() == (if (isStatic) params.size() else params.size() + 1)) {
+    assert(arguments.size == (if (isStatic) params.size else params.size + 1)) {
         "Wrong number of arguments for $methodNode: $arguments"
     }
 
@@ -50,7 +50,7 @@ public fun makeInitialFrame(methodNode: MethodNode, arguments: List<Value>): Fra
     var index = 0
     for ((i, arg) in arguments.withIndex()) {
         frame.setLocal(index++, arg)
-        if (arg.getSize() == 2) {
+        if (arg.size == 2) {
             frame.setLocal(index++, NOT_A_VALUE)
         }
     }

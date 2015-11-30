@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolverKt;
 import org.jetbrains.kotlin.resolve.jvm.JavaResolverUtils;
 import org.jetbrains.kotlin.types.*;
 
@@ -104,7 +103,7 @@ public class SingleAbstractMethodUtils {
                 KotlinType type = fixProjections(substitute);
                 if (type == null) return null;
 
-                if (JavaDescriptorResolverKt.getPLATFORM_TYPES() && FlexibleTypesKt.isNullabilityFlexible(samType)) {
+                if (FlexibleTypesKt.isNullabilityFlexible(samType)) {
                     return LazyJavaTypeResolver.FlexibleJavaClassifierTypeCapabilities.create(type, TypeUtils.makeNullable(type));
                 }
 
@@ -227,7 +226,7 @@ public class SingleAbstractMethodUtils {
                     @NotNull List<ValueParameterDescriptor> valueParameters,
                     @NotNull KotlinType returnType
             ) {
-                result.initialize(typeParameters, valueParameters, original.getVisibility());
+                result.initialize(valueParameters, original.getVisibility());
                 result.setReturnType(returnType);
             }
         });
@@ -289,6 +288,10 @@ public class SingleAbstractMethodUtils {
             @NotNull List<TypeParameterDescriptor> originalParameters,
             @Nullable DeclarationDescriptor newOwner
     ) {
+        if (newOwner instanceof SamAdapterConstructorDescriptor) {
+            return new TypeParameters(originalParameters, TypeSubstitutor.EMPTY);
+        }
+
         Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> traitToFunTypeParameters =
                 JavaResolverUtils.recreateTypeParametersAndReturnMapping(originalParameters, newOwner);
         TypeSubstitutor typeParametersSubstitutor = JavaResolverUtils.createSubstitutorForTypeParameters(traitToFunTypeParameters);

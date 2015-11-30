@@ -259,6 +259,12 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
             doTestCopy(fileName);
         }
 
+        @TestMetadata("KeywordClassName.kt")
+        public void testKeywordClassName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/imports/KeywordClassName.kt");
+            doTestCopy(fileName);
+        }
+
         @TestMetadata("Local.kt")
         public void testLocal() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/imports/Local.kt");
@@ -601,6 +607,12 @@ public class InsertImportOnPasteTestGenerated extends AbstractInsertImportOnPast
         @TestMetadata("JavaStaticViaClass.kt")
         public void testJavaStaticViaClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/imports/JavaStaticViaClass.kt");
+            doTestCut(fileName);
+        }
+
+        @TestMetadata("KeywordClassName.kt")
+        public void testKeywordClassName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/copyPaste/imports/KeywordClassName.kt");
             doTestCut(fileName);
         }
 

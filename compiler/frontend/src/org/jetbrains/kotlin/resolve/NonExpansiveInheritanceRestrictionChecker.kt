@@ -119,7 +119,7 @@ public object NonExpansiveInheritanceRestrictionChecker {
                         val bounds = hashSetOf<KotlinType>()
 
                         val substitutor = constituentType.substitution.buildSubstitutor()
-                        val adaptedUpperBounds = originalTypeParameter.upperBounds.map { substitutor.substitute(it, Variance.INVARIANT) }.filterNotNull()
+                        val adaptedUpperBounds = originalTypeParameter.upperBounds.mapNotNull { substitutor.substitute(it, Variance.INVARIANT) }
                         bounds.addAll(adaptedUpperBounds)
 
                         if (!typeProjection.isStarProjection) {

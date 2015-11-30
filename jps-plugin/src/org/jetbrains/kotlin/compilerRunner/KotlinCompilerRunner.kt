@@ -28,11 +28,15 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
+import org.jetbrains.kotlin.daemon.client.CompilationServices
+import org.jetbrains.kotlin.daemon.client.DaemonReportMessage
+import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
+import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
 import org.jetbrains.kotlin.config.CompilerSettings
+import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
-import org.jetbrains.kotlin.rmi.*
-import org.jetbrains.kotlin.rmi.kotlinr.*
 import java.io.*
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
@@ -108,12 +112,14 @@ public object KotlinCompilerRunner {
 
             if (!tryCompileWithDaemon(compilerClassName, argsArray, environment, messageCollector, collector)) {
                 // otherwise fallback to in-process
+                KotlinBuilder.LOG.info("Compile in-process")
 
                 val stream = ByteArrayOutputStream()
                 val out = PrintStream(stream)
 
-                if (System.getProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY) == null)
-                    System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "")
+// Uncomment after resolving problems with parallel compilation and tests
+//                if (System.getProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY) == null)
+//                    System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "")
 
                 val rc = CompilerRunnerUtil.invokeExecMethod(compilerClassName, argsArray, environment, messageCollector, out)
 
@@ -129,12 +135,12 @@ public object KotlinCompilerRunner {
 
     }
 
-    internal class DaemonConnection(public val daemon: CompileService?)
+    internal class DaemonConnection(public val daemon: CompileService?, public val sessionId: Int = CompileService.NO_SESSION)
 
     internal object getDaemonConnection {
         private @Volatile var connection: DaemonConnection? = null
 
-        @Synchronized operator fun invoke(environment: CompilerEnvironment, messageCollector: MessageCollector): DaemonConnection? {
+        @Synchronized operator fun invoke(environment: CompilerEnvironment, messageCollector: MessageCollector): DaemonConnection {
             if (connection == null) {
                 val libPath = CompilerRunnerUtil.getLibPath(environment.kotlinPaths, messageCollector)
                 val compilerId = CompilerId.makeCompilerId(File(libPath, "kotlin-compiler.jar"))
@@ -150,9 +156,13 @@ public object KotlinCompilerRunner {
                 val profiler = if (daemonOptions.reportPerf) WallAndThreadAndMemoryTotalProfiler(withGC = false) else DummyProfiler()
 
                 profiler.withMeasure(null) {
-                    connection = DaemonConnection(
-                            KotlinCompilerClient.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions, DaemonReportingTargets(null, daemonReportMessages), true, true)
-                    )
+                    fun newFlagFile(): File {
+                        val flagFile = File.createTempFile("kotlin-compiler-jps-session-", "-is-running")
+                        flagFile.deleteOnExit()
+                        return flagFile
+                    }
+                    val daemon = KotlinCompilerClient.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions, DaemonReportingTargets(null, daemonReportMessages), true, true)
+                    connection = DaemonConnection(daemon, daemon?.leaseCompileSession(newFlagFile().absolutePath)?.get() ?: CompileService.NO_SESSION)
                 }
 
                 for (msg in daemonReportMessages) {
@@ -163,7 +173,7 @@ public object KotlinCompilerRunner {
 
                 reportTotalAndThreadPerf("Daemon connect", daemonOptions, messageCollector, profiler)
             }
-            return connection
+            return connection!!
         }
     }
 
@@ -175,9 +185,12 @@ public object KotlinCompilerRunner {
 
         if (isDaemonEnabled()) {
 
+            KotlinBuilder.LOG.debug("Try to connect to daemon")
             val connection = getDaemonConnection(environment, messageCollector)
 
             if (connection?.daemon != null) {
+                KotlinBuilder.LOG.info("Connected to daemon")
+
                 val compilerOut = ByteArrayOutputStream()
                 val daemonOut = ByteArrayOutputStream()
 
@@ -190,7 +203,7 @@ public object KotlinCompilerRunner {
                     K2JS_COMPILER -> CompileService.TargetPlatform.JS
                     else -> throw IllegalArgumentException("Unknown compiler type $compilerClassName")
                 }
-                val res = KotlinCompilerClient.incrementalCompile(connection!!.daemon!!, targetPlatform, argsArray, services, compilerOut, daemonOut)
+                val res = KotlinCompilerClient.incrementalCompile(connection!!.daemon!!, connection.sessionId, targetPlatform, argsArray, services, compilerOut, daemonOut)
 
                 processCompilerOutput(messageCollector, collector, compilerOut, res.toString())
                 BufferedReader(StringReader(daemonOut.toString())).forEachLine {
@@ -198,6 +211,8 @@ public object KotlinCompilerRunner {
                 }
                 return true
             }
+
+            KotlinBuilder.LOG.info("Daemon not found")
         }
         return false
     }

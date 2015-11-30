@@ -27,7 +27,6 @@ import com.intellij.openapi.roots.libraries.LibraryUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.compiled.ClsFileImpl
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.*
 import com.sun.jdi.AbsentInformationException
@@ -45,7 +44,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
 import org.jetbrains.kotlin.fileClasses.getFileClassInternalName
-import org.jetbrains.kotlin.fileClasses.getInternalName
+import org.jetbrains.kotlin.fileClasses.internalNameWithoutInnerClasses
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
@@ -75,14 +74,14 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
 
         val psiFile = getPsiFileByLocation(location)
         if (psiFile == null) {
-            val isKotlinStrataAvailable = location.declaringType().availableStrata().contains("Kotlin")
+            val isKotlinStrataAvailable = location.declaringType().containsKotlinStrata()
             if (isKotlinStrataAvailable) {
                 try {
                     val javaSourceFileName = location.sourceName("Java")
                     val javaClassName = JvmClassName.byInternalName(defaultInternalName(location))
                     val project = myDebugProcess.project
 
-                    val defaultPsiFile = DebuggerUtils.findSourceFileForClass(project, GlobalSearchScope.allScope(project), javaClassName, javaSourceFileName)
+                    val defaultPsiFile = DebuggerUtils.findSourceFileForClass(project, myDebugProcess.searchScope, javaClassName, javaSourceFileName)
                     if (defaultPsiFile != null) {
                         return SourcePosition.createFromLine(defaultPsiFile, 0)
                     }
@@ -168,7 +167,7 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
 
         val referenceInternalName: String
         try {
-            if (location.declaringType().availableStrata().contains("Kotlin")) {
+            if (location.declaringType().containsKotlinStrata()) {
                 //replace is required for windows
                 referenceInternalName = location.sourcePath().replace('\\','/')
             } else {
@@ -183,7 +182,7 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
 
         val project = myDebugProcess.project
 
-        return DebuggerUtils.findSourceFileForClass(project, GlobalSearchScope.allScope(project), className, sourceName)
+        return DebuggerUtils.findSourceFileForClass(project, myDebugProcess.searchScope, className, sourceName)
     }
 
     private fun defaultInternalName(location: Location): String {
@@ -210,7 +209,8 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
         if (psiFile is ClsFileImpl) {
             val decompiledPsiFile = runReadAction { psiFile.decompiledPsiFile }
             if (decompiledPsiFile is KtClsFile && sourcePosition.line == -1) {
-                val className = JvmFileClassUtil.getFileClassInfoNoResolve(decompiledPsiFile).fileClassFqName.getInternalName()
+                val className =
+                        JvmFileClassUtil.getFileClassInfoNoResolve(decompiledPsiFile).fileClassFqName.internalNameWithoutInnerClasses
                 return myDebugProcess.virtualMachineProxy.classesByName(className)
             }
         }
@@ -298,9 +298,9 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
             throw NoDataException.INSTANCE
         }
 
-        return classNameForPositionAndInlinedOnes(position).map {
+        return classNameForPositionAndInlinedOnes(position).mapNotNull {
             className -> myDebugProcess.requestsManager.createClassPrepareRequest(requestor, className.replace('/', '.'))
-        }.filterNotNull()
+        }
     }
 
     @TestOnly
@@ -341,7 +341,7 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
                         return PositionedElement(asmType.internalName, element)
                     }
                 }
-                element is KtClassInitializer -> {
+                element is KtAnonymousInitializer -> {
                     val parent = getElementToCalculateClassName(element.parent)
                     // Class-object initializer
                     if (parent is KtObjectDeclaration && parent.isCompanion()) {
@@ -388,7 +388,7 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
                         KtFunctionLiteral::class.java,
                         KtNamedFunction::class.java,
                         KtProperty::class.java,
-                        KtClassInitializer::class.java)
+                        KtAnonymousInitializer::class.java)
 
         private fun getElementToCalculateClassName(notPositionedElement: PsiElement?): KtElement? {
             if (notPositionedElement?.javaClass in TYPES_TO_CALCULATE_CLASSNAME ) return notPositionedElement as KtElement
@@ -423,7 +423,8 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
             val element = getElementToCreateTypeMapperForLibraryFile(notPositionedElement)
             val analysisResult = element!!.analyzeAndGetResult()
 
-            val state = GenerationState(file.project, ClassBuilderFactories.THROW_EXCEPTION, analysisResult.moduleDescriptor, analysisResult.bindingContext, listOf(file))
+            val state = GenerationState(file.project, ClassBuilderFactories.THROW_EXCEPTION,
+                                        analysisResult.moduleDescriptor, analysisResult.bindingContext, listOf(file))
             state.beforeCompile()
             return state.typeMapper
         }
@@ -465,4 +466,6 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
             result
         }
     }
+
+    private fun ReferenceType.containsKotlinStrata() = availableStrata().contains("Kotlin")
 }

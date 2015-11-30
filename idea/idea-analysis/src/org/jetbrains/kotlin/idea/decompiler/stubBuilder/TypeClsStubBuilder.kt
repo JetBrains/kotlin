@@ -35,10 +35,7 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.ProtoBuf.Type
 import org.jetbrains.kotlin.serialization.ProtoBuf.Type.Argument.Projection
 import org.jetbrains.kotlin.serialization.ProtoBuf.TypeParameter.Variance
-import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
-import org.jetbrains.kotlin.serialization.deserialization.type
-import org.jetbrains.kotlin.serialization.deserialization.upperBounds
-import org.jetbrains.kotlin.serialization.deserialization.varargElementType
+import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.types.DynamicTypeCapabilities
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
@@ -83,14 +80,20 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         val shouldBuildAsFunctionType = KotlinBuiltIns.isNumberedFunctionClassFqName(classId.asSingleFqName().toUnsafe())
                                         && type.getArgumentList().none { it.getProjection() == Projection.STAR }
         if (shouldBuildAsFunctionType) {
-            val extension = annotations.any { annotation -> annotation.asSingleFqName() == KotlinBuiltIns.FQ_NAMES.extension }
+            val extension = annotations.any { annotation ->
+                val fqName = annotation.asSingleFqName()
+                fqName == KotlinBuiltIns.FQ_NAMES.extensionFunctionType || fqName == KotlinBuiltIns.FQ_NAMES.deprecatedExtensionAnnotation
+            }
             createFunctionTypeStub(parent, type, extension)
             return
         }
         createTypeAnnotationStubs(parent, annotations)
-        val typeStub = createStubForTypeName(classId, parent)
-        val typeArgumentProtoList = type.getArgumentList()
-        createTypeArgumentListStub(typeStub, typeArgumentProtoList)
+        val outerTypeChain = sequence(type) { it.outerType(c.typeTable) }.toList()
+
+        createStubForTypeName(classId, parent) {
+            userTypeStub, index ->
+            outerTypeChain.getOrNull(index)?.let { createTypeArgumentListStub(userTypeStub, it.argumentList) }
+        }
     }
 
     private fun createTypeAnnotationStubs(parent: KotlinStubBaseImpl<*>, annotations: List<ClassId>) {

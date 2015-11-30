@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleFileFacadeKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleMultifileClassKind
-import org.jetbrains.kotlin.load.kotlin.header.isCompatiblePackageFacadeKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
@@ -76,11 +75,6 @@ public open class KotlinClsStubBuilder : ClsStubBuilder() {
             return null
         }
         return when {
-            header.isCompatiblePackageFacadeKind() -> {
-                val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(annotationData, strings)
-                val context = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))
-                createPackageFacadeStub(packageProto, packageFqName, context)
-            }
             header.isCompatibleClassKind() -> {
                 if (header.isLocalClass) return null
                 val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(annotationData, strings)

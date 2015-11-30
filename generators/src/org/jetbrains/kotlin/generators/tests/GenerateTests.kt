@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.generators.tests.reservedWords.generateTestDataForRe
 import org.jetbrains.kotlin.idea.AbstractExpressionSelectionTest
 import org.jetbrains.kotlin.idea.AbstractSmartSelectionTest
 import org.jetbrains.kotlin.idea.actions.AbstractGotoTestOrCodeActionTest
+import org.jetbrains.kotlin.idea.caches.resolve.AbstractIdeCompiledLightClassTest
 import org.jetbrains.kotlin.idea.caches.resolve.AbstractIdeLightClassTest
 import org.jetbrains.kotlin.idea.codeInsight.*
 import org.jetbrains.kotlin.idea.codeInsight.generate.AbstractCodeInsightActionTest
@@ -72,6 +73,7 @@ import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractCommonDecompiled
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractJsDecompiledTextFromJsMetadataTest
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.AbstractJvmDecompiledTextTest
 import org.jetbrains.kotlin.idea.editor.quickDoc.AbstractQuickDocProviderTest
+import org.jetbrains.kotlin.idea.filters.AbstractKotlinExceptionFilterTest
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyTest
 import org.jetbrains.kotlin.idea.highlighter.*
@@ -111,7 +113,7 @@ import org.jetbrains.kotlin.jvm.compiler.*
 import org.jetbrains.kotlin.jvm.runtime.AbstractJvmRuntimeDescriptorLoaderTest
 import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidBytecodeShapeTest
-import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidXml2KConversionTest
+import org.jetbrains.kotlin.lang.resolve.android.test.AbstractAndroidSyntheticPropertyDescriptorTest
 import org.jetbrains.kotlin.load.java.AbstractJavaTypeSubstitutorTest
 import org.jetbrains.kotlin.modules.xml.AbstractModuleXmlParserTest
 import org.jetbrains.kotlin.parsing.AbstractParsingTest
@@ -375,6 +377,7 @@ fun main(args: Array<String>) {
             model("checker/regression")
             model("checker/recovery")
             model("checker/rendering")
+            model("checker/scripts", extension = "kts")
             model("checker/duplicateJvmSignature")
             model("checker/infos", testMethod = "doTestWithInfos")
         }
@@ -678,6 +681,10 @@ fun main(args: Array<String>) {
             model("debugger/positionManager", recursive = false, extension = null, testClassName = "MultiFile")
         }
 
+        testClass<AbstractKotlinExceptionFilterTest>() {
+            model("debugger/exceptionFilter", pattern = """^([^\.]+)$""", recursive = false)
+        }
+
         testClass<AbstractSmartStepIntoTest>() {
             model("debugger/smartStepInto")
         }
@@ -774,6 +781,10 @@ fun main(args: Array<String>) {
     testGroup("idea/tests", "compiler/testData") {
         testClass<AbstractIdeLightClassTest>() {
             model("asJava/lightClasses", excludeDirs = listOf("delegation"))
+        }
+
+        testClass<AbstractIdeCompiledLightClassTest> {
+            model("asJava/lightClasses", pattern = """^([^\.]+)\.kt$""", withTestRootMethod = true)
         }
     }
 
@@ -920,9 +931,8 @@ fun main(args: Array<String>) {
     }
 
     testGroup("plugins/android-compiler-plugin/tests", "plugins/android-compiler-plugin/testData") {
-        testClass<AbstractAndroidXml2KConversionTest>() {
-            model("android/converter/simple", recursive = false, extension = null)
-            model("android/converter/exceptions", recursive = false, extension = null, testMethod = "doNoManifestTest")
+        testClass<AbstractAndroidSyntheticPropertyDescriptorTest>() {
+            model("descriptors", recursive = false, extension = null)
         }
 
         testClass<AbstractAndroidBoxTest>() {
@@ -942,10 +952,6 @@ fun main(args: Array<String>) {
     }
 
     testGroup("plugins/android-idea-plugin/tests", "plugins/android-idea-plugin/testData") {
-        testClass<AbstractParserResultEqualityTest>() {
-            model("android/parserResultEquality", recursive = false, extension = null)
-        }
-
         testClass<AbstractAndroidCompletionTest>() {
             model("android/completion", recursive = false, extension = null)
         }
@@ -1080,7 +1086,8 @@ private class TestGroup(val testsRoot: String, val testDataRoot: String) {
                 testClassName: String? = null,
                 targetBackend: TargetBackend = TargetBackend.ANY,
                 excludeDirs: List<String> = listOf(),
-                filenameStartsLowerCase: Boolean? = null
+                filenameStartsLowerCase: Boolean? = null,
+                withTestRootMethod: Boolean = false
         ) {
             val rootFile = File(testDataRoot + "/" + relativeRootPath)
             val compiledPattern = Pattern.compile(pattern)
@@ -1092,7 +1099,8 @@ private class TestGroup(val testsRoot: String, val testDataRoot: String) {
                     }
                     else {
                         SimpleTestClassModel(rootFile, recursive, excludeParentDirs,
-                                             compiledPattern, filenameStartsLowerCase, testMethod, className, targetBackend, excludeDirs, false)
+                                             compiledPattern, filenameStartsLowerCase, testMethod, className, 
+                                             targetBackend, excludeDirs, withTestRootMethod)
                     }
             )
         }

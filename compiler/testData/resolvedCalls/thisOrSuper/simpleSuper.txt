@@ -9,6 +9,7 @@ class B: A() {
 }
 
 
+
 Resolved call:
 
 Resulting descriptor: Class{B}::this

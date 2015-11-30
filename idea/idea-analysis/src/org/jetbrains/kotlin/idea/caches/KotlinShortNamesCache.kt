@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.asJava.defaultImplsChild
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.stubindex.KotlinClassShortNameIndex
 import org.jetbrains.kotlin.idea.stubindex.KotlinFileFacadeShortNameIndex
-import org.jetbrains.kotlin.idea.stubindex.PackageIndexUtil
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import java.util.*
@@ -43,8 +42,6 @@ public class KotlinShortNamesCache(private val project: Project) : PsiShortNames
         val classNames = KotlinClassShortNameIndex.getInstance().getAllKeys(project)
 
         // package classes can not be indexed, since they have no explicit declarations
-        val packageClassShortNames = PackageIndexUtil.getAllPossiblePackageClasses(project).keySet()
-        classNames.addAll(packageClassShortNames)
         classNames.addAll(KotlinFileFacadeShortNameIndex.INSTANCE.getAllKeys(project))
 
         return classNames.toTypedArray()
@@ -55,9 +52,6 @@ public class KotlinShortNamesCache(private val project: Project) : PsiShortNames
      */
     override fun getClassesByName(name: String, scope: GlobalSearchScope): Array<PsiClass> {
         val allFqNames = HashSet<FqName?>()
-
-        val packageClassNames = PackageIndexUtil.getAllPossiblePackageClasses(project).get(name)
-        allFqNames.addAll(packageClassNames)
 
         KotlinClassShortNameIndex.getInstance().get(name, project, scope)
                 .mapTo(allFqNames) { it.fqName }

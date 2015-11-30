@@ -12,12 +12,12 @@ class SimpleEnumerator {
 }
 
 class SimpleEnumeratorWrapper(private val enumerator: SimpleEnumerator) {
-    fun hasNext(): Boolean = enumerator.hasMoreElements()
+    operator fun hasNext(): Boolean = enumerator.hasMoreElements()
 
-    fun next() = enumerator.getNext()
+    operator fun next() = enumerator.getNext()
 }
 
-fun SimpleEnumerator.iterator(): SimpleEnumeratorWrapper {
+operator fun SimpleEnumerator.iterator(): SimpleEnumeratorWrapper {
     return SimpleEnumeratorWrapper(this)
 }
 

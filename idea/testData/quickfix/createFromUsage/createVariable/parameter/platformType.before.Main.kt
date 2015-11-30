@@ -1,4 +1,4 @@
 // "Create parameter 's'" "true"
 // ERROR: Unresolved reference: s
 
-fun foo() = C(<caret>s)
+internal fun foo() = C(<caret>s)

@@ -2,7 +2,7 @@ package test
 
 public class Holder(var value: String = "") {
 
-    public fun plusAssign(s: String?) {
+    operator fun plusAssign(s: String?) {
         if (value.length() != 0) {
             value += " -> "
         }

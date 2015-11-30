@@ -66,5 +66,5 @@ public open class KotlinJavaScriptHandler(path: String) : ArchiveHandler(path) {
             shortName: String,
             isDirectory: Boolean,
             val content: ByteArray
-    ) : EntryInfo(parent, shortName, isDirectory, ArchiveHandler.DEFAULT_LENGTH, ArchiveHandler.DEFAULT_TIMESTAMP)
+    ) : EntryInfo(shortName, isDirectory, ArchiveHandler.DEFAULT_LENGTH, ArchiveHandler.DEFAULT_TIMESTAMP, parent)
 }

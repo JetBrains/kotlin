@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.js.inline.util.collectors.PropertyCollector
 import org.jetbrains.kotlin.js.translate.expression.*
 
 public fun collectFunctionReferencesInside(scope: JsNode): List<JsName> =
-    collectReferencesInside(scope) filter { it.staticRef is JsFunction }
+     collectReferencesInside(scope).filter { it.staticRef is JsFunction }
 
 public fun collectReferencesInside(scope: JsNode): List<JsName> {
     return with(ReferenceNameCollector()) {
@@ -68,7 +68,7 @@ public fun collectNamedFunctions(scope: JsNode): IdentityHashMap<JsName, JsFunct
     return namedFunctions
 }
 
-public fun collectInstances<T : JsNode>(klass: Class<T>, scope: JsNode): List<T> {
+public fun <T : JsNode> collectInstances(klass: Class<T>, scope: JsNode): List<T> {
     return with(InstanceCollector(klass, visitNestedDeclarations = false)) {
         accept(scope)
         collected

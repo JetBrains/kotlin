@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeSubstitutor
 
 public class AccessorForConstructorDescriptor(
         private val calleeDescriptor: ConstructorDescriptor,
@@ -37,6 +38,8 @@ public class AccessorForConstructorDescriptor(
     override fun getReturnType(): KotlinType = super.getReturnType()!!
 
     override fun getSuperCallTarget(): ClassDescriptor? = superCallTarget
+
+    override fun substitute(substitutor: TypeSubstitutor) = super.substitute(substitutor) as ConstructorDescriptor
 
     init {
         initialize(

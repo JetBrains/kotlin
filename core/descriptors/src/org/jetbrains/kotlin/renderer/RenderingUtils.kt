@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.renderer
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 
@@ -48,6 +49,10 @@ private fun Name.shouldBeEscaped(): Boolean {
 }
 
 public fun FqNameUnsafe.render(): String {
+    return renderFqName(pathSegments())
+}
+
+public fun FqName.render(): String {
     return renderFqName(pathSegments())
 }
 

@@ -48,3 +48,4 @@ class MyInterfaceImpl: MyInterface {
 }
 
 // STEP_INTO: 38
+// SKIP_CONSTRUCTORS: true

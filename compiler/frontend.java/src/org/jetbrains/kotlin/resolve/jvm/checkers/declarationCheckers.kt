@@ -195,7 +195,7 @@ public class TypeParameterBoundIsNotArrayChecker : DeclarationChecker {
             bindingContext: BindingContext
     ) {
         val typeParameters = (descriptor as? CallableDescriptor)?.typeParameters
-                             ?: (descriptor as? ClassDescriptor)?.typeConstructor?.parameters
+                             ?: (descriptor as? ClassDescriptor)?.declaredTypeParameters
                              ?: return
 
         for (typeParameter in typeParameters) {
@@ -222,7 +222,7 @@ public class ReifiedTypeParameterAnnotationChecker : DeclarationChecker {
         }
 
         if (descriptor is ClassDescriptor) {
-            checkTypeParameterDescriptorsAreNotReified(descriptor.getTypeConstructor().getParameters(), diagnosticHolder)
+            checkTypeParameterDescriptorsAreNotReified(descriptor.declaredTypeParameters, diagnosticHolder)
         }
     }
 

@@ -45,7 +45,7 @@ class ClsStubBuilderComponents(
 }
 
 interface TypeParameters {
-    fun get(id: Int): Name
+    operator fun get(id: Int): Name
 
     fun child(nameResolver: NameResolver, innerTypeParameters: List<ProtoBuf.TypeParameter>)
             = TypeParametersImpl(nameResolver, innerTypeParameters, parent = this)

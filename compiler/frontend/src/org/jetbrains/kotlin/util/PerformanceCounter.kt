@@ -88,7 +88,7 @@ public abstract class PerformanceCounter protected constructor(val name: String)
         count++
     }
 
-    public final fun time<T>(block: () -> T): T {
+    public final fun <T> time(block: () -> T): T {
         count++
         if (!enabled) return block()
 
@@ -110,7 +110,7 @@ public abstract class PerformanceCounter protected constructor(val name: String)
         totalTimeNanos += delta
     }
 
-    protected abstract fun countTime<T>(block: () -> T): T
+    protected abstract fun <T> countTime(block: () -> T): T
 
     public fun report(consumer: (String) -> Unit) {
         if (totalTimeNanos == 0L) {

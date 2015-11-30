@@ -38,7 +38,10 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
+import org.jetbrains.kotlin.resolve.scopes.receivers.ClassQualifier
 import org.jetbrains.kotlin.resolve.scopes.receivers.Qualifier
+import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.Variance
@@ -103,19 +106,24 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
         return doCreateCallableInfo(element, context, calleeExpr.getReferencedName(), receiverType, possibleContainers)
     }
 
-    private fun getReceiverTypeInfo(context: BindingContext, project: Project, receiver: ReceiverValue): TypeInfo? {
+    private fun getReceiverTypeInfo(context: BindingContext, project: Project, receiver: Receiver): TypeInfo? {
         return when {
             !receiver.exists() -> TypeInfo.Empty
             receiver is Qualifier -> {
                 val qualifierType = context.getType(receiver.expression)
                 if (qualifierType != null) return TypeInfo(qualifierType, Variance.IN_VARIANCE)
 
-                val classifier = receiver.classifier as? JavaClassDescriptor ?: return null
-                val javaClass = DescriptorToSourceUtilsIde.getAnyDeclaration(project, classifier) as? PsiClass
+                if (receiver !is ClassQualifier) return null
+                val classifierType = receiver.classifier.classValueType
+                if (classifierType != null) return TypeInfo(classifierType, Variance.IN_VARIANCE)
+
+                val javaClassifier = receiver.classifier as? JavaClassDescriptor ?: return null
+                val javaClass = DescriptorToSourceUtilsIde.getAnyDeclaration(project, javaClassifier) as? PsiClass
                 if (javaClass == null || !javaClass.canRefactor()) return null
-                TypeInfo.StaticContextRequired(TypeInfo(classifier.defaultType, Variance.IN_VARIANCE))
+                TypeInfo.StaticContextRequired(TypeInfo(javaClassifier.defaultType, Variance.IN_VARIANCE))
             }
-            else -> TypeInfo(receiver.type, Variance.IN_VARIANCE)
+            receiver is ReceiverValue -> TypeInfo(receiver.type, Variance.IN_VARIANCE)
+            else -> throw AssertionError("Unexpected receiver: $receiver")
         }
     }
 

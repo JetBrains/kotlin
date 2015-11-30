@@ -7,6 +7,7 @@ class A : B<Int> {
 }
 
 
+
 Resolved call:
 
 Candidate descriptor: constructor B<T>(x: T = ...) defined in B

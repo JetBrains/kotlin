@@ -1,6 +1,6 @@
 class MyClass
 
-fun MyClass?.inc(): MyClass? = null
+operator fun MyClass?.inc(): MyClass? = null
 
 public fun box() : String {
     var i : MyClass? 

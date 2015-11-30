@@ -137,7 +137,7 @@ class RegexTest {
     @test fun replaceEvaluator() {
         val input = "/12/456/7890/"
         val pattern = "\\d+".toRegex()
-        assertEquals("/2/3/4/", pattern.replace(input, { it.value.length().toString() } ))
+        assertEquals("/2/3/4/", pattern.replace(input, { it.value.length.toString() } ))
     }
 
 

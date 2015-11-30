@@ -1,6 +1,6 @@
 class C(val i: Int) {
-  fun component1() = i + 1
-  fun component2() = i + 2
+  operator fun component1() = i + 1
+  operator fun component2() = i + 2
 }
 
 fun doTest(l : Array<C>): String {

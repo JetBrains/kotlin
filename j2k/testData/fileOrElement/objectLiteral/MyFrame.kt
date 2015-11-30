@@ -17,7 +17,7 @@ internal open class Frame {
     }
 }
 
-class Client internal constructor() : Frame() {
+internal class Client : Frame() {
     init {
         val a = object : WindowAdapter() {
             override fun windowClosing() {

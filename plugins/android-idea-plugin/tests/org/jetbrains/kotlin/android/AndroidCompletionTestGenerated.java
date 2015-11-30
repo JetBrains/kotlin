@@ -88,4 +88,10 @@ public class AndroidCompletionTestGenerated extends AbstractAndroidCompletionTes
         String fileName = KotlinTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/completion/propertiesSimpleView/");
         doTest(fileName);
     }
+
+    @TestMetadata("withoutImport")
+    public void testWithoutImport() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-idea-plugin/testData/android/completion/withoutImport/");
+        doTest(fileName);
+    }
 }

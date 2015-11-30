@@ -1,4 +1,4 @@
-inline fun with<T>(receiver : T, body :  T.() -> Unit) = receiver.body()
+inline fun <T> with(receiver : T, body :  T.() -> Unit) = receiver.body()
 
 fun example() {
 

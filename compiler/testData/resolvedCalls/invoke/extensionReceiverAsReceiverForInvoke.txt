@@ -6,6 +6,7 @@ fun bar(f: Foo) {
 }
 
 
+
 Resolved call:
 
 Resulting descriptor: fun Foo.invoke(): Unit defined in root package

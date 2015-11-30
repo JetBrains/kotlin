@@ -18,7 +18,7 @@ fun testProperLineNumberAfterInline(): String {
                     test())
     }
     catch(e: AssertionError) {
-        val entry = e.getStackTrace()!![1]
+        val entry = e.stackTrace!![1]
         val actual = "${entry.getFileName()}:${entry.getLineNumber()}"
         if ("simpleCallWithParams.kt:17" != actual) {
             return "fail 2: ${actual}"
@@ -36,7 +36,7 @@ fun testProperLineForOtherParameters(): String {
                     fail())
     }
     catch(e: AssertionError) {
-        val entry = e.getStackTrace()!![1]
+        val entry = e.stackTrace!![1]
         val actual = "${entry.getFileName()}:${entry.getLineNumber()}"
         if ("simpleCallWithParams.kt:35" != actual) {
             return "fail 3: ${actual}"
@@ -50,7 +50,7 @@ fun testProperLineForOtherParameters(): String {
                     test())
     }
     catch(e: AssertionError) {
-        val entry = e.getStackTrace()!![1]
+        val entry = e.stackTrace!![1]
         val actual = "${entry.getFileName()}:${entry.getLineNumber()}"
         if ("simpleCallWithParams.kt:49" != actual) {
             return "fail 4: ${actual}"
@@ -62,7 +62,7 @@ fun testProperLineForOtherParameters(): String {
         checkEquals(fail(), test())
     }
     catch(e: AssertionError) {
-        val entry = e.getStackTrace()!![1]
+        val entry = e.stackTrace!![1]
         val actual = "${entry.getFileName()}:${entry.getLineNumber()}"
         if ("simpleCallWithParams.kt:62" != actual) {
             return "fail 5: ${actual}"
@@ -74,7 +74,7 @@ fun testProperLineForOtherParameters(): String {
         checkEquals(fail(), test())
     }
     catch(e: AssertionError) {
-        val entry = e.getStackTrace()!![1]
+        val entry = e.stackTrace!![1]
         val actual = "${entry.getFileName()}:${entry.getLineNumber()}"
         if ("simpleCallWithParams.kt:74" != actual) {
             return "fail 6: ${actual}"

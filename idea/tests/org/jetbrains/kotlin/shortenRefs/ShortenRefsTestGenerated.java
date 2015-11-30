@@ -59,6 +59,12 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         doTest(fileName);
     }
 
+    @TestMetadata("InterfaceInExpression.kt")
+    public void testInterfaceInExpression() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/InterfaceInExpression.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("JavaStaticMethod.kt")
     public void testJavaStaticMethod() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/JavaStaticMethod.kt");

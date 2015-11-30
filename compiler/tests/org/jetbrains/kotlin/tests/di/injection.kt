@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.tests.di
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.createContainer
-import org.jetbrains.kotlin.container.get
+import org.jetbrains.kotlin.container.getValue
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor

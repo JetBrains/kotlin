@@ -265,6 +265,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepIntoTest(fileName);
         }
 
+        @TestMetadata("syntheticMethodsSkip.kt")
+        public void testSyntheticMethodsSkip() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepInto/syntheticMethodsSkip.kt");
+            doStepIntoTest(fileName);
+        }
+
         @TestMetadata("traits.kt")
         public void testTraits() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepInto/traits.kt");
@@ -394,6 +400,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doCustomTest(fileName);
         }
 
+        @TestMetadata("functionCallStoredToVariable.kt")
+        public void testFunctionCallStoredToVariable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/functionCallStoredToVariable.kt");
+            doCustomTest(fileName);
+        }
+
         @TestMetadata("fwAbstractProperty.kt")
         public void testFwAbstractProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/fwAbstractProperty.kt");
@@ -427,6 +439,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
         @TestMetadata("simpleConditionalBreakpoint.kt")
         public void testSimpleConditionalBreakpoint() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/simpleConditionalBreakpoint.kt");
+            doCustomTest(fileName);
+        }
+
+        @TestMetadata("smartStepIntoConstructor.kt")
+        public void testSmartStepIntoConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/smartStepIntoConstructor.kt");
             doCustomTest(fileName);
         }
 

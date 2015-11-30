@@ -1,0 +1,12 @@
+package
+
+public val x: kotlin.Nothing
+public fun fn(): kotlin.Nothing
+
+public final class SomeClass {
+    public constructor SomeClass()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun method(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

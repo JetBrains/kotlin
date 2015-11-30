@@ -14,8 +14,8 @@ internal object EmptySet : Set<Nothing>, Serializable {
 
     override val size: Int get() = 0
     override fun isEmpty(): Boolean = true
-    override fun contains(o: Nothing): Boolean = false
-    override fun containsAll(c: Collection<Nothing>): Boolean = c.isEmpty()
+    override fun contains(element: Nothing): Boolean = false
+    override fun containsAll(elements: Collection<Nothing>): Boolean = elements.isEmpty()
 
     override fun iterator(): Iterator<Nothing> = EmptyIterator
 
@@ -24,39 +24,39 @@ internal object EmptySet : Set<Nothing>, Serializable {
 
 
 /** Returns an empty read-only set.  The returned set is serializable (JVM). */
-public fun emptySet<T>(): Set<T> = EmptySet
+public fun <T> emptySet(): Set<T> = EmptySet
 /** Returns a new read-only ordered set with the given elements.  The returned set is serializable (JVM). */
-public fun setOf<T>(vararg values: T): Set<T> = if (values.size() > 0) values.toSet() else emptySet()
+public fun <T> setOf(vararg elements: T): Set<T> = if (elements.size > 0) elements.toSet() else emptySet()
 
 /** Returns an empty read-only set.  The returned set is serializable (JVM). */
-public fun setOf<T>(): Set<T> = emptySet()
+public fun <T> setOf(): Set<T> = emptySet()
 
 
 /** Returns a new [HashSet] with the given elements. */
-public fun hashSetOf<T>(vararg values: T): HashSet<T> = values.toCollection(HashSet(mapCapacity(values.size())))
+public fun <T> hashSetOf(vararg elements: T): HashSet<T> = elements.toCollection(HashSet(mapCapacity(elements.size)))
 
 /** Returns a new [LinkedHashSet] with the given elements. */
-public fun linkedSetOf<T>(vararg values: T): LinkedHashSet<T> = values.toCollection(LinkedHashSet(mapCapacity(values.size())))
+public fun <T> linkedSetOf(vararg elements: T): LinkedHashSet<T> = elements.toCollection(LinkedHashSet(mapCapacity(elements.size)))
 
 /** Returns this Set if it's not `null` and the empty set otherwise. */
 public fun <T> Set<T>?.orEmpty(): Set<T> = this ?: emptySet()
 
 /**
- * Returns an immutable set containing only the specified object [value].
+ * Returns an immutable set containing only the specified object [element].
  * The returned set is serializable.
  */
 @JvmVersion
-public fun setOf<T>(value: T): Set<T> = Collections.singleton(value)
+public fun <T> setOf(element: T): Set<T> = Collections.singleton(element)
 
 
 /**
  * Returns a new [SortedSet] with the given elements.
  */
 @JvmVersion
-public fun sortedSetOf<T>(vararg values: T): TreeSet<T> = values.toCollection(TreeSet<T>())
+public fun <T> sortedSetOf(vararg elements: T): TreeSet<T> = elements.toCollection(TreeSet<T>())
 
 /**
  * Returns a new [SortedSet] with the given [comparator] and elements.
  */
 @JvmVersion
-public fun sortedSetOf<T>(comparator: Comparator<in T>, vararg values: T): TreeSet<T> = values.toCollection(TreeSet<T>(comparator))
+public fun <T> sortedSetOf(comparator: Comparator<in T>, vararg elements: T): TreeSet<T> = elements.toCollection(TreeSet<T>(comparator))

@@ -30,7 +30,7 @@ public class LexicalChainedScope @JvmOverloads constructor(
         override val ownerDescriptor: DeclarationDescriptor,
         override val isOwnerDescriptorAccessibleByLabel: Boolean,
         override val implicitReceiver: ReceiverParameterDescriptor?,
-        private val debugName: String,
+        override val kind: LexicalScopeKind,
         vararg memberScopes: MemberScope,
         @Deprecated("This value is temporary hack for resolve -- don't use it!")
         val isStaticScope: Boolean = false
@@ -47,10 +47,10 @@ public class LexicalChainedScope @JvmOverloads constructor(
 
     override fun getContributedFunctions(name: Name, location: LookupLocation) = getFromAllScopes(scopeChain) { it.getContributedFunctions(name, location) }
 
-    override fun toString(): String = debugName
+    override fun toString(): String = kind.toString()
 
     override fun printStructure(p: Printer) {
-        p.println(javaClass.simpleName, ": ", debugName, "; for descriptor: ", ownerDescriptor.name,
+        p.println(javaClass.simpleName, ": ", kind, "; for descriptor: ", ownerDescriptor.name,
                   " with implicitReceiver: ", implicitReceiver?.value ?: "NONE", " {")
         p.pushIndent()
 

@@ -160,4 +160,10 @@ public class AndroidBytecodeShapeTestGenerated extends AbstractAndroidBytecodeSh
         String fileName = KotlinTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/bytecodeShape/supportSimpleFragmentProperty/");
         doTest(fileName);
     }
+
+    @TestMetadata("viewStub")
+    public void testViewStub() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("plugins/android-compiler-plugin/testData/codegen/bytecodeShape/viewStub/");
+        doTest(fileName);
+    }
 }

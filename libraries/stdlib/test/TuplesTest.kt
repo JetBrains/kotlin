@@ -41,7 +41,7 @@ class PairTest {
 
     @test fun pairHashSet() {
         val s = hashSetOf(Pair(1, "a"), Pair(1, "b"), Pair(1, "a"))
-        assertEquals(2, s.size())
+        assertEquals(2, s.size)
         assertTrue(s.contains(p))
     }
 
@@ -92,7 +92,7 @@ class TripleTest {
 
     @test fun tripleHashSet() {
         val s = hashSetOf(Triple(1, "a", 0.07), Triple(1, "b", 0.07), Triple(1, "a", 0.07))
-        assertEquals(2, s.size())
+        assertEquals(2, s.size)
         assertTrue(s.contains(t))
     }
 

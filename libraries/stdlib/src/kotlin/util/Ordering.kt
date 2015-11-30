@@ -19,9 +19,6 @@ package kotlin
 
 import java.util.Comparator
 
-@Deprecated("Use compareValuesBy", ReplaceWith("compareValuesBy(a, b, *selectors)"), level = DeprecationLevel.HIDDEN)
-public fun <T> compareValuesByNullable(a: T, b: T, vararg selectors: (T) -> Comparable<*>?): Int = compareValuesBy(a, b, *selectors)
-
 /**
  * Compares two values using the specified functions [selectors] to calculate the result of the comparison.
  * The functions are called sequentially, receive the given values [a] and [b] and return [Comparable]
@@ -29,7 +26,7 @@ public fun <T> compareValuesByNullable(a: T, b: T, vararg selectors: (T) -> Comp
  * compare as equal, the result of that comparison is returned.
  */
 public fun <T> compareValuesBy(a: T, b: T, vararg selectors: (T) -> Comparable<*>?): Int {
-    require(selectors.size() > 0)
+    require(selectors.size > 0)
     for (fn in selectors) {
         val v1 = fn(a)
         val v2 = fn(b)
@@ -210,7 +207,7 @@ inline public fun <T> Comparator<T>.thenComparator(crossinline comparison: (T, T
  * Combines this comparator and the given [comparator] such that the latter is applied only
  * when the former considered values equal.
  */
-public fun <T> Comparator<T>.then(comparator: Comparator<in T>): Comparator<T> {
+public infix fun <T> Comparator<T>.then(comparator: Comparator<in T>): Comparator<T> {
     return object : Comparator<T> {
         public override fun compare(a: T, b: T): Int {
             val previousCompare = this@then.compare(a, b)
@@ -223,7 +220,7 @@ public fun <T> Comparator<T>.then(comparator: Comparator<in T>): Comparator<T> {
  * Combines this comparator and the given [comparator] such that the latter is applied only
  * when the former considered values equal.
  */
-public fun <T> Comparator<T>.thenDescending(comparator: Comparator<in T>): Comparator<T> {
+public infix fun <T> Comparator<T>.thenDescending(comparator: Comparator<in T>): Comparator<T> {
     return object : Comparator<T> {
         public override fun compare(a: T, b: T): Int {
             val previousCompare = this@thenDescending.compare(a, b)

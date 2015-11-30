@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.incremental.components
 
+import java.io.Serializable
+
 public interface LookupLocation {
     val location: LocationInfo?
 }
@@ -25,8 +27,12 @@ interface LocationInfo {
 
     // only for tests
     val position: Position
+}
 
-    data class Position(val line: Int, val column: Int)
+data class Position(val line: Int, val column: Int) : Serializable {
+    companion object {
+        val NO_POSITION = Position(-1, -1)
+    }
 }
 
 public enum class NoLookupLocation : LookupLocation {
@@ -40,6 +46,7 @@ public enum class NoLookupLocation : LookupLocation {
     FROM_REFLECTION,
     WHEN_RESOLVE_DECLARATION,
     WHEN_GET_DECLARATION_SCOPE,
+    WHEN_RESOLVING_DEFAULT_TYPE_ARGUMENTS,
     FOR_ALREADY_TRACKED,
     // TODO replace with real location (e.g. FROM_IDE) where it possible
     WHEN_GET_ALL_DESCRIPTORS,

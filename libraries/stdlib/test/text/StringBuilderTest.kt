@@ -32,8 +32,8 @@ class StringBuilderTest {
         val result = sb.toString()
         val cs = sb as CharSequence
 
-        assertEquals(result.length(), cs.length())
-        assertEquals(result.length(), sb.length())
+        assertEquals(result.length, cs.length)
+        assertEquals(result.length, sb.length)
         for (index in result.indices) {
             assertEquals(result[index], sb[index])
             assertEquals(result[index], cs[index])
@@ -43,22 +43,22 @@ class StringBuilderTest {
 
     @test fun constructors() {
         StringBuilder().let { sb ->
-            assertEquals(0, sb.length())
+            assertEquals(0, sb.length)
             assertEquals("", sb.toString())
         }
 
         StringBuilder(16).let { sb ->
-            assertEquals(0, sb.length())
+            assertEquals(0, sb.length)
             assertEquals("", sb.toString())
         }
 
         StringBuilder("content").let { sb ->
-            assertEquals(7, sb.length())
+            assertEquals(7, sb.length)
             assertEquals("content", sb.toString())
         }
 
         StringBuilder(StringBuilder("content")).let { sb ->
-            assertEquals(7, sb.length())
+            assertEquals(7, sb.length)
             assertEquals("content", sb.toString())
         }
     }

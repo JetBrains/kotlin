@@ -1,14 +1,14 @@
 class It {
-    fun next() = 5
+    operator fun next() = 5
 }
 
 class C {
-    fun iterator(): It = It()
+    operator fun iterator(): It = It()
 }
 
 class X {
     var hasNext = true
-    fun It.hasNext() = if (hasNext) {hasNext = false; true} else false
+    operator fun It.hasNext() = if (hasNext) {hasNext = false; true} else false
 
     fun test() {
         for (i in C()) {

@@ -16,22 +16,22 @@
 
 package org.jetbrains.kotlin.idea.debugger.evaluate
 
-import com.intellij.openapi.project.Project
-import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.CachedValueProvider
-import com.intellij.psi.util.PsiModificationTracker
-import org.jetbrains.kotlin.psi.KtCodeFragment
 import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
-import java.util.ArrayList
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.project.Project
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.MultiMap
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.apache.log4j.Logger
 import org.jetbrains.eval4j.Value
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.psi.KtCodeFragment
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.types.KotlinType
+import java.util.*
 
 class KotlinEvaluateExpressionCache(val project: Project) {
 
@@ -89,7 +89,6 @@ class KotlinEvaluateExpressionCache(val project: Project) {
             val bytecodes: ByteArray,
             val additionalClasses: List<Pair<String, ByteArray>>,
             val sourcePosition: SourcePosition,
-            val funName: String,
             val parameters: ParametersDescriptor
     )
 

@@ -5,6 +5,7 @@ class A(x: Double) {
 }
 
 
+
 Resolved call:
 
 Resulting descriptor: constructor A(x: String) defined in A

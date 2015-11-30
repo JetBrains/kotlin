@@ -1,9 +1,9 @@
 package com.myapp
 
 import android.app.Activity
-import kotlinx.android.synthetic.layout.*
+import kotlinx.android.synthetic.main.layout.*
 
 class MyActivity: Activity() {
-    val button = this.MyButton<caret>
+    val button = this.<caret>MyButton
 }
 

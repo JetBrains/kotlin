@@ -21,8 +21,8 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 
 import java.util.List;
 import java.util.Map;
@@ -57,8 +57,8 @@ public class SubstitutionUtils {
           F declared in MyFooCollection -> out CharSequence
      */
     @NotNull
-    public static Multimap<TypeConstructor, TypeProjection> buildDeepSubstitutionMultimap(@NotNull KotlinType type) {
-        Multimap<TypeConstructor, TypeProjection> fullSubstitution = LinkedHashMultimap.create();
+    public static Multimap<TypeParameterDescriptor, TypeProjection> buildDeepSubstitutionMultimap(@NotNull KotlinType type) {
+        Multimap<TypeParameterDescriptor, TypeProjection> fullSubstitution = LinkedHashMultimap.create();
         Map<TypeConstructor, TypeProjection> substitution = Maps.newHashMap();
         TypeSubstitutor typeSubstitutor = TypeSubstitutor.create(substitution);
         // we use the mutability of the map here
@@ -71,7 +71,7 @@ public class SubstitutionUtils {
             @NotNull KotlinType context,
             @NotNull TypeSubstitutor substitutor,
             @NotNull Map<TypeConstructor, TypeProjection> substitution,
-            @Nullable Multimap<TypeConstructor, TypeProjection> fullSubstitution
+            @Nullable Multimap<TypeParameterDescriptor, TypeProjection> typeParameterMapping
     ) {
         List<TypeParameterDescriptor> parameters = context.getConstructor().getParameters();
         List<TypeProjection> arguments = context.getArguments();
@@ -87,13 +87,13 @@ public class SubstitutionUtils {
             TypeProjection substitute = substitutor.substitute(argument);
             assert substitute != null;
             substitution.put(parameter.getTypeConstructor(), substitute);
-            if (fullSubstitution != null) {
-                fullSubstitution.put(parameter.getTypeConstructor(), substitute);
+            if (typeParameterMapping != null) {
+                typeParameterMapping.put(parameter, substitute);
             }
         }
         if (KotlinBuiltIns.isNothingOrNullableNothing(context)) return;
         for (KotlinType supertype : context.getConstructor().getSupertypes()) {
-            fillInDeepSubstitutor(supertype, substitutor, substitution, fullSubstitution);
+            fillInDeepSubstitutor(supertype, substitutor, substitution, typeParameterMapping);
         }
     }
 }

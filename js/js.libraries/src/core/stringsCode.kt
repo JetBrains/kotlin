@@ -17,13 +17,13 @@ public fun String.startsWith(prefix: String, ignoreCase: Boolean = false): Boole
 }
 
 /**
- * Returns `true` if a substring of this string starting at the specified offset [thisOffset] starts with the specified prefix.
+ * Returns `true` if a substring of this string starting at the specified offset [startIndex] starts with the specified prefix.
  */
-public fun String.startsWith(prefix: String, thisOffset: Int, ignoreCase: Boolean = false): Boolean {
+public fun String.startsWith(prefix: String, startIndex: Int, ignoreCase: Boolean = false): Boolean {
     if (!ignoreCase)
-        return nativeStartsWith(prefix, thisOffset)
+        return nativeStartsWith(prefix, startIndex)
     else
-        return regionMatches(thisOffset, prefix, 0, prefix.length(), ignoreCase)
+        return regionMatches(startIndex, prefix, 0, prefix.length(), ignoreCase)
 }
 
 /**
@@ -45,13 +45,13 @@ public inline fun String.matches(regex : String) : Boolean {
 
 public fun CharSequence.isBlank(): Boolean = length() == 0 || (if (this is String) this else this.toString()).matches("^[\\s\\xA0]+$")
 
-public fun String?.equals(anotherString: String?, ignoreCase: Boolean = false): Boolean =
+public fun String?.equals(other: String?, ignoreCase: Boolean = false): Boolean =
         if (this == null)
-            anotherString == null
+            other == null
         else if (!ignoreCase)
-            this == anotherString
+            this == other
         else
-            anotherString != null && this.toLowerCase() == anotherString.toLowerCase()
+            other != null && this.toLowerCase() == other.toLowerCase()
 
 
 public fun CharSequence.regionMatches(thisOffset: Int, other: CharSequence, otherOffset: Int, length: Int, ignoreCase: Boolean = false): Boolean

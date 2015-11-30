@@ -32,6 +32,9 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.completion.*
 import org.jetbrains.kotlin.idea.completion.handlers.KotlinFunctionInsertHandler
+import org.jetbrains.kotlin.idea.core.ExpectedInfo
+import org.jetbrains.kotlin.idea.core.Tail
+import org.jetbrains.kotlin.idea.core.fuzzyType
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.FuzzyType
@@ -295,7 +298,7 @@ class TypeInstantiationItems(
             private val freeParameters: Collection<TypeParameterDescriptor>,
             private val tail: Tail?) : InheritanceItemsSearcher {
 
-        private val baseHasTypeArgs = classDescriptor.typeConstructor.parameters.isNotEmpty()
+        private val baseHasTypeArgs = classDescriptor.declaredTypeParameters.isNotEmpty()
         private val expectedType = KotlinTypeImpl.create(Annotations.EMPTY, classDescriptor, false, typeArgs)
         private val expectedFuzzyType = FuzzyType(expectedType, freeParameters)
 
@@ -309,7 +312,7 @@ class TypeInstantiationItems(
                 if (!visibilityFilter(descriptor)) continue
 
                 var inheritorFuzzyType = FuzzyType(descriptor.defaultType, descriptor.typeConstructor.parameters)
-                val hasTypeArgs = descriptor.getTypeConstructor().getParameters().isNotEmpty()
+                val hasTypeArgs = descriptor.declaredTypeParameters.isNotEmpty()
                 if (hasTypeArgs || baseHasTypeArgs) {
                     val substitutor = inheritorFuzzyType.checkIsSubtypeOf(expectedFuzzyType) ?: continue
                     if (!substitutor.isEmpty) {

@@ -282,7 +282,7 @@ class PartialBodyResolveFilter(
                     else {
                         val leftName = left.smartCastExpressionName()
                         val rightName = right.smartCastExpressionName()
-                        val names = listOf(leftName, rightName).filterNotNull().toSet()
+                        val names = listOfNotNull(leftName, rightName).toSet()
                         return Pair(names, setOf())
                     }
                 }
@@ -551,7 +551,7 @@ class PartialBodyResolveFilter(
                         true
                 }
 
-                is KtClassInitializer -> false
+                is KtAnonymousInitializer -> false
 
                 else -> true
             }

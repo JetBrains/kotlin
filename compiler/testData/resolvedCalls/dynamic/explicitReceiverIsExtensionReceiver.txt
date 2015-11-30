@@ -5,6 +5,7 @@ fun bar(a: dynamic) {
 }
 
 
+
 Resolved call:
 
 Resulting descriptor: fun dynamic.foo(): Unit defined in root package

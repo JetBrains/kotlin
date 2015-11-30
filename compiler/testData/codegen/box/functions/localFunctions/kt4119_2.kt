@@ -1,5 +1,5 @@
 fun box(): String {
-    fun Int.foo(a: Int): Int = a + 2
+    infix fun Int.foo(a: Int): Int = a + 2
 
     val s = object {
         fun test(): Int {

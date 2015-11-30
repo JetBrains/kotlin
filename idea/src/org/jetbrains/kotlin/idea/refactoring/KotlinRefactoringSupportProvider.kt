@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.psi.*
 public class KotlinRefactoringSupportProvider : RefactoringSupportProvider() {
     override fun isSafeDeleteAvailable(element: PsiElement) = element.canDeleteElement()
 
-    override fun getIntroduceVariableHandler() = KotlinIntroduceVariableHandler()
+    override fun getIntroduceVariableHandler() = KotlinIntroduceVariableHandler
 
     override fun getIntroduceParameterHandler() = KotlinIntroduceParameterHandler()
 

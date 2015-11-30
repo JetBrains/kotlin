@@ -113,14 +113,14 @@ class ReversedViewsTest {
         val original = arrayListOf("a", "b", "c")
         val reversed = original.asReversed()
 
-        reversed.remove(0) // remove c
+        reversed.removeAt(0) // remove c
         assertEquals(listOf("a", "b"), original)
         assertEquals(listOf("b", "a"), reversed)
 
-        reversed.remove(1) // remove a
+        reversed.removeAt(1) // remove a
         assertEquals(listOf("b"), original)
 
-        reversed.remove(0) // remove remaining b
+        reversed.removeAt(0) // remove remaining b
         assertEquals(emptyList<String>(), original)
     }
 

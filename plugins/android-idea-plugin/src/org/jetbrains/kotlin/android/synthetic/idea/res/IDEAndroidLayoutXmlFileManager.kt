@@ -16,49 +16,112 @@
 
 package org.jetbrains.kotlin.android.synthetic.idea.res
 
+import com.android.builder.model.SourceProvider
 import com.intellij.openapi.module.Module
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.impl.PsiTreeChangePreprocessor
+import com.intellij.psi.util.CachedValue
+import com.intellij.psi.util.CachedValueProvider
 import org.jetbrains.android.facet.AndroidFacet
-import org.jetbrains.kotlin.android.synthetic.AndroidConst
+import org.jetbrains.kotlin.android.synthetic.AndroidConst.SYNTHETIC_PACKAGE_PATH_LENGTH
+import org.jetbrains.kotlin.android.synthetic.idea.AndroidPsiTreeChangePreprocessor
 import org.jetbrains.kotlin.android.synthetic.idea.AndroidXmlVisitor
-import org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager
-import org.jetbrains.kotlin.android.synthetic.res.AndroidModuleInfo
-import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.android.synthetic.res.*
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
 public class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileManager(module.project) {
+    override val androidModule: AndroidModule? by lazy { module.androidFacet?.toAndroidModuleInfo() }
 
-    override val androidModuleInfo: AndroidModuleInfo? by lazy { module.androidFacet?.toAndroidModuleInfo() }
+    private val moduleData: CachedValue<AndroidModuleData> by lazy {
+        cachedValue(project) {
+            CachedValueProvider.Result.create(super.getModuleData(), getPsiTreeChangePreprocessor())
+        }
+    }
 
-    override fun propertyToXmlAttributes(property: KtProperty): List<PsiElement> {
-        val fqPath = property.getFqName()?.pathSegments() ?: return listOf()
-        if (fqPath.size() <= AndroidConst.SYNTHETIC_PACKAGE_PATH_LENGTH) return listOf()
+    override fun getModuleData() = moduleData.value
 
-        val layoutPackageName = fqPath[AndroidConst.SYNTHETIC_PACKAGE_PATH_LENGTH].asString()
-        val layoutFiles = getLayoutXmlFiles()[layoutPackageName]
-        if (layoutFiles == null || layoutFiles.isEmpty()) return listOf()
+    private fun getPsiTreeChangePreprocessor(): PsiTreeChangePreprocessor {
+        return project.getExtensions(PsiTreeChangePreprocessor.EP_NAME).first { it is AndroidPsiTreeChangePreprocessor }
+    }
 
-        val propertyName = property.name
-
-        val attributes = arrayListOf<PsiElement>()
-        val visitor = AndroidXmlVisitor { retId, wClass, valueElement ->
-            if (retId == propertyName) attributes.add(valueElement)
+    override fun doExtractResources(files: List<PsiFile>, module: ModuleDescriptor): List<AndroidResource> {
+        val widgets = arrayListOf<AndroidResource>()
+        val visitor = AndroidXmlVisitor { id, widgetType, attribute ->
+            widgets += parseAndroidResource(id, widgetType, attribute.valueElement)
         }
 
-        layoutFiles.forEach { it.accept(visitor) }
-        return attributes
+        files.forEach { it.accept(visitor) }
+        return widgets
+    }
+
+
+    override fun propertyToXmlAttributes(propertyDescriptor: PropertyDescriptor): List<PsiElement> {
+        val fqPath = propertyDescriptor.fqNameUnsafe.pathSegments()
+        if (fqPath.size <= SYNTHETIC_PACKAGE_PATH_LENGTH) return listOf()
+
+        fun handle(variantData: AndroidVariantData, defaultVariant: Boolean = false): List<PsiElement>? {
+            val layoutNamePosition = SYNTHETIC_PACKAGE_PATH_LENGTH + (if (defaultVariant) 0 else 1)
+            val layoutName = fqPath[layoutNamePosition].asString()
+
+            val layoutFiles = variantData[layoutName] ?: return null
+            if (layoutFiles.isEmpty()) return null
+
+            val propertyName = propertyDescriptor.name.asString()
+
+            val attributes = arrayListOf<PsiElement>()
+            val visitor = AndroidXmlVisitor { retId, wClass, valueElement ->
+                if (retId == propertyName) attributes.add(valueElement)
+            }
+
+            layoutFiles.forEach { it.accept(visitor) }
+            return attributes
+        }
+
+        for (variantData in getModuleData()) {
+            if (variantData.variant.isMainVariant && fqPath.size == SYNTHETIC_PACKAGE_PATH_LENGTH + 2) {
+                handle(variantData, true)?.let { return it }
+            }
+            else if (fqPath[SYNTHETIC_PACKAGE_PATH_LENGTH].asString() == variantData.variant.name) {
+                handle(variantData)?.let { return it }
+            }
+        }
+
+        return listOf()
     }
 
     private val Module.androidFacet: AndroidFacet?
         get() = AndroidFacet.getInstance(this)
 
-    private fun AndroidFacet.toAndroidModuleInfo(): AndroidModuleInfo? {
-        val applicationPackage = manifest?.getPackage()?.toString()
-        val mainResDirectories = allResourceDirectories.map { it.path }
+    private fun SourceProvider.toVariant() = AndroidVariant(name, resDirectories.map { it.absolutePath })
 
-        return if (applicationPackage != null) {
-            AndroidModuleInfo(applicationPackage, mainResDirectories)
+    private fun AndroidFacet.toAndroidModuleInfo(): AndroidModule? {
+        val applicationPackage = manifest?.`package`?.toString()
+
+        if (applicationPackage != null) {
+            // This code is needed for compatibility with AS 2.0 and IDEA 15.0, because of difference in android plugins
+            val modelClass = try {
+                Class.forName("com.android.tools.idea.gradle.AndroidGradleModel")
+            }
+            catch(e: ClassNotFoundException) {
+                null
+            }
+            val mainVariant = mainSourceProvider.toVariant()
+            if (modelClass == null) {
+                val flavorVariants = flavorSourceProviders?.map { it.toVariant() } ?: listOf()
+                return AndroidModule(applicationPackage, listOf(mainVariant) + flavorVariants)
+            }
+            else {
+                val model = modelClass.getDeclaredMethod("get", Module::class.java).invoke(null, module)
+                if (model != null) {
+                    val sourceProviders = modelClass.getDeclaredMethod("getFlavorSourceProviders").invoke(model) as List<SourceProvider>
+                    return AndroidModule(applicationPackage, listOf(mainVariant) + sourceProviders.map { it.toVariant() })
+                }
+            }
         }
-        else null
+        return null
     }
 
 }

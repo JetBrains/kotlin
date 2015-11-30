@@ -33,13 +33,10 @@ import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.PluginCliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.cliPluginUsageString
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.IncrementalCompilation
-import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.config.addKotlinSourceRoot
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
-import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter
+import org.jetbrains.kotlin.script.StandardScriptDefinition
 import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
@@ -127,10 +124,10 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             return ExitCode.OK
         }
 
-        configuration.put<List<AnalyzerScriptParameter>>(JVMConfigurationKeys.SCRIPT_PARAMETERS, if (arguments.script)
-            CommandLineScriptUtils.scriptParameters()
-        else
-            emptyList<AnalyzerScriptParameter>())
+        if (arguments.script) {
+            configuration.add(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY, StandardScriptDefinition)
+            shouldReportPerf = false
+        }
 
         putAdvancedOptions(configuration, arguments)
 
@@ -237,6 +234,7 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         // allows to track GC time for each run when repeated compilation is used
         private val elapsedGCTime = hashMapOf<String, Long>()
         private var elapsedJITTime = 0L
+        private var shouldReportPerf = true
 
         public fun resetInitStartTime() {
             if (initStartNanos == 0L) {
@@ -250,10 +248,10 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         }
 
         public fun reportPerf(configuration: CompilerConfiguration, message: String) {
-            if (configuration[CLIConfigurationKeys.REPORT_PERF] == true) {
-                val collector = configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]!!
-                collector.report(CompilerMessageSeverity.INFO, "PERF: " + message, CompilerMessageLocation.NO_LOCATION)
-            }
+            if (!shouldReportPerf) return
+
+            val collector = configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]!!
+            collector.report(CompilerMessageSeverity.INFO, "PERF: " + message, CompilerMessageLocation.NO_LOCATION)
         }
 
         fun reportGCTime(configuration: CompilerConfiguration) {

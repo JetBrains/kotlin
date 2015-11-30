@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.calls.inference.constraintPosition
 
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
-import java.util.*
 
 public enum class ConstraintPositionKind {
     RECEIVER_POSITION,

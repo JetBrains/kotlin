@@ -16,16 +16,16 @@
 
 package org.jetbrains.kotlin.resolve.lazy.data
 
-import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.resolve.ScriptNameUtil
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.KtScript
 
 public class JetScriptInfo(
         val script: KtScript
 ) : JetClassLikeInfo {
-    public val fqName: FqName = ScriptNameUtil.classNameForScript(script)
-    override fun getContainingPackageFqName() = fqName.parent()
+    override fun getContainingPackageFqName() = script.fqName.parent()
     override fun getModifierList() = null
     override fun getCompanionObjects() = listOf<KtObjectDeclaration>()
     override fun getScopeAnchor() = script
@@ -34,14 +34,5 @@ public class JetScriptInfo(
     override fun getPrimaryConstructorParameters() = listOf<KtParameter>()
     override fun getClassKind() = ClassKind.CLASS
     override fun getDeclarations() = script.getDeclarations()
-            .filter(::shouldBeScriptClassMember)
     override fun getDanglingAnnotations() = listOf<KtAnnotationEntry>()
-}
-
-public fun shouldBeScriptClassMember(declaration: KtDeclaration): Boolean {
-    // To avoid the necessity to always analyze the whole body of a script even if just its class descriptor is needed
-    // we only add those vals, vars and funs that have explicitly specified return types
-    // (or implicit Unit for function with block body)
-    return declaration is KtCallableDeclaration && declaration.getTypeReference() != null
-           || declaration is KtNamedFunction && declaration.hasBlockBody()
 }

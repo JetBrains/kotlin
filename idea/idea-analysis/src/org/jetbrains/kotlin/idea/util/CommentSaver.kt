@@ -333,8 +333,7 @@ public class CommentSaver(originalElements: PsiChildRange, private val saveLineB
                 if (leaf is LineBreakTreeElement) return null
                 return leaf.parentsWithSelf
                         .takeWhile { it != lineBreakParent }
-                        .map { toNewPsiElementMap[it]?.first() } //TODO: what about multiple?
-                        .filterNotNull()
+                        .mapNotNull { toNewPsiElementMap[it]?.first() } //TODO: what about multiple?
                         .firstOrNull()
             }
 

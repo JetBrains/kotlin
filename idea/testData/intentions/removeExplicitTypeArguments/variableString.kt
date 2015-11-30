@@ -4,4 +4,4 @@ fun foo() {
     bar<caret><String>(x)
 }
 
-fun bar<T>(t: T): Int = 1
+fun <T> bar(t: T): Int = 1

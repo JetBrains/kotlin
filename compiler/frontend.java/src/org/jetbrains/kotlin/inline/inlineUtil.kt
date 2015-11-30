@@ -49,10 +49,10 @@ public fun inlineFunctionsJvmNames(bytes: ByteArray): Set<String> {
 private fun inlineFunctionsJvmNames(functions: List<ProtoBuf.Function>, nameResolver: NameResolver, protoTypeTable: ProtoBuf.TypeTable): Set<String> {
     val typeTable = TypeTable(protoTypeTable)
     val inlineFunctions = functions.filter { Flags.IS_INLINE.get(it.flags) }
-    val jvmNames = inlineFunctions.map {
+    val jvmNames = inlineFunctions.mapNotNull {
         JvmProtoBufUtil.getJvmMethodSignature(it, nameResolver, typeTable)
     }
-    return jvmNames.filterNotNull().toSet()
+    return jvmNames.toSet()
 }
 
 private fun readKotlinHeader(bytes: ByteArray): KotlinClassHeader {

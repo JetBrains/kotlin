@@ -96,7 +96,7 @@ public object CreateClassFromReferenceExpressionActionFactory : CreateClassFromU
         if (fullCallExpr.getAssignmentByLHS() != null) return Collections.emptyList()
 
         val call = element.getCall(context) ?: return Collections.emptyList()
-        val targetParent = getTargetParentByCall(call, file) ?: return Collections.emptyList()
+        val targetParent = getTargetParentByCall(call, file, context) ?: return Collections.emptyList()
         if (isInnerClassExpected(call)) return Collections.emptyList()
 
         val filter = fullCallExpr.getInheritableTypeInfo(context, moduleDescriptor, targetParent).second
@@ -136,7 +136,7 @@ public object CreateClassFromReferenceExpressionActionFactory : CreateClassFromU
         }
 
         val call = element.getCall(context) ?: return null
-        val targetParent = getTargetParentByCall(call, file) ?: return null
+        val targetParent = getTargetParentByCall(call, file, context) ?: return null
 
         val expectedTypeInfo = fullCallExpr.getInheritableTypeInfo(context, moduleDescriptor, targetParent).first
 

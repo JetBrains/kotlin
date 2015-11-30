@@ -21,15 +21,16 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
+import java.io.EOFException
 
 public class JvmPackagePartProvider(val env: KotlinCoreEnvironment) : PackagePartProvider {
 
     val roots by lazy {
         env.configuration.getList(CommonConfigurationKeys.CONTENT_ROOTS).
                 filterIsInstance<JvmClasspathRoot>().
-                map {
+                mapNotNull {
                     env.contentRootToVirtualFile(it);
-                }.filter { it?.findChild("META-INF") != null }.filterNotNull()
+                }.filter { it.findChild("META-INF") != null }
     }
 
     override fun findPackageParts(packageFqName: String): List<String> {
@@ -42,14 +43,18 @@ public class JvmPackagePartProvider(val env: KotlinCoreEnvironment) : PackagePar
                 else  parent.findChild(part) ?: return@filter false
             }
             true
-        }.map {
+        }.mapNotNull {
             it.findChild("META-INF")
-        }.filterNotNull().flatMap {
-            it.children.filter { it.name.endsWith(ModuleMapping.MAPPING_FILE_EXT) }.toList<VirtualFile>()
+        }.flatMap {
+            it.children.filter<VirtualFile> { it.name.endsWith(ModuleMapping.MAPPING_FILE_EXT) }
         }.map {
-            ModuleMapping.create(it.contentsToByteArray())
+            try {
+                ModuleMapping.create(it.contentsToByteArray())
+            } catch (e: EOFException) {
+                throw RuntimeException("Error on reading package parts for '$packageFqName' package in '$it', roots: $roots", e)
+            }
         }
 
-        return mappings.map { it.findPackageParts(packageFqName) }.filterNotNull().flatMap { it.parts }.distinct()
+        return mappings.mapNotNull { it.findPackageParts(packageFqName) }.flatMap { it.parts }.distinct()
     }
 }

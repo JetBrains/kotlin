@@ -99,7 +99,7 @@ public abstract class AbstractMemberPullPushTest : KotlinLightCodeInsightFixture
         }
     }
 
-    protected fun chooseMembers<T : MemberInfoBase<*>>(members: List<T>): List<T> {
+    protected fun <T : MemberInfoBase<*>> chooseMembers(members: List<T>): List<T> {
         members.forEach {
             val info = it.member.elementInfo
             it.isChecked = info.checked

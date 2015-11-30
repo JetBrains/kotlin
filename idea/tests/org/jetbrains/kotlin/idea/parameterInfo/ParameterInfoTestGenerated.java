@@ -214,6 +214,18 @@ public class ParameterInfoTestGenerated extends AbstractParameterInfoTest {
             doTest(fileName);
         }
 
+        @TestMetadata("SmartCastReceiver.kt")
+        public void testSmartCastReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/parameterInfo/functionCall/SmartCastReceiver.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("SmartCastReceiver2.kt")
+        public void testSmartCastReceiver2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/parameterInfo/functionCall/SmartCastReceiver2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("SubstituteExpectedType.kt")
         public void testSubstituteExpectedType() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/parameterInfo/functionCall/SubstituteExpectedType.kt");

@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
+import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.utils.addToStdlib.check
 
@@ -192,7 +193,7 @@ public class ResolveElementCache(
         }
 
         val declaration = contextElement.getParentOfType<KtDeclaration>(false)
-        if (declaration != null && declaration !is KtClassInitializer) {
+        if (declaration != null && declaration !is KtAnonymousInitializer) {
             // Activate descriptor resolution
             resolveSession.resolveToDescriptor(declaration)
         }
@@ -204,7 +205,7 @@ public class ResolveElementCache(
         val elementOfAdditionalResolve = KtPsiUtil.getTopmostParentOfTypes(
                 element,
                 javaClass<KtNamedFunction>(),
-                javaClass<KtClassInitializer>(),
+                javaClass<KtAnonymousInitializer>(),
                 javaClass<KtSecondaryConstructor>(),
                 javaClass<KtProperty>(),
                 javaClass<KtParameter>(),
@@ -262,7 +263,7 @@ public class ResolveElementCache(
         val trace: BindingTrace = when (resolveElement) {
             is KtNamedFunction -> functionAdditionalResolve(resolveSession, resolveElement, file, createStatementFilter())
 
-            is KtClassInitializer -> initializerAdditionalResolve(resolveSession, resolveElement, file, createStatementFilter())
+            is KtAnonymousInitializer -> initializerAdditionalResolve(resolveSession, resolveElement, file, createStatementFilter())
 
             is KtSecondaryConstructor -> secondaryConstructorAdditionalResolve(resolveSession, resolveElement, file, createStatementFilter())
 
@@ -327,7 +328,7 @@ public class ResolveElementCache(
         val declaration = jetTypeConstraint.getParentOfType<KtDeclaration>(true)!!
         val descriptor = analyzer.resolveToDescriptor(declaration) as ClassDescriptor
 
-        for (parameterDescriptor in descriptor.getTypeConstructor().getParameters()) {
+        for (parameterDescriptor in descriptor.declaredTypeParameters) {
             ForceResolveUtil.forceResolveAllContents<TypeParameterDescriptor>(parameterDescriptor)
         }
 
@@ -412,28 +413,19 @@ public class ResolveElementCache(
 
     private fun propertyAdditionalResolve(resolveSession: ResolveSession, property: KtProperty, file: KtFile, statementFilter: StatementFilter): BindingTrace {
         val trace = createDelegatingTrace(property)
-        val propertyResolutionScope = resolveSession.declarationScopeProvider.getResolutionScopeForDeclaration(property)
 
         val bodyResolver = createBodyResolver(resolveSession, trace, file, statementFilter)
         val descriptor = resolveSession.resolveToDescriptor(property) as PropertyDescriptor
         ForceResolveUtil.forceResolveAllContents(descriptor)
 
-        val propertyInitializer = property.getInitializer()
-        if (propertyInitializer != null) {
-            bodyResolver.resolvePropertyInitializer(DataFlowInfo.EMPTY, property, descriptor, propertyInitializer, propertyResolutionScope)
-        }
-
-        val propertyDelegate = property.getDelegateExpression()
-        if (propertyDelegate != null) {
-            bodyResolver.resolvePropertyDelegate(DataFlowInfo.EMPTY, property, descriptor, propertyDelegate, propertyResolutionScope, propertyResolutionScope)
-        }
-
         val bodyResolveContext = BodyResolveContextForLazy(TopDownAnalysisMode.LocalDeclarations, { declaration ->
-            assert(declaration.getParent() == property) { "Must be called only for property accessors, but called for $declaration" }
+            assert(declaration.getParent() == property || declaration == property) {
+                "Must be called only for property accessors or for property, but called for $declaration"
+            }
             resolveSession.declarationScopeProvider.getResolutionScopeForDeclaration(declaration)
         })
 
-        bodyResolver.resolvePropertyAccessors(bodyResolveContext, property, descriptor)
+        bodyResolver.resolveProperty(bodyResolveContext, property, descriptor)
 
         forceResolveAnnotationsInside(property)
 
@@ -488,16 +480,15 @@ public class ResolveElementCache(
         return trace
     }
 
-    private fun initializerAdditionalResolve(resolveSession: ResolveSession, classInitializer: KtClassInitializer, file: KtFile, statementFilter: StatementFilter): BindingTrace {
-        val trace = createDelegatingTrace(classInitializer)
+    private fun initializerAdditionalResolve(resolveSession: ResolveSession, anonymousInitializer: KtAnonymousInitializer, file: KtFile, statementFilter: StatementFilter): BindingTrace {
+        val trace = createDelegatingTrace(anonymousInitializer)
 
-        val classOrObject = classInitializer.getParentOfType<KtClassOrObject>(true)!!
-        val classOrObjectDescriptor = resolveSession.resolveToDescriptor(classOrObject) as LazyClassDescriptor
+        val classOrObjectDescriptor = resolveSession.resolveToDescriptor(anonymousInitializer.containingDeclaration) as LazyClassDescriptor
 
         val bodyResolver = createBodyResolver(resolveSession, trace, file, statementFilter)
-        bodyResolver.resolveAnonymousInitializer(DataFlowInfo.EMPTY, classInitializer, classOrObjectDescriptor)
+        bodyResolver.resolveAnonymousInitializer(DataFlowInfo.EMPTY, anonymousInitializer, classOrObjectDescriptor)
 
-        forceResolveAnnotationsInside(classInitializer)
+        forceResolveAnnotationsInside(anonymousInitializer)
 
         return trace
     }
@@ -540,7 +531,7 @@ public class ResolveElementCache(
 
         override fun getDeclaredClasses(): MutableMap<KtClassOrObject, ClassDescriptorWithResolutionScopes> = hashMapOf()
 
-        override fun getAnonymousInitializers(): MutableMap<KtClassInitializer, ClassDescriptorWithResolutionScopes> = hashMapOf()
+        override fun getAnonymousInitializers(): MutableMap<KtAnonymousInitializer, ClassDescriptorWithResolutionScopes> = hashMapOf()
 
         override fun getSecondaryConstructors(): MutableMap<KtSecondaryConstructor, ConstructorDescriptor> = hashMapOf()
 
@@ -550,7 +541,7 @@ public class ResolveElementCache(
 
         override fun getDeclaringScope(declaration: KtDeclaration): LexicalScope? = declaringScopes(declaration)
 
-        override fun getScripts(): MutableMap<KtScript, ScriptDescriptor> = hashMapOf()
+        override fun getScripts(): MutableMap<KtScript, LazyScriptDescriptor> = hashMapOf()
 
         override fun getOuterDataFlowInfo(): DataFlowInfo = DataFlowInfo.EMPTY
 

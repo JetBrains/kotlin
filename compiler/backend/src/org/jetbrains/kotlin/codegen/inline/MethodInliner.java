@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.inline;
 import com.google.common.collect.Lists;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.ClosureCodegen;
 import org.jetbrains.kotlin.codegen.StackValue;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
@@ -440,11 +441,16 @@ public class MethodInliner {
 
                         if (sourceValue.insns.size() == 1) {
                             AbstractInsnNode insnNode = sourceValue.insns.iterator().next();
+                            AbstractInsnNode processingInstruction = insnNode;
 
-                            lambdaInfo = getLambdaIfExists(insnNode);
+                            if (insnNode.getOpcode() == Opcodes.SWAP) {
+                                processingInstruction = InlineCodegenUtil.getPrevMeaningful(insnNode);
+                            }
+                            lambdaInfo = getLambdaIfExists(processingInstruction);
                             if (lambdaInfo != null) {
                                 //remove inlinable access
-                                node.instructions.remove(insnNode);
+                                assert processingInstruction != null;
+                                InlineCodegenUtil.removeInterval(node, processingInstruction, insnNode);
                             }
                         }
 
@@ -546,7 +552,12 @@ public class MethodInliner {
         return inliningContext.typeMapping.containsKey(owner);
     }
 
-    public LambdaInfo getLambdaIfExists(AbstractInsnNode insnNode) {
+    @Nullable
+    public LambdaInfo getLambdaIfExists(@Nullable AbstractInsnNode insnNode) {
+        if (insnNode == null) {
+            return null;
+        }
+
         if (insnNode.getOpcode() == Opcodes.ALOAD) {
             int varIndex = ((VarInsnNode) insnNode).var;
             return getLambdaIfExists(varIndex);

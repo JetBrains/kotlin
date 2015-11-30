@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.descriptors
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
+import org.jetbrains.kotlin.descriptors.EffectiveVisibility.*
 
 sealed class EffectiveVisibility(val name: String) {
 
@@ -169,86 +170,84 @@ sealed class EffectiveVisibility(val name: String) {
         }
     }
 
-    protected enum class Permissiveness {
+    internal enum class Permissiveness {
         LESS,
         SAME,
         MORE,
         UNKNOWN
     }
 
-    abstract protected fun relation(other: EffectiveVisibility): Permissiveness
+    abstract internal fun relation(other: EffectiveVisibility): Permissiveness
 
     fun sameOrMorePermissive(other: EffectiveVisibility) = when (relation(other)) {
         Permissiveness.SAME, Permissiveness.MORE -> true
         Permissiveness.LESS, Permissiveness.UNKNOWN -> false
     }
 
-    open protected fun lowerBound(other: EffectiveVisibility) = when (relation(other)) {
+    open internal fun lowerBound(other: EffectiveVisibility) = when (relation(other)) {
         Permissiveness.SAME, Permissiveness.LESS -> this
         Permissiveness.MORE -> other
         Permissiveness.UNKNOWN -> Private
     }
+}
 
-    companion object {
-
-        internal fun containerRelation(first: ClassDescriptor?, second: ClassDescriptor?): Permissiveness =
-                if (first == null || second == null) {
-                    Permissiveness.UNKNOWN
-                }
-                else if (first == second) {
-                    Permissiveness.SAME
-                }
-                else if (DescriptorUtils.isSubclass(first, second)) {
-                    Permissiveness.LESS
-                }
-                else if (DescriptorUtils.isSubclass(second, first)) {
-                    Permissiveness.MORE
-                }
-                else {
-                    Permissiveness.UNKNOWN
-                }
-
-        private fun lowerBound(first: EffectiveVisibility, second: EffectiveVisibility) =
-            first.lowerBound(second)
-
-        private fun lowerBound(first: EffectiveVisibility, args: List<EffectiveVisibility>) =
-                args.fold(first, { x, y -> x.lowerBound(y) })
-
-        private fun Visibility.forVisibility(descriptor: ClassDescriptor? = null): EffectiveVisibility = when (this) {
-            Visibilities.PRIVATE, Visibilities.PRIVATE_TO_THIS -> Private
-            Visibilities.PROTECTED -> Protected(descriptor)
-            Visibilities.INTERNAL -> Internal
-            Visibilities.PUBLIC -> Public
-            Visibilities.LOCAL -> Local
-            else -> this.effectiveVisibility(descriptor)
+internal fun containerRelation(first: ClassDescriptor?, second: ClassDescriptor?): Permissiveness =
+        if (first == null || second == null) {
+            Permissiveness.UNKNOWN
+        }
+        else if (first == second) {
+            Permissiveness.SAME
+        }
+        else if (DescriptorUtils.isSubclass(first, second)) {
+            Permissiveness.LESS
+        }
+        else if (DescriptorUtils.isSubclass(second, first)) {
+            Permissiveness.MORE
+        }
+        else {
+            Permissiveness.UNKNOWN
         }
 
-        fun effectiveVisibility(visibility: Visibility, descriptor: ClassDescriptor?) = visibility.forVisibility(descriptor)
+private fun lowerBound(first: EffectiveVisibility, second: EffectiveVisibility) =
+        first.lowerBound(second)
 
-        private fun ClassifierDescriptor.forClassifier(): EffectiveVisibility =
-                lowerBound(if (this is ClassDescriptor) this.forClass() else Public,
-                           (this.containingDeclaration as? ClassifierDescriptor)?.forClassifier() ?: Public)
+private fun lowerBound(first: EffectiveVisibility, args: List<EffectiveVisibility>) =
+        args.fold(first, { x, y -> x.lowerBound(y) })
 
-        fun ClassDescriptor.forClass() = forClass(emptySet())
-
-        private fun ClassDescriptor.forClass(classes: Set<ClassDescriptor>): EffectiveVisibility =
-                if (this in classes) Public
-                else with(this.containingDeclaration as? ClassDescriptor) {
-                    lowerBound(visibility.forVisibility(this), this?.forClass(classes + this@forClass) ?: Public)
-                }
-
-        fun KotlinType.forType() = forType(emptySet())
-
-        private fun KotlinType.forType(types: Set<KotlinType>): EffectiveVisibility =
-                if (this in types) Public
-                else lowerBound(constructor.forTypeConstructor(),
-                                arguments.map { it.type.forType(types + this) } )
-
-        private fun TypeConstructor.forTypeConstructor() =
-                this.declarationDescriptor?.forClassifier() ?: Public
-
-        fun MemberDescriptor.forMember() =
-                lowerBound(visibility.forVisibility(this.containingDeclaration as? ClassDescriptor),
-                           (this.containingDeclaration as? ClassDescriptor)?.forClass() ?: Public)
-    }
+private fun Visibility.forVisibility(descriptor: ClassDescriptor? = null): EffectiveVisibility = when (this) {
+    Visibilities.PRIVATE, Visibilities.PRIVATE_TO_THIS -> Private
+    Visibilities.PROTECTED -> Protected(descriptor)
+    Visibilities.INTERNAL -> Internal
+    Visibilities.PUBLIC -> Public
+    Visibilities.LOCAL -> Local
+    else -> this.effectiveVisibility(descriptor)
 }
+
+fun effectiveVisibility(visibility: Visibility, descriptor: ClassDescriptor?) = visibility.forVisibility(descriptor)
+
+private fun ClassifierDescriptor.effectiveVisibility(): EffectiveVisibility =
+        lowerBound(if (this is ClassDescriptor) this.effectiveVisibility() else Public,
+                   (this.containingDeclaration as? ClassifierDescriptor)?.effectiveVisibility() ?: Public)
+
+fun ClassDescriptor.effectiveVisibility() = effectiveVisibility(emptySet())
+
+private fun ClassDescriptor.effectiveVisibility(classes: Set<ClassDescriptor>): EffectiveVisibility =
+        if (this in classes) Public
+        else with(this.containingDeclaration as? ClassDescriptor) {
+            lowerBound(visibility.effectiveVisibility(this), this?.effectiveVisibility(classes + this@effectiveVisibility) ?: Public)
+        }
+
+fun KotlinType.effectiveVisibility() = effectiveVisibility(emptySet())
+
+private fun KotlinType.effectiveVisibility(types: Set<KotlinType>): EffectiveVisibility =
+        if (this in types) Public
+        else lowerBound(constructor.effectiveVisibility(),
+                        arguments.map { it.type.effectiveVisibility(types + this) })
+
+private fun TypeConstructor.effectiveVisibility() =
+        this.declarationDescriptor?.effectiveVisibility() ?: Public
+
+fun MemberDescriptor.effectiveVisibility() =
+        lowerBound(visibility.effectiveVisibility(this.containingDeclaration as? ClassDescriptor),
+                   (this.containingDeclaration as? ClassDescriptor)?.effectiveVisibility() ?: Public)
+

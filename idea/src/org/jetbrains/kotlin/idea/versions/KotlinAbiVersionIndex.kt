@@ -41,7 +41,6 @@ public object KotlinAbiVersionIndex : KotlinAbiVersionIndexBase<KotlinAbiVersion
 
     private val kotlinAnnotationsDesc = setOf(
             KOTLIN_CLASS,
-            KOTLIN_PACKAGE,
             KOTLIN_FILE_FACADE,
             KOTLIN_MULTIFILE_CLASS
     ).map { asmDescByFqNameWithoutInnerClasses(it) }

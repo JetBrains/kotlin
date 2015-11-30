@@ -90,6 +90,7 @@ public abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
                 classSuitesByClassName.getOrPut(className) { ClassExpectationsSuite(className) }
 
         fun check() {
+            Assert.assertTrue(classSuitesByClassName.isNotEmpty())
             classSuitesByClassName.values().forEach { it.check() }
         }
 
@@ -123,7 +124,7 @@ public abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
             val packageFacadePrefix = classLastName.replace(".class", "\$")
             classDir.listFiles { dir, lastName ->
                 lastName.startsWith(packageFacadePrefix) && lastName.endsWith(".class")
-            } forEach { packageFacadeFile ->
+            }.forEach { packageFacadeFile ->
                 checkClassFile(checker, packageFacadeFile)
             }
         }
@@ -151,17 +152,17 @@ public abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
 
         private inner class Checker : ClassVisitor(Opcodes.ASM5) {
             override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String?, interfaces: Array<out String>?) {
-                classExpectations forEach { it.check(name, name, signature?:"null") }
+                classExpectations.forEach { it.check(name, name, signature ?: "null") }
                 super.visit(version, access, name, signature, superName, interfaces)
             }
 
             override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
-                methodExpectations forEach { it.check(name, desc, signature?:"null") }
+                methodExpectations.forEach { it.check(name, desc, signature ?: "null") }
                 return super.visitMethod(access, name, desc, signature, exceptions)
             }
 
             override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor? {
-                fieldExpectations forEach { it.check(name, desc, signature?:"null") }
+                fieldExpectations.forEach { it.check(name, desc, signature ?: "null") }
                 return super.visitField(access, name, desc, signature, value)
             }
         }
@@ -195,9 +196,6 @@ public abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
 
                 if (kind == "class" && memberName != null) {
                     throw AssertionError("$ktFile:${lineNo+1}: use $className\$$memberName to denote inner class")
-                }
-                else if (memberName == null) {
-                    throw AssertionError("$ktFile:${lineNo+1}: '$kind' requires member name (after $className::)")
                 }
 
                 val jvmSignatureMatch = jvmSignatureRegex.matchExact(lines[lineNo+1])
@@ -237,7 +235,7 @@ public abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
 // jvm signature: $jvmSignature
 // generic signature: $genericSignature"""
 
-        val expectationRegex = Regex("^// (class|method|field): *([^:]+)(::(.+)) *(//.*)?")
+        val expectationRegex = Regex("^// (class|method|field): *([^:]+)(::(.+))? *(//.*)?")
         val jvmSignatureRegex = Regex("^// jvm signature: *(.+) *(//.*)?")
         val genericSignatureRegex = Regex("^// generic signature: *(.+) *(//.*)?")
 

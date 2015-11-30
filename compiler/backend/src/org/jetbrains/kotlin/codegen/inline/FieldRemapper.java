@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.StackValue;
 import org.jetbrains.org.objectweb.asm.Opcodes;
+import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode;
 import org.jetbrains.org.objectweb.asm.tree.MethodNode;
@@ -117,6 +118,10 @@ public class FieldRemapper {
     }
 
     public String getLambdaInternalName() {
+        return lambdaInternalName;
+    }
+
+    public String getNewLambdaInternalName() {
         return lambdaInternalName;
     }
 

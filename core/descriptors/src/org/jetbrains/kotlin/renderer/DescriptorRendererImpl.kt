@@ -253,16 +253,46 @@ internal class DescriptorRendererImpl(
 
         if (type.isError()) {
             sb.append(type.getConstructor().toString()) // Debug name of an error type is more informative
+            sb.append(renderTypeArguments(type.getArguments()))
         }
         else {
-            sb.append(renderTypeConstructor(type.getConstructor()))
+            sb.append(renderTypeConstructorAndArguments(type))
         }
-        sb.append(renderTypeArguments(type.getArguments()))
+
         if (type.isMarkedNullable()) {
             sb.append("?")
         }
         return sb.toString()
     }
+
+    private fun renderTypeConstructorAndArguments(
+            type: KotlinType,
+            typeConstructor: TypeConstructor = type.constructor
+    ): String =
+        buildString {
+
+            val possiblyInnerType = type.buildPossiblyInnerType()
+            if (possiblyInnerType == null) {
+                append(renderTypeConstructor(typeConstructor))
+                append(renderTypeArguments(type.arguments))
+                return@buildString
+            }
+
+            append(renderPossiblyInnerType(possiblyInnerType))
+        }.toString()
+
+    private fun renderPossiblyInnerType(possiblyInnerType: PossiblyInnerType): String =
+        buildString {
+            possiblyInnerType.outerType?.let {
+                append(renderPossiblyInnerType(it))
+                append('.')
+                append(renderName(possiblyInnerType.classDescriptor.name))
+            } ?: append(renderTypeConstructor(possiblyInnerType.classDescriptor.typeConstructor))
+
+            append(renderTypeArguments(possiblyInnerType.arguments))
+        }
+
+
 
     override fun renderTypeConstructor(typeConstructor: TypeConstructor): String {
         val cd = typeConstructor.getDeclarationDescriptor()
@@ -544,17 +574,21 @@ internal class DescriptorRendererImpl(
 
         if (!typeParameters.isEmpty()) {
             builder.append(lt())
-            val iterator = typeParameters.iterator()
-            while (iterator.hasNext()) {
-                val typeParameterDescriptor = iterator.next()
-                renderTypeParameter(typeParameterDescriptor, builder, false)
-                if (iterator.hasNext()) {
-                    builder.append(", ")
-                }
-            }
+            renderTypeParameterList(builder, typeParameters)
             builder.append(gt())
             if (withSpace) {
                 builder.append(" ")
+            }
+        }
+    }
+
+    private fun renderTypeParameterList(builder: StringBuilder, typeParameters: List<TypeParameterDescriptor>) {
+        val iterator = typeParameters.iterator()
+        while (iterator.hasNext()) {
+            val typeParameterDescriptor = iterator.next()
+            renderTypeParameter(typeParameterDescriptor, builder, false)
+            if (iterator.hasNext()) {
+                builder.append(", ")
             }
         }
     }
@@ -619,7 +653,7 @@ internal class DescriptorRendererImpl(
             val classDescriptor = constructor.getContainingDeclaration()
             builder.append(" ")
             renderName(classDescriptor, builder)
-            renderTypeParameters(classDescriptor.getTypeConstructor().getParameters(), builder, false)
+            renderTypeParameters(classDescriptor.declaredTypeParameters, builder, false)
         }
 
         renderValueParameters(constructor.valueParameters, constructor.hasSynthesizedParameterNames(), builder)
@@ -792,8 +826,16 @@ internal class DescriptorRendererImpl(
 
         if (isEnumEntry) return
 
-        val typeParameters = klass.typeConstructor.getParameters()
+        val typeParameters = klass.declaredTypeParameters
         renderTypeParameters(typeParameters, builder, false)
+
+        if (verbose && klass.isInner && klass.typeConstructor.parameters.size > typeParameters.size) {
+            builder.append(" /*captured type parameters: ")
+            val constructorTypeParameters = klass.typeConstructor.parameters
+            renderTypeParameterList(
+                    builder, constructorTypeParameters.subList(typeParameters.size, constructorTypeParameters.size))
+            builder.append("*/")
+        }
 
         if (!klass.kind.isSingleton && classWithPrimaryConstructor) {
             val primaryConstructor = klass.unsubstitutedPrimaryConstructor
@@ -830,10 +872,6 @@ internal class DescriptorRendererImpl(
 
 
     /* OTHER */
-    private fun renderModuleOrScript(moduleOrScript: DeclarationDescriptor, builder: StringBuilder) {
-        renderName(moduleOrScript, builder)
-    }
-
     private fun renderPackageView(packageView: PackageViewDescriptor, builder: StringBuilder) {
         builder.append(renderKeyword("package")).append(" ")
         builder.append(renderFqName(packageView.fqName.toUnsafe()))
@@ -920,11 +958,11 @@ internal class DescriptorRendererImpl(
         }
 
         override fun visitModuleDeclaration(descriptor: ModuleDescriptor, builder: StringBuilder) {
-            renderModuleOrScript(descriptor, builder)
+            renderName(descriptor, builder)
         }
 
         override fun visitScriptDescriptor(scriptDescriptor: ScriptDescriptor, builder: StringBuilder) {
-            renderModuleOrScript(scriptDescriptor, builder)
+            visitClassDescriptor(scriptDescriptor, builder)
         }
 
         override fun visitClassDescriptor(descriptor: ClassDescriptor, builder: StringBuilder) {

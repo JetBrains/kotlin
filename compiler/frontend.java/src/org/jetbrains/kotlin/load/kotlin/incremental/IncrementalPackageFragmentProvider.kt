@@ -119,10 +119,9 @@ public class IncrementalPackageFragmentProvider(
                         } ?: emptyList<String>()
 
                 val scopes = actualPackagePartFiles
-                        .map {
+                        .mapNotNull {
                             incrementalCache.getPackagePartData(it)
                         }
-                        .filterNotNull()
                         .map {
                             IncrementalPackageScope(JvmProtoBufUtil.readPackageDataFrom(it.data, it.strings))
                         }
@@ -149,7 +148,7 @@ public class IncrementalPackageFragmentProvider(
                 val partsNames: Collection<String>
         ) : PackageFragmentDescriptorImpl(moduleDescriptor, multifileClassFqName.parent()) {
             val memberScope = storageManager.createLazyValue {
-                val partsData = partsNames.map { incrementalCache.getPackagePartData(it) }.filterNotNull()
+                val partsData = partsNames.mapNotNull { incrementalCache.getPackagePartData(it) }
                 if (partsData.isEmpty())
                     MemberScope.Empty
                 else {
@@ -182,8 +181,7 @@ public class IncrementalPackageFragmentProvider(
 
                 if (LOG.isDebugEnabled) {
                     val allPackageParts = allMemberProtos
-                            .map(::getPackagePart)
-                            .filterNotNull()
+                            .mapNotNull(::getPackagePart)
                             .toSet()
                     val skippedPackageParts = allPackageParts.filter { shouldSkipPackagePart(it) }
 

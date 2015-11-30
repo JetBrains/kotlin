@@ -166,7 +166,7 @@ class BasicLookupElementFactory(
             }
 
             is ClassDescriptor -> {
-                val typeParams = descriptor.getTypeConstructor().getParameters()
+                val typeParams = descriptor.declaredTypeParameters
                 if (includeClassTypeArguments && typeParams.isNotEmpty()) {
                     element = element.appendTailText(typeParams.map { it.getName().asString() }.joinToString(", ", "<", ">"), true)
                 }

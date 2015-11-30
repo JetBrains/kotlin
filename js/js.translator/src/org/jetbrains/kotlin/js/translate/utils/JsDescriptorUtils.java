@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
 
@@ -108,8 +108,8 @@ public final class JsDescriptorUtils {
 
     @NotNull
     private static DeclarationDescriptor getDeclarationDescriptorForReceiver(@NotNull ReceiverValue receiverParameter) {
-        if (receiverParameter instanceof ThisReceiver) {
-            DeclarationDescriptor declarationDescriptor = ((ThisReceiver) receiverParameter).getDeclarationDescriptor();
+        if (receiverParameter instanceof ImplicitReceiver) {
+            DeclarationDescriptor declarationDescriptor = ((ImplicitReceiver) receiverParameter).getDeclarationDescriptor();
             return declarationDescriptor.getOriginal();
         }
 

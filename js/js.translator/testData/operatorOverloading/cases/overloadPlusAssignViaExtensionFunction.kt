@@ -8,7 +8,7 @@ class A<T>(val list: MutableList<T>) {
     }
 }
 
-fun <T> A<T>.plusAssign(other: Collection<T>) {
+operator fun <T> A<T>.plusAssign(other: Collection<T>) {
     addAll(other)
 }
 

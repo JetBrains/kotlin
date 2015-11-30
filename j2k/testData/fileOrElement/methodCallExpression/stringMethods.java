@@ -60,10 +60,7 @@ class A {
 
         s.toString();
         s.toCharArray();
-
-        char[] chars = new char[10];
-        s.getChars(1, 11, chars, 0);
-    }
+   }
 
     void specialMethods() throws Exception {
         String s = "test string";
@@ -86,6 +83,9 @@ class A {
         s.getBytes();
         s.getBytes(Charset.forName("utf-8"));
         s.getBytes("utf-8");
+
+        char[] chars = new char[10];
+        s.getChars(1, 11, chars, 0);
     }
 
     void staticMethods() {

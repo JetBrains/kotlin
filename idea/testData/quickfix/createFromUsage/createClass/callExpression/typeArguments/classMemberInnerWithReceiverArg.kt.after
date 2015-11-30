@@ -1,6 +1,4 @@
 // "Create class 'Foo'" "true"
-// ERROR: Type mismatch: inferred type is kotlin.String but W was expected
-// ERROR: The integer literal does not conform to the expected type V
 
 class B<T>(val t: T) {
     inner class Foo<U, V, W>(v: V, w: W) {

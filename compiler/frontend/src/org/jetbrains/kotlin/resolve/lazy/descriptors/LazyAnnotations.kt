@@ -86,11 +86,10 @@ public class LazyAnnotations(
 
     override fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> {
         return annotationEntries
-                .asSequence()
-                .map {
+                .mapNotNull {
                     val (descriptor, target) = annotation(it)
                     if (target == null) null else AnnotationWithTarget(descriptor, target)
-                }.filterNotNull().toList()
+                }
     }
 
     override fun getAllAnnotations() = annotationEntries.map(annotation)
@@ -98,10 +97,10 @@ public class LazyAnnotations(
     override fun iterator(): Iterator<AnnotationDescriptor> {
         return annotationEntries
                 .asSequence()
-                .map {
+                .mapNotNull {
                     val (descriptor, target) = annotation(it)
                     if (target == null) descriptor else null // Filter out annotations with target
-                }.filterNotNull().iterator()
+                }.iterator()
     }
 
     override fun forceResolveAllContents() {

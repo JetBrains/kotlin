@@ -1,9 +1,9 @@
 class MyList<T>() {
     var value: T? = null
 
-    fun get(index: Int): T = value!!
+    operator fun get(index: Int): T = value!!
 
-    fun set(index: Int, value: T) { this.value = value }
+    operator fun set(index: Int, value: T) { this.value = value }
 }
 
 fun box(): String {

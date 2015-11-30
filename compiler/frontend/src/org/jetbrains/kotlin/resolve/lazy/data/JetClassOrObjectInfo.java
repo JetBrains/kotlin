@@ -40,6 +40,7 @@ public abstract class JetClassOrObjectInfo<E extends KtClassOrObject> implements
     }
 
     @Override
+    @NotNull
     public KtClassOrObject getCorrespondingClassOrObject() {
         return element;
     }

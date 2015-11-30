@@ -505,10 +505,10 @@ fun parseIDL(reader: CharStream): Repository {
     ModuleVisitor(declarations).visit(idl)
 
     return Repository(
-            declarations.filterIsInstance<InterfaceDefinition>().filter { it.name.isEmpty().not() }.groupBy { it.name }.mapValues { it.getValue().reduce(::merge) },
-            declarations.filterIsInstance<TypedefDefinition>().groupBy { it.name }.mapValues { it.getValue().first() },
-            declarations.filterIsInstance<ExtensionInterfaceDefinition>().groupBy { it.name }.mapValues { it.getValue().map { it.implements } },
-            declarations.filterIsInstance<EnumDefinition>().groupBy { it.name }.mapValues { it.getValue().reduce { a, b -> a } }
+            declarations.filterIsInstance<InterfaceDefinition>().filter { it.name.isEmpty().not() }.groupBy { it.name }.mapValues { it.value.reduce(::merge) },
+            declarations.filterIsInstance<TypedefDefinition>().groupBy { it.name }.mapValues { it.value.first() },
+            declarations.filterIsInstance<ExtensionInterfaceDefinition>().groupBy { it.name }.mapValues { it.value.map { it.implements } },
+            declarations.filterIsInstance<EnumDefinition>().groupBy { it.name }.mapValues { it.value.reduce { a, b -> a } }
     )
 }
 
@@ -528,4 +528,4 @@ fun merge(i1: InterfaceDefinition, i2: InterfaceDefinition): InterfaceDefinition
     )
 }
 
-fun <T> List<T>.merge(other: List<T>) = (this + other).distinct().toList()
+infix fun <T> List<T>.merge(other: List<T>) = (this + other).distinct()

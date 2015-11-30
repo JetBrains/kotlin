@@ -1,0 +1,4 @@
+// WITH_RUNTIME
+fun test() {
+    val (i, i1) = 1 to 2
+}

@@ -1,4 +1,4 @@
-fun getInterface(): GenericInterface<String> {
+internal fun getInterface(): GenericInterface<String> {
     return GenericInterface { d, i, j, s ->
         "OK"
     }

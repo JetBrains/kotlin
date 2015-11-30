@@ -43,16 +43,16 @@ fun foo() {
         }
 ---------------------
 L3:
-  3 <START>                                INIT: in: {} out: {}
+  3 <START>                                INIT: in: {x=ID} out: {x=ID}
   4 mark({ val b = x })
-    v(val b = x)                           INIT: in: {} out: {b=D}
-    magic[IMPLICIT_RECEIVER](x) -> <v0>    INIT: in: {b=D} out: {b=D}     USE: in: {x=READ} out: {x=READ}
-    r(x|<v0>) -> <v1>                                                     USE: in: {} out: {x=READ}
-    w(b|<v1>)                              INIT: in: {b=D} out: {b=ID}
+    v(val b = x)                           INIT: in: {x=ID} out: {b=D, x=ID}
+    magic[IMPLICIT_RECEIVER](x) -> <v0>    INIT: in: {b=D, x=ID} out: {b=D, x=ID}     USE: in: {x=READ} out: {x=READ}
+    r(x|<v0>) -> <v1>                                                                 USE: in: {} out: {x=READ}
+    w(b|<v1>)                              INIT: in: {b=D, x=ID} out: {b=ID, x=ID}
 L4:
-  3 <END>                                  INIT: in: {} out: {}
+  3 <END>                                  INIT: in: {x=ID} out: {x=ID}
 error:
-    <ERROR>
+    <ERROR>                                INIT: in: {} out: {}
 sink:
-    <SINK>                                                                USE: in: {} out: {}
+    <SINK>                                 INIT: in: {x=ID} out: {x=ID}               USE: in: {} out: {}
 =====================

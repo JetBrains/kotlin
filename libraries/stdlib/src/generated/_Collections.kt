@@ -55,7 +55,7 @@ public inline operator fun <T> List<T>.component5(): T {
 /**
  * Returns `true` if [element] is found in the collection.
  */
-public operator fun <T> Iterable<T>.contains(element: @kotlin.internal.NoInfer T): Boolean {
+public operator fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.contains(element: T): Boolean {
     if (this is Collection)
         return contains(element)
     return indexOf(element) >= 0
@@ -64,20 +64,21 @@ public operator fun <T> Iterable<T>.contains(element: @kotlin.internal.NoInfer T
 /**
  * Returns `true` if [element] is found in the collection.
  */
-@Deprecated("Use 'containsRaw' instead.", ReplaceWith("containsRaw(element)"))
+@Deprecated("Collection and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("contains(element as T)"))
 @kotlin.jvm.JvmName("containsAny")
 @kotlin.internal.LowPriorityInOverloadResolution
 public operator fun <T> Iterable<T>.contains(element: T): Boolean {
-    return containsRaw(element)
+    return contains(element as T)
 }
 
 /**
  * Returns `true` if [element] is found in the collection.
  * Allows to overcome type-safety restriction of `contains` that requires to pass an element of type `T`.
  */
+@Deprecated("Collection and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("contains(element as Any?)"))
 @Suppress("NOTHING_TO_INLINE")
 public inline fun Iterable<*>.containsRaw(element: Any?): Boolean {
-    return contains<Any?>(element)
+    return contains(element as Any?)
 }
 
 /**
@@ -259,7 +260,7 @@ public fun <T> List<T>.getOrNull(index: Int): T? {
 /**
  * Returns first index of [element], or -1 if the collection does not contain element.
  */
-public fun <T> Iterable<T>.indexOf(element: @kotlin.internal.NoInfer T): Int {
+public fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.indexOf(element: T): Int {
     if (this is List) return this.indexOf(element)
     var index = 0
     for (item in this) {
@@ -271,14 +272,32 @@ public fun <T> Iterable<T>.indexOf(element: @kotlin.internal.NoInfer T): Int {
 }
 
 /**
+ * Returns first index of [element], or -1 if the list does not contain element.
+ */
+public fun <@kotlin.internal.OnlyInputTypes T> List<T>.indexOf(element: T): Int {
+    return indexOf(element)
+}
+
+/**
  * Returns first index of [element], or -1 if the collection does not contain element.
  */
-@Deprecated("Use 'indexOfRaw' instead.", ReplaceWith("indexOfRaw(element)"))
+@Deprecated("Collection and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("indexOf(element as T)"))
 @kotlin.jvm.JvmName("indexOfAny")
 @kotlin.internal.LowPriorityInOverloadResolution
 @Suppress("NOTHING_TO_INLINE")
 public fun <T> Iterable<T>.indexOf(element: T): Int {
-    return indexOfRaw(element)
+    return indexOf(element as T)
+}
+
+/**
+ * Returns first index of [element], or -1 if the collection does not contain element.
+ */
+@Deprecated("List and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("indexOf(element as T)"))
+@kotlin.jvm.JvmName("indexOfAny")
+@kotlin.internal.LowPriorityInOverloadResolution
+@Suppress("NOTHING_TO_INLINE")
+public fun <T> List<T>.indexOf(element: T): Int {
+    return indexOf(element as T)
 }
 
 /**
@@ -336,15 +355,17 @@ public inline fun <T> List<T>.indexOfLast(predicate: (T) -> Boolean): Int {
  * Returns first index of [element], or -1 if the collection does not contain element.
  * Allows to overcome type-safety restriction of `indexOf` that requires to pass an element of type `T`.
  */
+@Deprecated("Collection and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("indexOf(element as Any?)"))
 @Suppress("NOTHING_TO_INLINE")
 public inline fun Iterable<*>.indexOfRaw(element: Any?): Int {
-    return indexOf<Any?>(element)
+    return indexOf(element as Any?)
 }
 
 /**
  * Returns first index of [element], or -1 if the list does not contain element.
  * Allows to overcome type-safety restriction of `indexOf` that requires to pass an element of type `T`.
  */
+@Deprecated("List and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("indexOf(element as Any?)"))
 @Suppress("NOTHING_TO_INLINE")
 public inline fun <T> List<T>.indexOfRaw(element: Any?): Int {
     return (this as List<Any?>).indexOf(element)
@@ -418,7 +439,7 @@ public inline fun <T> List<T>.last(predicate: (T) -> Boolean): T {
 /**
  * Returns last index of [element], or -1 if the collection does not contain element.
  */
-public fun <T> Iterable<T>.lastIndexOf(element: @kotlin.internal.NoInfer T): Int {
+public fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.lastIndexOf(element: T): Int {
     if (this is List) return this.lastIndexOf(element)
     var lastIndex = -1
     var index = 0
@@ -431,29 +452,49 @@ public fun <T> Iterable<T>.lastIndexOf(element: @kotlin.internal.NoInfer T): Int
 }
 
 /**
+ * Returns last index of [element], or -1 if the list does not contain element.
+ */
+public fun <@kotlin.internal.OnlyInputTypes T> List<T>.lastIndexOf(element: T): Int {
+    return lastIndexOf(element)
+}
+
+/**
  * Returns last index of [element], or -1 if the collection does not contain element.
  */
-@Deprecated("Use 'indexOfRaw' instead.", ReplaceWith("indexOfRaw(element)"))
+@Deprecated("Collection and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("lastIndexOf(element as T)"))
 @kotlin.jvm.JvmName("lastIndexOfAny")
 @kotlin.internal.LowPriorityInOverloadResolution
 @Suppress("NOTHING_TO_INLINE")
 public fun <T> Iterable<T>.lastIndexOf(element: T): Int {
-    return indexOfRaw(element)
+    return lastIndexOf(element as T)
+}
+
+/**
+ * Returns last index of [element], or -1 if the collection does not contain element.
+ */
+@Deprecated("List and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("lastIndexOf(element as T)"))
+@kotlin.jvm.JvmName("lastIndexOfAny")
+@kotlin.internal.LowPriorityInOverloadResolution
+@Suppress("NOTHING_TO_INLINE")
+public fun <T> List<T>.lastIndexOf(element: T): Int {
+    return lastIndexOf(element as T)
 }
 
 /**
  * Returns last index of [element], or -1 if the collection does not contain element.
  * Allows to overcome type-safety restriction of `lastIndexOf` that requires to pass an element of type `T`.
  */
+@Deprecated("Collection and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("lastIndexOf(element as Any?)"))
 @Suppress("NOTHING_TO_INLINE")
 public inline fun Iterable<*>.lastIndexOfRaw(element: Any?): Int {
-    return lastIndexOf<Any?>(element)
+    return lastIndexOf(element as Any?)
 }
 
 /**
  * Returns last index of [element], or -1 if the list does not contain element.
  * Allows to overcome type-safety restriction of `lastIndexOf` that requires to pass an element of type `T`.
  */
+@Deprecated("List and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("lastIndexOf(element as Any?)"))
 @Suppress("NOTHING_TO_INLINE")
 public inline fun <T> List<T>.lastIndexOfRaw(element: Any?): Int {
     return (this as List<Any?>).lastIndexOf(element)
@@ -464,7 +505,7 @@ public inline fun <T> List<T>.lastIndexOfRaw(element: Any?): Int {
  */
 public fun <T> Iterable<T>.lastOrNull(): T? {
     when (this) {
-        is List -> return if (isEmpty()) null else this[size() - 1]
+        is List -> return if (isEmpty()) null else this[size - 1]
         else -> {
             val iterator = iterator()
             if (!iterator.hasNext())
@@ -481,7 +522,7 @@ public fun <T> Iterable<T>.lastOrNull(): T? {
  * Returns the last element, or `null` if the list is empty.
  */
 public fun <T> List<T>.lastOrNull(): T? {
-    return if (isEmpty()) null else this[size() - 1]
+    return if (isEmpty()) null else this[size - 1]
 }
 
 /**
@@ -515,7 +556,7 @@ public inline fun <T> List<T>.lastOrNull(predicate: (T) -> Boolean): T? {
  */
 public fun <T> Iterable<T>.single(): T {
     when (this) {
-        is List -> return when (size()) {
+        is List -> return when (size) {
             0 -> throw NoSuchElementException("Collection is empty.")
             1 -> this[0]
             else -> throw IllegalArgumentException("Collection has more than one element.")
@@ -536,7 +577,7 @@ public fun <T> Iterable<T>.single(): T {
  * Returns the single element, or throws an exception if the list is empty or has more than one element.
  */
 public fun <T> List<T>.single(): T {
-    return when (size()) {
+    return when (size) {
         0 -> throw NoSuchElementException("Collection is empty.")
         1 -> this[0]
         else -> throw IllegalArgumentException("Collection has more than one element.")
@@ -565,7 +606,7 @@ public inline fun <T> Iterable<T>.single(predicate: (T) -> Boolean): T {
  */
 public fun <T> Iterable<T>.singleOrNull(): T? {
     when (this) {
-        is List -> return if (size() == 1) this[0] else null
+        is List -> return if (size == 1) this[0] else null
         else -> {
             val iterator = iterator()
             if (!iterator.hasNext())
@@ -582,7 +623,7 @@ public fun <T> Iterable<T>.singleOrNull(): T? {
  * Returns single element, or `null` if the list is empty or has more than one element.
  */
 public fun <T> List<T>.singleOrNull(): T? {
-    return if (size() == 1) this[0] else null
+    return if (size == 1) this[0] else null
 }
 
 /**
@@ -610,12 +651,12 @@ public fun <T> Iterable<T>.drop(n: Int): List<T> {
     if (n == 0) return toList()
     val list: ArrayList<T>
     if (this is Collection<*>) {
-        val resultSize = size() - n
+        val resultSize = size - n
         if (resultSize <= 0)
             return emptyList()
         list = ArrayList<T>(resultSize)
         if (this is List<T>) {
-            for (index in n..size() - 1) {
+            for (index in n..size - 1) {
                 list.add(this[index])
             }
             return list
@@ -636,7 +677,7 @@ public fun <T> Iterable<T>.drop(n: Int): List<T> {
  */
 public fun <T> List<T>.dropLast(n: Int): List<T> {
     require(n >= 0, { "Requested element count $n is less than zero." })
-    return take((size() - n).coerceAtLeast(0))
+    return take((size - n).coerceAtLeast(0))
 }
 
 /**
@@ -734,7 +775,7 @@ public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterTo(destinat
  */
 public fun <T> List<T>.slice(indices: IntRange): List<T> {
     if (indices.isEmpty()) return listOf()
-    return this.subList(indices.start, indices.end + 1).toList()
+    return this.subList(indices.start, indices.endInclusive + 1).toList()
 }
 
 /**
@@ -756,7 +797,7 @@ public fun <T> List<T>.slice(indices: Iterable<Int>): List<T> {
 public fun <T> Iterable<T>.take(n: Int): List<T> {
     require(n >= 0, { "Requested element count $n is less than zero." })
     if (n == 0) return emptyList()
-    if (this is Collection<T> && n >= size()) return toList()
+    if (this is Collection<T> && n >= size) return toList()
     var count = 0
     val list = ArrayList<T>(n)
     for (item in this) {
@@ -773,7 +814,7 @@ public fun <T> Iterable<T>.take(n: Int): List<T> {
 public fun <T> List<T>.takeLast(n: Int): List<T> {
     require(n >= 0, { "Requested element count $n is less than zero." })
     if (n == 0) return emptyList()
-    val size = size()
+    val size = size
     if (n >= size) return toList()
     val list = ArrayList<T>(n)
     for (index in size - n .. size - 1)
@@ -891,7 +932,7 @@ public fun <T> Iterable<T>.sortedWith(comparator: Comparator<in T>): List<T> {
  * Returns an array of Boolean containing all of the elements of this collection.
  */
 public fun Collection<Boolean>.toBooleanArray(): BooleanArray {
-    val result = BooleanArray(size())
+    val result = BooleanArray(size)
     var index = 0
     for (element in this)
         result[index++] = element
@@ -902,7 +943,7 @@ public fun Collection<Boolean>.toBooleanArray(): BooleanArray {
  * Returns an array of Byte containing all of the elements of this collection.
  */
 public fun Collection<Byte>.toByteArray(): ByteArray {
-    val result = ByteArray(size())
+    val result = ByteArray(size)
     var index = 0
     for (element in this)
         result[index++] = element
@@ -913,7 +954,7 @@ public fun Collection<Byte>.toByteArray(): ByteArray {
  * Returns an array of Char containing all of the elements of this collection.
  */
 public fun Collection<Char>.toCharArray(): CharArray {
-    val result = CharArray(size())
+    val result = CharArray(size)
     var index = 0
     for (element in this)
         result[index++] = element
@@ -924,7 +965,7 @@ public fun Collection<Char>.toCharArray(): CharArray {
  * Returns an array of Double containing all of the elements of this collection.
  */
 public fun Collection<Double>.toDoubleArray(): DoubleArray {
-    val result = DoubleArray(size())
+    val result = DoubleArray(size)
     var index = 0
     for (element in this)
         result[index++] = element
@@ -935,7 +976,7 @@ public fun Collection<Double>.toDoubleArray(): DoubleArray {
  * Returns an array of Float containing all of the elements of this collection.
  */
 public fun Collection<Float>.toFloatArray(): FloatArray {
-    val result = FloatArray(size())
+    val result = FloatArray(size)
     var index = 0
     for (element in this)
         result[index++] = element
@@ -946,7 +987,7 @@ public fun Collection<Float>.toFloatArray(): FloatArray {
  * Returns an array of Int containing all of the elements of this collection.
  */
 public fun Collection<Int>.toIntArray(): IntArray {
-    val result = IntArray(size())
+    val result = IntArray(size)
     var index = 0
     for (element in this)
         result[index++] = element
@@ -957,7 +998,7 @@ public fun Collection<Int>.toIntArray(): IntArray {
  * Returns an array of Long containing all of the elements of this collection.
  */
 public fun Collection<Long>.toLongArray(): LongArray {
-    val result = LongArray(size())
+    val result = LongArray(size)
     var index = 0
     for (element in this)
         result[index++] = element
@@ -968,7 +1009,7 @@ public fun Collection<Long>.toLongArray(): LongArray {
  * Returns an array of Short containing all of the elements of this collection.
  */
 public fun Collection<Short>.toShortArray(): ShortArray {
-    val result = ShortArray(size())
+    val result = ShortArray(size)
     var index = 0
     for (element in this)
         result[index++] = element
@@ -992,13 +1033,13 @@ public fun <T> Iterable<T>.toArrayList(): ArrayList<T> {
 }
 
 /**
- * Appends all elements to the given [collection].
+ * Appends all elements to the given [destination] collection.
  */
-public fun <T, C : MutableCollection<in T>> Iterable<T>.toCollection(collection: C): C {
+public fun <T, C : MutableCollection<in T>> Iterable<T>.toCollection(destination: C): C {
     for (item in this) {
-        collection.add(item)
+        destination.add(item)
     }
-    return collection
+    return destination
 }
 
 /**
@@ -1065,8 +1106,17 @@ public fun <T> Iterable<T>.toSet(): Set<T> {
 /**
  * Returns a [SortedSet] of all elements.
  */
-public fun <T> Iterable<T>.toSortedSet(): SortedSet<T> {
+public fun <T: Comparable<T>> Iterable<T>.toSortedSet(): SortedSet<T> {
     return toCollection(TreeSet<T>())
+}
+
+/**
+ * Returns a [SortedSet] of all elements.
+ * Elements in the set returned are sorted according to the given [comparator].
+ */
+@kotlin.jvm.JvmVersion
+public fun <T> Iterable<T>.toSortedSet(comparator: Comparator<in T>): SortedSet<T> {
+    return toCollection(TreeSet<T>(comparator))
 }
 
 /**
@@ -1088,18 +1138,18 @@ public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(dest
 }
 
 /**
- * Returns a map of the elements in original collection grouped by the result of given [toKey] function.
+ * Returns a map of the elements in original collection grouped by the key returned by the given [selector] function.
  */
-public inline fun <T, K> Iterable<T>.groupBy(toKey: (T) -> K): Map<K, List<T>> {
-    return groupByTo(LinkedHashMap<K, MutableList<T>>(), toKey)
+public inline fun <T, K> Iterable<T>.groupBy(selector: (T) -> K): Map<K, List<T>> {
+    return groupByTo(LinkedHashMap<K, MutableList<T>>(), selector)
 }
 
 /**
- * Appends elements from original collection grouped by the result of given [toKey] function to the given [map].
+ * Appends elements from original collection grouped by the key returned by the given [selector] function to the given [map].
  */
-public inline fun <T, K> Iterable<T>.groupByTo(map: MutableMap<K, MutableList<T>>, toKey: (T) -> K): Map<K, MutableList<T>> {
+public inline fun <T, K> Iterable<T>.groupByTo(map: MutableMap<K, MutableList<T>>, selector: (T) -> K): Map<K, MutableList<T>> {
     for (element in this) {
-        val key = toKey(element)
+        val key = selector(element)
         val list = map.getOrPut(key) { ArrayList<T>() }
         list.add(element)
     }
@@ -1193,14 +1243,15 @@ public fun <T> Iterable<T>.distinct(): List<T> {
 }
 
 /**
- * Returns a list containing only distinct elements from the given collection according to the [keySelector].
+ * Returns a list containing only elements from the given collection
+ * having distinct keys returned by the given [selector] function.
  * The elements in the resulting list are in the same order as they were in the source collection.
  */
-public inline fun <T, K> Iterable<T>.distinctBy(keySelector: (T) -> K): List<T> {
+public inline fun <T, K> Iterable<T>.distinctBy(selector: (T) -> K): List<T> {
     val set = HashSet<K>()
     val list = ArrayList<T>()
     for (e in this) {
-        val key = keySelector(e)
+        val key = selector(e)
         if (set.add(key))
             list.add(e)
     }
@@ -1210,7 +1261,7 @@ public inline fun <T, K> Iterable<T>.distinctBy(keySelector: (T) -> K): List<T> 
 /**
  * Returns a set containing all elements that are contained by both this set and the specified collection.
  */
-public fun <T> Iterable<T>.intersect(other: Iterable<T>): Set<T> {
+public infix fun <T> Iterable<T>.intersect(other: Iterable<T>): Set<T> {
     val set = this.toMutableSet()
     set.retainAll(other)
     return set
@@ -1219,7 +1270,7 @@ public fun <T> Iterable<T>.intersect(other: Iterable<T>): Set<T> {
 /**
  * Returns a set containing all elements that are contained by this set and not contained by the specified collection.
  */
-public fun <T> Iterable<T>.subtract(other: Iterable<T>): Set<T> {
+public infix fun <T> Iterable<T>.subtract(other: Iterable<T>): Set<T> {
     val set = this.toMutableSet()
     set.removeAll(other)
     return set
@@ -1238,7 +1289,7 @@ public fun <T> Iterable<T>.toMutableSet(): MutableSet<T> {
 /**
  * Returns a set containing all distinct elements from both collections.
  */
-public fun <T> Iterable<T>.union(other: Iterable<T>): Set<T> {
+public infix fun <T> Iterable<T>.union(other: Iterable<T>): Set<T> {
     val set = this.toMutableSet()
     set.addAll(other)
     return set
@@ -1272,7 +1323,7 @@ public inline fun <T> Iterable<T>.any(predicate: (T) -> Boolean): Boolean {
  * Returns the number of elements in this collection.
  */
 public fun <T> Collection<T>.count(): Int {
-    return size()
+    return size
 }
 
 /**
@@ -1315,18 +1366,18 @@ public inline fun <T, R> List<T>.foldRight(initial: R, operation: (T, R) -> R): 
 }
 
 /**
- * Performs the given [operation] on each element.
+ * Performs the given [action] on each element.
  */
-public inline fun <T> Iterable<T>.forEach(operation: (T) -> Unit): Unit {
-    for (element in this) operation(element)
+public inline fun <T> Iterable<T>.forEach(action: (T) -> Unit): Unit {
+    for (element in this) action(element)
 }
 
 /**
- * Performs the given [operation] on each element, providing sequential index with the element.
+ * Performs the given [action] on each element, providing sequential index with the element.
  */
-public inline fun <T> Iterable<T>.forEachIndexed(operation: (Int, T) -> Unit): Unit {
+public inline fun <T> Iterable<T>.forEachIndexed(action: (Int, T) -> Unit): Unit {
     var index = 0
-    for (item in this) operation(index++, item)
+    for (item in this) action(index++, item)
 }
 
 /**
@@ -1346,14 +1397,14 @@ public fun <T : Comparable<T>> Iterable<T>.max(): T? {
 /**
  * Returns the first element yielding the largest value of the given function or `null` if there are no elements.
  */
-public inline fun <R : Comparable<R>, T : Any> Iterable<T>.maxBy(f: (T) -> R): T? {
+public inline fun <R : Comparable<R>, T : Any> Iterable<T>.maxBy(selector: (T) -> R): T? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
     var maxElem = iterator.next()
-    var maxValue = f(maxElem)
+    var maxValue = selector(maxElem)
     while (iterator.hasNext()) {
         val e = iterator.next()
-        val v = f(e)
+        val v = selector(e)
         if (maxValue < v) {
             maxElem = e
             maxValue = v
@@ -1379,14 +1430,14 @@ public fun <T : Comparable<T>> Iterable<T>.min(): T? {
 /**
  * Returns the first element yielding the smallest value of the given function or `null` if there are no elements.
  */
-public inline fun <R : Comparable<R>, T : Any> Iterable<T>.minBy(f: (T) -> R): T? {
+public inline fun <R : Comparable<R>, T : Any> Iterable<T>.minBy(selector: (T) -> R): T? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
     var minElem = iterator.next()
-    var minValue = f(minElem)
+    var minValue = selector(minElem)
     while (iterator.hasNext()) {
         val e = iterator.next()
-        val v = f(e)
+        val v = selector(e)
         if (minValue > v) {
             minElem = e
             minValue = v
@@ -1438,23 +1489,23 @@ public inline fun <S, T: S> List<T>.reduceRight(operation: (T, S) -> S): S {
 }
 
 /**
- * Returns the sum of all values produced by [transform] function applied to each element in the collection.
+ * Returns the sum of all values produced by [selector] function applied to each element in the collection.
  */
-public inline fun <T> Iterable<T>.sumBy(transform: (T) -> Int): Int {
+public inline fun <T> Iterable<T>.sumBy(selector: (T) -> Int): Int {
     var sum: Int = 0
     for (element in this) {
-        sum += transform(element)
+        sum += selector(element)
     }
     return sum
 }
 
 /**
- * Returns the sum of all values produced by [transform] function applied to each element in the collection.
+ * Returns the sum of all values produced by [selector] function applied to each element in the collection.
  */
-public inline fun <T> Iterable<T>.sumByDouble(transform: (T) -> Double): Double {
+public inline fun <T> Iterable<T>.sumByDouble(selector: (T) -> Double): Double {
     var sum: Double = 0.0
     for (element in this) {
-        sum += transform(element)
+        sum += selector(element)
     }
     return sum
 }
@@ -1484,25 +1535,6 @@ public fun <T : Any> List<T?>.requireNoNulls(): List<T> {
 }
 
 /**
- * Returns a list containing all elements of the original collection except the elements contained in the given [array].
- */
-public operator fun <T> Iterable<T>.minus(array: Array<out T>): List<T> {
-    if (array.isEmpty()) return this.toList()
-    val other = array.toHashSet()
-    return this.filterNot { it in other }
-}
-
-/**
- * Returns a list containing all elements of the original collection except the elements contained in the given [collection].
- */
-public operator fun <T> Iterable<T>.minus(collection: Iterable<T>): List<T> {
-    val other = collection.convertToSetForSetOperationWith(this)
-    if (other.isEmpty())
-        return this.toList()
-    return this.filterNot { it in other }
-}
-
-/**
  * Returns a list containing all elements of the original collection without the first occurrence of the given [element].
  */
 public operator fun <T> Iterable<T>.minus(element: T): List<T> {
@@ -1512,10 +1544,29 @@ public operator fun <T> Iterable<T>.minus(element: T): List<T> {
 }
 
 /**
- * Returns a list containing all elements of the original collection except the elements contained in the given [sequence].
+ * Returns a list containing all elements of the original collection except the elements contained in the given [elements] array.
  */
-public operator fun <T> Iterable<T>.minus(sequence: Sequence<T>): List<T> {
-    val other = sequence.toHashSet()
+public operator fun <T> Iterable<T>.minus(elements: Array<out T>): List<T> {
+    if (elements.isEmpty()) return this.toList()
+    val other = elements.toHashSet()
+    return this.filterNot { it in other }
+}
+
+/**
+ * Returns a list containing all elements of the original collection except the elements contained in the given [elements] collection.
+ */
+public operator fun <T> Iterable<T>.minus(elements: Iterable<T>): List<T> {
+    val other = elements.convertToSetForSetOperationWith(this)
+    if (other.isEmpty())
+        return this.toList()
+    return this.filterNot { it in other }
+}
+
+/**
+ * Returns a list containing all elements of the original collection except the elements contained in the given [elements] sequence.
+ */
+public operator fun <T> Iterable<T>.minus(elements: Sequence<T>): List<T> {
+    val other = elements.toHashSet()
     if (other.isEmpty())
         return this.toList()
     return this.filterNot { it in other }
@@ -1540,58 +1591,10 @@ public inline fun <T> Iterable<T>.partition(predicate: (T) -> Boolean): Pair<Lis
 }
 
 /**
- * Returns a list containing all elements of the original collection and then all elements of the given [array].
- */
-public operator fun <T> Collection<T>.plus(array: Array<out T>): List<T> {
-    val result = ArrayList<T>(this.size() + array.size())
-    result.addAll(this)
-    result.addAll(array)
-    return result
-}
-
-/**
- * Returns a list containing all elements of the original collection and then all elements of the given [array].
- */
-public operator fun <T> Iterable<T>.plus(array: Array<out T>): List<T> {
-    if (this is Collection) return this.plus(array)
-    val result = ArrayList<T>()
-    result.addAll(this)
-    result.addAll(array)
-    return result
-}
-
-/**
- * Returns a list containing all elements of the original collection and then all elements of the given [collection].
- */
-public operator fun <T> Collection<T>.plus(collection: Iterable<T>): List<T> {
-    if (collection is Collection) {
-        val result = ArrayList<T>(this.size() + collection.size())
-        result.addAll(this)
-        result.addAll(collection)
-        return result
-    } else {
-        val result = ArrayList<T>(this)
-        result.addAll(collection)
-        return result
-    }
-}
-
-/**
- * Returns a list containing all elements of the original collection and then all elements of the given [collection].
- */
-public operator fun <T> Iterable<T>.plus(collection: Iterable<T>): List<T> {
-    if (this is Collection) return this.plus(collection)
-    val result = ArrayList<T>()
-    result.addAll(this)
-    result.addAll(collection)
-    return result
-}
-
-/**
  * Returns a list containing all elements of the original collection and then the given [element].
  */
 public operator fun <T> Collection<T>.plus(element: T): List<T> {
-    val result = ArrayList<T>(size() + 1)
+    val result = ArrayList<T>(size + 1)
     result.addAll(this)
     result.add(element)
     return result
@@ -1609,42 +1612,90 @@ public operator fun <T> Iterable<T>.plus(element: T): List<T> {
 }
 
 /**
- * Returns a list containing all elements of the original collection and then all elements of the given [sequence].
+ * Returns a list containing all elements of the original collection and then all elements of the given [elements] array.
  */
-public operator fun <T> Collection<T>.plus(sequence: Sequence<T>): List<T> {
-    val result = ArrayList<T>(this.size() + 10)
+public operator fun <T> Collection<T>.plus(elements: Array<out T>): List<T> {
+    val result = ArrayList<T>(this.size + elements.size)
     result.addAll(this)
-    result.addAll(sequence)
+    result.addAll(elements)
     return result
 }
 
 /**
- * Returns a list containing all elements of the original collection and then all elements of the given [sequence].
+ * Returns a list containing all elements of the original collection and then all elements of the given [elements] array.
  */
-public operator fun <T> Iterable<T>.plus(sequence: Sequence<T>): List<T> {
+public operator fun <T> Iterable<T>.plus(elements: Array<out T>): List<T> {
+    if (this is Collection) return this.plus(elements)
     val result = ArrayList<T>()
     result.addAll(this)
-    result.addAll(sequence)
+    result.addAll(elements)
+    return result
+}
+
+/**
+ * Returns a list containing all elements of the original collection and then all elements of the given [elements] collection.
+ */
+public operator fun <T> Collection<T>.plus(elements: Iterable<T>): List<T> {
+    if (elements is Collection) {
+        val result = ArrayList<T>(this.size + elements.size)
+        result.addAll(this)
+        result.addAll(elements)
+        return result
+    } else {
+        val result = ArrayList<T>(this)
+        result.addAll(elements)
+        return result
+    }
+}
+
+/**
+ * Returns a list containing all elements of the original collection and then all elements of the given [elements] collection.
+ */
+public operator fun <T> Iterable<T>.plus(elements: Iterable<T>): List<T> {
+    if (this is Collection) return this.plus(elements)
+    val result = ArrayList<T>()
+    result.addAll(this)
+    result.addAll(elements)
+    return result
+}
+
+/**
+ * Returns a list containing all elements of the original collection and then all elements of the given [elements] sequence.
+ */
+public operator fun <T> Collection<T>.plus(elements: Sequence<T>): List<T> {
+    val result = ArrayList<T>(this.size + 10)
+    result.addAll(this)
+    result.addAll(elements)
+    return result
+}
+
+/**
+ * Returns a list containing all elements of the original collection and then all elements of the given [elements] sequence.
+ */
+public operator fun <T> Iterable<T>.plus(elements: Sequence<T>): List<T> {
+    val result = ArrayList<T>()
+    result.addAll(this)
+    result.addAll(elements)
     return result
 }
 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public fun <T, R> Iterable<T>.zip(array: Array<out R>): List<Pair<T, R>> {
-    return zip(array) { t1, t2 -> t1 to t2 }
+public infix fun <T, R> Iterable<T>.zip(other: Array<out R>): List<Pair<T, R>> {
+    return zip(other) { t1, t2 -> t1 to t2 }
 }
 
 /**
  * Returns a list of values built from elements of both collections with same indexes using provided [transform]. List has length of shortest collection.
  */
-public inline fun <T, R, V> Iterable<T>.zip(array: Array<out R>, transform: (T, R) -> V): List<V> {
-    val arraySize = array.size()
+public inline fun <T, R, V> Iterable<T>.zip(other: Array<out R>, transform: (T, R) -> V): List<V> {
+    val arraySize = other.size
     val list = ArrayList<V>(Math.min(collectionSizeOrDefault(10), arraySize))
     var i = 0
     for (element in this) {
         if (i >= arraySize) break
-        list.add(transform(element, array[i++]))
+        list.add(transform(element, other[i++]))
     }
     return list
 }
@@ -1652,7 +1703,7 @@ public inline fun <T, R, V> Iterable<T>.zip(array: Array<out R>, transform: (T, 
 /**
  * Returns a list of pairs built from elements of both collections with same indexes. List has length of shortest collection.
  */
-public fun <T, R> Iterable<T>.zip(other: Iterable<R>): List<Pair<T, R>> {
+public infix fun <T, R> Iterable<T>.zip(other: Iterable<R>): List<Pair<T, R>> {
     return zip(other) { t1, t2 -> t1 to t2 }
 }
 

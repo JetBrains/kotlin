@@ -1,6 +1,6 @@
 fun box(): String {
     val sb = StringBuilder()
-    fun String.plus() {
+    operator fun String.unaryPlus() {
         sb.append(this)
     }
 

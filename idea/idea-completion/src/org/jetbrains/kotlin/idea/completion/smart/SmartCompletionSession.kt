@@ -24,6 +24,8 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.completion.*
+import org.jetbrains.kotlin.idea.core.ExpectedInfo
+import org.jetbrains.kotlin.idea.core.ExpectedInfos
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
@@ -97,6 +99,14 @@ class SmartCompletionSession(
 
         val contextVariablesProvider = RealContextVariablesProvider(referenceVariantsHelper, position)
         withContextVariablesProvider(contextVariablesProvider) { lookupElementFactory ->
+            if (filter != null && receiverTypes != null) {
+                val results = ExtensionFunctionTypeValueCompletion(receiverTypes, callTypeAndReceiver.callType, lookupElementFactory)
+                        .processVariables(contextVariablesProvider)
+                for ((invokeDescriptor, factory) in results) {
+                    collector.addElements(filter(invokeDescriptor, factory))
+                }
+            }
+
             if (contextVariableTypesForAdditionalItems.any { contextVariablesProvider.functionTypeVariables(it).isNotEmpty() }) {
                 val additionalItems = smartCompletion!!.additionalItems(lookupElementFactory).first
                 collector.addElements(additionalItems)

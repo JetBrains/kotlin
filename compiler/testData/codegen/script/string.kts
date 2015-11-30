@@ -1,3 +1,3 @@
-"O" + "K"
+val rv = "O" + "K"
 
 // expected: rv: OK

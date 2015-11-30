@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.resolve.DeclarationsCheckerKt;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace;
 import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache;
@@ -155,6 +156,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         ExpressionTypingUtils.checkVariableShadowing(context.scope, context.trace, propertyDescriptor);
 
         scope.addVariableDescriptor(propertyDescriptor);
+        DeclarationsCheckerKt.checkTypeReferences(property, context.trace);
         components.modifiersChecker.withTrace(context.trace).checkModifiersForLocalDeclaration(property, propertyDescriptor);
         components.identifierChecker.checkDeclaration(property, context.trace);
         return typeInfo.replaceType(components.dataFlowAnalyzer.checkStatementType(property, context));
@@ -166,7 +168,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
         KtExpression initializer = multiDeclaration.getInitializer();
         if (initializer == null) {
-            context.trace.report(INITIALIZER_REQUIRED_FOR_MULTIDECLARATION.on(multiDeclaration));
+            context.trace.report(INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION.on(multiDeclaration));
             return TypeInfoFactoryKt.noTypeInfo(context);
         }
         ExpressionReceiver expressionReceiver = ExpressionTypingUtils.getExpressionReceiver(
@@ -250,7 +252,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             temporary.commit();
             return rightInfo.clearType();
         }
-        ExpressionReceiver receiver = new ExpressionReceiver(left, leftType);
+        ExpressionReceiver receiver = ExpressionReceiver.Companion.create(left, leftType, context.trace.getBindingContext());
 
         // We check that defined only one of '+=' and '+' operations, and call it (in the case '+' we then also assign)
         // Check for '+='

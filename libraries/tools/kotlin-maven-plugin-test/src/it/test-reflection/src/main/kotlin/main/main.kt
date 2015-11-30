@@ -33,7 +33,7 @@ fun box(): String {
     l()
 
     val ext = Int::extProp
-    if (ext.get(42) != 42) return "Fail ext: ${ext[42]}"
+    if (ext.get(42) != 42) return "Fail ext: ${ext.get(42)}"
 
     val a = A::class
     if (a.memberProperties.size() != 1) return "Fail: ${a.memberProperties}"

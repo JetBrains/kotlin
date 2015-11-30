@@ -2,10 +2,10 @@
 // OPTIONS: usages
 
 class A(val n: Int) {
-    fun <caret>minus(): A = this
+    operator fun <caret>unaryMinus(): A = this
 }
 
 fun test() {
-    A(1).minus()
+    A(1).unaryMinus()
     -A(1)
 }

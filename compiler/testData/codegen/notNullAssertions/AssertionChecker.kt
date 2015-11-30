@@ -1,5 +1,5 @@
 class AssertionChecker(val illegalStateExpected: Boolean) {
-    fun invoke(name: String, f: () -> Any) {
+    operator fun invoke(name: String, f: () -> Any) {
         try {
             f()
         } catch (e: IllegalStateException) {
@@ -71,5 +71,5 @@ fun checkAssertions(illegalStateExpected: Boolean) {
 //    check("inc-c") { var a = A.C.c(); ++a }
 }
 
-fun A.C.inc(): A.C = A.C()
-fun <T> T.inc(): T = null as T
+operator fun A.C.inc(): A.C = A.C()
+operator fun <T> T.inc(): T = null as T

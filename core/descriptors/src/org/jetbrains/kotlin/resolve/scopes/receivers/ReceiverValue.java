@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve.scopes.receivers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.types.KotlinType;
 
-public interface ReceiverValue {
+public interface ReceiverValue extends Receiver {
     ReceiverValue NO_RECEIVER = new ReceiverValue() {
         @NotNull
         @Override
@@ -58,6 +58,4 @@ public interface ReceiverValue {
 
     @NotNull
     KotlinType getType();
-
-    boolean exists();
 }

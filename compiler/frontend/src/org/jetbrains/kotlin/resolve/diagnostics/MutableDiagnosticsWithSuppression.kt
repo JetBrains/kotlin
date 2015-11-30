@@ -25,7 +25,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.resolve.BindingContext
 
-public class MutableDiagnosticsWithSuppression(
+public class MutableDiagnosticsWithSuppression @JvmOverloads constructor(
         private val bindingContext: BindingContext,
         private val delegateDiagnostics: Diagnostics = Diagnostics.EMPTY
 ) : Diagnostics {

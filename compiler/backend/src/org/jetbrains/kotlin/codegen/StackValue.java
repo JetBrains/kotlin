@@ -235,8 +235,8 @@ public abstract class StackValue {
     }
 
     @NotNull
-    private static Field field(@NotNull FieldInfo info) {
-        return field(info.getFieldType(), Type.getObjectType(info.getOwnerInternalName()), info.getFieldName(), true, none());
+    public static Field field(@NotNull FieldInfo info, @NotNull StackValue receiver) {
+        return field(info.getFieldType(), Type.getObjectType(info.getOwnerInternalName()), info.getFieldName(), info.isStatic(), receiver);
     }
 
     @NotNull
@@ -501,7 +501,7 @@ public abstract class StackValue {
             callDispatchReceiver = ((SyntheticFieldDescriptor) descriptor).getDispatchReceiverForBackend();
         }
 
-        ReceiverValue callExtensionReceiver = resolvedCall.getExtensionReceiver();
+        ReceiverValue callExtensionReceiver = (ReceiverValue) resolvedCall.getExtensionReceiver();
         if (callDispatchReceiver.exists() || callExtensionReceiver.exists()
             || isLocalFunCall(callableMethod) || isCallToMemberObjectImportedByName(resolvedCall)) {
             ReceiverParameterDescriptor dispatchReceiverParameter = descriptor.getDispatchReceiverParameter();
@@ -593,15 +593,15 @@ public abstract class StackValue {
 
     @NotNull
     public static Field singleton(@NotNull ClassDescriptor classDescriptor, @NotNull JetTypeMapper typeMapper) {
-        return field(FieldInfo.createForSingleton(classDescriptor, typeMapper));
+        return field(FieldInfo.createForSingleton(classDescriptor, typeMapper), none());
     }
 
     public static Field singletonViaInstance(ClassDescriptor classDescriptor, JetTypeMapper typeMapper) {
-        return field(FieldInfo.createSingletonViaInstance(classDescriptor, typeMapper, false));
+        return field(FieldInfo.createSingletonViaInstance(classDescriptor, typeMapper, false), none());
     }
 
     public static Field oldSingleton(ClassDescriptor classDescriptor, JetTypeMapper typeMapper) {
-        return field(FieldInfo.createForSingleton(classDescriptor, typeMapper, true));
+        return field(FieldInfo.createForSingleton(classDescriptor, typeMapper, true), none());
     }
 
     public static StackValue operation(Type type, Function1<InstructionAdapter, Unit> lambda) {
@@ -832,7 +832,7 @@ public abstract class StackValue {
                 v.store(firstParamIndex, type);
             }
 
-            ReceiverValue receiverParameter = resolvedGetCall.getExtensionReceiver();
+            ReceiverValue receiverParameter = (ReceiverValue) resolvedGetCall.getExtensionReceiver();
             int receiverIndex = -1;
             if (receiverParameter.exists()) {
                 Type type = codegen.typeMapper.mapType(receiverParameter.getType());
@@ -1084,9 +1084,7 @@ public abstract class StackValue {
 
                 v.visitFieldInsn(isStaticPut ? GETSTATIC : GETFIELD,
                                  backingFieldOwner.getInternalName(), fieldName, this.type.getDescriptor());
-                if (!genNotNullAssertionForField(v, state, descriptor)) {
-                    genNotNullAssertionForLateInitIfNeeded(v);
-                }
+                genNotNullAssertionForLateInitIfNeeded(v);
                 coerceTo(type, v);
             }
             else {

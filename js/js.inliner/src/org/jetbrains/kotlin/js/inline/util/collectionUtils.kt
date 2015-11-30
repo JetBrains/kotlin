@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.js.inline.util
 import java.util.Collections
 import java.util.IdentityHashMap
 
-public fun IdentitySet<T>(): MutableSet<T> {
+public fun <T> IdentitySet(): MutableSet<T> {
     return Collections.newSetFromMap(IdentityHashMap<T, Boolean>())
 }
 

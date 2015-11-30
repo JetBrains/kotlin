@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.js.translate.initializer.InitializerVisitor
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getPropertyDescriptor
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtClassInitializer
+import org.jetbrains.kotlin.psi.KtAnonymousInitializer
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 
@@ -78,7 +78,7 @@ class FileDeclarationVisitor(
         return null
     }
 
-    public override fun visitAnonymousInitializer(expression: KtClassInitializer, context: TranslationContext?): Void? {
+    public override fun visitAnonymousInitializer(expression: KtAnonymousInitializer, context: TranslationContext?): Void? {
         expression.accept(initializerVisitor, initializerContext)
         return null
     }

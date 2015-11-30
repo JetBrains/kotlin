@@ -5,7 +5,7 @@ open class A {
         val internal_val = 1
         public val public_val: Int = 2
         private val private_val = 3
-        <!DEPRECATED_MODIFIER_CONTAINING_DECLARATION!>protected<!> val protected_val: Int = 5
+        protected val protected_val: Int = 5
     }
 
     fun fromClass() {
@@ -28,6 +28,6 @@ class B: A() {
         devNull(A.internal_val)
         devNull(A.public_val)
         devNull(A.<!INVISIBLE_MEMBER!>private_val<!>)
-        devNull(A.protected_val)
+        devNull(A.<!SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC!>protected_val<!>)
     }
 }

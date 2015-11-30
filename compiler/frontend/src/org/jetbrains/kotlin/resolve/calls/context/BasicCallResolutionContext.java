@@ -42,11 +42,10 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull CallChecker callChecker,
             @NotNull StatementFilter statementFilter,
             boolean isAnnotationContext,
-            boolean collectAllCandidates,
-            boolean insideSafeCallChain
+            boolean collectAllCandidates
     ) {
         super(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
-              dataFlowInfoForArguments, callChecker, statementFilter, isAnnotationContext, collectAllCandidates, insideSafeCallChain);
+              dataFlowInfoForArguments, callChecker, statementFilter, isAnnotationContext, collectAllCandidates);
     }
 
     @NotNull
@@ -63,7 +62,7 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
     ) {
         return new BasicCallResolutionContext(trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments,
                                               new ResolutionResultsCacheImpl(), null,
-                                              callChecker, StatementFilter.NONE, isAnnotationContext, false, false);
+                                              callChecker, StatementFilter.NONE, isAnnotationContext, false);
     }
 
     @NotNull
@@ -75,7 +74,7 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
                 context.trace, context.scope, call, context.expectedType, context.dataFlowInfo, context.contextDependency, checkArguments,
                 context.resolutionResultsCache, dataFlowInfoForArguments,
                 context.callChecker,
-                context.statementFilter, context.isAnnotationContext, context.collectAllCandidates, context.insideCallChain);
+                context.statementFilter, context.isAnnotationContext, context.collectAllCandidates);
     }
 
     @NotNull
@@ -94,19 +93,18 @@ public class BasicCallResolutionContext extends CallResolutionContext<BasicCallR
             @NotNull ContextDependency contextDependency,
             @NotNull ResolutionResultsCache resolutionResultsCache,
             @NotNull StatementFilter statementFilter,
-            boolean collectAllCandidates,
-            boolean insideSafeCallChain
+            boolean collectAllCandidates
     ) {
         return new BasicCallResolutionContext(
                 trace, scope, call, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
-                dataFlowInfoForArguments, callChecker, statementFilter, isAnnotationContext, collectAllCandidates, insideSafeCallChain);
+                dataFlowInfoForArguments, callChecker, statementFilter, isAnnotationContext, collectAllCandidates);
     }
 
     @NotNull
     public BasicCallResolutionContext replaceCall(@NotNull Call newCall) {
         return new BasicCallResolutionContext(
                 trace, scope, newCall, expectedType, dataFlowInfo, contextDependency, checkArguments, resolutionResultsCache,
-                dataFlowInfoForArguments, callChecker, statementFilter, isAnnotationContext, collectAllCandidates, insideCallChain);
+                dataFlowInfoForArguments, callChecker, statementFilter, isAnnotationContext, collectAllCandidates);
     }
 
     public void performContextDependentCallChecks(@NotNull ResolvedCall<?> resolvedCall) {

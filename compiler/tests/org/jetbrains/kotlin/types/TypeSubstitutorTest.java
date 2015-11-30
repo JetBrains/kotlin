@@ -92,7 +92,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
         LexicalScope topLevelScope = trace.get(BindingContext.LEXICAL_SCOPE, jetFile);
         final ClassifierDescriptor contextClass = ScopeUtilsKt.findClassifier(topLevelScope, Name.identifier("___Context"), NoLookupLocation.FROM_TEST);
         assert contextClass instanceof ClassDescriptor;
-        LexicalScope typeParameters = new LexicalScopeImpl(topLevelScope, module, false, null, "Type parameter scope",
+        LexicalScope typeParameters = new LexicalScopeImpl(topLevelScope, module, false, null, LexicalScopeKind.SYNTHETIC,
                                                            RedeclarationHandler.THROW_EXCEPTION,
                                                            new Function1<LexicalScopeImpl.InitializeHandler, Unit>() {
                                                                @Override
@@ -103,7 +103,7 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
                                                                    return Unit.INSTANCE;
                                                                }
                                                            });
-        return new LexicalChainedScope(typeParameters, module, false, null, "TypeSubstitutorTest::getContextScope()",
+        return new LexicalChainedScope(typeParameters, module, false, null, LexicalScopeKind.SYNTHETIC,
                                 new MemberScope[] {
                                         contextClass.getDefaultType().getMemberScope(),
                                         module.getBuiltIns().getBuiltInsPackageScope()

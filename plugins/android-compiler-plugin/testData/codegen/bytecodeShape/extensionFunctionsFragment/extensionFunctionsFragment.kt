@@ -1,9 +1,9 @@
-package com.myapp
+package test
 
 import android.app.Fragment
 import android.os.Bundle
 import java.io.File
-import kotlinx.android.synthetic.layout.*
+import kotlinx.android.synthetic.main.layout.*
 
 public class MyFragment : Fragment()
 
@@ -14,7 +14,7 @@ fun MyFragment.b() {
 
 // 1 public _\$_findCachedViewById
 // 1 public _\$_clearFindViewByIdCache
-// 1 INVOKEVIRTUAL com/myapp/MyFragment\.getView
-// 2 GETSTATIC com/myapp/R\$id\.login
-// 2 INVOKEVIRTUAL com/myapp/MyFragment\._\$_findCachedViewById
+// 1 INVOKEVIRTUAL test/MyFragment\.getView
+// 2 GETSTATIC test/R\$id\.login
+// 2 INVOKEVIRTUAL test/MyFragment\._\$_findCachedViewById
 // 2 CHECKCAST android/widget/Button

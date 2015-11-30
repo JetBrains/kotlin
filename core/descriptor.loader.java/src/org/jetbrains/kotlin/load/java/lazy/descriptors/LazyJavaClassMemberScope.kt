@@ -83,7 +83,7 @@ public class LazyJavaClassMemberScope(
         }
         
         enhanceSignatures(
-                result ifEmpty { emptyOrSingletonList(createDefaultConstructor()) }
+                result.ifEmpty { emptyOrSingletonList(createDefaultConstructor()) }
         ).toReadOnlyList()
     }
 
@@ -420,18 +420,15 @@ public class LazyJavaClassMemberScope(
 
     override fun resolveMethodSignature(
             method: JavaMethod, methodTypeParameters: List<TypeParameterDescriptor>, returnType: KotlinType,
-            valueParameters: LazyJavaScope.ResolvedValueParameters
+            valueParameters: List<ValueParameterDescriptor>
     ): LazyJavaScope.MethodSignatureData {
-        val propagated = c.components.externalSignatureResolver.resolvePropagatedSignature(
-                method, ownerDescriptor, returnType, null, valueParameters.descriptors, methodTypeParameters
+        val propagated = c.components.signaturePropagator.resolvePropagatedSignature(
+                method, ownerDescriptor, returnType, null, valueParameters, methodTypeParameters
         )
-        val effectiveSignature = c.components.externalSignatureResolver.resolveAlternativeMethodSignature(
-                method, !propagated.getSuperMethods().isEmpty(), propagated.getReturnType(),
-                propagated.getReceiverType(), propagated.getValueParameters(), propagated.getTypeParameters(),
-                propagated.hasStableParameterNames()
+        return LazyJavaScope.MethodSignatureData(
+                propagated.returnType, propagated.receiverType, propagated.valueParameters, propagated.typeParameters,
+                propagated.hasStableParameterNames(), propagated.errors
         )
-
-        return LazyJavaScope.MethodSignatureData(effectiveSignature, propagated.getErrors() + effectiveSignature.getErrors())
     }
 
     private fun hasOverriddenBuiltinFunctionWithErasedValueParameters(
@@ -476,23 +473,12 @@ public class LazyJavaClassMemberScope(
         )
 
         val valueParameters = resolveValueParameters(c, constructorDescriptor, constructor.getValueParameters())
-        val effectiveSignature = c.components.externalSignatureResolver.resolveAlternativeMethodSignature(
-                constructor, false, null, null, valueParameters.descriptors, Collections.emptyList(), false)
 
-        constructorDescriptor.initialize(
-                classDescriptor.getTypeConstructor().getParameters(),
-                effectiveSignature.getValueParameters(),
-                constructor.getVisibility()
-        )
-        constructorDescriptor.setHasStableParameterNames(effectiveSignature.hasStableParameterNames())
+        constructorDescriptor.initialize(valueParameters.descriptors, constructor.visibility)
+        constructorDescriptor.setHasStableParameterNames(false)
         constructorDescriptor.setHasSynthesizedParameterNames(valueParameters.hasSynthesizedNames)
 
         constructorDescriptor.setReturnType(classDescriptor.getDefaultType())
-
-        val signatureErrors = effectiveSignature.getErrors()
-        if (!signatureErrors.isEmpty()) {
-            c.components.externalSignatureResolver.reportSignatureErrors(constructorDescriptor, signatureErrors)
-        }
 
         c.components.javaResolverCache.recordConstructor(constructor, constructorDescriptor)
 
@@ -508,12 +494,11 @@ public class LazyJavaClassMemberScope(
         val constructorDescriptor = JavaConstructorDescriptor.createJavaConstructor(
                 classDescriptor, Annotations.EMPTY, /* isPrimary = */ true, c.components.sourceElementFactory.source(jClass)
         )
-        val typeParameters = classDescriptor.getTypeConstructor().getParameters()
         val valueParameters = if (isAnnotation) createAnnotationConstructorParameters(constructorDescriptor)
                               else Collections.emptyList<ValueParameterDescriptor>()
         constructorDescriptor.setHasSynthesizedParameterNames(false)
 
-        constructorDescriptor.initialize(typeParameters, valueParameters, getConstructorVisibility(classDescriptor))
+        constructorDescriptor.initialize(valueParameters, getConstructorVisibility(classDescriptor))
         constructorDescriptor.setHasStableParameterNames(true)
         constructorDescriptor.setReturnType(classDescriptor.getDefaultType())
         c.components.javaResolverCache.recordConstructor(jClass, constructorDescriptor);

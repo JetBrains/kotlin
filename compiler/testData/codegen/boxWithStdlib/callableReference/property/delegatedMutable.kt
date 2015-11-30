@@ -5,11 +5,11 @@ var result: String by Delegate
 object Delegate {
     var value = "lol"
 
-    fun getValue(instance: Any?, data: KProperty<*>): String {
+    operator fun getValue(instance: Any?, data: KProperty<*>): String {
         return value
     }
 
-    fun setValue(instance: Any?, data: KProperty<*>, newValue: String) {
+    operator fun setValue(instance: Any?, data: KProperty<*>, newValue: String) {
         value = newValue
     }
 }

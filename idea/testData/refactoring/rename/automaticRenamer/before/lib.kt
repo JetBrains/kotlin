@@ -4,4 +4,4 @@ data class Pair<out A, out B>(
 )
 
 
-public fun listOf<T>(): List<T> = throw Error()
+public fun <T> listOf(): List<T> = throw Error()

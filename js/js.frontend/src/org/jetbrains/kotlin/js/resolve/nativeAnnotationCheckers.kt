@@ -117,7 +117,7 @@ internal class NativeSetterChecker : AbstractNativeIndexerChecker(PredefinedAnno
         if (parameters.size() < 2) return
 
         val secondParameterType = parameters.get(1).getType()
-        if (secondParameterType isSubtypeOf returnType) return
+        if (secondParameterType.isSubtypeOf(returnType)) return
 
         diagnosticHolder.report(ErrorsJs.NATIVE_SETTER_WRONG_RETURN_TYPE.on(declaration))
     }

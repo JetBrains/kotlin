@@ -57,6 +57,7 @@ public abstract class Config {
 
     private final boolean sourcemap;
     private final boolean metaInfo;
+    private final boolean kjsm;
 
     @NotNull
     protected final List<KotlinJavascriptMetadata> metadata = new SmartList<KotlinJavascriptMetadata>();
@@ -72,7 +73,8 @@ public abstract class Config {
             @NotNull EcmaVersion ecmaVersion,
             boolean sourcemap,
             boolean inlineEnabled,
-            boolean metaInfo
+            boolean metaInfo,
+            boolean kjsm
     ) {
         this.project = project;
         this.target = ecmaVersion;
@@ -80,6 +82,7 @@ public abstract class Config {
         this.sourcemap = sourcemap;
         this.inlineEnabled = inlineEnabled;
         this.metaInfo = metaInfo;
+        this.kjsm = kjsm;
     }
 
     public boolean isSourcemap() {
@@ -88,6 +91,10 @@ public abstract class Config {
 
     public boolean isMetaInfo() {
         return metaInfo;
+    }
+
+    public boolean isKjsm() {
+        return kjsm;
     }
 
     public boolean isInlineEnabled() {

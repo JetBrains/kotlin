@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTraceContext
+import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension
 import org.jetbrains.org.objectweb.asm.ClassWriter
@@ -38,8 +38,6 @@ public class StubProducerExtension(val stubsOutputDir: File) : AnalysisCompleted
             bindingContext: BindingContext,
             files: Collection<KtFile>
     ): AnalysisResult? {
-        val forExtraDiagnostics = BindingTraceContext()
-
         val generationState = GenerationState(
                 project,
                 StubClassBuilderFactory(),
@@ -47,8 +45,7 @@ public class StubProducerExtension(val stubsOutputDir: File) : AnalysisCompleted
                 bindingContext,
                 files.toArrayList(),
                 disableCallAssertions = false,
-                disableParamAssertions = false,
-                diagnostics = forExtraDiagnostics)
+                disableParamAssertions = false)
 
         KotlinCodegenFacade.compileCorrectFiles(generationState, CompilationErrorHandler.THROW_EXCEPTION)
 

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-@file:Suppress("DEPRECATION")
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
@@ -24,11 +23,9 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import kotlin.jvm.internal.KotlinPackage
 import kotlin.reflect.KCallable
-import kotlin.reflect.KPackage
 
-internal class KPackageImpl(override val jClass: Class<*>, val moduleName: String) : KDeclarationContainerImpl(), KPackage {
+internal class KPackageImpl(override val jClass: Class<*>, val moduleName: String) : KDeclarationContainerImpl() {
     private val descriptor = ReflectProperties.lazySoft {
         with(moduleData) {
             packageFacadeProvider.registerModule(moduleName)
@@ -44,7 +41,6 @@ internal class KPackageImpl(override val jClass: Class<*>, val moduleName: Strin
     override val constructorDescriptors: Collection<ConstructorDescriptor>
         get() = emptyList()
 
-    @Suppress("UNCHECKED_CAST")
     override fun getProperties(name: Name): Collection<PropertyDescriptor> =
             scope.getContributedVariables(name, NoLookupLocation.FROM_REFLECTION)
 
@@ -58,10 +54,7 @@ internal class KPackageImpl(override val jClass: Class<*>, val moduleName: Strin
             jClass.hashCode()
 
     override fun toString(): String {
-        val name = jClass.name
-        return "package " + if (jClass.isAnnotationPresent(KotlinPackage::class.java)) {
-            if (name == "_DefaultPackage") "<default>" else name.substringBeforeLast(".")
-        }
-        else name
+        val fqName = jClass.classId.packageFqName
+        return "package " + (if (fqName.isRoot) "<default>" else fqName.asString())
     }
 }

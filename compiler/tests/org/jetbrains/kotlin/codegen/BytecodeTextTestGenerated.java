@@ -161,6 +161,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         doTest(fileName);
     }
 
+    @TestMetadata("jvmField.kt")
+    public void testJvmField() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/jvmField.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("kt2202.kt")
     public void testKt2202() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/kt2202.kt");
@@ -401,6 +407,57 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         public void testSize() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/builtinFunctions/size.kt");
             doTest(fileName);
+        }
+
+        @TestMetadata("compiler/testData/codegen/bytecodeText/builtinFunctions/genericParameterBridge")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class GenericParameterBridge extends AbstractBytecodeTextTest {
+            @TestMetadata("abstractList.kt")
+            public void testAbstractList() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/builtinFunctions/genericParameterBridge/abstractList.kt");
+                doTest(fileName);
+            }
+
+            public void testAllFilesPresentInGenericParameterBridge() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/builtinFunctions/genericParameterBridge"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("IntMC.kt")
+            public void testIntMC() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/builtinFunctions/genericParameterBridge/IntMC.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("mutableCollection.kt")
+            public void testMutableCollection() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/builtinFunctions/genericParameterBridge/mutableCollection.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("mutableSetInterfaces.kt")
+            public void testMutableSetInterfaces() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/builtinFunctions/genericParameterBridge/mutableSetInterfaces.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("notNullAnyMC.kt")
+            public void testNotNullAnyMC() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/builtinFunctions/genericParameterBridge/notNullAnyMC.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("notNullParamMC.kt")
+            public void testNotNullParamMC() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/builtinFunctions/genericParameterBridge/notNullParamMC.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("nullableAnyMC.kt")
+            public void testNullableAnyMC() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/builtinFunctions/genericParameterBridge/nullableAnyMC.kt");
+                doTest(fileName);
+            }
         }
     }
 
@@ -749,6 +806,21 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/bytecodeText/signature")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Signature extends AbstractBytecodeTextTest {
+        public void testAllFilesPresentInSignature() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/signature"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("noSignatureInSyntheticAccessor.kt")
+        public void testNoSignatureInSyntheticAccessor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/signature/noSignatureInSyntheticAccessor.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/bytecodeText/statements")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -883,12 +955,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("concat.kt")
         public void testConcat() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/stringOperations/concat.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("infixPlus.kt")
-        public void testInfixPlus() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/stringOperations/infixPlus.kt");
             doTest(fileName);
         }
 

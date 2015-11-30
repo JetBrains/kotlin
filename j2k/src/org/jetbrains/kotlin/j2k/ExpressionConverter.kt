@@ -419,7 +419,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
 
         var identifier = Identifier(referenceName, isNullable).assignNoPrototype()
         if (qualifier != null && qualifier.getType() is PsiArrayType && referenceName == "length") {
-            identifier = Identifier("size()", isNullable).assignNoPrototype()
+            identifier = Identifier("size", isNullable).assignNoPrototype()
         }
         else if (qualifier != null) {
             if (target is KtLightField && target.getOrigin() is KtObjectDeclaration) {
@@ -429,7 +429,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         }
         else {
             if (target is PsiClass) {
-                if (PrimitiveType.values() any { it.getTypeName().asString() == target.getName() }) {
+                if (PrimitiveType.values().any { it.getTypeName().asString() == target.getName() }) {
                     result = Identifier(target.getQualifiedName()!!, false)
                     return
                 }
@@ -480,9 +480,21 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             result = MethodCallExpression.buildNotNull(operandConverted, typeConversion)
         }
         else {
-            val typeConverted = typeConverter.convertType(castType.getType(),
-                                                          if (operandConverted.isNullable) Nullability.Nullable else Nullability.NotNull)
+            val nullability = if (operandConverted.isNullable && !expression.isQualifier())
+                Nullability.Nullable
+            else
+                Nullability.NotNull
+            val typeConverted = typeConverter.convertType(castType.type, nullability)
             result = TypeCastExpression(typeConverted, operandConverted)
+        }
+    }
+
+    private fun PsiExpression.isQualifier(): Boolean {
+        val parent = parent
+        when (parent) {
+            is PsiParenthesizedExpression -> return parent.isQualifier()
+            is PsiReferenceExpression -> return this == parent.qualifierExpression
+            else -> return false
         }
     }
 

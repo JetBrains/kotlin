@@ -144,18 +144,18 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         return null;
     }
 
-    public static void markLineNumberForSyntheticFunction(@Nullable ClassDescriptor declarationDescriptor, @NotNull InstructionAdapter v) {
+    public static void markLineNumberForDescriptor(@Nullable ClassDescriptor declarationDescriptor, @NotNull InstructionAdapter v) {
         if (declarationDescriptor == null) {
             return;
         }
 
         PsiElement classElement = DescriptorToSourceUtils.getSourceFromDescriptor(declarationDescriptor);
         if (classElement != null) {
-            markLineNumberForSyntheticFunction(classElement, v);
+            markLineNumberForElement(classElement, v);
         }
     }
 
-    public static void markLineNumberForSyntheticFunction(@NotNull PsiElement element, @NotNull InstructionAdapter v) {
+    public static void markLineNumberForElement(@NotNull PsiElement element, @NotNull InstructionAdapter v) {
         Integer lineNumber = CodegenUtil.getLineNumberForElement(element, false);
         if (lineNumber != null) {
             Label label = new Label();
@@ -273,13 +273,8 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         String outerClassInternalName = null;
         if (containing instanceof ClassDescriptor) {
             outerClassInternalName = typeMapper.mapClass((ClassDescriptor) containing).getInternalName();
-        } /* disabled cause of KT-7775
-        else if (containing instanceof ScriptDescriptor) {
-            outerClassInternalName = asmTypeForScriptDescriptor(bindingContext, (ScriptDescriptor) containing).getInternalName();
-        }*/
-
+        }
         String innerName = innerClass.getName().isSpecial() ? null : innerClass.getName().asString();
-
         String innerClassInternalName = typeMapper.mapClass(innerClass).getInternalName();
         v.visitInnerClass(innerClassInternalName, outerClassInternalName, innerName, calculateInnerClassAccessFlags(innerClass));
     }
@@ -320,10 +315,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
                 return FileClasses.getFileClassType(fileClassesProvider, element.getContainingKtFile());
             }
         }
-        /*disabled cause of KT-7775
-        else if (outermost instanceof ScriptContext) {
-            return asmTypeForScriptDescriptor(bindingContext, ((ScriptContext) outermost).getScriptDescriptor());
-        }*/
+
         return null;
     }
 
@@ -373,8 +365,8 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
                     initializeProperty(codegen.invoke(), (KtProperty) declaration);
                 }
             }
-            else if (declaration instanceof KtClassInitializer) {
-                KtExpression body = ((KtClassInitializer) declaration).getBody();
+            else if (declaration instanceof KtAnonymousInitializer) {
+                KtExpression body = ((KtAnonymousInitializer) declaration).getBody();
                 if (body != null) {
                     codegen.invoke().gen(body, Type.VOID_TYPE);
                 }
@@ -492,13 +484,13 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         if (delegatedProperties.isEmpty()) return;
 
         v.newField(NO_ORIGIN, ACC_PRIVATE | ACC_STATIC | ACC_FINAL | ACC_SYNTHETIC, JvmAbi.DELEGATED_PROPERTIES_ARRAY_NAME,
-                   "[" + PROPERTY_METADATA_TYPE, null, null);
+                   "[" + K_PROPERTY_TYPE, null, null);
 
         if (state.getClassBuilderMode() == ClassBuilderMode.LIGHT_CLASSES) return;
 
         InstructionAdapter iv = createOrGetClInitCodegen().v;
         iv.iconst(delegatedProperties.size());
-        iv.newarray(PROPERTY_METADATA_TYPE);
+        iv.newarray(K_PROPERTY_TYPE);
 
         for (int i = 0, size = delegatedProperties.size(); i < size; i++) {
             PropertyDescriptor property =
@@ -537,12 +529,12 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
                 );
             }
 
-            value.put(PROPERTY_METADATA_TYPE, iv);
+            value.put(K_PROPERTY_TYPE, iv);
 
-            iv.astore(PROPERTY_METADATA_TYPE);
+            iv.astore(K_PROPERTY_TYPE);
         }
 
-        iv.putstatic(thisAsmType.getInternalName(), JvmAbi.DELEGATED_PROPERTIES_ARRAY_NAME, "[" + PROPERTY_METADATA_TYPE);
+        iv.putstatic(thisAsmType.getInternalName(), JvmAbi.DELEGATED_PROPERTIES_ARRAY_NAME, "[" + K_PROPERTY_TYPE);
     }
 
     public String getClassName() {
@@ -609,9 +601,10 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
                     new FunctionGenerationStrategy.CodegenBased<FunctionDescriptor>(state, accessor) {
                         @Override
                         public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
-                            markLineNumberForSyntheticFunction(element, codegen.v);
+                            markLineNumberForElement(element, codegen.v);
 
-                            generateMethodCallTo(original, accessor, codegen.v);
+                            generateMethodCallTo(original, accessor, codegen.v).coerceTo(signature.getReturnType(), codegen.v);
+
                             codegen.v.areturn(signature.getReturnType());
                         }
                     }
@@ -639,7 +632,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
 
                     InstructionAdapter iv = codegen.v;
 
-                    markLineNumberForSyntheticFunction(element, iv);
+                    markLineNumberForElement(element, iv);
 
                     Type[] argTypes = signature.getAsmMethod().getArgumentTypes();
                     for (int i = 0, reg = 0; i < argTypes.length; i++) {
@@ -650,7 +643,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
                     }
 
                     if (callableDescriptor instanceof PropertyGetterDescriptor) {
-                        property.put(property.type, iv);
+                        property.put(signature.getReturnType(), iv);
                     }
                     else {
                         property.store(StackValue.onStack(property.type), iv, true);
@@ -680,7 +673,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         }
     }
 
-    private void generateMethodCallTo(
+    private StackValue generateMethodCallTo(
             @NotNull FunctionDescriptor functionDescriptor,
             @Nullable FunctionDescriptor accessorDescriptor,
             @NotNull InstructionAdapter iv
@@ -716,5 +709,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         }
 
         callableMethod.genInvokeInstruction(iv);
+
+        return StackValue.onStack(callableMethod.getReturnType());
     }
 }

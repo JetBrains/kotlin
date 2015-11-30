@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.components.ExternalAnnotationResolver
-import org.jetbrains.kotlin.load.java.components.ExternalSignatureResolver
+import org.jetbrains.kotlin.load.java.components.SignaturePropagator
 import org.jetbrains.kotlin.load.java.components.JavaResolverCache
 import org.jetbrains.kotlin.load.java.components.SamConversionResolver
 import org.jetbrains.kotlin.load.java.lazy.types.LazyJavaTypeResolver
@@ -42,7 +42,7 @@ class JavaResolverComponents(
         val kotlinClassFinder: KotlinClassFinder,
         val deserializedDescriptorResolver: DeserializedDescriptorResolver,
         val externalAnnotationResolver: ExternalAnnotationResolver,
-        val externalSignatureResolver: ExternalSignatureResolver,
+        val signaturePropagator: SignaturePropagator,
         val errorReporter: ErrorReporter,
         val javaResolverCache: JavaResolverCache,
         val javaPropertyInitializerEvaluator: JavaPropertyInitializerEvaluator,

@@ -16,8 +16,9 @@
 
 package kotlin.text
 
-import java.util.regex.Pattern
+import java.util.*
 import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 private interface FlagEnum {
     public val value: Int
@@ -25,8 +26,10 @@ private interface FlagEnum {
 }
 private fun Iterable<FlagEnum>.toInt(): Int =
         this.fold(0, { value, option -> value or option.value })
-private fun <T: FlagEnum> fromInt(value: Int, allValues: Array<T>): Set<T> =
-        allValues.filter({ value and it.mask == it.value }).toSet()
+private inline fun <reified T> fromInt(value: Int): Set<T> where T : FlagEnum, T: Enum<T> =
+        Collections.unmodifiableSet(EnumSet.allOf(T::class.java).apply {
+            retainAll { value and it.mask == it.value }
+        })
 
 /**
  * Provides enumeration values to use to set regular expression options.
@@ -106,9 +109,9 @@ public class Regex internal constructor(private val nativePattern: Pattern) {
         get() = nativePattern.pattern()
 
     /** The set of options that were used to create this regular expression.  */
-    public val options: Set<RegexOption> = fromInt(nativePattern.flags(), RegexOption.values())
+    public val options: Set<RegexOption> = fromInt(nativePattern.flags())
 
-    @Deprecated("To get the Matcher from java.util.regex.Pattern use toPattern to convert string to Pattern, or migrate to Regex API")
+    @Deprecated("To get the Matcher from java.util.regex.Pattern use toPattern to convert string to Pattern, or migrate to Regex API", ReplaceWith("toPattern().matcher(input)"), DeprecationLevel.ERROR)
     public fun matcher(input: CharSequence): Matcher = nativePattern.matcher(input)
 
     /** Indicates whether the regular expression matches the entire [input]. */
@@ -117,7 +120,7 @@ public class Regex internal constructor(private val nativePattern: Pattern) {
     /** Indicates whether the regular expression can find at least one match in the specified [input]. */
     public fun containsMatchIn(input: CharSequence): Boolean = nativePattern.matcher(input).find()
 
-    @Deprecated("Use containsMatchIn() or 'in' operator instead.", ReplaceWith("this in input"))
+    @Deprecated("Use containsMatchIn() or 'in' operator instead.", ReplaceWith("this in input"), DeprecationLevel.ERROR)
     public fun hasMatch(input: CharSequence): Boolean = containsMatchIn(input)
 
     /**
@@ -128,7 +131,7 @@ public class Regex internal constructor(private val nativePattern: Pattern) {
      */
     public fun find(input: CharSequence, startIndex: Int = 0): MatchResult? = nativePattern.matcher(input).findNext(startIndex, input)
 
-    @Deprecated("Use find() instead.", ReplaceWith("find(input, startIndex)"))
+    @Deprecated("Use find() instead.", ReplaceWith("find(input, startIndex)"), DeprecationLevel.ERROR)
     public fun match(input: CharSequence, startIndex: Int = 0): MatchResult? = find(input, startIndex)
 
     /**
@@ -136,7 +139,7 @@ public class Regex internal constructor(private val nativePattern: Pattern) {
      */
     public fun findAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> = sequence({ find(input, startIndex) }, { match -> match.next() })
 
-    @Deprecated("Use findAll() instead.", ReplaceWith("findAll(input, startIndex)"))
+    @Deprecated("Use findAll() instead.", ReplaceWith("findAll(input, startIndex)"), DeprecationLevel.ERROR)
     public fun matchAll(input: CharSequence, startIndex: Int = 0): Sequence<MatchResult> = findAll(input, startIndex)
 
     /**
@@ -162,13 +165,13 @@ public class Regex internal constructor(private val nativePattern: Pattern) {
         var match: MatchResult? = find(input) ?: return input.toString()
 
         var lastStart = 0
-        val length = input.length()
+        val length = input.length
         val sb = StringBuilder(length)
         do {
             val foundMatch = match!!
             sb.append(input, lastStart, foundMatch.range.start)
             sb.append(transform(foundMatch))
-            lastStart = foundMatch.range.end + 1
+            lastStart = foundMatch.range.endInclusive + 1
             match = foundMatch.next()
         } while (lastStart < length && match != null)
 
@@ -256,7 +259,7 @@ private class MatcherMatchResult(private val matcher: Matcher, private val input
 
     override fun next(): MatchResult? {
         val nextIndex = matchResult.end() + if (matchResult.end() == matchResult.start()) 1 else 0
-        return if (nextIndex <= input.length()) matcher.findNext(nextIndex, input) else null
+        return if (nextIndex <= input.length) matcher.findNext(nextIndex, input) else null
     }
 }
 

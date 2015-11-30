@@ -1,10 +1,10 @@
-package com.myapp
+package test
 
 import android.app.Activity
 import android.view.View
 import android.widget.*
-import kotlinx.android.synthetic.layout.*
-import kotlinx.android.synthetic.layout.view.*
+import kotlinx.android.synthetic.main.layout.*
+import kotlinx.android.synthetic.main.layout.view.*
 
 class R {
     class id {

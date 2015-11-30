@@ -5,7 +5,7 @@ import a.B
 import a.hasNext
 import a.next
 
-fun A.iterator() = B()
+operator fun A.iterator() = B()
 
 fun f() {
     for (i in A()) {

@@ -125,7 +125,7 @@ class KotlinGenerateSecondaryConstructorAction : KotlinGenerateMemberActionBase<
 
         return with(info) {
             val prototypes = if (superConstructors.isNotEmpty()) {
-                superConstructors.map { generateConstructor(classDescriptor, propertiesToInitialize, it) }.filterNotNull()
+                superConstructors.mapNotNull { generateConstructor(classDescriptor, propertiesToInitialize, it) }
             } else {
                 generateConstructor(classDescriptor, propertiesToInitialize, null).singletonOrEmptyList()
             }

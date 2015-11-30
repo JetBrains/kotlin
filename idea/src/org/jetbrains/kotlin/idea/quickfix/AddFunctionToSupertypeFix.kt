@@ -119,7 +119,7 @@ class AddFunctionToSupertypeFix private constructor(
             if (descriptors.isEmpty()) return null
 
             val project = diagnostic.psiFile.project
-            val functionData = descriptors.map { createFunctionData(it, project) }.filterNotNull()
+            val functionData = descriptors.mapNotNull { createFunctionData(it, project) }
             if (functionData.isEmpty()) return null
 
             return AddFunctionToSupertypeFix(function, functionData)
@@ -169,9 +169,7 @@ class AddFunctionToSupertypeFix private constructor(
                 }
             })
 
-            return supertypes
-                    .map { it.constructor.declarationDescriptor as? ClassDescriptor }
-                    .filterNotNull()
+            return supertypes.mapNotNull { it.constructor.declarationDescriptor as? ClassDescriptor }
         }
 
         private fun generateFunctionSignatureForType(functionDescriptor: FunctionDescriptor, typeDescriptor: ClassDescriptor): FunctionDescriptor {

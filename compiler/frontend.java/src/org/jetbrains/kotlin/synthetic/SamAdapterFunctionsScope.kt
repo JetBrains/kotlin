@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.synthetic
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
@@ -78,8 +77,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : BaseImportingSc
         return receiverTypes.flatMapTo(LinkedHashSet<FunctionDescriptor>()) { type ->
             type.memberScope.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS)
                     .filterIsInstance<FunctionDescriptor>()
-                    .map { extensionForFunction(it.original) }
-                    .filterNotNull()
+                    .mapNotNull { extensionForFunction(it.original) }
         }
     }
 
@@ -117,7 +115,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : BaseImportingSc
                 //TODO: non-inner classes
                 for (parent in ownerClass.parentsWithSelf) {
                     if (parent !is ClassDescriptor) break
-                    sourceTypeParams += parent.typeConstructor.parameters
+                    sourceTypeParams += parent.declaredTypeParameters
                 }
                 //TODO: duplicated parameter names
 
@@ -134,6 +132,9 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : BaseImportingSc
 
                 descriptor.initialize(receiverType, null, typeParameters, valueParameters, returnType,
                                       Modality.FINAL, visibility)
+
+                descriptor.isOperator = sourceFunction.isOperator
+                descriptor.isInfix = sourceFunction.isInfix
 
                 return descriptor
             }
@@ -161,11 +162,13 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : BaseImportingSc
                 newOwner: DeclarationDescriptor,
                 newModality: Modality,
                 newVisibility: Visibility,
-                newIsOperator: Boolean,
-                newIsInfix: Boolean,
-                newIsExternal: Boolean,
-                newIsInline: Boolean,
-                newIsTailrec: Boolean,
+                isOperator: Boolean,
+                isInfix: Boolean,
+                isExternal: Boolean,
+                isInline: Boolean,
+                isTailrec: Boolean,
+                hasStableParameterNames: Boolean,
+                hasSynthesizedParameterNames: Boolean,
                 original: FunctionDescriptor?,
                 copyOverrides: Boolean,
                 kind: CallableMemberDescriptor.Kind,
@@ -178,7 +181,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : BaseImportingSc
         ): FunctionDescriptor? {
             val descriptor = super.doSubstitute(
                     originalSubstitutor, newOwner, newModality, newVisibility,
-                    newIsOperator, newIsInfix, newIsExternal, newIsInline, newIsTailrec, original,
+                    isOperator, isInfix, isExternal, isInline, isTailrec, hasStableParameterNames, hasSynthesizedParameterNames, original,
                     copyOverrides, kind, newValueParameterDescriptors, newExtensionReceiverParameterType, newReturnType, name,
                     preserveSource, signatureChange)
                     as MyFunctionDescriptor? ?: return null
@@ -199,7 +202,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : BaseImportingSc
             }
 
             val sourceFunctionSubstitutor = TypeSubstitutor.create(substitutionMap)
-            descriptor.sourceFunction = original.sourceFunction.substitute(sourceFunctionSubstitutor)!!
+            descriptor.sourceFunction = original.sourceFunction.substitute(sourceFunctionSubstitutor)
 
             return descriptor
         }

@@ -55,7 +55,7 @@ public val PsiReference.unwrappedTargets: Set<PsiElement>
         }
 
         return when (this) {
-            is PsiPolyVariantReference -> multiResolve(false).map { it.getElement()?.adjust() }.filterNotNullTo(HashSet<PsiElement>())
+            is PsiPolyVariantReference -> multiResolve(false).mapNotNullTo(HashSet<PsiElement>()) { it.getElement()?.adjust() }
             else -> emptyOrSingletonList(resolve()?.adjust()).toSet()
         }
     }
@@ -120,7 +120,7 @@ private fun PsiElement.isConstructorOf(unwrappedCandidate: PsiElement) =
     // call to Kotlin constructor
     (this is KtConstructor<*> && getContainingClassOrObject() == unwrappedCandidate)
 
-fun AbstractJetReference<out KtExpression>.renameImplicitConventionalCall(newName: String?): KtExpression {
+fun AbstractKtReference<out KtExpression>.renameImplicitConventionalCall(newName: String?): KtExpression {
     if (newName == null) return expression
 
     val (newExpression, newNameElement) = OperatorToFunctionIntention.convert(expression)

@@ -1,4 +1,4 @@
-fun doSomething<T>(a: T) {}
+fun <T> doSomething(a: T) {}
 
 fun foo() {
     fun test(): Boolean { return false }

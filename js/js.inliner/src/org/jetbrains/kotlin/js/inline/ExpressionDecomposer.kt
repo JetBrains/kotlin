@@ -292,7 +292,7 @@ internal class ExpressionDecomposer private constructor(
     }
 
     inline
-    private fun withNewAdditionalStatements<T>(fn: ()->T): T {
+    private fun <T> withNewAdditionalStatements(fn: ()->T): T {
         val backup = additionalStatements
         additionalStatements = SmartList<JsStatement>()
         val result = fn()

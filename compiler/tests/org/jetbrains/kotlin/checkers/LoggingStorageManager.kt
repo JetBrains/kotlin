@@ -16,19 +16,14 @@
 
 package org.jetbrains.kotlin.checkers
 
-import org.jetbrains.kotlin.checkers.LoggingStorageManager.CallData
+import org.jetbrains.kotlin.storage.ObservableStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
-import java.lang.reflect.*
-import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull
-import org.jetbrains.kotlin.storage.MemoizedFunctionToNullable
-import org.jetbrains.kotlin.storage.NotNullLazyValue
-import org.jetbrains.kotlin.storage.NullableLazyValue
-import java.util.concurrent.ConcurrentMap
+import java.lang.reflect.Field
+import java.lang.reflect.GenericDeclaration
 
 public class LoggingStorageManager(
         private val delegate: StorageManager,
-        private val callHandler: (lambda: Any, call: LoggingStorageManager.CallData?) -> Unit
-) : StorageManager {
+        private val callHandler: (lambda: Any, call: LoggingStorageManager.CallData?) -> Unit) : ObservableStorageManager(delegate) {
 
     public class CallData(
             val fieldOwner: Any?,
@@ -39,21 +34,21 @@ public class LoggingStorageManager(
     )
 
     // Creating objects here because we need a reference to it
-    private val <T> (() -> T).logged: () -> T
+    override val <T> (() -> T).observable: () -> T
         get() = object : () -> T {
             override fun invoke(): T {
-                val result = this@logged()
-                callHandler(this@logged, computeCallerData(this@logged, this, listOf(), result))
+                val result = this@observable()
+                callHandler(this@observable, computeCallerData(this@observable, this, listOf(), result))
                 return result
             }
         }
 
     // Creating objects here because we need a reference to it
-    private val <K, V> ((K) -> V).logged: (K) -> V
+    override val <K, V> ((K) -> V).observable: (K) -> V
         get() = object : (K) -> V {
             override fun invoke(p1: K): V {
-                val result = this@logged(p1)
-                callHandler(this@logged, computeCallerData(this@logged, this, listOf(p1), result))
+                val result = this@observable(p1)
+                callHandler(this@observable, computeCallerData(this@observable, this, listOf(p1), result))
                 return result
             }
         }
@@ -129,49 +124,5 @@ public class LoggingStorageManager(
         }
 
         return result
-    }
-
-    override fun createMemoizedFunction<K, V: Any>(compute: (K) -> V): MemoizedFunctionToNotNull<K, V> {
-        return delegate.createMemoizedFunction(compute.logged)
-    }
-
-    override fun createMemoizedFunctionWithNullableValues<K, V: Any>(compute: (K) -> V?): MemoizedFunctionToNullable<K, V> {
-        return delegate.createMemoizedFunctionWithNullableValues(compute.logged)
-    }
-
-    override fun createMemoizedFunction<K, V: Any>(compute: (K) -> V, map: ConcurrentMap<K, Any>): MemoizedFunctionToNotNull<K, V> {
-        return delegate.createMemoizedFunction(compute.logged, map)
-    }
-
-    override fun createMemoizedFunctionWithNullableValues<K, V: Any>(compute: (K) -> V, map: ConcurrentMap<K, Any>): MemoizedFunctionToNullable<K, V> {
-        return delegate.createMemoizedFunctionWithNullableValues(compute.logged, map)
-    }
-
-    override fun createLazyValue<T: Any>(computable: () -> T): NotNullLazyValue<T> {
-        return delegate.createLazyValue(computable.logged)
-    }
-
-    override fun createRecursionTolerantLazyValue<T: Any>(computable: () -> T, onRecursiveCall: T): NotNullLazyValue<T> {
-        return delegate.createRecursionTolerantLazyValue(computable.logged, onRecursiveCall)
-    }
-
-    override fun createLazyValueWithPostCompute<T: Any>(computable: () -> T, onRecursiveCall: ((Boolean) -> T)?, postCompute: (T) -> Unit): NotNullLazyValue<T> {
-        return delegate.createLazyValueWithPostCompute(computable.logged, onRecursiveCall, postCompute)
-    }
-
-    override fun createNullableLazyValue<T: Any>(computable: () -> T?): NullableLazyValue<T> {
-        return delegate.createNullableLazyValue(computable.logged)
-    }
-
-    override fun createRecursionTolerantNullableLazyValue<T: Any>(computable: () -> T?, onRecursiveCall: T?): NullableLazyValue<T> {
-        return delegate.createRecursionTolerantNullableLazyValue(computable.logged, onRecursiveCall)
-    }
-
-    override fun createNullableLazyValueWithPostCompute<T: Any>(computable: () -> T?, postCompute: (T?) -> Unit): NullableLazyValue<T> {
-        return delegate.createNullableLazyValueWithPostCompute(computable.logged, postCompute)
-    }
-
-    override fun compute<T>(computable: () -> T): T {
-        return delegate.compute(computable.logged)
     }
 }

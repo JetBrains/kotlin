@@ -38,10 +38,21 @@ public class RangeCodegenUtil {
     private static final ImmutableMap<FqName, PrimitiveType> RANGE_TO_ELEMENT_TYPE;
     private static final ImmutableMap<FqName, PrimitiveType> PROGRESSION_TO_ELEMENT_TYPE;
 
+    private static PrimitiveType[] supportedRangeTypes() {
+        return new PrimitiveType[] {
+                PrimitiveType.CHAR,
+                PrimitiveType.INT,
+                PrimitiveType.LONG,
+                // deprecated:
+                PrimitiveType.BYTE,
+                PrimitiveType.SHORT,
+        };
+    }
+
     static {
         ImmutableMap.Builder<FqName, PrimitiveType> rangeBuilder = ImmutableMap.builder();
         ImmutableMap.Builder<FqName, PrimitiveType> progressionBuilder = ImmutableMap.builder();
-        for (PrimitiveType primitiveType : PrimitiveType.values()) {
+        for (PrimitiveType primitiveType : supportedRangeTypes()) {
             FqName rangeClassFqName = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier(primitiveType.getTypeName() + "Range"));
             FqName progressionClassFqName = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier(primitiveType.getTypeName() + "Progression"));
             rangeBuilder.put(rangeClassFqName, primitiveType);

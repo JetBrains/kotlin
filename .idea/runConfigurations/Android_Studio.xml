@@ -24,9 +24,7 @@
       <option name="BuildArtifacts" enabled="true">
         <artifact name="KotlinPlugin" />
       </option>
-      <option name="BuildArtifacts" enabled="true">
-        <artifact name="KotlinAndroidExtensions" />
-      </option>
+      <option name="BuildArtifacts" enabled="true" />
     </method>
   </configuration>
 </component>

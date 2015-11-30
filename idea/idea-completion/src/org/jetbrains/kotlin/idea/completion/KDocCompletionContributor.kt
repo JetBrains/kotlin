@@ -25,6 +25,7 @@ import com.intellij.patterns.StandardPatterns
 import com.intellij.util.ProcessingContext
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.core.ExpectedInfo
 import org.jetbrains.kotlin.idea.kdoc.getParamDescriptors
 import org.jetbrains.kotlin.idea.kdoc.getResolutionScope
 import org.jetbrains.kotlin.idea.util.CallType

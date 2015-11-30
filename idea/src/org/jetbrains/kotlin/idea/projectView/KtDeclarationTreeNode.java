@@ -51,7 +51,7 @@ public class KtDeclarationTreeNode extends AbstractPsiBasedNode<KtDeclaration> {
     protected void updateImpl(PresentationData data) {
         KtDeclaration declaration = getValue();
         if (declaration != null) {
-            String text = declaration instanceof KtClassInitializer ? CLASS_INITIALIZER : declaration.getName();
+            String text = declaration instanceof KtAnonymousInitializer ? CLASS_INITIALIZER : declaration.getName();
             if (text == null) return;
 
             KotlinCodeStyleSettings settings = CodeStyleSettingsManager.getInstance(getProject()).getCurrentSettings()

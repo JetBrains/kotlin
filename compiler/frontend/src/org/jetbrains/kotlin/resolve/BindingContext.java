@@ -131,6 +131,8 @@ public interface BindingContext {
     WritableSlice<KtExpression, ResolvedCall<FunctionDescriptor>> INDEXED_LVALUE_SET = Slices.createSimpleSlice();
 
     WritableSlice<KtExpression, KotlinType> SMARTCAST = Slices.createSimpleSlice();
+    WritableSlice<KtExpression, Boolean> SMARTCAST_NULL = Slices.createSimpleSlice();
+    WritableSlice<KtExpression, KotlinType> IMPLICIT_RECEIVER_SMARTCAST = Slices.createSimpleSlice();
 
     WritableSlice<KtWhenExpression, Boolean> EXHAUSTIVE_WHEN = Slices.createSimpleSlice();
 
@@ -212,7 +214,7 @@ public interface BindingContext {
 
     WritableSlice[] DECLARATIONS_TO_DESCRIPTORS = new WritableSlice[] {
             CLASS, TYPE_PARAMETER, FUNCTION, CONSTRUCTOR, VARIABLE, VALUE_PARAMETER, PROPERTY_ACCESSOR,
-            PRIMARY_CONSTRUCTOR_PARAMETER
+            PRIMARY_CONSTRUCTOR_PARAMETER, SCRIPT
     };
 
     @SuppressWarnings("unchecked")

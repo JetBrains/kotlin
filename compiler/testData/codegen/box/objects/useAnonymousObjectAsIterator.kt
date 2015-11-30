@@ -1,6 +1,6 @@
 // KT-5869
 
-fun <T> Iterator<T>.iterator(): Iterator<T> = this
+operator fun <T> Iterator<T>.iterator(): Iterator<T> = this
 
 fun box(): String {
     val iterator = object : Iterator<Int> {

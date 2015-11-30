@@ -1,3 +1,3 @@
 package foo
 
-fun myRun<T>(f: () -> T) = f()
+fun <T> myRun(f: () -> T) = f()

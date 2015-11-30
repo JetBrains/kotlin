@@ -96,7 +96,7 @@ abstract class WritableScopeStorage(val redeclarationHandler: RedeclarationHandl
 
     private fun Int.descriptorByIndex() = addedDescriptors[this]
 
-    private fun IntList?.plus(value: Int) = IntList(value, this)
+    private operator fun IntList?.plus(value: Int) = IntList(value, this)
 
     private fun <TDescriptor: DeclarationDescriptor> IntList.toDescriptors(): List<TDescriptor> {
         val result = ArrayList<TDescriptor>(1)

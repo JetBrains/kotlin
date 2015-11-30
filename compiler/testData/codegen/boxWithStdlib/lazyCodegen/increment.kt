@@ -10,7 +10,7 @@ class A(val p: Int) {
 
     var prop = this
 
-    fun inc(): A {
+    operator fun inc(): A {
         return A(p+1)
     }
 

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.descriptors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.KotlinType;
+import org.jetbrains.kotlin.types.TypeSubstitutor;
 
 import java.util.List;
 
@@ -39,12 +40,26 @@ public interface ConstructorDescriptor extends FunctionDescriptor {
     @Override
     ConstructorDescriptor getOriginal();
 
+    @NotNull
+    @Override
+    ConstructorDescriptor substitute(@NotNull TypeSubstitutor substitutor);
+
     /**
      * @return "&lt;init&gt;" -- name is not stored for constructors
      */
     @NotNull
     @Override
     Name getName();
+
+    @NotNull
+    @Override
+    ConstructorDescriptor copy(
+            DeclarationDescriptor newOwner,
+            Modality modality,
+            Visibility visibility,
+            Kind kind,
+            boolean copyOverrides
+    );
 
     boolean isPrimary();
 }

@@ -6,7 +6,7 @@ interface DataEx
 class Pair<A, B>(val a: A, val b: B)
 
 // SIBLING:
-fun foo<V: Data>(v: V): Pair<Int, V> where V: DataEx {
+fun <V: Data> foo(v: V): Pair<Int, V> where V: DataEx {
     return pair(v)
 }
 

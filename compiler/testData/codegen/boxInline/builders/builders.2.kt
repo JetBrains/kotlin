@@ -23,7 +23,7 @@ abstract class Tag(val name: String) : Element() {
     val children = ArrayList<Element>()
     val attributes = HashMap<String, String>()
 
-    inline protected fun initTag<T : Element>(tag: T, init: T.() -> Unit): T {
+    inline protected fun <T : Element> initTag(tag: T, init: T.() -> Unit): T {
         tag.init()
         children.add(tag)
         return tag
@@ -47,7 +47,7 @@ abstract class Tag(val name: String) : Element() {
 }
 
 abstract class TagWithText(name: String) : Tag(name) {
-    fun String.plus() {
+    operator fun String.unaryPlus() {
         children.add(TextElement(this))
     }
 }

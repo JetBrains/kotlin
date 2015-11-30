@@ -45,8 +45,8 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
+import org.jetbrains.kotlin.idea.refactoring.introduce.IntroduceUtilKt;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.idea.util.string.StringUtilKt;
 import org.jetbrains.kotlin.psi.*;
@@ -332,15 +332,15 @@ public class KotlinRefactoringUtil {
 
     public static void selectExpression(
             @NotNull Editor editor,
-            @NotNull PsiFile file,
+            @NotNull KtFile file,
             @NotNull SelectExpressionCallback callback) throws IntroduceRefactoringException {
         selectExpression(editor, file, true, callback);
     }
 
     public static void selectExpression(@NotNull Editor editor,
-                                        @NotNull PsiFile file,
-                                        boolean failOnEmptySuggestion,
-                                        @NotNull SelectExpressionCallback callback) throws IntroduceRefactoringException {
+            @NotNull KtFile file,
+            boolean failOnEmptySuggestion,
+            @NotNull SelectExpressionCallback callback) throws IntroduceRefactoringException {
         if (editor.getSelectionModel().hasSelection()) {
             int selectionStart = editor.getSelectionModel().getSelectionStart();
             int selectionEnd = editor.getSelectionModel().getSelectionEnd();
@@ -439,7 +439,7 @@ public class KotlinRefactoringUtil {
         final ScopeHighlighter highlighter = new ScopeHighlighter(editor);
 
         final JList list = new JBList(model);
-        
+
         list.setCellRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(@NotNull JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
@@ -478,7 +478,7 @@ public class KotlinRefactoringUtil {
                 highlighter.dropHighlight();
             }
         }).createPopup().showInBestPositionFor(editor);
-        
+
     }
 
     public static String getExpressionShortText(@NotNull KtElement element) { //todo: write appropriate implementation
@@ -487,9 +487,9 @@ public class KotlinRefactoringUtil {
 
     @Nullable
     private static KtExpression findExpression(
-            @NotNull PsiFile file, int startOffset, int endOffset, boolean failOnNoExpression
+            @NotNull KtFile file, int startOffset, int endOffset, boolean failOnNoExpression
     ) throws IntroduceRefactoringException {
-        KtExpression element = CodeInsightUtils.findExpression(file, startOffset, endOffset);
+        KtExpression element = IntroduceUtilKt.findExpressionOrStringFragment(file, startOffset, endOffset);
         if (element == null) {
             //todo: if it's infix expression => add (), then commit document then return new created expression
 

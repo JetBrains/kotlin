@@ -89,6 +89,7 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
             Errors.USELESS_ELVIS,
             ErrorsJvm.POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION,
             Errors.DEPRECATION,
+            Errors.DEPRECATION_ERROR,
             Errors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION,
             Errors.OPERATOR_MODIFIER_REQUIRED,
             Errors.DEPRECATED_UNARY_PLUS_MINUS,
@@ -97,7 +98,8 @@ public class KotlinCleanupInspection(): LocalInspectionTool(), CleanupLocalInspe
             Errors.CALLABLE_REFERENCE_TO_MEMBER_OR_EXTENSION_WITH_EMPTY_LHS,
             Errors.DEPRECATED_TYPE_PARAMETER_SYNTAX,
             Errors.MISPLACED_TYPE_PARAMETER_CONSTRAINTS,
-            Errors.INVOKE_ON_EXTENSION_FUNCTION_WITH_EXPLICIT_DISPATCH_RECEIVER
+            Errors.INVOKE_ON_EXTENSION_FUNCTION_WITH_EXPLICIT_DISPATCH_RECEIVER,
+            Errors.COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT
     )
 
     private fun Diagnostic.isObsoleteLabel(): Boolean {

@@ -100,6 +100,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
+        @TestMetadata("kt10136.kt")
+        public void testKt10136() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/annotations/kt10136.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("nestedClassPropertyAsParameter.kt")
         public void testNestedClassPropertyAsParameter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/annotations/nestedClassPropertyAsParameter.kt");
@@ -1528,12 +1534,6 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             doTestWithStdlib(fileName);
         }
 
-        @TestMetadata("infixCallBinary.kt")
-        public void testInfixCallBinary() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/evaluate/infixCallBinary.kt");
-            doTestWithStdlib(fileName);
-        }
-
         @TestMetadata("intrincics.kt")
         public void testIntrincics() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/evaluate/intrincics.kt");
@@ -1993,6 +1993,18 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         @TestMetadata("defaultObjectMapping.kt")
         public void testDefaultObjectMapping() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/intrinsics/defaultObjectMapping.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("kt10131.kt")
+        public void testKt10131() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/intrinsics/kt10131.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("kt10131a.kt")
+        public void testKt10131a() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/intrinsics/kt10131a.kt");
             doTestWithStdlib(fileName);
         }
 
@@ -2704,6 +2716,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
         @TestMetadata("rangeContainsString.kt")
         public void testRangeContainsString() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/ranges/rangeContainsString.kt");
+            doTestWithStdlib(fileName);
+        }
+
+        @TestMetadata("safeCallRangeTo.kt")
+        public void testSafeCallRangeTo() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/ranges/safeCallRangeTo.kt");
             doTestWithStdlib(fileName);
         }
 

@@ -73,7 +73,7 @@ class Modifiers(modifiers: Collection<Modifier>) : Element() {
 fun Modifiers.filter(predicate: (Modifier) -> Boolean): Modifiers
         = Modifiers(modifiers.filter(predicate)).assignPrototypesFrom(this)
 
-fun CodeBuilder.appendWithSpaceAfter(modifiers: Modifiers): CodeBuilder {
+infix fun CodeBuilder.appendWithSpaceAfter(modifiers: Modifiers): CodeBuilder {
     if (!modifiers.isEmpty) {
         this append modifiers append " "
     }

@@ -132,24 +132,18 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
         val fragments = packageView.fragments
         val packageProto = DescriptorSerializer.createTopLevel(extension).packageProto(fragments).build()
         packageProto.writeTo(packageStream)
-        write(destDir, BuiltInsSerializedResourcePaths.getPackageFilePath(fqName), packageStream,
-              BuiltInsSerializedResourcePaths.fallbackPaths.getPackageFilePath(fqName))
+        write(destDir, BuiltInsSerializedResourcePaths.getPackageFilePath(fqName), packageStream)
 
         val nameStream = ByteArrayOutputStream()
         extension.stringTable.serializeTo(nameStream)
-        write(destDir, BuiltInsSerializedResourcePaths.getStringTableFilePath(fqName), nameStream,
-              BuiltInsSerializedResourcePaths.fallbackPaths.getStringTableFilePath(fqName))
+        write(destDir, BuiltInsSerializedResourcePaths.getStringTableFilePath(fqName), nameStream)
     }
 
-    private fun write(destDir: File, fileName: String, stream: ByteArrayOutputStream, legacyFileName: String? = null) {
+    private fun write(destDir: File, fileName: String, stream: ByteArrayOutputStream) {
         totalSize += stream.size()
         totalFiles++
         File(destDir, fileName).parentFile.mkdirs()
         File(destDir, fileName).writeBytes(stream.toByteArray())
-
-        legacyFileName?.let { fileName ->
-            File(destDir, fileName).writeBytes(stream.toByteArray())
-        }
     }
 
     private fun serializeClass(

@@ -25,6 +25,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.psi.util.proximity.PsiProximityComparator
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.completion.smart.*
+import org.jetbrains.kotlin.idea.core.ExpectedInfo
 import org.jetbrains.kotlin.idea.core.ImportableFqNameClassifier
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.core.completion.PackageLookupObject
@@ -280,5 +281,20 @@ class PreferContextElementsWeigher(private val context: DeclarationDescriptor) :
         }
 
         return original in contextElements
+    }
+}
+
+object ByNameAlphabeticalWeigher : LookupElementWeigher("kotlin.byNameAlphabetical") {
+    override fun weigh(element: LookupElement): String? {
+        val lookupObject = element.`object` as? DeclarationLookupObject ?: return null
+        return lookupObject.name?.asString()
+    }
+}
+
+object PreferLessParametersWeigher : LookupElementWeigher("kotlin.preferLessParameters") {
+    override fun weigh(element: LookupElement): Int? {
+        val lookupObject = element.`object` as? DeclarationLookupObject ?: return null
+        val function = lookupObject.descriptor as? FunctionDescriptor ?: return null
+        return function.valueParameters.size
     }
 }

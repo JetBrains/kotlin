@@ -3,5 +3,5 @@ fun foo() {
     // It is possible in principle to provide smart cast here
     v<!UNSAFE_CALL!>.<!>length
     v = null
-    <!ALWAYS_NULL!>v<!><!UNSAFE_CALL!>.<!>length
+    <!DEBUG_INFO_CONSTANT!>v<!><!UNSAFE_CALL!>.<!>length
 }

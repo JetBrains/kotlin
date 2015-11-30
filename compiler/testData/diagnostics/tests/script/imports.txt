@@ -1,9 +1,9 @@
 package
 
 public final class Imports {
-    public constructor Imports()
+    public constructor Imports(/*0*/ args: kotlin.Array<kotlin.String>)
     public final val al: java.util.ArrayList<kotlin.String>? = null
-    public final val rv: kotlin.Unit
+    public final val args: kotlin.Array<kotlin.String>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

@@ -5,5 +5,3 @@ object Foo {
 fun test() {
     Foo.<caret>baz
 }
-
-

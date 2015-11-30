@@ -212,7 +212,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
 
             val stepTargets = KotlinSmartStepIntoHandler().findSmartStepTargets(position)
 
-            stepTargets.filterIsInstance<SmartStepTarget>().map {
+            stepTargets.filterIsInstance<SmartStepTarget>().mapNotNull {
                 stepTarget ->
                 when (stepTarget) {
                     is KotlinLambdaSmartStepTarget -> KotlinLambdaMethodFilter(stepTarget.getLambda(), stepTarget.getCallingExpressionLines()!!, stepTarget.isInline)
@@ -221,7 +221,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
                     else -> null
                 }
             }
-        }.filterNotNull()
+        }
     }
 
     protected fun SuspendContextImpl.printContext() {

@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.isVisible
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
-import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isImportDirectiveExpression
@@ -136,12 +135,11 @@ internal abstract class AutoImportFixBase<T: KtExpression>(expression: T) :
 
         if (!diagnostics.any { it.getFactory() in getSupportedErrors() }) return emptyList()
 
-        val resolutionScope = element.getResolutionScope(bindingContext, file.getResolutionFacade())
-        val containingDescriptor = resolutionScope.ownerDescriptor
+        val resolutionFacade = element.getResolutionFacade()
 
         fun isVisible(descriptor: DeclarationDescriptor): Boolean {
             if (descriptor is DeclarationDescriptorWithVisibility) {
-                return descriptor.isVisible(containingDescriptor, bindingContext, element as? KtSimpleNameExpression)
+                return descriptor.isVisible(element, callTypeAndReceiver.receiver as? KtExpression, bindingContext, resolutionFacade)
             }
 
             return true
@@ -149,7 +147,7 @@ internal abstract class AutoImportFixBase<T: KtExpression>(expression: T) :
 
         val result = ArrayList<DeclarationDescriptor>()
 
-        val indicesHelper = KotlinIndicesHelper(element.getResolutionFacade(), searchScope, ::isVisible)
+        val indicesHelper = KotlinIndicesHelper(resolutionFacade, searchScope, ::isVisible)
 
         val expression = element
         if (expression is KtSimpleNameExpression) {

@@ -12,14 +12,14 @@ inline operator fun <T, U> Function1<T, U>.plusAssign(p: Function1<T, U>) {
     <!USAGE_IS_NOT_INLINABLE!>p<!> -= <!USAGE_IS_NOT_INLINABLE!>this<!>
 }
 
-operator fun <T, U, V> @Extension Function2<T, U, V>.minusAssign(ext : @Extension Function2<T, U, V>) {}
+operator fun <T, U, V> @ExtensionFunctionType Function2<T, U, V>.minusAssign(ext : @ExtensionFunctionType Function2<T, U, V>) {}
 
-inline <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun <T, U, V> @Extension Function2<T, U, V>.modAssign(ext : @Extension Function2<T, U, V>) = {
+inline <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun <T, U, V> @ExtensionFunctionType Function2<T, U, V>.modAssign(ext : @ExtensionFunctionType Function2<T, U, V>) = {
     this += ext
     ext += this
 }
 
-inline operator fun <T, U, V> @Extension Function2<T, U, V>.plusAssign(ext : @Extension Function2<T, U, V>) {
+inline operator fun <T, U, V> @ExtensionFunctionType Function2<T, U, V>.plusAssign(ext : @ExtensionFunctionType Function2<T, U, V>) {
     <!USAGE_IS_NOT_INLINABLE!>this<!> -= <!USAGE_IS_NOT_INLINABLE!>ext<!>
     <!USAGE_IS_NOT_INLINABLE!>ext<!> -= <!USAGE_IS_NOT_INLINABLE!>this<!>
 }

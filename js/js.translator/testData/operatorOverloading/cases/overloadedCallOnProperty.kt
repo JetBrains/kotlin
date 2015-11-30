@@ -5,7 +5,7 @@ var a = MyInt()
 class MyInt() {
     var b = 0
 
-    fun inc(): MyInt {
+    operator fun inc(): MyInt {
         val res = MyInt();
         res.b = b;
         res.b++;

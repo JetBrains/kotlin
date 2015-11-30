@@ -1,6 +1,0 @@
-package test
-
-public open class ExplicitFieldGettersAndSetters {
-    public constructor ExplicitFieldGettersAndSetters()
-    public final var foo: kotlin.String!
-}

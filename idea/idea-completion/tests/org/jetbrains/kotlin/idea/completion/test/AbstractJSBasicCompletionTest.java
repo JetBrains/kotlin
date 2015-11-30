@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.completion.test;
 import com.intellij.codeInsight.completion.CompletionType;
 import com.intellij.testFramework.LightProjectDescriptor;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryManager;
 import org.jetbrains.kotlin.idea.test.KotlinStdJSProjectDescriptor;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
@@ -35,12 +34,6 @@ public abstract class AbstractJSBasicCompletionTest extends KotlinFixtureComplet
     @Override
     public TargetPlatform getPlatform() {
         return JsPlatform.INSTANCE$;
-    }
-
-    @Override
-    protected void setUpFixture(@NotNull String testPath) {
-        super.setUpFixture(testPath);
-        KotlinJavaScriptLibraryManager.getInstance(getProject()).syncUpdateProjectLibrary();
     }
 
     @NotNull

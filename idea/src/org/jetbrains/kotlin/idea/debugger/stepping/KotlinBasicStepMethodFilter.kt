@@ -21,26 +21,22 @@ import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.NamedMethodFilter
 import com.intellij.util.Range
 import com.sun.jdi.Location
-import com.sun.jdi.Method
-import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.psi.KtConstructor
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtPropertyAccessor
+import org.jetbrains.kotlin.psi.*
 
 public class KotlinBasicStepMethodFilter(
-        val resolvedFunction: KtElement,
+        val resolvedElement: KtElement,
         val myCallingExpressionLines: Range<Int>
 ) : NamedMethodFilter {
     private val myTargetMethodName: String
 
     init {
-        myTargetMethodName = when (resolvedFunction) {
+        myTargetMethodName = when (resolvedElement) {
+            is KtAnonymousInitializer -> "<init>"
             is KtConstructor<*> -> "<init>"
-            is KtPropertyAccessor -> JvmAbi.getterName((resolvedFunction.getParent() as KtProperty).getName()!!)
-            else -> resolvedFunction.getName()!!
+            is KtPropertyAccessor -> JvmAbi.getterName((resolvedElement.getParent() as KtProperty).getName()!!)
+            else -> resolvedElement.getName()!!
         }
     }
 
@@ -52,7 +48,7 @@ public class KotlinBasicStepMethodFilter(
         val method = location.method()
         if (myTargetMethodName != method.name()) return false
 
-        val sourcePosition = runReadAction { SourcePosition.createFromElement(resolvedFunction) } ?: return false
+        val sourcePosition = runReadAction { SourcePosition.createFromElement(resolvedElement) } ?: return false
         val positionManager = process.getPositionManager() ?: return false
 
         val classes = positionManager.getAllClasses(sourcePosition)

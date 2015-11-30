@@ -1,9 +1,6 @@
 package templates
 
 import templates.Family.*
-import templates.DocExtensions.element
-import templates.DocExtensions.collection
-import templates.DocExtensions.prefixWithArticle
 
 
 fun elements(): List<GenericFunction> {
@@ -15,7 +12,7 @@ fun elements(): List<GenericFunction> {
 
         only(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives)
         doc { f -> "Returns `true` if [element] is found in the ${f.collection}." }
-        customSignature(Iterables, ArraysOfObjects, Sequences) { "contains(element: @kotlin.internal.NoInfer T)" }
+        typeParam("@kotlin.internal.OnlyInputTypes T")
         returns("Boolean")
         body(Iterables) {
             """
@@ -37,7 +34,7 @@ fun elements(): List<GenericFunction> {
         only(Iterables, Sequences, ArraysOfObjects)
         doc { "Returns `true` if [element] is found in the collection." }
         returns("Boolean")
-        deprecate(Deprecation("Use 'containsRaw' instead.", "containsRaw(element)"))
+        deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure.", "contains(element as T)") } }
         annotations("""
             @kotlin.jvm.JvmName("containsAny")
             @kotlin.internal.LowPriorityInOverloadResolution
@@ -54,15 +51,15 @@ fun elements(): List<GenericFunction> {
         }
         receiverAsterisk(Iterables, Sequences) { true }
         inline(true)
+        deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure.", "contains(element as Any?)") } }
         annotations("""@Suppress("NOTHING_TO_INLINE")""")
         returns("Boolean")
-        body { "return contains<Any?>(element)" }
     }
 
     templates add f("indexOf(element: T)") {
-        only(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives)
+        only(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives, Lists)
         doc { f -> "Returns first index of [element], or -1 if the ${f.collection} does not contain element." }
-        customSignature(Iterables, ArraysOfObjects, Sequences) { "indexOf(element: @kotlin.internal.NoInfer T)" }
+        typeParam("@kotlin.internal.OnlyInputTypes T")
         returns("Int")
         body { f ->
             """
@@ -105,13 +102,14 @@ fun elements(): List<GenericFunction> {
             return -1
            """
         }
+        body(Lists) { "return indexOf(element)" }
     }
 
     templates add f("indexOf(element: T)") {
-        only(Iterables, Sequences, ArraysOfObjects)
+        only(Iterables, Sequences, ArraysOfObjects, Lists)
         doc { "Returns first index of [element], or -1 if the collection does not contain element." }
         returns("Int")
-        deprecate(Deprecation("Use 'indexOfRaw' instead.", "indexOfRaw(element)"))
+        deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure.", "indexOf(element as T)") } }
         annotations("""
             @kotlin.jvm.JvmName("indexOfAny")
             @kotlin.internal.LowPriorityInOverloadResolution
@@ -129,16 +127,16 @@ fun elements(): List<GenericFunction> {
         }
         receiverAsterisk(Iterables, Sequences) { true }
         inline(true)
+        deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure.", "indexOf(element as Any?)") } }
         annotations("""@Suppress("NOTHING_TO_INLINE")""")
         returns("Int")
-        body { "return indexOf<Any?>(element)" }
         body(Lists) { "return (this as List<Any?>).indexOf(element)" }
     }
 
     templates add f("lastIndexOf(element: T)") {
-        only(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives)
+        only(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives, Lists)
         doc { f -> "Returns last index of [element], or -1 if the ${f.collection} does not contain element." }
-        customSignature(Iterables, ArraysOfObjects, Sequences) { "lastIndexOf(element: @kotlin.internal.NoInfer T)" }
+        typeParam("@kotlin.internal.OnlyInputTypes T")
         returns("Int")
         body { f ->
             """
@@ -182,13 +180,14 @@ fun elements(): List<GenericFunction> {
             return -1
            """
         }
+        body(Lists) { "return lastIndexOf(element)" }
     }
 
     templates add f("lastIndexOf(element: T)") {
-        only(Iterables, Sequences, ArraysOfObjects)
+        only(Iterables, Sequences, ArraysOfObjects, Lists)
         doc { "Returns last index of [element], or -1 if the collection does not contain element." }
         returns("Int")
-        deprecate(Deprecation("Use 'indexOfRaw' instead.", "indexOfRaw(element)"))
+        deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure.", "lastIndexOf(element as T)") } }
         annotations("""
             @kotlin.jvm.JvmName("lastIndexOfAny")
             @kotlin.internal.LowPriorityInOverloadResolution
@@ -206,9 +205,9 @@ fun elements(): List<GenericFunction> {
         }
         receiverAsterisk(Iterables, Sequences) { true }
         inline(true)
+        deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure.", "lastIndexOf(element as Any?)") } }
         annotations("""@Suppress("NOTHING_TO_INLINE")""")
         returns("Int")
-        body { "return lastIndexOf<Any?>(element)" }
         body(Lists) { "return (this as List<Any?>).lastIndexOf(element)" }
     }
 
@@ -577,7 +576,7 @@ fun elements(): List<GenericFunction> {
         body {
             """
             when (this) {
-                is List -> return if (isEmpty()) null else this[size() - 1]
+                is List -> return if (isEmpty()) null else this[size - 1]
                 else -> {
                     val iterator = iterator()
                     if (!iterator.hasNext())
@@ -604,12 +603,12 @@ fun elements(): List<GenericFunction> {
         deprecate(Strings) { forBinaryCompatibility }
         body(CharSequences, Strings) {
             """
-            return if (isEmpty()) null else this[length() - 1]
+            return if (isEmpty()) null else this[length - 1]
             """
         }
         body(Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
-            return if (isEmpty()) null else this[size() - 1]
+            return if (isEmpty()) null else this[size - 1]
             """
         }
     }
@@ -704,7 +703,7 @@ fun elements(): List<GenericFunction> {
         body {
             """
             when (this) {
-                is List -> return when (size()) {
+                is List -> return when (size) {
                     0 -> throw NoSuchElementException("Collection is empty.")
                     1 -> this[0]
                     else -> throw IllegalArgumentException("Collection has more than one element.")
@@ -735,7 +734,7 @@ fun elements(): List<GenericFunction> {
         deprecate(Strings) { forBinaryCompatibility }
         body(CharSequences, Strings) {
             """
-            return when (length()) {
+            return when (length) {
                 0 -> throw NoSuchElementException("Collection is empty.")
                 1 -> this[0]
                 else -> throw IllegalArgumentException("Collection has more than one element.")
@@ -744,7 +743,7 @@ fun elements(): List<GenericFunction> {
         }
         body(Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
-            return when (size()) {
+            return when (size) {
                 0 -> throw NoSuchElementException("Collection is empty.")
                 1 -> this[0]
                 else -> throw IllegalArgumentException("Collection has more than one element.")
@@ -759,7 +758,7 @@ fun elements(): List<GenericFunction> {
         body {
             """
             when (this) {
-                is List -> return if (size() == 1) this[0] else null
+                is List -> return if (size == 1) this[0] else null
                 else -> {
                     val iterator = iterator()
                     if (!iterator.hasNext())
@@ -786,12 +785,12 @@ fun elements(): List<GenericFunction> {
         deprecate(Strings) { forBinaryCompatibility }
         body(CharSequences, Strings) {
             """
-            return if (length() == 1) this[0] else null
+            return if (length == 1) this[0] else null
             """
         }
         body(Lists, ArraysOfObjects, ArraysOfPrimitives) {
             """
-            return if (size() == 1) this[0] else null
+            return if (size == 1) this[0] else null
             """
         }
     }

@@ -129,17 +129,19 @@ public abstract class ByteIterator : kotlin.Iterator<kotlin.Byte> {
 }
 
 @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use IntProgression instead.", replaceWith = kotlin.ReplaceWith(expression = "IntProgression", imports = {})) public open class ByteProgression : kotlin.Progression<kotlin.Byte> {
-    /*primary*/ @kotlin.Deprecated(message = "This constructor will become private soon. Use ByteProgression.fromClosedRange() instead.", replaceWith = kotlin.ReplaceWith(expression = "ByteProgression.fromClosedRange(start, end, increment)", imports = {})) public constructor ByteProgression(/*0*/ start: kotlin.Byte, /*1*/ endInclusive: kotlin.Byte, /*2*/ increment: kotlin.Int)
+    /*primary*/ @kotlin.Deprecated(message = "This constructor will become private soon. Use ByteProgression.fromClosedRange() instead.", replaceWith = kotlin.ReplaceWith(expression = "ByteProgression.fromClosedRange(start, endInclusive, step)", imports = {})) public constructor ByteProgression(/*0*/ start: kotlin.Byte, /*1*/ endInclusive: kotlin.Byte, /*2*/ step: kotlin.Int)
     @kotlin.Deprecated(message = "Use 'last' property instead.") public open override /*1*/ val end: kotlin.Byte
         public open override /*1*/ fun <get-end>(): kotlin.Byte
     public final val first: kotlin.Byte
         public final fun <get-first>(): kotlin.Byte
-    public open override /*1*/ val increment: kotlin.Int
+    @kotlin.Deprecated(message = "Use 'step' property instead.", replaceWith = kotlin.ReplaceWith(expression = "step", imports = {})) public open override /*1*/ val increment: kotlin.Int
         public open override /*1*/ fun <get-increment>(): kotlin.Int
     public final val last: kotlin.Byte
         public final fun <get-last>(): kotlin.Byte
-    @kotlin.Deprecated(message = "Use first instead.", replaceWith = kotlin.ReplaceWith(expression = "first", imports = {})) public open override /*1*/ val start: kotlin.Byte
+    @kotlin.Deprecated(message = "Use 'first' property instead.", replaceWith = kotlin.ReplaceWith(expression = "first", imports = {})) public open override /*1*/ val start: kotlin.Byte
         public open override /*1*/ fun <get-start>(): kotlin.Byte
+    public final val step: kotlin.Int
+        public final fun <get-step>(): kotlin.Int
     public open fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.ByteIterator
 
@@ -150,17 +152,17 @@ public abstract class ByteIterator : kotlin.Iterator<kotlin.Byte> {
 }
 
 internal final class ByteProgressionIterator : kotlin.ByteIterator {
-    /*primary*/ public constructor ByteProgressionIterator(/*0*/ start: kotlin.Byte, /*1*/ end: kotlin.Byte, /*2*/ increment: kotlin.Int)
-    private final val finalElement: kotlin.Byte
-        private final fun <get-finalElement>(): kotlin.Byte
+    /*primary*/ public constructor ByteProgressionIterator(/*0*/ first: kotlin.Byte, /*1*/ last: kotlin.Byte, /*2*/ step: kotlin.Int)
+    private final val finalElement: kotlin.Int
+        private final fun <get-finalElement>(): kotlin.Int
     private final var hasNext: kotlin.Boolean
         private final fun <get-hasNext>(): kotlin.Boolean
         private final fun <set-hasNext>(/*0*/ <set-?>: kotlin.Boolean): kotlin.Unit
-    public final val increment: kotlin.Int
-        public final fun <get-increment>(): kotlin.Int
     private final var next: kotlin.Int
         private final fun <get-next>(): kotlin.Int
         private final fun <set-next>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
+    public final val step: kotlin.Int
+        public final fun <get-step>(): kotlin.Int
     public open override /*1*/ fun hasNext(): kotlin.Boolean
     public final override /*1*/ /*fake_override*/ fun next(): kotlin.Byte
     public open override /*1*/ fun nextByte(): kotlin.Byte
@@ -174,13 +176,15 @@ internal final class ByteProgressionIterator : kotlin.ByteIterator {
         public open override /*1*/ fun <get-endInclusive>(): kotlin.Byte
     public final override /*1*/ /*fake_override*/ val first: kotlin.Byte
         public final override /*1*/ /*fake_override*/ fun <get-first>(): kotlin.Byte
-    public open override /*1*/ /*fake_override*/ val increment: kotlin.Int
+    @kotlin.Deprecated(message = "Use 'step' property instead.", replaceWith = kotlin.ReplaceWith(expression = "step", imports = {})) public open override /*1*/ /*fake_override*/ val increment: kotlin.Int
         public open override /*1*/ /*fake_override*/ fun <get-increment>(): kotlin.Int
     public final override /*1*/ /*fake_override*/ val last: kotlin.Byte
         public final override /*1*/ /*fake_override*/ fun <get-last>(): kotlin.Byte
     public open override /*2*/ val start: kotlin.Byte
         public open override /*2*/ fun <get-start>(): kotlin.Byte
-    public open override /*1*/ fun contains(/*0*/ item: kotlin.Byte): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ val step: kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun <get-step>(): kotlin.Int
+    public open override /*1*/ fun contains(/*0*/ value: kotlin.Byte): kotlin.Boolean
     public open override /*2*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun iterator(): kotlin.ByteIterator
 
@@ -231,17 +235,19 @@ public abstract class CharIterator : kotlin.Iterator<kotlin.Char> {
 }
 
 public open class CharProgression : kotlin.Progression<kotlin.Char> {
-    /*primary*/ @kotlin.Deprecated(message = "This constructor will become private soon. Use CharProgression.fromClosedRange() instead.", replaceWith = kotlin.ReplaceWith(expression = "CharProgression.fromClosedRange(start, end, increment)", imports = {})) public constructor CharProgression(/*0*/ start: kotlin.Char, /*1*/ endInclusive: kotlin.Char, /*2*/ increment: kotlin.Int)
+    /*primary*/ @kotlin.Deprecated(message = "This constructor will become private soon. Use CharProgression.fromClosedRange() instead.", replaceWith = kotlin.ReplaceWith(expression = "CharProgression.fromClosedRange(start, endInclusive, step)", imports = {})) public constructor CharProgression(/*0*/ start: kotlin.Char, /*1*/ endInclusive: kotlin.Char, /*2*/ step: kotlin.Int)
     @kotlin.Deprecated(message = "Use 'last' property instead.") public open override /*1*/ val end: kotlin.Char
         public open override /*1*/ fun <get-end>(): kotlin.Char
     public final val first: kotlin.Char
         public final fun <get-first>(): kotlin.Char
-    public open override /*1*/ val increment: kotlin.Int
+    @kotlin.Deprecated(message = "Use 'step' property instead.", replaceWith = kotlin.ReplaceWith(expression = "step", imports = {})) public open override /*1*/ val increment: kotlin.Int
         public open override /*1*/ fun <get-increment>(): kotlin.Int
     public final val last: kotlin.Char
         public final fun <get-last>(): kotlin.Char
-    @kotlin.Deprecated(message = "Use first instead.", replaceWith = kotlin.ReplaceWith(expression = "first", imports = {})) public open override /*1*/ val start: kotlin.Char
+    @kotlin.Deprecated(message = "Use 'first' property instead.", replaceWith = kotlin.ReplaceWith(expression = "first", imports = {})) public open override /*1*/ val start: kotlin.Char
         public open override /*1*/ fun <get-start>(): kotlin.Char
+    public final val step: kotlin.Int
+        public final fun <get-step>(): kotlin.Int
     public open fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.CharIterator
 
@@ -252,17 +258,17 @@ public open class CharProgression : kotlin.Progression<kotlin.Char> {
 }
 
 internal final class CharProgressionIterator : kotlin.CharIterator {
-    /*primary*/ public constructor CharProgressionIterator(/*0*/ start: kotlin.Char, /*1*/ end: kotlin.Char, /*2*/ increment: kotlin.Int)
-    private final val finalElement: kotlin.Char
-        private final fun <get-finalElement>(): kotlin.Char
+    /*primary*/ public constructor CharProgressionIterator(/*0*/ first: kotlin.Char, /*1*/ last: kotlin.Char, /*2*/ step: kotlin.Int)
+    private final val finalElement: kotlin.Int
+        private final fun <get-finalElement>(): kotlin.Int
     private final var hasNext: kotlin.Boolean
         private final fun <get-hasNext>(): kotlin.Boolean
         private final fun <set-hasNext>(/*0*/ <set-?>: kotlin.Boolean): kotlin.Unit
-    public final val increment: kotlin.Int
-        public final fun <get-increment>(): kotlin.Int
     private final var next: kotlin.Int
         private final fun <get-next>(): kotlin.Int
         private final fun <set-next>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
+    public final val step: kotlin.Int
+        public final fun <get-step>(): kotlin.Int
     public open override /*1*/ fun hasNext(): kotlin.Boolean
     public final override /*1*/ /*fake_override*/ fun next(): kotlin.Char
     public open override /*1*/ fun nextChar(): kotlin.Char
@@ -276,13 +282,15 @@ public final class CharRange : kotlin.CharProgression, kotlin.ClosedRange<kotlin
         public open override /*1*/ fun <get-endInclusive>(): kotlin.Char
     public final override /*1*/ /*fake_override*/ val first: kotlin.Char
         public final override /*1*/ /*fake_override*/ fun <get-first>(): kotlin.Char
-    public open override /*1*/ /*fake_override*/ val increment: kotlin.Int
+    @kotlin.Deprecated(message = "Use 'step' property instead.", replaceWith = kotlin.ReplaceWith(expression = "step", imports = {})) public open override /*1*/ /*fake_override*/ val increment: kotlin.Int
         public open override /*1*/ /*fake_override*/ fun <get-increment>(): kotlin.Int
     public final override /*1*/ /*fake_override*/ val last: kotlin.Char
         public final override /*1*/ /*fake_override*/ fun <get-last>(): kotlin.Char
     public open override /*2*/ val start: kotlin.Char
         public open override /*2*/ fun <get-start>(): kotlin.Char
-    public open override /*1*/ fun contains(/*0*/ item: kotlin.Char): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ val step: kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun <get-step>(): kotlin.Int
+    public open override /*1*/ fun contains(/*0*/ value: kotlin.Char): kotlin.Boolean
     public open override /*2*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun iterator(): kotlin.CharIterator
 
@@ -297,7 +305,7 @@ public interface CharSequence {
     public abstract val length: kotlin.Int
         public abstract fun <get-length>(): kotlin.Int
     public abstract operator fun get(/*0*/ index: kotlin.Int): kotlin.Char
-    public abstract fun subSequence(/*0*/ start: kotlin.Int, /*1*/ end: kotlin.Int): kotlin.CharSequence
+    public abstract fun subSequence(/*0*/ startIndex: kotlin.Int, /*1*/ endIndex: kotlin.Int): kotlin.CharSequence
 }
 
 public interface Cloneable {
@@ -311,7 +319,7 @@ public interface ClosedRange</*0*/ T : kotlin.Comparable<T>> : kotlin.Range<T> {
         public abstract fun <get-endInclusive>(): T
     public abstract override /*1*/ val start: T
         public abstract override /*1*/ fun <get-start>(): T
-    public open override /*1*/ fun contains(/*0*/ item: T): kotlin.Boolean
+    public open override /*1*/ fun contains(/*0*/ value: T): kotlin.Boolean
     public open override /*1*/ fun isEmpty(): kotlin.Boolean
 }
 
@@ -354,10 +362,10 @@ public final enum class DeprecationLevel : kotlin.Enum<kotlin.DeprecationLevel> 
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.DeprecationLevel): kotlin.Int
 
     // Static members
-    public final /*synthesized*/ val values: kotlin.Array<kotlin.DeprecationLevel>
+    @kotlin.Deprecated(message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<kotlin.DeprecationLevel>
         public final fun <get-values>(): kotlin.Array<kotlin.DeprecationLevel>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kotlin.DeprecationLevel
-    @kotlin.Deprecated(message = "Use 'values' property instead", replaceWith = kotlin.ReplaceWith(expression = "this.values", imports = {})) public final /*synthesized*/ fun values(): kotlin.Array<kotlin.DeprecationLevel>
+    public final /*synthesized*/ fun values(): kotlin.Array<kotlin.DeprecationLevel>
 }
 
 public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
@@ -456,8 +464,12 @@ public abstract class Enum</*0*/ E : kotlin.Enum<E>> : kotlin.Comparable<E> {
     }
 }
 
-@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) @kotlin.annotation.MustBeDocumented() public final annotation class Extension : kotlin.Annotation {
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) @kotlin.annotation.MustBeDocumented() @kotlin.Deprecated(message = "Use @ExtensionFunctionType instead.", replaceWith = kotlin.ReplaceWith(expression = "@ExtensionFunctionType", imports = {})) public final annotation class Extension : kotlin.Annotation {
     /*primary*/ public constructor Extension()
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) @kotlin.annotation.MustBeDocumented() public final annotation class ExtensionFunctionType : kotlin.Annotation {
+    /*primary*/ public constructor ExtensionFunctionType()
 }
 
 public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
@@ -650,17 +662,19 @@ public abstract class IntIterator : kotlin.Iterator<kotlin.Int> {
 }
 
 public open class IntProgression : kotlin.Progression<kotlin.Int> {
-    /*primary*/ @kotlin.Deprecated(message = "This constructor will become private soon. Use IntProgression.fromClosedRange() instead.", replaceWith = kotlin.ReplaceWith(expression = "IntProgression.fromClosedRange(start, end, increment)", imports = {})) public constructor IntProgression(/*0*/ start: kotlin.Int, /*1*/ endInclusive: kotlin.Int, /*2*/ increment: kotlin.Int)
+    /*primary*/ @kotlin.Deprecated(message = "This constructor will become private soon. Use IntProgression.fromClosedRange() instead.", replaceWith = kotlin.ReplaceWith(expression = "IntProgression.fromClosedRange(start, endInclusive, step)", imports = {})) public constructor IntProgression(/*0*/ start: kotlin.Int, /*1*/ endInclusive: kotlin.Int, /*2*/ step: kotlin.Int)
     @kotlin.Deprecated(message = "Use 'last' property instead.") public open override /*1*/ val end: kotlin.Int
         public open override /*1*/ fun <get-end>(): kotlin.Int
     public final val first: kotlin.Int
         public final fun <get-first>(): kotlin.Int
-    public open override /*1*/ val increment: kotlin.Int
+    @kotlin.Deprecated(message = "Use 'step' property instead.", replaceWith = kotlin.ReplaceWith(expression = "step", imports = {})) public open override /*1*/ val increment: kotlin.Int
         public open override /*1*/ fun <get-increment>(): kotlin.Int
     public final val last: kotlin.Int
         public final fun <get-last>(): kotlin.Int
-    @kotlin.Deprecated(message = "Use first instead.", replaceWith = kotlin.ReplaceWith(expression = "first", imports = {})) public open override /*1*/ val start: kotlin.Int
+    @kotlin.Deprecated(message = "Use 'first' property instead.", replaceWith = kotlin.ReplaceWith(expression = "first", imports = {})) public open override /*1*/ val start: kotlin.Int
         public open override /*1*/ fun <get-start>(): kotlin.Int
+    public final val step: kotlin.Int
+        public final fun <get-step>(): kotlin.Int
     public open fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.IntIterator
 
@@ -671,17 +685,17 @@ public open class IntProgression : kotlin.Progression<kotlin.Int> {
 }
 
 internal final class IntProgressionIterator : kotlin.IntIterator {
-    /*primary*/ public constructor IntProgressionIterator(/*0*/ start: kotlin.Int, /*1*/ end: kotlin.Int, /*2*/ increment: kotlin.Int)
+    /*primary*/ public constructor IntProgressionIterator(/*0*/ first: kotlin.Int, /*1*/ last: kotlin.Int, /*2*/ step: kotlin.Int)
     private final val finalElement: kotlin.Int
         private final fun <get-finalElement>(): kotlin.Int
     private final var hasNext: kotlin.Boolean
         private final fun <get-hasNext>(): kotlin.Boolean
         private final fun <set-hasNext>(/*0*/ <set-?>: kotlin.Boolean): kotlin.Unit
-    public final val increment: kotlin.Int
-        public final fun <get-increment>(): kotlin.Int
     private final var next: kotlin.Int
         private final fun <get-next>(): kotlin.Int
         private final fun <set-next>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
+    public final val step: kotlin.Int
+        public final fun <get-step>(): kotlin.Int
     public open override /*1*/ fun hasNext(): kotlin.Boolean
     public final override /*1*/ /*fake_override*/ fun next(): kotlin.Int
     public open override /*1*/ fun nextInt(): kotlin.Int
@@ -695,13 +709,15 @@ public final class IntRange : kotlin.IntProgression, kotlin.ClosedRange<kotlin.I
         public open override /*1*/ fun <get-endInclusive>(): kotlin.Int
     public final override /*1*/ /*fake_override*/ val first: kotlin.Int
         public final override /*1*/ /*fake_override*/ fun <get-first>(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ val increment: kotlin.Int
+    @kotlin.Deprecated(message = "Use 'step' property instead.", replaceWith = kotlin.ReplaceWith(expression = "step", imports = {})) public open override /*1*/ /*fake_override*/ val increment: kotlin.Int
         public open override /*1*/ /*fake_override*/ fun <get-increment>(): kotlin.Int
     public final override /*1*/ /*fake_override*/ val last: kotlin.Int
         public final override /*1*/ /*fake_override*/ fun <get-last>(): kotlin.Int
     public open override /*2*/ val start: kotlin.Int
         public open override /*2*/ fun <get-start>(): kotlin.Int
-    public open override /*1*/ fun contains(/*0*/ item: kotlin.Int): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ val step: kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun <get-step>(): kotlin.Int
+    public open override /*1*/ fun contains(/*0*/ value: kotlin.Int): kotlin.Boolean
     public open override /*2*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun iterator(): kotlin.IntIterator
 
@@ -840,17 +856,19 @@ public abstract class LongIterator : kotlin.Iterator<kotlin.Long> {
 }
 
 public open class LongProgression : kotlin.Progression<kotlin.Long> {
-    /*primary*/ @kotlin.Deprecated(message = "This constructor will become private soon. Use LongProgression.fromClosedRange() instead.", replaceWith = kotlin.ReplaceWith(expression = "LongProgression.fromClosedRange(start, end, increment)", imports = {})) public constructor LongProgression(/*0*/ start: kotlin.Long, /*1*/ endInclusive: kotlin.Long, /*2*/ increment: kotlin.Long)
+    /*primary*/ @kotlin.Deprecated(message = "This constructor will become private soon. Use LongProgression.fromClosedRange() instead.", replaceWith = kotlin.ReplaceWith(expression = "LongProgression.fromClosedRange(start, endInclusive, step)", imports = {})) public constructor LongProgression(/*0*/ start: kotlin.Long, /*1*/ endInclusive: kotlin.Long, /*2*/ step: kotlin.Long)
     @kotlin.Deprecated(message = "Use 'last' property instead.") public open override /*1*/ val end: kotlin.Long
         public open override /*1*/ fun <get-end>(): kotlin.Long
     public final val first: kotlin.Long
         public final fun <get-first>(): kotlin.Long
-    public open override /*1*/ val increment: kotlin.Long
+    @kotlin.Deprecated(message = "Use 'step' property instead.", replaceWith = kotlin.ReplaceWith(expression = "step", imports = {})) public open override /*1*/ val increment: kotlin.Long
         public open override /*1*/ fun <get-increment>(): kotlin.Long
     public final val last: kotlin.Long
         public final fun <get-last>(): kotlin.Long
-    @kotlin.Deprecated(message = "Use first instead.", replaceWith = kotlin.ReplaceWith(expression = "first", imports = {})) public open override /*1*/ val start: kotlin.Long
+    @kotlin.Deprecated(message = "Use 'first' property instead.", replaceWith = kotlin.ReplaceWith(expression = "first", imports = {})) public open override /*1*/ val start: kotlin.Long
         public open override /*1*/ fun <get-start>(): kotlin.Long
+    public final val step: kotlin.Long
+        public final fun <get-step>(): kotlin.Long
     public open fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.LongIterator
 
@@ -861,17 +879,17 @@ public open class LongProgression : kotlin.Progression<kotlin.Long> {
 }
 
 internal final class LongProgressionIterator : kotlin.LongIterator {
-    /*primary*/ public constructor LongProgressionIterator(/*0*/ start: kotlin.Long, /*1*/ end: kotlin.Long, /*2*/ increment: kotlin.Long)
+    /*primary*/ public constructor LongProgressionIterator(/*0*/ first: kotlin.Long, /*1*/ last: kotlin.Long, /*2*/ step: kotlin.Long)
     private final val finalElement: kotlin.Long
         private final fun <get-finalElement>(): kotlin.Long
     private final var hasNext: kotlin.Boolean
         private final fun <get-hasNext>(): kotlin.Boolean
         private final fun <set-hasNext>(/*0*/ <set-?>: kotlin.Boolean): kotlin.Unit
-    public final val increment: kotlin.Long
-        public final fun <get-increment>(): kotlin.Long
     private final var next: kotlin.Long
         private final fun <get-next>(): kotlin.Long
         private final fun <set-next>(/*0*/ <set-?>: kotlin.Long): kotlin.Unit
+    public final val step: kotlin.Long
+        public final fun <get-step>(): kotlin.Long
     public open override /*1*/ fun hasNext(): kotlin.Boolean
     public final override /*1*/ /*fake_override*/ fun next(): kotlin.Long
     public open override /*1*/ fun nextLong(): kotlin.Long
@@ -885,13 +903,15 @@ public final class LongRange : kotlin.LongProgression, kotlin.ClosedRange<kotlin
         public open override /*1*/ fun <get-endInclusive>(): kotlin.Long
     public final override /*1*/ /*fake_override*/ val first: kotlin.Long
         public final override /*1*/ /*fake_override*/ fun <get-first>(): kotlin.Long
-    public open override /*1*/ /*fake_override*/ val increment: kotlin.Long
+    @kotlin.Deprecated(message = "Use 'step' property instead.", replaceWith = kotlin.ReplaceWith(expression = "step", imports = {})) public open override /*1*/ /*fake_override*/ val increment: kotlin.Long
         public open override /*1*/ /*fake_override*/ fun <get-increment>(): kotlin.Long
     public final override /*1*/ /*fake_override*/ val last: kotlin.Long
         public final override /*1*/ /*fake_override*/ fun <get-last>(): kotlin.Long
     public open override /*2*/ val start: kotlin.Long
         public open override /*2*/ fun <get-start>(): kotlin.Long
-    public open override /*1*/ fun contains(/*0*/ item: kotlin.Long): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ val step: kotlin.Long
+        public final override /*1*/ /*fake_override*/ fun <get-step>(): kotlin.Long
+    public open override /*1*/ fun contains(/*0*/ value: kotlin.Long): kotlin.Boolean
     public open override /*2*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun iterator(): kotlin.LongIterator
 
@@ -1063,7 +1083,7 @@ public abstract class Number {
         public abstract fun <get-end>(): T
     public abstract val start: T
         public abstract fun <get-start>(): T
-    public abstract operator fun contains(/*0*/ item: T): kotlin.Boolean
+    public abstract operator fun contains(/*0*/ value: T): kotlin.Boolean
     public open fun isEmpty(): kotlin.Boolean
 }
 
@@ -1165,17 +1185,19 @@ public abstract class ShortIterator : kotlin.Iterator<kotlin.Short> {
 }
 
 @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Use IntProgression instead.", replaceWith = kotlin.ReplaceWith(expression = "IntProgression", imports = {})) public open class ShortProgression : kotlin.Progression<kotlin.Short> {
-    /*primary*/ @kotlin.Deprecated(message = "This constructor will become private soon. Use ShortProgression.fromClosedRange() instead.", replaceWith = kotlin.ReplaceWith(expression = "ShortProgression.fromClosedRange(start, end, increment)", imports = {})) public constructor ShortProgression(/*0*/ start: kotlin.Short, /*1*/ endInclusive: kotlin.Short, /*2*/ increment: kotlin.Int)
+    /*primary*/ @kotlin.Deprecated(message = "This constructor will become private soon. Use ShortProgression.fromClosedRange() instead.", replaceWith = kotlin.ReplaceWith(expression = "ShortProgression.fromClosedRange(start, endInclusive, step)", imports = {})) public constructor ShortProgression(/*0*/ start: kotlin.Short, /*1*/ endInclusive: kotlin.Short, /*2*/ step: kotlin.Int)
     @kotlin.Deprecated(message = "Use 'last' property instead.") public open override /*1*/ val end: kotlin.Short
         public open override /*1*/ fun <get-end>(): kotlin.Short
     public final val first: kotlin.Short
         public final fun <get-first>(): kotlin.Short
-    public open override /*1*/ val increment: kotlin.Int
+    @kotlin.Deprecated(message = "Use 'step' property instead.", replaceWith = kotlin.ReplaceWith(expression = "step", imports = {})) public open override /*1*/ val increment: kotlin.Int
         public open override /*1*/ fun <get-increment>(): kotlin.Int
     public final val last: kotlin.Short
         public final fun <get-last>(): kotlin.Short
-    @kotlin.Deprecated(message = "Use first instead.", replaceWith = kotlin.ReplaceWith(expression = "first", imports = {})) public open override /*1*/ val start: kotlin.Short
+    @kotlin.Deprecated(message = "Use 'first' property instead.", replaceWith = kotlin.ReplaceWith(expression = "first", imports = {})) public open override /*1*/ val start: kotlin.Short
         public open override /*1*/ fun <get-start>(): kotlin.Short
+    public final val step: kotlin.Int
+        public final fun <get-step>(): kotlin.Int
     public open fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun iterator(): kotlin.ShortIterator
 
@@ -1186,17 +1208,17 @@ public abstract class ShortIterator : kotlin.Iterator<kotlin.Short> {
 }
 
 internal final class ShortProgressionIterator : kotlin.ShortIterator {
-    /*primary*/ public constructor ShortProgressionIterator(/*0*/ start: kotlin.Short, /*1*/ end: kotlin.Short, /*2*/ increment: kotlin.Int)
-    private final val finalElement: kotlin.Short
-        private final fun <get-finalElement>(): kotlin.Short
+    /*primary*/ public constructor ShortProgressionIterator(/*0*/ first: kotlin.Short, /*1*/ last: kotlin.Short, /*2*/ step: kotlin.Int)
+    private final val finalElement: kotlin.Int
+        private final fun <get-finalElement>(): kotlin.Int
     private final var hasNext: kotlin.Boolean
         private final fun <get-hasNext>(): kotlin.Boolean
         private final fun <set-hasNext>(/*0*/ <set-?>: kotlin.Boolean): kotlin.Unit
-    public final val increment: kotlin.Int
-        public final fun <get-increment>(): kotlin.Int
     private final var next: kotlin.Int
         private final fun <get-next>(): kotlin.Int
         private final fun <set-next>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
+    public final val step: kotlin.Int
+        public final fun <get-step>(): kotlin.Int
     public open override /*1*/ fun hasNext(): kotlin.Boolean
     public final override /*1*/ /*fake_override*/ fun next(): kotlin.Short
     public open override /*1*/ fun nextShort(): kotlin.Short
@@ -1210,13 +1232,15 @@ internal final class ShortProgressionIterator : kotlin.ShortIterator {
         public open override /*1*/ fun <get-endInclusive>(): kotlin.Short
     public final override /*1*/ /*fake_override*/ val first: kotlin.Short
         public final override /*1*/ /*fake_override*/ fun <get-first>(): kotlin.Short
-    public open override /*1*/ /*fake_override*/ val increment: kotlin.Int
+    @kotlin.Deprecated(message = "Use 'step' property instead.", replaceWith = kotlin.ReplaceWith(expression = "step", imports = {})) public open override /*1*/ /*fake_override*/ val increment: kotlin.Int
         public open override /*1*/ /*fake_override*/ fun <get-increment>(): kotlin.Int
     public final override /*1*/ /*fake_override*/ val last: kotlin.Short
         public final override /*1*/ /*fake_override*/ fun <get-last>(): kotlin.Short
     public open override /*2*/ val start: kotlin.Short
         public open override /*2*/ fun <get-start>(): kotlin.Short
-    public open override /*1*/ fun contains(/*0*/ item: kotlin.Short): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ val step: kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun <get-step>(): kotlin.Int
+    public open override /*1*/ fun contains(/*0*/ value: kotlin.Short): kotlin.Boolean
     public open override /*2*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun iterator(): kotlin.ShortIterator
 

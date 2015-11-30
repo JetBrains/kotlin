@@ -51,6 +51,7 @@ fun KotlinType.immediateSupertypes(): Collection<KotlinType> = TypeUtils.getImme
 fun KotlinType.supertypes(): Collection<KotlinType> = TypeUtils.getAllSupertypes(this)
 
 fun KotlinType.isNothing(): Boolean = KotlinBuiltIns.isNothing(this)
+fun KotlinType.isNullableNothing(): Boolean = KotlinBuiltIns.isNullableNothing(this)
 fun KotlinType.isUnit(): Boolean = KotlinBuiltIns.isUnit(this)
 fun KotlinType.isAnyOrNullableAny(): Boolean = KotlinBuiltIns.isAnyOrNullableAny(this)
 fun KotlinType.isBoolean(): Boolean = KotlinBuiltIns.isBoolean(this)
@@ -113,23 +114,6 @@ public fun KotlinTypeChecker.equalTypesOrNulls(type1: KotlinType?, type2: Kotlin
     if (type1 === type2) return true
     if (type1 == null || type2 == null) return false
     return equalTypes(type1, type2)
-}
-
-fun KotlinType.getNestedArguments(): List<TypeProjection> {
-    val result = ArrayList<TypeProjection>()
-
-    val stack = ArrayDeque<TypeProjection>()
-    stack.push(TypeProjectionImpl(this))
-
-    while (!stack.isEmpty()) {
-        val typeProjection = stack.pop()
-        if (typeProjection.isStarProjection()) continue
-
-        result.add(typeProjection)
-
-        typeProjection.getType().getArguments().forEach { stack.add(it) }
-    }
-    return result
 }
 
 fun KotlinType.containsError() = ErrorUtils.containsErrorType(this)

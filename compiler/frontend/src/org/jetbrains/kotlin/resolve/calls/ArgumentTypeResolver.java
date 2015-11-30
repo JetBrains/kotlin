@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImplKt;
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImplKt;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.FunctionPlaceholders;
 import org.jetbrains.kotlin.types.FunctionPlaceholdersKt;
@@ -98,7 +99,7 @@ public class ArgumentTypeResolver {
             @NotNull KotlinType expectedType
     ) {
         if (FunctionPlaceholdersKt.isFunctionPlaceholder(actualType)) {
-            KotlinType functionType = ConstraintSystemImplKt.createTypeForFunctionPlaceholder(actualType, expectedType);
+            KotlinType functionType = ConstraintSystemBuilderImplKt.createTypeForFunctionPlaceholder(actualType, expectedType);
             return KotlinTypeChecker.DEFAULT.isSubtypeOf(functionType, expectedType);
         }
         return KotlinTypeChecker.DEFAULT.isSubtypeOf(actualType, expectedType);
@@ -319,21 +320,7 @@ public class ArgumentTypeResolver {
     ) {
         MutableDataFlowInfoForArguments infoForArguments = context.dataFlowInfoForArguments;
         Call call = context.call;
-        ReceiverValue receiver = call.getExplicitReceiver();
-        DataFlowInfo initialDataFlowInfo = context.dataFlowInfo;
-        // QualifierReceiver is a thing like Collections. which has no type or value
-        if (receiver.exists() && !(receiver instanceof QualifierReceiver)) {
-            DataFlowValue receiverDataFlowValue = DataFlowValueFactory.createDataFlowValue(receiver, context);
-            // Additional "receiver != null" information for KT-5840
-            // Should be applied if we consider a safe call
-            // For an unsafe call, we should not do it,
-            // otherwise not-null will propagate to successive statements
-            // Sample: x?.foo(x.bar()) // Inside foo call, x is not-nullable
-            if (CallUtilKt.isSafeCall(call)) {
-                initialDataFlowInfo = initialDataFlowInfo.disequate(receiverDataFlowValue, DataFlowValue.nullValue(builtIns));
-            }
-        }
-        infoForArguments.setInitialDataFlowInfo(initialDataFlowInfo);
+        infoForArguments.setInitialDataFlowInfo(context.dataFlowInfo);
 
         for (ValueArgument argument : call.getValueArguments()) {
             KtExpression expression = argument.getArgumentExpression();

@@ -269,7 +269,7 @@ public class ErrorUtils {
                   Modality.OPEN, Collections.<KotlinType>emptyList(), SourceElement.NO_SOURCE);
 
             ConstructorDescriptorImpl errorConstructor = ConstructorDescriptorImpl.create(this, Annotations.Companion.getEMPTY(), true, SourceElement.NO_SOURCE);
-            errorConstructor.initialize(Collections.<TypeParameterDescriptor>emptyList(), Collections.<ValueParameterDescriptor>emptyList(),
+            errorConstructor.initialize(Collections.<ValueParameterDescriptor>emptyList(),
                                         Visibilities.INTERNAL);
             MemberScope memberScope = createErrorScope(getName().asString());
             errorConstructor.setReturnType(
@@ -512,7 +512,7 @@ public class ErrorUtils {
         @NotNull
         @Override
         public TypeSubstitution getSubstitution() {
-            return new IndexedParametersSubstitution(constructor, arguments);
+            return TypeConstructorSubstitution.create(constructor, arguments);
         }
 
         @Override

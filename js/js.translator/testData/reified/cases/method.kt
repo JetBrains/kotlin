@@ -3,8 +3,7 @@ package foo
 // CHECK_NOT_CALLED: test
 
 class A(val x: Any? = null) {
-    inline
-    fun test<reified T>() = x is T
+    inline fun <reified T> test() = x is T
 }
 
 class B

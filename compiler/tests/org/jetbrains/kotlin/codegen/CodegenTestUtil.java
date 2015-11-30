@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.utils.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,8 +29,6 @@ import org.jetbrains.kotlin.cli.jvm.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.resolve.AnalyzingUtils;
-import org.jetbrains.kotlin.resolve.BindingTraceContext;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
@@ -58,7 +57,6 @@ public class CodegenTestUtil {
         analysisResult.throwIfError();
         AnalyzingUtils.throwExceptionOnErrors(analysisResult.getBindingContext());
         CompilerConfiguration configuration = environment.getConfiguration();
-        BindingTraceContext forExtraDiagnostics = new BindingTraceContext();
         GenerationState state = new GenerationState(
                 environment.getProject(), ClassBuilderFactories.TEST,
                 analysisResult.getModuleDescriptor(), analysisResult.getBindingContext(), files.getPsiFiles(),
@@ -67,13 +65,12 @@ public class CodegenTestUtil {
                 GenerationState.GenerateClassFilter.GENERATE_ALL,
                 configuration.get(JVMConfigurationKeys.DISABLE_INLINE, false),
                 configuration.get(JVMConfigurationKeys.DISABLE_OPTIMIZATION, false),
-                /* useTypeTableInSerializer = */ false,
-                forExtraDiagnostics
+                /* useTypeTableInSerializer = */ false
         );
         KotlinCodegenFacade.compileCorrectFiles(state, CompilationErrorHandler.THROW_EXCEPTION);
 
         // For JVM-specific errors
-        AnalyzingUtils.throwExceptionOnErrors(forExtraDiagnostics.getBindingContext());
+        AnalyzingUtils.throwExceptionOnErrors(state.getCollectedExtraJvmDiagnostics());
 
         return state.getFactory();
     }

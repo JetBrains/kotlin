@@ -4,4 +4,4 @@ fun foo() {
     val x = <caret>bar(s) // s not definded, can't be inferred
 }
 
-fun bar<T>(t: T): Int = 1
+fun <T> bar(t: T): Int = 1

@@ -1,9 +1,9 @@
-package com.myapp
+package test
 
 import android.app.Activity
 import android.os.Bundle
 import java.io.File
-import kotlinx.android.synthetic.layout.*
+import kotlinx.android.synthetic.main.layout.*
 
 public class MyActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {}

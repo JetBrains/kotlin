@@ -43,15 +43,15 @@ fun foo() {
         }
 ---------------------
 L3:
-  3 <START>                INIT: in: {} out: {}
+  3 <START>                INIT: in: {bar=D} out: {bar=D}
   4 mark({ val a = 2 })
-    v(val a = 2)           INIT: in: {} out: {a=D}
-    r(2) -> <v0>           INIT: in: {a=D} out: {a=D}
-    w(a|<v0>)              INIT: in: {a=D} out: {a=ID}
+    v(val a = 2)           INIT: in: {bar=D} out: {a=D, bar=D}
+    r(2) -> <v0>           INIT: in: {a=D, bar=D} out: {a=D, bar=D}
+    w(a|<v0>)              INIT: in: {a=D, bar=D} out: {a=ID, bar=D}
 L4:
-  3 <END>                  INIT: in: {} out: {}
+  3 <END>                  INIT: in: {bar=D} out: {bar=D}
 error:
-    <ERROR>
+    <ERROR>                INIT: in: {} out: {}
 sink:
-    <SINK>                                                USE: in: {} out: {}
+    <SINK>                 INIT: in: {bar=D} out: {bar=D}               USE: in: {} out: {}
 =====================

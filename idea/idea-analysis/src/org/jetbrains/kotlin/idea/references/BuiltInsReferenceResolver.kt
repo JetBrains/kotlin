@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.idea.references
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.progress.NonCancelableSection
+import com.intellij.openapi.progress.impl.CoreProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.vfs.VfsUtilCore
@@ -27,7 +29,9 @@ import com.intellij.psi.PsiManager
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.context.ContextForNewModule
+import org.jetbrains.kotlin.context.MutableModuleContextImpl
+import org.jetbrains.kotlin.context.ProjectContextImpl
+import org.jetbrains.kotlin.context.SimpleGlobalContext
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.frontend.di.createLazyResolveSession
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -37,11 +41,16 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingTraceContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.createModule
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.findClassAcrossModuleDependencies
+import org.jetbrains.kotlin.storage.ExceptionTracker
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.storage.ObservableStorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 import java.io.File
 import java.net.URL
 
@@ -64,7 +73,19 @@ public class BuiltInsReferenceResolver(val project: Project, val startupManager:
         val jetBuiltInsFiles = getBuiltInsKtFiles()
 
         runReadAction {
-            val newModuleContext = ContextForNewModule(project, Name.special("<built-ins resolver module>"), TargetPlatform.Default)
+            val tracker = object : ExceptionTracker() {
+                override fun handleException(throwable: Throwable): RuntimeException {
+                    throw RuntimeException("No exceptions expected in ${BuiltInsReferenceResolver::class.simpleName}", throwable)
+                }
+            }
+
+            val storageManager = NonCancelableStorageManager(LockBasedStorageManager.createWithExceptionHandling(tracker))
+            val globalContext = SimpleGlobalContext(storageManager, tracker)
+
+            val projectContext = ProjectContextImpl(project, globalContext)
+            val module = TargetPlatform.Default.createModule(Name.special("<built-ins resolver module>"), projectContext.storageManager)
+            val newModuleContext = MutableModuleContextImpl(module, projectContext)
+
             newModuleContext.setDependencies(newModuleContext.module)
 
             val declarationFactory = FileBasedDeclarationProviderFactory(newModuleContext.storageManager, jetBuiltInsFiles)
@@ -135,7 +156,7 @@ public class BuiltInsReferenceResolver(val project: Project, val startupManager:
         private val builtInDirUrls = getBuiltInsDirUrls().map { VfsUtilCore.convertFromUrl(it) }
 
         public fun getInstance(project: Project): BuiltInsReferenceResolver =
-            ServiceManager.getService(project, javaClass<BuiltInsReferenceResolver>())
+            ServiceManager.getService(project, BuiltInsReferenceResolver::class.java)
 
         private fun isFromBuiltinModule(originalDescriptor: DeclarationDescriptor): Boolean {
             // TODO This is optimization only
@@ -199,3 +220,28 @@ public class BuiltInsReferenceResolver(val project: Project, val startupManager:
         }
     }
 }
+
+class NonCancelableStorageManager(val delegate: StorageManager) : ObservableStorageManager(delegate) {
+    override val <V> (() -> V).observable: () -> V get() = {
+        runNonCancelable { this@observable() }
+    }
+
+    override val <K, V> ((K) -> V).observable: (K) -> V get() = { p ->
+        runNonCancelable { this@observable(p) }
+    }
+
+    private inline fun <T> runNonCancelable(crossinline call: () -> T) : T {
+        if (CoreProgressManager.getInstance().progressIndicator is NonCancelableSection) {
+            return call()
+        }
+
+        var result: Any? = null
+        CoreProgressManager.getInstance().executeNonCancelableSection {
+            result = call()
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        return result as T
+    }
+}
+

@@ -11,7 +11,7 @@ class A {
     val char: Char = '0'
     val bool: Boolean = false
 
-    fun invoke() {
+    operator fun invoke() {
         int.valProp
         long.valProp
         short.valProp

@@ -157,9 +157,9 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
                                         ?: return null
             val valueArguments = targetEntryDescriptor.allValueArguments
             val valueArgument = valueArguments.entrySet().firstOrNull()?.getValue() as? ArrayValue ?: return null
-            return valueArgument.value.filterIsInstance<EnumValue>().map {
+            return valueArgument.value.filterIsInstance<EnumValue>().mapNotNull {
                 KotlinTarget.valueOrNull(it.value.name.asString())
-            }.filterNotNull().toSet()
+            }.toSet()
         }
 
         public fun getDeclarationSiteActualTargetList(annotated: KtElement, descriptor: ClassDescriptor?): List<KotlinTarget> {
@@ -202,7 +202,7 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
                 is KtTypeParameter -> TargetLists.T_TYPE_PARAMETER
                 is KtTypeProjection ->
                     if (annotated.projectionKind == KtProjectionKind.STAR) TargetLists.T_STAR_PROJECTION else TargetLists.T_TYPE_PROJECTION
-                is KtClassInitializer -> TargetLists.T_INITIALIZER
+                is KtAnonymousInitializer -> TargetLists.T_INITIALIZER
                 is KtMultiDeclaration -> TargetLists.T_MULTI_DECLARATION
                 is KtFunctionLiteralExpression -> TargetLists.T_FUNCTION_LITERAL
                 is KtObjectLiteralExpression -> TargetLists.T_OBJECT_LITERAL

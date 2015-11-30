@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolverImpl
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
+import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
@@ -77,9 +78,10 @@ public object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
             resolverForModule.componentProvider.get<JavaDescriptorResolver>()
         }
 
+        val trace = CodeAnalyzerInitializer.getInstance(project).createTrace()
         val container = createContainerForLazyResolveWithJava(
                 moduleContext,
-                CodeAnalyzerInitializer.getInstance(project).createTrace(),
+                trace,
                 declarationProviderFactory,
                 moduleContentScope,
                 moduleClassResolver,
@@ -89,7 +91,14 @@ public object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
         val resolveSession = container.get<ResolveSession>()
         val javaDescriptorResolver = container.get<JavaDescriptorResolver>()
 
-        val providersForModule = listOf(resolveSession.getPackageFragmentProvider(), javaDescriptorResolver.packageFragmentProvider)
+        val providersForModule = arrayListOf(
+                resolveSession.packageFragmentProvider,
+                javaDescriptorResolver.packageFragmentProvider)
+
+        providersForModule += PackageFragmentProviderExtension.getInstances(project)
+                .map { it.getPackageFragmentProvider(project, moduleDescriptor, moduleContext.storageManager, trace, moduleInfo) }
+                .filterNotNull()
+
         return ResolverForModule(CompositePackageFragmentProvider(providersForModule), container)
     }
 

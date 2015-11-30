@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.types.TypeConstructorImpl;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 public class ClassDescriptorImpl extends ClassDescriptorBase {
@@ -146,5 +147,11 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
     @Override
     public String toString() {
         return "class " + getName();
+    }
+
+    @NotNull
+    @Override
+    public List<TypeParameterDescriptor> getDeclaredTypeParameters() {
+        return Collections.emptyList();
     }
 }

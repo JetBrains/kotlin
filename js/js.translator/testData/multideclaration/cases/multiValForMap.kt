@@ -3,18 +3,18 @@ package foo
 import java.util.HashMap
 
 
-public fun <K, V> Map<K, V>.iterator(): Iterator<Map.Entry<K, V>> {
+operator fun <K, V> Map<K, V>.iterator(): Iterator<Map.Entry<K, V>> {
     val entrySet = this.entrySet()
     return entrySet.iterator()
 }
 
 /** Returns the key of the entry */
-fun <K, V> Map.Entry<K, V>.component1(): K {
+operator fun <K, V> Map.Entry<K, V>.component1(): K {
     return getKey()
 }
 
 /** Returns the value of the entry */
-fun <K, V> Map.Entry<K, V>.component2(): V {
+operator fun <K, V> Map.Entry<K, V>.component2(): V {
     return getValue()
 }
 

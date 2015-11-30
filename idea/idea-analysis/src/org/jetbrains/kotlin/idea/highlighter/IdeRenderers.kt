@@ -78,8 +78,7 @@ public object IdeRenderers {
         data: ConflictingJvmDeclarationsData ->
 
         val conflicts = data.signatureOrigins
-            .map { it.descriptor }
-            .filterNotNull()
+            .mapNotNull { it.descriptor }
             .sortedWith(MemberComparator.INSTANCE)
             .joinToString("") { "<li>" + HTML_COMPACT_WITH_MODIFIERS.render(it) + "</li>\n" }
 

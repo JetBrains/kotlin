@@ -13,4 +13,4 @@ fun foo(s: String, t: X) {
     }
 }
 
-fun X.plus(x: X): X? = null
+operator fun X.plus(x: X): X? = null

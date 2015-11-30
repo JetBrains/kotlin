@@ -1,0 +1,6 @@
+>>> val c = "OK"
+>>> inner class A {
+...     fun foo() = c
+... }
+>>> A().foo()
+OK

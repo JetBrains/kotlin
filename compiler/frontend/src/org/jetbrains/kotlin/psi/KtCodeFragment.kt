@@ -131,6 +131,19 @@ public abstract class KtCodeFragment(
         return true
     }
 
+    public fun getContextContainingFile(): KtFile? {
+        return (getOriginalContext() as? KtElement)?.getContainingKtFile()
+    }
+
+    public fun getOriginalContext(): KtElement? {
+        val contextElement = getContext() as? KtElement
+        val contextFile = contextElement?.getContainingKtFile()
+        if (contextFile is KtCodeFragment) {
+            return contextFile.getOriginalContext()
+        }
+        return contextElement
+    }
+
     private fun initImports(imports: String?) {
         if (imports != null && !imports.isEmpty()) {
             this.imports.addAll(imports.split(IMPORT_SEPARATOR).map { it.check { it.startsWith("import ") } ?: "import $it" })

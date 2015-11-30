@@ -28,7 +28,7 @@ fun test(with: WithClassObject, without: WithoutClassObject, obj: Obj) {
     with.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedWithClassObject<!>
     with.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedWithClassObject<!>()
     with.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedWithClassObject<!>.foo()
-    with.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedEnum<!>.A
+    with.<!NO_COMPANION_OBJECT, NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedEnum<!>.A
     with.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedObj<!>
     with.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedObj<!>()
     with.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedObj<!>.foo()
@@ -37,7 +37,7 @@ fun test(with: WithClassObject, without: WithoutClassObject, obj: Obj) {
     without.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedWithClassObject<!>
     without.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedWithClassObject<!>()
     without.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedWithClassObject<!>.foo()
-    without.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedEnum<!>.A
+    without.<!NO_COMPANION_OBJECT, NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedEnum<!>.A
     without.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedObj<!>
     without.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedObj<!>()
     without.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedObj<!>.foo()
@@ -46,9 +46,8 @@ fun test(with: WithClassObject, without: WithoutClassObject, obj: Obj) {
     obj.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedWithClassObject<!>
     obj.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedWithClassObject<!>()
     obj.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedWithClassObject<!>.foo()
-    obj.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedEnum<!>.A
+    obj.<!NO_COMPANION_OBJECT, NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedEnum<!>.A
     obj.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedObj<!>
     obj.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedObj<!>()
     obj.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>NestedObj<!>.foo()
 }
-

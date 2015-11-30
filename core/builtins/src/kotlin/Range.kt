@@ -33,9 +33,9 @@ public interface Range<T : Comparable<T>> {
     public val end: T
 
     /**
-     * Checks if the specified value belongs to the range.
+     * Checks if the specified [value] belongs to the range.
      */
-    public operator fun contains(item: T): Boolean
+    public operator fun contains(value: T): Boolean
 
     /**
      * Checks if the range is empty.
@@ -65,12 +65,12 @@ public interface ClosedRange<T: Comparable<T>> : Range<T> {
     public val endInclusive: T
 
     /**
-     * Checks if the specified value belongs to the range.
+     * Checks whether the specified [value] belongs to the range.
      */
-    public override operator fun contains(item: T): Boolean = item >= start && item <= endInclusive
+    public override operator fun contains(value: T): Boolean = value >= start && value <= endInclusive
 
     /**
-     * Checks if the range is empty.
+     * Checks whether the range is empty.
      */
     public override fun isEmpty(): Boolean = start > endInclusive
 }

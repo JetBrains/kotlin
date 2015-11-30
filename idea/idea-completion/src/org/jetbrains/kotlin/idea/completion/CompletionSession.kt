@@ -29,10 +29,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.codeInsight.ReferenceVariantsHelper
-import org.jetbrains.kotlin.idea.core.ImportableFqNameClassifier
-import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
-import org.jetbrains.kotlin.idea.core.compareDescriptors
-import org.jetbrains.kotlin.idea.core.isVisible
+import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -106,8 +103,8 @@ abstract class CompletionSession(
     protected val bindingContext = resolutionFacade.analyze(position.parentsWithSelf.firstIsInstance<KtElement>(), BodyResolveMode.PARTIAL_FOR_COMPLETION)
     protected val inDescriptor = position.getResolutionScope(bindingContext, resolutionFacade).ownerDescriptor
 
-    private val kotlinIdentifierStartPattern = StandardPatterns.character().javaIdentifierStart() andNot singleCharPattern('$')
-    private val kotlinIdentifierPartPattern = StandardPatterns.character().javaIdentifierPart() andNot singleCharPattern('$')
+    private val kotlinIdentifierStartPattern = StandardPatterns.character().javaIdentifierStart().andNot(singleCharPattern('$'))
+    private val kotlinIdentifierPartPattern = StandardPatterns.character().javaIdentifierPart().andNot(singleCharPattern('$'))
 
     protected val prefix = CompletionUtil.findIdentifierPrefix(
             parameters.getPosition().getContainingFile(),
@@ -126,7 +123,7 @@ abstract class CompletionSession(
             nameFilter
     }
 
-    private fun ((Name) -> Boolean).or(otherFilter: (Name) -> Boolean): (Name) -> Boolean
+    private infix fun ((Name) -> Boolean).or(otherFilter: (Name) -> Boolean): (Name) -> Boolean
             = { this(it) || otherFilter(it) }
 
     protected val isVisibleFilter: (DeclarationDescriptor) -> Boolean = { isVisibleDescriptor(it, completeNonAccessible = configuration.completeNonAccessibleDeclarations) }
@@ -192,7 +189,7 @@ abstract class CompletionSession(
         if (descriptor is TypeParameterDescriptor && !isTypeParameterVisible(descriptor)) return false
 
         if (descriptor is DeclarationDescriptorWithVisibility) {
-            val visible = descriptor.isVisible(inDescriptor, bindingContext, nameExpression)
+            val visible = descriptor.isVisible(position, callTypeAndReceiver.receiver as? KtExpression, bindingContext, resolutionFacade)
             if (visible) return true
             return completeNonAccessible && !descriptor.isFromLibrary()
         }
@@ -272,6 +269,8 @@ abstract class CompletionSession(
 
         sorter = sorter.weighBefore("middleMatching", PreferMatchingItemWeigher)
 
+        sorter = sorter.weighAfter("kotlin.proximity", ByNameAlphabeticalWeigher, PreferLessParametersWeigher)
+
         return sorter
     }
 
@@ -279,16 +278,14 @@ abstract class CompletionSession(
         if (expectedInfos.isEmpty()) return null
 
         var context = expectedInfos
-                .map { it.fuzzyType?.type?.constructor?.declarationDescriptor?.importableFqName }
-                .filterNotNull()
+                .mapNotNull { it.fuzzyType?.type?.constructor?.declarationDescriptor?.importableFqName }
                 .distinct()
                 .singleOrNull()
                 ?.let { "expectedType=$it" }
 
         if (context == null) {
             context = expectedInfos
-                    .map { it.expectedName }
-                    .filterNotNull()
+                    .mapNotNull { it.expectedName }
                     .distinct()
                     .singleOrNull()
                     ?.let { "expectedName=$it" }
@@ -368,7 +365,8 @@ abstract class CompletionSession(
         val runtimeType = evaluator(explicitReceiver)
         if (runtimeType == null || runtimeType == type) return null
 
-        val (variants, notImportedExtensions) = collectReferenceVariants(descriptorKindFilter!!, nameExpression!!, ExpressionReceiver(explicitReceiver, runtimeType))
+        val expressionReceiver = ExpressionReceiver.create(explicitReceiver, runtimeType, bindingContext)
+        val (variants, notImportedExtensions) = collectReferenceVariants(descriptorKindFilter!!, nameExpression!!, expressionReceiver)
         val filteredVariants = filterVariantsForRuntimeReceiverType(variants, referenceVariants.imported)
         val filteredNotImportedExtensions = filterVariantsForRuntimeReceiverType(notImportedExtensions, referenceVariants.notImportedExtensions)
 

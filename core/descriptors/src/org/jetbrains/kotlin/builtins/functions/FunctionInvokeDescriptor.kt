@@ -39,6 +39,8 @@ public class FunctionInvokeDescriptor private constructor(
     // "p0", "p1", etc. should not be baked into the language
     override fun hasStableParameterNames(): Boolean = false
 
+    override fun hasSynthesizedParameterNames(): Boolean = true
+
     override fun createSubstitutedCopy(
             newOwner: DeclarationDescriptor,
             original: FunctionDescriptor?,
@@ -56,7 +58,7 @@ public class FunctionInvokeDescriptor private constructor(
 
     companion object Factory {
         fun create(functionClass: FunctionClassDescriptor): FunctionInvokeDescriptor {
-            val typeParameters = functionClass.getTypeConstructor().getParameters()
+            val typeParameters = functionClass.declaredTypeParameters
 
             val result = FunctionInvokeDescriptor(functionClass, null, CallableMemberDescriptor.Kind.DECLARATION)
             result.initialize(

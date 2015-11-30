@@ -40,11 +40,10 @@ import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import java.util.*
 
@@ -89,10 +88,10 @@ public fun Call.mapArgumentsToParameters(targetDescriptor: CallableDescriptor): 
     return map
 }
 
-public fun ThisReceiver.asExpression(resolutionScope: LexicalScope, psiFactory: KtPsiFactory): KtExpression? {
+public fun ImplicitReceiver.asExpression(resolutionScope: LexicalScope, psiFactory: KtPsiFactory): KtExpression? {
     val expressionFactory = resolutionScope.getImplicitReceiversWithInstanceToExpression()
                                     .entrySet()
-                                    .firstOrNull { it.key.getContainingDeclaration() == this.getDeclarationDescriptor() }
+                                    .firstOrNull { it.key.getContainingDeclaration() == this.declarationDescriptor }
                                     ?.value ?: return null
     return expressionFactory.createExpression(psiFactory)
 }
@@ -136,8 +135,7 @@ public fun Call.resolveCandidates(
 
     if (filterOutByVisibility) {
         candidates = candidates.filter {
-            val thisReceiver = ExpressionTypingUtils.normalizeReceiverValueForVisibility(it.dispatchReceiver, bindingContext)
-            Visibilities.isVisible(thisReceiver, it.resultingDescriptor, inDescriptor)
+            Visibilities.isVisible(it.dispatchReceiver, it.resultingDescriptor, inDescriptor)
         }
     }
 

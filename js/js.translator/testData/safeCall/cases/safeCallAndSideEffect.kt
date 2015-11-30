@@ -38,7 +38,7 @@ fun A.extFun(): Int {
 }
 
 class B {
-    fun invoke(): Int {
+    operator fun invoke(): Int {
         c5++
         return 2
     }

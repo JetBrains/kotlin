@@ -68,13 +68,12 @@ class StaticMembersCompletion(
     fun membersFromImports(file: KtFile): Collection<DeclarationDescriptor> {
         val containers = file.importDirectives
                 .filter { !it.isAllUnder }
-                .map {
+                .mapNotNull {
                     it.targetDescriptors(resolutionFacade)
                             .map { it.containingDeclaration }
                             .distinct()
                             .singleOrNull() as? ClassDescriptor
                 }
-                .filterNotNull()
                 .toSet()
 
         val result = ArrayList<DeclarationDescriptor>()

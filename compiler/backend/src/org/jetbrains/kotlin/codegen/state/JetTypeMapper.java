@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.state;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import kotlin.CollectionsKt;
+import kotlin.Pair;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -167,9 +168,6 @@ public class JetTypeMapper {
         }
         else if (container instanceof ClassDescriptor) {
             return mapClass((ClassDescriptor) container);
-        }
-        else if (container instanceof ScriptDescriptor) {
-            return asmTypeForScriptDescriptor(bindingContext, (ScriptDescriptor) container);
         }
         else {
             throw new UnsupportedOperationException("Don't know how to map owner for " + descriptor);
@@ -407,7 +405,7 @@ public class JetTypeMapper {
         sw.writeReturnType();
         mapType(descriptor.getType(), sw, JetTypeMapperMode.VALUE_FOR_ANNOTATION);
         sw.writeReturnTypeEnd();
-        return sw.makeJvmMethodSignature(descriptor.getName().asString());
+        return sw.makeJvmMethodSignature(descriptor.getName().asString(), false);
     }
 
     @NotNull
@@ -579,10 +577,6 @@ public class JetTypeMapper {
             return fqName.isRoot() ? name : fqName.asString().replace('.', '/') + '/' + name;
         }
 
-        if (container instanceof ScriptDescriptor) {
-            return asmTypeForScriptDescriptor(bindingContext, (ScriptDescriptor) container).getInternalName() + "$" + name;
-        }
-
         assert container instanceof ClassDescriptor : "Unexpected container: " + container + " for " + klass;
 
         String containerInternalName = computeAsmTypeImpl((ClassDescriptor) container);
@@ -628,40 +622,88 @@ public class JetTypeMapper {
     private void writeGenericType(
             BothSignatureWriter signatureVisitor,
             Type asmType,
-            KotlinType jetType,
+            KotlinType type,
             Variance howThisTypeIsUsed,
             boolean projectionsAllowed
     ) {
         if (signatureVisitor != null) {
-            if (hasNothingInArguments(jetType)) {
+            if (hasNothingInArguments(type) || type.getArguments().isEmpty()) {
                 signatureVisitor.writeAsmType(asmType);
                 return;
             }
 
-            signatureVisitor.writeClassBegin(asmType);
+            PossiblyInnerType possiblyInnerType = TypeParameterUtilsKt.buildPossiblyInnerType(type);
+            assert possiblyInnerType != null : "possiblyInnerType with arguments should not be null";
 
-            List<TypeProjection> arguments = jetType.getArguments();
-            for (TypeParameterDescriptor parameter : jetType.getConstructor().getParameters()) {
-                TypeProjection argument = arguments.get(parameter.getIndex());
+            List<PossiblyInnerType> innerTypesAsList = possiblyInnerType.segments();
+            PossiblyInnerType outermostInnerType = innerTypesAsList.get(0);
+            ClassDescriptor outermostClass = outermostInnerType.getClassDescriptor();
 
-                if (projectionsAllowed && argument.isStarProjection()) {
-                    signatureVisitor.writeUnboundedWildcard();
-                }
-                else {
-                    Variance projectionKind = projectionsAllowed
-                                              ? getEffectiveVariance(
-                            parameter.getVariance(),
-                            argument.getProjectionKind(),
-                            howThisTypeIsUsed
-                    )
-                                              : Variance.INVARIANT;
-                    signatureVisitor.writeTypeArgument(projectionKind);
-
-                    mapType(argument.getType(), signatureVisitor, JetTypeMapperMode.TYPE_PARAMETER);
-                    signatureVisitor.writeTypeArgumentEnd();
-                }
+            if (innerTypesAsList.size() == 1) {
+                signatureVisitor.writeClassBegin(asmType);
             }
+            else {
+                signatureVisitor.writeOuterClassBegin(
+                        asmType,
+                        mapType(outermostClass.getDefaultType()).getInternalName());
+            }
+
+            writeGenericArguments(
+                    signatureVisitor,
+                    outermostInnerType.getArguments(), outermostClass.getDeclaredTypeParameters(),
+                    howThisTypeIsUsed, projectionsAllowed);
+
+            for (PossiblyInnerType innerPart : innerTypesAsList.subList(1, innerTypesAsList.size())) {
+                ClassDescriptor classDescriptor = innerPart.getClassDescriptor();
+                signatureVisitor.writeInnerClass(getJvmShortName(classDescriptor));
+                writeGenericArguments(
+                        signatureVisitor, innerPart.getArguments(),
+                        classDescriptor.getDeclaredTypeParameters(),
+                        howThisTypeIsUsed, projectionsAllowed
+                );
+            }
+
             signatureVisitor.writeClassEnd();
+        }
+    }
+
+    @Nullable
+    private static String getJvmShortName(@NotNull ClassDescriptor klass) {
+        ClassId classId = JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(DescriptorUtils.getFqName(klass));
+        if (classId != null) {
+            return classId.getShortClassName().asString();
+        }
+
+        return SpecialNames.safeIdentifier(klass.getName()).getIdentifier();
+    }
+
+    private void writeGenericArguments(
+            BothSignatureWriter signatureVisitor,
+            List<? extends TypeProjection> arguments,
+            List<? extends TypeParameterDescriptor> parameters,
+            Variance howThisTypeIsUsed,
+            boolean projectionsAllowed
+    ) {
+        for (Pair<? extends TypeParameterDescriptor, ? extends TypeProjection> item : CollectionsKt.zip(parameters, arguments)) {
+            TypeParameterDescriptor parameter = item.getFirst();
+            TypeProjection argument = item.getSecond();
+
+            if (projectionsAllowed && argument.isStarProjection()) {
+                signatureVisitor.writeUnboundedWildcard();
+            }
+            else {
+                Variance projectionKind = projectionsAllowed
+                                          ? getEffectiveVariance(
+                        parameter.getVariance(),
+                        argument.getProjectionKind(),
+                        howThisTypeIsUsed
+                )
+                                          : Variance.INVARIANT;
+                signatureVisitor.writeTypeArgument(projectionKind);
+
+                mapType(argument.getType(), signatureVisitor, JetTypeMapperMode.TYPE_PARAMETER);
+                signatureVisitor.writeTypeArgumentEnd();
+            }
         }
     }
 
@@ -734,7 +776,8 @@ public class JetTypeMapper {
         if (descriptor instanceof ConstructorDescriptor) {
             JvmMethodSignature method = mapSignature(descriptor);
             Type owner = mapClass(((ConstructorDescriptor) descriptor).getContainingDeclaration());
-            return new CallableMethod(owner, owner, owner, method, INVOKESPECIAL, null, null, null);
+            String defaultImplDesc = mapDefaultMethod(descriptor, OwnerKind.IMPLEMENTATION).getDescriptor();
+            return new CallableMethod(owner, owner, defaultImplDesc, method, INVOKESPECIAL, null, null, null);
         }
 
         DeclarationDescriptor functionParent = descriptor.getOriginal().getContainingDeclaration();
@@ -744,7 +787,7 @@ public class JetTypeMapper {
         JvmMethodSignature signature;
         Type owner;
         Type ownerForDefaultImpl;
-        Type ownerForDefaultParam;
+        FunctionDescriptor baseMethodDescriptor;
         int invokeOpcode;
         Type thisClass;
 
@@ -759,9 +802,9 @@ public class JetTypeMapper {
 
             boolean isInterface = currentIsInterface && originalIsInterface;
 
-            ClassDescriptor ownerForDefault = (ClassDescriptor) findBaseDeclaration(functionDescriptor).getContainingDeclaration();
-            ownerForDefaultParam = mapClass(ownerForDefault);
-            ownerForDefaultImpl = isJvmInterface(ownerForDefault) ? mapDefaultImpls(ownerForDefault) : ownerForDefaultParam;
+            baseMethodDescriptor = findBaseDeclaration(functionDescriptor).getOriginal();
+            ClassDescriptor ownerForDefault = (ClassDescriptor) baseMethodDescriptor.getContainingDeclaration();
+            ownerForDefaultImpl = isJvmInterface(ownerForDefault) ? mapDefaultImpls(ownerForDefault) : mapClass(ownerForDefault);
 
             if (isInterface && (superCall || descriptor.getVisibility() == Visibilities.PRIVATE)) {
                 thisClass = mapClass(currentOwner);
@@ -810,8 +853,8 @@ public class JetTypeMapper {
         else {
             signature = mapSignature(functionDescriptor.getOriginal());
             owner = mapOwner(functionDescriptor);
-            ownerForDefaultParam = owner;
             ownerForDefaultImpl = owner;
+            baseMethodDescriptor = functionDescriptor;
             if (functionParent instanceof PackageFragmentDescriptor) {
                 invokeOpcode = INVOKESTATIC;
                 thisClass = null;
@@ -836,8 +879,11 @@ public class JetTypeMapper {
         else {
             receiverParameterType = null;
         }
+
+        String defaultImplDesc = mapDefaultMethod(baseMethodDescriptor, getKindForDefaultImplCall(baseMethodDescriptor)).getDescriptor();
+
         return new CallableMethod(
-                owner, ownerForDefaultImpl, ownerForDefaultParam, signature, invokeOpcode,
+                owner, ownerForDefaultImpl, defaultImplDesc, signature, invokeOpcode,
                 thisClass, receiverParameterType, calleeType);
     }
 
@@ -916,6 +962,18 @@ public class JetTypeMapper {
         else {
             return updateMemberNameIfInternal(descriptor.getName().asString(), descriptor);
         }
+    }
+
+    @NotNull
+    private static OwnerKind getKindForDefaultImplCall(@NotNull FunctionDescriptor baseMethodDescriptor) {
+        DeclarationDescriptor containingDeclaration = baseMethodDescriptor.getContainingDeclaration();
+        if (containingDeclaration instanceof PackageFragmentDescriptor) {
+            return OwnerKind.PACKAGE;
+        }
+        else if (isInterface(containingDeclaration)) {
+            return OwnerKind.DEFAULT_IMPLS;
+        }
+        return OwnerKind.IMPLEMENTATION;
     }
 
     @NotNull
@@ -1013,8 +1071,7 @@ public class JetTypeMapper {
             sw.writeReturnTypeEnd();
         }
 
-        JvmMethodSignature signature = sw.makeJvmMethodSignature(mapFunctionName(f));
-
+        JvmMethodSignature signature = sw.makeJvmMethodSignature(mapFunctionName(f), f instanceof AccessorForCallableDescriptor);
 
         if (kind != OwnerKind.DEFAULT_IMPLS) {
             SpecialSignatureInfo specialSignatureInfo = BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo(f);
@@ -1047,7 +1104,7 @@ public class JetTypeMapper {
     }
 
     @NotNull
-    public static String getDefaultDescriptor(@NotNull Method method, @Nullable String dispatchReceiverDescriptor, boolean isExtension) {
+    private static String getDefaultDescriptor(@NotNull Method method, @Nullable String dispatchReceiverDescriptor, boolean isExtension) {
         String descriptor = method.getDescriptor();
         int argumentsCount = Type.getArgumentTypes(descriptor).length;
         if (isExtension) {
@@ -1327,18 +1384,16 @@ public class JetTypeMapper {
         sw.writeParametersStart();
 
         for (ScriptDescriptor importedScript : importedScripts) {
-            ClassDescriptor descriptor = bindingContext.get(CLASS_FOR_SCRIPT, importedScript);
-            assert descriptor != null : "Script not found: " + importedScript;
-            writeParameter(sw, descriptor.getDefaultType());
+            writeParameter(sw, importedScript.getDefaultType());
         }
 
-        for (ValueParameterDescriptor valueParameter : script.getScriptCodeDescriptor().getValueParameters()) {
+        for (ValueParameterDescriptor valueParameter : script.getUnsubstitutedPrimaryConstructor().getValueParameters()) {
             writeParameter(sw, valueParameter.getType());
         }
 
         writeVoidReturn(sw);
 
-        return sw.makeJvmMethodSignature("<init>");
+        return sw.makeJvmMethodSignature("<init>", false);
     }
 
     public Type getSharedVarType(DeclarationDescriptor descriptor) {

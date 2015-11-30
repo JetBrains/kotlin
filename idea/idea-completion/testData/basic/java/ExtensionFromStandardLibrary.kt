@@ -1,12 +1,12 @@
 package first
 
-import java.util.ArrayList
+import java.util.HashMap
 
 fun firstFun() {
-  val a = ArrayList<Int>()
+  val a = HashMap<Int, String>()
   a.toLinke<caret>
 }
 
 // INVOCATION_COUNT: 1
-// EXIST: { lookupString:"toLinkedList", itemText:"toLinkedList", tailText:"() for Iterable<T> in kotlin" }
+// EXIST: { lookupString:"toLinkedMap", itemText:"toLinkedMap", tailText:"() for Map<K, V> in kotlin" }
 // NOTHING_ELSE

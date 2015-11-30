@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 
 data class PositionalAndNamedArguments(val positional: List<ValueArgument>, val named: List<ValueArgument>)
 {
-    fun get(position: Int, name: String): ValueArgument? =
+    operator fun get(position: Int, name: String): ValueArgument? =
             positional.getOrNull(position) ?: named.find { it.getArgumentName()!!.asName.asString() == name }
 }
 

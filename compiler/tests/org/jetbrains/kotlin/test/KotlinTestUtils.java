@@ -409,7 +409,7 @@ public class KotlinTestUtils {
     }
 
     public static String doLoadFile(@NotNull File file) throws IOException {
-        return FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim();
+        return FileUtil.loadFile(file, CharsetToolkit.UTF8, true);
     }
 
     public static String getFilePath(File file) {

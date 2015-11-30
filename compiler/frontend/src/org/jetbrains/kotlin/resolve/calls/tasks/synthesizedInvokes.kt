@@ -52,7 +52,7 @@ fun createSynthesizedInvokes(functions: Collection<FunctionDescriptor>): Collect
             fakeOverride
         }
 
-        result.add(synthesized.substitute(TypeSubstitutor.create(invoke.getDispatchReceiverParameter()!!.getType()))!!)
+        result.add(synthesized.substitute(TypeSubstitutor.create(invoke.getDispatchReceiverParameter()!!.getType())))
     }
 
     return result
@@ -87,6 +87,8 @@ private fun createSynthesizedFunctionWithFirstParameterAsReceiver(descriptor: Fu
     result.isExternal = original.isExternal
     result.isInline = original.isInline
     result.isTailrec = original.isTailrec
+    result.setHasStableParameterNames(false);
+    result.setHasSynthesizedParameterNames(true);
 
     return result
 }

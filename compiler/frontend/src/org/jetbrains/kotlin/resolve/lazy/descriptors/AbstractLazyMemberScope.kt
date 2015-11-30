@@ -17,20 +17,22 @@
 package org.jetbrains.kotlin.resolve.lazy.descriptors
 
 import com.google.common.collect.Sets
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.ScriptNameUtil
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.data.JetScriptInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.Printer
@@ -53,7 +55,7 @@ protected constructor(
     private fun resolveClassDescriptor(name: Name): List<ClassDescriptor> {
         return declarationProvider.getClassOrObjectDeclarations(name).map {
             if (it is JetScriptInfo)
-                LazyScriptClassDescriptor(c as ResolveSession, thisDescriptor, name, it)
+                LazyScriptDescriptor(c as ResolveSession, thisDescriptor, name, it)
             else
                 LazyClassDescriptor(c, thisDescriptor, name, it)
         }.toReadOnlyList()
@@ -152,7 +154,7 @@ protected constructor(
                 }
             }
             else if (declaration is KtScript) {
-                val name = ScriptNameUtil.classNameForScript(declaration).shortName()
+                val name = declaration.nameAsSafeName
                 if (nameFilter(name)) {
                     result.addAll(classDescriptors(name))
                 }
@@ -184,6 +186,6 @@ protected constructor(
     }
 
     private fun recordLookup(name: Name, from: LookupLocation) {
-        c.lookupTracker.record(from, thisDescriptor, this, name)
+        c.lookupTracker.record(from, thisDescriptor, name)
     }
 }

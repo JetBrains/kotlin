@@ -83,7 +83,7 @@ abstract class Element {
 
     public var createdAt: String?
             = if (saveCreationStacktraces)
-                  Exception().getStackTrace().joinToString("\n")
+                  Exception().stackTrace.joinToString("\n")
               else
                   null
 

@@ -325,8 +325,16 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
         super.visitInitializerList(list, null);
     }
 
-    public void visitAnonymousInitializer(@NotNull KtClassInitializer initializer) {
+    public void visitAnonymousInitializer(@NotNull KtAnonymousInitializer initializer) {
         super.visitAnonymousInitializer(initializer, null);
+    }
+
+    public void visitScriptInitializer(@NotNull KtScriptInitializer initializer) {
+        super.visitScriptInitializer(initializer, null);
+    }
+
+    public void visitClassInitializer(@NotNull KtClassInitializer initializer) {
+        super.visitClassInitializer(initializer, null);
     }
 
     public void visitPropertyAccessor(@NotNull KtPropertyAccessor accessor) {
@@ -889,7 +897,7 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
     }
 
     @Override
-    public final Void visitAnonymousInitializer(@NotNull KtClassInitializer initializer, Void data) {
+    public final Void visitAnonymousInitializer(@NotNull KtAnonymousInitializer initializer, Void data) {
         visitAnonymousInitializer(initializer);
         return null;
     }
@@ -1041,6 +1049,18 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
     @Override
     public Void visitPackageDirective(@NotNull KtPackageDirective directive, Void data) {
         visitPackageDirective(directive);
+        return null;
+    }
+
+    @Override
+    public Void visitScriptInitializer(@NotNull KtScriptInitializer initializer, Void data) {
+        visitScriptInitializer(initializer);
+        return null;
+    }
+
+    @Override
+    public Void visitClassInitializer(@NotNull KtClassInitializer initializer, Void data) {
+        visitClassInitializer(initializer);
         return null;
     }
 }

@@ -234,7 +234,7 @@ public class DescriptorValidator {
         public Boolean visitClassDescriptor(
                 ClassDescriptor descriptor, DiagnosticCollector collector
         ) {
-            validateTypeParameters(collector, descriptor.getTypeConstructor().getParameters());
+            validateTypeParameters(collector, descriptor.getDeclaredTypeParameters());
 
             Collection<KotlinType> supertypes = descriptor.getTypeConstructor().getSupertypes();
             if (supertypes.isEmpty() && descriptor.getKind() != ClassKind.INTERFACE

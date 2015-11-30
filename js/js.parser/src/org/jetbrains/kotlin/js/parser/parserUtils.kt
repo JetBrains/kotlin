@@ -78,7 +78,7 @@ private fun parse(
 }
 
 inline
-private fun Node.toJsAst<T>(scope: JsScope, mapAction: JsAstMapper.(Node)->T): T =
+private fun <T> Node.toJsAst(scope: JsScope, mapAction: JsAstMapper.(Node)->T): T =
         JsAstMapper(scope).mapAction(this)
 
 private fun StringReader(string: String, offset: Int): Reader {

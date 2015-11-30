@@ -1,12 +1,8 @@
 package test;
 
-import org.jetbrains.annotations.NotNull;
-import jet.runtime.typeinfo.KotlinSignature;
-
 public interface DeeplySubstitutedClassParameter {
 
     public interface Super<T> {
-        @KotlinSignature("fun foo(t: T)")
         void foo(T p);
 
         void dummy(); // to avoid loading as SAM interface

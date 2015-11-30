@@ -1,10 +1,10 @@
-fun doSomething<T>(a: T) {}
+fun <T> doSomething(a: T) {}
 
 fun test() {
     class Test {
-        fun unaryPlus(): Test = Test()
-        fun plus(a: Test): Test = Test()
-        fun unaryMinus(): Test = Test()
+        operator fun unaryPlus(): Test = Test()
+        operator fun plus(a: Test): Test = Test()
+        operator fun unaryMinus(): Test = Test()
     }
     val test = Test()
     doSomething((-(+(test + test))).toString())

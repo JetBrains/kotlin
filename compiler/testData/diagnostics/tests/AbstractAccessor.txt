@@ -2,6 +2,7 @@ package
 
 public abstract class My {
     public constructor My()
+    public open var t: kotlin.Int
     public abstract var u: kotlin.Int
     internal abstract val w: kotlin.Int
     public abstract var x: kotlin.Int

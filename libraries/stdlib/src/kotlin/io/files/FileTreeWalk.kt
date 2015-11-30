@@ -77,7 +77,7 @@ public class FileTreeWalk(private val start: File,
                     failed = true
                 }
             }
-            if (fileList != null && fileIndex < fileList!!.size()) {
+            if (fileList != null && fileIndex < fileList!!.size) {
                 // First visit all files
                 return fileList!![fileIndex++]
             } else if (!rootVisited) {
@@ -108,14 +108,14 @@ public class FileTreeWalk(private val start: File,
                 enter(rootDir)
                 rootVisited = true
                 return rootDir
-            } else if (fileList == null || fileIndex < fileList!!.size()) {
+            } else if (fileList == null || fileIndex < fileList!!.size) {
                 if (fileList == null) {
                     // Then read an array of files, if any
                     fileList = rootDir.listFiles()
                     if (fileList == null) {
                         fail(rootDir, AccessDeniedException(file = rootDir, reason = "Cannot list files in a directory"))
                     }
-                    if (fileList == null || fileList!!.size() == 0) {
+                    if (fileList == null || fileList!!.size == 0) {
                         leave(rootDir)
                         return null
                     }
@@ -175,7 +175,7 @@ public class FileTreeWalk(private val start: File,
             // Check that file/directory matches the filter
             if (!filter(file))
                 return gotoNext()
-            if (file == topState.rootDir || !file.isDirectory() || state.size() >= maxDepth) {
+            if (file == topState.rootDir || !file.isDirectory() || state.size >= maxDepth) {
                 // Proceed to a root directory or a simple file
                 return file
             } else {
@@ -211,16 +211,6 @@ public class FileTreeWalk(private val start: File,
         return FileTreeWalk(start, direction, enter, leave, function, filter, maxDepth)
     }
 
-    /**
-     * Sets tree filter [predicate].
-     * Tree filter [predicate] function is called before visiting files and entering directories.
-     * If it returns `false`, file is not visited, directory is not entered and all its content is also not visited.
-     * If it returns `true`, everything goes in the regular way.
-     */
-    @Deprecated("Use treeFilter instead", ReplaceWith("treeFilter(predicate)"))
-    public fun filter(predicate: (File) -> Boolean): FileTreeWalk {
-        return FileTreeWalk(start, direction, enter, leave, fail, predicate, maxDepth)
-    }
 
     /**
      * Sets tree filter [predicate].
@@ -295,7 +285,7 @@ public fun File.walkBottomUp(): FileTreeWalk = walk(FileWalkDirection.BOTTOM_UP)
  *
  * @param function the function to call on each file.
  */
-@Deprecated("It's recommended to use walkTopDown() / walkBottomUp()", ReplaceWith("walkTopDown().forEach(function)"))
+@Deprecated("It's recommended to use walkTopDown() / walkBottomUp()", ReplaceWith("walkTopDown().forEach(function)"), DeprecationLevel.ERROR)
 public fun File.recurse(function: (File) -> Unit): Unit {
     walkTopDown().forEach(function)
 }

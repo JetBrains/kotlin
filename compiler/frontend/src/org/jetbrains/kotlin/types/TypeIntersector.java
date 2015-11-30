@@ -22,17 +22,17 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl;
+import org.jetbrains.kotlin.resolve.calls.inference.CallHandle;
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl;
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImplKt.registerTypeVariables;
 import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.SPECIAL;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
 
@@ -185,11 +185,11 @@ public class TypeIntersector {
             };
             processAllTypeParameters(withParameters, Variance.INVARIANT, processor);
             processAllTypeParameters(expected, Variance.INVARIANT, processor);
-            ConstraintSystemImpl constraintSystem = new ConstraintSystemImpl();
-            registerTypeVariables(constraintSystem, parameters);
-            constraintSystem.addSubtypeConstraint(withParameters, expected, SPECIAL.position());
+            ConstraintSystem.Builder constraintSystem = new ConstraintSystemBuilderImpl();
+            TypeSubstitutor substitutor = constraintSystem.registerTypeVariables(CallHandle.NONE.INSTANCE, parameters.keySet(), false);
+            constraintSystem.addSubtypeConstraint(withParameters, substitutor.substitute(expected, Variance.INVARIANT), SPECIAL.position());
 
-            return constraintSystem.getStatus().isSuccessful();
+            return constraintSystem.build().getStatus().isSuccessful();
         }
 
         private static void processAllTypeParameters(KotlinType type, Variance howThisTypeIsUsed, Function1<TypeParameterUsage, Unit> result) {

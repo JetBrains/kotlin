@@ -1,7 +1,6 @@
 package test;
 
 import java.util.List;
-import org.jetbrains.kotlin.jvm.compiler.annotation.ExpectLoadError;
 
 public interface ArraysInSubtypes {
     interface Super {

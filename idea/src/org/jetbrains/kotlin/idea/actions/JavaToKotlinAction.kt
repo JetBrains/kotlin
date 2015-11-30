@@ -147,8 +147,7 @@ public class JavaToKotlinAction : AnAction() {
         val manager = PsiManager.getInstance(project)
         return allFiles(filesOrDirs)
                 .asSequence()
-                .map { manager.findFile(it) as? PsiJavaFile }
-                .filterNotNull()
+                .mapNotNull { manager.findFile(it) as? PsiJavaFile }
     }
 
     private fun allFiles(filesOrDirs: Array<VirtualFile>): Collection<VirtualFile> {

@@ -7,3 +7,5 @@ fun main(args: Array<String>) {
 }
 
 class A
+
+// SKIP_CONSTRUCTORS: true

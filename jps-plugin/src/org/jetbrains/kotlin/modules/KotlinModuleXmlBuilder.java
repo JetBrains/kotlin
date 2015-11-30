@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.utils.Printer;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -47,7 +48,8 @@ public class KotlinModuleXmlBuilder {
             List<JvmSourceRoot> javaSourceRoots,
             Collection<File> classpathRoots,
             JavaModuleBuildTargetType targetType,
-            Set<File> directoriesToFilterOut
+            Set<File> directoriesToFilterOut,
+            @NotNull List<File> friendDirs
     ) {
         assert !done : "Already done";
 
@@ -64,6 +66,10 @@ public class KotlinModuleXmlBuilder {
                   OUTPUT_DIR, "=\"", getEscapedPath(new File(outputDir)), "\">"
         );
         p.pushIndent();
+
+        for (File friendDir : friendDirs) {
+            p.println("<", FRIEND_DIR, " ", PATH, "=\"", getEscapedPath(friendDir), "\"/>");
+        }
 
         for (File sourceFile : sourceFiles) {
             p.println("<", SOURCES, " ", PATH, "=\"", getEscapedPath(sourceFile), "\"/>");

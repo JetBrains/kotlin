@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus;
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind;
 import org.jetbrains.kotlin.resolve.calls.tasks.ResolutionCandidate;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
+import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeProjection;
@@ -77,7 +78,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     private final D candidateDescriptor;
     private D resultingDescriptor; // Probably substituted
     private final ReceiverValue dispatchReceiver; // receiver object of a method
-    private final ReceiverValue extensionReceiver; // receiver of an extension function
+    private final Receiver extensionReceiver; // receiver of an extension function
     private final ExplicitReceiverKind explicitReceiverKind;
     private final TypeSubstitutor knownTypeParametersSubstitutor;
 
@@ -102,7 +103,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
         this.call = candidate.getCall();
         this.candidateDescriptor = candidate.getDescriptor();
         this.dispatchReceiver = candidate.getDispatchReceiver();
-        this.extensionReceiver = candidate.getExtensionReceiver();
+        this.extensionReceiver = candidate.getReceiverArgument();
         this.explicitReceiverKind = candidate.getExplicitReceiverKind();
         this.knownTypeParametersSubstitutor = candidate.getKnownTypeParametersResultingSubstitutor();
         this.trace = trace;
@@ -240,7 +241,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
 
     @Override
     @NotNull
-    public ReceiverValue getExtensionReceiver() {
+    public Receiver getExtensionReceiver() {
         return extensionReceiver;
     }
 

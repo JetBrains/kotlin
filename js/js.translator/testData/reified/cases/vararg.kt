@@ -5,8 +5,7 @@ package foo
 class A(val x: Int)
 class B(val x: Int)
 
-inline
-fun test<reified T>(vararg xs: Any): List<T> {
+inline fun <reified T> test(vararg xs: Any): List<T> {
     val ts = arrayListOf<T>()
 
     for (x in xs) {

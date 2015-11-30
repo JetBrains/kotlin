@@ -51,11 +51,11 @@ public class RegeneratedLambdaFieldRemapper extends FieldRemapper {
 
     @Override
     public boolean canProcess(@NotNull String fieldOwner, String fieldName, boolean isFolding) {
-        return super.canProcess(fieldOwner, fieldName, isFolding) || isRecapturedLambdaType(fieldOwner);
+        return super.canProcess(fieldOwner, fieldName, isFolding) || isRecapturedLambdaType(fieldOwner, isFolding);
     }
 
-    private boolean isRecapturedLambdaType(String owner) {
-        return recapturedLambdas.containsKey(owner);
+    private boolean isRecapturedLambdaType(String owner, boolean isFolding) {
+        return recapturedLambdas.containsKey(owner)  && (isFolding || false == parent instanceof InlinedLambdaRemapper);
     }
 
     @Nullable
@@ -79,10 +79,20 @@ public class RegeneratedLambdaFieldRemapper extends FieldRemapper {
         return super.findField(fieldInsnNode, parameters.getCaptured());
     }
 
+    @Override
+    public String getNewLambdaInternalName() {
+        return newOwnerType;
+    }
+
     @Nullable
     @Override
     public StackValue getFieldForInline(@NotNull FieldInsnNode node, @Nullable StackValue prefix) {
         assert node.name.startsWith("$$$") : "Captured field template should start with $$$ prefix";
+        if (node.name.equals("$$$" + InlineCodegenUtil.THIS)) {
+            assert oldOwnerType.equals(node.owner) : "Can't unfold '$$$THIS' parameter";
+            return StackValue.LOCAL_0;
+        }
+
         FieldInsnNode fin = new FieldInsnNode(node.getOpcode(), node.owner, node.name.substring(3), node.desc);
         CapturedParamInfo field = findFieldInMyCaptured(fin);
 
@@ -95,8 +105,9 @@ public class RegeneratedLambdaFieldRemapper extends FieldRemapper {
             }
         }
 
-        StackValue result = StackValue.field(field.getType(),
-                                             Type.getObjectType(newOwnerType), /*TODO owner type*/
+        StackValue result = StackValue.field(field.isSkipped ?
+                                             Type.getObjectType(parent.parent.getNewLambdaInternalName()) : field.getType(),
+                                             Type.getObjectType(getNewLambdaInternalName()), /*TODO owner type*/
                                              field.getNewFieldName(), false,
                                              prefix == null ? StackValue.LOCAL_0 : prefix);
 

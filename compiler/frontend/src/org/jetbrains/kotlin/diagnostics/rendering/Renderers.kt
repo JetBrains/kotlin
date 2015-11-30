@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.types.TypeIntersector
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.PrintWriter
 import java.io.StringWriter
 
@@ -152,7 +153,7 @@ public object Renderers {
     public fun renderConflictingSubstitutionsInferenceError(
             inferenceErrorData: InferenceErrorData, result: TabledDescriptorRenderer
     ): TabledDescriptorRenderer {
-        LOG.assertTrue(inferenceErrorData.constraintSystem.getStatus().hasConflictingConstraints(),
+        LOG.assertTrue(inferenceErrorData.constraintSystem.status.hasConflictingConstraints(),
                        renderDebugMessage("Conflicting substitutions inference error renderer is applied for incorrect status", inferenceErrorData))
 
         val substitutedDescriptors = Lists.newArrayList<CallableDescriptor>()
@@ -162,15 +163,15 @@ public object Renderers {
             substitutedDescriptors.add(substitutedDescriptor)
         }
 
-        val firstConflictingParameter = ConstraintsUtil.getFirstConflictingParameter(inferenceErrorData.constraintSystem)
-        if (firstConflictingParameter == null) {
+        val firstConflictingVariable = ConstraintsUtil.getFirstConflictingVariable(inferenceErrorData.constraintSystem)
+        if (firstConflictingVariable == null) {
             LOG.error(renderDebugMessage("There is no conflicting parameter for 'conflicting constraints' error.", inferenceErrorData))
             return result
         }
 
         result.text(newText()
                             .normal("Cannot infer type parameter ")
-                            .strong(firstConflictingParameter.getName())
+                            .strong(firstConflictingVariable.name)
                             .normal(" in "))
         val table = newTable()
         result.table(table)
@@ -207,7 +208,7 @@ public object Renderers {
     public fun renderParameterConstraintError(
             inferenceErrorData: InferenceErrorData, renderer: TabledDescriptorRenderer
     ): TabledDescriptorRenderer {
-        val constraintErrors = (inferenceErrorData.constraintSystem as ConstraintSystemImpl).constraintErrors
+        val constraintErrors = inferenceErrorData.constraintSystem.status.constraintErrors
         val errorPositions = constraintErrors.filter { it is ParameterConstraintError }.map { it.constraintPosition }
         return renderer.table(
                 TabledDescriptorRenderer
@@ -224,21 +225,15 @@ public object Renderers {
     public fun renderNoInformationForParameterError(
             inferenceErrorData: InferenceErrorData, result: TabledDescriptorRenderer
     ): TabledDescriptorRenderer {
-        var firstUnknownParameter: TypeParameterDescriptor? = null
-        for (typeParameter in inferenceErrorData.constraintSystem.getTypeVariables()) {
-            if (inferenceErrorData.constraintSystem.getTypeBounds(typeParameter).values.isEmpty()) {
-                firstUnknownParameter = typeParameter
-                break
-            }
-        }
-        if (firstUnknownParameter == null) {
+        val firstUnknownVariable = inferenceErrorData.constraintSystem.typeVariables.firstOrNull { variable ->
+            inferenceErrorData.constraintSystem.getTypeBounds(variable).values.isEmpty()
+        } ?: return result.apply {
             LOG.error(renderDebugMessage("There is no unknown parameter for 'no information for parameter error'.", inferenceErrorData))
-            return result
         }
 
         return result
                 .text(newText().normal("Not enough information to infer parameter ")
-                              .strong(firstUnknownParameter.getName())
+                              .strong(firstUnknownVariable.name)
                               .normal(" in "))
                 .table(newTable()
                                .descriptor(inferenceErrorData.descriptor)
@@ -249,14 +244,14 @@ public object Renderers {
     public fun renderUpperBoundViolatedInferenceError(
             inferenceErrorData: InferenceErrorData, result: TabledDescriptorRenderer
     ): TabledDescriptorRenderer {
-        val constraintSystem = inferenceErrorData.constraintSystem as ConstraintSystemImpl
-        val status = constraintSystem.getStatus()
+        val constraintSystem = inferenceErrorData.constraintSystem
+        val status = constraintSystem.status
         LOG.assertTrue(status.hasViolatedUpperBound(),
                        renderDebugMessage("Upper bound violated renderer is applied for incorrect status", inferenceErrorData))
 
         val systemWithoutWeakConstraints = constraintSystem.filterConstraintsOut(ConstraintPositionKind.TYPE_BOUND_POSITION)
-        val typeParameterDescriptor = inferenceErrorData.descriptor.getTypeParameters().firstOrNull { 
-            !ConstraintsUtil.checkUpperBoundIsSatisfied(systemWithoutWeakConstraints, it, true)
+        val typeParameterDescriptor = inferenceErrorData.descriptor.typeParameters.firstOrNull {
+            !ConstraintsUtil.checkUpperBoundIsSatisfied(systemWithoutWeakConstraints, it, inferenceErrorData.call, true)
         }
         if (typeParameterDescriptor == null && status.hasConflictingConstraints()) {
             return renderConflictingSubstitutionsInferenceError(inferenceErrorData, result)
@@ -266,7 +261,8 @@ public object Renderers {
             return result
         }
 
-        val inferredValueForTypeParameter = systemWithoutWeakConstraints.getTypeBounds(typeParameterDescriptor).value
+        val typeVariable = systemWithoutWeakConstraints.descriptorToVariable(inferenceErrorData.call.toHandle(), typeParameterDescriptor)
+        val inferredValueForTypeParameter = systemWithoutWeakConstraints.getTypeBounds(typeVariable).value
         if (inferredValueForTypeParameter == null) {
             LOG.error(renderDebugMessage("System without weak constraints is not successful, there is no value for type parameter " + 
                                          typeParameterDescriptor.getName() + "\n: " + systemWithoutWeakConstraints, inferenceErrorData))
@@ -282,7 +278,7 @@ public object Renderers {
 
         var violatedUpperBound: KotlinType? = null
         for (upperBound in typeParameterDescriptor.getUpperBounds()) {
-            val upperBoundWithSubstitutedInferredTypes = systemWithoutWeakConstraints.getResultingSubstitutor().substitute(upperBound, Variance.INVARIANT)
+            val upperBoundWithSubstitutedInferredTypes = systemWithoutWeakConstraints.resultingSubstitutor.substitute(upperBound, Variance.INVARIANT)
             if (upperBoundWithSubstitutedInferredTypes != null
                 && !KotlinTypeChecker.DEFAULT.isSubtypeOf(inferredValueForTypeParameter, upperBoundWithSubstitutedInferredTypes)) {
                 violatedUpperBound = upperBoundWithSubstitutedInferredTypes
@@ -308,15 +304,15 @@ public object Renderers {
     public fun renderCannotCaptureTypeParameterError(
             inferenceErrorData: InferenceErrorData, result: TabledDescriptorRenderer
     ): TabledDescriptorRenderer {
-        val constraintSystem = inferenceErrorData.constraintSystem as ConstraintSystemImpl
-        val errors = constraintSystem.constraintErrors
-        val typeParameterWithCapturedConstraint = (errors.firstOrNull { it is CannotCapture } as? CannotCapture)?.typeVariable
-        if (typeParameterWithCapturedConstraint == null) {
+        val system = inferenceErrorData.constraintSystem
+        val errors = system.status.constraintErrors
+        val typeVariableWithCapturedConstraint = errors.firstIsInstanceOrNull<CannotCapture>()?.typeVariable
+        if (typeVariableWithCapturedConstraint == null) {
             LOG.error(renderDebugMessage("An error 'cannot capture type parameter' is not found in errors", inferenceErrorData))
             return result
         }
 
-        val typeBounds = constraintSystem.getTypeBounds(typeParameterWithCapturedConstraint)
+        val typeBounds = system.getTypeBounds(typeVariableWithCapturedConstraint)
         val boundWithCapturedType = typeBounds.bounds.firstOrNull { it.constrainingType.isCaptured() }
         val capturedTypeConstructor = boundWithCapturedType?.constrainingType?.getConstructor() as? CapturedTypeConstructor
         if (capturedTypeConstructor == null) {
@@ -324,8 +320,10 @@ public object Renderers {
             return result
         }
 
+        val typeParameter = typeVariableWithCapturedConstraint.originalTypeParameter
+
         val explanation: String
-        val upperBound = TypeIntersector.getUpperBoundsAsType(typeParameterWithCapturedConstraint)
+        val upperBound = TypeIntersector.getUpperBoundsAsType(typeParameter)
         if (!KotlinBuiltIns.isNullableAny(upperBound) && capturedTypeConstructor.typeProjection.getProjectionKind() == Variance.IN_VARIANCE) {
             explanation = "Type parameter has an upper bound '" + result.getTypeRenderer().render(upperBound) + "'" +
                           " that cannot be satisfied capturing 'in' projection"
@@ -333,10 +331,12 @@ public object Renderers {
         else {
             explanation = "Only top-level type projections can be captured"
         }
-        result.text(newText().normal("'" + typeParameterWithCapturedConstraint.getName() + "'" +
-                                     " cannot capture " +
-                                     "'" + capturedTypeConstructor.typeProjection + "'. " +
-                                     explanation))
+        result.text(newText().normal(
+                "'" + typeParameter.name + "'" +
+                " cannot capture " +
+                "'" + capturedTypeConstructor.typeProjection + "'. " +
+                explanation
+        ))
         return result
     }
 
@@ -362,14 +362,13 @@ public object Renderers {
     public val RENDER_COLLECTION_OF_TYPES: Renderer<Collection<KotlinType>> = Renderer { renderTypes(it) }
 
     private fun renderConstraintSystem(constraintSystem: ConstraintSystem, renderTypeBounds: Renderer<TypeBounds>): String {
-        val typeVariables = constraintSystem.getTypeVariables()
-        val typeBounds = Sets.newLinkedHashSet<TypeBounds>()
-        for (variable in typeVariables) {
+        val typeBounds = linkedSetOf<TypeBounds>()
+        for (variable in constraintSystem.typeVariables) {
             typeBounds.add(constraintSystem.getTypeBounds(variable))
         }
         return "type parameter bounds:\n" +
                StringUtil.join(typeBounds, { renderTypeBounds.render(it) }, "\n") + "\n\n" + "status:\n" +
-               ConstraintsUtil.getDebugMessageForStatus(constraintSystem.getStatus())
+               ConstraintsUtil.getDebugMessageForStatus(constraintSystem.status)
     }
 
     public val RENDER_CONSTRAINT_SYSTEM: Renderer<ConstraintSystem> = Renderer { renderConstraintSystem(it, RENDER_TYPE_BOUNDS) }
@@ -382,7 +381,7 @@ public object Renderers {
             val renderedBound = arrow + renderer.renderType(bound.constrainingType) +  if (!bound.isProper) "*" else ""
             if (short) renderedBound else renderedBound + '(' + bound.position + ')'
         }
-        val typeVariableName = typeBounds.typeVariable.getName()
+        val typeVariableName = typeBounds.typeVariable.name
         return if (typeBounds.bounds.isEmpty()) {
             typeVariableName.asString()
         }

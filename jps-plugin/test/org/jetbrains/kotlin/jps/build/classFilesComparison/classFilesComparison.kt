@@ -22,7 +22,9 @@ import com.google.common.io.Files
 import com.google.protobuf.ExtensionRegistry
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.jps.incremental.LocalFileKotlinClass
-import org.jetbrains.kotlin.load.kotlin.header.*
+import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
+import org.jetbrains.kotlin.load.kotlin.header.isCompatibleFileFacadeKind
+import org.jetbrains.kotlin.load.kotlin.header.isCompatibleMultifileClassPartKind
 import org.jetbrains.kotlin.serialization.DebugProtoBuf
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf
@@ -53,7 +55,7 @@ fun getDirectoryString(dir: File, interestingPaths: List<String>): String {
         val listFiles = dir.listFiles()
         assertNotNull(listFiles)
 
-        val children = listFiles!!.sortedWith(compareBy ({ it.directory }, { it.name } ))
+        val children = listFiles!!.sortedWith(compareBy ({ it.isDirectory }, { it.name } ))
         for (child in children) {
             if (child.isDirectory()) {
                 p.println(child.name)
@@ -140,9 +142,7 @@ fun classFileToString(classFile: File): String {
             out.write("\n------ string table types proto -----\n${DebugJvmProtoBuf.StringTableTypes.parseDelimitedFrom(input)}")
 
             when {
-                classHeader!!.isCompatiblePackageFacadeKind() ->
-                    out.write("\n------ package proto -----\n${DebugProtoBuf.Package.parseFrom(input, getExtensionRegistry())}")
-                classHeader.isCompatibleFileFacadeKind() ->
+                classHeader!!.isCompatibleFileFacadeKind() ->
                     out.write("\n------ file facade proto -----\n${DebugProtoBuf.Package.parseFrom(input, getExtensionRegistry())}")
                 classHeader.isCompatibleClassKind() ->
                     out.write("\n------ class proto -----\n${DebugProtoBuf.Class.parseFrom(input, getExtensionRegistry())}")

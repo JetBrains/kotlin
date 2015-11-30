@@ -51,7 +51,7 @@ public class JvmDependenciesIndex(_roots: List<JavaRoot>) {
     private class Cache {
         private val innerPackageCaches = HashMap<String, Cache>()
 
-        fun get(name: String) = innerPackageCaches.getOrPut(name) { Cache() }
+        operator fun get(name: String) = innerPackageCaches.getOrPut(name) { Cache() }
 
         // indices of roots that are known to contain this package
         // if this list contains [1, 3, 5] then roots with indices 1, 3 and 5 are known to contain this package, 2 and 4 are known not to (no information about roots 6 or higher)

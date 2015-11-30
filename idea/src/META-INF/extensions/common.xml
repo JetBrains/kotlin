@@ -20,8 +20,14 @@
         <extensionPoint name="simpleNameReferenceExtension"
                         interface="org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension"
                         area="IDEA_PROJECT"/>
+        <extensionPoint name="kotlinIndicesHelperExtension"
+                        interface="org.jetbrains.kotlin.idea.core.extension.KotlinIndicesHelperExtension"
+                        area="IDEA_PROJECT"/>
         <extensionPoint name="classBuilderFactoryInterceptorExtension"
                         interface="org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension"
+                        area="IDEA_PROJECT"/>
+        <extensionPoint name="packageFragmentProviderExtension"
+                        interface="org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension"
                         area="IDEA_PROJECT"/>
         <extensionPoint name="quickFixContributor"
                         interface="org.jetbrains.kotlin.idea.quickfix.QuickFixContributor"/>

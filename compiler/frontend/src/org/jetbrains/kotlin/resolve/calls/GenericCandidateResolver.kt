@@ -32,8 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionResultsCache
 import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
+import org.jetbrains.kotlin.resolve.calls.inference.*
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.RECEIVER_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION
@@ -42,135 +41,145 @@ import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.INCOMPLETE_TY
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.OTHER_ERROR
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 
-
-class GenericCandidateResolver(
-        private val argumentTypeResolver: ArgumentTypeResolver
-) {
-
+class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeResolver) {
     fun <D : CallableDescriptor> inferTypeArguments(context: CallCandidateResolutionContext<D>): ResolutionStatus {
         val candidateCall = context.candidateCall
-        val candidate = candidateCall.getCandidateDescriptor()
+        val candidate = candidateCall.candidateDescriptor
 
-        val constraintSystem = ConstraintSystemImpl()
-        candidateCall.setConstraintSystem(constraintSystem)
+        val builder = ConstraintSystemBuilderImpl()
+        builder.registerTypeVariables(candidateCall.call.toHandle(), candidate.typeParameters)
 
-        // If the call is recursive, e.g.
-        //   fun foo<T>(t : T) : T = foo(t)
-        // we can't use same descriptor objects for T's as actual type values and same T's as unknowns,
-        // because constraints become trivial (T :< T), and inference fails
-        //
-        // Thus, we replace the parameters of our descriptor with fresh objects (perform alpha-conversion)
-        val candidateWithFreshVariables = FunctionDescriptorUtil.alphaConvertTypeParameters(candidate)
-
-        val conversionToOriginal = candidateWithFreshVariables.getTypeParameters().zip(candidate.getTypeParameters()).toMap()
-        constraintSystem.registerTypeVariables(candidateWithFreshVariables.getTypeParameters(), { Variance.INVARIANT }, { conversionToOriginal[it]!! })
-
-        val substituteDontCare = makeConstantSubstitutor(candidate.getTypeParameters(), DONT_CARE)
+        val substituteDontCare = makeConstantSubstitutor(candidate.typeParameters, DONT_CARE)
 
         // Value parameters
-        for (entry in candidateCall.getValueArguments().entrySet()) {
-            val resolvedValueArgument = entry.getValue()
-            val valueParameterDescriptor = candidate.getValueParameters().get(entry.getKey().index)
+        for ((candidateParameter, resolvedValueArgument) in candidateCall.valueArguments) {
+            val valueParameterDescriptor = candidate.valueParameters[candidateParameter.index]
 
-
-            for (valueArgument in resolvedValueArgument.getArguments()) {
+            for (valueArgument in resolvedValueArgument.arguments) {
                 // TODO : more attempts, with different expected types
 
                 // Here we type check expecting an error type (DONT_CARE, substitution with substituteDontCare)
                 // and throw the results away
                 // We'll type check the arguments later, with the inferred types expected
-                addConstraintForValueArgument(valueArgument, valueParameterDescriptor, substituteDontCare,
-                                              constraintSystem, context, SHAPE_FUNCTION_ARGUMENTS)
+                addConstraintForValueArgument(
+                        valueArgument, valueParameterDescriptor, substituteDontCare, builder, context, SHAPE_FUNCTION_ARGUMENTS
+                )
             }
         }
 
         // Receiver
         // Error is already reported if something is missing
-        val receiverArgument = candidateCall.getExtensionReceiver()
-        val receiverParameter = candidate.getExtensionReceiverParameter()
+        val receiverArgument = candidateCall.extensionReceiver
+        val receiverParameter = candidate.extensionReceiverParameter
         if (receiverArgument.exists() && receiverParameter != null) {
-            var receiverType: KotlinType? = if (context.candidateCall.isSafeCall())
-                TypeUtils.makeNotNullable(receiverArgument.getType())
+            val receiverArgumentType = (receiverArgument as ReceiverValue).type
+            var receiverType: KotlinType? = if (context.candidateCall.isSafeCall)
+                TypeUtils.makeNotNullable(receiverArgumentType)
             else
-                receiverArgument.getType()
+                receiverArgumentType
             if (receiverArgument is ExpressionReceiver) {
-                receiverType = updateResultTypeForSmartCasts(receiverType, receiverArgument.getExpression(), context)
+                receiverType = updateResultTypeForSmartCasts(receiverType, receiverArgument.expression, context)
             }
-            constraintSystem.addSubtypeConstraint(receiverType, receiverParameter.getType(), RECEIVER_POSITION.position())
+            builder.addSubtypeConstraint(
+                    receiverType,
+                    builder.compositeSubstitutor().substitute(receiverParameter.type, Variance.INVARIANT),
+                    RECEIVER_POSITION.position()
+            )
         }
 
+        val constraintSystem = builder.build()
+        candidateCall.setConstraintSystem(constraintSystem)
+
         // Solution
-        val hasContradiction = constraintSystem.getStatus().hasContradiction()
+        val hasContradiction = constraintSystem.status.hasContradiction()
         if (!hasContradiction) {
             return INCOMPLETE_TYPE_INFERENCE
         }
         return OTHER_ERROR
     }
 
+    // Creates a substitutor which maps types to their representation in the constraint system.
+    // In case when some type parameter descriptor is represented by more than one variable in the system, the behavior is undefined.
+    private fun ConstraintSystem.Builder.compositeSubstitutor(): TypeSubstitutor {
+        return TypeSubstitutor.create(object : TypeSubstitution() {
+            override fun get(key: KotlinType): TypeProjection? {
+                return typeVariableSubstitutors.values.reversed().asSequence().mapNotNull { it.substitution.get(key) }.firstOrNull()
+            }
+        })
+    }
+
     fun addConstraintForValueArgument(
             valueArgument: ValueArgument,
             valueParameterDescriptor: ValueParameterDescriptor,
             substitutor: TypeSubstitutor,
-            constraintSystem: ConstraintSystem,
+            builder: ConstraintSystem.Builder,
             context: CallCandidateResolutionContext<*>,
             resolveFunctionArgumentBodies: ResolveArgumentsMode
     ) {
-
         val effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument)
         val argumentExpression = valueArgument.getArgumentExpression()
 
         val expectedType = substitutor.substitute(effectiveExpectedType, Variance.INVARIANT)
-        val dataFlowInfoForArgument = context.candidateCall.getDataFlowInfoForArguments().getInfo(valueArgument)
+        val dataFlowInfoForArgument = context.candidateCall.dataFlowInfoForArguments.getInfo(valueArgument)
         val newContext = context.replaceExpectedType(expectedType).replaceDataFlowInfo(dataFlowInfoForArgument)
 
         val typeInfoForCall = argumentTypeResolver.getArgumentTypeInfo(argumentExpression, newContext, resolveFunctionArgumentBodies)
-        context.candidateCall.getDataFlowInfoForArguments().updateInfo(valueArgument, typeInfoForCall.dataFlowInfo)
+        context.candidateCall.dataFlowInfoForArguments.updateInfo(valueArgument, typeInfoForCall.dataFlowInfo)
 
         val constraintPosition = VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.index)
 
-        if (addConstraintForNestedCall(argumentExpression, constraintPosition, constraintSystem, newContext, effectiveExpectedType)) return
+        if (addConstraintForNestedCall(argumentExpression, constraintPosition, builder, newContext, effectiveExpectedType)) return
 
         val type = updateResultTypeForSmartCasts(typeInfoForCall.type, argumentExpression, context.replaceDataFlowInfo(dataFlowInfoForArgument))
-        constraintSystem.addSubtypeConstraint(type, effectiveExpectedType, constraintPosition)
+        builder.addSubtypeConstraint(
+                type,
+                builder.compositeSubstitutor().substitute(effectiveExpectedType, Variance.INVARIANT),
+                constraintPosition
+        )
     }
 
     private fun addConstraintForNestedCall(
             argumentExpression: KtExpression?,
             constraintPosition: ConstraintPosition,
-            constraintSystem: ConstraintSystem,
+            builder: ConstraintSystem.Builder,
             context: CallCandidateResolutionContext<*>,
             effectiveExpectedType: KotlinType
     ): Boolean {
         val resolutionResults = getResolutionResultsCachedData(argumentExpression, context)?.resolutionResults
-        if (resolutionResults == null || !resolutionResults.isSingleResult()) return false
+        if (resolutionResults == null || !resolutionResults.isSingleResult) return false
 
-        val resultingCall = resolutionResults.getResultingCall()
-        if (resultingCall.isCompleted()) return false
+        val resultingCall = resolutionResults.resultingCall
+        if (resultingCall.isCompleted) return false
 
-        val argumentConstraintSystem = resultingCall.getConstraintSystem() as ConstraintSystemImpl? ?: return false
+        val argumentConstraintSystem = resultingCall.constraintSystem ?: return false
 
-        val candidateDescriptor = resultingCall.getCandidateDescriptor()
-        val returnType = candidateDescriptor.getReturnType() ?: return false
+        val candidateDescriptor = resultingCall.candidateDescriptor
+        val returnType = candidateDescriptor.returnType ?: return false
 
-        val nestedTypeVariables = with (argumentConstraintSystem) {
-            returnType.getNestedTypeVariables()
-        }
+        val nestedTypeVariables = argumentConstraintSystem.getNestedTypeVariables(returnType)
+
         // we add an additional type variable only if no information is inferred for it.
         // otherwise we add currently inferred return type as before
         if (nestedTypeVariables.any { argumentConstraintSystem.getTypeBounds(it).bounds.isNotEmpty() }) return false
 
         val candidateWithFreshVariables = FunctionDescriptorUtil.alphaConvertTypeParameters(candidateDescriptor)
-        val conversion = candidateDescriptor.getTypeParameters().zip(candidateWithFreshVariables.getTypeParameters()).toMap()
+        val conversion = candidateDescriptor.typeParameters.zip(candidateWithFreshVariables.typeParameters).toMap()
 
-        val freshVariables = nestedTypeVariables.map { conversion[it] }.filterNotNull()
-        constraintSystem.registerTypeVariables(freshVariables, { Variance.INVARIANT }, { it }, external = true)
+        val freshVariables = returnType.getNestedTypeParameters().mapNotNull { conversion[it] }
+        builder.registerTypeVariables(resultingCall.call.toHandle(), freshVariables, external = true)
 
-        constraintSystem.addSubtypeConstraint(candidateWithFreshVariables.getReturnType(), effectiveExpectedType, constraintPosition)
+        builder.addSubtypeConstraint(
+                candidateWithFreshVariables.returnType,
+                builder.compositeSubstitutor().substitute(effectiveExpectedType, Variance.INVARIANT),
+                constraintPosition
+        )
+
         return true
     }
 
@@ -188,22 +197,17 @@ class GenericCandidateResolver(
         val possibleTypes = context.dataFlowInfo.getPossibleTypes(dataFlowValue)
         if (possibleTypes.isEmpty()) return type
 
-        return TypeIntersector.intersectTypes(KotlinTypeChecker.DEFAULT, possibleTypes)
+        return TypeIntersector.intersectTypes(KotlinTypeChecker.DEFAULT, possibleTypes + type)
     }
 
-    public fun <D : CallableDescriptor> completeTypeInferenceDependentOnFunctionArgumentsForCall(
-            context: CallCandidateResolutionContext<D>
-    ) {
+    fun <D : CallableDescriptor> completeTypeInferenceDependentOnFunctionArgumentsForCall(context: CallCandidateResolutionContext<D>) {
         val resolvedCall = context.candidateCall
-        val constraintSystem = resolvedCall.getConstraintSystem() ?: return
+        val constraintSystem = resolvedCall.constraintSystem?.toBuilder() ?: return
 
         // constraints for function literals
         // Value parameters
-        for (entry in resolvedCall.getValueArguments().entrySet()) {
-            val resolvedValueArgument = entry.getValue()
-            val valueParameterDescriptor = entry.getKey()
-
-            for (valueArgument in resolvedValueArgument.getArguments()) {
+        for ((valueParameterDescriptor, resolvedValueArgument) in resolvedCall.valueArguments) {
+            for (valueArgument in resolvedValueArgument.arguments) {
                 valueArgument.getArgumentExpression()?.let { argumentExpression ->
                     ArgumentTypeResolver.getFunctionLiteralArgumentIfAny(argumentExpression, context)?.let { functionLiteral ->
                         addConstraintForFunctionLiteral(functionLiteral, valueArgument, valueParameterDescriptor, constraintSystem, context)
@@ -214,20 +218,22 @@ class GenericCandidateResolver(
                 }
             }
         }
-        resolvedCall.setResultingSubstitutor(constraintSystem.getResultingSubstitutor())
+        val resultingSystem = constraintSystem.build()
+        resolvedCall.setConstraintSystem(resultingSystem)
+        resolvedCall.setResultingSubstitutor(resultingSystem.resultingSubstitutor)
     }
 
     private fun <D : CallableDescriptor> addConstraintForFunctionLiteral(
             functionLiteral: KtFunction,
             valueArgument: ValueArgument,
             valueParameterDescriptor: ValueParameterDescriptor,
-            constraintSystem: ConstraintSystem,
+            constraintSystem: ConstraintSystem.Builder,
             context: CallCandidateResolutionContext<D>
     ) {
         val argumentExpression = valueArgument.getArgumentExpression() ?: return
 
         val effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument)
-        var expectedType = constraintSystem.getCurrentSubstitutor().substitute(effectiveExpectedType, Variance.INVARIANT)
+        var expectedType = constraintSystem.build().currentSubstitutor.substitute(effectiveExpectedType, Variance.INVARIANT)
         if (expectedType == null || TypeUtils.isDontCarePlaceholder(expectedType)) {
             expectedType = argumentTypeResolver.getShapeTypeOfFunctionLiteral(functionLiteral, context.scope, context.trace, false)
         }
@@ -235,8 +241,11 @@ class GenericCandidateResolver(
             hasUnknownFunctionParameter(expectedType)) {
             return
         }
-        val dataFlowInfoForArguments = context.candidateCall.getDataFlowInfoForArguments()
+        val dataFlowInfoForArguments = context.candidateCall.dataFlowInfoForArguments
         val dataFlowInfoForArgument = dataFlowInfoForArguments.getInfo(valueArgument)
+
+        val effectiveExpectedTypeInSystem =
+                constraintSystem.typeVariableSubstitutors[context.call.toHandle()]?.substitute(effectiveExpectedType, Variance.INVARIANT)
 
         //todo analyze function literal body once in 'dependent' mode, then complete it with respect to expected type
         val hasExpectedReturnType = !hasUnknownReturnType(expectedType)
@@ -245,7 +254,7 @@ class GenericCandidateResolver(
             val temporaryToResolveFunctionLiteral = TemporaryTraceAndCache.create(
                     context, "trace to resolve function literal with expected return type", argumentExpression)
 
-            val statementExpression = KtPsiUtil.getExpressionOrLastStatementInBlock(functionLiteral.getBodyExpression()) ?: return
+            val statementExpression = KtPsiUtil.getExpressionOrLastStatementInBlock(functionLiteral.bodyExpression) ?: return
             val mismatch = BooleanArray(1)
             val errorInterceptingTrace = ExpressionTypingUtils.makeTraceInterceptingTypeMismatch(
                     temporaryToResolveFunctionLiteral.trace, statementExpression, mismatch)
@@ -255,7 +264,7 @@ class GenericCandidateResolver(
             val type = argumentTypeResolver.getFunctionLiteralTypeInfo(
                     argumentExpression, functionLiteral, newContext, RESOLVE_FUNCTION_ARGUMENTS).type
             if (!mismatch[0]) {
-                constraintSystem.addSubtypeConstraint(type, effectiveExpectedType, position)
+                constraintSystem.addSubtypeConstraint(type, effectiveExpectedTypeInSystem, position)
                 temporaryToResolveFunctionLiteral.commit()
                 return
             }
@@ -264,14 +273,14 @@ class GenericCandidateResolver(
         val newContext = context.replaceExpectedType(expectedTypeWithoutReturnType).replaceDataFlowInfo(dataFlowInfoForArgument)
                 .replaceContextDependency(INDEPENDENT)
         val type = argumentTypeResolver.getFunctionLiteralTypeInfo(argumentExpression, functionLiteral, newContext, RESOLVE_FUNCTION_ARGUMENTS).type
-        constraintSystem.addSubtypeConstraint(type, effectiveExpectedType, position)
+        constraintSystem.addSubtypeConstraint(type, effectiveExpectedTypeInSystem, position)
     }
 
     private fun <D : CallableDescriptor> addConstraintForCallableReference(
             callableReference: KtCallableReferenceExpression,
             valueArgument: ValueArgument,
             valueParameterDescriptor: ValueParameterDescriptor,
-            constraintSystem: ConstraintSystem,
+            constraintSystem: ConstraintSystem.Builder,
             context: CallCandidateResolutionContext<D>
     ) {
         val effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument)
@@ -280,16 +289,20 @@ class GenericCandidateResolver(
         if (!ReflectionTypes.isCallableType(expectedType)) return
         val resolvedType = getResolvedTypeForCallableReference(callableReference, context, expectedType, valueArgument)
         val position = VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.index)
-        constraintSystem.addSubtypeConstraint(resolvedType, effectiveExpectedType, position)
+        constraintSystem.addSubtypeConstraint(
+                resolvedType,
+                constraintSystem.typeVariableSubstitutors[context.call.toHandle()]?.substitute(effectiveExpectedType, Variance.INVARIANT),
+                position
+        )
     }
 
     private fun <D : CallableDescriptor> getExpectedTypeForCallableReference(
             callableReference: KtCallableReferenceExpression,
-            constraintSystem: ConstraintSystem,
+            constraintSystem: ConstraintSystem.Builder,
             context: CallCandidateResolutionContext<D>,
             effectiveExpectedType: KotlinType
     ): KotlinType? {
-        val substitutedType = constraintSystem.getCurrentSubstitutor().substitute(effectiveExpectedType, Variance.INVARIANT)
+        val substitutedType = constraintSystem.build().currentSubstitutor.substitute(effectiveExpectedType, Variance.INVARIANT)
         if (substitutedType != null && !TypeUtils.isDontCarePlaceholder(substitutedType))
             return substitutedType
 
@@ -306,7 +319,7 @@ class GenericCandidateResolver(
             expectedType: KotlinType,
             valueArgument: ValueArgument
     ): KotlinType? {
-        val dataFlowInfoForArgument = context.candidateCall.getDataFlowInfoForArguments().getInfo(valueArgument)
+        val dataFlowInfoForArgument = context.candidateCall.dataFlowInfoForArguments.getInfo(valueArgument)
         val expectedTypeWithoutReturnType = if (!hasUnknownReturnType(expectedType)) replaceReturnTypeByUnknown(expectedType) else expectedType
         val newContext = context
                 .replaceExpectedType(expectedTypeWithoutReturnType)
@@ -321,7 +334,7 @@ class GenericCandidateResolver(
 
 fun getResolutionResultsCachedData(expression: KtExpression?, context: ResolutionContext<*>): ResolutionResultsCache.CachedData? {
     if (!ExpressionTypingUtils.dependsOnExpectedType(expression)) return null
-    val argumentCall = expression?.getCall(context.trace.getBindingContext()) ?: return null
+    val argumentCall = expression?.getCall(context.trace.bindingContext) ?: return null
 
     return context.resolutionResultsCache[argumentCall]
 }

@@ -53,6 +53,12 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
         doTest(fileName);
     }
 
+    @TestMetadata("GenericInnerClass.kt")
+    public void testGenericInnerClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/GenericInnerClass.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Int.kt")
     public void testInt() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/Int.kt");

@@ -4,7 +4,7 @@ package foo
 fun <T> _enumerate(o: T): T = noImpl
 
 @native
-fun _findFirst<T>(o: Any): T = noImpl
+fun <T> _findFirst(o: Any): T = noImpl
 
 class Test() {
     val a: Int = 100

@@ -927,7 +927,7 @@ class StringTest {
         assertFails {
             data.drop(-2)
         }
-        assertEquals("", data.drop(data.length() + 5))
+        assertEquals("", data.drop(data.length + 5))
     }
 
     @test fun dropCharSequence() = withOneCharSequenceArg("abcd1234") { data ->
@@ -935,7 +935,7 @@ class StringTest {
         assertFails {
             data.drop(-2)
         }
-        assertContentEquals("", data.drop(data.length() + 5))
+        assertContentEquals("", data.drop(data.length + 5))
     }
 
     @test fun takeWhile() {
@@ -957,7 +957,7 @@ class StringTest {
         assertFails {
             data.take(-7)
         }
-        assertEquals(data, data.take(data.length() + 42))
+        assertEquals(data, data.take(data.length + 42))
     }
 
     @test fun takeCharSequence() = withOneCharSequenceArg("abcd1234") { data ->
@@ -1102,7 +1102,7 @@ ${"    "}
                    `XP      '             ''''''   YPXXXXXX'       ''''''`''YPPP
         """.trimIndent()
 
-        assertEquals(23, deindented.lines().size())
+        assertEquals(23, deindented.lines().size)
         val indents = deindented.lines().map { "^\\s*".toRegex().find(it)!!.value.length }
         assertEquals(0, indents.min())
         assertEquals(42, indents.max())

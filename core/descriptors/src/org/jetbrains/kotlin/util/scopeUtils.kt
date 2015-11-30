@@ -39,7 +39,7 @@ public fun <T> Collection<T>?.concat(collection: Collection<T>): Collection<T>? 
     return result
 }
 
-public fun concatInOrder<T>(c1: Collection<T>?, c2: Collection<T>?): Collection<T> {
+public fun <T> concatInOrder(c1: Collection<T>?, c2: Collection<T>?): Collection<T> {
     val result = if (c1 == null || c1.isEmpty())
         c2
     else if (c2 == null || c2.isEmpty())
@@ -53,7 +53,7 @@ public fun concatInOrder<T>(c1: Collection<T>?, c2: Collection<T>?): Collection<
     return result ?: emptySet()
 }
 
-public inline fun getFromAllScopes<Scope, T>(scopes: Array<out Scope>, callback: (Scope) -> Collection<T>): Collection<T> {
+public inline fun <Scope, T> getFromAllScopes(scopes: Array<out Scope>, callback: (Scope) -> Collection<T>): Collection<T> {
     if (scopes.isEmpty()) return emptySet()
     var result: Collection<T>? = null
     for (scope in scopes) {
@@ -62,7 +62,7 @@ public inline fun getFromAllScopes<Scope, T>(scopes: Array<out Scope>, callback:
     return result ?: emptySet()
 }
 
-public inline fun getFirstMatch<Scope, T : Any>(scopes: Array<out Scope>, callback: (Scope) -> T?): T? {
+public inline fun <Scope, T : Any> getFirstMatch(scopes: Array<out Scope>, callback: (Scope) -> T?): T? {
     // NOTE: This is performance-sensitive; please don't replace with map().firstOrNull()
     for (scope in scopes) {
         val result = callback(scope)

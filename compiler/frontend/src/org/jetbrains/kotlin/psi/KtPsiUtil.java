@@ -603,7 +603,7 @@ public class KtPsiUtil {
     /**
      * CommentUtilCore.isComment fails if element <strong>inside</strong> comment.
      *
-     * Also, we can not add KDocTokens to COMMENTS TokenSet, because it is used in JetParserDefinition.getCommentTokens(),
+     * Also, we can not add KDocTokens to COMMENTS TokenSet, because it is used in KotlinParserDefinition.getCommentTokens(),
      * and therefor all COMMENTS tokens will be ignored by PsiBuilder.
      *
      * @param element
@@ -755,8 +755,8 @@ public class KtPsiUtil {
         while (current != null) {
             PsiElement parent = PsiTreeUtil.getStubOrPsiParent(current);
             if (parent instanceof KtScript) return null;
-            if (current instanceof KtClassInitializer) {
-                return ((KtClassInitializer) current).getBody();
+            if (current instanceof KtAnonymousInitializer) {
+                return ((KtAnonymousInitializer) current).getBody();
             }
             if (current instanceof KtProperty || current instanceof KtFunction) {
                 if (parent instanceof KtFile) {

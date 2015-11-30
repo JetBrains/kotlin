@@ -47,6 +47,7 @@ public class ModuleXmlParser {
     public static final String TYPE_PRODUCTION = "java-production";
     public static final String TYPE_TEST = "java-test";
     public static final String OUTPUT_DIR = "outputDir";
+    public static final String FRIEND_DIR = "friendDir";
     public static final String SOURCES = "sources";
     public static final String JAVA_SOURCE_ROOTS = "javaSourceRoots";
     public static final String JAVA_SOURCE_PACKAGE_PREFIX = "packagePrefix";
@@ -161,6 +162,10 @@ public class ModuleXmlParser {
             if (SOURCES.equalsIgnoreCase(qName)) {
                 String path = getAttribute(attributes, PATH, qName);
                 moduleBuilder.addSourceFiles(path);
+            }
+            else if (FRIEND_DIR.equalsIgnoreCase(qName)) {
+                String path = getAttribute(attributes, PATH, qName);
+                moduleBuilder.addFriendDir(path);
             }
             else if (CLASSPATH.equalsIgnoreCase(qName)) {
                 String path = getAttribute(attributes, PATH, qName);

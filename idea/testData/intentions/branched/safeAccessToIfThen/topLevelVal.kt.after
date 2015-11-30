@@ -1,4 +1,4 @@
-fun doSomething<T>(a: T) {}
+fun <T> doSomething(a: T) {}
 
 val a: String? = "A"
 fun main(args: Array<String>) {

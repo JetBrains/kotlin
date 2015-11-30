@@ -111,14 +111,14 @@ public class KotlinChangeSignatureData(
             lightMethods.flatMap { baseMethod ->
                 OverridingMethodsSearch
                         .search(baseMethod)
-                        .map { overridingMethod ->
+                        .mapNotNullTo(HashSet<UsageInfo>()) { overridingMethod ->
                             if (overridingMethod is KtLightMethod) {
                                 val overridingDeclaration = overridingMethod.namedUnwrappedElement as KtNamedDeclaration
                                 val overridingDescriptor = overridingDeclaration.resolveToDescriptor() as CallableDescriptor
                                 KotlinCallableDefinitionUsage<PsiElement>(overridingDeclaration, overridingDescriptor, primaryFunction, null)
                             }
                             else OverriderUsageInfo(overridingMethod, baseMethod, true, true, true)
-                        }.filterNotNullTo(HashSet<UsageInfo>())
+                        }
             }
         }
     }

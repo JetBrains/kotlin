@@ -23,7 +23,7 @@ class AnotherClass : Trait {
     override fun baz(): String = "AnotherClass().boo()"
 }
 
-fun test<T : NativeTrait>(c: T, className: String) {
+fun <T : NativeTrait> test(c: T, className: String) {
     assertEquals("$className().foo", c.foo)
     assertEquals("$className().bar(3)", c.bar(3))
     assertEquals("$className().boo()", c.baz())

@@ -109,7 +109,7 @@ public abstract class CallableRefactoring<T: CallableDescriptor>(
 
     public fun run(): Boolean {
         fun buttonPressed(code: Int, dialogButtons: List<String>, button: String): Boolean {
-            return code == dialogButtons indexOf button && button in dialogButtons
+            return code == dialogButtons.indexOf(button) && button in dialogButtons
         }
 
         fun performForWholeHierarchy(dialogButtons: List<String>, code: Int): Boolean {
@@ -175,7 +175,7 @@ public abstract class CallableRefactoring<T: CallableDescriptor>(
 }
 
 fun getAffectedCallables(project: Project, descriptorsForChange: Collection<CallableDescriptor>): List<PsiElement> {
-    val baseCallables = descriptorsForChange.map { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }.filterNotNull()
+    val baseCallables = descriptorsForChange.mapNotNull { DescriptorToSourceUtilsIde.getAnyDeclaration(project, it) }
     return baseCallables + baseCallables.flatMap { it.toLightMethods() }.flatMapTo(HashSet<PsiElement>()) { psiMethod ->
         val overrides = OverridingMethodsSearch.search(psiMethod).findAll()
         overrides.map { method -> method.namedUnwrappedElement ?: method}

@@ -42,6 +42,7 @@ public fun <T> sequenceOf(vararg elements: T): Sequence<T> = if (elements.isEmpt
 /**
  * Creates a sequence that returns all values in the specified [progression].
  */
+@Deprecated("Use progression.asSequence() instead.", ReplaceWith("progression.asSequence()"))
 public fun <T : Any> sequenceOf(progression: Progression<T>): Sequence<T> = object : Sequence<T> {
     override fun iterator(): Iterator<T> = progression.iterator()
 }
@@ -67,9 +68,21 @@ private object EmptySequence : Sequence<Nothing> {
 /**
  * Returns a sequence of all elements from all sequences in this sequence.
  */
-public fun <T> Sequence<Sequence<T>>.flatten(): Sequence<T> {
-    return MultiSequence(this)
+public fun <T> Sequence<Sequence<T>>.flatten(): Sequence<T> = flatten { it.iterator() }
+
+/**
+ * Returns a sequence of all elements from all iterables in this sequence.
+ */
+@kotlin.jvm.JvmName("flattenSequenceOfIterable")
+public fun <T> Sequence<Iterable<T>>.flatten(): Sequence<T> = flatten { it.iterator() }
+
+private fun <T, R> Sequence<T>.flatten(iterator: (T) -> Iterator<R>): Sequence<R> {
+    if (this is TransformingSequence<*, *>) {
+        return (this as TransformingSequence<*, T>).flatten(iterator)
+    }
+    return FlatteningSequence(this, { it }, iterator)
 }
+
 /**
  * Returns a pair of lists, where
  * *first* list is built from the first values of each pair from this sequence,
@@ -150,6 +163,10 @@ constructor(private val sequence: Sequence<T>, private val transformer: (T) -> R
             return iterator.hasNext()
         }
     }
+
+    internal fun <E> flatten(iterator: (R) -> Iterator<E>): Sequence<E> {
+        return FlatteningSequence<T, R, E>(sequence, transformer, iterator)
+    }
 }
 
 /**
@@ -214,15 +231,17 @@ internal class MergingSequence<T1, T2, V>
     }
 }
 
-internal class FlatteningSequence<T, R>
-                                     constructor(private val sequence: Sequence<T>,
-                                      private val transformer: (T) -> Sequence<R>
-                                     ) : Sequence<R> {
-    override fun iterator(): Iterator<R> = object : Iterator<R> {
+internal class FlatteningSequence<T, R, E>
+    constructor(
+        private val sequence: Sequence<T>,
+        private val transformer: (T) -> R,
+        private val iterator: (R) -> Iterator<E>
+    ) : Sequence<E> {
+    override fun iterator(): Iterator<E> = object : Iterator<E> {
         val iterator = sequence.iterator()
-        var itemIterator: Iterator<R>? = null
+        var itemIterator: Iterator<E>? = null
 
-        override fun next(): R {
+        override fun next(): E {
             if (!ensureItemIterator())
                 throw NoSuchElementException()
             return itemIterator!!.next()
@@ -241,44 +260,7 @@ internal class FlatteningSequence<T, R>
                     return false
                 } else {
                     val element = iterator.next()
-                    val nextItemIterator = transformer(element).iterator()
-                    if (nextItemIterator.hasNext()) {
-                        itemIterator = nextItemIterator
-                        return true
-                    }
-                }
-            }
-            return true
-        }
-    }
-}
-
-internal class MultiSequence<T>
-constructor(private val sequence: Sequence<Sequence<T>>) : Sequence<T> {
-    override fun iterator(): Iterator<T> = object : Iterator<T> {
-        val iterator = sequence.iterator()
-        var itemIterator: Iterator<T>? = null
-
-        override fun next(): T {
-            if (!ensureItemIterator())
-                throw NoSuchElementException()
-            return itemIterator!!.next()
-        }
-
-        override fun hasNext(): Boolean {
-            return ensureItemIterator()
-        }
-
-        private fun ensureItemIterator(): Boolean {
-            if (itemIterator?.hasNext() == false)
-                itemIterator = null
-
-            while (itemIterator == null) {
-                if (!iterator.hasNext()) {
-                    return false
-                } else {
-                    val element = iterator.next()
-                    val nextItemIterator = element.iterator()
+                    val nextItemIterator = iterator(transformer(element))
                     if (nextItemIterator.hasNext()) {
                         itemIterator = nextItemIterator
                         return true
@@ -473,29 +455,28 @@ private class DistinctIterator<T, K>(private val source : Iterator<T>, private v
 
 private class GeneratorSequence<T: Any>(private val getInitialValue: () -> T?, private val getNextValue: (T) -> T?): Sequence<T> {
     override fun iterator(): Iterator<T> = object : Iterator<T> {
-        var nextItem: T? = getInitialValue()
-        var nextState: Int = if (nextItem == null) 0 else 1 // -1 for unknown, 0 for done, 1 for continue
+        var nextItem: T? = null
+        var nextState: Int = -2 // -2 for initial unknown, -1 for next unknown, 0 for done, 1 for continue
 
         private fun calcNext() {
-            nextItem = getNextValue(nextItem!!)
+            nextItem = if (nextState == -2) getInitialValue() else getNextValue(nextItem!!)
             nextState = if (nextItem == null) 0 else 1
         }
 
         override fun next(): T {
-            if (nextState == -1)
+            if (nextState < 0)
                 calcNext()
+
             if (nextState == 0)
                 throw NoSuchElementException()
             val result = nextItem as T
-            // Clean next to avoid keeping reference on yielded instance
-            // need to keep state
-            // nextItem = null
+            // Do not clean nextItem (to avoid keeping reference on yielded instance) -- need to keep state for getNextValue
             nextState = -1
             return result
         }
 
         override fun hasNext(): Boolean {
-            if (nextState == -1)
+            if (nextState < 0)
                 calcNext()
             return nextState == 1
         }
@@ -530,7 +511,10 @@ public fun <T : Any> sequence(nextFunction: () -> T?): Sequence<T> {
  *
  * The sequence can be iterated multiple times, each time starting with the [initialValue].
  */
-public /*inline*/ fun <T : Any> sequence(initialValue: T, nextFunction: (T) -> T?): Sequence<T> =
+public fun <T : Any> sequence(initialValue: T?, nextFunction: (T) -> T?): Sequence<T> =
+    if (initialValue == null)
+        EmptySequence
+    else
         GeneratorSequence({ initialValue }, nextFunction)
 
 /**

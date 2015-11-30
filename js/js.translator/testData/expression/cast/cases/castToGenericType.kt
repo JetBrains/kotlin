@@ -2,14 +2,14 @@ package foo
 
 class A(val s: String)
 
-fun castsNotNullToNullableT<T>(a: Any) {
+fun <T> castsNotNullToNullableT(a: Any) {
     a as T
     a as T?
     a as? T
     a as? T?
 }
 
-fun castsNullableToNullableT<T>(a: Any?) {
+fun <T> castsNullableToNullableT(a: Any?) {
     a as T
     a as T?
     a as? T
@@ -17,18 +17,18 @@ fun castsNullableToNullableT<T>(a: Any?) {
 }
 
 
-fun castsNotNullToNotNullT<T : Any>(a: Any) {
+fun <T : Any> castsNotNullToNotNullT(a: Any) {
     a as T
     a as T?
     a as? T
     a as? T?
 }
 
-fun castNullableToNotNullT<T : Any>(a: Any?) {
+fun <T : Any> castNullableToNotNullT(a: Any?) {
     a as T
 }
 
-fun castsNullableToNotNullT<T : Any>(a: Any?) {
+fun <T : Any> castsNullableToNotNullT(a: Any?) {
     a as T?
     a as? T
     a as? T?

@@ -2,9 +2,9 @@ package a
 
 class A() {}
 
-fun A.plus(a: A) = this
+operator fun A.plus(a: A) = this
 
-fun A.infix(i: Int) = i
+infix fun A.infix(i: Int) = i
 
 <selection>fun f(a: A) {
     a + a

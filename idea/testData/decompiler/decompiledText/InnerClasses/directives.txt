@@ -1,0 +1,4 @@
+// TODO Remove this restriction when nested classes will be supported in js backend.
+// See KT-1907 Support nested classes in js-backend
+// https://youtrack.jetbrains.com/issue/KT-1907
+// TARGET_BACKEND: JVM

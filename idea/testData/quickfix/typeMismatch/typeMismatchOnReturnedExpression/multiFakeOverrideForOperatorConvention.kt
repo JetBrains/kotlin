@@ -4,11 +4,11 @@
 // ACTION: Replace overloaded operator with function call
 // ERROR: Type mismatch: inferred type is kotlin.Boolean but kotlin.Int was expected
 interface A {
-    fun contains(i: Int): Boolean
+    operator fun contains(i: Int): Boolean
 }
 
 open class AA {
-    fun contains(i: Int) = true
+    operator fun contains(i: Int) = true
 }
 
 class AAA: AA(), A {

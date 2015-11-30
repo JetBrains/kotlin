@@ -649,6 +649,12 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
             doTest(fileName);
         }
 
+        @TestMetadata("InnerTypes.kt")
+        public void testInnerTypes() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/InnerTypes.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("NamedObject.kt")
         public void testNamedObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/class/NamedObject.kt");
@@ -790,12 +796,6 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
         @TestMetadata("FunInParamSuper.kt")
         public void testFunInParamSuper() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/classFun/FunInParamSuper.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("TraitFinalFun.kt")
-        public void testTraitFinalFun() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/classFun/TraitFinalFun.kt");
             doTest(fileName);
         }
 

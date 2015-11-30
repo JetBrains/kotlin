@@ -1,5 +1,5 @@
 class LongR {
-  fun contains(l : Long): Boolean = l == 5.toLong()
+  operator fun contains(l : Long): Boolean = l == 5.toLong()
 }
 
 fun box(): String {

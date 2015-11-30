@@ -7,6 +7,6 @@ enum class D
 fun main() {
     ::<!UNRESOLVED_REFERENCE!>A<!>
     ::<!CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS!>B<!>
-    ::C   // KT-3465
+    ::<!CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR!>C<!>   // KT-3465
     ::<!INVISIBLE_MEMBER!>D<!>
 }

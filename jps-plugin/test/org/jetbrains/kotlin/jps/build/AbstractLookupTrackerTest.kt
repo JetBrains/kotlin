@@ -17,15 +17,15 @@
 package org.jetbrains.kotlin.jps.build
 
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.incremental.components.LocationInfo
+import org.jetbrains.kotlin.incremental.components.LookupInfo
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.components.Position
 import org.jetbrains.kotlin.incremental.components.ScopeKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.utils.join
 import java.io.File
 import java.util.*
 
-private val DECLARATION_KEYWORDS = listOf("interface", "class", "enum class", "object", "fun", "val", "var")
+private val DECLARATION_KEYWORDS = listOf("interface", "class", "enum class", "object", "fun", "operator fun", "val", "var")
 private val DECLARATION_STARTS_WITH = DECLARATION_KEYWORDS.map { it + " " }
 
 abstract class AbstractLookupTrackerTest : AbstractIncrementalJpsTest(
@@ -38,7 +38,7 @@ abstract class AbstractLookupTrackerTest : AbstractIncrementalJpsTest(
     override fun checkLookups(lookupTracker: LookupTracker, compiledFiles: Set<File>) {
         if (lookupTracker !is TestLookupTracker) throw AssertionError("Expected TestLookupTracker, but: ${lookupTracker.javaClass}")
 
-        val fileToLookups = lookupTracker.lookups.groupBy { it.lookupContainingFile }
+        val fileToLookups = lookupTracker.lookups.groupBy { it.filePath }
 
         fun checkLookupsInFile(expectedFile: File, actualFile: File) {
 
@@ -54,8 +54,8 @@ abstract class AbstractLookupTrackerTest : AbstractIncrementalJpsTest(
 
             val lines = text.lines().toArrayList()
 
-            for ((line, lookupsFromLine) in lookupsFromFile.groupBy { it.lookupLine }) {
-                val columnToLookups = lookupsFromLine.groupBy { it.lookupColumn }.toList().sortedBy { it.first }
+            for ((line, lookupsFromLine) in lookupsFromFile.groupBy { it.position.line }) {
+                val columnToLookups = lookupsFromLine.groupBy { it.position.column }.toList().sortedBy { it.first }
 
                 val lineContent = lines[line - 1]
                 val parts = ArrayList<CharSequence>(columnToLookups.size * 2)
@@ -120,19 +120,12 @@ abstract class AbstractLookupTrackerTest : AbstractIncrementalJpsTest(
 class TestLookupTracker : LookupTracker {
     val lookups = arrayListOf<LookupInfo>()
 
-    override fun record(locationInfo: LocationInfo, scopeFqName: String, scopeKind: ScopeKind, name: String) {
-        val (line, column) = locationInfo.position
-        lookups.add(LookupInfo(locationInfo.filePath, line, column, scopeFqName, scopeKind, name))
-    }
+    override val requiresPosition: Boolean
+        get() = true
 
-    data class LookupInfo(
-            val lookupContainingFile: String,
-            val lookupLine: Int,
-            val lookupColumn: Int,
-            val scopeFqName: String,
-            val scopeKind: ScopeKind,
-            val name: String
-    )
+    override fun record(filePath: String, position: Position, scopeFqName: String, scopeKind: ScopeKind, name: String) {
+        lookups.add(LookupInfo(filePath, position, scopeFqName, scopeKind, name))
+    }
 }
 
 

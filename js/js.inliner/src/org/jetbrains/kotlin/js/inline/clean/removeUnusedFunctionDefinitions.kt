@@ -39,7 +39,7 @@ public fun removeUnusedFunctionDefinitions(root: JsNode, functions: Map<JsName, 
 
     NodeRemover(javaClass<JsPropertyInitializer>()) {
         val function = it.getValueExpr() as? JsFunction
-        function in removable
+        function != null && function in removable
     }.accept(root)
 }
 
@@ -106,6 +106,6 @@ private class UnusedLocalFunctionsCollector(functions: Map<JsName, JsFunction>) 
         return nameRef?.getName()?.staticRef is JsFunction
     }
 
-    private fun wasProcessed(function: JsFunction?): Boolean = function in processed
+    private fun wasProcessed(function: JsFunction?): Boolean = function != null && function in processed
 }
 

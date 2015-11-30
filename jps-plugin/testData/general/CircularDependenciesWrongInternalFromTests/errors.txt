@@ -1,0 +1,4 @@
+Cannot access 'funA': it is 'internal' in 'test' at line 4, column 5
+Cannot access 'funB': it is 'internal' in 'test' at line 4, column 5
+Cannot access 'testFunA': it is 'internal' in 'test' at line 5, column 5
+Cannot access 'testFunB': it is 'internal' in 'test' at line 5, column 5

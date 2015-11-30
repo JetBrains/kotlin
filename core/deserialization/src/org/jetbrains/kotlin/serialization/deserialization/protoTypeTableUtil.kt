@@ -78,3 +78,11 @@ fun ProtoBuf.ValueParameter.varargElementType(typeTable: TypeTable): ProtoBuf.Ty
         else -> null
     }
 }
+
+fun ProtoBuf.Type.outerType(typeTable: TypeTable): ProtoBuf.Type? {
+    return when {
+        hasOuterType() -> outerType
+        hasOuterTypeId() -> typeTable[outerTypeId]
+        else -> null
+    }
+}

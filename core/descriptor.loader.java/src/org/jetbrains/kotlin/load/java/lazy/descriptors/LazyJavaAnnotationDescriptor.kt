@@ -34,14 +34,13 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
-import org.jetbrains.kotlin.resolve.jvm.PLATFORM_TYPES
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.keysToMapExceptNulls
 import org.jetbrains.kotlin.utils.valuesToMap
 
 fun LazyJavaResolverContext.resolveAnnotation(annotation: JavaAnnotation): LazyJavaAnnotationDescriptor? {
     val classId = annotation.getClassId()
-    if (classId == null || isSpecialAnnotation(classId, !PLATFORM_TYPES)) return null
+    if (classId == null || isSpecialAnnotation(classId, false)) return null
     return LazyJavaAnnotationDescriptor(this, annotation)
 }
 

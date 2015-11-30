@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
+import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import java.io.File
 
 public class GenerationState @JvmOverloads constructor(
@@ -52,7 +53,6 @@ public class GenerationState @JvmOverloads constructor(
         disableInline: Boolean = false,
         disableOptimization: Boolean = false,
         public val useTypeTableInSerializer: Boolean = false,
-        public val diagnostics: DiagnosticSink = DiagnosticSink.DO_NOTHING,
         public val packagesWithObsoleteParts: Collection<FqName> = emptySet(),
         public val obsoleteMultifileClasses: Collection<FqName> = emptySet(),
         // for PackageCodegen in incremental compilation mode
@@ -91,6 +91,13 @@ public class GenerationState @JvmOverloads constructor(
                 incrementalCompilationComponents.getIncrementalCache(targetId)
             else null
 
+    private val extraJvmDiagnosticsTrace: BindingTrace = DelegatingBindingTrace(bindingContext, false, "For extra diagnostics in ${this.javaClass}")
+    private val interceptedBuilderFactory: ClassBuilderFactory
+    private var used = false
+
+    public val diagnostics: DiagnosticSink get() = extraJvmDiagnosticsTrace
+    public val collectedExtraJvmDiagnostics: Diagnostics get() = extraJvmDiagnosticsTrace.bindingContext.diagnostics
+
     public val moduleName: String = moduleName ?: JvmCodegenUtil.getModuleName(module)
     public val classBuilderMode: ClassBuilderMode = builderFactory.getClassBuilderMode()
     public val bindingTrace: BindingTrace = DelegatingBindingTrace(bindingContext, "trace in GenerationState")
@@ -100,12 +107,19 @@ public class GenerationState @JvmOverloads constructor(
     public val samWrapperClasses: SamWrapperClasses = SamWrapperClasses(this)
     public val inlineCycleReporter: InlineCycleReporter = InlineCycleReporter(diagnostics)
     public val mappingsClassesForWhenByEnum: MappingsClassesForWhenByEnum = MappingsClassesForWhenByEnum(this)
-    public var earlierScriptsForReplInterpreter: List<ScriptDescriptor>? = null
     public val reflectionTypes: ReflectionTypes = ReflectionTypes(module)
     public val jvmRuntimeTypes: JvmRuntimeTypes = JvmRuntimeTypes()
     public val factory: ClassFileFactory
-    private val interceptedBuilderFactory: ClassBuilderFactory
-    private var used = false
+
+    public val replSpecific = ForRepl()
+
+    //TODO: should be refactored out
+    public class ForRepl {
+        public var earlierScriptsForReplInterpreter: List<ScriptDescriptor>? = null
+        public var scriptResultFieldName: String? = null
+        public val shouldGenerateScriptResultValue: Boolean get() = scriptResultFieldName != null
+        public var hasResult: Boolean = false
+    }
 
     public val isCallAssertionsEnabled: Boolean = !disableCallAssertions
         @JvmName("isCallAssertionsEnabled") get

@@ -4,8 +4,8 @@ import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 
 interface Trait {
-    fun notNull(a: String): String
-    fun nullable(a: String?): String?
+    fun notNull(p: String): String
+    fun nullable(p: String?): String?
 
     @NotNull fun notNullWithNN(): String
     @Nullable fun notNullWithN(): String

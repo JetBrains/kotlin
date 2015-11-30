@@ -22,12 +22,12 @@ internal object EmptyList : List<Nothing>, Serializable {
 
     override val size: Int get() = 0
     override fun isEmpty(): Boolean = true
-    override fun contains(o: Nothing): Boolean = false
-    override fun containsAll(c: Collection<Nothing>): Boolean = c.isEmpty()
+    override fun contains(element: Nothing): Boolean = false
+    override fun containsAll(elements: Collection<Nothing>): Boolean = elements.isEmpty()
 
     override fun get(index: Int): Nothing = throw IndexOutOfBoundsException("Index $index is out of bound of empty list.")
-    override fun indexOf(o: Nothing): Int = -1
-    override fun lastIndexOf(o: Nothing): Int = -1
+    override fun indexOf(element: Nothing): Int = -1
+    override fun lastIndexOf(element: Nothing): Int = -1
 
     override fun iterator(): Iterator<Nothing> = EmptyIterator
     override fun listIterator(): ListIterator<Nothing> = EmptyIterator
@@ -47,10 +47,10 @@ internal object EmptyList : List<Nothing>, Serializable {
 internal fun <T> Array<out T>.asCollection(): Collection<T> = ArrayAsCollection(this)
 
 private class ArrayAsCollection<T>(val values: Array<out T>): Collection<T> {
-    override val size: Int get() = values.size()
+    override val size: Int get() = values.size
     override fun isEmpty(): Boolean = values.isEmpty()
-    override fun contains(o: T): Boolean = values.contains(o)
-    override fun containsAll(c: Collection<T>): Boolean = c.all { contains(it) }
+    override fun contains(element: T): Boolean = values.contains(element)
+    override fun containsAll(elements: Collection<T>): Boolean = elements.all { contains(it) }
     override fun iterator(): Iterator<T> = values.iterator()
     // override hidden toArray implementation to prevent copying of values array
     public fun toArray(): Array<out Any?> = values.varargToArrayOfAny()
@@ -60,38 +60,38 @@ private class ArrayAsCollection<T>(val values: Array<out T>): Collection<T> {
 public fun <T> emptyList(): List<T> = EmptyList
 
 /** Returns a new read-only list of given elements.  The returned list is serializable (JVM). */
-public fun <T> listOf(vararg values: T): List<T> = if (values.size() > 0) values.asList() else emptyList()
+public fun <T> listOf(vararg elements: T): List<T> = if (elements.size > 0) elements.asList() else emptyList()
 
 /** Returns an empty read-only list.  The returned list is serializable (JVM). */
 public fun <T> listOf(): List<T> = emptyList()
 
 /**
- * Returns an immutable list containing only the specified object [value].
+ * Returns an immutable list containing only the specified object [element].
  * The returned list is serializable.
  */
 @JvmVersion
-public fun <T> listOf(value: T): List<T> = Collections.singletonList(value)
+public fun <T> listOf(element: T): List<T> = Collections.singletonList(element)
 
 /** Returns a new [LinkedList] with the given elements. */
 @JvmVersion
-public fun <T> linkedListOf(vararg values: T): LinkedList<T>
-        = if (values.size() == 0) LinkedList() else LinkedList(ArrayAsCollection(values))
+public fun <T> linkedListOf(vararg elements: T): LinkedList<T>
+        = if (elements.size == 0) LinkedList() else LinkedList(ArrayAsCollection(elements))
 
 /** Returns a new [ArrayList] with the given elements. */
-public fun <T> arrayListOf(vararg values: T): ArrayList<T>
-        = if (values.size() == 0) ArrayList() else ArrayList(ArrayAsCollection(values))
+public fun <T> arrayListOf(vararg elements: T): ArrayList<T>
+        = if (elements.size == 0) ArrayList() else ArrayList(ArrayAsCollection(elements))
 
 /** Returns a new read-only list either of single given element, if it is not null, or empty list it the element is null. The returned list is serializable (JVM). */
-public fun <T : Any> listOfNotNull(value: T?): List<T> = if (value != null) listOf(value) else emptyList()
+public fun <T : Any> listOfNotNull(element: T?): List<T> = if (element != null) listOf(element) else emptyList()
 
 /** Returns a new read-only list only of those given elements, that are not null.  The returned list is serializable (JVM). */
-public fun <T : Any> listOfNotNull(vararg values: T?): List<T> = values.filterNotNull()
+public fun <T : Any> listOfNotNull(vararg elements: T?): List<T> = elements.filterNotNull()
 
 /**
  * Returns an [IntRange] of the valid indices for this collection.
  */
 public val Collection<*>.indices: IntRange
-    get() = 0..size() - 1
+    get() = 0..size - 1
 
 /**
  * Returns the index of the last item in the list or -1 if the list is empty.
@@ -99,7 +99,7 @@ public val Collection<*>.indices: IntRange
  * @sample test.collections.ListSpecificTest.lastIndex
  */
 public val <T> List<T>.lastIndex: Int
-    get() = this.size() - 1
+    get() = this.size - 1
 
 /** Returns `true` if the collection is not empty. */
 public fun <T> Collection<T>.isNotEmpty(): Boolean = !isEmpty()
@@ -120,15 +120,15 @@ public fun <T> Enumeration<T>.toList(): List<T> = Collections.list(this)
 /**
  * Returns the size of this iterable if it is known, or `null` otherwise.
  */
-public fun <T> Iterable<T>.collectionSizeOrNull(): Int? = if (this is Collection<*>) size() else null
+public fun <T> Iterable<T>.collectionSizeOrNull(): Int? = if (this is Collection<*>) this.size else null
 
 /**
  * Returns the size of this iterable if it is known, or the specified [default] value otherwise.
  */
-public fun <T> Iterable<T>.collectionSizeOrDefault(default: Int): Int = if (this is Collection<*>) size() else default
+public fun <T> Iterable<T>.collectionSizeOrDefault(default: Int): Int = if (this is Collection<*>) this.size else default
 
 /** Returns true when it's safe to convert this collection to a set without changing contains method behavior. */
-private fun <T> Collection<T>.safeToConvertToSet() = size() > 2 && this is ArrayList
+private fun <T> Collection<T>.safeToConvertToSet() = size > 2 && this is ArrayList
 
 /** Converts this collection to a set, when it's worth so and it doesn't change contains method behavior. */
 internal fun <T> Iterable<T>.convertToSetForSetOperationWith(source: Iterable<T>): Collection<T> =
@@ -136,7 +136,7 @@ internal fun <T> Iterable<T>.convertToSetForSetOperationWith(source: Iterable<T>
             is Set -> this
             is Collection ->
                 when {
-                    source is Collection && source.size() < 2 -> this
+                    source is Collection && source.size < 2 -> this
                     else -> if (this.safeToConvertToSet()) toHashSet() else this
                 }
             else -> toHashSet()
@@ -153,7 +153,7 @@ internal fun <T> Iterable<T>.convertToSetForSetOperation(): Collection<T> =
 // copies typed varargs array to array of objects
 @JvmVersion
 private fun <T> Array<out T>.varargToArrayOfAny(): Array<Any?>
-        = Arrays.copyOf(this, this.size(), Array<Any?>::class.java)
+        = Arrays.copyOf(this, this.size, Array<Any?>::class.java)
 
 /**
  * Searches this list or its range for the provided [element] index using binary search algorithm.
@@ -161,8 +161,8 @@ private fun <T> Array<out T>.varargToArrayOfAny(): Array<Any?>
  *
  * If the list contains multiple elements equal to the specified object, there is no guarantee which one will be found.
  */
-public fun <T: Comparable<T>> List<T?>.binarySearch(element: T?, fromIndex: Int = 0, toIndex: Int = size()): Int {
-    rangeCheck(size(), fromIndex, toIndex)
+public fun <T: Comparable<T>> List<T?>.binarySearch(element: T?, fromIndex: Int = 0, toIndex: Int = size): Int {
+    rangeCheck(size, fromIndex, toIndex)
 
     var low = fromIndex
     var high = toIndex - 1
@@ -188,8 +188,8 @@ public fun <T: Comparable<T>> List<T?>.binarySearch(element: T?, fromIndex: Int 
  *
  * If the list contains multiple elements equal to the specified object, there is no guarantee which one will be found.
  */
-public fun <T> List<T>.binarySearch(element: T, comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size()): Int {
-    rangeCheck(size(), fromIndex, toIndex)
+public fun <T> List<T>.binarySearch(element: T, comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size): Int {
+    rangeCheck(size, fromIndex, toIndex)
 
     var low = fromIndex
     var high = toIndex - 1
@@ -215,7 +215,7 @@ public fun <T> List<T>.binarySearch(element: T, comparator: Comparator<in T>, fr
  *
  * If the list contains multiple elements with the specified [key], there is no guarantee which one will be found.
  */
-public inline fun <T, K : Comparable<K>> List<T>.binarySearchBy(key: K?, fromIndex: Int = 0, toIndex: Int = size(), crossinline selector: (T) -> K?): Int =
+public inline fun <T, K : Comparable<K>> List<T>.binarySearchBy(key: K?, fromIndex: Int = 0, toIndex: Int = size, crossinline selector: (T) -> K?): Int =
         binarySearch(fromIndex, toIndex) { compareValues(selector(it), key) }
 
 // do not introduce this overload --- too rare
@@ -228,8 +228,8 @@ public inline fun <T, K : Comparable<K>> List<T>.binarySearchBy(key: K?, fromInd
  *
  * @param comparison function that compares an element of the list with the element being searched.
  */
-public fun <T> List<T>.binarySearch(fromIndex: Int = 0, toIndex: Int = size(), comparison: (T) -> Int): Int {
-    rangeCheck(size(), fromIndex, toIndex)
+public fun <T> List<T>.binarySearch(fromIndex: Int = 0, toIndex: Int = size, comparison: (T) -> Int): Int {
+    rangeCheck(size, fromIndex, toIndex)
 
     var low = fromIndex
     var high = toIndex - 1

@@ -35,11 +35,14 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 
 public class OverloadResolver {
     @NotNull private final BindingTrace trace;
-    @NotNull private final MainFunctionDetector mainFunctionDetector;
+    @NotNull private final OverloadFilter overloadFilter;
 
-    public OverloadResolver(@NotNull BindingTrace trace) {
+    public OverloadResolver(
+            @NotNull BindingTrace trace,
+            @NotNull OverloadFilter overloadFilter
+    ) {
         this.trace = trace;
-        mainFunctionDetector = new MainFunctionDetector(trace.getBindingContext());
+        this.overloadFilter = overloadFilter;
     }
 
     public void process(@NotNull BodiesResolveContext c) {
@@ -88,7 +91,8 @@ public class OverloadResolver {
             @NotNull BodiesResolveContext c,
             @NotNull MultiMap<FqNameUnsafe, ConstructorDescriptor> inPackages
     ) {
-        MultiMap<FqNameUnsafe, CallableMemberDescriptor> membersByName = OverloadUtil.groupModulePackageMembersByFqName(c, inPackages);
+        MultiMap<FqNameUnsafe, CallableMemberDescriptor> membersByName =
+                OverloadUtil.groupModulePackageMembersByFqName(c, inPackages, overloadFilter);
 
         for (Map.Entry<FqNameUnsafe, Collection<CallableMemberDescriptor>> e : membersByName.entrySet()) {
             FqNameUnsafe fqName = e.getKey().parent();
@@ -153,7 +157,7 @@ public class OverloadResolver {
     }
 
     @NotNull
-    private Set<Pair<KtDeclaration, CallableMemberDescriptor>> findRedeclarations(@NotNull Collection<? extends CallableMemberDescriptor> members) {
+    private static Set<Pair<KtDeclaration, CallableMemberDescriptor>> findRedeclarations(@NotNull Collection<? extends CallableMemberDescriptor> members) {
         Set<Pair<KtDeclaration, CallableMemberDescriptor>> redeclarations = Sets.newLinkedHashSet();
         for (CallableMemberDescriptor member : members) {
             for (CallableMemberDescriptor member2 : members) {
@@ -188,13 +192,15 @@ public class OverloadResolver {
                member.getContainingDeclaration().getContainingDeclaration().equals(member2.getContainingDeclaration().getContainingDeclaration());
     }
 
-    private boolean isTopLevelMainInDifferentFiles(@NotNull CallableMemberDescriptor member, @NotNull CallableMemberDescriptor member2) {
-        if (!DescriptorToSourceUtils.isTopLevelMainFunction(member, mainFunctionDetector) ||
-            !DescriptorToSourceUtils.isTopLevelMainFunction(member2, mainFunctionDetector)) {
+    private static boolean isTopLevelMainInDifferentFiles(@NotNull CallableMemberDescriptor member, @NotNull CallableMemberDescriptor member2) {
+        if (!MainFunctionDetector.isMain(member) ||
+            !MainFunctionDetector.isMain(member2)) {
             return false;
         }
 
-        return DescriptorToSourceUtils.getContainingFile(member) != DescriptorToSourceUtils.getContainingFile(member2);
+        KtFile file = DescriptorToSourceUtils.getContainingFile(member);
+        KtFile file2 = DescriptorToSourceUtils.getContainingFile(member2);
+        return file == null || file2 == null || file != file2;
     }
 
     private void reportRedeclarations(@NotNull String functionContainer,

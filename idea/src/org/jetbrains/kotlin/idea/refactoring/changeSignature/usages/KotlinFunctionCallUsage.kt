@@ -47,7 +47,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.sure
@@ -190,8 +190,12 @@ class KotlinFunctionCallUsage(
             }
             else {
                 addReceiver = descriptor !is ReceiverParameterDescriptor
-                argumentExpression = getReceiverExpressionIfMatched(resolvedCall.extensionReceiver, descriptor, psiFactory)
-                                     ?: getReceiverExpressionIfMatched(resolvedCall.dispatchReceiver, descriptor, psiFactory)
+                val extensionReceiver = resolvedCall.extensionReceiver
+                argumentExpression =
+                        (if (extensionReceiver is ReceiverValue)
+                            getReceiverExpressionIfMatched(extensionReceiver, descriptor, psiFactory)
+                        else null)
+                        ?: getReceiverExpressionIfMatched(resolvedCall.dispatchReceiver, descriptor, psiFactory)
             }
             if (argumentExpression == null) continue
 
@@ -314,7 +318,7 @@ class KotlinFunctionCallUsage(
             val oldIndex = param.oldIndex
             val resolvedArgument = if (oldIndex >= 0) getResolvedValueArgument(oldIndex) else null
             val receiverValue = if (param == originalReceiverInfo) extensionReceiver else null
-            ArgumentInfo(param, index, resolvedArgument, receiverValue)
+            ArgumentInfo(param, index, resolvedArgument, receiverValue as? ReceiverValue)
         }
 
         val lastParameterIndex = newParameters.lastIndex
@@ -503,7 +507,7 @@ class KotlinFunctionCallUsage(
         private fun getReceiverExpression(receiver: ReceiverValue, psiFactory: KtPsiFactory): KtExpression? {
             return when (receiver) {
                 is ExpressionReceiver -> receiver.expression
-                is ThisReceiver -> {
+                is ImplicitReceiver -> {
                     val descriptor = receiver.declarationDescriptor
                     val thisText = if (descriptor is ClassDescriptor) "this@" + descriptor.name.asString() else "this"
                     psiFactory.createExpression(thisText)

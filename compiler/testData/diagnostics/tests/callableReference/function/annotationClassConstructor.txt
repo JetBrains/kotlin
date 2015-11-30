@@ -1,0 +1,13 @@
+package
+
+public val annClassRef: kotlin.reflect.KClass<Ann>
+public val annCtorRef: kotlin.reflect.KFunction1<kotlin.String, Ann>
+public val annPropRef: kotlin.reflect.KProperty1<Ann, kotlin.String>
+
+public final annotation class Ann : kotlin.Annotation {
+    public constructor Ann(/*0*/ prop: kotlin.String)
+    public final val prop: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

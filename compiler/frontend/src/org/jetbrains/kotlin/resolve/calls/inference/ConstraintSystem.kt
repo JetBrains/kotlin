@@ -20,50 +20,20 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.Variance
 
-public interface ConstraintSystem {
-    /**
-     * Registers variables in a constraint system.
-     * The type variables for the corresponding function are local, the type variables of inner arguments calls are non-local.
-     */
-    public fun registerTypeVariables(
-            typeVariables: Collection<TypeParameterDescriptor>,
-            variance: (TypeParameterDescriptor) -> Variance,
-            mapToOriginal: (TypeParameterDescriptor) -> TypeParameterDescriptor,
-            external: Boolean = false
-    )
+interface ConstraintSystem {
+    val status: ConstraintSystemStatus
 
     /**
-     * Returns a set of all non-external registered type variables.
+     * Returns a set of all registered type variables.
      */
-    public fun getTypeVariables(): Set<TypeParameterDescriptor>
+    val typeVariables: Set<TypeVariable>
 
     /**
-     * Adds a constraint that the constraining type is a subtype of the subject type.
-     * Asserts that only subject type may contain registered type variables.
-     *
-     * For example, for `fun <T> id(t: T) {}` to infer `T` in invocation `id(1)`
-     * the constraint "Int is a subtype of T" should be generated where T is a subject type, and Int is a constraining type.
+     * Returns the resulting type constraints of solving the constraint system for specific type parameter descriptor.
+     * Throws IllegalArgumentException if the type parameter descriptor is not known to the system.
      */
-    public fun addSubtypeConstraint(constrainingType: KotlinType?, subjectType: KotlinType, constraintPosition: ConstraintPosition)
-
-    /**
-     * Adds a constraint that the constraining type is a supertype of the subject type.
-     * Asserts that only subject type may contain registered type variables.
-     *
-     * For example, for `fun <T> create(): T` to infer `T` in invocation `val i: Int = create()`
-     * the constraint "Int is a supertype of T" should be generated where T is a subject type, and Int is a constraining type.
-     */
-    public fun addSupertypeConstraint(constrainingType: KotlinType?, subjectType: KotlinType, constraintPosition: ConstraintPosition)
-
-    public fun getStatus(): ConstraintSystemStatus
-
-    /**
-     * Returns the resulting type constraints of solving the constraint system for specific type variable.
-     * Throws IllegalArgumentException if the type variable was not registered.
-     */
-    public fun getTypeBounds(typeVariable: TypeParameterDescriptor): TypeBounds
+    fun getTypeBounds(typeVariable: TypeVariable): TypeBounds
 
     /**
      * Returns the result of solving the constraint system (mapping from the type variable to the resulting type projection).
@@ -74,16 +44,49 @@ public interface ConstraintSystem {
      * If the addition of the 'expected type' constraint made the system fail,
      * this constraint is not included in the resulting substitution.
      */
-    public fun getResultingSubstitutor(): TypeSubstitutor
+    val resultingSubstitutor: TypeSubstitutor
 
     /**
      * Returns the current result of solving the constraint system (mapping from the type variable to the resulting type projection).
      * If there is no information for type parameter, returns type projection for DONT_CARE type.
      */
-    public fun getCurrentSubstitutor(): TypeSubstitutor
+    val currentSubstitutor: TypeSubstitutor
 
-    /**
-     * Returns the substitution only for type parameters that have result values, otherwise returns the type parameter itself.
-     */
-    public fun getPartialSubstitutor(): TypeSubstitutor
+    fun toBuilder(filterConstraintPosition: (ConstraintPosition) -> Boolean = { true }): Builder
+
+    interface Builder {
+        /**
+         * Registers variables in a constraint system. Returns a substitutor which maps type parameter descriptors passed as parameters
+         * to the corresponding types of variables of the system. Use that substitutor to provide constraints to the system
+         */
+        fun registerTypeVariables(
+                call: CallHandle, typeParameters: Collection<TypeParameterDescriptor>, external: Boolean = false
+        ): TypeSubstitutor
+
+        /**
+         * Adds a constraint that the constraining type is a subtype of the subject type.
+         * Asserts that only subject type may contain registered type variables.
+         *
+         * For example, for `fun <T> id(t: T) {}` to infer `T` in invocation `id(1)`
+         * the constraint "Int is a subtype of T" should be generated where T is a subject type, and Int is a constraining type.
+         */
+        fun addSubtypeConstraint(constrainingType: KotlinType?, subjectType: KotlinType?, constraintPosition: ConstraintPosition)
+
+        /**
+         * For each call for which type variables were registered, a type substitutor is stored in this map which maps
+         * type parameter descriptors of the candidate descriptor of that call -> type variables of the system.
+         * Those are the same substitutors that are returned by [registerTypeVariables] at the time of variable registration.
+         */
+        val typeVariableSubstitutors: Map<CallHandle, TypeSubstitutor>
+
+        /**
+         * Add all variables and constraints from the other system to this one. The other system may not have any common variables
+         * with this one, or even variables registered for calls, for which this system also has some registered variables
+         */
+        fun add(other: Builder)
+
+        fun fixVariables()
+
+        fun build(): ConstraintSystem
+    }
 }

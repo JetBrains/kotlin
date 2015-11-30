@@ -31,6 +31,6 @@ fun test(b: B?, c: C) {
     b?.foo(1, 1)
     c.foo(1, 1)
     if (b is C) {
-        b?.<!CANNOT_COMPLETE_RESOLVE!>foo<!>(1, 1)
+        b<!UNNECESSARY_SAFE_CALL!>?.<!><!CANNOT_COMPLETE_RESOLVE!>foo<!>(1, 1)
     }
 }

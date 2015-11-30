@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.resolve.OverrideResolver;
+import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode;
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
@@ -43,7 +44,8 @@ public class OverloadingConflictResolver {
     @Nullable
     public <D extends CallableDescriptor> MutableResolvedCall<D> findMaximallySpecific(
             @NotNull Set<MutableResolvedCall<D>> candidates,
-            boolean discriminateGenericDescriptors
+            boolean discriminateGenericDescriptors,
+            @NotNull CheckArgumentTypesMode checkArgumentsMode
     ) {
         // Different smartcasts may lead to the same candidate descriptor wrapped into different ResolvedCallImpl objects
         Set<MutableResolvedCall<D>> maximallySpecific = new THashSet<MutableResolvedCall<D>>(new TObjectHashingStrategy<MutableResolvedCall<D>>() {
@@ -58,7 +60,7 @@ public class OverloadingConflictResolver {
                     }
                 });
         for (MutableResolvedCall<D> candidateCall : candidates) {
-            if (isMaximallySpecific(candidateCall, candidates, discriminateGenericDescriptors)) {
+            if (isMaximallySpecific(candidateCall, candidates, discriminateGenericDescriptors, checkArgumentsMode)) {
                 maximallySpecific.add(candidateCall);
             }
         }
@@ -68,7 +70,8 @@ public class OverloadingConflictResolver {
     private <D extends CallableDescriptor> boolean isMaximallySpecific(
             @NotNull MutableResolvedCall<D> candidateCall,
             @NotNull Set<MutableResolvedCall<D>> candidates,
-            boolean discriminateGenericDescriptors
+            boolean discriminateGenericDescriptors,
+            @NotNull CheckArgumentTypesMode checkArgumentsMode
     ) {
         D me = candidateCall.getResultingDescriptor();
 
@@ -85,13 +88,13 @@ public class OverloadingConflictResolver {
             D other = otherCall.getResultingDescriptor();
             if (other == me) continue;
 
-            if (definitelyNotMaximallySpecific(me, other, discriminateGenericDescriptors)) {
+            if (definitelyNotMaximallySpecific(me, other, discriminateGenericDescriptors, checkArgumentsMode)) {
 
                 if (!isInvoke) return false;
 
                 assert otherCall instanceof VariableAsFunctionResolvedCall : "'invoke' candidate goes with usual one: " + candidateCall + otherCall;
                 ResolvedCall<VariableDescriptor> otherVariableCall = ((VariableAsFunctionResolvedCall) otherCall).getVariableCall();
-                if (definitelyNotMaximallySpecific(variable, otherVariableCall.getResultingDescriptor(), discriminateGenericDescriptors)) {
+                if (definitelyNotMaximallySpecific(variable, otherVariableCall.getResultingDescriptor(), discriminateGenericDescriptors, checkArgumentsMode)) {
                     return false;
                 }
             }
@@ -99,8 +102,14 @@ public class OverloadingConflictResolver {
         return true;
     }
 
-    private <D extends CallableDescriptor> boolean definitelyNotMaximallySpecific(D me, D other, boolean discriminateGenericDescriptors) {
-        return !moreSpecific(me, other, discriminateGenericDescriptors) || moreSpecific(other, me, discriminateGenericDescriptors);
+    private <D extends CallableDescriptor> boolean definitelyNotMaximallySpecific(
+            D me,
+            D other,
+            boolean discriminateGenericDescriptors,
+            @NotNull CheckArgumentTypesMode checkArgumentsMode
+    ) {
+        return !moreSpecific(me, other, discriminateGenericDescriptors, checkArgumentsMode) ||
+               moreSpecific(other, me, discriminateGenericDescriptors, checkArgumentsMode);
     }
 
     /**
@@ -113,8 +122,11 @@ public class OverloadingConflictResolver {
     private <Descriptor extends CallableDescriptor> boolean moreSpecific(
             Descriptor f,
             Descriptor g,
-            boolean discriminateGenericDescriptors
+            boolean discriminateGenericDescriptors,
+            @NotNull CheckArgumentTypesMode checkArgumentsMode
     ) {
+        boolean resolvingCallableReference = checkArgumentsMode == CheckArgumentTypesMode.CHECK_CALLABLE_TYPE;
+
         if (f.getContainingDeclaration() instanceof ScriptDescriptor && g.getContainingDeclaration() instanceof ScriptDescriptor) {
             ScriptDescriptor fs = (ScriptDescriptor) f.getContainingDeclaration();
             ScriptDescriptor gs = (ScriptDescriptor) g.getContainingDeclaration();
@@ -131,10 +143,9 @@ public class OverloadingConflictResolver {
             if (isGenericF && !isGenericG) return false;
 
             if (isGenericF && isGenericG) {
-                return moreSpecific(BoundsSubstitutor.substituteBounds(f), BoundsSubstitutor.substituteBounds(g), false);
+                return moreSpecific(BoundsSubstitutor.substituteBounds(f), BoundsSubstitutor.substituteBounds(g), false, checkArgumentsMode);
             }
         }
-
 
         if (OverrideResolver.overrides(f, g)) return true;
         if (OverrideResolver.overrides(g, f)) return false;
@@ -154,11 +165,13 @@ public class OverloadingConflictResolver {
         boolean fIsVararg = isVariableArity(fParams);
         boolean gIsVararg = isVariableArity(gParams);
 
+        if (resolvingCallableReference && fIsVararg != gIsVararg) return false;
         if (!fIsVararg && gIsVararg) return true;
         if (fIsVararg && !gIsVararg) return false;
 
         if (!fIsVararg && !gIsVararg) {
-            if (fSize > gSize) return false;
+            if (resolvingCallableReference && fSize != gSize) return false;
+            if (!resolvingCallableReference && fSize > gSize) return false;
 
             for (int i = 0; i < fSize; i++) {
                 ValueParameterDescriptor fParam = fParams.get(i);
@@ -229,12 +242,12 @@ public class OverloadingConflictResolver {
         return parameterDescriptor.getType();
     }
 
-    private boolean isVariableArity(List<ValueParameterDescriptor> fParams) {
+    private static boolean isVariableArity(List<ValueParameterDescriptor> fParams) {
         int fSize = fParams.size();
         return fSize > 0 && fParams.get(fSize - 1).getVarargElementType() != null;
     }
 
-    private boolean isGeneric(CallableDescriptor f) {
+    private static boolean isGeneric(CallableDescriptor f) {
         return !f.getOriginal().getTypeParameters().isEmpty();
     }
 

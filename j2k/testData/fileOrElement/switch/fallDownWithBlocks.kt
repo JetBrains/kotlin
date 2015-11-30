@@ -1,6 +1,6 @@
 object C {
     @JvmStatic fun main(args: Array<String>) {
-        when (args.size()) {
+        when (args.size) {
             1 -> {
                 run {
                     val a = 1

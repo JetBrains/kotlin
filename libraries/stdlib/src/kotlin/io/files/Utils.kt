@@ -54,30 +54,9 @@ public val File.directory: File
 /**
  * Returns parent of this abstract path name, or `null` if it has no parent.
  */
-@Deprecated("Use parentFile", ReplaceWith("parentFile"))
+@Deprecated("Use parentFile", ReplaceWith("parentFile"), DeprecationLevel.ERROR)
 public val File.parent: File?
     get() = parentFile
-
-/**
- * Returns the canonical path of this file.
- */
-@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("canonicalPath"), level = DeprecationLevel.HIDDEN)
-public val File.canonicalPath: String
-    get() = getCanonicalPath()
-
-/**
- * Returns the file name.
- */
-@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("name"), level = DeprecationLevel.HIDDEN)
-public val File.name: String
-    get() = getName()
-
-/**
- * Returns the file path.
- */
-@Deprecated("Is replaced with automatic synthetic extension", ReplaceWith("path"), level = DeprecationLevel.HIDDEN)
-public val File.path: String
-    get() = getPath()
 
 /**
  * Returns the extension of this file (not including the dot), or an empty string if it doesn't have one.
@@ -180,8 +159,8 @@ public fun File.relativePath(descendant: File): String {
     val prefix = directory.canonicalPath
     val answer = descendant.canonicalPath
     return if (answer.startsWith(prefix)) {
-        val prefixSize = prefix.length()
-        if (answer.length() > prefixSize) {
+        val prefixSize = prefix.length
+        if (answer.length > prefixSize) {
             answer.substring(prefixSize + 1)
         } else ""
     } else {
@@ -389,7 +368,7 @@ public fun File.normalize(): File {
         when (name) {
             "." -> {
             }
-            ".." -> if (!list.isEmpty() && list.get(list.size() - 1) != "..") list.remove(list.size() - 1) else list.add(name)
+            ".." -> if (!list.isEmpty() && list.get(list.size - 1) != "..") list.removeAt(list.size - 1) else list.add(name)
             else -> list.add(name)
         }
     }

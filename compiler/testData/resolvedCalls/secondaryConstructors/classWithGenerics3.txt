@@ -6,6 +6,7 @@ class B<R> {
 val y8: B<String> = <caret>B("")
 
 
+
 Resolved call:
 
 Candidate descriptor: constructor B<R>(x: String) defined in B

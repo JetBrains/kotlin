@@ -20,7 +20,7 @@ import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.toExpression
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.combineWhenConditions
 import org.jetbrains.kotlin.psi.*
 
 public class WhenToIfIntention : SelfTargetingRangeIntention<KtWhenExpression>(javaClass(), "Replace 'when' with 'if'"), LowPriorityAction {
@@ -58,19 +58,5 @@ public class WhenToIfIntention : SelfTargetingRangeIntention<KtWhenExpression>(j
         }
 
         element.replace(ifExpression)
-    }
-
-    private fun KtPsiFactory.combineWhenConditions(conditions: Array<KtWhenCondition>, subject: KtExpression?): KtExpression? {
-        when (conditions.size()) {
-            0 -> return null
-
-            1 -> return conditions[0].toExpression(subject)
-
-            else -> {
-                return buildExpression {
-                    appendExpressions(conditions.map { it.toExpression(subject) }, separator = "||")
-                }
-            }
-        }
     }
 }

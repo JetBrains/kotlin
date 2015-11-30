@@ -1,5 +1,5 @@
 fun box(): String {
-    return justPrint(9 compareTo 4) 
+    return justPrint(9.compareTo(4))
 } 
 
 fun justPrint(value: Int): String {

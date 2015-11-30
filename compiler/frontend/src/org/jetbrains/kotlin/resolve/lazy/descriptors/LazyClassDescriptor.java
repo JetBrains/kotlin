@@ -101,9 +101,10 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     private final boolean isCompanionObject;
 
     private final ClassResolutionScopesSupport resolutionScopesSupport;
+    private final NotNullLazyValue<List<TypeParameterDescriptor>> parameters;
 
     public LazyClassDescriptor(
-            @NotNull LazyClassContext c,
+            @NotNull final LazyClassContext c,
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Name name,
             @NotNull JetClassLikeInfo classLikeInfo
@@ -239,6 +240,30 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 return getOuterScope();
             }
         }, classLikeInfo.getPrimaryConstructorParameters());
+
+        this.parameters = c.getStorageManager().createLazyValue(new Function0<List<TypeParameterDescriptor>>() {
+            @Override
+            public List<TypeParameterDescriptor> invoke() {
+                JetClassLikeInfo classInfo = declarationProvider.getOwnerInfo();
+                KtTypeParameterList typeParameterList = classInfo.getTypeParameterList();
+                if (typeParameterList == null) return Collections.emptyList();
+
+                if (classInfo.getClassKind() == ClassKind.ENUM_CLASS) {
+                    c.getTrace().report(TYPE_PARAMETERS_IN_ENUM.on(typeParameterList));
+                }
+
+                List<KtTypeParameter> typeParameters = typeParameterList.getParameters();
+
+                List<TypeParameterDescriptor> parameters = new ArrayList<TypeParameterDescriptor>(typeParameters.size());
+
+                for (int i = 0; i < typeParameters.size(); i++) {
+                    parameters.add(new LazyTypeParameterDescriptor(c, LazyClassDescriptor.this, typeParameters.get(i), i));
+                }
+
+                return parameters;
+            }
+        });
+
     }
 
     // NOTE: Called from constructor!
@@ -489,6 +514,12 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         getVisibility();
     }
 
+    @NotNull
+    @Override
+    public List<TypeParameterDescriptor> getDeclaredTypeParameters() {
+        return parameters.invoke();
+    }
+
     private static class Supertypes {
         @Mutable
         public final Collection<KotlinType> trueSupertypes;
@@ -545,21 +576,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         private final NotNullLazyValue<List<TypeParameterDescriptor>> parameters = c.getStorageManager().createLazyValue(new Function0<List<TypeParameterDescriptor>>() {
             @Override
             public List<TypeParameterDescriptor> invoke() {
-                JetClassLikeInfo classInfo = declarationProvider.getOwnerInfo();
-                KtTypeParameterList typeParameterList = classInfo.getTypeParameterList();
-                if (typeParameterList == null) return Collections.emptyList();
-
-                if (classInfo.getClassKind() == ClassKind.ENUM_CLASS) {
-                    c.getTrace().report(TYPE_PARAMETERS_IN_ENUM.on(typeParameterList));
-                }
-
-                List<KtTypeParameter> typeParameters = typeParameterList.getParameters();
-                List<TypeParameterDescriptor> parameters = new ArrayList<TypeParameterDescriptor>(typeParameters.size());
-                for (int i = 0; i < typeParameters.size(); i++) {
-                    parameters.add(new LazyTypeParameterDescriptor(c, LazyClassDescriptor.this, typeParameters.get(i), i));
-                }
-
-                return parameters;
+                return TypeParameterUtilsKt.computeConstructorTypeParameters(LazyClassDescriptor.this);
             }
         });
 

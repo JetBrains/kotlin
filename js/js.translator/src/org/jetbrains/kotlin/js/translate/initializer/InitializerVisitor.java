@@ -57,7 +57,7 @@ public final class InitializerVisitor extends TranslatorVisitor<Void> {
     }
 
     @Override
-    public Void visitAnonymousInitializer(@NotNull KtClassInitializer initializer, @NotNull TranslationContext context) {
+    public Void visitAnonymousInitializer(@NotNull KtAnonymousInitializer initializer, @NotNull TranslationContext context) {
         KtExpression initializerBody = initializer.getBody();
         if (initializerBody != null) {
             result.add(translateAsStatementAndMergeInBlockIfNeeded(initializerBody, context));

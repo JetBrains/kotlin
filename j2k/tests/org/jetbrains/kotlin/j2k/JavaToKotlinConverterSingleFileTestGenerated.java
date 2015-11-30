@@ -4318,6 +4318,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/typeCastExpression"), Pattern.compile("^(.+)\\.java$"), true);
         }
 
+        @TestMetadata("beforeDot.java")
+        public void testBeforeDot() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeCastExpression/beforeDot.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("castNullable.java")
         public void testCastNullable() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/typeCastExpression/castNullable.java");

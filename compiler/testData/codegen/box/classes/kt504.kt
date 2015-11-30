@@ -1,7 +1,7 @@
 import java.util.HashMap
 import java.io.*
 
-fun <K, V> MutableMap<K, V>.set(key : K, value : V) = put(key, value)
+operator fun <K, V> MutableMap<K, V>.set(key : K, value : V) = put(key, value)
 
 fun box() : String {
 

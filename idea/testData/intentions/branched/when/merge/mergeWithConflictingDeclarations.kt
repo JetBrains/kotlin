@@ -1,6 +1,6 @@
 // IS_APPLICABLE: false
 
-fun doSomething<T>(a: T) {}
+fun <T> doSomething(a: T) {}
 
 fun test(n: Int) {
     val res: String

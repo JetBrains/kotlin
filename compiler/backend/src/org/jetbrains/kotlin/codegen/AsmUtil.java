@@ -38,20 +38,17 @@ import org.jetbrains.kotlin.jvm.RuntimeAssertionInfo;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
-import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.DeprecationUtilKt;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
-import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolverKt;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding;
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor;
-import org.jetbrains.kotlin.types.FlexibleTypesKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
@@ -449,14 +446,6 @@ public class AsmUtil {
         }
     }
 
-    public static List<FieldInfo> transformCapturedParams(List<Pair<String, Type>> allFields, Type owner) {
-        List<FieldInfo> result = new ArrayList<FieldInfo>();
-        for (Pair<String, Type> field : allFields) {
-            result.add(FieldInfo.createForHiddenField(owner, field.second, field.first));
-        }
-        return result;
-    }
-
     public static int genAssignInstanceFieldFromParam(FieldInfo info, int index, InstructionAdapter iv) {
         assert !info.isStatic();
         Type fieldType = info.getFieldType();
@@ -651,43 +640,6 @@ public class AsmUtil {
         }
     }
 
-    public static boolean genNotNullAssertionForField(
-            @NotNull InstructionAdapter v,
-            @NotNull GenerationState state,
-            @NotNull PropertyDescriptor descriptor
-    ) {
-        return genNotNullAssertion(v, state, descriptor, "checkFieldIsNotNull");
-    }
-
-    private static boolean genNotNullAssertion(
-            @NotNull InstructionAdapter v,
-            @NotNull GenerationState state,
-            @NotNull CallableDescriptor descriptor,
-            @NotNull String assertMethodToCall
-    ) {
-        // Assertions are generated elsewhere for platform types
-        if (JavaDescriptorResolverKt.getPLATFORM_TYPES()) return false;
-
-        if (!state.isCallAssertionsEnabled()) return false;
-
-        if (!isDeclaredInJava(descriptor)) return false;
-
-        KotlinType type = descriptor.getReturnType();
-        if (type == null || isNullableType(FlexibleTypesKt.lowerIfFlexible(type))) return false;
-
-        Type asmType = state.getTypeMapper().mapReturnType(descriptor);
-        if (asmType.getSort() == Type.OBJECT || asmType.getSort() == Type.ARRAY) {
-            v.dup();
-            v.visitLdcInsn(descriptor.getContainingDeclaration().getName().asString());
-            v.visitLdcInsn(descriptor.getName().asString());
-            v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, assertMethodToCall,
-                           "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;)V", false);
-            return true;
-        }
-
-        return false;
-    }
-
     @NotNull
     public static StackValue genNotNullAssertions(
             @NotNull GenerationState state,
@@ -710,19 +662,6 @@ public class AsmUtil {
                 }
             }
         };
-    }
-
-    private static boolean isDeclaredInJava(@NotNull CallableDescriptor callableDescriptor) {
-        CallableDescriptor descriptor = callableDescriptor;
-        while (true) {
-            if (descriptor instanceof JavaCallableMemberDescriptor) {
-                return true;
-            }
-            CallableDescriptor original = descriptor.getOriginal();
-            if (descriptor == original) break;
-            descriptor = original;
-        }
-        return false;
     }
 
     public static void pushDefaultValueOnStack(@NotNull Type type, @NotNull InstructionAdapter v) {

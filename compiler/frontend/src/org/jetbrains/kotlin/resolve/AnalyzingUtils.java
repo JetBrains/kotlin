@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticUtils;
 import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid;
 import org.jetbrains.kotlin.psi.debugText.DebugTextUtilKt;
+import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +60,11 @@ public class AnalyzingUtils {
     }
 
     public static void throwExceptionOnErrors(BindingContext bindingContext) {
-        for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
+        throwExceptionOnErrors(bindingContext.getDiagnostics());
+    }
+
+    public static void throwExceptionOnErrors(Diagnostics diagnostics) {
+        for (Diagnostic diagnostic : diagnostics) {
             DiagnosticSink.THROW_EXCEPTION.report(diagnostic);
         }
     }

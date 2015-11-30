@@ -1,3 +1,5 @@
+infix fun String.add(other: String) = ""
+
 fun foo(x: String) {
-    x plus<caret> ("1" + "2")
+    x add<caret> ("1" + "2")
 }

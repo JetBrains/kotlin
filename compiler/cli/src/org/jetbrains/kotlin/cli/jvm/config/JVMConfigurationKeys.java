@@ -16,20 +16,16 @@
 
 package org.jetbrains.kotlin.cli.jvm.config;
 
-import org.jetbrains.kotlin.modules.Module;
 import org.jetbrains.kotlin.cli.jvm.compiler.CompilerJarLocator;
 import org.jetbrains.kotlin.config.CompilerConfigurationKey;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
-import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter;
+import org.jetbrains.kotlin.modules.Module;
 
 import java.util.List;
 
 public class JVMConfigurationKeys {
     private JVMConfigurationKeys() {
     }
-
-    public static final CompilerConfigurationKey<List<AnalyzerScriptParameter>> SCRIPT_PARAMETERS =
-            CompilerConfigurationKey.create("script");
 
     public static final CompilerConfigurationKey<Boolean> DISABLE_CALL_ASSERTIONS =
             CompilerConfigurationKey.create("disable not-null call assertions");

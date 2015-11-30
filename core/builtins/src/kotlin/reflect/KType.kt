@@ -33,7 +33,7 @@ public interface KType {
      * This may happen if it is a type of the type parameter with a nullable upper bound:
      *
      * ```
-     * fun foo<T>(t: T) {
+     * fun <T> foo(t: T) {
      *     // isMarkedNullable == false for t's type, but t can be null here
      * }
      * ```

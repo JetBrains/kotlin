@@ -185,7 +185,7 @@ public class IDELightClassGenerationSupport(private val project: Project) : Ligh
             return withFakeLightClasses(lightClassForFacade, facadeFiles)
         }
         else {
-            return facadeFiles.filter { it.isCompiled }.map { createLightClassForDecompiledKotlinFile(it) }.filterNotNull()
+            return facadeFiles.filter { it.isCompiled }.mapNotNull { createLightClassForDecompiledKotlinFile(it) }
         }
     }
 

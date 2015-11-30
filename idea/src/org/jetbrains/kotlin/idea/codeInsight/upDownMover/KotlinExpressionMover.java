@@ -68,7 +68,7 @@ public class KotlinExpressionMover extends AbstractKotlinUpDownMover {
             {KtBlockExpression.class, KtWhenExpression.class, KtClassBody.class, KtFile.class};
 
     private final static Class[] FUNCTIONLIKE_ELEMENT_CLASSES =
-            {KtFunction.class, KtPropertyAccessor.class, KtClassInitializer.class};
+            {KtFunction.class, KtPropertyAccessor.class, KtAnonymousInitializer.class};
 
     private static final Predicate<KtElement> CHECK_BLOCK_LIKE_ELEMENT = new Predicate<KtElement>() {
         @Override
@@ -197,7 +197,7 @@ public class KotlinExpressionMover extends AbstractKotlinUpDownMover {
         while (current != null) {
             PsiElement parent = current.getParent();
             if (parent instanceof KtClassBody ||
-                parent instanceof KtClassInitializer ||
+                parent instanceof KtAnonymousInitializer ||
                 parent instanceof KtNamedFunction ||
                 (parent instanceof KtProperty && !((KtProperty) parent).isLocal())) {
                 return null;

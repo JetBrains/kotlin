@@ -41,10 +41,8 @@ public abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
     }
 
     private fun createEnvironmentForConfiguration(configuration: CompilerConfiguration, path: String) {
-        val layoutPaths = File(path).listFiles { it.name.startsWith("layout") && it.isDirectory() }!!.map { "$path${it.name}/" }
-        val manifestPath = path + "AndroidManifest.xml"
-        val supportV4 = File(path).name.startsWith("support")
-        myEnvironment = createAndroidTestEnvironment(configuration, layoutPaths, manifestPath, supportV4)
+        val layoutPaths = File(path).listFiles { it.name.startsWith("layout") && it.isDirectory }!!.map { "$path${it.name}/" }
+        myEnvironment = createAndroidTestEnvironment(configuration, layoutPaths)
     }
 
     public fun doCompileAgainstAndroidSdkTest(path: String) {
@@ -60,7 +58,7 @@ public abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
     }
 
     private fun getFakeFiles(path: String): Collection<String> {
-        return FileUtil.findFilesByMask(Pattern.compile("^Fake.*\\.kt$"), File(path.replace(getTestName(true), ""))) map { relativePath(it) }
+        return FileUtil.findFilesByMask(Pattern.compile("^Fake.*\\.kt$"), File(path.replace(getTestName(true), ""))).map { relativePath(it) }
     }
 
     private fun needsInvocationTest(path: String): Boolean {
@@ -83,7 +81,7 @@ public abstract class AbstractAndroidBoxTest : AbstractBlackBoxCodegenTest() {
                         if (additionalFiles != null) files.add(relativePath(file))
                     }
                     else -> {
-                        if (file.getName().endsWith(".kt")) files.add(relativePath(file))
+                        if (file.name.endsWith(".kt")) files.add(relativePath(file))
                     }
                 }
                 return true

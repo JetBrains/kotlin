@@ -34,9 +34,9 @@ fun spreadInObjectMethodCall(size: Int, sum: Int, vararg args: Int) = obj.test(s
 
 fun testVarargWithFunLit(vararg args: Int, f: (a: IntArray) -> Boolean): Boolean = f(args)
 
-fun idVarArgs<T>(vararg a: T) = a
+fun <T> idVarArgs(vararg a: T) = a
 
-fun idArrayVarArg<T>(vararg a: Array<T>) = a
+fun <T> idArrayVarArg(vararg a: Array<T>) = a
 
 fun sumFunValuesOnParameters(x: Int, y: Int, vararg a: Int, f: (Int) -> Int): Int {
     var result = f(x) + f(y)

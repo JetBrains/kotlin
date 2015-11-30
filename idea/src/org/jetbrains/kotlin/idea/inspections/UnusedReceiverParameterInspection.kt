@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import kotlin.properties.Delegates
 
 public class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
@@ -61,7 +61,7 @@ public class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
                         val resolvedCall = element.getResolvedCall(bindingContext) ?: return
 
                         if (resolvedCall.getDispatchReceiver().getThisReceiverOwner(bindingContext) == callable ||
-                            resolvedCall.getExtensionReceiver().getThisReceiverOwner(bindingContext) == callable) {
+                            (resolvedCall.extensionReceiver as ReceiverValue).getThisReceiverOwner(bindingContext) == callable) {
                             used = true
                         }
                         else if ((resolvedCall.getCandidateDescriptor() as? ReceiverParameterDescriptor)?.getContainingDeclaration() == callable) {

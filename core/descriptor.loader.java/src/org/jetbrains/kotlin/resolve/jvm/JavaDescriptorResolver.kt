@@ -16,17 +16,12 @@
 
 package org.jetbrains.kotlin.resolve.jvm
 
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaPackageFragmentProvider
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
+import org.jetbrains.kotlin.load.java.structure.JavaClass
 
-public var PLATFORM_TYPES: Boolean = true
-
-public class JavaDescriptorResolver(public val packageFragmentProvider: LazyJavaPackageFragmentProvider, private val module: ModuleDescriptor) {
-
-    public fun resolveClass(javaClass: JavaClass): ClassDescriptor? {
+class JavaDescriptorResolver(val packageFragmentProvider: LazyJavaPackageFragmentProvider) {
+    fun resolveClass(javaClass: JavaClass): ClassDescriptor? {
         return packageFragmentProvider.getClass(javaClass)
     }
 }

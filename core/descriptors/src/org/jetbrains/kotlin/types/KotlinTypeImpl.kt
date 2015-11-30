@@ -88,7 +88,7 @@ private constructor(
 
     override fun getSubstitution(): TypeSubstitution {
         if (substitution == null) {
-            return IndexedParametersSubstitution(getConstructor(), getArguments())
+            return TypeConstructorSubstitution.create(getConstructor(), getArguments())
         }
         return substitution
     }

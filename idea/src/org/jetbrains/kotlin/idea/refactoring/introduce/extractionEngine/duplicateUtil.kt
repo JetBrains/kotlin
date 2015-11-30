@@ -35,9 +35,10 @@ import com.intellij.find.FindManager
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import com.intellij.refactoring.util.duplicates.MethodDuplicatesHandler
 import com.intellij.refactoring.RefactoringBundle
+import org.jetbrains.kotlin.idea.refactoring.introduce.getPhysicalTextRange
 
 public fun KotlinPsiRange.highlight(project: Project, editor: Editor): RangeHighlighter? {
-    val textRange = getTextRange()
+    val textRange = getPhysicalTextRange()
     val highlighters = ArrayList<RangeHighlighter>()
     val attributes = EditorColorsManager.getInstance().getGlobalScheme().getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES)!!
     HighlightManager.getInstance(project).addRangeHighlight(
@@ -48,7 +49,7 @@ public fun KotlinPsiRange.highlight(project: Project, editor: Editor): RangeHigh
 
 public fun KotlinPsiRange.preview(project: Project, editor: Editor): RangeHighlighter? {
     return highlight(project, editor)?.let {
-        val startOffset = getTextRange().getStartOffset()
+        val startOffset = getPhysicalTextRange().getStartOffset()
         val foldedRegions =
                 CodeFoldingManager.getInstance(project)
                         .getFoldRegionsAtOffset(editor, startOffset)

@@ -21,6 +21,9 @@
       <module fileurl="file://$PROJECT_DIR$/compiler/tests/compiler-tests.iml" filepath="$PROJECT_DIR$/compiler/tests/compiler-tests.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/compiler/conditional-preprocessor/conditional-preprocessor.iml" filepath="$PROJECT_DIR$/compiler/conditional-preprocessor/conditional-preprocessor.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/compiler/container/container.iml" filepath="$PROJECT_DIR$/compiler/container/container.iml" group="compiler" />
+      <module fileurl="file://$PROJECT_DIR$/compiler/daemon/daemon.iml" filepath="$PROJECT_DIR$/compiler/daemon/daemon.iml" group="compiler/daemon" />
+      <module fileurl="file://$PROJECT_DIR$/compiler/daemon/daemon-client/daemon-client.iml" filepath="$PROJECT_DIR$/compiler/daemon/daemon-client/daemon-client.iml" group="compiler/daemon" />
+      <module fileurl="file://$PROJECT_DIR$/compiler/daemon/daemon-common/daemon-common.iml" filepath="$PROJECT_DIR$/compiler/daemon/daemon-common/daemon-common.iml" group="compiler/daemon" />
       <module fileurl="file://$PROJECT_DIR$/core/descriptor.loader.java/descriptor.loader.java.iml" filepath="$PROJECT_DIR$/core/descriptor.loader.java/descriptor.loader.java.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/core/descriptors/descriptors.iml" filepath="$PROJECT_DIR$/core/descriptors/descriptors.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/core/descriptors.runtime/descriptors.runtime.iml" filepath="$PROJECT_DIR$/core/descriptors.runtime/descriptors.runtime.iml" group="core" />
@@ -36,7 +39,7 @@
       <module fileurl="file://$PROJECT_DIR$/idea/idea-completion/idea-completion.iml" filepath="$PROJECT_DIR$/idea/idea-completion/idea-completion.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/idea/idea-core/idea-core.iml" filepath="$PROJECT_DIR$/idea/idea-core/idea-core.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/idea/idea-jps-common/idea-jps-common.iml" filepath="$PROJECT_DIR$/idea/idea-jps-common/idea-jps-common.iml" group="ide" />
-      <module fileurl="file://$PROJECT_DIR$/idea/idea-js/idea-js.iml" filepath="$PROJECT_DIR$/idea/idea-js/idea-js.iml" group="ide" />
+      <module fileurl="file://$PROJECT_DIR$/idea/idea-live-templates/idea-live-templates.iml" filepath="$PROJECT_DIR$/idea/idea-live-templates/idea-live-templates.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/idea/idea-repl/idea-repl.iml" filepath="$PROJECT_DIR$/idea/idea-repl/idea-repl.iml" />
       <module fileurl="file://$PROJECT_DIR$/idea-runner/idea-runner.iml" filepath="$PROJECT_DIR$/idea-runner/idea-runner.iml" group="ide" />
       <module fileurl="file://$PROJECT_DIR$/idea/idea-test-framework/idea-test-framework.iml" filepath="$PROJECT_DIR$/idea/idea-test-framework/idea-test-framework.iml" group="ide" />
@@ -53,13 +56,10 @@
       <module fileurl="file://$PROJECT_DIR$/js/js.translator/js.translator.iml" filepath="$PROJECT_DIR$/js/js.translator/js.translator.iml" group="compiler/js" />
       <module fileurl="file://$PROJECT_DIR$/jps-plugin/kannotator-jps-plugin-test/kannotator-jps-plugin-test.iml" filepath="$PROJECT_DIR$/jps-plugin/kannotator-jps-plugin-test/kannotator-jps-plugin-test.iml" group="ide/jps" />
       <module fileurl="file://$PROJECT_DIR$/idea/kotlin-android-plugin/kotlin-android-plugin.iml" filepath="$PROJECT_DIR$/idea/kotlin-android-plugin/kotlin-android-plugin.iml" group="ide" />
-      <module fileurl="file://$PROJECT_DIR$/compiler/rmi/kotlinr/kotlinr.iml" filepath="$PROJECT_DIR$/compiler/rmi/kotlinr/kotlinr.iml" group="rmi" />
       <module fileurl="file://$PROJECT_DIR$/compiler/light-classes/light-classes.iml" filepath="$PROJECT_DIR$/compiler/light-classes/light-classes.iml" group="compiler/java" />
       <module fileurl="file://$PROJECT_DIR$/compiler/plugin-api/plugin-api.iml" filepath="$PROJECT_DIR$/compiler/plugin-api/plugin-api.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/compiler/preloader/preloader.iml" filepath="$PROJECT_DIR$/compiler/preloader/preloader.iml" group="compiler/cli" />
       <module fileurl="file://$PROJECT_DIR$/core/reflection.jvm/reflection.jvm.iml" filepath="$PROJECT_DIR$/core/reflection.jvm/reflection.jvm.iml" group="core" />
-      <module fileurl="file://$PROJECT_DIR$/compiler/rmi/rmi-interface/rmi-interface.iml" filepath="$PROJECT_DIR$/compiler/rmi/rmi-interface/rmi-interface.iml" group="rmi" />
-      <module fileurl="file://$PROJECT_DIR$/compiler/rmi/rmi-server/rmi-server.iml" filepath="$PROJECT_DIR$/compiler/rmi/rmi-server/rmi-server.iml" group="rmi" />
       <module fileurl="file://$PROJECT_DIR$/core/runtime.jvm/runtime.jvm.iml" filepath="$PROJECT_DIR$/core/runtime.jvm/runtime.jvm.iml" group="core" />
       <module fileurl="file://$PROJECT_DIR$/compiler/serialization/serialization.iml" filepath="$PROJECT_DIR$/compiler/serialization/serialization.iml" group="compiler" />
       <module fileurl="file://$PROJECT_DIR$/compiler/util/util.iml" filepath="$PROJECT_DIR$/compiler/util/util.iml" />

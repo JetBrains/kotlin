@@ -159,23 +159,19 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     }
 
     @Override
+    public void visitScript(@NotNull KtScript script) {
+        classStack.push(bindingContext.get(SCRIPT, script));
+        nameStack.push(AsmUtil.internalNameByFqNameWithoutInnerClasses(script.getFqName()));
+        script.acceptChildren(this);
+        nameStack.pop();
+        classStack.pop();
+    }
+
+    @Override
     public void visitKtFile(@NotNull KtFile file) {
-        if (file.isScript()) {
-            // TODO: replace with visitScript override
-            //noinspection ConstantConditions
-            ClassDescriptor classDescriptor = bindingContext.get(CLASS_FOR_SCRIPT, bindingContext.get(SCRIPT, file.getScript()));
-            classStack.push(classDescriptor);
-            //noinspection ConstantConditions
-            nameStack.push(asmTypeForScriptPsi(bindingContext, file.getScript()).getInternalName());
-        }
-        else {
-            nameStack.push(AsmUtil.internalNameByFqNameWithoutInnerClasses(file.getPackageFqName()));
-        }
+        nameStack.push(AsmUtil.internalNameByFqNameWithoutInnerClasses(file.getPackageFqName()));
         file.acceptChildren(this);
         nameStack.pop();
-        if (file.isScript()) {
-            classStack.pop();
-        }
     }
 
     @Override
@@ -386,7 +382,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
         String peek = peekFromStack(nameStack);
         String name = safeIdentifier(descriptor.getName()).asString();
-        if (containingDeclaration instanceof ClassDescriptor || containingDeclaration instanceof ScriptDescriptor) {
+        if (containingDeclaration instanceof ClassDescriptor) {
             return peek + '$' + name;
         }
         else if (containingDeclaration instanceof PackageFragmentDescriptor) {

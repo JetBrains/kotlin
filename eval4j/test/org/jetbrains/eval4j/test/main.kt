@@ -16,20 +16,17 @@
 
 package org.jetbrains.eval4j.test
 
-import org.jetbrains.org.objectweb.asm.*
-import org.jetbrains.org.objectweb.asm.Opcodes.*
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import java.lang.reflect.Modifier
-import org.jetbrains.eval4j.*
-import org.junit.Assert.*
-import junit.framework.TestSuite
 import junit.framework.TestCase
-import java.lang.reflect.Method
-import java.lang.reflect.Field
-import java.lang.reflect.Constructor
-import java.lang.reflect.InvocationTargetException
-import java.lang.reflect.Array as JArray
+import junit.framework.TestSuite
+import org.jetbrains.eval4j.*
+import org.jetbrains.org.objectweb.asm.Opcodes.ACC_STATIC
+import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
+import java.lang.reflect.*
+import java.lang.reflect.Array as JArray
 
 fun suite(): TestSuite = buildTestSuite {
     methodNode, ownerClass, expected ->
@@ -59,13 +56,13 @@ fun suite(): TestSuite = buildTestSuite {
                 return methodNode.visibleAnnotations?.any {
                     val annotationDesc = it.desc
                     annotationDesc != null &&
-                        Type.getType(annotationDesc) == Type.getType(javaClass<IgnoreInReflectionTests>())
+                        Type.getType(annotationDesc) == Type.getType(IgnoreInReflectionTests::class.java)
                 } ?: false
             }
         }
 }
 
-fun Class<*>.getInternalName(): String = Type.getType(this).getInternalName()
+fun Class<*>.getInternalName(): String = Type.getType(this).internalName
 
 fun initFrame(
         owner: String,
@@ -83,9 +80,9 @@ fun initFrame(
     }
 
     val args = Type.getArgumentTypes(m.desc)
-    for (i in 0..args.size() - 1) {
+    for (i in 0..args.size - 1) {
         current.setLocal(local++, makeNotInitializedValue(args[i]))
-        if (args[i].getSize() == 2) {
+        if (args[i].size == 2) {
             current.setLocal(local++, NOT_A_VALUE)
         }
     }
@@ -98,7 +95,7 @@ fun initFrame(
 }
 
 fun objectToValue(obj: Any?, expectedType: Type): Value {
-    return when (expectedType.getSort()) {
+    return when (expectedType.sort) {
         Type.VOID -> VOID_VALUE
         Type.BOOLEAN -> boolean(obj as Boolean)
         Type.BYTE -> byte(obj as Byte)
@@ -115,13 +112,13 @@ fun objectToValue(obj: Any?, expectedType: Type): Value {
 
 object REFLECTION_EVAL : Eval {
 
-    val lookup = ReflectionLookup(javaClass<ReflectionLookup>().getClassLoader()!!)
+    val lookup = ReflectionLookup(ReflectionLookup::class.java.classLoader!!)
 
     override fun loadClass(classType: Type): Value {
-        return ObjectValue(findClass(classType), Type.getType(javaClass<Class<*>>()))
+        return ObjectValue(findClass(classType), Type.getType(Class::class.java))
     }
 
-    override fun loadString(str: String): Value = ObjectValue(str, Type.getType(javaClass<String>()))
+    override fun loadString(str: String): Value = ObjectValue(str, Type.getType(String::class.java))
 
     override fun newInstance(classType: Type): Value {
         return NewObjectValue(classType)
@@ -134,11 +131,11 @@ object REFLECTION_EVAL : Eval {
 
     @Suppress("UNCHECKED_CAST")
     override fun newArray(arrayType: Type, size: Int): Value {
-        return ObjectValue(JArray.newInstance(findClass(arrayType).getComponentType() as Class<Any>, size), arrayType)
+        return ObjectValue(JArray.newInstance(findClass(arrayType).componentType as Class<Any>, size), arrayType)
     }
 
     override fun newMultiDimensionalArray(arrayType: Type, dimensionSizes: List<Int>): Value {
-        return ObjectValue(ArrayHelper.newMultiArray(findClass(arrayType.getElementType()), *dimensionSizes.toTypedArray()), arrayType)
+        return ObjectValue(ArrayHelper.newMultiArray(findClass(arrayType.elementType), *dimensionSizes.toTypedArray()), arrayType)
     }
 
     override fun getArrayLength(array: Value): Value {
@@ -147,11 +144,11 @@ object REFLECTION_EVAL : Eval {
 
     override fun getArrayElement(array: Value, index: Value): Value {
         val asmType = array.asmType
-        val elementType = if (asmType.getDimensions() == 1) asmType.getElementType() else Type.getType(asmType.getDescriptor().substring(1))
+        val elementType = if (asmType.dimensions == 1) asmType.elementType else Type.getType(asmType.descriptor.substring(1))
         val arr = array.obj().checkNull()
         val ind = index.int
         return mayThrow {
-            when (elementType.getSort()) {
+            when (elementType.sort) {
                 Type.BOOLEAN -> boolean(JArray.getBoolean(arr, ind))
                 Type.BYTE -> byte(JArray.getByte(arr, ind))
                 Type.SHORT -> short(JArray.getShort(arr, ind))
@@ -173,13 +170,13 @@ object REFLECTION_EVAL : Eval {
     override fun setArrayElement(array: Value, index: Value, newValue: Value) {
         val arr = array.obj().checkNull()
         val ind = index.int
-        if (array.asmType.getDimensions() > 1) {
+        if (array.asmType.dimensions > 1) {
             JArray.set(arr, ind, newValue.obj())
             return
         }
-        val elementType = array.asmType.getElementType()
+        val elementType = array.asmType.elementType
         mayThrow {
-            when (elementType.getSort()) {
+            when (elementType.sort) {
                 Type.BOOLEAN -> JArray.setBoolean(arr, ind, newValue.boolean)
                 Type.BYTE -> JArray.setByte(arr, ind, newValue.int.toByte())
                 Type.SHORT -> JArray.setShort(arr, ind, newValue.int.toShort())
@@ -203,7 +200,7 @@ object REFLECTION_EVAL : Eval {
                 return f()
             }
             catch (ite: InvocationTargetException) {
-                    throw ite.getCause() ?: ite
+                    throw ite.cause ?: ite
             }
         }
         catch (e: Throwable) {
@@ -228,7 +225,7 @@ object REFLECTION_EVAL : Eval {
         assertTrue(fieldDesc.isStatic)
         val field = findClass(fieldDesc).findField(fieldDesc)
         assertNotNull("Field not found: $fieldDesc", field)
-        assertTrue("Field is not static: $field", (field!!.getModifiers() and Modifier.STATIC) != 0)
+        assertTrue("Field is not static: $field", (field!!.modifiers and Modifier.STATIC) != 0)
         return field
     }
 
@@ -308,7 +305,7 @@ object REFLECTION_EVAL : Eval {
 class ReflectionLookup(val classLoader: ClassLoader) {
     @Suppress("UNCHECKED_CAST")
     fun findClass(asmType: Type): Class<*>? {
-        return when (asmType.getSort()) {
+        return when (asmType.sort) {
             Type.BOOLEAN -> java.lang.Boolean.TYPE
             Type.BYTE -> java.lang.Byte.TYPE
             Type.SHORT -> java.lang.Short.TYPE
@@ -317,8 +314,8 @@ class ReflectionLookup(val classLoader: ClassLoader) {
             Type.LONG -> java.lang.Long.TYPE
             Type.FLOAT -> java.lang.Float.TYPE
             Type.DOUBLE -> java.lang.Double.TYPE
-            Type.OBJECT -> classLoader.loadClass(asmType.getInternalName().replace('/', '.'))
-            Type.ARRAY -> Class.forName(asmType.getDescriptor().replace('/', '.'))
+            Type.OBJECT -> classLoader.loadClass(asmType.internalName.replace('/', '.'))
+            Type.ARRAY -> Class.forName(asmType.descriptor.replace('/', '.'))
             else -> throw UnsupportedOperationException("Unsupported type: $asmType")
         }
     }
@@ -326,14 +323,14 @@ class ReflectionLookup(val classLoader: ClassLoader) {
 
 @Suppress("UNCHECKED_CAST")
 fun Class<Any>.findMethod(methodDesc: MethodDescription): Method? {
-    for (declared in getDeclaredMethods()) {
+    for (declared in declaredMethods) {
         if (methodDesc.matches(declared)) return declared
     }
 
-    val fromSuperClass = (getSuperclass() as Class<Any>).findMethod(methodDesc)
+    val fromSuperClass = (superclass as Class<Any>).findMethod(methodDesc)
     if (fromSuperClass != null) return fromSuperClass
 
-    for (supertype in getInterfaces()) {
+    for (supertype in interfaces) {
         val fromSuper = (supertype as Class<Any>).findMethod(methodDesc)
         if (fromSuper != null) return fromSuper
     }
@@ -343,15 +340,15 @@ fun Class<Any>.findMethod(methodDesc: MethodDescription): Method? {
 
 @Suppress("UNCHECKED_CAST")
 fun Class<Any>.findConstructor(methodDesc: MethodDescription): Constructor<Any?>? {
-    for (declared in getDeclaredConstructors()) {
+    for (declared in declaredConstructors) {
         if (methodDesc.matches(declared)) return declared as Constructor<Any?>
     }
     return null
 }
 
 fun MethodDescription.matches(ctor: Constructor<*>): Boolean {
-    val methodParams = ctor.getParameterTypes()!!
-    if (parameterTypes.size() != methodParams.size()) return false
+    val methodParams = ctor.parameterTypes!!
+    if (parameterTypes.size != methodParams.size) return false
     for ((i, p) in parameterTypes.withIndex()) {
         if (!p.matches(methodParams[i])) return false
     }
@@ -360,30 +357,30 @@ fun MethodDescription.matches(ctor: Constructor<*>): Boolean {
 }
 
 fun MethodDescription.matches(method: Method): Boolean {
-    if (name != method.getName()) return false
+    if (name != method.name) return false
 
-    val methodParams = method.getParameterTypes()!!
-    if (parameterTypes.size() != methodParams.size()) return false
+    val methodParams = method.parameterTypes!!
+    if (parameterTypes.size != methodParams.size) return false
     for ((i, p) in parameterTypes.withIndex()) {
         if (!p.matches(methodParams[i])) return false
     }
 
-    return returnType.matches(method.getReturnType()!!)
+    return returnType.matches(method.returnType!!)
 }
 
 @Suppress("UNCHECKED_CAST")
 fun Class<Any>.findField(fieldDesc: FieldDescription): Field? {
-    for (declared in getDeclaredFields()) {
+    for (declared in declaredFields) {
         if (fieldDesc.matches(declared)) return declared
     }
 
-    val superclass = getSuperclass()
+    val superclass = superclass
     if (superclass != null) {
         val fromSuperClass = (superclass as Class<Any>).findField(fieldDesc)
         if (fromSuperClass != null) return fromSuperClass
     }
 
-    for (supertype in getInterfaces()) {
+    for (supertype in interfaces) {
         val fromSuper = (supertype as Class<Any>).findField(fieldDesc)
         if (fromSuper != null) return fromSuper
     }
@@ -392,9 +389,9 @@ fun Class<Any>.findField(fieldDesc: FieldDescription): Field? {
 }
 
 fun FieldDescription.matches(field: Field): Boolean {
-    if (name != field.getName()) return false
+    if (name != field.name) return false
 
-    return fieldType.matches(field.getType()!!)
+    return fieldType.matches(field.type!!)
 }
 
 fun Type.matches(_class: Class<*>): Boolean = this == Type.getType(_class)

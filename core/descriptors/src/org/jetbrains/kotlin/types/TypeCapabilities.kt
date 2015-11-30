@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.types
 
+import org.jetbrains.kotlin.descriptors.PossiblyInnerType
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 
 public interface TypeCapability
@@ -26,6 +27,18 @@ public interface TypeCapabilities {
     }
 
     fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T?
+}
+
+class CompositeTypeCapabilities(private val first: TypeCapabilities, private val second: TypeCapabilities) : TypeCapabilities {
+    override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? =
+            first.getCapability(capabilityClass) ?: second.getCapability(capabilityClass)
+}
+
+class SingletonTypeCapabilities(private val clazz: Class<*>, private val typeCapability: TypeCapability) : TypeCapabilities {
+    override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? {
+        if (capabilityClass == clazz) return typeCapability as T
+        return null
+    }
 }
 
 public inline fun <reified T : TypeCapability> KotlinType.getCapability(): T? = getCapability(javaClass<T>())
@@ -87,4 +100,8 @@ public fun sameTypeConstructors(first: KotlinType, second: KotlinType): Boolean 
 
 interface CustomSubstitutionCapability : TypeCapability {
     public val substitution: TypeSubstitution
+}
+
+interface PossiblyInnerTypeCapability : TypeCapability {
+    public val possiblyInnerType: PossiblyInnerType?
 }

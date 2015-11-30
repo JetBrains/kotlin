@@ -37,10 +37,7 @@ import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasLowPriorityInOverloadResolution
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.receivers.CastClassReceiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.ClassReceiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
@@ -65,30 +62,32 @@ public class TaskPrioritizer(
             tracing: TracingStrategy,
             callableDescriptorCollectors: CallableDescriptorCollectors<D>
     ): List<ResolutionTask<D, F>> {
-        val explicitReceiver = context.call.getExplicitReceiver()
+        val explicitReceiver = context.call.explicitReceiver
         val result = ResolutionTaskHolder<D, F>(storageManager, context, PriorityProviderImpl<D>(context), tracing)
         val taskPrioritizerContext = TaskPrioritizerContext(name, result, context, context.scope, callableDescriptorCollectors)
 
-        if (explicitReceiver is QualifierReceiver) {
-            val qualifierReceiver: QualifierReceiver = explicitReceiver
-            val receiverScope = LexicalScope.empty(qualifierReceiver.getNestedClassesAndPackageMembersScope().memberScopeAsImportingScope(),
-                                                   qualifierReceiver.descriptor)
-            doComputeTasks(NO_RECEIVER, taskPrioritizerContext.replaceScope(receiverScope))
-            computeTasksForClassObjectReceiver(qualifierReceiver, taskPrioritizerContext)
-        }
-        else {
-            doComputeTasks(explicitReceiver, taskPrioritizerContext)
+        when (explicitReceiver) {
+            is QualifierReceiver -> {
+                val qualifierReceiver: QualifierReceiver = explicitReceiver
+                val receiverScope = LexicalScope.empty(qualifierReceiver.getNestedClassesAndPackageMembersScope().memberScopeAsImportingScope(),
+                                                       qualifierReceiver.descriptor)
+                doComputeTasks(NO_RECEIVER, taskPrioritizerContext.replaceScope(receiverScope))
+                computeTasksForClassObjectReceiver(qualifierReceiver, taskPrioritizerContext)
+            }
+            is ReceiverValue -> {
+                doComputeTasks(explicitReceiver, taskPrioritizerContext)
 
-            // Temporary fix for code migration (unaryPlus()/unaryMinus())
-            val unaryConventionName = getUnaryPlusOrMinusOperatorFunctionName(context.call)
-            if (unaryConventionName != null) {
-                val deprecatedName = if (name == OperatorNameConventions.UNARY_PLUS)
-                    OperatorNameConventions.PLUS
-                else
-                    OperatorNameConventions.MINUS
+                // Temporary fix for code migration (unaryPlus()/unaryMinus())
+                val unaryConventionName = getUnaryPlusOrMinusOperatorFunctionName(context.call)
+                if (unaryConventionName != null) {
+                    val deprecatedName = if (name == OperatorNameConventions.UNARY_PLUS)
+                        OperatorNameConventions.PLUS
+                    else
+                        OperatorNameConventions.MINUS
 
-                val additionalContext = TaskPrioritizerContext(deprecatedName, result, context, context.scope, callableDescriptorCollectors)
-                doComputeTasks(explicitReceiver, additionalContext)
+                    val additionalContext = TaskPrioritizerContext(deprecatedName, result, context, context.scope, callableDescriptorCollectors)
+                    doComputeTasks(explicitReceiver, additionalContext)
+                }
             }
         }
 
@@ -96,27 +95,26 @@ public class TaskPrioritizer(
     }
 
     private fun <D : CallableDescriptor, F : D> computeTasksForClassObjectReceiver(
-            qualifierReceiver: QualifierReceiver,
+            qualifier: Qualifier,
             taskPrioritizerContext: TaskPrioritizerContext<D, F>
     ) {
-        val classObjectReceiver = qualifierReceiver.getClassObjectReceiver()
-        if (!classObjectReceiver.exists()) {
-            return
+        if (qualifier is ClassQualifier) {
+            val companionObject = qualifier.classValueReceiver ?: return
+            val classifierDescriptor = qualifier.classifier
+            doComputeTasks(companionObject, taskPrioritizerContext.filterCollectors {
+                when {
+                    classifierDescriptor is ClassDescriptor && classifierDescriptor.getCompanionObjectDescriptor() != null -> {
+                        // nested classes and objects should not be accessible via short reference to companion object
+                        it !is ConstructorDescriptor && it !is FakeCallableDescriptorForObject
+                    }
+                    DescriptorUtils.isEnumEntry(classifierDescriptor) -> {
+                        // objects nested in enum should not be accessible via enum entries reference
+                        it !is FakeCallableDescriptorForObject
+                    }
+                    else -> true
+                }
+            })
         }
-        val classifierDescriptor = qualifierReceiver.classifier
-        doComputeTasks(classObjectReceiver, taskPrioritizerContext.filterCollectors {
-            when {
-                classifierDescriptor is ClassDescriptor && classifierDescriptor.getCompanionObjectDescriptor() != null -> {
-                    // nested classes and objects should not be accessible via short reference to companion object
-                    it !is ConstructorDescriptor && it !is FakeCallableDescriptorForObject
-                }
-                classifierDescriptor != null && DescriptorUtils.isEnumEntry(classifierDescriptor) -> {
-                    // objects nested in enum should not be accessible via enum entries reference
-                    it !is FakeCallableDescriptorForObject
-                }
-                else -> true
-            }
-        })
     }
 
     private fun <D : CallableDescriptor, F : D> doComputeTasks(receiver: ReceiverValue, c: TaskPrioritizerContext<D, F>) {
@@ -237,8 +235,8 @@ public class TaskPrioritizer(
                     val filteredMembers = if (filter == null) membersForThisVariant else membersForThisVariant.filter(filter)
 
                     val dispatchReceiver =
-                            if (explicitReceiver.value is ClassReceiver && type != explicitReceiver.value.type) {
-                                CastClassReceiver(explicitReceiver.value.declarationDescriptor, type)
+                            if (explicitReceiver.value is ImplicitClassReceiver && type != explicitReceiver.value.type) {
+                                CastImplicitClassReceiver(explicitReceiver.value.classDescriptor, type)
                             }
                             else {
                                 explicitReceiver.value
@@ -413,7 +411,7 @@ public class TaskPrioritizer(
         for (descriptor in descriptors) {
             val candidate = ResolutionCandidate.create<D>(call, descriptor)
             candidate.setDispatchReceiver(dispatchReceiver)
-            candidate.setExtensionReceiver(extensionReceiver)
+            candidate.setReceiverArgument(extensionReceiver)
             candidate.setExplicitReceiverKind(explicitReceiverKind)
             result.add(candidate)
         }
@@ -437,7 +435,7 @@ public class TaskPrioritizer(
         val result = Lists.newArrayList<ResolutionCandidate<D>>()
         for (descriptor in descriptors) {
             val candidate = ResolutionCandidate.create<D>(call, descriptor)
-            candidate.setExtensionReceiver(receiverParameter)
+            candidate.setReceiverArgument(receiverParameter)
             candidate.setExplicitReceiverKind(receiverKind)
             if (setImpliedThis(scope, candidate)) {
                 result.add(candidate)
@@ -488,8 +486,7 @@ public class TaskPrioritizer(
             if (candidate == null) return false
             val candidateDescriptor = candidate.getDescriptor()
             if (ErrorUtils.isError(candidateDescriptor)) return true
-            val receiverValue = ExpressionTypingUtils.normalizeReceiverValueForVisibility(candidate.getDispatchReceiver(), context.trace.getBindingContext())
-            return Visibilities.isVisible(receiverValue, candidateDescriptor, context.scope.ownerDescriptor)
+            return Visibilities.isVisible(candidate.dispatchReceiver, candidateDescriptor, context.scope.ownerDescriptor)
         }
 
         private fun hasLowPriority(candidate: ResolutionCandidate<D>?): Boolean {

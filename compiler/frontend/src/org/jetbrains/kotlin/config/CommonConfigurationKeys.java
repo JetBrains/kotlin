@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.config;
 
-import org.jetbrains.kotlin.parsing.KotlinScriptDefinition;
+import org.jetbrains.kotlin.script.KotlinScriptDefinition;
 
 import java.util.List;
 

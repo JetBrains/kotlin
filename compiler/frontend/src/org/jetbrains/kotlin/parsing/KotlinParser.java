@@ -23,6 +23,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider;
 
 public class KotlinParser implements PsiParser {
 

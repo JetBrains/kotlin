@@ -1,8 +1,6 @@
 package templates
 
 import templates.Family.*
-import templates.DocExtensions.element
-import templates.DocExtensions.collection
 
 fun aggregates(): List<GenericFunction> {
     val templates = arrayListOf<GenericFunction>()
@@ -106,41 +104,41 @@ fun aggregates(): List<GenericFunction> {
         deprecate(Strings) { forBinaryCompatibility }
         doc(CharSequences) { "Returns the length of this char sequence."}
         body(CharSequences, Strings) {
-            "return length()"
+            "return length"
         }
         body(Maps, Collections, ArraysOfObjects, ArraysOfPrimitives) {
-            "return size()"
+            "return size"
         }
     }
 
-    templates add f("sumBy(transform: (T) -> Int)") {
+    templates add f("sumBy(selector: (T) -> Int)") {
         inline(true)
         include(CharSequences, Strings)
         deprecate(Strings) { forBinaryCompatibility }
-        doc { f -> "Returns the sum of all values produced by [transform] function applied to each ${f.element} in the ${f.collection}." }
+        doc { f -> "Returns the sum of all values produced by [selector] function applied to each ${f.element} in the ${f.collection}." }
         returns("Int")
         body {
             """
             var sum: Int = 0
             for (element in this) {
-                sum += transform(element)
+                sum += selector(element)
             }
             return sum
             """
         }
     }
 
-    templates add f("sumByDouble(transform: (T) -> Double)") {
+    templates add f("sumByDouble(selector: (T) -> Double)") {
         inline(true)
         include(CharSequences, Strings)
         deprecate(Strings) { forBinaryCompatibility }
-        doc { f -> "Returns the sum of all values produced by [transform] function applied to each ${f.element} in the ${f.collection}." }
+        doc { f -> "Returns the sum of all values produced by [selector] function applied to each ${f.element} in the ${f.collection}." }
         returns("Double")
         body {
             """
             var sum: Double = 0.0
             for (element in this) {
-                sum += transform(element)
+                sum += selector(element)
             }
             return sum
             """
@@ -179,7 +177,7 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
-    templates add f("minBy(f: (T) -> R)") {
+    templates add f("minBy(selector: (T) -> R)") {
         inline(true)
 
         doc { f -> "Returns the first ${f.element} yielding the smallest value of the given function or `null` if there are no ${f.element}s." }
@@ -192,10 +190,10 @@ fun aggregates(): List<GenericFunction> {
             if (!iterator.hasNext()) return null
 
             var minElem = iterator.next()
-            var minValue = f(minElem)
+            var minValue = selector(minElem)
             while (iterator.hasNext()) {
                 val e = iterator.next()
-                val v = f(e)
+                val v = selector(e)
                 if (minValue > v) {
                     minElem = e
                     minValue = v
@@ -210,10 +208,10 @@ fun aggregates(): List<GenericFunction> {
             if (isEmpty()) return null
 
             var minElem = this[0]
-            var minValue = f(minElem)
+            var minValue = selector(minElem)
             for (i in 1..lastIndex) {
                 val e = this[i]
-                val v = f(e)
+                val v = selector(e)
                 if (minValue > v) {
                     minElem = e
                     minValue = v
@@ -224,7 +222,7 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
-    templates add f("minBy(f: (T) -> R)") {
+    templates add f("minBy(selector: (T) -> R)") {
         inline(true)
 
         only(Maps)
@@ -237,10 +235,10 @@ fun aggregates(): List<GenericFunction> {
             if (!iterator.hasNext()) return null
 
             var minElem = iterator.next()
-            var minValue = f(minElem)
+            var minValue = selector(minElem)
             while (iterator.hasNext()) {
                 val e = iterator.next()
-                val v = f(e)
+                val v = selector(e)
                 if (minValue > v) {
                     minElem = e
                     minValue = v
@@ -285,7 +283,7 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
-    templates add f("maxBy(f: (T) -> R)") {
+    templates add f("maxBy(selector: (T) -> R)") {
         inline(true)
 
         doc { f -> "Returns the first ${f.element} yielding the largest value of the given function or `null` if there are no ${f.element}s." }
@@ -298,10 +296,10 @@ fun aggregates(): List<GenericFunction> {
             if (!iterator.hasNext()) return null
 
             var maxElem = iterator.next()
-            var maxValue = f(maxElem)
+            var maxValue = selector(maxElem)
             while (iterator.hasNext()) {
                 val e = iterator.next()
-                val v = f(e)
+                val v = selector(e)
                 if (maxValue < v) {
                     maxElem = e
                     maxValue = v
@@ -316,10 +314,10 @@ fun aggregates(): List<GenericFunction> {
             if (isEmpty()) return null
 
             var maxElem = this[0]
-            var maxValue = f(maxElem)
+            var maxValue = selector(maxElem)
             for (i in 1..lastIndex) {
                 val e = this[i]
-                val v = f(e)
+                val v = selector(e)
                 if (maxValue < v) {
                     maxElem = e
                     maxValue = v
@@ -330,7 +328,7 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
-    templates add f("maxBy(f: (T) -> R)") {
+    templates add f("maxBy(selector: (T) -> R)") {
         inline(true)
 
         only(Maps)
@@ -343,10 +341,10 @@ fun aggregates(): List<GenericFunction> {
             if (!iterator.hasNext()) return null
 
             var maxElem = iterator.next()
-            var maxValue = f(maxElem)
+            var maxValue = selector(maxElem)
             while (iterator.hasNext()) {
                 val e = iterator.next()
-                val v = f(e)
+                val v = selector(e)
                 if (maxValue < v) {
                     maxElem = e
                     maxValue = v
@@ -484,30 +482,30 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
-    templates add f("forEach(operation: (T) -> Unit)") {
+    templates add f("forEach(action: (T) -> Unit)") {
         inline(true)
 
-        doc { f -> "Performs the given [operation] on each ${f.element}." }
+        doc { f -> "Performs the given [action] on each ${f.element}." }
         returns("Unit")
         body {
             """
-            for (element in this) operation(element)
+            for (element in this) action(element)
             """
         }
         deprecate(Strings) { forBinaryCompatibility }
         include(Maps, CharSequences, Strings)
     }
 
-    templates add f("forEachIndexed(operation: (Int, T) -> Unit)") {
+    templates add f("forEachIndexed(action: (Int, T) -> Unit)") {
         inline(true)
         deprecate(Strings) { forBinaryCompatibility }
         include(CharSequences, Strings)
-        doc { f -> "Performs the given [operation] on each ${f.element}, providing sequential index with the ${f.element}." }
+        doc { f -> "Performs the given [action] on each ${f.element}, providing sequential index with the ${f.element}." }
         returns("Unit")
         body {
             """
             var index = 0
-            for (item in this) operation(index++, item)
+            for (item in this) action(index++, item)
             """
         }
     }

@@ -1,3 +1,3 @@
-val x = <!UNRESOLVED_REFERENCE!>y<!>
+val x = <!UNINITIALIZED_VARIABLE!>y<!>
 
 val y = 2

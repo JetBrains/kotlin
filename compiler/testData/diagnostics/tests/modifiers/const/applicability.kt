@@ -1,4 +1,4 @@
-// !DIAGNOSTICS:-UNUSED_VARIABLE
+// !DIAGNOSTICS:-UNUSED_VARIABLE,-CAST_NEVER_SUCCEEDS
 
 import kotlin.reflect.KProperty
 
@@ -67,7 +67,11 @@ class Outer {
 const val defaultGetter = 19
     <!CONST_VAL_WITH_GETTER!>get<!>
 
-const val nonConstInitializer = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>foo()<!>
+const val nonConstInitializer1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>foo()<!>
+const val nonConstInitializer2 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1 as String<!>
+const val nonConstInitializer3 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1.0 as String<!>
+const val nonConstInitializer4 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1 as Double<!>
+const val nonConstInitializer5 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"2" as Int<!>
 
 // ------------------
 class Delegate {

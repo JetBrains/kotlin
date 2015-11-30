@@ -1,5 +1,5 @@
 class Mocha() {
-    fun invoke(f: (Int) -> String) {}
+    operator fun invoke(f: (Int) -> String) {}
 }
 fun main() {
     val mocha = Mocha()

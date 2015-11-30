@@ -48,8 +48,7 @@ public class IterableTypesDetection(
 
         private val typesWithExtensionIterator: Collection<KotlinType> = scope
                 .collectFunctions(iteratorName, NoLookupLocation.FROM_IDE)
-                .map { it.extensionReceiverParameter }
-                .filterNotNull()
+                .mapNotNull { it.extensionReceiverParameter }
                 .map { it.type }
 
         override fun isIterable(type: FuzzyType, loopVarType: KotlinType?): Boolean {
@@ -72,8 +71,8 @@ public class IterableTypesDetection(
             if (!canBeIterable(type)) return null
 
             val expression = KtPsiFactory(project).createExpression("fake")
-            val expressionReceiver = ExpressionReceiver(expression, type.type)
             val context = ExpressionTypingContext.newContext(BindingTraceContext(), scope, DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE)
+            val expressionReceiver = ExpressionReceiver.create(expression, type.type, context.trace.bindingContext)
             val elementType = forLoopConventionsChecker.checkIterableConvention(expressionReceiver, context)
             return elementType?.let { FuzzyType(it, type.freeParameters) }
         }

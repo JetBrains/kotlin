@@ -91,52 +91,54 @@ public fun PsiElement.nextLeaf(filter: (PsiElement) -> Boolean): PsiElement? {
     return leaf
 }
 
-public fun PsiElement.getParentOfTypesAndPredicate<T : PsiElement>(
+public fun <T : PsiElement> PsiElement.getParentOfTypesAndPredicate(
         strict: Boolean = false, vararg parentClasses: Class<T>, predicate: (T) -> Boolean
 ): T? {
     var element = if (strict) getParent() else this
     while (element != null) {
         @Suppress("UNCHECKED_CAST")
         when {
-            (parentClasses.isEmpty() || parentClasses.any { parentClass -> parentClass.isInstance(element) }) && predicate(element!! as T) ->
-                return element as T
+            (parentClasses.isEmpty() || parentClasses.any { parentClass -> parentClass.isInstance(element) }) && predicate(element as T) ->
+                return element
             element is PsiFile ->
                 return null
             else ->
-                element = element!!.getParent()
+                element = element.getParent()
         }
     }
 
     return null
 }
 
-public fun PsiElement.getNonStrictParentOfType<T : PsiElement>(parentClass: Class<T>): T? {
+public fun <T : PsiElement> PsiElement.getNonStrictParentOfType(parentClass: Class<T>): T? {
     return PsiTreeUtil.getParentOfType(this, parentClass, false)
 }
 
-inline public fun PsiElement.getParentOfType<reified T : PsiElement>(strict: Boolean): T? {
+inline public fun <reified T : PsiElement> PsiElement.getParentOfType(strict: Boolean): T? {
     return PsiTreeUtil.getParentOfType(this, javaClass<T>(), strict)
 }
 
-inline public fun PsiElement.getStrictParentOfType<reified T : PsiElement>(): T? {
+inline public fun <reified T : PsiElement> PsiElement.getStrictParentOfType(): T? {
     return PsiTreeUtil.getParentOfType(this, javaClass<T>(), true)
 }
 
-inline public fun PsiElement.getNonStrictParentOfType<reified T : PsiElement>(): T? {
+inline public fun <reified T : PsiElement> PsiElement.getNonStrictParentOfType(): T? {
     return PsiTreeUtil.getParentOfType(this, javaClass<T>(), false)
 }
 
-inline public fun PsiElement.getChildOfType<reified T : PsiElement>(): T? {
+inline public fun <reified T : PsiElement> PsiElement.getChildOfType(): T? {
     return PsiTreeUtil.getChildOfType(this, javaClass<T>())
 }
 
-inline public fun PsiElement.getChildrenOfType<reified T : PsiElement>(): Array<T> {
+inline public fun <reified T : PsiElement> PsiElement.getChildrenOfType(): Array<T> {
     return PsiTreeUtil.getChildrenOfType(this, javaClass<T>()) ?: arrayOf()
 }
 
 public fun PsiElement.getNextSiblingIgnoringWhitespaceAndComments(): PsiElement? {
     return siblings(withItself = false).filter { it !is PsiWhiteSpace && it !is PsiComment }.firstOrNull()
 }
+
+inline public fun <reified T : PsiElement> T.nextSiblingOfSameType() = PsiTreeUtil.getNextSiblingOfType(this, T::class.java)
 
 public fun PsiElement?.isAncestor(element: PsiElement, strict: Boolean = false): Boolean {
     return PsiTreeUtil.isAncestor(this, element, strict)
@@ -146,7 +148,7 @@ public fun <T : PsiElement> T.getIfChildIsInBranch(element: PsiElement, branch: 
     return if (branch().isAncestor(element)) this else null
 }
 
-public inline fun PsiElement.getParentOfTypeAndBranch<reified T : PsiElement>(strict: Boolean = false, noinline branch: T.() -> PsiElement?): T? {
+public inline fun <reified T : PsiElement> PsiElement.getParentOfTypeAndBranch(strict: Boolean = false, noinline branch: T.() -> PsiElement?): T? {
     return getParentOfType<T>(strict)?.getIfChildIsInBranch(this, branch)
 }
 
@@ -312,7 +314,7 @@ public fun PsiElement.getTextWithLocation(): String = "'${this.getText()}' at ${
 
 // -----------------------------------------------------------------------------------------------------------------------------------------
 
-public fun SearchScope.contains(element: PsiElement): Boolean = PsiSearchScopeUtil.isInScope(this, element)
+operator fun SearchScope.contains(element: PsiElement): Boolean = PsiSearchScopeUtil.isInScope(this, element)
 
 public fun <E : PsiElement> E.createSmartPointer(): SmartPsiElementPointer<E> =
         SmartPointerManager.getInstance(getProject()).createSmartPsiElementPointer(this)

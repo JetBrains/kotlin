@@ -1,7 +1,7 @@
 package foo
 
 class Data(val rawData: Array<Int>, val width: Int, val height: Int) {
-    fun get(x: Int, y: Int): ColorLike {
+    operator fun get(x: Int, y: Int): ColorLike {
         return object : ColorLike {
             override val red: Int = rawData[(y * width + x) * 4 + 0];
             override val green: Int = rawData[(y * width + x) * 4 + 1];
@@ -9,7 +9,7 @@ class Data(val rawData: Array<Int>, val width: Int, val height: Int) {
         }
     }
 
-    fun set(x: Int, y: Int, color: ColorLike) {
+    operator fun set(x: Int, y: Int, color: ColorLike) {
         rawData[(y * width + x) * 4 + 0] = color.red;
         rawData[(y * width + x) * 4 + 1] = color.green;
         rawData[(y * width + x) * 4 + 2] = color.blue;

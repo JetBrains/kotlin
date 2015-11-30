@@ -13,7 +13,7 @@ abstract class Tag(val name: String): Element {
 }
 
 abstract class TagWithText(name: String): Tag(name) {
-    fun String.plus() {}
+    operator fun String.unaryPlus() {}
 }
 
 class HTML(): TagWithText("html") {

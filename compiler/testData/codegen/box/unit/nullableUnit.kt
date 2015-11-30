@@ -1,6 +1,6 @@
 fun isNull(x: Unit?) = x == null
 
-fun isNullGeneric<T : Any>(x: T?) = x == null
+fun <T : Any> isNullGeneric(x: T?) = x == null
 
 fun deepIsNull0(x: Unit?) = isNull(x)
 fun deepIsNull(x: Unit?) = deepIsNull0(x)

@@ -45,9 +45,9 @@ public fun cliPluginUsageString(pluginId: String, options: Collection<CliOption>
             "\n" + " ".repeat(MAX_OPTION_WIDTH + LEFT_INDENT + 1)
         } else " ".repeat(1 + MAX_OPTION_WIDTH - name.length())
 
-        val modifiers = listOf(
+        val modifiers = listOfNotNull(
                 if (it.required) "required" else null,
-                if (it.allowMultipleOccurrences) "multiple" else null).filterNotNull()
+                if (it.allowMultipleOccurrences) "multiple" else null)
         val modifiersEnclosed = if (modifiers.isEmpty()) "" else " (${modifiers.joinToString()})"
 
         " ".repeat(LEFT_INDENT) + name + margin + it.description + modifiersEnclosed

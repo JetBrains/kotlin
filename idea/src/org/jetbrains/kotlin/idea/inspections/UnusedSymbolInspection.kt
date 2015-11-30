@@ -111,8 +111,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
             val annotationsPresent = annotated.getAnnotations()
                     .map { it.getType() }
                     .filter { !it.isError() }
-                    .map { it.getConstructor().getDeclarationDescriptor()?.let { DescriptorUtils.getFqName(it).asString() } }
-                    .filterNotNull()
+                    .mapNotNull { it.getConstructor().getDeclarationDescriptor()?.let { DescriptorUtils.getFqName(it).asString() } }
 
             if (annotationsPresent.isEmpty()) return false
 

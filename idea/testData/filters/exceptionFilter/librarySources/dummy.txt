@@ -1,1 +1,0 @@
-This test doesn't have sources, but IDEA test framework needs sources dir

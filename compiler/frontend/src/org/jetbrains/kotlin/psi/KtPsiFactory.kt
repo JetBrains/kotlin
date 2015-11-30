@@ -55,13 +55,23 @@ public class KtPsiFactory(private val project: Project) {
         return (createExpression("a?.b") as KtSafeQualifiedExpression).getOperationTokenNode()
     }
 
-    public fun createExpression(text: String): KtExpression {
+    private fun doCreateExpression(text: String): KtExpression {
         //TODO: '\n' below if important - some strange code indenting problems appear without it
         val expression = createProperty("val x =\n$text").getInitializer() ?: error("Failed to create expression from text: '$text'")
+        return expression
+    }
+
+    public fun createExpression(text: String): KtExpression {
+        val expression = doCreateExpression(text)
         assert(expression.getText() == text) {
             "Failed to create expression from text: '$text', resulting expression's text was: '${expression.getText()}'"
         }
         return expression
+    }
+
+    public fun createExpressionIfPossible(text: String): KtExpression? {
+        val expression = doCreateExpression(text)
+        return if (expression.getText() == text) expression else null
     }
 
     public fun createClassLiteral(className: String): KtClassLiteralExpression =
@@ -180,6 +190,19 @@ public class KtPsiFactory(private val project: Project) {
         return createDeclaration(text)
     }
 
+    public fun createPropertyGetter(expression: KtExpression): KtPropertyAccessor {
+        val property = createProperty("val x get() = 1")
+        val getter = property.getter!!
+        val bodyExpression = getter.bodyExpression!!
+
+        bodyExpression.replace(expression)
+        return getter
+    }
+
+    public fun createMultiDeclaration(text: String): KtMultiDeclaration {
+        return (createFunction("fun foo() {$text}").bodyExpression as KtBlockExpression).statements.first() as KtMultiDeclaration
+    }
+
     public fun <TDeclaration : KtDeclaration> createDeclaration(text: String): TDeclaration {
         val file = createFile(text)
         val declarations = file.getDeclarations()
@@ -234,7 +257,7 @@ public class KtPsiFactory(private val project: Project) {
         return createFunction("fun foo() {}").getBodyExpression() as KtBlockExpression
     }
 
-    public fun createAnonymousInitializer(): KtClassInitializer {
+    public fun createAnonymousInitializer(): KtAnonymousInitializer {
         return createClass("class A { init {} }").getAnonymousInitializers().first()
     }
 
@@ -281,6 +304,8 @@ public class KtPsiFactory(private val project: Project) {
         val stringTemplateExpression = createExpression("\"\$$name\"") as KtStringTemplateExpression
         return stringTemplateExpression.getEntries()[0] as KtStringTemplateEntryWithExpression
     }
+
+    public fun createStringTemplate(content: String) = createExpression("\"$content\"") as KtStringTemplateExpression
 
     public fun createPackageDirective(fqName: FqName): KtPackageDirective {
         return createFile("package ${fqName.asString()}").getPackageDirective()!!

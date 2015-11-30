@@ -1,4 +1,4 @@
-fun doSomething<T>(a: T) {}
+fun <T> doSomething(a: T) {}
 
 fun main(args: Array<String>) {
     var a: String? = "A"

@@ -36,7 +36,7 @@ class E: A() {
             <!NESTED_CLASS_SHOULD_BE_QUALIFIED!>B<!>().<!UNRESOLVED_REFERENCE!>foo<!>() // todo: some resolve hacks
             <!NESTED_CLASS_SHOULD_BE_QUALIFIED!>B<!>().bar()
 
-            <!NO_COMPANION_OBJECT, FUNCTION_EXPECTED!>D<!>()
+            <!UNRESOLVED_REFERENCE!>D<!>()
             C()
         }
     }
@@ -58,7 +58,7 @@ class F: A() {
     companion object {
         init {
             B().fas()
-            <!NO_COMPANION_OBJECT, FUNCTION_EXPECTED!>D<!>().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>f<!>()
+            <!UNRESOLVED_REFERENCE!>D<!>().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>f<!>()
         }
     }
 }

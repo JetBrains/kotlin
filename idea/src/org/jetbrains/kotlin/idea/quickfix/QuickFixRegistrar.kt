@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
 import org.jetbrains.kotlin.idea.inspections.AddModifierFixFactory
 import org.jetbrains.kotlin.idea.inspections.AddReflectionQuickFix
+import org.jetbrains.kotlin.idea.inspections.InfixCallFix
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable.*
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromCallWithConstructorCalleeActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromConstructorCallActionFactory
@@ -67,7 +68,9 @@ public class QuickFixRegistrar : QuickFixContributor {
         ABSTRACT_MEMBER_NOT_IMPLEMENTED.registerFactory(addAbstractModifierFactory)
         ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED.registerFactory(addAbstractModifierFactory)
 
-        val removeFinalModifierFactory = RemoveModifierFix.createRemoveModifierFromListOwnerFactory(FINAL_KEYWORD)
+        MUST_BE_INITIALIZED_OR_BE_ABSTRACT.registerFactory(InitializePropertyQuickFixFactory)
+        MUST_BE_INITIALIZED.registerFactory(InitializePropertyQuickFixFactory)
+
         val addAbstractToClassFactory = AddModifierFix.createFactory(ABSTRACT_KEYWORD, javaClass<KtClass>())
         ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS.registerFactory(removeAbstractModifierFactory, addAbstractToClassFactory)
 
@@ -75,9 +78,6 @@ public class QuickFixRegistrar : QuickFixContributor {
 
         val removeFunctionBodyFactory = RemoveFunctionBodyFix.createFactory()
         ABSTRACT_FUNCTION_WITH_BODY.registerFactory(removeAbstractModifierFactory, removeFunctionBodyFactory)
-
-        FINAL_PROPERTY_IN_INTERFACE.registerFactory(removeFinalModifierFactory)
-        FINAL_FUNCTION_WITH_NO_BODY.registerFactory(removeFinalModifierFactory)
 
         val addFunctionBodyFactory = AddFunctionBodyFix.createFactory()
         NON_ABSTRACT_FUNCTION_WITH_NO_BODY.registerFactory(addAbstractModifierFactory, addFunctionBodyFactory)
@@ -116,7 +116,8 @@ public class QuickFixRegistrar : QuickFixContributor {
         val removeModifierFactory = RemoveModifierFix.createRemoveModifierFactory()
         GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY.registerFactory(removeModifierFactory)
         SETTER_VISIBILITY_DIFFERS_FROM_LATEINIT_VISIBILITY.registerFactory(removeModifierFactory)
-        ACCESSOR_VISIBILITY_FOR_ABSTRACT_PROPERTY.registerFactory(removeModifierFactory)
+        PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY.registerFactory(removeModifierFactory)
+        PRIVATE_SETTER_FOR_OPEN_PROPERTY.registerFactory(removeModifierFactory)
         REDUNDANT_MODIFIER_IN_GETTER.registerFactory(removeRedundantModifierFactory)
         WRONG_MODIFIER_TARGET.registerFactory(removeModifierFactory)
         REDUNDANT_MODIFIER_FOR_TARGET.registerFactory(removeModifierFactory)
@@ -232,6 +233,8 @@ public class QuickFixRegistrar : QuickFixContributor {
 
         EXPECTED_PARAMETER_TYPE_MISMATCH.registerFactory(ChangeTypeFix.createFactoryForExpectedParameterTypeMismatch())
 
+        EXTENSION_PROPERTY_WITH_BACKING_FIELD.registerFactory(ConvertExtensionPropertyInitializerToGetterFix)
+
         val changeFunctionLiteralReturnTypeFix = ChangeFunctionLiteralReturnTypeFix.createFactoryForExpectedOrAssignmentTypeMismatch()
         EXPECTED_TYPE_MISMATCH.registerFactory(changeFunctionLiteralReturnTypeFix)
         ASSIGNMENT_TYPE_MISMATCH.registerFactory(changeFunctionLiteralReturnTypeFix)
@@ -315,6 +318,7 @@ public class QuickFixRegistrar : QuickFixContributor {
                                         ReplaceObsoleteLabelSyntaxFix.createWholeProjectFixFactory())
 
         DEPRECATION.registerFactory(DeprecatedSymbolUsageFix, DeprecatedSymbolUsageInWholeProjectFix)
+        DEPRECATION_ERROR.registerFactory(DeprecatedSymbolUsageFix, DeprecatedSymbolUsageInWholeProjectFix)
 
         POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION.registerFactory(ReplaceJavaAnnotationPositionedArgumentsFix)
 
@@ -331,6 +335,7 @@ public class QuickFixRegistrar : QuickFixContributor {
         OPERATOR_MODIFIER_REQUIRED.registerFactory(AutoImportForMissingOperatorFactory)
 
         INFIX_MODIFIER_REQUIRED.registerFactory(AddModifierFixFactory(KtTokens.INFIX_KEYWORD))
+        INFIX_MODIFIER_REQUIRED.registerFactory(InfixCallFix)
 
         UNDERSCORE_IS_RESERVED.registerFactory(RenameUnderscoreFix)
 
@@ -346,5 +351,7 @@ public class QuickFixRegistrar : QuickFixContributor {
         DEPRECATED_UNARY_PLUS_MINUS.registerFactory(DeprecatedFunctionConventionFix)
 
         INVOKE_ON_EXTENSION_FUNCTION_WITH_EXPLICIT_DISPATCH_RECEIVER.registerFactory(InvokeOnExtensionFunctionWithExplicitReceiverFix)
+
+        COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT.registerFactory(CommaInWhenConditionWithoutArgumentFix)
     }
 }

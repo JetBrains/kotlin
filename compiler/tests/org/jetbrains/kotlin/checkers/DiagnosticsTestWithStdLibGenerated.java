@@ -35,6 +35,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib"), Pattern.compile("^(.+)\\.kt$"), true);
     }
 
+    @TestMetadata("CallCompanionProtectedNonStatic.kt")
+    public void testCallCompanionProtectedNonStatic() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/CallCompanionProtectedNonStatic.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("CallToMainRedeclaredInMultiFile.kt")
     public void testCallToMainRedeclaredInMultiFile() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/CallToMainRedeclaredInMultiFile.kt");
@@ -205,6 +211,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         public static class AnnotationParameters extends AbstractDiagnosticsTestWithStdLib {
             public void testAllFilesPresentInAnnotationParameters() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameters"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("kt10136.kt")
+            public void testKt10136() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationParameters/kt10136.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("orderWithValue.kt")
@@ -702,9 +714,21 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 doTest(fileName);
             }
 
+            @TestMetadata("noInferAndLowPriority.kt")
+            public void testNoInferAndLowPriority() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/noInferAndLowPriority.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("noInferAnnotation.kt")
             public void testNoInferAnnotation() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/noInferAnnotation.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("onlyInputTypesAndLowPriority.kt")
+            public void testOnlyInputTypesAndLowPriority() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/onlyInputTypesAndLowPriority.kt");
                 doTest(fileName);
             }
 
@@ -719,27 +743,6 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/resolveWithOnlyInputTypesAnnotation.kt");
                 doTest(fileName);
             }
-        }
-    }
-
-    @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/kotlinSignature")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class KotlinSignature extends AbstractDiagnosticsTestWithStdLib {
-        public void testAllFilesPresentInKotlinSignature() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/kotlinSignature"), Pattern.compile("^(.+)\\.kt$"), true);
-        }
-
-        @TestMetadata("constructorNamedArguments.kt")
-        public void testConstructorNamedArguments() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/kotlinSignature/constructorNamedArguments.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("parameterNames.kt")
-        public void testParameterNames() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/kotlinSignature/parameterNames.kt");
-            doTest(fileName);
         }
     }
 
@@ -962,6 +965,24 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     public static class Resolve extends AbstractDiagnosticsTestWithStdLib {
         public void testAllFilesPresentInResolve() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/resolve"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("javaPackageMembers.kt")
+        public void testJavaPackageMembers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/resolve/javaPackageMembers.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("javaStaticMembers.kt")
+        public void testJavaStaticMembers() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/resolve/javaStaticMembers.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt10103.kt")
+        public void testKt10103() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/resolve/kt10103.kt");
+            doTest(fileName);
         }
 
         @TestMetadata("kt4711.kt")

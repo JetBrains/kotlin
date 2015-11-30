@@ -24,7 +24,7 @@ import java.util.*
 // NOTE: this enum must have the same entries with kotlin.annotation.AnnotationTarget,
 // and may also have some additional entries
 public enum class KotlinTarget(val description: String, val isDefault: Boolean = true) {
-    CLASS("class"),                            // includes CLASS_ONLY, OBJECT, OBJECT_LITERAL, INTERFACE, *_CLASS but not ENUM_ENTRY
+    CLASS("class"),                            // includes CLASS_ONLY, OBJECT, COMPANION_OBJECT, OBJECT_LITERAL, INTERFACE, *_CLASS but not ENUM_ENTRY
     ANNOTATION_CLASS("annotation class"),
     TYPE_PARAMETER("type parameter", false),
     PROPERTY("property"),                      // includes *_PROPERTY, PROPERTY_PARAMETER, ENUM_ENTRY
@@ -44,7 +44,8 @@ public enum class KotlinTarget(val description: String, val isDefault: Boolean =
     PROPERTY_PARAMETER("property constructor parameter", false),
 
     CLASS_ONLY("class", false),  // includes only top level classes and nested classes (but not enums, objects, interfaces, inner or local classes)
-    OBJECT("object", false),     // does not include OBJECT_LITERAL
+    OBJECT("object", false),     // does not include OBJECT_LITERAL but DOES include COMPANION_OBJECT
+    COMPANION_OBJECT("companion object", false),
     INTERFACE("interface", false),
     ENUM_CLASS("enum class", false),
     ENUM_ENTRY("enum entry", false),
@@ -94,7 +95,13 @@ public enum class KotlinTarget(val description: String, val isDefault: Boolean =
                 else {
                     listOf(CLASS_ONLY, CLASS)
                 }
-            ClassKind.OBJECT -> listOf(OBJECT, CLASS)
+            ClassKind.OBJECT ->
+                if (descriptor.isCompanionObject) {
+                    listOf(COMPANION_OBJECT, OBJECT, CLASS)
+                }
+                else {
+                    listOf(OBJECT, CLASS)
+                }
             ClassKind.INTERFACE -> listOf(INTERFACE, CLASS)
             ClassKind.ENUM_CLASS ->
                 if (DescriptorUtils.isLocal(descriptor)) {

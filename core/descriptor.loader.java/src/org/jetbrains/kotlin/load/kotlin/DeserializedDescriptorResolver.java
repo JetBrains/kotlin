@@ -45,7 +45,6 @@ public final class DeserializedDescriptorResolver {
 
     public static final Set<KotlinClassHeader.Kind> KOTLIN_CLASS = setOf(CLASS);
     public static final Set<KotlinClassHeader.Kind> KOTLIN_FILE_FACADE_OR_MULTIFILE_CLASS_PART = setOf(FILE_FACADE, MULTIFILE_CLASS_PART);
-    public static final Set<KotlinClassHeader.Kind> KOTLIN_PACKAGE_FACADE = setOf(PACKAGE_FACADE);
 
     public DeserializedDescriptorResolver(@NotNull ErrorReporter errorReporter) {
         this.errorReporter = errorReporter;
@@ -95,8 +94,11 @@ public final class DeserializedDescriptorResolver {
     }
 
     @NotNull
-    public MemberScope createKotlinPackageScope(@NotNull PackageFragmentDescriptor descriptor, @NotNull List<KotlinJvmBinaryClass> packageParts) {
-        List<MemberScope> list = new ArrayList<MemberScope>();
+    public MemberScope createKotlinPackageScope(
+            @NotNull PackageFragmentDescriptor descriptor,
+            @NotNull List<KotlinJvmBinaryClass> packageParts
+    ) {
+        List<MemberScope> list = new ArrayList<MemberScope>(packageParts.size());
         for (KotlinJvmBinaryClass callable : packageParts) {
             MemberScope scope = createKotlinPackagePartScope(descriptor, callable);
             if (scope != null) {

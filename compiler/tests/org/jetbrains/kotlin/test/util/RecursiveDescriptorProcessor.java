@@ -122,7 +122,7 @@ public class RecursiveDescriptorProcessor {
 
         @Override
         public Boolean visitScriptDescriptor(ScriptDescriptor scriptDescriptor, D data) {
-            return visitClassDescriptor(scriptDescriptor.getClassDescriptor(), data);
+            return visitClassDescriptor(scriptDescriptor, data);
         }
 
         @Override

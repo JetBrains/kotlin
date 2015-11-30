@@ -19,7 +19,7 @@ package kotlin.js
 inline fun Any?.asDynamic(): dynamic = this
 
 // TODO add the support ES6 iterators
-public fun dynamic.iterator(): Iterator<dynamic> {
+operator fun dynamic.iterator(): Iterator<dynamic> {
     val r = this
 
     return when {

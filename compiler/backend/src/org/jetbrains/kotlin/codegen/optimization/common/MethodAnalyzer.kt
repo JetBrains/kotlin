@@ -125,7 +125,7 @@ public open class MethodAnalyzer<V : Value>(
             frames[instructions.indexOf(insn)]
 
     private fun checkAssertions() {
-        if (instructions.toArray() any { it.getOpcode() == Opcodes.JSR || it.getOpcode() == Opcodes.RET })
+        if (instructions.toArray().any { it.getOpcode() == Opcodes.JSR || it.getOpcode() == Opcodes.RET })
             throw AssertionError("Subroutines are deprecated since Java 6")
     }
 

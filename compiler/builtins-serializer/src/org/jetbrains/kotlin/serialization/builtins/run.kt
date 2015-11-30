@@ -36,10 +36,10 @@ found top-level declarations to <destination dir> (files such as
 
     val destDir = File(args[0])
 
-    val srcDirs = args drop(1) map { File(it) }
+    val srcDirs = args.drop(1).map { File(it) }
     assert(srcDirs.isNotEmpty()) { "At least one source directory should be specified" }
 
-    val missing = srcDirs filterNot { it.exists() }
+    val missing = srcDirs.filterNot { it.exists() }
     assert(missing.isEmpty()) { "These source directories are missing: $missing" }
 
     BuiltInsSerializer(dependOnOldBuiltIns = false).serialize(destDir, srcDirs, listOf()) { totalSize, totalFiles ->

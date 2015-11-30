@@ -84,7 +84,7 @@ public object KotlinJavascriptSerializationUtil {
 
     public fun contentMapToByteArray(contentMap: Map<String, ByteArray>): ByteArray {
         val contentBuilder = JsProtoBuf.Library.newBuilder()
-        contentMap forEach {
+        contentMap.forEach {
             val entry = JsProtoBuf.Library.FileEntry.newBuilder().setPath(it.getKey()).setContent(ByteString.copyFrom(it.getValue())).build()
             contentBuilder.addEntry(entry)
         }
@@ -133,7 +133,7 @@ public object KotlinJavascriptSerializationUtil {
         strings.serializeTo(nameStream)
         val stringBytes = nameStream.toByteArray()
 
-        if (!stringBytes.isEmpty()) {
+        if (!stringBytes.isEmpty() && !Arrays.equals(stringBytes, STRING_TABLE_DEFAULT_BYTES)) {
             writeFun(KotlinJavascriptSerializedResourcePaths.getStringTableFilePath(fqName), stringBytes)
         }
     }
@@ -168,11 +168,11 @@ public object KotlinJavascriptSerializationUtil {
         return KotlinJavascriptSerializedResourcePaths.getClassMetadataPath(classDescriptor.classId)
     }
 
-    private fun ModuleDescriptor.toContentMap(): Map<String, ByteArray> {
+    public fun toContentMap(module: ModuleDescriptor): Map<String, ByteArray> {
         val contentMap = hashMapOf<String, ByteArray>()
 
-        getPackagesFqNames(this).forEach {
-            serializePackage(this, it) {
+        getPackagesFqNames(module).forEach {
+            serializePackage(module, it) {
                 fileName, bytes -> contentMap[fileName] = bytes
             }
         }
@@ -218,7 +218,7 @@ public object KotlinJavascriptSerializationUtil {
     }
 
     private fun ModuleDescriptor.toBinaryMetadata(): ByteArray =
-            KotlinJavascriptSerializationUtil.contentMapToByteArray(this.toContentMap())
+            KotlinJavascriptSerializationUtil.contentMapToByteArray(toContentMap(this))
 }
 
 public fun KotlinJavascriptMetadata.forEachFile(operation: (filePath: String, fileContent: ByteArray) -> Unit): Unit =

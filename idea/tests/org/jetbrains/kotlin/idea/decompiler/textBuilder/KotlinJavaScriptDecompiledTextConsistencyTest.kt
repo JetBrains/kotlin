@@ -20,11 +20,10 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryManager
 import org.jetbrains.kotlin.idea.test.KotlinStdJSProjectDescriptor
 import org.jetbrains.kotlin.idea.vfilefinder.JsVirtualFileFinder
 import org.jetbrains.kotlin.js.resolve.JsPlatform
-import org.jetbrains.kotlin.load.kotlin.PackageClassUtils
+import org.jetbrains.kotlin.load.kotlin.OldPackageFacadeClassUtils
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
@@ -41,12 +40,7 @@ public class KotlinJavaScriptDecompiledTextConsistencyTest : TextConsistencyBase
 
     override fun getTopLevelMembers(): Map<String, String> = mapOf("kotlin" to "intArrayOf")
 
-    override fun getVirtualFileFinder(): VirtualFileFinder = JsVirtualFileFinder.SERVICE.getInstance(getProject())
-
-    override fun setUp() {
-        super.setUp()
-        KotlinJavaScriptLibraryManager.getInstance(project).syncUpdateProjectLibrary()
-    }
+    override fun getVirtualFileFinder(): VirtualFileFinder = JsVirtualFileFinder.SERVICE.getInstance(project)
 
     override fun getDecompiledText(packageFile: VirtualFile, resolver: ResolverForDecompiler?): String =
             (resolver?.let { buildDecompiledTextFromJsMetadata(packageFile, it) } ?: buildDecompiledTextFromJsMetadata(packageFile)).text
@@ -55,7 +49,7 @@ public class KotlinJavaScriptDecompiledTextConsistencyTest : TextConsistencyBase
         val stdlibJar = PathUtil.getKotlinPathsForDistDirectory().jsStdLibJarPath.absolutePath
         val module = KotlinTestUtils.createEmptyModule("<module for stdlib>", JsPlatform)
         val metadata = KotlinJavascriptMetadataUtils.loadMetadata(stdlibJar)
-        assert(metadata.size() == 1)
+        assert(metadata.size == 1)
 
         val provider = KotlinJavascriptSerializationUtil.createPackageFragmentProvider(module, metadata[0].body, LockBasedStorageManager())
                 .sure { "No package fragment provider was created" }
@@ -71,6 +65,6 @@ public class KotlinJavaScriptDecompiledTextConsistencyTest : TextConsistencyBase
     override fun isFromFacade(descriptor: CallableMemberDescriptor, facadeFqName: FqName): Boolean {
         val containingDeclaration = descriptor.containingDeclaration
         return containingDeclaration is PackageFragmentDescriptor &&
-               facadeFqName == PackageClassUtils.getPackageClassFqName(containingDeclaration.fqName)
+               facadeFqName == OldPackageFacadeClassUtils.getPackageClassFqName(containingDeclaration.fqName)
     }
 }

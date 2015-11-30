@@ -30,6 +30,6 @@ public fun <T : JsNode> replaceNames(node: T, replaceMap: IdentityHashMap<JsName
     return NameReplacingVisitor(replaceMap).accept(node)!!
 }
 
-public fun replaceThisReference<T : JsNode>(node: T, replacement: JsExpression) {
+public fun <T : JsNode> replaceThisReference(node: T, replacement: JsExpression) {
     ThisReplacingVisitor(replacement).accept(node)
 }

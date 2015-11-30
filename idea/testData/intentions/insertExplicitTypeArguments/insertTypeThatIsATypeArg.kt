@@ -1,6 +1,6 @@
 // IS_APPLICABLE: true
-fun foo<T>(t: T) {
+fun <T> foo(t: T) {
     <caret>bar(t)
 }
 
-fun bar<T>(t: T): Int = 1
+fun <T> bar(t: T): Int = 1

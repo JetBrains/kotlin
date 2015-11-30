@@ -1,4 +1,4 @@
-fun String.plus() : String {
+operator fun String.unaryPlus() : String {
     if (this == "") {
         return "done"
     }

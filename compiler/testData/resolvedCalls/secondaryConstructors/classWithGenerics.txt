@@ -5,6 +5,7 @@ class A<T> {
 val y = <caret>A(1)
 
 
+
 Resolved call:
 
 Candidate descriptor: constructor A<T>(x: T) defined in A

@@ -61,7 +61,7 @@ abstract public class KtClassOrObject :
         }
     }
 
-    public fun getAnonymousInitializers(): List<KtClassInitializer> = getBody()?.anonymousInitializers.orEmpty()
+    public fun getAnonymousInitializers(): List<KtAnonymousInitializer> = getBody()?.anonymousInitializers.orEmpty()
 
     public fun getBody(): KtClassBody? = getStubOrPsiChild(KtStubElementTypes.CLASS_BODY)
 

@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 
 import java.util.Collection;
 
-import static org.jetbrains.kotlin.load.kotlin.PackageClassUtils.getPackageClassId;
+import static org.jetbrains.kotlin.load.kotlin.OldPackageFacadeClassUtils.getPackageClassId;
 
 public final class DecompiledNavigationUtils {
 

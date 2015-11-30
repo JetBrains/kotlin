@@ -1,6 +1,6 @@
 class C {
     companion object {
-        fun unaryMinus(): C = C()
+        operator fun unaryMinus(): C = C()
     }
 }
 

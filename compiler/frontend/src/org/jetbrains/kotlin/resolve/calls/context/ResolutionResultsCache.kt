@@ -17,12 +17,12 @@
 package org.jetbrains.kotlin.resolve.calls.context
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
-import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
-import java.util.HashMap
 import org.jetbrains.kotlin.psi.Call
-import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
+import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionResultsCache.CachedData
+import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
+import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
+import java.util.*
 
 public interface ResolutionResultsCache {
     public data class CachedData(
@@ -40,7 +40,7 @@ public interface ResolutionResultsCache {
             resolutionTrace: DelegatingBindingTrace
     )
 
-    fun get(call: Call): CachedData?
+    operator fun get(call: Call): CachedData?
 }
 
 class ResolutionResultsCacheImpl : ResolutionResultsCache {

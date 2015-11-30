@@ -175,6 +175,22 @@ public class NavigateToDecompiledLibraryTest extends LightCodeInsightFixtureTest
         return classFile;
     }
 
+    @NotNull
+    public static VirtualFile getKjsmFile(
+            @NotNull String packageName,
+            @NotNull String className,
+            @NotNull Module module
+    ) {
+        VirtualFile root = findTestLibraryRoot(module);
+        assertNotNull(root);
+        root.refresh(false, true);
+        VirtualFile packageDir = root.findFileByRelativePath(JdkAndMockLibraryProjectDescriptor.LIBRARY_NAME + "/" + packageName.replace(".", "/"));
+        assertNotNull(packageDir);
+        VirtualFile classFile = packageDir.findChild(className + ".kjsm");
+        assertNotNull(classFile);
+        return classFile;
+    }
+
     @Nullable
     public static VirtualFile findTestLibraryRoot(@NotNull Module module) {
         for (OrderEntry orderEntry : ModuleRootManager.getInstance(module).getOrderEntries()) {

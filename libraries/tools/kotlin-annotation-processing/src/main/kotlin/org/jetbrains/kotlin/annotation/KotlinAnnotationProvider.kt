@@ -60,7 +60,7 @@ public abstract class KotlinAnnotationProvider {
             val shortenedValue = shortenedPackageNameCache.get(id) ?:
                     throw RuntimeException("Value for $id couldn't be found in shrink cache")
 
-            return shortenedValue + '.' + s.substring(id.length() + 1)
+            return shortenedValue + '.' + s.substring(id.length + 1)
         }
 
         val annotatedKotlinElements: MutableMap<String, MutableSet<AnnotatedElementDescriptor>> = hashMapOf()
@@ -82,7 +82,7 @@ public abstract class KotlinAnnotationProvider {
                     ANNOTATED_CLASS, ANNOTATED_FIELD, ANNOTATED_METHOD -> {
                         val annotationName = expandAnnotation(lineParts[1])
                         val classFqName = expandClassName(lineParts[2]).replace('$', '.')
-                        val elementName = if (lineParts.size() == 4) lineParts[3] else null
+                        val elementName = if (lineParts.size == 4) lineParts[3] else null
 
                         val set = annotatedKotlinElements.getOrPut(annotationName) { hashSetOf() }
                         set.add(when (type) {

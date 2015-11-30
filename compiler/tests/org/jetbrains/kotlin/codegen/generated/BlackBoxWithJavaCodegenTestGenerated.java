@@ -77,6 +77,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         doTestWithJava(fileName);
     }
 
+    @TestMetadata("innerGenericClass")
+    public void testInnerGenericClass() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/innerGenericClass/");
+        doTestWithJava(fileName);
+    }
+
     @TestMetadata("interfaceCompanion")
     public void testInterfaceCompanion() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/interfaceCompanion/");
@@ -110,6 +116,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
     @TestMetadata("protectedInInline")
     public void testProtectedInInline() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/protectedInInline/");
+        doTestWithJava(fileName);
+    }
+
+    @TestMetadata("varargs")
+    public void testVarargs() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/varargs/");
         doTestWithJava(fileName);
     }
 
@@ -379,6 +391,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
     public static class JvmField extends AbstractBlackBoxCodegenTest {
         public void testAllFilesPresentInJvmField() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithJava/jvmField"), Pattern.compile("^([^\\.]+)$"), true);
+        }
+
+        @TestMetadata("constructorProperty")
+        public void testConstructorProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/jvmField/constructorProperty/");
+            doTestWithJava(fileName);
         }
 
         @TestMetadata("simple")
@@ -709,5 +727,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             doTestWithJava(fileName);
         }
 
+        @TestMetadata("protectedStaticAndInline")
+        public void testProtectedStaticAndInline() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/statics/protectedStaticAndInline/");
+            doTestWithJava(fileName);
+        }
+
     }
+
 }

@@ -125,8 +125,8 @@ public class DebugTextByStubTest : LightCodeInsightFixtureTestCase() {
     fun testFunction() {
         function("fun foo()")
         function("fun <T> foo()")
-        function("fun foo<T>()")
-        function("fun foo<T, G>()")
+        function("fun <T> foo()")
+        function("fun <T, G> foo()")
         function("fun foo(a: Int, b: String)")
         function("fun Int.foo()")
         function("fun foo(): String")
@@ -194,7 +194,7 @@ public class DebugTextByStubTest : LightCodeInsightFixtureTestCase() {
     fun testClassInitializer() {
         val tree = createStubTree("class A {\n init {} }")
         val initializer = tree.findChildStubByType(KtStubElementTypes.CLASS)!!.findChildStubByType(KtStubElementTypes.CLASS_BODY)!!
-                .findChildStubByType(KtStubElementTypes.ANONYMOUS_INITIALIZER)
+                .findChildStubByType(KtStubElementTypes.CLASS_INITIALIZER)
         assertEquals("initializer in STUB: class A", KtClassInitializer(initializer as KotlinPlaceHolderStub).getDebugText())
     }
 

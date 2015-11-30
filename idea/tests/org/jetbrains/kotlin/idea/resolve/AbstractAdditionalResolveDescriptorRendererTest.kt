@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
 import org.jetbrains.kotlin.idea.project.ResolveElementCache
-import org.jetbrains.kotlin.psi.KtClassInitializer
+import org.jetbrains.kotlin.psi.KtAnonymousInitializer
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.renderer.AbstractDescriptorRendererTest
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 
 public abstract class AbstractAdditionalResolveDescriptorRendererTest : AbstractDescriptorRendererTest() {
     override fun getDescriptor(declaration: KtDeclaration, container: ComponentProvider): DeclarationDescriptor {
-        if (declaration is KtClassInitializer || KtPsiUtil.isLocal(declaration)) {
+        if (declaration is KtAnonymousInitializer || KtPsiUtil.isLocal(declaration)) {
             return container.get<ResolveElementCache>()
                     .resolveToElement(declaration, BodyResolveMode.FULL)
                     .get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration)!!

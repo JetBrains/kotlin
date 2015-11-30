@@ -1,6 +1,7 @@
 package test.collections
 
 import org.junit.Test as test
+import org.junit.Test
 import kotlin.test.*
 import java.util.*
 
@@ -233,6 +234,24 @@ public class SequenceTest {
         assertEquals(expected, values.toList(), "Iterating sequence second time yields the same result")
     }
 
+    @Test fun sequenceFromFunctionWithLazyInitialValue() {
+        var start = 3
+        val values = sequence({ start }, { n -> if (n > 0) n - 1 else null })
+        val expected = listOf(3, 2, 1, 0)
+        assertEquals(expected, values.toList())
+        assertEquals(expected, values.toList(), "Iterating sequence second time yields the same result")
+
+        start = 2
+        assertEquals(expected.drop(1), values.toList(), "Initial value function is called on each iterator request")
+
+        // does not throw on construction
+        val errorValues = sequence<Int>({ (throw IllegalStateException()) }, { null })
+        // does not throw on iteration
+        val iterator = errorValues.iterator()
+        // throws on advancing
+        assertFails { iterator.next() }
+    }
+
 
     @test fun sequenceFromIterator() {
         val list = listOf(3, 2, 1, 0)
@@ -267,7 +286,7 @@ public class SequenceTest {
     @test fun sequenceExtensions() {
         val d = ArrayList<Int>()
         sequenceOf(0, 1, 2, 3, 4, 5).takeWhileTo(d, { i -> i < 4 })
-        assertEquals(4, d.size())
+        assertEquals(4, d.size)
     }
 
     @test fun flatMapAndTakeExtractTheTransformedElements() {
@@ -285,23 +304,34 @@ public class SequenceTest {
     }
 
     @test fun flatMap() {
-        val result = sequenceOf(1, 2).flatMap { sequenceOf(0..it) }
+        val result = sequenceOf(1, 2).flatMap { (0..it).asSequence() }
         assertEquals(listOf(0, 1, 0, 1, 2), result.toList())
     }
 
     @test fun flatMapOnEmpty() {
-        val result = sequenceOf<Int>().flatMap { sequenceOf(0..it) }
+        val result = sequenceOf<Int>().flatMap { (0..it).asSequence() }
         assertTrue(result.none())
     }
 
     @test fun flatMapWithEmptyItems() {
-        val result = sequenceOf(1, 2, 4).flatMap { if (it == 2) sequenceOf<Int>() else sequenceOf(it - 1..it) }
+        val result = sequenceOf(1, 2, 4).flatMap { if (it == 2) sequenceOf<Int>() else (it - 1..it).asSequence() }
         assertEquals(listOf(0, 1, 3, 4), result.toList())
     }
 
     @test fun flatten() {
-        val data = sequenceOf(1, 2).map { sequenceOf(0..it) }
-        assertEquals(listOf(0, 1, 0, 1, 2), data.flatten().toList())
+        val expected = listOf(0, 1, 0, 1, 2)
+
+        val seq = sequenceOf((0..1).asSequence(), (0..2).asSequence()).flatten()
+        assertEquals(expected, seq.toList())
+
+        val seqMappedSeq = sequenceOf(1, 2).map { (0..it).asSequence() }.flatten()
+        assertEquals(expected, seqMappedSeq.toList())
+
+        val seqOfIterable = sequenceOf(0..1, 0..2).flatten()
+        assertEquals(expected, seqOfIterable.toList())
+
+        val seqMappedIterable = sequenceOf(1, 2).map { 0..it }.flatten()
+        assertEquals(expected, seqMappedIterable.toList())
     }
 
     @test fun distinct() {
@@ -330,8 +360,8 @@ public class SequenceTest {
 
     @test fun sortedBy() {
         sequenceOf("it", "greater", "less").let {
-            it.sortedBy { it.length() }.iterator().assertSorted { a, b -> compareValuesBy(a, b) { it.length() } <= 0 }
-            it.sortedByDescending { it.length() }.iterator().assertSorted { a, b -> compareValuesBy(a, b) { it.length() } >= 0 }
+            it.sortedBy { it.length }.iterator().assertSorted { a, b -> compareValuesBy(a, b) { it.length } <= 0 }
+            it.sortedByDescending { it.length }.iterator().assertSorted { a, b -> compareValuesBy(a, b) { it.length } >= 0 }
         }
 
         sequenceOf('a', 'd', 'c', null).let {

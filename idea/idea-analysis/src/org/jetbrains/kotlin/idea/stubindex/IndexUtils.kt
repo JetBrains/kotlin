@@ -21,14 +21,14 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinCallableStubBase
 import org.jetbrains.kotlin.util.aliasImportMap
 
-fun indexTopLevelExtension<TDeclaration : KtCallableDeclaration>(stub: KotlinCallableStubBase<TDeclaration>, sink: IndexSink) {
+fun <TDeclaration : KtCallableDeclaration> indexTopLevelExtension(stub: KotlinCallableStubBase<TDeclaration>, sink: IndexSink) {
     if (stub.isExtension()) {
         val declaration = stub.getPsi()
         declaration.getReceiverTypeReference()!!.typeElement?.index(declaration, sink)
     }
 }
 
-private fun KtTypeElement.index<TDeclaration : KtCallableDeclaration>(declaration: TDeclaration, sink: IndexSink) {
+private fun <TDeclaration : KtCallableDeclaration> KtTypeElement.index(declaration: TDeclaration, sink: IndexSink) {
     fun occurrence(typeName: String) {
         val name = declaration.getName() ?: return
         sink.occurrence(KotlinTopLevelExtensionsByReceiverTypeIndex.INSTANCE.getKey(),

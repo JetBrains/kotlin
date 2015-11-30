@@ -41,16 +41,9 @@ public class ModuleMapping private constructor(val packageFqName2Parts: Map<Stri
             val inputStream = DataInputStream(ByteArrayInputStream(proto))
             val size = inputStream.readInt()
 
-            val abiVersion =
-                    if (size == 1) {
-                        // TODO: this is a temporary workaround, drop after M13
-                        BinaryVersion.create(0, inputStream.readInt(), 0)
-                    }
-                    else {
-                        BinaryVersion.create((0..size - 1).map { inputStream.readInt() }.toIntArray())
-                    }
+            val version = BinaryVersion.create((0..size - 1).map { inputStream.readInt() }.toIntArray())
 
-            if (AbiVersionUtil.isAbiVersionCompatible(abiVersion)) {
+            if (AbiVersionUtil.isAbiVersionCompatible(version)) {
                 val parseFrom = JvmPackageTable.PackageTable.parseFrom(inputStream)
                 if (parseFrom != null) {
                     val packageFqNameParts = hashMapOf<String, PackageParts>()
@@ -63,6 +56,9 @@ public class ModuleMapping private constructor(val packageFqName2Parts: Map<Stri
                     }
                     return ModuleMapping(packageFqNameParts)
                 }
+            }
+            else {
+                // TODO: consider reporting "incompatible ABI version" error for package parts
             }
 
             return EMPTY

@@ -24,32 +24,12 @@ import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtScript;
-import org.jetbrains.kotlin.resolve.ScriptNameUtil;
-import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.registerClassNameForScript;
-
 public class KotlinCodegenFacade {
-
-    public static void prepareForCompilation(@NotNull GenerationState state) {
-        for (KtFile file : state.getFiles()) {
-            if (file.isScript()) {
-                KtScript script = file.getScript();
-                assert script != null;
-
-                FqName name = ScriptNameUtil.classNameForScript(script);
-                Type type = AsmUtil.asmTypeByFqNameWithoutInnerClasses(name);
-                registerClassNameForScript(state.getBindingTrace(), script, type, state.getFileClassesProvider());
-            }
-        }
-
-        state.beforeCompile();
-    }
 
     public static void compileCorrectFiles(
             @NotNull GenerationState state,
@@ -57,7 +37,7 @@ public class KotlinCodegenFacade {
     ) {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
-        prepareForCompilation(state);
+        state.beforeCompile();
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 

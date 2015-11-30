@@ -4,10 +4,9 @@ package foo
 
 class A(val x: Int, val y: Int)
 
-fun A.component1(): Int = fizz(x)
+operator fun A.component1(): Int = fizz(x)
 
-inline
-fun A.component2(): Int = buzz(y)
+inline operator fun A.component2(): Int = buzz(y)
 
 fun box(): String {
     val (a, b) = A(1, 2)

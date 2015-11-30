@@ -31,18 +31,18 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import java.util.*
 
-internal fun KotlinType.contains(inner: KotlinType): Boolean {
+internal operator fun KotlinType.contains(inner: KotlinType): Boolean {
     return KotlinTypeChecker.DEFAULT.equalTypes(this, inner) || getArguments().any { inner in it.getType() }
 }
 
@@ -53,16 +53,16 @@ private fun KotlinType.render(typeParameterNameMap: Map<TypeParameterDescriptor,
 
                 val typeParameter = it.key
 
-                var wrappingTypeParameter: TypeParameterDescriptor
+                var wrappingTypeParameter: TypeParameterDescriptor? = null
                 var wrappingTypeConstructor: TypeConstructor
+
+                wrappingTypeConstructor = object : TypeConstructor by typeParameter.typeConstructor {
+                    override fun getDeclarationDescriptor() = wrappingTypeParameter
+                }
 
                 wrappingTypeParameter = object : TypeParameterDescriptor by typeParameter {
                     override fun getName() = name
                     override fun getTypeConstructor() = wrappingTypeConstructor
-                }
-
-                wrappingTypeConstructor = object : TypeConstructor by typeParameter.typeConstructor {
-                    override fun getDeclarationDescriptor() = wrappingTypeParameter
                 }
 
                 val wrappingType = object : KotlinType by typeParameter.defaultType {
@@ -127,9 +127,9 @@ fun KtExpression.guessTypes(
     // if we know the actual type of the expression
     val theType1 = context.getType(this)
     if (theType1 != null) {
-        val dataFlowInfo = context[BindingContext.EXPRESSION_TYPE_INFO, this]?.dataFlowInfo
-        val possibleTypes = dataFlowInfo?.getPossibleTypes(DataFlowValueFactory.createDataFlowValue(this, theType1, context, module))
-        return if (possibleTypes != null && possibleTypes.isNotEmpty()) possibleTypes.toTypedArray() else arrayOf(theType1)
+        val dataFlowInfo = context.getDataFlowInfo(this)
+        val possibleTypes = dataFlowInfo.getPossibleTypes(DataFlowValueFactory.createDataFlowValue(this, theType1, context, module))
+        return if (possibleTypes.isNotEmpty()) possibleTypes.toTypedArray() else arrayOf(theType1)
     }
 
     // expression has an expected type
@@ -207,14 +207,14 @@ fun KtExpression.guessTypes(
 }
 
 private fun KtNamedDeclaration.guessType(context: BindingContext): Array<KotlinType> {
-    val expectedTypes = SearchUtils.findAllReferences(this, getUseScope())!!.asSequence().map { ref ->
+    val expectedTypes = SearchUtils.findAllReferences(this, getUseScope())!!.mapNotNullTo(HashSet<KotlinType>()) { ref ->
         if (ref is KtSimpleNameReference) {
             context[BindingContext.EXPECTED_EXPRESSION_TYPE, ref.expression]
         }
         else {
             null
         }
-    }.filterNotNullTo(HashSet<KotlinType>())
+    }
 
     if (expectedTypes.isEmpty() || expectedTypes.any { expectedType -> ErrorUtils.containsErrorType(expectedType) }) {
         return arrayOf()
@@ -257,7 +257,7 @@ internal fun KotlinType.substitute(substitution: KotlinTypeSubstitution, varianc
 fun KtExpression.getExpressionForTypeGuess() = getAssignmentByLHS()?.getRight() ?: this
 
 fun KtCallElement.getTypeInfoForTypeArguments(): List<TypeInfo> {
-    return getTypeArguments().map { it.getTypeReference()?.let { TypeInfo(it, Variance.INVARIANT) } }.filterNotNull()
+    return getTypeArguments().mapNotNull { it.getTypeReference()?.let { TypeInfo(it, Variance.INVARIANT) } }
 }
 
 fun KtCallExpression.getParameterInfos(): List<ParameterInfo> {
@@ -276,7 +276,7 @@ private fun TypePredicate.getRepresentativeTypes(): Set<KotlinType> {
         is AllSubtypes -> Collections.singleton(upperBound)
         is ForAllTypes -> {
             if (typeSets.isEmpty()) AllTypes.getRepresentativeTypes()
-            else typeSets.map { it.getRepresentativeTypes() }.reduce { a, b -> a intersect b }
+            else typeSets.map { it.getRepresentativeTypes() }.reduce { a, b -> a.intersect(b) }
         }
         is ForSomeType -> typeSets.flatMapTo(LinkedHashSet<KotlinType>()) { it.getRepresentativeTypes() }
         is AllTypes -> emptySet()

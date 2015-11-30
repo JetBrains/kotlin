@@ -4353,6 +4353,26 @@ public final class ProtoBuf {
      * </pre>
      */
     int getTypeParameterName();
+
+    // optional .org.jetbrains.kotlin.serialization.Type outer_type = 10;
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Type outer_type = 10;</code>
+     */
+    boolean hasOuterType();
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Type outer_type = 10;</code>
+     */
+    org.jetbrains.kotlin.serialization.ProtoBuf.Type getOuterType();
+
+    // optional int32 outer_type_id = 11;
+    /**
+     * <code>optional int32 outer_type_id = 11;</code>
+     */
+    boolean hasOuterTypeId();
+    /**
+     * <code>optional int32 outer_type_id = 11;</code>
+     */
+    int getOuterTypeId();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.serialization.Type}
@@ -4446,6 +4466,24 @@ public final class ProtoBuf {
             case 72: {
               bitField0_ |= 0x00000040;
               typeParameterName_ = input.readInt32();
+              break;
+            }
+            case 82: {
+              org.jetbrains.kotlin.serialization.ProtoBuf.Type.Builder subBuilder = null;
+              if (((bitField0_ & 0x00000080) == 0x00000080)) {
+                subBuilder = outerType_.toBuilder();
+              }
+              outerType_ = input.readMessage(org.jetbrains.kotlin.serialization.ProtoBuf.Type.PARSER, extensionRegistry);
+              if (subBuilder != null) {
+                subBuilder.mergeFrom(outerType_);
+                outerType_ = subBuilder.buildPartial();
+              }
+              bitField0_ |= 0x00000080;
+              break;
+            }
+            case 88: {
+              bitField0_ |= 0x00000100;
+              outerTypeId_ = input.readInt32();
               break;
             }
           }
@@ -5316,6 +5354,38 @@ public final class ProtoBuf {
       return typeParameterName_;
     }
 
+    // optional .org.jetbrains.kotlin.serialization.Type outer_type = 10;
+    public static final int OUTER_TYPE_FIELD_NUMBER = 10;
+    private org.jetbrains.kotlin.serialization.ProtoBuf.Type outerType_;
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Type outer_type = 10;</code>
+     */
+    public boolean hasOuterType() {
+      return ((bitField0_ & 0x00000080) == 0x00000080);
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.serialization.Type outer_type = 10;</code>
+     */
+    public org.jetbrains.kotlin.serialization.ProtoBuf.Type getOuterType() {
+      return outerType_;
+    }
+
+    // optional int32 outer_type_id = 11;
+    public static final int OUTER_TYPE_ID_FIELD_NUMBER = 11;
+    private int outerTypeId_;
+    /**
+     * <code>optional int32 outer_type_id = 11;</code>
+     */
+    public boolean hasOuterTypeId() {
+      return ((bitField0_ & 0x00000100) == 0x00000100);
+    }
+    /**
+     * <code>optional int32 outer_type_id = 11;</code>
+     */
+    public int getOuterTypeId() {
+      return outerTypeId_;
+    }
+
     private void initFields() {
       argument_ = java.util.Collections.emptyList();
       nullable_ = false;
@@ -5325,6 +5395,8 @@ public final class ProtoBuf {
       className_ = 0;
       typeParameter_ = 0;
       typeParameterName_ = 0;
+      outerType_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
+      outerTypeId_ = 0;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -5339,6 +5411,12 @@ public final class ProtoBuf {
       }
       if (hasFlexibleUpperBound()) {
         if (!getFlexibleUpperBound().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      if (hasOuterType()) {
+        if (!getOuterType().isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -5381,6 +5459,12 @@ public final class ProtoBuf {
       if (((bitField0_ & 0x00000040) == 0x00000040)) {
         output.writeInt32(9, typeParameterName_);
       }
+      if (((bitField0_ & 0x00000080) == 0x00000080)) {
+        output.writeMessage(10, outerType_);
+      }
+      if (((bitField0_ & 0x00000100) == 0x00000100)) {
+        output.writeInt32(11, outerTypeId_);
+      }
       extensionWriter.writeUntil(200, output);
     }
 
@@ -5421,6 +5505,14 @@ public final class ProtoBuf {
       if (((bitField0_ & 0x00000040) == 0x00000040)) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(9, typeParameterName_);
+      }
+      if (((bitField0_ & 0x00000080) == 0x00000080)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(10, outerType_);
+      }
+      if (((bitField0_ & 0x00000100) == 0x00000100)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(11, outerTypeId_);
       }
       size += extensionsSerializedSize();
       memoizedSerializedSize = size;
@@ -5529,6 +5621,10 @@ public final class ProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000040);
         typeParameterName_ = 0;
         bitField0_ = (bitField0_ & ~0x00000080);
+        outerType_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00000100);
+        outerTypeId_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000200);
         return this;
       }
 
@@ -5585,6 +5681,14 @@ public final class ProtoBuf {
           to_bitField0_ |= 0x00000040;
         }
         result.typeParameterName_ = typeParameterName_;
+        if (((from_bitField0_ & 0x00000100) == 0x00000100)) {
+          to_bitField0_ |= 0x00000080;
+        }
+        result.outerType_ = outerType_;
+        if (((from_bitField0_ & 0x00000200) == 0x00000200)) {
+          to_bitField0_ |= 0x00000100;
+        }
+        result.outerTypeId_ = outerTypeId_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -5622,6 +5726,12 @@ public final class ProtoBuf {
         if (other.hasTypeParameterName()) {
           setTypeParameterName(other.getTypeParameterName());
         }
+        if (other.hasOuterType()) {
+          mergeOuterType(other.getOuterType());
+        }
+        if (other.hasOuterTypeId()) {
+          setOuterTypeId(other.getOuterTypeId());
+        }
         this.mergeExtensionFields(other);
         return this;
       }
@@ -5635,6 +5745,12 @@ public final class ProtoBuf {
         }
         if (hasFlexibleUpperBound()) {
           if (!getFlexibleUpperBound().isInitialized()) {
+            
+            return false;
+          }
+        }
+        if (hasOuterType()) {
+          if (!getOuterType().isInitialized()) {
             
             return false;
           }
@@ -6097,6 +6213,100 @@ public final class ProtoBuf {
       public Builder clearTypeParameterName() {
         bitField0_ = (bitField0_ & ~0x00000080);
         typeParameterName_ = 0;
+        
+        return this;
+      }
+
+      // optional .org.jetbrains.kotlin.serialization.Type outer_type = 10;
+      private org.jetbrains.kotlin.serialization.ProtoBuf.Type outerType_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Type outer_type = 10;</code>
+       */
+      public boolean hasOuterType() {
+        return ((bitField0_ & 0x00000100) == 0x00000100);
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Type outer_type = 10;</code>
+       */
+      public org.jetbrains.kotlin.serialization.ProtoBuf.Type getOuterType() {
+        return outerType_;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Type outer_type = 10;</code>
+       */
+      public Builder setOuterType(org.jetbrains.kotlin.serialization.ProtoBuf.Type value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        outerType_ = value;
+
+        bitField0_ |= 0x00000100;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Type outer_type = 10;</code>
+       */
+      public Builder setOuterType(
+          org.jetbrains.kotlin.serialization.ProtoBuf.Type.Builder builderForValue) {
+        outerType_ = builderForValue.build();
+
+        bitField0_ |= 0x00000100;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Type outer_type = 10;</code>
+       */
+      public Builder mergeOuterType(org.jetbrains.kotlin.serialization.ProtoBuf.Type value) {
+        if (((bitField0_ & 0x00000100) == 0x00000100) &&
+            outerType_ != org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance()) {
+          outerType_ =
+            org.jetbrains.kotlin.serialization.ProtoBuf.Type.newBuilder(outerType_).mergeFrom(value).buildPartial();
+        } else {
+          outerType_ = value;
+        }
+
+        bitField0_ |= 0x00000100;
+        return this;
+      }
+      /**
+       * <code>optional .org.jetbrains.kotlin.serialization.Type outer_type = 10;</code>
+       */
+      public Builder clearOuterType() {
+        outerType_ = org.jetbrains.kotlin.serialization.ProtoBuf.Type.getDefaultInstance();
+
+        bitField0_ = (bitField0_ & ~0x00000100);
+        return this;
+      }
+
+      // optional int32 outer_type_id = 11;
+      private int outerTypeId_ ;
+      /**
+       * <code>optional int32 outer_type_id = 11;</code>
+       */
+      public boolean hasOuterTypeId() {
+        return ((bitField0_ & 0x00000200) == 0x00000200);
+      }
+      /**
+       * <code>optional int32 outer_type_id = 11;</code>
+       */
+      public int getOuterTypeId() {
+        return outerTypeId_;
+      }
+      /**
+       * <code>optional int32 outer_type_id = 11;</code>
+       */
+      public Builder setOuterTypeId(int value) {
+        bitField0_ |= 0x00000200;
+        outerTypeId_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>optional int32 outer_type_id = 11;</code>
+       */
+      public Builder clearOuterTypeId() {
+        bitField0_ = (bitField0_ & ~0x00000200);
+        outerTypeId_ = 0;
         
         return this;
       }

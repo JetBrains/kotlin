@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.EXPECTED_TYPE_POSITION
+import org.jetbrains.kotlin.resolve.calls.inference.getNestedTypeVariables
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
@@ -70,11 +70,8 @@ private fun getReturnTypeForCallable(type: KotlinType) =
         type.getArguments().last().getType()
 
 private fun CallableDescriptor.hasReturnTypeDependentOnUninferredParams(constraintSystem: ConstraintSystem): Boolean {
-    val returnType = getReturnType() ?: return false
-
-    val nestedTypeVariables = with (constraintSystem as ConstraintSystemImpl) {
-        returnType.getNestedTypeVariables()
-    }
+    val returnType = returnType ?: return false
+    val nestedTypeVariables = constraintSystem.getNestedTypeVariables(returnType)
     return nestedTypeVariables.any { constraintSystem.getTypeBounds(it).value == null }
 }
 
@@ -82,7 +79,7 @@ public fun CallableDescriptor.hasInferredReturnType(constraintSystem: Constraint
     if (hasReturnTypeDependentOnUninferredParams(constraintSystem)) return false
 
     // Expected type mismatch was reported before as 'TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH'
-    if (constraintSystem.getStatus().hasOnlyErrorsDerivedFrom(EXPECTED_TYPE_POSITION)) return false
+    if (constraintSystem.status.hasOnlyErrorsDerivedFrom(EXPECTED_TYPE_POSITION)) return false
     return true
 }
 
@@ -133,7 +130,7 @@ public fun isInvokeCallOnVariable(call: Call): Boolean {
     if (call.getCallType() !== Call.CallType.INVOKE) return false
     val dispatchReceiver = call.getDispatchReceiver()
     //calleeExpressionAsDispatchReceiver for invoke is always ExpressionReceiver, see CallForImplicitInvoke
-    val expression = (dispatchReceiver as ExpressionReceiver).getExpression()
+    val expression = (dispatchReceiver as ExpressionReceiver).expression
     return expression is KtSimpleNameExpression
 }
 
@@ -143,7 +140,7 @@ public fun isInvokeCallOnExpressionWithBothReceivers(call: Call): Boolean {
 }
 
 public fun getSuperCallExpression(call: Call): KtSuperExpression? {
-    return (call.getExplicitReceiver() as? ExpressionReceiver)?.getExpression() as? KtSuperExpression
+    return (call.getExplicitReceiver() as? ExpressionReceiver)?.expression as? KtSuperExpression
 }
 
 public fun getEffectiveExpectedType(parameterDescriptor: ValueParameterDescriptor, argument: ValueArgument): KotlinType {

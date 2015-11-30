@@ -9,7 +9,7 @@ fun sort(list: MutableList<String>, comparator: (String, String) -> Int) {
     })
 }
 
-fun compare(s1: String, s2: String) = s1 compareTo s2
+fun compare(s1: String, s2: String) = s1.compareTo(s2)
 
 fun box(): String {
     val l = ArrayList(Arrays.asList("d", "b", "c", "e", "a"))

@@ -14,13 +14,19 @@ import java.util.concurrent.ConcurrentMap
  * Allows to use the index operator for storing values in a mutable map.
  */
 // this code is JVM-specific, because JS has native set function
-public operator fun <K, V> MutableMap<K, V>.set(key: K, value: V): V? = put(key, value)
+public operator fun <K, V> MutableMap<K, V>.set(key: K, value: V): Unit {
+    put(key, value)
+}
+
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+@JvmName("set")
+public fun <K, V> MutableMap<K, V>.set(key: K, value: V): V? = put(key, value)
 
 /**
  * getOrPut is not supported on [ConcurrentMap] since it cannot be implemented correctly in terms of concurrency.
  * Use [concurrentGetOrPut] instead, or cast this to a [MutableMap] if you want to sacrifice the concurrent-safety.
  */
-@Deprecated("Use concurrentGetOrPut instead or cast this map to MutableMap.")
+@Deprecated("Use concurrentGetOrPut instead or cast this map to MutableMap.", level = DeprecationLevel.ERROR)
 public inline fun <K, V> ConcurrentMap<K, V>.getOrPut(key: K, defaultValue: () -> V): Nothing =
     throw UnsupportedOperationException("getOrPut is not supported on ConcurrentMap.")
 
@@ -53,11 +59,8 @@ public fun <K : Comparable<K>, V> Map<K, V>.toSortedMap(): SortedMap<K, V> = Tre
  *
  * @sample test.collections.MapJVMTest.toSortedMapWithComparator
  */
-public fun <K, V> Map<K, V>.toSortedMap(comparator: Comparator<in K>): SortedMap<K, V> {
-    val result = TreeMap<K, V>(comparator)
-    result.putAll(this)
-    return result
-}
+public fun <K, V> Map<K, V>.toSortedMap(comparator: Comparator<in K>): SortedMap<K, V>
+        = TreeMap<K, V>(comparator).apply { putAll(this@toSortedMap) }
 
 /**
  * Returns a new [SortedMap] with the specified contents, given as a list of pairs
@@ -65,17 +68,8 @@ public fun <K, V> Map<K, V>.toSortedMap(comparator: Comparator<in K>): SortedMap
  *
  * @sample test.collections.MapJVMTest.createSortedMap
  */
-public fun <K, V> sortedMapOf(vararg values: Pair<K, V>): SortedMap<K, V> {
-    val answer = TreeMap<K, V>()
-    /**
-    TODO replace by this simpler call when we can pass vararg values into other methods
-    answer.putAll(values)
-     */
-    for (v in values) {
-        answer.put(v.first, v.second)
-    }
-    return answer
-}
+public fun <K : Comparable<K>, V> sortedMapOf(vararg pairs: Pair<K, V>): SortedMap<K, V>
+        = TreeMap<K, V>().apply { putAll(pairs) }
 
 
 /**
@@ -83,11 +77,6 @@ public fun <K, V> sortedMapOf(vararg values: Pair<K, V>): SortedMap<K, V> {
  *
  * @sample test.collections.MapJVMTest.toProperties
  */
-public fun Map<String, String>.toProperties(): Properties {
-    val answer = Properties()
-    for (e in this) {
-        answer.put(e.key, e.value)
-    }
-    return answer
-}
+public fun Map<String, String>.toProperties(): Properties
+        = Properties().apply { putAll(this@toProperties) }
 

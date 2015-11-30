@@ -21,7 +21,9 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiComment;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -87,7 +89,7 @@ public class KotlinDeclarationMover extends AbstractKotlinUpDownMover {
         declaration.accept(
                 new KtVisitorVoid() {
                     @Override
-                    public void visitAnonymousInitializer(@NotNull KtClassInitializer initializer) {
+                    public void visitClassInitializer(@NotNull KtClassInitializer initializer) {
                         PsiElement brace = initializer.getOpenBraceNode();
                         if (brace != null) {
                             memberSuspects.add(brace);
@@ -130,7 +132,7 @@ public class KotlinDeclarationMover extends AbstractKotlinUpDownMover {
     }
 
     private static final Class[] DECLARATION_CONTAINER_CLASSES =
-            {KtClassBody.class, KtClassInitializer.class, KtFunction.class, KtPropertyAccessor.class, KtFile.class};
+            {KtClassBody.class, KtAnonymousInitializer.class, KtFunction.class, KtPropertyAccessor.class, KtFile.class};
 
     private static final Class[] CLASSBODYLIKE_DECLARATION_CONTAINER_CLASSES = {KtClassBody.class, KtFile.class};
 
@@ -245,7 +247,7 @@ public class KotlinDeclarationMover extends AbstractKotlinUpDownMover {
         }
 
         if (nextParent != null) {
-            if (target instanceof KtClassInitializer && !(nextParent instanceof KtClassBody)) return null;
+            if (target instanceof KtAnonymousInitializer && !(nextParent instanceof KtClassBody)) return null;
 
             if (target instanceof KtEnumEntry) {
                 if (!(nextParent instanceof KtClassBody)) return null;

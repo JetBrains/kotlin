@@ -3,4 +3,12 @@
     <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinJavaMavenConfigurator"/>
     <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinJavascriptMavenConfigurator"/>
   </extensions>
+  <extensions defaultExtensionNs="org.jetbrains.idea.maven">
+    <importer implementation="org.jetbrains.kotlin.idea.configuration.KotlinMavenImporter" />
+  </extensions>
+  <module-components>
+    <component>
+      <implementation-class>org.jetbrains.kotlin.idea.configuration.KotlinImporterComponent</implementation-class>
+    </component>
+  </module-components>
 </idea-plugin>

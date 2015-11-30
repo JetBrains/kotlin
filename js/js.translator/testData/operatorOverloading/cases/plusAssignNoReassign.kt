@@ -3,7 +3,7 @@ package foo
 class A() {
 
     var message = ""
-    fun plusAssign(other: A) {
+    operator fun plusAssign(other: A) {
         message = message + "!"
     }
 

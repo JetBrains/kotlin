@@ -411,7 +411,7 @@ JetFile: MultiVariableDeclarations.kt
       MULTI_VARIABLE_DECLARATION
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
-        PsiErrorElement:Receiver type is not allowed on a multi-declaration
+        PsiErrorElement:Receiver type is not allowed on a destructuring declaration
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
@@ -434,7 +434,7 @@ JetFile: MultiVariableDeclarations.kt
         MULTI_VARIABLE_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('a')
         PsiElement(RPAR)(')')
-        PsiErrorElement:Type annotations are not allowed on multi-declarations
+        PsiErrorElement:Type annotations are not allowed on destructuring declarations
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
@@ -450,7 +450,7 @@ JetFile: MultiVariableDeclarations.kt
       MULTI_VARIABLE_DECLARATION
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
-        PsiErrorElement:Receiver type is not allowed on a multi-declaration
+        PsiErrorElement:Receiver type is not allowed on a destructuring declaration
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
@@ -460,7 +460,7 @@ JetFile: MultiVariableDeclarations.kt
         MULTI_VARIABLE_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('a')
         PsiElement(RPAR)(')')
-        PsiErrorElement:Type annotations are not allowed on multi-declarations
+        PsiErrorElement:Type annotations are not allowed on destructuring declarations
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE
@@ -478,7 +478,7 @@ JetFile: MultiVariableDeclarations.kt
   MULTI_VARIABLE_DECLARATION
     PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    PsiErrorElement:Multi-declarations are only allowed for local variables/values
+    PsiErrorElement:Destructuring declarations are only allowed for local variables/values
       PsiElement(LPAR)('(')
       MULTI_VARIABLE_DECLARATION_ENTRY
         PsiElement(IDENTIFIER)('a')
@@ -496,13 +496,13 @@ JetFile: MultiVariableDeclarations.kt
   MULTI_VARIABLE_DECLARATION
     PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    PsiErrorElement:Receiver type is not allowed on a multi-declaration
+    PsiErrorElement:Receiver type is not allowed on a destructuring declaration
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('Int')
       PsiElement(DOT)('.')
-    PsiErrorElement:Multi-declarations are only allowed for local variables/values
+    PsiErrorElement:Destructuring declarations are only allowed for local variables/values
       PsiElement(LPAR)('(')
       MULTI_VARIABLE_DECLARATION_ENTRY
         PsiElement(IDENTIFIER)('a')
@@ -520,7 +520,7 @@ JetFile: MultiVariableDeclarations.kt
   MULTI_VARIABLE_DECLARATION
     PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    PsiErrorElement:Multi-declarations are only allowed for local variables/values
+    PsiErrorElement:Destructuring declarations are only allowed for local variables/values
       PsiElement(LPAR)('(')
       MULTI_VARIABLE_DECLARATION_ENTRY
         PsiElement(IDENTIFIER)('a')
@@ -529,7 +529,7 @@ JetFile: MultiVariableDeclarations.kt
       MULTI_VARIABLE_DECLARATION_ENTRY
         PsiElement(IDENTIFIER)('b')
       PsiElement(RPAR)(')')
-    PsiErrorElement:Type annotations are not allowed on multi-declarations
+    PsiErrorElement:Type annotations are not allowed on destructuring declarations
       PsiElement(COLON)(':')
       TYPE_REFERENCE
         USER_TYPE
@@ -552,7 +552,7 @@ JetFile: MultiVariableDeclarations.kt
       MULTI_VARIABLE_DECLARATION
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
-        PsiErrorElement:Multi-declarations are only allowed for local variables/values
+        PsiErrorElement:Destructuring declarations are only allowed for local variables/values
           PsiElement(LPAR)('(')
           MULTI_VARIABLE_DECLARATION_ENTRY
             PsiElement(IDENTIFIER)('a')
@@ -570,13 +570,13 @@ JetFile: MultiVariableDeclarations.kt
       MULTI_VARIABLE_DECLARATION
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
-        PsiErrorElement:Receiver type is not allowed on a multi-declaration
+        PsiErrorElement:Receiver type is not allowed on a destructuring declaration
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('Int')
           PsiElement(DOT)('.')
-        PsiErrorElement:Multi-declarations are only allowed for local variables/values
+        PsiErrorElement:Destructuring declarations are only allowed for local variables/values
           PsiElement(LPAR)('(')
           MULTI_VARIABLE_DECLARATION_ENTRY
             PsiElement(IDENTIFIER)('a')
@@ -594,7 +594,7 @@ JetFile: MultiVariableDeclarations.kt
       MULTI_VARIABLE_DECLARATION
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
-        PsiErrorElement:Multi-declarations are only allowed for local variables/values
+        PsiErrorElement:Destructuring declarations are only allowed for local variables/values
           PsiElement(LPAR)('(')
           MULTI_VARIABLE_DECLARATION_ENTRY
             PsiElement(IDENTIFIER)('a')
@@ -603,7 +603,7 @@ JetFile: MultiVariableDeclarations.kt
           MULTI_VARIABLE_DECLARATION_ENTRY
             PsiElement(IDENTIFIER)('b')
           PsiElement(RPAR)(')')
-        PsiErrorElement:Type annotations are not allowed on multi-declarations
+        PsiErrorElement:Type annotations are not allowed on destructuring declarations
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
           TYPE_REFERENCE

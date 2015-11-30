@@ -152,7 +152,7 @@ class Converter private constructor(
     }
 
     private fun convertFile(javaFile: PsiJavaFile): File {
-        var convertedChildren = javaFile.getChildren().map { convertTopElement(it) }.filterNotNull()
+        var convertedChildren = javaFile.getChildren().mapNotNull { convertTopElement(it) }
         return File(convertedChildren).assignPrototype(javaFile)
     }
 
@@ -406,8 +406,7 @@ class Converter private constructor(
             )
 
             val placementElement = field ?: getMethod ?: setMethod
-            val prototypes = listOf<PsiElement?>(field, getMethod, setMethod)
-                    .filterNotNull()
+            val prototypes = listOfNotNull<PsiElement>(field, getMethod, setMethod)
                     .map { PrototypeInfo(it, if (it == placementElement) CommentsAndSpacesInheritance.LINE_BREAKS else CommentsAndSpacesInheritance.NO_SPACES) }
             return property.assignPrototypes(*prototypes.toTypedArray())
         }

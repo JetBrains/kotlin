@@ -4,8 +4,7 @@ fun main(args: Array<String>) {
     val a = A()
     // EXPRESSION: it
     // RESULT: 2: I
-    // STEP_INTO: 7
-    //Breakpoint!
+    //Breakpoint! (lambdaOrdinal = 1)
     a.foo(1) { a }.foo(2) { a }
 }
 

@@ -29,7 +29,9 @@ import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.scopes.*
+import org.jetbrains.kotlin.resolve.scopes.BaseImportingScope
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.collectSyntheticExtensionProperties
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
@@ -78,7 +80,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
         val (descriptor, lookedNames) = syntheticPropertyInClass(Pair(classifier, name))
 
         if (location !is NoLookupLocation) {
-            lookedNames.forEach { lookupTracker.record(location, classifier, classifier.unsubstitutedMemberScope, it) }
+            lookedNames.forEach { lookupTracker.record(location, classifier, it) }
         }
 
         return descriptor
@@ -359,7 +361,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
             }
             val classParametersSubstitutor = TypeSubstitutor.create(substitutionMap)
 
-            descriptor.getMethod = getMethod.substitute(classParametersSubstitutor)!!
+            descriptor.getMethod = getMethod.substitute(classParametersSubstitutor)
             descriptor.setMethod = setMethod?.substitute(classParametersSubstitutor)
             return descriptor
         }

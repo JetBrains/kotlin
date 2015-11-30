@@ -92,23 +92,23 @@ class MyCollection2(): Iterable<Int> {
 }
 
 class MyCollection3() {
-    fun iterator() = MyIterator()
+    operator fun iterator() = MyIterator()
 
     class MyIterator() {
         var k : Int = 5
 
-        fun next() : Int? = k--
-        fun hasNext() : Boolean = k > 0
+        operator fun next() : Int? = k--
+        operator fun hasNext() : Boolean = k > 0
     }
 }
 
 class MyCollection4() {
-    fun iterator() = MyIterator()
+    operator fun iterator() = MyIterator()
 
     class MyIterator() {
         var k : Int = 5
 
-        fun next() : Int = k--
-        fun hasNext() = k > 0
+        operator fun next() : Int = k--
+        operator fun hasNext() = k > 0
     }
 }

@@ -25,4 +25,5 @@ val propFoo: Int
 // EXISTS: fooWithParam: f.invoke()
 // EXISTS: test()
 // EXISTS: constructor FooClass()
+// EXISTS: constructor FooClass(Int)
 // EXISTS: constructor FooClass(Int\, Int)

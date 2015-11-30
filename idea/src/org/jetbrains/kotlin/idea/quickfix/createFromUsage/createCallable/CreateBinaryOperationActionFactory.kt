@@ -55,6 +55,7 @@ public object CreateBinaryOperationActionFactory: CreateCallableMemberFromUsageF
         }
         val parameters = Collections.singletonList(ParameterInfo(TypeInfo(argumentExpr, Variance.IN_VARIANCE)))
         return FunctionInfo(operationName, receiverType, returnType, parameterInfos = parameters,
-                            isOperator = token != KtTokens.IDENTIFIER)
+                            isOperator = token != KtTokens.IDENTIFIER,
+                            isInfix = true)
     }
 }

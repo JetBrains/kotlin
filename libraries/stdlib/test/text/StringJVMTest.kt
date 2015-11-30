@@ -1,5 +1,6 @@
 package test.text
 
+import test.collections.assertArrayNotSameButEquals
 import java.util.Locale
 import kotlin.test.*
 
@@ -77,6 +78,16 @@ class StringJVMTest {
         val defaultCharset = java.nio.charset.Charset.defaultCharset()!!
         assertEquals(String(s.toByteArray()), String(s.toByteArray(defaultCharset)))
         assertEquals(String(s.toByteArray()), String(s.toByteArray(defaultCharset.name())))
+    }
+
+    @test fun toCharArray() {
+        val s = "hello"
+        val chars = s.toCharArray()
+        assertArrayNotSameButEquals(charArrayOf('h', 'e', 'l', 'l', 'o'), chars)
+
+        val buffer = CharArray(4)
+        s.toCharArray(buffer, 2, 1, 3)
+        assertArrayNotSameButEquals(charArrayOf('\u0000', '\u0000', 'e', 'l'), buffer)
     }
 
     @test fun orderIgnoringCase() {

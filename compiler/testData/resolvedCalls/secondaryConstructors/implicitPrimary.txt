@@ -3,6 +3,7 @@ class A
 val v = <caret>A()
 
 
+
 Resolved call:
 
 Resulting descriptor: constructor A() defined in A

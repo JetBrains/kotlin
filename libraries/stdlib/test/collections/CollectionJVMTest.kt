@@ -15,7 +15,7 @@ class CollectionJVMTest {
     private fun <T> identitySetOf(vararg values: T): MutableSet<T> {
         val map = IdentityHashMap<T, String>()
         values.forEach { map.put(it, "") }
-        return map.keySet()
+        return map.keys
     }
 
     private data class IdentityData(public val value: Int)
@@ -37,9 +37,9 @@ class CollectionJVMTest {
 
     @test fun flatMap() {
         val data = listOf("", "foo", "bar", "x", "")
-        val characters = data.flatMap { it.toCharList() }
+        val characters = data.flatMap { it.toList() }
         println("Got list of characters ${characters}")
-        assertEquals(7, characters.size())
+        assertEquals(7, characters.size)
         val text = characters.joinToString("")
         assertEquals("foobarx", text)
     }
@@ -52,7 +52,7 @@ class CollectionJVMTest {
         assertTrue {
             foo.all { it.startsWith("f") }
         }
-        assertEquals(1, foo.size())
+        assertEquals(1, foo.size)
         assertEquals(linkedListOf("foo"), foo)
 
         assertTrue {
@@ -67,7 +67,7 @@ class CollectionJVMTest {
         assertTrue {
             foo.all { !it.startsWith("f") }
         }
-        assertEquals(1, foo.size())
+        assertEquals(1, foo.size)
         assertEquals(linkedListOf("bar"), foo)
 
         assertTrue {
@@ -79,7 +79,7 @@ class CollectionJVMTest {
         val data = listOf(null, "foo", null, "bar")
         val foo = data.filterNotNullTo(linkedListOf<String>())
 
-        assertEquals(2, foo.size())
+        assertEquals(2, foo.size)
         assertEquals(linkedListOf("foo", "bar"), foo)
 
         assertTrue {
@@ -89,8 +89,8 @@ class CollectionJVMTest {
 
     @test fun filterIntoSortedSet() {
         val data = listOf("foo", "bar")
-        val sorted = data.filterTo(sortedSetOf<String>()) { it.length() == 3 }
-        assertEquals(2, sorted.size())
+        val sorted = data.filterTo(sortedSetOf<String>()) { it.length == 3 }
+        assertEquals(2, sorted.size)
         assertEquals(sortedSetOf("bar", "foo"), sorted)
         assertTrue {
             sorted is TreeSet<String>
@@ -120,12 +120,24 @@ class CollectionJVMTest {
         val data = listOf("foo", "bar")
         val arr = data.toTypedArray()
         println("Got array ${arr}")
-        assertEquals(2, arr.size())
+        assertEquals(2, arr.size)
         todo {
             assertTrue {
                 arr.isArrayOf<String>()
             }
         }
+    }
+
+    @test fun toSortedSet() {
+        val data = listOf("foo", "Foo", "bar")
+        val set1 = data.toSortedSet()
+        assertEquals(listOf("Foo", "bar", "foo"), set1.toList())
+
+        val set2 = data.toSortedSet(reverseOrder())
+        assertEquals(listOf("foo", "bar", "Foo"), set2.toList())
+
+        val set3 = data.toSortedSet(String.CASE_INSENSITIVE_ORDER)
+        assertEquals(listOf("bar", "foo"), set3.toList())
     }
 
     @test fun takeReturnsFirstNElements() {
@@ -148,7 +160,7 @@ class CollectionJVMTest {
         assertEquals(values.toList(), anyValues)
 
         val charValues: List<Char> = values.filterIsInstance<Char>()
-        assertEquals(0, charValues.size())
+        assertEquals(0, charValues.size)
     }
 
     @test fun filterIsInstanceArray() {
@@ -167,7 +179,7 @@ class CollectionJVMTest {
         assertEquals(src.toList(), anyValues)
 
         val charValues: List<Char> = src.filterIsInstance<Char>()
-        assertEquals(0, charValues.size())
+        assertEquals(0, charValues.size)
     }
 
     @test fun emptyListIsSerializable() = testSingletonSerialization(emptyList<Any>())
@@ -183,7 +195,7 @@ class CollectionJVMTest {
         assertTrue(value === result)
     }
 
-    private fun serializeAndDeserialize<T>(value: T): T {
+    private fun <T> serializeAndDeserialize(value: T): T {
         val outputStream = ByteArrayOutputStream()
         val objectOutputStream = ObjectOutputStream(outputStream)
 

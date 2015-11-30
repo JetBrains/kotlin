@@ -3,4 +3,4 @@ fun foo() {
     bar<caret><(Int) -> Int> { it: Int -> it }
 }
 
-fun bar<T>(t: T): Int = 1
+fun <T> bar(t: T): Int = 1

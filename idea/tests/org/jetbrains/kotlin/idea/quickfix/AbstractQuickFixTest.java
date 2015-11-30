@@ -44,7 +44,6 @@ import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLightQuickFixTestCase;
-import org.jetbrains.kotlin.idea.js.KotlinJavaScriptLibraryManager;
 import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver;
 import org.jetbrains.kotlin.idea.quickfix.utils.QuickfixTestUtilsKt;
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
@@ -116,8 +115,10 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
             @Override
             public void run() {
                 String fileText = "";
+                String expectedErrorMessage = "";
                 try {
                     fileText = FileUtil.loadFile(testFile, CharsetToolkit.UTF8_CHARSET);
+                    expectedErrorMessage = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// SHOULD_FAIL_WITH: ");
                     String contents = StringUtil.convertLineSeparators(fileText);
                     quickFixTestCase.configureFromFileText(testFile.getName(), contents);
                     quickFixTestCase.bringRealEditorBack();
@@ -125,6 +126,8 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
                     checkForUnexpectedActions();
 
                     applyAction(contents, quickFixTestCase, testName, testFullPath);
+
+                    assertEmpty(expectedErrorMessage);
                 }
                 catch (FileComparisonFailure e) {
                     throw e;
@@ -133,10 +136,11 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
                     throw e;
                 }
                 catch (Throwable e) {
-                    e.printStackTrace();
-                    fail(testName);
-                }
-                finally {
+                    if (!e.getMessage().equals(expectedErrorMessage)) {
+                        e.printStackTrace();
+                        fail(testName);
+                    }
+                } finally {
                     ConfigLibraryUtil.unconfigureLibrariesByDirective(getModule(), fileText);
                 }
             }
@@ -183,7 +187,6 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
             FileBasedIndex.getInstance().requestRebuild(StubUpdatingIndex.INDEX_ID);
 
             ConfigLibraryUtil.configureKotlinJsRuntimeAndSdk(getModule(), getFullJavaJDK());
-            KotlinJavaScriptLibraryManager.getInstance(getProject()).syncUpdateProjectLibrary();
         }
         else if (beforeFileName.endsWith("Runtime.kt")) {
             ConfigLibraryUtil.configureKotlinRuntimeAndSdk(getModule(), getFullJavaJDK());

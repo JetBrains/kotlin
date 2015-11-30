@@ -1,7 +1,7 @@
 import kotlin.reflect.KProperty
 
 class Delegate<T>(val f: (T) -> Int) {
-    fun getValue(t: T, p: KProperty<*>): Int = f(t)
+    operator fun getValue(t: T, p: KProperty<*>): Int = f(t)
 }
 
 val p = Delegate<A> { t -> t.foo() }

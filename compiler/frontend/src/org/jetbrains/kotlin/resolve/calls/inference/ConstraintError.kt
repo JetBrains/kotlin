@@ -28,7 +28,7 @@ class ErrorInConstrainingType(constraintPosition: ConstraintPosition): Constrain
 
 class TypeInferenceError(constraintPosition: ConstraintPosition): ConstraintError(constraintPosition)
 
-class CannotCapture(constraintPosition: ConstraintPosition, val typeVariable: TypeParameterDescriptor): ConstraintError(constraintPosition)
+class CannotCapture(constraintPosition: ConstraintPosition, val typeVariable: TypeVariable): ConstraintError(constraintPosition)
 
 fun newTypeInferenceOrParameterConstraintError(constraintPosition: ConstraintPosition) =
         if (constraintPosition.isParameter()) ParameterConstraintError(constraintPosition) else TypeInferenceError(constraintPosition)

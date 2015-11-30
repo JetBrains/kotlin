@@ -31,9 +31,7 @@ public abstract class AbstractAndroidBytecodeShapeTest : AbstractBytecodeTextTes
 
     private fun createEnvironmentForConfiguration(configuration: CompilerConfiguration, path: String) {
         val layoutPaths = getResPaths(path)
-        val manifestPath = path + "../AndroidManifest.xml"
-        val supportV4 = File(path).name.startsWith("support")
-        myEnvironment = createAndroidTestEnvironment(configuration, layoutPaths, manifestPath, supportV4)
+        myEnvironment = createAndroidTestEnvironment(configuration, layoutPaths)
     }
 
     public override fun doTest(path: String) {

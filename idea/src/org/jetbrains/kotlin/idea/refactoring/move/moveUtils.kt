@@ -38,6 +38,7 @@ import com.intellij.refactoring.util.MoveRenameUsageInfo
 import com.intellij.refactoring.util.NonCodeUsageInfo
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.IncorrectOperationException
+import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.*
@@ -74,7 +75,7 @@ public class PackageNameInfo(val oldPackageName: FqName, val newPackageName: FqN
 public fun KtElement.getInternalReferencesToUpdateOnPackageNameChange(packageNameInfo: PackageNameInfo): List<UsageInfo> {
     val file = getContainingFile() as? KtFile ?: return listOf()
 
-    val importPaths = file.getImportDirectives().map { it.getImportPath() }.filterNotNull()
+    val importPaths = file.getImportDirectives().mapNotNull { it.getImportPath() }
 
     tailrec fun isImported(descriptor: DeclarationDescriptor): Boolean {
         val fqName = DescriptorUtils.getFqName(descriptor).let { if (it.isSafe()) it.toSafe() else return@isImported false }
@@ -93,7 +94,7 @@ public fun KtElement.getInternalReferencesToUpdateOnPackageNameChange(packageNam
         val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(getProject(), descriptor) ?: return null
 
         val isCallable = descriptor is CallableDescriptor
-        val isExtension = isCallable && (descriptor as CallableDescriptor).getExtensionReceiverParameter() != null
+        val isExtension = isCallable && declaration.isExtensionDeclaration()
 
         if (isCallable && !isExtension) {
             val containingDescriptor = descriptor.getContainingDeclaration()

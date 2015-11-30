@@ -2,4 +2,4 @@
 // param: what: kotlin.String: sky
 // param: color: kotlin.String: blue
 
-"$what color is $color"
+val rv = "$what color is $color"

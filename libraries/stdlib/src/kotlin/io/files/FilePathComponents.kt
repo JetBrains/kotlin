@@ -23,7 +23,7 @@ private fun String.getRootName(): String {
     // Note: separators should be already replaced to system ones
     var first = indexOf(File.separatorChar, 0)
     if (first == 0) {
-        if (length() > 1 && this[1] == File.separatorChar) {
+        if (length > 1 && this[1] == File.separatorChar) {
             // Network names like //my.host/home/something ? => //my.host/home/ should be root
             // NB: does not work in Unix because //my.host/home is converted into /my.host/home there
             // So in Windows we'll have root of //my.host/home but in Unix just /
@@ -75,7 +75,7 @@ public val File.rootName: String
 public val File.root: File?
     get() {
         val name = rootName
-        return if (name.length() > 0) File(name) else null
+        return if (name.length > 0) File(name) else null
     }
 
 /**
@@ -89,7 +89,7 @@ public data class FilePathComponents(public val rootName: String, public val fil
     /**
      * Returns the number of elements in the path to the file.
      */
-    public fun size(): Int = fileList.size()
+    public fun size(): Int = fileList.size
 
     /**
      * Returns a sub-path of the path, starting with the directory at the specified [beginIndex] and up
@@ -110,10 +110,10 @@ public data class FilePathComponents(public val rootName: String, public val fil
 public fun File.filePathComponents(): FilePathComponents {
     val path = separatorsToSystem()
     val rootName = path.getRootName()
-    val subPath = path.substring(rootName.length())
+    val subPath = path.substring(rootName.length)
     // if: a special case when we have only root component
     // Split not only by / or \, but also by //, ///, \\, \\\, etc.
-    val list = if (rootName.length() > 0 && subPath.isEmpty()) listOf() else
+    val list = if (rootName.length > 0 && subPath.isEmpty()) listOf() else
         // Looks awful but we split just by /+ or \+ depending on OS
         subPath.split(Regex.fromLiteral(File.separatorChar.toString())).toList().map { it -> File(it) }
     return FilePathComponents(rootName, list)

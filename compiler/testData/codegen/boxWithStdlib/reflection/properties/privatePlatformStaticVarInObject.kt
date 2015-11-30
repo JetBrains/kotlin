@@ -11,15 +11,15 @@ fun box(): String {
     p.isAccessible = true
 
     try {
-        p[null] = "OK"
+        p.set(null, "OK")
         return "Fail: set should check that first argument is Obj"
     } catch (e: IllegalArgumentException) {}
 
     try {
-        p[null]
+        p.get(null)
         return "Fail: get should check that first argument is Obj"
     } catch (e: IllegalArgumentException) {}
 
-    p[Obj] = "OK"
-    return p[Obj]
+    p.set(Obj, "OK")
+    return p.get(Obj)
 }

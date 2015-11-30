@@ -32,6 +32,7 @@ import org.jetbrains.jps.builders.logging.ProjectBuilderLogger;
 import org.jetbrains.jps.incremental.CompileContext;
 import org.jetbrains.jps.incremental.ModuleBuildTarget;
 import org.jetbrains.jps.incremental.ProjectBuildException;
+import org.jetbrains.jps.model.java.JpsJavaExtensionService;
 import org.jetbrains.kotlin.config.IncrementalCompilation;
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder;
 
@@ -61,6 +62,11 @@ public class KotlinBuilderModuleScriptGenerator {
         ProjectBuilderLogger logger = context.getLoggingManager().getProjectBuilderLogger();
         for (ModuleBuildTarget target : chunk.getTargets()) {
             File outputDir = getOutputDirSafe(target);
+            List<File> friendDirs = new ArrayList<File>();
+            File friendDir = getFriendDirSafe(target);
+            if (friendDir != null) {
+                friendDirs.add(friendDir);
+            }
 
             List<File> moduleSources = new ArrayList<File>(
                     IncrementalCompilation.isEnabled()
@@ -85,7 +91,8 @@ public class KotlinBuilderModuleScriptGenerator {
                     findClassPathRoots(target),
                     (JavaModuleBuildTargetType) targetType,
                     // this excludes the output directories from the class path, to be removed for true incremental compilation
-                    outputDirs
+                    outputDirs,
+                    friendDirs
             );
         }
 
@@ -105,6 +112,17 @@ public class KotlinBuilderModuleScriptGenerator {
             throw new ProjectBuildException("No output directory found for " + target);
         }
         return outputDir;
+    }
+
+    @Nullable
+    public static File getFriendDirSafe(@NotNull ModuleBuildTarget target) throws ProjectBuildException {
+        if (!target.isTests()) return null;
+
+        File outputDirForProduction = JpsJavaExtensionService.getInstance().getOutputDirectory(target.getModule(), false);
+        if (outputDirForProduction == null) {
+            throw new ProjectBuildException("No output production directory found for " + target);
+        }
+        return outputDirForProduction;
     }
 
     @NotNull

@@ -126,7 +126,7 @@ public class PseudocodeVariablesData {
         final LexicalScopeVariableInfo lexicalScopeVariableInfo = pseudocodeVariableDataCollector.getLexicalScopeVariableInfo();
 
         return pseudocodeVariableDataCollector.collectData(
-                FORWARD, /*mergeDataWithLocalDeclarations=*/ false,
+                FORWARD, /*mergeDataWithLocalDeclarations=*/ true,
                 new InstructionDataMergeStrategy<VariableControlFlowState>() {
                     @NotNull
                     @Override

@@ -4,7 +4,7 @@ package foo
 
 class A
 
-inline fun test<reified T>(): String {
+inline fun <reified T> test(): String {
     val a: Any = A()
 
     return if (a is T) "A" else "Unknown"

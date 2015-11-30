@@ -66,7 +66,7 @@ public class ConvertForEachToForLoopIntention : SelfTargetingOffsetIndependentIn
         val receiver = resolvedCall.getCall().getExplicitReceiver() as? ExpressionReceiver ?: return null
         val argument = resolvedCall.getCall().getValueArguments().singleOrNull() ?: return null
         val functionLiteral = argument.getArgumentExpression() as? KtFunctionLiteralExpression ?: return null
-        return Data(expression, receiver.getExpression(), functionLiteral)
+        return Data(expression, receiver.expression, functionLiteral)
     }
 
     private fun generateLoop(functionLiteral: KtFunctionLiteralExpression, receiver: KtExpression): KtExpression {

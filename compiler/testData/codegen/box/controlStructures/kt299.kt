@@ -7,7 +7,7 @@ class MyRange1() : Range<Int> {
 }
 
 class MyRange2() {
-    fun contains(item: Int) = true
+    operator fun contains(item: Int) = true
 }
 
 fun box(): String {

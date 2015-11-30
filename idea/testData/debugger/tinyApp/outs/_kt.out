@@ -3,6 +3,7 @@ LineBreakpoint created at .kt.kt:5
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 .kt.kt:5
 Compile bytecode for 1 + 1
+Compile bytecode for Test(1).a
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

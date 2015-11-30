@@ -1,10 +1,10 @@
-interface B : A {
+internal interface B : A {
     fun bar() = 1
 }
 
-interface C : B
+internal interface C : B
 
-class D : C {
+internal class D : C {
     override fun foo() {}
 }
 

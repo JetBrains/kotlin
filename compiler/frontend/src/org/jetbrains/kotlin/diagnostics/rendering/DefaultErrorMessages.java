@@ -112,13 +112,13 @@ public class DefaultErrorMessages {
         MAP.put(INVISIBLE_REFERENCE, "Cannot access ''{0}'': it is ''{1}'' in {2}", NAME, TO_STRING, NAME_OF_PARENT_OR_FILE);
         MAP.put(INVISIBLE_MEMBER, "Cannot access ''{0}'': it is ''{1}'' in {2}", NAME, TO_STRING, NAME_OF_PARENT_OR_FILE);
 
-        MAP.put(EXPOSED_PROPERTY_TYPE, "Deprecated: property effective visibility ''{0}'' should be the same or less permissive than its type effective visibility ''{1}''", TO_STRING, TO_STRING);
-        MAP.put(EXPOSED_FUNCTION_RETURN_TYPE, "Deprecated: function effective visibility ''{0}'' should be the same or less permissive than its return type effective visibility ''{1}''", TO_STRING, TO_STRING);
-        MAP.put(EXPOSED_PARAMETER_TYPE, "Deprecated: function effective visibility ''{0}'' should be the same or less permissive than its parameter type effective visibility ''{1}''", TO_STRING, TO_STRING);
-        MAP.put(EXPOSED_RECEIVER_TYPE, "Deprecated: member effective visibility ''{0}'' should be the same or less permissive than its receiver type effective visibility ''{1}''", TO_STRING, TO_STRING);
-        MAP.put(EXPOSED_TYPE_PARAMETER_BOUND, "Deprecated: generic effective visibility ''{0}'' should be the same or less permissive than its type parameter bound effective visibility ''{1}''", TO_STRING, TO_STRING);
-        MAP.put(EXPOSED_SUPER_CLASS, "Deprecated: subclass effective visibility ''{0}'' should be the same or less permissive than its superclass effective visibility ''{1}''", TO_STRING, TO_STRING);
-        MAP.put(EXPOSED_SUPER_INTERFACE, "Deprecated: sub-interface effective visibility ''{0}'' should be the same or less permissive than its super-interface effective visibility ''{1}''", TO_STRING, TO_STRING);
+        MAP.put(EXPOSED_PROPERTY_TYPE, "Property effective visibility ''{0}'' should be the same or less permissive than its type effective visibility ''{1}''", TO_STRING, TO_STRING);
+        MAP.put(EXPOSED_FUNCTION_RETURN_TYPE, "Function effective visibility ''{0}'' should be the same or less permissive than its return type effective visibility ''{1}''", TO_STRING, TO_STRING);
+        MAP.put(EXPOSED_PARAMETER_TYPE, "Function effective visibility ''{0}'' should be the same or less permissive than its parameter type effective visibility ''{1}''", TO_STRING, TO_STRING);
+        MAP.put(EXPOSED_RECEIVER_TYPE, "Member effective visibility ''{0}'' should be the same or less permissive than its receiver type effective visibility ''{1}''", TO_STRING, TO_STRING);
+        MAP.put(EXPOSED_TYPE_PARAMETER_BOUND, "Generic effective visibility ''{0}'' should be the same or less permissive than its type parameter bound effective visibility ''{1}''", TO_STRING, TO_STRING);
+        MAP.put(EXPOSED_SUPER_CLASS, "Subclass effective visibility ''{0}'' should be the same or less permissive than its superclass effective visibility ''{1}''", TO_STRING, TO_STRING);
+        MAP.put(EXPOSED_SUPER_INTERFACE, "Sub-interface effective visibility ''{0}'' should be the same or less permissive than its super-interface effective visibility ''{1}''", TO_STRING, TO_STRING);
 
         MAP.put(REDECLARATION, "Redeclaration: {0}", STRING);
         MAP.put(NAME_SHADOWING, "Name shadowed: {0}", STRING);
@@ -129,6 +129,7 @@ public class DefaultErrorMessages {
         MAP.put(DEPRECATED_MODIFIER_PAIR, "Modifier ''{0}'' is deprecated in presence of ''{1}''", TO_STRING, TO_STRING);
         MAP.put(REPEATED_MODIFIER, "Repeated ''{0}''", TO_STRING);
         MAP.put(WRONG_MODIFIER_TARGET, "Modifier ''{0}'' is not applicable to ''{1}''", TO_STRING, TO_STRING);
+        MAP.put(DEPRECATED_MODIFIER_FOR_TARGET, "Modifier ''{0}'' is deprecated for ''{1}''", TO_STRING, TO_STRING);
         MAP.put(REDUNDANT_MODIFIER_FOR_TARGET, "Modifier ''{0}'' is redundant for ''{1}''", TO_STRING, TO_STRING);
         MAP.put(WRONG_MODIFIER_CONTAINING_DECLARATION, "Modifier ''{0}'' is not applicable inside ''{1}''", TO_STRING, TO_STRING);
         MAP.put(DEPRECATED_MODIFIER_CONTAINING_DECLARATION, "Modifier ''{0}'' is deprecated inside ''{1}''", TO_STRING, TO_STRING);
@@ -184,13 +185,14 @@ public class DefaultErrorMessages {
 
         MAP.put(VARARG_OUTSIDE_PARENTHESES, "Passing value as a vararg is only allowed inside a parenthesized argument list");
         MAP.put(NON_VARARG_SPREAD, "The spread operator (*foo) may only be applied in a vararg position");
+        MAP.put(SPREAD_OF_NULLABLE, "The spread operator (*foo) may not be applied to an argument of nullable type");
 
         MAP.put(MANY_FUNCTION_LITERAL_ARGUMENTS, "Only one function literal is allowed outside a parenthesized argument list");
         MAP.put(PROPERTY_WITH_NO_TYPE_NO_INITIALIZER, "This property must either have a type annotation, be initialized or be delegated");
         MAP.put(VARIABLE_WITH_NO_TYPE_NO_INITIALIZER, "This variable must either have a type annotation or be initialized");
 
-        MAP.put(INITIALIZER_REQUIRED_FOR_MULTIDECLARATION, "Initializer required for multi-declaration");
-        MAP.put(COMPONENT_FUNCTION_MISSING, "Multi-declaration initializer of type {1} must have a ''{0}()'' function", TO_STRING, RENDER_TYPE);
+        MAP.put(INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION, "Initializer required for destructuring declaration");
+        MAP.put(COMPONENT_FUNCTION_MISSING, "Destructuring declaration initializer of type {1} must have a ''{0}()'' function", TO_STRING, RENDER_TYPE);
         MAP.put(COMPONENT_FUNCTION_AMBIGUITY, "Function ''{0}()'' is ambiguous for this expression: {1}", TO_STRING, AMBIGUOUS_CALLS);
         MAP.put(COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH, "''{0}()'' function returns ''{1}'', but ''{2}'' is expected",
                                                                                     TO_STRING, RENDER_TYPE, RENDER_TYPE);
@@ -209,12 +211,12 @@ public class DefaultErrorMessages {
 
         MAP.put(GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, "Getter visibility must be the same as property visibility");
         MAP.put(SETTER_VISIBILITY_DIFFERS_FROM_LATEINIT_VISIBILITY, "Setter visibility must be the same as lateinit property visibility");
-        MAP.put(ACCESSOR_VISIBILITY_FOR_ABSTRACT_PROPERTY, "Private accessor visibilities are not allowed for abstract properties");
+        MAP.put(PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY, "Private setters are not allowed for abstract properties");
+        MAP.put(PRIVATE_SETTER_FOR_OPEN_PROPERTY, "Private setters are deprecated for open properties");
         MAP.put(BACKING_FIELD_IN_INTERFACE, "Property in an interface cannot have a backing field");
         MAP.put(MUST_BE_INITIALIZED, "Property must be initialized");
         MAP.put(MUST_BE_INITIALIZED_OR_BE_ABSTRACT, "Property must be initialized or be abstract");
         MAP.put(PROPERTY_INITIALIZER_IN_INTERFACE, "Property initializers are not allowed in interfaces");
-        MAP.put(FINAL_PROPERTY_IN_INTERFACE, "Abstract property in an interface cannot be final");
         MAP.put(PRIVATE_PROPERTY_IN_INTERFACE, "Abstract property in an interface cannot be private");
         MAP.put(EXTENSION_PROPERTY_WITH_BACKING_FIELD, "Extension property cannot be initialized because it has no backing field");
         MAP.put(PROPERTY_INITIALIZER_NO_BACKING_FIELD, "Initializer is not allowed here because this property has no backing field");
@@ -222,7 +224,6 @@ public class DefaultErrorMessages {
         MAP.put(ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS, "Abstract function ''{0}'' in non-abstract class ''{1}''", STRING, NAME);
         MAP.put(ABSTRACT_FUNCTION_WITH_BODY, "A function ''{0}'' with body cannot be abstract", NAME);
         MAP.put(NON_ABSTRACT_FUNCTION_WITH_NO_BODY, "Function ''{0}'' without a body must be abstract", NAME);
-        MAP.put(FINAL_FUNCTION_WITH_NO_BODY, "Function ''{0}'' without body cannot be final", NAME);
         MAP.put(PRIVATE_FUNCTION_WITH_NO_BODY, "Function ''{0}'' without body cannot be private", NAME);
 
         MAP.put(NON_MEMBER_FUNCTION_NO_BODY, "Function ''{0}'' must have a body", NAME);
@@ -320,6 +321,7 @@ public class DefaultErrorMessages {
         MAP.put(CAST_NEVER_SUCCEEDS, "This cast can never succeed");
         MAP.put(DYNAMIC_NOT_ALLOWED, "Dynamic types are not allowed in this position");
         MAP.put(IS_ENUM_ENTRY, "'is' over enum entry is not allowed, use comparison instead");
+        MAP.put(ENUM_ENTRY_AS_TYPE, "Use of enum entry names as types is not allowed, use enum type instead");
         MAP.put(USELESS_NULLABLE_CHECK, "Non-null type is checked for instance of nullable type");
         MAP.put(WRONG_SETTER_PARAMETER_TYPE, "Setter parameter type must be equal to the type of the property, i.e. ''{0}''", RENDER_TYPE, RENDER_TYPE);
         MAP.put(WRONG_GETTER_RETURN_TYPE, "Getter return type must be equal to the type of the property, i.e. ''{0}''", RENDER_TYPE, RENDER_TYPE);
@@ -328,7 +330,6 @@ public class DefaultErrorMessages {
         MAP.put(TYPE_PARAMETER_IS_NOT_AN_EXPRESSION, "Type parameter ''{0}'' is not an expression", NAME);
         MAP.put(TYPE_PARAMETER_ON_LHS_OF_DOT, "Type parameter ''{0}'' cannot have or inherit a companion object, so it cannot be on the left hand side of dot", NAME);
         MAP.put(NO_GENERICS_IN_SUPERTYPE_SPECIFIER, "Generic arguments of the base type must be specified");
-        MAP.put(GENERICS_IN_CONTAINING_TYPE_NOT_ALLOWED, "Generic arguments in containing types are not allowed");
         MAP.put(NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE, "Nested {0} accessed via instance reference", RENDER_CLASS_OR_OBJECT_NAME);
         MAP.put(NESTED_CLASS_SHOULD_BE_QUALIFIED, "Nested {0} should be qualified as ''{1}''", RENDER_CLASS_OR_OBJECT_NAME, TO_STRING);
 
@@ -413,6 +414,7 @@ public class DefaultErrorMessages {
         MAP.put(NULL_FOR_NONNULL_TYPE, "Null can not be a value of a non-null type {0}", RENDER_TYPE);
 
         MAP.put(ELSE_MISPLACED_IN_WHEN, "'else' entry must be the last one in a when-expression");
+        MAP.put(COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT, "Deprecated syntax. Use '||' instead of commas in when-condition for 'when' without argument");
 
         MAP.put(NO_ELSE_IN_WHEN, "'when' expression must contain 'else' branch");
         MAP.put(NON_EXHAUSTIVE_WHEN, "'when' expression contains only some variants and no 'else' branch");
@@ -511,6 +513,11 @@ public class DefaultErrorMessages {
         MAP.put(EXPANSIVE_INHERITANCE_IN_JAVA, "Violation of Non-Expansive Inheritance Restriction for {0}", STRING);
         MAP.put(REDUNDANT_PROJECTION, "Projection is redundant: the corresponding type parameter of {0} has the same variance", NAME);
         MAP.put(CONFLICTING_PROJECTION, "Projection is conflicting with variance of the corresponding type parameter of {0}. Remove the projection or replace it with ''*''", NAME);
+
+        MAP.put(TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED, "Type arguments for outer class are redundant when nested class is referenced");
+
+        MAP.put(REIFIED_TYPE_IN_CATCH_CLAUSE, "Reified type is forbidden for catch parameter");
+        MAP.put(GENERIC_THROWABLE_SUBCLASS, "Subclass of 'kotlin.Throwable' may not have type parameters");
 
         MAP.put(TYPE_MISMATCH_IN_FOR_LOOP, "The loop iterates over values of type {0} but the parameter is declared to be {1}", RENDER_TYPE,
                 RENDER_TYPE);
@@ -673,6 +680,7 @@ public class DefaultErrorMessages {
                 "Left-hand side of a callable reference with a receiver parameter cannot be empty. " +
                 "Please specify the type of the receiver before '::' explicitly");
         MAP.put(CALLABLE_REFERENCE_TO_OBJECT_MEMBER, "Callable references to object members are not supported");
+        MAP.put(CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR, "Annotation class cannot be instantiated");
 
         MAP.put(CLASS_LITERAL_LHS_NOT_A_CLASS, "Only classes are allowed on the left hand side of a class literal");
         MAP.put(ARRAY_CLASS_LITERAL_REQUIRES_ARGUMENT, "kotlin.Array class literal requires a type argument, please specify one in angle brackets");

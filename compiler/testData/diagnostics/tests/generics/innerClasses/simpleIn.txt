@@ -1,0 +1,24 @@
+package
+
+public val infered: Outer<kotlin.String>.Inner
+public fun factoryString(): Outer<kotlin.String>.Inner
+public fun </*0*/ T> infer(/*0*/ x: T): Outer<T>.Inner
+public fun main(): kotlin.Unit
+
+public final class Outer</*0*/ in E> {
+    public constructor Outer</*0*/ in E>()
+    public final fun bar(): Outer<E>.Inner
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun set(/*0*/ inner: Outer<E>.Inner): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final inner class Inner /*captured type parameters: /*0*/ in E*/ {
+        public constructor Inner()
+        public final fun baz(): Outer<E>.Inner
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final fun foo(): Outer<E>.Inner
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

@@ -30,17 +30,17 @@ internal fun String.nativeLastIndexOf(ch: Char, fromIndex: Int): Int = (this as 
 internal fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int = (this as java.lang.String).lastIndexOf(str, fromIndex)
 
 /**
- * Returns `true` if this string is equal to [anotherString], optionally ignoring character case.
+ * Returns `true` if this string is equal to [other], optionally ignoring character case.
  *
  * @param ignoreCase `true` to ignore character case when comparing strings. By default `false`.
  */
-public fun String?.equals(anotherString: String?, ignoreCase: Boolean = false): Boolean {
+public fun String?.equals(other: String?, ignoreCase: Boolean = false): Boolean {
     if (this === null)
-        return anotherString === null
+        return other === null
     return if (!ignoreCase)
-        (this as java.lang.String).equals(anotherString)
+        (this as java.lang.String).equals(other)
     else
-        (this as java.lang.String).equalsIgnoreCase(anotherString)
+        (this as java.lang.String).equalsIgnoreCase(other)
 }
 
 /**
@@ -75,7 +75,7 @@ public fun String.replaceFirst(oldChar: Char, newChar: Char, ignoreCase: Boolean
  */
 public fun String.replaceFirst(oldValue: String, newValue: String, ignoreCase: Boolean = false): String {
     val index = indexOf(oldValue, ignoreCase = ignoreCase)
-    return if (index < 0) this else this.replaceRange(index, index + oldValue.length(), newValue)
+    return if (index < 0) this else this.replaceRange(index, index + oldValue.length, newValue)
 }
 
 /**
@@ -92,6 +92,19 @@ public fun String.toLowerCase(): String = (this as java.lang.String).toLowerCase
  * Returns a new character array containing the characters from this string.
  */
 public fun String.toCharArray(): CharArray = (this as java.lang.String).toCharArray()
+
+/**
+ * Copies characters from this string into the [destination] character array and returns that array.
+ *
+ * @param destination the array to copy to.
+ * @param destinationOffset the position in the array to copy to.
+ * @param startIndex the start offset (inclusive) of the substring to copy.
+ * @param endIndex the end offset (exclusive) of the substring to copy.
+ */
+public fun String.toCharArray(destination: CharArray, destinationOffset: Int = 0, startIndex: Int = 0, endIndex: Int = length): CharArray {
+    (this as java.lang.String).getChars(startIndex, endIndex, destination, destinationOffset)
+    return destination
+}
 
 /**
  * Uses this string as a format string and returns a string obtained by substituting the specified arguments,
@@ -120,12 +133,12 @@ public fun CharSequence.split(regex: Pattern, limit: Int = 0): List<String>
 /**
  * Returns a substring of this string starting with the specified index.
  */
-public fun String.substring(beginIndex: Int): String = (this as java.lang.String).substring(beginIndex)
+public fun String.substring(startIndex: Int): String = (this as java.lang.String).substring(startIndex)
 
 /**
  * Returns the substring of this string starting and ending at the specified indices.
  */
-public fun String.substring(beginIndex: Int, endIndex: Int): String = (this as java.lang.String).substring(beginIndex, endIndex)
+public fun String.substring(startIndex: Int, endIndex: Int): String = (this as java.lang.String).substring(startIndex, endIndex)
 
 /**
  * Returns `true` if this string starts with the specified prefix.
@@ -134,17 +147,17 @@ public fun String.startsWith(prefix: String, ignoreCase: Boolean = false): Boole
     if (!ignoreCase)
         return (this as java.lang.String).startsWith(prefix)
     else
-        return regionMatches(0, prefix, 0, prefix.length(), ignoreCase)
+        return regionMatches(0, prefix, 0, prefix.length, ignoreCase)
 }
 
 /**
- * Returns `true` if a substring of this string starting at the specified offset [thisOffset] starts with the specified prefix.
+ * Returns `true` if a substring of this string starting at the specified offset [startIndex] starts with the specified prefix.
  */
-public fun String.startsWith(prefix: String, thisOffset: Int, ignoreCase: Boolean = false): Boolean {
+public fun String.startsWith(prefix: String, startIndex: Int, ignoreCase: Boolean = false): Boolean {
     if (!ignoreCase)
-        return (this as java.lang.String).startsWith(prefix, thisOffset)
+        return (this as java.lang.String).startsWith(prefix, startIndex)
     else
-        return regionMatches(thisOffset, prefix, 0, prefix.length(), ignoreCase)
+        return regionMatches(startIndex, prefix, 0, prefix.length, ignoreCase)
 }
 
 /**
@@ -154,7 +167,7 @@ public fun String.endsWith(suffix: String, ignoreCase: Boolean = false): Boolean
     if (!ignoreCase)
         return (this as java.lang.String).endsWith(suffix)
     else
-        return regionMatches(length() - suffix.length(), suffix, 0, suffix.length(), ignoreCase = true)
+        return regionMatches(length - suffix.length, suffix, 0, suffix.length, ignoreCase = true)
 }
 
 // "constructors" for String
@@ -262,17 +275,18 @@ public fun String.compareTo(other: String, ignoreCase: Boolean = false): Int {
 /**
  * Returns a new string obtained by concatenating this string and the specified string.
  */
-public fun String.concat(str: String): String = (this as java.lang.String).concat(str)
+// TODO: Deprecated in favor of operator plus, when it would be as efficient as concat
+public fun String.concat(other: String): String = (this as java.lang.String).concat(other)
 
 /**
  * Returns `true` if this string is equal to the contents of the specified CharSequence.
  */
-public fun String.contentEquals(cs: CharSequence): Boolean = (this as java.lang.String).contentEquals(cs)
+public fun String.contentEquals(charSequence: CharSequence): Boolean = (this as java.lang.String).contentEquals(charSequence)
 
 /**
  * Returns `true` if this string is equal to the contents of the specified StringBuffer.
  */
-public fun String.contentEquals(sb: StringBuffer): Boolean = (this as java.lang.String).contentEquals(sb)
+public fun String.contentEquals(stringBuilder: StringBuffer): Boolean = (this as java.lang.String).contentEquals(stringBuilder)
 
 /**
  * Copies the characters from a substring of this string into the specified character array.
@@ -281,6 +295,7 @@ public fun String.contentEquals(sb: StringBuffer): Boolean = (this as java.lang.
  * @param dst the array to copy to.
  * @param dstBegin the position in the array to copy to.
  */
+@Deprecated("Use toCharArray() instead.", ReplaceWith("toCharArray(dst, dstBegin, srcBegin, srcEnd)"))
 public fun String.getChars(srcBegin: Int, srcEnd: Int, dst: CharArray, dstBegin: Int): Unit = (this as java.lang.String).getChars(srcBegin, srcEnd, dst, dstBegin)
 
 
@@ -292,7 +307,7 @@ public fun String.intern(): String = (this as java.lang.String).intern()
 /**
  * Returns `true` if this string is empty or consists solely of whitespace characters.
  */
-public fun CharSequence.isBlank(): Boolean = length() == 0 || indices.all { this[it].isWhitespace() }
+public fun CharSequence.isBlank(): Boolean = length == 0 || indices.all { this[it].isWhitespace() }
 
 /**
  * Returns the index within this string that is offset from the given [index] by [codePointOffset] code points.
@@ -380,6 +395,7 @@ public fun String.toDouble(): Double = java.lang.Double.parseDouble(this)
 /**
  * Returns the list of all characters in this string.
  */
+@Deprecated("Use toList() instead.", ReplaceWith("toList()"))
 public fun String.toCharList(): List<Char> = toCharArray().toList()
 
 /**
@@ -388,6 +404,7 @@ public fun String.toCharList(): List<Char> = toCharArray().toList()
  * @param start the start index (inclusive).
  * @param end the end index (exclusive).
  */
+@Deprecated("Use subSequence(start, end) instead.", ReplaceWith("subSequence(start, end)"))
 public operator fun CharSequence.get(start: Int, end: Int): CharSequence = subSequence(start, end)
 
 /**
@@ -440,7 +457,7 @@ public fun CharSequence.repeat(n: Int): String {
     if (n < 0)
         throw IllegalArgumentException("Value should be non-negative, but was $n")
 
-    val sb = StringBuilder(n * length())
+    val sb = StringBuilder(n * length)
     for (i in 1..n) {
         sb.append(this)
     }

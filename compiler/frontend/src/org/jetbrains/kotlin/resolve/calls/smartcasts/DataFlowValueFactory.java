@@ -104,7 +104,7 @@ public class DataFlowValueFactory {
     }
 
     @NotNull
-    public static DataFlowValue createDataFlowValue(@NotNull ThisReceiver receiver) {
+    public static DataFlowValue createDataFlowValueForStableReceiver(@NotNull ReceiverValue receiver) {
         KotlinType type = receiver.getType();
         return new DataFlowValue(receiver, type, STABLE_VALUE, getImmanentNullability(type));
     }
@@ -124,12 +124,8 @@ public class DataFlowValueFactory {
             @NotNull BindingContext bindingContext,
             @NotNull DeclarationDescriptor containingDeclarationOrModule
     ) {
-        if (receiverValue instanceof TransientReceiver || receiverValue instanceof ScriptReceiver) {
-            KotlinType type = receiverValue.getType();
-            return new DataFlowValue(receiverValue, type, STABLE_VALUE, getImmanentNullability(type));
-        }
-        else if (receiverValue instanceof ClassReceiver || receiverValue instanceof ExtensionReceiver) {
-            return createDataFlowValue((ThisReceiver) receiverValue);
+        if (receiverValue instanceof TransientReceiver || receiverValue instanceof ImplicitReceiver) {
+            return createDataFlowValueForStableReceiver(receiverValue);
         }
         else if (receiverValue instanceof ExpressionReceiver) {
             return createDataFlowValue(((ExpressionReceiver) receiverValue).getExpression(),
@@ -294,8 +290,8 @@ public class DataFlowValueFactory {
 
     @Nullable
     private static IdentifierInfo getIdForImplicitReceiver(@NotNull ReceiverValue receiverValue, @Nullable KtExpression expression) {
-        if (receiverValue instanceof ThisReceiver) {
-            return getIdForThisReceiver(((ThisReceiver) receiverValue).getDeclarationDescriptor());
+        if (receiverValue instanceof ImplicitReceiver) {
+            return getIdForThisReceiver(((ImplicitReceiver) receiverValue).getDeclarationDescriptor());
         }
         else {
             assert !(receiverValue instanceof TransientReceiver)
@@ -377,13 +373,13 @@ public class DataFlowValueFactory {
     }
 
     private static Kind propertyKind(@NotNull PropertyDescriptor propertyDescriptor, @Nullable ModuleDescriptor usageModule) {
-        if (propertyDescriptor.isVar()) return MEMBER_VARIABLE;
-        if (!isFinal(propertyDescriptor)) return MEMBER_VALUE_WITH_GETTER;
-        if (!hasDefaultGetter(propertyDescriptor)) return MEMBER_VALUE_WITH_GETTER;
+        if (propertyDescriptor.isVar()) return MUTABLE_PROPERTY;
+        if (!isFinal(propertyDescriptor)) return PROPERTY_WITH_GETTER;
+        if (!hasDefaultGetter(propertyDescriptor)) return PROPERTY_WITH_GETTER;
         if (!invisibleFromOtherModules(propertyDescriptor)) {
             ModuleDescriptor declarationModule = DescriptorUtils.getContainingModule(propertyDescriptor);
             if (usageModule == null || !usageModule.equals(declarationModule)) {
-                return ALIEN_PUBLIC_VALUE;
+                return ALIEN_PUBLIC_PROPERTY;
             }
         }
         return STABLE_VALUE;
@@ -400,7 +396,7 @@ public class DataFlowValueFactory {
         }
         if (!(variableDescriptor instanceof LocalVariableDescriptor) && !(variableDescriptor instanceof ParameterDescriptor)) return OTHER;
         if (!variableDescriptor.isVar()) return STABLE_VALUE;
-        if (variableDescriptor instanceof SyntheticFieldDescriptor) return MEMBER_VARIABLE;
+        if (variableDescriptor instanceof SyntheticFieldDescriptor) return MUTABLE_PROPERTY;
 
         // Local variable classification: PREDICTABLE or UNPREDICTABLE
         PreliminaryDeclarationVisitor preliminaryVisitor =

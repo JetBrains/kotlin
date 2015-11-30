@@ -63,7 +63,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ThisReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -302,7 +302,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private JvmClassSignature signature() {
         BothSignatureWriter sw = new BothSignatureWriter(BothSignatureWriter.Mode.CLASS);
 
-        typeMapper.writeFormalTypeParameters(descriptor.getTypeConstructor().getParameters(), sw);
+        typeMapper.writeFormalTypeParameters(descriptor.getDeclaredTypeParameters(), sw);
 
         sw.writeSuperclass();
         if (superClassType == null) {
@@ -851,7 +851,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
             // Invoke the object constructor but ignore the result because INSTANCE$ will be initialized in the first line of <init>
             InstructionAdapter v = createOrGetClInitCodegen().v;
-            markLineNumberForSyntheticFunction(element, v);
+            markLineNumberForElement(element, v);
             v.anew(classAsmType);
             v.invokespecial(classAsmType.getInternalName(), "<init>", "()V", false);
 
@@ -942,14 +942,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         ConstructorContext constructorContext = context.intoConstructor(constructorDescriptor);
 
-        KtPrimaryConstructor primaryConstructor = myClass.getPrimaryConstructor();
+        final KtPrimaryConstructor primaryConstructor = myClass.getPrimaryConstructor();
         JvmDeclarationOrigin origin = JvmDeclarationOriginKt
                 .OtherOrigin(primaryConstructor != null ? primaryConstructor : myClass, constructorDescriptor);
         functionCodegen.generateMethod(origin, constructorDescriptor, constructorContext,
                    new FunctionGenerationStrategy.CodegenBased<ConstructorDescriptor>(state, constructorDescriptor) {
                        @Override
                        public void doGenerateBody(@NotNull ExpressionCodegen codegen, @NotNull JvmMethodSignature signature) {
-                           generatePrimaryConstructorImpl(callableDescriptor, codegen, delegationFieldsInfo);
+                           generatePrimaryConstructorImpl(callableDescriptor, codegen, delegationFieldsInfo, primaryConstructor);
                        }
                    }
         );
@@ -993,9 +993,12 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generatePrimaryConstructorImpl(
             @NotNull ConstructorDescriptor constructorDescriptor,
             @NotNull ExpressionCodegen codegen,
-            @NotNull DelegationFieldsInfo fieldsInfo
+            @NotNull DelegationFieldsInfo fieldsInfo,
+            @Nullable KtPrimaryConstructor primaryConstructor
     ) {
         InstructionAdapter iv = codegen.v;
+
+        markLineNumberForConstructor(constructorDescriptor, primaryConstructor, codegen);
 
         generateClosureInitialization(iv);
 
@@ -1053,6 +1056,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     ) {
         InstructionAdapter iv = codegen.v;
 
+        KtSecondaryConstructor constructor =
+                (KtSecondaryConstructor) DescriptorToSourceUtils.descriptorToDeclaration(constructorDescriptor);
+
+        markLineNumberForConstructor(constructorDescriptor, constructor, codegen);
+
         ResolvedCall<ConstructorDescriptor> constructorDelegationCall =
                 getDelegationConstructorCall(bindingContext, constructorDescriptor);
         ConstructorDescriptor delegateConstructor = constructorDelegationCall == null ? null :
@@ -1065,14 +1073,35 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             generateInitializers(codegen);
         }
 
-        KtSecondaryConstructor constructor =
-                (KtSecondaryConstructor) DescriptorToSourceUtils.descriptorToDeclaration(constructorDescriptor);
         assert constructor != null;
         if (constructor.hasBody()) {
             codegen.gen(constructor.getBodyExpression(), Type.VOID_TYPE);
         }
 
         iv.visitInsn(RETURN);
+    }
+
+    private static void markLineNumberForConstructor(
+            @NotNull ConstructorDescriptor descriptor,
+            @Nullable KtConstructor constructor,
+            @NotNull ExpressionCodegen codegen
+    ) {
+        if (constructor == null) {
+            markLineNumberForDescriptor(descriptor.getContainingDeclaration(), codegen.v);
+        }
+        else if (constructor.hasBody() && !(constructor instanceof KtSecondaryConstructor && !((KtSecondaryConstructor) constructor).hasImplicitDelegationCall())) {
+            KtBlockExpression bodyExpression = constructor.getBodyExpression();
+            List<KtExpression> statements = bodyExpression != null ? bodyExpression.getStatements() : Collections.<KtExpression>emptyList();
+            if (!statements.isEmpty()) {
+                codegen.markStartLineNumber(statements.iterator().next());
+            }
+            else {
+                codegen.markStartLineNumber(bodyExpression != null ? bodyExpression : constructor);
+            }
+        }
+        else {
+            codegen.markStartLineNumber(constructor);
+        }
     }
 
     private void generateInitializers(@NotNull final ExpressionCodegen codegen) {
@@ -1206,7 +1235,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     ResolvedCall<? extends CallableDescriptor> call = CallUtilKt.getResolvedCall(expr, bindingContext);
                     if (call != null) {
                         lookupReceiver(call.getDispatchReceiver());
-                        lookupReceiver(call.getExtensionReceiver());
+                        lookupReceiver((ReceiverValue) call.getExtensionReceiver());
                     }
                 }
                 else if (descriptor instanceof VariableDescriptor) {
@@ -1220,7 +1249,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
 
             private void lookupReceiver(@NotNull ReceiverValue value) {
-                if (value instanceof ThisReceiver) {
+                if (value instanceof ImplicitReceiver) {
                     if (value instanceof ExtensionReceiver) {
                         ReceiverParameterDescriptor parameter =
                                 ((ExtensionReceiver) value).getDeclarationDescriptor().getExtensionReceiverParameter();
@@ -1228,7 +1257,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                         lookupInContext(parameter);
                     }
                     else {
-                        lookupInContext(((ThisReceiver) value).getDeclarationDescriptor());
+                        lookupInContext(((ImplicitReceiver) value).getDeclarationDescriptor());
                     }
                 }
             }
@@ -1264,8 +1293,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                     initializer.accept(visitor);
                 }
             }
-            else if (declaration instanceof KtClassInitializer) {
-                KtClassInitializer initializer = (KtClassInitializer) declaration;
+            else if (declaration instanceof KtAnonymousInitializer) {
+                KtAnonymousInitializer initializer = (KtAnonymousInitializer) declaration;
                 initializer.accept(visitor);
             }
             else if (declaration instanceof KtSecondaryConstructor) {

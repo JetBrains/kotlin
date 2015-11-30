@@ -10,4 +10,4 @@ Any.(Int) -> String
 
 (t: Any, u: Int) -> kotlin.String
 
-@Extension Function2<Any, Int, String>
+@ExtensionFunctionType Function2<Any, Int, String>

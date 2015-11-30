@@ -253,12 +253,6 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
             doJvmTest(fileName);
         }
 
-        @TestMetadata("wrongKotlinSignature.args")
-        public void testWrongKotlinSignature() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/wrongKotlinSignature.args");
-            doJvmTest(fileName);
-        }
-
         @TestMetadata("wrongScriptWithNoSource.args")
         public void testWrongScriptWithNoSource() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/jvm/wrongScriptWithNoSource.args");
@@ -272,6 +266,12 @@ public class KotlincExecutableTestGenerated extends AbstractKotlincExecutableTes
     public static class Js extends AbstractKotlincExecutableTest {
         public void testAllFilesPresentInJs() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cli/js"), Pattern.compile("^(.+)\\.args$"), false);
+        }
+
+        @TestMetadata("createKjsm.args")
+        public void testCreateKjsm() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cli/js/createKjsm.args");
+            doJsTest(fileName);
         }
 
         @TestMetadata("createMetadata.args")

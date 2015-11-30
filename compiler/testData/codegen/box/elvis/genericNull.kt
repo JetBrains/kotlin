@@ -1,4 +1,4 @@
-fun foo<T: Number?>(t: T) {
+fun <T: Number?> foo(t: T) {
     (t ?: 42).toInt()
 }
 

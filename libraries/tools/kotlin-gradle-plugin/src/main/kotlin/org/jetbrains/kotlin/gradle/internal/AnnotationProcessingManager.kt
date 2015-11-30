@@ -96,7 +96,7 @@ private fun Project.createKotlinAfterJavaTask(
     }
 
     getAllTasks(false)
-            .flatMap { it.getValue() }
+            .flatMap { it.value }
             .filter { javaTask in it.taskDependencies.getDependencies(it) }
             .forEach { it.dependsOn(kotlinAfterJavaTask) }
 
@@ -271,7 +271,7 @@ public class AnnotationProcessingManager(
         modifyCompilerArguments { args ->
             val argIndex = args.indexOfFirst { name == it }
 
-            if (argIndex >= 0 && args.size() > (argIndex + 1)) {
+            if (argIndex >= 0 && args.size > (argIndex + 1)) {
                 args[argIndex + 1] = value(args[argIndex + 1])
             }
             else {
@@ -313,7 +313,7 @@ public class AnnotationProcessingManager(
 
         fun processLines(lines: Sequence<String>) {
             for (line in lines) {
-                if (line.isBlank() || !JAVA_FQNAME_PATTERN.matcher(line).matches()) continue
+                if (line.isBlank() || !JAVA_FQNAME_PATTERN.matches(line)) continue
                 annotationProcessors.add(line)
             }
         }
@@ -334,7 +334,7 @@ public class AnnotationProcessingManager(
     }
 
     private fun invokeCoreKaptMethod(methodName: String, vararg args: Any): Any {
-        val array = arrayOfNulls<Class<*>>(args.size())
+        val array = arrayOfNulls<Class<*>>(args.size)
         args.forEachIndexed { i, arg -> array[i] = arg.javaClass }
         val method = getCoreKaptPackageClass().getMethod(methodName, *array)
         return method.invoke(null, *args)

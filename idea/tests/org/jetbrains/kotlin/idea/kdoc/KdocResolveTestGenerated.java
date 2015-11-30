@@ -60,6 +60,12 @@ public class KdocResolveTestGenerated extends AbstractReferenceResolveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("CompanionObjectMember.kt")
+    public void testCompanionObjectMember() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/CompanionObjectMember.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("ConstructorParamReference.kt")
     public void testConstructorParamReference() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/ConstructorParamReference.kt");
@@ -69,6 +75,12 @@ public class KdocResolveTestGenerated extends AbstractReferenceResolveTest {
     @TestMetadata("ImportedClassReference.kt")
     public void testImportedClassReference() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/ImportedClassReference.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("Overloads.kt")
+    public void testOverloads() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/Overloads.kt");
         doTest(fileName);
     }
 
@@ -93,6 +105,12 @@ public class KdocResolveTestGenerated extends AbstractReferenceResolveTest {
     @TestMetadata("SeeReference.kt")
     public void testSeeReference() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/SeeReference.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("StaticMember.kt")
+    public void testStaticMember() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/kdoc/resolve/StaticMember.kt");
         doTest(fileName);
     }
 

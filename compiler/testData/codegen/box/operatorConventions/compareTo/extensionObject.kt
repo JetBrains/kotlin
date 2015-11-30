@@ -1,6 +1,6 @@
 class A(val x: Int)
 
-fun A.compareTo(other: A) = x.compareTo(other.x)
+operator fun A.compareTo(other: A) = x.compareTo(other.x)
 
 fun checkLess(x: A, y: A) = when {
     x >= y    -> "Fail $x >= $y"

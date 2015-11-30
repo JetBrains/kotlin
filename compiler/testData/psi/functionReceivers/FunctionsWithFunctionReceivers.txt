@@ -418,12 +418,13 @@ JetFile: FunctionsWithFunctionReceivers.kt
     PsiWhiteSpace('\n')
     PsiElement(fun)('fun')
     PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('f')
     TYPE_PARAMETER_LIST
       PsiElement(LT)('<')
       TYPE_PARAMETER
         PsiElement(IDENTIFIER)('T')
       PsiElement(GT)('>')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('f')
     VALUE_PARAMETER_LIST
       PsiElement(LPAR)('(')
       PsiElement(RPAR)(')')

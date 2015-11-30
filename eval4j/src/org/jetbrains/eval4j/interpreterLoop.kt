@@ -22,7 +22,7 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.util.Printer
-import java.util.ArrayList
+import java.util.*
 
 public interface InterpreterResult {
     override fun toString(): String
@@ -61,7 +61,7 @@ public interface InterpretationEventHandler {
 }
 
 abstract class ThrownFromEvalExceptionBase(cause: Throwable): RuntimeException(cause) {
-    override fun toString(): String = "Thrown by evaluator: ${getCause()}"
+    override fun toString(): String = "Thrown by evaluator: ${cause}"
 }
 
 class BrokenCode(cause: Throwable): ThrownFromEvalExceptionBase(cause)
@@ -77,7 +77,7 @@ public fun interpreterLoop(
         eval: Eval,
         handler: InterpretationEventHandler = InterpretationEventHandler.NONE
 ): InterpreterResult {
-    val firstInsn = m.instructions.getFirst()
+    val firstInsn = m.instructions.first
     if (firstInsn == null) throw IllegalArgumentException("Empty method")
 
     var currentInsn = firstInsn
@@ -122,9 +122,9 @@ public fun interpreterLoop(
             try {
                 val exceptionClass = exception.javaClass
                 val _class = Class.forName(
-                        exceptionType.getInternalName().replace('/', '.'),
+                        exceptionType.internalName.replace('/', '.'),
                         true,
-                        exceptionClass.getClassLoader()
+                        exceptionClass.classLoader
                 )
                 _class.isAssignableFrom(exceptionClass)
             }
@@ -137,8 +137,8 @@ public fun interpreterLoop(
 
     try {
         loop@ while (true) {
-            val insnOpcode = currentInsn.getOpcode()
-            val insnType = currentInsn.getType()
+            val insnOpcode = currentInsn.opcode
+            val insnType = currentInsn.type
 
             when (insnType) {
                 AbstractInsnNode.LABEL,
@@ -168,7 +168,7 @@ public fun interpreterLoop(
                         IRETURN, LRETURN, FRETURN, DRETURN, ARETURN -> {
                             val value = frame.getStackTop()
                             val expectedType = Type.getReturnType(m.desc)
-                            if (expectedType.getSort() == Type.OBJECT || expectedType.getSort() == Type.ARRAY) {
+                            if (expectedType.sort == Type.OBJECT || expectedType.sort == Type.ARRAY) {
                                 val coerced = if (value != NULL_VALUE && value.asmType != expectedType)
                                                     ObjectValue(value.obj(), expectedType)
                                               else value
@@ -177,7 +177,7 @@ public fun interpreterLoop(
                             if (value.asmType != expectedType) {
                                 assert(insnOpcode == IRETURN) { "Only ints should be coerced: ${Printer.OPCODES[insnOpcode]}" }
 
-                                val coerced = when (expectedType.getSort()) {
+                                val coerced = when (expectedType.sort) {
                                     Type.BOOLEAN -> boolean(value.boolean)
                                     Type.BYTE -> byte(value.int.toByte())
                                     Type.SHORT -> short(value.int.toShort())
@@ -221,7 +221,7 @@ public fun interpreterLoop(
                         frame.execute(currentInsn, interpreter)
                     }
                     catch (e: ThrownFromEvalExceptionBase) {
-                        val exception = e.getCause()!!
+                        val exception = e.cause!!
                         val exceptionValue = ObjectValue(exception, Type.getType(exception.javaClass))
                         val handled = handler.exceptionThrown(frame, currentInsn,
                                 exceptionValue)
@@ -243,7 +243,7 @@ public fun interpreterLoop(
             val handled = handler.instructionProcessed(currentInsn)
             if (handled != null) return handled
 
-            goto(currentInsn.getNext())
+            goto(currentInsn.next)
         }
     }
     catch(e: ResultException) {
@@ -251,7 +251,7 @@ public fun interpreterLoop(
     }
 }
 
-private fun <T: Value> Frame<T>.getStackTop(i: Int = 0) = this.getStack(this.getStackSize() - 1 - i) ?: throwBrokenCodeException(IllegalArgumentException("Couldn't get value with index = $i from top of stack"))
+private fun <T: Value> Frame<T>.getStackTop(i: Int = 0) = this.getStack(this.stackSize - 1 - i) ?: throwBrokenCodeException(IllegalArgumentException("Couldn't get value with index = $i from top of stack"))
 
 // Copied from org.jetbrains.org.objectweb.asm.tree.analysis.Analyzer.analyze()
 fun computeHandlers(m: MethodNode): Array<out List<TryCatchBlockNode>?> {

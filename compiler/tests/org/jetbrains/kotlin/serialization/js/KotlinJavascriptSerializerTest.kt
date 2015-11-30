@@ -51,7 +51,7 @@ public class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
         val configuration = CompilerConfiguration()
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
 
-        configuration.addKotlinSourceRoots(srcDirs map { it.path })
+        configuration.addKotlinSourceRoots(srcDirs.map { it.path })
 
         serialize(configuration, metaFile)
         val module = deserialize(metaFile)

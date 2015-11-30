@@ -2,7 +2,7 @@ package foo
 
 import java.util.*
 
-fun <T> ArrayList<T>.plus(other: Collection<T>): List<T> {
+operator fun <T> ArrayList<T>.plus(other: Collection<T>): List<T> {
     val c = ArrayList<T>()
     c.addAll(this)
     c.addAll(other)

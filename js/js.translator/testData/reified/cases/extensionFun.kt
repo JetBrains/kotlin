@@ -6,7 +6,7 @@ open class A
 class B
 class C : A()
 
-inline fun Any.canBeCastedTo<reified T>(): Boolean = this is T
+inline fun <reified T> Any.canBeCastedTo(): Boolean = this is T
 
 fun box(): String {
     assertEquals(true, A().canBeCastedTo<A>(), "A().canBeCastedTo<A>()")

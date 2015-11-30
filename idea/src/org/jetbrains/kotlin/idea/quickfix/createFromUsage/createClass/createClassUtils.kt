@@ -61,19 +61,20 @@ internal fun getTargetParentByQualifier(
             if (qualifierDescriptor.fqName != file.getPackageFqName()) {
                 JavaPsiFacade.getInstance(project).findPackage(qualifierDescriptor.fqName.asString())
             }
-            else file as PsiElement
+            else file as PsiElement // KT-9972
         else ->
             null
     } ?: return null
     return if (targetParent.canRefactor()) return targetParent else null
 }
 
-internal fun getTargetParentByCall(call: Call, file: KtFile): PsiElement? {
+internal fun getTargetParentByCall(call: Call, file: KtFile, context: BindingContext): PsiElement? {
     val receiver = call.getExplicitReceiver()
     return when (receiver) {
         ReceiverValue.NO_RECEIVER -> getTargetParentByQualifier(file, false, null)
-        is Qualifier -> getTargetParentByQualifier(file, true, receiver.resultingDescriptor)
-        else -> getTargetParentByQualifier(file, true, receiver.getType().getConstructor().getDeclarationDescriptor())
+        is Qualifier -> getTargetParentByQualifier(file, true, context[BindingContext.REFERENCE_TARGET, receiver.referenceExpression])
+        is ReceiverValue -> getTargetParentByQualifier(file, true, receiver.getType().getConstructor().getDeclarationDescriptor())
+        else -> throw AssertionError("Unexpected receiver: $receiver")
     }
 }
 

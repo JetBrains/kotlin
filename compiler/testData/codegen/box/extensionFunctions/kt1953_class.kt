@@ -1,7 +1,7 @@
 class A {
     private val sb: StringBuilder = StringBuilder()
 
-    fun String.plus() {
+    operator fun String.unaryPlus() {
         sb.append(this)
     }
 

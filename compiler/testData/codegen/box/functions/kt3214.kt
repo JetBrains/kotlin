@@ -7,15 +7,15 @@ class B {
 }
 
 fun test1(a: A): Int {
-    return a[1]
+    return a.get(1)
 }
 
 fun test2(a: A): Int {
-    return a[1, 2]
+    return a.get(1, 2)
 }
 
 fun test3(b: B): Int {
-    return b[Unit, Unit]
+    return b.get(Unit, Unit)
 }
 
 

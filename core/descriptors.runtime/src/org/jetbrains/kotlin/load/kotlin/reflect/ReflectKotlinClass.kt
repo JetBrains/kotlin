@@ -28,15 +28,15 @@ import java.lang.reflect.Field
 import java.lang.reflect.Method
 
 @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
-private val TYPES_ELIGIBLE_FOR_SIMPLE_VISIT = setOf(
+private val TYPES_ELIGIBLE_FOR_SIMPLE_VISIT = setOf<Class<*>>(
         // Primitives
-        javaClass<java.lang.Integer>(), javaClass<java.lang.Character>(), javaClass<java.lang.Byte>(), javaClass<java.lang.Long>(),
-        javaClass<java.lang.Short>(), javaClass<java.lang.Boolean>(), javaClass<java.lang.Double>(), javaClass<java.lang.Float>(),
+        java.lang.Integer::class.java, java.lang.Character::class.java, java.lang.Byte::class.java, java.lang.Long::class.java,
+        java.lang.Short::class.java, java.lang.Boolean::class.java, java.lang.Double::class.java, java.lang.Float::class.java,
         // Arrays of primitives
-        javaClass<IntArray>(), javaClass<CharArray>(), javaClass<ByteArray>(), javaClass<LongArray>(),
-        javaClass<ShortArray>(), javaClass<BooleanArray>(), javaClass<DoubleArray>(), javaClass<FloatArray>(),
+        IntArray::class.java, CharArray::class.java, ByteArray::class.java, LongArray::class.java,
+        ShortArray::class.java, BooleanArray::class.java, DoubleArray::class.java, FloatArray::class.java,
         // Others
-        javaClass<Class<*>>(), javaClass<String>()
+        Class::class.java, String::class.java
 )
 
 public class ReflectKotlinClass private constructor(

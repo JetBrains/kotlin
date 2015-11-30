@@ -1,8 +1,8 @@
 class A
 
 class B {
-    fun A.invoke() = "##"
-    fun A.invoke(i: Int) = "#${i}"
+    operator fun A.invoke() = "##"
+    operator fun A.invoke(i: Int) = "#${i}"
 }
 
 fun foo() = A()

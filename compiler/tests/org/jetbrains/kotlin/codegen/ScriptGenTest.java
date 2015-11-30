@@ -17,27 +17,41 @@
 package org.jetbrains.kotlin.codegen;
 
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.parsing.KotlinScriptDefinition;
-import org.jetbrains.kotlin.parsing.KotlinScriptDefinitionProvider;
-import org.jetbrains.kotlin.resolve.AnalyzerScriptParameter;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
+import org.jetbrains.kotlin.script.KotlinScriptDefinition;
+import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider;
+import org.jetbrains.kotlin.script.ScriptParameter;
+import org.jetbrains.kotlin.scripts.TestScriptDefinition;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Collections;
+
+import static java.util.Collections.singletonList;
 
 public class ScriptGenTest extends CodegenTestCase {
     private static final KotlinScriptDefinition FIB_SCRIPT_DEFINITION =
-            new KotlinScriptDefinition(".lang.kt",
-                                       new AnalyzerScriptParameter(Name.identifier("num"), JvmPlatform.INSTANCE$.getBuiltIns().getIntType()));
+            new TestScriptDefinition(
+                    ".lang.kt",
+                    singletonList(new ScriptParameter(Name.identifier("num"), JvmPlatform.INSTANCE$.getBuiltIns().getIntType()))
+            );
+    private static final KotlinScriptDefinition NO_PARAM_SCRIPT_DEFINITION =
+            new TestScriptDefinition(
+                    ".kts",
+                    Collections.<ScriptParameter>emptyList()
+            );
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-        KotlinScriptDefinitionProvider.getInstance(myEnvironment.getProject()).addScriptDefinition(FIB_SCRIPT_DEFINITION);
+        KotlinScriptDefinitionProvider.getInstance(myEnvironment.getProject()).setScriptDefinitions(
+                Arrays.asList(FIB_SCRIPT_DEFINITION, NO_PARAM_SCRIPT_DEFINITION)
+        );
     }
 
     public void testLanguage() throws Exception {
@@ -69,10 +83,8 @@ public class ScriptGenTest extends CodegenTestCase {
         Method resultMethod = aClass.getDeclaredMethod("getResult");
         assertTrue((resultMethod.getModifiers() & Opcodes.ACC_FINAL) != 0);
         assertTrue((resultMethod.getModifiers() & Opcodes.ACC_PUBLIC) != 0);
-        Field rv = aClass.getField("rv");
         assertTrue((result.getModifiers() & Opcodes.ACC_PRIVATE) != 0);
         Object script = constructor.newInstance();
-        assertEquals(12, rv.get(script));
         assertEquals(8, result.get(script));
         assertEquals(8, resultMethod.invoke(script));
     }

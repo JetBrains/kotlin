@@ -38,8 +38,7 @@ public class KotlinPullUpHelperFactory : PullUpHelperFactory {
         val sourceClass = sourceClass.unwrapped as? KtClassOrObject ?: return null
         val targetClass = targetClass.unwrapped as? PsiNamedElement ?: return null
         val membersToMove = membersToMove
-                .map { it.namedUnwrappedElement as? KtNamedDeclaration }
-                .filterNotNull()
+                .mapNotNull { it.namedUnwrappedElement as? KtNamedDeclaration }
                 .sortedBy { it.startOffset }
         return KotlinPullUpData(sourceClass, targetClass, membersToMove)
     }

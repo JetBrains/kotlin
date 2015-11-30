@@ -61,7 +61,7 @@ public class HierarchySearchRequest<T: PsiElement> (
         override val searchScope: SearchScope,
         val searchDeeply: Boolean = true
 ) : SearchRequestWithElement<T> {
-    fun copy<U: PsiElement>(newOriginalElement: U): HierarchySearchRequest<U> =
+    fun <U: PsiElement> copy(newOriginalElement: U): HierarchySearchRequest<U> =
             HierarchySearchRequest(newOriginalElement, searchScope, searchDeeply)
 }
 

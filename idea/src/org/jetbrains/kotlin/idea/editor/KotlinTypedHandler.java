@@ -52,8 +52,16 @@ import org.jetbrains.kotlin.psi.KtSimpleNameStringTemplateEntry;
 public class KotlinTypedHandler extends TypedHandlerDelegate {
     private final static TokenSet CONTROL_FLOW_EXPRESSIONS = TokenSet.create(
             KtNodeTypes.IF,
+            KtNodeTypes.ELSE,
             KtNodeTypes.FOR,
-            KtNodeTypes.WHILE);
+            KtNodeTypes.WHILE,
+            KtNodeTypes.TRY);
+
+    private final static TokenSet SUPPRESS_AUTO_INSERT_CLOSE_BRACE_AFTER = TokenSet.create(
+            KtTokens.RPAR,
+            KtTokens.ELSE_KEYWORD,
+            KtTokens.TRY_KEYWORD
+    );
 
     private boolean kotlinLTTyped;
 
@@ -90,9 +98,11 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
                     iterator.retreat();
                 }
 
-                if (iterator.atEnd() || iterator.getTokenType() != KtTokens.RPAR) {
+                if (iterator.atEnd() || !(SUPPRESS_AUTO_INSERT_CLOSE_BRACE_AFTER.contains(iterator.getTokenType()))) {
                     return Result.CONTINUE;
                 }
+
+                int tokenBeforeBraceOffset = iterator.getStart();
 
                 PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
 
@@ -101,9 +111,7 @@ public class KotlinTypedHandler extends TypedHandlerDelegate {
                     PsiElement parent = leaf.getParent();
                     if (parent != null && CONTROL_FLOW_EXPRESSIONS.contains(parent.getNode().getElementType())) {
                         ASTNode nonWhitespaceSibling = FormatterUtil.getPreviousNonWhitespaceSibling(leaf.getNode());
-                        if (nonWhitespaceSibling != null && nonWhitespaceSibling.getText().equals(")")) {
-                            // Check that ')' belongs to same parent
-
+                        if (nonWhitespaceSibling != null && nonWhitespaceSibling.getStartOffset() == tokenBeforeBraceOffset) {
                             EditorModificationUtil.insertStringAtCaret(editor, "{", false, true);
                             indentBrace(project, editor, '{');
 

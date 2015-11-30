@@ -2,8 +2,8 @@
 //KT-2728 Can't compile A()()
 
 class A {
-    fun invoke() = "##"
-    fun invoke(i: Int) = "#${i}"
+    operator fun invoke() = "##"
+    operator fun invoke(i: Int) = "#${i}"
 }
 
 fun foo() = A()

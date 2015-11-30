@@ -19,7 +19,7 @@ class Frame {
   public void addWindowListener(WindowListener listener){}
 }
 
-public final class Client extends Frame {
+final class Client extends Frame {
   Client() {
     WindowAdapter a = new WindowAdapter() {
       @Override

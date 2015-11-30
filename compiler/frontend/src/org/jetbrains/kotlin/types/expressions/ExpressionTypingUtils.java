@@ -31,12 +31,14 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
+import org.jetbrains.kotlin.resolve.ObservableBindingTrace;
+import org.jetbrains.kotlin.resolve.TraceBasedRedeclarationHandler;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ClassReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
@@ -49,41 +51,15 @@ import static org.jetbrains.kotlin.resolve.BindingContext.PROCESSED;
 
 public class ExpressionTypingUtils {
 
-    @NotNull
-    public static ReceiverValue normalizeReceiverValueForVisibility(@NotNull ReceiverValue receiverValue, @NotNull BindingContext trace) {
-        if (receiverValue instanceof ExpressionReceiver) {
-            KtExpression expression = ((ExpressionReceiver) receiverValue).getExpression();
-            KtReferenceExpression referenceExpression = null;
-            if (expression instanceof KtThisExpression) {
-                referenceExpression = ((KtThisExpression) expression).getInstanceReference();
-            }
-            else if (expression instanceof KtConstructorDelegationReferenceExpression) {
-                referenceExpression = (KtReferenceExpression) expression;
-            }
-
-            if (referenceExpression != null) {
-                DeclarationDescriptor descriptor = trace.get(BindingContext.REFERENCE_TARGET, referenceExpression);
-                if (descriptor instanceof ClassDescriptor) {
-                    return new ClassReceiver((ClassDescriptor) descriptor.getOriginal());
-                }
-            }
-        }
-        return receiverValue;
-    }
-
-    @Nullable
-    public static ExpressionReceiver getExpressionReceiver(@NotNull KtExpression expression, @Nullable KotlinType type) {
-        if (type == null) return null;
-        return new ExpressionReceiver(expression, type);
-    }
-
     @Nullable
     public static ExpressionReceiver getExpressionReceiver(
             @NotNull ExpressionTypingFacade facade,
             @NotNull KtExpression expression,
             ExpressionTypingContext context
     ) {
-        return getExpressionReceiver(expression, facade.getTypeInfo(expression, context).getType());
+        KotlinType type = facade.getTypeInfo(expression, context).getType();
+        if (type == null) return null;
+        return ExpressionReceiver.Companion.create(expression, type, context.trace.getBindingContext());
     }
 
     @NotNull
@@ -93,7 +69,7 @@ public class ExpressionTypingUtils {
             ExpressionTypingContext context
     ) {
         KotlinType type = safeGetType(facade.safeGetTypeInfo(expression, context));
-        return new ExpressionReceiver(expression, type);
+        return ExpressionReceiver.Companion.create(expression, type, context.trace.getBindingContext());
     }
 
     @NotNull
@@ -104,9 +80,9 @@ public class ExpressionTypingUtils {
     }
 
     @NotNull
-    public static LexicalWritableScope newWritableScopeImpl(ExpressionTypingContext context, @NotNull String scopeDebugName) {
-        LexicalWritableScope scope = new LexicalWritableScope(
-                context.scope, context.scope.getOwnerDescriptor(), false, null, new TraceBasedRedeclarationHandler(context.trace), scopeDebugName);
+    public static LexicalWritableScope newWritableScopeImpl(ExpressionTypingContext context, @NotNull LexicalScopeKind scopeKind) {
+        LexicalWritableScope scope = new LexicalWritableScope(context.scope, context.scope.getOwnerDescriptor(), false, null,
+                                                              new TraceBasedRedeclarationHandler(context.trace), scopeKind);
         scope.changeLockLevel(LexicalWritableScope.LockLevel.BOTH);
         return scope;
     }

@@ -3,9 +3,9 @@ package foo
 import java.util.ArrayList
 
 class A {
-    fun component1(): Int = 1
+    operator fun component1(): Int = 1
 }
-fun A.component2(): String = "n"
+operator fun A.component2(): String = "n"
 
 fun box(): String {
     val list = ArrayList<A>()

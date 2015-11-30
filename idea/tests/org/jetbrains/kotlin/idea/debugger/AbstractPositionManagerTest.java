@@ -28,6 +28,7 @@ import com.intellij.debugger.jdi.VirtualMachineProxyImpl;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.sun.jdi.Location;
 import com.sun.jdi.ReferenceType;
@@ -202,6 +203,12 @@ public abstract class AbstractPositionManagerTest extends KotlinLightCodeInsight
                     virtualMachineProxy = new MockVirtualMachineProxy(this, referencesByName);
                 }
                 return virtualMachineProxy;
+            }
+
+            @NotNull
+            @Override
+            public GlobalSearchScope getSearchScope() {
+                return GlobalSearchScope.allScope(getProject());
             }
         };
     }

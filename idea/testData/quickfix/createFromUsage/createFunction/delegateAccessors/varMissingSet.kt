@@ -2,7 +2,7 @@
 import kotlin.reflect.KProperty
 
 class F {
-    fun getValue(x: X, property: KProperty<*>): Int = 1
+    operator fun getValue(x: X, property: KProperty<*>): Int = 1
 }
 
 class X {

@@ -1,2 +1,1 @@
-
-// expected: rv: null
+// expected: rv: <nofield>

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.codegen.inline;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.codegen.StackValue;
 import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode;
 
 import java.util.Collection;
@@ -49,5 +50,16 @@ public class InlinedLambdaRemapper extends FieldRemapper {
     @Override
     public boolean isInsideInliningLambda() {
         return true;
+    }
+
+
+    @Nullable
+    @Override
+    public StackValue getFieldForInline(@NotNull FieldInsnNode node, @Nullable StackValue prefix) {
+        if (parent.isRoot()) {
+            return super.getFieldForInline(node, prefix);
+        } else {
+            return parent.getFieldForInline(node, prefix);
+        }
     }
 }

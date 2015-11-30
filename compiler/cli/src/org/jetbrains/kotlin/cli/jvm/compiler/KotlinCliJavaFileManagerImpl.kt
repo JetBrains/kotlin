@@ -57,13 +57,12 @@ public class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager)
         // which supposedly shouldn't have errors so the dependencies exist in general
         // Most classes are top level classes so we will try to find them fast
         // but we must sometimes fallback to support finding inner/nested classes
-        return qName.toSafeTopLevelClassId()?.let { classId -> findClass(classId, scope) }
-               ?: super<CoreJavaFileManager>.findClass(qName, scope)
+        return qName.toSafeTopLevelClassId()?.let { classId -> findClass(classId, scope) } ?: super.findClass(qName, scope)
     }
 
     override fun findClasses(qName: String, scope: GlobalSearchScope): Array<PsiClass> {
         return perfCounter.time {
-            val classIdAsTopLevelClass = qName.toSafeTopLevelClassId() ?: return@time super<CoreJavaFileManager>.findClasses(qName, scope)
+            val classIdAsTopLevelClass = qName.toSafeTopLevelClassId() ?: return@time super.findClasses(qName, scope)
 
             val result = ArrayList<PsiClass>()
             val classNameWithInnerClasses = classIdAsTopLevelClass.getRelativeClassName().asString()
@@ -76,7 +75,7 @@ public class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager)
                 true
             }
             if (result.isEmpty()) {
-                super<CoreJavaFileManager>.findClasses(qName, scope)
+                super.findClasses(qName, scope)
             }
             else {
                 result.toTypedArray()
@@ -122,7 +121,7 @@ public class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager)
     }
 
     companion object {
-        private val LOG = Logger.getInstance(javaClass<KotlinCliJavaFileManagerImpl>())
+        private val LOG = Logger.getInstance(KotlinCliJavaFileManagerImpl::class.java)
 
         private fun findClassInPsiFile(classNameWithInnerClassesDotSeparated: String, file: PsiClassOwner): PsiClass? {
             for (topLevelClass in file.getClasses()) {

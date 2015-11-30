@@ -184,6 +184,6 @@ public abstract class DeserializedMemberScope protected constructor(
     }
 
     private fun recordLookup(name: Name, from: LookupLocation) {
-        c.components.lookupTracker.record(from, c.containingDeclaration, this, name)
+        c.components.lookupTracker.record(from, c.containingDeclaration, name)
     }
 }

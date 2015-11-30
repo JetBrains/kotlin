@@ -28,8 +28,6 @@ import org.jetbrains.kotlin.idea.util.psi.patternMatching.*
 import kotlin.test.*
 import com.intellij.openapi.application.*
 import org.jetbrains.kotlin.idea.core.refactoring.getExtractionContainers
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.EXTRACT_FUNCTION
-import org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty.*
 import java.util.*
 
 public class KotlinIntroducePropertyHandler(
@@ -54,7 +52,7 @@ public class KotlinIntroducePropertyHandler(
         }
     }
 
-    public fun selectElements(editor: Editor, file: PsiFile, continuation: (elements: List<PsiElement>, targetSibling: PsiElement) -> Unit) {
+    public fun selectElements(editor: Editor, file: KtFile, continuation: (elements: List<PsiElement>, targetSibling: PsiElement) -> Unit) {
         selectElementsWithTargetSibling(
                 INTRODUCE_PROPERTY,
                 editor,

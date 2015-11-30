@@ -72,6 +72,11 @@ public abstract class AbstractCompilerLightClassTest extends KotlinMultiFileTest
                     throw ExceptionUtilsKt.rethrow(e);
                 }
             }
+        }, new Function1<String, String>() {
+            @Override
+            public String invoke(String s) {
+                return LightClassTestCommon.INSTANCE.removeEmptyDefaultImpls(s);
+            }
         });
     }
 

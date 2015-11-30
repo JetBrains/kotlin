@@ -67,6 +67,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.types.KotlinType
@@ -143,15 +144,15 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
     val currentFileContext: BindingContext
     val currentFileModule: ModuleDescriptor
 
-    val pseudocode: Pseudocode? by lazy { config.originalElement.getContainingPseudocode(currentFileContext) }
-
-    private val typeCandidates = HashMap<TypeInfo, List<TypeCandidate>>()
-
     init {
         val result = config.currentFile.analyzeFullyAndGetResult()
         currentFileContext = result.bindingContext
         currentFileModule = result.moduleDescriptor
     }
+
+    val pseudocode: Pseudocode? by lazy { config.originalElement.getContainingPseudocode(currentFileContext) }
+
+    private val typeCandidates = HashMap<TypeInfo, List<TypeCandidate>>()
 
     public var placement: CallablePlacement by Delegates.notNull()
 
@@ -190,7 +191,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 newTypes.add(EqWrapper(currentFileModule.builtIns.anyType))
             }
 
-            newTypes.map { TypeCandidate(it._type, scope) }.reversed()
+            newTypes.map { TypeCandidate(it._type, scope) }.asReversed()
         }
     }
 
@@ -349,12 +350,12 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
             assert (receiverClassDescriptor is JavaClassDescriptor) { "Unexpected receiver class: $receiverClassDescriptor" }
 
-            val projections = receiverClassDescriptor.getTypeConstructor().getParameters()
+            val projections = receiverClassDescriptor.declaredTypeParameters
                     .map { TypeProjectionImpl(it.getDefaultType()) }
             val memberScope = receiverClassDescriptor.getMemberScope(projections)
 
             return LexicalScopeImpl(memberScope.memberScopeAsImportingScope(), receiverClassDescriptor, false, null,
-                                    "Scope with type parameters for ${receiverClassDescriptor.getName()}") {
+                                    LexicalScopeKind.SYNTHETIC) {
                 receiverClassDescriptor.typeConstructor.parameters.forEach { addClassifierDescriptor(it) }
             }
         }
@@ -376,7 +377,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 fakeFunction: FunctionDescriptor,
                 typeArguments: Set<KotlinType>,
                 result: MutableMap<KotlinType, KotlinType>) {
-            for ((typeArgument, typeParameter) in typeArguments zip fakeFunction.getTypeParameters()) {
+            for ((typeArgument, typeParameter) in typeArguments.zip(fakeFunction.getTypeParameters())) {
                 result[typeArgument] = typeParameter.getDefaultType()
             }
         }
@@ -462,7 +463,8 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         }
                         if (callableInfo is FunctionInfo) {
                             val operatorModifier = if (callableInfo.isOperator) "operator " else ""
-                            psiFactory.createFunction("${modifiers}${operatorModifier}fun<> $header $body")
+                            val infixModifier = if (callableInfo.isInfix) "infix " else ""
+                            psiFactory.createFunction("$modifiers$infixModifier${operatorModifier}fun<> $header $body")
                         }
                         else {
                             psiFactory.createSecondaryConstructor("${modifiers}constructor$paramList $body")
@@ -665,9 +667,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             }
 
             val expandedValueParameters = declaration.getValueParameters()
-            parameterIndicesToShorten.asSequence()
-                    .map { expandedValueParameters[it].getTypeReference() }
-                    .filterNotNullTo(typeRefsToShorten)
+            parameterIndicesToShorten.mapNotNullTo(typeRefsToShorten) { expandedValueParameters[it].getTypeReference() }
 
             return typeRefsToShorten
         }
@@ -801,7 +801,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 builder.replaceElement(parameterTypeRef, parameterTypeExpression)
 
                 // add parameter name to the template
-                val possibleNamesFromExpression = parameter.typeInfo.possibleNamesFromExpression
+                val possibleNamesFromExpression = parameter.typeInfo.getPossibleNamesFromExpression(currentFileContext)
                 val preferredName = parameter.preferredName
                 val possibleNames = if (preferredName != null) {
                     arrayOf(preferredName, *possibleNamesFromExpression)

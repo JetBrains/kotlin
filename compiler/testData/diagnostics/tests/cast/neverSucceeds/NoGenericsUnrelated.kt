@@ -6,7 +6,7 @@ open class OClass2
 class FClass1
 class FClass2
 
-fun test<TP1: OClass1, TP2: OClass2>(
+fun <TP1: OClass1, TP2: OClass2> test(
   t1: Trait1,
   oc1: OClass1,
   fc1: FClass1,

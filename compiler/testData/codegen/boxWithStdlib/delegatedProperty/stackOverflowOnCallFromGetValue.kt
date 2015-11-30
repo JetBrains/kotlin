@@ -4,14 +4,14 @@ import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.*
 
 object Delegate {
-    fun getValue(t: Any?, p: KProperty<*>): String {
+    operator fun getValue(t: Any?, p: KProperty<*>): String {
         (p as? KProperty0<String>)?.get()
         (p as? KProperty1<O, String>)?.get(O)
         (p as? KProperty2<O, O, String>)?.get(O, O)
         return "Fail"
     }
 
-    fun setValue(t: Any?, p: KProperty<*>, v: String) {
+    operator fun setValue(t: Any?, p: KProperty<*>, v: String) {
         (p as? KMutableProperty0<String>)?.set(v)
         (p as? KMutableProperty1<O, String>)?.set(O, v)
         (p as? KMutableProperty2<O, O, String>)?.set(O, O, v)

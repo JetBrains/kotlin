@@ -1,6 +1,6 @@
 package test;
 
-class JavaClass {
+public class JavaClass {
     public int field = 0;
 
     protected int myProperty = 0;

@@ -4,11 +4,11 @@ fun main(args: Array<String>) {
     test<Int>()
 }
 
-fun foo<U>(): Int {
+fun <U> foo(): Int {
     return 1
 }
 
-fun test<T>() {
+fun <T> test() {
     //Breakpoint!
     val a = foo<T>()
 }

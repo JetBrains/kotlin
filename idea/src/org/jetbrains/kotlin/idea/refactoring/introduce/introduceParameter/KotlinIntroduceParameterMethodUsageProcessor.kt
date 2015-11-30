@@ -25,11 +25,11 @@ import com.intellij.refactoring.introduceParameter.IntroduceParameterMethodUsage
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.asJava.unwrapped
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.core.refactoring.dropOverrideKeywordIfNecessary
 import org.jetbrains.kotlin.idea.core.refactoring.j2k
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeSignatureData
@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import java.util.Collections
+import java.util.*
 
 public class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMethodUsagesProcessor {
     override fun isMethodUsage(usage: UsageInfo): Boolean = (usage.getElement() as? KtElement)?.let {
@@ -68,7 +68,7 @@ public class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMe
         data.getParametersToRemove().toNativeArray().sortedDescending().forEach { changeInfo.removeParameter(it) }
 
         // Temporarily assume that the new parameter is of Any type. Actual type is substituted during the signature update phase
-        val defaultValueForCall = (data.getParameterInitializer().getExpression()!! as? PsiExpression)?.let { it.j2k() }
+        val defaultValueForCall = (data.getParameterInitializer().getExpression() as? PsiExpression)?.let { it.j2k() }
         changeInfo.addParameter(KotlinParameterInfo(callableDescriptor = psiMethodDescriptor,
                                                     name = data.getParameterName(),
                                                     type = psiMethodDescriptor.builtIns.anyType,
@@ -92,7 +92,9 @@ public class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMe
                 .map { it.unwrapped }
                 .filterIsInstance<KtFunction>()
         return (kotlinFunctions + element).all {
-            KotlinCallableDefinitionUsage(it, changeInfo.originalBaseFunctionDescriptor, null, null).processUsage(changeInfo, it, usages)
+            KotlinCallableDefinitionUsage(it, changeInfo.originalBaseFunctionDescriptor, null, null, false).processUsage(changeInfo, it, usages)
+        }.apply {
+            dropOverrideKeywordIfNecessary(element)
         }
     }
 

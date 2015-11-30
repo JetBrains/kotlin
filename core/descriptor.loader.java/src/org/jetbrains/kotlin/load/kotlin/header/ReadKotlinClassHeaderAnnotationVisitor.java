@@ -39,7 +39,6 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
 
     static {
         HEADER_KINDS.put(ClassId.topLevel(KOTLIN_CLASS), CLASS);
-        HEADER_KINDS.put(ClassId.topLevel(KOTLIN_PACKAGE), PACKAGE_FACADE);
         HEADER_KINDS.put(ClassId.topLevel(KOTLIN_FILE_FACADE), FILE_FACADE);
         HEADER_KINDS.put(ClassId.topLevel(KOTLIN_MULTIFILE_CLASS), MULTIFILE_CLASS);
         HEADER_KINDS.put(ClassId.topLevel(KOTLIN_MULTIFILE_CLASS_PART), MULTIFILE_CLASS_PART);
@@ -79,7 +78,6 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
 
     private boolean shouldHaveData() {
         return headerKind == CLASS ||
-               headerKind == PACKAGE_FACADE ||
                headerKind == FILE_FACADE ||
                headerKind == MULTIFILE_CLASS_PART;
     }
@@ -108,7 +106,6 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
 
             switch (newKind) {
                 case CLASS:
-                case PACKAGE_FACADE:
                 case FILE_FACADE:
                 case MULTIFILE_CLASS:
                 case MULTIFILE_CLASS_PART:

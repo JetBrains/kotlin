@@ -112,6 +112,16 @@ class LazyJavaClassDescriptor(
         }
     }
 
+    private val declaredParameters = c.storageManager.createLazyValue {
+        jClass.typeParameters.map {
+            p ->
+            c.typeParameterResolver.resolveTypeParameter(p)
+                ?: throw AssertionError("Parameter $p surely belongs to class $jClass, so it must be resolved")
+        }
+    }
+
+    override fun getDeclaredTypeParameters() = declaredParameters()
+
     override fun getFunctionTypeForSamInterface(): KotlinType? = functionTypeForSamInterface()
 
     override fun isCompanionObject() = false
@@ -121,11 +131,7 @@ class LazyJavaClassDescriptor(
     private inner class LazyJavaClassTypeConstructor : AbstractClassTypeConstructor() {
 
         private val parameters = c.storageManager.createLazyValue {
-            jClass.getTypeParameters().map {
-                p ->
-                c.typeParameterResolver.resolveTypeParameter(p)
-                    ?: throw AssertionError("Parameter $p surely belongs to class $jClass, so it must be resolved")
-            }
+            this@LazyJavaClassDescriptor.computeConstructorTypeParameters()
         }
 
         override fun getParameters(): List<TypeParameterDescriptor> = parameters()

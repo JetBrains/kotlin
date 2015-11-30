@@ -537,12 +537,13 @@ JetFile: FunctionsWithFunctionReceiversRecovery.kt
       FUN
         PsiElement(fun)('fun')
         PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('foo')
         TYPE_PARAMETER_LIST
           PsiElement(LT)('<')
           TYPE_PARAMETER
             PsiElement(IDENTIFIER)('Y')
           PsiElement(GT)('>')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('foo')
         VALUE_PARAMETER_LIST
           PsiElement(LPAR)('(')
           PsiElement(RPAR)(')')

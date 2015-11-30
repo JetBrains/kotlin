@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.TopDownAnalysisMode;
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisCompletedHandlerExtension;
+import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory;
 
@@ -134,6 +135,12 @@ public enum TopDownAnalyzerFacadeForJVM {
             }
         }
         additionalProviders.add(container.getJavaDescriptorResolver().getPackageFragmentProvider());
+
+        for (PackageFragmentProviderExtension extension : PackageFragmentProviderExtension.Companion.getInstances(project)) {
+            PackageFragmentProvider provider = extension.getPackageFragmentProvider(
+                    project, moduleContext.getModule(), moduleContext.getStorageManager(), trace, null);
+            if (provider != null) additionalProviders.add(provider);
+        }
 
         container.getLazyTopDownAnalyzerForTopLevel().analyzeFiles(topDownAnalysisMode, allFiles, additionalProviders);
 

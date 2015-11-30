@@ -16,53 +16,51 @@
 
 package org.jetbrains.kotlin.android.synthetic.res
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.android.synthetic.toMap
-import org.xml.sax.Attributes
-import org.xml.sax.helpers.DefaultHandler
-import java.io.File
-import java.io.FileInputStream
+import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.android.synthetic.AndroidXmlHandler
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import java.io.ByteArrayInputStream
 import javax.xml.parsers.SAXParser
 import javax.xml.parsers.SAXParserFactory
 
 public class CliAndroidLayoutXmlFileManager(
         project: Project,
-        private val manifestPath: String,
-        private val resDirectories: List<String>
+        private val applicationPackage: String,
+        private val variants: List<AndroidVariant>
 ) : AndroidLayoutXmlFileManager(project) {
-
-    override val androidModuleInfo by lazy {
-        AndroidModuleInfo(getApplicationPackage(manifestPath), resDirectories)
+    private companion object {
+        val LOG = Logger.getInstance(CliAndroidLayoutXmlFileManager::class.java)
     }
 
-    val saxParser: SAXParser = initSAX()
+    override val androidModule = AndroidModule(applicationPackage, variants)
+
+    private val saxParser: SAXParser = initSAX()
+
+    override fun doExtractResources(files: List<PsiFile>, module: ModuleDescriptor): List<AndroidResource> {
+        val resources = arrayListOf<AndroidResource>()
+
+        val handler = AndroidXmlHandler { id, tag ->
+            resources += parseAndroidResource(id, tag, null)
+        }
+
+        for (file in files) {
+            try {
+                val inputStream = ByteArrayInputStream(file.virtualFile.contentsToByteArray())
+                saxParser.parse(inputStream, handler)
+            } catch (e: Throwable) {
+                LOG.error(e)
+            }
+        }
+
+        return resources
+    }
 
     protected fun initSAX(): SAXParser {
         val saxFactory = SAXParserFactory.newInstance()
         saxFactory.isNamespaceAware = true
         return saxFactory.newSAXParser()
-    }
-
-    private fun getApplicationPackage(manifestPath: String): String {
-        try {
-            val manifestXml = File(manifestPath)
-            var applicationPackage: String = ""
-            try {
-                saxParser.parse(FileInputStream(manifestXml), object : DefaultHandler() {
-                    override fun startElement(uri: String, localName: String, qName: String, attributes: Attributes) {
-                        if (localName == "manifest")
-                            applicationPackage = attributes.toMap()["package"] ?: ""
-                    }
-                })
-            }
-            catch (e: Exception) {
-                throw e
-            }
-            return applicationPackage
-        }
-        catch (e: Exception) {
-            throw SyntheticFileGenerator.NoAndroidManifestFound()
-        }
     }
 
 }

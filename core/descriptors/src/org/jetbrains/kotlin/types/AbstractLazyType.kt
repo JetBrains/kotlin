@@ -34,7 +34,7 @@ public abstract class AbstractLazyType(storageManager: StorageManager) : Abstrac
 
     protected abstract fun computeArguments(): List<TypeProjection>
 
-    override fun getSubstitution() = computeCustomSubstitution() ?: IndexedParametersSubstitution(constructor, getArguments())
+    override fun getSubstitution() = computeCustomSubstitution() ?: TypeConstructorSubstitution.create(constructor, getArguments())
 
     protected open fun computeCustomSubstitution(): TypeSubstitution? = getCapability<CustomSubstitutionCapability>()?.substitution
 

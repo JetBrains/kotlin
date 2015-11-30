@@ -38,7 +38,7 @@ internal class IncrementalPackagePartProvider private constructor(
         val packagePartsFromParent = parent.findPackageParts(packageFqName)
         if (packageFqName in fqNamesToIgnore) return packagePartsFromParent
 
-        val packagePartsFromCompiled = moduleMappings().map { it.findPackageParts(packageFqName) }.filterNotNull().flatMap { it.parts }
+        val packagePartsFromCompiled = moduleMappings().mapNotNull { it.findPackageParts(packageFqName) }.flatMap { it.parts }
         return (packagePartsFromCompiled + packagePartsFromParent).distinct()
     }
 

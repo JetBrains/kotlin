@@ -1,5 +1,5 @@
 class Mocha() {
-    fun invoke(x: Int, y: String, f: (Int) -> String) {
+    operator fun invoke(x: Int, y: String, f: (Int) -> String) {
     }
 }
 fun main() {

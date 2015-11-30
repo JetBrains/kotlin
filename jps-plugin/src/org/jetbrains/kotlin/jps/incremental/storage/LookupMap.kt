@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.jps.incremental.storage
 
 import java.io.File
 
-class LookupMap(storage: File) : BasicMap<LookupSymbolKey, Set<Int>>(storage, LookupSymbolKeyDescriptor, IntSetExternalizer) {
+internal class LookupMap(storage: File) : BasicMap<LookupSymbolKey, Set<Int>>(storage, LookupSymbolKeyDescriptor, IntSetExternalizer) {
     override fun dumpKey(key: LookupSymbolKey): String = key.toString()
 
     override fun dumpValue(value: Set<Int>): String = value.toString()

@@ -96,7 +96,7 @@ JetFile: semicolonBetweenDeclarations.kt
           PsiElement(RPAR)(')')
         PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n\n    ')
-      ANONYMOUS_INITIALIZER
+      CLASS_INITIALIZER
         PsiElement(init)('init')
         PsiWhiteSpace(' ')
         BLOCK
@@ -162,7 +162,7 @@ JetFile: semicolonBetweenDeclarations.kt
           <empty list>
         PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n    ')
-      ANONYMOUS_INITIALIZER
+      CLASS_INITIALIZER
         PsiElement(init)('init')
         PsiErrorElement:Expecting '{' after 'init'
           <empty list>

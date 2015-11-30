@@ -55,6 +55,12 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
             doTest(fileName);
         }
 
+        @TestMetadata("circularDependencyWithAccessToInternal")
+        public void testCircularDependencyWithAccessToInternal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/circularDependencyWithAccessToInternal/");
+            doTest(fileName);
+        }
+
         @TestMetadata("constantValueChanged")
         public void testConstantValueChanged() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/multiModule/constantValueChanged/");
@@ -182,6 +188,18 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
         @TestMetadata("anonymousObjectChanged")
         public void testAnonymousObjectChanged() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/anonymousObjectChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("changeTypeImplicitlyWithCircularDependency")
+        public void testChangeTypeImplicitlyWithCircularDependency() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/changeTypeImplicitlyWithCircularDependency/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("changeWithRemovingUsage")
+        public void testChangeWithRemovingUsage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/changeWithRemovingUsage/");
             doTest(fileName);
         }
 
@@ -329,6 +347,12 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
             doTest(fileName);
         }
 
+        @TestMetadata("inlinFunctionUsageAdded")
+        public void testInlinFunctionUsageAdded() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlinFunctionUsageAdded/");
+            doTest(fileName);
+        }
+
         @TestMetadata("inlineFunctionRemoved")
         public void testInlineFunctionRemoved() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlineFunctionRemoved/");
@@ -374,6 +398,12 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
         @TestMetadata("localClassChanged")
         public void testLocalClassChanged() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/localClassChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mainRedeclaration")
+        public void testMainRedeclaration() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/mainRedeclaration/");
             doTest(fileName);
         }
 

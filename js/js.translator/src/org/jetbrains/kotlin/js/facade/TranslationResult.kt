@@ -21,9 +21,7 @@ import com.google.dart.compiler.util.TextOutput
 import com.google.dart.compiler.util.TextOutputImpl
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.VfsUtilCore
-import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
-import org.jetbrains.kotlin.backend.common.output.SimpleOutputFile
-import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
+import org.jetbrains.kotlin.backend.common.output.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.js.config.Config
 import org.jetbrains.kotlin.js.sourceMap.JsSourceGenerationVisitor
@@ -70,7 +68,7 @@ public abstract class TranslationResult protected constructor(public val diagnos
             }
 
             val jsFile = SimpleOutputFile(sourceFiles, outputFile.getName(), prefix + code + postfix)
-            val outputFiles = arrayListOf(jsFile)
+            val outputFiles = arrayListOf<OutputFile>(jsFile)
 
             if (config.isMetaInfo()) {
                 val metaFileName = KotlinJavascriptMetadataUtils.replaceSuffix(outputFile.getName())
@@ -78,6 +76,13 @@ public abstract class TranslationResult protected constructor(public val diagnos
                 val sourceFilesForMetaFile = ArrayList(sourceFiles)
                 val jsMetaFile = SimpleOutputFile(sourceFilesForMetaFile, metaFileName, metaFileContent)
                 outputFiles.add(jsMetaFile)
+            }
+
+            if (config.isKjsm) {
+                KotlinJavascriptSerializationUtil.toContentMap(moduleDescriptor).forEach {
+                    // TODO Add correct source files
+                    outputFiles.add(SimpleOutputBinaryFile(emptyList(), config.moduleId + VfsUtilCore.VFS_SEPARATOR_CHAR + it.key, it.value))
+                }
             }
 
             if (sourceMapBuilder != null) {

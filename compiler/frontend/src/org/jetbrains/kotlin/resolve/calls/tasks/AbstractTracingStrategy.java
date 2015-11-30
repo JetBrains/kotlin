@@ -30,12 +30,12 @@ import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemStatus;
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.Variance;
@@ -46,6 +46,7 @@ import java.util.Collection;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.AMBIGUOUS_REFERENCE_TARGET;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqNameFromTopLevelClass;
+import static org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemUtilsKt.filterConstraintsOut;
 import static org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.EXPECTED_TYPE_POSITION;
 import static org.jetbrains.kotlin.types.TypeUtils.noExpectedType;
 
@@ -186,19 +187,6 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
     }
 
     @Override
-    public void unnecessarySafeCall(@NotNull BindingTrace trace, @NotNull KotlinType type) {
-        ASTNode callOperationNode = call.getCallOperationNode();
-        assert callOperationNode != null;
-        ReceiverValue explicitReceiver = call.getExplicitReceiver();
-        if (explicitReceiver instanceof ExpressionReceiver && ((ExpressionReceiver)explicitReceiver).getExpression() instanceof KtSuperExpression) {
-            trace.report(UNEXPECTED_SAFE_CALL.on(callOperationNode.getPsi()));
-        }
-        else {
-            trace.report(UNNECESSARY_SAFE_CALL.on(callOperationNode.getPsi(), type));
-        }
-    }
-
-    @Override
     public void invisibleMember(@NotNull BindingTrace trace, @NotNull DeclarationDescriptorWithVisibility descriptor) {
         trace.report(INVISIBLE_MEMBER.on(call.getCallElement(), descriptor, descriptor.getVisibility(), descriptor));
     }
@@ -218,8 +206,7 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
             KotlinType declaredReturnType = data.descriptor.getReturnType();
             if (declaredReturnType == null) return;
 
-            ConstraintSystem systemWithoutExpectedTypeConstraint =
-                    ((ConstraintSystemImpl) constraintSystem).filterConstraintsOut(EXPECTED_TYPE_POSITION);
+            ConstraintSystem systemWithoutExpectedTypeConstraint = filterConstraintsOut(constraintSystem, EXPECTED_TYPE_POSITION);
             KotlinType substitutedReturnType = systemWithoutExpectedTypeConstraint.getResultingSubstitutor().substitute(
                     declaredReturnType, Variance.OUT_VARIANCE);
             assert substitutedReturnType != null; //todo

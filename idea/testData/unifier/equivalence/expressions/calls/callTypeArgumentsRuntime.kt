@@ -2,11 +2,11 @@
 class A
 class B
 
-fun foo<T>(klass: Class<T>) {
+fun <T> foo(klass: Class<T>) {
 
 }
 
-fun bar<T>(klass: Class<T>) {
+fun <T> bar(klass: Class<T>) {
 
 }
 

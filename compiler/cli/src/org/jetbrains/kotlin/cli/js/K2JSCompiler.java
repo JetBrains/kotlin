@@ -264,6 +264,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
                 .sourceMap(arguments.sourceMap)
                 .inlineEnabled(inlineEnabled)
                 .metaInfo(arguments.metaInfo)
+                .kjsm(arguments.kjsm)
                 .build();
     }
 

@@ -21,6 +21,7 @@ import com.google.common.collect.Sets
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.SUPER_CANT_BE_EXTENSION_RECEIVER
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.*
@@ -45,11 +46,11 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.noExpectedType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import java.util.*
 
 public class CandidateResolver(
@@ -58,7 +59,7 @@ public class CandidateResolver(
         private val reflectionTypes: ReflectionTypes,
         private val additionalTypeCheckers: Iterable<AdditionalTypeChecker>,
         private val smartCastManager: SmartCastManager
-){
+) {
 
     public fun <D : CallableDescriptor, F : D> performResolutionForCandidateCall(
             context: CallCandidateResolutionContext<D>,
@@ -169,9 +170,7 @@ public class CandidateResolver(
             }
 
     private fun CallCandidateResolutionContext<*>.checkVisibility() = checkAndReport {
-        val receiverValue = ExpressionTypingUtils.normalizeReceiverValueForVisibility(candidateCall.getDispatchReceiver(),
-                                                                                      trace.getBindingContext())
-        val invisibleMember = Visibilities.findInvisibleMember(receiverValue, candidateDescriptor, scope.ownerDescriptor)
+        val invisibleMember = Visibilities.findInvisibleMember(candidateCall.dispatchReceiver, candidateDescriptor, scope.ownerDescriptor)
         if (invisibleMember != null) {
             tracing.invisibleMember(trace, invisibleMember)
             OTHER_ERROR
@@ -283,9 +282,9 @@ public class CandidateResolver(
         SUCCESS
     }
 
-    private fun getReceiverSuper(receiver: ReceiverValue): KtSuperExpression? {
+    private fun getReceiverSuper(receiver: Receiver): KtSuperExpression? {
         if (receiver is ExpressionReceiver) {
-            val expression = receiver.getExpression()
+            val expression = receiver.expression
             if (expression is KtSuperExpression) {
                 return expression
             }
@@ -351,6 +350,15 @@ public class CandidateResolver(
                     else if (ErrorUtils.containsUninferredParameter(expectedType)) {
                         matchStatus = ArgumentMatchStatus.MATCH_MODULO_UNINFERRED_TYPES
                     }
+
+                    val spreadElement = argument.getSpreadElement()
+                    if (spreadElement != null && !type.isFlexible() && type.isMarkedNullable) {
+                        val dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, type, context)
+                        val smartCastResult = SmartCastManager.checkAndRecordPossibleCast(dataFlowValue, expectedType, expression, context, null, false)
+                        if (smartCastResult == null || !smartCastResult.isCorrect) {
+                            context.trace.report(Errors.SPREAD_OF_NULLABLE.on(spreadElement));
+                        }
+                    }
                 }
                 argumentTypes.add(resultingType)
                 candidateCall.recordArgumentMatchStatus(argument, matchStatus)
@@ -364,7 +372,7 @@ public class CandidateResolver(
             expectedType: KotlinType,
             actualType: KotlinType,
             context: ResolutionContext<*>): KotlinType? {
-        val receiverToCast = ExpressionReceiver(KtPsiUtil.safeDeparenthesize(expression), actualType)
+        val receiverToCast = ExpressionReceiver.create(KtPsiUtil.safeDeparenthesize(expression), actualType, context.trace.bindingContext)
         val variants = smartCastManager.getSmartCastVariantsExcludingReceiver(context, receiverToCast)
         for (possibleType in variants) {
             if (KotlinTypeChecker.DEFAULT.isSubtypeOf(possibleType, expectedType)) {
@@ -381,7 +389,9 @@ public class CandidateResolver(
         // For the expressions like '42.(f)()' where f: String.() -> Unit we'd like to generate a type mismatch error on '1',
         // not to throw away the candidate, so the following check is skipped.
         if (!isInvokeCallOnExpressionWithBothReceivers(call)) {
-            checkReceiverTypeError(extensionReceiver, candidateCall.getExtensionReceiver())
+            val callExtensionReceiver = candidateCall.extensionReceiver
+            assert(callExtensionReceiver is ReceiverValue) { "Expected ReceiverValue, got $callExtensionReceiver" }
+            checkReceiverTypeError(extensionReceiver, callExtensionReceiver as ReceiverValue)
         }
         checkReceiverTypeError(dispatchReceiver, candidateCall.getDispatchReceiver())
     }
@@ -413,7 +423,8 @@ public class CandidateResolver(
         resultStatus = resultStatus.combine(context.checkReceiver(
                 candidateCall,
                 candidateCall.getResultingDescriptor().getExtensionReceiverParameter(),
-                candidateCall.getExtensionReceiver(), candidateCall.getExplicitReceiverKind().isExtensionReceiver(), false))
+                candidateCall.extensionReceiver as ReceiverValue,
+                candidateCall.getExplicitReceiverKind().isExtensionReceiver(), false))
 
         resultStatus = resultStatus.combine(context.checkReceiver(candidateCall,
                                                                   candidateCall.getResultingDescriptor().getDispatchReceiverParameter(), candidateCall.getDispatchReceiver(),
@@ -448,13 +459,22 @@ public class CandidateResolver(
         val smartCastNeeded = !ArgumentTypeResolver.isSubtypeOfForArgumentType(receiverArgument.type, expectedReceiverParameterType)
         var reportUnsafeCall = false
 
-        if (smartCastNeeded) {
+        val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverArgument, this)
+        val nullability = dataFlowInfo.getPredictableNullability(dataFlowValue)
+        val expression = (receiverArgument as? ExpressionReceiver)?.expression
+        if (nullability.canBeNull() && !nullability.canBeNonNull()) {
+            if (!TypeUtils.isNullableType(expectedReceiverParameterType)) {
+                reportUnsafeCall = true
+            }
+            if (dataFlowValue.immanentNullability.canBeNonNull()) {
+                expression?.let { trace.record(BindingContext.SMARTCAST_NULL, it) }
+            }
+        }
+        else if (smartCastNeeded) {
             // Look if smart cast has some useful nullability info
-            val expression = (receiverArgument as? ExpressionReceiver)?.expression
-            val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverArgument, this)
 
             val smartCastResult = SmartCastManager.checkAndRecordPossibleCast(
-                    dataFlowValue, expectedReceiverParameterType, expression, this, /*recordType =*/ true
+                    dataFlowValue, expectedReceiverParameterType, expression, this, candidateCall.call.calleeExpression, /*recordType =*/true
             )
 
             if (smartCastResult == null) {
@@ -471,12 +491,6 @@ public class CandidateResolver(
         if (reportUnsafeCall) {
             tracing.unsafeCall(trace, receiverArgumentType, implicitInvokeCheck)
             return UNSAFE_CALL_ERROR
-        }
-
-        val bindingContext = trace.bindingContext
-        val receiverValue = DataFlowValueFactory.createDataFlowValue(receiverArgument, bindingContext, scope.ownerDescriptor)
-        if (safeAccess && !dataFlowInfo.getPredictableNullability(receiverValue).canBeNull()) {
-            tracing.unnecessarySafeCall(trace, receiverArgument.type)
         }
 
         additionalTypeCheckers.forEach { it.checkReceiver(receiverParameter, receiverArgument, safeAccess, this) }

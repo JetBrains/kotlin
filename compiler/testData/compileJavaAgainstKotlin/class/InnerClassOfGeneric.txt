@@ -10,11 +10,11 @@ public/*package*/ open class InnerClassOfGeneric {
 public final class Outer</*0*/ T> {
     public constructor Outer</*0*/ T>()
 
-    public final inner class Inner {
+    public final inner class Inner /*captured type parameters: /*0*/ T*/ {
         public constructor Inner(/*0*/ kotlin.List<T>)
     }
 
-    public final inner class InnerSimple {
+    public final inner class InnerSimple /*captured type parameters: /*0*/ T*/ {
         public constructor InnerSimple()
     }
 }

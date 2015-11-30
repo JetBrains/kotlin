@@ -1,6 +1,6 @@
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.KtParameter
 // OPTIONS: usages
-fun foo<T>(<caret>t: T): T {
+fun <T> foo(<caret>t: T): T {
     println(t)
     return t
 }

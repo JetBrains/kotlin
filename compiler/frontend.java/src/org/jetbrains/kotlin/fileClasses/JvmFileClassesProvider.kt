@@ -22,30 +22,21 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.Type
 
-public interface JvmFileClassesProvider {
-    public fun getFileClassInfo(file: KtFile): JvmFileClassInfo
+interface JvmFileClassesProvider {
+    fun getFileClassInfo(file: KtFile): JvmFileClassInfo
 }
 
-public fun FqName.getInternalName(): String =
-        JvmClassName.byFqNameWithoutInnerClasses(this).internalName
+val FqName.internalNameWithoutInnerClasses: String
+    get() = JvmClassName.byFqNameWithoutInnerClasses(this).internalName
 
-public fun FqName.getClassType(): Type =
-        Type.getObjectType(getInternalName())
-
-public fun JvmFileClassesProvider.getFileClassFqName(file: KtFile): FqName =
+fun JvmFileClassesProvider.getFileClassFqName(file: KtFile): FqName =
         getFileClassInfo(file).fileClassFqName
 
-public fun JvmFileClassesProvider.getFileClassInternalName(file: KtFile): String =
-        getFileClassFqName(file).getInternalName()
+fun JvmFileClassesProvider.getFileClassInternalName(file: KtFile): String =
+        getFileClassFqName(file).internalNameWithoutInnerClasses
 
-public fun JvmFileClassesProvider.getFileClassType(file: KtFile): Type =
-        getFileClassFqName(file).getClassType()
+fun JvmFileClassesProvider.getFileClassType(file: KtFile): Type =
+        Type.getObjectType(getFileClassFqName(file).internalNameWithoutInnerClasses)
 
-public fun JvmFileClassesProvider.getFacadeClassFqName(file: KtFile): FqName =
-        getFileClassInfo(file).facadeClassFqName
-
-public fun JvmFileClassesProvider.getFacadeClassInternalName(file: KtFile): String =
-        getFacadeClassFqName(file).getInternalName()
-
-public fun JvmFileClassesProvider.getFacadeClassType(file: KtFile): Type =
-        getFacadeClassFqName(file).getClassType()
+fun JvmFileClassesProvider.getFacadeClassInternalName(file: KtFile): String =
+        getFileClassInfo(file).facadeClassFqName.internalNameWithoutInnerClasses

@@ -1,5 +1,6 @@
 package test.collections
 
+import test.collections.behaviors.listBehavior
 import java.util.*
 import kotlin.test.*
 import org.junit.Test as test
@@ -39,7 +40,7 @@ class ArraysTest {
         val arr = ByteArray(2)
 
         val expected: Byte = 0
-        assertEquals(arr.size(), 2)
+        assertEquals(arr.size, 2)
         assertEquals(expected, arr[0])
         assertEquals(expected, arr[1])
     }
@@ -48,7 +49,7 @@ class ArraysTest {
         val arr = ShortArray(2)
 
         val expected: Short = 0
-        assertEquals(arr.size(), 2)
+        assertEquals(arr.size, 2)
         assertEquals(expected, arr[0])
         assertEquals(expected, arr[1])
     }
@@ -56,7 +57,7 @@ class ArraysTest {
     @test fun intArray() {
         val arr = IntArray(2)
 
-        assertEquals(arr.size(), 2)
+        assertEquals(arr.size, 2)
         assertEquals(0, arr[0])
         assertEquals(0, arr[1])
     }
@@ -65,7 +66,7 @@ class ArraysTest {
         val arr = LongArray(2)
 
         val expected: Long = 0
-        assertEquals(arr.size(), 2)
+        assertEquals(arr.size, 2)
         assertEquals(expected, arr[0])
         assertEquals(expected, arr[1])
     }
@@ -74,7 +75,7 @@ class ArraysTest {
         val arr = FloatArray(2)
 
         val expected: Float = 0.0F
-        assertEquals(arr.size(), 2)
+        assertEquals(arr.size, 2)
         assertEquals(expected, arr[0])
         assertEquals(expected, arr[1])
     }
@@ -82,7 +83,7 @@ class ArraysTest {
     @test fun doubleArray() {
         val arr = DoubleArray(2)
 
-        assertEquals(arr.size(), 2)
+        assertEquals(arr.size, 2)
         assertEquals(0.0, arr[0])
         assertEquals(0.0, arr[1])
     }
@@ -91,14 +92,14 @@ class ArraysTest {
         val arr = CharArray(2)
 
         val expected: Char = '\u0000'
-        assertEquals(arr.size(), 2)
+        assertEquals(arr.size, 2)
         assertEquals(expected, arr[0])
         assertEquals(expected, arr[1])
     }
 
     @test fun booleanArray() {
         val arr = BooleanArray(2)
-        assertEquals(arr.size(), 2)
+        assertEquals(arr.size, 2)
         assertEquals(false, arr[0])
         assertEquals(false, arr[1])
     }
@@ -150,7 +151,7 @@ class ArraysTest {
         expect(1, { arrayOf(1).minBy { it } })
         expect(3, { arrayOf(2, 3).minBy { -it } })
         expect('a', { arrayOf('a', 'b').minBy { "x$it" } })
-        expect("b", { arrayOf("b", "abc").minBy { it.length() } })
+        expect("b", { arrayOf("b", "abc").minBy { it.length } })
     }
 
     @test fun minByInPrimitiveArrays() {
@@ -169,7 +170,7 @@ class ArraysTest {
         expect(1, { arrayOf(1).maxBy { it } })
         expect(2, { arrayOf(2, 3).maxBy { -it } })
         expect('b', { arrayOf('a', 'b').maxBy { "x$it" } })
-        expect("abc", { arrayOf("b", "abc").maxBy { it.length() } })
+        expect("abc", { arrayOf("b", "abc").maxBy { it.length } })
     }
 
     @test fun maxByInPrimitiveArrays() {
@@ -237,44 +238,44 @@ class ArraysTest {
     }
 
     @test fun indexOfInPrimitiveArrays() {
-        expect(-1) { byteArrayOf(1, 2, 3) indexOf 0 }
-        expect(0) { byteArrayOf(1, 2, 3) indexOf 1 }
-        expect(1) { byteArrayOf(1, 2, 3) indexOf 2 }
-        expect(2) { byteArrayOf(1, 2, 3) indexOf 3 }
+        expect(-1) { byteArrayOf(1, 2, 3).indexOf(0) }
+        expect(0) { byteArrayOf(1, 2, 3).indexOf(1) }
+        expect(1) { byteArrayOf(1, 2, 3).indexOf(2) }
+        expect(2) { byteArrayOf(1, 2, 3).indexOf(3) }
 
-        expect(-1) { shortArrayOf(1, 2, 3) indexOf 0 }
-        expect(0) { shortArrayOf(1, 2, 3) indexOf 1 }
-        expect(1) { shortArrayOf(1, 2, 3) indexOf 2 }
-        expect(2) { shortArrayOf(1, 2, 3) indexOf 3 }
+        expect(-1) { shortArrayOf(1, 2, 3).indexOf(0) }
+        expect(0) { shortArrayOf(1, 2, 3).indexOf(1) }
+        expect(1) { shortArrayOf(1, 2, 3).indexOf(2) }
+        expect(2) { shortArrayOf(1, 2, 3).indexOf(3) }
 
-        expect(-1) { intArrayOf(1, 2, 3) indexOf 0 }
-        expect(0) { intArrayOf(1, 2, 3) indexOf 1 }
-        expect(1) { intArrayOf(1, 2, 3) indexOf 2 }
-        expect(2) { intArrayOf(1, 2, 3) indexOf 3 }
+        expect(-1) { intArrayOf(1, 2, 3).indexOf(0) }
+        expect(0) { intArrayOf(1, 2, 3).indexOf(1) }
+        expect(1) { intArrayOf(1, 2, 3).indexOf(2) }
+        expect(2) { intArrayOf(1, 2, 3).indexOf(3) }
 
-        expect(-1) { longArrayOf(1, 2, 3) indexOf 0 }
-        expect(0) { longArrayOf(1, 2, 3) indexOf 1 }
-        expect(1) { longArrayOf(1, 2, 3) indexOf 2 }
-        expect(2) { longArrayOf(1, 2, 3) indexOf 3 }
+        expect(-1) { longArrayOf(1, 2, 3).indexOf(0) }
+        expect(0) { longArrayOf(1, 2, 3).indexOf(1) }
+        expect(1) { longArrayOf(1, 2, 3).indexOf(2) }
+        expect(2) { longArrayOf(1, 2, 3).indexOf(3) }
 
-        expect(-1) { floatArrayOf(1.0f, 2.0f, 3.0f) indexOf 0f }
-        expect(0) { floatArrayOf(1.0f, 2.0f, 3.0f) indexOf 1.0f }
-        expect(1) { floatArrayOf(1.0f, 2.0f, 3.0f) indexOf 2.0f }
-        expect(2) { floatArrayOf(1.0f, 2.0f, 3.0f) indexOf 3.0f }
+        expect(-1) { floatArrayOf(1.0f, 2.0f, 3.0f).indexOf(0f) }
+        expect(0) { floatArrayOf(1.0f, 2.0f, 3.0f).indexOf(1.0f) }
+        expect(1) { floatArrayOf(1.0f, 2.0f, 3.0f).indexOf(2.0f) }
+        expect(2) { floatArrayOf(1.0f, 2.0f, 3.0f).indexOf(3.0f) }
 
-        expect(-1) { doubleArrayOf(1.0, 2.0, 3.0) indexOf 0.0 }
-        expect(0) { doubleArrayOf(1.0, 2.0, 3.0) indexOf 1.0 }
-        expect(1) { doubleArrayOf(1.0, 2.0, 3.0) indexOf 2.0 }
-        expect(2) { doubleArrayOf(1.0, 2.0, 3.0) indexOf 3.0 }
+        expect(-1) { doubleArrayOf(1.0, 2.0, 3.0).indexOf(0.0) }
+        expect(0) { doubleArrayOf(1.0, 2.0, 3.0).indexOf(1.0) }
+        expect(1) { doubleArrayOf(1.0, 2.0, 3.0).indexOf(2.0) }
+        expect(2) { doubleArrayOf(1.0, 2.0, 3.0).indexOf(3.0) }
 
-        expect(-1) { charArrayOf('a', 'b', 'c') indexOf 'z' }
-        expect(0) { charArrayOf('a', 'b', 'c') indexOf 'a' }
-        expect(1) { charArrayOf('a', 'b', 'c') indexOf 'b' }
-        expect(2) { charArrayOf('a', 'b', 'c') indexOf 'c' }
+        expect(-1) { charArrayOf('a', 'b', 'c').indexOf('z') }
+        expect(0) { charArrayOf('a', 'b', 'c').indexOf('a') }
+        expect(1) { charArrayOf('a', 'b', 'c').indexOf('b') }
+        expect(2) { charArrayOf('a', 'b', 'c').indexOf('c') }
 
-        expect(0) { booleanArrayOf(true, false) indexOf true }
-        expect(1) { booleanArrayOf(true, false) indexOf false }
-        expect(-1) { booleanArrayOf(true) indexOf false }
+        expect(0) { booleanArrayOf(true, false).indexOf(true) }
+        expect(1) { booleanArrayOf(true, false).indexOf(false) }
+        expect(-1) { booleanArrayOf(true).indexOf(false) }
     }
 
     @test fun indexOf() {
@@ -443,12 +444,12 @@ class ArraysTest {
     }
 
     @test fun asList() {
-        assertEquals(listOf(1, 2, 3), intArrayOf(1, 2, 3).asList())
-        assertEquals(listOf<Byte>(1, 2, 3), byteArrayOf(1, 2, 3).asList())
-        assertEquals(listOf(true, false), booleanArrayOf(true, false).asList())
+        compare(listOf(1, 2, 3), intArrayOf(1, 2, 3).asList()) { listBehavior() }
+        compare(listOf<Byte>(1, 2, 3), byteArrayOf(1, 2, 3).asList()) { listBehavior() }
+        compare(listOf(true, false), booleanArrayOf(true, false).asList()) { listBehavior() }
 
-        assertEquals(listOf(1, 2, 3), arrayOf(1, 2, 3).asList())
-        assertEquals(listOf("abc", "def"), arrayOf("abc", "def").asList())
+        compare(listOf(1, 2, 3), arrayOf(1, 2, 3).asList()) { listBehavior() }
+        compare(listOf("abc", "def"), arrayOf("abc", "def").asList()) { listBehavior() }
 
         val ints = intArrayOf(1, 5, 7)
         val intsAsList = ints.asList()
@@ -460,7 +461,7 @@ class ArraysTest {
     @test fun toPrimitiveArray() {
         val genericArray: Array<Int> = arrayOf(1, 2, 3)
         val primitiveArray: IntArray = genericArray.toIntArray()
-        expect(3) { primitiveArray.size() }
+        expect(3) { primitiveArray.size }
         assertEquals(genericArray.asList(), primitiveArray.asList())
 
 
@@ -472,7 +473,7 @@ class ArraysTest {
     @test fun toTypedArray() {
         val primitiveArray: LongArray = longArrayOf(1, 2, Long.MAX_VALUE)
         val genericArray: Array<Long> = primitiveArray.toTypedArray()
-        expect(3) { genericArray.size() }
+        expect(3) { genericArray.size }
         assertEquals(primitiveArray.asList(), genericArray.asList())
     }
 
@@ -515,15 +516,15 @@ class ArraysTest {
 
 
     @test fun reduce() {
-        expect(-4) { intArrayOf(1, 2, 3) reduce { a, b -> a - b } }
-        expect(-4.toLong()) { longArrayOf(1, 2, 3) reduce { a, b -> a - b } }
-        expect(-4F) { floatArrayOf(1F, 2F, 3F) reduce { a, b -> a - b } }
-        expect(-4.0) { doubleArrayOf(1.0, 2.0, 3.0) reduce { a, b -> a - b } }
-        expect('3') { charArrayOf('1', '3', '2') reduce { a, b -> if (a > b) a else b } }
-        expect(false) { booleanArrayOf(true, true, false) reduce { a, b -> a && b } }
-        expect(true) { booleanArrayOf(true, true) reduce { a, b -> a && b } }
-        expect(0.toByte()) { byteArrayOf(3, 2, 1) reduce { a, b -> (a - b).toByte() } }
-        expect(0.toShort()) { shortArrayOf(3, 2, 1) reduce { a, b -> (a - b).toShort() } }
+        expect(-4) { intArrayOf(1, 2, 3).reduce { a, b -> a - b } }
+        expect(-4.toLong()) { longArrayOf(1, 2, 3).reduce { a, b -> a - b } }
+        expect(-4F) { floatArrayOf(1F, 2F, 3F).reduce { a, b -> a - b } }
+        expect(-4.0) { doubleArrayOf(1.0, 2.0, 3.0).reduce { a, b -> a - b } }
+        expect('3') { charArrayOf('1', '3', '2').reduce { a, b -> if (a > b) a else b } }
+        expect(false) { booleanArrayOf(true, true, false).reduce { a, b -> a && b } }
+        expect(true) { booleanArrayOf(true, true).reduce { a, b -> a && b } }
+        expect(0.toByte()) { byteArrayOf(3, 2, 1).reduce { a, b -> (a - b).toByte() } }
+        expect(0.toShort()) { shortArrayOf(3, 2, 1).reduce { a, b -> (a - b).toShort() } }
 
         assertTrue(assertFails {
             intArrayOf().reduce { a, b -> a + b }
@@ -531,15 +532,15 @@ class ArraysTest {
     }
 
     @test fun reduceRight() {
-        expect(2) { intArrayOf(1, 2, 3) reduceRight { a, b -> a - b } }
-        expect(2.toLong()) { longArrayOf(1, 2, 3) reduceRight { a, b -> a - b } }
-        expect(2F) { floatArrayOf(1F, 2F, 3F) reduceRight { a, b -> a - b } }
-        expect(2.0) { doubleArrayOf(1.0, 2.0, 3.0) reduceRight { a, b -> a - b } }
-        expect('3') { charArrayOf('1', '3', '2') reduceRight { a, b -> if (a > b) a else b } }
-        expect(false) { booleanArrayOf(true, true, false) reduceRight { a, b -> a && b } }
-        expect(true) { booleanArrayOf(true, true) reduceRight { a, b -> a && b } }
-        expect(2.toByte()) { byteArrayOf(1, 2, 3) reduceRight { a, b -> (a - b).toByte() } }
-        expect(2.toShort()) { shortArrayOf(1, 2, 3) reduceRight { a, b -> (a - b).toShort() } }
+        expect(2) { intArrayOf(1, 2, 3).reduceRight { a, b -> a - b } }
+        expect(2.toLong()) { longArrayOf(1, 2, 3).reduceRight { a, b -> a - b } }
+        expect(2F) { floatArrayOf(1F, 2F, 3F).reduceRight { a, b -> a - b } }
+        expect(2.0) { doubleArrayOf(1.0, 2.0, 3.0).reduceRight { a, b -> a - b } }
+        expect('3') { charArrayOf('1', '3', '2').reduceRight { a, b -> if (a > b) a else b } }
+        expect(false) { booleanArrayOf(true, true, false).reduceRight { a, b -> a && b } }
+        expect(true) { booleanArrayOf(true, true).reduceRight { a, b -> a && b } }
+        expect(2.toByte()) { byteArrayOf(1, 2, 3).reduceRight { a, b -> (a - b).toByte() } }
+        expect(2.toShort()) { shortArrayOf(1, 2, 3).reduceRight { a, b -> (a - b).toShort() } }
 
         assertTrue(assertFails {
             intArrayOf().reduceRight { a, b -> a + b }
@@ -944,7 +945,7 @@ class ArraysTest {
 
     @test fun sortedWith() {
         val comparator = compareBy { it: Int -> it % 3 }.thenByDescending { it }
-        fun arrayData<A, T>(array: A, comparator: Comparator<T>) = ArraySortedChecker<A, T>(array, comparator)
+        fun <A, T> arrayData(array: A, comparator: Comparator<T>) = ArraySortedChecker<A, T>(array, comparator)
 
         arrayData(intArrayOf(0, 1, 2, 3, 4, 5), comparator)
                 .checkSorted<List<Int>>( { sortedWith(comparator) }, { sortedWith(comparator.reversed()) }, { iterator() })

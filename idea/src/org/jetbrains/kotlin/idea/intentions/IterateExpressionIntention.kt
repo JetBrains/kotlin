@@ -21,6 +21,7 @@ import com.intellij.codeInsight.template.TemplateBuilderImpl
 import com.intellij.codeInsight.template.impl.ConstantNode
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiDocumentManager
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.resolve.ideService
@@ -58,7 +59,8 @@ public class IterateExpressionIntention : SelfTargetingIntention<KtExpression>(j
 
         val elementType = data(element)!!.elementType
         val nameValidator = NewDeclarationNameValidator(element, element.siblings(), NewDeclarationNameValidator.Target.VARIABLES)
-        val names = KotlinNameSuggester.suggestIterationVariableNames(element, elementType, nameValidator, "e")
+        val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
+        val names = KotlinNameSuggester.suggestIterationVariableNames(element, elementType, bindingContext, nameValidator, "e")
 
         var forExpression = KtPsiFactory(element).createExpressionByPattern("for($0 in $1) {\nx\n}", names.first(), element) as KtForExpression
         forExpression = element.replaced(forExpression)

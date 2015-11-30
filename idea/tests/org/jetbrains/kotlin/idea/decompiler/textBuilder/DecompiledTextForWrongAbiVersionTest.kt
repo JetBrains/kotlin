@@ -38,7 +38,7 @@ public class DecompiledTextForWrongAbiVersionTest : AbstractInternalCompiledClas
 
     fun testClassWithWrongAbiVersion() = doTest("ClassWithWrongAbiVersion")
 
-    fun testPackageFacadeWithWrongAbiVersion() = doTest("WrongPackage")
+    fun testPackagePartWithWrongAbiVersion() = doTest("Wrong_packageKt")
 
     fun doTest(name: String) {
         val root = NavigateToDecompiledLibraryTest.findTestLibraryRoot(myModule!!)!!

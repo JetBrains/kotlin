@@ -31,8 +31,20 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class ScriptCodegenTestGenerated extends AbstractScriptCodegenTest {
+    @TestMetadata("adder.kts")
+    public void testAdder() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/adder.kts");
+        doTest(fileName);
+    }
+
     public void testAllFilesPresentInScript() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/script"), Pattern.compile("^(.+)\\.kts$"), true);
+    }
+
+    @TestMetadata("classLiteralInsideFunction.kts")
+    public void testClassLiteralInsideFunction() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/classLiteralInsideFunction.kts");
+        doTest(fileName);
     }
 
     @TestMetadata("empty.kts")
@@ -50,6 +62,12 @@ public class ScriptCodegenTestGenerated extends AbstractScriptCodegenTest {
     @TestMetadata("inline.kts")
     public void testInline() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/inline.kts");
+        doTest(fileName);
+    }
+
+    @TestMetadata("localFunction.kts")
+    public void testLocalFunction() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/script/localFunction.kts");
         doTest(fileName);
     }
 

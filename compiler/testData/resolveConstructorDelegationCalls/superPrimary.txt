@@ -5,6 +5,7 @@ class A : B, C {
 }
 
 
+
 Resolved call:
 
 Resulting descriptor: constructor B(x: Int) defined in B

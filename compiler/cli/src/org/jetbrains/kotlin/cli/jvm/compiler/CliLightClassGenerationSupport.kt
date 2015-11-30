@@ -92,13 +92,13 @@ public class CliLightClassGenerationSupport(project: Project) : LightClassGenera
     }
 
     override fun findClassOrObjectDeclarations(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtClassOrObject> {
-        return ResolveSessionUtils.getClassDescriptorsByFqName(module, fqName).map {
+        return ResolveSessionUtils.getClassDescriptorsByFqName(module, fqName).mapNotNull {
             val element = DescriptorToSourceUtils.getSourceFromDescriptor(it)
             if (element is KtClassOrObject && PsiSearchScopeUtil.isInScope(searchScope, element)) {
                 element
             }
             else null
-        }.filterNotNull()
+        }
     }
 
     override fun findFilesForPackage(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtFile> {
@@ -216,7 +216,7 @@ public class CliLightClassGenerationSupport(project: Project) : LightClassGenera
     override fun getFacadeClassesInPackage(packageFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
         return PackagePartClassUtils.getFilesWithCallables(findFilesForPackage(packageFqName, scope)).groupBy {
             JvmFileClassUtil.getFileClassInfoNoResolve(it).facadeClassFqName
-        }.map { KtLightClassForFacade.createForFacade(psiManager, it.key, scope, it.value) }.filterNotNull()
+        }.mapNotNull { KtLightClassForFacade.createForFacade(psiManager, it.key, scope, it.value) }
     }
 
     override fun getFacadeNames(packageFqName: FqName, scope: GlobalSearchScope): Collection<String> {

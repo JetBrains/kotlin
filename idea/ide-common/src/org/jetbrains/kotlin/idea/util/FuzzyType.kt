@@ -20,12 +20,10 @@ package org.jetbrains.kotlin.idea.util
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemImpl
+import org.jetbrains.kotlin.resolve.calls.inference.CallHandle
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
-import org.jetbrains.kotlin.resolve.calls.inference.registerTypeVariables
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeSubstitutor
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.*
 import java.util.*
 
@@ -117,26 +115,40 @@ class FuzzyType(
             return if (type.checkInheritance(otherType.type)) TypeSubstitutor.EMPTY else null
         }
 
-        val constraintSystem = ConstraintSystemImpl()
-        constraintSystem.registerTypeVariables(freeParameters, { Variance.INVARIANT })
-        constraintSystem.registerTypeVariables(otherType.freeParameters, { Variance.INVARIANT })
+        val builder = ConstraintSystemBuilderImpl()
+        val typeVariableSubstitutor = builder.registerTypeVariables(CallHandle.NONE, freeParameters + otherType.freeParameters)
+
+        val typeInSystem = typeVariableSubstitutor.substitute(type, Variance.INVARIANT)
+        val otherTypeInSystem = typeVariableSubstitutor.substitute(otherType.type, Variance.INVARIANT)
 
         when (matchKind) {
-            MatchKind.IS_SUBTYPE -> constraintSystem.addSubtypeConstraint(type, otherType.type, ConstraintPositionKind.RECEIVER_POSITION.position())
-            MatchKind.IS_SUPERTYPE -> constraintSystem.addSubtypeConstraint(otherType.type, type, ConstraintPositionKind.RECEIVER_POSITION.position())
+            MatchKind.IS_SUBTYPE ->
+                builder.addSubtypeConstraint(typeInSystem, otherTypeInSystem, ConstraintPositionKind.RECEIVER_POSITION.position())
+            MatchKind.IS_SUPERTYPE ->
+                builder.addSubtypeConstraint(otherTypeInSystem, typeInSystem, ConstraintPositionKind.RECEIVER_POSITION.position())
         }
 
-        constraintSystem.fixVariables()
+        builder.fixVariables()
 
-        if (constraintSystem.getStatus().hasContradiction()) return null
+        val constraintSystem = builder.build()
+
+        if (constraintSystem.status.hasContradiction()) return null
 
         // currently ConstraintSystem return successful status in case there are problems with nullability
         // that's why we have to check subtyping manually
-        val substitutor = constraintSystem.getResultingSubstitutor()
+        val substitutor = constraintSystem.resultingSubstitutor
         val substitutedType = substitutor.substitute(type, Variance.INVARIANT) ?: return null
         if (substitutedType.isError) return null
         val otherSubstitutedType = substitutor.substitute(otherType.type, Variance.INVARIANT) ?: return null
         if (otherSubstitutedType.isError) return null
-        return if (substitutedType.checkInheritance(otherSubstitutedType)) constraintSystem.getPartialSubstitutor() else null
+        if (!substitutedType.checkInheritance(otherSubstitutedType)) return null
+
+        val substitution = constraintSystem.typeVariables.map { it.originalTypeParameter }.toMap({ it.typeConstructor }) {
+            val type = it.defaultType
+            val solution = substitutor.substitute(type, Variance.INVARIANT)
+            TypeProjectionImpl(if (solution != null && !ErrorUtils.containsUninferredParameter(solution)) solution else type)
+        }
+
+        return TypeSubstitutor.create(TypeConstructorSubstitution.createByConstructorsMap(substitution))
     }
 }

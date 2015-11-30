@@ -30,6 +30,7 @@ import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.script.KotlinScriptDefinitionProvider;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.lang.annotation.Annotation;
@@ -39,6 +40,12 @@ import java.lang.reflect.Modifier;
 public abstract class AbstractParsingTest extends ParsingTestCase {
     static {
         System.setProperty("idea.platform.prefix", "Idea");
+    }
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        getProject().registerService(KotlinScriptDefinitionProvider.class);
     }
 
     @Override

@@ -10,19 +10,19 @@
 package foo
 
 class Bar/* : Function0<String>*/ {
-    fun invoke() = "Bar.invoke()"
+    operator fun invoke() = "Bar.invoke()"
 }
 
 class Baz/* : Function2<Int, Boolean, String>*/ {
-    fun invoke(i: Int, b: Boolean) = "Baz.invoke($i, $b)"
+    operator fun invoke(i: Int, b: Boolean) = "Baz.invoke($i, $b)"
 }
 
 class Mixed/* :
         Function1<Int, String>,
         Function2<Int, Boolean, String>*/
 {
-    fun invoke(i: Int) = "Mixed.invoke($i)"
-    fun invoke(i: Int, b: Boolean) = "Mixed.invoke($i, $b)"
+    operator fun invoke(i: Int) = "Mixed.invoke($i)"
+    operator fun invoke(i: Int, b: Boolean) = "Mixed.invoke($i, $b)"
 }
 
 fun box(): String {

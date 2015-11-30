@@ -70,16 +70,4 @@ public class ReflectionFactory {
     public KMutableProperty2 mutableProperty2(MutablePropertyReference2 p) {
         return p;
     }
-
-    // Deprecated
-
-    @Deprecated
-    public KClass foreignKotlinClass(Class javaClass) {
-        return new ClassReference(javaClass);
-    }
-
-    @Deprecated
-    public KPackage createKotlinPackage(Class javaClass, String moduleName) {
-        return null;
-    }
 }

@@ -4,6 +4,7 @@ class A<T> {
 }
 
 
+
 Resolved call:
 
 Candidate descriptor: constructor A<T>(x: T) defined in A

@@ -220,7 +220,7 @@ public class ReifiedTypeParameterMappings() {
         mappingsByName[name] = ReifiedTypeParameterMapping(name, type = null, asmType = null, newName = newName, signature = null)
     }
 
-    fun get(name: String): ReifiedTypeParameterMapping? {
+    operator fun get(name: String): ReifiedTypeParameterMapping? {
         return mappingsByName[name]
     }
 }

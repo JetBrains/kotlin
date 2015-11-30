@@ -1,5 +1,5 @@
 package test
 
-inline fun f<reified T>(x : () -> Unit) {
+inline fun <reified T> f(x : () -> Unit) {
     object { init { arrayOf<T>() } }
 }

@@ -104,7 +104,7 @@ public class DescriptorSerializer {
                 new MutableTypeTable(),
                 false
         );
-        for (TypeParameterDescriptor typeParameter : descriptor.getTypeConstructor().getParameters()) {
+        for (TypeParameterDescriptor typeParameter : descriptor.getDeclaredTypeParameters()) {
             serializer.typeParameters.intern(typeParameter);
         }
         return serializer;
@@ -137,7 +137,7 @@ public class DescriptorSerializer {
 
         builder.setFqName(getClassId(classDescriptor));
 
-        for (TypeParameterDescriptor typeParameterDescriptor : classDescriptor.getTypeConstructor().getParameters()) {
+        for (TypeParameterDescriptor typeParameterDescriptor : classDescriptor.getDeclaredTypeParameters()) {
             builder.addTypeParameter(typeParameter(typeParameterDescriptor));
         }
 
@@ -471,7 +471,11 @@ public class DescriptorSerializer {
 
         ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
         if (descriptor instanceof ClassDescriptor) {
-            builder.setClassName(getClassId((ClassDescriptor) descriptor));
+            PossiblyInnerType possiblyInnerType = TypeParameterUtilsKt.buildPossiblyInnerType(type);
+            assert possiblyInnerType != null : "possiblyInnerType should not be null in case of class";
+
+            fillFromPossiblyInnerType(builder, possiblyInnerType);
+
         }
         if (descriptor instanceof TypeParameterDescriptor) {
             TypeParameterDescriptor typeParameter = (TypeParameterDescriptor) descriptor;
@@ -481,10 +485,8 @@ public class DescriptorSerializer {
             else {
                 builder.setTypeParameter(getTypeParameterId(typeParameter));
             }
-        }
 
-        for (TypeProjection projection : type.getArguments()) {
-            builder.addArgument(typeArgument(projection));
+            assert type.getArguments().isEmpty() : "Found arguments for type constructor build on type parameter: " + descriptor;
         }
 
         if (type.isMarkedNullable() != builder.getNullable()) {
@@ -494,6 +496,29 @@ public class DescriptorSerializer {
         extension.serializeType(type, builder);
 
         return builder;
+    }
+
+    private void fillFromPossiblyInnerType(
+            @NotNull ProtoBuf.Type.Builder builder,
+            @NotNull PossiblyInnerType type
+    ) {
+        builder.setClassName(getClassId(type.getClassDescriptor()));
+
+        for (TypeProjection projection : type.getArguments()) {
+            builder.addArgument(typeArgument(projection));
+        }
+
+        if (type.getOuterType() != null) {
+            ProtoBuf.Type.Builder outerBuilder = ProtoBuf.Type.newBuilder();
+            fillFromPossiblyInnerType(outerBuilder, type.getOuterType());
+            if (useTypeTable()) {
+                builder.setOuterTypeId(typeTable.get(outerBuilder));
+            }
+            else {
+                builder.setOuterType(outerBuilder);
+            }
+
+        }
     }
 
     @NotNull

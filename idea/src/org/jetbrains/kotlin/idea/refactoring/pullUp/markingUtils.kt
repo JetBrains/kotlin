@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getExplicitReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 import java.util.*
@@ -67,7 +68,7 @@ fun markElements(
                     val resolvedCall = expression.getResolvedCall(context) ?: return
                     var receiver = resolvedCall.getExplicitReceiverValue()
                     if (!receiver.exists()) {
-                        receiver = resolvedCall.extensionReceiver
+                        receiver = resolvedCall.extensionReceiver as ReceiverValue
                     }
                     if (!receiver.exists()) {
                         receiver = resolvedCall.dispatchReceiver

@@ -7,8 +7,8 @@ class A {
 }
 
 fun main(args: Array<String>) {
-    A()
+    val a = A()
 
     //Breakpoint!
-    A().bar()
+    a.bar()
 }

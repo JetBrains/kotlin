@@ -35,6 +35,7 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.progress.Task
 import com.intellij.openapi.updateSettings.impl.PluginDownloader
 import com.intellij.openapi.updateSettings.impl.UpdateChecker
+import com.intellij.openapi.updateSettings.impl.UpdateSettings
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.vfs.CharsetToolkit
@@ -58,18 +59,19 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
         }
     }
 
-    private fun queueUpdateCheck() {
+    fun queueUpdateCheck(reportNoUpdates: Boolean = false) {
         if (ApplicationManager.getApplication().isUnitTestMode) return
+        if (!UpdateSettings.getInstance().isCheckNeeded) return
 
         ApplicationManager.getApplication().assertIsDispatchThread()
         if (!checkQueued) {
             checkQueued = true
-            alarm.addRequest({ updateCheck() }, updateDelay)
+            alarm.addRequest({ updateCheck(reportNoUpdates) }, updateDelay)
             updateDelay *= 2 // exponential backoff
         }
     }
 
-    private fun updateCheck() {
+    private fun updateCheck(reportNoUpdates: Boolean) {
         try {
             var (mainRepoUpdateSuccess, latestVersionInRepository) = getPluginVersionFromMainRepository()
             var descriptorToInstall: IdeaPluginDescriptor? = null
@@ -101,6 +103,15 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
                         notifyPluginUpdateAvailable(latestVersionInRepository!!, descriptorToInstall, hostToInstallFrom)
                     }
                 }
+                else if (reportNoUpdates) {
+                    ApplicationManager.getApplication().invokeLater {
+                        val notification = notificationGroup.createNotification(
+                                "Kotlin",
+                                "You have the latest version of the Kotlin plugin",
+                                NotificationType.INFORMATION, null)
+                        notification.notify(null)
+                    }
+                }
             }
             else {
                 ApplicationManager.getApplication().invokeLater { queueUpdateCheck() }
@@ -121,7 +132,7 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
         val pluginVersion = KotlinPluginUtil.getPluginVersion()
         val os = URLEncoder.encode(SystemInfo.OS_NAME + " " + SystemInfo.OS_VERSION, CharsetToolkit.UTF8)
         val uid = UpdateChecker.getInstallationUID(propertiesComponent)
-        val url = "https://plugins.jetbrains.com/plugins/list?pluginId=6954&build=$buildNumber&pluginVersion=$pluginVersion&os=$os&uuid=a$uid"
+        val url = "https://plugins.jetbrains.com/plugins/list?pluginId=6954&build=$buildNumber&pluginVersion=$pluginVersion&os=$os&uuid=$uid"
         val responseDoc = HttpRequests.request(url).connect {
             JDOMUtil.load(it.inputStream)
         }

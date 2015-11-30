@@ -2,6 +2,6 @@ class SimpleClass(val s: String) {
     fun foo() = s
 }
 
-SimpleClass("OK").foo()
+val rv = SimpleClass("OK").foo()
 
 // expected: rv: OK

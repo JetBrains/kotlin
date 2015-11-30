@@ -18,18 +18,18 @@ val metadatas = IdentityHashMap<KProperty<*>, Unit>()
 fun record(p: KProperty<*>) = metadatas.put(p, Unit)
 
 object IntHandler {
-    fun getValue(t: Any?, p: KProperty<*>): Int { record(p); return 42 }
-    fun setValue(t: Any?, p: KProperty<*>, value: Int) { record(p) }
+    operator fun getValue(t: Any?, p: KProperty<*>): Int { record(p); return 42 }
+    operator fun setValue(t: Any?, p: KProperty<*>, value: Int) { record(p) }
 }
 
 object AnyHandler {
-    fun getValue(t: Any?, p: KProperty<*>): Any? { record(p); return 3.14 }
-    fun setValue(t: Any?, p: KProperty<*>, value: Any?) { record(p) }
+    operator fun getValue(t: Any?, p: KProperty<*>): Any? { record(p); return 3.14 }
+    operator fun setValue(t: Any?, p: KProperty<*>, value: Any?) { record(p) }
 }
 
 object StringHandler {
-    fun getValue(t: Any?, p: KProperty<*>): String { record(p); return p.name }
-    fun setValue(t: Any?, p: KProperty<*>, value: String) { record(p) }
+    operator fun getValue(t: Any?, p: KProperty<*>): String { record(p); return p.name }
+    operator fun setValue(t: Any?, p: KProperty<*>, value: String) { record(p) }
 }
 
 fun box(): String {

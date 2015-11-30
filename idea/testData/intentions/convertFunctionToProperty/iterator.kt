@@ -1,7 +1,7 @@
 // WITH_RUNTIME
 // IS_APPLICABLE: false
 class A(val n: Int) {
-    fun <caret>iterator(): Iterator<Int> = throw Exception("")
+    operator fun <caret>iterator(): Iterator<Int> = throw Exception("")
 }
 
 fun test() {

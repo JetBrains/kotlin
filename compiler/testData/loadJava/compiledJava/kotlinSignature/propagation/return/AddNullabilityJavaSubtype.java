@@ -1,8 +1,6 @@
 package test;
 
 import org.jetbrains.annotations.NotNull;
-import jet.runtime.typeinfo.KotlinSignature;
-import org.jetbrains.kotlin.jvm.compiler.annotation.ExpectLoadError;
 
 public interface AddNullabilityJavaSubtype {
 
@@ -14,8 +12,6 @@ public interface AddNullabilityJavaSubtype {
     }
 
     public interface Sub extends Super {
-        //@ExpectLoadError("Auto type 'kotlin.String' is not-null, while type in alternative signature is nullable: 'String?'")
-        @KotlinSignature("fun foo(): String?")
         String foo();
     }
 }

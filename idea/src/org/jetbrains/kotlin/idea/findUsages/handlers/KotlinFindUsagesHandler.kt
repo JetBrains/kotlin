@@ -95,10 +95,10 @@ public abstract class KotlinFindUsagesHandler<T : PsiElement>(psiElement: T,
     companion object {
         val LOG = Logger.getInstance(KotlinFindUsagesHandler::class.java)
 
-        protected fun processUsage(processor: Processor<UsageInfo>, ref: PsiReference): Boolean =
+        internal fun processUsage(processor: Processor<UsageInfo>, ref: PsiReference): Boolean =
             processor.processIfNotNull { if (ref.element.isValid) KotlinReferenceUsageInfo(ref) else null }
 
-        protected fun processUsage(processor: Processor<UsageInfo>, element: PsiElement): Boolean =
+        internal fun processUsage(processor: Processor<UsageInfo>, element: PsiElement): Boolean =
             processor.processIfNotNull { if (element.isValid) UsageInfo(element) else null }
 
         private fun Processor<UsageInfo>.processIfNotNull(callback: () -> UsageInfo?): Boolean {
@@ -106,7 +106,7 @@ public abstract class KotlinFindUsagesHandler<T : PsiElement>(psiElement: T,
             return if (usageInfo != null) process(usageInfo) else true
         }
 
-        protected fun createReferenceProcessor(usageInfoProcessor: Processor<UsageInfo>): Processor<PsiReference> {
+        internal fun createReferenceProcessor(usageInfoProcessor: Processor<UsageInfo>): Processor<PsiReference> {
             val uniqueProcessor = CommonProcessors.UniqueProcessor(usageInfoProcessor)
 
             return Processor { KotlinFindUsagesHandler.processUsage(uniqueProcessor, it) }

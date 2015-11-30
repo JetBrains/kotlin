@@ -1,6 +1,5 @@
 fun calc(x: List<String>?): Int {
-    // x should be non-null in arguments list, despite of a chain
-    x?.subList(0, 1)<!UNSAFE_CALL!>.<!>get(<!DEBUG_INFO_SMARTCAST!>x<!>.size)
-    // But not here!
+    // x is not-null only inside subList
+    x?.subList(0, <!DEBUG_INFO_SMARTCAST!>x<!>.size - 1)<!UNSAFE_CALL!>.<!>get(x<!UNSAFE_CALL!>.<!>size)
     return x!!.size
 }

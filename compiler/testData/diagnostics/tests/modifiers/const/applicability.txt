@@ -2,7 +2,11 @@ package
 
 public const val defaultGetter: kotlin.Int = 19
 public const val delegated: kotlin.Int
-public const val nonConstInitializer: kotlin.Int
+public const val nonConstInitializer1: kotlin.Int
+public const val nonConstInitializer2: kotlin.String
+public const val nonConstInitializer3: kotlin.String
+public const val nonConstInitializer4: kotlin.Double
+public const val nonConstInitializer5: kotlin.Int
 private val privateTopLevel: kotlin.Int = 3
 public const var topLeveLVar: kotlin.Int
 public const val topLevel: kotlin.Int = 0
@@ -78,9 +82,9 @@ public final enum class MyEnum : kotlin.Enum<MyEnum> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    public final /*synthesized*/ val values: kotlin.Array<MyEnum>
+    @kotlin.Deprecated(message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<MyEnum>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): MyEnum
-    @kotlin.Deprecated(message = "Use 'values' property instead", replaceWith = kotlin.ReplaceWith(expression = "this.values", imports = {})) public final /*synthesized*/ fun values(): kotlin.Array<MyEnum>
+    public final /*synthesized*/ fun values(): kotlin.Array<MyEnum>
 }
 
 public final class Outer {

@@ -1,6 +1,6 @@
 open class Base
 class Derived: Base()
-fun Derived.inc(): Derived { return Derived() }
+operator fun Derived.inc(): Derived { return Derived() }
 
 public fun box() : String {
     var i : Base

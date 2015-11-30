@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.types.typeUtil.supertypes
 
 object DeleteEqualsAndHashCodeFix : LocalQuickFix {
     override fun getName() = "Delete equals()/hashCode()"
@@ -76,6 +77,7 @@ class EqualsOrHashCodeInspection : AbstractKotlinInspection() {
 
                 when (classDescriptor.kind) {
                     ClassKind.OBJECT -> {
+                        if (classOrObject.getDelegationSpecifiers().isNotEmpty()) return
                         holder.registerProblem(nameIdentifier, "equals()/hashCode() in object declaration", DeleteEqualsAndHashCodeFix)
                     }
                     ClassKind.CLASS -> {

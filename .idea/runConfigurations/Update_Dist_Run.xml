@@ -22,9 +22,7 @@
       <option name="BuildArtifacts" enabled="true">
         <artifact name="KotlinPlugin" />
       </option>
-      <option name="BuildArtifacts" enabled="true">
-        <artifact name="KotlinAndroidExtensions" />
-      </option>
+      <option name="BuildArtifacts" enabled="true" />
       <option name="AntTarget" enabled="true" antfile="file://$PROJECT_DIR$/idea_runner/runner.xml" target="force_enable_kotlin_plugin" />
     </method>
   </configuration>

@@ -1,7 +1,7 @@
 // WITH_RUNTIME
 // IS_APPLICABLE: false
 
-fun <T> T.compareTo(a: T): Int = 0
+operator fun <T> T.compareTo(a: T): Int = 0
 
 fun main(args: Array<String>) {
     val foo = null
