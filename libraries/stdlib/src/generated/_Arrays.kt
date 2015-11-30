@@ -5842,53 +5842,53 @@ public fun ShortArray.toList(): List<Short> {
     return this.toArrayList()
 }
 
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"), level = DeprecationLevel.HIDDEN)
 public inline fun <T, K> Array<out T>.toMap(selector: (T) -> K): Map<K, T> {
     return toMapBy(selector)
 }
 
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"), level = DeprecationLevel.HIDDEN)
 public inline fun <K> BooleanArray.toMap(selector: (Boolean) -> K): Map<K, Boolean> {
     return toMapBy(selector)
 }
 
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"), level = DeprecationLevel.HIDDEN)
 public inline fun <K> ByteArray.toMap(selector: (Byte) -> K): Map<K, Byte> {
     return toMapBy(selector)
 }
 
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"), level = DeprecationLevel.HIDDEN)
 public inline fun <K> CharArray.toMap(selector: (Char) -> K): Map<K, Char> {
     return toMapBy(selector)
 }
 
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"), level = DeprecationLevel.HIDDEN)
 public inline fun <K> DoubleArray.toMap(selector: (Double) -> K): Map<K, Double> {
     return toMapBy(selector)
 }
 
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"), level = DeprecationLevel.HIDDEN)
 public inline fun <K> FloatArray.toMap(selector: (Float) -> K): Map<K, Float> {
     return toMapBy(selector)
 }
 
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"), level = DeprecationLevel.HIDDEN)
 public inline fun <K> IntArray.toMap(selector: (Int) -> K): Map<K, Int> {
     return toMapBy(selector)
 }
 
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"), level = DeprecationLevel.HIDDEN)
 public inline fun <K> LongArray.toMap(selector: (Long) -> K): Map<K, Long> {
     return toMapBy(selector)
 }
 
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"), level = DeprecationLevel.HIDDEN)
 public inline fun <K> ShortArray.toMap(selector: (Short) -> K): Map<K, Short> {
     return toMapBy(selector)
 }
 
 /**
- * Returns Map containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
+ * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <T, K, V> Array<out T>.toMap(selector: (T) -> K, transform: (T) -> V): Map<K, V> {
@@ -5901,7 +5901,7 @@ public inline fun <T, K, V> Array<out T>.toMap(selector: (T) -> K, transform: (T
 }
 
 /**
- * Returns Map containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
+ * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> BooleanArray.toMap(selector: (Boolean) -> K, transform: (Boolean) -> V): Map<K, V> {
@@ -5914,7 +5914,7 @@ public inline fun <K, V> BooleanArray.toMap(selector: (Boolean) -> K, transform:
 }
 
 /**
- * Returns Map containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
+ * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> ByteArray.toMap(selector: (Byte) -> K, transform: (Byte) -> V): Map<K, V> {
@@ -5927,7 +5927,7 @@ public inline fun <K, V> ByteArray.toMap(selector: (Byte) -> K, transform: (Byte
 }
 
 /**
- * Returns Map containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
+ * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> CharArray.toMap(selector: (Char) -> K, transform: (Char) -> V): Map<K, V> {
@@ -5940,7 +5940,7 @@ public inline fun <K, V> CharArray.toMap(selector: (Char) -> K, transform: (Char
 }
 
 /**
- * Returns Map containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
+ * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> DoubleArray.toMap(selector: (Double) -> K, transform: (Double) -> V): Map<K, V> {
@@ -5953,7 +5953,7 @@ public inline fun <K, V> DoubleArray.toMap(selector: (Double) -> K, transform: (
 }
 
 /**
- * Returns Map containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
+ * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> FloatArray.toMap(selector: (Float) -> K, transform: (Float) -> V): Map<K, V> {
@@ -5966,7 +5966,7 @@ public inline fun <K, V> FloatArray.toMap(selector: (Float) -> K, transform: (Fl
 }
 
 /**
- * Returns Map containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
+ * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> IntArray.toMap(selector: (Int) -> K, transform: (Int) -> V): Map<K, V> {
@@ -5979,7 +5979,7 @@ public inline fun <K, V> IntArray.toMap(selector: (Int) -> K, transform: (Int) -
 }
 
 /**
- * Returns Map containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
+ * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> LongArray.toMap(selector: (Long) -> K, transform: (Long) -> V): Map<K, V> {
@@ -5992,7 +5992,7 @@ public inline fun <K, V> LongArray.toMap(selector: (Long) -> K, transform: (Long
 }
 
 /**
- * Returns Map containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
+ * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> ShortArray.toMap(selector: (Short) -> K, transform: (Short) -> V): Map<K, V> {
@@ -6005,7 +6005,7 @@ public inline fun <K, V> ShortArray.toMap(selector: (Short) -> K, transform: (Sh
 }
 
 /**
- * Returns Map containing the elements from the given array indexed by the key
+ * Returns a [Map] containing the elements from the given array indexed by the key
  * returned from [selector] function applied to each element.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
@@ -6019,7 +6019,7 @@ public inline fun <T, K> Array<out T>.toMapBy(selector: (T) -> K): Map<K, T> {
 }
 
 /**
- * Returns Map containing the elements from the given array indexed by the key
+ * Returns a [Map] containing the elements from the given array indexed by the key
  * returned from [selector] function applied to each element.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
@@ -6033,7 +6033,7 @@ public inline fun <K> BooleanArray.toMapBy(selector: (Boolean) -> K): Map<K, Boo
 }
 
 /**
- * Returns Map containing the elements from the given array indexed by the key
+ * Returns a [Map] containing the elements from the given array indexed by the key
  * returned from [selector] function applied to each element.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
@@ -6047,7 +6047,7 @@ public inline fun <K> ByteArray.toMapBy(selector: (Byte) -> K): Map<K, Byte> {
 }
 
 /**
- * Returns Map containing the elements from the given array indexed by the key
+ * Returns a [Map] containing the elements from the given array indexed by the key
  * returned from [selector] function applied to each element.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
@@ -6061,7 +6061,7 @@ public inline fun <K> CharArray.toMapBy(selector: (Char) -> K): Map<K, Char> {
 }
 
 /**
- * Returns Map containing the elements from the given array indexed by the key
+ * Returns a [Map] containing the elements from the given array indexed by the key
  * returned from [selector] function applied to each element.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
@@ -6075,7 +6075,7 @@ public inline fun <K> DoubleArray.toMapBy(selector: (Double) -> K): Map<K, Doubl
 }
 
 /**
- * Returns Map containing the elements from the given array indexed by the key
+ * Returns a [Map] containing the elements from the given array indexed by the key
  * returned from [selector] function applied to each element.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
@@ -6089,7 +6089,7 @@ public inline fun <K> FloatArray.toMapBy(selector: (Float) -> K): Map<K, Float> 
 }
 
 /**
- * Returns Map containing the elements from the given array indexed by the key
+ * Returns a [Map] containing the elements from the given array indexed by the key
  * returned from [selector] function applied to each element.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
@@ -6103,7 +6103,7 @@ public inline fun <K> IntArray.toMapBy(selector: (Int) -> K): Map<K, Int> {
 }
 
 /**
- * Returns Map containing the elements from the given array indexed by the key
+ * Returns a [Map] containing the elements from the given array indexed by the key
  * returned from [selector] function applied to each element.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
@@ -6117,7 +6117,7 @@ public inline fun <K> LongArray.toMapBy(selector: (Long) -> K): Map<K, Long> {
 }
 
 /**
- * Returns Map containing the elements from the given array indexed by the key
+ * Returns a [Map] containing the elements from the given array indexed by the key
  * returned from [selector] function applied to each element.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */

@@ -124,7 +124,7 @@ fun snapshots(): List<GenericFunction> {
         include(CharSequences, Strings)
         typeParam("K")
         returns("Map<K, T>")
-        deprecate(Deprecation("Use toMapBy instead.", replaceWith = "toMapBy(selector)"))
+        deprecate(Deprecation("Use toMapBy instead.", replaceWith = "toMapBy(selector)", level = DeprecationLevel.HIDDEN))
     }
 
     templates add f("toMapBy(selector: (T) -> K)") {
@@ -132,7 +132,7 @@ fun snapshots(): List<GenericFunction> {
         typeParam("K")
         doc { f ->
             """
-            Returns Map containing the ${f.element.pluralize()} from the given ${f.collection} indexed by the key
+            Returns a [Map] containing the ${f.element.pluralize()} from the given ${f.collection} indexed by the key
             returned from [selector] function applied to each ${f.element}.
             If any two ${f.element.pluralize()} would have the same key returned by [selector] the last one gets added to the map.
             """
@@ -192,7 +192,7 @@ fun snapshots(): List<GenericFunction> {
         typeParam("V")
         doc { f ->
             """
-            Returns Map containing the values provided by [transform] and indexed by [selector] functions applied to ${f.element.pluralize()} of the given ${f.collection}.
+            Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to ${f.element.pluralize()} of the given ${f.collection}.
             If any two ${f.element.pluralize()} would have the same key returned by [selector] the last one gets added to the map.
             """
         }

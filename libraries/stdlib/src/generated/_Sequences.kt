@@ -522,13 +522,13 @@ public fun <T> Sequence<T>.toList(): List<T> {
     return this.toArrayList()
 }
 
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"), level = DeprecationLevel.HIDDEN)
 public inline fun <T, K> Sequence<T>.toMap(selector: (T) -> K): Map<K, T> {
     return toMapBy(selector)
 }
 
 /**
- * Returns Map containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given sequence.
+ * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given sequence.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <T, K, V> Sequence<T>.toMap(selector: (T) -> K, transform: (T) -> V): Map<K, V> {
@@ -540,7 +540,7 @@ public inline fun <T, K, V> Sequence<T>.toMap(selector: (T) -> K, transform: (T)
 }
 
 /**
- * Returns Map containing the elements from the given sequence indexed by the key
+ * Returns a [Map] containing the elements from the given sequence indexed by the key
  * returned from [selector] function applied to each element.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */

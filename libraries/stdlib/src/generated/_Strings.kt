@@ -805,7 +805,7 @@ public fun String.toList(): List<Char> {
     return this.toArrayList()
 }
 
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"), level = DeprecationLevel.HIDDEN)
 public inline fun <K> CharSequence.toMap(selector: (Char) -> K): Map<K, Char> {
     return toMapBy(selector)
 }
@@ -816,7 +816,7 @@ public inline fun <K> String.toMap(selector: (Char) -> K): Map<K, Char> {
 }
 
 /**
- * Returns Map containing the values provided by [transform] and indexed by [selector] functions applied to characters of the given char sequence.
+ * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to characters of the given char sequence.
  * If any two characters would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> CharSequence.toMap(selector: (Char) -> K, transform: (Char) -> V): Map<K, V> {
@@ -829,7 +829,7 @@ public inline fun <K, V> CharSequence.toMap(selector: (Char) -> K, transform: (C
 }
 
 /**
- * Returns Map containing the values provided by [transform] and indexed by [selector] functions applied to characters of the given string.
+ * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to characters of the given string.
  * If any two characters would have the same key returned by [selector] the last one gets added to the map.
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
@@ -843,7 +843,7 @@ public inline fun <K, V> String.toMap(selector: (Char) -> K, transform: (Char) -
 }
 
 /**
- * Returns Map containing the characters from the given char sequence indexed by the key
+ * Returns a [Map] containing the characters from the given char sequence indexed by the key
  * returned from [selector] function applied to each character.
  * If any two characters would have the same key returned by [selector] the last one gets added to the map.
  */
@@ -857,7 +857,7 @@ public inline fun <K> CharSequence.toMapBy(selector: (Char) -> K): Map<K, Char> 
 }
 
 /**
- * Returns Map containing the characters from the given string indexed by the key
+ * Returns a [Map] containing the characters from the given string indexed by the key
  * returned from [selector] function applied to each character.
  * If any two characters would have the same key returned by [selector] the last one gets added to the map.
  */
