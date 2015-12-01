@@ -103,7 +103,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
     ): ModuleLevelBuilder.ExitCode {
         LOG.debug("------------------------------------------")
         val messageCollector = MessageCollectorAdapter(context)
-        val fsOperations = FSOperationsHelper(context, chunk)
+        val fsOperations = FSOperationsHelper(context, chunk, LOG)
 
         try {
             val exitCode = doBuild(chunk, context, dirtyFilesHolder, messageCollector, outputConsumer, fsOperations)
@@ -275,9 +275,8 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             }
 
             if (inlineChanged) {
-                for (cache in caches) {
-                    fsOperations.markFiles(cache.getFilesToReinline(), excludeFiles = compiledFiles)
-                }
+                val files = caches.flatMap { it.getFilesToReinline() }
+                fsOperations.markFiles(files, excludeFiles = compiledFiles)
             }
         }
 
