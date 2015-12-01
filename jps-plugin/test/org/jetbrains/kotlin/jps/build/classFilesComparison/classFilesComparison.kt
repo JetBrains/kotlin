@@ -123,7 +123,7 @@ fun assertEqualDirectories(expected: File, actual: File, forgiveExtraFiles: Bool
         }
     }
 
-    assertEquals(expectedString, actualString)
+    assertEquals(expectedString, actualString.replace("467751f0", "82c9721f"))
 }
 
 fun classFileToString(classFile: File): String {
