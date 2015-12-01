@@ -29,9 +29,6 @@ public abstract class LazyJavaStaticScope(c: LazyJavaResolverContext) : LazyJava
 
     override fun getDispatchReceiverParameter() = null
 
-    // Package fragments are not nested
-    override fun getPackage(name: Name) = null
-
     abstract fun getSubPackages(): Collection<FqName>
 
     override fun resolveMethodSignature(

@@ -23,17 +23,18 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.BaseImportingScope
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
 import org.jetbrains.kotlin.utils.Printer
 
 class AllUnderImportsScope(descriptor: DeclarationDescriptor) : BaseImportingScope(null) {
-    private val scopes = if (descriptor is ClassDescriptor) {
+    private val scopes: List<ResolutionScope> = if (descriptor is ClassDescriptor) {
         listOf(descriptor.staticScope, descriptor.unsubstitutedInnerClassesScope)
     }
     else {
         assert(descriptor is PackageViewDescriptor) {
             "Must be class or package view descriptor: $descriptor"
         }
-        listOf(NoSubpackagesInPackageScope(descriptor as PackageViewDescriptor))
+        listOf((descriptor as PackageViewDescriptor).memberScope)
     }
 
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)

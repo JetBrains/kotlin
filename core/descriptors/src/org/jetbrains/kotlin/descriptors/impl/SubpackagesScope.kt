@@ -28,9 +28,9 @@ import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
-public class SubpackagesScope(private val moduleDescriptor: ModuleDescriptor, private val fqName: FqName) : MemberScopeImpl() {
+public open class SubpackagesScope(private val moduleDescriptor: ModuleDescriptor, private val fqName: FqName) : MemberScopeImpl() {
 
-    override fun getPackage(name: Name): PackageViewDescriptor? {
+    protected fun getPackage(name: Name): PackageViewDescriptor? {
         if (name.isSpecial()) {
             return null
         }

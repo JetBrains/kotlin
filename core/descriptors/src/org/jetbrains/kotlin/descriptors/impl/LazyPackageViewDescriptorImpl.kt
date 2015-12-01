@@ -44,6 +44,7 @@ public class LazyPackageViewDescriptorImpl(
             MemberScope.Empty
         }
         else {
+            // Packages from SubpackagesScope are got via getContributedDescriptors(DescriptorKindFilter.PACKAGES, MemberScope.ALL_NAME_FILTER)
             val scopes = fragments.map { it.getMemberScope() } + SubpackagesScope(module, fqName)
             ChainedScope("package view scope for $fqName in ${module.getName()}", *scopes.toTypedArray())
         }

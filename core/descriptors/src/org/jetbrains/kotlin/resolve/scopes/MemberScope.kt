@@ -27,9 +27,6 @@ public interface MemberScope : ResolutionScope {
 
     public override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor>
 
-    @Deprecated("Should be removed soon")
-    public fun getPackage(name: Name): PackageViewDescriptor?
-
     /**
      * Is supposed to be used in tests and debug only
      */

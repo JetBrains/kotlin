@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.descriptors.impl.SubpackagesScope
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -30,7 +29,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.TypeResolver
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
-import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
+import org.jetbrains.kotlin.resolve.scopes.SubpackagesImportingScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SubstitutionUtils
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
@@ -77,7 +76,7 @@ internal class HeuristicSignatures(
 
     private fun typeFromText(text: String, typeParameters: Collection<TypeParameterDescriptor>): KotlinType {
         val typeRef = KtPsiFactory(project).createType(text)
-        val rootPackagesScope = SubpackagesScope(moduleDescriptor, FqName.ROOT).memberScopeAsImportingScope()
+        val rootPackagesScope = SubpackagesImportingScope(null, moduleDescriptor, FqName.ROOT)
         val scope = LexicalScopeImpl(rootPackagesScope, moduleDescriptor, false, null, LexicalScopeKind.SYNTHETIC) {
             typeParameters.forEach { addClassifierDescriptor(it) }
         }

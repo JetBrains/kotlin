@@ -32,9 +32,6 @@ public class ChainedScope(
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor?
             = getFirstMatch(scopeChain) { it.getContributedClassifier(name, location) }
 
-    override fun getPackage(name: Name): PackageViewDescriptor?
-            = getFirstMatch(scopeChain) { it.getPackage(name) }
-
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor>
             = getFromAllScopes(scopeChain) { it.getContributedVariables(name, location) }
 

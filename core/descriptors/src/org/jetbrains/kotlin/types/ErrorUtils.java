@@ -180,11 +180,6 @@ public class ErrorUtils {
             return ERROR_PROPERTY_GROUP;
         }
 
-        @Override
-        public PackageViewDescriptor getPackage(@NotNull Name name) {
-            return null;
-        }
-
         @NotNull
         @Override
         public Set<FunctionDescriptor> getContributedFunctions(@NotNull Name name, @NotNull LookupLocation location) {
@@ -220,12 +215,6 @@ public class ErrorUtils {
         @Nullable
         @Override
         public ClassifierDescriptor getContributedClassifier(@NotNull Name name, @NotNull LookupLocation location) {
-            throw new IllegalStateException();
-        }
-
-        @Nullable
-        @Override
-        public PackageViewDescriptor getPackage(@NotNull Name name) {
             throw new IllegalStateException();
         }
 

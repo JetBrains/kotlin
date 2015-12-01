@@ -17,18 +17,17 @@
 package org.jetbrains.kotlin.resolve.lazy
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.impl.SubpackagesScope
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtImportsFactory
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.NoSubpackagesInPackageScope
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.SubpackagesImportingScope
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.resolve.scopes.utils.withParent
 import org.jetbrains.kotlin.storage.StorageManager
@@ -97,9 +96,9 @@ public open class FileScopeProviderImpl(
         scope = LazyImportScope(scope, defaultAliasImportResolver, LazyImportScope.FilteringKind.ALL,
                 "Default alias imports in $debugName")
 
-        scope = SubpackagesScope(moduleDescriptor, FqName.ROOT).memberScopeAsImportingScope(scope)
+        scope = SubpackagesImportingScope(scope, moduleDescriptor, FqName.ROOT)
 
-        scope = NoSubpackagesInPackageScope(packageView).memberScopeAsImportingScope(scope) //TODO: problems with visibility too
+        scope = packageView.memberScope.memberScopeAsImportingScope(scope) //TODO: problems with visibility too
 
         scope = LazyImportScope(scope, aliasImportResolver, LazyImportScope.FilteringKind.ALL, "Alias imports in $debugName")
 

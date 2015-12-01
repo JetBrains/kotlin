@@ -28,8 +28,6 @@ public class FilteringScope(private val workerScope: MemberScope, private val pr
     private fun <D : DeclarationDescriptor> filterDescriptor(descriptor: D?): D?
             = if (descriptor != null && predicate(descriptor)) descriptor else null
 
-    override fun getPackage(name: Name) = filterDescriptor(workerScope.getPackage(name))
-
     override fun getContributedClassifier(name: Name, location: LookupLocation) = filterDescriptor(workerScope.getContributedClassifier(name, location))
 
     override fun getContributedVariables(name: Name, location: LookupLocation) = workerScope.getContributedVariables(name, location).filter(predicate)
