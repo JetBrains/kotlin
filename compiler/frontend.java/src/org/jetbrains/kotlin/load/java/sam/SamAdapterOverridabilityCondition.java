@@ -28,20 +28,21 @@ import org.jetbrains.kotlin.types.TypeUtils;
 import java.util.List;
 
 public class SamAdapterOverridabilityCondition implements ExternalOverridabilityCondition {
+    @NotNull
     @Override
-    public boolean isOverridable(@NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor) {
-        if (!(subDescriptor instanceof SimpleFunctionDescriptor)) {
-            return true;
+    public Result isOverridable(@NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor) {
+        if (!(subDescriptor instanceof SimpleFunctionDescriptor) || !(superDescriptor instanceof SimpleFunctionDescriptor)) {
+            return Result.UNKNOWN;
         }
 
         SimpleFunctionDescriptor superOriginal = getOriginalOfSamAdapterFunction((SimpleFunctionDescriptor) superDescriptor);
         SimpleFunctionDescriptor subOriginal = getOriginalOfSamAdapterFunction((SimpleFunctionDescriptor) subDescriptor);
         if (superOriginal == null || subOriginal == null) { // super or sub is/overrides DECLARATION
-            return subOriginal == null; // DECLARATION can override anything
+            return subOriginal == null ? Result.UNKNOWN : Result.INCOMPATIBLE; // DECLARATION can override anything
         }
 
         // inheritor if SYNTHESIZED can override inheritor of SYNTHESIZED if their originals have same erasure
-        return equalErasure(superOriginal, subOriginal);
+        return equalErasure(superOriginal, subOriginal) ? Result.UNKNOWN : Result.INCOMPATIBLE;
     }
 
     private static boolean equalErasure(@NotNull FunctionDescriptor fun1, @NotNull FunctionDescriptor fun2) {

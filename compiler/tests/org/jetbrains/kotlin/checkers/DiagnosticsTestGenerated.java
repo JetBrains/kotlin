@@ -9282,6 +9282,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("fieldOverridesFieldOfDifferentType.kt")
+            public void testFieldOverridesFieldOfDifferentType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/fieldOverridesFieldOfDifferentType.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("fieldOverridesNothing.kt")
             public void testFieldOverridesNothing() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/fieldOverridesNothing.kt");

@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import java.util.*;
 
 import static org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.*;
+import static org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.INCOMPATIBLE;
 
 public class OverridingUtil {
 
@@ -73,6 +74,30 @@ public class OverridingUtil {
 
     @NotNull
     private OverrideCompatibilityInfo isOverridableBy(
+            @NotNull CallableDescriptor superDescriptor,
+            @NotNull CallableDescriptor subDescriptor,
+            boolean checkReturnType
+    ) {
+        for (ExternalOverridabilityCondition externalCondition : EXTERNAL_CONDITIONS) {
+            ExternalOverridabilityCondition.Result result = externalCondition.isOverridable(superDescriptor, subDescriptor);
+            switch (result) {
+                case OVERRIDABLE:
+                    return OverrideCompatibilityInfo.success();
+                case CONFLICT:
+                    return OverrideCompatibilityInfo.conflict("External condition failed");
+                case INCOMPATIBLE:
+                    return OverrideCompatibilityInfo.incompatible("External condition");
+                case UNKNOWN:
+                    // do nothing
+                    // go to the next external condition or default override check
+            }
+        }
+
+        return isOverridableByWithoutExternalConditions(superDescriptor, subDescriptor, checkReturnType);
+    }
+
+    @NotNull
+    public OverrideCompatibilityInfo isOverridableByWithoutExternalConditions(
             @NotNull CallableDescriptor superDescriptor,
             @NotNull CallableDescriptor subDescriptor,
             boolean checkReturnType
@@ -135,12 +160,6 @@ public class OverridingUtil {
                 if (!bothErrors && !typeChecker.isSubtypeOf(subReturnType, superReturnType)) {
                     return OverrideCompatibilityInfo.conflict("Return type mismatch");
                 }
-            }
-        }
-
-        for (ExternalOverridabilityCondition externalCondition : EXTERNAL_CONDITIONS) {
-            if (!externalCondition.isOverridable(superDescriptor, subDescriptor)) {
-                return OverrideCompatibilityInfo.incompatible("External condition failed");
             }
         }
 
