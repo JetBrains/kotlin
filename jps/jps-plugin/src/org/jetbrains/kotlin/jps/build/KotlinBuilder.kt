@@ -29,7 +29,6 @@ import org.jetbrains.jps.builders.impl.TargetOutputIndexImpl
 import org.jetbrains.jps.builders.java.JavaBuilderUtil
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
 import org.jetbrains.jps.builders.java.dependencyView.Mappings
-import org.jetbrains.jps.builders.storage.BuildDataPaths
 import org.jetbrains.jps.incremental.*
 import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.*
 import org.jetbrains.jps.incremental.java.JavaBuilder
@@ -73,26 +72,9 @@ import java.util.*
 
 public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     companion object {
-        private val HAS_KOTLIN_FILE_NAME = "has-kotlin.txt"
-
         public val KOTLIN_BUILDER_NAME: String = "Kotlin Builder"
         public val LOOKUP_TRACKER: JpsElementChildRoleBase<JpsSimpleElement<out LookupTracker>> = JpsElementChildRoleBase.create("lookup tracker")
         val LOG = Logger.getInstance("#org.jetbrains.kotlin.jps.build.KotlinBuilder")
-
-        private fun hasKotlin(target: ModuleBuildTarget, paths: BuildDataPaths): Boolean {
-            val hasKotlinFile = File(paths.getTargetDataRoot(target), HAS_KOTLIN_FILE_NAME)
-            return hasKotlinFile.exists()
-        }
-
-        private fun setHasKotlin(target: ModuleBuildTarget, paths: BuildDataPaths) {
-            val hasKotlinFile = File(paths.getTargetDataRoot(target), HAS_KOTLIN_FILE_NAME)
-            hasKotlinFile.createNewFile()
-        }
-
-        fun clearHasKotlin(target: ModuleBuildTarget, paths: BuildDataPaths) {
-            val hasKotlinFile = File(paths.getTargetDataRoot(target), HAS_KOTLIN_FILE_NAME)
-            hasKotlinFile.delete()
-        }
     }
 
     private val statisticsLogger = TeamcityStatisticsLogger()
@@ -164,22 +146,25 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val projectDescriptor = context.projectDescriptor
         val dataManager = projectDescriptor.dataManager
         val targets = chunk.targets
-        val isFullRebuild = JavaBuilderUtil.isForcedRecompilationAllJavaModules(context)
+        val hasKotlin = HasKotlinMarker(dataManager)
+        val rebuildAfterCacheVersionChanged = RebuildAfterCacheVersionChangeMarker(dataManager)
+        val isChunkRebuilding = JavaBuilderUtil.isForcedRecompilationAllJavaModules(context)
+                                || targets.any { rebuildAfterCacheVersionChanged[it] == true }
 
-        if (!isFullRebuild &&
-            targets.any { hasKotlin(it, dataManager.dataPaths) } &&
+        if (!isChunkRebuilding &&
+            targets.any { hasKotlin[it] == true } &&
             shouldRebuildBecauseVersionChanged(context, dataManager, targets, fsOperations)
         ) {
-            fsOperations.markChunk(recursively = true)
-            val targetsWithDependents = getIncrementalCaches(chunk, context).keys
-            targetsWithDependents.forEach { clearHasKotlin(it, dataManager.dataPaths) }
+            targets.forEach { rebuildAfterCacheVersionChanged[it] = true }
             return CHUNK_REBUILD_REQUIRED
         }
 
-        if (hasKotlinDirtyOrRemovedFiles(dirtyFilesHolder, chunk)) {
-            targets.forEach { setHasKotlin(it, dataManager.dataPaths) }
-        }
-        else {
+        if (!hasKotlinDirtyOrRemovedFiles(dirtyFilesHolder, chunk)) {
+            if (isChunkRebuilding) {
+                targets.forEach { hasKotlin[it] = false }
+            }
+
+            targets.forEach { rebuildAfterCacheVersionChanged.clean(it) }
             return NOTHING_DONE
         }
 
@@ -226,6 +211,15 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         registerOutputItems(outputConsumer, generatedFiles)
         saveVersions(context, chunk)
 
+        if (targets.any { hasKotlin[it] == null }) {
+            fsOperations.markChunk(excludeFiles = filesToCompile.values().toSet())
+        }
+
+        for (target in targets) {
+            hasKotlin[target] = true
+            rebuildAfterCacheVersionChanged.clean(target)
+        }
+
         if (JpsUtils.isJsKotlinModule(chunk.representativeTarget())) {
             copyJsLibraryFilesIfNeeded(chunk, project)
             return OK
@@ -243,7 +237,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val changesInfo = updateKotlinIncrementalCache(compilationErrors, incrementalCaches, generatedFiles)
         updateLookupStorage(chunk, lookupTracker, dataManager, dirtyFilesHolder, filesToCompile)
 
-        if (isFullRebuild) {
+        if (isChunkRebuilding) {
             return OK
         }
 
@@ -332,6 +326,8 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val actions = allVersions.map { it.checkVersion() }.toSet().sorted()
         val buildTargetIndex = context.projectDescriptor.buildTargetIndex
         val allTargets = buildTargetIndex.allTargets.filterIsInstance<ModuleBuildTarget>().toSet()
+        val hasKotlin = HasKotlinMarker(dataManager)
+        val rebuildAfterCacheVersionChanged = RebuildAfterCacheVersionChangeMarker(dataManager)
 
         for (status in actions) {
             when (status) {
@@ -347,6 +343,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
                     for (target in allTargets) {
                         dataManager.getKotlinCache(target).clean()
+                        rebuildAfterCacheVersionChanged[target] = true
                     }
 
                     dataManager.getStorage(KotlinDataContainerTarget, LookupStorageProvider).clean()
@@ -355,7 +352,12 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                 }
                 CacheVersion.Action.REBUILD_CHUNK -> {
                     LOG.info("Clearing caches for " + targets.joinToString { it.presentableName })
-                    targets.forEach { dataManager.getKotlinCache(it).clean() }
+
+                    for (target in targets) {
+                        dataManager.getKotlinCache(target).clean()
+                        hasKotlin.clean(target)
+                    }
+
                     return true
                 }
                 CacheVersion.Action.CLEAN_NORMAL_CACHES -> {
