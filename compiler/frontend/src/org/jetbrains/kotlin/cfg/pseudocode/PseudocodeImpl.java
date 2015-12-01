@@ -458,6 +458,41 @@ public class PseudocodeImpl implements Pseudocode {
         return mutableInstructionList.get(targetPosition);
     }
 
+    @Override
+    public PseudocodeImpl copy() {
+        PseudocodeImpl result = new PseudocodeImpl(correspondingElement);
+        result.repeatWhole(this);
+        return result;
+    }
+
+    private void repeatWhole(PseudocodeImpl originalPseudocode) {
+        Map<Label, Label> originalToCopy = Maps.newLinkedHashMap();
+        Multimap<Instruction, Label> originalLabelsForInstruction = HashMultimap.create();
+        int labelCount = 0;
+        for (PseudocodeLabel label : originalPseudocode.labels) {
+            originalToCopy.put(label, label.copy(labelCount++));
+            originalLabelsForInstruction.put(getJumpTarget(label), label);
+        }
+        for (Label label : originalToCopy.values()) {
+            labels.add((PseudocodeLabel) label);
+        }
+        for (Instruction originalInstruction : originalPseudocode.mutableInstructionList) {
+            repeatLabelsBindingForInstruction(originalInstruction, originalToCopy, originalLabelsForInstruction);
+            Instruction copy = copyInstruction(originalInstruction, originalToCopy);
+            addInstruction(copy);
+            if (originalInstruction == originalPseudocode.errorInstruction && copy instanceof SubroutineExitInstruction) {
+                errorInstruction = (SubroutineExitInstruction) copy;
+            }
+            if (originalInstruction == originalPseudocode.exitInstruction && copy instanceof SubroutineExitInstruction) {
+                exitInstruction = (SubroutineExitInstruction) copy;
+            }
+            if (originalInstruction == originalPseudocode.sinkInstruction && copy instanceof SubroutineSinkInstruction) {
+                sinkInstruction = (SubroutineSinkInstruction) copy;
+            }
+        }
+        parent = originalPseudocode.parent;
+    }
+
     public int repeatPart(@NotNull Label startLabel, @NotNull Label finishLabel, int labelCount) {
         PseudocodeImpl originalPseudocode = ((PseudocodeLabel) startLabel).getPseudocode();
 
