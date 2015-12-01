@@ -319,7 +319,7 @@ public class OverridingUtil {
         }
     }
 
-    private static boolean isMoreSpecific(@NotNull CallableMemberDescriptor a, @NotNull CallableMemberDescriptor b) {
+    public static boolean isMoreSpecific(@NotNull CallableMemberDescriptor a, @NotNull CallableMemberDescriptor b) {
         if (a instanceof SimpleFunctionDescriptor) {
             assert b instanceof SimpleFunctionDescriptor : "b is " + b.getClass();
 
@@ -333,12 +333,14 @@ public class OverridingUtil {
         if (a instanceof PropertyDescriptor) {
             assert b instanceof PropertyDescriptor : "b is " + b.getClass();
 
-            if (((PropertyDescriptor) a).isVar() || ((PropertyDescriptor) b).isVar()) {
-                return ((PropertyDescriptor) a).isVar();
+            PropertyDescriptor pa = (PropertyDescriptor) a;
+            PropertyDescriptor pb = (PropertyDescriptor) b;
+            if (pa.isVar() && pb.isVar()) {
+                return KotlinTypeChecker.DEFAULT.equalTypes(pa.getType(), pb.getType());
             }
 
-            // both vals
-            return KotlinTypeChecker.DEFAULT.isSubtypeOf(((PropertyDescriptor) a).getType(), ((PropertyDescriptor) b).getType());
+            // both vals or var <? val
+            return KotlinTypeChecker.DEFAULT.isSubtypeOf(pa.getType(), pb.getType());
         }
         throw new IllegalArgumentException("Unexpected callable: " + a.getClass());
     }

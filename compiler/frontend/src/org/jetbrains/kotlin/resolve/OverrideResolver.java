@@ -257,7 +257,7 @@ public class OverrideResolver {
         }
     }
 
-    private void checkOverridesInAClass(@NotNull ClassDescriptorWithResolutionScopes classDescriptor, @NotNull KtClassOrObject klass) {
+    private void checkOverridesInAClass(@NotNull ClassDescriptorWithResolutionScopes classDescriptor, @NotNull final KtClassOrObject klass) {
         // Check overrides for internal consistency
         for (CallableMemberDescriptor member : classDescriptor.getDeclaredCallableMembers()) {
             checkOverrideForMember(member);
@@ -265,13 +265,53 @@ public class OverrideResolver {
 
         // Check if everything that must be overridden, actually is
         // More than one implementation or no implementations at all
-        Set<CallableMemberDescriptor> abstractNoImpl = Sets.newLinkedHashSet();
-        Set<CallableMemberDescriptor> manyImpl = Sets.newLinkedHashSet();
-        Set<CallableMemberDescriptor> abstractInBaseClassNoImpl = Sets.newLinkedHashSet();
-        Set<CallableMemberDescriptor> conflictingInterfaceOverrides = Sets.newLinkedHashSet();
-        collectMissingImplementations(classDescriptor,
-                                      abstractNoImpl, manyImpl,
-                                      abstractInBaseClassNoImpl, conflictingInterfaceOverrides);
+        final Set<CallableMemberDescriptor> abstractNoImpl = Sets.newLinkedHashSet();
+        final Set<CallableMemberDescriptor> manyImpl = Sets.newLinkedHashSet();
+        final Set<CallableMemberDescriptor> abstractInBaseClassNoImpl = Sets.newLinkedHashSet();
+        final Set<CallableMemberDescriptor> conflictingInterfaceOverrides = Sets.newLinkedHashSet();
+
+        checkInheritedSignatures(
+                classDescriptor,
+                new CheckInheritedSignaturesReportingStrategy() {
+                    private boolean returnTypeMismatch = false;
+                    private boolean propertyTypeMismatch = false;
+
+                    @Override
+                    public void abstractMemberNoImpl(CallableMemberDescriptor descriptor) {
+                        abstractNoImpl.add(descriptor);
+                    }
+
+                    @Override
+                    public void abstractBaseClassMemberNoImpl(CallableMemberDescriptor descriptor) {
+                        abstractInBaseClassNoImpl.add(descriptor);
+                    }
+
+                    @Override
+                    public void manyImplMemberNoImpl(CallableMemberDescriptor descriptor) {
+                        manyImpl.add(descriptor);
+                    }
+
+                    @Override
+                    public void conflictingMemberFromInterface(CallableMemberDescriptor descriptor) {
+                        conflictingInterfaceOverrides.add(descriptor);
+                    }
+
+                    @Override
+                    public void clashingWithReturnType(CallableMemberDescriptor descriptor1, CallableMemberDescriptor descriptor2) {
+                        if (!returnTypeMismatch) {
+                            returnTypeMismatch = true;
+                            trace.report(RETURN_TYPE_MISMATCH_ON_INHERITANCE.on(klass, descriptor1, descriptor2));
+                        }
+                    }
+
+                    @Override
+                    public void clashingWithPropertyType(CallableMemberDescriptor descriptor1, CallableMemberDescriptor descriptor2) {
+                        if (!propertyTypeMismatch) {
+                            propertyTypeMismatch = true;
+                            trace.report(PROPERTY_TYPE_MISMATCH_ON_INHERITANCE.on(klass, descriptor1, descriptor2));
+                        }
+                    }
+                });
 
         if (!classCanHaveAbstractMembers(classDescriptor)) {
             if (!abstractInBaseClassNoImpl.isEmpty()) {
@@ -292,34 +332,68 @@ public class OverrideResolver {
 
     @NotNull
     public static Set<CallableMemberDescriptor> getMissingImplementations(@NotNull ClassDescriptor classDescriptor) {
-        Set<CallableMemberDescriptor> shouldImplement = new LinkedHashSet<CallableMemberDescriptor>();
-        Set<CallableMemberDescriptor> dontCare = new HashSet<CallableMemberDescriptor>();
-        collectMissingImplementations(classDescriptor, shouldImplement, shouldImplement, dontCare, dontCare);
-        return shouldImplement;
+        CollectMissingImplementationsStrategy collector = new CollectMissingImplementationsStrategy();
+        checkInheritedSignatures(classDescriptor, collector);
+        return collector.shouldImplement;
     }
 
-    private static void collectMissingImplementations(
+    private interface CheckInheritedSignaturesReportingStrategy {
+        void abstractMemberNoImpl(CallableMemberDescriptor descriptor);
+        void abstractBaseClassMemberNoImpl(CallableMemberDescriptor descriptor);
+        void manyImplMemberNoImpl(CallableMemberDescriptor descriptor);
+        void conflictingMemberFromInterface(CallableMemberDescriptor descriptor);
+        void clashingWithReturnType(CallableMemberDescriptor descriptor1, CallableMemberDescriptor descriptor2);
+        void clashingWithPropertyType(CallableMemberDescriptor descriptor1, CallableMemberDescriptor descriptor2);
+    }
+
+    private static class CollectMissingImplementationsStrategy implements CheckInheritedSignaturesReportingStrategy {
+        private Set<CallableMemberDescriptor> shouldImplement = new LinkedHashSet<CallableMemberDescriptor>();
+
+        @Override
+        public void abstractMemberNoImpl(CallableMemberDescriptor descriptor) {
+            shouldImplement.add(descriptor);
+        }
+
+        @Override
+        public void abstractBaseClassMemberNoImpl(CallableMemberDescriptor descriptor) {
+            // don't care
+        }
+
+        @Override
+        public void manyImplMemberNoImpl(CallableMemberDescriptor descriptor) {
+            shouldImplement.add(descriptor);
+        }
+
+        @Override
+        public void conflictingMemberFromInterface(CallableMemberDescriptor descriptor) {
+            // don't care
+        }
+
+        @Override
+        public void clashingWithReturnType(CallableMemberDescriptor descriptor1, CallableMemberDescriptor descriptor2) {
+            // don't care
+        }
+
+        @Override
+        public void clashingWithPropertyType(CallableMemberDescriptor descriptor1, CallableMemberDescriptor descriptor2) {
+            // don't care
+        }
+    }
+
+    private static void checkInheritedSignatures(
             @NotNull ClassDescriptor classDescriptor,
-            @NotNull Set<CallableMemberDescriptor> abstractNoImpl,
-            @NotNull Set<CallableMemberDescriptor> manyImpl,
-            @NotNull Set<CallableMemberDescriptor> abstractInBaseClassNoImpl,
-            @NotNull Set<CallableMemberDescriptor> conflictingInterfaceOverrides
+            @NotNull CheckInheritedSignaturesReportingStrategy reportingStrategy
     ) {
         for (DeclarationDescriptor member : DescriptorUtils.getAllDescriptors(classDescriptor.getDefaultType().getMemberScope())) {
             if (member instanceof CallableMemberDescriptor) {
-                collectMissingImplementations((CallableMemberDescriptor) member,
-                                              abstractNoImpl, manyImpl,
-                                              abstractInBaseClassNoImpl, conflictingInterfaceOverrides);
+                checkInheritedSignatures((CallableMemberDescriptor) member, reportingStrategy);
             }
         }
     }
 
-    private static void collectMissingImplementations(
+    private static void checkInheritedSignatures(
             @NotNull CallableMemberDescriptor descriptor,
-            @NotNull Set<CallableMemberDescriptor> abstractNoImpl,
-            @NotNull Set<CallableMemberDescriptor> manyImpl,
-            @NotNull Set<CallableMemberDescriptor> abstractInBaseClassNoImpl,
-            @NotNull Set<CallableMemberDescriptor> conflictingInterfaceOverrides
+            @NotNull CheckInheritedSignaturesReportingStrategy reportingStrategy
     ) {
         if (descriptor.getKind().isReal()) return;
         if (descriptor.getVisibility() == Visibilities.INVISIBLE_FAKE) return;
@@ -341,7 +415,9 @@ public class OverrideResolver {
         Set<CallableMemberDescriptor> relevantDirectlyOverridden =
                 getRelevantDirectlyOverridden(overriddenDeclarationsByDirectParent, allFilteredOverriddenDeclarations);
 
-        collectJava8MissingOverrides(relevantDirectlyOverridden, abstractInBaseClassNoImpl, conflictingInterfaceOverrides);
+        checkInheritedSignaturesForFakeOverride(descriptor, relevantDirectlyOverridden, reportingStrategy);
+
+        collectJava8MissingOverrides(relevantDirectlyOverridden, reportingStrategy);
 
         List<CallableMemberDescriptor> implementations = collectImplementations(relevantDirectlyOverridden);
         if (implementations.size() == 1 && isReturnTypeOkForOverride(descriptor, implementations.get(0))) return;
@@ -351,20 +427,27 @@ public class OverrideResolver {
         filterNotSynthesizedDescriptorsByModality(allFilteredOverriddenDeclarations, abstractOverridden, concreteOverridden);
 
         if (implementations.isEmpty()) {
-            abstractNoImpl.addAll(abstractOverridden);
+            for (CallableMemberDescriptor member : abstractOverridden) {
+                reportingStrategy.abstractMemberNoImpl(member);
+            }
         }
         else if (implementations.size() > 1) {
-            manyImpl.addAll(concreteOverridden);
+            for (CallableMemberDescriptor member : concreteOverridden) {
+                reportingStrategy.manyImplMemberNoImpl(member);
+            }
         }
         else {
-            abstractNoImpl.addAll(collectAbstractMethodsWithMoreSpecificReturnType(abstractOverridden, implementations.get(0)));
+            List<CallableMemberDescriptor> membersWithMoreSpecificReturnType =
+                    collectAbstractMethodsWithMoreSpecificReturnType(abstractOverridden, implementations.get(0));
+            for (CallableMemberDescriptor member : membersWithMoreSpecificReturnType) {
+                reportingStrategy.abstractMemberNoImpl(member);
+            }
         }
     }
 
     private static void collectJava8MissingOverrides(
-            Set<CallableMemberDescriptor> relevantDirectlyOverridden,
-            @NotNull Set<CallableMemberDescriptor> abstractInBaseClassNoImpl,
-            @NotNull Set<CallableMemberDescriptor> conflictingInterfaceOverrides
+            @NotNull Set<CallableMemberDescriptor> relevantDirectlyOverridden,
+            @NotNull CheckInheritedSignaturesReportingStrategy reportingStrategy
     ) {
         // Java 8:
         // -- class should implement an abstract member of a super-class,
@@ -396,11 +479,13 @@ public class OverrideResolver {
         }
 
         if (overridesAbstractInBaseClass != null) {
-            abstractInBaseClassNoImpl.add(overridesAbstractInBaseClass);
+            reportingStrategy.abstractBaseClassMemberNoImpl(overridesAbstractInBaseClass);
         }
 
         if (!overridesClassMember && overridesNonAbstractInterfaceMember && overriddenInterfaceMembers.size() > 1) {
-            conflictingInterfaceOverrides.addAll(overriddenInterfaceMembers);
+            for (CallableMemberDescriptor member : overriddenInterfaceMembers) {
+                reportingStrategy.conflictingMemberFromInterface(member);
+            }
         }
     }
 
@@ -635,6 +720,39 @@ public class OverrideResolver {
         else if (!overriddenDescriptors.isEmpty()) {
             CallableMemberDescriptor overridden = overriddenDescriptors.iterator().next();
             trace.report(VIRTUAL_MEMBER_HIDDEN.on(member, declared, overridden, overridden.getContainingDeclaration()));
+        }
+    }
+
+    private static void checkInheritedSignaturesForFakeOverride(
+            @NotNull CallableMemberDescriptor fakeOverride,
+            @NotNull Collection<CallableMemberDescriptor> relevantDirectlyOverridden,
+            @NotNull CheckInheritedSignaturesReportingStrategy reportingStrategy
+    ) {
+        assert fakeOverride.getKind() == FAKE_OVERRIDE
+                : "Fake override expected; actual: " + fakeOverride + " of kind " + fakeOverride.getKind();
+
+        // FIXME This algorithm depends on transitiveness of sub-typing relation, which is broken in presence of flexible types.
+        // See override/clashesOnInheritance/flexibleReturnType.kt.
+        if (relevantDirectlyOverridden.size() > 1) {
+            Iterator<CallableMemberDescriptor> overriddenIterator = relevantDirectlyOverridden.iterator();
+            CallableMemberDescriptor mostSpecificOverridden = overriddenIterator.next();
+            while (overriddenIterator.hasNext()) {
+                CallableMemberDescriptor overriddenDescriptor = overriddenIterator.next();
+                if (OverridingUtil.isMoreSpecific(overriddenDescriptor, mostSpecificOverridden)) {
+                    mostSpecificOverridden = overriddenDescriptor;
+                }
+            }
+
+            for (CallableMemberDescriptor overriddenDescriptor : relevantDirectlyOverridden) {
+                if (!OverridingUtil.isMoreSpecific(mostSpecificOverridden, overriddenDescriptor)) {
+                    if (overriddenDescriptor instanceof PropertyDescriptor) {
+                        reportingStrategy.clashingWithPropertyType(mostSpecificOverridden, overriddenDescriptor);
+                    }
+                    else {
+                        reportingStrategy.clashingWithReturnType(mostSpecificOverridden, overriddenDescriptor);
+                    }
+                }
+            }
         }
     }
 

@@ -11295,6 +11295,45 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/override/clashesOnInheritance")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class ClashesOnInheritance extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInClashesOnInheritance() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/override/clashesOnInheritance"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("covariantOverrides.kt")
+                public void testCovariantOverrides() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/clashesOnInheritance/covariantOverrides.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("flexibleReturnType.kt")
+                public void testFlexibleReturnType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/clashesOnInheritance/flexibleReturnType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("propertyTypeMismatch.kt")
+                public void testPropertyTypeMismatch() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/clashesOnInheritance/propertyTypeMismatch.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("returnTypeMismatch.kt")
+                public void testReturnTypeMismatch() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/clashesOnInheritance/returnTypeMismatch.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("unrelatedInherited.kt")
+                public void testUnrelatedInherited() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/clashesOnInheritance/unrelatedInherited.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/override/parameterNames")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

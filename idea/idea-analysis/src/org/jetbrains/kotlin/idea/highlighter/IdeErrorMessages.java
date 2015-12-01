@@ -96,9 +96,13 @@ public class IdeErrorMessages {
 
         MAP.put(RETURN_TYPE_MISMATCH_ON_OVERRIDE, "<html>Return type is ''{0}'', which is not a subtype of overridden<br/>" +
                                                   "{1}</html>", HTML_RENDER_RETURN_TYPE, DescriptorRenderer.HTML);
+        MAP.put(RETURN_TYPE_MISMATCH_ON_INHERITANCE, "<html>Return types of inherited members are incompatible:<br/>{0},<br/>{1}</html>",
+                DescriptorRenderer.HTML, DescriptorRenderer.HTML);
 
         MAP.put(PROPERTY_TYPE_MISMATCH_ON_OVERRIDE, "<html>Var-property type is ''{0}'', which is not a type of overridden<br/>" +
                                                   "{1}</html>", HTML_RENDER_RETURN_TYPE, DescriptorRenderer.HTML);
+        MAP.put(PROPERTY_TYPE_MISMATCH_ON_INHERITANCE, "<html>Property types of inherited members are incompatible:<br/>{0},<br/>{1}</html>",
+                DescriptorRenderer.HTML, DescriptorRenderer.HTML);
 
         MAP.put(VAR_OVERRIDDEN_BY_VAL, "<html>Val-property cannot override var-property<br />" +
                                        "{1}</html>", DescriptorRenderer.HTML, DescriptorRenderer.HTML);
