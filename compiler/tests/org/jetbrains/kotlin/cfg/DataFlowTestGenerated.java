@@ -88,6 +88,12 @@ public class DataFlowTestGenerated extends AbstractDataFlowTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg-variables/bugs"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("kt10243.kt")
+        public void testKt10243() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/bugs/kt10243.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("referenceToPropertyInitializer.kt")
         public void testReferenceToPropertyInitializer() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/bugs/referenceToPropertyInitializer.kt");

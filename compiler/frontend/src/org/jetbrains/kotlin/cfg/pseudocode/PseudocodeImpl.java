@@ -465,6 +465,7 @@ public class PseudocodeImpl implements Pseudocode {
         return result;
     }
 
+    // TODO: extract common part from repeatWhole and repeatPart
     private void repeatWhole(PseudocodeImpl originalPseudocode) {
         Map<Label, Label> originalToCopy = Maps.newLinkedHashMap();
         Multimap<Instruction, Label> originalLabelsForInstruction = HashMultimap.create();

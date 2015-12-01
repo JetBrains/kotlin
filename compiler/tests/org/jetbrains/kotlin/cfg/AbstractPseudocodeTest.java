@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.cfg;
 
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import com.intellij.openapi.util.text.StringUtil;
 import kotlin.jvm.functions.Function3;
@@ -53,7 +55,7 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
         File file = new File(fileName);
         KtFile jetFile = KotlinTestUtils.loadJetFile(getProject(), file);
 
-        Map<KtElement, Pseudocode> data = new LinkedHashMap<KtElement, Pseudocode>();
+        SetMultimap<KtElement, Pseudocode> data = LinkedHashMultimap.create();
         AnalysisResult analysisResult = KotlinTestUtils.analyzeFile(jetFile, getEnvironment());
         List<KtDeclaration> declarations = jetFile.getDeclarations();
         BindingContext bindingContext = analysisResult.getBindingContext();
@@ -83,7 +85,7 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
         }
     }
 
-    private static void addDeclaration(Map<KtElement, Pseudocode> data, BindingContext bindingContext, KtDeclaration declaration) {
+    private static void addDeclaration(SetMultimap<KtElement, Pseudocode> data, BindingContext bindingContext, KtDeclaration declaration) {
         Pseudocode pseudocode = PseudocodeUtil.generatePseudocode(declaration, bindingContext);
         data.put(declaration, pseudocode);
         for (LocalFunctionDeclarationInstruction instruction : pseudocode.getLocalDeclarations()) {
@@ -92,7 +94,7 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
         }
     }
 
-    private void processCFData(File file, Map<KtElement, Pseudocode> data, BindingContext bindingContext) throws IOException {
+    private void processCFData(File file, SetMultimap<KtElement, Pseudocode> data, BindingContext bindingContext) throws IOException {
         Collection<Pseudocode> pseudocodes = data.values();
 
         StringBuilder instructionDump = new StringBuilder();

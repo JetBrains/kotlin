@@ -214,6 +214,12 @@ public class ControlFlowTestGenerated extends AbstractControlFlowTest {
             doTest(fileName);
         }
 
+        @TestMetadata("localFunctionInFinally.kt")
+        public void testLocalFunctionInFinally() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg/controlStructures/localFunctionInFinally.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("OnlyWhileInFunctionBody.kt")
         public void testOnlyWhileInFunctionBody() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg/controlStructures/OnlyWhileInFunctionBody.kt");

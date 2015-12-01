@@ -1,0 +1,30 @@
+== foo ==
+fun foo(): Int {
+    var i = 0
+    try {
+        i = 1
+    }
+    finally {
+        fun bar() {}
+        return i
+    }
+}
+---------------------
+0                                                               <v0>: Int   NEW: r(0) -> <v0>
+1                                                               <v1>: Int   NEW: r(1) -> <v1>
+i = 1                                                           !<v2>: *
+{ i = 1 }                                                       !<v2>: *    COPY
+i                                                               <v3>: Int   NEW: r(i) -> <v3>
+return i                                                        !<v4>: *
+{ fun bar() {} return i }                                       !<v4>: *    COPY
+try { i = 1 } finally { fun bar() {} return i }                 <v5>: *     NEW: merge(try { i = 1 } finally { fun bar() {} return i }|!<v2>) -> <v5>
+{ var i = 0 try { i = 1 } finally { fun bar() {} return i } }   <v5>: *     COPY
+=====================
+== bar ==
+fun bar() {}
+---------------------
+=====================
+== bar ==
+fun bar() {}
+---------------------
+=====================
