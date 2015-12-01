@@ -384,10 +384,14 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
             editor: Editor?,
             callback: (List<FunctionDescriptor>) -> Unit
     ) {
-        if (editor == null || haveOccurrencesToReplace) return callback(emptyList())
+        if (haveOccurrencesToReplace) return callback(emptyList())
 
         val functions = getApplicableComponentFunctions(this)
         if (functions.size <= 1) return callback(emptyList())
+
+        if (ApplicationManager.getApplication().isUnitTestMode) return callback(functions)
+
+        if (editor == null) return callback(emptyList())
 
         val list = JBList("Create single variable", "Create destructuring declaration")
         JBPopupFactory.getInstance()
