@@ -27,15 +27,15 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.DelegationResolver.generateDelegatedMembers
 import org.jetbrains.kotlin.resolve.dataClassUtils.createComponentName
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.varianceChecker.VarianceChecker
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.NullableLazyValue
@@ -231,13 +231,15 @@ public open class LazyClassMemberScope(
         val classOrObject = declarationProvider.getOwnerInfo().getCorrespondingClassOrObject()
             ?: return setOf()
 
-        val lazyTypeResolver = DelegationResolver.TypeResolver { reference ->
-            c.typeResolver.resolveType(thisDescriptor.getScopeForClassHeaderResolution(), reference, trace, false)
+        val lazyTypeResolver = object : DelegationResolver.TypeResolver {
+            override fun resolve(reference: KtTypeReference): KotlinType? =
+                    c.typeResolver.resolveType(thisDescriptor.scopeForClassHeaderResolution, reference, trace, false)
         }
-        val lazyMemberExtractor = DelegationResolver.MemberExtractor<T> {
-            type -> extractor.extract(type, name)
+        val lazyMemberExtractor = object : DelegationResolver.MemberExtractor<T> {
+            override fun getMembersByType(type: KotlinType): Collection<T> =
+                    extractor.extract(type, name)
         }
-        return generateDelegatedMembers(classOrObject, thisDescriptor, existingDescriptors, trace, lazyMemberExtractor, lazyTypeResolver)
+        return DelegationResolver.generateDelegatedMembers(classOrObject, thisDescriptor, existingDescriptors, trace, lazyMemberExtractor, lazyTypeResolver)
     }
 
     private fun addDataClassMethods(result: MutableCollection<DeclarationDescriptor>, location: LookupLocation) {

@@ -14,200 +14,108 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.resolve;
+package org.jetbrains.kotlin.resolve
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.psi.KtClassOrObject;
-import org.jetbrains.kotlin.psi.KtDelegationSpecifier;
-import org.jetbrains.kotlin.psi.KtDelegatorByExpressionSpecifier;
-import org.jetbrains.kotlin.psi.KtTypeReference;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeUtils;
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
+import org.jetbrains.kotlin.diagnostics.Errors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtDelegatorByExpressionSpecifier
+import org.jetbrains.kotlin.psi.KtTypeReference
+import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
+class DelegationResolver<T : CallableMemberDescriptor> private constructor(
+        private val classOrObject: KtClassOrObject,
+        private val ownerDescriptor: ClassDescriptor,
+        private val existingMembers: Collection<CallableDescriptor>,
+        private val trace: BindingTrace,
+        private val memberExtractor: DelegationResolver.MemberExtractor<T>,
+        private val typeResolver: DelegationResolver.TypeResolver
+) {
 
-import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION;
-import static org.jetbrains.kotlin.diagnostics.Errors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED;
-import static org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE;
-
-public final class DelegationResolver<T extends CallableMemberDescriptor> {
-
-    @NotNull
-    public static <T extends CallableMemberDescriptor> Collection<T> generateDelegatedMembers(
-            @NotNull KtClassOrObject classOrObject,
-            @NotNull ClassDescriptor ownerDescriptor,
-            @NotNull Collection<? extends CallableDescriptor> existingMembers,
-            @NotNull BindingTrace trace,
-            @NotNull MemberExtractor<T> memberExtractor,
-            @NotNull TypeResolver typeResolver
-    ) {
-        return new DelegationResolver<T>(classOrObject, ownerDescriptor, existingMembers, trace, memberExtractor, typeResolver)
-                .generateDelegatedMembers();
-    }
-
-    @NotNull private final KtClassOrObject classOrObject;
-    @NotNull private final ClassDescriptor ownerDescriptor;
-    @NotNull private final Collection<? extends CallableDescriptor> existingMembers;
-    @NotNull private final BindingTrace trace;
-    @NotNull private final MemberExtractor<T> memberExtractor;
-    @NotNull private final TypeResolver typeResolver;
-
-    private DelegationResolver(
-            @NotNull KtClassOrObject classOrObject,
-            @NotNull ClassDescriptor ownerDescriptor,
-            @NotNull Collection<? extends CallableDescriptor> existingMembers,
-            @NotNull BindingTrace trace,
-            @NotNull MemberExtractor<T> extractor,
-            @NotNull TypeResolver resolver
-    ) {
-
-        this.classOrObject = classOrObject;
-        this.ownerDescriptor = ownerDescriptor;
-        this.existingMembers = existingMembers;
-        this.trace = trace;
-        this.memberExtractor = extractor;
-        this.typeResolver = resolver;
-    }
-
-    @NotNull
-    private Collection<T> generateDelegatedMembers() {
-        Collection<T> delegatedMembers = new HashSet<T>();
-        for (KtDelegationSpecifier delegationSpecifier : classOrObject.getDelegationSpecifiers()) {
-            if (!(delegationSpecifier instanceof KtDelegatorByExpressionSpecifier)) {
-                continue;
+    private fun generateDelegatedMembers(): Collection<T> {
+        val delegatedMembers = hashSetOf<T>()
+        for (delegationSpecifier in classOrObject.getDelegationSpecifiers()) {
+            if (delegationSpecifier !is KtDelegatorByExpressionSpecifier) {
+                continue
             }
-            KtDelegatorByExpressionSpecifier specifier = (KtDelegatorByExpressionSpecifier) delegationSpecifier;
-            KtTypeReference typeReference = specifier.getTypeReference();
-            if (typeReference == null) {
-                continue;
+            val typeReference = delegationSpecifier.typeReference ?: continue
+            val delegatedInterfaceType = typeResolver.resolve(typeReference)
+            if (delegatedInterfaceType == null || delegatedInterfaceType.isError) {
+                continue
             }
-            KotlinType delegatedTraitType = typeResolver.resolve(typeReference);
-            if (delegatedTraitType == null || delegatedTraitType.isError()) {
-                continue;
-            }
-            Collection<T> delegatesForTrait = generateDelegatesForTrait(delegatedMembers, delegatedTraitType);
-            delegatedMembers.addAll(delegatesForTrait);
+            val delegatesForInterface = generateDelegatesForInterface(delegatedMembers, delegatedInterfaceType)
+            delegatedMembers.addAll(delegatesForInterface)
         }
-        return delegatedMembers;
+        return delegatedMembers
     }
 
-    @NotNull
-    private Collection<T> generateDelegatesForTrait(
-            @NotNull Collection<T> existingDelegates,
-            @NotNull KotlinType delegatedTraitType
-    ) {
-        Collection<T> result = new HashSet<T>();
-        Collection<T> candidates = generateDelegationCandidates(delegatedTraitType);
-        for (T candidate : candidates) {
-            if (existingMemberOverridesDelegatedMember(candidate, existingMembers)) {
-                continue;
-            }
-            //only leave the first delegated member
-            if (checkClashWithOtherDelegatedMember(existingDelegates, candidate)) {
-                continue;
+    private fun generateDelegatesForInterface(existingDelegates: Collection<T>, delegatedInterfaceType: KotlinType): Collection<T> =
+            generateDelegationCandidates(delegatedInterfaceType).filter { candidate ->
+                !isOverridingAnyOf(candidate, existingMembers) &&
+                !checkClashWithOtherDelegatedMember(candidate, existingDelegates)
             }
 
-            result.add(candidate);
-        }
-        return result;
-    }
-
-    @NotNull
-    private Collection<T> generateDelegationCandidates(@NotNull KotlinType delegatedTraitType) {
-        Collection<T> descriptorsToDelegate = overridableMembersNotFromSuperClassOfTrait(delegatedTraitType);
-        Collection<T> result = new ArrayList<T>(descriptorsToDelegate.size());
-        for (T memberDescriptor : descriptorsToDelegate) {
-            Modality newModality = memberDescriptor.getModality() == Modality.ABSTRACT ? Modality.OPEN : memberDescriptor.getModality();
-            @SuppressWarnings("unchecked")
-            T copy = (T) memberDescriptor.copy(ownerDescriptor, newModality, Visibilities.INHERITED, DELEGATION, false);
-            result.add(copy);
-        }
-        return result;
-    }
-
-    private static boolean existingMemberOverridesDelegatedMember(
-            @NotNull CallableMemberDescriptor candidate,
-            @NotNull Collection<? extends CallableDescriptor> existingMembers
-    ) {
-        for (CallableDescriptor existingDescriptor : existingMembers) {
-            if (haveSameSignatures(existingDescriptor, candidate)) {
-                return true;
+    private fun generateDelegationCandidates(delegatedInterfaceType: KotlinType): Collection<T> =
+            getDelegatableMembers(delegatedInterfaceType).map { memberDescriptor ->
+                val newModality = if (memberDescriptor.modality == Modality.ABSTRACT) Modality.OPEN else memberDescriptor.modality
+                @Suppress("UNCHECKED_CAST")
+                (memberDescriptor.copy(ownerDescriptor, newModality, Visibilities.INHERITED, DELEGATION, false) as T)
             }
+
+    private fun checkClashWithOtherDelegatedMember(candidate: T, delegatedMembers: Collection<T>): Boolean {
+        val alreadyDelegated = delegatedMembers.firstOrNull { isOverridableBy(it, candidate) }
+        if (alreadyDelegated != null) {
+            trace.report(MANY_IMPL_MEMBER_NOT_IMPLEMENTED.on(classOrObject, classOrObject, alreadyDelegated))
+            return true;
         }
         return false;
     }
 
-    private boolean checkClashWithOtherDelegatedMember(@NotNull Collection<T> delegatedMembers, @NotNull T candidate) {
-        for (CallableMemberDescriptor alreadyDelegatedMember : delegatedMembers) {
-            if (haveSameSignatures(alreadyDelegatedMember, candidate)) {
-                //trying to delegate to many traits with the same methods
-                trace.report(MANY_IMPL_MEMBER_NOT_IMPLEMENTED.on(classOrObject, classOrObject, alreadyDelegatedMember));
-                return true;
-            }
+
+    private fun getDelegatableMembers(interfaceType: KotlinType): Collection<T> {
+        val classSupertypeMembers =
+                TypeUtils.getAllSupertypes(interfaceType).firstOrNull {
+                    val typeConstructor = it.constructor.declarationDescriptor
+                    typeConstructor is ClassDescriptor && typeConstructor.kind != ClassKind.INTERFACE
+                }?.let {
+                    memberExtractor.getMembersByType(it)
+                } ?: emptyList<CallableMemberDescriptor>()
+        return memberExtractor.getMembersByType(interfaceType).filter { descriptor ->
+            descriptor.modality.isOverridable && !classSupertypeMembers.any { isOverridableBy(it, descriptor)  }
         }
-        return false;
     }
 
-    @NotNull
-    private Collection<T> overridableMembersNotFromSuperClassOfTrait(@NotNull KotlinType trait) {
-        final Collection<T> membersToSkip = getMembersFromClassSupertypeOfTrait(trait);
-        return Collections2.filter(
-                memberExtractor.getMembersByType(trait),
-                new Predicate<CallableMemberDescriptor>() {
-                    @Override
-                    public boolean apply(CallableMemberDescriptor descriptor) {
-                        if (!descriptor.getModality().isOverridable()) {
-                            return false;
-                        }
-                        for (CallableMemberDescriptor memberToSkip : membersToSkip) {
-                            if (haveSameSignatures(memberToSkip, descriptor)) {
-                                return false;
-                            }
-                        }
-                        return true;
-                    }
-                });
+    interface MemberExtractor<T : CallableMemberDescriptor> {
+        fun getMembersByType(type: KotlinType): Collection<T>
     }
 
-    private static boolean haveSameSignatures(@NotNull CallableDescriptor memberOne, @NotNull CallableDescriptor memberTwo) {
-        //isOverridableBy ignores return types
-        return OverridingUtil.DEFAULT.isOverridableBy(memberOne, memberTwo).getResult() == OVERRIDABLE;
+    interface TypeResolver {
+        fun resolve(reference: KtTypeReference): KotlinType?
     }
 
-    @NotNull
-    private Collection<T> getMembersFromClassSupertypeOfTrait(@NotNull KotlinType traitType) {
-        KotlinType classSupertype = null;
-        for (KotlinType supertype : TypeUtils.getAllSupertypes(traitType)) {
-            if (isNotTrait(supertype.getConstructor().getDeclarationDescriptor())) {
-                classSupertype = supertype;
-                break;
-            }
-        }
-        return classSupertype != null ? memberExtractor.getMembersByType(classSupertype) : Collections.<T>emptyList();
-    }
+    companion object {
+        fun <T : CallableMemberDescriptor> generateDelegatedMembers(
+                classOrObject: KtClassOrObject,
+                ownerDescriptor: ClassDescriptor,
+                existingMembers: Collection<CallableDescriptor>,
+                trace: BindingTrace,
+                memberExtractor: MemberExtractor<T>,
+                typeResolver: TypeResolver
+        ): Collection<T> =
+                DelegationResolver(classOrObject, ownerDescriptor, existingMembers, trace, memberExtractor, typeResolver)
+                        .generateDelegatedMembers()
 
-    private static boolean isNotTrait(@Nullable DeclarationDescriptor descriptor) {
-        if (descriptor instanceof ClassDescriptor) {
-            ClassKind kind = ((ClassDescriptor) descriptor).getKind();
-            return kind != ClassKind.INTERFACE;
-        }
-        return false;
-    }
+        private fun isOverridingAnyOf(
+                candidate: CallableMemberDescriptor,
+                possiblyOverriddenBy: Collection<CallableDescriptor>
+        ): Boolean =
+                possiblyOverriddenBy.any { isOverridableBy(it, candidate) }
 
-    public interface MemberExtractor<T extends CallableMemberDescriptor> {
-        @NotNull
-        Collection<T> getMembersByType(@NotNull KotlinType type);
-    }
+        private fun isOverridableBy(memberOne: CallableDescriptor, memberTwo: CallableDescriptor): Boolean =
+                OverridingUtil.DEFAULT.isOverridableBy(memberOne, memberTwo).result == OVERRIDABLE
 
-    public interface TypeResolver {
-        @Nullable
-        KotlinType resolve(@NotNull KtTypeReference reference);
     }
 }
