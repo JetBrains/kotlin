@@ -14,4 +14,4 @@ fun main(args: Array<String>) {
 // RESULT: 1: I
 
 // EXPRESSION: it
-// RESULT: 2: I
+// RESULT: Unresolved reference: it
