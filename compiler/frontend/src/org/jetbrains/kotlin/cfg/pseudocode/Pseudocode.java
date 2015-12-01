@@ -66,4 +66,6 @@ public interface Pseudocode {
     List<? extends Instruction> getUsages(@Nullable PseudoValue value);
 
     boolean isSideEffectFree(@NotNull Instruction instruction);
+
+    Pseudocode copy();
 }
