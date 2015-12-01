@@ -31,12 +31,17 @@ import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.utils.sure
 
-fun PsiElement.getModuleInfo(): IdeaModuleInfo {
-    fun logAndReturnDefault(message: String): IdeaModuleInfo {
-        LOG.error("Could not find correct module information.\nReason: $message")
-        return NotUnderContentRootModuleInfo
-    }
+fun PsiElement.getModuleInfo(): IdeaModuleInfo = this.getModuleInfo { reason ->
+    LOG.error("Could not find correct module information.\nReason: $reason")
+    NotUnderContentRootModuleInfo
+}.sure { "Defaulting to NotUnderContentRootModuleInfo so null is not possible" }
 
+fun PsiElement.getNullableModuleInfo(): IdeaModuleInfo? = this.getModuleInfo { reason ->
+    LOG.warn("Could not find correct module information.\nReason: $reason")
+    null
+}
+
+private fun PsiElement.getModuleInfo(onFailure: (String) -> IdeaModuleInfo?): IdeaModuleInfo? {
     if (this is KtLightElement<*, *>) return this.getModuleInfoForLightElement()
 
     val containingJetFile = (this as? KtElement)?.getContainingFile() as? KtFile
@@ -45,7 +50,7 @@ fun PsiElement.getModuleInfo(): IdeaModuleInfo {
 
     val doNotAnalyze = containingJetFile?.doNotAnalyze
     if (doNotAnalyze != null) {
-        return logAndReturnDefault(
+        return onFailure(
                 "Should not analyze element: ${getText()} in file ${containingJetFile?.getName() ?: " <no file>"}\n$doNotAnalyze"
         )
     }
@@ -55,15 +60,14 @@ fun PsiElement.getModuleInfo(): IdeaModuleInfo {
 
     if (containingJetFile is KtCodeFragment) {
         return containingJetFile.getContext()?.getModuleInfo()
-               ?: logAndReturnDefault("Analyzing code fragment of type ${containingJetFile.javaClass} with no context element\nText:\n${containingJetFile.getText()}")
+               ?: onFailure("Analyzing code fragment of type ${containingJetFile.javaClass} with no context element\nText:\n${containingJetFile.getText()}")
     }
 
-    val project = getProject()
     val containingFile = getContainingFile()
-            ?: return logAndReturnDefault("Analyzing element of type $javaClass with no containing file\nText:\n${getText()}")
+            ?: return onFailure("Analyzing element of type $javaClass with no containing file\nText:\n${getText()}")
 
     val virtualFile = containingFile.getOriginalFile().getVirtualFile()
-            ?: return logAndReturnDefault("Analyzing non-physical file $containingFile of type ${containingFile.javaClass}")
+            ?: return onFailure("Analyzing non-physical file $containingFile of type ${containingFile.javaClass}")
 
     return getModuleInfoByVirtualFile(
             project,

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiElementFactory
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
@@ -35,5 +36,11 @@ public class CustomModuleInfoTest : KotlinLightCodeInsightFixtureTestCase() {
         methods.forEach {
             Assert.assertEquals("Members of decompiled class should have the same module info", classModuleInfo, it.getModuleInfo())
         }
+    }
+
+    fun testModuleInfoForPsiCreatedByJavaPsiFactory() {
+        val dummyClass = PsiElementFactory.SERVICE.getInstance(project).createClass("A")
+        val moduleInfo = dummyClass.getNullableModuleInfo()
+        Assert.assertEquals("Should be null for psi created by factory", null, moduleInfo)
     }
 }
