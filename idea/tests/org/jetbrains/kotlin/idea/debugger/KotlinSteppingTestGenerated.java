@@ -316,6 +316,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doStepOutTest(fileName);
         }
 
+        @TestMetadata("stepOutInlinedLambdaArgumentOneLine.kt")
+        public void testStepOutInlinedLambdaArgumentOneLine() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOut/stepOutInlinedLambdaArgumentOneLine.kt");
+            doStepOutTest(fileName);
+        }
+
         @TestMetadata("stepOutSeveralInlineArgumentDeepest.kt")
         public void testStepOutSeveralInlineArgumentDeepest() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOut/stepOutSeveralInlineArgumentDeepest.kt");

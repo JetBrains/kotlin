@@ -202,7 +202,7 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
         val lineStartOffset = file.getLineStartOffset(sourcePosition.line) ?: return null
 
         val inlineFunctions = getInlineFunctionsIfAny(file, lineStartOffset)
-        val inlinedArgument = getInlineArgumentIfAny(file, lineStartOffset)
+        val inlinedArgument = getInlineArgumentIfAny(sourcePosition.elementAt)
 
         if (inlineFunctions.isEmpty() && inlinedArgument == null) return null
 
@@ -334,7 +334,11 @@ fun getStepOutPosition(
     val computedReferenceType = location.declaringType() ?: return null
 
     val locations = computedReferenceType.allLineLocations()
-    val nextLineLocations = locations.dropWhile { it.lineNumber() != location.lineNumber() }.filter { it.method() == location.method() }
+    val nextLineLocations = locations
+            .dropWhile { it != location }
+            .drop(1)
+            .filter { it.method() == location.method() }
+            .dropWhile { it.lineNumber() == location.lineNumber() }
 
     if (inlineFunctions.isNotEmpty()) {
         return suspendContext.getXPositionForStepOutFromInlineFunction(nextLineLocations, inlineFunctions) ?: return null
@@ -352,13 +356,12 @@ private fun SuspendContextImpl.getXPositionForStepOutFromInlineFunction(
         inlineFunctionsToSkip: List<KtNamedFunction>
 ): XSourcePositionImpl? {
     return getNextPositionWithFilter(locations) {
-        file, offset ->
+        offset, elementAt ->
         if (inlineFunctionsToSkip.any { it.textRange.contains(offset) }) {
             return@getNextPositionWithFilter true
         }
 
-        val inlinedArgument = getInlineArgumentIfAny(file, offset)
-        inlinedArgument != null && inlinedArgument.textRange.contains(offset)
+        getInlineArgumentIfAny(elementAt) != null
     }
 }
 
@@ -367,37 +370,37 @@ private fun SuspendContextImpl.getXPositionForStepOutFromInlinedArgument(
         inlinedArgumentToSkip: KtFunctionLiteral
 ): XSourcePositionImpl? {
     return getNextPositionWithFilter(locations) {
-        file, offset ->
+        offset, elementAt ->
         inlinedArgumentToSkip.textRange.contains(offset)
     }
 }
 
 private fun SuspendContextImpl.getNextPositionWithFilter(
         locations: List<Location>,
-        skip: (KtFile, Int) -> Boolean
+        skip: (Int, PsiElement) -> Boolean
 ): XSourcePositionImpl? {
     for (location in locations) {
-        val file = try {
-            this.debugProcess.positionManager.getSourcePosition(location)?.file as? KtFile
+        val sourcePosition = try {
+            this.debugProcess.positionManager.getSourcePosition(location)
         }
         catch(e: NoDataException) {
             null
         } ?: continue
 
+        val file = sourcePosition.file as? KtFile ?: continue
+        val elementAt = sourcePosition.elementAt ?: continue
         val currentLine = location.lineNumber() - 1
         val lineStartOffset = file.getLineStartOffset(currentLine) ?: continue
-        if (skip(file, lineStartOffset)) continue
+        if (skip(lineStartOffset, elementAt)) continue
 
-        val elementAt = file.findElementAt(lineStartOffset) ?: continue
         return XSourcePositionImpl.createByElement(elementAt)
     }
 
     return null
 }
 
-private fun getInlineArgumentIfAny(file: KtFile, offset: Int): KtFunctionLiteral? {
-    val elementAt = file.findElementAt(offset) ?: return null
-    val functionLiteralExpression = elementAt.getParentOfType<KtFunctionLiteralExpression>(false) ?: return null
+private fun getInlineArgumentIfAny(elementAt: PsiElement?): KtFunctionLiteral? {
+    val functionLiteralExpression = elementAt?.getParentOfType<KtFunctionLiteralExpression>(false) ?: return null
 
     val context = functionLiteralExpression.analyze(BodyResolveMode.PARTIAL)
     if (!InlineUtil.isInlinedArgument(functionLiteralExpression.functionLiteral, context, false)) return null
