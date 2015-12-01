@@ -24,7 +24,7 @@ import com.intellij.openapi.command.impl.FinishMarkAction
 import com.intellij.openapi.command.impl.StartMarkAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
@@ -32,6 +32,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.introduce.inplace.OccurrencesChooser
 import com.intellij.refactoring.util.CommonRefactoringUtil
+import com.intellij.ui.components.JBList
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -378,13 +379,29 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
         CommonRefactoringUtil.showErrorHint(project, editor, message, INTRODUCE_VARIABLE, HelpID.INTRODUCE_VARIABLE)
     }
 
-    private fun KtExpression.chooseApplicableComponentFunctions(haveOccurrencesToReplace: Boolean): List<FunctionDescriptor>? {
-        if (haveOccurrencesToReplace) return emptyList()
+    private fun KtExpression.chooseApplicableComponentFunctions(
+            haveOccurrencesToReplace: Boolean,
+            editor: Editor?,
+            callback: (List<FunctionDescriptor>) -> Unit
+    ) {
+        if (haveOccurrencesToReplace) return callback(emptyList())
 
         val functions = getApplicableComponentFunctions(this)
-        if (functions.size <= 1) return emptyList()
+        if (functions.size <= 1) return callback(emptyList())
 
-        return functions
+        if (ApplicationManager.getApplication().isUnitTestMode) return callback(functions)
+
+        if (editor == null) return callback(emptyList())
+
+        val list = JBList("Create single variable", "Create destructuring declaration")
+        JBPopupFactory.getInstance()
+                .createListPopupBuilder(list)
+                .setMovable(true)
+                .setResizable(false)
+                .setRequestFocus(true)
+                .setItemChoosenCallback { callback(if (list.selectedIndex == 0) emptyList() else functions) }
+                .createPopup()
+                .showInBestPositionFor(editor)
     }
 
     private fun executeMultiDeclarationTemplate(
@@ -517,67 +534,67 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
                 commonContainer = container
             }
 
-            val componentFunctions = physicalExpression.chooseApplicableComponentFunctions(replaceOccurrence) ?: return@Pass
-
-            val validator = NewDeclarationNameValidator(
-                    commonContainer,
-                    calculateAnchor(commonParent, commonContainer, allReplaces),
-                    NewDeclarationNameValidator.Target.VARIABLES
-            )
-            val suggestedNames = if (componentFunctions.isNotEmpty()) {
-                val collectingValidator = CollectingNameValidator(filter = validator)
-                componentFunctions.map { suggestNamesForComponent(it, project, collectingValidator) }
-            }
-            else {
-                KotlinNameSuggester.suggestNamesByExpressionAndType(expression,
-                                                                    substringInfo?.type,
-                                                                    bindingContext,
-                                                                    validator,
-                                                                    "value").singletonList()
-            }
-            val introduceVariableContext = IntroduceVariableContext(
-                    expression, suggestedNames, allReplaces, commonContainer, commonParent,
-                    replaceOccurrence, noTypeInference, expressionType, componentFunctions, bindingContext, resolutionFacade
-            )
-            project.executeCommand(INTRODUCE_VARIABLE, null) {
-                runWriteAction { introduceVariableContext.runRefactoring() }
-
-                val property = introduceVariableContext.propertyRef ?: return@executeCommand
-
-                if (editor == null) {
-                    onNonInteractiveFinish?.invoke(property)
-                    return@executeCommand
+            physicalExpression.chooseApplicableComponentFunctions(replaceOccurrence, editor) { componentFunctions ->
+                val validator = NewDeclarationNameValidator(
+                        commonContainer,
+                        calculateAnchor(commonParent, commonContainer, allReplaces),
+                        NewDeclarationNameValidator.Target.VARIABLES
+                )
+                val suggestedNames = if (componentFunctions.isNotEmpty()) {
+                    val collectingValidator = CollectingNameValidator(filter = validator)
+                    componentFunctions.map { suggestNamesForComponent(it, project, collectingValidator) }
                 }
+                else {
+                    KotlinNameSuggester.suggestNamesByExpressionAndType(expression,
+                                                                        substringInfo?.type,
+                                                                        bindingContext,
+                                                                        validator,
+                                                                        "value").singletonList()
+                }
+                val introduceVariableContext = IntroduceVariableContext(
+                        expression, suggestedNames, allReplaces, commonContainer, commonParent,
+                        replaceOccurrence, noTypeInference, expressionType, componentFunctions, bindingContext, resolutionFacade
+                )
+                project.executeCommand(INTRODUCE_VARIABLE, null) {
+                    runWriteAction { introduceVariableContext.runRefactoring() }
 
-                editor.caretModel.moveToOffset(property.textOffset)
-                editor.selectionModel.removeSelection()
+                    val property = introduceVariableContext.propertyRef ?: return@executeCommand
 
-                if (!isInplaceAvailable) return@executeCommand
-
-                PsiDocumentManager.getInstance(project).commitDocument(editor.document)
-                PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)
-
-                when (property) {
-                    is KtProperty -> {
-                        KotlinVariableInplaceIntroducer(
-                                property,
-                                introduceVariableContext.reference,
-                                introduceVariableContext.references.toTypedArray(),
-                                suggestedNames.single(),
-                                /*todo*/ false,
-                                /*todo*/ false,
-                                expressionType,
-                                noTypeInference,
-                                project,
-                                editor
-                        ).startInplaceIntroduceTemplate()
+                    if (editor == null) {
+                        onNonInteractiveFinish?.invoke(property)
+                        return@executeCommand
                     }
 
-                    is KtMultiDeclaration -> {
-                        executeMultiDeclarationTemplate(project, editor, property, suggestedNames)
-                    }
+                    editor.caretModel.moveToOffset(property.textOffset)
+                    editor.selectionModel.removeSelection()
 
-                    else -> throw AssertionError("Unexpected declaration: ${property.getElementTextWithContext()}")
+                    if (!isInplaceAvailable) return@executeCommand
+
+                    PsiDocumentManager.getInstance(project).commitDocument(editor.document)
+                    PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)
+
+                    when (property) {
+                        is KtProperty -> {
+                            KotlinVariableInplaceIntroducer(
+                                    property,
+                                    introduceVariableContext.reference,
+                                    introduceVariableContext.references.toTypedArray(),
+                                    suggestedNames.single(),
+                                    /*todo*/ false,
+                                    /*todo*/ false,
+                                    expressionType,
+                                    noTypeInference,
+                                    project,
+                                    editor
+                            ).startInplaceIntroduceTemplate()
+                        }
+
+                        is KtMultiDeclaration -> {
+                            executeMultiDeclarationTemplate(project, editor, property, suggestedNames)
+                        }
+
+                        else -> throw AssertionError("Unexpected declaration: ${property.getElementTextWithContext()}")
+                    }
                 }
             }
         }
