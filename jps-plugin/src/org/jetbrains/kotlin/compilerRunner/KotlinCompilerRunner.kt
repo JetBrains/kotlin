@@ -118,7 +118,10 @@ public object KotlinCompilerRunner {
                 val stream = ByteArrayOutputStream()
                 val out = PrintStream(stream)
 
-                if (java.lang.Boolean.parseBoolean(System.getProperty(GlobalOptions.COMPILE_PARALLEL_OPTION, "false")))
+                // the property should be set at least for parallel builds to avoid parallel building problems (racing between destroying and using environment)
+                // unfortunately it cannot be currently set by default globally, because it breaks many tests
+                // since there is no reliable way so far to detect running under tests, switching it on only for parallel builds
+                if (System.getProperty(GlobalOptions.COMPILE_PARALLEL_OPTION, "false").toBoolean())
                     System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
 
                 val rc = CompilerRunnerUtil.invokeExecMethod(compilerClassName, argsArray, environment, messageCollector, out)
@@ -146,10 +149,6 @@ public object KotlinCompilerRunner {
                 val compilerId = CompilerId.makeCompilerId(File(libPath, "kotlin-compiler.jar"))
                 val daemonOptions = configureDaemonOptions()
                 val daemonJVMOptions = configureDaemonJVMOptions(inheritMemoryLimits = true, inheritAdditionalProperties = true)
-                // the property should be set by default for daemon builds to avoid parallel building problems
-                // but it cannot be currently set by default globally, because it seems breaks many tests
-                // TODO: find out how to get rid of the property and make it the default behavior
-                daemonJVMOptions.jvmParams.add("D$KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY")
 
                 val daemonReportMessages = ArrayList<DaemonReportMessage>()
 
