@@ -24,9 +24,10 @@ abstract class AbstractIncrementalCacheVersionChangedTest : AbstractIncrementalJ
         val modifiedFiles = modifications.filterIsInstance<ModifyContent>().map { it.path }
         val paths = projectDescriptor.dataManager.dataPaths
         val targets = projectDescriptor.allModuleTargets
+        val hasKotlin = HasKotlinMarker(projectDescriptor.dataManager)
 
         if (modifiedFiles.any { it.endsWith("clear-has-kotlin") }) {
-            targets.forEach { KotlinBuilder.clearHasKotlin(it, paths) }
+            targets.forEach { hasKotlin.clean(it) }
         }
 
         if (modifiedFiles.none { it.endsWith("do-not-change-cache-versions") }) {
