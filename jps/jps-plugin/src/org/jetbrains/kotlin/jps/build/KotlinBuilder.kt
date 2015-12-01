@@ -242,13 +242,14 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         }
 
         val caches = filesToCompile.keySet().map { incrementalCaches[it]!! }
-        processChanges(filesToCompile.values(), allCompiledFiles, dataManager, caches, changesInfo, fsOperations)
+        processChanges(filesToCompile.values().toSet(), allCompiledFiles, dataManager, caches, changesInfo, fsOperations)
+        caches.forEach { it.cleanDirtyInlineFunctions() }
 
         return ADDITIONAL_PASS_REQUIRED
     }
 
     private fun processChanges(
-            compiledFiles: Collection<File>,
+            compiledFiles: Set<File>,
             allCompiledFiles: MutableSet<File>,
             dataManager: BuildDataManager,
             caches: List<IncrementalCacheImpl>,
@@ -261,7 +262,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             when {
                 inlineAdded -> {
                     allCompiledFiles.clear()
-                    fsOperations.markChunk(recursively = true)
+                    fsOperations.markChunk(recursively = true, excludeFiles = compiledFiles)
                     return
                 }
                 constantsChanged -> {
@@ -275,7 +276,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
             if (inlineChanged) {
                 for (cache in caches) {
-                    fsOperations.markFiles(cache.getFilesToReinline())
+                    fsOperations.markFiles(cache.getFilesToReinline(), excludeFiles = compiledFiles)
                 }
             }
         }
@@ -291,20 +292,14 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
                 if (change !is ChangeInfo.MembersChanged) continue
 
-                val files = change.names
-                        .flatMap { lookupStorage.get(LookupSymbol(it, change.fqName.asString())) }
-                        .asSequence()
-                        .map { File(it) }
-                        .filter { it !in compiledFiles && it.exists() }
-                        .toList()
+                val files = change.names.asSequence()
+                        .flatMap { lookupStorage.get(LookupSymbol(it, change.fqName.asString())).asSequence() }
+                        .map(::File)
 
-                LOG.debug("Mark dirty files: $files")
-                fsOperations.markFiles(files)
+                fsOperations.markFiles(files.asIterable(), excludeFiles = compiledFiles)
             }
 
             LOG.debug("End of processing changes")
-
-            caches.forEach { it.cleanDirtyInlineFunctions() }
         }
 
         if (IncrementalCompilation.isExperimental()) {

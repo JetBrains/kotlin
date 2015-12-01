@@ -377,9 +377,21 @@ public class ExperimentalIncrementalJpsTestGenerated extends AbstractExperimenta
             doTest(fileName);
         }
 
+        @TestMetadata("inlineModifiedWithUsage")
+        public void testInlineModifiedWithUsage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlineModifiedWithUsage/");
+            doTest(fileName);
+        }
+
         @TestMetadata("inlineTwoFunctionsOneChanged")
         public void testInlineTwoFunctionsOneChanged() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlineTwoFunctionsOneChanged/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inlineUsedWhereDeclared")
+        public void testInlineUsedWhereDeclared() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/pureKotlin/inlineUsedWhereDeclared/");
             doTest(fileName);
         }
 

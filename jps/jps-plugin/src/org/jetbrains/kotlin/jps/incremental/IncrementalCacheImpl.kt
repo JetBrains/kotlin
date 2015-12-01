@@ -131,7 +131,6 @@ public class IncrementalCacheImpl(
             dependents.forEach(::addFilesAffectedByChangedInlineFuns)
         }
 
-        cleanDirtyInlineFunctions()
         return result.map { File(it) }
     }
 
