@@ -33,6 +33,7 @@ import com.intellij.psi.search.GlobalSearchScopesCore
 import com.intellij.testIntegration.createTest.CreateTestAction
 import com.intellij.testIntegration.createTest.TestGenerators
 import org.jetbrains.kotlin.asJava.KtLightClass
+import org.jetbrains.kotlin.asJava.findFacadeClass
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.actions.JavaToKotlinAction
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
@@ -44,30 +45,50 @@ import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.runWithAlternativeResolveEnabled
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.runWhenSmart
-import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtEnumEntry
-import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import java.util.*
 
-class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtClassOrObject>(KtClassOrObject::class.java, "Create test") {
-    override fun applicabilityRange(element: KtClassOrObject): TextRange? {
-        if (element.isLocal()) return null
-        if (element is KtEnumEntry) return null
-        if (element is KtClass && (element.isAnnotation() || element.isInterface())) return null
+class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration>(KtNamedDeclaration::class.java, "Create test") {
+    override fun applicabilityRange(element: KtNamedDeclaration): TextRange? {
         if (ModuleUtilCore.findModuleForPsiElement(element) == null) return null
-        if (element.resolveToDescriptorIfAny() == null) return null
+        if (element.nameIdentifier == null) return null
 
-        return TextRange(
-                element.startOffset,
-                element.getDelegationSpecifierList()?.startOffset ?: element.getBody()?.startOffset ?: element.endOffset
-        )
+        if (element is KtClassOrObject) {
+            if (element.isLocal()) return null
+            if (element is KtEnumEntry) return null
+            if (element is KtClass && (element.isAnnotation() || element.isInterface())) return null
+
+            if (element.resolveToDescriptorIfAny() == null) return null
+
+            return TextRange(
+                    element.startOffset,
+                    element.getDelegationSpecifierList()?.startOffset ?: element.getBody()?.startOffset ?: element.endOffset
+            )
+        }
+
+        if (element.parent !is KtFile) return null
+
+        if (element is KtNamedFunction) {
+            return TextRange((element.funKeyword ?: element.nameIdentifier!!).startOffset, element.nameIdentifier!!.endOffset)
+        }
+
+        if (element is KtProperty) {
+            if (element.getter == null && element.delegate == null) return null
+            return TextRange(element.valOrVarKeyword.startOffset, element.nameIdentifier!!.endOffset)
+        }
+
+        return null
     }
 
-    override fun applyTo(element: KtClassOrObject, editor: Editor) {
+    override fun applyTo(element: KtNamedDeclaration, editor: Editor) {
+        val lightClass = when (element) {
+            is KtClassOrObject -> element.toLightClass()
+            else -> element.getContainingKtFile().findFacadeClass()
+        } ?: return
+
         object : CreateTestAction() {
             // Based on the com.intellij.testIntegration.createTest.JavaTestGenerator.createTestClass()
             private fun findTestClass(targetDirectory: PsiDirectory, className: String): PsiClass? {
@@ -164,6 +185,6 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtClassOrObject>(K
                     }
                 }
             }
-        }.invoke(element.project, editor, element.toLightClass()!!)
+        }.invoke(element.project, editor, lightClass)
     }
 }

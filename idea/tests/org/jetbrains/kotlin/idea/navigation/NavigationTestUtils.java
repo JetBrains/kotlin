@@ -30,6 +30,7 @@ import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.testFramework.UsefulTestCase;
+import com.intellij.util.PathUtil;
 import com.intellij.util.containers.MultiMap;
 import junit.framework.TestCase;
 import org.jetbrains.annotations.NotNull;
@@ -51,6 +52,10 @@ public final class NavigationTestUtils {
     public static void assertGotoDataMatching(Editor editor, GotoTargetHandler.GotoData gotoData) {
         // Get expected references from the tested document
         List<String> expectedReferences = InTextDirectivesUtils.findListWithPrefixes(editor.getDocument().getText(), "// REF:");
+        for (int i = 0; i < expectedReferences.size(); i++) {
+            expectedReferences.set(i, PathUtil.toSystemDependentName(expectedReferences.get(i)).replace("//", "/"));
+        }
+
         Collections.sort(expectedReferences);
 
         if (gotoData != null) {

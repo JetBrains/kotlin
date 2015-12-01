@@ -27,10 +27,10 @@ import com.intellij.testIntegration.JavaTestFinder
 import com.intellij.testIntegration.TestFinderHelper
 import com.intellij.util.CommonProcessors
 import com.intellij.util.containers.HashSet
-import org.jetbrains.kotlin.asJava.KtLightClassForExplicitDeclaration
-import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import java.util.*
 import java.util.regex.Pattern
@@ -41,9 +41,11 @@ class KotlinTestFinder : JavaTestFinder() {
     override fun findSourceElement(from: PsiElement): PsiClass? {
         super.findSourceElement(from)?.let { return it }
 
-        val classOrObject = from.parentsWithSelf.filterIsInstance<KtClassOrObject>().firstOrNull { !it.isLocal() } ?: return null
-        if (classOrObject.resolveToDescriptorIfAny() == null) return null
-        return classOrObject.toLightClass()
+        from.parentsWithSelf.filterIsInstance<KtClassOrObject>().firstOrNull { !it.isLocal() }?.let {
+            return if (it.resolveToDescriptorIfAny() == null) null else it.toLightClass()
+        }
+
+        return (from.containingFile as? KtFile)?.findFacadeClass()
     }
 
     override fun isTest(element: PsiElement): Boolean {
@@ -63,9 +65,13 @@ class KotlinTestFinder : JavaTestFinder() {
         for (candidateNameWithWeight in TestFinderHelper.collectPossibleClassNamesWithWeights(klass.name)) {
             for (eachClass in cache.getClassesByName(candidateNameWithWeight.first, scope)) {
                 if (eachClass.isAnnotationType || frameworks.isTestClass(eachClass)) continue
-                if (!eachClass.isPhysical && eachClass !is KtLightClassForExplicitDeclaration) continue
 
-                classesWithWeights.add(Pair.create(eachClass, candidateNameWithWeight.second))
+                if (eachClass is KtLightClassForFacade) {
+                    eachClass.files.mapTo(classesWithWeights) { Pair.create(it, candidateNameWithWeight.second) }
+                }
+                else if (eachClass.isPhysical || eachClass is KtLightClassForExplicitDeclaration) {
+                    classesWithWeights.add(Pair.create(eachClass, candidateNameWithWeight.second))
+                }
             }
         }
 
