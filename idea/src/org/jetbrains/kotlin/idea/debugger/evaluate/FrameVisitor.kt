@@ -62,10 +62,14 @@ class FrameVisitor(context: EvaluationContextImpl) {
                         }
                     }
 
-                    val localVariable = if (isFunctionType(asmType))
-                        findLocalVariableForLocalFun(name, asmType, checkType)
-                    else
-                        findLocalVariable(name, asmType, checkType)
+                    if (isFunctionType(asmType)) {
+                        val variableForLocalFun = findLocalVariableForLocalFun(name, asmType, checkType)
+                        if (variableForLocalFun != null) {
+                            return variableForLocalFun
+                        }
+                    }
+
+                    val localVariable = findLocalVariable(name, asmType, checkType)
 
                     if (localVariable != null) {
                         return localVariable
