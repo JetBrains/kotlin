@@ -63,11 +63,10 @@ private fun PsiElement.getModuleInfo(onFailure: (String) -> IdeaModuleInfo?): Id
                ?: onFailure("Analyzing code fragment of type ${containingJetFile.javaClass} with no context element\nText:\n${containingJetFile.getText()}")
     }
 
-    val containingFile = getContainingFile()
-            ?: return onFailure("Analyzing element of type $javaClass with no containing file\nText:\n${getText()}")
+    val containingFile = containingFile ?: return onFailure("Analyzing element of type $javaClass with no containing file\nText:\n$text")
 
-    val virtualFile = containingFile.getOriginalFile().getVirtualFile()
-            ?: return onFailure("Analyzing non-physical file $containingFile of type ${containingFile.javaClass}")
+    val virtualFile = containingFile.originalFile.virtualFile
+            ?: return onFailure("Analyzing element of type $javaClass in non-physical file $containingFile of type ${containingFile.javaClass}\nText:\n$text")
 
     return getModuleInfoByVirtualFile(
             project,
