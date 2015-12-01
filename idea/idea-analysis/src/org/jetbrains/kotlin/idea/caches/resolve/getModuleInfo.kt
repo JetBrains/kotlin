@@ -28,6 +28,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.roots.ModuleRootManager
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.utils.sure
 
 fun PsiElement.getModuleInfo(): IdeaModuleInfo {
     fun logAndReturnDefault(message: String): IdeaModuleInfo {
@@ -115,8 +117,13 @@ private fun getModuleInfoByVirtualFile(project: Project, virtualFile: VirtualFil
 }
 
 private fun KtLightElement<*, *>.getModuleInfoForLightElement(): IdeaModuleInfo {
-    if (this is KtLightClassForDecompiledDeclaration) {
-        return getModuleInfoByVirtualFile(getProject(), getContainingFile().getVirtualFile(), false)
+    val decompiledClass = this.getParentOfType<KtLightClassForDecompiledDeclaration>(strict = false)
+    if (decompiledClass != null) {
+        return getModuleInfoByVirtualFile(
+                project,
+                containingFile.virtualFile.sure { "Decompiled class should be build from physical file" },
+                false
+        )
     }
     val element = getOrigin() ?: when (this) {
         is FakeLightClassForFileOfPackage -> this.getContainingFile()!!
