@@ -32,7 +32,6 @@ import org.jetbrains.jps.builders.java.dependencyView.Mappings
 import org.jetbrains.jps.builders.storage.BuildDataPaths
 import org.jetbrains.jps.incremental.*
 import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.*
-import org.jetbrains.jps.incremental.fs.CompilationRound
 import org.jetbrains.jps.incremental.java.JavaBuilder
 import org.jetbrains.jps.incremental.messages.BuildMessage
 import org.jetbrains.jps.incremental.messages.CompilerMessage
@@ -122,10 +121,14 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
     ): ModuleLevelBuilder.ExitCode {
         LOG.debug("------------------------------------------")
         val messageCollector = MessageCollectorAdapter(context)
+        val fsOperations = FSOperationsHelper(context, chunk)
 
         try {
-            val exitCode = doBuild(chunk, context, dirtyFilesHolder, messageCollector, outputConsumer)
+            val exitCode = doBuild(chunk, context, dirtyFilesHolder, messageCollector, outputConsumer, fsOperations)
             LOG.debug("Build result: " + exitCode)
+
+            if (exitCode == OK && fsOperations.hasMarkedDirty()) return ADDITIONAL_PASS_REQUIRED
+
             return exitCode
         }
         catch (e: StopBuildException) {
@@ -148,7 +151,9 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             chunk: ModuleChunk,
             context: CompileContext,
             dirtyFilesHolder: DirtyFilesHolder<JavaSourceRootDescriptor, ModuleBuildTarget>,
-            messageCollector: MessageCollectorAdapter, outputConsumer: ModuleLevelBuilder.OutputConsumer
+            messageCollector: MessageCollectorAdapter,
+            outputConsumer: OutputConsumer,
+            fsOperations: FSOperationsHelper
     ): ModuleLevelBuilder.ExitCode {
         // Workaround for Android Studio
         if (!JavaBuilder.IS_ENABLED[context, true] && !JpsUtils.isJsKotlinModule(chunk.representativeTarget())) {
@@ -163,9 +168,9 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         if (!isFullRebuild &&
             targets.any { hasKotlin(it, dataManager.dataPaths) } &&
-            shouldRebuildBecauseVersionChanged(context, dataManager, targets)
+            shouldRebuildBecauseVersionChanged(context, dataManager, targets, fsOperations)
         ) {
-            FSOperations.markDirtyRecursively(context, CompilationRound.NEXT, chunk) { KotlinSourceFileCollector.isKotlinSourceFile(it) }
+            fsOperations.markChunk(recursively = true)
             val targetsWithDependents = getIncrementalCaches(chunk, context).keys
             targetsWithDependents.forEach { clearHasKotlin(it, dataManager.dataPaths) }
             return CHUNK_REBUILD_REQUIRED
@@ -243,53 +248,41 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         }
 
         val caches = filesToCompile.keySet().map { incrementalCaches[it]!! }
-        processChanges(context, chunk, filesToCompile.values(), allCompiledFiles, dataManager, caches, changesInfo)
+        processChanges(filesToCompile.values(), allCompiledFiles, dataManager, caches, changesInfo, fsOperations)
 
         return ADDITIONAL_PASS_REQUIRED
     }
 
     private fun processChanges(
-            context: CompileContext,
-            chunk: ModuleChunk,
             compiledFiles: Collection<File>,
             allCompiledFiles: MutableSet<File>,
             dataManager: BuildDataManager,
             caches: List<IncrementalCacheImpl>,
-            compilationResult: CompilationResult
+            compilationResult: CompilationResult,
+            fsOperations: FSOperationsHelper
     ) {
-        fun recompileInlined() {
-            for (cache in caches) {
-                val filesToReinline = cache.getFilesToReinline()
-
-                filesToReinline.forEach {
-                    FSOperations.markDirty(context, CompilationRound.NEXT, it)
-                }
-            }
-        }
-
         fun CompilationResult.doProcessChanges() {
-            fun isKotlin(file: File) = KotlinSourceFileCollector.isKotlinSourceFile(file)
-            fun isNotCompiled(file: File) = file !in allCompiledFiles
-
             LOG.debug("compilationResult = $this")
 
             when {
                 inlineAdded -> {
                     allCompiledFiles.clear()
-                    FSOperations.markDirtyRecursively(context, CompilationRound.NEXT, chunk, ::isKotlin)
+                    fsOperations.markChunk(recursively = true)
                     return
                 }
                 constantsChanged -> {
-                    FSOperations.markDirtyRecursively(context, CompilationRound.NEXT, chunk, ::isNotCompiled)
+                    fsOperations.markChunk(recursively = true, kotlinOnly = false, excludeFiles = allCompiledFiles)
                     return
                 }
                 protoChanged -> {
-                    FSOperations.markDirty(context, CompilationRound.NEXT, chunk, { isKotlin(it) && isNotCompiled(it) })
+                    fsOperations.markChunk(excludeFiles = allCompiledFiles)
                 }
             }
 
             if (inlineChanged) {
-                recompileInlined()
+                for (cache in caches) {
+                    fsOperations.markFiles(cache.getFilesToReinline())
+                }
             }
         }
 
@@ -312,10 +305,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                         .toList()
 
                 LOG.debug("Mark dirty files: $files")
-
-                files.forEach {
-                    FSOperations.markDirty(context, CompilationRound.NEXT, it)
-                }
+                fsOperations.markFiles(files)
             }
 
             LOG.debug("End of processing changes")
@@ -331,8 +321,12 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         }
     }
 
-
-    private fun shouldRebuildBecauseVersionChanged(context: CompileContext, dataManager: BuildDataManager, targets: MutableSet<ModuleBuildTarget>): Boolean {
+    private fun shouldRebuildBecauseVersionChanged(
+            context: CompileContext,
+            dataManager: BuildDataManager,
+            targets: MutableSet<ModuleBuildTarget>,
+            fsOperations: FSOperationsHelper
+    ): Boolean {
         val cacheVersionsProvider = CacheVersionProvider(dataManager.dataPaths)
         val allVersions = cacheVersionsProvider.allVersions(targets)
         val actions = allVersions.map { it.checkVersion() }.toSet().sorted()
@@ -348,9 +342,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
                     for (sourceRoot in sourceRoots) {
                         val ktFiles = sourceRoot.file.walk().filter { KotlinSourceFileCollector.isKotlinSourceFile(it) }
-                        ktFiles.forEach { kt ->
-                            FSOperations.markDirty(context, CompilationRound.NEXT, kt)
-                        }
+                        fsOperations.markFiles(ktFiles.asIterable())
                     }
 
                     for (target in allTargets) {
