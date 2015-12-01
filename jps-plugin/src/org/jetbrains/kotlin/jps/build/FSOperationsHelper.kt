@@ -16,13 +16,18 @@
 
 package org.jetbrains.kotlin.jps.build
 
+import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.jps.incremental.FSOperations
 import org.jetbrains.jps.incremental.fs.CompilationRound
 import java.io.File
 
-class FSOperationsHelper(private val compileContext: CompileContext, private val chunk: ModuleChunk) {
+class FSOperationsHelper(
+        private val compileContext: CompileContext,
+        private val chunk: ModuleChunk,
+        private val log: Logger
+) {
     private var markedDirty = false
 
     fun hasMarkedDirty(): Boolean = markedDirty
@@ -46,11 +51,16 @@ class FSOperationsHelper(private val compileContext: CompileContext, private val
     }
 
     fun markFiles(files: Iterable<File>, excludeFiles: Set<File> = setOf()) {
-        for (file in files) {
-            if (file in excludeFiles || !file.exists()) continue
+        val filesToMark = files.toMutableSet()
+        filesToMark.removeAll(excludeFiles)
+        log.debug("Mark dirty: $filesToMark")
+
+        for (file in filesToMark) {
+            if (!file.exists()) continue
 
             FSOperations.markDirty(compileContext, CompilationRound.NEXT, file)
-            markedDirty = true
         }
+
+        markedDirty = markedDirty || filesToMark.isNotEmpty()
     }
 }
