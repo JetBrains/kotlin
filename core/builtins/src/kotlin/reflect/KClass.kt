@@ -32,8 +32,7 @@ public interface KClass<T : Any> : KDeclarationContainer, KAnnotatedElement {
     public val simpleName: String?
 
     /**
-     * The fully qualified name of the class which consists of names of the declaring package,
-     * all outer classes of this class and the class itself separated by dots,
+     * The fully qualified dot-separated name of the class,
      * or `null` if the class is local or it is an anonymous object literal.
      */
     public val qualifiedName: String?
