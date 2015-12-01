@@ -270,7 +270,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             }
 
             if (!AsmUtil.isPrimitive(parameterType) && AsmUtil.isPrimitive(argumentType)) {
-                if (parameterType == AsmUtil.boxType(argumentType)) {
+                if (parameterType == FrameVisitor.OBJECT_TYPE || parameterType == AsmUtil.boxType(argumentType)) {
                     return eval.boxType(argumentValue)
                 }
             }
