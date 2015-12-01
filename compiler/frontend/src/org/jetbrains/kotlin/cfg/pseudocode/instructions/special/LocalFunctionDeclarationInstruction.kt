@@ -57,5 +57,5 @@ public class LocalFunctionDeclarationInstruction(
     override fun toString(): String = "d(${render(element)})"
 
     override fun createCopy(): InstructionImpl =
-            LocalFunctionDeclarationInstruction(element, body, lexicalScope)
+            LocalFunctionDeclarationInstruction(element, body.copy(), lexicalScope)
 }
