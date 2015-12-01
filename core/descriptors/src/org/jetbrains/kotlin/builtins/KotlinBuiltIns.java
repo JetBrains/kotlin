@@ -139,7 +139,7 @@ public abstract class KotlinBuiltIns {
         public final FqName throwable = fqName("Throwable");
 
         public final FqName deprecated = fqName("Deprecated");
-        public final FqName extensionFunctionType = fqName("ExtensionFunctionType");
+        public final FqName extension = fqName("Extension");
         public final FqName target = annotationName("Target");
         public final FqName annotationTarget = annotationName("AnnotationTarget");
         public final FqName annotationRetention = annotationName("AnnotationRetention");
@@ -155,9 +155,6 @@ public abstract class KotlinBuiltIns {
         public final FqNameUnsafe kClass = reflect("KClass");
         public final FqNameUnsafe kCallable = reflect("KCallable");
         public final ClassId kProperty = ClassId.topLevel(reflect("KProperty").toSafe());
-
-        // TODO: remove in 1.0
-        public final FqName deprecatedExtensionAnnotation = fqName("Extension");
 
         public final Map<FqNameUnsafe, PrimitiveType> fqNameToPrimitiveType;
         public final Map<FqNameUnsafe, PrimitiveType> arrayClassFqNameToPrimitiveType;
@@ -699,13 +696,12 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public AnnotationDescriptor createExtensionAnnotation() {
-        return new AnnotationDescriptorImpl(getBuiltInClassByName(FQ_NAMES.extensionFunctionType.shortName()).getDefaultType(),
+        return new AnnotationDescriptorImpl(getBuiltInClassByName(FQ_NAMES.extension.shortName()).getDefaultType(),
                                             Collections.<ValueParameterDescriptor, ConstantValue<?>>emptyMap(), SourceElement.NO_SOURCE);
     }
 
     private static boolean isTypeAnnotatedWithExtension(@NotNull KotlinType type) {
-        return type.getAnnotations().findAnnotation(FQ_NAMES.extensionFunctionType) != null ||
-               type.getAnnotations().findAnnotation(FQ_NAMES.deprecatedExtensionAnnotation) != null;
+        return type.getAnnotations().findAnnotation(FQ_NAMES.extension) != null;
     }
 
     @NotNull
@@ -719,14 +715,14 @@ public abstract class KotlinBuiltIns {
         int size = parameterTypes.size();
         ClassDescriptor classDescriptor = receiverType == null ? getFunction(size) : getExtensionFunction(size);
 
-        Annotations typeAnnotations = receiverType == null ? annotations : addExtensionFunctionTypeAnnotation(annotations);
+        Annotations typeAnnotations = receiverType == null ? annotations : addExtensionAnnotation(annotations);
 
         return KotlinTypeImpl.create(typeAnnotations, classDescriptor, false, arguments);
     }
 
     @NotNull
-    private Annotations addExtensionFunctionTypeAnnotation(@NotNull Annotations annotations) {
-        if (annotations.findAnnotation(FQ_NAMES.extensionFunctionType) != null) return annotations;
+    private Annotations addExtensionAnnotation(@NotNull Annotations annotations) {
+        if (annotations.findAnnotation(FQ_NAMES.extension) != null) return annotations;
 
         // TODO: preserve laziness of given annotations
         return new AnnotationsImpl(plus(annotations, listOf(createExtensionAnnotation())));

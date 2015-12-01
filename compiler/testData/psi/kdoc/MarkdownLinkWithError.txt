@@ -21,8 +21,7 @@ JetFile: MarkdownLinkWithError.kt
           PsiElement(IDENTIFIER)('C')
         PsiErrorElement:Closing bracket expected
           <empty list>
-        PsiElement(RANGE)('..')
-        PsiElement(DOT)('.')
+        PsiElement(RESERVED)('...')
         PsiElement(RBRACKET)(']')
       PsiWhiteSpace('\n ')
       PsiElement(KDOC_LEADING_ASTERISK)('*')

@@ -7,4 +7,3 @@ val `is`: Int
 val `in`: Int
 val `object`: Int
 val `when`: Int
-val `This`: Int

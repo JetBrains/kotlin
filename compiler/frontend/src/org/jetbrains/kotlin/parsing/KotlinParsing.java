@@ -56,7 +56,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private static final TokenSet PARAMETER_NAME_RECOVERY_SET = TokenSet.create(COLON, EQ, COMMA, RPAR);
     private static final TokenSet PACKAGE_NAME_RECOVERY_SET = TokenSet.create(DOT, EOL_OR_SEMICOLON);
     private static final TokenSet IMPORT_RECOVERY_SET = TokenSet.create(AS_KEYWORD, DOT, EOL_OR_SEMICOLON);
-    /*package*/ static final TokenSet TYPE_REF_FIRST = TokenSet.create(LBRACKET, IDENTIFIER, LPAR, CAPITALIZED_THIS_KEYWORD, HASH, DYNAMIC_KEYWORD);
+    /*package*/ static final TokenSet TYPE_REF_FIRST = TokenSet.create(LBRACKET, IDENTIFIER, LPAR, HASH, DYNAMIC_KEYWORD);
     private static final TokenSet RECEIVER_TYPE_TERMINATORS = TokenSet.create(DOT, SAFE_ACCESS);
     private static final TokenSet VALUE_PARAMETER_FIRST =
             TokenSet.orSet(TokenSet.create(IDENTIFIER, LBRACKET, VAL_KEYWORD, VAR_KEYWORD), MODIFIER_KEYWORDS);
@@ -1867,9 +1867,6 @@ public class KotlinParsing extends AbstractKotlinParsing {
             }
 
         }
-        else if (at(CAPITALIZED_THIS_KEYWORD)) {
-            parseSelfType();
-        }
         else {
             errorWithRecovery("Type expected",
                     TokenSet.orSet(TOP_LEVEL_DECLARATION_FIRST,
@@ -2019,19 +2016,6 @@ public class KotlinParsing extends AbstractKotlinParsing {
             advance(); // EXCL
             error.error("Unexpected token");
         }
-    }
-
-    /*
-     * selfType
-     *   : "This"
-     *   ;
-     */
-    private void parseSelfType() {
-        assert _at(CAPITALIZED_THIS_KEYWORD);
-
-        PsiBuilder.Marker type = mark();
-        advance(); // CAPITALIZED_THIS_KEYWORD
-        type.done(SELF_TYPE);
     }
 
     /*

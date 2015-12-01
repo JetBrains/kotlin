@@ -178,8 +178,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public KotlinTypeInfo visitConstantExpression(@NotNull KtConstantExpression expression, ExpressionTypingContext context) {
-        if (expression.getNode().getElementType() == KtNodeTypes.CHARACTER_CONSTANT) {
-            checkStringPrefixAndSuffix(expression, context);
+        IElementType elementType = expression.getNode().getElementType();
+        if (elementType == KtNodeTypes.CHARACTER_CONSTANT
+            || elementType == KtNodeTypes.INTEGER_CONSTANT
+            || elementType == KtNodeTypes.FLOAT_CONSTANT) {
+            checkLiteralPrefixAndSuffix(expression, context);
         }
 
         CompileTimeConstant<?> compileTimeConstant = components.constantExpressionEvaluator.evaluateExpression(
@@ -192,7 +195,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                     compileTimeConstant != null ? ((TypedCompileTimeConstant) compileTimeConstant).getConstantValue() : null;
             boolean hasError = constantChecker.checkConstantExpressionType(constantValue, expression, context.expectedType);
             if (hasError) {
-                IElementType elementType = expression.getNode().getElementType();
                 return TypeInfoFactoryKt.createTypeInfo(getDefaultType(elementType), context);
             }
         }
@@ -1482,7 +1484,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         final ExpressionTypingContext context = contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE)
                                                                        .replaceContextDependency(INDEPENDENT);
 
-        checkStringPrefixAndSuffix(expression, context);
+        checkLiteralPrefixAndSuffix(expression, context);
 
         class StringTemplateVisitor extends KtVisitorVoid {
             private KotlinTypeInfo typeInfo = TypeInfoFactoryKt.noTypeInfo(context);
@@ -1515,18 +1517,18 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                                                      contextWithExpectedType);
     }
 
-    private static void checkStringPrefixAndSuffix(@NotNull PsiElement expression, ExpressionTypingContext context) {
-        checkStringPrefixOrSuffix(PsiTreeUtil.prevLeaf(expression), context);
-        checkStringPrefixOrSuffix(PsiTreeUtil.nextLeaf(expression), context);
+    private static void checkLiteralPrefixAndSuffix(@NotNull PsiElement expression, ExpressionTypingContext context) {
+        checkLiteralPrefixOrSuffix(PsiTreeUtil.prevLeaf(expression), context);
+        checkLiteralPrefixOrSuffix(PsiTreeUtil.nextLeaf(expression), context);
     }
 
-    private static void checkStringPrefixOrSuffix(PsiElement prefixOrSuffix, ExpressionTypingContext context) {
-        if (illegalStringPrefixOrSuffix(prefixOrSuffix)) {
-            context.trace.report(Errors.UNSUPPORTED.on(prefixOrSuffix, "string prefixes and suffixes"));
+    private static void checkLiteralPrefixOrSuffix(PsiElement prefixOrSuffix, ExpressionTypingContext context) {
+        if (illegalLiteralPrefixOrSuffix(prefixOrSuffix)) {
+            context.trace.report(Errors.UNSUPPORTED.on(prefixOrSuffix, "literal prefixes and suffixes"));
         }
     }
 
-    private static boolean illegalStringPrefixOrSuffix(@Nullable PsiElement element) {
+    private static boolean illegalLiteralPrefixOrSuffix(@Nullable PsiElement element) {
         if (element == null) return false;
 
         IElementType elementType = element.getNode().getElementType();

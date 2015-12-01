@@ -251,7 +251,6 @@ LONG_TEMPLATE_ENTRY_START=\$\{
 "this"       { return KtTokens.THIS_KEYWORD ;}
 "null"       { return KtTokens.NULL_KEYWORD ;}
 "else"       { return KtTokens.ELSE_KEYWORD ;}
-"This"       { return KtTokens.CAPITALIZED_THIS_KEYWORD ;}
 "try"        { return KtTokens.TRY_KEYWORD ;}
 "val"        { return KtTokens.VAL_KEYWORD ;}
 "var"        { return KtTokens.VAR_KEYWORD ;}
@@ -268,6 +267,7 @@ LONG_TEMPLATE_ENTRY_START=\$\{
 \!in{IDENTIFIER_PART}        { yypushback(3); return KtTokens.EXCL; }
 \!is{IDENTIFIER_PART}        { yypushback(3); return KtTokens.EXCL; }
 
+"..."        { return KtTokens.RESERVED  ; }
 "==="        { return KtTokens.EQEQEQ    ; }
 "!=="        { return KtTokens.EXCLEQEQEQ; }
 "!in"        { return KtTokens.NOT_IN; }

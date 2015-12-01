@@ -59,7 +59,7 @@ fun createModuleResolverProvider(
         val jvmPlatformParameters = JvmPlatformParameters {
             javaClass: JavaClass ->
             val psiClass = (javaClass as JavaClassImpl).getPsi()
-            psiClass.getModuleInfo()
+            psiClass.getNullableModuleInfo()
         }
 
         val resolverForProject = analyzerFacade.setupResolverForProject(

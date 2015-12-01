@@ -366,6 +366,7 @@ JetFile: Imports_ERR.kt
         PsiElement(RANGE)('..')
         PsiElement(LBRACE)('{')
         PsiElement(RANGE)('..')
+        PsiWhiteSpace(' ')
         PsiElement(DOT)('.')
     PsiWhiteSpace('\n')
     IMPORT_DIRECTIVE
@@ -375,6 +376,7 @@ JetFile: Imports_ERR.kt
         PsiElement(RANGE)('..')
         PsiElement(RBRACE)('}')
         PsiElement(RANGE)('..')
+        PsiWhiteSpace(' ')
         PsiElement(DOT)('.')
     PsiWhiteSpace('\n')
     IMPORT_DIRECTIVE

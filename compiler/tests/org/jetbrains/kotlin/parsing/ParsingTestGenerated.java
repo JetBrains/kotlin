@@ -703,15 +703,15 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             doParsingTest(fileName);
         }
 
-        @TestMetadata("ThisType.kt")
-        public void testThisType() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/ThisType.kt");
-            doParsingTest(fileName);
-        }
-
         @TestMetadata("TraitConstructor.kt")
         public void testTraitConstructor() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/TraitConstructor.kt");
+            doParsingTest(fileName);
+        }
+
+        @TestMetadata("TripleDot.kt")
+        public void testTripleDot() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/TripleDot.kt");
             doParsingTest(fileName);
         }
 

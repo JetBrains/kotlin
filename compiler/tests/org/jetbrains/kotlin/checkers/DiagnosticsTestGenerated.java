@@ -403,6 +403,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("NumberPrefixAndSuffix.kt")
+        public void testNumberPrefixAndSuffix() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/NumberPrefixAndSuffix.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ObjectWithConstructor.kt")
         public void testObjectWithConstructor() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/ObjectWithConstructor.kt");
@@ -574,12 +580,6 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
         @TestMetadata("SafeCallOnSuperReceiver.kt")
         public void testSafeCallOnSuperReceiver() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/SafeCallOnSuperReceiver.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("SelfTypesUnsupported.kt")
-        public void testSelfTypesUnsupported() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/SelfTypesUnsupported.kt");
             doTest(fileName);
         }
 
@@ -14739,12 +14739,6 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("incDecToNull.kt")
             public void testIncDecToNull() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/incDecToNull.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("kt10232.kt")
-            public void testKt10232() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/kt10232.kt");
                 doTest(fileName);
             }
 

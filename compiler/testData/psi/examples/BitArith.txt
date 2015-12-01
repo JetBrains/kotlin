@@ -536,8 +536,9 @@ JetFile: BitArith.kt
               PsiElement(LT)('<')
               TYPE_PROJECTION
                 TYPE_REFERENCE
-                  SELF_TYPE
-                    PsiElement(This)('This')
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('This')
               PsiElement(GT)('>')
     PsiWhiteSpace(' ')
     CLASS_BODY
@@ -576,15 +577,17 @@ JetFile: BitArith.kt
             PsiElement(COLON)(':')
             PsiWhiteSpace(' ')
             TYPE_REFERENCE
-              SELF_TYPE
-                PsiElement(This)('This')
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('This')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(COLON)(':')
         PsiWhiteSpace(' ')
         TYPE_REFERENCE
-          SELF_TYPE
-            PsiElement(This)('This')
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('This')
       PsiWhiteSpace('\n\n  ')
       FUN
         MODIFIER_LIST
@@ -615,8 +618,9 @@ JetFile: BitArith.kt
         PsiElement(COLON)(':')
         PsiWhiteSpace(' ')
         TYPE_REFERENCE
-          SELF_TYPE
-            PsiElement(This)('This')
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('This')
       PsiWhiteSpace('\n  ')
       PsiComment(EOL_COMMENT)('// ...')
       PsiWhiteSpace('\n')

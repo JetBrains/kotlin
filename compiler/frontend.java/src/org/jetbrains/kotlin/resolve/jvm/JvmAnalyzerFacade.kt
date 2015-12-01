@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import java.util.*
 
 public class JvmPlatformParameters(
-        public val moduleByJavaClass: (JavaClass) -> ModuleInfo
+        public val moduleByJavaClass: (JavaClass) -> ModuleInfo?
 ) : PlatformAnalysisParameters
 
 
@@ -68,7 +68,10 @@ public object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
             // We don't have full control over idea resolve api so we allow for a situation which should not happen in Kotlin.
             // For example, type in a java library can reference a class declared in a source root (is valid but rare case)
             // Providing a fallback strategy in this case can hide future problems, so we should at least log to be able to diagnose those
-            val resolverForReferencedModule = resolverForProject.tryGetResolverForModule(referencedClassModule as M)
+
+            @Suppress("UNCHECKED_CAST")
+            val resolverForReferencedModule = referencedClassModule?.let { resolverForProject.tryGetResolverForModule(it as M) }
+
             val resolverForModule = resolverForReferencedModule ?: run {
                 LOG.warn("Java referenced $referencedClassModule from $moduleInfo\nReferenced class was: $javaClass\n")
                 // in case referenced class lies outside of our resolver, resolve the class as if it is inside our module

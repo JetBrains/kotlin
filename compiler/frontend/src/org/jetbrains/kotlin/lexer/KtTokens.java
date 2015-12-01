@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.psi.KtPsiUtil;
 public interface KtTokens {
     KtToken EOF   = new KtToken("EOF");
 
+    KtToken RESERVED    = new KtToken("RESERVED");
+
     KtToken BLOCK_COMMENT     = new KtToken("BLOCK_COMMENT");
     KtToken EOL_COMMENT       = new KtToken("EOL_COMMENT");
     KtToken SHEBANG_COMMENT   = new KtToken("SHEBANG_COMMENT");
@@ -74,9 +76,6 @@ public interface KtTokens {
     KtKeywordToken DO_KEYWORD               = KtKeywordToken.keyword("do");
     KtKeywordToken WHEN_KEYWORD             = KtKeywordToken.keyword("when");
     KtKeywordToken INTERFACE_KEYWORD        = KtKeywordToken.keyword("interface");
-    // TODO: Discuss "This" keyword
-    KtKeywordToken CAPITALIZED_THIS_KEYWORD = KtKeywordToken.keyword("This");
-
 
     KtToken AS_SAFE = KtKeywordToken.keyword("AS_SAFE");//new KtToken("as?");
 
@@ -189,7 +188,7 @@ public interface KtTokens {
                                         TRUE_KEYWORD, FALSE_KEYWORD, IS_KEYWORD,
                                         IN_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD, CONTINUE_KEYWORD, OBJECT_KEYWORD, IF_KEYWORD,
                                         ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD, TRY_KEYWORD, WHEN_KEYWORD,
-                                        NOT_IN, NOT_IS, CAPITALIZED_THIS_KEYWORD, AS_SAFE
+                                        NOT_IN, NOT_IS, AS_SAFE
     );
 
     TokenSet SOFT_KEYWORDS = TokenSet.create(FILE_KEYWORD, IMPORT_KEYWORD, WHERE_KEYWORD, BY_KEYWORD, GET_KEYWORD,
