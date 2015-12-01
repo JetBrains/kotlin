@@ -211,6 +211,10 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         updateJavaMappings(chunk, compilationErrors, context, dirtyFilesHolder, filesToCompile, generatedClasses)
         updateLookupStorage(chunk, lookupTracker, dataManager, dirtyFilesHolder, filesToCompile)
 
+        if (JavaBuilderUtil.isForcedRecompilationAllJavaModules(context)) {
+            return OK
+        }
+
         val caches = filesToCompile.keySet().map { incrementalCaches[it]!! }
         processChanges(context, chunk, filesToCompile.values(), allCompiledFiles, dataManager, caches, changesInfo)
 
