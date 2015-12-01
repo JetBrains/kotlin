@@ -34,7 +34,8 @@ fun elements(): List<GenericFunction> {
         only(Iterables, Sequences, ArraysOfObjects)
         doc { "Returns `true` if [element] is found in the collection." }
         returns("Boolean")
-        deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure.", "contains(element as T)") } }
+        deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure. Replacement will be provided in beta4.") } }
+        body { "return contains(element)" }
         annotations("""
             @kotlin.jvm.JvmName("containsAny")
             @kotlin.internal.LowPriorityInOverloadResolution
@@ -51,7 +52,7 @@ fun elements(): List<GenericFunction> {
         }
         receiverAsterisk(Iterables, Sequences) { true }
         inline(true)
-        deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure.", "contains(element as Any?)") } }
+        body { "return contains(element)" }
         annotations("""@Suppress("NOTHING_TO_INLINE")""")
         returns("Boolean")
     }
@@ -109,7 +110,8 @@ fun elements(): List<GenericFunction> {
         only(Iterables, Sequences, ArraysOfObjects, Lists)
         doc { "Returns first index of [element], or -1 if the collection does not contain element." }
         returns("Int")
-        deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure.", "indexOf(element as T)") } }
+        deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure. Replacement will be provided in beta4.") } }
+        body { "return indexOf(element)" }
         annotations("""
             @kotlin.jvm.JvmName("indexOfAny")
             @kotlin.internal.LowPriorityInOverloadResolution
@@ -127,7 +129,7 @@ fun elements(): List<GenericFunction> {
         }
         receiverAsterisk(Iterables, Sequences) { true }
         inline(true)
-        deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure.", "indexOf(element as Any?)") } }
+        body { "return indexOf(element)" }
         annotations("""@Suppress("NOTHING_TO_INLINE")""")
         returns("Int")
         body(Lists) { "return (this as List<Any?>).indexOf(element)" }
@@ -187,7 +189,8 @@ fun elements(): List<GenericFunction> {
         only(Iterables, Sequences, ArraysOfObjects, Lists)
         doc { "Returns last index of [element], or -1 if the collection does not contain element." }
         returns("Int")
-        deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure.", "lastIndexOf(element as T)") } }
+        deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure. Replacement will be provided in beta4.") } }
+        body { "return lastIndexOf(element)" }
         annotations("""
             @kotlin.jvm.JvmName("lastIndexOfAny")
             @kotlin.internal.LowPriorityInOverloadResolution
@@ -205,7 +208,7 @@ fun elements(): List<GenericFunction> {
         }
         receiverAsterisk(Iterables, Sequences) { true }
         inline(true)
-        deprecate { f -> with(DocExtensions) { Deprecation("${f.collection.capitalize()} and element have incompatible types. Upcast element to Any? if you're sure.", "lastIndexOf(element as Any?)") } }
+        body { "return lastIndexOf(element)" }
         annotations("""@Suppress("NOTHING_TO_INLINE")""")
         returns("Int")
         body(Lists) { "return (this as List<Any?>).lastIndexOf(element)" }

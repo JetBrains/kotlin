@@ -438,21 +438,20 @@ public operator fun ShortArray.contains(element: Short): Boolean {
 /**
  * Returns `true` if [element] is found in the collection.
  */
-@Deprecated("Array and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("contains(element as T)"))
+@Deprecated("Array and element have incompatible types. Upcast element to Any? if you're sure. Replacement will be provided in beta4.")
 @kotlin.jvm.JvmName("containsAny")
 @kotlin.internal.LowPriorityInOverloadResolution
 public operator fun <T> Array<out T>.contains(element: T): Boolean {
-    return contains(element as T)
+    return contains(element)
 }
 
 /**
  * Returns `true` if [element] is found in the array.
  * Allows to overcome type-safety restriction of `contains` that requires to pass an element of type `T`.
  */
-@Deprecated("Array and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("contains(element as Any?)"))
 @Suppress("NOTHING_TO_INLINE")
 public inline fun <T> Array<out T>.containsRaw(element: Any?): Boolean {
-    return contains(element as Any?)
+    return contains(element)
 }
 
 /**
@@ -1321,12 +1320,12 @@ public fun ShortArray.indexOf(element: Short): Int {
 /**
  * Returns first index of [element], or -1 if the collection does not contain element.
  */
-@Deprecated("Array and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("indexOf(element as T)"))
+@Deprecated("Array and element have incompatible types. Upcast element to Any? if you're sure. Replacement will be provided in beta4.")
 @kotlin.jvm.JvmName("indexOfAny")
 @kotlin.internal.LowPriorityInOverloadResolution
 @Suppress("NOTHING_TO_INLINE")
 public fun <T> Array<out T>.indexOf(element: T): Int {
-    return indexOf(element as T)
+    return indexOf(element)
 }
 
 /**
@@ -1549,10 +1548,9 @@ public inline fun ShortArray.indexOfLast(predicate: (Short) -> Boolean): Int {
  * Returns first index of [element], or -1 if the array does not contain element.
  * Allows to overcome type-safety restriction of `indexOf` that requires to pass an element of type `T`.
  */
-@Deprecated("Array and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("indexOf(element as Any?)"))
 @Suppress("NOTHING_TO_INLINE")
 public inline fun <T> Array<out T>.indexOfRaw(element: Any?): Int {
-    return indexOf(element as Any?)
+    return indexOf(element)
 }
 
 /**
@@ -1872,22 +1870,21 @@ public fun ShortArray.lastIndexOf(element: Short): Int {
 /**
  * Returns last index of [element], or -1 if the collection does not contain element.
  */
-@Deprecated("Array and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("lastIndexOf(element as T)"))
+@Deprecated("Array and element have incompatible types. Upcast element to Any? if you're sure. Replacement will be provided in beta4.")
 @kotlin.jvm.JvmName("lastIndexOfAny")
 @kotlin.internal.LowPriorityInOverloadResolution
 @Suppress("NOTHING_TO_INLINE")
 public fun <T> Array<out T>.lastIndexOf(element: T): Int {
-    return lastIndexOf(element as T)
+    return lastIndexOf(element)
 }
 
 /**
  * Returns last index of [element], or -1 if the array does not contain element.
  * Allows to overcome type-safety restriction of `lastIndexOf` that requires to pass an element of type `T`.
  */
-@Deprecated("Array and element have incompatible types. Upcast element to Any? if you're sure.", ReplaceWith("lastIndexOf(element as Any?)"))
 @Suppress("NOTHING_TO_INLINE")
 public inline fun <T> Array<out T>.lastIndexOfRaw(element: Any?): Int {
-    return lastIndexOf(element as Any?)
+    return lastIndexOf(element)
 }
 
 /**

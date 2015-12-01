@@ -16,19 +16,37 @@
 
 package org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable
 
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.util.isValidOperator
+import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
 fun getApplicableComponentFunctions(expression: KtExpression): List<FunctionDescriptor> {
     val facade = expression.getResolutionFacade()
-    val scope = expression.getResolutionScope(facade.analyze(expression), facade)
+    val context = facade.analyze(expression)
+    val builtIns = facade.moduleDescriptor.builtIns
+
+    val forbiddenClasses = arrayListOf(builtIns.collection, builtIns.array)
+    PrimitiveType.values().mapTo(forbiddenClasses) { builtIns.getPrimitiveArrayClassDescriptor(it) }
+
+    context.getType(expression)?.let {
+        if ((it.singletonList() + it.supertypes()).any {
+            val fqName = it.constructor.declarationDescriptor?.importableFqName
+            forbiddenClasses.any { it.fqNameSafe == fqName }
+        }) return emptyList()
+    }
+
+    val scope = expression.getResolutionScope(context, facade)
 
     val psiFactory = KtPsiFactory(expression)
     @Suppress("UNCHECKED_CAST")

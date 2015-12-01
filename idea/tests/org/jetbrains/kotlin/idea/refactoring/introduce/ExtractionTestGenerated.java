@@ -516,6 +516,24 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/introduceVariable/multiDeclarations"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("array.kt")
+            public void testArray() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/multiDeclarations/array.kt");
+                doIntroduceVariableTest(fileName);
+            }
+
+            @TestMetadata("intArray.kt")
+            public void testIntArray() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/multiDeclarations/intArray.kt");
+                doIntroduceVariableTest(fileName);
+            }
+
+            @TestMetadata("list.kt")
+            public void testList() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/multiDeclarations/list.kt");
+                doIntroduceVariableTest(fileName);
+            }
+
             @TestMetadata("notOperators.kt")
             public void testNotOperators() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/multiDeclarations/notOperators.kt");

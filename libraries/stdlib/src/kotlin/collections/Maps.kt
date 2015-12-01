@@ -109,7 +109,6 @@ public operator fun <@kotlin.internal.OnlyInputTypes K, V> Map<out K, V>.get(key
  * Allows to overcome type-safety restriction of `get` that requires to pass a key of type `K`.
  */
 @Suppress("NOTHING_TO_INLINE")
-@Deprecated("Map and key have incompatible types. Upcast key to Any? if you're sure.", ReplaceWith("get(key as Any?)"))
 public inline fun <K, V> Map<K, V>.getRaw(key: Any?): V? = get(key as Any?)
 
 /**
@@ -120,7 +119,6 @@ public inline fun <K, V> Map<K, V>.getRaw(key: Any?): V? = get(key as Any?)
 public fun <@kotlin.internal.OnlyInputTypes K> Map<out K, *>.containsKey(key: K): Boolean = (this as Map<K, *>).containsKey(key)
 
 @Suppress("NOTHING_TO_INLINE")
-@Deprecated("Map and key have incompatible types. Upcast key to Any? if you're sure.", ReplaceWith("containsKey(key as Any?)"))
 public inline fun <K> Map<K, *>.containsKeyRaw(key: Any?): Boolean = containsKey(key)
 
 /**
@@ -131,7 +129,6 @@ public inline fun <K> Map<K, *>.containsKeyRaw(key: Any?): Boolean = containsKey
 public fun <K, @kotlin.internal.OnlyInputTypes V> Map<K, V>.containsValue(value: V): Boolean = this.containsValue(value)
 
 @Suppress("NOTHING_TO_INLINE")
-@Deprecated("Map and value have incompatible types. Upcast value to Any? if you're sure.", ReplaceWith("containsValue(value as Any?)"))
 public inline fun <K> Map<K, *>.containsValueRaw(value: Any?): Boolean = containsValue(value)
 
 
