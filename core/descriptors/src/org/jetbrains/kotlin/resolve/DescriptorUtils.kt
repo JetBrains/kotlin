@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.addToStdlib.check
 
 public fun ClassDescriptor.getClassObjectReferenceTarget(): ClassDescriptor = getCompanionObjectDescriptor() ?: this
 
@@ -197,3 +198,29 @@ public val DeclarationDescriptor.parentsWithSelf: Sequence<DeclarationDescriptor
 public val DeclarationDescriptor.parents: Sequence<DeclarationDescriptor>
     get() = parentsWithSelf.drop(1)
 
+val CallableMemberDescriptor.propertyIfAccessor: CallableMemberDescriptor
+    get() = if (this is PropertyAccessorDescriptor) correspondingProperty else this
+
+fun CallableDescriptor.fqNameOrNull(): FqName? = fqNameUnsafe.check { it.isSafe }?.toSafe()
+
+public fun CallableMemberDescriptor.firstOverridden(
+        predicate: (CallableMemberDescriptor) -> Boolean
+): CallableMemberDescriptor? {
+    var result: CallableMemberDescriptor? = null
+    return DFS.dfs(listOf(this),
+                   object : DFS.Neighbors<CallableMemberDescriptor> {
+                       override fun getNeighbors(current: CallableMemberDescriptor?): Iterable<CallableMemberDescriptor> {
+                           return current?.overriddenDescriptors ?: emptyList()
+                       }
+                   },
+                   object : DFS.AbstractNodeHandler<CallableMemberDescriptor, CallableMemberDescriptor?>() {
+                       override fun beforeChildren(current: CallableMemberDescriptor) = result == null
+                       override fun afterChildren(current: CallableMemberDescriptor) {
+                           if (result == null && predicate(current)) {
+                               result = current
+                           }
+                       }
+                       override fun result(): CallableMemberDescriptor? = result
+                   }
+    )
+}

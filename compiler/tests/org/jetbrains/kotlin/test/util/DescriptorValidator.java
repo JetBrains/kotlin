@@ -404,7 +404,6 @@ public class DescriptorValidator {
         public Void visitPackageViewDescriptor(
                 PackageViewDescriptor descriptor, MemberScope scope
         ) {
-            assertFound(scope, descriptor, scope.getPackage(descriptor.getName()), false);
             return null;
         }
 

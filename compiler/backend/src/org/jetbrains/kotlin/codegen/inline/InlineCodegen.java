@@ -778,7 +778,7 @@ public class InlineCodegen extends CallGenerator {
 
     @Override
     public void reorderArgumentsIfNeeded(
-            @NotNull List<? extends ArgumentAndDeclIndex> actualArgsWithDeclIndex, @NotNull List<? extends Type> valueParameterTypes
+            @NotNull List actualArgsWithDeclIndex, @NotNull List valueParameterTypes
     ) {
 
     }

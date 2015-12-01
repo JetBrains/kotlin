@@ -154,8 +154,8 @@ class KotlinFunctionCallUsage(
     private fun needSeparateVariable(element: PsiElement): Boolean {
         return when {
             element is KtConstantExpression, element is KtThisExpression, element is KtSimpleNameExpression -> false
-            element is KtBinaryExpression && OperatorConventions.ASSIGNMENT_OPERATIONS.containsKeyRaw(element.operationToken) -> true
-            element is KtUnaryExpression && OperatorConventions.INCREMENT_OPERATIONS.containsRaw(element.operationToken) -> true
+            element is KtBinaryExpression && OperatorConventions.ASSIGNMENT_OPERATIONS.contains(element.operationToken) -> true
+            element is KtUnaryExpression && OperatorConventions.INCREMENT_OPERATIONS.contains(element.operationToken) -> true
             element is KtCallExpression -> element.getResolvedCall(context)?.resultingDescriptor is ConstructorDescriptor
             else -> element.children.any { needSeparateVariable(it) }
         }
@@ -210,7 +210,7 @@ class KotlinFunctionCallUsage(
                 }
             }
 
-            var expressionToReplace: KtExpression = nameCounterpartMap.getRaw(ref.element) ?: continue
+            var expressionToReplace: KtExpression = nameCounterpartMap[ref.element] ?: continue
             val parent = expressionToReplace.parent
 
             if (parent is KtThisExpression) {

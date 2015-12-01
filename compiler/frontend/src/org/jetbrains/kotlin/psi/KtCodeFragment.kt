@@ -40,9 +40,6 @@ public abstract class KtCodeFragment(
 
     private var viewProvider = super<KtFile>.getViewProvider() as SingleRootFileViewProvider
     private var imports = LinkedHashSet<String>()
-    private val additionalContextForLambda: PsiElement? by lazy {
-        this.getCopyableUserData(ADDITIONAL_CONTEXT_FOR_LAMBDA)?.invoke()
-    }
 
     init {
         getViewProvider().forceCachedPsi(this)
@@ -69,7 +66,7 @@ public abstract class KtCodeFragment(
 
     override fun isValid() = true
 
-    override fun getContext() = additionalContextForLambda ?: context
+    override fun getContext() = context
 
     override fun getResolveScope() = context?.getResolveScope() ?: super<KtFile>.getResolveScope()
 

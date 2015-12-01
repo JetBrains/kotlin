@@ -27,14 +27,16 @@ import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.eval4j.obj
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
+import org.jetbrains.kotlin.idea.debugger.isInsideInlineFunctionBody
+import org.jetbrains.kotlin.idea.debugger.numberOfInlinedFunctions
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Type
 
 class FrameVisitor(context: EvaluationContextImpl) {
-    private val project = context.getDebugProcess().getProject()
-    private val frame = context.getFrameProxy()?.getStackFrame()
+    private val project = context.debugProcess.project
+    private val frame = context.frameProxy?.stackFrame
 
     public fun findValue(name: String, asmType: Type?, checkType: Boolean, failIfNotFound: Boolean): Value? {
         if (frame == null) return null
@@ -48,6 +50,14 @@ class FrameVisitor(context: EvaluationContextImpl) {
                     }
                 }
                 else -> {
+                    if (isInsideInlineFunctionBody(frame.visibleVariables())) {
+                        val number = numberOfInlinedFunctions(frame.visibleVariables())
+                        val inlineFunVar = findLocalVariableForInlineArgument(name, number, asmType, true)
+                        if (inlineFunVar != null) {
+                            return inlineFunVar
+                        }
+                    }
+
                     val localVariable = if (isFunctionType(asmType))
                         findLocalVariableForLocalFun(name, asmType, checkType)
                     else
@@ -77,7 +87,15 @@ class FrameVisitor(context: EvaluationContextImpl) {
     }
 
     private fun findThis(asmType: Type?): Value? {
-        val thisObject = frame!!.thisObject()
+        if (isInsideInlineFunctionBody(frame!!.visibleVariables())) {
+            val number = numberOfInlinedFunctions(frame.visibleVariables())
+            val inlineFunVar = findLocalVariableForInlineArgument("this_", number, asmType, true)
+            if (inlineFunVar != null) {
+                return inlineFunVar
+            }
+        }
+
+        val thisObject = frame.thisObject()
         if (thisObject != null) {
             val eval4jValue = thisObject.asValue()
             if (isValueOfCorrectType(eval4jValue, asmType, true)) return eval4jValue
@@ -99,14 +117,17 @@ class FrameVisitor(context: EvaluationContextImpl) {
         return findLocalVariable(name + "$", asmType, checkType)
     }
 
+    private fun findLocalVariableForInlineArgument(name: String, number: Int, asmType: Type?, checkType: Boolean): Value? {
+        return findLocalVariable(name + InlineCodegenUtil.INLINE_FUN_VAR_SUFFIX.repeat(number), asmType, checkType)
+    }
+
     private fun isFunctionType(type: Type?): Boolean {
-        return type?.getSort() == Type.OBJECT &&
-               type!!.getInternalName().startsWith(InlineCodegenUtil.NUMBERED_FUNCTION_PREFIX)
+        return type?.sort == Type.OBJECT &&
+               type!!.internalName.startsWith(InlineCodegenUtil.NUMBERED_FUNCTION_PREFIX)
     }
 
     private fun findLocalVariable(name: String, asmType: Type?, checkType: Boolean): Value? {
-        val localVariable = frame!!.visibleVariableByName(name)
-        if (localVariable == null) return null
+        val localVariable = frame!!.visibleVariableByName(name) ?: return null
 
         val eval4jValue = frame.getValue(localVariable).asValue()
         val sharedVarValue = getValueIfSharedVar(eval4jValue, asmType, checkType)
@@ -148,7 +169,7 @@ class FrameVisitor(context: EvaluationContextImpl) {
         if (!shouldCheckType || asmType == null || value.asmType == asmType) return true
         if (project == null) return false
 
-        if ((value.obj() as? com.sun.jdi.ObjectReference)?.referenceType().isSubclass(asmType.getClassName())) {
+        if ((value.obj() as? com.sun.jdi.ObjectReference)?.referenceType().isSubclass(asmType.className)) {
             return true
         }
 
@@ -163,8 +184,7 @@ class FrameVisitor(context: EvaluationContextImpl) {
             if (obj !is ObjectReference) return null
 
             val _class = obj.referenceType()
-            val field = _class.fieldByName(name)
-            if (field == null) return null
+            val field = _class.fieldByName(name) ?: return null
 
             val fieldValue = obj.getValue(field).asValue()
             if (isValueOfCorrectType(fieldValue, asmType, checkType)) return fieldValue
@@ -176,7 +196,7 @@ class FrameVisitor(context: EvaluationContextImpl) {
     }
 
     private fun Value.isSharedVar(): Boolean {
-        return this.asmType.getSort() == Type.OBJECT && this.asmType.getInternalName().startsWith(AsmTypes.REF_TYPE_PREFIX)
+        return this.asmType.sort == Type.OBJECT && this.asmType.internalName.startsWith(AsmTypes.REF_TYPE_PREFIX)
     }
 
     fun getValueIfSharedVar(value: Value, expectedType: Type?, checkType: Boolean): Value? {

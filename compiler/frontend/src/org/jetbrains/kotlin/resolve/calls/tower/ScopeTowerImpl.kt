@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ClassQualifier
 import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -43,6 +44,7 @@ internal class CandidateWithBoundDispatchReceiverImpl<D : CallableDescriptor>(
 
 internal class ScopeTowerImpl(
         resolutionContext: ResolutionContext<*>,
+        override val dynamicScope: MemberScope,
         private val explicitReceiver: Receiver?,
         override val location: LookupLocation
 ): ScopeTower {

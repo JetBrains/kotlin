@@ -97,10 +97,6 @@ public class LocalVarRemapper {
         //add entries only for shifted vars
         if (SHIFT == info.status) {
             int newIndex = ((StackValue.Local) info.value).index;
-            if (newIndex != 0 && "this".equals(name)) {
-                /*skip additional this for now*/
-                return;
-            }
             mv.visitLocalVariable(name, desc, signature, start, end, newIndex);
         }
     }

@@ -26,8 +26,6 @@ abstract class MemberScopeImpl : MemberScope {
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> = emptyList()
 
-    override fun getPackage(name: Name): PackageViewDescriptor? = null
-
     override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> = emptyList()
 
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter,

@@ -75,6 +75,7 @@ public class InlineCodegenUtil {
     public static final String INLINE_MARKER_FINALLY_END = "finallyEnd";
     public static final String INLINE_TRANSFORMATION_SUFFIX = "$inlined";
     public static final String INLINE_FUN_THIS_0_SUFFIX = "$inline_fun";
+    public static final String INLINE_FUN_VAR_SUFFIX = "$iv";
 
     @Nullable
     public static SMAPAndMethodNode getMethodNode(

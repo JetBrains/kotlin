@@ -305,9 +305,9 @@ private fun ExtractionData.analyzeControlFlow(
     }
 
     val outParameters =
-            parameters.filter { it.mirrorVarName != null && modifiedVarDescriptors.getRaw(it.originalDescriptor) != null }.sortedBy { it.nameForRef }
+            parameters.filter { it.mirrorVarName != null && modifiedVarDescriptors[it.originalDescriptor] != null }.sortedBy { it.nameForRef }
     val outDeclarations =
-            declarationsToCopy.filter { modifiedVarDescriptors.getRaw(bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it]) != null }
+            declarationsToCopy.filter { modifiedVarDescriptors[bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it]] != null }
     val modifiedValueCount = outParameters.size + outDeclarations.size
 
     val outputValues = ArrayList<OutputValue>()
@@ -339,7 +339,7 @@ private fun ExtractionData.analyzeControlFlow(
         val descriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it] as? CallableDescriptor
         Initializer(it as KtProperty, descriptor?.returnType ?: module.builtIns.defaultParameterType)
     }
-    outParameters.mapTo(outputValues) { ParameterUpdate(it, modifiedVarDescriptors.getRaw(it.originalDescriptor)!!) }
+    outParameters.mapTo(outputValues) { ParameterUpdate(it, modifiedVarDescriptors[it.originalDescriptor]!!) }
 
     if (outputValues.isNotEmpty()) {
         if (jumpExits.isNotEmpty()) return outputAndExitsError

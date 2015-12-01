@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.utils.addToStdlib.check
+import java.util.*
 
 interface TowerContext<C> {
     val name: Name
@@ -41,14 +42,17 @@ interface TowerContext<C> {
     fun contextForInvoke(variable: C, useExplicitReceiver: Boolean): Pair<ReceiverValue, TowerContext<C>>
 }
 
+internal sealed class TowerData {
+    object Empty : TowerData()
+    class OnlyImplicitReceiver(val implicitReceiver: ReceiverValue): TowerData()
+    class TowerLevel(val level: ScopeTowerLevel) : TowerData()
+    class BothTowerLevelAndImplicitReceiver(val level: ScopeTowerLevel, val implicitReceiver: ReceiverValue) : TowerData()
+}
+
 internal interface ScopeTowerProcessor<C> {
-
-    fun processTowerLevel(level: ScopeTowerLevel)
-    fun processImplicitReceiver(implicitReceiver: ReceiverValue)
-
     // Candidates with matched receivers (dispatch receiver was already matched in ScopeTowerLevel)
     // Candidates in one groups have same priority, first group has highest priority.
-    fun getCandidatesGroups(): List<Collection<C>>
+    fun process(data: TowerData): List<Collection<C>>
 }
 
 class TowerResolver {
@@ -57,16 +61,25 @@ class TowerResolver {
             processor: ScopeTowerProcessor<C>,
             useOrder: Boolean = true
     ): Collection<C> {
+        return run(context, processor, useOrder, SuccessfulResultCollector(context))
+    }
 
-        val resultCollector = ResultCollector<C> { context.getStatus(it) }
+    internal fun <C> collectAllCandidates(context: TowerContext<C>, processor: ScopeTowerProcessor<C>): Collection<C> {
+        return run(context, processor, false, AllCandidatesCollector(context))
+    }
 
-        fun collectCandidates(action: ScopeTowerProcessor<C>.() -> Unit): Collection<C>? {
-            processor.action()
+    private fun <C> run(
+            context: TowerContext<C>,
+            processor: ScopeTowerProcessor<C>,
+            useOrder: Boolean,
+            resultCollector: ResultCollector<C>
+    ): Collection<C> {
+        fun collectCandidates(data: TowerData): Collection<C>? {
             val candidatesGroups = if (useOrder) {
-                    processor.getCandidatesGroups()
+                    processor.process(data)
                 }
                 else {
-                    listOf(processor.getCandidatesGroups().flatMap { it })
+                    listOf(processor.process(data).flatMap { it })
                 }
 
             for (candidatesGroup in candidatesGroups) {
@@ -77,13 +90,16 @@ class TowerResolver {
         }
 
         // possible there is explicit member
-        collectCandidates { /* do nothing */ }?.let { return it }
+        collectCandidates(TowerData.Empty)?.let { return it }
+        for (implicitReceiver in context.scopeTower.implicitReceivers) {
+            collectCandidates(TowerData.OnlyImplicitReceiver(implicitReceiver))?.let { return it }
+        }
 
         for (level in context.scopeTower.levels) {
-            collectCandidates { processTowerLevel(level) }?.let { return it }
+            collectCandidates(TowerData.TowerLevel(level))?.let { return it }
 
             for (implicitReceiver in context.scopeTower.implicitReceivers) {
-                collectCandidates { processImplicitReceiver(implicitReceiver) }?.let { return it }
+                collectCandidates(TowerData.BothTowerLevelAndImplicitReceiver(level, implicitReceiver))?.let { return it }
             }
         }
 
@@ -91,12 +107,39 @@ class TowerResolver {
     }
 
 
-    //todo collect all candidates
-    internal class ResultCollector<C>(private val getStatus: (C) -> ResolutionCandidateStatus) {
+    internal abstract class ResultCollector<C>(val context: TowerContext<C>) {
+        abstract fun getResolved(): Collection<C>?
+
+        abstract fun getFinalCandidates(): Collection<C>
+
+        fun pushCandidates(candidates: Collection<C>) {
+            val filteredCandidates = candidates.filter {
+                context.getStatus(it).resultingApplicability != ResolutionCandidateApplicability.HIDDEN
+            }
+            if (filteredCandidates.isNotEmpty()) addCandidates(filteredCandidates)
+        }
+
+        protected abstract fun addCandidates(candidates: Collection<C>)
+    }
+
+    internal class AllCandidatesCollector<C>(context: TowerContext<C>): ResultCollector<C>(context) {
+        private val allCandidates = ArrayList<C>()
+
+        override fun getResolved(): Collection<C>? = null
+
+        override fun getFinalCandidates(): Collection<C> = allCandidates
+
+        override fun addCandidates(candidates: Collection<C>) {
+            allCandidates.addAll(candidates)
+        }
+
+    }
+
+    internal class SuccessfulResultCollector<C>(context: TowerContext<C>): ResultCollector<C>(context) {
         private var currentCandidates: Collection<C> = emptyList()
         private var currentLevel: ResolutionCandidateApplicability? = null
 
-        fun getResolved() = currentCandidates.check { currentLevel == ResolutionCandidateApplicability.RESOLVED }
+        override fun getResolved() = currentCandidates.check { currentLevel == ResolutionCandidateApplicability.RESOLVED }
 
         fun getSyntheticResolved() = currentCandidates.check { currentLevel == ResolutionCandidateApplicability.RESOLVED_SYNTHESIZED }
 
@@ -104,14 +147,13 @@ class TowerResolver {
             currentLevel == null || currentLevel!! > ResolutionCandidateApplicability.RESOLVED_SYNTHESIZED
         }
 
-        fun getFinalCandidates() = getResolved() ?: getSyntheticResolved() ?: getErrors() ?: emptyList()
+        override fun getFinalCandidates() = getResolved() ?: getSyntheticResolved() ?: getErrors() ?: emptyList()
 
-        fun pushCandidates(candidates: Collection<C>) {
-            if (candidates.isEmpty()) return
-            val minimalLevel = candidates.map { getStatus(it).resultingApplicability }.min()!!
+        override fun addCandidates(candidates: Collection<C>) {
+            val minimalLevel = candidates.map { context.getStatus(it).resultingApplicability }.min()!!
             if (currentLevel == null || currentLevel!! > minimalLevel) {
                 currentLevel = minimalLevel
-                currentCandidates = candidates.filter { getStatus(it).resultingApplicability == minimalLevel }
+                currentCandidates = candidates.filter { context.getStatus(it).resultingApplicability == minimalLevel }
             }
         }
     }

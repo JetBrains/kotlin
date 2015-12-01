@@ -44,7 +44,7 @@ public class HtmlTabledDescriptorRenderer extends TabledDescriptorRenderer {
     @NotNull
     @Override
     public Renderer<KotlinType> getTypeRenderer() {
-        return IdeRenderers.HTML_RENDER_TYPE;
+        return (Renderer<KotlinType>) IdeRenderers.HTML_RENDER_TYPE;
     }
 
     @Override

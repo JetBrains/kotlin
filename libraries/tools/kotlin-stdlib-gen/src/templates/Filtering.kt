@@ -349,7 +349,7 @@ fun filtering(): List<GenericFunction> {
     templates add f("filter(predicate: (T) -> Boolean)") {
         inline(true)
 
-        doc { f -> "Returns a ${f.mapResult} containing only ${f.element}s matching the given [predicate]." }
+        doc { f -> "Returns a ${f.mapResult} containing only ${f.element.pluralize()} matching the given [predicate]." }
         returns("List<T>")
         body {
             """
@@ -373,7 +373,7 @@ fun filtering(): List<GenericFunction> {
     templates add f("filterTo(destination: C, predicate: (T) -> Boolean)") {
         inline(true)
 
-        doc { f -> "Appends all ${f.element}s matching the given [predicate] to the given [destination]." }
+        doc { f -> "Appends all ${f.element.pluralize()} matching the given [predicate] to the given [destination]." }
         typeParam("C : TCollection")
         returns("C")
 
@@ -399,7 +399,7 @@ fun filtering(): List<GenericFunction> {
     templates add f("filterIndexed(predicate: (Int, T) -> Boolean)") {
         inline(true)
 
-        doc { f -> "Returns a ${f.mapResult} containing only ${f.element}s matching the given [predicate]." }
+        doc { f -> "Returns a ${f.mapResult} containing only ${f.element.pluralize()} matching the given [predicate]." }
         returns("List<T>")
         body {
             """
@@ -427,7 +427,7 @@ fun filtering(): List<GenericFunction> {
 
         include(CharSequences)
 
-        doc { f -> "Appends all ${f.element}s matching the given [predicate] to the given [destination]." }
+        doc { f -> "Appends all ${f.element.pluralize()} matching the given [predicate] to the given [destination]." }
         typeParam("C : TCollection")
         returns("C")
 
@@ -542,7 +542,7 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        doc(CharSequences, Strings) { f -> "Returns a ${f.collection} containing ${f.element}s of the original ${f.collection} at specified [indices]." }
+        doc(CharSequences, Strings) { f -> "Returns a ${f.collection} containing ${f.element.pluralize()} of the original ${f.collection} at specified [indices]." }
         returns(CharSequences, Strings) { "SELF" }
         body(CharSequences, Strings) { f ->
             """
@@ -574,7 +574,7 @@ fun filtering(): List<GenericFunction> {
             """
         }
 
-        doc(CharSequences, Strings) { f -> "Returns a ${f.collection} containing ${f.element}s of the original ${f.collection} at the specified range of [indices]." }
+        doc(CharSequences, Strings) { f -> "Returns a ${f.collection} containing ${f.element.pluralize()} of the original ${f.collection} at the specified range of [indices]." }
         returns(CharSequences, Strings) { "SELF" }
         body(CharSequences, Strings) { f ->
             """

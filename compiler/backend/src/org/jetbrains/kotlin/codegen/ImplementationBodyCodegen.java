@@ -886,7 +886,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             int modifiers = ACC_STATIC | ACC_FINAL | ACC_PUBLIC | (property.isConst() ? 0 : ACC_DEPRECATED);
             FieldVisitor fv = v.newField(JvmDeclarationOriginKt.Synthetic(DescriptorToSourceUtils.descriptorToDeclaration(property), property),
                                          modifiers, context.getFieldName(property, false),
-                                         type.getDescriptor(), typeMapper.mapFieldSignature(property.getType()),
+                                         type.getDescriptor(), typeMapper.mapFieldSignature(property.getType(), property),
                                          info.defaultValue);
 
             AnnotationCodegen.forField(fv, typeMapper).genAnnotations(property, type);
@@ -1559,7 +1559,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         @Override
-        protected void reorderArgumentsIfNeeded(@NotNull List<? extends ArgumentAndDeclIndex> args) {
+        protected void reorderArgumentsIfNeeded(@NotNull List args) {
 
         }
     }

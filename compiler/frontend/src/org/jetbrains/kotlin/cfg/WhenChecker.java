@@ -48,12 +48,7 @@ public final class WhenChecker {
     }
 
     public static boolean mustHaveElse(@NotNull KtWhenExpression expression, @NotNull BindingTrace trace) {
-        KotlinType expectedType = trace.get(BindingContext.EXPECTED_EXPRESSION_TYPE, expression);
-        boolean isUnit = expectedType != null && KotlinBuiltIns.isUnit(expectedType);
-        // Some "statements" are actually expressions returned from lambdas, their expected types are non-null
-        boolean isStatement = BindingContextUtilsKt.isUsedAsStatement(expression, trace.getBindingContext()) && expectedType == null;
-
-        return !isUnit && !isStatement && !isWhenExhaustive(expression, trace);
+        return !BindingContextUtilsKt.isUsedAsStatement(expression, trace.getBindingContext()) && !isWhenExhaustive(expression, trace);
     }
 
     public static boolean isWhenByEnum(@NotNull KtWhenExpression expression, @NotNull BindingContext context) {

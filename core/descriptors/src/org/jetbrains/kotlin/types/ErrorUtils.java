@@ -77,8 +77,8 @@ public class ErrorUtils {
 
             @NotNull
             @Override
-            public Collection<FqName> getSubPackagesOf(
-                    @NotNull FqName fqName, @NotNull Function1<? super Name, ? extends Boolean> nameFilter
+            public Collection getSubPackagesOf(
+                    @NotNull FqName fqName, @NotNull Function1 nameFilter
             ) {
                 return emptyList();
             }
@@ -180,11 +180,6 @@ public class ErrorUtils {
             return ERROR_PROPERTY_GROUP;
         }
 
-        @Override
-        public PackageViewDescriptor getPackage(@NotNull Name name) {
-            return null;
-        }
-
         @NotNull
         @Override
         public Set<FunctionDescriptor> getContributedFunctions(@NotNull Name name, @NotNull LookupLocation location) {
@@ -193,8 +188,8 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public Collection<DeclarationDescriptor> getContributedDescriptors(
-                @NotNull DescriptorKindFilter kindFilter, @NotNull Function1<? super Name, ? extends Boolean> nameFilter
+        public Collection getContributedDescriptors(
+                @NotNull DescriptorKindFilter kindFilter, @NotNull Function1 nameFilter
         ) {
             return Collections.emptyList();
         }
@@ -223,12 +218,6 @@ public class ErrorUtils {
             throw new IllegalStateException();
         }
 
-        @Nullable
-        @Override
-        public PackageViewDescriptor getPackage(@NotNull Name name) {
-            throw new IllegalStateException();
-        }
-
         @NotNull
         @Override
         @SuppressWarnings({"unchecked"}) // KT-9898 Impossible implement kotlin interface from java
@@ -244,8 +233,8 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public Collection<DeclarationDescriptor> getContributedDescriptors(
-                @NotNull DescriptorKindFilter kindFilter, @NotNull Function1<? super Name, ? extends Boolean> nameFilter
+        public Collection getContributedDescriptors(
+                @NotNull DescriptorKindFilter kindFilter, @NotNull Function1 nameFilter
         ) {
             throw new IllegalStateException();
         }

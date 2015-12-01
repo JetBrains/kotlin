@@ -42,10 +42,12 @@ class HistoryKeyListener(
         UP, DOWN
     }
 
-    override fun keyReleased(e: KeyEvent): Unit = when (e.keyCode) {
-        KeyEvent.VK_UP -> moveHistoryCursor(HistoryMove.UP)
-        KeyEvent.VK_DOWN -> moveHistoryCursor(HistoryMove.DOWN)
-        KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT -> prevCaretOffset = consoleEditor.caretModel.offset
+    override fun keyReleased(e: KeyEvent) {
+        when (e.keyCode) {
+            KeyEvent.VK_UP -> moveHistoryCursor(HistoryMove.UP)
+            KeyEvent.VK_DOWN -> moveHistoryCursor(HistoryMove.DOWN)
+            KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT -> prevCaretOffset = consoleEditor.caretModel.offset
+        }
     }
 
     private fun moveHistoryCursor(move: HistoryMove) {

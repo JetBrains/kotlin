@@ -1,0 +1,55 @@
+package
+
+public val fn1: () -> kotlin.Unit
+public val fn2: () -> kotlin.Unit
+public val fn3: () -> kotlin.Unit
+public val fn4: () -> kotlin.Int
+public val fn5: () -> kotlin.Boolean
+public val fn6: () -> kotlin.Unit
+public val mlist: MList
+public val ufn1: () -> kotlin.Unit
+public val ufn2: () -> kotlin.Unit
+public val ufn3: () -> kotlin.Unit
+public val ufn4: () -> kotlin.Unit
+public val ufn5: () -> kotlin.Unit
+public val ufn6: () -> kotlin.Unit
+public val wxx1: kotlin.Int
+public val wxx2: kotlin.Unit
+public val wxx3: kotlin.Any
+public val wxx4: kotlin.Int
+public val wxx5: kotlin.Unit
+public val wxx6: kotlin.Int
+public val wxx7: kotlin.String
+public val xx1: kotlin.Unit
+public val xx2: kotlin.Unit
+public val xx3: kotlin.Any
+public val xx4: kotlin.Unit
+public val xx5: kotlin.Unit
+public val xx6: kotlin.Unit
+public val xx7: kotlin.String
+public fun f1(): kotlin.Unit
+public fun f2(): kotlin.Unit
+public fun f3(): kotlin.Unit
+public fun f4(): kotlin.Unit
+public fun f5(): kotlin.Unit
+public fun f6(): kotlin.Unit
+public fun foo1(/*0*/ x: kotlin.String?): kotlin.Unit
+public fun foo2(): kotlin.Unit
+public fun g1(): kotlin.Unit
+public fun g2(): kotlin.Boolean
+public fun g3(): kotlin.Int
+public fun g4(): kotlin.Unit
+public fun g5(): kotlin.Unit
+public fun g6(): kotlin.Unit
+public fun </*0*/ T> id(/*0*/ x: T): T
+public fun idAny(/*0*/ x: kotlin.Any): kotlin.Any
+public fun idUnit(/*0*/ x: kotlin.Unit): kotlin.Unit
+public fun work(): kotlin.Unit
+
+public final class MList {
+    public constructor MList()
+    public final fun add(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

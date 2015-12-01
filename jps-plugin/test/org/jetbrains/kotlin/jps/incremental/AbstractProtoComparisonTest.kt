@@ -36,8 +36,8 @@ public abstract class AbstractProtoComparisonTest : UsefulTestCase() {
         val oldClassFiles = compileFileAndGetClasses(testDataPath, testDir, "old")
         val newClassFiles = compileFileAndGetClasses(testDataPath, testDir, "new")
 
-        val oldClassMap = oldClassFiles.toMap { it.name }
-        val newClassMap = newClassFiles.toMap { it.name }
+        val oldClassMap = oldClassFiles.toMapBy { it.name }
+        val newClassMap = newClassFiles.toMapBy { it.name }
 
         val sb = StringBuilder()
         val p = Printer(sb)

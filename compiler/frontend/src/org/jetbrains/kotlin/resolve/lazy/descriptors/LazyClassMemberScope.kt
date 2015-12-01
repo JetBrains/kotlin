@@ -259,8 +259,6 @@ public open class LazyClassMemberScope(
         result.addAll(getContributedFunctions(Name.identifier("copy"), location))
     }
 
-    override fun getPackage(name: Name): PackageViewDescriptor? = null
-
     private val secondaryConstructors: NotNullLazyValue<Collection<ConstructorDescriptor>>
             = c.storageManager.createLazyValue { resolveSecondaryConstructors() }
 

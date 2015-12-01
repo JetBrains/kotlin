@@ -34,8 +34,6 @@ public class LazyPackageMemberScope(
         return computeDescriptorsFromDeclaredElements(kindFilter, nameFilter, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
     }
 
-    override fun getPackage(name: Name): PackageViewDescriptor? = null
-
     override fun getScopeForMemberDeclarationResolution(declaration: KtDeclaration)
             = resolveSession.getFileScopeProvider().getFileResolutionScope(declaration.getContainingKtFile())
 

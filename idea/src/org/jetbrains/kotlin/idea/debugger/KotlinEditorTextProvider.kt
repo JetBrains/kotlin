@@ -116,10 +116,10 @@ class KotlinEditorTextProvider : EditorTextProvider {
         }
 
         private val NOT_ACCEPTED_AS_CONTEXT_TYPES =
-                arrayOf(javaClass<KtUserType>(), javaClass<KtImportDirective>(), javaClass<KtPackageDirective>())
+                arrayOf(KtUserType::class.java, KtImportDirective::class.java, KtPackageDirective::class.java)
 
         fun isAcceptedAsCodeFragmentContext(element: PsiElement): Boolean {
-            return element.javaClass !in NOT_ACCEPTED_AS_CONTEXT_TYPES &&
+            return element.javaClass as Class<*> !in NOT_ACCEPTED_AS_CONTEXT_TYPES &&
                    PsiTreeUtil.getParentOfType(element, *NOT_ACCEPTED_AS_CONTEXT_TYPES) == null
         }
     }

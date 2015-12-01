@@ -7,7 +7,7 @@ fun aggregates(): List<GenericFunction> {
 
     templates add f("all(predicate: (T) -> Boolean)") {
         inline(true)
-        doc { f -> "Returns `true` if all ${f.element}s match the given [predicate]." }
+        doc { f -> "Returns `true` if all ${f.element.pluralize()} match the given [predicate]." }
         returns("Boolean")
         body {
             """
@@ -22,7 +22,7 @@ fun aggregates(): List<GenericFunction> {
     templates add f("none(predicate: (T) -> Boolean)") {
         inline(true)
 
-        doc { f -> "Returns `true` if no ${f.element}s match the given [predicate]." }
+        doc { f -> "Returns `true` if no ${f.element.pluralize()} match the given [predicate]." }
         returns("Boolean")
         body {
             """
@@ -35,7 +35,7 @@ fun aggregates(): List<GenericFunction> {
     }
 
     templates add f("none()") {
-        doc { f -> "Returns `true` if the ${f.collection} has no ${f.element}s." }
+        doc { f -> "Returns `true` if the ${f.collection} has no ${f.element.pluralize()}." }
         returns("Boolean")
         body {
             """
@@ -78,7 +78,7 @@ fun aggregates(): List<GenericFunction> {
     templates add f("count(predicate: (T) -> Boolean)") {
         inline(true)
 
-        doc { f -> "Returns the number of ${f.element}s matching the given [predicate]." }
+        doc { f -> "Returns the number of ${f.element.pluralize()} matching the given [predicate]." }
         returns("Int")
         body {
             """
@@ -92,7 +92,7 @@ fun aggregates(): List<GenericFunction> {
     }
 
     templates add f("count()") {
-        doc { f -> "Returns the number of ${f.element}s in this ${f.collection}." }
+        doc { f -> "Returns the number of ${f.element.pluralize()} in this ${f.collection}." }
         returns("Int")
         body {
             """
@@ -146,7 +146,7 @@ fun aggregates(): List<GenericFunction> {
     }
 
     templates add f("min()") {
-        doc { f -> "Returns the smallest ${f.element} or `null` if there are no ${f.element}s." }
+        doc { f -> "Returns the smallest ${f.element} or `null` if there are no ${f.element.pluralize()}." }
         returns("T?")
         exclude(PrimitiveType.Boolean)
         typeParam("T : Comparable<T>")
@@ -180,7 +180,7 @@ fun aggregates(): List<GenericFunction> {
     templates add f("minBy(selector: (T) -> R)") {
         inline(true)
 
-        doc { f -> "Returns the first ${f.element} yielding the smallest value of the given function or `null` if there are no ${f.element}s." }
+        doc { f -> "Returns the first ${f.element} yielding the smallest value of the given function or `null` if there are no ${f.element.pluralize()}." }
         typeParam("R : Comparable<R>")
         typeParam("T : Any")
         returns("T?")
@@ -250,7 +250,7 @@ fun aggregates(): List<GenericFunction> {
     }
 
     templates add f("max()") {
-        doc { f -> "Returns the largest ${f.element} or `null` if there are no ${f.element}s." }
+        doc { f -> "Returns the largest ${f.element} or `null` if there are no ${f.element.pluralize()}." }
         returns("T?")
         exclude(PrimitiveType.Boolean)
         typeParam("T : Comparable<T>")
@@ -286,7 +286,7 @@ fun aggregates(): List<GenericFunction> {
     templates add f("maxBy(selector: (T) -> R)") {
         inline(true)
 
-        doc { f -> "Returns the first ${f.element} yielding the largest value of the given function or `null` if there are no ${f.element}s." }
+        doc { f -> "Returns the first ${f.element} yielding the largest value of the given function or `null` if there are no ${f.element.pluralize()}." }
         typeParam("R : Comparable<R>")
         typeParam("T : Any")
         returns("T?")

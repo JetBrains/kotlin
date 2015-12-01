@@ -3282,6 +3282,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ifWhenWithoutElse.kt")
+            public void testIfWhenWithoutElse() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/ifWhenWithoutElse.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("improperElseInExpression.kt")
             public void testImproperElseInExpression() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlStructures/improperElseInExpression.kt");

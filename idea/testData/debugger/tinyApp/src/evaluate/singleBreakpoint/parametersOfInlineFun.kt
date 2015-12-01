@@ -3,8 +3,6 @@ package parametersOfInlineFun
 
 fun main(args: Array<String>) {
     val a = A(1)
-    // RESUME: 1
-    //Breakpoint!
     a.foo { 1 + 1 }
 }
 
@@ -13,15 +11,13 @@ inline fun A.foo(f: (i: Int) -> Unit) {
     val array = arrayOf(1)
     val str = "str"
     val list = listOf("str")
+    //Breakpoint!
     f(1)
 }
 
 class A(val prop: Int)
 
 // EXPRESSION: primitive
-// RESULT: 1: I
-
-// EXPRESSION: it
 // RESULT: 1: I
 
 // EXPRESSION: array
@@ -33,5 +29,5 @@ class A(val prop: Int)
 // EXPRESSION: list
 // RESULT: instance of java.util.Collections$SingletonList(id=ID): Ljava/util/Collections$SingletonList;
 
-// EXPRESSION: `$receiver`.prop
+// EXPRESSION: this.prop
 // RESULT: 1: I

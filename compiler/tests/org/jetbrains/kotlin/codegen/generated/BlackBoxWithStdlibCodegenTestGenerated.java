@@ -3696,6 +3696,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/reflection/genericSignature"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("covariantOverride.kt")
+            public void testCovariantOverride() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/genericSignature/covariantOverride.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("kt5112.kt")
             public void testKt5112() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/genericSignature/kt5112.kt");

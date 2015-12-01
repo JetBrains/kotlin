@@ -27,13 +27,8 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
-import org.jetbrains.kotlin.utils.DFS
-import org.jetbrains.kotlin.utils.addToStdlib.check
 
 object BuiltinSpecialProperties {
     private val PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP = mapOf(
@@ -60,7 +55,7 @@ object BuiltinSpecialProperties {
     }
 
     private fun CallableMemberDescriptor.hasBuiltinSpecialPropertyFqNameImpl(): Boolean {
-        if (FQ_NAMES.containsRaw(fqNameOrNull())) return true
+        if (fqNameOrNull() in FQ_NAMES) return true
         if (!isFromBuiltins()) return false
 
         return overriddenDescriptors.any { hasBuiltinSpecialPropertyFqName(it) }
@@ -108,7 +103,7 @@ object BuiltinMethodsWithSpecialGenericSignature {
             ERASED_VALUE_PARAMETERS_FQ_NAMES.map { it.shortName() }.toSet()
 
     private val CallableMemberDescriptor.hasErasedValueParametersInJava: Boolean
-        get() = ERASED_VALUE_PARAMETERS_FQ_NAMES.containsRaw(fqNameOrNull())
+        get() = fqNameOrNull() in ERASED_VALUE_PARAMETERS_FQ_NAMES
 
     @JvmStatic
     fun getOverriddenBuiltinFunctionWithErasedValueParametersInJava(
@@ -122,21 +117,22 @@ object BuiltinMethodsWithSpecialGenericSignature {
     fun getDefaultValueForOverriddenBuiltinFunction(functionDescriptor: FunctionDescriptor): DefaultValue? {
         if (functionDescriptor.name !in ERASED_VALUE_PARAMETERS_SHORT_NAMES) return null
         return functionDescriptor.firstOverridden {
-            GENERIC_PARAMETERS_METHODS_TO_DEFAULT_VALUES_MAP.keys.containsRaw(it.fqNameOrNull())
+            it.fqNameOrNull() in GENERIC_PARAMETERS_METHODS_TO_DEFAULT_VALUES_MAP.keys
         }?.let { GENERIC_PARAMETERS_METHODS_TO_DEFAULT_VALUES_MAP[it.fqNameSafe] }
     }
 
     val Name.sameAsBuiltinMethodWithErasedValueParameters: Boolean
         get () = this in ERASED_VALUE_PARAMETERS_SHORT_NAMES
 
-    enum class SpecialSignatureInfo(val signature: String?) {
-        ONE_COLLECTION_PARAMETER("(Ljava/util/Collection<+Ljava/lang/Object;>;)Z"),
-        GENERIC_PARAMETER(null)
+    enum class SpecialSignatureInfo(val valueParametersSignature: String?, val isObjectReplacedWithTypeParameter: Boolean) {
+        ONE_COLLECTION_PARAMETER("Ljava/util/Collection<+Ljava/lang/Object;>;", false),
+        OBJECT_PARAMETER_NON_GENERIC(null, true),
+        OBJECT_PARAMETER_GENERIC("Ljava/lang/Object;", true)
     }
 
     fun CallableMemberDescriptor.isBuiltinWithSpecialDescriptorInJvm(): Boolean {
         if (!isFromBuiltins()) return false
-        return getSpecialSignatureInfo() == SpecialSignatureInfo.GENERIC_PARAMETER || doesOverrideBuiltinWithDifferentJvmName()
+        return getSpecialSignatureInfo()?.isObjectReplacedWithTypeParameter ?: false || doesOverrideBuiltinWithDifferentJvmName()
     }
 
     @JvmStatic
@@ -144,11 +140,15 @@ object BuiltinMethodsWithSpecialGenericSignature {
         val builtinFqName = firstOverridden { it is FunctionDescriptor && it.hasErasedValueParametersInJava }?.fqNameOrNull()
                 ?: return null
 
-        return when (builtinFqName) {
-            in ERASED_COLLECTION_PARAMETER_FQ_NAMES -> SpecialSignatureInfo.ONE_COLLECTION_PARAMETER
-            in GENERIC_PARAMETERS_METHODS_TO_DEFAULT_VALUES_MAP -> SpecialSignatureInfo.GENERIC_PARAMETER
-            else -> error("Unexpected kind of special builtin: $builtinFqName")
-        }
+        if (builtinFqName in ERASED_COLLECTION_PARAMETER_FQ_NAMES) return SpecialSignatureInfo.ONE_COLLECTION_PARAMETER
+
+        val defaultValue = GENERIC_PARAMETERS_METHODS_TO_DEFAULT_VALUES_MAP[builtinFqName]!!
+
+        return if (defaultValue == DefaultValue.NULL)
+                    // return type is some generic type as 'Map.get'
+                    SpecialSignatureInfo.OBJECT_PARAMETER_GENERIC
+                else
+                    SpecialSignatureInfo.OBJECT_PARAMETER_NON_GENERIC
     }
 }
 
@@ -212,8 +212,7 @@ fun <T : CallableMemberDescriptor> T.getOverriddenBuiltinWithDifferentJvmDescrip
     if (!name.sameAsBuiltinMethodWithErasedValueParameters) return null
 
     return firstOverridden {
-        it.isFromBuiltins()
-                && it.getSpecialSignatureInfo() == BuiltinMethodsWithSpecialGenericSignature.SpecialSignatureInfo.GENERIC_PARAMETER
+        it.isFromBuiltins() && it.getSpecialSignatureInfo()?.isObjectReplacedWithTypeParameter ?: false
     }?.original as T?
 }
 
@@ -278,33 +277,6 @@ private fun CallableMemberDescriptor.isFromBuiltins(): Boolean {
     val fqName = propertyIfAccessor.fqNameOrNull() ?: return false
     return fqName.toUnsafe().startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME) &&
             this.module == this.builtIns.builtInsModule
-}
-
-private val CallableMemberDescriptor.propertyIfAccessor: CallableMemberDescriptor
-    get() = if (this is PropertyAccessorDescriptor) correspondingProperty else this
-
-private fun CallableDescriptor.fqNameOrNull(): FqName? = fqNameUnsafe.check { it.isSafe }?.toSafe()
-
-public fun CallableMemberDescriptor.firstOverridden(
-        predicate: (CallableMemberDescriptor) -> Boolean
-): CallableMemberDescriptor? {
-    var result: CallableMemberDescriptor? = null
-    return DFS.dfs(listOf(this),
-        object : DFS.Neighbors<CallableMemberDescriptor> {
-            override fun getNeighbors(current: CallableMemberDescriptor?): Iterable<CallableMemberDescriptor> {
-                return current?.overriddenDescriptors ?: emptyList()
-            }
-        },
-        object : DFS.AbstractNodeHandler<CallableMemberDescriptor, CallableMemberDescriptor?>() {
-            override fun beforeChildren(current: CallableMemberDescriptor) = result == null
-            override fun afterChildren(current: CallableMemberDescriptor) {
-                if (result == null && predicate(current)) {
-                    result = current
-                }
-            }
-            override fun result(): CallableMemberDescriptor? = result
-        }
-    )
 }
 
 public fun CallableMemberDescriptor.isFromJavaOrBuiltins() = isFromJava || isFromBuiltins()

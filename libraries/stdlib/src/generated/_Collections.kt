@@ -1064,13 +1064,13 @@ public fun <T> Iterable<T>.toList(): List<T> {
     return this.toArrayList()
 }
 
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"), level = DeprecationLevel.HIDDEN)
 public inline fun <T, K> Iterable<T>.toMap(selector: (T) -> K): Map<K, T> {
     return toMapBy(selector)
 }
 
 /**
- * Returns Map containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given collection.
+ * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given collection.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <T, K, V> Iterable<T>.toMap(selector: (T) -> K, transform: (T) -> V): Map<K, V> {
@@ -1083,7 +1083,7 @@ public inline fun <T, K, V> Iterable<T>.toMap(selector: (T) -> K, transform: (T)
 }
 
 /**
- * Returns Map containing the elements from the given collection indexed by the key
+ * Returns a [Map] containing the elements from the given collection indexed by the key
  * returned from [selector] function applied to each element.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
@@ -1762,7 +1762,14 @@ public fun <T> Iterable<T>.joinToString(separator: String = ", ", prefix: String
 }
 
 /**
- * Returns a sequence from the given collection.
+ * Returns this collection as an [Iterable].
+ */
+public fun <T> Iterable<T>.asIterable(): Iterable<T> {
+    return this
+}
+
+/**
+ * Creates a [Sequence] instance that wraps the original collection returning its elements when being iterated.
  */
 public fun <T> Iterable<T>.asSequence(): Sequence<T> {
     return object : Sequence<T> {

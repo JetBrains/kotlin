@@ -360,7 +360,7 @@ public class PropertyCodegen {
         v.getSerializationBindings().put(FIELD_FOR_PROPERTY, propertyDescriptor, Pair.create(type, name));
 
         FieldVisitor fv = builder.newField(JvmDeclarationOriginKt.OtherOrigin(element, propertyDescriptor), modifiers, name, type.getDescriptor(),
-                                           typeMapper.mapFieldSignature(jetType), defaultValue);
+                                           typeMapper.mapFieldSignature(jetType, propertyDescriptor), defaultValue);
 
         Annotated fieldAnnotated = new AnnotatedWithFakeAnnotations(propertyDescriptor, annotations);
         AnnotationCodegen.forField(fv, typeMapper).genAnnotations(fieldAnnotated, type, AnnotationUseSiteTarget.FIELD);

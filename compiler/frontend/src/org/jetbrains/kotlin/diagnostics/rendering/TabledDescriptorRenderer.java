@@ -157,7 +157,7 @@ public class TabledDescriptorRenderer {
 
     @NotNull
     public Renderer<KotlinType> getTypeRenderer() {
-        return Renderers.RENDER_TYPE;
+        return (Renderer<KotlinType>) Renderers.RENDER_TYPE;
     }
 
     protected void renderText(TextRenderer textRenderer, StringBuilder result) {

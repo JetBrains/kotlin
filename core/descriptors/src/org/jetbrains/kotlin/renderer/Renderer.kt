@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.renderer;
+package org.jetbrains.kotlin.renderer
 
-import org.jetbrains.annotations.NotNull;
+public interface Renderer<in O> {
+    fun render(obj: O): String
+}
 
-public interface Renderer<O> {
-    @NotNull
-    String render(@NotNull O object);
+fun <O> Renderer(block: (O) -> String) = object : Renderer<O> {
+    override fun render(obj: O) = block(obj)
 }

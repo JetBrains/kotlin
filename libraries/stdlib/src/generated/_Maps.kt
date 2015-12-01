@@ -88,7 +88,7 @@ public inline fun <K, V, R, C : MutableCollection<in R>> Map<K, V>.mapTo(destina
 }
 
 /**
- * Returns `true` if all entrys match the given [predicate].
+ * Returns `true` if all entries match the given [predicate].
  */
 public inline fun <K, V> Map<K, V>.all(predicate: (Map.Entry<K, V>) -> Boolean): Boolean {
     for (element in this) if (!predicate(element)) return false
@@ -112,14 +112,14 @@ public inline fun <K, V> Map<K, V>.any(predicate: (Map.Entry<K, V>) -> Boolean):
 }
 
 /**
- * Returns the number of entrys in this map.
+ * Returns the number of entries in this map.
  */
 public fun <K, V> Map<K, V>.count(): Int {
     return size
 }
 
 /**
- * Returns the number of entrys matching the given [predicate].
+ * Returns the number of entries matching the given [predicate].
  */
 public inline fun <K, V> Map<K, V>.count(predicate: (Map.Entry<K, V>) -> Boolean): Int {
     var count = 0
@@ -173,7 +173,7 @@ public inline fun <K, V, R : Comparable<R>> Map<K, V>.minBy(selector: (Map.Entry
 }
 
 /**
- * Returns `true` if the map has no entrys.
+ * Returns `true` if the map has no entries.
  */
 public fun <K, V> Map<K, V>.none(): Boolean {
     for (element in this) return false
@@ -181,7 +181,7 @@ public fun <K, V> Map<K, V>.none(): Boolean {
 }
 
 /**
- * Returns `true` if no entrys match the given [predicate].
+ * Returns `true` if no entries match the given [predicate].
  */
 public inline fun <K, V> Map<K, V>.none(predicate: (Map.Entry<K, V>) -> Boolean): Boolean {
     for (element in this) if (predicate(element)) return false
@@ -189,7 +189,14 @@ public inline fun <K, V> Map<K, V>.none(predicate: (Map.Entry<K, V>) -> Boolean)
 }
 
 /**
- * Returns a sequence from the given collection.
+ * Creates an [Iterable] instance that wraps the original map returning its entries when being iterated.
+ */
+public fun <K, V> Map<K, V>.asIterable(): Iterable<Map.Entry<K, V>> {
+    return entries
+}
+
+/**
+ * Creates a [Sequence] instance that wraps the original map returning its entries when being iterated.
  */
 public fun <K, V> Map<K, V>.asSequence(): Sequence<Map.Entry<K, V>> {
     return object : Sequence<Map.Entry<K, V>> {

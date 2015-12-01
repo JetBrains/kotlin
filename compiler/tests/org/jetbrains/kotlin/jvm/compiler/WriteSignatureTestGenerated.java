@@ -223,6 +223,12 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
             doTest(fileName);
         }
 
+        @TestMetadata("GenericOverrides.kt")
+        public void testGenericOverrides() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/GenericOverrides.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("InInInPosition.kt")
         public void testInInInPosition() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/InInInPosition.kt");
@@ -262,6 +268,18 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
         @TestMetadata("MappedSupertypeWithVariance.kt")
         public void testMappedSupertypeWithVariance() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/MappedSupertypeWithVariance.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("OpenMembersReturnType.kt")
+        public void testOpenMembersReturnType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/OpenMembersReturnType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("OpenMembersValueParameter.kt")
+        public void testOpenMembersValueParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/OpenMembersValueParameter.kt");
             doTest(fileName);
         }
 
@@ -353,6 +371,108 @@ public class WriteSignatureTestGenerated extends AbstractWriteSignatureTest {
         public void testSuperTypeWithVarianceInArguments() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/SuperTypeWithVarianceInArguments.kt");
             doTest(fileName);
+        }
+
+        @TestMetadata("compiler/testData/writeSignature/declarationSiteVariance/jvmWildcardAnnotations")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class JvmWildcardAnnotations extends AbstractWriteSignatureTest {
+            public void testAllFilesPresentInJvmWildcardAnnotations() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/declarationSiteVariance/jvmWildcardAnnotations"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("onFunction.kt")
+            public void testOnFunction() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/jvmWildcardAnnotations/onFunction.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("onTypes.kt")
+            public void testOnTypes() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/jvmWildcardAnnotations/onTypes.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("primitiveTypes.kt")
+            public void testPrimitiveTypes() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/jvmWildcardAnnotations/primitiveTypes.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("compiler/testData/writeSignature/declarationSiteVariance/wildcardOptimization")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class WildcardOptimization extends AbstractWriteSignatureTest {
+            public void testAllFilesPresentInWildcardOptimization() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeSignature/declarationSiteVariance/wildcardOptimization"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("argumentOverridability.kt")
+            public void testArgumentOverridability() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/wildcardOptimization/argumentOverridability.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("arrays.kt")
+            public void testArrays() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/wildcardOptimization/arrays.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("complicatedInBounds.kt")
+            public void testComplicatedInBounds() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/wildcardOptimization/complicatedInBounds.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("deepOut.kt")
+            public void testDeepOut() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/wildcardOptimization/deepOut.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("fields.kt")
+            public void testFields() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/wildcardOptimization/fields.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("finalReturnType.kt")
+            public void testFinalReturnType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/wildcardOptimization/finalReturnType.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("outIn.kt")
+            public void testOutIn() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/wildcardOptimization/outIn.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("outInv.kt")
+            public void testOutInv() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/wildcardOptimization/outInv.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("topLevelIn.kt")
+            public void testTopLevelIn() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/wildcardOptimization/topLevelIn.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("topLevelInv.kt")
+            public void testTopLevelInv() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/wildcardOptimization/topLevelInv.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("typeParameter.kt")
+            public void testTypeParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeSignature/declarationSiteVariance/wildcardOptimization/typeParameter.kt");
+                doTest(fileName);
+            }
         }
     }
 

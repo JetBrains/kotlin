@@ -5162,87 +5162,6 @@ public fun ShortArray.sortedWith(comparator: Comparator<in Short>): List<Short> 
 }
 
 /**
- * Returns the Iterable that wraps the original array.
- */
-public fun <T> Array<out T>.asIterable(): Iterable<T> {
-    return object : Iterable<T> {
-        override fun iterator(): Iterator<T> = this@asIterable.iterator()
-    }
-}
-
-/**
- * Returns the Iterable that wraps the original array.
- */
-public fun BooleanArray.asIterable(): Iterable<Boolean> {
-    return object : Iterable<Boolean> {
-        override fun iterator(): Iterator<Boolean> = this@asIterable.iterator()
-    }
-}
-
-/**
- * Returns the Iterable that wraps the original array.
- */
-public fun ByteArray.asIterable(): Iterable<Byte> {
-    return object : Iterable<Byte> {
-        override fun iterator(): Iterator<Byte> = this@asIterable.iterator()
-    }
-}
-
-/**
- * Returns the Iterable that wraps the original array.
- */
-public fun CharArray.asIterable(): Iterable<Char> {
-    return object : Iterable<Char> {
-        override fun iterator(): Iterator<Char> = this@asIterable.iterator()
-    }
-}
-
-/**
- * Returns the Iterable that wraps the original array.
- */
-public fun DoubleArray.asIterable(): Iterable<Double> {
-    return object : Iterable<Double> {
-        override fun iterator(): Iterator<Double> = this@asIterable.iterator()
-    }
-}
-
-/**
- * Returns the Iterable that wraps the original array.
- */
-public fun FloatArray.asIterable(): Iterable<Float> {
-    return object : Iterable<Float> {
-        override fun iterator(): Iterator<Float> = this@asIterable.iterator()
-    }
-}
-
-/**
- * Returns the Iterable that wraps the original array.
- */
-public fun IntArray.asIterable(): Iterable<Int> {
-    return object : Iterable<Int> {
-        override fun iterator(): Iterator<Int> = this@asIterable.iterator()
-    }
-}
-
-/**
- * Returns the Iterable that wraps the original array.
- */
-public fun LongArray.asIterable(): Iterable<Long> {
-    return object : Iterable<Long> {
-        override fun iterator(): Iterator<Long> = this@asIterable.iterator()
-    }
-}
-
-/**
- * Returns the Iterable that wraps the original array.
- */
-public fun ShortArray.asIterable(): Iterable<Short> {
-    return object : Iterable<Short> {
-        override fun iterator(): Iterator<Short> = this@asIterable.iterator()
-    }
-}
-
-/**
  * Returns the range of valid indices for the array.
  */
 public val <T> Array<out T>.indices: IntRange
@@ -5923,53 +5842,53 @@ public fun ShortArray.toList(): List<Short> {
     return this.toArrayList()
 }
 
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"), level = DeprecationLevel.HIDDEN)
 public inline fun <T, K> Array<out T>.toMap(selector: (T) -> K): Map<K, T> {
     return toMapBy(selector)
 }
 
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"), level = DeprecationLevel.HIDDEN)
 public inline fun <K> BooleanArray.toMap(selector: (Boolean) -> K): Map<K, Boolean> {
     return toMapBy(selector)
 }
 
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"), level = DeprecationLevel.HIDDEN)
 public inline fun <K> ByteArray.toMap(selector: (Byte) -> K): Map<K, Byte> {
     return toMapBy(selector)
 }
 
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"), level = DeprecationLevel.HIDDEN)
 public inline fun <K> CharArray.toMap(selector: (Char) -> K): Map<K, Char> {
     return toMapBy(selector)
 }
 
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"), level = DeprecationLevel.HIDDEN)
 public inline fun <K> DoubleArray.toMap(selector: (Double) -> K): Map<K, Double> {
     return toMapBy(selector)
 }
 
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"), level = DeprecationLevel.HIDDEN)
 public inline fun <K> FloatArray.toMap(selector: (Float) -> K): Map<K, Float> {
     return toMapBy(selector)
 }
 
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"), level = DeprecationLevel.HIDDEN)
 public inline fun <K> IntArray.toMap(selector: (Int) -> K): Map<K, Int> {
     return toMapBy(selector)
 }
 
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"), level = DeprecationLevel.HIDDEN)
 public inline fun <K> LongArray.toMap(selector: (Long) -> K): Map<K, Long> {
     return toMapBy(selector)
 }
 
-@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"))
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector)"), level = DeprecationLevel.HIDDEN)
 public inline fun <K> ShortArray.toMap(selector: (Short) -> K): Map<K, Short> {
     return toMapBy(selector)
 }
 
 /**
- * Returns Map containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
+ * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <T, K, V> Array<out T>.toMap(selector: (T) -> K, transform: (T) -> V): Map<K, V> {
@@ -5982,7 +5901,7 @@ public inline fun <T, K, V> Array<out T>.toMap(selector: (T) -> K, transform: (T
 }
 
 /**
- * Returns Map containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
+ * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> BooleanArray.toMap(selector: (Boolean) -> K, transform: (Boolean) -> V): Map<K, V> {
@@ -5995,7 +5914,7 @@ public inline fun <K, V> BooleanArray.toMap(selector: (Boolean) -> K, transform:
 }
 
 /**
- * Returns Map containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
+ * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> ByteArray.toMap(selector: (Byte) -> K, transform: (Byte) -> V): Map<K, V> {
@@ -6008,7 +5927,7 @@ public inline fun <K, V> ByteArray.toMap(selector: (Byte) -> K, transform: (Byte
 }
 
 /**
- * Returns Map containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
+ * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> CharArray.toMap(selector: (Char) -> K, transform: (Char) -> V): Map<K, V> {
@@ -6021,7 +5940,7 @@ public inline fun <K, V> CharArray.toMap(selector: (Char) -> K, transform: (Char
 }
 
 /**
- * Returns Map containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
+ * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> DoubleArray.toMap(selector: (Double) -> K, transform: (Double) -> V): Map<K, V> {
@@ -6034,7 +5953,7 @@ public inline fun <K, V> DoubleArray.toMap(selector: (Double) -> K, transform: (
 }
 
 /**
- * Returns Map containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
+ * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> FloatArray.toMap(selector: (Float) -> K, transform: (Float) -> V): Map<K, V> {
@@ -6047,7 +5966,7 @@ public inline fun <K, V> FloatArray.toMap(selector: (Float) -> K, transform: (Fl
 }
 
 /**
- * Returns Map containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
+ * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> IntArray.toMap(selector: (Int) -> K, transform: (Int) -> V): Map<K, V> {
@@ -6060,7 +5979,7 @@ public inline fun <K, V> IntArray.toMap(selector: (Int) -> K, transform: (Int) -
 }
 
 /**
- * Returns Map containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
+ * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> LongArray.toMap(selector: (Long) -> K, transform: (Long) -> V): Map<K, V> {
@@ -6073,7 +5992,7 @@ public inline fun <K, V> LongArray.toMap(selector: (Long) -> K, transform: (Long
 }
 
 /**
- * Returns Map containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
+ * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
 public inline fun <K, V> ShortArray.toMap(selector: (Short) -> K, transform: (Short) -> V): Map<K, V> {
@@ -6086,7 +6005,7 @@ public inline fun <K, V> ShortArray.toMap(selector: (Short) -> K, transform: (Sh
 }
 
 /**
- * Returns Map containing the elements from the given array indexed by the key
+ * Returns a [Map] containing the elements from the given array indexed by the key
  * returned from [selector] function applied to each element.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
@@ -6100,7 +6019,7 @@ public inline fun <T, K> Array<out T>.toMapBy(selector: (T) -> K): Map<K, T> {
 }
 
 /**
- * Returns Map containing the elements from the given array indexed by the key
+ * Returns a [Map] containing the elements from the given array indexed by the key
  * returned from [selector] function applied to each element.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
@@ -6114,7 +6033,7 @@ public inline fun <K> BooleanArray.toMapBy(selector: (Boolean) -> K): Map<K, Boo
 }
 
 /**
- * Returns Map containing the elements from the given array indexed by the key
+ * Returns a [Map] containing the elements from the given array indexed by the key
  * returned from [selector] function applied to each element.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
@@ -6128,7 +6047,7 @@ public inline fun <K> ByteArray.toMapBy(selector: (Byte) -> K): Map<K, Byte> {
 }
 
 /**
- * Returns Map containing the elements from the given array indexed by the key
+ * Returns a [Map] containing the elements from the given array indexed by the key
  * returned from [selector] function applied to each element.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
@@ -6142,7 +6061,7 @@ public inline fun <K> CharArray.toMapBy(selector: (Char) -> K): Map<K, Char> {
 }
 
 /**
- * Returns Map containing the elements from the given array indexed by the key
+ * Returns a [Map] containing the elements from the given array indexed by the key
  * returned from [selector] function applied to each element.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
@@ -6156,7 +6075,7 @@ public inline fun <K> DoubleArray.toMapBy(selector: (Double) -> K): Map<K, Doubl
 }
 
 /**
- * Returns Map containing the elements from the given array indexed by the key
+ * Returns a [Map] containing the elements from the given array indexed by the key
  * returned from [selector] function applied to each element.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
@@ -6170,7 +6089,7 @@ public inline fun <K> FloatArray.toMapBy(selector: (Float) -> K): Map<K, Float> 
 }
 
 /**
- * Returns Map containing the elements from the given array indexed by the key
+ * Returns a [Map] containing the elements from the given array indexed by the key
  * returned from [selector] function applied to each element.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
@@ -6184,7 +6103,7 @@ public inline fun <K> IntArray.toMapBy(selector: (Int) -> K): Map<K, Int> {
 }
 
 /**
- * Returns Map containing the elements from the given array indexed by the key
+ * Returns a [Map] containing the elements from the given array indexed by the key
  * returned from [selector] function applied to each element.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
@@ -6198,7 +6117,7 @@ public inline fun <K> LongArray.toMapBy(selector: (Long) -> K): Map<K, Long> {
 }
 
 /**
- * Returns Map containing the elements from the given array indexed by the key
+ * Returns a [Map] containing the elements from the given array indexed by the key
  * returned from [selector] function applied to each element.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
@@ -10497,7 +10416,97 @@ public fun ShortArray.joinToString(separator: String = ", ", prefix: String = ""
 }
 
 /**
- * Returns a sequence from the given collection.
+ * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
+ */
+public fun <T> Array<out T>.asIterable(): Iterable<T> {
+    if (isEmpty()) return emptyList()
+    return object : Iterable<T> {
+        override fun iterator(): Iterator<T> = this@asIterable.iterator()
+    }
+}
+
+/**
+ * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
+ */
+public fun BooleanArray.asIterable(): Iterable<Boolean> {
+    if (isEmpty()) return emptyList()
+    return object : Iterable<Boolean> {
+        override fun iterator(): Iterator<Boolean> = this@asIterable.iterator()
+    }
+}
+
+/**
+ * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
+ */
+public fun ByteArray.asIterable(): Iterable<Byte> {
+    if (isEmpty()) return emptyList()
+    return object : Iterable<Byte> {
+        override fun iterator(): Iterator<Byte> = this@asIterable.iterator()
+    }
+}
+
+/**
+ * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
+ */
+public fun CharArray.asIterable(): Iterable<Char> {
+    if (isEmpty()) return emptyList()
+    return object : Iterable<Char> {
+        override fun iterator(): Iterator<Char> = this@asIterable.iterator()
+    }
+}
+
+/**
+ * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
+ */
+public fun DoubleArray.asIterable(): Iterable<Double> {
+    if (isEmpty()) return emptyList()
+    return object : Iterable<Double> {
+        override fun iterator(): Iterator<Double> = this@asIterable.iterator()
+    }
+}
+
+/**
+ * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
+ */
+public fun FloatArray.asIterable(): Iterable<Float> {
+    if (isEmpty()) return emptyList()
+    return object : Iterable<Float> {
+        override fun iterator(): Iterator<Float> = this@asIterable.iterator()
+    }
+}
+
+/**
+ * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
+ */
+public fun IntArray.asIterable(): Iterable<Int> {
+    if (isEmpty()) return emptyList()
+    return object : Iterable<Int> {
+        override fun iterator(): Iterator<Int> = this@asIterable.iterator()
+    }
+}
+
+/**
+ * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
+ */
+public fun LongArray.asIterable(): Iterable<Long> {
+    if (isEmpty()) return emptyList()
+    return object : Iterable<Long> {
+        override fun iterator(): Iterator<Long> = this@asIterable.iterator()
+    }
+}
+
+/**
+ * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
+ */
+public fun ShortArray.asIterable(): Iterable<Short> {
+    if (isEmpty()) return emptyList()
+    return object : Iterable<Short> {
+        override fun iterator(): Iterator<Short> = this@asIterable.iterator()
+    }
+}
+
+/**
+ * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
  */
 public fun <T> Array<out T>.asSequence(): Sequence<T> {
     if (isEmpty()) return emptySequence()
@@ -10509,7 +10518,7 @@ public fun <T> Array<out T>.asSequence(): Sequence<T> {
 }
 
 /**
- * Returns a sequence from the given collection.
+ * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
  */
 public fun BooleanArray.asSequence(): Sequence<Boolean> {
     if (isEmpty()) return emptySequence()
@@ -10521,7 +10530,7 @@ public fun BooleanArray.asSequence(): Sequence<Boolean> {
 }
 
 /**
- * Returns a sequence from the given collection.
+ * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
  */
 public fun ByteArray.asSequence(): Sequence<Byte> {
     if (isEmpty()) return emptySequence()
@@ -10533,7 +10542,7 @@ public fun ByteArray.asSequence(): Sequence<Byte> {
 }
 
 /**
- * Returns a sequence from the given collection.
+ * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
  */
 public fun CharArray.asSequence(): Sequence<Char> {
     if (isEmpty()) return emptySequence()
@@ -10545,7 +10554,7 @@ public fun CharArray.asSequence(): Sequence<Char> {
 }
 
 /**
- * Returns a sequence from the given collection.
+ * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
  */
 public fun DoubleArray.asSequence(): Sequence<Double> {
     if (isEmpty()) return emptySequence()
@@ -10557,7 +10566,7 @@ public fun DoubleArray.asSequence(): Sequence<Double> {
 }
 
 /**
- * Returns a sequence from the given collection.
+ * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
  */
 public fun FloatArray.asSequence(): Sequence<Float> {
     if (isEmpty()) return emptySequence()
@@ -10569,7 +10578,7 @@ public fun FloatArray.asSequence(): Sequence<Float> {
 }
 
 /**
- * Returns a sequence from the given collection.
+ * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
  */
 public fun IntArray.asSequence(): Sequence<Int> {
     if (isEmpty()) return emptySequence()
@@ -10581,7 +10590,7 @@ public fun IntArray.asSequence(): Sequence<Int> {
 }
 
 /**
- * Returns a sequence from the given collection.
+ * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
  */
 public fun LongArray.asSequence(): Sequence<Long> {
     if (isEmpty()) return emptySequence()
@@ -10593,7 +10602,7 @@ public fun LongArray.asSequence(): Sequence<Long> {
 }
 
 /**
- * Returns a sequence from the given collection.
+ * Creates a [Sequence] instance that wraps the original array returning its elements when being iterated.
  */
 public fun ShortArray.asSequence(): Sequence<Short> {
     if (isEmpty()) return emptySequence()

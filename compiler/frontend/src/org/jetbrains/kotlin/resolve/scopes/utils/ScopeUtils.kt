@@ -116,7 +116,7 @@ public fun HierarchicalScope.takeSnapshot(): HierarchicalScope = if (this is Lex
 public fun MemberScope.memberScopeAsImportingScope(parentScope: ImportingScope? = null): ImportingScope = MemberScopeToImportingScopeAdapter(parentScope, this)
 
 private class MemberScopeToImportingScopeAdapter(override val parent: ImportingScope?, val memberScope: MemberScope) : ImportingScope {
-    override fun getContributedPackage(name: Name): PackageViewDescriptor? = memberScope.getPackage(name)
+    override fun getContributedPackage(name: Name): PackageViewDescriptor? = null
 
     override fun getContributedSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
             = emptyList<PropertyDescriptor>()

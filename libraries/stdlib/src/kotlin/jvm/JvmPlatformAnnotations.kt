@@ -99,3 +99,24 @@ internal annotation class JvmVersion(public val minimum: Int = 6, public val max
 @MustBeDocumented
 public annotation class JvmField
 
+/**
+ * Instructs compiler to generate or omit wildcards for type arguments corresponding to parameters with declaration-site variance.
+ * If the innermost applied @JvmSuppressWildcards has suppress=true, the type is generated as without wildcards.
+ * If the innermost applied @JvmSuppressWildcards has suppress=false, the type is generated as with wildcards.
+ *
+ * It may be helpful only if declaration seems to be inconvenient to use from Java.
+ */
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.TYPE)
+@Retention(AnnotationRetention.BINARY)
+@MustBeDocumented
+annotation class JvmSuppressWildcards(val suppress: Boolean = true)
+
+/**
+ * Instructs compiler to generate wildcard for annotated type arguments corresponding to parameters with declaration-site variance.
+ *
+ * It may be helpful only if declaration seems to be inconvenient to use from Java without wildcard.
+ */
+@Target(AnnotationTarget.TYPE)
+@Retention(AnnotationRetention.BINARY)
+@MustBeDocumented
+annotation class JvmWildcard

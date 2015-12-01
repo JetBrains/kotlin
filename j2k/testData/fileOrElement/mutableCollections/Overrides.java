@@ -10,7 +10,7 @@ public abstract class C extends KotlinClass {
         super(field);
     }
 
-    public List<Object> foo(Collection<String> mutableCollection, Collection<? extends Integer> nullableCollection) {
+    public List<Object> foo(Collection<String> mutableCollection, Collection<Integer> nullableCollection) {
         return super.foo(mutableCollection, nullableCollection);
     }
 }

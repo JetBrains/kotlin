@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
@@ -144,6 +145,12 @@ internal class ReceiverScopeTowerLevel(
 
             possibleType.memberScope.additionalDescriptors(possibleType).mapTo(result) {
                 it.addDiagnostic(unstableError)
+            }
+        }
+
+        if (dispatchReceiver.type.isDynamic()) {
+            scopeTower.dynamicScope.members().mapTo(result) {
+                createCandidateDescriptor(it, dispatchReceiver, DynamicDescriptorDiagnostic)
             }
         }
 

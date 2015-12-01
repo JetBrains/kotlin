@@ -8212,18 +8212,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
-        @TestMetadata("noElseAssigned.kt")
-        public void testNoElseAssigned() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/noElseAssigned.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("noElseAssignedNoMatch.kt")
-        public void testNoElseAssignedNoMatch() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/noElseAssignedNoMatch.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("noElseExhaustive.kt")
         public void testNoElseExhaustive() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/noElseExhaustive.kt");
@@ -8239,18 +8227,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("noElseExhaustiveUnitExpected.kt")
         public void testNoElseExhaustiveUnitExpected() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/noElseExhaustiveUnitExpected.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("noElseInRetunedExpression.kt")
-        public void testNoElseInRetunedExpression() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/noElseInRetunedExpression.kt");
-            doTest(fileName);
-        }
-
-        @TestMetadata("noElseInRetunedExpressionNoMatch.kt")
-        public void testNoElseInRetunedExpressionNoMatch() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/noElseInRetunedExpressionNoMatch.kt");
             doTest(fileName);
         }
 

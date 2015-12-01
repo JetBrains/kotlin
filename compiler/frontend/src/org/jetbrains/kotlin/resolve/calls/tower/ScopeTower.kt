@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -32,6 +33,8 @@ interface ScopeTower {
     val implicitReceivers: List<ReceiverValue>
 
     val lexicalScope: LexicalScope
+
+    val dynamicScope: MemberScope
 
     val location: LookupLocation
 
@@ -64,7 +67,7 @@ interface CandidateWithBoundDispatchReceiver<out D : CallableDescriptor> {
     val dispatchReceiver: ReceiverValue?
 }
 
-class ResolutionCandidateStatus(val diagnostics: List<ResolutionDiagnostic>) {
+data class ResolutionCandidateStatus(val diagnostics: List<ResolutionDiagnostic>) {
     val resultingApplicability: ResolutionCandidateApplicability = diagnostics.asSequence().map { it.candidateLevel }.max()
                                                                    ?: ResolutionCandidateApplicability.RESOLVED
 }
@@ -76,7 +79,8 @@ enum class ResolutionCandidateApplicability {
     MAY_THROW_RUNTIME_ERROR, // unsafe call or unstable smart cast
     RUNTIME_ERROR, // problems with visibility
     IMPOSSIBLE_TO_GENERATE, // access to outer class from nested
-    INAPPLICABLE // arguments not matched
+    INAPPLICABLE, // arguments not matched
+    HIDDEN, // removed from resolve
     // todo wrong receiver
 }
 
@@ -87,10 +91,13 @@ class VisibilityError(val invisibleMember: DeclarationDescriptorWithVisibility):
 class NestedClassViaInstanceReference(val classDescriptor: ClassDescriptor): ResolutionDiagnostic(ResolutionCandidateApplicability.IMPOSSIBLE_TO_GENERATE)
 class InnerClassViaStaticReference(val classDescriptor: ClassDescriptor): ResolutionDiagnostic(ResolutionCandidateApplicability.IMPOSSIBLE_TO_GENERATE)
 class UnsupportedInnerClassCall(val message: String): ResolutionDiagnostic(ResolutionCandidateApplicability.IMPOSSIBLE_TO_GENERATE)
-class UsedSmartCastForDispatchReceiver(val smartCastType: KotlinType): ResolutionDiagnostic(ResolutionCandidateApplicability.RESOLVED_SYNTHESIZED)
+class UsedSmartCastForDispatchReceiver(val smartCastType: KotlinType): ResolutionDiagnostic(ResolutionCandidateApplicability.RESOLVED)
 
 object ErrorDescriptorDiagnostic : ResolutionDiagnostic(ResolutionCandidateApplicability.INAPPLICABLE)
 object SynthesizedDescriptorDiagnostic: ResolutionDiagnostic(ResolutionCandidateApplicability.RESOLVED_SYNTHESIZED)
+object DynamicDescriptorDiagnostic: ResolutionDiagnostic(ResolutionCandidateApplicability.RESOLVED_SYNTHESIZED)
 object UnstableSmartCastDiagnostic: ResolutionDiagnostic(ResolutionCandidateApplicability.MAY_THROW_RUNTIME_ERROR)
+object ExtensionWithStaticTypeWithDynamicReceiver: ResolutionDiagnostic(ResolutionCandidateApplicability.HIDDEN)
+object HiddenDescriptor: ResolutionDiagnostic(ResolutionCandidateApplicability.HIDDEN)
 
 

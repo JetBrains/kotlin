@@ -110,7 +110,7 @@ public class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtPrope
                 else if (callable is PsiMethod) {
                     callable.getContainingClass()
                             ?.findMethodsByName(propertyName, true)
-                            ?.firstOrNull { it.getParameterList().getParametersCount() == 0 && it.namedUnwrappedElement !in callables }
+                            ?.firstOrNull { it.getParameterList().getParametersCount() == 0 && it.namedUnwrappedElement as PsiElement? !in callables }
                             ?.let { reportDeclarationConflict(conflicts, it) { "$it already exists" } }
                 }
 

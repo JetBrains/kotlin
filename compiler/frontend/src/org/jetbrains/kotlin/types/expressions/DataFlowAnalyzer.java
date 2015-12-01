@@ -274,18 +274,12 @@ public class DataFlowAnalyzer {
     @Nullable
     public KotlinType checkImplicitCast(@Nullable KotlinType expressionType, @NotNull KtExpression expression, @NotNull ResolutionContext context, boolean isStatement) {
         boolean isIfExpression = expression instanceof KtIfExpression;
-        if (expressionType != null && (context.expectedType == NO_EXPECTED_TYPE || isIfExpression)
-                && context.contextDependency == INDEPENDENT && !isStatement
-                && (KotlinBuiltIns.isUnit(expressionType) || KotlinBuiltIns.isAnyOrNullableAny(expressionType))
-                && !DynamicTypesKt.isDynamic(expressionType)) {
-            if (isIfExpression && KotlinBuiltIns.isUnit(expressionType)) {
-                KtIfExpression ifExpression = (KtIfExpression) expression;
-                if (ifExpression.getThen() == null || ifExpression.getElse() == null) {
-                    context.trace.report(INVALID_IF_AS_EXPRESSION.on((KtIfExpression) expression));
-                    return expressionType;
-                }
-            }
-            else if (isIfExpression && context.expectedType != NO_EXPECTED_TYPE) {
+        if (expressionType != null
+            && (context.expectedType == NO_EXPECTED_TYPE || isIfExpression)
+            && context.contextDependency == INDEPENDENT && !isStatement
+            && (KotlinBuiltIns.isUnit(expressionType) || KotlinBuiltIns.isAnyOrNullableAny(expressionType))
+            && !DynamicTypesKt.isDynamic(expressionType)) {
+            if (isIfExpression && KotlinBuiltIns.isUnit(expressionType) || isIfExpression && context.expectedType != NO_EXPECTED_TYPE) {
                 return expressionType;
             }
             else {
