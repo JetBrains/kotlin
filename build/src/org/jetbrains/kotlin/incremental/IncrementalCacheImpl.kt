@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.incremental
 
 import com.google.protobuf.MessageLite
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.io.FileUtil.toSystemIndependentName
 import com.intellij.util.io.BooleanDataDescriptor
 import com.intellij.util.io.EnumeratorStringDescriptor
 import com.intellij.util.io.IOUtil
@@ -131,7 +132,7 @@ public class IncrementalCacheImpl<TargetId>(
     }
 
     override fun getClassFilePath(internalClassName: String): String {
-        return File(outputDir, "$internalClassName.class").canonicalPath
+        return toSystemIndependentName(File(outputDir, "$internalClassName.class").canonicalPath)
     }
 
     public fun saveCacheFormatVersion() {
@@ -158,24 +159,20 @@ public class IncrementalCacheImpl<TargetId>(
 
         val header = kotlinClass.classHeader
         val changesInfo = when {
-            header.isCompatiblePackageFacadeKind() ->
-                protoMap.process(kotlinClass, isPackage = true)
             header.isCompatibleFileFacadeKind() -> {
                 assert(sourceFiles.size() == 1) { "Package part from several source files: $sourceFiles" }
                 packagePartMap.addPackagePart(className)
 
-                val isPackage = true
-
-                protoMap.process(kotlinClass, isPackage) +
+                protoMap.process(kotlinClass, isPackage = true) +
                 constantsMap.process(kotlinClass) +
-                inlineFunctionsMap.process(kotlinClass, isPackage)
+                inlineFunctionsMap.process(kotlinClass, isPackage = true)
             }
             header.isCompatibleMultifileClassKind() -> {
                 val partNames = kotlinClass.classHeader.filePartClassNames?.toList()
                                 ?: throw AssertionError("Multifile class has no parts: ${kotlinClass.className}")
                 multifileClassFacadeMap.add(className, partNames)
 
-                // TODO NO_CHANGES? (delegates only, see package facade)
+                // TODO NO_CHANGES? (delegates only)
                 constantsMap.process(kotlinClass) +
                 inlineFunctionsMap.process(kotlinClass, isPackage = true)
             }
@@ -184,18 +181,14 @@ public class IncrementalCacheImpl<TargetId>(
                 packagePartMap.addPackagePart(className)
                 multifileClassPartMap.add(className.internalName, header.multifileClassName!!)
 
-                val isPackage = true
-
-                protoMap.process(kotlinClass, isPackage) +
+                protoMap.process(kotlinClass, isPackage = true) +
                 constantsMap.process(kotlinClass) +
-                inlineFunctionsMap.process(kotlinClass, isPackage)
+                inlineFunctionsMap.process(kotlinClass, isPackage = true)
             }
             header.isCompatibleClassKind() && !header.isLocalClass -> {
-                val isPackage = false
-
-                protoMap.process(kotlinClass, isPackage) +
+                protoMap.process(kotlinClass, isPackage = false) +
                 constantsMap.process(kotlinClass) +
-                inlineFunctionsMap.process(kotlinClass, isPackage)
+                inlineFunctionsMap.process(kotlinClass, isPackage = false)
             }
             else -> CompilationResult.NO_CHANGES
         }
@@ -257,7 +250,7 @@ public class IncrementalCacheImpl<TargetId>(
 
         val changes =
                 if (IncrementalCompilation.isExperimental())
-                    dirtyClasses.map { createChangeInfo(it) }.asSequence().filterNotNull()
+                    dirtyClasses.mapNotNull { createChangeInfo(it) }.asSequence()
                 else
                     emptySequence<ChangeInfo>()
 
@@ -366,10 +359,10 @@ public class IncrementalCacheImpl<TargetId>(
             return CompilationResult(protoChanged = diff != DifferenceKind.NONE, changes = changes)
         }
 
-        public fun contains(className: JvmClassName): Boolean =
+        operator fun contains(className: JvmClassName): Boolean =
                 className.internalName in storage
 
-        public fun get(className: JvmClassName): ProtoMapValue? =
+        operator fun get(className: JvmClassName): ProtoMapValue? =
                 storage[className.internalName]
 
         public fun remove(className: JvmClassName) {
@@ -398,7 +391,7 @@ public class IncrementalCacheImpl<TargetId>(
             return if (result.isEmpty()) null else result
         }
 
-        fun contains(className: JvmClassName): Boolean =
+        operator fun contains(className: JvmClassName): Boolean =
                 className.internalName in storage
 
         public fun process(kotlinClass: LocalFileKotlinClass): CompilationResult {
@@ -565,7 +558,7 @@ public class IncrementalCacheImpl<TargetId>(
             storage.append(sourceFile.absolutePath, { out -> IOUtil.writeUTF(out, className.internalName) })
         }
 
-        public fun get(sourceFile: File): Collection<JvmClassName> =
+        public operator fun get(sourceFile: File): Collection<JvmClassName> =
                 storage[sourceFile.absolutePath].orEmpty().map { JvmClassName.byInternalName(it) }
 
         override fun dumpValue(value: List<String>) = value.toString()
@@ -667,7 +660,7 @@ data class CompilationResult(
         public val NO_CHANGES: CompilationResult = CompilationResult()
     }
 
-    public operator fun plus(other: CompilationResult): CompilationResult =
+    operator fun plus(other: CompilationResult): CompilationResult =
             CompilationResult(protoChanged || other.protoChanged,
                         constantsChanged || other.constantsChanged,
                         inlineChanged || other.inlineChanged,

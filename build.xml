@@ -602,11 +602,8 @@
         </jar>
     </target>
 
-    <target name="daemon-client">
-        <cleandir dir="${output}/classes/daemon-client"/>
-
     <target name="kotlin-build"
-            depends="kotlinr,preloader">
+            depends="daemon-client,preloader">
         <cleandir dir="${output}/classes/kotlin-build"/>
 
         <kotlinc output="${output}/classes/kotlin-build" modulename="kotlin-build">
@@ -620,7 +617,7 @@
                 <pathelement path="${trove4j.jar}"/>
                 <pathelement path="${kotlin-home}/lib/kotlin-preloader.jar"/>
                 <pathelement path="${kotlin-home}/lib/kotlin-compiler.jar"/>
-                <pathelement path="${kotlin-home}/lib/kotlinr.jar"/>
+                <pathelement path="${kotlin-home}/lib/kotlin-daemon-client.jar"/>
             </classpath>
         </kotlinc>
 
@@ -630,8 +627,8 @@
         </jar>
     </target>
 
-    <target name="kotlinr">
-        <cleandir dir="${output}/classes/kotlinr"/>
+    <target name="daemon-client">
+        <cleandir dir="${output}/classes/daemon-client"/>
 
         <kotlinc output="${output}/classes/daemon-client" modulename="client">
             <src>

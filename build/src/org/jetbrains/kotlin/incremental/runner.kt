@@ -33,18 +33,20 @@ import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.jps.incremental.IncrementalCompilationComponentsImpl
+import org.jetbrains.kotlin.incremental.IncrementalCompilationComponentsImpl
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.keysToMap
 import java.io.File
 
 
 fun<Target> compileChanged(
+        kotlinPaths: KotlinPaths,
         moduleName: String,
         isTest: Boolean,
         targets: Iterable<Target>,
@@ -67,7 +69,7 @@ fun<Target> compileChanged(
 
     val incrementalCaches = getIncrementalCaches(targets, getDependencies, getIncrementalCache, getTargetId)
     val lookupTracker = getLookupTracker()
-    val environment = createCompileEnvironment(incrementalCaches, lookupTracker, compilationCanceledStatus)
+    val environment = createCompileEnvironment(kotlinPaths, incrementalCaches, lookupTracker, compilationCanceledStatus)
 
     commonArguments.verbose = true // Make compiler report source to output files mapping
 
@@ -119,6 +121,7 @@ private fun findSrcDirRoot(file: File, roots: Iterable<File>): File? {
 }
 
 private fun createCompileEnvironment(
+        kotlinPaths: KotlinPaths,
         incrementalCaches: Map<TargetId, IncrementalCache>,
         lookupTracker: LookupTracker,
         compilationCanceledStatus: CompilationCanceledStatus
@@ -129,7 +132,7 @@ private fun createCompileEnvironment(
             .build()
 
     return CompilerEnvironment.getEnvironmentFor(
-            PathUtil.getKotlinPathsForJpsPluginOrJpsTests(),
+            kotlinPaths,
             { className ->
                 className.startsWith("org.jetbrains.kotlin.load.kotlin.incremental.components.")
                 || className.startsWith("org.jetbrains.kotlin.incremental.components.")

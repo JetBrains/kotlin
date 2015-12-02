@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.jps.incremental
+package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
@@ -29,7 +29,7 @@ public class IncrementalCompilationComponentsImpl(
 //    private val caches = caches.mapKeys { TargetId(it.key) }
 
     override fun getIncrementalCache(target: TargetId): IncrementalCache =
-            caches[target]!!
+            caches[target] ?: throw Exception("Incremental cache for target ${target.name} not found")
 
     override fun getLookupTracker(): LookupTracker = lookupTracker
 }
