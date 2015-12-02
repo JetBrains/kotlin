@@ -14,25 +14,29 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.decompiler.textBuilder
+package org.jetbrains.kotlin.idea.decompiler.classFile
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.decompiler.textBuilder.DeserializerForDecompilerBase
+import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter
+import org.jetbrains.kotlin.idea.decompiler.textBuilder.ResolveEverythingToKotlinAnyLocalClassResolver
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.load.kotlin.BinaryClassAnnotationAndConstantLoaderImpl
-import org.jetbrains.kotlin.load.kotlin.JavaFlexibleTypeCapabilitiesDeserializer
-import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
+import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.serialization.ClassDataWithSource
+import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.ClassDescriptorFactory
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 
-public fun DeserializerForDecompiler(classFile: VirtualFile): DeserializerForClassfileDecompiler {
+public fun DeserializerForClassfileDecompiler(classFile: VirtualFile): DeserializerForClassfileDecompiler {
     val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(classFile)
     assert(kotlinClass != null) { "Decompiled data factory shouldn't be called on an unsupported file: " + classFile }
     val packageFqName = kotlinClass!!.classId.packageFqName
@@ -84,3 +88,51 @@ public class DeserializerForClassfileDecompiler(
         private val LOG = Logger.getInstance(DeserializerForClassfileDecompiler::class.java)
     }
 }
+
+class DirectoryBasedClassFinder(
+        val packageDirectory: VirtualFile,
+        val directoryPackageFqName: FqName
+) : KotlinClassFinder {
+    override fun findKotlinClass(javaClass: JavaClass) = findKotlinClass(javaClass.classId)
+
+    override fun findKotlinClass(classId: ClassId): KotlinJvmBinaryClass? {
+        if (classId.getPackageFqName() != directoryPackageFqName) {
+            return null
+        }
+        val targetName = classId.getRelativeClassName().pathSegments().joinToString("$", postfix = ".class")
+        val virtualFile = packageDirectory.findChild(targetName)
+        if (virtualFile != null && isKotlinWithCompatibleAbiVersion(virtualFile)) {
+            return KotlinBinaryClassCache.getKotlinBinaryClass(virtualFile)
+        }
+        return null
+    }
+}
+
+class DirectoryBasedDataFinder(
+        val classFinder: DirectoryBasedClassFinder,
+        val log: Logger
+) : ClassDataFinder {
+    override fun findClassData(classId: ClassId): ClassDataWithSource? {
+        val binaryClass = classFinder.findKotlinClass(classId) ?: return null
+        val classHeader = binaryClass.classHeader
+        val data = classHeader.annotationData
+        if (data == null) {
+            log.error("Annotation data missing for ${binaryClass.classId}")
+            return null
+        }
+        val strings = classHeader.strings
+        if (strings == null) {
+            log.error("String table not found in class ${binaryClass.classId}")
+            return null
+        }
+
+        return ClassDataWithSource(JvmProtoBufUtil.readClassDataFrom(data, strings))
+    }
+}
+
+
+private val JavaClass.classId: ClassId
+    get() {
+        val outer = getOuterClass()
+        return if (outer == null) ClassId.topLevel(getFqName()!!) else outer.classId.createNestedClassId(getName())
+    }

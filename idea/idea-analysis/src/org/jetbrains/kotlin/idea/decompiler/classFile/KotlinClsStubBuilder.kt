@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.decompiler.stubBuilder
+package org.jetbrains.kotlin.idea.decompiler.classFile
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.vfs.VirtualFile
@@ -22,19 +22,27 @@ import com.intellij.psi.compiled.ClsStubBuilder
 import com.intellij.psi.impl.compiled.ClassFileStubBuilder
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.util.indexing.FileContent
-import org.jetbrains.kotlin.idea.decompiler.findMultifileClassParts
-import org.jetbrains.kotlin.idea.decompiler.isKotlinInternalCompiledFile
-import org.jetbrains.kotlin.idea.decompiler.textBuilder.DirectoryBasedClassFinder
-import org.jetbrains.kotlin.idea.decompiler.textBuilder.DirectoryBasedDataFinder
+import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.idea.decompiler.stubBuilder.*
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter
+import org.jetbrains.kotlin.load.kotlin.AbstractBinaryClassAnnotationAndConstantLoader
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
+import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
+import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleFileFacadeKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleMultifileClassKind
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
+import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 public open class KotlinClsStubBuilder : ClsStubBuilder() {
     override fun getStubVersion() = ClassFileStubBuilder.STUB_VERSION + 1
@@ -93,11 +101,47 @@ public open class KotlinClsStubBuilder : ClsStubBuilder() {
     private fun createStubBuilderComponents(file: VirtualFile, packageFqName: FqName): ClsStubBuilderComponents {
         val classFinder = DirectoryBasedClassFinder(file.getParent()!!, packageFqName)
         val classDataFinder = DirectoryBasedDataFinder(classFinder, LOG)
-        val annotationLoader = AnnotationLoaderForStubBuilder(classFinder, LoggingErrorReporter(LOG))
+        val annotationLoader = AnnotationLoaderForClassFileStubBuilder(classFinder, LoggingErrorReporter(LOG))
         return ClsStubBuilderComponents(classDataFinder, annotationLoader)
     }
 
     companion object {
         val LOG = Logger.getInstance(KotlinClsStubBuilder::class.java)
     }
+}
+
+class AnnotationLoaderForClassFileStubBuilder(
+        kotlinClassFinder: KotlinClassFinder,
+        errorReporter: ErrorReporter
+) : AbstractBinaryClassAnnotationAndConstantLoader<ClassId, Unit, ClassIdWithTarget>(
+        LockBasedStorageManager.NO_LOCKS, kotlinClassFinder, errorReporter) {
+
+    override fun loadClassAnnotations(
+            classProto: ProtoBuf.Class,
+            nameResolver: NameResolver
+    ): List<ClassId> {
+        val binaryAnnotationDescriptors = super.loadClassAnnotations(classProto, nameResolver)
+        val serializedAnnotations = classProto.getExtension(JvmProtoBuf.classAnnotation).orEmpty()
+        val serializedAnnotationDescriptors = serializedAnnotations.map { nameResolver.getClassId(it.id) }
+        return binaryAnnotationDescriptors + serializedAnnotationDescriptors
+    }
+
+    override fun loadTypeAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): ClassId =
+            nameResolver.getClassId(proto.getId())
+
+    override fun loadConstant(desc: String, initializer: Any) = null
+
+    override fun loadAnnotation(
+            annotationClassId: ClassId, source: SourceElement, result: MutableList<ClassId>
+    ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
+        result.add(annotationClassId)
+        return null
+    }
+
+    override fun loadPropertyAnnotations(propertyAnnotations: List<ClassId>, fieldAnnotations: List<ClassId>): List<ClassIdWithTarget> {
+        return propertyAnnotations.map { ClassIdWithTarget(it, null) } +
+               fieldAnnotations.map { ClassIdWithTarget(it, AnnotationUseSiteTarget.FIELD) }
+    }
+
+    override fun transformAnnotations(annotations: List<ClassId>) = annotations.map { ClassIdWithTarget(it, null) }
 }

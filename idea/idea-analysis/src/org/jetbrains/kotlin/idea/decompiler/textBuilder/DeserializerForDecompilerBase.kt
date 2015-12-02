@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleParameters
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
@@ -32,6 +34,7 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.serialization.deserialization.AnnotationAndConstantLoader
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
+import org.jetbrains.kotlin.serialization.deserialization.LocalClassResolver
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 
@@ -79,4 +82,8 @@ public abstract class DeserializerForDecompilerBase(
                 moduleDescriptor, targetPlatform.builtIns.builtInsModule, moduleContainingMissingDependencies
         )
     }
+}
+
+class ResolveEverythingToKotlinAnyLocalClassResolver(private val builtIns: KotlinBuiltIns) : LocalClassResolver {
+    override fun resolveLocalClass(classId: ClassId): ClassDescriptor = builtIns.any
 }

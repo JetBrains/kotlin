@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.concurrent.block.LockedClearableLazyValue
 
-public abstract class KtClsFileBase(val provider: KotlinClassFileViewProviderBase) : KtFile(provider, true) {
+public abstract class KtDecompiledFileBase(val provider: KotlinDecompiledFileViewProviderBase) : KtFile(provider, true) {
     protected abstract val decompiledText: LockedClearableLazyValue<DecompiledText>
 
     public fun getDeclarationForDescriptor(descriptor: DeclarationDescriptor): KtDeclaration? {

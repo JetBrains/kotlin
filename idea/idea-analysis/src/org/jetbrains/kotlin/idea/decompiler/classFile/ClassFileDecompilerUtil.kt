@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.decompiler
+package org.jetbrains.kotlin.idea.decompiler.classFile
 
 import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.ClassFileViewProvider
 import org.jetbrains.kotlin.idea.caches.JarUserDataManager
-import org.jetbrains.kotlin.idea.decompiler.textBuilder.DirectoryBasedClassFinder
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -42,8 +41,6 @@ public fun isKotlinJvmCompiledFile(file: VirtualFile): Boolean {
     val header = KotlinBinaryClassCache.getKotlinBinaryClass(file)?.classHeader
     return header != null
 }
-
-public fun isKotlinJsMetaFile(file: VirtualFile): Boolean = file.getFileType() == KotlinJavaScriptMetaFileType
 
 /**
  * Checks if this file is a compiled Kotlin class file ABI-compatible with the current plugin
@@ -73,9 +70,6 @@ public fun isKotlinInternalCompiledFile(file: VirtualFile): Boolean {
            header.kind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART ||
            header.isLocalClass || header.syntheticClassKind == "PACKAGE_PART"
 }
-
-public fun isKotlinJavaScriptInternalCompiledFile(file: VirtualFile): Boolean =
-        isKotlinJsMetaFile(file) && file.getNameWithoutExtension().contains('.')
 
 public object HasCompiledKotlinInJar : JarUserDataManager.JarBooleanPropertyCounter(HasCompiledKotlinInJar::class.simpleName!!) {
     override fun hasProperty(file: VirtualFile) = isKotlinJvmCompiledFile(file)

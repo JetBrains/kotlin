@@ -17,7 +17,8 @@
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledText
+import org.jetbrains.kotlin.idea.decompiler.classFile.KotlinClsStubBuilder
+import org.jetbrains.kotlin.idea.decompiler.classFile.buildDecompiledTextForClassFile
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
@@ -30,7 +31,7 @@ public class ClsStubConsistencyTest : StubConsistencyBaseTest() {
 
     override fun createStubBuilder() = KotlinClsStubBuilder()
 
-    override fun getDecompiledText(packageFile: VirtualFile): String = buildDecompiledText(packageFile).text
+    override fun getDecompiledText(packageFile: VirtualFile): String = buildDecompiledTextForClassFile(packageFile).text
 
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 }

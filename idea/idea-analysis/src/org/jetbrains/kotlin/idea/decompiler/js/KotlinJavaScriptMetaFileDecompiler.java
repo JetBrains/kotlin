@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.decompiler;
+package org.jetbrains.kotlin.idea.decompiler.js;
 
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.FileViewProvider;
@@ -22,7 +22,6 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.compiled.ClassFileDecompilers;
 import com.intellij.psi.compiled.ClsStubBuilder;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.decompiler.stubBuilder.KotlinJavaScriptStubBuilder;
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil;
 
 public class KotlinJavaScriptMetaFileDecompiler extends ClassFileDecompilers.Full {
@@ -42,7 +41,6 @@ public class KotlinJavaScriptMetaFileDecompiler extends ClassFileDecompilers.Ful
     @NotNull
     @Override
     public FileViewProvider createFileViewProvider(@NotNull VirtualFile file, @NotNull PsiManager manager, boolean physical) {
-        return new KotlinJavascriptMetaFileViewProvider(manager, file, physical, DecompiledUtilsKt.isKotlinJavaScriptInternalCompiledFile(
-                file));
+        return new KotlinJavascriptMetaFileViewProvider(manager, file, physical, JsMetaFileUtils.INSTANCE.isKotlinJavaScriptInternalCompiledFile(file));
     }
 }

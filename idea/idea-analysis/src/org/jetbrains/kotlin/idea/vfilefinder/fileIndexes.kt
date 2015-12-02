@@ -20,8 +20,8 @@ import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.util.indexing.*
 import com.intellij.util.io.KeyDescriptor
-import org.jetbrains.kotlin.idea.decompiler.KotlinJavaScriptMetaFileType
-import org.jetbrains.kotlin.idea.decompiler.navigation.JsMetaFileUtils
+import org.jetbrains.kotlin.idea.decompiler.js.JsMetaFileUtils
+import org.jetbrains.kotlin.idea.decompiler.js.KotlinJavaScriptMetaFileType
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.name.FqName
 import java.io.DataInput

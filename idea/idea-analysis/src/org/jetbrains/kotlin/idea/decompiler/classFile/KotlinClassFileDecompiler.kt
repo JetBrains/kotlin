@@ -14,25 +14,19 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.decompiler
+package org.jetbrains.kotlin.idea.decompiler.classFile
 
-import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
+import com.intellij.psi.PsiManager
+import com.intellij.psi.compiled.ClassFileDecompilers
 
-public object KotlinJavaScriptMetaFileType : FileType {
+public class KotlinClassFileDecompiler : ClassFileDecompilers.Full() {
+    private val stubBuilder = KotlinClsStubBuilder()
 
-    override fun getName() = "KJSM"
+    override fun accepts(file: VirtualFile) = isKotlinJvmCompiledFile(file)
 
-    override fun getDescription() = "Kotlin JavaScript meta file"
+    override fun getStubBuilder() = stubBuilder
 
-    override fun getDefaultExtension() = KotlinJavascriptSerializationUtil.CLASS_METADATA_FILE_EXTENSION
-
-    override fun getIcon() = null
-
-    override fun isBinary() = true
-
-    override fun isReadOnly() = true
-
-    override fun getCharset(file: VirtualFile, content: ByteArray) = null
+    override fun createFileViewProvider(file: VirtualFile, manager: PsiManager, physical: Boolean)
+            = KotlinClassFileViewProvider(manager, file, physical, isKotlinInternalCompiledFile(file))
 }

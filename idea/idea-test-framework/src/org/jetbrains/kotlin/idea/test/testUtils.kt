@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.caches.resolve.LibraryModificationTracker
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
-import org.jetbrains.kotlin.idea.decompiler.KotlinClassFileViewProvider
-import org.jetbrains.kotlin.idea.decompiler.KtClsFile
+import org.jetbrains.kotlin.idea.decompiler.classFile.KotlinClassFileViewProvider
+import org.jetbrains.kotlin.idea.decompiler.classFile.KtClsFile
 import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver
 import org.jetbrains.kotlin.psi.KtFile
 import java.util.*

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.decompiler.navigation
+package org.jetbrains.kotlin.idea.decompiler.js
 
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
@@ -24,6 +24,10 @@ import org.jetbrains.kotlin.serialization.js.isDefaultPackageMetafile
 import org.jetbrains.kotlin.serialization.js.isPackageClassFqName
 
 public object JsMetaFileUtils {
+    public fun isKotlinJsMetaFile(file: VirtualFile): Boolean = file.getFileType() == KotlinJavaScriptMetaFileType
+
+    public fun isKotlinJavaScriptInternalCompiledFile(file: VirtualFile): Boolean =
+            isKotlinJsMetaFile(file) && file.getNameWithoutExtension().contains('.')
 
     public fun getPackageFqName(file: VirtualFile): FqName = getPackageFqName(getRelativeToRootPath(file))
 
@@ -62,7 +66,7 @@ public object JsMetaFileUtils {
     private fun getModuleName(relPath: String): String = relPath.substringBefore(VfsUtilCore.VFS_SEPARATOR_CHAR)
 
     private fun isPackageHeader(relPath: String): Boolean {
-        val classFqName = JsMetaFileUtils.getClassFqName(relPath)
+        val classFqName = getClassFqName(relPath)
         return classFqName.isPackageClassFqName()
     }
 

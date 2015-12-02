@@ -16,18 +16,15 @@
 
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 
-import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.load.kotlin.AbstractBinaryClassAnnotationAndConstantLoader
-import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.*
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.serialization.deserialization.AnnotationAndConstantLoader
+import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
+import org.jetbrains.kotlin.serialization.deserialization.NameResolver
+import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 
 data class ClassIdWithTarget(val classId: ClassId, val target: AnnotationUseSiteTarget?)
 
@@ -95,40 +92,4 @@ internal fun ClsStubBuilderContext.child(nameResolver: NameResolver, typeTable: 
             this.typeParameters,
             typeTable
     )
-}
-
-class AnnotationLoaderForStubBuilder(
-        kotlinClassFinder: KotlinClassFinder,
-        errorReporter: ErrorReporter
-) : AbstractBinaryClassAnnotationAndConstantLoader<ClassId, Unit, ClassIdWithTarget>(
-        LockBasedStorageManager.NO_LOCKS, kotlinClassFinder, errorReporter) {
-
-    override fun loadClassAnnotations(
-            classProto: ProtoBuf.Class,
-            nameResolver: NameResolver
-    ): List<ClassId> {
-        val binaryAnnotationDescriptors = super.loadClassAnnotations(classProto, nameResolver)
-        val serializedAnnotations = classProto.getExtension(JvmProtoBuf.classAnnotation).orEmpty()
-        val serializedAnnotationDescriptors = serializedAnnotations.map { nameResolver.getClassId(it.id) }
-        return binaryAnnotationDescriptors + serializedAnnotationDescriptors
-    }
-
-    override fun loadTypeAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): ClassId =
-            nameResolver.getClassId(proto.getId())
-
-    override fun loadConstant(desc: String, initializer: Any) = null
-
-    override fun loadAnnotation(
-            annotationClassId: ClassId, source: SourceElement, result: MutableList<ClassId>
-    ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
-        result.add(annotationClassId)
-        return null
-    }
-
-    override fun loadPropertyAnnotations(propertyAnnotations: List<ClassId>, fieldAnnotations: List<ClassId>): List<ClassIdWithTarget> {
-        return propertyAnnotations.map { ClassIdWithTarget(it, null) } +
-               fieldAnnotations.map { ClassIdWithTarget(it, AnnotationUseSiteTarget.FIELD) }
-    }
-
-    override fun transformAnnotations(annotations: List<ClassId>) = annotations.map { ClassIdWithTarget(it, null) }
 }

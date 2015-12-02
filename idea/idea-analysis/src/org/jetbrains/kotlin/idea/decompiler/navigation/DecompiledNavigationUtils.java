@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
-import org.jetbrains.kotlin.idea.decompiler.KtClsFileBase;
+import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFileBase;
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope;
 import org.jetbrains.kotlin.idea.stubindex.StaticFacadeIndexUtil;
 import org.jetbrains.kotlin.idea.vfilefinder.JsVirtualFileFinderFactory;
@@ -62,11 +62,11 @@ public final class DecompiledNavigationUtils {
         if (virtualFile == null) return null;
 
         PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
-        if (!(psiFile instanceof KtClsFileBase)) {
+        if (!(psiFile instanceof KtDecompiledFileBase)) {
             return null;
         }
 
-        return ((KtClsFileBase) psiFile).getDeclarationForDescriptor(referencedDescriptor);
+        return ((KtDecompiledFileBase) psiFile).getDeclarationForDescriptor(referencedDescriptor);
     }
 
     private static boolean isLocal(DeclarationDescriptor descriptor) {

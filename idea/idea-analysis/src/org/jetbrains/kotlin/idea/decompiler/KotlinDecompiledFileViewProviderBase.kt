@@ -16,10 +16,8 @@
 
 package org.jetbrains.kotlin.idea.decompiler
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.FileIndexFacade
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
@@ -30,7 +28,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.utils.concurrent.block.LockedClearableLazyValue
 
-abstract class KotlinClassFileViewProviderBase(
+abstract class KotlinDecompiledFileViewProviderBase(
         manager: PsiManager,
         file: VirtualFile,
         physical: Boolean) : SingleRootFileViewProvider(manager, file, physical, KotlinLanguage.INSTANCE) {
@@ -55,37 +53,4 @@ abstract class KotlinClassFileViewProviderBase(
     }
 
     override fun getContents() = content.get()
-}
-
-public class KotlinClassFileViewProvider(
-        manager: PsiManager,
-        file: VirtualFile,
-        physical: Boolean,
-        val isInternal: Boolean) : KotlinClassFileViewProviderBase(manager, file, physical) {
-
-    override fun createFile(project: Project, file: VirtualFile, fileType: FileType): PsiFile? {
-        val fileIndex = ServiceManager.getService(project, javaClass<FileIndexFacade>())
-        if (!fileIndex.isInLibraryClasses(file) && fileIndex.isInSource(file)) {
-            return null
-        }
-
-        if (isInternal) return null
-
-        return KtClsFile(this)
-    }
-
-    override fun createCopy(copy: VirtualFile) = KotlinClassFileViewProvider(getManager(), copy, false, isInternal)
-}
-
-public class KotlinJavascriptMetaFileViewProvider (
-        manager: PsiManager,
-        val file: VirtualFile,
-        physical: Boolean,
-        val isInternal: Boolean) : KotlinClassFileViewProviderBase(manager, file, physical) {
-
-    //TODO: check index that file is library file, as in ClassFileViewProvider
-    override fun createFile(project: Project, file: VirtualFile, fileType: FileType) =
-        if (!isInternal) KotlinJavascriptMetaFile(this) else null
-
-    override fun createCopy(copy: VirtualFile) = KotlinJavascriptMetaFileViewProvider(getManager(), copy, false, isInternal)
 }

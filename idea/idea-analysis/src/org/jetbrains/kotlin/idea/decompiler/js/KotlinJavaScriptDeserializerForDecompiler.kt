@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.decompiler.textBuilder
+package org.jetbrains.kotlin.idea.decompiler.js
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.idea.decompiler.navigation.JsMetaFileUtils
+import org.jetbrains.kotlin.idea.decompiler.textBuilder.DeserializerForDecompilerBase
+import org.jetbrains.kotlin.idea.decompiler.textBuilder.ResolveEverythingToKotlinAnyLocalClassResolver
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.serialization.ClassDataWithSource
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
-import org.jetbrains.kotlin.serialization.js.KotlinJavascriptAnnotationAndConstantLoader
-import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializedResourcePaths
-import org.jetbrains.kotlin.serialization.js.toPackageData
+import org.jetbrains.kotlin.serialization.js.*
 import java.io.ByteArrayInputStream
 
 public class KotlinJavaScriptDeserializerForDecompiler(
@@ -80,5 +80,31 @@ public class KotlinJavaScriptDeserializerForDecompiler(
 
     companion object {
         private val LOG = Logger.getInstance(KotlinJavaScriptDeserializerForDecompiler::class.java)
+    }
+}
+
+class DirectoryBasedKotlinJavaScriptMetaFileFinder(
+        val packageDirectory: VirtualFile,
+        val directoryPackageFqName: FqName,
+        val nameResolver: NameResolver
+)  {
+    fun findKotlinJavascriptMetaFile(classId: ClassId): VirtualFile? {
+        if (classId.getPackageFqName() != directoryPackageFqName) return null
+
+        val targetName = classId.getRelativeClassName().pathSegments().joinToString(".", postfix = "." + KotlinJavascriptSerializationUtil.CLASS_METADATA_FILE_EXTENSION)
+        return packageDirectory.findChild(targetName)
+    }
+}
+
+class DirectoryBasedKotlinJavaScriptDataFinder(
+        val classFinder: DirectoryBasedKotlinJavaScriptMetaFileFinder,
+        val log: Logger
+) : ClassDataFinder {
+    override fun findClassData(classId: ClassId): ClassDataWithSource? {
+        val file = classFinder.findKotlinJavascriptMetaFile(classId) ?: return null
+
+        val content = file.contentsToByteArray(false)
+        val classData = content.toClassData(classFinder.nameResolver)
+        return ClassDataWithSource(classData)
     }
 }

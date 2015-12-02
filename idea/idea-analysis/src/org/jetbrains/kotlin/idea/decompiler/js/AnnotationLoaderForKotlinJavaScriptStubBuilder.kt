@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.decompiler
+package org.jetbrains.kotlin.idea.decompiler.js
 
 import com.google.protobuf.MessageLite
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.ClassIdWithTarget

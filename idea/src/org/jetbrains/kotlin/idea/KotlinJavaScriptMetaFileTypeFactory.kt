@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea
 
 import com.intellij.openapi.fileTypes.FileTypeConsumer
 import com.intellij.openapi.fileTypes.FileTypeFactory
-import org.jetbrains.kotlin.idea.decompiler.KotlinJavaScriptMetaFileType
+import org.jetbrains.kotlin.idea.decompiler.js.KotlinJavaScriptMetaFileType
 
 public class KotlinJavaScriptMetaFileTypeFactory : FileTypeFactory() {
     override fun createFileTypes(consumer: FileTypeConsumer) {

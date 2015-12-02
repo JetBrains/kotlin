@@ -14,20 +14,23 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.structureView
+package org.jetbrains.kotlin.idea.decompiler.js
 
-import com.intellij.ide.structureView.StructureViewBuilder
-import com.intellij.ide.structureView.StructureViewBuilderProvider
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.idea.decompiler.classFile.KtClsFile
+import org.jetbrains.kotlin.idea.decompiler.KotlinDecompiledFileViewProviderBase
 
-//TODO: workaround for bug in JavaClsStructureViewBuilderProvider, remove when IDEA api is updated
-public class KtClsStructureViewBuilderProvider : StructureViewBuilderProvider {
-    override fun getStructureViewBuilder(fileType: FileType, file: VirtualFile, project: Project): StructureViewBuilder? {
-        val psiFile = PsiManager.getInstance(project).findFile(file) as? KtClsFile ?: return null
-        return KotlinStructureViewFactory().getStructureViewBuilder(psiFile)
-    }
+public class KotlinJavascriptMetaFileViewProvider (
+        manager: PsiManager,
+        val file: VirtualFile,
+        physical: Boolean,
+        val isInternal: Boolean) : KotlinDecompiledFileViewProviderBase(manager, file, physical) {
+
+    //TODO: check index that file is library file, as in ClassFileViewProvider
+    override fun createFile(project: Project, file: VirtualFile, fileType: FileType) =
+        if (!isInternal) KotlinJavascriptMetaFile(this) else null
+
+    override fun createCopy(copy: VirtualFile) = KotlinJavascriptMetaFileViewProvider(getManager(), copy, false, isInternal)
 }
