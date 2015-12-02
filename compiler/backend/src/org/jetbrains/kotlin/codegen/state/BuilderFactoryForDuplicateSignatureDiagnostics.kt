@@ -53,8 +53,18 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
 
     // Avoid errors when some classes are not loaded for some reason
     private val typeMapper = JetTypeMapper(bindingContext, ClassBuilderMode.LIGHT_CLASSES, fileClassesProvider, incrementalCache, moduleName)
+    private val reportDiagnosticsTasks = ArrayList<() -> Unit>()
+
+    fun reportDiagnostics() {
+        reportDiagnosticsTasks.forEach { it() }
+        reportDiagnosticsTasks.clear()
+    }
 
     override fun handleClashingSignatures(data: ConflictingJvmDeclarationsData) {
+        reportDiagnosticsTasks.add { reportConflictingJvmSignatures(data) }
+    }
+
+    private fun reportConflictingJvmSignatures(data: ConflictingJvmDeclarationsData) {
         val noOwnImplementations = data.signatureOrigins.all { it.originKind in EXTERNAL_SOURCES_KINDS }
 
         val elements = LinkedHashSet<PsiElement>()
@@ -79,6 +89,14 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
     }
 
     override fun onClassDone(
+            classOrigin: JvmDeclarationOrigin,
+            classInternalName: String?,
+            signatures: MultiMap<RawSignature, JvmDeclarationOrigin>
+    ) {
+        reportDiagnosticsTasks.add { reportClashingSignaturesInHierarchy(classOrigin, classInternalName, signatures) }
+    }
+
+    private fun reportClashingSignaturesInHierarchy(
             classOrigin: JvmDeclarationOrigin,
             classInternalName: String?,
             signatures: MultiMap<RawSignature, JvmDeclarationOrigin>
@@ -165,7 +183,7 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
         return groupedBySignature
     }
 
-    public fun isOrOverridesSamAdapter(descriptor: CallableMemberDescriptor): Boolean {
+    private fun isOrOverridesSamAdapter(descriptor: CallableMemberDescriptor): Boolean {
         if (descriptor is SamAdapterDescriptor<*>) return true
 
         return descriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE
