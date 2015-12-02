@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.refactoring.pullUp
 
 import com.intellij.psi.PsiClass
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
@@ -46,7 +45,7 @@ fun KtNamedDeclaration.canMoveMemberToJavaClass(targetClass: PsiClass): Boolean 
             if (accessors.isNotEmpty() || delegateExpression != null) return false
             true
         }
-        is KtNamedFunction -> true
+        is KtNamedFunction -> valueParameters.all { it.defaultValue == null }
         else -> false
     }
 }

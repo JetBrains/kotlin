@@ -192,3 +192,9 @@ fun KtSecondaryConstructor.getOrCreateBody(): KtBlockExpression {
     val newBody = KtPsiFactory(this).createEmptyBody()
     return addAfter(newBody, anchor) as KtBlockExpression
 }
+
+fun KtParameter.dropDefaultValue() {
+    val from = equalsToken ?: return
+    val to = defaultValue ?: from
+    deleteChildRange(from, to)
+}

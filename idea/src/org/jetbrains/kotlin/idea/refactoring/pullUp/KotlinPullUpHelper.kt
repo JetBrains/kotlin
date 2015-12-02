@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
+import org.jetbrains.kotlin.idea.core.dropDefaultValue
 import org.jetbrains.kotlin.idea.core.refactoring.createJavaField
 import org.jetbrains.kotlin.idea.core.refactoring.createJavaMethod
 import org.jetbrains.kotlin.idea.core.refactoring.createPrimaryConstructorIfAbsent
@@ -360,6 +361,7 @@ class KotlinPullUpHelper(
         }
         else {
             member.addModifierWithSpace(KtTokens.OVERRIDE_KEYWORD)
+            (member as? KtNamedFunction)?.valueParameters?.forEach { it.dropDefaultValue() }
         }
     }
 
