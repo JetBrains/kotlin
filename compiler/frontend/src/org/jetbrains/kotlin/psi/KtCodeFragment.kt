@@ -107,7 +107,10 @@ public abstract class KtCodeFragment(
     }
 
     public fun importsAsImportList(): KtImportList? {
-        return KtPsiFactory(this).createFile(imports.joinToString("\n")).getImportList()
+        if (!imports.isEmpty() && context != null) {
+            return KtPsiFactory(this).createAnalyzableFile("imports_for_codeFragment.kt", imports.joinToString("\n"), context).importList
+        }
+        return null
     }
 
     override fun getImportDirectives(): List<KtImportDirective> {

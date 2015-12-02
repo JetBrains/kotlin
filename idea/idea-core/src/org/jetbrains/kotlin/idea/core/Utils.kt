@@ -97,6 +97,8 @@ public fun ImplicitReceiver.asExpression(resolutionScope: LexicalScope, psiFacto
 }
 
 public fun KtImportDirective.targetDescriptors(resolutionFacade: ResolutionFacade = this.getResolutionFacade()): Collection<DeclarationDescriptor> {
+    // For codeFragments imports are created in dummy file
+    if (this.getContainingKtFile().doNotAnalyze != null) return emptyList()
     val nameExpression = importedReference?.getQualifiedElementSelector() as? KtSimpleNameExpression ?: return emptyList()
     return nameExpression.mainReference.resolveToDescriptors(resolutionFacade.analyze(nameExpression))
 }
