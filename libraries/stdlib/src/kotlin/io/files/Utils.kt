@@ -366,8 +366,7 @@ public fun File.normalize(): File {
     for (file in components.fileList) {
         val name = file.toString()
         when (name) {
-            "." -> {
-            }
+            "." -> {}
             ".." -> if (!list.isEmpty() && list.get(list.size - 1) != "..") list.removeAt(list.size - 1) else list.add(name)
             else -> list.add(name)
         }
@@ -387,8 +386,8 @@ public fun File.normalize(): File {
 public fun File.resolve(relative: File): File {
     if (relative.root != null)
         return relative
-    val ourName = toString()
-    return if (ourName.endsWith(File.separatorChar)) File(ourName + relative) else File(ourName + File.separatorChar + relative)
+    val baseName = this.toString()
+    return if (baseName.isEmpty() || baseName.endsWith(File.separatorChar)) File(baseName + relative) else File(baseName + File.separatorChar + relative)
 }
 
 /**
@@ -409,8 +408,9 @@ public fun File.resolve(relative: String): File = resolve(File(relative))
  */
 public fun File.resolveSibling(relative: File): File {
     val components = filePathComponents()
+    val parentSubPath = if (components.size() == 0) File("..") else components.subPath(0, components.size() - 1)
     val rootName = components.rootName
-    return if (components.size() == 0) relative else File(rootName).resolve(components.subPath(0, components.size() - 1)).resolve(relative)
+    return File(rootName).resolve(parentSubPath).resolve(relative)
 }
 
 /**

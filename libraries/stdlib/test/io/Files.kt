@@ -235,6 +235,7 @@ class FilesTest {
                 File("C:\\home\\..\\documents\\..\\windows").normalize().separatorsToSystem())
         assertEquals(File("C:/windows"), File("C:/home/../documents/../windows").normalize())
         assertEquals(File("foo"), File("gav/bar/../../foo").normalize())
+        assertEquals(File("/../foo"), File("/bar/../../foo").normalize())
     }
 
     @test fun resolve() {
@@ -246,6 +247,14 @@ class FilesTest {
                 File("C:\\Users\\Me").resolve("Documents\\important.doc").separatorsToSystem())
         assertEquals(File("C:/Users/Me/Documents/important.doc"),
                 File("C:/Users/Me").resolve("Documents/important.doc"))
+
+        assertEquals(File(""), File("").resolve(""))
+        assertEquals(File("bar"), File("").resolve("bar"))
+        assertEquals(File("foo/bar"), File("foo").resolve("bar"))
+        // should it normalize such paths?
+//        assertEquals(File("bar"), File("foo").resolve("../bar"))
+//        assertEquals(File("../bar"), File("foo").resolve("../../bar"))
+//        assertEquals(File("foo/bar"), File("foo").resolve("./bar"))
     }
 
     @test fun resolveSibling() {
@@ -257,6 +266,8 @@ class FilesTest {
                 File("C:\\Users\\Me\\profile.ini").resolveSibling("Documents\\important.doc").separatorsToSystem())
         assertEquals(File("C:/Users/Me/Documents/important.doc"),
                 File("C:/Users/Me/profile.ini").resolveSibling("Documents/important.doc"))
+        assertEquals(File("gav"), File("foo").resolveSibling("gav"))
+        assertEquals(File("../gav"), File("").resolveSibling("gav"))
     }
 
     @test fun extension() {
