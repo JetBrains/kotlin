@@ -27,13 +27,14 @@ import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.vfs.VfsUtil;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.pom.java.LanguageLevel;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.testFramework.IdeaTestUtil;
+import com.intellij.util.ThrowableRunnable;
 import com.intellij.xdebugger.XDebugSession;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.asJava.FakeLightClassForFileOfPackage;
@@ -41,7 +42,6 @@ import org.jetbrains.kotlin.asJava.KtLightClassForFacade;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
-import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -61,9 +61,10 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
     private static boolean IS_TINY_APP_COMPILED = false;
 
     private static File CUSTOM_LIBRARY_JAR;
-    private final File CUSTOM_LIBRARY_SOURCES = new File(PluginTestCaseBase.getTestDataPathBase() + "/debugger/customLibraryForTinyApp");
+    private static final File CUSTOM_LIBRARY_SOURCES = new File(PluginTestCaseBase.getTestDataPathBase() + "/debugger/customLibraryForTinyApp");
 
-    private final ProjectDescriptorWithStdlibSources projectDescriptor = ProjectDescriptorWithStdlibSources.INSTANCE;
+    protected static final String KOTLIN_LIBRARY_NAME = "KotlinLibrary";
+    protected static final String CUSTOM_LIBRARY_NAME = "CustomLibrary";
 
     @Override
     protected OutputChecker initOutputChecker() {
@@ -82,19 +83,26 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
         super.setUp();
     }
 
-    private static void configureCustomLibrary(@NotNull ModifiableRootModel model, @NotNull VirtualFile customLibrarySources) {
+    private static void configureLibrary(@NotNull ModifiableRootModel model, @NotNull String libraryName, @NotNull File classes, @NotNull File sources) {
         NewLibraryEditor customLibEditor = new NewLibraryEditor();
-        customLibEditor.setName("CustomLibrary");
+        customLibEditor.setName(libraryName);
 
-        String customLibraryRoot = VfsUtil.getUrlForLibraryRoot(CUSTOM_LIBRARY_JAR);
-        customLibEditor.addRoot(customLibraryRoot, OrderRootType.CLASSES);
-        customLibEditor.addRoot(customLibrarySources, OrderRootType.SOURCES);
+        customLibEditor.addRoot(VfsUtil.getUrlForLibraryRoot(classes), OrderRootType.CLASSES);
+        customLibEditor.addRoot(VfsUtil.getUrlForLibraryRoot(sources), OrderRootType.SOURCES);
 
         ConfigLibraryUtil.addLibrary(customLibEditor, model);
     }
 
     @Override
     protected void tearDown() throws Exception {
+        EdtTestUtil.runInEdtAndWait(new ThrowableRunnable<Throwable>() {
+            @Override
+            public void run() throws Throwable {
+                ConfigLibraryUtil.removeLibrary(getModule(), CUSTOM_LIBRARY_NAME);
+                ConfigLibraryUtil.removeLibrary(getModule(), KOTLIN_LIBRARY_NAME);
+            }
+        });
+
         super.tearDown();
         VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory());
     }
@@ -130,14 +138,9 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override
             public void run() {
-                ModifiableRootModel model = ModuleRootManager.getInstance(getModule()).getModifiableModel();
-
-                projectDescriptor.configureModule(getModule(), model);
-
-                VirtualFile customLibrarySources = VfsUtil.findFileByIoFile(CUSTOM_LIBRARY_SOURCES, false);
-                assert customLibrarySources != null : "VirtualFile for customLibrary sources should be found";
-                configureCustomLibrary(model, customLibrarySources);
-
+                ModifiableRootModel model = ModuleRootManager.getInstance(myModule).getModifiableModel();
+                configureLibrary(model, CUSTOM_LIBRARY_NAME, CUSTOM_LIBRARY_JAR, CUSTOM_LIBRARY_SOURCES);
+                configureLibrary(model, KOTLIN_LIBRARY_NAME, ForTestCompileRuntime.runtimeJarForTests(), new File("libraries/stdlib/src"));
                 model.commit();
             }
         });
