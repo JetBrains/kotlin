@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import java.util.*
 import kotlin.test.assertTrue
+import kotlin.text.Regex
 
 // NOTE: in this file we collect only Kotlin-specific methods working with PSI and not modifying it
 
@@ -424,3 +425,10 @@ public fun KtExpression.getOutermostParenthesizerOrThis(): KtExpression {
 }
 
 public fun PsiElement.isFunctionalExpression(): Boolean = this is KtNamedFunction && nameIdentifier == null
+
+private val BAD_NEIGHBOUR_FOR_SIMPLE_TEMPLATE_ENTRY_PATTERN = Regex("[a-zA-Z0-9_].*")
+
+fun canPlaceAfterSimpleNameEntry(element: PsiElement?): Boolean {
+    val entryText = element?.text ?: return true
+    return !BAD_NEIGHBOUR_FOR_SIMPLE_TEMPLATE_ENTRY_PATTERN.matches(entryText)
+}

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.psi
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtNodeType
+import org.jetbrains.kotlin.psi.psiUtil.canPlaceAfterSimpleNameEntry
 
 public abstract class KtExpressionImpl(node: ASTNode) : KtElementImpl(node), KtExpression {
 
@@ -38,14 +39,33 @@ public abstract class KtExpressionImpl(node: ASTNode) : KtElementImpl(node), KtE
             val parent = expression.getParent()
 
             if (newElement is KtExpression) {
-                when (parent) {
-                    is KtExpression -> {
+                when {
+                    parent is KtStringTemplateEntryWithExpression &&
+                    newElement is KtStringTemplateExpression &&
+                    // Do not mix raw and non-raw templates
+                    parent.parent.firstChild.text == newElement.firstChild.text -> {
+                        val entriesToAdd = newElement.entries
+                        val templateExpression = parent.parent as KtStringTemplateExpression
+                        if (entriesToAdd.size > 0) {
+                            templateExpression.addRangeBefore(entriesToAdd.first(), entriesToAdd.last(), parent)
+                            val lastNewEntry = parent.prevSibling
+                            val nextElement = parent.nextSibling
+                            if (lastNewEntry is KtSimpleNameStringTemplateEntry &&
+                                lastNewEntry.expression != null &&
+                                !canPlaceAfterSimpleNameEntry(nextElement)) {
+                                lastNewEntry.replace(KtPsiFactory(expression).createBlockStringTemplateEntry(lastNewEntry.expression!!))
+                            }
+                        }
+                        parent.delete()
+                    }
+
+                    parent is KtExpression -> {
                         if (KtPsiUtil.areParenthesesNecessary(newElement, expression, parent)) {
                             return rawReplaceHandler(KtPsiFactory(expression).createExpressionByPattern("($0)", newElement))
                         }
                     }
 
-                    is KtSimpleNameStringTemplateEntry -> {
+                    parent is KtSimpleNameStringTemplateEntry -> {
                         if (newElement !is KtSimpleNameExpression) {
                             val newEntry = parent.replace(KtPsiFactory(expression).createBlockStringTemplateEntry(newElement)) as KtBlockStringTemplateEntry
                             return newEntry.getExpression()!!
