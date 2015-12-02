@@ -288,7 +288,7 @@ fun Pseudocode.getElementValuesRecursively(element: KtElement): List<PseudoValue
 
 public fun KtElement.getContainingPseudocode(context: BindingContext): Pseudocode? {
     val pseudocodeDeclaration =
-            PsiTreeUtil.getParentOfType(this, javaClass<KtDeclarationWithBody>(), javaClass<KtClassOrObject>())
+            PsiTreeUtil.getParentOfType(this, javaClass<KtDeclarationWithBody>(), javaClass<KtClassOrObject>(), javaClass<KtScript>())
             ?: getNonStrictParentOfType<KtProperty>()
             ?: return null
 

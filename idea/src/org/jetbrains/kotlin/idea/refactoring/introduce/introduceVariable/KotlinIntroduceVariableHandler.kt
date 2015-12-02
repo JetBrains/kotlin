@@ -332,7 +332,8 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
     }
 
     private fun KtExpression.shouldReplaceOccurrence(bindingContext: BindingContext, container: PsiElement?): Boolean {
-        return isUsedAsExpression(bindingContext) || container != parent
+        val effectiveParent = (parent as? KtScriptInitializer)?.parent ?: parent
+        return isUsedAsExpression(bindingContext) || container != effectiveParent
     }
 
     private fun KtElement.getContainer(): KtElement? {

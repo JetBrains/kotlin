@@ -58,7 +58,7 @@ public class KotlinIntroducePropertyHandler(
                 editor,
                 file,
                 { elements, parent ->
-                    parent.getExtractionContainers(strict = true, includeAll = true).filter { it is KtClassBody || it is KtFile }
+                    parent.getExtractionContainers(strict = true, includeAll = true).filter { it is KtClassBody || (it is KtFile && !it.isScript) }
                 },
                 continuation
         )

@@ -600,10 +600,8 @@ private fun ExtractionData.getLocalInstructions(pseudocode: Pseudocode): List<In
 }
 
 fun ExtractionData.isVisibilityApplicable(): Boolean {
-    return when (targetSibling.parent) {
-        is KtClassBody, is KtFile -> true
-        else -> false
-    }
+    val parent = targetSibling.parent
+    return parent is KtClassBody || (parent is KtFile && !parent.isScript)
 }
 
 fun ExtractionData.getDefaultVisibility(): String {
