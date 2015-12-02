@@ -21,6 +21,8 @@ import com.intellij.execution.TestStateStorage
 import com.intellij.execution.lineMarker.ExecutorAction
 import com.intellij.execution.lineMarker.RunLineMarkerContributor
 import com.intellij.execution.testframework.TestIconMapper
+import com.intellij.execution.testframework.sm.runner.states.TestStateInfo
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.asJava.KtLightClass
@@ -35,9 +37,16 @@ import javax.swing.Icon
 
 class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
     private fun getTestStateIcon(url: String, project: Project): Icon? {
-        val state = TestStateStorage.getInstance(project).getState(url) ?: return null
+        val defaultIcon = AllIcons.RunConfigurations.TestState.Run
+        val state = TestStateStorage.getInstance(project).getState(url) ?: return defaultIcon
         val magnitude = TestIconMapper.getMagnitude(state.magnitude)
-        return TestIconMapper.getIcon(magnitude)
+        return when (magnitude) {
+            TestStateInfo.Magnitude.ERROR_INDEX,
+            TestStateInfo.Magnitude.FAILED_INDEX -> AllIcons.RunConfigurations.TestState.Red2
+            TestStateInfo.Magnitude.PASSED_INDEX,
+            TestStateInfo.Magnitude.COMPLETE_INDEX -> AllIcons.RunConfigurations.TestState.Green2
+            else -> defaultIcon
+        }
     }
 
     override fun getInfo(element: PsiElement): RunLineMarkerContributor.Info? {
