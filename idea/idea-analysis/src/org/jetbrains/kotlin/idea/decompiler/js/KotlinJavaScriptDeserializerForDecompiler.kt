@@ -20,12 +20,14 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DeserializerForDecompilerBase
+import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.ResolveEverythingToKotlinAnyLocalClassResolver
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.serialization.ClassData
 import org.jetbrains.kotlin.serialization.ClassDataWithSource
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
@@ -48,13 +50,13 @@ public class KotlinJavaScriptDeserializerForDecompiler(
 
     private val metaFileFinder = DirectoryBasedKotlinJavaScriptMetaFileFinder(packageDirectory, directoryPackageFqName, nameResolver)
 
-    override val classDataFinder = DirectoryBasedKotlinJavaScriptDataFinder(metaFileFinder, LOG)
+    private val classDataFinder = DirectoryBasedKotlinJavaScriptDataFinder(metaFileFinder, LOG)
 
-    override val annotationAndConstantLoader = KotlinJavascriptAnnotationAndConstantLoader(moduleDescriptor)
+    private val annotationAndConstantLoader = KotlinJavascriptAnnotationAndConstantLoader(moduleDescriptor)
 
     override val deserializationComponents = DeserializationComponents(
             storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
-            ResolveEverythingToKotlinAnyLocalClassResolver(targetPlatform.builtIns), ErrorReporter.DO_NOTHING,
+            ResolveEverythingToKotlinAnyLocalClassResolver(targetPlatform.builtIns), LoggingErrorReporter(LOG),
             LookupTracker.DO_NOTHING, FlexibleTypeCapabilitiesDeserializer.Dynamic, ClassDescriptorFactory.EMPTY
     )
 
@@ -70,10 +72,8 @@ public class KotlinJavaScriptDeserializerForDecompiler(
         }
 
         val content = file.contentsToByteArray(false)
-        val (nameResolver, packageProto) = content.toPackageData(nameResolver)
-
         val membersScope = DeserializedPackageMemberScope(
-                createDummyPackageFragment(packageFqName), packageProto, nameResolver, deserializationComponents
+                createDummyPackageFragment(packageFqName), content.toPackageProto(), nameResolver, deserializationComponents
         ) { emptyList() }
         return membersScope.getContributedDescriptors()
     }
@@ -87,7 +87,7 @@ class DirectoryBasedKotlinJavaScriptMetaFileFinder(
         val packageDirectory: VirtualFile,
         val directoryPackageFqName: FqName,
         val nameResolver: NameResolver
-)  {
+) {
     fun findKotlinJavascriptMetaFile(classId: ClassId): VirtualFile? {
         if (classId.getPackageFqName() != directoryPackageFqName) return null
 
@@ -104,7 +104,6 @@ class DirectoryBasedKotlinJavaScriptDataFinder(
         val file = classFinder.findKotlinJavascriptMetaFile(classId) ?: return null
 
         val content = file.contentsToByteArray(false)
-        val classData = content.toClassData(classFinder.nameResolver)
-        return ClassDataWithSource(classData)
+        return ClassDataWithSource(ClassData(classFinder.nameResolver, content.toClassProto()))
     }
 }

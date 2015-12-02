@@ -36,9 +36,7 @@ import org.jetbrains.kotlin.utils.concurrent.block.LockedClearableLazyValue
 import java.util.*
 
 public class KtClsFile(provider: KotlinDecompiledFileViewProviderBase) : KtDecompiledFileBase(provider) {
-    protected override val decompiledText: LockedClearableLazyValue<DecompiledText> = LockedClearableLazyValue(Any()) {
-        buildDecompiledTextForClassFile(virtualFile)
-    }
+    override fun buildDecompiledText() = buildDecompiledTextForClassFile(virtualFile)
 }
 
 private val descriptorRendererForClassFileDecompiler = DescriptorRenderer.withOptions {

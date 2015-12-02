@@ -46,10 +46,6 @@ public abstract class DeserializerForDecompilerBase(
 
     protected abstract val targetPlatform: TargetPlatform
 
-    protected abstract val classDataFinder: ClassDataFinder
-
-    protected abstract val annotationAndConstantLoader: AnnotationAndConstantLoader<AnnotationDescriptor, ConstantValue<*>, AnnotationWithTarget>
-
     protected val storageManager: StorageManager = LockBasedStorageManager.NO_LOCKS
 
     protected val moduleDescriptor: ModuleDescriptorImpl = createDummyModule("module for building decompiled sources")

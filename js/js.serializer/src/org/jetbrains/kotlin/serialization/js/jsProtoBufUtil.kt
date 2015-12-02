@@ -16,21 +16,16 @@
 
 package org.jetbrains.kotlin.serialization.js
 
-import org.jetbrains.kotlin.serialization.ClassData
-import org.jetbrains.kotlin.serialization.PackageData
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import java.io.ByteArrayInputStream
 
-public fun ByteArray.toPackageData(nameResolver: NameResolver): PackageData {
+public fun ByteArray.toPackageProto(): ProtoBuf.Package {
     val registry = KotlinJavascriptSerializedResourcePaths.extensionRegistry
-    val packageProto = ProtoBuf.Package.parseFrom(ByteArrayInputStream(this), registry)
-    return PackageData(nameResolver, packageProto)
+    return ProtoBuf.Package.parseFrom(ByteArrayInputStream(this), registry)!!
 }
 
-public fun ByteArray.toClassData(nameResolver: NameResolver): ClassData {
+public fun ByteArray.toClassProto(): ProtoBuf.Class {
     val registry = KotlinJavascriptSerializedResourcePaths.extensionRegistry
-    val classProto = ProtoBuf.Class.parseFrom(ByteArrayInputStream(this), registry)
-    return ClassData(nameResolver, classProto)
+    return ProtoBuf.Class.parseFrom(ByteArrayInputStream(this), registry)
 }
 

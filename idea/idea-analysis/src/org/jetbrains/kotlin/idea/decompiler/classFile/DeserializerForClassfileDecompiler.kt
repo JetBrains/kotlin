@@ -51,11 +51,11 @@ public class DeserializerForClassfileDecompiler(
 
     private val classFinder = DirectoryBasedClassFinder(packageDirectory, directoryPackageFqName)
 
-    override val classDataFinder = DirectoryBasedDataFinder(classFinder, LOG)
+    private val classDataFinder = DirectoryBasedDataFinder(classFinder, LOG)
 
     private val errorReporter = LoggingErrorReporter(LOG)
 
-    override val annotationAndConstantLoader =
+    private val annotationAndConstantLoader =
             BinaryClassAnnotationAndConstantLoaderImpl(moduleDescriptor, storageManager, classFinder, errorReporter)
 
     override val deserializationComponents: DeserializationComponents = DeserializationComponents(
