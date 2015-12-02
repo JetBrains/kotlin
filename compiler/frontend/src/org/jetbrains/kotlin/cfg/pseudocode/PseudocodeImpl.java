@@ -465,41 +465,24 @@ public class PseudocodeImpl implements Pseudocode {
         return result;
     }
 
-    // TODO: extract common part from repeatWhole and repeatPart
-    private void repeatWhole(PseudocodeImpl originalPseudocode) {
-        Map<Label, Label> originalToCopy = Maps.newLinkedHashMap();
-        Multimap<Instruction, Label> originalLabelsForInstruction = HashMultimap.create();
-        int labelCount = 0;
-        for (PseudocodeLabel label : originalPseudocode.labels) {
-            originalToCopy.put(label, label.copy(labelCount++));
-            originalLabelsForInstruction.put(getJumpTarget(label), label);
-        }
-        for (Label label : originalToCopy.values()) {
-            labels.add((PseudocodeLabel) label);
-        }
-        for (Instruction originalInstruction : originalPseudocode.mutableInstructionList) {
-            repeatLabelsBindingForInstruction(originalInstruction, originalToCopy, originalLabelsForInstruction);
-            Instruction copy = copyInstruction(originalInstruction, originalToCopy);
-            addInstruction(copy);
-            if (originalInstruction == originalPseudocode.errorInstruction && copy instanceof SubroutineExitInstruction) {
-                errorInstruction = (SubroutineExitInstruction) copy;
-            }
-            if (originalInstruction == originalPseudocode.exitInstruction && copy instanceof SubroutineExitInstruction) {
-                exitInstruction = (SubroutineExitInstruction) copy;
-            }
-            if (originalInstruction == originalPseudocode.sinkInstruction && copy instanceof SubroutineSinkInstruction) {
-                sinkInstruction = (SubroutineSinkInstruction) copy;
-            }
-        }
+    private void repeatWhole(@NotNull PseudocodeImpl originalPseudocode) {
+        repeatInternal(originalPseudocode, null, null, 0);
         parent = originalPseudocode.parent;
     }
 
     public int repeatPart(@NotNull Label startLabel, @NotNull Label finishLabel, int labelCount) {
-        PseudocodeImpl originalPseudocode = ((PseudocodeLabel) startLabel).getPseudocode();
+        return repeatInternal(((PseudocodeLabel) startLabel).getPseudocode(), startLabel, finishLabel, labelCount);
+    }
 
-        Integer startIndex = ((PseudocodeLabel) startLabel).getTargetInstructionIndex();
+    private int repeatInternal(
+            @NotNull PseudocodeImpl originalPseudocode,
+            @Nullable Label startLabel, @Nullable Label finishLabel,
+            int labelCount) {
+        Integer startIndex = startLabel != null ? ((PseudocodeLabel) startLabel).getTargetInstructionIndex() : Integer.valueOf(0);
         assert startIndex != null;
-        Integer finishIndex = ((PseudocodeLabel) finishLabel).getTargetInstructionIndex();
+        Integer finishIndex = finishLabel != null
+                              ? ((PseudocodeLabel) finishLabel).getTargetInstructionIndex()
+                              : Integer.valueOf(originalPseudocode.mutableInstructionList.size());
         assert finishIndex != null;
 
         Map<Label, Label> originalToCopy = Maps.newLinkedHashMap();
@@ -520,11 +503,23 @@ public class PseudocodeImpl implements Pseudocode {
         for (int index = startIndex; index < finishIndex; index++) {
             Instruction originalInstruction = originalPseudocode.mutableInstructionList.get(index);
             repeatLabelsBindingForInstruction(originalInstruction, originalToCopy, originalLabelsForInstruction);
-            addInstruction(copyInstruction(originalInstruction, originalToCopy));
+            Instruction copy = copyInstruction(originalInstruction, originalToCopy);
+            addInstruction(copy);
+            if (originalInstruction == originalPseudocode.errorInstruction && copy instanceof SubroutineExitInstruction) {
+                errorInstruction = (SubroutineExitInstruction) copy;
+            }
+            if (originalInstruction == originalPseudocode.exitInstruction && copy instanceof SubroutineExitInstruction) {
+                exitInstruction = (SubroutineExitInstruction) copy;
+            }
+            if (originalInstruction == originalPseudocode.sinkInstruction && copy instanceof SubroutineSinkInstruction) {
+                sinkInstruction = (SubroutineSinkInstruction) copy;
+            }
         }
-        repeatLabelsBindingForInstruction(originalPseudocode.mutableInstructionList.get(finishIndex),
-                                          originalToCopy,
-                                          originalLabelsForInstruction);
+        if (finishIndex < mutableInstructionList.size()) {
+            repeatLabelsBindingForInstruction(originalPseudocode.mutableInstructionList.get(finishIndex),
+                                              originalToCopy,
+                                              originalLabelsForInstruction);
+        }
         return labelCount;
     }
 
