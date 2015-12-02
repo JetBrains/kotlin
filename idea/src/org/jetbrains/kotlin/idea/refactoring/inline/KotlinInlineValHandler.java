@@ -150,7 +150,7 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         if (canHighlight) {
             highlightExpressions(project, editor, referenceExpressions);
         }
-        if (!showDialog(project, name, referenceExpressions)) {
+        if (!showDialog(project, name, val, referenceExpressions)) {
             if (canHighlight) {
                 StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
                 if (statusBar != null) {
@@ -250,15 +250,20 @@ public class KotlinInlineValHandler extends InlineActionHandler {
         return result;
     }
 
-    private static boolean showDialog(Project project, String name, List<KtExpression> referenceExpressions) {
+    private static boolean showDialog(
+            Project project,
+            String name,
+            KtProperty property,
+            List<KtExpression> referenceExpressions
+    ) {
         if (ApplicationManager.getApplication().isUnitTestMode()) {
             return true;
         }
 
+        String kind = property.isLocal() ? "local variable" : "property";
         RefactoringMessageDialog dialog = new RefactoringMessageDialog(
                 RefactoringBundle.message("inline.variable.title"),
-                RefactoringBundle.message("inline.local.variable.prompt", name) + " " +
-                                  RefactoringBundle.message("occurences.string", referenceExpressions.size()),
+                "Inline " + kind + " '" + name + "'? " + RefactoringBundle.message("occurences.string", referenceExpressions.size()),
                 HelpID.INLINE_VARIABLE,
                 "OptionPane.questionIcon",
                 true,
