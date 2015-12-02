@@ -151,9 +151,16 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
             val containingFile = elementAt.containingFile
             if (containingFile !is KtFile) return null
 
-            var result = PsiTreeUtil.findElementOfClassAtOffset(containingFile, elementAt.textOffset, javaClass<KtExpression>(), false)
+            // elementAt can be PsiWhiteSpace when codeFragment is created from line start offset (in case of first opening EE window)
+            val lineStartOffset = if (elementAt is PsiWhiteSpace || elementAt is PsiComment) {
+                PsiTreeUtil.skipSiblingsForward(elementAt, PsiWhiteSpace::class.java, PsiComment::class.java)?.textOffset ?: elementAt.textOffset
+            } else {
+                elementAt.textOffset
+            }
+
+            var result = PsiTreeUtil.findElementOfClassAtOffset(containingFile, lineStartOffset, javaClass<KtExpression>(), false)
             if (result.check()) {
-                return CodeInsightUtils.getTopmostElementAtOffset(result!!, result.textOffset, KtExpression::class.java)
+                return CodeInsightUtils.getTopmostElementAtOffset(result!!, lineStartOffset, KtExpression::class.java)
             }
 
             result = KotlinEditorTextProvider.findExpressionInner(elementAt, true)
