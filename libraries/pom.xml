@@ -85,7 +85,6 @@
         <!--NB! kotlin-js-library should be built before kotlin-gradle-plugin-->
         <!--because it is used in tests but cannot be added as test-dependency-->
         <!--(kotlin-gradle-plugin module will be recognized as kotlin-js module)-->
-        <module>tools/idl2k</module>
         <module>tools/kotlin-js-library</module>
         <module>tools/kotlin-annotation-processing</module>
         <module>examples/annotation-processor-example</module>
