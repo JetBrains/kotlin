@@ -96,7 +96,9 @@ fun getAllRelativePaths(dir: File): Set<String> {
     return result
 }
 
-fun assertEqualDirectories(expected: File, actual: File, forgiveExtraFiles: Boolean) {
+@JvmOverloads
+fun assertEqualDirectories(expected: File, actual: File, forgiveExtraFiles: Boolean,
+                           beforeCompare: ((String, String) -> Pair<String, String>)? = null) {
     val pathsInExpected = getAllRelativePaths(expected)
     val pathsInActual = getAllRelativePaths(actual)
 
@@ -123,7 +125,13 @@ fun assertEqualDirectories(expected: File, actual: File, forgiveExtraFiles: Bool
         }
     }
 
-    assertEquals(expectedString, actualString.replace("467751f0", "82c9721f"))
+    if (beforeCompare == null) {
+        assertEquals(expectedString, actualString)
+    }
+    else {
+        val (expectedProcessed, actualProcessed) = beforeCompare(expectedString, actualString)
+        assertEquals(expectedProcessed, actualProcessed)
+    }
 }
 
 fun classFileToString(classFile: File): String {
