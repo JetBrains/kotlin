@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.jps.incremental.getKotlinCache
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.keysToMap
+import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
@@ -106,14 +107,25 @@ public abstract class AbstractIncrementalJpsTest(
         Logger.getRootLogger().addAppender(console)
     }
 
+    private val systemPropertiesBackup = run {
+        val props = System.getProperties()
+        val output = ByteArrayOutputStream()
+        props.store(output, "System properties backup")
+        output.toByteArray()
+    }
+
+    private fun restoreSystemProperties() {
+        val input = ByteArrayInputStream(systemPropertiesBackup)
+        val props = Properties()
+        props.load(input)
+        System.setProperties(props)
+    }
+
     override fun setUp() {
         super.setUp()
         System.setProperty("kotlin.jps.tests", "true")
         lookupsDuringTest = hashSetOf()
-
-        if (enableExperimentalIncrementalCompilation) {
-            IncrementalCompilation.enableExperimental()
-        }
+        IncrementalCompilation.setIsExperimental(enableExperimentalIncrementalCompilation)
 
         if (DEBUG_LOGGING_ENABLED) {
             enableDebugLogging()
@@ -121,12 +133,7 @@ public abstract class AbstractIncrementalJpsTest(
     }
 
     override fun tearDown() {
-        System.clearProperty("kotlin.jps.tests")
-
-        if (enableExperimentalIncrementalCompilation) {
-            IncrementalCompilation.disableExperimental()
-        }
-
+        restoreSystemProperties()
         super.tearDown()
     }
 

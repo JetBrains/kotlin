@@ -33,16 +33,11 @@ public abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJps
         get() = "expected-kotlin-caches.txt"
 
     override fun doTest(testDataPath: String) {
-        try {
-            super.doTest(testDataPath)
+        super.doTest(testDataPath)
 
-            val actual = dumpKotlinCachesFileNames()
-            val expectedFile = File(testDataPath, expectedCachesFileName)
-            UsefulTestCase.assertSameLinesWithFile(expectedFile.canonicalPath, actual)
-        }
-        finally {
-            IncrementalCompilation.enableIncrementalCompilation()
-        }
+        val actual = dumpKotlinCachesFileNames()
+        val expectedFile = File(testDataPath, expectedCachesFileName)
+        UsefulTestCase.assertSameLinesWithFile(expectedFile.canonicalPath, actual)
     }
 
     override fun performAdditionalModifications(modifications: List<AbstractIncrementalJpsTest.Modification>) {
@@ -55,20 +50,10 @@ public abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJps
 
             when {
                 name.endsWith("incremental-compilation") -> {
-                    if (modification.dataFile.readAsBool()) {
-                        IncrementalCompilation.enableIncrementalCompilation()
-                    }
-                    else {
-                        IncrementalCompilation.disableIncrementalCompilation()
-                    }
+                    IncrementalCompilation.setIsEnabled(modification.dataFile.readAsBool())
                 }
                 name.endsWith("experimental-compilation") -> {
-                    if (modification.dataFile.readAsBool()) {
-                        IncrementalCompilation.enableExperimental()
-                    }
-                    else {
-                        IncrementalCompilation.disableExperimental()
-                    }
+                    IncrementalCompilation.setIsExperimental(modification.dataFile.readAsBool())
                 }
             }
         }
