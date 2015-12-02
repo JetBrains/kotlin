@@ -31,22 +31,12 @@ public class IncrementalCompilation {
     }
 
     @TestOnly
-    public static void disableIncrementalCompilation() {
-        System.setProperty(INCREMENTAL_COMPILATION_PROPERTY, "false");
+    public static void setIsEnabled(boolean value) {
+        System.setProperty(INCREMENTAL_COMPILATION_PROPERTY, String.valueOf(value));
     }
 
     @TestOnly
-    public static void enableIncrementalCompilation() {
-        System.setProperty(INCREMENTAL_COMPILATION_PROPERTY, "true");
-    }
-
-    @TestOnly
-    public static void disableExperimental() {
-        System.setProperty(IS_EXPERIMENTAL_PROPERTY, "false");
-    }
-
-    @TestOnly
-    public static void enableExperimental() {
-        System.setProperty(IS_EXPERIMENTAL_PROPERTY, "true");
+    public static void setIsExperimental(boolean value) {
+        System.setProperty(IS_EXPERIMENTAL_PROPERTY, String.valueOf(value));
     }
 }
