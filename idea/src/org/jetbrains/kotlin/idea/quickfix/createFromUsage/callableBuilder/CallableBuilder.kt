@@ -938,6 +938,8 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
             val declaration = declarationPointer.getElement()!!
 
+            val declarationMarker = containingFileEditor.document.createRangeMarker(declaration.textRange)
+
             val builder = TemplateBuilderImpl(jetFileToEdit)
             if (declaration is KtProperty) {
                 setupValVarTemplate(builder, declaration)
@@ -979,10 +981,10 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         if (brokenOff && !ApplicationManager.getApplication().isUnitTestMode()) return
 
                         // file templates
-                        val newDeclaration = if (templateImpl.getSegmentsCount() > 0) {
-                            PsiTreeUtil.findElementOfClassAtOffset(jetFileToEdit, templateImpl.getSegmentOffset(0), declaration.javaClass, false)!!
-                        }
-                        else declarationPointer.getElement()!!
+                        val newDeclaration = PsiTreeUtil.findElementOfClassAtOffset(jetFileToEdit,
+                                                                                    declarationMarker.startOffset,
+                                                                                    declaration.javaClass,
+                                                                                    false) ?: return
 
                         runWriteAction {
                             // file templates
@@ -1004,6 +1006,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         }
                     }
                     finally {
+                        declarationMarker.dispose()
                         finished = true
                         onFinish()
                     }
