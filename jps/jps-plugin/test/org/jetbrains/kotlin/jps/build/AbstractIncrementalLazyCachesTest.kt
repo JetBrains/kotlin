@@ -22,8 +22,8 @@ import org.jetbrains.jps.builders.storage.BuildDataPaths
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.jps.incremental.CacheVersion
 import org.jetbrains.kotlin.jps.incremental.CacheVersionProvider
+import org.jetbrains.kotlin.jps.incremental.KOTLIN_CACHE_DIRECTORY_NAME
 import org.jetbrains.kotlin.jps.incremental.KotlinDataContainerTarget
-import org.jetbrains.kotlin.jps.incremental.getCacheDirectoryName
 import org.jetbrains.kotlin.jps.incremental.storage.BasicMapsOwner
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
@@ -95,7 +95,7 @@ public abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJps
 
         for (target in targets.sortedBy { it.presentableName }) {
             dumpCachesForTarget(p, paths, target, versions.normalVersion(target), versions.experimentalVersion(target),
-                                subdirectory = getCacheDirectoryName())
+                                subdirectory = KOTLIN_CACHE_DIRECTORY_NAME)
         }
 
         return sb.toString()

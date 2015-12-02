@@ -52,11 +52,7 @@ import java.io.File
 import java.security.MessageDigest
 import java.util.*
 
-internal val CACHE_DIRECTORY_NAME = "kotlin"
-
-@TestOnly
-public fun getCacheDirectoryName(): String =
-        CACHE_DIRECTORY_NAME
+val KOTLIN_CACHE_DIRECTORY_NAME = "kotlin"
 
 public class IncrementalCacheImpl(
         private val target: ModuleBuildTarget,
@@ -77,7 +73,7 @@ public class IncrementalCacheImpl(
         private val MODULE_MAPPING_FILE_NAME = "." + ModuleMapping.MAPPING_FILE_EXT
     }
 
-    private val baseDir = File(paths.getTargetDataRoot(target), CACHE_DIRECTORY_NAME)
+    private val baseDir = File(paths.getTargetDataRoot(target), KOTLIN_CACHE_DIRECTORY_NAME)
     private val cacheVersionProvider = CacheVersionProvider(paths)
 
     private val String.storageFile: File
