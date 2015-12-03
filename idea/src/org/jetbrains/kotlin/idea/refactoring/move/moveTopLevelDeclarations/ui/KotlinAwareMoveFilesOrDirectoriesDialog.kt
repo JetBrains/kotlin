@@ -25,7 +25,6 @@ import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.fileChooser.FileChooserFactory
 import com.intellij.openapi.help.HelpManager
 import com.intellij.openapi.keymap.KeymapUtil
-import com.intellij.openapi.project.DumbModePermission
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
@@ -167,7 +166,7 @@ public class KotlinAwareMoveFilesOrDirectoriesDialog(
     }
 
     override fun doOKAction() {
-        PropertiesComponent.getInstance().setValue(MOVE_FILES_OPEN_IN_EDITOR, openInEditorCb.isSelected, true)
+        PropertiesComponent.getInstance().setValue(MOVE_FILES_OPEN_IN_EDITOR, openInEditorCb.isSelected.toString(), true.toString())
         RecentsManager.getInstance(project).registerRecentEntry(RECENT_KEYS, targetDirectoryField.childComponent.text)
 
         if (DumbService.isDumb(project)) {
@@ -176,27 +175,25 @@ public class KotlinAwareMoveFilesOrDirectoriesDialog(
         }
 
         project.executeCommand(RefactoringBundle.message("move.title"), null) {
-            DumbService.allowStartingDumbModeInside(DumbModePermission.MAY_START_MODAL) {
-                runWriteAction {
-                    val directoryName = targetDirectoryField.childComponent.text.replace(File.separatorChar, '/')
-                    try {
-                        targetDirectory = DirectoryUtil.mkdirs(PsiManager.getInstance(project), directoryName)
-                    }
-                    catch (e: IncorrectOperationException) {
-                        // ignore
-                    }
+            runWriteAction {
+                val directoryName = targetDirectoryField.childComponent.text.replace(File.separatorChar, '/')
+                try {
+                    targetDirectory = DirectoryUtil.mkdirs(PsiManager.getInstance(project), directoryName)
                 }
-
-                if (targetDirectory == null) {
-                    CommonRefactoringUtil.showErrorMessage(title,
-                                                           RefactoringBundle.message("cannot.create.directory"),
-                                                           helpID,
-                                                           project)
-                    return@allowStartingDumbModeInside
+                catch (e: IncorrectOperationException) {
+                    // ignore
                 }
-
-                callback(this@KotlinAwareMoveFilesOrDirectoriesDialog)
             }
+
+            if (targetDirectory == null) {
+                CommonRefactoringUtil.showErrorMessage(title,
+                                                       RefactoringBundle.message("cannot.create.directory"),
+                                                       helpID,
+                                                       project)
+                return@executeCommand
+            }
+
+            callback(this@KotlinAwareMoveFilesOrDirectoriesDialog)
         }
     }
 }
