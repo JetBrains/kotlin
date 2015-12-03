@@ -16,12 +16,13 @@
 
 package org.jetbrains.kotlin.android
 
-import org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin
-import org.gradle.api.Project
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.AndroidSourceSet
+import org.gradle.api.Project
 import org.gradle.api.tasks.compile.AbstractCompile
+import org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
+import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
 import org.w3c.dom.Document
 import java.io.File
 import javax.xml.parsers.DocumentBuilderFactory
@@ -48,7 +49,7 @@ public class AndroidSubplugin : KotlinGradleSubplugin {
 
         addVariant(mainSourceSet)
 
-        val flavorSourceSets = androidExtension.productFlavors.map { sourceSets.findByName(it.name) }.filterNotNull()
+        val flavorSourceSets = AndroidGradleWrapper.getProductFlavorsSourceSets(androidExtension).filterNotNull()
         for (sourceSet in flavorSourceSets) {
             addVariant(sourceSet)
         }
