@@ -16,74 +16,81 @@
 
 package org.jetbrains.kotlin.idea.run;
 
-import com.intellij.execution.ui.AlternativeJREPanel;
+import com.intellij.application.options.ModulesComboBox;
+import com.intellij.execution.JavaExecutionUtil;
 import com.intellij.execution.ui.CommonJavaParametersPanel;
 import com.intellij.execution.ui.ConfigurationModuleSelector;
+import com.intellij.execution.ui.DefaultJreSelector;
+import com.intellij.execution.ui.JrePathEditor;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.LabeledComponent;
+import com.intellij.psi.PsiClass;
 import com.intellij.ui.PanelWithAnchor;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class JetRunConfigurationEditor extends SettingsEditor<JetRunConfiguration> implements PanelWithAnchor {
-    private JPanel myMainPanel;
-    private JTextField myMainClassField;
-    private JPanel myModuleChooserHolder;
-    private CommonJavaParametersPanel myCommonProgramParameters;
-    private AlternativeJREPanel alternativeJREPanel;
+    private JPanel mainPanel;
     private LabeledComponent<JTextField> mainClass;
-    private final ConfigurationModuleSelector myModuleSelector;
+
+    private CommonJavaParametersPanel commonProgramParameters;
+    private LabeledComponent<ModulesComboBox> moduleChooser;
+    private JrePathEditor jrePathEditor;
+
+    private final ConfigurationModuleSelector moduleSelector;
     private JComponent anchor;
-    private final LabeledComponent<JComboBox> moduleChooser;
 
     public JetRunConfigurationEditor(Project project) {
-        moduleChooser = LabeledComponent.create(new JComboBox(), "Use classpath of module:");
-        moduleChooser.setLabelLocation(BorderLayout.WEST);
-        myModuleChooserHolder.add(moduleChooser, BorderLayout.CENTER);
-        myModuleSelector = new ConfigurationModuleSelector(project, moduleChooser.getComponent());
-        myCommonProgramParameters.setModuleContext(myModuleSelector.getModule());
+        moduleSelector = new ConfigurationModuleSelector(project, moduleChooser.getComponent());
+        jrePathEditor.setDefaultJreSelector(DefaultJreSelector.fromModuleDependencies(moduleChooser.getComponent(), false));
+        commonProgramParameters.setModuleContext(moduleSelector.getModule());
         moduleChooser.getComponent().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                myCommonProgramParameters.setModuleContext(myModuleSelector.getModule());
+                commonProgramParameters.setModuleContext(moduleSelector.getModule());
             }
         });
 
-        anchor = UIUtil.mergeComponentsWithAnchor(mainClass, myCommonProgramParameters, alternativeJREPanel, moduleChooser);
-    }
-
-    @Override
-    protected void resetEditorFrom(JetRunConfiguration configuration) {
-        myCommonProgramParameters.reset(configuration);
-        myMainClassField.setText(configuration.getRunClass() == null ? null : configuration.getRunClass());
-        myModuleSelector.reset(configuration);
-        alternativeJREPanel.init(configuration.getAlternativeJrePath(), configuration.isAlternativeJrePathEnabled());
+        anchor = UIUtil.mergeComponentsWithAnchor(mainClass, commonProgramParameters, jrePathEditor, jrePathEditor, moduleChooser);
     }
 
     @Override
     protected void applyEditorTo(JetRunConfiguration configuration) throws ConfigurationException {
-        myModuleSelector.applyTo(configuration);
-        myCommonProgramParameters.applyTo(configuration);
-        configuration.setRunClass(myMainClassField.getText());
-        configuration.setAlternativeJrePath(alternativeJREPanel.getPath());
-        configuration.setAlternativeJrePathEnabled(alternativeJREPanel.isPathEnabled());
+        commonProgramParameters.applyTo(configuration);
+        moduleSelector.applyTo(configuration);
+
+        String className = mainClass.getComponent().getText();
+        PsiClass aClass = moduleSelector.findClass(className);
+
+        configuration.setRunClass(aClass != null ? JavaExecutionUtil.getRuntimeQualifiedName(aClass) : className);
+        configuration.setAlternativeJrePath(jrePathEditor.getJrePathOrName());
+        configuration.setAlternativeJrePathEnabled(jrePathEditor.isAlternativeJreSelected());
+    }
+
+    @Override
+    protected void resetEditorFrom(JetRunConfiguration configuration) {
+        commonProgramParameters.reset(configuration);
+        moduleSelector.reset(configuration);
+        mainClass.getComponent().setText(configuration.MAIN_CLASS_NAME != null ? configuration.MAIN_CLASS_NAME.replaceAll("\\$", "\\.") : "");
+        jrePathEditor.setPathOrName(configuration.ALTERNATIVE_JRE_PATH, configuration.ALTERNATIVE_JRE_PATH_ENABLED);
     }
 
     @NotNull
     @Override
     protected JComponent createEditor() {
-        return myMainPanel;
+        return mainPanel;
     }
 
-    @Override
-    protected void disposeEditor() {
+    private void createUIComponents() {
+        mainClass = new LabeledComponent<JTextField>();
+        JTextField myMainClassField = new JTextField();
+        mainClass.setComponent(myMainClassField);
     }
 
     @Override
@@ -95,14 +102,8 @@ public class JetRunConfigurationEditor extends SettingsEditor<JetRunConfiguratio
     public void setAnchor(JComponent anchor) {
         this.anchor = anchor;
         mainClass.setAnchor(anchor);
-        myCommonProgramParameters.setAnchor(anchor);
-        alternativeJREPanel.setAnchor(anchor);
+        commonProgramParameters.setAnchor(anchor);
+        jrePathEditor.setAnchor(anchor);
         moduleChooser.setAnchor(anchor);
-    }
-
-    private void createUIComponents() {
-        mainClass = new LabeledComponent<JTextField>();
-        myMainClassField = new JTextField();
-        mainClass.setComponent(myMainClassField);
     }
 }
