@@ -64,7 +64,7 @@ public class DeserializerForClassfileDecompiler(
             LookupTracker.DO_NOTHING, JavaFlexibleTypeCapabilitiesDeserializer, ClassDescriptorFactory.EMPTY
     )
 
-    override fun resolveDeclarationsInFacade(facadeFqName: FqName): Collection<DeclarationDescriptor> {
+    override fun resolveDeclarationsInFacade(facadeFqName: FqName): List<DeclarationDescriptor> {
         val packageFqName = facadeFqName.parent()
         assert(packageFqName == directoryPackageFqName) {
             "Was called for $facadeFqName; only members of $directoryPackageFqName package are expected."
@@ -81,7 +81,7 @@ public class DeserializerForClassfileDecompiler(
         val membersScope = DeserializedPackageMemberScope(
                 createDummyPackageFragment(packageFqName), packageProto, nameResolver, deserializationComponents
         ) { emptyList() }
-        return membersScope.getContributedDescriptors()
+        return membersScope.getContributedDescriptors().toList()
     }
 
     companion object {

@@ -26,11 +26,10 @@ import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.ResolverForDecompiler
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledText
+import org.jetbrains.kotlin.idea.decompiler.textBuilder.defaultDecompilerRendererOptions
 import org.jetbrains.kotlin.load.kotlin.OldPackageFacadeClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
-import org.jetbrains.kotlin.renderer.ExcludedTypeAnnotations
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import java.util.*
 
@@ -57,13 +56,7 @@ class KotlinJavaScriptMetaFileDecompiler : ClassFileDecompilers.Full() {
     }
 }
 
-private val descriptorRendererForKotlinJavascriptDecompiler = DescriptorRenderer.withOptions {
-    withDefinedIn = false
-    classWithPrimaryConstructor = true
-    secondaryConstructorsAsPrimary = false
-    modifiers = DescriptorRendererModifier.ALL
-    excludedTypeAnnotationClasses = ExcludedTypeAnnotations.annotationsForNullabilityAndMutability
-}
+private val decompilerRendererForJS = DescriptorRenderer.withOptions { defaultDecompilerRendererOptions() }
 
 public fun buildDecompiledTextFromJsMetadata(
         classFile: VirtualFile,
@@ -75,11 +68,11 @@ public fun buildDecompiledTextFromJsMetadata(
     if (isPackageHeader) {
         return buildDecompiledText(packageFqName,
                                    resolveDeclarationsInPackage(packageFqName, resolver),
-                                   descriptorRendererForKotlinJavascriptDecompiler)
+                                   decompilerRendererForJS)
     }
     else {
         val classId = JsMetaFileUtils.getClassId(classFile)
-        return buildDecompiledText(packageFqName, listOfNotNull(resolver.resolveTopLevelClass(classId)), descriptorRendererForKotlinJavascriptDecompiler)
+        return buildDecompiledText(packageFqName, listOfNotNull(resolver.resolveTopLevelClass(classId)), decompilerRendererForJS)
     }
 }
 

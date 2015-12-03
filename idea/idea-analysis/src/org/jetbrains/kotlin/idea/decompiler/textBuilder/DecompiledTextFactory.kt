@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
+import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
+import org.jetbrains.kotlin.renderer.ExcludedTypeAnnotations
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
@@ -41,6 +43,14 @@ public fun descriptorToKey(descriptor: DeclarationDescriptor): String {
 }
 
 public data class DecompiledText(public val text: String, public val renderedDescriptorsToRange: Map<String, TextRange>)
+
+fun DescriptorRendererOptions.defaultDecompilerRendererOptions() {
+    withDefinedIn = false
+    classWithPrimaryConstructor = true
+    secondaryConstructorsAsPrimary = false
+    modifiers = DescriptorRendererModifier.ALL
+    excludedTypeAnnotationClasses = ExcludedTypeAnnotations.annotationsForNullabilityAndMutability
+}
 
 public fun buildDecompiledText(
         packageFqName: FqName,

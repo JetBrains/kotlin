@@ -30,9 +30,9 @@ public object BuiltInsSerializedResourcePaths : SerializedResourcePaths() {
         BuiltInsProtoBuf.registerAllExtensions(extensionRegistry)
     }
 
-    private val CLASS_METADATA_FILE_EXTENSION = "kotlin_class"
-    private val PACKAGE_FILE_EXTENSION = "kotlin_package"
-    private val STRING_TABLE_FILE_EXTENSION = "kotlin_string_table"
+    val CLASS_METADATA_FILE_EXTENSION = "kotlin_class"
+    val PACKAGE_FILE_EXTENSION = "kotlin_package"
+    val STRING_TABLE_FILE_EXTENSION = "kotlin_string_table"
 
     public override fun getClassMetadataPath(classId: ClassId): String {
         return packageFqNameToPath(classId.getPackageFqName()) + "/" + classId.getRelativeClassName().asString() +

@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.serialization.js
+package org.jetbrains.kotlin.idea.decompiler.common
 
+import com.google.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import java.io.ByteArrayInputStream
 
-public fun ByteArray.toPackageProto(): ProtoBuf.Package {
-    val registry = KotlinJavascriptSerializedResourcePaths.extensionRegistry
-    return ProtoBuf.Package.parseFrom(ByteArrayInputStream(this), registry)!!
+fun ByteArray.toPackageProto(extensionRegistry: ExtensionRegistryLite): ProtoBuf.Package {
+    return ProtoBuf.Package.parseFrom(ByteArrayInputStream(this), extensionRegistry)!!
 }
 
-public fun ByteArray.toClassProto(): ProtoBuf.Class {
-    val registry = KotlinJavascriptSerializedResourcePaths.extensionRegistry
-    return ProtoBuf.Class.parseFrom(ByteArrayInputStream(this), registry)
+fun ByteArray.toClassProto(extensionRegistry: ExtensionRegistryLite): ProtoBuf.Class {
+    return ProtoBuf.Class.parseFrom(ByteArrayInputStream(this), extensionRegistry)
 }
-

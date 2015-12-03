@@ -14,25 +14,27 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.decompiler.js
+package org.jetbrains.kotlin.idea.decompiler.common
 
 import com.google.protobuf.MessageLite
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.ClassIdWithTarget
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.AnnotationAndConstantLoader
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
-import org.jetbrains.kotlin.serialization.js.JsProtoBuf
 import org.jetbrains.kotlin.types.KotlinType
 
-public class AnnotationLoaderForKotlinJavaScriptStubBuilder() : AnnotationAndConstantLoader<ClassId, Unit, ClassIdWithTarget> {
+public class AnnotationLoaderForStubBuilderImpl(
+        private val protocol: SerializerExtensionProtocol
+) : AnnotationAndConstantLoader<ClassId, Unit, ClassIdWithTarget> {
 
     override fun loadClassAnnotations(
             classProto: ProtoBuf.Class, nameResolver: NameResolver
     ): List<ClassId> =
-         classProto.getExtension(JsProtoBuf.classAnnotation).orEmpty().map { nameResolver.getClassId(it.id) }
+         classProto.getExtension(protocol.classAnnotation).orEmpty().map { nameResolver.getClassId(it.id) }
 
     override fun loadCallableAnnotations(
             container: ProtoContainer,
@@ -40,9 +42,9 @@ public class AnnotationLoaderForKotlinJavaScriptStubBuilder() : AnnotationAndCon
             kind: AnnotatedCallableKind
     ): List<ClassIdWithTarget> {
         val annotations = when (proto) {
-            is ProtoBuf.Constructor -> proto.getExtension(JsProtoBuf.constructorAnnotation)
-            is ProtoBuf.Function -> proto.getExtension(JsProtoBuf.functionAnnotation)
-            is ProtoBuf.Property -> proto.getExtension(JsProtoBuf.propertyAnnotation)
+            is ProtoBuf.Constructor -> proto.getExtension(protocol.constructorAnnotation)
+            is ProtoBuf.Function -> proto.getExtension(protocol.functionAnnotation)
+            is ProtoBuf.Property -> proto.getExtension(protocol.propertyAnnotation)
             else -> error("Unknown message: $proto")
         }.orEmpty()
         return annotations.map {
@@ -57,7 +59,7 @@ public class AnnotationLoaderForKotlinJavaScriptStubBuilder() : AnnotationAndCon
             parameterIndex: Int,
             proto: ProtoBuf.ValueParameter
     ): List<ClassId> =
-            proto.getExtension(JsProtoBuf.parameterAnnotation).orEmpty().map {
+            proto.getExtension(protocol.parameterAnnotation).orEmpty().map {
                 container.nameResolver.getClassId(it.id)
             }
 
@@ -71,10 +73,10 @@ public class AnnotationLoaderForKotlinJavaScriptStubBuilder() : AnnotationAndCon
             proto: ProtoBuf.Type,
             nameResolver: NameResolver
     ): List<ClassId> =
-            proto.getExtension(JsProtoBuf.typeAnnotation).orEmpty().map { nameResolver.getClassId(it.id) }
+            proto.getExtension(protocol.typeAnnotation).orEmpty().map { nameResolver.getClassId(it.id) }
 
     override fun loadTypeParameterAnnotations(proto: ProtoBuf.TypeParameter, nameResolver: NameResolver): List<ClassId> =
-        proto.getExtension(JsProtoBuf.typeParameterAnnotation).orEmpty().map { nameResolver.getClassId(it.id) }
+        proto.getExtension(protocol.typeParameterAnnotation).orEmpty().map { nameResolver.getClassId(it.id) }
 
     override fun loadPropertyConstant(
             container: ProtoContainer,

@@ -26,14 +26,13 @@ import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.ResolverForDecompiler
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledText
+import org.jetbrains.kotlin.idea.decompiler.textBuilder.defaultDecompilerRendererOptions
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleFileFacadeKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleMultifileClassKind
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
-import org.jetbrains.kotlin.renderer.ExcludedTypeAnnotations
 import org.jetbrains.kotlin.types.flexibility
 import org.jetbrains.kotlin.types.isFlexible
 import java.util.*
@@ -50,14 +49,10 @@ public class KotlinClassFileDecompiler : ClassFileDecompilers.Full() {
         return KotlinDecompiledFileViewProvider(manager, file, physical) { provider ->
             val virtualFile = provider.virtualFile
             val fileIndex = ServiceManager.getService(project, FileIndexFacade::class.java)
-            if (!fileIndex.isInLibraryClasses(virtualFile) && fileIndex.isInSource(virtualFile)) {
-                null
-            }
-            else if (isKotlinInternalCompiledFile(virtualFile)) {
-                null
-            }
-            else {
-                KtClsFile(provider)
+            when {
+                !fileIndex.isInLibraryClasses(virtualFile) && fileIndex.isInSource(virtualFile) -> null
+                isKotlinInternalCompiledFile(virtualFile) -> null
+                else -> KtClsFile(provider)
             }
         }
     }
@@ -65,13 +60,9 @@ public class KotlinClassFileDecompiler : ClassFileDecompilers.Full() {
 
 class KtClsFile(provider: KotlinDecompiledFileViewProvider) : KtDecompiledFile(provider, { file -> buildDecompiledTextForClassFile(file) })
 
-private val descriptorRendererForClassFileDecompiler = DescriptorRenderer.withOptions {
-    withDefinedIn = false
-    classWithPrimaryConstructor = true
+private val decompilerRendererForClassFiles = DescriptorRenderer.withOptions {
+    defaultDecompilerRendererOptions()
     typeNormalizer = { type -> if (type.isFlexible()) type.flexibility().lowerBound else type }
-    secondaryConstructorsAsPrimary = false
-    modifiers = DescriptorRendererModifier.ALL
-    excludedTypeAnnotationClasses = ExcludedTypeAnnotations.annotationsForNullabilityAndMutability
 }
 
 private val FILE_ABI_VERSION_MARKER: String = "FILE_ABI"
@@ -103,13 +94,13 @@ public fun buildDecompiledTextForClassFile(
                     mapOf())
         }
         classHeader.isCompatibleFileFacadeKind() ->
-            buildDecompiledText(packageFqName, ArrayList(resolver.resolveDeclarationsInFacade(classId.asSingleFqName())), descriptorRendererForClassFileDecompiler)
+            buildDecompiledText(packageFqName, ArrayList(resolver.resolveDeclarationsInFacade(classId.asSingleFqName())), decompilerRendererForClassFiles)
         classHeader.isCompatibleClassKind() ->
-            buildDecompiledText(packageFqName, listOfNotNull(resolver.resolveTopLevelClass(classId)), descriptorRendererForClassFileDecompiler)
+            buildDecompiledText(packageFqName, listOfNotNull(resolver.resolveTopLevelClass(classId)), decompilerRendererForClassFiles)
         classHeader.isCompatibleMultifileClassKind() -> {
             val partClasses = findMultifileClassParts(classFile, kotlinClass)
             val partMembers = partClasses.flatMap { partClass -> resolver.resolveDeclarationsInFacade(partClass.classId.asSingleFqName()) }
-            buildDecompiledText(packageFqName, partMembers, descriptorRendererForClassFileDecompiler)
+            buildDecompiledText(packageFqName, partMembers, decompilerRendererForClassFiles)
         }
         else ->
             throw UnsupportedOperationException("Unknown header kind: ${classHeader.kind} ${classHeader.isCompatibleAbiVersion}")
