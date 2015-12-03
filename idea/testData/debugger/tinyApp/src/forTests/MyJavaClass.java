@@ -11,4 +11,8 @@ public class MyJavaClass {
     public String testNotNullFun() {
        return "a";
     }
+
+    public static int staticFun(Object s) {
+        return 1;
+    }
 }

@@ -10,11 +10,11 @@ fun main(args: Array<String>) {
 
     val o = object: MyInterface {
         override fun inInterfaceOverride(): Int {
-            return super.inInterfaceOverride()
+            return 1
         }
 
         override val propInInterfaceOverride: Int
-            get() = super.propInInterfaceOverride
+            get() = 1
     }
     o.inInterface()
     o.propInInterface
