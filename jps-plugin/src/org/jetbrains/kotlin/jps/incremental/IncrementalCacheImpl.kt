@@ -24,7 +24,6 @@ import com.intellij.util.io.EnumeratorStringDescriptor
 import com.intellij.util.io.IOUtil
 import gnu.trove.THashSet
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.jps.builders.BuildTarget
 import org.jetbrains.jps.builders.storage.BuildDataPaths
 import org.jetbrains.jps.builders.storage.StorageProvider
 import org.jetbrains.jps.incremental.ModuleBuildTarget
@@ -53,15 +52,11 @@ import java.io.File
 import java.security.MessageDigest
 import java.util.*
 
-internal val CACHE_DIRECTORY_NAME = "kotlin"
-
-@TestOnly
-public fun getCacheDirectoryName(): String =
-        CACHE_DIRECTORY_NAME
+val KOTLIN_CACHE_DIRECTORY_NAME = "kotlin"
 
 public class IncrementalCacheImpl(
-        targetDataRoot: File,
-        private val target: ModuleBuildTarget
+        private val target: ModuleBuildTarget,
+        paths: BuildDataPaths
 ) : BasicMapsOwner(), IncrementalCache {
     companion object {
         val PROTO_MAP = "proto"
@@ -78,7 +73,8 @@ public class IncrementalCacheImpl(
         private val MODULE_MAPPING_FILE_NAME = "." + ModuleMapping.MAPPING_FILE_EXT
     }
 
-    private val baseDir = File(targetDataRoot, CACHE_DIRECTORY_NAME)
+    private val baseDir = File(paths.getTargetDataRoot(target), KOTLIN_CACHE_DIRECTORY_NAME)
+    private val cacheVersionProvider = CacheVersionProvider(paths)
 
     private val String.storageFile: File
         get() = File(baseDir, this + "." + CACHE_EXTENSION)
@@ -94,7 +90,6 @@ public class IncrementalCacheImpl(
     private val dirtyInlineFunctionsMap = registerMap(DirtyInlineFunctionsMap(DIRTY_INLINE_FUNCTIONS.storageFile))
     private val inlinedTo = registerMap(InlineFunctionsFilesMap(INLINED_TO.storageFile))
 
-    private val cacheFormatVersion = CacheFormatVersion(targetDataRoot)
     private val dependents = arrayListOf<IncrementalCacheImpl>()
     private val outputDir = requireNotNull(target.outputDir) { "Target is expected to have output directory: $target" }
 
@@ -132,7 +127,6 @@ public class IncrementalCacheImpl(
             dependents.forEach(::addFilesAffectedByChangedInlineFuns)
         }
 
-        cleanDirtyInlineFunctions()
         return result.map { File(it) }
     }
 
@@ -142,10 +136,6 @@ public class IncrementalCacheImpl(
 
     override fun getClassFilePath(internalClassName: String): String {
         return toSystemIndependentName(File(outputDir, "$internalClassName.class").canonicalPath)
-    }
-
-    public fun saveCacheFormatVersion() {
-        cacheFormatVersion.saveIfNeeded()
     }
 
     public fun saveModuleMappingToCache(sourceFiles: Collection<File>, file: File): CompilationResult {
@@ -320,7 +310,12 @@ public class IncrementalCacheImpl(
 
     public override fun clean() {
         super.clean()
-        cacheFormatVersion.clean()
+        cacheVersionProvider.normalVersion(target).clean()
+        cacheVersionProvider.experimentalVersion(target).clean()
+    }
+
+    public fun cleanExperimental() {
+        cacheVersionProvider.experimentalVersion(target).clean()
     }
 
     private inner class ProtoMap(storageFile: File) : BasicStringMap<ProtoMapValue>(storageFile, ProtoMapValueExternalizer) {
@@ -677,11 +672,9 @@ data class CompilationResult(
                         changes + other.changes)
 }
 
-
-public fun BuildDataPaths.getKotlinCacheVersion(target: BuildTarget<*>): CacheFormatVersion = CacheFormatVersion(getTargetDataRoot(target))
-
 private class KotlinIncrementalStorageProvider(
-        private val target: ModuleBuildTarget
+        private val target: ModuleBuildTarget,
+        private val paths: BuildDataPaths
 ) : StorageProvider<IncrementalCacheImpl>() {
 
     override fun equals(other: Any?) = other is KotlinIncrementalStorageProvider && target == other.target
@@ -689,11 +682,11 @@ private class KotlinIncrementalStorageProvider(
     override fun hashCode() = target.hashCode()
 
     override fun createStorage(targetDataDir: File): IncrementalCacheImpl =
-            IncrementalCacheImpl(targetDataDir, target)
+            IncrementalCacheImpl(target, paths)
 }
 
-public fun BuildDataManager.getKotlinCache(target: ModuleBuildTarget): IncrementalCacheImpl =
-        getStorage(target, KotlinIncrementalStorageProvider(target))
+fun BuildDataManager.getKotlinCache(target: ModuleBuildTarget): IncrementalCacheImpl =
+        getStorage(target, KotlinIncrementalStorageProvider(target, dataPaths))
 
 private fun ByteArray.md5(): Long {
     val d = MessageDigest.getInstance("MD5").digest(this)!!

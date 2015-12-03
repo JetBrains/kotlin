@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import com.intellij.util.xmlb.XmlSerializerUtil
+import org.jetbrains.jps.api.GlobalOptions
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -117,9 +118,11 @@ public object KotlinCompilerRunner {
                 val stream = ByteArrayOutputStream()
                 val out = PrintStream(stream)
 
-// Uncomment after resolving problems with parallel compilation and tests
-//                if (System.getProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY) == null)
-//                    System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "")
+                // the property should be set at least for parallel builds to avoid parallel building problems (racing between destroying and using environment)
+                // unfortunately it cannot be currently set by default globally, because it breaks many tests
+                // since there is no reliable way so far to detect running under tests, switching it on only for parallel builds
+                if (System.getProperty(GlobalOptions.COMPILE_PARALLEL_OPTION, "false").toBoolean())
+                    System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
 
                 val rc = CompilerRunnerUtil.invokeExecMethod(compilerClassName, argsArray, environment, messageCollector, out)
 
@@ -146,10 +149,6 @@ public object KotlinCompilerRunner {
                 val compilerId = CompilerId.makeCompilerId(File(libPath, "kotlin-compiler.jar"))
                 val daemonOptions = configureDaemonOptions()
                 val daemonJVMOptions = configureDaemonJVMOptions(inheritMemoryLimits = true, inheritAdditionalProperties = true)
-                // the property should be set by default for daemon builds to avoid parallel building problems
-                // but it cannot be currently set by default globally, because it seems breaks many tests
-                // TODO: find out how to get rid of the property and make it the default behavior
-                daemonJVMOptions.jvmParams.add("D$KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY")
 
                 val daemonReportMessages = ArrayList<DaemonReportMessage>()
 
@@ -188,7 +187,7 @@ public object KotlinCompilerRunner {
             KotlinBuilder.LOG.debug("Try to connect to daemon")
             val connection = getDaemonConnection(environment, messageCollector)
 
-            if (connection?.daemon != null) {
+            if (connection.daemon != null) {
                 KotlinBuilder.LOG.info("Connected to daemon")
 
                 val compilerOut = ByteArrayOutputStream()
@@ -203,7 +202,7 @@ public object KotlinCompilerRunner {
                     K2JS_COMPILER -> CompileService.TargetPlatform.JS
                     else -> throw IllegalArgumentException("Unknown compiler type $compilerClassName")
                 }
-                val res = KotlinCompilerClient.incrementalCompile(connection!!.daemon!!, connection.sessionId, targetPlatform, argsArray, services, compilerOut, daemonOut)
+                val res = KotlinCompilerClient.incrementalCompile(connection.daemon!!, connection.sessionId, targetPlatform, argsArray, services, compilerOut, daemonOut)
 
                 processCompilerOutput(messageCollector, collector, compilerOut, res.toString())
                 BufferedReader(StringReader(daemonOut.toString())).forEachLine {

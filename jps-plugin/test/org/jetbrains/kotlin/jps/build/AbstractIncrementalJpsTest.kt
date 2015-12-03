@@ -53,6 +53,7 @@ import org.jetbrains.kotlin.jps.incremental.getKotlinCache
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.keysToMap
+import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
@@ -77,6 +78,7 @@ public abstract class AbstractIncrementalJpsTest(
         private val COMMANDS = listOf("new", "touch", "delete")
         private val COMMANDS_AS_REGEX_PART = COMMANDS.joinToString("|")
         private val COMMANDS_AS_MESSAGE_PART = COMMANDS.joinToString("/") { "\".$it\"" }
+        private val BUILD_LOG_FILE_NAME = "build.log"
     }
 
     protected open val enableExperimentalIncrementalCompilation = false
@@ -91,6 +93,8 @@ public abstract class AbstractIncrementalJpsTest(
 
     protected val mapWorkingToOriginalFile: MutableMap<File, File> = hashMapOf()
 
+    protected open val experimentalBuildLogFileName = "experimental-ic-build.log"
+
     private fun enableDebugLogging() {
         com.intellij.openapi.diagnostic.Logger.setFactory(javaClass<TestLoggerFactory>())
         TestLoggerFactory.dumpLogToStdout("")
@@ -103,14 +107,25 @@ public abstract class AbstractIncrementalJpsTest(
         Logger.getRootLogger().addAppender(console)
     }
 
+    private val systemPropertiesBackup = run {
+        val props = System.getProperties()
+        val output = ByteArrayOutputStream()
+        props.store(output, "System properties backup")
+        output.toByteArray()
+    }
+
+    private fun restoreSystemProperties() {
+        val input = ByteArrayInputStream(systemPropertiesBackup)
+        val props = Properties()
+        props.load(input)
+        System.setProperties(props)
+    }
+
     override fun setUp() {
         super.setUp()
         System.setProperty("kotlin.jps.tests", "true")
         lookupsDuringTest = hashSetOf()
-
-        if (enableExperimentalIncrementalCompilation) {
-            IncrementalCompilation.enableExperimental()
-        }
+        IncrementalCompilation.setIsExperimental(enableExperimentalIncrementalCompilation)
 
         if (DEBUG_LOGGING_ENABLED) {
             enableDebugLogging()
@@ -118,12 +133,7 @@ public abstract class AbstractIncrementalJpsTest(
     }
 
     override fun tearDown() {
-        System.clearProperty("kotlin.jps.tests")
-
-        if (enableExperimentalIncrementalCompilation) {
-            IncrementalCompilation.disableExperimental()
-        }
-
+        restoreSystemProperties()
         super.tearDown()
     }
 
@@ -324,6 +334,17 @@ public abstract class AbstractIncrementalJpsTest(
         return result
     }
 
+    protected fun createDefaultBuildLog(incrementalMakeResults: List<AbstractIncrementalJpsTest.MakeResult>): String =
+            incrementalMakeResults.joinToString("\n\n") { it.log }
+
+    protected open fun createExperimentalBuildLog(incrementalMakeResults: List<AbstractIncrementalJpsTest.MakeResult>): String =
+            buildString {
+                incrementalMakeResults.forEachIndexed { i, makeResult ->
+                    append("\n========== Step #${i + 1} ============\n\n")
+                    append(makeResult.log)
+                }
+            }
+
     protected open fun doTest(testDataPath: String) {
         testDataDir = File(testDataPath)
         workDir = FileUtilRt.createTempDirectory(TEMP_DIRECTORY_TO_USE, "jps-build", null)
@@ -333,21 +354,15 @@ public abstract class AbstractIncrementalJpsTest(
 
         val otherMakeResults = performModificationsAndMake(moduleNames)
 
-        val buildLogFile = File(testDataDir, "build.log")
-        val fullBuildLogFile = File(testDataDir, "experimental-ic-build.log")
+        val buildLogFile = File(testDataDir, BUILD_LOG_FILE_NAME)
+        val experimentalBuildLog = File(testDataDir, experimentalBuildLogFileName)
 
-        if (enableExperimentalIncrementalCompilation && fullBuildLogFile.exists()) {
-            val logs = buildString {
-                otherMakeResults.forEachIndexed { i, makeResult ->
-                    append("\n========== Step #${i + 1} ============\n\n")
-                    append(makeResult.log)
-                }
-            }
-
-            UsefulTestCase.assertSameLinesWithFile(fullBuildLogFile.absolutePath, logs)
+        if (enableExperimentalIncrementalCompilation && experimentalBuildLog.exists()) {
+            val logs = createExperimentalBuildLog(otherMakeResults)
+            UsefulTestCase.assertSameLinesWithFile(experimentalBuildLog.absolutePath, logs)
         }
         else if (buildLogFile.exists() || !allowNoBuildLogFileInTestData) {
-            val logs = otherMakeResults.joinToString("\n\n") { it.log }
+            val logs = createDefaultBuildLog(otherMakeResults)
             UsefulTestCase.assertSameLinesWithFile(buildLogFile.absolutePath, logs)
         }
 
@@ -425,7 +440,7 @@ public abstract class AbstractIncrementalJpsTest(
         return byteArrayOutputStream.toString()
     }
 
-    private data class MakeResult(val log: String, val makeFailed: Boolean, val mappingsDump: String?)
+    protected data class MakeResult(val log: String, val makeFailed: Boolean, val mappingsDump: String?)
 
     private fun performModificationsAndMake(moduleNames: Set<String>?): List<MakeResult> {
         val results = arrayListOf<MakeResult>()

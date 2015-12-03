@@ -1,0 +1,1 @@
+fun f() = <selection>1</selection>

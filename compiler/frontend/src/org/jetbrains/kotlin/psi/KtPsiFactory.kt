@@ -560,6 +560,8 @@ public class KtPsiFactory(private val project: Project) {
             return this
         }
 
+        public fun transform(f: StringBuilder.() -> Unit) = sb.f()
+
         public fun asString(): String {
             if (state != State.DONE) {
                 state = State.DONE

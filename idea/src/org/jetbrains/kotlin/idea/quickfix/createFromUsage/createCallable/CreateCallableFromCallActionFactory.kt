@@ -129,7 +129,7 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
 
     object Property: CreateCallableFromCallActionFactory<KtSimpleNameExpression>() {
         override fun getElementOfInterest(diagnostic: Diagnostic): KtSimpleNameExpression? {
-            return getExpressionOfInterest(diagnostic) as? KtSimpleNameExpression
+            return getExpressionOfInterest(diagnostic) as? KtNameReferenceExpression
         }
 
         override fun doCreateCallableInfo(

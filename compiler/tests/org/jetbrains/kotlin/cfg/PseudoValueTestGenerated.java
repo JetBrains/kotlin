@@ -216,6 +216,12 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("localFunctionInFinally.kt")
+            public void testLocalFunctionInFinally() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg/controlStructures/localFunctionInFinally.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("OnlyWhileInFunctionBody.kt")
             public void testOnlyWhileInFunctionBody() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg/controlStructures/OnlyWhileInFunctionBody.kt");
@@ -808,6 +814,12 @@ public class PseudoValueTestGenerated extends AbstractPseudoValueTest {
         public static class Bugs extends AbstractPseudoValueTest {
             public void testAllFilesPresentInBugs() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg-variables/bugs"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("kt10243.kt")
+            public void testKt10243() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/bugs/kt10243.kt");
+                doTest(fileName);
             }
 
             @TestMetadata("referenceToPropertyInitializer.kt")

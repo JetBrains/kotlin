@@ -113,9 +113,7 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
 
         setOKActionEnabled(checkNames());
         signaturePreviewField.setText(
-                ExtractorUtilKt.getDeclarationText(getCurrentConfiguration(),
-                                                   false,
-                                                   IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES)
+                ExtractorUtilKt.getSignaturePreview(getCurrentConfiguration(), IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES)
         );
     }
 
@@ -285,59 +283,12 @@ public class KotlinExtractFunctionDialog extends DialogWrapper {
         for (KotlinParameterTablePanel.ParameterInfo parameterInfo : newParameterInfos) {
             oldToNewParameters.put(parameterInfo.getOriginalParameter(), parameterInfo.toParameter());
         }
-        ArrayList<Parameter> newParameters = ContainerUtil.newArrayList(oldToNewParameters.values());
-
         Parameter originalReceiver = originalDescriptor.getReceiverParameter();
         Parameter newReceiver = newReceiverInfo != null ? newReceiverInfo.toParameter() : null;
         if (originalReceiver != null && newReceiver != null) {
             oldToNewParameters.put(originalReceiver, newReceiver);
         }
 
-        ControlFlow controlFlow = originalDescriptor.getControlFlow();
-        List<OutputValue> outputValues = new ArrayList<OutputValue>(controlFlow.getOutputValues());
-        for (int i = 0; i < outputValues.size(); i++) {
-            OutputValue outputValue = outputValues.get(i);
-            if (outputValue instanceof OutputValue.ParameterUpdate) {
-                OutputValue.ParameterUpdate parameterUpdate = (OutputValue.ParameterUpdate) outputValue;
-                outputValues.set(i, new OutputValue.ParameterUpdate(oldToNewParameters.get(parameterUpdate.getParameter()), parameterUpdate.getOriginalExpressions()));
-            }
-        }
-        controlFlow = new ControlFlow(outputValues, controlFlow.getBoxerFactory(), controlFlow.getDeclarationsToCopy());
-
-        MultiMap<Integer, Replacement> replacementMap = MultiMap.<Integer, Replacement>create();
-        for (Map.Entry<Integer, Collection<Replacement>> e : originalDescriptor.getReplacementMap().entrySet()) {
-            Integer offset = e.getKey();
-            Collection<Replacement> replacements = e.getValue();
-
-            for (Replacement replacement : replacements) {
-                if (replacement instanceof ParameterReplacement) {
-                    ParameterReplacement parameterReplacement = (ParameterReplacement) replacement;
-                    Parameter parameter = parameterReplacement.getParameter();
-
-                    Parameter newParameter = oldToNewParameters.get(parameter);
-                    if (newParameter != null) {
-                        replacementMap.remove(offset, replacement);
-                        replacementMap.putValue(offset, parameterReplacement.copy(newParameter));
-                    }
-                }
-                else {
-                    replacementMap.put(offset, replacements);
-                }
-
-            }
-        }
-
-        return new ExtractableCodeDescriptor(
-                originalDescriptor.getExtractionData(),
-                originalDescriptor.getOriginalContext(),
-                Collections.singletonList(newName),
-                newVisibility,
-                newParameters,
-                newReceiver,
-                originalDescriptor.getTypeParameters(),
-                replacementMap,
-                controlFlow,
-                returnType != null ? returnType : originalDescriptor.getReturnType()
-        );
+        return ExtractableCodeDescriptorKt.copy(originalDescriptor, newName, newVisibility, oldToNewParameters, newReceiver, returnType);
     }
 }

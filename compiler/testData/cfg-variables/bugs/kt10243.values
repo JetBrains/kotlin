@@ -1,0 +1,34 @@
+== x ==
+var x: Int
+---------------------
+=====================
+== foo ==
+fun foo(f: Boolean) {
+    try {
+        if (f) {
+            x = 0
+        }
+    }
+    finally {
+        fun bar() {}
+    }
+}
+---------------------
+                                                        <v0>: Boolean   NEW: magic[FAKE_INITIALIZER](f: Boolean) -> <v0>
+f                                                       <v1>: Boolean   NEW: r(f) -> <v1>
+0                                                       <v2>: Int       NEW: r(0) -> <v2>
+x = 0                                                   !<v3>: *
+{ x = 0 }                                               !<v3>: *        COPY
+if (f) { x = 0 }                                        <v4>: *         NEW: merge(if (f) { x = 0 }|!<v3>) -> <v4>
+{ if (f) { x = 0 } }                                    <v4>: *         COPY
+try { if (f) { x = 0 } } finally { fun bar() {} }       <v5>: *         NEW: merge(try { if (f) { x = 0 } } finally { fun bar() {} }|<v4>) -> <v5>
+{ try { if (f) { x = 0 } } finally { fun bar() {} } }   <v5>: *         COPY
+=====================
+== bar ==
+fun bar() {}
+---------------------
+=====================
+== bar ==
+fun bar() {}
+---------------------
+=====================

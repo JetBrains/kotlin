@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.vfilefinder
 
 import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.indexing.*
 import com.intellij.util.io.KeyDescriptor
 import org.jetbrains.kotlin.idea.decompiler.KotlinJavaScriptMetaFileType
@@ -27,7 +26,7 @@ import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.name.FqName
 import java.io.DataInput
 import java.io.DataOutput
-import java.util.Collections
+import java.util.*
 
 abstract class KotlinFileIndexBase<T>(private val classOfIndex: Class<T>) : ScalarIndexExtension<FqName>() {
     public val KEY: ID<FqName, Void> = ID.create(classOfIndex.canonicalName)
@@ -50,10 +49,10 @@ abstract class KotlinFileIndexBase<T>(private val classOfIndex: Class<T>) : Scal
 
     override fun getKeyDescriptor() = KEY_DESCRIPTOR
 
-    protected fun indexer(f: (VirtualFile) -> FqName?): DataIndexer<FqName, Void, FileContent> =
+    protected fun indexer(f: (FileContent) -> FqName?): DataIndexer<FqName, Void, FileContent> =
             DataIndexer {
                 try {
-                    val fqName = f(it.file)
+                    val fqName = f(it)
                     if (fqName != null) {
                         Collections.singletonMap<FqName, Void>(fqName, null)
                     }
@@ -78,8 +77,8 @@ public object KotlinClassFileIndex : KotlinFileIndexBase<KotlinClassFileIndex>(K
 
     private val VERSION = 2
 
-    private val INDEXER = indexer() { file ->
-        val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(file)
+    private val INDEXER = indexer() { fileContent ->
+        val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(fileContent.file, fileContent.content)
         if (kotlinClass != null && kotlinClass.classHeader.isCompatibleAbiVersion) kotlinClass.classId.asSingleFqName() else null
     }
 }
@@ -94,7 +93,9 @@ public object KotlinJavaScriptMetaFileIndex : KotlinFileIndexBase<KotlinJavaScri
 
     private val VERSION = 2
 
-    private val INDEXER = indexer() { file ->
-        if (file.fileType == KotlinJavaScriptMetaFileType) JsMetaFileUtils.getClassFqName(file) else null
+    private val INDEXER = indexer() { fileContent ->
+        if (fileContent.fileType == KotlinJavaScriptMetaFileType) JsMetaFileUtils.getClassFqName(fileContent.file) else null
     }
+
+    override fun dependsOnFileContent(): Boolean = false
 }

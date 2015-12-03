@@ -329,6 +329,12 @@ public class MoveTestGenerated extends AbstractMoveTest {
         doTest(fileName);
     }
 
+    @TestMetadata("kotlin/moveTopLevelDeclarations/misc/shortenCompanionObject2/shortenCompanionObject.test")
+    public void testKotlin_moveTopLevelDeclarations_misc_shortenCompanionObject2_ShortenCompanionObject() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/shortenCompanionObject2/shortenCompanionObject.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("kotlin/moveTopLevelDeclarations/misc/singletonsAndStatics/singletonsAndStatics.test")
     public void testKotlin_moveTopLevelDeclarations_misc_singletonsAndStatics_SingletonsAndStatics() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/singletonsAndStatics/singletonsAndStatics.test");

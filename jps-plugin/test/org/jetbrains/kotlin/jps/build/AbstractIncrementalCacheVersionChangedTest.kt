@@ -16,20 +16,28 @@
 
 package org.jetbrains.kotlin.jps.build
 
-import org.jetbrains.kotlin.jps.incremental.getKotlinCacheVersion
+import org.jetbrains.jps.incremental.ModuleBuildTarget
+import org.jetbrains.kotlin.jps.incremental.CacheVersionProvider
 
 abstract class AbstractIncrementalCacheVersionChangedTest : AbstractIncrementalJpsTest(allowNoFilesWithSuffixInTestData = true) {
     override fun performAdditionalModifications(modifications: List<AbstractIncrementalJpsTest.Modification>) {
-        val targets = projectDescriptor.allModuleTargets
+        val modifiedFiles = modifications.filterIsInstance<ModifyContent>().map { it.path }
         val paths = projectDescriptor.dataManager.dataPaths
+        val targets = projectDescriptor.allModuleTargets
+        val hasKotlin = HasKotlinMarker(projectDescriptor.dataManager)
 
-        for (target in targets) {
-            val cacheVersion = paths.getKotlinCacheVersion(target)
-            val cacheVersionFile = cacheVersion.formatVersionFile
+        if (modifiedFiles.any { it.endsWith("clear-has-kotlin") }) {
+            targets.forEach { hasKotlin.clean(it) }
+        }
 
-            if (cacheVersionFile.exists()) {
-                cacheVersionFile.writeText("777")
-            }
+        if (modifiedFiles.none { it.endsWith("do-not-change-cache-versions") }) {
+            val cacheVersionProvider = CacheVersionProvider(paths)
+            val versions = getVersions(cacheVersionProvider, targets)
+            val versionFiles = versions.map { it.formatVersionFile }.filter { it.exists() }
+            versionFiles.forEach { it.writeText("777") }
         }
     }
+
+    protected open fun getVersions(cacheVersionProvider: CacheVersionProvider, targets: Iterable<ModuleBuildTarget>) =
+            targets.map { cacheVersionProvider.normalVersion(it) }
 }

@@ -27,7 +27,6 @@ import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.RefactoringSettings
 import com.intellij.refactoring.copy.CopyFilesOrDirectoriesHandler
 import com.intellij.refactoring.move.MoveHandler
-import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesDialog
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesProcessor
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesUtil
 import com.intellij.refactoring.move.moveMembers.MockMoveMembersOptions
@@ -49,7 +48,7 @@ import org.jetbrains.kotlin.idea.codeInsight.KotlinFileReferencesResolver
 import org.jetbrains.kotlin.idea.core.refactoring.isInJavaSourceRoot
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
-import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.ui.MoveFilesOrDirectoriesDialogWithKotlinOptions
+import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.ui.KotlinAwareMoveFilesOrDirectoriesDialog
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference.ShorteningMode
@@ -64,9 +63,7 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
-import java.util.ArrayList
-import java.util.Collections
-import java.util.Comparator
+import java.util.*
 
 val UNKNOWN_PACKAGE_FQ_NAME = FqNameUnsafe("org.jetbrains.kotlin.idea.refactoring.move.<unknown-package>")
 
@@ -325,14 +322,14 @@ public fun moveFilesOrDirectories(
 
     val initialTargetDirectory = MoveFilesOrDirectoriesUtil.getInitialTargetDirectory(targetDirectory, elements)
 
-    fun doRun(moveDialog: MoveFilesOrDirectoriesDialog?) {
+    fun doRun(moveDialog: KotlinAwareMoveFilesOrDirectoriesDialog?) {
         fun closeDialog() {
             moveDialog?.close(DialogWrapper.CANCEL_EXIT_CODE)
         }
 
         project.executeCommand(MoveHandler.REFACTORING_NAME) {
-            val selectedDir = if (moveDialog != null) moveDialog.getTargetDirectory() else initialTargetDirectory
-            val updatePackageDirective = (moveDialog as? MoveFilesOrDirectoriesDialogWithKotlinOptions)?.updatePackageDirective
+            val selectedDir = if (moveDialog != null) moveDialog.targetDirectory else initialTargetDirectory
+            val updatePackageDirective = (moveDialog as? KotlinAwareMoveFilesOrDirectoriesDialog)?.updatePackageDirective
 
             try {
                 val choice = if (elements.size() > 1 || elements[0] is PsiDirectory) intArrayOf(-1) else null
@@ -375,7 +372,7 @@ public fun moveFilesOrDirectories(
         return
     }
 
-    with(MoveFilesOrDirectoriesDialogWithKotlinOptions(project, ::doRun)) {
+    with(KotlinAwareMoveFilesOrDirectoriesDialog(project, ::doRun)) {
         setData(elements, initialTargetDirectory, "refactoring.moveFile")
         show()
     }

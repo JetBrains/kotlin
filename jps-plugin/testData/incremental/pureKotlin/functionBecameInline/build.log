@@ -7,9 +7,7 @@ End of files
 Cleaning output files:
 out/production/module/X$main$1.class
 out/production/module/X.class
-out/production/module/Y.class
 End of files
 Compiling files:
-src/fun.kt
 src/usage.kt
 End of files

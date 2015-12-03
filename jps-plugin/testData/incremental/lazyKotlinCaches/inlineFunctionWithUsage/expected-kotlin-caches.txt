@@ -1,3 +1,4 @@
+kotlin-data-container
 Module 'module' production
     format-version.txt
     inline-functions.tab

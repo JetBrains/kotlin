@@ -1,0 +1,4 @@
+package
+
+public var x: kotlin.Int
+public fun foo(/*0*/ f: kotlin.Boolean): kotlin.Unit

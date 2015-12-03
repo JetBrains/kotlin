@@ -83,6 +83,18 @@ public class ShortenRefsTestGenerated extends AbstractShortenRefsTest {
         doTest(fileName);
     }
 
+    @TestMetadata("removeCompanionRefInCalleeExpression.kt")
+    public void testRemoveCompanionRefInCalleeExpression() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/removeCompanionRefInCalleeExpression.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("removeCompanionRefWithQualifiedReceiverInCalleeExpression.kt")
+    public void testRemoveCompanionRefWithQualifiedReceiverInCalleeExpression() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/shortenRefs/removeCompanionRefWithQualifiedReceiverInCalleeExpression.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("idea/testData/shortenRefs/constructor")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

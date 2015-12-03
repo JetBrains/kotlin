@@ -54,12 +54,12 @@ public class VirtualFileKotlinClass private constructor(
         private val perfCounter = PerformanceCounter.create("Binary class from Kotlin file")
 
         @Deprecated("Use KotlinBinaryClassCache")
-        fun create(file: VirtualFile): VirtualFileKotlinClass? {
+        fun create(file: VirtualFile, fileContent: ByteArray?): VirtualFileKotlinClass? {
             return perfCounter.time {
                 assert(file.getFileType() == JavaClassFileType.INSTANCE) { "Trying to read binary data from a non-class file $file" }
 
                 try {
-                    val byteContent = file.contentsToByteArray(false)
+                    val byteContent = fileContent ?: file.contentsToByteArray(false)
                     if (!byteContent.isEmpty()) {
                         return@time FileBasedKotlinClass.create(byteContent) {
                             name, header, innerClasses ->

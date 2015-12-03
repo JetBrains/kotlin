@@ -49,6 +49,11 @@ public class CodeInsightUtils {
     @Nullable
     public static KtExpression findExpression(@NotNull PsiFile file, int startOffset, int endOffset) {
         KtExpression element = findElementOfClassAtRange(file, startOffset, endOffset, KtExpression.class);
+
+        if (element instanceof KtScriptInitializer) {
+            element = ((KtScriptInitializer) element).getBody();
+        }
+
         if (element == null) return null;
 
         // TODO: Support binary operations in "Introduce..." refactorings

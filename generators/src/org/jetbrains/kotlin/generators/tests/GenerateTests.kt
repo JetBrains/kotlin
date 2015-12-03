@@ -135,6 +135,8 @@ import java.io.File
 import java.util.*
 import java.util.regex.Pattern
 
+private val kotlinFileOrScript = "^(.+)\\.(kt|kts)\$"
+
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
@@ -716,11 +718,11 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractExtractionTest>() {
-            model("refactoring/introduceVariable", extension = "kt", testMethod = "doIntroduceVariableTest")
-            model("refactoring/extractFunction", extension = "kt", testMethod = "doExtractFunctionTest")
-            model("refactoring/introduceProperty", extension = "kt", testMethod = "doIntroducePropertyTest")
-            model("refactoring/introduceParameter", extension = "kt", testMethod = "doIntroduceSimpleParameterTest")
-            model("refactoring/introduceLambdaParameter", extension = "kt", testMethod = "doIntroduceLambdaParameterTest")
+            model("refactoring/introduceVariable", pattern = kotlinFileOrScript, testMethod = "doIntroduceVariableTest")
+            model("refactoring/extractFunction", pattern = kotlinFileOrScript, testMethod = "doExtractFunctionTest")
+            model("refactoring/introduceProperty", pattern = kotlinFileOrScript, testMethod = "doIntroducePropertyTest")
+            model("refactoring/introduceParameter", pattern = kotlinFileOrScript, testMethod = "doIntroduceSimpleParameterTest")
+            model("refactoring/introduceLambdaParameter", pattern = kotlinFileOrScript, testMethod = "doIntroduceLambdaParameterTest")
             model("refactoring/introduceJavaParameter", extension = "java", testMethod = "doIntroduceJavaParameterTest")
         }
 
@@ -917,6 +919,14 @@ fun main(args: Array<String>) {
 
         testClass<AbstractExperimentalIncrementalCacheVersionChangedTest>() {
             model("incremental/cacheVersionChanged", extension = null, excludeParentDirs = true)
+        }
+
+        testClass<AbstractDataContainerVersionChangedTest>() {
+            model("incremental/cacheVersionChanged", extension = null, excludeParentDirs = true)
+        }
+
+        testClass<AbstractExperimentalChangeIncrementalOptionTest>() {
+            model("incremental/changeIncrementalOption", extension = null, excludeParentDirs = true)
         }
     }
 

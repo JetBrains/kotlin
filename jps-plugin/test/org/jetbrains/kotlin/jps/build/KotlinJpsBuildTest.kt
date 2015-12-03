@@ -57,7 +57,8 @@ import java.io.*
 import java.util.*
 import java.util.regex.Pattern
 import java.util.zip.ZipOutputStream
-import kotlin.test.*
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
     companion object {

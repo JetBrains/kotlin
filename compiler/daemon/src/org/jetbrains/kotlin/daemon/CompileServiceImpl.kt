@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.daemon
 import com.intellij.openapi.vfs.impl.ZipHandler
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.*
@@ -74,6 +75,10 @@ class CompileServiceImpl(
         val timer: Timer,
         val onShutdown: () -> Unit
 ) : CompileService {
+
+    init {
+        System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
+    }
 
     // wrapped in a class to encapsulate alive check logic
     private class ClientOrSessionProxy(val aliveFlagPath: String?) {
