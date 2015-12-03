@@ -17,7 +17,12 @@
 package org.jetbrains.kotlin.idea.decompiler.js
 
 import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFileBase
+import com.intellij.psi.FileViewProvider
+import com.intellij.psi.PsiManager
+import com.intellij.psi.compiled.ClassFileDecompilers
+import com.intellij.psi.compiled.ClsStubBuilder
+import org.jetbrains.kotlin.idea.decompiler.KotlinDecompiledFileViewProvider
+import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.ResolverForDecompiler
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledText
@@ -26,11 +31,30 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
 import org.jetbrains.kotlin.renderer.ExcludedTypeAnnotations
-import org.jetbrains.kotlin.utils.concurrent.block.LockedClearableLazyValue
+import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import java.util.*
 
-public class KotlinJavascriptMetaFile(provider: KotlinJavascriptMetaFileViewProvider) : KtDecompiledFileBase(provider) {
-    override fun buildDecompiledText() = buildDecompiledTextFromJsMetadata(virtualFile)
+class KotlinJavaScriptMetaFileDecompiler : ClassFileDecompilers.Full() {
+    private val stubBuilder = KotlinJavaScriptStubBuilder()
+
+    override fun accepts(file: VirtualFile): Boolean {
+        return file.name.endsWith("." + KotlinJavascriptSerializationUtil.CLASS_METADATA_FILE_EXTENSION)
+    }
+
+    override fun getStubBuilder(): ClsStubBuilder {
+        return stubBuilder
+    }
+
+    override fun createFileViewProvider(file: VirtualFile, manager: PsiManager, physical: Boolean): FileViewProvider {
+        return KotlinDecompiledFileViewProvider(manager, file, physical) { provider ->
+            if (JsMetaFileUtils.isKotlinJavaScriptInternalCompiledFile(file)) {
+                null
+            }
+            else {
+                KtDecompiledFile(provider) { file -> buildDecompiledTextFromJsMetadata(file) }
+            }
+        }
+    }
 }
 
 private val descriptorRendererForKotlinJavascriptDecompiler = DescriptorRenderer.withOptions {

@@ -28,10 +28,12 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.utils.concurrent.block.LockedClearableLazyValue
 
-abstract class KotlinDecompiledFileViewProviderBase(
+class KotlinDecompiledFileViewProvider(
         manager: PsiManager,
         file: VirtualFile,
-        physical: Boolean) : SingleRootFileViewProvider(manager, file, physical, KotlinLanguage.INSTANCE) {
+        physical: Boolean,
+        private val factory: (KotlinDecompiledFileViewProvider) -> KtDecompiledFile?
+) : SingleRootFileViewProvider(manager, file, physical, KotlinLanguage.INSTANCE) {
     val content : LockedClearableLazyValue<String> = LockedClearableLazyValue(Any()) {
         val psiFile = createFile(manager.getProject(), file, KotlinFileType.INSTANCE)
         val text = psiFile?.getText() ?: ""
@@ -48,9 +50,10 @@ abstract class KotlinDecompiledFileViewProviderBase(
     }
 
     override fun createFile(project: Project, file: VirtualFile, fileType: FileType): PsiFile? {
-        // Workaround for KT-8344
-        return super.createFile(project, file, fileType)
+        return factory(this)
     }
+
+    override fun createCopy(copy: VirtualFile) = KotlinDecompiledFileViewProvider(getManager(), copy, false, factory)
 
     override fun getContents() = content.get()
 }
