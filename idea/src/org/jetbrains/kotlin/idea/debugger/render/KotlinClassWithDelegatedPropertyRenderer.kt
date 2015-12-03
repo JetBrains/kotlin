@@ -16,28 +16,23 @@
 
 package org.jetbrains.kotlin.idea.debugger.render
 
-import com.intellij.debugger.ui.tree.render.ClassRenderer
-import com.sun.jdi.Type as JdiType
-import com.sun.jdi.Value
-import com.intellij.debugger.ui.tree.render.ChildrenBuilder
-import com.intellij.debugger.engine.evaluation.EvaluationContext
-import com.intellij.debugger.ui.tree.DebuggerTreeNode
-import org.jetbrains.org.objectweb.asm.Type as AsmType
 import com.intellij.debugger.engine.DebuggerManagerThreadImpl
-import com.sun.jdi.ObjectReference
-import com.intellij.xdebugger.settings.XDebuggerSettingsManager
-import com.intellij.debugger.ui.impl.watch.NodeManagerImpl
+import com.intellij.debugger.engine.evaluation.EvaluationContext
 import com.intellij.debugger.ui.impl.watch.MessageDescriptor
-import java.util.ArrayList
-import org.jetbrains.kotlin.load.java.JvmAbi
-import com.sun.jdi.Field
+import com.intellij.debugger.ui.impl.watch.NodeManagerImpl
+import com.intellij.debugger.ui.tree.DebuggerTreeNode
+import com.intellij.debugger.ui.tree.render.ChildrenBuilder
+import com.intellij.debugger.ui.tree.render.ClassRenderer
+import com.intellij.xdebugger.settings.XDebuggerSettingsManager
+import com.sun.jdi.ObjectReference
 import com.sun.jdi.ReferenceType
 import com.sun.jdi.Type
-import com.sun.jdi.Method
-import org.jetbrains.kotlin.codegen.PropertyCodegen
-import org.jetbrains.kotlin.name.Name
-import com.intellij.debugger.engine.evaluation.EvaluateException
+import com.sun.jdi.Value
 import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerSettings
+import org.jetbrains.kotlin.load.java.JvmAbi
+import java.util.*
+import com.sun.jdi.Type as JdiType
+import org.jetbrains.org.objectweb.asm.Type as AsmType
 
 public class KotlinClassWithDelegatedPropertyRenderer : ClassRenderer() {
 
@@ -54,12 +49,12 @@ public class KotlinClassWithDelegatedPropertyRenderer : ClassRenderer() {
 
         if (value !is ObjectReference) return
 
-        val nodeManager = builder.getNodeManager()!!
-        val nodeDescriptorFactory = builder.getDescriptorManager()!!
+        val nodeManager = builder.nodeManager!!
+        val nodeDescriptorFactory = builder.descriptorManager!!
 
         val fields = value.referenceType().allFields()
         if (fields.isEmpty()) {
-            builder.setChildren(listOf(nodeManager.createMessageNode(MessageDescriptor.CLASS_HAS_NO_FIELDS.getLabel())))
+            builder.setChildren(listOf(nodeManager.createMessageNode(MessageDescriptor.CLASS_HAS_NO_FIELDS.label)))
             return
         }
 
@@ -69,7 +64,7 @@ public class KotlinClassWithDelegatedPropertyRenderer : ClassRenderer() {
                 continue
             }
 
-            val fieldDescriptor = nodeDescriptorFactory.getFieldDescriptor(builder.getParentDescriptor(), value, field)
+            val fieldDescriptor = nodeDescriptorFactory.getFieldDescriptor(builder.parentDescriptor, value, field)
 
             if (field.name().endsWith(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX)) {
                 val shouldRenderDelegatedProperty = KotlinDebuggerSettings.getInstance().DEBUG_RENDER_DELEGATED_PROPERTIES
@@ -78,7 +73,7 @@ public class KotlinClassWithDelegatedPropertyRenderer : ClassRenderer() {
                 }
 
                 val delegatedPropertyDescriptor = DelegatedPropertyFieldDescriptor(
-                        context.getDebugProcess().getProject()!!,
+                        context.debugProcess.project!!,
                         value,
                         field,
                         shouldRenderDelegatedProperty)
@@ -89,7 +84,7 @@ public class KotlinClassWithDelegatedPropertyRenderer : ClassRenderer() {
             }
         }
 
-        if (XDebuggerSettingsManager.getInstance()!!.getDataViewSettings().isSortValues()) {
+        if (XDebuggerSettingsManager.getInstance()!!.dataViewSettings.isSortValues) {
             children.sortedWith(NodeManagerImpl.getNodeComparator())
         }
 

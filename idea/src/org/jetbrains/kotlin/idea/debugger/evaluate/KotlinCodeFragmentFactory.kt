@@ -158,7 +158,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
                 elementAt.textOffset
             }
 
-            var result = PsiTreeUtil.findElementOfClassAtOffset(containingFile, lineStartOffset, javaClass<KtExpression>(), false)
+            var result = PsiTreeUtil.findElementOfClassAtOffset(containingFile, lineStartOffset, KtExpression::class.java, false)
             if (result.check()) {
                 return CodeInsightUtils.getTopmostElementAtOffset(result!!, lineStartOffset, KtExpression::class.java)
             }
@@ -177,7 +177,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
         fun createCodeFragmentForLabeledObjects(project: Project, markupMap: Map<*, ValueMarkup>): Pair<String, Map<String, Value>> {
             val sb = StringBuilder()
             val labeledObjects = HashMap<String, Value>()
-            val entrySet: Set<Map.Entry<*, ValueMarkup>> = markupMap.entrySet()
+            val entrySet: Set<Map.Entry<*, ValueMarkup>> = markupMap.entries
             for ((value, markup) in entrySet) {
                 val labelName = markup.text
                 if (!Name.isValidIdentifier(labelName)) continue
@@ -218,7 +218,7 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
         val session = XDebuggerManager.getInstance(project).currentSession as? XDebugSessionImpl
                                             ?: return originalContext
 
-        val markupMap = session.valueMarkers?.getAllMarkers()
+        val markupMap = session.valueMarkers?.allMarkers
         if (markupMap == null || markupMap.isEmpty()) return originalContext
 
         val (text, labels) = createCodeFragmentForLabeledObjects(project, markupMap)
@@ -245,6 +245,6 @@ class KotlinCodeFragmentFactory: CodeFragmentFactory() {
             }
         })
 
-        return getContextElement(codeFragment.findElementAt(codeFragment.text.length() - 1))
+        return getContextElement(codeFragment.findElementAt(codeFragment.text.length - 1))
     }
 }

@@ -16,15 +16,15 @@
 
 package org.jetbrains.kotlin.idea.debugger
 
-import com.intellij.debugger.impl.EditorTextProvider
-import com.intellij.psi.PsiElement
-import com.intellij.debugger.engine.evaluation.TextWithImports
-import com.intellij.openapi.util.TextRange
-import com.intellij.openapi.util.Pair
-import com.intellij.debugger.engine.evaluation.TextWithImportsImpl
 import com.intellij.debugger.engine.evaluation.CodeFragmentKind
-import org.jetbrains.kotlin.idea.KotlinFileType
+import com.intellij.debugger.engine.evaluation.TextWithImports
+import com.intellij.debugger.engine.evaluation.TextWithImportsImpl
+import com.intellij.debugger.impl.EditorTextProvider
+import com.intellij.openapi.util.Pair
+import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.*
 
 class KotlinEditorTextProvider : EditorTextProvider {
@@ -58,7 +58,7 @@ class KotlinEditorTextProvider : EditorTextProvider {
         fun findExpressionInner(element: PsiElement, allowMethodCalls: Boolean): KtExpression? {
             if (!isAcceptedAsCodeFragmentContext(element)) return null
 
-            val jetElement = PsiTreeUtil.getParentOfType(element, javaClass<KtElement>())
+            val jetElement = PsiTreeUtil.getParentOfType(element, KtElement::class.java)
             if (jetElement == null) return null
 
             if (jetElement is KtProperty) {
@@ -119,7 +119,7 @@ class KotlinEditorTextProvider : EditorTextProvider {
                 arrayOf(KtUserType::class.java, KtImportDirective::class.java, KtPackageDirective::class.java)
 
         fun isAcceptedAsCodeFragmentContext(element: PsiElement): Boolean {
-            return element.javaClass as Class<*> !in NOT_ACCEPTED_AS_CONTEXT_TYPES &&
+            return !NOT_ACCEPTED_AS_CONTEXT_TYPES.contains(element.javaClass as Class<*>) &&
                    PsiTreeUtil.getParentOfType(element, *NOT_ACCEPTED_AS_CONTEXT_TYPES) == null
         }
     }

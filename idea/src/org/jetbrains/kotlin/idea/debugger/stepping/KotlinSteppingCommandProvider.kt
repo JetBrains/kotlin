@@ -276,7 +276,7 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
         return allInlineFunctionCalls.filter {
             val shouldInclude = it.getLineNumber() in linesRange
             if (shouldInclude) {
-                linesRange = Math.min(linesRange.start, it.getLineNumber())..Math.max(linesRange.end, it.getLineNumber(false))
+                linesRange = Math.min(linesRange.start, it.getLineNumber())..Math.max(linesRange.endInclusive, it.getLineNumber(false))
             }
             shouldInclude
         }
@@ -286,7 +286,7 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
 fun getStepOverPosition(
         location: Location,
         file: KtFile,
-        range: Range<Int>,
+        range: IntRange,
         inlinedArguments: List<KtElement>,
         elementsToSkip: List<PsiElement>
 ): XSourcePositionImpl? {

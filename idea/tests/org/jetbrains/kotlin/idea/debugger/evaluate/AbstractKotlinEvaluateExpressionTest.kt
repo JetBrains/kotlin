@@ -62,7 +62,7 @@ import java.util.*
 import javax.swing.tree.TreeNode
 
 public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
-    private val logger = Logger.getLogger(javaClass<KotlinEvaluateExpressionCache>())!!
+    private val logger = Logger.getLogger(KotlinEvaluateExpressionCache::class.java)!!
 
     private var appender: AppenderSkeleton? = null
 
@@ -289,10 +289,10 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
 
     private fun checkExceptions(exceptions: MutableMap<String, Throwable>) {
         if (!exceptions.isEmpty()) {
-            for (exc in exceptions.values()) {
+            for (exc in exceptions.values) {
                 exc.printStackTrace()
             }
-            throw AssertionError("Test failed:\n" + exceptions.map { "expression: ${it.key}, exception: ${it.value.getMessage()}" }.joinToString("\n"))
+            throw AssertionError("Test failed:\n" + exceptions.map { "expression: ${it.key}, exception: ${it.value.message}" }.joinToString("\n"))
         }
     }
 
@@ -308,7 +308,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
     private fun loadTestDirectivesPairs(fileContent: String, directivePrefix: String, expectedPrefix: String): List<Pair<String, String>> {
         val directives = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileContent, directivePrefix)
         val expected = InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileContent, expectedPrefix)
-        assert(directives.size() == expected.size()) { "Sizes of test directives are different" }
+        assert(directives.size == expected.size) { "Sizes of test directives are different" }
         return directives.zip(expected)
     }
 
@@ -328,7 +328,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
         val markupMap = hashMapOf<com.sun.jdi.Value, ValueMarkup>()
         for (labelAsText in labelsAsText) {
             val labelParts = labelAsText.split("=")
-            assert(labelParts.size() == 2) { "Wrong format for DEBUG_LABEL directive: // DEBUG_LABEL: {localVariableName} = {labelText}"}
+            assert(labelParts.size == 2) { "Wrong format for DEBUG_LABEL directive: // DEBUG_LABEL: {localVariableName} = {labelText}"}
             val localVariableName = labelParts[0].trim()
             val labelName = labelParts[1].trim()
             val localVariable = context.getFrameProxy()!!.visibleVariableByName(localVariableName)
@@ -366,7 +366,7 @@ public abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestB
                 Assert.assertTrue("Evaluate expression returns wrong result for $text:\nexpected = $expectedResult\nactual   = $actualResult\n", expectedResult == actualResult)
             }
             catch (e: EvaluateException) {
-                Assert.assertTrue("Evaluate expression throws wrong exception for $text:\nexpected = $expectedResult\nactual   = ${e.getMessage()}\n", expectedResult == e.getMessage()?.replaceFirst(ID_PART_REGEX, "id=ID"))
+                Assert.assertTrue("Evaluate expression throws wrong exception for $text:\nexpected = $expectedResult\nactual   = ${e.message}\n", expectedResult == e.message?.replaceFirst(ID_PART_REGEX, "id=ID"))
             }
         }
     }

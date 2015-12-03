@@ -85,11 +85,11 @@ class KotlinFieldBreakpoint(
     }
 
     private fun getProperty(sourcePosition: SourcePosition?): KtCallableDeclaration? {
-        val property: KtProperty? = PositionUtil.getPsiElementAt(getProject(), javaClass(), sourcePosition)
+        val property: KtProperty? = PositionUtil.getPsiElementAt(getProject(), KtProperty::class.java, sourcePosition)
         if (property != null) {
             return property
         }
-        val parameter: KtParameter? = PositionUtil.getPsiElementAt(getProject(), javaClass(), sourcePosition)
+        val parameter: KtParameter? = PositionUtil.getPsiElementAt(getProject(), KtParameter::class.java, sourcePosition)
         if (parameter != null) {
             return parameter
         }
@@ -105,7 +105,7 @@ class KotlinFieldBreakpoint(
                 getProperties().myClassName = JvmFileClassUtil.getFileClassInfoNoResolve(property.getContainingKtFile()).fileClassFqName.asString()
             }
             else {
-                val ktClass: KtClassOrObject? = PsiTreeUtil.getParentOfType(property, javaClass())
+                val ktClass: KtClassOrObject? = PsiTreeUtil.getParentOfType(property, KtClassOrObject::class.java)
                 if (ktClass is KtClassOrObject) {
                     val fqName = ktClass.getFqName()
                     if (fqName != null) {
@@ -215,7 +215,7 @@ class KotlinFieldBreakpoint(
             }
         }
         else {
-            var entryRequest: MethodEntryRequest? = findRequest(debugProcess, javaClass(), this)
+            var entryRequest: MethodEntryRequest? = findRequest(debugProcess, MethodEntryRequest::class.java, this)
             if (entryRequest == null) {
                 entryRequest = manager.createMethodEntryRequest(this)!!
                 if (LOG.isDebugEnabled()) {

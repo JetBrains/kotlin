@@ -16,14 +16,7 @@
 
 package org.jetbrains.kotlin.idea.debugger
 
-import com.intellij.debugger.actions.MethodSmartStepTarget
-import com.intellij.debugger.actions.SmartStepTarget
-import com.intellij.psi.PsiSubstitutor
-import com.intellij.psi.util.PsiFormatUtil
-import com.intellij.psi.util.PsiFormatUtilBase
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.idea.debugger.stepping.KotlinLambdaSmartStepTarget
 import org.jetbrains.kotlin.idea.debugger.stepping.KotlinSmartStepIntoHandler
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
@@ -64,13 +57,13 @@ public abstract class AbstractSmartStepIntoTest : KotlinLightCodeInsightFixtureT
     private fun renderTableWithResults(expected: List<String>, actual: List<String>): String {
         val sb = StringBuilder()
 
-        val maxExtStrSize = (expected.maxBy { it.length() }?.length() ?: 0) + 5
-        val longerList = (if (expected.size() < actual.size()) actual else expected).sorted()
-        val shorterList = (if (expected.size() < actual.size()) expected else actual).sorted()
+        val maxExtStrSize = (expected.maxBy { it.length }?.length ?: 0) + 5
+        val longerList = (if (expected.size < actual.size) actual else expected).sorted()
+        val shorterList = (if (expected.size < actual.size) expected else actual).sorted()
         for ((i, element) in longerList.withIndex()) {
             sb.append(element)
-            sb.append(" ".repeat(maxExtStrSize - element.length()))
-            if (i < shorterList.size()) sb.append(shorterList[i])
+            sb.append(" ".repeat(maxExtStrSize - element.length))
+            if (i < shorterList.size) sb.append(shorterList[i])
             sb.append("\n")
         }
 

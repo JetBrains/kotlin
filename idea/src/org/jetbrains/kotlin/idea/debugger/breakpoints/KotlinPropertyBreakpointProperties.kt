@@ -16,10 +16,8 @@
 
 package org.jetbrains.kotlin.idea.debugger.breakpoints
 
-import org.jetbrains.java.debugger.breakpoints.properties.JavaBreakpointProperties
-import org.jetbrains.java.debugger.breakpoints.properties.JavaFieldBreakpointProperties
-
 import com.intellij.util.xmlb.annotations.Attribute
+import org.jetbrains.java.debugger.breakpoints.properties.JavaBreakpointProperties
 
 public class KotlinPropertyBreakpointProperties(
         @Attribute var myFieldName: String = "",

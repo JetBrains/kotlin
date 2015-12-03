@@ -26,7 +26,7 @@ import com.sun.jdi.ClassLoaderReference
 import org.jetbrains.kotlin.idea.debugger.evaluate.CompilingEvaluatorUtils
 
 public fun loadClasses(evaluationContext: EvaluationContextImpl, classes: Collection<Pair<String, ByteArray>>) {
-    val process = evaluationContext.getDebugProcess()
+    val process = evaluationContext.debugProcess
 
     val classLoader: ClassLoaderReference
     try {
@@ -36,11 +36,11 @@ public fun loadClasses(evaluationContext: EvaluationContextImpl, classes: Collec
         throw EvaluateException("Error creating evaluation class loader: " + e, e)
     }
 
-    val version = (process.getVirtualMachineProxy()).version()
+    val version = (process.virtualMachineProxy).version()
     val sdkVersion = JdkVersionUtil.getVersion(version)
 
-    if (!SystemInfo.isJavaVersionAtLeast(sdkVersion.getDescription())) {
-        throw EvaluateException("Unable to compile for target level " + sdkVersion.getDescription() + ". Need to run IDEA on java version at least " + sdkVersion.getDescription() + ", currently running on " + SystemInfo.JAVA_RUNTIME_VERSION)
+    if (!SystemInfo.isJavaVersionAtLeast(sdkVersion.description)) {
+        throw EvaluateException("Unable to compile for target level " + sdkVersion.description + ". Need to run IDEA on java version at least " + sdkVersion.description + ", currently running on " + SystemInfo.JAVA_RUNTIME_VERSION)
     }
 
     try {
@@ -50,7 +50,7 @@ public fun loadClasses(evaluationContext: EvaluationContextImpl, classes: Collec
         throw EvaluateException("Error during classes definition " + e, e)
     }
 
-    evaluationContext.setClassLoader(classLoader)
+    evaluationContext.classLoader = classLoader
 }
 
 private fun defineClasses(
@@ -75,7 +75,7 @@ private val LAMBDA_SUPERCLASSES = listOf(
 
 private class ClassBytes(val name: String) {
     val bytes: ByteArray by lazy {
-        val inputStream = this.javaClass.getClassLoader().getResourceAsStream(name.replace('.', '/') + ".class")
+        val inputStream = this.javaClass.classLoader.getResourceAsStream(name.replace('.', '/') + ".class")
                           ?: throw EvaluateException("Couldn't find $name class in current class loader")
 
         try {

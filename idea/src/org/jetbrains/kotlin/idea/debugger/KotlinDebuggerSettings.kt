@@ -24,10 +24,9 @@ import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.SimpleConfigurable
 import com.intellij.openapi.util.Getter
 import com.intellij.util.xmlb.XmlSerializerUtil
+import com.intellij.xdebugger.XDebuggerUtil
 import com.intellij.xdebugger.settings.DebuggerSettingsCategory
 import com.intellij.xdebugger.settings.XDebuggerSettings
-
-import com.intellij.xdebugger.XDebuggerUtil
 import org.jetbrains.kotlin.idea.debugger.stepping.KotlinSteppingConfigurableUi
 
 @State(name = "KotlinDebuggerSettings", storages = arrayOf(Storage(file = StoragePathMacros.APP_CONFIG + "/kotlin_debug.xml")))
@@ -38,7 +37,7 @@ public class KotlinDebuggerSettings : XDebuggerSettings<KotlinDebuggerSettings>(
 
     companion object {
         public fun getInstance(): KotlinDebuggerSettings {
-            return XDebuggerUtil.getInstance()?.getDebuggerSettings(javaClass<KotlinDebuggerSettings>())!!
+            return XDebuggerUtil.getInstance()?.getDebuggerSettings(KotlinDebuggerSettings::class.java)!!
         }
     }
 
@@ -48,13 +47,13 @@ public class KotlinDebuggerSettings : XDebuggerSettings<KotlinDebuggerSettings>(
                 listOf(SimpleConfigurable.create(
                         "reference.idesettings.debugger.kotlin.stepping",
                         "Kotlin",
-                        javaClass<KotlinSteppingConfigurableUi>(),
+                        KotlinSteppingConfigurableUi::class.java,
                         this))
             DebuggerSettingsCategory.DATA_VIEWS ->
                 listOf(SimpleConfigurable.create(
                         "reference.idesettings.debugger.kotlin.data.view",
                         "Kotlin",
-                        javaClass<KotlinDelegatedPropertyRendererConfigurableUi>(),
+                        KotlinDelegatedPropertyRendererConfigurableUi::class.java,
                         this))
             else -> listOf()
         }

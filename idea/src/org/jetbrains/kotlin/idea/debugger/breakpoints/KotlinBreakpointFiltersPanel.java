@@ -387,7 +387,7 @@ public class KotlinBreakpointFiltersPanel<T extends KotlinPropertyBreakpointProp
     }
     myPassCountCheckbox.setEnabled(passCountApplicable);
 
-    final boolean passCountSelected = myPassCountCheckbox.isSelected();
+    boolean passCountSelected = myPassCountCheckbox.isSelected();
     myInstanceFiltersCheckBox.setEnabled(!passCountSelected);
     myClassFiltersCheckBox.setEnabled(!passCountSelected);
 

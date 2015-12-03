@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.debugger.render
 import com.intellij.debugger.DebuggerContext
 import com.intellij.debugger.engine.evaluation.EvaluateException
 import com.intellij.debugger.engine.evaluation.EvaluationContextImpl
-import com.intellij.debugger.settings.NodeRendererSettings
 import com.intellij.debugger.ui.impl.watch.FieldDescriptorImpl
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiExpression
@@ -42,22 +41,22 @@ class DelegatedPropertyFieldDescriptor(
         if (!renderDelegatedProperty) return super.calcValue(evaluationContext)
 
         val method = findGetterForDelegatedProperty()
-        val threadReference = evaluationContext.getSuspendContext().getThread()?.getThreadReference()
+        val threadReference = evaluationContext.suspendContext.thread?.threadReference
         if (method == null || threadReference == null) {
             return super.calcValue(evaluationContext)
         }
 
         try {
-            return evaluationContext.getDebugProcess().invokeInstanceMethod(
+            return evaluationContext.debugProcess.invokeInstanceMethod(
                     evaluationContext,
-                    getObject(),
+                    `object`,
                     method,
                     listOf<Nothing>(),
-                    evaluationContext.getSuspendContext().getSuspendPolicy()
+                    evaluationContext.suspendContext.suspendPolicy
             )
         }
         catch(e: EvaluateException) {
-            return e.getExceptionFromTargetVM()
+            return e.exceptionFromTargetVM
         }
     }
 
@@ -70,10 +69,10 @@ class DelegatedPropertyFieldDescriptor(
     }
 
     private fun findGetterForDelegatedProperty(): Method? {
-        val fieldName = getName()
+        val fieldName = name
         if (!Name.isValidIdentifier(fieldName)) return null
 
-        return getObject().referenceType().methodsByName(JvmAbi.getterName(fieldName))?.firstOrNull()
+        return `object`.referenceType().methodsByName(JvmAbi.getterName(fieldName))?.firstOrNull()
     }
 
     override fun getDeclaredType(): String? {

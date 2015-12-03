@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.debugger.breakpoints
 import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.JavaBreakpointHandler
 import com.intellij.debugger.engine.JavaBreakpointHandlerFactory
-import com.intellij.debugger.ui.breakpoints.JavaLineBreakpointType
 
 public class KotlinFieldBreakpointHandlerFactory : JavaBreakpointHandlerFactory {
     override fun createHandler(process: DebugProcessImpl): JavaBreakpointHandler? {
@@ -33,5 +32,5 @@ public class KotlinLineBreakpointHandlerFactory: JavaBreakpointHandlerFactory {
     }
 }
 
-public class KotlinFieldBreakpointHandler(process: DebugProcessImpl) : JavaBreakpointHandler(javaClass<KotlinFieldBreakpointType>(), process)
-public class KotlinLineBreakpointHandler(process: DebugProcessImpl) : JavaBreakpointHandler(javaClass<KotlinLineBreakpointType>(), process)
+public class KotlinFieldBreakpointHandler(process: DebugProcessImpl) : JavaBreakpointHandler(KotlinFieldBreakpointType::class.java, process)
+public class KotlinLineBreakpointHandler(process: DebugProcessImpl) : JavaBreakpointHandler(KotlinLineBreakpointType::class.java, process)

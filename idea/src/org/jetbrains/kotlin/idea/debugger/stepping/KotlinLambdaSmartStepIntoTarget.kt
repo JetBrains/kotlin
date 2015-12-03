@@ -32,11 +32,11 @@ public class KotlinLambdaSmartStepTarget(
 ): SmartStepTarget(label, highlightElement, true, lines) {
     override fun getIcon() = KotlinIcons.LAMBDA
 
-    fun getLambda() = getHighlightElement() as KtFunction
+    fun getLambda() = highlightElement as KtFunction
 
     companion object {
         fun calcLabel(descriptor: DeclarationDescriptor, paramName: Name): String {
-            return "${descriptor.getName().asString()}: ${paramName.asString()}.${OperatorNameConventions.INVOKE.asString()}()"
+            return "${descriptor.name.asString()}: ${paramName.asString()}.${OperatorNameConventions.INVOKE.asString()}()"
         }
     }
 }

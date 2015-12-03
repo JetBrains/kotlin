@@ -35,8 +35,8 @@ public class KotlinBasicStepMethodFilter(
         myTargetMethodName = when (resolvedElement) {
             is KtAnonymousInitializer -> "<init>"
             is KtConstructor<*> -> "<init>"
-            is KtPropertyAccessor -> JvmAbi.getterName((resolvedElement.getParent() as KtProperty).getName()!!)
-            else -> resolvedElement.getName()!!
+            is KtPropertyAccessor -> JvmAbi.getterName((resolvedElement.parent as KtProperty).name!!)
+            else -> resolvedElement.name!!
         }
     }
 
@@ -49,7 +49,7 @@ public class KotlinBasicStepMethodFilter(
         if (myTargetMethodName != method.name()) return false
 
         val sourcePosition = runReadAction { SourcePosition.createFromElement(resolvedElement) } ?: return false
-        val positionManager = process.getPositionManager() ?: return false
+        val positionManager = process.positionManager ?: return false
 
         val classes = positionManager.getAllClasses(sourcePosition)
 

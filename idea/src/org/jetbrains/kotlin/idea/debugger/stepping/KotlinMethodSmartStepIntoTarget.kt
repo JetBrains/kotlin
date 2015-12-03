@@ -19,7 +19,7 @@ public class KotlinMethodSmartStepTarget(
 ): SmartStepTarget(label, highlightElement, false, lines) {
     override fun getIcon(): Icon? {
         return when {
-            resolvedElement is KtNamedFunction && resolvedElement.getReceiverTypeReference() != null -> KotlinIcons.EXTENSION_FUNCTION
+            resolvedElement is KtNamedFunction && resolvedElement.receiverTypeReference != null -> KotlinIcons.EXTENSION_FUNCTION
             else -> KotlinIcons.FUNCTION
         }
     }

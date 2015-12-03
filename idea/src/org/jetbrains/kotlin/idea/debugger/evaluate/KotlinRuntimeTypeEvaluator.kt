@@ -63,11 +63,11 @@ public abstract class KotlinRuntimeTypeEvaluator(
     protected abstract fun typeCalculationFinished(type: KotlinType?)
 
     override fun evaluate(evaluationContext: EvaluationContextImpl): KotlinType? {
-        val project = evaluationContext.getProject()
+        val project = evaluationContext.project
 
         val evaluator = DebuggerInvocationUtil.commitAndRunReadAction<ExpressionEvaluator>(project, EvaluatingComputable {
-                val codeFragment = KtPsiFactory(myElement.getProject()).createExpressionCodeFragment(
-                        myElement.getText(), myElement.getContainingFile().getContext())
+                val codeFragment = KtPsiFactory(myElement.project).createExpressionCodeFragment(
+                        myElement.text, myElement.containingFile.context)
                 KotlinEvaluationBuilder.build(codeFragment, ContextUtil.getSourcePosition(evaluationContext))
         })
 
@@ -84,7 +84,7 @@ public abstract class KotlinRuntimeTypeEvaluator(
             val myValue = value.asValue()
             var psiClass = myValue.asmType.getClassDescriptor(project)
             if (psiClass != null) {
-                return psiClass.getDefaultType()
+                return psiClass.defaultType
             }
 
             val type = value.type()
@@ -93,14 +93,14 @@ public abstract class KotlinRuntimeTypeEvaluator(
                 if (superclass != null && CommonClassNames.JAVA_LANG_OBJECT != superclass.name()) {
                     psiClass = AsmType.getType(superclass.signature()).getClassDescriptor(project)
                     if (psiClass != null) {
-                        return psiClass.getDefaultType()
+                        return psiClass.defaultType
                     }
                 }
 
                 for (interfaceType in type.interfaces()) {
                     psiClass = AsmType.getType(interfaceType.signature()).getClassDescriptor(project)
                     if (psiClass != null) {
-                        return psiClass.getDefaultType()
+                        return psiClass.defaultType
                     }
                 }
             }

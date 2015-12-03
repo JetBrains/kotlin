@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.idea.debugger
 
-import com.intellij.psi.PsiElement
 import com.intellij.debugger.SourcePosition
 import com.intellij.openapi.editor.Editor
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 
 class MockSourcePosition(

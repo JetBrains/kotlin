@@ -410,7 +410,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
             }
         }
 
-        assert(sourceFiles.size() == 1) { "One source file should be found: name = $fileName, sourceFiles = $sourceFiles" }
+        assert(sourceFiles.size == 1) { "One source file should be found: name = $fileName, sourceFiles = $sourceFiles" }
 
         val runnable = Runnable() {
             val psiSourceFile = PsiManager.getInstance(project).findFile(sourceFiles.first())!!

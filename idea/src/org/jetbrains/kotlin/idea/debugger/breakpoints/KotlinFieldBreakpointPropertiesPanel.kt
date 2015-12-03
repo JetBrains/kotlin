@@ -24,8 +24,6 @@ import com.intellij.xdebugger.breakpoints.ui.XBreakpointCustomPropertiesPanel
 import com.intellij.xdebugger.impl.breakpoints.XBreakpointBase
 import org.jetbrains.kotlin.idea.KotlinBundle
 import java.awt.BorderLayout
-import java.awt.event.ActionEvent
-import java.awt.event.ActionListener
 import javax.swing.Box
 import javax.swing.JCheckBox
 import javax.swing.JComponent
@@ -63,25 +61,25 @@ public class KotlinFieldBreakpointPropertiesPanel: XBreakpointCustomPropertiesPa
         innerPanel.add(Box.createHorizontalStrut(3), BorderLayout.WEST)
         innerPanel.add(Box.createHorizontalStrut(3), BorderLayout.EAST)
         mainPanel.add(innerPanel, BorderLayout.NORTH)
-        mainPanel.setBorder(IdeBorderFactory.createTitledBorder(DebuggerBundle.message("label.group.watch.events"), true))
+        mainPanel.border = IdeBorderFactory.createTitledBorder(DebuggerBundle.message("label.group.watch.events"), true)
         return mainPanel
     }
 
     override fun loadFrom(breakpoint: XLineBreakpoint<KotlinPropertyBreakpointProperties>) {
-        myWatchInitializationCheckBox.setSelected(breakpoint.getProperties().WATCH_INITIALIZATION)
-        myWatchAccessCheckBox.setSelected(breakpoint.getProperties().WATCH_ACCESS)
-        myWatchModificationCheckBox.setSelected(breakpoint.getProperties().WATCH_MODIFICATION)
+        myWatchInitializationCheckBox.isSelected = breakpoint.properties.WATCH_INITIALIZATION
+        myWatchAccessCheckBox.isSelected = breakpoint.properties.WATCH_ACCESS
+        myWatchModificationCheckBox.isSelected = breakpoint.properties.WATCH_MODIFICATION
     }
 
     override fun saveTo(breakpoint: XLineBreakpoint<KotlinPropertyBreakpointProperties>) {
-        var changed = breakpoint.getProperties().WATCH_ACCESS != myWatchAccessCheckBox.isSelected()
-        breakpoint.getProperties().WATCH_ACCESS = myWatchAccessCheckBox.isSelected()
+        var changed = breakpoint.properties.WATCH_ACCESS != myWatchAccessCheckBox.isSelected
+        breakpoint.properties.WATCH_ACCESS = myWatchAccessCheckBox.isSelected
 
-        changed = breakpoint.getProperties().WATCH_MODIFICATION != myWatchModificationCheckBox.isSelected() || changed
-        breakpoint.getProperties().WATCH_MODIFICATION = myWatchModificationCheckBox.isSelected()
+        changed = breakpoint.properties.WATCH_MODIFICATION != myWatchModificationCheckBox.isSelected || changed
+        breakpoint.properties.WATCH_MODIFICATION = myWatchModificationCheckBox.isSelected
 
-        changed = breakpoint.getProperties().WATCH_INITIALIZATION != myWatchInitializationCheckBox.isSelected() || changed
-        breakpoint.getProperties().WATCH_INITIALIZATION = myWatchInitializationCheckBox.isSelected()
+        changed = breakpoint.properties.WATCH_INITIALIZATION != myWatchInitializationCheckBox.isSelected || changed
+        breakpoint.properties.WATCH_INITIALIZATION = myWatchInitializationCheckBox.isSelected
 
         if (changed) {
             (breakpoint as XBreakpointBase<*, *, *>).fireBreakpointChanged()
