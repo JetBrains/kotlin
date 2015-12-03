@@ -297,8 +297,18 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                 text = text.replace("l", "L")
             }
 
+            fun isHexLiteral(text: String) = text.startsWith("0x") || text.startsWith("0X")
+            fun isLongField(element: PsiElement): Boolean {
+                val fieldType = (element as? PsiVariable)?.type ?: return false
+                return when (fieldType) {
+                    is PsiPrimitiveType -> fieldType.canonicalText == "long"
+                    else -> PsiPrimitiveType.getUnboxedType(fieldType)?.canonicalText == "long"
+                }
+            }
+
             if (typeStr == "int") {
-                text = if (value != null) value.toString() else text
+                val toIntIsNeeded = value != null && value.toString().toInt() < 0 && !isLongField(expression.parent)
+                text = if (value != null && !isHexLiteral(text)) value.toString() else text + (if (toIntIsNeeded) ".toInt()" else "")
             }
         }
 
