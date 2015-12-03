@@ -29,7 +29,7 @@ fun main(args: Array<String>) {
     // STEP_OVER: 1
     // SMART_STEP_INTO_BY_INDEX: 2
     myClass.f3(fun () = myClass.f3 {
-        println()
+        val a = 1
     })
 }
 
