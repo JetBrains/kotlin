@@ -77,8 +77,8 @@ public class ErrorUtils {
 
             @NotNull
             @Override
-            public Collection getSubPackagesOf(
-                    @NotNull FqName fqName, @NotNull Function1 nameFilter
+            public Collection<FqName> getSubPackagesOf(
+                    @NotNull FqName fqName, @NotNull Function1<? super Name, Boolean> nameFilter
             ) {
                 return emptyList();
             }
@@ -188,8 +188,8 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public Collection getContributedDescriptors(
-                @NotNull DescriptorKindFilter kindFilter, @NotNull Function1 nameFilter
+        public Collection<DeclarationDescriptor> getContributedDescriptors(
+                @NotNull DescriptorKindFilter kindFilter, @NotNull Function1<? super Name, Boolean> nameFilter
         ) {
             return Collections.emptyList();
         }
@@ -233,8 +233,8 @@ public class ErrorUtils {
 
         @NotNull
         @Override
-        public Collection getContributedDescriptors(
-                @NotNull DescriptorKindFilter kindFilter, @NotNull Function1 nameFilter
+        public Collection<DeclarationDescriptor> getContributedDescriptors(
+                @NotNull DescriptorKindFilter kindFilter, @NotNull Function1<? super Name, Boolean> nameFilter
         ) {
             throw new IllegalStateException();
         }

@@ -160,8 +160,8 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
 
             @NotNull
             @Override
-            public Collection getSubPackagesOf(
-                    @NotNull FqName fqName, @NotNull Function1 nameFilter
+            public Collection<FqName> getSubPackagesOf(
+                    @NotNull FqName fqName, @NotNull Function1<? super Name, Boolean> nameFilter
             ) {
                 LazyPackageDescriptor packageDescriptor = getPackageFragment(fqName);
                 if (packageDescriptor == null) {
