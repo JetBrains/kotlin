@@ -9,7 +9,7 @@
     <property name="kotlin.bootstrap.locator" value="buildType:bt345,tag:bootstrap,status:SUCCESS${kotlin.bootstrap.branch.locator}"/>
     <property name="kotlin.bootstrap.locator.force" value="false"/>
 
-    <property name="markdown.locator" value="buildType:IntelliJMarkdownParser_Build,status:SUCCESS"/>
+    <property name="markdown.locator" value="buildType:IntelliJMarkdownParser_Build,status:SUCCESS,tag:forKotlin"/>
 
     <property name="bootstrap.build.no.tests" value="false"/>
 
@@ -410,7 +410,7 @@
                 <length file="dependencies/markdown.jar" property="old.markdown.size"/>
                 <echo message="Size of the incompatible jar: ${old.markdown.size} bytes"/>
 
-                <get src="https://github.com/valich/intellij-markdown/archive/master.zip"
+                <get src="https://github.com/valich/intellij-markdown/archive/forKotlin.zip"
                      dest="dependencies/download/markdown-sources.zip" usetimestamp="true"/>
 
                 <delete dir="dependencies/intellij-markdown-master" failonerror="false"/>
