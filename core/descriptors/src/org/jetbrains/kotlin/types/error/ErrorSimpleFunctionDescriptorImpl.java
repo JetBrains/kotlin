@@ -67,6 +67,12 @@ public class ErrorSimpleFunctionDescriptorImpl extends SimpleFunctionDescriptorI
         return this;
     }
 
+    @NotNull
+    @Override
+    public SimpleFunctionDescriptor createCopyWithNewTypeParameters(@NotNull List<TypeParameterDescriptor> typeParameters) {
+        return this;
+    }
+
     @Override
     public void addOverriddenDescriptor(@NotNull CallableMemberDescriptor overriddenFunction) {
         // nop

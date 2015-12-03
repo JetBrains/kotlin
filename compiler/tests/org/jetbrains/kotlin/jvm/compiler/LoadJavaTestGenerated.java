@@ -229,6 +229,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             doTestCompiledJava(fileName);
         }
 
+        @TestMetadata("RawOverrides.java")
+        public void testRawOverrides() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/RawOverrides.java");
+            doTestCompiledJava(fileName);
+        }
+
         @TestMetadata("RawTypeWithUpperBound.java")
         public void testRawTypeWithUpperBound() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/RawTypeWithUpperBound.java");

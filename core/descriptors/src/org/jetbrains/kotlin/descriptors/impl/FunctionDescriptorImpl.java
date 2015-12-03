@@ -283,6 +283,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         protected @Nullable Name name;
         protected boolean copyOverrides;
         protected boolean signatureChange;
+        private List<TypeParameterDescriptor> newTypeParameters = null;
 
         public CopyConfiguration(
                 @NotNull TypeSubstitutor originalSubstitutor,
@@ -412,11 +413,21 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
                 configuration.newOwner, configuration.original, configuration.kind, configuration.name,
                 /* preserveSource = */ configuration.signatureChange);
 
-        List<TypeParameterDescriptor> originalTypeParameters = getTypeParameters();
-        List<TypeParameterDescriptor> substitutedTypeParameters = new ArrayList<TypeParameterDescriptor>(originalTypeParameters.size());
-        TypeSubstitutor substitutor = DescriptorSubstitutor.substituteTypeParameters(
-                originalTypeParameters, configuration.originalSubstitutor.getSubstitution(), substitutedDescriptor, substitutedTypeParameters
-        );
+        List<TypeParameterDescriptor> substitutedTypeParameters;
+        TypeSubstitutor substitutor;
+
+        if (configuration.newTypeParameters == null) {
+            List<TypeParameterDescriptor> originalTypeParameters = getTypeParameters();
+            substitutedTypeParameters = new ArrayList<TypeParameterDescriptor>(originalTypeParameters.size());
+            substitutor = DescriptorSubstitutor.substituteTypeParameters(
+                    originalTypeParameters, configuration.originalSubstitutor.getSubstitution(), substitutedDescriptor, substitutedTypeParameters
+            );
+        }
+        else {
+            // They should be already substituted
+            substitutedTypeParameters = configuration.newTypeParameters;
+            substitutor = configuration.originalSubstitutor;
+        }
 
         KotlinType substitutedReceiverParameterType = null;
         if (configuration.newExtensionReceiverParameterType != null) {

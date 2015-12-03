@@ -3289,6 +3289,12 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
             doTest(fileName);
         }
 
+        @TestMetadata("RawOverrides.java")
+        public void testRawOverrides() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/RawOverrides.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("RawTypeWithUpperBound.java")
         public void testRawTypeWithUpperBound() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/RawTypeWithUpperBound.java");

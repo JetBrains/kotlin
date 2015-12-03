@@ -122,4 +122,11 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
         //noinspection ConstantConditions
         return (SimpleFunctionDescriptor) newCopyBuilder().setValueParameters(valueParameters).setSignatureChange().build();
     }
+
+    @NotNull
+    @Override
+    public SimpleFunctionDescriptor createCopyWithNewTypeParameters(@NotNull List<TypeParameterDescriptor> typeParameters) {
+        //noinspection ConstantConditions
+        return (SimpleFunctionDescriptor) newCopyBuilder().setTypeParameters(typeParameters).build();
+    }
 }
