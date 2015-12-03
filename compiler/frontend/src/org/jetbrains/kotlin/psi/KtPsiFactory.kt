@@ -88,11 +88,16 @@ public class KtPsiFactory(private val project: Project) {
     }
 
     public fun createType(type: String): KtTypeReference {
-        val typeReference = createProperty("val x : $type").typeReference
+        val typeReference = createTypeIfPossible(type)
         if (typeReference == null || typeReference.text != type) {
             throw IllegalArgumentException("Incorrect type: $type")
         }
         return typeReference
+    }
+
+    public fun createTypeIfPossible(type: String): KtTypeReference? {
+        val typeReference = createProperty("val x : $type").typeReference
+        return if (typeReference?.text == type) typeReference else null
     }
 
     public fun createStar(): PsiElement {
