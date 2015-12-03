@@ -16,15 +16,23 @@
 
 package org.jetbrains.kotlin.test;
 
+import com.intellij.openapi.application.Application;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
+
+import java.lang.reflect.Field;
 
 public abstract class KotlinTestWithEnvironment extends KotlinTestWithEnvironmentManagement {
-    protected KotlinCoreEnvironment environment;
+    private KotlinCoreEnvironment environment;
+    private Application application;
 
     @Override
     protected void setUp() throws Exception {
+        application = ApplicationManager.getApplication();
+
         super.setUp();
         environment = createEnvironment();
     }
@@ -34,6 +42,23 @@ public abstract class KotlinTestWithEnvironment extends KotlinTestWithEnvironmen
         removeEnvironment();
         environment = null;
         super.tearDown();
+
+        if (application == null) {
+            resetApplicationToNull();
+        }
+
+        application = null;
+    }
+
+    protected void resetApplicationToNull() {
+        try {
+            Field ourApplicationField = ApplicationManager.class.getDeclaredField("ourApplication");
+            ourApplicationField.setAccessible(true);
+            ourApplicationField.set(null, null);
+        }
+        catch (Exception e) {
+            throw ExceptionUtilsKt.rethrow(e);
+        }
     }
 
     protected abstract KotlinCoreEnvironment createEnvironment() throws Exception;
