@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.gradle.plugin.android
 
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.BasePlugin
+import com.android.build.gradle.api.AndroidSourceSet
 import com.android.build.gradle.api.ApkVariant
 import com.android.build.gradle.api.BaseVariant
 import com.android.build.gradle.api.TestVariant
@@ -65,6 +66,11 @@ class AndroidGradleWrapper {
   @NotNull
   static def List<String> getProductFlavorsNames(ApkVariant variant) {
       return variant.getProductFlavors().iterator().collect { it.getName() }
+  }
+
+  @NotNull
+  static def List<AndroidSourceSet> getProductFlavorsSourceSets(BaseExtension extension) {
+      return extension.productFlavors.iterator().collect { extension.sourceSets.findByName(it.name) }
   }
 
   @NotNull
