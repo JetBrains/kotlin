@@ -345,6 +345,9 @@ public class QuickFixRegistrar : QuickFixContributor {
 
         UNRESOLVED_REFERENCE.registerFactory(KotlinAddOrderEntryActionFactory)
 
+        UNRESOLVED_REFERENCE.registerFactory(RenameUnresolvedReferenceActionFactory)
+        EXPRESSION_EXPECTED_PACKAGE_FOUND.registerFactory(RenameUnresolvedReferenceActionFactory)
+
         MISPLACED_TYPE_PARAMETER_CONSTRAINTS.registerFactory(MoveTypeParameterConstraintFix)
 
         DELEGATE_RESOLVED_TO_DEPRECATED_CONVENTION.registerFactory(DeprecatedFunctionConventionFix)

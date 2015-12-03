@@ -1,6 +1,7 @@
 // "Create property 'foo'" "false"
 // ACTION: Create extension function 'bar'
 // ACTION: Create member function 'bar'
+// ACTION: Rename reference
 // ERROR: Unresolved reference: bar
 // ERROR: Unresolved reference: foo
 

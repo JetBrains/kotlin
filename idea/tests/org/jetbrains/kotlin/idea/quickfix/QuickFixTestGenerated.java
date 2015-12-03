@@ -5758,6 +5758,51 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         }
     }
 
+    @TestMetadata("idea/testData/quickfix/renameUnresolvedReference")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RenameUnresolvedReference extends AbstractQuickFixTest {
+        public void testAllFilesPresentInRenameUnresolvedReference() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/renameUnresolvedReference"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("qualifiedFunRef.kt")
+        public void testQualifiedFunRef() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/renameUnresolvedReference/qualifiedFunRef.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("qualifiedPropertyRef.kt")
+        public void testQualifiedPropertyRef() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/renameUnresolvedReference/qualifiedPropertyRef.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("typeRef.kt")
+        public void testTypeRef() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/renameUnresolvedReference/typeRef.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unqualifiedFunRef.kt")
+        public void testUnqualifiedFunRef() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/renameUnresolvedReference/unqualifiedFunRef.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unqualifiedPropertyRef.kt")
+        public void testUnqualifiedPropertyRef() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/renameUnresolvedReference/unqualifiedPropertyRef.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unqualifiedPropertyRefWithPackageError.kt")
+        public void testUnqualifiedPropertyRefWithPackageError() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/renameUnresolvedReference/unqualifiedPropertyRefWithPackageError.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/quickfix/supercalls")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

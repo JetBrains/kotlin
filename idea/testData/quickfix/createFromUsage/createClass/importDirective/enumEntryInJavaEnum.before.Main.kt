@@ -3,6 +3,7 @@
 // ACTION: Create class 'A'
 // ACTION: Create enum 'A'
 // ACTION: Create interface 'A'
+// ACTION: Rename reference
 // ERROR: Unresolved reference: A
 import E.<caret>A
 

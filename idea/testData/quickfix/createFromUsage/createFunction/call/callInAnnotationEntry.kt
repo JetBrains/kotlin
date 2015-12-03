@@ -2,6 +2,7 @@
 // ACTION: Create annotation 'bar'
 // ACTION: Make internal
 // ACTION: Make private
+// ACTION: Rename reference
 // ERROR: Unresolved reference: foo
 // ERROR: Unresolved reference: bar
 
