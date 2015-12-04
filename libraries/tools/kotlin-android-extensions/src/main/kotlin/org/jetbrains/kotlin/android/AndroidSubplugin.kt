@@ -44,7 +44,7 @@ public class AndroidSubplugin : KotlinGradleSubplugin {
 
         fun addVariant(sourceSet: AndroidSourceSet) {
             pluginOptions += SubpluginOption("variant", sourceSet.name + ';' +
-                    mainSourceSet.res.srcDirs.joinToString(";") { it.absolutePath })
+                    sourceSet.res.srcDirs.joinToString(";") { it.absolutePath })
         }
 
         addVariant(mainSourceSet)
