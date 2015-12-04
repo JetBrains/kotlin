@@ -63,7 +63,7 @@ public class InterfaceImplBodyCodegen(
         if (DescriptorUtils.isLocal(descriptor)) return null
         val classDescriptorImpl = ClassDescriptorImpl(
                 descriptor, Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME),
-                Modality.FINAL, Collections.emptyList(), SourceElement.NO_SOURCE)
+                Modality.FINAL, ClassKind.CLASS, Collections.emptyList(), SourceElement.NO_SOURCE)
 
         classDescriptorImpl.initialize(MemberScope.Empty, emptySet(), null)
         return classDescriptorImpl

@@ -98,6 +98,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
                 correctContainerForLambda(callableDescriptor, element),
                 Name.special("<closure-" + simpleName + ">"),
                 Modality.FINAL,
+                ClassKind.CLASS,
                 supertypes,
                 KotlinSourceElementKt.toSourceElement(element)
         );

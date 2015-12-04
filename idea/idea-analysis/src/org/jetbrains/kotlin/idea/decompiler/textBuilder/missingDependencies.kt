@@ -63,7 +63,7 @@ internal class PackageFragmentProviderForMissingDependencies(val moduleDescripto
 private class MissingDependencyErrorClassDescriptor(
         containing: DeclarationDescriptor,
         override val fullFqName: FqName
-) : MissingDependencyErrorClass, ClassDescriptorImpl(containing, fullFqName.shortName(), Modality.OPEN, listOf(), SourceElement.NO_SOURCE) {
+) : MissingDependencyErrorClass, ClassDescriptorImpl(containing, fullFqName.shortName(), Modality.OPEN, ClassKind.CLASS, listOf(), SourceElement.NO_SOURCE) {
 
     private val scope = ScopeWithMissingDependencies(fullFqName, this)
 

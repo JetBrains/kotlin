@@ -70,6 +70,7 @@ public class SamWrapperCodegen {
                 samType.getJavaClassDescriptor().getContainingDeclaration(),
                 fqName.shortName(),
                 Modality.FINAL,
+                ClassKind.CLASS,
                 Collections.singleton(samType.getType()),
                 SourceElement.NO_SOURCE
         );
