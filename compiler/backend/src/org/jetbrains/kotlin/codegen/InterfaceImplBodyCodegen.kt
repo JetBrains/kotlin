@@ -103,6 +103,8 @@ public class InterfaceImplBodyCodegen(
                 }
             }
         }
+
+        generateSyntheticAccessors()
     }
 
     private fun generateDelegationToSuperTraitImpl(descriptor: FunctionDescriptor, implementation: FunctionDescriptor) {

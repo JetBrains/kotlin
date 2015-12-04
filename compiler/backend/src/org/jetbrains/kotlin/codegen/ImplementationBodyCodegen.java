@@ -230,7 +230,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     @Override
-    protected void generateBody() {
+    protected void generateDefaultImplsIfNeeded() {
         if (isInterface(descriptor) && !isLocal) {
             Type defaultImplsType = state.getTypeMapper().mapDefaultImpls(descriptor);
             ClassBuilder defaultImplsBuilder =
@@ -242,7 +242,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             ClassContext defaultImplsContext = parentContext.intoDefaultImplsClass(descriptor, (ClassContext) context, state);
             new InterfaceImplBodyCodegen(myClass, defaultImplsContext, defaultImplsBuilder, state, this).generate();
         }
-        super.generateBody();
     }
 
     @Override
@@ -378,7 +377,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         generateDelegates(delegationFieldsInfo);
 
-        generateSyntheticAccessors();
+        if (!isInterface(descriptor)  || kind == OwnerKind.DEFAULT_IMPLS) {
+            generateSyntheticAccessors();
+        }
 
         generateEnumMethods();
 
@@ -1332,7 +1333,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     private void generateTraitMethods() {
         if (isInterface(descriptor)) return;
 
-        for (Map.Entry<FunctionDescriptor, FunctionDescriptor> entry : CodegenUtil.getTraitMethods(descriptor).entrySet()) {
+        for (Map.Entry<FunctionDescriptor, FunctionDescriptor> entry : CodegenUtil.getNonPrivateTraitMethods(descriptor).entrySet()) {
             FunctionDescriptor traitFun = entry.getKey();
             //skip java 8 default methods
             if (!(traitFun instanceof JavaCallableMemberDescriptor)) {

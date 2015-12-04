@@ -758,7 +758,7 @@ public class JetTypeMapper {
             ClassDescriptor ownerForDefault = (ClassDescriptor) baseMethodDescriptor.getContainingDeclaration();
             ownerForDefaultImpl = isJvmInterface(ownerForDefault) ? mapDefaultImpls(ownerForDefault) : mapClass(ownerForDefault);
 
-            if (isInterface && (superCall || descriptor.getVisibility() == Visibilities.PRIVATE)) {
+            if (isInterface && (superCall || descriptor.getVisibility() == Visibilities.PRIVATE || isAccessor(descriptor))) {
                 thisClass = mapClass(currentOwner);
                 if (declarationOwner instanceof JavaClassDescriptor) {
                     invokeOpcode = INVOKESPECIAL;

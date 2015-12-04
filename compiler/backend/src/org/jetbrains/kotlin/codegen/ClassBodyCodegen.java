@@ -77,6 +77,8 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtClassOrObject> {
 
         generatePrimaryConstructorProperties();
         generateConstructors();
+        generateDefaultImplsIfNeeded();
+
         for (KtObjectDeclaration companion : companions) {
             generateDeclaration(companion);
         }
@@ -106,6 +108,10 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtClassOrObject> {
     }
 
     protected void generateConstructors() {
+
+    }
+
+    protected void generateDefaultImplsIfNeeded() {
 
     }
 

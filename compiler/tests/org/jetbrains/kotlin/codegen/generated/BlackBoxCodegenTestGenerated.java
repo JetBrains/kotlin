@@ -7876,6 +7876,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("noPrivateDelegation.kt")
+        public void testNoPrivateDelegation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/noPrivateDelegation.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("syntheticAccessor.kt")
+        public void testSyntheticAccessor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/syntheticAccessor.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("traitImplDelegationWithCovariantOverride.kt")
         public void testTraitImplDelegationWithCovariantOverride() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/traitImplDelegationWithCovariantOverride.kt");
