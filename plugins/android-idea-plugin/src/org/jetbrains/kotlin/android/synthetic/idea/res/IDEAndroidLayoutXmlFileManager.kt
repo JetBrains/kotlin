@@ -33,15 +33,25 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
 public class IDEAndroidLayoutXmlFileManager(val module: Module) : AndroidLayoutXmlFileManager(module.project) {
-    override val androidModule: AndroidModule? by lazy { module.androidFacet?.toAndroidModuleInfo() }
+    override val androidModule: AndroidModule?
+        get() = module.androidFacet?.toAndroidModuleInfo()
 
-    private val moduleData: CachedValue<AndroidModuleData> by lazy {
-        cachedValue(project) {
-            CachedValueProvider.Result.create(super.getModuleData(), getPsiTreeChangePreprocessor())
+    @Volatile
+    private var _moduleData: CachedValue<AndroidModuleData>? = null
+
+    override fun getModuleData(): AndroidModuleData {
+        if (androidModule == null) {
+            _moduleData = null
         }
+        else {
+            if (_moduleData == null) {
+                _moduleData = cachedValue(project) {
+                    CachedValueProvider.Result.create(super.getModuleData(), getPsiTreeChangePreprocessor())
+                }
+            }
+        }
+        return _moduleData?.value ?: AndroidModuleData.EMPTY
     }
-
-    override fun getModuleData() = moduleData.value
 
     private fun getPsiTreeChangePreprocessor(): PsiTreeChangePreprocessor {
         return project.getExtensions(PsiTreeChangePreprocessor.EP_NAME).first { it is AndroidPsiTreeChangePreprocessor }
