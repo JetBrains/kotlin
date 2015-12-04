@@ -7,6 +7,8 @@ import kotlin.test.*
 
 class FilesTest {
 
+    private val isCaseInsensitiveFileSystem = File("C:/") == File("c:/")
+
     @test fun testPath() {
         val fileSuf = System.currentTimeMillis().toString()
         val file1 = createTempFile("temp", fileSuf)
@@ -99,6 +101,10 @@ class FilesTest {
 
         assertEquals("..", file6.relativeTo(file7))
         assertEquals("Documents", file7.relativeTo(file6))
+
+        if (isCaseInsensitiveFileSystem) {
+            assertEquals("bar", File("C:/bar").relativeTo(File("c:/")))
+        }
 
         val file8 = File("""\\my.host\home/user/documents/vip""")
         val file9 = File("""\\my.host\home/other/images/nice""")
@@ -215,6 +221,9 @@ class FilesTest {
         assertTrue(File("C:\\Users\\Me\\Temp\\Game").startsWith("C:\\Users\\Me"))
         assertFalse(File("C:\\Users\\Me\\Temp\\Game").startsWith("C:\\Users\\He"))
         assertTrue(File("C:\\Users\\Me").startsWith("C:\\"))
+        if (isCaseInsensitiveFileSystem) {
+            assertTrue(File("C:\\Users\\Me").startsWith("c:\\"))
+        }
     }
 
     @test fun endsWith() {
@@ -224,6 +233,9 @@ class FilesTest {
         assertTrue(File("/foo/bar/gav/bar").endsWith("/gav/bar"))
         assertFalse(File("/foo/bar/gav").endsWith("/bar"))
         assertFalse(File("foo/bar").endsWith("/bar"))
+        if (isCaseInsensitiveFileSystem) {
+            assertTrue(File("/foo/bar").endsWith("Bar"))
+        }
     }
 
     @test fun subPath() {

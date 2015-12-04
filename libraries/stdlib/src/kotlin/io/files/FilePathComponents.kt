@@ -92,6 +92,11 @@ public data class FilePathComponents(public val rootName: String, public val fil
     public fun size(): Int = fileList.size
 
     /**
+     * [File] representing root of the path (for example, `/` or `C:` or empty for relative paths).
+     */
+    public val root: File = File(rootName)
+
+    /**
      * Returns a sub-path of the path, starting with the directory at the specified [beginIndex] and up
      * to the specified [endIndex].
      */

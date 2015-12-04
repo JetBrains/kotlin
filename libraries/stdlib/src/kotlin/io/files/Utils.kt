@@ -131,7 +131,7 @@ private fun File.relativeToOrNull(base: File): String? {
     // Check roots
     val thisComponents = this.filePathComponents().normalize()
     val baseComponents = base.filePathComponents().normalize()
-    if (thisComponents.rootName != baseComponents.rootName) {
+    if (thisComponents.root != baseComponents.root) {
         return null
     }
 
@@ -333,7 +333,7 @@ public fun File.listFiles(filter: (file: File) -> Boolean): Array<File>? = listF
 public fun File.startsWith(other: File): Boolean {
     val components = filePathComponents()
     val otherComponents = other.filePathComponents()
-    if (components.rootName != otherComponents.rootName && otherComponents.rootName != "")
+    if (components.root != otherComponents.root && otherComponents.rootName != "")
         return false
     return if (components.size() < otherComponents.size()) false
     else components.fileList.subList(0, otherComponents.size()).equals(otherComponents.fileList)
@@ -360,7 +360,7 @@ public fun File.startsWith(other: String): Boolean = startsWith(File(other))
 public fun File.endsWith(other: File): Boolean {
     val components = filePathComponents()
     val otherComponents = other.filePathComponents()
-    if (components.rootName != otherComponents.rootName && otherComponents.rootName != "")
+    if (components.root != otherComponents.root && otherComponents.rootName != "")
         return false
     val shift = components.size() - otherComponents.size()
     return if (shift < 0) false
@@ -436,8 +436,7 @@ public fun File.resolve(relative: String): File = resolve(File(relative))
 public fun File.resolveSibling(relative: File): File {
     val components = filePathComponents()
     val parentSubPath = if (components.size() == 0) File("..") else components.subPath(0, components.size() - 1)
-    val rootName = components.rootName
-    return File(rootName).resolve(parentSubPath).resolve(relative)
+    return components.root.resolve(parentSubPath).resolve(relative)
 }
 
 /**
