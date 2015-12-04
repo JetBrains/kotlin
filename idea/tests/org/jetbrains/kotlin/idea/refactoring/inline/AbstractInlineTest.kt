@@ -14,65 +14,51 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.inline;
+package org.jetbrains.kotlin.idea.refactoring.inline
 
-import com.intellij.codeInsight.TargetElementUtilBase;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.psi.PsiElement;
-import com.intellij.refactoring.util.CommonRefactoringUtil;
-import com.intellij.testFramework.LightProjectDescriptor;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
-import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor;
-import org.jetbrains.kotlin.test.InTextDirectivesUtils;
+import com.intellij.codeInsight.TargetElementUtil
+import com.intellij.codeInsight.TargetElementUtil.ELEMENT_NAME_ACCEPTED
+import com.intellij.codeInsight.TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.refactoring.util.CommonRefactoringUtil
+import com.intellij.testFramework.UsefulTestCase
+import junit.framework.TestCase
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import java.io.File
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
+abstract class AbstractInlineTest : KotlinLightCodeInsightFixtureTestCase() {
+    protected fun doTest(path: String) {
+        val afterFile = File(path + ".after")
 
-import static com.intellij.codeInsight.TargetElementUtilBase.ELEMENT_NAME_ACCEPTED;
-import static com.intellij.codeInsight.TargetElementUtilBase.REFERENCED_ELEMENT_ACCEPTED;
+        myFixture.configureByFile(path)
 
-public abstract class AbstractInlineTest extends KotlinLightCodeInsightFixtureTestCase {
-    protected void doTest(@NotNull String path) throws IOException {
-        File afterFile = new File(path + ".after");
+        val afterFileExists = afterFile.exists()
 
-        myFixture.configureByFile(path);
+        val targetElement = TargetElementUtil.findTargetElement(myFixture.editor, ELEMENT_NAME_ACCEPTED or REFERENCED_ELEMENT_ACCEPTED)
+        val handler = KotlinInlineValHandler()
 
-        boolean afterFileExists = afterFile.exists();
-
-        final PsiElement targetElement =
-                TargetElementUtilBase.findTargetElement(myFixture.getEditor(), ELEMENT_NAME_ACCEPTED | REFERENCED_ELEMENT_ACCEPTED);
-        final KotlinInlineValHandler handler = new KotlinInlineValHandler();
-
-        List<String> expectedErrors = InTextDirectivesUtils.findLinesWithPrefixesRemoved(myFixture.getFile().getText(), "// ERROR: ");
+        val expectedErrors = InTextDirectivesUtils.findLinesWithPrefixesRemoved(myFixture.file.text, "// ERROR: ")
         if (handler.canInlineElement(targetElement)) {
             try {
-                ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        handler.inlineElement(myFixture.getProject(), myFixture.getEditor(), targetElement);
-                    }
-                });
+                runWriteAction { handler.inlineElement(myFixture.project, myFixture.editor, targetElement) }
 
-                assertTrue(afterFileExists);
-                assertEmpty(expectedErrors);
-                myFixture.checkResult(FileUtil.loadFile(afterFile, true));
-            } catch (CommonRefactoringUtil.RefactoringErrorHintException e) {
-                assertFalse(afterFileExists);
-                assertEquals(1, expectedErrors.size());
-                assertEquals(expectedErrors.get(0).replace("\\n", "\n"), e.getMessage());
+                TestCase.assertTrue(afterFileExists)
+                UsefulTestCase.assertEmpty(expectedErrors)
+                myFixture.checkResult(FileUtil.loadFile(afterFile, true))
+            }
+            catch (e: CommonRefactoringUtil.RefactoringErrorHintException) {
+                TestCase.assertFalse(afterFileExists)
+                TestCase.assertEquals(1, expectedErrors.size)
+                TestCase.assertEquals(expectedErrors[0].replace("\\n", "\n"), e.message)
             }
         }
         else {
-            assertFalse(afterFileExists);
+            TestCase.assertFalse(afterFileExists)
         }
     }
 
-    @NotNull
-    @Override
-    protected LightProjectDescriptor getProjectDescriptor() {
-        return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
-    }
+    override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 }
