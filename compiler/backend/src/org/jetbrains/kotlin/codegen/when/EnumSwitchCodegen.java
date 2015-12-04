@@ -30,10 +30,11 @@ public class EnumSwitchCodegen extends SwitchCodegen {
     public EnumSwitchCodegen(
             @NotNull KtWhenExpression expression,
             boolean isStatement,
+            boolean isExhaustive,
             @NotNull ExpressionCodegen codegen,
             @NotNull WhenByEnumsMapping mapping
     ) {
-        super(expression, isStatement, codegen);
+        super(expression, isStatement, isExhaustive, codegen);
         this.mapping = mapping;
     }
 

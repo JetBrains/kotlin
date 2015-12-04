@@ -4891,6 +4891,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/when"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("exhaustiveBreakContinue.kt")
+        public void testExhaustiveBreakContinue() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/when/exhaustiveBreakContinue.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("integralWhenWithNoInlinedConstants.kt")
         public void testIntegralWhenWithNoInlinedConstants() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/when/integralWhenWithNoInlinedConstants.kt");

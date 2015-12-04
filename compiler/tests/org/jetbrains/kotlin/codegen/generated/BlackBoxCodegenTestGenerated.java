@@ -8242,6 +8242,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("exhaustiveWhenInitialization.kt")
+        public void testExhaustiveWhenInitialization() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/exhaustiveWhenInitialization.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("exhaustiveWhenReturn.kt")
+        public void testExhaustiveWhenReturn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/exhaustiveWhenReturn.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("is.kt")
         public void testIs() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/is.kt");
@@ -8317,6 +8329,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("range.kt")
         public void testRange() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/range.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sealedWhenInitialization.kt")
+        public void testSealedWhenInitialization() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/when/sealedWhenInitialization.kt");
             doTest(fileName);
         }
 
