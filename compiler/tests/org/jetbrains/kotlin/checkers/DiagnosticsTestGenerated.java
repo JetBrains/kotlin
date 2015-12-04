@@ -4754,6 +4754,21 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegation/Delegation_ScopeInitializationOrder.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/delegation/clashes")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Clashes extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInClashes() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/delegation/clashes"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("returnTypeMismatch.kt")
+                public void testReturnTypeMismatch() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegation/clashes/returnTypeMismatch.kt");
+                    doTest(fileName);
+                }
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/deparenthesize")
@@ -11315,9 +11330,15 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
-                @TestMetadata("propertyTypeMismatch.kt")
-                public void testPropertyTypeMismatch() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/clashesOnInheritance/propertyTypeMismatch.kt");
+                @TestMetadata("flexibleReturnTypeIn.kt")
+                public void testFlexibleReturnTypeIn() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/clashesOnInheritance/flexibleReturnTypeIn.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("flexibleReturnTypeList.kt")
+                public void testFlexibleReturnTypeList() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/clashesOnInheritance/flexibleReturnTypeList.kt");
                     doTest(fileName);
                 }
 
@@ -11330,6 +11351,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("unrelatedInherited.kt")
                 public void testUnrelatedInherited() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/clashesOnInheritance/unrelatedInherited.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("valTypeMismatch.kt")
+                public void testValTypeMismatch() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/clashesOnInheritance/valTypeMismatch.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("varTypeMismatch.kt")
+                public void testVarTypeMismatch() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/override/clashesOnInheritance/varTypeMismatch.kt");
                     doTest(fileName);
                 }
             }

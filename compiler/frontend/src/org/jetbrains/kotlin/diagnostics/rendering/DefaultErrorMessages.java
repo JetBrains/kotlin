@@ -563,6 +563,15 @@ public class DefaultErrorMessages {
         MAP.put(PROPERTY_TYPE_MISMATCH_ON_INHERITANCE, "''{0}'' clashes with ''{1}'': property types are incompatible",
                 SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);
 
+        MAP.put(OVERRIDING_FINAL_MEMBER_BY_DELEGATION, "''{0}'' implicitly overrides a final member ''{1}'' by delegation",
+                SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);
+        MAP.put(RETURN_TYPE_MISMATCH_ON_OVERRIDE_BY_DELEGATION, "Return type of ''{0}'' doesn't match ''{1}'' implicitly overridden by delegation",
+                SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);
+        MAP.put(PROPERTY_TYPE_MISMATCH_ON_OVERRIDE_BY_DELEGATION, "Property type of ''{0}'' doesn't match ''{1}'' implicitly overridden by delegation",
+                SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);
+        MAP.put(VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION, "val-property ''{0}'' implicitly overrides a var-property ''{1}'' by delegation",
+                SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);
+
         MAP.put(VAR_OVERRIDDEN_BY_VAL, "Var-property {0} cannot be overridden by val-property {1}", FQ_NAMES_IN_TYPES, FQ_NAMES_IN_TYPES);
 
         MAP.put(ABSTRACT_MEMBER_NOT_IMPLEMENTED, "{0} must be declared abstract or implement abstract member {1}", RENDER_CLASS_OR_OBJECT,
