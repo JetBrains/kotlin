@@ -26,9 +26,10 @@ public class IntegralConstantsSwitchCodegen extends SwitchCodegen {
     public IntegralConstantsSwitchCodegen(
             @NotNull KtWhenExpression expression,
             boolean isStatement,
+            boolean isExhaustive,
             @NotNull ExpressionCodegen codegen
     ) {
-        super(expression, isStatement, codegen);
+        super(expression, isStatement, isExhaustive, codegen);
     }
 
     @Override

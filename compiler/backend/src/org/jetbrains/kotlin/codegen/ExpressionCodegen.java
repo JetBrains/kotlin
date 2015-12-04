@@ -3801,8 +3801,9 @@ The "returned" value of try expression with no finally is either the last expres
         return StackValue.operation(resultType, new Function1<InstructionAdapter, Unit>() {
             @Override
             public Unit invoke(InstructionAdapter v) {
-                SwitchCodegen switchCodegen =
-                        SwitchCodegenUtil.buildAppropriateSwitchCodegenIfPossible(expression, isStatement, ExpressionCodegen.this);
+                SwitchCodegen switchCodegen = SwitchCodegenUtil.buildAppropriateSwitchCodegenIfPossible(
+                        expression, isStatement, isExhaustive(expression, isStatement), ExpressionCodegen.this
+                );
                 if (switchCodegen != null) {
                     switchCodegen.generate();
                     return Unit.INSTANCE;
@@ -3848,9 +3849,7 @@ The "returned" value of try expression with no finally is either the last expres
                 }
                 if (!hasElse && nextCondition != null) {
                     v.mark(nextCondition);
-                    if (!isStatement) {
-                        putUnitInstanceOntoStackForNonExhaustiveWhen(expression);
-                    }
+                    putUnitInstanceOntoStackForNonExhaustiveWhen(expression, isStatement);
                 }
 
                 markLineNumber(expression, isStatement);
@@ -3863,14 +3862,24 @@ The "returned" value of try expression with no finally is either the last expres
         });
     }
 
+    private boolean isExhaustive(@NotNull KtWhenExpression whenExpression, boolean isStatement) {
+        if (isStatement) {
+            return Boolean.TRUE.equals(bindingContext.get(BindingContext.IMPLICIT_EXHAUSTIVE_WHEN, whenExpression));
+        }
+        else {
+            return Boolean.TRUE.equals(bindingContext.get(BindingContext.EXHAUSTIVE_WHEN, whenExpression));
+        }
+    }
+
     public void putUnitInstanceOntoStackForNonExhaustiveWhen(
-            @NotNull KtWhenExpression expression
+            @NotNull KtWhenExpression whenExpression,
+            boolean isStatement
     ) {
-        if (Boolean.TRUE.equals(bindingContext.get(BindingContext.EXHAUSTIVE_WHEN, expression))) {
+        if (isExhaustive(whenExpression, isStatement)) {
             // when() is supposed to be exhaustive
             genThrow(v, "kotlin/NoWhenBranchMatchedException", null);
         }
-        else {
+        else if (!isStatement) {
             // non-exhaustive when() with no else -> Unit must be expected
             StackValue.putUnitInstance(v);
         }

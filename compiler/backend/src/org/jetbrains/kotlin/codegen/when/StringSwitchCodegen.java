@@ -40,9 +40,10 @@ public class StringSwitchCodegen extends SwitchCodegen {
     public StringSwitchCodegen(
             @NotNull KtWhenExpression expression,
             boolean isStatement,
+            boolean isExhaustive,
             @NotNull ExpressionCodegen codegen
     ) {
-        super(expression, isStatement, codegen);
+        super(expression, isStatement, isExhaustive, codegen);
     }
 
     @Override
