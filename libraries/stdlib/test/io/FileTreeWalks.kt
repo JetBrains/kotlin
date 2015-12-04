@@ -9,17 +9,18 @@ import kotlin.test.*
 class FileTreeWalkTest {
 
     companion object {
+        val referenceFilenames =
+                listOf("1", "1/2", "1/3", "1/3/4.txt", "1/3/5.txt", "6", "7.txt", "8", "8/9.txt")
+                .map { it.separatorsToSystem() }
         fun createTestFiles(): File {
             val basedir = createTempDir()
-            File(basedir, "1").mkdir()
-            File(basedir, "1/2".separatorsToSystem()).mkdir()
-            File(basedir, "1/3".separatorsToSystem()).mkdir()
-            File(basedir, "1/3/4.txt".separatorsToSystem()).createNewFile()
-            File(basedir, "1/3/5.txt".separatorsToSystem()).createNewFile()
-            File(basedir, "6").mkdir()
-            File(basedir, "7.txt").createNewFile()
-            File(basedir, "8").mkdir()
-            File(basedir, "8/9.txt".separatorsToSystem()).createNewFile()
+            for (name in referenceFilenames) {
+                val file = basedir.resolve(name)
+                if (file.extension.isEmpty())
+                    file.mkdir()
+                else
+                    file.createNewFile()
+            }
             return basedir
         }
     }
@@ -27,9 +28,7 @@ class FileTreeWalkTest {
     @Test fun withSimple() {
         val basedir = createTestFiles()
         try {
-            val referenceNames =
-                    listOf("", "1", "1/2", "1/3", "1/3/4.txt", "1/3/5.txt", "6", "7.txt", "8", "8/9.txt").map(
-                            { it -> it.separatorsToSystem() }).toHashSet()
+            val referenceNames = setOf("") + referenceFilenames
             val namesTopDown = HashSet<String>()
             for (file in basedir.walkTopDown()) {
                 val name = file.relativeTo(basedir)
@@ -70,20 +69,24 @@ class FileTreeWalkTest {
         val basedir = createTestFiles()
         try {
             val referenceNames =
-                    listOf("", "1", "1/2", "1/3", "6", "8").map(
+                    listOf("", "1", "1/2", "6", "8").map(
                             { it -> it.separatorsToSystem() }).toHashSet()
             val namesTopDownEnter = HashSet<String>()
             val namesTopDownLeave = HashSet<String>()
             val namesTopDown = HashSet<String>()
-            fun enter(file: File) {
+            fun enter(file: File): Boolean {
                 val name = file.relativeTo(basedir)
+                assertTrue(file.isDirectory, "$name is not directory, only directories should be entered")
                 assertFalse(namesTopDownEnter.contains(name), "$name is entered twice")
-                namesTopDownEnter.add(name)
                 assertFalse(namesTopDownLeave.contains(name), "$name is left before entrance")
+                if (file.name == "3") return false // filter out 3
+                namesTopDownEnter.add(name)
+                return true
             }
 
             fun leave(file: File) {
                 val name = file.relativeTo(basedir)
+                assertTrue(file.isDirectory, "$name is not directory, only directories should be left")
                 assertFalse(namesTopDownLeave.contains(name), "$name is left twice")
                 namesTopDownLeave.add(name)
                 assertTrue(namesTopDownEnter.contains(name), "$name is left before entrance")
@@ -91,14 +94,14 @@ class FileTreeWalkTest {
 
             fun visit(file: File) {
                 val name = file.relativeTo(basedir)
-                if (file.isDirectory()) {
+                if (file.isDirectory) {
                     assertTrue(namesTopDownEnter.contains(name), "$name is visited before entrance")
                     namesTopDown.add(name)
                     assertFalse(namesTopDownLeave.contains(name), "$name is visited after leaving")
                 }
                 if (file == basedir)
                     return
-                val parent = file.getParentFile()
+                val parent = file.parentFile
                 if (parent != null) {
                     val parentName = parent.relativeTo(basedir)
                     assertTrue(namesTopDownEnter.contains(parentName),
@@ -107,7 +110,7 @@ class FileTreeWalkTest {
                             "$name is visited after leaving its parent $parentName")
                 }
             }
-            for (file in basedir.walkTopDown().enter(::enter).leave(::leave)) {
+            for (file in basedir.walkTopDown().onEnter(::enter).onLeave(::leave)) {
                 visit(file)
             }
             assertEquals(referenceNames, namesTopDownEnter)
@@ -115,7 +118,7 @@ class FileTreeWalkTest {
             namesTopDownEnter.clear()
             namesTopDownLeave.clear()
             namesTopDown.clear()
-            for (file in basedir.walkBottomUp().enter(::enter).leave(::leave)) {
+            for (file in basedir.walkBottomUp().onEnter(::enter).onLeave(::leave)) {
                 visit(file)
             }
             assertEquals(referenceNames, namesTopDownEnter)
