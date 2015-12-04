@@ -271,7 +271,7 @@ class FileTreeWalkTest {
 
             fun visitDirectoryFailed(dir: File, e: IOException) {
                 assertEquals(stack.last(), dir)
-                stack.removeAt(stack.lastIndex)
+                //stack.removeAt(stack.lastIndex)
                 failed.add(dir.name)
             }
             basedir.walkTopDown().enter(::beforeVisitDirectory).leave(::afterVisitDirectory).
