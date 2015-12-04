@@ -10,6 +10,7 @@ import java.util.*
  * Returns an array with the specified [size], where each element is calculated by calling the specified
  * [init] function. The `init` function returns an array element given its index.
  */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public inline fun <reified T> Array(size: Int, init: (Int) -> T): Array<T> {
     val result = arrayOfNulls<T>(size)
 
@@ -23,6 +24,7 @@ public inline fun <reified T> Array(size: Int, init: (Int) -> T): Array<T> {
 /**
  * Returns an empty array of the specified type [T].
  */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public inline fun <reified T> emptyArray(): Array<T> = arrayOfNulls<T>(0) as Array<T>
 
 /**
