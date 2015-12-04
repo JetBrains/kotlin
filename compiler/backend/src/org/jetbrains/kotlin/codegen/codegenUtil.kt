@@ -17,8 +17,15 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.codegen.context.FieldOwnerContext
+import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.SpecialSignatureInfo
+import org.jetbrains.kotlin.psi.KtObjectDeclaration
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -68,3 +75,23 @@ fun generateNullCheckForNonSafeAs(
 public fun SpecialSignatureInfo.replaceValueParametersIn(sourceSignature: String?): String?
         = valueParametersSignature?.let { sourceSignature?.replace("^\\(.*\\)".toRegex(), "($it)") }
 
+fun populateCompanionBackingFieldNamesToOuterContextIfNeeded(companion: KtObjectDeclaration, outerContext: FieldOwnerContext<*>, state: GenerationState) {
+    val descriptor = state.bindingContext.get(BindingContext.CLASS, companion)
+
+    if (descriptor == null || ErrorUtils.isError(descriptor)) {
+        return
+    }
+
+    if (!AsmUtil.isCompanionObjectWithBackingFieldsInOuter(descriptor)) {
+        return
+    }
+    val properties = companion.declarations.filterIsInstance<KtProperty>()
+
+    properties.forEach {
+        val variableDescriptor = state.bindingContext.get(BindingContext.VARIABLE, it)
+        if (variableDescriptor is PropertyDescriptor) {
+            outerContext.getFieldName(variableDescriptor, it.hasDelegate())
+        }
+    }
+
+}

@@ -98,6 +98,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private List<PropertyAndDefaultValue> companionObjectPropertiesToCopy;
 
+    private final DelegationFieldsInfo delegationFieldsInfo;
+
     private final List<Function2<ImplementationBodyCodegen, ClassBuilder, Unit>> additionalTasks =
             new ArrayList<Function2<ImplementationBodyCodegen, ClassBuilder, Unit>>();
 
@@ -112,6 +114,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         super(aClass, context, v, state, parentCodegen);
         this.classAsmType = typeMapper.mapClass(descriptor);
         this.isLocal = isLocal;
+        delegationFieldsInfo = getDelegationFieldsInfo(myClass.getSuperTypeListEntries());
     }
 
     @Override
@@ -228,7 +231,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     @Override
     protected void generateBody() {
-        super.generateBody();
         if (isInterface(descriptor) && !isLocal) {
             Type defaultImplsType = state.getTypeMapper().mapDefaultImpls(descriptor);
             ClassBuilder defaultImplsBuilder =
@@ -237,9 +239,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             CodegenContext parentContext = context.getParentContext();
             assert parentContext != null : "Parent context of interface declaration should not be null";
 
-            ClassContext defaultImplsContext = parentContext.intoClass(descriptor, OwnerKind.DEFAULT_IMPLS, state);
+            ClassContext defaultImplsContext = parentContext.intoDefaultImplsClass(descriptor, (ClassContext) context, state);
             new InterfaceImplBodyCodegen(myClass, defaultImplsContext, defaultImplsBuilder, state, this).generate();
         }
+        super.generateBody();
     }
 
     @Override
@@ -371,24 +374,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         generateCompanionObjectBackingFieldCopies();
 
-        DelegationFieldsInfo delegationFieldsInfo = getDelegationFieldsInfo(myClass.getSuperTypeListEntries());
-        try {
-            lookupConstructorExpressionsInClosureIfPresent();
-            generatePrimaryConstructor(delegationFieldsInfo);
-            for (ConstructorDescriptor secondaryConstructor : DescriptorUtilsKt.getSecondaryConstructors(descriptor)) {
-                generateSecondaryConstructor(secondaryConstructor);
-            }
-        }
-        catch (CompilationException e) {
-            throw e;
-        }
-        catch (ProcessCanceledException e) {
-            throw e;
-        }
-        catch (RuntimeException e) {
-            throw new RuntimeException("Error generating constructors of class " + myClass.getName() + " with kind " + kind, e);
-        }
-
         generateTraitMethods();
 
         generateDelegates(delegationFieldsInfo);
@@ -407,6 +392,26 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         for (ExpressionCodegenExtension extension : ExpressionCodegenExtension.Companion.getInstances(state.getProject())) {
             extension.generateClassSyntheticParts(v, state, myClass, descriptor);
+        }
+    }
+
+    @Override
+    protected void generateConstructors() {
+        try {
+            lookupConstructorExpressionsInClosureIfPresent();
+            generatePrimaryConstructor(delegationFieldsInfo);
+            for (ConstructorDescriptor secondaryConstructor : DescriptorUtilsKt.getSecondaryConstructors(descriptor)) {
+                generateSecondaryConstructor(secondaryConstructor);
+            }
+        }
+        catch (CompilationException e) {
+            throw e;
+        }
+        catch (ProcessCanceledException e) {
+            throw e;
+        }
+        catch (RuntimeException e) {
+            throw new RuntimeException("Error generating constructors of class " + myClass.getName() + " with kind " + kind, e);
         }
     }
 

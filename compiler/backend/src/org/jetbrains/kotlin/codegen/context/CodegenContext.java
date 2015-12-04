@@ -266,6 +266,10 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         return new MultifileClassFacadeContext(descriptor, this, multifileClassType, filePartType);
     }
 
+    public ClassContext intoDefaultImplsClass(ClassDescriptor descriptor, ClassContext interfaceContext, GenerationState state) {
+        return new DefaultImplsClassContext(state.getTypeMapper(), descriptor, OwnerKind.DEFAULT_IMPLS, this, null, interfaceContext);
+    }
+
     @NotNull
     public ClassContext intoClass(ClassDescriptor descriptor, OwnerKind kind, GenerationState state) {
         if (descriptor.isCompanionObject()) {
@@ -624,7 +628,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     @Nullable
-    public CodegenContext findChildContext(@NotNull DeclarationDescriptor child) {
+    protected CodegenContext findChildContext(@NotNull DeclarationDescriptor child) {
         return childContexts == null ? null : childContexts.get(child);
     }
 
