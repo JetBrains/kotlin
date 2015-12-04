@@ -59,6 +59,12 @@ public class InlineTestGenerated extends AbstractInlineTest {
         doTest(fileName);
     }
 
+    @TestMetadata("lessAndGreaterInCallArgs.kt")
+    public void testLessAndGreaterInCallArgs() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/lessAndGreaterInCallArgs.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("MethodReference.kt")
     public void testMethodReference() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/MethodReference.kt");

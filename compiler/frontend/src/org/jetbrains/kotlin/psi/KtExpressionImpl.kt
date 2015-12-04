@@ -59,8 +59,8 @@ public abstract class KtExpressionImpl(node: ASTNode) : KtElementImpl(node), KtE
                         parent.delete()
                     }
 
-                    parent is KtExpression -> {
-                        if (KtPsiUtil.areParenthesesNecessary(newElement, expression, parent)) {
+                    parent is KtExpression || parent is KtValueArgument -> {
+                        if (KtPsiUtil.areParenthesesNecessary(newElement, expression, parent as KtElement)) {
                             return rawReplaceHandler(KtPsiFactory(expression).createExpressionByPattern("($0)", newElement))
                         }
                     }

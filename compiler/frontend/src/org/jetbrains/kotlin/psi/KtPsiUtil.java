@@ -471,21 +471,25 @@ public class KtPsiUtil {
         return !areParenthesesNecessary(innerExpression, expression, (KtExpression) parent);
     }
 
-    public static boolean areParenthesesNecessary(@NotNull KtExpression innerExpression, @NotNull KtExpression currentInner, @NotNull KtExpression parentExpression) {
-        if (parentExpression instanceof KtParenthesizedExpression || innerExpression instanceof KtParenthesizedExpression) {
+    public static boolean areParenthesesNecessary(
+            @NotNull KtExpression innerExpression,
+            @NotNull KtExpression currentInner,
+            @NotNull KtElement parentElement
+    ) {
+        if (parentElement instanceof KtParenthesizedExpression || innerExpression instanceof KtParenthesizedExpression) {
             return false;
         }
 
-        if (parentExpression instanceof KtPackageDirective) return false;
+        if (parentElement instanceof KtPackageDirective) return false;
 
-        if (parentExpression instanceof KtWhenExpression || innerExpression instanceof KtWhenExpression) {
+        if (parentElement instanceof KtWhenExpression || innerExpression instanceof KtWhenExpression) {
             return false;
         }
 
         if (innerExpression instanceof KtIfExpression) {
-            if (parentExpression instanceof KtQualifiedExpression) return true;
+            if (parentElement instanceof KtQualifiedExpression) return true;
 
-            PsiElement current = parentExpression;
+            PsiElement current = parentElement;
 
             while (!(current instanceof KtBlockExpression || current instanceof KtDeclaration || current instanceof KtStatementExpression)) {
                 if (current.getTextRange().getEndOffset() != currentInner.getTextRange().getEndOffset()) {
@@ -496,9 +500,9 @@ public class KtPsiUtil {
             }
         }
 
-        if (parentExpression instanceof KtCallExpression && currentInner == ((KtCallExpression) parentExpression).getCalleeExpression()) {
+        if (parentElement instanceof KtCallExpression && currentInner == ((KtCallExpression) parentElement).getCalleeExpression()) {
             if (innerExpression instanceof KtSimpleNameExpression) return false;
-            if (KtPsiUtilKt.getQualifiedExpressionForSelector(parentExpression) != null) return true;
+            if (KtPsiUtilKt.getQualifiedExpressionForSelector(parentElement) != null) return true;
             return !(innerExpression instanceof KtThisExpression
                      || innerExpression instanceof KtArrayAccessExpression
                      || innerExpression instanceof KtConstantExpression
@@ -506,11 +510,23 @@ public class KtPsiUtil {
                      || innerExpression instanceof KtCallExpression);
         }
 
+        if (parentElement instanceof KtValueArgument) {
+            // a(___, d > (e + f)) => a((b < c), d > (e + f)) to prevent parsing < c, d > as type argument list
+            KtValueArgument nextArg = PsiTreeUtil.getNextSiblingOfType(parentElement, KtValueArgument.class);
+            PsiElement nextExpression = nextArg != null ? nextArg.getArgumentExpression() : null;
+            if (innerExpression instanceof KtBinaryExpression &&
+                ((KtBinaryExpression) innerExpression).getOperationToken() == KtTokens.LT &&
+                nextExpression instanceof KtBinaryExpression &&
+                ((KtBinaryExpression) nextExpression).getOperationToken() == KtTokens.GT) return true;
+        }
+
+        if (!(parentElement instanceof KtExpression)) return false;
+
         IElementType innerOperation = getOperation(innerExpression);
-        IElementType parentOperation = getOperation(parentExpression);
+        IElementType parentOperation = getOperation((KtExpression) parentElement);
 
         // 'return (@label{...})' case
-        if (parentExpression instanceof KtReturnExpression
+        if (parentElement instanceof KtReturnExpression
             && (innerExpression instanceof KtLabeledExpression || innerExpression instanceof KtAnnotatedExpression)) return true;
 
         // '(x: Int) < y' case
@@ -518,26 +534,26 @@ public class KtPsiUtil {
             return true;
         }
 
-        if (parentExpression instanceof KtLabeledExpression) return false;
+        if (parentElement instanceof KtLabeledExpression) return false;
 
         // 'x ?: ...' case
-        if (parentExpression instanceof KtBinaryExpression && parentOperation == KtTokens.ELVIS && currentInner == ((KtBinaryExpression) parentExpression).getRight()) {
+        if (parentElement instanceof KtBinaryExpression && parentOperation == KtTokens.ELVIS && currentInner == ((KtBinaryExpression) parentElement).getRight()) {
             return false;
         }
 
         int innerPriority = getPriority(innerExpression);
-        int parentPriority = getPriority(parentExpression);
+        int parentPriority = getPriority((KtExpression) parentElement);
 
         if (innerPriority == parentPriority) {
-            if (parentExpression instanceof KtBinaryExpression) {
+            if (parentElement instanceof KtBinaryExpression) {
                 if (innerOperation == KtTokens.ANDAND || innerOperation == KtTokens.OROR) {
                     return false;
                 }
-                return ((KtBinaryExpression) parentExpression).getRight() == currentInner;
+                return ((KtBinaryExpression) parentElement).getRight() == currentInner;
             }
 
             //'-(-x)' case
-            if (parentExpression instanceof KtPrefixExpression && innerExpression instanceof KtPrefixExpression) {
+            if (parentElement instanceof KtPrefixExpression && innerExpression instanceof KtPrefixExpression) {
                 return innerOperation == parentOperation && (innerOperation == KtTokens.PLUS || innerOperation == KtTokens.MINUS);
             }
             return false;
