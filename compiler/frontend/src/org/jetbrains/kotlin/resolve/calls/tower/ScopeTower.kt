@@ -93,7 +93,7 @@ class InnerClassViaStaticReference(val classDescriptor: ClassDescriptor): Resolu
 class UnsupportedInnerClassCall(val message: String): ResolutionDiagnostic(ResolutionCandidateApplicability.IMPOSSIBLE_TO_GENERATE)
 class UsedSmartCastForDispatchReceiver(val smartCastType: KotlinType): ResolutionDiagnostic(ResolutionCandidateApplicability.RESOLVED)
 
-object ErrorDescriptorDiagnostic : ResolutionDiagnostic(ResolutionCandidateApplicability.INAPPLICABLE)
+object ErrorDescriptorDiagnostic : ResolutionDiagnostic(ResolutionCandidateApplicability.RESOLVED) // todo discuss and change to INAPPLICABLE
 object SynthesizedDescriptorDiagnostic: ResolutionDiagnostic(ResolutionCandidateApplicability.RESOLVED_SYNTHESIZED)
 object DynamicDescriptorDiagnostic: ResolutionDiagnostic(ResolutionCandidateApplicability.RESOLVED_SYNTHESIZED)
 object UnstableSmartCastDiagnostic: ResolutionDiagnostic(ResolutionCandidateApplicability.MAY_THROW_RUNTIME_ERROR)

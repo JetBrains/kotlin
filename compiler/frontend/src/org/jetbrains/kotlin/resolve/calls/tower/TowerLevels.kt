@@ -47,15 +47,18 @@ internal abstract class AbstractScopeTowerLevel(
         val diagnostics = SmartList<ResolutionDiagnostic>()
         diagnostics.addIfNotNull(specialError)
 
-        if (ErrorUtils.isError(descriptor)) diagnostics.add(ErrorDescriptorDiagnostic)
-        if (descriptor.isSynthesized) diagnostics.add(SynthesizedDescriptorDiagnostic)
-        if (dispatchReceiverSmartCastType != null) diagnostics.add(UsedSmartCastForDispatchReceiver(dispatchReceiverSmartCastType))
+        if (ErrorUtils.isError(descriptor)) {
+            diagnostics.add(ErrorDescriptorDiagnostic)
+        }
+        else {
+            if (descriptor.isSynthesized) diagnostics.add(SynthesizedDescriptorDiagnostic)
+            if (dispatchReceiverSmartCastType != null) diagnostics.add(UsedSmartCastForDispatchReceiver(dispatchReceiverSmartCastType))
 
-        Visibilities.findInvisibleMember(
-                dispatchReceiver ?: ReceiverValue.NO_RECEIVER, descriptor,
-                scopeTower.lexicalScope.ownerDescriptor
-        )?.let { diagnostics.add(VisibilityError(it)) }
-
+            Visibilities.findInvisibleMember(
+                    dispatchReceiver ?: ReceiverValue.NO_RECEIVER, descriptor,
+                    scopeTower.lexicalScope.ownerDescriptor
+            )?.let { diagnostics.add(VisibilityError(it)) }
+        }
         return CandidateWithBoundDispatchReceiverImpl(dispatchReceiver, descriptor, diagnostics)
     }
 
