@@ -555,7 +555,7 @@ public class FunctionCodegen {
         // If the function doesn't have a physical declaration among super-functions, it's a SAM adapter or alike and doesn't need bridges
         if (CallResolverUtilKt.isOrOverridesSynthesized(descriptor)) return;
 
-        boolean isSpecial = SpecialBuiltinMembers.getOverriddenBuiltinWithDifferentJvmDescriptor(descriptor) != null;
+        boolean isSpecial = SpecialBuiltinMembers.getOverriddenBuiltinReflectingJvmDescriptor(descriptor) != null;
 
         Set<Bridge<Method>> bridgesToGenerate;
         if (!isSpecial) {
@@ -589,7 +589,7 @@ public class FunctionCodegen {
             }
 
             if (!descriptor.getKind().isReal() && isAbstractMethod(descriptor, OwnerKind.IMPLEMENTATION)) {
-                CallableDescriptor overridden = SpecialBuiltinMembers.getOverriddenBuiltinWithDifferentJvmDescriptor(descriptor);
+                CallableDescriptor overridden = SpecialBuiltinMembers.getOverriddenBuiltinReflectingJvmDescriptor(descriptor);
                 assert overridden != null;
 
                 Method method = typeMapper.mapSignature(descriptor).getAsmMethod();

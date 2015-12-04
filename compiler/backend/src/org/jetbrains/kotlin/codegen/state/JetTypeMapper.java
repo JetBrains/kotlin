@@ -788,7 +788,7 @@ public class JetTypeMapper {
                 }
 
                 FunctionDescriptor overriddenSpecialBuiltinFunction =
-                        SpecialBuiltinMembers.<FunctionDescriptor>getOverriddenBuiltinWithDifferentJvmDescriptor(functionDescriptor.getOriginal());
+                        SpecialBuiltinMembers.<FunctionDescriptor>getOverriddenBuiltinReflectingJvmDescriptor(functionDescriptor.getOriginal());
                 FunctionDescriptor functionToCall = overriddenSpecialBuiltinFunction != null && !superCall
                                                     ? overriddenSpecialBuiltinFunction.getOriginal()
                                                     : functionDescriptor.getOriginal();
@@ -967,7 +967,7 @@ public class JetTypeMapper {
     public JvmMethodSignature mapSignature(@NotNull FunctionDescriptor f, @NotNull OwnerKind kind) {
         if (f.getInitialSignatureDescriptor() != null && f != f.getInitialSignatureDescriptor()) {
             // Overrides of special builtin in Kotlin classes always have special signature
-            if (SpecialBuiltinMembers.getOverriddenBuiltinWithDifferentJvmDescriptor(f) == null ||
+            if (SpecialBuiltinMembers.getOverriddenBuiltinReflectingJvmDescriptor(f) == null ||
                 f.getContainingDeclaration().getOriginal() instanceof JavaClassDescriptor) {
                 return mapSignature(f.getInitialSignatureDescriptor(), kind);
             }

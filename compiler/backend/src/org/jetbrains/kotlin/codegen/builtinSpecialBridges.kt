@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
-import org.jetbrains.kotlin.load.java.getOverriddenBuiltinWithDifferentJvmDescriptor
+import org.jetbrains.kotlin.load.java.getOverriddenBuiltinReflectingJvmDescriptor
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -51,7 +51,7 @@ object BuiltinSpecialBridgesUtil {
 
         val functionHandle = DescriptorBasedFunctionHandle(function)
         val fake = !functionHandle.isDeclaration
-        val overriddenBuiltin = function.getOverriddenBuiltinWithDifferentJvmDescriptor()!!
+        val overriddenBuiltin = function.getOverriddenBuiltinReflectingJvmDescriptor()!!
 
         val reachableDeclarations = findAllReachableDeclarations(function)
 
@@ -99,7 +99,7 @@ object BuiltinSpecialBridgesUtil {
     ): Boolean {
         if (BuiltinMethodsWithSpecialGenericSignature.getDefaultValueForOverriddenBuiltinFunction(this) == null) return false
 
-        val builtin = getOverriddenBuiltinWithDifferentJvmDescriptor()!!
+        val builtin = getOverriddenBuiltinReflectingJvmDescriptor()!!
         return signatureByDescriptor(this) == signatureByDescriptor(builtin)
     }
 }
@@ -134,7 +134,7 @@ private fun <Signature> needGenerateSpecialBridge(
             || originalOverridden.containingDeclaration is JavaClassDescriptor
             || DescriptorUtils.isInterface(originalOverridden.containingDeclaration)) return@firstOverridden false
 
-        val overriddenSpecial = originalOverridden.getOverriddenBuiltinWithDifferentJvmDescriptor()?.original ?: return@firstOverridden false
+        val overriddenSpecial = originalOverridden.getOverriddenBuiltinReflectingJvmDescriptor()?.original ?: return@firstOverridden false
 
         signatureByDescriptor(originalOverridden) != signatureByDescriptor(overriddenSpecial)
     } != null) return false
