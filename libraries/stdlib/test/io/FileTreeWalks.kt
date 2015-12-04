@@ -49,6 +49,23 @@ class FileTreeWalkTest {
         }
     }
 
+    @Test fun singleFile() {
+        val testFile = createTempFile()
+        val nonExistantFile = testFile.resolve("foo")
+        try {
+            for (walk in listOf(File::walkTopDown, File::walkBottomUp)) {
+                assertEquals(testFile, walk(testFile).single(), "${walk.name}")
+                assertTrue(walk(testFile).treeFilter { false }.none(), "${walk.name}")
+                assertEquals(testFile, testFile.walk().onEnter { false }.single(), "${walk.name} - enter should not be called for single file")
+
+                assertTrue(walk(nonExistantFile).none(), "${walk.name} - enter should not be called for single file")
+            }
+        }
+        finally {
+            testFile.delete()
+        }
+    }
+
     @Test fun withEnterLeave() {
         val basedir = createTestFiles()
         try {

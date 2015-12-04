@@ -5,8 +5,8 @@ package kotlin.io
 
 import java.io.File
 import java.io.IOException
-import java.util.NoSuchElementException
 import java.util.Stack
+import kotlin.support.AbstractIterator
 
 /**
  * An enumeration to describe possible walk directions.
@@ -45,145 +45,175 @@ public class FileTreeWalk(private val start: File,
                           private val maxDepth: Int = Int.MAX_VALUE
 ) : Sequence<File> {
 
-    /** Abstract class that encapsulates file visiting in some order, beginning from a given [rootDir] */
-    private abstract class DirectoryState(public val rootDir: File) {
-        init {
-            if (!rootDir.isDirectory())
-                throw IllegalArgumentException("Directory is needed")
-        }
+    /** Returns an iterator walking through files. */
+    override public fun iterator(): Iterator<File> = FileTreeWalkIterator()
 
+    /** Abstract class that encapsulates file visiting in some order, beginning from a given [rootDir] */
+    private abstract class WalkState(val rootDir: File) {
         /** Call of this function proceeds to a next file for visiting and returns it */
         abstract public fun step(): File?
     }
 
-    /** Visiting in bottom-up order */
-    private inner class BottomUpDirectoryState(rootDir: File) : DirectoryState(rootDir) {
-
-        private var rootVisited = false
-
-        private var fileList: Array<File>? = null
-
-        private var fileIndex = 0
-
-        private var failed = false
-
-        /** First all children, then root directory */
-        override public fun step(): File? {
-            if (!failed && fileList == null) {
-                enter(rootDir)
-                fileList = rootDir.listFiles()
-                if (fileList == null) {
-                    fail(rootDir, AccessDeniedException(file = rootDir, reason = "Cannot list files in a directory"))
-                    failed = true
-                }
-            }
-            if (fileList != null && fileIndex < fileList!!.size) {
-                // First visit all files
-                return fileList!![fileIndex++]
-            } else if (!rootVisited) {
-                // Then visit root
-                rootVisited = true
-                return rootDir
-            } else {
-                // That's all
-                leave(rootDir)
-                return null
-            }
+    /** Abstract class that encapsulates directory visiting in some order, beginning from a given [rootDir] */
+    private abstract class DirectoryState(rootDir: File): WalkState(rootDir) {
+        init {
+            @Suppress("DEPRECATION")
+            if (ASSERTIONS_ENABLED)
+                assert(rootDir.isDirectory) { "rootDir must be verified to be directory beforehand." }
         }
     }
 
-    /** Visiting in top-down order */
-    private inner class TopDownDirectoryState(rootDir: File) : DirectoryState(rootDir) {
+    private inner class FileTreeWalkIterator : AbstractIterator<File>() {
 
-        private var rootVisited = false
+        // Stack of directory states, beginning from the start directory
+        private val state = Stack<WalkState>()
 
-        private var fileList: Array<File>? = null
+        init {
+            if (start.isDirectory && filter(start)) {
+                state.push(directoryState(start))
+            } else if (start.isFile) {
+                state.push(SingleFileState(start))
+            } else {
+                done()
+            }
 
-        private var fileIndex = 0
+        }
 
-        /** First root directory, then all children */
-        override public fun step(): File? {
-            if (!rootVisited) {
-                // First visit root
-                enter(rootDir)
-                rootVisited = true
-                return rootDir
-            } else if (fileList == null || fileIndex < fileList!!.size) {
-                if (fileList == null) {
-                    // Then read an array of files, if any
+        override fun computeNext() {
+            val nextFile = gotoNext()
+            if (nextFile != null)
+                setNext(nextFile)
+            else
+                done()
+        }
+
+
+        private fun directoryState(root: File): DirectoryState {
+            return when (direction) {
+                FileWalkDirection.TOP_DOWN -> TopDownDirectoryState(root)
+                FileWalkDirection.BOTTOM_UP -> BottomUpDirectoryState(root)
+            }
+        }
+
+        tailrec private fun gotoNext(): File? {
+
+            if (state.empty()) {
+                // There is nothing in the state
+                return null
+            }
+            // Take next file from the top of the stack
+            val topState = state.peek()!!
+            val file = topState.step()
+            if (file == null) {
+                // There is nothing more on the top of the stack, go back
+                state.pop()
+                return gotoNext()
+            } else {
+                // Check that file/directory matches the filter
+                if (!filter(file))
+                    return gotoNext()
+                if (file == topState.rootDir || !file.isDirectory || state.size >= maxDepth) {
+                    // Proceed to a root directory or a simple file
+                    return file
+                } else {
+                    // Proceed to a sub-directory
+                    state.push(directoryState(file))
+                    return gotoNext()
+                }
+            }
+        }
+
+        /** Visiting in bottom-up order */
+        private inner class BottomUpDirectoryState(rootDir: File) : DirectoryState(rootDir) {
+
+            private var rootVisited = false
+
+            private var fileList: Array<File>? = null
+
+            private var fileIndex = 0
+
+            private var failed = false
+
+            /** First all children, then root directory */
+            override public fun step(): File? {
+                if (!failed && fileList == null) {
+                    enter(rootDir)
                     fileList = rootDir.listFiles()
                     if (fileList == null) {
                         fail(rootDir, AccessDeniedException(file = rootDir, reason = "Cannot list files in a directory"))
-                    }
-                    if (fileList == null || fileList!!.size == 0) {
-                        leave(rootDir)
-                        return null
+                        failed = true
                     }
                 }
-                // Then visit all files
-                return fileList!![fileIndex++]
-            } else {
-                // That's all
-                leave(rootDir)
-                return null
+                if (fileList != null && fileIndex < fileList!!.size) {
+                    // First visit all files
+                    return fileList!![fileIndex++]
+                } else if (!rootVisited) {
+                    // Then visit root
+                    rootVisited = true
+                    return rootDir
+                } else {
+                    // That's all
+                    leave(rootDir)
+                    return null
+                }
             }
         }
-    }
 
-    // Stack of directory states, beginning from the start directory
-    private val state = Stack<DirectoryState>()
+        /** Visiting in top-down order */
+        private inner class TopDownDirectoryState(rootDir: File) : DirectoryState(rootDir) {
 
-    // We are already at the end or not?
-    private var end = false
+            private var rootVisited = false
 
-    // A future result of next() call
-    private var nextFile: File? = null
+            private var fileList: Array<File>? = null
 
-    init {
-        if (!start.exists()) {
-            end = true
-        } else if (start.isDirectory() && filter(start)) {
-            pushState(start)
-        }
-    }
+            private var fileIndex = 0
 
-    private fun pushState(root: File) {
-        state.push(when (direction) {
-            FileWalkDirection.TOP_DOWN -> TopDownDirectoryState(root)
-            FileWalkDirection.BOTTOM_UP -> BottomUpDirectoryState(root)
-        })
-    }
-
-    tailrec private fun gotoNext(): File? {
-        if (end) {
-            // We are already at the end
-            return null
-        } else if (state.empty()) {
-            // There is nothing in the state
-            // We must visit "start" if it's a file and matches the filter
-            end = true
-            return if (start.exists() && !start.isDirectory() && filter(start)) start else null
-        }
-        // Take next file from the top of the stack
-        val topState = state.peek()
-        val file = topState.step()
-        if (file == null) {
-            // There is nothing more on the top of the stack, go back
-            state.pop()
-            return gotoNext()
-        } else {
-            // Check that file/directory matches the filter
-            if (!filter(file))
-                return gotoNext()
-            if (file == topState.rootDir || !file.isDirectory() || state.size >= maxDepth) {
-                // Proceed to a root directory or a simple file
-                return file
-            } else {
-                // Proceed to a sub-directory
-                pushState(file)
-                return gotoNext()
+            /** First root directory, then all children */
+            override public fun step(): File? {
+                if (!rootVisited) {
+                    // First visit root
+                    enter(rootDir)
+                    rootVisited = true
+                    return rootDir
+                } else if (fileList == null || fileIndex < fileList!!.size) {
+                    if (fileList == null) {
+                        // Then read an array of files, if any
+                        fileList = rootDir.listFiles()
+                        if (fileList == null) {
+                            fail(rootDir, AccessDeniedException(file = rootDir, reason = "Cannot list files in a directory"))
+                        }
+                        if (fileList == null || fileList!!.size == 0) {
+                            leave(rootDir)
+                            return null
+                        }
+                    }
+                    // Then visit all files
+                    return fileList!![fileIndex++]
+                } else {
+                    // That's all
+                    leave(rootDir)
+                    return null
+                }
             }
         }
+
+        private inner class SingleFileState(root: File) : WalkState(root) {
+            private var visited: Boolean = false
+
+            init {
+                @Suppress("DEPRECATION")
+                if (ASSERTIONS_ENABLED)
+                    assert(root.isFile) { "root must be verified to be file beforehand." }
+            }
+
+            override fun step(): File? {
+                if (visited) return null
+                visited = true
+                if (!filter(rootDir)) return null
+                return rootDir
+            }
+        }
+
     }
 
     /**
@@ -230,32 +260,6 @@ public class FileTreeWalk(private val start: File,
         if (depth <= 0)
             throw IllegalArgumentException("Use positive depth value")
         return FileTreeWalk(start, direction, enter, leave, fail, filter, depth)
-    }
-
-    /** An iterator associated with this walker */
-    private val it = object : Iterator<File> {
-        override public fun hasNext(): Boolean {
-            if (nextFile == null)
-                nextFile = gotoNext()
-            return (nextFile != null)
-        }
-
-        override public fun next(): File {
-            if (nextFile == null)
-                nextFile = gotoNext()
-            val res = nextFile
-            if (res == null)
-                throw NoSuchElementException()
-            // With nextFile = gotoNext() here some enter() / leave() can be called BEFORE visiting res
-            nextFile = null
-            // Visit this directory or file
-            return res
-        }
-    }
-
-    /** Returns an associated file iterator. */
-    override public fun iterator(): Iterator<File> {
-        return it
     }
 }
 
