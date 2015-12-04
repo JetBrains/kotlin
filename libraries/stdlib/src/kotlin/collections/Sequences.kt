@@ -6,18 +6,7 @@ package kotlin
 import java.util.*
 import kotlin.support.AbstractIterator
 
-/**
- * A sequence that returns values through its iterator. The values are evaluated lazily, and the sequence
- * is potentially infinite.
- *
- * @param T the type of elements in the sequence.
- */
-public interface Sequence<out T> {
-    /**
-     * Returns an iterator that returns the values from the sequence.
-     */
-    public operator fun iterator(): Iterator<T>
-}
+
 
 /**
  * Creates a sequence that returns all elements from this iterator. The sequence is constrained to be iterated only once.
@@ -484,6 +473,18 @@ public fun <T> Sequence<T>.constrainOnce(): Sequence<T> {
     //return this as? ConstrainedOnceSequence<T> ?: ConstrainedOnceSequence(this)
     return if (this is ConstrainedOnceSequence<T>) this else ConstrainedOnceSequence(this)
 }
+
+@kotlin.jvm.JvmVersion
+private class ConstrainedOnceSequence<T>(sequence: Sequence<T>) : Sequence<T> {
+    private val sequenceRef = java.util.concurrent.atomic.AtomicReference(sequence)
+
+    override fun iterator(): Iterator<T> {
+        val sequence = sequenceRef.getAndSet(null) ?: throw IllegalStateException("This sequence can be consumed only once.")
+        return sequence.iterator()
+    }
+}
+
+
 
 /**
  * Returns a sequence which invokes the function to calculate the next value on each iteration until the function returns `null`.
