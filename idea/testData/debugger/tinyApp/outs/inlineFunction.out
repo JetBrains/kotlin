@@ -3,6 +3,7 @@ LineBreakpoint created at inlineFunction.kt:7
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 inlineFunction.kt:7
 Compile bytecode for myFun { 1 }
+Compile bytecode for foo()
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

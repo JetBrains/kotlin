@@ -173,7 +173,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
 
     companion object {
         private fun extractAndCompile(codeFragment: KtCodeFragment, sourcePosition: SourcePosition, context: EvaluationContextImpl): CompiledDataDescriptor {
-            codeFragment.checkForErrors(false)
+            codeFragment.checkForErrors()
 
             val extractionResult = getFunctionForExtractedFragment(codeFragment, sourcePosition.file, sourcePosition.line)
                                             ?: throw IllegalStateException("Code fragment cannot be extracted to function: ${codeFragment.text}")
@@ -360,7 +360,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                     LOG.debug("File for eval4j:\n${runReadAction { jetFile.text }}")
                 }
 
-                val (bindingContext, moduleDescriptor, files) = jetFile.checkForErrors(true)
+                val (bindingContext, moduleDescriptor, files) = jetFile.checkForErrors(true, codeFragment.getContextContainingFile())
 
                 val generateClassFilter = object : GenerationState.GenerateClassFilter() {
                     override fun shouldGeneratePackagePart(jetFile: KtFile) = jetFile == jetFile
@@ -431,7 +431,8 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             throw EvaluateExceptionUtil.createEvaluateException(e)
         }
 
-        private fun KtFile.checkForErrors(analyzeInlineFunctions: Boolean): ExtendedAnalysisResult {
+        // contextFile must be NotNull when analyzeInlineFunctions = true
+        private fun KtFile.checkForErrors(analyzeInlineFunctions: Boolean = false, contextFile: KtFile? = null): ExtendedAnalysisResult {
             return runReadAction {
                 try {
                     AnalyzingUtils.checkForSyntacticErrors(this)
@@ -440,8 +441,10 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                     throw EvaluateExceptionUtil.createEvaluateException(e.message)
                 }
 
-                val resolutionFacade = KotlinCacheService.getInstance(project).getResolutionFacade(listOf(this, createFlexibleTypesFile()))
-                val analysisResult = resolutionFacade.analyzeFullyAndGetResult(Collections.singletonList(this))
+                val filesToAnalyze = if (contextFile == null) listOf(this) else listOf(this, contextFile)
+                val resolutionFacade = KotlinCacheService.getInstance(project).getResolutionFacade(filesToAnalyze + createFlexibleTypesFile())
+                val analysisResult = resolutionFacade.analyzeFullyAndGetResult(filesToAnalyze)
+
                 if (analysisResult.isError()) {
                     throw EvaluateExceptionUtil.createEvaluateException(analysisResult.error)
                 }

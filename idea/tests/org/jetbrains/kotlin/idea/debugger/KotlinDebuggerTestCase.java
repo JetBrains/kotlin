@@ -35,6 +35,7 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testFramework.EdtTestUtil;
 import com.intellij.testFramework.IdeaTestUtil;
 import com.intellij.util.ThrowableRunnable;
+import com.intellij.util.indexing.FileBasedIndex;
 import com.intellij.xdebugger.XDebugSession;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.asJava.FakeLightClassForFileOfPackage;
@@ -220,8 +221,9 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
 
     @SuppressWarnings("MethodMayBeStatic")
     protected void createDebugProcess(@NotNull String path) throws Exception {
-        VfsUtil.markDirty(true, true, VfsUtil.findFileByIoFile(new File(TINY_APP), true));
         File file = new File(path);
+        //noinspection ConstantConditions
+        FileBasedIndex.getInstance().requestReindex(VfsUtil.findFileByIoFile(file, true));
         String packageName = file.getName().replace(".kt", "");
         FqName packageFQN = new FqName(packageName);
         String mainClassName = PackagePartClassUtils.getPackagePartFqName(packageFQN, file.getName()).asString();
