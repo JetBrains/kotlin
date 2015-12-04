@@ -113,23 +113,29 @@ class FilesTest {
 
         assertEquals("bar", nested.relativeTo(base))
         assertEquals("..", base.relativeTo(nested))
-        assertEquals("", base.relativeTo(base))
-        assertEquals("", nested.relativeTo(nested))
 
         val empty = File("")
         val current = File(".")
         val parent = File("..")
         val outOfRoot = File("../bar")
 
-        assertEquals("../bar".separatorsToSystem(), outOfRoot.relativeTo(empty))
+        assertEquals(File("../bar"), File(outOfRoot.relativeTo(empty)))
+        assertEquals(File("../../bar"), File(outOfRoot.relativeTo(base)))
+        assertEquals("bar", outOfRoot.relativeTo(parent))
+        assertEquals("..", parent.relativeTo(outOfRoot))
 
         val root = File("/root")
         val files = listOf(nested, base, empty, outOfRoot, current, parent)
-        for (file1 in files) {
-            for (file2 in files) {
-                val rootedFile1 = root.resolve(file1)
-                val rootedFile2 = root.resolve(file2)
-                assertEquals(file1.relativeTo(file2), rootedFile1.relativeTo(rootedFile2), "nested: $file1, base: $file2")
+        val bases = listOf(nested, base, empty, current)
+
+        for (file in files)
+            assertEquals("", file.relativeTo(file), "file should have empty path relative to itself: $file")
+
+        for (file in files) {
+            for (base in bases) {
+                val rootedFile = root.resolve(file)
+                val rootedBase = root.resolve(base)
+                assertEquals(file.relativeTo(base), rootedFile.relativeTo(rootedBase), "nested: $file, base: $base")
             }
         }
     }
@@ -140,14 +146,19 @@ class FilesTest {
         val networkShare1 = File("""\\my.host\share1/folder""")
         val networkShare2 = File("""\\my.host\share2/folder""")
 
+        fun assertFailsRelativeTo(file: File, base: File) {
+            val e = assertFailsWith<IllegalArgumentException>("file: $file, base: $base") { file.relativeTo(base) }
+            println(e.message)
+        }
+
         val allFiles = listOf(absolute, relative, networkShare1, networkShare2)
         for (file in allFiles) {
             for (base in allFiles) {
-                if (file != base) {
-                    assertFailsWith<IllegalArgumentException>("file: $file, base: $base") { file.relativeTo(base) }
-                }
+                if (file != base) assertFailsRelativeTo(file, base)
             }
         }
+
+        assertFailsRelativeTo(File("y"), File("../x"))
     }
 
     @test fun relativeTo() {

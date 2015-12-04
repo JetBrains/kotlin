@@ -120,31 +120,55 @@ public val File.nameWithoutExtension: String
 *
  * @throws IllegalArgumentException if child and parent have different roots.
  */
-public fun File.relativeTo(base: File): String {
+public fun File.relativeTo(base: File): String
+        = relativeToOrNull(base) ?: throw IllegalArgumentException("this and base files have different roots: $this and $base")
+
+// TODO
+//private fun File.relativeToOrPath(base: File): String
+//        = relativeToOrNull(base) ?: toString()
+
+private fun File.relativeToOrNull(base: File): String? {
     // Check roots
-    val components = filePathComponents()
-    val baseComponents = base.filePathComponents()
-    if (components.rootName != baseComponents.rootName)
-        throw IllegalArgumentException("this and base files have different roots: ${components.rootName} and ${baseComponents.rootName}")
-    var i = 0
-    while (i < components.size() && i < baseComponents.size() && components.fileList[i] == baseComponents.fileList[i])
-        i++
-    val sameCount = i
-    val baseCount = baseComponents.size()
-    // Add all ..
-    val res = StringBuilder()
-    for (j in sameCount..baseCount - 2)
-        res.append("..").append(File.separator)
-    // If .. is the last element, no separator should present
-    if (baseCount > sameCount) {
-        res.append(if (sameCount < components.size()) ".." + File.separator else "..")
+    val thisComponents = this.filePathComponents().normalize()
+    val baseComponents = base.filePathComponents().normalize()
+    if (thisComponents.rootName != baseComponents.rootName) {
+        return null
     }
+
+    val baseCount = baseComponents.size()
+    val thisCount = thisComponents.size()
+
+    val sameCount = run countSame@ {
+        var i = 0
+        val maxSameCount = Math.min(thisCount, baseCount)
+        while (i < maxSameCount && thisComponents.fileList[i] == baseComponents.fileList[i])
+            i++
+        return@countSame i
+    }
+
+    // Annihilate differing base components by adding required number of .. parts
+    val res = StringBuilder()
+    for (i in baseCount - 1 downTo sameCount) {
+        if (baseComponents.fileList[i].name == "..") {
+            return null
+        }
+
+        res.append("..")
+
+        if (i != sameCount) {
+            res.append(File.separatorChar)
+        }
+    }
+
     // Add remaining this components
-    if (sameCount < components.size() - 1)
-        res.append(components.subPath(sameCount, components.size() - 1)).append(File.separator)
-    // The last one should be without separator
-    if (sameCount < components.size())
-        res.append(components.subPath(components.size() - 1, components.size()))
+    if (sameCount < thisCount) {
+        // If some .. were appended
+        if (sameCount < baseCount)
+            res.append(File.separatorChar)
+
+        res.append(thisComponents.subPath(sameCount, thisCount))
+    }
+
     return res.toString()
 }
 
@@ -359,19 +383,22 @@ public fun File.endsWith(other: String): Boolean = endsWith(File(other))
  *
  * @return normalized pathname with . and possibly .. removed.
  */
-public fun File.normalize(): File {
-    val components = filePathComponents()
-    val rootName = components.rootName
-    val list: MutableList<String> = ArrayList()
-    for (file in components.fileList) {
-        val name = file.toString()
-        when (name) {
+public fun File.normalize(): File
+        = filePathComponents().let { File(it.fileList.normalize().joinToString(File.separator, it.rootName)) }
+
+private fun FilePathComponents.normalize(): FilePathComponents
+        = FilePathComponents(rootName, fileList.normalize())
+
+private fun List<File>.normalize(): List<File> {
+    val list: MutableList<File> = ArrayList(this.size)
+    for (file in this) {
+        when (file.name) {
             "." -> {}
-            ".." -> if (!list.isEmpty() && list.get(list.size - 1) != "..") list.removeAt(list.size - 1) else list.add(name)
-            else -> list.add(name)
+            ".." -> if (!list.isEmpty() && list.last().name != "..") list.removeAt(list.size - 1) else list.add(file)
+            else -> list.add(file)
         }
     }
-    return File(list.joinToString(File.separator, rootName))
+    return list
 }
 
 /**
