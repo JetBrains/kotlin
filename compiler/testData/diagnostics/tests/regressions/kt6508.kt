@@ -19,6 +19,6 @@ import foo.View
 
 fun String.gah(view:View ?) {
     if (view is <!UNRESOLVED_REFERENCE!>TextView<!>)
-        <!DEBUG_INFO_SMARTCAST!>view<!>
+        view
     else <!UNRESOLVED_REFERENCE!>TextView<!>() as foo.TextView
 }

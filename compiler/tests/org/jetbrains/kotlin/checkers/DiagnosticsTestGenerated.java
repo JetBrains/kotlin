@@ -9282,6 +9282,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("fieldOverridesFieldOfDifferentType.kt")
+            public void testFieldOverridesFieldOfDifferentType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/fieldOverridesFieldOfDifferentType.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("fieldOverridesNothing.kt")
             public void testFieldOverridesNothing() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/fieldOverridesNothing.kt");
@@ -11370,6 +11376,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("delegateByComplexInheritance.kt")
+            public void testDelegateByComplexInheritance() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/delegateByComplexInheritance.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("dereference.kt")
             public void testDereference() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/dereference.kt");
@@ -11427,6 +11439,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("override.kt")
             public void testOverride() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/override.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("rawOverrides.kt")
+            public void testRawOverrides() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/rawOverrides.kt");
                 doTest(fileName);
             }
 
@@ -11894,6 +11912,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("arrays.kt")
                 public void testArrays() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/rawTypes/arrays.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("errorType.kt")
+                public void testErrorType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/platformTypes/rawTypes/errorType.kt");
                     doTest(fileName);
                 }
 

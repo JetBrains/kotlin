@@ -20,5 +20,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 
 public interface ExternalOverridabilityCondition {
-    boolean isOverridable(@NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor);
+    enum Result {
+        OVERRIDABLE, CONFLICT, INCOMPATIBLE, UNKNOWN
+    }
+
+    @NotNull
+    Result isOverridable(@NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor);
 }

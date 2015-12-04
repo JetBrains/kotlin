@@ -245,7 +245,7 @@ public class InlineCodegen extends CallGenerator {
 
     private InlineResult inlineCall(SMAPAndMethodNode nodeAndSmap) {
         MethodNode node = nodeAndSmap.getNode();
-        ReifiedTypeParametersUsages reificationResult = reifiedTypeInliner.reifyInstructions(node.instructions);
+        ReifiedTypeParametersUsages reificationResult = reifiedTypeInliner.reifyInstructions(node);
         generateClosuresBodies();
 
         //through generation captured parameters will be added to invocationParamBuilder
@@ -778,7 +778,7 @@ public class InlineCodegen extends CallGenerator {
 
     @Override
     public void reorderArgumentsIfNeeded(
-            @NotNull List actualArgsWithDeclIndex, @NotNull List valueParameterTypes
+            @NotNull List<ArgumentAndDeclIndex> actualArgsWithDeclIndex, @NotNull List<? extends Type> valueParameterTypes
     ) {
 
     }

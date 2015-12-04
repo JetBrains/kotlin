@@ -257,6 +257,30 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         doTest(fileName);
     }
 
+    @TestMetadata("reifiedAsCheck.kt")
+    public void testReifiedAsCheck() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/reifiedAsCheck.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("reifiedAsCheckWithNullable.kt")
+    public void testReifiedAsCheckWithNullable() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/reifiedAsCheckWithNullable.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("reifiedIsCheck.kt")
+    public void testReifiedIsCheck() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/reifiedIsCheck.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("reifiedIsCheckWithNullable.kt")
+    public void testReifiedIsCheckWithNullable() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/reifiedIsCheckWithNullable.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("safeAsWithMutable.kt")
     public void testSafeAsWithMutable() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/safeAsWithMutable.kt");

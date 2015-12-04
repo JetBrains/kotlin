@@ -262,9 +262,9 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
 
         @NotNull
         @Override
-        public Collection getContributedDescriptors(
+        public Collection<DeclarationDescriptor> getContributedDescriptors(
                 @NotNull DescriptorKindFilter kindFilter,
-                @NotNull Function1 nameFilter
+                @NotNull Function1<? super Name, Boolean> nameFilter
         ) {
             return allDescriptors.invoke();
         }

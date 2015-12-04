@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeSubstitutor;
 import org.jetbrains.kotlin.util.OperatorChecks;
 
 import java.util.List;
@@ -142,12 +141,13 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
         // We use `doSubstitute` here because it does exactly what we need:
         // 1. creates full copy of descriptor
         // 2. copies method's type parameters (with new containing declaration) and properly substitute to them in value parameters, return type and etc.
-        JavaMethodDescriptor enhancedMethod = (JavaMethodDescriptor) doSubstitute(
-                TypeSubstitutor.EMPTY, getContainingDeclaration(), getModality(), getVisibility(),
-                isOperator(), isInfix(), isExternal(), isInline(), isTailrec(), hasStableParameterNames(), hasSynthesizedParameterNames(),
-                getOriginal(), /* copyOverrides = */ true, getKind(),
-                enhancedValueParameters, enhancedReceiverType, enhancedReturnType,
-                null, /* preserveSource */false, /* signatureChange = */ false);
+        JavaMethodDescriptor enhancedMethod =
+                (JavaMethodDescriptor) newCopyBuilder()
+                        .setValueParameters(enhancedValueParameters)
+                        .setReturnType(enhancedReturnType)
+                        .setExtensionReceiverType(enhancedReceiverType)
+                        .setOriginal(getOriginal())
+                        .build();
 
         assert enhancedMethod != null : "null after substitution while enhancing " + toString();
         return enhancedMethod;

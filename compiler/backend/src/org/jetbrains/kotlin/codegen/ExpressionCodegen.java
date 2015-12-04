@@ -57,7 +57,6 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.renderer.DescriptorRenderer;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
@@ -2483,9 +2482,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             }
             else {
                 mappings.addParameterMappingToNewParameter(
-                        key.getName().getIdentifier(),
-                        parameterDescriptor.getName().getIdentifier()
-                );
+                        key.getName().getIdentifier(), type,
+                        parameterDescriptor.getName().getIdentifier());
             }
         }
         return getOrCreateCallGenerator(
@@ -3689,13 +3687,8 @@ The "returned" value of try expression with no finally is either the last expres
                 }
 
                 if (opToken != KtTokens.AS_SAFE) {
-                    if (!TypeUtils.isNullableType(rightType)) {
-                        v.dup();
-                        Label nonnull = new Label();
-                        v.ifnonnull(nonnull);
-                        genThrow(v, "kotlin/TypeCastException", "null cannot be cast to non-null type " +
-                                                                DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(rightType));
-                        v.mark(nonnull);
+                    if (!TypeUtils.isNullableType(rightType) && !TypeUtils.isReifiedTypeParameter(rightType)) {
+                        CodegenUtilKt.generateNullCheckForNonSafeAs(v, rightType);
                     }
                 }
                 else {
@@ -3759,7 +3752,7 @@ The "returned" value of try expression with no finally is either the last expres
                 if (leaveExpressionOnStack) {
                     v.dup();
                 }
-                CodegenUtilKt.generateIsCheck(v, kotlinType, new Function1<InstructionAdapter, Unit>() {
+                CodegenUtilKt.generateIsCheck(v, kotlinType.isMarkedNullable() && !TypeUtils.isReifiedTypeParameter(kotlinType), new Function1<InstructionAdapter, Unit>() {
                     @Override
                     public Unit invoke(InstructionAdapter adapter) {
                         generateInstanceOfInstruction(kotlinType);
@@ -3794,8 +3787,8 @@ The "returned" value of try expression with no finally is either the last expres
                 parentCodegen.getReifiedTypeParametersUsages().
                         addUsedReifiedParameter(typeParameterDescriptor.getName().asString());
             }
-
-            v.visitLdcInsn(typeParameterDescriptor.getName().asString());
+            boolean putNullableFlag = ReifiedTypeInliner.isNullableMarkerInstruction(markerMethodName) && type.isMarkedNullable();
+            v.visitLdcInsn(typeParameterDescriptor.getName().asString() + (putNullableFlag ? "?" : ""));
             v.invokestatic(
                     IntrinsicMethods.INTRINSICS_CLASS_NAME, markerMethodName,
                     Type.getMethodDescriptor(Type.VOID_TYPE, Type.getType(String.class)), false

@@ -114,6 +114,8 @@ internal object RawSubstitution : TypeSubstitution() {
             )
         }
 
+        if (type.isError) return ErrorUtils.createErrorType("Raw error type: ${type.constructor}")
+
         val constructor = type.constructor
         return KotlinTypeImpl.create(
                 type.annotations, constructor, type.isMarkedNullable,

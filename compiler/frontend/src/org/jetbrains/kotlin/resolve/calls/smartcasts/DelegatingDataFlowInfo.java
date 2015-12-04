@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve.calls.smartcasts;
 import com.google.common.collect.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.types.FlexibleTypesKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
@@ -281,6 +281,7 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
     public DataFlowInfo establishSubtyping(@NotNull DataFlowValue value, @NotNull KotlinType type) {
         if (value.getType().equals(type)) return this;
         if (getPossibleTypes(value).contains(type)) return this;
+        if (!FlexibleTypesKt.isFlexible(value.getType()) && TypeUtilsKt.isSubtypeOf(value.getType(), type)) return this;
         ImmutableMap<DataFlowValue, Nullability> newNullabilityInfo =
                 type.isMarkedNullable() ? EMPTY_NULLABILITY_INFO : ImmutableMap.of(value, NOT_NULL);
         SetMultimap<DataFlowValue, KotlinType> newTypeInfo = ImmutableSetMultimap.of(value, type);

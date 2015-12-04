@@ -390,7 +390,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     }
 
     private boolean isFullFileMove() {
-        Map<KtFile, List<KtNamedDeclaration>> fileToElements = (Map) CollectionsKt.groupBy(
+        Map<KtFile, List<KtNamedDeclaration>> fileToElements = CollectionsKt.groupBy(
                 getSelectedElementsToMove(),
                 new Function1<KtNamedDeclaration, KtFile>() {
                     @Override

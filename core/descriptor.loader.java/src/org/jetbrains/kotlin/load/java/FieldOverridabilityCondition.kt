@@ -20,11 +20,16 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.isJavaField
 import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition
+import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition.Result
 
 class FieldOverridabilityCondition : ExternalOverridabilityCondition {
-    override fun isOverridable(superDescriptor: CallableDescriptor, subDescriptor: CallableDescriptor): Boolean {
-        if (subDescriptor !is PropertyDescriptor || superDescriptor !is PropertyDescriptor) return true
+    override fun isOverridable(superDescriptor: CallableDescriptor, subDescriptor: CallableDescriptor): Result {
+        if (subDescriptor !is PropertyDescriptor || superDescriptor !is PropertyDescriptor) return Result.UNKNOWN
+        if (subDescriptor.name != superDescriptor.name) return Result.UNKNOWN
 
-        return subDescriptor.isJavaField == superDescriptor.isJavaField
+        if (subDescriptor.isJavaField && superDescriptor.isJavaField) return Result.OVERRIDABLE
+        if (subDescriptor.isJavaField || superDescriptor.isJavaField) return Result.INCOMPATIBLE
+
+        return Result.UNKNOWN
     }
 }

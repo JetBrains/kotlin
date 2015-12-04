@@ -8,6 +8,6 @@ public interface MethodTypeParameterErased {
 
     public open class SubBug : test.MethodTypeParameterErased.Bug<kotlin.Any!> {
         public constructor SubBug()
-        public open fun save(): test.MethodTypeParameterErased.SubBug!
+        public open override /*1*/ fun save(): test.MethodTypeParameterErased.SubBug!
     }
 }

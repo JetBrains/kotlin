@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeSubstitutor;
 
 import java.util.List;
 
@@ -100,33 +99,34 @@ public class SimpleFunctionDescriptorImpl extends FunctionDescriptorImpl impleme
             Kind kind,
             boolean copyOverrides
     ) {
-        return (SimpleFunctionDescriptorImpl) doSubstitute(
-                TypeSubstitutor.EMPTY, newOwner, modality, visibility,
-                isOperator(), isInfix(), isExternal(), isInline(), isTailrec(),
-                hasStableParameterNames(), hasSynthesizedParameterNames(),
-                null, copyOverrides, kind
-        );
+        //noinspection ConstantConditions
+        return (SimpleFunctionDescriptor) newCopyBuilder()
+                    .setOwner(newOwner)
+                    .setModality(modality)
+                    .setVisibility(visibility)
+                    .setKind(kind)
+                    .setCopyOverrides(copyOverrides)
+                    .build();
     }
 
     @NotNull
     @Override
     public SimpleFunctionDescriptor createRenamedCopy(@NotNull Name name) {
         //noinspection ConstantConditions
-        return (SimpleFunctionDescriptorImpl) doSubstitute(
-                TypeSubstitutor.EMPTY, getContainingDeclaration(), getModality(), getVisibility(),
-                isOperator(), isInfix(), isExternal(), isInline(), isTailrec(), hasStableParameterNames(), hasSynthesizedParameterNames(),
-                null, /* copyOverrides = */ true, getKind(), getValueParameters(), getExtensionReceiverParameterType(), getReturnType(), name,
-                /* preserveSource = */ true, /* signatureChange = */ true);
+        return (SimpleFunctionDescriptor) newCopyBuilder().setName(name).setSignatureChange().build();
     }
 
     @NotNull
     @Override
     public SimpleFunctionDescriptor createCopyWithNewValueParameters(@NotNull List<ValueParameterDescriptor> valueParameters) {
         //noinspection ConstantConditions
-        return (SimpleFunctionDescriptorImpl) doSubstitute(
-                TypeSubstitutor.EMPTY, getContainingDeclaration(), getModality(), getVisibility(),
-                isOperator(), isInfix(), isExternal(), isInline(), isTailrec(), hasStableParameterNames(), hasSynthesizedParameterNames(),
-                null, /* copyOverrides = */ true, getKind(), valueParameters, getExtensionReceiverParameterType(), getReturnType(), null,
-                /* preserveSource = */ true, /* signatureChange = */ true);
+        return (SimpleFunctionDescriptor) newCopyBuilder().setValueParameters(valueParameters).setSignatureChange().build();
+    }
+
+    @NotNull
+    @Override
+    public SimpleFunctionDescriptor createCopyWithNewTypeParameters(@NotNull List<TypeParameterDescriptor> typeParameters) {
+        //noinspection ConstantConditions
+        return (SimpleFunctionDescriptor) newCopyBuilder().setTypeParameters(typeParameters).build();
     }
 }

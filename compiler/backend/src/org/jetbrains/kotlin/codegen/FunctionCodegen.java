@@ -911,7 +911,7 @@ public class FunctionCodegen {
             iv.ifnonnull(afterBarrier);
         }
         else {
-            CodegenUtilKt.generateIsCheck(iv, kotlinType, new Function1<InstructionAdapter, Unit>() {
+            CodegenUtilKt.generateIsCheck(iv, kotlinType.isMarkedNullable(), new Function1<InstructionAdapter, Unit>() {
                 @Override
                 public Unit invoke(InstructionAdapter adapter) {
                     TypeIntrinsics.instanceOf(adapter, kotlinType, boxType(delegateParameterType));

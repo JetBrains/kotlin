@@ -197,12 +197,12 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
 
             BindingContext bindingContextForFile = resolutionFacade.analyzeFullyAndGetResult(Collections.singletonList(jetFile)).getBindingContext();
 
-            kotlin.Pair<BindingContext, List<KtFile>> result = (kotlin.Pair) DebuggerUtils.INSTANCE.analyzeInlinedFunctions(
+            kotlin.Pair<BindingContext, List<KtFile>> result = DebuggerUtils.INSTANCE.analyzeInlinedFunctions(
                     resolutionFacade, bindingContextForFile, jetFile, !enableInline
             );
 
             BindingContext bindingContext = result.getFirst();
-            List<? extends KtFile> toProcess = result.getSecond();
+            List<KtFile> toProcess = result.getSecond();
 
             GenerationState.GenerateClassFilter generateClassFilter = new GenerationState.GenerateClassFilter() {
 

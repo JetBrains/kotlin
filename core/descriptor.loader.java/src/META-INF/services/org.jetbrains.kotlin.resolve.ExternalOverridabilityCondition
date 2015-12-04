@@ -1,1 +1,2 @@
 org.jetbrains.kotlin.load.java.FieldOverridabilityCondition
+org.jetbrains.kotlin.load.java.ErasedOverridabilityCondition

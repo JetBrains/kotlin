@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.codegen.inline;
 
-import com.intellij.openapi.util.Pair;
 import com.intellij.util.ArrayUtil;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
@@ -237,7 +236,7 @@ public class AnonymousObjectTransformer {
             @NotNull ParametersBuilder capturedBuilder,
             boolean isConstructor
     ) {
-        ReifiedTypeParametersUsages typeParametersToReify = inliningContext.reifedTypeInliner.reifyInstructions(sourceNode.instructions);
+        ReifiedTypeParametersUsages typeParametersToReify = inliningContext.reifedTypeInliner.reifyInstructions(sourceNode);
         Parameters parameters = isConstructor ? capturedBuilder.buildParameters() : getMethodParametersWithCaptured(capturedBuilder, sourceNode);
 
         RegeneratedLambdaFieldRemapper remapper =
