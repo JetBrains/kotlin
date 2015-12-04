@@ -25,11 +25,12 @@ public class KtFunctionLiteralArgument(node: ASTNode) : KtValueArgument(node), F
     override fun getFunctionLiteral(): KtFunctionLiteralExpression = getArgumentExpression().unpackFunctionLiteral()!!
 }
 
-public fun KtExpression.unpackFunctionLiteral(): KtFunctionLiteralExpression? {
+public fun KtExpression.unpackFunctionLiteral(allowParentheses: Boolean = false): KtFunctionLiteralExpression? {
     return when (this) {
         is KtFunctionLiteralExpression -> this
-        is KtLabeledExpression -> getBaseExpression()?.unpackFunctionLiteral()
-        is KtAnnotatedExpression -> getBaseExpression()?.unpackFunctionLiteral()
+        is KtLabeledExpression -> baseExpression?.unpackFunctionLiteral(allowParentheses)
+        is KtAnnotatedExpression -> baseExpression?.unpackFunctionLiteral(allowParentheses)
+        is KtParenthesizedExpression -> if (allowParentheses) expression?.unpackFunctionLiteral(allowParentheses) else null
         else -> null
     }
 }

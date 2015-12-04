@@ -37,7 +37,7 @@ abstract class AbstractInlineTest : KotlinLightCodeInsightFixtureTestCase() {
 
         val afterFileExists = afterFile.exists()
 
-        val targetElement = TargetElementUtil.findTargetElement(myFixture.editor, ELEMENT_NAME_ACCEPTED or REFERENCED_ELEMENT_ACCEPTED)
+        val targetElement = TargetElementUtil.findTargetElement(myFixture.editor, ELEMENT_NAME_ACCEPTED or REFERENCED_ELEMENT_ACCEPTED)!!
         val handler = KotlinInlineValHandler()
 
         val expectedErrors = InTextDirectivesUtils.findLinesWithPrefixesRemoved(myFixture.file.text, "// ERROR: ")

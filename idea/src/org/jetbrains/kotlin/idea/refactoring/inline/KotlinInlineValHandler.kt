@@ -14,412 +14,258 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.inline;
+package org.jetbrains.kotlin.idea.refactoring.inline
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-import com.intellij.codeInsight.highlighting.HighlightManager;
-import com.intellij.lang.Language;
-import com.intellij.lang.refactoring.InlineActionHandler;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.command.CommandProcessor;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.colors.EditorColors;
-import com.intellij.openapi.editor.colors.EditorColorsManager;
-import com.intellij.openapi.editor.markup.TextAttributes;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.wm.StatusBar;
-import com.intellij.openapi.wm.WindowManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.psi.search.searches.ReferencesSearch;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.refactoring.HelpID;
-import com.intellij.refactoring.RefactoringBundle;
-import com.intellij.refactoring.util.CommonRefactoringUtil;
-import com.intellij.refactoring.util.RefactoringMessageDialog;
-import com.intellij.util.Function;
-import kotlin.CollectionsKt;
-import kotlin.Pair;
-import kotlin.jvm.functions.Function1;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
-import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.idea.KotlinLanguage;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.idea.resolve.ResolutionFacade;
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
-import org.jetbrains.kotlin.idea.util.ShortenReferences;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
-import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.expressions.OperatorConventions;
+import com.google.common.collect.Sets
+import com.intellij.codeInsight.highlighting.HighlightManager
+import com.intellij.lang.Language
+import com.intellij.lang.refactoring.InlineActionHandler
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.colors.EditorColors
+import com.intellij.openapi.editor.colors.EditorColorsManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.wm.WindowManager
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.search.searches.ReferencesSearch
+import com.intellij.refactoring.HelpID
+import com.intellij.refactoring.RefactoringBundle
+import com.intellij.refactoring.util.CommonRefactoringUtil
+import com.intellij.refactoring.util.RefactoringMessageDialog
+import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCallWithAssert
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.utils.sure
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+class KotlinInlineValHandler : InlineActionHandler() {
+    override fun isEnabledForLanguage(l: Language) = l == KotlinLanguage.INSTANCE
 
-public class KotlinInlineValHandler extends InlineActionHandler {
-    @Override
-    public boolean isEnabledForLanguage(Language l) {
-        return l.equals(KotlinLanguage.INSTANCE);
+    override fun canInlineElement(element: PsiElement): Boolean {
+        if (element !is KtProperty) return false
+        return element.getter == null && element.receiverTypeReference == null
     }
 
-    @Override
-    public boolean canInlineElement(PsiElement element) {
-        if (!(element instanceof KtProperty)) {
-            return false;
+    override fun inlineElement(project: Project, editor: Editor, element: PsiElement) {
+        val declaration = element as KtProperty
+        val file = declaration.getContainingKtFile()
+        val name = declaration.name ?: return
+
+        val referenceExpressions = ReferencesSearch.search(declaration).mapNotNull() {
+            (it.element as? KtExpression)?.getQualifiedExpressionForSelectorOrThis()
         }
-        KtProperty property = (KtProperty) element;
-        return property.getGetter() == null && property.getReceiverTypeReference() == null;
-    }
 
-    @Override
-    public void inlineElement(final Project project, final Editor editor, PsiElement element) {
-        final KtProperty val = (KtProperty) element;
-        final KtFile file = val.getContainingKtFile();
-        String name = val.getName();
+        val assignments = Sets.newHashSet<PsiElement>()
+        referenceExpressions.forEach { expression ->
+            val parent = expression.parent
 
-        KtExpression initializerInDeclaration = val.getInitializer();
-
-        final List<KtExpression> referenceExpressions = findReferenceExpressions(val);
-
-        final Set<PsiElement> assignments = Sets.newHashSet();
-        for (KtExpression expression : referenceExpressions) {
-            PsiElement parent = expression.getParent();
-
-            KtBinaryExpression assignment = KtPsiUtilKt.getAssignmentByLHS(expression);
+            val assignment = expression.getAssignmentByLHS()
             if (assignment != null) {
-                assignments.add(parent);
+                assignments.add(parent)
             }
 
-            //noinspection SuspiciousMethodCalls
-            if (parent instanceof KtUnaryExpression &&
-                OperatorConventions.INCREMENT_OPERATIONS.contains(((KtUnaryExpression) parent).getOperationToken())) {
-                assignments.add(parent);
+            if (parent is KtUnaryExpression && OperatorConventions.INCREMENT_OPERATIONS.contains(parent.operationToken)) {
+                assignments.add(parent)
             }
         }
 
-        final KtExpression initializer;
-        if (initializerInDeclaration != null) {
-            initializer = initializerInDeclaration;
-            if (!assignments.isEmpty()) {
-                reportAmbiguousAssignment(project, editor, name, assignments);
-                return;
-            }
+        val initializerInDeclaration = declaration.initializer
+        val initializer = if (initializerInDeclaration != null) {
+            if (!assignments.isEmpty()) return reportAmbiguousAssignment(project, editor, name, assignments)
+            initializerInDeclaration
         }
         else {
-            if (assignments.size() == 1) {
-                initializer = ((KtBinaryExpression) assignments.iterator().next()).getRight();
-            }
-            else {
-                initializer = null;
-            }
-            if (initializer == null) {
-                reportAmbiguousAssignment(project, editor, name, assignments);
-                return;
-            }
+            (assignments.singleOrNull() as? KtBinaryExpression)?.right
+            ?: return reportAmbiguousAssignment(project, editor, name, assignments)
         }
 
-        final String typeArgumentsForCall = getTypeArgumentsStringForCall(initializer);
-        final String parametersForFunctionLiteral = getParametersForFunctionLiteral(initializer);
+        val typeArgumentsForCall = getTypeArgumentsStringForCall(initializer)
+        val parametersForFunctionLiteral = getParametersForFunctionLiteral(initializer)
 
-        final boolean canHighlight = CollectionsKt.all(
-                referenceExpressions,
-                new Function1<KtExpression, Boolean>() {
-                    @Override
-                    public Boolean invoke(KtExpression expression) {
-                        return expression.getContainingFile() == file;
-                    }
-                }
-        );
-
+        val canHighlight = referenceExpressions.all { it.containingFile === file }
         if (canHighlight) {
-            highlightExpressions(project, editor, referenceExpressions);
+            highlightExpressions(project, editor, referenceExpressions)
         }
-        if (!showDialog(project, name, val, referenceExpressions)) {
+
+        if (!showDialog(project, name, declaration, referenceExpressions)) {
             if (canHighlight) {
-                StatusBar statusBar = WindowManager.getInstance().getStatusBar(project);
-                if (statusBar != null) {
-                    statusBar.setInfo(RefactoringBundle.message("press.escape.to.remove.the.highlighting"));
-                }
+                val statusBar = WindowManager.getInstance().getStatusBar(project)
+                statusBar?.info = RefactoringBundle.message("press.escape.to.remove.the.highlighting")
+            }
+            return
+        }
+
+        project.executeWriteCommand(RefactoringBundle.message("inline.command", name)) {
+            val inlinedExpressions = referenceExpressions.mapNotNull { referenceExpression ->
+                if (assignments.contains(referenceExpression.parent)) return@mapNotNull null
+                referenceExpression.replaced(initializer)
             }
 
-            return;
-        }
+            assignments.forEach { it.delete() }
+            declaration.delete()
 
-        final List<KtExpression> inlinedExpressions = Lists.newArrayList();
-        CommandProcessor.getInstance().executeCommand(
-                project,
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                            @Override
-                            public void run() {
-                                for (KtExpression referenceExpression : referenceExpressions) {
-                                    if (assignments.contains(referenceExpression.getParent())) {
-                                        continue;
-                                    }
+            typeArgumentsForCall?.let { addTypeArguments(it, inlinedExpressions) }
 
-                                    inlinedExpressions.add((KtExpression) referenceExpression.replace(initializer));
-                                }
+            parametersForFunctionLiteral?.let { addFunctionLiteralParameterTypes(it, inlinedExpressions) }
 
-                                for (PsiElement assignment : assignments) {
-                                    assignment.delete();
-                                }
-
-                                val.delete();
-
-                                if (typeArgumentsForCall != null) {
-                                    addTypeArguments(typeArgumentsForCall, inlinedExpressions);
-                                }
-
-                                if (parametersForFunctionLiteral != null) {
-                                    addFunctionLiteralParameterTypes(parametersForFunctionLiteral, inlinedExpressions);
-                                }
-
-                                if (canHighlight) {
-                                    highlightExpressions(project, editor, inlinedExpressions);
-                                }
-                            }
-                        });
-                    }
-                },
-                RefactoringBundle.message("inline.command", name),
-                null);
-    }
-
-    private static void reportAmbiguousAssignment(Project project, Editor editor, String name, Set<PsiElement> assignments) {
-        String key = assignments.isEmpty() ? "variable.has.no.initializer" : "variable.has.no.dominating.definition";
-        String message = RefactoringBundle.getCannotRefactorMessage(RefactoringBundle.message(key, name));
-        showErrorHint(project, editor, message);
-    }
-
-    private static void reportWriteAccess(Project project, Editor editor, String name) {
-        String message = RefactoringBundle.getCannotRefactorMessage(
-                RefactoringBundle.message("variable.is.accessed.for.writing", name)
-        );
-        showErrorHint(project, editor, message);
-    }
-
-    private static void showErrorHint(Project project, Editor editor, String message) {
-        CommonRefactoringUtil.showErrorHint(project, editor, message, RefactoringBundle.message("inline.variable.title"), HelpID.INLINE_VARIABLE);
-    }
-
-    private static void highlightExpressions(Project project, Editor editor, List<? extends PsiElement> elements) {
-        if (editor == null || ApplicationManager.getApplication().isUnitTestMode()) {
-            return;
-        }
-        EditorColorsManager editorColorsManager = EditorColorsManager.getInstance();
-        TextAttributes searchResultsAttributes = editorColorsManager.getGlobalScheme().getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES);
-        HighlightManager highlightManager = HighlightManager.getInstance(project);
-
-        PsiElement[] elementsArray = elements.toArray(new PsiElement[elements.size()]);
-
-        highlightManager.addOccurrenceHighlights(editor, elementsArray, searchResultsAttributes, true, null);
-    }
-
-    private static List<KtExpression> findReferenceExpressions(KtProperty val) {
-        List<KtExpression> result = Lists.newArrayList();
-
-        for (PsiReference reference : ReferencesSearch.search(val, GlobalSearchScope.allScope(val.getProject()), false).findAll()) {
-            KtExpression expression = (KtExpression) reference.getElement();
-            PsiElement parent = expression.getParent();
-            if (parent instanceof KtQualifiedExpression && ((KtQualifiedExpression) parent).getSelectorExpression() == expression) {
-                result.add((KtQualifiedExpression) parent);
-            }
-            else {
-                result.add(expression);
+            if (canHighlight) {
+                highlightExpressions(project, editor, inlinedExpressions)
             }
         }
-
-        return result;
     }
 
-    private static boolean showDialog(
-            Project project,
-            String name,
-            KtProperty property,
-            List<KtExpression> referenceExpressions
-    ) {
-        if (ApplicationManager.getApplication().isUnitTestMode()) {
-            return true;
-        }
+    private fun reportAmbiguousAssignment(project: Project, editor: Editor, name: String, assignments: Set<PsiElement>) {
+        val key = if (assignments.isEmpty()) "variable.has.no.initializer" else "variable.has.no.dominating.definition"
+        val message = RefactoringBundle.getCannotRefactorMessage(RefactoringBundle.message(key, name))
+        showErrorHint(project, editor, message)
+    }
 
-        String kind = property.isLocal() ? "local variable" : "property";
-        RefactoringMessageDialog dialog = new RefactoringMessageDialog(
+    private fun showErrorHint(project: Project, editor: Editor, message: String) {
+        CommonRefactoringUtil.showErrorHint(project, editor, message, RefactoringBundle.message("inline.variable.title"), HelpID.INLINE_VARIABLE)
+    }
+
+    private fun highlightExpressions(project: Project, editor: Editor?, elements: List<PsiElement>) {
+        if (editor == null || ApplicationManager.getApplication().isUnitTestMode) return
+
+        val editorColorsManager = EditorColorsManager.getInstance()
+        val searchResultsAttributes = editorColorsManager.globalScheme.getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES)
+        val highlightManager = HighlightManager.getInstance(project)
+        highlightManager.addOccurrenceHighlights(editor, elements.toTypedArray(), searchResultsAttributes, true, null)
+    }
+
+    private fun showDialog(
+            project: Project,
+            name: String,
+            property: KtProperty,
+            referenceExpressions: List<KtExpression>
+    ): Boolean {
+        if (ApplicationManager.getApplication().isUnitTestMode) return true
+
+        val kind = if (property.isLocal) "local variable" else "property"
+        val dialog = RefactoringMessageDialog(
                 RefactoringBundle.message("inline.variable.title"),
-                "Inline " + kind + " '" + name + "'? " + RefactoringBundle.message("occurences.string", referenceExpressions.size()),
+                "Inline " + kind + " '" + name + "'? " + RefactoringBundle.message("occurences.string", referenceExpressions.size),
                 HelpID.INLINE_VARIABLE,
                 "OptionPane.questionIcon",
                 true,
-                project);
-
-        dialog.show();
-        return dialog.isOK();
+                project
+        )
+        dialog.show()
+        return dialog.isOK
     }
 
-    @Nullable
-    private static String getParametersForFunctionLiteral(KtExpression initializer) {
-        KtFunctionLiteralExpression functionLiteralExpression = getFunctionLiteralExpression(initializer);
-        if (functionLiteralExpression == null) {
-            return null;
+    private fun getParametersForFunctionLiteral(initializer: KtExpression): String? {
+        val functionLiteralExpression = initializer.unpackFunctionLiteral(true) ?: return null
+        val context = initializer.analyze(BodyResolveMode.PARTIAL)
+        val lambdaDescriptor = context.get(BindingContext.FUNCTION, functionLiteralExpression.functionLiteral)
+        if (lambdaDescriptor == null || ErrorUtils.containsErrorType(lambdaDescriptor)) return null
+        return lambdaDescriptor.valueParameters.joinToString {
+            it.name.asString() + ": " + IdeDescriptorRenderers.SOURCE_CODE.renderType(it.type)
         }
-
-        BindingContext context = ResolutionUtils.analyze(initializer, BodyResolveMode.FULL);
-        SimpleFunctionDescriptor fun = context.get(BindingContext.FUNCTION, functionLiteralExpression.getFunctionLiteral());
-        if (fun == null || ErrorUtils.containsErrorType(fun)) {
-            return null;
-        }
-
-        return StringUtil.join(fun.getValueParameters(), new Function<ValueParameterDescriptor, String>() {
-            @Override
-            public String fun(ValueParameterDescriptor descriptor) {
-                return descriptor.getName() + ": " + IdeDescriptorRenderers.SOURCE_CODE.renderType(descriptor.getType());
-            }
-        }, ", ");
     }
 
-    @Nullable
-    private static KtFunctionLiteralExpression getFunctionLiteralExpression(@NotNull KtExpression expression) {
-        if (expression instanceof KtParenthesizedExpression) {
-            KtExpression inner = ((KtParenthesizedExpression) expression).getExpression();
-            return inner == null ? null : getFunctionLiteralExpression(inner);
-        }
-        if (expression instanceof KtFunctionLiteralExpression) {
-            return (KtFunctionLiteralExpression) expression;
-        }
-        return null;
-    }
+    private fun addFunctionLiteralParameterTypes(parameters: String, inlinedExpressions: List<KtExpression>) {
+        val containingFile = inlinedExpressions.first().getContainingKtFile()
+        val resolutionFacade = containingFile.getResolutionFacade()
 
-    private static void addFunctionLiteralParameterTypes(@NotNull String parameters, @NotNull List<KtExpression> inlinedExpressions) {
-        KtFile containingFile = inlinedExpressions.get(0).getContainingKtFile();
-        List<KtFunctionLiteralExpression> functionsToAddParameters = Lists.newArrayList();
-
-        ResolutionFacade resolutionFacade = ResolutionUtils.getResolutionFacade(containingFile);
-        for (KtExpression inlinedExpression : inlinedExpressions) {
-            KtFunctionLiteralExpression functionLiteralExpression = getFunctionLiteralExpression(inlinedExpression);
-            assert functionLiteralExpression != null : "can't find function literal expression for " + inlinedExpression.getText();
-
-            if (needToAddParameterTypes(functionLiteralExpression, resolutionFacade)) {
-                functionsToAddParameters.add(functionLiteralExpression);
-            }
+        val functionsToAddParameters = inlinedExpressions.mapNotNull {
+            val lambdaExpr = it.unpackFunctionLiteral(true).sure { "can't find function literal expression for " + it.text }
+            if (needToAddParameterTypes(lambdaExpr, resolutionFacade)) lambdaExpr else null
         }
 
-        KtPsiFactory psiFactory = KtPsiFactoryKt.KtPsiFactory(containingFile);
-        for (KtFunctionLiteralExpression functionLiteralExpression : functionsToAddParameters) {
-            KtFunctionLiteral functionLiteral = functionLiteralExpression.getFunctionLiteral();
+        val psiFactory = KtPsiFactory(containingFile)
+        for (lambdaExpr in functionsToAddParameters) {
+            val lambda = lambdaExpr.functionLiteral
 
-            KtParameterList currentParameterList = functionLiteral.getValueParameterList();
-            KtParameterList newParameterList = psiFactory.createParameterList("(" + parameters + ")");
+            val currentParameterList = lambda.valueParameterList
+            val newParameterList = psiFactory.createParameterList("($parameters)")
             if (currentParameterList != null) {
-                currentParameterList.replace(newParameterList);
+                currentParameterList.replace(newParameterList)
             }
             else {
-                PsiElement openBraceElement = functionLiteral.getLBrace();
+                // TODO: Ugly code, need refactoring
+                val openBraceElement = lambda.lBrace
 
-                PsiElement nextSibling = openBraceElement.getNextSibling();
-                PsiElement whitespaceToAdd = nextSibling instanceof PsiWhiteSpace && nextSibling.getText().contains("\n")
-                        ? nextSibling.copy() : null;
+                val nextSibling = openBraceElement.nextSibling
+                val whitespaceToAdd = if (nextSibling is PsiWhiteSpace && nextSibling.text.contains("\n"))
+                    nextSibling.copy()
+                else
+                    null
 
-                Pair<PsiElement, PsiElement> whitespaceAndArrow = psiFactory.createWhitespaceAndArrow();
-                functionLiteral.addRangeAfter(whitespaceAndArrow.getFirst(), whitespaceAndArrow.getSecond(), openBraceElement);
+                val whitespaceAndArrow = psiFactory.createWhitespaceAndArrow()
+                lambda.addRangeAfter(whitespaceAndArrow.first, whitespaceAndArrow.second, openBraceElement)
 
-                functionLiteral.addAfter(newParameterList, openBraceElement);
+                lambda.addAfter(newParameterList, openBraceElement)
                 if (whitespaceToAdd != null) {
-                    functionLiteral.addAfter(whitespaceToAdd, openBraceElement);
+                    lambda.addAfter(whitespaceToAdd, openBraceElement)
                 }
             }
-            ShortenReferences.DEFAULT.process(functionLiteralExpression.getValueParameters());
+            ShortenReferences.DEFAULT.process(lambdaExpr.valueParameters)
         }
     }
 
-    private static boolean needToAddParameterTypes(
-            @NotNull KtFunctionLiteralExpression functionLiteralExpression,
-            @NotNull ResolutionFacade resolutionFacade
-    ) {
-        KtFunctionLiteral functionLiteral = functionLiteralExpression.getFunctionLiteral();
-        BindingContext context = resolutionFacade.analyze(functionLiteralExpression, BodyResolveMode.FULL);
-        for (Diagnostic diagnostic : context.getDiagnostics()) {
-            DiagnosticFactory<?> factory = diagnostic.getFactory();
-            PsiElement element = diagnostic.getPsiElement();
-            boolean hasCantInferParameter = factory == Errors.CANNOT_INFER_PARAMETER_TYPE && element.getParent().getParent() == functionLiteral;
-            boolean hasUnresolvedItOrThis = factory == Errors.UNRESOLVED_REFERENCE && element.getText().equals("it") &&
-                                            PsiTreeUtil.getParentOfType(element, KtFunctionLiteral.class) == functionLiteral;
-            if (hasCantInferParameter || hasUnresolvedItOrThis) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static void addTypeArguments(@NotNull String typeArguments, @NotNull List<KtExpression> inlinedExpressions) {
-        KtFile containingFile = inlinedExpressions.get(0).getContainingKtFile();
-        List<KtCallExpression> callsToAddArguments = Lists.newArrayList();
-
-        ResolutionFacade resolutionFacade = ResolutionUtils.getResolutionFacade(containingFile);
-        for (KtExpression inlinedExpression : inlinedExpressions) {
-            BindingContext context = resolutionFacade.analyze(inlinedExpression, BodyResolveMode.FULL);
-            Call call = CallUtilKt.getCallWithAssert(inlinedExpression, context);
-
-            KtElement callElement = call.getCallElement();
-            if (callElement instanceof KtCallExpression && hasIncompleteTypeInferenceDiagnostic(call, context) &&
-                    call.getTypeArgumentList() == null) {
-                callsToAddArguments.add((KtCallExpression) callElement);
-            }
-        }
-
-        KtPsiFactory psiFactory = KtPsiFactoryKt.KtPsiFactory(containingFile);
-        for (KtCallExpression call : callsToAddArguments) {
-            call.addAfter(psiFactory.createTypeArguments("<" + typeArguments + ">"), call.getCalleeExpression());
-            ShortenReferences.DEFAULT.process(call.getTypeArgumentList());
+    private fun needToAddParameterTypes(
+            functionLiteralExpression: KtFunctionLiteralExpression,
+            resolutionFacade: ResolutionFacade
+    ): Boolean {
+        val functionLiteral = functionLiteralExpression.functionLiteral
+        val context = resolutionFacade.analyze(functionLiteralExpression, BodyResolveMode.PARTIAL)
+        return context.diagnostics.any { diagnostic ->
+            val factory = diagnostic.factory
+            val element = diagnostic.psiElement
+            val hasCantInferParameter = factory == Errors.CANNOT_INFER_PARAMETER_TYPE &&
+                                        element.parent.parent == functionLiteral
+            val hasUnresolvedItOrThis = factory == Errors.UNRESOLVED_REFERENCE &&
+                                        element.text == "it" &&
+                                        element.getStrictParentOfType<KtFunctionLiteral>() == functionLiteral
+            hasCantInferParameter || hasUnresolvedItOrThis
         }
     }
 
-    @Nullable
-    private static String getTypeArgumentsStringForCall(@NotNull KtExpression initializer) {
-        BindingContext context = ResolutionUtils.analyze(initializer, BodyResolveMode.FULL);
-        ResolvedCall<?> call = CallUtilKt.getResolvedCall(initializer, context);
-        if (call == null) return null;
-
-        List<KotlinType> typeArguments = Lists.newArrayList();
-        Map<TypeParameterDescriptor, KotlinType> typeArgumentMap = call.getTypeArguments();
-        for (TypeParameterDescriptor typeParameter : call.getCandidateDescriptor().getTypeParameters()) {
-            typeArguments.add(typeArgumentMap.get(typeParameter));
+    private fun addTypeArguments(typeArguments: String, inlinedExpressions: List<KtExpression>) {
+        val containingFile = inlinedExpressions.first().getContainingKtFile()
+        val callsToAddArguments = inlinedExpressions.mapNotNull {
+            val context = it.analyze(BodyResolveMode.PARTIAL)
+            val call = it.getCallWithAssert(context)
+            val callElement = call.callElement
+            if (callElement is KtCallExpression &&
+                hasIncompleteTypeInferenceDiagnostic(call, context) &&
+                call.typeArgumentList == null) callElement else null
         }
 
-        return StringUtil.join(typeArguments, new Function<KotlinType, String>() {
-            @Override
-            public String fun(KotlinType type) {
-                return IdeDescriptorRenderers.SOURCE_CODE_FOR_TYPE_ARGUMENTS.renderType(type);
-            }
-        }, ", ");
+        val psiFactory = KtPsiFactory(containingFile)
+        for (call in callsToAddArguments) {
+            call.addAfter(psiFactory.createTypeArguments("<$typeArguments>"), call.calleeExpression)
+            ShortenReferences.DEFAULT.process(call.typeArgumentList!!)
+        }
     }
 
-    private static boolean hasIncompleteTypeInferenceDiagnostic(
-            @NotNull Call call,
-            @NotNull BindingContext context
-    ) {
-        KtExpression callee = call.getCalleeExpression();
-        for (Diagnostic diagnostic : context.getDiagnostics()) {
-            if (diagnostic.getFactory() == Errors.TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER && diagnostic.getPsiElement() == callee) {
-                return true;
-            }
-        }
-        return false;
+    private fun getTypeArgumentsStringForCall(initializer: KtExpression): String? {
+        val context = initializer.analyze(BodyResolveMode.PARTIAL)
+        val call = initializer.getResolvedCall(context) ?: return null
+        val typeArgumentMap = call.typeArguments
+        val typeArguments = call.candidateDescriptor.typeParameters.mapNotNull { typeArgumentMap[it] }
+        return typeArguments.joinToString { IdeDescriptorRenderers.SOURCE_CODE_FOR_TYPE_ARGUMENTS.renderType(it) }
+    }
+
+    private fun hasIncompleteTypeInferenceDiagnostic(call: Call, context: BindingContext): Boolean {
+        val callee = call.calleeExpression ?: return false
+        return context.diagnostics.forElement(callee).any { it.factory == Errors.TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER }
     }
 }
