@@ -2558,6 +2558,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("callableRef.kt")
+                public void testCallableRef() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/localVariable/callableRef.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("inAccessor.kt")
                 public void testInAccessor() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/localVariable/inAccessor.kt");
@@ -2690,6 +2696,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("assignedInFunInClass.kt")
                 public void testAssignedInFunInClass() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/assignedInFunInClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("callableRef.kt")
+                public void testCallableRef() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/callableRef.kt");
                     doTest(fileName);
                 }
 
@@ -3068,6 +3080,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("callOnUserType.kt")
                 public void testCallOnUserType() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/callOnUserType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("callableRef.kt")
+                public void testCallableRef() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/callableRef.kt");
                     doTest(fileName);
                 }
 

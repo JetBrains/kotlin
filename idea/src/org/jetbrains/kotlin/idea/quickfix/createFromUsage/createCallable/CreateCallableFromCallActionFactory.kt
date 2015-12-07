@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
@@ -129,7 +130,9 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
 
     object Property: CreateCallableFromCallActionFactory<KtSimpleNameExpression>() {
         override fun getElementOfInterest(diagnostic: Diagnostic): KtSimpleNameExpression? {
-            return getExpressionOfInterest(diagnostic) as? KtNameReferenceExpression
+            val refExpr = getExpressionOfInterest(diagnostic) as? KtNameReferenceExpression ?: return null
+            if (refExpr.getParentOfTypeAndBranch<KtCallableReferenceExpression> { callableReference } != null) return null
+            return refExpr
         }
 
         override fun doCreateCallableInfo(

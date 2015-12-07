@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.*
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.types.Variance
@@ -39,6 +40,7 @@ object CreateLocalVariableActionFactory: KotlinSingleIntentionActionFactory() {
     override fun createAction(diagnostic: Diagnostic): IntentionAction? {
         val refExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtNameReferenceExpression>()) ?: return null
         if (refExpr.getQualifiedElement() != refExpr) return null
+        if (refExpr.getParentOfTypeAndBranch<KtCallableReferenceExpression> { callableReference } != null) return null
 
         val propertyName = refExpr.getReferencedName()
 
