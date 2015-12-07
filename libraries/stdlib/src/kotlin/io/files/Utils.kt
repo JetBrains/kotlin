@@ -48,13 +48,14 @@ public fun createTempFile(prefix: String = "tmp", suffix: String? = null, direct
 /**
  * Returns this if this file is a directory, or the parent if it is a file inside a directory.
  */
+@Deprecated("This property has unclear semantics and will be removed soon.")
 public val File.directory: File
     get() = if (isDirectory()) this else parentFile!!
 
 /**
  * Returns parent of this abstract path name, or `null` if it has no parent.
  */
-@Deprecated("Use parentFile", ReplaceWith("parentFile"), DeprecationLevel.ERROR)
+@Deprecated("Use 'parentFile' property instead.", ReplaceWith("parentFile"), DeprecationLevel.ERROR)
 public val File.parent: File?
     get() = parentFile
 

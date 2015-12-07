@@ -17,9 +17,9 @@ import kotlin.text.Regex
  * which is incorrect for current OS. For instance, in Unix function cannot detect
  * network root names like //network.name/root, but can detect Windows roots like C:/.
  *
- * @return string representing the root for this file, or empty string is this file name is relative.
+ * @return length or a substring representing the root for this path, or zero if this file name is relative.
  */
-private fun String.getRootName(): String {
+private fun String.getRootLength(): Int {
     // Note: separators should be already replaced to system ones
     var first = indexOf(File.separatorChar, 0)
     if (first == 0) {
@@ -31,23 +31,22 @@ private fun String.getRootName(): String {
             if (first >= 0) {
                 first = indexOf(File.separatorChar, first + 1)
                 if (first >= 0)
-                    return substring(0, first + 1)
+                    return first + 1
                 else
-                    return this
+                    return length
             }
         }
-        return substring(0, 1)
+        return 1
     }
     // C:\
     if (first > 0 && this[first - 1] == ':') {
         first++
-        return substring(0, first)
+        return first
     }
     // C:
     if (first == -1 && endsWith(':'))
-        return this
-    return ""
-
+        return length
+    return 0
 }
 
 /**
@@ -63,13 +62,15 @@ private fun String.getRootName(): String {
  *
  * @return string representing the root for this file, or empty string is this file name is relative.
  */
+@Deprecated("This property has unclear semantics and will become internal soon.")
 public val File.rootName: String
-    get() = path.getRootName()
+    get() = path.substring(0, path.getRootLength())
 
 /**
  * Returns root component of this abstract name, like / from /home/user, or C:\ from C:\file.tmp,
  * or //my.host/home for //my.host/home/user
  */
+@Deprecated("This property has unclear semantics and will become internal soon.")
 public val File.root: File
     get() = File(rootName)
 
@@ -79,8 +80,7 @@ public val File.root: File
  * Returns `true` when this file has non-empty root.
  */
 public val File.isRooted: Boolean
-    // TODO: Do not calculate root
-    get() = path.getRootName().isNotEmpty()
+    get() = path.getRootLength() > 0
 
 /**
  * Represents the path to a file as a collection of directories.
@@ -89,6 +89,7 @@ public val File.isRooted: Boolean
  * @property segments the list of [File] objects representing every directory in the path to the file,
  *     up to an including the file itself.
  */
+@Deprecated("FilePathComponents has unclear semantics and will become internal soon.")
 public data class FilePathComponents
     internal constructor(public val root: File, public val segments: List<File>) {
 
@@ -132,10 +133,11 @@ public data class FilePathComponents
  * Splits the file into path components (the names of containing directories and the name of the file
  * itself) and returns the resulting collection of components.
  */
-public fun File.toComponents(): FilePathComponents {
+internal fun File.toComponents(): FilePathComponents {
     val path = path
-    val rootName = path.getRootName()
-    val subPath = path.substring(rootName.length)
+    val rootLength = path.getRootLength()
+    val rootName = path.substring(0, rootLength)
+    val subPath = path.substring(rootLength)
     // if: a special case when we have only root component
     // Split not only by / or \, but also by //, ///, \\, \\\, etc.
     val list = if (subPath.isEmpty()) listOf() else
@@ -144,7 +146,7 @@ public fun File.toComponents(): FilePathComponents {
     return FilePathComponents(File(rootName), list)
 }
 
-@Deprecated("Use 'toComponents' instead.", ReplaceWith("toComponents()"))
+@Deprecated("FilePathComponents has unclear semantics and will become internal soon.")
 public fun File.filePathComponents(): FilePathComponents = toComponents()
 
 /**
@@ -157,4 +159,5 @@ public fun File.filePathComponents(): FilePathComponents = toComponents()
 * or [endIndex] is greater than existing number of components,
 * or [beginIndex] is greater than [endIndex].
  */
+@Deprecated("This function can fail since path segment count isn't known in advance.")
 public fun File.subPath(beginIndex: Int, endIndex: Int): File = toComponents().subPath(beginIndex, endIndex)

@@ -181,7 +181,7 @@ class FilesTest {
 
     private fun checkFilePathComponents(f: File, root: File, elements: List<String>) {
         assertEquals(root, f.root)
-        val components = f.toComponents()
+        val components = f.filePathComponents()
         assertEquals(root, components.root)
         assertEquals(elements, components.segments.map { it.toString() })
     }
