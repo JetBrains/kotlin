@@ -1,7 +1,7 @@
-import kotlin.support.AbstractIterator
+import kotlin.properties.ObservableProperty
 
 fun main() {
-    val randomFunction: (x: kotlin.support.AbstractIterator<Int>, y: kotlin.String) -> kotlin.String = { x: AbstractIterator<Int>, str: String -> str}
+    val randomFunction: (x: kotlin.properties.ObservableProperty<Int>, y: kotlin.String) -> kotlin.String = { x: ObservableProperty<Int>, str: String -> str}
 }
 
 // WITH_RUNTIME

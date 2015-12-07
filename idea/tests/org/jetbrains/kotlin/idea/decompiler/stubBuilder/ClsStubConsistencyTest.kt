@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.FqName
 
 public class ClsStubConsistencyTest : StubConsistencyBaseTest() {
     override fun getVirtualFileFinder(): VirtualFileFinder = JvmVirtualFileFinder.SERVICE.getInstance(getProject())
-    override fun getFileIds(): List<ClassId> = listOf(ClassId.topLevel(FqName("kotlin.CollectionsKt")))
+    override fun getFileIds(): List<ClassId> = listOf(ClassId.topLevel(FqName("kotlin.collections.CollectionsKt")))
 
     override fun createStubBuilder() = KotlinClsStubBuilder()
 

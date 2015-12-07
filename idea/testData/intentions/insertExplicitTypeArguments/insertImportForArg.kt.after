@@ -1,7 +1,6 @@
 import kotlin.properties.ObservableProperty
-import kotlin.support.AbstractIterator
 
-fun foo(c: kotlin.support.AbstractIterator<kotlin.properties.ObservableProperty<Int>>) {
+fun foo(c: kotlin.collections.AbstractIterator<kotlin.properties.ObservableProperty<Int>>) {
     bar<AbstractIterator<ObservableProperty<Int>>>(c)
 }
 

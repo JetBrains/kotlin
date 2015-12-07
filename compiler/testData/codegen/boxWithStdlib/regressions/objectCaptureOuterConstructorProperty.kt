@@ -1,5 +1,3 @@
-import kotlin.support.*
-
 interface Stream<T> {
     fun iterator(): Iterator<T>
 }

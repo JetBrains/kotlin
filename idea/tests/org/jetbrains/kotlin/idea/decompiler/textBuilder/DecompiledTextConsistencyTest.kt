@@ -38,9 +38,9 @@ public class DecompiledTextConsistencyTest : TextConsistencyBaseTest() {
 
     override fun getPackages(): List<FqName> = emptyList()
 
-    override fun getFacades(): List<FqName> = listOf(FqName("kotlin.CollectionsKt"))
+    override fun getFacades(): List<FqName> = listOf(FqName("kotlin.collections.CollectionsKt"))
 
-    override fun getTopLevelMembers(): Map<String, String> = mapOf("kotlin.CollectionsKt" to "linkedListOf")
+    override fun getTopLevelMembers(): Map<String, String> = mapOf("kotlin.collections.CollectionsKt" to "linkedListOf")
 
     override fun getVirtualFileFinder(): VirtualFileFinder =
             JvmVirtualFileFinder.SERVICE.getInstance(project)
