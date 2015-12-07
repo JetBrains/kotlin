@@ -83,6 +83,12 @@ public class InlineTestGenerated extends AbstractInlineTest {
         doTest(fileName);
     }
 
+    @TestMetadata("noUsages.kt")
+    public void testNoUsages() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/noUsages.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Parameter.kt")
     public void testParameter() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/Parameter.kt");

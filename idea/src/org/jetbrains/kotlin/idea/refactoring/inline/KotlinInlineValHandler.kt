@@ -71,6 +71,11 @@ class KotlinInlineValHandler : InlineActionHandler() {
             (it.element as? KtExpression)?.getQualifiedExpressionForSelectorOrThis()
         }
 
+        if (referenceExpressions.isEmpty()) {
+            val kind = if (declaration.isLocal) "Variable" else "Property"
+            return showErrorHint(project, editor, "$kind '$name' is never used")
+        }
+
         val assignments = Sets.newHashSet<PsiElement>()
         referenceExpressions.forEach { expression ->
             val parent = expression.parent
@@ -119,6 +124,8 @@ class KotlinInlineValHandler : InlineActionHandler() {
 
             assignments.forEach { it.delete() }
             declaration.delete()
+
+            if (inlinedExpressions.isEmpty()) return@executeWriteCommand
 
             typeArgumentsForCall?.let { addTypeArguments(it, inlinedExpressions) }
 
