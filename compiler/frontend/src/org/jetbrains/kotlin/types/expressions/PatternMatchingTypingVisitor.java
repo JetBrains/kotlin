@@ -345,7 +345,7 @@ public class PatternMatchingTypingVisitor extends ExpressionTypingVisitor {
     /*
      * (a: SubjectType) is Type
      */
-    private void checkTypeCompatibility(
+    private static void checkTypeCompatibility(
             @NotNull ExpressionTypingContext context,
             @Nullable KotlinType type,
             @NotNull KotlinType subjectType,

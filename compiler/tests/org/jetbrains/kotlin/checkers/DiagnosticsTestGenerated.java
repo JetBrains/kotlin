@@ -14300,6 +14300,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sealed/WhenOnEmptySealed.kt");
                 doTest(fileName);
             }
+
+            @TestMetadata("WithInterface.kt")
+            public void testWithInterface() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/sealed/WithInterface.kt");
+                doTest(fileName);
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/tests/secondaryConstructors")
@@ -15129,6 +15135,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("notNullorNotNull.kt")
             public void testNotNullorNotNull() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/notNullorNotNull.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("openInSealed.kt")
+            public void testOpenInSealed() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/openInSealed.kt");
                 doTest(fileName);
             }
 

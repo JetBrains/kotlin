@@ -488,8 +488,8 @@ public class BodyResolver {
                     trace.report(SINGLETON_IN_SUPERTYPE.on(typeReference));
                 }
             }
-            else if (constructor.isFinal() && !allowedFinalSupertypes.contains(constructor)) {
-                if (classDescriptor.getModality() == Modality.SEALED) {
+            else if (!allowedFinalSupertypes.contains(constructor)) {
+                if (classDescriptor != null && classDescriptor.getModality() == Modality.SEALED) {
                     DeclarationDescriptor containingDescriptor = supertypeOwner.getContainingDeclaration();
                     while (containingDescriptor != null && containingDescriptor != classDescriptor) {
                         containingDescriptor = containingDescriptor.getContainingDeclaration();
@@ -501,7 +501,7 @@ public class BodyResolver {
                         trace.report(SEALED_SUPERTYPE_IN_LOCAL_CLASS.on(typeReference));
                     }
                 }
-                else {
+                else if (constructor.isFinal()) {
                     trace.report(FINAL_SUPERTYPE.on(typeReference));
                 }
             }

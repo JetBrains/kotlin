@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.Modality;
 import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -60,7 +59,7 @@ public final class WhenChecker {
         if (type == null) return null;
         ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(type);
         if (classDescriptor == null) return null;
-        if (classDescriptor.getKind() != ClassKind.ENUM_CLASS || classDescriptor.getModality().isOverridable()) return null;
+        if (classDescriptor.getKind() != ClassKind.ENUM_CLASS) return null;
 
         return classDescriptor;
     }

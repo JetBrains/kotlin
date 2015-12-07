@@ -614,10 +614,6 @@ public class DescriptorResolver {
     ) {
         if (DeclarationsCheckerKt.checkNotEnumEntry(upperBound, trace)) return;
         if (!TypeUtils.canHaveSubtypes(KotlinTypeChecker.DEFAULT, upperBoundType)) {
-            ClassifierDescriptor descriptor = upperBoundType.getConstructor().getDeclarationDescriptor();
-            if (descriptor instanceof ClassDescriptor) {
-                if (((ClassDescriptor) descriptor).getModality() == Modality.SEALED) return;
-            }
             trace.report(FINAL_UPPER_BOUND.on(upperBound, upperBoundType));
         }
         if (DynamicTypesKt.isDynamic(upperBoundType)) {

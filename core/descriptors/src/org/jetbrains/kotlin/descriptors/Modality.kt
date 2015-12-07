@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.descriptors
 
-enum class Modality private constructor(@get:JvmName("isOverridable") val isOverridable: Boolean) {
+// For sealed classes, isOverridable is false but isOverridableByMembers is true
+enum class Modality private constructor(val isOverridable: Boolean) {
     // THE ORDER OF ENTRIES MATTERS HERE
     FINAL(false),
-    SEALED(false),
+    // NB: class can be sealed but not function or property
+    SEALED(true),
     OPEN(true),
     ABSTRACT(true);
 
