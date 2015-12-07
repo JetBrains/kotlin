@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL;
 
@@ -145,7 +142,7 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
     public Set<KotlinType> getPossibleTypes(@NotNull DataFlowValue key) {
         KotlinType originalType = key.getType();
         Set<KotlinType> types = collectTypesFromMeAndParents(key);
-        if (getPredictableNullability(key).canBeNull()) {
+        if (getNullability(key).canBeNull()) {
             return types;
         }
 
@@ -158,6 +155,15 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
         }
 
         return enrichedTypes;
+    }
+
+    @Override
+    @NotNull
+    public Set<KotlinType> getPredictableTypes(@NotNull DataFlowValue key) {
+        if (!key.isPredictable()) {
+            return new LinkedHashSet<KotlinType>();
+        }
+        return getPossibleTypes(key);
     }
 
     /**
@@ -187,7 +193,7 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
         putNullability(nullability, a, nullabilityOfB);
 
         SetMultimap<DataFlowValue, KotlinType> newTypeInfo = newTypeInfo();
-        Set<KotlinType> typesForB = getPossibleTypes(b);
+        Set<KotlinType> typesForB = getPredictableTypes(b);
         // Own type of B must be recorded separately, e.g. for a constant
         // But if its type is the same as A or it's null, there is no reason to do it
         // because usually null type or own type are not saved in this set
@@ -216,8 +222,8 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
         changed |= putNullability(builder, b, nullabilityOfB.refine(nullabilityOfA));
 
         SetMultimap<DataFlowValue, KotlinType> newTypeInfo = newTypeInfo();
-        newTypeInfo.putAll(a, collectTypesFromMeAndParents(b));
-        newTypeInfo.putAll(b, collectTypesFromMeAndParents(a));
+        newTypeInfo.putAll(a, getPredictableTypes(b));
+        newTypeInfo.putAll(b, getPredictableTypes(a));
         if (!a.getType().equals(b.getType())) {
             // To avoid recording base types of own type
             if (!TypeUtilsKt.isSubtypeOf(a.getType(), b.getType())) {
