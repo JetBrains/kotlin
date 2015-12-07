@@ -3187,6 +3187,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("simpleCharSequence.kt")
+        public void testSimpleCharSequence() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertForEachToForLoop/simpleCharSequence.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleSequence.kt")
+        public void testSimpleSequence() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertForEachToForLoop/simpleSequence.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("typeArgumentPresent.kt")
         public void testTypeArgumentPresent() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertForEachToForLoop/typeArgumentPresent.kt");
@@ -6930,6 +6942,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("simpleLoopWithIndices.kt")
         public void testSimpleLoopWithIndices() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeForLoopIndices/simpleLoopWithIndices.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleLoopWithIndicesOverCharSequence.kt")
+        public void testSimpleLoopWithIndicesOverCharSequence() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeForLoopIndices/simpleLoopWithIndicesOverCharSequence.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleLoopWithIndicesOverSequence.kt")
+        public void testSimpleLoopWithIndicesOverSequence() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeForLoopIndices/simpleLoopWithIndicesOverSequence.kt");
             doTest(fileName);
         }
     }

@@ -1,0 +1,8 @@
+// WITH_RUNTIME
+fun foo() {
+    val x = (1..4).asSequence()
+
+    for (it in x) {
+        it.equals(1)
+    }
+}

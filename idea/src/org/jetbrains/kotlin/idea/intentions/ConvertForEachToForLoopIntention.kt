@@ -25,8 +25,12 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 
 public class ConvertForEachToForLoopIntention : SelfTargetingOffsetIndependentIntention<KtSimpleNameExpression>(javaClass(), "Replace with a 'for' loop") {
+    private val FOR_EACH_NAME = "forEach"
+    private val FOR_EACH_FQ_NAMES = listOf("collections", "sequences", "text", "ranges").map { "kotlin.$it.$FOR_EACH_NAME" }.toSet()
+
+
     override fun isApplicableTo(element: KtSimpleNameExpression): Boolean {
-        if (element.getReferencedName() != "forEach") return false
+        if (element.getReferencedName() != FOR_EACH_NAME) return false
 
         val data = extractData(element) ?: return false
         if (data.functionLiteral.getValueParameters().size() > 1) return false
@@ -61,7 +65,7 @@ public class ConvertForEachToForLoopIntention : SelfTargetingOffsetIndependentIn
         } ?: return null) as KtExpression //TODO: submit bug
 
         val resolvedCall = expression.getResolvedCall(expression.analyze()) ?: return null
-        if (DescriptorUtils.getFqName(resolvedCall.getResultingDescriptor()).toString() != "kotlin.forEach") return null
+        if (DescriptorUtils.getFqName(resolvedCall.getResultingDescriptor()).toString() !in FOR_EACH_FQ_NAMES) return null
 
         val receiver = resolvedCall.getCall().getExplicitReceiver() as? ExpressionReceiver ?: return null
         val argument = resolvedCall.getCall().getValueArguments().singleOrNull() ?: return null

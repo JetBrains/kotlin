@@ -34,7 +34,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 public class AddForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpression>(javaClass(), "Add indices to 'for' loop"), LowPriorityAction {
-    private val WITH_INDEX_FQ_NAME = "kotlin.withIndex"
+    private val WITH_INDEX_NAME = "withIndex"
+    private val WITH_INDEX_FQ_NAMES = listOf("collections", "sequences", "text", "ranges").map { "kotlin.$it.$WITH_INDEX_NAME" }.toSet()
 
     override fun applicabilityRange(element: KtForExpression): TextRange? {
         if (element.loopParameter == null) return null
@@ -43,14 +44,14 @@ public class AddForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpre
         val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
 
         val resolvedCall = loopRange.getResolvedCall(bindingContext)
-        if (resolvedCall?.resultingDescriptor?.fqNameUnsafe?.asString() == WITH_INDEX_FQ_NAME) return null // already withIndex() call
+        if (resolvedCall?.resultingDescriptor?.fqNameUnsafe?.asString() in WITH_INDEX_FQ_NAMES) return null // already withIndex() call
 
         val resolutionScope = element.getResolutionScope(bindingContext, element.getResolutionFacade())
         val potentialExpression = createWithIndexExpression(loopRange)
 
         val newBindingContext = potentialExpression.analyzeInContext(resolutionScope, loopRange)
         val newResolvedCall = potentialExpression.getResolvedCall(newBindingContext) ?: return null
-        if (newResolvedCall.resultingDescriptor.fqNameUnsafe.asString() != WITH_INDEX_FQ_NAME) return null
+        if (newResolvedCall.resultingDescriptor.fqNameUnsafe.asString() !in WITH_INDEX_FQ_NAMES) return null
 
         return TextRange(element.startOffset, element.body?.startOffset ?: element.endOffset)
     }
@@ -99,6 +100,6 @@ public class AddForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpre
     }
 
     private fun createWithIndexExpression(originalExpression: KtExpression): KtExpression {
-        return KtPsiFactory(originalExpression).createExpressionByPattern("$0.withIndex()", originalExpression)
+        return KtPsiFactory(originalExpression).createExpressionByPattern("$0.$WITH_INDEX_NAME()", originalExpression)
     }
 }
