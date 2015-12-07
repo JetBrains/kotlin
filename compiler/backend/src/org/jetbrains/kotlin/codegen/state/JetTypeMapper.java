@@ -20,7 +20,6 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import kotlin.CollectionsKt;
 import kotlin.Pair;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.BuiltinsPackageFragment;
@@ -581,7 +580,14 @@ public class JetTypeMapper {
             @NotNull TypeMappingMode mode
     ) {
         if (signatureVisitor != null) {
-            if (hasNothingInArguments(type) || type.getArguments().isEmpty()) {
+
+            // Nothing mapping rules:
+            //  Map<Nothing, Foo> -> Map
+            //  Map<Foo, List<Nothing>> -> Map<Foo, List>
+            //  In<Nothing, Foo> == In<*, Foo> -> In<?, Foo>
+            //  In<Nothing, Nothing> -> In
+            //  Inv<in Nothing, Foo> -> Inv
+            if (hasNothingInNonContravariantPosition(type) || type.getArguments().isEmpty()) {
                 signatureVisitor.writeAsmType(asmType);
                 return;
             }
@@ -638,7 +644,11 @@ public class JetTypeMapper {
             TypeParameterDescriptor parameter = item.getFirst();
             TypeProjection argument = item.getSecond();
 
-            if (argument.isStarProjection()) {
+            if (
+                argument.isStarProjection() ||
+                // In<Nothing, Foo> == In<*, Foo> -> In<?, Foo>
+                KotlinBuiltIns.isNothing(argument.getType()) && parameter.getVariance() == Variance.IN_VARIANCE
+            ) {
                 signatureVisitor.writeUnboundedWildcard();
             }
             else {
@@ -656,22 +666,22 @@ public class JetTypeMapper {
         }
     }
 
-    private static boolean hasNothingInArguments(KotlinType jetType) {
-        boolean hasNothingInArguments = CollectionsKt.any(jetType.getArguments(), new Function1<TypeProjection, Boolean>() {
-            @Override
-            public Boolean invoke(TypeProjection projection) {
-                return KotlinBuiltIns.isNothingOrNullableNothing(projection.getType());
-            }
-        });
+    private static boolean hasNothingInNonContravariantPosition(KotlinType kotlinType) {
+        List<TypeParameterDescriptor> parameters = kotlinType.getConstructor().getParameters();
+        List<TypeProjection> arguments = kotlinType.getArguments();
 
-        if (hasNothingInArguments) return true;
+        for (int i = 0; i < arguments.size(); i++) {
+            TypeProjection projection = arguments.get(i);
 
-        return CollectionsKt.any(jetType.getArguments(), new Function1<TypeProjection, Boolean>() {
-            @Override
-            public Boolean invoke(TypeProjection projection) {
-                return !projection.isStarProjection() && hasNothingInArguments(projection.getType());
-            }
-        });
+            if (projection.isStarProjection()) continue;
+
+            KotlinType type = projection.getType();
+
+            if (KotlinBuiltIns.isNullableNothing(type) ||
+                KotlinBuiltIns.isNothing(type) && parameters.get(i).getVariance() != Variance.IN_VARIANCE) return true;
+        }
+
+        return false;
     }
 
     @NotNull
