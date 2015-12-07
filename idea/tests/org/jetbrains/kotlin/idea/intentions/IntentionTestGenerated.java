@@ -3739,12 +3739,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
-        @TestMetadata("inapplicableIfTopLevelDeclaration.kt")
-        public void testInapplicableIfTopLevelDeclaration() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyInitializerToGetter/inapplicableIfTopLevelDeclaration.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("propertyWithInitializerWithSetter.kt")
         public void testPropertyWithInitializerWithSetter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyInitializerToGetter/propertyWithInitializerWithSetter.kt");

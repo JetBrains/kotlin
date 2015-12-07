@@ -33,7 +33,6 @@ class ConvertPropertyInitializerToGetterIntention : SelfTargetingIntention<KtPro
                && element.getter == null
                && !element.isExtensionDeclaration()
                && !element.isLocal
-               && !element.isTopLevel
     }
 
     override fun applyTo(property: KtProperty, editor: Editor) {
