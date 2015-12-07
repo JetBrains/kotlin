@@ -37,6 +37,8 @@ public class BuiltInsSerializerExtension : SerializerExtension() {
     }
 
     override fun serializePackage(packageFragments: Collection<PackageFragmentDescriptor>, proto: ProtoBuf.Package.Builder) {
+        if (packageFragments.isEmpty()) return
+
         val classes = packageFragments.flatMap {
             it.getMemberScope().getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS).filterIsInstance<ClassDescriptor>()
         }
@@ -44,6 +46,8 @@ public class BuiltInsSerializerExtension : SerializerExtension() {
         for (descriptor in DescriptorSerializer.sort(classes)) {
             proto.addExtension(BuiltInsProtoBuf.className, stringTable.getSimpleNameIndex(descriptor.name))
         }
+
+        proto.setExtension(BuiltInsProtoBuf.packageFqName, stringTable.getPackageFqNameIndex(packageFragments.first().fqName))
     }
 
     override fun serializeConstructor(descriptor: ConstructorDescriptor, proto: ProtoBuf.Constructor.Builder) {

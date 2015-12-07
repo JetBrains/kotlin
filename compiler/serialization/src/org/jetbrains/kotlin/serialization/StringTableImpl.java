@@ -100,7 +100,7 @@ public class StringTableImpl implements StringTable {
         return qualifiedNames.intern(new FqNameProto(builder));
     }
 
-    private int getPackageFqNameIndex(@NotNull FqName fqName) {
+    public int getPackageFqNameIndex(@NotNull FqName fqName) {
         int result = -1;
         for (Name segment : fqName.pathSegments()) {
             QualifiedName.Builder builder = QualifiedName.newBuilder();
