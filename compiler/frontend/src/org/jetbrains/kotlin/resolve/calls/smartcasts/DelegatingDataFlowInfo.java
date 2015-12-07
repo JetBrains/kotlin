@@ -140,13 +140,18 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
     @Override
     @NotNull
     public Set<KotlinType> getPossibleTypes(@NotNull DataFlowValue key) {
-        KotlinType originalType = key.getType();
+        return getPossibleTypes(key, true);
+    }
+
+    @NotNull
+    private Set<KotlinType> getPossibleTypes(@NotNull DataFlowValue key, boolean enrichWithNotNull) {
         Set<KotlinType> types = collectTypesFromMeAndParents(key);
-        if (getNullability(key).canBeNull()) {
+        if (!enrichWithNotNull || getNullability(key).canBeNull()) {
             return types;
         }
 
         Set<KotlinType> enrichedTypes = Sets.newHashSetWithExpectedSize(types.size() + 1);
+        KotlinType originalType = key.getType();
         if (originalType.isMarkedNullable()) {
             enrichedTypes.add(TypeUtils.makeNotNullable(originalType));
         }
@@ -160,10 +165,15 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
     @Override
     @NotNull
     public Set<KotlinType> getPredictableTypes(@NotNull DataFlowValue key) {
+        return getPredictableTypes(key, true);
+    }
+
+    @NotNull
+    private Set<KotlinType> getPredictableTypes(@NotNull DataFlowValue key, boolean enrichWithNotNull) {
         if (!key.isPredictable()) {
             return new LinkedHashSet<KotlinType>();
         }
-        return getPossibleTypes(key);
+        return getPossibleTypes(key, enrichWithNotNull);
     }
 
     /**
@@ -222,8 +232,8 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
         changed |= putNullability(builder, b, nullabilityOfB.refine(nullabilityOfA));
 
         SetMultimap<DataFlowValue, KotlinType> newTypeInfo = newTypeInfo();
-        newTypeInfo.putAll(a, getPredictableTypes(b));
-        newTypeInfo.putAll(b, getPredictableTypes(a));
+        newTypeInfo.putAll(a, getPredictableTypes(b, false));
+        newTypeInfo.putAll(b, getPredictableTypes(a, false));
         if (!a.getType().equals(b.getType())) {
             // To avoid recording base types of own type
             if (!TypeUtilsKt.isSubtypeOf(a.getType(), b.getType())) {
