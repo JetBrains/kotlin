@@ -81,30 +81,39 @@ public val File.root: File?
 /**
  * Represents the path to a file as a collection of directories.
  *
- * @property rootName the name of the root of the path (for example, `/` or `C:`).
- * @property fileList the list of [File] objects representing every directory in the path to the file,
+ * @property root the [File] object representing root of the path (for example, `/` or `C:` or empty for relative paths).
+ * @property segments the list of [File] objects representing every directory in the path to the file,
  *     up to an including the file itself.
  */
-public data class FilePathComponents(public val rootName: String, public val fileList: List<File>) {
+public data class FilePathComponents
+    internal constructor(public val root: File, public val segments: List<File>) {
+
+    @Deprecated("This constructor will be removed soon. Use File.toComponents() extension to create an instance of FilePathComponents.")
+    constructor (rootName: String, fileList: List<File>): this(File(rootName), fileList)
+
+    @Deprecated("Use 'root' property or 'root.path' instead.", ReplaceWith("root.path"))
+    public val rootName: String get() = root.path
+
+    @Deprecated("Use 'segments' property instead.", ReplaceWith("segments"))
+    public val fileList: List<File> get() = segments
+
     /**
      * Returns the number of elements in the path to the file.
      */
-    public fun size(): Int = fileList.size
+    public val size: Int get() = segments.size
 
-    /**
-     * [File] representing root of the path (for example, `/` or `C:` or empty for relative paths).
-     */
-    public val root: File = File(rootName)
+    @Deprecated("Use 'size' property instead.", ReplaceWith("size"))
+    public fun size(): Int = size
 
     /**
      * Returns a sub-path of the path, starting with the directory at the specified [beginIndex] and up
      * to the specified [endIndex].
      */
     public fun subPath(beginIndex: Int, endIndex: Int): File {
-        if (beginIndex < 0 || beginIndex > endIndex || endIndex > size())
+        if (beginIndex < 0 || beginIndex > endIndex || endIndex > size)
             throw IllegalArgumentException()
 
-        return File(fileList.subList(beginIndex, endIndex).joinToString(File.separator))
+        return File(segments.subList(beginIndex, endIndex).joinToString(File.separator))
     }
 }
 
@@ -112,7 +121,7 @@ public data class FilePathComponents(public val rootName: String, public val fil
  * Splits the file into path components (the names of containing directories and the name of the file
  * itself) and returns the resulting collection of components.
  */
-public fun File.filePathComponents(): FilePathComponents {
+public fun File.toComponents(): FilePathComponents {
     val path = separatorsToSystem()
     val rootName = path.getRootName()
     val subPath = path.substring(rootName.length)
@@ -121,8 +130,11 @@ public fun File.filePathComponents(): FilePathComponents {
     val list = if (subPath.isEmpty()) listOf() else
         // Looks awful but we split just by /+ or \+ depending on OS
         subPath.split(Regex.fromLiteral(File.separatorChar.toString())).map { it -> File(it) }
-    return FilePathComponents(rootName, list)
+    return FilePathComponents(File(rootName), list)
 }
+
+@Deprecated("Use 'toComponents' instead.", ReplaceWith("toComponents()"))
+public fun File.filePathComponents(): FilePathComponents = toComponents()
 
 /**
  * Returns a relative pathname which is a subsequence of this pathname,
@@ -134,4 +146,4 @@ public fun File.filePathComponents(): FilePathComponents {
 * or [endIndex] is greater than existing number of components,
 * or [beginIndex] is greater than [endIndex].
  */
-public fun File.subPath(beginIndex: Int, endIndex: Int): File = filePathComponents().subPath(beginIndex, endIndex)
+public fun File.subPath(beginIndex: Int, endIndex: Int): File = toComponents().subPath(beginIndex, endIndex)

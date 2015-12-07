@@ -189,7 +189,7 @@ class FilesTest {
     private fun checkFileElements(f: File, root: File?, elements: List<String>) {
         var i = 0
         assertEquals(root, f.root)
-        for (elem in f.filePathComponents().fileList) {
+        for (elem in f.toComponents().segments) {
             assertTrue(i < elements.size, i.toString())
             assertEquals(elements[i++], elem.toString())
         }

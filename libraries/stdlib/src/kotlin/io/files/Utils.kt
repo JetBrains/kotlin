@@ -129,19 +129,19 @@ public fun File.relativeTo(base: File): String
 
 private fun File.relativeToOrNull(base: File): String? {
     // Check roots
-    val thisComponents = this.filePathComponents().normalize()
-    val baseComponents = base.filePathComponents().normalize()
+    val thisComponents = this.toComponents().normalize()
+    val baseComponents = base.toComponents().normalize()
     if (thisComponents.root != baseComponents.root) {
         return null
     }
 
-    val baseCount = baseComponents.size()
-    val thisCount = thisComponents.size()
+    val baseCount = baseComponents.size
+    val thisCount = thisComponents.size
 
     val sameCount = run countSame@ {
         var i = 0
         val maxSameCount = Math.min(thisCount, baseCount)
-        while (i < maxSameCount && thisComponents.fileList[i] == baseComponents.fileList[i])
+        while (i < maxSameCount && thisComponents.segments[i] == baseComponents.segments[i])
             i++
         return@countSame i
     }
@@ -149,7 +149,7 @@ private fun File.relativeToOrNull(base: File): String? {
     // Annihilate differing base components by adding required number of .. parts
     val res = StringBuilder()
     for (i in baseCount - 1 downTo sameCount) {
-        if (baseComponents.fileList[i].name == "..") {
+        if (baseComponents.segments[i].name == "..") {
             return null
         }
 
@@ -166,7 +166,7 @@ private fun File.relativeToOrNull(base: File): String? {
         if (sameCount < baseCount)
             res.append(File.separatorChar)
 
-        res.append(thisComponents.subPath(sameCount, thisCount))
+        thisComponents.segments.drop(sameCount).joinTo(res, File.separator)
     }
 
     return res.toString()
@@ -331,12 +331,12 @@ public fun File.listFiles(filter: (file: File) -> Boolean): Array<File>? = listF
  * @return `true` if this path starts with [other] path, `false` otherwise.
  */
 public fun File.startsWith(other: File): Boolean {
-    val components = filePathComponents()
-    val otherComponents = other.filePathComponents()
+    val components = toComponents()
+    val otherComponents = other.toComponents()
     if (components.root != otherComponents.root && otherComponents.rootName != "")
         return false
-    return if (components.size() < otherComponents.size()) false
-    else components.fileList.subList(0, otherComponents.size()).equals(otherComponents.fileList)
+    return if (components.size < otherComponents.size) false
+    else components.segments.subList(0, otherComponents.size).equals(otherComponents.segments)
 }
 
 /**
@@ -358,13 +358,13 @@ public fun File.startsWith(other: String): Boolean = startsWith(File(other))
  * @return `true` if this path ends with [other] path, `false` otherwise.
  */
 public fun File.endsWith(other: File): Boolean {
-    val components = filePathComponents()
-    val otherComponents = other.filePathComponents()
+    val components = toComponents()
+    val otherComponents = other.toComponents()
     if (components.root != otherComponents.root && otherComponents.rootName != "")
         return false
-    val shift = components.size() - otherComponents.size()
+    val shift = components.size - otherComponents.size
     return if (shift < 0) false
-    else components.fileList.subList(shift, components.size()).equals(otherComponents.fileList)
+    else components.segments.subList(shift, components.size).equals(otherComponents.segments)
 }
 
 /**
@@ -384,10 +384,10 @@ public fun File.endsWith(other: String): Boolean = endsWith(File(other))
  * @return normalized pathname with . and possibly .. removed.
  */
 public fun File.normalize(): File
-        = filePathComponents().let { File(it.fileList.normalize().joinToString(File.separator, it.rootName)) }
+        = with (toComponents()) { root.resolve(segments.normalize().joinToString(File.separator)) }
 
 private fun FilePathComponents.normalize(): FilePathComponents
-        = FilePathComponents(rootName, fileList.normalize())
+        = FilePathComponents(root, segments.normalize())
 
 private fun List<File>.normalize(): List<File> {
     val list: MutableList<File> = ArrayList(this.size)
@@ -434,8 +434,8 @@ public fun File.resolve(relative: String): File = resolve(File(relative))
  * @return concatenated this.parent and [relative] paths, or just [relative] if it's absolute or this has no parent.
  */
 public fun File.resolveSibling(relative: File): File {
-    val components = filePathComponents()
-    val parentSubPath = if (components.size() == 0) File("..") else components.subPath(0, components.size() - 1)
+    val components = this.toComponents()
+    val parentSubPath = if (components.size == 0) File("..") else components.subPath(0, components.size - 1)
     return components.root.resolve(parentSubPath).resolve(relative)
 }
 
