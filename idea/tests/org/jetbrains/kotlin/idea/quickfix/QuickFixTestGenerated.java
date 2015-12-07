@@ -6101,6 +6101,30 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("topLevelFunctionSuppressOnFile.kt")
+            public void testTopLevelFunctionSuppressOnFile() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/suppress/annotationPosition/topLevelFunctionSuppressOnFile.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("topLevelFunctionSuppressOnFileOtherAnnotation.kt")
+            public void testTopLevelFunctionSuppressOnFileOtherAnnotation() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/suppress/annotationPosition/topLevelFunctionSuppressOnFileOtherAnnotation.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("topLevelFunctionSuppressOnFileWithPackage.kt")
+            public void testTopLevelFunctionSuppressOnFileWithPackage() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/suppress/annotationPosition/topLevelFunctionSuppressOnFileWithPackage.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("topLevelFunctionSuppressOnFileWithSuppress.kt")
+            public void testTopLevelFunctionSuppressOnFileWithSuppress() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/suppress/annotationPosition/topLevelFunctionSuppressOnFileWithSuppress.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("topLevelFunctionUnrelatedAnnotation.kt")
             public void testTopLevelFunctionUnrelatedAnnotation() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/suppress/annotationPosition/topLevelFunctionUnrelatedAnnotation.kt");

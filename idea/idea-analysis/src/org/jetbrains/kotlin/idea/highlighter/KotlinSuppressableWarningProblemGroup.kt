@@ -57,20 +57,29 @@ fun createSuppressWarningActions(element: PsiElement, severity: Severity, suppre
     var current: PsiElement? = element
     var suppressAtStatementAllowed = true
     while (current != null) {
-        if (current is KtDeclaration && current !is KtDestructuringDeclaration) {
-            val declaration = current
-            val kind = DeclarationKindDetector.detect(declaration)
-            if (kind != null) {
-                actions.add(KotlinSuppressIntentionAction(declaration, suppressionKey, kind))
+        when {
+            current is KtDeclaration && current !is KtDestructuringDeclaration -> {
+                val declaration = current
+                val kind = DeclarationKindDetector.detect(declaration)
+                if (kind != null) {
+                    actions.add(KotlinSuppressIntentionAction(declaration, suppressionKey, kind))
+                }
+                suppressAtStatementAllowed = false
             }
-            suppressAtStatementAllowed = false
-        }
-        else if (current is KtExpression && suppressAtStatementAllowed) {
-            // Add suppress action at first statement
-            if (current.parent is KtBlockExpression || current.parent is KtDestructuringDeclaration) {
-                val kind = if (current.parent is KtBlockExpression) "statement" else "initializer"
+
+            current is KtExpression && suppressAtStatementAllowed -> {
+                // Add suppress action at first statement
+                if (current.parent is KtBlockExpression || current.parent is KtDestructuringDeclaration) {
+                    val kind = if (current.parent is KtBlockExpression) "statement" else "initializer"
+                    actions.add(KotlinSuppressIntentionAction(current, suppressionKey,
+                                                              AnnotationHostKind(kind, "", true)))
+                    suppressAtStatementAllowed = false
+                }
+            }
+
+            current is KtFile -> {
                 actions.add(KotlinSuppressIntentionAction(current, suppressionKey,
-                                                          AnnotationHostKind(kind, "", true)))
+                                                          AnnotationHostKind("file", current.name, true)))
                 suppressAtStatementAllowed = false
             }
         }

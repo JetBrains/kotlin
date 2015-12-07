@@ -22,6 +22,8 @@ import com.intellij.psi.search.PsiSearchScopeUtil
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtFileAnnotationList
 import java.util.*
 
 // NOTE: in this file we collect only LANGUAGE INDEPENDENT methods working with PSI and not modifying it
@@ -312,6 +314,29 @@ public fun PsiElement.getElementTextWithContext(): String {
 
 public fun PsiElement.getTextWithLocation(): String = "'${this.getText()}' at ${DiagnosticUtils.atLocation(this)}"
 
+fun replaceFileAnnotationList(file: KtFile, annotationList: KtFileAnnotationList): KtFileAnnotationList {
+    if (file.fileAnnotationList != null) {
+        return file.fileAnnotationList!!.replace(annotationList) as KtFileAnnotationList
+    }
+
+    val beforeAnchor : PsiElement? = when {
+        file.packageDirective?.packageKeyword != null -> file.packageDirective!!
+        file.importList != null -> file.importList!!
+        file.declarations.firstOrNull() != null -> file.declarations.first()
+        else -> null
+    }
+
+    if (beforeAnchor != null) {
+        return file.addBefore(annotationList, beforeAnchor) as KtFileAnnotationList
+    }
+
+    if (file.lastChild == null) {
+        return file.add(annotationList) as KtFileAnnotationList
+    }
+
+    return file.addAfter(annotationList, file.lastChild) as KtFileAnnotationList
+}
+
 // -----------------------------------------------------------------------------------------------------------------------------------------
 
 operator fun SearchScope.contains(element: PsiElement): Boolean = PsiSearchScopeUtil.isInScope(this, element)
@@ -320,3 +345,4 @@ public fun <E : PsiElement> E.createSmartPointer(): SmartPsiElementPointer<E> =
         SmartPointerManager.getInstance(getProject()).createSmartPsiElementPointer(this)
 
 public fun PsiElement.before(element: PsiElement) = textRange.endOffset <= element.textRange.startOffset
+

@@ -1,0 +1,9 @@
+// "Suppress 'REDUNDANT_NULLABLE' for file ${file}" "true"
+// ERROR: This annotation is not applicable to target 'file' and use site target '@file'
+
+@file:Deprecated("Some")
+@file:Suppress("REDUNDANT_NULLABLE")
+
+package test
+
+public fun foo(): String?<caret>? = null

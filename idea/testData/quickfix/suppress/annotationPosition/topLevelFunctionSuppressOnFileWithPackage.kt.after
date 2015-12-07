@@ -1,0 +1,8 @@
+// "Suppress 'REDUNDANT_NULLABLE' for file ${file}" "true"
+/** Some Comment **/
+
+@file:Suppress("REDUNDANT_NULLABLE")
+
+package test
+
+public fun foo(): String?<caret>? = null
