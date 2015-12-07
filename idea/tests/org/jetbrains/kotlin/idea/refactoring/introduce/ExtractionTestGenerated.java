@@ -563,6 +563,12 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/multiDeclarations/usedExpr.kt");
                 doIntroduceVariableTest(fileName);
             }
+
+            @TestMetadata("userDataClass.kt")
+            public void testUserDataClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceVariable/multiDeclarations/userDataClass.kt");
+                doIntroduceVariableTest(fileName);
+            }
         }
 
         @TestMetadata("idea/testData/refactoring/introduceVariable/script")
