@@ -331,10 +331,6 @@ public interface Errors {
 
     DiagnosticFactory2<KtClassOrObject, CallableMemberDescriptor, CallableMemberDescriptor> OVERRIDING_FINAL_MEMBER_BY_DELEGATION =
             DiagnosticFactory2.create(ERROR, DECLARATION_NAME);
-    DiagnosticFactory2<KtClassOrObject, CallableMemberDescriptor, CallableMemberDescriptor> RETURN_TYPE_MISMATCH_ON_OVERRIDE_BY_DELEGATION =
-            DiagnosticFactory2.create(ERROR, DECLARATION_NAME);
-    DiagnosticFactory2<KtClassOrObject, CallableMemberDescriptor, CallableMemberDescriptor> PROPERTY_TYPE_MISMATCH_ON_OVERRIDE_BY_DELEGATION =
-            DiagnosticFactory2.create(ERROR, DECLARATION_NAME);
     DiagnosticFactory2<KtClassOrObject, CallableMemberDescriptor, CallableMemberDescriptor> VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION =
             DiagnosticFactory2.create(ERROR, DECLARATION_NAME);
 

@@ -290,7 +290,7 @@ public class OverrideResolver {
     }
 
     private static class CollectMissingImplementationsStrategy implements CheckInheritedSignaturesReportStrategy {
-        private Set<CallableMemberDescriptor> shouldImplement = new LinkedHashSet<CallableMemberDescriptor>();
+        private final Set<CallableMemberDescriptor> shouldImplement = new LinkedHashSet<CallableMemberDescriptor>();
 
         @Override
         public void abstractMemberNotImplemented(CallableMemberDescriptor descriptor) {
@@ -401,8 +401,7 @@ public class OverrideResolver {
                 @NotNull CallableMemberDescriptor overriding,
                 @NotNull CallableMemberDescriptor overridden
         ) {
-            conflictingReturnTypes.add(overridden);
-            reportDelegationProblemIfRequired(RETURN_TYPE_MISMATCH_ON_OVERRIDE_BY_DELEGATION, overriding, overridden);
+            // Always reported as RETURN_TYPE_MISMATCH_ON_INHERITANCE
         }
 
         @Override
@@ -410,8 +409,7 @@ public class OverrideResolver {
                 @NotNull CallableMemberDescriptor overriding,
                 @NotNull CallableMemberDescriptor overridden
         ) {
-            conflictingReturnTypes.add(overridden);
-            reportDelegationProblemIfRequired(PROPERTY_TYPE_MISMATCH_ON_OVERRIDE_BY_DELEGATION, overriding, overridden);
+            // Always reported as PROPERTY_TYPE_MISMATCH_ON_INHERITANCE
         }
 
         @Override
@@ -487,9 +485,7 @@ public class OverrideResolver {
         if (descriptor.getVisibility() == Visibilities.INVISIBLE_FAKE) return;
 
         Collection<? extends CallableMemberDescriptor> directOverridden = descriptor.getOverriddenDescriptors();
-        if (directOverridden.size() == 0) {
-            throw new IllegalStateException(kind + " " + descriptor.getName().asString() + " must override something");
-        }
+        assert !directOverridden.isEmpty() : kind + " " + descriptor.getName().asString() + " must override something";
 
         // collects map from the directly overridden descriptor to the set of declarations:
         // -- if directly overridden is not fake, the set consists of one element: this directly overridden
@@ -505,14 +501,12 @@ public class OverrideResolver {
 
         checkInheritedDescriptorsGroup(relevantDirectlyOverridden, reportingStrategy);
 
-        if (kind == DELEGATION) {
-            if (overrideReportStrategyForDelegates != null) {
-                checkOverridesForMember(descriptor, relevantDirectlyOverridden, overrideReportStrategyForDelegates);
-            }
+        if (kind == DELEGATION && overrideReportStrategyForDelegates != null) {
+            checkOverridesForMember(descriptor, relevantDirectlyOverridden, overrideReportStrategyForDelegates);
         }
 
         if (kind != DELEGATION) {
-            checkMissingOverridesByJava8Restrictions(descriptor, relevantDirectlyOverridden, reportingStrategy);
+            checkMissingOverridesByJava8Restrictions(relevantDirectlyOverridden, reportingStrategy);
         }
 
         List<CallableMemberDescriptor> implementations = collectImplementations(relevantDirectlyOverridden);
@@ -549,7 +543,6 @@ public class OverrideResolver {
     }
 
     private static void checkMissingOverridesByJava8Restrictions(
-            @NotNull CallableMemberDescriptor descriptor,
             @NotNull Set<CallableMemberDescriptor> relevantDirectlyOverridden,
             @NotNull CheckInheritedSignaturesReportStrategy reportingStrategy
     ) {
@@ -874,8 +867,8 @@ public class OverrideResolver {
     }
 
     private static void checkOverridesForMember(
-            CallableMemberDescriptor memberDescriptor,
-            Collection<? extends CallableMemberDescriptor> overriddenDescriptors,
+            @NotNull CallableMemberDescriptor memberDescriptor,
+            @NotNull Collection<? extends CallableMemberDescriptor> overriddenDescriptors,
             @NotNull CheckOverrideReportStrategy reportError
     ) {
         for (CallableMemberDescriptor overridden : overriddenDescriptors) {

@@ -4763,9 +4763,27 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/delegation/clashes"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
+                @TestMetadata("finalMemberOverridden.kt")
+                public void testFinalMemberOverridden() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegation/clashes/finalMemberOverridden.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("propertyTypeMismatch.kt")
+                public void testPropertyTypeMismatch() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegation/clashes/propertyTypeMismatch.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("returnTypeMismatch.kt")
                 public void testReturnTypeMismatch() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegation/clashes/returnTypeMismatch.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("varOverriddenByVal.kt")
+                public void testVarOverriddenByVal() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/delegation/clashes/varOverriddenByVal.kt");
                     doTest(fileName);
                 }
             }

@@ -51,6 +51,13 @@ public interface Test10 : IMLNS, ILS, J {
     public open override /*3*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+public interface Test11 : IMLNS, ILS {
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract override /*2*/ /*fake_override*/ fun foo(): kotlin.MutableList<kotlin.String?>
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 public interface Test2 : J, ILNS {
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public abstract override /*2*/ /*fake_override*/ fun foo(): kotlin.List<kotlin.String?>

@@ -1,7 +1,5 @@
 // FILE: InOut.k
 interface In<in T>
-interface Out<out T>
-interface Inv<T>
 
 // FILE: J1.java
 public interface J1 {
