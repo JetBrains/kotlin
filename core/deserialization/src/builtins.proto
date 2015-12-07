@@ -24,6 +24,7 @@ option optimize_for = LITE_RUNTIME;
 extend Package {
   // id in StringTable
   repeated int32 class_name = 150 [packed = true];
+  optional int32 package_fq_name = 151;
 }
 
 extend Class {

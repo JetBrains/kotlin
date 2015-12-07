@@ -8,6 +8,7 @@ public final class BuiltInsProtoBuf {
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistryLite registry) {
     registry.add(org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.className);
+    registry.add(org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.packageFqName);
     registry.add(org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.classAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.constructorAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf.functionAnnotation);
@@ -32,6 +33,21 @@ public final class BuiltInsProtoBuf {
         150,
         com.google.protobuf.WireFormat.FieldType.INT32,
         true);
+  public static final int PACKAGE_FQ_NAME_FIELD_NUMBER = 151;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Package { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.ProtoBuf.Package,
+      java.lang.Integer> packageFqName = com.google.protobuf.GeneratedMessageLite
+          .newSingularGeneratedExtension(
+        org.jetbrains.kotlin.serialization.ProtoBuf.Package.getDefaultInstance(),
+        0,
+        null,
+        null,
+        151,
+        com.google.protobuf.WireFormat.FieldType.INT32);
   public static final int CLASS_ANNOTATION_FIELD_NUMBER = 150;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.Class { ... }</code>
