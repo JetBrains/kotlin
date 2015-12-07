@@ -28,14 +28,12 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.TypeCapabilitiesKt;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.util.*;
 
 import static org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.*;
-import static org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.INCOMPATIBLE;
 
 public class OverridingUtil {
 
@@ -322,11 +320,10 @@ public class OverridingUtil {
 
     public static boolean isMoreSpecific(@NotNull CallableMemberDescriptor a, @NotNull CallableMemberDescriptor b) {
         KotlinType aReturnType = a.getReturnType();
-        assert aReturnType != null : "Return type is null for " + a;
-        // Use upper bound for flexible type.
-        aReturnType = TypeCapabilitiesKt.getSupertypeRepresentative(aReturnType);
         KotlinType bReturnType = b.getReturnType();
-        assert bReturnType != null : "Return type is null for " + b;
+
+        assert aReturnType != null : "Return type of " + a + " is null";
+        assert bReturnType != null : "Return type of " + b + " is null";
 
         if (a instanceof SimpleFunctionDescriptor) {
             assert b instanceof SimpleFunctionDescriptor : "b is " + b.getClass();
@@ -341,13 +338,9 @@ public class OverridingUtil {
             if (pa.isVar() && pb.isVar()) {
                 return KotlinTypeChecker.DEFAULT.equalTypes(aReturnType, bReturnType);
             }
-            else if (!pa.isVar() && pb.isVar()) {
-                // val can't be more specific than var, regardless of return type.
-                return false;
-            }
             else {
-                // both vals or var <? val
-                return KotlinTypeChecker.DEFAULT.isSubtypeOf(aReturnType, bReturnType);
+                // both vals or var vs val: val can't be more specific then var
+                return !(!pa.isVar() && pb.isVar()) && KotlinTypeChecker.DEFAULT.isSubtypeOf(aReturnType, bReturnType);
             }
         }
         throw new IllegalArgumentException("Unexpected callable: " + a.getClass());
@@ -381,7 +374,12 @@ public class OverridingUtil {
         // Should be 'foo(s: String): String'.
         Modality modality = getMinimalModality(effectiveOverridden);
         Visibility visibility = allInvisible ? Visibilities.INVISIBLE_FAKE : Visibilities.INHERITED;
-        CallableMemberDescriptor mostSpecific = selectMostSpecificMemberFromSuper(effectiveOverridden);
+        CallableMemberDescriptor mostSpecific =
+                OverridingUtilsKt.getOverriddenWithMostSpecificReturnTypeOrNull(KotlinTypeChecker.DEFAULT, effectiveOverridden);
+        if (mostSpecific == null) {
+            // Use some (possibly erroneous) inherited signature. Will be reported as an error later.
+            mostSpecific = selectMostSpecificMemberFromSuper(effectiveOverridden);
+        }
         CallableMemberDescriptor fakeOverride =
                 mostSpecific.copy(current, modality, visibility, CallableMemberDescriptor.Kind.FAKE_OVERRIDE, false);
         for (CallableMemberDescriptor descriptor : effectiveOverridden) {

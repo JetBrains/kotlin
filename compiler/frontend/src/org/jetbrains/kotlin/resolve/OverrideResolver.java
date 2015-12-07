@@ -499,7 +499,7 @@ public class OverrideResolver {
         Set<CallableMemberDescriptor> relevantDirectlyOverridden =
                 getRelevantDirectlyOverridden(overriddenDeclarationsByDirectParent, allFilteredOverriddenDeclarations);
 
-        checkInheritedDescriptorsGroup(relevantDirectlyOverridden, reportingStrategy);
+        checkInheritedDescriptorsGroup(relevantDirectlyOverridden, descriptor, reportingStrategy);
 
         if (kind == DELEGATION && overrideReportStrategyForDelegates != null) {
             checkOverridesForMember(descriptor, relevantDirectlyOverridden, overrideReportStrategyForDelegates);
@@ -816,27 +816,24 @@ public class OverrideResolver {
 
     private static void checkInheritedDescriptorsGroup(
             @NotNull Collection<CallableMemberDescriptor> inheritedDescriptors,
+            @NotNull CallableMemberDescriptor mostSpecific,
             @NotNull CheckInheritedSignaturesReportStrategy reportingStrategy
     ) {
-        // FIXME This algorithm depends on transitiveness of sub-typing relation, which is broken in presence of flexible types.
         if (inheritedDescriptors.size() > 1) {
-            Iterator<CallableMemberDescriptor> inheritedIterator = inheritedDescriptors.iterator();
-            CallableMemberDescriptor mostSpecificInherited = inheritedIterator.next();
-            while (inheritedIterator.hasNext()) {
-                CallableMemberDescriptor overriddenDescriptor = inheritedIterator.next();
-                if (OverridingUtil.isMoreSpecific(overriddenDescriptor, mostSpecificInherited)) {
-                    mostSpecificInherited = overriddenDescriptor;
-                }
-            }
+            PropertyDescriptor mostSpecificProperty = mostSpecific instanceof PropertyDescriptor ? (PropertyDescriptor) mostSpecific : null;
 
             for (CallableMemberDescriptor inheritedDescriptor : inheritedDescriptors) {
-                if (!OverridingUtil.isMoreSpecific(mostSpecificInherited, inheritedDescriptor)) {
-                    if (inheritedDescriptor instanceof PropertyDescriptor) {
-                        reportingStrategy.propertyTypeMismatchOnInheritance(mostSpecificInherited, inheritedDescriptor);
+                if (mostSpecificProperty != null) {
+                    assert inheritedDescriptor instanceof PropertyDescriptor
+                            : inheritedDescriptor + " inherited from " + mostSpecificProperty + " is not a property";
+                    PropertyDescriptor inheritedPropertyDescriptor = (PropertyDescriptor) inheritedDescriptor;
+
+                    if (!isPropertyTypeOkForOverride(inheritedPropertyDescriptor, mostSpecificProperty)) {
+                        reportingStrategy.propertyTypeMismatchOnInheritance(mostSpecific, inheritedDescriptor);
                     }
-                    else {
-                        reportingStrategy.returnTypeMismatchOnInheritance(mostSpecificInherited, inheritedDescriptor);
-                    }
+                }
+                else if (!isReturnTypeOkForOverride(inheritedDescriptor, mostSpecific)) {
+                    reportingStrategy.returnTypeMismatchOnInheritance(mostSpecific, inheritedDescriptor);
                 }
             }
         }
@@ -935,11 +932,15 @@ public class OverrideResolver {
         TypeSubstitutor typeSubstitutor = prepareTypeSubstitutor(superDescriptor, subDescriptor);
         if (typeSubstitutor == null) return false;
 
-        if (!superDescriptor.isVar()) return true;
-
         KotlinType substitutedSuperReturnType = typeSubstitutor.substitute(superDescriptor.getType(), Variance.OUT_VARIANCE);
         assert substitutedSuperReturnType != null;
-        return KotlinTypeChecker.DEFAULT.equalTypes(subDescriptor.getType(), substitutedSuperReturnType);
+
+        if (superDescriptor.isVar()) {
+            return KotlinTypeChecker.DEFAULT.equalTypes(subDescriptor.getType(), substitutedSuperReturnType);
+        }
+        else {
+            return KotlinTypeChecker.DEFAULT.isSubtypeOf(subDescriptor.getType(), substitutedSuperReturnType);
+        }
     }
 
     private void checkOverrideForComponentFunction(@NotNull final CallableMemberDescriptor componentFunction) {

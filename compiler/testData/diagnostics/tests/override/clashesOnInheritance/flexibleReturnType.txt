@@ -60,7 +60,7 @@ public interface KDerived1b : J, K1 {
 
 public interface KDerived2a : K2, J {
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract override /*2*/ /*fake_override*/ fun foo(): kotlin.String!
+    public abstract override /*2*/ /*fake_override*/ fun foo(): kotlin.String?
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }

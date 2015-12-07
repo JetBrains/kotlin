@@ -30,9 +30,14 @@ interface Test5 : ILNS, IMLS, J
 interface Test6 : ILNS, J, IMLS
 interface Test7 : J, ILNS, IMLS
 
-// ILS and IMLNS are incompatible
+// Return types of ILS::foo and IMLNS::foo are incompatible themselves.
+// However, return type of J::foo is (Mutable)List<String!>!,
+// which is subtype of both List<String> and MutalbeList<String?>.
+// Thus, inheriting from J, IMLNS, and ILS is Ok,
+// but inheriting from IMLNS and ILS is not.
 
-<!RETURN_TYPE_MISMATCH_ON_INHERITANCE!>interface Test8<!> : J, IMLNS, ILS
-<!RETURN_TYPE_MISMATCH_ON_INHERITANCE!>interface Test9<!> : IMLNS, J, ILS
-<!RETURN_TYPE_MISMATCH_ON_INHERITANCE!>interface Test10<!> : IMLNS, ILS, J
+interface Test8 : J, IMLNS, ILS
+interface Test9 : IMLNS, J, ILS
+interface Test10 : IMLNS, ILS, J
+
 <!RETURN_TYPE_MISMATCH_ON_INHERITANCE!>interface Test11<!> : IMLNS, ILS

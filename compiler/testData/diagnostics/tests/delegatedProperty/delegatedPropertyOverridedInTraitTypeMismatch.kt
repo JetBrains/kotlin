@@ -7,7 +7,7 @@ interface A {
 }
 
 class AImpl: A  {
-    override val <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>prop<!> by Delegate()
+    override val <!PROPERTY_TYPE_MISMATCH_ON_OVERRIDE!>prop<!> by Delegate()
 }
 
 fun foo() {
