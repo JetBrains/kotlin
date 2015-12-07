@@ -60,7 +60,7 @@ public fun assertNull(actual: Any?, message: String? = null) {
 }
 
 /** Marks a test as having failed if this point in the execution path is reached, with an optional [message]. */
-public fun fail(message: String? = null) {
+public fun fail(message: String? = null): Nothing {
     asserter.fail(message)
 }
 
@@ -100,7 +100,7 @@ public interface Asserter {
      *
      * @param message the message to report.
      */
-    public fun fail(message: String?): Unit
+    public fun fail(message: String?): Nothing
 
     /**
      * Asserts that the specified value is `true`.

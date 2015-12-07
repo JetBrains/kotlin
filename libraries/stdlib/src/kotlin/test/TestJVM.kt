@@ -72,7 +72,7 @@ public var asserter: Asserter
  */
 private class DefaultAsserter() : Asserter {
 
-    public override fun fail(message : String?) {
+    public override fun fail(message : String?): Nothing {
         if (message == null)
             throw AssertionError()
         else
