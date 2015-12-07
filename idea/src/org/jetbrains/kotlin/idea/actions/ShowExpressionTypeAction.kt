@@ -40,8 +40,8 @@ import org.jetbrains.kotlin.types.KotlinType
 @Deprecated("Remove once we no longer support IDEA 14.1")
 public class ShowExpressionTypeAction : AnAction() {
     override fun actionPerformed(e: AnActionEvent) {
-        val editor = e.getData<Editor>(CommonDataKeys.EDITOR)!!
-        val psiFile = e.getData<PsiFile>(CommonDataKeys.PSI_FILE)!!
+        val editor = e.getData(CommonDataKeys.EDITOR) ?: return
+        val psiFile = e.getData(CommonDataKeys.PSI_FILE) as? KtFile ?: return
 
         val type = if (editor.getSelectionModel().hasSelection()) {
             val startOffset = editor.getSelectionModel().getSelectionStart()
