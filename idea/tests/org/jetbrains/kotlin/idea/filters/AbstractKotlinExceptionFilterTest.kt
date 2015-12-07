@@ -61,7 +61,7 @@ public abstract class AbstractKotlinExceptionFilterTest: KotlinCodeInsightTestCa
                 MOCK_LIBRARY_JAR = MockLibraryUtil.compileLibraryToJar(MOCK_LIBRARY_SOURCES, "mockLibrary", true)
             }
 
-            val mockLibraryJar = MOCK_LIBRARY_JAR
+            val mockLibraryJar = MOCK_LIBRARY_JAR ?: throw AssertionError("Mock library JAR is null")
             val mockLibraryPath = FileUtilRt.toSystemIndependentName(mockLibraryJar.canonicalPath)
             val libRootUrl = "jar://$mockLibraryPath!/"
 

@@ -313,8 +313,7 @@ public class KotlinCoreEnvironment private constructor(
 
         public fun disposeApplicationEnvironment() {
             synchronized (APPLICATION_LOCK) {
-                if (ourApplicationEnvironment == null) return
-                val environment = ourApplicationEnvironment
+                val environment = ourApplicationEnvironment ?: return
                 ourApplicationEnvironment = null
                 Disposer.dispose(environment.getParentDisposable())
             }
