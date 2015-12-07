@@ -289,7 +289,7 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
 
         override fun getBoxingExpressionPattern(arguments: List<KtExpression>): String? {
             if (arguments.isEmpty()) return null
-            return arguments.indices.joinToString(prefix = "kotlin.listOf(", separator = ", ", postfix = ")") { "\$$it" }
+            return arguments.indices.joinToString(prefix = "kotlin.collections.listOf(", separator = ", ", postfix = ")") { "\$$it" }
         }
 
         override fun extractExpressionByIndex(boxedExpression: KtExpression, index: Int): KtExpression? {
