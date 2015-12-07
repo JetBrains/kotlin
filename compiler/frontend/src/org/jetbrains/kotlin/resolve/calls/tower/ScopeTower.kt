@@ -100,4 +100,5 @@ object UnstableSmartCastDiagnostic: ResolutionDiagnostic(ResolutionCandidateAppl
 object ExtensionWithStaticTypeWithDynamicReceiver: ResolutionDiagnostic(ResolutionCandidateApplicability.HIDDEN)
 object HiddenDescriptor: ResolutionDiagnostic(ResolutionCandidateApplicability.HIDDEN)
 
-
+object InvokeConventionCallNoOperatorModifier : ResolutionDiagnostic(ResolutionCandidateApplicability.CONVENTION_ERROR)
+object InfixCallNoInfixModifier : ResolutionDiagnostic(ResolutionCandidateApplicability.CONVENTION_ERROR)
