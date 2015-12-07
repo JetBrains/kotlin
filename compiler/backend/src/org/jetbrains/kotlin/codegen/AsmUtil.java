@@ -376,11 +376,6 @@ public class AsmUtil {
             }
         }
 
-        if (memberDescriptor instanceof PropertyDescriptor &&
-            ((PropertyDescriptor) memberDescriptor).isConst() || hasJvmFieldAnnotation(memberDescriptor)) {
-            return null;
-        }
-
         return null;
     }
 
