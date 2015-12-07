@@ -145,7 +145,7 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
     public Set<KotlinType> getPossibleTypes(@NotNull DataFlowValue key) {
         KotlinType originalType = key.getType();
         Set<KotlinType> types = collectTypesFromMeAndParents(key);
-        if (getNullability(key).canBeNull()) {
+        if (getPredictableNullability(key).canBeNull()) {
             return types;
         }
 
@@ -183,7 +183,7 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
     @NotNull
     public DataFlowInfo assign(@NotNull DataFlowValue a, @NotNull DataFlowValue b) {
         Map<DataFlowValue, Nullability> nullability = Maps.newHashMap();
-        Nullability nullabilityOfB = getNullability(b);
+        Nullability nullabilityOfB = getPredictableNullability(b);
         putNullability(nullability, a, nullabilityOfB);
 
         SetMultimap<DataFlowValue, KotlinType> newTypeInfo = newTypeInfo();
@@ -208,8 +208,8 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
     @NotNull
     public DataFlowInfo equate(@NotNull DataFlowValue a, @NotNull DataFlowValue b) {
         Map<DataFlowValue, Nullability> builder = Maps.newHashMap();
-        Nullability nullabilityOfA = getNullability(a);
-        Nullability nullabilityOfB = getNullability(b);
+        Nullability nullabilityOfA = getPredictableNullability(a);
+        Nullability nullabilityOfB = getPredictableNullability(b);
 
         boolean changed = false;
         changed |= putNullability(builder, a, nullabilityOfA.refine(nullabilityOfB));
@@ -267,8 +267,8 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
     @NotNull
     public DataFlowInfo disequate(@NotNull DataFlowValue a, @NotNull DataFlowValue b) {
         Map<DataFlowValue, Nullability> builder = Maps.newHashMap();
-        Nullability nullabilityOfA = getNullability(a);
-        Nullability nullabilityOfB = getNullability(b);
+        Nullability nullabilityOfA = getPredictableNullability(a);
+        Nullability nullabilityOfB = getPredictableNullability(b);
 
         boolean changed = false;
         changed |= putNullability(builder, a, nullabilityOfA.refine(nullabilityOfB.invert()));

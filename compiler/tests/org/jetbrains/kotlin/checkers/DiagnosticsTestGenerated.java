@@ -15060,6 +15060,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("unstableToStable.kt")
+            public void testUnstableToStable() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/unstableToStable.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("varChangedInInitializer.kt")
             public void testVarChangedInInitializer() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/varChangedInInitializer.kt");
