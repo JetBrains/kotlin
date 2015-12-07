@@ -15,7 +15,7 @@
       <sourceFolder url="file://$MODULE_DIR$/resources" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/testData/debugger/tinyApp/classes" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="backend" />
     <orderEntry type="module" module-name="frontend" />
