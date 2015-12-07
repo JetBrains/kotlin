@@ -24,11 +24,11 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.processDelegationCallConstr
 
 public class KotlinConstructorDelegationCallReferenceSearcher() : QueryExecutorBase<PsiReference, SearchParameters>(true) {
     override fun processQuery(queryParameters: SearchParameters, consumer: Processor<PsiReference>) {
-        val method = queryParameters.getMethod()
-        if (!method.isConstructor()) return
+        val method = queryParameters.method
+        if (!method.isConstructor) return
 
-        method.processDelegationCallConstructorUsages(method.getUseScope()) {
-            it.getCalleeExpression()?.getReference()?.let { consumer.process(it) } ?: true
+        method.processDelegationCallConstructorUsages(method.useScope.intersectWith(queryParameters.effectiveSearchScope)) {
+            it.calleeExpression?.getReference()?.let { consumer.process(it) } ?: true
         }
     }
 }

@@ -22,7 +22,10 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.util.MethodSignatureUtil
-import org.jetbrains.kotlin.asJava.*
+import org.jetbrains.kotlin.asJava.KtLightElement
+import org.jetbrains.kotlin.asJava.KtLightMethod
+import org.jetbrains.kotlin.asJava.toLightMethods
+import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
@@ -30,6 +33,7 @@ import org.jetbrains.kotlin.idea.references.unwrappedTargets
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.contains
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -112,6 +116,8 @@ public fun PsiElement.processDelegationCallConstructorUsages(scope: SearchScope,
 
 private fun PsiElement.processDelegationCallKotlinConstructorUsages(scope: SearchScope, process: (KtCallElement) -> Boolean): Boolean {
     val element = unwrapped
+    if (element != null && element !in scope) return true
+
     val klass = when (element) {
         is KtConstructor<*> -> element.getContainingClassOrObject()
         is KtClass -> element
