@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.serialization.js
+package org.jetbrains.kotlin.builtins
 
-import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
+import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
 
-public class KotlinJavascriptSerializerExtension : KotlinSerializerExtensionBase(JsSerializerProtocol)
-
-object JsSerializerProtocol : SerializerExtensionProtocol(
-        JsProtoBuf.constructorAnnotation, JsProtoBuf.classAnnotation, JsProtoBuf.functionAnnotation, JsProtoBuf.propertyAnnotation,
-        JsProtoBuf.compileTimeValue, JsProtoBuf.parameterAnnotation, JsProtoBuf.typeAnnotation, JsProtoBuf.typeParameterAnnotation
+object BuiltInSerializerProtocol : SerializerExtensionProtocol(
+        BuiltInsProtoBuf.constructorAnnotation, BuiltInsProtoBuf.classAnnotation, BuiltInsProtoBuf.functionAnnotation,
+        BuiltInsProtoBuf.propertyAnnotation, BuiltInsProtoBuf.compileTimeValue, BuiltInsProtoBuf.parameterAnnotation,
+        BuiltInsProtoBuf.typeAnnotation, BuiltInsProtoBuf.typeParameterAnnotation
 )

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.builtins
+package org.jetbrains.kotlin.serialization.deserialization
 
 import com.google.protobuf.MessageLite
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -22,12 +22,12 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.*
+import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.types.KotlinType
 
-class BuiltInsAnnotationAndConstantLoader(
-        module: ModuleDescriptor
+class AnnotationAndConstantLoaderImpl(
+        module: ModuleDescriptor,
+        private val protocol: SerializerExtensionProtocol
 ) : AnnotationAndConstantLoader<AnnotationDescriptor, ConstantValue<*>, AnnotationWithTarget> {
     private val deserializer = AnnotationDeserializer(module)
 
@@ -35,7 +35,7 @@ class BuiltInsAnnotationAndConstantLoader(
             classProto: ProtoBuf.Class,
             nameResolver: NameResolver
     ): List<AnnotationDescriptor> {
-        val annotations = classProto.getExtension(BuiltInsProtoBuf.classAnnotation).orEmpty()
+        val annotations = classProto.getExtension(protocol.classAnnotation).orEmpty()
         return annotations.map { proto -> deserializer.deserializeAnnotation(proto, nameResolver) }
     }
 
@@ -45,9 +45,9 @@ class BuiltInsAnnotationAndConstantLoader(
             kind: AnnotatedCallableKind
     ): List<AnnotationWithTarget> {
         val annotations = when (proto) {
-            is ProtoBuf.Constructor -> proto.getExtension(BuiltInsProtoBuf.constructorAnnotation)
-            is ProtoBuf.Function -> proto.getExtension(BuiltInsProtoBuf.functionAnnotation)
-            is ProtoBuf.Property -> proto.getExtension(BuiltInsProtoBuf.propertyAnnotation)
+            is ProtoBuf.Constructor -> proto.getExtension(protocol.constructorAnnotation)
+            is ProtoBuf.Function -> proto.getExtension(protocol.functionAnnotation)
+            is ProtoBuf.Property -> proto.getExtension(protocol.propertyAnnotation)
             else -> error("Unknown message: $proto")
         }.orEmpty()
         return annotations.map { proto -> AnnotationWithTarget(deserializer.deserializeAnnotation(proto, container.nameResolver), null) }
@@ -60,7 +60,7 @@ class BuiltInsAnnotationAndConstantLoader(
             parameterIndex: Int,
             proto: ProtoBuf.ValueParameter
     ): List<AnnotationDescriptor> {
-        val annotations = proto.getExtension(BuiltInsProtoBuf.parameterAnnotation).orEmpty()
+        val annotations = proto.getExtension(protocol.parameterAnnotation).orEmpty()
         return annotations.map { proto -> deserializer.deserializeAnnotation(proto, container.nameResolver) }
     }
 
@@ -71,11 +71,11 @@ class BuiltInsAnnotationAndConstantLoader(
     ): List<AnnotationDescriptor> = emptyList()
 
     override fun loadTypeAnnotations(proto: ProtoBuf.Type, nameResolver: NameResolver): List<AnnotationDescriptor> {
-        return proto.getExtension(BuiltInsProtoBuf.typeAnnotation).orEmpty().map { deserializer.deserializeAnnotation(it, nameResolver) }
+        return proto.getExtension(protocol.typeAnnotation).orEmpty().map { deserializer.deserializeAnnotation(it, nameResolver) }
     }
 
     override fun loadTypeParameterAnnotations(proto: ProtoBuf.TypeParameter, nameResolver: NameResolver): List<AnnotationDescriptor> {
-        return proto.getExtension(BuiltInsProtoBuf.typeParameterAnnotation).orEmpty().map { deserializer.deserializeAnnotation(it, nameResolver) }
+        return proto.getExtension(protocol.typeParameterAnnotation).orEmpty().map { deserializer.deserializeAnnotation(it, nameResolver) }
     }
 
     override fun loadPropertyConstant(
@@ -83,8 +83,8 @@ class BuiltInsAnnotationAndConstantLoader(
             proto: ProtoBuf.Property,
             expectedType: KotlinType
     ): ConstantValue<*>? {
-        if (!proto.hasExtension(BuiltInsProtoBuf.compileTimeValue)) return null
-        val value = proto.getExtension(BuiltInsProtoBuf.compileTimeValue)
+        if (!proto.hasExtension(protocol.compileTimeValue)) return null
+        val value = proto.getExtension(protocol.compileTimeValue)
         return deserializer.resolveValue(expectedType, value, container.nameResolver)
     }
 }

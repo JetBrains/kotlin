@@ -44,7 +44,7 @@ public fun createBuiltInPackageFragmentProvider(
             storageManager,
             module,
             ResourceLoadingClassDataFinder(provider, BuiltInsSerializedResourcePaths, loadResource),
-            BuiltInsAnnotationAndConstantLoader(module),
+            AnnotationAndConstantLoaderImpl(module, BuiltInSerializerProtocol),
             provider,
             localClassResolver,
             ErrorReporter.DO_NOTHING,

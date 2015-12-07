@@ -16,25 +16,16 @@
 
 package org.jetbrains.kotlin.serialization.builtins
 
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.resolve.constants.NullValue
+import org.jetbrains.kotlin.builtins.BuiltInSerializerProtocol
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.serialization.*
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.serialization.DescriptorSerializer
+import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
+import org.jetbrains.kotlin.serialization.ProtoBuf
 
-public class BuiltInsSerializerExtension : SerializerExtension() {
-    private val stringTable = StringTableImpl()
-    private val annotationSerializer = AnnotationSerializer(stringTable)
-
-    override fun getStringTable(): StringTable = stringTable
-
+public class BuiltInsSerializerExtension : KotlinSerializerExtensionBase(BuiltInSerializerProtocol) {
     override fun shouldUseTypeTable(): Boolean = true
-
-    override fun serializeClass(descriptor: ClassDescriptor, proto: ProtoBuf.Class.Builder) {
-        for (annotation in descriptor.annotations) {
-            proto.addExtension(BuiltInsProtoBuf.classAnnotation, annotationSerializer.serializeAnnotation(annotation))
-        }
-    }
 
     override fun serializePackage(packageFragments: Collection<PackageFragmentDescriptor>, proto: ProtoBuf.Package.Builder) {
         if (packageFragments.isEmpty()) return
@@ -48,40 +39,5 @@ public class BuiltInsSerializerExtension : SerializerExtension() {
         }
 
         proto.setExtension(BuiltInsProtoBuf.packageFqName, stringTable.getPackageFqNameIndex(packageFragments.first().fqName))
-    }
-
-    override fun serializeConstructor(descriptor: ConstructorDescriptor, proto: ProtoBuf.Constructor.Builder) {
-        for (annotation in descriptor.annotations) {
-            proto.addExtension(BuiltInsProtoBuf.constructorAnnotation, annotationSerializer.serializeAnnotation(annotation))
-        }
-    }
-
-    override fun serializeFunction(descriptor: FunctionDescriptor, proto: ProtoBuf.Function.Builder) {
-        for (annotation in descriptor.annotations) {
-            proto.addExtension(BuiltInsProtoBuf.functionAnnotation, annotationSerializer.serializeAnnotation(annotation))
-        }
-    }
-
-    override fun serializeProperty(descriptor: PropertyDescriptor, proto: ProtoBuf.Property.Builder) {
-        for (annotation in descriptor.annotations) {
-            proto.addExtension(BuiltInsProtoBuf.propertyAnnotation, annotationSerializer.serializeAnnotation(annotation))
-        }
-        val compileTimeConstant = descriptor.compileTimeInitializer ?: return
-        if (compileTimeConstant !is NullValue) {
-            val valueProto = annotationSerializer.valueProto(compileTimeConstant)
-            proto.setExtension(BuiltInsProtoBuf.compileTimeValue, valueProto.build())
-        }
-    }
-
-    override fun serializeValueParameter(descriptor: ValueParameterDescriptor, proto: ProtoBuf.ValueParameter.Builder) {
-        for (annotation in descriptor.annotations) {
-            proto.addExtension(BuiltInsProtoBuf.parameterAnnotation, annotationSerializer.serializeAnnotation(annotation))
-        }
-    }
-
-    override fun serializeType(type: KotlinType, proto: ProtoBuf.Type.Builder) {
-        for (annotation in type.annotations) {
-            proto.addExtension(BuiltInsProtoBuf.typeAnnotation, annotationSerializer.serializeAnnotation(annotation))
-        }
     }
 }

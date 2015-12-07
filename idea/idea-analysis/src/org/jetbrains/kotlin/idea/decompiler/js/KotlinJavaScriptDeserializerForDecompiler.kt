@@ -52,7 +52,7 @@ public class KotlinJavaScriptDeserializerForDecompiler(
 
     private val classDataFinder = DirectoryBasedKotlinJavaScriptDataFinder(metaFileFinder, LOG)
 
-    private val annotationAndConstantLoader = KotlinJavascriptAnnotationAndConstantLoader(moduleDescriptor)
+    private val annotationAndConstantLoader = AnnotationAndConstantLoaderImpl(moduleDescriptor, JsSerializerProtocol)
 
     override val deserializationComponents = DeserializationComponents(
             storageManager, moduleDescriptor, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
