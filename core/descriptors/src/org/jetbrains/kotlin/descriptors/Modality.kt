@@ -14,31 +14,22 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.descriptors;
+package org.jetbrains.kotlin.descriptors
 
-import org.jetbrains.annotations.NotNull;
-
-public enum Modality {
+enum class Modality private constructor(@get:JvmName("isOverridable") val isOverridable: Boolean) {
     // THE ORDER OF ENTRIES MATTERS HERE
     FINAL(false),
     SEALED(false),
     OPEN(true),
     ABSTRACT(true);
 
-    private final boolean overridable;
+    companion object {
 
-    Modality(boolean overridable) {
-        this.overridable = overridable;
-    }
-
-    public boolean isOverridable() {
-        return overridable;
-    }
-
-    @NotNull
-    public static Modality convertFromFlags(boolean _abstract, boolean open) {
-        if (_abstract) return ABSTRACT;
-        if (open) return OPEN;
-        return FINAL;
+        // NB: never returns SEALED
+        fun convertFromFlags(abstract: Boolean, open: Boolean): Modality {
+            if (abstract) return ABSTRACT
+            if (open) return OPEN
+            return FINAL
+        }
     }
 }
