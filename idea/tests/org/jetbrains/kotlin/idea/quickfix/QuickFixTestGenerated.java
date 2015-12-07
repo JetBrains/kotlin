@@ -2157,6 +2157,45 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 }
             }
 
+            @TestMetadata("idea/testData/quickfix/createFromUsage/createFunction/callableReferences")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class CallableReferences extends AbstractQuickFixTest {
+                public void testAllFilesPresentInCallableReferences() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/callableReferences"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+                }
+
+                @TestMetadata("extensionNoReceiverInCallableRef.kt")
+                public void testExtensionNoReceiverInCallableRef() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/callableReferences/extensionNoReceiverInCallableRef.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("extensionWithReceiverInCallableRef.kt")
+                public void testExtensionWithReceiverInCallableRef() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/callableReferences/extensionWithReceiverInCallableRef.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("noExpectedReturnType.kt")
+                public void testNoExpectedReturnType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/callableReferences/noExpectedReturnType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("noFunctionalType.kt")
+                public void testNoFunctionalType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/callableReferences/noFunctionalType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("withExpectedReturnType.kt")
+                public void testWithExpectedReturnType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/callableReferences/withExpectedReturnType.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("idea/testData/quickfix/createFromUsage/createFunction/component")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
