@@ -523,18 +523,18 @@ public class IncrementalCacheImpl(
         override fun dumpValue(value: Boolean) = ""
     }
 
-    private inner class MultifileClassFacadeMap(storageFile: File) : BasicStringMap<List<String>>(storageFile, StringListExternalizer) {
-        public fun add(facadeName: JvmClassName, partNames: List<String>) {
+    private inner class MultifileClassFacadeMap(storageFile: File) : BasicStringMap<Collection<String>>(storageFile, StringCollectionExternalizer) {
+        public fun add(facadeName: JvmClassName, partNames: Collection<String>) {
             storage[facadeName.internalName] = partNames
         }
 
-        public fun getMultifileClassParts(facadeName: String): List<String>? = storage[facadeName]
+        public fun getMultifileClassParts(facadeName: String): Collection<String>? = storage[facadeName]
 
         public fun remove(className: JvmClassName) {
             storage.remove(className.internalName)
         }
 
-        override fun dumpValue(value: List<String>): String = value.toString()
+        override fun dumpValue(value: Collection<String>): String = value.dumpCollection()
     }
 
     private inner class MultifileClassPartMap(storageFile: File) : BasicStringMap<String>(storageFile, EnumeratorStringDescriptor.INSTANCE) {
@@ -553,7 +553,7 @@ public class IncrementalCacheImpl(
         override fun dumpValue(value: String): String = value
     }
 
-    private inner class SourceToClassesMap(storageFile: File) : BasicStringMap<List<String>>(storageFile, PathStringDescriptor.INSTANCE, StringListExternalizer) {
+    private inner class SourceToClassesMap(storageFile: File) : BasicStringMap<Collection<String>>(storageFile, PathStringDescriptor.INSTANCE, StringCollectionExternalizer) {
         public fun clearOutputsForSource(sourceFile: File) {
             remove(sourceFile.absolutePath)
         }
@@ -565,7 +565,7 @@ public class IncrementalCacheImpl(
         public operator fun get(sourceFile: File): Collection<JvmClassName> =
                 storage[sourceFile.absolutePath].orEmpty().map { JvmClassName.byInternalName(it) }
 
-        override fun dumpValue(value: List<String>) = value.toString()
+        override fun dumpValue(value: Collection<String>) = value.dumpCollection()
 
         override fun clean() {
             storage.keys.forEach { remove(it) }
@@ -594,16 +594,15 @@ public class IncrementalCacheImpl(
         override fun dumpValue(value: Boolean) = ""
     }
 
-    private inner class DirtyInlineFunctionsMap(storageFile: File) : BasicStringMap<List<String>>(storageFile, StringListExternalizer) {
-        public fun getEntries(): Map<JvmClassName, List<String>> =
+    private inner class DirtyInlineFunctionsMap(storageFile: File) : BasicStringMap<Collection<String>>(storageFile, StringCollectionExternalizer) {
+        public fun getEntries(): Map<JvmClassName, Collection<String>> =
             storage.keys.toMap(JvmClassName::byInternalName) { storage[it]!! }
 
         public fun put(className: JvmClassName, changedFunctions: List<String>) {
             storage[className.internalName] = changedFunctions
         }
 
-        override fun dumpValue(value: List<String>) =
-                value.dumpCollection()
+        override fun dumpValue(value: Collection<String>) = value.dumpCollection()
     }
 
 
