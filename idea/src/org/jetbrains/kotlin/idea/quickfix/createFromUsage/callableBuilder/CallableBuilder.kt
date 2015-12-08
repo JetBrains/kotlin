@@ -72,10 +72,12 @@ import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 import kotlin.properties.Delegates
@@ -223,7 +225,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
         val containingFileEditor: Editor
         val containingElement: PsiElement
         val dialogWithEditor: DialogWithEditor?
-        val receiverClassDescriptor: ClassDescriptor?
+        val receiverClassDescriptor: ClassifierDescriptor?
         val typeParameterNameMap: Map<TypeParameterDescriptor, String>
         val receiverTypeCandidate: TypeCandidate?
         val mandatoryTypeParametersAsCandidates: List<TypeCandidate>
@@ -247,7 +249,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 }
                 is CallablePlacement.WithReceiver -> {
                     receiverClassDescriptor =
-                            placement.receiverTypeCandidate.theType.getConstructor().getDeclarationDescriptor() as? ClassDescriptor
+                            placement.receiverTypeCandidate.theType.getConstructor().getDeclarationDescriptor()
                     val classDeclaration = receiverClassDescriptor?.let { DescriptorToSourceUtils.getSourceFromDescriptor(it) }
                     containingElement = if (!config.isExtension && classDeclaration != null) classDeclaration else config.currentFile
                 }
@@ -350,7 +352,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
             assert (receiverClassDescriptor is JavaClassDescriptor) { "Unexpected receiver class: $receiverClassDescriptor" }
 
-            val projections = receiverClassDescriptor.declaredTypeParameters
+            val projections = ((receiverClassDescriptor as JavaClassDescriptor).declaredTypeParameters)
                     .map { TypeProjectionImpl(it.getDefaultType()) }
             val memberScope = receiverClassDescriptor.getMemberScope(projections)
 

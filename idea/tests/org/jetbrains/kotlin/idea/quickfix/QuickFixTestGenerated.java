@@ -2119,6 +2119,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                         doTest(fileName);
                     }
 
+                    @TestMetadata("extensionWithTypeParameterAsReceiver.kt")
+                    public void testExtensionWithTypeParameterAsReceiver() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/typeArguments/extensionWithTypeParameterAsReceiver.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("memberWithTypeParameterAsReceiver.kt")
+                    public void testMemberWithTypeParameterAsReceiver() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/typeArguments/memberWithTypeParameterAsReceiver.kt");
+                        doTest(fileName);
+                    }
+
                     @TestMetadata("noReceiver.kt")
                     public void testNoReceiver() throws Exception {
                         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/typeArguments/noReceiver.kt");
@@ -3065,6 +3077,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("extensionWithTypeParameterAsReceiver.kt")
+                public void testExtensionWithTypeParameterAsReceiver() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/extensionWithTypeParameterAsReceiver.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("inBinaryOperation.kt")
                 public void testInBinaryOperation() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/inBinaryOperation.kt");
@@ -3110,6 +3128,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("memberVarDelegateRuntime.kt")
                 public void testMemberVarDelegateRuntime() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/memberVarDelegateRuntime.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("memberWithTypeParameterAsReceiver.kt")
+                public void testMemberWithTypeParameterAsReceiver() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/memberWithTypeParameterAsReceiver.kt");
                     doTest(fileName);
                 }
 
