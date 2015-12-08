@@ -55,6 +55,18 @@ public class SafeDeleteTestGenerated extends AbstractSafeDeleteTest {
             doClassTest(fileName);
         }
 
+        @TestMetadata("classWithExternalConstructructorUsage.kt")
+        public void testClassWithExternalConstructructorUsage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/safeDelete/deleteClass/kotlinClass/classWithExternalConstructructorUsage.kt");
+            doClassTest(fileName);
+        }
+
+        @TestMetadata("classWithInternalConstructructorUsage.kt")
+        public void testClassWithInternalConstructructorUsage() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/safeDelete/deleteClass/kotlinClass/classWithInternalConstructructorUsage.kt");
+            doClassTest(fileName);
+        }
+
         @TestMetadata("localClass1.kt")
         public void testLocalClass1() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/safeDelete/deleteClass/kotlinClass/localClass1.kt");
