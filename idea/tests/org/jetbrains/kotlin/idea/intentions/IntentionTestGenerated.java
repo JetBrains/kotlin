@@ -3756,6 +3756,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyInitializerToGetter/semicolon.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("topLevelDeclaration.kt")
+        public void testTopLevelDeclaration() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyInitializerToGetter/topLevelDeclaration.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/intentions/convertPropertyToFunction")
