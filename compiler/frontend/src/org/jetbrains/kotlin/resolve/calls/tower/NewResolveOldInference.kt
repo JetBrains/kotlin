@@ -66,7 +66,7 @@ class NewResolveOldInference(
         val explicitReceiver = context.call.explicitReceiver.check { it.exists() }
 
         val dynamicScope = dynamicCallableDescriptors.createDynamicDescriptorScope(context.call, context.scope.ownerDescriptor)
-        val scopeTower = ScopeTowerImpl(context, dynamicScope, explicitReceiver, context.call.createLookupLocation())
+        val scopeTower = ScopeTowerImpl(context, dynamicScope, context.call.createLookupLocation())
 
         val baseContext = Context(scopeTower, name, context, tracing)
 

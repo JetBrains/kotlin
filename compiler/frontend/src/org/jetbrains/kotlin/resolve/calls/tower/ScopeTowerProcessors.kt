@@ -51,7 +51,7 @@ internal abstract class AbstractSimpleScopeTowerProcessor<C>(
 internal class ExplicitReceiverScopeTowerProcessor<C>(
         context: TowerContext<C>,
         val explicitReceiver: ReceiverValue,
-        val collectCandidates: ScopeTowerLevel.(Name) -> Collection<CandidateWithBoundDispatchReceiver<*>>
+        val collectCandidates: ScopeTowerLevel.(name: Name, extensionReceiver: ReceiverValue?) -> Collection<CandidateWithBoundDispatchReceiver<*>>
 ): AbstractSimpleScopeTowerProcessor<C>(context) {
     override fun simpleProcess(data: TowerData): Collection<C> {
         return when (data) {
@@ -63,12 +63,12 @@ internal class ExplicitReceiverScopeTowerProcessor<C>(
 
     private fun resolveAsMember(): Collection<C> {
         val members = ReceiverScopeTowerLevel(context.scopeTower, explicitReceiver)
-                .collectCandidates(name).filter { !it.requiresExtensionReceiver }
+                .collectCandidates(name, null).filter { !it.requiresExtensionReceiver }
         return members.map { context.createCandidate(it, ExplicitReceiverKind.DISPATCH_RECEIVER, extensionReceiver = null) }
     }
 
     private fun resolveAsExtension(level: ScopeTowerLevel): Collection<C> {
-        val extensions = level.collectCandidates(name).filter { it.requiresExtensionReceiver }
+        val extensions = level.collectCandidates(name, explicitReceiver).filter { it.requiresExtensionReceiver }
         return extensions.map { context.createCandidate(it, ExplicitReceiverKind.EXTENSION_RECEIVER, extensionReceiver = explicitReceiver) }
     }
 }
@@ -76,12 +76,12 @@ internal class ExplicitReceiverScopeTowerProcessor<C>(
 private class QualifierScopeTowerProcessor<C>(
         context: TowerContext<C>,
         val qualifier: QualifierReceiver,
-        val collectCandidates: ScopeTowerLevel.(Name) -> Collection<CandidateWithBoundDispatchReceiver<*>>
+        val collectCandidates: ScopeTowerLevel.(name: Name, extensionReceiver: ReceiverValue?) -> Collection<CandidateWithBoundDispatchReceiver<*>>
 ): AbstractSimpleScopeTowerProcessor<C>(context) {
     override fun simpleProcess(data: TowerData): Collection<C> {
         if (data != TowerData.Empty) return emptyList()
 
-        val staticMembers = QualifierScopeTowerLevel(context.scopeTower, qualifier).collectCandidates(name)
+        val staticMembers = QualifierScopeTowerLevel(context.scopeTower, qualifier).collectCandidates(name, null)
                 .filter { !it.requiresExtensionReceiver }
                 .map { context.createCandidate(it, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, extensionReceiver = null) }
         return staticMembers
@@ -90,17 +90,17 @@ private class QualifierScopeTowerProcessor<C>(
 
 private class NoExplicitReceiverScopeTowerProcessor<C>(
         context: TowerContext<C>,
-        val collectCandidates: ScopeTowerLevel.(Name) -> Collection<CandidateWithBoundDispatchReceiver<*>>
+        val collectCandidates: ScopeTowerLevel.(name: Name, extensionReceiver: ReceiverValue?) -> Collection<CandidateWithBoundDispatchReceiver<*>>
 ) : AbstractSimpleScopeTowerProcessor<C>(context) {
     override fun simpleProcess(data: TowerData): Collection<C>
             = when(data) {
                 is TowerData.TowerLevel -> {
-                    data.level.collectCandidates(name).filter { !it.requiresExtensionReceiver }.map {
+                    data.level.collectCandidates(name, null).filter { !it.requiresExtensionReceiver }.map {
                         context.createCandidate(it, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, extensionReceiver = null)
                     }
                 }
                 is TowerData.BothTowerLevelAndImplicitReceiver -> {
-                    data.level.collectCandidates(name).filter { it.requiresExtensionReceiver }.map {
+                    data.level.collectCandidates(name, data.implicitReceiver).filter { it.requiresExtensionReceiver }.map {
                         context.createCandidate(it, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, extensionReceiver = data.implicitReceiver)
                     }
                 }
@@ -111,7 +111,7 @@ private class NoExplicitReceiverScopeTowerProcessor<C>(
 private fun <C> createSimpleProcessor(
         context: TowerContext<C>,
         explicitReceiver: Receiver?,
-        collectCandidates: ScopeTowerLevel.(Name) -> Collection<CandidateWithBoundDispatchReceiver<*>>
+        collectCandidates: ScopeTowerLevel.(name: Name, extensionReceiver: ReceiverValue?) -> Collection<CandidateWithBoundDispatchReceiver<*>>
 ) : ScopeTowerProcessor<C> {
     if (explicitReceiver is ReceiverValue) {
         return ExplicitReceiverScopeTowerProcessor(context, explicitReceiver, collectCandidates)

@@ -41,7 +41,7 @@ interface ScopeTower {
     val dataFlowInfo: DataFlowDecorator
 
     // The closest (the most local) levels goes first
-    val levels: Sequence<ScopeTowerLevel>
+    val levels: List<ScopeTowerLevel>
 }
 
 interface DataFlowDecorator {
@@ -54,9 +54,9 @@ interface DataFlowDecorator {
 }
 
 interface ScopeTowerLevel {
-    fun getVariables(name: Name): Collection<CandidateWithBoundDispatchReceiver<VariableDescriptor>>
+    fun getVariables(name: Name, extensionReceiver: ReceiverValue?): Collection<CandidateWithBoundDispatchReceiver<VariableDescriptor>>
 
-    fun getFunctions(name: Name): Collection<CandidateWithBoundDispatchReceiver<FunctionDescriptor>>
+    fun getFunctions(name: Name, extensionReceiver: ReceiverValue?): Collection<CandidateWithBoundDispatchReceiver<FunctionDescriptor>>
 }
 
 interface CandidateWithBoundDispatchReceiver<out D : CallableDescriptor> {

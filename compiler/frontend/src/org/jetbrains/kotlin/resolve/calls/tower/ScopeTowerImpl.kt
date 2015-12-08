@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
@@ -25,8 +24,6 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.resolve.scopes.receivers.ClassQualifier
-import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
@@ -45,7 +42,6 @@ internal class CandidateWithBoundDispatchReceiverImpl<D : CallableDescriptor>(
 internal class ScopeTowerImpl(
         resolutionContext: ResolutionContext<*>,
         override val dynamicScope: MemberScope,
-        private val explicitReceiver: Receiver?,
         override val location: LookupLocation
 ): ScopeTower {
     override val dataFlowInfo: DataFlowDecorator = DataFlowDecoratorImpl(resolutionContext)
@@ -54,62 +50,25 @@ internal class ScopeTowerImpl(
     override val implicitReceivers = resolutionContext.scope.getImplicitReceiversHierarchy().
             mapNotNull { it.value.check { !it.type.containsError() } }
 
-    override val levels: Sequence<ScopeTowerLevel> = createPrototypeLevels().asSequence().map { it.asTowerLevel(this) }
+    override val levels: List<ScopeTowerLevel> = createLevels()
 
-    // we shouldn't calculate this before we entrance to some importing scope
-    private val receiversForSyntheticExtensions: Collection<KotlinType> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        if (explicitReceiver != null) {
-            if (explicitReceiver is ReceiverValue) {
-                return@lazy dataFlowInfo.getAllPossibleTypes(explicitReceiver)
-            }
-
-            if (explicitReceiver is ClassQualifier) {
-                explicitReceiver.classValueReceiver?.let {
-                    return@lazy dataFlowInfo.getAllPossibleTypes(it)
-                }
-            }
-
-            // explicit receiver is package or class without companion object
-            emptyList()
-        }
-        else {
-            implicitReceivers.flatMap { dataFlowInfo.getAllPossibleTypes(it) }
-        }
-    }
-
-    private sealed class LevelFactory {
-        abstract fun asTowerLevel(resolveTower: ScopeTower): ScopeTowerLevel
-
-        class Scope(val lexicalScope: LexicalScope): LevelFactory() {
-            override fun asTowerLevel(resolveTower: ScopeTower) = ScopeBasedTowerLevel(resolveTower, lexicalScope)
-        }
-
-        class Receiver(val implicitReceiver: ReceiverParameterDescriptor): LevelFactory() {
-            override fun asTowerLevel(resolveTower: ScopeTower) = ReceiverScopeTowerLevel(resolveTower, implicitReceiver.value)
-        }
-
-        class ImportingScopeFactory(val importingScope: ImportingScope, val lazyReceiversForSyntheticExtensions: () -> Collection<KotlinType>): LevelFactory() {
-            override fun asTowerLevel(resolveTower: ScopeTower) = ImportingScopeBasedTowerLevel(resolveTower, importingScope, lazyReceiversForSyntheticExtensions())
-        }
-    }
-
-    private fun createPrototypeLevels(): List<LevelFactory> {
-        val result = ArrayList<LevelFactory>()
+    private fun createLevels(): List<ScopeTowerLevel> {
+        val result = ArrayList<ScopeTowerLevel>()
 
         // locals win
         lexicalScope.parentsWithSelf.
                 filterIsInstance<LexicalScope>().
                 filter { it.kind.withLocalDescriptors }.
-                mapTo(result) { LevelFactory.Scope(it) }
+                mapTo(result) { ScopeBasedTowerLevel(this, it) }
 
         lexicalScope.parentsWithSelf.forEach { scope ->
             if (scope is LexicalScope) {
-                if (!scope.kind.withLocalDescriptors) result.add(LevelFactory.Scope(scope))
+                if (!scope.kind.withLocalDescriptors) result.add(ScopeBasedTowerLevel(this, scope))
 
-                scope.implicitReceiver?.let { result.add(LevelFactory.Receiver(it)) }
+                scope.implicitReceiver?.let { result.add(ReceiverScopeTowerLevel(this, it.value)) }
             }
             else {
-                result.add(LevelFactory.ImportingScopeFactory(scope as ImportingScope, { receiversForSyntheticExtensions }))
+                result.add(ImportingScopeBasedTowerLevel(this, scope as ImportingScope))
             }
         }
 
