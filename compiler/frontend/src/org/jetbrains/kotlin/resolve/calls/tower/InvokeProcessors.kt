@@ -96,6 +96,7 @@ internal class InvokeTowerProcessor<C>(
     // todo filter by operator
     override fun createInvokeProcessor(variableCandidate: C): ScopeTowerProcessor<C> {
         val (variableReceiver, invokeContext) = functionContext.contextForInvoke(variableCandidate, useExplicitReceiver = false)
+                                                ?: return KnownResultProcessor(emptyList())
         return ExplicitReceiverScopeTowerProcessor(invokeContext, variableReceiver, ScopeTowerLevel::getFunctions)
     }
 }
@@ -110,6 +111,7 @@ internal class InvokeExtensionTowerProcessor<C>(
 
     override fun createInvokeProcessor(variableCandidate: C): ScopeTowerProcessor<C> {
         val (variableReceiver, invokeContext) = functionContext.contextForInvoke(variableCandidate, useExplicitReceiver = true)
+                                                ?: return KnownResultProcessor(emptyList())
         val invokeDescriptor = functionContext.scopeTower.getExtensionInvokeCandidateDescriptor(variableReceiver)
                                ?: return KnownResultProcessor(emptyList())
         return InvokeExtensionScopeTowerProcessor(invokeContext, invokeDescriptor, explicitReceiver)

@@ -325,6 +325,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("InvokeAndRecursiveResolve.kt")
+        public void testInvokeAndRecursiveResolve() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/InvokeAndRecursiveResolve.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("IsExpressions.kt")
         public void testIsExpressions() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/IsExpressions.kt");

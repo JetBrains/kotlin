@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategyForInvoke
 import org.jetbrains.kotlin.resolve.isAnnotatedAsHidden
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
+import org.jetbrains.kotlin.types.DeferredType
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -243,7 +244,7 @@ class NewResolveOldInference(
             return Context(scopeTower, name, basicCallResolutionContext, tracing)
         }
 
-        override fun contextForInvoke(variable: Candidate, useExplicitReceiver: Boolean): Pair<ReceiverValue, TowerContext<Candidate>> {
+        override fun contextForInvoke(variable: Candidate, useExplicitReceiver: Boolean): Pair<ReceiverValue, TowerContext<Candidate>>? {
             assert(variable.resolvedCall.status.possibleTransformToSuccess()) {
                 "Incorrect status: ${variable.resolvedCall.status} for variable call: ${variable.resolvedCall} " +
                 "and descriptor: ${variable.resolvedCall.candidateDescriptor}"
@@ -253,8 +254,13 @@ class NewResolveOldInference(
             assert(variable.resolvedCall.status.possibleTransformToSuccess() && calleeExpression != null && variableDescriptor is VariableDescriptor) {
                 "Unexpected varialbe candidate: $variable"
             }
+            val variableType = (variableDescriptor as VariableDescriptor).type
+
+            if (variableType is DeferredType && variableType.isComputing) {
+                return null // todo: create special check that there is no invoke on variable
+            }
             val variableReceiver = ExpressionReceiver.create(calleeExpression!!,
-                                                             (variableDescriptor as VariableDescriptor).type,
+                                                             variableType,
                                                              basicCallContext.trace.bindingContext)
             // used for smartCasts, see: DataFlowValueFactory.getIdForSimpleNameExpression
             tracing.bindReference(variable.resolvedCall.trace, variable.resolvedCall)
