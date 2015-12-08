@@ -39,6 +39,7 @@ import kotlin.CollectionsKt;
 import kotlin.StringsKt;
 import kotlin.jvm.functions.Function1;
 import org.apache.commons.lang.SystemUtils;
+import org.codehaus.plexus.util.FileUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLightQuickFixTestCase;
@@ -131,7 +132,10 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
 
     private static void applyAction(String contents, QuickFixTestCase quickFixTestCase, String testName, String testFullPath) throws Exception {
         Pair<String, Boolean> pair = quickFixTestCase.parseActionHintImpl(quickFixTestCase.getFile(), contents);
-        String text = pair.getFirst();
+
+        String fileName = StringsKt.substringAfterLast(testFullPath, "/", "");
+        String text = pair.getFirst().replace("${file}", fileName);
+
         boolean actionShouldBeAvailable = pair.getSecond().booleanValue();
 
         quickFixTestCase.beforeActionStarted(testName, contents);
