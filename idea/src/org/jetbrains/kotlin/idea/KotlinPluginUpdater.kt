@@ -120,7 +120,7 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
         catch(e: Exception) {
             LOG.info("Kotlin plugin update check failed", e)
             checkQueued = false
-            queueUpdateCheck()
+            ApplicationManager.getApplication().invokeLater { queueUpdateCheck() }
         }
     }
 
