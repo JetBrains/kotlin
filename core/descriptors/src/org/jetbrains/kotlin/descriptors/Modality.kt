@@ -35,3 +35,7 @@ enum class Modality private constructor(val isOverridable: Boolean) {
         }
     }
 }
+
+val CallableMemberDescriptor.isOverridable: Boolean
+    get() = modality != Modality.FINAL
+

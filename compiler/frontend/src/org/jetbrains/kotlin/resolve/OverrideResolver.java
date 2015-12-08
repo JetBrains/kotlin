@@ -884,7 +884,7 @@ public class OverrideResolver {
         for (CallableMemberDescriptor overridden : overriddenDescriptors) {
             if (overridden == null) continue;
 
-            if (!overridden.getModality().isOverridable()) {
+            if (!ModalityKt.isOverridable(overridden)) {
                 reportError.overridingFinalMember(memberDescriptor, overridden);
             }
 

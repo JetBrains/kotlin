@@ -115,7 +115,7 @@ public class JvmNameAnnotationChecker : DeclarationChecker {
 
         if (descriptor is CallableMemberDescriptor) {
             val callableMemberDescriptor = descriptor
-            if (DescriptorUtils.isOverride(callableMemberDescriptor) || callableMemberDescriptor.modality.isOverridable) {
+            if (DescriptorUtils.isOverride(callableMemberDescriptor) || callableMemberDescriptor.isOverridable) {
                 diagnosticHolder.report(ErrorsJvm.INAPPLICABLE_JVM_NAME.on(annotationEntry))
             }
         }

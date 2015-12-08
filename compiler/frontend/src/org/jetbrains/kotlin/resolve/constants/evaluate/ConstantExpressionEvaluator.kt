@@ -531,7 +531,7 @@ private class ConstantExpressionEvaluatorVisitor(
         if (resolvedCall != null) {
             val callableDescriptor = resolvedCall.resultingDescriptor
             if (callableDescriptor is VariableDescriptor) {
-                if (callableDescriptor is PropertyDescriptor && callableDescriptor.modality.isOverridable) return null
+                if (callableDescriptor is PropertyDescriptor && callableDescriptor.isOverridable) return null
 
                 val variableInitializer = callableDescriptor.compileTimeInitializer ?: return null
 

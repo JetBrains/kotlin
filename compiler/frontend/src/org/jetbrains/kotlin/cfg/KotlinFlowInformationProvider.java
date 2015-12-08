@@ -612,7 +612,7 @@ public class KotlinFlowInformationProvider {
                                         FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
                                         String functionName = functionDescriptor.getName().asString();
                                         if (isMain
-                                            || functionDescriptor.getModality().isOverridable()
+                                            || ModalityKt.isOverridable(functionDescriptor)
                                             || !functionDescriptor.getOverriddenDescriptors().isEmpty()
                                             || "getValue".equals(functionName) || "setValue".equals(functionName)
                                             || "propertyDelegated".equals(functionName)

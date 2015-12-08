@@ -84,7 +84,7 @@ class DelegationResolver<T : CallableMemberDescriptor> private constructor(
                     memberExtractor.getMembersByType(it)
                 } ?: emptyList<CallableMemberDescriptor>()
         return memberExtractor.getMembersByType(interfaceType).filter { descriptor ->
-            descriptor.modality.isOverridable && !classSupertypeMembers.any { isOverridableBy(it, descriptor)  }
+            descriptor.isOverridable && !classSupertypeMembers.any { isOverridableBy(it, descriptor)  }
         }
     }
 

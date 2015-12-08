@@ -151,7 +151,7 @@ public final class JsDescriptorUtils {
         return !isExtension(propertyDescriptor) &&
                isDefaultAccessor(propertyDescriptor.getGetter()) &&
                isDefaultAccessor(propertyDescriptor.getSetter()) &&
-               !propertyDescriptor.getModality().isOverridable();
+               !ModalityKt.isOverridable(propertyDescriptor);
     }
 
     public static boolean isBuiltin(@NotNull DeclarationDescriptor descriptor) {

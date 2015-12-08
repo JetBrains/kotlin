@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.isInsideJvmMultifileClassFile
@@ -58,7 +55,7 @@ class JvmFieldApplicabilityChecker : DeclarationChecker {
 
         val problem = when {
             descriptor !is PropertyDescriptor -> NOT_A_PROPERTY
-            descriptor.modality.isOverridable -> NOT_FINAL
+            descriptor.isOverridable -> NOT_FINAL
             Visibilities.isPrivate(descriptor.visibility) -> PRIVATE
             !descriptor.hasBackingField(bindingContext) -> NO_BACKING_FIELD
             descriptor.hasCustomAccessor() -> CUSTOM_ACCESSOR

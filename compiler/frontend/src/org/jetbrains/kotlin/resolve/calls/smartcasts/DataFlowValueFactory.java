@@ -447,10 +447,10 @@ public class DataFlowValueFactory {
         DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
         if (containingDeclaration instanceof ClassDescriptor) {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
-            if (classDescriptor.getModality().isOverridable() && propertyDescriptor.getModality().isOverridable()) return false;
+            if (classDescriptor.getModality().isOverridable() && ModalityKt.isOverridable(propertyDescriptor)) return false;
         }
         else {
-            if (propertyDescriptor.getModality().isOverridable()) {
+            if (ModalityKt.isOverridable(propertyDescriptor)) {
                 throw new IllegalStateException("Property outside a class must not be overridable: " + propertyDescriptor.getName());
             }
         }
