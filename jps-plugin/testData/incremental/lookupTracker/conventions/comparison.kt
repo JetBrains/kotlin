@@ -11,8 +11,8 @@ package foo.bar
     a /*c:foo.bar.A(compareTo)*/>= b
     a /*c:foo.bar.A(compareTo)*/<= b
 
-    a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo) p:java.lang(compareTo) p:kotlin(compareTo) p:kotlin.annotation(compareTo) p:kotlin.jvm(compareTo) p:kotlin.io(compareTo)*/> c
-    a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo) p:java.lang(compareTo) p:kotlin(compareTo) p:kotlin.annotation(compareTo) p:kotlin.jvm(compareTo) p:kotlin.io(compareTo)*/< c
-    a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo) p:java.lang(compareTo) p:kotlin(compareTo) p:kotlin.annotation(compareTo) p:kotlin.jvm(compareTo) p:kotlin.io(compareTo)*/>= c
-    a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo) p:java.lang(compareTo) p:kotlin(compareTo) p:kotlin.annotation(compareTo) p:kotlin.jvm(compareTo) p:kotlin.io(compareTo)*/<= c
+    a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo)*/> c
+    a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo)*/< c
+    a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo)*/>= c
+    a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo)*/<= c
 }

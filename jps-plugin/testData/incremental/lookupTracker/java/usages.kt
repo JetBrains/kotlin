@@ -4,7 +4,7 @@ import bar./*p:bar*/C
 import baz.*
 
 /*p:foo*/fun usages() {
-    val c = /*p:foo p:baz p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/C()
+    val c = C()
 
     c./*c:bar.C*/field
     c./*c:bar.C*/field = 2
