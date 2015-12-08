@@ -4,6 +4,6 @@ fun main(args: Array<String>) {
 /*
 1.0
 1.0 + 1
-Math.pow(1.0 + 1, Math.abs(-42.0))
-print(Math.pow(1.0 + 1, Math.abs(-42.0)))
+Math.pow(...)
+print(...)
 */

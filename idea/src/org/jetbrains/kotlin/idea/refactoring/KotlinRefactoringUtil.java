@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
 import org.jetbrains.kotlin.idea.refactoring.introduce.IntroduceUtilKt;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
-import org.jetbrains.kotlin.idea.util.string.StringUtilKt;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
@@ -378,7 +377,10 @@ public class KotlinRefactoringUtil {
             if (element instanceof KtExpression && !(element instanceof KtStatementExpression)) {
                 boolean addExpression = true;
 
-                if (KtPsiUtil.isLabelIdentifierExpression(element)) {
+                if (element instanceof KtParenthesizedExpression) {
+                    addExpression = false;
+                }
+                else if (KtPsiUtil.isLabelIdentifierExpression(element)) {
                     addExpression = false;
                 }
                 else if (element.getParent() instanceof KtQualifiedExpression) {
@@ -481,8 +483,12 @@ public class KotlinRefactoringUtil {
 
     }
 
-    public static String getExpressionShortText(@NotNull KtElement element) { //todo: write appropriate implementation
-        return StringUtilKt.collapseSpaces(StringUtil.shortenTextWithEllipsis(element.getText(), 53, 0));
+    public static String getExpressionShortText(@NotNull KtElement element) {
+        String text = ElementRenderingUtilsKt.renderTrimmed(element);
+        int firstNewLinePos = text.indexOf('\n');
+        String trimmedText = text.substring(0, firstNewLinePos != -1 ? firstNewLinePos : Math.min(100, text.length()));
+        if (trimmedText.length() != text.length()) trimmedText += " ...";
+        return trimmedText;
     }
 
     @Nullable
