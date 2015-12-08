@@ -77,6 +77,10 @@ public class DeferredType extends DelegatingType implements LazyType {
         this.lazyValue = lazyValue;
     }
 
+    public boolean isComputing() {
+        return lazyValue.isComputing();
+    }
+
     public boolean isComputed() {
         return lazyValue.isComputed();
     }

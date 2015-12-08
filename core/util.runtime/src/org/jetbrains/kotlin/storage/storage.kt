@@ -28,10 +28,12 @@ public interface MemoizedFunctionToNullable<P, R : Any> : Function1<P, R?> {
 
 public interface NotNullLazyValue<T : Any> : Function0<T> {
     public fun isComputed(): Boolean
+    public fun isComputing(): Boolean
 }
 
 public interface NullableLazyValue<T : Any> : Function0<T?> {
     public fun isComputed(): Boolean
+    public fun isComputing(): Boolean
 }
 
 public operator fun <T : Any> NotNullLazyValue<T>.getValue(_this: Any?, p: KProperty<*>): T = invoke()

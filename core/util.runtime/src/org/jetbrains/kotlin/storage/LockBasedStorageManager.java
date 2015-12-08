@@ -287,6 +287,11 @@ public class LockBasedStorageManager implements StorageManager {
         }
 
         @Override
+        public boolean isComputing() {
+            return value == NotValue.COMPUTING;
+        }
+
+        @Override
         public T invoke() {
             Object _value = value;
             if (!(_value instanceof NotValue)) return WrappedValues.unescapeThrowable(_value);
