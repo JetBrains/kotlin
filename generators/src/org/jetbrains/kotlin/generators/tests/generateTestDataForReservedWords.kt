@@ -320,7 +320,8 @@ class TestDataBuilder() {
                             error("The file '$fileName' unexpectedly exists when create test data from scratch.")
                         }
                     } else if (!isCreatingFromScratch) {
-                        error("Unexpected new testdata file: '$fileName'. It may cause for example because of bug in stdlib.")
+                        error("Unexpected new testdata file: '$fileName'. It may cause for example because of bug in stdlib.\n" +
+                              "If a new keyword has been added, delete SHOULD_BE_ESCAPED.txt and SHOULD_NOT_BE_ESCAPED.txt")
                     }
 
                     GeneratorsFileUtil.writeFileIfContentChanged(testDataFile, out, false)

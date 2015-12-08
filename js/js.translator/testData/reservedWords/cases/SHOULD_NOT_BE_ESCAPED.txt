@@ -30,4 +30,3 @@ typeof
 undefined
 void
 with
-yield
