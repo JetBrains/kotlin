@@ -133,6 +133,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             doTestCompiledJava(fileName);
         }
 
+        @TestMetadata("InnerClassTypeMultipleGeneric.java")
+        public void testInnerClassTypeMultipleGeneric() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/InnerClassTypeMultipleGeneric.java");
+            doTestCompiledJava(fileName);
+        }
+
         @TestMetadata("InnerClassesInGeneric.java")
         public void testInnerClassesInGeneric() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/InnerClassesInGeneric.java");

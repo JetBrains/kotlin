@@ -3199,6 +3199,12 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
             doTest(fileName);
         }
 
+        @TestMetadata("InnerClassTypeMultipleGeneric.java")
+        public void testInnerClassTypeMultipleGeneric() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/InnerClassTypeMultipleGeneric.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("InnerClassesInGeneric.java")
         public void testInnerClassesInGeneric() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/InnerClassesInGeneric.java");

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.load.java.structure.impl;
 
 import com.intellij.psi.*;
-import com.intellij.psi.util.PsiUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.load.java.structure.*;
@@ -113,8 +112,8 @@ public class JavaClassifierTypeImpl extends JavaTypeImpl<PsiClassType> implement
 
         // parameters including ones from outer class
         Iterable<PsiTypeParameter> parameters = classifier instanceof JavaClassImpl
-                     ? getReversedTypeParameters((JavaClassImpl) classifier)
-                     : Collections.<PsiTypeParameter>emptyList();
+                                                ? getTypeParameters(((JavaClassImpl) classifier).getPsi())
+                                                : Collections.<PsiTypeParameter>emptyList();
 
         JavaTypeSubstitutor substitutor = getSubstitutor();
 
@@ -126,16 +125,32 @@ public class JavaClassifierTypeImpl extends JavaTypeImpl<PsiClassType> implement
         return result;
     }
 
-    private static Collection<PsiTypeParameter> getReversedTypeParameters(@NotNull JavaClassImpl classifier) {
-        Iterable<PsiTypeParameter> parameters = PsiUtil.typeParametersIterable(classifier.getPsi());
-        List<PsiTypeParameter> result = new ArrayList<PsiTypeParameter>();
+    // Copy-pasted from PsiUtil.typeParametersIterable
+    // The only change is using `Collections.addAll(result, typeParameters)` instead of reversing type parameters of `currentOwner`
+    // Result differs in cases like:
+    // class Outer<H1> {
+    //   class Inner<H2, H3> {}
+    // }
+    //
+    // PsiUtil.typeParametersIterable returns H3, H2, H1
+    // But we would like to have H2, H3, H1 as such order is consistent with our type representation
+    @NotNull
+    public static List<PsiTypeParameter> getTypeParameters(@NotNull PsiClass owner) {
+        List<PsiTypeParameter> result = null;
 
-        for (PsiTypeParameter parameter : parameters) {
-            result.add(parameter);
+        PsiTypeParameterListOwner currentOwner = owner;
+        while (currentOwner != null) {
+            PsiTypeParameter[] typeParameters = currentOwner.getTypeParameters();
+            if (typeParameters.length > 0) {
+                if (result == null) result = new ArrayList<PsiTypeParameter>(typeParameters.length);
+                Collections.addAll(result, typeParameters);
+            }
+
+            if (currentOwner.hasModifierProperty(PsiModifier.STATIC)) break;
+            currentOwner = currentOwner.getContainingClass();
         }
 
-        Collections.reverse(result);
-
+        if (result == null) return Collections.emptyList();
         return result;
     }
 }
