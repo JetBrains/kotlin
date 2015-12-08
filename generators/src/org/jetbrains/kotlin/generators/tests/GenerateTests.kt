@@ -127,7 +127,7 @@ import org.jetbrains.kotlin.resolve.calls.AbstractResolvedCallsTest
 import org.jetbrains.kotlin.resolve.calls.AbstractResolvedConstructorDelegationCallsTests
 import org.jetbrains.kotlin.resolve.constants.evaluate.AbstractCompileTimeConstantEvaluatorTest
 import org.jetbrains.kotlin.resolve.constraintSystem.AbstractConstraintSystemTest
-import org.jetbrains.kotlin.safeDelete.AbstractSafeDeleteTest
+import org.jetbrains.kotlin.idea.refactoring.safeDelete.AbstractSafeDeleteTest
 import org.jetbrains.kotlin.serialization.AbstractLocalClassProtoTest
 import org.jetbrains.kotlin.shortenRefs.AbstractShortenRefsTest
 import org.jetbrains.kotlin.types.AbstractTypeBindingTest
@@ -521,19 +521,19 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractSafeDeleteTest>() {
-            model("safeDelete/deleteClass/kotlinClass", testMethod = "doClassTest")
-            model("safeDelete/deleteClass/kotlinClassWithJava", testMethod = "doClassTestWithJava")
-            model("safeDelete/deleteObject/kotlinObject", testMethod = "doObjectTest")
-            model("safeDelete/deleteFunction/kotlinFunction", testMethod = "doFunctionTest")
-            model("safeDelete/deleteFunction/kotlinFunctionWithJava", testMethod = "doFunctionTestWithJava")
-            model("safeDelete/deleteFunction/javaFunctionWithKotlin", testMethod = "doJavaMethodTest")
-            model("safeDelete/deleteProperty/kotlinProperty", testMethod = "doPropertyTest")
-            model("safeDelete/deleteProperty/kotlinPropertyWithJava", testMethod = "doPropertyTestWithJava")
-            model("safeDelete/deleteProperty/javaPropertyWithKotlin", testMethod = "doJavaPropertyTest")
-            model("safeDelete/deleteTypeParameter/kotlinTypeParameter", testMethod = "doTypeParameterTest")
-            model("safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava", testMethod = "doTypeParameterTestWithJava")
-            model("safeDelete/deleteValueParameter/kotlinValueParameter", testMethod = "doValueParameterTest")
-            model("safeDelete/deleteValueParameter/kotlinValueParameterWithJava", testMethod = "doValueParameterTestWithJava")
+            model("refactoring/safeDelete/deleteClass/kotlinClass", testMethod = "doClassTest")
+            model("refactoring/safeDelete/deleteClass/kotlinClassWithJava", testMethod = "doClassTestWithJava")
+            model("refactoring/safeDelete/deleteObject/kotlinObject", testMethod = "doObjectTest")
+            model("refactoring/safeDelete/deleteFunction/kotlinFunction", testMethod = "doFunctionTest")
+            model("refactoring/safeDelete/deleteFunction/kotlinFunctionWithJava", testMethod = "doFunctionTestWithJava")
+            model("refactoring/safeDelete/deleteFunction/javaFunctionWithKotlin", testMethod = "doJavaMethodTest")
+            model("refactoring/safeDelete/deleteProperty/kotlinProperty", testMethod = "doPropertyTest")
+            model("refactoring/safeDelete/deleteProperty/kotlinPropertyWithJava", testMethod = "doPropertyTestWithJava")
+            model("refactoring/safeDelete/deleteProperty/javaPropertyWithKotlin", testMethod = "doJavaPropertyTest")
+            model("refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameter", testMethod = "doTypeParameterTest")
+            model("refactoring/safeDelete/deleteTypeParameter/kotlinTypeParameterWithJava", testMethod = "doTypeParameterTestWithJava")
+            model("refactoring/safeDelete/deleteValueParameter/kotlinValueParameter", testMethod = "doValueParameterTest")
+            model("refactoring/safeDelete/deleteValueParameter/kotlinValueParameterWithJava", testMethod = "doValueParameterTestWithJava")
         }
 
         testClass<AbstractReferenceResolveTest>() {
