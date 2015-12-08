@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.jps.incremental.CacheVersion.Action
 import org.jetbrains.kotlin.load.java.JvmAbi
 import java.io.File
 
-private val NORMAL_VERSION = 7
+private val NORMAL_VERSION = 8
 private val EXPERIMENTAL_VERSION = 2
 private val DATA_CONTAINER_VERSION = 1
 
