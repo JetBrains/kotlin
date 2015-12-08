@@ -41,7 +41,7 @@ public interface DataFlowInfo {
      * Returns collected nullability for the given value, NOT taking its predictability into account.
      */
     @NotNull
-    Nullability getNullability(@NotNull DataFlowValue key);
+    Nullability getCollectedNullability(@NotNull DataFlowValue key);
 
     /**
      * Returns collected nullability for the given value if it's predictable.
@@ -57,7 +57,7 @@ public interface DataFlowInfo {
      * are NOT included. So it's quite possible to get an empty set here.
      */
     @NotNull
-    Set<KotlinType> getPossibleTypes(@NotNull DataFlowValue key);
+    Set<KotlinType> getCollectedTypes(@NotNull DataFlowValue key);
 
     /**
      * Returns possible types for the given value if it's predictable.

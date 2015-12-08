@@ -313,7 +313,7 @@ private fun suggestParameterType(
                receiverToExtract is ImplicitReceiver -> {
                    val typeByDataFlowInfo = if (useSmartCastsIfPossible) {
                        val dataFlowInfo = bindingContext.getDataFlowInfo(resolvedCall!!.call.callElement)
-                       val possibleTypes = dataFlowInfo.getPossibleTypes(DataFlowValueFactory.createDataFlowValueForStableReceiver(receiverToExtract))
+                       val possibleTypes = dataFlowInfo.getCollectedTypes(DataFlowValueFactory.createDataFlowValueForStableReceiver(receiverToExtract))
                        if (possibleTypes.isNotEmpty()) CommonSupertypes.commonSupertype(possibleTypes) else null
                    } else null
                    typeByDataFlowInfo ?: receiverToExtract.type

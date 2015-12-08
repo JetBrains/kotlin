@@ -128,7 +128,7 @@ fun KtExpression.guessTypes(
     val theType1 = context.getType(this)
     if (theType1 != null) {
         val dataFlowInfo = context.getDataFlowInfo(this)
-        val possibleTypes = dataFlowInfo.getPossibleTypes(DataFlowValueFactory.createDataFlowValue(this, theType1, context, module))
+        val possibleTypes = dataFlowInfo.getCollectedTypes(DataFlowValueFactory.createDataFlowValue(this, theType1, context, module))
         return if (possibleTypes.isNotEmpty()) possibleTypes.toTypedArray() else arrayOf(theType1)
     }
 

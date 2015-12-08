@@ -194,7 +194,7 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
         val dataFlowValue = DataFlowValueFactory.createDataFlowValue(deparenthesizedArgument, type, context)
         if (!dataFlowValue.isPredictable) return type
 
-        val possibleTypes = context.dataFlowInfo.getPossibleTypes(dataFlowValue)
+        val possibleTypes = context.dataFlowInfo.getCollectedTypes(dataFlowValue)
         if (possibleTypes.isEmpty()) return type
 
         return TypeIntersector.intersectTypes(KotlinTypeChecker.DEFAULT, possibleTypes + type)

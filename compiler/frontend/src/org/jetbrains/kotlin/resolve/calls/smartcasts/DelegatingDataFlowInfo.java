@@ -109,7 +109,7 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
 
     @Override
     @NotNull
-    public Nullability getNullability(@NotNull DataFlowValue key) {
+    public Nullability getCollectedNullability(@NotNull DataFlowValue key) {
         return getNullability(key, false);
     }
 
@@ -124,7 +124,7 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
         if (predictableOnly && !key.isPredictable()) return key.getImmanentNullability();
         Nullability nullability = nullabilityInfo.get(key);
         return nullability != null ? nullability :
-               parent != null ? parent.getNullability(key) :
+               parent != null ? parent.getCollectedNullability(key) :
                key.getImmanentNullability();
     }
 
@@ -134,19 +134,19 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
             @NotNull Nullability nullability
     ) {
         map.put(value, nullability);
-        return nullability != getNullability(value);
+        return nullability != getCollectedNullability(value);
     }
 
     @Override
     @NotNull
-    public Set<KotlinType> getPossibleTypes(@NotNull DataFlowValue key) {
-        return getPossibleTypes(key, true);
+    public Set<KotlinType> getCollectedTypes(@NotNull DataFlowValue key) {
+        return getCollectedTypes(key, true);
     }
 
     @NotNull
-    private Set<KotlinType> getPossibleTypes(@NotNull DataFlowValue key, boolean enrichWithNotNull) {
+    private Set<KotlinType> getCollectedTypes(@NotNull DataFlowValue key, boolean enrichWithNotNull) {
         Set<KotlinType> types = collectTypesFromMeAndParents(key);
-        if (!enrichWithNotNull || getNullability(key).canBeNull()) {
+        if (!enrichWithNotNull || getCollectedNullability(key).canBeNull()) {
             return types;
         }
 
@@ -173,7 +173,7 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
         if (!key.isPredictable()) {
             return new LinkedHashSet<KotlinType>();
         }
-        return getPossibleTypes(key, enrichWithNotNull);
+        return getCollectedTypes(key, enrichWithNotNull);
     }
 
     /**
@@ -271,7 +271,7 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
                 }
             }
             else {
-                types.addAll(current.getPossibleTypes(value));
+                types.addAll(current.getCollectedTypes(value));
                 break;
             }
         }
@@ -296,7 +296,7 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
     @NotNull
     public DataFlowInfo establishSubtyping(@NotNull DataFlowValue value, @NotNull KotlinType type) {
         if (value.getType().equals(type)) return this;
-        if (getPossibleTypes(value).contains(type)) return this;
+        if (getCollectedTypes(value).contains(type)) return this;
         if (!FlexibleTypesKt.isFlexible(value.getType()) && TypeUtilsKt.isSubtypeOf(value.getType(), type)) return this;
         ImmutableMap<DataFlowValue, Nullability> newNullabilityInfo =
                 type.isMarkedNullable() ? EMPTY_NULLABILITY_INFO : ImmutableMap.of(value, NOT_NULL);
@@ -318,7 +318,7 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
         for (Map.Entry<DataFlowValue, Nullability> entry : other.getCompleteNullabilityInfo().entrySet()) {
             DataFlowValue key = entry.getKey();
             Nullability otherFlags = entry.getValue();
-            Nullability thisFlags = getNullability(key);
+            Nullability thisFlags = getCollectedNullability(key);
             Nullability flags = thisFlags.and(otherFlags);
             if (flags != thisFlags) {
                 nullabilityMapBuilder.put(key, flags);
@@ -352,7 +352,7 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
         for (Map.Entry<DataFlowValue, Nullability> entry : other.getCompleteNullabilityInfo().entrySet()) {
             DataFlowValue key = entry.getKey();
             Nullability otherFlags = entry.getValue();
-            Nullability thisFlags = getNullability(key);
+            Nullability thisFlags = getCollectedNullability(key);
             nullabilityMapBuilder.put(key, thisFlags.or(otherFlags));
         }
 

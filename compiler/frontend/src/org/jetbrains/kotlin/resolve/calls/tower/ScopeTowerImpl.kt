@@ -125,7 +125,7 @@ private class DataFlowDecoratorImpl(private val resolutionContext: ResolutionCon
     private fun getSmartCastInfo(receiver: ReceiverValue): SmartCastInfo
             = cache.getOrPut(receiver) {
         val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiver, resolutionContext)
-        SmartCastInfo(dataFlowValue, dataFlowInfo.getPossibleTypes(dataFlowValue))
+        SmartCastInfo(dataFlowValue, dataFlowInfo.getCollectedTypes(dataFlowValue))
     }
 
     override fun getDataFlowValue(receiver: ReceiverValue): DataFlowValue = getSmartCastInfo(receiver).dataFlowValue
