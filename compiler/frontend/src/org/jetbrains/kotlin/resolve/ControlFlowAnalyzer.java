@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.cfg.JetFlowInformationProvider;
+import org.jetbrains.kotlin.cfg.KotlinFlowInformationProvider;
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
@@ -68,7 +68,7 @@ public class ControlFlowAnalyzer {
     }
 
     private void checkSecondaryConstructor(@NotNull KtSecondaryConstructor constructor) {
-        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider(constructor, trace);
+        KotlinFlowInformationProvider flowInformationProvider = new KotlinFlowInformationProvider(constructor, trace);
         flowInformationProvider.checkDeclaration();
         flowInformationProvider.checkFunction(builtIns.getUnitType());
     }
@@ -76,7 +76,7 @@ public class ControlFlowAnalyzer {
     private void checkDeclarationContainer(@NotNull BodiesResolveContext c, KtDeclarationContainer declarationContainer) {
         // A pseudocode of class/object initialization corresponds to a class/object
         // or initialization of properties corresponds to a package declared in a file
-        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider((KtElement) declarationContainer, trace);
+        KotlinFlowInformationProvider flowInformationProvider = new KotlinFlowInformationProvider((KtElement) declarationContainer, trace);
         if (c.getTopDownAnalysisMode().isLocalDeclarations()) {
             flowInformationProvider.checkForLocalClassOrObjectMode();
             return;
@@ -97,7 +97,7 @@ public class ControlFlowAnalyzer {
 
     private void checkFunction(@NotNull BodiesResolveContext c, @NotNull KtDeclarationWithBody function, @Nullable KotlinType expectedReturnType) {
         if (!function.hasBody()) return;
-        JetFlowInformationProvider flowInformationProvider = new JetFlowInformationProvider(function, trace);
+        KotlinFlowInformationProvider flowInformationProvider = new KotlinFlowInformationProvider(function, trace);
         if (c.getTopDownAnalysisMode().isLocalDeclarations()) {
             flowInformationProvider.checkForLocalClassOrObjectMode();
             return;

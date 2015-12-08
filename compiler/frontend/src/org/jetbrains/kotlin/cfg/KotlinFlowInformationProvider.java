@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtil;
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtilsKt;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.JetElementInstruction;
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.KtElementInstruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.*;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction;
@@ -67,21 +67,20 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.cfg.PseudocodeVariablesData.VariableUseState.*;
 import static org.jetbrains.kotlin.cfg.TailRecursionKind.*;
-import static org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder.FORWARD;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.UNREACHABLE_CODE;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.kotlin.types.TypeUtils.noExpectedType;
 
-public class JetFlowInformationProvider {
+public class KotlinFlowInformationProvider {
 
     private final KtElement subroutine;
     private final Pseudocode pseudocode;
     private final BindingTrace trace;
     private PseudocodeVariablesData pseudocodeVariablesData;
 
-    private JetFlowInformationProvider(
+    private KotlinFlowInformationProvider(
             @NotNull KtElement declaration,
             @NotNull BindingTrace trace,
             @NotNull Pseudocode pseudocode
@@ -91,11 +90,11 @@ public class JetFlowInformationProvider {
         this.pseudocode = pseudocode;
     }
 
-    public JetFlowInformationProvider(
+    public KotlinFlowInformationProvider(
             @NotNull KtElement declaration,
             @NotNull BindingTrace trace
     ) {
-        this(declaration, trace, new JetControlFlowProcessor(trace).generatePseudocode(declaration));
+        this(declaration, trace, new KotlinControlFlowProcessor(trace).generatePseudocode(declaration));
     }
 
     public PseudocodeVariablesData getPseudocodeVariablesData() {
@@ -190,8 +189,8 @@ public class JetFlowInformationProvider {
 
                 @Override
                 public void visitInstruction(@NotNull Instruction instruction) {
-                    if (instruction instanceof JetElementInstruction) {
-                        JetElementInstruction elementInstruction = (JetElementInstruction) instruction;
+                    if (instruction instanceof KtElementInstruction) {
+                        KtElementInstruction elementInstruction = (KtElementInstruction) instruction;
                         returnedExpressions.add(elementInstruction.getElement());
                     }
                     else {
@@ -212,8 +211,8 @@ public class JetFlowInformationProvider {
                         (CallableDescriptor) trace.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, localDeclaration);
                 KotlinType expectedType = functionDescriptor != null ? functionDescriptor.getReturnType() : null;
 
-                JetFlowInformationProvider providerForLocalDeclaration =
-                        new JetFlowInformationProvider(localDeclaration, trace, localDeclarationInstruction.getBody());
+                KotlinFlowInformationProvider providerForLocalDeclaration =
+                        new KotlinFlowInformationProvider(localDeclaration, trace, localDeclarationInstruction.getBody());
 
                 providerForLocalDeclaration.checkFunction(expectedType);
             }
@@ -270,12 +269,12 @@ public class JetFlowInformationProvider {
         Set<KtElement> reachableElements = Sets.newHashSet();
         Set<KtElement> unreachableElements = Sets.newHashSet();
         for (Instruction instruction : pseudocode.getInstructionsIncludingDeadCode()) {
-            if (!(instruction instanceof JetElementInstruction)
+            if (!(instruction instanceof KtElementInstruction)
                     || instruction instanceof LoadUnitValueInstruction
                     || instruction instanceof MergeInstruction
                     || (instruction instanceof MagicInstruction && ((MagicInstruction) instruction).getSynthetic())) continue;
 
-            KtElement element = ((JetElementInstruction) instruction).getElement();
+            KtElement element = ((KtElementInstruction) instruction).getElement();
 
             if (instruction instanceof JumpInstruction) {
                 boolean isJumpElement = element instanceof KtBreakExpression
@@ -312,7 +311,7 @@ public class JetFlowInformationProvider {
         final Map<Instruction, DiagnosticFactory<?>> reportedDiagnosticMap = Maps.newHashMap();
 
         PseudocodeTraverserKt.traverse(
-                pseudocode, FORWARD, initializers,
+                pseudocode, TraversalOrder.FORWARD, initializers,
                 new InstructionDataAnalyzeStrategy<Map<VariableDescriptor, VariableControlFlowState>>() {
                     @Override
                     public void execute(
@@ -650,12 +649,12 @@ public class JetFlowInformationProvider {
     public void markUnusedExpressions() {
         final Map<Instruction, DiagnosticFactory<?>> reportedDiagnosticMap = Maps.newHashMap();
         PseudocodeTraverserKt.traverse(
-                pseudocode, FORWARD, new JetFlowInformationProvider.FunctionVoid1<Instruction>() {
+                pseudocode, TraversalOrder.FORWARD, new KotlinFlowInformationProvider.FunctionVoid1<Instruction>() {
                     @Override
                     public void execute(@NotNull Instruction instruction) {
-                        if (!(instruction instanceof JetElementInstruction)) return;
+                        if (!(instruction instanceof KtElementInstruction)) return;
 
-                        KtElement element = ((JetElementInstruction)instruction).getElement();
+                        KtElement element = ((KtElementInstruction)instruction).getElement();
                         if (!(element instanceof KtExpression)) return;
 
                         if (BindingContextUtilsKt.isUsedAsStatement((KtExpression) element, trace.getBindingContext())
@@ -678,7 +677,7 @@ public class JetFlowInformationProvider {
 
     public void markStatements() {
         PseudocodeTraverserKt.traverse(
-                pseudocode, FORWARD, new JetFlowInformationProvider.FunctionVoid1<Instruction>() {
+                pseudocode, TraversalOrder.FORWARD, new KotlinFlowInformationProvider.FunctionVoid1<Instruction>() {
                     @Override
                     public void execute(@NotNull Instruction instruction) {
                         PseudoValue value = instruction instanceof InstructionWithValue
@@ -696,7 +695,7 @@ public class JetFlowInformationProvider {
 
     public void markIfWithoutElse() {
         PseudocodeTraverserKt.traverse(
-                pseudocode, FORWARD, new JetFlowInformationProvider.FunctionVoid1<Instruction>() {
+                pseudocode, TraversalOrder.FORWARD, new KotlinFlowInformationProvider.FunctionVoid1<Instruction>() {
                     @Override
                     public void execute(@NotNull Instruction instruction) {
                         PseudoValue value = instruction instanceof InstructionWithValue
@@ -718,7 +717,7 @@ public class JetFlowInformationProvider {
 
     public void markWhenWithoutElse() {
         PseudocodeTraverserKt.traverse(
-                pseudocode, FORWARD, new JetFlowInformationProvider.FunctionVoid1<Instruction>() {
+                pseudocode, TraversalOrder.FORWARD, new KotlinFlowInformationProvider.FunctionVoid1<Instruction>() {
                     @Override
                     public void execute(@NotNull Instruction instruction) {
                         PseudoValue value = instruction instanceof InstructionWithValue
@@ -767,7 +766,7 @@ public class JetFlowInformationProvider {
         final Map<KtElement, KindAndCall> calls = new HashMap<KtElement, KindAndCall>();
         PseudocodeTraverserKt.traverse(
                 pseudocode,
-                FORWARD,
+                TraversalOrder.FORWARD,
                 new FunctionVoid1<Instruction>() {
                     public void execute(@NotNull Instruction instruction) {
                         if (!(instruction instanceof CallInstruction)) return;
@@ -797,7 +796,7 @@ public class JetFlowInformationProvider {
                         boolean isTail = PseudocodeTraverserKt.traverseFollowingInstructions(
                                 callInstruction,
                                 new HashSet<Instruction>(),
-                                FORWARD,
+                                TraversalOrder.FORWARD,
                                 new TailRecursionDetector(subroutine, callInstruction)
                         );
 

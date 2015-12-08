@@ -30,10 +30,10 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import java.util.List;
 import java.util.Map;
 
-public abstract class JetControlFlowBuilderAdapter implements JetControlFlowBuilder {
+public abstract class KotlinControlFlowBuilderAdapter implements KotlinControlFlowBuilder {
 
     @NotNull
-    protected abstract JetControlFlowBuilder getDelegateBuilder();
+    protected abstract KotlinControlFlowBuilder getDelegateBuilder();
 
     @Override
     public void loadUnit(@NotNull KtExpression expression) {

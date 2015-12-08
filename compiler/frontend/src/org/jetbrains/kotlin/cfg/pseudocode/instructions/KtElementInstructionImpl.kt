@@ -16,8 +16,13 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtElement
 
-public interface JetElementInstruction : Instruction {
-    public val element: KtElement
+public abstract class KtElementInstructionImpl(
+        override val element: KtElement,
+        lexicalScope: LexicalScope
+) : InstructionImpl(lexicalScope), KtElementInstruction {
+    protected fun render(element: PsiElement): String =
+            element.getText()?.replace("\\s+".toRegex(), " ") ?: ""
 }

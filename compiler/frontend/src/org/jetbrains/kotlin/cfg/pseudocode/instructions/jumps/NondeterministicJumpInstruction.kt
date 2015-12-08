@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.cfg.Label
 import com.google.common.collect.Maps
 import com.google.common.collect.Lists
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.JetElementInstructionImpl
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.KtElementInstructionImpl
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
@@ -34,7 +34,7 @@ public class NondeterministicJumpInstruction(
         targetLabels: List<Label>,
         lexicalScope: LexicalScope,
         public val inputValue: PseudoValue?
-) : JetElementInstructionImpl(element, lexicalScope), JumpInstruction {
+) : KtElementInstructionImpl(element, lexicalScope), JumpInstruction {
     private var _next: Instruction? = null
     private val _resolvedTargets: MutableMap<Label, Instruction> = Maps.newLinkedHashMap()
 

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.cfg.Label
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.JetElementInstructionImpl
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.KtElementInstructionImpl
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
@@ -28,7 +28,7 @@ public abstract class AbstractJumpInstruction(
         element: KtElement,
         public val targetLabel: Label,
         lexicalScope: LexicalScope
-) : JetElementInstructionImpl(element, lexicalScope), JumpInstruction {
+) : KtElementInstructionImpl(element, lexicalScope), JumpInstruction {
     public var resolvedTarget: Instruction? = null
         set(value: Instruction?) {
             field = outgoingEdgeTo(value)

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionWithNext
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.JetElementInstruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.KtElementInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction
@@ -592,7 +592,7 @@ private fun ExtractionData.checkDeclarationsMovingOutOfScope(
 private fun ExtractionData.getLocalInstructions(pseudocode: Pseudocode): List<Instruction> {
     val instructions = ArrayList<Instruction>()
     pseudocode.traverse(TraversalOrder.FORWARD) {
-        if (it is JetElementInstruction && it.element.isInsideOf(physicalElements)) {
+        if (it is KtElementInstruction && it.element.isInsideOf(physicalElements)) {
             instructions.add(it)
         }
     }

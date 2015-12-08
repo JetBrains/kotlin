@@ -29,7 +29,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.cfg.pseudocode.JetControlFlowInstructionsGenerator;
+import org.jetbrains.kotlin.cfg.pseudocode.KotlinControlFlowInstructionsGenerator;
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue;
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode;
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeImpl;
@@ -61,17 +61,17 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.cfg.JetControlFlowBuilder.PredefinedOperation.*;
+import static org.jetbrains.kotlin.cfg.KotlinControlFlowBuilder.PredefinedOperation.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 
-public class JetControlFlowProcessor {
+public class KotlinControlFlowProcessor {
 
-    private final JetControlFlowBuilder builder;
+    private final KotlinControlFlowBuilder builder;
     private final BindingTrace trace;
 
-    public JetControlFlowProcessor(BindingTrace trace) {
-        this.builder = new JetControlFlowInstructionsGenerator();
+    public KotlinControlFlowProcessor(BindingTrace trace) {
+        this.builder = new KotlinControlFlowInstructionsGenerator();
         this.trace = trace;
     }
 
@@ -127,7 +127,7 @@ public class JetControlFlowProcessor {
     }
 
     private class CFPVisitor extends KtVisitorVoid {
-        private final JetControlFlowBuilder builder;
+        private final KotlinControlFlowBuilder builder;
 
         private final KtVisitorVoid conditionVisitor = new KtVisitorVoid() {
 
@@ -174,7 +174,7 @@ public class JetControlFlowProcessor {
             }
         };
 
-        private CFPVisitor(@NotNull JetControlFlowBuilder builder) {
+        private CFPVisitor(@NotNull KotlinControlFlowBuilder builder) {
             this.builder = builder;
         }
 
@@ -411,7 +411,7 @@ public class JetControlFlowProcessor {
                 generateInstructions(right);
             }
             builder.bindLabel(resultLabel);
-            JetControlFlowBuilder.PredefinedOperation operation = operationType == ANDAND ? AND : OR;
+            KotlinControlFlowBuilder.PredefinedOperation operation = operationType == ANDAND ? AND : OR;
             builder.predefinedOperation(expression, operation, elementsToValues(Arrays.asList(left, right)));
         }
 

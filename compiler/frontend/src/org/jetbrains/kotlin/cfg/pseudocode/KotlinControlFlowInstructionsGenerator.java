@@ -35,32 +35,32 @@ import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.*;
 
-public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAdapter {
-    private JetControlFlowBuilder builder = null;
+public class KotlinControlFlowInstructionsGenerator extends KotlinControlFlowBuilderAdapter {
+    private KotlinControlFlowBuilder builder = null;
 
     private final Stack<LoopInfo> loopInfo = new Stack<LoopInfo>();
     private final Stack<LexicalScope> lexicalScopes = new Stack<LexicalScope>();
     private final Map<KtElement, BreakableBlockInfo> elementToBlockInfo = new HashMap<KtElement, BreakableBlockInfo>();
     private int labelCount = 0;
 
-    private final Stack<JetControlFlowInstructionsGeneratorWorker> builders = new Stack<JetControlFlowInstructionsGeneratorWorker>();
+    private final Stack<KotlinControlFlowInstructionsGeneratorWorker> builders = new Stack<KotlinControlFlowInstructionsGeneratorWorker>();
 
     private final Stack<BlockInfo> allBlocks = new Stack<BlockInfo>();
 
     @NotNull
     @Override
-    protected JetControlFlowBuilder getDelegateBuilder() {
+    protected KotlinControlFlowBuilder getDelegateBuilder() {
         return builder;
     }
 
     private void pushBuilder(KtElement scopingElement, KtElement subroutine) {
-        JetControlFlowInstructionsGeneratorWorker worker = new JetControlFlowInstructionsGeneratorWorker(scopingElement, subroutine);
+        KotlinControlFlowInstructionsGeneratorWorker worker = new KotlinControlFlowInstructionsGeneratorWorker(scopingElement, subroutine);
         builders.push(worker);
         builder = worker;
     }
 
-    private JetControlFlowInstructionsGeneratorWorker popBuilder(@NotNull KtElement element) {
-        JetControlFlowInstructionsGeneratorWorker worker = builders.pop();
+    private KotlinControlFlowInstructionsGeneratorWorker popBuilder(@NotNull KtElement element) {
+        KotlinControlFlowInstructionsGeneratorWorker worker = builders.pop();
         if (!builders.isEmpty()) {
             builder = builders.peek();
         }
@@ -88,15 +88,15 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
     public Pseudocode exitSubroutine(@NotNull KtElement subroutine) {
         super.exitSubroutine(subroutine);
         builder.exitLexicalScope(subroutine);
-        JetControlFlowInstructionsGeneratorWorker worker = popBuilder(subroutine);
+        KotlinControlFlowInstructionsGeneratorWorker worker = popBuilder(subroutine);
         if (!builders.empty()) {
-            JetControlFlowInstructionsGeneratorWorker builder = builders.peek();
+            KotlinControlFlowInstructionsGeneratorWorker builder = builders.peek();
             builder.declareFunction(subroutine, worker.getPseudocode());
         }
         return worker.getPseudocode();
     }
 
-    private class JetControlFlowInstructionsGeneratorWorker implements JetControlFlowBuilder {
+    private class KotlinControlFlowInstructionsGeneratorWorker implements KotlinControlFlowBuilder {
 
         private final PseudocodeImpl pseudocode;
         private final Label error;
@@ -115,7 +115,7 @@ public class JetControlFlowInstructionsGenerator extends JetControlFlowBuilderAd
             }
         };
 
-        private JetControlFlowInstructionsGeneratorWorker(@NotNull KtElement scopingElement, @NotNull KtElement returnSubroutine) {
+        private KotlinControlFlowInstructionsGeneratorWorker(@NotNull KtElement scopingElement, @NotNull KtElement returnSubroutine) {
             this.pseudocode = new PseudocodeImpl(scopingElement);
             this.error = pseudocode.createLabel("error", null);
             this.sink = pseudocode.createLabel("sink", null);
