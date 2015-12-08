@@ -724,6 +724,18 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTestWithInfos(fileName);
         }
 
+        @TestMetadata("SmartCastOnIf.kt")
+        public void testSmartCastOnIf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/SmartCastOnIf.kt");
+            doTestWithInfos(fileName);
+        }
+
+        @TestMetadata("SmartCastOnWhen.kt")
+        public void testSmartCastOnWhen() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/SmartCastOnWhen.kt");
+            doTestWithInfos(fileName);
+        }
+
         @TestMetadata("SmartCasts.kt")
         public void testSmartCasts() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/SmartCasts.kt");

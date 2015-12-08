@@ -7275,6 +7275,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/smartCasts/nullSmartCast.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("whenSmartCast.kt")
+        public void testWhenSmartCast() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/smartCasts/whenSmartCast.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/specialBuiltins")

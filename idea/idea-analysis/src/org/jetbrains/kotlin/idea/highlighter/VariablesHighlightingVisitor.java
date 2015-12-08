@@ -84,8 +84,14 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
 
         KotlinType smartCast = bindingContext.get(SMARTCAST, expression);
         if (smartCast != null) {
-            holder.createInfoAnnotation(expression, "Smart cast to " +
-                                                    DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(smartCast))
+            PsiElement target = expression;
+            if (expression instanceof KtIfExpression) {
+                target = ((KtIfExpression) expression).getIfKeyword();
+            }
+            else if (expression instanceof KtWhenExpression) {
+                target = ((KtWhenExpression) expression).getWhenKeyword();
+            }
+            holder.createInfoAnnotation(target, "Smart cast to " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(smartCast))
                   .setTextAttributes(KotlinHighlightingColors.SMART_CAST_VALUE);
         }
 

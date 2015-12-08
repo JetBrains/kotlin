@@ -15225,6 +15225,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("smartCastOnIf.kt")
+            public void testSmartCastOnIf() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/smartCastOnIf.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("smartCastOnWhen.kt")
+            public void testSmartCastOnWhen() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/smartCastOnWhen.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("thisWithLabel.kt")
             public void testThisWithLabel() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/thisWithLabel.kt");
