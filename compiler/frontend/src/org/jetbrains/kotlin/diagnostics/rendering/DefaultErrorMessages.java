@@ -296,7 +296,7 @@ public class DefaultErrorMessages {
         MAP.put(NO_GET_METHOD, "No get method providing array access");
         MAP.put(NO_SET_METHOD, "No set method providing array access");
 
-        MAP.put(DEPRECATED_UNARY_PLUS_MINUS, "Deprecated convention for ''{0}''. Rename to ''{1}''", NAME, STRING);
+        MAP.put(DEPRECATED_UNARY_PLUS_MINUS, "Unary operation must be named ''{1}'', not ''{0}''", NAME, STRING);
 
         MAP.put(INC_DEC_SHOULD_NOT_RETURN_UNIT, "Functions inc(), dec() shouldn't return Unit to be used by operators ++, --");
         MAP.put(ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT, "Function ''{0}'' should return Unit to be used by corresponding operator ''{1}''",
@@ -349,7 +349,7 @@ public class DefaultErrorMessages {
         MAP.put(ITERATOR_AMBIGUITY, "Method ''iterator()'' is ambiguous for this expression: {0}", AMBIGUOUS_CALLS);
 
         MAP.put(DELEGATE_SPECIAL_FUNCTION_MISSING, "Missing ''{0}'' method on delegate of type ''{1}''", STRING, RENDER_TYPE);
-        MAP.put(DELEGATE_RESOLVED_TO_DEPRECATED_CONVENTION, "''{0}'' method convention on type ''{1}'' is deprecated. Rename to ''{2}''", NAME, RENDER_TYPE, STRING);
+        MAP.put(DELEGATE_RESOLVED_TO_DEPRECATED_CONVENTION, "''{0}'' method convention on type ''{1}'' is no longer supported. Rename to ''{2}''", NAME, RENDER_TYPE, STRING);
         MAP.put(DELEGATE_SPECIAL_FUNCTION_AMBIGUITY, "Overload resolution ambiguity on method ''{0}'': {1}",  STRING, AMBIGUOUS_CALLS);
         MAP.put(DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, "Property delegate must have a ''{0}'' method. None of the following functions is suitable: {1}",
                 STRING, AMBIGUOUS_CALLS);
@@ -492,7 +492,7 @@ public class DefaultErrorMessages {
 
         MAP.put(VARIANCE_ON_TYPE_PARAMETER_OF_FUNCTION_OR_PROPERTY, "Variance annotations are only allowed for type parameters of classes and interfaces");
 
-        MAP.put(DEPRECATED_TYPE_PARAMETER_SYNTAX, "Placing function type parameters after the function name is deprecated");
+        MAP.put(DEPRECATED_TYPE_PARAMETER_SYNTAX, "Type parameters must be placed before the name of the function");
 
         MAP.put(MISPLACED_TYPE_PARAMETER_CONSTRAINTS, "If a type parameter has multiple constraints, they all need to be placed in the 'where' clause");
 

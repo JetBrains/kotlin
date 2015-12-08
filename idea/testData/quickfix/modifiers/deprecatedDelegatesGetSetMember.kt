@@ -1,5 +1,5 @@
 // "Rename to 'setValue'" "true"
-// ERROR: 'get' method convention on type 'CustomDelegate' is deprecated. Rename to 'getValue'
+// ERROR: 'get' method convention on type 'CustomDelegate' is no longer supported. Rename to 'getValue'
 
 import kotlin.reflect.KProperty
 
