@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.descriptors
 
 // For sealed classes, isOverridable is false but isOverridableByMembers is true
-enum class Modality private constructor(val isOverridable: Boolean) {
+enum class Modality {
     // THE ORDER OF ENTRIES MATTERS HERE
-    FINAL(false),
+    FINAL,
     // NB: class can be sealed but not function or property
-    SEALED(true),
-    OPEN(true),
-    ABSTRACT(true);
+    SEALED,
+    OPEN,
+    ABSTRACT;
 
     companion object {
 
@@ -39,3 +39,5 @@ enum class Modality private constructor(val isOverridable: Boolean) {
 val CallableMemberDescriptor.isOverridable: Boolean
     get() = modality != Modality.FINAL
 
+val ClassDescriptor.isFinal: Boolean
+    get() = modality == Modality.FINAL

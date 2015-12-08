@@ -676,7 +676,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
         @Override
         public boolean isFinal() {
-            return !getModality().isOverridable();
+            return getModality() == Modality.FINAL;
         }
 
         @Override
