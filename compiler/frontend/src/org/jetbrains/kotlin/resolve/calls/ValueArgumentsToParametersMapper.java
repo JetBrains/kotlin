@@ -284,7 +284,7 @@ public class ValueArgumentsToParametersMapper {
 
                 for (int i = 1; i < functionLiteralArguments.size(); i++) {
                     KtExpression argument = functionLiteralArguments.get(i).getArgumentExpression();
-                    report(MANY_FUNCTION_LITERAL_ARGUMENTS.on(argument));
+                    report(MANY_LAMBDA_EXPRESSION_ARGUMENTS.on(argument));
                     setStatus(WEAK_ERROR);
                 }
             }

@@ -662,7 +662,7 @@ public class KotlinFlowInformationProvider {
                             VariableContext ctxt = new VariableContext(instruction, reportedDiagnosticMap);
                             report(
                                     element instanceof KtFunctionLiteralExpression
-                                        ? Errors.UNUSED_FUNCTION_LITERAL.on((KtFunctionLiteralExpression) element)
+                                        ? Errors.UNUSED_LAMBDA_EXPRESSION.on((KtFunctionLiteralExpression) element)
                                         : Errors.UNUSED_EXPRESSION.on(element),
                                     ctxt
                             );

@@ -1,4 +1,4 @@
-// "Change the signature of function literal" "true"
+// "Change the signature of lambda expression" "true"
 
 fun foo(f: Int.(Int, Int) -> Int) {
 

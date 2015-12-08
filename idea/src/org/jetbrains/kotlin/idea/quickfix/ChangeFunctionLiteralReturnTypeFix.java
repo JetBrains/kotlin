@@ -116,8 +116,8 @@ public class ChangeFunctionLiteralReturnTypeFix extends KotlinQuickFixAction<KtF
         if (appropriateQuickFix != null) {
             return appropriateQuickFix.getText();
         }
-        return KotlinBundle
-                .message("change.function.literal.return.type", IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type));
+        return String.format("Change lambda expression return type to '%s'",
+                             IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type));
     }
 
     @NotNull

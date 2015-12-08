@@ -60,12 +60,12 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
             }
 
             if (function.getName() != null) {
-                context.trace.report(FUNCTION_EXPRESSION_WITH_NAME.on(function.getNameIdentifier()))
+                context.trace.report(ANONYMOUS_FUNCTION_WITH_NAME.on(function.getNameIdentifier()))
             }
 
             for (parameter in function.getValueParameters()) {
                 if (parameter.hasDefaultValue()) {
-                    context.trace.report(FUNCTION_EXPRESSION_PARAMETER_WITH_DEFAULT_VALUE.on(parameter))
+                    context.trace.report(ANONYMOUS_FUNCTION_PARAMETER_WITH_DEFAULT_VALUE.on(parameter))
                 }
                 if (parameter.isVarArg()) {
                     context.trace.report(USELESS_VARARG_ON_PARAMETER.on(parameter))

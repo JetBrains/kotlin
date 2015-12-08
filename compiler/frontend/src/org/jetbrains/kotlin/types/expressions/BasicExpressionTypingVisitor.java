@@ -926,7 +926,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         KotlinTypeInfo baseTypeInfo = BindingContextUtils.getRecordedTypeInfo(baseExpression, context.trace.getBindingContext());
 
         if (ArgumentTypeResolver.isFunctionLiteralArgument(baseExpression, context)) {
-            context.trace.report(NOT_NULL_ASSERTION_ON_FUNCTION_LITERAL.on(operationSign));
+            context.trace.report(NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION.on(operationSign));
             return baseTypeInfo;
         }
         assert baseTypeInfo != null : "Base expression was not processed: " + expression;
@@ -1261,7 +1261,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 Lists.newArrayList(true, false), contextWithExpectedType, null);
         KotlinTypeInfo leftTypeInfo = BindingContextUtils.getRecordedTypeInfo(left, context.trace.getBindingContext());
         if (ArgumentTypeResolver.isFunctionLiteralArgument(left, context)) {
-            context.trace.report(USELESS_ELVIS_ON_FUNCTION_LITERAL.on(expression.getOperationReference()));
+            context.trace.report(USELESS_ELVIS_ON_LAMBDA_EXPRESSION.on(expression.getOperationReference()));
             if (leftTypeInfo == null) return TypeInfoFactoryKt.noTypeInfo(context);
         }
         assert leftTypeInfo != null : "Left expression was not processed: " + expression;

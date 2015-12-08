@@ -312,7 +312,7 @@ public class QuickFixRegistrar : QuickFixContributor {
         MISSING_CONSTRUCTOR_KEYWORD.registerFactory(MissingConstructorKeywordFix,
                                                MissingConstructorKeywordFix.createWholeProjectFixFactory())
 
-        FUNCTION_EXPRESSION_WITH_NAME.registerFactory(RemoveNameFromFunctionExpressionFix)
+        ANONYMOUS_FUNCTION_WITH_NAME.registerFactory(RemoveNameFromFunctionExpressionFix)
 
         UNRESOLVED_REFERENCE.registerFactory(ReplaceObsoleteLabelSyntaxFix,
                                         ReplaceObsoleteLabelSyntaxFix.createWholeProjectFixFactory())

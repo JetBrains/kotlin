@@ -61,9 +61,9 @@ public enum class KotlinTarget(val description: String, val isDefault: Boolean =
     TOP_LEVEL_PROPERTY("top level property", false),
 
     INITIALIZER("initializer", false),
-    MULTI_DECLARATION("multi declaration", false),
-    FUNCTION_LITERAL("function literal", false),
-    FUNCTION_EXPRESSION("function expression", false),
+    DESTRUCTURING_DECLARATION("destructuring declaration", false),
+    LAMBDA_EXPRESSION("lambda expression", false),
+    ANONYMOUS_FUNCTION("anonymous function", false),
     OBJECT_LITERAL("object literal", false)
     ;
 

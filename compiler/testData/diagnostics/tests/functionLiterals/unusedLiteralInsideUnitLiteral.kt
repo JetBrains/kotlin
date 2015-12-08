@@ -1,6 +1,6 @@
 fun main(args: Array<String>) {
     "".run {
-        <!UNUSED_FUNCTION_LITERAL!>{}<!>
+        <!UNUSED_LAMBDA_EXPRESSION!>{}<!>
     }
 }
 

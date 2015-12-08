@@ -138,7 +138,7 @@ public interface Errors {
     DiagnosticFactory1<KtAnnotationEntry, String> WRONG_ANNOTATION_TARGET = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<KtAnnotationEntry, String, String> WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory0<KtAnnotationEntry> REPEATED_ANNOTATION = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<KtAnnotationEntry> NON_SOURCE_ANNOTATION_ON_INLINED_FUNCTION_LITERAL = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtAnnotationEntry> NON_SOURCE_ANNOTATION_ON_INLINED_LAMBDA_EXPRESSION = DiagnosticFactory0.create(ERROR);
 
     // Annotations
 
@@ -395,13 +395,14 @@ public interface Errors {
             DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE);
 
     DiagnosticFactory0<KtFunction> FUNCTION_DECLARATION_WITH_NO_NAME = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
-    DiagnosticFactory0<PsiElement>  FUNCTION_EXPRESSION_WITH_NAME     = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> ANONYMOUS_FUNCTION_WITH_NAME = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<KtParameter> VALUE_PARAMETER_WITH_NO_TYPE_ANNOTATION = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<KtNamedFunction> NO_TAIL_CALLS_FOUND = DiagnosticFactory0.create(WARNING, DECLARATION_SIGNATURE);
 
-    DiagnosticFactory0<KtParameter> FUNCTION_EXPRESSION_PARAMETER_WITH_DEFAULT_VALUE = DiagnosticFactory0.create(ERROR, PARAMETER_DEFAULT_VALUE);
+    DiagnosticFactory0<KtParameter>
+            ANONYMOUS_FUNCTION_PARAMETER_WITH_DEFAULT_VALUE = DiagnosticFactory0.create(ERROR, PARAMETER_DEFAULT_VALUE);
 
     DiagnosticFactory0<KtParameter> USELESS_VARARG_ON_PARAMETER = DiagnosticFactory0.create(WARNING);
 
@@ -456,7 +457,7 @@ public interface Errors {
     DiagnosticFactory0<LeafPsiElement> NON_VARARG_SPREAD = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<LeafPsiElement> SPREAD_OF_NULLABLE = DiagnosticFactory0.create(ERROR);
 
-    DiagnosticFactory0<KtExpression> MANY_FUNCTION_LITERAL_ARGUMENTS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtExpression> MANY_LAMBDA_EXPRESSION_ARGUMENTS = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory1<PsiElement, CallableDescriptor> TOO_MANY_ARGUMENTS = DiagnosticFactory1.create(ERROR);
 
@@ -611,7 +612,7 @@ public interface Errors {
     DiagnosticFactory2<KtBinaryExpression, KtElement, DeclarationDescriptor> UNUSED_VALUE = DiagnosticFactory2.create(WARNING, PositioningStrategies.UNUSED_VALUE);
     DiagnosticFactory1<KtElement, KtElement> UNUSED_CHANGED_VALUE = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory0<KtElement> UNUSED_EXPRESSION = DiagnosticFactory0.create(WARNING);
-    DiagnosticFactory0<KtFunctionLiteralExpression> UNUSED_FUNCTION_LITERAL = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<KtFunctionLiteralExpression> UNUSED_LAMBDA_EXPRESSION = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory1<KtExpression, DeclarationDescriptor> VAL_REASSIGNMENT = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<KtExpression, DeclarationDescriptor> SETTER_PROJECTED_OUT = DiagnosticFactory1.create(ERROR);
@@ -633,10 +634,10 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, KotlinType> UNNECESSARY_SAFE_CALL = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory0<PsiElement> UNEXPECTED_SAFE_CALL = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<PsiElement, KotlinType> UNNECESSARY_NOT_NULL_ASSERTION = DiagnosticFactory1.create(WARNING);
-    DiagnosticFactory0<PsiElement> NOT_NULL_ASSERTION_ON_FUNCTION_LITERAL = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> NOT_NULL_ASSERTION_ON_LAMBDA_EXPRESSION = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory1<KtBinaryExpression, KotlinType> USELESS_ELVIS = DiagnosticFactory1.create(WARNING, PositioningStrategies.USELESS_ELVIS);
-    DiagnosticFactory0<PsiElement> USELESS_ELVIS_ON_FUNCTION_LITERAL = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> USELESS_ELVIS_ON_LAMBDA_EXPRESSION = DiagnosticFactory0.create(WARNING);
 
     // Compile-time values
 
@@ -758,7 +759,7 @@ public interface Errors {
             INVISIBLE_MEMBER, INVISIBLE_MEMBER_FROM_INLINE, INVISIBLE_REFERENCE, INVISIBLE_SETTER);
     ImmutableSet<? extends DiagnosticFactory<?>> UNUSED_ELEMENT_DIAGNOSTICS = ImmutableSet.of(
             UNUSED_VARIABLE, UNUSED_PARAMETER, ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE, VARIABLE_WITH_REDUNDANT_INITIALIZER,
-            UNUSED_FUNCTION_LITERAL, USELESS_CAST, UNUSED_VALUE, USELESS_ELVIS);
+            UNUSED_LAMBDA_EXPRESSION, USELESS_CAST, UNUSED_VALUE, USELESS_ELVIS);
     ImmutableSet<? extends DiagnosticFactory<?>> TYPE_INFERENCE_ERRORS = ImmutableSet.of(
             TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER, TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS,
             TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR,

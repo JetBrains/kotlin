@@ -114,7 +114,7 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
 
             val functionLiteralExpression = annotatedExpression.baseExpression as? KtFunctionLiteralExpression ?: return
             if (InlineUtil.isInlinedArgument(functionLiteralExpression.functionLiteral, trace.bindingContext, false)) {
-                trace.report(Errors.NON_SOURCE_ANNOTATION_ON_INLINED_FUNCTION_LITERAL.on(entry))
+                trace.report(Errors.NON_SOURCE_ANNOTATION_ON_INLINED_LAMBDA_EXPRESSION.on(entry))
             }
         }
 
@@ -203,7 +203,7 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
                 is KtTypeProjection ->
                     if (annotated.projectionKind == KtProjectionKind.STAR) TargetLists.T_STAR_PROJECTION else TargetLists.T_TYPE_PROJECTION
                 is KtAnonymousInitializer -> TargetLists.T_INITIALIZER
-                is KtMultiDeclaration -> TargetLists.T_MULTI_DECLARATION
+                is KtMultiDeclaration -> TargetLists.T_DESTRUCTURING_DECLARATION
                 is KtFunctionLiteralExpression -> TargetLists.T_FUNCTION_LITERAL
                 is KtObjectLiteralExpression -> TargetLists.T_OBJECT_LITERAL
                 is KtExpression -> TargetLists.T_EXPRESSION
@@ -218,7 +218,7 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
                 onlyWithUseSiteTarget(PROPERTY, FIELD, PROPERTY_GETTER, PROPERTY_SETTER, VALUE_PARAMETER)
             }
 
-            val T_MULTI_DECLARATION = targetList(MULTI_DECLARATION)
+            val T_DESTRUCTURING_DECLARATION = targetList(DESTRUCTURING_DECLARATION)
 
             val T_MEMBER_PROPERTY = targetList(MEMBER_PROPERTY, PROPERTY) {
                 extraTargets(FIELD)
@@ -260,9 +260,9 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
 
             val T_EXPRESSION = targetList(EXPRESSION)
 
-            val T_FUNCTION_LITERAL = targetList(FUNCTION_LITERAL, FUNCTION, EXPRESSION)
+            val T_FUNCTION_LITERAL = targetList(LAMBDA_EXPRESSION, FUNCTION, EXPRESSION)
 
-            val T_FUNCTION_EXPRESSION = targetList(FUNCTION_EXPRESSION, FUNCTION, EXPRESSION)
+            val T_FUNCTION_EXPRESSION = targetList(ANONYMOUS_FUNCTION, FUNCTION, EXPRESSION)
 
             val T_OBJECT_LITERAL = targetList(OBJECT_LITERAL, CLASS, EXPRESSION)
 
