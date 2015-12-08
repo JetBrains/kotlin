@@ -404,9 +404,9 @@ public class ResolveElementCache(
         bodyResolver.resolveDelegationSpecifierList(DataFlowInfo.EMPTY,
                                                     classOrObject,
                                                     descriptor,
-                                                    descriptor.getUnsubstitutedPrimaryConstructor(),
-                                                    descriptor.getScopeForClassHeaderResolution(),
-                                                    descriptor.getScopeForMemberDeclarationResolution())
+                                                    descriptor.unsubstitutedPrimaryConstructor,
+                                                    descriptor.scopeForConstructorHeaderResolution,
+                                                    descriptor.scopeForMemberDeclarationResolution)
 
         return trace
     }

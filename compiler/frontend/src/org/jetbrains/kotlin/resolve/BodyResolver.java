@@ -239,7 +239,7 @@ public class BodyResolver {
 
             resolveDelegationSpecifierList(c.getOuterDataFlowInfo(), classOrObject, descriptor,
                                            descriptor.getUnsubstitutedPrimaryConstructor(),
-                                           descriptor.getScopeForClassHeaderResolution(),
+                                           descriptor.getScopeForConstructorHeaderResolution(),
                                            descriptor.getScopeForMemberDeclarationResolution());
         }
     }
@@ -249,13 +249,13 @@ public class BodyResolver {
             @NotNull KtClassOrObject jetClass,
             @NotNull final ClassDescriptor descriptor,
             @Nullable final ConstructorDescriptor primaryConstructor,
-            @NotNull LexicalScope scopeForSupertypeResolution,
+            @NotNull LexicalScope scopeForConstructorResolution,
             @NotNull final LexicalScope scopeForMemberResolution
     ) {
         final LexicalScope scopeForConstructor =
                 primaryConstructor == null
                 ? null
-                : FunctionDescriptorUtil.getFunctionInnerScope(scopeForSupertypeResolution, primaryConstructor, trace);
+                : FunctionDescriptorUtil.getFunctionInnerScope(scopeForConstructorResolution, primaryConstructor, trace);
         final ExpressionTypingServices typeInferrer = expressionTypingServices; // TODO : flow
 
         final Map<KtTypeReference, KotlinType> supertypes = Maps.newLinkedHashMap();
@@ -556,7 +556,7 @@ public class BodyResolver {
             if (unsubstitutedPrimaryConstructor != null) {
                 ForceResolveUtil.forceResolveAllContents(unsubstitutedPrimaryConstructor.getAnnotations());
 
-                LexicalScope parameterScope = getPrimaryConstructorParametersScope(classDescriptor.getScopeForClassHeaderResolution(),
+                LexicalScope parameterScope = getPrimaryConstructorParametersScope(classDescriptor.getScopeForConstructorHeaderResolution(),
                                                                                    unsubstitutedPrimaryConstructor);
                 valueParameterResolver.resolveValueParameters(klass.getPrimaryConstructorParameters(),
                                                               unsubstitutedPrimaryConstructor.getValueParameters(),

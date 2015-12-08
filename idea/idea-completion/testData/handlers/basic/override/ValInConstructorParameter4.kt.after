@@ -4,7 +4,7 @@ interface I {
     val p: CCCC.Nested
 }
 
-class CCCC(override val p: CCCC.Nested<caret>val x: Int) : I {
+class CCCC(override val p: Nested<caret>val x: Int) : I {
     interface Nested
 }
 

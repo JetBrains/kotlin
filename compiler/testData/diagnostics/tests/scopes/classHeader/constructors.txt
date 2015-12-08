@@ -1,0 +1,56 @@
+package
+
+public final class A {
+    public constructor A(/*0*/ n: A.Nested = ..., /*1*/ n2: A.Nested = ..., /*2*/ inn: A.Inner = ..., /*3*/ inn2: A.Inner = ..., /*4*/ i: A.Interface = ..., /*5*/ c: kotlin.Int = ..., /*6*/ cc: kotlin.Int = ..., /*7*/ cn: kotlin.Int = ..., /*8*/ ci: kotlin.Int = ..., /*9*/ t1: kotlin.Int = ..., /*10*/ t2: kotlin.Int = ...)
+    public constructor A(/*0*/ dummy: kotlin.Int, /*1*/ n: A.Nested = ..., /*2*/ n2: A.Nested = ..., /*3*/ inn: A.Inner = ..., /*4*/ inn2: A.Inner = ..., /*5*/ i: A.Interface = ..., /*6*/ c: kotlin.Int = ..., /*7*/ cc: kotlin.Int = ..., /*8*/ cn: kotlin.Int = ..., /*9*/ ci: kotlin.Int = ..., /*10*/ t1: kotlin.Int = ..., /*11*/ t2: kotlin.Int = ...)
+    public final val a: kotlin.Int = 1
+    public final fun b(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion {
+        private constructor Companion()
+        public const final val CONST: kotlin.Int = 1
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final fun foo(): A.Nested
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final inner class Inner {
+        public constructor Inner()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface Interface {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public companion object Companion {
+            private constructor Companion()
+            public const final val CONST: kotlin.Int = 3
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    public final class Nested {
+        public constructor Nested()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public companion object Companion {
+            private constructor Companion()
+            public const final val CONST: kotlin.Int = 2
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+}

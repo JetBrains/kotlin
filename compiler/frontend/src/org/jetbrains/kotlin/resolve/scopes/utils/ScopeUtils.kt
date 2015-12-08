@@ -245,3 +245,32 @@ fun chainImportingScopes(scopes: List<ImportingScope>, tail: ImportingScope? = n
                 scope.withParent(current)
             }
 }
+
+class ThrowingLexicalScope : LexicalScope {
+    override val parent: HierarchicalScope
+        get() = throw IllegalStateException()
+
+    override val ownerDescriptor: DeclarationDescriptor
+        get() = throw IllegalStateException()
+    override val isOwnerDescriptorAccessibleByLabel: Boolean
+        get() = throw IllegalStateException()
+    override val implicitReceiver: ReceiverParameterDescriptor?
+        get() = throw IllegalStateException()
+    override val kind: LexicalScopeKind
+        get() = LexicalScopeKind.THROWING
+
+    override fun printStructure(p: Printer) =
+            throw IllegalStateException()
+
+    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? =
+            throw IllegalStateException()
+
+    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> =
+            throw IllegalStateException()
+
+    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> =
+            throw IllegalStateException()
+
+    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> =
+            throw IllegalStateException()
+}

@@ -13905,6 +13905,69 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/scopes/classHeader")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class ClassHeader extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInClassHeader() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/scopes/classHeader"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("annotationOnClass.kt")
+                public void testAnnotationOnClass() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/classHeader/annotationOnClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("annotationOnConstructors.kt")
+                public void testAnnotationOnConstructors() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/classHeader/annotationOnConstructors.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("classGenericParameters.kt")
+                public void testClassGenericParameters() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/classHeader/classGenericParameters.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("classParents.kt")
+                public void testClassParents() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/classHeader/classParents.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("constructors.kt")
+                public void testConstructors() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/classHeader/constructors.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("delegation.kt")
+                public void testDelegation() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/classHeader/delegation.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("simpleDelegation.kt")
+                public void testSimpleDelegation() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/classHeader/simpleDelegation.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("superConstructorArguments.kt")
+                public void testSuperConstructorArguments() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/classHeader/superConstructorArguments.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("superConstructorArgumentsInSecondaryConstructor.kt")
+                public void testSuperConstructorArgumentsInSecondaryConstructor() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/classHeader/superConstructorArgumentsInSecondaryConstructor.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/scopes/inheritance")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
