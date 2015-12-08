@@ -132,6 +132,13 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
             return result
         }
 
+        private fun KtExpression.mustBeParenthesizedInInitializerPosition(): Boolean {
+            if (this !is KtBinaryExpression) return false
+
+            if (left?.mustBeParenthesizedInInitializerPosition() ?: false) return true
+            return PsiChildRange(left, operationReference).any { (it is PsiWhiteSpace) && it.textContains('\n') }
+        }
+
         private fun runRefactoring (
                 expression: KtExpression,
                 commonContainer: PsiElement,
@@ -139,11 +146,13 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
                 allReplaces: List<KtExpression>
         ) {
             val initializer = (expression as? KtParenthesizedExpression)?.expression ?: expression
+            val initializerText = if (initializer.mustBeParenthesizedInInitializerPosition()) "(${initializer.text})" else initializer.text
+
             var property: KtDeclaration = if (componentFunctions.isNotEmpty()) {
                 buildString {
                     componentFunctions.indices.joinTo(this, prefix = "val (", postfix = ")") { nameSuggestions[it].first() }
                     append(" = ")
-                    append(initializer.text)
+                    append(initializerText)
                 }.let { psiFactory.createDestructuringDeclaration(it) }
             }
             else {
@@ -155,7 +164,7 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
                         append(": ").append(IdeDescriptorRenderers.SOURCE_CODE.renderType(typeToRender))
                     }
                     append(" = ")
-                    append(initializer.text)
+                    append(initializerText)
                 }.let { psiFactory.createProperty(it) }
             }
 
