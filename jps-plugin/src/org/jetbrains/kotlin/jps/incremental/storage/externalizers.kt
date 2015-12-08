@@ -18,11 +18,11 @@ package org.jetbrains.kotlin.jps.incremental.storage
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.io.DataExternalizer
+import com.intellij.util.io.EnumeratorStringDescriptor
 import com.intellij.util.io.IOUtil
 import com.intellij.util.io.KeyDescriptor
 import gnu.trove.THashSet
-import gnu.trove.TIntHashSet
-import gnu.trove.decorator.TIntHashSetDecorator
+import org.jetbrains.jps.incremental.storage.PathStringDescriptor
 import java.io.DataInput
 import java.io.DataInputStream
 import java.io.DataOutput
@@ -125,44 +125,6 @@ object StringToLongMapExternalizer : StringMapExternalizer<Long>() {
     }
 }
 
-
-object StringListExternalizer : DataExternalizer<List<String>> {
-    override fun save(output: DataOutput, value: List<String>) {
-        value.forEach { IOUtil.writeUTF(output, it) }
-    }
-
-    override fun read(input: DataInput): List<String> {
-        val result = ArrayList<String>()
-
-        while ((input as DataInputStream).available() > 0) {
-            result.add(IOUtil.readUTF(input))
-        }
-
-        return result
-    }
-}
-
-
-object PathCollectionExternalizer : DataExternalizer<Collection<String>> {
-    override fun save(output: DataOutput, value: Collection<String>) {
-        for (str in value) {
-            IOUtil.writeUTF(output, str)
-        }
-    }
-
-    override fun read(input: DataInput): Collection<String> {
-        val result = THashSet(FileUtil.PATH_HASHING_STRATEGY)
-        val stream = input as DataInputStream
-
-        while (stream.available() > 0) {
-            val str = IOUtil.readUTF(stream)
-            result.add(str)
-        }
-
-        return result
-    }
-}
-
 object ConstantsMapExternalizer : DataExternalizer<Map<String, Any>> {
     override fun save(output: DataOutput, map: Map<String, Any>?) {
         output.writeInt(map!!.size())
@@ -222,25 +184,6 @@ object ConstantsMapExternalizer : DataExternalizer<Map<String, Any>> {
     }
 }
 
-
-object IntSetExternalizer : DataExternalizer<Set<Int>> {
-    override fun save(output: DataOutput, value: Set<Int>) {
-        value.forEach { output.writeInt(it) }
-    }
-
-    override fun read(input: DataInput): Set<Int> {
-        val result = TIntHashSet()
-        val stream = input as DataInputStream
-
-        while (stream.available() > 0) {
-            val str = stream.readInt()
-            result.add(str)
-        }
-
-        return TIntHashSetDecorator(result)
-    }
-}
-
 object IntExternalizer : DataExternalizer<Int> {
     override fun read(input: DataInput): Int = input.readInt()
 
@@ -262,3 +205,29 @@ object FileKeyDescriptor : KeyDescriptor<File> {
     override fun isEqual(val1: File?, val2: File?): Boolean =
             FileUtil.FILE_HASHING_STRATEGY.equals(val1, val2)
 }
+
+open class CollectionExternalizer<T>(
+        private val elementExternalizer: DataExternalizer<T>,
+        private val newCollection: ()->MutableCollection<T>
+) : DataExternalizer<Collection<T>> {
+    override fun read(input: DataInput): Collection<T> {
+        val result = newCollection()
+        val stream = input as DataInputStream
+
+        while (stream.available() > 0) {
+            result.add(elementExternalizer.read(stream))
+        }
+
+        return result
+    }
+
+    override fun save(output: DataOutput, value: Collection<T>) {
+        value.forEach { elementExternalizer.save(output, it) }
+    }
+}
+
+object StringCollectionExternalizer : CollectionExternalizer<String>(EnumeratorStringDescriptor(), { HashSet() })
+
+object PathCollectionExternalizer : CollectionExternalizer<String>(PathStringDescriptor(), { THashSet(FileUtil.PATH_HASHING_STRATEGY) })
+
+object IntCollectionExternalizer : CollectionExternalizer<Int>(IntExternalizer, { HashSet() })
