@@ -75,7 +75,7 @@ class NewResolveOldInference(
                 CallResolver.ResolveKind.VARIABLE -> createVariableProcessor(baseContext, explicitReceiver)
                 CallResolver.ResolveKind.FUNCTION -> createFunctionTowerProcessor(baseContext, explicitReceiver)
                 CallResolver.ResolveKind.CALLABLE_REFERENCE -> CompositeScopeTowerProcessor(
-                        createFunctionTowerProcessor(baseContext, explicitReceiver),
+                        createFunctionProcessor(baseContext, explicitReceiver),
                         createVariableProcessor(baseContext, explicitReceiver)
                 )
                 CallResolver.ResolveKind.INVOKE -> {
