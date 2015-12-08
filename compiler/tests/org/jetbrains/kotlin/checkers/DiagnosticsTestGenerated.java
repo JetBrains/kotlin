@@ -14907,6 +14907,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("elvisExprNotNull.kt")
+            public void testElvisExprNotNull() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/elvisExprNotNull.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("elvisNothingRHS.kt")
             public void testElvisNothingRHS() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/elvisNothingRHS.kt");
@@ -15222,6 +15228,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("propertyToNotNull.kt")
             public void testPropertyToNotNull() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/propertyToNotNull.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("smartCastOnElvis.kt")
+            public void testSmartCastOnElvis() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/smartCastOnElvis.kt");
                 doTest(fileName);
             }
 

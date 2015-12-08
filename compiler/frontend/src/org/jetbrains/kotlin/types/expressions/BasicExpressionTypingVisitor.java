@@ -173,7 +173,14 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         if (innerExpression == null) {
             return TypeInfoFactoryKt.noTypeInfo(context);
         }
-        return facade.getTypeInfo(innerExpression, context.replaceScope(context.scope));
+        KotlinTypeInfo result = facade.getTypeInfo(innerExpression, context.replaceScope(context.scope));
+        KotlinType resultType = result.getType();
+        if (resultType != null) {
+            DataFlowValue innerValue = DataFlowValueFactory.createDataFlowValue(innerExpression, resultType, context);
+            DataFlowValue resultValue = DataFlowValueFactory.createDataFlowValue(expression, resultType, context);
+            result = result.replaceDataFlowInfo(result.getDataFlowInfo().assign(resultValue, innerValue));
+        }
+        return result;
     }
 
     @Override
@@ -1278,19 +1285,30 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         boolean loopBreakContinuePossible = leftTypeInfo.getJumpOutPossible() || rightTypeInfo.getJumpOutPossible();
         KotlinType rightType = rightTypeInfo.getType();
 
-        // Only left argument DFA is taken into account here: we cannot be sure that right argument is executed
+        // Only left argument DFA is taken into account here: we cannot be sure that right argument is joined
+        // (we merge it with right DFA if right argument contains no jump outside)
         DataFlowInfo dataFlowInfo = resolvedCall.getDataFlowInfoForArguments().getInfo(call.getValueArguments().get(1));
+
+        KotlinType type = resolvedCall.getResultingDescriptor().getReturnType();
+        if (type == null || rightType == null) return TypeInfoFactoryKt.noTypeInfo(dataFlowInfo);
         if (leftType != null) {
             DataFlowValue leftValue = createDataFlowValue(left, leftType, context);
             DataFlowInfo rightDataFlowInfo = resolvedCall.getDataFlowInfoForArguments().getResultInfo();
+            boolean jumpInRight = KotlinBuiltIns.isNothing(rightType);
+            DataFlowValue nullValue = DataFlowValue.nullValue(components.builtIns);
             // left argument is considered not-null if it's not-null also in right part or if we have jump in right part
-            if ((rightType != null && KotlinBuiltIns.isNothingOrNullableNothing(rightType) && !rightType.isMarkedNullable())
-                || !rightDataFlowInfo.getPredictableNullability(leftValue).canBeNull()) {
-                dataFlowInfo = dataFlowInfo.disequate(leftValue, DataFlowValue.nullValue(components.builtIns));
+            if (jumpInRight || !rightDataFlowInfo.getPredictableNullability(leftValue).canBeNull()) {
+                dataFlowInfo = dataFlowInfo.disequate(leftValue, nullValue);
+            }
+            DataFlowValue resultValue = DataFlowValueFactory.createDataFlowValue(expression, type, context);
+            dataFlowInfo = dataFlowInfo.assign(resultValue, leftValue).disequate(resultValue, nullValue);
+            if (!jumpInRight) {
+                DataFlowValue rightValue = DataFlowValueFactory.createDataFlowValue(right, rightType, context);
+                rightDataFlowInfo = rightDataFlowInfo.assign(resultValue, rightValue);
+                dataFlowInfo = dataFlowInfo.or(rightDataFlowInfo);
             }
         }
-        KotlinType type = resolvedCall.getResultingDescriptor().getReturnType();
-        if (type == null || rightType == null) return TypeInfoFactoryKt.noTypeInfo(dataFlowInfo);
+
 
         // Sometimes return type for special call for elvis operator might be nullable,
         // but result is not nullable if the right type is not nullable

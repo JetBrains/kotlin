@@ -66,6 +66,21 @@ public class DataFlowValueFactory {
                                    resolutionContext.scope.getOwnerDescriptor());
     }
 
+    private static boolean isComplexExpression(@NotNull KtExpression expression) {
+        if (expression instanceof KtBlockExpression ||
+            expression instanceof KtIfExpression ||
+            expression instanceof KtWhenExpression ||
+            (expression instanceof KtBinaryExpression && ((KtBinaryExpression) expression).getOperationToken() == KtTokens.ELVIS)) {
+
+            return true;
+        }
+        if (expression instanceof KtParenthesizedExpression) {
+            KtExpression deparenthesized = KtPsiUtil.deparenthesize(expression);
+            return deparenthesized != null && isComplexExpression(deparenthesized);
+        }
+        return false;
+    }
+
     @NotNull
     public static DataFlowValue createDataFlowValue(
             @NotNull KtExpression expression,
@@ -96,7 +111,7 @@ public class DataFlowValueFactory {
                                      Nullability.NOT_NULL);
         }
 
-        if (expression instanceof KtBlockExpression || expression instanceof KtIfExpression || expression instanceof KtWhenExpression) {
+        if (isComplexExpression(expression)) {
             return createDataFlowValueForComplexExpression(expression, type);
         }
 
