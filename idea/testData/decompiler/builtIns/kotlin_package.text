@@ -1,0 +1,12 @@
+// IntelliJ API Decompiler stub source generated from a class file
+// Implementation of methods is not available
+
+package kotlin
+
+public fun <reified T> arrayOfNulls(size: kotlin.Int): kotlin.Array<T?> { /* compiled code */ }
+
+@kotlin.Deprecated public fun kotlin.Any?.identityEquals(other: kotlin.Any?): kotlin.Boolean { /* compiled code */ }
+
+public operator fun kotlin.String?.plus(other: kotlin.Any?): kotlin.String { /* compiled code */ }
+
+public fun kotlin.Any?.toString(): kotlin.String { /* compiled code */ }
