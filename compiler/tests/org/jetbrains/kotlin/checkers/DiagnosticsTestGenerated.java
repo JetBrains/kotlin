@@ -14766,6 +14766,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("falseUnnecessaryCall.kt")
+            public void testFalseUnnecessaryCall() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/falseUnnecessaryCall.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("fieldExclExcl.kt")
             public void testFieldExclExcl() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/fieldExclExcl.kt");

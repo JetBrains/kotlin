@@ -429,7 +429,7 @@ public class CallExpressionResolver {
                 // Should be applied if we consider a safe call
                 if (element.getSafe()) {
                     DataFlowInfo dataFlowInfo = contextForSelector.dataFlowInfo;
-                    if (dataFlowInfo.getNullability(receiverDataFlowValue).canBeNull()) {
+                    if (dataFlowInfo.getPredictableNullability(receiverDataFlowValue).canBeNull()) {
                         contextForSelector = contextForSelector.replaceDataFlowInfo(
                                 dataFlowInfo.disequate(receiverDataFlowValue, DataFlowValue.nullValue(builtIns)));
                     }
