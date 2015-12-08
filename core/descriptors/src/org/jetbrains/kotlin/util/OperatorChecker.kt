@@ -41,10 +41,8 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.HAS_NEXT
 import org.jetbrains.kotlin.util.OperatorNameConventions.INC
 import org.jetbrains.kotlin.util.OperatorNameConventions.INVOKE
 import org.jetbrains.kotlin.util.OperatorNameConventions.ITERATOR
-import org.jetbrains.kotlin.util.OperatorNameConventions.MINUS
 import org.jetbrains.kotlin.util.OperatorNameConventions.NEXT
 import org.jetbrains.kotlin.util.OperatorNameConventions.NOT
-import org.jetbrains.kotlin.util.OperatorNameConventions.PLUS
 import org.jetbrains.kotlin.util.OperatorNameConventions.RANGE_TO
 import org.jetbrains.kotlin.util.OperatorNameConventions.SET
 import org.jetbrains.kotlin.util.OperatorNameConventions.SET_VALUE
@@ -83,9 +81,9 @@ object OperatorChecks {
                 }
                 COMPARE_TO == name -> returnsInt && singleValueParameter && noDefaultsAndVarargs
                 
-                BINARY_OPERATION_NAMES.any { it == name } && functionDescriptor.valueParameters.size == 1 -> 
+                BINARY_OPERATION_NAMES.any { it == name } ->
                     singleValueParameter && noDefaultsAndVarargs
-                (PLUS == name) || (MINUS == name) || (UNARY_PLUS == name) || (UNARY_MINUS == name) || (NOT == name) ->
+                (UNARY_PLUS == name) || (UNARY_MINUS == name) || (NOT == name) ->
                     noValueParameters
                 (INC == name) || (DEC == name) -> {
                     val receiver = dispatchReceiverParameter ?: extensionReceiverParameter
