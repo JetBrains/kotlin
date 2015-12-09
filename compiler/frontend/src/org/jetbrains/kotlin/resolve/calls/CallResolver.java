@@ -330,8 +330,8 @@ public class CallResolver {
 
         // Here we handle the case where the callee expression must be something of type function, e.g. (foo.bar())(1, 2)
         KotlinType expectedType = NO_EXPECTED_TYPE;
-        if (calleeExpression instanceof KtFunctionLiteralExpression) {
-            int parameterNumber = ((KtFunctionLiteralExpression) calleeExpression).getValueParameters().size();
+        if (calleeExpression instanceof KtLambdaExpression) {
+            int parameterNumber = ((KtLambdaExpression) calleeExpression).getValueParameters().size();
             List<KotlinType> parameterTypes = new ArrayList<KotlinType>(parameterNumber);
             for (int i = 0; i < parameterNumber; i++) {
                 parameterTypes.add(NO_EXPECTED_TYPE);

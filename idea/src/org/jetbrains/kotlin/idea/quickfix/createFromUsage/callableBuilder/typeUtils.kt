@@ -148,7 +148,7 @@ fun KtExpression.guessTypes(
             val constraint = parent
             arrayOf(context[BindingContext.TYPE, constraint.getBoundTypeReference()]!!)
         }
-        this is KtMultiDeclarationEntry -> {
+        this is KtDestructuringDeclarationEntry -> {
             // expression is on the lhs of a multi-declaration
             val typeRef = getTypeReference()
             if (typeRef != null) {

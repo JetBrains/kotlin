@@ -40,7 +40,7 @@ public class AddNameToArgumentIntention
 
         setText("Add '$name =' to argument")
 
-        if (expression is KtFunctionLiteralExpression) {
+        if (expression is KtLambdaExpression) {
             val range = expression.getTextRange()
             return caretOffset == range.start || caretOffset == range.end
         }
@@ -59,7 +59,7 @@ public class AddNameToArgumentIntention
 
     private fun detectNameToAdd(argument: KtValueArgument): Name? {
         if (argument.isNamed()) return null
-        if (argument is KtFunctionLiteralArgument) return null
+        if (argument is KtLambdaArgument) return null
 
         val argumentList = argument.getParent() as? KtValueArgumentList ?: return null
         if (argument != argumentList.arguments.last { !it.isNamed() }) return null

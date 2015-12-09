@@ -115,8 +115,8 @@ PsiJetFileStubImpl[package=test]
                                 PRIMARY_CONSTRUCTOR:
                                   MODIFIER_LIST:[public]
                                   VALUE_PARAMETER_LIST:
-                                DELEGATION_SPECIFIER_LIST:
-                                  DELEGATOR_SUPER_CLASS:
+                                SUPER_TYPE_LIST:
+                                  SUPER_TYPE_ENTRY:
                                     TYPE_REFERENCE:
                                       USER_TYPE:[isAbsoluteInRootPackage=false]
                                         USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -128,8 +128,8 @@ PsiJetFileStubImpl[package=test]
                                 PRIMARY_CONSTRUCTOR:
                                   MODIFIER_LIST:[private]
                                   VALUE_PARAMETER_LIST:
-                                DELEGATION_SPECIFIER_LIST:
-                                  DELEGATOR_SUPER_CLASS:
+                                SUPER_TYPE_LIST:
+                                  SUPER_TYPE_ENTRY:
                                     TYPE_REFERENCE:
                                       USER_TYPE:[isAbsoluteInRootPackage=false]
                                         USER_TYPE:[isAbsoluteInRootPackage=false]

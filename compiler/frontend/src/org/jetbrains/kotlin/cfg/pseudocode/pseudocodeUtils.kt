@@ -219,7 +219,7 @@ public fun getExpectedTypePredicate(
                                 }
                             }
 
-                            element is KtDelegatorByExpressionSpecifier ->
+                            element is KtDelegatedSuperTypeEntry ->
                                 addSubtypesOf(bindingContext[TYPE, element.getTypeReference()])
                         }
                     }
@@ -260,7 +260,7 @@ fun Instruction.calcSideEffectFree(): Boolean {
                 }
 
                 else -> when (element) {
-                    is KtConstantExpression, is KtFunctionLiteralExpression, is KtStringTemplateExpression -> true
+                    is KtConstantExpression, is KtLambdaExpression, is KtStringTemplateExpression -> true
                     else -> false
                 }
             }

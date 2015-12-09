@@ -188,7 +188,7 @@ private class VariablesCollector(
         // Do not show expressions used in anonymous objects
     }
 
-    override fun visitFunctionLiteralExpression(expression: KtFunctionLiteralExpression) {
+    override fun visitLambdaExpression(lambdaExpression: KtLambdaExpression) {
         // Do not show expressions used in lambdas
     }
 }

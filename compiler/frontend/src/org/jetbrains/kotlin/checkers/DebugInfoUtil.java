@@ -106,11 +106,11 @@ public class DebugInfoUtil {
             }
 
             @Override
-            public void visitMultiDeclaration(@NotNull KtMultiDeclaration multiDeclaration) {
-                for (KtMultiDeclarationEntry entry : multiDeclaration.getEntries()) {
+            public void visitDestructuringDeclaration(@NotNull KtDestructuringDeclaration destructuringDeclaration) {
+                for (KtDestructuringDeclarationEntry entry : destructuringDeclaration.getEntries()) {
                     reportIfDynamicCall(entry, entry, COMPONENT_RESOLVED_CALL);
                 }
-                super.visitMultiDeclaration(multiDeclaration);
+                super.visitDestructuringDeclaration(destructuringDeclaration);
             }
 
             @Override

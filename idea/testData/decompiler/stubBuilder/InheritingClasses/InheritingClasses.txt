@@ -19,8 +19,8 @@ PsiJetFileStubImpl[package=a]
                   USER_TYPE:[isAbsoluteInRootPackage=false]
                     REFERENCE_EXPRESSION:[referencedName=kotlin]
                   REFERENCE_EXPRESSION:[referencedName=Int]
-        DELEGATION_SPECIFIER_LIST:
-          DELEGATOR_SUPER_CLASS:
+        SUPER_TYPE_LIST:
+          SUPER_TYPE_ENTRY:
             TYPE_REFERENCE:
               USER_TYPE:[isAbsoluteInRootPackage=false]
                 USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -71,8 +71,8 @@ PsiJetFileStubImpl[package=a]
         PRIMARY_CONSTRUCTOR:
           MODIFIER_LIST:[public]
           VALUE_PARAMETER_LIST:
-        DELEGATION_SPECIFIER_LIST:
-          DELEGATOR_SUPER_CLASS:
+        SUPER_TYPE_LIST:
+          SUPER_TYPE_ENTRY:
             TYPE_REFERENCE:
               USER_TYPE:[isAbsoluteInRootPackage=false]
                 USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -125,8 +125,8 @@ PsiJetFileStubImpl[package=a]
         MODIFIER_LIST:[public]
         TYPE_PARAMETER_LIST:
           TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=T]
-        DELEGATION_SPECIFIER_LIST:
-          DELEGATOR_SUPER_CLASS:
+        SUPER_TYPE_LIST:
+          SUPER_TYPE_ENTRY:
             TYPE_REFERENCE:
               USER_TYPE:[isAbsoluteInRootPackage=false]
                 USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -150,8 +150,8 @@ PsiJetFileStubImpl[package=a]
         PRIMARY_CONSTRUCTOR:
           MODIFIER_LIST:[public]
           VALUE_PARAMETER_LIST:
-        DELEGATION_SPECIFIER_LIST:
-          DELEGATOR_SUPER_CLASS:
+        SUPER_TYPE_LIST:
+          SUPER_TYPE_ENTRY:
             TYPE_REFERENCE:
               USER_TYPE:[isAbsoluteInRootPackage=false]
                 USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -159,7 +159,7 @@ PsiJetFileStubImpl[package=a]
                     REFERENCE_EXPRESSION:[referencedName=a]
                   REFERENCE_EXPRESSION:[referencedName=InheritingClasses]
                 REFERENCE_EXPRESSION:[referencedName=B]
-          DELEGATOR_SUPER_CLASS:
+          SUPER_TYPE_ENTRY:
             TYPE_REFERENCE:
               USER_TYPE:[isAbsoluteInRootPackage=false]
                 USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -167,7 +167,7 @@ PsiJetFileStubImpl[package=a]
                     REFERENCE_EXPRESSION:[referencedName=a]
                   REFERENCE_EXPRESSION:[referencedName=InheritingClasses]
                 REFERENCE_EXPRESSION:[referencedName=C]
-          DELEGATOR_SUPER_CLASS:
+          SUPER_TYPE_ENTRY:
             TYPE_REFERENCE:
               USER_TYPE:[isAbsoluteInRootPackage=false]
                 USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -182,7 +182,7 @@ PsiJetFileStubImpl[package=a]
                         USER_TYPE:[isAbsoluteInRootPackage=false]
                           REFERENCE_EXPRESSION:[referencedName=kotlin]
                         REFERENCE_EXPRESSION:[referencedName=Int]
-          DELEGATOR_SUPER_CLASS:
+          SUPER_TYPE_ENTRY:
             TYPE_REFERENCE:
               USER_TYPE:[isAbsoluteInRootPackage=false]
                 USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -214,8 +214,8 @@ PsiJetFileStubImpl[package=a]
             PRIMARY_CONSTRUCTOR:
               MODIFIER_LIST:[public]
               VALUE_PARAMETER_LIST:
-            DELEGATION_SPECIFIER_LIST:
-              DELEGATOR_SUPER_CLASS:
+            SUPER_TYPE_LIST:
+              SUPER_TYPE_ENTRY:
                 TYPE_REFERENCE:
                   USER_TYPE:[isAbsoluteInRootPackage=false]
                     USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -231,8 +231,8 @@ PsiJetFileStubImpl[package=a]
             PRIMARY_CONSTRUCTOR:
               MODIFIER_LIST:[public]
               VALUE_PARAMETER_LIST:
-            DELEGATION_SPECIFIER_LIST:
-              DELEGATOR_SUPER_CLASS:
+            SUPER_TYPE_LIST:
+              SUPER_TYPE_ENTRY:
                 TYPE_REFERENCE:
                   USER_TYPE:[isAbsoluteInRootPackage=false]
                     USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -242,7 +242,7 @@ PsiJetFileStubImpl[package=a]
                         REFERENCE_EXPRESSION:[referencedName=InheritingClasses]
                       REFERENCE_EXPRESSION:[referencedName=InheritAny]
                     REFERENCE_EXPRESSION:[referencedName=SomeTrait]
-              DELEGATOR_SUPER_CLASS:
+              SUPER_TYPE_ENTRY:
                 TYPE_REFERENCE:
                   USER_TYPE:[isAbsoluteInRootPackage=false]
                     USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -264,14 +264,14 @@ PsiJetFileStubImpl[package=a]
             PRIMARY_CONSTRUCTOR:
               MODIFIER_LIST:[public]
               VALUE_PARAMETER_LIST:
-            DELEGATION_SPECIFIER_LIST:
-              DELEGATOR_SUPER_CLASS:
+            SUPER_TYPE_LIST:
+              SUPER_TYPE_ENTRY:
                 TYPE_REFERENCE:
                   USER_TYPE:[isAbsoluteInRootPackage=false]
                     USER_TYPE:[isAbsoluteInRootPackage=false]
                       REFERENCE_EXPRESSION:[referencedName=kotlin]
                     REFERENCE_EXPRESSION:[referencedName=Any]
-              DELEGATOR_SUPER_CLASS:
+              SUPER_TYPE_ENTRY:
                 TYPE_REFERENCE:
                   USER_TYPE:[isAbsoluteInRootPackage=false]
                     USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -287,8 +287,8 @@ PsiJetFileStubImpl[package=a]
             PRIMARY_CONSTRUCTOR:
               MODIFIER_LIST:[public]
               VALUE_PARAMETER_LIST:
-            DELEGATION_SPECIFIER_LIST:
-              DELEGATOR_SUPER_CLASS:
+            SUPER_TYPE_LIST:
+              SUPER_TYPE_ENTRY:
                 TYPE_REFERENCE:
                   USER_TYPE:[isAbsoluteInRootPackage=false]
                     USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -298,13 +298,13 @@ PsiJetFileStubImpl[package=a]
                         REFERENCE_EXPRESSION:[referencedName=InheritingClasses]
                       REFERENCE_EXPRESSION:[referencedName=InheritAny]
                     REFERENCE_EXPRESSION:[referencedName=SomeTrait2]
-              DELEGATOR_SUPER_CLASS:
+              SUPER_TYPE_ENTRY:
                 TYPE_REFERENCE:
                   USER_TYPE:[isAbsoluteInRootPackage=false]
                     USER_TYPE:[isAbsoluteInRootPackage=false]
                       REFERENCE_EXPRESSION:[referencedName=kotlin]
                     REFERENCE_EXPRESSION:[referencedName=Any]
-              DELEGATOR_SUPER_CLASS:
+              SUPER_TYPE_ENTRY:
                 TYPE_REFERENCE:
                   USER_TYPE:[isAbsoluteInRootPackage=false]
                     USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -320,8 +320,8 @@ PsiJetFileStubImpl[package=a]
         PRIMARY_CONSTRUCTOR:
           MODIFIER_LIST:[public]
           VALUE_PARAMETER_LIST:
-        DELEGATION_SPECIFIER_LIST:
-          DELEGATOR_SUPER_CLASS:
+        SUPER_TYPE_LIST:
+          SUPER_TYPE_ENTRY:
             TYPE_REFERENCE:
               FUNCTION_TYPE:
                 VALUE_PARAMETER_LIST:

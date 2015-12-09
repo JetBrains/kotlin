@@ -743,9 +743,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                                                                 expression.getObjectDeclaration());
         temporaryTrace.commit();
         DataFlowInfo resultFlowInfo = context.dataFlowInfo;
-        for (KtDelegationSpecifier specifier : expression.getObjectDeclaration().getDelegationSpecifiers()) {
-            if (specifier instanceof KtDelegatorToSuperCall) {
-                KtDelegatorToSuperCall delegator = (KtDelegatorToSuperCall) specifier;
+        for (KtSuperTypeListEntry specifier : expression.getObjectDeclaration().getSuperTypeListEntries()) {
+            if (specifier instanceof KtSuperTypeCallEntry) {
+                KtSuperTypeCallEntry delegator = (KtSuperTypeCallEntry) specifier;
                 KotlinTypeInfo delegatorTypeInfo = context.trace.get(EXPRESSION_TYPE_INFO, delegator.getCalleeExpression());
                 if (delegatorTypeInfo != null) {
                     resultFlowInfo = resultFlowInfo.and(delegatorTypeInfo.getDataFlowInfo());

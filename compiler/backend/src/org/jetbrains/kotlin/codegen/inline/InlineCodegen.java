@@ -546,7 +546,7 @@ public class InlineCodegen extends CallGenerator {
     }
 
     protected static boolean isInlinableParameterExpression(KtExpression deparenthesized) {
-        return deparenthesized instanceof KtFunctionLiteralExpression ||
+        return deparenthesized instanceof KtLambdaExpression ||
                deparenthesized instanceof KtNamedFunction ||
                deparenthesized instanceof KtCallableReferenceExpression;
     }

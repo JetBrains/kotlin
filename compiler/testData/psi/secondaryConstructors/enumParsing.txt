@@ -17,7 +17,7 @@ JetFile: enumParsing.kt
       ENUM_ENTRY
         PsiElement(IDENTIFIER)('abc1')
         INITIALIZER_LIST
-          DELEGATOR_SUPER_CALL
+          SUPER_TYPE_CALL_ENTRY
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
@@ -42,7 +42,7 @@ JetFile: enumParsing.kt
       ENUM_ENTRY
         PsiElement(IDENTIFIER)('abc2')
         INITIALIZER_LIST
-          DELEGATOR_SUPER_CALL
+          SUPER_TYPE_CALL_ENTRY
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE

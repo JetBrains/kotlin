@@ -733,7 +733,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     expression = TypeExpression.ForTypeReference(candidates)
                 }
                 is KtClassOrObject -> {
-                    elementToReplace = declaration.getDelegationSpecifiers().firstOrNull()
+                    elementToReplace = declaration.getSuperTypeListEntries().firstOrNull()
                     expression = TypeExpression.ForDelegationSpecifier(candidates)
                 }
                 else -> throw AssertionError("Unexpected declaration kind: ${declaration.getText()}")
@@ -1033,7 +1033,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 internal fun KtNamedDeclaration.getReturnTypeReference(): KtTypeReference? {
     return when (this) {
         is KtCallableDeclaration -> getTypeReference()
-        is KtClassOrObject -> getDelegationSpecifiers().firstOrNull()?.getTypeReference()
+        is KtClassOrObject -> getSuperTypeListEntries().firstOrNull()?.getTypeReference()
         else -> throw AssertionError("Unexpected declaration kind: ${getText()}")
     }
 }

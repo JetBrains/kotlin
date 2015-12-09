@@ -83,7 +83,7 @@ object CreateParameterByRefActionFactory : CreateParameterFromUsageFactory<KtSim
             return element.parents
                     .filter {
                         it is KtNamedFunction || it is KtSecondaryConstructor || it is KtPropertyAccessor ||
-                        it is KtClassBody || it is KtAnonymousInitializer || it is KtDelegationSpecifier
+                        it is KtClassBody || it is KtAnonymousInitializer || it is KtSuperTypeListEntry
                     }
                     .firstOrNull()
                     ?.let {
@@ -91,7 +91,7 @@ object CreateParameterByRefActionFactory : CreateParameterFromUsageFactory<KtSim
                             (it is KtNamedFunction || it is KtSecondaryConstructor) && varExpected,
                             it is KtPropertyAccessor -> chooseContainingClass(it)
                             it is KtAnonymousInitializer -> it.parent?.parent as? KtClass
-                            it is KtDelegationSpecifier -> {
+                            it is KtSuperTypeListEntry -> {
                                 val klass = it.getStrictParentOfType<KtClassOrObject>()
                                 if (klass is KtClass && !klass.isInterface() && klass !is KtEnumEntry) klass else null
                             }

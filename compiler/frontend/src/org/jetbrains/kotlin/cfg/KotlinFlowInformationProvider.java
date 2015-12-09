@@ -633,7 +633,7 @@ public class KotlinFlowInformationProvider {
                                         report(Errors.VARIABLE_WITH_REDUNDANT_INITIALIZER.on(initializer, variableDescriptor), ctxt);
                                     }
                                 }
-                                else if (element instanceof KtMultiDeclarationEntry) {
+                                else if (element instanceof KtDestructuringDeclarationEntry) {
                                     report(VARIABLE_WITH_REDUNDANT_INITIALIZER.on(element, variableDescriptor), ctxt);
                                 }
                             }
@@ -661,8 +661,8 @@ public class KotlinFlowInformationProvider {
                             && PseudocodeUtilsKt.getSideEffectFree(instruction)) {
                             VariableContext ctxt = new VariableContext(instruction, reportedDiagnosticMap);
                             report(
-                                    element instanceof KtFunctionLiteralExpression
-                                        ? Errors.UNUSED_LAMBDA_EXPRESSION.on((KtFunctionLiteralExpression) element)
+                                    element instanceof KtLambdaExpression
+                                        ? Errors.UNUSED_LAMBDA_EXPRESSION.on((KtLambdaExpression) element)
                                         : Errors.UNUSED_EXPRESSION.on(element),
                                     ctxt
                             );

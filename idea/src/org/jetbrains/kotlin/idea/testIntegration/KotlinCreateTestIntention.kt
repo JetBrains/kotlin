@@ -65,7 +65,7 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
 
             return TextRange(
                     element.startOffset,
-                    element.getDelegationSpecifierList()?.startOffset ?: element.getBody()?.startOffset ?: element.endOffset
+                    element.getSuperTypeList()?.startOffset ?: element.getBody()?.startOffset ?: element.endOffset
             )
         }
 

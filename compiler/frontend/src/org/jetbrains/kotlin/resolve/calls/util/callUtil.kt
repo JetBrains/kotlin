@@ -87,14 +87,14 @@ public fun KtCallElement.getValueArgumentsInParentheses(): List<ValueArgument> =
 public fun Call.getValueArgumentListOrElement(): KtElement = getValueArgumentList() ?: getCalleeExpression() ?: getCallElement()
 
 @Suppress("UNCHECKED_CAST")
-private fun List<ValueArgument?>.filterArgsInParentheses() = filter { it !is KtFunctionLiteralArgument } as List<ValueArgument>
+private fun List<ValueArgument?>.filterArgsInParentheses() = filter { it !is KtLambdaArgument } as List<ValueArgument>
 
 public fun Call.getValueArgumentForExpression(expression: KtExpression): ValueArgument? {
     fun KtElement.deparenthesizeStructurally(): KtElement? {
         val deparenthesized = if (this is KtExpression) KtPsiUtil.deparenthesizeOnce(this) else this
         return when {
             deparenthesized != this -> deparenthesized
-            this is KtFunctionLiteralExpression -> this.getFunctionLiteral()
+            this is KtLambdaExpression -> this.getFunctionLiteral()
             this is KtFunctionLiteral -> this.getBodyExpression()
             else -> null
         }

@@ -170,9 +170,9 @@ class ExpectedInfos(
     }
 
     private fun calculateForFunctionLiteralArgument(expressionWithType: KtExpression): Collection<ExpectedInfo>? {
-        val functionLiteralArgument = expressionWithType.getParent() as? KtFunctionLiteralArgument
+        val functionLiteralArgument = expressionWithType.getParent() as? KtLambdaArgument
         val callExpression = functionLiteralArgument?.getParent() as? KtCallExpression ?: return null
-        val literalArgument = callExpression.getFunctionLiteralArguments().firstOrNull() ?: return null
+        val literalArgument = callExpression.getLambdaArguments().firstOrNull() ?: return null
         if (literalArgument.getArgumentExpression() != expressionWithType) return null
         return calculateForArgument(callExpression, literalArgument)
     }
@@ -228,7 +228,7 @@ class ExpectedInfos(
             val arguments = call.getValueArguments().subList(0, argumentIndex)
 
             override fun getValueArguments() = arguments
-            override fun getFunctionLiteralArguments() = emptyList<FunctionLiteralArgument>()
+            override fun getFunctionLiteralArguments() = emptyList<LambdaArgument>()
             override fun getValueArgumentList() = null
         }
 
@@ -276,7 +276,7 @@ class ExpectedInfos(
         }
 
         val argumentName = argument.getArgumentName()?.asName
-        val isFunctionLiteralArgument = argument is FunctionLiteralArgument
+        val isFunctionLiteralArgument = argument is LambdaArgument
 
         val callType = call.callType
         val isArrayAccess = callType == Call.CallType.ARRAY_GET_METHOD || callType == Call.CallType.ARRAY_SET_METHOD
@@ -471,7 +471,7 @@ class ExpectedInfos(
 
         val functionLiteral = block.parent as? KtFunctionLiteral
         if (functionLiteral != null) {
-            val literalExpression = functionLiteral.parent as KtFunctionLiteralExpression
+            val literalExpression = functionLiteral.parent as KtLambdaExpression
             return calculate(literalExpression)
                     .mapNotNull { it.fuzzyType }
                     .filter { KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(it.type) }

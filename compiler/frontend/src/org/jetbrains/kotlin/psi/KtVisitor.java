@@ -57,11 +57,11 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitNamedDeclaration(property, data);
     }
 
-    public R visitMultiDeclaration(@NotNull KtMultiDeclaration multiDeclaration, D data) {
+    public R visitDestructuringDeclaration(@NotNull KtDestructuringDeclaration multiDeclaration, D data) {
         return visitDeclaration(multiDeclaration, data);
     }
 
-    public R visitMultiDeclarationEntry(@NotNull KtMultiDeclarationEntry multiDeclarationEntry, D data) {
+    public R visitDestructuringDeclarationEntry(@NotNull KtDestructuringDeclarationEntry multiDeclarationEntry, D data) {
         return visitNamedDeclaration(multiDeclarationEntry, data);
     }
 
@@ -134,24 +134,24 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitNamedDeclaration(parameter, data);
     }
 
-    public R visitDelegationSpecifierList(@NotNull KtDelegationSpecifierList list, D data) {
+    public R visitSuperTypeList(@NotNull KtSuperTypeList list, D data) {
         return visitKtElement(list, data);
     }
 
-    public R visitDelegationSpecifier(@NotNull KtDelegationSpecifier specifier, D data) {
+    public R visitSuperTypeListEntry(@NotNull KtSuperTypeListEntry specifier, D data) {
         return visitKtElement(specifier, data);
     }
 
-    public R visitDelegationByExpressionSpecifier(@NotNull KtDelegatorByExpressionSpecifier specifier, D data) {
-        return visitDelegationSpecifier(specifier, data);
+    public R visitDelegatedSuperTypeEntry(@NotNull KtDelegatedSuperTypeEntry specifier, D data) {
+        return visitSuperTypeListEntry(specifier, data);
     }
 
-    public R visitDelegationToSuperCallSpecifier(@NotNull KtDelegatorToSuperCall call, D data) {
-        return visitDelegationSpecifier(call, data);
+    public R visitSuperTypeCallEntry(@NotNull KtSuperTypeCallEntry call, D data) {
+        return visitSuperTypeListEntry(call, data);
     }
 
-    public R visitDelegationToSuperClassSpecifier(@NotNull KtDelegatorToSuperClass specifier, D data) {
-        return visitDelegationSpecifier(specifier, data);
+    public R visitSuperTypeEntry(@NotNull KtSuperTypeEntry specifier, D data) {
+        return visitSuperTypeListEntry(specifier, data);
     }
 
     public R visitConstructorDelegationCall(@NotNull KtConstructorDelegationCall call, D data) {
@@ -258,7 +258,7 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitLoopExpression(expression, data);
     }
 
-    public R visitFunctionLiteralExpression(@NotNull KtFunctionLiteralExpression expression, D data) {
+    public R visitLambdaExpression(@NotNull KtLambdaExpression expression, D data) {
         return visitExpression(expression, data);
     }
 

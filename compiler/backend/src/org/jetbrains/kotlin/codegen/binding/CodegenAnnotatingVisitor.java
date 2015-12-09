@@ -129,7 +129,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
                 if (element instanceof KtObjectDeclaration &&
                     element.getParent() instanceof KtObjectLiteralExpression &&
-                    child instanceof KtDelegationSpecifierList) {
+                    child instanceof KtSuperTypeList) {
                     // If we're passing an anonymous object's super call, it means "container" is ConstructorDescriptor of that object.
                     // To reach outer context, we should call getContainingDeclaration() twice
                     // TODO: this is probably not entirely correct, mostly because DECLARATION_TO_DESCRIPTOR can return null
@@ -178,7 +178,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     @Override
     public void visitEnumEntry(@NotNull KtEnumEntry enumEntry) {
         if (enumEntry.getDeclarations().isEmpty()) {
-            for (KtDelegationSpecifier specifier : enumEntry.getDelegationSpecifiers()) {
+            for (KtSuperTypeListEntry specifier : enumEntry.getSuperTypeListEntries()) {
                 specifier.accept(this);
             }
             return;
@@ -248,7 +248,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         String name = inventAnonymousClassName();
         recordClosure(classDescriptor, name);
 
-        KtDelegationSpecifierList delegationSpecifierList = object.getDelegationSpecifierList();
+        KtSuperTypeList delegationSpecifierList = object.getSuperTypeList();
         if (delegationSpecifierList != null) {
             delegationSpecifierList.accept(this);
         }
@@ -264,8 +264,8 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     }
 
     @Override
-    public void visitFunctionLiteralExpression(@NotNull KtFunctionLiteralExpression expression) {
-        KtFunctionLiteral functionLiteral = expression.getFunctionLiteral();
+    public void visitLambdaExpression(@NotNull KtLambdaExpression lambdaExpression) {
+        KtFunctionLiteral functionLiteral = lambdaExpression.getFunctionLiteral();
         FunctionDescriptor functionDescriptor =
                 (FunctionDescriptor) bindingContext.get(DECLARATION_TO_DESCRIPTOR, functionLiteral);
         // working around a problem with shallow analysis
@@ -278,7 +278,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
         classStack.push(classDescriptor);
         nameStack.push(name);
-        super.visitFunctionLiteralExpression(expression);
+        super.visitLambdaExpression(lambdaExpression);
         nameStack.pop();
         classStack.pop();
     }
@@ -432,8 +432,8 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     }
 
     @Override
-    public void visitDelegationToSuperCallSpecifier(@NotNull KtDelegatorToSuperCall call) {
-        super.visitDelegationToSuperCallSpecifier(call);
+    public void visitSuperTypeCallEntry(@NotNull KtSuperTypeCallEntry call) {
+        super.visitSuperTypeCallEntry(call);
         checkSamCall(call);
     }
 

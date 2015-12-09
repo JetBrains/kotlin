@@ -26,7 +26,7 @@ JetFile: annotationValueArgumentsAmbiguity.kt
           VALUE_ARGUMENT_LIST
             PsiElement(LPAR)('(')
             VALUE_ARGUMENT
-              FUNCTION_LITERAL_EXPRESSION
+              LAMBDA_EXPRESSION
                 FUNCTION_LITERAL
                   PsiElement(LBRACE)('{')
                   PsiWhiteSpace(' ')
@@ -75,7 +75,7 @@ JetFile: annotationValueArgumentsAmbiguity.kt
         PsiWhiteSpace(' ')
         PARENTHESIZED
           PsiElement(LPAR)('(')
-          FUNCTION_LITERAL_EXPRESSION
+          LAMBDA_EXPRESSION
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
               PsiWhiteSpace(' ')

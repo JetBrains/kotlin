@@ -194,7 +194,7 @@ private fun ExtractionData.extractReceiver(
     else {
         val extractThis = (hasThisReceiver && refInfo.smartCast == null) || thisExpr != null
         val extractOrdinaryParameter =
-                originalDeclaration is KtMultiDeclarationEntry ||
+                originalDeclaration is KtDestructuringDeclarationEntry ||
                 originalDeclaration is KtProperty ||
                 originalDeclaration is KtParameter
 

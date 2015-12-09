@@ -960,7 +960,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 callee.done(CONSTRUCTOR_CALLEE);
 
                 myExpressionParsing.parseValueArgumentList();
-                delegatorSuperCall.done(DELEGATOR_SUPER_CALL);
+                delegatorSuperCall.done(SUPER_TYPE_CALL_ENTRY);
                 initializerList.done(INITIALIZER_LIST);
             }
             if (at(LBRACE)) {
@@ -1284,7 +1284,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             }
         }
 
-        return multiDeclaration ? MULTI_VARIABLE_DECLARATION : PROPERTY;
+        return multiDeclaration ? DESTRUCTURING_DECLARATION : PROPERTY;
     }
 
     /*
@@ -1329,7 +1329,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
                     advance(); // COLON
                     parseTypeRef(follow);
                 }
-                property.done(MULTI_VARIABLE_DECLARATION_ENTRY);
+                property.done(DESTRUCTURING_DECLARATION_ENTRY);
 
                 if (!at(COMMA)) break;
                 advance(); // COMMA
@@ -1637,7 +1637,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             advance(); // COMMA
         }
 
-        list.done(DELEGATION_SPECIFIER_LIST);
+        list.done(SUPER_TYPE_LIST);
     }
 
     /*
@@ -1660,16 +1660,16 @@ public class KotlinParsing extends AbstractKotlinParsing {
             reference.drop();
             advance(); // BY_KEYWORD
             createForByClause(myBuilder).myExpressionParsing.parseExpression();
-            delegator.done(DELEGATOR_BY);
+            delegator.done(DELEGATED_SUPER_TYPE_ENTRY);
         }
         else if (at(LPAR)) {
             reference.done(CONSTRUCTOR_CALLEE);
             myExpressionParsing.parseValueArgumentList();
-            delegator.done(DELEGATOR_SUPER_CALL);
+            delegator.done(SUPER_TYPE_CALL_ENTRY);
         }
         else {
             reference.drop();
-            delegator.done(DELEGATOR_SUPER_CLASS);
+            delegator.done(SUPER_TYPE_ENTRY);
         }
     }
 

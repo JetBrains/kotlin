@@ -140,8 +140,8 @@ JetFile: SoftKeywords.kt
     PsiWhiteSpace(' ')
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
-    DELEGATION_SPECIFIER_LIST
-      DELEGATOR_BY
+    SUPER_TYPE_LIST
+      DELEGATED_SUPER_TYPE_ENTRY
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION

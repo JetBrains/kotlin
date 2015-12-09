@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtClassBody
-import org.jetbrains.kotlin.psi.KtDelegationSpecifierList
-import org.jetbrains.kotlin.psi.KtDelegatorToSuperClass
+import org.jetbrains.kotlin.psi.KtSuperTypeEntry
+import org.jetbrains.kotlin.psi.KtSuperTypeList
 import org.jetbrains.kotlin.psi.stubs.elements.KtClassElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassStubImpl
@@ -144,11 +144,11 @@ private class ClassClsStubBuilder(
         if (supertypeIds.isEmpty()) return
 
         val delegationSpecifierListStub =
-                KotlinPlaceHolderStubImpl<KtDelegationSpecifierList>(classOrObjectStub, KtStubElementTypes.DELEGATION_SPECIFIER_LIST)
+                KotlinPlaceHolderStubImpl<KtSuperTypeList>(classOrObjectStub, KtStubElementTypes.SUPER_TYPE_LIST)
 
         classProto.supertypes(c.typeTable).forEach { type ->
-            val superClassStub = KotlinPlaceHolderStubImpl<KtDelegatorToSuperClass>(
-                    delegationSpecifierListStub, KtStubElementTypes.DELEGATOR_SUPER_CLASS
+            val superClassStub = KotlinPlaceHolderStubImpl<KtSuperTypeEntry>(
+                    delegationSpecifierListStub, KtStubElementTypes.SUPER_TYPE_ENTRY
             )
             typeStubBuilder.createTypeReferenceStub(superClassStub, type)
         }

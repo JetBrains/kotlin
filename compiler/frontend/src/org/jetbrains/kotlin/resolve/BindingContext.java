@@ -125,7 +125,7 @@ public interface BindingContext {
 
     WritableSlice<PropertyDescriptor, ResolvedCall<FunctionDescriptor>> DELEGATED_PROPERTY_PD_RESOLVED_CALL = Slices.createSimpleSlice();
 
-    WritableSlice<KtMultiDeclarationEntry, ResolvedCall<FunctionDescriptor>> COMPONENT_RESOLVED_CALL = Slices.createSimpleSlice();
+    WritableSlice<KtDestructuringDeclarationEntry, ResolvedCall<FunctionDescriptor>> COMPONENT_RESOLVED_CALL = Slices.createSimpleSlice();
 
     WritableSlice<KtExpression, ResolvedCall<FunctionDescriptor>> INDEXED_LVALUE_GET = Slices.createSimpleSlice();
     WritableSlice<KtExpression, ResolvedCall<FunctionDescriptor>> INDEXED_LVALUE_SET = Slices.createSimpleSlice();
@@ -189,9 +189,9 @@ public interface BindingContext {
     };
     WritableSlice<PropertyDescriptor, Boolean> IS_UNINITIALIZED = Slices.createSimpleSetSlice();
 
-    WritableSlice<KtFunctionLiteralExpression, Boolean> BLOCK = new Slices.SetSlice<KtFunctionLiteralExpression>(DO_NOTHING) {
+    WritableSlice<KtLambdaExpression, Boolean> BLOCK = new Slices.SetSlice<KtLambdaExpression>(DO_NOTHING) {
         @Override
-        public Boolean computeValue(SlicedMap map, KtFunctionLiteralExpression expression, Boolean isBlock, boolean valueNotFound) {
+        public Boolean computeValue(SlicedMap map, KtLambdaExpression expression, Boolean isBlock, boolean valueNotFound) {
             isBlock = valueNotFound ? false : isBlock;
             return isBlock && !expression.getFunctionLiteral().hasParameterSpecification();
         }

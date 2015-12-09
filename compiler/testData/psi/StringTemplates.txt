@@ -292,8 +292,8 @@ JetFile: StringTemplates.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('map')
               PsiWhiteSpace(' ')
-              FUNCTION_LITERAL_ARGUMENT
-                FUNCTION_LITERAL_EXPRESSION
+              LAMBDA_ARGUMENT
+                LAMBDA_EXPRESSION
                   FUNCTION_LITERAL
                     PsiElement(LBRACE)('{')
                     BLOCK
@@ -322,8 +322,8 @@ JetFile: StringTemplates.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('map')
               PsiWhiteSpace(' ')
-              FUNCTION_LITERAL_ARGUMENT
-                FUNCTION_LITERAL_EXPRESSION
+              LAMBDA_ARGUMENT
+                LAMBDA_EXPRESSION
                   FUNCTION_LITERAL
                     PsiElement(LBRACE)('{')
                     PsiWhiteSpace(' ')
@@ -357,8 +357,8 @@ JetFile: StringTemplates.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('map')
               PsiWhiteSpace(' ')
-              FUNCTION_LITERAL_ARGUMENT
-                FUNCTION_LITERAL_EXPRESSION
+              LAMBDA_ARGUMENT
+                LAMBDA_EXPRESSION
                   FUNCTION_LITERAL
                     PsiElement(LBRACE)('{')
                     PsiWhiteSpace('\n      ')
@@ -377,8 +377,8 @@ JetFile: StringTemplates.kt
                           CALL_EXPRESSION
                             REFERENCE_EXPRESSION
                               PsiElement(IDENTIFIER)('buzz')
-                            FUNCTION_LITERAL_ARGUMENT
-                              FUNCTION_LITERAL_EXPRESSION
+                            LAMBDA_ARGUMENT
+                              LAMBDA_EXPRESSION
                                 FUNCTION_LITERAL
                                   PsiElement(LBRACE)('{')
                                   BLOCK

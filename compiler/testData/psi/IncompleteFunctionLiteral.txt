@@ -14,7 +14,7 @@ JetFile: IncompleteFunctionLiteral.kt
     BLOCK
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUNCTION_LITERAL_EXPRESSION
+      LAMBDA_EXPRESSION
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
           VALUE_PARAMETER_LIST

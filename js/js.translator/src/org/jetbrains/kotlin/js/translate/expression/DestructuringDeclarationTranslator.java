@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.reference.CallExpressionTranslator;
-import org.jetbrains.kotlin.psi.KtMultiDeclaration;
-import org.jetbrains.kotlin.psi.KtMultiDeclarationEntry;
+import org.jetbrains.kotlin.psi.KtDestructuringDeclaration;
+import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -39,28 +39,28 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.js.translate.utils.InlineUtils.setInlineCallMetadata;
 
-public class MultiDeclarationTranslator extends AbstractTranslator {
+public class DestructuringDeclarationTranslator extends AbstractTranslator {
 
     // if multiObjectName was init, initializer must be null
     @NotNull
     public static JsVars translate(
-            @NotNull KtMultiDeclaration multiDeclaration,
+            @NotNull KtDestructuringDeclaration multiDeclaration,
             @NotNull JsName multiObjectName,
             @Nullable JsExpression initializer,
             @NotNull TranslationContext context
     ) {
-        return new MultiDeclarationTranslator(multiDeclaration, multiObjectName, initializer, context).translate();
+        return new DestructuringDeclarationTranslator(multiDeclaration, multiObjectName, initializer, context).translate();
     }
 
     @NotNull
-    private final KtMultiDeclaration multiDeclaration;
+    private final KtDestructuringDeclaration multiDeclaration;
     @NotNull
     private final JsName multiObjectName;
     @Nullable
     private final JsExpression initializer;
 
-    private MultiDeclarationTranslator(
-            @NotNull KtMultiDeclaration multiDeclaration,
+    private DestructuringDeclarationTranslator(
+            @NotNull KtDestructuringDeclaration multiDeclaration,
             @NotNull JsName multiObjectName,
             @Nullable JsExpression initializer,
             @NotNull TranslationContext context
@@ -78,7 +78,7 @@ public class MultiDeclarationTranslator extends AbstractTranslator {
         }
 
         JsNameRef multiObjNameRef = multiObjectName.makeRef();
-        for (KtMultiDeclarationEntry entry : multiDeclaration.getEntries()) {
+        for (KtDestructuringDeclarationEntry entry : multiDeclaration.getEntries()) {
             ResolvedCall<FunctionDescriptor> entryInitCall =  context().bindingContext().get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
             assert entryInitCall != null : "Entry init call must be not null";
             JsExpression entryInitializer = CallTranslator.translate(context(), entryInitCall, multiObjNameRef);

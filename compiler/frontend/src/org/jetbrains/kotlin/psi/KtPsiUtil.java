@@ -298,8 +298,8 @@ public class KtPsiUtil {
     public static boolean isVariableNotParameterDeclaration(@NotNull KtDeclaration declaration) {
         if (!(declaration instanceof KtVariableDeclaration)) return false;
         if (declaration instanceof KtProperty) return true;
-        assert declaration instanceof KtMultiDeclarationEntry;
-        KtMultiDeclarationEntry multiDeclarationEntry = (KtMultiDeclarationEntry) declaration;
+        assert declaration instanceof KtDestructuringDeclarationEntry;
+        KtDestructuringDeclarationEntry multiDeclarationEntry = (KtDestructuringDeclarationEntry) declaration;
         return !(multiDeclarationEntry.getParent().getParent() instanceof KtForExpression);
     }
 
@@ -819,7 +819,7 @@ public class KtPsiUtil {
                 parent instanceof KtDotQualifiedExpression ||
                 parent instanceof KtCallExpression ||
                 parent instanceof KtArrayAccessExpression ||
-                parent instanceof KtMultiDeclaration) {
+                parent instanceof KtDestructuringDeclaration) {
 
                 if (parent instanceof KtLabeledExpression) {
                     parent = parent.getParent();
@@ -835,7 +835,7 @@ public class KtPsiUtil {
             else if (parent instanceof KtValueArgument || parent instanceof KtValueArgumentList) {
                 parent = parent.getParent();
             }
-            else if (parent instanceof KtFunctionLiteralExpression || parent instanceof KtAnnotatedExpression) {
+            else if (parent instanceof KtLambdaExpression || parent instanceof KtAnnotatedExpression) {
                 parent = parent.getParent();
             }
             else {

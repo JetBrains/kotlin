@@ -188,7 +188,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
             }
 
             for (argument in call.valueArguments) {
-                if (argument is FunctionLiteralArgument) continue
+                if (argument is LambdaArgument) continue
                 val parameter = argumentToParameter(argument) ?: continue
                 if (!usedParameterIndices.add(parameter.index)) continue
 
@@ -336,7 +336,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
                 val arguments = call.valueArguments + currentArgument
 
                 override fun getValueArguments() = arguments
-                override fun getFunctionLiteralArguments() = emptyList<FunctionLiteralArgument>()
+                override fun getFunctionLiteralArguments() = emptyList<LambdaArgument>()
                 override fun getValueArgumentList() = null
             }
         }

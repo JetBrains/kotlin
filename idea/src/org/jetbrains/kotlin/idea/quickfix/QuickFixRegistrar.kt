@@ -259,8 +259,8 @@ public class QuickFixRegistrar : QuickFixContributor {
         NO_VALUE_FOR_PARAMETER.registerFactory(CreateConstructorFromDelegationCallActionFactory)
         TOO_MANY_ARGUMENTS.registerFactory(CreateConstructorFromDelegationCallActionFactory)
 
-        NO_VALUE_FOR_PARAMETER.registerFactory(CreateConstructorFromDelegatorToSuperCallActionFactory)
-        TOO_MANY_ARGUMENTS.registerFactory(CreateConstructorFromDelegatorToSuperCallActionFactory)
+        NO_VALUE_FOR_PARAMETER.registerFactory(CreateConstructorFromSuperTypeCallActionFactory)
+        TOO_MANY_ARGUMENTS.registerFactory(CreateConstructorFromSuperTypeCallActionFactory)
 
         UNRESOLVED_REFERENCE_WRONG_RECEIVER.registerFactory(CreateClassFromConstructorCallActionFactory)
         UNRESOLVED_REFERENCE.registerFactory(CreateClassFromConstructorCallActionFactory)

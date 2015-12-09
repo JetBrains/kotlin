@@ -45,7 +45,7 @@ public class RemoveForLoopIndicesIntention : SelfTargetingRangeIntention<KtForEx
 
     override fun applicabilityRange(element: KtForExpression): TextRange? {
         val loopRange = element.loopRange as? KtDotQualifiedExpression ?: return null
-        val multiParameter = element.multiParameter ?: return null
+        val multiParameter = element.destructuringParameter ?: return null
         if (multiParameter.entries.size() != 2) return null
 
         val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
@@ -60,7 +60,7 @@ public class RemoveForLoopIndicesIntention : SelfTargetingRangeIntention<KtForEx
     }
 
     override fun applyTo(element: KtForExpression, editor: Editor) {
-        val multiParameter = element.multiParameter!!
+        val multiParameter = element.destructuringParameter!!
         val loopRange = element.loopRange as KtDotQualifiedExpression
 
         val elementVar = multiParameter.entries[1]

@@ -240,8 +240,8 @@ private fun makeCall(
         arguments: List<String>) {
     fun insertCall(anchor: PsiElement, wrappedCall: KtExpression): KtExpression? {
         val firstExpression = rangeToReplace.elements.firstOrNull { it is KtExpression } as? KtExpression
-        if (firstExpression?.isFunctionLiteralOutsideParentheses() ?: false) {
-            val functionLiteralArgument = firstExpression?.getStrictParentOfType<KtFunctionLiteralArgument>()!!
+        if (firstExpression?.isLambdaOutsideParentheses() ?: false) {
+            val functionLiteralArgument = firstExpression?.getStrictParentOfType<KtLambdaArgument>()!!
             return functionLiteralArgument.moveInsideParenthesesAndReplaceWith(wrappedCall, extractableDescriptor.originalContext)
         }
 

@@ -148,7 +148,7 @@ JetFile: CallsInWhen.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('a')
               PsiElement(DOT)('.')
-              FUNCTION_LITERAL_EXPRESSION
+              LAMBDA_EXPRESSION
                 FUNCTION_LITERAL
                   PsiElement(LBRACE)('{')
                   BLOCK
@@ -167,7 +167,7 @@ JetFile: CallsInWhen.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('a')
               PsiElement(DOT)('.')
-              FUNCTION_LITERAL_EXPRESSION
+              LAMBDA_EXPRESSION
                 FUNCTION_LITERAL
                   PsiElement(LBRACE)('{')
                   BLOCK
@@ -189,7 +189,7 @@ JetFile: CallsInWhen.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('a')
               PsiElement(DOT)('.')
-              FUNCTION_LITERAL_EXPRESSION
+              LAMBDA_EXPRESSION
                 FUNCTION_LITERAL
                   PsiElement(LBRACE)('{')
                   PsiWhiteSpace(' ')

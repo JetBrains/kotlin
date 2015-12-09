@@ -265,7 +265,7 @@ public open class KotlinIntroduceParameterHandler(
                 fun() {
                     val isTestMode = ApplicationManager.getApplication().isUnitTestMode()
                     val haveLambdaArgumentsToReplace = occurrencesToReplace.any {
-                        it.elements.any { it is KtFunctionLiteralExpression && it.parent is KtFunctionLiteralArgument }
+                        it.elements.any { it is KtLambdaExpression && it.parent is KtLambdaArgument }
                     }
                     val inplaceIsAvailable = editor.settings.isVariableInplaceRenameEnabled
                                              && !isTestMode
@@ -291,9 +291,9 @@ public open class KotlinIntroduceParameterHandler(
                                                 val replacingExpression = psiFactory.createExpression(newParameterName)
                                                 val substringInfo = expressionToReplace.extractableSubstringInfo
                                                 val result = when {
-                                                    expressionToReplace.isFunctionLiteralOutsideParentheses() -> {
+                                                    expressionToReplace.isLambdaOutsideParentheses() -> {
                                                         expressionToReplace
-                                                                .getStrictParentOfType<KtFunctionLiteralArgument>()!!
+                                                                .getStrictParentOfType<KtLambdaArgument>()!!
                                                                 .moveInsideParenthesesAndReplaceWith(replacingExpression, context)
                                                     }
                                                     substringInfo != null -> substringInfo.replaceWith(replacingExpression)

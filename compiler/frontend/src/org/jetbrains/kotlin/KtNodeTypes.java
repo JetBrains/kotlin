@@ -28,8 +28,8 @@ public interface KtNodeTypes {
     IElementType CLASS     = KtStubElementTypes.CLASS;
     IElementType FUN       = KtStubElementTypes.FUNCTION;
     IElementType PROPERTY  = KtStubElementTypes.PROPERTY;
-    IElementType MULTI_VARIABLE_DECLARATION  = new KtNodeType("MULTI_VARIABLE_DECLARATION", KtMultiDeclaration.class);
-    IElementType MULTI_VARIABLE_DECLARATION_ENTRY = new KtNodeType("MULTI_VARIABLE_DECLARATION_ENTRY", KtMultiDeclarationEntry.class);
+    IElementType DESTRUCTURING_DECLARATION = new KtNodeType("DESTRUCTURING_DECLARATION", KtDestructuringDeclaration.class);
+    IElementType DESTRUCTURING_DECLARATION_ENTRY = new KtNodeType("DESTRUCTURING_DECLARATION_ENTRY", KtDestructuringDeclarationEntry.class);
 
     KtNodeType TYPEDEF    = new KtNodeType("TYPEDEF", KtTypedef.class);
     IElementType OBJECT_DECLARATION = KtStubElementTypes.OBJECT_DECLARATION;
@@ -42,10 +42,10 @@ public interface KtNodeTypes {
 
     IElementType TYPE_PARAMETER_LIST                 = KtStubElementTypes.TYPE_PARAMETER_LIST;
     IElementType TYPE_PARAMETER                      = KtStubElementTypes.TYPE_PARAMETER;
-    IElementType DELEGATION_SPECIFIER_LIST           = KtStubElementTypes.DELEGATION_SPECIFIER_LIST;
-    IElementType DELEGATOR_BY                        = KtStubElementTypes.DELEGATOR_BY;
-    IElementType DELEGATOR_SUPER_CALL                = KtStubElementTypes.DELEGATOR_SUPER_CALL;
-    IElementType DELEGATOR_SUPER_CLASS               = KtStubElementTypes.DELEGATOR_SUPER_CLASS;
+    IElementType SUPER_TYPE_LIST                     = KtStubElementTypes.SUPER_TYPE_LIST;
+    IElementType DELEGATED_SUPER_TYPE_ENTRY          = KtStubElementTypes.DELEGATED_SUPER_TYPE_ENTRY;
+    IElementType SUPER_TYPE_CALL_ENTRY               = KtStubElementTypes.SUPER_TYPE_CALL_ENTRY;
+    IElementType SUPER_TYPE_ENTRY                    = KtStubElementTypes.SUPER_TYPE_ENTRY;
     KtNodeType PROPERTY_DELEGATE                    = new KtNodeType("PROPERTY_DELEGATE", KtPropertyDelegate.class);
     IElementType CONSTRUCTOR_CALLEE                  = KtStubElementTypes.CONSTRUCTOR_CALLEE;
     IElementType VALUE_PARAMETER_LIST               = KtStubElementTypes.VALUE_PARAMETER_LIST;
@@ -63,7 +63,7 @@ public interface KtNodeTypes {
     IElementType TYPE_ARGUMENT_LIST                 = KtStubElementTypes.TYPE_ARGUMENT_LIST;
     KtNodeType VALUE_ARGUMENT_LIST                 = new KtNodeType("VALUE_ARGUMENT_LIST", KtValueArgumentList.class);
     KtNodeType VALUE_ARGUMENT                      = new KtNodeType("VALUE_ARGUMENT", KtValueArgument.class);
-    KtNodeType FUNCTION_LITERAL_ARGUMENT           = new KtNodeType("FUNCTION_LITERAL_ARGUMENT", KtFunctionLiteralArgument.class);
+    KtNodeType LAMBDA_ARGUMENT                     = new KtNodeType("LAMBDA_ARGUMENT", KtLambdaArgument.class);
     KtNodeType VALUE_ARGUMENT_NAME                 = new KtNodeType("VALUE_ARGUMENT_NAME", KtValueArgumentName.class);
     IElementType TYPE_REFERENCE                     = KtStubElementTypes.TYPE_REFERENCE;
 
@@ -116,7 +116,7 @@ public interface KtNodeTypes {
     KtNodeType LOOP_RANGE                = new KtNodeType("LOOP_RANGE", KtContainerNode.class);
     KtNodeType BODY                      = new KtNodeType("BODY", KtContainerNode.class);
     KtNodeType BLOCK                     = new KtNodeType("BLOCK", KtBlockExpression.class);
-    KtNodeType FUNCTION_LITERAL_EXPRESSION = new KtNodeType("FUNCTION_LITERAL_EXPRESSION", KtFunctionLiteralExpression.class);
+    KtNodeType LAMBDA_EXPRESSION         = new KtNodeType("LAMBDA_EXPRESSION", KtLambdaExpression.class);
     KtNodeType FUNCTION_LITERAL          = new KtNodeType("FUNCTION_LITERAL", KtFunctionLiteral.class);
     KtNodeType ANNOTATED_EXPRESSION      = new KtNodeType("ANNOTATED_EXPRESSION", KtAnnotatedExpression.class);
 

@@ -30,22 +30,15 @@ import org.jetbrains.kotlin.resolve.TemporaryBindingTrace;
 import org.jetbrains.kotlin.resolve.TypeResolver;
 import org.jetbrains.kotlin.resolve.callableReferences.CallableReferencesResolutionUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImplKt;
 import org.jetbrains.kotlin.resolve.calls.model.MutableDataFlowInfoForArguments;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
-import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver;
-import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.FunctionPlaceholders;
 import org.jetbrains.kotlin.types.FunctionPlaceholdersKt;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -117,7 +110,7 @@ public class ArgumentTypeResolver {
 
         for (ValueArgument valueArgument : context.call.getValueArguments()) {
             KtExpression argumentExpression = valueArgument.getArgumentExpression();
-            if (argumentExpression != null && !(argumentExpression instanceof KtFunctionLiteralExpression)) {
+            if (argumentExpression != null && !(argumentExpression instanceof KtLambdaExpression)) {
                 checkArgumentTypeWithNoCallee(context, argumentExpression);
             }
         }
@@ -173,8 +166,8 @@ public class ArgumentTypeResolver {
             @NotNull KtExpression expression, @NotNull ResolutionContext context
     ) {
         KtExpression deparenthesizedExpression = getLastElementDeparenthesized(expression, context.statementFilter);
-        if (deparenthesizedExpression instanceof KtFunctionLiteralExpression) {
-            return ((KtFunctionLiteralExpression) deparenthesizedExpression).getFunctionLiteral();
+        if (deparenthesizedExpression instanceof KtLambdaExpression) {
+            return ((KtLambdaExpression) deparenthesizedExpression).getFunctionLiteral();
         }
         if (deparenthesizedExpression instanceof KtFunction) {
             return (KtFunction) deparenthesizedExpression;

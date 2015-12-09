@@ -49,7 +49,7 @@ public class ConvertForEachToForLoopIntention : SelfTargetingOffsetIndependentIn
     private data class Data(
             val expressionToReplace: KtExpression,
             val receiver: KtExpression,
-            val functionLiteral: KtFunctionLiteralExpression
+            val functionLiteral: KtLambdaExpression
     )
 
     private fun extractData(nameExpr: KtSimpleNameExpression): Data? {
@@ -65,11 +65,11 @@ public class ConvertForEachToForLoopIntention : SelfTargetingOffsetIndependentIn
 
         val receiver = resolvedCall.getCall().getExplicitReceiver() as? ExpressionReceiver ?: return null
         val argument = resolvedCall.getCall().getValueArguments().singleOrNull() ?: return null
-        val functionLiteral = argument.getArgumentExpression() as? KtFunctionLiteralExpression ?: return null
+        val functionLiteral = argument.getArgumentExpression() as? KtLambdaExpression ?: return null
         return Data(expression, receiver.expression, functionLiteral)
     }
 
-    private fun generateLoop(functionLiteral: KtFunctionLiteralExpression, receiver: KtExpression): KtExpression {
+    private fun generateLoop(functionLiteral: KtLambdaExpression, receiver: KtExpression): KtExpression {
         val factory = KtPsiFactory(functionLiteral)
         val loopRange = KtPsiUtil.safeDeparenthesize(receiver)
         val body = functionLiteral.getBodyExpression()!!

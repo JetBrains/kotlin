@@ -39,7 +39,7 @@ public class KtInitializerList extends KtElementImplStub<KotlinPlaceHolderStub<K
     }
 
     @NotNull
-    public List<KtDelegationSpecifier> getInitializers() {
-        return Arrays.asList(getStubOrPsiChildren(KtStubElementTypes.DELEGATION_SPECIFIER_TYPES, KtDelegationSpecifier.ARRAY_FACTORY));
+    public List<KtSuperTypeListEntry> getInitializers() {
+        return Arrays.asList(getStubOrPsiChildren(KtStubElementTypes.SUPER_TYPE_LIST_ENTRIES, KtSuperTypeListEntry.ARRAY_FACTORY));
     }
 }

@@ -371,7 +371,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         generateCompanionObjectBackingFieldCopies();
 
-        DelegationFieldsInfo delegationFieldsInfo = getDelegationFieldsInfo(myClass.getDelegationSpecifiers());
+        DelegationFieldsInfo delegationFieldsInfo = getDelegationFieldsInfo(myClass.getSuperTypeListEntries());
         try {
             lookupConstructorExpressionsInClosureIfPresent();
             generatePrimaryConstructor(delegationFieldsInfo);
@@ -1012,9 +1012,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
         }
 
-        for (KtDelegationSpecifier specifier : myClass.getDelegationSpecifiers()) {
-            if (specifier instanceof KtDelegatorByExpressionSpecifier) {
-                genCallToDelegatorByExpressionSpecifier(iv, codegen, (KtDelegatorByExpressionSpecifier) specifier, fieldsInfo);
+        for (KtSuperTypeListEntry specifier : myClass.getSuperTypeListEntries()) {
+            if (specifier instanceof KtDelegatedSuperTypeEntry) {
+                genCallToDelegatorByExpressionSpecifier(iv, codegen, (KtDelegatedSuperTypeEntry) specifier, fieldsInfo);
             }
         }
 
@@ -1153,41 +1153,41 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 return StackValue.field(type, classAsmType, name, false, StackValue.none());
             }
         }
-        private final Map<KtDelegatorByExpressionSpecifier, Field> fields = new HashMap<KtDelegatorByExpressionSpecifier, Field>();
+        private final Map<KtDelegatedSuperTypeEntry, Field> fields = new HashMap<KtDelegatedSuperTypeEntry, Field>();
 
         @NotNull
-        public Field getInfo(KtDelegatorByExpressionSpecifier specifier) {
+        public Field getInfo(KtDelegatedSuperTypeEntry specifier) {
             return fields.get(specifier);
         }
 
-        private void addField(KtDelegatorByExpressionSpecifier specifier, PropertyDescriptor propertyDescriptor) {
+        private void addField(KtDelegatedSuperTypeEntry specifier, PropertyDescriptor propertyDescriptor) {
             fields.put(specifier,
                        new Field(typeMapper.mapType(propertyDescriptor), propertyDescriptor.getName().asString(), false));
         }
 
-        private void addField(KtDelegatorByExpressionSpecifier specifier, Type type, String name) {
+        private void addField(KtDelegatedSuperTypeEntry specifier, Type type, String name) {
             fields.put(specifier, new Field(type, name, true));
         }
     }
 
     @NotNull
-    private DelegationFieldsInfo getDelegationFieldsInfo(@NotNull List<KtDelegationSpecifier> delegationSpecifiers) {
+    private DelegationFieldsInfo getDelegationFieldsInfo(@NotNull List<KtSuperTypeListEntry> delegationSpecifiers) {
         DelegationFieldsInfo result = new DelegationFieldsInfo();
         int n = 0;
-        for (KtDelegationSpecifier specifier : delegationSpecifiers) {
-            if (specifier instanceof KtDelegatorByExpressionSpecifier) {
-                KtExpression expression = ((KtDelegatorByExpressionSpecifier) specifier).getDelegateExpression();
+        for (KtSuperTypeListEntry specifier : delegationSpecifiers) {
+            if (specifier instanceof KtDelegatedSuperTypeEntry) {
+                KtExpression expression = ((KtDelegatedSuperTypeEntry) specifier).getDelegateExpression();
                 PropertyDescriptor propertyDescriptor = CodegenUtil.getDelegatePropertyIfAny(expression, descriptor, bindingContext);
 
 
                 if (CodegenUtil.isFinalPropertyWithBackingField(propertyDescriptor, bindingContext)) {
-                    result.addField((KtDelegatorByExpressionSpecifier) specifier, propertyDescriptor);
+                    result.addField((KtDelegatedSuperTypeEntry) specifier, propertyDescriptor);
                 }
                 else {
                     KotlinType expressionType = expression != null ? bindingContext.getType(expression) : null;
                     Type asmType =
                             expressionType != null ? typeMapper.mapType(expressionType) : typeMapper.mapType(getSuperClass(specifier));
-                    result.addField((KtDelegatorByExpressionSpecifier) specifier, asmType, "$delegate_" + n);
+                    result.addField((KtDelegatedSuperTypeEntry) specifier, asmType, "$delegate_" + n);
                 }
                 n++;
             }
@@ -1196,14 +1196,14 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     @NotNull
-    private ClassDescriptor getSuperClass(@NotNull KtDelegationSpecifier specifier) {
-        return CodegenUtil.getSuperClassByDelegationSpecifier(specifier, bindingContext);
+    private ClassDescriptor getSuperClass(@NotNull KtSuperTypeListEntry specifier) {
+        return CodegenUtil.getSuperClassBySuperTypeListEntry(specifier, bindingContext);
     }
 
     private void genCallToDelegatorByExpressionSpecifier(
             InstructionAdapter iv,
             ExpressionCodegen codegen,
-            KtDelegatorByExpressionSpecifier specifier,
+            KtDelegatedSuperTypeEntry specifier,
             DelegationFieldsInfo fieldsInfo
     ) {
         KtExpression expression = specifier.getDelegateExpression();
@@ -1303,9 +1303,9 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             }
         }
 
-        for (KtDelegationSpecifier specifier : myClass.getDelegationSpecifiers()) {
-            if (specifier instanceof KtDelegatorByExpressionSpecifier) {
-                KtExpression delegateExpression = ((KtDelegatorByExpressionSpecifier) specifier).getDelegateExpression();
+        for (KtSuperTypeListEntry specifier : myClass.getSuperTypeListEntries()) {
+            if (specifier instanceof KtDelegatedSuperTypeEntry) {
+                KtExpression delegateExpression = ((KtDelegatedSuperTypeEntry) specifier).getDelegateExpression();
                 assert delegateExpression != null;
                 delegateExpression.accept(visitor);
             }
@@ -1620,7 +1620,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         iv.aconst(enumEntry.getName());
         iv.iconst(ordinal);
 
-        List<KtDelegationSpecifier> delegationSpecifiers = enumEntry.getDelegationSpecifiers();
+        List<KtSuperTypeListEntry> delegationSpecifiers = enumEntry.getSuperTypeListEntries();
         if (delegationSpecifiers.size() == 1 && !enumEntryNeedSubclass(bindingContext, enumEntry)) {
             ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCallWithAssert(delegationSpecifiers.get(0), bindingContext);
 
@@ -1638,11 +1638,11 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateDelegates(DelegationFieldsInfo delegationFieldsInfo) {
-        for (KtDelegationSpecifier specifier : myClass.getDelegationSpecifiers()) {
-            if (specifier instanceof KtDelegatorByExpressionSpecifier) {
-                DelegationFieldsInfo.Field field = delegationFieldsInfo.getInfo((KtDelegatorByExpressionSpecifier) specifier);
+        for (KtSuperTypeListEntry specifier : myClass.getSuperTypeListEntries()) {
+            if (specifier instanceof KtDelegatedSuperTypeEntry) {
+                DelegationFieldsInfo.Field field = delegationFieldsInfo.getInfo((KtDelegatedSuperTypeEntry) specifier);
                 generateDelegateField(field);
-                KtExpression delegateExpression = ((KtDelegatorByExpressionSpecifier) specifier).getDelegateExpression();
+                KtExpression delegateExpression = ((KtDelegatedSuperTypeEntry) specifier).getDelegateExpression();
                 KotlinType delegateExpressionType = delegateExpression != null ? bindingContext.getType(delegateExpression) : null;
                 generateDelegates(getSuperClass(specifier), delegateExpressionType, field);
             }

@@ -209,7 +209,7 @@ public class ResolveElementCache(
                 javaClass<KtSecondaryConstructor>(),
                 javaClass<KtProperty>(),
                 javaClass<KtParameter>(),
-                javaClass<KtDelegationSpecifierList>(),
+                javaClass<KtSuperTypeList>(),
                 javaClass<KtInitializerList>(),
                 javaClass<KtImportList>(),
                 javaClass<KtAnnotationEntry>(),
@@ -269,7 +269,7 @@ public class ResolveElementCache(
 
             is KtProperty -> propertyAdditionalResolve(resolveSession, resolveElement, file, createStatementFilter())
 
-            is KtDelegationSpecifierList -> delegationSpecifierAdditionalResolve(resolveSession, resolveElement, resolveElement.getParent() as KtClassOrObject, file)
+            is KtSuperTypeList -> delegationSpecifierAdditionalResolve(resolveSession, resolveElement, resolveElement.getParent() as KtClassOrObject, file)
 
             is KtInitializerList -> delegationSpecifierAdditionalResolve(resolveSession, resolveElement, resolveElement.getParent() as KtEnumEntry, file)
 
@@ -401,12 +401,12 @@ public class ResolveElementCache(
         ForceResolveUtil.forceResolveAllContents(descriptor.getTypeConstructor().getSupertypes())
 
         val bodyResolver = createBodyResolver(resolveSession, trace, file, StatementFilter.NONE)
-        bodyResolver.resolveDelegationSpecifierList(DataFlowInfo.EMPTY,
-                                                    classOrObject,
-                                                    descriptor,
-                                                    descriptor.unsubstitutedPrimaryConstructor,
-                                                    descriptor.scopeForConstructorHeaderResolution,
-                                                    descriptor.scopeForMemberDeclarationResolution)
+        bodyResolver.resolveSuperTypeEntryList(DataFlowInfo.EMPTY,
+                                               classOrObject,
+                                               descriptor,
+                                               descriptor.getUnsubstitutedPrimaryConstructor(),
+                                               descriptor.scopeForConstructorHeaderResolution,
+                                               descriptor.getScopeForMemberDeclarationResolution())
 
         return trace
     }

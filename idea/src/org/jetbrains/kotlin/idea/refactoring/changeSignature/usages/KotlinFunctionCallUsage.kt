@@ -74,7 +74,7 @@ class KotlinFunctionCallUsage(
             }
         }
 
-        if (changeInfo.getNewParametersCount() == 0 && element is KtDelegatorToSuperCall) {
+        if (changeInfo.getNewParametersCount() == 0 && element is KtSuperTypeCallEntry) {
             val enumEntry = element.getStrictParentOfType<KtEnumEntry>()
             if (enumEntry != null && enumEntry.initializerList == element.parent) {
                 val initializerList = enumEntry.initializerList
@@ -87,11 +87,11 @@ class KotlinFunctionCallUsage(
 
     private fun shouldSkipUsage(element: KtCallElement): Boolean {
         // TODO: We probable need more clever processing of invalid calls, but for now default to Java-like behaviour
-        if (resolvedCall == null && element !is KtDelegatorToSuperCall) return true
+        if (resolvedCall == null && element !is KtSuperTypeCallEntry) return true
         if (resolvedCall == null || resolvedCall.isReallySuccess()) return false
 
         // TODO: investigate why arguments are not recorded for enum constructor call
-        if (element is KtDelegatorToSuperCall && element.parent.parent is KtEnumEntry) return false
+        if (element is KtSuperTypeCallEntry && element.parent.parent is KtEnumEntry) return false
 
         if (!resolvedCall.call.valueArguments.all{ resolvedCall.getArgumentMapping(it) is ArgumentMatch }) return true
 
@@ -202,7 +202,7 @@ class KotlinFunctionCallUsage(
             if (needSeparateVariable(argumentExpression)
                 && PsiTreeUtil.getNonStrictParentOfType(element,
                                                         KtConstructorDelegationCall::class.java,
-                                                        KtDelegationSpecifier::class.java,
+                                                        KtSuperTypeListEntry::class.java,
                                                         KtParameter::class.java) == null) {
 
                 KotlinIntroduceVariableHandler.doRefactoring(project, null, argumentExpression, listOf(argumentExpression)) {
@@ -358,7 +358,7 @@ class KotlinFunctionCallUsage(
                         val valueArgument = resolvedArgument.valueArgument
                         val newValueArgument: KtValueArgument = when {
                             valueArgument == null -> argInfo.getArgumentByDefaultValue(element, allUsages, psiFactory)
-                            valueArgument is KtFunctionLiteralArgument -> psiFactory.createArgument(valueArgument.getArgumentExpression(), name)
+                            valueArgument is KtLambdaArgument -> psiFactory.createArgument(valueArgument.getArgumentExpression(), name)
                             valueArgument is KtValueArgument && valueArgument.getArgumentName()?.asName == name -> valueArgument
                             else -> psiFactory.createArgument(valueArgument.getArgumentExpression(), name)
                         }
@@ -386,10 +386,10 @@ class KotlinFunctionCallUsage(
         val lastNewArgument = newArgumentList.arguments.lastOrNull()
         val oldLastResolvedArgument = getResolvedValueArgument(lastNewParameter?.oldIndex ?: -1) as? ExpressionValueArgument
         val lambdaArgumentNotTouched =
-                lastOldArgument is KtFunctionLiteralArgument && oldLastResolvedArgument?.valueArgument == lastOldArgument
+                lastOldArgument is KtLambdaArgument && oldLastResolvedArgument?.valueArgument == lastOldArgument
         val newLambdaArgumentAddedLast = lastNewParameter != null
                                          && lastNewParameter.isNewParameter
-                                         && lastNewParameter.defaultValueForCall is KtFunctionLiteralExpression
+                                         && lastNewParameter.defaultValueForCall is KtLambdaExpression
                                          && lastNewArgument != null
                                          && !lastNewArgument.isNamed()
 
@@ -397,7 +397,7 @@ class KotlinFunctionCallUsage(
             newArgumentList.removeArgument(newArgumentList.arguments.last())
         }
         else {
-            val lambdaArguments = element.functionLiteralArguments
+            val lambdaArguments = element.lambdaArguments
             if (lambdaArguments.isNotEmpty()) {
                 element.deleteChildRange(lambdaArguments.first(), lambdaArguments.last())
             }

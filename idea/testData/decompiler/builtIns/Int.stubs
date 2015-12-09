@@ -7,14 +7,14 @@ PsiJetFileStubImpl[package=kotlin]
     PRIMARY_CONSTRUCTOR:
       MODIFIER_LIST:[private]
       VALUE_PARAMETER_LIST:
-    DELEGATION_SPECIFIER_LIST:
-      DELEGATOR_SUPER_CLASS:
+    SUPER_TYPE_LIST:
+      SUPER_TYPE_ENTRY:
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
             USER_TYPE:[isAbsoluteInRootPackage=false]
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Number]
-      DELEGATOR_SUPER_CLASS:
+      SUPER_TYPE_ENTRY:
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
             USER_TYPE:[isAbsoluteInRootPackage=false]
@@ -30,8 +30,8 @@ PsiJetFileStubImpl[package=kotlin]
     CLASS_BODY:
       OBJECT_DECLARATION:[fqName=kotlin.Int.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[IntegerConstants]]
         MODIFIER_LIST:[public companion]
-        DELEGATION_SPECIFIER_LIST:
-          DELEGATOR_SUPER_CLASS:
+        SUPER_TYPE_LIST:
+          SUPER_TYPE_ENTRY:
             TYPE_REFERENCE:
               USER_TYPE:[isAbsoluteInRootPackage=false]
                 USER_TYPE:[isAbsoluteInRootPackage=false]

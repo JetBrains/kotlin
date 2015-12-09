@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.diagnostics.Errors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED
 import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtDelegatorByExpressionSpecifier
+import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
 import org.jetbrains.kotlin.types.KotlinType
@@ -37,8 +37,8 @@ class DelegationResolver<T : CallableMemberDescriptor> private constructor(
 
     private fun generateDelegatedMembers(): Collection<T> {
         val delegatedMembers = hashSetOf<T>()
-        for (delegationSpecifier in classOrObject.getDelegationSpecifiers()) {
-            if (delegationSpecifier !is KtDelegatorByExpressionSpecifier) {
+        for (delegationSpecifier in classOrObject.getSuperTypeListEntries()) {
+            if (delegationSpecifier !is KtDelegatedSuperTypeEntry) {
                 continue
             }
             val typeReference = delegationSpecifier.typeReference ?: continue

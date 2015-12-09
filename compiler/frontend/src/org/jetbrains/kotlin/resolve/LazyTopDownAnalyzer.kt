@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.resolve
 import com.google.common.collect.HashMultimap
 import com.google.common.collect.Multimap
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation
@@ -163,7 +162,7 @@ public class LazyTopDownAnalyzer(
                     trace.report(UNSUPPORTED.on(typedef, "Typedefs are not supported"))
                 }
 
-                override fun visitMultiDeclaration(multiDeclaration: KtMultiDeclaration) {
+                override fun visitDestructuringDeclaration(destructuringDeclaration: KtDestructuringDeclaration) {
                     // Ignore: multi-declarations are only allowed locally
                 }
 

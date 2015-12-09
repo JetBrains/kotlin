@@ -88,12 +88,12 @@ fun KtClass.makeAbstract() {
     }
 }
 
-fun KtClassOrObject.getDelegatorToSuperClassByDescriptor(
+fun KtClassOrObject.getSuperTypeEntryByDescriptor(
         descriptor: ClassDescriptor,
         context: BindingContext
-): KtDelegatorToSuperClass? {
-    return getDelegationSpecifiers()
-            .filterIsInstance<KtDelegatorToSuperClass>()
+): KtSuperTypeEntry? {
+    return getSuperTypeListEntries()
+            .filterIsInstance<KtSuperTypeEntry>()
             .firstOrNull {
                 val referencedType = context[BindingContext.TYPE, it.typeReference]
                 referencedType?.constructor?.declarationDescriptor == descriptor
@@ -141,8 +141,8 @@ fun makeAbstract(member: KtCallableDeclaration,
     }
 }
 
-fun addDelegatorToSuperClass(
-        delegator: KtDelegatorToSuperClass,
+fun addSuperTypeEntry(
+        delegator: KtSuperTypeEntry,
         targetClass: KtClassOrObject,
         targetClassDescriptor: ClassDescriptor,
         context: BindingContext,
@@ -157,6 +157,6 @@ fun addDelegatorToSuperClass(
     if (!(typeInTargetClass != null && !typeInTargetClass.isError)) return
 
     val renderedType = IdeDescriptorRenderers.SOURCE_CODE.renderType(typeInTargetClass)
-    val newSpecifier = KtPsiFactory(targetClass).createDelegatorToSuperClass(renderedType)
-    targetClass.addDelegationSpecifier(newSpecifier).addToShorteningWaitSet()
+    val newSpecifier = KtPsiFactory(targetClass).createSuperTypeEntry(renderedType)
+    targetClass.addSuperTypeListEntry(newSpecifier).addToShorteningWaitSet()
 }

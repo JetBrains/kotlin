@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtFunctionLiteral;
-import org.jetbrains.kotlin.psi.KtFunctionLiteralExpression;
+import org.jetbrains.kotlin.psi.KtLambdaExpression;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
@@ -898,7 +898,7 @@ public class JetTypeMapper {
             PsiElement element = DescriptorToSourceUtils.getSourceFromDescriptor(descriptor);
             if (element instanceof KtFunctionLiteral) {
                 PsiElement expression = element.getParent();
-                if (expression instanceof KtFunctionLiteralExpression) {
+                if (expression instanceof KtLambdaExpression) {
                     SamType samType = bindingContext.get(SAM_VALUE, (KtExpression) expression);
                     if (samType != null) {
                         return samType.getAbstractMethod().getName().asString();

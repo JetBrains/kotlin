@@ -20,11 +20,8 @@ import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiEnumConstant;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub;
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
@@ -42,7 +39,7 @@ public class KtEnumEntry extends KtClass {
 
     @NotNull
     @Override
-    public List<KtDelegationSpecifier> getDelegationSpecifiers() {
+    public List<KtSuperTypeListEntry> getSuperTypeListEntries() {
         KtInitializerList initializerList = getInitializerList();
         if (initializerList == null) {
             return Collections.emptyList();
@@ -51,7 +48,7 @@ public class KtEnumEntry extends KtClass {
     }
 
     public boolean hasInitializer() {
-        return !getDelegationSpecifiers().isEmpty();
+        return !getSuperTypeListEntries().isEmpty();
     }
 
     @Nullable

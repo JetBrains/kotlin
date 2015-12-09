@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.translate.callTranslator.CallTranslator
 import org.jetbrains.kotlin.js.translate.context.TemporaryVariable
 import org.jetbrains.kotlin.js.translate.context.TranslationContext
-import org.jetbrains.kotlin.js.translate.expression.MultiDeclarationTranslator
+import org.jetbrains.kotlin.js.translate.expression.DestructuringDeclarationTranslator
 import org.jetbrains.kotlin.js.translate.general.Translation
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.factories.CompositeFIF
 import org.jetbrains.kotlin.js.translate.utils.BindingUtils.getHasNextCallable
@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.js.translate.utils.TranslationUtils
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtForExpression
-import org.jetbrains.kotlin.psi.KtMultiDeclaration
+import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtWhileExpressionBase
 import org.jetbrains.kotlin.resolve.DescriptorUtils.getClassDescriptorForType
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -115,14 +115,14 @@ public fun translateForExpression(expression: KtForExpression, context: Translat
                getClassDescriptorForType(rangeType).getName().asString() == "IntArray"
     }
 
-    val multiParameter: KtMultiDeclaration? = expression.getMultiParameter();
+    val destructuringParameter: KtDestructuringDeclaration? = expression.getDestructuringParameter();
 
     fun declareParameter(): JsName {
         val loopParameter = getLoopParameter(expression)
         if (loopParameter != null) {
             return context.getNameForElement(loopParameter)
         }
-        assert(multiParameter != null) { "If loopParameter is null, multi parameter must be not null ${expression.getText()}" }
+        assert(destructuringParameter != null) { "If loopParameter is null, multi parameter must be not null ${expression.getText()}" }
         return context.scope().declareTemporary()
     }
 
@@ -130,15 +130,15 @@ public fun translateForExpression(expression: KtForExpression, context: Translat
 
     fun translateBody(itemValue: JsExpression?): JsStatement? {
         val realBody = expression.getBody()?.let { Translation.translateAsStatementAndMergeInBlockIfNeeded(it, context) }
-        if (itemValue == null && multiParameter == null) {
+        if (itemValue == null && destructuringParameter == null) {
             return realBody
         }
         else {
             val currentVarInit =
-                if (multiParameter == null)
+                if (destructuringParameter == null)
                     newVar(parameterName, itemValue)
                 else
-                    MultiDeclarationTranslator.translate(multiParameter, parameterName, itemValue, context)
+                    DestructuringDeclarationTranslator.translate(destructuringParameter, parameterName, itemValue, context)
 
             if (realBody == null) return JsBlock(currentVarInit)
 

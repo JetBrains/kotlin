@@ -29,19 +29,19 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 
-public class KtMultiDeclaration extends KtDeclarationImpl implements KtValVarKeywordOwner {
-    public KtMultiDeclaration(@NotNull ASTNode node) {
+public class KtDestructuringDeclaration extends KtDeclarationImpl implements KtValVarKeywordOwner {
+    public KtDestructuringDeclaration(@NotNull ASTNode node) {
         super(node);
     }
 
     @Override
     public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
-        return visitor.visitMultiDeclaration(this, data);
+        return visitor.visitDestructuringDeclaration(this, data);
     }
 
     @NotNull
-    public List<KtMultiDeclarationEntry> getEntries() {
-        return findChildrenByType(KtNodeTypes.MULTI_VARIABLE_DECLARATION_ENTRY);
+    public List<KtDestructuringDeclarationEntry> getEntries() {
+        return findChildrenByType(KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY);
     }
 
     @Nullable

@@ -25,7 +25,7 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.KtFunctionLiteral;
-import org.jetbrains.kotlin.psi.KtFunctionLiteralExpression;
+import org.jetbrains.kotlin.psi.KtLambdaExpression;
 import org.jetbrains.kotlin.psi.KtVisitorVoid;
 
 class SoftKeywordsHighlightingVisitor extends KtVisitorVoid {
@@ -53,9 +53,9 @@ class SoftKeywordsHighlightingVisitor extends KtVisitorVoid {
     }
 
     @Override
-    public void visitFunctionLiteralExpression(@NotNull KtFunctionLiteralExpression expression) {
+    public void visitLambdaExpression(@NotNull KtLambdaExpression lambdaExpression) {
         if (ApplicationManager.getApplication().isUnitTestMode()) return;
-        KtFunctionLiteral functionLiteral = expression.getFunctionLiteral();
+        KtFunctionLiteral functionLiteral = lambdaExpression.getFunctionLiteral();
         holder.createInfoAnnotation(functionLiteral.getLBrace(), null).setTextAttributes(KotlinHighlightingColors.FUNCTION_LITERAL_BRACES_AND_ARROW);
         PsiElement closingBrace = functionLiteral.getRBrace();
         if (closingBrace != null) {

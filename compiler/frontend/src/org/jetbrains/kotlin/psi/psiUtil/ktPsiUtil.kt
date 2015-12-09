@@ -232,7 +232,7 @@ public fun StubBasedPsiElementBase<out KotlinClassOrObjectStub<out KtClassOrObje
         return stub.getSuperNames()
     }
 
-    val specifiers = (this as KtClassOrObject).getDelegationSpecifiers()
+    val specifiers = (this as KtClassOrObject).getSuperTypeListEntries()
     if (specifiers.isEmpty()) return Collections.emptyList<String>()
 
     val result = ArrayList<String>()
@@ -351,11 +351,11 @@ public fun KtSimpleNameExpression.isPackageDirectiveExpression(): Boolean {
     return parent is KtPackageDirective || parent?.getParent() is KtPackageDirective
 }
 
-public fun KtExpression.isFunctionLiteralOutsideParentheses(): Boolean {
+public fun KtExpression.isLambdaOutsideParentheses(): Boolean {
     val parent = getParent()
     return when (parent) {
-        is KtFunctionLiteralArgument -> true
-        is KtLabeledExpression -> parent.isFunctionLiteralOutsideParentheses()
+        is KtLambdaArgument -> true
+        is KtLabeledExpression -> parent.isLambdaOutsideParentheses()
         else -> false
     }
 }
@@ -387,7 +387,7 @@ public fun KtNamedDeclaration.getValueParameterList(): KtParameterList? {
     }
 }
 
-public fun KtFunctionLiteralArgument.getFunctionLiteralArgumentName(bindingContext: BindingContext): Name? {
+public fun KtLambdaArgument.getLambdaArgumentName(bindingContext: BindingContext): Name? {
     val callExpression = getParent() as KtCallExpression
     val resolvedCall = callExpression.getResolvedCall(bindingContext)
     return (resolvedCall?.getArgumentMapping(this) as? ArgumentMatch)?.valueParameter?.getName()

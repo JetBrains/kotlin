@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.psi.debugText
 
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.lexer.KtTokens
 import com.intellij.openapi.diagnostic.Logger
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.*
 
 // invoke this instead of getText() when you need debug text to identify some place in PSI without storing the element itself
 // this is need to avoid unnecessary file parses
@@ -98,11 +98,11 @@ private object DebugTextBuildingVisitor : KtVisitor<String, Unit>() {
         return render(constructorCalleeExpression, constructorCalleeExpression.getConstructorReferenceExpression())
     }
 
-    override fun visitDelegationSpecifier(specifier: KtDelegationSpecifier, data: Unit?): String? {
+    override fun visitSuperTypeListEntry(specifier: KtSuperTypeListEntry, data: Unit?): String? {
         return render(specifier, specifier.getTypeReference())
     }
 
-    override fun visitDelegationSpecifierList(list: KtDelegationSpecifierList, data: Unit?): String? {
+    override fun visitSuperTypeList(list: KtSuperTypeList, data: Unit?): String? {
         return renderChildren(list, ", ")
     }
 
@@ -208,7 +208,7 @@ private object DebugTextBuildingVisitor : KtVisitor<String, Unit>() {
             appendInn(klass.getTypeParameterList())
             appendInn(klass.getPrimaryConstructorModifierList(), prefix = " ", suffix = " ")
             appendInn(klass.getPrimaryConstructorParameterList())
-            appendInn(klass.getDelegationSpecifierList(), prefix = " : ")
+            appendInn(klass.getSuperTypeList(), prefix = " : ")
         }
     }
 
@@ -239,7 +239,7 @@ private object DebugTextBuildingVisitor : KtVisitor<String, Unit>() {
             appendInn(declaration.getModifierList(), suffix = " ")
             append("object ")
             appendInn(declaration.getNameAsName())
-            appendInn(declaration.getDelegationSpecifierList(), prefix = " : ")
+            appendInn(declaration.getSuperTypeList(), prefix = " : ")
         }
     }
 

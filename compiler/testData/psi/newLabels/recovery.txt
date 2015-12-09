@@ -29,7 +29,7 @@ JetFile: recovery.kt
           PsiErrorElement:Expected annotation identifier after '@'
             PsiElement(AT)('@')
           PsiWhiteSpace(' ')
-          FUNCTION_LITERAL_EXPRESSION
+          LAMBDA_EXPRESSION
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
               PsiWhiteSpace(' ')
@@ -52,12 +52,12 @@ JetFile: recovery.kt
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('filter')
           PsiWhiteSpace(' ')
-          FUNCTION_LITERAL_ARGUMENT
+          LAMBDA_ARGUMENT
             ANNOTATED_EXPRESSION
               PsiErrorElement:Expected annotation identifier after '@'
                 PsiElement(AT)('@')
               PsiWhiteSpace(' ')
-              FUNCTION_LITERAL_EXPRESSION
+              LAMBDA_EXPRESSION
                 FUNCTION_LITERAL
                   PsiElement(LBRACE)('{')
                   PsiWhiteSpace(' ')
@@ -90,7 +90,7 @@ JetFile: recovery.kt
         PsiElement(INTEGER_LITERAL)('100')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
-      FUNCTION_LITERAL_EXPRESSION
+      LAMBDA_EXPRESSION
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
           PsiWhiteSpace(' ')
@@ -176,7 +176,7 @@ JetFile: recovery.kt
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
-      FUNCTION_LITERAL_EXPRESSION
+      LAMBDA_EXPRESSION
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
           BLOCK

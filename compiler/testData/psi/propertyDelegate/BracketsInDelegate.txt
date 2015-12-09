@@ -15,8 +15,8 @@ JetFile: BracketsInDelegate.kt
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('A')
         PsiWhiteSpace(' ')
-        FUNCTION_LITERAL_ARGUMENT
-          FUNCTION_LITERAL_EXPRESSION
+        LAMBDA_ARGUMENT
+          LAMBDA_EXPRESSION
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
               BLOCK

@@ -158,9 +158,9 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
 
     @Nullable
     private ResolvedCall<FunctionDescriptor> getSuperCall() {
-        for (KtDelegationSpecifier specifier : classDeclaration.getDelegationSpecifiers()) {
-            if (specifier instanceof KtDelegatorToSuperCall) {
-                KtDelegatorToSuperCall superCall = (KtDelegatorToSuperCall) specifier;
+        for (KtSuperTypeListEntry specifier : classDeclaration.getSuperTypeListEntries()) {
+            if (specifier instanceof KtSuperTypeCallEntry) {
+                KtSuperTypeCallEntry superCall = (KtSuperTypeCallEntry) specifier;
                 //noinspection unchecked
                 return (ResolvedCall<FunctionDescriptor>) CallUtilKt.getResolvedCallWithAssert(superCall, bindingContext());
             }

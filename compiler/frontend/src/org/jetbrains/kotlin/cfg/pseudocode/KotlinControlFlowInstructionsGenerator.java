@@ -426,7 +426,7 @@ public class KotlinControlFlowInstructionsGenerator extends KotlinControlFlowBui
         @NotNull
         @Override
         public InstructionWithValue createLambda(@NotNull KtFunction expression) {
-            return read(expression instanceof KtFunctionLiteral ? (KtFunctionLiteralExpression) expression.getParent() : expression);
+            return read(expression instanceof KtFunctionLiteral ? (KtLambdaExpression) expression.getParent() : expression);
         }
 
         @NotNull

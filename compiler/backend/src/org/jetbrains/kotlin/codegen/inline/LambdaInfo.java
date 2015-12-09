@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.psi.KtExpression;
-import org.jetbrains.kotlin.psi.KtFunctionLiteralExpression;
+import org.jetbrains.kotlin.psi.KtLambdaExpression;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
@@ -61,8 +61,8 @@ public class LambdaInfo implements CapturedParamOwner, LabelOwner {
     private final Type closureClassType;
 
     LambdaInfo(@NotNull KtExpression expr, @NotNull JetTypeMapper typeMapper) {
-        this.expression = expr instanceof KtFunctionLiteralExpression ?
-                          ((KtFunctionLiteralExpression) expr).getFunctionLiteral() : expr;
+        this.expression = expr instanceof KtLambdaExpression ?
+                          ((KtLambdaExpression) expr).getFunctionLiteral() : expr;
 
         this.typeMapper = typeMapper;
         BindingContext bindingContext = typeMapper.getBindingContext();

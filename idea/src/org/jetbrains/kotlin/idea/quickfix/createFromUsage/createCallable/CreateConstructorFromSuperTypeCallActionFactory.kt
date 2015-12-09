@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
 import com.intellij.psi.PsiClass
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -29,18 +28,18 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.Parame
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.SecondaryConstructorInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.kotlin.psi.KtClass
-import org.jetbrains.kotlin.psi.KtDelegatorToSuperCall
+import org.jetbrains.kotlin.psi.KtSuperTypeCallEntry
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.Variance
 
-object CreateConstructorFromDelegatorToSuperCallActionFactory : CreateCallableMemberFromUsageFactory<KtDelegatorToSuperCall>() {
-    override fun getElementOfInterest(diagnostic: Diagnostic): KtDelegatorToSuperCall? {
-        return diagnostic.psiElement.getStrictParentOfType<KtDelegatorToSuperCall>()
+object CreateConstructorFromSuperTypeCallActionFactory : CreateCallableMemberFromUsageFactory<KtSuperTypeCallEntry>() {
+    override fun getElementOfInterest(diagnostic: Diagnostic): KtSuperTypeCallEntry? {
+        return diagnostic.psiElement.getStrictParentOfType<KtSuperTypeCallEntry>()
     }
 
-    override fun createCallableInfo(element: KtDelegatorToSuperCall, diagnostic: Diagnostic): CallableInfo? {
+    override fun createCallableInfo(element: KtSuperTypeCallEntry, diagnostic: Diagnostic): CallableInfo? {
         val typeReference = element.calleeExpression.typeReference ?: return null
 
         val project = element.project

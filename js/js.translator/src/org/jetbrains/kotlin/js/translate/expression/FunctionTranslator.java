@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.general.AbstractTranslator;
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils;
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody;
-import org.jetbrains.kotlin.psi.KtFunctionLiteralExpression;
+import org.jetbrains.kotlin.psi.KtLambdaExpression;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 
@@ -160,6 +160,6 @@ public final class FunctionTranslator extends AbstractTranslator {
     }
 
     private boolean isExtensionFunction() {
-        return DescriptorUtils.isExtension(descriptor) && !(functionDeclaration instanceof KtFunctionLiteralExpression);
+        return DescriptorUtils.isExtension(descriptor) && !(functionDeclaration instanceof KtLambdaExpression);
     }
 }

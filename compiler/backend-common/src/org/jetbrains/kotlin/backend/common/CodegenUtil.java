@@ -140,7 +140,7 @@ public class CodegenUtil {
     }
 
     @NotNull
-    public static ClassDescriptor getSuperClassByDelegationSpecifier(@NotNull KtDelegationSpecifier specifier, @NotNull BindingContext bindingContext) {
+    public static ClassDescriptor getSuperClassBySuperTypeListEntry(@NotNull KtSuperTypeListEntry specifier, @NotNull BindingContext bindingContext) {
         KotlinType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
         assert superType != null : "superType should not be null: " + specifier.getText();
 

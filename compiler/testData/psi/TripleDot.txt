@@ -38,7 +38,7 @@ JetFile: TripleDot.kt
         PsiElement(INTEGER_LITERAL)('2')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
-      FUNCTION_LITERAL_EXPRESSION
+      LAMBDA_EXPRESSION
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n\n    ')

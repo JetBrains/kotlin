@@ -54,7 +54,7 @@ public class KotlinRefactoringSupportProvider : RefactoringSupportProvider() {
             is KtProperty -> {
                 if (element.isLocal()) return true
             }
-            is KtMultiDeclarationEntry -> return true
+            is KtDestructuringDeclarationEntry -> return true
             is KtFunction -> {
                 if (element.isLocal() && element.nameIdentifier != null) return true
             }

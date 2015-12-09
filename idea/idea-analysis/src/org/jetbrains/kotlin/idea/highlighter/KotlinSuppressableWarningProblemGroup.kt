@@ -54,7 +54,7 @@ fun createSuppressWarningActions(element: PsiElement, diagnosticFactory: Diagnos
     var current: PsiElement? = element
     var suppressAtStatementAllowed = true
     while (current != null) {
-        if (current is KtDeclaration && current !is KtMultiDeclaration) {
+        if (current is KtDeclaration && current !is KtDestructuringDeclaration) {
             val declaration = current
             val kind = DeclarationKindDetector.detect(declaration)
             if (kind != null) {
@@ -64,7 +64,7 @@ fun createSuppressWarningActions(element: PsiElement, diagnosticFactory: Diagnos
         }
         else if (current is KtExpression && suppressAtStatementAllowed) {
             // Add suppress action at first statement
-            if (current.parent is KtBlockExpression || current.parent is KtMultiDeclaration) {
+            if (current.parent is KtBlockExpression || current.parent is KtDestructuringDeclaration) {
                 val kind = if (current.parent is KtBlockExpression) "statement" else "initializer"
                 actions.add(KotlinSuppressIntentionAction(current, diagnosticFactory,
                                                           AnnotationHostKind(kind, "", true)))
@@ -89,8 +89,8 @@ private object DeclarationKindDetector : KtVisitor<AnnotationHostKind?, Unit?>()
 
     override fun visitProperty(d: KtProperty, data: Unit?) = detect(d, d.getValOrVarKeyword().getText()!!)
 
-    override fun visitMultiDeclaration(d: KtMultiDeclaration, data: Unit?) = detect(d, d.getValOrVarKeyword()?.getText() ?: "val",
-                                                                                  name = d.getEntries().map { it.getName()!! }.joinToString(", ", "(", ")"))
+    override fun visitDestructuringDeclaration(d: KtDestructuringDeclaration, data: Unit?) = detect(d, d.getValOrVarKeyword()?.getText() ?: "val",
+                                                                                                    name = d.getEntries().map { it.getName()!! }.joinToString(", ", "(", ")"))
 
     override fun visitTypeParameter(d: KtTypeParameter, data: Unit?) = detect(d, "type parameter", newLineNeeded = false)
 

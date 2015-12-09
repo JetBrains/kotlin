@@ -32,7 +32,7 @@ public interface KtCallElement extends KtElement {
     List<? extends ValueArgument> getValueArguments();
 
     @NotNull
-    List<KtFunctionLiteralArgument> getFunctionLiteralArguments();
+    List<KtLambdaArgument> getLambdaArguments();
 
     @NotNull
     List<KtTypeProjection> getTypeArguments();

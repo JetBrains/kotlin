@@ -109,8 +109,8 @@ public class DescriptorResolver {
             BindingTrace trace
     ) {
         List<KotlinType> supertypes = Lists.newArrayList();
-        List<KtDelegationSpecifier> delegationSpecifiers = jetClass.getDelegationSpecifiers();
-        Collection<KotlinType> declaredSupertypes = resolveDelegationSpecifiers(
+        List<KtSuperTypeListEntry> delegationSpecifiers = jetClass.getSuperTypeListEntries();
+        Collection<KotlinType> declaredSupertypes = resolveSuperTypeListEntries(
                 scope,
                 delegationSpecifiers,
                 typeResolver, trace, false);
@@ -166,9 +166,9 @@ public class DescriptorResolver {
         return builtIns.getAnyType();
     }
 
-    public Collection<KotlinType> resolveDelegationSpecifiers(
+    public Collection<KotlinType> resolveSuperTypeListEntries(
             LexicalScope extensibleScope,
-            List<KtDelegationSpecifier> delegationSpecifiers,
+            List<KtSuperTypeListEntry> delegationSpecifiers,
             @NotNull TypeResolver resolver,
             BindingTrace trace,
             boolean checkBounds
@@ -177,7 +177,7 @@ public class DescriptorResolver {
             return Collections.emptyList();
         }
         Collection<KotlinType> result = Lists.newArrayList();
-        for (KtDelegationSpecifier delegationSpecifier : delegationSpecifiers) {
+        for (KtSuperTypeListEntry delegationSpecifier : delegationSpecifiers) {
             KtTypeReference typeReference = delegationSpecifier.getTypeReference();
             if (typeReference != null) {
                 KotlinType supertype = resolver.resolveType(extensibleScope, typeReference, trace, checkBounds);

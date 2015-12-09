@@ -113,7 +113,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
 
             @NotNull
             @Override
-            public List<FunctionLiteralArgument> getFunctionLiteralArguments() {
+            public List<LambdaArgument> getFunctionLiteralArguments() {
                 return Collections.emptyList();
             }
 

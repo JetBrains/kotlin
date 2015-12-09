@@ -114,8 +114,8 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
             val replacement = psiFactory.createExpression(nameSuggestions.single().first())
             val substringInfo = expressionToReplace.extractableSubstringInfo
             var result = when {
-                expressionToReplace.isFunctionLiteralOutsideParentheses() -> {
-                    val functionLiteralArgument = expressionToReplace.getStrictParentOfType<KtFunctionLiteralArgument>()!!
+                expressionToReplace.isLambdaOutsideParentheses() -> {
+                    val functionLiteralArgument = expressionToReplace.getStrictParentOfType<KtLambdaArgument>()!!
                     val newCallExpression = functionLiteralArgument.moveInsideParenthesesAndReplaceWith(replacement, bindingContext)
                     newCallExpression.valueArguments.last().getArgumentExpression()!!
                 }
@@ -144,7 +144,7 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
                     componentFunctions.indices.joinTo(this, prefix = "val (", postfix = ")") { nameSuggestions[it].first() }
                     append(" = ")
                     append(initializer.text)
-                }.let { psiFactory.createMultiDeclaration(it) }
+                }.let { psiFactory.createDestructuringDeclaration(it) }
             }
             else {
                 buildString {
@@ -408,7 +408,7 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
     private fun executeMultiDeclarationTemplate(
             project: Project,
             editor: Editor,
-            declaration: KtMultiDeclaration,
+            declaration: KtDestructuringDeclaration,
             suggestedNames: List<Collection<String>>) {
         StartMarkAction.canStart(project)?.let { return }
 
@@ -590,7 +590,7 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
                             ).startInplaceIntroduceTemplate()
                         }
 
-                        is KtMultiDeclaration -> {
+                        is KtDestructuringDeclaration -> {
                             executeMultiDeclarationTemplate(project, editor, property, suggestedNames)
                         }
 
@@ -660,7 +660,7 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
             var container = firstContainer
             do {
                 var lambda: KtExpression = container.getNonStrictParentOfType<KtFunction>()!!
-                if (lambda is KtFunctionLiteral) lambda = lambda.parent as? KtFunctionLiteralExpression ?: return@apply
+                if (lambda is KtFunctionLiteral) lambda = lambda.parent as? KtLambdaExpression ?: return@apply
                 if (!isResolvableNextTo(lambda)) return@apply
                 container = lambda.getContainer() ?: return@apply
                 add(lambda to container)

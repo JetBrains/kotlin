@@ -199,10 +199,10 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             betweenInside(WHEN_KEYWORD, LPAR, WHEN).spacing(1, 1, 0, false, 0)
 
             betweenInside(LPAR, VALUE_PARAMETER, FOR).spaces(0)
-            betweenInside(LPAR, MULTI_VARIABLE_DECLARATION, FOR).spaces(0)
+            betweenInside(LPAR, DESTRUCTURING_DECLARATION, FOR).spaces(0)
             betweenInside(LOOP_RANGE, RPAR, FOR).spaces(0)
 
-            val TYPE_COLON_ELEMENTS = TokenSet.create(PROPERTY, FUN, VALUE_PARAMETER, MULTI_VARIABLE_DECLARATION_ENTRY, FUNCTION_LITERAL)
+            val TYPE_COLON_ELEMENTS = TokenSet.create(PROPERTY, FUN, VALUE_PARAMETER, DESTRUCTURING_DECLARATION_ENTRY, FUNCTION_LITERAL)
             beforeInside(COLON, TYPE_COLON_ELEMENTS) { spaceIf(jetSettings.SPACE_BEFORE_TYPE_COLON) }
             afterInside(COLON, TYPE_COLON_ELEMENTS) { spaceIf(jetSettings.SPACE_AFTER_TYPE_COLON) }
 
@@ -215,9 +215,9 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
 
             aroundInside(ARROW, FUNCTION_TYPE).spaceIf(jetSettings.SPACE_AROUND_FUNCTION_TYPE_ARROW)
 
-            between(VALUE_ARGUMENT_LIST, FUNCTION_LITERAL_ARGUMENT).spaces(1)
-            betweenInside(REFERENCE_EXPRESSION, FUNCTION_LITERAL_ARGUMENT, CALL_EXPRESSION).spaces(1)
-            betweenInside(TYPE_ARGUMENT_LIST, FUNCTION_LITERAL_ARGUMENT, CALL_EXPRESSION).spaces(1)
+            between(VALUE_ARGUMENT_LIST, LAMBDA_ARGUMENT).spaces(1)
+            betweenInside(REFERENCE_EXPRESSION, LAMBDA_ARGUMENT, CALL_EXPRESSION).spaces(1)
+            betweenInside(TYPE_ARGUMENT_LIST, LAMBDA_ARGUMENT, CALL_EXPRESSION).spaces(1)
         }
         custom {
 

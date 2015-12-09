@@ -43,7 +43,7 @@ JetFile: enumEntries.kt
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('X')
         INITIALIZER_LIST
-          DELEGATOR_SUPER_CALL
+          SUPER_TYPE_CALL_ENTRY
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
@@ -66,7 +66,7 @@ JetFile: enumEntries.kt
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('Y')
         INITIALIZER_LIST
-          DELEGATOR_SUPER_CALL
+          SUPER_TYPE_CALL_ENTRY
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
@@ -98,7 +98,7 @@ JetFile: enumEntries.kt
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('Z')
         INITIALIZER_LIST
-          DELEGATOR_SUPER_CALL
+          SUPER_TYPE_CALL_ENTRY
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE

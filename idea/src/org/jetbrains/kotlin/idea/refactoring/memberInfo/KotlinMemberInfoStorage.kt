@@ -80,8 +80,8 @@ public class KotlinMemberInfoStorage(
                           && myFilter.includeMember(it) }
                 .mapTo(temp) { KotlinMemberInfo(it as KtNamedDeclaration) }
         if (aClass == myClass) {
-            aClass.getDelegationSpecifiers()
-                    .filterIsInstance<KtDelegatorToSuperClass>()
+            aClass.getSuperTypeListEntries()
+                    .filterIsInstance<KtSuperTypeEntry>()
                     .map {
                         val type = context[BindingContext.TYPE, it.typeReference]
                         val classDescriptor = type?.constructor?.declarationDescriptor as? ClassDescriptor

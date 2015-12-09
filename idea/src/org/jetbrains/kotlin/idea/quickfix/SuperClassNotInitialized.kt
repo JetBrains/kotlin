@@ -49,7 +49,7 @@ public object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
     private val DISPLAY_MAX_PARAMS = 5
 
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
-        val delegator = diagnostic.getPsiElement() as KtDelegatorToSuperClass
+        val delegator = diagnostic.getPsiElement() as KtSuperTypeEntry
         val classOrObjectDeclaration = delegator.getParent().getParent() as? KtClassOrObject ?: return emptyList()
 
         val typeRef = delegator.getTypeReference() ?: return emptyList()
@@ -103,16 +103,16 @@ public object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
     }
 
     private class AddParenthesisFix(
-            element: KtDelegatorToSuperClass,
+            element: KtSuperTypeEntry,
             val putCaretIntoParenthesis: Boolean
-    ) : KotlinQuickFixAction<KtDelegatorToSuperClass>(element), HighPriorityAction {
+    ) : KotlinQuickFixAction<KtSuperTypeEntry>(element), HighPriorityAction {
 
         override fun getFamilyName() = "Change to constructor invocation" //TODO?
 
         override fun getText() = getFamilyName()
 
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-            val newSpecifier = element.replaced(KtPsiFactory(project).createDelegatorToSuperCall(element.getText() + "()"))
+            val newSpecifier = element.replaced(KtPsiFactory(project).createSuperTypeCallEntry(element.getText() + "()"))
 
             if (putCaretIntoParenthesis) {
                 if (editor != null) {
@@ -127,16 +127,16 @@ public object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
     }
 
     private class AddParametersFix(
-            element: KtDelegatorToSuperClass,
+            element: KtSuperTypeEntry,
             private val classDeclaration: KtClass,
             private val parametersToAdd: Collection<KtParameter>,
             private val argumentText: String,
             private val text: String
-    ) : KotlinQuickFixAction<KtDelegatorToSuperClass>(element) {
+    ) : KotlinQuickFixAction<KtSuperTypeEntry>(element) {
 
         companion object {
             fun create(
-                    element: KtDelegatorToSuperClass,
+                    element: KtSuperTypeEntry,
                     classDeclaration: KtClass,
                     superConstructor: ConstructorDescriptor,
                     text: String
@@ -191,7 +191,7 @@ public object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
                 typeRefsToShorten.add(newParameter.typeReference!!)
             }
 
-            val delegatorCall = factory.createDelegatorToSuperCall(element.text + "(" + argumentText + ")")
+            val delegatorCall = factory.createSuperTypeCallEntry(element.text + "(" + argumentText + ")")
             element.replace(delegatorCall)
 
             ShortenReferences.DEFAULT.process(typeRefsToShorten)

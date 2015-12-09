@@ -50,12 +50,12 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
         super.visitProperty(property, data);
     }
 
-    public void visitMultiDeclarationVoid(@NotNull KtMultiDeclaration multiDeclaration, P data) {
-        super.visitMultiDeclaration(multiDeclaration, data);
+    public void visitDestructuringDeclarationVoid(@NotNull KtDestructuringDeclaration multiDeclaration, P data) {
+        super.visitDestructuringDeclaration(multiDeclaration, data);
     }
 
-    public void visitMultiDeclarationEntryVoid(@NotNull KtMultiDeclarationEntry multiDeclarationEntry, P data) {
-        super.visitMultiDeclarationEntry(multiDeclarationEntry, data);
+    public void visitDestructuringDeclarationEntryVoid(@NotNull KtDestructuringDeclarationEntry multiDeclarationEntry, P data) {
+        super.visitDestructuringDeclarationEntry(multiDeclarationEntry, data);
     }
 
     public void visitTypedefVoid(@NotNull KtTypedef typedef, P data) {
@@ -118,27 +118,27 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
         super.visitParameter(parameter, data);
     }
 
-    public void visitDelegationSpecifierListVoid(@NotNull KtDelegationSpecifierList list, P data) {
-        super.visitDelegationSpecifierList(list, data);
+    public void visitSuperTypeListVoid(@NotNull KtSuperTypeList list, P data) {
+        super.visitSuperTypeList(list, data);
     }
 
-    public void visitDelegationSpecifierVoid(@NotNull KtDelegationSpecifier specifier, P data) {
-        super.visitDelegationSpecifier(specifier, data);
+    public void visitSuperTypeListEntryVoid(@NotNull KtSuperTypeListEntry specifier, P data) {
+        super.visitSuperTypeListEntry(specifier, data);
     }
 
-    public void visitDelegationByExpressionSpecifierVoid(@NotNull KtDelegatorByExpressionSpecifier specifier, P data) {
-        super.visitDelegationByExpressionSpecifier(specifier, data);
+    public void visitDelegatedSuperTypeEntryVoid(@NotNull KtDelegatedSuperTypeEntry specifier, P data) {
+        super.visitDelegatedSuperTypeEntry(specifier, data);
     }
 
-    public void visitDelegationToSuperCallSpecifierVoid(@NotNull KtDelegatorToSuperCall call, P data) {
-        super.visitDelegationToSuperCallSpecifier(call, data);
+    public void visitSuperTypeCallEntryVoid(@NotNull KtSuperTypeCallEntry call, P data) {
+        super.visitSuperTypeCallEntry(call, data);
     }
 
-    public void visitDelegationToSuperClassSpecifierVoid(@NotNull KtDelegatorToSuperClass specifier, P data) {
-        super.visitDelegationToSuperClassSpecifier(specifier, data);
+    public void visitSuperTypeEntryVoid(@NotNull KtSuperTypeEntry specifier, P data) {
+        super.visitSuperTypeEntry(specifier, data);
     }
 
-    public void visitDelegationCallVoid(@NotNull KtConstructorDelegationCall call, P data) {
+    public void visitConstructorDelegationCallVoid(@NotNull KtConstructorDelegationCall call, P data) {
         super.visitConstructorDelegationCall(call, data);
     }
 
@@ -242,8 +242,8 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
         super.visitDoWhileExpression(expression, data);
     }
 
-    public void visitFunctionLiteralExpressionVoid(@NotNull KtFunctionLiteralExpression expression, P data) {
-        super.visitFunctionLiteralExpression(expression, data);
+    public void visitLambdaExpressionVoid(@NotNull KtLambdaExpression expression, P data) {
+        super.visitLambdaExpression(expression, data);
     }
 
     public void visitAnnotatedExpressionVoid(@NotNull KtAnnotatedExpression expression, P data) {
@@ -460,14 +460,14 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
     }
 
     @Override
-    public final Void visitMultiDeclaration(@NotNull KtMultiDeclaration multiDeclaration, P data) {
-        visitMultiDeclarationVoid(multiDeclaration, data);
+    public final Void visitDestructuringDeclaration(@NotNull KtDestructuringDeclaration multiDeclaration, P data) {
+        visitDestructuringDeclarationVoid(multiDeclaration, data);
     	return null;
     }
 
     @Override
-    public final Void visitMultiDeclarationEntry(@NotNull KtMultiDeclarationEntry multiDeclarationEntry, P data) {
-        visitMultiDeclarationEntryVoid(multiDeclarationEntry, data);
+    public final Void visitDestructuringDeclarationEntry(@NotNull KtDestructuringDeclarationEntry multiDeclarationEntry, P data) {
+        visitDestructuringDeclarationEntryVoid(multiDeclarationEntry, data);
     	return null;
     }
 
@@ -556,40 +556,40 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
     }
 
     @Override
-    public final Void visitDelegationSpecifierList(@NotNull KtDelegationSpecifierList list, P data) {
-        visitDelegationSpecifierListVoid(list, data);
+    public final Void visitSuperTypeList(@NotNull KtSuperTypeList list, P data) {
+        visitSuperTypeListVoid(list, data);
     	return null;
     }
 
     @Override
-    public final Void visitDelegationSpecifier(@NotNull KtDelegationSpecifier specifier, P data) {
-        visitDelegationSpecifierVoid(specifier, data);
+    public final Void visitSuperTypeListEntry(@NotNull KtSuperTypeListEntry specifier, P data) {
+        visitSuperTypeListEntryVoid(specifier, data);
     	return null;
     }
 
     @Override
-    public final Void visitDelegationByExpressionSpecifier(
-            @NotNull KtDelegatorByExpressionSpecifier specifier, P data
+    public final Void visitDelegatedSuperTypeEntry(
+            @NotNull KtDelegatedSuperTypeEntry specifier, P data
     ) {
-        visitDelegationByExpressionSpecifierVoid(specifier, data);
+        visitDelegatedSuperTypeEntryVoid(specifier, data);
     	return null;
     }
 
     @Override
-    public final Void visitDelegationToSuperCallSpecifier(@NotNull KtDelegatorToSuperCall call, P data) {
-        visitDelegationToSuperCallSpecifierVoid(call, data);
+    public final Void visitSuperTypeCallEntry(@NotNull KtSuperTypeCallEntry call, P data) {
+        visitSuperTypeCallEntryVoid(call, data);
     	return null;
     }
 
     @Override
-    public final Void visitDelegationToSuperClassSpecifier(@NotNull KtDelegatorToSuperClass specifier, P data) {
-        visitDelegationToSuperClassSpecifierVoid(specifier, data);
+    public final Void visitSuperTypeEntry(@NotNull KtSuperTypeEntry specifier, P data) {
+        visitSuperTypeEntryVoid(specifier, data);
     	return null;
     }
 
     @Override
     public final Void visitConstructorDelegationCall(@NotNull KtConstructorDelegationCall call, P data) {
-        visitDelegationCallVoid(call, data);
+        visitConstructorDelegationCallVoid(call, data);
         return null;
     }
 
@@ -744,8 +744,8 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
     }
 
     @Override
-    public final Void visitFunctionLiteralExpression(@NotNull KtFunctionLiteralExpression expression, P data) {
-        visitFunctionLiteralExpressionVoid(expression, data);
+    public final Void visitLambdaExpression(@NotNull KtLambdaExpression expression, P data) {
+        visitLambdaExpressionVoid(expression, data);
     	return null;
     }
 

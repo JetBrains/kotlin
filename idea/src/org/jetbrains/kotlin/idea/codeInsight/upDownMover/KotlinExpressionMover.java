@@ -227,10 +227,10 @@ public class KotlinExpressionMover extends AbstractKotlinUpDownMover {
                 (KtCallExpression) KtPsiUtil.getOutermostDescendantElement(element, down, IS_CALL_EXPRESSION);
         if (callExpression == null) return null;
 
-        List<KtFunctionLiteralArgument> functionLiterals = callExpression.getFunctionLiteralArguments();
+        List<KtLambdaArgument> functionLiterals = callExpression.getLambdaArguments();
         if (functionLiterals.isEmpty()) return null;
 
-        return functionLiterals.get(0).getFunctionLiteral().getBodyExpression();
+        return functionLiterals.get(0).getLambdaExpression().getBodyExpression();
     }
 
     @Nullable

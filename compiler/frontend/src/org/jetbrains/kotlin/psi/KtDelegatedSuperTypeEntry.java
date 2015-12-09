@@ -18,27 +18,26 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
-import java.util.Arrays;
-import java.util.List;
-
-public class KtDelegationSpecifierList extends KtElementImplStub<KotlinPlaceHolderStub<KtDelegationSpecifierList>> {
-    public KtDelegationSpecifierList(@NotNull ASTNode node) {
+public class KtDelegatedSuperTypeEntry extends KtSuperTypeListEntry {
+    public KtDelegatedSuperTypeEntry(@NotNull ASTNode node) {
         super(node);
     }
 
-    public KtDelegationSpecifierList(@NotNull KotlinPlaceHolderStub<KtDelegationSpecifierList> stub) {
-        super(stub, KtStubElementTypes.DELEGATION_SPECIFIER_LIST);
+    public KtDelegatedSuperTypeEntry(@NotNull KotlinPlaceHolderStub<? extends KtSuperTypeListEntry> stub) {
+        super(stub, KtStubElementTypes.DELEGATED_SUPER_TYPE_ENTRY);
     }
 
     @Override
     public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
-        return visitor.visitDelegationSpecifierList(this, data);
+        return visitor.visitDelegatedSuperTypeEntry(this, data);
     }
 
-    public List<KtDelegationSpecifier> getDelegationSpecifiers() {
-        return Arrays.asList(getStubOrPsiChildren(KtStubElementTypes.DELEGATION_SPECIFIER_TYPES, KtDelegationSpecifier.ARRAY_FACTORY));
+    @Nullable @IfNotParsed
+    public KtExpression getDelegateExpression() {
+        return findChildByClass(KtExpression.class);
     }
 }

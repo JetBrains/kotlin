@@ -27,13 +27,13 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.psi.KtDelegationSpecifier;
+import org.jetbrains.kotlin.psi.KtSuperTypeListEntry;
 import org.jetbrains.kotlin.psi.KtFile;
 
-public class RemoveSupertypeFix extends KotlinQuickFixAction<KtDelegationSpecifier> {
-    private final KtDelegationSpecifier superClass;
+public class RemoveSupertypeFix extends KotlinQuickFixAction<KtSuperTypeListEntry> {
+    private final KtSuperTypeListEntry superClass;
 
-    public RemoveSupertypeFix(@NotNull KtDelegationSpecifier superClass) {
+    public RemoveSupertypeFix(@NotNull KtSuperTypeListEntry superClass) {
         super(superClass);
         this.superClass = superClass;
     }
@@ -67,8 +67,8 @@ public class RemoveSupertypeFix extends KotlinQuickFixAction<KtDelegationSpecifi
     public static KotlinSingleIntentionActionFactory createFactory() {
         return new KotlinSingleIntentionActionFactory() {
             @Override
-            public KotlinQuickFixAction<KtDelegationSpecifier> createAction(Diagnostic diagnostic) {
-                KtDelegationSpecifier superClass = QuickFixUtil.getParentElementOfType(diagnostic, KtDelegationSpecifier.class);
+            public KotlinQuickFixAction<KtSuperTypeListEntry> createAction(Diagnostic diagnostic) {
+                KtSuperTypeListEntry superClass = QuickFixUtil.getParentElementOfType(diagnostic, KtSuperTypeListEntry.class);
                 if (superClass == null) return null;
                 return new RemoveSupertypeFix(superClass);
             }

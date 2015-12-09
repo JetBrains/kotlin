@@ -63,7 +63,7 @@ public class KotlinCalleeMethodsTreeStructure extends KotlinCallTreeStructure {
             }
         } else {
             KtClassOrObject classOrObject = (KtClassOrObject) rootElement;
-            for (KtDelegationSpecifier specifier : classOrObject.getDelegationSpecifiers()) {
+            for (KtSuperTypeListEntry specifier : classOrObject.getSuperTypeListEntries()) {
                 if (specifier instanceof KtCallElement) {
                     elementsToAnalyze.add(specifier);
                 }

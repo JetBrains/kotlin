@@ -18,26 +18,20 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
-public class KtDelegatorByExpressionSpecifier extends KtDelegationSpecifier {
-    public KtDelegatorByExpressionSpecifier(@NotNull ASTNode node) {
+public class KtSuperTypeEntry extends KtSuperTypeListEntry {
+    public KtSuperTypeEntry(@NotNull ASTNode node) {
         super(node);
     }
 
-    public KtDelegatorByExpressionSpecifier(@NotNull KotlinPlaceHolderStub<? extends KtDelegationSpecifier> stub) {
-        super(stub, KtStubElementTypes.DELEGATOR_BY);
+    public KtSuperTypeEntry(@NotNull KotlinPlaceHolderStub<? extends KtSuperTypeListEntry> stub) {
+        super(stub, KtStubElementTypes.SUPER_TYPE_ENTRY);
     }
 
     @Override
     public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
-        return visitor.visitDelegationByExpressionSpecifier(this, data);
-    }
-
-    @Nullable @IfNotParsed
-    public KtExpression getDelegateExpression() {
-        return findChildByClass(KtExpression.class);
+        return visitor.visitSuperTypeEntry(this, data);
     }
 }

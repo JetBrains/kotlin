@@ -731,7 +731,7 @@ internal fun KtNamedDeclaration.getGeneratedBody() =
                 // We assume lazy property here with delegate expression 'by Delegates.lazy { body }'
                 property.delegateExpression?.let {
                     val call = it.getCalleeExpressionIfAny()?.parent as? KtCallExpression
-                    call?.functionLiteralArguments?.singleOrNull()?.getFunctionLiteral()?.bodyExpression
+                    call?.lambdaArguments?.singleOrNull()?.getLambdaExpression()?.bodyExpression
                 }
             }
         } ?: throw AssertionError("Couldn't get block body for this declaration: ${getElementTextWithContext()}")

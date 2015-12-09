@@ -16,16 +16,16 @@
 
 package org.jetbrains.kotlin.idea.references
 
-import org.jetbrains.kotlin.psi.KtMultiDeclaration
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
+import org.jetbrains.kotlin.resolve.BindingContext
 
-class KtMultiDeclarationReference(element: KtMultiDeclaration) : KtMultiReference<KtMultiDeclaration>(element) {
+class KtDestructuringDeclarationReference(element: KtDestructuringDeclaration) : KtMultiReference<KtDestructuringDeclaration>(element) {
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
         return expression.getEntries().mapNotNull { entry ->
             context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry)?.getCandidateDescriptor()

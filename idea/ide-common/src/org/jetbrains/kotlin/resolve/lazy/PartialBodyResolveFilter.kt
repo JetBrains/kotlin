@@ -90,7 +90,7 @@ class PartialBodyResolveFilter(
                     statementMarks.mark(statement, MarkLevel.NEED_REFERENCE_RESOLVE)
                 }
             }
-            else if (statement is KtMultiDeclaration) {
+            else if (statement is KtDestructuringDeclaration) {
                 if (statement.getEntries().any {
                     val name = it.getName()
                     name != null && nameFilter(name)

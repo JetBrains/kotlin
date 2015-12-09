@@ -93,13 +93,13 @@ JetFile: forParameters.kt
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        MULTI_VARIABLE_DECLARATION
+        DESTRUCTURING_DECLARATION
           PsiElement(LPAR)('(')
-          MULTI_VARIABLE_DECLARATION_ENTRY
+          DESTRUCTURING_DECLARATION_ENTRY
             PsiElement(IDENTIFIER)('x')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          MULTI_VARIABLE_DECLARATION_ENTRY
+          DESTRUCTURING_DECLARATION_ENTRY
             MODIFIER_LIST
               PsiElement(private)('private')
               PsiWhiteSpace(' ')
@@ -143,9 +143,9 @@ JetFile: forParameters.kt
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        MULTI_VARIABLE_DECLARATION
+        DESTRUCTURING_DECLARATION
           PsiElement(LPAR)('(')
-          MULTI_VARIABLE_DECLARATION_ENTRY
+          DESTRUCTURING_DECLARATION_ENTRY
             MODIFIER_LIST
               ANNOTATION
                 PsiElement(AT)('@')
@@ -161,7 +161,7 @@ JetFile: forParameters.kt
               <empty list>
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          MULTI_VARIABLE_DECLARATION_ENTRY
+          DESTRUCTURING_DECLARATION_ENTRY
             PsiElement(IDENTIFIER)('x')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
@@ -253,7 +253,7 @@ JetFile: forParameters.kt
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        MULTI_VARIABLE_DECLARATION
+        DESTRUCTURING_DECLARATION
           MODIFIER_LIST
             ANNOTATION_ENTRY
               PsiElement(AT)('@')
@@ -267,11 +267,11 @@ JetFile: forParameters.kt
                 PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
           PsiElement(LPAR)('(')
-          MULTI_VARIABLE_DECLARATION_ENTRY
+          DESTRUCTURING_DECLARATION_ENTRY
             PsiElement(IDENTIFIER)('x')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          MULTI_VARIABLE_DECLARATION_ENTRY
+          DESTRUCTURING_DECLARATION_ENTRY
             MODIFIER_LIST
               ANNOTATION_ENTRY
                 PsiElement(AT)('@')
@@ -377,7 +377,7 @@ JetFile: forParameters.kt
         PsiElement(for)('for')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        MULTI_VARIABLE_DECLARATION
+        DESTRUCTURING_DECLARATION
           MODIFIER_LIST
             PsiElement(private)('private')
             PsiWhiteSpace(' ')
@@ -392,11 +392,11 @@ JetFile: forParameters.kt
           PsiElement(val)('val')
           PsiWhiteSpace(' ')
           PsiElement(LPAR)('(')
-          MULTI_VARIABLE_DECLARATION_ENTRY
+          DESTRUCTURING_DECLARATION_ENTRY
             PsiElement(IDENTIFIER)('x')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          MULTI_VARIABLE_DECLARATION_ENTRY
+          DESTRUCTURING_DECLARATION_ENTRY
             MODIFIER_LIST
               ANNOTATION_ENTRY
                 PsiElement(AT)('@')

@@ -17,59 +17,24 @@ JetFile: CallWithManyClosures.kt
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
-      FUNCTION_LITERAL_ARGUMENT
-        FUNCTION_LITERAL_EXPRESSION
+      LAMBDA_ARGUMENT
+        LAMBDA_EXPRESSION
           FUNCTION_LITERAL
             PsiElement(LBRACE)('{')
             BLOCK
               <empty list>
             PsiElement(RBRACE)('}')
       PsiWhiteSpace(' ')
-      FUNCTION_LITERAL_ARGUMENT
-        FUNCTION_LITERAL_EXPRESSION
+      LAMBDA_ARGUMENT
+        LAMBDA_EXPRESSION
           FUNCTION_LITERAL
             PsiElement(LBRACE)('{')
             BLOCK
               <empty list>
             PsiElement(RBRACE)('}')
       PsiWhiteSpace(' ')
-      FUNCTION_LITERAL_ARGUMENT
-        FUNCTION_LITERAL_EXPRESSION
-          FUNCTION_LITERAL
-            PsiElement(LBRACE)('{')
-            BLOCK
-              <empty list>
-            PsiElement(RBRACE)('}')
-  PsiWhiteSpace('\n')
-  PROPERTY
-    PsiElement(val)('val')
-    PsiWhiteSpace(' ')
-    PsiElement(IDENTIFIER)('a')
-    PsiWhiteSpace(' ')
-    PsiElement(EQ)('=')
-    PsiWhiteSpace(' ')
-    CALL_EXPRESSION
-      REFERENCE_EXPRESSION
-        PsiElement(IDENTIFIER)('f')
-      PsiWhiteSpace(' ')
-      FUNCTION_LITERAL_ARGUMENT
-        FUNCTION_LITERAL_EXPRESSION
-          FUNCTION_LITERAL
-            PsiElement(LBRACE)('{')
-            BLOCK
-              <empty list>
-            PsiElement(RBRACE)('}')
-      PsiWhiteSpace(' ')
-      FUNCTION_LITERAL_ARGUMENT
-        FUNCTION_LITERAL_EXPRESSION
-          FUNCTION_LITERAL
-            PsiElement(LBRACE)('{')
-            BLOCK
-              <empty list>
-            PsiElement(RBRACE)('}')
-      PsiWhiteSpace(' ')
-      FUNCTION_LITERAL_ARGUMENT
-        FUNCTION_LITERAL_EXPRESSION
+      LAMBDA_ARGUMENT
+        LAMBDA_EXPRESSION
           FUNCTION_LITERAL
             PsiElement(LBRACE)('{')
             BLOCK
@@ -87,8 +52,43 @@ JetFile: CallWithManyClosures.kt
       REFERENCE_EXPRESSION
         PsiElement(IDENTIFIER)('f')
       PsiWhiteSpace(' ')
-      FUNCTION_LITERAL_ARGUMENT
-        FUNCTION_LITERAL_EXPRESSION
+      LAMBDA_ARGUMENT
+        LAMBDA_EXPRESSION
+          FUNCTION_LITERAL
+            PsiElement(LBRACE)('{')
+            BLOCK
+              <empty list>
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace(' ')
+      LAMBDA_ARGUMENT
+        LAMBDA_EXPRESSION
+          FUNCTION_LITERAL
+            PsiElement(LBRACE)('{')
+            BLOCK
+              <empty list>
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace(' ')
+      LAMBDA_ARGUMENT
+        LAMBDA_EXPRESSION
+          FUNCTION_LITERAL
+            PsiElement(LBRACE)('{')
+            BLOCK
+              <empty list>
+            PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('a')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    CALL_EXPRESSION
+      REFERENCE_EXPRESSION
+        PsiElement(IDENTIFIER)('f')
+      PsiWhiteSpace(' ')
+      LAMBDA_ARGUMENT
+        LAMBDA_EXPRESSION
           FUNCTION_LITERAL
             PsiElement(LBRACE)('{')
             BLOCK
@@ -109,8 +109,8 @@ JetFile: CallWithManyClosures.kt
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
-      FUNCTION_LITERAL_ARGUMENT
-        FUNCTION_LITERAL_EXPRESSION
+      LAMBDA_ARGUMENT
+        LAMBDA_EXPRESSION
           FUNCTION_LITERAL
             PsiElement(LBRACE)('{')
             BLOCK
@@ -131,24 +131,24 @@ JetFile: CallWithManyClosures.kt
           PsiElement(IDENTIFIER)('f')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
-      FUNCTION_LITERAL_ARGUMENT
-        FUNCTION_LITERAL_EXPRESSION
+      LAMBDA_ARGUMENT
+        LAMBDA_EXPRESSION
           FUNCTION_LITERAL
             PsiElement(LBRACE)('{')
             BLOCK
               <empty list>
             PsiElement(RBRACE)('}')
       PsiWhiteSpace(' ')
-      FUNCTION_LITERAL_ARGUMENT
-        FUNCTION_LITERAL_EXPRESSION
+      LAMBDA_ARGUMENT
+        LAMBDA_EXPRESSION
           FUNCTION_LITERAL
             PsiElement(LBRACE)('{')
             BLOCK
               <empty list>
             PsiElement(RBRACE)('}')
       PsiWhiteSpace(' ')
-      FUNCTION_LITERAL_ARGUMENT
-        FUNCTION_LITERAL_EXPRESSION
+      LAMBDA_ARGUMENT
+        LAMBDA_EXPRESSION
           FUNCTION_LITERAL
             PsiElement(LBRACE)('{')
             BLOCK
@@ -172,24 +172,24 @@ JetFile: CallWithManyClosures.kt
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
-      FUNCTION_LITERAL_ARGUMENT
-        FUNCTION_LITERAL_EXPRESSION
+      LAMBDA_ARGUMENT
+        LAMBDA_EXPRESSION
           FUNCTION_LITERAL
             PsiElement(LBRACE)('{')
             BLOCK
               <empty list>
             PsiElement(RBRACE)('}')
       PsiWhiteSpace(' ')
-      FUNCTION_LITERAL_ARGUMENT
-        FUNCTION_LITERAL_EXPRESSION
+      LAMBDA_ARGUMENT
+        LAMBDA_EXPRESSION
           FUNCTION_LITERAL
             PsiElement(LBRACE)('{')
             BLOCK
               <empty list>
             PsiElement(RBRACE)('}')
       PsiWhiteSpace(' ')
-      FUNCTION_LITERAL_ARGUMENT
-        FUNCTION_LITERAL_EXPRESSION
+      LAMBDA_ARGUMENT
+        LAMBDA_EXPRESSION
           FUNCTION_LITERAL
             PsiElement(LBRACE)('{')
             BLOCK
@@ -221,24 +221,24 @@ JetFile: CallWithManyClosures.kt
         PsiElement(LPAR)('(')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
-      FUNCTION_LITERAL_ARGUMENT
-        FUNCTION_LITERAL_EXPRESSION
+      LAMBDA_ARGUMENT
+        LAMBDA_EXPRESSION
           FUNCTION_LITERAL
             PsiElement(LBRACE)('{')
             BLOCK
               <empty list>
             PsiElement(RBRACE)('}')
       PsiWhiteSpace(' ')
-      FUNCTION_LITERAL_ARGUMENT
-        FUNCTION_LITERAL_EXPRESSION
+      LAMBDA_ARGUMENT
+        LAMBDA_EXPRESSION
           FUNCTION_LITERAL
             PsiElement(LBRACE)('{')
             BLOCK
               <empty list>
             PsiElement(RBRACE)('}')
       PsiWhiteSpace(' ')
-      FUNCTION_LITERAL_ARGUMENT
-        FUNCTION_LITERAL_EXPRESSION
+      LAMBDA_ARGUMENT
+        LAMBDA_EXPRESSION
           FUNCTION_LITERAL
             PsiElement(LBRACE)('{')
             BLOCK

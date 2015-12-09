@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getFunctionLiteralArgumentName
+import org.jetbrains.kotlin.psi.psiUtil.getLambdaArgumentName
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.OverridingUtil
@@ -44,16 +44,16 @@ public inline fun <reified T: PsiElement> PsiElement.replaced(newElement: T): T 
 @Suppress("UNCHECKED_CAST")
 public fun <T: PsiElement> T.copied(): T = copy() as T
 
-public fun KtFunctionLiteralArgument.moveInsideParentheses(bindingContext: BindingContext): KtCallExpression {
+public fun KtLambdaArgument.moveInsideParentheses(bindingContext: BindingContext): KtCallExpression {
     return moveInsideParenthesesAndReplaceWith(this.getArgumentExpression(), bindingContext)
 }
 
-public fun KtFunctionLiteralArgument.moveInsideParenthesesAndReplaceWith(
+public fun KtLambdaArgument.moveInsideParenthesesAndReplaceWith(
         replacement: KtExpression,
         bindingContext: BindingContext
-): KtCallExpression = moveInsideParenthesesAndReplaceWith(replacement, getFunctionLiteralArgumentName(bindingContext))
+): KtCallExpression = moveInsideParenthesesAndReplaceWith(replacement, getLambdaArgumentName(bindingContext))
 
-public fun KtFunctionLiteralArgument.moveInsideParenthesesAndReplaceWith(
+public fun KtLambdaArgument.moveInsideParenthesesAndReplaceWith(
         replacement: KtExpression,
         functionLiteralArgumentName: Name?
 ): KtCallExpression {
@@ -68,7 +68,7 @@ public fun KtFunctionLiteralArgument.moveInsideParenthesesAndReplaceWith(
         psiFactory.createArgument(replacement)
     }
 
-    val functionLiteralArgument = newCallExpression.getFunctionLiteralArguments().firstOrNull()!!
+    val functionLiteralArgument = newCallExpression.getLambdaArguments().firstOrNull()!!
     val valueArgumentList = newCallExpression.getValueArgumentList() ?: psiFactory.createCallArguments("()")
 
     valueArgumentList.addArgument(argument)
@@ -84,14 +84,14 @@ public fun KtFunctionLiteralArgument.moveInsideParenthesesAndReplaceWith(
 }
 
 public fun KtCallExpression.moveFunctionLiteralOutsideParentheses() {
-    assert(getFunctionLiteralArguments().isEmpty())
+    assert(getLambdaArguments().isEmpty())
     val argumentList = getValueArgumentList()!!
     val argument = argumentList.getArguments().last()
     val expression = argument.getArgumentExpression()!!
     assert(expression.unpackFunctionLiteral() != null)
 
     val dummyCall = KtPsiFactory(this).createExpressionByPattern("foo()$0:'{}'", expression) as KtCallExpression
-    val functionLiteralArgument = dummyCall.getFunctionLiteralArguments().single()
+    val functionLiteralArgument = dummyCall.getLambdaArguments().single()
     this.add(functionLiteralArgument)
     if (argumentList.getArguments().size() > 1) {
         argumentList.removeArgument(argument)

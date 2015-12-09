@@ -182,7 +182,7 @@ class KotlinGenerateSecondaryConstructorAction : KotlinGenerateMemberActionBase<
                 delegationCallArguments.add(if (isVararg) "*$paramName" else paramName)
             }
 
-            val delegationCall = psiFactory.createConstructorDelegationCall(delegationCallArguments.joinToString(prefix = "super(", postfix = ")"))
+            val delegationCall = psiFactory.creareDelegatedSuperTypeEntry(delegationCallArguments.joinToString(prefix = "super(", postfix = ")"))
             constructor.replaceImplicitDelegationCallWithExplicit(false).replace(delegationCall)
         }
 

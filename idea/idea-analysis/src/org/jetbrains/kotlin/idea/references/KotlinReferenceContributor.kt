@@ -61,8 +61,8 @@ public class KotlinReferenceContributor() : PsiReferenceContributor() {
                 KtPropertyDelegationMethodsReference(it)
             }
 
-            registerProvider(javaClass<KtMultiDeclaration>()) {
-                KtMultiDeclarationReference(it)
+            registerProvider(javaClass<KtDestructuringDeclaration>()) {
+                KtDestructuringDeclarationReference(it)
             }
 
             registerProvider(javaClass<KDocName>()) {

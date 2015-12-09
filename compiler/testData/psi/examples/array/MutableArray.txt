@@ -29,8 +29,8 @@ JetFile: MutableArray.kt
     PsiWhiteSpace(' ')
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
-    DELEGATION_SPECIFIER_LIST
-      DELEGATOR_SUPER_CLASS
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION
@@ -95,8 +95,8 @@ JetFile: MutableArray.kt
     PsiWhiteSpace(' ')
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
-    DELEGATION_SPECIFIER_LIST
-      DELEGATOR_SUPER_CLASS
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION
@@ -161,8 +161,8 @@ JetFile: MutableArray.kt
     PsiWhiteSpace(' ')
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
-    DELEGATION_SPECIFIER_LIST
-      DELEGATOR_SUPER_CLASS
+    SUPER_TYPE_LIST
+      SUPER_TYPE_ENTRY
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION
@@ -177,7 +177,7 @@ JetFile: MutableArray.kt
               PsiElement(GT)('>')
       PsiElement(COMMA)(',')
       PsiWhiteSpace(' ')
-      DELEGATOR_SUPER_CLASS
+      SUPER_TYPE_ENTRY
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION

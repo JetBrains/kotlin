@@ -123,11 +123,11 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     }
 
     @Override
-    public JsNode visitMultiDeclaration(@NotNull KtMultiDeclaration multiDeclaration, @NotNull TranslationContext context) {
+    public JsNode visitDestructuringDeclaration(@NotNull KtDestructuringDeclaration multiDeclaration, @NotNull TranslationContext context) {
         KtExpression jetInitializer = multiDeclaration.getInitializer();
         assert jetInitializer != null : "Initializer for multi declaration must be not null";
         JsExpression initializer = Translation.translateAsExpression(jetInitializer, context);
-        return MultiDeclarationTranslator.translate(multiDeclaration, context.scope().declareTemporary(), initializer, context);
+        return DestructuringDeclarationTranslator.translate(multiDeclaration, context.scope().declareTemporary(), initializer, context);
     }
 
     @Override
@@ -409,7 +409,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
     @Override
     @NotNull
-    public JsNode visitFunctionLiteralExpression(@NotNull KtFunctionLiteralExpression expression, @NotNull TranslationContext context) {
+    public JsNode visitLambdaExpression(@NotNull KtLambdaExpression expression, @NotNull TranslationContext context) {
         return new LiteralFunctionTranslator(context).translate(expression.getFunctionLiteral());
     }
 

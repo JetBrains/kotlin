@@ -78,8 +78,8 @@ public interface Errors {
     DiagnosticFactory2<KtParameter, EffectiveVisibility, EffectiveVisibility> EXPOSED_PARAMETER_TYPE = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<KtTypeReference, EffectiveVisibility, EffectiveVisibility> EXPOSED_RECEIVER_TYPE = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<KtTypeParameter, EffectiveVisibility, EffectiveVisibility> EXPOSED_TYPE_PARAMETER_BOUND = DiagnosticFactory2.create(ERROR);
-    DiagnosticFactory2<KtDelegationSpecifier, EffectiveVisibility, EffectiveVisibility> EXPOSED_SUPER_CLASS = DiagnosticFactory2.create(ERROR);
-    DiagnosticFactory2<KtDelegationSpecifier, EffectiveVisibility, EffectiveVisibility> EXPOSED_SUPER_INTERFACE = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<KtSuperTypeListEntry, EffectiveVisibility, EffectiveVisibility> EXPOSED_SUPER_CLASS = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory2<KtSuperTypeListEntry, EffectiveVisibility, EffectiveVisibility> EXPOSED_SUPER_INTERFACE = DiagnosticFactory2.create(ERROR);
 
     DiagnosticFactory1<KtElement, Collection<ClassDescriptor>> PLATFORM_CLASS_MAPPED_TO_KOTLIN = DiagnosticFactory1.create(WARNING);
 
@@ -142,7 +142,7 @@ public interface Errors {
 
     // Annotations
 
-    DiagnosticFactory0<KtDelegationSpecifierList> SUPERTYPES_FOR_ANNOTATION_CLASS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtSuperTypeList> SUPERTYPES_FOR_ANNOTATION_CLASS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtParameter> MISSING_VAL_ON_ANNOTATION_PARAMETER = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtCallExpression> ANNOTATION_CLASS_CONSTRUCTOR_CALL = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<KtAnnotationEntry, DeclarationDescriptor> NOT_AN_ANNOTATION_CLASS = DiagnosticFactory1.create(ERROR);
@@ -178,7 +178,7 @@ public interface Errors {
 
     DiagnosticFactory0<PsiElement> CYCLIC_INHERITANCE_HIERARCHY = DiagnosticFactory0.create(ERROR);
 
-    DiagnosticFactory0<KtDelegatorToSuperClass> SUPERTYPE_NOT_INITIALIZED = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtSuperTypeEntry> SUPERTYPE_NOT_INITIALIZED = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<KtTypeReference> DELEGATION_NOT_TO_INTERFACE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtTypeReference> SUPERTYPE_NOT_A_CLASS_OR_INTERFACE = DiagnosticFactory0.create(ERROR);
@@ -188,7 +188,7 @@ public interface Errors {
 
     DiagnosticFactory0<KtTypeReference> MANY_CLASSES_IN_SUPERTYPE_LIST = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtTypeReference> SUPERTYPE_APPEARS_TWICE = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory3<KtDelegationSpecifierList, TypeParameterDescriptor, ClassDescriptor, Collection<KotlinType>>
+    DiagnosticFactory3<KtSuperTypeList, TypeParameterDescriptor, ClassDescriptor, Collection<KotlinType>>
             INCONSISTENT_TYPE_PARAMETER_VALUES = DiagnosticFactory3.create(ERROR);
     DiagnosticFactory3<KtTypeParameter, TypeParameterDescriptor, ClassDescriptor, Collection<KotlinType>>
             INCONSISTENT_TYPE_PARAMETER_BOUNDS = DiagnosticFactory3.create(ERROR);
@@ -207,7 +207,7 @@ public interface Errors {
     DiagnosticFactory0<KtConstructorDelegationReferenceExpression> CYCLIC_CONSTRUCTOR_DELEGATION_CALL = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<KtDeclaration> CONSTRUCTOR_IN_OBJECT = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
-    DiagnosticFactory0<KtDelegatorToSuperCall> SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtSuperTypeCallEntry> SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<KtConstructorDelegationCall> PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED =
             DiagnosticFactory0.create(ERROR, PositioningStrategies.SECONDARY_CONSTRUCTOR_DELEGATION_CALL);
@@ -231,7 +231,7 @@ public interface Errors {
 
     DiagnosticFactory0<PsiElement> SUPERTYPE_INITIALIZED_IN_INTERFACE = DiagnosticFactory0.create(ERROR);
 
-    DiagnosticFactory0<KtDelegatorByExpressionSpecifier> DELEGATION_IN_INTERFACE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtDelegatedSuperTypeEntry> DELEGATION_IN_INTERFACE = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<PsiElement> INTERFACE_WITH_SUPERCLASS = DiagnosticFactory0.create(ERROR);
 
@@ -532,7 +532,7 @@ public interface Errors {
 
     // Destructuring-declarations
 
-    DiagnosticFactory0<KtMultiDeclaration> INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION = DiagnosticFactory0.create(ERROR, DEFAULT);
+    DiagnosticFactory0<KtDestructuringDeclaration> INITIALIZER_REQUIRED_FOR_DESTRUCTURING_DECLARATION = DiagnosticFactory0.create(ERROR, DEFAULT);
     DiagnosticFactory2<KtExpression, Name, KotlinType> COMPONENT_FUNCTION_MISSING = DiagnosticFactory2.create(ERROR, DEFAULT);
     DiagnosticFactory2<KtExpression, Name, Collection<? extends ResolvedCall<?>>> COMPONENT_FUNCTION_AMBIGUITY = DiagnosticFactory2.create(ERROR, DEFAULT);
     DiagnosticFactory3<KtExpression, Name, KotlinType, KotlinType> COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH = DiagnosticFactory3.create(ERROR, DEFAULT);
@@ -626,7 +626,7 @@ public interface Errors {
     DiagnosticFactory2<KtBinaryExpression, KtElement, DeclarationDescriptor> UNUSED_VALUE = DiagnosticFactory2.create(WARNING, PositioningStrategies.UNUSED_VALUE);
     DiagnosticFactory1<KtElement, KtElement> UNUSED_CHANGED_VALUE = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory0<KtElement> UNUSED_EXPRESSION = DiagnosticFactory0.create(WARNING);
-    DiagnosticFactory0<KtFunctionLiteralExpression> UNUSED_LAMBDA_EXPRESSION = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<KtLambdaExpression> UNUSED_LAMBDA_EXPRESSION = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory1<KtExpression, DeclarationDescriptor> VAL_REASSIGNMENT = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<KtExpression, DeclarationDescriptor> SETTER_PROJECTED_OUT = DiagnosticFactory1.create(ERROR);

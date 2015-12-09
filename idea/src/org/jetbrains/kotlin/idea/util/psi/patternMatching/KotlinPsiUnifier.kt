@@ -42,9 +42,8 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
@@ -425,7 +424,7 @@ public class KotlinPsiUnifier(
             return matchDescriptors(d1, d2)
         }
 
-        private fun matchMultiDeclarations(e1: KtMultiDeclaration, e2: KtMultiDeclaration): Boolean {
+        private fun matchDestructuringDeclarations(e1: KtDestructuringDeclaration, e2: KtDestructuringDeclaration): Boolean {
             val entries1 = e1.getEntries()
             val entries2 = e2.getEntries()
             if (entries1.size() != entries2.size()) return false
@@ -552,8 +551,8 @@ public class KotlinPsiUnifier(
                 return OrderInfo(orderSensitive, orderInsensitive)
             }
 
-            fun getDelegationOrderInfo(cls: KtClassOrObject): OrderInfo<KtDelegationSpecifier> {
-                val (orderInsensitive, orderSensitive) = cls.getDelegationSpecifiers().partition { it is KtDelegatorToSuperClass }
+            fun getDelegationOrderInfo(cls: KtClassOrObject): OrderInfo<KtSuperTypeListEntry> {
+                val (orderInsensitive, orderSensitive) = cls.getSuperTypeListEntries().partition { it is KtSuperTypeEntry }
                 return OrderInfo(orderSensitive, orderInsensitive)
             }
 
@@ -666,8 +665,8 @@ public class KotlinPsiUnifier(
                 e1 !is KtElement, e2 !is KtElement ->
                     null
 
-                e1 is KtMultiDeclaration && e2 is KtMultiDeclaration ->
-                    if (matchMultiDeclarations(e1, e2)) null else UNMATCHED
+                e1 is KtDestructuringDeclaration && e2 is KtDestructuringDeclaration ->
+                    if (matchDestructuringDeclarations(e1, e2)) null else UNMATCHED
 
                 e1 is KtAnonymousInitializer && e2 is KtAnonymousInitializer ->
                     null

@@ -117,7 +117,7 @@ public fun isOrOverridesSynthesized(descriptor: CallableMemberDescriptor): Boole
 fun isConventionCall(call: Call): Boolean {
     if (call is CallTransformer.CallForImplicitInvoke) return true
     val callElement = call.callElement
-    if (callElement is KtArrayAccessExpression || callElement is KtMultiDeclarationEntry) return true
+    if (callElement is KtArrayAccessExpression || callElement is KtDestructuringDeclarationEntry) return true
     val calleeExpression = call.calleeExpression as? KtOperationReferenceExpression ?: return false
     return calleeExpression.getNameForConventionalOperation() != null
 }

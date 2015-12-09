@@ -24,14 +24,14 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 
 import java.util.List;
 
-public class KtFunctionLiteralExpression extends KtExpressionImpl {
-    public KtFunctionLiteralExpression(@NotNull ASTNode node) {
+public class KtLambdaExpression extends KtExpressionImpl {
+    public KtLambdaExpression(@NotNull ASTNode node) {
         super(node);
     }
 
     @Override
     public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
-        return visitor.visitFunctionLiteralExpression(this, data);
+        return visitor.visitLambdaExpression(this, data);
     }
 
     @NotNull

@@ -33,7 +33,7 @@ object JvmSimpleNameBacktickChecker : IdentifierChecker {
     }
 
     override fun checkDeclaration(declaration: KtDeclaration, diagnosticHolder: DiagnosticSink) {
-        if (declaration is KtMultiDeclaration) {
+        if (declaration is KtDestructuringDeclaration) {
             declaration.entries.forEach { checkNamed(it, diagnosticHolder) }
         }
         if (declaration is KtCallableDeclaration) {

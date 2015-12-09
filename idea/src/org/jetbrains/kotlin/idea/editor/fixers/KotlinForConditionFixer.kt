@@ -23,7 +23,7 @@ public class KotlinForConditionFixer: MissingConditionFixer<KtForExpression>() {
     override val keyword = "for"
     override fun getElement(element: PsiElement?) = element as? KtForExpression
     override fun getCondition(element: KtForExpression) =
-            element.getLoopRange() ?: element.getLoopParameter() ?: element.getMultiParameter()
+            element.getLoopRange() ?: element.getLoopParameter() ?: element.getDestructuringParameter()
     override fun getLeftParenthesis(element: KtForExpression) = element.getLeftParenthesis()
     override fun getRightParenthesis(element: KtForExpression) = element.getRightParenthesis()
     override fun getBody(element: KtForExpression) = element.getBody()

@@ -62,7 +62,7 @@ public class AddForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpre
 
         loopRange.replace(createWithIndexExpression(loopRange))
 
-        var multiParameter = (psiFactory.createExpressionByPattern("for((index, $0) in x){}", loopParameter.text) as KtForExpression).multiParameter!!
+        var multiParameter = (psiFactory.createExpressionByPattern("for((index, $0) in x){}", loopParameter.text) as KtForExpression).destructuringParameter!!
 
         multiParameter = loopParameter.replaced(multiParameter)
 
@@ -72,7 +72,7 @@ public class AddForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpre
         runTemplate(editor, element, indexVariable)
     }
 
-    private fun runTemplate(editor: Editor, forExpression: KtForExpression, indexVariable: KtMultiDeclarationEntry) {
+    private fun runTemplate(editor: Editor, forExpression: KtForExpression, indexVariable: KtDestructuringDeclarationEntry) {
         PsiDocumentManager.getInstance(forExpression.project).doPostponedOperationsAndUnblockDocument(editor.document)
 
         val templateBuilder = TemplateBuilderImpl(forExpression)

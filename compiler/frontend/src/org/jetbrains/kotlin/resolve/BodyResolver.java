@@ -98,7 +98,7 @@ public class BodyResolver {
     }
 
     private void resolveBehaviorDeclarationBodies(@NotNull BodiesResolveContext c) {
-        resolveDelegationSpecifierLists(c);
+        resolveSuperTypeEntryLists(c);
 
         resolvePropertyDeclarationBodies(c);
 
@@ -231,20 +231,20 @@ public class BodyResolver {
         functionAnalyzerExtension.process(c);
     }
 
-    private void resolveDelegationSpecifierLists(@NotNull BodiesResolveContext c) {
+    private void resolveSuperTypeEntryLists(@NotNull BodiesResolveContext c) {
         // TODO : Make sure the same thing is not initialized twice
         for (Map.Entry<KtClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
             KtClassOrObject classOrObject = entry.getKey();
             ClassDescriptorWithResolutionScopes descriptor = entry.getValue();
 
-            resolveDelegationSpecifierList(c.getOuterDataFlowInfo(), classOrObject, descriptor,
-                                           descriptor.getUnsubstitutedPrimaryConstructor(),
-                                           descriptor.getScopeForConstructorHeaderResolution(),
-                                           descriptor.getScopeForMemberDeclarationResolution());
+            resolveSuperTypeEntryList(c.getOuterDataFlowInfo(), classOrObject, descriptor,
+                                      descriptor.getUnsubstitutedPrimaryConstructor(),
+                                      descriptor.getScopeForConstructorHeaderResolution(),
+                                      descriptor.getScopeForMemberDeclarationResolution());
         }
     }
 
-    public void resolveDelegationSpecifierList(
+    public void resolveSuperTypeEntryList(
             @NotNull final DataFlowInfo outerDataFlowInfo,
             @NotNull KtClassOrObject jetClass,
             @NotNull final ClassDescriptor descriptor,
@@ -267,7 +267,7 @@ public class BodyResolver {
             }
 
             @Override
-            public void visitDelegationByExpressionSpecifier(@NotNull KtDelegatorByExpressionSpecifier specifier) {
+            public void visitDelegatedSuperTypeEntry(@NotNull KtDelegatedSuperTypeEntry specifier) {
                 if (descriptor.getKind() == ClassKind.INTERFACE) {
                     trace.report(DELEGATION_IN_INTERFACE.on(specifier));
                 }
@@ -294,7 +294,7 @@ public class BodyResolver {
             }
 
             @Override
-            public void visitDelegationToSuperCallSpecifier(@NotNull KtDelegatorToSuperCall call) {
+            public void visitSuperTypeCallEntry(@NotNull KtSuperTypeCallEntry call) {
                 KtValueArgumentList valueArgumentList = call.getValueArgumentList();
                 PsiElement elementToMark = valueArgumentList == null ? call : valueArgumentList;
                 if (descriptor.getKind() == ClassKind.INTERFACE) {
@@ -336,7 +336,7 @@ public class BodyResolver {
             }
 
             @Override
-            public void visitDelegationToSuperClassSpecifier(@NotNull KtDelegatorToSuperClass specifier) {
+            public void visitSuperTypeEntry(@NotNull KtSuperTypeEntry specifier) {
                 KtTypeReference typeReference = specifier.getTypeReference();
                 KotlinType supertype = trace.getBindingContext().get(BindingContext.TYPE, typeReference);
                 recordSupertype(typeReference, supertype);
@@ -363,12 +363,12 @@ public class BodyResolver {
             }
         };
 
-        for (KtDelegationSpecifier delegationSpecifier : jetClass.getDelegationSpecifiers()) {
+        for (KtSuperTypeListEntry delegationSpecifier : jetClass.getSuperTypeListEntries()) {
             delegationSpecifier.accept(visitor);
         }
 
-        if (DescriptorUtils.isAnnotationClass(descriptor) && jetClass.getDelegationSpecifierList() != null) {
-            trace.report(SUPERTYPES_FOR_ANNOTATION_CLASS.on(jetClass.getDelegationSpecifierList()));
+        if (DescriptorUtils.isAnnotationClass(descriptor) && jetClass.getSuperTypeList() != null) {
+            trace.report(SUPERTYPES_FOR_ANNOTATION_CLASS.on(jetClass.getSuperTypeList()));
         }
 
         if (primaryConstructorDelegationCall[0] != null && primaryConstructor != null) {

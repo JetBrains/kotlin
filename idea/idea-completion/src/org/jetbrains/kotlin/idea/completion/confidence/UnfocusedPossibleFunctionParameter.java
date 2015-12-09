@@ -34,8 +34,8 @@ public class UnfocusedPossibleFunctionParameter extends CompletionConfidence {
         // 2. The same but for the case when first expression is additionally surrounded with brackets
 
         PsiElement position = parameters.getPosition();
-        KtFunctionLiteralExpression functionLiteral = PsiTreeUtil.getParentOfType(
-                position, KtFunctionLiteralExpression.class);
+        KtLambdaExpression functionLiteral = PsiTreeUtil.getParentOfType(
+                position, KtLambdaExpression.class);
 
         if (functionLiteral != null) {
             PsiElement expectedReference = position.getParent();

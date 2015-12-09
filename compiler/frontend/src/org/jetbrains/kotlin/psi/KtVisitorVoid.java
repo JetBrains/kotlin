@@ -53,12 +53,12 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
         super.visitProperty(property, null);
     }
 
-    public void visitMultiDeclaration(@NotNull KtMultiDeclaration multiDeclaration) {
-        super.visitMultiDeclaration(multiDeclaration, null);
+    public void visitDestructuringDeclaration(@NotNull KtDestructuringDeclaration destructuringDeclaration) {
+        super.visitDestructuringDeclaration(destructuringDeclaration, null);
     }
 
-    public void visitMultiDeclarationEntry(@NotNull KtMultiDeclarationEntry multiDeclarationEntry) {
-        super.visitMultiDeclarationEntry(multiDeclarationEntry, null);
+    public void visitDestructuringDeclarationEntry(@NotNull KtDestructuringDeclarationEntry multiDeclarationEntry) {
+        super.visitDestructuringDeclarationEntry(multiDeclarationEntry, null);
     }
 
     public void visitTypedef(@NotNull KtTypedef typedef) {
@@ -121,24 +121,24 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
         super.visitParameter(parameter, null);
     }
 
-    public void visitDelegationSpecifierList(@NotNull KtDelegationSpecifierList list) {
-        super.visitDelegationSpecifierList(list, null);
+    public void visitSuperTypeList(@NotNull KtSuperTypeList list) {
+        super.visitSuperTypeList(list, null);
     }
 
-    public void visitDelegationSpecifier(@NotNull KtDelegationSpecifier specifier) {
-        super.visitDelegationSpecifier(specifier, null);
+    public void visitSuperTypeListEntry(@NotNull KtSuperTypeListEntry specifier) {
+        super.visitSuperTypeListEntry(specifier, null);
     }
 
-    public void visitDelegationByExpressionSpecifier(@NotNull KtDelegatorByExpressionSpecifier specifier) {
-        super.visitDelegationByExpressionSpecifier(specifier, null);
+    public void visitDelegatedSuperTypeEntry(@NotNull KtDelegatedSuperTypeEntry specifier) {
+        super.visitDelegatedSuperTypeEntry(specifier, null);
     }
 
-    public void visitDelegationToSuperCallSpecifier(@NotNull KtDelegatorToSuperCall call) {
-        super.visitDelegationToSuperCallSpecifier(call, null);
+    public void visitSuperTypeCallEntry(@NotNull KtSuperTypeCallEntry call) {
+        super.visitSuperTypeCallEntry(call, null);
     }
 
-    public void visitDelegationToSuperClassSpecifier(@NotNull KtDelegatorToSuperClass specifier) {
-        super.visitDelegationToSuperClassSpecifier(specifier, null);
+    public void visitSuperTypeEntry(@NotNull KtSuperTypeEntry specifier) {
+        super.visitSuperTypeEntry(specifier, null);
     }
 
     public void visitConstructorDelegationCall(@NotNull KtConstructorDelegationCall call) {
@@ -245,8 +245,8 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
         super.visitDoWhileExpression(expression, null);
     }
 
-    public void visitFunctionLiteralExpression(@NotNull KtFunctionLiteralExpression expression) {
-        super.visitFunctionLiteralExpression(expression, null);
+    public void visitLambdaExpression(@NotNull KtLambdaExpression lambdaExpression) {
+        super.visitLambdaExpression(lambdaExpression, null);
     }
 
     public void visitAnnotatedExpression(@NotNull KtAnnotatedExpression expression) {
@@ -487,14 +487,14 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
     }
 
     @Override
-    public final Void visitMultiDeclaration(@NotNull KtMultiDeclaration multiDeclaration, Void data) {
-        visitMultiDeclaration(multiDeclaration);
+    public final Void visitDestructuringDeclaration(@NotNull KtDestructuringDeclaration multiDeclaration, Void data) {
+        visitDestructuringDeclaration(multiDeclaration);
         return null;
     }
 
     @Override
-    public final Void visitMultiDeclarationEntry(@NotNull KtMultiDeclarationEntry multiDeclarationEntry, Void data) {
-        visitMultiDeclarationEntry(multiDeclarationEntry);
+    public final Void visitDestructuringDeclarationEntry(@NotNull KtDestructuringDeclarationEntry multiDeclarationEntry, Void data) {
+        visitDestructuringDeclarationEntry(multiDeclarationEntry);
         return null;
     }
 
@@ -589,34 +589,34 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
     }
 
     @Override
-    public final Void visitDelegationSpecifierList(@NotNull KtDelegationSpecifierList list, Void data) {
-        visitDelegationSpecifierList(list);
+    public final Void visitSuperTypeList(@NotNull KtSuperTypeList list, Void data) {
+        visitSuperTypeList(list);
         return null;
     }
 
     @Override
-    public final Void visitDelegationSpecifier(@NotNull KtDelegationSpecifier specifier, Void data) {
-        visitDelegationSpecifier(specifier);
+    public final Void visitSuperTypeListEntry(@NotNull KtSuperTypeListEntry specifier, Void data) {
+        visitSuperTypeListEntry(specifier);
         return null;
     }
 
     @Override
-    public final Void visitDelegationByExpressionSpecifier(
-            @NotNull KtDelegatorByExpressionSpecifier specifier, Void data
+    public final Void visitDelegatedSuperTypeEntry(
+            @NotNull KtDelegatedSuperTypeEntry specifier, Void data
     ) {
-        visitDelegationByExpressionSpecifier(specifier);
+        visitDelegatedSuperTypeEntry(specifier);
         return null;
     }
 
     @Override
-    public final Void visitDelegationToSuperCallSpecifier(@NotNull KtDelegatorToSuperCall call, Void data) {
-        visitDelegationToSuperCallSpecifier(call);
+    public final Void visitSuperTypeCallEntry(@NotNull KtSuperTypeCallEntry call, Void data) {
+        visitSuperTypeCallEntry(call);
         return null;
     }
 
     @Override
-    public final Void visitDelegationToSuperClassSpecifier(@NotNull KtDelegatorToSuperClass specifier, Void data) {
-        visitDelegationToSuperClassSpecifier(specifier);
+    public final Void visitSuperTypeEntry(@NotNull KtSuperTypeEntry specifier, Void data) {
+        visitSuperTypeEntry(specifier);
         return null;
     }
 
@@ -777,8 +777,8 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
     }
 
     @Override
-    public final Void visitFunctionLiteralExpression(@NotNull KtFunctionLiteralExpression expression, Void data) {
-        visitFunctionLiteralExpression(expression);
+    public final Void visitLambdaExpression(@NotNull KtLambdaExpression expression, Void data) {
+        visitLambdaExpression(expression);
         return null;
     }
 

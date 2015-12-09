@@ -73,7 +73,7 @@ public class OperatorToFunctionIntention : SelfTargetingIntention<KtExpression>(
 
         private fun isApplicableCall(element: KtCallExpression, caretOffset: Int): Boolean {
             val lbrace = (element.getValueArgumentList()?.getLeftParenthesis()
-                          ?: element.getFunctionLiteralArguments().firstOrNull()?.getFunctionLiteral()?.getLeftCurlyBrace()
+                          ?: element.getLambdaArguments().firstOrNull()?.getLambdaExpression()?.getLeftCurlyBrace()
                           ?: return false) as PsiElement
             if (!lbrace.getTextRange().containsOffset(caretOffset)) return false
 
@@ -82,7 +82,7 @@ public class OperatorToFunctionIntention : SelfTargetingIntention<KtExpression>(
             if (descriptor is FunctionDescriptor && descriptor.getName() == OperatorNameConventions.INVOKE) {
                 if (element.getParent() is KtDotQualifiedExpression &&
                     element.getCalleeExpression()?.getText() == OperatorNameConventions.INVOKE.asString()) return false
-                return element.getValueArgumentList() != null || element.getFunctionLiteralArguments().isNotEmpty()
+                return element.getValueArgumentList() != null || element.getLambdaArguments().isNotEmpty()
             }
             return false
         }
@@ -196,7 +196,7 @@ public class OperatorToFunctionIntention : SelfTargetingIntention<KtExpression>(
             val callee = element.getCalleeExpression()!!
             val arguments = element.getValueArgumentList()
             val argumentString = arguments?.getText()?.removeSurrounding("(", ")")
-            val funcLitArgs = element.getFunctionLiteralArguments()
+            val funcLitArgs = element.getLambdaArguments()
             val calleeText = callee.getText()
             val transformation = "$calleeText.${OperatorNameConventions.INVOKE.asString()}" +
                                  (if (argumentString == null) "" else "($argumentString)")

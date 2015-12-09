@@ -313,7 +313,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         // .and it with entrance data flow information, because do-while body is executed at least once
         // See KT-6283
         KotlinTypeInfo bodyTypeInfo;
-        if (body instanceof KtFunctionLiteralExpression) {
+        if (body instanceof KtLambdaExpression) {
             // As a matter of fact, function literal is always unused at this point
             bodyTypeInfo = facade.getTypeInfo(body, context.replaceScope(context.scope));
         }
@@ -397,15 +397,15 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
             loopScope.addVariableDescriptor(variableDescriptor);
         }
         else {
-            KtMultiDeclaration multiParameter = expression.getMultiParameter();
+            KtDestructuringDeclaration multiParameter = expression.getDestructuringParameter();
             if (multiParameter != null && loopRange != null) {
                 KotlinType elementType = expectedParameterType == null ? ErrorUtils.createErrorType("Loop range has no type") : expectedParameterType;
                 TransientReceiver iteratorNextAsReceiver = new TransientReceiver(elementType);
                 components.annotationResolver.resolveAnnotationsWithArguments(loopScope, multiParameter.getModifierList(), context.trace);
-                components.multiDeclarationResolver.defineLocalVariablesFromMultiDeclaration(
+                components.destructuringDeclarationResolver.defineLocalVariablesFromMultiDeclaration(
                         loopScope, multiParameter, iteratorNextAsReceiver, loopRange, context
                 );
-                components.modifiersChecker.withTrace(context.trace).checkModifiersForMultiDeclaration(multiParameter);
+                components.modifiersChecker.withTrace(context.trace).checkModifiersForDestructuringDeclaration(multiParameter);
                 components.modifiersChecker.withTrace(context.trace).checkParameterHasNoValOrVar(multiParameter, VAL_OR_VAR_ON_LOOP_MULTI_PARAMETER);
                 components.identifierChecker.checkDeclaration(multiParameter, context.trace);
             }
@@ -538,7 +538,7 @@ public class ControlStructureTypingVisitor extends ExpressionTypingVisitor {
         }
 
         if (expression.getTargetLabel() == null) {
-            while (parentDeclaration instanceof KtMultiDeclaration) {
+            while (parentDeclaration instanceof KtDestructuringDeclaration) {
                 //TODO: It's hacking fix for KT-5100: Strange "Return is not allowed here" for multi-declaration initializer with elvis expression
                 parentDeclaration = PsiTreeUtil.getParentOfType(parentDeclaration, KtDeclaration.class);
             }

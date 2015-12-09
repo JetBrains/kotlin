@@ -20,7 +20,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
-import org.jetbrains.kotlin.idea.references.KtMultiDeclarationReference
+import org.jetbrains.kotlin.idea.references.KtDestructuringDeclarationReference
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtParameter
@@ -46,7 +46,7 @@ public class KotlinReferencesSearchTest(): AbstractSearcherTest() {
         Assert.assertEquals(3, refs.size())
         Assert.assertEquals("n", refs[0].getCanonicalText())
         Assert.assertEquals("component1", refs[1].getCanonicalText())
-        Assert.assertTrue(refs[2] is KtMultiDeclarationReference)
+        Assert.assertTrue(refs[2] is KtDestructuringDeclarationReference)
     }
 
     // workaround for KT-9788 AssertionError from backand when we read field from inline function

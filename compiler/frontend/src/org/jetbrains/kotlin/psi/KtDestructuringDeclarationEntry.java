@@ -34,8 +34,8 @@ import java.util.List;
 import static org.jetbrains.kotlin.lexer.KtTokens.VAL_KEYWORD;
 import static org.jetbrains.kotlin.lexer.KtTokens.VAR_KEYWORD;
 
-public class KtMultiDeclarationEntry extends KtNamedDeclarationNotStubbed implements KtVariableDeclaration {
-    public KtMultiDeclarationEntry(@NotNull ASTNode node) {
+public class KtDestructuringDeclarationEntry extends KtNamedDeclarationNotStubbed implements KtVariableDeclaration {
+    public KtDestructuringDeclarationEntry(@NotNull ASTNode node) {
         super(node);
     }
 
@@ -100,7 +100,7 @@ public class KtMultiDeclarationEntry extends KtNamedDeclarationNotStubbed implem
 
     @Override
     public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
-        return visitor.visitMultiDeclarationEntry(this, data);
+        return visitor.visitDestructuringDeclarationEntry(this, data);
     }
 
     @Override
@@ -122,7 +122,7 @@ public class KtMultiDeclarationEntry extends KtNamedDeclarationNotStubbed implem
     @NotNull
     private ASTNode getParentNode() {
         ASTNode parent = getNode().getTreeParent();
-        assert parent.getElementType() == KtNodeTypes.MULTI_VARIABLE_DECLARATION;
+        assert parent.getElementType() == KtNodeTypes.DESTRUCTURING_DECLARATION;
         return parent;
     }
 

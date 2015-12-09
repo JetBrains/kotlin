@@ -28,7 +28,7 @@ public class KotlinEnumEntryWithoutSuperCallUsage(enumEntry: KtEnumEntry) : Kotl
             val delegatorToSuperCall = (element.addAfter(
                     psiFactory.createEnumEntryInitializerList(),
                     element.nameIdentifier
-            ) as KtInitializerList).initializers[0] as KtDelegatorToSuperCall
+            ) as KtInitializerList).initializers[0] as KtSuperTypeCallEntry
 
             return KotlinFunctionCallUsage(delegatorToSuperCall, changeInfo.methodDescriptor.originalPrimaryCallable)
                     .processUsage(changeInfo, delegatorToSuperCall, allUsages)

@@ -43,7 +43,7 @@ public class KotlinElementDescriptionProvider : ElementDescriptionProvider {
             is KtProperty -> if (targetElement.isLocal()) "variable" else "property"
             is KtTypeParameter -> "type parameter"
             is KtParameter -> "parameter"
-            is KtMultiDeclarationEntry -> "variable"
+            is KtDestructuringDeclarationEntry -> "variable"
             else -> null
         }
 

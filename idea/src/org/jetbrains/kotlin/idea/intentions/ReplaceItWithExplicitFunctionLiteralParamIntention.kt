@@ -37,7 +37,7 @@ public class ReplaceItWithExplicitFunctionLiteralParamIntention() : SelfTargetin
 
         val functionLiteral = DescriptorToSourceUtils.descriptorToDeclaration(target.getContainingDeclaration()!!) as KtFunctionLiteral
 
-        val newExpr = KtPsiFactory(element).createExpression("{ it -> }") as KtFunctionLiteralExpression
+        val newExpr = KtPsiFactory(element).createExpression("{ it -> }") as KtLambdaExpression
         functionLiteral.addRangeAfter(
                 newExpr.getFunctionLiteral().getValueParameterList(),
                 newExpr.getFunctionLiteral().getArrow()!!,

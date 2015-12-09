@@ -26,18 +26,18 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 import java.util.Collections;
 import java.util.List;
 
-public class KtDelegatorToSuperCall extends KtDelegationSpecifier implements KtCallElement {
-    public KtDelegatorToSuperCall(@NotNull ASTNode node) {
+public class KtSuperTypeCallEntry extends KtSuperTypeListEntry implements KtCallElement {
+    public KtSuperTypeCallEntry(@NotNull ASTNode node) {
         super(node);
     }
 
-    public KtDelegatorToSuperCall(@NotNull KotlinPlaceHolderStub<? extends KtDelegationSpecifier> stub) {
-        super(stub, KtStubElementTypes.DELEGATOR_SUPER_CALL);
+    public KtSuperTypeCallEntry(@NotNull KotlinPlaceHolderStub<? extends KtSuperTypeListEntry> stub) {
+        super(stub, KtStubElementTypes.SUPER_TYPE_CALL_ENTRY);
     }
 
     @Override
     public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
-        return visitor.visitDelegationToSuperCallSpecifier(this, data);
+        return visitor.visitSuperTypeCallEntry(this, data);
     }
 
     @NotNull
@@ -61,7 +61,7 @@ public class KtDelegatorToSuperCall extends KtDelegationSpecifier implements KtC
 
     @NotNull
     @Override
-    public List<KtFunctionLiteralArgument> getFunctionLiteralArguments() {
+    public List<KtLambdaArgument> getLambdaArguments() {
         return Collections.emptyList();
     }
 

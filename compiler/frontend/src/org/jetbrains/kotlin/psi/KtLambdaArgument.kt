@@ -18,16 +18,16 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
 
-public class KtFunctionLiteralArgument(node: ASTNode) : KtValueArgument(node), FunctionLiteralArgument {
+public class KtLambdaArgument(node: ASTNode) : KtValueArgument(node), LambdaArgument {
 
-    override fun getArgumentExpression() = super<KtValueArgument>.getArgumentExpression()!!
+    override fun getArgumentExpression() = super.getArgumentExpression()!!
 
-    override fun getFunctionLiteral(): KtFunctionLiteralExpression = getArgumentExpression().unpackFunctionLiteral()!!
+    override fun getLambdaExpression(): KtLambdaExpression = getArgumentExpression().unpackFunctionLiteral()!!
 }
 
-public fun KtExpression.unpackFunctionLiteral(allowParentheses: Boolean = false): KtFunctionLiteralExpression? {
+public fun KtExpression.unpackFunctionLiteral(allowParentheses: Boolean = false): KtLambdaExpression? {
     return when (this) {
-        is KtFunctionLiteralExpression -> this
+        is KtLambdaExpression -> this
         is KtLabeledExpression -> baseExpression?.unpackFunctionLiteral(allowParentheses)
         is KtAnnotatedExpression -> baseExpression?.unpackFunctionLiteral(allowParentheses)
         is KtParenthesizedExpression -> if (allowParentheses) expression?.unpackFunctionLiteral(allowParentheses) else null

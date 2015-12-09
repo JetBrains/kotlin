@@ -17,19 +17,19 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.psi.KtFunctionLiteralExpression
+import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 
-public class RemoveExplicitLambdaParameterTypesIntention : SelfTargetingIntention<KtFunctionLiteralExpression>(javaClass(), "Remove explicit lambda parameter types (may break code)") {
-    override fun isApplicableTo(element: KtFunctionLiteralExpression, caretOffset: Int): Boolean {
+public class RemoveExplicitLambdaParameterTypesIntention : SelfTargetingIntention<KtLambdaExpression>(javaClass(), "Remove explicit lambda parameter types (may break code)") {
+    override fun isApplicableTo(element: KtLambdaExpression, caretOffset: Int): Boolean {
         if (element.getValueParameters().none { it.getTypeReference() != null }) return false
         val arrow = element.getFunctionLiteral().getArrow() ?: return false
         return caretOffset <= arrow.endOffset
     }
 
-    override fun applyTo(element: KtFunctionLiteralExpression, editor: Editor) {
+    override fun applyTo(element: KtLambdaExpression, editor: Editor) {
         val oldParameterList = element.getFunctionLiteral().getValueParameterList()!!
 
         val parameterString = oldParameterList.getParameters().map { it.getName() }.joinToString(", ")

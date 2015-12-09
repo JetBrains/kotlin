@@ -18,7 +18,7 @@ JetFile: lambda.kt
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('bar')
         PsiWhiteSpace(' ')
-        FUNCTION_LITERAL_ARGUMENT
+        LAMBDA_ARGUMENT
           ANNOTATED_EXPRESSION
             ANNOTATION_ENTRY
               PsiElement(AT)('@')
@@ -28,7 +28,7 @@ JetFile: lambda.kt
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('ann')
             PsiWhiteSpace(' ')
-            FUNCTION_LITERAL_EXPRESSION
+            LAMBDA_EXPRESSION
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')
                 PsiWhiteSpace('\n        ')
@@ -56,8 +56,8 @@ JetFile: lambda.kt
               PsiElement(IDENTIFIER)('ann')
             PsiElement(RBRACKET)(']')
         PsiWhiteSpace(' ')
-        FUNCTION_LITERAL_ARGUMENT
-          FUNCTION_LITERAL_EXPRESSION
+        LAMBDA_ARGUMENT
+          LAMBDA_EXPRESSION
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
               PsiWhiteSpace(' ')
@@ -80,7 +80,7 @@ JetFile: lambda.kt
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('bar')
         PsiWhiteSpace(' ')
-        FUNCTION_LITERAL_ARGUMENT
+        LAMBDA_ARGUMENT
           ANNOTATED_EXPRESSION
             ANNOTATION_ENTRY
               PsiElement(AT)('@')
@@ -101,7 +101,7 @@ JetFile: lambda.kt
                         PsiElement(IDENTIFIER)('ann')
               PsiElement(RBRACKET)(']')
             PsiWhiteSpace(' ')
-            FUNCTION_LITERAL_EXPRESSION
+            LAMBDA_EXPRESSION
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')
                 PsiWhiteSpace('\n        ')
@@ -125,7 +125,7 @@ JetFile: lambda.kt
           PsiElement(LPAR)('(')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        FUNCTION_LITERAL_ARGUMENT
+        LAMBDA_ARGUMENT
           ANNOTATED_EXPRESSION
             ANNOTATION_ENTRY
               PsiElement(AT)('@')
@@ -135,7 +135,7 @@ JetFile: lambda.kt
                     REFERENCE_EXPRESSION
                       PsiElement(IDENTIFIER)('ann')
             PsiWhiteSpace(' ')
-            FUNCTION_LITERAL_EXPRESSION
+            LAMBDA_EXPRESSION
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')
                 PsiWhiteSpace('\n        ')
@@ -159,7 +159,7 @@ JetFile: lambda.kt
           PsiElement(LPAR)('(')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        FUNCTION_LITERAL_ARGUMENT
+        LAMBDA_ARGUMENT
           ANNOTATED_EXPRESSION
             ANNOTATION
               PsiElement(AT)('@')
@@ -172,7 +172,7 @@ JetFile: lambda.kt
                         PsiElement(IDENTIFIER)('ann')
               PsiElement(RBRACKET)(']')
             PsiWhiteSpace(' ')
-            FUNCTION_LITERAL_EXPRESSION
+            LAMBDA_EXPRESSION
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')
                 PsiWhiteSpace('\n        ')
@@ -196,7 +196,7 @@ JetFile: lambda.kt
           PsiElement(LPAR)('(')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        FUNCTION_LITERAL_ARGUMENT
+        LAMBDA_ARGUMENT
           ANNOTATED_EXPRESSION
             ANNOTATION_ENTRY
               PsiElement(AT)('@')
@@ -217,7 +217,7 @@ JetFile: lambda.kt
                         PsiElement(IDENTIFIER)('ann')
               PsiElement(RBRACKET)(']')
             PsiWhiteSpace(' ')
-            FUNCTION_LITERAL_EXPRESSION
+            LAMBDA_EXPRESSION
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')
                 PsiWhiteSpace('\n        ')
@@ -249,7 +249,7 @@ JetFile: lambda.kt
                       REFERENCE_EXPRESSION
                         PsiElement(IDENTIFIER)('ann')
               PsiWhiteSpace(' ')
-              FUNCTION_LITERAL_EXPRESSION
+              LAMBDA_EXPRESSION
                 FUNCTION_LITERAL
                   PsiElement(LBRACE)('{')
                   PsiWhiteSpace('\n        ')
@@ -336,7 +336,7 @@ JetFile: lambda.kt
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('ann')
           PsiWhiteSpace(' ')
-          FUNCTION_LITERAL_EXPRESSION
+          LAMBDA_EXPRESSION
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
               PsiWhiteSpace('\n\n    ')

@@ -880,18 +880,18 @@ public class KotlinControlFlowProcessor {
 
         private void declareLoopParameter(KtForExpression expression) {
             KtParameter loopParameter = expression.getLoopParameter();
-            KtMultiDeclaration multiDeclaration = expression.getMultiParameter();
+            KtDestructuringDeclaration multiDeclaration = expression.getDestructuringParameter();
             if (loopParameter != null) {
                 builder.declareParameter(loopParameter);
             }
             else if (multiDeclaration != null) {
-                visitMultiDeclaration(multiDeclaration, false);
+                visitDestructuringDeclaration(multiDeclaration, false);
             }
         }
 
         private void writeLoopParameterAssignment(KtForExpression expression) {
             KtParameter loopParameter = expression.getLoopParameter();
-            KtMultiDeclaration multiDeclaration = expression.getMultiParameter();
+            KtDestructuringDeclaration multiDeclaration = expression.getDestructuringParameter();
             KtExpression loopRange = expression.getLoopRange();
 
             PseudoValue value = builder.magic(
@@ -905,7 +905,7 @@ public class KotlinControlFlowProcessor {
                 generateInitializer(loopParameter, value);
             }
             else if (multiDeclaration != null) {
-                for (KtMultiDeclarationEntry entry : multiDeclaration.getEntries()) {
+                for (KtDestructuringDeclarationEntry entry : multiDeclaration.getEntries()) {
                     generateInitializer(entry, value);
                 }
             }
@@ -1079,11 +1079,11 @@ public class KotlinControlFlowProcessor {
         }
 
         @Override
-        public void visitFunctionLiteralExpression(@NotNull KtFunctionLiteralExpression expression) {
-            mark(expression);
-            KtFunctionLiteral functionLiteral = expression.getFunctionLiteral();
+        public void visitLambdaExpression(@NotNull KtLambdaExpression lambdaExpression) {
+            mark(lambdaExpression);
+            KtFunctionLiteral functionLiteral = lambdaExpression.getFunctionLiteral();
             visitFunction(functionLiteral);
-            copyValue(functionLiteral, expression);
+            copyValue(functionLiteral, lambdaExpression);
         }
 
         @Override
@@ -1161,14 +1161,14 @@ public class KotlinControlFlowProcessor {
         }
 
         @Override
-        public void visitMultiDeclaration(@NotNull KtMultiDeclaration declaration) {
-            visitMultiDeclaration(declaration, true);
+        public void visitDestructuringDeclaration(@NotNull KtDestructuringDeclaration declaration) {
+            visitDestructuringDeclaration(declaration, true);
         }
 
-        private void visitMultiDeclaration(@NotNull KtMultiDeclaration declaration, boolean generateWriteForEntries) {
+        private void visitDestructuringDeclaration(@NotNull KtDestructuringDeclaration declaration, boolean generateWriteForEntries) {
             KtExpression initializer = declaration.getInitializer();
             generateInstructions(initializer);
-            for (KtMultiDeclarationEntry entry : declaration.getEntries()) {
+            for (KtDestructuringDeclarationEntry entry : declaration.getEntries()) {
                 builder.declareVariable(entry);
 
                 ResolvedCall<FunctionDescriptor> resolvedCall = trace.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
@@ -1348,7 +1348,7 @@ public class KotlinControlFlowProcessor {
         }
 
         private void generateHeaderDelegationSpecifiers(@NotNull KtClassOrObject classOrObject) {
-            for (KtDelegationSpecifier specifier : classOrObject.getDelegationSpecifiers()) {
+            for (KtSuperTypeListEntry specifier : classOrObject.getSuperTypeListEntries()) {
                 generateInstructions(specifier);
             }
         }
@@ -1414,7 +1414,7 @@ public class KotlinControlFlowProcessor {
         }
 
         @Override
-        public void visitDelegationToSuperCallSpecifier(@NotNull KtDelegatorToSuperCall call) {
+        public void visitSuperTypeCallEntry(@NotNull KtSuperTypeCallEntry call) {
             generateCallOrMarkUnresolved(call);
         }
 
@@ -1439,19 +1439,19 @@ public class KotlinControlFlowProcessor {
         }
 
         @Override
-        public void visitDelegationByExpressionSpecifier(@NotNull KtDelegatorByExpressionSpecifier specifier) {
+        public void visitDelegatedSuperTypeEntry(@NotNull KtDelegatedSuperTypeEntry specifier) {
             KtExpression delegateExpression = specifier.getDelegateExpression();
             generateInstructions(delegateExpression);
             createSyntheticValue(specifier, MagicKind.VALUE_CONSUMER, delegateExpression);
         }
 
         @Override
-        public void visitDelegationToSuperClassSpecifier(@NotNull KtDelegatorToSuperClass specifier) {
+        public void visitSuperTypeEntry(@NotNull KtSuperTypeEntry specifier) {
             // Do not generate UNSUPPORTED_ELEMENT here
         }
 
         @Override
-        public void visitDelegationSpecifierList(@NotNull KtDelegationSpecifierList list) {
+        public void visitSuperTypeList(@NotNull KtSuperTypeList list) {
             list.acceptChildren(this);
         }
 

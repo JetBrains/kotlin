@@ -77,7 +77,7 @@ public fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {
         is KtInvokeFunctionReference -> {
             if (candidateTarget !is KtNamedFunction) return false
         }
-        is KtMultiDeclarationReference -> {
+        is KtDestructuringDeclarationReference -> {
             if (candidateTarget !is KtNamedFunction && candidateTarget !is KtParameter) return false
         }
     }

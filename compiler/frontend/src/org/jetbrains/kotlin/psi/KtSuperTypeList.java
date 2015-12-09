@@ -21,17 +21,24 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
-public class KtDelegatorToSuperClass extends KtDelegationSpecifier {
-    public KtDelegatorToSuperClass(@NotNull ASTNode node) {
+import java.util.Arrays;
+import java.util.List;
+
+public class KtSuperTypeList extends KtElementImplStub<KotlinPlaceHolderStub<KtSuperTypeList>> {
+    public KtSuperTypeList(@NotNull ASTNode node) {
         super(node);
     }
 
-    public KtDelegatorToSuperClass(@NotNull KotlinPlaceHolderStub<? extends KtDelegationSpecifier> stub) {
-        super(stub, KtStubElementTypes.DELEGATOR_SUPER_CLASS);
+    public KtSuperTypeList(@NotNull KotlinPlaceHolderStub<KtSuperTypeList> stub) {
+        super(stub, KtStubElementTypes.SUPER_TYPE_LIST);
     }
 
     @Override
     public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
-        return visitor.visitDelegationToSuperClassSpecifier(this, data);
+        return visitor.visitSuperTypeList(this, data);
+    }
+
+    public List<KtSuperTypeListEntry> getEntries() {
+        return Arrays.asList(getStubOrPsiChildren(KtStubElementTypes.SUPER_TYPE_LIST_ENTRIES, KtSuperTypeListEntry.ARRAY_FACTORY));
     }
 }

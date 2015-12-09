@@ -294,7 +294,7 @@ public class KotlinBlock extends AbstractBlock {
             return NodeAlignmentStrategy.fromTypes(AlignmentStrategy.wrap(
                     createAlignment(jetCommonSettings.ALIGN_MULTILINE_BINARY_OPERATION, getAlignment())));
         }
-        else if (parentType == DELEGATION_SPECIFIER_LIST || parentType == INITIALIZER_LIST) {
+        else if (parentType == SUPER_TYPE_LIST || parentType == INITIALIZER_LIST) {
             return NodeAlignmentStrategy.fromTypes(AlignmentStrategy.wrap(
                     createAlignment(jetCommonSettings.ALIGN_MULTILINE_EXTENDS_LIST, getAlignment())));
         }
@@ -396,7 +396,7 @@ public class KotlinBlock extends AbstractBlock {
                     .set(Indent.getNormalIndent()),
 
             strategy("Indent for parts")
-                    .in(PROPERTY, FUN, MULTI_VARIABLE_DECLARATION)
+                    .in(PROPERTY, FUN, DESTRUCTURING_DECLARATION)
                     .notForType(BLOCK, FUN_KEYWORD, VAL_KEYWORD, VAR_KEYWORD)
                     .set(Indent.getContinuationWithoutFirstIndent()),
 
@@ -405,7 +405,7 @@ public class KotlinBlock extends AbstractBlock {
                     .set(Indent.getContinuationWithoutFirstIndent(false)),
 
             strategy("Delegation list")
-                    .in(DELEGATION_SPECIFIER_LIST, INITIALIZER_LIST)
+                    .in(SUPER_TYPE_LIST, INITIALIZER_LIST)
                     .set(Indent.getContinuationIndent(false)),
 
             strategy("Indices")

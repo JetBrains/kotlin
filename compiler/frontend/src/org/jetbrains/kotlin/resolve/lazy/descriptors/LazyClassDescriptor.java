@@ -641,7 +641,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             PsiElement elementToMark = null;
             if (psiElement instanceof KtClassOrObject) {
                 KtClassOrObject classOrObject = (KtClassOrObject) psiElement;
-                for (KtDelegationSpecifier delegationSpecifier : classOrObject.getDelegationSpecifiers()) {
+                for (KtSuperTypeListEntry delegationSpecifier : classOrObject.getSuperTypeListEntries()) {
                     KtTypeReference typeReference = delegationSpecifier.getTypeReference();
                     if (typeReference == null) continue;
                     KotlinType supertype = trace.get(TYPE, typeReference);

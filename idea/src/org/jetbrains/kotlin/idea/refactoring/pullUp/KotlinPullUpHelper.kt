@@ -198,7 +198,7 @@ class KotlinPullUpHelper(
                             }
                         }
 
-                        override fun visitDelegationToSuperCallSpecifier(specifier: KtDelegatorToSuperCall) {
+                        override fun visitSuperTypeCallEntry(specifier: KtSuperTypeCallEntry) {
                             val constructorRef = specifier.calleeExpression.constructorReferenceExpression ?: return
                             val containingClass = specifier.getStrictParentOfType<KtClassOrObject>() ?: return
                             val callingConstructorElement = containingClass.getPrimaryConstructor() ?: containingClass
@@ -326,11 +326,11 @@ class KotlinPullUpHelper(
 
     private fun moveSuperInterface(member: KtClass, substitutor: PsiSubstitutor) {
         val classDescriptor = data.memberDescriptors[member] as? ClassDescriptor ?: return
-        val currentSpecifier = data.sourceClass.getDelegatorToSuperClassByDescriptor(classDescriptor, data.sourceClassContext) ?: return
+        val currentSpecifier = data.sourceClass.getSuperTypeEntryByDescriptor(classDescriptor, data.sourceClassContext) ?: return
         when (data.targetClass) {
             is KtClass -> {
-                data.sourceClass.removeDelegationSpecifier(currentSpecifier)
-                addDelegatorToSuperClass(currentSpecifier, data.targetClass, data.targetClassDescriptor, data.sourceClassContext, data.sourceToTargetClassSubstitutor)
+                data.sourceClass.removeSuperTypeListEntry(currentSpecifier)
+                addSuperTypeEntry(currentSpecifier, data.targetClass, data.targetClassDescriptor, data.sourceClassContext, data.sourceToTargetClassSubstitutor)
             }
 
             is PsiClass -> {
@@ -343,7 +343,7 @@ class KotlinPullUpHelper(
                                 ?: return
                 val superTypeForTarget = substitutor.substitute(elementFactory.createType(superRef))
 
-                data.sourceClass.removeDelegationSpecifier(currentSpecifier)
+                data.sourceClass.removeSuperTypeListEntry(currentSpecifier)
 
                 if (DescriptorUtils.isSubclass(data.targetClassDescriptor, classDescriptor)) return
 
@@ -523,8 +523,8 @@ class KotlinPullUpHelper(
             } as? KtBlockExpression
         }
 
-        fun KtClassOrObject.getDelegatorToSuperCall(): KtDelegatorToSuperCall? {
-            return getDelegationSpecifiers().singleOrNull { it is KtDelegatorToSuperCall } as? KtDelegatorToSuperCall
+        fun KtClassOrObject.getDelegatorToSuperCall(): KtSuperTypeCallEntry? {
+            return getSuperTypeListEntries().singleOrNull { it is KtSuperTypeCallEntry } as? KtSuperTypeCallEntry
         }
 
         fun addUsedParameters(constructorElement: KtElement, info: InitializerInfo) {

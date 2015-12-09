@@ -23,18 +23,18 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.Callab
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.FunctionInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.kotlin.psi.KtForExpression
-import org.jetbrains.kotlin.psi.KtMultiDeclaration
+import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.resolve.dataClassUtils.getComponentIndex
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.types.Variance
 
-object CreateComponentFunctionActionFactory : CreateCallableMemberFromUsageFactory<KtMultiDeclaration>() {
-    override fun getElementOfInterest(diagnostic: Diagnostic): KtMultiDeclaration? {
-        QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtMultiDeclaration>())?.let { return it }
-        return QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtForExpression>())?.multiParameter
+object CreateComponentFunctionActionFactory : CreateCallableMemberFromUsageFactory<KtDestructuringDeclaration>() {
+    override fun getElementOfInterest(diagnostic: Diagnostic): KtDestructuringDeclaration? {
+        QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtDestructuringDeclaration>())?.let { return it }
+        return QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtForExpression>())?.destructuringParameter
     }
 
-    override fun createCallableInfo(element: KtMultiDeclaration, diagnostic: Diagnostic): CallableInfo? {
+    override fun createCallableInfo(element: KtDestructuringDeclaration, diagnostic: Diagnostic): CallableInfo? {
         val diagnosticWithParameters = Errors.COMPONENT_FUNCTION_MISSING.cast(diagnostic)
 
         val name = diagnosticWithParameters.a

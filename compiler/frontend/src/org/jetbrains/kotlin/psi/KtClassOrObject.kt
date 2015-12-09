@@ -25,7 +25,6 @@ import com.intellij.psi.impl.CheckUtil
 import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
@@ -35,26 +34,26 @@ abstract public class KtClassOrObject :
     public constructor(node: ASTNode) : super(node)
     public constructor(stub: KotlinClassOrObjectStub<out KtClassOrObject>, nodeType: IStubElementType<*, *>) : super(stub, nodeType)
 
-    public fun getDelegationSpecifierList(): KtDelegationSpecifierList? = getStubOrPsiChild(KtStubElementTypes.DELEGATION_SPECIFIER_LIST)
-    open public fun getDelegationSpecifiers(): List<KtDelegationSpecifier> = getDelegationSpecifierList()?.getDelegationSpecifiers().orEmpty()
+    public fun getSuperTypeList(): KtSuperTypeList? = getStubOrPsiChild(KtStubElementTypes.SUPER_TYPE_LIST)
+    open public fun getSuperTypeListEntries(): List<KtSuperTypeListEntry> = getSuperTypeList()?.getEntries().orEmpty()
 
-    public fun addDelegationSpecifier(delegationSpecifier: KtDelegationSpecifier): KtDelegationSpecifier {
-        getDelegationSpecifierList()?.let {
-            return EditCommaSeparatedListHelper.addItem(it, getDelegationSpecifiers(), delegationSpecifier)
+    public fun addSuperTypeListEntry(superTypeListEntry: KtSuperTypeListEntry): KtSuperTypeListEntry {
+        getSuperTypeList()?.let {
+            return EditCommaSeparatedListHelper.addItem(it, getSuperTypeListEntries(), superTypeListEntry)
         }
 
         val psiFactory = KtPsiFactory(this)
-        val specifierListToAdd = psiFactory.createDelegatorToSuperCall("A()").replace(delegationSpecifier).getParent()
+        val specifierListToAdd = psiFactory.createSuperTypeCallEntry("A()").replace(superTypeListEntry).getParent()
         val colon = addBefore(psiFactory.createColon(), getBody())
-        return (addAfter(specifierListToAdd, colon) as KtDelegationSpecifierList).getDelegationSpecifiers().first()
+        return (addAfter(specifierListToAdd, colon) as KtSuperTypeList).getEntries().first()
     }
 
-    public fun removeDelegationSpecifier(delegationSpecifier: KtDelegationSpecifier) {
-        val specifierList = getDelegationSpecifierList() ?: return
-        assert(delegationSpecifier.getParent() === specifierList)
+    public fun removeSuperTypeListEntry(superTypeListEntry: KtSuperTypeListEntry) {
+        val specifierList = getSuperTypeList() ?: return
+        assert(superTypeListEntry.getParent() === specifierList)
 
-        if (specifierList.getDelegationSpecifiers().size() > 1) {
-            EditCommaSeparatedListHelper.removeItem<KtElement>(delegationSpecifier)
+        if (specifierList.getEntries().size() > 1) {
+            EditCommaSeparatedListHelper.removeItem<KtElement>(superTypeListEntry)
         }
         else {
             deleteChildRange(findChildByType<PsiElement>(KtTokens.COLON) ?: specifierList, specifierList)

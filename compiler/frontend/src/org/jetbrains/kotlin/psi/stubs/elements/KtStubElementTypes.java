@@ -100,19 +100,19 @@ public interface KtStubElementTypes {
     KtPlaceHolderStubElementType<KtTypeArgumentList> TYPE_ARGUMENT_LIST =
             new KtPlaceHolderStubElementType<KtTypeArgumentList>("TYPE_ARGUMENT_LIST", KtTypeArgumentList.class);
 
-    KtPlaceHolderStubElementType<KtDelegationSpecifierList> DELEGATION_SPECIFIER_LIST =
-            new KtPlaceHolderStubElementType<KtDelegationSpecifierList>("DELEGATION_SPECIFIER_LIST", KtDelegationSpecifierList.class);
+    KtPlaceHolderStubElementType<KtSuperTypeList> SUPER_TYPE_LIST =
+            new KtPlaceHolderStubElementType<KtSuperTypeList>("SUPER_TYPE_LIST", KtSuperTypeList.class);
 
     KtPlaceHolderStubElementType<KtInitializerList> INITIALIZER_LIST =
             new KtPlaceHolderStubElementType<KtInitializerList>("INITIALIZER_LIST", KtInitializerList.class);
 
-    KtPlaceHolderStubElementType<KtDelegatorByExpressionSpecifier> DELEGATOR_BY =
-            new KtPlaceHolderStubElementType<KtDelegatorByExpressionSpecifier>("DELEGATOR_BY", KtDelegatorByExpressionSpecifier.class);
+    KtPlaceHolderStubElementType<KtDelegatedSuperTypeEntry> DELEGATED_SUPER_TYPE_ENTRY =
+            new KtPlaceHolderStubElementType<KtDelegatedSuperTypeEntry>("DELEGATED_SUPER_TYPE_ENTRY", KtDelegatedSuperTypeEntry.class);
 
-    KtPlaceHolderStubElementType<KtDelegatorToSuperCall> DELEGATOR_SUPER_CALL =
-            new KtPlaceHolderStubElementType<KtDelegatorToSuperCall>("DELEGATOR_SUPER_CALL", KtDelegatorToSuperCall.class);
-    KtPlaceHolderStubElementType<KtDelegatorToSuperClass> DELEGATOR_SUPER_CLASS =
-            new KtPlaceHolderStubElementType<KtDelegatorToSuperClass>("DELEGATOR_SUPER_CLASS", KtDelegatorToSuperClass.class);
+    KtPlaceHolderStubElementType<KtSuperTypeCallEntry> SUPER_TYPE_CALL_ENTRY =
+            new KtPlaceHolderStubElementType<KtSuperTypeCallEntry>("SUPER_TYPE_CALL_ENTRY", KtSuperTypeCallEntry.class);
+    KtPlaceHolderStubElementType<KtSuperTypeEntry> SUPER_TYPE_ENTRY =
+            new KtPlaceHolderStubElementType<KtSuperTypeEntry>("SUPER_TYPE_ENTRY", KtSuperTypeEntry.class);
     KtPlaceHolderStubElementType<KtConstructorCalleeExpression> CONSTRUCTOR_CALLEE =
             new KtPlaceHolderStubElementType<KtConstructorCalleeExpression>("CONSTRUCTOR_CALLEE", KtConstructorCalleeExpression.class);
 
@@ -121,7 +121,7 @@ public interface KtStubElementTypes {
     TokenSet DECLARATION_TYPES =
             TokenSet.create(CLASS, OBJECT_DECLARATION, FUNCTION, PROPERTY, CLASS_INITIALIZER, SECONDARY_CONSTRUCTOR, ENUM_ENTRY);
 
-    TokenSet DELEGATION_SPECIFIER_TYPES = TokenSet.create(DELEGATOR_BY, DELEGATOR_SUPER_CALL, DELEGATOR_SUPER_CLASS);
+    TokenSet SUPER_TYPE_LIST_ENTRIES = TokenSet.create(DELEGATED_SUPER_TYPE_ENTRY, SUPER_TYPE_CALL_ENTRY, SUPER_TYPE_ENTRY);
 
     TokenSet TYPE_ELEMENT_TYPES = TokenSet.create(USER_TYPE, NULLABLE_TYPE, FUNCTION_TYPE, DYNAMIC_TYPE, SELF_TYPE);
 

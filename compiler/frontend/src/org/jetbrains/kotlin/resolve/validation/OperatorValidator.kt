@@ -49,7 +49,7 @@ public class OperatorValidator : SymbolUsageValidator {
         }
 
         fun isMultiDeclaration(): Boolean {
-            return (resolvedCall != null) && (call?.callElement is KtMultiDeclarationEntry)
+            return (resolvedCall != null) && (call?.callElement is KtDestructuringDeclarationEntry)
         }
 
         fun isConventionOperator(): Boolean {

@@ -149,7 +149,7 @@ class DeclarationsChecker(
     private fun checkTypesInClassHeader(classOrObject: KtClassOrObject) {
         fun KtTypeReference.type(): KotlinType? = trace.bindingContext.get(TYPE, this)
 
-        for (delegationSpecifier in classOrObject.getDelegationSpecifiers()) {
+        for (delegationSpecifier in classOrObject.getSuperTypeListEntries()) {
             val typeReference = delegationSpecifier.typeReference ?: continue
             typeReference.type()?.let { DescriptorResolver.checkBounds(typeReference, it, trace) }
             typeReference.checkNotEnumEntry(trace)
@@ -212,7 +212,7 @@ class DeclarationsChecker(
             val containingDeclaration = typeParameterDescriptor.containingDeclaration as? ClassDescriptor
                                         ?: throw AssertionError("Not a class descriptor: " + typeParameterDescriptor.containingDeclaration)
             if (sourceElement is KtClassOrObject) {
-                val delegationSpecifierList = sourceElement.getDelegationSpecifierList() ?: continue
+                val delegationSpecifierList = sourceElement.getSuperTypeList() ?: continue
                 trace.report(INCONSISTENT_TYPE_PARAMETER_VALUES.on(
                         delegationSpecifierList, typeParameterDescriptor, containingDeclaration, conflictingTypes
                 ))
@@ -252,7 +252,7 @@ class DeclarationsChecker(
     private fun checkExposedSupertypes(klass: KtClassOrObject, classDescriptor: ClassDescriptor) {
         val classVisibility = classDescriptor.effectiveVisibility()
         val isInterface = classDescriptor.kind == ClassKind.INTERFACE
-        val delegationList = klass.getDelegationSpecifiers()
+        val delegationList = klass.getSuperTypeListEntries()
         classDescriptor.typeConstructor.supertypes.forEachIndexed { i, superType ->
             if (i >= delegationList.size) return
             val superDescriptor = TypeUtils.getClassDescriptor(superType) ?: return@forEachIndexed

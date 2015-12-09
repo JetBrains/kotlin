@@ -61,7 +61,7 @@ JetFile: functionLiterals.kt
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           VALUE_ARGUMENT
-            FUNCTION_LITERAL_EXPRESSION
+            LAMBDA_EXPRESSION
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')
                 BLOCK
@@ -71,7 +71,7 @@ JetFile: functionLiterals.kt
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           VALUE_ARGUMENT
-            FUNCTION_LITERAL_EXPRESSION
+            LAMBDA_EXPRESSION
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')
                 PsiWhiteSpace(' ')
@@ -87,7 +87,7 @@ JetFile: functionLiterals.kt
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           VALUE_ARGUMENT
-            FUNCTION_LITERAL_EXPRESSION
+            LAMBDA_EXPRESSION
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')
                 BLOCK
@@ -98,7 +98,7 @@ JetFile: functionLiterals.kt
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           VALUE_ARGUMENT
-            FUNCTION_LITERAL_EXPRESSION
+            LAMBDA_EXPRESSION
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')
                 BLOCK
@@ -109,7 +109,7 @@ JetFile: functionLiterals.kt
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           VALUE_ARGUMENT
-            FUNCTION_LITERAL_EXPRESSION
+            LAMBDA_EXPRESSION
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')
                 VALUE_PARAMETER_LIST
@@ -124,7 +124,7 @@ JetFile: functionLiterals.kt
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           VALUE_ARGUMENT
-            FUNCTION_LITERAL_EXPRESSION
+            LAMBDA_EXPRESSION
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')
                 VALUE_PARAMETER_LIST
@@ -141,7 +141,7 @@ JetFile: functionLiterals.kt
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           VALUE_ARGUMENT
-            FUNCTION_LITERAL_EXPRESSION
+            LAMBDA_EXPRESSION
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')
                 VALUE_PARAMETER_LIST
@@ -162,7 +162,7 @@ JetFile: functionLiterals.kt
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           VALUE_ARGUMENT
-            FUNCTION_LITERAL_EXPRESSION
+            LAMBDA_EXPRESSION
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')
                 VALUE_PARAMETER_LIST
@@ -179,7 +179,7 @@ JetFile: functionLiterals.kt
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
           VALUE_ARGUMENT
-            FUNCTION_LITERAL_EXPRESSION
+            LAMBDA_EXPRESSION
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')
                 BLOCK

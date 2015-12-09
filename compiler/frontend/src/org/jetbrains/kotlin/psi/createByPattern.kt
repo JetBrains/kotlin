@@ -164,7 +164,7 @@ public fun <TElement : KtElement> createByPattern(pattern: String, vararg args: 
     for ((pointer, n) in pointers) {
         var element = pointer.getElement()!!
         if (element is KtFunctionLiteral) {
-            element = element.getParent() as KtFunctionLiteralExpression
+            element = element.getParent() as KtLambdaExpression
         }
         (argumentTypes[n] as PsiElementPlaceholderArgumentType<in Any, in PsiElement>).replacePlaceholderElement(element, args[n])
     }

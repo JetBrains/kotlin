@@ -426,8 +426,8 @@ JetFile: Graph.kt
             CALL_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('filter')
-              FUNCTION_LITERAL_ARGUMENT
-                FUNCTION_LITERAL_EXPRESSION
+              LAMBDA_ARGUMENT
+                LAMBDA_EXPRESSION
                   FUNCTION_LITERAL
                     PsiElement(LBRACE)('{')
                     BLOCK
@@ -449,8 +449,8 @@ JetFile: Graph.kt
           CALL_EXPRESSION
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('map')
-            FUNCTION_LITERAL_ARGUMENT
-              FUNCTION_LITERAL_EXPRESSION
+            LAMBDA_ARGUMENT
+              LAMBDA_EXPRESSION
                 FUNCTION_LITERAL
                   PsiElement(LBRACE)('{')
                   BLOCK
@@ -534,8 +534,8 @@ JetFile: Graph.kt
             CALL_EXPRESSION
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('foreach')
-              FUNCTION_LITERAL_ARGUMENT
-                FUNCTION_LITERAL_EXPRESSION
+              LAMBDA_ARGUMENT
+                LAMBDA_EXPRESSION
                   FUNCTION_LITERAL
                     PsiElement(LBRACE)('{')
                     BLOCK
@@ -690,8 +690,8 @@ JetFile: Graph.kt
                 CALL_EXPRESSION
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('foreach')
-                  FUNCTION_LITERAL_ARGUMENT
-                    FUNCTION_LITERAL_EXPRESSION
+                  LAMBDA_ARGUMENT
+                    LAMBDA_EXPRESSION
                       FUNCTION_LITERAL
                         PsiElement(LBRACE)('{')
                         BLOCK
@@ -818,8 +818,8 @@ JetFile: Graph.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('foreach')
               PsiWhiteSpace(' ')
-              FUNCTION_LITERAL_ARGUMENT
-                FUNCTION_LITERAL_EXPRESSION
+              LAMBDA_ARGUMENT
+                LAMBDA_EXPRESSION
                   FUNCTION_LITERAL
                     PsiElement(LBRACE)('{')
                     PsiWhiteSpace('\n      ')
@@ -929,8 +929,8 @@ JetFile: Graph.kt
                                 REFERENCE_EXPRESSION
                                   PsiElement(IDENTIFIER)('foreach')
                                 PsiWhiteSpace(' ')
-                                FUNCTION_LITERAL_ARGUMENT
-                                  FUNCTION_LITERAL_EXPRESSION
+                                LAMBDA_ARGUMENT
+                                  LAMBDA_EXPRESSION
                                     FUNCTION_LITERAL
                                       PsiElement(LBRACE)('{')
                                       PsiWhiteSpace(' ')

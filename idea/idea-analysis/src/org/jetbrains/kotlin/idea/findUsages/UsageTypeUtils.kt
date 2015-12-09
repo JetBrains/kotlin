@@ -34,7 +34,7 @@ public object UsageTypeUtils {
     public fun getUsageType(element: PsiElement?): UsageTypeEnum? {
         when (element) {
             is KtForExpression -> return IMPLICIT_ITERATION
-            is KtMultiDeclaration -> return READ
+            is KtDestructuringDeclaration -> return READ
             is KtPropertyDelegate -> return PROPERTY_DELEGATION
             is KtStringTemplateExpression -> return USAGE_IN_STRING_LITERAL
         }
@@ -83,8 +83,8 @@ public object UsageTypeUtils {
                 || refExpr.getParentOfTypeAndBranch<KtTypeConstraint>(){ getBoundTypeReference() } != null ->
                     TYPE_CONSTRAINT
 
-                refExpr is KtDelegationSpecifier
-                || refExpr.getParentOfTypeAndBranch<KtDelegationSpecifier>(){ getTypeReference() } != null ->
+                refExpr is KtSuperTypeListEntry
+                || refExpr.getParentOfTypeAndBranch<KtSuperTypeListEntry>(){ getTypeReference() } != null ->
                     SUPER_TYPE
 
                 refExpr.getParentOfTypeAndBranch<KtTypedef>(){ getTypeReference() } != null ->
@@ -120,7 +120,7 @@ public object UsageTypeUtils {
         }
 
         fun getVariableUsageType(): UsageTypeEnum? {
-            if (refExpr.getParentOfTypeAndBranch<KtDelegatorByExpressionSpecifier>(){ getDelegateExpression() } != null) {
+            if (refExpr.getParentOfTypeAndBranch<KtDelegatedSuperTypeEntry>(){ getDelegateExpression() } != null) {
                 return DELEGATE
             }
 
@@ -158,7 +158,7 @@ public object UsageTypeUtils {
             }
 
             return when {
-                refExpr.getParentOfTypeAndBranch<KtDelegationSpecifier>(){ getTypeReference() } != null ->
+                refExpr.getParentOfTypeAndBranch<KtSuperTypeListEntry>(){ getTypeReference() } != null ->
                     SUPER_TYPE
 
                 descriptor is ConstructorDescriptor

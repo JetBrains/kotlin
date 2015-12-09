@@ -36,8 +36,8 @@ public interface ValueArgument {
     public fun isExternal(): Boolean
 }
 
-public interface FunctionLiteralArgument : ValueArgument {
-    public fun getFunctionLiteral(): KtFunctionLiteralExpression
+public interface LambdaArgument : ValueArgument {
+    public fun getLambdaExpression(): KtLambdaExpression
 
     override fun getArgumentExpression(): KtExpression
 }

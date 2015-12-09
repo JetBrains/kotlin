@@ -159,7 +159,7 @@ protected constructor(
                     result.addAll(classDescriptors(name))
                 }
             }
-            else if (declaration is KtTypedef || declaration is KtMultiDeclaration) {
+            else if (declaration is KtTypedef || declaration is KtDestructuringDeclaration) {
                 // Do nothing for typedefs as they are not supported.
                 // MultiDeclarations are not supported on global level too.
             }

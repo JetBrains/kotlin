@@ -130,7 +130,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         return components.builtIns.getFunctionType(Annotations.EMPTY, receiverType, parameters, returnType)
     }
 
-    override fun visitFunctionLiteralExpression(expression: KtFunctionLiteralExpression, context: ExpressionTypingContext): KotlinTypeInfo? {
+    override fun visitLambdaExpression(expression: KtLambdaExpression, context: ExpressionTypingContext): KotlinTypeInfo? {
         if (!expression.getFunctionLiteral().hasBody()) return null
 
         val expectedType = context.expectedType
@@ -154,7 +154,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
     }
 
     private fun createFunctionLiteralDescriptor(
-            expression: KtFunctionLiteralExpression,
+            expression: KtLambdaExpression,
             context: ExpressionTypingContext
     ): AnonymousFunctionDescriptor {
         val functionLiteral = expression.getFunctionLiteral()
@@ -174,7 +174,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
     }
 
     private fun computeReturnType(
-            expression: KtFunctionLiteralExpression,
+            expression: KtLambdaExpression,
             context: ExpressionTypingContext,
             functionDescriptor: SimpleFunctionDescriptorImpl,
             functionTypeExpected: Boolean
@@ -191,7 +191,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
     }
 
     private fun computeUnsafeReturnType(
-            expression: KtFunctionLiteralExpression,
+            expression: KtLambdaExpression,
             context: ExpressionTypingContext,
             functionDescriptor: SimpleFunctionDescriptorImpl,
             expectedReturnType: KotlinType?

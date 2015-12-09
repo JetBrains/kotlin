@@ -65,7 +65,7 @@ public class LabelResolver {
             return getLabelNameIfAny(element.getParent());
         }
 
-        if (element instanceof KtFunctionLiteralExpression) {
+        if (element instanceof KtLambdaExpression) {
             return getLabelForFunctionalExpression((KtExpression) element);
         }
 
@@ -88,8 +88,8 @@ public class LabelResolver {
     @NotNull
     private KtExpression getExpressionUnderLabel(@NotNull KtExpression labeledExpression) {
         KtExpression expression = KtPsiUtil.safeDeparenthesize(labeledExpression);
-        if (expression instanceof KtFunctionLiteralExpression) {
-            return ((KtFunctionLiteralExpression) expression).getFunctionLiteral();
+        if (expression instanceof KtLambdaExpression) {
+            return ((KtLambdaExpression) expression).getFunctionLiteral();
         }
         return expression;
     }
@@ -111,7 +111,7 @@ public class LabelResolver {
     @Nullable
     private KtCallExpression getContainingCallExpression(@NotNull KtExpression expression) {
         PsiElement parent = expression.getParent();
-        if (parent instanceof KtFunctionLiteralArgument) {
+        if (parent instanceof KtLambdaArgument) {
             // f {}
             PsiElement call = parent.getParent();
             if (call instanceof KtCallExpression) {

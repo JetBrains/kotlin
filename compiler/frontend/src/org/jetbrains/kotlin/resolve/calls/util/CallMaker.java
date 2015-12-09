@@ -164,7 +164,7 @@ public class CallMaker {
 
         @NotNull
         @Override
-        public List<FunctionLiteralArgument> getFunctionLiteralArguments() {
+        public List<LambdaArgument> getFunctionLiteralArguments() {
             return Collections.emptyList();
         }
         @NotNull
@@ -304,8 +304,8 @@ public class CallMaker {
 
             @Override
             @NotNull
-            public List<? extends FunctionLiteralArgument> getFunctionLiteralArguments() {
-                return callElement.getFunctionLiteralArguments();
+            public List<? extends LambdaArgument> getFunctionLiteralArguments() {
+                return callElement.getLambdaArguments();
             }
 
             @Override

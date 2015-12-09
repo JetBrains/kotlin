@@ -545,7 +545,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 break;
             }
 
-            argument.done(FUNCTION_LITERAL_ARGUMENT);
+            argument.done(LAMBDA_ARGUMENT);
             success = true;
         }
 
@@ -1031,7 +1031,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         if (declType != null) {
             // we do not attach preceding comments (non-doc) to local variables because they are likely commenting a few statements below
             closeDeclarationWithCommentBinders(decl, declType,
-                                               declType != KtNodeTypes.PROPERTY && declType != KtNodeTypes.MULTI_VARIABLE_DECLARATION);
+                                               declType != KtNodeTypes.PROPERTY && declType != KtNodeTypes.DESTRUCTURING_DECLARATION);
             return true;
         }
         else {
@@ -1104,7 +1104,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         myBuilder.restoreNewlinesState();
 
         literal.done(FUNCTION_LITERAL);
-        literalExpression.done(FUNCTION_LITERAL_EXPRESSION);
+        literalExpression.done(LAMBDA_EXPRESSION);
     }
 
     private boolean rollbackOrDropAt(PsiBuilder.Marker rollbackMarker, IElementType dropAt) {
@@ -1352,7 +1352,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
                 if (at(LPAR)) {
                     myJetParsing.parseMultiDeclarationName(TokenSet.create(IN_KEYWORD, LBRACE));
-                    parameter.done(MULTI_VARIABLE_DECLARATION);
+                    parameter.done(DESTRUCTURING_DECLARATION);
                 }
                 else {
                     expect(IDENTIFIER, "Expecting a variable name", TokenSet.create(COLON, IN_KEYWORD));

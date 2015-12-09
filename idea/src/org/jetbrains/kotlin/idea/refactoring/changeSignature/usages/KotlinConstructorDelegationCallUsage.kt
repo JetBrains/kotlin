@@ -41,7 +41,7 @@ public class KotlinConstructorDelegationCallUsage(
 
         if (changeInfo.getNewParametersCount() == 0 && !isThisCall && !elementToWorkWith.isImplicit()) {
             (elementToWorkWith.getParent() as? KtSecondaryConstructor)?.getColon()?.delete()
-            elementToWorkWith.replace(KtPsiFactory(element).createConstructorDelegationCall(""))
+            elementToWorkWith.replace(KtPsiFactory(element).creareDelegatedSuperTypeEntry(""))
         }
 
         return result

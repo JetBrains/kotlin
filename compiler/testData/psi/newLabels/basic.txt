@@ -22,14 +22,14 @@ JetFile: basic.kt
           REFERENCE_EXPRESSION
             PsiElement(IDENTIFIER)('filter')
           PsiWhiteSpace(' ')
-          FUNCTION_LITERAL_ARGUMENT
+          LAMBDA_ARGUMENT
             LABELED_EXPRESSION
               LABEL_QUALIFIER
                 LABEL
                   PsiElement(IDENTIFIER)('b')
                   PsiElement(AT)('@')
               PsiWhiteSpace(' ')
-              FUNCTION_LITERAL_EXPRESSION
+              LAMBDA_EXPRESSION
                 FUNCTION_LITERAL
                   PsiElement(LBRACE)('{')
                   PsiWhiteSpace('\n        ')
@@ -42,14 +42,14 @@ JetFile: basic.kt
                   PsiWhiteSpace('\n    ')
                   PsiElement(RBRACE)('}')
           PsiWhiteSpace('\n    ')
-          FUNCTION_LITERAL_ARGUMENT
+          LAMBDA_ARGUMENT
             LABELED_EXPRESSION
               LABEL_QUALIFIER
                 LABEL
                   PsiElement(IDENTIFIER)('c')
                   PsiElement(AT)('@')
               PsiWhiteSpace(' ')
-              FUNCTION_LITERAL_EXPRESSION
+              LAMBDA_EXPRESSION
                 FUNCTION_LITERAL
                   PsiElement(LBRACE)('{')
                   PsiWhiteSpace('\n        ')

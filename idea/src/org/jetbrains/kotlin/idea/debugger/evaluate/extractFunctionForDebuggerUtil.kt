@@ -299,5 +299,5 @@ private fun wrapInRunFun(expression: KtExpression): PsiElement? {
     // Increment modification tracker to clear ResolveCache after changes in function body
     (PsiManager.getInstance(expression.project).modificationTracker as PsiModificationTrackerImpl).incCounter()
 
-    return replacedBody.functionLiteralArguments.first().getFunctionLiteral().bodyExpression?.firstChild
+    return replacedBody.lambdaArguments.first().getLambdaExpression().bodyExpression?.firstChild
 }

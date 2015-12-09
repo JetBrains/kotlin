@@ -114,8 +114,8 @@ public class ChangeVariableTypeFix extends KotlinQuickFixAction<KtVariableDeclar
             @Nullable
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                KtMultiDeclarationEntry
-                        entry = ChangeFunctionReturnTypeFix.getMultiDeclarationEntryThatTypeMismatchComponentFunction(diagnostic);
+                KtDestructuringDeclarationEntry
+                        entry = ChangeFunctionReturnTypeFix.getDestructuringDeclarationEntryThatTypeMismatchComponentFunction(diagnostic);
                 BindingContext context = ResolutionUtils.analyze(entry);
                 ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
                 if (resolvedCall == null) return null;

@@ -17,9 +17,9 @@
 package org.jetbrains.kotlin.types.expressions
 
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
+import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtMultiDeclaration
-import org.jetbrains.kotlin.psi.KtMultiDeclarationEntry
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorResolver
 import org.jetbrains.kotlin.resolve.TypeResolver
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
-public class MultiDeclarationResolver(
+public class DestructuringDeclarationResolver(
         private val fakeCallResolver: FakeCallResolver,
         private val descriptorResolver: DescriptorResolver,
         private val typeResolver: TypeResolver,
@@ -40,12 +40,12 @@ public class MultiDeclarationResolver(
 ) {
     public fun defineLocalVariablesFromMultiDeclaration(
             writableScope: LexicalWritableScope,
-            multiDeclaration: KtMultiDeclaration,
+            destructuringDeclaration: KtDestructuringDeclaration,
             receiver: ReceiverValue,
             reportErrorsOn: KtExpression,
             context: ExpressionTypingContext
     ) {
-        for ((componentIndex, entry) in multiDeclaration.getEntries().withIndex()) {
+        for ((componentIndex, entry) in destructuringDeclaration.getEntries().withIndex()) {
             val componentName = createComponentName(componentIndex + 1)
 
             val expectedType = getExpectedTypeForComponent(context, entry)
@@ -80,7 +80,7 @@ public class MultiDeclarationResolver(
         }
     }
 
-    private fun getExpectedTypeForComponent(context: ExpressionTypingContext, entry: KtMultiDeclarationEntry): KotlinType {
+    private fun getExpectedTypeForComponent(context: ExpressionTypingContext, entry: KtDestructuringDeclarationEntry): KotlinType {
         val entryTypeRef = entry.getTypeReference() ?: return TypeUtils.NO_EXPECTED_TYPE
         return typeResolver.resolveType(context.scope, entryTypeRef, context.trace, true)
     }

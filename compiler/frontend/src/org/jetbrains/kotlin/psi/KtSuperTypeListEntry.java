@@ -24,31 +24,31 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
-public class KtDelegationSpecifier extends KtElementImplStub<KotlinPlaceHolderStub<? extends KtDelegationSpecifier>> {
+public class KtSuperTypeListEntry extends KtElementImplStub<KotlinPlaceHolderStub<? extends KtSuperTypeListEntry>> {
 
-    private static final KtDelegationSpecifier[] EMPTY_ARRAY = new KtDelegationSpecifier[0];
+    private static final KtSuperTypeListEntry[] EMPTY_ARRAY = new KtSuperTypeListEntry[0];
 
-    public static ArrayFactory<KtDelegationSpecifier> ARRAY_FACTORY = new ArrayFactory<KtDelegationSpecifier>() {
+    public static ArrayFactory<KtSuperTypeListEntry> ARRAY_FACTORY = new ArrayFactory<KtSuperTypeListEntry>() {
         @NotNull
         @Override
-        public KtDelegationSpecifier[] create(int count) {
-            return count == 0 ? EMPTY_ARRAY : new KtDelegationSpecifier[count];
+        public KtSuperTypeListEntry[] create(int count) {
+            return count == 0 ? EMPTY_ARRAY : new KtSuperTypeListEntry[count];
         }
     };
 
-    public KtDelegationSpecifier(@NotNull ASTNode node) {
+    public KtSuperTypeListEntry(@NotNull ASTNode node) {
         super(node);
     }
 
-    public KtDelegationSpecifier(
-            @NotNull KotlinPlaceHolderStub<? extends KtDelegationSpecifier> stub,
+    public KtSuperTypeListEntry(
+            @NotNull KotlinPlaceHolderStub<? extends KtSuperTypeListEntry> stub,
             @NotNull IStubElementType nodeType) {
         super(stub, nodeType);
     }
 
     @Override
     public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
-        return visitor.visitDelegationSpecifier(this, data);
+        return visitor.visitSuperTypeListEntry(this, data);
     }
 
     @Nullable

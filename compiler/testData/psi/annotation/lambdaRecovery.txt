@@ -22,7 +22,7 @@ JetFile: lambdaRecovery.kt
         PsiWhiteSpace(' ')
         PsiElement(IDENTIFIER)('ann')
       PsiWhiteSpace(' ')
-      FUNCTION_LITERAL_EXPRESSION
+      LAMBDA_EXPRESSION
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n        ')
@@ -43,12 +43,12 @@ JetFile: lambdaRecovery.kt
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('bar')
         PsiWhiteSpace(' ')
-        FUNCTION_LITERAL_ARGUMENT
+        LAMBDA_ARGUMENT
           ANNOTATED_EXPRESSION
             PsiErrorElement:Expected annotation identifier after '@'
               PsiElement(AT)('@')
             PsiWhiteSpace(' ')
-            FUNCTION_LITERAL_EXPRESSION
+            LAMBDA_EXPRESSION
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')
                 PsiWhiteSpace('\n        ')
@@ -69,7 +69,7 @@ JetFile: lambdaRecovery.kt
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('bar')
         PsiWhiteSpace(' ')
-        FUNCTION_LITERAL_ARGUMENT
+        LAMBDA_ARGUMENT
           ANNOTATED_EXPRESSION
             PsiErrorElement:Expected annotation identifier after '@'
               PsiElement(AT)('@')
@@ -85,7 +85,7 @@ JetFile: lambdaRecovery.kt
                         PsiElement(IDENTIFIER)('ann')
               PsiElement(RBRACKET)(']')
             PsiWhiteSpace(' ')
-            FUNCTION_LITERAL_EXPRESSION
+            LAMBDA_EXPRESSION
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')
                 PsiWhiteSpace('\n        ')
@@ -113,12 +113,12 @@ JetFile: lambdaRecovery.kt
               <empty list>
             PsiElement(RBRACKET)(']')
         PsiWhiteSpace(' ')
-        FUNCTION_LITERAL_ARGUMENT
+        LAMBDA_ARGUMENT
           ANNOTATED_EXPRESSION
             PsiErrorElement:Expected annotation identifier after '@'
               PsiElement(AT)('@')
             PsiWhiteSpace(' ')
-            FUNCTION_LITERAL_EXPRESSION
+            LAMBDA_EXPRESSION
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')
                 PsiWhiteSpace('\n        ')
@@ -142,12 +142,12 @@ JetFile: lambdaRecovery.kt
           PsiElement(LPAR)('(')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        FUNCTION_LITERAL_ARGUMENT
+        LAMBDA_ARGUMENT
           ANNOTATED_EXPRESSION
             PsiErrorElement:Expected annotation identifier after '@'
               PsiElement(AT)('@')
             PsiWhiteSpace(' ')
-            FUNCTION_LITERAL_EXPRESSION
+            LAMBDA_EXPRESSION
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')
                 PsiWhiteSpace('\n        ')
@@ -171,7 +171,7 @@ JetFile: lambdaRecovery.kt
           PsiElement(LPAR)('(')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        FUNCTION_LITERAL_ARGUMENT
+        LAMBDA_ARGUMENT
           ANNOTATED_EXPRESSION
             ANNOTATION
               PsiElement(AT)('@')
@@ -183,7 +183,7 @@ JetFile: lambdaRecovery.kt
             PsiErrorElement:Expected annotation identifier after '@'
               PsiElement(AT)('@')
             PsiWhiteSpace(' ')
-            FUNCTION_LITERAL_EXPRESSION
+            LAMBDA_EXPRESSION
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')
                 PsiWhiteSpace('\n        ')
@@ -210,7 +210,7 @@ JetFile: lambdaRecovery.kt
               PsiErrorElement:Expected annotation identifier after '@'
                 PsiElement(AT)('@')
               PsiWhiteSpace(' ')
-              FUNCTION_LITERAL_EXPRESSION
+              LAMBDA_EXPRESSION
                 FUNCTION_LITERAL
                   PsiElement(LBRACE)('{')
                   PsiWhiteSpace('\n        ')
@@ -241,8 +241,8 @@ JetFile: lambdaRecovery.kt
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('ann')
                 PsiWhiteSpace(' ')
-                FUNCTION_LITERAL_ARGUMENT
-                  FUNCTION_LITERAL_EXPRESSION
+                LAMBDA_ARGUMENT
+                  LAMBDA_EXPRESSION
                     FUNCTION_LITERAL
                       PsiElement(LBRACE)('{')
                       PsiWhiteSpace('\n        ')
@@ -300,8 +300,8 @@ JetFile: lambdaRecovery.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('ann')
               PsiWhiteSpace(' ')
-              FUNCTION_LITERAL_ARGUMENT
-                FUNCTION_LITERAL_EXPRESSION
+              LAMBDA_ARGUMENT
+                LAMBDA_EXPRESSION
                   FUNCTION_LITERAL
                     PsiElement(LBRACE)('{')
                     PsiWhiteSpace('\n\n    ')

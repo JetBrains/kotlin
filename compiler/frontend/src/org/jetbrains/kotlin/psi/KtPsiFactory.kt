@@ -204,8 +204,8 @@ public class KtPsiFactory(private val project: Project) {
         return getter
     }
 
-    public fun createMultiDeclaration(text: String): KtMultiDeclaration {
-        return (createFunction("fun foo() {$text}").bodyExpression as KtBlockExpression).statements.first() as KtMultiDeclaration
+    public fun createDestructuringDeclaration(text: String): KtDestructuringDeclaration {
+        return (createFunction("fun foo() {$text}").bodyExpression as KtBlockExpression).statements.first() as KtDestructuringDeclaration
     }
 
     public fun <TDeclaration : KtDeclaration> createDeclaration(text: String): TDeclaration {
@@ -279,7 +279,7 @@ public class KtPsiFactory(private val project: Project) {
     }
 
     public fun createFunctionLiteralParameterList(text: String): KtParameterList {
-        return (createExpression("{ $text -> 0}") as KtFunctionLiteralExpression).getFunctionLiteral().getValueParameterList()!!
+        return (createExpression("{ $text -> 0}") as KtLambdaExpression).getFunctionLiteral().getValueParameterList()!!
     }
 
     public fun createEnumEntry(text: String): KtEnumEntry {
@@ -395,15 +395,15 @@ public class KtPsiFactory(private val project: Project) {
         return argumentList.getArguments().single()
     }
 
-    public fun createDelegatorToSuperCall(text: String): KtDelegatorToSuperCall {
-        return createClass("class A: $text").getDelegationSpecifiers().first() as KtDelegatorToSuperCall
+    public fun createSuperTypeCallEntry(text: String): KtSuperTypeCallEntry {
+        return createClass("class A: $text").getSuperTypeListEntries().first() as KtSuperTypeCallEntry
     }
 
-    public fun createDelegatorToSuperClass(text: String): KtDelegatorToSuperClass {
-        return createClass("class A: $text").getDelegationSpecifiers().first() as KtDelegatorToSuperClass
+    public fun createSuperTypeEntry(text: String): KtSuperTypeEntry {
+        return createClass("class A: $text").getSuperTypeListEntries().first() as KtSuperTypeEntry
     }
 
-    public fun createConstructorDelegationCall(text: String): KtConstructorDelegationCall {
+    public fun creareDelegatedSuperTypeEntry(text: String): KtConstructorDelegationCall {
         val colonOrEmpty = if (text.isEmpty()) "" else ": "
         return createClass("class A { constructor()$colonOrEmpty$text {}").getSecondaryConstructors().first().getDelegationCall()
     }

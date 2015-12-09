@@ -17,8 +17,8 @@ JetFile: Builder.kt
           PsiWhiteSpace(' ')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
-          DELEGATION_SPECIFIER_LIST
-            DELEGATOR_SUPER_CALL
+          SUPER_TYPE_LIST
+            SUPER_TYPE_CALL_ENTRY
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
                   USER_TYPE
@@ -51,8 +51,8 @@ JetFile: Builder.kt
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('library')
                 PsiWhiteSpace(' ')
-                FUNCTION_LITERAL_ARGUMENT
-                  FUNCTION_LITERAL_EXPRESSION
+                LAMBDA_ARGUMENT
+                  LAMBDA_EXPRESSION
                     FUNCTION_LITERAL
                       PsiElement(LBRACE)('{')
                       PsiWhiteSpace('\n    ')
@@ -96,8 +96,8 @@ JetFile: Builder.kt
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('library')
                 PsiWhiteSpace(' ')
-                FUNCTION_LITERAL_ARGUMENT
-                  FUNCTION_LITERAL_EXPRESSION
+                LAMBDA_ARGUMENT
+                  LAMBDA_EXPRESSION
                     FUNCTION_LITERAL
                       PsiElement(LBRACE)('{')
                       PsiWhiteSpace('\n    ')
@@ -128,8 +128,8 @@ JetFile: Builder.kt
                             REFERENCE_EXPRESSION
                               PsiElement(IDENTIFIER)('each')
                             PsiWhiteSpace(' ')
-                            FUNCTION_LITERAL_ARGUMENT
-                              FUNCTION_LITERAL_EXPRESSION
+                            LAMBDA_ARGUMENT
+                              LAMBDA_EXPRESSION
                                 FUNCTION_LITERAL
                                   PsiElement(LBRACE)('{')
                                   PsiWhiteSpace('\n      ')
@@ -168,8 +168,8 @@ JetFile: Builder.kt
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('module')
                 PsiWhiteSpace(' ')
-                FUNCTION_LITERAL_ARGUMENT
-                  FUNCTION_LITERAL_EXPRESSION
+                LAMBDA_ARGUMENT
+                  LAMBDA_EXPRESSION
                     FUNCTION_LITERAL
                       PsiElement(LBRACE)('{')
                       PsiWhiteSpace('\n    ')
@@ -262,8 +262,8 @@ JetFile: Builder.kt
         PsiWhiteSpace(' ')
         PsiElement(COLON)(':')
         PsiWhiteSpace(' ')
-        DELEGATION_SPECIFIER_LIST
-          DELEGATOR_SUPER_CLASS
+        SUPER_TYPE_LIST
+          SUPER_TYPE_ENTRY
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION
@@ -342,8 +342,8 @@ JetFile: Builder.kt
         PsiWhiteSpace(' ')
         PsiElement(COLON)(':')
         PsiWhiteSpace(' ')
-        DELEGATION_SPECIFIER_LIST
-          DELEGATOR_SUPER_CLASS
+        SUPER_TYPE_LIST
+          SUPER_TYPE_ENTRY
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION

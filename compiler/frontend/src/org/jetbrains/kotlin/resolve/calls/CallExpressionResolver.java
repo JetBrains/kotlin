@@ -24,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
@@ -222,7 +221,7 @@ public class CallExpressionResolver {
         if (result[0]) {
             FunctionDescriptor functionDescriptor = resolvedCall != null ? resolvedCall.getResultingDescriptor() : null;
             temporaryForFunction.commit();
-            if (callExpression.getValueArgumentList() == null && callExpression.getFunctionLiteralArguments().isEmpty()) {
+            if (callExpression.getValueArgumentList() == null && callExpression.getLambdaArguments().isEmpty()) {
                 // there are only type arguments
                 boolean hasValueParameters = functionDescriptor == null || functionDescriptor.getValueParameters().size() > 0;
                 context.trace.report(FUNCTION_CALL_EXPECTED.on(callExpression, callExpression, hasValueParameters));

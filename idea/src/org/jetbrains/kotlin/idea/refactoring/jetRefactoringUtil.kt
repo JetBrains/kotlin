@@ -330,11 +330,11 @@ public fun KtElement.getContextForContainingDeclarationBody(): BindingContext? {
     val bodyElement = when (enclosingDeclaration) {
         is KtDeclarationWithBody -> enclosingDeclaration.getBodyExpression()
         is KtWithExpressionInitializer -> enclosingDeclaration.getInitializer()
-        is KtMultiDeclaration -> enclosingDeclaration.getInitializer()
+        is KtDestructuringDeclaration -> enclosingDeclaration.getInitializer()
         is KtParameter -> enclosingDeclaration.getDefaultValue()
         is KtAnonymousInitializer -> enclosingDeclaration.body
         is KtClass -> {
-            val delegationSpecifierList = enclosingDeclaration.getDelegationSpecifierList()
+            val delegationSpecifierList = enclosingDeclaration.getSuperTypeList()
             if (delegationSpecifierList.isAncestor(this)) this else null
         }
         else -> null

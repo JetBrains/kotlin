@@ -351,7 +351,7 @@ JetFile: validExpressions.kt
               LABEL
                 PsiElement(IDENTIFIER)('l')
                 PsiElement(AT)('@')
-            FUNCTION_LITERAL_EXPRESSION
+            LAMBDA_EXPRESSION
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')
                 PsiWhiteSpace('\n        ')

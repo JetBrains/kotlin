@@ -228,11 +228,11 @@ class KotlinInlineValHandler : InlineActionHandler() {
     }
 
     private fun needToAddParameterTypes(
-            functionLiteralExpression: KtFunctionLiteralExpression,
+            lambdaExpression: KtLambdaExpression,
             resolutionFacade: ResolutionFacade
     ): Boolean {
-        val functionLiteral = functionLiteralExpression.functionLiteral
-        val context = resolutionFacade.analyze(functionLiteralExpression, BodyResolveMode.PARTIAL)
+        val functionLiteral = lambdaExpression.functionLiteral
+        val context = resolutionFacade.analyze(lambdaExpression, BodyResolveMode.PARTIAL)
         return context.diagnostics.any { diagnostic ->
             val factory = diagnostic.factory
             val element = diagnostic.psiElement

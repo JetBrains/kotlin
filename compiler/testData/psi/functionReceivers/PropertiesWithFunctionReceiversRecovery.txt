@@ -369,7 +369,7 @@ JetFile: PropertiesWithFunctionReceiversRecovery.kt
     PsiErrorElement:Expecting '.' before a property name
       <empty list>
   PsiWhiteSpace('\n')
-  MULTI_VARIABLE_DECLARATION
+  DESTRUCTURING_DECLARATION
     PsiElement(val)('val')
     PsiWhiteSpace(' ')
     PsiErrorElement:Receiver type is not allowed on a destructuring declaration

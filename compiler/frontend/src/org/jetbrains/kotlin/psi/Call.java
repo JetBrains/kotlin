@@ -49,7 +49,7 @@ public interface Call {
 
     @ReadOnly
     @NotNull
-    List<? extends FunctionLiteralArgument> getFunctionLiteralArguments();
+    List<? extends LambdaArgument> getFunctionLiteralArguments();
 
     @ReadOnly
     @NotNull

@@ -246,7 +246,7 @@ public class ControlStructureTypingUtils {
 
             @NotNull
             @Override
-            public List<FunctionLiteralArgument> getFunctionLiteralArguments() {
+            public List<LambdaArgument> getFunctionLiteralArguments() {
                 return Collections.emptyList();
             }
 

@@ -234,7 +234,7 @@ public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
         }
     }
 
-    private fun getArgumentExpression(it: ValueArgument) = (it.getArgumentExpression() as? KtFunctionLiteralExpression)?.functionLiteral ?: it.getArgumentExpression()
+    private fun getArgumentExpression(it: ValueArgument) = (it.getArgumentExpression() as? KtLambdaExpression)?.functionLiteral ?: it.getArgumentExpression()
 
     private fun getInlineFunctionCallsIfAny(sourcePosition: SourcePosition): List<KtCallExpression> {
         val file = sourcePosition.file as? KtFile ?: return emptyList()
@@ -400,7 +400,7 @@ private fun SuspendContextImpl.getNextPositionWithFilter(
 }
 
 private fun getInlineArgumentIfAny(elementAt: PsiElement?): KtFunctionLiteral? {
-    val functionLiteralExpression = elementAt?.getParentOfType<KtFunctionLiteralExpression>(false) ?: return null
+    val functionLiteralExpression = elementAt?.getParentOfType<KtLambdaExpression>(false) ?: return null
 
     val context = functionLiteralExpression.analyze(BodyResolveMode.PARTIAL)
     if (!InlineUtil.isInlinedArgument(functionLiteralExpression.functionLiteral, context, false)) return null

@@ -22,7 +22,7 @@ import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.impl.FunctionExpressionDescriptor
-import org.jetbrains.kotlin.psi.KtFunctionLiteralExpression
+import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
@@ -47,9 +47,9 @@ abstract public class AbstractFunctionDescriptorInExpressionRendererTest : Kotli
                 function.acceptChildren(this)
                 descriptors.addIfNotNull(bindingContext.get(BindingContext.FUNCTION, function) as? FunctionExpressionDescriptor)
             }
-            override fun visitFunctionLiteralExpression(expression: KtFunctionLiteralExpression) {
-                expression.acceptChildren(this)
-                descriptors.add(bindingContext.get(BindingContext.FUNCTION, expression.getFunctionLiteral())!!)
+            override fun visitLambdaExpression(lambdaExpression: KtLambdaExpression) {
+                lambdaExpression.acceptChildren(this)
+                descriptors.add(bindingContext.get(BindingContext.FUNCTION, lambdaExpression.getFunctionLiteral())!!)
             }
         })
 

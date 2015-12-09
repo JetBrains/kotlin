@@ -169,8 +169,8 @@ private fun processClassDelegationCallsToSpecifiedConstructor(
     if (!klass.isEnum()) return true
     for (declaration in klass.declarations) {
         if (declaration is KtEnumEntry) {
-            val delegationCall = declaration.getDelegationSpecifiers().firstOrNull()
-            if (delegationCall is KtDelegatorToSuperCall && constructor == delegationCall.calleeExpression.getConstructorCallDescriptor()) {
+            val delegationCall = declaration.getSuperTypeListEntries().firstOrNull()
+            if (delegationCall is KtSuperTypeCallEntry && constructor == delegationCall.calleeExpression.getConstructorCallDescriptor()) {
                 if (!process(delegationCall)) return false
             }
         }

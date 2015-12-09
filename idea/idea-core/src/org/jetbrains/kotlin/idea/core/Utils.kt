@@ -57,7 +57,7 @@ public fun Call.mapArgumentsToParameters(targetDescriptor: CallableDescriptor): 
     var positionalArgumentIndex: Int? = 0
 
     for (argument in getValueArguments()) {
-        if (argument is FunctionLiteralArgument) {
+        if (argument is LambdaArgument) {
             map[argument] = parameters.last()
         }
         else {

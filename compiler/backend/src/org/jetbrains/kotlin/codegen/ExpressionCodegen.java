@@ -668,7 +668,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 });
             }
             else {
-                KtMultiDeclaration multiParameter = forExpression.getMultiParameter();
+                KtDestructuringDeclaration multiParameter = forExpression.getDestructuringParameter();
                 assert multiParameter != null;
 
                 // E tmp<e> = tmp<iterator>.next()
@@ -686,15 +686,15 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             assignToLoopParameter();
 
             if (forExpression.getLoopParameter() == null) {
-                KtMultiDeclaration multiParameter = forExpression.getMultiParameter();
+                KtDestructuringDeclaration multiParameter = forExpression.getDestructuringParameter();
                 assert multiParameter != null;
 
                 generateMultiVariables(multiParameter.getEntries());
             }
         }
 
-        private void generateMultiVariables(List<KtMultiDeclarationEntry> entries) {
-            for (KtMultiDeclarationEntry variableDeclaration : entries) {
+        private void generateMultiVariables(List<KtDestructuringDeclarationEntry> entries) {
+            for (KtDestructuringDeclarationEntry variableDeclaration : entries) {
                 final VariableDescriptor componentDescriptor = bindingContext.get(VARIABLE, variableDeclaration);
 
                 @SuppressWarnings("ConstantConditions") final Type componentAsmType = asmType(componentDescriptor.getReturnType());
@@ -1331,7 +1331,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @Override
-    public StackValue visitFunctionLiteralExpression(@NotNull KtFunctionLiteralExpression expression, StackValue receiver) {
+    public StackValue visitLambdaExpression(@NotNull KtLambdaExpression expression, StackValue receiver) {
         if (Boolean.TRUE.equals(bindingContext.get(BLOCK, expression))) {
             return gen(expression.getFunctionLiteral().getBodyExpression());
         }
@@ -1568,9 +1568,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
 
     private void putDescriptorIntoFrameMap(@NotNull KtElement statement) {
-        if (statement instanceof KtMultiDeclaration) {
-            KtMultiDeclaration multiDeclaration = (KtMultiDeclaration) statement;
-            for (KtMultiDeclarationEntry entry : multiDeclaration.getEntries()) {
+        if (statement instanceof KtDestructuringDeclaration) {
+            KtDestructuringDeclaration multiDeclaration = (KtDestructuringDeclaration) statement;
+            for (KtDestructuringDeclarationEntry entry : multiDeclaration.getEntries()) {
                 putLocalVariableIntoFrameMap(entry);
             }
         }
@@ -1608,9 +1608,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @NotNull Label blockEnd,
             @NotNull List<Function<StackValue, Void>> leaveTasks
     ) {
-        if (statement instanceof KtMultiDeclaration) {
-            KtMultiDeclaration multiDeclaration = (KtMultiDeclaration) statement;
-            for (KtMultiDeclarationEntry entry : multiDeclaration.getEntries()) {
+        if (statement instanceof KtDestructuringDeclaration) {
+            KtDestructuringDeclaration multiDeclaration = (KtDestructuringDeclaration) statement;
+            for (KtDestructuringDeclarationEntry entry : multiDeclaration.getEntries()) {
                 addLeaveTaskToRemoveLocalVariableFromFrameMap(entry, blockEnd, leaveTasks);
             }
         }
@@ -2250,8 +2250,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         final SamType samType = bindingContext.get(SAM_VALUE, probablyParenthesizedExpression);
         if (samType == null || expression == null) return null;
 
-        if (expression instanceof KtFunctionLiteralExpression) {
-            return genClosure(((KtFunctionLiteralExpression) expression).getFunctionLiteral(), samType);
+        if (expression instanceof KtLambdaExpression) {
+            return genClosure(((KtLambdaExpression) expression).getFunctionLiteral(), samType);
         }
 
         if (expression instanceof KtNamedFunction) {
@@ -3274,7 +3274,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @Override
-    public StackValue visitMultiDeclaration(@NotNull KtMultiDeclaration multiDeclaration, StackValue receiver) {
+    public StackValue visitDestructuringDeclaration(@NotNull KtDestructuringDeclaration multiDeclaration, StackValue receiver) {
         KtExpression initializer = multiDeclaration.getInitializer();
         if (initializer == null) return StackValue.none();
 
@@ -3291,7 +3291,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         v.store(tempVarIndex, initializerAsmType);
         StackValue.Local local = StackValue.local(tempVarIndex, initializerAsmType);
 
-        for (KtMultiDeclarationEntry variableDeclaration : multiDeclaration.getEntries()) {
+        for (KtDestructuringDeclarationEntry variableDeclaration : multiDeclaration.getEntries()) {
             ResolvedCall<FunctionDescriptor> resolvedCall = bindingContext.get(COMPONENT_RESOLVED_CALL, variableDeclaration);
             assert resolvedCall != null : "Resolved call is null for " + variableDeclaration.getText();
             Call call = makeFakeCall(initializerAsReceiver);

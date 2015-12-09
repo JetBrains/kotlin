@@ -48,12 +48,12 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.idea.project.PlatformKt.getPlatform;
 
-public class ChangeFunctionLiteralReturnTypeFix extends KotlinQuickFixAction<KtFunctionLiteralExpression> {
+public class ChangeFunctionLiteralReturnTypeFix extends KotlinQuickFixAction<KtLambdaExpression> {
     private final KotlinType type;
     private final KtTypeReference functionLiteralReturnTypeRef;
     private IntentionAction appropriateQuickFix = null;
 
-    public ChangeFunctionLiteralReturnTypeFix(@NotNull KtFunctionLiteralExpression functionLiteralExpression, @NotNull KotlinType type) {
+    public ChangeFunctionLiteralReturnTypeFix(@NotNull KtLambdaExpression functionLiteralExpression, @NotNull KotlinType type) {
         super(functionLiteralExpression);
         this.type = type;
         functionLiteralReturnTypeRef = functionLiteralExpression.getFunctionLiteral().getTypeReference();
@@ -150,8 +150,8 @@ public class ChangeFunctionLiteralReturnTypeFix extends KotlinQuickFixAction<KtF
             @Nullable
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                KtFunctionLiteralExpression
-                        functionLiteralExpression = QuickFixUtil.getParentElementOfType(diagnostic, KtFunctionLiteralExpression.class);
+                KtLambdaExpression
+                        functionLiteralExpression = QuickFixUtil.getParentElementOfType(diagnostic, KtLambdaExpression.class);
                 if (functionLiteralExpression == null) return null;
                 return new ChangeFunctionLiteralReturnTypeFix(functionLiteralExpression, getPlatform(functionLiteralExpression).getBuiltIns().getUnitType());
             }

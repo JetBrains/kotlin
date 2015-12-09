@@ -46,10 +46,10 @@ abstract class AssignedVariablesSearcher: KtTreeVisitorVoid() {
         currentDeclaration = previous
     }
 
-    override fun visitFunctionLiteralExpression(functionLiteralExpression: KtFunctionLiteralExpression) {
+    override fun visitLambdaExpression(lambdaExpression: KtLambdaExpression) {
         val previous = currentDeclaration
-        currentDeclaration = functionLiteralExpression.functionLiteral
-        super.visitFunctionLiteralExpression(functionLiteralExpression)
+        currentDeclaration = lambdaExpression.functionLiteral
+        super.visitLambdaExpression(lambdaExpression)
         currentDeclaration = previous
     }
 

@@ -67,7 +67,7 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
 
     public fun checkExpression(expression: KtExpression, trace: BindingTrace) {
         checkEntries(expression.getAnnotationEntries(), getActualTargetList(expression, null), trace)
-        if (expression is KtFunctionLiteralExpression) {
+        if (expression is KtLambdaExpression) {
             for (parameter in expression.valueParameters) {
                 parameter.typeReference?.let { check(it, trace) }
             }
@@ -112,7 +112,7 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
             val retention = descriptor.type.constructor.declarationDescriptor?.getAnnotationRetention()
             if (retention == KotlinRetention.SOURCE) return
 
-            val functionLiteralExpression = annotatedExpression.baseExpression as? KtFunctionLiteralExpression ?: return
+            val functionLiteralExpression = annotatedExpression.baseExpression as? KtLambdaExpression ?: return
             if (InlineUtil.isInlinedArgument(functionLiteralExpression.functionLiteral, trace.bindingContext, false)) {
                 trace.report(Errors.NON_SOURCE_ANNOTATION_ON_INLINED_LAMBDA_EXPRESSION.on(entry))
             }
@@ -170,7 +170,7 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
             return when (annotated) {
                 is KtClassOrObject ->
                     (descriptor as? ClassDescriptor)?.let { TargetList(KotlinTarget.classActualTargets(it)) } ?: TargetLists.T_CLASSIFIER
-                is KtMultiDeclarationEntry -> TargetLists.T_LOCAL_VARIABLE
+                is KtDestructuringDeclarationEntry -> TargetLists.T_LOCAL_VARIABLE
                 is KtProperty -> {
                     if (annotated.isLocal)
                         TargetLists.T_LOCAL_VARIABLE
@@ -203,8 +203,8 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
                 is KtTypeProjection ->
                     if (annotated.projectionKind == KtProjectionKind.STAR) TargetLists.T_STAR_PROJECTION else TargetLists.T_TYPE_PROJECTION
                 is KtAnonymousInitializer -> TargetLists.T_INITIALIZER
-                is KtMultiDeclaration -> TargetLists.T_DESTRUCTURING_DECLARATION
-                is KtFunctionLiteralExpression -> TargetLists.T_FUNCTION_LITERAL
+                is KtDestructuringDeclaration -> TargetLists.T_DESTRUCTURING_DECLARATION
+                is KtLambdaExpression -> TargetLists.T_FUNCTION_LITERAL
                 is KtObjectLiteralExpression -> TargetLists.T_OBJECT_LITERAL
                 is KtExpression -> TargetLists.T_EXPRESSION
                 else -> TargetLists.EMPTY

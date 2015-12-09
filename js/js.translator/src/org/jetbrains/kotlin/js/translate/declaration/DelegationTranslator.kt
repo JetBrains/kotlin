@@ -33,8 +33,8 @@ import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.simpleReturnFunc
 import org.jetbrains.kotlin.js.translate.utils.TranslationUtils.translateFunctionAsEcma5PropertyDescriptor
 import org.jetbrains.kotlin.js.translate.utils.generateDelegateCall
 import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtDelegationSpecifier
-import org.jetbrains.kotlin.psi.KtDelegatorByExpressionSpecifier
+import org.jetbrains.kotlin.psi.KtSuperTypeListEntry
+import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import java.util.*
 
@@ -47,10 +47,10 @@ public class DelegationTranslator(
             BindingUtils.getClassDescriptor(context.bindingContext(), classDeclaration);
 
     private val delegationBySpecifiers =
-            classDeclaration.getDelegationSpecifiers().filterIsInstance<KtDelegatorByExpressionSpecifier>();
+            classDeclaration.getSuperTypeListEntries().filterIsInstance<KtDelegatedSuperTypeEntry>();
 
     private class Field (val name: String, val generateField: Boolean)
-    private val fields = HashMap<KtDelegatorByExpressionSpecifier, Field>()
+    private val fields = HashMap<KtDelegatedSuperTypeEntry, Field>()
 
     init {
         for (specifier in delegationBySpecifiers) {
@@ -88,8 +88,8 @@ public class DelegationTranslator(
         }
     }
 
-    private fun getSuperClass(specifier: KtDelegationSpecifier): ClassDescriptor =
-        CodegenUtil.getSuperClassByDelegationSpecifier(specifier, bindingContext())
+    private fun getSuperClass(specifier: KtSuperTypeListEntry): ClassDescriptor =
+        CodegenUtil.getSuperClassBySuperTypeListEntry(specifier, bindingContext())
 
     private fun generateDelegates(toClass: ClassDescriptor, field: Field, properties: MutableList<JsPropertyInitializer>) {
         for ((descriptor, overriddenDescriptor) in CodegenUtilKt.getDelegates(classDescriptor, toClass)) {
