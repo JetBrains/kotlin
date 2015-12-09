@@ -17,6 +17,7 @@ this
 throw
 true
 try
+typeof
 var
 while
 yield

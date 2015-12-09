@@ -15,6 +15,19 @@ JetFile: Reserved.kt
     BLOCK
       PsiElement(LBRACE)('{')
       PsiElement(RBRACE)('}')
+  PsiWhiteSpace('\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiErrorElement:Expecting function name or receiver type
+      PsiElement(typeof)('typeof')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
   FUN
     PsiElement(fun)('fun')
@@ -29,5 +42,8 @@ JetFile: Reserved.kt
       PsiWhiteSpace('\n    ')
       PsiErrorElement:Expecting an element
         PsiElement(yield)('yield')
+      PsiWhiteSpace('\n    ')
+      PsiErrorElement:Expecting an element
+        PsiElement(typeof)('typeof')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')

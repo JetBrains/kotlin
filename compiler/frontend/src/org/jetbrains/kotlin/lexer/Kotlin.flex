@@ -247,6 +247,7 @@ LONG_TEMPLATE_ENTRY_START=\$\{
 "false"      { return KtTokens.FALSE_KEYWORD ;}
 "super"      { return KtTokens.SUPER_KEYWORD ;}
 "yield"      { return KtTokens.YIELD_KEYWORD ;}
+"typeof"     { return KtTokens.TYPEOF_KEYWORD ;}
 "when"       { return KtTokens.WHEN_KEYWORD ;}
 "true"       { return KtTokens.TRUE_KEYWORD ;}
 "this"       { return KtTokens.THIS_KEYWORD ;}

@@ -79,6 +79,7 @@ public interface KtTokens {
 
     // Reserved for future use:
     KtKeywordToken YIELD_KEYWORD            = KtKeywordToken.keyword("yield");
+    KtKeywordToken TYPEOF_KEYWORD           = KtKeywordToken.keyword("typeof");
 
     KtToken AS_SAFE = KtKeywordToken.keyword("AS_SAFE");//new KtToken("as?");
 
@@ -192,7 +193,8 @@ public interface KtTokens {
                                         IN_KEYWORD, THROW_KEYWORD, RETURN_KEYWORD, BREAK_KEYWORD, CONTINUE_KEYWORD, OBJECT_KEYWORD, IF_KEYWORD,
                                         ELSE_KEYWORD, WHILE_KEYWORD, DO_KEYWORD, TRY_KEYWORD, WHEN_KEYWORD,
                                         NOT_IN, NOT_IS, AS_SAFE,
-                                        YIELD_KEYWORD
+                                        YIELD_KEYWORD,
+                                        TYPEOF_KEYWORD
     );
 
     TokenSet SOFT_KEYWORDS = TokenSet.create(FILE_KEYWORD, IMPORT_KEYWORD, WHERE_KEYWORD, BY_KEYWORD, GET_KEYWORD,

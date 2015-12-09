@@ -1,2 +1,2 @@
 //statement
-int as, type, val, var, fun, is, in, object, when, yield;
+int as, type, val, var, fun, is, in, object, when, yield, typeof;

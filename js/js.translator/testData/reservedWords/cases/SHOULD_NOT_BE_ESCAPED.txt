@@ -26,7 +26,6 @@ protected
 public
 static
 switch
-typeof
 undefined
 void
 with
