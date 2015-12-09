@@ -20,6 +20,7 @@ import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.intentions.ConvertPropertyInitializerToGetterIntention
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
@@ -34,20 +35,7 @@ class ConvertExtensionPropertyInitializerToGetterFix(element: KtExpression) : Ko
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val property = element.getParentOfType<KtProperty>(true) ?: return
-        val type = SpecifyTypeExplicitlyIntention.getTypeForDeclaration(property)
-        SpecifyTypeExplicitlyIntention.addTypeAnnotation(editor, property, type)
-
-        val getter = KtPsiFactory(element).createPropertyGetter(element)
-        val setter = property.setter
-
-        if (setter != null) {
-            property.addBefore(getter, setter)
-        }
-        else {
-            property.add(getter)
-        }
-
-        property.setInitializer(null)
+        ConvertPropertyInitializerToGetterIntention.convertPropertyInitializerToGetter(property, editor)
     }
 
     companion object : KotlinSingleIntentionActionFactory() {

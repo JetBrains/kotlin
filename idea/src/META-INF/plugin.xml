@@ -1001,6 +1001,11 @@
     </intentionAction>
 
     <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertPropertyInitializerToGetterIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.InvertIfConditionIntention</className>
       <category>Kotlin</category>
     </intentionAction>

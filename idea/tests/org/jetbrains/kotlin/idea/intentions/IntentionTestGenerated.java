@@ -3707,6 +3707,63 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/convertPropertyInitializerToGetter")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConvertPropertyInitializerToGetter extends AbstractIntentionTest {
+        public void testAllFilesPresentInConvertPropertyInitializerToGetter() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertPropertyInitializerToGetter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("inapplicableIfExtensionProperty.kt")
+        public void testInapplicableIfExtensionProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyInitializerToGetter/inapplicableIfExtensionProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inapplicableIfLocalVariableInFun.kt")
+        public void testInapplicableIfLocalVariableInFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyInitializerToGetter/inapplicableIfLocalVariableInFun.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inapplicableIfLocalVariableInInitBlock.kt")
+        public void testInapplicableIfLocalVariableInInitBlock() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyInitializerToGetter/inapplicableIfLocalVariableInInitBlock.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inapplicableIfNoInitializer.kt")
+        public void testInapplicableIfNoInitializer() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyInitializerToGetter/inapplicableIfNoInitializer.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyWithInitializerWithSetter.kt")
+        public void testPropertyWithInitializerWithSetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyInitializerToGetter/propertyWithInitializerWithSetter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyWithInitializerWithoutAccessors.kt")
+        public void testPropertyWithInitializerWithoutAccessors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyInitializerToGetter/propertyWithInitializerWithoutAccessors.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("semicolon.kt")
+        public void testSemicolon() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyInitializerToGetter/semicolon.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("topLevelDeclaration.kt")
+        public void testTopLevelDeclaration() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyInitializerToGetter/topLevelDeclaration.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/convertPropertyToFunction")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
