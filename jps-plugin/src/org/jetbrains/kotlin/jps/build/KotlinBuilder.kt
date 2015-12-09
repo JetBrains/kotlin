@@ -226,7 +226,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         saveVersions(context, chunk)
 
         if (targets.any { hasKotlin[it] == null }) {
-            fsOperations.markChunk(excludeFiles = filesToCompile.values().toSet())
+            fsOperations.markChunk(recursively = false, kotlinOnly = true, excludeFiles = filesToCompile.values().toSet())
         }
 
         for (target in targets) {
@@ -276,7 +276,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             when {
                 inlineAdded -> {
                     allCompiledFiles.clear()
-                    fsOperations.markChunk(recursively = true, excludeFiles = compiledFiles)
+                    fsOperations.markChunk(recursively = true, kotlinOnly = true, excludeFiles = compiledFiles)
                     return
                 }
                 constantsChanged -> {
@@ -284,7 +284,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                     return
                 }
                 protoChanged -> {
-                    fsOperations.markChunk(excludeFiles = allCompiledFiles)
+                    fsOperations.markChunk(recursively = false, kotlinOnly = true, excludeFiles = allCompiledFiles)
                 }
             }
 
@@ -365,7 +365,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                         rebuildAfterCacheVersionChanged[target] = true
                     }
 
-                    fsOperations.markChunk()
+                    fsOperations.markChunk(recursively = false, kotlinOnly = true)
 
                     return
                 }

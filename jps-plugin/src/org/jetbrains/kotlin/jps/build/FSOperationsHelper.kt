@@ -32,7 +32,7 @@ class FSOperationsHelper(
 
     fun hasMarkedDirty(): Boolean = markedDirty
 
-    fun markChunk(recursively: Boolean = false, kotlinOnly: Boolean = true, excludeFiles: Set<File> = setOf()) {
+    fun markChunk(recursively: Boolean, kotlinOnly: Boolean, excludeFiles: Set<File> = setOf()) {
         fun shouldMark(file: File): Boolean {
             if (kotlinOnly && !KotlinSourceFileCollector.isKotlinSourceFile(file)) return false
 
