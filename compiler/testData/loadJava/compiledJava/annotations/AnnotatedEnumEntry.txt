@@ -1,0 +1,29 @@
+package test
+
+public final enum class AnnotatedEnumEntry : kotlin.Enum<test.AnnotatedEnumEntry!> {
+    @test.AnnotatedEnumEntry.Anno(value = "a") enum entry E1
+
+    @test.AnnotatedEnumEntry.Anno(value = "b") @test.AnnotatedEnumEntry.Anno2() enum entry E2
+
+    enum entry E3
+
+    private constructor AnnotatedEnumEntry()
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.AnnotatedEnumEntry!): kotlin.Int
+
+    public final annotation class Anno : kotlin.Annotation {
+        public constructor Anno(/*0*/ value: kotlin.String)
+        public final val value: kotlin.String
+    }
+
+    public final annotation class Anno2 : kotlin.Annotation {
+        public constructor Anno2()
+    }
+
+    // Static members
+    @kotlin.Deprecated(message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<test.AnnotatedEnumEntry>
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.AnnotatedEnumEntry
+    public final /*synthesized*/ fun values(): kotlin.Array<test.AnnotatedEnumEntry>
+}

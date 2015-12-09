@@ -321,6 +321,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJava(fileName);
             }
 
+            @TestMetadata("AnnotatedEnumEntry.java")
+            public void testAnnotatedEnumEntry() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/AnnotatedEnumEntry.java");
+                doTestCompiledJava(fileName);
+            }
+
             @TestMetadata("AnnotatedField.java")
             public void testAnnotatedField() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/AnnotatedField.java");

@@ -585,8 +585,8 @@ public class LazyJavaClassMemberScope(
             if (field != null) {
                 EnumEntrySyntheticClassDescriptor.create(c.storageManager, ownerDescriptor, name,
                                                          c.storageManager.createLazyValue {
-                                                             memberIndex().getAllFieldNames() + memberIndex().getMethodNames({true})
-                                                         }, c.components.sourceElementFactory.source(field))
+                                                             memberIndex().getAllFieldNames() + memberIndex().getMethodNames({ true })
+                                                         }, c.resolveAnnotations(field), c.components.sourceElementFactory.source(field))
             }
             else null
         }

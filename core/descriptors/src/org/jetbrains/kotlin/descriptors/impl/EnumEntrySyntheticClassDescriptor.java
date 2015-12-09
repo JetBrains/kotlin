@@ -47,6 +47,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
     private final MemberScope scope;
     private final MemberScope staticScope = new StaticScopeForKotlinClass(this);
     private final NotNullLazyValue<Collection<Name>> enumMemberNames;
+    private final Annotations annotations;
 
     /**
      * Creates and initializes descriptors for enum entry with the given name and its companion object
@@ -58,11 +59,12 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
             @NotNull ClassDescriptor enumClass,
             @NotNull Name name,
             @NotNull NotNullLazyValue<Collection<Name>> enumMemberNames,
+            @NotNull Annotations annotations,
             @NotNull SourceElement source
     ) {
         KotlinType enumType = enumClass.getDefaultType();
 
-        return new EnumEntrySyntheticClassDescriptor(storageManager, enumClass, enumType, name, enumMemberNames, source);
+        return new EnumEntrySyntheticClassDescriptor(storageManager, enumClass, enumType, name, enumMemberNames, annotations, source);
     }
 
     private EnumEntrySyntheticClassDescriptor(
@@ -71,11 +73,13 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
             @NotNull KotlinType supertype,
             @NotNull Name name,
             @NotNull NotNullLazyValue<Collection<Name>> enumMemberNames,
+            @NotNull Annotations annotations,
             @NotNull SourceElement source
     ) {
         super(storageManager, containingClass, name, source);
         assert containingClass.getKind() == ClassKind.ENUM_CLASS;
 
+        this.annotations = annotations;
         this.typeConstructor =
                 TypeConstructorImpl.createForClass(this, getAnnotations(), true, "enum entry", Collections.<TypeParameterDescriptor>emptyList(),
                                         Collections.singleton(supertype));
@@ -160,8 +164,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
     @NotNull
     @Override
     public Annotations getAnnotations() {
-        // TODO
-        return Annotations.Companion.getEMPTY();
+        return annotations;
     }
 
     @Override

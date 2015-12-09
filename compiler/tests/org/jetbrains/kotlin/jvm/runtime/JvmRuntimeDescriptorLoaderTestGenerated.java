@@ -3387,6 +3387,12 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
                 doTest(fileName);
             }
 
+            @TestMetadata("AnnotatedEnumEntry.java")
+            public void testAnnotatedEnumEntry() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/AnnotatedEnumEntry.java");
+                doTest(fileName);
+            }
+
             @TestMetadata("AnnotatedField.java")
             public void testAnnotatedField() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/AnnotatedField.java");
