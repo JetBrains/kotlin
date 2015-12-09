@@ -286,7 +286,7 @@ public class OverrideResolver {
         void multipleImplementationsMemberNotImplemented(CallableMemberDescriptor descriptor);
         void conflictingInterfaceMemberNotImplemented(CallableMemberDescriptor descriptor);
         void returnTypeMismatchOnInheritance(CallableMemberDescriptor descriptor1, CallableMemberDescriptor descriptor2);
-        void propertyTypeMismatchOnInheritance(CallableMemberDescriptor descriptor1, CallableMemberDescriptor descriptor2);
+        void propertyTypeMismatchOnInheritance(PropertyDescriptor descriptor1, PropertyDescriptor descriptor2);
     }
 
     private static class CollectMissingImplementationsStrategy implements CheckInheritedSignaturesReportStrategy {
@@ -318,7 +318,7 @@ public class OverrideResolver {
         }
 
         @Override
-        public void propertyTypeMismatchOnInheritance(CallableMemberDescriptor descriptor1, CallableMemberDescriptor descriptor2) {
+        public void propertyTypeMismatchOnInheritance(PropertyDescriptor descriptor1, PropertyDescriptor descriptor2) {
             // don't care
         }
     }
@@ -373,11 +373,16 @@ public class OverrideResolver {
         }
 
         @Override
-        public void propertyTypeMismatchOnInheritance(CallableMemberDescriptor descriptor1, CallableMemberDescriptor descriptor2) {
+        public void propertyTypeMismatchOnInheritance(PropertyDescriptor descriptor1, PropertyDescriptor descriptor2) {
             conflictingReturnTypes.add(descriptor1);
             conflictingReturnTypes.add(descriptor2);
 
-            reportInheritanceConflictIfRequired(PROPERTY_TYPE_MISMATCH_ON_INHERITANCE, descriptor1, descriptor2);
+            if (descriptor1.isVar() || descriptor2.isVar()) {
+                reportInheritanceConflictIfRequired(VAR_TYPE_MISMATCH_ON_INHERITANCE, descriptor1, descriptor2);
+            }
+            else {
+                reportInheritanceConflictIfRequired(PROPERTY_TYPE_MISMATCH_ON_INHERITANCE, descriptor1, descriptor2);
+            }
         }
 
         private void reportInheritanceConflictIfRequired(
@@ -406,8 +411,8 @@ public class OverrideResolver {
 
         @Override
         public void propertyTypeMismatchOnOverride(
-                @NotNull CallableMemberDescriptor overriding,
-                @NotNull CallableMemberDescriptor overridden
+                @NotNull PropertyDescriptor overriding,
+                @NotNull PropertyDescriptor overridden
         ) {
             // Always reported as PROPERTY_TYPE_MISMATCH_ON_INHERITANCE
         }
@@ -732,7 +737,7 @@ public class OverrideResolver {
     private interface CheckOverrideReportStrategy {
         void overridingFinalMember(@NotNull CallableMemberDescriptor overriding, @NotNull CallableMemberDescriptor overridden);
         void returnTypeMismatchOnOverride(@NotNull CallableMemberDescriptor overriding, @NotNull CallableMemberDescriptor overridden);
-        void propertyTypeMismatchOnOverride(@NotNull CallableMemberDescriptor overriding, @NotNull CallableMemberDescriptor overridden);
+        void propertyTypeMismatchOnOverride(@NotNull PropertyDescriptor overriding, @NotNull PropertyDescriptor overridden);
         void varOverriddenByVal(@NotNull CallableMemberDescriptor overriding, @NotNull CallableMemberDescriptor overridden);
         void cannotOverrideInvisibleMember(@NotNull CallableMemberDescriptor overriding, @NotNull CallableMemberDescriptor invisibleOverridden);
         void nothingToOverride(@NotNull CallableMemberDescriptor overriding);
@@ -782,10 +787,15 @@ public class OverrideResolver {
                 }
 
                 @Override
-                public void propertyTypeMismatchOnOverride(@NotNull CallableMemberDescriptor overriding, @NotNull CallableMemberDescriptor overridden) {
+                public void propertyTypeMismatchOnOverride(@NotNull PropertyDescriptor overriding, @NotNull PropertyDescriptor overridden) {
                     if (!typeMismatchError) {
                         typeMismatchError = true;
-                        trace.report(PROPERTY_TYPE_MISMATCH_ON_OVERRIDE.on(member, declared, overridden));
+                        if (overridden.isVar()) {
+                            trace.report(VAR_TYPE_MISMATCH_ON_OVERRIDE.on(member, declared, overridden));
+                        }
+                        else {
+                            trace.report(PROPERTY_TYPE_MISMATCH_ON_OVERRIDE.on(member, declared, overridden));
+                        }
                     }
                 }
 
@@ -829,7 +839,7 @@ public class OverrideResolver {
                     PropertyDescriptor inheritedPropertyDescriptor = (PropertyDescriptor) inheritedDescriptor;
 
                     if (!isPropertyTypeOkForOverride(inheritedPropertyDescriptor, mostSpecificProperty)) {
-                        reportingStrategy.propertyTypeMismatchOnInheritance(mostSpecific, inheritedDescriptor);
+                        reportingStrategy.propertyTypeMismatchOnInheritance(mostSpecificProperty, inheritedPropertyDescriptor);
                     }
                 }
                 else if (!isReturnTypeOkForOverride(inheritedDescriptor, mostSpecific)) {
@@ -868,6 +878,9 @@ public class OverrideResolver {
             @NotNull Collection<? extends CallableMemberDescriptor> overriddenDescriptors,
             @NotNull CheckOverrideReportStrategy reportError
     ) {
+        PropertyDescriptor propertyMemberDescriptor =
+                memberDescriptor instanceof PropertyDescriptor ? (PropertyDescriptor) memberDescriptor : null;
+
         for (CallableMemberDescriptor overridden : overriddenDescriptors) {
             if (overridden == null) continue;
 
@@ -875,9 +888,12 @@ public class OverrideResolver {
                 reportError.overridingFinalMember(memberDescriptor, overridden);
             }
 
-            if (memberDescriptor instanceof PropertyDescriptor &&
-                !isPropertyTypeOkForOverride((PropertyDescriptor) overridden, (PropertyDescriptor) memberDescriptor)) {
-                reportError.propertyTypeMismatchOnOverride(memberDescriptor, overridden);
+            if (propertyMemberDescriptor != null) {
+                assert overridden instanceof PropertyDescriptor : overridden + " is overridden by property " + propertyMemberDescriptor;
+                PropertyDescriptor overriddenProperty = (PropertyDescriptor) overridden;
+                if (!isPropertyTypeOkForOverride(overriddenProperty, propertyMemberDescriptor)) {
+                    reportError.propertyTypeMismatchOnOverride(propertyMemberDescriptor, overriddenProperty);
+                }
             }
             else if (!isReturnTypeOkForOverride(overridden, memberDescriptor)) {
                 reportError.returnTypeMismatchOnOverride(memberDescriptor, overridden);
@@ -966,7 +982,7 @@ public class OverrideResolver {
             }
 
             @Override
-            public void propertyTypeMismatchOnOverride(@NotNull CallableMemberDescriptor overriding, @NotNull CallableMemberDescriptor overridden) {
+            public void propertyTypeMismatchOnOverride(@NotNull PropertyDescriptor overriding, @NotNull PropertyDescriptor overridden) {
                 throw new IllegalStateException("Component functions are not properties");
             }
 
