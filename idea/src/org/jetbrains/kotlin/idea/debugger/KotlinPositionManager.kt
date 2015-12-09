@@ -53,12 +53,15 @@ import org.jetbrains.kotlin.fileClasses.internalNameWithoutInnerClasses
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.idea.core.refactoring.getLineStartOffset
 import org.jetbrains.kotlin.idea.debugger.breakpoints.getLambdasAtLineIfAny
+import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinCodeFragmentFactory
 import org.jetbrains.kotlin.idea.decompiler.classFile.KtClsFile
 import org.jetbrains.kotlin.idea.search.usagesSearch.isImportUsage
 import org.jetbrains.kotlin.idea.util.DebuggerUtils
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -125,10 +128,28 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
             if (lambdaOrFunIfInside != null) {
                 return SourcePosition.createFromElement(lambdaOrFunIfInside.bodyExpression!!)
             }
+            val property = getParameterIfInConstructor(location, psiFile, lineNumber)
+            if (property != null) {
+                return SourcePosition.createFromElement(property)
+            }
             return SourcePosition.createFromLine(psiFile, lineNumber)
         }
 
         throw NoDataException.INSTANCE
+    }
+
+    private fun getParameterIfInConstructor(location: Location, file: KtFile, lineNumber: Int): KtParameter? {
+        val lineStartOffset = file.getLineStartOffset(lineNumber) ?: return null
+        val elementAt = file.findElementAt(lineStartOffset)
+        val contextElement = KotlinCodeFragmentFactory.getContextElement(elementAt)
+        val methodName = location.method().name()
+        if (contextElement is KtClass && JvmAbi.isGetterName(methodName)) {
+            val parameterForGetter = contextElement.getPrimaryConstructor()?.valueParameters?.firstOrNull() {
+                it.hasValOrVar() && it.name != null && JvmAbi.getterName(it.name!!) == methodName
+            } ?: return null
+            return parameterForGetter
+        }
+        return null
     }
 
     private fun getLambdaOrFunIfInside(location: Location, file: KtFile, lineNumber: Int): KtFunction? {

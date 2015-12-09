@@ -180,80 +180,12 @@ private fun getExpressionToAddDebugExpressionBefore(tmpFile: KtFile, contextElem
 }
 
 private fun addDebugExpressionBeforeContextElement(codeFragment: KtCodeFragment, contextElement: PsiElement): List<KtExpression> {
-    val psiFactory = KtPsiFactory(codeFragment)
-
-    fun insertNewInitializer(classBody: KtClassBody): PsiElement? {
-        val initializer = psiFactory.createAnonymousInitializer()
-        val newInitializer = (classBody.addAfter(initializer, classBody.firstChild) as KtAnonymousInitializer)
-        val block = newInitializer.body as KtBlockExpression?
-        return block?.lastChild
-    }
-
-    val elementBefore = when {
-        contextElement is KtFile -> {
-            val fakeFunction = psiFactory.createFunction("fun _debug_fun_() {}")
-            contextElement.add(psiFactory.createNewLine())
-            val newFakeFun = contextElement.add(fakeFunction) as KtNamedFunction
-            newFakeFun.bodyExpression!!.lastChild
-        }
-        contextElement is KtProperty && !contextElement.isLocal -> {
-            val delegateExpressionOrInitializer = contextElement.delegateExpressionOrInitializer
-            if (delegateExpressionOrInitializer != null) {
-                wrapInRunFun(delegateExpressionOrInitializer)
-            }
-            else {
-                val getter = contextElement.getter!!
-                if (!getter.hasBlockBody()) {
-                    wrapInRunFun(getter.bodyExpression!!)
-                }
-                else {
-                    (getter.bodyExpression as KtBlockExpression).statements.first()
-                }
-            }
-        }
-        contextElement is KtPrimaryConstructor -> {
-            val classOrObject = contextElement.getContainingClassOrObject()
-            insertNewInitializer(classOrObject.getOrCreateBody())
-        }
-        contextElement is KtClassOrObject -> {
-            insertNewInitializer(contextElement.getOrCreateBody())
-        }
-        contextElement is KtFunctionLiteral -> {
-            val block = contextElement.bodyExpression!!
-            block.statements.firstOrNull() ?: block.lastChild
-        }
-        contextElement is KtDeclarationWithBody && !contextElement.hasBody()-> {
-            val block = psiFactory.createBlock("")
-            val newBlock = contextElement.add(block) as KtBlockExpression
-            newBlock.rBrace
-        }
-        contextElement is KtDeclarationWithBody && !contextElement.hasBlockBody()-> {
-            wrapInRunFun(contextElement.bodyExpression!!)
-        }
-        contextElement is KtDeclarationWithBody && contextElement.hasBlockBody()-> {
-            val block = contextElement.bodyExpression as KtBlockExpression
-            val last = block.statements.lastOrNull()
-            if (last is KtReturnExpression)
-                last
-            else
-                block.rBrace
-        }
-        contextElement is KtWhenEntry -> {
-            val entryExpression = contextElement.expression
-            if (entryExpression is KtBlockExpression) {
-                entryExpression.statements.firstOrNull() ?: entryExpression.lastChild
-            }
-            else {
-                wrapInRunFun(entryExpression!!)
-            }
-        }
-        else -> {
-            contextElement
-        }
-    }
+    val elementBefore = findElementBefore(contextElement)
 
     val parent = elementBefore?.parent
     if (parent == null || elementBefore == null) return emptyList()
+
+    val psiFactory = KtPsiFactory(codeFragment)
 
     parent.addBefore(psiFactory.createNewLine(), elementBefore)
 
@@ -280,6 +212,84 @@ private fun addDebugExpressionBeforeContextElement(codeFragment: KtCodeFragment,
 
     val debugExpression = codeFragment.getContentElement() ?: return emptyList()
     return insertExpression(debugExpression)
+}
+
+private fun findElementBefore(contextElement: PsiElement): PsiElement? {
+    val psiFactory = KtPsiFactory(contextElement)
+
+    fun insertNewInitializer(classBody: KtClassBody): PsiElement? {
+        val initializer = psiFactory.createAnonymousInitializer()
+        val newInitializer = (classBody.addAfter(initializer, classBody.firstChild) as KtAnonymousInitializer)
+        val block = newInitializer.body as KtBlockExpression?
+        return block?.lastChild
+    }
+
+    return when {
+        contextElement is KtFile -> {
+            val fakeFunction = psiFactory.createFunction("fun _debug_fun_() {}")
+            contextElement.add(psiFactory.createNewLine())
+            val newFakeFun = contextElement.add(fakeFunction) as KtNamedFunction
+            newFakeFun.bodyExpression!!.lastChild
+        }
+        contextElement is KtProperty && !contextElement.isLocal -> {
+            val delegateExpressionOrInitializer = contextElement.delegateExpressionOrInitializer
+            if (delegateExpressionOrInitializer != null) {
+                wrapInRunFun(delegateExpressionOrInitializer)
+            }
+            else {
+                val getter = contextElement.getter!!
+                if (!getter.hasBlockBody()) {
+                    wrapInRunFun(getter.bodyExpression!!)
+                }
+                else {
+                    (getter.bodyExpression as KtBlockExpression).statements.first()
+                }
+            }
+        }
+        contextElement is KtParameter -> {
+            val ownerFunction = contextElement.ownerFunction!!
+            findElementBefore(ownerFunction)
+        }
+        contextElement is KtPrimaryConstructor -> {
+            val classOrObject = contextElement.getContainingClassOrObject()
+            insertNewInitializer(classOrObject.getOrCreateBody())
+        }
+        contextElement is KtClassOrObject -> {
+            insertNewInitializer(contextElement.getOrCreateBody())
+        }
+        contextElement is KtFunctionLiteral -> {
+            val block = contextElement.bodyExpression!!
+            block.statements.firstOrNull() ?: block.lastChild
+        }
+        contextElement is KtDeclarationWithBody && !contextElement.hasBody() -> {
+            val block = psiFactory.createBlock("")
+            val newBlock = contextElement.add(block) as KtBlockExpression
+            newBlock.rBrace
+        }
+        contextElement is KtDeclarationWithBody && !contextElement.hasBlockBody() -> {
+            wrapInRunFun(contextElement.bodyExpression!!)
+        }
+        contextElement is KtDeclarationWithBody && contextElement.hasBlockBody() -> {
+            val block = contextElement.bodyExpression as KtBlockExpression
+            val last = block.statements.lastOrNull()
+            if (last is KtReturnExpression)
+                last
+            else
+                block.rBrace
+        }
+        contextElement is KtWhenEntry -> {
+            val entryExpression = contextElement.expression
+            if (entryExpression is KtBlockExpression) {
+                entryExpression.statements.firstOrNull() ?: entryExpression.lastChild
+            }
+            else {
+                wrapInRunFun(entryExpression!!)
+            }
+        }
+        else -> {
+            contextElement
+        }
+    }
 }
 
 private fun replaceByRunFunction(expression: KtExpression): KtCallExpression {

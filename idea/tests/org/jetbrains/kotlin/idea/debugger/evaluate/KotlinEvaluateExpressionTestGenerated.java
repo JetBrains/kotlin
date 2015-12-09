@@ -223,6 +223,12 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             doSingleBreakpointTest(fileName);
         }
 
+        @TestMetadata("onGetter.kt")
+        public void testOnGetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/onGetter.kt");
+            doSingleBreakpointTest(fileName);
+        }
+
         @TestMetadata("onObjectHeader.kt")
         public void testOnObjectHeader() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/onObjectHeader.kt");
