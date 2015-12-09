@@ -28,7 +28,6 @@ import org.jetbrains.jps.builders.impl.BuildTargetRegistryImpl
 import org.jetbrains.jps.builders.impl.TargetOutputIndexImpl
 import org.jetbrains.jps.builders.java.JavaBuilderUtil
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
-import org.jetbrains.jps.builders.java.dependencyView.Mappings
 import org.jetbrains.jps.incremental.*
 import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.*
 import org.jetbrains.jps.incremental.java.JavaBuilder
@@ -93,6 +92,10 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         if (historyLabel != null) {
             LOG.info("Label in local history: $historyLabel")
         }
+    }
+
+    override fun buildFinished(context: CompileContext?) {
+        statisticsLogger.reportTotal()
     }
 
     override fun build(
@@ -726,10 +729,6 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                 else -> throw IllegalArgumentException("Unsupported severity: " + severity)
             }
         }
-    }
-
-    override fun buildFinished(context: CompileContext?) {
-        statisticsLogger.reportTotal()
     }
 }
 
