@@ -491,10 +491,10 @@ internal class DescriptorRendererImpl(
     }
 
     private fun renderAdditionalModifiers(functionDescriptor: FunctionDescriptor, builder: StringBuilder) {
-        if (functionDescriptor.isOperator && functionDescriptor.overriddenDescriptors.none { it.isOperator }) {
+        if (functionDescriptor.isOperator && (functionDescriptor.overriddenDescriptors.none { it.isOperator } || alwaysRenderModifiers)) {
             builder.append("operator ")
         }
-        if (functionDescriptor.isInfix && functionDescriptor.overriddenDescriptors.none { it.isInfix }) {
+        if (functionDescriptor.isInfix && (functionDescriptor.overriddenDescriptors.none { it.isInfix } || alwaysRenderModifiers)) {
             builder.append("infix ")
         }
         if (functionDescriptor.isExternal) {

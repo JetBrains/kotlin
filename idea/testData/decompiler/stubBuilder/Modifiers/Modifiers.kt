@@ -14,5 +14,7 @@ data class Modifiers(val x: Int) {
 
     inline fun inlined(crossinline arg1: ()->Unit, noinline arg2: ()->Unit): Unit {}
 
+    override operator fun equals(other: Any?) = false
+
     annotation class Ann
 }

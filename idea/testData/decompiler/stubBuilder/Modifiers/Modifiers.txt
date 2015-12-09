@@ -36,6 +36,21 @@ PsiJetFileStubImpl[package=test]
             USER_TYPE:[isAbsoluteInRootPackage=false]
               REFERENCE_EXPRESSION:[referencedName=kotlin]
             REFERENCE_EXPRESSION:[referencedName=Int]
+      FUN:[fqName=test.Modifiers.equals, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=equals]
+        MODIFIER_LIST:[open public operator]
+        VALUE_PARAMETER_LIST:
+          VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
+            TYPE_REFERENCE:
+              NULLABLE_TYPE:
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  USER_TYPE:[isAbsoluteInRootPackage=false]
+                    REFERENCE_EXPRESSION:[referencedName=kotlin]
+                  REFERENCE_EXPRESSION:[referencedName=Any]
+        TYPE_REFERENCE:
+          USER_TYPE:[isAbsoluteInRootPackage=false]
+            USER_TYPE:[isAbsoluteInRootPackage=false]
+              REFERENCE_EXPRESSION:[referencedName=kotlin]
+            REFERENCE_EXPRESSION:[referencedName=Boolean]
       FUN:[fqName=test.Modifiers.extFun, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=extFun]
         MODIFIER_LIST:[public final external]
         VALUE_PARAMETER_LIST:

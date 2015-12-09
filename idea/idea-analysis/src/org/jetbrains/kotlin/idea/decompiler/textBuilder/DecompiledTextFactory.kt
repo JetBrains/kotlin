@@ -50,6 +50,7 @@ fun DescriptorRendererOptions.defaultDecompilerRendererOptions() {
     secondaryConstructorsAsPrimary = false
     modifiers = DescriptorRendererModifier.ALL
     excludedTypeAnnotationClasses = ExcludedTypeAnnotations.annotationsForNullabilityAndMutability
+    alwaysRenderModifiers = true
 }
 
 public fun buildDecompiledText(
