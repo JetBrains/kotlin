@@ -277,7 +277,7 @@ class FileTreeWalkTest {
             }
 
             fun visitFile(file: File) {
-                assert(stack.last().listFiles().contains(file)) { file }
+                assertTrue(stack.last().listFiles().contains(file), file.toString())
                 files.add(file.relativeToOrSelf(basedir))
             }
 
@@ -288,13 +288,12 @@ class FileTreeWalkTest {
             }
             basedir.walkTopDown().enter(::beforeVisitDirectory).leave(::afterVisitDirectory).
                     fail(::visitDirectoryFailed).forEach { it -> if (!it.isDirectory()) visitFile(it) }
-            assert(stack.isEmpty())
-            val sep = File.separator
+            assertTrue(stack.isEmpty())
             for (fileName in arrayOf("", "1", "1/2", "1/3", "6", "8")) {
-                assert(dirs.contains(fileName)) { fileName }
+                assertTrue(dirs.contains(File(fileName)), fileName)
             }
             for (fileName in arrayOf("1/3/4.txt", "1/3/4.txt", "7.txt", "8/9.txt")) {
-                assert(files.contains(fileName)) { fileName }
+                assertTrue(files.contains(File(fileName)), fileName)
             }
 
             //limit maxDepth
@@ -302,10 +301,10 @@ class FileTreeWalkTest {
             dirs.clear()
             basedir.walkTopDown().enter(::beforeVisitDirectory).leave(::afterVisitDirectory).maxDepth(1).
                     forEach { it -> if (it != basedir) visitFile(it) }
-            assert(stack.isEmpty())
-            assert(dirs.size == 1 && dirs.contains(File(""))) { dirs.size }
+            assertTrue(stack.isEmpty())
+            assertEquals(setOf(File("")), dirs)
             for (file in arrayOf("1", "6", "7.txt", "8")) {
-                assert(files.contains(File(file))) { file }
+                assertTrue(files.contains(File(file)), file.toString())
             }
 
             //restrict access
@@ -315,16 +314,10 @@ class FileTreeWalkTest {
                     dirs.clear()
                     basedir.walkTopDown().enter(::beforeVisitDirectory).leave(::afterVisitDirectory).
                             fail(::visitDirectoryFailed).forEach { it -> if (!it.isDirectory()) visitFile(it) }
-                    assert(stack.isEmpty())
-                    assert(failed.size == 1 && failed.contains("1")) { failed.size }
-                    assert(dirs.size == 4) { dirs.size }
-                    for (dir in arrayOf("", "1", "6", "8")) {
-                        assert(dirs.contains(File(dir))) { dir }
-                    }
-                    assert(files.size == 2) { files.size }
-                    for (file in arrayOf("7.txt", "8/9.txt")) {
-                        assert(files.contains(File(file))) { file }
-                    }
+                    assertTrue(stack.isEmpty())
+                    assertEquals(setOf("1"), failed)
+                    assertEquals(listOf("", "1", "6", "8").map { File(it) }.toSet(), dirs)
+                    assertEquals(listOf("7.txt", "8/9.txt").map { File(it) }.toSet(), files)
                 } finally {
                     File(basedir, "1").setReadable(true)
                 }
@@ -341,13 +334,12 @@ class FileTreeWalkTest {
         try {
             val visited = HashSet<File>()
             val block: (File) -> Unit = {
-                assert(!visited.contains(it)) { it }
-                assert(it == basedir && visited.isEmpty() || visited.contains(it.getParentFile())) { it }
+                assertTrue(!visited.contains(it), it.toString())
+                assertTrue(it == basedir && visited.isEmpty() || visited.contains(it.getParentFile()), it.toString())
                 visited.add(it)
             }
             basedir.walkTopDown().forEach(block)
-            assert(visited.size == 10) { visited.size }
-
+            assertEquals(10, visited.size)
         } finally {
             basedir.deleteRecursively()
         }
@@ -360,12 +352,12 @@ class FileTreeWalkTest {
             if (restricted.setReadable(false)) {
                 val visited = HashSet<File>()
                 val block: (File) -> Unit = {
-                    assert(!visited.contains(it)) { it }
-                    assert(it == basedir && visited.isEmpty() || visited.contains(it.getParentFile())) { it }
+                    assertTrue(!visited.contains(it), it.toString())
+                    assertTrue(it == basedir && visited.isEmpty() || visited.contains(it.getParentFile()), it.toString())
                     visited.add(it)
                 }
                 basedir.walkTopDown().forEach(block)
-                assert(visited.size == 6) { visited.size }
+                assertEquals(6, visited.size)
             }
         } finally {
             restricted.setReadable(true)
@@ -388,7 +380,7 @@ class FileTreeWalkTest {
                     makeBackup(it)
                 }
             }
-            assert(count == 4)
+            assertEquals(4, count)
         } finally {
             basedir1.deleteRecursively()
         }
@@ -401,7 +393,7 @@ class FileTreeWalkTest {
                     makeBackup(it)
                 }
             }
-            assert(count == 4)
+            assertEquals(4, count)
         } finally {
             basedir2.deleteRecursively()
         }
@@ -417,7 +409,7 @@ class FileTreeWalkTest {
                     count++
                 }
             }
-            assert(count == 1)
+            assertEquals(1, count)
         } finally {
             basedir.deleteRecursively()
         }
@@ -435,7 +427,7 @@ class FileTreeWalkTest {
                     found.add(file.getParentFile())
                 }
             }
-            assert(found.size == 3)
+            assertEquals(3, found.size)
         } finally {
             basedir.deleteRecursively()
         }
@@ -457,9 +449,7 @@ class FileTreeWalkTest {
         try {
             val it = dir.walkTopDown().iterator()
             it.next()
-            it.next()
-            assert(false)
-        } catch(e: NoSuchElementException) {
+            assertFailsWith<NoSuchElementException>("Second call to next() should fail.") { it.next() }
         } finally {
             dir.delete()
         }
