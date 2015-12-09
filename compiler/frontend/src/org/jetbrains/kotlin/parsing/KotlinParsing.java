@@ -1573,7 +1573,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private void parseFunctionOrPropertyName(boolean receiverFound, String title, TokenSet nameFollow, boolean nameRequired) {
         if (nameRequired && atSet(nameFollow)) return; // no name
 
-        TokenSet recoverySet = TokenSet.orSet(nameFollow, TokenSet.create(LBRACE, RBRACE));
+        TokenSet recoverySet = TokenSet.orSet(nameFollow, TokenSet.create(LBRACE, RBRACE), TOP_LEVEL_DECLARATION_FIRST);
         if (!receiverFound) {
             expect(IDENTIFIER, "Expecting " + title + " name or receiver type", recoverySet);
         }

@@ -2046,6 +2046,12 @@ public class ParsingTestGenerated extends AbstractParsingTest {
                 doParsingTest(fileName);
             }
 
+            @TestMetadata("FunFun.kt")
+            public void testFunFun() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/recovery/FunFun.kt");
+                doParsingTest(fileName);
+            }
+
             @TestMetadata("IfKeywordRBrace.kt")
             public void testIfKeywordRBrace() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/recovery/IfKeywordRBrace.kt");
