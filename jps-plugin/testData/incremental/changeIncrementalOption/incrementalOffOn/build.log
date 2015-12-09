@@ -18,8 +18,6 @@ End of files
 Cleaning output files:
 out/production/module2/META-INF/module2.kotlin_module
 out/production/module2/foo/Module2_aKt.class
-End of files
-Cleaning output files:
 out/production/module2/foo/Module2_bKt.class
 out/production/module2/foo/Module2_cKt.class
 End of files

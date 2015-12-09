@@ -76,13 +76,13 @@ class CacheVersion(
         get() = versionFile
 
     // Order of entries is important, because actions are sorted in KotlinBuilder::checkVersions
-    enum class Action(val isChunkRebuildRequired: Boolean = false) {
-        REBUILD_ALL_KOTLIN(isChunkRebuildRequired = true),
-        REBUILD_CHUNK(isChunkRebuildRequired = true),
-        CLEAN_NORMAL_CACHES(),
-        CLEAN_EXPERIMENTAL_CACHES(),
-        CLEAN_DATA_CONTAINER(),
-        DO_NOTHING()
+    enum class Action {
+        REBUILD_ALL_KOTLIN,
+        REBUILD_CHUNK,
+        CLEAN_NORMAL_CACHES,
+        CLEAN_EXPERIMENTAL_CACHES,
+        CLEAN_DATA_CONTAINER,
+        DO_NOTHING
     }
 }
 
