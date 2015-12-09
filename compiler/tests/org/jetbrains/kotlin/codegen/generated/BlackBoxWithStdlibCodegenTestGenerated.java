@@ -3727,6 +3727,51 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/javaProperties")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class JavaProperties extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInJavaProperties() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/reflection/javaProperties"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("java.kt")
+            public void testJava() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/javaProperties/java.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("javaObjectType.kt")
+            public void testJavaObjectType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/javaProperties/javaObjectType.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("javaObjectTypeReified.kt")
+            public void testJavaObjectTypeReified() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/javaProperties/javaObjectTypeReified.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("javaPrimitiveType.kt")
+            public void testJavaPrimitiveType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/javaProperties/javaPrimitiveType.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("javaPrimitiveTypeReified.kt")
+            public void testJavaPrimitiveTypeReified() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/javaProperties/javaPrimitiveTypeReified.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("javaReified.kt")
+            public void testJavaReified() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/javaProperties/javaReified.kt");
+                doTestWithStdlib(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/kClassInAnnotation")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

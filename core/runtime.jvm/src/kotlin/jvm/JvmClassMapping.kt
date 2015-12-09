@@ -33,6 +33,51 @@ public val <T : Any> KClass<T>.java: Class<T>
     get() = (this as ClassBasedDeclarationContainer).jClass as Class<T>
 
 /**
+ * Returns a Java [Class] instance representing the primitive type corresponding to the given [KClass] if it exists.
+ */
+@Suppress("UNCHECKED_CAST")
+public val <T : Any> KClass<T>.javaPrimitiveType: Class<T>?
+    get() {
+        val thisJClass = (this as ClassBasedDeclarationContainer).jClass
+        if (thisJClass.isPrimitive) return thisJClass as Class<T>
+
+        return when (thisJClass.canonicalName) {
+            "java.lang.Boolean"   -> Boolean::class.java
+            "java.lang.Character" -> Char::class.java
+            "java.lang.Byte"      -> Byte::class.java
+            "java.lang.Short"     -> Short::class.java
+            "java.lang.Integer"   -> Int::class.java
+            "java.lang.Float"     -> Float::class.java
+            "java.lang.Long"      -> Long::class.java
+            "java.lang.Double"    -> Double::class.java
+            else -> null
+        } as Class<T>?
+    }
+
+/**
+ * Returns a Java [Class] instance corresponding to the given [KClass] instance.
+ * In case of primitive types it returns corresponding wrapper classes.
+ */
+@Suppress("UNCHECKED_CAST", "PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+public val <T : Any> KClass<T>.javaObjectType: Class<T>
+    get() {
+        val thisJClass = (this as ClassBasedDeclarationContainer).jClass
+        if (!thisJClass.isPrimitive) return thisJClass as Class<T>
+
+        return when (thisJClass.canonicalName) {
+            "boolean" -> java.lang.Boolean::class.java
+            "char"    -> java.lang.Character::class.java
+            "byte"    -> java.lang.Byte::class.java
+            "short"   -> java.lang.Short::class.java
+            "int"     -> java.lang.Integer::class.java
+            "float"   -> java.lang.Float::class.java
+            "long"    -> java.lang.Long::class.java
+            "double"  -> java.lang.Double::class.java
+            else -> thisJClass
+        } as Class<T>
+    }
+
+/**
  * Returns a [KClass] instance corresponding to the given Java [Class] instance.
  */
 @Suppress("UNCHECKED_CAST")
