@@ -93,9 +93,10 @@ object ReplaceWithAnnotationAnalyzer {
 
         val module = symbolDescriptor.module
         val explicitImportsScope = buildExplicitImportsScope(annotation, resolutionFacade, module)
+        val defaultImportsScopes = buildDefaultImportsScopes(resolutionFacade, module)
         val additionalScopes = resolutionFacade.getFrontendService(FileScopeProvider.AdditionalScopes::class.java)
         val scope = getResolutionScope(symbolDescriptor, symbolDescriptor,
-                                       listOf(explicitImportsScope) + additionalScopes.scopes) ?: return null
+                                       listOf(explicitImportsScope) + defaultImportsScopes + additionalScopes.scopes) ?: return null
 
         var bindingContext = analyzeInContext(expression, module, scope, resolutionFacade)
 
@@ -179,7 +180,8 @@ object ReplaceWithAnnotationAnalyzer {
         val module = symbolDescriptor.module
 
         val explicitImportsScope = buildExplicitImportsScope(annotation, resolutionFacade, module)
-        val scope = getResolutionScope(symbolDescriptor, symbolDescriptor, listOf(explicitImportsScope)) ?: return null
+        val defaultImportScopes = buildDefaultImportsScopes(resolutionFacade, module)
+        val scope = getResolutionScope(symbolDescriptor, symbolDescriptor, listOf(explicitImportsScope) + defaultImportScopes) ?: return null
 
         val typeResolver = resolutionFacade.getFrontendService(TypeResolver::class.java)
         val bindingTrace = BindingTraceContext()
@@ -204,9 +206,21 @@ object ReplaceWithAnnotationAnalyzer {
         return typeReference.typeElement as KtUserType
     }
 
+    private fun buildDefaultImportsScopes(resolutionFacade: ResolutionFacade, module: ModuleDescriptor): List<ImportingScope> {
+        val (allUnderImports, aliasImports) = module.defaultImports.partition { it.isAllUnder }
+        // this solution doesn't support aliased default imports with a different alias
+        // TODO: Create import directives from ImportPath, create ImportResolver, create LazyResolverScope, see FileScopeProviderImpl
+
+        return listOf(buildExplicitImportsScope(aliasImports.map { it.fqnPart() }, resolutionFacade, module)) +
+               allUnderImports.map { module.getPackage(it.fqnPart()).memberScope.memberScopeAsImportingScope() }.asReversed()
+    }
+
     private fun buildExplicitImportsScope(annotation: ReplaceWith, resolutionFacade: ResolutionFacade, module: ModuleDescriptor): ExplicitImportsScope {
-        val importedSymbols = importFqNames(annotation)
-                .flatMap { resolutionFacade.resolveImportReference(module, it) }
+        return buildExplicitImportsScope(importFqNames(annotation), resolutionFacade, module)
+    }
+
+    private fun buildExplicitImportsScope(importFqNames: List<FqName>, resolutionFacade: ResolutionFacade, module: ModuleDescriptor): ExplicitImportsScope {
+        val importedSymbols = importFqNames.flatMap { resolutionFacade.resolveImportReference(module, it) }
         return ExplicitImportsScope(importedSymbols)
     }
 
