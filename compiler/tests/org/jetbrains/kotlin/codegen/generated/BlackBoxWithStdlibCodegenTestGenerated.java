@@ -1621,6 +1621,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/fullJdk"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("charBuffer.kt")
+        public void testCharBuffer() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/fullJdk/charBuffer.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("classpath.kt")
         public void testClasspath() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/fullJdk/classpath.kt");

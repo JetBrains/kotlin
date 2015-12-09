@@ -286,10 +286,10 @@ public fun ClassDescriptor.hasRealKotlinSuperClassWithOverrideOf(
 }
 
 // Util methods
-private val CallableMemberDescriptor.isFromJava: Boolean
+public val CallableMemberDescriptor.isFromJava: Boolean
     get() = propertyIfAccessor is JavaCallableMemberDescriptor && propertyIfAccessor.containingDeclaration is JavaClassDescriptor
 
-private fun CallableMemberDescriptor.isFromBuiltins(): Boolean {
+public fun CallableMemberDescriptor.isFromBuiltins(): Boolean {
     val fqName = propertyIfAccessor.fqNameOrNull() ?: return false
     return fqName.toUnsafe().startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME) &&
             this.module == this.builtIns.builtInsModule

@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallableDescriptors
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategyForInvoke
-import org.jetbrains.kotlin.resolve.isAnnotatedAsHidden
+import org.jetbrains.kotlin.resolve.isHiddenInResolution
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.DeferredType
 import org.jetbrains.kotlin.types.ErrorUtils
@@ -201,7 +201,7 @@ class NewResolveOldInference(
                 return Candidate(ResolutionCandidateStatus(listOf(ExtensionWithStaticTypeWithDynamicReceiver)), candidateCall)
             }
 
-            if (towerCandidate.descriptor.isAnnotatedAsHidden()) {
+            if (towerCandidate.descriptor.isHiddenInResolution()) {
                 return Candidate(ResolutionCandidateStatus(listOf(HiddenDescriptor)), candidateCall)
             }
 

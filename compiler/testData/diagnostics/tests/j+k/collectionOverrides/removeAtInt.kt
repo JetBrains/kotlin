@@ -1,7 +1,7 @@
 // FILE: A.java
 abstract public class A extends B {
-    public Integer remove(int x) { }
-    public boolean remove(Object x) { }
+    public Integer removeAt(int x) { }
+    public boolean remove(Integer x) { }
 }
 
 // FILE: main.kt

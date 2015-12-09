@@ -603,6 +603,10 @@ internal class DescriptorRendererImpl(
             renderOverride(function, builder)
             renderMemberKind(function, builder)
 
+            if (verbose && function.isHiddenToOvercomeSignatureClash) {
+                builder.append("/*isHiddenToOvercomeSignatureClash*/ ")
+            }
+
             builder.append(renderKeyword("fun")).append(" ")
             renderTypeParameters(function.getTypeParameters(), builder, true)
             renderReceiver(function, builder)

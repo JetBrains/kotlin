@@ -24,9 +24,9 @@ public abstract class A : B {
     public open override /*1*/ /*fake_override*/ fun listIterator(/*0*/ index: kotlin.Int): kotlin.MutableListIterator<kotlin.Int!>
     invisible_fake open override /*1*/ /*fake_override*/ fun outOfBoundsMsg(/*0*/ p0: kotlin.Int): kotlin.String!
     invisible_fake open override /*1*/ /*fake_override*/ fun rangeCheckForAdd(/*0*/ p0: kotlin.Int): kotlin.Unit
-    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ element: kotlin.Int): kotlin.Boolean
+    public open override /*1*/ fun remove(/*0*/ element: kotlin.Int): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ elements: kotlin.Collection<kotlin.Int!>): kotlin.Boolean
-    public open override /*1*/ fun removeAt(/*0*/ x: kotlin.Int): kotlin.Int
+    public open override /*1*/ fun removeAt(/*0*/ index: kotlin.Int): kotlin.Int
     protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun removeRange(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ elements: kotlin.Collection<kotlin.Int!>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun set(/*0*/ index: kotlin.Int, /*1*/ element: kotlin.Int): kotlin.Int

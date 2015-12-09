@@ -15,11 +15,17 @@ private object EmptyList : List<Nothing> {
 }
 
 fun box(): String {
-    val n = EmptyList as List<Any?>
+    val n = EmptyList as List<String>
 
-    if (n.contains(null)) return "fail 1"
-    if (n.indexOf(null) != -1) return "fail 2"
-    if (n.lastIndexOf(null) != -1) return "fail 3"
+    if (n.contains("")) return "fail 1"
+    if (n.indexOf("") != -1) return "fail 2"
+    if (n.lastIndexOf("") != -1) return "fail 3"
+
+    val nullAny = EmptyList as List<Any?>
+
+    if (nullAny.contains(null)) return "fail 4"
+    if (nullAny.indexOf(null) != -1) return "fail 5"
+    if (nullAny.lastIndexOf(null) != -1) return "fail 6"
 
     return "OK"
 }

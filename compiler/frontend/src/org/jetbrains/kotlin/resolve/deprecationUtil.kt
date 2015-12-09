@@ -97,7 +97,8 @@ fun DeclarationDescriptor.getDeprecatedAnnotationLevel(): DeprecationLevelValue?
 @Deprecated("Should be removed together with kotlin.HiddenDeclaration")
 private val HIDDEN_ANNOTATION_FQ_NAME = FqName("kotlin.HiddenDeclaration")
 
-fun DeclarationDescriptor.isAnnotatedAsHidden(): Boolean {
+fun DeclarationDescriptor.isHiddenInResolution(): Boolean {
+    if (this is FunctionDescriptor && this.isHiddenToOvercomeSignatureClash) return true
     return annotations.findAnnotation(HIDDEN_ANNOTATION_FQ_NAME) != null
         || getDeprecatedAnnotationLevel() == DeprecationLevelValue.HIDDEN
 }

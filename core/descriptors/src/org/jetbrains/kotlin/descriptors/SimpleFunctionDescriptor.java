@@ -39,6 +39,9 @@ public interface SimpleFunctionDescriptor extends FunctionDescriptor {
     SimpleFunctionDescriptor createCopyWithNewTypeParameters(@NotNull List<TypeParameterDescriptor> typeParameters);
 
     @NotNull
+    SimpleFunctionDescriptor createHiddenCopyToOvercomeSignatureClash();
+
+    @NotNull
     @Override
     SimpleFunctionDescriptor getOriginal();
 }

@@ -143,7 +143,7 @@ public class X implements java.util.List<String> {
 
 // FILE: main.kt
 
-class Y : X()
+class <!CONFLICTING_INHERITED_JVM_DECLARATIONS, CONFLICTING_INHERITED_JVM_DECLARATIONS!>Y<!> : X()
 
 fun main() {
     X().remove("")
@@ -154,4 +154,7 @@ fun main() {
 
     Y().remove("")
     Y().removeAt(1)
+
+    X().remove("")
+    X().removeAt(1)
 }

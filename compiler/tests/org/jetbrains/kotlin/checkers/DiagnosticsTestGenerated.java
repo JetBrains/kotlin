@@ -9641,6 +9641,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/j+k/collectionOverrides"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
+                @TestMetadata("charBuffer.kt")
+                public void testCharBuffer() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/collectionOverrides/charBuffer.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("collectionStringImpl.kt")
+                public void testCollectionStringImpl() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/collectionOverrides/collectionStringImpl.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("commonCollections.kt")
                 public void testCommonCollections() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/j+k/collectionOverrides/commonCollections.kt");

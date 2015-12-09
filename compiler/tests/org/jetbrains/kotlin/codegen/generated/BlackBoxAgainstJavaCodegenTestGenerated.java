@@ -830,6 +830,21 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxCod
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxAgainstJava/specialBuiltins")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SpecialBuiltins extends AbstractBlackBoxCodegenTest {
+        public void testAllFilesPresentInSpecialBuiltins() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxAgainstJava/specialBuiltins"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("CharBuffer.kt")
+        public void testCharBuffer() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxAgainstJava/specialBuiltins/CharBuffer.kt");
+            doTestAgainstJava(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxAgainstJava/staticFun")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -708,7 +708,7 @@ public class CallResolver {
     ) {
         final List<CallCandidateResolutionContext<D>> candidateResolutionContexts = ContainerUtil.newArrayList();
         for (final ResolutionCandidate<D> resolutionCandidate : task.getCandidates()) {
-            if (DeprecationUtilKt.isAnnotatedAsHidden(resolutionCandidate.getDescriptor())) continue;
+            if (DeprecationUtilKt.isHiddenInResolution(resolutionCandidate.getDescriptor())) continue;
 
             candidatePerfCounter.time(new Function0<Unit>() {
                 @Override

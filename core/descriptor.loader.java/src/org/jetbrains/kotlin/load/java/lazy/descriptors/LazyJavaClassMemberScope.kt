@@ -152,8 +152,8 @@ public class LazyJavaClassMemberScope(
     }
 
     private fun CallableDescriptor.doesOverride(superDescriptor: CallableDescriptor): Boolean {
-        return OverridingUtil.DEFAULT.isOverridableByIncludingReturnType(
-                superDescriptor, this
+        return OverridingUtil.DEFAULT.isOverridableByWithoutExternalConditions(
+                superDescriptor, this, /* checkReturnType = */ true
         ).result == OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE
     }
 
@@ -214,7 +214,11 @@ public class LazyJavaClassMemberScope(
         val functionsFromSupertypes = getFunctionsFromSupertypes(name)
 
         if (!name.sameAsRenamedInJvmBuiltin && !name.sameAsBuiltinMethodWithErasedValueParameters) {
-            addFunctionFromSupertypes(result, name, functionsFromSupertypes.filter { isVisibleAsFunctionInCurrentClass(it) })
+            // Simple fast path in case of name is not suspicious (i.e. name is not one of builtins that have different signature in Java)
+            addFunctionFromSupertypes(
+                    result, name,
+                    functionsFromSupertypes.filter { isVisibleAsFunctionInCurrentClass(it) },
+                    isSpecialBuiltinName = false)
             return
         }
 
@@ -237,16 +241,33 @@ public class LazyJavaClassMemberScope(
         val visibleFunctionsFromSupertypes =
                 functionsFromSupertypes.filter { isVisibleAsFunctionInCurrentClass(it) } + specialBuiltinsFromSuperTypes
 
-        addFunctionFromSupertypes(result, name, visibleFunctionsFromSupertypes)
+        addFunctionFromSupertypes(result, name, visibleFunctionsFromSupertypes, isSpecialBuiltinName = true)
     }
 
     private fun addFunctionFromSupertypes(
             result: MutableCollection<SimpleFunctionDescriptor>,
             name: Name,
-            functionsFromSupertypes: Collection<SimpleFunctionDescriptor>
+            functionsFromSupertypes: Collection<SimpleFunctionDescriptor>,
+            isSpecialBuiltinName: Boolean
     ) {
-        result.addAll(DescriptorResolverUtils.resolveOverrides(
-                name, functionsFromSupertypes, result, ownerDescriptor, c.components.errorReporter))
+
+        val additionalOverrides =
+                DescriptorResolverUtils.resolveOverrides(name, functionsFromSupertypes, result, ownerDescriptor, c.components.errorReporter)
+
+        if (!isSpecialBuiltinName) {
+            result.addAll(additionalOverrides)
+        }
+        else {
+            val allDescriptors = result + additionalOverrides
+            result.addAll(
+                    additionalOverrides.map {
+                        resolvedOverride ->
+                        val overriddenBuiltin = resolvedOverride.getOverriddenSpecialBuiltin()
+                                                ?: return@map resolvedOverride
+
+                        resolvedOverride.createHiddenCopyIfBuiltinAlreadyAccidentallyOverridden(overriddenBuiltin, allDescriptors)
+                    })
+        }
     }
 
     private fun addOverriddenBuiltinMethods(
@@ -259,14 +280,14 @@ public class LazyJavaClassMemberScope(
         for (descriptor in candidatesForOverride) {
             val overriddenBuiltin = descriptor.getOverriddenBuiltinWithDifferentJvmName() ?: continue
 
-            if (alreadyDeclaredFunctions.any { it.doesOverride(overriddenBuiltin) }) continue
-
             val nameInJava = getJvmMethodNameIfSpecial(overriddenBuiltin)!!
             for (method in functions(Name.identifier(nameInJava))) {
                 val renamedCopy = method.createRenamedCopy(name)
 
                 if (isOverridableRenamedDescriptor(overriddenBuiltin, renamedCopy)) {
-                    result.add(renamedCopy)
+                    result.add(
+                            renamedCopy.createHiddenCopyIfBuiltinAlreadyAccidentallyOverridden(overriddenBuiltin, alreadyDeclaredFunctions))
+                    break
                 }
             }
         }
@@ -276,16 +297,28 @@ public class LazyJavaClassMemberScope(
                     BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(descriptor)
                     ?: continue
 
-            if (alreadyDeclaredFunctions.any { it.doesOverride(overriddenBuiltin) }) continue
-
             createOverrideForBuiltinFunctionWithErasedParameterIfNeeded(overriddenBuiltin, functions)?.let {
                 override ->
                 if (isVisibleAsFunctionInCurrentClass(override)) {
-                    result.add(override)
+                    result.add(override.createHiddenCopyIfBuiltinAlreadyAccidentallyOverridden(overriddenBuiltin, alreadyDeclaredFunctions))
                 }
             }
         }
     }
+
+    // In case when Java has declaration with signature reflecting one of special builtin we load override of builtin as hidden function
+    // Unless we do it then signature clash happens.
+    // For example see java.nio.CharBuffer implementing CharSequence and defining irrelevant 'get' method having the same signature as in kotlin.CharSequence
+    // We load java.nio.CharBuffer as having both 'get' functions, but one that is override of kotlin.CharSequence is hidden,
+    // so when someone calls CharBuffer.get it results in invoking java method CharBuffer.get
+    // But we still have the way to call 'charAt' java method by upcasting CharBuffer to kotlin.CharSequence
+    private fun SimpleFunctionDescriptor.createHiddenCopyIfBuiltinAlreadyAccidentallyOverridden(
+            specialBuiltin: CallableDescriptor,
+            alreadyDeclaredFunctions: Collection<SimpleFunctionDescriptor>
+    ) = if (alreadyDeclaredFunctions.none { this != it && it.doesOverride(specialBuiltin) })
+            this
+        else
+            createHiddenCopyToOvercomeSignatureClash()
 
     private fun createOverrideForBuiltinFunctionWithErasedParameterIfNeeded(
             overridden: FunctionDescriptor,

@@ -241,7 +241,7 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
                 @NotNull Name name,
                 @NotNull Collection<D> fromSupertypes
         ) {
-            final Set<D> result = new HashSet<D>();
+            final Set<D> result = new LinkedHashSet<D>();
 
             OverridingUtil.generateOverridesInFunctionGroup(
                     name, fromSupertypes, Collections.<D>emptySet(), EnumEntrySyntheticClassDescriptor.this,

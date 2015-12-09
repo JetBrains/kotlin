@@ -201,4 +201,9 @@ public abstract class PropertyAccessorDescriptorImpl extends DeclarationDescript
     public void setInitialSignatureDescriptor(@Nullable FunctionDescriptor initialSignatureDescriptor) {
         this.initialSignatureDescriptor = initialSignatureDescriptor;
     }
+
+    @Override
+    public boolean isHiddenToOvercomeSignatureClash() {
+        return false;
+    }
 }

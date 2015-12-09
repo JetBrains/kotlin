@@ -226,9 +226,9 @@ public class AsmUtil {
         int flags = getVisibilityAccessFlag(functionDescriptor);
         flags |= getVarargsFlag(functionDescriptor);
         flags |= getDeprecatedAccessFlag(functionDescriptor);
-        if (DeprecationUtilKt.isAnnotatedAsHidden(functionDescriptor)
+        if (DeprecationUtilKt.isHiddenInResolution(functionDescriptor)
             || functionDescriptor instanceof PropertyAccessorDescriptor
-               && DeprecationUtilKt.isAnnotatedAsHidden(((PropertyAccessorDescriptor) functionDescriptor).getCorrespondingProperty())) {
+               && DeprecationUtilKt.isHiddenInResolution(((PropertyAccessorDescriptor) functionDescriptor).getCorrespondingProperty())) {
             flags |= ACC_SYNTHETIC;
         }
         return flags;

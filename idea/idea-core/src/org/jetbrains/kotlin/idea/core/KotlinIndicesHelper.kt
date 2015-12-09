@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.isAnnotatedAsHidden
+import org.jetbrains.kotlin.resolve.isHiddenInResolution
 import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.KotlinType
@@ -70,7 +70,7 @@ public class KotlinIndicesHelper(
     private val project = resolutionFacade.project
 
     private val descriptorFilter: (DeclarationDescriptor) -> Boolean = filter@ {
-        if (it.isAnnotatedAsHidden()) return@filter false
+        if (it.isHiddenInResolution()) return@filter false
         if (!visibilityFilter(it)) return@filter false
         if (applyExcludeSettings && isExcludedFromAutoImport(it)) return@filter false
         true

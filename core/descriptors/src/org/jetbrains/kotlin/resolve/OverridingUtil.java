@@ -82,12 +82,14 @@ public class OverridingUtil {
             @Nullable ClassDescriptor subClassDescriptor,
             boolean checkReturnType
     ) {
+        boolean wasSuccessfulExternalCondition = false;
         for (ExternalOverridabilityCondition externalCondition : EXTERNAL_CONDITIONS) {
             ExternalOverridabilityCondition.Result result =
                     externalCondition.isOverridable(superDescriptor, subDescriptor, subClassDescriptor);
             switch (result) {
                 case OVERRIDABLE:
-                    return OverrideCompatibilityInfo.success();
+                    wasSuccessfulExternalCondition = true;
+                    break;
                 case CONFLICT:
                     return OverrideCompatibilityInfo.conflict("External condition failed");
                 case INCOMPATIBLE:
@@ -96,6 +98,10 @@ public class OverridingUtil {
                     // do nothing
                     // go to the next external condition or default override check
             }
+        }
+
+        if (wasSuccessfulExternalCondition) {
+            return OverrideCompatibilityInfo.success();
         }
 
         return isOverridableByWithoutExternalConditions(superDescriptor, subDescriptor, checkReturnType);
