@@ -147,6 +147,10 @@ public class KotlinToJVMBytecodeCompiler {
 
         result.throwIfError();
 
+        // the same handling of the generationStates as in compileBunchOfSources
+        // TODO: doublecheck if this is desired approach and try to find some less fragile one
+        List<GenerationState> generationStates = new ArrayList<GenerationState>();
+
         for (Module module : chunk) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
             List<KtFile> jetFiles = CompileEnvironmentUtil.getKtFiles(
@@ -162,13 +166,21 @@ public class KotlinToJVMBytecodeCompiler {
                     generate(environment, result, jetFiles, module, moduleOutputDirectory,
                              module.getModuleName());
             outputFiles.put(module, generationState.getFactory());
+            generationStates.add(generationState);
         }
 
-        for (Module module : chunk) {
-            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
-            writeOutput(configuration, outputFiles.get(module), new File(module.getOutputDirectory()), jarPath, jarRuntime, null);
+        try {
+            for (Module module : chunk) {
+                ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
+                writeOutput(configuration, outputFiles.get(module), new File(module.getOutputDirectory()), jarPath, jarRuntime, null);
+            }
+            return true;
         }
-        return true;
+        finally {
+            for (GenerationState generationState : generationStates) {
+                generationState.destroy();
+            }
+        }
     }
 
     @NotNull
