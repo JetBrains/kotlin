@@ -27,12 +27,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.storage.StorageManager
-import java.util.*
 
 abstract class AndroidPackageFragmentProviderExtension : PackageFragmentProviderExtension {
     protected abstract fun getLayoutXmlFileManager(project: Project, moduleInfo: ModuleInfo?): AndroidLayoutXmlFileManager?
-
-    private val cache = WeakHashMap<AndroidModuleData, AndroidSyntheticPackageFragmentProvider>()
 
     override fun getPackageFragmentProvider(
             project: Project,
@@ -44,9 +41,6 @@ abstract class AndroidPackageFragmentProviderExtension : PackageFragmentProvider
         val layoutXmlFileManager = getLayoutXmlFileManager(project, moduleInfo) ?: return null
 
         val moduleData = layoutXmlFileManager.getModuleData()
-
-        val cachedPackageFragmentProvider = cache[moduleData]
-        if (cachedPackageFragmentProvider != null) return cachedPackageFragmentProvider
 
         val lazyContext = LazySyntheticElementResolveContext(module, storageManager)
 
@@ -97,9 +91,7 @@ abstract class AndroidPackageFragmentProviderExtension : PackageFragmentProvider
             allPackageDescriptors += packageDescriptor
         }
 
-        val provider = AndroidSyntheticPackageFragmentProvider(allPackageDescriptors)
-        cache[moduleData] = provider
-        return provider
+        return AndroidSyntheticPackageFragmentProvider(allPackageDescriptors)
     }
 }
 
