@@ -37,6 +37,18 @@ public class KotlinGotoTestGenerated extends AbstractKotlinGotoTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/navigation/gotoClass"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("builtInAny.kt")
+        public void testBuiltInAny() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoClass/builtInAny.kt");
+            doClassTest(fileName);
+        }
+
+        @TestMetadata("builtInInt.kt")
+        public void testBuiltInInt() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoClass/builtInInt.kt");
+            doClassTest(fileName);
+        }
+
         @TestMetadata("enumEntries.kt")
         public void testEnumEntries() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoClass/enumEntries.kt");
@@ -92,6 +104,12 @@ public class KotlinGotoTestGenerated extends AbstractKotlinGotoTest {
     public static class GotoSymbol extends AbstractKotlinGotoTest {
         public void testAllFilesPresentInGotoSymbol() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/navigation/gotoSymbol"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("builtInArrayOfNulls.kt")
+        public void testBuiltInArrayOfNulls() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoSymbol/builtInArrayOfNulls.kt");
+            doSymbolTest(fileName);
         }
 
         @TestMetadata("functions.kt")
