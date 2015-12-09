@@ -1571,7 +1571,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         for (KtEnumEntry enumEntry : enumEntries) {
             ClassDescriptor descriptor = getNotNull(bindingContext, BindingContext.CLASS, enumEntry);
-            FieldVisitor fv = v.newField(JvmDeclarationOriginKt.OtherOrigin(enumEntry, descriptor), ACC_PUBLIC | ACC_ENUM | ACC_STATIC | ACC_FINAL,
+            int isDeprecated = KotlinBuiltIns.isDeprecated(descriptor) ? ACC_DEPRECATED : 0;
+            FieldVisitor fv = v.newField(JvmDeclarationOriginKt.OtherOrigin(enumEntry, descriptor), ACC_PUBLIC | ACC_ENUM | ACC_STATIC | ACC_FINAL | isDeprecated,
                                          descriptor.getName().asString(), classAsmType.getDescriptor(), null, null);
             AnnotationCodegen.forField(fv, typeMapper).genAnnotations(descriptor, null);
         }
