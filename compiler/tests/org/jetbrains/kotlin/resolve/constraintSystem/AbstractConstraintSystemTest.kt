@@ -137,7 +137,7 @@ abstract public class AbstractConstraintSystemTest() : KotlinLiteFixture() {
     }
 
     private fun parseConstraints(lines: List<String>): List<MyConstraint> {
-        val kindsMap = MyConstraintKind.values.map { it.token to it }.toMap()
+        val kindsMap = MyConstraintKind.values().map { it.token to it }.toMap()
         val kinds = kindsMap.keys
         val linesWithConstraints = lines.filter { line -> kinds.any { kind -> line.contains(kind) } }
         return linesWithConstraints.map {
