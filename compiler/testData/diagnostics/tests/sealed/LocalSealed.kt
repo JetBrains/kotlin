@@ -1,3 +1,3 @@
 fun foo() {
-    <!DEPRECATED_MODIFIER_FOR_TARGET!>sealed<!> class My
+    <!WRONG_MODIFIER_TARGET!>sealed<!> class My
 }
