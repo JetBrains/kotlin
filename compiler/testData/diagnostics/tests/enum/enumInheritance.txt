@@ -14,7 +14,7 @@ public final enum class MyEnum : MyClass {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    @kotlin.Deprecated(message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<MyEnum>
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<MyEnum>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): MyEnum
     public final /*synthesized*/ fun values(): kotlin.Array<MyEnum>
 }
@@ -30,7 +30,7 @@ public final enum class MyEnum2 : kotlin.Enum<MyEnum2>, MyTrait {
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    @kotlin.Deprecated(message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<MyEnum2>
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<MyEnum2>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): MyEnum2
     public final /*synthesized*/ fun values(): kotlin.Array<MyEnum2>
 }
@@ -46,7 +46,7 @@ public final enum class MyEnum3 : MyEnumBase {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    @kotlin.Deprecated(message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<MyEnum3>
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<MyEnum3>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): MyEnum3
     public final /*synthesized*/ fun values(): kotlin.Array<MyEnum3>
 }
@@ -62,7 +62,7 @@ public final enum class MyEnumBase : kotlin.Enum<MyEnumBase> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    @kotlin.Deprecated(message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<MyEnumBase>
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<MyEnumBase>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): MyEnumBase
     public final /*synthesized*/ fun values(): kotlin.Array<MyEnumBase>
 }

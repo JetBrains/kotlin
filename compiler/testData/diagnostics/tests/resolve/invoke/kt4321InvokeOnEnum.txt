@@ -18,7 +18,7 @@ public final enum class DOMElementTestClasses : kotlin.Enum<DOMElementTestClasse
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    @kotlin.Deprecated(message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<DOMElementTestClasses>
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<DOMElementTestClasses>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): DOMElementTestClasses
     public final /*synthesized*/ fun values(): kotlin.Array<DOMElementTestClasses>
 }
@@ -44,7 +44,7 @@ public final enum class TestClasses : kotlin.Enum<TestClasses>, EnumStyleClass {
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    @kotlin.Deprecated(message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<TestClasses>
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<TestClasses>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): TestClasses
     public final /*synthesized*/ fun values(): kotlin.Array<TestClasses>
 }

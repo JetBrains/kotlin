@@ -82,7 +82,7 @@ public final class A {
         }
 
         // Static members
-        @kotlin.Deprecated(message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<A.E>
+        @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<A.E>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): A.E
         public final /*synthesized*/ fun values(): kotlin.Array<A.E>
     }
@@ -211,7 +211,7 @@ public final enum class E : kotlin.Enum<E> {
         }
 
         // Static members
-        @kotlin.Deprecated(message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<E.E>
+        @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<E.E>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): E.E
         public final /*synthesized*/ fun values(): kotlin.Array<E.E>
     }
@@ -250,7 +250,7 @@ public final enum class E : kotlin.Enum<E> {
     }
 
     // Static members
-    @kotlin.Deprecated(message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<E>
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<E>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): E
     public final /*synthesized*/ fun values(): kotlin.Array<E>
 }
@@ -336,7 +336,7 @@ public interface T {
         }
 
         // Static members
-        @kotlin.Deprecated(message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<T.E>
+        @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<T.E>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): T.E
         public final /*synthesized*/ fun values(): kotlin.Array<T.E>
     }

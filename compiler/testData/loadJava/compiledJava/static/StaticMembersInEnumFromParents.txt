@@ -29,7 +29,7 @@ public/*package*/ final enum class StaticMembersInEnum : kotlin.Enum<test.Static
     public final var c: kotlin.Int
     public final override /*1*/ var d: kotlin.Int
     public const final override /*1*/ /*fake_override*/ val e: kotlin.Int
-    @kotlin.Deprecated(message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<test.StaticMembersInEnum>
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<test.StaticMembersInEnum>
     public open fun foo(): kotlin.Unit
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.StaticMembersInEnum
     public final /*synthesized*/ fun values(): kotlin.Array<test.StaticMembersInEnum>

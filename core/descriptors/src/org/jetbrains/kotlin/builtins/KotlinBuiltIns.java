@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.builtins;
 
+import kotlin.DeprecationLevel;
 import kotlin.SetsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -139,6 +140,7 @@ public abstract class KotlinBuiltIns {
         public final FqName throwable = fqName("Throwable");
 
         public final FqName deprecated = fqName("Deprecated");
+        public final FqName deprecationLevel = fqName("DeprecationLevel");
         public final FqName extension = fqName("Extension");
         public final FqName target = annotationName("Target");
         public final FqName annotationTarget = annotationName("AnnotationTarget");
@@ -375,6 +377,19 @@ public abstract class KotlinBuiltIns {
     @NotNull
     public ClassDescriptor getDeprecatedAnnotation() {
         return getBuiltInClassByName(FQ_NAMES.deprecated.shortName());
+    }
+
+    @NotNull
+    public ClassDescriptor getDeprecationLevelEnum() {
+        return getBuiltInClassByName(FQ_NAMES.deprecationLevel.shortName());
+    }
+
+    @Nullable
+    public ClassDescriptor getDeprecationLevelEnumEntry(@NotNull DeprecationLevel level) {
+        ClassifierDescriptor result = getDeprecationLevelEnum().getUnsubstitutedInnerClassesScope().getContributedClassifier(
+                Name.identifier(level.name()), NoLookupLocation.FROM_BUILTINS
+        );
+        return result instanceof ClassDescriptor ? (ClassDescriptor) result : null;
     }
 
     @NotNull

@@ -24,7 +24,7 @@ public final enum class C : kotlin.Enum<C> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    @kotlin.Deprecated(message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<C>
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<C>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): C
     public final /*synthesized*/ fun values(): kotlin.Array<C>
 }
