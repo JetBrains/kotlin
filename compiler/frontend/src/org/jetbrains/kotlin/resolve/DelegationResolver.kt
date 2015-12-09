@@ -115,7 +115,7 @@ class DelegationResolver<T : CallableMemberDescriptor> private constructor(
                 possiblyOverriddenBy.any { isOverridableBy(it, candidate) }
 
         private fun isOverridableBy(memberOne: CallableDescriptor, memberTwo: CallableDescriptor): Boolean =
-                OverridingUtil.DEFAULT.isOverridableBy(memberOne, memberTwo).result == OVERRIDABLE
+                OverridingUtil.DEFAULT.isOverridableBy(memberOne, memberTwo, null).result == OVERRIDABLE
 
     }
 }

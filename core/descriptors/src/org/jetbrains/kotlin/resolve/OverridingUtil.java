@@ -62,23 +62,29 @@ public class OverridingUtil {
     }
 
     @NotNull
-    public OverrideCompatibilityInfo isOverridableBy(@NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor) {
-        return isOverridableBy(superDescriptor, subDescriptor, false);
+    public OverrideCompatibilityInfo isOverridableBy(
+            @NotNull CallableDescriptor superDescriptor,
+            @NotNull CallableDescriptor subDescriptor,
+            @Nullable ClassDescriptor subClassDescriptor
+    ) {
+        return isOverridableBy(superDescriptor, subDescriptor, subClassDescriptor, false);
     }
 
     @NotNull
     public OverrideCompatibilityInfo isOverridableByIncludingReturnType(@NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor) {
-        return isOverridableBy(superDescriptor, subDescriptor, true);
+        return isOverridableBy(superDescriptor, subDescriptor, null, true);
     }
 
     @NotNull
     private OverrideCompatibilityInfo isOverridableBy(
             @NotNull CallableDescriptor superDescriptor,
             @NotNull CallableDescriptor subDescriptor,
+            @Nullable ClassDescriptor subClassDescriptor,
             boolean checkReturnType
     ) {
         for (ExternalOverridabilityCondition externalCondition : EXTERNAL_CONDITIONS) {
-            ExternalOverridabilityCondition.Result result = externalCondition.isOverridable(superDescriptor, subDescriptor);
+            ExternalOverridabilityCondition.Result result =
+                    externalCondition.isOverridable(superDescriptor, subDescriptor, subClassDescriptor);
             switch (result) {
                 case OVERRIDABLE:
                     return OverrideCompatibilityInfo.success();
@@ -281,7 +287,7 @@ public class OverridingUtil {
     ) {
         Collection<CallableMemberDescriptor> bound = new ArrayList<CallableMemberDescriptor>(descriptorsFromSuper.size());
         for (CallableMemberDescriptor fromSupertype : descriptorsFromSuper) {
-            OverrideCompatibilityInfo.Result result = DEFAULT.isOverridableBy(fromSupertype, fromCurrent).getResult();
+            OverrideCompatibilityInfo.Result result = DEFAULT.isOverridableBy(fromSupertype, fromCurrent, current).getResult();
 
             boolean isVisible = Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, fromSupertype, current);
             switch (result) {
@@ -429,8 +435,8 @@ public class OverridingUtil {
                 continue;
             }
 
-            OverrideCompatibilityInfo.Result result1 = DEFAULT.isOverridableBy(candidate, overrider).getResult();
-            OverrideCompatibilityInfo.Result result2 = DEFAULT.isOverridableBy(overrider, candidate).getResult();
+            OverrideCompatibilityInfo.Result result1 = DEFAULT.isOverridableBy(candidate, overrider, null).getResult();
+            OverrideCompatibilityInfo.Result result2 = DEFAULT.isOverridableBy(overrider, candidate, null).getResult();
             if (result1 == OVERRIDABLE && result2 == OVERRIDABLE) {
                 overridable.add(candidate);
                 iterator.remove();

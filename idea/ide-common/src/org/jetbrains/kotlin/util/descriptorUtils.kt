@@ -65,7 +65,7 @@ public fun ClassDescriptor.findCallableMemberBySignature(signature: CallableMemb
             .filterIsInstance<CallableMemberDescriptor>()
             .firstOrNull {
                 it.getContainingDeclaration() == this
-                && OverridingUtil.DEFAULT.isOverridableBy(it as CallableDescriptor, signature).getResult() == OVERRIDABLE
+                && OverridingUtil.DEFAULT.isOverridableBy(it as CallableDescriptor, signature, null).getResult() == OVERRIDABLE
             } as? CallableMemberDescriptor
 }
 

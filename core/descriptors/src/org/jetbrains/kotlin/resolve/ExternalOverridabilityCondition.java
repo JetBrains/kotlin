@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.resolve;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 
 public interface ExternalOverridabilityCondition {
     enum Result {
@@ -25,5 +27,9 @@ public interface ExternalOverridabilityCondition {
     }
 
     @NotNull
-    Result isOverridable(@NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor);
+    Result isOverridable(
+            @NotNull CallableDescriptor superDescriptor,
+            @NotNull CallableDescriptor subDescriptor,
+            @Nullable ClassDescriptor subClassDescriptor
+    );
 }
