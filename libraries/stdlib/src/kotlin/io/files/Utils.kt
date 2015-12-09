@@ -69,7 +69,7 @@ public val File.extension: String
  *
  * @return the pathname with system separators.
  */
-@Deprecated("Use File.separatorsToSystem instead", ReplaceWith("File(this).separatorsToSystem()", "java.io.File"))
+@Deprecated("Use File.path instead", ReplaceWith("File(this).path", "java.io.File"))
 public fun String.separatorsToSystem(): String {
     val otherSep = if (File.separator == "/") "\\" else "/"
     return replace(otherSep, File.separator)
@@ -101,9 +101,17 @@ public fun String.allSeparatorsToSystem(): String {
  *
  * @return the pathname with system separators.
  */
+@Deprecated("File has already system separators.")
 public fun File.separatorsToSystem(): String {
     return toString().separatorsToSystem()
 }
+
+/**
+ * Returns [path] of this File using the invariant separator '/' to
+ * separate the names in the name sequence.
+ */
+public val File.invariantSeparatorsPath: String
+    get() = if (File.separatorChar != '/') path.replace(File.separatorChar, '/') else path
 
 /**
  * Returns file's name without an extension.
@@ -118,16 +126,60 @@ public val File.nameWithoutExtension: String
  *
  * @return relative path from [base] to this.
 *
- * @throws IllegalArgumentException if child and parent have different roots.
+ * @throws IllegalArgumentException if this and base paths have different roots.
  */
+@Deprecated("This function will change return type to File soon. Use toRelativeString instead.", ReplaceWith("toRelativeString(base)"))
 public fun File.relativeTo(base: File): String
-        = relativeToOrNull(base) ?: throw IllegalArgumentException("this and base files have different roots: $this and $base")
+        = toRelativeString(base)
 
-// TODO
-//private fun File.relativeToOrPath(base: File): String
-//        = relativeToOrNull(base) ?: toString()
 
-private fun File.relativeToOrNull(base: File): String? {
+/**
+ * Calculates the relative path for this file from [base] file.
+ * Note that the [base] file is treated as a directory.
+ * If this file matches the [base] file, then an empty string will be returned.
+ *
+ * @return relative path from [base] to this.
+ *
+ * @throws IllegalArgumentException if this and base paths have different roots.
+ */
+public fun File.toRelativeString(base: File): String
+        = toRelativeStringOrNull(base) ?: throw IllegalArgumentException("this and base files have different roots: $this and $base")
+
+/**
+ * Calculates the relative path for this file from [base] file.
+ * Note that the [base] file is treated as a directory.
+ * If this file matches the [base] file, then a [File] with empty path will be returned.
+ *
+ * @return File with relative path from [base] to this.
+ *
+ * @throws IllegalArgumentException if this and base paths have different roots.
+ */
+@Deprecated("This function will be renamed to relativeTo soon.")
+public fun File.relativeToFile(base: File): File = File(this.relativeTo(base))
+
+
+/**
+ * Calculates the relative path for this file from [base] file.
+ * Note that the [base] file is treated as a directory.
+ * If this file matches the [base] file, then a [File] with empty path will be returned.
+ *
+ * @return File with relative path from [base] to this, or `this` if this and base paths have different roots.
+ */
+public fun File.relativeToOrSelf(base: File): File
+        = toRelativeStringOrNull(base)?.let { File(it) } ?: this
+
+/**
+ * Calculates the relative path for this file from [base] file.
+ * Note that the [base] file is treated as a directory.
+ * If this file matches the [base] file, then a [File] with empty path will be returned.
+ *
+ * @return File with relative path from [base] to this, or `null` if this and base paths have different roots.
+ */
+public fun File.relativeToOrNull(base: File): File?
+        = toRelativeStringOrNull(base)?.let { File(it) }
+
+
+private fun File.toRelativeStringOrNull(base: File): String? {
     // Check roots
     val thisComponents = this.toComponents().normalize()
     val baseComponents = base.toComponents().normalize()
@@ -411,7 +463,7 @@ private fun List<File>.normalize(): List<File> {
  * @return concatenated this and [relative] paths, or just [relative] if it's absolute.
  */
 public fun File.resolve(relative: File): File {
-    if (relative.root != null)
+    if (relative.isRooted)
         return relative
     val baseName = this.toString()
     return if (baseName.isEmpty() || baseName.endsWith(File.separatorChar)) File(baseName + relative) else File(baseName + File.separatorChar + relative)

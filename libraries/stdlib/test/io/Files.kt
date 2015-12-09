@@ -75,7 +75,7 @@ class FilesTest {
         val file1 = File("/foo/bar/baz")
         val file2 = File("/foo/baa/ghoo")
 
-        assertEquals("../../bar/baz".separatorsToSystem(), file1.relativeTo(file2))
+        assertEquals("../../bar/baz", file1.relativeToFile(file2).invariantSeparatorsPath)
 
         val file3 = File("/foo/bar")
 
@@ -91,10 +91,10 @@ class FilesTest {
 
         val file5 = File("/foo/baran")
 
-        assertEquals("../bar".separatorsToSystem(), file3.relativeTo(file5))
-        assertEquals("../baran".separatorsToSystem(), file5.relativeTo(file3))
-        assertEquals("../bar".separatorsToSystem(), file4.relativeTo(file5))
-        assertEquals("../baran".separatorsToSystem(), file5.relativeTo(file4))
+        assertEquals("../bar", file3.relativeToFile(file5).invariantSeparatorsPath)
+        assertEquals("../baran", file5.relativeToFile(file3).invariantSeparatorsPath)
+        assertEquals("../bar", file4.relativeToFile(file5).invariantSeparatorsPath)
+        assertEquals("../baran", file5.relativeToFile(file4).invariantSeparatorsPath)
 
         val file6 = File("C:\\Users\\Me")
         val file7 = File("C:\\Users\\Me\\Documents")
@@ -109,8 +109,8 @@ class FilesTest {
         val file8 = File("""\\my.host\home/user/documents/vip""")
         val file9 = File("""\\my.host\home/other/images/nice""")
 
-        assertEquals("../../../user/documents/vip".separatorsToSystem(), file8.relativeTo(file9))
-        assertEquals("../../../other/images/nice".separatorsToSystem(), file9.relativeTo(file8))
+        assertEquals("../../../user/documents/vip", file8.relativeToFile(file9).invariantSeparatorsPath)
+        assertEquals("../../../other/images/nice", file9.relativeToFile(file8).invariantSeparatorsPath)
     }
 
     @test fun relativeToRelative() {
@@ -165,56 +165,66 @@ class FilesTest {
         }
 
         assertFailsRelativeTo(File("y"), File("../x"))
+
+        // This test operates correctly only at Windows PCs with C & D drives
+        val fileOnC = File("C:/dir1")
+        val fileOnD = File("D:/dir2")
+        assertFailsRelativeTo(fileOnC, fileOnD)
     }
 
     @test fun relativeTo() {
-        assertEquals("kotlin", File("src/kotlin".separatorsToSystem()).relativeTo(File("src")))
+        assertEquals("kotlin", File("src/kotlin").relativeTo(File("src")))
         assertEquals("", File("dir").relativeTo(File("dir")))
-        assertEquals("..", File("dir").relativeTo(File("dir/subdir".separatorsToSystem())))
-        assertEquals("../../test".separatorsToSystem(), File("test").relativeTo(File("dir/dir".separatorsToSystem())))
-
-        // This test operates correctly only at Windows PCs with C & D drives
-        val file1 = File("C:/dir1".separatorsToSystem())
-        val file2 = File("D:/dir2".separatorsToSystem())
-        try {
-            file1.relativeTo(file2)
-            assert(false);
-        } catch (e: IllegalArgumentException) {
-            // It's the thing we should get here
-        } catch (e: IOException) {
-            // The device is not ready (D) ==> DO NOTHING
-        }
+        assertEquals("..", File("dir").relativeTo(File("dir/subdir")))
+        assertEquals(File("../../test"), File("test").relativeToFile(File("dir/dir")))
     }
 
-    private fun checkFileElements(f: File, root: File?, elements: List<String>) {
-        var i = 0
+    private fun checkFilePathComponents(f: File, root: File, elements: List<String>) {
         assertEquals(root, f.root)
-        for (elem in f.toComponents().segments) {
-            assertTrue(i < elements.size, i.toString())
-            assertEquals(elements[i++], elem.toString())
-        }
-        assertEquals(elements.size, i)
+        val components = f.toComponents()
+        assertEquals(root, components.root)
+        assertEquals(elements, components.segments.map { it.toString() })
     }
 
-    @test fun fileIterator() {
-        checkFileElements(File("/foo/bar"), File("/"), listOf("foo", "bar"))
-        checkFileElements(File("\\foo\\bar"), File("\\".separatorsToSystem()), listOf("foo", "bar"))
-        checkFileElements(File("/foo/bar/gav"), File("/"), listOf("foo", "bar", "gav"))
-        checkFileElements(File("/foo/bar/gav/"), File("/"), listOf("foo", "bar", "gav"))
-        checkFileElements(File("bar/gav"), null, listOf("bar", "gav"))
-        checkFileElements(File("C:\\bar\\gav"), File("C:\\".separatorsToSystem()), listOf("bar", "gav"))
-        checkFileElements(File("C:/bar/gav"), File("C:/"), listOf("bar", "gav"))
-        checkFileElements(File("C:\\"), File("C:\\".separatorsToSystem()), listOf())
-        checkFileElements(File("C:/"), File("C:/"), listOf())
-        checkFileElements(File("C:"), File("C:"), listOf())
-        if (File.separatorChar == '\\') {
+    @test fun filePathComponents() {
+        checkFilePathComponents(File("/foo/bar"), File("/"), listOf("foo", "bar"))
+        checkFilePathComponents(File("/foo/bar/gav"), File("/"), listOf("foo", "bar", "gav"))
+        checkFilePathComponents(File("/foo/bar/gav/"), File("/"), listOf("foo", "bar", "gav"))
+        checkFilePathComponents(File("bar/gav"), File(""), listOf("bar", "gav"))
+        checkFilePathComponents(File("C:/bar/gav"), File("C:/"), listOf("bar", "gav"))
+        checkFilePathComponents(File("C:/"), File("C:/"), listOf())
+        checkFilePathComponents(File("C:"), File("C:"), listOf())
+        if (File.separator == "\\") {
             // Check only in Windows
-            checkFileElements(File("\\\\host.ru\\home\\mike"), File("\\\\host.ru\\home"), listOf("mike"))
-            checkFileElements(File("//host.ru/home/mike"), File("//host.ru/home"), listOf("mike"))
+            checkFilePathComponents(File("\\\\host.ru\\home\\mike"), File("\\\\host.ru\\home"), listOf("mike"))
+            checkFilePathComponents(File("//host.ru/home/mike"), File("//host.ru/home"), listOf("mike"))
+            checkFilePathComponents(File("\\foo\\bar"), File("\\"), listOf("foo", "bar"))
+            checkFilePathComponents(File("C:\\bar\\gav"), File("C:\\"), listOf("bar", "gav"))
+            checkFilePathComponents(File("C:\\"), File("C:\\"), listOf())
         }
-        checkFileElements(File(""), null, listOf())
-        checkFileElements(File("."), null, listOf("."))
-        checkFileElements(File(".."), null, listOf(".."))
+        checkFilePathComponents(File(""), File(""), listOf())
+        checkFilePathComponents(File("."), File(""), listOf("."))
+        checkFilePathComponents(File(".."), File(""), listOf(".."))
+    }
+
+    @test fun fileRoot() {
+        val rooted = File("/foo/bar")
+        assertTrue(rooted.isRooted)
+        assertEquals("/", rooted.root.invariantSeparatorsPath)
+
+        if (File.separator == "\\") {
+            val diskRooted = File("""C:\foo\bar""")
+            assertTrue(rooted.isRooted)
+            assertEquals("""C:\""", diskRooted.rootName)
+
+            val networkRooted = File("""\\network\share\""")
+            assertTrue(networkRooted.isRooted)
+            assertEquals("""\\network\share""", networkRooted.rootName)
+        }
+
+        val relative = File("foo/bar")
+        assertFalse(relative.isRooted)
+        assertEquals("", relative.rootName)
     }
 
     @test fun startsWith() {
@@ -254,9 +264,10 @@ class FilesTest {
         assertEquals(File("/foo/bar/baaz"), File("/foo/bak/../bar/gav/../baaz").normalize())
         assertEquals(File("../../bar"), File("../foo/../../bar").normalize())
         // For Unix C:\windows is not correct so it's not the same as C:/windows
-        assertEquals(File("C:\\windows").separatorsToSystem(),
-                File("C:\\home\\..\\documents\\..\\windows").normalize().separatorsToSystem())
-        assertEquals(File("C:/windows"), File("C:/home/../documents/../windows").normalize())
+        if (File.separator == "\\") {
+            assertEquals(File("C:\\windows"), File("C:\\home\\..\\documents\\..\\windows").normalize())
+            assertEquals(File("C:/windows"), File("C:/home/../documents/../windows").normalize())
+        }
         assertEquals(File("foo"), File("gav/bar/../../foo").normalize())
         assertEquals(File("/../foo"), File("/bar/../../foo").normalize())
     }
@@ -266,11 +277,12 @@ class FilesTest {
         assertEquals(File("/foo/bar/gav"), File("/foo/bar/").resolve("gav"))
         assertEquals(File("/gav"), File("/foo/bar").resolve("/gav"))
         // For Unix C:\path is not correct so it's cannot be automatically converted
-        assertEquals(File("C:\\Users\\Me\\Documents\\important.doc").separatorsToSystem(),
-                File("C:\\Users\\Me").resolve("Documents\\important.doc").separatorsToSystem())
-        assertEquals(File("C:/Users/Me/Documents/important.doc"),
-                File("C:/Users/Me").resolve("Documents/important.doc"))
-
+        if (File.separator == "\\") {
+            assertEquals(File("C:\\Users\\Me\\Documents\\important.doc"),
+                    File("C:\\Users\\Me").resolve("Documents\\important.doc"))
+            assertEquals(File("C:/Users/Me/Documents/important.doc"),
+                    File("C:/Users/Me").resolve("Documents/important.doc"))
+        }
         assertEquals(File(""), File("").resolve(""))
         assertEquals(File("bar"), File("").resolve("bar"))
         assertEquals(File("foo/bar"), File("foo").resolve("bar"))
@@ -285,10 +297,12 @@ class FilesTest {
         assertEquals(File("/foo/gav"), File("/foo/bar/").resolveSibling("gav"))
         assertEquals(File("/gav"), File("/foo/bar").resolveSibling("/gav"))
         // For Unix C:\path is not correct so it's cannot be automatically converted
-        assertEquals(File("C:\\Users\\Me\\Documents\\important.doc").separatorsToSystem(),
-                File("C:\\Users\\Me\\profile.ini").resolveSibling("Documents\\important.doc").separatorsToSystem())
-        assertEquals(File("C:/Users/Me/Documents/important.doc"),
-                File("C:/Users/Me/profile.ini").resolveSibling("Documents/important.doc"))
+        if (File.separator == "\\") {
+            assertEquals(File("C:\\Users\\Me\\Documents\\important.doc"),
+                    File("C:\\Users\\Me\\profile.ini").resolveSibling("Documents\\important.doc"))
+            assertEquals(File("C:/Users/Me/Documents/important.doc"),
+                    File("C:/Users/Me/profile.ini").resolveSibling("Documents/important.doc"))
+        }
         assertEquals(File("gav"), File("foo").resolveSibling("gav"))
         assertEquals(File("../gav"), File("").resolveSibling("gav"))
     }

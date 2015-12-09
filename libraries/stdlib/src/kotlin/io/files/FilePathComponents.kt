@@ -29,12 +29,11 @@ private fun String.getRootName(): String {
             // So in Windows we'll have root of //my.host/home but in Unix just /
             first = indexOf(File.separatorChar, 2)
             if (first >= 0) {
-                val dot = indexOf('.', 2)
-                if (dot >= 0 && dot < first) {
-                    first = indexOf(File.separatorChar, first + 1)
-                    if (first >= 0)
-                        return substring(0, first + 1)
-                }
+                first = indexOf(File.separatorChar, first + 1)
+                if (first >= 0)
+                    return substring(0, first + 1)
+                else
+                    return this
             }
         }
         return substring(0, 1)
@@ -65,18 +64,23 @@ private fun String.getRootName(): String {
  * @return string representing the root for this file, or empty string is this file name is relative.
  */
 public val File.rootName: String
-    get() = separatorsToSystem().getRootName()
+    get() = path.getRootName()
 
 /**
  * Returns root component of this abstract name, like / from /home/user, or C:\ from C:\file.tmp,
- * or //my.host/home for //my.host/home/user,
- * or `null` if this name is relative, like bar/gav
+ * or //my.host/home for //my.host/home/user
  */
-public val File.root: File?
-    get() {
-        val name = rootName
-        return if (name.length > 0) File(name) else null
-    }
+public val File.root: File
+    get() = File(rootName)
+
+/**
+ * Determines whether this file has a root or it represents a relative path.
+ *
+ * Returns `true` when this file has non-empty root.
+ */
+public val File.isRooted: Boolean
+    // TODO: Do not calculate root
+    get() = path.getRootName().isNotEmpty()
 
 /**
  * Represents the path to a file as a collection of directories.
@@ -91,11 +95,18 @@ public data class FilePathComponents
     @Deprecated("This constructor will be removed soon. Use File.toComponents() extension to create an instance of FilePathComponents.")
     constructor (rootName: String, fileList: List<File>): this(File(rootName), fileList)
 
-    @Deprecated("Use 'root' property or 'root.path' instead.", ReplaceWith("root.path"))
-    public val rootName: String get() = root.path
-
     @Deprecated("Use 'segments' property instead.", ReplaceWith("segments"))
     public val fileList: List<File> get() = segments
+
+    /**
+     *  Returns a string representing the root for this file, or an empty string is this file name is relative.
+     */
+    public val rootName: String get() = root.path
+
+    /**
+     * Returns `true` when the [root] is not empty.
+     */
+    public val isRooted: Boolean get() = root.path.isNotEmpty()
 
     /**
      * Returns the number of elements in the path to the file.
@@ -122,7 +133,7 @@ public data class FilePathComponents
  * itself) and returns the resulting collection of components.
  */
 public fun File.toComponents(): FilePathComponents {
-    val path = separatorsToSystem()
+    val path = path
     val rootName = path.getRootName()
     val subPath = path.substring(rootName.length)
     // if: a special case when we have only root component
