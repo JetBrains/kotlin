@@ -1,7 +1,5 @@
 package a
 
-import java.lang.AssertionError
-
 fun foo() {
     if (!true) {
         throw AssertionError("text")

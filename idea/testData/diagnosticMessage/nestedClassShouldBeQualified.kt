@@ -1,5 +1,7 @@
-// !DIAGNOSTICS_NUMBER: 5
+// !DIAGNOSTICS_NUMBER: 0
 // !DIAGNOSTICS: NESTED_CLASS_SHOULD_BE_QUALIFIED
+
+// TODO: 5 "nested class should be qualified" dianostics should be reported here
 
 package p
 

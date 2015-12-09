@@ -48,17 +48,17 @@ fun test() {
     val ii: I.NI? = null
 
     val bc: B.<!UNRESOLVED_REFERENCE!>NC<!> = B.<!UNRESOLVED_REFERENCE!>NC<!>()
-    val bic: B.<!UNRESOLVED_REFERENCE!>IC<!> = B().<!UNRESOLVED_REFERENCE!>IC<!>()
+    val bic: B.<!UNRESOLVED_REFERENCE!>IC<!> = B().IC()
     val bi: B.<!UNRESOLVED_REFERENCE!>NI<!>? = null
 
     val cc: C.<!UNRESOLVED_REFERENCE!>NC<!> = C.<!UNRESOLVED_REFERENCE!>NC<!>()
     val ci: C.<!UNRESOLVED_REFERENCE!>NI<!>? = null
 
     val dc: D.<!UNRESOLVED_REFERENCE!>NC<!> = D.<!UNRESOLVED_REFERENCE!>NC<!>()
-    val dic: D.<!UNRESOLVED_REFERENCE!>IC<!> = D().<!UNRESOLVED_REFERENCE!>IC<!>()
+    val dic: D.<!UNRESOLVED_REFERENCE!>IC<!> = D().IC()
     val di: D.<!UNRESOLVED_REFERENCE!>NI<!>? = null
 
     val kc: K.<!UNRESOLVED_REFERENCE!>NC<!> = K.<!UNRESOLVED_REFERENCE!>NC<!>()
-    val kic: K.<!UNRESOLVED_REFERENCE!>IC<!> = K().<!UNRESOLVED_REFERENCE!>IC<!>()
+    val kic: K.<!UNRESOLVED_REFERENCE!>IC<!> = K().IC()
     val ki: K.<!UNRESOLVED_REFERENCE!>NI<!>? = null
 }

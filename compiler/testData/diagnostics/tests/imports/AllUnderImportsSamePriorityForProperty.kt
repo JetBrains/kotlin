@@ -15,5 +15,5 @@ import a.X
 import b.*
 
 fun foo() {
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>X<!> = 1
+    X = 1
 }

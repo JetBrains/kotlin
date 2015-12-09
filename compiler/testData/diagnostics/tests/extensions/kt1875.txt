@@ -1,7 +1,7 @@
 package
 
 package kt1875 {
-    public fun f(/*0*/ a: kotlin.Int?, /*1*/ b: kotlin.Int.(kotlin.Int) -> kotlin.Int): kotlin.Int?
+    public fun foo(/*0*/ a: kotlin.Int?, /*1*/ b: kotlin.Int.(kotlin.Int) -> kotlin.Int): kotlin.Int?
     public fun test(/*0*/ t: kt1875.T): kotlin.Unit
     public fun test1(/*0*/ t: kt1875.T?): kotlin.Unit
 

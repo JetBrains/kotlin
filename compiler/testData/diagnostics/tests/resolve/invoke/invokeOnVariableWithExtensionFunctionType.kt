@@ -12,7 +12,7 @@ fun test(a: A, b: B) {
     a.foo(b)
 
     with(a) {
-        b.<!MISSING_RECEIVER!>foo<!>() // todo
+        b.foo()
 
         b.(foo)()
 
@@ -23,7 +23,7 @@ fun test(a: A, b: B) {
     }
 
     with(b) {
-        a.<!INVOKE_ON_EXTENSION_FUNCTION_WITH_EXPLICIT_DISPATCH_RECEIVER!>foo<!>()
+        a.foo(<!NO_VALUE_FOR_PARAMETER!>)<!>
         a.<!FUNCTION_EXPECTED!>(<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>)<!>()
 
         (a.foo)()
@@ -68,7 +68,7 @@ fun test(a: A, b: B) {
     }
 
     with(b) {
-        a.<!INVOKE_ON_EXTENSION_FUNCTION_WITH_EXPLICIT_DISPATCH_RECEIVER!>foo<!>()
+        a.foo(<!NO_VALUE_FOR_PARAMETER!>)<!>
         a.<!FUNCTION_EXPECTED!>(<!UNRESOLVED_REFERENCE!>foo<!>)<!>()
 
         (a.foo)()

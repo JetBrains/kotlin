@@ -1,9 +1,9 @@
 class A
 
 class B {
-    fun foo() = 2
+    ~foo~fun foo() = 2
 
-    fun A.bar() = `A.foo`foo()
+    fun A.bar() = `foo`foo()
 }
 
 ~A.foo~fun A.foo() = 1

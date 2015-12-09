@@ -1,2 +1,2 @@
 <!-- nestedClassAcessedViaInstanceReference2 -->
-Nested companion object 'Companion' accessed via instance reference
+Nested enum class 'NestedEnum' accessed via instance reference

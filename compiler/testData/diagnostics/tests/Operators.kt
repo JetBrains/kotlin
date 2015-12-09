@@ -38,7 +38,7 @@ class Example2 {
     public operator fun invoke() {}
 }
 
-fun a() {
+fun test() {
     var a = Example()
     var b = Example()
     var c = Example2()
@@ -107,7 +107,7 @@ open class Anc : Base() {
 
 class Anc2 : Anc()
 
-fun b() {
+fun test2() {
     Anc() + Anc()
     Anc() <!OPERATOR_MODIFIER_REQUIRED!>-<!> Anc()
     Anc2() + Anc2()

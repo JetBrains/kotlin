@@ -24,7 +24,7 @@ operator fun Example.inc() = Example2()
 
 infix fun Example.plus(o: Example) = ""
 
-fun a() {
+fun test() {
     var a = Example()
     val b = Example()
 

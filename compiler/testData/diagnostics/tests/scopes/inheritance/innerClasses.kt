@@ -33,8 +33,8 @@ class E: A() {
 
     object Z {
         init {
-            <!NESTED_CLASS_SHOULD_BE_QUALIFIED!>B<!>().<!UNRESOLVED_REFERENCE!>foo<!>() // todo: some resolve hacks
-            <!NESTED_CLASS_SHOULD_BE_QUALIFIED!>B<!>().bar()
+            <!UNRESOLVED_REFERENCE!>B<!>().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>foo<!>()
+            <!UNRESOLVED_REFERENCE!>B<!>().<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>bar<!>()
 
             <!UNRESOLVED_REFERENCE!>D<!>()
             C()

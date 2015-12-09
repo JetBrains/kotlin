@@ -1,5 +1,5 @@
 class A {
-    fun foo() = 1
+    ~A.foo~fun foo() = 1
 }
 class B {
 }
@@ -8,7 +8,7 @@ class B {
 fun test(a: A, b: B) {
     with (a) {
         with (b) {
-            `B.foo`foo()
+            `A.foo`foo()
         }
     }
 }

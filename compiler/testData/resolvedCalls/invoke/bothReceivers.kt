@@ -1,7 +1,3 @@
-class Foo() {
-    fun Int.invoke() {}
-}
-
-fun bar(f: Foo) {
+fun bar(f: Int.() -> Unit) {
     1.f<caret>()
 }

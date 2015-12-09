@@ -9,11 +9,11 @@ val B.a: () -> Int  get() = { 5 }
 fun test(a: A, b: B) {
     val <!UNUSED_VARIABLE!>x<!>: Int = b.a()
 
-    b.<!INVOKE_EXTENSION_ON_NOT_EXTENSION_FUNCTION!>(a)<!>()
+    b.<!FUNCTION_EXPECTED!>(a)<!>()
 
     with(b) {
         val <!UNUSED_VARIABLE!>y<!>: Int = a()
-        <!MISSING_RECEIVER!>(a)<!>()
+        <!FUNCTION_EXPECTED!>(a)<!>()
     }
 }
 

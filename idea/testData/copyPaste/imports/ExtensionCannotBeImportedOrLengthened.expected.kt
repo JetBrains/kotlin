@@ -1,6 +1,3 @@
-// ERROR: Overload resolution ambiguity:  public fun a.A.ext(): kotlin.Unit defined in a public fun a.A.ext(): kotlin.Unit defined in to
-// ERROR: Overload resolution ambiguity:  public var a.A.p: kotlin.Int defined in a public var a.A.p: kotlin.Int defined in to
-// ERROR: Overload resolution ambiguity:  public var a.A.p: kotlin.Int defined in a public var a.A.p: kotlin.Int defined in to
 package to
 
 import a.A
