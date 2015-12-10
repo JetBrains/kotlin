@@ -22,9 +22,9 @@ import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.SuppressIntentionAction
 import com.intellij.codeInspection.SuppressManager
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.idea.highlighter.createSuppressWarningActions
-import org.jetbrains.kotlin.idea.caches.resolve.KotlinCacheService
 
 abstract class AbstractKotlinInspection: LocalInspectionTool(), CustomSuppressableInspectionTool {
     override fun getSuppressActions(element: PsiElement?): Array<SuppressIntentionAction>? {

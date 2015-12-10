@@ -20,6 +20,7 @@ package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.KtLightClass
+import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
@@ -87,8 +88,9 @@ private fun PsiElement.getJavaDescriptorResolver(resolutionFacade: ResolutionFac
     else {
         if (!ProjectRootsUtil.isInProjectOrLibraryClassFile(this)) return null
 
+        val cacheService = KotlinCacheService.getInstance(project)
         @Suppress("DEPRECATION")
-        return KotlinCacheService.getInstance(project).getProjectService(JvmPlatform, this.getModuleInfo(), JavaDescriptorResolver::class.java)
+        return (cacheService as? KotlinCacheServiceImpl)?.getProjectService(JvmPlatform, this.getModuleInfo(), JavaDescriptorResolver::class.java)
     }
 }
 
