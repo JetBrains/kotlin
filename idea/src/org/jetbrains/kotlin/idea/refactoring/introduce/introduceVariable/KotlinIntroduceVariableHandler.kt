@@ -132,13 +132,6 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
             return result
         }
 
-        private fun KtExpression.mustBeParenthesizedInInitializerPosition(): Boolean {
-            if (this !is KtBinaryExpression) return false
-
-            if (left?.mustBeParenthesizedInInitializerPosition() ?: false) return true
-            return PsiChildRange(left, operationReference).any { (it is PsiWhiteSpace) && it.textContains('\n') }
-        }
-
         private fun runRefactoring (
                 expression: KtExpression,
                 commonContainer: PsiElement,

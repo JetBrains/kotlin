@@ -3502,6 +3502,39 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             doIntroduceSimpleParameterTest(fileName);
         }
 
+        @TestMetadata("idea/testData/refactoring/introduceParameter/multiline")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Multiline extends AbstractExtractionTest {
+            public void testAllFilesPresentInMultiline() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/introduceParameter/multiline"), Pattern.compile("^(.+)\\.(kt|kts)$"), true);
+            }
+
+            @TestMetadata("multilineBinaryExpression.kt")
+            public void testMultilineBinaryExpression() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/multiline/multilineBinaryExpression.kt");
+                doIntroduceSimpleParameterTest(fileName);
+            }
+
+            @TestMetadata("multilineBinaryExpressionWithComments.kt")
+            public void testMultilineBinaryExpressionWithComments() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/multiline/multilineBinaryExpressionWithComments.kt");
+                doIntroduceSimpleParameterTest(fileName);
+            }
+
+            @TestMetadata("multilineNestedBinaryExpression1.kt")
+            public void testMultilineNestedBinaryExpression1() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/multiline/multilineNestedBinaryExpression1.kt");
+                doIntroduceSimpleParameterTest(fileName);
+            }
+
+            @TestMetadata("multilineNestedBinaryExpression2.kt")
+            public void testMultilineNestedBinaryExpression2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/multiline/multilineNestedBinaryExpression2.kt");
+                doIntroduceSimpleParameterTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/refactoring/introduceParameter/script")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -3695,6 +3728,39 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
         public void testLambdaParamWithDefaultValue() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceLambdaParameter/lambdaParamWithDefaultValue.kt");
             doIntroduceLambdaParameterTest(fileName);
+        }
+
+        @TestMetadata("idea/testData/refactoring/introduceLambdaParameter/multiline")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Multiline extends AbstractExtractionTest {
+            public void testAllFilesPresentInMultiline() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/introduceLambdaParameter/multiline"), Pattern.compile("^(.+)\\.(kt|kts)$"), true);
+            }
+
+            @TestMetadata("multilineBinaryExpression.kt")
+            public void testMultilineBinaryExpression() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceLambdaParameter/multiline/multilineBinaryExpression.kt");
+                doIntroduceLambdaParameterTest(fileName);
+            }
+
+            @TestMetadata("multilineBinaryExpressionWithComments.kt")
+            public void testMultilineBinaryExpressionWithComments() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceLambdaParameter/multiline/multilineBinaryExpressionWithComments.kt");
+                doIntroduceLambdaParameterTest(fileName);
+            }
+
+            @TestMetadata("multilineNestedBinaryExpression1.kt")
+            public void testMultilineNestedBinaryExpression1() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceLambdaParameter/multiline/multilineNestedBinaryExpression1.kt");
+                doIntroduceLambdaParameterTest(fileName);
+            }
+
+            @TestMetadata("multilineNestedBinaryExpression2.kt")
+            public void testMultilineNestedBinaryExpression2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceLambdaParameter/multiline/multilineNestedBinaryExpression2.kt");
+                doIntroduceLambdaParameterTest(fileName);
+            }
         }
 
         @TestMetadata("idea/testData/refactoring/introduceLambdaParameter/stringTemplates")

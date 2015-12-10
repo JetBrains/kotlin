@@ -70,13 +70,22 @@ public data class IntroduceParameterDescriptor(
         val callableDescriptor: FunctionDescriptor,
         val newParameterName: String,
         val newParameterTypeText: String,
-        val newArgumentValue: KtExpression,
+        val argumentValue: KtExpression,
         val withDefaultValue: Boolean,
         val parametersUsages: MultiMap<KtElement, KtElement>,
         val occurrencesToReplace: List<KotlinPsiRange>,
         val parametersToRemove: List<KtElement> = getParametersToRemove(withDefaultValue, parametersUsages, occurrencesToReplace),
         val occurrenceReplacer: IntroduceParameterDescriptor.(KotlinPsiRange) -> Unit = {}
 ) {
+    val newArgumentValue: KtExpression by lazy {
+        if (argumentValue.mustBeParenthesizedInInitializerPosition()) {
+            KtPsiFactory(callable).createExpressionByPattern("($0)", argumentValue)
+        }
+        else {
+            argumentValue
+        }
+    }
+
     val originalOccurrence: KotlinPsiRange
         get() = occurrencesToReplace.first { it.getTextRange().intersects(originalRange.getTextRange()) }
     val valVar: KotlinValVar
@@ -271,6 +280,7 @@ public open class KotlinIntroduceParameterHandler(
                                              && !isTestMode
                                              && !haveLambdaArgumentsToReplace
                                              && expression.extractableSubstringInfo == null
+                                             && !expression.mustBeParenthesizedInInitializerPosition()
 
                     val originalExpression = KtPsiUtil.safeDeparenthesize(expression)
                     val psiFactory = KtPsiFactory(project)
@@ -282,7 +292,7 @@ public open class KotlinIntroduceParameterHandler(
                                             callableDescriptor = functionDescriptor,
                                             newParameterName = suggestedNames.first(),
                                             newParameterTypeText = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(replacementType),
-                                            newArgumentValue = originalExpression,
+                                            argumentValue = originalExpression,
                                             withDefaultValue = false,
                                             parametersUsages = parametersUsages,
                                             occurrencesToReplace = occurrencesToReplace,
@@ -435,7 +445,7 @@ public open class KotlinIntroduceLambdaParameterHandler(
                     callableDescriptor = callableDescriptor,
                     newParameterName = "", // to be chosen in the dialog
                     newParameterTypeText = "", // to be chosen in the dialog
-                    newArgumentValue = KtPsiFactory(project).createExpression("{}"), // substituted later
+                    argumentValue = KtPsiFactory(project).createExpression("{}"), // substituted later
                     withDefaultValue = false,
                     parametersUsages = findInternalUsagesOfParametersAndReceiver(callable, callableDescriptor),
                     occurrencesToReplace = listOf(originalRange),

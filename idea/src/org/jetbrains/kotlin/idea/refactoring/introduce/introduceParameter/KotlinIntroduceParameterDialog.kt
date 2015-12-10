@@ -19,14 +19,11 @@ package org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter
 import com.intellij.openapi.command.impl.FinishMarkAction
 import com.intellij.openapi.command.impl.StartMarkAction
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.ui.NameSuggestionsField
 import com.intellij.refactoring.ui.RefactoringDialog
 import com.intellij.ui.NonFocusableCheckBox
-import com.intellij.ui.TitledSeparator
 import com.intellij.usageView.BaseUsageViewDescriptor
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.idea.KotlinFileType
@@ -38,13 +35,11 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractFunction.ui.Kotlin
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.types.KotlinType
 import java.awt.GridBagConstraints
 import java.awt.GridBagLayout
 import java.awt.Insets
-import java.util.Collections
-import java.util.LinkedHashMap
+import java.util.*
 import javax.swing.JCheckBox
 import javax.swing.JComponent
 import javax.swing.JLabel
@@ -301,7 +296,7 @@ public class KotlinIntroduceParameterDialog private constructor(
                         val descriptorToRefactor = descriptor.copy(
                                 newParameterName = chosenName,
                                 newParameterTypeText = chosenType,
-                                newArgumentValue = newArgumentValue,
+                                argumentValue = newArgumentValue,
                                 withDefaultValue = defaultValueCheckBox!!.isSelected(),
                                 occurrencesToReplace = with(descriptor) {
                                     if (replaceAllCheckBox?.isSelected() ?: true) {
