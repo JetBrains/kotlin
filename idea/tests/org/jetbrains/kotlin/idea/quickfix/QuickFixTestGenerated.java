@@ -4724,27 +4724,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
-        @TestMetadata("idea/testData/quickfix/migration/invokeOnExtensionFunctionWithExplicitReceiverFix")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class InvokeOnExtensionFunctionWithExplicitReceiverFix extends AbstractQuickFixTest {
-            public void testAllFilesPresentInInvokeOnExtensionFunctionWithExplicitReceiverFix() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/invokeOnExtensionFunctionWithExplicitReceiverFix"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
-            }
-
-            @TestMetadata("notSimple.kt")
-            public void testNotSimple() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/invokeOnExtensionFunctionWithExplicitReceiverFix/notSimple.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("simple.kt")
-            public void testSimple() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/invokeOnExtensionFunctionWithExplicitReceiverFix/simple.kt");
-                doTest(fileName);
-            }
-        }
-
         @TestMetadata("idea/testData/quickfix/migration/missingConstructorKeyword")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

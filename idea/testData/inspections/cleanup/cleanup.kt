@@ -73,18 +73,6 @@ fun <T : Cloneable> withTypeParameters() where T : Comparable<T> {
 
 val x = C() willBeInfix 1
 
-class AAA {
-    val foo: BBB.() -> Unit get() = null!!
-}
-
-class BBB
-
-fun test(a: AAA, b: BBB) {
-    with(b) {
-        a.foo()
-    }
-}
-
 fun infixTest() {
     arrayListOf(1, 2, 3) map { it }
 }
