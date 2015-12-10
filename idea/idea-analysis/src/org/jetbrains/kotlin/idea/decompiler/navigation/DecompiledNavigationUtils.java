@@ -14,147 +14,122 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.decompiler.navigation;
+package org.jetbrains.kotlin.idea.decompiler.navigation
 
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.search.GlobalSearchScope;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
-import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile;
-import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope;
-import org.jetbrains.kotlin.idea.stubindex.StaticFacadeIndexUtil;
-import org.jetbrains.kotlin.idea.vfilefinder.JsVirtualFileFinderFactory;
-import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinderFactory;
-import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder;
-import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory;
-import org.jetbrains.kotlin.name.ClassId;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.KtDeclaration;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
-import org.jetbrains.kotlin.serialization.js.KotlinJavascriptPackageFragment;
-import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiManager
+import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
+import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
+import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
+import org.jetbrains.kotlin.idea.stubindex.StaticFacadeIndexUtil
+import org.jetbrains.kotlin.idea.vfilefinder.JsVirtualFileFinderFactory
+import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinderFactory
+import org.jetbrains.kotlin.load.kotlin.OldPackageFacadeClassUtils.getPackageClassId
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
+import org.jetbrains.kotlin.serialization.js.KotlinJavascriptPackageFragment
+import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 
-import java.util.Collection;
+object DecompiledNavigationUtils {
 
-import static org.jetbrains.kotlin.load.kotlin.OldPackageFacadeClassUtils.getPackageClassId;
+    fun getDeclarationFromDecompiledClassFile(
+            project: Project,
+            referencedDescriptor: DeclarationDescriptor): KtDeclaration? {
+        if (isLocal(referencedDescriptor)) return null
 
-public final class DecompiledNavigationUtils {
+        val virtualFile = findVirtualFileContainingDescriptor(project, referencedDescriptor) ?: return null
 
-    @Nullable
-    public static KtDeclaration getDeclarationFromDecompiledClassFile(
-            @NotNull Project project,
-            @NotNull DeclarationDescriptor referencedDescriptor
-    ) {
-        if (isLocal(referencedDescriptor)) return null;
-
-        VirtualFile virtualFile = findVirtualFileContainingDescriptor(project, referencedDescriptor);
-
-        if (virtualFile == null) return null;
-
-        PsiFile psiFile = PsiManager.getInstance(project).findFile(virtualFile);
-        if (!(psiFile instanceof KtDecompiledFile)) {
-            return null;
+        val psiFile = PsiManager.getInstance(project).findFile(virtualFile)
+        if (psiFile !is KtDecompiledFile) {
+            return null
         }
 
-        return ((KtDecompiledFile) psiFile).getDeclarationForDescriptor(referencedDescriptor);
+        return psiFile.getDeclarationForDescriptor(referencedDescriptor)
     }
 
-    private static boolean isLocal(DeclarationDescriptor descriptor) {
-        if (descriptor instanceof ParameterDescriptor) {
-            return isLocal(descriptor.getContainingDeclaration());
+    private fun isLocal(descriptor: DeclarationDescriptor): Boolean {
+        if (descriptor is ParameterDescriptor) {
+            return isLocal(descriptor.containingDeclaration)
         }
         else {
-            return DescriptorUtils.isLocal(descriptor);
+            return DescriptorUtils.isLocal(descriptor)
         }
     }
 
     /*
         Find virtual file which contains the declaration of descriptor we're navigating to.
      */
-    @Nullable
-    private static VirtualFile findVirtualFileContainingDescriptor(
-            @NotNull Project project,
-            @NotNull DeclarationDescriptor referencedDescriptor
-    ) {
-        if (ErrorUtils.isError(referencedDescriptor)) return null;
+    private fun findVirtualFileContainingDescriptor(
+            project: Project,
+            referencedDescriptor: DeclarationDescriptor): VirtualFile? {
+        if (ErrorUtils.isError(referencedDescriptor)) return null
 
-        ClassId containerClassId = getContainerClassId(project, referencedDescriptor);
-        if (containerClassId == null) return null;
+        val containerClassId = getContainerClassId(project, referencedDescriptor) ?: return null
 
-        GlobalSearchScope scopeToSearchIn = KotlinSourceFilterScope.sourceAndClassFiles(GlobalSearchScope.allScope(project), project);
+        val scopeToSearchIn = KotlinSourceFilterScope.sourceAndClassFiles(GlobalSearchScope.allScope(project), project)
 
-        VirtualFileFinderFactory virtualFileFinderFactory;
+        val virtualFileFinderFactory: VirtualFileFinderFactory
         if (isFromKotlinJavasriptMetadata(referencedDescriptor)) {
-            virtualFileFinderFactory = JsVirtualFileFinderFactory.SERVICE.getInstance(project);
+            virtualFileFinderFactory = JsVirtualFileFinderFactory.SERVICE.getInstance(project)
         }
         else {
-            virtualFileFinderFactory = JvmVirtualFileFinderFactory.SERVICE.getInstance(project);
+            virtualFileFinderFactory = JvmVirtualFileFinderFactory.SERVICE.getInstance(project)
         }
 
-        VirtualFileFinder fileFinder = virtualFileFinderFactory.create(scopeToSearchIn);
-        return fileFinder.findVirtualFileWithHeader(containerClassId);
+        val fileFinder = virtualFileFinderFactory.create(scopeToSearchIn)
+        return fileFinder.findVirtualFileWithHeader(containerClassId)
     }
 
-    private static boolean isFromKotlinJavasriptMetadata(@NotNull DeclarationDescriptor referencedDescriptor) {
-        PackageFragmentDescriptor packageFragmentDescriptor =
-                DescriptorUtils.getParentOfType(referencedDescriptor, PackageFragmentDescriptor.class, false);
-        return packageFragmentDescriptor instanceof KotlinJavascriptPackageFragment;
+    private fun isFromKotlinJavasriptMetadata(referencedDescriptor: DeclarationDescriptor): Boolean {
+        val packageFragmentDescriptor = DescriptorUtils.getParentOfType(referencedDescriptor, PackageFragmentDescriptor::class.java, false)
+        return packageFragmentDescriptor is KotlinJavascriptPackageFragment
     }
 
     //TODO: navigate to inner classes
     //TODO: should we construct proper SourceElement's for decompiled parts / facades?
-    @Nullable
-    private static ClassId getContainerClassId(@NotNull Project project, @NotNull DeclarationDescriptor referencedDescriptor) {
-        DeserializedCallableMemberDescriptor deserializedCallableContainer =
-                DescriptorUtils.getParentOfType(referencedDescriptor, DeserializedCallableMemberDescriptor.class, true);
+    private fun getContainerClassId(project: Project, referencedDescriptor: DeclarationDescriptor): ClassId? {
+        val deserializedCallableContainer = DescriptorUtils.getParentOfType(referencedDescriptor, DeserializedCallableMemberDescriptor::class.java, true)
         if (deserializedCallableContainer != null) {
-            return getContainerClassId(project, deserializedCallableContainer);
+            return getContainerClassId(project, deserializedCallableContainer)
         }
 
-        ClassOrPackageFragmentDescriptor
-                containerDescriptor = DescriptorUtils.getParentOfType(referencedDescriptor, ClassOrPackageFragmentDescriptor.class, false);
-        if (containerDescriptor instanceof PackageFragmentDescriptor) {
-            FqName packageFQN = ((PackageFragmentDescriptor) containerDescriptor).getFqName();
+        val containerDescriptor = DescriptorUtils.getParentOfType(referencedDescriptor, ClassOrPackageFragmentDescriptor::class.java, false)
+        if (containerDescriptor is PackageFragmentDescriptor) {
+            val packageFQN = containerDescriptor.fqName
 
-            if (referencedDescriptor instanceof DeserializedCallableMemberDescriptor) {
-                Name partClassName = JvmFileClassUtil.getImplClassName((DeserializedCallableMemberDescriptor) referencedDescriptor);
+            if (referencedDescriptor is DeserializedCallableMemberDescriptor) {
+                val partClassName = JvmFileClassUtil.getImplClassName(referencedDescriptor)
                 if (partClassName != null) {
-                    FqName partFQN = packageFQN.child(partClassName);
-                    Collection<KtFile> multifileFacadeJetFiles =
-                            StaticFacadeIndexUtil.getMultifileClassForPart(partFQN, GlobalSearchScope.allScope(project), project);
+                    val partFQN = packageFQN.child(partClassName)
+                    val multifileFacadeJetFiles = StaticFacadeIndexUtil.getMultifileClassForPart(partFQN, GlobalSearchScope.allScope(project), project)
                     if (multifileFacadeJetFiles.isEmpty()) {
-                        return new ClassId(packageFQN, partClassName);
+                        return ClassId(packageFQN, partClassName)
                     }
                     else {
-                        KtFile multifileFacade = multifileFacadeJetFiles.iterator().next();
-                        String multifileFacadeName = multifileFacade.getVirtualFile().getNameWithoutExtension();
-                        return new ClassId(packageFQN, Name.identifier(multifileFacadeName));
+                        val multifileFacade = multifileFacadeJetFiles.iterator().next()
+                        val multifileFacadeName = multifileFacade.virtualFile.nameWithoutExtension
+                        return ClassId(packageFQN, Name.identifier(multifileFacadeName))
                     }
                 }
             }
 
-            return getPackageClassId(packageFQN);
+            return getPackageClassId(packageFQN)
         }
-        if (containerDescriptor instanceof ClassDescriptor) {
-            if (containerDescriptor.getContainingDeclaration() instanceof ClassDescriptor
-                || ExpressionTypingUtils.isLocal(containerDescriptor.getContainingDeclaration(), containerDescriptor)) {
-                return getContainerClassId(project, containerDescriptor.getContainingDeclaration());
+        if (containerDescriptor is ClassDescriptor) {
+            if (containerDescriptor.containingDeclaration is ClassDescriptor || ExpressionTypingUtils.isLocal(containerDescriptor.containingDeclaration, containerDescriptor)) {
+                return getContainerClassId(project, containerDescriptor.containingDeclaration)
             }
-            return DescriptorUtilsKt.getClassId((ClassDescriptor) containerDescriptor);
+            return containerDescriptor.classId
         }
-        return null;
-    }
-
-    private DecompiledNavigationUtils() {
+        return null
     }
 }
