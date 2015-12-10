@@ -240,8 +240,10 @@ class NewResolveOldInference(
         }
 
         override fun contextForVariable(stripExplicitReceiver: Boolean): TowerContext<Candidate> {
-            val basicCallResolutionContext = basicCallContext.replaceCall(CallTransformer.stripCallArguments(basicCallContext.call))
-            return Context(scopeTower, name, basicCallResolutionContext, tracing)
+            val newCall = CallTransformer.stripCallArguments(basicCallContext.call).let {
+                if (stripExplicitReceiver) CallTransformer.stripReceiver(it) else it
+            }
+            return Context(scopeTower, name, basicCallContext.replaceCall(newCall), tracing)
         }
 
         override fun contextForInvoke(variable: Candidate, useExplicitReceiver: Boolean): Pair<ReceiverValue, TowerContext<Candidate>>? {

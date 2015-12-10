@@ -139,6 +139,22 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
         };
     }
 
+    public static Call stripReceiver(@NotNull Call variableCall) {
+        return new DelegatingCall(variableCall) {
+            @Nullable
+            @Override
+            public ASTNode getCallOperationNode() {
+                return null;
+            }
+
+            @NotNull
+            @Override
+            public ReceiverValue getExplicitReceiver() {
+                return ReceiverValue.NO_RECEIVER;
+            }
+        };
+    }
+
     public static CallTransformer<CallableDescriptor, FunctionDescriptor> FUNCTION_CALL_TRANSFORMER = new CallTransformer<CallableDescriptor, FunctionDescriptor>() {
         @NotNull
         @Override
@@ -195,22 +211,6 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
             ResolvedCallImpl<CallableDescriptor> resolvedCall = ResolvedCallImpl.create(candidate, chainedTrace, task.tracing, task.dataFlowInfoForArguments);
             return CallCandidateResolutionContext.create(resolvedCall, task, chainedTrace, task.tracing, call, receiverValue,
                                                          candidateResolveMode);
-        }
-
-        private Call stripReceiver(@NotNull Call variableCall) {
-            return new DelegatingCall(variableCall) {
-                @Nullable
-                @Override
-                public ASTNode getCallOperationNode() {
-                    return null;
-                }
-
-                @NotNull
-                @Override
-                public ReceiverValue getExplicitReceiver() {
-                    return ReceiverValue.NO_RECEIVER;
-                }
-            };
         }
 
         @NotNull
