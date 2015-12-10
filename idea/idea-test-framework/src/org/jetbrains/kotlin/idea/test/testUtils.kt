@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.LibraryModificationTracker
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.decompiler.KotlinDecompiledFileViewProvider
 import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
-import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver
 import org.jetbrains.kotlin.psi.KtFile
 import java.util.*
 
@@ -85,8 +84,6 @@ public fun closeAndDeleteProject(): Unit =
     ApplicationManager.getApplication().runWriteAction() { LightPlatformTestCase.closeAndDeleteProject() }
 
 public fun unInvalidateBuiltinsAndStdLib(project: Project, runnable: RunnableWithException) {
-    val builtInsSources = BuiltInsReferenceResolver.getInstance(project).builtInsSources!!
-
     val stdLibViewProviders = HashSet<KotlinDecompiledFileViewProvider>()
     val vFileToViewProviderMap = ((PsiManager.getInstance(project) as PsiManagerEx).fileManager as FileManagerImpl).vFileToViewProviderMap
     for ((file, viewProvider) in vFileToViewProviderMap) {
@@ -104,7 +101,6 @@ public fun unInvalidateBuiltinsAndStdLib(project: Project, runnable: RunnableWit
         field.set(file, false)
     }
 
-    builtInsSources.forEach { unInvalidateFile(it) }
     stdLibViewProviders.forEach {
         it.allFiles.forEach { unInvalidateFile(it as KtDecompiledFile) }
         vFileToViewProviderMap.set(it.virtualFile, it)

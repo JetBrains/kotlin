@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver;
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.*;
@@ -89,7 +88,7 @@ public class QuickFixUtil {
     }
 
     public static boolean canModifyElement(@NotNull PsiElement element) {
-        return element.isWritable() && !BuiltInsReferenceResolver.Companion.isFromBuiltIns(element);
+        return element.isWritable();
     }
 
     @Nullable

@@ -20,7 +20,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.decompiler.navigation.findDecompiledDeclaration
-import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.utils.addToStdlib.sequenceOfLazyValues
 
@@ -46,7 +45,7 @@ public object DescriptorToSourceUtilsIde {
             // therefore we put both source declaration and decompiled declaration to stream, and afterwards we filter it in getAllDeclarations
             sequenceOfLazyValues(
                     { DescriptorToSourceUtils.getSourceFromDescriptor(effectiveReferenced)  },
-                    { BuiltInsReferenceResolver.resolveBuiltInSymbol(project, effectiveReferenced) ?: findDecompiledDeclaration(project, effectiveReferenced) }
+                    { findDecompiledDeclaration(project, effectiveReferenced) }
             )
         }.filterNotNull()
     }
