@@ -1872,6 +1872,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTestCompiledKotlin(fileName);
                 }
 
+                @TestMetadata("EnumEntry.kt")
+                public void testEnumEntry() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/EnumEntry.kt");
+                    doTestCompiledKotlin(fileName);
+                }
+
                 @TestMetadata("Function.kt")
                 public void testFunction() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/Function.kt");

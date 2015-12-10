@@ -117,6 +117,12 @@ public class ResolveByStubTestGenerated extends AbstractResolveByStubTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("EnumEntry.kt")
+            public void testEnumEntry() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/EnumEntry.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("Function.kt")
             public void testFunction() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/Function.kt");
