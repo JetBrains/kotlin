@@ -2,6 +2,7 @@ package
 
 public fun </*0*/ K, /*1*/ V : K> f1(): kotlin.Unit where V : K
 public fun </*0*/ K, /*1*/ V, /*2*/ W : K> f2(): kotlin.Unit where W : V
+public fun </*0*/ K, /*1*/ V, /*2*/ W : K> f3(): kotlin.Unit where W : V, W : kotlin.Any
 
 public interface A1</*0*/ K, /*1*/ V : K> where V : K {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

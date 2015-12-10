@@ -179,14 +179,38 @@ class DeclarationsChecker(
         }
     }
 
-    private fun checkOnlyOneTypeParameterBound(descriptor: TypeParameterDescriptor, declaration: KtTypeParameter) {
+    private fun checkOnlyOneTypeParameterBound(
+            descriptor: TypeParameterDescriptor, declaration: KtTypeParameter, owner: KtTypeParameterListOwner
+    ) {
         val upperBounds = descriptor.upperBounds
         val (boundsWhichAreTypeParameters, otherBounds) = upperBounds
                 .map { type -> type.constructor }
                 .partition { constructor -> constructor.declarationDescriptor is TypeParameterDescriptor }
                 .let { pair -> pair.first.toSet() to pair.second.toSet() }
-        if (boundsWhichAreTypeParameters.size > 1 || (boundsWhichAreTypeParameters.isNotEmpty() && otherBounds.isNotEmpty())) {
-            trace.report(BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER.on(declaration))
+        if (boundsWhichAreTypeParameters.size > 1 || (boundsWhichAreTypeParameters.size == 1 && otherBounds.isNotEmpty())) {
+            val reportOn = if (boundsWhichAreTypeParameters.size + otherBounds.size == 2) {
+                // If there's only one problematic bound (either 2 type parameter bounds, or 1 type parameter bound + 1 other bound),
+                // report the diagnostic on that bound
+
+                val allBounds: List<Pair<KtTypeReference, KotlinType?>> =
+                        owner.typeConstraints
+                                .filter { constraint ->
+                                    constraint.subjectTypeParameterName?.getReferencedNameAsName() == declaration.nameAsName
+                                }
+                                .mapNotNull { constraint -> constraint.boundTypeReference }
+                                .map { typeReference -> typeReference to trace.bindingContext.get(TYPE, typeReference) }
+
+                val problematicBound =
+                        allBounds.firstOrNull { bound -> bound.second?.constructor != boundsWhichAreTypeParameters.first() }
+
+                problematicBound?.first ?: declaration
+            }
+            else {
+                // Otherwise report the diagnostic on the type parameter declaration
+                declaration
+            }
+
+            trace.report(BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER.on(reportOn))
         }
     }
 
@@ -349,7 +373,7 @@ class DeclarationsChecker(
             }
             val typeParameterDescriptor = trace.get(TYPE_PARAMETER, typeParameter) ?: continue
             checkSupertypesForConsistency(typeParameterDescriptor, typeParameter)
-            checkOnlyOneTypeParameterBound(typeParameterDescriptor, typeParameter)
+            checkOnlyOneTypeParameterBound(typeParameterDescriptor, typeParameter, typeParameterListOwner)
         }
     }
 

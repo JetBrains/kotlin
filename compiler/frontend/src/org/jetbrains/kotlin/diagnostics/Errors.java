@@ -265,7 +265,7 @@ public interface Errors {
     DiagnosticFactory0<KtTypeReference> DYNAMIC_UPPER_BOUND = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtTypeReference> UPPER_BOUND_IS_EXTENSION_FUNCTION_TYPE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtTypeReference> ONLY_ONE_CLASS_BOUND_ALLOWED = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<KtTypeParameter> BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtElement> BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtTypeReference> REPEATED_BOUND = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory1<KtNamedDeclaration, TypeParameterDescriptor> CONFLICTING_UPPER_BOUNDS =
