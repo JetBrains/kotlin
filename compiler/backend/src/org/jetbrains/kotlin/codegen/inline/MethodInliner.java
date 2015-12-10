@@ -262,7 +262,14 @@ public class MethodInliner {
                             visitFieldInsn(Opcodes.GETSTATIC, capturedParamDesc.getContainingLambdaName(),
                                            "$$$" + capturedParamDesc.getFieldName(), capturedParamDesc.getType().getDescriptor());
                         }
-                        super.visitMethodInsn(opcode, anonymousObjectGen.getNewLambdaType().getInternalName(), name, anonymousObjectGen.getNewConstructorDescriptor(), itf);
+                        String newInternalName = anonymousObjectGen.getNewLambdaType().getInternalName();
+                        super.visitMethodInsn(opcode, newInternalName, name, anonymousObjectGen.getNewConstructorDescriptor(), itf);
+
+                        //TODO: add new inner class also for other contexts
+                        if (inliningContext.getParent() instanceof RegeneratedClassContext) {
+                            inliningContext.getParent().typeRemapper.addAdditionalMappings(anonymousObjectGen.getOwnerInternalName(), newInternalName);
+                        }
+
                         anonymousObjectGen = null;
                     } else {
                         super.visitMethodInsn(opcode, changeOwnerForExternalPackage(owner, opcode), name, desc, itf);

@@ -81,6 +81,7 @@ public class AnonymousObjectTransformer {
 
     @NotNull
     public InlineResult doTransform(@NotNull AnonymousObjectGeneration anonymousObjectGen, @NotNull FieldRemapper parentRemapper) {
+        final List<InnerClassNode> innerClassNodes = new ArrayList<InnerClassNode>();
         ClassBuilder classBuilder = createClassBuilder();
         final List<MethodNode> methodsToTransform = new ArrayList<MethodNode>();
 
@@ -93,6 +94,11 @@ public class AnonymousObjectTransformer {
                     transformationResult.getReifiedTypeParametersUsages().mergeAll(signatureResult.getTypeParametersUsages());
                 }
                 super.visit(version, access, name, signature, superName, interfaces);
+            }
+
+            @Override
+            public void visitInnerClass(String name, String outerName, String innerName, int access) {
+                innerClassNodes.add(new InnerClassNode(name, outerName, innerName, access));
             }
 
             @Override
@@ -199,6 +205,10 @@ public class AnonymousObjectTransformer {
         generateConstructorAndFields(classBuilder, allCapturedParamBuilder, constructorParamBuilder, anonymousObjectGen, parentRemapper, additionalFakeParams);
 
         SourceMapper.Companion.flushToClassBuilder(sourceMapper, classBuilder);
+
+        for (InnerClassNode node : innerClassNodes) {
+            classBuilder.getVisitor().visitInnerClass(node.name, node.outerName, node.innerName, node.access);
+        }
 
         classBuilder.done();
 
