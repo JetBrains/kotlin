@@ -2038,6 +2038,39 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             }
         }
 
+        @TestMetadata("idea/testData/refactoring/extractFunction/multiline")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Multiline extends AbstractExtractionTest {
+            public void testAllFilesPresentInMultiline() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/extractFunction/multiline"), Pattern.compile("^(.+)\\.(kt|kts)$"), true);
+            }
+
+            @TestMetadata("multilineBinaryExpression.kt")
+            public void testMultilineBinaryExpression() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/multiline/multilineBinaryExpression.kt");
+                doExtractFunctionTest(fileName);
+            }
+
+            @TestMetadata("multilineBinaryExpressionWithComments.kt")
+            public void testMultilineBinaryExpressionWithComments() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/multiline/multilineBinaryExpressionWithComments.kt");
+                doExtractFunctionTest(fileName);
+            }
+
+            @TestMetadata("multilineNestedBinaryExpression1.kt")
+            public void testMultilineNestedBinaryExpression1() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/multiline/multilineNestedBinaryExpression1.kt");
+                doExtractFunctionTest(fileName);
+            }
+
+            @TestMetadata("multilineNestedBinaryExpression2.kt")
+            public void testMultilineNestedBinaryExpression2() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/extractFunction/multiline/multilineNestedBinaryExpression2.kt");
+                doExtractFunctionTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/refactoring/extractFunction/parameters")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
