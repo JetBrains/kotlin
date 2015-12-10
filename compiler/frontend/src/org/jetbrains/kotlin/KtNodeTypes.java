@@ -144,7 +144,6 @@ public interface KtNodeTypes {
     KtNodeType SAFE_ACCESS_EXPRESSION    = new KtNodeType("SAFE_ACCESS_EXPRESSION", KtSafeQualifiedExpression.class);
 
     KtNodeType OBJECT_LITERAL            = new KtNodeType("OBJECT_LITERAL", KtObjectLiteralExpression.class);
-    KtNodeType ROOT_PACKAGE = new KtNodeType("ROOT_PACKAGE", KtRootPackageExpression.class);
 
     KtNodeType WHEN                      = new KtNodeType("WHEN", KtWhenExpression.class);
     KtNodeType WHEN_ENTRY                = new KtNodeType("WHEN_ENTRY", KtWhenEntry.class);

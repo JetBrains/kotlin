@@ -385,11 +385,6 @@ public abstract class ExpressionTypingVisitorDispatcher extends KtVisitor<Kotlin
     }
 
     @Override
-    public KotlinTypeInfo visitRootPackageExpression(@NotNull KtRootPackageExpression expression, ExpressionTypingContext data) {
-        return basic.visitRootPackageExpression(expression, data);
-    }
-
-    @Override
     public KotlinTypeInfo visitStringTemplateExpression(@NotNull KtStringTemplateExpression expression, ExpressionTypingContext data) {
         return basic.visitStringTemplateExpression(expression, data);
     }

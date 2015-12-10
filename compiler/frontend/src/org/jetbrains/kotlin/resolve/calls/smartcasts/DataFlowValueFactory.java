@@ -279,9 +279,6 @@ public class DataFlowValueFactory {
                         getIdForStableIdentifier(postfixExpression.getBaseExpression(), bindingContext, containingDeclarationOrModule));
             }
         }
-        else if (expression instanceof KtRootPackageExpression) {
-            //todo return createPackageInfo());
-        }
         return NO_IDENTIFIER_INFO;
     }
 

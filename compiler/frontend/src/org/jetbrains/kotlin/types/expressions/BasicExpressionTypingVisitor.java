@@ -1487,14 +1487,6 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     }
 
     @Override
-    public KotlinTypeInfo visitRootPackageExpression(@NotNull KtRootPackageExpression expression, ExpressionTypingContext context) {
-        if (!KtPsiUtil.isLHSOfDot(expression)) {
-            context.trace.report(PACKAGE_IS_NOT_AN_EXPRESSION.on(expression));
-        }
-        return TypeInfoFactoryKt.noTypeInfo(context);
-    }
-
-    @Override
     public KotlinTypeInfo visitStringTemplateExpression(
             @NotNull KtStringTemplateExpression expression,
             ExpressionTypingContext contextWithExpectedType

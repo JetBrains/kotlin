@@ -286,10 +286,6 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
         super.visitObjectLiteralExpression(expression, data);
     }
 
-    public void visitRootPackageExpressionVoid(@NotNull KtRootPackageExpression expression, P data) {
-        super.visitRootPackageExpression(expression, data);
-    }
-
     public void visitBlockExpressionVoid(@NotNull KtBlockExpression expression, P data) {
         super.visitBlockExpression(expression, data);
     }
@@ -806,12 +802,6 @@ public class KtVisitorVoidWithParameter<P> extends KtVisitor<Void, P> {
     @Override
     public final Void visitObjectLiteralExpression(@NotNull KtObjectLiteralExpression expression, P data) {
         visitObjectLiteralExpressionVoid(expression, data);
-    	return null;
-    }
-
-    @Override
-    public final Void visitRootPackageExpression(@NotNull KtRootPackageExpression expression, P data) {
-        visitRootPackageExpressionVoid(expression, data);
     	return null;
     }
 

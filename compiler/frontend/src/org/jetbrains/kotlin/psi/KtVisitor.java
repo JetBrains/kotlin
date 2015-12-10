@@ -302,10 +302,6 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitExpression(expression, data);
     }
 
-    public R visitRootPackageExpression(@NotNull KtRootPackageExpression expression, D data) {
-        return visitExpression(expression, data);
-    }
-
     public R visitBlockExpression(@NotNull KtBlockExpression expression, D data) {
         return visitExpression(expression, data);
     }

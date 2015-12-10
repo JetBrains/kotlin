@@ -10,7 +10,6 @@ fun foo() {
 // EXIST: if
 // EXIST: null
 // EXIST: object
-// EXIST: package
 // EXIST: return
 // EXIST: super
 // EXIST: throw

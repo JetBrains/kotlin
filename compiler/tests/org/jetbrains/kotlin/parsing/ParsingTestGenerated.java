@@ -643,12 +643,6 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             doParsingTest(fileName);
         }
 
-        @TestMetadata("RootPackage.kt")
-        public void testRootPackage() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/RootPackage.kt");
-            doParsingTest(fileName);
-        }
-
         @TestMetadata("SemicolonAfterIf.kt")
         public void testSemicolonAfterIf() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/SemicolonAfterIf.kt");

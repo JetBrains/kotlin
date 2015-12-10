@@ -620,7 +620,6 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
      *   : functionLiteral
      *   : declaration
      *   : SimpleName
-     *   : "package" // for the root package
      *   ;
      */
     private boolean parseAtomicExpression() {
@@ -630,9 +629,6 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
         if (at(LPAR)) {
             parseParenthesizedExpression();
-        }
-        else if (at(PACKAGE_KEYWORD)) {
-            parseOneTokenExpression(ROOT_PACKAGE);
         }
         else if (at(THIS_KEYWORD)) {
             parseThisExpression();

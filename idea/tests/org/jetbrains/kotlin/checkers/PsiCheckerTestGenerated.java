@@ -217,12 +217,6 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTest(fileName);
         }
 
-        @TestMetadata("PackageAsExpression.kt")
-        public void testPackageAsExpression() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/PackageAsExpression.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("PackageQualified.kt")
         public void testPackageQualified() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/PackageQualified.kt");

@@ -7,7 +7,6 @@ fun foo() = <caret>
 // EXIST: if
 // EXIST: null
 // EXIST: object
-// EXIST: package
 // EXIST: super
 // EXIST: throw
 // EXIST: true
