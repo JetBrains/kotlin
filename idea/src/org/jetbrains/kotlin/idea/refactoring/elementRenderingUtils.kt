@@ -111,7 +111,7 @@ fun KtElement.renderTrimmed(): String {
         override fun visitCallExpression(expression: KtCallExpression) {
             expression.calleeExpression?.accept(this)
             expression.valueArgumentList?.accept(this)
-            expression.functionLiteralArguments.forEach { builder.append("{...}") }
+            expression.lambdaArguments.forEach { builder.append("{...}") }
         }
 
         override fun visitValueArgumentList(list: KtValueArgumentList) {
@@ -209,7 +209,7 @@ fun KtElement.renderTrimmed(): String {
 
         override fun visitForExpression(expression: KtForExpression) {
             builder.append("for (")
-            (expression.loopParameter ?: expression.multiParameter)?.accept(this)
+            (expression.loopParameter ?: expression.destructuringParameter)?.accept(this)
             builder.append(" in ")
             expression.loopRange?.accept(this)
             builder.append(")")
@@ -284,15 +284,15 @@ fun KtElement.renderTrimmed(): String {
             keyword?.accept(this)
 
             classOrObject.name?.let { builder.append(" $it") }
-            classOrObject.getDelegationSpecifierList()?.accept(this)
+            classOrObject.getSuperTypeList()?.accept(this)
             classOrObject.getBody()?.let { builder.append(" {...}") }
         }
 
-        override fun visitDelegationSpecifierList(list: KtDelegationSpecifierList) {
-            list.delegationSpecifiers.ifEmpty { return }.join(builder, prefix = " : ")
+        override fun visitSuperTypeList(list: KtSuperTypeList) {
+            list.entries.ifEmpty { return }.join(builder, prefix = " : ")
         }
 
-        override fun visitDelegationByExpressionSpecifier(specifier: KtDelegatorByExpressionSpecifier) {
+        override fun visitDelegatedSuperTypeEntry(specifier: KtDelegatedSuperTypeEntry) {
             specifier.typeReference?.accept(this)
             specifier.delegateExpression?.let {
                 builder.append(" by ")
@@ -300,12 +300,12 @@ fun KtElement.renderTrimmed(): String {
             }
         }
 
-        override fun visitDelegationToSuperCallSpecifier(specifier: KtDelegatorToSuperCall) {
-            specifier.typeReference?.accept(this)
-            specifier.valueArgumentList?.accept(this)
+        override fun visitSuperTypeCallEntry(call: KtSuperTypeCallEntry) {
+            call.typeReference?.accept(this)
+            call.valueArgumentList?.accept(this)
         }
 
-        override fun visitDelegationToSuperClassSpecifier(specifier: KtDelegatorToSuperClass) {
+        override fun visitSuperTypeEntry(specifier: KtSuperTypeEntry) {
             specifier.typeReference?.accept(this)
         }
 
