@@ -12,6 +12,7 @@ public final class JsProtoBuf {
     registry.add(org.jetbrains.kotlin.serialization.js.JsProtoBuf.functionAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.js.JsProtoBuf.propertyAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.js.JsProtoBuf.compileTimeValue);
+    registry.add(org.jetbrains.kotlin.serialization.js.JsProtoBuf.enumEntryAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.js.JsProtoBuf.parameterAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.js.JsProtoBuf.typeAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.js.JsProtoBuf.typeParameterAnnotation);
@@ -1540,6 +1541,21 @@ public final class JsProtoBuf {
         null,
         131,
         com.google.protobuf.WireFormat.FieldType.MESSAGE);
+  public static final int ENUM_ENTRY_ANNOTATION_FIELD_NUMBER = 130;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.EnumEntry { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry,
+      java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.Annotation>> enumEntryAnnotation = com.google.protobuf.GeneratedMessageLite
+          .newRepeatedGeneratedExtension(
+        org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry.getDefaultInstance(),
+        org.jetbrains.kotlin.serialization.ProtoBuf.Annotation.getDefaultInstance(),
+        null,
+        130,
+        com.google.protobuf.WireFormat.FieldType.MESSAGE,
+        false);
   public static final int PARAMETER_ANNOTATION_FIELD_NUMBER = 130;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.ValueParameter { ... }</code>

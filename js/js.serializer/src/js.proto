@@ -38,6 +38,10 @@ extend Property {
   optional Annotation.Argument.Value compile_time_value = 131;
 }
 
+extend EnumEntry {
+  repeated Annotation enum_entry_annotation = 130;
+}
+
 extend ValueParameter {
   repeated Annotation parameter_annotation = 130;
 }

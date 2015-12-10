@@ -249,7 +249,7 @@ public class IncrementalCacheImpl(
                                     ProtoBuf.Class::getFunctionList,
                                     ProtoBuf.Class::getPropertyList
                             ) +
-                            classData.classProto.enumEntryList.map { classData.nameResolver.getString(it) }.toSet()
+                            classData.classProto.enumEntryNameList.map { classData.nameResolver.getString(it) }.toSet()
 
                     ChangeInfo.Removed(className.fqNameForClassNameWithoutDollars, memberNames)
                 }

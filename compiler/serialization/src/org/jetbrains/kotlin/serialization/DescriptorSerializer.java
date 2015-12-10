@@ -174,7 +174,8 @@ public class DescriptorSerializer {
         for (DeclarationDescriptor descriptor : sort(DescriptorUtils.getAllDescriptors(classDescriptor.getUnsubstitutedInnerClassesScope()))) {
             int name = getSimpleNameIndex(descriptor.getName());
             if (isEnumEntry(descriptor)) {
-                builder.addEnumEntry(name);
+                builder.addEnumEntryName(name);
+                builder.addEnumEntry(enumEntryProto((ClassDescriptor) descriptor));
             }
             else {
                 builder.addNestedClassName(name);
@@ -354,6 +355,14 @@ public class DescriptorSerializer {
 
         extension.serializeConstructor(descriptor, builder);
 
+        return builder;
+    }
+
+    @NotNull
+    public ProtoBuf.EnumEntry.Builder enumEntryProto(@NotNull ClassDescriptor descriptor) {
+        ProtoBuf.EnumEntry.Builder builder = ProtoBuf.EnumEntry.newBuilder();
+        builder.setName(getSimpleNameIndex(descriptor.getName()));
+        extension.serializeEnumEntry(descriptor, builder);
         return builder;
     }
 

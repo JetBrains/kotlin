@@ -45,6 +45,9 @@ public abstract class SerializerExtension {
     public void serializeProperty(@NotNull PropertyDescriptor descriptor, @NotNull ProtoBuf.Property.Builder proto) {
     }
 
+    public void serializeEnumEntry(@NotNull ClassDescriptor descriptor, @NotNull ProtoBuf.EnumEntry.Builder proto) {
+    }
+
     public void serializeValueParameter(@NotNull ValueParameterDescriptor descriptor, @NotNull ProtoBuf.ValueParameter.Builder proto) {
     }
 

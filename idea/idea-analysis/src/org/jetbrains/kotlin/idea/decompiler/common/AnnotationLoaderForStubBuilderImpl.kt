@@ -52,6 +52,11 @@ public class AnnotationLoaderForStubBuilderImpl(
         }
     }
 
+    override fun loadEnumEntryAnnotations(container: ProtoContainer, proto: ProtoBuf.EnumEntry): List<ClassId> {
+        // TODO
+        return listOf()
+    }
+
     override fun loadValueParameterAnnotations(
             container: ProtoContainer,
             message: MessageLite,

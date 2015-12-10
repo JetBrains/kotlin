@@ -23,5 +23,6 @@ public class KotlinJavascriptSerializerExtension : KotlinSerializerExtensionBase
 
 object JsSerializerProtocol : SerializerExtensionProtocol(
         JsProtoBuf.constructorAnnotation, JsProtoBuf.classAnnotation, JsProtoBuf.functionAnnotation, JsProtoBuf.propertyAnnotation,
-        JsProtoBuf.compileTimeValue, JsProtoBuf.parameterAnnotation, JsProtoBuf.typeAnnotation, JsProtoBuf.typeParameterAnnotation
+        JsProtoBuf.enumEntryAnnotation, JsProtoBuf.compileTimeValue, JsProtoBuf.parameterAnnotation, JsProtoBuf.typeAnnotation,
+        JsProtoBuf.typeParameterAnnotation
 )

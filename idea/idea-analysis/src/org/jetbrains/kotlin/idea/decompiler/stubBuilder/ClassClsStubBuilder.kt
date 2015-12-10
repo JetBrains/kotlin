@@ -172,7 +172,7 @@ private class ClassClsStubBuilder(
     }
 
     private fun createEnumEntryStubs(classBody: KotlinPlaceHolderStubImpl<KtClassBody>) {
-        classProto.getEnumEntryList().forEach { id ->
+        classProto.getEnumEntryNameList().forEach { id ->
             val name = c.nameResolver.getName(id)
             KotlinClassStubImpl(
                     KtStubElementTypes.ENUM_ENTRY,

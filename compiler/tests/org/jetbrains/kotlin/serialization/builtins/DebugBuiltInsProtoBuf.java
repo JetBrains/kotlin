@@ -14,6 +14,7 @@ public final class DebugBuiltInsProtoBuf {
     registry.add(org.jetbrains.kotlin.serialization.builtins.DebugBuiltInsProtoBuf.functionAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.builtins.DebugBuiltInsProtoBuf.propertyAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.builtins.DebugBuiltInsProtoBuf.compileTimeValue);
+    registry.add(org.jetbrains.kotlin.serialization.builtins.DebugBuiltInsProtoBuf.enumEntryAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.builtins.DebugBuiltInsProtoBuf.parameterAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.builtins.DebugBuiltInsProtoBuf.typeAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.builtins.DebugBuiltInsProtoBuf.typeParameterAnnotation);
@@ -95,6 +96,17 @@ public final class DebugBuiltInsProtoBuf {
           .newFileScopedGeneratedExtension(
         org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value.class,
         org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.Argument.Value.getDefaultInstance());
+  public static final int ENUM_ENTRY_ANNOTATION_FIELD_NUMBER = 150;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.EnumEntry { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessage.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.DebugProtoBuf.EnumEntry,
+      java.util.List<org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation>> enumEntryAnnotation = com.google.protobuf.GeneratedMessage
+          .newFileScopedGeneratedExtension(
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.class,
+        org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.getDefaultInstance());
   public static final int PARAMETER_ANNOTATION_FIELD_NUMBER = 150;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.ValueParameter { ... }</code>
@@ -160,17 +172,20 @@ public final class DebugBuiltInsProtoBuf {
       "lue\022,.org.jetbrains.kotlin.serialization" +
       ".Property\030\227\001 \001(\0132=.org.jetbrains.kotlin." +
       "serialization.Annotation.Argument.Value:" +
-      "\201\001\n\024parameter_annotation\0222.org.jetbrains" +
-      ".kotlin.serialization.ValueParameter\030\226\001 " +
-      "\003(\0132..org.jetbrains.kotlin.serialization" +
-      ".Annotation:r\n\017type_annotation\022(.org.jet" +
-      "brains.kotlin.serialization.Type\030\226\001 \003(\0132" +
-      "..org.jetbrains.kotlin.serialization.Ann" +
-      "otation:\205\001\n\031type_parameter_annotation\0221.",
-      "org.jetbrains.kotlin.serialization.TypeP" +
-      "arameter\030\226\001 \003(\0132..org.jetbrains.kotlin.s" +
-      "erialization.AnnotationB\027B\025DebugBuiltIns" +
-      "ProtoBuf"
+      "}\n\025enum_entry_annotation\022-.org.jetbrains" +
+      ".kotlin.serialization.EnumEntry\030\226\001 \003(\0132." +
+      ".org.jetbrains.kotlin.serialization.Anno" +
+      "tation:\201\001\n\024parameter_annotation\0222.org.je" +
+      "tbrains.kotlin.serialization.ValueParame" +
+      "ter\030\226\001 \003(\0132..org.jetbrains.kotlin.serial" +
+      "ization.Annotation:r\n\017type_annotation\022(.",
+      "org.jetbrains.kotlin.serialization.Type\030" +
+      "\226\001 \003(\0132..org.jetbrains.kotlin.serializat" +
+      "ion.Annotation:\205\001\n\031type_parameter_annota" +
+      "tion\0221.org.jetbrains.kotlin.serializatio" +
+      "n.TypeParameter\030\226\001 \003(\0132..org.jetbrains.k" +
+      "otlin.serialization.AnnotationB\027B\025DebugB" +
+      "uiltInsProtoBuf"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -184,9 +199,10 @@ public final class DebugBuiltInsProtoBuf {
           functionAnnotation.internalInit(descriptor.getExtensions().get(4));
           propertyAnnotation.internalInit(descriptor.getExtensions().get(5));
           compileTimeValue.internalInit(descriptor.getExtensions().get(6));
-          parameterAnnotation.internalInit(descriptor.getExtensions().get(7));
-          typeAnnotation.internalInit(descriptor.getExtensions().get(8));
-          typeParameterAnnotation.internalInit(descriptor.getExtensions().get(9));
+          enumEntryAnnotation.internalInit(descriptor.getExtensions().get(7));
+          parameterAnnotation.internalInit(descriptor.getExtensions().get(8));
+          typeAnnotation.internalInit(descriptor.getExtensions().get(9));
+          typeParameterAnnotation.internalInit(descriptor.getExtensions().get(10));
           return null;
         }
       };

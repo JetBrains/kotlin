@@ -21,6 +21,6 @@ import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
 
 object BuiltInSerializerProtocol : SerializerExtensionProtocol(
         BuiltInsProtoBuf.constructorAnnotation, BuiltInsProtoBuf.classAnnotation, BuiltInsProtoBuf.functionAnnotation,
-        BuiltInsProtoBuf.propertyAnnotation, BuiltInsProtoBuf.compileTimeValue, BuiltInsProtoBuf.parameterAnnotation,
-        BuiltInsProtoBuf.typeAnnotation, BuiltInsProtoBuf.typeParameterAnnotation
+        BuiltInsProtoBuf.propertyAnnotation, BuiltInsProtoBuf.enumEntryAnnotation, BuiltInsProtoBuf.compileTimeValue,
+        BuiltInsProtoBuf.parameterAnnotation, BuiltInsProtoBuf.typeAnnotation, BuiltInsProtoBuf.typeParameterAnnotation
 )

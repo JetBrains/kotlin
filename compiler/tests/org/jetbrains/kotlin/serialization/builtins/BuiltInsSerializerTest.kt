@@ -74,6 +74,10 @@ public class BuiltInsSerializerTest : TestCaseWithTmpdir() {
         doTest("annotationTargets.kt")
     }
 
+    fun testAnnotatedEnumEntry() {
+        doTest("annotatedEnumEntry.kt")
+    }
+
     fun testPrimitives() {
         doTest("annotationArguments/primitives.kt")
     }

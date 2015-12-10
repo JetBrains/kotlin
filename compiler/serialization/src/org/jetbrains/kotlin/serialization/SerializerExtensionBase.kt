@@ -54,6 +54,12 @@ public open class KotlinSerializerExtensionBase(private val protocol: Serializer
         }
     }
 
+    override fun serializeEnumEntry(descriptor: ClassDescriptor, proto: ProtoBuf.EnumEntry.Builder) {
+        for (annotation in descriptor.annotations) {
+            proto.addExtension(protocol.enumEntryAnnotation, annotationSerializer.serializeAnnotation(annotation))
+        }
+    }
+
     override fun serializeValueParameter(descriptor: ValueParameterDescriptor, proto: ProtoBuf.ValueParameter.Builder) {
         for (annotation in descriptor.annotations) {
             proto.addExtension(protocol.parameterAnnotation, annotationSerializer.serializeAnnotation(annotation))

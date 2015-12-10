@@ -53,6 +53,14 @@ class AnnotationAndConstantLoaderImpl(
         return annotations.map { proto -> AnnotationWithTarget(deserializer.deserializeAnnotation(proto, container.nameResolver), null) }
     }
 
+    override fun loadEnumEntryAnnotations(
+            container: ProtoContainer,
+            proto: ProtoBuf.EnumEntry
+    ): List<AnnotationDescriptor> {
+        val annotations = proto.getExtension(protocol.enumEntryAnnotation).orEmpty()
+        return annotations.map { proto -> deserializer.deserializeAnnotation(proto, container.nameResolver) }
+    }
+
     override fun loadValueParameterAnnotations(
             container: ProtoContainer,
             message: MessageLite,

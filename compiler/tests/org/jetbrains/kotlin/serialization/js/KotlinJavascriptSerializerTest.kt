@@ -111,6 +111,10 @@ public class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
         doTest("builtinsSerializer/annotationTargets.kt")
     }
 
+    fun testAnnotatedEnumEntry() {
+        doTest("builtinsSerializer/annotatedEnumEntry.kt")
+    }
+
     fun testPrimitives() {
         doTest("builtinsSerializer/annotationArguments/primitives.kt")
     }
