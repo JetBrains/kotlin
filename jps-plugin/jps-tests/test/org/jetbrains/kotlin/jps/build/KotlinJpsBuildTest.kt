@@ -131,7 +131,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         private fun assertFilesExistInOutput(module: JpsModule, vararg relativePaths: String) {
             for (path in relativePaths) {
                 val outputFile = findFileInOutputDir(module, path)
-                assertTrue(outputFile.exists(), "Output not written: " + outputFile.absolutePath + "\n Directory contents: \n" + dirContents(outputFile.parentFile))
+                assertTrue("Output not written: " + outputFile.absolutePath + "\n Directory contents: \n" + dirContents(outputFile.parentFile), outputFile.exists())
             }
         }
 
@@ -149,7 +149,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
             val outputDir = File(JpsPathUtil.urlToPath(outputUrl))
             for (path in relativePaths) {
                 val outputFile = File(outputDir, path)
-                assertFalse(outputFile.exists(), "Output directory \"" + outputFile.absolutePath + "\" contains \"" + path + "\"")
+                assertFalse("Output directory \"" + outputFile.absolutePath + "\" contains \"" + path + "\"", outputFile.exists())
             }
         }
 
@@ -860,7 +860,7 @@ class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
                 Operation.CHANGE ->
                     touch(file)
                 Operation.DELETE ->
-                    assertTrue(file.delete(), "Can not delete file \"" + file.absolutePath + "\"")
+                    assertTrue("Can not delete file \"" + file.absolutePath + "\"", file.exists())
                 else ->
                     fail("Unknown operation")
             }

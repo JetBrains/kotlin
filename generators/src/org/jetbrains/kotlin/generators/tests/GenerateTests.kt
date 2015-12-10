@@ -902,7 +902,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("jps-plugin/test", "jps-plugin/testData") {
+    testGroup("jps-plugin/jps-tests/test", "jps-plugin/testData") {
         testClass<AbstractIncrementalJpsTest>() {
             model("incremental/multiModule", extension = null, excludeParentDirs = true)
             model("incremental/pureKotlin", extension = null, recursive = false)
@@ -922,7 +922,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("jps-plugin/test", "jps-plugin/testData") {
+    testGroup("jps-plugin/jps-tests/test", "jps-plugin/testData") {
         testClass<AbstractExperimentalIncrementalJpsTest>() {
             model("incremental/multiModule", extension = null, excludeParentDirs = true)
             model("incremental/pureKotlin", extension = null, recursive = false)
@@ -948,7 +948,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    testGroup("jps-plugin/test", "jps-plugin/testData") {
+    testGroup("jps-plugin/jps-tests/test", "jps-plugin/testData") {
         testClass<AbstractProtoComparisonTest>() {
             model("comparison/classSignatureChange", extension = null, excludeParentDirs = true)
             model("comparison/classPrivateOnlyChange", extension = null, excludeParentDirs = true)
