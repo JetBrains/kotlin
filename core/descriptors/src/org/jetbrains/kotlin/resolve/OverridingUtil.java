@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyAccessorDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
+import org.jetbrains.kotlin.types.FlexibleTypesKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
@@ -358,14 +359,53 @@ public class OverridingUtil {
         throw new IllegalArgumentException("Unexpected callable: " + a.getClass());
     }
 
-    private static CallableMemberDescriptor selectMostSpecificMemberFromSuper(@NotNull Collection<CallableMemberDescriptor> overridables) {
-        CallableMemberDescriptor result = null;
-        for (CallableMemberDescriptor overridable : overridables) {
-            if (result == null || isMoreSpecific(overridable, result)) {
-                result = overridable;
+    private static boolean isMoreSpecificThenAllOf(@NotNull CallableMemberDescriptor candidate, @NotNull Collection<CallableMemberDescriptor> descriptors) {
+        // NB subtyping relation in Kotlin is not transitive in presence of flexible types:
+        //  String? <: String! <: String, but not String? <: String
+        for (CallableMemberDescriptor descriptor : descriptors) {
+            if (!isMoreSpecific(candidate, descriptor)) {
+                return false;
             }
         }
-        return result;
+        return true;
+    }
+
+    private static CallableMemberDescriptor selectMostSpecificMemberFromSuper(@NotNull Collection<CallableMemberDescriptor> overridables) {
+        assert !overridables.isEmpty() : "Should have at least one overridable descriptor";
+
+        if (overridables.size() == 1) {
+            return CollectionsKt.first(overridables);
+        }
+
+        Collection<CallableMemberDescriptor> candidates = new ArrayList<CallableMemberDescriptor>(2);
+        CallableMemberDescriptor transitivelyMostSpecific = null;
+        for (CallableMemberDescriptor overridable : overridables) {
+            if (isMoreSpecificThenAllOf(overridable, overridables)) {
+                candidates.add(overridable);
+            }
+            if (transitivelyMostSpecific == null || isMoreSpecific(overridable, transitivelyMostSpecific)) {
+                transitivelyMostSpecific = overridable;
+            }
+        }
+
+        if (candidates.isEmpty()) {
+            return transitivelyMostSpecific;
+        }
+        else if (candidates.size() == 1) {
+            return CollectionsKt.first(candidates);
+        }
+
+        CallableMemberDescriptor lastNonFlexible = null;
+        for (CallableMemberDescriptor candidate : candidates) {
+            if (!FlexibleTypesKt.isFlexible(candidate.getReturnType())) {
+                lastNonFlexible = candidate;
+            }
+        }
+        if (lastNonFlexible != null) {
+            return lastNonFlexible;
+        }
+
+        return CollectionsKt.last(candidates);
     }
 
     private static void createAndBindFakeOverride(
@@ -386,12 +426,7 @@ public class OverridingUtil {
         // Should be 'foo(s: String): String'.
         Modality modality = getMinimalModality(effectiveOverridden);
         Visibility visibility = allInvisible ? Visibilities.INVISIBLE_FAKE : Visibilities.INHERITED;
-        CallableMemberDescriptor mostSpecific =
-                OverridingUtilsKt.getOverriddenWithMostSpecificReturnTypeOrNull(KotlinTypeChecker.DEFAULT, effectiveOverridden);
-        if (mostSpecific == null) {
-            // Use some (possibly erroneous) inherited signature. Will be reported as an error later.
-            mostSpecific = selectMostSpecificMemberFromSuper(effectiveOverridden);
-        }
+        CallableMemberDescriptor mostSpecific = selectMostSpecificMemberFromSuper(effectiveOverridden);
         CallableMemberDescriptor fakeOverride =
                 mostSpecific.copy(current, modality, visibility, CallableMemberDescriptor.Kind.FAKE_OVERRIDE, false);
         for (CallableMemberDescriptor descriptor : effectiveOverridden) {
