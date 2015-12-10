@@ -379,14 +379,13 @@ public fun File.listFiles(filter: (file: File) -> Boolean): Array<File>? = listF
  * Determines whether this file belongs to the same root as [other]
  * and starts with all components of [other] in the same order.
  * So if [other] has N components, first N components of `this` must be the same as in [other].
- * For relative [other], `this` can belong to any root.
  *
  * @return `true` if this path starts with [other] path, `false` otherwise.
  */
 public fun File.startsWith(other: File): Boolean {
     val components = toComponents()
     val otherComponents = other.toComponents()
-    if (components.root != otherComponents.root && otherComponents.rootName != "")
+    if (components.root != otherComponents.root)
         return false
     return if (components.size < otherComponents.size) false
     else components.segments.subList(0, otherComponents.size).equals(otherComponents.segments)
@@ -396,25 +395,25 @@ public fun File.startsWith(other: File): Boolean {
  * Determines whether this file belongs to the same root as [other]
  * and starts with all components of [other] in the same order.
  * So if [other] has N components, first N components of `this` must be the same as in [other].
- * For relative [other], `this` can belong to any root.
  *
  * @return `true` if this path starts with [other] path, `false` otherwise.
  */
 public fun File.startsWith(other: String): Boolean = startsWith(File(other))
 
 /**
- * Determines whether this file belongs to the same root as [other]
- * and ends with all components of [other] in the same order.
- * So if [other] has N components, last N components of `this` must be the same as in [other].
- * For relative [other], `this` can belong to any root.
+ * Determines whether this file path ends with the path of [other] file.
+ *
+ * If [other] is rooted path it must be equal to this.
+ * If [other] is relative path then last N components of `this` must be the same as all components in [other],
+ * where N is the number of components in [other].
  *
  * @return `true` if this path ends with [other] path, `false` otherwise.
  */
 public fun File.endsWith(other: File): Boolean {
     val components = toComponents()
     val otherComponents = other.toComponents()
-    if (components.root != otherComponents.root && otherComponents.rootName != "")
-        return false
+    if (otherComponents.isRooted)
+        return this == other
     val shift = components.size - otherComponents.size
     return if (shift < 0) false
     else components.segments.subList(shift, components.size).equals(otherComponents.segments)

@@ -243,8 +243,8 @@ class FilesTest {
         assertTrue(File("/foo/bar").startsWith(File("/foo/bar")))
         assertTrue(File("/foo/bar").startsWith(File("/foo")))
         assertTrue(File("/foo/bar").startsWith("/"))
-// TODO: assertFalse(File("/foo/bar").startsWith(""))
-// TODO: assertFalse(File("/foo/bar").startsWith(File("foo")))
+        assertFalse(File("/foo/bar").startsWith(""))
+        assertFalse(File("/foo/bar").startsWith(File("foo")))
         assertFalse(File("/foo/bar").startsWith("/fo"))
 
         if (isBackslashSeparator) {
@@ -259,9 +259,15 @@ class FilesTest {
 
     @test fun endsWith() {
         assertTrue(File("/foo/bar").endsWith("bar"))
-        assertTrue(File("/foo/bar").endsWith("/bar"))
-        assertTrue(File("/foo/bar/gav/bar").endsWith("/bar"))
-        assertTrue(File("/foo/bar/gav/bar").endsWith("/gav/bar"))
+        assertTrue(File("/foo/bar").endsWith("foo/bar"))
+        assertTrue(File("/foo/bar").endsWith("/foo/bar"))
+        assertTrue(File("foo/bar").endsWith("foo/bar"))
+        assertTrue(File("foo/bar").endsWith("bar/"))
+
+        assertFalse(File("/foo/bar").endsWith("ar"))
+        assertFalse(File("/foo/bar").endsWith("/bar"))
+        assertFalse(File("/foo/bar/gav/bar").endsWith("/bar"))
+        assertFalse(File("/foo/bar/gav/bar").endsWith("/gav/bar"))
         assertFalse(File("/foo/bar/gav").endsWith("/bar"))
         assertFalse(File("foo/bar").endsWith("/bar"))
         if (isCaseInsensitiveFileSystem) {
