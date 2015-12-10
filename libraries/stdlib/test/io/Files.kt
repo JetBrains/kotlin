@@ -8,6 +8,8 @@ import kotlin.test.*
 class FilesTest {
 
     private val isCaseInsensitiveFileSystem = File("C:/") == File("c:/")
+    private val isBackslashSeparator = File.separatorChar == '\\'
+
 
     @test fun testPath() {
         val fileSuf = System.currentTimeMillis().toString()
@@ -96,21 +98,23 @@ class FilesTest {
         assertEquals("../bar", file4.relativeToFile(file5).invariantSeparatorsPath)
         assertEquals("../baran", file5.relativeToFile(file4).invariantSeparatorsPath)
 
-        val file6 = File("C:\\Users\\Me")
-        val file7 = File("C:\\Users\\Me\\Documents")
+        if (isBackslashSeparator) {
+            val file6 = File("C:\\Users\\Me")
+            val file7 = File("C:\\Users\\Me\\Documents")
 
-        assertEquals("..", file6.relativeTo(file7))
-        assertEquals("Documents", file7.relativeTo(file6))
+            assertEquals("..", file6.relativeTo(file7))
+            assertEquals("Documents", file7.relativeTo(file6))
+
+            val file8 = File("""\\my.host\home/user/documents/vip""")
+            val file9 = File("""\\my.host\home/other/images/nice""")
+
+            assertEquals("../../../user/documents/vip", file8.relativeToFile(file9).invariantSeparatorsPath)
+            assertEquals("../../../other/images/nice", file9.relativeToFile(file8).invariantSeparatorsPath)
+        }
 
         if (isCaseInsensitiveFileSystem) {
             assertEquals("bar", File("C:/bar").relativeTo(File("c:/")))
         }
-
-        val file8 = File("""\\my.host\home/user/documents/vip""")
-        val file9 = File("""\\my.host\home/other/images/nice""")
-
-        assertEquals("../../../user/documents/vip", file8.relativeToFile(file9).invariantSeparatorsPath)
-        assertEquals("../../../other/images/nice", file9.relativeToFile(file8).invariantSeparatorsPath)
     }
 
     @test fun relativeToRelative() {
@@ -150,14 +154,14 @@ class FilesTest {
         val absolute = File("/foo/bar/baz")
         val relative = File("foo/bar")
         val networkShare1 = File("""\\my.host\share1/folder""")
-        val networkShare2 = File("""\\my.host\share2/folder""")
+        val networkShare2 = File("""\\my.host\share2\folder""")
 
         fun assertFailsRelativeTo(file: File, base: File) {
             val e = assertFailsWith<IllegalArgumentException>("file: $file, base: $base") { file.relativeTo(base) }
             println(e.message)
         }
 
-        val allFiles = listOf(absolute, relative, networkShare1, networkShare2)
+        val allFiles = listOf(absolute, relative) + if (isBackslashSeparator) listOf(networkShare1, networkShare2) else emptyList()
         for (file in allFiles) {
             for (base in allFiles) {
                 if (file != base) assertFailsRelativeTo(file, base)
@@ -166,10 +170,11 @@ class FilesTest {
 
         assertFailsRelativeTo(File("y"), File("../x"))
 
-        // This test operates correctly only at Windows PCs with C & D drives
-        val fileOnC = File("C:/dir1")
-        val fileOnD = File("D:/dir2")
-        assertFailsRelativeTo(fileOnC, fileOnD)
+        if (isBackslashSeparator) {
+            val fileOnC = File("C:/dir1")
+            val fileOnD = File("D:/dir2")
+            assertFailsRelativeTo(fileOnC, fileOnD)
+        }
     }
 
     @test fun relativeTo() {
@@ -194,7 +199,7 @@ class FilesTest {
         checkFilePathComponents(File("C:/bar/gav"), File("C:/"), listOf("bar", "gav"))
         checkFilePathComponents(File("C:/"), File("C:/"), listOf())
         checkFilePathComponents(File("C:"), File("C:"), listOf())
-        if (File.separator == "\\") {
+        if (isBackslashSeparator) {
             // Check only in Windows
             checkFilePathComponents(File("\\\\host.ru\\home\\mike"), File("\\\\host.ru\\home"), listOf("mike"))
             checkFilePathComponents(File("//host.ru/home/mike"), File("//host.ru/home"), listOf("mike"))
@@ -212,7 +217,7 @@ class FilesTest {
         assertTrue(rooted.isRooted)
         assertEquals("/", rooted.root.invariantSeparatorsPath)
 
-        if (File.separator == "\\") {
+        if (isBackslashSeparator) {
             val diskRooted = File("""C:\foo\bar""")
             assertTrue(rooted.isRooted)
             assertEquals("""C:\""", diskRooted.rootName)
@@ -228,9 +233,25 @@ class FilesTest {
     }
 
     @test fun startsWith() {
-        assertTrue(File("C:\\Users\\Me\\Temp\\Game").startsWith("C:\\Users\\Me"))
-        assertFalse(File("C:\\Users\\Me\\Temp\\Game").startsWith("C:\\Users\\He"))
-        assertTrue(File("C:\\Users\\Me").startsWith("C:\\"))
+        assertTrue(File("foo/bar").startsWith(File("foo/bar")))
+        assertTrue(File("foo/bar").startsWith(File("foo")))
+        assertTrue(File("foo/bar").startsWith(""))
+        assertFalse(File("foo/bar").startsWith(File("/")))
+        assertFalse(File("foo/bar").startsWith(File("/foo")))
+        assertFalse(File("foo/bar").startsWith("fo"))
+
+        assertTrue(File("/foo/bar").startsWith(File("/foo/bar")))
+        assertTrue(File("/foo/bar").startsWith(File("/foo")))
+        assertTrue(File("/foo/bar").startsWith("/"))
+// TODO: assertFalse(File("/foo/bar").startsWith(""))
+// TODO: assertFalse(File("/foo/bar").startsWith(File("foo")))
+        assertFalse(File("/foo/bar").startsWith("/fo"))
+
+        if (isBackslashSeparator) {
+            assertTrue(File("C:\\Users\\Me\\Temp\\Game").startsWith("C:\\Users\\Me"))
+            assertFalse(File("C:\\Users\\Me\\Temp\\Game").startsWith("C:\\Users\\He"))
+            assertTrue(File("C:\\Users\\Me").startsWith("C:\\"))
+        }
         if (isCaseInsensitiveFileSystem) {
             assertTrue(File("C:\\Users\\Me").startsWith("c:\\"))
         }
@@ -249,7 +270,7 @@ class FilesTest {
     }
 
     @test fun subPath() {
-        if (File.separatorChar == '\\') {
+        if (isBackslashSeparator) {
             // Check only in Windows
             assertEquals(File("mike"), File("//my.host.net/home/mike/temp").subPath(0, 1))
             assertEquals(File("mike"), File("\\\\my.host.net\\home\\mike\\temp").subPath(0, 1))
@@ -264,7 +285,7 @@ class FilesTest {
         assertEquals(File("/foo/bar/baaz"), File("/foo/bak/../bar/gav/../baaz").normalize())
         assertEquals(File("../../bar"), File("../foo/../../bar").normalize())
         // For Unix C:\windows is not correct so it's not the same as C:/windows
-        if (File.separator == "\\") {
+        if (isBackslashSeparator) {
             assertEquals(File("C:\\windows"), File("C:\\home\\..\\documents\\..\\windows").normalize())
             assertEquals(File("C:/windows"), File("C:/home/../documents/../windows").normalize())
         }
@@ -277,7 +298,7 @@ class FilesTest {
         assertEquals(File("/foo/bar/gav"), File("/foo/bar/").resolve("gav"))
         assertEquals(File("/gav"), File("/foo/bar").resolve("/gav"))
         // For Unix C:\path is not correct so it's cannot be automatically converted
-        if (File.separator == "\\") {
+        if (isBackslashSeparator) {
             assertEquals(File("C:\\Users\\Me\\Documents\\important.doc"),
                     File("C:\\Users\\Me").resolve("Documents\\important.doc"))
             assertEquals(File("C:/Users/Me/Documents/important.doc"),
@@ -297,7 +318,7 @@ class FilesTest {
         assertEquals(File("/foo/gav"), File("/foo/bar/").resolveSibling("gav"))
         assertEquals(File("/gav"), File("/foo/bar").resolveSibling("/gav"))
         // For Unix C:\path is not correct so it's cannot be automatically converted
-        if (File.separator == "\\") {
+        if (isBackslashSeparator) {
             assertEquals(File("C:\\Users\\Me\\Documents\\important.doc"),
                     File("C:\\Users\\Me\\profile.ini").resolveSibling("Documents\\important.doc"))
             assertEquals(File("C:/Users/Me/Documents/important.doc"),
