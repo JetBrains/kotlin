@@ -35,7 +35,7 @@ public class InliningContext {
 
     public final NameGenerator nameGenerator;
 
-    public final Map<String, String> typeMapping;
+    public final TypeRemapper typeRemapper;
 
     public final ReifiedTypeInliner reifedTypeInliner;
 
@@ -48,7 +48,7 @@ public class InliningContext {
             @NotNull Map<Integer, LambdaInfo> map,
             @NotNull GenerationState state,
             @NotNull NameGenerator nameGenerator,
-            @NotNull Map<String, String> typeMapping,
+            @NotNull TypeRemapper typeRemapper,
             @NotNull ReifiedTypeInliner reifedTypeInliner,
             boolean isInliningLambda,
             boolean classRegeneration
@@ -57,7 +57,7 @@ public class InliningContext {
         expressionMap = map;
         this.state = state;
         this.nameGenerator = nameGenerator;
-        this.typeMapping = typeMapping;
+        this.typeRemapper = typeRemapper;
         this.reifedTypeInliner = reifedTypeInliner;
         this.isInliningLambda = isInliningLambda;
         this.classRegeneration = classRegeneration;
@@ -78,13 +78,12 @@ public class InliningContext {
     }
 
     public InliningContext subInlineWithClassRegeneration(@NotNull NameGenerator generator,
-            @NotNull Map<String, String> additionalTypeMappings,
+            @NotNull Map<String, String> newTypeMappings,
             @NotNull AnonymousObjectGeneration anonymousObjectGeneration
     ) {
-        Map<String, String> newTypeMappings = new HashMap<String, String>(typeMapping);
-        newTypeMappings.putAll(additionalTypeMappings);
         return new RegeneratedClassContext(this, expressionMap, state, generator,
-                                           newTypeMappings, reifedTypeInliner, isInliningLambda, anonymousObjectGeneration);
+                                           new TypeRemapper(typeRemapper, newTypeMappings),
+                                           reifedTypeInliner, isInliningLambda, anonymousObjectGeneration);
     }
 
     public InliningContext subInline(NameGenerator generator, Map<String, String> additionalTypeMappings, boolean isInliningLambda) {
@@ -97,10 +96,8 @@ public class InliningContext {
             boolean isInliningLambda,
             boolean isRegeneration
     ) {
-        Map<String, String> newTypeMappings = new HashMap<String, String>(typeMapping);
-        newTypeMappings.putAll(additionalTypeMappings);
         return new InliningContext(this, expressionMap, state, generator,
-                                   newTypeMappings, reifedTypeInliner, isInliningLambda, isRegeneration);
+                                   new TypeRemapper(typeRemapper, additionalTypeMappings), reifedTypeInliner, isInliningLambda, isRegeneration);
     }
 
     public boolean isRoot() {

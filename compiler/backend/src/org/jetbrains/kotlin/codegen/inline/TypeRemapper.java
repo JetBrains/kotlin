@@ -23,12 +23,41 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TypeRemapper extends Remapper {
+    //typeMapping field could be changed outside through method processing
     private final Map<String, String> typeMapping;
+
     private Map<String, String> additionalMappings;
 
-    //typeMapping could be changed outside through method processing
-    public TypeRemapper(@NotNull Map<String, String> typeMapping) {
+    //typeMapping field could be changed outside through method processing
+    private TypeRemapper(@NotNull Map<String, String> typeMapping) {
         this.typeMapping = typeMapping;
+    }
+
+    public TypeRemapper(@NotNull TypeRemapper remapper, @NotNull Map<String, String> newTypeMappings) {
+        this(createNewAndMerge(remapper, newTypeMappings));
+    }
+
+    public static TypeRemapper createEmpty() {
+        return new TypeRemapper(new HashMap<String, String>());
+    }
+
+    public static TypeRemapper createFrom(Map<String, String> mappings) {
+        return new TypeRemapper(mappings);
+    }
+
+    @NotNull
+    private static Map<String, String> createNewAndMerge(@NotNull TypeRemapper remapper, @NotNull Map<String, String> additionalTypeMappings) {
+        Map<String, String> map = new HashMap<String, String>(remapper.typeMapping);
+        map.putAll(additionalTypeMappings);
+        return map;
+    }
+
+    public void addMapping(String type, String newType) {
+        typeMapping.put(type, newType);
+    }
+
+    public boolean hasNoAdditionalMapping(String type) {
+        return typeMapping.containsKey(type);
     }
 
     @Override

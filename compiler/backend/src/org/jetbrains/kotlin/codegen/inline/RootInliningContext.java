@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.psi.KtElement;
 
-import java.util.Collections;
 import java.util.Map;
 
 public class RootInliningContext extends InliningContext {
@@ -38,7 +37,7 @@ public class RootInliningContext extends InliningContext {
             @NotNull String classNameToInline,
             @NotNull ReifiedTypeInliner inliner
     ) {
-        super(null, map, state, nameGenerator, Collections.<String, String>emptyMap(), inliner, false, false);
+        super(null, map, state, nameGenerator, TypeRemapper.createEmpty(), inliner, false, false);
         this.callElement = callElement;
         this.startContext = startContext;
         this.classNameToInline = classNameToInline;

@@ -27,10 +27,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
 import org.jetbrains.org.objectweb.asm.*;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode;
-import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode;
-import org.jetbrains.org.objectweb.asm.tree.MethodNode;
-import org.jetbrains.org.objectweb.asm.tree.VarInsnNode;
+import org.jetbrains.org.objectweb.asm.tree.*;
 
 import java.util.*;
 
@@ -65,8 +62,6 @@ public class AnonymousObjectTransformer {
 
     private final Map<String, List<String>> fieldNames = new HashMap<String, List<String>>();
 
-    private final TypeRemapper typeRemapper;
-
     public AnonymousObjectTransformer(
             @NotNull String objectInternalName,
             @NotNull InliningContext inliningContext,
@@ -81,7 +76,6 @@ public class AnonymousObjectTransformer {
         this.newLambdaType = newLambdaType;
 
         reader = InlineCodegenUtil.buildClassReaderByInternalName(state, objectInternalName);
-        typeRemapper = new TypeRemapper(inliningContext.typeMapping);
         transformationResult = InlineResult.create();
     }
 
@@ -192,7 +186,7 @@ public class AnonymousObjectTransformer {
                 String oldFunReturnType = returnType.getInternalName();
                 String newFunReturnType = funResult.getChangedTypes().get(oldFunReturnType);
                 if (newFunReturnType != null) {
-                    typeRemapper.addAdditionalMappings(oldFunReturnType, newFunReturnType);
+                    inliningContext.typeRemapper.addAdditionalMappings(oldFunReturnType, newFunReturnType);
                 }
             }
             deferringMethods.add(deferringVisitor);
@@ -344,7 +338,7 @@ public class AnonymousObjectTransformer {
     @NotNull
     private ClassBuilder createClassBuilder() {
         ClassBuilder classBuilder = state.getFactory().newVisitor(NO_ORIGIN, newLambdaType, inliningContext.getRoot().callElement.getContainingFile());
-        return new RemappingClassBuilder(classBuilder, typeRemapper);
+        return new RemappingClassBuilder(classBuilder, inliningContext.typeRemapper);
     }
 
     @NotNull
