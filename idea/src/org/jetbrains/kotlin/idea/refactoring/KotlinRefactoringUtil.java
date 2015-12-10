@@ -425,6 +425,7 @@ public class KotlinRefactoringUtil {
         if (expressions.size() == 0) {
             if (failOnEmptySuggestion) throw new IntroduceRefactoringException(
                     KotlinRefactoringBundle.message("cannot.refactor.not.expression"));
+            callback.run(null);
             return;
         }
 

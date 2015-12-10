@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.refactoring.introduce.introduceParameter
 import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.RangeMarker
 import com.intellij.openapi.editor.impl.DocumentMarkupModel
 import com.intellij.openapi.editor.markup.EffectType
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
@@ -26,6 +27,7 @@ import com.intellij.openapi.editor.markup.MarkupModel
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
 import com.intellij.ui.JBColor
 import com.intellij.ui.NonFocusableCheckBox
 import org.jetbrains.kotlin.idea.core.refactoring.createPrimaryConstructorParameterListIfAbsent
@@ -38,6 +40,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.getValueParameterList
 import org.jetbrains.kotlin.psi.psiUtil.getValueParameters
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
@@ -135,7 +138,9 @@ public class KotlinInplaceParameterIntroducer(
                         val parameterType = currentType ?: parameter.getTypeReference()!!.getText()
                         descriptor = descriptor.copy(newParameterName = parameterName!!, newParameterTypeText = parameterType)
                         val modifier = if (valVar != KotlinValVar.None) "${valVar.keywordName} " else ""
-                        val defaultValue = if (withDefaultValue) " = ${newArgumentValue.getText()}" else ""
+                        val defaultValue = if (withDefaultValue) {
+                            " = ${if (newArgumentValue is KtProperty) newArgumentValue.name else newArgumentValue.text}"
+                        } else ""
 
                         "$modifier$parameterName: $parameterType$defaultValue"
                     }
@@ -237,6 +242,16 @@ public class KotlinInplaceParameterIntroducer(
         preview.rangesToRemove.forEach { PreviewDecorator.FOR_REMOVAL.applyToRange(it, markupModel) }
         preview.addedRange?.let { PreviewDecorator.FOR_ADD.applyToRange(it, markupModel) }
         revalidate()
+    }
+
+    override fun getRangeToRename(element: PsiElement): TextRange {
+        if (element is KtProperty) return element.nameIdentifier!!.textRange.shiftRight(-element.startOffset)
+        return super.getRangeToRename(element)
+    }
+
+    override fun createMarker(element: PsiElement): RangeMarker {
+        if (element is KtProperty) return super.createMarker(element.nameIdentifier)
+        return super.createMarker(element)
     }
 
     override fun performIntroduce() {

@@ -3370,12 +3370,6 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             doIntroduceSimpleParameterTest(fileName);
         }
 
-        @TestMetadata("localVar.kt")
-        public void testLocalVar() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/localVar.kt");
-            doIntroduceSimpleParameterTest(fileName);
-        }
-
         @TestMetadata("partialSubstitution.kt")
         public void testPartialSubstitution() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/partialSubstitution.kt");
@@ -3663,6 +3657,27 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             @TestMetadata("singleEntrySuffix.kt")
             public void testSingleEntrySuffix() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/stringTemplates/singleEntrySuffix.kt");
+                doIntroduceSimpleParameterTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/testData/refactoring/introduceParameter/variableConversion")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class VariableConversion extends AbstractExtractionTest {
+            public void testAllFilesPresentInVariableConversion() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/introduceParameter/variableConversion"), Pattern.compile("^(.+)\\.(kt|kts)$"), true);
+            }
+
+            @TestMetadata("caretAtIdentifier.kt")
+            public void testCaretAtIdentifier() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/variableConversion/caretAtIdentifier.kt");
+                doIntroduceSimpleParameterTest(fileName);
+            }
+
+            @TestMetadata("fullSelection.kt")
+            public void testFullSelection() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/introduceParameter/variableConversion/fullSelection.kt");
                 doIntroduceSimpleParameterTest(fileName);
             }
         }

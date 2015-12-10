@@ -27,6 +27,7 @@ import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.introduce.inplace.AbstractInplaceIntroducer
 import com.intellij.refactoring.listeners.RefactoringEventListener
+import com.intellij.util.SmartList
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -36,7 +37,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
-import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.core.moveInsideParenthesesAndReplaceWith
 import org.jetbrains.kotlin.idea.core.refactoring.removeTemplateEntryBracesIfPossible
 import org.jetbrains.kotlin.idea.core.refactoring.runRefactoringWithPostprocessing
@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.approximateWithResolvableType
+import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiUnifier
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
@@ -61,6 +62,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.supertypes
+import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 import kotlin.test.fail
 
@@ -147,10 +149,11 @@ fun IntroduceParameterDescriptor.performRefactoring() {
                                 .forEach { methodDescriptor.removeParameter(it) }
                     }
 
+                    val defaultValue = if (newArgumentValue is KtProperty) (newArgumentValue as KtProperty).initializer else newArgumentValue
                     val parameterInfo = KotlinParameterInfo(callableDescriptor = callableDescriptor,
                                                             name = newParameterName,
-                                                            defaultValueForCall = if (withDefaultValue) null else newArgumentValue,
-                                                            defaultValueForParameter = if (withDefaultValue) newArgumentValue else null,
+                                                            defaultValueForCall = if (withDefaultValue) null else defaultValue,
+                                                            defaultValueForParameter = if (withDefaultValue) defaultValue else null,
                                                             valOrVar = valVar)
                     parameterInfo.currentTypeText = newParameterTypeText
                     methodDescriptor.addParameter(parameterInfo)
@@ -214,9 +217,20 @@ public open class KotlinIntroduceParameterHandler(
 ): KotlinIntroduceHandlerBase() {
     open fun invoke(project: Project, editor: Editor, expression: KtExpression, targetParent: KtNamedDeclaration) {
         val physicalExpression = expression.substringContextOrThis
+        if (physicalExpression is KtProperty && physicalExpression.isLocal && physicalExpression.nameIdentifier == null) {
+            showErrorHintByKey(project, editor, "cannot.refactor.no.expression", INTRODUCE_PARAMETER)
+            return
+        }
+
         val context = physicalExpression.analyze()
 
-        val expressionType = expression.extractableSubstringInfo?.type ?: context.getType(physicalExpression)
+        val expressionType = if (physicalExpression is KtProperty && physicalExpression.isLocal) {
+            context[BindingContext.VARIABLE, physicalExpression]?.type
+        }
+        else {
+            expression.extractableSubstringInfo?.type ?: context.getType(physicalExpression)
+        }
+
         if (expressionType == null) {
             showErrorHint(project, editor, "Expression has no type", INTRODUCE_PARAMETER)
             return
@@ -241,7 +255,13 @@ public open class KotlinIntroduceParameterHandler(
                        else -> null
                    } ?: throw AssertionError("Body element is not found: ${targetParent.getElementTextWithContext()}")
         val nameValidator = NewDeclarationNameValidator(body, sequenceOf(body), NewDeclarationNameValidator.Target.VARIABLES)
-        val suggestedNames = KotlinNameSuggester.suggestNamesByType(replacementType, nameValidator, "p")
+
+        val suggestedNames = SmartList<String>().apply {
+            if (physicalExpression is KtProperty && !ApplicationManager.getApplication().isUnitTestMode) {
+                addIfNotNull(physicalExpression.name)
+            }
+            addAll(KotlinNameSuggester.suggestNamesByType(replacementType, nameValidator, "p"))
+        }
 
         val parametersUsages = findInternalUsagesOfParametersAndReceiver(targetParent, functionDescriptor)
 
@@ -252,21 +272,27 @@ public open class KotlinIntroduceParameterHandler(
                 else {
                     Collections.emptyList()
                 }
-        val occurrencesToReplace = expression.toRange()
-                .match(body, KotlinPsiUnifier.DEFAULT)
-                .filterNot {
-                    val textRange = it.range.getPhysicalTextRange()
-                    forbiddenRanges.any { it.intersects(textRange) }
-                }
-                .mapNotNull {
-                    val matchedElement = it.range.elements.singleOrNull()
-                    when (matchedElement) {
-                        is KtExpression -> matchedElement
-                        is KtStringTemplateEntryWithExpression -> matchedElement.getExpression()
-                        else -> null
-                    } as? KtExpression
-                }
-                .map { it.toRange() }
+
+        val occurrencesToReplace = if (expression is KtProperty) {
+            ReferencesSearch.search(expression).mapNotNullTo(SmartList(expression.toRange())) { it.element?.toRange() }
+        }
+        else {
+            expression.toRange()
+                    .match(body, KotlinPsiUnifier.DEFAULT)
+                    .filterNot {
+                        val textRange = it.range.getPhysicalTextRange()
+                        forbiddenRanges.any { it.intersects(textRange) }
+                    }
+                    .mapNotNull {
+                        val matchedElement = it.range.elements.singleOrNull()
+                        val matchedExpr = when (matchedElement) {
+                            is KtExpression -> matchedElement
+                            is KtStringTemplateEntryWithExpression -> matchedElement.expression
+                            else -> null
+                        } as? KtExpression
+                        matchedExpr?.toRange()
+                    }
+        }
 
         project.executeCommand(
                 INTRODUCE_PARAMETER,
@@ -296,11 +322,12 @@ public open class KotlinIntroduceParameterHandler(
                                             withDefaultValue = false,
                                             parametersUsages = parametersUsages,
                                             occurrencesToReplace = occurrencesToReplace,
-                                            occurrenceReplacer = {
+                                            occurrenceReplacer = replacer@ {
                                                 val expressionToReplace = it.elements.single() as KtExpression
                                                 val replacingExpression = psiFactory.createExpression(newParameterName)
                                                 val substringInfo = expressionToReplace.extractableSubstringInfo
                                                 val result = when {
+                                                    expressionToReplace is KtProperty -> return@replacer expressionToReplace.delete()
                                                     expressionToReplace.isLambdaOutsideParentheses() -> {
                                                         expressionToReplace
                                                                 .getStrictParentOfType<KtLambdaArgument>()!!
