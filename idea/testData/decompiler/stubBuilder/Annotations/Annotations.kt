@@ -22,6 +22,8 @@
 
     class Nested @a private @b(E.E1) @b(E.E2) constructor()
 
+    enum class En { Entry1, @a @b(E.E2) Entry2, @a @c Entry3 }
+
     fun types(param: @a @b(E.E1) LongRange): @a @b(E.E2) Unit {}
 }
 
@@ -35,5 +37,10 @@ annotation class a
 @Retention(AnnotationRetention.SOURCE)
 @Repeatable
 annotation class b(val e: E)
+
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.FUNCTION,
+        AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER,
+        AnnotationTarget.TYPE, AnnotationTarget.CLASS)
+annotation class c
 
 enum class E { E1, E2 }

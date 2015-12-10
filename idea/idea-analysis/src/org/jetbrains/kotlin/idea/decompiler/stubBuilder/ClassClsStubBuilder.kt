@@ -172,9 +172,22 @@ private class ClassClsStubBuilder(
     }
 
     private fun createEnumEntryStubs(classBody: KotlinPlaceHolderStubImpl<KtClassBody>) {
-        classProto.getEnumEntryNameList().forEach { id ->
-            val name = c.nameResolver.getName(id)
-            KotlinClassStubImpl(
+        if (classKind != ProtoBuf.Class.Kind.ENUM_CLASS) return
+
+        val container = ProtoContainer(classProto, null, c.nameResolver, c.typeTable)
+        val enumEntries: List<Pair<Int, List<ClassId>>> =
+                if (classProto.enumEntryList.isNotEmpty())
+                    classProto.enumEntryList.map { enumEntryProto ->
+                        enumEntryProto.name to c.components.annotationLoader.loadEnumEntryAnnotations(container, enumEntryProto)
+                    }
+                else classProto.enumEntryNameList.map { enumEntryName ->
+                    enumEntryName to listOf<ClassId>()
+                }
+
+        enumEntries.forEach { entry ->
+            val name = c.nameResolver.getName(entry.first)
+            val annotations = entry.second
+            val enumEntryStub = KotlinClassStubImpl(
                     KtStubElementTypes.ENUM_ENTRY,
                     classBody,
                     qualifiedName = c.containerFqName.child(name).ref(),
@@ -185,6 +198,9 @@ private class ClassClsStubBuilder(
                     isLocal = false,
                     isTopLevel = false
             )
+            if (annotations.isNotEmpty()) {
+                createAnnotationStubs(annotations, createEmptyModifierListStub(enumEntryStub))
+            }
         }
     }
 

@@ -77,13 +77,19 @@ public fun buildDecompiledText(
         if (descriptor is MissingDependencyErrorClass) {
             throw IllegalStateException("${descriptor.javaClass.getSimpleName()} cannot be rendered. FqName: ${descriptor.fullFqName}")
         }
-        val startOffset = builder.length()
-        val header = if (isEnumEntry(descriptor))
-            descriptor.name.asString() + if (lastEnumEntry!!) ";" else ","
-        else
-            descriptorRenderer.render(descriptor).replace("= ...", DECOMPILED_COMMENT_FOR_PARAMETER)
-        builder.append(header)
-        var endOffset = builder.length()
+        val startOffset = builder.length
+        if (isEnumEntry(descriptor)) {
+            for (annotation in descriptor.annotations) {
+                builder.append(descriptorRenderer.renderAnnotation(annotation))
+                builder.append(" ")
+            }
+            builder.append(descriptor.name.asString())
+            builder.append(if (lastEnumEntry!!) ";" else ",")
+        }
+        else {
+            builder.append(descriptorRenderer.render(descriptor).replace("= ...", DECOMPILED_COMMENT_FOR_PARAMETER))
+        }
+        var endOffset = builder.length
 
         if (descriptor is CallableDescriptor) {
             //NOTE: assuming that only return types can be flexible
