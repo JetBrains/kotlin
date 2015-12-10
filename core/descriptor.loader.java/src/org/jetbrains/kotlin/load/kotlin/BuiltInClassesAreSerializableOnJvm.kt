@@ -68,18 +68,21 @@ class BuiltInClassesAreSerializableOnJvm(
         else return listOf()
     }
 
-    private fun isSerializableInJava(classFqName: FqName): Boolean {
-        val fqNameUnsafe = classFqName.toUnsafe()
-        if (fqNameUnsafe == KotlinBuiltIns.FQ_NAMES.array || KotlinBuiltIns.isPrimitiveArray(fqNameUnsafe)) {
-            return true
+    companion object {
+        fun isSerializableInJava(classFqName: FqName): Boolean {
+            val fqNameUnsafe = classFqName.toUnsafe()
+            if (fqNameUnsafe == KotlinBuiltIns.FQ_NAMES.array || KotlinBuiltIns.isPrimitiveArray(fqNameUnsafe)) {
+                return true
+            }
+            val javaClassId = JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(fqNameUnsafe) ?: return false
+            val classViaReflection = try {
+                Class.forName(javaClassId.asSingleFqName().asString())
+            }
+            catch (e: ClassNotFoundException) {
+                return false
+            }
+            return Serializable::class.java.isAssignableFrom(classViaReflection)
         }
-        val javaClassId = JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(fqNameUnsafe) ?: return false
-        val classViaReflection = try {
-            Class.forName(javaClassId.asSingleFqName().asString())
-        }
-        catch (e: ClassNotFoundException) {
-            return false
-        }
-        return Serializable::class.java.isAssignableFrom(classViaReflection)
+
     }
 }

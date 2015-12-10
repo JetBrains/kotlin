@@ -20,15 +20,21 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.descriptorToKey
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.load.kotlin.BuiltInClassesAreSerializableOnJvm
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.utils.concurrent.block.LockedClearableLazyValue
 
 open class KtDecompiledFile(
@@ -54,14 +60,21 @@ open class KtDecompiledFile(
             return classOrObject?.getPrimaryConstructor() ?: classOrObject
         }
 
-        val key = descriptorToKey(original)
+        return original.findElementForDescriptor() ?: run {
+            if (descriptor !is ClassDescriptor) return null
 
-        val range = decompiledText.get().renderedDescriptorsToRange[key]
-        return if (range != null) {
-            PsiTreeUtil.findElementOfClassAtRange(this, range.getStartOffset(), range.getEndOffset(), javaClass<KtDeclaration>())
+            val classFqName = descriptor.fqNameSafe
+            if (BuiltInClassesAreSerializableOnJvm.isSerializableInJava(classFqName)) {
+                val builtInDescriptor = TargetPlatform.Default.builtIns.builtInsModule.resolveTopLevelClass(classFqName, NoLookupLocation.FROM_IDE)
+                return builtInDescriptor?.findElementForDescriptor()
+            }
+            return null
         }
-        else {
-            null
+    }
+
+    private fun DeclarationDescriptor.findElementForDescriptor(): KtDeclaration? {
+        return decompiledText.get().renderedDescriptorsToRange[descriptorToKey(this)]?.let { range ->
+            PsiTreeUtil.findElementOfClassAtRange(this@KtDecompiledFile, range.getStartOffset(), range.getEndOffset(), javaClass<KtDeclaration>())
         }
     }
 
@@ -81,3 +94,4 @@ open class KtDecompiledFile(
         return decompiledText.get().renderedDescriptorsToRange
     }
 }
+
