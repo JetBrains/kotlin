@@ -28,7 +28,7 @@ public class KotlinMoveFilesOrDirectoriesHandler : MoveFilesOrDirectoriesHandler
     private fun adjustElements(elements: Array<out PsiElement>): Array<PsiElement>? {
         return elements.map {
             when {
-                it is PsiFile, it is PsiDirectory -> it
+                it is PsiFile || it is PsiDirectory -> it
                 it is PsiClass && it.getContainingClass() == null -> it.getContainingFile()
                 it is KtClassOrObject && it.getParent() is KtFile -> it.getParent()
                 else -> return null

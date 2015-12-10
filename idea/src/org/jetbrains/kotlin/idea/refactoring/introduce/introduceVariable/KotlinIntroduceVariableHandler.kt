@@ -368,7 +368,7 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
         for ((place, parent) in parentsWithSelf.zip(parents)) {
             when {
                 parent is KtContainerNode && place !is KtBlockExpression && !parent.isBadContainerNode(place) -> result = parent
-                parent is KtClassBody, parent is KtFile -> return result
+                parent is KtClassBody || parent is KtFile -> return result
                 parent is KtBlockExpression -> result = parent
                 parent is KtWhenEntry && place !is KtBlockExpression -> result = parent
                 parent is KtDeclarationWithBody && parent.bodyExpression == place && place !is KtBlockExpression -> result = parent

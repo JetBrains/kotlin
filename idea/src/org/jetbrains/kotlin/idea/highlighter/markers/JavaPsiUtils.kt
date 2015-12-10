@@ -56,7 +56,7 @@ internal fun getPsiMethod(element: PsiElement?): PsiMethod? {
     return when {
         element == null -> null
         element is PsiMethod -> element
-        parent is KtNamedFunction, parent is KtSecondaryConstructor -> LightClassUtil.getLightClassMethod(parent as KtFunction)
+        parent is KtNamedFunction || parent is KtSecondaryConstructor -> LightClassUtil.getLightClassMethod(parent as KtFunction)
         else -> null
     }
 }

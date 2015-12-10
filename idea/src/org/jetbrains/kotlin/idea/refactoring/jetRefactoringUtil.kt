@@ -436,8 +436,8 @@ public fun PsiElement.canRefactor(): Boolean {
     return when {
         this is PsiPackage ->
             getDirectories().any { it.canRefactor() }
-        this is KtElement,
-        this is PsiMember && getLanguage() == JavaLanguage.INSTANCE,
+        this is KtElement ||
+        this is PsiMember && getLanguage() == JavaLanguage.INSTANCE ||
         this is PsiDirectory ->
             isWritable() && ProjectRootsUtil.isInProjectSource(this)
         else ->

@@ -56,7 +56,7 @@ tailrec fun allSuperTypesImpl(roots: List<GenerateTraitOrClass>, all: Map<String
 
 fun standardTypes() = typeMapper.values.map {it.dropNullable()}.toSet()
 fun Type.dynamicIfUnknownType(allTypes: Set<String>, standardTypes: Set<Type> = standardTypes()): Type = when {
-    this is DynamicType, this is UnitType -> this
+    this is DynamicType || this is UnitType -> this
 
     this is SimpleType && this.type in allTypes -> this
     this.dropNullable() in standardTypes -> this

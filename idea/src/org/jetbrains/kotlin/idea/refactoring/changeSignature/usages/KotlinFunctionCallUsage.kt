@@ -153,7 +153,7 @@ class KotlinFunctionCallUsage(
 
     private fun needSeparateVariable(element: PsiElement): Boolean {
         return when {
-            element is KtConstantExpression, element is KtThisExpression, element is KtSimpleNameExpression -> false
+            element is KtConstantExpression || element is KtThisExpression || element is KtSimpleNameExpression -> false
             element is KtBinaryExpression && OperatorConventions.ASSIGNMENT_OPERATIONS.contains(element.operationToken) -> true
             element is KtUnaryExpression && OperatorConventions.INCREMENT_OPERATIONS.contains(element.operationToken) -> true
             element is KtCallExpression -> element.getResolvedCall(context)?.resultingDescriptor is ConstructorDescriptor

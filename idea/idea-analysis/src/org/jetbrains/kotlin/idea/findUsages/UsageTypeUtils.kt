@@ -170,8 +170,8 @@ public object UsageTypeUtils {
                 } ->
                     if (descriptor is ConstructorDescriptor) CLASS_NEW_OPERATOR else FUNCTION_CALL
 
-                refExpr.getParentOfTypeAndBranch<KtBinaryExpression>(){ getOperationReference() } != null,
-                refExpr.getParentOfTypeAndBranch<KtUnaryExpression>(){ getOperationReference() } != null,
+                refExpr.getParentOfTypeAndBranch<KtBinaryExpression>(){ getOperationReference() } != null ||
+                refExpr.getParentOfTypeAndBranch<KtUnaryExpression>(){ getOperationReference() } != null ||
                 refExpr.getParentOfTypeAndBranch<KtWhenConditionInRange>(){ getOperationReference() } != null ->
                     FUNCTION_CALL
 
@@ -195,7 +195,7 @@ public object UsageTypeUtils {
         return when (descriptor) {
             is ClassifierDescriptor -> when {
             // Treat object accesses as variables to simulate the old behaviour (when variables were created for objects)
-                DescriptorUtils.isNonCompanionObject(descriptor), DescriptorUtils.isEnumEntry(descriptor) -> getVariableUsageType()
+                DescriptorUtils.isNonCompanionObject(descriptor) || DescriptorUtils.isEnumEntry(descriptor) -> getVariableUsageType()
                 DescriptorUtils.isCompanionObject(descriptor) -> COMPANION_OBJECT_ACCESS
                 else -> getClassUsageType()
             }

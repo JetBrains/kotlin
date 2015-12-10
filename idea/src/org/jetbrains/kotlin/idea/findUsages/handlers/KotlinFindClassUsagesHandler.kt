@@ -83,7 +83,7 @@ public class KotlinFindClassUsagesHandler(
                                 public override fun execute(element: PsiClass): Boolean {
                                     val isInterface = element.isInterface()
                                     return when {
-                                        isInterface && options.isDerivedInterfaces, !isInterface && options.isDerivedClasses ->
+                                        isInterface && options.isDerivedInterfaces || !isInterface && options.isDerivedClasses ->
                                             KotlinFindUsagesHandler.processUsage(processor, element.getNavigationElement())
                                         else -> true
                                     }

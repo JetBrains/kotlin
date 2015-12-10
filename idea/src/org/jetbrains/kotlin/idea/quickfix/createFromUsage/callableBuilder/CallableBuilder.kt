@@ -529,7 +529,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
                     val neighborType = neighbor?.getNode()?.getElementType()
                     val lineBreaksNeeded = when {
-                        neighborType == KtTokens.LBRACE, neighborType == KtTokens.RBRACE -> 1
+                        neighborType == KtTokens.LBRACE || neighborType == KtTokens.RBRACE -> 1
                         neighbor is KtDeclaration && (neighbor !is KtProperty || decl !is KtProperty) -> 2
                         else -> 1
                     }

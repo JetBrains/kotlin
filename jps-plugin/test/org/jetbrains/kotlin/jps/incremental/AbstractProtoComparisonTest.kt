@@ -102,8 +102,8 @@ public abstract class AbstractProtoComparisonTest : UsefulTestCase() {
         )
 
         val diff = when {
-            newClassHeader.isCompatibleClassKind(),
-            newClassHeader.isCompatibleFileFacadeKind(),
+            newClassHeader.isCompatibleClassKind() ||
+            newClassHeader.isCompatibleFileFacadeKind() ||
             newClassHeader.isCompatibleMultifileClassPartKind() ->
                 difference(oldProto, newProto)
             else ->  {

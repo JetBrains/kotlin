@@ -706,7 +706,7 @@ public interface Errors {
     DiagnosticFactory0<KtWhenEntry> ELSE_MISPLACED_IN_WHEN = DiagnosticFactory0.create(ERROR, ELSE_ENTRY);
     DiagnosticFactory0<KtWhenExpression> NO_ELSE_IN_WHEN = DiagnosticFactory0.create(ERROR, WHEN_EXPRESSION);
     DiagnosticFactory0<KtWhenExpression> NON_EXHAUSTIVE_WHEN = DiagnosticFactory0.create(WARNING, WHEN_EXPRESSION);
-    DiagnosticFactory0<PsiElement> COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT = DiagnosticFactory0.create(ERROR);
 
     // Type mismatch
 

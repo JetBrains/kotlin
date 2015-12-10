@@ -86,7 +86,7 @@ object CreateParameterByRefActionFactory : CreateParameterFromUsageFactory<KtSim
                     .firstOrNull()
                     ?.let {
                         when {
-                            (it is KtNamedFunction || it is KtSecondaryConstructor) && varExpected,
+                            (it is KtNamedFunction || it is KtSecondaryConstructor) && varExpected ||
                             it is KtPropertyAccessor -> chooseContainingClass(it)
                             it is KtAnonymousInitializer -> it.parent?.parent as? KtClass
                             it is KtSuperTypeListEntry -> {

@@ -2062,12 +2062,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                     doTest(fileName);
                 }
 
-                @TestMetadata("whenWithRangeTestsAndMultiConditions.kt")
-                public void testWhenWithRangeTestsAndMultiConditions() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/when/introduceSubject/whenWithRangeTestsAndMultiConditions.kt");
-                    doTest(fileName);
-                }
-
                 @TestMetadata("whenWithSubject.kt")
                 public void testWhenWithSubject() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/when/introduceSubject/whenWithSubject.kt");
