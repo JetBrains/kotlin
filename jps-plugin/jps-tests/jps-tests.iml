@@ -7,11 +7,15 @@
     </content>
     <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="jps-tests" />
-    <orderEntry type="library" scope="TEST" name="jps" level="project" />
+    <orderEntry type="module" module-name="jps-plugin" scope="TEST" />
+    <orderEntry type="module" module-name="descriptors" scope="TEST" />
+    <orderEntry type="module" module-name="frontend.java" scope="TEST" />
+    <orderEntry type="module" module-name="backend" scope="TEST" />
+    <orderEntry type="module" module-name="util" scope="TEST" />
+    <orderEntry type="module" module-name="daemon-common" scope="TEST" />
+    <orderEntry type="module" module-name="compiler-tests" scope="TEST" />
+    <orderEntry type="module" module-name="build-common" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="jps-test" level="project" />
     <orderEntry type="library" scope="TEST" name="idea-full" level="project" />
-    <orderEntry type="library" scope="TEST" name="build-common" level="project" />
-    <orderEntry type="module" module-name="build-common" scope="TEST" />
   </component>
 </module>
