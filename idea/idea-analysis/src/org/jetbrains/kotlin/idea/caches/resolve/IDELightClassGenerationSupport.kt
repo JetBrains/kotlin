@@ -32,6 +32,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.asJava.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
+import org.jetbrains.kotlin.idea.decompiler.classFile.KtClsFile
 import org.jetbrains.kotlin.idea.decompiler.navigation.SourceNavigationHelper
 import org.jetbrains.kotlin.idea.project.ResolveElementCache
 import org.jetbrains.kotlin.idea.stubindex.*
@@ -266,7 +267,7 @@ public class IDELightClassGenerationSupport(private val project: Project) : Ligh
             return null
         }
         val containingJetFile = decompiledClassOrObject.getContainingKtFile()
-        if (!containingJetFile.isCompiled) {
+        if (containingJetFile !is KtClsFile) {
             return null
         }
         val rootLightClassForDecompiledFile = createLightClassForDecompiledKotlinFile(containingJetFile) ?: return null
