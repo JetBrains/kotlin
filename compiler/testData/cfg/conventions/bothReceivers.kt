@@ -5,6 +5,6 @@ class Foo() {
     fun Bar.invoke() {}
 }
 
-fun foobar(f: Foo) {
-    Bar().f()
+fun Foo.foobar(bar: Bar) {
+    bar()
 }

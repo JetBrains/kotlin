@@ -35,8 +35,8 @@ fun test2(foo: Foo, get: Foo.(Int) -> Int) {
 ---------------------
              <v0>: Foo                     NEW: magic[FAKE_INITIALIZER](foo: Foo) -> <v0>
              <v1>: {<: Foo.(Int) -> Int}   NEW: magic[FAKE_INITIALIZER](get: Foo.(Int) -> Int) -> <v1>
-foo          <v2>: Foo                     NEW: r(foo) -> <v2>
+foo          <v3>: Foo                     NEW: r(foo) -> <v3>
 1            <v4>: Int                     NEW: r(1) -> <v4>
-foo[1]       <v5>: *                       NEW: call(foo[1], invoke|<v3>, <v4>) -> <v5>
+foo[1]       <v5>: *                       NEW: call(foo[1], invoke|<v2>, <v3>, <v4>) -> <v5>
 { foo[1] }   <v5>: *                       COPY
 =====================

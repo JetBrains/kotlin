@@ -40,26 +40,24 @@ sink:
     <SINK>         PREV:[<ERROR>, <END>]
 =====================
 == foobar ==
-fun foobar(f: Foo) {
-    Bar().f()
+fun Foo.foobar(bar: Bar) {
+    bar()
 }
 ---------------------
 L0:
   1 <START>
-    v(f: Foo)
-    magic[FAKE_INITIALIZER](f: Foo) -> <v0>
-    w(f|<v0>)
-  2 mark({ Bar().f() })
-    mark(Bar().f())
-    r(f) -> <v1>
-    mark(Bar())
-    call(Bar(), <init>) -> <v2>
-    mark(f())
-    call(f(), invoke|<v1>, <v2>) -> <v3>
+    v(bar: Bar)
+    magic[FAKE_INITIALIZER](bar: Bar) -> <v0>
+    w(bar|<v0>)
+  2 mark({ bar() })
+    r(bar) -> <v1>
+    magic[IMPLICIT_RECEIVER](bar()) -> <v2>
+    mark(bar())
+    call(bar(), invoke|<v1>, <v2>) -> <v3>
 L1:
-  1 <END>                                      NEXT:[<SINK>]
+  1 <END>                                        NEXT:[<SINK>]
 error:
-    <ERROR>                                    PREV:[]
+    <ERROR>                                      PREV:[]
 sink:
-    <SINK>                                     PREV:[<ERROR>, <END>]
+    <SINK>                                       PREV:[<ERROR>, <END>]
 =====================

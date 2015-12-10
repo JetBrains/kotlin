@@ -86,11 +86,11 @@ L0:
     w(get|<v1>)
   2 mark({ foo[1] })
     mark(foo[1])
-    r(foo) -> <v2>
-    r(foo[1], get|<v2>) -> <v3>
+    r(foo[1], get) -> <v2>
+    r(foo) -> <v3>
     r(1) -> <v4>
     mark(foo[1])
-    call(foo[1], invoke|<v3>, <v4>) -> <v5>
+    call(foo[1], invoke|<v2>, <v3>, <v4>) -> <v5>
 L1:
   1 <END>                                                     NEXT:[<SINK>]
 error:

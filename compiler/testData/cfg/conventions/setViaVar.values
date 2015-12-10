@@ -35,12 +35,12 @@ fun test2(foo: Foo, set: Foo.(Int, Int) -> Int) {
     foo[1] = 2
 }
 ---------------------
-                 <v0>: Foo                          NEW: magic[FAKE_INITIALIZER](foo: Foo) -> <v0>
-                 <v1>: {<: Foo.(Int, Int) -> Int}   NEW: magic[FAKE_INITIALIZER](set: Foo.(Int, Int) -> Int) -> <v1>
-foo              <v2>: Foo                          NEW: r(foo) -> <v2>
-1                <v4>: Int                          NEW: r(1) -> <v4>
-foo[1]           <v3>: Bar                          NEW: r(foo[1], set|<v2>) -> <v3>
-2                <v5>: Int                          NEW: r(2) -> <v5>
-foo[1] = 2       <v6>: *                            NEW: call(foo[1] = 2, invoke|<v3>, <v4>, <v5>) -> <v6>
-{ foo[1] = 2 }   <v6>: *                            COPY
+                 <v0>: Foo                           NEW: magic[FAKE_INITIALIZER](foo: Foo) -> <v0>
+                 <v1>: {<: Foo.(Int, Int) -> Int}    NEW: magic[FAKE_INITIALIZER](set: Foo.(Int, Int) -> Int) -> <v1>
+foo              <v2>: Foo                           NEW: r(foo) -> <v2>
+1                <v4>: Int                           NEW: r(1) -> <v4>
+foo[1]           <v3>: {<: (Foo, Int, Int) -> Int}   NEW: r(foo[1], set) -> <v3>
+2                <v5>: Int                           NEW: r(2) -> <v5>
+foo[1] = 2       <v6>: *                             NEW: call(foo[1] = 2, invoke|<v3>, <v2>, <v4>, <v5>) -> <v6>
+{ foo[1] = 2 }   <v6>: *                             COPY
 =====================

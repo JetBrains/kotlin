@@ -90,10 +90,10 @@ L0:
   2 mark({ foo[1] = 2 })
     mark(foo[1])
     r(foo) -> <v2>
-    r(foo[1], set|<v2>) -> <v3>
+    r(foo[1], set) -> <v3>
     r(1) -> <v4>
     r(2) -> <v5>
-    call(foo[1] = 2, invoke|<v3>, <v4>, <v5>) -> <v6>
+    call(foo[1] = 2, invoke|<v3>, <v2>, <v4>, <v5>) -> <v6>
 L1:
   1 <END>                                                          NEXT:[<SINK>]
 error:
