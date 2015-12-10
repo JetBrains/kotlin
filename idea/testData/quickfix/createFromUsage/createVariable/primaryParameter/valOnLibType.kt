@@ -2,6 +2,7 @@
 // ACTION: Create extension property 'foo'
 // ACTION: Rename reference
 // ERROR: Unresolved reference: foo
+// WITH_RUNTIME
 
 class A<T>(val n: T)
 

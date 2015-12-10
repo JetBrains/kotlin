@@ -73,7 +73,7 @@ public class NavigateFromLibrarySourcesTest: LightCodeInsightFixtureTestCase() {
     }
 
     override fun getProjectDescriptor(): LightProjectDescriptor {
-        return JdkAndMockLibraryProjectDescriptor(PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/fromLibSource", true)
+        return JdkAndMockLibraryProjectDescriptor(PluginTestCaseBase.getTestDataPathBase() + "/decompiler/navigation/fromLibSource", true, true, false)
     }
 
     private fun checkNavigationElement(element: PsiElement, expectedFqName: String) {

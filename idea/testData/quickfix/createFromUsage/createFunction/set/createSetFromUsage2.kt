@@ -1,4 +1,5 @@
 // "Create extension function 'set'" "true"
+// WITH_RUNTIME
 
 class Foo<T> {
     fun <T> x (y: Any, w: java.util.ArrayList<T>) {
