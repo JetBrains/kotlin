@@ -1,6 +1,3 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
-public inline fun <reified T> Array(n: Int, block: (Int) -> T): Array<T> = null!!
-
 //KT-1703 Reference to label is unresolved
 
 fun test() {

@@ -1,5 +1,4 @@
-fun foo() {
-  val a = Array<Int>
+fun foo(a: Array<Int>) {
   3
   a[10] = 4
   2
