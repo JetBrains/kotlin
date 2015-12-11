@@ -492,6 +492,11 @@ public class ReplInterpreter {
             return this.delegateFactory.getPackageMemberDeclarationProvider(packageFqName);
         }
 
+        @Override
+        public void diagnoseMissingPackageFragment(KtFile file) {
+            this.delegateFactory.diagnoseMissingPackageFragment(file);
+        }
+
         public static class AdaptablePackageMemberDeclarationProvider extends DelegatePackageMemberDeclarationProvider {
             @NotNull
             private PackageMemberDeclarationProvider delegateProvider;

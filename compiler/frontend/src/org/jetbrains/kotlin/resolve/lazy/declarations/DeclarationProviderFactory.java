@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.lazy.declarations;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo;
 
 public interface DeclarationProviderFactory {
@@ -27,4 +28,6 @@ public interface DeclarationProviderFactory {
 
     @Nullable
     PackageMemberDeclarationProvider getPackageMemberDeclarationProvider(@NotNull FqName packageFqName);
+
+    void diagnoseMissingPackageFragment(KtFile file);
 }

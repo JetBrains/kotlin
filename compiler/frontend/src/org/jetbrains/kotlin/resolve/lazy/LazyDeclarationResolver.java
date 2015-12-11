@@ -243,9 +243,17 @@ public class LazyDeclarationResolver {
         KtDeclaration parentDeclaration = KtStubbedPsiUtil.getContainingDeclaration(declaration);
         boolean isTopLevel = parentDeclaration == null;
         if (isTopLevel) { // for top level declarations we search directly in package because of possible conflicts with imports
-            FqName fqName = ((KtFile) declaration.getContainingFile()).getPackageFqName();
+            KtFile ktFile = (KtFile) declaration.getContainingFile();
+            FqName fqName = ktFile.getPackageFqName();
             LazyPackageDescriptor packageDescriptor = topLevelDescriptorProvider.getPackageFragment(fqName);
-            assert packageDescriptor != null;
+            if (packageDescriptor == null) {
+                if (topLevelDescriptorProvider instanceof LazyClassContext) {
+                    ((LazyClassContext) topLevelDescriptorProvider).getDeclarationProviderFactory().diagnoseMissingPackageFragment(ktFile);
+                }
+                else {
+                    throw new IllegalStateException("Cannot find package fragment for file " + ktFile.getName() + " with package " + fqName);
+                }
+            }
             return packageDescriptor.getMemberScope();
         }
         else {

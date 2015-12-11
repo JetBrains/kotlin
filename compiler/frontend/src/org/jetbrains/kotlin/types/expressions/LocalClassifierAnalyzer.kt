@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
@@ -133,6 +134,9 @@ class LocalClassDescriptorHolder(
                                 throw UnsupportedOperationException("Should not be called for top-level declarations")
                             }
 
+                            override fun diagnoseMissingPackageFragment(file: KtFile?) {
+                                throw UnsupportedOperationException()
+                            }
                         }
                         override val annotationResolver = this@LocalClassDescriptorHolder.annotationResolver
                         override val lookupTracker: LookupTracker = LookupTracker.DO_NOTHING
