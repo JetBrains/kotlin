@@ -1398,6 +1398,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJava(fileName);
             }
 
+            @TestMetadata("StaticOverrides.java")
+            public void testStaticOverrides() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/sam/StaticOverrides.java");
+                doTestCompiledJava(fileName);
+            }
+
             @TestMetadata("SubstitutedSamInterface.java")
             public void testSubstitutedSamInterface() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/sam/SubstitutedSamInterface.java");
