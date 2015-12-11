@@ -69,16 +69,16 @@ public class GenerationState @JvmOverloads constructor(
         public val progress: Progress = Progress.DEAF
 ) {
     public abstract class GenerateClassFilter {
-        public abstract fun shouldAnnotateClass(classOrObject: KtClassOrObject): Boolean
-        public abstract fun shouldGenerateClass(classOrObject: KtClassOrObject): Boolean
+        public abstract fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject): Boolean
+        public abstract fun shouldGenerateClass(processingClassOrObject: KtClassOrObject): Boolean
         public abstract fun shouldGeneratePackagePart(jetFile: KtFile): Boolean
         public abstract fun shouldGenerateScript(script: KtScript): Boolean
 
         companion object {
             public val GENERATE_ALL: GenerateClassFilter = object : GenerateClassFilter() {
-                override fun shouldAnnotateClass(classOrObject: KtClassOrObject): Boolean = true
+                override fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject): Boolean = true
 
-                override fun shouldGenerateClass(classOrObject: KtClassOrObject): Boolean = true
+                override fun shouldGenerateClass(processingClassOrObject: KtClassOrObject): Boolean = true
 
                 override fun shouldGenerateScript(script: KtScript): Boolean = true
 

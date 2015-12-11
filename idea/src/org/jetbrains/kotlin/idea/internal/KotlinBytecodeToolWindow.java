@@ -212,13 +212,13 @@ public class KotlinBytecodeToolWindow extends JPanel implements Disposable {
                 }
 
                 @Override
-                public boolean shouldAnnotateClass(@NotNull KtClassOrObject classOrObject) {
+                public boolean shouldAnnotateClass(@NotNull KtClassOrObject processingClassOrObject) {
                     return true;
                 }
 
                 @Override
-                public boolean shouldGenerateClass(@NotNull KtClassOrObject classOrObject) {
-                    return classOrObject.getContainingKtFile() == jetFile;
+                public boolean shouldGenerateClass(@NotNull KtClassOrObject processingClassOrObject) {
+                    return processingClassOrObject.getContainingKtFile() == jetFile;
                 }
 
                 @Override
