@@ -2,7 +2,7 @@ fun usedOnlyRecursively() {
     usedOnlyRecursively()
 }
 
-@Suppress("UnusedSymbol")
+@Suppress("unused")
 fun usedOnlyRecursivelyNoWarn() {
     usedOnlyRecursivelyNoWarn()
 }

@@ -189,6 +189,8 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
         }
     }
 
+    override val suppressionKey: String get() = "unused"
+
     private fun classOrObjectHasTextUsages(classOrObject: KtClassOrObject): Boolean {
         var hasTextUsages = false
 

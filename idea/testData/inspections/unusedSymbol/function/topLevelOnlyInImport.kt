@@ -7,5 +7,5 @@ fun onlyInImport() {
 
 }
 
-@Suppress("UnusedSymbol")
+@Suppress("unused")
 fun onlyInImportNoWarn() {}

@@ -14,13 +14,13 @@ fun main(args: Array<String>) {
         fun f() {
         }
 
-        @Suppress("UnusedSymbol")
+        @Suppress("unused")
         fun fNoWarn() {}
 
         val p = 5
     }
 
-    @Suppress("UnusedSymbol")
+    @Suppress("unused")
     fun localObject3() = object {
         fun fNoWarn() {}
     }

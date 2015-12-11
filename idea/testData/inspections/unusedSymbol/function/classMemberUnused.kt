@@ -2,13 +2,13 @@ class Klass {
     fun unusedFun() {
     }
 
-    @Suppress("UnusedSymbol")
+    @Suppress("unused")
     fun unusedNoWarn() {
 
     }
 }
 
-@Suppress("UnusedSymbol")
+@Suppress("unused")
 class OtherKlass {
     fun unusedNoWarn() {
 

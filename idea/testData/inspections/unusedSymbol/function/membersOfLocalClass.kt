@@ -3,13 +3,13 @@ fun main(args: Array<String>) {
         fun f() {
         }
 
-        @Suppress("UnusedSymbol")
+        @Suppress("unused")
         fun fNoWarn() {}
 
         val p = 5
     }
 
-    @Suppress("UnusedSymbol")
+    @Suppress("unused")
     class OtherClass {
         fun fNoWarn() {}
     }
@@ -19,7 +19,7 @@ fun main(args: Array<String>) {
     LocalClass().p
 }
 
-@Suppress("UnusedSymbol")
+@Suppress("unused")
 fun other() {
     class OtherClass {
         fun fNoWarn() {}

@@ -1,4 +1,4 @@
-// "Suppress 'KotlinUnusedImport' for file ${file}" "true"
+// "Suppress 'UnusedImport' for file ${file}" "true"
 
 import<caret> java.io.*
 

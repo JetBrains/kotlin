@@ -3,7 +3,7 @@ class Klass {
         fun f() {
         }
 
-        @Suppress("UnusedSymbol")
+        @Suppress("unused")
         fun fNoWarn() {}
 
         val p = 5
@@ -19,17 +19,17 @@ class Klass {
         fun f() {
         }
 
-        @Suppress("UnusedSymbol")
+        @Suppress("unused")
         fun fNoWarn() {}
 
         val p = 5
     }
 
-    fun localObject3() = @Suppress("UnusedSymbol") object {
+    fun localObject3() = @Suppress("unused") object {
         fun fNoWarn() {}
     }
 
-    @Suppress("UnusedSymbol")
+    @Suppress("unused")
     private val localObject4 = object {
         fun fNoWarn() {}
     }

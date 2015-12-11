@@ -3,13 +3,13 @@ fun outer() {
 
     }
 
-    @Suppress("UnusedSymbol")
+    @Suppress("unused")
     fun localNoWarn() {
 
     }
 }
 
-@Suppress("UnusedSymbol")
+@Suppress("unused")
 fun otherFun() {
     fun localNoWarn() {
 

@@ -30,7 +30,7 @@ public abstract class AbstractKotlinInspection: LocalInspectionTool(), CustomSup
     public override fun getSuppressActions(element: PsiElement?): Array<SuppressIntentionAction>? {
         if (element == null) return emptyArray()
 
-        return createSuppressWarningActions(element, toSeverity(defaultLevel), this.shortName).toTypedArray()
+        return createSuppressWarningActions(element, toSeverity(defaultLevel), suppressionKey).toTypedArray()
     }
 
     public override fun isSuppressedFor(element: PsiElement): Boolean {
@@ -39,25 +39,28 @@ public abstract class AbstractKotlinInspection: LocalInspectionTool(), CustomSup
         }
 
         val project = element.project
-        if (KotlinCacheService.getInstance(project).getSuppressionCache().isSuppressed(element, this.shortName, toSeverity(defaultLevel))) {
+        if (KotlinCacheService.getInstance(project).getSuppressionCache().isSuppressed(element, suppressionKey, toSeverity(defaultLevel))) {
             return true
         }
 
         return false
     }
 
-    public fun toSeverity(highlightDisplayLevel: HighlightDisplayLevel): Severity  {
-        return when (highlightDisplayLevel) {
-            HighlightDisplayLevel.DO_NOT_SHOW -> Severity.INFO
+    protected open val suppressionKey: String get() = this.shortName.removePrefix("Kotlin")
+}
 
-            HighlightDisplayLevel.WARNING,
-            HighlightDisplayLevel.WEAK_WARNING -> Severity.WARNING
+private fun toSeverity(highlightDisplayLevel: HighlightDisplayLevel): Severity  {
+    return when (highlightDisplayLevel) {
+        HighlightDisplayLevel.DO_NOT_SHOW -> Severity.INFO
 
-            HighlightDisplayLevel.ERROR,
-            HighlightDisplayLevel.GENERIC_SERVER_ERROR_OR_WARNING,
-            HighlightDisplayLevel.NON_SWITCHABLE_ERROR -> Severity.ERROR
+        HighlightDisplayLevel.WARNING,
+        HighlightDisplayLevel.WEAK_WARNING -> Severity.WARNING
 
-            else -> Severity.ERROR
-        }
+        HighlightDisplayLevel.ERROR,
+        HighlightDisplayLevel.GENERIC_SERVER_ERROR_OR_WARNING,
+        HighlightDisplayLevel.NON_SWITCHABLE_ERROR -> Severity.ERROR
+
+        else -> Severity.ERROR
     }
 }
+
