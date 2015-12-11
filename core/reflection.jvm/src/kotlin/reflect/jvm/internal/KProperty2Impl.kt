@@ -31,6 +31,8 @@ internal open class KProperty2Impl<D, E, out R> : DescriptorBasedProperty<R>, KP
 
     override fun get(receiver1: D, receiver2: E): R = getter.call(receiver1, receiver2)
 
+    override fun invoke(receiver1: D, receiver2: E): R = get(receiver1, receiver2)
+
     class Getter<D, E, out R>(override val property: KProperty2Impl<D, E, R>) : KPropertyImpl.Getter<R>(), KProperty2.Getter<D, E, R> {
         override fun invoke(receiver1: D, receiver2: E): R = property.get(receiver1, receiver2)
     }

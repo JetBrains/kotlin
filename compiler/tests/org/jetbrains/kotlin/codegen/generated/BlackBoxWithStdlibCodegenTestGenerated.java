@@ -816,6 +816,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
+            @TestMetadata("invokePropertyReference.kt")
+            public void testInvokePropertyReference() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/property/invokePropertyReference.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("javaBeanConvention.kt")
             public void testJavaBeanConvention() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/property/javaBeanConvention.kt");
@@ -4188,6 +4194,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             @TestMetadata("getPropertiesMutableVsReadonly.kt")
             public void testGetPropertiesMutableVsReadonly() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/properties/getPropertiesMutableVsReadonly.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("invokeKProperty.kt")
+            public void testInvokeKProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/properties/invokeKProperty.kt");
                 doTestWithStdlib(fileName);
             }
 

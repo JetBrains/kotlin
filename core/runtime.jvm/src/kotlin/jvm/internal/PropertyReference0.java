@@ -31,6 +31,11 @@ public class PropertyReference0 extends PropertyReference implements KProperty0 
     }
 
     @Override
+    public Object invoke() {
+        return get();
+    }
+
+    @Override
     public KProperty0.Getter getGetter() {
         return ((KProperty0) getReflected()).getGetter();
     }

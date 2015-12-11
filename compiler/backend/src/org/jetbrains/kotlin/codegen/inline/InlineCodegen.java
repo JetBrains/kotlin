@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.modules.TargetId;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
@@ -538,9 +539,16 @@ public class InlineCodegen extends CallGenerator {
     }
 
     /*lambda or callable reference*/
-    public static boolean isInliningParameter(KtExpression expression, ValueParameterDescriptor valueParameterDescriptor) {
+    public boolean isInliningParameter(KtExpression expression, ValueParameterDescriptor valueParameterDescriptor) {
         //TODO deparenthisise typed
         KtExpression deparenthesized = KtPsiUtil.deparenthesize(expression);
+
+        if (deparenthesized instanceof KtCallableReferenceExpression) {
+            // TODO: support inline of property references passed to inlinable function parameters
+            SimpleFunctionDescriptor functionReference = state.getBindingContext().get(BindingContext.FUNCTION, deparenthesized);
+            if (functionReference == null) return false;
+        }
+
         return InlineUtil.isInlineLambdaParameter(valueParameterDescriptor) &&
                isInlinableParameterExpression(deparenthesized);
     }
