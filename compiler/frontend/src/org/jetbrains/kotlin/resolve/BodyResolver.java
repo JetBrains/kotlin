@@ -483,13 +483,14 @@ public class BodyResolver {
                 trace.report(SUPERTYPE_APPEARS_TWICE.on(typeReference));
             }
 
-            if (classDescriptor != null && classDescriptor.getKind().isSingleton()) {
+            if (classDescriptor == null) return;
+            if (classDescriptor.getKind().isSingleton()) {
                 if (!DescriptorUtils.isEnumEntry(classDescriptor)) {
                     trace.report(SINGLETON_IN_SUPERTYPE.on(typeReference));
                 }
             }
             else if (!allowedFinalSupertypes.contains(constructor)) {
-                if (classDescriptor != null && classDescriptor.getModality() == Modality.SEALED) {
+                if (classDescriptor.getModality() == Modality.SEALED) {
                     DeclarationDescriptor containingDescriptor = supertypeOwner.getContainingDeclaration();
                     while (containingDescriptor != null && containingDescriptor != classDescriptor) {
                         containingDescriptor = containingDescriptor.getContainingDeclaration();
@@ -501,7 +502,7 @@ public class BodyResolver {
                         trace.report(SEALED_SUPERTYPE_IN_LOCAL_CLASS.on(typeReference));
                     }
                 }
-                else if (constructor.isFinal()) {
+                else if (ModalityKt.isFinalOrEnum(classDescriptor)) {
                     trace.report(FINAL_SUPERTYPE.on(typeReference));
                 }
             }

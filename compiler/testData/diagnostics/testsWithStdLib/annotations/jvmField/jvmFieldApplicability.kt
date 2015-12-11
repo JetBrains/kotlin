@@ -65,10 +65,28 @@ class H {
 }
 
 interface K {
+
+    val i: Int
+    val j: Int
+
     companion object {
         <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
         var c = 3
     }
+}
+
+class KK : K {
+    <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
+    override val i: Int = 0
+    <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
+    override final val j: Int = 0
+}
+
+open class KKK : K {
+    <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
+    override val i: Int = 0
+    <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
+    override final val j: Int = 0
 }
 
 object O {

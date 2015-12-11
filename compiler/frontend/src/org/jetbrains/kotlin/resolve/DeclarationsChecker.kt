@@ -712,10 +712,7 @@ class DeclarationsChecker(
                     reportVisibilityModifierDiagnostics(tokens.values, Errors.PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY)
                 }
                 else {
-                    val parentDescriptor = propertyDescriptor.containingDeclaration
-                    if (parentDescriptor !is ClassDescriptor || !parentDescriptor.isFinal) {
-                        reportVisibilityModifierDiagnostics(tokens.values, Errors.PRIVATE_SETTER_FOR_OPEN_PROPERTY)
-                    }
+                    reportVisibilityModifierDiagnostics(tokens.values, Errors.PRIVATE_SETTER_FOR_OPEN_PROPERTY)
                 }
             }
             else if (propertyDescriptor.isLateInit && accessorDescriptor.visibility != propertyDescriptor.visibility) {

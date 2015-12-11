@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.descriptors
 
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+
 // For sealed classes, isOverridable is false but isOverridableByMembers is true
 enum class Modality {
     // THE ORDER OF ENTRIES MATTERS HERE
@@ -37,7 +39,13 @@ enum class Modality {
 }
 
 val CallableMemberDescriptor.isOverridable: Boolean
-    get() = modality != Modality.FINAL
+    get() = modality != Modality.FINAL && (containingDeclaration as? ClassDescriptor)?.isFinal != true
+
+val CallableMemberDescriptor.isOverridableOrOverrides: Boolean
+    get() = isOverridable || DescriptorUtils.isOverride(this)
 
 val ClassDescriptor.isFinal: Boolean
+    get() = modality == Modality.FINAL && kind != ClassKind.ENUM_CLASS
+
+val ClassDescriptor.isFinalOrEnum: Boolean
     get() = modality == Modality.FINAL

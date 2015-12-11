@@ -10,8 +10,8 @@ class MyClass() {
 
     <error>var b: Int</error>                private set
     var b1: Int = 0;                         private set
-    <error>abstract</error> var b2: Int      <error>private</error> set
-    <error>abstract</error> var b3: Int = 0; <error>private</error> set
+    <error>abstract</error> var b2: Int      private set
+    <error>abstract</error> var b3: Int = 0; private set
 
     <error>var c: Int</error>                set(v: Int) { field = v }
     var c1: Int = 0;                         set(v: Int) { field = v }
