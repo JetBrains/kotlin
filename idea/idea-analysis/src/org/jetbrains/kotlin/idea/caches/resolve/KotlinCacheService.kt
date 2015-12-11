@@ -20,35 +20,43 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootModificationTracker
+import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.analyzer.EmptyResolverForProject
 import org.jetbrains.kotlin.container.getService
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.idea.project.AnalyzerFacadeProvider
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.diagnostics.KotlinSuppressCache
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.keysToMap
 
-internal val LOG = Logger.getInstance(javaClass<KotlinCacheService>())
+internal val LOG = Logger.getInstance(KotlinCacheService::class.java)
 
 public class KotlinCacheService(val project: Project) {
     companion object {
         @JvmStatic
-        public fun getInstance(project: Project): KotlinCacheService = ServiceManager.getService(project, javaClass<KotlinCacheService>())!!
+        public fun getInstance(project: Project): KotlinCacheService = ServiceManager.getService(project, KotlinCacheService::class.java)!!
     }
 
     public fun getResolutionFacade(elements: List<KtElement>): ResolutionFacade {
         return getFacadeToAnalyzeFiles(elements.map { it.getContainingKtFile() })
     }
+
+    public fun getSuppressionCache(): KotlinSuppressCache = kotlinSuppressCache.value
 
     private val globalFacadesPerPlatform = listOf(JvmPlatform, JsPlatform).keysToMap { platform -> GlobalFacade(platform) }
 
@@ -146,6 +154,22 @@ public class KotlinCacheService(val project: Project) {
             else -> throw IllegalStateException("Unknown IdeaModuleInfo ${syntheticFileModule.javaClass}")
         }
     }
+
+    private val kotlinSuppressCache: CachedValue<KotlinSuppressCache> = CachedValuesManager.getManager(project).createCachedValue({
+        CachedValueProvider.Result<KotlinSuppressCache>(object : KotlinSuppressCache() {
+            override fun getSuppressionAnnotations(annotated: KtAnnotated): List<AnnotationDescriptor> {
+                val context = annotated.analyze(BodyResolveMode.PARTIAL)
+                val annotatedDescriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, annotated)
+
+                if (annotatedDescriptor != null) {
+                    return annotatedDescriptor.annotations.toList()
+                }
+                else {
+                    return annotated.annotationEntries.map { context.get(BindingContext.ANNOTATION, it) }.filterNotNull()
+                }
+            }
+        }, LibraryModificationTracker.getInstance(project), PsiModificationTracker.MODIFICATION_COUNT)
+    }, false)
 
     private val syntheticFileCachesLock = Any()
 

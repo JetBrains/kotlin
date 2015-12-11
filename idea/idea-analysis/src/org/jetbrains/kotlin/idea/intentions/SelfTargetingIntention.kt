@@ -91,7 +91,9 @@ public abstract class SelfTargetingIntention<TElement : KtElement>(
         val inspection = findInspection(javaClass) ?: return false
 
         val key = HighlightDisplayKey.find(inspection.shortName)
-        if (!InspectionProjectProfileManager.getInstance(project).getInspectionProfile(target).isToolEnabled(key)) return false
+        if (!InspectionProjectProfileManager.getInstance(project).getInspectionProfile(target).isToolEnabled(key)) {
+            return false
+        }
 
         return inspection.intentions.single { it.intention.javaClass == javaClass }.additionalChecker(target)
     }

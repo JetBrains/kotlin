@@ -10,7 +10,7 @@
 
   <problem>
     <file>topLevelOnlyInImport.kt</file>
-    <line>5</line>
+    <line>6</line>
     <module>light_idea_test_case</module>
     <entry_point TYPE="file" FQNAME="temp:///src/topLevelOnlyInImport.kt" />
     <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused Symbol</problem_class>
