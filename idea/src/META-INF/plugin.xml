@@ -160,18 +160,18 @@
     </action>
 
     <group id="KotlinGenerateGroup">
-      <action id="KotlinGenerateSetUpMethod"
-              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateTestSupportActionBase$SetUp"
-              text="SetUp Function" />
       <action id="KotlinGenerateTestMethod"
               class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateTestSupportActionBase$Test"
               text="Test Function" />
-      <action id="KotlinGenerateDataMethod"
-              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateTestSupportActionBase$Data"
-              text="Parameters Function" />
+      <action id="KotlinGenerateSetUpMethod"
+              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateTestSupportActionBase$SetUp"
+              text="SetUp Function" />
       <action id="KotlinGenerateTearDownMethod"
               class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateTestSupportActionBase$TearDown"
               text="TearDown Function" />
+      <action id="KotlinGenerateDataMethod"
+              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateTestSupportActionBase$Data"
+              text="Parameters Function" />
       <separator />
       <action id="KotlinGenerateSecondaryConstructor"
               class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateSecondaryConstructorAction"
