@@ -95,6 +95,18 @@ public class InlineTestGenerated extends AbstractInlineTest {
         doTest(fileName);
     }
 
+    @TestMetadata("semicolon.kt")
+    public void testSemicolon() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/semicolon.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("semicolonWithSpacesAndComments.kt")
+    public void testSemicolonWithSpacesAndComments() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/semicolonWithSpacesAndComments.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("SeparateInitializer.kt")
     public void testSeparateInitializer() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/SeparateInitializer.kt");

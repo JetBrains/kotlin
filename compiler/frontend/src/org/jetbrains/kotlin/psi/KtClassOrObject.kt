@@ -110,7 +110,7 @@ abstract public class KtClassOrObject :
 
         val file = getContainingKtFile();
         if (!isTopLevel() || file.getDeclarations().size() > 1) {
-            CodeEditUtil.removeChild(getParent().getNode(), getNode());
+            super.delete()
         }
         else {
             file.delete();

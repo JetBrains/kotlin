@@ -23,6 +23,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
 import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubElement;
+import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType;
@@ -83,6 +84,12 @@ public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiEle
     @Override
     public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
         return visitor.visitKtElement(this, data);
+    }
+
+    @Override
+    public void delete() throws IncorrectOperationException {
+        KtElementUtilsKt.deleteSemicolon(this);
+        super.delete();
     }
 
     @Override
