@@ -259,7 +259,7 @@ object ReplaceWithAnnotationAnalyzer {
 
             is PropertyDescriptor -> {
                 val outerScope = getResolutionScope(descriptor.containingDeclaration, ownerDescriptor, additionalScopes) ?: return null
-                val propertyHeader = JetScopeUtils.makeScopeForPropertyHeader(outerScope, descriptor)
+                val propertyHeader = ScopeUtils.makeScopeForPropertyHeader(outerScope, descriptor)
                 LexicalScopeImpl(propertyHeader, descriptor, false, descriptor.extensionReceiverParameter, LexicalScopeKind.PROPERTY_ACCESSOR_BODY)
             }
 

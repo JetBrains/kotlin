@@ -24,8 +24,8 @@ import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.utils.Printer;
 
-public final class JetScopeUtils {
-    private JetScopeUtils() {}
+public final class ScopeUtils {
+    private ScopeUtils() {}
 
     @NotNull
     public static MemberScope getStaticNestedClassesScope(@NotNull ClassDescriptor descriptor) {

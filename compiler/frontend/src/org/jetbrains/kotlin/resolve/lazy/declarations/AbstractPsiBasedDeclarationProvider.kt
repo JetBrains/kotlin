@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
 import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils.safeNameForLazyResolve
-import org.jetbrains.kotlin.resolve.lazy.data.JetClassInfoUtil
-import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo
-import org.jetbrains.kotlin.resolve.lazy.data.JetScriptInfo
+import org.jetbrains.kotlin.resolve.lazy.data.KtClassInfoUtil
+import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo
+import org.jetbrains.kotlin.resolve.lazy.data.KtScriptInfo
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.storage.StorageManager
 import java.util.*
@@ -35,7 +35,7 @@ public abstract class AbstractPsiBasedDeclarationProvider(storageManager: Storag
         val allDeclarations = ArrayList<KtDeclaration>()
         val functions = ArrayListMultimap.create<Name, KtNamedFunction>()
         val properties = ArrayListMultimap.create<Name, KtProperty>()
-        val classesAndObjects = ArrayListMultimap.create<Name, JetClassLikeInfo>() // order matters here
+        val classesAndObjects = ArrayListMultimap.create<Name, KtClassLikeInfo>() // order matters here
 
         public fun putToIndex(declaration: KtDeclaration) {
             if (declaration is KtAnonymousInitializer || declaration is KtSecondaryConstructor) return
@@ -48,10 +48,10 @@ public abstract class AbstractPsiBasedDeclarationProvider(storageManager: Storag
                 properties.put(safeNameForLazyResolve(declaration), declaration)
             }
             else if (declaration is KtClassOrObject) {
-                classesAndObjects.put(safeNameForLazyResolve(declaration.getNameAsName()), JetClassInfoUtil.createClassLikeInfo(declaration))
+                classesAndObjects.put(safeNameForLazyResolve(declaration.getNameAsName()), KtClassInfoUtil.createClassLikeInfo(declaration))
             }
             else if (declaration is KtScript) {
-                val scriptInfo = JetScriptInfo(declaration)
+                val scriptInfo = KtScriptInfo(declaration)
                 classesAndObjects.put(scriptInfo.script.nameAsName, scriptInfo)
             }
             else if (declaration is KtParameter || declaration is KtTypedef || declaration is KtDestructuringDeclaration) {
@@ -80,6 +80,6 @@ public abstract class AbstractPsiBasedDeclarationProvider(storageManager: Storag
     override fun getPropertyDeclarations(name: Name): List<KtProperty>
             = index().properties[ResolveSessionUtils.safeNameForLazyResolve(name)].toList()
 
-    override fun getClassOrObjectDeclarations(name: Name): Collection<JetClassLikeInfo>
+    override fun getClassOrObjectDeclarations(name: Name): Collection<KtClassLikeInfo>
             = index().classesAndObjects[ResolveSessionUtils.safeNameForLazyResolve(name)]
 }

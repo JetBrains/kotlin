@@ -19,32 +19,38 @@ package org.jetbrains.kotlin.resolve.lazy.data;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.ClassKind;
-import org.jetbrains.kotlin.psi.KtObjectDeclaration;
+import org.jetbrains.kotlin.psi.KtClass;
+import org.jetbrains.kotlin.psi.KtEnumEntry;
 import org.jetbrains.kotlin.psi.KtTypeParameterList;
-import org.jetbrains.kotlin.resolve.ModifiersChecker;
 
-public class JetObjectInfo extends JetClassOrObjectInfo<KtObjectDeclaration> {
-    @NotNull
+public class KtClassInfo extends KtClassOrObjectInfo<KtClass> {
     private final ClassKind kind;
 
-    protected JetObjectInfo(@NotNull KtObjectDeclaration element) {
-        super(element);
-        this.kind = element.isObjectLiteral() ? ClassKind.CLASS : ClassKind.OBJECT;
+    protected KtClassInfo(@NotNull KtClass classOrObject) {
+        super(classOrObject);
+        if (element instanceof KtEnumEntry) {
+            this.kind = ClassKind.ENUM_ENTRY;
+        }
+        else if (element.isInterface()) {
+            this.kind = ClassKind.INTERFACE;
+        }
+        else if (element.isEnum()) {
+            this.kind = ClassKind.ENUM_CLASS;
+        }
+        else {
+            this.kind = ClassKind.CLASS;
+        }
     }
 
     @Nullable
     @Override
     public KtTypeParameterList getTypeParameterList() {
-        return null;
+        return element.getTypeParameterList();
     }
 
     @NotNull
     @Override
     public ClassKind getClassKind() {
         return kind;
-    }
-
-    public boolean isCompanionObject() {
-        return element.isCompanion() && ModifiersChecker.isCompanionModifierAllowed(element);
     }
 }

@@ -18,11 +18,11 @@ package org.jetbrains.kotlin.resolve.lazy.declarations
 
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo
+import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo
 
 public class PsiBasedClassMemberDeclarationProvider(
         storageManager: StorageManager,
-        private val classInfo: JetClassLikeInfo)
+        private val classInfo: KtClassLikeInfo)
 : AbstractPsiBasedDeclarationProvider(storageManager), ClassMemberDeclarationProvider {
 
     override fun getOwnerInfo() = classInfo

@@ -27,10 +27,10 @@ import org.jetbrains.kotlin.psi.*;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class JetClassOrObjectInfo<E extends KtClassOrObject> implements JetClassLikeInfo {
+public abstract class KtClassOrObjectInfo<E extends KtClassOrObject> implements KtClassLikeInfo {
     protected final E element;
 
-    protected JetClassOrObjectInfo(@NotNull E element) {
+    protected KtClassOrObjectInfo(@NotNull E element) {
         this.element = element;
     }
 

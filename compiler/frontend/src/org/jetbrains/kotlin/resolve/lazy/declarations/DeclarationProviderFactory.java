@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.resolve.lazy.declarations;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo;
+import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo;
 
 public interface DeclarationProviderFactory {
     @NotNull
-    ClassMemberDeclarationProvider getClassMemberDeclarationProvider(@NotNull JetClassLikeInfo classLikeInfo);
+    ClassMemberDeclarationProvider getClassMemberDeclarationProvider(@NotNull KtClassLikeInfo classLikeInfo);
 
     @Nullable
     PackageMemberDeclarationProvider getPackageMemberDeclarationProvider(@NotNull FqName packageFqName);

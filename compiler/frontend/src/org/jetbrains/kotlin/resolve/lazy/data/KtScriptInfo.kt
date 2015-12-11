@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtScript
 
-public class JetScriptInfo(
+public class KtScriptInfo(
         val script: KtScript
-) : JetClassLikeInfo {
+) : KtClassLikeInfo {
     override fun getContainingPackageFqName() = script.fqName.parent()
     override fun getModifierList() = null
     override fun getCompanionObjects() = listOf<KtObjectDeclaration>()

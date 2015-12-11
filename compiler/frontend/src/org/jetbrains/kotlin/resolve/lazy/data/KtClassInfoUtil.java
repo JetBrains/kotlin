@@ -21,15 +21,15 @@ import org.jetbrains.kotlin.psi.KtClass;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.psi.KtObjectDeclaration;
 
-public class JetClassInfoUtil {
+public class KtClassInfoUtil {
 
     @NotNull
-    public static JetClassLikeInfo createClassLikeInfo(@NotNull KtClassOrObject classOrObject) {
+    public static KtClassLikeInfo createClassLikeInfo(@NotNull KtClassOrObject classOrObject) {
         if (classOrObject instanceof KtClass) {
-            return new JetClassInfo((KtClass) classOrObject);
+            return new KtClassInfo((KtClass) classOrObject);
         }
         if (classOrObject instanceof KtObjectDeclaration) {
-            return new JetObjectInfo((KtObjectDeclaration) classOrObject);
+            return new KtObjectInfo((KtObjectDeclaration) classOrObject);
         }
         throw new IllegalArgumentException("Unknown declaration type: " + classOrObject + classOrObject.getText());
     }

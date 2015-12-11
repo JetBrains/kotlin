@@ -35,8 +35,8 @@ import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.*
-import org.jetbrains.kotlin.resolve.lazy.data.JetClassInfoUtil
-import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo
+import org.jetbrains.kotlin.resolve.lazy.data.KtClassInfoUtil
+import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.PackageMemberDeclarationProvider
@@ -125,7 +125,7 @@ class LocalClassDescriptorHolder(
                         override val functionDescriptorResolver = this@LocalClassDescriptorHolder.functionDescriptorResolver
                         override val typeResolver = this@LocalClassDescriptorHolder.typeResolver
                         override val declarationProviderFactory = object : DeclarationProviderFactory {
-                            override fun getClassMemberDeclarationProvider(classLikeInfo: JetClassLikeInfo): ClassMemberDeclarationProvider {
+                            override fun getClassMemberDeclarationProvider(classLikeInfo: KtClassLikeInfo): ClassMemberDeclarationProvider {
                                 return PsiBasedClassMemberDeclarationProvider(storageManager, classLikeInfo)
                             }
 
@@ -141,7 +141,7 @@ class LocalClassDescriptorHolder(
                     ,
                     containingDeclaration,
                     classOrObject.getNameAsSafeName(),
-                    JetClassInfoUtil.createClassLikeInfo(classOrObject)
+                    KtClassInfoUtil.createClassLikeInfo(classOrObject)
             )
             writableScope?.addClassifierDescriptor(classDescriptor!!)
         }

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
-import org.jetbrains.kotlin.resolve.lazy.data.JetScriptInfo
+import org.jetbrains.kotlin.resolve.lazy.data.KtScriptInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.script.ScriptPriorities
@@ -33,7 +33,7 @@ public class LazyScriptDescriptor(
         private val resolveSession: ResolveSession,
         containingDeclaration: DeclarationDescriptor,
         name: Name,
-        internal val scriptInfo: JetScriptInfo
+        internal val scriptInfo: KtScriptInfo
 ) : ScriptDescriptor, LazyClassDescriptor(
         resolveSession,
         containingDeclaration,

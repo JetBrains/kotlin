@@ -592,7 +592,7 @@ public class BodyResolver {
 
         PreliminaryDeclarationVisitor.Companion.createForDeclaration(property, trace);
         KtExpression initializer = property.getInitializer();
-        LexicalScope propertyHeaderScope = JetScopeUtils.makeScopeForPropertyHeader(getScopeForProperty(c, property), propertyDescriptor);
+        LexicalScope propertyHeaderScope = ScopeUtils.makeScopeForPropertyHeader(getScopeForProperty(c, property), propertyDescriptor);
 
         if (initializer != null) {
             resolvePropertyInitializer(c.getOuterDataFlowInfo(), property, propertyDescriptor, initializer, propertyHeaderScope);
@@ -641,7 +641,7 @@ public class BodyResolver {
     ) {
         LexicalScope accessorDeclaringScope = c.getDeclaringScope(accessor);
         assert accessorDeclaringScope != null : "Scope for accessor " + accessor.getText() + " should exists";
-        LexicalScope headerScope = JetScopeUtils.makeScopeForPropertyHeader(accessorDeclaringScope, descriptor);
+        LexicalScope headerScope = ScopeUtils.makeScopeForPropertyHeader(accessorDeclaringScope, descriptor);
         return new LexicalScopeImpl(headerScope, descriptor, true, descriptor.getExtensionReceiverParameter(),
                                     LexicalScopeKind.PROPERTY_ACCESSOR_BODY);
     }
@@ -706,9 +706,9 @@ public class BodyResolver {
             trace.report(ACCESSOR_FOR_DELEGATED_PROPERTY.on(setter));
         }
 
-        LexicalScope delegateFunctionsScope = JetScopeUtils.makeScopeForDelegateConventionFunctions(propertyHeaderScope, propertyDescriptor);
+        LexicalScope delegateFunctionsScope = ScopeUtils.makeScopeForDelegateConventionFunctions(propertyHeaderScope, propertyDescriptor);
 
-        LexicalScope initializerScope = JetScopeUtils.makeScopeForPropertyInitializer(propertyHeaderScope, propertyDescriptor);
+        LexicalScope initializerScope = ScopeUtils.makeScopeForPropertyInitializer(propertyHeaderScope, propertyDescriptor);
 
         KotlinType delegateType = delegatedPropertyResolver.resolveDelegateExpression(
                 delegateExpression, property, propertyDescriptor, initializerScope, trace,
@@ -733,7 +733,7 @@ public class BodyResolver {
             @NotNull KtExpression initializer,
             @NotNull LexicalScope propertyHeader
     ) {
-        LexicalScope propertyDeclarationInnerScope = JetScopeUtils.makeScopeForPropertyInitializer(propertyHeader, propertyDescriptor);
+        LexicalScope propertyDeclarationInnerScope = ScopeUtils.makeScopeForPropertyInitializer(propertyHeader, propertyDescriptor);
         KotlinType expectedTypeForInitializer = property.getTypeReference() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
         if (propertyDescriptor.getCompileTimeInitializer() == null) {
             expressionTypingServices.getType(propertyDeclarationInnerScope, initializer, expectedTypeForInitializer,

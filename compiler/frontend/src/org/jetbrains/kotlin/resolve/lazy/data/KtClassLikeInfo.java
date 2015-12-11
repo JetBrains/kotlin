@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.*;
 
 import java.util.List;
 
-public interface JetClassLikeInfo extends KtDeclarationContainer {
+public interface KtClassLikeInfo extends KtDeclarationContainer {
     @NotNull
     FqName getContainingPackageFqName();
 

@@ -41,10 +41,10 @@ import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext;
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity;
-import org.jetbrains.kotlin.resolve.lazy.data.JetClassInfoUtil;
-import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo;
-import org.jetbrains.kotlin.resolve.lazy.data.JetClassOrObjectInfo;
-import org.jetbrains.kotlin.resolve.lazy.data.JetObjectInfo;
+import org.jetbrains.kotlin.resolve.lazy.data.KtClassInfoUtil;
+import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo;
+import org.jetbrains.kotlin.resolve.lazy.data.KtClassOrObjectInfo;
+import org.jetbrains.kotlin.resolve.lazy.data.KtObjectInfo;
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
@@ -107,7 +107,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             @NotNull final LazyClassContext c,
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Name name,
-            @NotNull JetClassLikeInfo classLikeInfo
+            @NotNull KtClassLikeInfo classLikeInfo
     ) {
         super(c.getStorageManager(), containingDeclaration, name,
               KotlinSourceElementKt.toSourceElement(classLikeInfo.getCorrespondingClassOrObject())
@@ -128,7 +128,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         this.typeConstructor = new LazyClassTypeConstructor();
 
         final ClassKind syntaxKind = classLikeInfo.getClassKind();
-        this.isCompanionObject = classLikeInfo instanceof JetObjectInfo && ((JetObjectInfo) classLikeInfo).isCompanionObject();
+        this.isCompanionObject = classLikeInfo instanceof KtObjectInfo && ((KtObjectInfo) classLikeInfo).isCompanionObject();
 
         final KtModifierList modifierList = classLikeInfo.getModifierList();
         if (syntaxKind.isSingleton()) {
@@ -244,7 +244,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         this.parameters = c.getStorageManager().createLazyValue(new Function0<List<TypeParameterDescriptor>>() {
             @Override
             public List<TypeParameterDescriptor> invoke() {
-                JetClassLikeInfo classInfo = declarationProvider.getOwnerInfo();
+                KtClassLikeInfo classInfo = declarationProvider.getOwnerInfo();
                 KtTypeParameterList typeParameterList = classInfo.getTypeParameterList();
                 if (typeParameterList == null) return Collections.emptyList();
 
@@ -386,11 +386,11 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
     @Nullable
     private LazyClassDescriptor computeCompanionObjectDescriptor(@Nullable KtObjectDeclaration companionObject) {
-        JetClassLikeInfo companionObjectInfo = getCompanionObjectInfo(companionObject);
-        if (!(companionObjectInfo instanceof JetClassOrObjectInfo)) {
+        KtClassLikeInfo companionObjectInfo = getCompanionObjectInfo(companionObject);
+        if (!(companionObjectInfo instanceof KtClassOrObjectInfo)) {
             return null;
         }
-        Name name = ((JetClassOrObjectInfo) companionObjectInfo).getName();
+        Name name = ((KtClassOrObjectInfo) companionObjectInfo).getName();
         assert name != null;
         getUnsubstitutedMemberScope().getContributedClassifier(name, NoLookupLocation.WHEN_GET_COMPANION_OBJECT);
         ClassDescriptor companionObjectDescriptor = c.getTrace().get(BindingContext.CLASS, companionObject);
@@ -404,9 +404,9 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     }
 
     @Nullable
-    private static JetClassLikeInfo getCompanionObjectInfo(@Nullable KtObjectDeclaration companionObject) {
+    private static KtClassLikeInfo getCompanionObjectInfo(@Nullable KtObjectDeclaration companionObject) {
         if (companionObject != null) {
-            return JetClassInfoUtil.createClassLikeInfo(companionObject);
+            return KtClassInfoUtil.createClassLikeInfo(companionObject);
         }
 
         return null;
