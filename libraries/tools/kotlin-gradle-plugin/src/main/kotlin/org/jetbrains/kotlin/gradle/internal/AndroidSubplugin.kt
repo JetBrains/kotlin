@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 JetBrains s.r.o.
+ * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.android
+package org.jetbrains.kotlin.gradle.internal
 
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.api.AndroidSourceSet
+import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin
@@ -27,11 +28,33 @@ import org.w3c.dom.Document
 import java.io.File
 import javax.xml.parsers.DocumentBuilderFactory
 
+// Use apply plugin: 'kotlin-android-extensions' to enable Android Extensions in an Android project.
+// Just a marker plugin.
+public class AndroidExtensionsSubpluginIndicator : Plugin<Project> {
+    override fun apply(target: Project?) {}
+}
+
 public class AndroidSubplugin : KotlinGradleSubplugin {
+    private companion object {
+        @Volatile
+        var migrateWarningReported: Boolean = false
+    }
 
-    override fun getExtraArguments(project: Project, task: AbstractCompile): List<SubpluginOption>? {
-        val androidExtension = project.extensions.getByName("android") as? BaseExtension ?: return null
+    override fun isApplicable(project: Project, task: AbstractCompile): Boolean {
+        project.extensions.getByName("android") as? BaseExtension ?: return false
+        if (project.plugins.findPlugin(AndroidExtensionsSubpluginIndicator::class.java) == null) {
+            val dependencies = project.buildscript.configurations.getByName("classpath").dependencies
+            if (dependencies.any { it.name == getArtifactName() && it.group == getGroupName() } && !migrateWarningReported) {
+                project.logger.warn("To enable Android Extensions, use: \"apply plugin: 'kotlin-android-extensions'\"")
+                migrateWarningReported = true
+            }
+            return false
+        }
+        return true
+    }
 
+    override fun getExtraArguments(project: Project, task: AbstractCompile): List<SubpluginOption> {
+        val androidExtension = project.extensions.getByName("android") as? BaseExtension ?: return emptyList()
         val sourceSets = androidExtension.sourceSets
 
         val pluginOptions = arrayListOf<SubpluginOption>()

@@ -23,7 +23,11 @@ import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 
 public class ExampleSubplugin : KotlinGradleSubplugin {
 
-    override fun getExtraArguments(project: Project, task: AbstractCompile): List<SubpluginOption>? {
+    override fun isApplicable(project: Project, task: AbstractCompile): Boolean {
+        return true
+    }
+
+    override fun getExtraArguments(project: Project, task: AbstractCompile): List<SubpluginOption> {
         println("ExampleSubplugin loaded")
         return listOf(SubpluginOption("exampleKey", "exampleValue"))
     }
