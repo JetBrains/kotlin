@@ -35,10 +35,6 @@ public fun DeclarationDescriptor.hasJvmSyntheticAnnotation(): Boolean {
            Annotations.findUseSiteTargetedAnnotation(annotations, AnnotationUseSiteTarget.FIELD, jvmSyntheticName) != null
 }
 
-public fun DeclarationDescriptor.hasIntrinsicAnnotation(): Boolean {
-    return getAnnotations().findAnnotation(FqName("kotlin.jvm.internal.Intrinsic")) != null
-}
-
 public fun CallableDescriptor.isPlatformStaticInObjectOrClass(): Boolean =
         isPlatformStaticIn { DescriptorUtils.isNonCompanionObject(it) || DescriptorUtils.isClass(it) || DescriptorUtils.isEnumClass(it) }
 

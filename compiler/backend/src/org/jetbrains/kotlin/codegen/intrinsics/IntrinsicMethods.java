@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen.intrinsics;
 
 import com.google.common.collect.ImmutableList;
+import kotlin.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils;
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType;
 import org.jetbrains.kotlin.types.expressions.OperatorConventions;
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.CapitalizeDecapitalizeKt;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -63,10 +65,11 @@ public class IntrinsicMethods {
         namedMethods.put("kotlin.javaClass.function", new JavaClassFunction());
         namedMethods.put("kotlin.javaClass.property", new JavaClassProperty());
         namedMethods.put("kotlin.KClass.java.property", new KClassJavaProperty());
-        namedMethods.put("kotlin.arrays.array", new JavaClassArray());
         namedMethods.put("kotlin.jvm.internal.unsafe.monitorEnter", MonitorInstruction.MONITOR_ENTER);
         namedMethods.put("kotlin.jvm.internal.unsafe.monitorExit", MonitorInstruction.MONITOR_EXIT);
         namedMethods.put("kotlin.jvm.isArrayOf", new IsArrayOf());
+
+        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "arrayOf", 1, new JavaClassArray());
 
         ImmutableList<Name> primitiveCastMethods = OperatorConventions.NUMBER_CONVERSIONS.asList();
         for (Name method : primitiveCastMethods) {
@@ -94,6 +97,10 @@ public class IntrinsicMethods {
             declareIntrinsicFunction(typeName, "equals", 1, EQUALS);
             declareIntrinsicFunction(typeName, "hashCode", 0, HASH_CODE);
             declareIntrinsicFunction(typeName, "toString", 0, TO_STRING);
+
+            intrinsicsMap.registerIntrinsic(
+                    BUILT_INS_PACKAGE_FQ_NAME, null, StringsKt.decapitalize(type.getArrayTypeName().asString()) + "Of", 1, new JavaClassArray()
+            );
         }
 
         declareBinaryOp("plus", IADD);

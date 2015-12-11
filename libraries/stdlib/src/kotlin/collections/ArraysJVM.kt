@@ -5,54 +5,53 @@ package kotlin
 
 import java.io.ByteArrayInputStream
 import java.nio.charset.Charset
-import kotlin.jvm.internal.Intrinsic
 
 // Array "constructor"
 /**
  * Returns an array containing the specified elements.
  */
-@Intrinsic("kotlin.arrays.array") public fun <reified T> arrayOf(vararg elements: T) : Array<T> = elements as Array<T>
+public inline fun <reified T> arrayOf(vararg elements: T) : Array<T> = elements as Array<T>
 
 // "constructors" for primitive types array
 /**
  * Returns an array containing the specified [Double] numbers.
  */
-@Intrinsic("kotlin.arrays.array") public fun doubleArrayOf(vararg elements: Double) : DoubleArray    = elements
+public fun doubleArrayOf(vararg elements: Double) : DoubleArray    = elements
 
 /**
  * Returns an array containing the specified [Float] numbers.
  */
-@Intrinsic("kotlin.arrays.array") public fun floatArrayOf(vararg elements: Float) : FloatArray       = elements
+public fun floatArrayOf(vararg elements: Float) : FloatArray       = elements
 
 /**
  * Returns an array containing the specified [Long] numbers.
  */
-@Intrinsic("kotlin.arrays.array") public fun longArrayOf(vararg elements: Long) : LongArray          = elements
+public fun longArrayOf(vararg elements: Long) : LongArray          = elements
 
 /**
  * Returns an array containing the specified [Int] numbers.
  */
-@Intrinsic("kotlin.arrays.array") public fun intArrayOf(vararg elements: Int) : IntArray             = elements
+public fun intArrayOf(vararg elements: Int) : IntArray             = elements
 
 /**
  * Returns an array containing the specified characters.
  */
-@Intrinsic("kotlin.arrays.array") public fun charArrayOf(vararg elements: Char) : CharArray          = elements
+public fun charArrayOf(vararg elements: Char) : CharArray          = elements
 
 /**
  * Returns an array containing the specified [Short] numbers.
  */
-@Intrinsic("kotlin.arrays.array") public fun shortArrayOf(vararg elements: Short) : ShortArray       = elements
+public fun shortArrayOf(vararg elements: Short) : ShortArray       = elements
 
 /**
  * Returns an array containing the specified [Byte] numbers.
  */
-@Intrinsic("kotlin.arrays.array") public fun byteArrayOf(vararg elements: Byte) : ByteArray          = elements
+public fun byteArrayOf(vararg elements: Byte) : ByteArray          = elements
 
 /**
  * Returns an array containing the specified boolean values.
  */
-@Intrinsic("kotlin.arrays.array") public fun booleanArrayOf(vararg elements: Boolean) : BooleanArray = elements
+public fun booleanArrayOf(vararg elements: Boolean) : BooleanArray = elements
 
 /**
  * Converts the contents of this byte array to a string using the specified [charset].

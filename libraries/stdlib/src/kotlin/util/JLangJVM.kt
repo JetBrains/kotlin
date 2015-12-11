@@ -39,6 +39,7 @@ public val <T: Any> T.javaClass : Class<T>
  * Returns the Java class for the specified type.
  */
 @Intrinsic("kotlin.javaClass.function")
+@Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")
 @Deprecated("Use the class reference and .java extension property instead: MyClass::class.java", ReplaceWith("T::class.java"))
 public fun <reified T: Any> javaClass(): Class<T> = T::class.java
 
