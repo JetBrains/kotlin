@@ -1,5 +1,5 @@
 fun main(args: Array<String>) {
-    val a = a1
-    println(a)
+    val a1 = a1
+    println(a1)
     println(a2)
 }
