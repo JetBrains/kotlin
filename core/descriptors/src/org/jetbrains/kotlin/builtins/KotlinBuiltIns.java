@@ -385,11 +385,16 @@ public abstract class KotlinBuiltIns {
     }
 
     @Nullable
-    public ClassDescriptor getDeprecationLevelEnumEntry(@NotNull DeprecationLevel level) {
-        ClassifierDescriptor result = getDeprecationLevelEnum().getUnsubstitutedInnerClassesScope().getContributedClassifier(
-                Name.identifier(level.name()), NoLookupLocation.FROM_BUILTINS
+    private static ClassDescriptor getEnumEntry(@NotNull ClassDescriptor enumDescriptor, @NotNull String entryName) {
+        ClassifierDescriptor result = enumDescriptor.getUnsubstitutedInnerClassesScope().getContributedClassifier(
+                Name.identifier(entryName), NoLookupLocation.FROM_BUILTINS
         );
         return result instanceof ClassDescriptor ? (ClassDescriptor) result : null;
+    }
+
+    @Nullable
+    public ClassDescriptor getDeprecationLevelEnumEntry(@NotNull DeprecationLevel level) {
+        return getEnumEntry(getDeprecationLevelEnum(), level.name());
     }
 
     @NotNull
@@ -419,10 +424,7 @@ public abstract class KotlinBuiltIns {
 
     @Nullable
     public ClassDescriptor getAnnotationTargetEnumEntry(@NotNull KotlinTarget target) {
-        ClassifierDescriptor result = getAnnotationTargetEnum().getUnsubstitutedInnerClassesScope().getContributedClassifier(
-                Name.identifier(target.name()), NoLookupLocation.FROM_BUILTINS
-        );
-        return result instanceof ClassDescriptor ? (ClassDescriptor) result : null;
+        return getEnumEntry(getAnnotationTargetEnum(), target.name());
     }
 
     @NotNull
@@ -432,10 +434,7 @@ public abstract class KotlinBuiltIns {
 
     @Nullable
     public ClassDescriptor getAnnotationRetentionEnumEntry(@NotNull KotlinRetention retention) {
-        ClassifierDescriptor result = getAnnotationRetentionEnum().getUnsubstitutedInnerClassesScope().getContributedClassifier(
-                Name.identifier(retention.name()), NoLookupLocation.FROM_BUILTINS
-        );
-        return result instanceof ClassDescriptor ? (ClassDescriptor) result : null;
+        return getEnumEntry(getAnnotationRetentionEnum(), retention.name());
     }
 
     @NotNull
