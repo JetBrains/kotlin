@@ -13,7 +13,7 @@ abstract class ATest {
 class Test: ATest(), ITest {
     override var prop : Int
         get() = 12
-        <!CANNOT_WEAKEN_ACCESS_PRIVILEGE, PRIVATE_SETTER_FOR_OPEN_PROPERTY!>private<!> set(value) {}
+        <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>private<!> set(value) {}
 
     override var prop2 : Int
         get() = 14

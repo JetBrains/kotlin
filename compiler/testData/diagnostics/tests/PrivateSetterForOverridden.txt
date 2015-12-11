@@ -1,0 +1,59 @@
+package
+
+public interface A {
+    public abstract val a: kotlin.Int
+    public abstract var b: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class AA {
+    public constructor AA()
+    public abstract val c: kotlin.Int
+    public abstract var d: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class B : A, AA {
+    public constructor B()
+    public open override /*1*/ var a: kotlin.Int
+    public open override /*1*/ var b: kotlin.Int
+    public open override /*1*/ var c: kotlin.Int
+    public open override /*1*/ var d: kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class C : A, AA {
+    public constructor C()
+    public open override /*1*/ var a: kotlin.Int
+    public open override /*1*/ var b: kotlin.Int
+    public open override /*1*/ var c: kotlin.Int
+    public open override /*1*/ var d: kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class D : A, AA {
+    public constructor D()
+    public open override /*1*/ var a: kotlin.Int
+    public open override /*1*/ var b: kotlin.Int
+    public open override /*1*/ var c: kotlin.Int
+    public open override /*1*/ var d: kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface E : A {
+    public open override /*1*/ var a: kotlin.Int
+    public open override /*1*/ var b: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

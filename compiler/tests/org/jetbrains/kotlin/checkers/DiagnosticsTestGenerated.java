@@ -499,6 +499,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("PrivateSetterForOverridden.kt")
+        public void testPrivateSetterForOverridden() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/PrivateSetterForOverridden.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ProcessingEmptyImport.kt")
         public void testProcessingEmptyImport() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/ProcessingEmptyImport.kt");

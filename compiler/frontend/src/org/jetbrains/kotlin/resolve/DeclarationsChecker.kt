@@ -681,14 +681,17 @@ class DeclarationsChecker(
             }
         }
         else {
-            if (propertyDescriptor.modality != Modality.FINAL
+            if (propertyDescriptor.isOverridable
                 && accessorDescriptor.visibility == Visibilities.PRIVATE
                 && propertyDescriptor.visibility != Visibilities.PRIVATE) {
                 if (propertyDescriptor.modality == Modality.ABSTRACT) {
                     reportVisibilityModifierDiagnostics(tokens.values, Errors.PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY)
                 }
                 else {
-                    reportVisibilityModifierDiagnostics(tokens.values, Errors.PRIVATE_SETTER_FOR_OPEN_PROPERTY)
+                    val parentDescriptor = propertyDescriptor.containingDeclaration
+                    if (parentDescriptor !is ClassDescriptor || !parentDescriptor.isFinal) {
+                        reportVisibilityModifierDiagnostics(tokens.values, Errors.PRIVATE_SETTER_FOR_OPEN_PROPERTY)
+                    }
                 }
             }
             else if (propertyDescriptor.isLateInit && accessorDescriptor.visibility != propertyDescriptor.visibility) {
