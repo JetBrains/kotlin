@@ -143,13 +143,11 @@ private fun ScopeTower.getExtensionInvokeCandidateDescriptor(
 ): CandidateWithBoundDispatchReceiver<FunctionDescriptor>? {
     if (!KotlinBuiltIns.isExactExtensionFunctionType(extensionFunctionReceiver.type)) return null
 
-    return ReceiverScopeTowerLevel(this, extensionFunctionReceiver).getFunctions(OperatorNameConventions.INVOKE, null).single().let {
-        assert(it.diagnostics.isEmpty())
-        val synthesizedInvoke = createSynthesizedInvokes(listOf(it.descriptor)).single()
+    val invokeDescriptor = extensionFunctionReceiver.type.memberScope.getContributedFunctions(OperatorNameConventions.INVOKE, location).single()
+    val synthesizedInvoke = createSynthesizedInvokes(listOf(invokeDescriptor)).single()
 
-        // here we don't add SynthesizedDescriptor diagnostic because it should has priority as member
-        CandidateWithBoundDispatchReceiverImpl(extensionFunctionReceiver, synthesizedInvoke, listOf())
-    }
+    // here we don't add SynthesizedDescriptor diagnostic because it should has priority as member
+    return CandidateWithBoundDispatchReceiverImpl(extensionFunctionReceiver, synthesizedInvoke, listOf())
 }
 
 // case 1.(foo())() or (foo())()
