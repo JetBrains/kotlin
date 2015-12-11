@@ -174,6 +174,8 @@ public interface BindingContext {
                        backingFieldRequired; // this part is unused because we do not allow access to constructor parameters in member bodies
             }
             if (propertyDescriptor.getModality() == Modality.ABSTRACT) return false;
+            if (declarationPsiElement instanceof KtProperty &&
+                ((KtProperty) declarationPsiElement).hasDelegate()) return false;
             PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
             PropertySetterDescriptor setter = propertyDescriptor.getSetter();
 
