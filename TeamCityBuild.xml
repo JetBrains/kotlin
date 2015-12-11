@@ -18,7 +18,6 @@
 
     <property name="plugin.zip" value="${artifact.output.path}/kotlin-plugin-${build.number}.zip"/>
     <property name="bare.plugin.zip" value="${artifact.output.path}/kotlin-bare-plugin-${build.number}.zip"/>
-    <property name="android-extensions.zip" value="${artifact.output.path}/kotlin-android-extensions-plugin-${build.number}.zip"/>
 
     <property name="kotlin.bare.plugin.xml" value="jps-plugin/bare-plugin/src/META-INF/plugin.xml"/>
     <property name="kotlin.bare.plugin.xml.bk" value="${version_substitute_dir}/kotlin.bare.plugin.xml.bk"/>
@@ -127,10 +126,6 @@
 
         <zipPlugin filename="${plugin.zip}" dir="Kotlin"/>
         <zipPlugin filename="${bare.plugin.zip}" dir="BareKotlin"/>
-
-        <zip destfile="${android-extensions.zip}">
-            <zipfileset prefix="META-INF" dir="${basedir}/plugins/android-idea-plugin/old_plugin" includes="plugin.xml" />
-        </zip>
     </target>
 
     <macrodef name="print-statistic">
