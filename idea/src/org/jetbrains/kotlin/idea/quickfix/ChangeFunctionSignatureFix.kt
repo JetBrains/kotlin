@@ -76,7 +76,7 @@ abstract class ChangeFunctionSignatureFix(
         }
     }
 
-    companion object : KotlinSingleIntentionActionFactoryWithDelegate<KtCallElement, Data>() {
+    companion object : KotlinSingleIntentionActionFactoryWithDelegate<KtCallElement, Companion.Data>() {
         data class Data(val callElement: KtCallElement, val descriptor: CallableDescriptor)
 
         override fun getElementOfInterest(diagnostic: Diagnostic): KtCallElement? {

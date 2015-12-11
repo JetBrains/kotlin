@@ -148,7 +148,7 @@ class MapPlatformClassToKotlinFix(
         })
     }
 
-    companion object : KotlinSingleIntentionActionFactoryWithDelegate<KtReferenceExpression, Data>() {
+    companion object : KotlinSingleIntentionActionFactoryWithDelegate<KtReferenceExpression, Companion.Data>() {
         data class Data(val element: KtReferenceExpression,
                         val platformClass: ClassDescriptor,
                         val possibleClasses: Collection<ClassDescriptor>)

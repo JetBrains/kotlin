@@ -61,7 +61,7 @@ class ChangeFunctionLiteralSignatureFix private constructor(
                 text)
     }
 
-    companion object : KotlinSingleIntentionActionFactoryWithDelegate<KtFunctionLiteral, Data>() {
+    companion object : KotlinSingleIntentionActionFactoryWithDelegate<KtFunctionLiteral, Companion.Data>() {
         data class Data(val functionLiteral: KtFunctionLiteral, val descriptor: FunctionDescriptor, val parameterTypes: List<KotlinType>)
 
         override fun getElementOfInterest(diagnostic: Diagnostic): KtFunctionLiteral? {
