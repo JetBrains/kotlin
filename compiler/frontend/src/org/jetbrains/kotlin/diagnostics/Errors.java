@@ -360,7 +360,7 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> SETTER_VISIBILITY_DIFFERS_FROM_LATEINIT_VISIBILITY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<PsiElement> PRIVATE_SETTER_FOR_OPEN_PROPERTY = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> PRIVATE_SETTER_FOR_OPEN_PROPERTY = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory2<KtTypeReference, KotlinType, KotlinType> WRONG_GETTER_RETURN_TYPE = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory0<KtTypeReference> WRONG_SETTER_RETURN_TYPE = DiagnosticFactory0.create(ERROR);
 

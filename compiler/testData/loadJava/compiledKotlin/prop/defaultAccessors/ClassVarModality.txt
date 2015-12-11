@@ -10,7 +10,7 @@ public open class ClassVarModality {
         internal final fun <set-property2>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
     public open var property3: kotlin.Int
         public open fun <get-property3>(): kotlin.Int
-        private open fun <set-property3>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
+        public open fun <set-property3>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
     internal final var property4: kotlin.Int
         internal final fun <get-property4>(): kotlin.Int
         private final fun <set-property4>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
