@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.ABSTRACT_KEYWORD
@@ -52,7 +53,7 @@ open class AddModifierFix(
     }
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
-        return super.isAvailable(project, editor, file) && QuickFixUtil.canModifyElement(element)
+        return super.isAvailable(project, editor, file) && element.canRefactor()
     }
 
     companion object {
@@ -97,7 +98,7 @@ open class AddModifierFix(
             val type = bindingContext[BindingContext.TYPE, typeReference] ?: return null
             val classDescriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return null
             val declaration = DescriptorToSourceUtils.descriptorToDeclaration(classDescriptor) as? KtClass ?: return null
-            if (!QuickFixUtil.canModifyElement(declaration)) return null
+            if (!declaration.canRefactor()) return null
             if (declaration.isEnum()) return null
             return AddModifierFix(declaration, KtTokens.OPEN_KEYWORD)
         }

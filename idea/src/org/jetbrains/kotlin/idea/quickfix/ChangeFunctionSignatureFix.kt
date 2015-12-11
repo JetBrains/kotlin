@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.mapArgumentsToParameters
-import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeSignatureConfiguration
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.modify
@@ -57,7 +57,7 @@ abstract class ChangeFunctionSignatureFix(
         if (!super.isAvailable(project, editor, file)) return false
 
         val declarations = DescriptorToSourceUtilsIde.getAllDeclarations(project, functionDescriptor)
-        return declarations.all { it.isValid && QuickFixUtil.canModifyElement(it) }
+        return declarations.isNotEmpty() && declarations.all { it.isValid && it.canRefactor() }
     }
 
     protected fun getNewArgumentName(argument: ValueArgument, validator: Function1<String, Boolean>): String {

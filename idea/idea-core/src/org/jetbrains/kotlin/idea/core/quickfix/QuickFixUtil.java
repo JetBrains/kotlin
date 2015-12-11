@@ -87,10 +87,6 @@ public class QuickFixUtil {
         return matchingReturnType;
     }
 
-    public static boolean canModifyElement(@NotNull PsiElement element) {
-        return element.isWritable();
-    }
-
     @Nullable
     public static PsiElement safeGetDeclaration(@Nullable CallableDescriptor descriptor) {
         //do not create fix if descriptor has more than one overridden declaration
