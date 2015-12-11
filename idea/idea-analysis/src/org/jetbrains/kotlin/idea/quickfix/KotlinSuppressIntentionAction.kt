@@ -16,31 +16,30 @@
 
 package org.jetbrains.kotlin.idea.quickfix
 
+import com.intellij.codeInspection.SuppressIntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import com.intellij.codeInspection.SuppressIntentionAction
-import org.jetbrains.kotlin.idea.util.PsiPrecedences
+import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.util.PsiPrecedences
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
 
 public class KotlinSuppressIntentionAction(
         private val suppressAt: KtExpression,
-        private val diagnosticFactory: DiagnosticFactory<*>,
+        private val suppressKey: String,
         private val kind: AnnotationHostKind
 ) : SuppressIntentionAction() {
 
     override fun getFamilyName() = KotlinBundle.message("suppress.warnings.family")
-    override fun getText() = KotlinBundle.message("suppress.warning.for", diagnosticFactory.getName(), kind.kind, kind.name)
+    override fun getText() = KotlinBundle.message("suppress.warning.for", suppressKey, kind.kind, kind.name)
 
     override fun isAvailable(project: Project, editor: Editor?, element: PsiElement) = element.isValid()
 
     override fun invoke(project: Project, editor: Editor?, element: PsiElement) {
-        val id = "\"${diagnosticFactory.getName()}\""
+        val id = "\"$suppressKey\""
         if (suppressAt is KtModifierListOwner) {
             suppressAtModifierListOwner(suppressAt, id)
         }

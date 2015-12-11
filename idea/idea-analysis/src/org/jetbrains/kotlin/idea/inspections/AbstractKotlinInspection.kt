@@ -17,18 +17,20 @@
 package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.codeHighlighting.HighlightDisplayLevel
-import com.intellij.codeInsight.daemon.HighlightDisplayKey
 import com.intellij.codeInspection.CustomSuppressableInspectionTool
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.SuppressIntentionAction
 import com.intellij.codeInspection.SuppressManager
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.idea.highlighter.createSuppressWarningActions
 import org.jetbrains.kotlin.idea.caches.resolve.KotlinCacheService
 
 public abstract class AbstractKotlinInspection: LocalInspectionTool(), CustomSuppressableInspectionTool {
     public override fun getSuppressActions(element: PsiElement?): Array<SuppressIntentionAction>? {
-        return SuppressManager.getInstance()!!.createSuppressActions(HighlightDisplayKey.find(getShortName())!!)
+        if (element == null) return emptyArray()
+
+        return createSuppressWarningActions(element, toSeverity(defaultLevel), this.shortName).toTypedArray()
     }
 
     public override fun isSuppressedFor(element: PsiElement): Boolean {

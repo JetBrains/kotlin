@@ -46,9 +46,12 @@ class KotlinSuppressableWarningProblemGroup(
 
 }
 
-fun createSuppressWarningActions(element: PsiElement, diagnosticFactory: DiagnosticFactory<*>): List<SuppressIntentionAction> {
-    if (diagnosticFactory.getSeverity() != Severity.WARNING)
-        return Collections.emptyList()
+fun createSuppressWarningActions(element: PsiElement, diagnosticFactory: DiagnosticFactory<*>): List<SuppressIntentionAction> =
+        createSuppressWarningActions(element, diagnosticFactory.severity, diagnosticFactory.name)
+
+
+fun createSuppressWarningActions(element: PsiElement, severity: Severity, suppressionKey: String): List<SuppressIntentionAction> {
+    if (severity != Severity.WARNING) return Collections.emptyList()
 
     val actions = arrayListOf<SuppressIntentionAction>()
     var current: PsiElement? = element
@@ -58,7 +61,7 @@ fun createSuppressWarningActions(element: PsiElement, diagnosticFactory: Diagnos
             val declaration = current
             val kind = DeclarationKindDetector.detect(declaration)
             if (kind != null) {
-                actions.add(KotlinSuppressIntentionAction(declaration, diagnosticFactory, kind))
+                actions.add(KotlinSuppressIntentionAction(declaration, suppressionKey, kind))
             }
             suppressAtStatementAllowed = false
         }
@@ -66,7 +69,7 @@ fun createSuppressWarningActions(element: PsiElement, diagnosticFactory: Diagnos
             // Add suppress action at first statement
             if (current.parent is KtBlockExpression || current.parent is KtDestructuringDeclaration) {
                 val kind = if (current.parent is KtBlockExpression) "statement" else "initializer"
-                actions.add(KotlinSuppressIntentionAction(current, diagnosticFactory,
+                actions.add(KotlinSuppressIntentionAction(current, suppressionKey,
                                                           AnnotationHostKind(kind, "", true)))
                 suppressAtStatementAllowed = false
             }
