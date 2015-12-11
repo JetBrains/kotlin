@@ -12,10 +12,10 @@ public interface B {
 
 public abstract class ZAB : test.A, test.B {
     public constructor ZAB()
-    public abstract override /*2*/ /*fake_override*/ fun foo(/*0*/ kotlinName: kotlin.Int): kotlin.Unit
+    public abstract override /*2*/ /*fake_override*/ fun foo(/*0*/ p0: kotlin.Int): kotlin.Unit
 }
 
 public abstract class ZBA : test.B, test.A {
     public constructor ZBA()
-    public abstract override /*2*/ /*fake_override*/ fun foo(/*0*/ p0: kotlin.Int): kotlin.Unit
+    public abstract override /*2*/ /*fake_override*/ fun foo(/*0*/ kotlinName: kotlin.Int): kotlin.Unit
 }

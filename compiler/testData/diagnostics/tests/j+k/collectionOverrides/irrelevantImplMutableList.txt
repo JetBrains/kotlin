@@ -6,25 +6,25 @@ public open class A : AImpl, kotlin.MutableList<kotlin.String!> {
     public constructor A()
     public open override /*2*/ /*fake_override*/ val size: kotlin.Int
     public open override /*2*/ /*fake_override*/ fun add(/*0*/ index: kotlin.Int, /*1*/ element: kotlin.String!): kotlin.Unit
-    public open override /*2*/ /*fake_override*/ fun add(/*0*/ element: kotlin.String!): kotlin.Boolean
-    public open override /*2*/ /*fake_override*/ fun addAll(/*0*/ elements: kotlin.Collection<kotlin.String!>): kotlin.Boolean
-    public open override /*2*/ /*fake_override*/ fun addAll(/*0*/ index: kotlin.Int, /*1*/ elements: kotlin.Collection<kotlin.String!>): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun add(/*0*/ s: kotlin.String!): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun addAll(/*0*/ c: kotlin.Collection<kotlin.String!>): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun addAll(/*0*/ index: kotlin.Int, /*1*/ c: kotlin.Collection<kotlin.String!>): kotlin.Boolean
     public open override /*2*/ /*fake_override*/ fun clear(): kotlin.Unit
-    public open override /*2*/ /*fake_override*/ fun contains(/*0*/ o: kotlin.String!): kotlin.Boolean
-    public open override /*2*/ /*fake_override*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.String!>): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun contains(/*0*/ element: kotlin.String!): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun containsAll(/*0*/ elements: kotlin.Collection<kotlin.String!>): kotlin.Boolean
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*2*/ /*fake_override*/ fun get(/*0*/ index: kotlin.Int): kotlin.String!
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*2*/ /*fake_override*/ fun indexOf(/*0*/ o: kotlin.String!): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun indexOf(/*0*/ element: kotlin.String!): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
     public open override /*2*/ /*fake_override*/ fun iterator(): kotlin.MutableIterator<kotlin.String!>
-    public open override /*2*/ /*fake_override*/ fun lastIndexOf(/*0*/ o: kotlin.String!): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun lastIndexOf(/*0*/ element: kotlin.String!): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun listIterator(): kotlin.MutableListIterator<kotlin.String!>
     public open override /*2*/ /*fake_override*/ fun listIterator(/*0*/ index: kotlin.Int): kotlin.MutableListIterator<kotlin.String!>
-    public open override /*2*/ /*fake_override*/ fun remove(/*0*/ o: kotlin.String!): kotlin.Boolean
-    public open override /*2*/ /*fake_override*/ fun removeAll(/*0*/ c: kotlin.Collection<kotlin.String!>): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun remove(/*0*/ element: kotlin.String!): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun removeAll(/*0*/ elements: kotlin.Collection<kotlin.String!>): kotlin.Boolean
     public open override /*2*/ /*fake_override*/ fun removeAt(/*0*/ index: kotlin.Int): kotlin.String!
-    public open override /*2*/ /*fake_override*/ fun retainAll(/*0*/ c: kotlin.Collection<kotlin.String!>): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun retainAll(/*0*/ elements: kotlin.Collection<kotlin.String!>): kotlin.Boolean
     public open override /*2*/ /*fake_override*/ fun set(/*0*/ index: kotlin.Int, /*1*/ element: kotlin.String!): kotlin.String!
     public open override /*2*/ /*fake_override*/ fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.MutableList<kotlin.String!>
     public open override /*1*/ /*fake_override*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!
@@ -66,25 +66,25 @@ public final class X : A {
     public constructor X()
     public open override /*1*/ /*fake_override*/ val size: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun add(/*0*/ index: kotlin.Int, /*1*/ element: kotlin.String!): kotlin.Unit
-    public open override /*1*/ /*fake_override*/ fun add(/*0*/ element: kotlin.String!): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun addAll(/*0*/ elements: kotlin.Collection<kotlin.String!>): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun addAll(/*0*/ index: kotlin.Int, /*1*/ elements: kotlin.Collection<kotlin.String!>): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun add(/*0*/ s: kotlin.String!): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun addAll(/*0*/ c: kotlin.Collection<kotlin.String!>): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun addAll(/*0*/ index: kotlin.Int, /*1*/ c: kotlin.Collection<kotlin.String!>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
-    public open override /*1*/ /*fake_override*/ fun contains(/*0*/ o: kotlin.String!): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun containsAll(/*0*/ c: kotlin.Collection<kotlin.String!>): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun contains(/*0*/ element: kotlin.String!): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun containsAll(/*0*/ elements: kotlin.Collection<kotlin.String!>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun get(/*0*/ index: kotlin.Int): kotlin.String!
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun indexOf(/*0*/ o: kotlin.String!): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun indexOf(/*0*/ element: kotlin.String!): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun iterator(): kotlin.MutableIterator<kotlin.String!>
-    public open override /*1*/ /*fake_override*/ fun lastIndexOf(/*0*/ o: kotlin.String!): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun lastIndexOf(/*0*/ element: kotlin.String!): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun listIterator(): kotlin.MutableListIterator<kotlin.String!>
     public open override /*1*/ /*fake_override*/ fun listIterator(/*0*/ index: kotlin.Int): kotlin.MutableListIterator<kotlin.String!>
-    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ o: kotlin.String!): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ c: kotlin.Collection<kotlin.String!>): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ element: kotlin.String!): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ elements: kotlin.Collection<kotlin.String!>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun removeAt(/*0*/ index: kotlin.Int): kotlin.String!
-    public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ c: kotlin.Collection<kotlin.String!>): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ elements: kotlin.Collection<kotlin.String!>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun set(/*0*/ index: kotlin.Int, /*1*/ element: kotlin.String!): kotlin.String!
     public open override /*1*/ /*fake_override*/ fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.MutableList<kotlin.String!>
     public open override /*1*/ /*fake_override*/ fun toArray(): kotlin.Array<(out) kotlin.Any!>!

@@ -33,10 +33,10 @@ public open class D : C {
 public final class E : D, B {
     public constructor E()
     public open override /*1*/ fun bar(/*0*/ x: kotlin.CharSequence?, /*1*/ y: kotlin.List<*>?): kotlin.String
-    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any(raw)?): kotlin.Boolean(raw)
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ fun foo(/*0*/ x: kotlin.Any, /*1*/ y: kotlin.List<kotlin.Any?>): kotlin.String
-    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int(raw)
-    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String(raw)
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public final class E2 : B {

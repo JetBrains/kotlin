@@ -395,17 +395,18 @@ public class OverridingUtil {
             return CollectionsKt.first(candidates);
         }
 
-        CallableMemberDescriptor lastNonFlexible = null;
+        CallableMemberDescriptor firstNonFlexible = null;
         for (CallableMemberDescriptor candidate : candidates) {
-            if (!FlexibleTypesKt.isFlexible(candidate.getReturnType())) {
-                lastNonFlexible = candidate;
+            if (firstNonFlexible == null && !FlexibleTypesKt.isFlexible(candidate.getReturnType())) {
+                firstNonFlexible = candidate;
+                break;
             }
         }
-        if (lastNonFlexible != null) {
-            return lastNonFlexible;
+        if (firstNonFlexible != null) {
+            return firstNonFlexible;
         }
 
-        return CollectionsKt.last(candidates);
+        return CollectionsKt.first(candidates);
     }
 
     private static void createAndBindFakeOverride(
