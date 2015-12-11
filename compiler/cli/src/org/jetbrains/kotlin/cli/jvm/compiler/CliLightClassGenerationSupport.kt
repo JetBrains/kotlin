@@ -80,11 +80,13 @@ public class CliLightClassGenerationSupport(project: Project) : LightClassGenera
     }
 
     override fun getContextForPackage(files: Collection<KtFile>): LightClassConstructionContext {
-        return getContext()
+        return LightClassConstructionContext(bindingContext, module)
     }
 
     override fun getContextForClassOrObject(classOrObject: KtClassOrObject): LightClassConstructionContext {
-        return getContext()
+        //force resolve companion for light class generation
+        bindingContext.get(BindingContext.CLASS, classOrObject)?.companionObjectDescriptor
+        return LightClassConstructionContext(bindingContext, module)
     }
 
     private fun getContext(): LightClassConstructionContext {

@@ -282,11 +282,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         }
         ClassContext classContext = new ClassContext(state.getTypeMapper(), descriptor, kind, this, null);
 
-        //We can't call descriptor.getCompanionObjectDescriptor() on light class generation
-        // because it triggers companion light class generation via putting it to BindingContext.CLASS
-        // (so MemberCodegen doesn't skip it in genClassOrObject).
-        if (state.getTypeMapper().getClassBuilderMode() != ClassBuilderMode.LIGHT_CLASSES &&
-            descriptor.getCompanionObjectDescriptor() != null) {
+        if (descriptor.getCompanionObjectDescriptor() != null) {
             //We need to create companion object context ahead of time
             // because otherwise we can't generate synthetic accessor for private members in companion object
             classContext.intoClass(descriptor.getCompanionObjectDescriptor(), OwnerKind.IMPLEMENTATION, state);
