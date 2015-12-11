@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.diagnostics.MutableDiagnosticsWithSuppression
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.psi.*
 
 class MutableDiagnosticsTest : KotlinTestWithEnvironment() {
@@ -66,15 +68,15 @@ class MutableDiagnosticsTest : KotlinTestWithEnvironment() {
         middle.reportDiagnostic()
         derived.reportDiagnostic()
 
-        Assert.assertEquals(1, base.diagnostics.all().size())
-        Assert.assertEquals(2, middle.diagnostics.all().size())
-        Assert.assertEquals(3, derived.diagnostics.all().size())
+        Assert.assertEquals(1, base.diagnostics.all().size)
+        Assert.assertEquals(2, middle.diagnostics.all().size)
+        Assert.assertEquals(3, derived.diagnostics.all().size)
 
         middle.clear()
 
-        Assert.assertEquals(1, base.diagnostics.all().size())
-        Assert.assertEquals(1, middle.diagnostics.all().size())
-        Assert.assertEquals(2, derived.diagnostics.all().size())
+        Assert.assertEquals(1, base.diagnostics.all().size)
+        Assert.assertEquals(1, middle.diagnostics.all().size)
+        Assert.assertEquals(2, derived.diagnostics.all().size)
     }
 
     fun testCaching() {
@@ -129,21 +131,23 @@ class MutableDiagnosticsTest : KotlinTestWithEnvironment() {
         return (this as MutableDiagnosticsWithSuppression).getReadonlyView().getDiagnostics()
     }
 
+    private class DummyDiagnosticFactory : DiagnosticFactory<DummyDiagnostic>("DUMMY", Severity.ERROR)
+
     private inner class DummyDiagnostic : Diagnostic {
-        val dummyElement = KtPsiFactory(getEnvironment().project).createType("Int")
+        private val factory = DummyDiagnosticFactory()
+        private val dummyElement = KtPsiFactory(getEnvironment().project).createType("Int")
 
         init {
             dummyElement.getContainingKtFile().doNotAnalyze = null
         }
 
-        override fun getFactory() = unimplemented()
-        override fun getSeverity() = unimplemented()
+        override fun getFactory() = factory
+        override fun getSeverity() = factory.severity
         override fun getPsiElement() = dummyElement
         override fun getTextRanges() = unimplemented()
         override fun getPsiFile() = unimplemented()
         override fun isValid() = unimplemented()
 
         private fun unimplemented(): Nothing = throw UnsupportedOperationException()
-
     }
 }
