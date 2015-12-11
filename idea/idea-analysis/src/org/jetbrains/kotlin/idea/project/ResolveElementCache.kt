@@ -23,7 +23,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.asJava.KotlinCodeBlockModificationListener
-import org.jetbrains.kotlin.cfg.KotlinFlowInformationProvider
+import org.jetbrains.kotlin.cfg.ControlFlowInformationProvider
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.SimpleGlobalContext
 import org.jetbrains.kotlin.context.withModule
@@ -300,7 +300,7 @@ public class ResolveElementCache(
         }
 
         val controlFlowTrace = DelegatingBindingTrace(trace.getBindingContext(), "Element control flow resolve", resolveElement)
-        KotlinFlowInformationProvider(resolveElement, controlFlowTrace).checkDeclaration()
+        ControlFlowInformationProvider(resolveElement, controlFlowTrace).checkDeclaration()
         controlFlowTrace.addOwnDataTo(trace, null, false)
 
         return Pair(trace.getBindingContext(), statementFilterUsed)
@@ -430,7 +430,7 @@ public class ResolveElementCache(
         forceResolveAnnotationsInside(property)
 
         for (accessor in property.getAccessors()) {
-            KotlinFlowInformationProvider(accessor, trace).checkDeclaration()
+            ControlFlowInformationProvider(accessor, trace).checkDeclaration()
         }
 
         return trace

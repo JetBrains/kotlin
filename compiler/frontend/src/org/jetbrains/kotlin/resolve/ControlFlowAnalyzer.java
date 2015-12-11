@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.cfg.KotlinFlowInformationProvider;
+import org.jetbrains.kotlin.cfg.ControlFlowInformationProvider;
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor;
@@ -68,20 +68,21 @@ public class ControlFlowAnalyzer {
     }
 
     private void checkSecondaryConstructor(@NotNull KtSecondaryConstructor constructor) {
-        KotlinFlowInformationProvider flowInformationProvider = new KotlinFlowInformationProvider(constructor, trace);
-        flowInformationProvider.checkDeclaration();
-        flowInformationProvider.checkFunction(builtIns.getUnitType());
+        ControlFlowInformationProvider controlFlowInformationProvider = new ControlFlowInformationProvider(constructor, trace);
+        controlFlowInformationProvider.checkDeclaration();
+        controlFlowInformationProvider.checkFunction(builtIns.getUnitType());
     }
 
     private void checkDeclarationContainer(@NotNull BodiesResolveContext c, KtDeclarationContainer declarationContainer) {
         // A pseudocode of class/object initialization corresponds to a class/object
         // or initialization of properties corresponds to a package declared in a file
-        KotlinFlowInformationProvider flowInformationProvider = new KotlinFlowInformationProvider((KtElement) declarationContainer, trace);
+        ControlFlowInformationProvider
+                controlFlowInformationProvider = new ControlFlowInformationProvider((KtElement) declarationContainer, trace);
         if (c.getTopDownAnalysisMode().isLocalDeclarations()) {
-            flowInformationProvider.checkForLocalClassOrObjectMode();
+            controlFlowInformationProvider.checkForLocalClassOrObjectMode();
             return;
         }
-        flowInformationProvider.checkDeclaration();
+        controlFlowInformationProvider.checkDeclaration();
     }
 
     private void checkProperty(@NotNull BodiesResolveContext c, KtProperty property, PropertyDescriptor propertyDescriptor) {
@@ -97,12 +98,12 @@ public class ControlFlowAnalyzer {
 
     private void checkFunction(@NotNull BodiesResolveContext c, @NotNull KtDeclarationWithBody function, @Nullable KotlinType expectedReturnType) {
         if (!function.hasBody()) return;
-        KotlinFlowInformationProvider flowInformationProvider = new KotlinFlowInformationProvider(function, trace);
+        ControlFlowInformationProvider controlFlowInformationProvider = new ControlFlowInformationProvider(function, trace);
         if (c.getTopDownAnalysisMode().isLocalDeclarations()) {
-            flowInformationProvider.checkForLocalClassOrObjectMode();
+            controlFlowInformationProvider.checkForLocalClassOrObjectMode();
             return;
         }
-        flowInformationProvider.checkDeclaration();
-        flowInformationProvider.checkFunction(expectedReturnType);
+        controlFlowInformationProvider.checkDeclaration();
+        controlFlowInformationProvider.checkFunction(expectedReturnType);
     }
 }

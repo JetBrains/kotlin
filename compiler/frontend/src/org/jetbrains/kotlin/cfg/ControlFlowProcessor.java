@@ -29,7 +29,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.cfg.pseudocode.KotlinControlFlowInstructionsGenerator;
+import org.jetbrains.kotlin.cfg.pseudocode.ControlFlowInstructionsGenerator;
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue;
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode;
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeImpl;
@@ -61,17 +61,17 @@ import org.jetbrains.kotlin.types.expressions.OperatorConventions;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.cfg.KotlinControlFlowBuilder.PredefinedOperation.*;
+import static org.jetbrains.kotlin.cfg.ControlFlowBuilder.PredefinedOperation.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 
-public class KotlinControlFlowProcessor {
+public class ControlFlowProcessor {
 
-    private final KotlinControlFlowBuilder builder;
+    private final ControlFlowBuilder builder;
     private final BindingTrace trace;
 
-    public KotlinControlFlowProcessor(BindingTrace trace) {
-        this.builder = new KotlinControlFlowInstructionsGenerator();
+    public ControlFlowProcessor(BindingTrace trace) {
+        this.builder = new ControlFlowInstructionsGenerator();
         this.trace = trace;
     }
 
@@ -127,7 +127,7 @@ public class KotlinControlFlowProcessor {
     }
 
     private class CFPVisitor extends KtVisitorVoid {
-        private final KotlinControlFlowBuilder builder;
+        private final ControlFlowBuilder builder;
 
         private final KtVisitorVoid conditionVisitor = new KtVisitorVoid() {
 
@@ -170,11 +170,11 @@ public class KotlinControlFlowProcessor {
 
             @Override
             public void visitKtElement(@NotNull KtElement element) {
-                throw new UnsupportedOperationException("[JetControlFlowProcessor] " + element.toString());
+                throw new UnsupportedOperationException("[ControlFlowProcessor] " + element.toString());
             }
         };
 
-        private CFPVisitor(@NotNull KotlinControlFlowBuilder builder) {
+        private CFPVisitor(@NotNull ControlFlowBuilder builder) {
             this.builder = builder;
         }
 
@@ -411,7 +411,7 @@ public class KotlinControlFlowProcessor {
                 generateInstructions(right);
             }
             builder.bindLabel(resultLabel);
-            KotlinControlFlowBuilder.PredefinedOperation operation = operationType == ANDAND ? AND : OR;
+            ControlFlowBuilder.PredefinedOperation operation = operationType == ANDAND ? AND : OR;
             builder.predefinedOperation(expression, operation, elementsToValues(Arrays.asList(left, right)));
         }
 

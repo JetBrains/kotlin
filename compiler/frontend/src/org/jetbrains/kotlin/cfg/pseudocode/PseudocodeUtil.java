@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.cfg.pseudocode;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.cfg.KotlinControlFlowProcessor;
+import org.jetbrains.kotlin.cfg.ControlFlowProcessor;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.AccessTarget;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.AccessValueInstruction;
@@ -84,7 +84,7 @@ public class PseudocodeUtil {
             public void report(@NotNull Diagnostic diagnostic) {
             }
         };
-        return new KotlinControlFlowProcessor(mockTrace).generatePseudocode(declaration);
+        return new ControlFlowProcessor(mockTrace).generatePseudocode(declaration);
     }
 
     @Nullable

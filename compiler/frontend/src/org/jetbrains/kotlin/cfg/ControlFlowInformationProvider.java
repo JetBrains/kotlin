@@ -73,14 +73,14 @@ import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 import static org.jetbrains.kotlin.types.TypeUtils.noExpectedType;
 
-public class KotlinFlowInformationProvider {
+public class ControlFlowInformationProvider {
 
     private final KtElement subroutine;
     private final Pseudocode pseudocode;
     private final BindingTrace trace;
     private PseudocodeVariablesData pseudocodeVariablesData;
 
-    private KotlinFlowInformationProvider(
+    private ControlFlowInformationProvider(
             @NotNull KtElement declaration,
             @NotNull BindingTrace trace,
             @NotNull Pseudocode pseudocode
@@ -90,11 +90,11 @@ public class KotlinFlowInformationProvider {
         this.pseudocode = pseudocode;
     }
 
-    public KotlinFlowInformationProvider(
+    public ControlFlowInformationProvider(
             @NotNull KtElement declaration,
             @NotNull BindingTrace trace
     ) {
-        this(declaration, trace, new KotlinControlFlowProcessor(trace).generatePseudocode(declaration));
+        this(declaration, trace, new ControlFlowProcessor(trace).generatePseudocode(declaration));
     }
 
     public PseudocodeVariablesData getPseudocodeVariablesData() {
@@ -211,8 +211,8 @@ public class KotlinFlowInformationProvider {
                         (CallableDescriptor) trace.getBindingContext().get(BindingContext.DECLARATION_TO_DESCRIPTOR, localDeclaration);
                 KotlinType expectedType = functionDescriptor != null ? functionDescriptor.getReturnType() : null;
 
-                KotlinFlowInformationProvider providerForLocalDeclaration =
-                        new KotlinFlowInformationProvider(localDeclaration, trace, localDeclarationInstruction.getBody());
+                ControlFlowInformationProvider providerForLocalDeclaration =
+                        new ControlFlowInformationProvider(localDeclaration, trace, localDeclarationInstruction.getBody());
 
                 providerForLocalDeclaration.checkFunction(expectedType);
             }
@@ -649,7 +649,7 @@ public class KotlinFlowInformationProvider {
     public void markUnusedExpressions() {
         final Map<Instruction, DiagnosticFactory<?>> reportedDiagnosticMap = Maps.newHashMap();
         PseudocodeTraverserKt.traverse(
-                pseudocode, TraversalOrder.FORWARD, new KotlinFlowInformationProvider.FunctionVoid1<Instruction>() {
+                pseudocode, TraversalOrder.FORWARD, new ControlFlowInformationProvider.FunctionVoid1<Instruction>() {
                     @Override
                     public void execute(@NotNull Instruction instruction) {
                         if (!(instruction instanceof KtElementInstruction)) return;
@@ -677,7 +677,7 @@ public class KotlinFlowInformationProvider {
 
     public void markStatements() {
         PseudocodeTraverserKt.traverse(
-                pseudocode, TraversalOrder.FORWARD, new KotlinFlowInformationProvider.FunctionVoid1<Instruction>() {
+                pseudocode, TraversalOrder.FORWARD, new ControlFlowInformationProvider.FunctionVoid1<Instruction>() {
                     @Override
                     public void execute(@NotNull Instruction instruction) {
                         PseudoValue value = instruction instanceof InstructionWithValue
@@ -695,7 +695,7 @@ public class KotlinFlowInformationProvider {
 
     public void markIfWithoutElse() {
         PseudocodeTraverserKt.traverse(
-                pseudocode, TraversalOrder.FORWARD, new KotlinFlowInformationProvider.FunctionVoid1<Instruction>() {
+                pseudocode, TraversalOrder.FORWARD, new ControlFlowInformationProvider.FunctionVoid1<Instruction>() {
                     @Override
                     public void execute(@NotNull Instruction instruction) {
                         PseudoValue value = instruction instanceof InstructionWithValue
@@ -717,7 +717,7 @@ public class KotlinFlowInformationProvider {
 
     public void markWhenWithoutElse() {
         PseudocodeTraverserKt.traverse(
-                pseudocode, TraversalOrder.FORWARD, new KotlinFlowInformationProvider.FunctionVoid1<Instruction>() {
+                pseudocode, TraversalOrder.FORWARD, new ControlFlowInformationProvider.FunctionVoid1<Instruction>() {
                     @Override
                     public void execute(@NotNull Instruction instruction) {
                         PseudoValue value = instruction instanceof InstructionWithValue

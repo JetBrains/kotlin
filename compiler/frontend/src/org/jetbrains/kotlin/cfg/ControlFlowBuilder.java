@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import java.util.List;
 import java.util.Map;
 
-public interface KotlinControlFlowBuilder {
+public interface ControlFlowBuilder {
     // Subroutines
     void enterSubroutine(@NotNull KtElement subroutine);
 
