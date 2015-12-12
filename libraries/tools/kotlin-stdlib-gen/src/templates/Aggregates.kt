@@ -349,6 +349,53 @@ fun aggregates(): List<GenericFunction> {
         body(Maps) { "return entries.maxWith(comparator)" }
     }
 
+    templates add f("foldIndexed(initial: R, operation: (Int, R, T) -> R)") {
+        inline(true)
+
+        include(CharSequences)
+        doc { f ->
+            """
+            Accumulates value starting with [initial] value and applying [operation] from left to right
+            to current accumulator value and each ${f.element} with its index in the original ${f.collection}.
+            """
+        }
+        typeParam("R")
+        returns("R")
+        body {
+            """
+            var index = 0
+            var accumulator = initial
+            for (element in this) accumulator = operation(index++, accumulator, element)
+            return accumulator
+            """
+        }
+    }
+
+    templates add f("foldRightIndexed(initial: R, operation: (Int, T, R) -> R)") {
+        inline(true)
+
+        only(CharSequences, Lists, ArraysOfObjects, ArraysOfPrimitives)
+        doc { f ->
+            """
+            Accumulates value starting with [initial] value and applying [operation] from right to left
+            to each ${f.element} with its index in the original ${f.collection} and current accumulator value.
+            """
+        }
+        typeParam("R")
+        returns("R")
+        body {
+            """
+            var index = lastIndex
+            var accumulator = initial
+            while (index >= 0) {
+                accumulator = operation(index, get(index), accumulator)
+                --index
+            }
+            return accumulator
+            """
+        }
+    }
+
     templates add f("fold(initial: R, operation: (R, T) -> R)") {
         inline(true)
 
@@ -384,6 +431,116 @@ fun aggregates(): List<GenericFunction> {
         }
     }
 
+    templates add f("reduceIndexed(operation: (Int, T, T) -> T)") {
+        inline(true)
+        include(CharSequences)
+        exclude(ArraysOfObjects, Iterables, Sequences)
+
+        doc { f ->
+            """
+            Accumulates value starting with the first ${f.element} and applying [operation] from left to right
+            to current accumulator value and each ${f.element} with its index in the original ${f.collection}.
+            """
+        }
+        returns("T")
+        body {
+            """
+            val iterator = this.iterator()
+            if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+
+            var index = 1
+            var accumulator = iterator.next()
+            while (iterator.hasNext()) {
+                accumulator = operation(index++, accumulator, iterator.next())
+            }
+            return accumulator
+            """
+        }
+    }
+
+    templates add f("reduceIndexed(operation: (Int, S, T) -> S)") {
+        inline(true)
+        only(ArraysOfObjects, Iterables, Sequences)
+
+        doc { f ->
+            """
+            Accumulates value starting with the first ${f.element} and applying [operation] from left to right
+            to current accumulator value and each ${f.element} with its index in the original ${f.collection}.
+            """
+        }
+        typeParam("S")
+        typeParam("T: S")
+        returns("S")
+        body {
+            """
+            val iterator = this.iterator()
+            if (!iterator.hasNext()) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+
+            var index = 1
+            var accumulator: S = iterator.next()
+            while (iterator.hasNext()) {
+                accumulator = operation(index++, accumulator, iterator.next())
+            }
+            return accumulator
+            """
+        }
+    }
+
+    templates add f("reduceRightIndexed(operation: (Int, T, T) -> T)") {
+        inline(true)
+
+        only(CharSequences, ArraysOfPrimitives)
+        doc { f ->
+            """
+            Accumulates value starting with last ${f.element} and applying [operation] from right to left
+            to each ${f.element} with its index in the original ${f.collection} and current accumulator value.
+            """
+        }
+        returns("T")
+        body {
+            """
+            var index = lastIndex
+            if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+
+            var accumulator = get(index--)
+            while (index >= 0) {
+                accumulator = operation(index, get(index), accumulator)
+                --index
+            }
+
+            return accumulator
+            """
+        }
+    }
+
+    templates add f("reduceRightIndexed(operation: (Int, T, S) -> S)") {
+        inline(true)
+
+        only(Lists, ArraysOfObjects)
+        doc { f ->
+            """
+            Accumulates value starting with last ${f.element} and applying [operation] from right to left
+            to each ${f.element} with its index in the original ${f.collection} and current accumulator value.
+            """
+        }
+        typeParam("S")
+        typeParam("T: S")
+        returns("S")
+        body {
+            """
+            var index = lastIndex
+            if (index < 0) throw UnsupportedOperationException("Empty iterable can't be reduced.")
+
+            var accumulator: S = get(index--)
+            while (index >= 0) {
+                accumulator = operation(index, get(index), accumulator)
+                --index
+            }
+
+            return accumulator
+            """
+        }
+    }
 
     templates add f("reduce(operation: (T, T) -> T)") {
         inline(true)
