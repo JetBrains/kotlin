@@ -18,8 +18,8 @@ import bar.*
     /*p:foo*/A./*c:foo.A*/Companion./*c:foo.A.Companion*/baz()
     /*p:foo*/A./*c:foo.A c:foo.A.Companion*/O
     /*p:foo*/A./*c:foo.A*/O./*c:foo.A.O*/v = "OK"
-    /*p:foo*/A./*c:foo.A c:foo.A.Companion p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io c:foo.A.Companion(getVala) c:foo.A.Companion(getVALA)*/vala
-    /*p:foo*/A./*c:foo.A c:foo.A.Companion p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io c:foo.A.Companion(getVara) c:foo.A.Companion(getVARA)*/vara()
+    /*p:foo*/A./*c:foo.A c:foo.A.Companion p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io c:foo.A.Companion(getVala) c:foo.A.Companion(getVALA)*/vala
+    /*p:foo*/A./*c:foo.A c:foo.A.Companion p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io c:foo.A.Companion(getVara) c:foo.A.Companion(getVARA)*/vara()
 
     i./*c:foo.I*/a = 2
     /*p:foo*/Obj./*c:foo.Obj*/a
@@ -31,13 +31,13 @@ import bar.*
     val iii = /*p:foo*/Obj./*c:foo.Obj*/bar()
     iii./*c:foo.I*/foo()
 
-    /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/E./*c:foo.E*/X
-    /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/E./*c:foo.E*/X./*c:foo.E*/a
-    /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/E./*c:foo.E*/Y./*c:foo.E*/foo()
-    /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/E./*c:foo.E p:foo(invoke) p:bar(invoke) p:java.lang(invoke) p:kotlin(invoke) p:kotlin.annotation(invoke) p:kotlin.jvm(invoke) p:kotlin.io(invoke)*/values()
-    /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/E./*c:foo.E*/valueOf("")
-    /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/E./*c:foo.E*/foo
-    /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/E./*c:foo.E*/bar()
+    /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io*/E./*c:foo.E*/X
+    /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io*/E./*c:foo.E*/X./*c:foo.E*/a
+    /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io*/E./*c:foo.E*/Y./*c:foo.E*/foo()
+    /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io*/E./*c:foo.E p:foo(invoke) p:bar(invoke) p:java.lang(invoke) p:kotlin(invoke) p:kotlin.annotation(invoke) p:kotlin.jvm(invoke) p:kotlin.collections(invoke) p:kotlin.ranges(invoke) p:kotlin.sequences(invoke) p:kotlin.text(invoke) p:kotlin.io(invoke)*/values()
+    /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io*/E./*c:foo.E*/valueOf("")
+    /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io*/E./*c:foo.E*/foo
+    /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io*/E./*c:foo.E*/bar()
 }
 
 /*p:foo*/fun classifiers(

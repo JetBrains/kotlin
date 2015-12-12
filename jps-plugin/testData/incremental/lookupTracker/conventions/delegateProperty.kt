@@ -20,8 +20,8 @@ import kotlin.reflect./*p:kotlin.reflect*/KProperty
 }
 
 
-/*p:foo.bar*/val x1 by /*p:foo.bar c:foo.bar.D1(getValue) c:foo.bar.D1(propertyDelegated) p:foo.bar(propertyDelegated) p:java.lang(propertyDelegated) p:kotlin(propertyDelegated) p:kotlin.annotation(propertyDelegated) p:kotlin.jvm(propertyDelegated) p:kotlin.io(propertyDelegated) c:foo.bar.D1(getPropertyDelegated) c:foo.bar.D1(getPROPERTYDelegated)*/D1()
-/*p:foo.bar*/var y1 by /*p:foo.bar c:foo.bar.D1(getValue) c:foo.bar.D1(setValue) p:foo.bar(setValue) c:foo.bar.D1(propertyDelegated) p:foo.bar(propertyDelegated) p:java.lang(propertyDelegated) p:kotlin(propertyDelegated) p:kotlin.annotation(propertyDelegated) p:kotlin.jvm(propertyDelegated) p:kotlin.io(propertyDelegated) c:foo.bar.D1(getPropertyDelegated) c:foo.bar.D1(getPROPERTYDelegated)*/D1()
+/*p:foo.bar*/val x1 by /*p:foo.bar c:foo.bar.D1(getValue) c:foo.bar.D1(propertyDelegated) p:foo.bar(propertyDelegated) p:java.lang(propertyDelegated) p:kotlin(propertyDelegated) p:kotlin.annotation(propertyDelegated) p:kotlin.jvm(propertyDelegated) p:kotlin.collections(propertyDelegated) p:kotlin.ranges(propertyDelegated) p:kotlin.sequences(propertyDelegated) p:kotlin.text(propertyDelegated) p:kotlin.io(propertyDelegated) c:foo.bar.D1(getPropertyDelegated) c:foo.bar.D1(getPROPERTYDelegated)*/D1()
+/*p:foo.bar*/var y1 by /*p:foo.bar c:foo.bar.D1(getValue) c:foo.bar.D1(setValue) p:foo.bar(setValue) c:foo.bar.D1(propertyDelegated) p:foo.bar(propertyDelegated) p:java.lang(propertyDelegated) p:kotlin(propertyDelegated) p:kotlin.annotation(propertyDelegated) p:kotlin.jvm(propertyDelegated) p:kotlin.collections(propertyDelegated) p:kotlin.ranges(propertyDelegated) p:kotlin.sequences(propertyDelegated) p:kotlin.text(propertyDelegated) p:kotlin.io(propertyDelegated) c:foo.bar.D1(getPropertyDelegated) c:foo.bar.D1(getPROPERTYDelegated)*/D1()
 
 /*p:foo.bar*/val x2 by /*p:foo.bar c:foo.bar.D2(getValue) p:foo.bar(getValue) c:foo.bar.D2(propertyDelegated) p:foo.bar(propertyDelegated)*/D2()
 /*p:foo.bar*/var y2 by /*p:foo.bar c:foo.bar.D2(getValue) p:foo.bar(getValue) c:foo.bar.D2(setValue) c:foo.bar.D2(propertyDelegated) p:foo.bar(propertyDelegated)*/D2()
