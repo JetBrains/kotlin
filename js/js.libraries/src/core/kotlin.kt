@@ -31,26 +31,6 @@ public fun byteArrayOf(vararg elements: Byte): ByteArray          = noImpl
 @library
 public fun booleanArrayOf(vararg elements: Boolean): BooleanArray = noImpl
 
-@library("copyToArray")
-public fun <reified T> Collection<T>.toTypedArray(): Array<T> = noImpl
-
-
-/**
- * Returns an immutable list containing only the specified object [element].
- */
-public fun <T> listOf(element: T): List<T> = arrayListOf(element)
-
-/**
- * Returns an immutable set containing only the specified object [element].
- */
-public fun <T> setOf(element: T): Set<T> = hashSetOf(element)
-
-/**
- * Returns an immutable map, mapping only the specified key to the
- * specified value.
- */
-public fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = hashMapOf(pair)
-
 /**
  * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer].
  */

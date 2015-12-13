@@ -13,12 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package kotlin.collections
 
-package kotlin.text
 
-// actually \s is enough to match all whitespace, but \xA0 added because of different regexp behavior of Rhino used in Selenium tests
-public fun Char.isWhitespace(): Boolean = toString().matches("[\\s\\xA0]")
+@library("copyToArray")
+public fun <reified T> Collection<T>.toTypedArray(): Array<T> = noImpl
 
-@native public fun Char.toLowerCase(): Char = noImpl
 
-@native public fun Char.toUpperCase(): Char = noImpl
+/**
+ * Returns an immutable list containing only the specified object [element].
+ */
+public fun <T> listOf(element: T): List<T> = arrayListOf(element)
+
+/**
+ * Returns an immutable set containing only the specified object [element].
+ */
+public fun <T> setOf(element: T): Set<T> = hashSetOf(element)
+
+/**
+ * Returns an immutable map, mapping only the specified key to the
+ * specified value.
+ */
+public fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = hashMapOf(pair)

@@ -1,6 +1,5 @@
-package kotlin
+package kotlin.text
 
-import kotlin.text.Regex
 import kotlin.text.js.RegExp
 
 internal inline fun String.nativeIndexOf(ch : Char, fromIndex : Int) : Int = nativeIndexOf(ch.toString(), fromIndex)
