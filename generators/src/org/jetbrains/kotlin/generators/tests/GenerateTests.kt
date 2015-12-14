@@ -499,7 +499,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractInlineTest>() {
-            model("refactoring/inline")
+            model("refactoring/inline", pattern = "^(\\w+)\\.kt$")
         }
 
         testClass<AbstractUnwrapRemoveTest>() {

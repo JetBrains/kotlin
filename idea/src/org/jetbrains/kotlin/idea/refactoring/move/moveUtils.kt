@@ -37,7 +37,6 @@ import com.intellij.refactoring.util.MoveRenameUsageInfo
 import com.intellij.refactoring.util.NonCodeUsageInfo
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.IncorrectOperationException
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.descriptors.*
@@ -63,14 +62,24 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.getImportableDescriptor
+import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
 val UNKNOWN_PACKAGE_FQ_NAME = FqNameUnsafe("org.jetbrains.kotlin.idea.refactoring.move.<unknown-package>")
 
 public class PackageNameInfo(val oldPackageName: FqName, val newPackageName: FqNameUnsafe)
 
-public fun KtElement.getInternalReferencesToUpdateOnPackageNameChange(packageNameInfo: PackageNameInfo): List<UsageInfo> {
-    val file = getContainingFile() as? KtFile ?: return listOf()
+fun KtElement.getInternalReferencesToUpdateOnPackageNameChange(packageNameInfo: PackageNameInfo): List<UsageInfo> {
+    val usages = ArrayList<UsageInfo>()
+    lazilyProcessInternalReferencesToUpdateOnPackageNameChange(packageNameInfo) { expr, factory -> usages.addIfNotNull(factory(expr)) }
+    return usages
+}
+
+fun KtElement.lazilyProcessInternalReferencesToUpdateOnPackageNameChange(
+        packageNameInfo: PackageNameInfo,
+        body: (originalRefExpr: KtSimpleNameExpression, usageFactory: (KtSimpleNameExpression) -> UsageInfo?) -> Unit
+) {
+    val file = getContainingFile() as? KtFile ?: return
 
     val importPaths = file.getImportDirectives().mapNotNull { it.getImportPath() }
 
@@ -85,7 +94,7 @@ public fun KtElement.getInternalReferencesToUpdateOnPackageNameChange(packageNam
         }
     }
 
-    fun processReference(refExpr: KtSimpleNameExpression, bindingContext: BindingContext): UsageInfo? {
+    fun processReference(refExpr: KtSimpleNameExpression, bindingContext: BindingContext): ((KtSimpleNameExpression) -> UsageInfo?)? {
         val descriptor = bindingContext[BindingContext.REFERENCE_TARGET, refExpr]?.getImportableDescriptor() ?: return null
 
         val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(getProject(), descriptor) ?: return null
@@ -95,11 +104,13 @@ public fun KtElement.getInternalReferencesToUpdateOnPackageNameChange(packageNam
 
         if (isCallable && !isExtension) {
             val containingDescriptor = descriptor.getContainingDeclaration()
-            val receiver = refExpr.getReceiverExpression()
-            if (receiver != null) {
-                val receiverRef = receiver.getQualifiedElementSelector() as? KtSimpleNameExpression ?: return null
-                if (bindingContext[BindingContext.QUALIFIER, receiverRef] == null) return null
-                return processReference(receiverRef, bindingContext)
+            if (refExpr.getReceiverExpression() != null) {
+                return fun(refExpr: KtSimpleNameExpression): UsageInfo? {
+                    val receiver = refExpr.getReceiverExpression() ?: return null
+                    val receiverRef = receiver.getQualifiedElementSelector() as? KtSimpleNameExpression ?: return null
+                    if (bindingContext[BindingContext.QUALIFIER, receiverRef] == null) return null
+                    return processReference(receiverRef, bindingContext)?.invoke(receiverRef)
+                }
             }
             if (containingDescriptor !is PackageFragmentDescriptor) return null
         }
@@ -113,41 +124,38 @@ public fun KtElement.getInternalReferencesToUpdateOnPackageNameChange(packageNam
 
         val oldPackageName = packageNameInfo.oldPackageName
         val newPackageName = packageNameInfo.newPackageName
-        return when {
-            isExtension ||
-            packageName == oldPackageName ||
-            packageName?.asString() == newPackageName.asString() ||
-            isImported(descriptor) -> {
-                if (isAncestor(declaration, false)) {
-                    if (descriptor.importableFqName == null) return null
-                    if (isUnqualifiedExtensionReference(refExpr.mainReference, declaration)) return null
-                    if (packageName == null || !newPackageName.isSafe) return null
-                    fqName.asString().let {
-                        val prefix = packageName.asString()
-                        val prefixOffset = it.indexOf(prefix)
-                        val newFqName = FqName(it.replaceRange(prefixOffset..prefixOffset + prefix.length() - 1, newPackageName.asString()))
-                        return MoveRenameSelfUsageInfo(refExpr.mainReference, declaration, newFqName)
-                    }
-                }
 
-                createMoveUsageInfoIfPossible(refExpr.mainReference, declaration, false)
+        fun doCreateUsageInfo(refExpr: KtSimpleNameExpression): UsageInfo? {
+            if (isAncestor(declaration, false)) {
+                if (descriptor.importableFqName == null) return null
+                if (isUnqualifiedExtensionReference(refExpr.mainReference, declaration)) return null
+                if (packageName == null || !newPackageName.isSafe) return null
+                return fqName.asString().let {
+                    val prefix = packageName.asString()
+                    val prefixOffset = it.indexOf(prefix)
+                    val newFqName = FqName(it.replaceRange(prefixOffset..prefixOffset + prefix.length() - 1, newPackageName.asString()))
+                    MoveRenameSelfUsageInfo(refExpr.mainReference, declaration, newFqName)
+                }
             }
 
-            else -> null
+            return createMoveUsageInfoIfPossible(refExpr.mainReference, declaration, false)
         }
+
+        if (!isExtension &&
+            packageName != oldPackageName &&
+            packageName?.asString() != newPackageName.asString() &&
+            !isImported(descriptor)) return null
+        return ::doCreateUsageInfo
     }
 
     val referenceToContext = KotlinFileReferencesResolver.resolve(file = file, elements = listOf(this))
 
-    val usages = ArrayList<UsageInfo>()
     for ((refExpr, bindingContext) in referenceToContext) {
         if (refExpr !is KtSimpleNameExpression || refExpr.getParent() is KtThisExpression) continue
         if (bindingContext[BindingContext.QUALIFIER, refExpr] != null) continue
 
-        processReference(refExpr, bindingContext)?.let { usages.add(it) }
+        processReference(refExpr, bindingContext)?.let { body(refExpr, it) }
     }
-
-    return usages
 }
 
 class MoveRenameUsageInfoForExtension(

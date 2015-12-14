@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class InlineTestGenerated extends AbstractInlineTest {
     public void testAllFilesPresentInInline() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline"), Pattern.compile("^(.+)\\.kt$"), true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline"), Pattern.compile("^(\\w+)\\.kt$"), true);
     }
 
     @TestMetadata("Basic.kt")
@@ -154,7 +154,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AddParenthesis extends AbstractInlineTest {
         public void testAllFilesPresentInAddParenthesis() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/addParenthesis"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/addParenthesis"), Pattern.compile("^(\\w+)\\.kt$"), true);
         }
 
         @TestMetadata("ArrayAccess.kt")
@@ -343,7 +343,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ExplicateParameterTypes extends AbstractInlineTest {
         public void testAllFilesPresentInExplicateParameterTypes() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/explicateParameterTypes"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/explicateParameterTypes"), Pattern.compile("^(\\w+)\\.kt$"), true);
         }
 
         @TestMetadata("EnoughDontExplicate.kt")
@@ -394,7 +394,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ExplicateTypeArgument extends AbstractInlineTest {
         public void testAllFilesPresentInExplicateTypeArgument() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/explicateTypeArgument"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/explicateTypeArgument"), Pattern.compile("^(\\w+)\\.kt$"), true);
         }
 
         @TestMetadata("DeeperNestedCall.kt")
@@ -457,7 +457,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Property extends AbstractInlineTest {
         public void testAllFilesPresentInProperty() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/property"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/property"), Pattern.compile("^(\\w+)\\.kt$"), true);
         }
 
         @TestMetadata("Basic.kt")
@@ -484,6 +484,18 @@ public class InlineTestGenerated extends AbstractInlineTest {
             doTest(fileName);
         }
 
+        @TestMetadata("keepImport.kt")
+        public void testKeepImport() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/property/keepImport.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("multiplePackages.kt")
+        public void testMultiplePackages() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/property/multiplePackages.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ObjectProperty.kt")
         public void testObjectProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/property/ObjectProperty.kt");
@@ -493,6 +505,12 @@ public class InlineTestGenerated extends AbstractInlineTest {
         @TestMetadata("QualifiedUsage.kt")
         public void testQualifiedUsage() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/property/QualifiedUsage.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("removeImport.kt")
+        public void testRemoveImport() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/property/removeImport.kt");
             doTest(fileName);
         }
 
@@ -520,7 +538,7 @@ public class InlineTestGenerated extends AbstractInlineTest {
         }
 
         public void testAllFilesPresentInStringTemplates() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/stringTemplates"), Pattern.compile("^(.+)\\.kt$"), true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/stringTemplates"), Pattern.compile("^(\\w+)\\.kt$"), true);
         }
 
         @TestMetadata("blockEntry.kt")

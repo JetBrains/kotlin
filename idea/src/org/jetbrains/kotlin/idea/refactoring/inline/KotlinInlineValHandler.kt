@@ -25,6 +25,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.colors.EditorColors
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
@@ -33,17 +34,24 @@ import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.refactoring.util.RefactoringMessageDialog
+import com.intellij.usageView.UsageInfo
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedShortening
 import org.jetbrains.kotlin.idea.core.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.refactoring.move.PackageNameInfo
+import org.jetbrains.kotlin.idea.refactoring.move.lazilyProcessInternalReferencesToUpdateOnPackageNameChange
+import org.jetbrains.kotlin.idea.refactoring.move.postProcessMoveUsages
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -58,6 +66,11 @@ import org.jetbrains.kotlin.utils.sure
 import java.util.*
 
 class KotlinInlineValHandler : InlineActionHandler() {
+    companion object {
+        private var KtSimpleNameExpression.internalUsageInfos: MutableMap<FqName, (KtSimpleNameExpression) -> UsageInfo?>?
+                by CopyableUserDataProperty(Key.create("INTERNAL_USAGE_INFOS"))
+    }
+
     override fun isEnabledForLanguage(l: Language) = l == KotlinLanguage.INSTANCE
 
     override fun canInlineElement(element: PsiElement): Boolean {
@@ -146,14 +159,28 @@ class KotlinInlineValHandler : InlineActionHandler() {
         val typeArgumentsForCall = getTypeArgumentsStringForCall(initializer)
         val parametersForFunctionLiteral = getParametersForFunctionLiteral(initializer)
 
-        val canHighlight = referenceExpressions.all { it.containingFile === file }
-        if (canHighlight) {
+        val isSingleFile = referenceExpressions.all { it.containingFile === file }
+        if (isSingleFile) {
             highlightExpressions(project, editor, referenceExpressions)
+        }
+
+        if (!isSingleFile) {
+            val targetPackages = referenceExpressions.mapNotNullTo(LinkedHashSet()) { (it.containingFile as? KtFile)?.packageFqName }
+            for (targetPackage in targetPackages) {
+                if (targetPackage == file.packageFqName) continue
+                val packageNameInfo = PackageNameInfo(file.packageFqName, targetPackage.toUnsafe())
+                initializer.lazilyProcessInternalReferencesToUpdateOnPackageNameChange(packageNameInfo) { expr, factory ->
+                    val infos = expr.internalUsageInfos
+                                ?: LinkedHashMap<FqName, (KtSimpleNameExpression) -> UsageInfo?>()
+                                        .apply { expr.internalUsageInfos = this }
+                    infos[targetPackage] = factory
+                }
+            }
         }
 
         fun performRefactoring() {
             if (!showDialog(project, name, declaration, referenceExpressions)) {
-                if (canHighlight) {
+                if (isSingleFile) {
                     val statusBar = WindowManager.getInstance().getStatusBar(project)
                     statusBar?.info = RefactoringBundle.message("press.escape.to.remove.the.highlighting")
                 }
@@ -161,23 +188,45 @@ class KotlinInlineValHandler : InlineActionHandler() {
             }
 
             project.executeWriteCommand(RefactoringBundle.message("inline.command", name)) {
-                val inlinedExpressions = referenceExpressions.flatMap { referenceExpression ->
-                    if (assignments.contains(referenceExpression.parent)) return@flatMap emptyList<KtExpression>()
-                    doReplace(referenceExpression, initializer)
-                }
+                val inlinedExpressions = referenceExpressions
+                        .flatMap { referenceExpression ->
+                            if (assignments.contains(referenceExpression.parent)) return@flatMap emptyList<KtExpression>()
+
+                            val importDirective = referenceExpression.getStrictParentOfType<KtImportDirective>()
+                            if (importDirective != null) {
+                                val reference = referenceExpression.getQualifiedElementSelector()?.mainReference
+                                if (reference != null && reference.multiResolve(false).size <= 1) {
+                                    importDirective.delete()
+                                }
+
+                                return@flatMap emptyList<KtExpression>()
+                            }
+
+                            doReplace(referenceExpression, initializer)
+                        }
+                        .mapNotNull { inlinedExpression ->
+                            val pointer = inlinedExpression.createSmartPointer()
+                            val targetPackage = inlinedExpression.getContainingKtFile().packageFqName
+                            val expressionsToProcess = inlinedExpression.collectDescendantsOfType<KtSimpleNameExpression> { it.internalUsageInfos != null }
+                            val internalUsages = expressionsToProcess.mapNotNull { it.internalUsageInfos!![targetPackage]?.invoke(it) }
+                            expressionsToProcess.forEach { it.internalUsageInfos = null }
+                            postProcessMoveUsages(internalUsages)
+                            pointer.element
+                        }
 
                 assignments.forEach { it.delete() }
                 declaration.delete()
 
-                if (inlinedExpressions.isEmpty()) return@executeWriteCommand
+                if (inlinedExpressions.isNotEmpty()) {
+                    typeArgumentsForCall?.let { addTypeArguments(it, inlinedExpressions) }
 
-                typeArgumentsForCall?.let { addTypeArguments(it, inlinedExpressions) }
+                    parametersForFunctionLiteral?.let { addFunctionLiteralParameterTypes(it, inlinedExpressions) }
 
-                parametersForFunctionLiteral?.let { addFunctionLiteralParameterTypes(it, inlinedExpressions) }
-
-                if (canHighlight) {
-                    highlightExpressions(project, editor, inlinedExpressions)
+                    if (isSingleFile) {
+                        highlightExpressions(project, editor, inlinedExpressions)
+                    }
                 }
+                performDelayedShortening(project)
             }
         }
 
