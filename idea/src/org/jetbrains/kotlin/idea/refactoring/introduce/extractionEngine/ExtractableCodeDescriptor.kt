@@ -391,7 +391,7 @@ fun ExtractableCodeDescriptor.copy(
             originalContext,
             listOf(newName),
             newVisibility,
-            parameters.map { oldToNewParameters[it]!! },
+            oldToNewParameters.values.filter { it != newReceiver },
             newReceiver,
             typeParameters,
             newReplacementMap,
