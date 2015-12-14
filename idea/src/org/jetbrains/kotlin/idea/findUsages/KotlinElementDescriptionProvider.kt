@@ -57,6 +57,7 @@ public class KotlinElementDescriptionProvider : ElementDescriptionProvider {
 
         if (targetElement !is PsiNamedElement || targetElement !is KtElement) return null
 
+        // as is necessary because of ambiguity: see KT-3996
         val name = (targetElement as PsiNamedElement).getName()
 
         return when(location) {

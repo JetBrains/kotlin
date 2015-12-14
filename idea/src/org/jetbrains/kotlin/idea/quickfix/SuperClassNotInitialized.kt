@@ -72,7 +72,7 @@ public object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
 
                 val substitutedConstructors = constructors
                         .filter { it.getValueParameters().isNotEmpty() }
-                        .map { it.substitute(substitutor) as ConstructorDescriptor }
+                        .map { it.substitute(substitutor) }
 
                 if (substitutedConstructors.isNotEmpty()) {
                     val parameterTypes: List<List<KotlinType>> = substitutedConstructors.map {

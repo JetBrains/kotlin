@@ -149,7 +149,7 @@ public abstract class AbstractOverrideImplementTest : KotlinLightCodeInsightFixt
             if (candidateToOverride == null) {
                 throw IllegalStateException("no chooserObjects to override with name $memberToOverride found")
             }
-            candidateToOverride!!
+            candidateToOverride
         }
 
         performGenerateCommand(classOrObject, listOf(singleToOverride))

@@ -315,7 +315,7 @@ public object KotlinNameSuggester {
     private fun MutableCollection<String>.addName(name: String?, validator: (String) -> Boolean) {
         if (name == null) return
         val correctedName = when {
-            isIdentifier(name) -> name!!
+            isIdentifier(name) -> name
             name == "class" -> "clazz"
             else -> return
         }
