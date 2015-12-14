@@ -419,8 +419,8 @@ public class DefaultErrorMessages {
         MAP.put(ELSE_MISPLACED_IN_WHEN, "'else' entry must be the last one in a when-expression");
         MAP.put(COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT, "Deprecated syntax. Use '||' instead of commas in when-condition for 'when' without argument");
 
-        MAP.put(NO_ELSE_IN_WHEN, "'when' expression must be exhaustive or contain an 'else' branch");
-        MAP.put(NON_EXHAUSTIVE_WHEN, "'when' expression contains only some variants and no 'else' branch");
+        MAP.put(NO_ELSE_IN_WHEN, "'when' expression must be exhaustive, add necessary {0}", RENDER_WHEN_MISSING_CASES);
+        MAP.put(NON_EXHAUSTIVE_WHEN, "'when' expression on enum is recommended to be exhaustive, add {0}", RENDER_WHEN_MISSING_CASES);
 
         MAP.put(TYPE_MISMATCH_IN_RANGE, "Type mismatch: incompatible types of range and element checked in it");
         MAP.put(CYCLIC_INHERITANCE_HIERARCHY, "There's a cycle in the inheritance hierarchy for this type");

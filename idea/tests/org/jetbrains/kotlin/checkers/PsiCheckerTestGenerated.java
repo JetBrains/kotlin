@@ -366,6 +366,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/WhenInEnumInExtensionProperty.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("WhenNonExhaustive.kt")
+        public void testWhenNonExhaustive() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/WhenNonExhaustive.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/checker/regression")

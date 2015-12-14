@@ -105,7 +105,7 @@ class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
                         if (type.isFlexible() && TypeUtils.isNullableType(type.flexibility().upperBound) && !type.annotations.isMarkedNotNull()) {
                             val enumClassDescriptor = WhenChecker.getClassDescriptorOfTypeIfEnum(type) ?: return
 
-                            if (WhenChecker.isWhenOnEnumExhaustive(expression, c.trace, enumClassDescriptor)
+                            if (WhenChecker.getEnumMissingCases(expression, c.trace, enumClassDescriptor).isEmpty()
                                 && !WhenChecker.containsNullCase(expression, c.trace)) {
 
                                 c.trace.report(ErrorsJvm.WHEN_ENUM_CAN_BE_NULL_IN_JAVA.on(expression.getSubjectExpression()))

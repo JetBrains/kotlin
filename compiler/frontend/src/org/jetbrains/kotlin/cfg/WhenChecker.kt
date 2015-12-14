@@ -34,17 +34,20 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
-import java.util.HashSet
-
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumClass
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
+import java.util.*
 
 interface WhenMissingCase
 
+// Always must be first in the list
 private object UnknownMissingCase : WhenMissingCase {
     override fun toString() = "unknown"
 }
+
+val List<WhenMissingCase>.hasUnknown: Boolean
+    get() = firstOrNull() == UnknownMissingCase
 
 private interface WhenExhaustivenessChecker {
     fun getMissingCases(
@@ -135,7 +138,7 @@ private abstract class WhenOnClassExhaustivenessChecker : WhenExhaustivenessChec
     ): List<WhenMissingCase> {
         // when on empty enum / sealed is considered non-exhaustive, see test whenOnEmptySealed
         if (memberDescriptors.isEmpty()) return listOf(UnknownMissingCase)
-        val checkedDescriptors = HashSet<ClassDescriptor>()
+        val checkedDescriptors = LinkedHashSet<ClassDescriptor>()
         for (whenEntry in whenExpression.entries) {
             for (condition in whenEntry.conditions) {
                 var negated = false
@@ -214,7 +217,7 @@ private object WhenOnSealedExhaustivenessChecker : WhenOnClassExhaustivenessChec
         assert(subjectDescriptor!!.modality === Modality.SEALED) {
             "isWhenOnSealedClassExhaustive should be called with a sealed class descriptor"
         }
-        val memberClassDescriptors = HashSet<ClassDescriptor>()
+        val memberClassDescriptors = LinkedHashSet<ClassDescriptor>()
         collectNestedSubclasses(subjectDescriptor!!, subjectDescriptor, memberClassDescriptors)
         // When on a sealed class without derived members is considered non-exhaustive (see test WhenOnEmptySealed)
         return getMissingClassCases(expression, memberClassDescriptors, trace)
@@ -248,8 +251,9 @@ object WhenChecker {
                                                 WhenOnNullableExhaustivenessChecker)
 
     @JvmStatic
-    fun mustHaveElse(expression: KtWhenExpression, trace: BindingTrace) =
-            expression.isUsedAsExpression(trace.bindingContext) && !isWhenExhaustive(expression, trace)
+    fun getNecessaryCases(expression: KtWhenExpression, trace: BindingTrace) =
+            if (expression.isUsedAsExpression(trace.bindingContext)) getMissingCases(expression, trace)
+            else listOf()
 
     @JvmStatic
     fun isWhenByEnum(expression: KtWhenExpression, context: BindingContext) =
@@ -268,11 +272,11 @@ object WhenChecker {
             expression.subjectExpression?.let { context.getType(it) } ?: null
 
     @JvmStatic
-    fun isWhenOnEnumExhaustive(
+    fun getEnumMissingCases(
             expression: KtWhenExpression,
             trace: BindingTrace,
             enumClassDescriptor: ClassDescriptor
-    ) = WhenOnEnumExhaustivenessChecker.getMissingCases(expression, trace, enumClassDescriptor, false).isEmpty()
+    ) = WhenOnEnumExhaustivenessChecker.getMissingCases(expression, trace, enumClassDescriptor, false)
 
     /**
      * It's assumed that function is called for a final type. In this case the only possible smart cast is to not nullable type.

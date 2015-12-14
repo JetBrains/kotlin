@@ -21,6 +21,7 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.impl.source.tree.LeafPsiElement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.cfg.WhenMissingCase;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.lexer.KtKeywordToken;
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
@@ -705,8 +706,8 @@ public interface Errors {
 
     DiagnosticFactory0<KtWhenCondition> EXPECTED_CONDITION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtWhenEntry> ELSE_MISPLACED_IN_WHEN = DiagnosticFactory0.create(ERROR, ELSE_ENTRY);
-    DiagnosticFactory0<KtWhenExpression> NO_ELSE_IN_WHEN = DiagnosticFactory0.create(ERROR, WHEN_EXPRESSION);
-    DiagnosticFactory0<KtWhenExpression> NON_EXHAUSTIVE_WHEN = DiagnosticFactory0.create(WARNING, WHEN_EXPRESSION);
+    DiagnosticFactory1<KtWhenExpression, List<WhenMissingCase>> NO_ELSE_IN_WHEN = DiagnosticFactory1.create(ERROR, WHEN_EXPRESSION);
+    DiagnosticFactory1<KtWhenExpression, List<WhenMissingCase>> NON_EXHAUSTIVE_WHEN = DiagnosticFactory1.create(WARNING, WHEN_EXPRESSION);
     DiagnosticFactory0<PsiElement> COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT = DiagnosticFactory0.create(ERROR);
 
     // Type mismatch
