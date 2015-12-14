@@ -2,5 +2,5 @@
 ~foo~fun foo() = 2
 
 class A {
-    fun test() = `foo`foo()
+    fun test() = `A.foo`foo()
 }

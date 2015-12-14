@@ -90,18 +90,17 @@ class TowerResolver {
             return null
         }
 
-        // possible there is explicit member
-        collectCandidates(TowerData.Empty)?.let { return it }
         for (implicitReceiver in context.scopeTower.implicitReceivers) {
             collectCandidates(TowerData.OnlyImplicitReceiver(implicitReceiver))?.let { return it }
         }
+        // possible there is explicit member
+        collectCandidates(TowerData.Empty)?.let { return it }
 
         for (level in context.scopeTower.levels) {
-            collectCandidates(TowerData.TowerLevel(level))?.let { return it }
-
             for (implicitReceiver in context.scopeTower.implicitReceivers) {
                 collectCandidates(TowerData.BothTowerLevelAndImplicitReceiver(level, implicitReceiver))?.let { return it }
             }
+            collectCandidates(TowerData.TowerLevel(level))?.let { return it }
         }
 
         return resultCollector.getFinalCandidates()

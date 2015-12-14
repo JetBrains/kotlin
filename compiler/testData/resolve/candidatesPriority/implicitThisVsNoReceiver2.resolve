@@ -5,7 +5,7 @@ class A {
 
 fun test(a: A) {
     with (a) {
-        `simple`foo()
+        `extension`foo()
     }
 }
 

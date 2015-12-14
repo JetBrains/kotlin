@@ -3,5 +3,5 @@ class B {
     ~foo~fun foo() = 1
     ~A.foo~fun A.foo() = 2
 
-    fun A.bar() = `foo`foo()
+    fun A.bar() = `A.foo`foo()
 }
