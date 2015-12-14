@@ -45,7 +45,7 @@ class ClassResolutionScopesSupport(
     }
 
     public val scopeForConstructorHeaderResolution: () -> LexicalScope = storageManager.createLazyValue {
-        scopeWithGenerics(scopeForStaticMemberDeclarationResolution())
+        scopeWithGenerics(if (classDescriptor.kind.isSingleton) scopeForCompanionObjectHeaderResolution() else scopeForStaticMemberDeclarationResolution())
     }
 
     private val inheritanceScopeWithoutMe: () -> LexicalScope = storageManager.createLazyValue(onRecursion = createThrowingLexicalScope) {
