@@ -1279,7 +1279,10 @@ public final class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequenc
 }
 
 public open class Throwable {
-    /*primary*/ public constructor Throwable(/*0*/ message: kotlin.String? = ..., /*1*/ cause: kotlin.Throwable? = ...)
+    public constructor Throwable()
+    public constructor Throwable(/*0*/ message: kotlin.String?)
+    /*primary*/ public constructor Throwable(/*0*/ message: kotlin.String?, /*1*/ cause: kotlin.Throwable?)
+    public constructor Throwable(/*0*/ cause: kotlin.Throwable?)
     public final val cause: kotlin.Throwable?
         public final fun <get-cause>(): kotlin.Throwable?
     public final val message: kotlin.String?
