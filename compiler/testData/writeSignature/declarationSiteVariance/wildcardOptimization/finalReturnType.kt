@@ -10,6 +10,10 @@ fun skipAllOutInvWildcards(): Inv<OutPair<Open, Out<Out<Open>>>> = null!!
 // method: FinalReturnTypeKt::skipAllOutInvWildcards
 // generic signature: ()LInv<LOutPair<LOpen;LOut<LOut<LOpen;>;>;>;>;
 
+fun skipAllInvWildcards(): Inv<In<Out<Open>>> = null!!
+// method: FinalReturnTypeKt::skipAllInvWildcards
+// generic signature: ()LInv<LIn<LOut<+LOpen;>;>;>;
+
 fun notDeepIn(): In<Final> = null!!
 // method: FinalReturnTypeKt::notDeepIn
 // generic signature: ()LIn<LFinal;>;
