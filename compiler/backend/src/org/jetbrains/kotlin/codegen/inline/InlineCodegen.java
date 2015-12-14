@@ -310,7 +310,7 @@ public class InlineCodegen extends CallGenerator {
 
         MethodContext parentContext = codegen.getContext();
 
-        MethodContext context = parentContext.intoClosure(descriptor, codegen, typeMapper).intoInlinedLambda(descriptor);
+        MethodContext context = parentContext.intoClosure(descriptor, codegen, typeMapper).intoInlinedLambda(descriptor, info.isCrossInline);
 
         JvmMethodSignature jvmMethodSignature = typeMapper.mapSignature(descriptor);
         Method asmMethod = jvmMethodSignature.getAsmMethod();
@@ -559,13 +559,14 @@ public class InlineCodegen extends CallGenerator {
                deparenthesized instanceof KtCallableReferenceExpression;
     }
 
-    public void rememberClosure(KtExpression expression, Type type, int parameterIndex) {
+    public void rememberClosure(KtExpression expression, Type type, ValueParameterDescriptor parameter) {
         KtExpression lambda = KtPsiUtil.deparenthesize(expression);
         assert isInlinableParameterExpression(lambda) : "Couldn't find inline expression in " + expression.getText();
 
-        LambdaInfo info = new LambdaInfo(lambda, typeMapper);
 
-        ParameterInfo closureInfo = invocationParamBuilder.addNextValueParameter(type, true, null, parameterIndex);
+        LambdaInfo info = new LambdaInfo(lambda, typeMapper, parameter.isCrossinline());
+
+        ParameterInfo closureInfo = invocationParamBuilder.addNextValueParameter(type, true, null, parameter.getIndex());
         closureInfo.setLambda(info);
         expressionMap.put(closureInfo.getIndex(), info);
     }
@@ -638,7 +639,7 @@ public class InlineCodegen extends CallGenerator {
             int parameterIndex
     ) {
         if (isInliningParameter(argumentExpression, valueParameterDescriptor)) {
-            rememberClosure(argumentExpression, parameterType, valueParameterDescriptor.getIndex());
+            rememberClosure(argumentExpression, parameterType, valueParameterDescriptor);
         }
         else {
             StackValue value = codegen.gen(argumentExpression);

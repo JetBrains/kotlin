@@ -297,12 +297,12 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
 
     @NotNull
     public MethodContext intoFunction(FunctionDescriptor descriptor) {
-        return new MethodContext(descriptor, getContextKind(), this, null, false);
+        return new MethodContext(descriptor, getContextKind(), this, null, false, false);
     }
 
     @NotNull
-    public MethodContext intoInlinedLambda(FunctionDescriptor descriptor) {
-        return new MethodContext(descriptor, getContextKind(), this, null, true);
+    public MethodContext intoInlinedLambda(FunctionDescriptor descriptor, boolean isCrossInline) {
+        return new MethodContext(descriptor, getContextKind(), this, null, true, isCrossInline);
     }
 
     @NotNull
