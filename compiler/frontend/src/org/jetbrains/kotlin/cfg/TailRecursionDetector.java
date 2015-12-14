@@ -27,9 +27,10 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.ThrowExceptionInst
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.MarkInstruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineExitInstruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineSinkInstruction;
+import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraverseInstructionResult;
 import org.jetbrains.kotlin.psi.KtElement;
 
-public class TailRecursionDetector extends InstructionVisitorWithResult<Boolean> implements Function1<Instruction, Boolean> {
+public class TailRecursionDetector extends InstructionVisitorWithResult<Boolean> implements Function1<Instruction, TraverseInstructionResult> {
     private final KtElement subroutine;
     private final Instruction start;
 
@@ -39,8 +40,8 @@ public class TailRecursionDetector extends InstructionVisitorWithResult<Boolean>
     }
 
     @Override
-    public Boolean invoke(@NotNull Instruction instruction) {
-        return instruction == start || instruction.accept(this);
+    public TraverseInstructionResult invoke(@NotNull Instruction instruction) {
+        return instruction == start || instruction.accept(this) ? TraverseInstructionResult.CONTINUE : TraverseInstructionResult.HALT;
     }
 
     @Override

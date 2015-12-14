@@ -24,11 +24,14 @@ import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode;
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtil;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope;
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicInstruction;
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicKind;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.ReadValueInstruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.WriteValueInstruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.VariableDeclarationInstruction;
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.Edges;
+import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.VariableDescriptor;
 import org.jetbrains.kotlin.psi.KtDeclaration;
@@ -39,9 +42,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
-
-import static org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder.BACKWARD;
-import static org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder.FORWARD;
 
 public class PseudocodeVariablesData {
     private final Pseudocode pseudocode;
@@ -126,7 +126,7 @@ public class PseudocodeVariablesData {
         final LexicalScopeVariableInfo lexicalScopeVariableInfo = pseudocodeVariableDataCollector.getLexicalScopeVariableInfo();
 
         return pseudocodeVariableDataCollector.collectData(
-                FORWARD, /*mergeDataWithLocalDeclarations=*/ true,
+                TraversalOrder.FORWARD, /*mergeDataWithLocalDeclarations=*/ true,
                 new InstructionDataMergeStrategy<VariableControlFlowState>() {
                     @NotNull
                     @Override
@@ -169,7 +169,7 @@ public class PseudocodeVariablesData {
 
         Map<VariableDescriptor, VariableControlFlowState> enterInstructionData = Maps.newHashMap();
         for (VariableDescriptor variable : variablesInScope) {
-            TriInitState initState = null;
+            InitState initState = null;
             boolean isDeclared = true;
             for (Map<VariableDescriptor, VariableControlFlowState> edgeData : incomingEdgesData) {
                 VariableControlFlowState varControlFlowState = edgeData.get(variable);
@@ -194,6 +194,19 @@ public class PseudocodeVariablesData {
             @NotNull Map<VariableDescriptor, VariableControlFlowState> enterInstructionData,
             @NotNull LexicalScopeVariableInfo lexicalScopeVariableInfo
     ) {
+        if (instruction instanceof MagicInstruction) {
+            MagicInstruction magicInstruction = (MagicInstruction) instruction;
+            if (magicInstruction.getKind() == MagicKind.EXHAUSTIVE_WHEN_ELSE) {
+                Map<VariableDescriptor, VariableControlFlowState> exitInstructionData = Maps.newHashMap(enterInstructionData);
+                for (Map.Entry<VariableDescriptor, VariableControlFlowState> entry: enterInstructionData.entrySet()) {
+                    if (!entry.getValue().definitelyInitialized()) {
+                        exitInstructionData.put(entry.getKey(),
+                                                VariableControlFlowState.createInitializedExhaustively(entry.getValue().isDeclared));
+                    }
+                }
+                return exitInstructionData;
+            }
+        }
         if (!(instruction instanceof WriteValueInstruction) && !(instruction instanceof VariableDeclarationInstruction)) {
             return enterInstructionData;
         }
@@ -233,7 +246,7 @@ public class PseudocodeVariablesData {
     @NotNull
     public Map<Instruction, Edges<Map<VariableDescriptor, VariableUseState>>> getVariableUseStatusData() {
         return pseudocodeVariableDataCollector.collectData(
-                BACKWARD, /*mergeDataWithLocalDeclarations=*/ true,
+                TraversalOrder.BACKWARD, /*mergeDataWithLocalDeclarations=*/ true,
                 new InstructionDataMergeStrategy<VariableUseState>() {
                     @NotNull
                     @Override
@@ -281,17 +294,28 @@ public class PseudocodeVariablesData {
         );
     }
 
-    private enum TriInitState {
-        INITIALIZED("I"), UNKNOWN("I?"), NOT_INITIALIZED("");
+    private enum InitState {
+        // Definitely initialized
+        INITIALIZED("I"),
+        // Fake initializer in else branch of "exhaustive when without else", see MagicKind.EXHAUSTIVE_WHEN_ELSE
+        INITIALIZED_EXHAUSTIVELY("IE"),
+        // Initialized in some branches, not initialized in other branches
+        UNKNOWN("I?"),
+        // Definitely not initialized
+        NOT_INITIALIZED("");
 
         private final String s;
 
-        TriInitState(String s) {
+        InitState(String s) {
             this.s = s;
         }
 
-        private TriInitState merge(@NotNull TriInitState other) {
-            if (this == other) return this;
+        private InitState merge(@NotNull InitState other) {
+            // X merge X = X
+            // X merge IE = IE merge X = X
+            // else X merge Y = I?
+            if (this == other || other == INITIALIZED_EXHAUSTIVELY) return this;
+            if (this == INITIALIZED_EXHAUSTIVELY) return other;
             return UNKNOWN;
         }
 
@@ -303,32 +327,39 @@ public class PseudocodeVariablesData {
 
     public static class VariableControlFlowState {
 
-        public final TriInitState initState;
+        public final InitState initState;
         public final boolean isDeclared;
 
-        private VariableControlFlowState(TriInitState initState, boolean isDeclared) {
+        private VariableControlFlowState(InitState initState, boolean isDeclared) {
             this.initState = initState;
             this.isDeclared = isDeclared;
         }
 
-        private static final VariableControlFlowState VS_IT = new VariableControlFlowState(TriInitState.INITIALIZED, true);
-        private static final VariableControlFlowState VS_IF = new VariableControlFlowState(TriInitState.INITIALIZED, false);
-        private static final VariableControlFlowState VS_UT = new VariableControlFlowState(TriInitState.UNKNOWN, true);
-        private static final VariableControlFlowState VS_UF = new VariableControlFlowState(TriInitState.UNKNOWN, false);
-        private static final VariableControlFlowState VS_NT = new VariableControlFlowState(TriInitState.NOT_INITIALIZED, true);
-        private static final VariableControlFlowState VS_NF = new VariableControlFlowState(TriInitState.NOT_INITIALIZED, false);
+        private static final VariableControlFlowState VS_IT = new VariableControlFlowState(InitState.INITIALIZED, true);
+        private static final VariableControlFlowState VS_IF = new VariableControlFlowState(InitState.INITIALIZED, false);
+        private static final VariableControlFlowState VS_ET = new VariableControlFlowState(InitState.INITIALIZED_EXHAUSTIVELY, true);
+        private static final VariableControlFlowState VS_EF = new VariableControlFlowState(InitState.INITIALIZED_EXHAUSTIVELY, false);
+        private static final VariableControlFlowState VS_UT = new VariableControlFlowState(InitState.UNKNOWN, true);
+        private static final VariableControlFlowState VS_UF = new VariableControlFlowState(InitState.UNKNOWN, false);
+        private static final VariableControlFlowState VS_NT = new VariableControlFlowState(InitState.NOT_INITIALIZED, true);
+        private static final VariableControlFlowState VS_NF = new VariableControlFlowState(InitState.NOT_INITIALIZED, false);
 
 
-        private static VariableControlFlowState create(TriInitState initState, boolean isDeclared) {
+        private static VariableControlFlowState create(InitState initState, boolean isDeclared) {
             switch (initState) {
                 case INITIALIZED: return isDeclared ? VS_IT : VS_IF;
+                case INITIALIZED_EXHAUSTIVELY: return isDeclared ? VS_ET : VS_EF;
                 case UNKNOWN: return isDeclared ? VS_UT : VS_UF;
                 default: return isDeclared ? VS_NT : VS_NF;
             }
         }
 
+        private static VariableControlFlowState createInitializedExhaustively(boolean isDeclared) {
+            return create(InitState.INITIALIZED_EXHAUSTIVELY, isDeclared);
+        }
+
         private static VariableControlFlowState create(boolean isInitialized, boolean isDeclared) {
-            return create(isInitialized ? TriInitState.INITIALIZED : TriInitState.NOT_INITIALIZED, isDeclared);
+            return create(isInitialized ? InitState.INITIALIZED : InitState.NOT_INITIALIZED, isDeclared);
         }
 
         private static VariableControlFlowState create(boolean isInitialized) {
@@ -340,16 +371,16 @@ public class PseudocodeVariablesData {
         }
 
         public boolean definitelyInitialized() {
-            return initState == TriInitState.INITIALIZED;
+            return initState == InitState.INITIALIZED;
         }
 
         public boolean mayBeInitialized() {
-            return initState != TriInitState.NOT_INITIALIZED;
+            return initState != InitState.NOT_INITIALIZED;
         }
 
         @Override
         public String toString() {
-            if (initState == TriInitState.NOT_INITIALIZED && !isDeclared) return "-";
+            if (initState == InitState.NOT_INITIALIZED && !isDeclared) return "-";
             return initState + (isDeclared ? "D" : "");
         }
     }
