@@ -6614,6 +6614,27 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 }
             }
         }
+
+        @TestMetadata("idea/testData/quickfix/suppress/inspections")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Inspections extends AbstractQuickFixTest {
+            public void testAllFilesPresentInInspections() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/suppress/inspections"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+            }
+
+            @TestMetadata("ifNullToElvis.kt")
+            public void testIfNullToElvis() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/suppress/inspections/ifNullToElvis.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("unusedImports.kt")
+            public void testUnusedImports() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/suppress/inspections/unusedImports.kt");
+                doTest(fileName);
+            }
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/typeAddition")

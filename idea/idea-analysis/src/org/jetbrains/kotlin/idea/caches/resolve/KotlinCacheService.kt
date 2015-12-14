@@ -158,7 +158,14 @@ public class KotlinCacheService(val project: Project) {
     private val kotlinSuppressCache: CachedValue<KotlinSuppressCache> = CachedValuesManager.getManager(project).createCachedValue({
         CachedValueProvider.Result<KotlinSuppressCache>(object : KotlinSuppressCache() {
             override fun getSuppressionAnnotations(annotated: KtAnnotated): List<AnnotationDescriptor> {
-                val context = annotated.analyze(BodyResolveMode.PARTIAL)
+                val context =
+                        if (annotated is KtFile) {
+                            annotated.fileAnnotationList?.analyze(BodyResolveMode.PARTIAL) ?: return emptyList()
+                        }
+                        else {
+                            annotated.analyze(BodyResolveMode.PARTIAL)
+                        }
+
                 val annotatedDescriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, annotated)
 
                 if (annotatedDescriptor != null) {

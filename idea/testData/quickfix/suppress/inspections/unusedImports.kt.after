@@ -1,0 +1,7 @@
+// "Suppress 'KotlinUnusedImport' for file ${file}" "true"
+
+@file:Suppress("KotlinUnusedImport")
+
+import java.io.*
+
+// TOOL: org.jetbrains.kotlin.idea.inspections.KotlinUnusedImportInspection

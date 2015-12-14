@@ -795,13 +795,10 @@ public class KotlinTestUtils {
         return testFile;
     }
 
-    public static String getTestsRoot(@NotNull TestCase testCase) {
-        try {
-            return (String) testCase.getClass().getMethod("getTestsRoot").invoke(testCase);
-        }
-        catch (Exception e) {
-            throw new RuntimeException("Can't call getTestsRoot() on test class", e);
-        }
+    public static String getTestsRoot(@NotNull Class<?> testCaseClass) {
+        TestMetadata testClassMetadata = testCaseClass.getAnnotation(TestMetadata.class);
+        Assert.assertNotNull("No metadata for class: " + testCaseClass, testClassMetadata);
+        return testClassMetadata.value();
     }
 
     public static void assertAllTestsPresentByMetadata(
@@ -811,10 +808,7 @@ public class KotlinTestUtils {
             boolean recursive,
             @NotNull String... excludeDirs
     ) {
-        TestMetadata testClassMetadata = testCaseClass.getAnnotation(TestMetadata.class);
-        Assert.assertNotNull("No metadata for class: " + testCaseClass, testClassMetadata);
-        String rootPath = testClassMetadata.value();
-        File rootFile = new File(rootPath);
+        File rootFile = new File(getTestsRoot(testCaseClass));
 
         Set<String> filePaths = collectPathsMetadata(testCaseClass);
         Set<String> exclude = SetsKt.setOf(excludeDirs);
