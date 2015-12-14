@@ -159,12 +159,11 @@ class KotlinInlineValHandler : InlineActionHandler() {
         val typeArgumentsForCall = getTypeArgumentsStringForCall(initializer)
         val parametersForFunctionLiteral = getParametersForFunctionLiteral(initializer)
 
-        val isSingleFile = referenceExpressions.all { it.containingFile === file }
-        if (isSingleFile) {
-            highlightExpressions(project, editor, referenceExpressions)
-        }
+        val referencesInOriginalFile = referenceExpressions.filter { it.containingFile == file }
+        val isHighlighting = referencesInOriginalFile.isNotEmpty()
+        highlightExpressions(project, editor, referencesInOriginalFile)
 
-        if (!isSingleFile) {
+        if (referencesInOriginalFile.size != referenceExpressions.size) {
             val targetPackages = referenceExpressions.mapNotNullTo(LinkedHashSet()) { (it.containingFile as? KtFile)?.packageFqName }
             for (targetPackage in targetPackages) {
                 if (targetPackage == file.packageFqName) continue
@@ -180,7 +179,7 @@ class KotlinInlineValHandler : InlineActionHandler() {
 
         fun performRefactoring() {
             if (!showDialog(project, name, declaration, referenceExpressions)) {
-                if (isSingleFile) {
+                if (isHighlighting) {
                     val statusBar = WindowManager.getInstance().getStatusBar(project)
                     statusBar?.info = RefactoringBundle.message("press.escape.to.remove.the.highlighting")
                 }
@@ -222,7 +221,7 @@ class KotlinInlineValHandler : InlineActionHandler() {
 
                     parametersForFunctionLiteral?.let { addFunctionLiteralParameterTypes(it, inlinedExpressions) }
 
-                    if (isSingleFile) {
+                    if (isHighlighting) {
                         highlightExpressions(project, editor, inlinedExpressions)
                     }
                 }
