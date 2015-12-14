@@ -1,5 +1,5 @@
 class Test {
-    @ClassObjectAnnotation
+    <!UNRESOLVED_REFERENCE!>@ClassObjectAnnotation<!>
     @NestedAnnotation
     companion object {
         annotation class ClassObjectAnnotation

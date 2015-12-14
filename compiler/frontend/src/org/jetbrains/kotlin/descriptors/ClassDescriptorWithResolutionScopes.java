@@ -31,6 +31,9 @@ public interface ClassDescriptorWithResolutionScopes extends ClassDescriptor {
     LexicalScope getScopeForConstructorHeaderResolution();
 
     @NotNull
+    LexicalScope getScopeForCompanionObjectHeaderResolution();
+
+    @NotNull
     LexicalScope getScopeForMemberDeclarationResolution();
 
     @NotNull

@@ -14012,6 +14012,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("companionObjectParents.kt")
+                public void testCompanionObjectParents() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/classHeader/companionObjectParents.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("constructors.kt")
                 public void testConstructors() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/classHeader/constructors.kt");
@@ -14021,6 +14027,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("delegation.kt")
                 public void testDelegation() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/classHeader/delegation.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("objectParents.kt")
+                public void testObjectParents() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/classHeader/objectParents.kt");
                     doTest(fileName);
                 }
 

@@ -300,6 +300,12 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
     @Override
     @NotNull
+    public LexicalScope getScopeForCompanionObjectHeaderResolution() {
+        return resolutionScopesSupport.getScopeForCompanionObjectHeaderResolution().invoke();
+    }
+
+    @Override
+    @NotNull
     public LexicalScope getScopeForMemberDeclarationResolution() {
         return resolutionScopesSupport.getScopeForMemberDeclarationResolution().invoke();
     }
