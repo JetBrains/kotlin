@@ -21,9 +21,9 @@ package kotlin.jvm
 import kotlin.jvm.internal.Reflection
 import kotlin.reflect.KClass
 
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+@Deprecated("Use 'java' extension property instead.", ReplaceWith("this.java"), level = DeprecationLevel.ERROR)
 public fun <T: Any> KClass<T>.getJava(): Class<T> = this.java
 
-@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+@Deprecated("Use 'kotlin' extension property instead.", ReplaceWith("this.kotlin"), level = DeprecationLevel.ERROR)
 public fun <T : Any> Class<T>.getKotlin(): KClass<T> = Reflection.createKotlinClass(this) as KClass<T>
 
