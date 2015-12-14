@@ -18048,6 +18048,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ExhaustiveBreakContinue.kt")
+            public void testExhaustiveBreakContinue() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/ExhaustiveBreakContinue.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("ExhaustiveEnumIs.kt")
             public void testExhaustiveEnumIs() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/ExhaustiveEnumIs.kt");
@@ -18063,6 +18069,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("ExhaustiveInitialization.kt")
             public void testExhaustiveInitialization() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/ExhaustiveInitialization.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ExhaustiveNoInitialization.kt")
+            public void testExhaustiveNoInitialization() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/ExhaustiveNoInitialization.kt");
                 doTest(fileName);
             }
 
@@ -18105,6 +18117,24 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("ExhaustiveReturn.kt")
             public void testExhaustiveReturn() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/ExhaustiveReturn.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ExhaustiveReturnThrow.kt")
+            public void testExhaustiveReturnThrow() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/ExhaustiveReturnThrow.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ExhaustiveValOverConditionalInit.kt")
+            public void testExhaustiveValOverConditionalInit() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/ExhaustiveValOverConditionalInit.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("ExhaustiveVarOverConditionalInit.kt")
+            public void testExhaustiveVarOverConditionalInit() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/ExhaustiveVarOverConditionalInit.kt");
                 doTest(fileName);
             }
 

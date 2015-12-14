@@ -167,6 +167,11 @@ private fun <D> Pseudocode.collectDataFromSubgraph(
 
 data class Edges<T>(val incoming: T, val outgoing: T)
 
+enum class TraverseInstructionResult {
+    CONTINUE,
+    SKIP,
+    HALT
+}
 
 // returns false when interrupted by handler
 public fun traverseFollowingInstructions(
@@ -174,7 +179,7 @@ public fun traverseFollowingInstructions(
         visited: MutableSet<Instruction>,
         order: TraversalOrder,
         // true to continue traversal
-        handler: ((Instruction) -> Boolean)?
+        handler: ((Instruction) -> TraverseInstructionResult)?
 ): Boolean {
     val stack = ArrayDeque<Instruction>()
     stack.push(rootInstruction)
@@ -182,9 +187,11 @@ public fun traverseFollowingInstructions(
     while (!stack.isEmpty()) {
         val instruction = stack.pop()
         if (!visited.add(instruction)) continue
-        if (handler != null && !handler(instruction)) return false
-
-        instruction.getNextInstructions(order).forEach { stack.push(it) }
+        when (handler?.let { it(instruction) } ?: TraverseInstructionResult.CONTINUE) {
+            TraverseInstructionResult.CONTINUE -> instruction.getNextInstructions(order).forEach { stack.push(it) }
+            TraverseInstructionResult.SKIP -> {}
+            TraverseInstructionResult.HALT -> return false
+        }
     }
     return true
 }

@@ -43,6 +43,12 @@ public class DataFlowTestGenerated extends AbstractDataFlowTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg-variables/basic"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("ExhaustiveInitialization.kt")
+        public void testExhaustiveInitialization() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/basic/ExhaustiveInitialization.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("IfWithUninitialized.kt")
         public void testIfWithUninitialized() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/basic/IfWithUninitialized.kt");

@@ -1297,7 +1297,7 @@ public class ControlFlowProcessor {
                     // For the last entry of exhaustive when,
                     // attempt to jump further should lead to error, not to "done"
                     if (!iterator.hasNext() && WhenChecker.isWhenExhaustive(expression, trace)) {
-                        builder.jumpToError(expression);
+                        builder.magic(expression, null, Collections.<PseudoValue>emptyList(), MagicKind.EXHAUSTIVE_WHEN_ELSE);
                     }
                 }
             }

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.MarkInstruction
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
+import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraverseInstructionResult
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverse
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverseFollowingInstructions
 import org.jetbrains.kotlin.descriptors.*
@@ -114,7 +115,7 @@ private fun List<Instruction>.getVarDescriptorsAccessedAfterwards(bindingContext
                     doTraversal(it.body.enterInstruction)
             }
 
-            true
+            TraverseInstructionResult.CONTINUE
         }
     }
 

@@ -143,7 +143,8 @@ public enum class MagicKind(val sideEffectFree: Boolean = false) {
     UNRESOLVED_CALL(),
     UNSUPPORTED_ELEMENT(),
     UNRECOGNIZED_WRITE_RHS(),
-    FAKE_INITIALIZER()
+    FAKE_INITIALIZER(),
+    EXHAUSTIVE_WHEN_ELSE()
 }
 
 // Merges values produced by alternative control-flow paths (such as 'if' branches)

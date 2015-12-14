@@ -1,0 +1,27 @@
+package
+
+public fun foo(/*0*/ dir: Direction): kotlin.Int
+
+public final enum class Direction : kotlin.Enum<Direction> {
+    enum entry NORTH
+
+    enum entry SOUTH
+
+    enum entry WEST
+
+    enum entry EAST
+
+    private constructor Direction()
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: Direction): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<Direction>
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): Direction
+    public final /*synthesized*/ fun values(): kotlin.Array<Direction>
+}
