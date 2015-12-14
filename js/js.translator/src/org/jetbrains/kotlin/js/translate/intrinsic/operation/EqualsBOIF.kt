@@ -62,7 +62,7 @@ object EqualsBOIF : BinaryOperationIntrinsicFactory {
             val appliedToDynamic =
                     resolvedCall != null &&
                     with(resolvedCall.getDispatchReceiver()) {
-                        if (exists()) getType().isDynamic() else false
+                        if (this != null) getType().isDynamic() else false
                     }
 
             if (appliedToDynamic) {

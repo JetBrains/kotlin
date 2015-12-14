@@ -52,8 +52,6 @@ abstract class QualifierReceiver(
         get() = referenceExpression.getTopmostParentQualifiedExpressionForSelector() ?: referenceExpression
 
     abstract fun getNestedClassesAndPackageMembersScope(): MemberScope
-
-    override fun exists() = true
 }
 
 class PackageQualifier(

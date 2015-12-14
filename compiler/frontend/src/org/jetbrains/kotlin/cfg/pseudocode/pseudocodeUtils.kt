@@ -81,7 +81,7 @@ public fun getExpectedTypePredicate(
 
     fun addByExplicitReceiver(resolvedCall: ResolvedCall<*>?) {
         val receiverValue = (resolvedCall ?: return).getExplicitReceiverValue()
-        if (receiverValue.exists()) typePredicates.add(getReceiverTypePredicate(resolvedCall, receiverValue))
+        if (receiverValue != null) typePredicates.add(getReceiverTypePredicate(resolvedCall, receiverValue))
     }
 
     fun getTypePredicateForUnresolvedCallArgument(to: KtElement, inputValueIndex: Int): TypePredicate? {
@@ -95,7 +95,7 @@ public fun getExpectedTypePredicate(
         if (candidates.isEmpty()) return null
 
         val explicitReceiver = call.getExplicitReceiver()
-        val argValueOffset = if (explicitReceiver.exists()) 1 else 0
+        val argValueOffset = if (explicitReceiver != null) 1 else 0
 
         val predicates = ArrayList<TypePredicate>()
 

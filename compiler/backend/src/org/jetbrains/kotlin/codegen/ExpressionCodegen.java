@@ -2071,7 +2071,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         PropertyGetterDescriptor getter = descriptor.getGetter();
         if (getter != null) {
             Call call = bindingContext.get(DELEGATED_PROPERTY_CALL, getter);
-            return call != null ? ((ReceiverValue) call.getExplicitReceiver()).getType() : null;
+            if (call != null) {
+                assert call.getExplicitReceiver() != null : "No explicit receiver for call:" + call;
+                return ((ReceiverValue) call.getExplicitReceiver()).getType();
+            }
         }
         return null;
     }
@@ -2492,7 +2495,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @NotNull
-    public StackValue generateReceiverValue(@NotNull ReceiverValue receiverValue, boolean isSuper) {
+    public StackValue generateReceiverValue(@Nullable ReceiverValue receiverValue, boolean isSuper) {
         if (receiverValue instanceof ImplicitClassReceiver) {
             ClassDescriptor receiverDescriptor = ((ImplicitClassReceiver) receiverValue).getDeclarationDescriptor();
             if (DescriptorUtils.isCompanionObject(receiverDescriptor)) {
@@ -2756,7 +2759,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             @NotNull KtElement element,
             @NotNull VariableDescriptor variableDescriptor,
             @NotNull VariableDescriptor target,
-            @NotNull ReceiverValue dispatchReceiver
+            @Nullable ReceiverValue dispatchReceiver
     ) {
         ClassDescriptor classDescriptor = CodegenBinding.anonymousClassForCallable(bindingContext, variableDescriptor);
 

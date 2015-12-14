@@ -102,7 +102,6 @@ fun TranslationContext.getCallInfo(resolvedCall: ResolvedCall<out FunctionDescri
 }
 
 private fun TranslationContext.getDispatchReceiver(receiverValue: ReceiverValue): JsExpression {
-    assert(receiverValue.exists()) { "receiverValue must be exist here" }
     return getDispatchReceiver(getReceiverParameterForReceiver(receiverValue))
 }
 
@@ -110,10 +109,7 @@ private fun TranslationContext.createCallInfo(resolvedCall: ResolvedCall<out Cal
     val receiverKind = resolvedCall.getExplicitReceiverKind()
 
     fun getDispatchReceiver(): JsExpression? {
-        val receiverValue = resolvedCall.getDispatchReceiver()
-        if (!receiverValue.exists()) {
-            return null
-        }
+        val receiverValue = resolvedCall.getDispatchReceiver() ?: return null
         return when (receiverKind) {
             DISPATCH_RECEIVER, BOTH_RECEIVERS -> explicitReceivers.extensionOrDispatchReceiver
             else -> this.getDispatchReceiver(receiverValue)
@@ -121,10 +117,7 @@ private fun TranslationContext.createCallInfo(resolvedCall: ResolvedCall<out Cal
     }
 
     fun getExtensionReceiver(): JsExpression? {
-        val receiverValue = resolvedCall.getExtensionReceiver()
-        if (!receiverValue.exists()) {
-            return null
-        }
+        val receiverValue = resolvedCall.getExtensionReceiver() ?: return null
         return when (receiverKind) {
             EXTENSION_RECEIVER -> explicitReceivers.extensionOrDispatchReceiver
             BOTH_RECEIVERS -> explicitReceivers.extensionReceiver

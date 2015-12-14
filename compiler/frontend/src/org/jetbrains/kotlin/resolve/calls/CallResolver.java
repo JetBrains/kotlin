@@ -351,7 +351,7 @@ public class CallResolver {
             @NotNull BasicCallResolutionContext context,
             @NotNull KtConstructorCalleeExpression expression
     ) {
-        assert !context.call.getExplicitReceiver().exists() :
+        assert context.call.getExplicitReceiver() == null :
                 "Constructor can't be invoked with explicit receiver: " + context.call.getCallElement().getText();
 
         context.trace.record(BindingContext.LEXICAL_SCOPE, context.call.getCallElement(), context.scope);
@@ -394,7 +394,7 @@ public class CallResolver {
 
         BasicCallResolutionContext context = BasicCallResolutionContext.create(
                 trace, scope,
-                CallMaker.makeCall(ReceiverValue.NO_RECEIVER, null, call),
+                CallMaker.makeCall(null, null, call),
                 NO_EXPECTED_TYPE,
                 dataFlowInfo, ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
                 callChecker, false);
@@ -450,7 +450,7 @@ public class CallResolver {
         }
 
         List<ResolutionCandidate<CallableDescriptor>> candidates = Lists.newArrayList();
-        ReceiverValue constructorDispatchReceiver = !delegateClassDescriptor.isInner() ? ReceiverValue.NO_RECEIVER :
+        ReceiverValue constructorDispatchReceiver = !delegateClassDescriptor.isInner() ? null :
                                                     ((ClassDescriptor) delegateClassDescriptor.getContainingDeclaration()).
                                                             getThisAsReceiverParameter().getValue();
 
@@ -461,7 +461,7 @@ public class CallResolver {
         TypeSubstitutor knownTypeParametersSubstitutor = TypeSubstitutor.create(expectedType);
         for (CallableDescriptor descriptor : constructors) {
             candidates.add(ResolutionCandidate.create(
-                    context.call, descriptor, constructorDispatchReceiver, ReceiverValue.NO_RECEIVER,
+                    context.call, descriptor, constructorDispatchReceiver, null,
                     ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
                     knownTypeParametersSubstitutor));
         }

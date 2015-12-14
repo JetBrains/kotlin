@@ -42,7 +42,7 @@ public class ShadowedDeclarationsFilter(
         private val bindingContext: BindingContext,
         private val resolutionFacade: ResolutionFacade,
         private val context: PsiElement,
-        private val explicitReceiverValue: ReceiverValue
+        private val explicitReceiverValue: ReceiverValue?
 ) {
     companion object {
         fun create(
@@ -64,7 +64,7 @@ public class ShadowedDeclarationsFilter(
             val explicitReceiverValue = receiverExpression?.let {
                 val type = bindingContext.getType(it) ?: return null
                 ExpressionReceiver.create(it, type, bindingContext)
-            } ?: ReceiverValue.NO_RECEIVER
+            }
             return ShadowedDeclarationsFilter(bindingContext, resolutionFacade, context, explicitReceiverValue)
         }
     }
@@ -183,7 +183,7 @@ public class ShadowedDeclarationsFilter(
 
             override fun getTypeArgumentList() = null
 
-            override fun getDispatchReceiver() = ReceiverValue.NO_RECEIVER
+            override fun getDispatchReceiver() = null
 
             override fun getCallOperationNode() = null
 

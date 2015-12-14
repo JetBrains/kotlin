@@ -846,7 +846,7 @@ fun isIntegerType(value: Any?) = value is Byte || value is Short || value is Int
 
 private fun getReceiverExpressionType(resolvedCall: ResolvedCall<*>): KotlinType? {
     return when (resolvedCall.explicitReceiverKind) {
-        ExplicitReceiverKind.DISPATCH_RECEIVER -> resolvedCall.dispatchReceiver.type
+        ExplicitReceiverKind.DISPATCH_RECEIVER -> resolvedCall.dispatchReceiver!!.type
         ExplicitReceiverKind.EXTENSION_RECEIVER -> (resolvedCall.extensionReceiver as ReceiverValue).type
         ExplicitReceiverKind.NO_EXPLICIT_RECEIVER -> null
         ExplicitReceiverKind.BOTH_RECEIVERS -> null

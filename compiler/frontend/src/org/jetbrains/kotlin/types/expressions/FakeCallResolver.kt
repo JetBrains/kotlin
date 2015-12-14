@@ -38,7 +38,7 @@ public class FakeCallResolver(
 ) {
     public fun resolveFakeCall(
             context: ExpressionTypingContext,
-            receiver: ReceiverValue,
+            receiver: ReceiverValue?,
             name: Name,
             callElement: KtExpression?,
             vararg argumentTypes: KotlinType
@@ -71,7 +71,7 @@ public class FakeCallResolver(
     }
 
     public fun makeAndResolveFakeCall(
-            receiver: ReceiverValue,
+            receiver: ReceiverValue?,
             context: ExpressionTypingContext,
             valueArguments: List<KtExpression>,
             name: Name,
@@ -90,7 +90,7 @@ public class FakeCallResolver(
 
     @JvmOverloads
     public fun makeAndResolveFakeCallInContext(
-            receiver: ReceiverValue,
+            receiver: ReceiverValue?,
             context: ExpressionTypingContext,
             valueArguments: List<KtExpression>,
             name: Name,

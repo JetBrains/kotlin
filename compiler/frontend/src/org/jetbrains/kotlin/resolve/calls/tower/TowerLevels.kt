@@ -59,7 +59,7 @@ internal abstract class AbstractScopeTowerLevel(
             if (dispatchReceiverSmartCastType != null) diagnostics.add(UsedSmartCastForDispatchReceiver(dispatchReceiverSmartCastType))
 
             Visibilities.findInvisibleMember(
-                    dispatchReceiver ?: ReceiverValue.NO_RECEIVER, descriptor,
+                    dispatchReceiver, descriptor,
                     scopeTower.lexicalScope.ownerDescriptor
             )?.let { diagnostics.add(VisibilityError(it)) }
         }

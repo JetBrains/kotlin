@@ -173,13 +173,13 @@ private fun checkExternalUsages(
         context: KotlinPushDownContext,
         member: KtNamedDeclaration,
         targetClassDescriptor: ClassDescriptor
-) {
+): Unit {
     for (ref in ReferencesSearch.search(member, member.resolveScope, false)) {
         val calleeExpr = ref.element as? KtSimpleNameExpression ?: continue
         val resolvedCall = calleeExpr.getResolvedCall(context.resolutionFacade.analyze(calleeExpr)) ?: continue
         val callElement = resolvedCall.call.callElement
         val dispatchReceiver = resolvedCall.dispatchReceiver
-        if (!dispatchReceiver.exists() || dispatchReceiver is Qualifier) continue
+        if (dispatchReceiver == null || dispatchReceiver is Qualifier) continue
         val receiverClassDescriptor = dispatchReceiver.type.constructor.declarationDescriptor as? ClassDescriptor ?: continue
         if (!DescriptorUtils.isSubclass(receiverClassDescriptor, targetClassDescriptor)) {
             conflicts.putValue(callElement, "Pushed member won't be available in '${callElement.text}'")

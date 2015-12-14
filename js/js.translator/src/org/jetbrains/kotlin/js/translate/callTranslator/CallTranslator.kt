@@ -124,13 +124,13 @@ fun computeExplicitReceiversForInvoke(
     val callElement = resolvedCall.getCall().getCallElement()
     assert(explicitReceivers.extensionReceiver == null) { "'Invoke' call must have one receiver: $callElement" }
 
-    fun translateReceiverAsExpression(receiver: ReceiverValue): JsExpression? =
+    fun translateReceiverAsExpression(receiver: ReceiverValue?): JsExpression? =
             (receiver as? ExpressionReceiver)?.let { Translation.translateAsExpression(it.expression, context) }
 
     val dispatchReceiver = resolvedCall.getDispatchReceiver()
     val extensionReceiver = resolvedCall.getExtensionReceiver()
 
-    if (dispatchReceiver.exists() && extensionReceiver.exists() && resolvedCall.getExplicitReceiverKind() == ExplicitReceiverKind.BOTH_RECEIVERS) {
+    if (dispatchReceiver != null && extensionReceiver != null && resolvedCall.getExplicitReceiverKind() == ExplicitReceiverKind.BOTH_RECEIVERS) {
         assert(explicitReceivers.extensionOrDispatchReceiver != null) {
             "No explicit receiver for 'invoke' resolved call with both receivers: $callElement, text: ${callElement.getText()}" +
             "Dispatch receiver: $dispatchReceiver Extension receiver: $extensionReceiver"
@@ -145,7 +145,7 @@ fun computeExplicitReceiversForInvoke(
     }
 
     val dispatchReceiverExpression = translateReceiverAsExpression(dispatchReceiver)
-    return when (Pair(dispatchReceiver.exists(), extensionReceiver.exists())) {
+    return when (Pair(dispatchReceiver != null, extensionReceiver != null)) {
         Pair(true, true)  -> ExplicitReceivers(dispatchReceiverExpression, explicitReceivers.extensionOrDispatchReceiver)
         Pair(true, false) -> ExplicitReceivers(dispatchReceiverExpression)
         Pair(false, true) -> ExplicitReceivers(translateReceiverAsExpression(extensionReceiver as ReceiverValue))

@@ -29,7 +29,7 @@ class InvokeConventionChecker : CallChecker {
         if (resolvedCall is VariableAsFunctionResolvedCallImpl) {
             val functionCall = resolvedCall.functionCall
             val variableCall = resolvedCall.variableCall
-            if (functionCall.dispatchReceiver.exists() && functionCall.extensionReceiver.exists() && KotlinBuiltIns.isExactExtensionFunctionType(variableCall.resultingDescriptor.type)) {
+            if (functionCall.dispatchReceiver != null && functionCall.extensionReceiver != null && KotlinBuiltIns.isExactExtensionFunctionType(variableCall.resultingDescriptor.type)) {
                 if (variableCall.dispatchReceiver is ExpressionReceiver || variableCall.extensionReceiver is ExpressionReceiver) {
                     val callElement = variableCall.call.callElement
                     context.trace.report(Errors.INVOKE_ON_EXTENSION_FUNCTION_WITH_EXPLICIT_DISPATCH_RECEIVER.on(callElement))

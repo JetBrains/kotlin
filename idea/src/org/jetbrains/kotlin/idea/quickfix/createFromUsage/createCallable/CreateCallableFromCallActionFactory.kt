@@ -92,7 +92,7 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
         if (calleeExpr.getReferencedNameElementType() != KtTokens.IDENTIFIER) return null
 
         val context = calleeExpr.analyze()
-        val receiver = element.getCall(context)?.explicitReceiver ?: ReceiverValue.NO_RECEIVER
+        val receiver = element.getCall(context)?.explicitReceiver
         val receiverType = getReceiverTypeInfo(context, project, receiver) ?: return null
 
         val possibleContainers =
@@ -107,9 +107,9 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
         return doCreateCallableInfo(element, context, calleeExpr.getReferencedName(), receiverType, possibleContainers)
     }
 
-    private fun getReceiverTypeInfo(context: BindingContext, project: Project, receiver: Receiver): TypeInfo? {
+    private fun getReceiverTypeInfo(context: BindingContext, project: Project, receiver: Receiver?): TypeInfo? {
         return when {
-            !receiver.exists() -> TypeInfo.Empty
+            receiver == null -> TypeInfo.Empty
             receiver is Qualifier -> {
                 val qualifierType = context.getType(receiver.expression)
                 if (qualifierType != null) return TypeInfo(qualifierType, Variance.IN_VARIANCE)

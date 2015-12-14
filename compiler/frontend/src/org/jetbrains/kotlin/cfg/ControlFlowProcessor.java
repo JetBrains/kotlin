@@ -1523,7 +1523,7 @@ public class ControlFlowProcessor {
         @NotNull
         private Map<PseudoValue, ReceiverValue> getReceiverValues(ResolvedCall<?> resolvedCall) {
             PseudoValue varCallResult = null;
-            ReceiverValue explicitReceiver = ReceiverValue.NO_RECEIVER;
+            ReceiverValue explicitReceiver = null;
             if (resolvedCall instanceof VariableAsFunctionResolvedCall) {
                 varCallResult = generateCall(((VariableAsFunctionResolvedCall) resolvedCall).getVariableCall()).getOutputValue();
 
@@ -1541,7 +1541,7 @@ public class ControlFlowProcessor {
             }
 
             SmartFMap<PseudoValue, ReceiverValue> receiverValues = SmartFMap.emptyMap();
-            if (explicitReceiver.exists() && varCallResult != null) {
+            if (explicitReceiver != null && varCallResult != null) {
                 receiverValues = receiverValues.plus(varCallResult, explicitReceiver);
             }
             KtElement callElement = resolvedCall.getCall().getCallElement();
@@ -1553,10 +1553,10 @@ public class ControlFlowProcessor {
         @NotNull
         private SmartFMap<PseudoValue, ReceiverValue> getReceiverValues(
                 KtElement callElement,
-                ReceiverValue receiver,
+                @Nullable ReceiverValue receiver,
                 SmartFMap<PseudoValue, ReceiverValue> receiverValues
         ) {
-            if (!receiver.exists() || receiverValues.containsValue(receiver)) return receiverValues;
+            if (receiver == null || receiverValues.containsValue(receiver)) return receiverValues;
 
             if (receiver instanceof ImplicitReceiver) {
                 receiverValues = receiverValues.plus(createSyntheticValue(callElement, MagicKind.IMPLICIT_RECEIVER), receiver);

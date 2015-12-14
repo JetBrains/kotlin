@@ -66,14 +66,11 @@ fun markElements(
 
                 override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
                     val resolvedCall = expression.getResolvedCall(context) ?: return
-                    var receiver = resolvedCall.getExplicitReceiverValue()
-                    if (!receiver.exists()) {
-                        receiver = resolvedCall.extensionReceiver as ReceiverValue
-                    }
-                    if (!receiver.exists()) {
-                        receiver = resolvedCall.dispatchReceiver
-                    }
-                    if (!receiver.exists()) return
+                    val receiver = resolvedCall.getExplicitReceiverValue()
+                                   ?: resolvedCall.extensionReceiver
+                                   ?: resolvedCall.dispatchReceiver
+                                   ?: return
+                    if (receiver !is ReceiverValue) return
 
                     val implicitThis = receiver.type.constructor.declarationDescriptor as? ClassDescriptor ?: return
                     if (implicitThis.isCompanionObject

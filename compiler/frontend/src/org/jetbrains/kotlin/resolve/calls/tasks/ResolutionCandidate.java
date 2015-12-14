@@ -24,8 +24,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
-import static org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER;
-
 public class ResolutionCandidate<D extends CallableDescriptor> {
     private final Call call;
     private final D candidateDescriptor;
@@ -35,8 +33,8 @@ public class ResolutionCandidate<D extends CallableDescriptor> {
     private ExplicitReceiverKind explicitReceiverKind;
 
     private ResolutionCandidate(
-            @NotNull Call call, @NotNull D descriptor, @NotNull ReceiverValue dispatchReceiver,
-            @NotNull Receiver receiverArgument, @NotNull ExplicitReceiverKind explicitReceiverKind,
+            @NotNull Call call, @NotNull D descriptor, @Nullable ReceiverValue dispatchReceiver,
+            @Nullable Receiver receiverArgument, @NotNull ExplicitReceiverKind explicitReceiverKind,
             @Nullable TypeSubstitutor knownTypeParametersResultingSubstitutor
     ) {
         this.call = call;
@@ -50,23 +48,23 @@ public class ResolutionCandidate<D extends CallableDescriptor> {
     public static <D extends CallableDescriptor> ResolutionCandidate<D> create(
             @NotNull Call call, @NotNull D descriptor
     ) {
-        return new ResolutionCandidate<D>(call, descriptor, NO_RECEIVER, NO_RECEIVER, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, null);
+        return new ResolutionCandidate<D>(call, descriptor, null, null, ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, null);
     }
 
     public static <D extends CallableDescriptor> ResolutionCandidate<D> create(
-            @NotNull Call call, @NotNull D descriptor, @NotNull ReceiverValue dispatchReceiver,
-            @NotNull Receiver receiverArgument, @NotNull ExplicitReceiverKind explicitReceiverKind,
+            @NotNull Call call, @NotNull D descriptor, @Nullable ReceiverValue dispatchReceiver,
+            @Nullable Receiver receiverArgument, @NotNull ExplicitReceiverKind explicitReceiverKind,
             @Nullable TypeSubstitutor knownTypeParametersResultingSubstitutor
     ) {
         return new ResolutionCandidate<D>(call, descriptor, dispatchReceiver, receiverArgument, explicitReceiverKind,
                                           knownTypeParametersResultingSubstitutor);
     }
 
-    public void setDispatchReceiver(@NotNull ReceiverValue dispatchReceiver) {
+    public void setDispatchReceiver(@Nullable ReceiverValue dispatchReceiver) {
         this.dispatchReceiver = dispatchReceiver;
     }
 
-    public void setReceiverArgument(@NotNull ReceiverValue receiverArgument) {
+    public void setReceiverArgument(@Nullable ReceiverValue receiverArgument) {
         this.receiverArgument = receiverArgument;
     }
 
@@ -84,12 +82,12 @@ public class ResolutionCandidate<D extends CallableDescriptor> {
         return candidateDescriptor;
     }
 
-    @NotNull
+    @Nullable
     public ReceiverValue getDispatchReceiver() {
         return dispatchReceiver;
     }
 
-    @NotNull
+    @Nullable
     public Receiver getReceiverArgument() {
         return receiverArgument;
     }

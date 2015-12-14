@@ -193,7 +193,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
                         if (receiver is ImplicitReceiver) {
                             result.add(KotlinImplicitThisUsage(callElement, receiver.declarationDescriptor))
                         }
-                        else if (!receiver.exists()) {
+                        else if (receiver == null) {
                             result.add(
                                     object : UnresolvableCollisionUsageInfo(callElement, null) {
                                         override fun getDescription(): String {
@@ -369,10 +369,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
                             return null
                         }
 
-                        var receiverValue = resolvedCall.extensionReceiver
-                        if (!receiverValue.exists()) {
-                            receiverValue = resolvedCall.dispatchReceiver
-                        }
+                        val receiverValue = resolvedCall.extensionReceiver ?: resolvedCall.dispatchReceiver
                         if (receiverValue is ImplicitReceiver) {
                             processImplicitThis(resolvedCall.call.callElement, receiverValue)
                         }
@@ -667,7 +664,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         if (newReceiverInfo != null && (callable is KtNamedFunction) && callable.bodyExpression != null) {
             val noReceiverRefToContext = KotlinFileReferencesResolver.resolve(callable, true, true).filter {
                 val resolvedCall = it.key.getResolvedCall(it.value)
-                resolvedCall != null && !resolvedCall.dispatchReceiver.exists() && !resolvedCall.extensionReceiver.exists()
+                resolvedCall != null && resolvedCall.dispatchReceiver == null && resolvedCall.extensionReceiver == null
             }
 
             val psiFactory = KtPsiFactory(callable.project)
@@ -684,7 +681,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
                         .findElementAt(originalRef.textOffset - originalOffset)
                         ?.getNonStrictParentOfType<KtReferenceExpression>()
                 val newResolvedCall = newRef.getResolvedCall(newContext)
-                if (newResolvedCall == null || newResolvedCall.extensionReceiver.exists() || newResolvedCall.dispatchReceiver.exists()) {
+                if (newResolvedCall == null || newResolvedCall.extensionReceiver != null || newResolvedCall.dispatchReceiver != null) {
                     val descriptor = originalRef.getResolvedCall(originalContext)!!.candidateDescriptor
                     val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(callable.project, descriptor)
                     val prefix = if (declaration != null) RefactoringUIUtil.getDescription(declaration, true) else originalRef.text

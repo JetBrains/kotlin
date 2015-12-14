@@ -137,7 +137,7 @@ public class KotlinPsiUnifier(
             return false
         }
 
-        private fun matchReceivers(rv1: Receiver, rv2: Receiver): Boolean {
+        private fun matchReceivers(rv1: Receiver?, rv2: Receiver?): Boolean {
             return when {
                 rv1 is ExpressionReceiver && rv2 is ExpressionReceiver ->
                     doUnify(rv1.expression, rv2.expression) == MATCHED

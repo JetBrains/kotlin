@@ -28,7 +28,7 @@ public class JavaVisibilities {
 
     public static final Visibility PACKAGE_VISIBILITY = new Visibility("package", false) {
         @Override
-        public boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+        public boolean isVisible(@Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             return areInSamePackage(what, from);
         }
 
@@ -65,7 +65,7 @@ public class JavaVisibilities {
 
     public static final Visibility PROTECTED_STATIC_VISIBILITY = new Visibility("protected_static", true) {
         @Override
-        public boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+        public boolean isVisible(@Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             if (areInSamePackage(what, from)) {
                 return true;
             }
@@ -103,7 +103,7 @@ public class JavaVisibilities {
 
     public static final Visibility PROTECTED_AND_PACKAGE = new Visibility("protected_and_package", true) {
         @Override
-        public boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+        public boolean isVisible(@Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
             if (areInSamePackage(what, from)) {
                 return true;
             }

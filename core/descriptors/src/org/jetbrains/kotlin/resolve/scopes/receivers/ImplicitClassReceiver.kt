@@ -30,8 +30,6 @@ interface ThisClassReceiver : ReceiverValue {
  */
 open class ImplicitClassReceiver(override val classDescriptor: ClassDescriptor) : ThisClassReceiver, ImplicitReceiver {
 
-    override fun exists() = true
-
     override fun getType() = classDescriptor.defaultType
 
     override val declarationDescriptor = classDescriptor

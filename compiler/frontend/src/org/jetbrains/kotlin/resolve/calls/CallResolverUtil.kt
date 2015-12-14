@@ -141,7 +141,7 @@ public fun isInvokeCallOnVariable(call: Call): Boolean {
 
 public fun isInvokeCallOnExpressionWithBothReceivers(call: Call): Boolean {
     if (call.getCallType() !== Call.CallType.INVOKE || isInvokeCallOnVariable(call)) return false
-    return call.getExplicitReceiver().exists() && call.getDispatchReceiver().exists()
+    return call.getExplicitReceiver() != null && call.getDispatchReceiver() != null
 }
 
 public fun getSuperCallExpression(call: Call): KtSuperExpression? {

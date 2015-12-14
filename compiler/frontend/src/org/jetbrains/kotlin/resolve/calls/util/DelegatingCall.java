@@ -41,12 +41,12 @@ public class DelegatingCall implements Call {
     }
 
     @Override
-    @NotNull
+    @Nullable
     public Receiver getExplicitReceiver() {
         return delegate.getExplicitReceiver();
     }
 
-    @NotNull
+    @Nullable
     @Override
     public ReceiverValue getDispatchReceiver() {
         return delegate.getDispatchReceiver();

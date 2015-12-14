@@ -77,7 +77,7 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
         // Error is already reported if something is missing
         val receiverArgument = candidateCall.extensionReceiver
         val receiverParameter = candidate.extensionReceiverParameter
-        if (receiverArgument.exists() && receiverParameter != null) {
+        if (receiverArgument != null && receiverParameter != null) {
             val receiverArgumentType = (receiverArgument as ReceiverValue).type
             var receiverType: KotlinType? = if (context.candidateCall.isSafeCall)
                 TypeUtils.makeNotNullable(receiverArgumentType)

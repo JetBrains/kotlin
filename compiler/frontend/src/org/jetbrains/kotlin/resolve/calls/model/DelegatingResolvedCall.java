@@ -63,13 +63,13 @@ public abstract class DelegatingResolvedCall<D extends CallableDescriptor> imple
         return resolvedCall.getResultingDescriptor();
     }
 
-    @NotNull
+    @Nullable
     @Override
     public Receiver getExtensionReceiver() {
         return resolvedCall.getExtensionReceiver();
     }
 
-    @NotNull
+    @Nullable
     @Override
     public ReceiverValue getDispatchReceiver() {
         return resolvedCall.getDispatchReceiver();

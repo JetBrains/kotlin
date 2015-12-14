@@ -114,8 +114,8 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     public ResolvedCallImpl(
             @NotNull Call call,
             @NotNull D candidateDescriptor,
-            @NotNull ReceiverValue dispatchReceiver,
-            @NotNull ReceiverValue extensionReceiver,
+            @Nullable ReceiverValue dispatchReceiver,
+            @Nullable ReceiverValue extensionReceiver,
             @NotNull ExplicitReceiverKind explicitReceiverKind,
             @Nullable TypeSubstitutor knownTypeParametersSubstitutor,
             @NotNull DelegatingBindingTrace trace,
@@ -240,13 +240,13 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
     }
 
     @Override
-    @NotNull
+    @Nullable
     public Receiver getExtensionReceiver() {
         return extensionReceiver;
     }
 
     @Override
-    @NotNull
+    @Nullable
     public ReceiverValue getDispatchReceiver() {
         return dispatchReceiver;
     }

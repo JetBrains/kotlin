@@ -419,7 +419,7 @@ public class ControlFlowInformationProvider {
             PropertySetterDescriptor setterDescriptor = ((PropertyDescriptor) variableDescriptor).getSetter();
 
             ResolvedCall<? extends CallableDescriptor> resolvedCall = CallUtilKt.getResolvedCall(expression, trace.getBindingContext());
-            ReceiverValue receiverValue = ReceiverValue.NO_RECEIVER;
+            ReceiverValue receiverValue = null;
             if (resolvedCall != null) {
                 receiverValue = resolvedCall.getDispatchReceiver();
             }

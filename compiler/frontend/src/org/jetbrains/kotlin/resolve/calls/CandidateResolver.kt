@@ -182,11 +182,11 @@ public class CandidateResolver(
     private fun CallCandidateResolutionContext<*>.checkExtensionReceiver() = checkAndReport {
         val receiverParameter = candidateCall.getCandidateDescriptor().getExtensionReceiverParameter()
         val receiverArgument = candidateCall.getExtensionReceiver()
-        if (receiverParameter != null && !receiverArgument.exists()) {
+        if (receiverParameter != null && receiverArgument == null) {
             tracing.missingReceiver(candidateCall.getTrace(), receiverParameter)
             OTHER_ERROR
         }
-        else if (receiverParameter == null && receiverArgument.exists()) {
+        else if (receiverParameter == null && receiverArgument != null) {
             tracing.noReceiverAllowed(candidateCall.getTrace())
             if (call.getCalleeExpression() is KtSimpleNameExpression) {
                 RECEIVER_PRESENCE_ERROR
@@ -203,7 +203,7 @@ public class CandidateResolver(
     private fun CallCandidateResolutionContext<*>.checkDispatchReceiver() = checkAndReport {
         val candidateDescriptor = candidateDescriptor
         val dispatchReceiver = candidateCall.getDispatchReceiver()
-        if (dispatchReceiver.exists()) {
+        if (dispatchReceiver != null) {
             var nestedClass: ClassDescriptor? = null
             if (candidateDescriptor is ConstructorDescriptor
                 && DescriptorUtils.isStaticNestedClass(candidateDescriptor.getContainingDeclaration())
@@ -219,7 +219,7 @@ public class CandidateResolver(
             }
         }
 
-        assert((dispatchReceiver.exists() == (candidateCall.getResultingDescriptor().getDispatchReceiverParameter() != null))) {
+        assert((dispatchReceiver != null) == (candidateCall.getResultingDescriptor().getDispatchReceiverParameter() != null)) {
             "Shouldn't happen because of TaskPrioritizer: $candidateDescriptor"
         }
 
@@ -228,7 +228,7 @@ public class CandidateResolver(
 
     private fun checkOuterClassMemberIsAccessible(context: CallCandidateResolutionContext<*>): Boolean {
         // In "this@Outer.foo()" the error will be reported on "this@Outer" instead
-        if (context.call.getExplicitReceiver().exists() || context.call.getDispatchReceiver().exists()) return true
+        if (context.call.getExplicitReceiver() != null || context.call.getDispatchReceiver() != null) return true
 
         val candidateThis = getDeclaringClass(context.candidateCall.getCandidateDescriptor())
         if (candidateThis == null || candidateThis.getKind().isSingleton()) return true
@@ -269,8 +269,8 @@ public class CandidateResolver(
 
     private fun CallCandidateResolutionContext<*>.checkNonExtensionCalledWithReceiver() = checkAndReport {
         val call = candidateCall.call
-        if (call is CallTransformer.CallForImplicitInvoke && candidateCall.extensionReceiver.exists()
-                && candidateCall.dispatchReceiver.exists()
+        if (call is CallTransformer.CallForImplicitInvoke && candidateCall.extensionReceiver != null
+                && candidateCall.dispatchReceiver != null
         ) {
             if (call.dispatchReceiver == candidateCall.dispatchReceiver
                     && !KotlinBuiltIns.isExactExtensionFunctionType(call.dispatchReceiver.type)
@@ -282,7 +282,7 @@ public class CandidateResolver(
         SUCCESS
     }
 
-    private fun getReceiverSuper(receiver: Receiver): KtSuperExpression? {
+    private fun getReceiverSuper(receiver: Receiver?): KtSuperExpression? {
         if (receiver is ExpressionReceiver) {
             val expression = receiver.expression
             if (expression is KtSuperExpression) {
@@ -390,17 +390,17 @@ public class CandidateResolver(
         // not to throw away the candidate, so the following check is skipped.
         if (!isInvokeCallOnExpressionWithBothReceivers(call)) {
             val callExtensionReceiver = candidateCall.extensionReceiver
-            assert(callExtensionReceiver is ReceiverValue) { "Expected ReceiverValue, got $callExtensionReceiver" }
-            checkReceiverTypeError(extensionReceiver, callExtensionReceiver as ReceiverValue)
+            assert(callExtensionReceiver is ReceiverValue?) { "Expected ReceiverValue, got $callExtensionReceiver" }
+            checkReceiverTypeError(extensionReceiver, callExtensionReceiver as ReceiverValue?)
         }
         checkReceiverTypeError(dispatchReceiver, candidateCall.getDispatchReceiver())
     }
 
     private fun CallCandidateResolutionContext<*>.checkReceiverTypeError(
             receiverParameterDescriptor: ReceiverParameterDescriptor?,
-            receiverArgument: ReceiverValue
+            receiverArgument: ReceiverValue?
     ) = checkAndReport {
-        if (receiverParameterDescriptor == null || !receiverArgument.exists()) return@checkAndReport SUCCESS
+        if (receiverParameterDescriptor == null || receiverArgument == null) return@checkAndReport SUCCESS
 
         val erasedReceiverType = getErasedReceiverType(receiverParameterDescriptor, candidateDescriptor)
 
@@ -423,7 +423,7 @@ public class CandidateResolver(
         resultStatus = resultStatus.combine(context.checkReceiver(
                 candidateCall,
                 candidateCall.getResultingDescriptor().getExtensionReceiverParameter(),
-                candidateCall.extensionReceiver as ReceiverValue,
+                candidateCall.extensionReceiver as ReceiverValue?,
                 candidateCall.getExplicitReceiverKind().isExtensionReceiver(), false))
 
         resultStatus = resultStatus.combine(context.checkReceiver(candidateCall,
@@ -437,10 +437,10 @@ public class CandidateResolver(
     private fun <D : CallableDescriptor> CallCandidateResolutionContext<D>.checkReceiver(
             candidateCall: ResolvedCall<D>,
             receiverParameter: ReceiverParameterDescriptor?,
-            receiverArgument: ReceiverValue,
+            receiverArgument: ReceiverValue?,
             isExplicitReceiver: Boolean,
             implicitInvokeCheck: Boolean): ResolutionStatus {
-        if (receiverParameter == null || !receiverArgument.exists()) return SUCCESS
+        if (receiverParameter == null || receiverArgument == null) return SUCCESS
         val candidateDescriptor = candidateCall.getCandidateDescriptor()
         if (TypeUtils.dependsOnTypeParameters(receiverParameter.getType(), candidateDescriptor.getTypeParameters())) return SUCCESS
 

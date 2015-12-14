@@ -58,7 +58,7 @@ public class JavaClassProperty : IntrinsicPropertyGetter() {
     }
 
     override fun toCallable(fd: FunctionDescriptor, isSuper: Boolean, resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): Callable {
-        val classType = codegen.getState().typeMapper.mapType(resolvedCall.getCall().getDispatchReceiver().getType())
+        val classType = codegen.getState().typeMapper.mapType(resolvedCall.getCall().getDispatchReceiver()!!.getType())
         return object : IntrinsicCallable(getType(javaClass<Class<Any>>()), listOf(), classType, null) {
             override fun invokeIntrinsic(v: InstructionAdapter) {
                 if (isPrimitive(classType)) {

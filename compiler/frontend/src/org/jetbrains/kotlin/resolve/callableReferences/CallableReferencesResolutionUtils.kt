@@ -73,7 +73,7 @@ private fun <D : CallableDescriptor> ResolveArgumentsMode.acceptResolution(resul
 
 private fun resolvePossiblyAmbiguousCallableReference(
         reference: KtSimpleNameExpression,
-        receiver: ReceiverValue,
+        receiver: ReceiverValue?,
         context: ResolutionContext<*>,
         resolutionMode: ResolveArgumentsMode,
         callResolver: CallResolver
@@ -122,7 +122,7 @@ public fun resolvePossiblyAmbiguousCallableReference(
 
         val temporaryTraceAndCache = TemporaryTraceAndCache.create(context, traceTitle, reference)
         val newContext = context.replaceTraceAndCache(temporaryTraceAndCache).replaceScope(StaticScopeAsLexicalScope(staticScope))
-        val results = resolvePossiblyAmbiguousCallableReference(reference, ReceiverValue.NO_RECEIVER, newContext, resolutionMode, callResolver)
+        val results = resolvePossiblyAmbiguousCallableReference(reference, null, newContext, resolutionMode, callResolver)
         resolutionMode.acceptResolution(results, temporaryTraceAndCache)
         return results
     }
@@ -136,7 +136,7 @@ public fun resolvePossiblyAmbiguousCallableReference(
     }
 
     if (lhsType == null) {
-        return resolvePossiblyAmbiguousCallableReference(reference, ReceiverValue.NO_RECEIVER, context, resolutionMode, callResolver)
+        return resolvePossiblyAmbiguousCallableReference(reference, null, context, resolutionMode, callResolver)
     }
 
     val classifier = lhsType.getConstructor().getDeclarationDescriptor()

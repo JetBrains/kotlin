@@ -189,7 +189,7 @@ public class AnnotationResolver {
     ) {
         return callResolver.resolveFunctionCall(
                 trace, scope,
-                CallMaker.makeCall(ReceiverValue.NO_RECEIVER, null, annotationEntry),
+                CallMaker.makeCall(null, null, annotationEntry),
                 NO_EXPECTED_TYPE,
                 DataFlowInfo.EMPTY,
                 true
