@@ -1301,6 +1301,13 @@
                      enabledByDefault="true"
                      level="WARNING"/>
 
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.OldStdlibApiInspection"
+                     displayName="Java usages of old Kotlin standard library APIs"
+                     groupName="Kotlin"
+                     enabledByDefault="true"
+                     cleanupTool="true"
+                     level="WARNING"/>
+
     <referenceImporter implementation="org.jetbrains.kotlin.idea.quickfix.KotlinReferenceImporter"/>
 
     <fileType.fileViewProviderFactory filetype="KJSM" implementationClass="com.intellij.psi.ClassFileViewProviderFactory"/>
