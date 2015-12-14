@@ -2122,7 +2122,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (isBackingFieldInClassCompanion && forceField) {
             fieldAccessorKind = FieldAccessorKind.IN_CLASS_COMPANION;
         }
-        else if (syntheticBackingField && context.getParentContext().getContextDescriptor() != containingDeclaration) {
+        else if (syntheticBackingField && context.getFirstCrossInlineOrNonInlineContext().getParentContext().getContextDescriptor() != containingDeclaration) {
             fieldAccessorKind = FieldAccessorKind.FIELD_FROM_LOCAL;
         }
         boolean isStaticBackingField = DescriptorUtils.isStaticDeclaration(propertyDescriptor) ||
@@ -2163,13 +2163,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         if (!skipPropertyAccessors) {
             if (!couldUseDirectAccessToProperty(propertyDescriptor, true, isDelegatedProperty, context)) {
-                if (isSuper && !isJvmInterface(containingDeclaration)) {
-                    CodegenContext c = context.findParentContextWithDescriptor(superCallTarget);
-                    assert c != null : "Couldn't find a context for a super-call: " + propertyDescriptor;
-                    if (c != context.getParentContext()) {
-                        propertyDescriptor = (PropertyDescriptor) c.getAccessor(propertyDescriptor, superCallTarget);
-                    }
-                }
+                propertyDescriptor = context.getAccessorForSuperCallIfNeeded(propertyDescriptor, superCallTarget);
 
                 propertyDescriptor = context.accessibleDescriptor(propertyDescriptor, superCallTarget);
 
@@ -2327,15 +2321,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     public StackValue invokeFunction(@NotNull Call call, @NotNull ResolvedCall<?> resolvedCall, @NotNull StackValue receiver) {
         FunctionDescriptor fd = accessibleFunctionDescriptor(resolvedCall);
         ClassDescriptor superCallTarget = getSuperCallTarget(call);
-        boolean superCall = superCallTarget != null;
 
-        if (superCall && !isJvmInterface(fd.getContainingDeclaration())) {
-            CodegenContext c = context.findParentContextWithDescriptor(superCallTarget);
-            assert c != null : "Couldn't find a context for a super-call: " + fd;
-            if (c != context.getParentContext()) {
-                fd = (FunctionDescriptor) c.getAccessor(fd, superCallTarget);
-            }
-        }
+        fd = context.getAccessorForSuperCallIfNeeded(fd, superCallTarget);
 
         Collection<ExpressionCodegenExtension> codegenExtensions = ExpressionCodegenExtension.Companion.getInstances(state.getProject());
         if (!codegenExtensions.isEmpty()) {
@@ -2346,7 +2333,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             }
         }
 
-        Callable callable = resolveToCallable(fd, superCall, resolvedCall);
+        Callable callable = resolveToCallable(fd, superCallTarget != null, resolvedCall);
 
         return callable.invokeMethodWithArguments(resolvedCall, receiver, this);
     }

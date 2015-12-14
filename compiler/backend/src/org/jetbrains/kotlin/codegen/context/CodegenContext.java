@@ -37,6 +37,7 @@ import org.jetbrains.org.objectweb.asm.Type;
 import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.getVisibilityAccessFlag;
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PROTECTED;
 
@@ -364,11 +365,24 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     @NotNull
-    public <D extends CallableMemberDescriptor> D getAccessor(@NotNull D descriptor, @Nullable ClassDescriptor superCallTarget) {
+    private <D extends CallableMemberDescriptor> D getAccessor(@NotNull D descriptor, @Nullable ClassDescriptor superCallTarget) {
         return getAccessor(descriptor, FieldAccessorKind.NORMAL, null, superCallTarget);
     }
 
     @SuppressWarnings("unchecked")
+    @NotNull
+    public <D extends CallableMemberDescriptor> D getAccessorForSuperCallIfNeeded(@NotNull D descriptor, @Nullable ClassDescriptor superCallTarget) {
+        if (superCallTarget != null && !isJvmInterface(descriptor.getContainingDeclaration())) {
+            CodegenContext afterInline = getFirstCrossInlineOrNonInlineContext();
+            CodegenContext c = afterInline.findParentContextWithDescriptor(superCallTarget);
+            assert c != null : "Couldn't find a context for a super-call: " + descriptor;
+            if (c != afterInline.getParentContext()) {
+                return (D) c.getAccessor(descriptor, superCallTarget);
+            }
+        }
+        return descriptor;
+    }
+
     @NotNull
     public <D extends CallableMemberDescriptor> D getAccessor(
             @NotNull D possiblySubstitutedDescriptor,
@@ -506,21 +520,22 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         return accessors == null ? Collections.<AccessorForCallableDescriptor<CallableMemberDescriptor>>emptySet() : accessors.values();
     }
 
+    @SuppressWarnings("unchecked")
     @NotNull
     public <D extends CallableMemberDescriptor> D accessibleDescriptor(
             @NotNull D descriptor,
             @Nullable ClassDescriptor superCallTarget
     ) {
+        CodegenContext properContext = getFirstCrossInlineOrNonInlineContext();
         DeclarationDescriptor enclosing = descriptor.getContainingDeclaration();
-        boolean isInliningContext = isInlineMethodContext();
+        boolean isInliningContext = properContext.isInlineMethodContext();
         if (!isInliningContext && (
-                !hasThisDescriptor() ||
-                enclosing == getThisDescriptor() ||
-                enclosing == getClassOrPackageParentContext().getContextDescriptor())) {
+                !properContext.hasThisDescriptor() ||
+                enclosing == properContext.getThisDescriptor() ||
+                enclosing == properContext.getClassOrPackageParentContext().getContextDescriptor())) {
             return descriptor;
         }
-
-        return accessibleDescriptorIfNeeded(descriptor, superCallTarget, isInliningContext);
+        return (D) properContext.accessibleDescriptorIfNeeded(descriptor, superCallTarget, isInliningContext);
     }
 
     @SuppressWarnings("unchecked")
@@ -633,18 +648,25 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         return value instanceof StackValue.Field && ((StackValue.Field) value).isStaticPut;
     }
 
-    private boolean isInsideInliningContext() {
-        CodegenContext current = this;
-        while (current != null) {
-            if (current instanceof MethodContext && ((MethodContext) current).isInlineFunction()) {
-                return true;
-            }
-            current = current.getParentContext();
-        }
-        return false;
+    public boolean isInlineMethodContext() {
+        return this instanceof MethodContext && ((MethodContext) this).isInlineFunction();
     }
 
-    private boolean isInlineMethodContext() {
-        return this instanceof MethodContext && ((MethodContext) this).isInlineFunction();
+    @NotNull
+    public CodegenContext getFirstCrossInlineOrNonInlineContext() {
+        if (!(this instanceof MethodContext)) {
+            return this;
+        }
+        MethodContext context = (MethodContext) this;
+        if (!context.isInliningLambda() || context.isCrossInline) {
+            return this;
+        }
+
+        CodegenContext parent = context.getParentContext();
+        assert parent instanceof ClosureContext : "Parent of inlining lambda body should be ClosureContext, but: " + parent;
+
+        parent = parent.getParentContext();
+        assert parent != null : "Parent context of lambda class context should exist: " + this.contextDescriptor;
+        return parent.getFirstCrossInlineOrNonInlineContext();
     }
 }

@@ -1680,6 +1680,51 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/syntheticAccessors/superProperty.1.kt");
             doBoxTestWithInlineCheck(fileName);
         }
+
+        @TestMetadata("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class WithinInlineLambda extends AbstractCompileKotlinAgainstInlineKotlinTest {
+            public void testAllFilesPresentInWithinInlineLambda() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda"), Pattern.compile("^(.+)\\.1.kt$"), true);
+            }
+
+            @TestMetadata("directFieldAccess.1.kt")
+            public void testDirectFieldAccess() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda/directFieldAccess.1.kt");
+                doBoxTestWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("directFieldAccessInCrossInline.1.kt")
+            public void testDirectFieldAccessInCrossInline() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda/directFieldAccessInCrossInline.1.kt");
+                doBoxTestWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("privateCall.1.kt")
+            public void testPrivateCall() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda/privateCall.1.kt");
+                doBoxTestWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("privateInCrossInline.1.kt")
+            public void testPrivateInCrossInline() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda/privateInCrossInline.1.kt");
+                doBoxTestWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("superCall.1.kt")
+            public void testSuperCall() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda/superCall.1.kt");
+                doBoxTestWithInlineCheck(fileName);
+            }
+
+            @TestMetadata("superInCrossInline.1.kt")
+            public void testSuperInCrossInline() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda/superInCrossInline.1.kt");
+                doBoxTestWithInlineCheck(fileName);
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/boxInline/trait")

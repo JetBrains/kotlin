@@ -712,6 +712,24 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/bytecodeText/inline"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("noSynAccessor.kt")
+        public void testNoSynAccessor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inline/noSynAccessor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noSynAccessorToDirectFieldAccess.kt")
+        public void testNoSynAccessorToDirectFieldAccess() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inline/noSynAccessorToDirectFieldAccess.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noSynAccessorToSuper.kt")
+        public void testNoSynAccessorToSuper() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inline/noSynAccessorToSuper.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("notSplitedExceptionTable.kt")
         public void testNotSplitedExceptionTable() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/inline/notSplitedExceptionTable.kt");

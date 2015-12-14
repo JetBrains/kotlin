@@ -39,7 +39,7 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
     // Note: in case of code inside property accessors, functionDescriptor will be that accessor,
     // but CodegenContext#contextDescriptor will be the corresponding property
     private final FunctionDescriptor functionDescriptor;
-    private boolean isCrossInline;
+    public final boolean isCrossInline;
 
     protected MethodContext(
             @NotNull FunctionDescriptor functionDescriptor,
