@@ -1468,6 +1468,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/delegatedProperty"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("delegateWithPrivateSet.kt")
+        public void testDelegateWithPrivateSet() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/delegatedProperty/delegateWithPrivateSet.kt");
+            doTestWithStdlib(fileName);
+        }
+
         @TestMetadata("kt6722.kt")
         public void testKt6722() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/delegatedProperty/kt6722.kt");
