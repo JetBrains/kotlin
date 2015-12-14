@@ -225,6 +225,10 @@ public class ResolveElementCache(
                     return element
                 }
 
+                if (element is KtFileAnnotationList) {
+                    return element
+                }
+
                 return null
             }
 
@@ -277,6 +281,16 @@ public class ResolveElementCache(
                 val resolver = resolveSession.fileScopeProvider.getImportResolver(resolveElement.getContainingKtFile())
                 resolver.forceResolveAllImports()
                 resolveSession.trace
+            }
+
+            is KtFileAnnotationList -> {
+                val annotationEntry = resolveElement.annotationEntries.firstOrNull()
+                if (annotationEntry != null) {
+                    annotationAdditionalResolve(resolveSession, annotationEntry)
+                }
+                else {
+                    resolveSession.trace
+                }
             }
 
             is KtAnnotationEntry -> annotationAdditionalResolve(resolveSession, resolveElement)

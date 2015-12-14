@@ -278,4 +278,26 @@ class C(param1: String = "", param2: Int = 0) {
         val context = annotationEntry.analyze(BodyResolveMode.PARTIAL)
         assert(context[BindingContext.ANNOTATION, annotationEntry] != null)
     }
+
+    public fun testFileAnnotationList() {
+        val file = myFixture.configureByText("Test.kt", """
+        @file:Suppress("Some")
+        @file:JvmName("Hi")
+        """) as KtFile
+
+        val fileAnnotationList = file.fileAnnotationList!!
+        val context = fileAnnotationList.analyze(BodyResolveMode.PARTIAL)
+        assert(context[BindingContext.ANNOTATION, fileAnnotationList.annotationEntries[0]] != null)
+        assert(context[BindingContext.ANNOTATION, fileAnnotationList.annotationEntries[1]] != null)
+    }
+
+    public fun testIncompleteFileAnnotationList() {
+        val file = myFixture.configureByText("Test.kt", """
+        @file
+        import some.hello
+        """) as KtFile
+
+        val fileAnnotationList = file.fileAnnotationList!!
+        fileAnnotationList.analyze(BodyResolveMode.PARTIAL)
+    }
 }
