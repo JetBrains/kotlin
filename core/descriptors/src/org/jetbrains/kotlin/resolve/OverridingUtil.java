@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.PropertyAccessorDescriptorImpl;
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.FlexibleTypesKt;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeConstructor;
@@ -297,7 +296,7 @@ public class OverridingUtil {
         for (CallableMemberDescriptor fromSupertype : descriptorsFromSuper) {
             OverrideCompatibilityInfo.Result result = DEFAULT.isOverridableBy(fromSupertype, fromCurrent, current).getResult();
 
-            boolean isVisible = Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, fromSupertype, current);
+            boolean isVisible = Visibilities.isVisibleWithIrrelevantReceiver(fromSupertype, current);
             switch (result) {
                 case OVERRIDABLE:
                     if (isVisible) {
@@ -485,7 +484,7 @@ public class OverridingUtil {
             public Boolean invoke(CallableMemberDescriptor descriptor) {
                 //nested class could capture private member, so check for private visibility added
                 return !Visibilities.isPrivate(descriptor.getVisibility()) &&
-                       Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, descriptor, current);
+                       Visibilities.isVisibleWithIrrelevantReceiver(descriptor, current);
             }
         });
     }

@@ -70,6 +70,20 @@ public class Visibilities {
         }
     };
 
+    /**
+     * This visibility is needed for the next case:
+     *  class A<in T>(t: T) {
+     *      private val t: T = t // visibility for t is PRIVATE_TO_THIS
+     *
+     *      fun test() {
+     *          val x: T = t // correct
+     *          val y: T = this.t // also correct
+     *      }
+     *      fun foo(a: A<String>) {
+     *         val x: String = a.t // incorrect, because a.t can be Any
+     *      }
+     *  }
+     */
     public static final Visibility PRIVATE_TO_THIS = new Visibility("private_to_this", false) {
         @Override
         public boolean isVisible(@NotNull ReceiverValue thisObject, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
@@ -206,6 +220,14 @@ public class Visibilities {
 
     public static boolean isVisible(@NotNull ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
         return findInvisibleMember(receiver, what, from) == null;
+    }
+
+    /**
+     * Receiver used only for visibility PRIVATE_TO_THIS.
+     * For all other visibilities this method give correct result.
+     */
+    public static boolean isVisibleWithIrrelevantReceiver(@NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+        return findInvisibleMember(ReceiverValue.NO_RECEIVER /* temporary */, what, from) == null; 
     }
 
     @Nullable

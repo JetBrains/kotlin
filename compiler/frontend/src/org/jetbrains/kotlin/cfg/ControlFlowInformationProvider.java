@@ -419,11 +419,11 @@ public class ControlFlowInformationProvider {
             PropertySetterDescriptor setterDescriptor = ((PropertyDescriptor) variableDescriptor).getSetter();
 
             ResolvedCall<? extends CallableDescriptor> resolvedCall = CallUtilKt.getResolvedCall(expression, trace.getBindingContext());
-            ReceiverValue receiverValue = ReceiverValue.IRRELEVANT_RECEIVER;
+            ReceiverValue receiverValue = ReceiverValue.NO_RECEIVER;
             if (resolvedCall != null) {
                 receiverValue = resolvedCall.getDispatchReceiver();
-
             }
+
             if (Visibilities.isVisible(receiverValue, variableDescriptor, descriptor) && setterDescriptor != null
                     && !Visibilities.isVisible(receiverValue, setterDescriptor, descriptor)) {
                 report(Errors.INVISIBLE_SETTER.on(expression, variableDescriptor, setterDescriptor.getVisibility(),

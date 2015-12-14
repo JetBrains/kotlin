@@ -600,7 +600,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
             if (Visibilities.isPrivate(visibility)) return false
             if (!visibility.mustCheckInImports()) return true
         }
-        return Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, descriptor, shouldBeVisibleFrom)
+        return Visibilities.isVisibleWithIrrelevantReceiver(descriptor, shouldBeVisibleFrom)
     }
 }
 

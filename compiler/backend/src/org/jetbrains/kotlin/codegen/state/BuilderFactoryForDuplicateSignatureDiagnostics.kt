@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.*
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
@@ -175,7 +174,7 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
         descriptor.getParentJavaStaticClassScope()?.run {
             getContributedDescriptors(DescriptorKindFilter.FUNCTIONS)
                     .filter {
-                        it is FunctionDescriptor && Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, it, descriptor)
+                        it is FunctionDescriptor && Visibilities.isVisibleWithIrrelevantReceiver(it, descriptor)
                     }
                     .forEach(::processMember)
         }

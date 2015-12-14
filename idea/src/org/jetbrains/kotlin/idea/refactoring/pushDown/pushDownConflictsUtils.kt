@@ -34,13 +34,11 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.Qualifier
-import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.substitutions.getTypeSubstitutor
 import org.jetbrains.kotlin.util.findCallableMemberBySignature
-import java.util.ArrayList
+import java.util.*
 
 fun analyzePushDownConflicts(context: KotlinPushDownContext,
                              usages: Array<out UsageInfo>): MultiMap<PsiElement, String> {
@@ -198,7 +196,7 @@ private fun checkVisibility(
     fun reportConflictIfAny(targetDescriptor: DeclarationDescriptor) {
         val target = (targetDescriptor as? DeclarationDescriptorWithSource)?.source?.getPsi() ?: return
         if (targetDescriptor is DeclarationDescriptorWithVisibility
-            && !Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, targetDescriptor, targetClassDescriptor)) {
+            && !Visibilities.isVisibleWithIrrelevantReceiver(targetDescriptor, targetClassDescriptor)) {
             val message = "${context.memberDescriptors[member]!!.renderForConflicts()} " +
                           "uses ${targetDescriptor.renderForConflicts()}, " +
                           "which is not accessible from the ${targetClassDescriptor.renderForConflicts()}"
