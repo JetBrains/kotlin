@@ -124,8 +124,7 @@ public abstract class KotlinLightCodeInsightFixtureTestCase : LightCodeInsightFi
         return KotlinLightProjectDescriptor.INSTANCE
     }
 
-    protected fun isAllFilesPresentInTest(): Boolean
-            = getTestName(false).startsWith("AllFilesPresentIn")
+    protected fun isAllFilesPresentInTest(): Boolean = KotlinTestUtils.isAllFilesPresentTest(getTestName(false))
 
     protected open fun fileName(): String
             = getTestName(false) + ".kt"

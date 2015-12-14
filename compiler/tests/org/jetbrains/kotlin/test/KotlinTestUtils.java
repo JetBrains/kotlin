@@ -962,4 +962,9 @@ public class KotlinTestUtils {
         }
         return string;
     }
+
+    public static boolean isAllFilesPresentTest(String testName) {
+        //noinspection SpellCheckingInspection
+        return testName.toLowerCase().startsWith("allfilespresentin");
+    }
 }

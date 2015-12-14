@@ -45,7 +45,7 @@ public abstract class AbstractIdeCompiledLightClassTest : KotlinDaemonAnalyzerTe
         super.setUp()
 
         val testName = getTestName(false)
-        if (testName.startsWith("AllFilesPresentIn")) return
+        if (KotlinTestUtils.isAllFilesPresentTest(testName)) return
 
         val filePath = "${KotlinTestUtils.getTestsRoot(this)}/${getTestName(false)}.kt"
 
