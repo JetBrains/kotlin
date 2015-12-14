@@ -1,0 +1,33 @@
+package
+
+public fun add1(/*0*/ x: Impl2, /*1*/ y: Base): Impl1
+public fun add2(/*0*/ x: Base, /*1*/ y: Impl2): Impl1
+public fun error1(/*0*/ x: Impl2, /*1*/ y: Base): Impl1
+public fun error2(/*0*/ x: Base, /*1*/ y: Impl2): Impl1
+public fun error3(/*0*/ x: Impl2): Impl1
+public fun minus3(/*0*/ x: Impl2): Impl1
+public operator fun Base.plus(/*0*/ arg: Base): Impl1
+public operator fun Base.plus(/*0*/ arg: Impl2): Impl2
+public operator fun Impl2.plus(/*0*/ arg: Base): Impl2
+public operator fun Base.unaryMinus(): Impl1
+public operator fun Impl2.unaryMinus(): Impl2
+
+public interface Base {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Impl1 : Base {
+    public constructor Impl1()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Impl2 : Base {
+    public constructor Impl2()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

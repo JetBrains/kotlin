@@ -568,6 +568,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/cast"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("AsInsideIn.kt")
+        public void testAsInsideIn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/cast/AsInsideIn.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("IsArray.kt")
         public void testIsArray() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/cast/IsArray.kt");

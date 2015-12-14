@@ -349,6 +349,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             KtExpression receiver = ((KtQualifiedExpression) parent).getReceiverExpression();
             return PsiTreeUtil.isAncestor(receiver, expression, false);
         }
+        // in binary expression, left argument can be a receiver and right an argument
+        // in unary expression, left argument can be a receiver
+        if (parent instanceof KtBinaryExpression || parent instanceof KtUnaryExpression) {
+            return true;
+        }
         return false;
     }
 
