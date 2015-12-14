@@ -45,9 +45,7 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCallWithAssert
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -55,6 +53,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import org.jetbrains.kotlin.utils.sure
 import java.util.*
 
@@ -64,6 +63,38 @@ class KotlinInlineValHandler : InlineActionHandler() {
     override fun canInlineElement(element: PsiElement): Boolean {
         if (element !is KtProperty) return false
         return element.getter == null && element.receiverTypeReference == null
+    }
+
+    private fun doReplace(expression: KtExpression, replacement: KtExpression): List<KtExpression> {
+        val parent = expression.parent
+
+        if (parent is KtStringTemplateEntryWithExpression &&
+            replacement is KtStringTemplateExpression &&
+            // Do not mix raw and non-raw templates
+            parent.parent.firstChild.text == replacement.firstChild.text) {
+            val entriesToAdd = replacement.entries
+            val templateExpression = parent.parent as KtStringTemplateExpression
+            val inlinedExpressions = if (entriesToAdd.size > 0) {
+                val firstAddedEntry = templateExpression.addRangeBefore(entriesToAdd.first(), entriesToAdd.last(), parent)
+                val lastNewEntry = parent.prevSibling
+                val nextElement = parent.nextSibling
+                if (lastNewEntry is KtSimpleNameStringTemplateEntry &&
+                    lastNewEntry.expression != null &&
+                    !canPlaceAfterSimpleNameEntry(nextElement)) {
+                    lastNewEntry.replace(KtPsiFactory(expression).createBlockStringTemplateEntry(lastNewEntry.expression!!))
+                }
+                firstAddedEntry.siblings()
+                        .take(entriesToAdd.size)
+                        .mapNotNull { (it as? KtStringTemplateEntryWithExpression)?.expression }
+                        .toList()
+            }
+            else emptyList()
+
+            parent.delete()
+            return inlinedExpressions
+        }
+
+        return expression.replaced(replacement).singletonList()
     }
 
     override fun inlineElement(project: Project, editor: Editor, element: PsiElement) {
@@ -130,9 +161,9 @@ class KotlinInlineValHandler : InlineActionHandler() {
             }
 
             project.executeWriteCommand(RefactoringBundle.message("inline.command", name)) {
-                val inlinedExpressions = referenceExpressions.mapNotNull { referenceExpression ->
-                    if (assignments.contains(referenceExpression.parent)) return@mapNotNull null
-                    referenceExpression.replaced(initializer)
+                val inlinedExpressions = referenceExpressions.flatMap { referenceExpression ->
+                    if (assignments.contains(referenceExpression.parent)) return@flatMap emptyList<KtExpression>()
+                    doReplace(referenceExpression, initializer)
                 }
 
                 assignments.forEach { it.delete() }
