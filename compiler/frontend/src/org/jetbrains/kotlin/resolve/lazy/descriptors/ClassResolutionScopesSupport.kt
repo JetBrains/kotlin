@@ -123,15 +123,24 @@ class ClassResolutionScopesSupport(
 
         val implicitReceiver: ReceiverParameterDescriptor?
 
+        val parentForNewScope: LexicalScope
+
         if (withCompanionObject) {
             staticScopes.addIfNotNull(classDescriptor.companionObjectDescriptor?.unsubstitutedInnerClassesScope)
             implicitReceiver = classDescriptor.companionObjectDescriptor?.thisAsReceiverParameter
+
+            parentForNewScope = classDescriptor.companionObjectDescriptor?.let {
+                it.getAllSuperclassesWithoutAny().asReversed().fold(parent) { scope, currentClass ->
+                    createInheritanceScope(parent = scope, ownerDescriptor = ownerDescriptor, classDescriptor = currentClass, withCompanionObject = false)
+                }
+            } ?: parent
         }
         else {
             implicitReceiver = null
+            parentForNewScope = parent
         }
 
-        return LexicalChainedScope(parent, ownerDescriptor, false,
+        return LexicalChainedScope(parentForNewScope, ownerDescriptor, false,
                                    implicitReceiver,
                                    LexicalScopeKind.CLASS_INHERITANCE,
                                    memberScopes = *staticScopes.toTypedArray(), isStaticScope = true)

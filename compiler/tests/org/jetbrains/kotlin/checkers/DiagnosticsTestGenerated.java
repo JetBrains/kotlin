@@ -14256,6 +14256,45 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/inheritance/statics/staticsFromjavaAfterKotlin.kt");
                         doTest(fileName);
                     }
+
+                    @TestMetadata("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class CompanionObject extends AbstractDiagnosticsTest {
+                        @TestMetadata("accessToStaticMembersOfParentClass.kt")
+                        public void testAccessToStaticMembersOfParentClass() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/accessToStaticMembersOfParentClass.kt");
+                            doTest(fileName);
+                        }
+
+                        @TestMetadata("accessToStaticMembersOfParentClassJKJ.kt")
+                        public void testAccessToStaticMembersOfParentClassJKJ() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/accessToStaticMembersOfParentClassJKJ.kt");
+                            doTest(fileName);
+                        }
+
+                        public void testAllFilesPresentInCompanionObject() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject"), Pattern.compile("^(.+)\\.kt$"), true);
+                        }
+
+                        @TestMetadata("inheritFromContainingClass.kt")
+                        public void testInheritFromContainingClass() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/inheritFromContainingClass.kt");
+                            doTest(fileName);
+                        }
+
+                        @TestMetadata("inheritFromJava.kt")
+                        public void testInheritFromJava() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/inheritFromJava.kt");
+                            doTest(fileName);
+                        }
+
+                        @TestMetadata("inheritFromJavaAfterKotlin.kt")
+                        public void testInheritFromJavaAfterKotlin() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/inheritFromJavaAfterKotlin.kt");
+                            doTest(fileName);
+                        }
+                    }
                 }
             }
         }
