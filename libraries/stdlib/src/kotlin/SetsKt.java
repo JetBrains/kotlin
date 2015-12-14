@@ -17,6 +17,6 @@
 package kotlin;
 
 @java.lang.Deprecated
-@Deprecated(message = "Use kotlin.collections.SetsKt instead")
+@Deprecated(message = "Use kotlin.collections.SetsKt instead", level = DeprecationLevel.HIDDEN)
 public class SetsKt extends kotlin.collections.SetsKt {
 }

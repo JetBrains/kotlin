@@ -17,6 +17,6 @@
 package kotlin;
 
 @java.lang.Deprecated
-@Deprecated(message = "Use kotlin.collections.MapsKt instead")
+@Deprecated(message = "Use kotlin.collections.MapsKt instead", level = DeprecationLevel.HIDDEN)
 public class MapsKt extends kotlin.collections.MapsKt {
 }

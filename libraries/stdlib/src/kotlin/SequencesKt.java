@@ -17,6 +17,6 @@
 package kotlin;
 
 @java.lang.Deprecated
-@Deprecated(message = "Use kotlin.sequences.SequencesKt instead")
+@Deprecated(message = "Use kotlin.sequences.SequencesKt instead", level = DeprecationLevel.HIDDEN)
 public class SequencesKt extends kotlin.sequences.SequencesKt {
 }

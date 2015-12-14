@@ -17,6 +17,6 @@
 package kotlin;
 
 @java.lang.Deprecated
-@Deprecated(message = "Use kotlin.text.StringsKt instead")
+@Deprecated(message = "Use kotlin.text.StringsKt instead", level = DeprecationLevel.HIDDEN)
 public class StringsKt extends kotlin.text.StringsKt {
 }
