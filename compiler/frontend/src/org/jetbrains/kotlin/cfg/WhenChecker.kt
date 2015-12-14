@@ -40,31 +40,61 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumClass
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 
-object WhenChecker {
+interface WhenMissingCase
 
-    @JvmStatic
-    fun mustHaveElse(expression: KtWhenExpression, trace: BindingTrace): Boolean {
-        return expression.isUsedAsExpression(trace.bindingContext) && !isWhenExhaustive(expression, trace)
+private object UnknownMissingCase : WhenMissingCase {
+    override fun toString() = "unknown"
+}
+
+private interface WhenExhaustivenessChecker {
+    fun getMissingCases(
+            expression: KtWhenExpression,
+            trace: BindingTrace,
+            subjectDescriptor: ClassDescriptor?,
+            nullable: Boolean
+    ): List<WhenMissingCase>
+
+    fun isApplicable(subjectType: KotlinType, trace: BindingTrace): Boolean = false
+}
+
+private object NullMissingCase : WhenMissingCase {
+    override fun toString() = "null"
+}
+
+private object WhenOnNullableExhaustivenessChecker : WhenExhaustivenessChecker {
+    override fun getMissingCases(expression: KtWhenExpression, trace: BindingTrace, subjectDescriptor: ClassDescriptor?, nullable: Boolean) =
+            if (nullable) getNullCaseIfMissing(expression, trace) else listOf()
+
+    override fun isApplicable(subjectType: KotlinType, trace: BindingTrace): Boolean = TypeUtils.isNullableType(subjectType)
+
+    private fun getNullCaseIfMissing(expression: KtWhenExpression, trace: BindingTrace): List<WhenMissingCase> {
+        for (entry in expression.entries) {
+            for (condition in entry.conditions) {
+                if (condition is KtWhenConditionWithExpression) {
+                    condition.expression?.let {
+                        val type = trace.bindingContext.getType(it)
+                        if (type != null && KotlinBuiltIns.isNullableNothing(type)) {
+                            return listOf()
+                        }
+                    }
+                }
+            }
+        }
+        return listOf(NullMissingCase)
     }
+}
 
-    @JvmStatic
-    fun isWhenByEnum(expression: KtWhenExpression, context: BindingContext): Boolean {
-        return getClassDescriptorOfTypeIfEnum(whenSubjectType(expression, context)) != null
-    }
+private class BooleanMissingCase(val b: Boolean) : WhenMissingCase {
+    override fun toString() = b.toString()
+}
 
-    @JvmStatic
-    fun getClassDescriptorOfTypeIfEnum(type: KotlinType?): ClassDescriptor? {
-        if (type == null) return null
-        val classDescriptor = TypeUtils.getClassDescriptor(type) ?: return null
-        if (classDescriptor.kind != ClassKind.ENUM_CLASS) return null
-
-        return classDescriptor
-    }
-
-    private fun whenSubjectType(expression: KtWhenExpression, context: BindingContext): KotlinType? =
-            expression.subjectExpression?.let { context.getType(it) } ?: null
-
-    private fun isWhenOnBooleanExhaustive(expression: KtWhenExpression, trace: BindingTrace): Boolean {
+private object WhenOnBooleanExhaustivenessChecker : WhenExhaustivenessChecker {
+    override fun getMissingCases(
+            expression: KtWhenExpression,
+            trace: BindingTrace,
+            subjectDescriptor: ClassDescriptor?,
+            nullable: Boolean
+    ): List<WhenMissingCase> {
         // It's assumed (and not checked) that expression is of the boolean type
         var containsFalse = false
         var containsTrue = false
@@ -77,105 +107,34 @@ object WhenChecker {
                 }
             }
         }
-        return containsFalse && containsTrue
+        return (if (!containsTrue) listOf(BooleanMissingCase(true)) else listOf()) +
+               (if (!containsFalse) listOf(BooleanMissingCase(false)) else listOf())
     }
 
-    @JvmStatic
-    fun isWhenOnEnumExhaustive(
-            expression: KtWhenExpression,
-            trace: BindingTrace,
-            enumClassDescriptor: ClassDescriptor): Boolean {
-        assert(isEnumClass(enumClassDescriptor)) { "isWhenOnEnumExhaustive should be called with an enum class descriptor" }
-        val entryDescriptors =
-                DescriptorUtils.getAllDescriptors(enumClassDescriptor.unsubstitutedInnerClassesScope)
-                        .filter { isEnumEntry(it) }
-                        .filterIsInstance<ClassDescriptor>()
-                        .toSet()
-        return !entryDescriptors.isEmpty() && containsAllClassCases(expression, entryDescriptors, trace)
+    override fun isApplicable(subjectType: KotlinType, trace: BindingTrace): Boolean {
+        return KotlinBuiltIns.isBoolean(TypeUtils.makeNotNullable(subjectType))
     }
+}
 
-    private fun collectNestedSubclasses(
-            baseDescriptor: ClassDescriptor,
-            currentDescriptor: ClassDescriptor,
-            subclasses: MutableSet<ClassDescriptor>) {
-        for (descriptor in DescriptorUtils.getAllDescriptors(currentDescriptor.unsubstitutedInnerClassesScope)) {
-            if (descriptor is ClassDescriptor) {
-                if (DescriptorUtils.isDirectSubclass(descriptor, baseDescriptor)) {
-                    subclasses.add(descriptor)
-                }
-                collectNestedSubclasses(baseDescriptor, descriptor, subclasses)
+private class ClassMissingCase(val descriptor: ClassDescriptor): WhenMissingCase {
+    override fun toString() = descriptor.name.identifier.let { if (descriptor.kind.isSingleton) it else "is $it" }
+}
+
+private abstract class WhenOnClassExhaustivenessChecker : WhenExhaustivenessChecker {
+    private fun getReference(expression: KtExpression?): KtSimpleNameExpression? =
+            when (expression) {
+                is KtSimpleNameExpression -> expression
+                is KtQualifiedExpression -> getReference(expression.selectorExpression)
+                else -> null
             }
-        }
-    }
 
-    private fun isWhenOnSealedClassExhaustive(
-            expression: KtWhenExpression,
-            trace: BindingTrace,
-            classDescriptor: ClassDescriptor): Boolean {
-        assert(classDescriptor.modality === Modality.SEALED) { "isWhenOnSealedClassExhaustive should be called with a sealed class descriptor" }
-        val memberClassDescriptors = HashSet<ClassDescriptor>()
-        collectNestedSubclasses(classDescriptor, classDescriptor, memberClassDescriptors)
-        // When on a sealed class without derived members is considered non-exhaustive (see test WhenOnEmptySealed)
-        return !memberClassDescriptors.isEmpty() && containsAllClassCases(expression, memberClassDescriptors, trace)
-    }
-
-    /**
-     * It's assumed that function is called for a final type. In this case the only possible smart cast is to not nullable type.
-     * @return true if type is nullable, and cannot be smart casted
-     */
-    private fun isNullableTypeWithoutPossibleSmartCast(
-            expression: KtExpression?,
-            type: KotlinType,
-            context: BindingContext): Boolean {
-        if (expression == null) return false // Normally should not happen
-        if (!TypeUtils.isNullableType(type)) return false
-        // We cannot read data flow information here due to lack of inputs (module descriptor is necessary)
-        if (context.get(BindingContext.SMARTCAST, expression) != null) {
-            // We have smart cast from enum or boolean to something
-            // Not very nice but we *can* decide it was smart cast to not-null
-            // because both enum and boolean are final
-            return false
-        }
-        return true
-    }
-
-    @JvmStatic
-    fun isWhenExhaustive(expression: KtWhenExpression, trace: BindingTrace): Boolean {
-        val type = whenSubjectType(expression, trace.bindingContext) ?: return false
-        val enumClassDescriptor = getClassDescriptorOfTypeIfEnum(type)
-
-        val exhaustive: Boolean
-        if (enumClassDescriptor == null) {
-            if (KotlinBuiltIns.isBoolean(TypeUtils.makeNotNullable(type))) {
-                exhaustive = isWhenOnBooleanExhaustive(expression, trace)
-            }
-            else {
-                val classDescriptor = TypeUtils.getClassDescriptor(type)
-                exhaustive = (classDescriptor != null &&
-                              classDescriptor.modality === Modality.SEALED &&
-                              isWhenOnSealedClassExhaustive(expression, trace, classDescriptor))
-            }
-        }
-        else {
-            exhaustive = isWhenOnEnumExhaustive(expression, trace, enumClassDescriptor)
-        }
-        if (exhaustive) {
-            // Flexible (nullable) enum types are also counted as exhaustive
-            if ((enumClassDescriptor != null && type.isFlexible()) ||
-                containsNullCase(expression, trace) ||
-                !isNullableTypeWithoutPossibleSmartCast(expression.subjectExpression, type, trace.bindingContext)) {
-
-                trace.record(BindingContext.EXHAUSTIVE_WHEN, expression)
-                return true
-            }
-        }
-        return false
-    }
-
-    private fun containsAllClassCases(
+    protected fun getMissingClassCases(
             whenExpression: KtWhenExpression,
             memberDescriptors: Set<ClassDescriptor>,
-            trace: BindingTrace): Boolean {
+            trace: BindingTrace
+    ): List<WhenMissingCase> {
+        // when on empty enum / sealed is considered non-exhaustive, see test whenOnEmptySealed
+        if (memberDescriptors.isEmpty()) return listOf(UnknownMissingCase)
         val checkedDescriptors = HashSet<ClassDescriptor>()
         for (whenEntry in whenExpression.entries) {
             for (condition in whenEntry.conditions) {
@@ -210,7 +169,7 @@ object WhenChecker {
                     continue
                 }
                 if (negated) {
-                    if (checkedDescriptors.contains(checkedDescriptor)) return true // all members are already there
+                    if (checkedDescriptors.contains(checkedDescriptor)) return listOf() // all members are already there
                     checkedDescriptors.addAll(memberDescriptors)
                     checkedDescriptors.remove(checkedDescriptor)
                 }
@@ -219,35 +178,142 @@ object WhenChecker {
                 }
             }
         }
-        return checkedDescriptors.containsAll(memberDescriptors)
+        return (memberDescriptors - checkedDescriptors).toList().map { ClassMissingCase(it) }
+    }
+}
+
+private object WhenOnEnumExhaustivenessChecker : WhenOnClassExhaustivenessChecker() {
+    override fun getMissingCases(
+            expression: KtWhenExpression,
+            trace: BindingTrace,
+            subjectDescriptor: ClassDescriptor?,
+            nullable: Boolean
+    ): List<WhenMissingCase> {
+        assert(isEnumClass(subjectDescriptor)) { "isWhenOnEnumExhaustive should be called with an enum class descriptor" }
+        val entryDescriptors =
+                DescriptorUtils.getAllDescriptors(subjectDescriptor!!.unsubstitutedInnerClassesScope)
+                        .filter { isEnumEntry(it) }
+                        .filterIsInstance<ClassDescriptor>()
+                        .toSet()
+        return getMissingClassCases(expression, entryDescriptors, trace)
+    }
+
+    override fun isApplicable(subjectType: KotlinType, trace: BindingTrace): Boolean {
+        return WhenChecker.getClassDescriptorOfTypeIfEnum(subjectType) != null
+    }
+}
+
+private object WhenOnSealedExhaustivenessChecker : WhenOnClassExhaustivenessChecker() {
+    override fun getMissingCases(
+            expression: KtWhenExpression,
+            trace: BindingTrace,
+            subjectDescriptor: ClassDescriptor?,
+            nullable: Boolean
+    ): List<WhenMissingCase> {
+        assert(subjectDescriptor != null) { "isWhenOnSealedClassExhaustive should be called with not-null subject class descriptor" }
+        assert(subjectDescriptor!!.modality === Modality.SEALED) {
+            "isWhenOnSealedClassExhaustive should be called with a sealed class descriptor"
+        }
+        val memberClassDescriptors = HashSet<ClassDescriptor>()
+        collectNestedSubclasses(subjectDescriptor!!, subjectDescriptor, memberClassDescriptors)
+        // When on a sealed class without derived members is considered non-exhaustive (see test WhenOnEmptySealed)
+        return getMissingClassCases(expression, memberClassDescriptors, trace)
+    }
+
+    override fun isApplicable(subjectType: KotlinType, trace: BindingTrace): Boolean {
+        return TypeUtils.getClassDescriptor(subjectType)?.modality == Modality.SEALED
+    }
+
+    private fun collectNestedSubclasses(
+            baseDescriptor: ClassDescriptor,
+            currentDescriptor: ClassDescriptor,
+            subclasses: MutableSet<ClassDescriptor>) {
+        for (descriptor in DescriptorUtils.getAllDescriptors(currentDescriptor.unsubstitutedInnerClassesScope)) {
+            if (descriptor is ClassDescriptor) {
+                if (DescriptorUtils.isDirectSubclass(descriptor, baseDescriptor)) {
+                    subclasses.add(descriptor)
+                }
+                collectNestedSubclasses(baseDescriptor, descriptor, subclasses)
+            }
+        }
+    }
+}
+
+
+object WhenChecker {
+
+    private val exhaustivenessCheckers = listOf(WhenOnBooleanExhaustivenessChecker,
+                                                WhenOnEnumExhaustivenessChecker,
+                                                WhenOnSealedExhaustivenessChecker,
+                                                WhenOnNullableExhaustivenessChecker)
+
+    @JvmStatic
+    fun mustHaveElse(expression: KtWhenExpression, trace: BindingTrace) =
+            expression.isUsedAsExpression(trace.bindingContext) && !isWhenExhaustive(expression, trace)
+
+    @JvmStatic
+    fun isWhenByEnum(expression: KtWhenExpression, context: BindingContext) =
+            getClassDescriptorOfTypeIfEnum(whenSubjectType(expression, context)) != null
+
+    @JvmStatic
+    fun getClassDescriptorOfTypeIfEnum(type: KotlinType?): ClassDescriptor? {
+        if (type == null) return null
+        val classDescriptor = TypeUtils.getClassDescriptor(type) ?: return null
+        if (classDescriptor.kind != ClassKind.ENUM_CLASS) return null
+
+        return classDescriptor
+    }
+
+    private fun whenSubjectType(expression: KtWhenExpression, context: BindingContext) =
+            expression.subjectExpression?.let { context.getType(it) } ?: null
+
+    @JvmStatic
+    fun isWhenOnEnumExhaustive(
+            expression: KtWhenExpression,
+            trace: BindingTrace,
+            enumClassDescriptor: ClassDescriptor
+    ) = WhenOnEnumExhaustivenessChecker.getMissingCases(expression, trace, enumClassDescriptor, false).isEmpty()
+
+    /**
+     * It's assumed that function is called for a final type. In this case the only possible smart cast is to not nullable type.
+     * @return true if type is nullable, and cannot be smart casted
+     */
+    private fun isNullableTypeWithoutPossibleSmartCast(
+            expression: KtExpression?,
+            type: KotlinType,
+            trace: BindingTrace): Boolean {
+        if (expression == null) return false // Normally should not happen
+        if (!TypeUtils.isNullableType(type)) return false
+        // We cannot read data flow information here due to lack of inputs (module descriptor is necessary)
+        if (trace.get(BindingContext.SMARTCAST, expression) != null) {
+            // We have smart cast from enum or boolean to something
+            // Not very nice but we *can* decide it was smart cast to not-null
+            // because both enum and boolean are final
+            return false
+        }
+        return true
+    }
+
+    private fun getMissingCases(expression: KtWhenExpression, trace: BindingTrace): List<WhenMissingCase> {
+        val type = whenSubjectType(expression, trace.bindingContext) ?: return listOf(UnknownMissingCase)
+        val nullable = !type.isFlexible() && isNullableTypeWithoutPossibleSmartCast(expression.subjectExpression, type, trace)
+        val checkers = exhaustivenessCheckers.filter { it.isApplicable(type, trace) }
+        if (checkers.isEmpty()) return listOf(UnknownMissingCase)
+        return checkers.map { it.getMissingCases(expression, trace, TypeUtils.getClassDescriptor(type), nullable) }.flatten()
     }
 
     @JvmStatic
-    fun containsNullCase(expression: KtWhenExpression, trace: BindingTrace): Boolean {
-        for (entry in expression.entries) {
-            for (condition in entry.conditions) {
-                if (condition is KtWhenConditionWithExpression) {
-                    condition.expression?.let {
-                        val type = trace.bindingContext.getType(it)
-                        if (type != null && KotlinBuiltIns.isNothingOrNullableNothing(type)) {
-                            return true
-                        }
-                    }
-                }
+    fun isWhenExhaustive(expression: KtWhenExpression, trace: BindingTrace) =
+            if (getMissingCases(expression, trace).isEmpty()) {
+                trace.record(BindingContext.EXHAUSTIVE_WHEN, expression)
+                true
+            } else {
+                false
             }
-        }
-        return false
-    }
 
-    private fun getReference(expression: KtExpression?): KtSimpleNameExpression? {
-        if (expression is KtSimpleNameExpression) {
-            return expression
-        }
-        if (expression is KtQualifiedExpression) {
-            return getReference(expression.selectorExpression)
-        }
-        return null
-    }
+    @JvmStatic
+    fun containsNullCase(expression: KtWhenExpression, trace: BindingTrace) =
+            WhenOnNullableExhaustivenessChecker.getMissingCases(expression, trace, null, true).isEmpty()
 
     @JvmStatic
     fun checkDeprecatedWhenSyntax(trace: BindingTrace, expression: KtWhenExpression) {
