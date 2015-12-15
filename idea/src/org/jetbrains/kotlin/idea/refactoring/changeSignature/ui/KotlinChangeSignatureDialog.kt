@@ -449,6 +449,6 @@ public class KotlinChangeSignatureDialog(
         }
 
         private fun hasTypeReference(codeFragment: PsiCodeFragment?): Boolean
-                = (codeFragment as? KtTypeCodeFragment)?.hasTypeReference() ?: false
+                = (codeFragment as? KtTypeCodeFragment)?.hasTypeReference ?: false
     }
 }

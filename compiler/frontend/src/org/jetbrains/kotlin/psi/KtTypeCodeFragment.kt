@@ -14,25 +14,20 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.psi;
+package org.jetbrains.kotlin.psi
 
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtNodeTypes;
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.KtNodeTypes
 
-public class KtTypeCodeFragment extends KtCodeFragment {
-    public KtTypeCodeFragment(Project project, String name, CharSequence text, PsiElement context) {
-        super(project, name, text, null, KtNodeTypes.TYPE_CODE_FRAGMENT, context);
-    }
+class KtTypeCodeFragment(
+        project: Project,
+        name: String,
+        text: CharSequence,
+        context: PsiElement?
+) : KtCodeFragment(project, name, text, null, KtNodeTypes.TYPE_CODE_FRAGMENT, context) {
+    override fun getContentElement() = findChildByClass(KtTypeReference::class.java)
 
-    public boolean hasTypeReference() {
-        return getContentElement() != null;
-    }
-
-    @Nullable
-    @Override
-    public KtTypeReference getContentElement() {
-        return findChildByClass(KtTypeReference.class);
-    }
+    val hasTypeReference: Boolean
+        get() = getContentElement() != null
 }
