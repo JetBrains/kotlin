@@ -35,7 +35,9 @@ import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.openapi.vfs.PersistentFSConstants
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.FileContextProvider
 import com.intellij.psi.PsiElementFinder
@@ -109,6 +111,10 @@ public class KotlinCoreEnvironment private constructor(
     public val configuration: CompilerConfiguration = configuration.copy().let {
         it.setReadOnly(true)
         it
+    }
+
+    init {
+        PersistentFSConstants.setMaxIntellisenseFileSize(FileUtilRt.LARGE_FOR_CONTENT_LOADING)
     }
 
     init {
