@@ -4135,6 +4135,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("LibraryFunctions.java")
+        public void testLibraryFunctions() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/toKotlinClasses/LibraryFunctions.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("TypeParameterBound.java")
         public void testTypeParameterBound() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/toKotlinClasses/TypeParameterBound.java");

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.j2k
 
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiMethodUtil
+import org.jetbrains.kotlin.asJava.KtLightClass
 import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
@@ -114,3 +115,6 @@ fun PsiMember.isImported(file: PsiJavaFile): Boolean {
 }
 
 fun PsiExpression.isNullLiteral() = this is PsiLiteralExpression && type == PsiType.NULL
+
+// TODO: set origin for facade classes in library
+fun isFacadeClassFromLibrary(element: PsiElement?) = element is KtLightClass && element.getOrigin() == null

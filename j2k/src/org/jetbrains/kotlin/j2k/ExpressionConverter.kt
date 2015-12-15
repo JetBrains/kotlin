@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.asJava.KtLightField
 import org.jetbrains.kotlin.asJava.KtLightMethod
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.j2k.ast.*
+import org.jetbrains.kotlin.j2k.ast.Function
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -174,7 +175,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
     override fun visitClassObjectAccessExpression(expression: PsiClassObjectAccessExpression) {
         val operand = expression.operand
         val typeName = operand.type.canonicalText
-        val primitiveType = JvmPrimitiveType.values.firstOrNull { it.javaKeywordName == typeName }
+        val primitiveType = JvmPrimitiveType.values().firstOrNull { it.javaKeywordName == typeName }
         val wrapperTypeName = if (primitiveType != null) {
             primitiveType.wrapperFqName
         }
@@ -309,6 +310,27 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                     return
                 }
             }
+            else if (origin == null){
+                val resolvedQualifier = (methodExpr.qualifier as? PsiReferenceExpression)?.resolve()
+                if (isFacadeClassFromLibrary(resolvedQualifier)) {
+                    result = if (target.isKotlinExtensionFunction()) {
+                        val qualifier = codeConverter.convertExpression(arguments.firstOrNull())
+                        MethodCallExpression.build(qualifier,
+                                                   methodExpr.referenceName!!,
+                                                   convertArguments(expression, isExtension = true),
+                                                   typeArguments,
+                                                   isNullable)
+                    }
+                    else {
+                        MethodCallExpression.build(null,
+                                                   methodExpr.referenceName!!,
+                                                   convertArguments(expression),
+                                                   typeArguments,
+                                                   isNullable)
+                    }
+                    return
+                }
+            }
         }
 
         if (target is PsiMethod) {
@@ -326,6 +348,14 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                                       convertArguments(expression),
                                       typeArguments,
                                       isNullable)
+    }
+
+    private fun KtLightMethod.isKotlinExtensionFunction(): Boolean {
+        val origin = this.getOrigin()
+        if (origin != null) return origin.isExtensionDeclaration()
+
+        val parameters = parameterList.parameters
+        return parameters.size > 0 && parameters[0].name == "\$receiver"
     }
 
     private fun convertTypeArguments(call: PsiCallExpression): List<Type> {
@@ -371,10 +401,19 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             val qualifier = expression.qualifier
             val classRef = expression.classOrAnonymousClassReference
             val classRefConverted = if (classRef != null) converter.convertCodeReferenceElement(classRef, hasExternalQualifier = qualifier != null) else null
+
+            val anonymousClass = expression.anonymousClass?.let { converter.convertAnonymousClassBody(it) }
+            if (isFunctionType(expression.type)) {
+                val function = anonymousClass?.body?.members?.singleOrNull() as? Function
+                if (function != null) {
+                    result = AnonymousFunction(function.returnType.toNotNullType(), function.typeParameterList, function.parameterList, function.body)
+                    return
+                }
+            }
             result = NewClassExpression(classRefConverted,
-                    convertArguments(expression),
-                    codeConverter.convertExpression(qualifier),
-                    expression.anonymousClass?.let { converter.convertAnonymousClassBody(it) })
+                                        convertArguments(expression),
+                                        codeConverter.convertExpression(qualifier),
+                                        anonymousClass)
         }
     }
 
@@ -602,7 +641,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
         val functionalType = expression.functionalInterfaceType
 
         val isTypeInQualifier = (qualifier as? PsiReference)?.resolve() is PsiClass
-        val isKotlinFunctionType = functionalType?.canonicalText?.startsWith("kotlin.jvm.functions.Function") ?: false
+        val isKotlinFunctionType = isFunctionType(functionalType)
 
         // method can be null in case of default constructor
         val method = expression.resolve() as? PsiMethod
@@ -658,6 +697,8 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             )
         }
     }
+
+    private fun isFunctionType(functionalType: PsiType?) = functionalType?.canonicalText?.startsWith("kotlin.jvm.functions.Function") ?: false
 
     private fun convertMethodReferenceQualifier(qualifier: PsiElement): String {
         return when(qualifier) {
