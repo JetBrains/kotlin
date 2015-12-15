@@ -1242,12 +1242,21 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @Nullable
     public static ConstantValue<?> getCompileTimeConstant(@NotNull KtExpression expression, @NotNull BindingContext bindingContext) {
+        return getCompileTimeConstant(expression, bindingContext, false);
+    }
+
+    @Nullable
+    public static ConstantValue<?> getCompileTimeConstant(
+            @NotNull KtExpression expression,
+            @NotNull BindingContext bindingContext,
+            boolean checkPure
+    ) {
         CompileTimeConstant<?> compileTimeValue = ConstantExpressionEvaluator.getConstant(expression, bindingContext);
         if (compileTimeValue == null) {
             return null;
         }
 
-        if (compileTimeValue.getUsesNonConstValAsConstant()) return null;
+        if (compileTimeValue.getUsesNonConstValAsConstant() || (checkPure && !compileTimeValue.getParameters().isPure())) return null;
 
         KotlinType expectedType = bindingContext.getType(expression);
         return compileTimeValue.toConstantValue(expectedType);
@@ -2893,6 +2902,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                               expression.getRight(), reference);
         }
         else {
+            ConstantValue<?> compileTimeConstant = getCompileTimeConstant(expression, bindingContext, true);
+            if (compileTimeConstant != null) {
+                return StackValue.constant(compileTimeConstant.getValue(), expressionType(expression));
+            }
+
             ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCallWithAssert(expression, bindingContext);
             FunctionDescriptor descriptor = (FunctionDescriptor) resolvedCall.getResultingDescriptor();
 
@@ -3165,6 +3179,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @Override
     public StackValue visitPrefixExpression(@NotNull KtPrefixExpression expression, @NotNull StackValue receiver) {
+        ConstantValue<?> compileTimeConstant = getCompileTimeConstant(expression, bindingContext, true);
+        if (compileTimeConstant != null) {
+            return StackValue.constant(compileTimeConstant.getValue(), expressionType(expression));
+        }
+
         DeclarationDescriptor originalOperation = bindingContext.get(REFERENCE_TARGET, expression.getOperationReference());
         ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCallWithAssert(expression, bindingContext);
         CallableDescriptor op = resolvedCall.getResultingDescriptor();

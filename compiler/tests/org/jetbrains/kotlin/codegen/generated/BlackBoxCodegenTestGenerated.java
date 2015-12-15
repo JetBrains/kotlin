@@ -987,6 +987,51 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/unitNullableCast.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class LiteralExpressionAsGenericArgument extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInLiteralExpressionAsGenericArgument() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("binaryExpressionCast.kt")
+            public void testBinaryExpressionCast() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument/binaryExpressionCast.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("labeledExpressionCast.kt")
+            public void testLabeledExpressionCast() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument/labeledExpressionCast.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("parenthesizedExpressionCast.kt")
+            public void testParenthesizedExpressionCast() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument/parenthesizedExpressionCast.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("superConstructor.kt")
+            public void testSuperConstructor() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument/superConstructor.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("unaryExpressionCast.kt")
+            public void testUnaryExpressionCast() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument/unaryExpressionCast.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("vararg.kt")
+            public void testVararg() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument/vararg.kt");
+                doTest(fileName);
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/classes")
