@@ -71,12 +71,12 @@
         </clientProperties>
         <border type="etched" title-resource-bundle="org/jetbrains/kotlin/idea/KotlinBundle" title-key="kotlin.compiler.jvm.option.panel.title"/>
         <children>
-          <component id="c6928" class="javax.swing.JCheckBox" binding="incrementalCompilationCheckBox">
+          <component id="d8f92" class="javax.swing.JCheckBox" binding="enablePreciseIncrementalCheckBox">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="Enable incremental compilation"/>
+              <text value="Enable precise incremental compilation (experimental)"/>
             </properties>
           </component>
         </children>
