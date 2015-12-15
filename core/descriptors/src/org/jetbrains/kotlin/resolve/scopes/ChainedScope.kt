@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.util.collectionUtils.getFromAllScopes
 import org.jetbrains.kotlin.utils.Printer
 
 public class ChainedScope(
-        private val debugName: String,
+        internal val debugName: String,
         vararg scopes: MemberScope
 ) : MemberScope {
     private val scopeChain = scopes.clone()

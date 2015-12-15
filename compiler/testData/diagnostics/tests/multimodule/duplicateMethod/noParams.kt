@@ -31,6 +31,6 @@ import p.*
 
 fun test(b: B?) {
     if (b is C) {
-        <!DEBUG_INFO_SMARTCAST!>b<!>?.getParent()
+        b?.getParent()
     }
 }

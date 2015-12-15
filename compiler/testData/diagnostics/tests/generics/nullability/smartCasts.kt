@@ -27,7 +27,7 @@ fun <T : CharSequence?> foo(x: T) {
 
     if (x is String) {
         <!DEBUG_INFO_SMARTCAST!>x<!>.length
-        <!DEBUG_INFO_SMARTCAST!>x<!><!UNNECESSARY_SAFE_CALL!>?.<!>length
+        x<!UNNECESSARY_SAFE_CALL!>?.<!>length
 
         <!DEBUG_INFO_SMARTCAST!>x<!>.bar1()
         x.bar2()

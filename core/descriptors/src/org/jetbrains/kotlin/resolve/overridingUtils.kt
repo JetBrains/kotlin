@@ -17,12 +17,8 @@
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.SmartSet
 import java.util.*
 
 fun <TDescriptor : CallableDescriptor> TDescriptor.findTopMostOverriddenDescriptors(): List<TDescriptor> {
@@ -45,4 +41,43 @@ fun <TDescriptor : CallableDescriptor> TDescriptor.findOriginalTopMostOverridden
         @Suppress("UNCHECKED_CAST")
         (it.original as TDescriptor)
     }
+}
+
+/**
+ * @param <H> is something that handles CallableDescriptor inside
+ */
+public fun <H : Any> Collection<H>.selectMostSpecificInEachOverridableGroup(
+        descriptorByHandle: H.() -> CallableDescriptor
+): Collection<H> {
+    if (size <= 1) return this
+    val queue = LinkedList<H>(this)
+    val result = SmartSet.create<H>()
+
+    while (queue.isNotEmpty()) {
+        val nextHandle: H = queue.first()
+
+        val conflictedHandles = SmartSet.create<H>()
+
+        val overridableGroup =
+                OverridingUtil.extractMembersOverridableInBothWays(nextHandle, queue, descriptorByHandle) { conflictedHandles.add(it) }
+
+        if (overridableGroup.size == 1 && overridableGroup.isEmpty()) {
+            result.add(overridableGroup.single())
+            continue
+        }
+
+        val mostSpecific = OverridingUtil.selectMostSpecificMember(overridableGroup, descriptorByHandle)
+        val mostSpecificDescriptor = mostSpecific.descriptorByHandle()
+
+        overridableGroup.filterNotTo(conflictedHandles) {
+            OverridingUtil.isMoreSpecific(mostSpecificDescriptor, it.descriptorByHandle())
+        }
+
+        if (conflictedHandles.isNotEmpty()) {
+            result.addAll(conflictedHandles)
+        }
+
+        result.add(mostSpecific)
+    }
+    return result
 }

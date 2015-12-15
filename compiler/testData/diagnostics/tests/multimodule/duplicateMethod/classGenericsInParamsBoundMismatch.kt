@@ -33,6 +33,6 @@ import p.*
 
 fun test(b: B<Tr>?) {
     if (b is C) {
-        <!DEBUG_INFO_SMARTCAST!>b<!>?.foo(null)
+        b?.foo(null)
     }
 }

@@ -14,7 +14,7 @@ fun foo(): Boolean {
     var v: A
     v = B()
     // No smart cast needed, but not a problem if ever
-    if (<!DEBUG_INFO_SMARTCAST!>v<!>.ok()) {
+    if (v.ok()) {
         v = C()
     }
     // No smart cast needed, and no smart cast possible!

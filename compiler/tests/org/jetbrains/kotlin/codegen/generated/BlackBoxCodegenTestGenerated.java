@@ -928,6 +928,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("intersectionTypeMultipleBounds.kt")
+        public void testIntersectionTypeMultipleBounds() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/intersectionTypeMultipleBounds.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("intersectionTypeSmartcast.kt")
+        public void testIntersectionTypeSmartcast() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/intersectionTypeSmartcast.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("is.kt")
         public void testIs() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/is.kt");

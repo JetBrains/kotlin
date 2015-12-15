@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
-import org.jetbrains.kotlin.resolve.validation.InfixValidator
+import org.jetbrains.kotlin.resolve.selectMostSpecificInEachOverridableGroup
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
@@ -251,6 +251,11 @@ public class TaskPrioritizer(
                             c.context.call
                     )
                 }
+
+                if (explicitReceiver.types.size > 1) {
+                    members.retainAll( members.selectMostSpecificInEachOverridableGroup { descriptor } )
+                }
+
                 members
             }
         }

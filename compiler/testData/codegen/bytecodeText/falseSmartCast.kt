@@ -10,6 +10,6 @@ open class SuperFoo {
 
 class Foo : SuperFoo() 
 
-// 0 INVOKEVIRTUAL SuperFoo.baz
-// 1 CHECKCAST Foo
-// 1 INVOKEVIRTUAL Foo.baz
+// 1 INVOKEVIRTUAL SuperFoo.baz
+// 0 CHECKCAST Foo
+// 0 INVOKEVIRTUAL Foo.baz

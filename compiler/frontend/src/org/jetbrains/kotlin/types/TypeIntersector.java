@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl;
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
+import org.jetbrains.kotlin.resolve.scopes.TypeIntersectionScope;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 
 import java.util.*;
@@ -124,19 +125,12 @@ public class TypeIntersector {
 
         TypeConstructor constructor = new IntersectionTypeConstructor(Annotations.Companion.getEMPTY(), resultingTypes);
 
-        MemberScope[] scopes = new MemberScope[resultingTypes.size()];
-        int i = 0;
-        for (KotlinType type : resultingTypes) {
-            scopes[i] = type.getMemberScope();
-            i++;
-        }
-
         return KotlinTypeImpl.create(
                 Annotations.Companion.getEMPTY(),
                 constructor,
                 allNullable,
                 Collections.<TypeProjection>emptyList(),
-                new ChainedScope("member scope for intersection type " + constructor, scopes)
+                TypeIntersectionScope.create("member scope for intersection type " + constructor, resultingTypes)
         );
     }
 
