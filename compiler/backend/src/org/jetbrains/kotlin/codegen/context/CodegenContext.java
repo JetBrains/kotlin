@@ -649,7 +649,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     public boolean isInlineMethodContext() {
-        return this instanceof MethodContext && ((MethodContext) this).isInlineFunction();
+        return false;
     }
 
     @NotNull

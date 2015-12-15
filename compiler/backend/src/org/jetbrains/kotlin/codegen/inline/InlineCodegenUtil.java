@@ -131,7 +131,7 @@ public class InlineCodegenUtil {
             CodegenContext<?> parentContext = context.getParentContext();
             while (parentContext != null) {
                 if (parentContext instanceof MethodContext) {
-                    if (((MethodContext) parentContext).isInlineFunction()) {
+                    if (((MethodContext) parentContext).isInlineMethodContext()) {
                         //just init default one to one mapping
                         codegen.getOrCreateSourceMapper();
                         break;
@@ -398,7 +398,7 @@ public class InlineCodegenUtil {
     }
 
     public static boolean isFinallyMarkerRequired(@NotNull MethodContext context) {
-        return context.isInlineFunction() || context.isInliningLambda();
+        return context.isInlineMethodContext() || context.isInliningLambda();
     }
 
     public static int getConstant(AbstractInsnNode ins) {

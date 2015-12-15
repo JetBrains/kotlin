@@ -120,7 +120,7 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
         return "Method: " + getContextDescriptor();
     }
 
-    public boolean isInlineFunction() {
+    public boolean isInlineMethodContext() {
         return InlineUtil.isInline(getContextDescriptor());
     }
 

@@ -371,7 +371,7 @@ public class FunctionCodegen {
         else {
             FrameMap frameMap = createFrameMap(parentCodegen.state, functionDescriptor, signature, isStaticMethod(context.getContextKind(),
                                                                                                                   functionDescriptor));
-            if (context.isInlineFunction()) {
+            if (context.isInlineMethodContext()) {
                 functionFakeIndex = frameMap.enterTemp(Type.INT_TYPE);
             }
 
@@ -396,7 +396,7 @@ public class FunctionCodegen {
         Type thisType = getThisTypeForFunction(functionDescriptor, context, typeMapper);
         generateLocalVariableTable(mv, signature, functionDescriptor, thisType, methodBegin, methodEnd, context.getContextKind());
 
-        if (context.isInlineFunction() && functionFakeIndex != -1) {
+        if (context.isInlineMethodContext() && functionFakeIndex != -1) {
             mv.visitLocalVariable(
                     JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION + functionDescriptor.getName().asString(),
                     Type.INT_TYPE.getDescriptor(), null,
