@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
@@ -39,7 +40,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 public class AnnotationChecker(private val additionalCheckers: Iterable<AdditionalAnnotationChecker>) {
 
     public fun check(annotated: KtAnnotated, trace: BindingTrace, descriptor: DeclarationDescriptor? = null) {
-        val actualTargets = getActualTargetList(annotated, descriptor)
+        val actualTargets = getActualTargetList(annotated, descriptor, trace)
         checkEntries(annotated.annotationEntries, actualTargets, trace)
         if (annotated is KtCallableDeclaration) {
             annotated.typeReference?.let { check(it, trace) }
@@ -66,7 +67,7 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
     }
 
     public fun checkExpression(expression: KtExpression, trace: BindingTrace) {
-        checkEntries(expression.getAnnotationEntries(), getActualTargetList(expression, null), trace)
+        checkEntries(expression.getAnnotationEntries(), getActualTargetList(expression, null, trace), trace)
         if (expression is KtLambdaExpression) {
             for (parameter in expression.valueParameters) {
                 parameter.typeReference?.let { check(it, trace) }
@@ -162,11 +163,15 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
             }.toSet()
         }
 
-        public fun getDeclarationSiteActualTargetList(annotated: KtElement, descriptor: ClassDescriptor?): List<KotlinTarget> {
-            return getActualTargetList(annotated, descriptor).defaultTargets
+        public fun getDeclarationSiteActualTargetList(annotated: KtElement, descriptor: ClassDescriptor?, trace: BindingTrace):
+                List<KotlinTarget> {
+            return getActualTargetList(annotated, descriptor, trace).defaultTargets
         }
 
-        private fun getActualTargetList(annotated: KtElement, descriptor: DeclarationDescriptor?): TargetList {
+        private fun DeclarationDescriptor?.hasBackingField(bindingTrace: BindingTrace)
+                = (this as? PropertyDescriptor)?.let { bindingTrace.get(BindingContext.BACKING_FIELD_REQUIRED, it) } ?: false
+
+        private fun getActualTargetList(annotated: KtElement, descriptor: DeclarationDescriptor?, trace: BindingTrace): TargetList {
             return when (annotated) {
                 is KtClassOrObject ->
                     (descriptor as? ClassDescriptor)?.let { TargetList(KotlinTarget.classActualTargets(it)) } ?: TargetLists.T_CLASSIFIER
@@ -175,9 +180,9 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
                     if (annotated.isLocal)
                         TargetLists.T_LOCAL_VARIABLE
                     else if (annotated.parent is KtClassOrObject || annotated.parent is KtClassBody)
-                        TargetLists.T_MEMBER_PROPERTY
+                        TargetLists.T_MEMBER_PROPERTY(descriptor.hasBackingField(trace))
                     else
-                        TargetLists.T_TOP_LEVEL_PROPERTY
+                        TargetLists.T_TOP_LEVEL_PROPERTY(descriptor.hasBackingField(trace))
                 }
                 is KtParameter -> {
                     if (annotated.hasValOrVar())
@@ -220,13 +225,17 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
 
             val T_DESTRUCTURING_DECLARATION = targetList(DESTRUCTURING_DECLARATION)
 
-            val T_MEMBER_PROPERTY = targetList(MEMBER_PROPERTY, PROPERTY) {
-                extraTargets(FIELD)
+            fun T_MEMBER_PROPERTY(backingField: Boolean) =
+                    targetList(if (backingField) MEMBER_PROPERTY_WITH_FIELD else MEMBER_PROPERTY_WITHOUT_FIELD,
+                               MEMBER_PROPERTY, PROPERTY) {
+                if (backingField) extraTargets(FIELD)
                 onlyWithUseSiteTarget(VALUE_PARAMETER, PROPERTY_GETTER, PROPERTY_SETTER)
             }
 
-            val T_TOP_LEVEL_PROPERTY = targetList(TOP_LEVEL_PROPERTY, PROPERTY) {
-                extraTargets(FIELD)
+            fun T_TOP_LEVEL_PROPERTY(backingField: Boolean) =
+                    targetList(if (backingField) TOP_LEVEL_PROPERTY_WITH_FIELD else TOP_LEVEL_PROPERTY_WITHOUT_FIELD,
+                               TOP_LEVEL_PROPERTY, PROPERTY) {
+                if (backingField) extraTargets(FIELD)
                 onlyWithUseSiteTarget(VALUE_PARAMETER, PROPERTY_GETTER, PROPERTY_SETTER)
             }
 

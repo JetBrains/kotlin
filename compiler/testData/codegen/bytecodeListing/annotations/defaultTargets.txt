@@ -55,6 +55,5 @@ public abstract class Anno
 public final class DefaultTargetsKt {
     private final static @Anno field p2: int
     static method <clinit>(): void
-    public final static method getP(): int
     public final static method getP2(): int
 }

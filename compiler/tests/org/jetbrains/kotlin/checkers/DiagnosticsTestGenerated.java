@@ -1300,6 +1300,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                         doTest(fileName);
                     }
 
+                    @TestMetadata("field.kt")
+                    public void testField() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/options/targets/field.kt");
+                        doTest(fileName);
+                    }
+
                     @TestMetadata("file.kt")
                     public void testFile() throws Exception {
                         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/annotations/options/targets/file.kt");

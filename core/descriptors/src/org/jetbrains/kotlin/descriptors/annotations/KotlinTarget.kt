@@ -27,8 +27,8 @@ public enum class KotlinTarget(val description: String, val isDefault: Boolean =
     CLASS("class"),                            // includes CLASS_ONLY, OBJECT, COMPANION_OBJECT, OBJECT_LITERAL, INTERFACE, *_CLASS but not ENUM_ENTRY
     ANNOTATION_CLASS("annotation class"),
     TYPE_PARAMETER("type parameter", false),
-    PROPERTY("property"),                      // includes *_PROPERTY, PROPERTY_PARAMETER, ENUM_ENTRY
-    FIELD("field"),
+    PROPERTY("property"),                      // includes *_PROPERTY (with and without backing field), PROPERTY_PARAMETER, ENUM_ENTRY
+    FIELD("field"),                            // includes MEMBER_PROPERTY_WITH_FIELD, TOP_LEVEL_PROPERTY_WITH_FIELD, PROPERTY_PARAMETER, ENUM_ENTRY
     LOCAL_VARIABLE("local variable"),
     VALUE_PARAMETER("value parameter"),
     CONSTRUCTOR("constructor"),
@@ -57,8 +57,12 @@ public enum class KotlinTarget(val description: String, val isDefault: Boolean =
     MEMBER_FUNCTION("member function", false),
     TOP_LEVEL_FUNCTION("top level function", false),
 
-    MEMBER_PROPERTY("member property", false), // includes PROPERTY_PARAMETER
-    TOP_LEVEL_PROPERTY("top level property", false),
+    MEMBER_PROPERTY("member property", false), // includes PROPERTY_PARAMETER, with and without field
+    MEMBER_PROPERTY_WITH_FIELD("member property with backing field", false),
+    MEMBER_PROPERTY_WITHOUT_FIELD("member property without backing field", false),
+    TOP_LEVEL_PROPERTY("top level property", false), // with and without field
+    TOP_LEVEL_PROPERTY_WITH_FIELD("top level property with backing field", false),
+    TOP_LEVEL_PROPERTY_WITHOUT_FIELD("top level property without backing field", false),
 
     INITIALIZER("initializer", false),
     DESTRUCTURING_DECLARATION("destructuring declaration", false),

@@ -30,9 +30,5 @@ public class A(
 annotation class Anno
 
 @Anno
-val p: Int
-    get() = 5
-
-@Anno
 val p2: Int = 4
     get() = field

@@ -18,10 +18,10 @@ class SomeClass {
     @field:[Ann]
     protected val simplePropertyWithAnnotationList: String = "text"
 
-    @field:Ann
+    <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@field:Ann<!>
     protected val delegatedProperty: String by CustomDelegate()
 
-    <!INAPPLICABLE_FIELD_TARGET_NO_BACKING_FIELD!>@field:Ann<!>
+    <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@field:Ann<!>
     val propertyWithCustomGetter: Int
         get() = 5
 

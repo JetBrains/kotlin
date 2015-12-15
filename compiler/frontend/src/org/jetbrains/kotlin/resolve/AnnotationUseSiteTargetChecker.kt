@@ -62,7 +62,7 @@ public object AnnotationUseSiteTargetChecker {
             val target = annotation.useSiteTarget?.getAnnotationUseSiteTarget() ?: continue
 
             when (target) {
-                AnnotationUseSiteTarget.FIELD -> checkFieldTargetApplicability(annotated, annotation, descriptor)
+                AnnotationUseSiteTarget.FIELD -> checkIfProperty(annotated, annotation)
                 AnnotationUseSiteTarget.PROPERTY -> checkIfProperty(annotated, annotation)
                 AnnotationUseSiteTarget.PROPERTY_GETTER -> checkIfProperty(annotated, annotation)
                 AnnotationUseSiteTarget.PROPERTY_SETTER -> checkIfMutableProperty(annotated, annotation)
@@ -83,20 +83,6 @@ public object AnnotationUseSiteTargetChecker {
                 AnnotationUseSiteTarget.SETTER_PARAMETER -> checkIfMutableProperty(annotated, annotation)
                 AnnotationUseSiteTarget.FILE -> throw IllegalArgumentException("@file annotations are not allowed here")
                 AnnotationUseSiteTarget.RECEIVER -> report(INAPPLICABLE_RECEIVER_TARGET.on(annotation))
-            }
-        }
-    }
-
-    private fun BindingTrace.checkFieldTargetApplicability(
-            annotated: KtAnnotated,
-            annotation: KtAnnotationEntry,
-            descriptor: DeclarationDescriptor
-    ) {
-        if (!checkIfProperty(annotated, annotation)) return
-
-        if (annotated is KtProperty && descriptor is PropertyDescriptor) {
-            if (!annotated.hasDelegate() && !(bindingContext.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor) ?: false)) {
-                report(INAPPLICABLE_FIELD_TARGET_NO_BACKING_FIELD.on(annotation))
             }
         }
     }

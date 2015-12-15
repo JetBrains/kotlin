@@ -32,12 +32,10 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 class JvmFieldApplicabilityChecker : DeclarationChecker {
 
-    enum class Problem(val errorMessage: String) {
-        NOT_A_PROPERTY("JvmField can only be applied to a property"),
+    internal enum class Problem(val errorMessage: String) {
         NOT_FINAL("JvmField can only be applied to final property"),
         PRIVATE("JvmField has no effect on a private property"),
         CUSTOM_ACCESSOR("JvmField cannot be applied to a property with a custom accessor"),
-        NO_BACKING_FIELD("JvmField can only be applied to a property with backing field"),
         OVERRIDES("JvmField cannot be applied to a property that overrides some other property"),
         LATEINIT("JvmField cannot be applied to lateinit property"),
         CONST("JvmField cannot be applied to const property"),
@@ -54,10 +52,11 @@ class JvmFieldApplicabilityChecker : DeclarationChecker {
         val annotation = descriptor.findJvmFieldAnnotation() ?: return
 
         val problem = when {
-            descriptor !is PropertyDescriptor -> NOT_A_PROPERTY
+            // First two cases just prevent duplication of WRONG_ANNOTATION_TARGET
+            descriptor !is PropertyDescriptor -> return
+            !descriptor.hasBackingField(bindingContext) -> return
             descriptor.isOverridable -> NOT_FINAL
             Visibilities.isPrivate(descriptor.visibility) -> PRIVATE
-            !descriptor.hasBackingField(bindingContext) -> NO_BACKING_FIELD
             descriptor.hasCustomAccessor() -> CUSTOM_ACCESSOR
             descriptor.overriddenDescriptors.isNotEmpty() -> OVERRIDES
             descriptor.isLateInit -> LATEINIT
