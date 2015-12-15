@@ -21,6 +21,13 @@ class B : A() {
         bar()
     }
 
+    object O {
+        fun test() {
+            foo()
+            bar()
+        }
+    }
+
     companion object {
         init {
             foo()

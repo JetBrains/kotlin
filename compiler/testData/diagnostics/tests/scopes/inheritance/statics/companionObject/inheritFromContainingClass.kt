@@ -23,6 +23,15 @@ open class A<T> : J() {
 
     fun baz(): T = null!!
 
+    object O {
+        fun test() {
+            foo()
+            bar()
+            val a: Int = <!INACCESSIBLE_OUTER_CLASS_EXPRESSION!>baz()<!>
+            val b: <!UNRESOLVED_REFERENCE!>T<!> = <!INACCESSIBLE_OUTER_CLASS_EXPRESSION!>baz()<!>
+        }
+    }
+
     companion object : A<Int>() {
         init {
             foo()

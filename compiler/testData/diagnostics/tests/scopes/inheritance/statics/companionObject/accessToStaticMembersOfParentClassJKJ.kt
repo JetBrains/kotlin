@@ -28,6 +28,14 @@ class B : J2() {
         boo()
     }
 
+    object O {
+        fun test() {
+            foo()
+            bar()
+            boo()
+        }
+    }
+
     companion object {
         init {
             foo()

@@ -22,6 +22,15 @@ class A {
         baz()
     }
 
+    object O {
+        fun test() {
+            foo()
+            bar()
+            baz()
+        }
+    }
+
+
     companion object : B() {
         init {
             foo()
