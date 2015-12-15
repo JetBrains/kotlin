@@ -141,7 +141,7 @@ class ClassResolutionScopesSupport(
         return LexicalChainedScope(parentForNewScope, ownerDescriptor, false,
                                    implicitReceiver,
                                    LexicalScopeKind.CLASS_INHERITANCE,
-                                   memberScopes = *staticScopes.toTypedArray(), isStaticScope = true)
+                                   memberScopes = staticScopes, isStaticScope = true)
     }
 
     private fun <T : Any> StorageManager.createLazyValue(onRecursion: ((Boolean) -> T), compute: () -> T) =

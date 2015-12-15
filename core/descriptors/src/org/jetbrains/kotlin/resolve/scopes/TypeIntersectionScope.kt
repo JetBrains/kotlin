@@ -46,7 +46,7 @@ class TypeIntersectionScope private constructor(override val workerScope: Chaine
     companion object {
         @JvmStatic
         fun create(message: String, types: List<KotlinType>): MemberScope {
-            val chainedScope = ChainedMemberScope(message, *types.map { it.memberScope }.toTypedArray())
+            val chainedScope = ChainedMemberScope(message, types.map { it.memberScope })
             if (types.size <= 1) return chainedScope
 
             return TypeIntersectionScope(chainedScope)

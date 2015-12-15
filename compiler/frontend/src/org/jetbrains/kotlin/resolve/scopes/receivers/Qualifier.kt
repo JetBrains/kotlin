@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
 import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
 import org.jetbrains.kotlin.resolve.scopes.FilteringScope
-import org.jetbrains.kotlin.resolve.scopes.ScopeUtils
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.resolve.scopes.ScopeUtils
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
@@ -112,7 +112,7 @@ class ClassQualifier(
             scopes.add(classifier.unsubstitutedInnerClassesScope)
         }
 
-        return ChainedMemberScope("Member scope for $name as class or object", *scopes.toTypedArray())
+        return ChainedMemberScope("Member scope for $name as class or object", scopes)
     }
 
     override fun getNestedClassesAndPackageMembersScope(): MemberScope {
@@ -128,7 +128,7 @@ class ClassQualifier(
             scopes.add(ScopeUtils.getStaticNestedClassesScope(classifier))
         }
 
-        return ChainedMemberScope("Static scope for $name as class or object", *scopes.toTypedArray())
+        return ChainedMemberScope("Static scope for $name as class or object", scopes)
     }
 
     override fun toString() = "Class{$classifier}"

@@ -130,7 +130,7 @@ public class IncrementalPackageFragmentProvider(
                     MemberScope.Empty
                 }
                 else {
-                    ChainedMemberScope("Member scope for incremental compilation: union of package parts data", *scopes.toTypedArray())
+                    ChainedMemberScope("Member scope for incremental compilation: union of package parts data", scopes)
                 }
             }
         }
@@ -155,7 +155,7 @@ public class IncrementalPackageFragmentProvider(
                     val scopes = partsData.map { IncrementalPackageScope(JvmProtoBufUtil.readPackageDataFrom(it.data, it.strings)) }
                     ChainedMemberScope(
                             "Member scope for incremental compilation: union of multifile class parts data for $multifileClassFqName",
-                                 *scopes.toTypedArray<MemberScope>())
+                            scopes)
                 }
             }
 

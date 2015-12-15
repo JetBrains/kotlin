@@ -194,7 +194,10 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
         private val scope: MemberScope
 
         init {
-            scope = ChainedMemberScope("synthetic package view for test", ScopeWithClassifiers(classes), *packageScopes.toTypedArray())
+            val list = ArrayList<MemberScope>(packageScopes.size + 1)
+            list.add(ScopeWithClassifiers(classes))
+            list.addAll(packageScopes)
+            scope = ChainedMemberScope("synthetic package view for test", list)
         }
 
         override val fqName: FqName

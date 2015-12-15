@@ -108,7 +108,7 @@ public final class DeserializedDescriptorResolver {
         if (list.isEmpty()) {
             return MemberScope.Empty.INSTANCE;
         }
-        return new ChainedMemberScope("Member scope for union of package parts data", list.toArray(new MemberScope[list.size()]));
+        return new ChainedMemberScope("Member scope for union of package parts data", list);
     }
 
     @Nullable
