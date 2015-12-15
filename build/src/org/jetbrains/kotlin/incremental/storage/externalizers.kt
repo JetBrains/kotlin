@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.incremental.storage
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.io.DataExternalizer
+import com.intellij.util.io.EnumeratorStringDescriptor
 import com.intellij.util.io.IOUtil
 import com.intellij.util.io.KeyDescriptor
 import gnu.trove.THashSet
@@ -262,3 +263,27 @@ object FileKeyDescriptor : KeyDescriptor<File> {
     override fun isEqual(val1: File?, val2: File?): Boolean =
             FileUtil.FILE_HASHING_STRATEGY.equals(val1, val2)
 }
+
+open class CollectionExternalizer<T>(
+        private val elementExternalizer: DataExternalizer<T>,
+        private val newCollection: ()->MutableCollection<T>
+) : DataExternalizer<Collection<T>> {
+    override fun read(input: DataInput): Collection<T> {
+        val result = newCollection()
+        val stream = input as DataInputStream
+
+        while (stream.available() > 0) {
+            result.add(elementExternalizer.read(stream))
+        }
+
+        return result
+    }
+
+    override fun save(output: DataOutput, value: Collection<T>) {
+        value.forEach { elementExternalizer.save(output, it) }
+    }
+}
+
+object StringCollectionExternalizer : CollectionExternalizer<String>(EnumeratorStringDescriptor(), { HashSet() })
+
+object IntCollectionExternalizer : CollectionExternalizer<Int>(IntExternalizer, { HashSet() })

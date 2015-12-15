@@ -192,8 +192,6 @@ fun<Target> updateKotlinIncrementalCache(
 
     assert(IncrementalCompilation.isEnabled()) { "updateKotlinIncrementalCache should not be called when incremental compilation disabled" }
 
-    targets.forEach { getIncrementalCache(it).saveCacheFormatVersion() }
-
     var changesInfo = CompilationResult.NO_CHANGES
     for (generatedFile in generatedFiles) {
         val ic = getIncrementalCache(generatedFile.target)

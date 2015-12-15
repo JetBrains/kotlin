@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.incremental.storage
 import com.intellij.util.io.ExternalIntegerKeyDescriptor
 import java.io.File
 
-class IdToFileMap(file: File) : BasicMap<Int, File>(file, ExternalIntegerKeyDescriptor(), FileKeyDescriptor) {
+internal class IdToFileMap(file: File) : BasicMap<Int, File>(file, ExternalIntegerKeyDescriptor(), FileKeyDescriptor) {
     override fun dumpKey(key: Int): String = key.toString()
 
     override fun dumpValue(value: File): String = value.toString()
