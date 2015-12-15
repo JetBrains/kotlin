@@ -7,6 +7,8 @@
     <JAVADOC />
     <SOURCES>
       <root url="file://$PROJECT_DIR$/libraries/stdlib/src" />
+      <root url="file://$PROJECT_DIR$/core/builtins/native" />
+      <root url="file://$PROJECT_DIR$/core/builtins/src" />
     </SOURCES>
   </library>
 </component>
