@@ -1,0 +1,7 @@
+fun foo2(f: (Int) -> Unit) {
+    f(1)
+}
+
+fun main(args: String) {
+    foo2 { i -> val p = i }
+}
