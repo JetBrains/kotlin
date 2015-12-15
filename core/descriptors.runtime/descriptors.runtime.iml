@@ -9,6 +9,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="descriptor.loader.java" exported="" />
     <orderEntry type="module" module-name="descriptors" exported="" />
-    <orderEntry type="module" module-name="util.runtime" />
+    <orderEntry type="module" module-name="util.runtime" exported="" />
   </component>
 </module>
