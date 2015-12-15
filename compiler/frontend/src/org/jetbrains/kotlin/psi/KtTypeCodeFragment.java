@@ -27,12 +27,12 @@ public class KtTypeCodeFragment extends KtCodeFragment {
     }
 
     public boolean hasTypeReference() {
-        return getContentElement() instanceof KtTypeReference;
+        return getContentElement() != null;
     }
 
     @Nullable
     @Override
-    public KtElement getContentElement() {
+    public KtTypeReference getContentElement() {
         return findChildByClass(KtTypeReference.class);
     }
 }

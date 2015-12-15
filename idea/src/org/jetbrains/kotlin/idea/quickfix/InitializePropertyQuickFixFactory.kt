@@ -102,11 +102,12 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
 
                 val classDescriptor = klass.resolveToDescriptorIfAny() as? ClassDescriptorWithResolutionScopes ?: return
                 val constructorDescriptor = classDescriptor.unsubstitutedPrimaryConstructor ?: return
-                val constructorPointer = constructorDescriptor.source.getPsi()?.createSmartPointer()
+                val contextElement = constructorDescriptor.source.getPsi() ?: return
+                val constructorPointer = contextElement.createSmartPointer()
                 val config = configureChangeSignature(propertyDescriptor)
-                val changeSignature = { runChangeSignature(project, constructorDescriptor, config, element, text) }
+                val changeSignature = { runChangeSignature(project, constructorDescriptor, config, contextElement, text) }
                 changeSignature.runRefactoringWithPostprocessing(project, "refactoring.changeSignature") {
-                    val constructorOrClass = constructorPointer?.element
+                    val constructorOrClass = constructorPointer.element
                     val constructor = constructorOrClass as? KtConstructor<*> ?: (constructorOrClass as? KtClass)?.getPrimaryConstructor()
                     constructor?.getValueParameters()?.lastOrNull()?.replace(parameterToInsert)
                 }

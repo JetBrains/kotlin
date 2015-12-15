@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -116,7 +117,10 @@ class KotlinChangeSignatureTest : KotlinCodeInsightTestCase() {
         configureFiles()
 
         val element = (KotlinChangeSignatureHandler().findTargetMember(file, editor) as KtElement?).sure { "Target element is null" }
-        val context = file.findElementAt(editor.caretModel.offset).sure { "Context element is null" }
+        val context = file
+                .findElementAt(editor.caretModel.offset)
+                ?.getNonStrictParentOfType<KtElement>()
+                .sure { "Context element is null" }
         val bindingContext = element.analyze(BodyResolveMode.FULL)
         val callableDescriptor = KotlinChangeSignatureHandler
                 .findDescriptor(element, project, editor, bindingContext)

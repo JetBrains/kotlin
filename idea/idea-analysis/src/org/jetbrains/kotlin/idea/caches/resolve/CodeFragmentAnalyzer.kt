@@ -22,9 +22,7 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.siblings
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
@@ -40,7 +38,8 @@ import javax.inject.Inject
 public class CodeFragmentAnalyzer(
         private val resolveSession: ResolveSession,
         private val qualifierResolver: QualifiedExpressionResolver,
-        private val expressionTypingServices: ExpressionTypingServices
+        private val expressionTypingServices: ExpressionTypingServices,
+        private val typeResolver: TypeResolver
 ) {
 
     // component dependency cycle
@@ -48,22 +47,30 @@ public class CodeFragmentAnalyzer(
         @Inject set
 
     public fun analyzeCodeFragment(codeFragment: KtCodeFragment, trace: BindingTrace, bodyResolveMode: BodyResolveMode) {
-        val codeFragmentExpression = codeFragment.getContentElement()
-        if (codeFragmentExpression !is KtExpression) return
+        val codeFragmentElement = codeFragment.getContentElement()
 
         val (scopeForContextElement, dataFlowInfo) = getScopeAndDataFlowForAnalyzeFragment(codeFragment) {
             resolveElementCache!!.resolveToElement(it, bodyResolveMode)
         } ?: return
 
-        PreliminaryDeclarationVisitor.createForExpression(codeFragmentExpression, trace)
-        expressionTypingServices.getTypeInfo(
-                scopeForContextElement,
-                codeFragmentExpression,
-                TypeUtils.NO_EXPECTED_TYPE,
-                dataFlowInfo,
-                trace,
-                false
-        )
+        when (codeFragmentElement) {
+            is KtExpression -> {
+                PreliminaryDeclarationVisitor.createForExpression(codeFragmentElement, trace)
+                expressionTypingServices.getTypeInfo(
+                        scopeForContextElement,
+                        codeFragmentElement,
+                        TypeUtils.NO_EXPECTED_TYPE,
+                        dataFlowInfo,
+                        trace,
+                        false
+                )
+            }
+
+            is KtTypeReference -> {
+                val context = TypeResolutionContext(scopeForContextElement, trace, true, true).noBareTypes()
+                typeResolver.resolvePossiblyBareType(context, codeFragmentElement)
+            }
+        }
     }
 
     //TODO: this code should be moved into debugger which should set correct context for its code fragment
