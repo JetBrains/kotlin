@@ -37,6 +37,9 @@ import org.jetbrains.kotlin.utils.LibraryUtils
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.*
+import kotlin.collections.*
+import kotlin.sequences.*
+import kotlin.text.*
 
 val DEFAULT_ANNOTATIONS = "org.jebrains.kotlin.gradle.defaultAnnotations"
 
@@ -50,7 +53,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
     abstract protected fun populateTargetSpecificArgs(args: T)
 
     public var kotlinOptions: T = createBlankArgs()
-    public var kotlinDestinationDir: File? = getDestinationDir()
+    public var kotlinDestinationDir: File? = destinationDir
 
     private val logger = Logging.getLogger(this.javaClass)
     override fun getLogger() = logger
@@ -90,14 +93,14 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
     private fun getKotlinSources(): List<File> = (getSource() as Iterable<File>).filter { it.isKotlinFile() }
 
     protected fun File.isKotlinFile(): Boolean {
-        return when (FilenameUtils.getExtension(getName()).toLowerCase()) {
+        return when (FilenameUtils.getExtension(name).toLowerCase()) {
             "kt", "kts" -> true
             else -> false
         }
     }
 
     private fun populateSources(args:T, sources: List<File>) {
-        args.freeArgs = sources.map { it.getAbsolutePath() }
+        args.freeArgs = sources.map { it.absolutePath }
     }
 
     private fun populateCommonArgs(args: T) {
@@ -140,30 +143,30 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
     override fun populateTargetSpecificArgs(args: K2JVMCompilerArguments) {
         // show kotlin compiler where to look for java source files
 //        args.freeArgs = (args.freeArgs + getJavaSourceRoots().map { it.getAbsolutePath() }).toSet().toList()
-        getLogger().kotlinDebug("args.freeArgs = ${args.freeArgs}")
+        logger.kotlinDebug("args.freeArgs = ${args.freeArgs}")
 
         if (StringUtils.isEmpty(kotlinOptions.classpath)) {
-            args.classpath = getClasspath().filter({ it != null && it.exists() }).joinToString(File.pathSeparator)
-            getLogger().kotlinDebug("args.classpath = ${args.classpath}")
+            args.classpath = classpath.filter({ it != null && it.exists() }).joinToString(File.pathSeparator)
+            logger.kotlinDebug("args.classpath = ${args.classpath}")
         }
 
         args.destination = if (StringUtils.isEmpty(kotlinOptions.destination)) {
-            kotlinDestinationDir?.getPath()
+            kotlinDestinationDir?.path
         } else {
             kotlinOptions.destination
         }
-        getLogger().kotlinDebug("args.destination = ${args.destination}")
+        logger.kotlinDebug("args.destination = ${args.destination}")
 
-        val extraProperties = getExtensions().getExtraProperties()
+        val extraProperties = extensions.extraProperties
         args.pluginClasspaths = extraProperties.getOrNull<Array<String>>("compilerPluginClasspaths") ?: arrayOf()
-        getLogger().kotlinDebug("args.pluginClasspaths = ${args.pluginClasspaths.joinToString(File.pathSeparator)}")
+        logger.kotlinDebug("args.pluginClasspaths = ${args.pluginClasspaths.joinToString(File.pathSeparator)}")
         val basePluginOptions = extraProperties.getOrNull<Array<String>>("compilerPluginArguments") ?: arrayOf()
 
         val pluginOptions = arrayListOf(*basePluginOptions)
         handleKaptProperties(extraProperties, pluginOptions)
 
         args.pluginOptions = pluginOptions.toTypedArray()
-        getLogger().kotlinDebug("args.pluginOptions = ${args.pluginOptions.joinToString(File.pathSeparator)}")
+        logger.kotlinDebug("args.pluginOptions = ${args.pluginOptions.joinToString(File.pathSeparator)}")
 
         args.noStdlib = true
         args.noJdk = kotlinOptions.noJdk
@@ -187,11 +190,11 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
             }
         }
 
-        testsMap.get(this.name)?.let {
-            addFriendPathForTestTask(it)
+        testsMap.get(this.name).let {
+            addFriendPathForTestTask(it!!)
         }
 
-        getLogger().kotlinDebug("args.moduleName = ${args.moduleName}")
+        logger.kotlinDebug("args.moduleName = ${args.moduleName}")
     }
 
     override fun callCompiler(args: K2JVMCompilerArguments, sources: List<File>, isIncremental: Boolean, modified: List<File>, removed: List<File>, cachesBaseDir: File) {
@@ -208,13 +211,13 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
 
         fun getOrCreateIncrementalCache(target: TargetId): IncrementalCacheImpl<TargetId> {
             val cacheDir = File(cachesBaseDir, "increCache.${target.name}")
-            getLogger().kotlinDebug("incr cache for ${target.name} = $cacheDir")
+            logger.kotlinDebug("incr cache for ${target.name} = $cacheDir")
             cacheDir.mkdirs()
             return IncrementalCacheImpl(targetDataRoot = cacheDir, targetOutputDir = outputDir, target = target)
         }
 
         while (true) {
-            getLogger().kotlinDebug("compile iteration: ${sourcesToCompile.joinToString(", ")}")
+            logger.kotlinDebug("compile iteration: ${sourcesToCompile.joinToString(", ")}")
 
             val generatedFiles = compileChanged(
                     targets = targets,
@@ -238,9 +241,9 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
 
             lookupStorage.update(lookupTracker, sourcesToCompile, currentRemoved)
 
-            getLogger().kotlinDebug("generated ${generatedFiles.joinToString { it.outputFile.path }}")
-            getLogger().kotlinDebug("changes: ${changes.changes.joinToString { it.fqName.toString() }}")
-            getLogger().kotlinDebug("dirty: ${changes.dirtyFiles(lookupStorage).joinToString()}")
+            logger.kotlinDebug("generated ${generatedFiles.joinToString { it.outputFile.path }}")
+            logger.kotlinDebug("changes: ${changes.changes.joinToString { it.fqName.toString() }}")
+            logger.kotlinDebug("dirty: ${changes.dirtyFiles(lookupStorage).joinToString()}")
 
             // TODO: consider using some order-preserving set for sourcesToCompile instead
             val sourcesSet = sourcesToCompile.toHashSet()
@@ -327,15 +330,15 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
             .filterNotNull()
             .toSet()
 
-    private fun File.isJavaFile() = extension.equals(JavaFileType.INSTANCE.getDefaultExtension(), ignoreCase = true)
+    private fun File.isJavaFile() = extension.equals(JavaFileType.INSTANCE.defaultExtension, ignoreCase = true)
 
     override fun afterCompileHook(args: K2JVMCompilerArguments) {
-        getLogger().debug("Copying resulting files to classes")
+        logger.debug("Copying resulting files to classes")
 
         // Copy kotlin classes to all classes directory
         val outputDirFile = File(args.destination!!)
         if (outputDirFile.exists()) {
-            FileUtils.copyDirectory(outputDirFile, getDestinationDir())
+            FileUtils.copyDirectory(outputDirFile, destinationDir)
         }
     }
 
@@ -367,7 +370,7 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
     fun findSrcDirRoot(file: File): File? {
         for (source in srcDirsSources) {
             if (source is SourceDirectorySet) {
-                for (root in source.getSrcDirs()) {
+                for (root in source.srcDirs) {
                     if (FileUtil.isAncestor(root, file, false)) {
                         return root
                     }
@@ -399,7 +402,7 @@ public open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArgumen
     }
 
     public fun addLibraryFiles(vararg fs: File) {
-        val strs = fs.map { it.getPath() }.toTypedArray()
+        val strs = fs.map { it.path }.toTypedArray()
         addLibraryFiles(*strs)
     }
 
@@ -413,7 +416,7 @@ public open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArgumen
             get() = kotlinOptions.sourceMap
 
     init {
-        getOutputs().file(MethodClosure(this, "getOutputFile"))
+        outputs.file(MethodClosure(this, "getOutputFile"))
     }
 
     override fun populateTargetSpecificArgs(args: K2JSCompilerArguments) {
@@ -425,16 +428,16 @@ public open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArgumen
         args.kjsm = kotlinOptions.kjsm
 
         val kotlinJsLibsFromDependencies =
-                getProject().getConfigurations().getByName("compile")
+                project.configurations.getByName("compile")
                         .filter { LibraryUtils.isKotlinJavascriptLibrary(it) }
-                        .map { it.getAbsolutePath() }
+                        .map { it.absolutePath }
 
         args.libraryFiles = kotlinOptions.libraryFiles + kotlinJsLibsFromDependencies
         args.target = kotlinOptions.target
         args.sourceMap = kotlinOptions.sourceMap
 
         if (args.outputFile == null) {
-            throw GradleException("${getName()}.kotlinOptions.outputFile should be specified.")
+            throw GradleException("${name}.kotlinOptions.outputFile should be specified.")
         }
 
         val outputDir = File(args.outputFile).directory
@@ -444,8 +447,8 @@ public open class Kotlin2JsCompile() : AbstractKotlinCompile<K2JSCompilerArgumen
             }
         }
 
-        getLogger().debug("${getName()} set libraryFiles to ${args.libraryFiles.joinToString(",")}")
-        getLogger().debug("${getName()} set outputFile to ${args.outputFile}")
+        logger.debug("${name} set libraryFiles to ${args.libraryFiles.joinToString(",")}")
+        logger.debug("${name} set outputFile to ${args.outputFile}")
 
     }
 }
