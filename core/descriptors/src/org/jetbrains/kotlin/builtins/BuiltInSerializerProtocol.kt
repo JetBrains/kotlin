@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.decompiler
+package org.jetbrains.kotlin.builtins
 
-import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledTextFromJsMetadata
-import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledText
-import org.jetbrains.kotlin.utils.concurrent.block.LockedClearableLazyValue
+import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
+import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
 
-public class KotlinJavascriptMetaFile(provider: KotlinJavascriptMetaFileViewProvider) : KtClsFileBase(provider) {
-    protected override val decompiledText: LockedClearableLazyValue<DecompiledText> = LockedClearableLazyValue(Any()) {
-        buildDecompiledTextFromJsMetadata(getVirtualFile())
-    }
-}
+object BuiltInSerializerProtocol : SerializerExtensionProtocol(
+        BuiltInsProtoBuf.constructorAnnotation, BuiltInsProtoBuf.classAnnotation, BuiltInsProtoBuf.functionAnnotation,
+        BuiltInsProtoBuf.propertyAnnotation, BuiltInsProtoBuf.enumEntryAnnotation, BuiltInsProtoBuf.compileTimeValue,
+        BuiltInsProtoBuf.parameterAnnotation, BuiltInsProtoBuf.typeAnnotation, BuiltInsProtoBuf.typeParameterAnnotation
+)
+

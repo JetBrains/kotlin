@@ -36,17 +36,7 @@ class KotlinDecompiledFileViewProvider(
 ) : SingleRootFileViewProvider(manager, file, physical, KotlinLanguage.INSTANCE) {
     val content : LockedClearableLazyValue<String> = LockedClearableLazyValue(Any()) {
         val psiFile = createFile(manager.getProject(), file, KotlinFileType.INSTANCE)
-        val text = psiFile?.getText() ?: ""
-
-        DebugUtil.startPsiModification("Invalidating throw-away copy of file that was used for getting text")
-        try {
-            (psiFile as? PsiFileImpl)?.markInvalidated()
-        }
-        finally {
-            DebugUtil.finishPsiModification()
-        }
-
-        text
+        psiFile?.getText() ?: ""
     }
 
     override fun createFile(project: Project, file: VirtualFile, fileType: FileType): PsiFile? {

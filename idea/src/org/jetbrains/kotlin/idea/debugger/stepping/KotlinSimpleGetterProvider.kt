@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.debugger.stepping
 
-import com.intellij.debugger.engine.SimplePropertyGetterProvider
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.*
