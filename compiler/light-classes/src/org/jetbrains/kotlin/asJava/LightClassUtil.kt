@@ -16,98 +16,22 @@
 
 package org.jetbrains.kotlin.asJava
 
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.util.Comparing
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.psi.*
 import com.intellij.psi.impl.java.stubs.PsiClassStub
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.util.PathUtil
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.utils.KotlinVfsUtil
-import org.jetbrains.kotlin.utils.rethrow
-import java.io.File
-import java.net.MalformedURLException
-import java.net.URL
 
 public object LightClassUtil {
-    private val LOG = Logger.getInstance(LightClassUtil::class.java)
-
-    public val BUILT_INS_SRC_DIR: File = File("core/builtins/native", KotlinBuiltIns.BUILT_INS_PACKAGE_NAME.asString())
-
-    public val builtInsDirUrl: URL by lazy { computeBuiltInsDir() }
-
-    /**
-     * Checks whether the given file is loaded from the location where Kotlin's built-in classes are defined.
-     * As of today, this is core/builtins/native/kotlin directory and files such as Any.kt, Nothing.kt etc.
-
-     * Used to skip JetLightClass creation for built-ins, because built-in classes have no Java counterparts
-     */
-    public fun belongsToKotlinBuiltIns(file: KtFile): Boolean {
-        val virtualFile = file.virtualFile
-        if (virtualFile != null) {
-            val parent = virtualFile.parent
-            if (parent != null) {
-                try {
-                    val jetVfsPathUrl = KotlinVfsUtil.convertFromUrl(builtInsDirUrl)
-                    val fileDirVfsUrl = parent.url
-                    if (jetVfsPathUrl == fileDirVfsUrl) {
-                        return true
-                    }
-                }
-                catch (e: MalformedURLException) {
-                    LOG.error(e)
-                }
-
-            }
-        }
-
-        // We deliberately return false on error: who knows what weird URLs we might come across out there
-        // it would be a pity if no light classes would be created in such cases
-        return false
-    }
-
-    private fun computeBuiltInsDir(): URL {
-        val builtInFilePath = "/" + KotlinBuiltIns.BUILT_INS_PACKAGE_NAME + "/Library.kt"
-
-        val url = KotlinBuiltIns::class.java.getResource(builtInFilePath)
-
-        if (url == null) {
-            if (ApplicationManager.getApplication().isUnitTestMode) {
-                // HACK: Temp code. Get built-in files from the sources when running from test.
-                try {
-                    return URL(StandardFileSystems.FILE_PROTOCOL, "",
-                               FileUtil.toSystemIndependentName(BUILT_INS_SRC_DIR.absolutePath))
-                }
-                catch (e: MalformedURLException) {
-                    throw rethrow(e)
-                }
-
-            }
-
-            throw IllegalStateException("Built-ins file wasn't found at url: " + builtInFilePath)
-        }
-
-        try {
-            return URL(url.protocol, url.host, PathUtil.getParentPath(url.file))
-        }
-        catch (e: MalformedURLException) {
-            throw AssertionError(e)
-        }
-
-    }
 
     fun findClass(fqn: FqName, stub: StubElement<*>): PsiClass? {
         if (stub is PsiClassStub<*> && Comparing.equal(fqn.asString(), stub.qualifiedName)) {

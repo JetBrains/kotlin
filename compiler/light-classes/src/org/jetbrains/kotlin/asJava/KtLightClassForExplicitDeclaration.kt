@@ -390,10 +390,6 @@ public open class KtLightClassForExplicitDeclaration(
 
 
         public fun create(classOrObject: KtClassOrObject): KtLightClassForExplicitDeclaration? {
-            if (LightClassUtil.belongsToKotlinBuiltIns(classOrObject.getContainingKtFile())) {
-                return null
-            }
-
             val fqName = predictFqName(classOrObject) ?: return null
 
             if (classOrObject is KtObjectDeclaration && classOrObject.isObjectLiteral()) {

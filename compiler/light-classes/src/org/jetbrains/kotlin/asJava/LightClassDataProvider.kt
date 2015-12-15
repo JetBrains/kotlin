@@ -73,8 +73,6 @@ abstract class LightClassDataProvider<T : WithFileStubAndExtraDiagnostics>(
         val packageFqName = packageFqName
         val files = files
 
-        checkForBuiltIns(packageFqName, files)
-
         val context = getContext(files)
 
         val javaFileStub = createJavaFileStub(packageFqName, files)
@@ -154,20 +152,10 @@ abstract class LightClassDataProvider<T : WithFileStubAndExtraDiagnostics>(
         return files.firstOrNull()?.virtualFile.sure { "No virtual file for " + files.iterator().next() }
     }
 
-    private fun checkForBuiltIns(fqName: FqName, files: Collection<KtFile>) {
-        for (file in files) {
-            if (LightClassUtil.belongsToKotlinBuiltIns(file)) {
-                // We may not fail later due to some luck, but generating JetLightClasses for built-ins is a bad idea anyways
-                // If it fails later, there will be an exception logged
-                logErrorWithOSInfo(null, fqName, file.virtualFile)
-            }
-        }
-    }
-
     private fun logErrorWithOSInfo(cause: Throwable?, fqName: FqName, virtualFile: VirtualFile?) {
         val path = if (virtualFile == null) "<null>" else virtualFile.path
         LOG.error(
-                "Could not generate LightClass for $fqName declared in $path\nbuilt-ins dir URL is ${LightClassUtil.builtInsDirUrl}\n" +
+                "Could not generate LightClass for $fqName declared in $path\n" +
                 "System: ${SystemInfo.OS_NAME} ${SystemInfo.OS_VERSION} Java Runtime: ${SystemInfo.JAVA_RUNTIME_VERSION}",
                 cause
         )

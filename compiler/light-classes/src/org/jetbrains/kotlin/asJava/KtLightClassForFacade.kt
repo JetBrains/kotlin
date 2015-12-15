@@ -194,11 +194,7 @@ public class KtLightClassForFacade private constructor(
                 facadeClassFqName: FqName,
                 searchScope: GlobalSearchScope,
                 files: Collection<KtFile>
-        ): KtLightClassForFacade? {
-            if (files.any { LightClassUtil.belongsToKotlinBuiltIns(it) }) {
-                return null
-            }
-
+        ): KtLightClassForFacade {
             assert(files.isNotEmpty()) { "No files for facade $facadeClassFqName" }
 
             val lightClassDataCache = FacadeStubCache.getInstance(manager.project).get(facadeClassFqName, searchScope)
