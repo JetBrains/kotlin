@@ -63,10 +63,14 @@ class CodeConverter(
     public fun convertExpressions(expressions: List<PsiExpression>): List<Expression>
             = expressions.map { convertExpression(it) }
 
-    public fun convertExpression(expression: PsiExpression?): Expression {
+    public fun convertExpression(expression: PsiExpression?, shouldParenthesize: Boolean = false): Expression {
         if (expression == null) return Expression.Empty
 
-        return expressionConverter.convertExpression(expression, this).assignPrototype(expression)
+        val converted = expressionConverter.convertExpression(expression, this).assignPrototype(expression)
+        if (shouldParenthesize) {
+            return ParenthesizedExpression(converted).assignNoPrototype()
+        }
+        return converted
     }
 
     public fun convertLocalVariable(variable: PsiLocalVariable): LocalVariable {

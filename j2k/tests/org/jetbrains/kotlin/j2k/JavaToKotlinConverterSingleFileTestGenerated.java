@@ -3091,6 +3091,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("parameterToReceiver.java")
+        public void testParameterToReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/parameterToReceiver.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("simpleCall.java")
         public void testSimpleCall() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/simpleCall.java");

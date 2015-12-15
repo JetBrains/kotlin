@@ -268,7 +268,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                     val isExtension = property.isExtensionDeclaration()
                     val propertyAccess = if (isTopLevel) {
                         if (isExtension)
-                            QualifiedExpression(codeConverter.convertExpression(arguments.firstOrNull()), propertyName).assignNoPrototype()
+                            QualifiedExpression(codeConverter.convertExpression(arguments.firstOrNull(), true), propertyName).assignNoPrototype()
                         else
                             propertyName
                     }
@@ -293,7 +293,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
             else if (origin is KtFunction) {
                 if (isTopLevel) {
                     result = if (origin.isExtensionDeclaration()) {
-                        val qualifier = codeConverter.convertExpression(arguments.firstOrNull())
+                        val qualifier = codeConverter.convertExpression(arguments.firstOrNull(), true)
                         MethodCallExpression.build(qualifier,
                                                    origin.name!!,
                                                    convertArguments(expression, isExtension = true),
@@ -314,7 +314,7 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                 val resolvedQualifier = (methodExpr.qualifier as? PsiReferenceExpression)?.resolve()
                 if (isFacadeClassFromLibrary(resolvedQualifier)) {
                     result = if (target.isKotlinExtensionFunction()) {
-                        val qualifier = codeConverter.convertExpression(arguments.firstOrNull())
+                        val qualifier = codeConverter.convertExpression(arguments.firstOrNull(), true)
                         MethodCallExpression.build(qualifier,
                                                    methodExpr.referenceName!!,
                                                    convertArguments(expression, isExtension = true),

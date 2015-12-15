@@ -306,7 +306,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
 
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): Expression? {
             if (arguments.size < 2) return null // incorrect call
-            return MethodCallExpression.build(codeConverter.convertExpression(arguments[1]), "format", codeConverter.convertExpressions(listOf(arguments[0]) + arguments.drop(2)), emptyList(), false)
+            return MethodCallExpression.build(codeConverter.convertExpression(arguments[1], true), "format", codeConverter.convertExpressions(listOf(arguments[0]) + arguments.drop(2)), emptyList(), false)
         }
     },
 
@@ -319,7 +319,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
 
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): Expression? {
             if (arguments.isEmpty()) return null // incorrect call
-            return MethodCallExpression.build(codeConverter.convertExpression(arguments.first()), "format", codeConverter.convertExpressions(arguments.drop(1)), emptyList(), false)
+            return MethodCallExpression.build(codeConverter.convertExpression(arguments.first(), true), "format", codeConverter.convertExpressions(arguments.drop(1)), emptyList(), false)
         }
     },
 
@@ -347,7 +347,7 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
 
     STRING_VALUE_OF(JAVA_LANG_STRING, "valueOf", 1) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = MethodCallExpression.build(codeConverter.convertExpression(arguments.single()), "toString", emptyList(), emptyList(), false)
+                = MethodCallExpression.build(codeConverter.convertExpression(arguments.single(), true), "toString", emptyList(), emptyList(), false)
     },
 
     SYSTEM_OUT_PRINTLN(PrintStream::class.java.name, "println", null) {
@@ -412,7 +412,7 @@ private fun convertSystemOutMethodCall(
 }
 
 private fun CodeConverter.convertToRegex(expression: PsiExpression?): Expression
-        = MethodCallExpression.build(convertExpression(expression), "toRegex", emptyList(), emptyList(), false).assignNoPrototype()
+        = MethodCallExpression.build(convertExpression(expression, true), "toRegex", emptyList(), emptyList(), false).assignNoPrototype()
 
 private fun addIgnoreCaseArgument(
         qualifier: PsiExpression?,

@@ -1,2 +1,2 @@
 //expression
-(str.toString() + "abc")
+(str.toString() + "abc").foo()
