@@ -95,6 +95,18 @@ public class BlackBoxMultiFileCodegenTestGenerated extends AbstractBlackBoxCodeg
         doTestMultiFile(fileName);
     }
 
+    @TestMetadata("kt5445")
+    public void testKt5445() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/kt5445/");
+        doTestMultiFile(fileName);
+    }
+
+    @TestMetadata("kt5445_2")
+    public void testKt5445_2() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/kt5445_2/");
+        doTestMultiFile(fileName);
+    }
+
     @TestMetadata("kt9717")
     public void testKt9717() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxMultiFile/kt9717/");
