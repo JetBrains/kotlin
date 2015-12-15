@@ -30,21 +30,19 @@ import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.testFramework.EdtTestUtil;
-import com.intellij.testFramework.IdeaTestUtil;
 import com.intellij.util.ThrowableRunnable;
 import com.intellij.util.indexing.FileBasedIndex;
-import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.xdebugger.XDebugSession;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.EdtTestUtil;
 import org.jetbrains.kotlin.asJava.FakeLightClassForFileOfPackage;
 import org.jetbrains.kotlin.asJava.KtLightClassForFacade;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
+import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.MockLibraryUtil;
 import org.junit.ComparisonFailure;
@@ -81,26 +79,6 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
     protected void setUp() throws Exception {
         VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory());
         super.setUp();
-
-        UsefulTestCase.edt(new Runnable() {
-            @Override
-            public void run() {
-                ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        ModifiableRootModel model = ModuleRootManager.getInstance(getModule()).getModifiableModel();
-
-                        projectDescriptor.configureModule(getModule(), model);
-
-                        VirtualFile customLibrarySources = VfsUtil.findFileByIoFile(CUSTOM_LIBRARY_SOURCES, false);
-                        assert customLibrarySources != null : "VirtualFile for customLibrary sources should be found";
-                        configureCustomLibrary(model, customLibrarySources);
-
-                        model.commit();
-                    }
-                });
-            }
-        });
     }
 
     private static void configureLibrary(@NotNull ModifiableRootModel model, @NotNull String libraryName, @NotNull File classes, @NotNull File sources) {

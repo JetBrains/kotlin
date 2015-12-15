@@ -43,7 +43,6 @@ import kotlin.CollectionsKt;
 import kotlin.StringsKt;
 import kotlin.jvm.functions.Function1;
 import org.apache.commons.lang.SystemUtils;
-import org.codehaus.plexus.util.FileUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLightQuickFixTestCase;
