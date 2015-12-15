@@ -8,8 +8,6 @@ Cleaning output files:
 out/production/module1/META-INF/module1.kotlin_module
 out/production/module1/module1/A.class
 out/production/module1/module1/Module1_aKt.class
-End of files
-Cleaning output files:
 out/production/module1/module1/Module1_fKt.class
 End of files
 Compiling files:

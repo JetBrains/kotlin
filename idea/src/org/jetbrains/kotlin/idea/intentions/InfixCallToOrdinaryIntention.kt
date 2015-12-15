@@ -34,7 +34,7 @@ public class InfixCallToOrdinaryIntention : SelfTargetingIntention<KtBinaryExpre
         public fun convert(element: KtBinaryExpression): KtExpression {
             val argument = KtPsiUtil.safeDeparenthesize(element.getRight()!!)
             val pattern = "$0.$1" + when (argument) {
-                is KtFunctionLiteralExpression -> " $2:'{}'"
+                is KtLambdaExpression -> " $2:'{}'"
                 else -> "($2)"
             }
             val replacement = KtPsiFactory(element).createExpressionByPattern(pattern, element.getLeft()!!, element.getOperationReference().getText(), argument)

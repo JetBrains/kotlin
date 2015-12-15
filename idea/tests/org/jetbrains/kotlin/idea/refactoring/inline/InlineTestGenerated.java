@@ -59,6 +59,12 @@ public class InlineTestGenerated extends AbstractInlineTest {
         doTest(fileName);
     }
 
+    @TestMetadata("lessAndGreaterInCallArgs.kt")
+    public void testLessAndGreaterInCallArgs() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/lessAndGreaterInCallArgs.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("MethodReference.kt")
     public void testMethodReference() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/MethodReference.kt");
@@ -77,9 +83,27 @@ public class InlineTestGenerated extends AbstractInlineTest {
         doTest(fileName);
     }
 
+    @TestMetadata("noUsages.kt")
+    public void testNoUsages() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/noUsages.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("Parameter.kt")
     public void testParameter() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/Parameter.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("semicolon.kt")
+    public void testSemicolon() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/semicolon.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("semicolonWithSpacesAndComments.kt")
+    public void testSemicolonWithSpacesAndComments() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/semicolonWithSpacesAndComments.kt");
         doTest(fileName);
     }
 
@@ -481,6 +505,57 @@ public class InlineTestGenerated extends AbstractInlineTest {
         @TestMetadata("WithInitializerAndGetter.kt")
         public void testWithInitializerAndGetter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/property/WithInitializerAndGetter.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/refactoring/inline/stringTemplates")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class StringTemplates extends AbstractInlineTest {
+        @TestMetadata("addBraces.kt")
+        public void testAddBraces() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/stringTemplates/addBraces.kt");
+            doTest(fileName);
+        }
+
+        public void testAllFilesPresentInStringTemplates() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/refactoring/inline/stringTemplates"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("blockEntry.kt")
+        public void testBlockEntry() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/stringTemplates/blockEntry.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("empty.kt")
+        public void testEmpty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/stringTemplates/empty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonEmpty.kt")
+        public void testNonEmpty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/stringTemplates/nonEmpty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonRawToRaw.kt")
+        public void testNonRawToRaw() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/stringTemplates/nonRawToRaw.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("rawString.kt")
+        public void testRawString() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/stringTemplates/rawString.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("rawToNonRaw.kt")
+        public void testRawToNonRaw() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/inline/stringTemplates/rawToNonRaw.kt");
             doTest(fileName);
         }
     }

@@ -17,6 +17,11 @@
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.utils.DFS
 import java.util.*
 
@@ -40,4 +45,65 @@ fun <TDescriptor : CallableDescriptor> TDescriptor.findOriginalTopMostOverridden
         @Suppress("UNCHECKED_CAST")
         (it.original as TDescriptor)
     }
+}
+
+
+private fun CallableDescriptor.isVar(): Boolean =
+        this is PropertyDescriptor && isVar
+
+private fun CallableDescriptor.isVal(): Boolean =
+        this is PropertyDescriptor && !isVar
+
+private fun isMostSpecificByReturnTypeAndKind(
+        type: KotlinType,
+        returnTypeOwner: CallableDescriptor,
+        descriptors: Collection<CallableDescriptor>,
+        typeChecker: KotlinTypeChecker
+): Boolean =
+        descriptors.all {
+            otherDescriptor ->
+            otherDescriptor == returnTypeOwner ||
+            (!(returnTypeOwner.isVal() && otherDescriptor.isVar()) &&
+             otherDescriptor.returnType?.let { typeChecker.isSubtypeOf(type, it) } ?: true)
+        }
+
+
+fun <TDescriptor : CallableDescriptor> getOverriddenWithMostSpecificReturnTypeOrNull(
+        typeChecker: KotlinTypeChecker,
+        descriptors: Collection<TDescriptor>
+): TDescriptor? {
+    val candidates = arrayListOf<TDescriptor>()
+
+    // Need this to avoid recursion on lazy types.
+    if (descriptors.isEmpty()) {
+        return null
+    } else if (descriptors.size == 1) {
+        return descriptors.first()
+    }
+
+    for (descriptor in descriptors) {
+        val returnType = descriptor.returnType ?: continue
+
+        if (isMostSpecificByReturnTypeAndKind(returnType, descriptor, descriptors, typeChecker)) {
+            candidates.add(descriptor)
+        }
+        else if (!TypeUtils.canHaveSubtypes(typeChecker, returnType)) {
+            return null
+        }
+    }
+
+    if (candidates.isEmpty()) {
+        return null
+    }
+
+    var withNonErrorReturnType: TDescriptor? = null
+    var withNonFlexibleReturnType: TDescriptor? = null
+    for (candidate in candidates) {
+        val returnType = candidate.returnType ?: continue
+        withNonErrorReturnType = candidate
+        if (!returnType.isFlexible()) {
+            withNonFlexibleReturnType = candidate
+        }
+    }
+    return withNonFlexibleReturnType ?: withNonErrorReturnType
 }

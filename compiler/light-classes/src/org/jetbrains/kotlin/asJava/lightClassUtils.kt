@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.*
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -28,6 +29,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 
 public fun KtClassOrObject.toLightClass(): KtLightClass? = LightClassUtil.getPsiClass(this) as KtLightClass?
+
+public fun KtFile.findFacadeClass(): KtLightClass? {
+    return LightClassGenerationSupport.getInstance(project)
+            .getFacadeClassesInPackage(packageFqName, this.useScope as? GlobalSearchScope ?: GlobalSearchScope.projectScope(project))
+            .firstOrNull { it is KtLightClassForFacade && this in it.files } as? KtLightClass
+}
 
 public fun KtDeclaration.toLightElements(): List<PsiNamedElement> =
         when (this) {

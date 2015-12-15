@@ -10,9 +10,6 @@ public val noImpl: Nothing
 public fun eval(expr: String): dynamic = noImpl
 
 @native
-public fun typeof(a: Any?): String = noImpl
-
-@native
 public val undefined: Nothing? = noImpl
 
 @native operator fun <K, V> MutableMap<K, V>.set(key: K, value: V): V? = noImpl
@@ -34,3 +31,8 @@ public fun safeParseDouble(s : String) : Double? = noImpl
 
 @native
 public fun js(code: String): dynamic = noImpl
+
+/**
+ * Function corresponding to JavaScript's `typeof` operator
+ */
+public inline fun jsTypeOf(a: Any?): String = js("typeof a")

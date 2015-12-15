@@ -1,0 +1,8 @@
+// WITH_RUNTIME
+fun foo() {
+    val x = "abcd"
+
+    for (it in x) {
+        it.equals('a')
+    }
+}

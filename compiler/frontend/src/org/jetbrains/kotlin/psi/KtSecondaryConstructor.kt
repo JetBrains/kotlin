@@ -48,6 +48,6 @@ public class KtSecondaryConstructor : KtConstructor<KtSecondaryConstructor> {
 
         val delegationName = if (isThis) "this" else "super"
 
-        return addAfter(psiFactory.createConstructorDelegationCall(delegationName + "()"), colon) as KtConstructorDelegationCall
+        return addAfter(psiFactory.creareDelegatedSuperTypeEntry(delegationName + "()"), colon) as KtConstructorDelegationCall
     }
 }

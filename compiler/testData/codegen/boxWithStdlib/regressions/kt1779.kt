@@ -1,4 +1,4 @@
-import kotlin.support.AbstractIterator
+import kotlin.collections.AbstractIterator
 
 class MyIterator : AbstractIterator<String>() {
     var i = 0

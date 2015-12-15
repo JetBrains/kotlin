@@ -37,7 +37,7 @@ public class ConvertAssertToIfWithThrowIntention : SelfTargetingIntention<KtCall
 
         val argumentSize = element.getValueArguments().size()
         if (argumentSize !in 1..2) return false
-        val functionLiterals = element.getFunctionLiteralArguments()
+        val functionLiterals = element.getLambdaArguments()
         if (functionLiterals.size() > 1) return false
         if (functionLiterals.size() == 1 && argumentSize == 1) return false // "assert {...}" is incorrect
 
@@ -48,17 +48,17 @@ public class ConvertAssertToIfWithThrowIntention : SelfTargetingIntention<KtCall
     override fun applyTo(element: KtCallExpression, editor: Editor) {
         val args = element.getValueArguments()
         val conditionText = args[0]?.getArgumentExpression()?.getText() ?: return
-        val functionLiteralArgument = element.functionLiteralArguments.singleOrNull()
+        val functionLiteralArgument = element.lambdaArguments.singleOrNull()
         val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
         val psiFactory = KtPsiFactory(element)
 
         val messageFunctionExpr = when {
             args.size == 2 -> args[1]?.getArgumentExpression() ?: return
-            functionLiteralArgument != null -> functionLiteralArgument.getFunctionLiteral()
+            functionLiteralArgument != null -> functionLiteralArgument.getLambdaExpression()
             else -> null
         }
 
-        val extractedMessageSingleExpr = (messageFunctionExpr as? KtFunctionLiteralExpression)?.let { extractMessageSingleExpression(it, bindingContext) }
+        val extractedMessageSingleExpr = (messageFunctionExpr as? KtLambdaExpression)?.let { extractMessageSingleExpression(it, bindingContext) }
 
         val messageIsFunction = extractedMessageSingleExpr == null && messageIsFunction(element, bindingContext)
         val messageExpr = extractedMessageSingleExpr ?: messageFunctionExpr ?: psiFactory.createExpression("\"Assertion failed\"")
@@ -93,7 +93,7 @@ public class ConvertAssertToIfWithThrowIntention : SelfTargetingIntention<KtCall
         simplifyConditionIfPossible(ifExpression)
     }
 
-    private fun extractMessageSingleExpression(functionLiteral: KtFunctionLiteralExpression, bindingContext: BindingContext): KtExpression? {
+    private fun extractMessageSingleExpression(functionLiteral: KtLambdaExpression, bindingContext: BindingContext): KtExpression? {
         return functionLiteral.bodyExpression?.statements?.singleOrNull()?.let { singleStatement ->
             singleStatement.check { it.isUsedAsExpression(bindingContext) }
         }

@@ -1,7 +1,7 @@
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("StringsKt")
 
-package kotlin
+package kotlin.text
 
 /**
  * Builds newly created StringBuilder using provided body.

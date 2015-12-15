@@ -258,17 +258,29 @@ public class TypeUtils {
 
     @NotNull
     public static List<KotlinType> getImmediateSupertypes(@NotNull KotlinType type) {
-        boolean isNullable = type.isMarkedNullable();
         TypeSubstitutor substitutor = TypeSubstitutor.create(type);
         Collection<KotlinType> originalSupertypes = type.getConstructor().getSupertypes();
         List<KotlinType> result = new ArrayList<KotlinType>(originalSupertypes.size());
         for (KotlinType supertype : originalSupertypes) {
-            KotlinType substitutedType = substitutor.substitute(supertype, Variance.INVARIANT);
+            KotlinType substitutedType = createSubstitutedSupertype(type, supertype, substitutor);
             if (substitutedType != null) {
-                result.add(makeNullableIfNeeded(substitutedType, isNullable));
+                result.add(substitutedType);
             }
         }
         return result;
+    }
+
+    @Nullable
+    public static KotlinType createSubstitutedSupertype(
+            @NotNull KotlinType subType,
+            @NotNull KotlinType superType,
+            @NotNull TypeSubstitutor substitutor
+    ) {
+        KotlinType substitutedType = substitutor.substitute(superType, Variance.INVARIANT);
+        if (substitutedType != null) {
+            return makeNullableIfNeeded(substitutedType, subType.isMarkedNullable());
+        }
+        return null;
     }
 
     private static void collectAllSupertypes(@NotNull KotlinType type, @NotNull Set<KotlinType> result) {

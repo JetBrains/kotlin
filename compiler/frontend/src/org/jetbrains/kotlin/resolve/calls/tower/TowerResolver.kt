@@ -39,7 +39,8 @@ interface TowerContext<C> {
     fun contextForVariable(stripExplicitReceiver: Boolean): TowerContext<C>
 
     // foo() -> ReceiverValue(foo), context for invoke
-    fun contextForInvoke(variable: C, useExplicitReceiver: Boolean): Pair<ReceiverValue, TowerContext<C>>
+    // null means that there is no invoke on variable
+    fun contextForInvoke(variable: C, useExplicitReceiver: Boolean): Pair<ReceiverValue, TowerContext<C>>?
 }
 
 internal sealed class TowerData {
@@ -89,18 +90,17 @@ class TowerResolver {
             return null
         }
 
-        // possible there is explicit member
-        collectCandidates(TowerData.Empty)?.let { return it }
         for (implicitReceiver in context.scopeTower.implicitReceivers) {
             collectCandidates(TowerData.OnlyImplicitReceiver(implicitReceiver))?.let { return it }
         }
+        // possible there is explicit member
+        collectCandidates(TowerData.Empty)?.let { return it }
 
         for (level in context.scopeTower.levels) {
-            collectCandidates(TowerData.TowerLevel(level))?.let { return it }
-
             for (implicitReceiver in context.scopeTower.implicitReceivers) {
                 collectCandidates(TowerData.BothTowerLevelAndImplicitReceiver(level, implicitReceiver))?.let { return it }
             }
+            collectCandidates(TowerData.TowerLevel(level))?.let { return it }
         }
 
         return resultCollector.getFinalCandidates()

@@ -38,13 +38,16 @@ public class AndroidSubplugin : KotlinGradleSubplugin {
 
         val mainSourceSet = sourceSets.getByName("main")
         val manifestFile = mainSourceSet.manifest.srcFile
-        val applicationPackage = androidExtension.defaultConfig.applicationId
-                ?: getApplicationPackageFromManifest(manifestFile) ?: ""
+        val applicationPackage = getApplicationPackageFromManifest(manifestFile) ?: run {
+            project.logger.warn(
+                    "Application package name is not present in the manifest file (${manifestFile.absolutePath})")
+            ""
+        }
         pluginOptions += SubpluginOption("package", applicationPackage)
 
         fun addVariant(sourceSet: AndroidSourceSet) {
             pluginOptions += SubpluginOption("variant", sourceSet.name + ';' +
-                    mainSourceSet.res.srcDirs.joinToString(";") { it.absolutePath })
+                    sourceSet.res.srcDirs.joinToString(";") { it.absolutePath })
         }
 
         addVariant(mainSourceSet)

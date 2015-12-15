@@ -2119,6 +2119,18 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                         doTest(fileName);
                     }
 
+                    @TestMetadata("extensionWithTypeParameterAsReceiver.kt")
+                    public void testExtensionWithTypeParameterAsReceiver() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/typeArguments/extensionWithTypeParameterAsReceiver.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("memberWithTypeParameterAsReceiver.kt")
+                    public void testMemberWithTypeParameterAsReceiver() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/typeArguments/memberWithTypeParameterAsReceiver.kt");
+                        doTest(fileName);
+                    }
+
                     @TestMetadata("noReceiver.kt")
                     public void testNoReceiver() throws Exception {
                         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/typeArguments/noReceiver.kt");
@@ -2142,6 +2154,45 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/call/typeArguments/noReceiverPartialSubstitution.kt");
                         doTest(fileName);
                     }
+                }
+            }
+
+            @TestMetadata("idea/testData/quickfix/createFromUsage/createFunction/callableReferences")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class CallableReferences extends AbstractQuickFixTest {
+                public void testAllFilesPresentInCallableReferences() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/createFromUsage/createFunction/callableReferences"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+                }
+
+                @TestMetadata("extensionNoReceiverInCallableRef.kt")
+                public void testExtensionNoReceiverInCallableRef() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/callableReferences/extensionNoReceiverInCallableRef.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("extensionWithReceiverInCallableRef.kt")
+                public void testExtensionWithReceiverInCallableRef() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/callableReferences/extensionWithReceiverInCallableRef.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("noExpectedReturnType.kt")
+                public void testNoExpectedReturnType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/callableReferences/noExpectedReturnType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("noFunctionalType.kt")
+                public void testNoFunctionalType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/callableReferences/noFunctionalType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("withExpectedReturnType.kt")
+                public void testWithExpectedReturnType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/callableReferences/withExpectedReturnType.kt");
+                    doTest(fileName);
                 }
             }
 
@@ -2546,6 +2597,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("callableRef.kt")
+                public void testCallableRef() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/localVariable/callableRef.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("inAccessor.kt")
                 public void testInAccessor() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/localVariable/inAccessor.kt");
@@ -2678,6 +2735,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("assignedInFunInClass.kt")
                 public void testAssignedInFunInClass() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/assignedInFunInClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("callableRef.kt")
+                public void testCallableRef() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/parameter/callableRef.kt");
                     doTest(fileName);
                 }
 
@@ -3059,9 +3122,21 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("callableRef.kt")
+                public void testCallableRef() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/callableRef.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("extensionRefInImport.kt")
                 public void testExtensionRefInImport() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/extensionRefInImport.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("extensionWithTypeParameterAsReceiver.kt")
+                public void testExtensionWithTypeParameterAsReceiver() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/extensionWithTypeParameterAsReceiver.kt");
                     doTest(fileName);
                 }
 
@@ -3110,6 +3185,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 @TestMetadata("memberVarDelegateRuntime.kt")
                 public void testMemberVarDelegateRuntime() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/memberVarDelegateRuntime.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("memberWithTypeParameterAsReceiver.kt")
+                public void testMemberWithTypeParameterAsReceiver() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createVariable/property/memberWithTypeParameterAsReceiver.kt");
                     doTest(fileName);
                 }
 
@@ -4622,27 +4703,6 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             }
         }
 
-        @TestMetadata("idea/testData/quickfix/migration/invokeOnExtensionFunctionWithExplicitReceiverFix")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class InvokeOnExtensionFunctionWithExplicitReceiverFix extends AbstractQuickFixTest {
-            public void testAllFilesPresentInInvokeOnExtensionFunctionWithExplicitReceiverFix() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/migration/invokeOnExtensionFunctionWithExplicitReceiverFix"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
-            }
-
-            @TestMetadata("notSimple.kt")
-            public void testNotSimple() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/invokeOnExtensionFunctionWithExplicitReceiverFix/notSimple.kt");
-                doTest(fileName);
-            }
-
-            @TestMetadata("simple.kt")
-            public void testSimple() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/migration/invokeOnExtensionFunctionWithExplicitReceiverFix/simple.kt");
-                doTest(fileName);
-            }
-        }
-
         @TestMetadata("idea/testData/quickfix/migration/missingConstructorKeyword")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -5733,6 +5793,51 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
         @TestMetadata("inProperty.kt")
         public void testInProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/removeUnusedReceiver/inProperty.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/quickfix/renameUnresolvedReference")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class RenameUnresolvedReference extends AbstractQuickFixTest {
+        public void testAllFilesPresentInRenameUnresolvedReference() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/renameUnresolvedReference"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("qualifiedFunRef.kt")
+        public void testQualifiedFunRef() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/renameUnresolvedReference/qualifiedFunRef.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("qualifiedPropertyRef.kt")
+        public void testQualifiedPropertyRef() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/renameUnresolvedReference/qualifiedPropertyRef.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("typeRef.kt")
+        public void testTypeRef() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/renameUnresolvedReference/typeRef.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unqualifiedFunRef.kt")
+        public void testUnqualifiedFunRef() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/renameUnresolvedReference/unqualifiedFunRef.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unqualifiedPropertyRef.kt")
+        public void testUnqualifiedPropertyRef() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/renameUnresolvedReference/unqualifiedPropertyRef.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("unqualifiedPropertyRefWithPackageError.kt")
+        public void testUnqualifiedPropertyRefWithPackageError() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/renameUnresolvedReference/unqualifiedPropertyRefWithPackageError.kt");
             doTest(fileName);
         }
     }

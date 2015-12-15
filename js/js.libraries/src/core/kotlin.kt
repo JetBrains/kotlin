@@ -2,6 +2,27 @@ package kotlin
 
 import java.util.*
 
+/**
+ * Returns an array with the specified [size], where each element is calculated by calling the specified
+ * [init] function. The `init` function returns an array element given its index.
+ */
+// TODO: @library("arrayFromFun")
+public inline fun <reified T> Array(size: Int, init: (Int) -> T): Array<T> {
+    val result = arrayOfNulls<T>(size)
+
+    for (i in 0..size - 1) {
+        result[i] = init(i)
+    }
+
+    return result as Array<T>
+}
+
+/**
+ * Returns an empty array of the specified type [T].
+ */
+public inline fun <reified T> emptyArray(): Array<T> = arrayOfNulls<T>(0) as Array<T>
+
+
 @library
 public fun <T> arrayOf(vararg elements: T): Array<T> = noImpl
 
@@ -30,26 +51,6 @@ public fun byteArrayOf(vararg elements: Byte): ByteArray          = noImpl
 
 @library
 public fun booleanArrayOf(vararg elements: Boolean): BooleanArray = noImpl
-
-@library("copyToArray")
-public fun <reified T> Collection<T>.toTypedArray(): Array<T> = noImpl
-
-
-/**
- * Returns an immutable list containing only the specified object [element].
- */
-public fun <T> listOf(element: T): List<T> = arrayListOf(element)
-
-/**
- * Returns an immutable set containing only the specified object [element].
- */
-public fun <T> setOf(element: T): Set<T> = hashSetOf(element)
-
-/**
- * Returns an immutable map, mapping only the specified key to the
- * specified value.
- */
-public fun <K, V> mapOf(pair: Pair<K, V>): Map<K, V> = hashMapOf(pair)
 
 /**
  * Creates a new instance of the [Lazy] that uses the specified initialization function [initializer].

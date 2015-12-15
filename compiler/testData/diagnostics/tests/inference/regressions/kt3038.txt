@@ -20,7 +20,7 @@ package a {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         // Static members
-        @kotlin.Deprecated(message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<a.TestEnum>
+        @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<a.TestEnum>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): a.TestEnum
         public final /*synthesized*/ fun values(): kotlin.Array<a.TestEnum>
     }

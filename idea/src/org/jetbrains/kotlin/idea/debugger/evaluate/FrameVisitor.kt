@@ -38,6 +38,10 @@ class FrameVisitor(context: EvaluationContextImpl) {
     private val project = context.debugProcess.project
     private val frame = context.frameProxy?.stackFrame
 
+    companion object {
+        val OBJECT_TYPE = Type.getType(Any::class.java)
+    }
+
     public fun findValue(name: String, asmType: Type?, checkType: Boolean, failIfNotFound: Boolean): Value? {
         if (frame == null) return null
 
@@ -58,10 +62,14 @@ class FrameVisitor(context: EvaluationContextImpl) {
                         }
                     }
 
-                    val localVariable = if (isFunctionType(asmType))
-                        findLocalVariableForLocalFun(name, asmType, checkType)
-                    else
-                        findLocalVariable(name, asmType, checkType)
+                    if (isFunctionType(asmType)) {
+                        val variableForLocalFun = findLocalVariableForLocalFun(name, asmType, checkType)
+                        if (variableForLocalFun != null) {
+                            return variableForLocalFun
+                        }
+                    }
+
+                    val localVariable = findLocalVariable(name, asmType, checkType)
 
                     if (localVariable != null) {
                         return localVariable
@@ -168,6 +176,8 @@ class FrameVisitor(context: EvaluationContextImpl) {
     private fun isValueOfCorrectType(value: Value, asmType: Type?, shouldCheckType: Boolean): Boolean {
         if (!shouldCheckType || asmType == null || value.asmType == asmType) return true
         if (project == null) return false
+
+        if (asmType == OBJECT_TYPE) return true
 
         if ((value.obj() as? com.sun.jdi.ObjectReference)?.referenceType().isSubclass(asmType.className)) {
             return true

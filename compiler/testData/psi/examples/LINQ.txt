@@ -23,7 +23,7 @@ JetFile: LINQ.kt
             OPERATION_REFERENCE
               PsiElement(IDENTIFIER)('filter')
             PsiWhiteSpace(' ')
-            FUNCTION_LITERAL_EXPRESSION
+            LAMBDA_EXPRESSION
               FUNCTION_LITERAL
                 PsiElement(LBRACE)('{')
                 BLOCK
@@ -38,7 +38,7 @@ JetFile: LINQ.kt
           OPERATION_REFERENCE
             PsiElement(IDENTIFIER)('map')
           PsiWhiteSpace(' ')
-          FUNCTION_LITERAL_EXPRESSION
+          LAMBDA_EXPRESSION
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
               BLOCK
@@ -53,7 +53,7 @@ JetFile: LINQ.kt
         OPERATION_REFERENCE
           PsiElement(IDENTIFIER)('aggregate')
         PsiWhiteSpace(' ')
-        FUNCTION_LITERAL_EXPRESSION
+        LAMBDA_EXPRESSION
           FUNCTION_LITERAL
             PsiElement(LBRACE)('{')
             VALUE_PARAMETER_LIST

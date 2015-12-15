@@ -1,10 +1,11 @@
 object A {
-  class B
-  fun foo() = 1
-  object Bar{}
+    class B
+    fun foo() = 1
+    object Bar {}
 }
 
 fun <T> test(a: T) {
-  val c = (a as A)
-    c.<error descr="[NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE] Nested class 'B' accessed via instance reference">B</error>()
+    val c = (a as A)
+    // TODO: report "nested class accessed via instance reference"
+    c.<error descr="[UNRESOLVED_REFERENCE] Unresolved reference: B">B</error>()
 }

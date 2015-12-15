@@ -491,10 +491,10 @@ internal class DescriptorRendererImpl(
     }
 
     private fun renderAdditionalModifiers(functionDescriptor: FunctionDescriptor, builder: StringBuilder) {
-        if (functionDescriptor.isOperator && functionDescriptor.overriddenDescriptors.none { it.isOperator }) {
+        if (functionDescriptor.isOperator && (functionDescriptor.overriddenDescriptors.none { it.isOperator } || alwaysRenderModifiers)) {
             builder.append("operator ")
         }
-        if (functionDescriptor.isInfix && functionDescriptor.overriddenDescriptors.none { it.isInfix }) {
+        if (functionDescriptor.isInfix && (functionDescriptor.overriddenDescriptors.none { it.isInfix } || alwaysRenderModifiers)) {
             builder.append("infix ")
         }
         if (functionDescriptor.isExternal) {
@@ -602,6 +602,10 @@ internal class DescriptorRendererImpl(
             renderAdditionalModifiers(function, builder)
             renderOverride(function, builder)
             renderMemberKind(function, builder)
+
+            if (verbose && function.isHiddenToOvercomeSignatureClash) {
+                builder.append("/*isHiddenToOvercomeSignatureClash*/ ")
+            }
 
             builder.append(renderKeyword("fun")).append(" ")
             renderTypeParameters(function.getTypeParameters(), builder, true)

@@ -49,7 +49,7 @@ public class ExpressionTypingComponents {
     /*package*/ TypeResolver typeResolver;
     /*package*/ AnnotationResolver annotationResolver;
     /*package*/ ValueParameterResolver valueParameterResolver;
-    /*package*/ MultiDeclarationResolver multiDeclarationResolver;
+    /*package*/ DestructuringDeclarationResolver destructuringDeclarationResolver;
     /*package*/ ConstantExpressionEvaluator constantExpressionEvaluator;
     /*package*/ ModifiersChecker modifiersChecker;
     /*package*/ DataFlowAnalyzer dataFlowAnalyzer;
@@ -142,8 +142,8 @@ public class ExpressionTypingComponents {
     }
 
     @Inject
-    public void setMultiDeclarationResolver(MultiDeclarationResolver multiDeclarationResolver) {
-        this.multiDeclarationResolver = multiDeclarationResolver;
+    public void setDestructuringDeclarationResolver(DestructuringDeclarationResolver destructuringDeclarationResolver) {
+        this.destructuringDeclarationResolver = destructuringDeclarationResolver;
     }
 
     @NotNull

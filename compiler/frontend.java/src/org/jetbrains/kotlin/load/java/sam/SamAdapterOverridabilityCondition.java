@@ -30,7 +30,11 @@ import java.util.List;
 public class SamAdapterOverridabilityCondition implements ExternalOverridabilityCondition {
     @NotNull
     @Override
-    public Result isOverridable(@NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor) {
+    public Result isOverridable(
+            @NotNull CallableDescriptor superDescriptor,
+            @NotNull CallableDescriptor subDescriptor,
+            @Nullable ClassDescriptor subClassDescriptor
+    ) {
         if (!(subDescriptor instanceof SimpleFunctionDescriptor) || !(superDescriptor instanceof SimpleFunctionDescriptor)) {
             return Result.UNKNOWN;
         }

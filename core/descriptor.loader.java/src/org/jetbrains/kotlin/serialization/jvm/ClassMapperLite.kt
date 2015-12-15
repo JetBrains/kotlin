@@ -33,7 +33,7 @@ object ClassMapperLite {
         val internalName = classId.asString().replace('.', '$')
         val simpleName = internalName.removePrefix("kotlin/")
         if (simpleName != internalName) {
-            for (jvmPrimitive in JvmPrimitiveType.values) {
+            for (jvmPrimitive in JvmPrimitiveType.values()) {
                 val primitiveType = jvmPrimitive.primitiveType
                 if (simpleName == primitiveType.typeName.asString()) return jvmPrimitive.desc
                 if (simpleName == primitiveType.arrayTypeName.asString()) return "[" + jvmPrimitive.desc

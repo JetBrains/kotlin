@@ -30,7 +30,7 @@ public fun expandIsCalls(node: JsNode, context: TranslationContext) {
             val type = callee?.getArguments()?.firstOrNull()
 
             val replacement = when (callee?.typeCheck) {
-                TypeCheck.TYPEOF -> typeof(instance!!, type as JsStringLiteral)
+                TypeCheck.TYPEOF -> typeOfIs(instance!!, type as JsStringLiteral)
                 TypeCheck.INSTANCEOF -> context.namer().isInstanceOf(instance!!, type!!)
                 else -> null
             }

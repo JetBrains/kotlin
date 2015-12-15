@@ -24,6 +24,7 @@ option optimize_for = LITE_RUNTIME;
 extend Package {
   // id in StringTable
   repeated int32 class_name = 150 [packed = true];
+  optional int32 package_fq_name = 151;
 }
 
 extend Class {
@@ -41,6 +42,10 @@ extend Function {
 extend Property {
   repeated Annotation property_annotation = 150;
   optional Annotation.Argument.Value compile_time_value = 151;
+}
+
+extend EnumEntry {
+  repeated Annotation enum_entry_annotation = 150;
 }
 
 extend ValueParameter {

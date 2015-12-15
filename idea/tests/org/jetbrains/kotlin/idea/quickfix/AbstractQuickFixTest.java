@@ -39,8 +39,11 @@ import com.intellij.psi.impl.file.impl.FileManager;
 import com.intellij.psi.stubs.StubUpdatingIndex;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.util.indexing.FileBasedIndex;
+import kotlin.CollectionsKt;
 import kotlin.StringsKt;
+import kotlin.jvm.functions.Function1;
 import org.apache.commons.lang.SystemUtils;
+import org.codehaus.plexus.util.FileUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLightQuickFixTestCase;
@@ -101,12 +104,12 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
     //region Severe hack - lot of code copied from LightQuickFixTestCase to workaround stupid format of test data with before/after prefixes
     @Override
     protected void doSingleTest(String fileSuffix) {
-        doTestFor(fileSuffix, createWrapper());
+        doKotlinQuickFixTest(fileSuffix, createWrapper());
     }
 
     private static QuickFixTestCase myWrapper;
 
-    private void doTestFor(final String testName, final QuickFixTestCase quickFixTestCase) {
+    private void doKotlinQuickFixTest(final String testName, final QuickFixTestCase quickFixTestCase) {
         String relativePath = notNull(quickFixTestCase.getBasePath(), "") + "/" + StringsKt.decapitalize(testName);
         final String testFullPath = quickFixTestCase.getTestDataPath().replace(File.separatorChar, '/') + relativePath;
         final File testFile = new File(testFullPath);
@@ -149,7 +152,10 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
 
     private static void applyAction(String contents, QuickFixTestCase quickFixTestCase, String testName, String testFullPath) throws Exception {
         Pair<String, Boolean> pair = quickFixTestCase.parseActionHintImpl(quickFixTestCase.getFile(), contents);
-        String text = pair.getFirst();
+
+        String fileName = StringsKt.substringAfterLast(testFullPath, "/", "");
+        String text = pair.getFirst().replace("${file}", fileName);
+
         boolean actionShouldBeAvailable = pair.getSecond().booleanValue();
 
         quickFixTestCase.beforeActionStarted(testName, contents);
@@ -181,7 +187,7 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
     }
     //endregion
 
-    private void configureRuntimeIfNeeded(@NotNull String beforeFileName) {
+    private static void configureRuntimeIfNeeded(@NotNull String beforeFileName) {
         if (beforeFileName.endsWith("JsRuntime.kt")) {
             // Without the following line of code subsequent tests with js-runtime will be prone to failure due "outdated stub in index" error.
             FileBasedIndex.getInstance().requestRebuild(StubUpdatingIndex.INDEX_ID);
@@ -220,10 +226,28 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
             String prefix = "class ";
             if (pair.first.startsWith(prefix)) {
                 String className = pair.first.substring(prefix.length());
-                Class<?> aClass = Class.forName(className);
+                final Class<?> aClass = Class.forName(className);
                 assert IntentionAction.class.isAssignableFrom(aClass) : className + " should be inheritor of IntentionAction";
 
-                Set<String> validActions = new HashSet<String>(InTextDirectivesUtils.findLinesWithPrefixesRemoved(text, "// ACTION:"));
+                final Set<String> validActions = new HashSet<String>(InTextDirectivesUtils.findLinesWithPrefixesRemoved(text, "// ACTION:"));
+
+                CollectionsKt.removeAll(actions, new Function1<IntentionAction, Boolean>() {
+                    @Override
+                    public Boolean invoke(IntentionAction action) {
+                        return !aClass.isAssignableFrom(action.getClass()) || validActions.contains(action.getText());
+                    }
+                });
+
+                if (!actions.isEmpty()) {
+                    Assert.fail("Unexpected intention actions present\n " +
+                                CollectionsKt.map(actions, new Function1<IntentionAction, String>() {
+                                    @Override
+                                    public String invoke(IntentionAction action) {
+                                        return action.getClass().toString() + " " + action.toString() + "\n";
+                                    }
+                                })
+                    );
+                }
 
                 for (IntentionAction action : actions) {
                     if (aClass.isAssignableFrom(action.getClass()) && !validActions.contains(action.getText())) {
@@ -233,13 +257,13 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
             }
             else {
                 // Action shouldn't be found. Check that other actions are expected and thus tested action isn't there under another name.
-                DirectiveBasedActionUtils.INSTANCE$.checkAvailableActionsAreExpected((KtFile) getFile(), actions);
+                DirectiveBasedActionUtils.INSTANCE.checkAvailableActionsAreExpected(getFile(), actions);
             }
         }
     }
 
     public static void checkForUnexpectedErrors() {
-        DirectiveBasedActionUtils.INSTANCE$.checkForUnexpectedErrors((KtFile) getFile());
+        DirectiveBasedActionUtils.INSTANCE.checkForUnexpectedErrors((KtFile) getFile());
     }
 
     @Override

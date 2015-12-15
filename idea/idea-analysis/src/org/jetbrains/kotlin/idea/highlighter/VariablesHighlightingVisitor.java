@@ -67,6 +67,27 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
         super.visitParameter(parameter);
     }
 
+    @NotNull
+    private static PsiElement getSmartCastTarget(@NotNull KtExpression expression) {
+        PsiElement target = expression;
+        if (target instanceof KtParenthesizedExpression) {
+            target = KtPsiUtil.deparenthesize((KtParenthesizedExpression) target);
+            if (target == null) {
+                target = expression;
+            }
+        }
+        if (target instanceof KtIfExpression) {
+            target = ((KtIfExpression) target).getIfKeyword();
+        }
+        else if (target instanceof KtWhenExpression) {
+            target = ((KtWhenExpression) target).getWhenKeyword();
+        }
+        else if (target instanceof KtBinaryExpression) {
+            target = ((KtBinaryExpression) target).getOperationReference();
+        }
+        return target;
+    }
+
     @Override
     public void visitExpression(@NotNull KtExpression expression) {
         KotlinType implicitSmartCast = bindingContext.get(IMPLICIT_RECEIVER_SMARTCAST, expression);
@@ -84,8 +105,8 @@ class VariablesHighlightingVisitor extends AfterAnalysisHighlightingVisitor {
 
         KotlinType smartCast = bindingContext.get(SMARTCAST, expression);
         if (smartCast != null) {
-            holder.createInfoAnnotation(expression, "Smart cast to " +
-                                                    DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(smartCast))
+            holder.createInfoAnnotation(getSmartCastTarget(expression),
+                                        "Smart cast to " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(smartCast))
                   .setTextAttributes(KotlinHighlightingColors.SMART_CAST_VALUE);
         }
 

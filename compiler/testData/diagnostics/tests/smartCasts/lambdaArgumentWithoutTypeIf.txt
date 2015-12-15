@@ -1,0 +1,4 @@
+package
+
+public fun foo(): kotlin.Int
+public fun </*0*/ T, /*1*/ R> T.let(/*0*/ f: (T) -> R): R

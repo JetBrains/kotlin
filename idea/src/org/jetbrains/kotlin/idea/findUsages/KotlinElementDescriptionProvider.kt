@@ -43,7 +43,7 @@ public class KotlinElementDescriptionProvider : ElementDescriptionProvider {
             is KtProperty -> if (targetElement.isLocal()) "variable" else "property"
             is KtTypeParameter -> "type parameter"
             is KtParameter -> "parameter"
-            is KtMultiDeclarationEntry -> "variable"
+            is KtDestructuringDeclarationEntry -> "variable"
             else -> null
         }
 
@@ -57,6 +57,7 @@ public class KotlinElementDescriptionProvider : ElementDescriptionProvider {
 
         if (targetElement !is PsiNamedElement || targetElement !is KtElement) return null
 
+        // as is necessary because of ambiguity: see KT-3996
         val name = (targetElement as PsiNamedElement).getName()
 
         return when(location) {

@@ -96,11 +96,21 @@ public class IdeErrorMessages {
 
         MAP.put(RETURN_TYPE_MISMATCH_ON_OVERRIDE, "<html>Return type is ''{0}'', which is not a subtype of overridden<br/>" +
                                                   "{1}</html>", HTML_RENDER_RETURN_TYPE, DescriptorRenderer.HTML);
+        MAP.put(RETURN_TYPE_MISMATCH_ON_INHERITANCE, "<html>Return types of inherited members are incompatible:<br/>{0},<br/>{1}</html>",
+                DescriptorRenderer.HTML, DescriptorRenderer.HTML);
 
-        MAP.put(PROPERTY_TYPE_MISMATCH_ON_OVERRIDE, "<html>Var-property type is ''{0}'', which is not a type of overridden<br/>" +
+        MAP.put(PROPERTY_TYPE_MISMATCH_ON_OVERRIDE, "<html>Property type is ''{0}'', which is not a subtype type of overridden<br/>" +
                                                   "{1}</html>", HTML_RENDER_RETURN_TYPE, DescriptorRenderer.HTML);
+        MAP.put(VAR_TYPE_MISMATCH_ON_OVERRIDE, "<html>Var-property type is ''{0}'', which is not a type of overridden<br/>" +
+                                                    "{1}</html>", HTML_RENDER_RETURN_TYPE, DescriptorRenderer.HTML);
+        MAP.put(PROPERTY_TYPE_MISMATCH_ON_INHERITANCE, "<html>Types of inherited properties are incompatible:<br/>{0},<br/>{1}</html>",
+                DescriptorRenderer.HTML, DescriptorRenderer.HTML);
+        MAP.put(VAR_TYPE_MISMATCH_ON_INHERITANCE, "<html>Types of inherited var-properties do not match:<br/>{0},<br/>{1}</html>",
+                DescriptorRenderer.HTML, DescriptorRenderer.HTML);
 
         MAP.put(VAR_OVERRIDDEN_BY_VAL, "<html>Val-property cannot override var-property<br />" +
+                                       "{1}</html>", DescriptorRenderer.HTML, DescriptorRenderer.HTML);
+        MAP.put(VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION, "<html>Val-property cannot override var-property<br />" +
                                        "{1}</html>", DescriptorRenderer.HTML, DescriptorRenderer.HTML);
 
         MAP.put(ABSTRACT_MEMBER_NOT_IMPLEMENTED, "<html>{0} must be declared abstract or implement abstract member<br/>" +

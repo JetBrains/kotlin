@@ -1,14 +1,14 @@
 package templates
 
-enum class SourceFile(jvmClassName: String? = null, val multifile: Boolean = true) {
+enum class SourceFile(jvmClassName: String? = null, val multifile: Boolean = true, val packageName: String? = null) {
 
-    Arrays(),
-    Collections(),
-    Sets(),
-    Maps(),
-    Sequences(),
-    Ranges(),
-    Strings(),
+    Arrays(packageName = "kotlin.collections"),
+    Collections(packageName = "kotlin.collections"),
+    Sets(packageName = "kotlin.collections"),
+    Maps(packageName = "kotlin.collections"),
+    Sequences(packageName = "kotlin.sequences"),
+    Ranges(packageName = "kotlin.ranges"),
+    Strings(packageName = "kotlin.text"),
     Misc(),
     ;
 

@@ -44,7 +44,7 @@ public object Delegates {
      * as a key.
      * @param map the map where the property values are stored.
      */
-    @Deprecated("Delegate property to the map itself without creating a wrapper.", ReplaceWith("map", "kotlin.properties.get", "kotlin.properties.set"))
+    @Deprecated("Delegate property to the map itself without creating a wrapper.", ReplaceWith("map"))
     public fun <T> mapVar(map: MutableMap<in String, Any?>): ReadWriteProperty<Any?, T> {
         return FixedMapVar<Any?, String, T>(map, propertyNameSelector, throwKeyNotFound)
     }
@@ -66,7 +66,7 @@ public object Delegates {
      * as a key.
      * @param map the map where the property values are stored.
      */
-    @Deprecated("Delegate property to the map itself without creating a wrapper.", ReplaceWith("map", "kotlin.properties.get"))
+    @Deprecated("Delegate property to the map itself without creating a wrapper.", ReplaceWith("map"))
     public fun <T> mapVal(map: Map<in String, Any?>): ReadOnlyProperty<Any?, T> {
         return FixedMapVal<Any?, String, T>(map, propertyNameSelector, throwKeyNotFound)
     }

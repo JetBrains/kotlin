@@ -31,10 +31,16 @@
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <version>${project.version}</version>
 
+                 <configuration>
+                     <args>
+                         <arg>-Xmultifile-facades-open</arg>
+                     </args>
+                 </configuration>
+
                 <executions>
                     <execution>
                         <id>compile</id>
-                        <phase>compile</phase>
+                        <phase>process-sources</phase>
                         <goals>
                             <goal>compile</goal>
                         </goals>

@@ -20,6 +20,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNullable;
 import org.jetbrains.kotlin.storage.StorageManager;
 
@@ -42,5 +43,10 @@ public abstract class AbstractDeclarationProviderFactory implements DeclarationP
     @Override
     public PackageMemberDeclarationProvider getPackageMemberDeclarationProvider(@NotNull FqName packageFqName) {
         return packageDeclarationProviders.invoke(packageFqName);
+    }
+
+    @Override
+    public void diagnoseMissingPackageFragment(KtFile file) {
+        throw new IllegalStateException("Cannot find package fragment for file " + file.getName() + " with package " + file.getPackageFqName());
     }
 }

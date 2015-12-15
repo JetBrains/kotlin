@@ -7538,19 +7538,34 @@ public final class ProtoBuf {
      */
     int getPropertyCount();
 
-    // repeated int32 enum_entry = 12 [packed = true];
+    // repeated int32 enum_entry_name = 12 [packed = true];
     /**
-     * <code>repeated int32 enum_entry = 12 [packed = true];</code>
+     * <code>repeated int32 enum_entry_name = 12 [packed = true];</code>
      */
-    java.util.List<java.lang.Integer> getEnumEntryList();
+    java.util.List<java.lang.Integer> getEnumEntryNameList();
     /**
-     * <code>repeated int32 enum_entry = 12 [packed = true];</code>
+     * <code>repeated int32 enum_entry_name = 12 [packed = true];</code>
+     */
+    int getEnumEntryNameCount();
+    /**
+     * <code>repeated int32 enum_entry_name = 12 [packed = true];</code>
+     */
+    int getEnumEntryName(int index);
+
+    // repeated .org.jetbrains.kotlin.serialization.EnumEntry enum_entry = 13;
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.EnumEntry enum_entry = 13;</code>
+     */
+    java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry> 
+        getEnumEntryList();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.EnumEntry enum_entry = 13;</code>
+     */
+    org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry getEnumEntry(int index);
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.EnumEntry enum_entry = 13;</code>
      */
     int getEnumEntryCount();
-    /**
-     * <code>repeated int32 enum_entry = 12 [packed = true];</code>
-     */
-    int getEnumEntry(int index);
 
     // optional .org.jetbrains.kotlin.serialization.TypeTable type_table = 30;
     /**
@@ -7704,23 +7719,31 @@ public final class ProtoBuf {
             }
             case 96: {
               if (!((mutable_bitField0_ & 0x00000400) == 0x00000400)) {
-                enumEntry_ = new java.util.ArrayList<java.lang.Integer>();
+                enumEntryName_ = new java.util.ArrayList<java.lang.Integer>();
                 mutable_bitField0_ |= 0x00000400;
               }
-              enumEntry_.add(input.readInt32());
+              enumEntryName_.add(input.readInt32());
               break;
             }
             case 98: {
               int length = input.readRawVarint32();
               int limit = input.pushLimit(length);
               if (!((mutable_bitField0_ & 0x00000400) == 0x00000400) && input.getBytesUntilLimit() > 0) {
-                enumEntry_ = new java.util.ArrayList<java.lang.Integer>();
+                enumEntryName_ = new java.util.ArrayList<java.lang.Integer>();
                 mutable_bitField0_ |= 0x00000400;
               }
               while (input.getBytesUntilLimit() > 0) {
-                enumEntry_.add(input.readInt32());
+                enumEntryName_.add(input.readInt32());
               }
               input.popLimit(limit);
+              break;
+            }
+            case 106: {
+              if (!((mutable_bitField0_ & 0x00000800) == 0x00000800)) {
+                enumEntry_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry>();
+                mutable_bitField0_ |= 0x00000800;
+              }
+              enumEntry_.add(input.readMessage(org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry.PARSER, extensionRegistry));
               break;
             }
             case 242: {
@@ -7766,6 +7789,9 @@ public final class ProtoBuf {
           property_ = java.util.Collections.unmodifiableList(property_);
         }
         if (((mutable_bitField0_ & 0x00000400) == 0x00000400)) {
+          enumEntryName_ = java.util.Collections.unmodifiableList(enumEntryName_);
+        }
+        if (((mutable_bitField0_ & 0x00000800) == 0x00000800)) {
           enumEntry_ = java.util.Collections.unmodifiableList(enumEntry_);
         }
         makeExtensionsImmutable();
@@ -8192,29 +8218,65 @@ public final class ProtoBuf {
       return property_.get(index);
     }
 
-    // repeated int32 enum_entry = 12 [packed = true];
-    public static final int ENUM_ENTRY_FIELD_NUMBER = 12;
-    private java.util.List<java.lang.Integer> enumEntry_;
+    // repeated int32 enum_entry_name = 12 [packed = true];
+    public static final int ENUM_ENTRY_NAME_FIELD_NUMBER = 12;
+    private java.util.List<java.lang.Integer> enumEntryName_;
     /**
-     * <code>repeated int32 enum_entry = 12 [packed = true];</code>
+     * <code>repeated int32 enum_entry_name = 12 [packed = true];</code>
      */
     public java.util.List<java.lang.Integer>
-        getEnumEntryList() {
+        getEnumEntryNameList() {
+      return enumEntryName_;
+    }
+    /**
+     * <code>repeated int32 enum_entry_name = 12 [packed = true];</code>
+     */
+    public int getEnumEntryNameCount() {
+      return enumEntryName_.size();
+    }
+    /**
+     * <code>repeated int32 enum_entry_name = 12 [packed = true];</code>
+     */
+    public int getEnumEntryName(int index) {
+      return enumEntryName_.get(index);
+    }
+    private int enumEntryNameMemoizedSerializedSize = -1;
+
+    // repeated .org.jetbrains.kotlin.serialization.EnumEntry enum_entry = 13;
+    public static final int ENUM_ENTRY_FIELD_NUMBER = 13;
+    private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry> enumEntry_;
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.EnumEntry enum_entry = 13;</code>
+     */
+    public java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry> getEnumEntryList() {
       return enumEntry_;
     }
     /**
-     * <code>repeated int32 enum_entry = 12 [packed = true];</code>
+     * <code>repeated .org.jetbrains.kotlin.serialization.EnumEntry enum_entry = 13;</code>
+     */
+    public java.util.List<? extends org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntryOrBuilder> 
+        getEnumEntryOrBuilderList() {
+      return enumEntry_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.EnumEntry enum_entry = 13;</code>
      */
     public int getEnumEntryCount() {
       return enumEntry_.size();
     }
     /**
-     * <code>repeated int32 enum_entry = 12 [packed = true];</code>
+     * <code>repeated .org.jetbrains.kotlin.serialization.EnumEntry enum_entry = 13;</code>
      */
-    public int getEnumEntry(int index) {
+    public org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry getEnumEntry(int index) {
       return enumEntry_.get(index);
     }
-    private int enumEntryMemoizedSerializedSize = -1;
+    /**
+     * <code>repeated .org.jetbrains.kotlin.serialization.EnumEntry enum_entry = 13;</code>
+     */
+    public org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntryOrBuilder getEnumEntryOrBuilder(
+        int index) {
+      return enumEntry_.get(index);
+    }
 
     // optional .org.jetbrains.kotlin.serialization.TypeTable type_table = 30;
     public static final int TYPE_TABLE_FIELD_NUMBER = 30;
@@ -8243,6 +8305,7 @@ public final class ProtoBuf {
       constructor_ = java.util.Collections.emptyList();
       function_ = java.util.Collections.emptyList();
       property_ = java.util.Collections.emptyList();
+      enumEntryName_ = java.util.Collections.emptyList();
       enumEntry_ = java.util.Collections.emptyList();
       typeTable_ = org.jetbrains.kotlin.serialization.ProtoBuf.TypeTable.getDefaultInstance();
     }
@@ -8281,6 +8344,12 @@ public final class ProtoBuf {
       }
       for (int i = 0; i < getPropertyCount(); i++) {
         if (!getProperty(i).isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      for (int i = 0; i < getEnumEntryCount(); i++) {
+        if (!getEnumEntry(i).isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -8343,12 +8412,15 @@ public final class ProtoBuf {
       for (int i = 0; i < property_.size(); i++) {
         output.writeMessage(10, property_.get(i));
       }
-      if (getEnumEntryList().size() > 0) {
+      if (getEnumEntryNameList().size() > 0) {
         output.writeRawVarint32(98);
-        output.writeRawVarint32(enumEntryMemoizedSerializedSize);
+        output.writeRawVarint32(enumEntryNameMemoizedSerializedSize);
+      }
+      for (int i = 0; i < enumEntryName_.size(); i++) {
+        output.writeInt32NoTag(enumEntryName_.get(i));
       }
       for (int i = 0; i < enumEntry_.size(); i++) {
-        output.writeInt32NoTag(enumEntry_.get(i));
+        output.writeMessage(13, enumEntry_.get(i));
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         output.writeMessage(30, typeTable_);
@@ -8424,17 +8496,21 @@ public final class ProtoBuf {
       }
       {
         int dataSize = 0;
-        for (int i = 0; i < enumEntry_.size(); i++) {
+        for (int i = 0; i < enumEntryName_.size(); i++) {
           dataSize += com.google.protobuf.CodedOutputStream
-            .computeInt32SizeNoTag(enumEntry_.get(i));
+            .computeInt32SizeNoTag(enumEntryName_.get(i));
         }
         size += dataSize;
-        if (!getEnumEntryList().isEmpty()) {
+        if (!getEnumEntryNameList().isEmpty()) {
           size += 1;
           size += com.google.protobuf.CodedOutputStream
               .computeInt32SizeNoTag(dataSize);
         }
-        enumEntryMemoizedSerializedSize = dataSize;
+        enumEntryNameMemoizedSerializedSize = dataSize;
+      }
+      for (int i = 0; i < enumEntry_.size(); i++) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeMessageSize(13, enumEntry_.get(i));
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += com.google.protobuf.CodedOutputStream
@@ -8551,10 +8627,12 @@ public final class ProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000100);
         property_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000200);
-        enumEntry_ = java.util.Collections.emptyList();
+        enumEntryName_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000400);
-        typeTable_ = org.jetbrains.kotlin.serialization.ProtoBuf.TypeTable.getDefaultInstance();
+        enumEntry_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000800);
+        typeTable_ = org.jetbrains.kotlin.serialization.ProtoBuf.TypeTable.getDefaultInstance();
+        bitField0_ = (bitField0_ & ~0x00001000);
         return this;
       }
 
@@ -8626,11 +8704,16 @@ public final class ProtoBuf {
         }
         result.property_ = property_;
         if (((bitField0_ & 0x00000400) == 0x00000400)) {
-          enumEntry_ = java.util.Collections.unmodifiableList(enumEntry_);
+          enumEntryName_ = java.util.Collections.unmodifiableList(enumEntryName_);
           bitField0_ = (bitField0_ & ~0x00000400);
         }
+        result.enumEntryName_ = enumEntryName_;
+        if (((bitField0_ & 0x00000800) == 0x00000800)) {
+          enumEntry_ = java.util.Collections.unmodifiableList(enumEntry_);
+          bitField0_ = (bitField0_ & ~0x00000800);
+        }
         result.enumEntry_ = enumEntry_;
-        if (((from_bitField0_ & 0x00000800) == 0x00000800)) {
+        if (((from_bitField0_ & 0x00001000) == 0x00001000)) {
           to_bitField0_ |= 0x00000008;
         }
         result.typeTable_ = typeTable_;
@@ -8719,10 +8802,20 @@ public final class ProtoBuf {
           }
           
         }
+        if (!other.enumEntryName_.isEmpty()) {
+          if (enumEntryName_.isEmpty()) {
+            enumEntryName_ = other.enumEntryName_;
+            bitField0_ = (bitField0_ & ~0x00000400);
+          } else {
+            ensureEnumEntryNameIsMutable();
+            enumEntryName_.addAll(other.enumEntryName_);
+          }
+          
+        }
         if (!other.enumEntry_.isEmpty()) {
           if (enumEntry_.isEmpty()) {
             enumEntry_ = other.enumEntry_;
-            bitField0_ = (bitField0_ & ~0x00000400);
+            bitField0_ = (bitField0_ & ~0x00000800);
           } else {
             ensureEnumEntryIsMutable();
             enumEntry_.addAll(other.enumEntry_);
@@ -8767,6 +8860,12 @@ public final class ProtoBuf {
         }
         for (int i = 0; i < getPropertyCount(); i++) {
           if (!getProperty(i).isInitialized()) {
+            
+            return false;
+          }
+        }
+        for (int i = 0; i < getEnumEntryCount(); i++) {
+          if (!getEnumEntry(i).isInitialized()) {
             
             return false;
           }
@@ -9699,69 +9798,194 @@ public final class ProtoBuf {
         return this;
       }
 
-      // repeated int32 enum_entry = 12 [packed = true];
-      private java.util.List<java.lang.Integer> enumEntry_ = java.util.Collections.emptyList();
-      private void ensureEnumEntryIsMutable() {
+      // repeated int32 enum_entry_name = 12 [packed = true];
+      private java.util.List<java.lang.Integer> enumEntryName_ = java.util.Collections.emptyList();
+      private void ensureEnumEntryNameIsMutable() {
         if (!((bitField0_ & 0x00000400) == 0x00000400)) {
-          enumEntry_ = new java.util.ArrayList<java.lang.Integer>(enumEntry_);
+          enumEntryName_ = new java.util.ArrayList<java.lang.Integer>(enumEntryName_);
           bitField0_ |= 0x00000400;
          }
       }
       /**
-       * <code>repeated int32 enum_entry = 12 [packed = true];</code>
+       * <code>repeated int32 enum_entry_name = 12 [packed = true];</code>
        */
       public java.util.List<java.lang.Integer>
-          getEnumEntryList() {
+          getEnumEntryNameList() {
+        return java.util.Collections.unmodifiableList(enumEntryName_);
+      }
+      /**
+       * <code>repeated int32 enum_entry_name = 12 [packed = true];</code>
+       */
+      public int getEnumEntryNameCount() {
+        return enumEntryName_.size();
+      }
+      /**
+       * <code>repeated int32 enum_entry_name = 12 [packed = true];</code>
+       */
+      public int getEnumEntryName(int index) {
+        return enumEntryName_.get(index);
+      }
+      /**
+       * <code>repeated int32 enum_entry_name = 12 [packed = true];</code>
+       */
+      public Builder setEnumEntryName(
+          int index, int value) {
+        ensureEnumEntryNameIsMutable();
+        enumEntryName_.set(index, value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 enum_entry_name = 12 [packed = true];</code>
+       */
+      public Builder addEnumEntryName(int value) {
+        ensureEnumEntryNameIsMutable();
+        enumEntryName_.add(value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 enum_entry_name = 12 [packed = true];</code>
+       */
+      public Builder addAllEnumEntryName(
+          java.lang.Iterable<? extends java.lang.Integer> values) {
+        ensureEnumEntryNameIsMutable();
+        super.addAll(values, enumEntryName_);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 enum_entry_name = 12 [packed = true];</code>
+       */
+      public Builder clearEnumEntryName() {
+        enumEntryName_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000400);
+        
+        return this;
+      }
+
+      // repeated .org.jetbrains.kotlin.serialization.EnumEntry enum_entry = 13;
+      private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry> enumEntry_ =
+        java.util.Collections.emptyList();
+      private void ensureEnumEntryIsMutable() {
+        if (!((bitField0_ & 0x00000800) == 0x00000800)) {
+          enumEntry_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry>(enumEntry_);
+          bitField0_ |= 0x00000800;
+         }
+      }
+
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.EnumEntry enum_entry = 13;</code>
+       */
+      public java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry> getEnumEntryList() {
         return java.util.Collections.unmodifiableList(enumEntry_);
       }
       /**
-       * <code>repeated int32 enum_entry = 12 [packed = true];</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.EnumEntry enum_entry = 13;</code>
        */
       public int getEnumEntryCount() {
         return enumEntry_.size();
       }
       /**
-       * <code>repeated int32 enum_entry = 12 [packed = true];</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.EnumEntry enum_entry = 13;</code>
        */
-      public int getEnumEntry(int index) {
+      public org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry getEnumEntry(int index) {
         return enumEntry_.get(index);
       }
       /**
-       * <code>repeated int32 enum_entry = 12 [packed = true];</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.EnumEntry enum_entry = 13;</code>
        */
       public Builder setEnumEntry(
-          int index, int value) {
+          int index, org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
         ensureEnumEntryIsMutable();
         enumEntry_.set(index, value);
-        
+
         return this;
       }
       /**
-       * <code>repeated int32 enum_entry = 12 [packed = true];</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.EnumEntry enum_entry = 13;</code>
        */
-      public Builder addEnumEntry(int value) {
+      public Builder setEnumEntry(
+          int index, org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry.Builder builderForValue) {
+        ensureEnumEntryIsMutable();
+        enumEntry_.set(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.EnumEntry enum_entry = 13;</code>
+       */
+      public Builder addEnumEntry(org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
         ensureEnumEntryIsMutable();
         enumEntry_.add(value);
-        
+
         return this;
       }
       /**
-       * <code>repeated int32 enum_entry = 12 [packed = true];</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.EnumEntry enum_entry = 13;</code>
+       */
+      public Builder addEnumEntry(
+          int index, org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        ensureEnumEntryIsMutable();
+        enumEntry_.add(index, value);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.EnumEntry enum_entry = 13;</code>
+       */
+      public Builder addEnumEntry(
+          org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry.Builder builderForValue) {
+        ensureEnumEntryIsMutable();
+        enumEntry_.add(builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.EnumEntry enum_entry = 13;</code>
+       */
+      public Builder addEnumEntry(
+          int index, org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry.Builder builderForValue) {
+        ensureEnumEntryIsMutable();
+        enumEntry_.add(index, builderForValue.build());
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.EnumEntry enum_entry = 13;</code>
        */
       public Builder addAllEnumEntry(
-          java.lang.Iterable<? extends java.lang.Integer> values) {
+          java.lang.Iterable<? extends org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry> values) {
         ensureEnumEntryIsMutable();
         super.addAll(values, enumEntry_);
-        
+
         return this;
       }
       /**
-       * <code>repeated int32 enum_entry = 12 [packed = true];</code>
+       * <code>repeated .org.jetbrains.kotlin.serialization.EnumEntry enum_entry = 13;</code>
        */
       public Builder clearEnumEntry() {
         enumEntry_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000400);
-        
+        bitField0_ = (bitField0_ & ~0x00000800);
+
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.serialization.EnumEntry enum_entry = 13;</code>
+       */
+      public Builder removeEnumEntry(int index) {
+        ensureEnumEntryIsMutable();
+        enumEntry_.remove(index);
+
         return this;
       }
 
@@ -9771,7 +9995,7 @@ public final class ProtoBuf {
        * <code>optional .org.jetbrains.kotlin.serialization.TypeTable type_table = 30;</code>
        */
       public boolean hasTypeTable() {
-        return ((bitField0_ & 0x00000800) == 0x00000800);
+        return ((bitField0_ & 0x00001000) == 0x00001000);
       }
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.TypeTable type_table = 30;</code>
@@ -9788,7 +10012,7 @@ public final class ProtoBuf {
         }
         typeTable_ = value;
 
-        bitField0_ |= 0x00000800;
+        bitField0_ |= 0x00001000;
         return this;
       }
       /**
@@ -9798,14 +10022,14 @@ public final class ProtoBuf {
           org.jetbrains.kotlin.serialization.ProtoBuf.TypeTable.Builder builderForValue) {
         typeTable_ = builderForValue.build();
 
-        bitField0_ |= 0x00000800;
+        bitField0_ |= 0x00001000;
         return this;
       }
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.TypeTable type_table = 30;</code>
        */
       public Builder mergeTypeTable(org.jetbrains.kotlin.serialization.ProtoBuf.TypeTable value) {
-        if (((bitField0_ & 0x00000800) == 0x00000800) &&
+        if (((bitField0_ & 0x00001000) == 0x00001000) &&
             typeTable_ != org.jetbrains.kotlin.serialization.ProtoBuf.TypeTable.getDefaultInstance()) {
           typeTable_ =
             org.jetbrains.kotlin.serialization.ProtoBuf.TypeTable.newBuilder(typeTable_).mergeFrom(value).buildPartial();
@@ -9813,7 +10037,7 @@ public final class ProtoBuf {
           typeTable_ = value;
         }
 
-        bitField0_ |= 0x00000800;
+        bitField0_ |= 0x00001000;
         return this;
       }
       /**
@@ -9822,7 +10046,7 @@ public final class ProtoBuf {
       public Builder clearTypeTable() {
         typeTable_ = org.jetbrains.kotlin.serialization.ProtoBuf.TypeTable.getDefaultInstance();
 
-        bitField0_ = (bitField0_ & ~0x00000800);
+        bitField0_ = (bitField0_ & ~0x00001000);
         return this;
       }
 
@@ -15914,6 +16138,353 @@ public final class ProtoBuf {
     }
 
     // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.ValueParameter)
+  }
+
+  public interface EnumEntryOrBuilder extends 
+       com.google.protobuf.GeneratedMessageLite.
+            ExtendableMessageOrBuilder<EnumEntry> {
+
+    // optional int32 name = 1;
+    /**
+     * <code>optional int32 name = 1;</code>
+     */
+    boolean hasName();
+    /**
+     * <code>optional int32 name = 1;</code>
+     */
+    int getName();
+  }
+  /**
+   * Protobuf type {@code org.jetbrains.kotlin.serialization.EnumEntry}
+   */
+  public static final class EnumEntry extends
+      com.google.protobuf.GeneratedMessageLite.ExtendableMessage<
+        EnumEntry> implements EnumEntryOrBuilder {
+    // Use EnumEntry.newBuilder() to construct.
+    private EnumEntry(com.google.protobuf.GeneratedMessageLite.ExtendableBuilder<org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry, ?> builder) {
+      super(builder);
+
+    }
+    private EnumEntry(boolean noInit) {}
+
+    private static final EnumEntry defaultInstance;
+    public static EnumEntry getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public EnumEntry getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private EnumEntry(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      try {
+        boolean done = false;
+        while (!done) {
+          int tag = input.readTag();
+          switch (tag) {
+            case 0:
+              done = true;
+              break;
+            default: {
+              if (!parseUnknownField(input,
+                                     extensionRegistry, tag)) {
+                done = true;
+              }
+              break;
+            }
+            case 8: {
+              bitField0_ |= 0x00000001;
+              name_ = input.readInt32();
+              break;
+            }
+          }
+        }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        makeExtensionsImmutable();
+      }
+    }
+    public static com.google.protobuf.Parser<EnumEntry> PARSER =
+        new com.google.protobuf.AbstractParser<EnumEntry>() {
+      public EnumEntry parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new EnumEntry(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<EnumEntry> getParserForType() {
+      return PARSER;
+    }
+
+    private int bitField0_;
+    // optional int32 name = 1;
+    public static final int NAME_FIELD_NUMBER = 1;
+    private int name_;
+    /**
+     * <code>optional int32 name = 1;</code>
+     */
+    public boolean hasName() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>optional int32 name = 1;</code>
+     */
+    public int getName() {
+      return name_;
+    }
+
+    private void initFields() {
+      name_ = 0;
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+
+      if (!extensionsAreInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      com.google.protobuf.GeneratedMessageLite
+        .ExtendableMessage<org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry>.ExtensionWriter extensionWriter =
+          newExtensionWriter();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeInt32(1, name_);
+      }
+      extensionWriter.writeUntil(200, output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(1, name_);
+      }
+      size += extensionsSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    /**
+     * Protobuf type {@code org.jetbrains.kotlin.serialization.EnumEntry}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessageLite.ExtendableBuilder<
+          org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry, Builder> implements org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntryOrBuilder {
+      // Construct using org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private void maybeForceBuilderInitialization() {
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        name_ = 0;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry getDefaultInstanceForType() {
+        return org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry.getDefaultInstance();
+      }
+
+      public org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry build() {
+        org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry buildPartial() {
+        org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry result = new org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.name_ = name_;
+        result.bitField0_ = to_bitField0_;
+        return result;
+      }
+
+      public Builder mergeFrom(org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry other) {
+        if (other == org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry.getDefaultInstance()) return this;
+        if (other.hasName()) {
+          setName(other.getName());
+        }
+        this.mergeExtensionFields(other);
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        if (!extensionsAreInitialized()) {
+          
+          return false;
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      // optional int32 name = 1;
+      private int name_ ;
+      /**
+       * <code>optional int32 name = 1;</code>
+       */
+      public boolean hasName() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>optional int32 name = 1;</code>
+       */
+      public int getName() {
+        return name_;
+      }
+      /**
+       * <code>optional int32 name = 1;</code>
+       */
+      public Builder setName(int value) {
+        bitField0_ |= 0x00000001;
+        name_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>optional int32 name = 1;</code>
+       */
+      public Builder clearName() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        name_ = 0;
+        
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.serialization.EnumEntry)
+    }
+
+    static {
+      defaultInstance = new EnumEntry(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.serialization.EnumEntry)
   }
 
 

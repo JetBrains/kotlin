@@ -450,7 +450,7 @@ JetFile: FunctionsAndTypes.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    FUNCTION_LITERAL_EXPRESSION
+    LAMBDA_EXPRESSION
       FUNCTION_LITERAL
         PsiElement(LBRACE)('{')
         VALUE_PARAMETER_LIST
@@ -485,7 +485,7 @@ JetFile: FunctionsAndTypes.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    FUNCTION_LITERAL_EXPRESSION
+    LAMBDA_EXPRESSION
       FUNCTION_LITERAL
         PsiElement(LBRACE)('{')
         VALUE_PARAMETER_LIST
@@ -513,7 +513,7 @@ JetFile: FunctionsAndTypes.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    FUNCTION_LITERAL_EXPRESSION
+    LAMBDA_EXPRESSION
       FUNCTION_LITERAL
         PsiElement(LBRACE)('{')
         BLOCK
@@ -555,7 +555,7 @@ JetFile: FunctionsAndTypes.kt
     PsiWhiteSpace(' ')
     PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    FUNCTION_LITERAL_EXPRESSION
+    LAMBDA_EXPRESSION
       FUNCTION_LITERAL
         PsiElement(LBRACE)('{')
         BLOCK

@@ -1,7 +1,7 @@
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("StringsKt")
 
-package kotlin
+package kotlin.text
 
 /** Line separator for current system. */
 private val LINE_SEPARATOR: String by lazy { System.getProperty("line.separator")!! }

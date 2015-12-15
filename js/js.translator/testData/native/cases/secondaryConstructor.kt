@@ -12,7 +12,7 @@ class A {
 fun test(a: A, expectedValue: Any?, expectedTypeOfValue: String) {
     assertTrue(a is A)
     assertEquals(expectedValue, a.value)
-    assertEquals(expectedTypeOfValue, typeof(a.value))
+    assertEquals(expectedTypeOfValue, jsTypeOf(a.value))
 }
 
 fun box(): String {

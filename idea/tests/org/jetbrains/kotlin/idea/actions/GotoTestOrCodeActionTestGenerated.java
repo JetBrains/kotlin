@@ -47,9 +47,21 @@ public class GotoTestOrCodeActionTestGenerated extends AbstractGotoTestOrCodeAct
         doTest(fileName);
     }
 
+    @TestMetadata("fromJavaTestToKotlinFile.main.java")
+    public void testFromJavaTestToKotlinFile() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoTestOrCode/fromJavaTestToKotlinFile.main.java");
+        doTest(fileName);
+    }
+
     @TestMetadata("fromKotlinClassToTest.main.kt")
     public void testFromKotlinClassToTest() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoTestOrCode/fromKotlinClassToTest.main.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("fromKotlinFileToTest.main.kt")
+    public void testFromKotlinFileToTest() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoTestOrCode/fromKotlinFileToTest.main.kt");
         doTest(fileName);
     }
 
@@ -62,6 +74,12 @@ public class GotoTestOrCodeActionTestGenerated extends AbstractGotoTestOrCodeAct
     @TestMetadata("fromKotlinTestToKotlinClass.main.kt")
     public void testFromKotlinTestToKotlinClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoTestOrCode/fromKotlinTestToKotlinClass.main.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("fromKotlinTestToKotlinFile.main.kt")
+    public void testFromKotlinTestToKotlinFile() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/navigation/gotoTestOrCode/fromKotlinTestToKotlinFile.main.kt");
         doTest(fileName);
     }
 }

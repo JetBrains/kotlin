@@ -156,7 +156,7 @@ public class KotlinOverridingTest extends KotlinLiteFixture {
     private void assertOverridabilityRelation(String superFun, String subFun, boolean expectedIsError) {
         FunctionDescriptor a = makeFunction(superFun);
         FunctionDescriptor b = makeFunction(subFun);
-        OverridingUtil.OverrideCompatibilityInfo overridableWith = OverridingUtil.DEFAULT.isOverridableBy(a, b);
+        OverridingUtil.OverrideCompatibilityInfo overridableWith = OverridingUtil.DEFAULT.isOverridableBy(a, b, null);
         assertEquals(
                 overridableWith.getDebugMessage(),
                 expectedIsError,

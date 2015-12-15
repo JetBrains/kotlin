@@ -3,7 +3,7 @@ abstract class Foo<T> {
 }
 
 interface Tr {
-    fun hello(s : String)
+    fun hello(s : String): String
 }
 
 class Bar: Foo<String>(), Tr {

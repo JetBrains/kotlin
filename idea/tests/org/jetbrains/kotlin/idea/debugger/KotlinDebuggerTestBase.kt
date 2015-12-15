@@ -50,7 +50,6 @@ import org.jetbrains.kotlin.idea.core.refactoring.getLineNumber
 import org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinFieldBreakpoint
 import org.jetbrains.kotlin.idea.debugger.breakpoints.KotlinFieldBreakpointType
 import org.jetbrains.kotlin.idea.debugger.stepping.*
-import org.jetbrains.kotlin.idea.test.KotlinJdkAndLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
@@ -247,7 +246,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
 
         val libraryEntry = LibraryUtil.findLibraryEntry(virtualFile, getProject())
         if (libraryEntry != null && (libraryEntry is JdkOrderEntry ||
-                                     libraryEntry.getPresentableName() == KotlinJdkAndLibraryProjectDescriptor.LIBRARY_NAME)) {
+                                     libraryEntry.getPresentableName() == KOTLIN_LIBRARY_NAME)) {
             return FileUtil.getNameWithoutExtension(virtualFile.getName()) + ".!EXT!"
         }
 
@@ -406,7 +405,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
             }
         }
 
-        assert(sourceFiles.size() == 1) { "One source file should be found: name = $fileName, sourceFiles = $sourceFiles" }
+        assert(sourceFiles.size == 1) { "One source file should be found: name = $fileName, sourceFiles = $sourceFiles" }
 
         val runnable = Runnable() {
             val psiSourceFile = PsiManager.getInstance(project).findFile(sourceFiles.first())!!

@@ -1,9 +1,0 @@
-package
-
-package root {
-    public val x: [ERROR : Type for root.a]
-    public val y2: [ERROR : Type for package]
-
-    package root.a {
-    }
-}

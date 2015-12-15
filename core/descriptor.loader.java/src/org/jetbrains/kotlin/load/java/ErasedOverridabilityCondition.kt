@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.load.java
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.lazy.types.RawSubstitution
@@ -25,7 +26,7 @@ import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition.Result
 import org.jetbrains.kotlin.resolve.OverridingUtil
 
 class ErasedOverridabilityCondition : ExternalOverridabilityCondition {
-    override fun isOverridable(superDescriptor: CallableDescriptor, subDescriptor: CallableDescriptor): Result {
+    override fun isOverridable(superDescriptor: CallableDescriptor, subDescriptor: CallableDescriptor, subClassDescriptor: ClassDescriptor?): Result {
         if (subDescriptor !is JavaMethodDescriptor) return Result.UNKNOWN
 
         var erasedSuper = superDescriptor.substitute(RawSubstitution.buildSubstitutor()) ?: return Result.UNKNOWN

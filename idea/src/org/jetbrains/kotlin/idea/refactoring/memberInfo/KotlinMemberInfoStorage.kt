@@ -45,7 +45,7 @@ public class KotlinMemberInfoStorage(
             descriptor1 is FunctionDescriptor && descriptor is FunctionDescriptor -> {
                 !OverloadUtil.isOverloadable(descriptor1, descriptor)
             }
-            descriptor1 is PropertyDescriptor && descriptor is PropertyDescriptor,
+            descriptor1 is PropertyDescriptor && descriptor is PropertyDescriptor ||
             descriptor1 is ClassDescriptor && descriptor is ClassDescriptor -> true
             else -> false
         }
@@ -80,8 +80,8 @@ public class KotlinMemberInfoStorage(
                           && myFilter.includeMember(it) }
                 .mapTo(temp) { KotlinMemberInfo(it as KtNamedDeclaration) }
         if (aClass == myClass) {
-            aClass.getDelegationSpecifiers()
-                    .filterIsInstance<KtDelegatorToSuperClass>()
+            aClass.getSuperTypeListEntries()
+                    .filterIsInstance<KtSuperTypeEntry>()
                     .map {
                         val type = context[BindingContext.TYPE, it.typeReference]
                         val classDescriptor = type?.constructor?.declarationDescriptor as? ClassDescriptor

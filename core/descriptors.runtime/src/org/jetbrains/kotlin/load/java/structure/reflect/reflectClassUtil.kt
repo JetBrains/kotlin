@@ -34,7 +34,7 @@ public val Class<*>.classId: ClassId
     get() = when {
         isPrimitive() -> throw IllegalArgumentException("Can't compute ClassId for primitive type: $this")
         isArray() -> throw IllegalArgumentException("Can't compute ClassId for array type: $this")
-        getEnclosingMethod() != null, getEnclosingConstructor() != null, getSimpleName().isEmpty() -> {
+        getEnclosingMethod() != null || getEnclosingConstructor() != null || getSimpleName().isEmpty() -> {
             val fqName = FqName(getName())
             ClassId(fqName.parent(), FqName.topLevel(fqName.shortName()), /* local = */ true)
         }

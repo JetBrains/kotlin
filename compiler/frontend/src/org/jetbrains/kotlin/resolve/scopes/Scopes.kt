@@ -55,6 +55,7 @@ interface LexicalScope: HierarchicalScope {
 
 enum class LexicalScopeKind(val withLocalDescriptors: Boolean) {
     EMPTY(false),
+    THROWING(false),
 
     CLASS_HEADER(false),
     CLASS_INHERITANCE(false),

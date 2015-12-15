@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.idea.debugger
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.InTextDirectivesUtils.getPrefixedInt
 import java.io.File
 
 public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestBase() {

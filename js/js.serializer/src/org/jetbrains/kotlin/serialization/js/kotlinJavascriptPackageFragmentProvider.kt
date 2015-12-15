@@ -42,7 +42,7 @@ public fun createKotlinJavascriptPackageFragmentProvider(
             storageManager,
             module,
             ResourceLoadingClassDataFinder(provider, KotlinJavascriptSerializedResourcePaths, loadResource),
-            KotlinJavascriptAnnotationAndConstantLoader(module),
+            AnnotationAndConstantLoaderImpl(module, JsSerializerProtocol),
             provider,
             localClassResolver,
             ErrorReporter.DO_NOTHING,

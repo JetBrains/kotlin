@@ -14,15 +14,15 @@ JetFile: multiDeclaration.kt
     BLOCK
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      MULTI_VARIABLE_DECLARATION
+      DESTRUCTURING_DECLARATION
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('x')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           MODIFIER_LIST
             PsiElement(private)('private')
             PsiWhiteSpace(' ')
@@ -55,11 +55,11 @@ JetFile: multiDeclaration.kt
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('pair')
       PsiWhiteSpace('\n    ')
-      MULTI_VARIABLE_DECLARATION
+      DESTRUCTURING_DECLARATION
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           MODIFIER_LIST
             ANNOTATION
               PsiElement(AT)('@')
@@ -75,7 +75,7 @@ JetFile: multiDeclaration.kt
             <empty list>
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('x')
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
@@ -84,7 +84,7 @@ JetFile: multiDeclaration.kt
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('pair')
       PsiWhiteSpace('\n\n    ')
-      MULTI_VARIABLE_DECLARATION
+      DESTRUCTURING_DECLARATION
         MODIFIER_LIST
           ANNOTATION_ENTRY
             PsiElement(AT)('@')
@@ -97,7 +97,7 @@ JetFile: multiDeclaration.kt
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           MODIFIER_LIST
             ANNOTATION_ENTRY
               PsiElement(AT)('@')
@@ -110,7 +110,7 @@ JetFile: multiDeclaration.kt
           PsiElement(IDENTIFIER)('x')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('y')
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
@@ -119,7 +119,7 @@ JetFile: multiDeclaration.kt
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n    ')
-      MULTI_VARIABLE_DECLARATION
+      DESTRUCTURING_DECLARATION
         MODIFIER_LIST
           ANNOTATION_ENTRY
             PsiElement(AT)('@')
@@ -132,7 +132,7 @@ JetFile: multiDeclaration.kt
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           MODIFIER_LIST
             ANNOTATION_ENTRY
               PsiElement(AT)('@')
@@ -145,7 +145,7 @@ JetFile: multiDeclaration.kt
           PsiElement(IDENTIFIER)('x')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('y')
         PsiErrorElement:Expecting ')'
           <empty list>

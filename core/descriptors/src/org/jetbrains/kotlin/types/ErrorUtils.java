@@ -255,7 +255,7 @@ public class ErrorUtils {
     private static class ErrorClassDescriptor extends ClassDescriptorImpl {
         public ErrorClassDescriptor(@Nullable String name) {
             super(getErrorModule(), Name.special(name == null ? "<ERROR CLASS>" : "<ERROR CLASS: " + name + ">"),
-                  Modality.OPEN, Collections.<KotlinType>emptyList(), SourceElement.NO_SOURCE);
+                  Modality.OPEN, ClassKind.CLASS, Collections.<KotlinType>emptyList(), SourceElement.NO_SOURCE);
 
             ConstructorDescriptorImpl errorConstructor = ConstructorDescriptorImpl.create(this, Annotations.Companion.getEMPTY(), true, SourceElement.NO_SOURCE);
             errorConstructor.initialize(Collections.<ValueParameterDescriptor>emptyList(),

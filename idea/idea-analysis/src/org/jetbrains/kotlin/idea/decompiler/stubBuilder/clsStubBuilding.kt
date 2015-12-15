@@ -262,6 +262,14 @@ fun createModifierListStub(
     )
 }
 
+fun createEmptyModifierListStub(parent: KotlinStubBaseImpl<*>): KotlinModifierListStubImpl {
+    return KotlinModifierListStubImpl(
+            parent,
+            ModifierMaskUtils.computeMask { false },
+            KtStubElementTypes.MODIFIER_LIST
+    )
+}
+
 fun createAnnotationStubs(annotationIds: List<ClassId>, parent: KotlinStubBaseImpl<*>) {
     return createTargetedAnnotationStubs(annotationIds.map { ClassIdWithTarget(it, null) }, parent)
 }

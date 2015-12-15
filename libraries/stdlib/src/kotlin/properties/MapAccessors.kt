@@ -12,6 +12,7 @@ import kotlin.internal.Exact
  *
  * @throws NoSuchElementException when the map doesn't contain value for the property name and doesn't provide an implicit default (see [withDefault]).
  */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public operator fun <V, V1: V> Map<in String, @Exact V>.getValue(thisRef: Any?, property: KProperty<*>): V1 = getOrImplicitDefault(property.name) as V1
 
 /**
@@ -23,6 +24,7 @@ public operator fun <V, V1: V> Map<in String, @Exact V>.getValue(thisRef: Any?, 
  * @throws NoSuchElementException when the map doesn't contain value for the property name and doesn't provide an implicit default (see [withDefault]).
  */
 @kotlin.jvm.JvmName("getVar")
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public operator fun <V> MutableMap<in String, in V>.getValue(thisRef: Any?, property: KProperty<*>): V = getOrImplicitDefault(property.name) as V
 
 /**
@@ -31,6 +33,7 @@ public operator fun <V> MutableMap<in String, in V>.getValue(thisRef: Any?, prop
  * @param property the metadata for the property, used to get the name of property and store the value associated with that name in the map.
  * @param value the value to set.
  */
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public operator fun <V> MutableMap<in String, in V>.setValue(thisRef: Any?, property: KProperty<*>, value: V) {
     this.put(property.name, value)
 }

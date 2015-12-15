@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
 public fun KtFunctionLiteral.findLabelAndCall(): Pair<Name?, KtCallExpression?> {
-    val literalParent = (this.getParent() as KtFunctionLiteralExpression).getParent()
+    val literalParent = (this.getParent() as KtLambdaExpression).getParent()
 
     fun KtValueArgument.callExpression(): KtCallExpression? {
         val parent = getParent()

@@ -190,6 +190,7 @@ public interface DescriptorRendererOptions {
     public var secondaryConstructorsAsPrimary: Boolean
     public var renderAccessors: Boolean
     public var renderDefaultAnnotationArguments: Boolean
+    public var alwaysRenderModifiers: Boolean
 }
 
 object ExcludedTypeAnnotations {

@@ -2,6 +2,8 @@ package ppp
 
 import ppp.Base.Nested
 
-class Base(p: Nested) {
+fun foo(p: Nested) {}
+
+class Base {
     class Nested
 }

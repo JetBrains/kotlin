@@ -16,8 +16,8 @@ PsiJetFileStubImpl[package=]
           TYPE_REFERENCE:
             USER_TYPE:[isAbsoluteInRootPackage=false]
               REFERENCE_EXPRESSION:[referencedName=A]
-    DELEGATION_SPECIFIER_LIST:
-      DELEGATOR_SUPER_CLASS:
+    SUPER_TYPE_LIST:
+      SUPER_TYPE_ENTRY:
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
             REFERENCE_EXPRESSION:[referencedName=T]

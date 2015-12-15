@@ -16,7 +16,7 @@
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("CollectionsKt")
 
-package kotlin
+package kotlin.collections
 
 import java.util.AbstractList
 

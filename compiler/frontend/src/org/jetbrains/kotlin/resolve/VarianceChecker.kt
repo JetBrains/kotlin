@@ -57,7 +57,7 @@ class VarianceChecker(private val trace: BindingTrace) {
     private fun checkClasses(c: TopDownAnalysisContext) {
         for (jetClassOrObject in c.getDeclaredClasses()!!.keySet()) {
             if (jetClassOrObject is KtClass) {
-                for (specifier in jetClassOrObject.getDelegationSpecifiers()) {
+                for (specifier in jetClassOrObject.getSuperTypeListEntries()) {
                     specifier.getTypeReference()?.checkTypePosition(trace.getBindingContext(), OUT_VARIANCE, trace)
                 }
                 jetClassOrObject.checkTypeParameters(trace.getBindingContext(), OUT_VARIANCE, trace)

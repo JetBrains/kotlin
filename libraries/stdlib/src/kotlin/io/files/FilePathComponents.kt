@@ -17,9 +17,9 @@ import kotlin.text.Regex
  * which is incorrect for current OS. For instance, in Unix function cannot detect
  * network root names like //network.name/root, but can detect Windows roots like C:/.
  *
- * @return string representing the root for this file, or empty string is this file name is relative.
+ * @return length or a substring representing the root for this path, or zero if this file name is relative.
  */
-private fun String.getRootName(): String {
+private fun String.getRootLength(): Int {
     // Note: separators should be already replaced to system ones
     var first = indexOf(File.separatorChar, 0)
     if (first == 0) {
@@ -29,26 +29,24 @@ private fun String.getRootName(): String {
             // So in Windows we'll have root of //my.host/home but in Unix just /
             first = indexOf(File.separatorChar, 2)
             if (first >= 0) {
-                val dot = indexOf('.', 2)
-                if (dot >= 0 && dot < first) {
-                    first = indexOf(File.separatorChar, first + 1)
-                    if (first >= 0)
-                        return substring(0, first + 1)
-                }
+                first = indexOf(File.separatorChar, first + 1)
+                if (first >= 0)
+                    return first + 1
+                else
+                    return length
             }
         }
-        return substring(0, 1)
+        return 1
     }
     // C:\
     if (first > 0 && this[first - 1] == ':') {
         first++
-        return substring(0, first)
+        return first
     }
     // C:
     if (first == -1 && endsWith(':'))
-        return this
-    return ""
-
+        return length
+    return 0
 }
 
 /**
@@ -64,42 +62,70 @@ private fun String.getRootName(): String {
  *
  * @return string representing the root for this file, or empty string is this file name is relative.
  */
+@Deprecated("This property has unclear semantics and will become internal soon.")
 public val File.rootName: String
-    get() = separatorsToSystem().getRootName()
+    get() = path.substring(0, path.getRootLength())
 
 /**
  * Returns root component of this abstract name, like / from /home/user, or C:\ from C:\file.tmp,
- * or //my.host/home for //my.host/home/user,
- * or `null` if this name is relative, like bar/gav
+ * or //my.host/home for //my.host/home/user
  */
-public val File.root: File?
-    get() {
-        val name = rootName
-        return if (name.length > 0) File(name) else null
-    }
+@Deprecated("This property has unclear semantics and will become internal soon.")
+public val File.root: File
+    get() = File(rootName)
+
+/**
+ * Determines whether this file has a root or it represents a relative path.
+ *
+ * Returns `true` when this file has non-empty root.
+ */
+public val File.isRooted: Boolean
+    get() = path.getRootLength() > 0
 
 /**
  * Represents the path to a file as a collection of directories.
  *
- * @property rootName the name of the root of the path (for example, `/` or `C:`).
- * @property fileList the list of [File] objects representing every directory in the path to the file,
+ * @property root the [File] object representing root of the path (for example, `/` or `C:` or empty for relative paths).
+ * @property segments the list of [File] objects representing every directory in the path to the file,
  *     up to an including the file itself.
  */
-public data class FilePathComponents(public val rootName: String, public val fileList: List<File>) {
+@Deprecated("FilePathComponents has unclear semantics and will become internal soon.")
+public data class FilePathComponents
+    internal constructor(public val root: File, public val segments: List<File>) {
+
+    @Deprecated("This constructor will be removed soon. Use File.toComponents() extension to create an instance of FilePathComponents.")
+    constructor (rootName: String, fileList: List<File>): this(File(rootName), fileList)
+
+    @Deprecated("Use 'segments' property instead.", ReplaceWith("segments"))
+    public val fileList: List<File> get() = segments
+
+    /**
+     *  Returns a string representing the root for this file, or an empty string is this file name is relative.
+     */
+    public val rootName: String get() = root.path
+
+    /**
+     * Returns `true` when the [root] is not empty.
+     */
+    public val isRooted: Boolean get() = root.path.isNotEmpty()
+
     /**
      * Returns the number of elements in the path to the file.
      */
-    public fun size(): Int = fileList.size
+    public val size: Int get() = segments.size
+
+    @Deprecated("Use 'size' property instead.", ReplaceWith("size"))
+    public fun size(): Int = size
 
     /**
      * Returns a sub-path of the path, starting with the directory at the specified [beginIndex] and up
      * to the specified [endIndex].
      */
     public fun subPath(beginIndex: Int, endIndex: Int): File {
-        if (beginIndex < 0 || beginIndex > endIndex || endIndex > size())
+        if (beginIndex < 0 || beginIndex > endIndex || endIndex > size)
             throw IllegalArgumentException()
 
-        return File(fileList.subList(beginIndex, endIndex).joinToString(File.separator))
+        return File(segments.subList(beginIndex, endIndex).joinToString(File.separator))
     }
 }
 
@@ -107,17 +133,17 @@ public data class FilePathComponents(public val rootName: String, public val fil
  * Splits the file into path components (the names of containing directories and the name of the file
  * itself) and returns the resulting collection of components.
  */
-public fun File.filePathComponents(): FilePathComponents {
-    val path = separatorsToSystem()
-    val rootName = path.getRootName()
-    val subPath = path.substring(rootName.length)
-    // if: a special case when we have only root component
-    // Split not only by / or \, but also by //, ///, \\, \\\, etc.
-    val list = if (rootName.length > 0 && subPath.isEmpty()) listOf() else
-        // Looks awful but we split just by /+ or \+ depending on OS
-        subPath.split(Regex.fromLiteral(File.separatorChar.toString())).toList().map { it -> File(it) }
-    return FilePathComponents(rootName, list)
+internal fun File.toComponents(): FilePathComponents {
+    val path = path
+    val rootLength = path.getRootLength()
+    val rootName = path.substring(0, rootLength)
+    val subPath = path.substring(rootLength)
+    val list = if (subPath.isEmpty()) listOf() else subPath.split(File.separatorChar).map { File(it) }
+    return FilePathComponents(File(rootName), list)
 }
+
+@Deprecated("FilePathComponents has unclear semantics and will become internal soon.")
+public fun File.filePathComponents(): FilePathComponents = toComponents()
 
 /**
  * Returns a relative pathname which is a subsequence of this pathname,
@@ -129,4 +155,5 @@ public fun File.filePathComponents(): FilePathComponents {
 * or [endIndex] is greater than existing number of components,
 * or [beginIndex] is greater than [endIndex].
  */
-public fun File.subPath(beginIndex: Int, endIndex: Int): File = filePathComponents().subPath(beginIndex, endIndex)
+@Deprecated("This function can fail since path segment count isn't known in advance.")
+public fun File.subPath(beginIndex: Int, endIndex: Int): File = toComponents().subPath(beginIndex, endIndex)

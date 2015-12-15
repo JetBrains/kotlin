@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.resolve.lazy.declarations
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo
+import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
@@ -30,5 +30,5 @@ public interface DeclarationProvider {
 
     public fun getPropertyDeclarations(name: Name): Collection<KtProperty>
 
-    public fun getClassOrObjectDeclarations(name: Name): Collection<JetClassLikeInfo>
+    public fun getClassOrObjectDeclarations(name: Name): Collection<KtClassLikeInfo>
 }

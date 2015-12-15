@@ -48,7 +48,7 @@ JetFile: oldAnnotationsRecovery.kt
             PsiElement(LPAR)('(')
             PsiElement(RPAR)(')')
           PsiWhiteSpace(' ')
-          FUNCTION_LITERAL_EXPRESSION
+          LAMBDA_EXPRESSION
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
               PsiWhiteSpace('\n            ')

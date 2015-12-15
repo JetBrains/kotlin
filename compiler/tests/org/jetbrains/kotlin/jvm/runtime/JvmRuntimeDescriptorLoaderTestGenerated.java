@@ -119,6 +119,12 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
                     doTest(fileName);
                 }
 
+                @TestMetadata("EnumEntry.kt")
+                public void testEnumEntry() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/EnumEntry.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("Function.kt")
                 public void testFunction() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/Function.kt");
@@ -467,6 +473,12 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
                 @TestMetadata("TypeAnnotationWithArguments.kt")
                 public void testTypeAnnotationWithArguments() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/types/TypeAnnotationWithArguments.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("TypeArgument.kt")
+                public void testTypeArgument() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/types/TypeArgument.kt");
                     doTest(fileName);
                 }
 
@@ -3193,6 +3205,12 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
             doTest(fileName);
         }
 
+        @TestMetadata("InnerClassTypeMultipleGeneric.java")
+        public void testInnerClassTypeMultipleGeneric() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/InnerClassTypeMultipleGeneric.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("InnerClassesInGeneric.java")
         public void testInnerClassesInGeneric() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/InnerClassesInGeneric.java");
@@ -3372,6 +3390,12 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
             @TestMetadata("AnnotatedConstructor.java")
             public void testAnnotatedConstructor() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/AnnotatedConstructor.java");
+                doTest(fileName);
+            }
+
+            @TestMetadata("AnnotatedEnumEntry.java")
+            public void testAnnotatedEnumEntry() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/AnnotatedEnumEntry.java");
                 doTest(fileName);
             }
 

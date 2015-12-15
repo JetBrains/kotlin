@@ -108,45 +108,7 @@ class ReadWriteTest {
         file.deleteOnExit()
     }
 
-    class LineIteratorTest {
-        @test fun useLines() {
-            // TODO we should maybe zap the useLines approach as it encourages
-            // use of iterators which don't close the underlying stream
-            val list1 = sample().useLines { it.toArrayList() }
-            val list2 = sample().useLines<ArrayList<String>>{ it.toArrayList() }
 
-            assertEquals(arrayListOf("Hello", "World"), list1)
-            assertEquals(arrayListOf("Hello", "World"), list2)
-        }
-
-        @test fun manualClose() {
-            val reader = sample().buffered()
-            try {
-                val list = reader.lineSequence().toArrayList()
-                assertEquals(arrayListOf("Hello", "World"), list)
-            } finally {
-                reader.close()
-            }
-        }
-
-        @test fun boundaryConditions() {
-            var reader = StringReader("").buffered()
-            assertEquals(ArrayList<String>(), reader.lineSequence().toArrayList())
-            reader.close()
-
-            reader = StringReader(" ").buffered()
-            assertEquals(arrayListOf(" "), reader.lineSequence().toArrayList())
-            reader.close()
-
-            reader = StringReader(" \n").buffered()
-            assertEquals(arrayListOf(" "), reader.lineSequence().toArrayList())
-            reader.close()
-
-            reader = StringReader(" \n ").buffered()
-            assertEquals(arrayListOf(" ", " "), reader.lineSequence().toArrayList())
-            reader.close()
-        }
-    }
 
     @test fun testUse() {
         val list = ArrayList<String>()
@@ -171,5 +133,46 @@ class ReadWriteTest {
         assertFalse(text.isEmpty())
         val text2 = url.readText("UTF8")
         assertFalse(text2.isEmpty())
+    }
+}
+
+
+class LineIteratorTest {
+    @test fun useLines() {
+        // TODO we should maybe zap the useLines approach as it encourages
+        // use of iterators which don't close the underlying stream
+        val list1 = sample().useLines { it.toArrayList() }
+        val list2 = sample().useLines<ArrayList<String>>{ it.toArrayList() }
+
+        assertEquals(arrayListOf("Hello", "World"), list1)
+        assertEquals(arrayListOf("Hello", "World"), list2)
+    }
+
+    @test fun manualClose() {
+        val reader = sample().buffered()
+        try {
+            val list = reader.lineSequence().toArrayList()
+            assertEquals(arrayListOf("Hello", "World"), list)
+        } finally {
+            reader.close()
+        }
+    }
+
+    @test fun boundaryConditions() {
+        var reader = StringReader("").buffered()
+        assertEquals(ArrayList<String>(), reader.lineSequence().toArrayList())
+        reader.close()
+
+        reader = StringReader(" ").buffered()
+        assertEquals(arrayListOf(" "), reader.lineSequence().toArrayList())
+        reader.close()
+
+        reader = StringReader(" \n").buffered()
+        assertEquals(arrayListOf(" "), reader.lineSequence().toArrayList())
+        reader.close()
+
+        reader = StringReader(" \n ").buffered()
+        assertEquals(arrayListOf(" ", " "), reader.lineSequence().toArrayList())
+        reader.close()
     }
 }

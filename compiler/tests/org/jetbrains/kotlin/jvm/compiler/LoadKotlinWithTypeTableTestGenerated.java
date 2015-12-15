@@ -117,6 +117,12 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
                 doTest(fileName);
             }
 
+            @TestMetadata("EnumEntry.kt")
+            public void testEnumEntry() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/EnumEntry.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("Function.kt")
             public void testFunction() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/Function.kt");
@@ -465,6 +471,12 @@ public class LoadKotlinWithTypeTableTestGenerated extends AbstractLoadKotlinWith
             @TestMetadata("TypeAnnotationWithArguments.kt")
             public void testTypeAnnotationWithArguments() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/types/TypeAnnotationWithArguments.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("TypeArgument.kt")
+            public void testTypeArgument() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/types/TypeArgument.kt");
                 doTest(fileName);
             }
 

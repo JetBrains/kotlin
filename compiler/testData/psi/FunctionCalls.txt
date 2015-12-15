@@ -64,8 +64,8 @@ JetFile: FunctionCalls.kt
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('i')
         PsiWhiteSpace(' ')
-        FUNCTION_LITERAL_ARGUMENT
-          FUNCTION_LITERAL_EXPRESSION
+        LAMBDA_ARGUMENT
+          LAMBDA_EXPRESSION
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
               BLOCK
@@ -77,7 +77,7 @@ JetFile: FunctionCalls.kt
         PsiElement(IDENTIFIER)('j')
       PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n  ')
-      FUNCTION_LITERAL_EXPRESSION
+      LAMBDA_EXPRESSION
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
           BLOCK
@@ -89,8 +89,8 @@ JetFile: FunctionCalls.kt
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('k')
         PsiWhiteSpace(' ')
-        FUNCTION_LITERAL_ARGUMENT
-          FUNCTION_LITERAL_EXPRESSION
+        LAMBDA_ARGUMENT
+          LAMBDA_EXPRESSION
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
               PsiWhiteSpace('\n    ')
@@ -110,8 +110,8 @@ JetFile: FunctionCalls.kt
               PsiElement(IDENTIFIER)('a')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        FUNCTION_LITERAL_ARGUMENT
-          FUNCTION_LITERAL_EXPRESSION
+        LAMBDA_ARGUMENT
+          LAMBDA_EXPRESSION
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
               PsiWhiteSpace('\n    ')
@@ -132,7 +132,7 @@ JetFile: FunctionCalls.kt
           PsiElement(RPAR)(')')
       PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n  ')
-      FUNCTION_LITERAL_EXPRESSION
+      LAMBDA_EXPRESSION
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n    ')
@@ -160,8 +160,8 @@ JetFile: FunctionCalls.kt
               PsiElement(IDENTIFIER)('a')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        FUNCTION_LITERAL_ARGUMENT
-          FUNCTION_LITERAL_EXPRESSION
+        LAMBDA_ARGUMENT
+          LAMBDA_EXPRESSION
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
               PsiWhiteSpace('\n    ')
@@ -190,7 +190,7 @@ JetFile: FunctionCalls.kt
           PsiElement(RPAR)(')')
       PsiElement(SEMICOLON)(';')
       PsiWhiteSpace('\n  ')
-      FUNCTION_LITERAL_EXPRESSION
+      LAMBDA_EXPRESSION
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
           PsiWhiteSpace('\n    ')

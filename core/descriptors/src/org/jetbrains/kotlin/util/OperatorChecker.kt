@@ -41,15 +41,11 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.HAS_NEXT
 import org.jetbrains.kotlin.util.OperatorNameConventions.INC
 import org.jetbrains.kotlin.util.OperatorNameConventions.INVOKE
 import org.jetbrains.kotlin.util.OperatorNameConventions.ITERATOR
-import org.jetbrains.kotlin.util.OperatorNameConventions.MINUS
 import org.jetbrains.kotlin.util.OperatorNameConventions.NEXT
-import org.jetbrains.kotlin.util.OperatorNameConventions.NOT
-import org.jetbrains.kotlin.util.OperatorNameConventions.PLUS
 import org.jetbrains.kotlin.util.OperatorNameConventions.RANGE_TO
 import org.jetbrains.kotlin.util.OperatorNameConventions.SET
 import org.jetbrains.kotlin.util.OperatorNameConventions.SET_VALUE
-import org.jetbrains.kotlin.util.OperatorNameConventions.UNARY_MINUS
-import org.jetbrains.kotlin.util.OperatorNameConventions.UNARY_PLUS
+import org.jetbrains.kotlin.util.OperatorNameConventions.SIMPLE_UNARY_OPERATION_NAMES
 
 object OperatorChecks {
     fun canBeOperator(functionDescriptor: FunctionDescriptor): Boolean {
@@ -64,38 +60,39 @@ object OperatorChecks {
                     val lastIsOk = valueParameters.lastOrNull()?.let { !it.hasDefaultValue() && it.varargElementType == null } ?: false
                     valueParameters.size >= 2 && lastIsOk
                 }
-                
+
                 GET_VALUE == name -> noDefaultsAndVarargs && valueParameters.size >= 2 && valueParameters[1].isKProperty
                 SET_VALUE == name -> noDefaultsAndVarargs && valueParameters.size >= 3 && valueParameters[1].isKProperty
-                
+
                 INVOKE == name -> isMemberOrExtension
                 CONTAINS == name -> singleValueParameter && noDefaultsAndVarargs && returnsBoolean
-                
+
                 ITERATOR == name -> noValueParameters
                 NEXT == name -> noValueParameters
                 HAS_NEXT == name -> noValueParameters && returnsBoolean
-                
+
                 RANGE_TO == name -> singleValueParameter && noDefaultsAndVarargs
-                
+
                 EQUALS == name -> {
                     fun DeclarationDescriptor.isAny() = (this as? ClassDescriptor)?.let { KotlinBuiltIns.isAny(it) } ?: false
                     isMember && overriddenDescriptors.any { it.containingDeclaration.isAny() }
                 }
                 COMPARE_TO == name -> returnsInt && singleValueParameter && noDefaultsAndVarargs
-                
-                BINARY_OPERATION_NAMES.any { it == name } && functionDescriptor.valueParameters.size == 1 -> 
-                    singleValueParameter && noDefaultsAndVarargs
-                (PLUS == name) || (MINUS == name) || (UNARY_PLUS == name) || (UNARY_MINUS == name) || (NOT == name) ->
-                    noValueParameters
-                (INC == name) || (DEC == name) -> {
+
+                name in BINARY_OPERATION_NAMES -> singleValueParameter && noDefaultsAndVarargs
+
+                name in SIMPLE_UNARY_OPERATION_NAMES -> noValueParameters
+
+                INC == name || DEC == name -> {
                     val receiver = dispatchReceiverParameter ?: extensionReceiverParameter
                     isMemberOrExtension && (receiver != null) && (returnType?.let { it.isSubtypeOf(receiver.type) } ?: false)
                 }
-                
-                ASSIGNMENT_OPERATIONS.any { it == name } ->
+
+                name in ASSIGNMENT_OPERATIONS ->
                     returnsUnit && singleValueParameter && noDefaultsAndVarargs
-                
+
                 name.asString().matches(COMPONENT_REGEX) -> noValueParameters
+
                 else -> false
             }
         }

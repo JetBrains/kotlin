@@ -226,9 +226,9 @@ public class AsmUtil {
         int flags = getVisibilityAccessFlag(functionDescriptor);
         flags |= getVarargsFlag(functionDescriptor);
         flags |= getDeprecatedAccessFlag(functionDescriptor);
-        if (DeprecationUtilKt.isAnnotatedAsHidden(functionDescriptor)
+        if (DeprecationUtilKt.isHiddenInResolution(functionDescriptor)
             || functionDescriptor instanceof PropertyAccessorDescriptor
-               && DeprecationUtilKt.isAnnotatedAsHidden(((PropertyAccessorDescriptor) functionDescriptor).getCorrespondingProperty())) {
+               && DeprecationUtilKt.isHiddenInResolution(((PropertyAccessorDescriptor) functionDescriptor).getCorrespondingProperty())) {
             flags |= ACC_SYNTHETIC;
         }
         return flags;
@@ -325,9 +325,6 @@ public class AsmUtil {
     private static Integer specialCaseVisibility(@NotNull MemberDescriptor memberDescriptor) {
         DeclarationDescriptor containingDeclaration = memberDescriptor.getContainingDeclaration();
         Visibility memberVisibility = memberDescriptor.getVisibility();
-        if (isJvmInterface(containingDeclaration)) {
-            return memberVisibility == Visibilities.PRIVATE ? NO_FLAG_PACKAGE_PRIVATE : ACC_PUBLIC;
-        }
 
         if (memberVisibility == Visibilities.LOCAL && memberDescriptor instanceof CallableMemberDescriptor) {
             return ACC_PUBLIC;
@@ -377,11 +374,6 @@ public class AsmUtil {
                 // see http://youtrack.jetbrains.com/issue/KT-2680
                 return ACC_PROTECTED;
             }
-        }
-
-        if (memberDescriptor instanceof PropertyDescriptor &&
-            ((PropertyDescriptor) memberDescriptor).isConst() || hasJvmFieldAnnotation(memberDescriptor)) {
-            return null;
         }
 
         return null;

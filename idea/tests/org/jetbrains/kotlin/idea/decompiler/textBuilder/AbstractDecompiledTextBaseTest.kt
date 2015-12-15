@@ -22,13 +22,13 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiRecursiveElementVisitor
 import com.intellij.testFramework.LightProjectDescriptor
-import com.intellij.testFramework.UsefulTestCase
 import org.jetbrains.kotlin.idea.test.JdkAndMockLibraryProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
-import kotlin.test.fail
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import java.io.File
 
 public abstract class AbstractDecompiledTextBaseTest(
         baseDirectory: String,
@@ -44,9 +44,9 @@ public abstract class AbstractDecompiledTextBaseTest(
 
     public fun doTest(path: String) {
         val fileToDecompile = getFileToDecompile()
-        val psiFile = PsiManager.getInstance(getProject()).findFile(fileToDecompile)!!
+        val psiFile = PsiManager.getInstance(project).findFile(fileToDecompile)!!
         checkPsiFile(psiFile)
-        UsefulTestCase.assertSameLinesWithFile(path.substring(0, path.length() - 1) + ".expected.kt", psiFile.getText())
+        KotlinTestUtils.assertEqualsToFile(File(path.substring(0, path.length - 1) + ".expected.kt"), psiFile.text)
         checkThatFileWasParsedCorrectly(psiFile)
     }
 

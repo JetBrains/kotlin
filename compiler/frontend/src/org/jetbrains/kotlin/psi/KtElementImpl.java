@@ -24,6 +24,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.PsiReferenceService;
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry;
+import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 
@@ -69,6 +70,12 @@ public class KtElementImpl extends ASTWrapperPsiElement implements KtElement {
     @Override
     public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
         return visitor.visitKtElement(this, data);
+    }
+
+    @Override
+    public void delete() throws IncorrectOperationException {
+        KtElementUtilsKt.deleteSemicolon(this);
+        super.delete();
     }
 
     @Override

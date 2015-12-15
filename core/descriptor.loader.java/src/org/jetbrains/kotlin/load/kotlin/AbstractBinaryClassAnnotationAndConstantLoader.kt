@@ -25,11 +25,9 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
+import org.jetbrains.kotlin.serialization.jvm.ClassMapperLite
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.index
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.methodImplClassName
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.propertyImplClassName
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.propertySignature
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.*
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.KotlinType
@@ -110,6 +108,14 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
 
         val signature = getCallableSignature(proto, container.nameResolver, container.typeTable, kind) ?: return emptyList()
         return transformAnnotations(findClassAndLoadMemberAnnotations(container, proto, signature))
+    }
+
+    override fun loadEnumEntryAnnotations(container: ProtoContainer, proto: ProtoBuf.EnumEntry): List<A> {
+        val signature = MemberSignature.fromFieldNameAndDesc(
+                container.nameResolver.getString(proto.name),
+                ClassMapperLite.mapClass(container.nameResolver.getClassId(container.classProto!!.fqName))
+        )
+        return findClassAndLoadMemberAnnotations(container, proto, signature)
     }
 
     protected abstract fun loadPropertyAnnotations(propertyAnnotations: List<A>, fieldAnnotations: List<A>): List<T>

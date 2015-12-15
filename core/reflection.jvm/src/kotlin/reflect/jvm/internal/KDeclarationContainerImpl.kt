@@ -37,8 +37,6 @@ import kotlin.reflect.KCallable
 import kotlin.reflect.KotlinReflectionInternalError
 
 internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContainer {
-    // NB: be careful not to introduce delegated properties in this class and subclasses, there are problems with circular dependencies
-
     // Note: this is stored here on a soft reference to prevent GC from destroying the weak reference to it in the moduleByClassLoader cache
     private val moduleData_ = ReflectProperties.lazySoft {
         jClass.getOrCreateModule()

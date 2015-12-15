@@ -342,7 +342,7 @@ private fun argumentForParameter(
             val valueArgument = resolvedArgument.valueArgument!!
             val expression = valueArgument.getArgumentExpression()!!
             expression.mark(USER_CODE_KEY)
-            if (valueArgument is FunctionLiteralArgument) {
+            if (valueArgument is LambdaArgument) {
                 expression.mark(WAS_FUNCTION_LITERAL_ARGUMENT_KEY)
             }
             return Argument(expression, bindingContext.getType(expression), isNamed = valueArgument.isNamed())
@@ -464,7 +464,7 @@ private fun introduceNamedArguments(result: KtElement) {
         val argumentsToMakeNamed = callExpression.valueArguments.dropWhile { !it[MAKE_ARGUMENT_NAMED_KEY] }
         for (argument in argumentsToMakeNamed) {
             if (argument.isNamed()) continue
-            if (argument is KtFunctionLiteralArgument) continue
+            if (argument is KtLambdaArgument) continue
             val argumentMatch = resolvedCall.getArgumentMapping(argument) as ArgumentMatch
             val name = argumentMatch.valueParameter.name
             //TODO: not always correct for vararg's
@@ -499,7 +499,7 @@ private fun dropArgumentsForDefaultValues(result: KtElement) {
         argumentList.removeArgument(argument)
         if (argumentList.arguments.isEmpty()) {
             val callExpression = argumentList.parent as KtCallExpression
-            if (callExpression.functionLiteralArguments.isNotEmpty()) {
+            if (callExpression.lambdaArguments.isNotEmpty()) {
                 argumentList.delete()
             }
         }
@@ -570,12 +570,12 @@ private fun restoreFunctionLiteralArguments(expression: KtElement) {
         assert(expr.unpackFunctionLiteral() != null)
 
         val argument = expr.parent as? KtValueArgument ?: return
-        if (argument is KtFunctionLiteralArgument) return
+        if (argument is KtLambdaArgument) return
         if (argument.isNamed()) return
         val argumentList = argument.parent as? KtValueArgumentList ?: return
         if (argument != argumentList.arguments.last()) return
         val callExpression = argumentList.parent as? KtCallExpression ?: return
-        if (callExpression.functionLiteralArguments.isNotEmpty()) return
+        if (callExpression.lambdaArguments.isNotEmpty()) return
 
         val resolvedCall = callExpression.getResolvedCall(callExpression.analyze(BodyResolveMode.PARTIAL)) ?: return
         if (!resolvedCall.isReallySuccess()) return

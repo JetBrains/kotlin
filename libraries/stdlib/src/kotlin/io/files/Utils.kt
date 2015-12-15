@@ -48,13 +48,14 @@ public fun createTempFile(prefix: String = "tmp", suffix: String? = null, direct
 /**
  * Returns this if this file is a directory, or the parent if it is a file inside a directory.
  */
+@Deprecated("This property has unclear semantics and will be removed soon.")
 public val File.directory: File
     get() = if (isDirectory()) this else parentFile!!
 
 /**
  * Returns parent of this abstract path name, or `null` if it has no parent.
  */
-@Deprecated("Use parentFile", ReplaceWith("parentFile"), DeprecationLevel.ERROR)
+@Deprecated("Use 'parentFile' property instead.", ReplaceWith("parentFile"), DeprecationLevel.ERROR)
 public val File.parent: File?
     get() = parentFile
 
@@ -69,7 +70,7 @@ public val File.extension: String
  *
  * @return the pathname with system separators.
  */
-@Deprecated("Use File.separatorsToSystem instead", ReplaceWith("File(this).separatorsToSystem()", "java.io.File"))
+@Deprecated("Use File.path instead", ReplaceWith("File(this).path", "java.io.File"))
 public fun String.separatorsToSystem(): String {
     val otherSep = if (File.separator == "/") "\\" else "/"
     return replace(otherSep, File.separator)
@@ -101,9 +102,17 @@ public fun String.allSeparatorsToSystem(): String {
  *
  * @return the pathname with system separators.
  */
+@Deprecated("File has already system separators.")
 public fun File.separatorsToSystem(): String {
     return toString().separatorsToSystem()
 }
+
+/**
+ * Returns [path] of this File using the invariant separator '/' to
+ * separate the names in the name sequence.
+ */
+public val File.invariantSeparatorsPath: String
+    get() = if (File.separatorChar != '/') path.replace(File.separatorChar, '/') else path
 
 /**
  * Returns file's name without an extension.
@@ -118,33 +127,101 @@ public val File.nameWithoutExtension: String
  *
  * @return relative path from [base] to this.
 *
- * @throws IllegalArgumentException if child and parent have different roots.
+ * @throws IllegalArgumentException if this and base paths have different roots.
  */
-public fun File.relativeTo(base: File): String {
+@Deprecated("This function will change return type to File soon. Use toRelativeString instead.", ReplaceWith("toRelativeString(base)"))
+public fun File.relativeTo(base: File): String
+        = toRelativeString(base)
+
+
+/**
+ * Calculates the relative path for this file from [base] file.
+ * Note that the [base] file is treated as a directory.
+ * If this file matches the [base] file, then an empty string will be returned.
+ *
+ * @return relative path from [base] to this.
+ *
+ * @throws IllegalArgumentException if this and base paths have different roots.
+ */
+public fun File.toRelativeString(base: File): String
+        = toRelativeStringOrNull(base) ?: throw IllegalArgumentException("this and base files have different roots: $this and $base")
+
+/**
+ * Calculates the relative path for this file from [base] file.
+ * Note that the [base] file is treated as a directory.
+ * If this file matches the [base] file, then a [File] with empty path will be returned.
+ *
+ * @return File with relative path from [base] to this.
+ *
+ * @throws IllegalArgumentException if this and base paths have different roots.
+ */
+@Deprecated("This function will be renamed to relativeTo soon.")
+public fun File.relativeToFile(base: File): File = File(this.relativeTo(base))
+
+
+/**
+ * Calculates the relative path for this file from [base] file.
+ * Note that the [base] file is treated as a directory.
+ * If this file matches the [base] file, then a [File] with empty path will be returned.
+ *
+ * @return File with relative path from [base] to this, or `this` if this and base paths have different roots.
+ */
+public fun File.relativeToOrSelf(base: File): File
+        = toRelativeStringOrNull(base)?.let { File(it) } ?: this
+
+/**
+ * Calculates the relative path for this file from [base] file.
+ * Note that the [base] file is treated as a directory.
+ * If this file matches the [base] file, then a [File] with empty path will be returned.
+ *
+ * @return File with relative path from [base] to this, or `null` if this and base paths have different roots.
+ */
+public fun File.relativeToOrNull(base: File): File?
+        = toRelativeStringOrNull(base)?.let { File(it) }
+
+
+private fun File.toRelativeStringOrNull(base: File): String? {
     // Check roots
-    val components = filePathComponents()
-    val baseComponents = base.filePathComponents()
-    if (components.rootName != baseComponents.rootName)
-        throw IllegalArgumentException("this and base files have different roots: ${components.rootName} and ${baseComponents.rootName}")
-    var i = 0
-    while (i < components.size() && i < baseComponents.size() && components.fileList[i] == baseComponents.fileList[i])
-        i++
-    val sameCount = i
-    val baseCount = baseComponents.size()
-    // Add all ..
-    val res = StringBuilder()
-    for (j in sameCount..baseCount - 2)
-        res.append("..").append(File.separator)
-    // If .. is the last element, no separator should present
-    if (baseCount > sameCount) {
-        res.append(if (sameCount < components.size()) ".." + File.separator else "..")
+    val thisComponents = this.toComponents().normalize()
+    val baseComponents = base.toComponents().normalize()
+    if (thisComponents.root != baseComponents.root) {
+        return null
     }
+
+    val baseCount = baseComponents.size
+    val thisCount = thisComponents.size
+
+    val sameCount = run countSame@ {
+        var i = 0
+        val maxSameCount = Math.min(thisCount, baseCount)
+        while (i < maxSameCount && thisComponents.segments[i] == baseComponents.segments[i])
+            i++
+        return@countSame i
+    }
+
+    // Annihilate differing base components by adding required number of .. parts
+    val res = StringBuilder()
+    for (i in baseCount - 1 downTo sameCount) {
+        if (baseComponents.segments[i].name == "..") {
+            return null
+        }
+
+        res.append("..")
+
+        if (i != sameCount) {
+            res.append(File.separatorChar)
+        }
+    }
+
     // Add remaining this components
-    if (sameCount < components.size() - 1)
-        res.append(components.subPath(sameCount, components.size() - 1)).append(File.separator)
-    // The last one should be without separator
-    if (sameCount < components.size())
-        res.append(components.subPath(components.size() - 1, components.size()))
+    if (sameCount < thisCount) {
+        // If some .. were appended
+        if (sameCount < baseCount)
+            res.append(File.separatorChar)
+
+        thisComponents.segments.drop(sameCount).joinTo(res, File.separator)
+    }
+
     return res.toString()
 }
 
@@ -302,45 +379,44 @@ public fun File.listFiles(filter: (file: File) -> Boolean): Array<File>? = listF
  * Determines whether this file belongs to the same root as [other]
  * and starts with all components of [other] in the same order.
  * So if [other] has N components, first N components of `this` must be the same as in [other].
- * For relative [other], `this` can belong to any root.
  *
  * @return `true` if this path starts with [other] path, `false` otherwise.
  */
 public fun File.startsWith(other: File): Boolean {
-    val components = filePathComponents()
-    val otherComponents = other.filePathComponents()
-    if (components.rootName != otherComponents.rootName && otherComponents.rootName != "")
+    val components = toComponents()
+    val otherComponents = other.toComponents()
+    if (components.root != otherComponents.root)
         return false
-    return if (components.size() < otherComponents.size()) false
-    else components.fileList.subList(0, otherComponents.size()).equals(otherComponents.fileList)
+    return if (components.size < otherComponents.size) false
+    else components.segments.subList(0, otherComponents.size).equals(otherComponents.segments)
 }
 
 /**
  * Determines whether this file belongs to the same root as [other]
  * and starts with all components of [other] in the same order.
  * So if [other] has N components, first N components of `this` must be the same as in [other].
- * For relative [other], `this` can belong to any root.
  *
  * @return `true` if this path starts with [other] path, `false` otherwise.
  */
 public fun File.startsWith(other: String): Boolean = startsWith(File(other))
 
 /**
- * Determines whether this file belongs to the same root as [other]
- * and ends with all components of [other] in the same order.
- * So if [other] has N components, last N components of `this` must be the same as in [other].
- * For relative [other], `this` can belong to any root.
+ * Determines whether this file path ends with the path of [other] file.
+ *
+ * If [other] is rooted path it must be equal to this.
+ * If [other] is relative path then last N components of `this` must be the same as all components in [other],
+ * where N is the number of components in [other].
  *
  * @return `true` if this path ends with [other] path, `false` otherwise.
  */
 public fun File.endsWith(other: File): Boolean {
-    val components = filePathComponents()
-    val otherComponents = other.filePathComponents()
-    if (components.rootName != otherComponents.rootName && otherComponents.rootName != "")
-        return false
-    val shift = components.size() - otherComponents.size()
+    val components = toComponents()
+    val otherComponents = other.toComponents()
+    if (otherComponents.isRooted)
+        return this == other
+    val shift = components.size - otherComponents.size
     return if (shift < 0) false
-    else components.fileList.subList(shift, components.size()).equals(otherComponents.fileList)
+    else components.segments.subList(shift, components.size).equals(otherComponents.segments)
 }
 
 /**
@@ -359,20 +435,22 @@ public fun File.endsWith(other: String): Boolean = endsWith(File(other))
  *
  * @return normalized pathname with . and possibly .. removed.
  */
-public fun File.normalize(): File {
-    val components = filePathComponents()
-    val rootName = components.rootName
-    val list: MutableList<String> = ArrayList()
-    for (file in components.fileList) {
-        val name = file.toString()
-        when (name) {
-            "." -> {
-            }
-            ".." -> if (!list.isEmpty() && list.get(list.size - 1) != "..") list.removeAt(list.size - 1) else list.add(name)
-            else -> list.add(name)
+public fun File.normalize(): File
+        = with (toComponents()) { root.resolve(segments.normalize().joinToString(File.separator)) }
+
+private fun FilePathComponents.normalize(): FilePathComponents
+        = FilePathComponents(root, segments.normalize())
+
+private fun List<File>.normalize(): List<File> {
+    val list: MutableList<File> = ArrayList(this.size)
+    for (file in this) {
+        when (file.name) {
+            "." -> {}
+            ".." -> if (!list.isEmpty() && list.last().name != "..") list.removeAt(list.size - 1) else list.add(file)
+            else -> list.add(file)
         }
     }
-    return File(list.joinToString(File.separator, rootName))
+    return list
 }
 
 /**
@@ -385,10 +463,10 @@ public fun File.normalize(): File {
  * @return concatenated this and [relative] paths, or just [relative] if it's absolute.
  */
 public fun File.resolve(relative: File): File {
-    if (relative.root != null)
+    if (relative.isRooted)
         return relative
-    val ourName = toString()
-    return if (ourName.endsWith(File.separatorChar)) File(ourName + relative) else File(ourName + File.separatorChar + relative)
+    val baseName = this.toString()
+    return if (baseName.isEmpty() || baseName.endsWith(File.separatorChar)) File(baseName + relative) else File(baseName + File.separatorChar + relative)
 }
 
 /**
@@ -408,9 +486,9 @@ public fun File.resolve(relative: String): File = resolve(File(relative))
  * @return concatenated this.parent and [relative] paths, or just [relative] if it's absolute or this has no parent.
  */
 public fun File.resolveSibling(relative: File): File {
-    val components = filePathComponents()
-    val rootName = components.rootName
-    return if (components.size() == 0) relative else File(rootName).resolve(components.subPath(0, components.size() - 1)).resolve(relative)
+    val components = this.toComponents()
+    val parentSubPath = if (components.size == 0) File("..") else components.subPath(0, components.size - 1)
+    return components.root.resolve(parentSubPath).resolve(relative)
 }
 
 /**

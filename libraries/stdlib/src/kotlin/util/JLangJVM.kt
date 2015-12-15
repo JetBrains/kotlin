@@ -32,6 +32,7 @@ public annotation class throws(public vararg val exceptionClasses: KClass<out Th
  * Returns the runtime Java class of this object.
  */
 @Intrinsic("kotlin.javaClass.property")
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
 public val <T: Any> T.javaClass : Class<T>
     get() = (this as java.lang.Object).getClass() as Class<T>
 
@@ -39,6 +40,7 @@ public val <T: Any> T.javaClass : Class<T>
  * Returns the Java class for the specified type.
  */
 @Intrinsic("kotlin.javaClass.function")
+@Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")
 @Deprecated("Use the class reference and .java extension property instead: MyClass::class.java", ReplaceWith("T::class.java"))
 public fun <reified T: Any> javaClass(): Class<T> = T::class.java
 
@@ -46,8 +48,8 @@ public fun <reified T: Any> javaClass(): Class<T> = T::class.java
 /**
  * Returns the annotation type of this annotation.
  */
-public fun <T : Annotation> T.annotationType() : Class<out T> =
-    (this as java.lang.annotation.Annotation).annotationType() as Class<out T>
+@Deprecated("Use annotationClass.java instead", ReplaceWith("annotationClass.java"))
+public fun <T : Annotation> T.annotationType() : Class<out T> = annotationClass.java
 
 /**
  * Invokes the underlying method represented by this [Method] object, on the specified [instance] with the specified parameters.

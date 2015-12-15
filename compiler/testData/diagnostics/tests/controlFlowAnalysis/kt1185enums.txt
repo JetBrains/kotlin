@@ -38,7 +38,7 @@ package kt1185 {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         // Static members
-        @kotlin.Deprecated(message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<kt1185.Color>
+        @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<kt1185.Color>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kt1185.Color
         public final /*synthesized*/ fun values(): kotlin.Array<kt1185.Color>
     }
@@ -62,7 +62,7 @@ package kt1185 {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         // Static members
-        @kotlin.Deprecated(message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<kt1185.Direction>
+        @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<kt1185.Direction>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kt1185.Direction
         public final /*synthesized*/ fun values(): kotlin.Array<kt1185.Direction>
     }

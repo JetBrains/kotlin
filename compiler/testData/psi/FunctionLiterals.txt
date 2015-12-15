@@ -14,14 +14,14 @@ JetFile: FunctionLiterals.kt
     BLOCK
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      FUNCTION_LITERAL_EXPRESSION
+      LAMBDA_EXPRESSION
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
           BLOCK
             <empty list>
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
-      FUNCTION_LITERAL_EXPRESSION
+      LAMBDA_EXPRESSION
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
           BLOCK
@@ -29,7 +29,7 @@ JetFile: FunctionLiterals.kt
               PsiElement(IDENTIFIER)('foo')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
-      FUNCTION_LITERAL_EXPRESSION
+      LAMBDA_EXPRESSION
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
           VALUE_PARAMETER_LIST
@@ -43,7 +43,7 @@ JetFile: FunctionLiterals.kt
               PsiElement(IDENTIFIER)('a')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
-      FUNCTION_LITERAL_EXPRESSION
+      LAMBDA_EXPRESSION
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
           VALUE_PARAMETER_LIST
@@ -61,7 +61,7 @@ JetFile: FunctionLiterals.kt
               PsiElement(INTEGER_LITERAL)('1')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
-      FUNCTION_LITERAL_EXPRESSION
+      LAMBDA_EXPRESSION
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
           VALUE_PARAMETER_LIST
@@ -81,7 +81,7 @@ JetFile: FunctionLiterals.kt
               PsiElement(IDENTIFIER)('f')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
-      FUNCTION_LITERAL_EXPRESSION
+      LAMBDA_EXPRESSION
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
           VALUE_PARAMETER_LIST
@@ -105,7 +105,7 @@ JetFile: FunctionLiterals.kt
               PsiElement(IDENTIFIER)('f')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
-      FUNCTION_LITERAL_EXPRESSION
+      LAMBDA_EXPRESSION
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
           VALUE_PARAMETER_LIST
@@ -135,7 +135,7 @@ JetFile: FunctionLiterals.kt
               PsiElement(IDENTIFIER)('f')
           PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
-      FUNCTION_LITERAL_EXPRESSION
+      LAMBDA_EXPRESSION
         FUNCTION_LITERAL
           PsiElement(LBRACE)('{')
           VALUE_PARAMETER_LIST

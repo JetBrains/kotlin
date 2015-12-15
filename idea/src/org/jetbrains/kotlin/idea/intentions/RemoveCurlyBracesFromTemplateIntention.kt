@@ -23,15 +23,14 @@ import org.jetbrains.kotlin.psi.KtBlockStringTemplateEntry
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtStringTemplateEntryWithExpression
-import java.util.regex.Pattern
+import org.jetbrains.kotlin.psi.psiUtil.canPlaceAfterSimpleNameEntry
 
 public class RemoveCurlyBracesFromTemplateInspection : IntentionBasedInspection<KtBlockStringTemplateEntry>(RemoveCurlyBracesFromTemplateIntention())
 
 public class RemoveCurlyBracesFromTemplateIntention : SelfTargetingOffsetIndependentIntention<KtBlockStringTemplateEntry>(javaClass(), "Remove curly braces") {
     override fun isApplicableTo(element: KtBlockStringTemplateEntry): Boolean {
         if (element.getExpression() !is KtNameReferenceExpression) return false
-        val nextSiblingText = element.getNextSibling()?.getText()
-        return nextSiblingText == null || !pattern.matcher(nextSiblingText).matches()
+        return canPlaceAfterSimpleNameEntry(element.nextSibling)
     }
 
     override fun applyTo(element: KtBlockStringTemplateEntry, editor: Editor) {
@@ -42,9 +41,5 @@ public class RemoveCurlyBracesFromTemplateIntention : SelfTargetingOffsetIndepen
         val name = (element.getExpression() as KtNameReferenceExpression).getReferencedName()
         val newEntry = KtPsiFactory(element).createSimpleNameStringTemplateEntry(name)
         return element.replaced(newEntry)
-    }
-
-    companion object {
-        private val pattern = Pattern.compile("[a-zA-Z0-9_].*")
     }
 }

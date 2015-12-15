@@ -65,7 +65,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM;
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession;
-import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo;
+import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo;
 import org.jetbrains.kotlin.resolve.lazy.declarations.*;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyScriptDescriptor;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
@@ -478,7 +478,7 @@ public class ReplInterpreter {
 
         @NotNull
         @Override
-        public ClassMemberDeclarationProvider getClassMemberDeclarationProvider(@NotNull JetClassLikeInfo classLikeInfo) {
+        public ClassMemberDeclarationProvider getClassMemberDeclarationProvider(@NotNull KtClassLikeInfo classLikeInfo) {
             return delegateFactory.getClassMemberDeclarationProvider(classLikeInfo);
         }
 
@@ -490,6 +490,11 @@ public class ReplInterpreter {
             }
 
             return this.delegateFactory.getPackageMemberDeclarationProvider(packageFqName);
+        }
+
+        @Override
+        public void diagnoseMissingPackageFragment(KtFile file) {
+            this.delegateFactory.diagnoseMissingPackageFragment(file);
         }
 
         public static class AdaptablePackageMemberDeclarationProvider extends DelegatePackageMemberDeclarationProvider {

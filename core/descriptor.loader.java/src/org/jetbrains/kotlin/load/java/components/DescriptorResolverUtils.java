@@ -30,10 +30,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.OverridingUtil;
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public final class DescriptorResolverUtils {
     private DescriptorResolverUtils() {
@@ -47,7 +44,7 @@ public final class DescriptorResolverUtils {
             @NotNull ClassDescriptor classDescriptor,
             @NotNull final ErrorReporter errorReporter
     ) {
-        final Set<D> result = new HashSet<D>();
+        final Set<D> result = new LinkedHashSet<D>();
 
         OverridingUtil.generateOverridesInFunctionGroup(
                 name, membersFromSupertypes, membersFromCurrent, classDescriptor,

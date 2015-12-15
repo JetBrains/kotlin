@@ -22,15 +22,13 @@ import com.intellij.debugger.ui.breakpoints.BreakpointManager
 import com.intellij.debugger.ui.breakpoints.BreakpointWithHighlighter
 import com.intellij.debugger.ui.breakpoints.JavaBreakpointType
 import com.intellij.icons.AllIcons
-import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.*
+import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.xdebugger.XDebuggerManager
-import com.intellij.xdebugger.XDebuggerUtil
 import com.intellij.xdebugger.breakpoints.XBreakpoint
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint
 import com.intellij.xdebugger.breakpoints.XLineBreakpointType
@@ -38,15 +36,12 @@ import com.intellij.xdebugger.breakpoints.ui.XBreakpointCustomPropertiesPanel
 import org.jetbrains.kotlin.asJava.KtLightClass
 import org.jetbrains.kotlin.asJava.KtLightClassForExplicitDeclaration
 import org.jetbrains.kotlin.asJava.KtLightClassForFacade
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.debugger.breakpoints.dialog.AddFieldBreakpointDialog
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.psi.KtDeclarationContainer
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtProperty
 import javax.swing.JComponent
 
 public class KotlinFieldBreakpointType : JavaBreakpointType<KotlinPropertyBreakpointProperties>, XLineBreakpointType<KotlinPropertyBreakpointProperties>(
@@ -71,7 +66,7 @@ public class KotlinFieldBreakpointType : JavaBreakpointType<KotlinPropertyBreakp
 
         val dialog = object : AddFieldBreakpointDialog(project) {
             override fun validateData(): Boolean {
-                val className = getClassName()
+                val className = className
                 if (className.isEmpty()) {
                     reportError(project, DebuggerBundle.message("error.field.breakpoint.class.name.not.specified"))
                     return false
@@ -83,7 +78,7 @@ public class KotlinFieldBreakpointType : JavaBreakpointType<KotlinPropertyBreakp
                     return false
                 }
 
-                val fieldName = getFieldName()
+                val fieldName = fieldName
                 if (fieldName.isEmpty()) {
                     reportError(project, DebuggerBundle.message("error.field.breakpoint.field.name.not.specified"))
                     return false
@@ -118,15 +113,15 @@ public class KotlinFieldBreakpointType : JavaBreakpointType<KotlinPropertyBreakp
             className: String,
             fieldName: String
     ): XLineBreakpoint<KotlinPropertyBreakpointProperties>? {
-        val project = file.getProject()
-        val property = declaration.getDeclarations().firstOrNull { it is KtProperty && it.getName() == fieldName } ?: return null
+        val project = file.project
+        val property = declaration.declarations.firstOrNull { it is KtProperty && it.name == fieldName } ?: return null
 
         val document = PsiDocumentManager.getInstance(project).getDocument(file) ?: return null
-        val line = document.getLineNumber(property.getTextOffset())
+        val line = document.getLineNumber(property.textOffset)
         return runWriteAction {
-            XDebuggerManager.getInstance(project).getBreakpointManager().addLineBreakpoint(
+            XDebuggerManager.getInstance(project).breakpointManager.addLineBreakpoint(
                     this,
-                    file.getVirtualFile().getUrl(),
+                    file.virtualFile.url,
                     line,
                     KotlinPropertyBreakpointProperties(fieldName, className)
             )
@@ -150,7 +145,7 @@ public class KotlinFieldBreakpointType : JavaBreakpointType<KotlinPropertyBreakp
     override fun canBeHitInOtherPlaces() = true
 
     override fun getShortText(breakpoint: XLineBreakpoint<KotlinPropertyBreakpointProperties>): String? {
-        val properties = breakpoint.getProperties()
+        val properties = breakpoint.properties
         val className = properties.myClassName
         return if (!className.isEmpty()) className + "." + properties.myFieldName else properties.myFieldName
     }
@@ -166,10 +161,10 @@ public class KotlinFieldBreakpointType : JavaBreakpointType<KotlinPropertyBreakp
     override fun getDisplayText(breakpoint: XLineBreakpoint<KotlinPropertyBreakpointProperties>): String? {
         val kotlinBreakpoint = BreakpointManager.getJavaBreakpoint(breakpoint) as? BreakpointWithHighlighter
         if (kotlinBreakpoint != null) {
-            return kotlinBreakpoint.getDescription();
+            return kotlinBreakpoint.description;
         }
         else {
-            return super<XLineBreakpointType>.getDisplayText(breakpoint);
+            return super.getDisplayText(breakpoint);
         }
     }
 

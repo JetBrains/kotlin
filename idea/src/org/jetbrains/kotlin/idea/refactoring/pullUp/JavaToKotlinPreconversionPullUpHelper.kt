@@ -114,7 +114,7 @@ public class JavaToKotlinPreconversionPullUpHelper(
             if (getCurrentSuperInterfaceCount() == superInterfaceCount) return
 
             val typeText = RefactoringUtil.findReferenceToClass(dummyTargetClass.implementsList, member as PsiClass)?.j2kText() ?: return
-            targetClass.addDelegationSpecifier(psiFactory.createDelegatorToSuperClass(typeText))
+            targetClass.addSuperTypeListEntry(psiFactory.createSuperTypeEntry(typeText))
             return
         }
 

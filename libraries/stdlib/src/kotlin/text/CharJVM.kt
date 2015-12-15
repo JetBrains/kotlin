@@ -17,7 +17,7 @@
 @file:kotlin.jvm.JvmName("CharsKt")
 
 
-package kotlin
+package kotlin.text
 
 /**
  * Returns `true` if this character (Unicode code point) is defined in Unicode.

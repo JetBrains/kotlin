@@ -25,8 +25,12 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 
 public class ConvertForEachToForLoopIntention : SelfTargetingOffsetIndependentIntention<KtSimpleNameExpression>(javaClass(), "Replace with a 'for' loop") {
+    private val FOR_EACH_NAME = "forEach"
+    private val FOR_EACH_FQ_NAMES = listOf("collections", "sequences", "text", "ranges").map { "kotlin.$it.$FOR_EACH_NAME" }.toSet()
+
+
     override fun isApplicableTo(element: KtSimpleNameExpression): Boolean {
-        if (element.getReferencedName() != "forEach") return false
+        if (element.getReferencedName() != FOR_EACH_NAME) return false
 
         val data = extractData(element) ?: return false
         if (data.functionLiteral.getValueParameters().size() > 1) return false
@@ -49,7 +53,7 @@ public class ConvertForEachToForLoopIntention : SelfTargetingOffsetIndependentIn
     private data class Data(
             val expressionToReplace: KtExpression,
             val receiver: KtExpression,
-            val functionLiteral: KtFunctionLiteralExpression
+            val functionLiteral: KtLambdaExpression
     )
 
     private fun extractData(nameExpr: KtSimpleNameExpression): Data? {
@@ -61,15 +65,15 @@ public class ConvertForEachToForLoopIntention : SelfTargetingOffsetIndependentIn
         } ?: return null) as KtExpression //TODO: submit bug
 
         val resolvedCall = expression.getResolvedCall(expression.analyze()) ?: return null
-        if (DescriptorUtils.getFqName(resolvedCall.getResultingDescriptor()).toString() != "kotlin.forEach") return null
+        if (DescriptorUtils.getFqName(resolvedCall.getResultingDescriptor()).toString() !in FOR_EACH_FQ_NAMES) return null
 
         val receiver = resolvedCall.getCall().getExplicitReceiver() as? ExpressionReceiver ?: return null
         val argument = resolvedCall.getCall().getValueArguments().singleOrNull() ?: return null
-        val functionLiteral = argument.getArgumentExpression() as? KtFunctionLiteralExpression ?: return null
+        val functionLiteral = argument.getArgumentExpression() as? KtLambdaExpression ?: return null
         return Data(expression, receiver.expression, functionLiteral)
     }
 
-    private fun generateLoop(functionLiteral: KtFunctionLiteralExpression, receiver: KtExpression): KtExpression {
+    private fun generateLoop(functionLiteral: KtLambdaExpression, receiver: KtExpression): KtExpression {
         val factory = KtPsiFactory(functionLiteral)
         val loopRange = KtPsiUtil.safeDeparenthesize(receiver)
         val body = functionLiteral.getBodyExpression()!!

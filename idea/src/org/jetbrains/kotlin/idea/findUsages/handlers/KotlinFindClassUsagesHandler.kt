@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.isImportUsage
 import org.jetbrains.kotlin.idea.search.usagesSearch.processDelegationCallConstructorUsages
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.contains
 import org.jetbrains.kotlin.psi.psiUtil.effectiveDeclarations
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -82,7 +83,7 @@ public class KotlinFindClassUsagesHandler(
                                 public override fun execute(element: PsiClass): Boolean {
                                     val isInterface = element.isInterface()
                                     return when {
-                                        isInterface && options.isDerivedInterfaces, !isInterface && options.isDerivedClasses ->
+                                        isInterface && options.isDerivedInterfaces || !isInterface && options.isDerivedClasses ->
                                             KotlinFindUsagesHandler.processUsage(processor, element.getNavigationElement())
                                         else -> true
                                     }
@@ -103,7 +104,7 @@ public class KotlinFindClassUsagesHandler(
             if (!processMemberReferences(classOrObject, kotlinOptions, referenceProcessor)) return false
         }
 
-        if (kotlinOptions.isUsages && classOrObject is KtObjectDeclaration && classOrObject.isCompanion()) {
+        if (kotlinOptions.isUsages && classOrObject is KtObjectDeclaration && classOrObject.isCompanion() && classOrObject in options.searchScope) {
             if (!processCompanionObjectInternalReferences(classOrObject, referenceProcessor)) {
                 return false
             }

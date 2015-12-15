@@ -232,7 +232,7 @@ public class ClassTranslator private constructor(
     }
 
     private fun generateBridgesToTraitImpl(properties: MutableList<JsPropertyInitializer>) {
-        for (entry in CodegenUtil.getTraitMethods(descriptor).entrySet()) {
+        for (entry in CodegenUtil.getNonPrivateTraitMethods(descriptor).entrySet()) {
             if (!areNamesEqual(entry.getKey(), entry.getValue())) {
                 properties.add(generateDelegateCall(entry.getValue(), entry.getKey(), JsLiteral.THIS, context()))
             }

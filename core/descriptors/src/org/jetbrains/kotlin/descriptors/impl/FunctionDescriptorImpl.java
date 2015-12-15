@@ -47,6 +47,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     private boolean isExternal = false;
     private boolean isInline = false;
     private boolean isTailrec = false;
+    private boolean isHidden = false;
     private boolean hasStableParameterNames = true;
     private boolean hasSynthesizedParameterNames = false;
     private final Set<FunctionDescriptor> overriddenFunctions = SmartSet.create();
@@ -127,6 +128,10 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
     public void setTailrec(boolean isTailrec) {
         this.isTailrec = isTailrec;
+    }
+
+    public void setHidden(boolean hidden) {
+        isHidden = hidden;
     }
 
     public void setReturnType(@NotNull KotlinType unsubstitutedReturnType) {
@@ -213,6 +218,11 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     }
 
     @Override
+    public boolean isHiddenToOvercomeSignatureClash() {
+        return isHidden;
+    }
+
+    @Override
     public void addOverriddenDescriptor(@NotNull CallableMemberDescriptor overriddenFunction) {
         overriddenFunctions.add((FunctionDescriptor) overriddenFunction);
     }
@@ -283,6 +293,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         protected @Nullable Name name;
         protected boolean copyOverrides;
         protected boolean signatureChange;
+        private boolean isHiddenToOvercomeSignatureClash;
         private List<TypeParameterDescriptor> newTypeParameters = null;
 
         public CopyConfiguration(
@@ -307,6 +318,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             this.name = name;
             this.copyOverrides = true;
             this.signatureChange = false;
+            this.isHiddenToOvercomeSignatureClash = isHiddenToOvercomeSignatureClash();
         }
 
         @NotNull
@@ -376,6 +388,12 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         @NotNull
         public CopyConfiguration setSignatureChange() {
             this.signatureChange = true;
+            return this;
+        }
+
+        @NotNull
+        public CopyConfiguration setHidden() {
+            isHiddenToOvercomeSignatureClash = true;
             return this;
         }
 
@@ -483,6 +501,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         substitutedDescriptor.setTailrec(isTailrec);
         substitutedDescriptor.setHasStableParameterNames(hasStableParameterNames);
         substitutedDescriptor.setHasSynthesizedParameterNames(hasSynthesizedParameterNames);
+        substitutedDescriptor.setHidden(configuration.isHiddenToOvercomeSignatureClash);
 
         if (configuration.signatureChange || getInitialSignatureDescriptor() != null) {
             FunctionDescriptor initialSignature = (getInitialSignatureDescriptor() != null ? getInitialSignatureDescriptor() : this);

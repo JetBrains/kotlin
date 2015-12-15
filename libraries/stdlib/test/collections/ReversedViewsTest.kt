@@ -18,7 +18,6 @@ package collections
 
 import test.collections.behaviors.listBehavior
 import test.collections.compare
-import kotlin.asReversed
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue

@@ -217,12 +217,6 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTest(fileName);
         }
 
-        @TestMetadata("PackageAsExpression.kt")
-        public void testPackageAsExpression() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/PackageAsExpression.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("PackageQualified.kt")
         public void testPackageQualified() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/PackageQualified.kt");
@@ -721,6 +715,24 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         @TestMetadata("PropertiesWithBackingFields.kt")
         public void testPropertiesWithBackingFields() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/PropertiesWithBackingFields.kt");
+            doTestWithInfos(fileName);
+        }
+
+        @TestMetadata("smartCastOnElvis.kt")
+        public void testSmartCastOnElvis() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/smartCastOnElvis.kt");
+            doTestWithInfos(fileName);
+        }
+
+        @TestMetadata("SmartCastOnIf.kt")
+        public void testSmartCastOnIf() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/SmartCastOnIf.kt");
+            doTestWithInfos(fileName);
+        }
+
+        @TestMetadata("SmartCastOnWhen.kt")
+        public void testSmartCastOnWhen() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/infos/SmartCastOnWhen.kt");
             doTestWithInfos(fileName);
         }
 

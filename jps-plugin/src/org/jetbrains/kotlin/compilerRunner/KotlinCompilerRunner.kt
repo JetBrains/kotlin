@@ -202,7 +202,7 @@ public object KotlinCompilerRunner {
                     K2JS_COMPILER -> CompileService.TargetPlatform.JS
                     else -> throw IllegalArgumentException("Unknown compiler type $compilerClassName")
                 }
-                val res = KotlinCompilerClient.incrementalCompile(connection.daemon!!, connection.sessionId, targetPlatform, argsArray, services, compilerOut, daemonOut)
+                val res = KotlinCompilerClient.incrementalCompile(connection.daemon, connection.sessionId, targetPlatform, argsArray, services, compilerOut, daemonOut)
 
                 processCompilerOutput(messageCollector, collector, compilerOut, res.toString())
                 BufferedReader(StringReader(daemonOut.toString())).forEachLine {

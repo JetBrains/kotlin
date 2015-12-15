@@ -1,4 +1,5 @@
 // "Create property 'foo'" "false"
+// ACTION: Rename reference
 // ERROR: Unresolved reference: foo
 
 class A<T>(val n: T)

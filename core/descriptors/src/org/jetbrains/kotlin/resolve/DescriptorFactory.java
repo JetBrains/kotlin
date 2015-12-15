@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve;
 
+import kotlin.DeprecationLevel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
@@ -133,7 +134,9 @@ public class DescriptorFactory {
     @NotNull
     public static PropertyDescriptor createEnumValuesProperty(@NotNull ClassDescriptor enumClass) {
         AnnotationsImpl annotations = AnnotationsImpl.createWithNoTarget(
-                AnnotationUtilKt.createDeprecatedAnnotation(getBuiltIns(enumClass), "Use 'values()' function instead", "this.values()")
+                AnnotationUtilKt.createDeprecatedAnnotation(getBuiltIns(enumClass),
+                                                            "Use 'values()' function instead", "this.values()",
+                                                            DeprecationLevel.ERROR)
         );
 
         PropertyDescriptorImpl values =

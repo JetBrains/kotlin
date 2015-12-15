@@ -637,9 +637,9 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             doParsingTest(fileName);
         }
 
-        @TestMetadata("RootPackage.kt")
-        public void testRootPackage() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/RootPackage.kt");
+        @TestMetadata("Reserved.kt")
+        public void testReserved() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/Reserved.kt");
             doParsingTest(fileName);
         }
 
@@ -2037,6 +2037,12 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             @TestMetadata("ForWithoutRange.kt")
             public void testForWithoutRange() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/recovery/ForWithoutRange.kt");
+                doParsingTest(fileName);
+            }
+
+            @TestMetadata("FunFun.kt")
+            public void testFunFun() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/recovery/FunFun.kt");
                 doParsingTest(fileName);
             }
 

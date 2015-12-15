@@ -15,7 +15,7 @@ sealed class Sealed(val x: Int) {
 fun foo(s: Sealed): Int {
     return <!NO_ELSE_IN_WHEN!>when<!>(s) {
         is Sealed.First -> 1
-        !is <!INCOMPATIBLE_TYPES!>Sealed.ITuple<!> -> 0
+        !is Sealed.ITuple -> 0
         // else required
     }
 }

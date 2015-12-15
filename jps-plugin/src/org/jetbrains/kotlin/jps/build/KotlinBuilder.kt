@@ -28,7 +28,6 @@ import org.jetbrains.jps.builders.impl.BuildTargetRegistryImpl
 import org.jetbrains.jps.builders.impl.TargetOutputIndexImpl
 import org.jetbrains.jps.builders.java.JavaBuilderUtil
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
-import org.jetbrains.jps.builders.java.dependencyView.Mappings
 import org.jetbrains.jps.incremental.*
 import org.jetbrains.jps.incremental.ModuleLevelBuilder.ExitCode.*
 import org.jetbrains.jps.incremental.java.JavaBuilder
@@ -95,6 +94,29 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         }
     }
 
+    override fun buildFinished(context: CompileContext?) {
+        statisticsLogger.reportTotal()
+    }
+
+    override fun chunkBuildStarted(context: CompileContext, chunk: ModuleChunk) {
+        super.chunkBuildStarted(context, chunk)
+
+        if (JavaBuilderUtil.isForcedRecompilationAllJavaModules(context)) return
+
+        val targets = chunk.targets
+        val dataManager = context.projectDescriptor.dataManager
+        val hasKotlin = HasKotlinMarker(dataManager)
+
+        if (targets.none { hasKotlin[it] == true }) return
+
+        val cacheVersionsProvider = CacheVersionProvider(dataManager.dataPaths)
+        val allVersions = cacheVersionsProvider.allVersions(targets)
+        val actions = allVersions.map { it.checkVersion() }.toSet()
+
+        val fsOperations = FSOperationsHelper(context, chunk, LOG)
+        applyActionsOnCacheVersionChange(actions, cacheVersionsProvider, context, dataManager, targets, fsOperations)
+    }
+
     override fun build(
             context: CompileContext,
             chunk: ModuleChunk,
@@ -151,17 +173,6 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val isChunkRebuilding = JavaBuilderUtil.isForcedRecompilationAllJavaModules(context)
                                 || targets.any { rebuildAfterCacheVersionChanged[it] == true }
 
-        if (!isChunkRebuilding && targets.any { hasKotlin[it] == true }) {
-            val cacheVersionsProvider = CacheVersionProvider(dataManager.dataPaths)
-            val allVersions = cacheVersionsProvider.allVersions(targets)
-            val actions = allVersions.map { it.checkVersion() }.toSet()
-
-            applyActionsOnCacheVersionChange(actions, cacheVersionsProvider, context, dataManager, targets, fsOperations)
-
-            if (actions.any { it.isChunkRebuildRequired }) {
-                return CHUNK_REBUILD_REQUIRED
-            }
-        }
         if (!hasKotlinDirtyOrRemovedFiles(dirtyFilesHolder, chunk)) {
             if (isChunkRebuilding) {
                 targets.forEach { hasKotlin[it] = false }
@@ -215,7 +226,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         saveVersions(context, chunk)
 
         if (targets.any { hasKotlin[it] == null }) {
-            fsOperations.markChunk(excludeFiles = filesToCompile.values().toSet())
+            fsOperations.markChunk(recursively = false, kotlinOnly = true, excludeFiles = filesToCompile.values().toSet())
         }
 
         for (target in targets) {
@@ -265,7 +276,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             when {
                 inlineAdded -> {
                     allCompiledFiles.clear()
-                    fsOperations.markChunk(recursively = true, excludeFiles = compiledFiles)
+                    fsOperations.markChunk(recursively = true, kotlinOnly = true, excludeFiles = compiledFiles)
                     return
                 }
                 constantsChanged -> {
@@ -273,7 +284,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                     return
                 }
                 protoChanged -> {
-                    fsOperations.markChunk(excludeFiles = allCompiledFiles)
+                    fsOperations.markChunk(recursively = false, kotlinOnly = true, excludeFiles = allCompiledFiles)
                 }
             }
 
@@ -353,6 +364,9 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                         hasKotlin.clean(target)
                         rebuildAfterCacheVersionChanged[target] = true
                     }
+
+                    fsOperations.markChunk(recursively = false, kotlinOnly = true)
+
                     return
                 }
                 CacheVersion.Action.CLEAN_NORMAL_CACHES -> {
@@ -726,10 +740,6 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                 else -> throw IllegalArgumentException("Unsupported severity: " + severity)
             }
         }
-    }
-
-    override fun buildFinished(context: CompileContext?) {
-        statisticsLogger.reportTotal()
     }
 }
 

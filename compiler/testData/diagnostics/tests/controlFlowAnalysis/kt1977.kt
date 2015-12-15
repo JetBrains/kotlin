@@ -29,7 +29,7 @@ fun test2(s : String) : Int? {
         Integer.parseInt(s)
         22
     } finally {
-            <!UNUSED_FUNCTION_LITERAL!>{
+            <!UNUSED_LAMBDA_EXPRESSION!>{
             x : Int -> x
             }<!>
     }

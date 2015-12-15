@@ -41,6 +41,12 @@ public interface AnnotationAndConstantLoader<A, C, T> {
     );
 
     @NotNull
+    List<A> loadEnumEntryAnnotations(
+            @NotNull ProtoContainer container,
+            @NotNull ProtoBuf.EnumEntry proto
+    );
+
+    @NotNull
     List<A> loadValueParameterAnnotations(
             @NotNull ProtoContainer container,
             @NotNull MessageLite message,

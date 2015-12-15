@@ -119,7 +119,7 @@ private object KotlinResolveDataProvider {
             // TODO: Non-analyzable so far, add more granular analysis
             javaClass<KtAnnotationEntry>(),
             javaClass<KtTypeConstraint>(),
-            javaClass<KtDelegationSpecifierList>(),
+            javaClass<KtSuperTypeList>(),
             javaClass<KtTypeParameter>(),
             javaClass<KtParameter>()
     )
@@ -133,7 +133,7 @@ private object KotlinResolveDataProvider {
         val analyzableElement = when (topmostElement) {
             is KtAnnotationEntry,
             is KtTypeConstraint,
-            is KtDelegationSpecifierList,
+            is KtSuperTypeList,
             is KtTypeParameter,
             is KtParameter -> PsiTreeUtil.getParentOfType(topmostElement, javaClass<KtClassOrObject>(), javaClass<KtCallableDeclaration>())
             else -> topmostElement

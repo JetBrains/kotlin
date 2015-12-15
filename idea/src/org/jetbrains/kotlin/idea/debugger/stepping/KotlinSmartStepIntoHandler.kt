@@ -65,8 +65,8 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
 
         // TODO support class initializers, local functions, delegated properties with specified type, setter for properties
         element.accept(object: KtTreeVisitorVoid() {
-            override fun visitFunctionLiteralExpression(expression: KtFunctionLiteralExpression) {
-                recordFunctionLiteral(expression.functionLiteral)
+            override fun visitLambdaExpression(lambdaExpression: KtLambdaExpression) {
+                recordFunctionLiteral(lambdaExpression.functionLiteral)
             }
 
             override fun visitNamedFunction(function: KtNamedFunction) {
@@ -91,7 +91,7 @@ public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
                 return false
             }
 
-            private fun getArgumentExpression(it: ValueArgument) = (it.getArgumentExpression() as? KtFunctionLiteralExpression)?.functionLiteral ?: it.getArgumentExpression()
+            private fun getArgumentExpression(it: ValueArgument) = (it.getArgumentExpression() as? KtLambdaExpression)?.functionLiteral ?: it.getArgumentExpression()
 
             override fun visitObjectLiteralExpression(expression: KtObjectLiteralExpression) {
                 // skip calls in object declarations

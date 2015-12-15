@@ -1,7 +1,7 @@
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("MapsKt")
 
-package kotlin
+package kotlin.collections
 
 import java.io.Serializable
 import java.util.*
@@ -110,7 +110,7 @@ public operator fun <@kotlin.internal.OnlyInputTypes K, V> Map<out K, V>.get(key
  */
 @Suppress("NOTHING_TO_INLINE")
 @Deprecated("Map and key have incompatible types. Upcast key to Any? if you're sure.", ReplaceWith("get(key as Any?)"))
-public inline fun <K, V> Map<K, V>.getRaw(key: Any?): V? = get(key as Any?)
+public inline fun <K, V> Map<K, V>.getRaw(key: Any?): V? = get(key)
 
 /**
  * Returns `true` if the map contains the specified [key].

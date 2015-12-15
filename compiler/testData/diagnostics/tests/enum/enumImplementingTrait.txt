@@ -16,7 +16,7 @@ public final enum class EnumImplementingTraitWithFun : kotlin.Enum<EnumImplement
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    @kotlin.Deprecated(message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<EnumImplementingTraitWithFun>
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<EnumImplementingTraitWithFun>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): EnumImplementingTraitWithFun
     public final /*synthesized*/ fun values(): kotlin.Array<EnumImplementingTraitWithFun>
 }
@@ -37,7 +37,7 @@ public final enum class EnumImplementingTraitWithVal : kotlin.Enum<EnumImplement
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    @kotlin.Deprecated(message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<EnumImplementingTraitWithVal>
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<EnumImplementingTraitWithVal>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): EnumImplementingTraitWithVal
     public final /*synthesized*/ fun values(): kotlin.Array<EnumImplementingTraitWithVal>
 }

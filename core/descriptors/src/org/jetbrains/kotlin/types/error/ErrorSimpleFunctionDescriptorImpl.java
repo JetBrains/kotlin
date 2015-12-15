@@ -73,6 +73,12 @@ public class ErrorSimpleFunctionDescriptorImpl extends SimpleFunctionDescriptorI
         return this;
     }
 
+    @NotNull
+    @Override
+    public SimpleFunctionDescriptor createHiddenCopyToOvercomeSignatureClash() {
+        return this;
+    }
+
     @Override
     public void addOverriddenDescriptor(@NotNull CallableMemberDescriptor overriddenFunction) {
         // nop

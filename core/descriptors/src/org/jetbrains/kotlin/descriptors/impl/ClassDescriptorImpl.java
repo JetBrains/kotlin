@@ -35,6 +35,7 @@ import java.util.Set;
 
 public class ClassDescriptorImpl extends ClassDescriptorBase {
     private final Modality modality;
+    private final ClassKind kind;
     private final TypeConstructor typeConstructor;
     private final MemberScope staticScope = new StaticScopeForKotlinClass(this);
 
@@ -46,11 +47,13 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Name name,
             @NotNull Modality modality,
+            @NotNull ClassKind kind,
             @NotNull Collection<KotlinType> supertypes,
             @NotNull SourceElement source
     ) {
         super(LockBasedStorageManager.NO_LOCKS, containingDeclaration, name, source);
         this.modality = modality;
+        this.kind = kind;
 
         this.typeConstructor = TypeConstructorImpl.createForClass(this, Annotations.Companion.getEMPTY(), false, getName().asString(),
                                                        Collections.<TypeParameterDescriptor>emptyList(), supertypes);
@@ -109,7 +112,7 @@ public class ClassDescriptorImpl extends ClassDescriptorBase {
     @NotNull
     @Override
     public ClassKind getKind() {
-        return ClassKind.CLASS;
+        return kind;
     }
 
     @Override

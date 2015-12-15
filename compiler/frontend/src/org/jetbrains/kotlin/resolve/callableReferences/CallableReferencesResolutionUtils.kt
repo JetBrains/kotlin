@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsUtil
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.scopes.BaseLexicalScope
-import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils
+import org.jetbrains.kotlin.resolve.scopes.ScopeUtils
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
@@ -149,7 +149,7 @@ public fun resolvePossiblyAmbiguousCallableReference(
     if (possibleStatic.isSomething()) return possibleStatic
 
     val possibleNested = resolveInScope("trace to resolve ::${reference.getReferencedName()} in static nested classes scope",
-                                        classifier, JetScopeUtils.getStaticNestedClassesScope(classifier))
+                                        classifier, ScopeUtils.getStaticNestedClassesScope(classifier))
     if (possibleNested.isSomething()) return possibleNested
 
     val possibleWithReceiver = resolveWithReceiver("trace to resolve ::${reference.getReferencedName()} with receiver",

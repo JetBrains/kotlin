@@ -18,9 +18,9 @@ import bar.*
         /*c:foo.A*/foo()
         this./*c:foo.A*/a
         this./*c:foo.A*/foo()
-        /*c:foo.A c:foo.A.Companion p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io c:foo.A(getBaz) c:foo.A(getBAZ)*/baz()
-        /*c:foo.A c:foo.A.Companion p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/Companion./*c:foo.A.Companion*/a
-        /*c:foo.A c:foo.A.Companion p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/O./*c:foo.A.O*/v = "OK"
+        /*c:foo.A c:foo.A.Companion*/baz()
+        /*c:foo.A*/Companion./*c:foo.A.Companion*/a
+        /*c:foo.A*/O./*c:foo.A.O*/v = "OK"
     }
 
     class B {
@@ -64,8 +64,8 @@ import bar.*
     val a = 1
     fun foo() {
         /*c:foo.E*/a
-        /*c:foo.E p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/Y./*c:foo.E*/a
+        /*c:foo.E*/Y./*c:foo.E*/a
         /*c:foo.E*/foo()
-        /*c:foo.E p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.io*/X./*c:foo.E*/foo()
+        /*c:foo.E*/X./*c:foo.E*/foo()
     }
 }

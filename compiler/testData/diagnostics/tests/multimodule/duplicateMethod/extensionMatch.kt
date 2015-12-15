@@ -31,6 +31,6 @@ import p.*
 
 fun B.test() {
     if (this is C) {
-        "".getParent()
+        "".<!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>getParent<!>()
     }
 }

@@ -52,7 +52,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         val local = c.childContext(property, proto.getTypeParameterList())
 
         val hasGetter = Flags.HAS_GETTER.get(flags)
-        val receiverAnnotations = if (hasGetter && (proto.hasReceiverType() || proto.hasReceiverTypeId()))
+        val receiverAnnotations = if (hasGetter && proto.hasReceiver())
             getReceiverParameterAnnotations(proto, AnnotatedCallableKind.PROPERTY_GETTER)
         else
             Annotations.EMPTY
@@ -136,7 +136,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
 
     public fun loadFunction(proto: ProtoBuf.Function): FunctionDescriptor {
         val annotations = getAnnotations(proto, proto.flags, AnnotatedCallableKind.FUNCTION)
-        val receiverAnnotations = if (proto.hasReceiverType() || proto.hasReceiverTypeId())
+        val receiverAnnotations = if (proto.hasReceiver())
             getReceiverParameterAnnotations(proto, AnnotatedCallableKind.FUNCTION)
         else Annotations.EMPTY
         val function = DeserializedSimpleFunctionDescriptor.create(c.containingDeclaration, annotations, proto, c.nameResolver, c.typeTable)

@@ -71,7 +71,7 @@ public abstract class KtFunctionNotStubbed extends KtTypeParameterListOwnerNotSt
     @Override
     public KtTypeReference setTypeReference(@Nullable KtTypeReference typeRef) {
         if (typeRef == null) return null;
-        throw new IllegalStateException("Function literals can't have type reference");
+        throw new IllegalStateException("Lambda expressions can't have type reference");
     }
 
     @Nullable

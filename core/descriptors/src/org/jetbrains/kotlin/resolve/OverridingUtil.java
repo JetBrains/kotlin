@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import java.util.*;
 
 import static org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.*;
-import static org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.Result.INCOMPATIBLE;
 
 public class OverridingUtil {
 
@@ -63,26 +62,34 @@ public class OverridingUtil {
     }
 
     @NotNull
-    public OverrideCompatibilityInfo isOverridableBy(@NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor) {
-        return isOverridableBy(superDescriptor, subDescriptor, false);
+    public OverrideCompatibilityInfo isOverridableBy(
+            @NotNull CallableDescriptor superDescriptor,
+            @NotNull CallableDescriptor subDescriptor,
+            @Nullable ClassDescriptor subClassDescriptor
+    ) {
+        return isOverridableBy(superDescriptor, subDescriptor, subClassDescriptor, false);
     }
 
     @NotNull
     public OverrideCompatibilityInfo isOverridableByIncludingReturnType(@NotNull CallableDescriptor superDescriptor, @NotNull CallableDescriptor subDescriptor) {
-        return isOverridableBy(superDescriptor, subDescriptor, true);
+        return isOverridableBy(superDescriptor, subDescriptor, null, true);
     }
 
     @NotNull
     private OverrideCompatibilityInfo isOverridableBy(
             @NotNull CallableDescriptor superDescriptor,
             @NotNull CallableDescriptor subDescriptor,
+            @Nullable ClassDescriptor subClassDescriptor,
             boolean checkReturnType
     ) {
+        boolean wasSuccessfulExternalCondition = false;
         for (ExternalOverridabilityCondition externalCondition : EXTERNAL_CONDITIONS) {
-            ExternalOverridabilityCondition.Result result = externalCondition.isOverridable(superDescriptor, subDescriptor);
+            ExternalOverridabilityCondition.Result result =
+                    externalCondition.isOverridable(superDescriptor, subDescriptor, subClassDescriptor);
             switch (result) {
                 case OVERRIDABLE:
-                    return OverrideCompatibilityInfo.success();
+                    wasSuccessfulExternalCondition = true;
+                    break;
                 case CONFLICT:
                     return OverrideCompatibilityInfo.conflict("External condition failed");
                 case INCOMPATIBLE:
@@ -91,6 +98,10 @@ public class OverridingUtil {
                     // do nothing
                     // go to the next external condition or default override check
             }
+        }
+
+        if (wasSuccessfulExternalCondition) {
+            return OverrideCompatibilityInfo.success();
         }
 
         return isOverridableByWithoutExternalConditions(superDescriptor, subDescriptor, checkReturnType);
@@ -282,7 +293,7 @@ public class OverridingUtil {
     ) {
         Collection<CallableMemberDescriptor> bound = new ArrayList<CallableMemberDescriptor>(descriptorsFromSuper.size());
         for (CallableMemberDescriptor fromSupertype : descriptorsFromSuper) {
-            OverrideCompatibilityInfo.Result result = DEFAULT.isOverridableBy(fromSupertype, fromCurrent).getResult();
+            OverrideCompatibilityInfo.Result result = DEFAULT.isOverridableBy(fromSupertype, fromCurrent, current).getResult();
 
             boolean isVisible = Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, fromSupertype, current);
             switch (result) {
@@ -319,26 +330,30 @@ public class OverridingUtil {
         }
     }
 
-    private static boolean isMoreSpecific(@NotNull CallableMemberDescriptor a, @NotNull CallableMemberDescriptor b) {
+    public static boolean isMoreSpecific(@NotNull CallableMemberDescriptor a, @NotNull CallableMemberDescriptor b) {
+        KotlinType aReturnType = a.getReturnType();
+        KotlinType bReturnType = b.getReturnType();
+
+        assert aReturnType != null : "Return type of " + a + " is null";
+        assert bReturnType != null : "Return type of " + b + " is null";
+
         if (a instanceof SimpleFunctionDescriptor) {
             assert b instanceof SimpleFunctionDescriptor : "b is " + b.getClass();
-
-            KotlinType aReturnType = a.getReturnType();
-            assert aReturnType != null;
-            KotlinType bReturnType = b.getReturnType();
-            assert bReturnType != null;
 
             return KotlinTypeChecker.DEFAULT.isSubtypeOf(aReturnType, bReturnType);
         }
         if (a instanceof PropertyDescriptor) {
             assert b instanceof PropertyDescriptor : "b is " + b.getClass();
 
-            if (((PropertyDescriptor) a).isVar() || ((PropertyDescriptor) b).isVar()) {
-                return ((PropertyDescriptor) a).isVar();
+            PropertyDescriptor pa = (PropertyDescriptor) a;
+            PropertyDescriptor pb = (PropertyDescriptor) b;
+            if (pa.isVar() && pb.isVar()) {
+                return KotlinTypeChecker.DEFAULT.equalTypes(aReturnType, bReturnType);
             }
-
-            // both vals
-            return KotlinTypeChecker.DEFAULT.isSubtypeOf(((PropertyDescriptor) a).getType(), ((PropertyDescriptor) b).getType());
+            else {
+                // both vals or var vs val: val can't be more specific then var
+                return !(!pa.isVar() && pb.isVar()) && KotlinTypeChecker.DEFAULT.isSubtypeOf(aReturnType, bReturnType);
+            }
         }
         throw new IllegalArgumentException("Unexpected callable: " + a.getClass());
     }
@@ -362,9 +377,21 @@ public class OverridingUtil {
         boolean allInvisible = visibleOverridables.isEmpty();
         Collection<CallableMemberDescriptor> effectiveOverridden = allInvisible ? overridables : visibleOverridables;
 
+        // FIXME doesn't work as expected for flexible types: should create a refined signature.
+        // Current algorithm produces bad results in presence of annotated Java signatures such as:
+        //      J: foo(s: String!): String -- @NotNull String foo(String s);
+        //      K: foo(s: String): String?
+        //  --> 'foo(s: String!): String' as an inherited signature with most specific return type.
+        // This is bad because it can be overridden by 'foo(s: String?): String', which is not override-equivalent with K::foo above.
+        // Should be 'foo(s: String): String'.
         Modality modality = getMinimalModality(effectiveOverridden);
         Visibility visibility = allInvisible ? Visibilities.INVISIBLE_FAKE : Visibilities.INHERITED;
-        CallableMemberDescriptor mostSpecific = selectMostSpecificMemberFromSuper(effectiveOverridden);
+        CallableMemberDescriptor mostSpecific =
+                OverridingUtilsKt.getOverriddenWithMostSpecificReturnTypeOrNull(KotlinTypeChecker.DEFAULT, effectiveOverridden);
+        if (mostSpecific == null) {
+            // Use some (possibly erroneous) inherited signature. Will be reported as an error later.
+            mostSpecific = selectMostSpecificMemberFromSuper(effectiveOverridden);
+        }
         CallableMemberDescriptor fakeOverride =
                 mostSpecific.copy(current, modality, visibility, CallableMemberDescriptor.Kind.FAKE_OVERRIDE, false);
         for (CallableMemberDescriptor descriptor : effectiveOverridden) {
@@ -414,8 +441,8 @@ public class OverridingUtil {
                 continue;
             }
 
-            OverrideCompatibilityInfo.Result result1 = DEFAULT.isOverridableBy(candidate, overrider).getResult();
-            OverrideCompatibilityInfo.Result result2 = DEFAULT.isOverridableBy(overrider, candidate).getResult();
+            OverrideCompatibilityInfo.Result result1 = DEFAULT.isOverridableBy(candidate, overrider, null).getResult();
+            OverrideCompatibilityInfo.Result result2 = DEFAULT.isOverridableBy(overrider, candidate, null).getResult();
             if (result1 == OVERRIDABLE && result2 == OVERRIDABLE) {
                 overridable.add(candidate);
                 iterator.remove();

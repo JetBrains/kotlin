@@ -31,12 +31,9 @@ import org.jetbrains.kotlin.idea.intentions.ConvertToExpressionBodyIntention
 import org.jetbrains.kotlin.idea.intentions.InfixCallToOrdinaryIntention
 import org.jetbrains.kotlin.idea.intentions.OperatorToFunctionIntention
 import org.jetbrains.kotlin.idea.intentions.RemoveExplicitTypeArgumentsIntention
-import org.jetbrains.kotlin.idea.refactoring.introduce.extractableSubstringInfo
+import org.jetbrains.kotlin.idea.refactoring.introduce.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValue.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.OutputValueBoxer.AsTuple
-import org.jetbrains.kotlin.idea.refactoring.introduce.getPhysicalTextRange
-import org.jetbrains.kotlin.idea.refactoring.introduce.replaceWith
-import org.jetbrains.kotlin.idea.refactoring.introduce.substringContextOrThis
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.*
@@ -240,8 +237,8 @@ private fun makeCall(
         arguments: List<String>) {
     fun insertCall(anchor: PsiElement, wrappedCall: KtExpression): KtExpression? {
         val firstExpression = rangeToReplace.elements.firstOrNull { it is KtExpression } as? KtExpression
-        if (firstExpression?.isFunctionLiteralOutsideParentheses() ?: false) {
-            val functionLiteralArgument = firstExpression?.getStrictParentOfType<KtFunctionLiteralArgument>()!!
+        if (firstExpression?.isLambdaOutsideParentheses() ?: false) {
+            val functionLiteralArgument = firstExpression?.getStrictParentOfType<KtLambdaArgument>()!!
             return functionLiteralArgument.moveInsideParenthesesAndReplaceWith(wrappedCall, extractableDescriptor.originalContext)
         }
 
@@ -465,6 +462,12 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
 
     fun adjustDeclarationBody(declaration: KtNamedDeclaration) {
         val body = declaration.getGeneratedBody()
+
+        (body.blockExpressionsOrSingle().singleOrNull() as? KtExpression)?.let {
+            if (it.mustBeParenthesizedInInitializerPosition()) {
+                it.replace(psiFactory.createExpressionByPattern("($0)", it))
+            }
+        }
 
         val jumpValue = descriptor.controlFlow.jumpOutputValue
         if (jumpValue != null) {

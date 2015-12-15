@@ -47,7 +47,7 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
     }
 
     @Override
-    public void visitDelegationToSuperCallSpecifier(@NotNull KtDelegatorToSuperCall call) {
+    public void visitSuperTypeCallEntry(@NotNull KtSuperTypeCallEntry call) {
         KtConstructorCalleeExpression calleeExpression = call.getCalleeExpression();
         KtTypeReference typeRef = calleeExpression.getTypeReference();
         if (typeRef != null) {
@@ -59,7 +59,7 @@ public class FunctionsHighlightingVisitor extends AfterAnalysisHighlightingVisit
                 }
             }
         }
-        super.visitDelegationToSuperCallSpecifier(call);
+        super.visitSuperTypeCallEntry(call);
     }
 
     @Override

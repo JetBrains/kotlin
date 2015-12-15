@@ -4,6 +4,6 @@ interface Super {
 }
 
 class Sub: Super {
-    override var v: <!PROPERTY_TYPE_MISMATCH_ON_OVERRIDE!>String<!> = "fail"
+    override var v: <!VAR_TYPE_MISMATCH_ON_OVERRIDE!>String<!> = "fail"
     override val v2: String = "ok"
 }

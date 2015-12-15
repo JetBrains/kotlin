@@ -98,7 +98,7 @@ public class BodyResolver {
     }
 
     private void resolveBehaviorDeclarationBodies(@NotNull BodiesResolveContext c) {
-        resolveDelegationSpecifierLists(c);
+        resolveSuperTypeEntryLists(c);
 
         resolvePropertyDeclarationBodies(c);
 
@@ -231,31 +231,31 @@ public class BodyResolver {
         functionAnalyzerExtension.process(c);
     }
 
-    private void resolveDelegationSpecifierLists(@NotNull BodiesResolveContext c) {
+    private void resolveSuperTypeEntryLists(@NotNull BodiesResolveContext c) {
         // TODO : Make sure the same thing is not initialized twice
         for (Map.Entry<KtClassOrObject, ClassDescriptorWithResolutionScopes> entry : c.getDeclaredClasses().entrySet()) {
             KtClassOrObject classOrObject = entry.getKey();
             ClassDescriptorWithResolutionScopes descriptor = entry.getValue();
 
-            resolveDelegationSpecifierList(c.getOuterDataFlowInfo(), classOrObject, descriptor,
-                                           descriptor.getUnsubstitutedPrimaryConstructor(),
-                                           descriptor.getScopeForClassHeaderResolution(),
-                                           descriptor.getScopeForMemberDeclarationResolution());
+            resolveSuperTypeEntryList(c.getOuterDataFlowInfo(), classOrObject, descriptor,
+                                      descriptor.getUnsubstitutedPrimaryConstructor(),
+                                      descriptor.getScopeForConstructorHeaderResolution(),
+                                      descriptor.getScopeForMemberDeclarationResolution());
         }
     }
 
-    public void resolveDelegationSpecifierList(
+    public void resolveSuperTypeEntryList(
             @NotNull final DataFlowInfo outerDataFlowInfo,
             @NotNull KtClassOrObject jetClass,
             @NotNull final ClassDescriptor descriptor,
             @Nullable final ConstructorDescriptor primaryConstructor,
-            @NotNull LexicalScope scopeForSupertypeResolution,
+            @NotNull LexicalScope scopeForConstructorResolution,
             @NotNull final LexicalScope scopeForMemberResolution
     ) {
         final LexicalScope scopeForConstructor =
                 primaryConstructor == null
                 ? null
-                : FunctionDescriptorUtil.getFunctionInnerScope(scopeForSupertypeResolution, primaryConstructor, trace);
+                : FunctionDescriptorUtil.getFunctionInnerScope(scopeForConstructorResolution, primaryConstructor, trace);
         final ExpressionTypingServices typeInferrer = expressionTypingServices; // TODO : flow
 
         final Map<KtTypeReference, KotlinType> supertypes = Maps.newLinkedHashMap();
@@ -267,7 +267,7 @@ public class BodyResolver {
             }
 
             @Override
-            public void visitDelegationByExpressionSpecifier(@NotNull KtDelegatorByExpressionSpecifier specifier) {
+            public void visitDelegatedSuperTypeEntry(@NotNull KtDelegatedSuperTypeEntry specifier) {
                 if (descriptor.getKind() == ClassKind.INTERFACE) {
                     trace.report(DELEGATION_IN_INTERFACE.on(specifier));
                 }
@@ -294,7 +294,7 @@ public class BodyResolver {
             }
 
             @Override
-            public void visitDelegationToSuperCallSpecifier(@NotNull KtDelegatorToSuperCall call) {
+            public void visitSuperTypeCallEntry(@NotNull KtSuperTypeCallEntry call) {
                 KtValueArgumentList valueArgumentList = call.getValueArgumentList();
                 PsiElement elementToMark = valueArgumentList == null ? call : valueArgumentList;
                 if (descriptor.getKind() == ClassKind.INTERFACE) {
@@ -336,7 +336,7 @@ public class BodyResolver {
             }
 
             @Override
-            public void visitDelegationToSuperClassSpecifier(@NotNull KtDelegatorToSuperClass specifier) {
+            public void visitSuperTypeEntry(@NotNull KtSuperTypeEntry specifier) {
                 KtTypeReference typeReference = specifier.getTypeReference();
                 KotlinType supertype = trace.getBindingContext().get(BindingContext.TYPE, typeReference);
                 recordSupertype(typeReference, supertype);
@@ -363,12 +363,12 @@ public class BodyResolver {
             }
         };
 
-        for (KtDelegationSpecifier delegationSpecifier : jetClass.getDelegationSpecifiers()) {
+        for (KtSuperTypeListEntry delegationSpecifier : jetClass.getSuperTypeListEntries()) {
             delegationSpecifier.accept(visitor);
         }
 
-        if (DescriptorUtils.isAnnotationClass(descriptor) && jetClass.getDelegationSpecifierList() != null) {
-            trace.report(SUPERTYPES_FOR_ANNOTATION_CLASS.on(jetClass.getDelegationSpecifierList()));
+        if (DescriptorUtils.isAnnotationClass(descriptor) && jetClass.getSuperTypeList() != null) {
+            trace.report(SUPERTYPES_FOR_ANNOTATION_CLASS.on(jetClass.getSuperTypeList()));
         }
 
         if (primaryConstructorDelegationCall[0] != null && primaryConstructor != null) {
@@ -488,8 +488,8 @@ public class BodyResolver {
                     trace.report(SINGLETON_IN_SUPERTYPE.on(typeReference));
                 }
             }
-            else if (constructor.isFinal() && !allowedFinalSupertypes.contains(constructor)) {
-                if (classDescriptor.getModality() == Modality.SEALED) {
+            else if (!allowedFinalSupertypes.contains(constructor)) {
+                if (classDescriptor != null && classDescriptor.getModality() == Modality.SEALED) {
                     DeclarationDescriptor containingDescriptor = supertypeOwner.getContainingDeclaration();
                     while (containingDescriptor != null && containingDescriptor != classDescriptor) {
                         containingDescriptor = containingDescriptor.getContainingDeclaration();
@@ -501,7 +501,7 @@ public class BodyResolver {
                         trace.report(SEALED_SUPERTYPE_IN_LOCAL_CLASS.on(typeReference));
                     }
                 }
-                else {
+                else if (constructor.isFinal()) {
                     trace.report(FINAL_SUPERTYPE.on(typeReference));
                 }
             }
@@ -556,7 +556,7 @@ public class BodyResolver {
             if (unsubstitutedPrimaryConstructor != null) {
                 ForceResolveUtil.forceResolveAllContents(unsubstitutedPrimaryConstructor.getAnnotations());
 
-                LexicalScope parameterScope = getPrimaryConstructorParametersScope(classDescriptor.getScopeForClassHeaderResolution(),
+                LexicalScope parameterScope = getPrimaryConstructorParametersScope(classDescriptor.getScopeForConstructorHeaderResolution(),
                                                                                    unsubstitutedPrimaryConstructor);
                 valueParameterResolver.resolveValueParameters(klass.getPrimaryConstructorParameters(),
                                                               unsubstitutedPrimaryConstructor.getValueParameters(),
@@ -592,7 +592,7 @@ public class BodyResolver {
 
         PreliminaryDeclarationVisitor.Companion.createForDeclaration(property, trace);
         KtExpression initializer = property.getInitializer();
-        LexicalScope propertyHeaderScope = JetScopeUtils.makeScopeForPropertyHeader(getScopeForProperty(c, property), propertyDescriptor);
+        LexicalScope propertyHeaderScope = ScopeUtils.makeScopeForPropertyHeader(getScopeForProperty(c, property), propertyDescriptor);
 
         if (initializer != null) {
             resolvePropertyInitializer(c.getOuterDataFlowInfo(), property, propertyDescriptor, initializer, propertyHeaderScope);
@@ -641,7 +641,7 @@ public class BodyResolver {
     ) {
         LexicalScope accessorDeclaringScope = c.getDeclaringScope(accessor);
         assert accessorDeclaringScope != null : "Scope for accessor " + accessor.getText() + " should exists";
-        LexicalScope headerScope = JetScopeUtils.makeScopeForPropertyHeader(accessorDeclaringScope, descriptor);
+        LexicalScope headerScope = ScopeUtils.makeScopeForPropertyHeader(accessorDeclaringScope, descriptor);
         return new LexicalScopeImpl(headerScope, descriptor, true, descriptor.getExtensionReceiverParameter(),
                                     LexicalScopeKind.PROPERTY_ACCESSOR_BODY);
     }
@@ -706,9 +706,9 @@ public class BodyResolver {
             trace.report(ACCESSOR_FOR_DELEGATED_PROPERTY.on(setter));
         }
 
-        LexicalScope delegateFunctionsScope = JetScopeUtils.makeScopeForDelegateConventionFunctions(propertyHeaderScope, propertyDescriptor);
+        LexicalScope delegateFunctionsScope = ScopeUtils.makeScopeForDelegateConventionFunctions(propertyHeaderScope, propertyDescriptor);
 
-        LexicalScope initializerScope = JetScopeUtils.makeScopeForPropertyInitializer(propertyHeaderScope, propertyDescriptor);
+        LexicalScope initializerScope = ScopeUtils.makeScopeForPropertyInitializer(propertyHeaderScope, propertyDescriptor);
 
         KotlinType delegateType = delegatedPropertyResolver.resolveDelegateExpression(
                 delegateExpression, property, propertyDescriptor, initializerScope, trace,
@@ -733,7 +733,7 @@ public class BodyResolver {
             @NotNull KtExpression initializer,
             @NotNull LexicalScope propertyHeader
     ) {
-        LexicalScope propertyDeclarationInnerScope = JetScopeUtils.makeScopeForPropertyInitializer(propertyHeader, propertyDescriptor);
+        LexicalScope propertyDeclarationInnerScope = ScopeUtils.makeScopeForPropertyInitializer(propertyHeader, propertyDescriptor);
         KotlinType expectedTypeForInitializer = property.getTypeReference() != null ? propertyDescriptor.getType() : NO_EXPECTED_TYPE;
         if (propertyDescriptor.getCompileTimeInitializer() == null) {
             expressionTypingServices.getType(propertyDeclarationInnerScope, initializer, expectedTypeForInitializer,

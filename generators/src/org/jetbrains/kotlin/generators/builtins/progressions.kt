@@ -194,7 +194,7 @@ public open class $progression(
     override fun generateBody() {
         out.println("import kotlin.internal.getProgressionLastElement")
         out.println()
-        for (kind in ProgressionKind.values) {
+        for (kind in ProgressionKind.values()) {
             if (kind == FLOAT || kind == DOUBLE)
                 continue
             else

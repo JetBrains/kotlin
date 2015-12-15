@@ -10,13 +10,13 @@ fun id(s: String, value: Boolean): Boolean {
 fun box(): String {
 
     when {
-      id("A", true), id("B", true) -> 10
+      id("A", true) || id("B", true) -> 10
     }
     assertEquals("A", global)
 
     global = ""
     when {
-        id("A", false), id("B", true), id("C", true) -> 10
+        id("A", false) || id("B", true) || id("C", true) -> 10
     }
     assertEquals("AB", global)
 
@@ -39,14 +39,14 @@ fun box(): String {
     global = ""
     b = true
     when {
-        b, try { global += "A"; !b } finally {} -> 10
+        b || try { global += "A"; !b } finally {} -> 10
     }
     assertEquals("", global)
 
     global = ""
     b = false
     when {
-        b, try { global += "A"; !b } finally {} -> 10
+        b || try { global += "A"; !b } finally {} -> 10
     }
     assertEquals("A", global)
 

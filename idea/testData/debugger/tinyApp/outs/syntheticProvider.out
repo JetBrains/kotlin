@@ -1,0 +1,23 @@
+LineBreakpoint created at syntheticProvider.kt:38
+LineBreakpoint created at syntheticProvider.kt:42
+LineBreakpoint created at syntheticProvider.kt:46
+LineBreakpoint created at syntheticProvider.kt:50
+LineBreakpoint created at syntheticProvider.kt:54
+LineBreakpoint created at syntheticProvider.kt:58
+!JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! syntheticProvider.SyntheticProviderKt
+Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+syntheticProvider.kt:38
+syntheticProvider.kt:5
+syntheticProvider.kt:42
+syntheticProvider.kt:9
+syntheticProvider.kt:46
+syntheticProvider.kt:13
+syntheticProvider.kt:50
+syntheticProvider.kt:17
+syntheticProvider.kt:54
+syntheticProvider.kt:21
+syntheticProvider.kt:58
+syntheticProvider.kt:25
+Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
+
+Process finished with exit code 0

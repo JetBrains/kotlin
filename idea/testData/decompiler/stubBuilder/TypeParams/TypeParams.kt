@@ -1,6 +1,8 @@
 package test
 
-class TypeParams<in T1 : Any, out T2, T3 : (Int) -> Int, T4, T5 : Any?, T6 : T5, T7 : Any> where T1 : Any?, T1 : Int?, T1 : Int, T2 : String, T7 : T6 {
+import java.io.Serializable
+
+class TypeParams<in T1 : Any, out T2, T3 : (Int) -> Int, T4, T5 : Any?, T6 : T5, T7> where T1 : Cloneable?, T1 : Serializable, T2 : String, T7 : T6 {
 
     fun useParams(p1: T1, p2: (T2) -> Unit, p3: T3, p4: T4, P5: T5) {
     }
@@ -15,7 +17,7 @@ class TypeParams<in T1 : Any, out T2, T3 : (Int) -> Int, T4, T5 : Any?, T6 : T5,
     fun <G1, G2, G3> withOwnParams(p1: G1, p2: G2, p3: G3, p4: T1, p5: (T2) -> Unit) {
     }
 
-    fun <G1 : Any?, G2 : G1, G3> withOwnParamsAndTypeConstraints(p1: G1, p2: G2, p3: G3, p4: T1, p5: (T2) -> Unit) where G3 : G1, G3 : String, G3 : String? {
+    fun <G1 : Any?, G2 : G1, G3, G4> withOwnParamsAndTypeConstraints(p1: G1, p2: G2, p3: G3, p4: T1, p5: (T2) -> Unit) where G4 : G1, G3 : String, G3 : Serializable? {
     }
 
     fun <T1, T2, T3> withOwnParamsClashing(p1: T1, p2: T2, p3: T3, p4: T4, p5: T5) {

@@ -89,7 +89,7 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
         val functionLiteral = DescriptorToSourceUtils.descriptorToDeclaration(callableDescriptor) as KtFunctionLiteral?
         assert(functionLiteral != null) { "No declaration found for " + callableDescriptor }
 
-        val parent = functionLiteral!!.parent as? KtFunctionLiteralExpression ?: return false
+        val parent = functionLiteral!!.parent as? KtLambdaExpression ?: return false
 
         return parent.analyze(BodyResolveMode.PARTIAL)[BindingContext.EXPECTED_EXPRESSION_TYPE, parent] != null
     }

@@ -206,7 +206,23 @@ fun <T : CallableMemberDescriptor> T.getOverriddenBuiltinWithDifferentJvmName():
 fun CallableMemberDescriptor.doesOverrideBuiltinWithDifferentJvmName(): Boolean = getOverriddenBuiltinWithDifferentJvmName() != null
 
 @Suppress("UNCHECKED_CAST")
-fun <T : CallableMemberDescriptor> T.getOverriddenBuiltinWithDifferentJvmDescriptor(): T? {
+fun <T : CallableMemberDescriptor> T.getOverriddenSpecialBuiltin(): T? {
+    getOverriddenBuiltinWithDifferentJvmName()?.let { return it }
+
+    if (!name.sameAsBuiltinMethodWithErasedValueParameters) return null
+
+    return firstOverridden {
+        it.isFromBuiltins() && it.getSpecialSignatureInfo() != null
+    } as T?
+}
+
+// The subtle difference between getOverriddenBuiltinReflectingJvmDescriptor and getOverriddenSpecialBuiltin
+// is that first one return descriptor reflecting JVM signature (JVM descriptor)
+// E.g. it returns `contains(e: E): Boolean` instead of `contains(e: String): Boolean` for implementation of Collection<String>.contains
+// Implementation differs by getting 'original' for collection methods with erased value parameters
+// Also it ignores Collection<String>.containsAll overrides because they have the same JVM descriptor
+@Suppress("UNCHECKED_CAST")
+fun <T : CallableMemberDescriptor> T.getOverriddenBuiltinReflectingJvmDescriptor(): T? {
     getOverriddenBuiltinWithDifferentJvmName()?.let { return it }
 
     if (!name.sameAsBuiltinMethodWithErasedValueParameters) return null
@@ -270,10 +286,10 @@ public fun ClassDescriptor.hasRealKotlinSuperClassWithOverrideOf(
 }
 
 // Util methods
-private val CallableMemberDescriptor.isFromJava: Boolean
+public val CallableMemberDescriptor.isFromJava: Boolean
     get() = propertyIfAccessor is JavaCallableMemberDescriptor && propertyIfAccessor.containingDeclaration is JavaClassDescriptor
 
-private fun CallableMemberDescriptor.isFromBuiltins(): Boolean {
+public fun CallableMemberDescriptor.isFromBuiltins(): Boolean {
     val fqName = propertyIfAccessor.fqNameOrNull() ?: return false
     return fqName.toUnsafe().startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME) &&
             this.module == this.builtIns.builtInsModule

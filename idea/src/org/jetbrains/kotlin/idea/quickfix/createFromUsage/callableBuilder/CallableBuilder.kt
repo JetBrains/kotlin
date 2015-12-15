@@ -72,10 +72,12 @@ import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 import kotlin.properties.Delegates
@@ -223,7 +225,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
         val containingFileEditor: Editor
         val containingElement: PsiElement
         val dialogWithEditor: DialogWithEditor?
-        val receiverClassDescriptor: ClassDescriptor?
+        val receiverClassDescriptor: ClassifierDescriptor?
         val typeParameterNameMap: Map<TypeParameterDescriptor, String>
         val receiverTypeCandidate: TypeCandidate?
         val mandatoryTypeParametersAsCandidates: List<TypeCandidate>
@@ -247,7 +249,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 }
                 is CallablePlacement.WithReceiver -> {
                     receiverClassDescriptor =
-                            placement.receiverTypeCandidate.theType.getConstructor().getDeclarationDescriptor() as? ClassDescriptor
+                            placement.receiverTypeCandidate.theType.getConstructor().getDeclarationDescriptor()
                     val classDeclaration = receiverClassDescriptor?.let { DescriptorToSourceUtils.getSourceFromDescriptor(it) }
                     containingElement = if (!config.isExtension && classDeclaration != null) classDeclaration else config.currentFile
                 }
@@ -350,7 +352,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
             assert (receiverClassDescriptor is JavaClassDescriptor) { "Unexpected receiver class: $receiverClassDescriptor" }
 
-            val projections = receiverClassDescriptor.declaredTypeParameters
+            val projections = ((receiverClassDescriptor as JavaClassDescriptor).declaredTypeParameters)
                     .map { TypeProjectionImpl(it.getDefaultType()) }
             val memberScope = receiverClassDescriptor.getMemberScope(projections)
 
@@ -527,7 +529,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
                     val neighborType = neighbor?.getNode()?.getElementType()
                     val lineBreaksNeeded = when {
-                        neighborType == KtTokens.LBRACE, neighborType == KtTokens.RBRACE -> 1
+                        neighborType == KtTokens.LBRACE || neighborType == KtTokens.RBRACE -> 1
                         neighbor is KtDeclaration && (neighbor !is KtProperty || decl !is KtProperty) -> 2
                         else -> 1
                     }
@@ -733,7 +735,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     expression = TypeExpression.ForTypeReference(candidates)
                 }
                 is KtClassOrObject -> {
-                    elementToReplace = declaration.getDelegationSpecifiers().firstOrNull()
+                    elementToReplace = declaration.getSuperTypeListEntries().firstOrNull()
                     expression = TypeExpression.ForDelegationSpecifier(candidates)
                 }
                 else -> throw AssertionError("Unexpected declaration kind: ${declaration.getText()}")
@@ -938,6 +940,8 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
             val declaration = declarationPointer.getElement()!!
 
+            val declarationMarker = containingFileEditor.document.createRangeMarker(declaration.textRange)
+
             val builder = TemplateBuilderImpl(jetFileToEdit)
             if (declaration is KtProperty) {
                 setupValVarTemplate(builder, declaration)
@@ -979,10 +983,10 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         if (brokenOff && !ApplicationManager.getApplication().isUnitTestMode()) return
 
                         // file templates
-                        val newDeclaration = if (templateImpl.getSegmentsCount() > 0) {
-                            PsiTreeUtil.findElementOfClassAtOffset(jetFileToEdit, templateImpl.getSegmentOffset(0), declaration.javaClass, false)!!
-                        }
-                        else declarationPointer.getElement()!!
+                        val newDeclaration = PsiTreeUtil.findElementOfClassAtOffset(jetFileToEdit,
+                                                                                    declarationMarker.startOffset,
+                                                                                    declaration.javaClass,
+                                                                                    false) ?: return
 
                         runWriteAction {
                             // file templates
@@ -1004,6 +1008,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         }
                     }
                     finally {
+                        declarationMarker.dispose()
                         release()
                         onFinish()
                     }
@@ -1038,7 +1043,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 internal fun KtNamedDeclaration.getReturnTypeReference(): KtTypeReference? {
     return when (this) {
         is KtCallableDeclaration -> getTypeReference()
-        is KtClassOrObject -> getDelegationSpecifiers().firstOrNull()?.getTypeReference()
+        is KtClassOrObject -> getSuperTypeListEntries().firstOrNull()?.getTypeReference()
         else -> throw AssertionError("Unexpected declaration kind: ${getText()}")
     }
 }

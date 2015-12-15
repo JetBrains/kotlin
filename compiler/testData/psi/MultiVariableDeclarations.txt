@@ -14,11 +14,11 @@ JetFile: MultiVariableDeclarations.kt
     BLOCK
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      MULTI_VARIABLE_DECLARATION
+      DESTRUCTURING_DECLARATION
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('a')
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
@@ -27,11 +27,11 @@ JetFile: MultiVariableDeclarations.kt
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n    ')
-      MULTI_VARIABLE_DECLARATION
+      DESTRUCTURING_DECLARATION
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('b')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
@@ -46,15 +46,15 @@ JetFile: MultiVariableDeclarations.kt
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n    ')
-      MULTI_VARIABLE_DECLARATION
+      DESTRUCTURING_DECLARATION
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('a')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('b')
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
@@ -63,11 +63,11 @@ JetFile: MultiVariableDeclarations.kt
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n    ')
-      MULTI_VARIABLE_DECLARATION
+      DESTRUCTURING_DECLARATION
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('a')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
@@ -77,7 +77,7 @@ JetFile: MultiVariableDeclarations.kt
                 PsiElement(IDENTIFIER)('Int')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('b')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
@@ -92,11 +92,11 @@ JetFile: MultiVariableDeclarations.kt
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n    ')
-      MULTI_VARIABLE_DECLARATION
+      DESTRUCTURING_DECLARATION
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('a')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
@@ -106,7 +106,7 @@ JetFile: MultiVariableDeclarations.kt
                 PsiElement(IDENTIFIER)('Int')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('b')
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
@@ -115,15 +115,15 @@ JetFile: MultiVariableDeclarations.kt
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n    ')
-      MULTI_VARIABLE_DECLARATION
+      DESTRUCTURING_DECLARATION
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('a')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('b')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
@@ -138,11 +138,11 @@ JetFile: MultiVariableDeclarations.kt
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n    ')
-      MULTI_VARIABLE_DECLARATION
+      DESTRUCTURING_DECLARATION
         PsiElement(var)('var')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('a')
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
@@ -151,11 +151,11 @@ JetFile: MultiVariableDeclarations.kt
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n    ')
-      MULTI_VARIABLE_DECLARATION
+      DESTRUCTURING_DECLARATION
         PsiElement(var)('var')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('b')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
@@ -170,15 +170,15 @@ JetFile: MultiVariableDeclarations.kt
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n    ')
-      MULTI_VARIABLE_DECLARATION
+      DESTRUCTURING_DECLARATION
         PsiElement(var)('var')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('a')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('b')
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
@@ -187,11 +187,11 @@ JetFile: MultiVariableDeclarations.kt
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n    ')
-      MULTI_VARIABLE_DECLARATION
+      DESTRUCTURING_DECLARATION
         PsiElement(var)('var')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('a')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
@@ -201,7 +201,7 @@ JetFile: MultiVariableDeclarations.kt
                 PsiElement(IDENTIFIER)('Int')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('b')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
@@ -216,11 +216,11 @@ JetFile: MultiVariableDeclarations.kt
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n    ')
-      MULTI_VARIABLE_DECLARATION
+      DESTRUCTURING_DECLARATION
         PsiElement(var)('var')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('a')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
@@ -230,7 +230,7 @@ JetFile: MultiVariableDeclarations.kt
                 PsiElement(IDENTIFIER)('Int')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('b')
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
@@ -239,15 +239,15 @@ JetFile: MultiVariableDeclarations.kt
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n    ')
-      MULTI_VARIABLE_DECLARATION
+      DESTRUCTURING_DECLARATION
         PsiElement(var)('var')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('a')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('b')
           PsiElement(COLON)(':')
           PsiWhiteSpace(' ')
@@ -262,7 +262,7 @@ JetFile: MultiVariableDeclarations.kt
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n\n    ')
-      MULTI_VARIABLE_DECLARATION
+      DESTRUCTURING_DECLARATION
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
@@ -275,14 +275,14 @@ JetFile: MultiVariableDeclarations.kt
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n    ')
-      MULTI_VARIABLE_DECLARATION
+      DESTRUCTURING_DECLARATION
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
         PsiErrorElement:Expecting a name
           PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('a')
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
@@ -291,11 +291,11 @@ JetFile: MultiVariableDeclarations.kt
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n    ')
-      MULTI_VARIABLE_DECLARATION
+      DESTRUCTURING_DECLARATION
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('a')
         PsiElement(COMMA)(',')
         PsiErrorElement:Expecting a name
@@ -308,15 +308,15 @@ JetFile: MultiVariableDeclarations.kt
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n    ')
-      MULTI_VARIABLE_DECLARATION
+      DESTRUCTURING_DECLARATION
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('a')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiErrorElement:Expecting a name
             <empty list>
           PsiElement(COLON)(':')
@@ -332,15 +332,15 @@ JetFile: MultiVariableDeclarations.kt
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n    ')
-      MULTI_VARIABLE_DECLARATION
+      DESTRUCTURING_DECLARATION
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('a')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiErrorElement:Expecting a name
             <empty list>
           PsiElement(COLON)(':')
@@ -360,15 +360,15 @@ JetFile: MultiVariableDeclarations.kt
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n    ')
-      MULTI_VARIABLE_DECLARATION
+      DESTRUCTURING_DECLARATION
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('a')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiErrorElement:Expecting a name
             <empty list>
         PsiElement(EQ)('=')
@@ -376,15 +376,15 @@ JetFile: MultiVariableDeclarations.kt
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n    ')
-      MULTI_VARIABLE_DECLARATION
+      DESTRUCTURING_DECLARATION
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('a')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('b')
         PsiErrorElement:Expecting ')'
           <empty list>
@@ -394,11 +394,11 @@ JetFile: MultiVariableDeclarations.kt
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n    ')
-      MULTI_VARIABLE_DECLARATION
+      DESTRUCTURING_DECLARATION
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiErrorElement:Expecting a name
             PsiElement(INTEGER_LITERAL)('1')
         PsiElement(RPAR)(')')
@@ -408,7 +408,7 @@ JetFile: MultiVariableDeclarations.kt
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n\n    ')
-      MULTI_VARIABLE_DECLARATION
+      DESTRUCTURING_DECLARATION
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
         PsiErrorElement:Receiver type is not allowed on a destructuring declaration
@@ -418,7 +418,7 @@ JetFile: MultiVariableDeclarations.kt
                 PsiElement(IDENTIFIER)('T')
           PsiElement(DOT)('.')
         PsiElement(LPAR)('(')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('a')
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
@@ -427,11 +427,11 @@ JetFile: MultiVariableDeclarations.kt
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n    ')
-      MULTI_VARIABLE_DECLARATION
+      DESTRUCTURING_DECLARATION
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
         PsiElement(LPAR)('(')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('a')
         PsiElement(RPAR)(')')
         PsiErrorElement:Type annotations are not allowed on destructuring declarations
@@ -447,7 +447,7 @@ JetFile: MultiVariableDeclarations.kt
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n    ')
-      MULTI_VARIABLE_DECLARATION
+      DESTRUCTURING_DECLARATION
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
         PsiErrorElement:Receiver type is not allowed on a destructuring declaration
@@ -457,7 +457,7 @@ JetFile: MultiVariableDeclarations.kt
                 PsiElement(IDENTIFIER)('T')
           PsiElement(DOT)('.')
         PsiElement(LPAR)('(')
-        MULTI_VARIABLE_DECLARATION_ENTRY
+        DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('a')
         PsiElement(RPAR)(')')
         PsiErrorElement:Type annotations are not allowed on destructuring declarations
@@ -475,16 +475,16 @@ JetFile: MultiVariableDeclarations.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  MULTI_VARIABLE_DECLARATION
+  DESTRUCTURING_DECLARATION
     PsiElement(val)('val')
     PsiWhiteSpace(' ')
     PsiErrorElement:Destructuring declarations are only allowed for local variables/values
       PsiElement(LPAR)('(')
-      MULTI_VARIABLE_DECLARATION_ENTRY
+      DESTRUCTURING_DECLARATION_ENTRY
         PsiElement(IDENTIFIER)('a')
       PsiElement(COMMA)(',')
       PsiWhiteSpace(' ')
-      MULTI_VARIABLE_DECLARATION_ENTRY
+      DESTRUCTURING_DECLARATION_ENTRY
         PsiElement(IDENTIFIER)('b')
       PsiElement(RPAR)(')')
     PsiWhiteSpace(' ')
@@ -493,7 +493,7 @@ JetFile: MultiVariableDeclarations.kt
     INTEGER_CONSTANT
       PsiElement(INTEGER_LITERAL)('1')
   PsiWhiteSpace('\n')
-  MULTI_VARIABLE_DECLARATION
+  DESTRUCTURING_DECLARATION
     PsiElement(val)('val')
     PsiWhiteSpace(' ')
     PsiErrorElement:Receiver type is not allowed on a destructuring declaration
@@ -504,11 +504,11 @@ JetFile: MultiVariableDeclarations.kt
       PsiElement(DOT)('.')
     PsiErrorElement:Destructuring declarations are only allowed for local variables/values
       PsiElement(LPAR)('(')
-      MULTI_VARIABLE_DECLARATION_ENTRY
+      DESTRUCTURING_DECLARATION_ENTRY
         PsiElement(IDENTIFIER)('a')
       PsiElement(COMMA)(',')
       PsiWhiteSpace(' ')
-      MULTI_VARIABLE_DECLARATION_ENTRY
+      DESTRUCTURING_DECLARATION_ENTRY
         PsiElement(IDENTIFIER)('b')
       PsiElement(RPAR)(')')
     PsiWhiteSpace(' ')
@@ -517,16 +517,16 @@ JetFile: MultiVariableDeclarations.kt
     INTEGER_CONSTANT
       PsiElement(INTEGER_LITERAL)('1')
   PsiWhiteSpace('\n')
-  MULTI_VARIABLE_DECLARATION
+  DESTRUCTURING_DECLARATION
     PsiElement(val)('val')
     PsiWhiteSpace(' ')
     PsiErrorElement:Destructuring declarations are only allowed for local variables/values
       PsiElement(LPAR)('(')
-      MULTI_VARIABLE_DECLARATION_ENTRY
+      DESTRUCTURING_DECLARATION_ENTRY
         PsiElement(IDENTIFIER)('a')
       PsiElement(COMMA)(',')
       PsiWhiteSpace(' ')
-      MULTI_VARIABLE_DECLARATION_ENTRY
+      DESTRUCTURING_DECLARATION_ENTRY
         PsiElement(IDENTIFIER)('b')
       PsiElement(RPAR)(')')
     PsiErrorElement:Type annotations are not allowed on destructuring declarations
@@ -549,16 +549,16 @@ JetFile: MultiVariableDeclarations.kt
     CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      MULTI_VARIABLE_DECLARATION
+      DESTRUCTURING_DECLARATION
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
         PsiErrorElement:Destructuring declarations are only allowed for local variables/values
           PsiElement(LPAR)('(')
-          MULTI_VARIABLE_DECLARATION_ENTRY
+          DESTRUCTURING_DECLARATION_ENTRY
             PsiElement(IDENTIFIER)('a')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          MULTI_VARIABLE_DECLARATION_ENTRY
+          DESTRUCTURING_DECLARATION_ENTRY
             PsiElement(IDENTIFIER)('b')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
@@ -567,7 +567,7 @@ JetFile: MultiVariableDeclarations.kt
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n    ')
-      MULTI_VARIABLE_DECLARATION
+      DESTRUCTURING_DECLARATION
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
         PsiErrorElement:Receiver type is not allowed on a destructuring declaration
@@ -578,11 +578,11 @@ JetFile: MultiVariableDeclarations.kt
           PsiElement(DOT)('.')
         PsiErrorElement:Destructuring declarations are only allowed for local variables/values
           PsiElement(LPAR)('(')
-          MULTI_VARIABLE_DECLARATION_ENTRY
+          DESTRUCTURING_DECLARATION_ENTRY
             PsiElement(IDENTIFIER)('a')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          MULTI_VARIABLE_DECLARATION_ENTRY
+          DESTRUCTURING_DECLARATION_ENTRY
             PsiElement(IDENTIFIER)('b')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
@@ -591,16 +591,16 @@ JetFile: MultiVariableDeclarations.kt
         INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n    ')
-      MULTI_VARIABLE_DECLARATION
+      DESTRUCTURING_DECLARATION
         PsiElement(val)('val')
         PsiWhiteSpace(' ')
         PsiErrorElement:Destructuring declarations are only allowed for local variables/values
           PsiElement(LPAR)('(')
-          MULTI_VARIABLE_DECLARATION_ENTRY
+          DESTRUCTURING_DECLARATION_ENTRY
             PsiElement(IDENTIFIER)('a')
           PsiElement(COMMA)(',')
           PsiWhiteSpace(' ')
-          MULTI_VARIABLE_DECLARATION_ENTRY
+          DESTRUCTURING_DECLARATION_ENTRY
             PsiElement(IDENTIFIER)('b')
           PsiElement(RPAR)(')')
         PsiErrorElement:Type annotations are not allowed on destructuring declarations

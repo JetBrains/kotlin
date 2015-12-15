@@ -71,7 +71,7 @@ interface MyTrait {
     <warning>abstract</warning> val a3: Int = <error>1</error>
 
     var b: Int                                                  <error>private</error> set
-    var b1: Int = <error>0</error>;                             <warning>private</warning> set
+    var b1: Int = <error>0</error>;                             <error>private</error> set
     <warning>abstract</warning> var b2: Int                     <error>private</error> set
     <warning>abstract</warning> var b3: Int = <error>0</error>; <error>private</error> set
 

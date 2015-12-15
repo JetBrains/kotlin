@@ -1,0 +1,5 @@
+package
+
+public fun bar(/*0*/ s: kotlin.String?, /*1*/ r: kotlin.String?): kotlin.Int
+public fun baz(/*0*/ s: kotlin.String?, /*1*/ r: kotlin.String?): kotlin.Int
+public fun foo(/*0*/ s: kotlin.String): kotlin.Int

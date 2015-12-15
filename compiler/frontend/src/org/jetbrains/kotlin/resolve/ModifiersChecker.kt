@@ -61,7 +61,7 @@ public object ModifierCheckerCore {
             ABSTRACT_KEYWORD  to EnumSet.of(CLASS_ONLY, LOCAL_CLASS, INNER_CLASS, INTERFACE, MEMBER_PROPERTY, MEMBER_FUNCTION),
             OPEN_KEYWORD      to EnumSet.of(CLASS_ONLY, LOCAL_CLASS, INNER_CLASS, INTERFACE, MEMBER_PROPERTY, MEMBER_FUNCTION),
             FINAL_KEYWORD     to EnumSet.of(CLASS_ONLY, LOCAL_CLASS, INNER_CLASS, ENUM_CLASS, OBJECT, MEMBER_PROPERTY, MEMBER_FUNCTION),
-            SEALED_KEYWORD    to EnumSet.of(CLASS_ONLY, LOCAL_CLASS, INNER_CLASS),
+            SEALED_KEYWORD    to EnumSet.of(CLASS_ONLY, INNER_CLASS),
             // We should have also CLASS_ONLY here because INNER_CLASS is not always perfectly identified
             INNER_KEYWORD     to EnumSet.of(CLASS_ONLY, INNER_CLASS),
             OVERRIDE_KEYWORD  to EnumSet.of(MEMBER_PROPERTY, MEMBER_FUNCTION),
@@ -89,10 +89,7 @@ public object ModifierCheckerCore {
     )
 
     // NOTE: deprecated targets must be possible!
-    private val deprecatedTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>(
-            // Deprecated in 1.0 beta 3
-            SEALED_KEYWORD    to EnumSet.of(LOCAL_CLASS)
-    )
+    private val deprecatedTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>()
 
     // NOTE: redundant targets must be possible!
     private val redundantTargetMap = mapOf<KtModifierKeywordToken, Set<KotlinTarget>>(

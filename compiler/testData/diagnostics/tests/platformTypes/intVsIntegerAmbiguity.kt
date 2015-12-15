@@ -24,10 +24,12 @@ class C
 fun foo(i: Int?) : C = null!!
 
 fun test(i: Int, ni: Int?) {
-    checkSubtype<J.A>(foo(2))
-    checkSubtype<J.A>(foo(i))
+    checkSubtype<C>(foo(2))
+    checkSubtype<J.A>(J.foo(2))
+    checkSubtype<J.A>(J.foo(i))
     checkSubtype<J.B>(J.foo(ni))
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(ni)
+    checkSubtype<C>(foo(ni))
+    checkSubtype<J.B>(J.foo(ni))
 
     foo(J.getInteger())
     J.foo(J.getInteger())

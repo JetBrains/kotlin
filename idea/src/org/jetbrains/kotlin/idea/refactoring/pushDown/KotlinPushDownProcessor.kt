@@ -164,11 +164,11 @@ public class KotlinPushDownProcessor(
 
                 is KtClassOrObject -> {
                     if (memberInfo.overrides != null) {
-                        context.sourceClass.getDelegatorToSuperClassByDescriptor(
+                        context.sourceClass.getSuperTypeEntryByDescriptor(
                                 memberDescriptor as ClassDescriptor,
                                 context.sourceClassContext
                         )?.let {
-                            addDelegatorToSuperClass(it, targetClass, targetClassDescriptor, context.sourceClassContext, substitutor)
+                            addSuperTypeEntry(it, targetClass, targetClassDescriptor, context.sourceClassContext, substitutor)
                         }
                         continue@members
                     }
@@ -205,11 +205,11 @@ public class KotlinPushDownProcessor(
                 }
                 is KtClassOrObject -> {
                     if (memberInfo.overrides != null) {
-                        context.sourceClass.getDelegatorToSuperClassByDescriptor(
+                        context.sourceClass.getSuperTypeEntryByDescriptor(
                                 memberDescriptor as ClassDescriptor,
                                 context.sourceClassContext
                         )?.let {
-                            context.sourceClass.removeDelegationSpecifier(it)
+                            context.sourceClass.removeSuperTypeListEntry(it)
                         }
                     }
                     else {

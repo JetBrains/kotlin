@@ -31,6 +31,6 @@ public class X extends B {
 // FILE: 2.kt
 class Y: X() {
     init {
-        val a: Double = <!TYPE_MISMATCH!>foo()<!> // todo
+        val a: Double = foo()
     }
 }

@@ -25,7 +25,7 @@ import java.util.ArrayList
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiWhiteSpace
-import org.jetbrains.kotlin.psi.KtMultiDeclaration
+import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
@@ -34,7 +34,7 @@ public class KotlinDeclarationSelectioner : ExtendWordSelectionHandlerBase() {
             = e is KtDeclaration
 
     override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange>? {
-        if (e is KtMultiDeclaration) {
+        if (e is KtDestructuringDeclaration) {
             return selectMultiDeclaration(editorText, e)
         }
 
@@ -58,7 +58,7 @@ public class KotlinDeclarationSelectioner : ExtendWordSelectionHandlerBase() {
         return result
     }
 
-    private fun selectMultiDeclaration(editorText: CharSequence, e: KtMultiDeclaration): ArrayList<TextRange> {
+    private fun selectMultiDeclaration(editorText: CharSequence, e: KtDestructuringDeclaration): ArrayList<TextRange> {
         val result = ArrayList<TextRange>()
         val lpar = e.lPar
         val rpar = e.rPar

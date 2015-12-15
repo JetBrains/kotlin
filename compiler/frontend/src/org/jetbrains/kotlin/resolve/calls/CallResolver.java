@@ -87,7 +87,7 @@ public class CallResolver {
     private static final PerformanceCounter callResolvePerfCounter = PerformanceCounter.Companion.create("Call resolve", ExpressionTypingVisitorDispatcher.typeInfoPerfCounter);
     private static final PerformanceCounter candidatePerfCounter = PerformanceCounter.Companion.create("Call resolve candidate analysis", true);
 
-    public static boolean useNewResolve = System.getProperty("kotlin.internal.new_resolve") != null;
+    public static boolean useNewResolve = !"false".equals(System.getProperty("kotlin.internal.new_resolve"));
 
     public CallResolver(
             @NotNull TaskPrioritizer taskPrioritizer,
@@ -330,8 +330,8 @@ public class CallResolver {
 
         // Here we handle the case where the callee expression must be something of type function, e.g. (foo.bar())(1, 2)
         KotlinType expectedType = NO_EXPECTED_TYPE;
-        if (calleeExpression instanceof KtFunctionLiteralExpression) {
-            int parameterNumber = ((KtFunctionLiteralExpression) calleeExpression).getValueParameters().size();
+        if (calleeExpression instanceof KtLambdaExpression) {
+            int parameterNumber = ((KtLambdaExpression) calleeExpression).getValueParameters().size();
             List<KotlinType> parameterTypes = new ArrayList<KotlinType>(parameterNumber);
             for (int i = 0; i < parameterNumber; i++) {
                 parameterTypes.add(NO_EXPECTED_TYPE);
@@ -708,7 +708,7 @@ public class CallResolver {
     ) {
         final List<CallCandidateResolutionContext<D>> candidateResolutionContexts = ContainerUtil.newArrayList();
         for (final ResolutionCandidate<D> resolutionCandidate : task.getCandidates()) {
-            if (DeprecationUtilKt.isAnnotatedAsHidden(resolutionCandidate.getDescriptor())) continue;
+            if (DeprecationUtilKt.isHiddenInResolution(resolutionCandidate.getDescriptor())) continue;
 
             candidatePerfCounter.time(new Function0<Unit>() {
                 @Override

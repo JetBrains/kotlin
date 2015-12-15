@@ -61,7 +61,7 @@ class LazyClasspathWatcher(classpath: Iterable<String>,
                 fileIds = classpath
                         .map { File(it) }
                         .asSequence()
-                        .flatMap { FileTreeWalk(it, filter = ::isClasspathFile) }
+                        .flatMap { it.walk().filter(::isClasspathFile) }
                         .map { FileId(it, it.lastModified(), it.md5Digest()) }
                         .toArrayList()
                 val nowMs = TimeUnit.MILLISECONDS.toMillis(System.nanoTime())

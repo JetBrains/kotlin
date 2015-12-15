@@ -38,8 +38,8 @@ public class KtForExpression extends KtLoopExpression {
     }
 
     @Nullable
-    public KtMultiDeclaration getMultiParameter() {
-        return (KtMultiDeclaration) findChildByType(KtNodeTypes.MULTI_VARIABLE_DECLARATION);
+    public KtDestructuringDeclaration getDestructuringParameter() {
+        return (KtDestructuringDeclaration) findChildByType(KtNodeTypes.DESTRUCTURING_DECLARATION);
     }
 
     @Nullable @IfNotParsed

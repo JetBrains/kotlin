@@ -27,6 +27,7 @@ import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.util.getResolutionScope
@@ -73,7 +74,9 @@ class AnonymousSuperMacro : Macro() {
 
         return resolutionScope
                 .collectDescriptorsFiltered(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS)
-                .filter { it is ClassDescriptor && it.modality.isOverridable && (it.kind == ClassKind.CLASS || it.kind == ClassKind.INTERFACE) }
+                .filter { it is ClassDescriptor &&
+                          (it.modality == Modality.OPEN || it.modality == Modality.ABSTRACT) &&
+                          (it.kind == ClassKind.CLASS || it.kind == ClassKind.INTERFACE) }
                 .mapNotNull { DescriptorToSourceUtils.descriptorToDeclaration(it) as PsiNamedElement? }
     }
 }

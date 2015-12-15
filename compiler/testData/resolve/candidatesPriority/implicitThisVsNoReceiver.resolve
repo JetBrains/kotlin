@@ -1,5 +1,5 @@
-fun ~A.foo~A.foo() = 1
-fun foo() = 2
+~A.foo~fun A.foo() = 1
+~foo~fun foo() = 2
 
 class A {
     fun test() = `A.foo`foo()

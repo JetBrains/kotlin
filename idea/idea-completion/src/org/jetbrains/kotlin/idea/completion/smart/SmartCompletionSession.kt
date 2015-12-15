@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.idea.core.ExpectedInfos
 import org.jetbrains.kotlin.idea.core.completion.DeclarationLookupObject
 import org.jetbrains.kotlin.idea.util.CallTypeAndReceiver
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptorKindExclude
-import org.jetbrains.kotlin.psi.FunctionLiteralArgument
+import org.jetbrains.kotlin.psi.LambdaArgument
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.ValueArgumentName
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -177,8 +177,8 @@ class SmartCompletionSession(
             val callTypeAndReceiver = CallTypeAndReceiver.detect(nameExpression) as? CallTypeAndReceiver.INFIX ?: return
             val call = callTypeAndReceiver.receiver.getCall(bindingContext)
             if (call != null && call.getFunctionLiteralArguments().isEmpty()) {
-                val dummyArgument = object : FunctionLiteralArgument {
-                    override fun getFunctionLiteral() = throw UnsupportedOperationException()
+                val dummyArgument = object : LambdaArgument {
+                    override fun getLambdaExpression() = throw UnsupportedOperationException()
                     override fun getArgumentExpression() = throw UnsupportedOperationException()
                     override fun getArgumentName(): ValueArgumentName? = null
                     override fun isNamed() = false

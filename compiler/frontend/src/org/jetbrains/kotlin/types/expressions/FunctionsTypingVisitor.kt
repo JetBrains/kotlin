@@ -60,12 +60,12 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
             }
 
             if (function.getName() != null) {
-                context.trace.report(FUNCTION_EXPRESSION_WITH_NAME.on(function.getNameIdentifier()))
+                context.trace.report(ANONYMOUS_FUNCTION_WITH_NAME.on(function.getNameIdentifier()))
             }
 
             for (parameter in function.getValueParameters()) {
                 if (parameter.hasDefaultValue()) {
-                    context.trace.report(FUNCTION_EXPRESSION_PARAMETER_WITH_DEFAULT_VALUE.on(parameter))
+                    context.trace.report(ANONYMOUS_FUNCTION_PARAMETER_WITH_DEFAULT_VALUE.on(parameter))
                 }
                 if (parameter.isVarArg()) {
                     context.trace.report(USELESS_VARARG_ON_PARAMETER.on(parameter))
@@ -130,7 +130,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         return components.builtIns.getFunctionType(Annotations.EMPTY, receiverType, parameters, returnType)
     }
 
-    override fun visitFunctionLiteralExpression(expression: KtFunctionLiteralExpression, context: ExpressionTypingContext): KotlinTypeInfo? {
+    override fun visitLambdaExpression(expression: KtLambdaExpression, context: ExpressionTypingContext): KotlinTypeInfo? {
         if (!expression.getFunctionLiteral().hasBody()) return null
 
         val expectedType = context.expectedType
@@ -154,7 +154,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
     }
 
     private fun createFunctionLiteralDescriptor(
-            expression: KtFunctionLiteralExpression,
+            expression: KtLambdaExpression,
             context: ExpressionTypingContext
     ): AnonymousFunctionDescriptor {
         val functionLiteral = expression.getFunctionLiteral()
@@ -174,7 +174,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
     }
 
     private fun computeReturnType(
-            expression: KtFunctionLiteralExpression,
+            expression: KtLambdaExpression,
             context: ExpressionTypingContext,
             functionDescriptor: SimpleFunctionDescriptorImpl,
             functionTypeExpected: Boolean
@@ -191,7 +191,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
     }
 
     private fun computeUnsafeReturnType(
-            expression: KtFunctionLiteralExpression,
+            expression: KtLambdaExpression,
             context: ExpressionTypingContext,
             functionDescriptor: SimpleFunctionDescriptorImpl,
             expectedReturnType: KotlinType?

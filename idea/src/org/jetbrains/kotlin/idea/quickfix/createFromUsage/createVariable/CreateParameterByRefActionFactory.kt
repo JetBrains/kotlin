@@ -33,10 +33,7 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getAssignmentByLHS
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElement
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.resolve.source.getPsi
@@ -48,6 +45,7 @@ object CreateParameterByRefActionFactory : CreateParameterFromUsageFactory<KtSim
     override fun getElementOfInterest(diagnostic: Diagnostic): KtSimpleNameExpression? {
         val refExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtNameReferenceExpression>()) ?: return null
         if (refExpr.getQualifiedElement() != refExpr) return null
+        if (refExpr.getParentOfTypeAndBranch<KtCallableReferenceExpression> { callableReference } != null) return null
         return refExpr
     }
 
@@ -83,15 +81,15 @@ object CreateParameterByRefActionFactory : CreateParameterFromUsageFactory<KtSim
             return element.parents
                     .filter {
                         it is KtNamedFunction || it is KtSecondaryConstructor || it is KtPropertyAccessor ||
-                        it is KtClassBody || it is KtAnonymousInitializer || it is KtDelegationSpecifier
+                        it is KtClassBody || it is KtAnonymousInitializer || it is KtSuperTypeListEntry
                     }
                     .firstOrNull()
                     ?.let {
                         when {
-                            (it is KtNamedFunction || it is KtSecondaryConstructor) && varExpected,
+                            (it is KtNamedFunction || it is KtSecondaryConstructor) && varExpected ||
                             it is KtPropertyAccessor -> chooseContainingClass(it)
                             it is KtAnonymousInitializer -> it.parent?.parent as? KtClass
-                            it is KtDelegationSpecifier -> {
+                            it is KtSuperTypeListEntry -> {
                                 val klass = it.getStrictParentOfType<KtClassOrObject>()
                                 if (klass is KtClass && !klass.isInterface() && klass !is KtEnumEntry) klass else null
                             }

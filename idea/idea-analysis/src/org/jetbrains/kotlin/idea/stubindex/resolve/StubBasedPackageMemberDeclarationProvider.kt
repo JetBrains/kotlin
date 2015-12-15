@@ -22,14 +22,14 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.lazy.declarations.PackageMemberDeclarationProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo
-import org.jetbrains.kotlin.resolve.lazy.data.JetClassInfoUtil
+import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo
+import org.jetbrains.kotlin.resolve.lazy.data.KtClassInfoUtil
 import org.jetbrains.kotlin.resolve.lazy.ResolveSessionUtils
 import java.util.ArrayList
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import com.intellij.psi.stubs.StringStubIndexExtension
 import org.jetbrains.kotlin.idea.stubindex.*
-import org.jetbrains.kotlin.resolve.lazy.data.JetScriptInfo
+import org.jetbrains.kotlin.resolve.lazy.data.KtScriptInfo
 
 public class StubBasedPackageMemberDeclarationProvider(
         private val fqName: FqName,
@@ -59,13 +59,13 @@ public class StubBasedPackageMemberDeclarationProvider(
         return result
     }
 
-    override fun getClassOrObjectDeclarations(name: Name): Collection<JetClassLikeInfo> {
-        val result = ArrayList<JetClassLikeInfo>()
+    override fun getClassOrObjectDeclarations(name: Name): Collection<KtClassLikeInfo> {
+        val result = ArrayList<KtClassLikeInfo>()
         KotlinFullClassNameIndex.getInstance().get(childName(name), project, searchScope)
-                .mapTo(result) { JetClassInfoUtil.createClassLikeInfo(it) }
+                .mapTo(result) { KtClassInfoUtil.createClassLikeInfo(it) }
 
         KotlinScriptFqnIndex.instance.get(childName(name), project, searchScope)
-                .mapTo(result) { JetScriptInfo(it) }
+                .mapTo(result) { KtScriptInfo(it) }
         return result
     }
 

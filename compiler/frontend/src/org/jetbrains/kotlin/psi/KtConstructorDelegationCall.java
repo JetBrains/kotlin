@@ -44,7 +44,7 @@ public class KtConstructorDelegationCall extends KtElementImpl implements KtCall
 
     @NotNull
     @Override
-    public List<KtFunctionLiteralArgument> getFunctionLiteralArguments() {
+    public List<KtLambdaArgument> getLambdaArguments() {
         return Collections.emptyList();
     }
 

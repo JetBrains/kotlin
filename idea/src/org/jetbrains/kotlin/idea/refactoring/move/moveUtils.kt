@@ -114,9 +114,9 @@ public fun KtElement.getInternalReferencesToUpdateOnPackageNameChange(packageNam
         val oldPackageName = packageNameInfo.oldPackageName
         val newPackageName = packageNameInfo.newPackageName
         return when {
-            isExtension,
-            packageName == oldPackageName,
-            packageName?.asString() == newPackageName.asString(),
+            isExtension ||
+            packageName == oldPackageName ||
+            packageName?.asString() == newPackageName.asString() ||
             isImported(descriptor) -> {
                 if (isAncestor(declaration, false)) {
                     if (descriptor.importableFqName == null) return null

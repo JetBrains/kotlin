@@ -1,7 +1,7 @@
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("StringsKt")
 
-package kotlin
+package kotlin.text
 
 import java.io.StringReader
 import java.util.regex.Pattern

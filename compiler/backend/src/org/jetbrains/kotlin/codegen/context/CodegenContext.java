@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.context;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.ReadOnly;
 import org.jetbrains.kotlin.codegen.*;
 import org.jetbrains.kotlin.codegen.binding.MutableClosure;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -27,7 +28,6 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.descriptors.SamConstructorDescriptor;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.storage.NullableLazyValue;
@@ -37,7 +37,6 @@ import org.jetbrains.org.objectweb.asm.Type;
 import java.util.*;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.getVisibilityAccessFlag;
-import static org.jetbrains.kotlin.resolve.BindingContext.NEED_SYNTHETIC_ACCESSOR;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PRIVATE;
 import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PROTECTED;
 
@@ -267,6 +266,10 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         return new MultifileClassFacadeContext(descriptor, this, multifileClassType, filePartType);
     }
 
+    public ClassContext intoDefaultImplsClass(ClassDescriptor descriptor, ClassContext interfaceContext, GenerationState state) {
+        return new DefaultImplsClassContext(state.getTypeMapper(), descriptor, OwnerKind.DEFAULT_IMPLS, this, null, interfaceContext);
+    }
+
     @NotNull
     public ClassContext intoClass(ClassDescriptor descriptor, OwnerKind kind, GenerationState state) {
         if (descriptor.isCompanionObject()) {
@@ -279,11 +282,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         }
         ClassContext classContext = new ClassContext(state.getTypeMapper(), descriptor, kind, this, null);
 
-        //We can't call descriptor.getCompanionObjectDescriptor() on light class generation
-        // because it triggers companion light class generation via putting it to BindingContext.CLASS
-        // (so MemberCodegen doesn't skip it in genClassOrObject).
-        if (state.getTypeMapper().getClassBuilderMode() != ClassBuilderMode.LIGHT_CLASSES &&
-            descriptor.getCompanionObjectDescriptor() != null) {
+        if (descriptor.getCompanionObjectDescriptor() != null) {
             //We need to create companion object context ahead of time
             // because otherwise we can't generate synthetic accessor for private members in companion object
             classContext.intoClass(descriptor.getCompanionObjectDescriptor(), OwnerKind.IMPLEMENTATION, state);
@@ -502,6 +501,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     @NotNull
+    @ReadOnly
     public Collection<? extends AccessorForCallableDescriptor<?>> getAccessors() {
         return accessors == null ? Collections.<AccessorForCallableDescriptor<CallableMemberDescriptor>>emptySet() : accessors.values();
     }
@@ -521,13 +521,6 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         }
 
         return accessibleDescriptorIfNeeded(descriptor, superCallTarget, isInliningContext);
-    }
-
-    public void recordSyntheticAccessorIfNeeded(@NotNull CallableMemberDescriptor descriptor, @NotNull BindingContext bindingContext) {
-        if (hasThisDescriptor() && Boolean.TRUE.equals(bindingContext.get(NEED_SYNTHETIC_ACCESSOR, descriptor))) {
-            // Not a super call because neither constructors nor private members can be targets of super calls
-            accessibleDescriptorIfNeeded(descriptor, /* superCallTarget = */ null, false);
-        }
     }
 
     @SuppressWarnings("unchecked")
@@ -632,7 +625,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
     }
 
     @Nullable
-    public CodegenContext findChildContext(@NotNull DeclarationDescriptor child) {
+    protected CodegenContext findChildContext(@NotNull DeclarationDescriptor child) {
         return childContexts == null ? null : childContexts.get(child);
     }
 

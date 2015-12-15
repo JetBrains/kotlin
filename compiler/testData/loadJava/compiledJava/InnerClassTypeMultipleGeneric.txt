@@ -1,0 +1,23 @@
+package test
+
+public open class InnerClassTypeMultipleGeneric {
+    public constructor InnerClassTypeMultipleGeneric()
+    public open fun staticType(): test.InnerClassTypeMultipleGeneric.Outer<kotlin.Char!, kotlin.Boolean!>.Inner<kotlin.Byte!>!
+
+    public open inner class BaseOuter</*0*/ H1 : kotlin.Any!, /*1*/ H2 : kotlin.Any!> {
+        public constructor BaseOuter</*0*/ H1 : kotlin.Any!, /*1*/ H2 : kotlin.Any!>()
+
+        public abstract inner class BaseInner</*0*/ H3 : kotlin.Any!, /*1*/ H4 : kotlin.Any!> /*captured type parameters: /*2*/ H1 : kotlin.Any!, /*3*/ H2 : kotlin.Any!*/ {
+            public constructor BaseInner</*0*/ H3 : kotlin.Any!, /*1*/ H4 : kotlin.Any!>()
+        }
+    }
+
+    public open inner class Outer</*0*/ E1 : kotlin.Any!, /*1*/ E2 : kotlin.Any!> : test.InnerClassTypeMultipleGeneric.BaseOuter<kotlin.Int!, E1!> {
+        public constructor Outer</*0*/ E1 : kotlin.Any!, /*1*/ E2 : kotlin.Any!>()
+        public open fun bar(): test.InnerClassTypeMultipleGeneric.BaseOuter<kotlin.Int!, E1!>.BaseInner<java.lang.Class<*>!, kotlin.CharSequence!>!
+
+        public open inner class Inner</*0*/ E3 : kotlin.Any!> /*captured type parameters: /*1*/ E1 : kotlin.Any!, /*2*/ E2 : kotlin.Any!*/ : test.InnerClassTypeMultipleGeneric.BaseOuter<E2!, E3!>.BaseInner<kotlin.Double!, kotlin.String!> {
+            public constructor Inner</*0*/ E3 : kotlin.Any!>()
+        }
+    }
+}

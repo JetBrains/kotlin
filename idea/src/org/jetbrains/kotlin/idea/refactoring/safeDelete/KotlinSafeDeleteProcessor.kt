@@ -21,6 +21,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Condition
 import com.intellij.openapi.util.Conditions
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiParameter
@@ -163,8 +164,18 @@ public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
         }
 
         fun findDelegationCallUsages(element: PsiElement) {
-            element.processDelegationCallConstructorUsages(element.getUseScope()) {
-                usages.add(SafeDeleteReferenceSimpleDeleteUsageInfo(it, element, false))
+            val constructors = when (element) {
+                is PsiClass -> element.constructors
+                is PsiMethod -> arrayOf(element)
+                else -> return
+            }
+            for (constructor in constructors) {
+                constructor.processDelegationCallConstructorUsages(constructor.useScope) {
+                    if (!getIgnoranceCondition().value(it)) {
+                        usages.add(SafeDeleteReferenceSimpleDeleteUsageInfo(it, element, false))
+                    }
+                    true
+                }
             }
         }
 

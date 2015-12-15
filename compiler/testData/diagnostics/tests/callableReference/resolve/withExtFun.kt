@@ -14,15 +14,14 @@ class A {
 
 fun A.foo(): String = "A"
 
-val x0 = A::foo // function A::foo wins by default
-val userOfX0 = x0(A())
+val x0 = A::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>
 
 val x1 = ofType<(A) -> Unit>(A::foo)
 val x2 = ofType<KProperty1<A, Int>>(A::foo)
 val x3: KProperty1<A, Int> = A::foo
 val x4: (A) -> String = A::foo
 
-val y0 = A::bar
+val y0 = A::<!OVERLOAD_RESOLUTION_AMBIGUITY!>bar<!>
 val y1 = ofType<(A) -> Unit>(A::bar)
 val y2 = ofType<KProperty1<A, Int>>(A::bar)
 val y3: KProperty1<A, Int> = A::bar

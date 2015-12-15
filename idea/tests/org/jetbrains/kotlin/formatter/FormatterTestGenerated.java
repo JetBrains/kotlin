@@ -565,6 +565,51 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("idea/testData/formatter/fileAnnotations")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class FileAnnotations extends AbstractFormatterTest {
+            @TestMetadata("afterComment.after.kt")
+            public void testAfterComment() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/fileAnnotations/afterComment.after.kt");
+                doTest(fileName);
+            }
+
+            public void testAllFilesPresentInFileAnnotations() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/formatter/fileAnnotations"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), true);
+            }
+
+            @TestMetadata("beforeDeclaration.after.kt")
+            public void testBeforeDeclaration() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/fileAnnotations/beforeDeclaration.after.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("beforeImportList.after.kt")
+            public void testBeforeImportList() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/fileAnnotations/beforeImportList.after.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("beforePackage.after.kt")
+            public void testBeforePackage() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/fileAnnotations/beforePackage.after.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inEmptyFile.after.kt")
+            public void testInEmptyFile() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/fileAnnotations/inEmptyFile.after.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("manyLinesFromFileBegin.after.kt")
+            public void testManyLinesFromFileBegin() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/fileAnnotations/manyLinesFromFileBegin.after.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("idea/testData/formatter/modifierList")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

@@ -78,7 +78,7 @@ public class MethodInliner {
     public MethodInliner(
             @NotNull MethodNode node,
             @NotNull Parameters parameters,
-            @NotNull InliningContext parent,
+            @NotNull InliningContext inliningContext,
             @NotNull FieldRemapper nodeRemapper,
             boolean isSameModule,
             @NotNull String errorPrefix,
@@ -86,12 +86,12 @@ public class MethodInliner {
     ) {
         this.node = node;
         this.parameters = parameters;
-        this.inliningContext = parent;
+        this.inliningContext = inliningContext;
         this.nodeRemapper = nodeRemapper;
         this.isSameModule = isSameModule;
         this.errorPrefix = errorPrefix;
         this.sourceMapper = sourceMapper;
-        this.typeMapper = parent.state.getTypeMapper();
+        this.typeMapper = inliningContext.state.getTypeMapper();
         this.result = InlineResult.create();
     }
 
@@ -153,8 +153,9 @@ public class MethodInliner {
 
         final Iterator<AnonymousObjectGeneration> iterator = anonymousObjectGenerations.iterator();
 
+        final TypeRemapper remapper = TypeRemapper.createFrom(currentTypeMapping);
         RemappingMethodAdapter remappingMethodAdapter = new RemappingMethodAdapter(resultNode.access, resultNode.desc, resultNode,
-                                                                                   new TypeRemapper(currentTypeMapping));
+                                                                                   remapper);
 
         final int markerShift = InlineCodegenUtil.calcMarkerShift(parameters, node);
         InlineAdapter lambdaInliner = new InlineAdapter(remappingMethodAdapter, parameters.getArgsSizeOnStack(), sourceMapper) {
@@ -167,7 +168,7 @@ public class MethodInliner {
                     //TODO: need poping of type but what to do with local funs???
                     String oldClassName = anonymousObjectGen.getOwnerInternalName();
                     String newClassName = inliningContext.nameGenerator.genLambdaClassName();
-                    currentTypeMapping.put(oldClassName, newClassName);
+                    remapper.addMapping(oldClassName, newClassName);
                     AnonymousObjectTransformer transformer =
                             new AnonymousObjectTransformer(oldClassName,
                                                            inliningContext
@@ -261,7 +262,14 @@ public class MethodInliner {
                             visitFieldInsn(Opcodes.GETSTATIC, capturedParamDesc.getContainingLambdaName(),
                                            "$$$" + capturedParamDesc.getFieldName(), capturedParamDesc.getType().getDescriptor());
                         }
-                        super.visitMethodInsn(opcode, anonymousObjectGen.getNewLambdaType().getInternalName(), name, anonymousObjectGen.getNewConstructorDescriptor(), itf);
+                        String newInternalName = anonymousObjectGen.getNewLambdaType().getInternalName();
+                        super.visitMethodInsn(opcode, newInternalName, name, anonymousObjectGen.getNewConstructorDescriptor(), itf);
+
+                        //TODO: add new inner class also for other contexts
+                        if (inliningContext.getParent() instanceof RegeneratedClassContext) {
+                            inliningContext.getParent().typeRemapper.addAdditionalMappings(anonymousObjectGen.getOwnerInternalName(), newInternalName);
+                        }
+
                         anonymousObjectGen = null;
                     } else {
                         super.visitMethodInsn(opcode, changeOwnerForExternalPackage(owner, opcode), name, desc, itf);
@@ -551,7 +559,7 @@ public class MethodInliner {
     }
 
     private boolean isAlreadyRegenerated(@NotNull String owner) {
-        return inliningContext.typeMapping.containsKey(owner);
+        return inliningContext.typeRemapper.hasNoAdditionalMapping(owner);
     }
 
     @Nullable

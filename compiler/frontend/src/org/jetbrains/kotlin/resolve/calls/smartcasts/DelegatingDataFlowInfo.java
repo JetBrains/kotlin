@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeUtils;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL;
 
@@ -112,7 +109,7 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
 
     @Override
     @NotNull
-    public Nullability getNullability(@NotNull DataFlowValue key) {
+    public Nullability getCollectedNullability(@NotNull DataFlowValue key) {
         return getNullability(key, false);
     }
 
@@ -127,7 +124,7 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
         if (predictableOnly && !key.isPredictable()) return key.getImmanentNullability();
         Nullability nullability = nullabilityInfo.get(key);
         return nullability != null ? nullability :
-               parent != null ? parent.getNullability(key) :
+               parent != null ? parent.getCollectedNullability(key) :
                key.getImmanentNullability();
     }
 
@@ -137,19 +134,24 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
             @NotNull Nullability nullability
     ) {
         map.put(value, nullability);
-        return nullability != getNullability(value);
+        return nullability != getCollectedNullability(value);
     }
 
     @Override
     @NotNull
-    public Set<KotlinType> getPossibleTypes(@NotNull DataFlowValue key) {
-        KotlinType originalType = key.getType();
+    public Set<KotlinType> getCollectedTypes(@NotNull DataFlowValue key) {
+        return getCollectedTypes(key, true);
+    }
+
+    @NotNull
+    private Set<KotlinType> getCollectedTypes(@NotNull DataFlowValue key, boolean enrichWithNotNull) {
         Set<KotlinType> types = collectTypesFromMeAndParents(key);
-        if (getNullability(key).canBeNull()) {
+        if (!enrichWithNotNull || getCollectedNullability(key).canBeNull()) {
             return types;
         }
 
         Set<KotlinType> enrichedTypes = Sets.newHashSetWithExpectedSize(types.size() + 1);
+        KotlinType originalType = key.getType();
         if (originalType.isMarkedNullable()) {
             enrichedTypes.add(TypeUtils.makeNotNullable(originalType));
         }
@@ -158,6 +160,20 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
         }
 
         return enrichedTypes;
+    }
+
+    @Override
+    @NotNull
+    public Set<KotlinType> getPredictableTypes(@NotNull DataFlowValue key) {
+        return getPredictableTypes(key, true);
+    }
+
+    @NotNull
+    private Set<KotlinType> getPredictableTypes(@NotNull DataFlowValue key, boolean enrichWithNotNull) {
+        if (!key.isPredictable()) {
+            return new LinkedHashSet<KotlinType>();
+        }
+        return getCollectedTypes(key, enrichWithNotNull);
     }
 
     /**
@@ -183,11 +199,11 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
     @NotNull
     public DataFlowInfo assign(@NotNull DataFlowValue a, @NotNull DataFlowValue b) {
         Map<DataFlowValue, Nullability> nullability = Maps.newHashMap();
-        Nullability nullabilityOfB = getNullability(b);
+        Nullability nullabilityOfB = getPredictableNullability(b);
         putNullability(nullability, a, nullabilityOfB);
 
         SetMultimap<DataFlowValue, KotlinType> newTypeInfo = newTypeInfo();
-        Set<KotlinType> typesForB = getPossibleTypes(b);
+        Set<KotlinType> typesForB = getPredictableTypes(b);
         // Own type of B must be recorded separately, e.g. for a constant
         // But if its type is the same as A or it's null, there is no reason to do it
         // because usually null type or own type are not saved in this set
@@ -208,16 +224,16 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
     @NotNull
     public DataFlowInfo equate(@NotNull DataFlowValue a, @NotNull DataFlowValue b) {
         Map<DataFlowValue, Nullability> builder = Maps.newHashMap();
-        Nullability nullabilityOfA = getNullability(a);
-        Nullability nullabilityOfB = getNullability(b);
+        Nullability nullabilityOfA = getPredictableNullability(a);
+        Nullability nullabilityOfB = getPredictableNullability(b);
 
         boolean changed = false;
         changed |= putNullability(builder, a, nullabilityOfA.refine(nullabilityOfB));
         changed |= putNullability(builder, b, nullabilityOfB.refine(nullabilityOfA));
 
         SetMultimap<DataFlowValue, KotlinType> newTypeInfo = newTypeInfo();
-        newTypeInfo.putAll(a, collectTypesFromMeAndParents(b));
-        newTypeInfo.putAll(b, collectTypesFromMeAndParents(a));
+        newTypeInfo.putAll(a, getPredictableTypes(b, false));
+        newTypeInfo.putAll(b, getPredictableTypes(a, false));
         if (!a.getType().equals(b.getType())) {
             // To avoid recording base types of own type
             if (!TypeUtilsKt.isSubtypeOf(a.getType(), b.getType())) {
@@ -255,7 +271,7 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
                 }
             }
             else {
-                types.addAll(current.getPossibleTypes(value));
+                types.addAll(current.getCollectedTypes(value));
                 break;
             }
         }
@@ -267,8 +283,8 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
     @NotNull
     public DataFlowInfo disequate(@NotNull DataFlowValue a, @NotNull DataFlowValue b) {
         Map<DataFlowValue, Nullability> builder = Maps.newHashMap();
-        Nullability nullabilityOfA = getNullability(a);
-        Nullability nullabilityOfB = getNullability(b);
+        Nullability nullabilityOfA = getPredictableNullability(a);
+        Nullability nullabilityOfB = getPredictableNullability(b);
 
         boolean changed = false;
         changed |= putNullability(builder, a, nullabilityOfA.refine(nullabilityOfB.invert()));
@@ -280,7 +296,7 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
     @NotNull
     public DataFlowInfo establishSubtyping(@NotNull DataFlowValue value, @NotNull KotlinType type) {
         if (value.getType().equals(type)) return this;
-        if (getPossibleTypes(value).contains(type)) return this;
+        if (getCollectedTypes(value).contains(type)) return this;
         if (!FlexibleTypesKt.isFlexible(value.getType()) && TypeUtilsKt.isSubtypeOf(value.getType(), type)) return this;
         ImmutableMap<DataFlowValue, Nullability> newNullabilityInfo =
                 type.isMarkedNullable() ? EMPTY_NULLABILITY_INFO : ImmutableMap.of(value, NOT_NULL);
@@ -302,7 +318,7 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
         for (Map.Entry<DataFlowValue, Nullability> entry : other.getCompleteNullabilityInfo().entrySet()) {
             DataFlowValue key = entry.getKey();
             Nullability otherFlags = entry.getValue();
-            Nullability thisFlags = getNullability(key);
+            Nullability thisFlags = getCollectedNullability(key);
             Nullability flags = thisFlags.and(otherFlags);
             if (flags != thisFlags) {
                 nullabilityMapBuilder.put(key, flags);
@@ -336,7 +352,7 @@ import static org.jetbrains.kotlin.resolve.calls.smartcasts.Nullability.NOT_NULL
         for (Map.Entry<DataFlowValue, Nullability> entry : other.getCompleteNullabilityInfo().entrySet()) {
             DataFlowValue key = entry.getKey();
             Nullability otherFlags = entry.getValue();
-            Nullability thisFlags = getNullability(key);
+            Nullability thisFlags = getCollectedNullability(key);
             nullabilityMapBuilder.put(key, thisFlags.or(otherFlags));
         }
 

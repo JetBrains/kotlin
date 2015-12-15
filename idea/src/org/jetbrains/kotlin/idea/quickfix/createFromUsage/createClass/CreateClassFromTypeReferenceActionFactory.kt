@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.kotlin.psi.KtConstructorCalleeExpression
-import org.jetbrains.kotlin.psi.KtDelegatorToSuperClass
+import org.jetbrains.kotlin.psi.KtSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -39,7 +39,7 @@ public object CreateClassFromTypeReferenceActionFactory : CreateClassFromUsageFa
         val typeRefParent = element.parent?.parent
         if (typeRefParent is KtConstructorCalleeExpression) return Collections.emptyList()
 
-        val interfaceExpected = typeRefParent is KtDelegatorToSuperClass
+        val interfaceExpected = typeRefParent is KtSuperTypeEntry
 
         val isQualifier = (element.parent as? KtUserType)?.let { it.qualifier == element } ?: false
 

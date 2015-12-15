@@ -20,10 +20,7 @@ import com.intellij.extapi.psi.PsiFileBase;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.FileASTNode;
 import com.intellij.openapi.fileTypes.FileType;
-import com.intellij.psi.FileViewProvider;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiClassOwner;
-import com.intellij.psi.PsiElementVisitor;
+import com.intellij.psi.*;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import kotlin.ArraysKt;
@@ -42,7 +39,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class KtFile extends PsiFileBase implements KtDeclarationContainer, KtAnnotated, KtElement, PsiClassOwner {
+public class KtFile extends PsiFileBase implements KtDeclarationContainer, KtAnnotated, KtElement, PsiClassOwner, PsiNamedElement {
 
     private final boolean isCompiled;
 

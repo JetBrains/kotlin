@@ -10,8 +10,8 @@ JetFile: ByClauses.kt
     PsiWhiteSpace(' ')
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
-    DELEGATION_SPECIFIER_LIST
-      DELEGATOR_BY
+    SUPER_TYPE_LIST
+      DELEGATED_SUPER_TYPE_ENTRY
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION
@@ -44,8 +44,8 @@ JetFile: ByClauses.kt
     PsiWhiteSpace(' ')
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
-    DELEGATION_SPECIFIER_LIST
-      DELEGATOR_BY
+    SUPER_TYPE_LIST
+      DELEGATED_SUPER_TYPE_ENTRY
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION
@@ -96,8 +96,8 @@ JetFile: ByClauses.kt
     PsiWhiteSpace(' ')
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
-    DELEGATION_SPECIFIER_LIST
-      DELEGATOR_BY
+    SUPER_TYPE_LIST
+      DELEGATED_SUPER_TYPE_ENTRY
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION
@@ -133,8 +133,8 @@ JetFile: ByClauses.kt
     PsiWhiteSpace(' ')
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
-    DELEGATION_SPECIFIER_LIST
-      DELEGATOR_BY
+    SUPER_TYPE_LIST
+      DELEGATED_SUPER_TYPE_ENTRY
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION
@@ -148,8 +148,8 @@ JetFile: ByClauses.kt
             REFERENCE_EXPRESSION
               PsiElement(IDENTIFIER)('a')
             PsiWhiteSpace(' ')
-            FUNCTION_LITERAL_ARGUMENT
-              FUNCTION_LITERAL_EXPRESSION
+            LAMBDA_ARGUMENT
+              LAMBDA_EXPRESSION
                 FUNCTION_LITERAL
                   PsiElement(LBRACE)('{')
                   BLOCK
@@ -179,8 +179,8 @@ JetFile: ByClauses.kt
     PsiWhiteSpace(' ')
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
-    DELEGATION_SPECIFIER_LIST
-      DELEGATOR_BY
+    SUPER_TYPE_LIST
+      DELEGATED_SUPER_TYPE_ENTRY
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION
@@ -197,8 +197,8 @@ JetFile: ByClauses.kt
               REFERENCE_EXPRESSION
                 PsiElement(IDENTIFIER)('a')
               PsiWhiteSpace(' ')
-              FUNCTION_LITERAL_ARGUMENT
-                FUNCTION_LITERAL_EXPRESSION
+              LAMBDA_ARGUMENT
+                LAMBDA_EXPRESSION
                   FUNCTION_LITERAL
                     PsiElement(LBRACE)('{')
                     BLOCK
@@ -228,8 +228,8 @@ JetFile: ByClauses.kt
     PsiWhiteSpace(' ')
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
-    DELEGATION_SPECIFIER_LIST
-      DELEGATOR_BY
+    SUPER_TYPE_LIST
+      DELEGATED_SUPER_TYPE_ENTRY
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION
@@ -247,8 +247,8 @@ JetFile: ByClauses.kt
                 REFERENCE_EXPRESSION
                   PsiElement(IDENTIFIER)('a')
                 PsiWhiteSpace(' ')
-                FUNCTION_LITERAL_ARGUMENT
-                  FUNCTION_LITERAL_EXPRESSION
+                LAMBDA_ARGUMENT
+                  LAMBDA_EXPRESSION
                     FUNCTION_LITERAL
                       PsiElement(LBRACE)('{')
                       BLOCK
@@ -278,8 +278,8 @@ JetFile: ByClauses.kt
     PsiWhiteSpace(' ')
     PsiElement(COLON)(':')
     PsiWhiteSpace(' ')
-    DELEGATION_SPECIFIER_LIST
-      DELEGATOR_BY
+    SUPER_TYPE_LIST
+      DELEGATED_SUPER_TYPE_ENTRY
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION
@@ -308,8 +308,8 @@ JetFile: ByClauses.kt
                   REFERENCE_EXPRESSION
                     PsiElement(IDENTIFIER)('a')
                   PsiWhiteSpace(' ')
-                  FUNCTION_LITERAL_ARGUMENT
-                    FUNCTION_LITERAL_EXPRESSION
+                  LAMBDA_ARGUMENT
+                    LAMBDA_EXPRESSION
                       FUNCTION_LITERAL
                         PsiElement(LBRACE)('{')
                         BLOCK

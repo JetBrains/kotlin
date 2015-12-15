@@ -1,9 +1,7 @@
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("StringsKt")
 
-package kotlin
-
-import kotlin.text.*
+package kotlin.text
 
 /**
  * Converts the string into a regular expression [Regex] with the default options.

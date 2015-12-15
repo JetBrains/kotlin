@@ -1,7 +1,7 @@
 class A {
 }
 ~extension~fun A.foo() = 1
-fun foo() = 2
+~simple~fun foo() = 2
 
 fun test(a: A) {
     with (a) {

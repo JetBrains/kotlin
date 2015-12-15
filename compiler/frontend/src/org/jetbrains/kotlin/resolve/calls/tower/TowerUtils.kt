@@ -23,12 +23,6 @@ import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasLowPriorityInOverloadResolution
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
-
-internal fun <D : CallableDescriptor> CandidateWithBoundDispatchReceiver<D>.addDiagnostic(error: ResolutionDiagnostic?): CandidateWithBoundDispatchReceiver<D> {
-    if (error == null) return this
-    return CandidateWithBoundDispatchReceiverImpl(dispatchReceiver, descriptor, diagnostics + error)
-}
-
 @Deprecated("Temporary error")
 internal class PreviousResolutionError(candidateLevel: ResolutionCandidateApplicability): ResolutionDiagnostic(candidateLevel)
 

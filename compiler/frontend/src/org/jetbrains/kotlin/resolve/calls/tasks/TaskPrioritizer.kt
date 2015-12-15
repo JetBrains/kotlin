@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getUnaryPlusOrMinusOperatorFunctionName
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isConventionCall
+import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isInfixCall
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isOrOverridesSynthesized
 import org.jetbrains.kotlin.resolve.calls.callUtil.createLookupLocation
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
@@ -166,7 +167,7 @@ public class TaskPrioritizer(
         if (isConventionCall(c.context.call)) {
             addMembersAndExtensionsWithFilter { d: CallableDescriptor -> d is FunctionDescriptor && d.isOperator }
         }
-        if (InfixValidator.isInfixCall(c.context.call.calleeExpression)) {
+        if (isInfixCall(c.context.call)) {
             addMembersAndExtensionsWithFilter { d: CallableDescriptor -> d is FunctionDescriptor && d.isInfix }
         }
 

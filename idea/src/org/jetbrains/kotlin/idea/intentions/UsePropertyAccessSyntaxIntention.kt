@@ -129,7 +129,7 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
             override fun getCalleeExpression() = newCallee
             override fun getValueArgumentList(): KtValueArgumentList? = null
             override fun getValueArguments(): List<ValueArgument> = emptyList()
-            override fun getFunctionLiteralArguments(): List<FunctionLiteralArgument> = emptyList()
+            override fun getFunctionLiteralArguments(): List<LambdaArgument> = emptyList()
         }
 
         val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace")

@@ -1,0 +1,12 @@
+package
+
+public fun </*0*/ T> run(/*0*/ f: () -> T): T
+
+public final class My</*0*/ T : kotlin.Any> {
+    public constructor My</*0*/ T : kotlin.Any>(/*0*/ y: T?)
+    public final val y: T?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun get(): T
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

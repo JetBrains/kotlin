@@ -23,19 +23,19 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.typeUtil.*
-
-import java.util.*
-
-import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.resolve.BindingContext.TYPE
 import org.jetbrains.kotlin.resolve.BindingContext.TYPE_PARAMETER
 import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractMembers
 import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveOpenMembers
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.SubstitutionUtils
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.typeUtil.isNothing
+import java.util.*
 
 fun KtDeclaration.checkTypeReferences(trace: BindingTrace) {
     if (this is KtCallableDeclaration) {
@@ -147,70 +147,104 @@ class DeclarationsChecker(
     }
 
     private fun checkTypesInClassHeader(classOrObject: KtClassOrObject) {
-        for (delegationSpecifier in classOrObject.getDelegationSpecifiers()) {
-            delegationSpecifier.typeReference?.check(checkBoundsForTypeInClassHeader = true)
+        fun KtTypeReference.type(): KotlinType? = trace.bindingContext.get(TYPE, this)
+
+        for (delegationSpecifier in classOrObject.getSuperTypeListEntries()) {
+            val typeReference = delegationSpecifier.typeReference ?: continue
+            typeReference.type()?.let { DescriptorResolver.checkBounds(typeReference, it, trace) }
+            typeReference.checkNotEnumEntry(trace)
         }
 
         if (classOrObject !is KtClass) return
 
-        for (jetTypeParameter in classOrObject.typeParameters) {
-            jetTypeParameter.extendsBound?.check(checkBoundsForTypeInClassHeader = true, checkFinalUpperBounds = true)
+        val upperBoundCheckRequests = ArrayList<DescriptorResolver.UpperBoundCheckRequest>()
+
+        for (typeParameter in classOrObject.typeParameters) {
+            val typeReference = typeParameter.extendsBound ?: continue
+            val type = typeReference.type() ?: continue
+            upperBoundCheckRequests.add(DescriptorResolver.UpperBoundCheckRequest(typeParameter.nameAsName, typeReference, type))
         }
 
         for (constraint in classOrObject.typeConstraints) {
-            constraint.boundTypeReference?.check(checkBoundsForTypeInClassHeader = true, checkFinalUpperBounds = true)
+            val typeReference = constraint.boundTypeReference ?: continue
+            val type = typeReference.type() ?: continue
+            val name = constraint.subjectTypeParameterName?.getReferencedNameAsName() ?: continue
+            upperBoundCheckRequests.add(DescriptorResolver.UpperBoundCheckRequest(name, typeReference, type))
+        }
+
+        DescriptorResolver.checkUpperBoundTypes(trace, upperBoundCheckRequests)
+
+        for (request in upperBoundCheckRequests) {
+            DescriptorResolver.checkBounds(request.upperBound, request.upperBoundType, trace)
         }
     }
 
-    private fun KtTypeReference.checkBoundsForTypeInClassHeader() {
-        trace.bindingContext.get(TYPE, this)?.let { DescriptorResolver.checkBounds(this, it, trace) }
+    private fun checkOnlyOneTypeParameterBound(
+            descriptor: TypeParameterDescriptor, declaration: KtTypeParameter, owner: KtTypeParameterListOwner
+    ) {
+        val upperBounds = descriptor.upperBounds
+        val (boundsWhichAreTypeParameters, otherBounds) = upperBounds
+                .map { type -> type.constructor }
+                .partition { constructor -> constructor.declarationDescriptor is TypeParameterDescriptor }
+                .let { pair -> pair.first.toSet() to pair.second.toSet() }
+        if (boundsWhichAreTypeParameters.size > 1 || (boundsWhichAreTypeParameters.size == 1 && otherBounds.isNotEmpty())) {
+            val reportOn = if (boundsWhichAreTypeParameters.size + otherBounds.size == 2) {
+                // If there's only one problematic bound (either 2 type parameter bounds, or 1 type parameter bound + 1 other bound),
+                // report the diagnostic on that bound
+
+                val allBounds: List<Pair<KtTypeReference, KotlinType?>> =
+                        owner.typeConstraints
+                                .filter { constraint ->
+                                    constraint.subjectTypeParameterName?.getReferencedNameAsName() == declaration.nameAsName
+                                }
+                                .mapNotNull { constraint -> constraint.boundTypeReference }
+                                .map { typeReference -> typeReference to trace.bindingContext.get(TYPE, typeReference) }
+
+                val problematicBound =
+                        allBounds.firstOrNull { bound -> bound.second?.constructor != boundsWhichAreTypeParameters.first() }
+
+                problematicBound?.first ?: declaration
+            }
+            else {
+                // Otherwise report the diagnostic on the type parameter declaration
+                declaration
+            }
+
+            trace.report(BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER.on(reportOn))
+        }
     }
 
-    private fun KtTypeReference.checkFinalUpperBounds() {
-        trace.bindingContext.get(TYPE, this)?.let { DescriptorResolver.checkUpperBoundType(this, it, trace) }
-    }
+    private fun checkSupertypesForConsistency(classifier: ClassifierDescriptor, sourceElement: PsiElement) {
+        if (classifier is TypeParameterDescriptor) {
+            val immediateUpperBounds = classifier.upperBounds.map { it.constructor }
+            if (immediateUpperBounds.size != immediateUpperBounds.toSet().size) {
+                // If there are duplicate type constructors among the _immediate_ upper bounds,
+                // then the REPEATED_BOUNDS diagnostic would be already reported for those bounds of this type parameter
+                return
+            }
+        }
 
-    private fun KtTypeReference.check(checkBoundsForTypeInClassHeader: Boolean = false, checkFinalUpperBounds: Boolean = false) {
-        if (checkFinalUpperBounds) {
-            checkFinalUpperBounds()
-        }
-        else {
-            checkNotEnumEntry(trace)
-        }
-        if (checkBoundsForTypeInClassHeader) {
-            checkBoundsForTypeInClassHeader()
-        }
-    }
+        val multiMap = SubstitutionUtils.buildDeepSubstitutionMultimap(classifier.defaultType)
+        for ((typeParameterDescriptor, projections) in multiMap.asMap()) {
+            if (projections.size <= 1) continue
 
-    private fun checkSupertypesForConsistency(
-            classifierDescriptor: ClassifierDescriptor,
-            sourceElement: PsiElement) {
-        val multimap = SubstitutionUtils.buildDeepSubstitutionMultimap(classifierDescriptor.defaultType)
-        for ((typeParameterDescriptor, projections) in multimap.asMap().entries) {
-            if (projections.size > 1) {
-                // Immediate arguments of supertypes cannot be projected
-                val conflictingTypes = Sets.newLinkedHashSet<KotlinType>()
-                for (projection in projections) {
-                    conflictingTypes.add(projection.type)
-                }
-                removeDuplicateTypes(conflictingTypes)
-                if (conflictingTypes.size > 1) {
-                    val containingDeclaration = typeParameterDescriptor.containingDeclaration as? ClassDescriptor
-                                                ?: throw AssertionError("Not a class descriptor : " + typeParameterDescriptor.containingDeclaration)
-                    if (sourceElement is KtClassOrObject) {
-                        val delegationSpecifierList = sourceElement.getDelegationSpecifierList() ?: continue
-                        trace.report(INCONSISTENT_TYPE_PARAMETER_VALUES.on(delegationSpecifierList,
-                                                                           typeParameterDescriptor,
-                                                                           containingDeclaration,
-                                                                           conflictingTypes))
-                    }
-                    else if (sourceElement is KtTypeParameter) {
-                        trace.report(INCONSISTENT_TYPE_PARAMETER_BOUNDS.on(sourceElement,
-                                                                           typeParameterDescriptor,
-                                                                           containingDeclaration,
-                                                                           conflictingTypes))
-                    }
-                }
+            // Immediate arguments of supertypes cannot be projected
+            val conflictingTypes = projections.map { it.type }.toMutableSet()
+            removeDuplicateTypes(conflictingTypes)
+            if (conflictingTypes.size <= 1) continue
+
+            val containingDeclaration = typeParameterDescriptor.containingDeclaration as? ClassDescriptor
+                                        ?: throw AssertionError("Not a class descriptor: " + typeParameterDescriptor.containingDeclaration)
+            if (sourceElement is KtClassOrObject) {
+                val delegationSpecifierList = sourceElement.getSuperTypeList() ?: continue
+                trace.report(INCONSISTENT_TYPE_PARAMETER_VALUES.on(
+                        delegationSpecifierList, typeParameterDescriptor, containingDeclaration, conflictingTypes
+                ))
+            }
+            else if (sourceElement is KtTypeParameter) {
+                trace.report(INCONSISTENT_TYPE_PARAMETER_BOUNDS.on(
+                        sourceElement, typeParameterDescriptor, containingDeclaration, conflictingTypes
+                ))
             }
         }
     }
@@ -242,7 +276,7 @@ class DeclarationsChecker(
     private fun checkExposedSupertypes(klass: KtClassOrObject, classDescriptor: ClassDescriptor) {
         val classVisibility = classDescriptor.effectiveVisibility()
         val isInterface = classDescriptor.kind == ClassKind.INTERFACE
-        val delegationList = klass.getDelegationSpecifiers()
+        val delegationList = klass.getSuperTypeListEntries()
         classDescriptor.typeConstructor.supertypes.forEachIndexed { i, superType ->
             if (i >= delegationList.size) return
             val superDescriptor = TypeUtils.getClassDescriptor(superType) ?: return@forEachIndexed
@@ -331,13 +365,15 @@ class DeclarationsChecker(
 
     private fun checkTypeParameterConstraints(typeParameterListOwner: KtTypeParameterListOwner) {
         val constraints = typeParameterListOwner.typeConstraints
-        if (!constraints.isEmpty()) {
-            for (typeParameter in typeParameterListOwner.typeParameters) {
-                if (typeParameter.extendsBound != null && hasConstraints(typeParameter, constraints)) {
-                    trace.report(MISPLACED_TYPE_PARAMETER_CONSTRAINTS.on(typeParameter))
-                }
-                trace.get(TYPE_PARAMETER, typeParameter)?.let { checkSupertypesForConsistency(it, typeParameter) }
+        if (constraints.isEmpty()) return
+
+        for (typeParameter in typeParameterListOwner.typeParameters) {
+            if (typeParameter.extendsBound != null && hasConstraints(typeParameter, constraints)) {
+                trace.report(MISPLACED_TYPE_PARAMETER_CONSTRAINTS.on(typeParameter))
             }
+            val typeParameterDescriptor = trace.get(TYPE_PARAMETER, typeParameter) ?: continue
+            checkSupertypesForConsistency(typeParameterDescriptor, typeParameter)
+            checkOnlyOneTypeParameterBound(typeParameterDescriptor, typeParameter, typeParameterListOwner)
         }
     }
 
@@ -669,14 +705,17 @@ class DeclarationsChecker(
             }
         }
         else {
-            if (propertyDescriptor.modality != Modality.FINAL
+            if (propertyDescriptor.isOverridable
                 && accessorDescriptor.visibility == Visibilities.PRIVATE
                 && propertyDescriptor.visibility != Visibilities.PRIVATE) {
                 if (propertyDescriptor.modality == Modality.ABSTRACT) {
                     reportVisibilityModifierDiagnostics(tokens.values, Errors.PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY)
                 }
                 else {
-                    reportVisibilityModifierDiagnostics(tokens.values, Errors.PRIVATE_SETTER_FOR_OPEN_PROPERTY)
+                    val parentDescriptor = propertyDescriptor.containingDeclaration
+                    if (parentDescriptor !is ClassDescriptor || !parentDescriptor.isFinal) {
+                        reportVisibilityModifierDiagnostics(tokens.values, Errors.PRIVATE_SETTER_FOR_OPEN_PROPERTY)
+                    }
                 }
             }
             else if (propertyDescriptor.isLateInit && accessorDescriptor.visibility != propertyDescriptor.visibility) {

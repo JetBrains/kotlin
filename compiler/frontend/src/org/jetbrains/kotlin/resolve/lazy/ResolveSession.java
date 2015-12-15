@@ -34,9 +34,9 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
-import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo;
-import org.jetbrains.kotlin.resolve.lazy.data.JetClassOrObjectInfo;
-import org.jetbrains.kotlin.resolve.lazy.data.JetScriptInfo;
+import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo;
+import org.jetbrains.kotlin.resolve.lazy.data.KtClassOrObjectInfo;
+import org.jetbrains.kotlin.resolve.lazy.data.KtScriptInfo;
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory;
 import org.jetbrains.kotlin.resolve.lazy.declarations.PackageMemberDeclarationProvider;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotations;
@@ -242,15 +242,15 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
 
         return ContainerUtil.mapNotNull(
                 provider.getClassOrObjectDeclarations(fqName.shortName()),
-                new Function<JetClassLikeInfo, ClassDescriptor>() {
+                new Function<KtClassLikeInfo, ClassDescriptor>() {
                     @Override
-                    public ClassDescriptor fun(JetClassLikeInfo classLikeInfo) {
-                        if (classLikeInfo instanceof JetClassOrObjectInfo) {
+                    public ClassDescriptor fun(KtClassLikeInfo classLikeInfo) {
+                        if (classLikeInfo instanceof KtClassOrObjectInfo) {
                             //noinspection RedundantCast
-                            return getClassDescriptor(((JetClassOrObjectInfo) classLikeInfo).getCorrespondingClassOrObject(), location);
+                            return getClassDescriptor(((KtClassOrObjectInfo) classLikeInfo).getCorrespondingClassOrObject(), location);
                         }
-                        else if (classLikeInfo instanceof JetScriptInfo) {
-                            return getScriptDescriptor(((JetScriptInfo) classLikeInfo).getScript());
+                        else if (classLikeInfo instanceof KtScriptInfo) {
+                            return getScriptDescriptor(((KtScriptInfo) classLikeInfo).getScript());
                         }
                         else {
                             throw new IllegalStateException(

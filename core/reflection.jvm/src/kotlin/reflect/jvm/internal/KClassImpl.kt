@@ -134,7 +134,7 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
                     val packageName = classId.packageFqName.asString()
                     val className = classId.relativeClassName.asString().replace('.', '$')
                     // All pseudo-classes like String.Companion must be accessible from the current class loader
-                    javaClass.safeClassLoader.tryLoadClass("$packageName.$className")
+                    (this as Any).javaClass.safeClassLoader.tryLoadClass("$packageName.$className")
                 }
                 else -> throw KotlinReflectionInternalError("Unsupported class: $nestedClass (source = $source)")
             }

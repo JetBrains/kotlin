@@ -18,7 +18,7 @@ public final data enum class First : kotlin.Enum<First> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    @kotlin.Deprecated(message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<First>
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<First>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): First
     public final /*synthesized*/ fun values(): kotlin.Array<First>
 }

@@ -27,7 +27,7 @@ public class KotlinLambdaUnwrapper extends KotlinUnwrapRemoveBase {
         super(key);
     }
 
-    private static KtElement getLambdaEnclosingElement(@NotNull KtFunctionLiteralExpression lambda) {
+    private static KtElement getLambdaEnclosingElement(@NotNull KtLambdaExpression lambda) {
         PsiElement parent = lambda.getParent();
 
         if (parent instanceof KtValueArgument) {
@@ -47,11 +47,11 @@ public class KotlinLambdaUnwrapper extends KotlinUnwrapRemoveBase {
 
     @Override
     public boolean isApplicableTo(PsiElement e) {
-        if (!(e instanceof KtFunctionLiteralExpression)) return false;
+        if (!(e instanceof KtLambdaExpression)) return false;
 
-        KtFunctionLiteralExpression lambda = (KtFunctionLiteralExpression) e;
+        KtLambdaExpression lambda = (KtLambdaExpression) e;
         KtBlockExpression body = lambda.getBodyExpression();
-        KtElement enclosingElement = getLambdaEnclosingElement((KtFunctionLiteralExpression) e);
+        KtElement enclosingElement = getLambdaEnclosingElement((KtLambdaExpression) e);
 
         if (body == null || enclosingElement == null) return false;
 
@@ -60,7 +60,7 @@ public class KotlinLambdaUnwrapper extends KotlinUnwrapRemoveBase {
 
     @Override
     protected void doUnwrap(PsiElement element, Context context) throws IncorrectOperationException {
-        KtFunctionLiteralExpression lambda = (KtFunctionLiteralExpression) element;
+        KtLambdaExpression lambda = (KtLambdaExpression) element;
         KtBlockExpression body = lambda.getBodyExpression();
         KtElement enclosingExpression = getLambdaEnclosingElement(lambda);
 

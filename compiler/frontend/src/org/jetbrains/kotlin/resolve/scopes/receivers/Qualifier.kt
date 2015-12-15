@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
 import org.jetbrains.kotlin.resolve.scopes.ChainedScope
 import org.jetbrains.kotlin.resolve.scopes.FilteringScope
-import org.jetbrains.kotlin.resolve.scopes.JetScopeUtils
+import org.jetbrains.kotlin.resolve.scopes.ScopeUtils
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
@@ -125,7 +125,7 @@ class ClassQualifier(
         scopes.add(classifier.staticScope)
 
         if (classifier.kind != ClassKind.ENUM_ENTRY) {
-            scopes.add(JetScopeUtils.getStaticNestedClassesScope(classifier))
+            scopes.add(ScopeUtils.getStaticNestedClassesScope(classifier))
         }
 
         return ChainedScope("Static scope for $name as class or object", *scopes.toTypedArray())

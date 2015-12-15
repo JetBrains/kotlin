@@ -75,7 +75,7 @@ public class KtAnnotationEntry extends KtElementImplStub<KotlinAnnotationEntrySt
 
     @NotNull
     @Override
-    public List<KtFunctionLiteralArgument> getFunctionLiteralArguments() {
+    public List<KtLambdaArgument> getLambdaArguments() {
         return Collections.emptyList();
     }
 

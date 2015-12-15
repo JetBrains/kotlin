@@ -180,7 +180,7 @@ class ChangeMemberFunctionSignatureFix private constructor(
             val name = functionDescriptor.name
             return containingClass.defaultType.supertypes()
                     .flatMap { supertype -> supertype.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_IDE) }
-                    .filter { it.kind.isReal && it.modality.isOverridable }
+                    .filter { it.kind.isReal && it.isOverridable }
         }
     }
 

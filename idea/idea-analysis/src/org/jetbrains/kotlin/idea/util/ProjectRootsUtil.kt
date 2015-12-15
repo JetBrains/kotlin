@@ -16,14 +16,18 @@
 
 package org.jetbrains.kotlin.idea.util
 
-import com.intellij.openapi.roots.ProjectFileIndex
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.util.application.runReadAction
+import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
-import com.intellij.ide.highlighter.JavaClassFileType
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.caches.resolve.JsProjectDetector
+import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInClassFileType
+import org.jetbrains.kotlin.idea.decompiler.builtIns.KotlinBuiltInPackageFileType
+import org.jetbrains.kotlin.idea.util.application.runReadAction
+
+private val classFileLike = setOf(JavaClassFileType.INSTANCE, KotlinBuiltInClassFileType, KotlinBuiltInPackageFileType)
 
 public object ProjectRootsUtil {
     @JvmStatic
@@ -42,7 +46,7 @@ public object ProjectRootsUtil {
                    || (includeLibraryClasses && fileIndex.isLibraryClassFile(file))
         }
         // NOTE: the following is a workaround for cases when class files are under library source roots and source files are under class roots
-        val isClassFile = file.getFileType() == JavaClassFileType.INSTANCE
+        val isClassFile = file.fileType in classFileLike
         return (includeLibraryClasses && isClassFile && fileIndex.isInLibraryClasses(file))
                || (includeLibrarySource && !isClassFile && fileIndex.isInLibrarySource(file))
     }

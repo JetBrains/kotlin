@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.builtins;
 
+import kotlin.DeprecationLevel;
 import kotlin.SetsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -139,6 +140,7 @@ public abstract class KotlinBuiltIns {
         public final FqName throwable = fqName("Throwable");
 
         public final FqName deprecated = fqName("Deprecated");
+        public final FqName deprecationLevel = fqName("DeprecationLevel");
         public final FqName extension = fqName("Extension");
         public final FqName target = annotationName("Target");
         public final FqName annotationTarget = annotationName("AnnotationTarget");
@@ -378,6 +380,24 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
+    public ClassDescriptor getDeprecationLevelEnum() {
+        return getBuiltInClassByName(FQ_NAMES.deprecationLevel.shortName());
+    }
+
+    @Nullable
+    private static ClassDescriptor getEnumEntry(@NotNull ClassDescriptor enumDescriptor, @NotNull String entryName) {
+        ClassifierDescriptor result = enumDescriptor.getUnsubstitutedInnerClassesScope().getContributedClassifier(
+                Name.identifier(entryName), NoLookupLocation.FROM_BUILTINS
+        );
+        return result instanceof ClassDescriptor ? (ClassDescriptor) result : null;
+    }
+
+    @Nullable
+    public ClassDescriptor getDeprecationLevelEnumEntry(@NotNull DeprecationLevel level) {
+        return getEnumEntry(getDeprecationLevelEnum(), level.name());
+    }
+
+    @NotNull
     public ClassDescriptor getTargetAnnotation() {
         return getAnnotationClassByName(FQ_NAMES.target.shortName());
     }
@@ -404,10 +424,7 @@ public abstract class KotlinBuiltIns {
 
     @Nullable
     public ClassDescriptor getAnnotationTargetEnumEntry(@NotNull KotlinTarget target) {
-        ClassifierDescriptor result = getAnnotationTargetEnum().getUnsubstitutedInnerClassesScope().getContributedClassifier(
-                Name.identifier(target.name()), NoLookupLocation.FROM_BUILTINS
-        );
-        return result instanceof ClassDescriptor ? (ClassDescriptor) result : null;
+        return getEnumEntry(getAnnotationTargetEnum(), target.name());
     }
 
     @NotNull
@@ -417,10 +434,7 @@ public abstract class KotlinBuiltIns {
 
     @Nullable
     public ClassDescriptor getAnnotationRetentionEnumEntry(@NotNull KotlinRetention retention) {
-        ClassifierDescriptor result = getAnnotationRetentionEnum().getUnsubstitutedInnerClassesScope().getContributedClassifier(
-                Name.identifier(retention.name()), NoLookupLocation.FROM_BUILTINS
-        );
-        return result instanceof ClassDescriptor ? (ClassDescriptor) result : null;
+        return getEnumEntry(getAnnotationRetentionEnum(), retention.name());
     }
 
     @NotNull

@@ -3,6 +3,7 @@
 // ACTION: Create parameter 'Foo'
 // ACTION: Create property 'Foo'
 // ACTION: Split property declaration
+// ACTION: Rename reference
 // ERROR: Unresolved reference: Foo
 open class Cyclic<E : Cyclic<E>>
 

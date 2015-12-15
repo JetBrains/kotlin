@@ -192,10 +192,10 @@ public class ModifiersChecker {
             checkModifierListCommon(modifierListOwner, descriptor);
         }
 
-        public void checkModifiersForMultiDeclaration(@NotNull KtMultiDeclaration multiDeclaration) {
+        public void checkModifiersForDestructuringDeclaration(@NotNull KtDestructuringDeclaration multiDeclaration) {
             annotationChecker.check(multiDeclaration, trace, null);
             ModifierCheckerCore.INSTANCE.check(multiDeclaration, trace, null);
-            for (KtMultiDeclarationEntry multiEntry: multiDeclaration.getEntries()) {
+            for (KtDestructuringDeclarationEntry multiEntry: multiDeclaration.getEntries()) {
                 annotationChecker.check(multiEntry, trace, null);
                 ModifierCheckerCore.INSTANCE.check(multiEntry, trace, null);
                 UnderscoreChecker.INSTANCE.checkNamed(multiEntry, trace);

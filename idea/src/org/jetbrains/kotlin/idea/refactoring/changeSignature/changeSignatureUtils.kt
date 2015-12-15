@@ -34,8 +34,8 @@ import org.jetbrains.kotlin.types.substitutions.getCallableSubstitutor
 
 fun KtNamedDeclaration.getDeclarationBody(): KtElement? {
     return when {
-        this is KtClassOrObject -> getDelegationSpecifierList()
-        this is KtPrimaryConstructor -> getContainingClassOrObject().getDelegationSpecifierList()
+        this is KtClassOrObject -> getSuperTypeList()
+        this is KtPrimaryConstructor -> getContainingClassOrObject().getSuperTypeList()
         this is KtSecondaryConstructor -> getDelegationCall()
         this is KtNamedFunction -> getBodyExpression()
         else -> null

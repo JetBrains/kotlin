@@ -1,4 +1,6 @@
-val <T> T.valProp: T where T : Number, T : Int
+import java.io.Serializable
+
+val <T> T.valProp: T where T : Number, T : Serializable
     get() = this
 
 fun box(): String {

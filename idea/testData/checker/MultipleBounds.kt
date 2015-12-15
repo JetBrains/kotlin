@@ -42,7 +42,7 @@ class Bar<T : <warning>Foo</warning>>
 class Buzz<T> where T : <warning>Bar<<error>Int</error>></warning>, T : <error>nioho</error>
 
 class X<T : <warning>Foo</warning>>
-class Y<<error>T</error>> where T :  <warning>Foo</warning>, T : <warning>Bar<Foo></warning>
+class Y<<error>T</error>> where T :  <warning>Foo</warning>, T : <error>Bar<Foo></error>
 
 fun <T> test2(t : T)
   where

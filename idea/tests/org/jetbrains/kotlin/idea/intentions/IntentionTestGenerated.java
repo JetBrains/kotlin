@@ -2062,12 +2062,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                     doTest(fileName);
                 }
 
-                @TestMetadata("whenWithRangeTestsAndMultiConditions.kt")
-                public void testWhenWithRangeTestsAndMultiConditions() throws Exception {
-                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/when/introduceSubject/whenWithRangeTestsAndMultiConditions.kt");
-                    doTest(fileName);
-                }
-
                 @TestMetadata("whenWithSubject.kt")
                 public void testWhenWithSubject() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/branched/when/introduceSubject/whenWithSubject.kt");
@@ -3193,6 +3187,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("simpleCharSequence.kt")
+        public void testSimpleCharSequence() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertForEachToForLoop/simpleCharSequence.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleSequence.kt")
+        public void testSimpleSequence() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertForEachToForLoop/simpleSequence.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("typeArgumentPresent.kt")
         public void testTypeArgumentPresent() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertForEachToForLoop/typeArgumentPresent.kt");
@@ -3703,6 +3709,63 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("withExtensionReceiver.kt")
         public void testWithExtensionReceiver() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertParameterToReceiver/withExtensionReceiver.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/intentions/convertPropertyInitializerToGetter")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ConvertPropertyInitializerToGetter extends AbstractIntentionTest {
+        public void testAllFilesPresentInConvertPropertyInitializerToGetter() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/convertPropertyInitializerToGetter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("inapplicableIfExtensionProperty.kt")
+        public void testInapplicableIfExtensionProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyInitializerToGetter/inapplicableIfExtensionProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inapplicableIfLocalVariableInFun.kt")
+        public void testInapplicableIfLocalVariableInFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyInitializerToGetter/inapplicableIfLocalVariableInFun.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inapplicableIfLocalVariableInInitBlock.kt")
+        public void testInapplicableIfLocalVariableInInitBlock() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyInitializerToGetter/inapplicableIfLocalVariableInInitBlock.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inapplicableIfNoInitializer.kt")
+        public void testInapplicableIfNoInitializer() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyInitializerToGetter/inapplicableIfNoInitializer.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyWithInitializerWithSetter.kt")
+        public void testPropertyWithInitializerWithSetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyInitializerToGetter/propertyWithInitializerWithSetter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("propertyWithInitializerWithoutAccessors.kt")
+        public void testPropertyWithInitializerWithoutAccessors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyInitializerToGetter/propertyWithInitializerWithoutAccessors.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("semicolon.kt")
+        public void testSemicolon() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyInitializerToGetter/semicolon.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("topLevelDeclaration.kt")
+        public void testTopLevelDeclaration() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/convertPropertyInitializerToGetter/topLevelDeclaration.kt");
             doTest(fileName);
         }
     }
@@ -6879,6 +6942,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         @TestMetadata("simpleLoopWithIndices.kt")
         public void testSimpleLoopWithIndices() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeForLoopIndices/simpleLoopWithIndices.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleLoopWithIndicesOverCharSequence.kt")
+        public void testSimpleLoopWithIndicesOverCharSequence() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeForLoopIndices/simpleLoopWithIndicesOverCharSequence.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simpleLoopWithIndicesOverSequence.kt")
+        public void testSimpleLoopWithIndicesOverSequence() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/removeForLoopIndices/simpleLoopWithIndicesOverSequence.kt");
             doTest(fileName);
         }
     }

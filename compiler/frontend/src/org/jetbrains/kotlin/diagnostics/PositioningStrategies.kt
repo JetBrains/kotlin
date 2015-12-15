@@ -49,7 +49,7 @@ public object PositioningStrategies {
                 is KtObjectLiteralExpression -> {
                     val objectDeclaration = element.getObjectDeclaration()
                     val objectKeyword = objectDeclaration.getObjectKeyword()
-                    val delegationSpecifierList = objectDeclaration.getDelegationSpecifierList()
+                    val delegationSpecifierList = objectDeclaration.getSuperTypeList()
                     if (delegationSpecifierList == null) {
                         return markElement(objectKeyword)
                     }
@@ -426,7 +426,7 @@ public object PositioningStrategies {
 
     @JvmField public val DELEGATOR_SUPER_CALL: PositioningStrategy<KtEnumEntry> = object: PositioningStrategy<KtEnumEntry>() {
         override fun mark(element: KtEnumEntry): List<TextRange> {
-            val specifiers = element.getDelegationSpecifiers()
+            val specifiers = element.getSuperTypeListEntries()
             return markElement(if (specifiers.isEmpty()) element else specifiers[0])
         }
     }

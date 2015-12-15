@@ -65,6 +65,12 @@ public class CommonDecompiledTextFromJsMetadataTestGenerated extends AbstractCom
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/decompiler/decompiledText"), Pattern.compile("^([^\\.]+)$"), true);
     }
 
+    @TestMetadata("AnnotatedEnumEntry")
+    public void testAnnotatedEnumEntry() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/AnnotatedEnumEntry/");
+        doTest(fileName);
+    }
+
     @TestMetadata("Annotations")
     public void testAnnotations() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/decompiler/decompiledText/Annotations/");

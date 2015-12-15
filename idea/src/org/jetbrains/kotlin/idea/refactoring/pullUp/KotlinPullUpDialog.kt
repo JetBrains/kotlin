@@ -23,6 +23,7 @@ import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiNamedElement
 import com.intellij.refactoring.JavaRefactoringSettings
 import com.intellij.refactoring.classMembers.AbstractMemberInfoModel
+import com.intellij.refactoring.classMembers.MemberInfoChange
 import com.intellij.refactoring.classMembers.MemberInfoModel
 import com.intellij.refactoring.memberPullUp.PullUpProcessor
 import com.intellij.refactoring.util.DocCommentPolicy
@@ -44,6 +45,8 @@ public class KotlinPullUpDialog(
     }
 
     private inner class MemberInfoModelImpl : AbstractMemberInfoModel<KtNamedDeclaration, KotlinMemberInfo>() {
+        private var lastSuperClass: PsiNamedElement? = null
+
         // Abstract members remain abstract
         override fun isFixedAbstract(memberInfo: KotlinMemberInfo?) = true
 
@@ -78,6 +81,15 @@ public class KotlinPullUpDialog(
             if (memberInfo in memberInfoStorage.getDuplicatedMemberInfos(superClass)) return false
             if (member in memberInfoStorage.getExtending(superClass)) return false
             return true
+        }
+
+        override fun memberInfoChanged(event: MemberInfoChange<KtNamedDeclaration, KotlinMemberInfo>) {
+            val superClass = superClass ?: return
+            if (superClass != lastSuperClass) {
+                lastSuperClass = superClass
+                val isInterface = superClass is KtClass && superClass.isInterface()
+                event.changedMembers.forEach { it.isToAbstract = isInterface }
+            }
         }
     }
 

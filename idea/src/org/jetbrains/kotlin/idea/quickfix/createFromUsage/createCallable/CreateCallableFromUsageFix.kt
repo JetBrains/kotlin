@@ -73,7 +73,7 @@ public abstract class CreateCallableFromUsageFixBase<E : KtElement>(
     private fun getDeclarationIfApplicable(project: Project, candidate: TypeCandidate): PsiElement? {
         val descriptor = candidate.theType.constructor.declarationDescriptor ?: return null
         val declaration = getDeclaration(descriptor, project) ?: return null
-        if (declaration !is KtClassOrObject && declaration !is PsiClass) return null
+        if (declaration !is KtClassOrObject && declaration !is KtTypeParameter && declaration !is PsiClass) return null
         return if (isExtension || declaration.canRefactor()) declaration else null
     }
 
@@ -125,6 +125,7 @@ public abstract class CreateCallableFromUsageFixBase<E : KtElement>(
                     false
                 isFunction && insertToJavaInterface && receiverInfo.staticContextRequired ->
                     false
+                !isExtension && declaration is KtTypeParameter -> false
                 else ->
                     declaration != null
             }

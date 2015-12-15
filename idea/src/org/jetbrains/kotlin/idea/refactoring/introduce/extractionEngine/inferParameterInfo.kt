@@ -87,7 +87,7 @@ internal fun ExtractionData.inferParametersInfo(
         val resolvedCall = refInfo.resolveResult.resolvedCall
         val extensionReceiver = resolvedCall?.extensionReceiver
         val receiverToExtract = (when {
-            extensionReceiver == ReceiverValue.NO_RECEIVER,
+            extensionReceiver == ReceiverValue.NO_RECEIVER ||
             isSynthesizedInvoke(refInfo.resolveResult.descriptor) -> resolvedCall?.dispatchReceiver
             else -> extensionReceiver
         } as? ReceiverValue) ?: ReceiverValue.NO_RECEIVER
@@ -194,7 +194,7 @@ private fun ExtractionData.extractReceiver(
     else {
         val extractThis = (hasThisReceiver && refInfo.smartCast == null) || thisExpr != null
         val extractOrdinaryParameter =
-                originalDeclaration is KtMultiDeclarationEntry ||
+                originalDeclaration is KtDestructuringDeclarationEntry ||
                 originalDeclaration is KtProperty ||
                 originalDeclaration is KtParameter
 
@@ -313,7 +313,7 @@ private fun suggestParameterType(
                receiverToExtract is ImplicitReceiver -> {
                    val typeByDataFlowInfo = if (useSmartCastsIfPossible) {
                        val dataFlowInfo = bindingContext.getDataFlowInfo(resolvedCall!!.call.callElement)
-                       val possibleTypes = dataFlowInfo.getPossibleTypes(DataFlowValueFactory.createDataFlowValueForStableReceiver(receiverToExtract))
+                       val possibleTypes = dataFlowInfo.getCollectedTypes(DataFlowValueFactory.createDataFlowValueForStableReceiver(receiverToExtract))
                        if (possibleTypes.isNotEmpty()) CommonSupertypes.commonSupertype(possibleTypes) else null
                    } else null
                    typeByDataFlowInfo ?: receiverToExtract.type

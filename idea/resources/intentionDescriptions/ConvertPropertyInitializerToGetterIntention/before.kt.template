@@ -1,0 +1,3 @@
+class A {
+    val foo: Int = <spot>1</spot>
+}

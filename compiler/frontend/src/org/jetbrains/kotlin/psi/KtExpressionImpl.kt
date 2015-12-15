@@ -39,12 +39,11 @@ public abstract class KtExpressionImpl(node: ASTNode) : KtElementImpl(node), KtE
 
             if (newElement is KtExpression) {
                 when (parent) {
-                    is KtExpression -> {
-                        if (KtPsiUtil.areParenthesesNecessary(newElement, expression, parent)) {
+                    is KtExpression, is KtValueArgument -> {
+                        if (KtPsiUtil.areParenthesesNecessary(newElement, expression, parent as KtElement)) {
                             return rawReplaceHandler(KtPsiFactory(expression).createExpressionByPattern("($0)", newElement))
                         }
                     }
-
                     is KtSimpleNameStringTemplateEntry -> {
                         if (newElement !is KtSimpleNameExpression) {
                             val newEntry = parent.replace(KtPsiFactory(expression).createBlockStringTemplateEntry(newElement)) as KtBlockStringTemplateEntry

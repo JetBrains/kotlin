@@ -10,7 +10,3 @@ enum class MyEnum { A }
 <!TYPE_CANT_BE_USED_FOR_CONST_VAL!>const<!> val enumConst: MyEnum = MyEnum.A
 <!TYPE_CANT_BE_USED_FOR_CONST_VAL!>const<!> val arrayConst: Array<String> = arrayOf("1")
 <!TYPE_CANT_BE_USED_FOR_CONST_VAL!>const<!> val intArrayConst: IntArray = intArrayOf()
-
-// ------------------------------------------------
-fun <T> arrayOf(vararg x: T): Array<T> = null!!
-fun intArrayOf(): IntArray = null!!

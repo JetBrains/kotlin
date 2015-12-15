@@ -41,7 +41,7 @@ interface ScopeTower {
     val dataFlowInfo: DataFlowDecorator
 
     // The closest (the most local) levels goes first
-    val levels: Sequence<ScopeTowerLevel>
+    val levels: List<ScopeTowerLevel>
 }
 
 interface DataFlowDecorator {
@@ -54,9 +54,9 @@ interface DataFlowDecorator {
 }
 
 interface ScopeTowerLevel {
-    fun getVariables(name: Name): Collection<CandidateWithBoundDispatchReceiver<VariableDescriptor>>
+    fun getVariables(name: Name, extensionReceiver: ReceiverValue?): Collection<CandidateWithBoundDispatchReceiver<VariableDescriptor>>
 
-    fun getFunctions(name: Name): Collection<CandidateWithBoundDispatchReceiver<FunctionDescriptor>>
+    fun getFunctions(name: Name, extensionReceiver: ReceiverValue?): Collection<CandidateWithBoundDispatchReceiver<FunctionDescriptor>>
 }
 
 interface CandidateWithBoundDispatchReceiver<out D : CallableDescriptor> {
@@ -93,11 +93,12 @@ class InnerClassViaStaticReference(val classDescriptor: ClassDescriptor): Resolu
 class UnsupportedInnerClassCall(val message: String): ResolutionDiagnostic(ResolutionCandidateApplicability.IMPOSSIBLE_TO_GENERATE)
 class UsedSmartCastForDispatchReceiver(val smartCastType: KotlinType): ResolutionDiagnostic(ResolutionCandidateApplicability.RESOLVED)
 
-object ErrorDescriptorDiagnostic : ResolutionDiagnostic(ResolutionCandidateApplicability.INAPPLICABLE)
+object ErrorDescriptorDiagnostic : ResolutionDiagnostic(ResolutionCandidateApplicability.RESOLVED) // todo discuss and change to INAPPLICABLE
 object SynthesizedDescriptorDiagnostic: ResolutionDiagnostic(ResolutionCandidateApplicability.RESOLVED_SYNTHESIZED)
 object DynamicDescriptorDiagnostic: ResolutionDiagnostic(ResolutionCandidateApplicability.RESOLVED_SYNTHESIZED)
 object UnstableSmartCastDiagnostic: ResolutionDiagnostic(ResolutionCandidateApplicability.MAY_THROW_RUNTIME_ERROR)
 object ExtensionWithStaticTypeWithDynamicReceiver: ResolutionDiagnostic(ResolutionCandidateApplicability.HIDDEN)
 object HiddenDescriptor: ResolutionDiagnostic(ResolutionCandidateApplicability.HIDDEN)
 
-
+object InvokeConventionCallNoOperatorModifier : ResolutionDiagnostic(ResolutionCandidateApplicability.CONVENTION_ERROR)
+object InfixCallNoInfixModifier : ResolutionDiagnostic(ResolutionCandidateApplicability.CONVENTION_ERROR)

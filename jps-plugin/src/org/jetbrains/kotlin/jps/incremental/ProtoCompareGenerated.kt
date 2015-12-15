@@ -94,6 +94,8 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
 
         if (!checkEqualsClassProperty(old, new)) return false
 
+        if (!checkEqualsClassEnumEntryName(old, new)) return false
+
         if (!checkEqualsClassEnumEntry(old, new)) return false
 
         if (old.hasTypeTable() != new.hasTypeTable()) return false
@@ -120,6 +122,7 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
         CONSTRUCTOR_LIST,
         FUNCTION_LIST,
         PROPERTY_LIST,
+        ENUM_ENTRY_NAME_LIST,
         ENUM_ENTRY_LIST,
         TYPE_TABLE,
         CLASS_ANNOTATION_LIST
@@ -153,6 +156,8 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
         if (!checkEqualsClassFunction(old, new)) result.add(ProtoBufClassKind.FUNCTION_LIST)
 
         if (!checkEqualsClassProperty(old, new)) result.add(ProtoBufClassKind.PROPERTY_LIST)
+
+        if (!checkEqualsClassEnumEntryName(old, new)) result.add(ProtoBufClassKind.ENUM_ENTRY_NAME_LIST)
 
         if (!checkEqualsClassEnumEntry(old, new)) result.add(ProtoBufClassKind.ENUM_ENTRY_LIST)
 
@@ -390,6 +395,15 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
         if (old.hasExtension(JvmProtoBuf.constructorSignature) != new.hasExtension(JvmProtoBuf.constructorSignature)) return false
         if (old.hasExtension(JvmProtoBuf.constructorSignature)) {
             if (!checkEquals(old.getExtension(JvmProtoBuf.constructorSignature), new.getExtension(JvmProtoBuf.constructorSignature))) return false
+        }
+
+        return true
+    }
+
+    open fun checkEquals(old: ProtoBuf.EnumEntry, new: ProtoBuf.EnumEntry): Boolean {
+        if (old.hasName() != new.hasName()) return false
+        if (old.hasName()) {
+            if (old.name != new.name) return false
         }
 
         return true
@@ -659,11 +673,21 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
         return true
     }
 
+    open fun checkEqualsClassEnumEntryName(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean {
+        if (old.enumEntryNameCount != new.enumEntryNameCount) return false
+
+        for(i in 0..old.enumEntryNameCount - 1) {
+            if (!checkStringEquals(old.getEnumEntryName(i), new.getEnumEntryName(i))) return false
+        }
+
+        return true
+    }
+
     open fun checkEqualsClassEnumEntry(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean {
         if (old.enumEntryCount != new.enumEntryCount) return false
 
         for(i in 0..old.enumEntryCount - 1) {
-            if (!checkStringEquals(old.getEnumEntry(i), new.getEnumEntry(i))) return false
+            if (!checkEquals(old.getEnumEntry(i), new.getEnumEntry(i))) return false
         }
 
         return true
@@ -859,8 +883,12 @@ public fun ProtoBuf.Class.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (
         hashCode = 31 * hashCode + getProperty(i).hashCode(stringIndexes, fqNameIndexes)
     }
 
+    for(i in 0..enumEntryNameCount - 1) {
+        hashCode = 31 * hashCode + stringIndexes(getEnumEntryName(i))
+    }
+
     for(i in 0..enumEntryCount - 1) {
-        hashCode = 31 * hashCode + stringIndexes(getEnumEntry(i))
+        hashCode = 31 * hashCode + getEnumEntry(i).hashCode(stringIndexes, fqNameIndexes)
     }
 
     if (hasTypeTable()) {
@@ -1085,6 +1113,16 @@ public fun ProtoBuf.Constructor.hashCode(stringIndexes: (Int) -> Int, fqNameInde
 
     if (hasExtension(JvmProtoBuf.constructorSignature)) {
         hashCode = 31 * hashCode + getExtension(JvmProtoBuf.constructorSignature).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    return hashCode
+}
+
+public fun ProtoBuf.EnumEntry.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {
+    var hashCode = 1
+
+    if (hasName()) {
+        hashCode = 31 * hashCode + name
     }
 
     return hashCode

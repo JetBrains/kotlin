@@ -1,4 +1,3 @@
 package
 
-@kotlin.Suppress(names = {"UNCHECKED_CAST"}) public fun </*0*/ T> arrayOf(/*0*/ vararg t: T /*kotlin.Array<out T>*/): kotlin.Array<T>
 public fun test(): kotlin.Unit

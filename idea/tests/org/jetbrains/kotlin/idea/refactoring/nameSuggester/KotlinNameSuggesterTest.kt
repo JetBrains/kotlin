@@ -62,6 +62,18 @@ public class KotlinNameSuggesterTest : LightCodeInsightFixtureTestCase() {
 
     public fun testParameterNameByParenthesizedArgumentExpression() { doTest() }
 
+    public fun testIdWithDigits() { doTest() }
+
+    public fun testIdWithNonASCII() { doTest() }
+
+    public fun testFunction1() { doTest() }
+
+    public fun testFunction2() { doTest() }
+
+    public fun testExtensionFunction1() { doTest() }
+
+    public fun testExtensionFunction2() { doTest() }
+
     override fun setUp() {
         super.setUp()
         myFixture.setTestDataPath(PluginTestCaseBase.getTestDataPathBase() + "/refactoring/nameSuggester")

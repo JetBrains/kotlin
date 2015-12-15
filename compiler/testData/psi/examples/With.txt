@@ -100,8 +100,8 @@ JetFile: With.kt
                 PsiElement(IDENTIFIER)('out')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        FUNCTION_LITERAL_ARGUMENT
-          FUNCTION_LITERAL_EXPRESSION
+        LAMBDA_ARGUMENT
+          LAMBDA_EXPRESSION
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
               PsiWhiteSpace('\n    ')
@@ -145,7 +145,7 @@ JetFile: With.kt
             PsiElement(IDENTIFIER)('out')
         PsiElement(DOT)('.')
         CALL_EXPRESSION
-          FUNCTION_LITERAL_EXPRESSION
+          LAMBDA_EXPRESSION
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
               PsiWhiteSpace('\n    ')

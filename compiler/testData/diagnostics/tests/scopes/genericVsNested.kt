@@ -15,12 +15,12 @@ class A<T> {
 
     inner class I {
         init {
-            <!NESTED_CLASS_SHOULD_BE_QUALIFIED!>T<!>() // todo: fix error message
+            T() // todo: https://jetbrains.quip.com/hPM5AJcc1nca
         }
     }
 
     init {
-        <!NESTED_CLASS_SHOULD_BE_QUALIFIED!>T<!>()
+        T()
     }
 }
 
@@ -47,11 +47,11 @@ class B<T> {
 
     inner class I {
         init {
-            <!NESTED_CLASS_SHOULD_BE_QUALIFIED!>T<!>()
+            T()
         }
     }
 
     init {
-        <!NESTED_CLASS_SHOULD_BE_QUALIFIED!>T<!>()
+        T()
     }
 }

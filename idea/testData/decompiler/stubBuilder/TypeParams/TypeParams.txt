@@ -43,9 +43,7 @@ PsiJetFileStubImpl[package=test]
       TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=T7]
         TYPE_REFERENCE:
           USER_TYPE:[isAbsoluteInRootPackage=false]
-            USER_TYPE:[isAbsoluteInRootPackage=false]
-              REFERENCE_EXPRESSION:[referencedName=kotlin]
-            REFERENCE_EXPRESSION:[referencedName=Any]
+            REFERENCE_EXPRESSION:[referencedName=T6]
     PRIMARY_CONSTRUCTOR:
       MODIFIER_LIST:[public]
       VALUE_PARAMETER_LIST:
@@ -57,27 +55,16 @@ PsiJetFileStubImpl[package=test]
             USER_TYPE:[isAbsoluteInRootPackage=false]
               USER_TYPE:[isAbsoluteInRootPackage=false]
                 REFERENCE_EXPRESSION:[referencedName=kotlin]
-              REFERENCE_EXPRESSION:[referencedName=Any]
+              REFERENCE_EXPRESSION:[referencedName=Cloneable]
       TYPE_CONSTRAINT:
         REFERENCE_EXPRESSION:[referencedName=T1]
         TYPE_REFERENCE:
-          NULLABLE_TYPE:
+          USER_TYPE:[isAbsoluteInRootPackage=false]
             USER_TYPE:[isAbsoluteInRootPackage=false]
               USER_TYPE:[isAbsoluteInRootPackage=false]
-                REFERENCE_EXPRESSION:[referencedName=kotlin]
-              REFERENCE_EXPRESSION:[referencedName=Int]
-      TYPE_CONSTRAINT:
-        REFERENCE_EXPRESSION:[referencedName=T1]
-        TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
-            USER_TYPE:[isAbsoluteInRootPackage=false]
-              REFERENCE_EXPRESSION:[referencedName=kotlin]
-            REFERENCE_EXPRESSION:[referencedName=Int]
-      TYPE_CONSTRAINT:
-        REFERENCE_EXPRESSION:[referencedName=T7]
-        TYPE_REFERENCE:
-          USER_TYPE:[isAbsoluteInRootPackage=false]
-            REFERENCE_EXPRESSION:[referencedName=T6]
+                REFERENCE_EXPRESSION:[referencedName=java]
+              REFERENCE_EXPRESSION:[referencedName=io]
+            REFERENCE_EXPRESSION:[referencedName=Serializable]
     CLASS_BODY:
       PROPERTY:[fqName=test.TypeParams.useSomeParam, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=useSomeParam]
         MODIFIER_LIST:[public final]
@@ -321,6 +308,12 @@ PsiJetFileStubImpl[package=test]
           TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=G3]
             TYPE_REFERENCE:
               USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=kotlin]
+                REFERENCE_EXPRESSION:[referencedName=String]
+          TYPE_PARAMETER:[fqName=null, isInVariance=false, isOutVariance=false, name=G4]
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
                 REFERENCE_EXPRESSION:[referencedName=G1]
         VALUE_PARAMETER_LIST:
           VALUE_PARAMETER:[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
@@ -361,18 +354,13 @@ PsiJetFileStubImpl[package=test]
           TYPE_CONSTRAINT:
             REFERENCE_EXPRESSION:[referencedName=G3]
             TYPE_REFERENCE:
-              USER_TYPE:[isAbsoluteInRootPackage=false]
-                USER_TYPE:[isAbsoluteInRootPackage=false]
-                  REFERENCE_EXPRESSION:[referencedName=kotlin]
-                REFERENCE_EXPRESSION:[referencedName=String]
-          TYPE_CONSTRAINT:
-            REFERENCE_EXPRESSION:[referencedName=G3]
-            TYPE_REFERENCE:
               NULLABLE_TYPE:
                 USER_TYPE:[isAbsoluteInRootPackage=false]
                   USER_TYPE:[isAbsoluteInRootPackage=false]
-                    REFERENCE_EXPRESSION:[referencedName=kotlin]
-                  REFERENCE_EXPRESSION:[referencedName=String]
+                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                      REFERENCE_EXPRESSION:[referencedName=java]
+                    REFERENCE_EXPRESSION:[referencedName=io]
+                  REFERENCE_EXPRESSION:[referencedName=Serializable]
       FUN:[fqName=test.TypeParams.withOwnParamsClashing, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, name=withOwnParamsClashing]
         MODIFIER_LIST:[public final]
         TYPE_PARAMETER_LIST:

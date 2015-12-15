@@ -42,9 +42,9 @@ class KotlinEvaluateExpressionCache(val project: Project) {
             }, false)
 
     companion object {
-        private val LOG = Logger.getLogger(javaClass<KotlinEvaluateExpressionCache>())!!
+        private val LOG = Logger.getLogger(KotlinEvaluateExpressionCache::class.java)!!
 
-        fun getInstance(project: Project) = ServiceManager.getService(project, javaClass<KotlinEvaluateExpressionCache>())!!
+        fun getInstance(project: Project) = ServiceManager.getService(project, KotlinEvaluateExpressionCache::class.java)!!
 
         fun getOrCreateCompiledData(
                 codeFragment: KtCodeFragment,

@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtClassBody
-import org.jetbrains.kotlin.psi.KtDelegationSpecifierList
-import org.jetbrains.kotlin.psi.KtDelegatorToSuperClass
+import org.jetbrains.kotlin.psi.KtSuperTypeEntry
+import org.jetbrains.kotlin.psi.KtSuperTypeList
 import org.jetbrains.kotlin.psi.stubs.elements.KtClassElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassStubImpl
@@ -144,11 +144,11 @@ private class ClassClsStubBuilder(
         if (supertypeIds.isEmpty()) return
 
         val delegationSpecifierListStub =
-                KotlinPlaceHolderStubImpl<KtDelegationSpecifierList>(classOrObjectStub, KtStubElementTypes.DELEGATION_SPECIFIER_LIST)
+                KotlinPlaceHolderStubImpl<KtSuperTypeList>(classOrObjectStub, KtStubElementTypes.SUPER_TYPE_LIST)
 
         classProto.supertypes(c.typeTable).forEach { type ->
-            val superClassStub = KotlinPlaceHolderStubImpl<KtDelegatorToSuperClass>(
-                    delegationSpecifierListStub, KtStubElementTypes.DELEGATOR_SUPER_CLASS
+            val superClassStub = KotlinPlaceHolderStubImpl<KtSuperTypeEntry>(
+                    delegationSpecifierListStub, KtStubElementTypes.SUPER_TYPE_ENTRY
             )
             typeStubBuilder.createTypeReferenceStub(superClassStub, type)
         }
@@ -172,9 +172,22 @@ private class ClassClsStubBuilder(
     }
 
     private fun createEnumEntryStubs(classBody: KotlinPlaceHolderStubImpl<KtClassBody>) {
-        classProto.getEnumEntryList().forEach { id ->
-            val name = c.nameResolver.getName(id)
-            KotlinClassStubImpl(
+        if (classKind != ProtoBuf.Class.Kind.ENUM_CLASS) return
+
+        val container = ProtoContainer(classProto, null, c.nameResolver, c.typeTable)
+        val enumEntries: List<Pair<Int, List<ClassId>>> =
+                if (classProto.enumEntryList.isNotEmpty())
+                    classProto.enumEntryList.map { enumEntryProto ->
+                        enumEntryProto.name to c.components.annotationLoader.loadEnumEntryAnnotations(container, enumEntryProto)
+                    }
+                else classProto.enumEntryNameList.map { enumEntryName ->
+                    enumEntryName to listOf<ClassId>()
+                }
+
+        enumEntries.forEach { entry ->
+            val name = c.nameResolver.getName(entry.first)
+            val annotations = entry.second
+            val enumEntryStub = KotlinClassStubImpl(
                     KtStubElementTypes.ENUM_ENTRY,
                     classBody,
                     qualifiedName = c.containerFqName.child(name).ref(),
@@ -185,6 +198,9 @@ private class ClassClsStubBuilder(
                     isLocal = false,
                     isTopLevel = false
             )
+            if (annotations.isNotEmpty()) {
+                createAnnotationStubs(annotations, createEmptyModifierListStub(enumEntryStub))
+            }
         }
     }
 

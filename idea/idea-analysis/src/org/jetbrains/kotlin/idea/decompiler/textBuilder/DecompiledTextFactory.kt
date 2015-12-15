@@ -17,111 +17,22 @@
 package org.jetbrains.kotlin.idea.decompiler.textBuilder
 
 import com.intellij.openapi.util.TextRange
-import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.decompiler.findMultifileClassParts
-import org.jetbrains.kotlin.idea.decompiler.navigation.JsMetaFileUtils
-import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
-import org.jetbrains.kotlin.load.kotlin.OldPackageFacadeClassUtils
-import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
-import org.jetbrains.kotlin.load.kotlin.header.isCompatibleFileFacadeKind
-import org.jetbrains.kotlin.load.kotlin.header.isCompatibleMultifileClassKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
+import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
 import org.jetbrains.kotlin.renderer.ExcludedTypeAnnotations
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
 import org.jetbrains.kotlin.types.error.MissingDependencyErrorClass
-import org.jetbrains.kotlin.types.flexibility
 import org.jetbrains.kotlin.types.isFlexible
 import java.util.*
-
-private val FILE_ABI_VERSION_MARKER: String = "FILE_ABI"
-private val CURRENT_ABI_VERSION_MARKER: String = "CURRENT_ABI"
-
-public val INCOMPATIBLE_ABI_VERSION_GENERAL_COMMENT: String = "// This class file was compiled with different version of Kotlin compiler and can't be decompiled."
-public val INCOMPATIBLE_ABI_VERSION_COMMENT: String =
-        "$INCOMPATIBLE_ABI_VERSION_GENERAL_COMMENT\n" +
-        "//\n" +
-        "// Current compiler ABI version is $CURRENT_ABI_VERSION_MARKER\n" +
-        "// File ABI version is $FILE_ABI_VERSION_MARKER"
-
-public fun buildDecompiledText(
-        classFile: VirtualFile,
-        resolver: ResolverForDecompiler = DeserializerForDecompiler(classFile)
-): DecompiledText {
-    val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(classFile)
-    assert(kotlinClass != null) { "Decompiled data factory shouldn't be called on an unsupported file: " + classFile }
-    val classId = kotlinClass!!.getClassId()
-    val classHeader = kotlinClass.getClassHeader()
-    val packageFqName = classId.getPackageFqName()
-
-    return when {
-        !classHeader.isCompatibleAbiVersion -> {
-            DecompiledText(
-                    INCOMPATIBLE_ABI_VERSION_COMMENT
-                            .replace(CURRENT_ABI_VERSION_MARKER, JvmAbi.VERSION.toString())
-                            .replace(FILE_ABI_VERSION_MARKER, classHeader.version.toString()),
-                    mapOf())
-        }
-        classHeader.isCompatibleFileFacadeKind() ->
-            buildDecompiledText(packageFqName, ArrayList(resolver.resolveDeclarationsInFacade(classId.asSingleFqName())))
-        classHeader.isCompatibleClassKind() ->
-            buildDecompiledText(packageFqName, listOfNotNull(resolver.resolveTopLevelClass(classId)))
-        classHeader.isCompatibleMultifileClassKind() -> {
-            val partClasses = findMultifileClassParts(classFile, kotlinClass)
-            val partMembers = partClasses.flatMap { partClass -> resolver.resolveDeclarationsInFacade(partClass.classId.asSingleFqName()) }
-            buildDecompiledText(packageFqName, partMembers)
-        }
-        else ->
-            throw UnsupportedOperationException("Unknown header kind: ${classHeader.kind} ${classHeader.isCompatibleAbiVersion}")
-    }
-}
-
-public fun buildDecompiledTextFromJsMetadata(
-        classFile: VirtualFile,
-        resolver: ResolverForDecompiler = KotlinJavaScriptDeserializerForDecompiler(classFile)
-): DecompiledText {
-    val packageFqName = JsMetaFileUtils.getPackageFqName(classFile)
-    val isPackageHeader = JsMetaFileUtils.isPackageHeader(classFile)
-
-    if (isPackageHeader) {
-        return buildDecompiledText(packageFqName,
-                                   resolveDeclarationsInPackage(packageFqName, resolver),
-                                   descriptorRendererForKotlinJavascriptDecompiler)
-    }
-    else {
-        val classId = JsMetaFileUtils.getClassId(classFile)
-        return buildDecompiledText(packageFqName, listOfNotNull(resolver.resolveTopLevelClass(classId)), descriptorRendererForKotlinJavascriptDecompiler)
-    }
-}
-
-private fun resolveDeclarationsInPackage(packageFqName: FqName, resolver: ResolverForDecompiler) =
-        ArrayList(resolver.resolveDeclarationsInFacade(OldPackageFacadeClassUtils.getPackageClassFqName(packageFqName)))
 
 private val DECOMPILED_CODE_COMMENT = "/* compiled code */"
 private val DECOMPILED_COMMENT_FOR_PARAMETER = "/* = compiled code */"
 private val FLEXIBLE_TYPE_COMMENT = "/* platform type */"
-
-private val descriptorRendererForDecompiler = DescriptorRenderer.withOptions {
-    withDefinedIn = false
-    classWithPrimaryConstructor = true
-    typeNormalizer = { type -> if (type.isFlexible()) type.flexibility().lowerBound else type }
-    secondaryConstructorsAsPrimary = false
-    modifiers = DescriptorRendererModifier.ALL
-    excludedTypeAnnotationClasses = ExcludedTypeAnnotations.annotationsForNullabilityAndMutability
-}
-
-private val descriptorRendererForKotlinJavascriptDecompiler = DescriptorRenderer.withOptions {
-    withDefinedIn = false
-    classWithPrimaryConstructor = true
-    secondaryConstructorsAsPrimary = false
-    modifiers = DescriptorRendererModifier.ALL
-    excludedTypeAnnotationClasses = ExcludedTypeAnnotations.annotationsForNullabilityAndMutability
-}
 
 private val descriptorRendererForKeys = DescriptorRenderer.COMPACT_WITH_MODIFIERS.withOptions {
     modifiers = DescriptorRendererModifier.ALL
@@ -133,10 +44,19 @@ public fun descriptorToKey(descriptor: DeclarationDescriptor): String {
 
 public data class DecompiledText(public val text: String, public val renderedDescriptorsToRange: Map<String, TextRange>)
 
+fun DescriptorRendererOptions.defaultDecompilerRendererOptions() {
+    withDefinedIn = false
+    classWithPrimaryConstructor = true
+    secondaryConstructorsAsPrimary = false
+    modifiers = DescriptorRendererModifier.ALL
+    excludedTypeAnnotationClasses = ExcludedTypeAnnotations.annotationsForNullabilityAndMutability
+    alwaysRenderModifiers = true
+}
+
 public fun buildDecompiledText(
         packageFqName: FqName,
         descriptors: List<DeclarationDescriptor>,
-        descriptorRenderer: DescriptorRenderer = descriptorRendererForDecompiler
+        descriptorRenderer: DescriptorRenderer
 ): DecompiledText {
     val builder = StringBuilder()
     val renderedDescriptorsToRange = HashMap<String, TextRange>()
@@ -157,13 +77,19 @@ public fun buildDecompiledText(
         if (descriptor is MissingDependencyErrorClass) {
             throw IllegalStateException("${descriptor.javaClass.getSimpleName()} cannot be rendered. FqName: ${descriptor.fullFqName}")
         }
-        val startOffset = builder.length()
-        val header = if (isEnumEntry(descriptor))
-            descriptor.name.asString() + if (lastEnumEntry!!) ";" else ","
-        else
-            descriptorRenderer.render(descriptor).replace("= ...", DECOMPILED_COMMENT_FOR_PARAMETER)
-        builder.append(header)
-        var endOffset = builder.length()
+        val startOffset = builder.length
+        if (isEnumEntry(descriptor)) {
+            for (annotation in descriptor.annotations) {
+                builder.append(descriptorRenderer.renderAnnotation(annotation))
+                builder.append(" ")
+            }
+            builder.append(descriptor.name.asString())
+            builder.append(if (lastEnumEntry!!) ";" else ",")
+        }
+        else {
+            builder.append(descriptorRenderer.render(descriptor).replace("= ...", DECOMPILED_COMMENT_FOR_PARAMETER))
+        }
+        var endOffset = builder.length
 
         if (descriptor is CallableDescriptor) {
             //NOTE: assuming that only return types can be flexible

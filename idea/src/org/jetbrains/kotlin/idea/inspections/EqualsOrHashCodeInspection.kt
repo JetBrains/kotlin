@@ -77,7 +77,7 @@ class EqualsOrHashCodeInspection : AbstractKotlinInspection() {
 
                 when (classDescriptor.kind) {
                     ClassKind.OBJECT -> {
-                        if (classOrObject.getDelegationSpecifiers().isNotEmpty()) return
+                        if (classOrObject.getSuperTypeListEntries().isNotEmpty()) return
                         holder.registerProblem(nameIdentifier, "equals()/hashCode() in object declaration", DeleteEqualsAndHashCodeFix)
                     }
                     ClassKind.CLASS -> {

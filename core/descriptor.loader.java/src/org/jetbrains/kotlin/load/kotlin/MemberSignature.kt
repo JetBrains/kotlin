@@ -21,30 +21,30 @@ import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 
 // The purpose of this class is to hold a unique signature of either a method or a field, so that annotations on a member can be put
 // into a map indexed by these signatures
-data class MemberSignature private constructor(private val signature: String) {
+internal data class MemberSignature private constructor(private val signature: String) {
     companion object {
         @JvmStatic
-        public fun fromMethod(nameResolver: NameResolver, signature: JvmProtoBuf.JvmMethodSignature): MemberSignature {
+        fun fromMethod(nameResolver: NameResolver, signature: JvmProtoBuf.JvmMethodSignature): MemberSignature {
             return fromMethodNameAndDesc(nameResolver.getString(signature.name), nameResolver.getString(signature.desc))
         }
 
         @JvmStatic
-        public fun fromMethodNameAndDesc(name: String, desc: String): MemberSignature {
+        fun fromMethodNameAndDesc(name: String, desc: String): MemberSignature {
             return MemberSignature(name + desc)
         }
 
         @JvmStatic
-        public fun fromMethodNameAndDesc(namePlusDesc: String): MemberSignature {
+        fun fromMethodNameAndDesc(namePlusDesc: String): MemberSignature {
             return MemberSignature(namePlusDesc)
         }
 
         @JvmStatic
-        public fun fromFieldNameAndDesc(name: String, desc: String): MemberSignature {
+        fun fromFieldNameAndDesc(name: String, desc: String): MemberSignature {
             return MemberSignature(name + "#" + desc)
         }
 
         @JvmStatic
-        public fun fromMethodSignatureAndParameterIndex(signature: MemberSignature, index: Int): MemberSignature {
+        fun fromMethodSignatureAndParameterIndex(signature: MemberSignature, index: Int): MemberSignature {
             return MemberSignature(signature.signature + "@" + index)
         }
     }

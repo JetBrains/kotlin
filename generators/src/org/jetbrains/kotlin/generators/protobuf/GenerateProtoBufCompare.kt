@@ -387,7 +387,7 @@ class GenerateProtoBufCompare {
 
     private fun Printer.printlnIfWithComparison(field: Descriptors.FieldDescriptor, expr: String, statement: String = "return false") {
         val line = when {
-            field.options.getExtension(DebugExtOptionsProtoBuf.stringIdInTable),
+            field.options.getExtension(DebugExtOptionsProtoBuf.stringIdInTable) ||
             field.options.getExtension(DebugExtOptionsProtoBuf.nameIdInTable) ->
                 "if (!$CHECK_STRING_EQAULS_NAME(old.$expr, new.$expr)) $statement"
             field.options.getExtension(DebugExtOptionsProtoBuf.fqNameIdInTable) ->
@@ -408,7 +408,7 @@ class GenerateProtoBufCompare {
 
     private fun fieldToHashCode(field: Descriptors.FieldDescriptor, expr: String): String =
         when {
-            field.options.getExtension(DebugExtOptionsProtoBuf.stringIdInTable),
+            field.options.getExtension(DebugExtOptionsProtoBuf.stringIdInTable) ||
             field.options.getExtension(DebugExtOptionsProtoBuf.nameIdInTable) ->
                 "stringIndexes($expr)"
             field.options.getExtension(DebugExtOptionsProtoBuf.fqNameIdInTable) ->

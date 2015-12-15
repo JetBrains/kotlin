@@ -6883,12 +6883,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/regressions"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
-        @TestMetadata("ea49318.kt")
-        public void testEa49318() throws Exception {
-            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/ea49318.kt");
-            doTest(fileName);
-        }
-
         @TestMetadata("kt3107.kt")
         public void testKt3107() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/kt3107.kt");
@@ -7270,9 +7264,21 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("lambdaArgumentWithoutType.kt")
+        public void testLambdaArgumentWithoutType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/smartCasts/lambdaArgumentWithoutType.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("nullSmartCast.kt")
         public void testNullSmartCast() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/smartCasts/nullSmartCast.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("whenSmartCast.kt")
+        public void testWhenSmartCast() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/smartCasts/whenSmartCast.kt");
             doTest(fileName);
         }
     }
@@ -7867,6 +7873,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("multiple.kt")
         public void testMultiple() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/multiple.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noPrivateDelegation.kt")
+        public void testNoPrivateDelegation() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/noPrivateDelegation.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("syntheticAccessor.kt")
+        public void testSyntheticAccessor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/traits/syntheticAccessor.kt");
             doTest(fileName);
         }
 

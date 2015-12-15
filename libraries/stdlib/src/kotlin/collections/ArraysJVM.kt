@@ -1,58 +1,66 @@
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("ArraysKt")
 
-package kotlin
+package kotlin.collections
 
 import java.io.ByteArrayInputStream
 import java.nio.charset.Charset
-import kotlin.jvm.internal.Intrinsic
 
 // Array "constructor"
 /**
  * Returns an array containing the specified elements.
  */
-@Intrinsic("kotlin.arrays.array") public fun <reified T> arrayOf(vararg elements: T) : Array<T> = elements as Array<T>
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public inline fun <reified T> arrayOf(vararg elements: T) : Array<T> = elements as Array<T>
 
 // "constructors" for primitive types array
 /**
  * Returns an array containing the specified [Double] numbers.
  */
-@Intrinsic("kotlin.arrays.array") public fun doubleArrayOf(vararg elements: Double) : DoubleArray    = elements
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun doubleArrayOf(vararg elements: Double) : DoubleArray    = elements
 
 /**
  * Returns an array containing the specified [Float] numbers.
  */
-@Intrinsic("kotlin.arrays.array") public fun floatArrayOf(vararg elements: Float) : FloatArray       = elements
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun floatArrayOf(vararg elements: Float) : FloatArray       = elements
 
 /**
  * Returns an array containing the specified [Long] numbers.
  */
-@Intrinsic("kotlin.arrays.array") public fun longArrayOf(vararg elements: Long) : LongArray          = elements
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun longArrayOf(vararg elements: Long) : LongArray          = elements
 
 /**
  * Returns an array containing the specified [Int] numbers.
  */
-@Intrinsic("kotlin.arrays.array") public fun intArrayOf(vararg elements: Int) : IntArray             = elements
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun intArrayOf(vararg elements: Int) : IntArray             = elements
 
 /**
  * Returns an array containing the specified characters.
  */
-@Intrinsic("kotlin.arrays.array") public fun charArrayOf(vararg elements: Char) : CharArray          = elements
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun charArrayOf(vararg elements: Char) : CharArray          = elements
 
 /**
  * Returns an array containing the specified [Short] numbers.
  */
-@Intrinsic("kotlin.arrays.array") public fun shortArrayOf(vararg elements: Short) : ShortArray       = elements
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun shortArrayOf(vararg elements: Short) : ShortArray       = elements
 
 /**
  * Returns an array containing the specified [Byte] numbers.
  */
-@Intrinsic("kotlin.arrays.array") public fun byteArrayOf(vararg elements: Byte) : ByteArray          = elements
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun byteArrayOf(vararg elements: Byte) : ByteArray          = elements
 
 /**
  * Returns an array containing the specified boolean values.
  */
-@Intrinsic("kotlin.arrays.array") public fun booleanArrayOf(vararg elements: Boolean) : BooleanArray = elements
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+public fun booleanArrayOf(vararg elements: Boolean) : BooleanArray = elements
 
 /**
  * Converts the contents of this byte array to a string using the specified [charset].

@@ -47,7 +47,7 @@ fun test(d: dynamic) {
         val plus: dynamic = null
     }
 
-    C() <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>+<!> 5
+    C() + 5 // todo should be marked as DEBUG_INFO_DYNAMIC
     C().<!DEBUG_INFO_DYNAMIC!>plus(5)<!>
 
     d == d

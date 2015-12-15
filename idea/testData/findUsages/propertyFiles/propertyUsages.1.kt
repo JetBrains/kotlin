@@ -6,7 +6,7 @@ public fun String.infixMessage(@PropertyKey(resourceBundle = "idea.testData.find
 
 public fun @receiver:PropertyKey(resourceBundle = "idea.testData.findUsages.propertyFiles.propertyUsages.0") String.infixMessage2(s: String) = this
 
-public fun @receiver:PropertyKey(resourceBundle = "idea.testData.findUsages.propertyFiles.propertyUsages.0") String.minus() = this
+public fun @receiver:PropertyKey(resourceBundle = "idea.testData.findUsages.propertyFiles.propertyUsages.0") String.unaryMinus() = this
 
 public fun Int.get(@PropertyKey(resourceBundle = "idea.testData.findUsages.propertyFiles.propertyUsages.0") key: String) = this
 

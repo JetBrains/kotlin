@@ -1,9 +1,9 @@
 package
 
-public fun a(): kotlin.Unit
 public fun consumeExample2(/*0*/ e: Example2): kotlin.Unit
 public fun consumeInt(/*0*/ i: kotlin.Int): kotlin.Unit
 public fun consumeString(/*0*/ s: kotlin.String): kotlin.Unit
+public fun test(): kotlin.Unit
 public operator fun Example.component1(): kotlin.String
 public operator fun Example.component2(): kotlin.String
 public operator fun Example.get(/*0*/ i: kotlin.Int): kotlin.String

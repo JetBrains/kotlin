@@ -14,14 +14,13 @@ fun Bar.invoke() {}
 ---------------------
 =====================
 == foobar ==
-fun foobar(f: Foo) {
-    Bar().f()
+fun Foo.foobar(bar: Bar) {
+    bar()
 }
 ---------------------
-                <v0>: Foo   NEW: magic[FAKE_INITIALIZER](f: Foo) -> <v0>
-Bar()           <v2>: Bar   NEW: call(Bar(), <init>) -> <v2>            
-f               <v1>: Foo   NEW: r(f) -> <v1>                           
-f()             <v3>: *     NEW: call(f(), invoke|<v1>, <v2>) -> <v3>   
-Bar().f()       <v3>: *     COPY                                        
-{ Bar().f() }   <v3>: *     COPY                                        
+            <v0>: Bar   NEW: magic[FAKE_INITIALIZER](bar: Bar) -> <v0>
+            <v2>: Foo   NEW: magic[IMPLICIT_RECEIVER](bar()) -> <v2>
+bar         <v1>: Bar   NEW: r(bar) -> <v1>
+bar()       <v3>: *     NEW: call(bar(), invoke|<v1>, <v2>) -> <v3>
+{ bar() }   <v3>: *     COPY
 =====================

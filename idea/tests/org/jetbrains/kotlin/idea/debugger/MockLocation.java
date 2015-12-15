@@ -48,7 +48,7 @@ public class MockLocation implements Location {
 
     @Override
     public Method method() {
-        throw new UnsupportedOperationException();
+        return new MockMethod();
     }
 
     @Override

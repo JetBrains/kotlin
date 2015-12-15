@@ -106,7 +106,7 @@ abstract class WrapInWithReplacement : Replacement {
         val call = (e as? KtSimpleNameExpression)?.getQualifiedElement() ?: return e
         val replacingExpression = KtPsiFactory(e).createExpressionByPattern("with($0) { $1 }", argumentText, call)
         val replace = call.replace(replacingExpression)
-        return (replace as KtCallExpression).functionLiteralArguments.first().getFunctionLiteral().bodyExpression!!.statements.first()
+        return (replace as KtCallExpression).lambdaArguments.first().getLambdaExpression().bodyExpression!!.statements.first()
     }
 }
 
@@ -289,7 +289,7 @@ abstract class OutputValueBoxer(val outputValues: List<OutputValue>) {
 
         override fun getBoxingExpressionPattern(arguments: List<KtExpression>): String? {
             if (arguments.isEmpty()) return null
-            return arguments.indices.joinToString(prefix = "kotlin.listOf(", separator = ", ", postfix = ")") { "\$$it" }
+            return arguments.indices.joinToString(prefix = "kotlin.collections.listOf(", separator = ", ", postfix = ")") { "\$$it" }
         }
 
         override fun extractExpressionByIndex(boxedExpression: KtExpression, index: Int): KtExpression? {
@@ -333,7 +333,7 @@ val ControlFlow.possibleReturnTypes: List<KotlinType>
         return when {
             !returnType.isNullabilityFlexible() ->
                 listOf(returnType)
-            returnType.isAnnotatedNotNull(), returnType.isAnnotatedNullable() ->
+            returnType.isAnnotatedNotNull() || returnType.isAnnotatedNullable() ->
                 listOf(approximateFlexibleTypes(returnType))
             else ->
                 returnType.getCapability(javaClass<Flexibility>()).let { listOf(it!!.upperBound, it.lowerBound) }
@@ -391,7 +391,7 @@ fun ExtractableCodeDescriptor.copy(
             originalContext,
             listOf(newName),
             newVisibility,
-            parameters.map { oldToNewParameters[it]!! },
+            oldToNewParameters.values.filter { it != newReceiver },
             newReceiver,
             typeParameters,
             newReplacementMap,

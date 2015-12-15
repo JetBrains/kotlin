@@ -116,7 +116,7 @@ public class SmartCastManager {
                 receiverToCast, bindingContext, containingDeclarationOrModule
         );
 
-        return dataFlowInfo.getPossibleTypes(dataFlowValue);
+        return dataFlowInfo.getCollectedTypes(dataFlowValue);
     }
 
     public boolean isSubTypeBySmartCastIgnoringNullability(
@@ -178,7 +178,7 @@ public class SmartCastManager {
             @Nullable KtExpression calleeExpression,
             boolean recordExpressionType
     ) {
-        for (KotlinType possibleType : c.dataFlowInfo.getPossibleTypes(dataFlowValue)) {
+        for (KotlinType possibleType : c.dataFlowInfo.getCollectedTypes(dataFlowValue)) {
             if (ArgumentTypeResolver.isSubtypeOfForArgumentType(possibleType, expectedType)) {
                 if (expression != null) {
                     recordCastOrError(expression, possibleType, c.trace, dataFlowValue, recordExpressionType);
@@ -190,7 +190,7 @@ public class SmartCastManager {
             }
         }
 
-        if (!c.dataFlowInfo.getNullability(dataFlowValue).canBeNull() && !expectedType.isMarkedNullable()) {
+        if (!c.dataFlowInfo.getCollectedNullability(dataFlowValue).canBeNull() && !expectedType.isMarkedNullable()) {
             // Handling cases like:
             // fun bar(x: Any) {}
             // fun <T : Any?> foo(x: T) {

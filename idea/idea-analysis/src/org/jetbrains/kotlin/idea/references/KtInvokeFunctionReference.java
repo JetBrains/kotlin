@@ -83,9 +83,9 @@ public class KtInvokeFunctionReference extends KtSimpleReference<KtCallExpressio
             }
         }
 
-        List<KtFunctionLiteralArgument> functionLiteralArguments = getExpression().getFunctionLiteralArguments();
-        for (KtFunctionLiteralArgument functionLiteralArgument : functionLiteralArguments) {
-            KtFunctionLiteralExpression functionLiteralExpression = functionLiteralArgument.getFunctionLiteral();
+        List<KtLambdaArgument> functionLiteralArguments = getExpression().getLambdaArguments();
+        for (KtLambdaArgument functionLiteralArgument : functionLiteralArguments) {
+            KtLambdaExpression functionLiteralExpression = functionLiteralArgument.getLambdaExpression();
             list.add(getRange(functionLiteralExpression.getLeftCurlyBrace()));
             ASTNode rightCurlyBrace = functionLiteralExpression.getRightCurlyBrace();
             if (rightCurlyBrace != null) {

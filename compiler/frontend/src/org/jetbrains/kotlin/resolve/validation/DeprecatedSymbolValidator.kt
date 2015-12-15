@@ -55,7 +55,7 @@ public class DeprecatedSymbolValidator : SymbolUsageValidator {
             return
 
         // Do not check types in calls to super constructor in extends list, rely on call message
-        val superExpression = KtStubbedPsiUtil.getPsiOrStubParent(element, javaClass<KtDelegatorToSuperCall>(), true)
+        val superExpression = KtStubbedPsiUtil.getPsiOrStubParent(element, javaClass<KtSuperTypeCallEntry>(), true)
         if (superExpression != null && superExpression.getCalleeExpression().getConstructorReferenceExpression() == element)
             return
 

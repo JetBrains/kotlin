@@ -182,13 +182,13 @@ data class ExtractionData(
         val dataFlowInfo = context.getDataFlowInfo(expression)
 
         (resolvedCall?.getImplicitReceiverValue() as? ImplicitReceiver)?.let {
-            return dataFlowInfo.getPossibleTypes(DataFlowValueFactory.createDataFlowValueForStableReceiver(it))
+            return dataFlowInfo.getCollectedTypes(DataFlowValueFactory.createDataFlowValueForStableReceiver(it))
         }
 
         val type = resolvedCall?.resultingDescriptor?.returnType ?: return emptySet()
         val containingDescriptor = expression.getResolutionScope(context, expression.getResolutionFacade()).ownerDescriptor
         val dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, type, context, containingDescriptor)
-        return dataFlowInfo.getPossibleTypes(dataFlowValue)
+        return dataFlowInfo.getCollectedTypes(dataFlowValue)
     }
 
     fun getBrokenReferencesInfo(body: KtBlockExpression): List<ResolvedReferenceInfo> {

@@ -14,12 +14,11 @@ enum class C {
 
     E4 {
         fun c() {
-            //TODO: this is a bug
-            this.<!UNRESOLVED_REFERENCE!>B<!>()
+            this.B()
 
             C.A()
             A()
-            //TODO: this is a bug
+            //TODO: should be resolved with error
             this.<!UNRESOLVED_REFERENCE!>A<!>()
         }
     };
@@ -33,7 +32,7 @@ enum class C {
 
 fun f() {
     C.E1.<!UNRESOLVED_REFERENCE!>A<!>
-    C.E1.<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>A<!>()
+    C.E1.<!UNRESOLVED_REFERENCE!>A<!>()
     C.E2.B()
 
     C.E2.<!UNRESOLVED_REFERENCE!>O<!>

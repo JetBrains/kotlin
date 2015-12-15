@@ -7,7 +7,7 @@ public open class Outer</*0*/ E : kotlin.Any!> {
     public/*package*/ open fun baz(): Outer<E!>.Inner<E!>!
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public/*package*/ open fun set(/*0*/ x: Outer<kotlin.String!>.Inner<E!>!): kotlin.Unit
+    public/*package*/ open fun set(/*0*/ x: Outer<E!>.Inner<kotlin.String!>!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     public open inner class Inner</*0*/ F : kotlin.Any!> /*captured type parameters: /*1*/ E : kotlin.Any!*/ {

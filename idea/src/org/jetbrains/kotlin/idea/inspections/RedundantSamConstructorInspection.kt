@@ -204,7 +204,7 @@ public class RedundantSamConstructorInspection : AbstractKotlinInspection() {
                 = argument.toCallExpression()?.samConstructorValueArgument() != null
 
         private fun KtCallExpression.samConstructorValueArgument(): KtValueArgument? {
-            return valueArguments.singleOrNull()?.check { it.getArgumentExpression() is KtFunctionLiteralExpression }
+            return valueArguments.singleOrNull()?.check { it.getArgumentExpression() is KtLambdaExpression }
         }
 
         private fun ValueArgument.toCallExpression(): KtCallExpression? {

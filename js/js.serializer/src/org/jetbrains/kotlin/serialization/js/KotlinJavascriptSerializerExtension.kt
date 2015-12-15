@@ -16,57 +16,13 @@
 
 package org.jetbrains.kotlin.serialization.js
 
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.resolve.constants.NullValue
-import org.jetbrains.kotlin.serialization.AnnotationSerializer
-import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.SerializerExtension
-import org.jetbrains.kotlin.serialization.StringTableImpl
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
+import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 
-public class KotlinJavascriptSerializerExtension : SerializerExtension() {
-    private val stringTable = StringTableImpl()
-    private val annotationSerializer = AnnotationSerializer(stringTable)
+public class KotlinJavascriptSerializerExtension : KotlinSerializerExtensionBase(JsSerializerProtocol)
 
-    override fun getStringTable() = stringTable
-
-    override fun serializeClass(descriptor: ClassDescriptor, proto: ProtoBuf.Class.Builder) {
-        for (annotation in descriptor.annotations) {
-            proto.addExtension(JsProtoBuf.classAnnotation, annotationSerializer.serializeAnnotation(annotation))
-        }
-    }
-
-    override fun serializeConstructor(descriptor: ConstructorDescriptor, proto: ProtoBuf.Constructor.Builder) {
-        for (annotation in descriptor.annotations) {
-            proto.addExtension(JsProtoBuf.constructorAnnotation, annotationSerializer.serializeAnnotation(annotation))
-        }
-    }
-
-    override fun serializeFunction(descriptor: FunctionDescriptor, proto: ProtoBuf.Function.Builder) {
-        for (annotation in descriptor.annotations) {
-            proto.addExtension(JsProtoBuf.functionAnnotation, annotationSerializer.serializeAnnotation(annotation))
-        }
-    }
-
-    override fun serializeProperty(descriptor: PropertyDescriptor, proto: ProtoBuf.Property.Builder) {
-        for (annotation in descriptor.annotations) {
-            proto.addExtension(JsProtoBuf.propertyAnnotation, annotationSerializer.serializeAnnotation(annotation))
-        }
-        val constantInitializer = descriptor.compileTimeInitializer ?: return
-        if (constantInitializer !is NullValue) {
-            proto.setExtension(JsProtoBuf.compileTimeValue, annotationSerializer.valueProto(constantInitializer).build())
-        }
-    }
-
-    override fun serializeValueParameter(descriptor: ValueParameterDescriptor, proto: ProtoBuf.ValueParameter.Builder) {
-        for (annotation in descriptor.annotations) {
-            proto.addExtension(JsProtoBuf.parameterAnnotation, annotationSerializer.serializeAnnotation(annotation))
-        }
-    }
-
-    override fun serializeType(type: KotlinType, proto: ProtoBuf.Type.Builder) {
-        for (annotation in type.annotations) {
-            proto.addExtension(JsProtoBuf.typeAnnotation, annotationSerializer.serializeAnnotation(annotation))
-        }
-    }
-}
+object JsSerializerProtocol : SerializerExtensionProtocol(
+        JsProtoBuf.constructorAnnotation, JsProtoBuf.classAnnotation, JsProtoBuf.functionAnnotation, JsProtoBuf.propertyAnnotation,
+        JsProtoBuf.enumEntryAnnotation, JsProtoBuf.compileTimeValue, JsProtoBuf.parameterAnnotation, JsProtoBuf.typeAnnotation,
+        JsProtoBuf.typeParameterAnnotation
+)

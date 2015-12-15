@@ -163,7 +163,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
     }
 
     @Override
-    public KotlinTypeInfo visitMultiDeclaration(@NotNull KtMultiDeclaration multiDeclaration, ExpressionTypingContext context) {
+    public KotlinTypeInfo visitDestructuringDeclaration(@NotNull KtDestructuringDeclaration multiDeclaration, ExpressionTypingContext context) {
         components.annotationResolver.resolveAnnotationsWithArguments(scope, multiDeclaration.getModifierList(), context.trace);
 
         KtExpression initializer = multiDeclaration.getInitializer();
@@ -177,8 +177,9 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         if (expressionReceiver == null) {
             return TypeInfoFactoryKt.noTypeInfo(context);
         }
-        components.multiDeclarationResolver.defineLocalVariablesFromMultiDeclaration(scope, multiDeclaration, expressionReceiver, initializer, context);
-        components.modifiersChecker.withTrace(context.trace).checkModifiersForMultiDeclaration(multiDeclaration);
+        components.destructuringDeclarationResolver
+                .defineLocalVariablesFromMultiDeclaration(scope, multiDeclaration, expressionReceiver, initializer, context);
+        components.modifiersChecker.withTrace(context.trace).checkModifiersForDestructuringDeclaration(multiDeclaration);
         components.identifierChecker.checkDeclaration(multiDeclaration, context.trace);
         return typeInfo.replaceType(components.dataFlowAnalyzer.checkStatementType(multiDeclaration, context));
     }

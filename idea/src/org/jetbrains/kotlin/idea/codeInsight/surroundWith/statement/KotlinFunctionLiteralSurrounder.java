@@ -43,7 +43,7 @@ public class KotlinFunctionLiteralSurrounder extends KotlinStatementsSurrounder 
         callExpression = (KtCallExpression) container.addAfter(callExpression, statements[statements.length - 1]);
         container.addBefore(psiFactory.createWhiteSpace(), callExpression);
 
-        KtFunctionLiteralExpression bodyExpression = callExpression.getFunctionLiteralArguments().get(0).getFunctionLiteral();
+        KtLambdaExpression bodyExpression = callExpression.getLambdaArguments().get(0).getLambdaExpression();
         assert bodyExpression != null : "Body expression should exists for " + callExpression.getText();
         KtBlockExpression blockExpression = bodyExpression.getBodyExpression();
         assert blockExpression != null : "JetBlockExpression should exists for " + callExpression.getText();

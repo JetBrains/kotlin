@@ -1,4 +1,4 @@
-// "Change the signature of function literal" "true"
+// "Change the signature of lambda expression" "true"
 // DISABLE-ERRORS
 
 fun f(x: Int, y: Int, z : (Int, Int?, Any) -> Int) {

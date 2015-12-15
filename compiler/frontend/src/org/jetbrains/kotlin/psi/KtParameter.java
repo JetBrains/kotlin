@@ -21,6 +21,7 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.TokenSet;
+import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -64,6 +65,11 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
         return findChildByType(KtTokens.COLON);
     }
 
+    @Nullable
+    public PsiElement getEqualsToken() {
+        return findChildByType(KtTokens.EQ);
+    }
+
     public boolean hasDefaultValue() {
         KotlinParameterStub stub = getStub();
         if (stub != null) {
@@ -75,20 +81,10 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
     @Nullable
     public KtExpression getDefaultValue() {
         KotlinParameterStub stub = getStub();
-        if (stub != null && !stub.hasDefaultValue()) {
-            return null;
-        }
-        boolean passedEQ = false;
-        ASTNode child = getNode().getFirstChildNode();
-        while (child != null) {
-            if (child.getElementType() == KtTokens.EQ) passedEQ = true;
-            if (passedEQ && child.getPsi() instanceof KtExpression) {
-                return (KtExpression) child.getPsi();
-            }
-            child = child.getTreeNext();
-        }
+        if (stub != null && !stub.hasDefaultValue()) return null;
 
-        return null;
+        PsiElement equalsToken = getEqualsToken();
+        return equalsToken != null ? PsiTreeUtil.getNextSiblingOfType(equalsToken, KtExpression.class) : null;
     }
 
     public boolean isMutable() {

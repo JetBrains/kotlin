@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 
 public class RemoveNameFromFunctionExpressionFix(element: KtNamedFunction) : KotlinQuickFixAction<KtNamedFunction>(element), CleanupFix {
-    override fun getText(): String = "Remove identifier from function expression"
+    override fun getText(): String = "Remove identifier from anonymous function"
     override fun getFamilyName(): String = getText()
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) = removeNameFromFunction(element)

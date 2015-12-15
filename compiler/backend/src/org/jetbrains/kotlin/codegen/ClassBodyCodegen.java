@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -51,11 +52,19 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtClassOrObject> {
 
     @Override
     protected void generateBody() {
+        List<KtObjectDeclaration> companions = new ArrayList<KtObjectDeclaration>();
         if (kind != OwnerKind.DEFAULT_IMPLS) {
             //generate nested classes first and only then generate class body. It necessary to access to nested CodegenContexts
             for (KtDeclaration declaration : myClass.getDeclarations()) {
                 if (shouldProcessFirst(declaration)) {
-                    generateDeclaration(declaration);
+                    //Generate companions after class body generation (need to record all synthetic accessors)
+                    if (declaration instanceof KtObjectDeclaration && ((KtObjectDeclaration) declaration).isCompanion()) {
+                        companions.add((KtObjectDeclaration) declaration);
+                        CodegenUtilKt.populateCompanionBackingFieldNamesToOuterContextIfNeeded((KtObjectDeclaration) declaration, context, state);
+                    }
+                    else {
+                        generateDeclaration(declaration);
+                    }
                 }
             }
         }
@@ -64,6 +73,14 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtClassOrObject> {
             if (!shouldProcessFirst(declaration)) {
                 generateDeclaration(declaration);
             }
+        }
+
+        generatePrimaryConstructorProperties();
+        generateConstructors();
+        generateDefaultImplsIfNeeded();
+
+        for (KtObjectDeclaration companion : companions) {
+            generateDeclaration(companion);
         }
 
         if (!DescriptorUtils.isInterface(descriptor)) {
@@ -88,8 +105,14 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtClassOrObject> {
                 }
             }
         }
+    }
 
-        generatePrimaryConstructorProperties();
+    protected void generateConstructors() {
+
+    }
+
+    protected void generateDefaultImplsIfNeeded() {
+
     }
 
     private static boolean shouldProcessFirst(KtDeclaration declaration) {

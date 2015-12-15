@@ -140,10 +140,10 @@ object DebuggerUtils {
                 checkResolveCall(resolvedCall)
             }
 
-            override fun visitMultiDeclaration(multiDeclaration: KtMultiDeclaration) {
-                super.visitMultiDeclaration(multiDeclaration)
+            override fun visitDestructuringDeclaration(destructuringDeclaration: KtDestructuringDeclaration) {
+                super.visitDestructuringDeclaration(destructuringDeclaration)
 
-                for (entry in multiDeclaration.entries) {
+                for (entry in destructuringDeclaration.entries) {
                     val resolvedCall = bindingContext.get(BindingContext.COMPONENT_RESOLVED_CALL, entry)
                     checkResolveCall(resolvedCall)
                 }

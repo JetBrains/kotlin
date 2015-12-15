@@ -60,8 +60,8 @@ public class KtCallExpression extends KtExpressionImpl implements KtCallElement,
      */
     @Override
     @NotNull
-    public List<KtFunctionLiteralArgument> getFunctionLiteralArguments() {
-        return findChildrenByType(KtNodeTypes.FUNCTION_LITERAL_ARGUMENT);
+    public List<KtLambdaArgument> getLambdaArguments() {
+        return findChildrenByType(KtNodeTypes.LAMBDA_ARGUMENT);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class KtCallExpression extends KtExpressionImpl implements KtCallElement,
     public List<KtValueArgument> getValueArguments() {
         KtValueArgumentList list = getValueArgumentList();
         List<KtValueArgument> valueArgumentsInParentheses = list != null ? list.getArguments() : Collections.<KtValueArgument>emptyList();
-        List<KtFunctionLiteralArgument> functionLiteralArguments = getFunctionLiteralArguments();
+        List<KtLambdaArgument> functionLiteralArguments = getLambdaArguments();
         if (functionLiteralArguments.isEmpty()) {
             return valueArgumentsInParentheses;
         }

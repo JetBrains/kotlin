@@ -113,7 +113,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
 
             @NotNull
             @Override
-            public List<FunctionLiteralArgument> getFunctionLiteralArguments() {
+            public List<LambdaArgument> getFunctionLiteralArguments() {
                 return Collections.emptyList();
             }
 
@@ -135,6 +135,22 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
                 assert calleeExpression != null : "No callee expression: " + getCallElement().getText();
 
                 return calleeExpression;
+            }
+        };
+    }
+
+    public static Call stripReceiver(@NotNull Call variableCall) {
+        return new DelegatingCall(variableCall) {
+            @Nullable
+            @Override
+            public ASTNode getCallOperationNode() {
+                return null;
+            }
+
+            @NotNull
+            @Override
+            public ReceiverValue getExplicitReceiver() {
+                return ReceiverValue.NO_RECEIVER;
             }
         };
     }
@@ -195,22 +211,6 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
             ResolvedCallImpl<CallableDescriptor> resolvedCall = ResolvedCallImpl.create(candidate, chainedTrace, task.tracing, task.dataFlowInfoForArguments);
             return CallCandidateResolutionContext.create(resolvedCall, task, chainedTrace, task.tracing, call, receiverValue,
                                                          candidateResolveMode);
-        }
-
-        private Call stripReceiver(@NotNull Call variableCall) {
-            return new DelegatingCall(variableCall) {
-                @Nullable
-                @Override
-                public ASTNode getCallOperationNode() {
-                    return null;
-                }
-
-                @NotNull
-                @Override
-                public ReceiverValue getExplicitReceiver() {
-                    return ReceiverValue.NO_RECEIVER;
-                }
-            };
         }
 
         @NotNull

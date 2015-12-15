@@ -20,6 +20,8 @@ import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.*;
+
 public class GroupingMessageCollector implements MessageCollector {
 
     private final MessageCollector delegate;
@@ -48,13 +50,14 @@ public class GroupingMessageCollector implements MessageCollector {
     public void flush() {
         boolean hasError = false;
 
-        for (String path : groupedMessages.keySet()) {
+        Collection<String> keys = sortedKeys();
+        for (String path : keys) {
             for (Message message : groupedMessages.get(path)) {
                 hasError |= CompilerMessageSeverity.ERRORS.contains(message.severity);
             }
         }
 
-        for (String path : groupedMessages.keySet()) {
+        for (String path : keys) {
             for (Message message : groupedMessages.get(path)) {
                 if (!hasError || CompilerMessageSeverity.ERRORS.contains(message.severity)) {
                     delegate.report(message.severity, message.message, message.location);
@@ -63,6 +66,22 @@ public class GroupingMessageCollector implements MessageCollector {
         }
 
         groupedMessages.clear();
+    }
+
+    @NotNull
+    private Collection<String> sortedKeys() {
+        List<String> sortedKeys = new ArrayList<String>(groupedMessages.keySet());
+        // ensure that messages with no location i.e. perf, incomplete hierarchy are always reported first
+        Collections.sort(sortedKeys, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                if (o1 == o2) return 0;
+                if (o1 == null) return -1;
+                if (o2 == null) return 1;
+                return o1.compareTo(o2);
+            }
+        });
+        return sortedKeys;
     }
 
     private static class Message {

@@ -19,7 +19,7 @@ public open class NestedEnumArgument {
         public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.NestedEnumArgument.E!): kotlin.Int
 
         // Static members
-        @kotlin.Deprecated(message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<test.NestedEnumArgument.E>
+        @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<test.NestedEnumArgument.E>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.NestedEnumArgument.E
         public final /*synthesized*/ fun values(): kotlin.Array<test.NestedEnumArgument.E>
     }

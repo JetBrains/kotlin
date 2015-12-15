@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.jps.incremental.CacheVersion.Action
 import org.jetbrains.kotlin.load.java.JvmAbi
 import java.io.File
 
-private val NORMAL_VERSION = 7
-private val EXPERIMENTAL_VERSION = 1
+private val NORMAL_VERSION = 8
+private val EXPERIMENTAL_VERSION = 2
 private val DATA_CONTAINER_VERSION = 1
 
 private val NORMAL_VERSION_FILE_NAME = "format-version.txt"
@@ -76,13 +76,13 @@ class CacheVersion(
         get() = versionFile
 
     // Order of entries is important, because actions are sorted in KotlinBuilder::checkVersions
-    enum class Action(val isChunkRebuildRequired: Boolean = false) {
-        REBUILD_ALL_KOTLIN(isChunkRebuildRequired = true),
-        REBUILD_CHUNK(isChunkRebuildRequired = true),
-        CLEAN_NORMAL_CACHES(),
-        CLEAN_EXPERIMENTAL_CACHES(),
-        CLEAN_DATA_CONTAINER(),
-        DO_NOTHING()
+    enum class Action {
+        REBUILD_ALL_KOTLIN,
+        REBUILD_CHUNK,
+        CLEAN_NORMAL_CACHES,
+        CLEAN_EXPERIMENTAL_CACHES,
+        CLEAN_DATA_CONTAINER,
+        DO_NOTHING
     }
 }
 

@@ -28,7 +28,7 @@ public final enum class Enum : kotlin.Enum<test.Enum> {
     }
 
     // Static members
-    @kotlin.Deprecated(message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<test.Enum>
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<test.Enum>
         public final fun <get-values>(): kotlin.Array<test.Enum>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.Enum
     public final /*synthesized*/ fun values(): kotlin.Array<test.Enum>

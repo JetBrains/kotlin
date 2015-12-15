@@ -39,8 +39,18 @@ public interface FunctionDescriptor extends CallableMemberDescriptor {
     @NotNull
     Collection<? extends FunctionDescriptor> getOverriddenDescriptors();
 
+    /**
+     * @return descriptor that represents initial signature, e.g in case of result SimpleFunctionDescriptor.createRenamedCopy it returns
+     * descriptor before rename
+     */
     @Nullable
     FunctionDescriptor getInitialSignatureDescriptor();
+
+    /**
+     * @return true if descriptor signature clashed with some other signature and it's supposed to be legal
+     * See java.nio.CharBuffer
+     */
+    boolean isHiddenToOvercomeSignatureClash();
 
     @NotNull
     @Override

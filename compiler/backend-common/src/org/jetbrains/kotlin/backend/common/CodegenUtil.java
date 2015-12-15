@@ -93,14 +93,14 @@ public class CodegenUtil {
     }
 
     @NotNull
-    public static Map<FunctionDescriptor, FunctionDescriptor> getTraitMethods(ClassDescriptor descriptor) {
+    public static Map<FunctionDescriptor, FunctionDescriptor> getNonPrivateTraitMethods(ClassDescriptor descriptor) {
         Map<FunctionDescriptor, FunctionDescriptor> result = new LinkedHashMap<FunctionDescriptor, FunctionDescriptor>();
         for (DeclarationDescriptor declaration : DescriptorUtils.getAllDescriptors(descriptor.getDefaultType().getMemberScope())) {
             if (!(declaration instanceof CallableMemberDescriptor)) continue;
 
             CallableMemberDescriptor inheritedMember = (CallableMemberDescriptor) declaration;
             CallableMemberDescriptor traitMember = ImplKt.findTraitImplementation(inheritedMember);
-            if (traitMember == null) continue;
+            if (traitMember == null || Visibilities.isPrivate(traitMember.getVisibility())) continue;
 
             assert traitMember.getModality() != Modality.ABSTRACT : "Cannot delegate to abstract trait method: " + inheritedMember;
 
@@ -140,7 +140,7 @@ public class CodegenUtil {
     }
 
     @NotNull
-    public static ClassDescriptor getSuperClassByDelegationSpecifier(@NotNull KtDelegationSpecifier specifier, @NotNull BindingContext bindingContext) {
+    public static ClassDescriptor getSuperClassBySuperTypeListEntry(@NotNull KtSuperTypeListEntry specifier, @NotNull BindingContext bindingContext) {
         KotlinType superType = bindingContext.get(BindingContext.TYPE, specifier.getTypeReference());
         assert superType != null : "superType should not be null: " + specifier.getText();
 

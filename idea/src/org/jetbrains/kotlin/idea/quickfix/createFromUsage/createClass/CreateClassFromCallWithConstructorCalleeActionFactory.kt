@@ -17,9 +17,7 @@
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass
 
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
@@ -28,7 +26,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
-import java.util.Collections
+import java.util.*
 
 public object CreateClassFromCallWithConstructorCalleeActionFactory : CreateClassFromUsageFactory<KtCallElement>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): KtCallElement? {
@@ -37,7 +35,7 @@ public object CreateClassFromCallWithConstructorCalleeActionFactory : CreateClas
         val callElement = PsiTreeUtil.getParentOfType(
                 diagElement,
                 javaClass<KtAnnotationEntry>(),
-                javaClass<KtDelegatorToSuperCall>()
+                javaClass<KtSuperTypeCallEntry>()
         ) as? KtCallElement ?: return null
 
         val callee = callElement.calleeExpression as? KtConstructorCalleeExpression ?: return null

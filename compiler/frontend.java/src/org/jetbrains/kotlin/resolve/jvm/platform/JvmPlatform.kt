@@ -43,11 +43,15 @@ public object JvmPlatform : TargetPlatform("JVM") {
     override val platformConfigurator: PlatformConfigurator = JvmPlatformConfigurator
 }
 
-private val DEFAULT_IMPORTS_FOR_JVM = ArrayList<ImportPath>().apply {
+private val DEFAULT_IMPORTS_FOR_JVM: List<ImportPath> = ArrayList<ImportPath>().apply {
     add(ImportPath("java.lang.*"))
     add(ImportPath("kotlin.*"))
     add(ImportPath("kotlin.annotation.*"))
     add(ImportPath("kotlin.jvm.*"))
+    add(ImportPath("kotlin.collections.*"))
+    add(ImportPath("kotlin.ranges.*"))
+    add(ImportPath("kotlin.sequences.*"))
+    add(ImportPath("kotlin.text.*"))
     add(ImportPath("kotlin.io.*"))
 
     fun addAllClassifiersFromScope(scope: MemberScope) {

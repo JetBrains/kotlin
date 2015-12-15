@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DeclarationChecker
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.annotations.hasIntrinsicAnnotation
 import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmOverloadsAnnotation
@@ -115,7 +114,7 @@ public class JvmNameAnnotationChecker : DeclarationChecker {
 
         if (descriptor is CallableMemberDescriptor) {
             val callableMemberDescriptor = descriptor
-            if (DescriptorUtils.isOverride(callableMemberDescriptor) || callableMemberDescriptor.modality.isOverridable) {
+            if (DescriptorUtils.isOverride(callableMemberDescriptor) || callableMemberDescriptor.isOverridable) {
                 diagnosticHolder.report(ErrorsJvm.INAPPLICABLE_JVM_NAME.on(annotationEntry))
             }
         }
@@ -215,8 +214,6 @@ public class ReifiedTypeParameterAnnotationChecker : DeclarationChecker {
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext
     ) {
-        if (descriptor.hasIntrinsicAnnotation()) return
-
         if (descriptor is CallableDescriptor && !InlineUtil.isInline(descriptor)) {
             checkTypeParameterDescriptorsAreNotReified(descriptor.getTypeParameters(), diagnosticHolder)
         }

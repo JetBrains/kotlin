@@ -35,6 +35,12 @@ public class SmartSelectionTestGenerated extends AbstractSmartSelectionTest {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/smartSelection"), Pattern.compile("^([^\\.]+)\\.kt$"), true);
     }
 
+    @TestMetadata("commentsAndExtraSpaces.kt")
+    public void testCommentsAndExtraSpaces() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/smartSelection/commentsAndExtraSpaces.kt");
+        doTestSmartSelection(fileName);
+    }
+
     @TestMetadata("labelledStatement.kt")
     public void testLabelledStatement() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/smartSelection/labelledStatement.kt");
@@ -44,6 +50,36 @@ public class SmartSelectionTestGenerated extends AbstractSmartSelectionTest {
     @TestMetadata("labelledThis.kt")
     public void testLabelledThis() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/smartSelection/labelledThis.kt");
+        doTestSmartSelection(fileName);
+    }
+
+    @TestMetadata("lambdaCalls.kt")
+    public void testLambdaCalls() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/smartSelection/lambdaCalls.kt");
+        doTestSmartSelection(fileName);
+    }
+
+    @TestMetadata("multilineCalls.kt")
+    public void testMultilineCalls() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/smartSelection/multilineCalls.kt");
+        doTestSmartSelection(fileName);
+    }
+
+    @TestMetadata("multilineOperations.kt")
+    public void testMultilineOperations() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/smartSelection/multilineOperations.kt");
+        doTestSmartSelection(fileName);
+    }
+
+    @TestMetadata("objectLiteral.kt")
+    public void testObjectLiteral() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/smartSelection/objectLiteral.kt");
+        doTestSmartSelection(fileName);
+    }
+
+    @TestMetadata("parenthesized.kt")
+    public void testParenthesized() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/smartSelection/parenthesized.kt");
         doTestSmartSelection(fileName);
     }
 

@@ -66,6 +66,7 @@ import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED;
 import static org.jetbrains.kotlin.resolve.BindingContext.VARIABLE;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isStaticDeclaration;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
@@ -684,7 +685,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
                 ((AccessorForCallableDescriptor) accessorDescriptor).getSuperCallTarget() != null
         );
 
-        boolean hasDispatchReceiver = !isStaticDeclaration(functionDescriptor);
+        boolean hasDispatchReceiver = !isStaticDeclaration(functionDescriptor) && !isInterface(functionDescriptor.getContainingDeclaration());
         int reg = hasDispatchReceiver ? 1 : 0;
         boolean accessorIsConstructor = accessorDescriptor instanceof AccessorForConstructorDescriptor;
         if (!accessorIsConstructor && functionDescriptor instanceof ConstructorDescriptor) {

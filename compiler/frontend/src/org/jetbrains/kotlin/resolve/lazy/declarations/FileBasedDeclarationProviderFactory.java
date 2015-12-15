@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.resolve.lazy.data.JetClassLikeInfo;
+import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
 
@@ -98,7 +98,7 @@ public class FileBasedDeclarationProviderFactory extends AbstractDeclarationProv
 
     @NotNull
     @Override
-    public ClassMemberDeclarationProvider getClassMemberDeclarationProvider(@NotNull JetClassLikeInfo classLikeInfo) {
+    public ClassMemberDeclarationProvider getClassMemberDeclarationProvider(@NotNull KtClassLikeInfo classLikeInfo) {
         if (!index.invoke().filesByPackage.containsKey(classLikeInfo.getContainingPackageFqName())) {
             throw new IllegalStateException("This factory doesn't know about this class: " + classLikeInfo);
         }

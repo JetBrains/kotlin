@@ -21,6 +21,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.intellij.psi.PsiElement;
 import kotlin.CollectionsKt;
+import kotlin.Pair;
 import kotlin.SetsKt;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
@@ -46,7 +47,10 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator;
 import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
-import org.jetbrains.kotlin.resolve.scopes.*;
+import org.jetbrains.kotlin.resolve.scopes.ScopeUtils;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
+import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.storage.StorageManager;
@@ -105,8 +109,8 @@ public class DescriptorResolver {
             BindingTrace trace
     ) {
         List<KotlinType> supertypes = Lists.newArrayList();
-        List<KtDelegationSpecifier> delegationSpecifiers = jetClass.getDelegationSpecifiers();
-        Collection<KotlinType> declaredSupertypes = resolveDelegationSpecifiers(
+        List<KtSuperTypeListEntry> delegationSpecifiers = jetClass.getSuperTypeListEntries();
+        Collection<KotlinType> declaredSupertypes = resolveSuperTypeListEntries(
                 scope,
                 delegationSpecifiers,
                 typeResolver, trace, false);
@@ -162,9 +166,9 @@ public class DescriptorResolver {
         return builtIns.getAnyType();
     }
 
-    public Collection<KotlinType> resolveDelegationSpecifiers(
+    public Collection<KotlinType> resolveSuperTypeListEntries(
             LexicalScope extensibleScope,
-            List<KtDelegationSpecifier> delegationSpecifiers,
+            List<KtSuperTypeListEntry> delegationSpecifiers,
             @NotNull TypeResolver resolver,
             BindingTrace trace,
             boolean checkBounds
@@ -173,7 +177,7 @@ public class DescriptorResolver {
             return Collections.emptyList();
         }
         Collection<KotlinType> result = Lists.newArrayList();
-        for (KtDelegationSpecifier delegationSpecifier : delegationSpecifiers) {
+        for (KtSuperTypeListEntry delegationSpecifier : delegationSpecifiers) {
             KtTypeReference typeReference = delegationSpecifier.getTypeReference();
             if (typeReference != null) {
                 KotlinType supertype = resolver.resolveType(extensibleScope, typeReference, trace, checkBounds);
@@ -457,11 +461,13 @@ public class DescriptorResolver {
         return constructorDescriptor;
     }
 
-    static final class UpperBoundCheckerTask {
-        KtTypeReference upperBound;
-        KotlinType upperBoundType;
+    static final class UpperBoundCheckRequest {
+        public final Name typeParameterName;
+        public final KtTypeReference upperBound;
+        public final KotlinType upperBoundType;
 
-        private UpperBoundCheckerTask(KtTypeReference upperBound, KotlinType upperBoundType) {
+        UpperBoundCheckRequest(Name typeParameterName, KtTypeReference upperBound, KotlinType upperBoundType) {
+            this.typeParameterName = typeParameterName;
             this.upperBound = upperBound;
             this.upperBoundType = upperBoundType;
         }
@@ -474,21 +480,21 @@ public class DescriptorResolver {
             List<TypeParameterDescriptorImpl> parameters,
             BindingTrace trace
     ) {
-        List<UpperBoundCheckerTask> deferredUpperBoundCheckerTasks = Lists.newArrayList();
+        List<UpperBoundCheckRequest> upperBoundCheckRequests = Lists.newArrayList();
 
         List<KtTypeParameter> typeParameters = declaration.getTypeParameters();
         Map<Name, TypeParameterDescriptorImpl> parameterByName = Maps.newHashMap();
         for (int i = 0; i < typeParameters.size(); i++) {
-            KtTypeParameter jetTypeParameter = typeParameters.get(i);
+            KtTypeParameter ktTypeParameter = typeParameters.get(i);
             TypeParameterDescriptorImpl typeParameterDescriptor = parameters.get(i);
 
             parameterByName.put(typeParameterDescriptor.getName(), typeParameterDescriptor);
 
-            KtTypeReference extendsBound = jetTypeParameter.getExtendsBound();
+            KtTypeReference extendsBound = ktTypeParameter.getExtendsBound();
             if (extendsBound != null) {
                 KotlinType type = typeResolver.resolveType(scope, extendsBound, trace, false);
                 typeParameterDescriptor.addUpperBound(type);
-                deferredUpperBoundCheckerTasks.add(new UpperBoundCheckerTask(extendsBound, type));
+                upperBoundCheckRequests.add(new UpperBoundCheckRequest(ktTypeParameter.getNameAsName(), extendsBound, type));
             }
         }
         for (KtTypeConstraint constraint : declaration.getTypeConstraints()) {
@@ -502,7 +508,7 @@ public class DescriptorResolver {
             KotlinType bound = null;
             if (boundTypeReference != null) {
                 bound = typeResolver.resolveType(scope, boundTypeReference, trace, false);
-                deferredUpperBoundCheckerTasks.add(new UpperBoundCheckerTask(boundTypeReference, bound));
+                upperBoundCheckRequests.add(new UpperBoundCheckRequest(referencedName, boundTypeReference, bound));
             }
 
             if (typeParameterDescriptor != null) {
@@ -523,11 +529,40 @@ public class DescriptorResolver {
         }
 
         if (!(declaration instanceof KtClass)) {
-            for (UpperBoundCheckerTask checkerTask : deferredUpperBoundCheckerTasks) {
-                checkUpperBoundType(checkerTask.upperBound, checkerTask.upperBoundType, trace);
+            checkUpperBoundTypes(trace, upperBoundCheckRequests);
+            checkNamesInConstraints(declaration, descriptor, scope, trace);
+        }
+    }
+
+    public static void checkUpperBoundTypes(@NotNull BindingTrace trace, @NotNull List<UpperBoundCheckRequest> requests) {
+        if (requests.isEmpty()) return;
+
+        Set<Name> classBoundEncountered = new HashSet<Name>();
+        Set<Pair<Name, TypeConstructor>> allBounds = new HashSet<Pair<Name, TypeConstructor>>();
+
+        for (UpperBoundCheckRequest request : requests) {
+            Name typeParameterName = request.typeParameterName;
+            KotlinType upperBound = request.upperBoundType;
+            KtTypeReference upperBoundElement = request.upperBound;
+
+            if (!upperBound.isError()) {
+                if (!allBounds.add(new Pair<Name, TypeConstructor>(typeParameterName, upperBound.getConstructor()))) {
+                    trace.report(REPEATED_BOUND.on(upperBoundElement));
+                }
+                else {
+                    ClassDescriptor classDescriptor = TypeUtils.getClassDescriptor(upperBound);
+                    if (classDescriptor != null) {
+                        ClassKind kind = classDescriptor.getKind();
+                        if (kind == ClassKind.CLASS || kind == ClassKind.ENUM_CLASS || kind == ClassKind.OBJECT) {
+                            if (!classBoundEncountered.add(typeParameterName)) {
+                                trace.report(ONLY_ONE_CLASS_BOUND_ALLOWED.on(upperBoundElement));
+                            }
+                        }
+                    }
+                }
             }
 
-            checkNamesInConstraints(declaration, descriptor, scope, trace);
+            checkUpperBoundType(upperBoundElement, upperBound, trace);
         }
     }
 
@@ -579,10 +614,6 @@ public class DescriptorResolver {
     ) {
         if (DeclarationsCheckerKt.checkNotEnumEntry(upperBound, trace)) return;
         if (!TypeUtils.canHaveSubtypes(KotlinTypeChecker.DEFAULT, upperBoundType)) {
-            ClassifierDescriptor descriptor = upperBoundType.getConstructor().getDeclarationDescriptor();
-            if (descriptor instanceof ClassDescriptor) {
-                if (((ClassDescriptor) descriptor).getModality() == Modality.SEALED) return;
-            }
             trace.report(FINAL_UPPER_BOUND.on(upperBound, upperBoundType));
         }
         if (DynamicTypesKt.isDynamic(upperBoundType)) {
@@ -794,7 +825,7 @@ public class DescriptorResolver {
                 DescriptorFactory.createExtensionReceiverParameterForCallable(propertyDescriptor, receiverType);
 
         KotlinType type = getVariableType(propertyDescriptor,
-                                          JetScopeUtils.makeScopeForPropertyInitializer(scopeWithTypeParameters, propertyDescriptor),
+                                          ScopeUtils.makeScopeForPropertyInitializer(scopeWithTypeParameters, propertyDescriptor),
                                           property, dataFlowInfo, true, trace);
 
         propertyDescriptor.setType(type, typeParameterDescriptors, getDispatchReceiverParameterIfNeeded(containingDeclaration),
@@ -939,7 +970,7 @@ public class DescriptorResolver {
                 delegateExpression, property, propertyDescriptor, scopeForInitializer, trace, dataFlowInfo);
 
         if (type != null) {
-            LexicalScope delegateFunctionsScope = JetScopeUtils.makeScopeForDelegateConventionFunctions(scopeForInitializer, propertyDescriptor);
+            LexicalScope delegateFunctionsScope = ScopeUtils.makeScopeForDelegateConventionFunctions(scopeForInitializer, propertyDescriptor);
             KotlinType getterReturnType = delegatedPropertyResolver
                     .getDelegatedPropertyGetMethodReturnType(propertyDescriptor, delegateExpression, type, trace, delegateFunctionsScope);
             if (getterReturnType != null) {

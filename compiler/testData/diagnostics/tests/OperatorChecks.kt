@@ -5,6 +5,8 @@ interface Example {
     operator fun div(o: Example): Example
     <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun plus(o: Example, s: String = ""): Example
     <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun minus(vararg o: Example): Example
+    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun plus(): Example
+    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun minus(): Example
 
     operator fun unaryPlus(): Example
     operator fun unaryMinus(): Example
@@ -94,10 +96,12 @@ interface Example3 {
 
 
 
-operator fun Example.plus(<!UNUSED_PARAMETER!>o<!>: Example): Example {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+operator fun Example.plus(<!UNUSED_PARAMETER!>o<!>: Any): Example {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 operator fun Example.div(<!UNUSED_PARAMETER!>o<!>: Example): Example {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun Example.plus(<!UNUSED_PARAMETER!>o<!>: Example, <!UNUSED_PARAMETER!>s<!>: String = ""): Example {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun Example.minus(vararg <!UNUSED_PARAMETER!>o<!>: Example): Example {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+<!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun Example.plus(): Example {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+<!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun Example.minus(): Example {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 
 operator fun Example.unaryPlus(): Example {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 operator fun Example.unaryMinus(): Example {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
@@ -155,7 +159,7 @@ infix fun Example.i1(<!UNUSED_PARAMETER!>n<!>: Int) {}
 
 
 
-<!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun plus(<!UNUSED_PARAMETER!>o<!>: Example): Example {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
+<!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun plus(<!UNUSED_PARAMETER!>o<!>: String): Example {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun div(<!UNUSED_PARAMETER!>o<!>: Example): Example {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun plus(<!UNUSED_PARAMETER!>o<!>: Example, <!UNUSED_PARAMETER!>s<!>: String = ""): Example {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun minus(vararg <!UNUSED_PARAMETER!>o<!>: Example): Example {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>

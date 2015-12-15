@@ -182,8 +182,8 @@ JetFile: newModifiers.kt
         REFERENCE_EXPRESSION
           PsiElement(IDENTIFIER)('data')
         PsiWhiteSpace(' ')
-        FUNCTION_LITERAL_ARGUMENT
-          FUNCTION_LITERAL_EXPRESSION
+        LAMBDA_ARGUMENT
+          LAMBDA_EXPRESSION
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
               PsiWhiteSpace('\n\n    ')
@@ -201,8 +201,8 @@ JetFile: newModifiers.kt
               PsiElement(IDENTIFIER)('data')
           PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        FUNCTION_LITERAL_ARGUMENT
-          FUNCTION_LITERAL_EXPRESSION
+        LAMBDA_ARGUMENT
+          LAMBDA_EXPRESSION
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
               PsiWhiteSpace('\n\n    ')

@@ -1,0 +1,7 @@
+class A {
+    var a: Int
+        get() = 1
+        set(value) {
+            field = value
+        }
+}

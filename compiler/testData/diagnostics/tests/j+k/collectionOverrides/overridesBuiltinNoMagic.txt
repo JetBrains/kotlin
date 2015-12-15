@@ -10,7 +10,8 @@ public open class X : kotlin.MutableList<kotlin.String!> {
     @java.lang.Override() public open override /*1*/ fun addAll(/*0*/ elements: kotlin.Collection<kotlin.String!>): kotlin.Boolean
     @java.lang.Override() public open override /*1*/ fun addAll(/*0*/ index: kotlin.Int, /*1*/ elements: kotlin.Collection<kotlin.String!>): kotlin.Boolean
     @java.lang.Override() public open override /*1*/ fun clear(): kotlin.Unit
-    public open override /*1*/ fun contains(/*0*/ element: kotlin.String!): kotlin.Boolean
+    @java.lang.Override() public open override /*1*/ /*isHiddenToOvercomeSignatureClash*/ fun contains(/*0*/ o: kotlin.String!): kotlin.Boolean
+    public open operator fun contains(/*0*/ element: kotlin.String!): kotlin.Boolean
     @java.lang.Override() public open override /*1*/ fun containsAll(/*0*/ elements: kotlin.Collection<kotlin.String!>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     @java.lang.Override() public open override /*1*/ fun get(/*0*/ index: kotlin.Int): kotlin.String!
@@ -23,7 +24,8 @@ public open class X : kotlin.MutableList<kotlin.String!> {
     @org.jetbrains.annotations.NotNull() @java.lang.Override() public open override /*1*/ fun listIterator(/*0*/ index: kotlin.Int): kotlin.MutableListIterator<kotlin.String!>
     @java.lang.Override() public open override /*1*/ fun remove(/*0*/ o: kotlin.String!): kotlin.Boolean
     @java.lang.Override() public open override /*1*/ fun removeAll(/*0*/ elements: kotlin.Collection<kotlin.String!>): kotlin.Boolean
-    public open override /*1*/ fun removeAt(/*0*/ index: kotlin.Int): kotlin.String!
+    @java.lang.Override() public open override /*1*/ /*isHiddenToOvercomeSignatureClash*/ fun removeAt(/*0*/ index: kotlin.Int): kotlin.String!
+    public open fun removeAt(/*0*/ index: kotlin.Int): kotlin.String!
     @java.lang.Override() public open override /*1*/ fun retainAll(/*0*/ elements: kotlin.Collection<kotlin.String!>): kotlin.Boolean
     @java.lang.Override() public open override /*1*/ fun set(/*0*/ index: kotlin.Int, /*1*/ element: kotlin.String!): kotlin.String!
     @org.jetbrains.annotations.NotNull() @java.lang.Override() public open override /*1*/ fun subList(/*0*/ fromIndex: kotlin.Int, /*1*/ toIndex: kotlin.Int): kotlin.MutableList<kotlin.String!>
@@ -40,6 +42,7 @@ public final class Y : X {
     @java.lang.Override() public open override /*1*/ /*fake_override*/ fun addAll(/*0*/ elements: kotlin.Collection<kotlin.String!>): kotlin.Boolean
     @java.lang.Override() public open override /*1*/ /*fake_override*/ fun addAll(/*0*/ index: kotlin.Int, /*1*/ elements: kotlin.Collection<kotlin.String!>): kotlin.Boolean
     @java.lang.Override() public open override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
+    @java.lang.Override() public open override /*1*/ /*fake_override*/ /*isHiddenToOvercomeSignatureClash*/ fun contains(/*0*/ o: kotlin.String!): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun contains(/*0*/ element: kotlin.String!): kotlin.Boolean
     @java.lang.Override() public open override /*1*/ /*fake_override*/ fun containsAll(/*0*/ elements: kotlin.Collection<kotlin.String!>): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -53,6 +56,7 @@ public final class Y : X {
     @org.jetbrains.annotations.NotNull() @java.lang.Override() public open override /*1*/ /*fake_override*/ fun listIterator(/*0*/ index: kotlin.Int): kotlin.MutableListIterator<kotlin.String!>
     @java.lang.Override() public open override /*1*/ /*fake_override*/ fun remove(/*0*/ o: kotlin.String!): kotlin.Boolean
     @java.lang.Override() public open override /*1*/ /*fake_override*/ fun removeAll(/*0*/ elements: kotlin.Collection<kotlin.String!>): kotlin.Boolean
+    @java.lang.Override() public open override /*1*/ /*fake_override*/ /*isHiddenToOvercomeSignatureClash*/ fun removeAt(/*0*/ index: kotlin.Int): kotlin.String!
     public open override /*1*/ /*fake_override*/ fun removeAt(/*0*/ index: kotlin.Int): kotlin.String!
     @java.lang.Override() public open override /*1*/ /*fake_override*/ fun retainAll(/*0*/ elements: kotlin.Collection<kotlin.String!>): kotlin.Boolean
     @java.lang.Override() public open override /*1*/ /*fake_override*/ fun set(/*0*/ index: kotlin.Int, /*1*/ element: kotlin.String!): kotlin.String!

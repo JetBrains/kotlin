@@ -127,8 +127,6 @@ public class PropertyCodegen {
         if (isAccessorNeeded(declaration, descriptor, setter)) {
             generateSetter(declaration, descriptor, setter);
         }
-
-        context.recordSyntheticAccessorIfNeeded(descriptor, bindingContext);
     }
 
     private void genBackingFieldAndAnnotations(@NotNull KtNamedDeclaration declaration, @NotNull PropertyDescriptor descriptor, boolean isParameter) {

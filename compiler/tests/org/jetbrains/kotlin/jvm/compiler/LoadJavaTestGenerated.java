@@ -133,6 +133,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             doTestCompiledJava(fileName);
         }
 
+        @TestMetadata("InnerClassTypeMultipleGeneric.java")
+        public void testInnerClassTypeMultipleGeneric() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/InnerClassTypeMultipleGeneric.java");
+            doTestCompiledJava(fileName);
+        }
+
         @TestMetadata("InnerClassesInGeneric.java")
         public void testInnerClassesInGeneric() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/InnerClassesInGeneric.java");
@@ -312,6 +318,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
             @TestMetadata("AnnotatedConstructor.java")
             public void testAnnotatedConstructor() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/AnnotatedConstructor.java");
+                doTestCompiledJava(fileName);
+            }
+
+            @TestMetadata("AnnotatedEnumEntry.java")
+            public void testAnnotatedEnumEntry() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/annotations/AnnotatedEnumEntry.java");
                 doTestCompiledJava(fileName);
             }
 
@@ -1386,6 +1398,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 doTestCompiledJava(fileName);
             }
 
+            @TestMetadata("StaticOverrides.java")
+            public void testStaticOverrides() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/sam/StaticOverrides.java");
+                doTestCompiledJava(fileName);
+            }
+
             @TestMetadata("SubstitutedSamInterface.java")
             public void testSubstitutedSamInterface() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/sam/SubstitutedSamInterface.java");
@@ -1854,6 +1872,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                     doTestCompiledKotlin(fileName);
                 }
 
+                @TestMetadata("EnumEntry.kt")
+                public void testEnumEntry() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/EnumEntry.kt");
+                    doTestCompiledKotlin(fileName);
+                }
+
                 @TestMetadata("Function.kt")
                 public void testFunction() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/classMembers/Function.kt");
@@ -2202,6 +2226,12 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 @TestMetadata("TypeAnnotationWithArguments.kt")
                 public void testTypeAnnotationWithArguments() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/types/TypeAnnotationWithArguments.kt");
+                    doTestCompiledKotlin(fileName);
+                }
+
+                @TestMetadata("TypeArgument.kt")
+                public void testTypeArgument() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledKotlin/annotations/types/TypeArgument.kt");
                     doTestCompiledKotlin(fileName);
                 }
 

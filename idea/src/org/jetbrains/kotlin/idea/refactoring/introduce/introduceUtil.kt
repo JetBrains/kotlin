@@ -22,10 +22,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.refactoring.chooseContainerElementIfNecessary
-import org.jetbrains.kotlin.idea.core.refactoring.removeTemplateEntryBracesIfPossible
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtil
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiRange
@@ -83,7 +83,7 @@ fun selectElementsWithTargetParent(
     fun selectTargetContainer(elements: List<PsiElement>) {
         val physicalElements = elements.map { it.substringContextOrThis }
         val parent = PsiTreeUtil.findCommonParent(physicalElements)
-            ?: throw AssertionError("Should have at least one parent: ${physicalElements.joinToString("\n")}")
+                     ?: throw AssertionError("Should have at least one parent: ${physicalElements.joinToString("\n")}")
 
         val containers = getContainers(physicalElements, parent)
         if (containers.isEmpty()) {
@@ -121,6 +121,11 @@ fun selectElementsWithTargetParent(
             }
             else {
                 if (!editor.getSelectionModel().hasSelection()) {
+                    val elementAtCaret = file.findElementAt(editor.caretModel.offset)
+                    elementAtCaret?.getParentOfTypeAndBranch<KtProperty> { nameIdentifier }?.let {
+                        return@selectExpression selectTargetContainer(listOf(it))
+                    }
+
                     editor.getSelectionModel().selectLineAtCaret()
                 }
                 selectMultipleExpressions()
@@ -196,4 +201,11 @@ fun ExtractableSubstringInfo.replaceWith(replacement: KtExpression): KtExpressio
 
         addedRefEntry.expression!!
     }
+}
+
+fun KtExpression.mustBeParenthesizedInInitializerPosition(): Boolean {
+    if (this !is KtBinaryExpression) return false
+
+    if (left?.mustBeParenthesizedInInitializerPosition() ?: false) return true
+    return PsiChildRange(left, operationReference).any { (it is PsiWhiteSpace) && it.textContains('\n') }
 }

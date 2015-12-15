@@ -41,6 +41,12 @@ public class IdeCompiledLightClassTestGenerated extends AbstractIdeCompiledLight
         doTest(fileName);
     }
 
+    @TestMetadata("DeprecatedEnumEntry.kt")
+    public void testDeprecatedEnumEntry() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/DeprecatedEnumEntry.kt");
+        doTest(fileName);
+    }
+
     public String getTestsRoot() {
         return "compiler/testData/asJava/lightClasses";
     }

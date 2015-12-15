@@ -1,0 +1,45 @@
+package
+
+public fun </*0*/ T> Singleton<out T>.indexed(): WithValue<Indexed<T>>
+
+public final class Indexed</*0*/ T> {
+    public constructor Indexed</*0*/ T>(/*0*/ x: T, /*1*/ y: kotlin.Int)
+    public final val x: T
+    public final val y: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Singleton</*0*/ T> : WithValue<T> {
+    public constructor Singleton</*0*/ T>(/*0*/ x: T)
+    public final val x: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public open override /*1*/ fun value(): Value<T>
+}
+
+public final class Value</*0*/ out T> {
+    public constructor Value</*0*/ out T>(/*0*/ x: T)
+    public final val x: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface WithValue</*0*/ out T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public abstract fun value(): Value<T>
+}
+
+public final class WithValueIndexed</*0*/ T> : WithValue<Indexed<T>> {
+    public constructor WithValueIndexed</*0*/ T>(/*0*/ f: () -> Value<T>)
+    public final val f: () -> Value<T>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public open override /*1*/ fun value(): Value<Indexed<T>>
+}

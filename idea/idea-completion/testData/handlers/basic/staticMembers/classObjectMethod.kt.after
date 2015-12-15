@@ -1,5 +1,3 @@
-import kotlin.text.Regex
-
 fun foo() {
     Regex.fromLiteral(<caret>)
 }

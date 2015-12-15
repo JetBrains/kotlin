@@ -114,8 +114,8 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
             val replacement = psiFactory.createExpression(nameSuggestions.single().first())
             val substringInfo = expressionToReplace.extractableSubstringInfo
             var result = when {
-                expressionToReplace.isFunctionLiteralOutsideParentheses() -> {
-                    val functionLiteralArgument = expressionToReplace.getStrictParentOfType<KtFunctionLiteralArgument>()!!
+                expressionToReplace.isLambdaOutsideParentheses() -> {
+                    val functionLiteralArgument = expressionToReplace.getStrictParentOfType<KtLambdaArgument>()!!
                     val newCallExpression = functionLiteralArgument.moveInsideParenthesesAndReplaceWith(replacement, bindingContext)
                     newCallExpression.valueArguments.last().getArgumentExpression()!!
                 }
@@ -139,12 +139,14 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
                 allReplaces: List<KtExpression>
         ) {
             val initializer = (expression as? KtParenthesizedExpression)?.expression ?: expression
+            val initializerText = if (initializer.mustBeParenthesizedInInitializerPosition()) "(${initializer.text})" else initializer.text
+
             var property: KtDeclaration = if (componentFunctions.isNotEmpty()) {
                 buildString {
                     componentFunctions.indices.joinTo(this, prefix = "val (", postfix = ")") { nameSuggestions[it].first() }
                     append(" = ")
-                    append(initializer.text)
-                }.let { psiFactory.createMultiDeclaration(it) }
+                    append(initializerText)
+                }.let { psiFactory.createDestructuringDeclaration(it) }
             }
             else {
                 buildString {
@@ -155,7 +157,7 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
                         append(": ").append(IdeDescriptorRenderers.SOURCE_CODE.renderType(typeToRender))
                     }
                     append(" = ")
-                    append(initializer.text)
+                    append(initializerText)
                 }.let { psiFactory.createProperty(it) }
             }
 
@@ -366,7 +368,7 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
         for ((place, parent) in parentsWithSelf.zip(parents)) {
             when {
                 parent is KtContainerNode && place !is KtBlockExpression && !parent.isBadContainerNode(place) -> result = parent
-                parent is KtClassBody, parent is KtFile -> return result
+                parent is KtClassBody || parent is KtFile -> return result
                 parent is KtBlockExpression -> result = parent
                 parent is KtWhenEntry && place !is KtBlockExpression -> result = parent
                 parent is KtDeclarationWithBody && parent.bodyExpression == place && place !is KtBlockExpression -> result = parent
@@ -408,7 +410,7 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
     private fun executeMultiDeclarationTemplate(
             project: Project,
             editor: Editor,
-            declaration: KtMultiDeclaration,
+            declaration: KtDestructuringDeclaration,
             suggestedNames: List<Collection<String>>) {
         StartMarkAction.canStart(project)?.let { return }
 
@@ -452,10 +454,12 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
 
     private fun suggestNamesForComponent(descriptor: FunctionDescriptor, project: Project, validator: (String) -> Boolean): Set<String> {
         return LinkedHashSet<String>().apply {
-            descriptor.returnType?.let { addAll(KotlinNameSuggester.suggestNamesByType(it, validator)) }
-
+            val descriptorName = descriptor.name.asString()
             val componentName = (DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) as? PsiNamedElement)?.name
-                                ?: descriptor.name.asString()
+                                ?: descriptorName
+            if (componentName == descriptorName) {
+                descriptor.returnType?.let { addAll(KotlinNameSuggester.suggestNamesByType(it, validator)) }
+            }
             add(KotlinNameSuggester.suggestNameByName(componentName, validator))
         }
     }
@@ -590,7 +594,7 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
                             ).startInplaceIntroduceTemplate()
                         }
 
-                        is KtMultiDeclaration -> {
+                        is KtDestructuringDeclaration -> {
                             executeMultiDeclarationTemplate(project, editor, property, suggestedNames)
                         }
 
@@ -660,7 +664,7 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
             var container = firstContainer
             do {
                 var lambda: KtExpression = container.getNonStrictParentOfType<KtFunction>()!!
-                if (lambda is KtFunctionLiteral) lambda = lambda.parent as? KtFunctionLiteralExpression ?: return@apply
+                if (lambda is KtFunctionLiteral) lambda = lambda.parent as? KtLambdaExpression ?: return@apply
                 if (!isResolvableNextTo(lambda)) return@apply
                 container = lambda.getContainer() ?: return@apply
                 add(lambda to container)

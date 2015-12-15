@@ -172,7 +172,7 @@ class DynamicCallableDescriptors(private val builtIns: KotlinBuiltIns) {
             ))
         }
 
-        fun getFunctionType(funLiteralExpr: KtFunctionLiteralExpression): KotlinType {
+        fun getFunctionType(funLiteralExpr: KtLambdaExpression): KotlinType {
             val funLiteral = funLiteralExpr.getFunctionLiteral()
 
             val receiverType = funLiteral.getReceiverTypeReference()?.let { dynamicType }
@@ -189,7 +189,7 @@ class DynamicCallableDescriptors(private val builtIns: KotlinBuiltIns) {
             val argExpression = KtPsiUtil.deparenthesize(arg.getArgumentExpression())
 
             when {
-                argExpression is KtFunctionLiteralExpression -> {
+                argExpression is KtLambdaExpression -> {
                     outType = getFunctionType(argExpression)
                     varargElementType = null
                 }
@@ -210,7 +210,7 @@ class DynamicCallableDescriptors(private val builtIns: KotlinBuiltIns) {
 
             if (hasSpreadOperator) {
                 for (funLiteralArg in call.getFunctionLiteralArguments()) {
-                    addParameter(funLiteralArg, getFunctionType(funLiteralArg.getFunctionLiteral()), null)
+                    addParameter(funLiteralArg, getFunctionType(funLiteralArg.getLambdaExpression()), null)
                 }
 
                 break

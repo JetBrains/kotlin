@@ -36,7 +36,7 @@ class ChangeFunctionLiteralSignatureFix private constructor(
         private val parameterTypes: List<KotlinType>
 ) : ChangeFunctionSignatureFix(functionLiteral, functionDescriptor) {
 
-    override fun getText() = "Change the signature of function literal"
+    override fun getText() = "Change the signature of lambda expression"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         runChangeSignature(

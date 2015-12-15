@@ -1,4 +1,4 @@
-package kotlin.support
+package kotlin.collections
 
 import java.util.NoSuchElementException
 

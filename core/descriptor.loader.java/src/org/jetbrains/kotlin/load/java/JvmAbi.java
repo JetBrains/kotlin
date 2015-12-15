@@ -35,7 +35,7 @@ public final class JvmAbi {
      * - Patch version can be increased freely and is only supposed to be used for debugging. Increase the patch version when you
      *   make a change to the metadata format or the bytecode which is both forward- and backward compatible.
      */
-    public static final BinaryVersion VERSION = BinaryVersion.create(1, 0, 0);
+    public static final BinaryVersion VERSION = BinaryVersion.create(1, 0, 1);
 
     public static final String DEFAULT_IMPLS_CLASS_NAME = "DefaultImpls";
     public static final String DEFAULT_IMPLS_SUFFIX = "$" + DEFAULT_IMPLS_CLASS_NAME;

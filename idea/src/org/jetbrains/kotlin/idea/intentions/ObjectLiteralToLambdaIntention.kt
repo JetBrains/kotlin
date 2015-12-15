@@ -118,7 +118,7 @@ class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiter
 
         val callee = replaced.getCalleeExpressionIfAny()!! as KtNameReferenceExpression
         val callExpression = callee.parent as KtCallExpression
-        val functionLiteral = callExpression.functionLiteralArguments.single().getFunctionLiteral()
+        val functionLiteral = callExpression.lambdaArguments.single().getLambdaExpression()
 
         val lambdaBody = functionLiteral.bodyExpression!!
 
@@ -190,7 +190,7 @@ class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiter
         val singleFunction = objectDeclaration.declarations.singleOrNull() as? KtNamedFunction ?: return null
         if (!singleFunction.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return null
 
-        val delegationSpecifier = objectDeclaration.getDelegationSpecifiers().singleOrNull() ?: return null
+        val delegationSpecifier = objectDeclaration.getSuperTypeListEntries().singleOrNull() ?: return null
         val typeRef = delegationSpecifier.typeReference ?: return null
         val bindingContext = typeRef.analyze(BodyResolveMode.PARTIAL)
         val baseType = bindingContext[BindingContext.TYPE, typeRef] ?: return null

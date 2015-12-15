@@ -33,7 +33,7 @@ public final enum class D : kotlin.Enum<D> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
-    @kotlin.Deprecated(message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<D>
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<D>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): D
     public final /*synthesized*/ fun values(): kotlin.Array<D>
 }

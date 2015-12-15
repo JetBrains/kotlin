@@ -13,5 +13,5 @@ class A {
     }
 
     constructor(x: Int)
-    constructor() : this(foo() + prop + B.bar() + B.prop + C)
+    constructor() : this(foo() + prop + B.bar() + B.prop <!NONE_APPLICABLE!>+<!> C)
 }

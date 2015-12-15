@@ -12,5 +12,5 @@ fun f3(): Iterable<Char>{}
 // EXIST: f1
 // ABSENT: f2
 // EXIST: f3
-// EXIST: { lookupString:"listOf", itemText: "listOf", tailText: "(vararg elements: T) (kotlin)", typeText:"List<T>" }
+// EXIST: { lookupString:"listOf", itemText: "listOf", tailText: "(vararg elements: T) (kotlin.collections)", typeText:"List<T>" }
 

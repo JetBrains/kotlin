@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.util
 
 import org.jetbrains.kotlin.name.Name
-import java.util.*
 import kotlin.text.Regex
 
 object OperatorNameConventions {
@@ -63,8 +62,9 @@ object OperatorNameConventions {
 
     // If you add new unary, binary or assignment operators, add it to OperatorConventions as well
 
-    val UNARY_OPERATION_NAMES_WITH_DEPRECATED = Collections.unmodifiableSet(setOf(INC, DEC, UNARY_PLUS, PLUS, UNARY_MINUS, MINUS, NOT))
+    @JvmField
     internal val UNARY_OPERATION_NAMES = setOf(INC, DEC, UNARY_PLUS, UNARY_MINUS, NOT)
+    internal val SIMPLE_UNARY_OPERATION_NAMES = setOf(UNARY_PLUS, UNARY_MINUS, NOT)
     internal val BINARY_OPERATION_NAMES = setOf(TIMES, PLUS, MINUS, DIV, MOD, RANGE_TO)
     internal val ASSIGNMENT_OPERATIONS = setOf(TIMES_ASSIGN, DIV_ASSIGN, MOD_ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN)
 

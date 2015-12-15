@@ -5,8 +5,8 @@ package test
 import testing.other.*
 import testing.TestFun
 
-// Resolve should be ambiguous
-val a = <!OVERLOAD_RESOLUTION_AMBIGUITY!>TestFun<!>()
+// Resolve shouldn't be ambiguous
+val a = TestFun()
 
 
 //FILE:testing.kt

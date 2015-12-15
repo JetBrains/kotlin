@@ -41,7 +41,7 @@ public interface DataFlowInfo {
      * Returns collected nullability for the given value, NOT taking its predictability into account.
      */
     @NotNull
-    Nullability getNullability(@NotNull DataFlowValue key);
+    Nullability getCollectedNullability(@NotNull DataFlowValue key);
 
     /**
      * Returns collected nullability for the given value if it's predictable.
@@ -51,11 +51,23 @@ public interface DataFlowInfo {
     Nullability getPredictableNullability(@NotNull DataFlowValue key);
 
     /**
+     * Returns possible types for the given value, NOT taking its predictability into account.
+     *
      * IMPORTANT: by default, the original (native) type for this value
      * are NOT included. So it's quite possible to get an empty set here.
      */
     @NotNull
-    Set<KotlinType> getPossibleTypes(@NotNull DataFlowValue key);
+    Set<KotlinType> getCollectedTypes(@NotNull DataFlowValue key);
+
+    /**
+     * Returns possible types for the given value if it's predictable.
+     * Otherwise, basic value type is returned.
+     *
+     * IMPORTANT: by default, the original (native) type for this value
+     * are NOT included. So it's quite possible to get an empty set here.
+     */
+    @NotNull
+    Set<KotlinType> getPredictableTypes(@NotNull DataFlowValue key);
 
     /**
      * Call this function to clear all data flow information about

@@ -38,7 +38,7 @@ public abstract class AbstractSmartSelectionTest extends LightCodeInsightTestCas
 
         List<String> textualExpressions = new ArrayList<String>();
         for (KtExpression expression : expressions) {
-            textualExpressions.add(expression.getText());
+            textualExpressions.add(KotlinRefactoringUtil.getExpressionShortText(expression));
         }
         assertEquals(expectedResultText, StringUtil.join(textualExpressions, "\n"));
     }

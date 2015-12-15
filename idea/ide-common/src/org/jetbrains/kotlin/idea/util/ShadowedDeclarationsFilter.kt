@@ -177,7 +177,7 @@ public class ShadowedDeclarationsFilter(
 
             override fun getValueArguments() = arguments
 
-            override fun getFunctionLiteralArguments() = emptyList<FunctionLiteralArgument>()
+            override fun getFunctionLiteralArguments() = emptyList<LambdaArgument>()
 
             override fun getTypeArguments() = emptyList<KtTypeProjection>()
 

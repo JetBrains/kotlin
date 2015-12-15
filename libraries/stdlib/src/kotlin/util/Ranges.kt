@@ -1,6 +1,6 @@
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("RangesKt")
-package kotlin
+package kotlin.ranges
 
 /**
  * Represents a range of [Comparable] values.

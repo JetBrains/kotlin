@@ -8,5 +8,5 @@ fun firstFun() {
 }
 
 // INVOCATION_COUNT: 1
-// EXIST: { lookupString:"toLinkedMap", itemText:"toLinkedMap", tailText:"() for Map<K, V> in kotlin" }
+// EXIST: { lookupString:"toLinkedMap", itemText:"toLinkedMap", tailText:"() for Map<K, V> in kotlin.collections" }
 // NOTHING_ELSE

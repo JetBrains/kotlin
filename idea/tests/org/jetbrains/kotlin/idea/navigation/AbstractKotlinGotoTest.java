@@ -115,6 +115,13 @@ public abstract class AbstractKotlinGotoTest extends KotlinLightCodeInsightFixtu
             }
         });
 
-        UsefulTestCase.assertOrderedEquals(Ordering.natural().sortedCopy(renderedElements), expectedReferences);
+        boolean inexactMatching = InTextDirectivesUtils.isDirectiveDefined(documentText, "// ALLOW_MORE_RESULTS");
+
+        if (inexactMatching) {
+            UsefulTestCase.assertContainsElements(renderedElements, expectedReferences);
+        }
+        else {
+            UsefulTestCase.assertOrderedEquals(Ordering.natural().sortedCopy(renderedElements), expectedReferences);
+        }
     }
 }

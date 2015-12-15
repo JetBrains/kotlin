@@ -2,7 +2,7 @@
 
 package kt1875
 
-fun f(a : Int?, b : Int.(Int)->Int) = a?.b(1) //unnecessary safe call warning
+fun foo(a : Int?, b : Int.(Int)->Int) = a?.b(1) //unnecessary safe call warning
 
 interface T {
     val f : ((i: Int) -> Unit)?
@@ -14,7 +14,7 @@ fun test(t: T) {
 }
 
 fun test1(t: T?) {
-    t<!UNSAFE_CALL!>.<!><!UNSAFE_CALL!>f<!>(1)
+    t<!UNSAFE_CALL!>.<!><!FUNCTION_EXPECTED!>f<!>(1) // todo resolve f as value and report UNSAFE_CALL
     t?.<!UNSAFE_CALL!>f<!>(1)
     t<!UNSAFE_CALL!>.<!>f?.invoke(1)
     t?.f?.invoke(1)

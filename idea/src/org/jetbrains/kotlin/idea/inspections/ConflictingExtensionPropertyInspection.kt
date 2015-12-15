@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
-import org.jetbrains.kotlin.resolve.isAnnotatedAsHidden
+import org.jetbrains.kotlin.resolve.isHiddenInResolution
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.collectSyntheticExtensionProperties
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
@@ -70,7 +70,7 @@ public class ConflictingExtensionPropertyInspection : AbstractKotlinInspection()
                     val conflictingExtension = conflictingSyntheticExtension(propertyDescriptor, fileScope) ?: return
 
                     // don't report on hidden declarations
-                    if (propertyDescriptor.isAnnotatedAsHidden()) return
+                    if (propertyDescriptor.isHiddenInResolution()) return
 
                     val fixes = createFixes(property, conflictingExtension, isOnTheFly)
 

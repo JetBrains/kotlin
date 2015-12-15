@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.idea.caches.resolve.IDEPackagePartProvider
+import org.jetbrains.kotlin.idea.decompiler.classFile.DeserializerForClassfileDecompiler
+import org.jetbrains.kotlin.idea.decompiler.classFile.buildDecompiledTextForClassFile
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder
@@ -36,15 +38,15 @@ public class DecompiledTextConsistencyTest : TextConsistencyBaseTest() {
 
     override fun getPackages(): List<FqName> = emptyList()
 
-    override fun getFacades(): List<FqName> = listOf(FqName("kotlin.CollectionsKt"))
+    override fun getFacades(): List<FqName> = listOf(FqName("kotlin.collections.CollectionsKt"))
 
-    override fun getTopLevelMembers(): Map<String, String> = mapOf("kotlin.CollectionsKt" to "linkedListOf")
+    override fun getTopLevelMembers(): Map<String, String> = mapOf("kotlin.collections.CollectionsKt" to "linkedListOf")
 
     override fun getVirtualFileFinder(): VirtualFileFinder =
             JvmVirtualFileFinder.SERVICE.getInstance(project)
 
     override fun getDecompiledText(packageFile: VirtualFile, resolver: ResolverForDecompiler?): String =
-            (resolver?.let { buildDecompiledText(packageFile, it) } ?: buildDecompiledText(packageFile)).text
+            (resolver?.let { buildDecompiledTextForClassFile(packageFile, it) } ?: buildDecompiledTextForClassFile(packageFile)).text
 
     override fun getModuleDescriptor(): ModuleDescriptor =
             TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegrationWithCustomContext(

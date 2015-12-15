@@ -28,14 +28,16 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.util.PsiTreeUtil
 import com.sun.jdi.AbsentInformationException
 import com.sun.jdi.ClassNotPreparedException
 import com.sun.jdi.ReferenceType
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinCodeFragmentFactory
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -123,7 +125,7 @@ public class KotlinSourcePositionProvider: SourcePositionProvider() {
             try {
                 val locations = type.allLineLocations()
                 if (!locations.isEmpty()) {
-                    val lastLocation = locations.get(locations.size() - 1)
+                    val lastLocation = locations.get(locations.size - 1)
                     return debugProcess.getPositionManager().getSourcePosition(lastLocation)
                 }
             }

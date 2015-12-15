@@ -6,6 +6,6 @@ interface B
 
 interface D<T>
 
-interface CorrectF<<error descr="[INCONSISTENT_TYPE_PARAMETER_BOUNDS] Type parameter T of 'D' has inconsistent bounds: A, B">T</error>> where T : D<A>, T : D<B>
+interface CorrectF<T> where T : D<A>, T : <error descr="[REPEATED_BOUND] Type parameter already has this bound">D<B></error>
 
-fun <<error descr="[INCONSISTENT_TYPE_PARAMETER_BOUNDS] Type parameter T of 'D' has inconsistent bounds: A, B">T</error>> bar() where T : D<A>, T : D<B> {}
+fun <T> bar() where T : D<A>, T : <error descr="[REPEATED_BOUND] Type parameter already has this bound">D<B></error> {}

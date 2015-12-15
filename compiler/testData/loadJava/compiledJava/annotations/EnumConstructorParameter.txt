@@ -16,7 +16,7 @@ public final enum class EnumConstructorParameter : kotlin.Enum<test.EnumConstruc
     }
 
     // Static members
-    @kotlin.Deprecated(message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<test.EnumConstructorParameter>
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<test.EnumConstructorParameter>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.EnumConstructorParameter
     public final /*synthesized*/ fun values(): kotlin.Array<test.EnumConstructorParameter>
 }

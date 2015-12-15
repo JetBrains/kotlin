@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 import com.google.protobuf.MessageLite
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
-import com.intellij.util.SmartList
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -175,19 +174,11 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                     container, callableProto, callableProto.annotatedCallableKind, index, valueParameterProto
             )
             if (parameterAnnotations.isNotEmpty()) {
-                createAnnotationStubs(parameterAnnotations, modifierList ?: createEmptyModifierList(parameterStub))
+                createAnnotationStubs(parameterAnnotations, modifierList ?: createEmptyModifierListStub(parameterStub))
             }
 
             createTypeReferenceStub(parameterStub, typeProto)
         }
-    }
-
-    private fun createEmptyModifierList(parameterStub: KotlinParameterStubImpl): KotlinModifierListStubImpl {
-        return KotlinModifierListStubImpl(
-                parameterStub,
-                ModifierMaskUtils.computeMask { false },
-                KtStubElementTypes.MODIFIER_LIST
-        )
     }
 
     fun createTypeParameterListStub(

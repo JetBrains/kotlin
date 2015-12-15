@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.utils.emptyOrSingletonList
 public abstract class InstructionWithNext(
         element: KtElement,
         lexicalScope: LexicalScope
-) : JetElementInstructionImpl(element, lexicalScope) {
+) : KtElementInstructionImpl(element, lexicalScope) {
     public var next: Instruction? = null
         set(value: Instruction?) {
             field = outgoingEdgeTo(value)

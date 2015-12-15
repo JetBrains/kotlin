@@ -1,0 +1,5 @@
+package
+
+public val input: kotlin.Any? = null
+public val test4: kotlin.String
+public inline fun </*0*/ T> using(/*0*/ input: kotlin.Any?, /*1*/ f: (kotlin.Any?) -> T): T

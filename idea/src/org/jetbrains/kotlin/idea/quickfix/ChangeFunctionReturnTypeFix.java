@@ -62,7 +62,7 @@ public class ChangeFunctionReturnTypeFix extends KotlinQuickFixAction<KtFunction
         super(element);
         this.type = type;
         if (element instanceof KtFunctionLiteral) {
-            KtFunctionLiteralExpression functionLiteralExpression = PsiTreeUtil.getParentOfType(element, KtFunctionLiteralExpression.class);
+            KtLambdaExpression functionLiteralExpression = PsiTreeUtil.getParentOfType(element, KtLambdaExpression.class);
             assert functionLiteralExpression != null : "FunctionLiteral outside any FunctionLiteralExpression: " +
                                                        PsiUtilsKt.getElementTextWithContext(element);
             changeFunctionLiteralReturnTypeFix = new ChangeFunctionLiteralReturnTypeFix(functionLiteralExpression, type);
@@ -125,10 +125,10 @@ public class ChangeFunctionReturnTypeFix extends KotlinQuickFixAction<KtFunction
     }
 
     @NotNull
-    public static KtMultiDeclarationEntry getMultiDeclarationEntryThatTypeMismatchComponentFunction(Diagnostic diagnostic) {
+    public static KtDestructuringDeclarationEntry getDestructuringDeclarationEntryThatTypeMismatchComponentFunction(Diagnostic diagnostic) {
         Name componentName = COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH.cast(diagnostic).getA();
         int componentIndex = DataClassUtilsKt.getComponentIndex(componentName);
-        KtMultiDeclaration multiDeclaration = QuickFixUtil.getParentElementOfType(diagnostic, KtMultiDeclaration.class);
+        KtDestructuringDeclaration multiDeclaration = QuickFixUtil.getParentElementOfType(diagnostic, KtDestructuringDeclaration.class);
         assert multiDeclaration != null : "COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH reported on expression that is not within any multi declaration";
         return multiDeclaration.getEntries().get(componentIndex - 1);
     }
@@ -139,7 +139,7 @@ public class ChangeFunctionReturnTypeFix extends KotlinQuickFixAction<KtFunction
             @Nullable
             @Override
             public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                KtMultiDeclarationEntry entry = getMultiDeclarationEntryThatTypeMismatchComponentFunction(diagnostic);
+                KtDestructuringDeclarationEntry entry = getDestructuringDeclarationEntryThatTypeMismatchComponentFunction(diagnostic);
                 BindingContext context = ResolutionUtils.analyze(entry);
                 ResolvedCall<FunctionDescriptor> resolvedCall = context.get(BindingContext.COMPONENT_RESOLVED_CALL, entry);
                 if (resolvedCall == null) return null;

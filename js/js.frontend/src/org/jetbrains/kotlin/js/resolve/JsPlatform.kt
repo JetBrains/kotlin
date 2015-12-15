@@ -31,6 +31,10 @@ public object JsPlatform : TargetPlatform("JS") {
                 ImportPath("java.lang.*"),
                 ImportPath("kotlin.*"),
                 ImportPath("kotlin.annotation.*"),
+                ImportPath("kotlin.collections.*"),
+                ImportPath("kotlin.ranges.*"),
+                ImportPath("kotlin.sequences.*"),
+                ImportPath("kotlin.text.*"),
                 ImportPath("kotlin.js.*")
         )
 

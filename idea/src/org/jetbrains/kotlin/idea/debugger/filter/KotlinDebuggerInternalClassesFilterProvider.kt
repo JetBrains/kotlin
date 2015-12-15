@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.idea.debugger.filter
 
-import com.intellij.ui.classFilter.DebuggerClassFilterProvider
 import com.intellij.ui.classFilter.ClassFilter
+import com.intellij.ui.classFilter.DebuggerClassFilterProvider
 import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerSettings
 
 private val FILTERS = listOf(

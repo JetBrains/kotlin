@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.EXPECTED_TYPE_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.getNestedTypeVariables
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
+import org.jetbrains.kotlin.resolve.validation.InfixValidator
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -52,13 +53,15 @@ public fun hasUnknownReturnType(type: KotlinType): Boolean {
     return ErrorUtils.containsErrorType(getReturnTypeForCallable(type))
 }
 
-public fun replaceReturnTypeByUnknown(type: KotlinType): KotlinType {
+public fun replaceReturnTypeForCallable(type: KotlinType, given: KotlinType): KotlinType {
     assert(ReflectionTypes.isCallableType(type)) { "type $type is not a function or property" }
     val newArguments = Lists.newArrayList<TypeProjection>()
     newArguments.addAll(getParameterArgumentsOfCallableType(type))
-    newArguments.add(TypeProjectionImpl(Variance.INVARIANT, DONT_CARE))
+    newArguments.add(TypeProjectionImpl(Variance.INVARIANT, given))
     return replaceTypeArguments(type, newArguments)
 }
+
+public fun replaceReturnTypeByUnknown(type: KotlinType) = replaceReturnTypeForCallable(type, DONT_CARE)
 
 private fun replaceTypeArguments(type: KotlinType, newArguments: List<TypeProjection>) =
         KotlinTypeImpl.create(type.getAnnotations(), type.getConstructor(), type.isMarkedNullable(), newArguments, type.getMemberScope())
@@ -66,7 +69,7 @@ private fun replaceTypeArguments(type: KotlinType, newArguments: List<TypeProjec
 private fun getParameterArgumentsOfCallableType(type: KotlinType) =
         type.getArguments().dropLast(1)
 
-private fun getReturnTypeForCallable(type: KotlinType) =
+fun getReturnTypeForCallable(type: KotlinType) =
         type.getArguments().last().getType()
 
 private fun CallableDescriptor.hasReturnTypeDependentOnUninferredParams(constraintSystem: ConstraintSystem): Boolean {
@@ -114,10 +117,12 @@ public fun isOrOverridesSynthesized(descriptor: CallableMemberDescriptor): Boole
 fun isConventionCall(call: Call): Boolean {
     if (call is CallTransformer.CallForImplicitInvoke) return true
     val callElement = call.callElement
-    if (callElement is KtArrayAccessExpression || callElement is KtMultiDeclarationEntry) return true
+    if (callElement is KtArrayAccessExpression || callElement is KtDestructuringDeclarationEntry) return true
     val calleeExpression = call.calleeExpression as? KtOperationReferenceExpression ?: return false
     return calleeExpression.getNameForConventionalOperation() != null
 }
+
+fun isInfixCall(call: Call): Boolean = InfixValidator.isInfixCall(call.calleeExpression)
 
 fun getUnaryPlusOrMinusOperatorFunctionName(call: Call): Name? {
     if (call.callElement !is KtPrefixExpression) return null

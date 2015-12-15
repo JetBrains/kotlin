@@ -86,7 +86,7 @@ public class ManglingUtils {
             ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
 
             // Use stable mangling when it's inside an overridable declaration to avoid clashing names on inheritance.
-            if (classDescriptor.getModality().isOverridable()) {
+            if (!ModalityKt.isFinal(classDescriptor)) {
                 return true;
             }
 

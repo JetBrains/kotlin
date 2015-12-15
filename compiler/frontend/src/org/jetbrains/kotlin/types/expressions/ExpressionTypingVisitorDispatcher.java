@@ -229,8 +229,8 @@ public abstract class ExpressionTypingVisitorDispatcher extends KtVisitor<Kotlin
     //////////////////////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public KotlinTypeInfo visitFunctionLiteralExpression(@NotNull KtFunctionLiteralExpression expression, ExpressionTypingContext data) {
-        return functions.visitFunctionLiteralExpression(expression, data);
+    public KotlinTypeInfo visitLambdaExpression(@NotNull KtLambdaExpression expression, ExpressionTypingContext data) {
+        return functions.visitLambdaExpression(expression, data);
     }
 
     @Override
@@ -382,11 +382,6 @@ public abstract class ExpressionTypingVisitorDispatcher extends KtVisitor<Kotlin
     @Override
     public KotlinTypeInfo visitDeclaration(@NotNull KtDeclaration dcl, ExpressionTypingContext data) {
         return basic.visitDeclaration(dcl, data);
-    }
-
-    @Override
-    public KotlinTypeInfo visitRootPackageExpression(@NotNull KtRootPackageExpression expression, ExpressionTypingContext data) {
-        return basic.visitRootPackageExpression(expression, data);
     }
 
     @Override

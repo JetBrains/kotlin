@@ -35,7 +35,7 @@ public class KotlinFindUsagesProvider : FindUsagesProvider {
             is KtClass -> "class"
             is KtParameter -> "parameter"
             is KtProperty -> if (element.isLocal()) "variable" else "property"
-            is KtMultiDeclarationEntry -> "variable"
+            is KtDestructuringDeclarationEntry -> "variable"
             is KtTypeParameter -> "type parameter"
             is KtSecondaryConstructor -> "constructor"
             is KtObjectDeclaration -> "object"

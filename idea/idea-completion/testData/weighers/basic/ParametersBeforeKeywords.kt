@@ -1,5 +1,6 @@
-fun bar(fop: Int) {
-    fo<caret>
+fun bar(breach: Int) {
+    while (true)
+        bre<caret>
 }
 
-// ORDER: fop, for
+// ORDER: breach, break

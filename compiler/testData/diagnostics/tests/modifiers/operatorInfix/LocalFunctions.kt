@@ -26,11 +26,11 @@ fun a() {
             consumeString(a plus b)
             consumeInt(a minus b)
 
-            a <!OVERLOAD_RESOLUTION_AMBIGUITY!>*<!> b
-            a <!OVERLOAD_RESOLUTION_AMBIGUITY!>/<!> b
+            a * b
+            a <!OPERATOR_MODIFIER_REQUIRED!>/<!> b
 
-            a <!OVERLOAD_RESOLUTION_AMBIGUITY!>times<!> b
-            a <!OVERLOAD_RESOLUTION_AMBIGUITY!>div<!> b
+            a times b
+            a <!INFIX_MODIFIER_REQUIRED!>div<!> b
         }
     }
 }

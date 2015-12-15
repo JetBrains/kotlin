@@ -8,7 +8,7 @@ public final class SecondaryConstructors public constructor(x: kotlin.Boolean) {
 
     private constructor(x: kotlin.Int) { /* compiled code */ }
 
-    public final inner class Inner<T : kotlin.String, G : kotlin.Int> where G : kotlin.Number {
+    public final inner class Inner<T : kotlin.String, G : kotlin.Int> where G : java.io.Serializable {
         public constructor(x: T, g: G) { /* compiled code */ }
     }
 

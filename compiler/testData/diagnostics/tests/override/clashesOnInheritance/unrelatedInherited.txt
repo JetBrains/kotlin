@@ -1,0 +1,136 @@
+package
+
+public interface IA {
+    public abstract val propVal: kotlin.String
+    public abstract var propVar: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun method(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface IB1 : IA {
+    public abstract override /*1*/ /*fake_override*/ val propVal: kotlin.String
+    public abstract override /*1*/ /*fake_override*/ var propVar: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun method(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface IB2 : IA {
+    public abstract override /*1*/ /*fake_override*/ val propVal: kotlin.String
+    public abstract override /*1*/ /*fake_override*/ var propVar: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun method(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface IC : IB1, IB2 {
+    public abstract override /*2*/ /*fake_override*/ val propVal: kotlin.String
+    public abstract override /*2*/ /*fake_override*/ var propVar: kotlin.String
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*2*/ /*fake_override*/ fun method(): kotlin.String
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface IGA</*0*/ T> {
+    public abstract val propVal: T
+    public abstract var propVar: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun method(): T
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface IGB1Str : IGA<kotlin.String> {
+    public abstract override /*1*/ /*fake_override*/ val propVal: kotlin.String
+    public abstract override /*1*/ /*fake_override*/ var propVar: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun method(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface IGB2Str : IGA<kotlin.String> {
+    public abstract override /*1*/ /*fake_override*/ val propVal: kotlin.String
+    public abstract override /*1*/ /*fake_override*/ var propVar: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun method(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface IGB3Int : IGA<kotlin.Int> {
+    public abstract override /*1*/ /*fake_override*/ val propVal: kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ var propVar: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun method(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface IGB4T</*0*/ T> : IGA<T> {
+    public abstract override /*1*/ /*fake_override*/ val propVal: T
+    public abstract override /*1*/ /*fake_override*/ var propVar: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun method(): T
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface IGB5T</*0*/ T> : IGA<T> {
+    public abstract override /*1*/ /*fake_override*/ val propVal: T
+    public abstract override /*1*/ /*fake_override*/ var propVar: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun method(): T
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface IGC1 : IGB1Str, IGB2Str {
+    public abstract override /*2*/ /*fake_override*/ val propVal: kotlin.String
+    public abstract override /*2*/ /*fake_override*/ var propVar: kotlin.String
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*2*/ /*fake_override*/ fun method(): kotlin.String
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface IGC2 : IGB1Str, IGB3Int {
+    public abstract override /*2*/ /*fake_override*/ val propVal: kotlin.String
+    public abstract override /*2*/ /*fake_override*/ var propVar: kotlin.String
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*2*/ /*fake_override*/ fun method(): kotlin.String
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface IGC3</*0*/ T> : IGB4T<T>, IGB5T<T> {
+    public abstract override /*2*/ /*fake_override*/ val propVal: T
+    public abstract override /*2*/ /*fake_override*/ var propVar: T
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*2*/ /*fake_override*/ fun method(): T
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface IGC4</*0*/ T> : IGB4T<T>, IGB5T<kotlin.String> {
+    public abstract override /*2*/ /*fake_override*/ val propVal: T
+    public abstract override /*2*/ /*fake_override*/ var propVar: T
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*2*/ /*fake_override*/ fun method(): T
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface IGC5 : IGB4T<kotlin.String>, IGB5T<kotlin.String> {
+    public abstract override /*2*/ /*fake_override*/ val propVal: kotlin.String
+    public abstract override /*2*/ /*fake_override*/ var propVar: kotlin.String
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*2*/ /*fake_override*/ fun method(): kotlin.String
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}

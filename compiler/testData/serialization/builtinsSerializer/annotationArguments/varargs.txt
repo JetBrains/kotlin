@@ -14,7 +14,7 @@ public final enum class My : kotlin.Enum<test.My> {
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.My): kotlin.Int
 
     // Static members
-    @kotlin.Deprecated(message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<test.My>
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<test.My>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.My
     public final /*synthesized*/ fun values(): kotlin.Array<test.My>
 }

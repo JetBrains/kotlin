@@ -49,6 +49,12 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
             doKotlinTest(fileName);
         }
 
+        @TestMetadata("defaultValuesInOverride.kt")
+        public void testDefaultValuesInOverride() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/defaultValuesInOverride.kt");
+            doKotlinTest(fileName);
+        }
+
         @TestMetadata("fromClassToClass.kt")
         public void testFromClassToClass() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2k/fromClassToClass.kt");
@@ -230,6 +236,12 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
     public static class K2J extends AbstractPullUpTest {
         public void testAllFilesPresentInK2J() throws Exception {
             KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/refactoring/pullUp/k2j"), Pattern.compile("^(.+)\\.kt$"));
+        }
+
+        @TestMetadata("defaultValuesInOverride.kt")
+        public void testDefaultValuesInOverride() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/refactoring/pullUp/k2j/defaultValuesInOverride.kt");
+            doKotlinTest(fileName);
         }
 
         @TestMetadata("fromClassToClass.kt")

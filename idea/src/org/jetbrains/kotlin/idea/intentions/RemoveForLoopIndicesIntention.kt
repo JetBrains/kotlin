@@ -41,17 +41,18 @@ public class RemoveForLoopIndicesInspection : IntentionBasedInspection<KtForExpr
 }
 
 public class RemoveForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpression>(javaClass(), "Remove indices in 'for' loop") {
-    private val WITH_INDEX_FQ_NAME = "kotlin.withIndex"
+    private val WITH_INDEX_NAME = "withIndex"
+    private val WITH_INDEX_FQ_NAMES = listOf("collections", "sequences", "text", "ranges").map { "kotlin.$it.$WITH_INDEX_NAME" }.toSet()
 
     override fun applicabilityRange(element: KtForExpression): TextRange? {
         val loopRange = element.loopRange as? KtDotQualifiedExpression ?: return null
-        val multiParameter = element.multiParameter ?: return null
+        val multiParameter = element.destructuringParameter ?: return null
         if (multiParameter.entries.size() != 2) return null
 
         val bindingContext = element.analyze(BodyResolveMode.PARTIAL)
 
         val resolvedCall = loopRange.getResolvedCall(bindingContext)
-        if (resolvedCall?.resultingDescriptor?.fqNameUnsafe?.asString() != WITH_INDEX_FQ_NAME) return null
+        if (resolvedCall?.resultingDescriptor?.fqNameUnsafe?.asString() !in WITH_INDEX_FQ_NAMES) return null
 
         val indexVar = multiParameter.entries[0]
         if (ReferencesSearch.search(indexVar).any()) return null
@@ -60,7 +61,7 @@ public class RemoveForLoopIndicesIntention : SelfTargetingRangeIntention<KtForEx
     }
 
     override fun applyTo(element: KtForExpression, editor: Editor) {
-        val multiParameter = element.multiParameter!!
+        val multiParameter = element.destructuringParameter!!
         val loopRange = element.loopRange as KtDotQualifiedExpression
 
         val elementVar = multiParameter.entries[1]

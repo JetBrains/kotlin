@@ -330,7 +330,7 @@ public final class JsAstUtils {
     }
 
     @NotNull
-    public static JsBinaryOperation typeof(@NotNull JsExpression expression, @NotNull JsStringLiteral string) {
+    public static JsBinaryOperation typeOfIs(@NotNull JsExpression expression, @NotNull JsStringLiteral string) {
         return equality(new JsPrefixOperation(JsUnaryOperator.TYPEOF, expression), string);
     }
 

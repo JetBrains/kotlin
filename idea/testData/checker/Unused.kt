@@ -2,7 +2,7 @@ fun test(<warning textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES">unusedParam</w
   val str = ":)"
   str <warning textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES">as String</warning> // USELESS_CAST
 
-  // UNUSED_FUNCTION_LITERAL
+  // UNUSED_LAMBDA_EXPRESSION
   <warning textAttributesKey="NOT_USED_ELEMENT_ATTRIBUTES">{
     test(0)
   }</warning>

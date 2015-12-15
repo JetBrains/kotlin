@@ -38,14 +38,6 @@ public interface G</*0*/ T> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public interface I</*0*/ T : G<D<T>>> {
-    public abstract fun </*0*/ S : T?> correctFoo(): kotlin.Unit where S : G<D<S>>
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public abstract fun </*0*/ S : T?> incorrectFoo(): kotlin.Unit where S : G<D<S>>
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-}
-
 public interface IncorrectF</*0*/ T : D<A>> where T : D<B> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

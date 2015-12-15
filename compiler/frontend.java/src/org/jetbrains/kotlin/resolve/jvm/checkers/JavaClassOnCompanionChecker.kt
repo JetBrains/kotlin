@@ -34,7 +34,7 @@ public class JavaClassOnCompanionChecker : CallChecker {
         if (descriptor !is PropertyDescriptor || descriptor.name.asString() != "javaClass") return
 
         val container = descriptor.containingDeclaration
-        if (container !is PackageFragmentDescriptor || container.fqName.asString() != "kotlin") return
+        if (container !is PackageFragmentDescriptor || container.fqName.asString() != "kotlin.jvm") return
 
         val actualType = descriptor.type
 

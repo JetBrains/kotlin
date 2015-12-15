@@ -1,0 +1,5 @@
+fun test() {
+    val (width, height) = Dimension(1, 2)
+}
+
+data class Dimension(val width: Int, val height: Int)

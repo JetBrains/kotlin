@@ -29,10 +29,7 @@ import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.ProtoBuf.MemberKind
 import org.jetbrains.kotlin.serialization.ProtoBuf.Modality
-import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
-import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
-import org.jetbrains.kotlin.serialization.deserialization.receiverType
-import org.jetbrains.kotlin.serialization.deserialization.returnType
+import org.jetbrains.kotlin.serialization.deserialization.*
 
 fun createCallableStubs(
         parentStub: StubElement<out PsiElement>,
@@ -150,7 +147,7 @@ private class FunctionClsStubBuilder(
                 callableName.ref(),
                 isTopLevel,
                 c.containerFqName.child(callableName),
-                isExtension = functionProto.hasReceiverType(),
+                isExtension = functionProto.hasReceiver(),
                 hasBlockBody = true,
                 hasBody = Flags.MODALITY.get(functionProto.flags) != Modality.ABSTRACT,
                 hasTypeParameterListBeforeFunctionName = functionProto.typeParameterList.isNotEmpty()
@@ -201,7 +198,7 @@ private class PropertyClsStubBuilder(
                 hasDelegate = false,
                 hasDelegateExpression = false,
                 hasInitializer = false,
-                isExtension = propertyProto.hasReceiverType(),
+                isExtension = propertyProto.hasReceiver(),
                 hasReturnTypeRef = true,
                 fqName = c.containerFqName.child(callableName)
         )

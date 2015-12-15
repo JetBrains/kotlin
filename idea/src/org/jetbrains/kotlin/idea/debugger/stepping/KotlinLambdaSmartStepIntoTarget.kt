@@ -34,7 +34,7 @@ public class KotlinLambdaSmartStepTarget(
 
     companion object {
         fun calcLabel(descriptor: DeclarationDescriptor, paramName: Name): String {
-            return "${descriptor.getName().asString()}: ${paramName.asString()}.${OperatorNameConventions.INVOKE.asString()}()"
+            return "${descriptor.name.asString()}: ${paramName.asString()}.${OperatorNameConventions.INVOKE.asString()}()"
         }
     }
 }

@@ -12,7 +12,7 @@ public final enum class StaticMembersInEnum : kotlin.Enum<test.StaticMembersInEn
     // Static members
     public final val CONSTANT: test.StaticMembersInEnum!
     public final var STATIC_FIELD: kotlin.Int
-    @kotlin.Deprecated(message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<test.StaticMembersInEnum>
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<test.StaticMembersInEnum>
     public open fun foo(): kotlin.Unit
     public open fun valueOf(/*0*/ p0: kotlin.Int): kotlin.Unit
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.StaticMembersInEnum

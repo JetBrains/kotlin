@@ -27,8 +27,8 @@ public operator fun minusAssign(/*0*/ n: kotlin.Int): kotlin.String
 public operator fun modAssign(/*0*/ vararg n: kotlin.Int /*kotlin.IntArray*/): kotlin.Unit
 public operator fun next(): kotlin.String
 public operator fun next(/*0*/ n: kotlin.Int): kotlin.String
-public operator fun plus(/*0*/ o: Example): Example
 public operator fun plus(/*0*/ o: Example, /*1*/ s: kotlin.String = ...): Example
+public operator fun plus(/*0*/ o: kotlin.String): Example
 public operator fun plusAssign(/*0*/ n: kotlin.Int): kotlin.Unit
 public operator fun rangeTo(/*0*/ vararg o: kotlin.String /*kotlin.Array<out kotlin.String>*/): kotlin.Unit
 public operator fun rangeTo(/*0*/ o: kotlin.Int): kotlin.Unit
@@ -62,13 +62,15 @@ public operator fun Example.inc(): Example
 public operator fun Example.invoke(): kotlin.Unit
 public operator fun Example.iterator(): kotlin.String
 public operator fun Example.iterator(/*0*/ n: kotlin.Int): kotlin.String
+public operator fun Example.minus(): Example
 public operator fun Example.minus(/*0*/ vararg o: Example /*kotlin.Array<out Example>*/): Example
 public operator fun Example.minusAssign(/*0*/ n: kotlin.Int): kotlin.String
 public operator fun Example.modAssign(/*0*/ vararg n: kotlin.Int /*kotlin.IntArray*/): kotlin.Unit
 public operator fun Example.next(): kotlin.String
 public operator fun Example.next(/*0*/ n: kotlin.Int): kotlin.String
-public operator fun Example.plus(/*0*/ o: Example): Example
+public operator fun Example.plus(): Example
 public operator fun Example.plus(/*0*/ o: Example, /*1*/ s: kotlin.String = ...): Example
+public operator fun Example.plus(/*0*/ o: kotlin.Any): Example
 public operator fun Example.plusAssign(/*0*/ n: kotlin.Int): kotlin.Unit
 public operator fun Example.rangeTo(/*0*/ vararg o: kotlin.String /*kotlin.Array<out kotlin.String>*/): kotlin.Unit
 public operator fun Example.rangeTo(/*0*/ o: kotlin.Int): kotlin.Unit
@@ -119,11 +121,13 @@ public interface Example {
     public abstract operator fun invoke(): kotlin.Unit
     public abstract operator fun iterator(): kotlin.String
     public abstract operator fun iterator(/*0*/ n: kotlin.Int): kotlin.String
+    public abstract operator fun minus(): Example
     public abstract operator fun minus(/*0*/ vararg o: Example /*kotlin.Array<out Example>*/): Example
     public abstract operator fun minusAssign(/*0*/ n: kotlin.Int): kotlin.String
     public abstract operator fun modAssign(/*0*/ vararg n: kotlin.Int /*kotlin.IntArray*/): kotlin.Unit
     public abstract operator fun next(): kotlin.String
     public abstract operator fun next(/*0*/ n: kotlin.Int): kotlin.String
+    public abstract operator fun plus(): Example
     public abstract operator fun plus(/*0*/ o: Example): Example
     public abstract operator fun plus(/*0*/ o: Example, /*1*/ s: kotlin.String = ...): Example
     public abstract operator fun plusAssign(/*0*/ n: kotlin.Int): kotlin.Unit

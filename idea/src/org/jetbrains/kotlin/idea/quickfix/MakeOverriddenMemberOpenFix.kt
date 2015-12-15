@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATIO
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED
+import org.jetbrains.kotlin.descriptors.isOverridable
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
@@ -110,7 +111,7 @@ public class MakeOverriddenMemberOpenFix(declaration: KtDeclaration) : KotlinQui
 
         private fun retainNonOverridableMembers(
                 callableMemberDescriptors: Collection<CallableMemberDescriptor>): Collection<CallableMemberDescriptor> {
-            return callableMemberDescriptors.filter { !it.modality.isOverridable }
+            return callableMemberDescriptors.filter { !it.isOverridable }
         }
 
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {

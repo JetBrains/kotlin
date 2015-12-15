@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.eval
 
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.JetElementInstruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.KtElementInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 
-public interface InstructionWithValue : JetElementInstruction {
+public interface InstructionWithValue : KtElementInstruction {
     public val outputValue: PseudoValue?
 }

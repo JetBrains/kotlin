@@ -249,8 +249,8 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
                     parent is KtUserType && parent.parent is KtTypeReference -> {
                         parent = parent.parent.parent
 
-                        if (parent is KtConstructorCalleeExpression && parent.parent is KtDelegatorToSuperCall)
-                            result.add(KotlinFunctionCallUsage(parent.parent as KtDelegatorToSuperCall, functionUsageInfo))
+                        if (parent is KtConstructorCalleeExpression && parent.parent is KtSuperTypeCallEntry)
+                            result.add(KotlinFunctionCallUsage(parent.parent as KtSuperTypeCallEntry, functionUsageInfo))
                     }
 
                     element is KtSimpleNameExpression && (functionPsi is KtProperty || functionPsi is KtParameter) ->
@@ -293,7 +293,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
 
         if (functionPsi is KtClass && functionPsi.isEnum()) {
             for (declaration in functionPsi.declarations) {
-                if (declaration is KtEnumEntry && declaration.getDelegationSpecifiers().isEmpty()) {
+                if (declaration is KtEnumEntry && declaration.getSuperTypeListEntries().isEmpty()) {
                     result.add(KotlinEnumEntryWithoutSuperCallUsage(declaration))
                 }
             }
@@ -302,7 +302,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         functionPsi.processDelegationCallConstructorUsages(functionPsi.useScope) {
             when (it) {
                 is KtConstructorDelegationCall -> result.add(KotlinConstructorDelegationCallUsage(it, changeInfo))
-                is KtDelegatorToSuperCall -> result.add(KotlinFunctionCallUsage(it, functionUsageInfo))
+                is KtSuperTypeCallEntry -> result.add(KotlinFunctionCallUsage(it, functionUsageInfo))
             }
             true
         }
@@ -404,7 +404,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             if (arguments.size != 1) continue
 
             val argExpression = arguments[0].getArgumentExpression()
-            if (argExpression !is KtFunctionLiteralExpression) continue
+            if (argExpression !is KtLambdaExpression) continue
 
             val context = callExpression.analyze(BodyResolveMode.FULL)
 

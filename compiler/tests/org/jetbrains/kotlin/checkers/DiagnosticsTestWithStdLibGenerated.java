@@ -95,6 +95,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         doTest(fileName);
     }
 
+    @TestMetadata("PropertyDelegateWithPrivateSet.kt")
+    public void testPropertyDelegateWithPrivateSet() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/PropertyDelegateWithPrivateSet.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("RedeclarationMainInMultiFileClass.kt")
     public void testRedeclarationMainInMultiFileClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/RedeclarationMainInMultiFileClass.kt");
@@ -560,6 +566,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
     public static class Cast extends AbstractDiagnosticsTestWithStdLib {
         public void testAllFilesPresentInCast() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/cast"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("AsInsideIn.kt")
+        public void testAsInsideIn() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/cast/AsInsideIn.kt");
+            doTest(fileName);
         }
 
         @TestMetadata("IsArray.kt")

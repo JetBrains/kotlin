@@ -240,18 +240,19 @@ class LightClassDataProviderForClassOrObject(private val classOrObject: KtClassO
                 return true
             }
 
-            override fun shouldAnnotateClass(classOrObject: KtClassOrObject): Boolean {
-                return shouldGenerateClass(classOrObject)
+            override fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject): Boolean {
+                return shouldGenerateClass(processingClassOrObject)
             }
 
-            override fun shouldGenerateClass(classOrObject: KtClassOrObject): Boolean {
+            override fun shouldGenerateClass(processingClassOrObject: KtClassOrObject): Boolean {
                 // Trivial: generate and analyze class we are interested in.
-                if (classOrObject === classOrObject) return true
+                if (classOrObject === processingClassOrObject) return true
 
                 // Process all parent classes as they are context for current class
                 // Process child classes because they probably affect members (heuristic)
 
-                if (PsiTreeUtil.isAncestor(classOrObject, classOrObject, true) || PsiTreeUtil.isAncestor(classOrObject, classOrObject, true)) {
+                if (PsiTreeUtil.isAncestor(classOrObject, processingClassOrObject, true) ||
+                    PsiTreeUtil.isAncestor(processingClassOrObject, classOrObject, true)) {
                     return true
                 }
 
@@ -269,8 +270,8 @@ class LightClassDataProviderForClassOrObject(private val classOrObject: KtClassO
                 // TODO: current method will process local classes in irrelevant declarations, it should be fixed.
                 // We generate all enclosing classes
 
-                if (classOrObject.isLocal() && classOrObject.isLocal()) {
-                    val commonParent = PsiTreeUtil.findCommonParent(classOrObject, classOrObject)
+                if (classOrObject.isLocal() && processingClassOrObject.isLocal()) {
+                    val commonParent = PsiTreeUtil.findCommonParent(classOrObject, processingClassOrObject)
                     return commonParent != null && commonParent !is PsiFile
                 }
 
@@ -320,12 +321,12 @@ class LightClassDataProviderForFileFacade(
 
     override val generateClassFilter: GenerationState.GenerateClassFilter
         get() = object : GenerationState.GenerateClassFilter() {
-            override fun shouldAnnotateClass(classOrObject: KtClassOrObject): Boolean {
-                return shouldGenerateClass(classOrObject)
+            override fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject): Boolean {
+                return shouldGenerateClass(processingClassOrObject)
             }
 
-            override fun shouldGenerateClass(classOrObject: KtClassOrObject): Boolean {
-                return KtPsiUtil.isLocal(classOrObject)
+            override fun shouldGenerateClass(processingClassOrObject: KtClassOrObject): Boolean {
+                return KtPsiUtil.isLocal(processingClassOrObject)
             }
 
             override fun shouldGeneratePackagePart(jetFile: KtFile): Boolean {

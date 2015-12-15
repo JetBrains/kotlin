@@ -103,8 +103,8 @@ JetFile: nestedClassAmbiguity.kt
         PsiWhiteSpace(' ')
         PsiElement(COLON)(':')
         PsiWhiteSpace(' ')
-        DELEGATION_SPECIFIER_LIST
-          DELEGATOR_SUPER_CALL
+        SUPER_TYPE_LIST
+          SUPER_TYPE_CALL_ENTRY
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 PsiErrorElement:Type expected
@@ -158,8 +158,8 @@ JetFile: nestedClassAmbiguity.kt
         PsiWhiteSpace(' ')
         PsiElement(COLON)(':')
         PsiWhiteSpace(' ')
-        DELEGATION_SPECIFIER_LIST
-          DELEGATOR_SUPER_CALL
+        SUPER_TYPE_LIST
+          SUPER_TYPE_CALL_ENTRY
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 PsiErrorElement:Type expected

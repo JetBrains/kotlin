@@ -101,7 +101,7 @@ public class KotlinChangeSignatureHandler : ChangeSignatureHandler {
 
             val call: KtCallElement? = PsiTreeUtil.getParentOfType(element,
                                                                    javaClass<KtCallExpression>(),
-                                                                   javaClass<KtDelegatorToSuperCall>(),
+                                                                   javaClass<KtSuperTypeCallEntry>(),
                                                                    javaClass<KtConstructorDelegationCall>())
             val calleeExpr = call?.let {
                 val callee = it.getCalleeExpression()

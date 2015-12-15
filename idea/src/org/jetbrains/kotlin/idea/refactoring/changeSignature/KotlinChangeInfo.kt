@@ -247,7 +247,13 @@ public open class KotlinChangeInfo(
 
             if (kind == Kind.FUNCTION) {
                 receiverParameterInfo?.let {
-                    buffer.append(it.currentTypeText).append('.')
+                    // TODO: Temporary solution until Change Signature is able to infer actual KotlinType from code fragments instead of using text representation
+                    if (KtPsiFactory(context).createTypeIfPossible(it.currentTypeText)?.typeElement is KtFunctionType) {
+                        buffer.append("(${it.currentTypeText})")
+                    } else {
+                        buffer.append(it.currentTypeText)
+                    }
+                    buffer.append('.')
                 }
             }
 

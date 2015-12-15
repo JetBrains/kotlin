@@ -256,10 +256,10 @@ public class ValueArgumentsToParametersMapper {
             D candidate = candidateCall.getCandidateDescriptor();
             List<ValueParameterDescriptor> valueParameters = candidate.getValueParameters();
 
-            List<? extends FunctionLiteralArgument> functionLiteralArguments = call.getFunctionLiteralArguments();
+            List<? extends LambdaArgument> functionLiteralArguments = call.getFunctionLiteralArguments();
             if (!functionLiteralArguments.isEmpty()) {
-                FunctionLiteralArgument functionLiteralArgument = functionLiteralArguments.get(0);
-                KtExpression possiblyLabeledFunctionLiteral = functionLiteralArgument.getArgumentExpression();
+                LambdaArgument lambdaArgument = functionLiteralArguments.get(0);
+                KtExpression possiblyLabeledFunctionLiteral = lambdaArgument.getArgumentExpression();
 
                 if (valueParameters.isEmpty()) {
                     report(TOO_MANY_ARGUMENTS.on(possiblyLabeledFunctionLiteral, candidate));
@@ -277,14 +277,14 @@ public class ValueArgumentsToParametersMapper {
                             setStatus(WEAK_ERROR);
                         }
                         else {
-                            putVararg(valueParameterDescriptor, functionLiteralArgument);
+                            putVararg(valueParameterDescriptor, lambdaArgument);
                         }
                     }
                 }
 
                 for (int i = 1; i < functionLiteralArguments.size(); i++) {
                     KtExpression argument = functionLiteralArguments.get(i).getArgumentExpression();
-                    report(MANY_FUNCTION_LITERAL_ARGUMENTS.on(argument));
+                    report(MANY_LAMBDA_EXPRESSION_ARGUMENTS.on(argument));
                     setStatus(WEAK_ERROR);
                 }
             }

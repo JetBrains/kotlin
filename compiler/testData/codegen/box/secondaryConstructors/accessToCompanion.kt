@@ -4,8 +4,6 @@ internal class A(val result: Int) {
         val prop = 2
         val C = 3
     }
-    object C {
-    }
 
     constructor() : this(foo() + prop + C)
 }

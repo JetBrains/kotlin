@@ -133,17 +133,17 @@ JetFile: EmptyName.kt
           BLOCK
             PsiElement(LBRACE)('{')
             PsiWhiteSpace('\n        ')
-            MULTI_VARIABLE_DECLARATION
+            DESTRUCTURING_DECLARATION
               PsiElement(val)('val')
               PsiWhiteSpace(' ')
               PsiElement(LPAR)('(')
-              MULTI_VARIABLE_DECLARATION_ENTRY
+              DESTRUCTURING_DECLARATION_ENTRY
                 PsiElement(BAD_CHARACTER)('`')
                 PsiErrorElement:Expecting a name
                   PsiElement(BAD_CHARACTER)('`')
               PsiElement(COMMA)(',')
               PsiWhiteSpace(' ')
-              MULTI_VARIABLE_DECLARATION_ENTRY
+              DESTRUCTURING_DECLARATION_ENTRY
                 PsiElement(IDENTIFIER)('y')
               PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')

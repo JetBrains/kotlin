@@ -22,7 +22,7 @@ import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.idea.decompiler.KtClsFile
+import org.jetbrains.kotlin.idea.decompiler.classFile.KtClsFile
 
 //TODO: workaround for bug in JavaClsStructureViewBuilderProvider, remove when IDEA api is updated
 public class KtClsStructureViewBuilderProvider : StructureViewBuilderProvider {

@@ -1,0 +1,20 @@
+package
+
+public val bar: Bar
+public val foo: Foo
+public val foofoo: Foo
+public fun bar(): Bar?
+public fun foo(): Foo?
+public fun </*0*/ T : Bar> run(/*0*/ f: () -> T): T
+
+public interface Bar : Foo {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Foo {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

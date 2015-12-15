@@ -31,7 +31,7 @@ public abstract class ReflectJavaType : JavaType {
         fun create(type: Type): ReflectJavaType {
             return when {
                 type is Class<*> && type.isPrimitive() -> ReflectJavaPrimitiveType(type)
-                type is GenericArrayType, type is Class<*> && type.isArray() -> ReflectJavaArrayType(type)
+                type is GenericArrayType || type is Class<*> && type.isArray() -> ReflectJavaArrayType(type)
                 type is WildcardType -> ReflectJavaWildcardType(type)
                 else -> ReflectJavaClassifierType(type)
             }

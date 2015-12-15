@@ -7,7 +7,7 @@ class A {
 }
     
 fun A.main() {
-    ::<!NESTED_CLASS_SHOULD_BE_QUALIFIED!>Nested<!>
+    ::<!UNRESOLVED_REFERENCE!>Nested<!>
     val y = A::Nested
     
     checkSubtype<KFunction0<A.Nested>>(y)

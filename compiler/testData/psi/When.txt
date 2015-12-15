@@ -30,7 +30,7 @@ JetFile: When.kt
         PsiWhiteSpace(' ')
         PsiElement(EQ)('=')
         PsiWhiteSpace(' ')
-        FUNCTION_LITERAL_EXPRESSION
+        LAMBDA_EXPRESSION
           FUNCTION_LITERAL
             PsiElement(LBRACE)('{')
             BLOCK

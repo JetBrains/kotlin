@@ -34,7 +34,7 @@ JetFile: EnumMissingName.kt
       ENUM_ENTRY
         PsiElement(IDENTIFIER)('RED')
         INITIALIZER_LIST
-          DELEGATOR_SUPER_CALL
+          SUPER_TYPE_CALL_ENTRY
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
@@ -51,7 +51,7 @@ JetFile: EnumMissingName.kt
       ENUM_ENTRY
         PsiElement(IDENTIFIER)('GREEN')
         INITIALIZER_LIST
-          DELEGATOR_SUPER_CALL
+          SUPER_TYPE_CALL_ENTRY
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
@@ -68,7 +68,7 @@ JetFile: EnumMissingName.kt
       ENUM_ENTRY
         PsiElement(IDENTIFIER)('BLUE')
         INITIALIZER_LIST
-          DELEGATOR_SUPER_CALL
+          SUPER_TYPE_CALL_ENTRY
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE

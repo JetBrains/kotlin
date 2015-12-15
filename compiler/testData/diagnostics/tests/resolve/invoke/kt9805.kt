@@ -6,7 +6,7 @@ class B
 
 fun test(a: A, b: B) {
     with(b) {
-        a.<!INVOKE_ON_EXTENSION_FUNCTION_WITH_EXPLICIT_DISPATCH_RECEIVER!>foo<!>() // here must be error, because a is not extension receiver
+        a.foo(<!NO_VALUE_FOR_PARAMETER!>)<!> // here must be error, because a is not extension receiver
 
         a.foo(this)
 

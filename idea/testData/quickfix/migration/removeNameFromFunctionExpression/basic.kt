@@ -1,4 +1,4 @@
-// "Remove identifier from function expression" "true"
+// "Remove identifier from anonymous function" "true"
 
 fun foo() {
     (fun bar<caret>() {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package kotlin
+package kotlin.sequences
 
 internal class ConstrainedOnceSequence<T>(sequence: Sequence<T>) : Sequence<T> {
     @Volatile private var sequenceRef: Sequence<T>? = sequence

@@ -7,3 +7,5 @@ val `is`: Int
 val `in`: Int
 val `object`: Int
 val `when`: Int
+val `yield`: Int
+val `typeof`: Int

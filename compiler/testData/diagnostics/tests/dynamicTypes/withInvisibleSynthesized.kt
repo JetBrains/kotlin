@@ -22,9 +22,9 @@ import p.*
 class K: J.C() {
     fun <!UNSUPPORTED!>dynamic<!>.test() {
         <!DEBUG_INFO_DYNAMIC!>sam<!>(null)
-        <!INVISIBLE_MEMBER!>sam<!>(
-            <!NAMED_ARGUMENTS_NOT_ALLOWED, NAMED_PARAMETER_NOT_FOUND!>name<!> = null,
-            <!NAMED_ARGUMENTS_NOT_ALLOWED, NAMED_PARAMETER_NOT_FOUND!>name<!> = null
+        <!DEBUG_INFO_DYNAMIC!>sam<!>(
+            name = null,
+            <!ARGUMENT_PASSED_TWICE!>name<!> = null
         <!NO_VALUE_FOR_PARAMETER!>)<!>
     }
 

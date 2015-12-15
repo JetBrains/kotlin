@@ -96,6 +96,7 @@ internal class InvokeTowerProcessor<C>(
     // todo filter by operator
     override fun createInvokeProcessor(variableCandidate: C): ScopeTowerProcessor<C> {
         val (variableReceiver, invokeContext) = functionContext.contextForInvoke(variableCandidate, useExplicitReceiver = false)
+                                                ?: return KnownResultProcessor(emptyList())
         return ExplicitReceiverScopeTowerProcessor(invokeContext, variableReceiver, ScopeTowerLevel::getFunctions)
     }
 }
@@ -110,6 +111,7 @@ internal class InvokeExtensionTowerProcessor<C>(
 
     override fun createInvokeProcessor(variableCandidate: C): ScopeTowerProcessor<C> {
         val (variableReceiver, invokeContext) = functionContext.contextForInvoke(variableCandidate, useExplicitReceiver = true)
+                                                ?: return KnownResultProcessor(emptyList())
         val invokeDescriptor = functionContext.scopeTower.getExtensionInvokeCandidateDescriptor(variableReceiver)
                                ?: return KnownResultProcessor(emptyList())
         return InvokeExtensionScopeTowerProcessor(invokeContext, invokeDescriptor, explicitReceiver)
@@ -141,13 +143,11 @@ private fun ScopeTower.getExtensionInvokeCandidateDescriptor(
 ): CandidateWithBoundDispatchReceiver<FunctionDescriptor>? {
     if (!KotlinBuiltIns.isExactExtensionFunctionType(extensionFunctionReceiver.type)) return null
 
-    return ReceiverScopeTowerLevel(this, extensionFunctionReceiver).getFunctions(OperatorNameConventions.INVOKE).single().let {
-        assert(it.diagnostics.isEmpty())
-        val synthesizedInvoke = createSynthesizedInvokes(listOf(it.descriptor)).single()
+    val invokeDescriptor = extensionFunctionReceiver.type.memberScope.getContributedFunctions(OperatorNameConventions.INVOKE, location).single()
+    val synthesizedInvoke = createSynthesizedInvokes(listOf(invokeDescriptor)).single()
 
-        // here we don't add SynthesizedDescriptor diagnostic because it should has priority as member
-        CandidateWithBoundDispatchReceiverImpl(extensionFunctionReceiver, synthesizedInvoke, listOf())
-    }
+    // here we don't add SynthesizedDescriptor diagnostic because it should has priority as member
+    return CandidateWithBoundDispatchReceiverImpl(extensionFunctionReceiver, synthesizedInvoke, listOf())
 }
 
 // case 1.(foo())() or (foo())()
