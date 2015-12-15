@@ -29,7 +29,6 @@ import com.intellij.util.VisibilityUtil
 import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.asJava.unwrapped
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -48,7 +47,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmOverloadsAnnotation
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.kotlin.utils.removeLast
@@ -57,8 +56,7 @@ import java.util.*
 public open class KotlinChangeInfo(
         val methodDescriptor: KotlinMethodDescriptor,
         private var name: String = methodDescriptor.getName(),
-        val newReturnType: KotlinType? = methodDescriptor.baseDescriptor.getReturnType(),
-        var newReturnTypeText: String = methodDescriptor.renderOriginalReturnType(),
+        var newReturnTypeInfo: KotlinTypeInfo = KotlinTypeInfo(methodDescriptor.baseDescriptor.returnType),
         var newVisibility: Visibility = methodDescriptor.getVisibility(),
         parameterInfos: List<KotlinParameterInfo> = methodDescriptor.getParameters(),
         receiver: KotlinParameterInfo? = methodDescriptor.receiver,
@@ -74,6 +72,8 @@ public open class KotlinChangeInfo(
             return JvmOverloadSignature(method, mandatoryParams.intersect(other.mandatoryParams), defaultValues.intersect(other.defaultValues))
         }
     }
+
+    private val originalReturnTypeInfo = methodDescriptor.returnTypeInfo
 
     var receiverParameterInfo: KotlinParameterInfo? = receiver
         set(value: KotlinParameterInfo?) {
@@ -184,7 +184,8 @@ public open class KotlinChangeInfo(
         return methodDescriptor.getMethod()
     }
 
-    override fun isReturnTypeChanged(): Boolean = newReturnTypeText != methodDescriptor.renderOriginalReturnType()
+
+    override fun isReturnTypeChanged(): Boolean = !newReturnTypeInfo.isEquivalentTo(originalReturnTypeInfo)
 
     fun isReceiverTypeChanged(): Boolean = receiverParameterInfo?.getTypeText() != methodDescriptor.renderOriginalReceiverType()
 
@@ -226,6 +227,13 @@ public open class KotlinChangeInfo(
         this.primaryPropagationTargets = primaryPropagationTargets
     }
 
+    private fun renderReturnTypeIfNeeded(): String? {
+        val typeInfo = newReturnTypeInfo
+        if (kind != Kind.FUNCTION) return null
+        if (typeInfo.type?.isUnit() ?: false) return null
+        return typeInfo.render()
+    }
+
     public fun getNewSignature(inheritedCallable: KotlinCallableDefinitionUsage<PsiElement>): String {
         val buffer = StringBuilder()
 
@@ -262,8 +270,7 @@ public open class KotlinChangeInfo(
 
         buffer.append(getNewParametersSignature(inheritedCallable))
 
-        if (newReturnType != null && !KotlinBuiltIns.isUnit(newReturnType) && kind == Kind.FUNCTION)
-            buffer.append(": ").append(newReturnTypeText)
+        renderReturnTypeIfNeeded()?.let { buffer.append(": ").append(it) }
 
         return buffer.toString()
     }
@@ -300,9 +307,10 @@ public open class KotlinChangeInfo(
     }
 
     public fun renderReturnType(inheritedCallable: KotlinCallableDefinitionUsage<*>): String {
-        val typeSubstitutor = inheritedCallable.typeSubstitutor ?: return newReturnTypeText
-        val currentBaseFunction = inheritedCallable.baseFunction.currentCallableDescriptor ?: return newReturnTypeText
-        return currentBaseFunction.getReturnType()!!.renderTypeWithSubstitution(typeSubstitutor, newReturnTypeText, false)
+        val defaultRendering = newReturnTypeInfo.render()
+        val typeSubstitutor = inheritedCallable.typeSubstitutor ?: return defaultRendering
+        val currentBaseFunction = inheritedCallable.baseFunction.currentCallableDescriptor ?: return defaultRendering
+        return currentBaseFunction.returnType!!.renderTypeWithSubstitution(typeSubstitutor, defaultRendering, false)
     }
 
     public fun primaryMethodUpdated() {
@@ -545,13 +553,9 @@ public fun ChangeInfo.toJetChangeInfo(originalChangeSignatureDescriptor: KotlinM
         }
     }
 
-    val returnType = functionDescriptor.getReturnType()
-    val returnTypeText = if (returnType != null) IdeDescriptorRenderers.SOURCE_CODE.renderType(returnType) else ""
-
     return KotlinChangeInfo(originalChangeSignatureDescriptor,
                             getNewName(),
-                            returnType,
-                            returnTypeText,
+                            KotlinTypeInfo(functionDescriptor.returnType),
                             functionDescriptor.getVisibility(),
                             newParameters,
                             null,

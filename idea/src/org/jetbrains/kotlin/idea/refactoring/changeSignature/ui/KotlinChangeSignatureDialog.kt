@@ -49,13 +49,11 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor.Kind
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.KtExpressionCodeFragment
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtTypeCodeFragment
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.types.KotlinType
 import java.awt.BorderLayout
 import java.awt.Font
 import java.awt.Toolkit
@@ -317,7 +315,8 @@ public class KotlinChangeSignatureDialog(
                                             getMethodDescriptor(),
                                             getVisibility(),
                                             getMethodName(),
-                                            myDefaultValueContext)
+                                            myDefaultValueContext,
+                                            true)
         return changeInfo.getNewSignature(getMethodDescriptor().originalPrimaryCallable)
     }
 
@@ -365,7 +364,8 @@ public class KotlinChangeSignatureDialog(
                                             getMethodDescriptor(),
                                             getVisibility(),
                                             getMethodName(),
-                                            myDefaultValueContext)
+                                            myDefaultValueContext,
+                                            false)
         changeInfo.primaryPropagationTargets = myMethodsToPropagateParameters ?: emptyList();
         return KotlinChangeSignatureProcessor(myProject, changeInfo, commandName ?: getTitle())
     }
@@ -387,7 +387,7 @@ public class KotlinChangeSignatureDialog(
         }
 
         private fun createReturnTypeCodeFragment(project: Project, method: KotlinMethodDescriptor) =
-                KtPsiFactory(project).createTypeCodeFragment(method.renderOriginalReturnType(), method.baseDeclaration)
+                KtPsiFactory(project).createTypeCodeFragment(method.returnTypeInfo.render(), method.baseDeclaration)
 
         public fun createRefactoringProcessorForSilentChangeSignature(project: Project,
                                                                       commandName: String,
@@ -400,21 +400,21 @@ public class KotlinChangeSignatureDialog(
                                                 method,
                                                 method.getVisibility(),
                                                 method.getName(),
-                                                defaultValueContext)
+                                                defaultValueContext,
+                                                false)
             return KotlinChangeSignatureProcessor(project, changeInfo, commandName)
         }
 
-        private fun PsiCodeFragment?.getTypeWithText(): Pair<KotlinType?, String> {
-            if (this !is KtTypeCodeFragment) return null to ""
+        private fun PsiCodeFragment?.getTypeInfo(forPreview: Boolean): KotlinTypeInfo {
+            if (this !is KtTypeCodeFragment) return KotlinTypeInfo()
 
             val typeRef = getContentElement()
             val type = typeRef?.analyze(BodyResolveMode.PARTIAL)?.get(BindingContext.TYPE, typeRef)
-            val typeText = when {
-                type != null && !type.isError -> IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
-                typeRef != null -> typeRef.text
-                else -> ""
+            return when {
+                type != null && !type.isError -> KotlinTypeInfo(type, if (forPreview) typeRef?.text else null)
+                typeRef != null -> KotlinTypeInfo(null, typeRef.text)
+                else -> KotlinTypeInfo()
             }
-            return type to typeText
         }
 
         private fun evaluateChangeInfo(parametersModel: KotlinCallableParameterTableModel,
@@ -422,11 +422,12 @@ public class KotlinChangeSignatureDialog(
                                        methodDescriptor: KotlinMethodDescriptor,
                                        visibility: Visibility?,
                                        methodName: String,
-                                       defaultValueContext: PsiElement): KotlinChangeInfo {
+                                       defaultValueContext: PsiElement,
+                                       forPreview: Boolean): KotlinChangeInfo {
             val parameters = parametersModel.getItems().map { parameter ->
                 val parameterInfo = parameter.parameter
 
-                parameterInfo.currentTypeText = parameter.typeCodeFragment.getTypeWithText().second
+                parameterInfo.currentTypeText = parameter.typeCodeFragment.getTypeInfo(forPreview).render()
 
                 val codeFragment = parameter.defaultValueCodeFragment as KtExpressionCodeFragment
                 val oldDefaultValue = parameterInfo.defaultValueForCall
@@ -437,11 +438,9 @@ public class KotlinChangeSignatureDialog(
                 parameterInfo
             }
 
-            val (returnType, returnTypeText) = returnTypeCodeFragment.getTypeWithText()
             return KotlinChangeInfo(methodDescriptor.original,
                                     methodName,
-                                    returnType,
-                                    returnTypeText,
+                                    returnTypeCodeFragment.getTypeInfo(forPreview),
                                     visibility ?: Visibilities.DEFAULT_VISIBILITY,
                                     parameters,
                                     parametersModel.getReceiver(),

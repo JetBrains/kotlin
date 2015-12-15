@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.sure
 import java.io.File
 import java.util.*
@@ -267,11 +268,11 @@ class KotlinChangeSignatureTest : KotlinCodeInsightTestCase() {
 
     fun testRenameFunction() = doTest { newName = "after" }
 
-    fun testChangeReturnType() = doTest { newReturnTypeText = "Float" }
+    fun testChangeReturnType() = doTest { newReturnTypeInfo = KotlinTypeInfo(BUILT_INS.floatType) }
 
-    fun testAddReturnType() = doTest { newReturnTypeText = "Float" }
+    fun testAddReturnType() = doTest { newReturnTypeInfo = KotlinTypeInfo(BUILT_INS.floatType) }
 
-    fun testRemoveReturnType() = doTest { newReturnTypeText = "Unit" }
+    fun testRemoveReturnType() = doTest { newReturnTypeInfo = KotlinTypeInfo(BUILT_INS.unitType) }
 
     fun testChangeConstructorVisibility() = doTest { newVisibility = Visibilities.PROTECTED }
 
@@ -367,7 +368,7 @@ class KotlinChangeSignatureTest : KotlinCodeInsightTestCase() {
         newParameters[1].name = "y1"
         addParameter(KotlinParameterInfo(originalBaseFunctionDescriptor, -1, "x", BUILT_INS.anyType))
 
-        newReturnTypeText = "Int"
+        newReturnTypeInfo = KotlinTypeInfo(BUILT_INS.intType)
     }
 
     fun testVarargs() = doTestConflict()
@@ -427,7 +428,7 @@ class KotlinChangeSignatureTest : KotlinCodeInsightTestCase() {
         newParameters[1].currentTypeText = "String?"
         newParameters[2].currentTypeText = "Any"
 
-        newReturnTypeText = "String?"
+        newReturnTypeInfo = KotlinTypeInfo(BUILT_INS.stringType.makeNullable())
     }
 
     fun testFunctionJavaUsagesAndOverridesChangeTypes() = doTest {
@@ -435,7 +436,7 @@ class KotlinChangeSignatureTest : KotlinCodeInsightTestCase() {
         newParameters[1].currentTypeText = "Int"
         newParameters[2].currentTypeText = "Long?"
 
-        newReturnTypeText = "Any?"
+        newReturnTypeInfo = KotlinTypeInfo(BUILT_INS.nullableAnyType)
     }
 
     fun testGenericsWithOverrides() = doTest {
@@ -443,7 +444,7 @@ class KotlinChangeSignatureTest : KotlinCodeInsightTestCase() {
         newParameters[1].currentTypeText = "A?"
         newParameters[2].currentTypeText = "U<B>"
 
-        newReturnTypeText = "U<C>?"
+        newReturnTypeInfo = KotlinTypeInfo(null, "U<C>?")
     }
 
     fun testAddReceiverToGenericsWithOverrides() = doTest {
@@ -668,7 +669,7 @@ class KotlinChangeSignatureTest : KotlinCodeInsightTestCase() {
 
     fun testChangeProperty() = doTest {
         newName = "s"
-        newReturnTypeText = "String"
+        newReturnTypeInfo = KotlinTypeInfo(BUILT_INS.stringType)
     }
 
     fun testAddPropertyReceiverConflict() = doTestConflict {
@@ -697,7 +698,7 @@ class KotlinChangeSignatureTest : KotlinCodeInsightTestCase() {
 
     fun testChangeClassParameter() = doTest {
         newName = "s"
-        newReturnTypeText = "String"
+        newReturnTypeInfo = KotlinTypeInfo(BUILT_INS.stringType)
     }
 
     fun testParameterPropagation() = doTest {

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallableDefinitionUsage
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
 
 public interface KotlinMethodDescriptor : MethodDescriptor<KotlinParameterInfo, Visibility> {
     enum class Kind(val isConstructor: Boolean) {
@@ -53,8 +54,14 @@ public interface KotlinMethodDescriptor : MethodDescriptor<KotlinParameterInfo, 
     val receiver: KotlinParameterInfo?
 }
 
-fun KotlinMethodDescriptor.renderOriginalReturnType(): String =
-        baseDescriptor.getReturnType()?.let { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(it) } ?: ""
+val KotlinMethodDescriptor.returnTypeInfo: KotlinTypeInfo
+    get() {
+        val type = baseDescriptor.returnType
+        val text = (baseDeclaration as? KtCallableDeclaration)?.typeReference?.text
+                   ?: type?.let { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type) }
+                   ?: "Unit"
+        return KotlinTypeInfo(type, text)
+    }
 
 fun KotlinMethodDescriptor.renderOriginalReceiverType(): String? =
         baseDescriptor.getExtensionReceiverParameter()?.getType()?.let { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(it) }

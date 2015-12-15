@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.substitutions.getTypeSubstitutor
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.sure
 
 class KotlinCallableDefinitionUsage<T : PsiElement>(
@@ -162,11 +163,9 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
         if (changeInfo.isReturnTypeChanged && returnTypeIsNeeded) {
             element.setTypeReference(null)
             val returnTypeText = changeInfo.renderReturnType(this)
-
-            //TODO use ChangeFunctionReturnTypeFix.invoke when JetTypeCodeFragment.getType() is ready
-            if (!(returnTypeText == "Unit" || returnTypeText == "kotlin.Unit")) {
-                element.setTypeReference(KtPsiFactory(element).createType(returnTypeText))!!.addToShorteningWaitSet(
-                        Options.DEFAULT)
+            val returnType = changeInfo.newReturnTypeInfo.type
+            if (returnType == null || !returnType.isUnit()) {
+                element.setTypeReference(KtPsiFactory(element).createType(returnTypeText))!!.addToShorteningWaitSet(Options.DEFAULT)
             }
         }
     }

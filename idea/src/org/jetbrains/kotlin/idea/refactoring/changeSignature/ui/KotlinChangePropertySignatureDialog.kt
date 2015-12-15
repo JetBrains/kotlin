@@ -16,15 +16,11 @@
 
 package org.jetbrains.kotlin.idea.refactoring.changeSignature
 
-import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiElement
 import com.intellij.refactoring.BaseRefactoringProcessor
-import com.intellij.refactoring.ui.ComboBoxVisibilityPanel
 import com.intellij.refactoring.ui.RefactoringDialog
 import com.intellij.ui.EditorTextField
-import com.intellij.ui.NonFocusableCheckBox
 import com.intellij.util.ui.FormBuilder
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -33,8 +29,6 @@ import org.jetbrains.kotlin.idea.core.refactoring.validateElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.KtTypeCodeFragment
-import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import javax.swing.JCheckBox
 import javax.swing.JComboBox
 import javax.swing.JComponent
@@ -85,7 +79,7 @@ public class KotlinChangePropertySignatureDialog(
 
             addLabeledComponent("&Name: ", nameField)
 
-            val returnTypeCodeFragment = psiFactory.createTypeCodeFragment(methodDescriptor.renderOriginalReturnType(),
+            val returnTypeCodeFragment = psiFactory.createTypeCodeFragment(methodDescriptor.returnTypeInfo.render(),
                                                                            baseDeclaration)
             returnTypeField = EditorTextField(documentManager.getDocument(returnTypeCodeFragment), myProject, KotlinFileType.INSTANCE)
             addLabeledComponent("&Type: ", returnTypeField)
@@ -151,8 +145,7 @@ public class KotlinChangePropertySignatureDialog(
         receiver?.currentTypeText = receiverTypeField.getText()
         val changeInfo = KotlinChangeInfo(originalDescriptor,
                                           nameField.getText(),
-                                          null,
-                                          returnTypeField.getText(),
+                                          KotlinTypeInfo(null, returnTypeField.text),
                                           visibilityCombo.getSelectedItem() as Visibility,
                                           emptyList(),
                                           receiver,
