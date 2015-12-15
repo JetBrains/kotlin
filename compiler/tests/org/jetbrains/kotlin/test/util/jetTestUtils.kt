@@ -16,23 +16,23 @@
 
 package org.jetbrains.kotlin.test.util
 
-import com.intellij.codeInspection.SmartHashMap
-import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.util.SmartFMap
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtPackageDirective
+import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import java.io.File
-import java.util.*
 
 public fun String.trimTrailingWhitespacesAndAddNewlineAtEOF(): String =
         this.split('\n').map { it.trimEnd() }.joinToString(separator = "\n").let {
             result -> if (result.endsWith("\n")) result else result + "\n"
         }
 
-public fun CodeInsightTestFixture.configureWithExtraFile(path: String, vararg extraNameParts: String) {
-    configureWithExtraFile(path, *extraNameParts)
+public fun CodeInsightTestFixture.configureWithExtraFileAbs(path: String, vararg extraNameParts: String) {
+    configureWithExtraFile(path, *extraNameParts, relativePaths = false)
 }
 
 public fun CodeInsightTestFixture.configureWithExtraFile(path: String, vararg extraNameParts: String = arrayOf(".Data"), relativePaths: Boolean = false) {

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.types;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
@@ -51,6 +52,11 @@ public class BoundsSubstitutor {
         assert substitutedFunction != null : "Substituting upper bounds should always be legal";
 
         return substitutedFunction;
+    }
+
+    @NotNull
+    public static <D extends CallableDescriptor> TypeSubstitutor createUpperBoundsSubstitutor(@NotNull D callableDescriptor) {
+        return createUpperBoundsSubstitutor(callableDescriptor.getTypeParameters());
     }
 
     @NotNull

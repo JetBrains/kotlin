@@ -16,21 +16,20 @@
 
 package org.jetbrains.kotlin.idea.structureView
 
-import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import com.intellij.util.ui.tree.TreeUtil
-import com.intellij.openapi.util.io.FileUtil
-import java.io.File
-import com.intellij.ui.treeStructure.filtered.FilteringTreeStructure
-import com.intellij.ide.util.FileStructurePopup
 import com.intellij.ide.actions.ViewStructureAction
+import com.intellij.ide.util.FileStructurePopup
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import com.intellij.openapi.ui.Queryable.PrintInfo
-import com.intellij.testFramework.LightProjectDescriptor
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.ui.treeStructure.filtered.FilteringTreeStructure
+import com.intellij.util.ui.tree.TreeUtil
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.configureWithExtraFile
+import java.io.File
 
 public abstract class AbstractKotlinFileStructureTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/structureView/fileStructure"

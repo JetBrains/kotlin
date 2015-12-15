@@ -13731,6 +13731,57 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 }
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/resolve/overloadConflicts")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class OverloadConflicts extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInOverloadConflicts() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/resolve/overloadConflicts"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("extensionReceiverAndVarargs.kt")
+                public void testExtensionReceiverAndVarargs() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/overloadConflicts/extensionReceiverAndVarargs.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("javaOverloadedVarargs.kt")
+                public void testJavaOverloadedVarargs() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/overloadConflicts/javaOverloadedVarargs.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("numberOfDefaults.kt")
+                public void testNumberOfDefaults() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/overloadConflicts/numberOfDefaults.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("originalExamples.kt")
+                public void testOriginalExamples() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/overloadConflicts/originalExamples.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("varargs.kt")
+                public void testVarargs() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/overloadConflicts/varargs.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("varargsInDifferentPositions.kt")
+                public void testVarargsInDifferentPositions() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/overloadConflicts/varargsInDifferentPositions.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("varargsMixed.kt")
+                public void testVarargsMixed() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/overloadConflicts/varargsMixed.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/resolve/specialConstructions")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

@@ -1,0 +1,26 @@
+package
+
+public val test1: Right
+public val test1a: Wrong
+public val test2: Right
+public val test2a: Right
+public fun overloadedFun1(/*0*/ b: kotlin.Any = ..., /*1*/ c: kotlin.Any = ..., /*2*/ e: kotlin.String = ...): Wrong
+public fun overloadedFun1(/*0*/ c: kotlin.Any = ..., /*1*/ b: kotlin.String = ..., /*2*/ f: kotlin.Any = ...): Right
+public fun overloadedFun2(/*0*/ a: kotlin.Any, /*1*/ b: kotlin.String = ...): Wrong
+public fun overloadedFun2(/*0*/ a: kotlin.String, /*1*/ b: kotlin.Any = ...): Right
+public fun overloadedFun2a(/*0*/ a: kotlin.Any, /*1*/ b: kotlin.String = ...): Wrong
+public fun overloadedFun2a(/*0*/ a: kotlin.String, /*1*/ b: kotlin.Any = ...): Right
+
+public object Right {
+    private constructor Right()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public object Wrong {
+    private constructor Wrong()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
