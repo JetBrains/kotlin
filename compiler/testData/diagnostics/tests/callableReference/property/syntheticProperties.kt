@@ -16,4 +16,4 @@ public class Customer {
 }
 
 // FILE: test.kt
-val customerName = Customer::name
+val customerName = Customer::<!UNSUPPORTED!>name<!>

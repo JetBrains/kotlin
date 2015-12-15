@@ -17198,6 +17198,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("SyntheticJavaPropertyReference.kt")
+                public void testSyntheticJavaPropertyReference() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/javaProperties/SyntheticJavaPropertyReference.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("TypeAnnotation.kt")
                 public void testTypeAnnotation() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/javaProperties/TypeAnnotation.kt");
