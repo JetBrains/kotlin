@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.resolve.scopes.ChainedScope
+import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.PackageData
 import org.jetbrains.kotlin.serialization.ProtoBuf
@@ -130,7 +130,7 @@ public class IncrementalPackageFragmentProvider(
                     MemberScope.Empty
                 }
                 else {
-                    ChainedScope("Member scope for incremental compilation: union of package parts data", *scopes.toTypedArray())
+                    ChainedMemberScope("Member scope for incremental compilation: union of package parts data", *scopes.toTypedArray())
                 }
             }
         }
@@ -153,7 +153,7 @@ public class IncrementalPackageFragmentProvider(
                     MemberScope.Empty
                 else {
                     val scopes = partsData.map { IncrementalPackageScope(JvmProtoBufUtil.readPackageDataFrom(it.data, it.strings)) }
-                    ChainedScope(
+                    ChainedMemberScope(
                             "Member scope for incremental compilation: union of multifile class parts data for $multifileClassFqName",
                                  *scopes.toTypedArray<MemberScope>())
                 }

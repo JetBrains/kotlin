@@ -16,14 +16,15 @@
 
 package org.jetbrains.kotlin.resolve.scopes
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.selectMostSpecificInEachOverridableGroup
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.Printer
 
-class TypeIntersectionScope private constructor(override val workerScope: ChainedScope) : AbstractScopeAdapter() {
+class TypeIntersectionScope private constructor(override val workerScope: ChainedMemberScope) : AbstractScopeAdapter() {
     override fun getContributedFunctions(name: Name, location: LookupLocation) =
             super.getContributedFunctions(name, location).selectMostSpecificInEachOverridableGroup { this }
 
@@ -45,7 +46,7 @@ class TypeIntersectionScope private constructor(override val workerScope: Chaine
     companion object {
         @JvmStatic
         fun create(message: String, types: List<KotlinType>): MemberScope {
-            val chainedScope = ChainedScope(message, *types.map { it.memberScope }.toTypedArray())
+            val chainedScope = ChainedMemberScope(message, *types.map { it.memberScope }.toTypedArray())
             if (types.size <= 1) return chainedScope
 
             return TypeIntersectionScope(chainedScope)

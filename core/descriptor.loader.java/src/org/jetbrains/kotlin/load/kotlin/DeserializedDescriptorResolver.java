@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.resolve.scopes.ChainedScope;
+import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.serialization.ClassData;
 import org.jetbrains.kotlin.serialization.ClassDataWithSource;
@@ -108,7 +108,7 @@ public final class DeserializedDescriptorResolver {
         if (list.isEmpty()) {
             return MemberScope.Empty.INSTANCE;
         }
-        return new ChainedScope("Member scope for union of package parts data", list.toArray(new MemberScope[list.size()]));
+        return new ChainedMemberScope("Member scope for union of package parts data", list.toArray(new MemberScope[list.size()]));
     }
 
     @Nullable
