@@ -55,7 +55,7 @@ public class DefaultErrorMessages {
         DiagnosticFactoryToRendererMap getMap();
     }
 
-    private static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap();
+    private static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap("Default");
     private static final MappedExtensionProvider<Extension, List<DiagnosticFactoryToRendererMap>> RENDERER_MAPS = MappedExtensionProvider.create(
             Extension.EP_NAME,
             new Function1<List<? extends Extension>, List<DiagnosticFactoryToRendererMap>>() {
@@ -79,7 +79,8 @@ public class DefaultErrorMessages {
                 return renderer.render(diagnostic);
             }
         }
-        throw new IllegalArgumentException("Don't know how to render diagnostic of type " + diagnostic.getFactory().getName());
+        throw new IllegalArgumentException("Don't know how to render diagnostic of type " + diagnostic.getFactory().getName() +
+                                           " with the following renderer maps: " + RENDERER_MAPS.get());
     }
 
     @TestOnly
