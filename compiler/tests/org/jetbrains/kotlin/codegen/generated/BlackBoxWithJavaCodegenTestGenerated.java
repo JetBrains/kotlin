@@ -241,6 +241,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
             doTestWithJava(fileName);
         }
 
+        @TestMetadata("literalExpressionAsGenericArgument")
+        public void testLiteralExpressionAsGenericArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/casts/literalExpressionAsGenericArgument/");
+            doTestWithJava(fileName);
+        }
+
     }
 
     @TestMetadata("compiler/testData/codegen/boxWithJava/collections")
