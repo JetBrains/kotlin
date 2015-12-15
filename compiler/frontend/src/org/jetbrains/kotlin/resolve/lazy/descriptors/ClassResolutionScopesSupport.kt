@@ -45,7 +45,7 @@ class ClassResolutionScopesSupport(
     }
 
     public val scopeForConstructorHeaderResolution: () -> LexicalScope = storageManager.createLazyValue {
-        scopeWithGenerics(if (classDescriptor.kind.isSingleton) scopeForCompanionObjectHeaderResolution() else scopeForStaticMemberDeclarationResolution())
+        scopeWithGenerics(inheritanceScopeWithMe())
     }
 
     private val inheritanceScopeWithoutMe: () -> LexicalScope = storageManager.createLazyValue(onRecursion = createThrowingLexicalScope) {
@@ -59,8 +59,7 @@ class ClassResolutionScopesSupport(
     }
 
     public val scopeForCompanionObjectHeaderResolution: () -> LexicalScope = storageManager.createLazyValue(onRecursion = createThrowingLexicalScope) {
-        val inheritanceScope = createInheritanceScope(inheritanceScopeWithoutMe(), classDescriptor, classDescriptor, withCompanionObject = false)
-        LexicalScopeImpl(inheritanceScope, classDescriptor, false, null, LexicalScopeKind.COMPANION_OBJECT_HEADER)
+        createInheritanceScope(inheritanceScopeWithoutMe(), classDescriptor, classDescriptor, withCompanionObject = false)
     }
 
     public val scopeForMemberDeclarationResolution: () -> LexicalScope = storageManager.createLazyValue {
@@ -73,7 +72,7 @@ class ClassResolutionScopesSupport(
             scopeForMemberDeclarationResolution()
         }
         else {
-            LexicalScopeImpl(inheritanceScopeWithMe(), classDescriptor, false, null, LexicalScopeKind.CLASS_STATIC_SCOPE)
+            inheritanceScopeWithMe()
         }
     }
 
@@ -99,7 +98,6 @@ class ClassResolutionScopesSupport(
         val superClasses = SmartList<ClassDescriptor>()
         var parent: ClassDescriptor? = getSuperClassNotAny()
 
-        // possible recursion in inheritance
         while(parent != null && parent != this) {
             superClasses.add(parent)
             parent = parent.getSuperClassNotAny()
