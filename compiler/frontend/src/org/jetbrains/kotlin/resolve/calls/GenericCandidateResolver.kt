@@ -197,7 +197,7 @@ class GenericCandidateResolver(private val argumentTypeResolver: ArgumentTypeRes
         val possibleTypes = context.dataFlowInfo.getCollectedTypes(dataFlowValue)
         if (possibleTypes.isEmpty()) return type
 
-        return TypeIntersector.intersectTypes(KotlinTypeChecker.DEFAULT, possibleTypes)
+        return TypeIntersector.intersectTypes(KotlinTypeChecker.DEFAULT, possibleTypes + type)
     }
 
     fun <D : CallableDescriptor> completeTypeInferenceDependentOnFunctionArgumentsForCall(context: CallCandidateResolutionContext<D>) {
