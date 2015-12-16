@@ -303,6 +303,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOut/inapplicableFieldWatchpoints.kt");
             doStepOutTest(fileName);
         }
+
+        @TestMetadata("stepOutInlinedLambdaArgumentOneLine.kt")
+        public void testStepOutInlinedLambdaArgumentOneLine() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/stepOut/stepOutInlinedLambdaArgumentOneLine.kt");
+            doStepOutTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/debugger/tinyApp/src/stepping/filters")
@@ -448,9 +454,27 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             doCustomTest(fileName);
         }
 
+        @TestMetadata("smartStepIntoFunWithDefaultArgs.kt")
+        public void testSmartStepIntoFunWithDefaultArgs() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/smartStepIntoFunWithDefaultArgs.kt");
+            doCustomTest(fileName);
+        }
+
+        @TestMetadata("smartStepIntoInterfaceImpl.kt")
+        public void testSmartStepIntoInterfaceImpl() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/smartStepIntoInterfaceImpl.kt");
+            doCustomTest(fileName);
+        }
+
         @TestMetadata("stepIntoStdlibInlineFun2step.kt")
         public void testStepIntoStdlibInlineFun2step() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/stepIntoStdlibInlineFun2step.kt");
+            doCustomTest(fileName);
+        }
+
+        @TestMetadata("syntheticProvider.kt")
+        public void testSyntheticProvider() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/syntheticProvider.kt");
             doCustomTest(fileName);
         }
     }

@@ -128,6 +128,11 @@ public abstract class KotlinDebuggerTestCase extends DescriptorTestCase {
 
             IS_TINY_APP_COMPILED = true;
         }
+    }
+
+    @Override
+    protected void setUpModule() {
+        super.setUpModule();
 
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             @Override

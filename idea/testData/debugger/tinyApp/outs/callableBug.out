@@ -4,6 +4,7 @@ Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socke
 callableBug.kt:8
 callableBug.kt:8
 Compile bytecode for callable
+Compile bytecode for it
 callableBug.kt:8
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
