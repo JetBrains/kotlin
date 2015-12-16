@@ -60,7 +60,7 @@ public class ConvertIfWithThrowToAssertIntention : SelfTargetingOffsetIndependen
 
         val arg = thrownExpr.getValueArguments().singleOrNull()?.getArgumentExpression()
         val assertExpr = if (arg != null && !arg.isNullExpression())
-            psiFactory.createExpressionByPattern("kotlin.assert($0, $1)", newCondition, arg)
+            psiFactory.createExpressionByPattern("kotlin.assert($0) {$1}", newCondition, arg)
         else
             psiFactory.createExpressionByPattern("kotlin.assert($0)", newCondition)
 

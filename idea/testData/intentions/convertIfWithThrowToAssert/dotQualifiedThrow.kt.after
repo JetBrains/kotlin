@@ -1,4 +1,4 @@
 // WITH_RUNTIME
 fun foo() {
-    assert(!true, "text")
+    assert(!true) { "text" }
 }
