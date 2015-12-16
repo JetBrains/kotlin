@@ -41,7 +41,9 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedShortening
+import org.jetbrains.kotlin.idea.core.refactoring.addTypeArgumentsIfNeeded
 import org.jetbrains.kotlin.idea.core.refactoring.checkConflictsInteractively
+import org.jetbrains.kotlin.idea.core.refactoring.getQualifiedTypeArgumentList
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.refactoring.move.PackageNameInfo
 import org.jetbrains.kotlin.idea.refactoring.move.lazilyProcessInternalReferencesToUpdateOnPackageNameChange
@@ -55,8 +57,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.callUtil.getCallWithAssert
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -156,7 +156,7 @@ class KotlinInlineValHandler : InlineActionHandler() {
             ?: return reportAmbiguousAssignment(project, editor, name, assignments)
         }
 
-        val typeArgumentsForCall = getTypeArgumentsStringForCall(initializer)
+        val typeArgumentsForCall = getQualifiedTypeArgumentList(initializer)
         val parametersForFunctionLiteral = getParametersForFunctionLiteral(initializer)
 
         val referencesInOriginalFile = referenceExpressions.filter { it.containingFile == file }
@@ -217,7 +217,9 @@ class KotlinInlineValHandler : InlineActionHandler() {
                 declaration.delete()
 
                 if (inlinedExpressions.isNotEmpty()) {
-                    typeArgumentsForCall?.let { addTypeArguments(it, inlinedExpressions) }
+                    if (typeArgumentsForCall != null) {
+                        inlinedExpressions.forEach { addTypeArgumentsIfNeeded(it, typeArgumentsForCall) }
+                    }
 
                     parametersForFunctionLiteral?.let { addFunctionLiteralParameterTypes(it, inlinedExpressions) }
 
@@ -347,36 +349,5 @@ class KotlinInlineValHandler : InlineActionHandler() {
                                         element.getStrictParentOfType<KtFunctionLiteral>() == functionLiteral
             hasCantInferParameter || hasUnresolvedItOrThis
         }
-    }
-
-    private fun addTypeArguments(typeArguments: String, inlinedExpressions: List<KtExpression>) {
-        val containingFile = inlinedExpressions.first().getContainingKtFile()
-        val callsToAddArguments = inlinedExpressions.mapNotNull {
-            val context = it.analyze(BodyResolveMode.PARTIAL)
-            val call = it.getCallWithAssert(context)
-            val callElement = call.callElement
-            if (callElement is KtCallExpression &&
-                hasIncompleteTypeInferenceDiagnostic(call, context) &&
-                call.typeArgumentList == null) callElement else null
-        }
-
-        val psiFactory = KtPsiFactory(containingFile)
-        for (call in callsToAddArguments) {
-            call.addAfter(psiFactory.createTypeArguments("<$typeArguments>"), call.calleeExpression)
-            ShortenReferences.DEFAULT.process(call.typeArgumentList!!)
-        }
-    }
-
-    private fun getTypeArgumentsStringForCall(initializer: KtExpression): String? {
-        val context = initializer.analyze(BodyResolveMode.PARTIAL)
-        val call = initializer.getResolvedCall(context) ?: return null
-        val typeArgumentMap = call.typeArguments
-        val typeArguments = call.candidateDescriptor.typeParameters.mapNotNull { typeArgumentMap[it] }
-        return typeArguments.joinToString { IdeDescriptorRenderers.SOURCE_CODE_FOR_TYPE_ARGUMENTS.renderType(it) }
-    }
-
-    private fun hasIncompleteTypeInferenceDiagnostic(call: Call, context: BindingContext): Boolean {
-        val callee = call.calleeExpression ?: return false
-        return context.diagnostics.forElement(callee).any { it.factory == Errors.TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER }
     }
 }

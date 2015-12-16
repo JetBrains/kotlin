@@ -63,6 +63,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMemberDescriptor
@@ -71,7 +72,9 @@ import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.intentions.RemoveCurlyBracesFromTemplateIntention
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.string.collapseSpaces
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.j2k.JavaToKotlinConverter
@@ -83,6 +86,9 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCallWithAssert
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import java.io.File
 import java.lang.annotation.Retention
 import java.util.*
@@ -769,4 +775,27 @@ fun dropOverrideKeywordIfNecessary(element: KtNamedDeclaration) {
     if (callableDescriptor.overriddenDescriptors.isEmpty()) {
         element.removeModifier(KtTokens.OVERRIDE_KEYWORD)
     }
+}
+
+fun getQualifiedTypeArgumentList(initializer: KtExpression): KtTypeArgumentList? {
+    val context = initializer.analyze(BodyResolveMode.PARTIAL)
+    val call = initializer.getResolvedCall(context) ?: return null
+    val typeArgumentMap = call.typeArguments
+    val typeArguments = call.candidateDescriptor.typeParameters.mapNotNull { typeArgumentMap[it] }
+    val renderedList = typeArguments.joinToString(prefix = "<", postfix = ">") {
+        IdeDescriptorRenderers.SOURCE_CODE_FOR_TYPE_ARGUMENTS.renderType(it)
+    }
+    return KtPsiFactory(initializer).createTypeArguments(renderedList)
+}
+
+fun addTypeArgumentsIfNeeded(expression: KtExpression, typeArgumentList: KtTypeArgumentList) {
+    val context = expression.analyze(BodyResolveMode.PARTIAL)
+    val call = expression.getCallWithAssert(context)
+    val callElement = call.callElement as? KtCallExpression ?: return
+    if (call.typeArgumentList != null) return
+    val callee = call.calleeExpression ?: return
+    if (context.diagnostics.forElement(callee).all { it.factory != Errors.TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER }) return
+
+    callElement.addAfter(typeArgumentList, callElement.calleeExpression)
+    ShortenReferences.DEFAULT.process(callElement.typeArgumentList!!)
 }

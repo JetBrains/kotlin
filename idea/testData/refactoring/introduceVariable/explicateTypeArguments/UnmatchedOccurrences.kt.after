@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+fun f() {
+    val listOf = listOf<Int>()
+    val v : List<Int> = listOf
+    val u : List<String> = listOf()
+}

@@ -33,9 +33,7 @@ import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
 import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractKotlinInplaceIntroducer
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.types.KotlinType
 import java.awt.BorderLayout
@@ -50,7 +48,8 @@ public class KotlinVariableInplaceIntroducer(
         val expressionType: KotlinType?,
         val noTypeInference: Boolean,
         project: Project,
-        editor: Editor
+        editor: Editor,
+        private val postProcess: (KtDeclaration) -> Unit
 ): AbstractKotlinInplaceIntroducer<KtProperty>(
         addedVariable,
         originalExpression,
@@ -155,5 +154,6 @@ public class KotlinVariableInplaceIntroducer(
                 it.replace(replacement)
             }
         }
+        postProcess(addedVariable)
     }
 }
