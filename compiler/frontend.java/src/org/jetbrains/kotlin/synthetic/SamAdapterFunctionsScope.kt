@@ -26,12 +26,10 @@ import org.jetbrains.kotlin.load.java.typeEnhacement.enhanceSignature
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
-import org.jetbrains.kotlin.resolve.scopes.BaseImportingScope
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.utils.Printer
 import java.util.*
 import kotlin.properties.Delegates
 
@@ -39,7 +37,7 @@ interface SamAdapterExtensionFunctionDescriptor : FunctionDescriptor {
     val sourceFunction: FunctionDescriptor
 }
 
-class SamAdapterFunctionsScope(storageManager: StorageManager) : BaseImportingScope(null), SyntheticScope {
+class SamAdapterFunctionsScope(storageManager: StorageManager) : SyntheticScope {
     private val extensionForFunction = storageManager.createMemoizedFunctionWithNullableValues<FunctionDescriptor, FunctionDescriptor> { function ->
         extensionForFunctionNotCached(function)
     }
@@ -54,7 +52,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : BaseImportingSc
         return MyFunctionDescriptor.create(enhancedFunction)
     }
 
-    override fun getContributedSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         var result: SmartList<FunctionDescriptor>? = null
         for (type in receiverTypes) {
             for (function in type.memberScope.getContributedFunctions(name, location)) {
@@ -74,7 +72,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : BaseImportingSc
         }
     }
 
-    override fun getContributedSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor> {
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor> {
         return receiverTypes.flatMapTo(LinkedHashSet<FunctionDescriptor>()) { type ->
             type.memberScope.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS)
                     .filterIsInstance<FunctionDescriptor>()
@@ -82,9 +80,9 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : BaseImportingSc
         }
     }
 
-    override fun printStructure(p: Printer) {
-        p.println(javaClass.simpleName)
-    }
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor> = emptyList()
+
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>): Collection<PropertyDescriptor> = emptyList()
 
     private class MyFunctionDescriptor(
             containingDeclaration: DeclarationDescriptor,

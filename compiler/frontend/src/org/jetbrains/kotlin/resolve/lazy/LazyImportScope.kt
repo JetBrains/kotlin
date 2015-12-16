@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.collectionUtils.concat
 import org.jetbrains.kotlin.utils.Printer
 import java.util.*
@@ -199,38 +198,6 @@ class LazyImportScope(
     override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
         if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
         return importResolver.collectFromImports(name) { scope, name -> scope.getContributedFunctions(name, location) }
-    }
-
-    override fun getContributedSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
-        if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
-        return importResolver.collectFromImports(name) { scope, name -> scope.getContributedSyntheticExtensionProperties(receiverTypes, name, location) }
-    }
-
-    override fun getContributedSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
-        if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
-        return importResolver.collectFromImports(name) { scope, name -> scope.getContributedSyntheticExtensionFunctions(receiverTypes, name, location) }
-    }
-
-    override fun getContributedSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>): Collection<PropertyDescriptor> {
-        // we do not perform any filtering by visibility here because all descriptors from both visible/invisible filter scopes are to be added anyway
-        if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
-
-        return importResolver.storageManager.compute {
-            importResolver.indexedImports.imports.flatMapTo(LinkedHashSet<PropertyDescriptor>()) { import ->
-                importResolver.getImportScope(import).getContributedSyntheticExtensionProperties(receiverTypes)
-            }
-        }
-    }
-
-    override fun getContributedSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor> {
-        // we do not perform any filtering by visibility here because all descriptors from both visible/invisible filter scopes are to be added anyway
-        if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
-
-        return importResolver.storageManager.compute {
-            importResolver.indexedImports.imports.flatMapTo(LinkedHashSet<FunctionDescriptor>()) { import ->
-                importResolver.getImportScope(import).getContributedSyntheticExtensionFunctions(receiverTypes)
-            }
-        }
     }
 
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {

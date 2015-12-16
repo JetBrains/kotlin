@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.lazy
 
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 
 public interface FileScopeProvider {
@@ -27,10 +26,6 @@ public interface FileScopeProvider {
     public object ThrowException : FileScopeProvider {
         override fun getFileResolutionScope(file: KtFile) = throw UnsupportedOperationException("Should not be called")
         override fun getImportResolver(file: KtFile) = throw UnsupportedOperationException("Should not be called")
-    }
-
-    public interface AdditionalScopes {
-        public val scopes: List<ImportingScope>
     }
 }
 

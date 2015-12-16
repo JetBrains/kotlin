@@ -29,14 +29,16 @@ import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.scopes.*
+import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.SyntheticScope
+import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
+import org.jetbrains.kotlin.resolve.scopes.collectSyntheticExtensionProperties
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeFirstWord
-import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 import kotlin.properties.Delegates
@@ -73,7 +75,7 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
     }
 }
 
-class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val lookupTracker: LookupTracker) : BaseImportingScope(null), SyntheticScope {
+class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val lookupTracker: LookupTracker) : SyntheticScope {
     private val syntheticPropertyInClass = storageManager.createMemoizedFunction<Pair<ClassDescriptor, Name>, SyntheticPropertyHolder> { pair ->
         syntheticPropertyInClassNotCached(pair.first, pair.second)
     }
@@ -165,7 +167,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
         return null
     }
 
-    override fun getContributedSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
         var result: SmartList<PropertyDescriptor>? = null
         val processedTypes: MutableSet<TypeConstructor>? = if (receiverTypes.size() > 1) HashSet<TypeConstructor>() else null
         for (type in receiverTypes) {
@@ -195,7 +197,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
         return result
     }
 
-    override fun getContributedSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>): Collection<PropertyDescriptor> {
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>): Collection<PropertyDescriptor> {
         val result = ArrayList<PropertyDescriptor>()
         val processedTypes = HashSet<TypeConstructor>()
         receiverTypes.forEach { result.collectSyntheticProperties(it.constructor, processedTypes) }
@@ -257,9 +259,8 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
         return Name.identifier("set" + identifier.removePrefix(prefix))
     }
 
-    override fun printStructure(p: Printer) {
-        p.println(javaClass.simpleName)
-    }
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<FunctionDescriptor> = emptyList()
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor> = emptyList()
 
     private data class SyntheticPropertyHolder(val descriptor: PropertyDescriptor?, val lookedNames: List<Name>) {
         companion object {

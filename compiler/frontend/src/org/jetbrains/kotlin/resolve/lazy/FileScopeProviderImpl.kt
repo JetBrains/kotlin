@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.SubpackagesImportingScope
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
-import org.jetbrains.kotlin.resolve.scopes.utils.withParent
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.sure
@@ -40,8 +39,7 @@ public open class FileScopeProviderImpl(
         private val moduleDescriptor: ModuleDescriptor,
         private val qualifiedExpressionResolver: QualifiedExpressionResolver,
         private val bindingTrace: BindingTrace,
-        private val ktImportsFactory: KtImportsFactory,
-        private val additionalScopes: Iterable<FileScopeProvider.AdditionalScopes>
+        private val ktImportsFactory: KtImportsFactory
 ) : FileScopeProvider {
 
     private val defaultImports by storageManager.createLazyValue {
@@ -81,11 +79,6 @@ public open class FileScopeProviderImpl(
 
         scope = LazyImportScope(scope, allUnderImportResolver, LazyImportScope.FilteringKind.INVISIBLE_CLASSES,
                 "All under imports in $debugName (invisible classes only)")
-
-        for (additionalScope in additionalScopes.flatMap { it.scopes }) {
-            assert(additionalScope.parent == null)
-            scope = additionalScope.withParent(scope)
-        }
 
         scope = LazyImportScope(scope, defaultAllUnderImportResolver, LazyImportScope.FilteringKind.VISIBLE_CLASSES,
                 "Default all under imports in $debugName (visible classes)")
