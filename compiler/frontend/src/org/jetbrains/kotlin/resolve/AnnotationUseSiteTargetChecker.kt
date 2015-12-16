@@ -62,9 +62,9 @@ object AnnotationUseSiteTargetChecker {
             val target = annotation.useSiteTarget?.getAnnotationUseSiteTarget() ?: continue
 
             when (target) {
-                AnnotationUseSiteTarget.FIELD -> checkIfProperty(annotated, annotation)
-                AnnotationUseSiteTarget.PROPERTY -> checkIfProperty(annotated, annotation)
-                AnnotationUseSiteTarget.PROPERTY_GETTER -> checkIfProperty(annotated, annotation)
+                AnnotationUseSiteTarget.FIELD,
+                AnnotationUseSiteTarget.PROPERTY,
+                AnnotationUseSiteTarget.PROPERTY_GETTER -> {}
                 AnnotationUseSiteTarget.PROPERTY_SETTER -> checkIfMutableProperty(annotated, annotation)
                 AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER -> {
                     if (annotated !is KtParameter) {

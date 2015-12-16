@@ -6,10 +6,10 @@ class CustomDelegate {
     operator fun getValue(thisRef: Any?, prop: KProperty<*>): String = prop.name
 }
 
-<!INAPPLICABLE_TARGET_ON_PROPERTY, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@field:Ann<!>
+<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@field:Ann<!>
 class SomeClass {
 
-    <!INAPPLICABLE_TARGET_ON_PROPERTY, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@field:Ann<!>
+    <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@field:Ann<!>
     constructor()
 
     @field:Ann
@@ -25,9 +25,9 @@ class SomeClass {
     val propertyWithCustomGetter: Int
         get() = 5
 
-    <!INAPPLICABLE_TARGET_ON_PROPERTY, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@field:Ann<!>
-    fun anotherFun(<!INAPPLICABLE_TARGET_ON_PROPERTY!>@field:Ann<!> <!UNUSED_PARAMETER!>s<!>: String) {
-        <!INAPPLICABLE_TARGET_ON_PROPERTY!>@field:Ann<!>
+    <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@field:Ann<!>
+    fun anotherFun(<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@field:Ann<!> <!UNUSED_PARAMETER!>s<!>: String) {
+        <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@field:Ann<!>
         val <!UNUSED_VARIABLE!>localVariable<!> = 5
     }
 

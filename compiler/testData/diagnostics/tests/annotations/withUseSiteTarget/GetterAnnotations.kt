@@ -6,10 +6,10 @@ class CustomDelegate {
     operator fun getValue(thisRef: Any?, prop: KProperty<*>): String = prop.name
 }
 
-<!INAPPLICABLE_TARGET_ON_PROPERTY, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@get:Ann<!>
+<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@get:Ann<!>
 class SomeClass {
 
-    <!INAPPLICABLE_TARGET_ON_PROPERTY, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@get:Ann<!>
+    <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@get:Ann<!>
     constructor()
 
     @get:Ann
@@ -28,11 +28,11 @@ class SomeClass {
     val propertyWithCustomGetter: Int
         get() = 5
 
-    <!INAPPLICABLE_TARGET_ON_PROPERTY, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@get:Ann<!>
+    <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@get:Ann<!>
     fun annotationOnFunction(a: Int) = a + 5
 
     fun anotherFun() {
-        <!INAPPLICABLE_TARGET_ON_PROPERTY!>@get:Ann<!>
+        <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@get:Ann<!>
         val <!UNUSED_VARIABLE!>localVariable<!> = 5
     }
 
