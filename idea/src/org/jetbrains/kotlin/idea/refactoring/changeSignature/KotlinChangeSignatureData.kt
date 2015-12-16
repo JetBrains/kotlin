@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallableDefinitionUsage
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
@@ -63,11 +64,14 @@ public class KotlinChangeSignatureData(
         parameters = baseDescriptor.getValueParameters()
                 .mapTo(receiver?.let{ arrayListOf(it) } ?: arrayListOf()) { parameterDescriptor ->
                     val jetParameter = valueParameters?.get(parameterDescriptor.index)
+                    val parameterType = parameterDescriptor.type
+                    val parameterTypeText = jetParameter?.typeReference?.text
+                                            ?: IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(parameterType)
                     KotlinParameterInfo(
                             callableDescriptor = baseDescriptor,
                             originalIndex = parameterDescriptor.index,
                             name = parameterDescriptor.getName().asString(),
-                            type = parameterDescriptor.getType(),
+                            originalTypeInfo = KotlinTypeInfo(false, parameterType, parameterTypeText),
                             defaultValueForParameter = jetParameter?.getDefaultValue(),
                             valOrVar = jetParameter?.getValOrVarKeyword().toValVar(),
                             modifierList = jetParameter?.getModifierList()
@@ -86,7 +90,11 @@ public class KotlinChangeSignatureData(
         } ?: CollectingNameValidator(paramNames)
         val receiverType = baseDescriptor.getExtensionReceiverParameter()?.getType() ?: return null
         val receiverName = KotlinNameSuggester.suggestNamesByType(receiverType, validator, "receiver").first()
-        return KotlinParameterInfo(callableDescriptor = baseDescriptor, name = receiverName, type = receiverType)
+        val receiverTypeText = (baseDeclaration as? KtCallableDeclaration)?.receiverTypeReference?.text
+                               ?: IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(receiverType)
+        return KotlinParameterInfo(callableDescriptor = baseDescriptor,
+                                   name = receiverName,
+                                   originalTypeInfo = KotlinTypeInfo(false, receiverType, receiverTypeText))
     }
 
     override val original: KotlinMethodDescriptor

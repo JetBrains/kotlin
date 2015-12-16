@@ -91,7 +91,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             methodDescriptor: KotlinMethodDescriptor
     ) : KotlinChangeInfo(methodDescriptor = methodDescriptor,
                          name = "",
-                         newReturnTypeInfo = KotlinTypeInfo(),
+                         newReturnTypeInfo = KotlinTypeInfo(true),
                          newVisibility = Visibilities.DEFAULT_VISIBILITY,
                          parameterInfos = emptyList<KotlinParameterInfo>(),
                          receiver = null,
@@ -669,7 +669,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             val psiFactory = KtPsiFactory(callable.project)
             val tempFile = (callable.containingFile as KtFile).createTempCopy()
             val functionWithReceiver = tempFile.findElementAt(callable.textOffset)?.getNonStrictParentOfType<KtNamedFunction>() ?: return
-            val receiverTypeRef = psiFactory.createType(newReceiverInfo.currentTypeText)
+            val receiverTypeRef = psiFactory.createType(newReceiverInfo.currentTypeInfo.render())
             functionWithReceiver.setReceiverTypeReference(receiverTypeRef)
             val newContext = functionWithReceiver.bodyExpression!!.analyze(BodyResolveMode.FULL)
 

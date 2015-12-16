@@ -26,28 +26,25 @@ import org.jetbrains.kotlin.idea.core.refactoring.quoteIfNeeded
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallableDefinitionUsage
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.mainReference
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
-import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
 public class KotlinParameterInfo @JvmOverloads constructor (
         val callableDescriptor: CallableDescriptor,
         val originalIndex: Int = -1,
         private var name: String,
-        type: KotlinType? = null,
+        val originalTypeInfo: KotlinTypeInfo = KotlinTypeInfo(false),
         var defaultValueForParameter: KtExpression? = null,
         var defaultValueForCall: KtExpression? = null,
         var valOrVar: KotlinValVar = KotlinValVar.None,
         val modifierList: KtModifierList? = null
 ): ParameterInfo {
-    val originalType: KotlinType? = type
-    var currentTypeText: String = getOldTypeText()
+    var currentTypeInfo: KotlinTypeInfo = originalTypeInfo
 
     public val defaultValueParameterReferences: Map<PsiReference, DeclarationDescriptor>
 
@@ -125,8 +122,6 @@ public class KotlinParameterInfo @JvmOverloads constructor (
                 }
     }
 
-    private fun getOldTypeText() = originalType?.let { IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(it) } ?: ""
-
     override fun getOldIndex(): Int = originalIndex
 
     public val isNewParameter: Boolean
@@ -140,9 +135,9 @@ public class KotlinParameterInfo @JvmOverloads constructor (
         this.name = name ?: ""
     }
 
-    override fun getTypeText(): String = currentTypeText
+    override fun getTypeText(): String = currentTypeInfo.render()
 
-    public val isTypeChanged: Boolean get() = getOldTypeText() != currentTypeText
+    public val isTypeChanged: Boolean get() = !currentTypeInfo.isEquivalentTo(originalTypeInfo)
 
     override fun isUseAnySingleVariable(): Boolean = false
 
@@ -151,10 +146,11 @@ public class KotlinParameterInfo @JvmOverloads constructor (
     }
 
     public fun renderType(parameterIndex: Int, inheritedCallable: KotlinCallableDefinitionUsage<*>): String {
-        val typeSubstitutor = inheritedCallable.typeSubstitutor ?: return currentTypeText
-        val currentBaseFunction = inheritedCallable.baseFunction.currentCallableDescriptor ?: return currentTypeText
+        val defaultRendering = currentTypeInfo.render()
+        val typeSubstitutor = inheritedCallable.typeSubstitutor ?: return defaultRendering
+        val currentBaseFunction = inheritedCallable.baseFunction.currentCallableDescriptor ?: return defaultRendering
         val parameterType = currentBaseFunction.getValueParameters().get(parameterIndex).getType()
-        return parameterType.renderTypeWithSubstitution(typeSubstitutor, currentTypeText, true)
+        return parameterType.renderTypeWithSubstitution(typeSubstitutor, defaultRendering, true)
     }
 
     public fun getInheritedName(inheritedCallable: KotlinCallableDefinitionUsage<*>): String {

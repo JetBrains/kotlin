@@ -76,7 +76,7 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
                         val newParam = KotlinParameterInfo(
                                 callableDescriptor = originalDescriptor.baseDescriptor,
                                 name = propertyDescriptor.name.asString(),
-                                type = propertyDescriptor.type,
+                                originalTypeInfo = KotlinTypeInfo(false, propertyDescriptor.type),
                                 valOrVar = element.valOrVarKeyword.toValVar(),
                                 modifierList = element.modifierList,
                                 defaultValueForCall = KtPsiFactory(element.project).createExpression(initializerText)
@@ -135,7 +135,7 @@ object InitializePropertyQuickFixFactory : KotlinIntentionActionsFactory() {
                         val newParam = KotlinParameterInfo(
                                 callableDescriptor = originalDescriptor.baseDescriptor,
                                 name = KotlinNameSuggester.suggestNameByName(propertyDescriptor.name.asString(), validator),
-                                type = propertyDescriptor.type,
+                                originalTypeInfo = KotlinTypeInfo(false, propertyDescriptor.type),
                                 defaultValueForCall = KtPsiFactory(element.project).createExpression(initializerText)
                         )
                         it.addParameter(newParam)

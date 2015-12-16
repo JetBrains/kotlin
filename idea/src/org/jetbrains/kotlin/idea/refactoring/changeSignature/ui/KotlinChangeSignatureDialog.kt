@@ -405,15 +405,15 @@ public class KotlinChangeSignatureDialog(
             return KotlinChangeSignatureProcessor(project, changeInfo, commandName)
         }
 
-        private fun PsiCodeFragment?.getTypeInfo(forPreview: Boolean): KotlinTypeInfo {
-            if (this !is KtTypeCodeFragment) return KotlinTypeInfo()
+        private fun PsiCodeFragment?.getTypeInfo(isCovariant: Boolean, forPreview: Boolean): KotlinTypeInfo {
+            if (this !is KtTypeCodeFragment) return KotlinTypeInfo(isCovariant)
 
             val typeRef = getContentElement()
             val type = typeRef?.analyze(BodyResolveMode.PARTIAL)?.get(BindingContext.TYPE, typeRef)
             return when {
-                type != null && !type.isError -> KotlinTypeInfo(type, if (forPreview) typeRef?.text else null)
-                typeRef != null -> KotlinTypeInfo(null, typeRef.text)
-                else -> KotlinTypeInfo()
+                type != null && !type.isError -> KotlinTypeInfo(isCovariant, type, if (forPreview) typeRef?.text else null)
+                typeRef != null -> KotlinTypeInfo(isCovariant, null, typeRef.text)
+                else -> KotlinTypeInfo(isCovariant)
             }
         }
 
@@ -427,7 +427,7 @@ public class KotlinChangeSignatureDialog(
             val parameters = parametersModel.getItems().map { parameter ->
                 val parameterInfo = parameter.parameter
 
-                parameterInfo.currentTypeText = parameter.typeCodeFragment.getTypeInfo(forPreview).render()
+                parameterInfo.currentTypeInfo = parameter.typeCodeFragment.getTypeInfo(false, forPreview)
 
                 val codeFragment = parameter.defaultValueCodeFragment as KtExpressionCodeFragment
                 val oldDefaultValue = parameterInfo.defaultValueForCall
@@ -440,7 +440,7 @@ public class KotlinChangeSignatureDialog(
 
             return KotlinChangeInfo(methodDescriptor.original,
                                     methodName,
-                                    returnTypeCodeFragment.getTypeInfo(forPreview),
+                                    returnTypeCodeFragment.getTypeInfo(true, forPreview),
                                     visibility ?: Visibilities.DEFAULT_VISIBILITY,
                                     parameters,
                                     parametersModel.getReceiver(),

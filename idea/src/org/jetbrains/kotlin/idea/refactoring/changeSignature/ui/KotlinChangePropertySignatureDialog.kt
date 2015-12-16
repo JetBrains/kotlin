@@ -94,7 +94,7 @@ public class KotlinChangePropertySignatureDialog(
                 addComponent(receiverTypeCheckBox)
                 this@KotlinChangePropertySignatureDialog.receiverTypeCheckBox = receiverTypeCheckBox
 
-                val receiverTypeCodeFragment = psiFactory.createTypeCodeFragment(methodDescriptor.renderOriginalReceiverType() ?: "",
+                val receiverTypeCodeFragment = psiFactory.createTypeCodeFragment(methodDescriptor.receiverTypeInfo.render(),
                                                                                  methodDescriptor.baseDeclaration)
                 receiverTypeField = EditorTextField(documentManager.getDocument(receiverTypeCodeFragment), myProject, KotlinFileType.INSTANCE)
                 receiverTypeLabel = JLabel("Receiver type: ")
@@ -142,10 +142,10 @@ public class KotlinChangePropertySignatureDialog(
                                                                name = "receiver",
                                                                defaultValueForCall = getDefaultReceiverValue())
         } else null
-        receiver?.currentTypeText = receiverTypeField.getText()
+        receiver?.currentTypeInfo = KotlinTypeInfo(false, null, receiverTypeField.getText())
         val changeInfo = KotlinChangeInfo(originalDescriptor,
                                           nameField.getText(),
-                                          KotlinTypeInfo(null, returnTypeField.text),
+                                          KotlinTypeInfo(true, null, returnTypeField.text),
                                           visibilityCombo.getSelectedItem() as Visibility,
                                           emptyList(),
                                           receiver,

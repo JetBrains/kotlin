@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getExp
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getTypeParameters
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.guessTypes
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinTypeInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -118,7 +119,7 @@ object CreateParameterByRefActionFactory : CreateParameterFromUsageFactory<KtSim
                 context,
                 KotlinParameterInfo(callableDescriptor = functionDescriptor,
                                     name = element.getReferencedName(),
-                                    type = paramType,
+                                    originalTypeInfo = KotlinTypeInfo(false, paramType),
                                     valOrVar = valOrVar),
                 element
         )

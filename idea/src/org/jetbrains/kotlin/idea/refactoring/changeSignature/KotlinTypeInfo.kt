@@ -20,12 +20,12 @@ import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
-data class KotlinTypeInfo(val type: KotlinType? = null, val text: String? = null)
+data class KotlinTypeInfo(val isCovariant: Boolean, val type: KotlinType? = null, val text: String? = null)
 
 fun KotlinTypeInfo.render(): String {
     return when {
         text != null -> text
-        type != null -> IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
+        type != null -> (if (isCovariant) IdeDescriptorRenderers.SOURCE_CODE else IdeDescriptorRenderers.SOURCE_CODE_FOR_TYPE_ARGUMENTS).renderType(type)
         else -> ""
     }
 }

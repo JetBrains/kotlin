@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createVariable
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
@@ -25,6 +24,7 @@ import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
 import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.guessTypes
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinTypeInfo
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -61,7 +61,7 @@ public object CreateParameterByNamedArgumentActionFactory: CreateParameterFromUs
         val parameterInfo = KotlinParameterInfo(
                 callableDescriptor = functionDescriptor,
                 name = name,
-                type = paramType,
+                originalTypeInfo = KotlinTypeInfo(false, paramType),
                 defaultValueForCall = argumentExpression
         )
 

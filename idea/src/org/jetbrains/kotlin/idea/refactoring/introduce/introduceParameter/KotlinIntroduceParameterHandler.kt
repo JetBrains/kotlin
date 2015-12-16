@@ -155,7 +155,7 @@ fun IntroduceParameterDescriptor.performRefactoring() {
                                                             defaultValueForCall = if (withDefaultValue) null else defaultValue,
                                                             defaultValueForParameter = if (withDefaultValue) defaultValue else null,
                                                             valOrVar = valVar)
-                    parameterInfo.currentTypeText = newParameterTypeText
+                    parameterInfo.currentTypeInfo = KotlinTypeInfo(false, null, newParameterTypeText)
                     methodDescriptor.addParameter(parameterInfo)
                 }
             }

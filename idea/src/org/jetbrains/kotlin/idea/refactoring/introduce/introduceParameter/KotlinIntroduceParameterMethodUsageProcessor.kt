@@ -31,17 +31,13 @@ import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.refactoring.dropOverrideKeywordIfNecessary
 import org.jetbrains.kotlin.idea.core.refactoring.j2k
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeInfo
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeSignatureData
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.originalBaseFunctionDescriptor
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallableDefinitionUsage
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinConstructorDelegationCallUsage
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinFunctionCallUsage
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinUsageInfo
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
 import org.jetbrains.kotlin.idea.search.declarationsSearch.searchOverriders
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -71,7 +67,7 @@ public class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMe
         val defaultValueForCall = (data.getParameterInitializer().getExpression() as? PsiExpression)?.let { it.j2k() }
         changeInfo.addParameter(KotlinParameterInfo(callableDescriptor = psiMethodDescriptor,
                                                     name = data.getParameterName(),
-                                                    type = psiMethodDescriptor.builtIns.anyType,
+                                                    originalTypeInfo = KotlinTypeInfo(false, psiMethodDescriptor.builtIns.anyType),
                                                     defaultValueForCall = defaultValueForCall))
         return changeInfo
     }
@@ -82,7 +78,7 @@ public class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMe
         val changeInfo = createChangeInfo(data, element) ?: return true
         // Java method is already updated at this point
         val addedParameterType = data.getMethodToReplaceIn().getJavaMethodDescriptor()!!.getValueParameters().last().getType()
-        changeInfo.getNewParameters().last().currentTypeText = IdeDescriptorRenderers.SOURCE_CODE.renderType(addedParameterType)
+        changeInfo.getNewParameters().last().currentTypeInfo = KotlinTypeInfo(false, addedParameterType)
 
         val scope = element.getUseScope().let {
             if (it is GlobalSearchScope) GlobalSearchScope.getScopeRestrictedByFileTypes(it, KotlinFileType.INSTANCE) else it

@@ -29,6 +29,7 @@ import com.intellij.util.VisibilityUtil
 import org.jetbrains.kotlin.asJava.getRepresentativeLightMethod
 import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.asJava.unwrapped
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -40,7 +41,6 @@ import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor.Kind
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallableDefinitionUsage
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallerUsage
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
@@ -56,7 +56,7 @@ import java.util.*
 public open class KotlinChangeInfo(
         val methodDescriptor: KotlinMethodDescriptor,
         private var name: String = methodDescriptor.getName(),
-        var newReturnTypeInfo: KotlinTypeInfo = KotlinTypeInfo(methodDescriptor.baseDescriptor.returnType),
+        var newReturnTypeInfo: KotlinTypeInfo = KotlinTypeInfo(true, methodDescriptor.baseDescriptor.returnType),
         var newVisibility: Visibility = methodDescriptor.getVisibility(),
         parameterInfos: List<KotlinParameterInfo> = methodDescriptor.getParameters(),
         receiver: KotlinParameterInfo? = methodDescriptor.receiver,
@@ -74,6 +74,7 @@ public open class KotlinChangeInfo(
     }
 
     private val originalReturnTypeInfo = methodDescriptor.returnTypeInfo
+    private val originalReceiverTypeInfo = methodDescriptor.receiver?.originalTypeInfo
 
     var receiverParameterInfo: KotlinParameterInfo? = receiver
         set(value: KotlinParameterInfo?) {
@@ -184,10 +185,12 @@ public open class KotlinChangeInfo(
         return methodDescriptor.getMethod()
     }
 
-
     override fun isReturnTypeChanged(): Boolean = !newReturnTypeInfo.isEquivalentTo(originalReturnTypeInfo)
 
-    fun isReceiverTypeChanged(): Boolean = receiverParameterInfo?.getTypeText() != methodDescriptor.renderOriginalReceiverType()
+    fun isReceiverTypeChanged(): Boolean {
+        val receiverInfo = receiverParameterInfo ?: return originalReceiverTypeInfo != null
+        return originalReceiverTypeInfo == null || !receiverInfo.currentTypeInfo.isEquivalentTo(originalReceiverTypeInfo)
+    }
 
     override fun getLanguage(): Language = KotlinLanguage.INSTANCE
 
@@ -255,11 +258,12 @@ public open class KotlinChangeInfo(
 
             if (kind == Kind.FUNCTION) {
                 receiverParameterInfo?.let {
-                    // TODO: Temporary solution until Change Signature is able to infer actual KotlinType from code fragments instead of using text representation
-                    if (KtPsiFactory(context).createTypeIfPossible(it.currentTypeText)?.typeElement is KtFunctionType) {
-                        buffer.append("(${it.currentTypeText})")
-                    } else {
-                        buffer.append(it.currentTypeText)
+                    val typeInfo = it.currentTypeInfo
+                    if (typeInfo.type != null && KotlinBuiltIns.isExactFunctionType(typeInfo.type)) {
+                        buffer.append("(${typeInfo.render()})")
+                    }
+                    else {
+                        buffer.append(typeInfo.render())
                     }
                     buffer.append('.')
                 }
@@ -300,7 +304,7 @@ public open class KotlinChangeInfo(
     }
 
     public fun renderReceiverType(inheritedCallable: KotlinCallableDefinitionUsage<*>): String? {
-        val receiverTypeText = receiverParameterInfo?.currentTypeText ?: return null
+        val receiverTypeText = receiverParameterInfo?.currentTypeInfo?.render() ?: return null
         val typeSubstitutor = inheritedCallable.typeSubstitutor ?: return receiverTypeText
         val currentBaseFunction = inheritedCallable.baseFunction.currentCallableDescriptor ?: return receiverTypeText
         return currentBaseFunction.extensionReceiverParameter!!.type.renderTypeWithSubstitution(typeSubstitutor, receiverTypeText, false)
@@ -543,19 +547,19 @@ public fun ChangeInfo.toJetChangeInfo(originalChangeSignatureDescriptor: KotlinM
                     else -> null
                 }
 
-        with(KotlinParameterInfo(callableDescriptor = functionDescriptor,
-                                 originalIndex = oldIndex,
-                                 name = info.getName(),
-                                 type = if (oldIndex >= 0) originalParameterDescriptors[oldIndex].getType() else currentType,
-                                 defaultValueForCall = defaultValueExpr)) {
-            currentTypeText = IdeDescriptorRenderers.SOURCE_CODE_FOR_TYPE_ARGUMENTS.renderType(currentType)
-            this
+        val parameterType = if (oldIndex >= 0) originalParameterDescriptors[oldIndex].getType() else currentType
+        KotlinParameterInfo(callableDescriptor = functionDescriptor,
+                            originalIndex = oldIndex,
+                            name = info.getName(),
+                            originalTypeInfo = KotlinTypeInfo(false, parameterType),
+                            defaultValueForCall = defaultValueExpr).apply {
+            currentTypeInfo = KotlinTypeInfo(false, currentType)
         }
     }
 
     return KotlinChangeInfo(originalChangeSignatureDescriptor,
                             getNewName(),
-                            KotlinTypeInfo(functionDescriptor.returnType),
+                            KotlinTypeInfo(true, functionDescriptor.returnType),
                             functionDescriptor.getVisibility(),
                             newParameters,
                             null,

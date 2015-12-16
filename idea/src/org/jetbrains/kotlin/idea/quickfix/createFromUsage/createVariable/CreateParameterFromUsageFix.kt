@@ -93,7 +93,7 @@ public open class CreateParameterFromUsageFix<E : KtElement>(
             val paramInfo = KotlinParameterInfo(
                     callableDescriptor = constructorDescriptor,
                     name = info.name,
-                    type = paramType,
+                    originalTypeInfo = KotlinTypeInfo(false, paramType),
                     valOrVar = if (info.writable) KotlinValVar.Var else KotlinValVar.Val
             )
 
