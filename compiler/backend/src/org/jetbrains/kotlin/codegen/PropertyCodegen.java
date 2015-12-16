@@ -112,7 +112,7 @@ public class PropertyCodegen {
 
         String implClassName = CodegenContextUtil.getImplementationClassShortName(context);
         if (implClassName != null) {
-            v.getSerializationBindings().put(IMPL_CLASS_NAME_FOR_CALLABLE, descriptor, implClassName);
+            v.getSerializationBindings().put(PROPERTY_IMPL_CLASS_NAME, descriptor, implClassName);
         }
 
         if (CodegenContextUtil.isImplClassOwner(context)) {
@@ -267,7 +267,7 @@ public class PropertyCodegen {
         }
         else {
             Type tImplType = typeMapper.mapDefaultImpls((ClassDescriptor) context.getContextDescriptor());
-            v.getSerializationBindings().put(IMPL_CLASS_NAME_FOR_CALLABLE, descriptor, shortNameByAsmType(tImplType));
+            v.getSerializationBindings().put(PROPERTY_IMPL_CLASS_NAME, descriptor, shortNameByAsmType(tImplType));
         }
 
         if (kind != OwnerKind.DEFAULT_IMPLS) {

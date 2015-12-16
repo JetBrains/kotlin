@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.codegen.serialization;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
@@ -37,7 +36,9 @@ public final class JvmSerializationBindings {
             SerializationMappingSlice.create();
     public static final SerializationMappingSlice<PropertyDescriptor, Method> SYNTHETIC_METHOD_FOR_PROPERTY =
             SerializationMappingSlice.create();
-    public static final SerializationMappingSlice<CallableMemberDescriptor, String> IMPL_CLASS_NAME_FOR_CALLABLE =
+    public static final SerializationMappingSlice<FunctionDescriptor, String> METHOD_IMPL_CLASS_NAME =
+            SerializationMappingSlice.create();
+    public static final SerializationMappingSlice<PropertyDescriptor, String> PROPERTY_IMPL_CLASS_NAME =
             SerializationMappingSlice.create();
     public static final SerializationMappingSetSlice<PropertyDescriptor> STATIC_FIELD_IN_OUTER_CLASS =
             SerializationMappingSetSlice.create();

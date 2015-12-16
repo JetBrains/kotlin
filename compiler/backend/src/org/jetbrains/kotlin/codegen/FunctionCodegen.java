@@ -174,7 +174,7 @@ public class FunctionCodegen {
 
         String implClassName = CodegenContextUtil.getImplementationClassShortName(owner);
         if (implClassName != null) {
-            v.getSerializationBindings().put(IMPL_CLASS_NAME_FOR_CALLABLE, functionDescriptor, implClassName);
+            v.getSerializationBindings().put(METHOD_IMPL_CLASS_NAME, functionDescriptor, implClassName);
         }
         if (CodegenContextUtil.isImplClassOwner(owner)) {
             v.getSerializationBindings().put(METHOD_FOR_FUNCTION, functionDescriptor, asmMethod);

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.codegen.serialization;
 
-import com.google.protobuf.MessageLite;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -99,8 +98,6 @@ public class JvmSerializerExtension extends SerializerExtension {
                 proto.setExtension(JvmProtoBuf.constructorSignature, signature);
             }
         }
-
-        saveImplClassName(descriptor, proto);
     }
 
     @Override
@@ -113,7 +110,10 @@ public class JvmSerializerExtension extends SerializerExtension {
             }
         }
 
-        saveImplClassName(descriptor, proto);
+        String name = bindings.get(METHOD_IMPL_CLASS_NAME, descriptor);
+        if (name != null) {
+            proto.setExtension(JvmProtoBuf.methodImplClassName, stringTable.getStringIndex(name));
+        }
     }
 
     @Override
@@ -151,19 +151,9 @@ public class JvmSerializerExtension extends SerializerExtension {
 
         proto.setExtension(JvmProtoBuf.propertySignature, signature);
 
-        saveImplClassName(descriptor, proto);
-    }
-
-    private void saveImplClassName(@NotNull CallableMemberDescriptor callable, @NotNull MessageLite.Builder proto) {
-        String name = bindings.get(IMPL_CLASS_NAME_FOR_CALLABLE, callable);
-        if (name == null) return;
-
-        int index = stringTable.getStringIndex(name);
-        if (proto instanceof ProtoBuf.Function.Builder) {
-            ((ProtoBuf.Function.Builder) proto).setExtension(JvmProtoBuf.methodImplClassName, index);
-        }
-        else if (proto instanceof ProtoBuf.Property.Builder) {
-            ((ProtoBuf.Property.Builder) proto).setExtension(JvmProtoBuf.propertyImplClassName, index);
+        String name = bindings.get(PROPERTY_IMPL_CLASS_NAME, descriptor);
+        if (name != null) {
+            proto.setExtension(JvmProtoBuf.propertyImplClassName, stringTable.getStringIndex(name));
         }
     }
 
