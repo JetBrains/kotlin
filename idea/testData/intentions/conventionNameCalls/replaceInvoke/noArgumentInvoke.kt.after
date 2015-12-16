@@ -1,6 +1,6 @@
 fun test() {
     class Test {
-        fun invoke() {}
+        operator fun invoke() {}
     }
     val test = Test()
     test()

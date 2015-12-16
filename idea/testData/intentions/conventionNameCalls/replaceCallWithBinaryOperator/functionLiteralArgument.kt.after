@@ -1,6 +1,6 @@
 fun test() {
     class Test {
-        fun plus(fn: () -> Test): Test = fn()
+        operator fun plus(fn: () -> Test): Test = fn()
     }
     val test = Test()
     test + {

@@ -1,6 +1,6 @@
 class C {
     companion object {
-        fun contains(s: String) = true
+        operator fun contains(s: String) = true
     }
 }
 

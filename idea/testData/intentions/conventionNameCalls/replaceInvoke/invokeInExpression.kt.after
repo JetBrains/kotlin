@@ -2,7 +2,7 @@ fun <T> doSomething(a: T) {}
 
 fun test() {
     class Test {
-        fun invoke(a: Int, vararg b: String, fn: () -> Unit): String = "test"
+        operator fun invoke(a: Int, vararg b: String, fn: () -> Unit): String = "test"
     }
     val test = Test()
     doSomething(test(1, "a", "b") { })
