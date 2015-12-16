@@ -7310,6 +7310,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("valOverrideVarConstructorParameter.kt")
+            public void testValOverrideVarConstructorParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/variables/changeMutability/valOverrideVarConstructorParameter.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("valReassignmentLocal.kt")
             public void testValReassignmentLocal() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/variables/changeMutability/valReassignmentLocal.kt");
@@ -7325,6 +7331,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             @TestMetadata("valReassignmentProperty.kt")
             public void testValReassignmentProperty() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/variables/changeMutability/valReassignmentProperty.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("valReassignmentPropertyConstructorParameter.kt")
+            public void testValReassignmentPropertyConstructorParameter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/variables/changeMutability/valReassignmentPropertyConstructorParameter.kt");
                 doTest(fileName);
             }
 

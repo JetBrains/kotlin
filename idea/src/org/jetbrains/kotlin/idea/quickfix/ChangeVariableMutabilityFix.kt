@@ -22,26 +22,31 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtPropertyAccessor
-import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
-public class ChangeVariableMutabilityFix(element: KtProperty, private val makeVar: Boolean) : KotlinQuickFixAction<KtProperty>(element) {
+public class ChangeVariableMutabilityFix(element: KtNamedDeclaration, private val makeVar: Boolean) : KotlinQuickFixAction<KtNamedDeclaration>(element) {
 
     override fun getText() = if (makeVar) "Make variable mutable" else "Make variable immutable"
 
     override fun getFamilyName(): String = getText()
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
-        return element.isVar() != makeVar
+        return when (element) {
+            is KtProperty -> element.isVar != makeVar
+            is KtParameter -> (element.valOrVarKeyword == KtTokens.VAR_KEYWORD) != makeVar
+            else -> false
+        }
     }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val factory = KtPsiFactory(project)
         val newKeyword = if (makeVar) factory.createVarKeyword() else factory.createValKeyword()
-        element.getValOrVarKeyword().replace(newKeyword)
+        when (element) {
+            is KtProperty -> element.valOrVarKeyword.replace(newKeyword)
+            is KtParameter -> element.valOrVarKeyword!!.replace(newKeyword)
+        }
     }
 
     companion object {
@@ -56,14 +61,18 @@ public class ChangeVariableMutabilityFix(element: KtProperty, private val makeVa
         public val VAL_REASSIGNMENT_FACTORY: KotlinSingleIntentionActionFactory = object: KotlinSingleIntentionActionFactory() {
             override fun createAction(diagnostic: Diagnostic): IntentionAction? {
                 val propertyDescriptor = Errors.VAL_REASSIGNMENT.cast(diagnostic).getA()
-                val declaration = DescriptorToSourceUtils.descriptorToDeclaration(propertyDescriptor) as? KtProperty ?: return null
+                val declaration = DescriptorToSourceUtils.descriptorToDeclaration(propertyDescriptor) as? KtNamedDeclaration ?: return null
                 return ChangeVariableMutabilityFix(declaration, true)
             }
         }
 
         public val VAR_OVERRIDDEN_BY_VAL_FACTORY: KotlinSingleIntentionActionFactory = object: KotlinSingleIntentionActionFactory() {
             override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-                return ChangeVariableMutabilityFix(diagnostic.getPsiElement() as KtProperty, true)
+                val element = diagnostic.psiElement
+                return when (element) {
+                    is KtProperty, is KtParameter -> ChangeVariableMutabilityFix(element as KtNamedDeclaration, true)
+                    else -> null
+                }
             }
         }
     }
