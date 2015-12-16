@@ -46,6 +46,51 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
                 = convertMethodCallToPropertyUse(codeConverter, qualifier, "keys")
     },
 
+    MAP_PUT_IF_ABSENT(Map::class.java.name, "putIfAbsent", 2) {
+        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
+                = convertMethodCallWithReceiverCast(qualifier, arguments, typeArgumentsConverted, codeConverter)
+    },
+
+    MAP_REMOVE(Map::class.java.name, "remove", 2) {
+        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
+                = convertMethodCallWithReceiverCast(qualifier, arguments, typeArgumentsConverted, codeConverter)
+    },
+
+    MAP_REPLACE(Map::class.java.name, "replace", 3) {
+        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
+                = convertMethodCallWithReceiverCast(qualifier, arguments, typeArgumentsConverted, codeConverter)
+    },
+
+    MAP_REPLACE_ALL(Map::class.java.name, "replaceAll", 1) {
+        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
+                = convertMethodCallWithReceiverCast(qualifier, arguments, typeArgumentsConverted, codeConverter)
+    },
+
+    MAP_COMPUTE(Map::class.java.name, "compute", 2) {
+        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
+                = convertMethodCallWithReceiverCast(qualifier, arguments, typeArgumentsConverted, codeConverter)
+    },
+
+    MAP_COMPUTE_IF_ABSENT(Map::class.java.name, "computeIfAbsent", 2) {
+        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
+                = convertMethodCallWithReceiverCast(qualifier, arguments, typeArgumentsConverted, codeConverter)
+    },
+
+    MAP_COMPUTE_IF_PRESENT(Map::class.java.name, "computeIfPresent", 2) {
+        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
+                = convertMethodCallWithReceiverCast(qualifier, arguments, typeArgumentsConverted, codeConverter)
+    },
+
+    MAP_MERGE(Map::class.java.name, "merge", 3) {
+        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
+                = convertMethodCallWithReceiverCast(qualifier, arguments, typeArgumentsConverted, codeConverter)
+    },
+
+    MAP_GET_OR_DEFAULT(Map::class.java.name, "getOrDefault", 2) {
+        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
+                = convertMethodCallWithReceiverCast(qualifier, arguments, typeArgumentsConverted, codeConverter)
+    },
+
     MAP_VALUES(Map::class.java.name, "values", 0) {
         override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
                 = convertMethodCallToPropertyUse(codeConverter, qualifier)
@@ -383,6 +428,24 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
 
     protected fun convertWithChangedName(name: String, qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
             = MethodCallExpression.buildNotNull(codeConverter.convertExpression(qualifier), name, codeConverter.convertExpressions(arguments), typeArgumentsConverted)
+
+    protected fun convertMethodCallWithReceiverCast(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): MethodCallExpression? {
+        val convertedArguments = arguments.map { codeConverter.convertExpression(it) }
+        val qualifierWithCast = castQualifierToType(codeConverter, qualifier!!, qualifiedClassName!!)
+        if (qualifierWithCast != null) {
+            return MethodCallExpression.build(qualifierWithCast, methodName, convertedArguments, typeArgumentsConverted, false)
+        }
+        return null
+    }
+
+    private fun castQualifierToType(codeConverter: CodeConverter, qualifier: PsiExpression, type: String): TypeCastExpression? {
+        val convertedQualifier = codeConverter.convertExpression(qualifier)
+        val qualifierType = codeConverter.typeConverter.convertType(qualifier.type)
+        val typeArgs = if (qualifierType is ClassType) qualifierType.referenceElement.typeArgs else emptyList()
+        val referenceElement = ReferenceElement(Identifier(type).assignNoPrototype(), typeArgs).assignNoPrototype()
+        val newType = ClassType(referenceElement, Nullability.Default, codeConverter.settings).assignNoPrototype()
+        return TypeCastExpression(newType, convertedQualifier).assignNoPrototype()
+    }
 
     companion object {
         private val valuesByName = values().groupBy { it.methodName }

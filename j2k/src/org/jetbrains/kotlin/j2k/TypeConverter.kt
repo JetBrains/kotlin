@@ -427,7 +427,7 @@ class TypeConverter(val converter: Converter) {
         )
 
         private val modificationMethodNames = setOf(
-                "add", "remove", "set", "addAll", "removeAll", "retainAll", "clear", "put", "putAll"
+                "add", "remove", "set", "addAll", "removeAll", "retainAll", "clear", "put", "putAll", "putIfAbsent", "replace", "replaceAll", "merge", "compute", "computeIfAbsent", "computeIfPresent"
         )
 
         private val mutableKotlinClasses = TypeVisitor.toKotlinMutableTypesMap.values.toSet()
