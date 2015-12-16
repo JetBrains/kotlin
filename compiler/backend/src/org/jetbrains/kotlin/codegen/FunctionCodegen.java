@@ -375,7 +375,7 @@ public class FunctionCodegen {
                 functionFakeIndex = frameMap.enterTemp(Type.INT_TYPE);
             }
 
-            if (context.isInliningLambda()) {
+            if (context instanceof InlineLambdaContext) {
                 lambdaFakeIndex = frameMap.enterTemp(Type.INT_TYPE);
             }
 
@@ -404,7 +404,7 @@ public class FunctionCodegen {
                     functionFakeIndex);
         }
 
-        if (context.isInliningLambda() && thisType != null && lambdaFakeIndex != -1) {
+        if (context instanceof InlineLambdaContext && thisType != null && lambdaFakeIndex != -1) {
             String name = thisType.getClassName();
             int indexOfLambdaOrdinal = name.lastIndexOf("$");
             if (indexOfLambdaOrdinal > 0) {

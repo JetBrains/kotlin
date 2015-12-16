@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.codegen.MemberCodegen;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.context.CodegenContextUtil;
+import org.jetbrains.kotlin.codegen.context.InlineLambdaContext;
 import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.optimization.common.UtilKt;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -398,7 +399,7 @@ public class InlineCodegenUtil {
     }
 
     public static boolean isFinallyMarkerRequired(@NotNull MethodContext context) {
-        return context.isInlineMethodContext() || context.isInliningLambda();
+        return context.isInlineMethodContext() || context instanceof InlineLambdaContext;
     }
 
     public static int getConstant(AbstractInsnNode ins) {

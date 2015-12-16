@@ -279,7 +279,8 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
 
     protected void writeOuterClassAndEnclosingMethod() {
         CodegenContext context = this.context.getParentContext();
-        while (context instanceof MethodContext && ((MethodContext) context).isInliningLambda()) {
+
+        while (context instanceof InlineLambdaContext) {
             // If this is a lambda which will be inlined, skip its MethodContext and enclosing ClosureContext
             //noinspection ConstantConditions
             context = context.getParentContext().getParentContext();

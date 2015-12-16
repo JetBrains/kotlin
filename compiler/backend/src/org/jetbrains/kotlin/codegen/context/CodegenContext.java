@@ -298,12 +298,12 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
 
     @NotNull
     public MethodContext intoFunction(FunctionDescriptor descriptor) {
-        return new MethodContext(descriptor, getContextKind(), this, null, false, false);
+        return new MethodContext(descriptor, getContextKind(), this, null);
     }
 
     @NotNull
     public MethodContext intoInlinedLambda(FunctionDescriptor descriptor, boolean isCrossInline) {
-        return new MethodContext(descriptor, getContextKind(), this, null, true, isCrossInline);
+        return new InlineLambdaContext(descriptor, getContextKind(), this, null, isCrossInline);
     }
 
     @NotNull
@@ -654,19 +654,6 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
 
     @NotNull
     public CodegenContext getFirstCrossInlineOrNonInlineContext() {
-        if (!(this instanceof MethodContext)) {
-            return this;
-        }
-        MethodContext context = (MethodContext) this;
-        if (!context.isInliningLambda() || context.isCrossInline) {
-            return this;
-        }
-
-        CodegenContext parent = context.getParentContext();
-        assert parent instanceof ClosureContext : "Parent of inlining lambda body should be ClosureContext, but: " + parent;
-
-        parent = parent.getParentContext();
-        assert parent != null : "Parent context of lambda class context should exist: " + this.contextDescriptor;
-        return parent.getFirstCrossInlineOrNonInlineContext();
+        return this;
     }
 }
