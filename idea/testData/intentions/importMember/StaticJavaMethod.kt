@@ -3,6 +3,7 @@
 // ERROR: No value passed for parameter p0
 // ERROR: Unresolved reference: SomethingElse
 // ERROR: Unresolved reference: somethingElse
+// SKIP_ERRORS_AFTER
 
 import javax.swing.SwingUtilities
 
