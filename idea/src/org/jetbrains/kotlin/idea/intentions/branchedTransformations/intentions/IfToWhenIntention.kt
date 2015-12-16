@@ -43,7 +43,7 @@ public class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(jav
                     orBranches.addOrBranches(condition)
                 }
 
-                appendExpressions(orBranches)
+                appendExpressions(orBranches, separator = "||")
 
                 appendFixedText("->")
 

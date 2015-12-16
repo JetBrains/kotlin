@@ -83,6 +83,11 @@ private fun KtExpression?.getWhenConditionSubjectCandidate(): KtExpression? {
             when (op) {
                 KtTokens.IN_KEYWORD, KtTokens.NOT_IN -> lhs
                 KtTokens.EQEQ -> lhs as? KtNameReferenceExpression ?: getRight()
+                KtTokens.OROR -> {
+                    val leftCandidate = lhs.getWhenConditionSubjectCandidate()
+                    val rightCandidate = right.getWhenConditionSubjectCandidate()
+                    if (leftCandidate.matches(rightCandidate)) leftCandidate else null
+                }
                 else -> null
             }
 
@@ -109,29 +114,7 @@ public fun KtWhenExpression.introduceSubject(): KtWhenExpression {
                     if (i > 0) appendFixedText(",")
 
                     val conditionExpression = (condition as KtWhenConditionWithExpression).getExpression()
-                    when (conditionExpression)  {
-                        is KtIsExpression -> {
-                            if (conditionExpression.isNegated()) {
-                                appendFixedText("!")
-                            }
-                            appendFixedText("is ")
-                            appendNonFormattedText(conditionExpression.getTypeReference()?.getText() ?: "")
-                        }
-
-                        is KtBinaryExpression -> {
-                            val lhs = conditionExpression.getLeft()
-                            val rhs = conditionExpression.getRight()
-                            val op = conditionExpression.getOperationToken()
-                            when (op) {
-                                KtTokens.IN_KEYWORD -> appendFixedText("in ").appendExpression(rhs)
-                                KtTokens.NOT_IN -> appendFixedText("!in ").appendExpression(rhs)
-                                KtTokens.EQEQ -> appendExpression(if (subject.matches(lhs)) rhs else lhs)
-                                else -> throw IllegalStateException()
-                            }
-                        }
-
-                        else -> throw IllegalStateException()
-                    }
+                    appendConditionWithSubjectRemoved(conditionExpression, subject)
                 }
             }
             appendFixedText("->")
@@ -144,6 +127,37 @@ public fun KtWhenExpression.introduceSubject(): KtWhenExpression {
     } as KtWhenExpression
 
     return replaced(whenExpression)
+}
+
+private fun BuilderByPattern<KtExpression>.appendConditionWithSubjectRemoved(conditionExpression: KtExpression?, subject: KtExpression) {
+    when (conditionExpression) {
+        is KtIsExpression -> {
+            if (conditionExpression.isNegated()) {
+                appendFixedText("!")
+            }
+            appendFixedText("is ")
+            appendNonFormattedText(conditionExpression.getTypeReference()?.getText() ?: "")
+        }
+
+        is KtBinaryExpression -> {
+            val lhs = conditionExpression.getLeft()
+            val rhs = conditionExpression.getRight()
+            val op = conditionExpression.getOperationToken()
+            when (op) {
+                KtTokens.IN_KEYWORD -> appendFixedText("in ").appendExpression(rhs)
+                KtTokens.NOT_IN -> appendFixedText("!in ").appendExpression(rhs)
+                KtTokens.EQEQ -> appendExpression(if (subject.matches(lhs)) rhs else lhs)
+                KtTokens.OROR -> {
+                    appendConditionWithSubjectRemoved(lhs, subject)
+                    appendFixedText(", ")
+                    appendConditionWithSubjectRemoved(rhs, subject)
+                }
+                else -> throw IllegalStateException()
+            }
+        }
+
+        else -> throw IllegalStateException()
+    }
 }
 
 fun KtPsiFactory.combineWhenConditions(conditions: Array<KtWhenCondition>, subject: KtExpression?): KtExpression? {
