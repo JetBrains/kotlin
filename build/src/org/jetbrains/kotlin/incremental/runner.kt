@@ -266,7 +266,7 @@ fun<Target> getGeneratedFiles(
 }
 
 
-fun CompilationResult.dirtyFiles(lookupStorage: LookupStorage) =
+fun CompilationResult.dirtyFiles(lookupStorage: LookupStorage): Sequence<File> =
     // TODO group by fqName?
     changes.mapNotNull { it as? ChangeInfo.MembersChanged }
            .flatMap { change ->

@@ -92,6 +92,13 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
 
     private fun getKotlinSources(): List<File> = (getSource() as Iterable<File>).filter { it.isKotlinFile() }
 
+    protected fun File.isClassFile(): Boolean {
+        return when (FilenameUtils.getExtension(name).toLowerCase()) {
+            "class" -> true
+            else -> false
+        }
+    }
+
     protected fun File.isKotlinFile(): Boolean {
         return when (FilenameUtils.getExtension(name).toLowerCase()) {
             "kt", "kts" -> true
@@ -190,8 +197,8 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
             }
         }
 
-        testsMap.get(this.name).let {
-            addFriendPathForTestTask(it!!)
+        testsMap.get(this.name)?.let {
+            addFriendPathForTestTask(it)
         }
 
         logger.kotlinDebug("args.moduleName = ${args.moduleName}")
@@ -202,21 +209,46 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
         val moduleName = args.moduleName
         val targets = listOf(TargetId(moduleName, targetType))
         val outputDir = File(args.destination)
-        val modifiedSources = modified.filter { it.isKotlinFile() }
-        var sourcesToCompile = if (isIncremental && modifiedSources.any()) modifiedSources else sources
         val caches = hashMapOf<TargetId, IncrementalCacheImpl<TargetId>>()
         val lookupStorage = LookupStorage(File(cachesBaseDir, "lookups"))
         val lookupTracker = makeLookupTracker()
+        val dirtyFilesStorage = DirtyFilesStorage(project.rootDir, File(cachesBaseDir, "dirty"))
         var currentRemoved = removed
 
         fun getOrCreateIncrementalCache(target: TargetId): IncrementalCacheImpl<TargetId> {
             val cacheDir = File(cachesBaseDir, "increCache.${target.name}")
-            logger.kotlinDebug("incr cache for ${target.name} = $cacheDir")
             cacheDir.mkdirs()
             return IncrementalCacheImpl(targetDataRoot = cacheDir, targetOutputDir = outputDir, target = target)
         }
 
-        while (true) {
+        fun dirtySourcesFromGradle() = modified.filter { it.isKotlinFile() }
+
+        fun dirtySourcesFromEarlierStages(): Iterable<File> {
+            val dirty = dirtyFilesStorage.popAllFiles(sources)
+            if (dirty.any()) {
+                logger.kotlinDebug("dirty sources from earlier compilation stages: $dirty")
+            }
+            return dirty
+        }
+
+        fun isClassPathChanged(): Boolean {
+            // TODO: that doesn't look to wise - join it first and then split here, consider storing it somewhere in between
+            val classpath = args.classpath.split(File.pathSeparator).map { File(it) }.toHashSet()
+            val changedClasspath = modified.filter { classpath.contains(it) }
+            if (changedClasspath.any()) {
+                logger.kotlinDebug("recompiling project because of classpath changes: $changedClasspath")
+                return true
+            }
+            return false
+        }
+
+        // TODO: decide what to do if no files are considered dirty - rebuild or skip the module
+        // TODO: more precise will be not to rebuild unconditionally on classpath changes, but retrieve lookup info and try to find out which sources are affected by cp changes
+        var sourcesToCompile =
+            if (isIncremental && !isClassPathChanged()) (dirtySourcesFromGradle() + dirtySourcesFromEarlierStages()).distinct()
+            else sources
+
+        while (sourcesToCompile.any()) {
             logger.kotlinDebug("compile iteration: ${sourcesToCompile.joinToString(", ")}")
 
             val generatedFiles = compileChanged(
@@ -248,13 +280,19 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
             // TODO: consider using some order-preserving set for sourcesToCompile instead
             val sourcesSet = sourcesToCompile.toHashSet()
             val dirty = changes.dirtyFiles(lookupStorage).filterNot { it in sourcesSet }
-            if (dirty.none())
-                break
-            sourcesToCompile = dirty.toList()
+            sourcesToCompile = dirty.filter {
+                if (it in sources) true
+                else {
+                    dirtyFilesStorage.add(it)
+                    false
+                }
+            }.toList()
             if (currentRemoved.any()) {
                 currentRemoved = listOf()
             }
         }
+        dirtyFilesStorage.flush(false)
+        dirtyFilesStorage.close()
         lookupStorage.flush(false)
         lookupStorage.close()
         caches.values.forEach { it.flush(false); it.close() }

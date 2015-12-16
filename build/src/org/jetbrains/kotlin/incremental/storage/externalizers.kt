@@ -250,6 +250,14 @@ object IntExternalizer : DataExternalizer<Int> {
     }
 }
 
+object LongExternalizer : DataExternalizer<Long> {
+    override fun read(input: DataInput): Long = input.readLong()
+
+    override fun save(output: DataOutput, value: Long) {
+        output.writeLong(value)
+    }
+}
+
 object FileKeyDescriptor : KeyDescriptor<File> {
     override fun read(input: DataInput): File = File(input.readUTF())
 
