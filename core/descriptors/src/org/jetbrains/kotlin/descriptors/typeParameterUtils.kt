@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.descriptors
 
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.error.MissingDependencyErrorClass
 import java.util.*
@@ -65,7 +66,7 @@ fun KotlinType.buildPossiblyInnerType(): PossiblyInnerType? {
 }
 
 private fun KotlinType.buildPossiblyInnerType(classDescriptor: ClassDescriptor?, index: Int): PossiblyInnerType? {
-    if (classDescriptor == null) return null
+    if (classDescriptor == null || ErrorUtils.isError(classDescriptor)) return null
 
     val toIndex = classDescriptor.declaredTypeParameters.size + index
     val argumentsSubList = arguments.subList(index, toIndex)
