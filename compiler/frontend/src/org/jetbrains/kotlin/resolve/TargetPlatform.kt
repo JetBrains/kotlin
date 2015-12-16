@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.ModuleParameters
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.checkers.*
+import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.validation.DeprecatedSymbolValidator
 import org.jetbrains.kotlin.resolve.validation.InfixValidator
 import org.jetbrains.kotlin.resolve.validation.OperatorValidator
@@ -47,8 +48,14 @@ abstract class TargetPlatform(
         override val builtIns: KotlinBuiltIns
             get() = DefaultBuiltIns.Instance
         override val defaultModuleParameters = ModuleParameters.Empty
-        override val platformConfigurator = PlatformConfigurator(DynamicTypesSettings(), listOf(), listOf(), listOf(), listOf(), listOf(),
-                                                                 IdentifierChecker.DEFAULT, OverloadFilter.DEFAULT)
+        override val platformConfigurator =
+                object : PlatformConfigurator(DynamicTypesSettings(), listOf(), listOf(), listOf(), listOf(), listOf(),
+                                              IdentifierChecker.DEFAULT, OverloadFilter.DEFAULT) {
+                    override fun configure(container: StorageComponentContainer) {
+                        super.configure(container)
+                        container.useInstance(SyntheticScopes.Empty)
+                    }
+                }
     }
 }
 
@@ -67,7 +74,7 @@ private val DEFAULT_TYPE_CHECKERS = emptyList<AdditionalTypeChecker>()
 private val DEFAULT_VALIDATORS = listOf(DeprecatedSymbolValidator(), OperatorValidator(), InfixValidator())
 
 
-open class PlatformConfigurator(
+abstract class PlatformConfigurator(
         private val dynamicTypesSettings: DynamicTypesSettings,
         additionalDeclarationCheckers: List<DeclarationChecker>,
         additionalCallCheckers: List<CallChecker>,

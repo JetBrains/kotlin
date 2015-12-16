@@ -135,7 +135,7 @@ abstract class BaseLexicalScope(
         get() = null
 }
 
-abstract class BaseImportingScope(parent: ImportingScope?) : BaseHierarchicalScope(parent), ImportingScope {
+abstract class BaseImportingScope(parent: ImportingScope?) : BaseHierarchicalScope(parent), ImportingScope, SyntheticScope {
     override val parent: ImportingScope?
         get() = super.parent as ImportingScope?
 
@@ -148,4 +148,17 @@ abstract class BaseImportingScope(parent: ImportingScope?) : BaseHierarchicalSco
     override fun getContributedSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>): Collection<PropertyDescriptor> = emptyList()
 
     override fun getContributedSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor> = emptyList()
+
+    // temporary
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
+            = getContributedSyntheticExtensionProperties(receiverTypes, name, location)
+
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
+            = getContributedSyntheticExtensionFunctions(receiverTypes, name, location)
+
+    override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>)
+            = getContributedSyntheticExtensionProperties(receiverTypes)
+
+    override fun getSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>)
+            = getContributedSyntheticExtensionFunctions(receiverTypes)
 }

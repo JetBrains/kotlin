@@ -29,10 +29,7 @@ import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.scopes.BaseImportingScope
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
-import org.jetbrains.kotlin.resolve.scopes.utils.collectSyntheticExtensionProperties
+import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
@@ -49,7 +46,7 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
     val setMethod: FunctionDescriptor?
 
     companion object {
-        fun findByGetterOrSetter(getterOrSetter: FunctionDescriptor, resolutionScope: HierarchicalScope): SyntheticJavaPropertyDescriptor? {
+        fun findByGetterOrSetter(getterOrSetter: FunctionDescriptor, syntheticScopes: SyntheticScopes): SyntheticJavaPropertyDescriptor? {
             val name = getterOrSetter.getName()
             if (name.isSpecial()) return null
             val identifier = name.getIdentifier()
@@ -58,10 +55,15 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
             val owner = getterOrSetter.getContainingDeclaration() as? ClassDescriptor ?: return null
 
             val originalGetterOrSetter = getterOrSetter.original
-            return resolutionScope.collectSyntheticExtensionProperties(listOf(owner.defaultType))
+            return syntheticScopes.collectSyntheticExtensionProperties(listOf(owner.defaultType))
                     .filterIsInstance<SyntheticJavaPropertyDescriptor>()
                     .firstOrNull { originalGetterOrSetter == it.getMethod || originalGetterOrSetter == it.setMethod }
         }
+
+        fun findByGetterOrSetter(getterOrSetter: FunctionDescriptor, syntheticScope: SyntheticScope)
+                = findByGetterOrSetter(getterOrSetter, object : SyntheticScopes {
+            override val scopes: Collection<SyntheticScope> = listOf(syntheticScope)
+        })
 
         fun propertyNameByGetMethodName(methodName: Name): Name?
                 = org.jetbrains.kotlin.load.java.propertyNameByGetMethodName(methodName)
@@ -71,7 +73,7 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
     }
 }
 
-class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val lookupTracker: LookupTracker) : BaseImportingScope(null) {
+class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val lookupTracker: LookupTracker) : BaseImportingScope(null), SyntheticScope {
     private val syntheticPropertyInClass = storageManager.createMemoizedFunction<Pair<ClassDescriptor, Name>, SyntheticPropertyHolder> { pair ->
         syntheticPropertyInClassNotCached(pair.first, pair.second)
     }

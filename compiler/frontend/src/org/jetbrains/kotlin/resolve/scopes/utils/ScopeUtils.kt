@@ -98,18 +98,6 @@ public fun HierarchicalScope.findFunction(name: Name, location: LookupLocation, 
     return null
 }
 
-public fun HierarchicalScope.collectSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
-        = collectAllFromImportingScopes { it.getContributedSyntheticExtensionProperties(receiverTypes, name, location) }
-
-public fun HierarchicalScope.collectSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
-        = collectAllFromImportingScopes { it.getContributedSyntheticExtensionFunctions(receiverTypes, name, location) }
-
-public fun HierarchicalScope.collectSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>)
-        = collectAllFromImportingScopes { it.getContributedSyntheticExtensionProperties(receiverTypes) }
-
-public fun HierarchicalScope.collectSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>)
-        = collectAllFromImportingScopes { it.getContributedSyntheticExtensionFunctions(receiverTypes) }
-
 public fun HierarchicalScope.takeSnapshot(): HierarchicalScope = if (this is LexicalWritableScope) takeSnapshot() else this
 
 @JvmOverloads

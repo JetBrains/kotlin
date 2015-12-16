@@ -31,10 +31,7 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.SmartCastManager
 import org.jetbrains.kotlin.resolve.isHiddenInResolution
 import org.jetbrains.kotlin.resolve.scopes.*
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.collectDescriptorsFiltered
-import org.jetbrains.kotlin.resolve.scopes.utils.collectSyntheticExtensionFunctions
-import org.jetbrains.kotlin.resolve.scopes.utils.collectSyntheticExtensionProperties
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
@@ -341,14 +338,15 @@ class ReferenceVariantsHelper(
             process(descriptor as CallableDescriptor)
         }
 
+        val syntheticScopes = resolutionFacade.getFrontendService(SyntheticScopes::class.java)
         if (kindFilter.acceptsKinds(DescriptorKindFilter.VARIABLES_MASK)) {
-            for (extension in scope.collectSyntheticExtensionProperties(receiverTypes)) {
+            for (extension in syntheticScopes.collectSyntheticExtensionProperties(receiverTypes)) {
                 process(extension)
             }
         }
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK)) {
-            for (extension in scope.collectSyntheticExtensionFunctions(receiverTypes)) {
+            for (extension in syntheticScopes.collectSyntheticExtensionFunctions(receiverTypes)) {
                 process(extension)
             }
         }

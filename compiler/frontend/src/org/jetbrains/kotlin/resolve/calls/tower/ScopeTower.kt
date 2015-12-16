@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -35,6 +36,8 @@ interface ScopeTower {
     val lexicalScope: LexicalScope
 
     val dynamicScope: MemberScope
+
+    val syntheticScopes: SyntheticScopes
 
     val location: LookupLocation
 

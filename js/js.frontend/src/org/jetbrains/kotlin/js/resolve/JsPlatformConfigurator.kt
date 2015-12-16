@@ -18,10 +18,12 @@ package org.jetbrains.kotlin.js.resolve
 
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl
+import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.js.resolve.diagnostics.JsCallChecker
 import org.jetbrains.kotlin.resolve.IdentifierChecker
 import org.jetbrains.kotlin.resolve.OverloadFilter
 import org.jetbrains.kotlin.resolve.PlatformConfigurator
+import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.types.DynamicTypesAllowed
 
 public object JsPlatformConfigurator : PlatformConfigurator(
@@ -38,5 +40,6 @@ public object JsPlatformConfigurator : PlatformConfigurator(
         super.configure(container)
 
         container.useImpl<JsCallChecker>()
+        container.useInstance(SyntheticScopes.Empty)
     }
 }

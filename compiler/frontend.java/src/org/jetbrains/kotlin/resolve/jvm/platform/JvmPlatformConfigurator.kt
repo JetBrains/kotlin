@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeFunChecker
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.jvm.JvmOverloadFilter
 import org.jetbrains.kotlin.resolve.jvm.checkers.*
+import org.jetbrains.kotlin.synthetic.JavaSyntheticScopes
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 
 
@@ -72,5 +73,6 @@ public object JvmPlatformConfigurator : PlatformConfigurator(
         super.configure(container)
 
         container.useImpl<ReflectionAPICallChecker>()
+        container.useImpl<JavaSyntheticScopes>()
     }
 }
