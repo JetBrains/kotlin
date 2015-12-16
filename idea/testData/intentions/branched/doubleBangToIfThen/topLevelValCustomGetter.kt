@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 val a: String?
     get() = ""
 

@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 fun main(args: Array<String>) {
     if (doSomething("one") == null) throw NullPointerException("Expression 'doSomething(\"one\")' must not be null")
 }

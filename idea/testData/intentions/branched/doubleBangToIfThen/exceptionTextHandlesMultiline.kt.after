@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 fun main(args: Array<String>) {
     val doSomething = doSomething("one" + 1,
             "two",
