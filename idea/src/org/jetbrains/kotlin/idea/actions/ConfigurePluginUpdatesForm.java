@@ -14,14 +14,21 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.actions
+package org.jetbrains.kotlin.idea.actions;
 
-import com.intellij.openapi.actionSystem.AnAction
-import com.intellij.openapi.actionSystem.AnActionEvent
-import org.jetbrains.kotlin.idea.KotlinPluginUpdater
+import com.intellij.util.ui.AsyncProcessIcon;
 
-class CheckPluginUpdatesAction : AnAction() {
-    override fun actionPerformed(e: AnActionEvent) {
-        KotlinPluginUpdater.getInstance().queueUpdateCheck(true)
+import javax.swing.*;
+
+public class ConfigurePluginUpdatesForm {
+    public JComboBox channelCombo;
+    public JButton checkForUpdatesNowButton;
+    public JPanel mainPanel;
+    public AsyncProcessIcon updateCheckProgressIcon;
+    public JLabel updateStatusLabel;
+    public JButton installButton;
+
+    private void createUIComponents() {
+        updateCheckProgressIcon = new AsyncProcessIcon("Plugin update check progress");
     }
 }

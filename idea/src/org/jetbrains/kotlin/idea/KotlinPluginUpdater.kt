@@ -27,6 +27,7 @@ import com.intellij.notification.NotificationType
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationInfo
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.PluginId
@@ -45,6 +46,16 @@ import com.intellij.util.text.VersionComparatorUtil
 import java.net.URLEncoder
 import java.util.concurrent.TimeUnit
 
+sealed class PluginUpdateStatus {
+    object LatestVersionInstalled : PluginUpdateStatus()
+
+    class Update(val newVersion: String,
+                 val descriptorToInstall: IdeaPluginDescriptor?,
+                 val hostToInstallFrom: String?) : PluginUpdateStatus()
+
+    class CheckFailed(val message: String) : PluginUpdateStatus()
+}
+
 class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Disposable {
     private val INITIAL_UPDATE_DELAY = 5000L
     private var updateDelay = INITIAL_UPDATE_DELAY
@@ -53,25 +64,30 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
     private val notificationGroup = NotificationGroup("Kotlin plugin updates",  NotificationDisplayType.STICKY_BALLOON, true)
 
     fun kotlinFileEdited() {
-        val lastUpdateTime = java.lang.Long.parseLong(propertiesComponent.getValue(PROPERTY_NAME, "0"))
-        if (lastUpdateTime == 0L || System.currentTimeMillis() - lastUpdateTime > TimeUnit.DAYS.toMillis(1)) {
-            queueUpdateCheck()
-        }
-    }
-
-    fun queueUpdateCheck(reportNoUpdates: Boolean = false) {
         if (ApplicationManager.getApplication().isUnitTestMode) return
         if (!UpdateSettings.getInstance().isCheckNeeded) return
 
+        val lastUpdateTime = java.lang.Long.parseLong(propertiesComponent.getValue(PROPERTY_NAME, "0"))
+        if (lastUpdateTime == 0L || System.currentTimeMillis() - lastUpdateTime > TimeUnit.DAYS.toMillis(1)) {
+            queueUpdateCheck { updateStatus ->
+                if (updateStatus is PluginUpdateStatus.Update) {
+                    notifyPluginUpdateAvailable(updateStatus)
+                }
+                true
+            }
+        }
+    }
+
+    fun queueUpdateCheck(callback: (PluginUpdateStatus) -> Boolean) {
         ApplicationManager.getApplication().assertIsDispatchThread()
         if (!checkQueued) {
             checkQueued = true
-            alarm.addRequest({ updateCheck(reportNoUpdates) }, updateDelay)
+            alarm.addRequest({ updateCheck(callback) }, updateDelay)
             updateDelay *= 2 // exponential backoff
         }
     }
 
-    private fun updateCheck(reportNoUpdates: Boolean) {
+    private fun updateCheck(callback: (PluginUpdateStatus) -> Boolean) {
         try {
             var (mainRepoUpdateSuccess, latestVersionInRepository) = getPluginVersionFromMainRepository()
             var descriptorToInstall: IdeaPluginDescriptor? = null
@@ -99,28 +115,28 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
             if (mainRepoUpdateSuccess || latestVersionInRepository != null) {
                 recordSuccessfulUpdateCheck()
                 if (latestVersionInRepository != null && VersionComparatorUtil.compare(latestVersionInRepository, KotlinPluginUtil.getPluginVersion()) > 0) {
-                    ApplicationManager.getApplication().invokeLater {
-                        notifyPluginUpdateAvailable(latestVersionInRepository!!, descriptorToInstall, hostToInstallFrom)
-                    }
+                    ApplicationManager.getApplication().invokeLater({
+                        callback(PluginUpdateStatus.Update(latestVersionInRepository!!, descriptorToInstall, hostToInstallFrom))
+                    }, ModalityState.any())
                 }
-                else if (reportNoUpdates) {
-                    ApplicationManager.getApplication().invokeLater {
-                        val notification = notificationGroup.createNotification(
-                                "Kotlin",
-                                "You have the latest version of the Kotlin plugin",
-                                NotificationType.INFORMATION, null)
-                        notification.notify(null)
-                    }
+                else {
+                    ApplicationManager.getApplication().invokeLater({
+                        callback(PluginUpdateStatus.LatestVersionInstalled)
+                    }, ModalityState.any())
                 }
             }
             else {
-                ApplicationManager.getApplication().invokeLater { queueUpdateCheck() }
+                ApplicationManager.getApplication().invokeLater {
+                    if (callback(PluginUpdateStatus.CheckFailed("Plugin not found in repository"))) queueUpdateCheck(callback)
+                }
             }
         }
         catch(e: Exception) {
             LOG.info("Kotlin plugin update check failed", e)
             checkQueued = false
-            ApplicationManager.getApplication().invokeLater { queueUpdateCheck() }
+            ApplicationManager.getApplication().invokeLater {
+                if (callback(PluginUpdateStatus.CheckFailed(e.message ?: "Unknown error"))) queueUpdateCheck(callback)
+            }
         }
     }
 
@@ -157,41 +173,42 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
         updateDelay = INITIAL_UPDATE_DELAY
     }
 
-    private fun notifyPluginUpdateAvailable(newVersion: String,
-                                            descriptorToInstall: IdeaPluginDescriptor?,
-                                            hostToInstallFrom: String?) {
+    private fun notifyPluginUpdateAvailable(update: PluginUpdateStatus.Update) {
         val notification = notificationGroup.createNotification(
                 "Kotlin",
-                "A new version $newVersion of the Kotlin plugin is available. <b><a href=\"#\">Install</a></b>",
+                "A new version ${update.newVersion} of the Kotlin plugin is available. <b><a href=\"#\">Install</a></b>",
                 NotificationType.INFORMATION) { notification, event ->
-            val descriptor = descriptorToInstall ?: PluginManager.getPlugin(PluginId.getId("org.jetbrains.kotlin"))
-            if (descriptor != null) {
-                notification.expire()
-
-                val pluginDownloader = PluginDownloader.createDownloader(descriptor, hostToInstallFrom, null)
-                ProgressManager.getInstance().run(object : Task.Backgroundable(null, "Downloading plugins", true) {
-                    override fun run(indicator: ProgressIndicator) {
-                        if (pluginDownloader.prepareToInstall(indicator)) {
-                            val pluginDescriptor = pluginDownloader.getDescriptor()
-                            if (pluginDescriptor != null) {
-                                pluginDownloader.install()
-
-                                ApplicationManager.getApplication().invokeLater {
-                                    notification.expire()
-                                    PluginManagerMain.notifyPluginsUpdated(null)
-                                }
-                            }
-                        }
-                    }
-
-                    override fun onCancel() {
-                        notifyPluginUpdateAvailable(newVersion, descriptorToInstall, hostToInstallFrom)
-                    }
-                })
+            notification.expire()
+            installPluginUpdate(update) {
+                notifyPluginUpdateAvailable(update)
             }
         }
 
         notification.notify(null)
+    }
+
+    fun installPluginUpdate(update: PluginUpdateStatus.Update,
+                            cancelCallback: () -> Unit = {}) {
+        val descriptor = update.descriptorToInstall ?: PluginManager.getPlugin(PluginId.getId("org.jetbrains.kotlin")) ?: return
+        val pluginDownloader = PluginDownloader.createDownloader(descriptor, update.hostToInstallFrom, null)
+        ProgressManager.getInstance().run(object : Task.Backgroundable(null, "Downloading plugins", true) {
+            override fun run(indicator: ProgressIndicator) {
+                if (pluginDownloader.prepareToInstall(indicator)) {
+                    val pluginDescriptor = pluginDownloader.getDescriptor()
+                    if (pluginDescriptor != null) {
+                        pluginDownloader.install()
+
+                        ApplicationManager.getApplication().invokeLater {
+                            PluginManagerMain.notifyPluginsUpdated(null)
+                        }
+                    }
+                }
+            }
+
+            override fun onCancel() {
+                cancelCallback()
+            }
+        })
     }
 
     override fun dispose() {
