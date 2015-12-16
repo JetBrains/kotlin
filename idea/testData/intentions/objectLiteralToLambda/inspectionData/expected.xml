@@ -52,6 +52,14 @@
         <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Convert object literal to lambda</problem_class>
         <description>Convert to lambda</description>
     </problem>
+    <problem>
+        <file>ParametersNotUsedMoreThanOne.kt</file>
+        <line>8</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="ParametersNotUsedMoreThanOne.kt" />
+        <problem_class severity="WARNING" attribute_key="WARNING_ATTRIBUTES">Convert object literal to lambda</problem_class>
+        <description>Convert to lambda</description>
+    </problem>
 
     <problem>
         <file>NoSamAdapterNeeded.kt</file>

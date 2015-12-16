@@ -84,7 +84,7 @@ class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiter
 
             val parameters = singleFunction.valueParameters
 
-            val needParameters = parameters.any { parameter -> ReferencesSearch.search(parameter, LocalSearchScope(body)).any() }
+            val needParameters = parameters.count() > 1 || parameters.any { parameter -> ReferencesSearch.search(parameter, LocalSearchScope(body)).any() }
             if (needParameters) {
                 parameters.forEachIndexed { index, parameter ->
                     if (index > 0) {

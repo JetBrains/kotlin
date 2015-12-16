@@ -6183,6 +6183,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ParametersNotUsedMoreThanOne.kt")
+        public void testParametersNotUsedMoreThanOne() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/ParametersNotUsedMoreThanOne.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("QualifiedReturn.kt")
         public void testQualifiedReturn() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/QualifiedReturn.kt");
