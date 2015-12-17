@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.parsing;
 
 import com.intellij.lang.PsiBuilder;
+import com.intellij.lang.WhitespacesBinders;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
@@ -112,7 +113,21 @@ public class KotlinParsing extends AbstractKotlinParsing {
             parseTopLevelDeclaration();
         }
 
+        checkUnclosedBlockComment();
         fileMarker.done(KT_FILE);
+    }
+
+    private void checkUnclosedBlockComment() {
+        if (TokenSet.create(BLOCK_COMMENT, DOC_COMMENT).contains(myBuilder.rawLookup(-1))) {
+            int startOffset = myBuilder.rawTokenTypeStart(-1);
+            int endOffset = myBuilder.rawTokenTypeStart(0);
+            CharSequence tokenChars = myBuilder.getOriginalText().subSequence(startOffset, endOffset);
+            if (!(tokenChars.length() > 2 && tokenChars.subSequence(tokenChars.length() - 2, tokenChars.length()).toString().equals("*/"))) {
+                PsiBuilder.Marker marker = myBuilder.mark();
+                marker.error("Unclosed comment");
+                marker.setCustomEdgeTokenBinders(WhitespacesBinders.GREEDY_RIGHT_BINDER, null);
+            }
+        }
     }
 
     void parseTypeCodeFragment() {

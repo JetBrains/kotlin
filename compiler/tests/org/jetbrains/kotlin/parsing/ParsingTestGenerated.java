@@ -97,6 +97,12 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             doParsingTest(fileName);
         }
 
+        @TestMetadata("BlockCommentUnmatchedClosing_ERR.kt")
+        public void testBlockCommentUnmatchedClosing_ERR() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/BlockCommentUnmatchedClosing_ERR.kt");
+            doParsingTest(fileName);
+        }
+
         @TestMetadata("ByClauses.kt")
         public void testByClauses() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/ByClauses.kt");
