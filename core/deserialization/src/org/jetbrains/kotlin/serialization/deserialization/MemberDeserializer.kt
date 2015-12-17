@@ -139,7 +139,10 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         val receiverAnnotations = if (proto.hasReceiver())
             getReceiverParameterAnnotations(proto, AnnotatedCallableKind.FUNCTION)
         else Annotations.EMPTY
-        val function = DeserializedSimpleFunctionDescriptor.create(c.containingDeclaration, annotations, proto, c.nameResolver, c.typeTable)
+        val function = DeserializedSimpleFunctionDescriptor(
+                c.containingDeclaration, /* original = */ null, annotations, c.nameResolver.getName(proto.name),
+                Deserialization.memberKind(Flags.MEMBER_KIND.get(proto.flags)), proto, c.nameResolver, c.typeTable
+        )
         val local = c.childContext(function, proto.typeParameterList)
         function.initialize(
                 proto.receiverType(c.typeTable)?.let { local.typeDeserializer.type(it, receiverAnnotations) },

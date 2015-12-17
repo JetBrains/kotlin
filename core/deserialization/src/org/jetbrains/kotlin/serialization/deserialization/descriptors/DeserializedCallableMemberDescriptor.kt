@@ -17,7 +17,14 @@
 package org.jetbrains.kotlin.serialization.deserialization.descriptors
 
 import com.google.protobuf.MessageLite
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.ConstructorDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 
@@ -27,4 +34,93 @@ interface DeserializedCallableMemberDescriptor : CallableMemberDescriptor {
     val nameResolver: NameResolver
 
     val typeTable: TypeTable
+}
+
+class DeserializedSimpleFunctionDescriptor(
+        containingDeclaration: DeclarationDescriptor,
+        original: SimpleFunctionDescriptor?,
+        annotations: Annotations,
+        name: Name,
+        kind: CallableMemberDescriptor.Kind,
+        override val proto: ProtoBuf.Function,
+        override val nameResolver: NameResolver,
+        override val typeTable: TypeTable
+) : DeserializedCallableMemberDescriptor,
+        SimpleFunctionDescriptorImpl(containingDeclaration, original, annotations, name, kind, SourceElement.NO_SOURCE) {
+
+    override fun createSubstitutedCopy(
+            newOwner: DeclarationDescriptor,
+            original: FunctionDescriptor?,
+            kind: CallableMemberDescriptor.Kind,
+            newName: Name?,
+            preserveSource: Boolean
+    ): FunctionDescriptorImpl {
+        return DeserializedSimpleFunctionDescriptor(
+                newOwner, original as SimpleFunctionDescriptor?, annotations, newName ?: name, kind, proto, nameResolver, typeTable
+        )
+    }
+}
+
+class DeserializedPropertyDescriptor(
+        containingDeclaration: DeclarationDescriptor,
+        original: PropertyDescriptor?,
+        annotations: Annotations,
+        modality: Modality,
+        visibility: Visibility,
+        isVar: Boolean,
+        name: Name,
+        kind: CallableMemberDescriptor.Kind,
+        isLateInit: Boolean,
+        isConst: Boolean,
+        override val proto: ProtoBuf.Property,
+        override val nameResolver: NameResolver,
+        override val typeTable: TypeTable
+) : DeserializedCallableMemberDescriptor,
+        PropertyDescriptorImpl(containingDeclaration, original, annotations,
+                               modality, visibility, isVar, name, kind, SourceElement.NO_SOURCE, isLateInit, isConst) {
+
+    override fun createSubstitutedCopy(
+            newOwner: DeclarationDescriptor,
+            newModality: Modality,
+            newVisibility: Visibility,
+            original: PropertyDescriptor?,
+            kind: CallableMemberDescriptor.Kind
+    ): PropertyDescriptorImpl {
+        return DeserializedPropertyDescriptor(
+                newOwner, original, annotations, newModality, newVisibility, isVar, name, kind, isLateInit, isConst,
+                proto, nameResolver, typeTable
+        )
+    }
+}
+
+class DeserializedConstructorDescriptor(
+        containingDeclaration: ClassDescriptor,
+        original: ConstructorDescriptor?,
+        annotations: Annotations,
+        isPrimary: Boolean,
+        kind: CallableMemberDescriptor.Kind,
+        override val proto: ProtoBuf.Constructor,
+        override val nameResolver: NameResolver,
+        override val typeTable: TypeTable
+) : DeserializedCallableMemberDescriptor,
+        ConstructorDescriptorImpl(containingDeclaration, original, annotations, isPrimary, kind, SourceElement.NO_SOURCE) {
+
+    override fun createSubstitutedCopy(
+            newOwner: DeclarationDescriptor,
+            original: FunctionDescriptor?,
+            kind: CallableMemberDescriptor.Kind,
+            newName: Name?,
+            preserveSource: Boolean
+    ): DeserializedConstructorDescriptor {
+        return DeserializedConstructorDescriptor(
+                newOwner as ClassDescriptor, original as ConstructorDescriptor?, annotations, isPrimary, kind,
+                proto, nameResolver, typeTable
+        )
+    }
+
+    override fun isExternal(): Boolean = false
+
+    override fun isInline(): Boolean = false
+
+    override fun isTailrec(): Boolean = false
 }
