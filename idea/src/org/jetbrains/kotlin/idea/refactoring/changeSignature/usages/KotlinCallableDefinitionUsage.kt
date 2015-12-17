@@ -120,12 +120,10 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
             processParameterListWithStructuralChanges(changeInfo, element, parameterList, psiFactory)
         }
         else if (parameterList != null) {
-            var paramIndex = if (originalCallableDescriptor.extensionReceiverParameter != null) 1 else 0
-
-            for (parameter in parameterList.parameters) {
-                val parameterInfo = changeInfo.newParameters[paramIndex]
+            val offset = if (originalCallableDescriptor.extensionReceiverParameter != null) 1 else 0
+            for ((paramIndex, parameter) in parameterList.parameters.withIndex()) {
+                val parameterInfo = changeInfo.newParameters[paramIndex + offset]
                 changeParameter(paramIndex, parameter, parameterInfo)
-                paramIndex++
             }
 
             parameterList.addToShorteningWaitSet(Options.DEFAULT)

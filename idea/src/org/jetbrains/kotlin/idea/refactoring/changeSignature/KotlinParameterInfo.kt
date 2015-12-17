@@ -150,6 +150,7 @@ public class KotlinParameterInfo @JvmOverloads constructor (
         val typeSubstitutor = inheritedCallable.typeSubstitutor ?: return defaultRendering
         val currentBaseFunction = inheritedCallable.baseFunction.currentCallableDescriptor ?: return defaultRendering
         val parameterType = currentBaseFunction.getValueParameters().get(parameterIndex).getType()
+        if (parameterType.isError) return defaultRendering
         return parameterType.renderTypeWithSubstitution(typeSubstitutor, defaultRendering, true)
     }
 

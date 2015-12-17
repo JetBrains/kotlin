@@ -307,14 +307,18 @@ public open class KotlinChangeInfo(
         val receiverTypeText = receiverParameterInfo?.currentTypeInfo?.render() ?: return null
         val typeSubstitutor = inheritedCallable.typeSubstitutor ?: return receiverTypeText
         val currentBaseFunction = inheritedCallable.baseFunction.currentCallableDescriptor ?: return receiverTypeText
-        return currentBaseFunction.extensionReceiverParameter!!.type.renderTypeWithSubstitution(typeSubstitutor, receiverTypeText, false)
+        val receiverType = currentBaseFunction.extensionReceiverParameter!!.type
+        if (receiverType.isError) return receiverTypeText
+        return receiverType.renderTypeWithSubstitution(typeSubstitutor, receiverTypeText, false)
     }
 
     public fun renderReturnType(inheritedCallable: KotlinCallableDefinitionUsage<*>): String {
         val defaultRendering = newReturnTypeInfo.render()
         val typeSubstitutor = inheritedCallable.typeSubstitutor ?: return defaultRendering
         val currentBaseFunction = inheritedCallable.baseFunction.currentCallableDescriptor ?: return defaultRendering
-        return currentBaseFunction.returnType!!.renderTypeWithSubstitution(typeSubstitutor, defaultRendering, false)
+        val returnType = currentBaseFunction.returnType!!
+        if (returnType.isError) return defaultRendering
+        return returnType.renderTypeWithSubstitution(typeSubstitutor, defaultRendering, false)
     }
 
     public fun primaryMethodUpdated() {

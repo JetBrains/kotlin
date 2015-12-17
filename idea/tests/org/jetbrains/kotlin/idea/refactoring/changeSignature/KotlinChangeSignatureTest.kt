@@ -897,4 +897,10 @@ class KotlinChangeSignatureTest : KotlinCodeInsightTestCase() {
     fun testRemoveParameterKeepFormat3() = doTest { removeParameter(2) }
 
     fun testSwapParametersKeepFormat() = doTest { swapParameters(0, 2) }
+
+    fun testSetErrorReturnType() = doTest { newReturnTypeInfo = KotlinTypeInfo(true, null, "XYZ") }
+
+    fun testSetErrorReceiverType() = doTest { receiverParameterInfo!!.currentTypeInfo = KotlinTypeInfo(true, null, "XYZ") }
+
+    fun testSetErrorParameterType() = doTest { newParameters[1].currentTypeInfo = KotlinTypeInfo(true, null, "XYZ") }
 }
