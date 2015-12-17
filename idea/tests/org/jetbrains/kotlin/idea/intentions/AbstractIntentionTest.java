@@ -122,7 +122,9 @@ public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
                 ConfigLibraryUtil.configureKotlinRuntimeAndSdk(getModule(), PluginTestCaseBase.mockJdk());
             }
 
-            DirectiveBasedActionUtils.INSTANCE$.checkForUnexpectedErrors((KtFile) getFile());
+            if (getFile() instanceof KtFile && !InTextDirectivesUtils.isDirectiveDefined(fileText, "// SKIP_ERRORS_BEFORE")) {
+                DirectiveBasedActionUtils.INSTANCE$.checkForUnexpectedErrors((KtFile) getFile());
+            }
 
             doTestFor(pathToFile, intentionAction, fileText);
 

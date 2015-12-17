@@ -1,7 +1,5 @@
-// ERROR: Property must be initialized
 // WITH_RUNTIME
-// SKIP_ERRORS_AFTER
-
+// SKIP_ERRORS_BEFORE
 class Owner {
 }
 
