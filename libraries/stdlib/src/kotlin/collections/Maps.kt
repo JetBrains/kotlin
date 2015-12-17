@@ -179,6 +179,7 @@ public fun <K, V> Map.Entry<K, V>.toPair(): Pair<K, V> = Pair(key, value)
  *
  * @sample test.collections.MapTest.getOrElse
  */
+@Deprecated("This function will change its behavior soon not to distinguish missing keys and keys mapped to nulls. To stick with the new behavior you can use get(key) with ?: operator after instead.")
 public inline fun <K, V> Map<K, V>.getOrElse(key: K, defaultValue: () -> V): V {
     val value = get(key)
     if (value == null && !containsKey(key)) {
@@ -194,14 +195,30 @@ public inline fun <K, V> Map<K, V>.getOrElse(key: K, defaultValue: () -> V): V {
  *
  * @sample test.collections.MapTest.getOrPut
  */
-public inline fun <K, V> MutableMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V {
+@kotlin.jvm.JvmVersion
+public inline fun <K, V: Any> MutableMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V {
     val value = get(key)
-    if (value == null && !containsKey(key)) {
+    return if (value == null) {
         val answer = defaultValue()
         put(key, answer)
-        return answer
+        answer
     } else {
-        return value as V
+        value
+    }
+}
+
+@kotlin.jvm.JvmName("getOrPutNullable")
+@kotlin.jvm.JvmVersion
+@Deprecated("This function will change its behavior soon not to distinguish missing keys and keys mapped to nulls.")
+@kotlin.internal.LowPriorityInOverloadResolution
+public inline fun <K, V> MutableMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V {
+    val value = get(key)
+    return if (value == null && !containsKey(key)) {
+        val answer = defaultValue()
+        put(key, answer)
+        answer
+    } else {
+        value as V
     }
 }
 
