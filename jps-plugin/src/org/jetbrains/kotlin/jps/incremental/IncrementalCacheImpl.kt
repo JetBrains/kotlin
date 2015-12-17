@@ -109,7 +109,9 @@ class IncrementalCacheImpl(
             get() = sequenceOf(this).plus(dependents.asSequence())
 
     override fun registerInline(fromPath: String, jvmSignature: String, toPath: String) {
-        inlinedTo.add(fromPath, jvmSignature, toPath)
+        if (!IncrementalCompilation.isExperimental()) {
+            inlinedTo.add(fromPath, jvmSignature, toPath)
+        }
     }
 
     fun addDependentCache(cache: IncrementalCacheImpl) {
