@@ -2785,6 +2785,12 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("kt-9997.java")
+        public void testKt_9997() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/kt-9997.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("qualifyStatic.java")
         public void testQualifyStatic() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/issues/qualifyStatic.java");
