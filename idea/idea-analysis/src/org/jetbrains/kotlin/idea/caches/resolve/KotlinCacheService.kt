@@ -34,10 +34,7 @@ import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.js.resolve.JsPlatform
-import org.jetbrains.kotlin.psi.KtAnnotated
-import org.jetbrains.kotlin.psi.KtCodeFragment
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.resolve.diagnostics.KotlinSuppressCache
@@ -167,13 +164,11 @@ public class KotlinCacheService(val project: Project) {
                     return emptyList()
                 }
 
-                val context =
-                        if (annotated is KtFile) {
-                            annotated.fileAnnotationList?.analyze(BodyResolveMode.PARTIAL) ?: return emptyList()
-                        }
-                        else {
-                            annotated.analyze(BodyResolveMode.PARTIAL)
-                        }
+                val context = when (annotated) {
+                    is KtFile -> annotated.fileAnnotationList?.analyze(BodyResolveMode.PARTIAL) ?: return emptyList()
+                    is KtModifierListOwner -> annotated.modifierList?.analyze(BodyResolveMode.PARTIAL) ?: return emptyList()
+                    else -> annotated.analyze(BodyResolveMode.PARTIAL)
+                }
 
                 val annotatedDescriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, annotated)
 
