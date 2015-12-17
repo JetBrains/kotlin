@@ -198,7 +198,7 @@ public class DataFlowAnalyzer {
             ConstantValue<?> constantValue = constantExpressionEvaluator.evaluateToConstantValue(expression, c.trace, c.expectedType);
             boolean error = new CompileTimeConstantChecker(c.trace, builtIns, true)
                     .checkConstantExpressionType(constantValue, (KtConstantExpression) expression, c.expectedType);
-            if (hasError != null) hasError.set(error);
+            hasError.set(error);
             return expressionType;
         }
 
@@ -211,7 +211,7 @@ public class DataFlowAnalyzer {
         if (castResult != null) return castResult.getResultType();
 
         c.trace.report(TYPE_MISMATCH.on(expression, c.expectedType, expressionType));
-        if (hasError != null) hasError.set(true);
+        hasError.set(true);
         return expressionType;
     }
 
