@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.types.expressions.ForLoopConventionsChecker
+import org.jetbrains.kotlin.util.isValidOperator
 import java.util.*
 
 public class IterableTypesDetection(
@@ -49,8 +50,8 @@ public class IterableTypesDetection(
 
         private val typesWithExtensionIterator: Collection<KotlinType> = scope
                 .collectFunctions(iteratorName, NoLookupLocation.FROM_IDE)
-                .mapNotNull { it.extensionReceiverParameter }
-                .map { it.type }
+                .filter { it.isValidOperator() }
+                .mapNotNull { it.extensionReceiverParameter?.type }
 
         override fun isIterable(type: FuzzyType, loopVarType: KotlinType?): Boolean {
             val elementType = elementType(type) ?: return false

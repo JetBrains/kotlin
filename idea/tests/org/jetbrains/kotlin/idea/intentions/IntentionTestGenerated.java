@@ -5859,6 +5859,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("nonOperatorIterator.kt")
+        public void testNonOperatorIterator() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterateExpression/nonOperatorIterator.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonOperatotExtensionIterator.kt")
+        public void testNonOperatotExtensionIterator() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterateExpression/nonOperatotExtensionIterator.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterateExpression/simple.kt");
