@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.jps.incremental.storage
 
+import com.intellij.util.io.IOUtil
 import org.jetbrains.kotlin.jps.incremental.dumpCollection
 import org.jetbrains.kotlin.name.FqName
 import java.io.File
@@ -26,7 +27,7 @@ internal open class ClassOneToManyMap(
     override fun dumpValue(value: Collection<String>): String = value.dumpCollection()
 
     fun add(key: FqName, value: FqName) {
-        storage.append(key.asString()) { out -> out.writeUTF(value.asString()) }
+        storage.append(key.asString()) { out -> IOUtil.writeUTF(out, value.asString()) }
     }
 
     operator fun get(key: FqName): Collection<FqName> =
