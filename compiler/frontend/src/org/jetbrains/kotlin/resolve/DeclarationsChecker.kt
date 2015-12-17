@@ -720,9 +720,6 @@ class DeclarationsChecker(
                     reportVisibilityModifierDiagnostics(tokens.values, Errors.PRIVATE_SETTER_FOR_OPEN_PROPERTY)
                 }
             }
-            else if (propertyDescriptor.isLateInit && accessorDescriptor.visibility != propertyDescriptor.visibility) {
-                reportVisibilityModifierDiagnostics(tokens.values, Errors.SETTER_VISIBILITY_DIFFERS_FROM_LATEINIT_VISIBILITY)
-            }
             else {
                 val compare = Visibilities.compare(accessorDescriptor.visibility, propertyDescriptor.visibility)
                 if (compare == null || compare > 0) {
