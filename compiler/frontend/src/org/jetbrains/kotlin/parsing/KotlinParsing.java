@@ -112,7 +112,18 @@ public class KotlinParsing extends AbstractKotlinParsing {
             parseTopLevelDeclaration();
         }
 
+        checkUnclosedBlockComment();
         fileMarker.done(KT_FILE);
+    }
+
+    private void checkUnclosedBlockComment() {
+        if (TokenSet.create(BLOCK_COMMENT, DOC_COMMENT).contains(myBuilder.rawLookup(-1))) {
+            int startOffset = myBuilder.rawTokenTypeStart(-1);
+            int endOffset = myBuilder.rawTokenTypeStart(0);
+            if (!myBuilder.getOriginalText().subSequence(startOffset, endOffset).toString().endsWith("*/")) {
+                error("Unclosed comment");
+            }
+        }
     }
 
     void parseTypeCodeFragment() {
