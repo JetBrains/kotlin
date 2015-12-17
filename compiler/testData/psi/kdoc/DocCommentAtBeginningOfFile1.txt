@@ -7,3 +7,5 @@ JetFile: DocCommentAtBeginningOfFile1.kt
     PsiElement(KDOC_START)('/**')
     KDOC_SECTION
       <empty list>
+  PsiErrorElement:Unclosed comment
+    <empty list>
