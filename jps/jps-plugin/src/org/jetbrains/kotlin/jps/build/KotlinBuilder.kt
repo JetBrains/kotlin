@@ -263,67 +263,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         return ADDITIONAL_PASS_REQUIRED
     }
 
-    private fun processChanges(
-            compiledFiles: Set<File>,
-            allCompiledFiles: MutableSet<File>,
-            dataManager: BuildDataManager,
-            caches: List<IncrementalCacheImpl>,
-            compilationResult: CompilationResult,
-            fsOperations: FSOperationsHelper
-    ) {
-        fun CompilationResult.doProcessChanges() {
-            LOG.debug("compilationResult = $this")
-
-            when {
-                inlineAdded -> {
-                    allCompiledFiles.clear()
-                    fsOperations.markChunk(recursively = true, kotlinOnly = true, excludeFiles = compiledFiles)
-                    return
-                }
-                constantsChanged -> {
-                    fsOperations.markChunk(recursively = true, kotlinOnly = false, excludeFiles = allCompiledFiles)
-                    return
-                }
-                protoChanged -> {
-                    fsOperations.markChunk(recursively = false, kotlinOnly = true, excludeFiles = allCompiledFiles)
-                }
-            }
-
-            if (inlineChanged) {
-                val files = caches.flatMap { it.getFilesToReinline() }
-                fsOperations.markFiles(files, excludeFiles = compiledFiles)
-            }
-        }
-
-        fun CompilationResult.doProcessChangesUsingLookups() {
-            val lookupStorage = dataManager.getStorage(KotlinDataContainerTarget, LookupStorageProvider)
-
-            LOG.debug("Start processing changes")
-
-            // TODO group by fqName?
-            for (change in changes) {
-                LOG.debug("Process $change")
-
-                if (change !is ChangeInfo.MembersChanged) continue
-
-                val files = change.names.asSequence()
-                        .flatMap { lookupStorage.get(LookupSymbol(it, change.fqName.asString())).asSequence() }
-                        .map(::File)
-
-                fsOperations.markFiles(files.asIterable(), excludeFiles = compiledFiles)
-            }
-
-            LOG.debug("End of processing changes")
-        }
-
-        if (IncrementalCompilation.isExperimental()) {
-            compilationResult.doProcessChangesUsingLookups()
-        }
-        else {
-            compilationResult.doProcessChanges()
-        }
-    }
-
     private fun applyActionsOnCacheVersionChange(
             actions: Set<CacheVersion.Action>,
             cacheVersionsProvider: CacheVersionProvider,
@@ -742,6 +681,76 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             }
         }
     }
+}
+
+private fun processChanges(
+        compiledFiles: Set<File>,
+        allCompiledFiles: MutableSet<File>,
+        dataManager: BuildDataManager,
+        caches: List<IncrementalCacheImpl>,
+        compilationResult: CompilationResult,
+        fsOperations: FSOperationsHelper
+) {
+    if (IncrementalCompilation.isExperimental()) {
+        compilationResult.doProcessChangesUsingLookups(compiledFiles, dataManager, fsOperations)
+    }
+    else {
+        compilationResult.doProcessChanges(compiledFiles, allCompiledFiles, caches, fsOperations)
+    }
+}
+
+private fun CompilationResult.doProcessChanges(
+        compiledFiles: Set<File>,
+        allCompiledFiles: MutableSet<File>,
+        caches: Collection<IncrementalCacheImpl>,
+        fsOperations: FSOperationsHelper
+) {
+    KotlinBuilder.LOG.debug("compilationResult = $this")
+
+    when {
+        inlineAdded -> {
+            allCompiledFiles.clear()
+            fsOperations.markChunk(recursively = true, kotlinOnly = true, excludeFiles = compiledFiles)
+            return
+        }
+        constantsChanged -> {
+            fsOperations.markChunk(recursively = true, kotlinOnly = false, excludeFiles = allCompiledFiles)
+            return
+        }
+        protoChanged -> {
+            fsOperations.markChunk(recursively = false, kotlinOnly = true, excludeFiles = allCompiledFiles)
+        }
+    }
+
+    if (inlineChanged) {
+        val files = caches.flatMap { it.getFilesToReinline() }
+        fsOperations.markFiles(files, excludeFiles = compiledFiles)
+    }
+}
+
+private fun CompilationResult.doProcessChangesUsingLookups(
+        compiledFiles: Set<File>,
+        dataManager: BuildDataManager,
+        fsOperations: FSOperationsHelper
+) {
+    val lookupStorage = dataManager.getStorage(KotlinDataContainerTarget, LookupStorageProvider)
+
+    KotlinBuilder.LOG.debug("Start processing changes")
+
+    // TODO group by fqName?
+    for (change in changes) {
+        KotlinBuilder.LOG.debug("Process $change")
+
+        if (change !is ChangeInfo.MembersChanged) continue
+
+        val files = change.names.asSequence()
+                .flatMap { lookupStorage.get(LookupSymbol(it, change.fqName.asString())).asSequence() }
+                .map(::File)
+
+        fsOperations.markFiles(files.asIterable(), excludeFiles = compiledFiles)
+    }
+
+    KotlinBuilder.LOG.debug("End of processing changes")
 }
 
 private val Iterable<BuildTarget<*>>.moduleTargets: Iterable<ModuleBuildTarget>
