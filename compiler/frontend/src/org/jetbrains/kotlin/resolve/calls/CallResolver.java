@@ -387,7 +387,7 @@ public class CallResolver {
     public OverloadResolutionResults<FunctionDescriptor> resolveConstructorDelegationCall(
             @NotNull BindingTrace trace, @NotNull LexicalScope scope, @NotNull DataFlowInfo dataFlowInfo,
             @NotNull ConstructorDescriptor constructorDescriptor,
-            @NotNull KtConstructorDelegationCall call, @NotNull CallChecker callChecker
+            @NotNull KtConstructorDelegationCall call
     ) {
         // Method returns `null` when there is nothing to resolve in trivial cases like `null` call expression or
         // when super call should be conventional enum constructor and super call should be empty
@@ -397,7 +397,7 @@ public class CallResolver {
                 CallMaker.makeCall(null, null, call),
                 NO_EXPECTED_TYPE,
                 dataFlowInfo, ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                callChecker, false);
+                CallChecker.DoNothing.INSTANCE, false);
 
         if (call.getCalleeExpression() == null) return checkArgumentTypesAndFail(context);
 

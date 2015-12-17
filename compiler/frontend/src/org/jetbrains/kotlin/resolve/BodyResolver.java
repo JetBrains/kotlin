@@ -135,17 +135,22 @@ public class BodyResolver {
     ) {
         ForceResolveUtil.forceResolveAllContents(descriptor.getAnnotations());
 
-        final CallChecker callChecker = new ConstructorHeaderCallChecker(descriptor);
         resolveFunctionBody(outerDataFlowInfo, trace, constructor, descriptor, declaringScope,
                             new Function1<LexicalScope, DataFlowInfo>() {
                                 @Override
                                 public DataFlowInfo invoke(@NotNull LexicalScope headerInnerScope) {
                                     return resolveSecondaryConstructorDelegationCall(outerDataFlowInfo, trace, headerInnerScope,
-                                                                                     constructor, descriptor,
-                                                                                     callChecker);
+                                                                                     constructor, descriptor);
                                 }
                             },
-                            callChecker);
+                            new Function1<LexicalScope, LexicalScope>() {
+                                @Override
+                                public LexicalScope invoke(LexicalScope scope) {
+                                    return new LexicalScopeImpl(
+                                            scope, descriptor, scope.isOwnerDescriptorAccessibleByLabel(), scope.getImplicitReceiver(),
+                                            LexicalScopeKind.CONSTRUCTOR_HEADER);
+                                }
+                            });
     }
 
     @Nullable
@@ -154,13 +159,11 @@ public class BodyResolver {
             @NotNull BindingTrace trace,
             @NotNull LexicalScope scope,
             @NotNull KtSecondaryConstructor constructor,
-            @NotNull ConstructorDescriptor descriptor,
-            @NotNull CallChecker callChecker
+            @NotNull ConstructorDescriptor descriptor
     ) {
         OverloadResolutionResults<?> results = callResolver.resolveConstructorDelegationCall(
                 trace, scope, outerDataFlowInfo,
-                descriptor, constructor.getDelegationCall(),
-                callChecker);
+                descriptor, constructor.getDelegationCall());
 
         if (results != null && results.isSingleResult()) {
             ResolvedCall<? extends CallableDescriptor> resolvedCall = results.getResultingCall();
@@ -775,27 +778,29 @@ public class BodyResolver {
     ) {
         computeDeferredType(functionDescriptor.getReturnType());
 
-        resolveFunctionBody(outerDataFlowInfo, trace, function, functionDescriptor, declaringScope, null, CallChecker.DoNothing.INSTANCE$);
+        resolveFunctionBody(outerDataFlowInfo, trace, function, functionDescriptor, declaringScope, null, null);
 
         assert functionDescriptor.getReturnType() != null;
     }
 
-    public void resolveFunctionBody(
+    private void resolveFunctionBody(
             @NotNull DataFlowInfo outerDataFlowInfo,
             @NotNull BindingTrace trace,
             @NotNull KtDeclarationWithBody function,
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull LexicalScope scope,
             @Nullable Function1<LexicalScope, DataFlowInfo> beforeBlockBody,
-            @NotNull CallChecker callChecker
+            // Creates wrapper scope for header resolution if necessary (see resolveSecondaryConstructorBody)
+            @Nullable Function1<LexicalScope, LexicalScope> headerScopeFactory
     ) {
         PreliminaryDeclarationVisitor.Companion.createForDeclaration(function, trace);
         LexicalScope innerScope = FunctionDescriptorUtil.getFunctionInnerScope(scope, functionDescriptor, trace);
         List<KtParameter> valueParameters = function.getValueParameters();
         List<ValueParameterDescriptor> valueParameterDescriptors = functionDescriptor.getValueParameters();
 
+        LexicalScope headerScope = headerScopeFactory != null ? headerScopeFactory.invoke(innerScope) : innerScope;
         valueParameterResolver.resolveValueParameters(
-                valueParameters, valueParameterDescriptors, innerScope, outerDataFlowInfo, trace, callChecker
+                valueParameters, valueParameterDescriptors, headerScope, outerDataFlowInfo, trace
         );
 
         // Synthetic "field" creation
@@ -823,7 +828,7 @@ public class BodyResolver {
         DataFlowInfo dataFlowInfo = null;
 
         if (beforeBlockBody != null) {
-            dataFlowInfo = beforeBlockBody.invoke(innerScope);
+            dataFlowInfo = beforeBlockBody.invoke(headerScope);
         }
 
         if (function.hasBody()) {

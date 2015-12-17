@@ -33,26 +33,18 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 //   val x
 //   val y = other.x // return false for `other.x` as it's receiver is not `this`
 // }
-public fun ResolvedCall<*>.hasThisOrNoDispatchReceiver(context: BindingContext): Boolean =
-        hasThisOrNoDispatchReceiver(context, true, true)
-
-public fun ResolvedCall<*>.hasImplicitThisOrSuperDispatchReceiver(context: BindingContext): Boolean =
-        hasThisOrNoDispatchReceiver(context, false, false)
-
-private fun ResolvedCall<*>.hasThisOrNoDispatchReceiver(
-        context: BindingContext,
-        returnForNoReceiver: Boolean,
-        considerExplicitReceivers: Boolean
+fun ResolvedCall<*>.hasThisOrNoDispatchReceiver(
+        context: BindingContext
 ): Boolean {
-    val dispatchReceiverValue = getDispatchReceiver()
-    if (getResultingDescriptor().getDispatchReceiverParameter() == null || dispatchReceiverValue == null) return returnForNoReceiver
+    val dispatchReceiverValue = dispatchReceiver
+    if (resultingDescriptor.dispatchReceiverParameter == null || dispatchReceiverValue == null) return true
 
     var dispatchReceiverDescriptor: DeclarationDescriptor? = null
     if (dispatchReceiverValue is ImplicitReceiver) {
         // foo() -- implicit receiver
         dispatchReceiverDescriptor = dispatchReceiverValue.declarationDescriptor
     }
-    else if (dispatchReceiverValue is ExpressionReceiver && considerExplicitReceivers) {
+    else if (dispatchReceiverValue is ExpressionReceiver) {
         val expression = KtPsiUtil.deparenthesize(dispatchReceiverValue.expression)
         if (expression is KtThisExpression) {
             // this.foo() -- explicit receiver
