@@ -28,7 +28,10 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isOverridable
 import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
 public class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
@@ -53,13 +56,25 @@ public class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
                         val bindingContext = element.analyze()
                         val resolvedCall = element.getResolvedCall(bindingContext) ?: return
 
+                        if (isUsageOfReceiver(resolvedCall, bindingContext)) {
+                            used = true
+                        } else if (resolvedCall is VariableAsFunctionResolvedCall
+                                   && isUsageOfReceiver(resolvedCall.variableCall, bindingContext)) {
+                            used = true
+                        }
+                    }
+
+                    private fun isUsageOfReceiver(resolvedCall: ResolvedCall<*>, bindingContext: BindingContext): Boolean {
+                        // As receiver of call
                         if (resolvedCall.dispatchReceiver.getThisReceiverOwner(bindingContext) == callable ||
                             (resolvedCall.extensionReceiver as ReceiverValue?).getThisReceiverOwner(bindingContext) == callable) {
-                            used = true
+                            return true
                         }
-                        else if ((resolvedCall.candidateDescriptor as? ReceiverParameterDescriptor)?.containingDeclaration == callable) {
-                            used = true
+                        // As explicit "this"
+                        if ((resolvedCall.candidateDescriptor as? ReceiverParameterDescriptor)?.containingDeclaration == callable) {
+                            return true
                         }
+                        return false
                     }
                 })
 
