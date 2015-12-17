@@ -29,7 +29,7 @@ import com.intellij.util.xmlb.XmlSerializerUtil
         )
 )
 public class KotlinCompilerWorkspaceSettings() : PersistentStateComponent<KotlinCompilerWorkspaceSettings> {
-    public var incrementalCompilationEnabled: Boolean = true
+    public var preciseIncrementalEnabled: Boolean = false
     public var enableDaemon: Boolean = true
 
     override fun getState(): KotlinCompilerWorkspaceSettings {

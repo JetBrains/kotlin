@@ -164,10 +164,10 @@ class InlineChecker implements CallChecker {
     private void checkCallWithReceiver(
             @NotNull BasicCallResolutionContext context,
             @NotNull CallableDescriptor targetDescriptor,
-            @NotNull ReceiverValue receiver,
+            @Nullable ReceiverValue receiver,
             @Nullable KtExpression expression
     ) {
-        if (!receiver.exists()) return;
+        if (receiver == null) return;
 
         CallableDescriptor varDescriptor = null;
         KtExpression receiverExpression = null;

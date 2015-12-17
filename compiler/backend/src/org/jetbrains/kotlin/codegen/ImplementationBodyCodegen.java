@@ -1250,7 +1250,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 }
             }
 
-            private void lookupReceiver(@NotNull ReceiverValue value) {
+            private void lookupReceiver(@Nullable ReceiverValue value) {
                 if (value instanceof ImplicitReceiver) {
                     if (value instanceof ExtensionReceiver) {
                         ReceiverParameterDescriptor parameter =

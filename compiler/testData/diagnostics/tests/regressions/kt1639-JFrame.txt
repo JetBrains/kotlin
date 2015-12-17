@@ -558,12 +558,12 @@ package test {
         invisible_fake open override /*1*/ /*fake_override*/ fun reparentChild(/*0*/ p0: java.awt.Component!): kotlin.Unit
         invisible_fake open override /*1*/ /*fake_override*/ fun reparentTraverse(/*0*/ p0: [ERROR : Unresolved java classifier: ContainerPeer]!, /*1*/ p1: java.awt.Container!): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun requestFocus(): kotlin.Unit
-        public open override /*1*/ /*fake_override*/ fun requestFocus(/*0*/ p0: [ERROR : Unresolved java classifier: Cause]!): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun requestFocus(/*0*/ p0: kotlin.Boolean): kotlin.Boolean
         invisible_fake open override /*1*/ /*fake_override*/ fun requestFocus(/*0*/ p0: kotlin.Boolean, /*1*/ p1: [ERROR : Unresolved java classifier: Cause]!): kotlin.Boolean
         invisible_fake final override /*1*/ /*fake_override*/ fun requestFocusHelper(/*0*/ p0: kotlin.Boolean, /*1*/ p1: kotlin.Boolean): kotlin.Boolean
         invisible_fake final override /*1*/ /*fake_override*/ fun requestFocusHelper(/*0*/ p0: kotlin.Boolean, /*1*/ p1: kotlin.Boolean, /*2*/ p2: [ERROR : Unresolved java classifier: Cause]!): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun requestFocusInWindow(): kotlin.Boolean
-        public open override /*1*/ /*fake_override*/ fun requestFocusInWindow(/*0*/ p0: [ERROR : Unresolved java classifier: Cause]!): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun requestFocusInWindow(/*0*/ p0: kotlin.Boolean): kotlin.Boolean
         invisible_fake open override /*1*/ /*fake_override*/ fun requestFocusInWindow(/*0*/ p0: kotlin.Boolean, /*1*/ p1: [ERROR : Unresolved java classifier: Cause]!): kotlin.Boolean
         @kotlin.Deprecated(message = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun reshape(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.Int): kotlin.Unit
         invisible_fake open override /*1*/ /*fake_override*/ fun reshapeNativePeer(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int, /*3*/ p3: kotlin.Int, /*4*/ p4: kotlin.Int): kotlin.Unit

@@ -1,2 +1,4 @@
-val ia = <ref>IntArray(4)
-//kotlin/Arrays.kt:IntArray
+val ia = <caret>IntArray(4)
+// BINARY: kotlin/IntArray.kotlin_class
+// SRC: kotlin/Arrays.kt
+// TARGET: (in kotlin.IntArray).IntArray(Int)

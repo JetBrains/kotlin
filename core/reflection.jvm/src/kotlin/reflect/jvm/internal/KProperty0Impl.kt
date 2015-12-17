@@ -31,6 +31,8 @@ internal open class KProperty0Impl<out R> : DescriptorBasedProperty<R>, KPropert
 
     override fun get(): R = getter.call()
 
+    override fun invoke(): R = get()
+
     class Getter<out R>(override val property: KProperty0Impl<R>) : KPropertyImpl.Getter<R>(), KProperty0.Getter<R> {
         override fun invoke(): R = property.get()
     }

@@ -29,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
+import org.jetbrains.kotlin.idea.core.refactoring.JetRefactoringUtilKt;
 import org.jetbrains.kotlin.idea.references.ReferenceUtilKt;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
@@ -62,7 +63,7 @@ public class MakeClassAnAnnotationClassFix extends KotlinQuickFixAction<KtAnnota
         PsiElement target = reference.resolve();
         if (target instanceof KtClass) {
             annotationClass = (KtClass) target;
-            return QuickFixUtil.canModifyElement(annotationClass);
+            return JetRefactoringUtilKt.canRefactor(annotationClass);
         }
 
         return false;

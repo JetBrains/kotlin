@@ -1,4 +1,5 @@
 // "Create extension function 'plus'" "true"
+// WITH_RUNTIME
 
 class A<T>(val n: T)
 

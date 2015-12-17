@@ -39,10 +39,9 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.hasLowPriorityInOverloadResol
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue.NO_RECEIVER
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
-import org.jetbrains.kotlin.resolve.validation.InfixValidator
+import org.jetbrains.kotlin.resolve.selectMostSpecificInEachOverridableGroup
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
@@ -72,10 +71,10 @@ public class TaskPrioritizer(
                 val qualifierReceiver: QualifierReceiver = explicitReceiver
                 val receiverScope = LexicalScope.empty(qualifierReceiver.getNestedClassesAndPackageMembersScope().memberScopeAsImportingScope(),
                                                        qualifierReceiver.descriptor)
-                doComputeTasks(NO_RECEIVER, taskPrioritizerContext.replaceScope(receiverScope))
+                doComputeTasks(null, taskPrioritizerContext.replaceScope(receiverScope))
                 computeTasksForClassObjectReceiver(qualifierReceiver, taskPrioritizerContext)
             }
-            is ReceiverValue -> {
+            is ReceiverValue? -> {
                 doComputeTasks(explicitReceiver, taskPrioritizerContext)
 
                 // Temporary fix for code migration (unaryPlus()/unaryMinus())
@@ -118,18 +117,18 @@ public class TaskPrioritizer(
         }
     }
 
-    private fun <D : CallableDescriptor, F : D> doComputeTasks(receiver: ReceiverValue, c: TaskPrioritizerContext<D, F>) {
+    private fun <D : CallableDescriptor, F : D> doComputeTasks(receiver: ReceiverValue?, c: TaskPrioritizerContext<D, F>) {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
         val receiverWithTypes = ReceiverWithTypes(receiver, c.context)
 
-        val resolveInvoke = c.context.call.getDispatchReceiver().exists()
+        val resolveInvoke = c.context.call.getDispatchReceiver() != null
         if (resolveInvoke) {
             addCandidatesForInvoke(receiverWithTypes, c)
             return
         }
         val implicitReceivers = c.scope.getImplicitReceiversHierarchy().map { it.value }
-        if (receiver.exists()) {
+        if (receiver != null) {
             addCandidatesForExplicitReceiver(receiverWithTypes, implicitReceivers, c, isExplicit = true)
             addMembers(receiverWithTypes, c, staticMembers = true, isExplicit = true)
             return
@@ -138,10 +137,10 @@ public class TaskPrioritizer(
     }
 
     private inner class ReceiverWithTypes(
-            val value: ReceiverValue,
+            val value: ReceiverValue?,
             private val context: ResolutionContext<*>
     ) {
-        val types: Collection<KotlinType> by lazy { smartCastManager.getSmartCastVariants(value, context) }
+        val types: Collection<KotlinType> by lazy { smartCastManager.getSmartCastVariants(value!!, context) }
     }
 
     private fun <D : CallableDescriptor, F : D> addCandidatesForExplicitReceiver(
@@ -150,7 +149,7 @@ public class TaskPrioritizer(
             c: TaskPrioritizerContext<D, F>,
             isExplicit: Boolean
     ) {
-        val explicitReceiverTypeIsDynamic = explicitReceiver.value.type.isDynamic()
+        val explicitReceiverTypeIsDynamic = explicitReceiver.value!!.type.isDynamic()
 
         fun addMembersAndExtensionsWithFilter(filter: (CallableDescriptor) -> Boolean) {
             // If the explicit receiver is erroneous, an error function is returned by getMembersByName().
@@ -245,12 +244,17 @@ public class TaskPrioritizer(
                     convertWithReceivers(
                             filteredMembers,
                             dispatchReceiver,
-                            NO_RECEIVER,
+                            null,
                             members,
                             createKind(DISPATCH_RECEIVER, isExplicit),
                             c.context.call
                     )
                 }
+
+                if (explicitReceiver.types.size > 1) {
+                    members.retainAll( members.selectMostSpecificInEachOverridableGroup { descriptor } )
+                }
+
                 members
             }
         }
@@ -272,7 +276,7 @@ public class TaskPrioritizer(
                 it.getNonExtensionsByName(dynamicScope.memberScopeAsImportingScope(), c.name, createLookupLocation(c))
             }
 
-            convertWithReceivers(dynamicDescriptors, explicitReceiver.value, NO_RECEIVER, createKind(DISPATCH_RECEIVER, isExplicit), c.context.call)
+            convertWithReceivers(dynamicDescriptors, explicitReceiver.value, null, createKind(DISPATCH_RECEIVER, isExplicit), c.context.call)
         }
     }
 
@@ -350,15 +354,15 @@ public class TaskPrioritizer(
         // For 'a.foo()' where foo has function type,
         // a is explicitReceiver, foo is variableReceiver.
         val variableReceiver = c.context.call.getDispatchReceiver()
-        assert(variableReceiver.exists()) { "'Invoke' call hasn't got variable receiver" }
+        assert(variableReceiver != null) { "'Invoke' call hasn't got variable receiver" }
 
         // For invocation a.foo() explicit receiver 'a'
         // can be a receiver for 'foo' variable
         // or for 'invoke' function.
 
         // (1) a.foo + foo.invoke()
-        if (!explicitReceiver.value.exists()) {
-            addCandidatesForExplicitReceiver(ReceiverWithTypes(variableReceiver, c.context), implicitReceivers, c, isExplicit = true)
+        if (explicitReceiver.value == null) {
+            addCandidatesForExplicitReceiver(ReceiverWithTypes(variableReceiver!!, c.context), implicitReceivers, c, isExplicit = true)
         }
 
         // (2) foo + a.invoke()
@@ -367,14 +371,14 @@ public class TaskPrioritizer(
         //trait A
         //trait Foo { fun A.invoke() }
 
-        if (explicitReceiver.value.exists()) {
+        if (explicitReceiver.value != null) {
             //a.foo()
-            addCandidatesWhenInvokeIsMemberAndExtensionToExplicitReceiver(variableReceiver, explicitReceiver, c, BOTH_RECEIVERS)
+            addCandidatesWhenInvokeIsMemberAndExtensionToExplicitReceiver(variableReceiver!!, explicitReceiver, c, BOTH_RECEIVERS)
             return
         }
         // with (a) { foo() }
         for (implicitReceiver in implicitReceivers) {
-            addCandidatesWhenInvokeIsMemberAndExtensionToExplicitReceiver(variableReceiver, ReceiverWithTypes(implicitReceiver, c.context), c, DISPATCH_RECEIVER)
+            addCandidatesWhenInvokeIsMemberAndExtensionToExplicitReceiver(variableReceiver!!, ReceiverWithTypes(implicitReceiver, c.context), c, DISPATCH_RECEIVER)
         }
     }
 
@@ -391,8 +395,8 @@ public class TaskPrioritizer(
 
     private fun <D : CallableDescriptor> convertWithReceivers(
             descriptors: Collection<D>,
-            dispatchReceiver: ReceiverValue,
-            extensionReceiver: ReceiverValue,
+            dispatchReceiver: ReceiverValue?,
+            extensionReceiver: ReceiverValue?,
             explicitReceiverKind: ExplicitReceiverKind,
             call: Call
     ): Collection<ResolutionCandidate<D>> {
@@ -403,8 +407,8 @@ public class TaskPrioritizer(
 
     private fun <D : CallableDescriptor> convertWithReceivers(
             descriptors: Collection<D>,
-            dispatchReceiver: ReceiverValue,
-            extensionReceiver: ReceiverValue,
+            dispatchReceiver: ReceiverValue?,
+            extensionReceiver: ReceiverValue?,
             result: MutableCollection<ResolutionCandidate<D>>,
             explicitReceiverKind: ExplicitReceiverKind,
             call: Call
@@ -423,12 +427,12 @@ public class TaskPrioritizer(
             descriptors: Collection<D>,
             call: Call
     ): Collection<ResolutionCandidate<D>> {
-        return convertWithImpliedThis(scope, NO_RECEIVER, descriptors, NO_EXPLICIT_RECEIVER, call)
+        return convertWithImpliedThis(scope, null, descriptors, NO_EXPLICIT_RECEIVER, call)
     }
 
     public fun <D : CallableDescriptor> convertWithImpliedThis(
             scope: LexicalScope,
-            receiverParameter: ReceiverValue,
+            receiverParameter: ReceiverValue?,
             descriptors: Collection<D>,
             receiverKind: ExplicitReceiverKind,
             call: Call
@@ -501,7 +505,7 @@ public class TaskPrioritizer(
         }
 
         fun hasImplicitDynamicReceiver(candidate: ResolutionCandidate<D>): Boolean {
-            return (!candidate.getExplicitReceiverKind().isDispatchReceiver() || !candidate.getCall().getExplicitReceiver().exists())
+            return (!candidate.getExplicitReceiverKind().isDispatchReceiver() || candidate.getCall().getExplicitReceiver() == null)
                    && candidate.getDescriptor().isDynamic()
         }
     }

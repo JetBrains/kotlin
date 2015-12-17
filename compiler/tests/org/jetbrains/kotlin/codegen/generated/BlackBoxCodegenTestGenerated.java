@@ -928,6 +928,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("intersectionTypeMultipleBounds.kt")
+        public void testIntersectionTypeMultipleBounds() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/intersectionTypeMultipleBounds.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("intersectionTypeSmartcast.kt")
+        public void testIntersectionTypeSmartcast() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/intersectionTypeSmartcast.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("is.kt")
         public void testIs() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/casts/is.kt");
@@ -6883,6 +6895,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/regressions"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("doubleMerge.kt")
+        public void testDoubleMerge() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/doubleMerge.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("floatMerge.kt")
+        public void testFloatMerge() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/floatMerge.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("kt3107.kt")
         public void testKt3107() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/kt3107.kt");
@@ -6922,6 +6946,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("kt6153.kt")
         public void testKt6153() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/kt6153.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("kt7401.kt")
+        public void testKt7401() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/regressions/kt7401.kt");
             doTest(fileName);
         }
 

@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
@@ -88,7 +88,7 @@ public abstract class CallableRefactoring<T: CallableDescriptor>(
     }
 
     protected fun checkModifiable(element: PsiElement): Boolean {
-        if (QuickFixUtil.canModifyElement(element)) {
+        if (element.canRefactor()) {
             return true
         }
 

@@ -152,9 +152,6 @@ public class DataFlowValueFactory {
                                        bindingContext,
                                        containingDeclarationOrModule);
         }
-        else if (receiverValue == ReceiverValue.NO_RECEIVER) {
-            throw new IllegalArgumentException("No DataFlowValue exists for ReceiverValue.NO_RECEIVER");
-        }
         else {
             throw new UnsupportedOperationException("Unsupported receiver value: " + receiverValue.getClass().getName());
         }
@@ -313,7 +310,7 @@ public class DataFlowValueFactory {
     }
 
     @Nullable
-    private static IdentifierInfo getIdForImplicitReceiver(@NotNull ReceiverValue receiverValue, @Nullable KtExpression expression) {
+    private static IdentifierInfo getIdForImplicitReceiver(@Nullable ReceiverValue receiverValue, @Nullable KtExpression expression) {
         if (receiverValue instanceof ImplicitReceiver) {
             return getIdForThisReceiver(((ImplicitReceiver) receiverValue).getDeclarationDescriptor());
         }

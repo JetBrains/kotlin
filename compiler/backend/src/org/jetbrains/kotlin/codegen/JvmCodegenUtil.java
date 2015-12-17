@@ -134,12 +134,13 @@ public class JvmCodegenUtil {
             @NotNull PropertyDescriptor property,
             boolean forGetter,
             boolean isDelegated,
-            @NotNull MethodContext context
+            @NotNull MethodContext contextBeforeInline
     ) {
         if (JetTypeMapper.isAccessor(property)) return false;
 
+        CodegenContext context = contextBeforeInline.getFirstCrossInlineOrNonInlineContext();
         // Inline functions can't use direct access because a field may not be visible at the call site
-        if (context.isInlineFunction()) {
+        if (context.isInlineMethodContext()) {
             return false;
         }
 
@@ -164,7 +165,7 @@ public class JvmCodegenUtil {
         return Visibilities.isPrivate(property.getVisibility()) || accessor.getModality() == FINAL;
     }
 
-    private static boolean isDebuggerContext(@NotNull MethodContext context) {
+    private static boolean isDebuggerContext(@NotNull CodegenContext context) {
         KtFile file = DescriptorToSourceUtils.getContainingFile(context.getContextDescriptor());
         return file != null && CodeFragmentUtilKt.getSuppressDiagnosticsInDebugMode(file);
     }

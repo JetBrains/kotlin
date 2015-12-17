@@ -16,7 +16,7 @@ public interface D {
 
 public interface E : C, D {
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public abstract override /*2*/ /*fake_override*/ fun foo(/*0*/ b: kotlin.Int): kotlin.Unit
+    public abstract override /*2*/ /*fake_override*/ fun foo(/*0*/ a: kotlin.Int): kotlin.Unit
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }

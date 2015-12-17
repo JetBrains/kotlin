@@ -31,21 +31,20 @@ public class LexicalChainedScope @JvmOverloads constructor(
         override val isOwnerDescriptorAccessibleByLabel: Boolean,
         override val implicitReceiver: ReceiverParameterDescriptor?,
         override val kind: LexicalScopeKind,
-        vararg memberScopes: MemberScope,
+        private val memberScopes: List<MemberScope>,
         @Deprecated("This value is temporary hack for resolve -- don't use it!")
         val isStaticScope: Boolean = false
 ): LexicalScope {
     override val parent = parent.takeSnapshot()
-    private val scopeChain = memberScopes.clone()
 
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
-            = getFromAllScopes(scopeChain) { it.getContributedDescriptors() }
+            = getFromAllScopes(memberScopes) { it.getContributedDescriptors() }
 
-    override fun getContributedClassifier(name: Name, location: LookupLocation) = getFirstMatch(scopeChain) { it.getContributedClassifier(name, location) }
+    override fun getContributedClassifier(name: Name, location: LookupLocation) = getFirstMatch(memberScopes) { it.getContributedClassifier(name, location) }
 
-    override fun getContributedVariables(name: Name, location: LookupLocation) = getFromAllScopes(scopeChain) { it.getContributedVariables(name, location) }
+    override fun getContributedVariables(name: Name, location: LookupLocation) = getFromAllScopes(memberScopes) { it.getContributedVariables(name, location) }
 
-    override fun getContributedFunctions(name: Name, location: LookupLocation) = getFromAllScopes(scopeChain) { it.getContributedFunctions(name, location) }
+    override fun getContributedFunctions(name: Name, location: LookupLocation) = getFromAllScopes(memberScopes) { it.getContributedFunctions(name, location) }
 
     override fun toString(): String = kind.toString()
 
@@ -54,7 +53,7 @@ public class LexicalChainedScope @JvmOverloads constructor(
                   " with implicitReceiver: ", implicitReceiver?.value ?: "NONE", " {")
         p.pushIndent()
 
-        for (scope in scopeChain) {
+        for (scope in memberScopes) {
             scope.printScopeStructure(p)
         }
 

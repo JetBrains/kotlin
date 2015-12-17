@@ -33,6 +33,6 @@ import p.*
 
 fun test(b: B?) {
     if (b is C && b is D) {
-        b<!UNNECESSARY_SAFE_CALL!>?.<!><!OVERLOAD_RESOLUTION_AMBIGUITY!>getParent<!>()
+        b<!UNNECESSARY_SAFE_CALL!>?.<!>getParent()
     }
 }

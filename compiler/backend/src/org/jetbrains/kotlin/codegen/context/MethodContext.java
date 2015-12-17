@@ -32,7 +32,6 @@ import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.Type;
 
 public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
-    private final boolean isInliningLambda;
     private Label methodStartLabel;
     private Label methodEndLabel;
 
@@ -44,12 +43,10 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
             @NotNull FunctionDescriptor functionDescriptor,
             @NotNull OwnerKind contextKind,
             @NotNull CodegenContext parentContext,
-            @Nullable MutableClosure closure,
-            boolean isInliningLambda
+            @Nullable MutableClosure closure
     ) {
         super(JvmCodegenUtil.getDirectMember(functionDescriptor), contextKind, parentContext, closure,
               parentContext.hasThisDescriptor() ? parentContext.getThisDescriptor() : null, null);
-        this.isInliningLambda = isInliningLambda;
         this.functionDescriptor = functionDescriptor;
     }
 
@@ -117,12 +114,8 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
         return "Method: " + getContextDescriptor();
     }
 
-    public boolean isInlineFunction() {
+    public boolean isInlineMethodContext() {
         return InlineUtil.isInline(getContextDescriptor());
-    }
-
-    public boolean isInliningLambda() {
-        return isInliningLambda;
     }
 
     @NotNull

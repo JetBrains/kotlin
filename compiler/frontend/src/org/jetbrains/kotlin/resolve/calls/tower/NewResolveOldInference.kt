@@ -64,7 +64,7 @@ class NewResolveOldInference(
             kind: CallResolver.ResolveKind,
             tracing: TracingStrategy
     ): OverloadResolutionResultsImpl<*> {
-        val explicitReceiver = context.call.explicitReceiver.check { it.exists() }
+        val explicitReceiver = context.call.explicitReceiver
 
         val dynamicScope = dynamicCallableDescriptors.createDynamicDescriptorScope(context.call, context.scope.ownerDescriptor)
         val scopeTower = ScopeTowerImpl(context, dynamicScope, context.call.createLookupLocation())
@@ -190,7 +190,7 @@ class NewResolveOldInference(
             val candidateTrace = TemporaryBindingTrace.create(basicCallContext.trace, "Context for resolve candidate")
             val candidateCall = ResolvedCallImpl(
                     basicCallContext.call, towerCandidate.descriptor,
-                    towerCandidate.dispatchReceiver ?: ReceiverValue.NO_RECEIVER, extensionReceiver ?: ReceiverValue.NO_RECEIVER,
+                    towerCandidate.dispatchReceiver, extensionReceiver,
                     explicitReceiverKind, null, candidateTrace, tracing,
                     basicCallContext.dataFlowInfoForArguments // todo may be we should create new mutable info for arguments
             )
@@ -207,7 +207,7 @@ class NewResolveOldInference(
 
             val callCandidateResolutionContext = CallCandidateResolutionContext.create(
                     candidateCall, basicCallContext, candidateTrace, tracing, basicCallContext.call,
-                    ReceiverValue.NO_RECEIVER, CandidateResolveMode.FULLY // todo
+                    null, CandidateResolveMode.FULLY // todo
             )
             candidateResolver.performResolutionForCandidateCall(callCandidateResolutionContext, basicCallContext.checkArguments) // todo
 
@@ -268,7 +268,7 @@ class NewResolveOldInference(
             tracing.bindReference(variable.resolvedCall.trace, variable.resolvedCall)
             // todo hacks
             val functionCall = CallTransformer.CallForImplicitInvoke(
-                    basicCallContext.call.explicitReceiver.check { useExplicitReceiver } ?: ReceiverValue.NO_RECEIVER,
+                    basicCallContext.call.explicitReceiver?.check { useExplicitReceiver },
                     variableReceiver, basicCallContext.call)
             val tracingForInvoke = TracingStrategyForInvoke(calleeExpression, functionCall, variableReceiver.type)
             val basicCallResolutionContext = basicCallContext.replaceBindingTrace(variable.resolvedCall.trace)

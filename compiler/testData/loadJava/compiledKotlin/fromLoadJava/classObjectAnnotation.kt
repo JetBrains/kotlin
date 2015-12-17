@@ -1,7 +1,9 @@
 package test
 
 class Some {
-  @TestAnnotation companion object {
+  // TODO uncomment after KT-10405 will be fixed
+  // @Companion.TestAnnotation
+  companion object {
     annotation class TestAnnotation
   }
 }

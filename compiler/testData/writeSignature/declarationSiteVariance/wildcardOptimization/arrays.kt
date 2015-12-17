@@ -8,7 +8,7 @@ open class Open
 
 fun arrayOfOutOpen(x: Array<Out<Open>>) {}
 // method: ArraysKt::arrayOfOutOpen
-// generic signature: ([LOut<+LOpen;>;)V
+// generic signature: ([LOut<LOpen;>;)V
 
 fun arrayOfOutFinal(x: Array<Out<Final>>) {}
 // method: ArraysKt::arrayOfOutFinal

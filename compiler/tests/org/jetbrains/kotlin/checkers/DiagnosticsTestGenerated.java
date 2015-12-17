@@ -6909,6 +6909,57 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 }
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/generics/multipleBoundsMemberScope")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class MultipleBoundsMemberScope extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInMultipleBoundsMemberScope() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/generics/multipleBoundsMemberScope"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("conflictingReturnType.kt")
+                public void testConflictingReturnType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/multipleBoundsMemberScope/conflictingReturnType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("flexibleTypes.kt")
+                public void testFlexibleTypes() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/multipleBoundsMemberScope/flexibleTypes.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("mostSpecific.kt")
+                public void testMostSpecific() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/multipleBoundsMemberScope/mostSpecific.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("properties.kt")
+                public void testProperties() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/multipleBoundsMemberScope/properties.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("propertiesConflict.kt")
+                public void testPropertiesConflict() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/multipleBoundsMemberScope/propertiesConflict.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("simple.kt")
+                public void testSimple() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/multipleBoundsMemberScope/simple.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("validTypeParameters.kt")
+                public void testValidTypeParameters() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/multipleBoundsMemberScope/validTypeParameters.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/generics/nullability")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -13961,6 +14012,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("companionObjectParents.kt")
+                public void testCompanionObjectParents() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/classHeader/companionObjectParents.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("companionObjectSuperConstructorArguments.kt")
+                public void testCompanionObjectSuperConstructorArguments() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/classHeader/companionObjectSuperConstructorArguments.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("constructors.kt")
                 public void testConstructors() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/classHeader/constructors.kt");
@@ -13970,6 +14033,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("delegation.kt")
                 public void testDelegation() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/classHeader/delegation.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("objectParents.kt")
+                public void testObjectParents() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/classHeader/objectParents.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("objectSuperConstructorArguments.kt")
+                public void testObjectSuperConstructorArguments() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/classHeader/objectSuperConstructorArguments.kt");
                     doTest(fileName);
                 }
 
@@ -14180,6 +14255,45 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     public void testStaticsFromjavaAfterKotlin() throws Exception {
                         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/inheritance/statics/staticsFromjavaAfterKotlin.kt");
                         doTest(fileName);
+                    }
+
+                    @TestMetadata("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject")
+                    @TestDataPath("$PROJECT_ROOT")
+                    @RunWith(JUnit3RunnerWithInners.class)
+                    public static class CompanionObject extends AbstractDiagnosticsTest {
+                        @TestMetadata("accessToStaticMembersOfParentClass.kt")
+                        public void testAccessToStaticMembersOfParentClass() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/accessToStaticMembersOfParentClass.kt");
+                            doTest(fileName);
+                        }
+
+                        @TestMetadata("accessToStaticMembersOfParentClassJKJ.kt")
+                        public void testAccessToStaticMembersOfParentClassJKJ() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/accessToStaticMembersOfParentClassJKJ.kt");
+                            doTest(fileName);
+                        }
+
+                        public void testAllFilesPresentInCompanionObject() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject"), Pattern.compile("^(.+)\\.kt$"), true);
+                        }
+
+                        @TestMetadata("inheritFromContainingClass.kt")
+                        public void testInheritFromContainingClass() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/inheritFromContainingClass.kt");
+                            doTest(fileName);
+                        }
+
+                        @TestMetadata("inheritFromJava.kt")
+                        public void testInheritFromJava() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/inheritFromJava.kt");
+                            doTest(fileName);
+                        }
+
+                        @TestMetadata("inheritFromJavaAfterKotlin.kt")
+                        public void testInheritFromJavaAfterKotlin() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/scopes/inheritance/statics/companionObject/inheritFromJavaAfterKotlin.kt");
+                            doTest(fileName);
+                        }
                     }
                 }
             }
@@ -15470,6 +15584,87 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("smartCastOnReceiver.kt")
                 public void testSmartCastOnReceiver() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/inference/smartCastOnReceiver.kt");
+                    doTest(fileName);
+                }
+            }
+
+            @TestMetadata("compiler/testData/diagnostics/tests/smartCasts/intersectionScope")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class IntersectionScope extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInIntersectionScope() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts/intersectionScope"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("conflictTypeParameters.kt")
+                public void testConflictTypeParameters() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/intersectionScope/conflictTypeParameters.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("conflictingReturnType.kt")
+                public void testConflictingReturnType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/intersectionScope/conflictingReturnType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("flexibleTypes.kt")
+                public void testFlexibleTypes() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/intersectionScope/flexibleTypes.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("mostSpecific.kt")
+                public void testMostSpecific() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/intersectionScope/mostSpecific.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("mostSpecificIrrelevant.kt")
+                public void testMostSpecificIrrelevant() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/intersectionScope/mostSpecificIrrelevant.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("properties.kt")
+                public void testProperties() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/intersectionScope/properties.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("propertiesConflict.kt")
+                public void testPropertiesConflict() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/intersectionScope/propertiesConflict.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("refineReturnType.kt")
+                public void testRefineReturnType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/intersectionScope/refineReturnType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("simple.kt")
+                public void testSimple() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/intersectionScope/simple.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("unstableSmartCast.kt")
+                public void testUnstableSmartCast() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/intersectionScope/unstableSmartCast.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("validTypeParameters.kt")
+                public void testValidTypeParameters() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/intersectionScope/validTypeParameters.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("validTypeParametersNoSmartCast.kt")
+                public void testValidTypeParametersNoSmartCast() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/intersectionScope/validTypeParametersNoSmartCast.kt");
                     doTest(fileName);
                 }
             }
@@ -17000,6 +17195,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("SmartCastImplicitReceiver.kt")
                 public void testSmartCastImplicitReceiver() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/javaProperties/SmartCastImplicitReceiver.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("SyntheticJavaPropertyReference.kt")
+                public void testSyntheticJavaPropertyReference() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/syntheticExtensions/javaProperties/SyntheticJavaPropertyReference.kt");
                     doTest(fileName);
                 }
 

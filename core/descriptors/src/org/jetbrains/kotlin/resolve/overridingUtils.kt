@@ -17,93 +17,67 @@
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.SmartSet
 import java.util.*
 
-fun <TDescriptor : CallableDescriptor> TDescriptor.findTopMostOverriddenDescriptors(): List<TDescriptor> {
+fun <D : CallableDescriptor> D.findTopMostOverriddenDescriptors(): List<D> {
     return DFS.dfs(
             listOf(this),
             { current -> current.overriddenDescriptors },
-            object : DFS.CollectingNodeHandler<CallableDescriptor, CallableDescriptor, ArrayList<TDescriptor>>(ArrayList<TDescriptor>()) {
+            object : DFS.CollectingNodeHandler<CallableDescriptor, CallableDescriptor, ArrayList<D>>(ArrayList<D>()) {
                 override fun afterChildren(current: CallableDescriptor) {
                     if (current.overriddenDescriptors.isEmpty()) {
                         @Suppress("UNCHECKED_CAST")
-                        result.add(current as TDescriptor)
+                        result.add(current as D)
                     }
                 }
             })
 }
 
 
-fun <TDescriptor : CallableDescriptor> TDescriptor.findOriginalTopMostOverriddenDescriptors(): Set<TDescriptor> {
-    return findTopMostOverriddenDescriptors().mapTo(LinkedHashSet<TDescriptor>()) {
+fun <D : CallableDescriptor> D.findOriginalTopMostOverriddenDescriptors(): Set<D> {
+    return findTopMostOverriddenDescriptors().mapTo(LinkedHashSet<D>()) {
         @Suppress("UNCHECKED_CAST")
-        (it.original as TDescriptor)
+        (it.original as D)
     }
 }
 
+/**
+ * @param <H> is something that handles CallableDescriptor inside
+ */
+public fun <H : Any> Collection<H>.selectMostSpecificInEachOverridableGroup(
+        descriptorByHandle: H.() -> CallableDescriptor
+): Collection<H> {
+    if (size <= 1) return this
+    val queue = LinkedList<H>(this)
+    val result = SmartSet.create<H>()
 
-private fun CallableDescriptor.isVar(): Boolean =
-        this is PropertyDescriptor && isVar
+    while (queue.isNotEmpty()) {
+        val nextHandle: H = queue.first()
 
-private fun CallableDescriptor.isVal(): Boolean =
-        this is PropertyDescriptor && !isVar
+        val conflictedHandles = SmartSet.create<H>()
 
-private fun isMostSpecificByReturnTypeAndKind(
-        type: KotlinType,
-        returnTypeOwner: CallableDescriptor,
-        descriptors: Collection<CallableDescriptor>,
-        typeChecker: KotlinTypeChecker
-): Boolean =
-        descriptors.all {
-            otherDescriptor ->
-            otherDescriptor == returnTypeOwner ||
-            (!(returnTypeOwner.isVal() && otherDescriptor.isVar()) &&
-             otherDescriptor.returnType?.let { typeChecker.isSubtypeOf(type, it) } ?: true)
+        val overridableGroup =
+                OverridingUtil.extractMembersOverridableInBothWays(nextHandle, queue, descriptorByHandle) { conflictedHandles.add(it) }
+
+        if (overridableGroup.size == 1 && overridableGroup.isEmpty()) {
+            result.add(overridableGroup.single())
+            continue
         }
 
+        val mostSpecific = OverridingUtil.selectMostSpecificMember(overridableGroup, descriptorByHandle)
+        val mostSpecificDescriptor = mostSpecific.descriptorByHandle()
 
-fun <TDescriptor : CallableDescriptor> getOverriddenWithMostSpecificReturnTypeOrNull(
-        typeChecker: KotlinTypeChecker,
-        descriptors: Collection<TDescriptor>
-): TDescriptor? {
-    val candidates = arrayListOf<TDescriptor>()
-
-    // Need this to avoid recursion on lazy types.
-    if (descriptors.isEmpty()) {
-        return null
-    } else if (descriptors.size == 1) {
-        return descriptors.first()
-    }
-
-    for (descriptor in descriptors) {
-        val returnType = descriptor.returnType ?: continue
-
-        if (isMostSpecificByReturnTypeAndKind(returnType, descriptor, descriptors, typeChecker)) {
-            candidates.add(descriptor)
+        overridableGroup.filterNotTo(conflictedHandles) {
+            OverridingUtil.isMoreSpecific(mostSpecificDescriptor, it.descriptorByHandle())
         }
-        else if (!TypeUtils.canHaveSubtypes(typeChecker, returnType)) {
-            return null
-        }
-    }
 
-    if (candidates.isEmpty()) {
-        return null
-    }
-
-    var withNonErrorReturnType: TDescriptor? = null
-    var withNonFlexibleReturnType: TDescriptor? = null
-    for (candidate in candidates) {
-        val returnType = candidate.returnType ?: continue
-        withNonErrorReturnType = candidate
-        if (!returnType.isFlexible()) {
-            withNonFlexibleReturnType = candidate
+        if (conflictedHandles.isNotEmpty()) {
+            result.addAll(conflictedHandles)
         }
+
+        result.add(mostSpecific)
     }
-    return withNonFlexibleReturnType ?: withNonErrorReturnType
+    return result
 }

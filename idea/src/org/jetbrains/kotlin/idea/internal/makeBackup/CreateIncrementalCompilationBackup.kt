@@ -50,10 +50,6 @@ public class CreateIncrementalCompilationBackup: AnAction("Create backup for deb
         val ZIP_FRACTION = 1.0 - PATCHES_FRACTION - LOGS_FRACTION - PROJECT_SYSTEM_FRACTION
     }
 
-    override fun update(e: AnActionEvent) {
-        e.presentation.isVisible = e.project?.let { incrementalCompilationEnabled(it) } ?: false
-    }
-
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.getProject()!!
         val projectBaseDir = File(project.getBaseDir()!!.getPath())

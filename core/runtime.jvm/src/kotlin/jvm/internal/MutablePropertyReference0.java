@@ -37,6 +37,11 @@ public class MutablePropertyReference0 extends MutablePropertyReference implemen
     }
 
     @Override
+    public Object invoke() {
+        return get();
+    }
+
+    @Override
     public KProperty0.Getter getGetter() {
         return ((KMutableProperty0) getReflected()).getGetter();
     }

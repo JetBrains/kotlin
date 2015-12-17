@@ -31,10 +31,10 @@ import p.*
 
 fun test(b: B?) {
     if (b !is C)  return
-    <!DEBUG_INFO_SMARTCAST!>b<!>?.foo("")
+    b?.foo("")
 }
 
 fun test1(b: B?) {
     if (b !is C)  return
-    <!DEBUG_INFO_SMARTCAST!>b<!>?.foo<String>("")
+    b?.foo<String>("")
 }

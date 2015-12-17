@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.resolve.PlatformTypesMappedToKotlinChecker
 import org.jetbrains.kotlin.resolve.QualifiedExpressionResolver
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.collectionUtils.concat
@@ -180,7 +179,7 @@ class LazyImportScope(
         val visibility = descriptor.getVisibility()
         val includeVisible = filteringKind == FilteringKind.VISIBLE_CLASSES
         if (!visibility.mustCheckInImports()) return includeVisible
-        return Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, descriptor, importResolver.moduleDescriptor) == includeVisible
+        return Visibilities.isVisibleWithIrrelevantReceiver(descriptor, importResolver.moduleDescriptor) == includeVisible
     }
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {

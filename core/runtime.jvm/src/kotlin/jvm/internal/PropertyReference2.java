@@ -31,6 +31,11 @@ public class PropertyReference2 extends PropertyReference implements KProperty2 
     }
 
     @Override
+    public Object invoke(Object receiver1, Object receiver2) {
+        return get(receiver1, receiver2);
+    }
+
+    @Override
     public KProperty2.Getter getGetter() {
         return ((KProperty2) getReflected()).getGetter();
     }

@@ -26,7 +26,8 @@ internal class TypeMappingMode private constructor(
         val skipDeclarationSiteWildcards: Boolean = false,
         val skipDeclarationSiteWildcardsIfPossible: Boolean = false,
         private val genericArgumentMode: TypeMappingMode? = null,
-        private val genericContravariantArgumentMode: TypeMappingMode? = genericArgumentMode
+        private val genericContravariantArgumentMode: TypeMappingMode? = genericArgumentMode,
+        private val genericInvariantArgumentMode: TypeMappingMode? = genericArgumentMode
 ) {
     companion object {
         /**
@@ -86,11 +87,18 @@ internal class TypeMappingMode private constructor(
                 else
                     null
 
+            val invariantArgumentMode =
+                    if (canBeUsedInSupertypePosition)
+                        getOptimalModeForSignaturePart(type, isForAnnotationParameter, canBeUsedInSupertypePosition = false)
+                    else
+                        null
+
             return TypeMappingMode(
                     isForAnnotationParameter = isForAnnotationParameter,
                     skipDeclarationSiteWildcards = !canBeUsedInSupertypePosition,
                     skipDeclarationSiteWildcardsIfPossible = true,
-                    genericContravariantArgumentMode = contravariantArgumentMode)
+                    genericContravariantArgumentMode = contravariantArgumentMode,
+                    genericInvariantArgumentMode = invariantArgumentMode)
         }
 
         @JvmStatic
@@ -107,6 +115,7 @@ internal class TypeMappingMode private constructor(
     fun toGenericArgumentMode(effectiveVariance: Variance): TypeMappingMode =
             when (effectiveVariance) {
                 Variance.IN_VARIANCE -> genericContravariantArgumentMode ?: this
+                Variance.INVARIANT   -> genericInvariantArgumentMode ?: this
                 else -> genericArgumentMode ?: this
             }
 }

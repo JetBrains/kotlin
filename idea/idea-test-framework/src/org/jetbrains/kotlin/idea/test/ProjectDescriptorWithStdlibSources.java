@@ -36,6 +36,8 @@ public class ProjectDescriptorWithStdlibSources extends KotlinWithJdkAndRuntimeL
         assert library != null;
         Library.ModifiableModel modifiableModel = library.getModifiableModel();
         modifiableModel.addRoot(VfsUtil.getUrlForLibraryRoot(new File("libraries/stdlib/src")), OrderRootType.SOURCES);
+        modifiableModel.addRoot(VfsUtil.getUrlForLibraryRoot(new File("core/builtins/src")), OrderRootType.SOURCES);
+        modifiableModel.addRoot(VfsUtil.getUrlForLibraryRoot(new File("core/builtins/native")), OrderRootType.SOURCES);
         modifiableModel.commit();
     }
 }

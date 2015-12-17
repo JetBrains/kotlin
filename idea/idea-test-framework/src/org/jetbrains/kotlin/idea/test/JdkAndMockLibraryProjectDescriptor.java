@@ -1,4 +1,5 @@
 /*
+/*
  * Copyright 2010-2015 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,6 +24,7 @@ import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.util.io.FileUtilRt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.test.MockLibraryUtil;
+import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.File;
 
@@ -31,31 +33,41 @@ public class JdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
 
     private final String sourcesPath;
     private final boolean withSources;
+    private final boolean withRuntime;
     private final boolean isJsLibrary;
 
     public JdkAndMockLibraryProjectDescriptor(String sourcesPath, boolean withSources) {
-        this(sourcesPath, withSources, false);
+        this(sourcesPath, withSources, false, false);
     }
 
-    public JdkAndMockLibraryProjectDescriptor(String sourcesPath, boolean withSources, boolean isJsLibrary) {
+    public JdkAndMockLibraryProjectDescriptor(String sourcesPath, boolean withSources, boolean withRuntime, boolean isJsLibrary) {
         this.sourcesPath = sourcesPath;
         this.withSources = withSources;
+        this.withRuntime = withRuntime;
         this.isJsLibrary = isJsLibrary;
     }
 
     @Override
     public void configureModule(@NotNull Module module, @NotNull ModifiableRootModel model) {
         File libraryJar = MockLibraryUtil.compileLibraryToJar(sourcesPath, LIBRARY_NAME, withSources, isJsLibrary);
-        String jarUrl = "jar://" + FileUtilRt.toSystemIndependentName(libraryJar.getAbsolutePath()) + "!/";
+        String jarUrl = getJarUrl(libraryJar);
 
         Library.ModifiableModel libraryModel = model.getModuleLibraryTable().getModifiableModel().createLibrary(LIBRARY_NAME).getModifiableModel();
         libraryModel.addRoot(jarUrl, OrderRootType.CLASSES);
+        if (withRuntime) {
+            libraryModel.addRoot(getJarUrl(PathUtil.getKotlinPathsForDistDirectory().getRuntimePath()), OrderRootType.CLASSES);
+        }
         if (withSources) {
             libraryModel.addRoot(jarUrl + "src/", OrderRootType.SOURCES);
         }
+
         libraryModel.commit();
     }
 
+    @NotNull
+    private static String getJarUrl(@NotNull File libraryJar) {
+        return "jar://" + FileUtilRt.toSystemIndependentName(libraryJar.getAbsolutePath()) + "!/";
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -65,15 +77,19 @@ public class JdkAndMockLibraryProjectDescriptor extends KotlinLightProjectDescri
         JdkAndMockLibraryProjectDescriptor that = (JdkAndMockLibraryProjectDescriptor) o;
 
         if (withSources != that.withSources) return false;
-        if (sourcesPath != null ? !sourcesPath.equals(that.sourcesPath) : that.sourcesPath != null) return false;
+        if (withRuntime != that.withRuntime) return false;
+        if (isJsLibrary != that.isJsLibrary) return false;
+        if (!sourcesPath.equals(that.sourcesPath)) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = sourcesPath != null ? sourcesPath.hashCode() : 0;
+        int result = sourcesPath.hashCode();
         result = 31 * result + (withSources ? 1 : 0);
+        result = 31 * result + (withRuntime ? 1 : 0);
+        result = 31 * result + (isJsLibrary ? 1 : 0);
         return result;
     }
 }

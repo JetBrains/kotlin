@@ -39,9 +39,7 @@ class AddTypeToLHSOfCallableReferenceFix(
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val resolvedCall = element.callableReference.getResolvedCall(element.analyze(BodyResolveMode.PARTIAL)) ?: return
         val receiver = with(resolvedCall) {
-            if (dispatchReceiver.exists()) dispatchReceiver
-            else if (extensionReceiver.exists()) extensionReceiver as ReceiverValue
-            else return
+            dispatchReceiver ?: extensionReceiver as? ReceiverValue ?: return
         }
         val type = KtPsiFactory(project).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(receiver.type))
         element.setTypeReference(type)

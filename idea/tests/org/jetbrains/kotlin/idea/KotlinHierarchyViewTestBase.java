@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea;
 
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.testFramework.codeInsight.hierarchy.HierarchyViewTestBase;
+import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 public abstract class KotlinHierarchyViewTestBase extends HierarchyViewTestBase {
@@ -25,10 +26,12 @@ public abstract class KotlinHierarchyViewTestBase extends HierarchyViewTestBase 
     protected void setUp() throws Exception {
         super.setUp();
         VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory());
+        ConfigLibraryUtil.configureKotlinRuntime(myModule);
     }
 
     @Override
     protected void tearDown() throws Exception {
+        ConfigLibraryUtil.unConfigureKotlinRuntime(myModule);
         VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory());
         super.tearDown();
     }

@@ -28,6 +28,6 @@ public abstract class AbstractReferenceResolveWithLibTest extends AbstractRefere
         if (PluginTestCaseBase.isAllFilesPresentTest(getTestName(true))) {
             return null;
         }
-        return new JdkAndMockLibraryProjectDescriptor(TEST_DATA_PATH + "/" + getTestName(true) + "Src", false);
+        return new JdkAndMockLibraryProjectDescriptor(TEST_DATA_PATH + "/" + getTestName(true) + "Src", false, true, false);
     }
 }

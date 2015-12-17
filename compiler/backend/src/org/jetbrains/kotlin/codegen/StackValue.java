@@ -502,19 +502,19 @@ public abstract class StackValue {
         }
 
         ReceiverValue callExtensionReceiver = (ReceiverValue) resolvedCall.getExtensionReceiver();
-        if (callDispatchReceiver.exists() || callExtensionReceiver.exists()
+        if (callDispatchReceiver != null || callExtensionReceiver != null
             || isLocalFunCall(callableMethod) || isCallToMemberObjectImportedByName(resolvedCall)) {
             ReceiverParameterDescriptor dispatchReceiverParameter = descriptor.getDispatchReceiverParameter();
             ReceiverParameterDescriptor extensionReceiverParameter = descriptor.getExtensionReceiverParameter();
 
             if (descriptor.getOriginal() instanceof SamAdapterExtensionFunctionDescriptor) {
                 callDispatchReceiver = callExtensionReceiver;
-                callExtensionReceiver = ReceiverValue.NO_RECEIVER;
+                callExtensionReceiver = null;
                 dispatchReceiverParameter = extensionReceiverParameter;
                 extensionReceiverParameter = null;
             }
 
-            boolean hasExtensionReceiver = callExtensionReceiver.exists();
+            boolean hasExtensionReceiver = callExtensionReceiver != null;
             StackValue dispatchReceiver = platformStaticCallIfPresent(
                     genReceiver(hasExtensionReceiver ? none() : receiver, codegen, resolvedCall, callableMethod, callDispatchReceiver, false),
                     descriptor
@@ -532,11 +532,11 @@ public abstract class StackValue {
             @NotNull ExpressionCodegen codegen,
             @NotNull ResolvedCall resolvedCall,
             @Nullable Callable callableMethod,
-            ReceiverValue receiverValue,
+            @Nullable ReceiverValue receiverValue,
             boolean isExtension
     ) {
         if (receiver == none()) {
-            if (receiverValue.exists()) {
+            if (receiverValue != null) {
                 return codegen.generateReceiverValue(receiverValue, false);
             }
             else if (isLocalFunCall(callableMethod) && !isExtension) {
@@ -548,7 +548,7 @@ public abstract class StackValue {
                 return singleton(((ImportedFromObjectCallableDescriptor) resolvedCall.getResultingDescriptor()).getContainingObject(), codegen.typeMapper);
             }
         }
-        else if (receiverValue.exists()) {
+        else if (receiverValue != null) {
             return receiver;
         }
         return none();
@@ -834,7 +834,7 @@ public abstract class StackValue {
 
             ReceiverValue receiverParameter = (ReceiverValue) resolvedGetCall.getExtensionReceiver();
             int receiverIndex = -1;
-            if (receiverParameter.exists()) {
+            if (receiverParameter != null) {
                 Type type = codegen.typeMapper.mapType(receiverParameter.getType());
                 receiverIndex = frame.enterTemp(type);
                 v.store(receiverIndex, type);
@@ -842,7 +842,7 @@ public abstract class StackValue {
 
             ReceiverValue dispatchReceiver = resolvedGetCall.getDispatchReceiver();
             int thisIndex = -1;
-            if (dispatchReceiver.exists()) {
+            if (dispatchReceiver != null) {
                 thisIndex = frame.enterTemp(OBJECT_TYPE);
                 v.store(thisIndex, OBJECT_TYPE);
             }
@@ -863,14 +863,14 @@ public abstract class StackValue {
                 throw new UnsupportedOperationException();
             }
 
-            if (resolvedSetCall.getDispatchReceiver().exists()) {
-                if (resolvedSetCall.getExtensionReceiver().exists()) {
+            if (resolvedSetCall.getDispatchReceiver() != null) {
+                if (resolvedSetCall.getExtensionReceiver() != null) {
                     codegen.generateReceiverValue(resolvedSetCall.getDispatchReceiver(), false).put(OBJECT_TYPE, v);
                 }
                 v.load(realReceiverIndex, realReceiverType);
             }
             else {
-                if (resolvedSetCall.getExtensionReceiver().exists()) {
+                if (resolvedSetCall.getExtensionReceiver() != null) {
                     v.load(realReceiverIndex, realReceiverType);
                 }
                 else {
@@ -970,8 +970,8 @@ public abstract class StackValue {
                 }
             }
 
-            if (call.getDispatchReceiver().exists()) {
-                if (call.getExtensionReceiver().exists()) {
+            if (call.getDispatchReceiver() != null) {
+                if (call.getExtensionReceiver() != null) {
                     return false;
                 }
             }

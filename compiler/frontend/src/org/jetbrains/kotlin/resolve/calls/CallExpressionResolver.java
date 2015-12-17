@@ -112,7 +112,7 @@ public class CallExpressionResolver {
 
     @Nullable
     private KotlinType getVariableType(
-            @NotNull KtSimpleNameExpression nameExpression, @NotNull Receiver receiver,
+            @NotNull KtSimpleNameExpression nameExpression, @Nullable Receiver receiver,
             @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context, @NotNull boolean[] result
     ) {
         TemporaryTraceAndCache temporaryForVariable = TemporaryTraceAndCache.create(
@@ -143,7 +143,7 @@ public class CallExpressionResolver {
 
     @NotNull
     public KotlinTypeInfo getSimpleNameExpressionTypeInfo(
-            @NotNull KtSimpleNameExpression nameExpression, @NotNull Receiver receiver,
+            @NotNull KtSimpleNameExpression nameExpression, @Nullable Receiver receiver,
             @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context
     ) {
         boolean[] result = new boolean[1];
@@ -190,7 +190,7 @@ public class CallExpressionResolver {
 
     @NotNull
     public KotlinTypeInfo getCallExpressionTypeInfo(
-            @NotNull KtCallExpression callExpression, @NotNull ReceiverValue receiver,
+            @NotNull KtCallExpression callExpression, @Nullable ReceiverValue receiver,
             @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context
     ) {
         KotlinTypeInfo typeInfo = getCallExpressionTypeInfoWithoutFinalTypeCheck(callExpression, receiver, callOperationNode, context);
@@ -206,7 +206,7 @@ public class CallExpressionResolver {
      */
     @NotNull
     private KotlinTypeInfo getCallExpressionTypeInfoWithoutFinalTypeCheck(
-            @NotNull KtCallExpression callExpression, @NotNull Receiver receiver,
+            @NotNull KtCallExpression callExpression, @Nullable Receiver receiver,
             @Nullable ASTNode callOperationNode, @NotNull ExpressionTypingContext context
     ) {
         boolean[] result = new boolean[1];
@@ -356,7 +356,7 @@ public class CallExpressionResolver {
             public Boolean invoke(KtSimpleNameExpression nameExpression) {
                 TemporaryTraceAndCache temporaryForVariable = TemporaryTraceAndCache.create(
                         context, "trace to resolve as local variable or property", nameExpression);
-                Call call = CallMaker.makePropertyCall(ReceiverValue.NO_RECEIVER, null, nameExpression);
+                Call call = CallMaker.makePropertyCall(null, null, nameExpression);
                 BasicCallResolutionContext contextForVariable = BasicCallResolutionContext.create(
                         context.replaceTraceAndCache(temporaryForVariable),
                         call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS);
@@ -422,7 +422,7 @@ public class CallExpressionResolver {
                 contextForSelector = baseContext.replaceDataFlowInfo(receiverDataFlowInfo);
             }
 
-            if (receiver.exists() && receiver instanceof ReceiverValue) {
+            if (receiver instanceof ReceiverValue) {
                 DataFlowValue receiverDataFlowValue = DataFlowValueFactory.createDataFlowValue((ReceiverValue) receiver, context);
                 // Additional "receiver != null" information
                 // Should be applied if we consider a safe call

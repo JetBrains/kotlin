@@ -21,14 +21,11 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.FAKE_OVERRIDE
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.*
 import org.jetbrains.kotlin.descriptors.isOverridable
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
-import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
 import org.jetbrains.kotlin.lexer.KtTokens.OPEN_KEYWORD
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -57,7 +54,7 @@ public class MakeOverriddenMemberOpenFix(declaration: KtDeclaration) : KotlinQui
                 descriptor)) {
             assert(overriddenDescriptor.kind == DECLARATION) { "Can only be applied to declarations." }
             val overriddenMember = DescriptorToSourceUtils.descriptorToDeclaration(overriddenDescriptor)
-            if (overriddenMember == null || !QuickFixUtil.canModifyElement(overriddenMember) || overriddenMember !is KtCallableDeclaration) {
+            if (overriddenMember == null || !overriddenMember.canRefactor() || overriddenMember !is KtCallableDeclaration) {
                 return false
             }
             val containingDeclarationName = overriddenDescriptor.containingDeclaration.name.asString()

@@ -66,8 +66,6 @@ public fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCalla
         dataFlowInfo: DataFlowInfo,
         containingDeclarationOrModule: DeclarationDescriptor
 ): Collection<TCallable> {
-    if (!receiver.exists()) return listOf()
-
     var types = SmartCastManager().getSmartCastVariants(receiver, bindingContext, containingDeclarationOrModule, dataFlowInfo)
     return substituteExtensionIfCallable(types, callType)
 }
@@ -101,7 +99,7 @@ public fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCalla
     }
 }
 
-public fun ReceiverValue.getThisReceiverOwner(bindingContext: BindingContext): DeclarationDescriptor? {
+public fun ReceiverValue?.getThisReceiverOwner(bindingContext: BindingContext): DeclarationDescriptor? {
     return when (this) {
         is ExpressionReceiver -> {
             val thisRef = (KtPsiUtil.deparenthesize(this.expression) as? KtThisExpression)?.getInstanceReference() ?: return null

@@ -1,4 +1,5 @@
 // "Create extension function 'foo'" "true"
+// WITH_RUNTIME
 fun <T, U> T.map(f: T.() -> U) = f()
 
 fun consume(s: String) {}

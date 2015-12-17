@@ -17,13 +17,10 @@
 package org.jetbrains.kotlin.idea.internal.makeBackup
 
 import com.intellij.history.LocalHistory
-import com.intellij.openapi.compiler.CompileTask
 import com.intellij.openapi.compiler.CompileContext
-import java.util.Random
+import com.intellij.openapi.compiler.CompileTask
 import com.intellij.openapi.util.Key
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.components.ServiceManager
-import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerWorkspaceSettings
+import java.util.*
 
 val random = Random()
 
@@ -32,8 +29,6 @@ val HISTORY_LABEL_KEY = Key.create<String>("history label")
 public class MakeBackupCompileTask: CompileTask {
     override fun execute(context: CompileContext?): Boolean {
         val project = context!!.getProject()!!
-
-        if (!incrementalCompilationEnabled(project)) return true
 
         val localHistory = LocalHistory.getInstance()!!
         val label = HISTORY_LABEL_PREFIX + Integer.toHexString(random.nextInt())
@@ -44,8 +39,4 @@ public class MakeBackupCompileTask: CompileTask {
         return true
     }
 
-}
-
-fun incrementalCompilationEnabled(project: Project): Boolean {
-    return ServiceManager.getService(project, javaClass<KotlinCompilerWorkspaceSettings>()).incrementalCompilationEnabled
 }

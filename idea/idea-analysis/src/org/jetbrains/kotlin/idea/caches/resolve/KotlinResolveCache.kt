@@ -23,7 +23,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.GlobalContext
@@ -153,7 +152,7 @@ private object KotlinResolveDataProvider {
             }
 
             val file = analyzableElement.getContainingKtFile()
-            if (LightClassUtil.belongsToKotlinBuiltIns(file) || file.getModuleInfo() is LibrarySourceInfo) {
+            if (file.getModuleInfo() is LibrarySourceInfo) {
                 // Library sources: mark file to skip
                 file.putUserData(LibrarySourceHacks.SKIP_TOP_LEVEL_MEMBERS, true)
             }

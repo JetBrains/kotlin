@@ -410,20 +410,22 @@
                 <echo message="Recompiling intellij-markdown manually"/>
                 <length file="dependencies/markdown.jar" property="old.markdown.size"/>
                 <echo message="Size of the incompatible jar: ${old.markdown.size} bytes"/>
+                <local name="markdown.dir" />
+                <property name="markdown.dir" value="dependencies/intellij-markdown-forKotlin/" />
 
                 <get src="https://github.com/valich/intellij-markdown/archive/forKotlin.zip"
                      dest="dependencies/download/markdown-sources.zip" usetimestamp="true"/>
 
-                <delete dir="dependencies/intellij-markdown-master" failonerror="false"/>
+                <delete dir="${markdown.dir}" failonerror="false"/>
                 <unzip src="dependencies/download/markdown-sources.zip" dest="dependencies"/>
                 <exec executable="dependencies/bootstrap-compiler/Kotlin/kotlinc/bin/${kotlinc.executable.path}" failonerror="true">
-                    <arg value="dependencies/intellij-markdown-master/src"/>
+                    <arg value="${markdown.dir}/src"/>
                     <arg value="-d"/>
-                    <arg value="dependencies/intellij-markdown-master/out"/>
+                    <arg value="${markdown.dir}/out"/>
                 </exec>
 
-                <javac srcdir="dependencies/intellij-markdown-master/src"
-                       destdir="dependencies/intellij-markdown-master/out" includeantruntime="false">
+                <javac srcdir="${markdown.dir}/src"
+                       destdir="${markdown.dir}/out" includeantruntime="false">
                     <classpath>
                         <path location="dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-runtime.jar"/>
                     </classpath>
@@ -431,7 +433,7 @@
 
                 <delete file="dependencies/markdown.jar" failonerror="false"/>
                 <jar jarfile="dependencies/markdown.jar">
-                    <fileset dir="dependencies/intellij-markdown-master/out" includes="**"/>
+                    <fileset dir="${markdown.dir}/out" includes="**"/>
                 </jar>
 
                 <echo message="Compilation of intellij-markdown finished"/>

@@ -1,0 +1,32 @@
+package
+
+public var x: A
+public fun test(): kotlin.Unit
+
+public interface A {
+    public open fun baz(/*0*/ x: kotlin.Any): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun foo(): kotlin.CharSequence?
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface B {
+    public open fun baz(/*0*/ x: kotlin.Int): kotlin.String
+    public open fun baz(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun foo(): kotlin.String
+    public abstract fun foobar(): kotlin.CharSequence?
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface C {
+    public open fun baz(/*0*/ x: kotlin.Int): kotlin.String
+    public open fun baz(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun foo(): kotlin.String
+    public abstract fun foobar(): kotlin.String
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

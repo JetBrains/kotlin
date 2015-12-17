@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.CallResolverUtilKt;
 import org.jetbrains.kotlin.resolve.dataClassUtils.DataClassUtilsKt;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.utils.HashSetUtil;
@@ -1028,7 +1027,7 @@ public class OverrideResolver {
             all.addAll((Collection) supertype.getMemberScope().getContributedVariables(declared.getName(), NoLookupLocation.WHEN_CHECK_OVERRIDES));
             for (CallableMemberDescriptor fromSuper : all) {
                 if (OverridingUtil.DEFAULT.isOverridableBy(fromSuper, declared, null).getResult() == OVERRIDABLE) {
-                    if (Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, fromSuper, declared)) {
+                    if (Visibilities.isVisibleWithIrrelevantReceiver(fromSuper, declared)) {
                         throw new IllegalStateException("Descriptor " + fromSuper + " is overridable by " + declared +
                                                         " and visible but does not appear in its getOverriddenDescriptors()");
                     }

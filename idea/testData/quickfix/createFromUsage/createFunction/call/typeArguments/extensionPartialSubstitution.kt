@@ -1,4 +1,5 @@
 // "Create extension function 'foo'" "true"
+// WITH_RUNTIME
 
 class A<T>(val items: List<T>) {
     fun test(): Int {

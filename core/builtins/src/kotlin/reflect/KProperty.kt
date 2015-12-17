@@ -65,7 +65,7 @@ public interface KMutableProperty<R> : KProperty<R> {
  * Such property is either originally declared in a receiverless context such as a package,
  * or has the receiver bound to it.
  */
-public interface KProperty0<out R> : KProperty<R> {
+public interface KProperty0<out R> : KProperty<R>, () -> R {
     /**
      * Returns the current value of the property.
      */
@@ -99,7 +99,7 @@ public interface KMutableProperty0<R> : KProperty0<R>, KMutableProperty<R> {
  * @param T the type of the receiver which should be used to obtain the value of the property.
  * @param R the type of the property.
  */
-public interface KProperty1<T, out R> : KProperty<R> {
+public interface KProperty1<T, out R> : KProperty<R>, (T) -> R {
     /**
      * Returns the current value of the property.
      *
@@ -144,7 +144,7 @@ public interface KMutableProperty1<T, R> : KProperty1<T, R>, KMutableProperty<R>
  *        the type of the extension receiver.
  * @param R the type of the property.
  */
-public interface KProperty2<D, E, out R> : KProperty<R> {
+public interface KProperty2<D, E, out R> : KProperty<R>, (D, E) -> R {
     /**
      * Returns the current value of the property. In case of the extension property in a class,
      * the instance of the class should be passed first and the instance of the extension receiver second.

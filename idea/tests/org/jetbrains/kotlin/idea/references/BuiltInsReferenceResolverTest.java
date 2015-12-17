@@ -16,37 +16,31 @@
 
 package org.jetbrains.kotlin.idea.references;
 
-import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
-import com.intellij.psi.*;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.testFramework.ResolveTestCase;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiPolyVariantReference;
+import com.intellij.testFramework.LightProjectDescriptor;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBodies;
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde;
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.test.InTextDirectivesUtils;
+import org.jetbrains.kotlin.test.ReferenceUtils;
+import org.junit.Assert;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class BuiltInsReferenceResolverTest extends ResolveTestCase {
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory());
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory());
-        super.tearDown();
-    }
-
+public class BuiltInsReferenceResolverTest extends KotlinLightCodeInsightFixtureTestCase {
     public void testAny() throws Exception {
         doTest();
     }
@@ -85,7 +79,7 @@ public class BuiltInsReferenceResolverTest extends ResolveTestCase {
 
     public void testAllReferencesResolved() {
         for (DeclarationDescriptor descriptor : getAllStandardDescriptors()) {
-            assertNotNull("Can't resolve " + descriptor, DescriptorToSourceUtilsIde.INSTANCE$.getAnyDeclaration(getProject(), descriptor));
+            assertNotNull("Can't resolve " + descriptor, DescriptorToSourceUtilsIde.INSTANCE.getAnyDeclaration(getProject(), descriptor));
         }
     }
 
@@ -99,7 +93,8 @@ public class BuiltInsReferenceResolverTest extends ResolveTestCase {
                 @Override
                 public Void visitClassDescriptor(ClassDescriptor descriptor, Void data) {
                     descriptors.add(descriptor);
-                    for (DeclarationDescriptor classMember : DescriptorUtils.getAllDescriptors(descriptor.getDefaultType().getMemberScope())) {
+                    for (DeclarationDescriptor classMember : DescriptorUtils
+                            .getAllDescriptors(descriptor.getDefaultType().getMemberScope())) {
                         classMember.acceptVoid(this);
                     }
                     return null;
@@ -117,27 +112,41 @@ public class BuiltInsReferenceResolverTest extends ResolveTestCase {
     }
 
     private void doTest() throws Exception {
-        PsiPolyVariantReference reference = (PsiPolyVariantReference) configureByFile(getTestName(true) + ".kt");
+        PsiPolyVariantReference reference = (PsiPolyVariantReference) myFixture.getReferenceAtCaretPosition(getTestName(true) + ".kt");
+        assert reference != null;
         PsiElement resolved = reference.resolve();
         assertNotNull(resolved);
         assertEquals(1, reference.multiResolve(false).length);
 
-        List<PsiComment> comments = PsiTreeUtil.getChildrenOfTypeAsList(getFile(), PsiComment.class);
-        String[] expectedTarget = comments.get(comments.size() - 1).getText().substring(2).split(":");
-        assertEquals(2, expectedTarget.length);
-        String expectedFile = expectedTarget[0];
-        String expectedName = expectedTarget[1];
+        String text = myFixture.getFile().getText();
+        String expectedBinaryFile = InTextDirectivesUtils.findStringWithPrefixes(text, "// BINARY:");
+        String expectedSourceFile = InTextDirectivesUtils.findStringWithPrefixes(text, "// SRC:");
+        String expectedTarget = InTextDirectivesUtils.findStringWithPrefixes(text, "// TARGET:");
 
+        assertEquals(expectedBinaryFile, getFileWithDir(resolved));
+        assertEquals(expectedTarget, ReferenceUtils.renderAsGotoImplementation(resolved));
+        PsiElement srcElement = resolved.getNavigationElement();
+        Assert.assertNotEquals(srcElement, resolved);
+        assertEquals(expectedSourceFile, getFileWithDir(srcElement));
+        assertEquals(expectedTarget, ReferenceUtils.renderAsGotoImplementation(srcElement));
+    }
+
+    @NotNull
+    private static String getFileWithDir(@NotNull PsiElement resolved) {
         PsiFile targetFile = resolved.getContainingFile();
         PsiDirectory targetDir = targetFile.getParent();
         assertNotNull(targetDir);
-        assertEquals(expectedFile, targetDir.getName() + "/" + targetFile.getName());
-        assertInstanceOf(resolved, PsiNamedElement.class);
-        assertEquals(expectedName, ((PsiNamedElement) resolved).getName());
+        return targetDir.getName() + "/" + targetFile.getName();
     }
 
     @Override
     protected String getTestDataPath() {
         return PluginTestCaseBase.getTestDataPathBase() + "/resolve/builtins/";
+    }
+
+    @NotNull
+    @Override
+    protected LightProjectDescriptor getProjectDescriptor() {
+        return ProjectDescriptorWithStdlibSources.INSTANCE;
     }
 }

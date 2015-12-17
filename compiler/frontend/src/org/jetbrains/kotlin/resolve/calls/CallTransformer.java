@@ -78,7 +78,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
     ) {
         ResolvedCallImpl<D> candidateCall = ResolvedCallImpl.create(candidate, candidateTrace, task.tracing, task.dataFlowInfoForArguments);
         return Collections.singleton(CallCandidateResolutionContext.create(candidateCall, task, candidateTrace, task.tracing, task.call,
-                                                                           ReceiverValue.NO_RECEIVER, candidateResolveMode));
+                                                                           null, candidateResolveMode));
     }
 
     /**
@@ -147,10 +147,10 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
                 return null;
             }
 
-            @NotNull
+            @Nullable
             @Override
             public ReceiverValue getExplicitReceiver() {
-                return ReceiverValue.NO_RECEIVER;
+                return null;
             }
         };
     }
@@ -169,7 +169,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
 
             assert candidate.getDescriptor() instanceof VariableDescriptor;
 
-            boolean hasReceiver = candidate.getReceiverArgument().exists();
+            boolean hasReceiver = candidate.getReceiverArgument() != null;
             Call variableCall = stripCallArguments(task.call);
             ResolutionCandidate<CallableDescriptor> variableCandidate = ResolutionCandidate.create(
                     variableCall,
@@ -181,18 +181,18 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
             if (!hasReceiver) {
                 CallCandidateResolutionContext<CallableDescriptor> context = CallCandidateResolutionContext.create(
                         ResolvedCallImpl.create(variableCandidate, candidateTrace, task.tracing, task.dataFlowInfoForArguments),
-                        task, candidateTrace, task.tracing, variableCall, ReceiverValue.NO_RECEIVER, candidateResolveMode);
+                        task, candidateTrace, task.tracing, variableCall, null, candidateResolveMode);
                 return Collections.singleton(context);
             }
             CallCandidateResolutionContext<CallableDescriptor> contextWithReceiver = createContextWithChainedTrace(
-                    variableCandidate, variableCall, candidateTrace, task, ReceiverValue.NO_RECEIVER, candidateResolveMode);
+                    variableCandidate, variableCall, candidateTrace, task, null, candidateResolveMode);
 
             Call variableCallWithoutReceiver = stripReceiver(variableCall);
             ResolutionCandidate<CallableDescriptor> candidateWithoutReceiver = ResolutionCandidate.create(
                     variableCallWithoutReceiver,
                     candidate.getDescriptor(),
                     candidate.getDispatchReceiver(),
-                    ReceiverValue.NO_RECEIVER,
+                    null,
                     ExplicitReceiverKind.NO_EXPLICIT_RECEIVER, null);
 
             CallCandidateResolutionContext<CallableDescriptor> contextWithoutReceiver = createContextWithChainedTrace(
@@ -204,7 +204,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
 
         private CallCandidateResolutionContext<CallableDescriptor> createContextWithChainedTrace(
                 @NotNull ResolutionCandidate<CallableDescriptor> candidate, @NotNull Call call, @NotNull TemporaryBindingTrace temporaryTrace,
-                @NotNull ResolutionTask<CallableDescriptor, FunctionDescriptor> task, @NotNull Receiver receiverValue,
+                @NotNull ResolutionTask<CallableDescriptor, FunctionDescriptor> task, @Nullable Receiver receiverValue,
                 @NotNull CandidateResolveMode candidateResolveMode
         ) {
             ChainedTemporaryBindingTrace chainedTrace = ChainedTemporaryBindingTrace.create(temporaryTrace, "chained trace to resolve candidate", candidate);
@@ -268,7 +268,7 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
         private final KtSimpleNameExpression fakeInvokeExpression;
 
         public CallForImplicitInvoke(
-                @NotNull Receiver explicitExtensionReceiver,
+                @Nullable Receiver explicitExtensionReceiver,
                 @NotNull ExpressionReceiver calleeExpressionAsDispatchReceiver,
                 @NotNull Call call
         ) {
@@ -287,10 +287,10 @@ public class CallTransformer<D extends CallableDescriptor, F extends D> {
             // if an explicit receiver corresponds to the implicit invoke, there is a corresponding call operation node:
             // a.b() or a?.b() (where b has an extension function type);
             // otherwise it's implicit
-            return explicitExtensionReceiver.exists() ? super.getCallOperationNode() : null;
+            return explicitExtensionReceiver != null ? super.getCallOperationNode() : null;
         }
 
-        @NotNull
+        @Nullable
         @Override
         public Receiver getExplicitReceiver() {
             return explicitExtensionReceiver;

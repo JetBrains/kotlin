@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.findOriginalTopMostOverriddenDescriptors
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 
@@ -55,7 +54,7 @@ private fun DeclarationDescriptorWithVisibility.isVisible(
         bindingContext: BindingContext? = null,
         resolutionScope: LexicalScope? = null
 ): Boolean {
-    if (Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, this, from)) return true
+    if (Visibilities.isVisibleWithIrrelevantReceiver(this, from)) return true
 
     if (bindingContext == null || resolutionScope == null) return false
 

@@ -30,6 +30,6 @@ fun test(a: A?) {
 
     if (a is B && a is D) {
         //when it's resolved, the message should be 'Smart cast to A'
-        a.<error>foo</error>
+        <info>a</info>.<error>foo</error>
     }
 }

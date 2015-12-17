@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
@@ -150,7 +149,7 @@ private fun KotlinPullUpData.checkVisibility(
     fun reportConflictIfAny(targetDescriptor: DeclarationDescriptor) {
         val target = (targetDescriptor as? DeclarationDescriptorWithSource)?.source?.getPsi() ?: return
         if (targetDescriptor is DeclarationDescriptorWithVisibility
-            && !Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, targetDescriptor, targetClassDescriptor)) {
+            && !Visibilities.isVisibleWithIrrelevantReceiver(targetDescriptor, targetClassDescriptor)) {
             val message = RefactoringBundle.message(
                     "0.uses.1.which.is.not.accessible.from.the.superclass",
                     memberDescriptor.renderForConflicts(),

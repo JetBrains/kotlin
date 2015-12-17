@@ -365,16 +365,14 @@ public class SourceNavigationHelper {
 
     @Nullable
     public static PsiClass getOriginalPsiClassOrCreateLightClass(@NotNull KtClassOrObject classOrObject) {
-        if (LightClassUtil.INSTANCE$.belongsToKotlinBuiltIns(classOrObject.getContainingKtFile())) {
-            FqName fqName = classOrObject.getFqName();
-            if (fqName != null) {
-                ClassId javaClassId = JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(fqName.toUnsafe());
-                if (javaClassId != null) {
-                    return JavaPsiFacade.getInstance(classOrObject.getProject()).findClass(
-                            javaClassId.asSingleFqName().asString(),
-                            GlobalSearchScope.allScope(classOrObject.getProject())
-                    );
-                }
+        FqName fqName = classOrObject.getFqName();
+        if (fqName != null) {
+            ClassId javaClassId = JavaToKotlinClassMap.INSTANCE.mapKotlinToJava(fqName.toUnsafe());
+            if (javaClassId != null) {
+                return JavaPsiFacade.getInstance(classOrObject.getProject()).findClass(
+                        javaClassId.asSingleFqName().asString(),
+                        GlobalSearchScope.allScope(classOrObject.getProject())
+                );
             }
         }
         return LightClassUtil.INSTANCE$.getPsiClass(classOrObject);

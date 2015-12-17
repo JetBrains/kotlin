@@ -23,14 +23,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.resolve.scopes.ChainedScope;
-import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.resolve.scopes.LazyScopeAdapter;
+import org.jetbrains.kotlin.resolve.scopes.MemberScope;
+import org.jetbrains.kotlin.resolve.scopes.TypeIntersectionScope;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -79,14 +78,7 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
                                 new Function0<MemberScope>() {
                                     @Override
                                     public MemberScope invoke() {
-                                        List<MemberScope> scopes = new ArrayList<MemberScope>();
-                                        for (KotlinType bound : getUpperBounds()) {
-                                            scopes.add(bound.getMemberScope());
-                                        }
-                                        return new ChainedScope(
-                                                "Scope for type parameter " + name.asString(),
-                                                scopes.toArray(new MemberScope[scopes.size()])
-                                        );
+                                        return TypeIntersectionScope.create("Scope for type parameter " + name.asString(), getUpperBounds());
                                     }
                                 }
                         ))

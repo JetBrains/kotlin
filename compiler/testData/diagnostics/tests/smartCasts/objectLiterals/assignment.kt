@@ -12,7 +12,7 @@ fun foo(): Int {
             override fun run() = Unit
         }
         // Unnecessary but not important smart cast
-        <!DEBUG_INFO_SMARTCAST!>k<!>.run()
+        k.run()
         return <!DEBUG_INFO_SMARTCAST!>c<!> + d
     }
     else return -1

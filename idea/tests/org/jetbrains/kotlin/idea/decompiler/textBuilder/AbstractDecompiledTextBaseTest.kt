@@ -54,7 +54,7 @@ public abstract class AbstractDecompiledTextBaseTest(
         if (isAllFilesPresentInTest()) {
             return KotlinLightProjectDescriptor.INSTANCE
         }
-        return JdkAndMockLibraryProjectDescriptor(TEST_DATA_PATH + "/" + getTestName(false), false, isJsLibrary)
+        return JdkAndMockLibraryProjectDescriptor(TEST_DATA_PATH + "/" + getTestName(false), false, false, isJsLibrary)
     }
 
     private fun checkThatFileWasParsedCorrectly(clsFile: PsiFile) {

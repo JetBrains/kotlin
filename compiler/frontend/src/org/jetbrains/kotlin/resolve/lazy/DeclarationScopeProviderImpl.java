@@ -60,17 +60,23 @@ public class DeclarationScopeProviderImpl implements DeclarationScopeProvider {
         }
 
         if (parentDeclaration instanceof KtClassOrObject) {
-            KtClassOrObject classOrObject = (KtClassOrObject) parentDeclaration;
-            LazyClassDescriptor classDescriptor = (LazyClassDescriptor) lazyDeclarationResolver.getClassDescriptor(classOrObject, NoLookupLocation.WHEN_GET_DECLARATION_SCOPE);
+            KtClassOrObject parentClassOrObject = (KtClassOrObject) parentDeclaration;
+            LazyClassDescriptor parentClassDescriptor = (LazyClassDescriptor) lazyDeclarationResolver.getClassDescriptor(parentClassOrObject, NoLookupLocation.WHEN_GET_DECLARATION_SCOPE);
+
             if (ktDeclaration instanceof KtAnonymousInitializer || ktDeclaration instanceof KtProperty) {
-                return classDescriptor.getScopeForInitializerResolution();
-            }
-            if (ktDeclaration instanceof KtObjectDeclaration
-                || (ktDeclaration instanceof KtClass && !((KtClass) ktDeclaration).isInner())) {
-                return classDescriptor.getScopeForStaticMemberDeclarationResolution();
+                return parentClassDescriptor.getScopeForInitializerResolution();
             }
 
-            return classDescriptor.getScopeForMemberDeclarationResolution();
+            if (ktDeclaration instanceof KtObjectDeclaration && ((KtObjectDeclaration) ktDeclaration).isCompanion()) {
+                return parentClassDescriptor.getScopeForCompanionObjectHeaderResolution();
+            }
+
+            if (ktDeclaration instanceof KtObjectDeclaration ||
+                ktDeclaration instanceof KtClass && !((KtClass) ktDeclaration).isInner()) {
+                return parentClassDescriptor.getScopeForStaticMemberDeclarationResolution();
+            }
+
+            return parentClassDescriptor.getScopeForMemberDeclarationResolution();
         }
         //TODO: this is not how it works for classes and for exact parity we can try to use the code above
         if (parentDeclaration instanceof KtScript) {

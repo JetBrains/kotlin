@@ -392,7 +392,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
 
     public fun resolveNameExpressionAsQualifierForDiagnostics(
             expression: KtSimpleNameExpression,
-            receiver: Receiver,
+            receiver: Receiver?,
             context: ExpressionTypingContext
     ): Qualifier? {
         val name = expression.getReferencedNameAsName()
@@ -405,7 +405,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
             }
             receiver is ClassQualifier ->
                 receiver.scope.getContributedClassifier(name, KotlinLookupLocation(expression))
-            !receiver.exists() ->
+            receiver == null ->
                 context.scope.findClassifier(name, KotlinLookupLocation(expression)) ?:
                 context.scope.ownerDescriptor.module.getPackage(FqName.ROOT.child(name)).check { !it.isEmpty() }
             receiver is ReceiverValue ->
@@ -600,7 +600,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
             if (Visibilities.isPrivate(visibility)) return false
             if (!visibility.mustCheckInImports()) return true
         }
-        return Visibilities.isVisible(ReceiverValue.IRRELEVANT_RECEIVER, descriptor, shouldBeVisibleFrom)
+        return Visibilities.isVisibleWithIrrelevantReceiver(descriptor, shouldBeVisibleFrom)
     }
 }
 

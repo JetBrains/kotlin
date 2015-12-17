@@ -16,30 +16,30 @@
 
 package org.jetbrains.kotlin.resolve.scopes
 
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.collectionUtils.getFirstMatch
 import org.jetbrains.kotlin.util.collectionUtils.getFromAllScopes
 import org.jetbrains.kotlin.utils.Printer
 
-public class ChainedScope(
-        private val debugName: String,
-        vararg scopes: MemberScope
+public class ChainedMemberScope(
+        internal val debugName: String,
+        private val scopes: List<MemberScope>
 ) : MemberScope {
-    private val scopeChain = scopes.clone()
-
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor?
-            = getFirstMatch(scopeChain) { it.getContributedClassifier(name, location) }
+            = getFirstMatch(scopes) { it.getContributedClassifier(name, location) }
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor>
-            = getFromAllScopes(scopeChain) { it.getContributedVariables(name, location) }
+            = getFromAllScopes(scopes) { it.getContributedVariables(name, location) }
 
     override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor>
-            = getFromAllScopes(scopeChain) { it.getContributedFunctions(name, location) }
+            = getFromAllScopes(scopes) { it.getContributedFunctions(name, location) }
 
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
-            = getFromAllScopes(scopeChain) { it.getContributedDescriptors(kindFilter, nameFilter) }
+            = getFromAllScopes(scopes) { it.getContributedDescriptors(kindFilter, nameFilter) }
 
     override fun toString() = debugName
 
@@ -47,7 +47,7 @@ public class ChainedScope(
         p.println(javaClass.getSimpleName(), ": ", debugName, " {")
         p.pushIndent()
 
-        for (scope in scopeChain) {
+        for (scope in scopes) {
             scope.printScopeStructure(p)
         }
 

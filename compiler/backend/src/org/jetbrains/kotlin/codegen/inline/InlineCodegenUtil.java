@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.codegen.MemberCodegen;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.context.CodegenContextUtil;
+import org.jetbrains.kotlin.codegen.context.InlineLambdaContext;
 import org.jetbrains.kotlin.codegen.context.MethodContext;
 import org.jetbrains.kotlin.codegen.optimization.common.UtilKt;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -131,7 +132,7 @@ public class InlineCodegenUtil {
             CodegenContext<?> parentContext = context.getParentContext();
             while (parentContext != null) {
                 if (parentContext instanceof MethodContext) {
-                    if (((MethodContext) parentContext).isInlineFunction()) {
+                    if (((MethodContext) parentContext).isInlineMethodContext()) {
                         //just init default one to one mapping
                         codegen.getOrCreateSourceMapper();
                         break;
@@ -398,7 +399,7 @@ public class InlineCodegenUtil {
     }
 
     public static boolean isFinallyMarkerRequired(@NotNull MethodContext context) {
-        return context.isInlineFunction() || context.isInliningLambda();
+        return context.isInlineMethodContext() || context instanceof InlineLambdaContext;
     }
 
     public static int getConstant(AbstractInsnNode ins) {

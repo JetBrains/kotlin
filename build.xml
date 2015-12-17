@@ -14,6 +14,7 @@
     <property name="bootstrap.reflect" value="${bootstrap.compiler.home}/lib/kotlin-reflect.jar"/>
 
     <property name="output" value="${basedir}/dist"/>
+    <property name="js.stdlib.output.dir" value="${output}/js"/>
     <property name="intermediate-sources" value="out/src" />
     <property name="kotlin-home" value="${output}/kotlinc"/>
     <property name="build.number" value="snapshot"/>
@@ -308,13 +309,13 @@
 
         <kotlin-pp src="libraries/stdlib/src" output="${intermediate-sources}/stdlib/js" profile="JS" />
 
-        <new-kotlin2js output="${output}/js/${compiled.builtins.js}">
+        <new-kotlin2js output="${js.stdlib.output.dir}/${compiled.builtins.js}">
             <src>
                 <fileset refid="kotlin.builtin.files"/>
             </src>
         </new-kotlin2js>
 
-        <new-kotlin2js output="${output}/js/${compiled.stdlib.js}">
+        <new-kotlin2js output="${js.stdlib.output.dir}/${compiled.stdlib.js}">
             <src>
                 <resources refid="js.lib.files"/>
             </src>
@@ -334,7 +335,7 @@
             prettyprint="true"
             languagein="ECMASCRIPT5_STRICT"
             warning="${warningLevel}"
-            output="${output}/js/kotlin.js">
+            output="${js.stdlib.output.dir}/kotlin.js">
 
             <sources dir="${stdlib.js.dir}">
                 <file name="kotlin_lib_ecma5.js"/>
@@ -343,11 +344,11 @@
                 <file name="long.js"/>
             </sources>
 
-            <sources dir="${output}/js">
+            <sources dir="${js.stdlib.output.dir}">
                 <file name="${compiled.builtins.js}"/>
             </sources>
 
-            <sources dir="${output}/js">
+            <sources dir="${js.stdlib.output.dir}">
                 <file name="${compiled.stdlib.js}"/>
             </sources>
 
@@ -362,7 +363,7 @@
 
         <jar jarfile="${kotlin-home}/lib/kotlin-jslib.jar" duplicate="fail">
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
-            <zipfileset dir="${output}/js" prefix="">
+            <zipfileset dir="${js.stdlib.output.dir}" prefix="">
                 <include name="kotlin.js"/>
                 <include name="${compiled.stdlib.meta.js}"/>
                 <include name="stdlib/**"/>

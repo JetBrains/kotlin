@@ -5,6 +5,6 @@ public interface Foo {
 /*
 LINEMARKER: Overrides function in 'Any'
 TARGETS:
-Any.kt
-    public open fun <1>toString(): String
+Any.kotlin_class
+    public open fun <1>toString(): kotlin.String { /* compiled code */ }
 */

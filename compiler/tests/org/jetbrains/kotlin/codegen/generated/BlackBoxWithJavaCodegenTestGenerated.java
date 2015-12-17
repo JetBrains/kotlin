@@ -107,6 +107,12 @@ public class BlackBoxWithJavaCodegenTestGenerated extends AbstractBlackBoxCodege
         doTestWithJava(fileName);
     }
 
+    @TestMetadata("invariantArgumentsNoWildcard")
+    public void testInvariantArgumentsNoWildcard() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/invariantArgumentsNoWildcard/");
+        doTestWithJava(fileName);
+    }
+
     @TestMetadata("jvmName")
     public void testJvmName() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithJava/jvmName/");

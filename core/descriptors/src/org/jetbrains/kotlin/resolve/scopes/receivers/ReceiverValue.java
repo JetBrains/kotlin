@@ -20,41 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.types.KotlinType;
 
 public interface ReceiverValue extends Receiver {
-    ReceiverValue NO_RECEIVER = new ReceiverValue() {
-        @NotNull
-        @Override
-        public KotlinType getType() {
-            throw new UnsupportedOperationException("NO_RECEIVER.getType()");
-        }
-
-        @Override
-        public boolean exists() {
-            return false;
-        }
-
-        @Override
-        public String toString() {
-            return "NO_RECEIVER";
-        }
-    };
-
-    ReceiverValue IRRELEVANT_RECEIVER = new ReceiverValue() {
-        @NotNull
-        @Override
-        public KotlinType getType() {
-            throw new UnsupportedOperationException("IRRELEVANT_RECEIVER.getType()");
-        }
-
-        @Override
-        public boolean exists() {
-            return false;
-        }
-
-        @Override
-        public String toString() {
-            return "IRRELEVANT_RECEIVER";
-        }
-    };
 
     @NotNull
     KotlinType getType();

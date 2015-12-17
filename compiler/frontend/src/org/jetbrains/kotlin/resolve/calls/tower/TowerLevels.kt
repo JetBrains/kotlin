@@ -25,7 +25,11 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassValueDescriptor
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
-import org.jetbrains.kotlin.resolve.scopes.receivers.*
+import org.jetbrains.kotlin.resolve.scopes.receivers.CastImplicitClassReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.selectMostSpecificInEachOverridableGroup
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isDynamic
@@ -55,7 +59,7 @@ internal abstract class AbstractScopeTowerLevel(
             if (dispatchReceiverSmartCastType != null) diagnostics.add(UsedSmartCastForDispatchReceiver(dispatchReceiverSmartCastType))
 
             Visibilities.findInvisibleMember(
-                    dispatchReceiver ?: ReceiverValue.NO_RECEIVER, descriptor,
+                    dispatchReceiver, descriptor,
                     scopeTower.lexicalScope.ownerDescriptor
             )?.let { diagnostics.add(VisibilityError(it)) }
         }
@@ -71,7 +75,7 @@ internal class ReceiverScopeTowerLevel(
         val dispatchReceiver: ReceiverValue
 ): AbstractScopeTowerLevel(scopeTower) {
 
-    private fun <D: CallableDescriptor> collectMembers(
+    private fun <D : CallableDescriptor> collectMembers(
             getMembers: ResolutionScope.(KotlinType?) -> Collection<D>
     ): Collection<CandidateWithBoundDispatchReceiver<D>> {
         val result = ArrayList<CandidateWithBoundDispatchReceiver<D>>(0)
@@ -81,10 +85,20 @@ internal class ReceiverScopeTowerLevel(
 
         val smartCastPossibleTypes = scopeTower.dataFlowInfo.getSmartCastTypes(dispatchReceiver)
         val unstableError = if (scopeTower.dataFlowInfo.isStableReceiver(dispatchReceiver)) null else UnstableSmartCastDiagnostic
+        val unstableCandidates = if (unstableError != null) ArrayList<CandidateWithBoundDispatchReceiver<D>>(0) else null
 
         for (possibleType in smartCastPossibleTypes) {
-            possibleType.memberScope.getMembers(possibleType).mapTo(result) {
+            possibleType.memberScope.getMembers(possibleType).mapTo(unstableCandidates ?: result) {
                 createCandidateDescriptor(it, dispatchReceiver.smartCastReceiver(possibleType), unstableError, dispatchReceiverSmartCastType = possibleType)
+            }
+        }
+
+        if (smartCastPossibleTypes.isNotEmpty()) {
+            if (unstableCandidates == null) {
+                result.retainAll(result.selectMostSpecificInEachOverridableGroup { descriptor })
+            }
+            else {
+                result.addAll(unstableCandidates.selectMostSpecificInEachOverridableGroup { descriptor })
             }
         }
 

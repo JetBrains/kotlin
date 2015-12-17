@@ -22,7 +22,7 @@ public abstract class Visibility protected constructor(
         public val name: String,
         public val isPublicAPI: Boolean
 ) {
-    public abstract fun isVisible(receiver: ReceiverValue, what: DeclarationDescriptorWithVisibility, from: DeclarationDescriptor): Boolean
+    public abstract fun isVisible(receiver: ReceiverValue?, what: DeclarationDescriptorWithVisibility, from: DeclarationDescriptor): Boolean
 
     /**
      * True, if it makes sense to check this visibility in imports and not import inaccessible declarations with such visibility.

@@ -158,11 +158,11 @@
         <print-file-size-statistic path="${kotlin-home}/lib" file-name="kotlin-reflect.jar"/>
 
         <print-file-size-statistic path="${kotlin-home}/lib" file-name="kotlin-jslib.jar"/>
-        <print-file-size-statistic path="${output}" file-name="kotlin.js"/>
-        <print-file-size-statistic path="${output}" file-name="builtins.js"/>
-        <print-file-size-statistic path="${output}" file-name="builtins.meta.js"/>
-        <print-file-size-statistic path="${output}" file-name="stdlib.js"/>
-        <print-file-size-statistic path="${output}" file-name="stdlib.meta.js"/>
+        <print-file-size-statistic path="${js.stdlib.output.dir}" file-name="kotlin.js"/>
+        <print-file-size-statistic path="${js.stdlib.output.dir}" file-name="builtins.js"/>
+        <print-file-size-statistic path="${js.stdlib.output.dir}" file-name="builtins.meta.js"/>
+        <print-file-size-statistic path="${js.stdlib.output.dir}" file-name="stdlib.js"/>
+        <print-file-size-statistic path="${js.stdlib.output.dir}" file-name="stdlib.meta.js"/>
     </target>
 
     <target name="post_build" depends="zipArtifacts, revertTemplateFiles, printStatistics, remove_internal_artifacts, dont_remove_internal_artifacts"/>

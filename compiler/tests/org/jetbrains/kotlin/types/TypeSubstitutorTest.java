@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.tests.di.InjectionKt;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
@@ -104,10 +105,10 @@ public class TypeSubstitutorTest extends KotlinTestWithEnvironment {
                                                                }
                                                            });
         return new LexicalChainedScope(typeParameters, module, false, null, LexicalScopeKind.SYNTHETIC,
-                                new MemberScope[] {
-                                        contextClass.getDefaultType().getMemberScope(),
-                                        module.getBuiltIns().getBuiltInsPackageScope()
-                                });
+                                       Arrays.asList(
+                                               contextClass.getDefaultType().getMemberScope(),
+                                               module.getBuiltIns().getBuiltInsPackageScope()
+                                       ));
     }
 
     private void doTest(@Nullable String expectedTypeStr, String initialTypeStr, Pair<String, String>... substitutionStrs) {

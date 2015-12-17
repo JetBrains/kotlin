@@ -71,17 +71,14 @@ internal fun getTargetParentByQualifier(
 internal fun getTargetParentByCall(call: Call, file: KtFile, context: BindingContext): PsiElement? {
     val receiver = call.getExplicitReceiver()
     return when (receiver) {
-        ReceiverValue.NO_RECEIVER -> getTargetParentByQualifier(file, false, null)
+        null -> getTargetParentByQualifier(file, false, null)
         is Qualifier -> getTargetParentByQualifier(file, true, context[BindingContext.REFERENCE_TARGET, receiver.referenceExpression])
         is ReceiverValue -> getTargetParentByQualifier(file, true, receiver.getType().getConstructor().getDeclarationDescriptor())
         else -> throw AssertionError("Unexpected receiver: $receiver")
     }
 }
 
-internal fun isInnerClassExpected(call: Call): Boolean {
-    val receiver = call.getExplicitReceiver()
-    return receiver != ReceiverValue.NO_RECEIVER && receiver !is Qualifier
-}
+internal fun isInnerClassExpected(call: Call) = call.getExplicitReceiver() is ReceiverValue
 
 internal fun KtExpression.getInheritableTypeInfo(
         context: BindingContext,

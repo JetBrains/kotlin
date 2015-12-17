@@ -816,6 +816,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
                 doTestWithStdlib(fileName);
             }
 
+            @TestMetadata("invokePropertyReference.kt")
+            public void testInvokePropertyReference() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/property/invokePropertyReference.kt");
+                doTestWithStdlib(fileName);
+            }
+
             @TestMetadata("javaBeanConvention.kt")
             public void testJavaBeanConvention() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/callableReference/property/javaBeanConvention.kt");
@@ -3727,6 +3733,51 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/javaProperties")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class JavaProperties extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInJavaProperties() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxWithStdlib/reflection/javaProperties"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("java.kt")
+            public void testJava() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/javaProperties/java.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("javaObjectType.kt")
+            public void testJavaObjectType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/javaProperties/javaObjectType.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("javaObjectTypeReified.kt")
+            public void testJavaObjectTypeReified() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/javaProperties/javaObjectTypeReified.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("javaPrimitiveType.kt")
+            public void testJavaPrimitiveType() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/javaProperties/javaPrimitiveType.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("javaPrimitiveTypeReified.kt")
+            public void testJavaPrimitiveTypeReified() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/javaProperties/javaPrimitiveTypeReified.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("javaReified.kt")
+            public void testJavaReified() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/javaProperties/javaReified.kt");
+                doTestWithStdlib(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/boxWithStdlib/reflection/kClassInAnnotation")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -4143,6 +4194,12 @@ public class BlackBoxWithStdlibCodegenTestGenerated extends AbstractBlackBoxCode
             @TestMetadata("getPropertiesMutableVsReadonly.kt")
             public void testGetPropertiesMutableVsReadonly() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/properties/getPropertiesMutableVsReadonly.kt");
+                doTestWithStdlib(fileName);
+            }
+
+            @TestMetadata("invokeKProperty.kt")
+            public void testInvokeKProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxWithStdlib/reflection/properties/invokeKProperty.kt");
                 doTestWithStdlib(fileName);
             }
 

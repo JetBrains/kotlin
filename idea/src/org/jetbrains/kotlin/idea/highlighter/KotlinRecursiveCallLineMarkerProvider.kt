@@ -92,8 +92,8 @@ public class KotlinRecursiveCallLineMarkerProvider() : LineMarkerProvider {
 
         if (resolvedCall.getCandidateDescriptor().getOriginal() != enclosingFunctionDescriptor) return false
 
-        fun isDifferentReceiver(receiver: Receiver): Boolean {
-            if (receiver == ReceiverValue.NO_RECEIVER || receiver !is ReceiverValue) return false
+        fun isDifferentReceiver(receiver: Receiver?): Boolean {
+            if (receiver !is ReceiverValue) return false
 
             val receiverOwner = receiver.getThisReceiverOwner(bindingContext) ?: return true
 

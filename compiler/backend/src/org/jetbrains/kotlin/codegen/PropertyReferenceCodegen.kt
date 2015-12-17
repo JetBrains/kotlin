@@ -47,11 +47,11 @@ public class PropertyReferenceCodegen(
         classBuilder: ClassBuilder,
         private val classDescriptor: ClassDescriptor,
         private val target: VariableDescriptor,
-        dispatchReceiver: ReceiverValue
+        dispatchReceiver: ReceiverValue?
 ) : MemberCodegen<KtElement>(state, parentCodegen, context, expression, classBuilder) {
     private val asmType = typeMapper.mapClass(classDescriptor)
 
-    private val dispatchReceiverType = if (dispatchReceiver.exists()) dispatchReceiver.type else null
+    private val dispatchReceiverType = dispatchReceiver?.type
 
     private val extensionReceiverType = target.extensionReceiverParameter?.type
 

@@ -37,7 +37,7 @@ class SyntheticFieldDescriptor private constructor(
 
     override fun getDispatchReceiverParameter() = null
 
-    fun getDispatchReceiverForBackend() = propertyDescriptor.dispatchReceiverParameter?.value ?: ReceiverValue.NO_RECEIVER
+    fun getDispatchReceiverForBackend() = propertyDescriptor.dispatchReceiverParameter?.value
 
     companion object {
         val NAME = Name.identifier("field")

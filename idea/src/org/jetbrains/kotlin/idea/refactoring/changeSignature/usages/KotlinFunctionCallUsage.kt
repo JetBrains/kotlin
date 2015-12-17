@@ -124,11 +124,11 @@ class KotlinFunctionCallUsage(
     }
 
     private fun getReceiverExpressionIfMatched(
-            receiverValue: ReceiverValue,
+            receiverValue: ReceiverValue?,
             originalDescriptor: DeclarationDescriptor,
             psiFactory: KtPsiFactory
     ): KtExpression? {
-        if (!receiverValue.exists()) return null
+        if (receiverValue == null) return null
 
         // Replace descriptor of extension function/property with descriptor of its receiver
         // to simplify checking against receiver value in the corresponding resolved call
@@ -307,8 +307,8 @@ class KotlinFunctionCallUsage(
         val newReceiverInfo = changeInfo.receiverParameterInfo
         val originalReceiverInfo = changeInfo.methodDescriptor.receiver
 
-        val extensionReceiver = if (resolvedCall != null) resolvedCall.extensionReceiver else ReceiverValue.NO_RECEIVER
-        val dispatchReceiver = if (resolvedCall != null) resolvedCall.dispatchReceiver else ReceiverValue.NO_RECEIVER
+        val extensionReceiver = resolvedCall?.extensionReceiver
+        val dispatchReceiver = resolvedCall?.dispatchReceiver
 
         // Do not add extension receiver to calls with explicit dispatch receiver
         if (newReceiverInfo != null && fullCallElement is KtQualifiedExpression && dispatchReceiver is ExpressionReceiver) return

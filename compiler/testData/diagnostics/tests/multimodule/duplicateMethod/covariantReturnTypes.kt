@@ -31,6 +31,6 @@ import p.*
 
 fun test(b: B?) {
     if (b is C) {
-        b?.<!OVERLOAD_RESOLUTION_AMBIGUITY!>getParent<!>()
+        <!DEBUG_INFO_SMARTCAST!>b<!>?.getParent()
     }
 }

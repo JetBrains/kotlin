@@ -50,6 +50,8 @@ public class LambdaInfo implements CapturedParamOwner, LabelOwner {
 
     private final CalculatedClosure closure;
 
+    public final boolean isCrossInline;
+
     private SMAPAndMethodNode node;
 
     private List<CapturedParamDesc> capturedVars;
@@ -60,7 +62,8 @@ public class LambdaInfo implements CapturedParamOwner, LabelOwner {
 
     private final Type closureClassType;
 
-    LambdaInfo(@NotNull KtExpression expr, @NotNull JetTypeMapper typeMapper) {
+    LambdaInfo(@NotNull KtExpression expr, @NotNull JetTypeMapper typeMapper, boolean isCrossInline) {
+        this.isCrossInline = isCrossInline;
         this.expression = expr instanceof KtLambdaExpression ?
                           ((KtLambdaExpression) expr).getFunctionLiteral() : expr;
 

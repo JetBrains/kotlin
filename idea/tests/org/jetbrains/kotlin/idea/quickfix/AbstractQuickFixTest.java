@@ -186,23 +186,25 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
     }
     //endregion
 
-    private static void configureRuntimeIfNeeded(@NotNull String beforeFileName) {
+    private static void configureRuntimeIfNeeded(@NotNull String beforeFileName) throws IOException {
         if (beforeFileName.endsWith("JsRuntime.kt")) {
             // Without the following line of code subsequent tests with js-runtime will be prone to failure due "outdated stub in index" error.
             FileBasedIndex.getInstance().requestRebuild(StubUpdatingIndex.INDEX_ID);
 
             ConfigLibraryUtil.configureKotlinJsRuntimeAndSdk(getModule(), getFullJavaJDK());
         }
-        else if (beforeFileName.endsWith("Runtime.kt")) {
+        else if (beforeFileName.endsWith("Runtime.kt") ||
+                 InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(new File(beforeFileName)), "WITH_RUNTIME")) {
             ConfigLibraryUtil.configureKotlinRuntimeAndSdk(getModule(), getFullJavaJDK());
         }
     }
 
-    private void unConfigureRuntimeIfNeeded(@NotNull String beforeFileName) {
+    private void unConfigureRuntimeIfNeeded(@NotNull String beforeFileName) throws IOException {
         if (beforeFileName.endsWith("JsRuntime.kt")) {
             ConfigLibraryUtil.unConfigureKotlinJsRuntimeAndSdk(getModule(), getProjectJDK());
         }
-        else if (beforeFileName.endsWith("Runtime.kt")) {
+        else if (beforeFileName.endsWith("Runtime.kt") ||
+                 InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(new File(beforeFileName)), "WITH_RUNTIME")) {
             ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(getModule(), getProjectJDK());
         }
     }

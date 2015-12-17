@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.modules.TargetId;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
+import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
@@ -309,7 +310,7 @@ public class InlineCodegen extends CallGenerator {
 
         MethodContext parentContext = codegen.getContext();
 
-        MethodContext context = parentContext.intoClosure(descriptor, codegen, typeMapper).intoInlinedLambda(descriptor);
+        MethodContext context = parentContext.intoClosure(descriptor, codegen, typeMapper).intoInlinedLambda(descriptor, info.isCrossInline);
 
         JvmMethodSignature jvmMethodSignature = typeMapper.mapSignature(descriptor);
         Method asmMethod = jvmMethodSignature.getAsmMethod();
@@ -538,9 +539,16 @@ public class InlineCodegen extends CallGenerator {
     }
 
     /*lambda or callable reference*/
-    public static boolean isInliningParameter(KtExpression expression, ValueParameterDescriptor valueParameterDescriptor) {
+    public boolean isInliningParameter(KtExpression expression, ValueParameterDescriptor valueParameterDescriptor) {
         //TODO deparenthisise typed
         KtExpression deparenthesized = KtPsiUtil.deparenthesize(expression);
+
+        if (deparenthesized instanceof KtCallableReferenceExpression) {
+            // TODO: support inline of property references passed to inlinable function parameters
+            SimpleFunctionDescriptor functionReference = state.getBindingContext().get(BindingContext.FUNCTION, deparenthesized);
+            if (functionReference == null) return false;
+        }
+
         return InlineUtil.isInlineLambdaParameter(valueParameterDescriptor) &&
                isInlinableParameterExpression(deparenthesized);
     }
@@ -551,13 +559,14 @@ public class InlineCodegen extends CallGenerator {
                deparenthesized instanceof KtCallableReferenceExpression;
     }
 
-    public void rememberClosure(KtExpression expression, Type type, int parameterIndex) {
+    public void rememberClosure(KtExpression expression, Type type, ValueParameterDescriptor parameter) {
         KtExpression lambda = KtPsiUtil.deparenthesize(expression);
         assert isInlinableParameterExpression(lambda) : "Couldn't find inline expression in " + expression.getText();
 
-        LambdaInfo info = new LambdaInfo(lambda, typeMapper);
 
-        ParameterInfo closureInfo = invocationParamBuilder.addNextValueParameter(type, true, null, parameterIndex);
+        LambdaInfo info = new LambdaInfo(lambda, typeMapper, parameter.isCrossinline());
+
+        ParameterInfo closureInfo = invocationParamBuilder.addNextValueParameter(type, true, null, parameter.getIndex());
         closureInfo.setLambda(info);
         expressionMap.put(closureInfo.getIndex(), info);
     }
@@ -630,7 +639,7 @@ public class InlineCodegen extends CallGenerator {
             int parameterIndex
     ) {
         if (isInliningParameter(argumentExpression, valueParameterDescriptor)) {
-            rememberClosure(argumentExpression, parameterType, valueParameterDescriptor.getIndex());
+            rememberClosure(argumentExpression, parameterType, valueParameterDescriptor);
         }
         else {
             StackValue value = codegen.gen(argumentExpression);

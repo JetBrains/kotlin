@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.psi.psiUtil.getTopmostParentQualifiedExpressionForSelector
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.classValueType
-import org.jetbrains.kotlin.resolve.scopes.ChainedScope
+import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
 import org.jetbrains.kotlin.resolve.scopes.FilteringScope
-import org.jetbrains.kotlin.resolve.scopes.ScopeUtils
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.resolve.scopes.ScopeUtils
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
@@ -52,8 +52,6 @@ abstract class QualifierReceiver(
         get() = referenceExpression.getTopmostParentQualifiedExpressionForSelector() ?: referenceExpression
 
     abstract fun getNestedClassesAndPackageMembersScope(): MemberScope
-
-    override fun exists() = true
 }
 
 class PackageQualifier(
@@ -112,7 +110,7 @@ class ClassQualifier(
             scopes.add(classifier.unsubstitutedInnerClassesScope)
         }
 
-        return ChainedScope("Member scope for $name as class or object", *scopes.toTypedArray())
+        return ChainedMemberScope("Member scope for $name as class or object", scopes)
     }
 
     override fun getNestedClassesAndPackageMembersScope(): MemberScope {
@@ -128,7 +126,7 @@ class ClassQualifier(
             scopes.add(ScopeUtils.getStaticNestedClassesScope(classifier))
         }
 
-        return ChainedScope("Static scope for $name as class or object", *scopes.toTypedArray())
+        return ChainedMemberScope("Static scope for $name as class or object", scopes)
     }
 
     override fun toString() = "Class{$classifier}"

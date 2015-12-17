@@ -17,5 +17,4 @@
 package org.jetbrains.kotlin.resolve.scopes.receivers;
 
 public interface Receiver {
-    boolean exists();
 }

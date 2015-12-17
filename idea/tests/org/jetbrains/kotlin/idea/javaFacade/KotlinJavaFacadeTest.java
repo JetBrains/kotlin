@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.asJava.KtLightClass;
 import org.jetbrains.kotlin.asJava.KtLightMethod;
 import org.jetbrains.kotlin.asJava.LightClassUtil;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
-import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor;
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.*;
@@ -34,7 +34,7 @@ public class KotlinJavaFacadeTest extends KotlinLightCodeInsightFixtureTestCase 
     @NotNull
     @Override
     protected LightProjectDescriptor getProjectDescriptor() {
-        return KotlinLightProjectDescriptor.INSTANCE;
+        return KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE;
     }
 
     @Override

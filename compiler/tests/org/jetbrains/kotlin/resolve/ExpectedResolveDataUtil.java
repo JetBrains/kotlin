@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtil;
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.tests.di.ContainerForTests;
 import org.jetbrains.kotlin.tests.di.InjectionKt;
@@ -147,7 +146,7 @@ public class ExpectedResolveDataUtil {
                 DataFlowInfo.EMPTY, TypeUtils.NO_EXPECTED_TYPE);
 
         OverloadResolutionResults<FunctionDescriptor> functions = container.getFakeCallResolver().resolveFakeCall(
-                context, ReceiverValue.NO_RECEIVER, Name.identifier(name), null, parameterTypes);
+                context, null, Name.identifier(name), null, parameterTypes);
 
         for (ResolvedCall<? extends FunctionDescriptor> resolvedCall : functions.getResultingCalls()) {
             List<ValueParameterDescriptor> unsubstitutedValueParameters = resolvedCall.getResultingDescriptor().getValueParameters();

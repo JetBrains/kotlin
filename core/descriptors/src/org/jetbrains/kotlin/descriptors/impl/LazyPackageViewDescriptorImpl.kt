@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.scopes.ChainedScope
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
 import org.jetbrains.kotlin.resolve.scopes.LazyScopeAdapter
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -46,7 +46,7 @@ public class LazyPackageViewDescriptorImpl(
         else {
             // Packages from SubpackagesScope are got via getContributedDescriptors(DescriptorKindFilter.PACKAGES, MemberScope.ALL_NAME_FILTER)
             val scopes = fragments.map { it.getMemberScope() } + SubpackagesScope(module, fqName)
-            ChainedScope("package view scope for $fqName in ${module.getName()}", *scopes.toTypedArray())
+            ChainedMemberScope("package view scope for $fqName in ${module.name}", scopes)
         }
     })
 

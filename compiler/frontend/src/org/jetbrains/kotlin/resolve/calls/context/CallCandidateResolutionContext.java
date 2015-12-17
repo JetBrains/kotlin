@@ -37,7 +37,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
     public final MutableResolvedCall<D> candidateCall;
     @NotNull
     public final TracingStrategy tracing;
-    @NotNull
+    @Nullable
     public final Receiver explicitExtensionReceiverForInvoke;
     @NotNull
     public final CandidateResolveMode candidateResolveMode;
@@ -56,7 +56,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
             @Nullable MutableDataFlowInfoForArguments dataFlowInfoForArguments,
             @NotNull CallChecker callChecker,
             @NotNull StatementFilter statementFilter,
-            @NotNull Receiver explicitExtensionReceiverForInvoke,
+            @Nullable Receiver explicitExtensionReceiverForInvoke,
             @NotNull CandidateResolveMode candidateResolveMode,
             boolean isAnnotationContext,
             boolean collectAllCandidates
@@ -72,7 +72,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
 
     public static <D extends CallableDescriptor> CallCandidateResolutionContext<D> create(
             @NotNull MutableResolvedCall<D> candidateCall, @NotNull CallResolutionContext<?> context, @NotNull BindingTrace trace,
-            @NotNull TracingStrategy tracing, @NotNull Call call, @NotNull Receiver explicitExtensionReceiverForInvoke,
+            @NotNull TracingStrategy tracing, @NotNull Call call, @Nullable Receiver explicitExtensionReceiverForInvoke,
             @NotNull CandidateResolveMode candidateResolveMode
     ) {
         return new CallCandidateResolutionContext<D>(
@@ -91,7 +91,7 @@ public final class CallCandidateResolutionContext<D extends CallableDescriptor> 
                 candidateCall, tracing, context.trace, context.scope, context.call, context.expectedType,
                 context.dataFlowInfo, context.contextDependency, context.checkArguments, context.resolutionResultsCache,
                 context.dataFlowInfoForArguments, context.callChecker, context.statementFilter,
-                ReceiverValue.NO_RECEIVER, CandidateResolveMode.FULLY, context.isAnnotationContext, context.collectAllCandidates);
+                null, CandidateResolveMode.FULLY, context.isAnnotationContext, context.collectAllCandidates);
     }
 
     @Override

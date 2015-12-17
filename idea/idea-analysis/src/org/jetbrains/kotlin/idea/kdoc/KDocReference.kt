@@ -148,7 +148,7 @@ private fun getClassInnerScope(outerScope: LexicalScope, descriptor: ClassDescri
 
     return LexicalChainedScope(headerScope, descriptor, false, null,
                                LexicalScopeKind.SYNTHETIC,
-                               *scopeChain.toTypedArray())
+                               scopeChain)
 }
 
 public fun getResolutionScope(resolutionFacade: ResolutionFacade, descriptor: DeclarationDescriptor): LexicalScope {

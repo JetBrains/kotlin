@@ -214,16 +214,16 @@ public class ControlStructureTypingUtils {
                 return expression.getNode();
             }
 
-            @NotNull
+            @Nullable
             @Override
             public ReceiverValue getExplicitReceiver() {
-                return ReceiverValue.NO_RECEIVER;
+                return null;
             }
 
-            @NotNull
+            @Nullable
             @Override
             public ReceiverValue getDispatchReceiver() {
-                return ReceiverValue.NO_RECEIVER;
+                return null;
             }
 
             @Nullable

@@ -216,8 +216,7 @@ public class CallCompleter(
             return
         }
 
-        val extensionReceiver = this.extensionReceiver
-        val receiverType = if (extensionReceiver.exists() && extensionReceiver is ReceiverValue) extensionReceiver.type else null
+        val receiverType = (extensionReceiver as? ReceiverValue)?.type
 
         val errorData = InferenceErrorData.create(
                 candidateDescriptor, constraintSystem!!, valueArgumentsCheckingResult.argumentTypes,

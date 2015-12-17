@@ -28,10 +28,14 @@ import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import com.intellij.openapi.ui.Queryable.PrintInfo
+import com.intellij.testFramework.LightProjectDescriptor
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.test.util.configureWithExtraFile
 
 public abstract class AbstractKotlinFileStructureTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/structureView/fileStructure"
+
+    override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     public fun doTest(path: String) {
         myFixture.configureWithExtraFile(path)

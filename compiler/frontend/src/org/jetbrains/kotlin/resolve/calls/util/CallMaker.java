@@ -113,7 +113,7 @@ public class CallMaker {
             this(callElement, explicitReceiver, callOperationNode, calleeExpression, valueArguments, CallType.DEFAULT);
         }
 
-        protected CallImpl(@NotNull KtElement callElement, @NotNull Receiver explicitReceiver, @Nullable ASTNode callOperationNode,
+        protected CallImpl(@NotNull KtElement callElement, @Nullable Receiver explicitReceiver, @Nullable ASTNode callOperationNode,
                 @Nullable KtExpression calleeExpression, @NotNull List<? extends ValueArgument> valueArguments, @NotNull CallType callType) {
             this.callElement = callElement;
             this.explicitReceiver = explicitReceiver;
@@ -128,16 +128,16 @@ public class CallMaker {
             return callOperationNode;
         }
 
-        @NotNull
+        @Nullable
         @Override
         public Receiver getExplicitReceiver() {
             return explicitReceiver;
         }
 
-        @NotNull
+        @Nullable
         @Override
         public ReceiverValue getDispatchReceiver() {
-            return ReceiverValue.NO_RECEIVER;
+            return null;
         }
 
         @Override
@@ -191,14 +191,14 @@ public class CallMaker {
     }
 
     @NotNull
-    public static Call makeCallWithExpressions(@NotNull KtElement callElement, @NotNull Receiver explicitReceiver,
+    public static Call makeCallWithExpressions(@NotNull KtElement callElement, @Nullable Receiver explicitReceiver,
                                                @Nullable ASTNode callOperationNode, @NotNull KtExpression calleeExpression,
                                                @NotNull List<KtExpression> argumentExpressions) {
         return makeCallWithExpressions(callElement, explicitReceiver, callOperationNode, calleeExpression, argumentExpressions, CallType.DEFAULT);
     }
 
     @NotNull
-    public static Call makeCallWithExpressions(@NotNull KtElement callElement, @NotNull Receiver explicitReceiver,
+    public static Call makeCallWithExpressions(@NotNull KtElement callElement, @Nullable Receiver explicitReceiver,
                                                @Nullable ASTNode callOperationNode, @NotNull KtExpression calleeExpression,
                                                @NotNull List<KtExpression> argumentExpressions, @NotNull CallType callType) {
         List<ValueArgument> arguments = new ArrayList<ValueArgument>(argumentExpressions.size());
@@ -209,13 +209,13 @@ public class CallMaker {
     }
 
     @NotNull
-    public static Call makeCall(KtElement callElement, Receiver explicitReceiver, @Nullable ASTNode callOperationNode, KtExpression calleeExpression, List<? extends ValueArgument> arguments) {
+    public static Call makeCall(KtElement callElement, @Nullable Receiver explicitReceiver, @Nullable ASTNode callOperationNode, KtExpression calleeExpression, List<? extends ValueArgument> arguments) {
         return makeCall(callElement, explicitReceiver, callOperationNode, calleeExpression, arguments, CallType.DEFAULT);
     }
 
     @NotNull
     public static Call makeCall(
-            KtElement callElement, Receiver explicitReceiver, @Nullable ASTNode callOperationNode,
+            KtElement callElement, @Nullable Receiver explicitReceiver, @Nullable ASTNode callOperationNode,
             KtExpression calleeExpression, List<? extends ValueArgument> arguments, CallType callType) {
         return new CallImpl(callElement, explicitReceiver, callOperationNode, calleeExpression, arguments, callType);
     }
@@ -260,28 +260,28 @@ public class CallMaker {
     }
 
     @NotNull
-    public static Call makePropertyCall(@NotNull Receiver explicitReceiver, @Nullable ASTNode callOperationNode, @NotNull KtSimpleNameExpression nameExpression) {
+    public static Call makePropertyCall(@Nullable Receiver explicitReceiver, @Nullable ASTNode callOperationNode, @NotNull KtSimpleNameExpression nameExpression) {
         return makeCallWithExpressions(nameExpression, explicitReceiver, callOperationNode, nameExpression, Collections.<KtExpression>emptyList());
     }
 
     @NotNull
-    public static Call makeCall(@NotNull final Receiver explicitReceiver, @Nullable final ASTNode callOperationNode, @NotNull final KtCallElement callElement) {
+    public static Call makeCall(@Nullable final Receiver explicitReceiver, @Nullable final ASTNode callOperationNode, @NotNull final KtCallElement callElement) {
         return new Call() {
             @Override
             public ASTNode getCallOperationNode() {
                 return callOperationNode;
             }
 
-            @NotNull
+            @Nullable
             @Override
             public Receiver getExplicitReceiver() {
                 return explicitReceiver;
             }
 
-            @NotNull
+            @Nullable
             @Override
             public ReceiverValue getDispatchReceiver() {
-                return ReceiverValue.NO_RECEIVER;
+                return null;
             }
 
             @Override

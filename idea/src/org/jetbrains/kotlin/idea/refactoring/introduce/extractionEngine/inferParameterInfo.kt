@@ -86,11 +86,12 @@ internal fun ExtractionData.inferParametersInfo(
 
         val resolvedCall = refInfo.resolveResult.resolvedCall
         val extensionReceiver = resolvedCall?.extensionReceiver
-        val receiverToExtract = (when {
-            extensionReceiver == ReceiverValue.NO_RECEIVER ||
-            isSynthesizedInvoke(refInfo.resolveResult.descriptor) -> resolvedCall?.dispatchReceiver
-            else -> extensionReceiver
-        } as? ReceiverValue) ?: ReceiverValue.NO_RECEIVER
+        val receiverToExtract = (if (extensionReceiver == null || isSynthesizedInvoke(refInfo.resolveResult.descriptor)) {
+            resolvedCall?.dispatchReceiver
+        }
+        else {
+            extensionReceiver
+        }) as? ReceiverValue
 
         val twoReceivers = resolvedCall != null && resolvedCall.hasBothReceivers()
         val dispatchReceiverDescriptor = (resolvedCall?.dispatchReceiver as? ImplicitReceiver)?.declarationDescriptor
@@ -140,7 +141,7 @@ internal fun ExtractionData.inferParametersInfo(
 }
 
 private fun ExtractionData.extractReceiver(
-        receiverToExtract: ReceiverValue,
+        receiverToExtract: ReceiverValue?,
         info: ParametersInfo,
         targetScope: LexicalScope,
         refInfo: ResolvedReferenceInfo,
@@ -214,7 +215,7 @@ private fun ExtractionData.extractReceiver(
                     // If p.q has a smart-cast, then extract entire qualified expression
                     if (refInfo.smartCast != null) receiverExpression.parent as KtExpression else receiverExpression
                 }
-                receiverToExtract.exists() && refInfo.smartCast == null -> null
+                receiverToExtract != null && refInfo.smartCast == null -> null
                 else -> (originalRef.parent as? KtThisExpression) ?: originalRef
             }
 
@@ -288,7 +289,7 @@ private fun suggestParameterType(
         extractFunctionRef: Boolean,
         originalDescriptor: DeclarationDescriptor,
         parameterExpression: KtExpression?,
-        receiverToExtract: ReceiverValue,
+        receiverToExtract: ReceiverValue?,
         resolvedCall: ResolvedCall<*>?,
         useSmartCastsIfPossible: Boolean, bindingContext: BindingContext
 ): KotlinType {
@@ -308,7 +309,7 @@ private fun suggestParameterType(
                    ?: (parameterExpression as? KtReferenceExpression)?.let {
                        (bindingContext[BindingContext.REFERENCE_TARGET, it] as? CallableDescriptor)?.returnType
                    }
-                   ?: if (receiverToExtract.exists()) receiverToExtract.type else null
+                   ?: receiverToExtract?.type
 
                receiverToExtract is ImplicitReceiver -> {
                    val typeByDataFlowInfo = if (useSmartCastsIfPossible) {
@@ -319,8 +320,6 @@ private fun suggestParameterType(
                    typeByDataFlowInfo ?: receiverToExtract.type
                }
 
-               receiverToExtract.exists() -> receiverToExtract.type
-
-               else -> null
+               else -> receiverToExtract?.type
            } ?: builtIns.defaultParameterType
 }
