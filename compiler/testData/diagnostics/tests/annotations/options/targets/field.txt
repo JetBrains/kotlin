@@ -1,0 +1,57 @@
+package
+
+@Field() public val x: kotlin.Int = 42
+@Field() public val y: kotlin.Int
+
+@Field() public final annotation class Another : kotlin.Annotation {
+    public constructor Another()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FIELD}) public final annotation class Field : kotlin.Annotation {
+    public constructor Field()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface His {
+    @Field() public abstract val x: kotlin.Int
+    @Field() public open val y: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@Field() public abstract class My {
+    public constructor My(/*0*/ @Field() arg: kotlin.Int, /*1*/ w: kotlin.Int)
+    @Field() public final val v: kotlin.Int
+    @Field() public final val w: kotlin.Int
+    @Field() public final val x: kotlin.Int
+    @Field() public final val y: kotlin.Int
+    @Field() public abstract val z: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @Field() public final fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final enum class Your : kotlin.Enum<Your> {
+    @Field() enum entry FIRST
+
+    private constructor Your()
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: Your): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<Your>
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): Your
+    public final /*synthesized*/ fun values(): kotlin.Array<Your>
+}

@@ -46,7 +46,7 @@ public class EliminateWhenSubjectIntention : SelfTargetingIntention<KtWhenExpres
                     appendFixedText("else")
                 }
                 else {
-                    appendExpressions(entry.conditions.map { it.toExpression(subject) })
+                    appendExpressions(entry.conditions.map { it.toExpression(subject) }, separator = "||")
                 }
                 appendFixedText("->")
 

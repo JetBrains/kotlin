@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.j2k
 
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiMethodUtil
+import org.jetbrains.kotlin.asJava.KtLightClass
 import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
@@ -47,46 +48,46 @@ fun shouldGenerateDefaultInitializer(searcher: ReferenceSearcher, field: PsiFiel
         = field.initializer == null && (field.isVar(searcher) || !field.hasWriteAccesses(searcher, field.containingClass))
 
 fun PsiReferenceExpression.isQualifierEmptyOrThis(): Boolean {
-    val qualifier = getQualifierExpression()
-    return qualifier == null || (qualifier is PsiThisExpression && qualifier.getQualifier() == null)
+    val qualifier = qualifierExpression
+    return qualifier == null || (qualifier is PsiThisExpression && qualifier.qualifier == null)
 }
 
 fun PsiReferenceExpression.isQualifierEmptyOrClass(psiClass: PsiClass): Boolean {
-    val qualifier = getQualifierExpression()
+    val qualifier = qualifierExpression
     return qualifier == null || (qualifier is PsiReferenceExpression && qualifier.isReferenceTo(psiClass))
 }
 
 fun PsiElement.isInSingleLine(): Boolean {
     if (this is PsiWhiteSpace) {
-        val text = getText()!!
+        val text = text!!
         return text.indexOf('\n') < 0 && text.indexOf('\r') < 0
     }
 
-    var child = getFirstChild()
+    var child = firstChild
     while (child != null) {
         if (!child.isInSingleLine()) return false
-        child = child.getNextSibling()
+        child = child.nextSibling
     }
     return true
 }
 
 //TODO: check for variables that are definitely assigned in constructors
 fun PsiElement.getContainingMethod(): PsiMethod? {
-    var context = getContext()
+    var context = context
     while (context != null) {
         val _context = context
         if (_context is PsiMethod) return _context
-        context = _context.getContext()
+        context = _context.context
     }
     return null
 }
 
 fun PsiElement.getContainingConstructor(): PsiMethod? {
     val method = getContainingMethod()
-    return if (method?.isConstructor() == true) method else null
+    return if (method?.isConstructor == true) method else null
 }
 
-fun PsiMember.isConstructor(): Boolean = this is PsiMethod && this.isConstructor()
+fun PsiMember.isConstructor(): Boolean = this is PsiMethod && this.isConstructor
 
 fun PsiModifierListOwner.accessModifier(): String = when {
     hasModifierProperty(PsiModifier.PUBLIC) -> PsiModifier.PUBLIC
@@ -99,18 +100,21 @@ fun PsiMethod.isMainMethod(): Boolean = PsiMethodUtil.isMainMethod(this)
 
 fun PsiMember.isImported(file: PsiJavaFile): Boolean {
     if (this is PsiClass) {
-        val fqName = getQualifiedName()
+        val fqName = qualifiedName
         val index = fqName?.lastIndexOf('.') ?: -1
         val parentName = if (index >= 0) fqName!!.substring(0, index) else null
-        return file.getImportList()?.getAllImportStatements()?.any {
-            it.getImportReference()?.getQualifiedName() == (if (it.isOnDemand()) parentName else fqName)
+        return file.importList?.allImportStatements?.any {
+            it.importReference?.qualifiedName == (if (it.isOnDemand) parentName else fqName)
         } ?: false
     }
     else {
-        return getContainingClass() != null && file.getImportList()?.getImportStaticStatements()?.any {
-            it.resolveTargetClass() == getContainingClass() && (it.isOnDemand() || it.getReferenceName() == getName())
+        return containingClass != null && file.importList?.importStaticStatements?.any {
+            it.resolveTargetClass() == containingClass && (it.isOnDemand || it.referenceName == name)
         } ?: false
     }
 }
 
-fun PsiExpression.isNullLiteral() = this is PsiLiteralExpression && getType() == PsiType.NULL
+fun PsiExpression.isNullLiteral() = this is PsiLiteralExpression && type == PsiType.NULL
+
+// TODO: set origin for facade classes in library
+fun isFacadeClassFromLibrary(element: PsiElement?) = element is KtLightClass && element.getOrigin() == null

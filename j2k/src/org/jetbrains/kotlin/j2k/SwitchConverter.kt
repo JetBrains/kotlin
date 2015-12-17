@@ -18,11 +18,11 @@ package org.jetbrains.kotlin.j2k
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.j2k.ast.*
-import java.util.ArrayList
+import java.util.*
 
 class SwitchConverter(private val codeConverter: CodeConverter) {
     public fun convert(statement: PsiSwitchStatement): WhenStatement
-            = WhenStatement(codeConverter.convertExpression(statement.getExpression()), switchBodyToWhenEntries(statement.getBody()))
+            = WhenStatement(codeConverter.convertExpression(statement.expression), switchBodyToWhenEntries(statement.body))
 
     private class Case(val label: PsiSwitchLabelStatement?, val statements: List<PsiStatement>)
 
@@ -59,7 +59,7 @@ class SwitchConverter(private val codeConverter: CodeConverter) {
                 }
             }
 
-            for (statement in body.getStatements()) {
+            for (statement in body.statements) {
                 if (statement is PsiSwitchLabelStatement) {
                     flushCurrentCase()
                     currentLabel = statement
@@ -78,10 +78,10 @@ class SwitchConverter(private val codeConverter: CodeConverter) {
 
     private fun convertCaseStatements(statements: List<PsiStatement>, allowBlock: Boolean = true): List<Statement> {
         val statementsToKeep = statements.filter { !isSwitchBreak(it) }
-        if (allowBlock && statementsToKeep.size() == 1) {
+        if (allowBlock && statementsToKeep.size == 1) {
             val block = statementsToKeep.single() as? PsiBlockStatement
             if (block != null) {
-                return listOf(codeConverter.convertBlock(block.getCodeBlock(), true, { !isSwitchBreak(it) }))
+                return listOf(codeConverter.convertBlock(block.codeBlock, true, { !isSwitchBreak(it) }))
             }
         }
         return statementsToKeep.map { codeConverter.convertStatement(it) }
@@ -94,7 +94,7 @@ class SwitchConverter(private val codeConverter: CodeConverter) {
         }
         else {
             val block = case.statements.singleOrNull() as? PsiBlockStatement
-            val statements = if (block != null) block.getCodeBlock().getStatements().toList() else case.statements
+            val statements = if (block != null) block.codeBlock.statements.toList() else case.statements
             !statements.any { it is PsiBreakStatement || it is PsiContinueStatement || it is PsiReturnStatement || it is PsiThrowStatement }
         }
         return if (fallsThrough) // we fall through into the next case
@@ -105,11 +105,11 @@ class SwitchConverter(private val codeConverter: CodeConverter) {
 
     private fun convertCaseStatementsToBody(cases: List<Case>, caseIndex: Int): Statement {
         val statements = convertCaseStatements(cases, caseIndex)
-        return if (statements.size() == 1)
+        return if (statements.size == 1)
             statements.single()
         else
             Block(statements, LBrace().assignNoPrototype(), RBrace().assignNoPrototype(), true).assignNoPrototype()
     }
 
-    private fun isSwitchBreak(statement: PsiStatement) = statement is PsiBreakStatement && statement.getLabelIdentifier() == null
+    private fun isSwitchBreak(statement: PsiStatement) = statement is PsiBreakStatement && statement.labelIdentifier == null
 }

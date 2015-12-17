@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 var a: String?
     get() = ""
     set(v) {}

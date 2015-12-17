@@ -16,8 +16,11 @@
 
 package org.jetbrains.kotlin.j2k.ast
 
-import org.jetbrains.kotlin.j2k.*
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.j2k.CodeBuilder
+import org.jetbrains.kotlin.j2k.CodeConverter
+import org.jetbrains.kotlin.j2k.Converter
+import org.jetbrains.kotlin.j2k.EmptyDocCommentConverter
 
 fun <TElement: Element> TElement.assignPrototype(prototype: PsiElement?, inheritance: CommentsAndSpacesInheritance = CommentsAndSpacesInheritance()): TElement {
     prototypes = if (prototype != null) listOf(PrototypeInfo(prototype, inheritance)) else listOf()

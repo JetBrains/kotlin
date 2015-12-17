@@ -3091,6 +3091,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
             doTest(fileName);
         }
 
+        @TestMetadata("parameterToReceiver.java")
+        public void testParameterToReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/parameterToReceiver.java");
+            doTest(fileName);
+        }
+
         @TestMetadata("simpleCall.java")
         public void testSimpleCall() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/methodCallExpression/simpleCall.java");
@@ -3941,6 +3947,21 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         }
     }
 
+    @TestMetadata("j2k/testData/fileOrElement/strings")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Strings extends AbstractJavaToKotlinConverterSingleFileTest {
+        public void testAllFilesPresentInStrings() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("j2k/testData/fileOrElement/strings"), Pattern.compile("^(.+)\\.java$"), true);
+        }
+
+        @TestMetadata("formattedString.java")
+        public void testFormattedString() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/strings/formattedString.java");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("j2k/testData/fileOrElement/superExpression")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -4117,6 +4138,12 @@ public class JavaToKotlinConverterSingleFileTestGenerated extends AbstractJavaTo
         @TestMetadata("iterableAndIterator3.java")
         public void testIterableAndIterator3() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/toKotlinClasses/iterableAndIterator3.java");
+            doTest(fileName);
+        }
+
+        @TestMetadata("LibraryFunctions.java")
+        public void testLibraryFunctions() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("j2k/testData/fileOrElement/toKotlinClasses/LibraryFunctions.java");
             doTest(fileName);
         }
 

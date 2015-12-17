@@ -2,6 +2,7 @@
 // ERROR: Type mismatch: inferred type is () -> ??? but kotlin.Int was expected
 // ERROR: No value passed for parameter b
 // ERROR: Unresolved reference: it
+// SKIP_ERRORS_AFTER
 fun foo() {
     bar({ it <caret>})
 }

@@ -1,3 +1,4 @@
+// SKIP_ERRORS_AFTER
 class A {
     var a: Int
         get() = 1

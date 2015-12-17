@@ -4765,6 +4765,24 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             doTest(fileName);
         }
 
+        @TestMetadata("throwable.kt")
+        public void testThrowable() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/intrinsics/throwable.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("throwableCallableReference.kt")
+        public void testThrowableCallableReference() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/intrinsics/throwableCallableReference.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("throwableParamOrder.kt")
+        public void testThrowableParamOrder() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/intrinsics/throwableParamOrder.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("tostring.kt")
         public void testTostring() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/intrinsics/tostring.kt");

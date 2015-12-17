@@ -96,7 +96,7 @@ public abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJava
             CodeStyleManager.getInstance(project)!!.reformat(convertedFile)
         }
 
-        val reformattedText = convertedFile.getText()!!
+        val reformattedText = convertedFile.text!!
 
         return if (inFunContext)
             reformattedText.removeFirstLine().removeLastLine().trimIndent()
@@ -111,17 +111,17 @@ public abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJava
     }
 
     private fun methodToKotlin(text: String, settings: ConverterSettings, project: Project): String {
-        val result = fileToKotlin("final class C {" + text + "}", settings, project).replace("internal class C {", "").replace("internal object C {", "")
+        val result = fileToKotlin("final class C {$text}", settings, project).replace("internal class C {", "").replace("internal object C {", "")
         return result.substring(0, (result.lastIndexOf("}"))).trim()
     }
 
     private fun statementToKotlin(text: String, settings: ConverterSettings, project: Project): String {
-        val result = methodToKotlin("void main() {" + text + "}", settings, project)
+        val result = methodToKotlin("void main() {$text}", settings, project)
         return result.substring(0, result.lastIndexOf("}")).replaceFirst("fun main() {", "").trim()
     }
 
     private fun expressionToKotlin(code: String, settings: ConverterSettings, project: Project): String {
-        val result = statementToKotlin("final Object o =" + code + "}", settings, project)
+        val result = statementToKotlin("final Object o =$code}", settings, project)
         return result.replaceFirst("val o:Any? = ", "").replaceFirst("val o:Any = ", "").replaceFirst("val o = ", "").trim()
     }
 

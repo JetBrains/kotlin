@@ -63,6 +63,8 @@ object J2KPostProcessingRegistrar {
         registerIntentionBasedProcessing(ReplaceGetOrSetIntention(), additionalChecker = ReplaceGetOrSetInspection.additionalChecker) { applyTo(it) }
         registerIntentionBasedProcessing(AddOperatorModifierIntention()) { applyTo(it) }
         registerIntentionBasedProcessing(ObjectLiteralToLambdaIntention()) { applyTo(it) }
+        registerIntentionBasedProcessing(AnonymousFunctionToLambdaIntention()) { applyTo(it) }
+        registerIntentionBasedProcessing(RemoveUnnecessaryParenthesesIntention()) { applyTo(it) }
 
         registerDiagnosticBasedProcessing<KtBinaryExpressionWithTypeRHS>(Errors.USELESS_CAST) { element, diagnostic ->
             val expression = RemoveRightPartOfBinaryExpressionFix(element, "").invoke()

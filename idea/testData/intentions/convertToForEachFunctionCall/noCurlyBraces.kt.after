@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 fun foo() {
     val list = 1..4
     val i = 0

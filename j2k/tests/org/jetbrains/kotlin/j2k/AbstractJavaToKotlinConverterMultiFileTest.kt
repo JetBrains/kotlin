@@ -22,16 +22,14 @@ import com.intellij.psi.PsiJavaFile
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightPlatformTestCase
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
-import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
-import org.jetbrains.kotlin.idea.j2k.IdeaResolverForConverter
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.dumpTextWithErrors
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
-import java.util.ArrayList
+import java.util.*
 
 public abstract class AbstractJavaToKotlinConverterMultiFileTest : AbstractJavaToKotlinConverterTest() {
     public fun doTest(dirPath: String) {
@@ -61,12 +59,12 @@ public abstract class AbstractJavaToKotlinConverterMultiFileTest : AbstractJavaT
         val process = externalCodeProcessor?.prepareWriteOperation(EmptyProgressIndicator())
         project.executeWriteCommand("") { process?.invoke() }
 
-        fun expectedResultFile(i: Int) = File(filesToConvert[i].getPath().replace(".java", ".kt"))
+        fun expectedResultFile(i: Int) = File(filesToConvert[i].path.replace(".java", ".kt"))
 
         val resultFiles = ArrayList<KtFile>()
         for ((i, javaFile) in psiFilesToConvert.withIndex()) {
-            deleteFile(javaFile.getVirtualFile())
-            val virtualFile = addFile(results[i], expectedResultFile(i).getName(), "test")
+            deleteFile(javaFile.virtualFile)
+            val virtualFile = addFile(results[i], expectedResultFile(i).name, "test")
             resultFiles.add(psiManager.findFile(virtualFile) as KtFile)
         }
 
@@ -75,13 +73,13 @@ public abstract class AbstractJavaToKotlinConverterMultiFileTest : AbstractJavaT
         }
 
         for ((externalFile, externalPsiFile) in externalFiles.zip(externalPsiFiles)) {
-            val expectedFile = File(externalFile.getPath() + ".expected")
+            val expectedFile = File(externalFile.path + ".expected")
             var resultText = if (externalPsiFile is KtFile) {
                 externalPsiFile.dumpTextWithErrors()
             }
             else {
                 //TODO: errors dump for java files too
-                externalPsiFile.getText()
+                externalPsiFile.text
             }
             KotlinTestUtils.assertEqualsToFile(expectedFile, resultText)
         }

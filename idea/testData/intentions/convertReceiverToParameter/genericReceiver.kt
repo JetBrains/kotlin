@@ -1,5 +1,3 @@
-// CHECK_ERRORS_AFTER
-
 fun <T> <caret>T.bar() {
     toString()
 }

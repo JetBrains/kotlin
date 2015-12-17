@@ -17,11 +17,14 @@
 package org.jetbrains.kotlin.j2k.ast
 
 import com.intellij.psi.PsiTypeParameter
-import org.jetbrains.kotlin.j2k.*
 import com.intellij.psi.PsiTypeParameterList
+import org.jetbrains.kotlin.j2k.CodeBuilder
+import org.jetbrains.kotlin.j2k.Converter
+import org.jetbrains.kotlin.j2k.append
+import org.jetbrains.kotlin.j2k.buildList
 
 class TypeParameter(val name: Identifier, val extendsTypes: List<Type>) : Element() {
-    fun hasWhere(): Boolean = extendsTypes.size() > 1
+    fun hasWhere(): Boolean = extendsTypes.size > 1
 
     fun whereToKotlin(builder: CodeBuilder) {
         if (hasWhere()) {
@@ -64,12 +67,12 @@ class TypeParameterList(val parameters: List<TypeParameter>) : Element() {
 
 private fun Converter.convertTypeParameter(typeParameter: PsiTypeParameter): TypeParameter {
     return TypeParameter(typeParameter.declarationIdentifier(),
-                           typeParameter.getExtendsListTypes().map { typeConverter.convertType(it) }).assignPrototype(typeParameter)
+                           typeParameter.extendsListTypes.map { typeConverter.convertType(it) }).assignPrototype(typeParameter)
 }
 
 fun Converter.convertTypeParameterList(typeParameterList: PsiTypeParameterList?): TypeParameterList {
     return if (typeParameterList != null)
-        TypeParameterList(typeParameterList.getTypeParameters()!!.toList().map { convertTypeParameter(it) }).assignPrototype(typeParameterList)
+        TypeParameterList(typeParameterList.typeParameters!!.toList().map { convertTypeParameter(it) }).assignPrototype(typeParameterList)
     else
         TypeParameterList.Empty
 }

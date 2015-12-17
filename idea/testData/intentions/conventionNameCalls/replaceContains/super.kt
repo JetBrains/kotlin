@@ -1,7 +1,7 @@
 // IS_APPLICABLE: false
 
 open class Base {
-    open fun contains(s: String) = true
+    open operator fun contains(s: String) = true
 }
 
 class C : Base() {

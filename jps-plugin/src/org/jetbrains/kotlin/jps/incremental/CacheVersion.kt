@@ -71,7 +71,7 @@ class CacheVersion(
         versionFile.delete()
     }
 
-    @TestOnly
+    @get:TestOnly
     val formatVersionFile: File
         get() = versionFile
 

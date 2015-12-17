@@ -18,9 +18,11 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ShortenReferences
@@ -136,7 +138,11 @@ private fun KtExpression.specialNegation(): KtExpression? {
             if (getOperationReference().getReferencedName() == "!") {
                 val baseExpression = getBaseExpression()
                 if (baseExpression != null) {
-                    return KtPsiUtil.safeDeparenthesize(baseExpression)
+                    val context = baseExpression.analyzeAndGetResult().bindingContext
+                    val type = context.getType(baseExpression)
+                    if (type != null && KotlinBuiltIns.isBoolean(type)) {
+                        return KtPsiUtil.safeDeparenthesize(baseExpression)
+                    }
                 }
             }
         }

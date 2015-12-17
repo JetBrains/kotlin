@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.j2k.ast
 
 import org.jetbrains.kotlin.j2k.CodeBuilder
-import org.jetbrains.kotlin.j2k.CodeConverter
 
 abstract class Expression : Statement() {
     open val isNullable: Boolean get() = false

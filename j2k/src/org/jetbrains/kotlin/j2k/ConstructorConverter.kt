@@ -27,11 +27,11 @@ class ConstructorConverter(
         private val fieldToPropertyInfo: (PsiField) -> PropertyInfo,
         private val overloadReducer: OverloadReducer
 ) {
-    private val constructors = psiClass.getConstructors().asList()
+    private val constructors = psiClass.constructors.asList()
 
     private val toTargetConstructorMap = buildToTargetConstructorMap()
 
-    private val primaryConstructor: PsiMethod? = when (constructors.size()) {
+    private val primaryConstructor: PsiMethod? = when (constructors.size) {
         0 -> null
         1 -> constructors.single()
         else -> choosePrimaryConstructor()
@@ -39,25 +39,25 @@ class ConstructorConverter(
 
     private fun choosePrimaryConstructor(): PsiMethod? {
         val candidates = constructors.filter { it !in toTargetConstructorMap }
-        if (candidates.size() != 1) return null // there should be only one constructor which does not call other constructor
+        if (candidates.size != 1) return null // there should be only one constructor which does not call other constructor
         val primary = candidates.single()
-        if (toTargetConstructorMap.values().any() { it != primary }) return null // all other constructors call our candidate (directly or indirectly)
+        if (toTargetConstructorMap.values.any() { it != primary }) return null // all other constructors call our candidate (directly or indirectly)
         return primary
     }
 
     private fun buildToTargetConstructorMap(): Map<PsiMethod, PsiMethod> {
         val toTargetConstructorMap = HashMap<PsiMethod, PsiMethod>()
         for (constructor in constructors) {
-            val firstStatement = constructor.getBody()?.getStatements()?.firstOrNull()
-            val methodCall = (firstStatement as? PsiExpressionStatement)?.getExpression() as? PsiMethodCallExpression
+            val firstStatement = constructor.body?.statements?.firstOrNull()
+            val methodCall = (firstStatement as? PsiExpressionStatement)?.expression as? PsiMethodCallExpression
             if (methodCall != null) {
-                val refExpr = methodCall.getMethodExpression()
-                if (refExpr.getCanonicalText() == "this") {
+                val refExpr = methodCall.methodExpression
+                if (refExpr.canonicalText == "this") {
                     val target = refExpr.resolve() as? PsiMethod
-                    if (target != null && target.isConstructor()) {
+                    if (target != null && target.isConstructor) {
                         val finalTarget = toTargetConstructorMap[target] ?: target
                         toTargetConstructorMap[constructor] = finalTarget
-                        for (entry in toTargetConstructorMap.entrySet()) {
+                        for (entry in toTargetConstructorMap.entries) {
                             if (entry.value == constructor) {
                                 entry.setValue(finalTarget)
                             }
@@ -87,7 +87,7 @@ class ConstructorConverter(
 
             val thisOrSuper = findThisOrSuperCall(constructor)
             val thisOrSuperDeferred = if (thisOrSuper != null)
-                converter.deferredElement { it.convertExpression(thisOrSuper.getExpression()) }
+                converter.deferredElement { it.convertExpression(thisOrSuper.expression) }
             else
                 null
 
@@ -99,7 +99,7 @@ class ConstructorConverter(
                         }
                         return null
                     }
-                }).convertBlock(constructor.getBody()))
+                }).convertBlock(constructor.body))
             }
 
             SecondaryConstructor(annotations, modifiers, params, converter.deferredElement(::convertBody), thisOrSuperDeferred)
@@ -108,9 +108,9 @@ class ConstructorConverter(
     }
 
     private fun findThisOrSuperCall(constructor: PsiMethod): PsiExpressionStatement? {
-        val statement = constructor.getBody()?.getStatements()?.firstOrNull() as? PsiExpressionStatement ?: return null
-        val methodCall = statement.getExpression() as? PsiMethodCallExpression ?: return null
-        val text = methodCall.getMethodExpression().getText()
+        val statement = constructor.body?.statements?.firstOrNull() as? PsiExpressionStatement ?: return null
+        val methodCall = statement.expression as? PsiMethodCallExpression ?: return null
+        val text = methodCall.methodExpression.text
         return if (text == "this" || text == "super") statement else null
     }
 
@@ -118,9 +118,9 @@ class ConstructorConverter(
                                           modifiers: Modifiers,
                                           fieldsToDrop: MutableSet<PsiField>,
                                           postProcessBody: (Block) -> Block): PrimaryConstructor {
-        val params = primaryConstructor!!.getParameterList().getParameters()
+        val params = primaryConstructor!!.parameterList.parameters
         val parameterToField = HashMap<PsiParameter, Pair<PsiField, Type>>()
-        val body = primaryConstructor.getBody()
+        val body = primaryConstructor.body
 
         val parameterUsageReplacementMap = HashMap<String, String>()
         val correctedTypeConverter = converter.withSpecialContext(psiClass).typeConverter /* to correct nested class references */
@@ -151,8 +151,8 @@ class ConstructorConverter(
                 fieldsToDrop.add(field)
 
                 val fieldName = propertyInfo.name
-                if (fieldName != parameter.getName()) {
-                    parameterUsageReplacementMap.put(parameter.getName()!!, fieldName)
+                if (fieldName != parameter.name) {
+                    parameterUsageReplacementMap.put(parameter.name!!, fieldName)
                 }
             }
 
@@ -179,10 +179,10 @@ class ConstructorConverter(
 
         fun CodeConverter.correct() = withSpecialExpressionConverter(ReplacingExpressionConverter(parameterUsageReplacementMap))
 
-        val statement = primaryConstructor.getBody()?.getStatements()?.firstOrNull()
-        val methodCall = (statement as? PsiExpressionStatement)?.getExpression() as? PsiMethodCallExpression
+        val statement = primaryConstructor.body?.statements?.firstOrNull()
+        val methodCall = (statement as? PsiExpressionStatement)?.expression as? PsiMethodCallExpression
         if (methodCall != null && methodCall.isSuperConstructorCall()) {
-            baseClassParams = methodCall.getArgumentList().getExpressions().map {
+            baseClassParams = methodCall.argumentList.expressions.map {
                 correctedConverter.deferredElement { codeConverter -> codeConverter.correct().convertExpression(it) }
             }
         }
@@ -218,25 +218,25 @@ class ConstructorConverter(
     }
 
     private fun findBackingFieldForConstructorParameter(parameter: PsiParameter, constructor: PsiMethod): Pair<PsiField, PsiStatement>? {
-        val body = constructor.getBody() ?: return null
+        val body = constructor.body ?: return null
 
         val refs = converter.referenceSearcher.findVariableUsages(parameter, body)
 
         if (refs.any { PsiUtil.isAccessedForWriting(it) }) return null
 
         for (ref in refs) {
-            val assignment = ref.getParent() as? PsiAssignmentExpression ?: continue
-            if (assignment.getOperationSign().getTokenType() != JavaTokenType.EQ) continue
-            val assignee = assignment.getLExpression() as? PsiReferenceExpression ?: continue
+            val assignment = ref.parent as? PsiAssignmentExpression ?: continue
+            if (assignment.operationSign.tokenType != JavaTokenType.EQ) continue
+            val assignee = assignment.lExpression as? PsiReferenceExpression ?: continue
             if (!assignee.isQualifierEmptyOrThis()) continue
             val field = assignee.resolve() as? PsiField ?: continue
-            if (field.getContainingClass() != constructor.getContainingClass()) continue
+            if (field.containingClass != constructor.containingClass) continue
             if (field.hasModifierProperty(PsiModifier.STATIC)) continue
-            if (field.getInitializer() != null) continue
+            if (field.initializer != null) continue
 
             // assignment should be a top-level statement
-            val statement = assignment.getParent() as? PsiExpressionStatement ?: continue
-            if (statement.getParent() != body) continue
+            val statement = assignment.parent as? PsiExpressionStatement ?: continue
+            if (statement.parent != body) continue
 
             // and no other assignments to field should exist in the constructor
             if (converter.referenceSearcher.findVariableUsages(field, body).any { it != assignee && PsiUtil.isAccessedForWriting(it) && it.isQualifierEmptyOrThis() }) continue
@@ -248,19 +248,19 @@ class ConstructorConverter(
         return null
     }
 
-    private fun PsiExpression.isSuperConstructorCall() = (this as? PsiMethodCallExpression)?.getMethodExpression()?.getText() == "super"
-    private fun PsiExpression.isThisConstructorCall() = (this as? PsiMethodCallExpression)?.getMethodExpression()?.getText() == "this"
+    private fun PsiExpression.isSuperConstructorCall() = (this as? PsiMethodCallExpression)?.methodExpression?.text == "super"
+    private fun PsiExpression.isThisConstructorCall() = (this as? PsiMethodCallExpression)?.methodExpression?.text == "this"
 
     private inner open class ReplacingExpressionConverter(val parameterUsageReplacementMap: Map<String, String>) : SpecialExpressionConverter {
         override fun convertExpression(expression: PsiExpression, codeConverter: CodeConverter): Expression? {
-            if (expression is PsiReferenceExpression && expression.getQualifier() == null) {
-                val replacement = parameterUsageReplacementMap[expression.getReferenceName()]
+            if (expression is PsiReferenceExpression && expression.qualifier == null) {
+                val replacement = parameterUsageReplacementMap[expression.referenceName]
                 if (replacement != null) {
                     val target = expression.resolve()
                     if (target is PsiParameter) {
-                        val scope = target.getDeclarationScope()
+                        val scope = target.declarationScope
                         // we do not check for exactly this constructor because default values reference parameters in other constructors
-                        if (scope is PsiMember && scope.isConstructor() && scope.getParent() == psiClass) {
+                        if (scope is PsiMember && scope.isConstructor() && scope.parent == psiClass) {
                             return Identifier(replacement, codeConverter.typeConverter.variableNullability(target).isNullable(codeConverter.settings))
                         }
                     }

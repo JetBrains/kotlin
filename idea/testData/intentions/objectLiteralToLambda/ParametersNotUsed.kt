@@ -1,11 +1,11 @@
 // WITH_RUNTIME
 import java.io.File
-import java.io.FilenameFilter
+import java.io.FileFilter
 
-fun foo(filter: FilenameFilter) {}
+fun foo(filter: FileFilter) {}
 
 fun bar() {
-    foo(<caret>object: FilenameFilter {
-        override fun accept(file: File, name: String) = true
+    foo(<caret>object: FileFilter {
+        override fun accept(file: File) = true
     })
 }

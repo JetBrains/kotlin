@@ -1,23 +1,23 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
-<!INAPPLICABLE_JVM_FIELD, WRONG_ANNOTATION_TARGET!>@kotlin.jvm.JvmField<!>
+<!WRONG_ANNOTATION_TARGET!>@kotlin.jvm.JvmField<!>
 fun foo() {
-    <!INAPPLICABLE_JVM_FIELD, WRONG_ANNOTATION_TARGET!>@kotlin.jvm.JvmField<!> val x = "A"
+    <!WRONG_ANNOTATION_TARGET!>@kotlin.jvm.JvmField<!> val x = "A"
 }
 
-<!INAPPLICABLE_JVM_FIELD, WRONG_ANNOTATION_TARGET!>@JvmField<!>
+<!WRONG_ANNOTATION_TARGET!>@JvmField<!>
 abstract class C : I{
 
-    <!INAPPLICABLE_JVM_FIELD, WRONG_ANNOTATION_TARGET!>@kotlin.jvm.JvmField<!> constructor(s: String) {
+    <!WRONG_ANNOTATION_TARGET!>@kotlin.jvm.JvmField<!> constructor(s: String) {
     }
 
-    <!INAPPLICABLE_JVM_FIELD, WRONG_ANNOTATION_TARGET!>@kotlin.jvm.JvmField<!> private fun foo(s: String = "OK") {
+    <!WRONG_ANNOTATION_TARGET!>@kotlin.jvm.JvmField<!> private fun foo(s: String = "OK") {
     }
 
-    <!INAPPLICABLE_JVM_FIELD!>@JvmField<!> val a: String by lazy { "A" }
+    <!WRONG_ANNOTATION_TARGET!>@JvmField<!> val a: String by lazy { "A" }
 
     <!INAPPLICABLE_JVM_FIELD!>@JvmField<!> open val b: Int = 3
 
-    <!INAPPLICABLE_JVM_FIELD!>@JvmField<!> abstract val c: Int
+    <!WRONG_ANNOTATION_TARGET!>@JvmField<!> abstract val c: Int
 
     <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
     val customGetter: String = ""
@@ -29,7 +29,7 @@ abstract class C : I{
             field = s
         }
 
-    <!INAPPLICABLE_JVM_FIELD!>@JvmField<!>
+    <!WRONG_ANNOTATION_TARGET!>@JvmField<!>
     val noBackingField: String
         get() = "a"
 
@@ -41,8 +41,8 @@ abstract class C : I{
 }
 
 interface I {
-    <!INAPPLICABLE_JVM_FIELD!>@JvmField<!> val ai: Int
-    <!INAPPLICABLE_JVM_FIELD!>@JvmField<!> val bi: Int
+    <!WRONG_ANNOTATION_TARGET!>@JvmField<!> val ai: Int
+    <!WRONG_ANNOTATION_TARGET!>@JvmField<!> val bi: Int
         get() = 5
 }
 

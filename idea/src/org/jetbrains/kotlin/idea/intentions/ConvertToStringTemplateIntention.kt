@@ -52,7 +52,9 @@ public class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentIn
 
     public fun shouldSuggestToConvert(expression: KtBinaryExpression): Boolean {
         val entries = buildReplacement(expression).entries
-        return entries.none { it is KtBlockStringTemplateEntry } && entries.count { it is KtLiteralStringTemplateEntry } > 1
+        return entries.none { it is KtBlockStringTemplateEntry } &&
+               !entries.all { it is KtLiteralStringTemplateEntry || it is KtEscapeStringTemplateEntry }
+               && entries.count { it is KtLiteralStringTemplateEntry } > 1
     }
 
     private fun isApplicableToNoParentCheck(expression: KtBinaryExpression): Boolean {

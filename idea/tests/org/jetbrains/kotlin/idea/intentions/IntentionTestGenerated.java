@@ -362,6 +362,69 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/anonymousFunctionToLambda")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AnonymousFunctionToLambda extends AbstractIntentionTest {
+        public void testAllFilesPresentInAnonymousFunctionToLambda() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/anonymousFunctionToLambda"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("callMultiline.kt")
+        public void testCallMultiline() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/anonymousFunctionToLambda/callMultiline.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("constructor.kt")
+        public void testConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/anonymousFunctionToLambda/constructor.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("expressionBody.kt")
+        public void testExpressionBody() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/anonymousFunctionToLambda/expressionBody.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("fullParam.kt")
+        public void testFullParam() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/anonymousFunctionToLambda/fullParam.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("moveOut.kt")
+        public void testMoveOut() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/anonymousFunctionToLambda/moveOut.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("paramName.kt")
+        public void testParamName() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/anonymousFunctionToLambda/paramName.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("replaceReturnWithExpression.kt")
+        public void testReplaceReturnWithExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/anonymousFunctionToLambda/replaceReturnWithExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("replaceReturnWithLabel.kt")
+        public void testReplaceReturnWithLabel() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/anonymousFunctionToLambda/replaceReturnWithLabel.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/anonymousFunctionToLambda/simple.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/branched")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -4711,12 +4774,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("genericProperty.kt")
-            public void testGenericProperty() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/declarations/convertMemberToExtension/genericProperty.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("inFunctionBody.kt")
             public void testInFunctionBody() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/declarations/convertMemberToExtension/inFunctionBody.kt");
@@ -6120,9 +6177,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ParametersNotUsedMoreThanOne.kt")
+        public void testParametersNotUsedMoreThanOne() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/ParametersNotUsedMoreThanOne.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("QualifiedReturn.kt")
         public void testQualifiedReturn() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/QualifiedReturn.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("Recursive.kt")
+        public void testRecursive() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/Recursive.kt");
             doTest(fileName);
         }
 

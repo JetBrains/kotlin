@@ -26,9 +26,9 @@ class ToObjectWithOnlyMethodsProcessing(private val psiClass: PsiClass) : UsageP
 
     override val javaCodeProcessor = object: ExternalCodeProcessor {
         override fun processUsage(reference: PsiReference): Array<PsiReference>? {
-            val refExpr = reference.getElement() as? PsiReferenceExpression ?: return null
-            val factory = PsiElementFactory.SERVICE.getInstance(psiClass.getProject())
-            var qualifiedExpr = factory.createExpressionFromText(refExpr.getText() + "." + JvmAbi.INSTANCE_FIELD, null) as PsiReferenceExpression
+            val refExpr = reference.element as? PsiReferenceExpression ?: return null
+            val factory = PsiElementFactory.SERVICE.getInstance(psiClass.project)
+            var qualifiedExpr = factory.createExpressionFromText(refExpr.text + "." + JvmAbi.INSTANCE_FIELD, null) as PsiReferenceExpression
             qualifiedExpr = refExpr.replace(qualifiedExpr) as PsiReferenceExpression
             return arrayOf(qualifiedExpr)
         }

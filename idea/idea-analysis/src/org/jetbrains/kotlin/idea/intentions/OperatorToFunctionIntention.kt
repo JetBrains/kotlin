@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
+import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -199,9 +200,15 @@ public class OperatorToFunctionIntention : SelfTargetingIntention<KtExpression>(
             val funcLitArgs = element.getLambdaArguments()
             val calleeText = callee.getText()
             val transformation = "$calleeText.${OperatorNameConventions.INVOKE.asString()}" +
-                                 (if (argumentString == null) "" else "($argumentString)")
+                                 (if (argumentString == null) "()" else "($argumentString)")
             val transformed = KtPsiFactory(element).createExpression(transformation)
-            funcLitArgs.forEach { transformed.add(it) }
+            val callExpression = transformed.getCalleeExpressionIfAny()?.parent as? KtCallExpression
+            if (callExpression != null) {
+                funcLitArgs.forEach { callExpression.add(it) }
+                if (argumentString == null) {
+                    callExpression.valueArgumentList?.delete()
+                }
+            }
             return callee.getParent()!!.replace(transformed) as KtExpression
         }
 

@@ -1,8 +1,0 @@
-// ERROR: Property must be initialized or be abstract
-// ERROR: Type parameter of a property must be used in its receiver type
-
-class Owner<T> {
-}
-
-val <T, R> Owner<T>.p: R
-    get() = <caret><selection>throw UnsupportedOperationException()</selection>

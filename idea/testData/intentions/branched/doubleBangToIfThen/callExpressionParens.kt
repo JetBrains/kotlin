@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 fun foo(): String? {
     return "foo"
 }

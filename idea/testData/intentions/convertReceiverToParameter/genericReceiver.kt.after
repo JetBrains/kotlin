@@ -1,5 +1,3 @@
-// CHECK_ERRORS_AFTER
-
 fun <T> bar(t: T) {
     t.toString()
 }

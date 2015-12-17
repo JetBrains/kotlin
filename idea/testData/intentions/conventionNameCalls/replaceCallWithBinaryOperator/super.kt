@@ -1,7 +1,7 @@
 // IS_APPLICABLE: false
 
 open class Base {
-    open fun plus(s: String) = ""
+    open operator fun plus(s: String) = ""
 }
 
 class C : Base() {

@@ -16,7 +16,8 @@
 
 package org.jetbrains.kotlin.j2k.ast
 
-import org.jetbrains.kotlin.j2k.*
+import org.jetbrains.kotlin.j2k.CodeBuilder
+import org.jetbrains.kotlin.j2k.append
 
 abstract class Statement : Element() {
     object Empty : Statement() {

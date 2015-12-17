@@ -76,3 +76,14 @@ class Function(
         }
     }
 }
+
+class AnonymousFunction(
+        returnType: Type,
+        typeParameterList: TypeParameterList,
+        parameterList: ParameterList,
+        body: DeferredElement<Block>?
+): Expression() {
+    private val function = Function(Identifier.Empty, Annotations.Empty, Modifiers.Empty, returnType, typeParameterList, parameterList, body, false)
+
+    override fun generateCode(builder: CodeBuilder) = function.generateCode(builder)
+}

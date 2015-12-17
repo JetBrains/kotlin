@@ -1,0 +1,6 @@
+// "Make variable mutable" "true"
+class A(var a: Int) {
+    fun foo() {
+        a = 5
+    }
+}

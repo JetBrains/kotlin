@@ -18,9 +18,7 @@ package org.jetbrains.kotlin.j2k
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.j2k.ast.*
-import java.util.ArrayList
-import java.util.HashMap
-import java.util.HashSet
+import java.util.*
 
 class OverloadReducer(
         private val methods: Collection<PsiMethod>,
@@ -39,8 +37,8 @@ class OverloadReducer(
 
     public fun parameterDefault(method: PsiMethod, parameterIndex: Int): PsiExpression? {
         val defaults = methodToLastParameterDefaults[method] ?: return null
-        val index = method.getParameterList().getParametersCount() - parameterIndex - 1
-        return if (index < defaults.size()) defaults[index] else null
+        val index = method.parameterList.parametersCount - parameterIndex - 1
+        return if (index < defaults.size) defaults[index] else null
     }
 
     private class EquivalentOverloadInfo(
@@ -55,15 +53,15 @@ class OverloadReducer(
 
     private fun buildOverloadEquivalenceMap(): Map<PsiMethod, EquivalentOverloadInfo> {
         val overloadGroups = methods
-                .groupBy { listOf(if (it.isConstructor()) null else it.getName(),
+                .groupBy { listOf(if (it.isConstructor) null else it.name,
                                   it.accessModifier(),
-                                  it.getReturnType(),
+                                  it.returnType,
                                   it.hasModifierProperty(PsiModifier.STATIC),
                                   getAnnotationsFingerprint(it)) }
-                .values()
-                .filter { it.size() > 1 }
+                .values
+                .filter { it.size > 1 }
                 .map { it.filterNot { shouldSkipOverload(it) } }
-                .filter { it.size() > 1 }
+                .filter { it.size > 1 }
 
         val map = HashMap<PsiMethod, EquivalentOverloadInfo>()
         for (group in overloadGroups) {
@@ -79,7 +77,7 @@ class OverloadReducer(
                 }
 
                 map[method] = resultOverloadInfo
-                for (entry in map.entrySet()) {
+                for (entry in map.entries) {
                     if (entry.value.method == method) {
                         val newParameterDefaults = entry.value.parameterDefaults + resultOverloadInfo.parameterDefaults
                         entry.setValue(EquivalentOverloadInfo(resultOverloadInfo.method, newParameterDefaults))
@@ -93,27 +91,27 @@ class OverloadReducer(
     }
 
     private fun shouldSkipOverload(method: PsiMethod): Boolean {
-        if (method.isConstructor()) return false
+        if (method.isConstructor) return false
         if (method.hasModifierProperty(PsiModifier.ABSTRACT)) return true
         if (method.hasModifierProperty(PsiModifier.NATIVE)) return true
         if (method.hasModifierProperty(PsiModifier.SYNCHRONIZED)) return true
-        if (method.getHierarchicalMethodSignature().getSuperSignatures().isNotEmpty()) return true
+        if (method.hierarchicalMethodSignature.superSignatures.isNotEmpty()) return true
         if (isOpenClass && referenceSearcher.hasOverrides(method)) return true
         return false
     }
 
     private fun findEquivalentOverload(method: PsiMethod, overloads: Collection<PsiMethod>): EquivalentOverloadInfo? {
-        val statement = method.getBody()?.getStatements()?.singleOrNull() ?: return null
+        val statement = method.body?.statements?.singleOrNull() ?: return null
 
         val methodCall = when (statement) {
-            is PsiExpressionStatement -> statement.getExpression()
-            is PsiReturnStatement -> statement.getReturnValue()
+            is PsiExpressionStatement -> statement.expression
+            is PsiReturnStatement -> statement.returnValue
             else -> null
         } as? PsiMethodCallExpression ?: return null
 
-        val expectedMethodName = if (method.isConstructor()) "this" else method.getName()
-        val refExpr = methodCall.getMethodExpression()
-        if (refExpr.isQualified() || refExpr.getReferenceName() != expectedMethodName) return null
+        val expectedMethodName = if (method.isConstructor) "this" else method.name
+        val refExpr = methodCall.methodExpression
+        if (refExpr.isQualified || refExpr.referenceName != expectedMethodName) return null
 
         val target = refExpr.resolve() as? PsiMethod ?: return null
         if (target !in overloads) return null
@@ -123,21 +121,21 @@ class OverloadReducer(
     }
 
     private fun calcTargetParameterDefaults(method: PsiMethod, target: PsiMethod, targetCall: PsiMethodCallExpression): List<PsiExpression>? {
-        val parameters = method.getParameterList().getParameters()
-        val targetParameters = target.getParameterList().getParameters()
-        if (parameters.size() >= targetParameters.size()) return null
-        val args = targetCall.getArgumentList().getExpressions()
-        if (args.size() != targetParameters.size()) return null // incorrect code
+        val parameters = method.parameterList.parameters
+        val targetParameters = target.parameterList.parameters
+        if (parameters.size >= targetParameters.size) return null
+        val args = targetCall.argumentList.expressions
+        if (args.size != targetParameters.size) return null // incorrect code
 
         for (i in parameters.indices) {
             val parameter = parameters[i]
             val targetParameter = targetParameters[i]
-            if (parameter.getName() != targetParameter.getName() || parameter.getType() != targetParameter.getType()) return null
+            if (parameter.name != targetParameter.name || parameter.type != targetParameter.type) return null
             val arg = args[i]
             if (arg !is PsiReferenceExpression || arg.resolve() != parameter) return null
         }
 
-        return args.drop(parameters.size())
+        return args.drop(parameters.size)
     }
 
     private fun dropOverloadsForDefaultValues(equivalenceMap: Map<PsiMethod, EquivalentOverloadInfo>) {
@@ -147,19 +145,19 @@ class OverloadReducer(
 
         DropCandidatesLoop@
         for (method in dropCandidates) {
-            val paramCount = method.getParameterList().getParametersCount()
+            val paramCount = method.parameterList.parametersCount
             val targetInfo = equivalenceMap[method]!!
-            val targetParamCount = targetInfo.method.getParameterList().getParametersCount()
+            val targetParamCount = targetInfo.method.parameterList.parametersCount
             assert(paramCount < targetParamCount)
             val defaults = targetInfo.parameterDefaults
-            assert(defaults.size() == targetParamCount - paramCount)
+            assert(defaults.size == targetParamCount - paramCount)
 
             val targetDefaults = methodToLastParameterDefaults.getOrPut(targetInfo.method, { ArrayList() })
 
             for (i in defaults.indices) {
-                val default = defaults[defaults.size() - i - 1]
-                if (i < targetDefaults.size()) { // default for this parameter has already been assigned
-                    if (targetDefaults[i].getText() != default.getText()) continue@DropCandidatesLoop
+                val default = defaults[defaults.size - i - 1]
+                if (i < targetDefaults.size) { // default for this parameter has already been assigned
+                    if (targetDefaults[i].text != default.text) continue@DropCandidatesLoop
                 }
                 else {
                     targetDefaults.add(default)
@@ -171,7 +169,7 @@ class OverloadReducer(
     }
 
     private fun getAnnotationsFingerprint(method: PsiMethod): Any {
-        return method.getModifierList().getAnnotations().map { it.getText() }
+        return method.modifierList.annotations.map { it.text }
     }
 }
 
@@ -181,13 +179,13 @@ public fun Converter.convertParameterList(
         convertParameter: (parameter: PsiParameter, default: DeferredElement<Expression>?) -> FunctionParameter = { parameter, default -> convertParameter(parameter, defaultValue = default) },
         correctCodeConverter: CodeConverter.() -> CodeConverter = { this }
 ): ParameterList {
-    val parameterList = method.getParameterList()
-    val params = parameterList.getParameters()
+    val parameterList = method.parameterList
+    val params = parameterList.parameters
     return ParameterList(params.indices.map { i ->
         val parameter = params[i]
         val defaultValue = overloadReducer?.parameterDefault(method, i)
         val defaultValueConverted = if (defaultValue != null)
-            deferredElement { codeConverter -> codeConverter.correctCodeConverter().convertExpression(defaultValue, parameter.getType()) }
+            deferredElement { codeConverter -> codeConverter.correctCodeConverter().convertExpression(defaultValue, parameter.type) }
         else
             null
         convertParameter(parameter, defaultValueConverted)

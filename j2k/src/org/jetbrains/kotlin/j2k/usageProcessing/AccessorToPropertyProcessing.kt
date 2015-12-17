@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.j2k.usageProcessing
 import com.intellij.psi.*
 import org.jetbrains.kotlin.j2k.AccessorKind
 import org.jetbrains.kotlin.j2k.CodeConverter
-import org.jetbrains.kotlin.j2k.ResolverForConverter
 import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.psi.*
 
@@ -30,20 +29,20 @@ class AccessorToPropertyProcessing(val accessorMethod: PsiMethod, val accessorKi
         override fun convertMethodUsage(methodCall: PsiMethodCallExpression, codeConverter: CodeConverter): Expression? {
             val isNullable = codeConverter.typeConverter.methodNullability(accessorMethod).isNullable(codeConverter.settings)
 
-            val methodExpr = methodCall.getMethodExpression()
-            val arguments = methodCall.getArgumentList().getExpressions()
+            val methodExpr = methodCall.methodExpression
+            val arguments = methodCall.argumentList.expressions
 
             val propertyName = Identifier(propertyName, isNullable).assignNoPrototype()
-            val propertyAccess = QualifiedExpression(codeConverter.convertExpression(methodExpr.getQualifierExpression()), propertyName).assignNoPrototype()
+            val propertyAccess = QualifiedExpression(codeConverter.convertExpression(methodExpr.qualifierExpression), propertyName).assignNoPrototype()
 
             if (accessorKind == AccessorKind.GETTER) {
-                if (arguments.size() != 0) return null // incorrect call
+                if (arguments.size != 0) return null // incorrect call
                 return propertyAccess
             }
             else {
-                if (arguments.size() != 1) return null // incorrect call
+                if (arguments.size != 1) return null // incorrect call
                 val argument = codeConverter.convertExpression(arguments[0])
-                return AssignmentExpression(propertyAccess, argument, "=")
+                return AssignmentExpression(propertyAccess, argument, Operator.EQ)
             }
         }
     }
@@ -55,34 +54,34 @@ class AccessorToPropertyProcessing(val accessorMethod: PsiMethod, val accessorKi
     else
         object : ExternalCodeProcessor {
             override fun processUsage(reference: PsiReference): Array<PsiReference>? {
-                val nameExpr = reference.getElement() as? KtSimpleNameExpression ?: return null
-                val callExpr = nameExpr.getParent() as? KtCallExpression ?: return null
+                val nameExpr = reference.element as? KtSimpleNameExpression ?: return null
+                val callExpr = nameExpr.parent as? KtCallExpression ?: return null
 
-                val arguments = callExpr.getValueArguments()
+                val arguments = callExpr.valueArguments
 
-                val factory = KtPsiFactory(nameExpr.getProject())
+                val factory = KtPsiFactory(nameExpr.project)
                 var propertyNameExpr = factory.createSimpleName(propertyName)
                 if (accessorKind == AccessorKind.GETTER) {
-                    if (arguments.size() != 0) return null // incorrect call
+                    if (arguments.size != 0) return null // incorrect call
                     propertyNameExpr = callExpr.replace(propertyNameExpr) as KtSimpleNameExpression
-                    return propertyNameExpr.getReferences()
+                    return propertyNameExpr.references
                 }
                 else {
                     val value = arguments.singleOrNull()?.getArgumentExpression() ?: return null
                     var assignment = factory.createExpression("a = b") as KtBinaryExpression
-                    assignment.getRight()!!.replace(value)
+                    assignment.right!!.replace(value)
 
-                    val qualifiedExpression = callExpr.getParent() as? KtQualifiedExpression
-                    if (qualifiedExpression != null && qualifiedExpression.getSelectorExpression() == callExpr) {
+                    val qualifiedExpression = callExpr.parent as? KtQualifiedExpression
+                    if (qualifiedExpression != null && qualifiedExpression.selectorExpression == callExpr) {
                         callExpr.replace(propertyNameExpr)
-                        assignment.getLeft()!!.replace(qualifiedExpression)
+                        assignment.left!!.replace(qualifiedExpression)
                         assignment = qualifiedExpression.replace(assignment) as KtBinaryExpression
-                        return (assignment.getLeft() as KtQualifiedExpression).getSelectorExpression()!!.getReferences()
+                        return (assignment.left as KtQualifiedExpression).selectorExpression!!.references
                     }
                     else {
-                        assignment.getLeft()!!.replace(propertyNameExpr)
+                        assignment.left!!.replace(propertyNameExpr)
                         assignment = callExpr.replace(assignment) as KtBinaryExpression
-                        return assignment.getLeft()!!.getReferences()
+                        return assignment.left!!.references
                     }
                 }
 

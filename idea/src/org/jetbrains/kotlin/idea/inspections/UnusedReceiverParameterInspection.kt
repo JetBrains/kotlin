@@ -19,9 +19,7 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
@@ -32,21 +30,19 @@ import org.jetbrains.kotlin.psi.psiUtil.isOverridable
 import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
-import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
-import kotlin.properties.Delegates
 
 public class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return object : KtVisitorVoid() {
             private fun check(callableDeclaration: KtCallableDeclaration) {
-                val receiverTypeReference = callableDeclaration.getReceiverTypeReference()
+                val receiverTypeReference = callableDeclaration.receiverTypeReference
                 if (receiverTypeReference == null || receiverTypeReference.textRange.isEmpty) return
                 if (callableDeclaration.isOverridable() || callableDeclaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
 
-                if (callableDeclaration is KtProperty && callableDeclaration.getAccessors().isEmpty()) return
+                if (callableDeclaration is KtProperty && callableDeclaration.accessors.isEmpty()) return
                 if (callableDeclaration is KtNamedFunction && !callableDeclaration.hasBody()) return
 
                 val callable = callableDeclaration.descriptor
@@ -60,13 +56,25 @@ public class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
                         val bindingContext = element.analyze()
                         val resolvedCall = element.getResolvedCall(bindingContext) ?: return
 
-                        if (resolvedCall.getDispatchReceiver().getThisReceiverOwner(bindingContext) == callable ||
+                        if (isUsageOfReceiver(resolvedCall, bindingContext)) {
+                            used = true
+                        } else if (resolvedCall is VariableAsFunctionResolvedCall
+                                   && isUsageOfReceiver(resolvedCall.variableCall, bindingContext)) {
+                            used = true
+                        }
+                    }
+
+                    private fun isUsageOfReceiver(resolvedCall: ResolvedCall<*>, bindingContext: BindingContext): Boolean {
+                        // As receiver of call
+                        if (resolvedCall.dispatchReceiver.getThisReceiverOwner(bindingContext) == callable ||
                             (resolvedCall.extensionReceiver as ReceiverValue?).getThisReceiverOwner(bindingContext) == callable) {
-                            used = true
+                            return true
                         }
-                        else if ((resolvedCall.getCandidateDescriptor() as? ReceiverParameterDescriptor)?.getContainingDeclaration() == callable) {
-                            used = true
+                        // As explicit "this"
+                        if ((resolvedCall.candidateDescriptor as? ReceiverParameterDescriptor)?.containingDeclaration == callable) {
+                            return true
                         }
+                        return false
                     }
                 })
 
@@ -99,6 +107,6 @@ public class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
             declaration.setReceiverTypeReference(null)
         }
 
-        override fun getFamilyName(): String = getName()
+        override fun getFamilyName(): String = name
     }
 }

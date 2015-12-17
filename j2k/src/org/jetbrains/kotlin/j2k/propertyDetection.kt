@@ -114,9 +114,9 @@ private class PropertyDetector(
 
         val propertyNameToGetterInfo = detectGetters(methodsToCheck, prohibitedPropertyNames, propertyNamesWithConflict)
 
-        val propertyNameToSetterInfo = detectSetters(methodsToCheck, prohibitedPropertyNames, propertyNameToGetterInfo.keySet(), propertyNamesWithConflict)
+        val propertyNameToSetterInfo = detectSetters(methodsToCheck, prohibitedPropertyNames, propertyNameToGetterInfo.keys, propertyNamesWithConflict)
 
-        val propertyNames = propertyNameToGetterInfo.keySet() + propertyNameToSetterInfo.keySet()
+        val propertyNames = propertyNameToGetterInfo.keys + propertyNameToSetterInfo.keys
 
         val memberToPropertyInfo = HashMap<PsiMember, PropertyInfo>()
         for (propertyName in propertyNames) {
@@ -246,7 +246,7 @@ private class PropertyDetector(
     }
 
     private fun dropPropertiesWithConflictingAccessors(memberToPropertyInfo: MutableMap<PsiMember, PropertyInfo>) {
-        val propertyInfos = memberToPropertyInfo.values().distinct()
+        val propertyInfos = memberToPropertyInfo.values.distinct()
 
         val mappedMethods = propertyInfos.mapNotNull { it.getMethod }.toSet() + propertyInfos.mapNotNull { it.setMethod }.toSet()
 
@@ -413,25 +413,25 @@ private class PropertyDetector(
     }
 
     private fun fieldFromGetterBody(getter: PsiMethod): PsiField? {
-        val body = getter.getBody() ?: return null
-        val returnStatement = (body.getStatements().singleOrNull() as? PsiReturnStatement) ?: return null
+        val body = getter.body ?: return null
+        val returnStatement = (body.statements.singleOrNull() as? PsiReturnStatement) ?: return null
         val isStatic = getter.hasModifierProperty(PsiModifier.STATIC)
-        val field = fieldByExpression(returnStatement.getReturnValue(), isStatic) ?: return null
-        if (field.getType() != getter.getReturnType()) return null
+        val field = fieldByExpression(returnStatement.returnValue, isStatic) ?: return null
+        if (field.type != getter.returnType) return null
         if (converter.typeConverter.variableMutability(field) != converter.typeConverter.methodMutability(getter)) return null
         return field
     }
 
     private fun fieldFromSetterBody(setter: PsiMethod): PsiField? {
-        val body = setter.getBody() ?: return null
-        val statement = (body.getStatements().singleOrNull() as? PsiExpressionStatement) ?: return null
-        val assignment = statement.getExpression() as? PsiAssignmentExpression ?: return null
-        if (assignment.getOperationTokenType() != JavaTokenType.EQ) return null
+        val body = setter.body ?: return null
+        val statement = (body.statements.singleOrNull() as? PsiExpressionStatement) ?: return null
+        val assignment = statement.expression as? PsiAssignmentExpression ?: return null
+        if (assignment.operationTokenType != JavaTokenType.EQ) return null
         val isStatic = setter.hasModifierProperty(PsiModifier.STATIC)
-        val field = fieldByExpression(assignment.getLExpression(), isStatic) ?: return null
-        val parameter = setter.getParameterList().getParameters().single()
-        if ((assignment.getRExpression() as? PsiReferenceExpression)?.resolve() != parameter) return null
-        if (field.getType() != parameter.getType()) return null
+        val field = fieldByExpression(assignment.lExpression, isStatic) ?: return null
+        val parameter = setter.parameterList.parameters.single()
+        if ((assignment.rExpression as? PsiReferenceExpression)?.resolve() != parameter) return null
+        if (field.type != parameter.type) return null
         return field
     }
 
@@ -444,7 +444,7 @@ private class PropertyDetector(
             if (!refExpr.isQualifierEmptyOrThis()) return null
         }
         val field = refExpr.resolve() as? PsiField ?: return null
-        if (field.getContainingClass() != psiClass || field.hasModifierProperty(PsiModifier.STATIC) != static) return null
+        if (field.containingClass != psiClass || field.hasModifierProperty(PsiModifier.STATIC) != static) return null
         return field
     }
 }
