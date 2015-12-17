@@ -37,7 +37,7 @@ public interface KotlinMethodDescriptor : MethodDescriptor<KotlinParameterInfo, 
         val descriptor = baseDescriptor
         return when {
             descriptor !is ConstructorDescriptor -> Kind.FUNCTION
-            descriptor.isPrimary() -> Kind.PRIMARY_CONSTRUCTOR
+            descriptor.isPrimary -> Kind.PRIMARY_CONSTRUCTOR
             else -> Kind.SECONDARY_CONSTRUCTOR
         }
     }

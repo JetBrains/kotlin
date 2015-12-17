@@ -27,12 +27,13 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.extractionEngine.*
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.*
 import kotlin.test.*
 import com.intellij.openapi.application.*
-import org.jetbrains.kotlin.idea.core.refactoring.getExtractionContainers
+import com.intellij.refactoring.RefactoringActionHandler
+import org.jetbrains.kotlin.idea.refactoring.getExtractionContainers
 import java.util.*
 
 public class KotlinIntroducePropertyHandler(
         val helper: ExtractionEngineHelper = KotlinIntroducePropertyHandler.InteractiveExtractionHelper
-): KotlinIntroduceHandlerBase() {
+): RefactoringActionHandler {
     object InteractiveExtractionHelper : ExtractionEngineHelper(INTRODUCE_PROPERTY) {
         override fun configureAndRun(
                 project: Project,
@@ -65,7 +66,7 @@ public class KotlinIntroducePropertyHandler(
     }
 
     public fun doInvoke(project: Project, editor: Editor, file: KtFile, elements: List<PsiElement>, targetSibling: PsiElement) {
-        val adjustedElements = (elements.singleOrNull() as? KtBlockExpression)?.getStatements() ?: elements
+        val adjustedElements = (elements.singleOrNull() as? KtBlockExpression)?.statements ?: elements
         if (adjustedElements.isNotEmpty()) {
             val options = ExtractionOptions(extractAsProperty = true)
             val extractionData = ExtractionData(file, adjustedElements.toRange(), targetSibling, null, options)
@@ -73,12 +74,12 @@ public class KotlinIntroducePropertyHandler(
                 val property = it.declaration as KtProperty
                 val descriptor = it.config.descriptor
 
-                editor.getCaretModel().moveToOffset(property.getTextOffset())
-                editor.getSelectionModel().removeSelection()
-                if (editor.getSettings().isVariableInplaceRenameEnabled() && !ApplicationManager.getApplication().isUnitTestMode()) {
+                editor.caretModel.moveToOffset(property.textOffset)
+                editor.selectionModel.removeSelection()
+                if (editor.settings.isVariableInplaceRenameEnabled && !ApplicationManager.getApplication().isUnitTestMode) {
                     with(PsiDocumentManager.getInstance(project)) {
-                        commitDocument(editor.getDocument())
-                        doPostponedOperationsAndUnblockDocument(editor.getDocument())
+                        commitDocument(editor.document)
+                        doPostponedOperationsAndUnblockDocument(editor.document)
                     }
 
                     val introducer = KotlinInplacePropertyIntroducer(

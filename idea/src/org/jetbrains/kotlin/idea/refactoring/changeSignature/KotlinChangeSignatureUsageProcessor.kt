@@ -47,8 +47,8 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.KotlinFileReferencesResolver
 import org.jetbrains.kotlin.idea.core.compareDescriptors
-import org.jetbrains.kotlin.idea.core.refactoring.createTempCopy
-import org.jetbrains.kotlin.idea.core.refactoring.isTrueJavaMethod
+import org.jetbrains.kotlin.idea.refactoring.createTempCopy
+import org.jetbrains.kotlin.idea.refactoring.isTrueJavaMethod
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.*
 import org.jetbrains.kotlin.idea.refactoring.getBodyScope
 import org.jetbrains.kotlin.idea.refactoring.getContainingScope

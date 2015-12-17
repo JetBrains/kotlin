@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.psi.KtPsiUtil
 public class KotlinSafeDeleteOverridingUsageInfo(
         overridingElement: PsiElement, superElement: PsiElement
 ) : SafeDeleteUsageInfo(overridingElement, superElement), SafeDeleteCustomUsageInfo {
-    public val overridingElement: PsiElement get() = getElement()!!
+    public val overridingElement: PsiElement get() = element!!
 
     public override fun performRefactoring(): Unit {
-        KtPsiUtil.ascendIfPropertyAccessor(getElement())?.delete()
+        KtPsiUtil.ascendIfPropertyAccessor(element)?.delete()
     }
 }

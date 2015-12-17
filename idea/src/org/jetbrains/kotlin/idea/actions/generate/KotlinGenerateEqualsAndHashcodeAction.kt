@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject
 import org.jetbrains.kotlin.idea.core.overrideImplement.generateMember
-import org.jetbrains.kotlin.idea.core.refactoring.quoteIfNeeded
+import org.jetbrains.kotlin.idea.refactoring.quoteIfNeeded
 import org.jetbrains.kotlin.idea.quickfix.insertMembersAfter
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.runWriteAction

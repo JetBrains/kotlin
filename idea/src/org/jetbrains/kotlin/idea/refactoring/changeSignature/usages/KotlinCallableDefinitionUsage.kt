@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
-import org.jetbrains.kotlin.idea.core.refactoring.createPrimaryConstructorIfAbsent
-import org.jetbrains.kotlin.idea.core.refactoring.dropOverrideKeywordIfNecessary
-import org.jetbrains.kotlin.idea.core.refactoring.replaceListPsiAndKeepDelimiters
+import org.jetbrains.kotlin.idea.refactoring.createPrimaryConstructorIfAbsent
+import org.jetbrains.kotlin.idea.refactoring.dropOverrideKeywordIfNecessary
+import org.jetbrains.kotlin.idea.refactoring.replaceListPsiAndKeepDelimiters
 import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.core.toKeywordToken
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeInfo

@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.core.refactoring.checkConflictsInteractively
-import org.jetbrains.kotlin.idea.core.refactoring.reportDeclarationConflict
+import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
+import org.jetbrains.kotlin.idea.refactoring.reportDeclarationConflict
 import org.jetbrains.kotlin.idea.refactoring.CallableRefactoring
 import org.jetbrains.kotlin.idea.refactoring.getAffectedCallables
 import org.jetbrains.kotlin.idea.refactoring.getContainingScope

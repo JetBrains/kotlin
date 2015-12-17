@@ -29,8 +29,8 @@ public class KotlinMoveFilesOrDirectoriesHandler : MoveFilesOrDirectoriesHandler
         return elements.map {
             when {
                 it is PsiFile || it is PsiDirectory -> it
-                it is PsiClass && it.getContainingClass() == null -> it.getContainingFile()
-                it is KtClassOrObject && it.getParent() is KtFile -> it.getParent()
+                it is PsiClass && it.containingClass == null -> it.containingFile
+                it is KtClassOrObject && it.parent is KtFile -> it.parent
                 else -> return null
             }
         }.toTypedArray()

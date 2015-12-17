@@ -26,7 +26,7 @@ import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectori
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.Function
 import org.jetbrains.kotlin.idea.core.getPackage
-import org.jetbrains.kotlin.idea.core.refactoring.invokeOnceOnCommandFinish
+import org.jetbrains.kotlin.idea.refactoring.invokeOnceOnCommandFinish
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.MoveKotlinTopLevelDeclarationsProcessor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
@@ -54,7 +54,7 @@ public class KotlinMoveDirectoryWithClassesHelper : MoveDirectoryWithClassesHelp
         return fileToMoveContext
                ?: HashMap<PsiFile, MoveContext>().apply {
                    fileToMoveContext = this
-                   invokeOnceOnCommandFinish { fileToMoveContext = null }
+            invokeOnceOnCommandFinish { fileToMoveContext = null }
                }
     }
 

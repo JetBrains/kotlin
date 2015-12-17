@@ -52,19 +52,19 @@ public class KotlinRefactoringSupportProvider : RefactoringSupportProvider() {
     override fun isInplaceRenameAvailable(element: PsiElement, context: PsiElement?): Boolean {
         when (element) {
             is KtProperty -> {
-                if (element.isLocal()) return true
+                if (element.isLocal) return true
             }
             is KtDestructuringDeclarationEntry -> return true
             is KtFunction -> {
-                if (element.isLocal() && element.nameIdentifier != null) return true
+                if (element.isLocal && element.nameIdentifier != null) return true
             }
             is KtParameter -> {
-                val parent = element.getParent()
+                val parent = element.parent
                 if (parent is KtForExpression) {
                     return true
                 }
                 if (parent is KtParameterList) {
-                    val grandparent = parent.getParent()
+                    val grandparent = parent.parent
                     return grandparent is KtCatchClause || grandparent is KtFunctionLiteral
                 }
             }

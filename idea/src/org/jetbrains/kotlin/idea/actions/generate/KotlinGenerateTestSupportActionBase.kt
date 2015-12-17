@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject.BodyType
 import org.jetbrains.kotlin.idea.core.overrideImplement.generateUnsupportedOrSuperCall
-import org.jetbrains.kotlin.idea.core.refactoring.j2k
+import org.jetbrains.kotlin.idea.refactoring.j2k
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.setupEditorSelection
 import org.jetbrains.kotlin.idea.quickfix.insertMember
 import org.jetbrains.kotlin.idea.testIntegration.findSuitableFrameworks

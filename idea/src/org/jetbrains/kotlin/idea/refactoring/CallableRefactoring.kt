@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
+import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtDeclarationWithBody
@@ -50,9 +50,9 @@ public abstract class CallableRefactoring<T: CallableDescriptor>(
         val project: Project,
         val callableDescriptor: T,
         val commandName: String) {
-    private val LOG = Logger.getInstance(javaClass<CallableRefactoring<*>>())
+    private val LOG = Logger.getInstance(CallableRefactoring::class.java)
 
-    private val kind = (callableDescriptor as? CallableMemberDescriptor)?.getKind() ?: CallableMemberDescriptor.Kind.DECLARATION
+    private val kind = (callableDescriptor as? CallableMemberDescriptor)?.kind ?: CallableMemberDescriptor.Kind.DECLARATION
 
     protected open fun forcePerformForSelectedFunctionOnly(): Boolean {
         return false
@@ -67,7 +67,7 @@ public abstract class CallableRefactoring<T: CallableDescriptor>(
                 OverrideResolver.getDirectlyOverriddenDeclarations(callableDescriptor as CallableMemberDescriptor)
             }
             else -> {
-                throw IllegalStateException("Unexpected callable kind: ${kind}")
+                throw IllegalStateException("Unexpected callable kind: $kind")
             }
         }
     }
@@ -76,11 +76,11 @@ public abstract class CallableRefactoring<T: CallableDescriptor>(
                                                callableFromEditor: CallableDescriptor,
                                                options: List<String>): Int {
         val superString = superCallables.map {
-            it.getContainingDeclaration().getName().asString()
+            it.containingDeclaration.name.asString()
         }.joinToString(prefix = "\n    ", separator = ",\n    ", postfix = ".\n\n")
         val message = KotlinBundle.message("x.overrides.y.in.class.list",
                                            DescriptorRenderer.COMPACT.render(callableFromEditor),
-                                           callableFromEditor.getContainingDeclaration().getName().asString(), superString,
+                                           callableFromEditor.containingDeclaration.name.asString(), superString,
                                            "refactor")
         val title = IdeBundle.message("title.warning")!!
         val icon = Messages.getQuestionIcon()
@@ -92,14 +92,14 @@ public abstract class CallableRefactoring<T: CallableDescriptor>(
             return true
         }
 
-        val unmodifiableFile = element.getContainingFile()?.getVirtualFile()?.getPresentableUrl()
+        val unmodifiableFile = element.containingFile?.virtualFile?.presentableUrl
         if (unmodifiableFile != null) {
             val message = RefactoringBundle.message("refactoring.cannot.be.performed") + "\n" +
                           IdeBundle.message("error.message.cannot.modify.file.0", unmodifiableFile)
             Messages.showErrorDialog(project, message, CommonBundle.getErrorTitle()!!)
         }
         else {
-            LOG.error("Could not find file for Psi element: " + element.getText())
+            LOG.error("Could not find file for Psi element: " + element.text)
         }
 
         return false
@@ -144,17 +144,17 @@ public abstract class CallableRefactoring<T: CallableDescriptor>(
         val deepestSuperDeclarations =
                 (callableDescriptor as? CallableMemberDescriptor)?.let { OverrideResolver.getDeepestSuperDeclarations(it) }
                 ?: Collections.singletonList(callableDescriptor)
-        if (ApplicationManager.getApplication()!!.isUnitTestMode()) {
+        if (ApplicationManager.getApplication()!!.isUnitTestMode) {
             performRefactoring(deepestSuperDeclarations)
             return true
         }
 
-        if (closestModifiableDescriptors.size() == 1 && deepestSuperDeclarations.subtract(closestModifiableDescriptors).isEmpty()) {
+        if (closestModifiableDescriptors.size == 1 && deepestSuperDeclarations.subtract(closestModifiableDescriptors).isEmpty()) {
             performRefactoring(closestModifiableDescriptors)
             return true
         }
 
-        val isSingleFunctionSelected = closestModifiableDescriptors.size() == 1
+        val isSingleFunctionSelected = closestModifiableDescriptors.size == 1
         val selectedFunction = if (isSingleFunctionSelected) closestModifiableDescriptors.first() else callableDescriptor
         val optionsForDialog = buildDialogOptions(isSingleFunctionSelected)
         val code = showSuperFunctionWarningDialog(deepestSuperDeclarations, selectedFunction, optionsForDialog)
@@ -184,16 +184,16 @@ fun getAffectedCallables(project: Project, descriptorsForChange: Collection<Call
 
 fun DeclarationDescriptor.getContainingScope(): LexicalScope? {
     val declaration = DescriptorToSourceUtils.descriptorToDeclaration(this)
-    val block = declaration?.getParent() as? KtBlockExpression
+    val block = declaration?.parent as? KtBlockExpression
     if (block != null) {
         val lastStatement = block.statements.last()
         val bindingContext = lastStatement.analyze()
         return lastStatement.getResolutionScope(bindingContext, lastStatement.getResolutionFacade())
     }
     else {
-        val containingDescriptor = getContainingDeclaration() ?: return null
+        val containingDescriptor = containingDeclaration ?: return null
         return when (containingDescriptor) {
-            is ClassDescriptorWithResolutionScopes -> containingDescriptor.getScopeForInitializerResolution()
+            is ClassDescriptorWithResolutionScopes -> containingDescriptor.scopeForInitializerResolution
             is PackageFragmentDescriptor -> LexicalScope.empty(containingDescriptor.getMemberScope().memberScopeAsImportingScope(), this)
             else -> null
         }
@@ -201,6 +201,6 @@ fun DeclarationDescriptor.getContainingScope(): LexicalScope? {
 }
 
 fun KtDeclarationWithBody.getBodyScope(bindingContext: BindingContext): LexicalScope? {
-    val expression = getBodyExpression()?.getChildren()?.firstOrNull { it is KtExpression } ?: return null
+    val expression = bodyExpression?.children?.firstOrNull { it is KtExpression } ?: return null
     return expression.getResolutionScope(bindingContext, getResolutionFacade())
 }

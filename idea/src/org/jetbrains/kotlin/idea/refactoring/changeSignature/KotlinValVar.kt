@@ -39,8 +39,8 @@ public enum class KotlinValVar(val keywordName: String) {
 fun PsiElement?.toValVar(): KotlinValVar {
     return when {
         this == null -> KotlinValVar.None
-        getNode().getElementType() == KtTokens.VAL_KEYWORD -> KotlinValVar.Val
-        getNode().getElementType() == KtTokens.VAR_KEYWORD -> KotlinValVar.Var
-        else -> throw IllegalArgumentException("Unknown val/var token: " + getText())
+        node.elementType == KtTokens.VAL_KEYWORD -> KotlinValVar.Val
+        node.elementType == KtTokens.VAR_KEYWORD -> KotlinValVar.Var
+        else -> throw IllegalArgumentException("Unknown val/var token: " + text)
     }
 }

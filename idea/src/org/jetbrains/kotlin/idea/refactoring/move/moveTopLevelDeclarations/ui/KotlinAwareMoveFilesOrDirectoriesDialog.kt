@@ -45,7 +45,7 @@ import com.intellij.util.IncorrectOperationException
 import com.intellij.util.ui.FormBuilder
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.core.packageMatchesDirectory
-import org.jetbrains.kotlin.idea.core.refactoring.isInJavaSourceRoot
+import org.jetbrains.kotlin.idea.refactoring.isInJavaSourceRoot
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.psi.KtFile

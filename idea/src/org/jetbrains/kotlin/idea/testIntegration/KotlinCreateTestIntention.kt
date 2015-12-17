@@ -38,8 +38,8 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.idea.actions.JavaToKotlinAction
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.getPackage
-import org.jetbrains.kotlin.idea.core.refactoring.j2k
-import org.jetbrains.kotlin.idea.core.refactoring.toPsiDirectory
+import org.jetbrains.kotlin.idea.refactoring.j2k
+import org.jetbrains.kotlin.idea.refactoring.toPsiDirectory
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.runWithAlternativeResolveEnabled

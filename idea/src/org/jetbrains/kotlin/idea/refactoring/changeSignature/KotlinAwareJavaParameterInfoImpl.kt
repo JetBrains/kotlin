@@ -25,4 +25,4 @@ public class KotlinAwareJavaParameterInfoImpl(
         name: String,
         type: PsiType,
         val kotlinDefaultValue: KtExpression?
-): ParameterInfoImpl(oldParameterIndex, name, type, kotlinDefaultValue?.getText() ?: "")
+): ParameterInfoImpl(oldParameterIndex, name, type, kotlinDefaultValue?.text ?: "")

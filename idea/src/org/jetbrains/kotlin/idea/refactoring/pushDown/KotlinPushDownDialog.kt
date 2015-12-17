@@ -95,10 +95,10 @@ public class KotlinPushDownDialog(
     }
 
     override fun doAction() {
-        if (!isOKActionEnabled()) return
+        if (!isOKActionEnabled) return
 
         JavaRefactoringSettings.getInstance().PUSH_DOWN_PREVIEW_USAGES = isPreviewUsages
 
-        invokeRefactoring(KotlinPushDownProcessor(getProject(), sourceClass, selectedMemberInfos))
+        invokeRefactoring(KotlinPushDownProcessor(project, sourceClass, selectedMemberInfos))
     }
 }

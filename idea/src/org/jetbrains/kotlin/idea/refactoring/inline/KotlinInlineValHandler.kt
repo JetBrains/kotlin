@@ -41,9 +41,9 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.shorten.performDelayedShortening
-import org.jetbrains.kotlin.idea.core.refactoring.addTypeArgumentsIfNeeded
-import org.jetbrains.kotlin.idea.core.refactoring.checkConflictsInteractively
-import org.jetbrains.kotlin.idea.core.refactoring.getQualifiedTypeArgumentList
+import org.jetbrains.kotlin.idea.refactoring.addTypeArgumentsIfNeeded
+import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
+import org.jetbrains.kotlin.idea.refactoring.getQualifiedTypeArgumentList
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.refactoring.move.PackageNameInfo
 import org.jetbrains.kotlin.idea.refactoring.move.lazilyProcessInternalReferencesToUpdateOnPackageNameChange

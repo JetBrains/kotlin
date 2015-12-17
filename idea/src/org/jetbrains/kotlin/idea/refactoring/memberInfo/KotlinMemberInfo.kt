@@ -73,9 +73,7 @@ public fun KotlinMemberInfo.toJavaMemberInfo(): MemberInfo? {
         is KtClassOrObject -> declaration.toLightClass()
         else -> null
     }
-    if (psiMember == null) return null
-
-    val info = MemberInfo(psiMember, isSuperClass, null)
+    val info = MemberInfo(psiMember ?: return null, isSuperClass, null)
     info.isToAbstract = isToAbstract
     return info
 }

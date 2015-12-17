@@ -25,8 +25,8 @@ public class SafeDeleteValueArgumentListUsageInfo(
         valueArgument: KtValueArgument, parameter: PsiElement
 ) : SafeDeleteReferenceSimpleDeleteUsageInfo(valueArgument, parameter, true) {
     public override fun deleteElement() {
-        val element = getElement() as? KtValueArgument ?: return
-        val parent = element.getParent()
+        val element = element as? KtValueArgument ?: return
+        val parent = element.parent
         if (parent is KtValueArgumentList) {
             parent.removeArgument(element)
         }

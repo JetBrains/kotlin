@@ -28,15 +28,16 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
 import com.intellij.ui.NonFocusableCheckBox
-import com.intellij.util.ui.FormBuilder
 import org.jetbrains.kotlin.idea.intentions.SpecifyTypeExplicitlyIntention
 import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractKotlinInplaceIntroducer
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.types.KotlinType
-import java.awt.BorderLayout
 
 public class KotlinVariableInplaceIntroducer(
         val addedVariable: KtProperty,
@@ -64,15 +65,15 @@ public class KotlinVariableInplaceIntroducer(
         initFormComponents {
             if (!doNotChangeVar) {
                 val varCheckBox = NonFocusableCheckBox("Declare with var")
-                varCheckBox.setSelected(isVar)
+                varCheckBox.isSelected = isVar
                 varCheckBox.setMnemonic('v')
                 varCheckBox.addActionListener {
-                    myProject.executeWriteCommand(getCommandName(), getCommandName()) {
-                        PsiDocumentManager.getInstance(myProject).commitDocument(myEditor.getDocument())
+                    myProject.executeWriteCommand(commandName, commandName) {
+                        PsiDocumentManager.getInstance(myProject).commitDocument(myEditor.document)
 
                         val psiFactory = KtPsiFactory(myProject)
-                        val keyword = if (varCheckBox.isSelected()) psiFactory.createVarKeyword() else psiFactory.createValKeyword()
-                        addedVariable.getValOrVarKeyword().replace(keyword)
+                        val keyword = if (varCheckBox.isSelected) psiFactory.createVarKeyword() else psiFactory.createValKeyword()
+                        addedVariable.valOrVarKeyword.replace(keyword)
                     }
                 }
                 addComponent(varCheckBox)
@@ -80,11 +81,11 @@ public class KotlinVariableInplaceIntroducer(
 
             if (expressionType != null && !noTypeInference) {
                 val expressionTypeCheckBox = NonFocusableCheckBox("Specify type explicitly")
-                expressionTypeCheckBox.setSelected(false)
+                expressionTypeCheckBox.isSelected = false
                 expressionTypeCheckBox.setMnemonic('t')
                 expressionTypeCheckBox.addActionListener {
                     runWriteCommandAndRestart {
-                        if (expressionTypeCheckBox.isSelected()) {
+                        if (expressionTypeCheckBox.isSelected) {
                             val renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(expressionType)
                             addedVariable.setTypeReference(KtPsiFactory(myProject).createType(renderedType))
                         }
@@ -105,7 +106,7 @@ public class KotlinVariableInplaceIntroducer(
     override fun createFieldToStartTemplateOn(replaceAll: Boolean, names: Array<out String>) = addedVariable
 
     override fun addAdditionalVariables(builder: TemplateBuilderImpl) {
-        addedVariable.getTypeReference()?.let {
+        addedVariable.typeReference?.let {
             builder.replaceElement(it,
                                    "TypeReferenceVariable",
                                    SpecifyTypeExplicitlyIntention.createTypeExpressionForTemplate(expressionType!!),
@@ -117,12 +118,12 @@ public class KotlinVariableInplaceIntroducer(
                                        stringUsages: Collection<Pair<PsiElement, TextRange>>,
                                        scope: PsiElement,
                                        containingFile: PsiFile): Boolean {
-        myEditor.getCaretModel().moveToOffset(getNameIdentifier()!!.startOffset)
+        myEditor.caretModel.moveToOffset(nameIdentifier!!.startOffset)
 
         val result = super.buildTemplateAndStart(refs, stringUsages, scope, containingFile)
 
         val templateState = TemplateManagerImpl.getTemplateState(InjectedLanguageUtil.getTopLevelEditor(myEditor))
-        if (templateState != null && addedVariable.getTypeReference() != null) {
+        if (templateState != null && addedVariable.typeReference != null) {
             templateState.addTemplateStateListener(SpecifyTypeExplicitlyIntention.createTypeReferencePostprocessor(addedVariable))
         }
 
@@ -146,11 +147,11 @@ public class KotlinVariableInplaceIntroducer(
     override fun getComponent() = myWholePanel
 
     override fun performIntroduce() {
-        val newName = getInputName() ?: return
+        val newName = inputName ?: return
         addedVariable.setName(newName)
         val replacement = KtPsiFactory(myProject).createExpression(newName)
-        getOccurrences().forEach {
-            if (it.isValid()) {
+        occurrences.forEach {
+            if (it.isValid) {
                 it.replace(replacement)
             }
         }

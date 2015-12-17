@@ -34,8 +34,8 @@ public abstract class KotlinImplicitReceiverUsage(callElement: KtElement): Kotli
     }
 
     override fun processUsage(changeInfo: KotlinChangeInfo, element: KtElement, allUsages: Array<out UsageInfo>): Boolean {
-        val newQualifiedCall = KtPsiFactory(element.getProject()).createExpression(
-                "${getNewReceiverText()}.${element.getText()}"
+        val newQualifiedCall = KtPsiFactory(element.project).createExpression(
+                "${getNewReceiverText()}.${element.text}"
         ) as KtQualifiedExpression
         processReplacedElement(element.replace(newQualifiedCall) as KtElement)
         return false

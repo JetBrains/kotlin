@@ -30,7 +30,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.ui.JBColor
 import com.intellij.ui.NonFocusableCheckBox
-import org.jetbrains.kotlin.idea.core.refactoring.createPrimaryConstructorParameterListIfAbsent
+import org.jetbrains.kotlin.idea.refactoring.createPrimaryConstructorParameterListIfAbsent
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
 import org.jetbrains.kotlin.idea.refactoring.introduce.AbstractKotlinInplaceIntroducer
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinInplaceVariableIntroducer
@@ -65,22 +65,22 @@ public class KotlinInplaceParameterIntroducer(
         editor
 ) {
     companion object {
-        private val LOG = Logger.getInstance(javaClass<KotlinInplaceParameterIntroducer>())
+        private val LOG = Logger.getInstance(KotlinInplaceParameterIntroducer::class.java)
     }
 
     enum class PreviewDecorator {
         FOR_ADD() {
             override val textAttributes: TextAttributes = with(TextAttributes()) {
-                setEffectType(EffectType.ROUNDED_BOX)
-                setEffectColor(JBColor.RED)
+                effectType = EffectType.ROUNDED_BOX
+                effectColor = JBColor.RED
                 this
             }
         },
 
         FOR_REMOVAL() {
             override val textAttributes: TextAttributes = with(TextAttributes()) {
-                setEffectType(EffectType.STRIKEOUT)
-                setEffectColor(Color.BLACK)
+                effectType = EffectType.STRIKEOUT
+                effectColor = Color.BLACK
                 this
             }
         };
@@ -88,8 +88,8 @@ public class KotlinInplaceParameterIntroducer(
         protected abstract val textAttributes: TextAttributes
 
         fun applyToRange(range: TextRange, markupModel: MarkupModel) {
-            markupModel.addRangeHighlighter(range.getStartOffset(),
-                                            range.getEndOffset(),
+            markupModel.addRangeHighlighter(range.startOffset,
+                                            range.endOffset,
                                             0,
                                             textAttributes,
                                             HighlighterTargetArea.EXACT_RANGE
@@ -110,23 +110,23 @@ public class KotlinInplaceParameterIntroducer(
 
         init {
             val templateState = TemplateManagerImpl.getTemplateState(myEditor)
-            val currentType = if (templateState != null && templateState.getTemplate() != null) {
+            val currentType = if (templateState != null && templateState.template != null) {
                 templateState
                         .getVariableValue(KotlinInplaceVariableIntroducer.TYPE_REFERENCE_VARIABLE_NAME)
-                        ?.getText()
+                        ?.text
             } else null
 
             val builder = StringBuilder()
 
             with(descriptor) {
-                (callable as? KtFunction)?.getReceiverTypeReference()?.let { receiverTypeRef ->
-                    builder.append(receiverTypeRef.getText()).append('.')
+                (callable as? KtFunction)?.receiverTypeReference?.let { receiverTypeRef ->
+                    builder.append(receiverTypeRef.text).append('.')
                     if (!descriptor.withDefaultValue && receiverTypeRef in parametersToRemove) {
-                        _rangesToRemove.add(TextRange(0, builder.length()))
+                        _rangesToRemove.add(TextRange(0, builder.length))
                     }
                 }
 
-                builder.append(callable.getName())
+                builder.append(callable.name)
 
                 val parameters = callable.getValueParameters()
                 builder.append("(")
@@ -134,8 +134,8 @@ public class KotlinInplaceParameterIntroducer(
                     val parameter = parameters[i]
 
                     val parameterText = if (parameter == addedParameter){
-                        val parameterName = currentName ?: parameter.getName()
-                        val parameterType = currentType ?: parameter.getTypeReference()!!.getText()
+                        val parameterName = currentName ?: parameter.name
+                        val parameterType = currentType ?: parameter.typeReference!!.text
                         descriptor = descriptor.copy(newParameterName = parameterName!!, newParameterTypeText = parameterType)
                         val modifier = if (valVar != KotlinValVar.None) "${valVar.keywordName} " else ""
                         val defaultValue = if (withDefaultValue) {
@@ -144,11 +144,11 @@ public class KotlinInplaceParameterIntroducer(
 
                         "$modifier$parameterName: $parameterType$defaultValue"
                     }
-                    else parameter.getText()
+                    else parameter.text
 
                     builder.append(parameterText)
 
-                    val range = TextRange(builder.length() - parameterText.length(), builder.length())
+                    val range = TextRange(builder.length - parameterText.length, builder.length)
                     if (parameter == addedParameter) {
                         addedRange = range
                     }
@@ -176,21 +176,21 @@ public class KotlinInplaceParameterIntroducer(
 
     init {
         initFormComponents {
-            addComponent(getPreviewComponent())
+            addComponent(previewComponent)
 
             val defaultValueCheckBox = NonFocusableCheckBox("Introduce default value")
-            defaultValueCheckBox.setSelected(descriptor.withDefaultValue)
+            defaultValueCheckBox.isSelected = descriptor.withDefaultValue
             defaultValueCheckBox.setMnemonic('d')
             defaultValueCheckBox.addActionListener {
-                descriptor = descriptor.copy(withDefaultValue = defaultValueCheckBox.isSelected())
-                updateTitle(getVariable())
+                descriptor = descriptor.copy(withDefaultValue = defaultValueCheckBox.isSelected)
+                updateTitle(variable)
             }
             addComponent(defaultValueCheckBox)
 
-            val occurrenceCount = descriptor.occurrencesToReplace.size()
+            val occurrenceCount = descriptor.occurrencesToReplace.size
             if (occurrenceCount > 1) {
                 val replaceAllCheckBox = NonFocusableCheckBox("Replace all occurrences ($occurrenceCount)")
-                replaceAllCheckBox.setSelected(true)
+                replaceAllCheckBox.isSelected = true
                 replaceAllCheckBox.setMnemonic('R')
                 addComponent(replaceAllCheckBox)
                 this@KotlinInplaceParameterIntroducer.replaceAllCheckBox = replaceAllCheckBox
@@ -218,15 +218,15 @@ public class KotlinInplaceParameterIntroducer(
     }
 
     override fun deleteTemplateField(psiField: KtParameter) {
-        if (psiField.isValid()) {
-            (psiField.getParent() as? KtParameterList)?.removeParameter(psiField)
+        if (psiField.isValid) {
+            (psiField.parent as? KtParameterList)?.removeParameter(psiField)
         }
     }
 
-    override fun isReplaceAllOccurrences() = replaceAllCheckBox?.isSelected() ?: true
+    override fun isReplaceAllOccurrences() = replaceAllCheckBox?.isSelected ?: true
 
     override fun setReplaceAllOccurrences(allOccurrences: Boolean) {
-        replaceAllCheckBox?.setSelected(allOccurrences)
+        replaceAllCheckBox?.isSelected = allOccurrences
     }
 
     override fun getComponent() = myWholePanel
@@ -234,7 +234,7 @@ public class KotlinInplaceParameterIntroducer(
     override fun updateTitle(addedParameter: KtParameter?, currentName: String?) {
         val preview = Preview(addedParameter, currentName)
 
-        val document = getPreviewEditor().getDocument()
+        val document = previewEditor.document
         runWriteAction { document.setText(preview.text) }
 
         val markupModel = DocumentMarkupModel.forDocument(document, myProject, true)
@@ -255,15 +255,15 @@ public class KotlinInplaceParameterIntroducer(
     }
 
     override fun performIntroduce() {
-        getDescriptorToRefactor(isReplaceAllOccurrences()).performRefactoring()
+        getDescriptorToRefactor(isReplaceAllOccurrences).performRefactoring()
     }
 
     private fun getDescriptorToRefactor(replaceAll: Boolean): IntroduceParameterDescriptor {
-        val originalRange = getExpr().toRange()
+        val originalRange = expr.toRange()
         return descriptor.copy(
                 originalRange = originalRange,
-                occurrencesToReplace = if (replaceAll) getOccurrences().map { it.toRange() } else originalRange.singletonList(),
-                argumentValue = getExpr()!!
+                occurrencesToReplace = if (replaceAll) occurrences.map { it.toRange() } else originalRange.singletonList(),
+                argumentValue = expr!!
         )
     }
 

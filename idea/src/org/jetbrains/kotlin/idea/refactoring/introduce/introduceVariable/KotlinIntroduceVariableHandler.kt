@@ -30,6 +30,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.HelpID
+import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.refactoring.introduce.inplace.OccurrencesChooser
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.ui.components.JBList
@@ -42,10 +43,8 @@ import org.jetbrains.kotlin.idea.analysis.computeTypeInfoInContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.*
-import org.jetbrains.kotlin.idea.core.refactoring.*
 import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyIntention
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtil
+import org.jetbrains.kotlin.idea.refactoring.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -74,7 +73,7 @@ import org.jetbrains.kotlin.utils.ifEmpty
 import org.jetbrains.kotlin.utils.sure
 import java.util.*
 
-object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
+object KotlinIntroduceVariableHandler : RefactoringActionHandler {
     val INTRODUCE_VARIABLE = KotlinRefactoringBundle.message("introduce.variable")
 
     private val EXPRESSION_KEY = Key.create<Boolean>("EXPRESSION_KEY")

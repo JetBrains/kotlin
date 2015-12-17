@@ -26,7 +26,7 @@ import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.asJava.KtLightMethod
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.unwrapped
-import org.jetbrains.kotlin.idea.core.refactoring.dropOverrideKeywordIfNecessary
+import org.jetbrains.kotlin.idea.refactoring.dropOverrideKeywordIfNecessary
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -41,10 +41,7 @@ public class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
     }
 
     override fun substituteElementToRename(element: PsiElement?, editor: Editor?): PsiElement?  {
-        val wrappedMethod = wrapPsiMethod(element)
-        if (wrappedMethod == null) {
-            return element
-        }
+        val wrappedMethod = wrapPsiMethod(element) ?: return element
 
         // Use java dialog to ask we should rename function with the base element
         val substitutedJavaElement = javaMethodProcessorInstance.substituteElementToRename(wrappedMethod, editor)
@@ -57,7 +54,7 @@ public class RenameKotlinFunctionProcessor : RenameKotlinPsiProcessor() {
 
     override fun prepareRenaming(element: PsiElement?, newName: String?, allRenames: MutableMap<PsiElement, String>, scope: SearchScope) {
         val psiMethod = wrapPsiMethod(element)
-        if (psiMethod?.getContainingClass() != null) {
+        if (psiMethod?.containingClass != null) {
             javaMethodProcessorInstance.prepareRenaming(psiMethod, newName, allRenames, scope)
         }
     }

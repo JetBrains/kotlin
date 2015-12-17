@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.debugger
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.LightCodeInsightTestCase
 import com.intellij.testFramework.LightPlatformCodeInsightTestCase
-import org.jetbrains.kotlin.idea.core.refactoring.getLineNumber
+import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinCodeFragmentFactory
 import org.jetbrains.kotlin.idea.debugger.evaluate.addDebugExpressionIntoTmpFileForExtractFunction
 import org.jetbrains.kotlin.psi.KtExpressionCodeFragment

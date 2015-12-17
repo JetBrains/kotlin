@@ -40,8 +40,8 @@ import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.kotlin.asJava.KtLightClass
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import org.jetbrains.kotlin.idea.core.refactoring.j2kText
-import org.jetbrains.kotlin.idea.core.refactoring.quoteIfNeeded
+import org.jetbrains.kotlin.idea.refactoring.j2kText
+import org.jetbrains.kotlin.idea.refactoring.quoteIfNeeded
 import org.jetbrains.kotlin.idea.debugger.KotlinEditorTextProvider
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.name.Name

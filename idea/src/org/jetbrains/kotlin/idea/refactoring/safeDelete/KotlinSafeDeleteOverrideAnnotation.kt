@@ -24,6 +24,6 @@ public class KotlinSafeDeleteOverrideAnnotation(
         element: PsiElement, referencedElement: PsiElement
 ) : SafeDeleteUsageInfo(element, referencedElement), SafeDeleteCustomUsageInfo {
     public override fun performRefactoring() {
-        getElement()?.removeOverrideModifier()
+        element?.removeOverrideModifier()
     }
 }

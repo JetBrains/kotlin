@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.compareDescriptors
-import org.jetbrains.kotlin.idea.core.refactoring.quoteIfNeeded
+import org.jetbrains.kotlin.idea.refactoring.quoteIfNeeded
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallableDefinitionUsage
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.mainReference
@@ -49,17 +49,17 @@ public class KotlinParameterInfo @JvmOverloads constructor (
     public val defaultValueParameterReferences: Map<PsiReference, DeclarationDescriptor>
 
     init {
-        val file = defaultValueForCall?.getContainingFile() as? KtFile
+        val file = defaultValueForCall?.containingFile as? KtFile
         defaultValueParameterReferences =
-                if (defaultValueForCall != null && file != null && (file.isPhysical() || file.analysisContext != null)) {
-                    val project = file.getProject()
+                if (defaultValueForCall != null && file != null && (file.isPhysical || file.analysisContext != null)) {
+                    val project = file.project
                     val map = LinkedHashMap<PsiReference, DeclarationDescriptor>()
 
                     defaultValueForCall!!.accept(
                             object : KtTreeVisitorVoid() {
                                 private fun selfParameterOrNull(parameter: DeclarationDescriptor?): ValueParameterDescriptor? {
                                     return if (parameter is ValueParameterDescriptor &&
-                                               compareDescriptors(project, parameter.getContainingDeclaration(), callableDescriptor)) {
+                                               compareDescriptors(project, parameter.containingDeclaration, callableDescriptor)) {
                                         parameter
                                     } else null
                                 }
@@ -67,12 +67,12 @@ public class KotlinParameterInfo @JvmOverloads constructor (
                                 private fun selfReceiverOrNull(receiverDescriptor: DeclarationDescriptor?): DeclarationDescriptor? {
                                     if (compareDescriptors(project,
                                                            receiverDescriptor,
-                                                           callableDescriptor.getExtensionReceiverParameter()?.getContainingDeclaration())) {
+                                                           callableDescriptor.extensionReceiverParameter?.containingDeclaration)) {
                                         return receiverDescriptor
                                     }
                                     if (compareDescriptors(project,
                                                            receiverDescriptor,
-                                                           callableDescriptor.getDispatchReceiverParameter()?.getContainingDeclaration())) {
+                                                           callableDescriptor.dispatchReceiverParameter?.containingDeclaration)) {
                                         return receiverDescriptor
                                     }
                                     return null
@@ -97,12 +97,12 @@ public class KotlinParameterInfo @JvmOverloads constructor (
                                     }
 
                                     val resolvedCall = expression.getResolvedCall(context) ?: return null
-                                    (resolvedCall.getResultingDescriptor() as? ReceiverParameterDescriptor)?.let {
-                                        return if (selfReceiverOrNull(it.getContainingDeclaration()) != null) it else null
+                                    (resolvedCall.resultingDescriptor as? ReceiverParameterDescriptor)?.let {
+                                        return if (selfReceiverOrNull(it.containingDeclaration) != null) it else null
                                     }
 
-                                    selfReceiverOrNull(resolvedCall.getExtensionReceiver() as? ImplicitReceiver)?.let { return it }
-                                    selfReceiverOrNull(resolvedCall.getDispatchReceiver() as? ImplicitReceiver)?.let { return it }
+                                    selfReceiverOrNull(resolvedCall.extensionReceiver as? ImplicitReceiver)?.let { return it }
+                                    selfReceiverOrNull(resolvedCall.dispatchReceiver as? ImplicitReceiver)?.let { return it }
 
                                     return null
                                 }
@@ -149,7 +149,7 @@ public class KotlinParameterInfo @JvmOverloads constructor (
         val defaultRendering = currentTypeInfo.render()
         val typeSubstitutor = inheritedCallable.typeSubstitutor ?: return defaultRendering
         val currentBaseFunction = inheritedCallable.baseFunction.currentCallableDescriptor ?: return defaultRendering
-        val parameterType = currentBaseFunction.getValueParameters().get(parameterIndex).getType()
+        val parameterType = currentBaseFunction.valueParameters[parameterIndex].type
         if (parameterType.isError) return defaultRendering
         return parameterType.renderTypeWithSubstitution(typeSubstitutor, defaultRendering, true)
     }
@@ -161,13 +161,13 @@ public class KotlinParameterInfo @JvmOverloads constructor (
         val baseFunctionDescriptor = baseFunction.originalCallableDescriptor
 
         val inheritedFunctionDescriptor = inheritedCallable.originalCallableDescriptor
-        val inheritedParameterDescriptors = inheritedFunctionDescriptor.getValueParameters()
+        val inheritedParameterDescriptors = inheritedFunctionDescriptor.valueParameters
         if (originalIndex < 0
-            || originalIndex >= baseFunctionDescriptor.getValueParameters().size()
-            || originalIndex >= inheritedParameterDescriptors.size()) return name
+            || originalIndex >= baseFunctionDescriptor.valueParameters.size
+            || originalIndex >= inheritedParameterDescriptors.size) return name
 
-        val inheritedParamName = inheritedParameterDescriptors.get(originalIndex).getName().asString()
-        val oldParamName = baseFunctionDescriptor.getValueParameters().get(originalIndex).getName().asString()
+        val inheritedParamName = inheritedParameterDescriptors[originalIndex].name.asString()
+        val oldParamName = baseFunctionDescriptor.valueParameters[originalIndex].name.asString()
 
         return when {
             oldParamName == inheritedParamName && inheritedFunctionDescriptor !is AnonymousFunctionDescriptor -> name
@@ -181,16 +181,16 @@ public class KotlinParameterInfo @JvmOverloads constructor (
 
         if (originalIndex < 0) return !inheritedCallable.hasExpectedType
 
-        val inheritedParameterDescriptor = inheritedFunctionDescriptor.getValueParameters().get(originalIndex)
+        val inheritedParameterDescriptor = inheritedFunctionDescriptor.valueParameters[originalIndex]
         val parameter = DescriptorToSourceUtils.descriptorToDeclaration(inheritedParameterDescriptor) as? KtParameter ?: return false
-        return parameter.getTypeReference() != null
+        return parameter.typeReference != null
     }
 
     public fun getDeclarationSignature(parameterIndex: Int, inheritedCallable: KotlinCallableDefinitionUsage<*>): String {
         val buffer = StringBuilder()
 
         if (modifierList != null) {
-            buffer.append(modifierList.getText()).append(' ')
+            buffer.append(modifierList.text).append(' ')
         }
 
         if (valOrVar != KotlinValVar.None) {
@@ -204,7 +204,7 @@ public class KotlinParameterInfo @JvmOverloads constructor (
         }
 
         if (!inheritedCallable.isInherited) {
-            defaultValueForParameter?.let { buffer.append(" = ").append(it.getText()) }
+            defaultValueForParameter?.let { buffer.append(" = ").append(it.text) }
         }
 
         return buffer.toString()

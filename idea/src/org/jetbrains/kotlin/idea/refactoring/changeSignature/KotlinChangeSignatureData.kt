@@ -56,12 +56,12 @@ public class KotlinChangeSignatureData(
     init {
         receiver = createReceiverInfoIfNeeded()
 
-        val valueParameters = when {
-            baseDeclaration is KtFunction -> baseDeclaration.getValueParameters()
-            baseDeclaration is KtClass -> baseDeclaration.getPrimaryConstructorParameters()
+        val valueParameters = when (baseDeclaration) {
+            is KtFunction -> baseDeclaration.valueParameters
+            is KtClass -> baseDeclaration.getPrimaryConstructorParameters()
             else -> null
         }
-        parameters = baseDescriptor.getValueParameters()
+        parameters = baseDescriptor.valueParameters
                 .mapTo(receiver?.let{ arrayListOf(it) } ?: arrayListOf()) { parameterDescriptor ->
                     val jetParameter = valueParameters?.get(parameterDescriptor.index)
                     val parameterType = parameterDescriptor.type
@@ -70,11 +70,11 @@ public class KotlinChangeSignatureData(
                     KotlinParameterInfo(
                             callableDescriptor = baseDescriptor,
                             originalIndex = parameterDescriptor.index,
-                            name = parameterDescriptor.getName().asString(),
+                            name = parameterDescriptor.name.asString(),
                             originalTypeInfo = KotlinTypeInfo(false, parameterType, parameterTypeText),
-                            defaultValueForParameter = jetParameter?.getDefaultValue(),
-                            valOrVar = jetParameter?.getValOrVarKeyword().toValVar(),
-                            modifierList = jetParameter?.getModifierList()
+                            defaultValueForParameter = jetParameter?.defaultValue,
+                            valOrVar = jetParameter?.valOrVarKeyword.toValVar(),
+                            modifierList = jetParameter?.modifierList
                     )
                 }
     }
@@ -88,7 +88,7 @@ public class KotlinChangeSignatureData(
                 bodyScope.findVariable(Name.identifier(it), NoLookupLocation.FROM_IDE) == null
             }
         } ?: CollectingNameValidator(paramNames)
-        val receiverType = baseDescriptor.getExtensionReceiverParameter()?.getType() ?: return null
+        val receiverType = baseDescriptor.extensionReceiverParameter?.type ?: return null
         val receiverName = KotlinNameSuggester.suggestNamesByType(receiverType, validator, "receiver").first()
         val receiverTypeText = (baseDeclaration as? KtCallableDeclaration)?.receiverTypeReference?.text
                                ?: IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(receiverType)
@@ -102,9 +102,9 @@ public class KotlinChangeSignatureData(
 
     override val primaryCallables: Collection<KotlinCallableDefinitionUsage<PsiElement>> by lazy {
         descriptorsForSignatureChange.map {
-            val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(baseDeclaration.getProject(), it)
+            val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(baseDeclaration.project, it)
             assert(declaration != null) { "No declaration found for " + baseDescriptor }
-            KotlinCallableDefinitionUsage<PsiElement>(declaration!!, it, null, null)
+            KotlinCallableDefinitionUsage(declaration!!, it, null, null)
         }
     }
 
@@ -137,22 +137,22 @@ public class KotlinChangeSignatureData(
 
     override fun getName(): String {
         if (baseDescriptor is ConstructorDescriptor) {
-            return baseDescriptor.getContainingDeclaration().getName().asString()
+            return baseDescriptor.containingDeclaration.name.asString()
         }
         else if (baseDescriptor is AnonymousFunctionDescriptor) {
             return ""
         }
         else {
-            return baseDescriptor.getName().asString()
+            return baseDescriptor.name.asString()
         }
     }
 
     override fun getParametersCount(): Int {
-        return baseDescriptor.getValueParameters().size()
+        return baseDescriptor.valueParameters.size
     }
 
     override fun getVisibility(): Visibility {
-        return baseDescriptor.getVisibility()
+        return baseDescriptor.visibility
     }
 
     override fun getMethod(): PsiElement {
@@ -161,8 +161,8 @@ public class KotlinChangeSignatureData(
 
     override fun canChangeVisibility(): Boolean {
         if (DescriptorUtils.isLocal(baseDescriptor)) return false;
-        val parent = baseDescriptor.getContainingDeclaration()
-        return !(baseDescriptor is AnonymousFunctionDescriptor || parent is ClassDescriptor && parent.getKind() == ClassKind.INTERFACE)
+        val parent = baseDescriptor.containingDeclaration
+        return !(baseDescriptor is AnonymousFunctionDescriptor || parent is ClassDescriptor && parent.kind == ClassKind.INTERFACE)
     }
 
     override fun canChangeParameters(): Boolean {

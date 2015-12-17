@@ -21,7 +21,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.util.Key
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.RefactoringSettings
@@ -44,9 +43,9 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.KotlinFileReferencesResolver
-import org.jetbrains.kotlin.idea.core.refactoring.isInJavaSourceRoot
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
+import org.jetbrains.kotlin.idea.refactoring.isInJavaSourceRoot
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.ui.KotlinAwareMoveFilesOrDirectoriesDialog
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
@@ -79,15 +78,15 @@ fun KtElement.lazilyProcessInternalReferencesToUpdateOnPackageNameChange(
         packageNameInfo: PackageNameInfo,
         body: (originalRefExpr: KtSimpleNameExpression, usageFactory: (KtSimpleNameExpression) -> UsageInfo?) -> Unit
 ) {
-    val file = getContainingFile() as? KtFile ?: return
+    val file = containingFile as? KtFile ?: return
 
-    val importPaths = file.getImportDirectives().mapNotNull { it.getImportPath() }
+    val importPaths = file.importDirectives.mapNotNull { it.importPath }
 
     tailrec fun isImported(descriptor: DeclarationDescriptor): Boolean {
-        val fqName = DescriptorUtils.getFqName(descriptor).let { if (it.isSafe()) it.toSafe() else return@isImported false }
+        val fqName = DescriptorUtils.getFqName(descriptor).let { if (it.isSafe) it.toSafe() else return@isImported false }
         if (importPaths.any { fqName.isImported(it, false) }) return true
 
-        val containingDescriptor = descriptor.getContainingDeclaration()
+        val containingDescriptor = descriptor.containingDeclaration
         return when (containingDescriptor) {
             is ClassDescriptor, is PackageViewDescriptor -> isImported(containingDescriptor)
             else -> false
@@ -97,13 +96,13 @@ fun KtElement.lazilyProcessInternalReferencesToUpdateOnPackageNameChange(
     fun processReference(refExpr: KtSimpleNameExpression, bindingContext: BindingContext): ((KtSimpleNameExpression) -> UsageInfo?)? {
         val descriptor = bindingContext[BindingContext.REFERENCE_TARGET, refExpr]?.getImportableDescriptor() ?: return null
 
-        val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(getProject(), descriptor) ?: return null
+        val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) ?: return null
 
         val isCallable = descriptor is CallableDescriptor
         val isExtension = isCallable && declaration.isExtensionDeclaration()
 
         if (isCallable && !isExtension) {
-            val containingDescriptor = descriptor.getContainingDeclaration()
+            val containingDescriptor = descriptor.containingDeclaration
             if (refExpr.getReceiverExpression() != null) {
                 return fun(refExpr: KtSimpleNameExpression): UsageInfo? {
                     val receiver = refExpr.getReceiverExpression() ?: return null
@@ -116,9 +115,9 @@ fun KtElement.lazilyProcessInternalReferencesToUpdateOnPackageNameChange(
         }
 
         val fqName = DescriptorUtils.getFqName(descriptor)
-        if (!fqName.isSafe()) return null
+        if (!fqName.isSafe) return null
 
-        val packageName = DescriptorUtils.getParentOfType(descriptor, javaClass<PackageFragmentDescriptor>(), false)?.let {
+        val packageName = DescriptorUtils.getParentOfType(descriptor, PackageFragmentDescriptor::class.java, false)?.let {
             DescriptorUtils.getFqName(it).toSafe()
         }
 
@@ -133,7 +132,7 @@ fun KtElement.lazilyProcessInternalReferencesToUpdateOnPackageNameChange(
                 return fqName.asString().let {
                     val prefix = packageName.asString()
                     val prefixOffset = it.indexOf(prefix)
-                    val newFqName = FqName(it.replaceRange(prefixOffset..prefixOffset + prefix.length() - 1, newPackageName.asString()))
+                    val newFqName = FqName(it.replaceRange(prefixOffset..prefixOffset + prefix.length - 1, newPackageName.asString()))
                     MoveRenameSelfUsageInfo(refExpr.mainReference, declaration, newFqName)
                 }
             }
@@ -151,7 +150,7 @@ fun KtElement.lazilyProcessInternalReferencesToUpdateOnPackageNameChange(
     val referenceToContext = KotlinFileReferencesResolver.resolve(file = file, elements = listOf(this))
 
     for ((refExpr, bindingContext) in referenceToContext) {
-        if (refExpr !is KtSimpleNameExpression || refExpr.getParent() is KtThisExpression) continue
+        if (refExpr !is KtSimpleNameExpression || refExpr.parent is KtThisExpression) continue
         if (bindingContext[BindingContext.QUALIFIER, refExpr] != null) continue
 
         processReference(refExpr, bindingContext)?.let { body(refExpr, it) }
@@ -178,16 +177,16 @@ fun createMoveUsageInfoIfPossible(
         referencedElement: PsiElement,
         addImportToOriginalFile: Boolean
 ): UsageInfo? {
-    val element = reference.getElement()
+    val element = reference.element
     if (element.getStrictParentOfType<KtSuperExpression>() != null) return null
 
-    val range = reference.getRangeInElement()!!
-    val startOffset = range.getStartOffset()
-    val endOffset = range.getEndOffset()
+    val range = reference.rangeInElement!!
+    val startOffset = range.startOffset
+    val endOffset = range.endOffset
 
     if (isUnqualifiedExtensionReference(reference, referencedElement)) {
         return MoveRenameUsageInfoForExtension(
-                element, reference, startOffset, endOffset, referencedElement, element.getContainingFile()!!, addImportToOriginalFile
+                element, reference, startOffset, endOffset, referencedElement, element.containingFile!!, addImportToOriginalFile
         )
     }
     return MoveRenameUsageInfo(element, reference, startOffset, endOffset, referencedElement, false)
@@ -213,7 +212,7 @@ public fun guessNewFileName(declarationsToMove: Collection<KtNamedDeclaration>):
 private fun updateJavaReference(reference: PsiReferenceExpression, oldElement: PsiElement, newElement: PsiElement): Boolean {
     if (oldElement is PsiMember && newElement is PsiMember) {
         // Remove import of old package facade, if any
-        val oldClassName = oldElement.getContainingClass()?.getQualifiedName()
+        val oldClassName = oldElement.containingClass?.qualifiedName
         if (oldClassName != null) {
             val importOfOldClass = (reference.containingFile as? PsiJavaFile)?.importList?.allImportStatements?.firstOrNull {
                 when (it) {
@@ -227,12 +226,12 @@ private fun updateJavaReference(reference: PsiReferenceExpression, oldElement: P
             }
         }
 
-        val newClass = newElement.getContainingClass()
-        if (newClass != null && reference.getQualifierExpression() != null) {
-            val mockMoveMembersOptions = MockMoveMembersOptions(newClass.getQualifiedName(), arrayOf(newElement))
+        val newClass = newElement.containingClass
+        if (newClass != null && reference.qualifierExpression != null) {
+            val mockMoveMembersOptions = MockMoveMembersOptions(newClass.qualifiedName, arrayOf(newElement))
             val moveMembersUsageInfo = MoveMembersProcessor.MoveMembersUsageInfo(
-                    newElement, reference.getElement(), newClass, reference.getQualifierExpression(), reference)
-            val moveMemberHandler = MoveMemberHandler.EP_NAME.forLanguage(reference.getElement().getLanguage())
+                    newElement, reference.element, newClass, reference.qualifierExpression, reference)
+            val moveMemberHandler = MoveMemberHandler.EP_NAME.forLanguage(reference.element.language)
             if (moveMemberHandler != null) {
                 moveMemberHandler.changeExternalUsage(mockMoveMembersOptions, moveMembersUsageInfo)
                 return true
@@ -252,22 +251,20 @@ fun postProcessMoveUsages(usages: List<UsageInfo>,
     fun counterpart(e: PsiElement) = oldToNewElementsMapping[e] ?: e
 
     val sortedUsages = usages.sortedWith(
-            object : Comparator<UsageInfo> {
-                override fun compare(o1: UsageInfo, o2: UsageInfo): Int {
-                    val file1 = o1.getVirtualFile()
-                    val file2 = o2.getVirtualFile()
-                    if (Comparing.equal<VirtualFile>(file1, file2)) {
-                        val rangeInElement1 = o1.getRangeInElement()
-                        val rangeInElement2 = o2.getRangeInElement()
-                        if (rangeInElement1 != null && rangeInElement2 != null) {
-                            return rangeInElement2.getStartOffset() - rangeInElement1.getStartOffset()
-                        }
-                        return 0
+            Comparator<UsageInfo> { o1, o2 ->
+                val file1 = o1.virtualFile
+                val file2 = o2.virtualFile
+                if (Comparing.equal(file1, file2)) {
+                    val rangeInElement1 = o1.rangeInElement
+                    val rangeInElement2 = o2.rangeInElement
+                    if (rangeInElement1 != null && rangeInElement2 != null) {
+                        return@Comparator rangeInElement2.startOffset - rangeInElement1.startOffset
                     }
-                    if (file1 == null) return -1
-                    if (file2 == null) return 1
-                    return Comparing.compare<String>(file1.getPath(), file2.getPath())
+                    return@Comparator 0
                 }
+                if (file1 == null) return@Comparator -1
+                if (file2 == null) return@Comparator 1
+                Comparing.compare(file1.path, file2.path)
             }
     )
 
@@ -285,14 +282,14 @@ fun postProcessMoveUsages(usages: List<UsageInfo>,
 
             is MoveRenameUsageInfoForExtension -> {
                 val file = with(usage) { if (addImportToOriginalFile) originalFile else counterpart(originalFile) } as KtFile
-                val declaration = counterpart(usage.getReferencedElement()!!).unwrapped as KtDeclaration
-                ImportInsertHelper.getInstance(usage.getProject()).importDescriptor(file, declaration.resolveToDescriptor())
+                val declaration = counterpart(usage.referencedElement!!).unwrapped as KtDeclaration
+                ImportInsertHelper.getInstance(usage.project).importDescriptor(file, declaration.resolveToDescriptor())
             }
 
             is MoveRenameUsageInfo -> {
-                val oldElement = usage.getReferencedElement()!!
+                val oldElement = usage.referencedElement!!
                 val newElement = counterpart(oldElement)
-                usage.getReference()?.let {
+                usage.reference?.let {
                     try {
                         if (it is KtSimpleNameReference) {
                             it.bindToElement(newElement, shorteningMode)
@@ -340,10 +337,10 @@ public fun moveFilesOrDirectories(
             val updatePackageDirective = (moveDialog as? KotlinAwareMoveFilesOrDirectoriesDialog)?.updatePackageDirective
 
             try {
-                val choice = if (elements.size() > 1 || elements[0] is PsiDirectory) intArrayOf(-1) else null
+                val choice = if (elements.size > 1 || elements[0] is PsiDirectory) intArrayOf(-1) else null
                 val elementsToMove = elements.filterNot {
                     it is PsiFile
-                    && runWriteAction { CopyFilesOrDirectoriesHandler.checkFileExist(selectedDir, choice, it, it.getName(), "Move") }
+                    && runWriteAction { CopyFilesOrDirectoriesHandler.checkFileExist(selectedDir, choice, it, it.name, "Move") }
                 }
 
                 elementsToMove.forEach {
@@ -370,12 +367,12 @@ public fun moveFilesOrDirectories(
                 }
             }
             catch (e: IncorrectOperationException) {
-                CommonRefactoringUtil.showErrorMessage(RefactoringBundle.message("error.title"), e.getMessage(), "refactoring.moveFile", project)
+                CommonRefactoringUtil.showErrorMessage(RefactoringBundle.message("error.title"), e.message, "refactoring.moveFile", project)
             }
         }
     }
 
-    if (ApplicationManager.getApplication().isUnitTestMode()) {
+    if (ApplicationManager.getApplication().isUnitTestMode) {
         doRun(null)
         return
     }

@@ -28,7 +28,7 @@ import com.intellij.refactoring.classMembers.MemberInfoModel
 import com.intellij.refactoring.memberPullUp.PullUpProcessor
 import com.intellij.refactoring.util.DocCommentPolicy
 import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.idea.core.refactoring.isInterfaceClass
+import org.jetbrains.kotlin.idea.refactoring.isInterfaceClass
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.*
 import org.jetbrains.kotlin.psi.*
 
@@ -109,12 +109,12 @@ public class KotlinPullUpDialog(
     override fun createMemberSelectionTable(infos: MutableList<KotlinMemberInfo>) =
             KotlinMemberSelectionTable(infos, null, "Make abstract")
 
-    override fun isOKActionEnabled() = selectedMemberInfos.size() > 0
+    override fun isOKActionEnabled() = selectedMemberInfos.size > 0
 
     override fun doAction() {
         val selectedMembers = selectedMemberInfos
         val targetClass = superClass!!
-        checkConflicts(getProject(), sourceClass, targetClass, selectedMembers, { close(DialogWrapper.OK_EXIT_CODE) }) {
+        checkConflicts(project, sourceClass, targetClass, selectedMembers, { close(DialogWrapper.OK_EXIT_CODE) }) {
             invokeRefactoring(createProcessor(sourceClass, targetClass, selectedMembers))
         }
     }

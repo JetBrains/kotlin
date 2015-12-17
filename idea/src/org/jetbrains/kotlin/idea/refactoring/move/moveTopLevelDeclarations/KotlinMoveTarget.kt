@@ -42,8 +42,8 @@ public object EmptyKotlinMoveTarget: KotlinMoveTarget {
 }
 
 public class KotlinMoveTargetForExistingFile(val targetFile: KtFile): KotlinMoveTarget {
-    override val packageWrapper: PackageWrapper? = targetFile.getPackageFqName().asString().let { packageName ->
-        PackageWrapper(PsiManager.getInstance(targetFile.getProject()), packageName)
+    override val packageWrapper: PackageWrapper? = targetFile.packageFqName.asString().let { packageName ->
+        PackageWrapper(PsiManager.getInstance(targetFile.project), packageName)
     }
 
     override fun getOrCreateTargetPsi(originalPsi: PsiElement) = targetFile
