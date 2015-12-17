@@ -182,7 +182,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
     private void checkForUnexpectedSymbols() {
         while (!eof()) {
-            errorAndAdvance("unexpected symbol");
+            errorAndAdvance("Unexpected symbol");
         }
     }
 

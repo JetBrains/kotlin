@@ -10,17 +10,17 @@ JetFile: fragment.kt
       INTEGER_CONSTANT
         PsiElement(INTEGER_LITERAL)('1')
     PsiWhiteSpace('\n')
-    PsiErrorElement:unexpected symbol
+    PsiErrorElement:Unexpected symbol
       PsiElement(RBRACE)('}')
     PsiWhiteSpace('\n')
-    PsiErrorElement:unexpected symbol
+    PsiErrorElement:Unexpected symbol
       PsiElement(val)('val')
     PsiWhiteSpace(' ')
-    PsiErrorElement:unexpected symbol
+    PsiErrorElement:Unexpected symbol
       PsiElement(IDENTIFIER)('b')
     PsiWhiteSpace(' ')
-    PsiErrorElement:unexpected symbol
+    PsiErrorElement:Unexpected symbol
       PsiElement(EQ)('=')
     PsiWhiteSpace(' ')
-    PsiErrorElement:unexpected symbol
+    PsiErrorElement:Unexpected symbol
       PsiElement(INTEGER_LITERAL)('4')
