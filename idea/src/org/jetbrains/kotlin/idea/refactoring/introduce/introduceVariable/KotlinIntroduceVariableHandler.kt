@@ -24,16 +24,17 @@ import com.intellij.openapi.command.impl.FinishMarkAction
 import com.intellij.openapi.command.impl.StartMarkAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.*
+import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.refactoring.introduce.inplace.OccurrencesChooser
 import com.intellij.refactoring.util.CommonRefactoringUtil
-import com.intellij.ui.components.JBList
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -41,7 +42,6 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.analysis.computeTypeInfoInContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyIntention
 import org.jetbrains.kotlin.idea.refactoring.*
@@ -379,29 +379,13 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
         CommonRefactoringUtil.showErrorHint(project, editor, message, INTRODUCE_VARIABLE, HelpID.INTRODUCE_VARIABLE)
     }
 
-    private fun KtExpression.chooseApplicableComponentFunctions(
+    private fun KtExpression.chooseApplicableComponentFunctionsForVariableDeclaration(
             haveOccurrencesToReplace: Boolean,
             editor: Editor?,
             callback: (List<FunctionDescriptor>) -> Unit
     ) {
         if (haveOccurrencesToReplace) return callback(emptyList())
-
-        val functions = getApplicableComponentFunctions(this)
-        if (functions.size <= 1) return callback(emptyList())
-
-        if (ApplicationManager.getApplication().isUnitTestMode) return callback(functions)
-
-        if (editor == null) return callback(emptyList())
-
-        val list = JBList("Create single variable", "Create destructuring declaration")
-        JBPopupFactory.getInstance()
-                .createListPopupBuilder(list)
-                .setMovable(true)
-                .setResizable(false)
-                .setRequestFocus(true)
-                .setItemChoosenCallback { callback(if (list.selectedIndex == 0) emptyList() else functions) }
-                .createPopup()
-                .showInBestPositionFor(editor)
+        return chooseApplicableComponentFunctions(this, editor, callback = callback)
     }
 
     private fun executeMultiDeclarationTemplate(
@@ -451,18 +435,6 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
                         }
                     }
             )
-        }
-    }
-
-    private fun suggestNamesForComponent(descriptor: FunctionDescriptor, project: Project, validator: (String) -> Boolean): Set<String> {
-        return LinkedHashSet<String>().apply {
-            val descriptorName = descriptor.name.asString()
-            val componentName = (DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor) as? PsiNamedElement)?.name
-                                ?: descriptorName
-            if (componentName == descriptorName) {
-                descriptor.returnType?.let { addAll(KotlinNameSuggester.suggestNamesByType(it, validator)) }
-            }
-            add(KotlinNameSuggester.suggestNameByName(componentName, validator))
         }
     }
 
@@ -553,7 +525,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
                 commonContainer = container
             }
 
-            physicalExpression.chooseApplicableComponentFunctions(replaceOccurrence, editor) { componentFunctions ->
+            physicalExpression.chooseApplicableComponentFunctionsForVariableDeclaration(replaceOccurrence, editor) { componentFunctions ->
                 val validator = NewDeclarationNameValidator(
                         commonContainer,
                         calculateAnchor(commonParent, commonContainer, allReplaces),

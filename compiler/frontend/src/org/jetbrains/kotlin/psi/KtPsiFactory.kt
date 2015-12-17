@@ -216,6 +216,11 @@ public class KtPsiFactory(private val project: Project) {
         return (createFunction("fun foo() {$text}").bodyExpression as KtBlockExpression).statements.first() as KtDestructuringDeclaration
     }
 
+    public fun createDestructuringParameter(text: String): KtDestructuringDeclaration {
+        val dummyFun = createFunction("fun foo() { for ($text in foo) {} }")
+        return ((dummyFun.bodyExpression as KtBlockExpression).statements.first() as KtForExpression).destructuringParameter!!
+    }
+
     public fun <TDeclaration : KtDeclaration> createDeclaration(text: String): TDeclaration {
         val file = createFile(text)
         val declarations = file.getDeclarations()

@@ -5817,6 +5817,18 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/iterateExpression"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("collectionIteratorWithComponents.kt")
+        public void testCollectionIteratorWithComponents() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterateExpression/collectionIteratorWithComponents.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("dataClassCollectionIterator.kt")
+        public void testDataClassCollectionIterator() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterateExpression/dataClassCollectionIterator.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("extensionIterator.kt")
         public void testExtensionIterator() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterateExpression/extensionIterator.kt");
