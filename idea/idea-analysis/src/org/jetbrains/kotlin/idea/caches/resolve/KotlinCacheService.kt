@@ -26,6 +26,7 @@ import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.analyzer.EmptyResolverForProject
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.container.getService
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.idea.project.AnalyzerFacadeProvider
@@ -155,9 +156,17 @@ public class KotlinCacheService(val project: Project) {
         }
     }
 
+    private val suppressAnnotationShortName = KotlinBuiltIns.FQ_NAMES.suppress.shortName().identifier
     private val kotlinSuppressCache: CachedValue<KotlinSuppressCache> = CachedValuesManager.getManager(project).createCachedValue({
         CachedValueProvider.Result<KotlinSuppressCache>(object : KotlinSuppressCache() {
             override fun getSuppressionAnnotations(annotated: KtAnnotated): List<AnnotationDescriptor> {
+                if (annotated.annotationEntries.none {
+                        it.calleeExpression?.text?.endsWith(suppressAnnotationShortName) ?: false }) {
+                    // Avoid running resolve heuristics
+                    // TODO: Check aliases in imports
+                    return emptyList()
+                }
+
                 val context =
                         if (annotated is KtFile) {
                             annotated.fileAnnotationList?.analyze(BodyResolveMode.PARTIAL) ?: return emptyList()
