@@ -18,20 +18,19 @@ package org.jetbrains.kotlin.idea.test
 
 import com.intellij.codeInsight.daemon.impl.EditorTracker
 import com.intellij.ide.startup.impl.StartupManagerImpl
-import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.actionSystem.ActionPlaces
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.actionSystem.ex.ActionManagerEx
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
-import com.intellij.psi.PsiManager
-import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.LoggedErrorProcessor
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
-import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -71,17 +70,7 @@ public abstract class KotlinLightCodeInsightFixtureTestCase : LightCodeInsightFi
         KotlinInternalMode.enabled = kotlinInternalModeOriginalValue
         VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
 
-        val builtInsSources = BuiltInsReferenceResolver.getInstance(getProject()).builtInsSources!!
-        val fileManager = (PsiManager.getInstance(getProject()) as PsiManagerEx).getFileManager()
-
         super.tearDown()
-
-        // Restore mapping between PsiFiles and VirtualFiles dropped in FileManager.cleanupForNextTest(),
-        // otherwise built-ins psi elements will become invalid in next test.
-        for (source in builtInsSources) {
-            val provider = source.getViewProvider()
-            fileManager.setViewProvider(provider.getVirtualFile(), provider)
-        }
     }
 
     override fun getProjectDescriptor(): LightProjectDescriptor

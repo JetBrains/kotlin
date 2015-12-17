@@ -19,11 +19,8 @@ package org.jetbrains.kotlin.idea.test
 import com.intellij.ide.startup.impl.StartupManagerImpl
 import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
-import com.intellij.psi.PsiManager
-import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
-import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver
 import org.jetbrains.kotlin.test.KotlinTestUtils
 
 public abstract class KotlinLightPlatformCodeInsightFixtureTestCase: LightPlatformCodeInsightFixtureTestCase() {
@@ -43,16 +40,6 @@ public abstract class KotlinLightPlatformCodeInsightFixtureTestCase: LightPlatfo
         KotlinInternalMode.enabled = kotlinInternalModeOriginalValue
         VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
 
-        val builtInsSources = BuiltInsReferenceResolver.getInstance(getProject()).builtInsSources!!
-        val fileManager = (PsiManager.getInstance(getProject()) as PsiManagerEx).getFileManager()
-
         super.tearDown()
-
-        // Restore mapping between PsiFiles and VirtualFiles dropped in FileManager.cleanupForNextTest(),
-        // otherwise built-ins psi elements will become invalid in next test.
-        for (source in builtInsSources) {
-            val provider = source.getViewProvider()
-            fileManager.setViewProvider(provider.getVirtualFile(), provider)
-        }
     }
 }

@@ -46,7 +46,6 @@ import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLightQuickFixTestCase;
-import org.jetbrains.kotlin.idea.references.BuiltInsReferenceResolver;
 import org.jetbrains.kotlin.idea.quickfix.utils.QuickfixTestUtilsKt;
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils;
@@ -69,21 +68,6 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
     protected void setUp() throws Exception {
         super.setUp();
         ((StartupManagerImpl) StartupManager.getInstance(getProject())).runPostStartupActivities();
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-        Set<KtFile> builtInsSources = BuiltInsReferenceResolver.Companion.getInstance(getProject()).getBuiltInsSources();
-        FileManager fileManager = ((PsiManagerEx) PsiManager.getInstance(getProject())).getFileManager();
-
-        super.tearDown();
-
-        // Restore mapping between PsiFiles and VirtualFiles dropped in FileManager.cleanupForNextTest(),
-        // otherwise built-ins psi elements will become invalid in next test.
-        for (KtFile source : builtInsSources) {
-            FileViewProvider provider = source.getViewProvider();
-            fileManager.setViewProvider(provider.getVirtualFile(), provider);
-        }
     }
 
     protected void doTest(@NotNull String beforeFileName) throws Exception {
