@@ -13710,6 +13710,27 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 }
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/resolve/priority")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Priority extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInPriority() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/resolve/priority"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("kt9965.kt")
+                public void testKt9965() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/priority/kt9965.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("synthesizedMembersVsExtension.kt")
+                public void testSynthesizedMembersVsExtension() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/priority/synthesizedMembersVsExtension.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/resolve/specialConstructions")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

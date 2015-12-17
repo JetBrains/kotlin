@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isOrOverridesSynthesized
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasLowPriorityInOverloadResolution
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
 @Deprecated("Temporary error")
@@ -37,11 +36,10 @@ internal fun createPreviousResolveError(status: ResolutionStatus): PreviousResol
 }
 
 internal val ResolutionCandidateApplicability.isSuccess: Boolean
-    get() = this == ResolutionCandidateApplicability.RESOLVED || this == ResolutionCandidateApplicability.RESOLVED_SYNTHESIZED
+    get() = this <= ResolutionCandidateApplicability.RESOLVED_LOW_PRIORITY
 
-internal val CallableDescriptor.isSynthesized: Boolean // todo dynamics calls
-    get() = (this is CallableMemberDescriptor && isOrOverridesSynthesized(this))
-            || hasLowPriorityInOverloadResolution()
+internal val CallableDescriptor.isSynthesized: Boolean
+    get() = (this is CallableMemberDescriptor && kind == CallableMemberDescriptor.Kind.SYNTHESIZED)
 
 internal val CandidateWithBoundDispatchReceiver<*>.requiresExtensionReceiver: Boolean
     get() = descriptor.extensionReceiverParameter != null

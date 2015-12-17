@@ -85,7 +85,7 @@ class TowerResolver {
 
             for (candidatesGroup in candidatesGroups) {
                 resultCollector.pushCandidates(candidatesGroup)
-                resultCollector.getResolved()?.let { return it }
+                resultCollector.getSuccessfulCandidates()?.let { return it }
             }
             return null
         }
@@ -108,7 +108,7 @@ class TowerResolver {
 
 
     internal abstract class ResultCollector<C>(val context: TowerContext<C>) {
-        abstract fun getResolved(): Collection<C>?
+        abstract fun getSuccessfulCandidates(): Collection<C>?
 
         abstract fun getFinalCandidates(): Collection<C>
 
@@ -125,7 +125,7 @@ class TowerResolver {
     internal class AllCandidatesCollector<C>(context: TowerContext<C>): ResultCollector<C>(context) {
         private val allCandidates = ArrayList<C>()
 
-        override fun getResolved(): Collection<C>? = null
+        override fun getSuccessfulCandidates(): Collection<C>? = null
 
         override fun getFinalCandidates(): Collection<C> = allCandidates
 
@@ -139,15 +139,19 @@ class TowerResolver {
         private var currentCandidates: Collection<C> = emptyList()
         private var currentLevel: ResolutionCandidateApplicability? = null
 
-        override fun getResolved() = currentCandidates.check { currentLevel == ResolutionCandidateApplicability.RESOLVED }
+        override fun getSuccessfulCandidates(): Collection<C>? = getResolved() ?: getResolvedSynthetic()
 
-        fun getSyntheticResolved() = currentCandidates.check { currentLevel == ResolutionCandidateApplicability.RESOLVED_SYNTHESIZED }
+        fun getResolved() = currentCandidates.check { currentLevel == ResolutionCandidateApplicability.RESOLVED }
+
+        fun getResolvedSynthetic() = currentCandidates.check { currentLevel == ResolutionCandidateApplicability.RESOLVED_SYNTHESIZED }
+
+        fun getResolvedLowPriority() = currentCandidates.check { currentLevel == ResolutionCandidateApplicability.RESOLVED_LOW_PRIORITY }
 
         fun getErrors() = currentCandidates.check {
-            currentLevel == null || currentLevel!! > ResolutionCandidateApplicability.RESOLVED_SYNTHESIZED
+            currentLevel == null || currentLevel!! > ResolutionCandidateApplicability.RESOLVED_LOW_PRIORITY
         }
 
-        override fun getFinalCandidates() = getResolved() ?: getSyntheticResolved() ?: getErrors() ?: emptyList()
+        override fun getFinalCandidates() = getResolved() ?: getResolvedSynthetic() ?: getResolvedLowPriority() ?: getErrors() ?: emptyList()
 
         override fun addCandidates(candidates: Collection<C>) {
             val minimalLevel = candidates.map { context.getStatus(it).resultingApplicability }.min()!!

@@ -34,7 +34,7 @@ import bar.*
     /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io*/E./*c:foo.E*/X
     /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io*/E./*c:foo.E*/X./*c:foo.E*/a
     /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io*/E./*c:foo.E*/Y./*c:foo.E*/foo()
-    /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io*/E./*c:foo.E p:foo(invoke) p:bar(invoke) p:java.lang(invoke) p:kotlin(invoke) p:kotlin.annotation(invoke) p:kotlin.jvm(invoke) p:kotlin.collections(invoke) p:kotlin.ranges(invoke) p:kotlin.sequences(invoke) p:kotlin.text(invoke) p:kotlin.io(invoke)*/values()
+    /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io*/E./*c:foo.E*/values()
     /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io*/E./*c:foo.E*/valueOf("")
     /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io*/E./*c:foo.E*/foo
     /*p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io*/E./*c:foo.E*/bar()
