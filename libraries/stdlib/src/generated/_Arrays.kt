@@ -5891,117 +5891,81 @@ public inline fun <K> ShortArray.toMap(selector: (Short) -> K): Map<K, Short> {
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector, transform)"))
 public inline fun <T, K, V> Array<out T>.toMap(selector: (T) -> K, transform: (T) -> V): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), transform(element))
-    }
-    return result
+    return toMapBy(selector, transform)
 }
 
 /**
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector, transform)"))
 public inline fun <K, V> BooleanArray.toMap(selector: (Boolean) -> K, transform: (Boolean) -> V): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), transform(element))
-    }
-    return result
+    return toMapBy(selector, transform)
 }
 
 /**
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector, transform)"))
 public inline fun <K, V> ByteArray.toMap(selector: (Byte) -> K, transform: (Byte) -> V): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), transform(element))
-    }
-    return result
+    return toMapBy(selector, transform)
 }
 
 /**
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector, transform)"))
 public inline fun <K, V> CharArray.toMap(selector: (Char) -> K, transform: (Char) -> V): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), transform(element))
-    }
-    return result
+    return toMapBy(selector, transform)
 }
 
 /**
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector, transform)"))
 public inline fun <K, V> DoubleArray.toMap(selector: (Double) -> K, transform: (Double) -> V): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), transform(element))
-    }
-    return result
+    return toMapBy(selector, transform)
 }
 
 /**
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector, transform)"))
 public inline fun <K, V> FloatArray.toMap(selector: (Float) -> K, transform: (Float) -> V): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), transform(element))
-    }
-    return result
+    return toMapBy(selector, transform)
 }
 
 /**
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector, transform)"))
 public inline fun <K, V> IntArray.toMap(selector: (Int) -> K, transform: (Int) -> V): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), transform(element))
-    }
-    return result
+    return toMapBy(selector, transform)
 }
 
 /**
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector, transform)"))
 public inline fun <K, V> LongArray.toMap(selector: (Long) -> K, transform: (Long) -> V): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), transform(element))
-    }
-    return result
+    return toMapBy(selector, transform)
 }
 
 /**
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector, transform)"))
 public inline fun <K, V> ShortArray.toMap(selector: (Short) -> K, transform: (Short) -> V): Map<K, V> {
-    val capacity = (size/.75f) + 1
-    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
-    for (element in this) {
-        result.put(selector(element), transform(element))
-    }
-    return result
+    return toMapBy(selector, transform)
 }
 
 /**
@@ -6252,6 +6216,123 @@ public inline fun <K> ShortArray.toMapBy(selector: (Short) -> K): Map<K, Short> 
     val result = LinkedHashMap<K, Short>(Math.max(capacity.toInt(), 16))
     for (element in this) {
         result.put(selector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
+ */
+public inline fun <T, K, V> Array<out T>.toMapBy(selector: (T) -> K, transform: (T) -> V): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(selector(element), transform(element))
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
+ */
+public inline fun <K, V> BooleanArray.toMapBy(selector: (Boolean) -> K, transform: (Boolean) -> V): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(selector(element), transform(element))
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
+ */
+public inline fun <K, V> ByteArray.toMapBy(selector: (Byte) -> K, transform: (Byte) -> V): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(selector(element), transform(element))
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
+ */
+public inline fun <K, V> CharArray.toMapBy(selector: (Char) -> K, transform: (Char) -> V): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(selector(element), transform(element))
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
+ */
+public inline fun <K, V> DoubleArray.toMapBy(selector: (Double) -> K, transform: (Double) -> V): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(selector(element), transform(element))
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
+ */
+public inline fun <K, V> FloatArray.toMapBy(selector: (Float) -> K, transform: (Float) -> V): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(selector(element), transform(element))
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
+ */
+public inline fun <K, V> IntArray.toMapBy(selector: (Int) -> K, transform: (Int) -> V): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(selector(element), transform(element))
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
+ */
+public inline fun <K, V> LongArray.toMapBy(selector: (Long) -> K, transform: (Long) -> V): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(selector(element), transform(element))
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given array.
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
+ */
+public inline fun <K, V> ShortArray.toMapBy(selector: (Short) -> K, transform: (Short) -> V): Map<K, V> {
+    val capacity = (size/.75f) + 1
+    val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
+    for (element in this) {
+        result.put(selector(element), transform(element))
     }
     return result
 }

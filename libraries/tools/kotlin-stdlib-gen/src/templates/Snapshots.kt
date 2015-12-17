@@ -242,6 +242,24 @@ fun snapshots(): List<GenericFunction> {
 
     templates add f("toMap(selector: (T) -> K, transform: (T) -> V)") {
         inline(true)
+        include(CharSequences)
+        typeParam("K")
+        typeParam("V")
+        doc { f ->
+            """
+            Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to ${f.element.pluralize()} of the given ${f.collection}.
+            If any two ${f.element.pluralize()} would have the same key returned by [selector] the last one gets added to the map.
+            """
+        }
+        returns("Map<K, V>")
+        deprecate(Deprecation("Use toMapBy instead.", "toMapBy(selector, transform)"))
+
+        deprecate(Strings) { forBinaryCompatibility }
+        body(Strings) { "return toMapBy(selector, transform)"}
+    }
+
+    templates add f("toMapBy(selector: (T) -> K, transform: (T) -> V)") {
+        inline(true)
         typeParam("K")
         typeParam("V")
         doc { f ->
@@ -276,8 +294,7 @@ fun snapshots(): List<GenericFunction> {
             return result
             """
         }
-        deprecate(Strings) { forBinaryCompatibility }
-        body(CharSequences, Strings) {
+        body(CharSequences) {
             """
             val capacity = (length/.75f) + 1
             val result = LinkedHashMap<K, V>(Math.max(capacity.toInt(), 16))
