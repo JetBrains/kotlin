@@ -1,0 +1,32 @@
+Cleaning output files:
+out/production/module1/foo/A.class
+End of files
+Compiling files:
+module1/src/module1_A.kt
+End of files
+Cleaning output files:
+out/production/module2/foo/AChild.class
+End of files
+Compiling files:
+module2/src/module2_AChild.kt
+module2/src/module2_importA.kt
+End of files
+COMPILATION FAILED
+Cannot access 'A': it is 'private' in file
+Subclass effective visibility 'public' should be the same or less permissive than its superclass effective visibility 'private'
+Cannot access 'A': it is 'private' in file
+
+
+Cleaning output files:
+out/production/module1/foo/A.class
+End of files
+Compiling files:
+module1/src/module1_A.kt
+End of files
+Compiling files:
+module2/src/module2_AChild.kt
+module2/src/module2_importA.kt
+End of files
+Compiling files:
+module3/src/module3_importAChild.kt
+End of files

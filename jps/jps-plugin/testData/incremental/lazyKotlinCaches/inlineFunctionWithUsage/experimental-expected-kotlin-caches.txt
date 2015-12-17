@@ -8,7 +8,6 @@ Module 'module' production
     experimental-format-version.txt
     format-version.txt
     inline-functions.tab
-    inlined-to.tab
     package-parts.tab
     proto.tab
     source-to-classes.tab
