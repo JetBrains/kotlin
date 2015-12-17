@@ -914,6 +914,7 @@ fun main(args: Array<String>) {
             model("incremental/pureKotlin", extension = null, excludeParentDirs = true)
             model("incremental/withJava", extension = null, excludeParentDirs = true)
             model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true)
+            model("incremental/classHierarchyAffected", extension = null, excludeParentDirs = true)
         }
 
         testClass<AbstractExperimentalIncrementalLazyCachesTest>() {

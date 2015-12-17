@@ -1,0 +1,1 @@
+class A<T : B>(x: T)
