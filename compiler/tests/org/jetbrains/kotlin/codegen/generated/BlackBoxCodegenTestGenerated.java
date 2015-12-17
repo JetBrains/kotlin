@@ -6882,6 +6882,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("privateSetter.kt")
+            public void testPrivateSetter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/privateSetter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("privateSetterFromLambda.kt")
+            public void testPrivateSetterFromLambda() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/privateSetterFromLambda.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("simpleVar.kt")
             public void testSimpleVar() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/properties/lateinit/simpleVar.kt");
