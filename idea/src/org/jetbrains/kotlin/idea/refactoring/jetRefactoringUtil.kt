@@ -676,7 +676,9 @@ public fun (() -> Any).runRefactoringWithPostprocessing(
 }
 
 @Throws(ConfigurationException::class)
-public fun KtElement.validateElement(errorMessage: String) {
+public fun KtElement?.validateElement(errorMessage: String) {
+    if (this == null) throw ConfigurationException(errorMessage)
+
     try {
         AnalyzingUtils.checkForSyntacticErrors(this)
     }

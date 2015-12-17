@@ -27,7 +27,4 @@ class KtTypeCodeFragment(
         context: PsiElement?
 ) : KtCodeFragment(project, name, text, null, KtNodeTypes.TYPE_CODE_FRAGMENT, context) {
     override fun getContentElement() = findChildByClass(KtTypeReference::class.java)
-
-    val hasTypeReference: Boolean
-        get() = getContentElement() != null
 }

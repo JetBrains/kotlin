@@ -22,13 +22,14 @@ import com.intellij.openapi.editor.event.DocumentAdapter
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiCodeFragment
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.refactoring.BaseRefactoringProcessor
+import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.changeSignature.ChangeSignatureDialogBase
 import com.intellij.refactoring.changeSignature.MethodDescriptor
 import com.intellij.refactoring.changeSignature.ParameterTableModelItemBase
@@ -46,9 +47,12 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
+import org.jetbrains.kotlin.idea.core.refactoring.validateElementAndNotNull
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor.Kind
+import org.jetbrains.kotlin.idea.refactoring.validateElement
 import org.jetbrains.kotlin.psi.KtExpressionCodeFragment
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtTypeCodeFragment
@@ -329,32 +333,54 @@ public class KotlinChangeSignatureDialog(
         validateButtons()
     }
 
-    override fun validateAndCommitData() = null
+    override fun validateAndCommitData(): String? {
+        if (myMethod.canChangeReturnType() == MethodDescriptor.ReadWriteOption.ReadWrite &&
+            myReturnTypeCodeFragment.getTypeInfo(true, false).type == null) {
+            if (Messages.showOkCancelDialog(
+                    myProject,
+                    "Return type '${myReturnTypeCodeFragment!!.text}' cannot be resolved.\nContinue?",
+                    RefactoringBundle.message("changeSignature.refactoring.name"),
+                    Messages.getWarningIcon()
+            ) != Messages.OK) {
+                return ChangeSignatureDialogBase.EXIT_SILENTLY
+            }
+        }
+
+        for (item in parametersTableModel.items) {
+            if (item.typeCodeFragment.getTypeInfo(true, false).type == null) {
+                val paramText = if (item.parameter != parametersTableModel.receiver) "parameter '${item.parameter.name}'" else "receiver"
+                if (Messages.showOkCancelDialog(
+                        myProject,
+                        "Type '${item.typeCodeFragment.text}' for $paramText cannot be resolved.\nContinue?",
+                        RefactoringBundle.message("changeSignature.refactoring.name"),
+                        Messages.getWarningIcon()
+                ) != Messages.OK) {
+                    return ChangeSignatureDialogBase.EXIT_SILENTLY
+                }
+            }
+        }
+        return null
+    }
 
     override fun canRun() {
-        if (myNamePanel.isVisible()
-            && myMethod.canChangeName()
-            && !JavaPsiFacade.getInstance(myProject).getNameHelper().isIdentifier(getMethodName())) {
+        if (myNamePanel.isVisible && myMethod.canChangeName() && !KotlinNameSuggester.isIdentifier(methodName)) {
             throw ConfigurationException(KotlinRefactoringBundle.message("function.name.is.invalid"))
         }
 
-        if (myMethod.canChangeReturnType() === MethodDescriptor.ReadWriteOption.ReadWrite && !hasTypeReference(myReturnTypeCodeFragment)) {
-            throw ConfigurationException(KotlinRefactoringBundle.message("return.type.is.invalid"))
+        if (myMethod.canChangeReturnType() === MethodDescriptor.ReadWriteOption.ReadWrite) {
+            (myReturnTypeCodeFragment as? KtTypeCodeFragment)
+                    ?.validateElement(KotlinRefactoringBundle.message("return.type.is.invalid"))
         }
 
-        val parameterInfos = parametersTableModel.getItems()
+        for (item in parametersTableModel.items) {
+            val parameterName = item.parameter.name
 
-        for (item in parameterInfos) {
-            val parameterName = item.parameter.getName()
-
-            if (item.parameter != parametersTableModel.getReceiver()
-                && !JavaPsiFacade.getInstance(myProject).getNameHelper().isIdentifier(parameterName)) {
+            if (item.parameter != parametersTableModel.receiver && !KotlinNameSuggester.isIdentifier(parameterName)) {
                 throw ConfigurationException(KotlinRefactoringBundle.message("parameter.name.is.invalid", parameterName))
             }
 
-            if (!hasTypeReference(item.typeCodeFragment)) {
-                throw ConfigurationException(KotlinRefactoringBundle.message("parameter.type.is.invalid", item.typeCodeFragment.getText()))
-            }
+            (item.typeCodeFragment as? KtTypeCodeFragment)
+                    ?.validateElement(KotlinRefactoringBundle.message("parameter.type.is.invalid", item.typeCodeFragment.text))
         }
     }
 
@@ -446,8 +472,5 @@ public class KotlinChangeSignatureDialog(
                                     parametersModel.getReceiver(),
                                     defaultValueContext)
         }
-
-        private fun hasTypeReference(codeFragment: PsiCodeFragment?): Boolean
-                = (codeFragment as? KtTypeCodeFragment)?.hasTypeReference ?: false
     }
 }
