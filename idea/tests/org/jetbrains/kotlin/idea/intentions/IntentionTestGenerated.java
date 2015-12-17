@@ -6189,6 +6189,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("Recursive.kt")
+        public void testRecursive() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/Recursive.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ReturnNoValue.kt")
         public void testReturnNoValue() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/objectLiteralToLambda/ReturnNoValue.kt");

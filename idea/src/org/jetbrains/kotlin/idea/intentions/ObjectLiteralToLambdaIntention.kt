@@ -60,6 +60,11 @@ class ObjectLiteralToLambdaIntention : SelfTargetingRangeIntention<KtObjectLiter
         if (!singleFunction.hasBody()) return null
         if (singleFunction.valueParameters.any { it.name == null }) return null
 
+        // Recursive call, skip labels
+        if (ReferencesSearch.search(singleFunction, LocalSearchScope(singleFunction.bodyExpression!!)).any { it.element !is KtLabelReferenceExpression }) {
+            return null
+        }
+
         return TextRange(element.objectDeclaration.getObjectKeyword().startOffset, baseTypeRef.endOffset)
     }
 
