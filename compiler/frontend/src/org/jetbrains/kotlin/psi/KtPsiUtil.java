@@ -599,6 +599,25 @@ public class KtPsiUtil {
         return PsiTreeUtil.skipSiblingsForward(element, PsiWhiteSpace.class, PsiComment.class);
     }
 
+    @Nullable
+    public static PsiElement prevLeafIgnoringWhitespaceAndComments(@NotNull PsiElement element) {
+        PsiElement prev = PsiTreeUtil.prevLeaf(element, true);
+        while (prev != null && KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET.contains(prev.getNode().getElementType())) {
+            prev = PsiTreeUtil.prevLeaf(prev, true);
+        }
+        return prev;
+    }
+
+    @Nullable
+    public static PsiElement getPreviousWord(@NotNull PsiElement element, @NotNull String word) {
+        PsiElement prev = prevLeafIgnoringWhitespaceAndComments(element);
+        if (prev != null && prev.getNode().getElementType() == KtTokens.IDENTIFIER && word.equals(prev.getText())) {
+            return prev;
+        }
+
+        return null;
+    }
+
     public static final Predicate<KtElement> ANY_JET_ELEMENT = new Predicate<KtElement>() {
         @Override
         public boolean apply(@Nullable KtElement input) {

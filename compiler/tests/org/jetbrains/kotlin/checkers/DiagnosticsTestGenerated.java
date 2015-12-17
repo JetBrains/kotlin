@@ -18186,6 +18186,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("ReservedExhaustiveWhen.kt")
+            public void testReservedExhaustiveWhen() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/ReservedExhaustiveWhen.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("When.kt")
             public void testWhen() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/when/When.kt");
