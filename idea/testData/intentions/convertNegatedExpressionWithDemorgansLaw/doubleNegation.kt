@@ -1,4 +1,3 @@
-// SKIP_ERRORS_AFTER
 operator fun String.not(): Boolean {
     return length == 0
 }
