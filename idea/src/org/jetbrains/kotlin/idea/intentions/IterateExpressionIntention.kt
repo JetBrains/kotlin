@@ -32,13 +32,13 @@ import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 
-public class IterateExpressionIntention : SelfTargetingIntention<KtExpression>(javaClass(), "Iterate over collection"), HighPriorityAction {
+public class IterateExpressionIntention : SelfTargetingIntention<KtExpression>(KtExpression::class.java, "Iterate over collection"), HighPriorityAction {
     override fun isApplicableTo(element: KtExpression, caretOffset: Int): Boolean {
-        if (element.getParent() !is KtBlockExpression) return false
-        val range = element.getTextRange()
-        if (caretOffset != range.getStartOffset() && caretOffset != range.getEndOffset()) return false
+        if (element.parent !is KtBlockExpression) return false
+        val range = element.textRange
+        if (caretOffset != range.startOffset && caretOffset != range.endOffset) return false
         val data = data(element) ?: return false
-        setText("Iterate over '${IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(data.collectionType)}'")
+        text = "Iterate over '${IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(data.collectionType)}'"
         return true
     }
 
@@ -65,12 +65,12 @@ public class IterateExpressionIntention : SelfTargetingIntention<KtExpression>(j
         var forExpression = KtPsiFactory(element).createExpressionByPattern("for($0 in $1) {\nx\n}", names.first(), element) as KtForExpression
         forExpression = element.replaced(forExpression)
 
-        PsiDocumentManager.getInstance(forExpression.getProject()).doPostponedOperationsAndUnblockDocument(editor.getDocument())
+        PsiDocumentManager.getInstance(forExpression.project).doPostponedOperationsAndUnblockDocument(editor.document)
 
-        val bodyPlaceholder = (forExpression.getBody() as KtBlockExpression).getStatements().single()
+        val bodyPlaceholder = (forExpression.body as KtBlockExpression).statements.single()
 
         val templateBuilder = TemplateBuilderImpl(forExpression)
-        templateBuilder.replaceElement(forExpression.getLoopParameter()!!, ChooseStringExpression(names))
+        templateBuilder.replaceElement(forExpression.loopParameter!!, ChooseStringExpression(names))
         templateBuilder.replaceElement(bodyPlaceholder, ConstantNode(""), false)
         templateBuilder.setEndVariableAfter(bodyPlaceholder)
 

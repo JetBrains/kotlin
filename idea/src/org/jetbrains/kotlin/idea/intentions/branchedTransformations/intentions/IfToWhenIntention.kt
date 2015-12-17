@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import java.util.*
 
-public class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(javaClass(), "Replace 'if' with 'when'") {
+public class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpression::class.java, "Replace 'if' with 'when'") {
     override fun applicabilityRange(element: KtIfExpression): TextRange? {
-        if (element.getThen() == null) return null
-        return element.getIfKeyword().getTextRange()
+        if (element.then == null) return null
+        return element.ifKeyword.textRange
     }
 
     override fun applyTo(element: KtIfExpression, editor: Editor) {
@@ -37,7 +37,7 @@ public class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(jav
 
             var ifExpression = element
             while (true) {
-                val condition = ifExpression.getCondition()
+                val condition = ifExpression.condition
                 val orBranches = ArrayList<KtExpression>()
                 if (condition != null) {
                     orBranches.addOrBranches(condition)
@@ -47,11 +47,11 @@ public class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(jav
 
                 appendFixedText("->")
 
-                val thenBranch = ifExpression.getThen()
+                val thenBranch = ifExpression.then
                 appendExpression(thenBranch)
                 appendFixedText("\n")
 
-                val elseBranch = ifExpression.getElse() ?: break
+                val elseBranch = ifExpression.`else` ?: break
                 if (elseBranch is KtIfExpression) {
                     ifExpression = elseBranch
                 }
@@ -75,9 +75,9 @@ public class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(jav
     }
 
     private fun MutableList<KtExpression>.addOrBranches(expression: KtExpression): List<KtExpression> {
-        if (expression is KtBinaryExpression && expression.getOperationToken() == KtTokens.OROR) {
-            val left = expression.getLeft()
-            val right = expression.getRight()
+        if (expression is KtBinaryExpression && expression.operationToken == KtTokens.OROR) {
+            val left = expression.left
+            val right = expression.right
             if (left != null && right != null) {
                 addOrBranches(left)
                 addOrBranches(right)

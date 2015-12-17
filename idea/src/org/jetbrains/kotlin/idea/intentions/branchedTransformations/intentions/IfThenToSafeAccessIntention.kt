@@ -26,17 +26,17 @@ import org.jetbrains.kotlin.idea.core.replaced
 
 public class IfThenToSafeAccessInspection : IntentionBasedInspection<KtIfExpression>(IfThenToSafeAccessIntention())
 
-public class IfThenToSafeAccessIntention : SelfTargetingOffsetIndependentIntention<KtIfExpression>(javaClass(), "Replace 'if' expression with safe access expression") {
+public class IfThenToSafeAccessIntention : SelfTargetingOffsetIndependentIntention<KtIfExpression>(KtIfExpression::class.java, "Replace 'if' expression with safe access expression") {
 
     override fun isApplicableTo(element: KtIfExpression): Boolean {
-        val condition = element.getCondition() as? KtBinaryExpression ?: return false
-        val thenClause = element.getThen()
-        val elseClause = element.getElse()
+        val condition = element.condition as? KtBinaryExpression ?: return false
+        val thenClause = element.then
+        val elseClause = element.`else`
 
         val receiverExpression = condition.expressionComparedToNull() ?: return false
         if (!receiverExpression.isStableVariable()) return false
 
-        return when (condition.getOperationToken()) {
+        return when (condition.operationToken) {
             KtTokens.EQEQ ->
                 thenClause?.isNullExpressionOrEmptyBlock() ?: true &&
                 elseClause != null && clauseContainsAppropriateDotQualifiedExpression(elseClause, receiverExpression)
@@ -56,14 +56,14 @@ public class IfThenToSafeAccessIntention : SelfTargetingOffsetIndependentIntenti
     }
 
     public fun applyTo(element: KtIfExpression): KtSafeQualifiedExpression {
-        val condition = element.getCondition() as KtBinaryExpression
+        val condition = element.condition as KtBinaryExpression
         val receiverExpression = condition.expressionComparedToNull()!!
 
         val selectorExpression =
-                when(condition.getOperationToken()) {
-                    KtTokens.EQEQ -> findSelectorExpressionInClause(element.getElse()!!, receiverExpression)!!
+                when(condition.operationToken) {
+                    KtTokens.EQEQ -> findSelectorExpressionInClause(element.`else`!!, receiverExpression)!!
 
-                    KtTokens.EXCLEQ -> findSelectorExpressionInClause(element.getThen()!!, receiverExpression)!!
+                    KtTokens.EXCLEQ -> findSelectorExpressionInClause(element.then!!, receiverExpression)!!
 
                     else -> throw IllegalArgumentException()
                 }
@@ -78,8 +78,8 @@ public class IfThenToSafeAccessIntention : SelfTargetingOffsetIndependentIntenti
     private fun findSelectorExpressionInClause(clause: KtExpression, receiverExpression: KtExpression): KtExpression? {
         val expression = clause.unwrapBlockOrParenthesis() as? KtDotQualifiedExpression ?: return null
 
-        if (expression.getReceiverExpression().getText() != receiverExpression.getText()) return null
+        if (expression.receiverExpression.text != receiverExpression.text) return null
 
-        return expression.getSelectorExpression()
+        return expression.selectorExpression
     }
 }

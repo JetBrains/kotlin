@@ -26,23 +26,23 @@ import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.psi.buildExpression
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-public class EliminateWhenSubjectIntention : SelfTargetingIntention<KtWhenExpression>(javaClass(), "Eliminate argument of 'when'"), LowPriorityAction {
+public class EliminateWhenSubjectIntention : SelfTargetingIntention<KtWhenExpression>(KtWhenExpression::class.java, "Eliminate argument of 'when'"), LowPriorityAction {
     override fun isApplicableTo(element: KtWhenExpression, caretOffset: Int): Boolean {
-        if (element.getSubjectExpression() !is KtNameReferenceExpression) return false
-        val lBrace = element.getOpenBrace() ?: return false
+        if (element.subjectExpression !is KtNameReferenceExpression) return false
+        val lBrace = element.openBrace ?: return false
         return caretOffset <= lBrace.startOffset
     }
 
     override fun applyTo(element: KtWhenExpression, editor: Editor) {
-        val subject = element.getSubjectExpression()!!
+        val subject = element.subjectExpression!!
 
         val whenExpression = KtPsiFactory(element).buildExpression {
             appendFixedText("when {\n")
 
-            for (entry in element.getEntries()) {
-                val branchExpression = entry.getExpression()
+            for (entry in element.entries) {
+                val branchExpression = entry.expression
 
-                if (entry.isElse()) {
+                if (entry.isElse) {
                     appendFixedText("else")
                 }
                 else {

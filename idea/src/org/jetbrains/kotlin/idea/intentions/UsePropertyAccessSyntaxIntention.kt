@@ -55,7 +55,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 
 class UsePropertyAccessSyntaxInspection : IntentionBasedInspection<KtCallExpression>(UsePropertyAccessSyntaxIntention()), CleanupLocalInspectionTool
 
-class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention<KtCallExpression>(javaClass(), "Use property access syntax") {
+class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention<KtCallExpression>(KtCallExpression::class.java, "Use property access syntax") {
     override fun isApplicableTo(element: KtCallExpression): Boolean {
         return detectPropertyNameToUse(element) != null
     }
@@ -65,8 +65,8 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
     }
 
     public fun applyTo(element: KtCallExpression, propertyName: Name): KtExpression {
-        val arguments = element.getValueArguments()
-        return when (arguments.size()) {
+        val arguments = element.valueArguments
+        return when (arguments.size) {
             0 -> replaceWithPropertyGet(element, propertyName)
             1 -> replaceWithPropertySet(element, propertyName, arguments.single())
             else -> error("More than one argument in call to accessor")
@@ -74,16 +74,16 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
     }
 
     public fun detectPropertyNameToUse(callExpression: KtCallExpression): Name? {
-        if (callExpression.getQualifiedExpressionForSelector()?.getReceiverExpression() is KtSuperExpression) return null // cannot call extensions on "super"
+        if (callExpression.getQualifiedExpressionForSelector()?.receiverExpression is KtSuperExpression) return null // cannot call extensions on "super"
 
-        val callee = callExpression.getCalleeExpression() as? KtNameReferenceExpression ?: return null
+        val callee = callExpression.calleeExpression as? KtNameReferenceExpression ?: return null
 
         val resolutionFacade = callExpression.getResolutionFacade()
         val bindingContext = resolutionFacade.analyze(callExpression, BodyResolveMode.PARTIAL)
         val resolvedCall = callExpression.getResolvedCall(bindingContext) ?: return null
         if (!resolvedCall.isReallySuccess()) return null
 
-        val function = resolvedCall.getResultingDescriptor() as? FunctionDescriptor ?: return null
+        val function = resolvedCall.resultingDescriptor as? FunctionDescriptor ?: return null
         val resolutionScope = callExpression.getResolutionScope(bindingContext, resolutionFacade)
         val property = findSyntheticProperty(function, resolutionScope) ?: return null
 
@@ -93,7 +93,7 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
 
         if (!checkWillResolveToProperty(resolvedCall, property, bindingContext, resolutionScope, dataFlowInfo, expectedType, resolutionFacade)) return null
 
-        val isSetUsage = callExpression.valueArguments.size() == 1
+        val isSetUsage = callExpression.valueArguments.size == 1
         if (isSetUsage && property.type != function.valueParameters.single().type) {
             val qualifiedExpressionCopy = qualifiedExpression.copied()
             val callExpressionCopy = ((qualifiedExpressionCopy as? KtQualifiedExpression)?.selectorExpression ?: qualifiedExpressionCopy) as KtCallExpression
@@ -144,7 +144,7 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
     private fun findSyntheticProperty(function: FunctionDescriptor, resolutionScope: LexicalScope): SyntheticJavaPropertyDescriptor? {
         SyntheticJavaPropertyDescriptor.findByGetterOrSetter(function, resolutionScope)?.let { return it }
 
-        for (overridden in function.getOverriddenDescriptors()) {
+        for (overridden in function.overriddenDescriptors) {
             findSyntheticProperty(overridden, resolutionScope)?.let { return it }
         }
 
@@ -167,7 +167,7 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
             }
             val newExpression = KtPsiFactory(callExpression).createExpressionByPattern(
                     pattern,
-                    qualifiedExpression.getReceiverExpression(),
+                    qualifiedExpression.receiverExpression,
                     propertyName,
                     argument.getArgumentExpression()!!
             )

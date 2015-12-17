@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.utils.addToStdlib.check
 
 public class ConvertToExpressionBodyIntention : SelfTargetingOffsetIndependentIntention<KtDeclarationWithBody>(
-        javaClass(), "Convert to expression body"
+        KtDeclarationWithBody::class.java, "Convert to expression body"
 ) {
     override fun isApplicableTo(element: KtDeclarationWithBody): Boolean {
         val value = calcValue(element) ?: return false
@@ -53,7 +53,7 @@ public class ConvertToExpressionBodyIntention : SelfTargetingOffsetIndependentIn
 
     public fun applyTo(declaration: KtDeclarationWithBody, canDeleteTypeRef: Boolean) {
         val deleteTypeHandler: (KtCallableDeclaration) -> Unit = {
-            it.deleteChildRange(it.getColon()!!, it.getTypeReference()!!)
+            it.deleteChildRange(it.colon!!, it.typeReference!!)
         }
         applyTo(declaration, deleteTypeHandler.check { canDeleteTypeRef })
     }
@@ -68,7 +68,7 @@ public class ConvertToExpressionBodyIntention : SelfTargetingOffsetIndependentIn
             }
         }
 
-        val body = declaration.getBodyExpression()!!
+        val body = declaration.bodyExpression!!
 
         val commentSaver = CommentSaver(body)
 
@@ -86,13 +86,13 @@ public class ConvertToExpressionBodyIntention : SelfTargetingOffsetIndependentIn
 
     private fun calcValue(declaration: KtDeclarationWithBody): KtExpression? {
         if (declaration is KtFunctionLiteral) return null
-        val body = declaration.getBodyExpression()
+        val body = declaration.bodyExpression
         if (!declaration.hasBlockBody() || body !is KtBlockExpression) return null
 
-        val statement = body.getStatements().singleOrNull() ?: return null
+        val statement = body.statements.singleOrNull() ?: return null
         when(statement) {
             is KtReturnExpression -> {
-                return statement.getReturnedExpression()
+                return statement.returnedExpression
             }
 
             //TODO: IMO this is not good code, there should be a way to detect that JetExpression does not have value

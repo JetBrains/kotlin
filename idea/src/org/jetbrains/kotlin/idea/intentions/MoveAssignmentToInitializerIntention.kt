@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 public class MoveAssignmentToInitializerIntention :
-        SelfTargetingIntention<KtBinaryExpression>(javaClass(), "Move assignment to initializer") {
+        SelfTargetingIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Move assignment to initializer") {
 
     override fun isApplicableTo(element: KtBinaryExpression, caretOffset: Int): Boolean {
         if (element.operationToken != KtTokens.EQ) {

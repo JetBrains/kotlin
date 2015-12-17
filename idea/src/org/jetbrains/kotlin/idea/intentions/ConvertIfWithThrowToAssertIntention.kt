@@ -17,48 +17,46 @@
 package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.openapi.editor.Editor
-import org.jetbrains.kotlin.idea.util.ShortenReferences
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.unwrapBlockOrParenthesis
-import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpression
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isNullExpression
+import org.jetbrains.kotlin.idea.intentions.branchedTransformations.unwrapBlockOrParenthesis
+import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 
-public class ConvertIfWithThrowToAssertIntention : SelfTargetingOffsetIndependentIntention<KtIfExpression>(javaClass(), "Replace 'if' with 'assert' statement") {
-
+public class ConvertIfWithThrowToAssertIntention : SelfTargetingOffsetIndependentIntention<KtIfExpression>(KtIfExpression::class.java, "Replace 'if' with 'assert' statement") {
     override fun isApplicableTo(element: KtIfExpression): Boolean {
-        if (element.getElse() != null) return false
+        if (element.`else` != null) return false
 
-        val throwExpr = element.getThen()?.unwrapBlockOrParenthesis() as? KtThrowExpression
-        val thrownExpr = getSelector(throwExpr?.getThrownExpression())
+        val throwExpr = element.then?.unwrapBlockOrParenthesis() as? KtThrowExpression
+        val thrownExpr = getSelector(throwExpr?.thrownExpression)
         if (thrownExpr !is KtCallExpression) return false
 
-        if (thrownExpr.getValueArguments().size() > 1) return false
+        if (thrownExpr.valueArguments.size > 1) return false
 
         val resolvedCall = thrownExpr.getResolvedCall(thrownExpr.analyze()) ?: return false
-        return DescriptorUtils.getFqName(resolvedCall.getResultingDescriptor()).toString() == "java.lang.AssertionError.<init>"
+        return DescriptorUtils.getFqName(resolvedCall.resultingDescriptor).toString() == "java.lang.AssertionError.<init>"
     }
 
     override fun applyTo(element: KtIfExpression, editor: Editor) {
-        val condition = element.getCondition() ?: return
+        val condition = element.condition ?: return
 
-        val thenExpr = element.getThen()?.unwrapBlockOrParenthesis() as KtThrowExpression
-        val thrownExpr = getSelector(thenExpr.getThrownExpression()) as KtCallExpression
+        val thenExpr = element.then?.unwrapBlockOrParenthesis() as KtThrowExpression
+        val thrownExpr = getSelector(thenExpr.thrownExpression) as KtCallExpression
 
         val psiFactory = KtPsiFactory(element)
         condition.replace(psiFactory.createExpressionByPattern("!$0", condition))
 
-        var newCondition = element.getCondition()!!
+        var newCondition = element.condition!!
         val simplifier = SimplifyNegatedBinaryExpressionIntention()
         if (simplifier.isApplicableTo(newCondition as KtPrefixExpression)) {
             simplifier.applyTo(newCondition, editor)
-            newCondition = element.getCondition()!!
+            newCondition = element.condition!!
         }
 
-        val arg = thrownExpr.getValueArguments().singleOrNull()?.getArgumentExpression()
+        val arg = thrownExpr.valueArguments.singleOrNull()?.getArgumentExpression()
         val assertExpr = if (arg != null && !arg.isNullExpression())
             psiFactory.createExpressionByPattern("kotlin.assert($0) {$1}", newCondition, arg)
         else
@@ -70,7 +68,7 @@ public class ConvertIfWithThrowToAssertIntention : SelfTargetingOffsetIndependen
 
     private fun getSelector(element: KtExpression?): KtExpression? {
         if (element is KtDotQualifiedExpression) {
-            return element.getSelectorExpression()
+            return element.selectorExpression
         }
         return element
     }

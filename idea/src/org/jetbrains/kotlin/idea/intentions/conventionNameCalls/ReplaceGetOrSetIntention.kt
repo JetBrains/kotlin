@@ -71,9 +71,9 @@ class ReplaceGetOrSetIntention : SelfTargetingRangeIntention<KtDotQualifiedExpre
         val target = resolvedCall.resultingDescriptor as? FunctionDescriptor ?: return null
         if (!target.isValidOperator() || target.name !in operatorNames) return null
 
-        if (callExpression.getTypeArgumentList() != null) return null
+        if (callExpression.typeArgumentList != null) return null
 
-        val arguments = callExpression.getValueArguments()
+        val arguments = callExpression.valueArguments
         if (arguments.isEmpty()) return null
         if (arguments.any { it.isNamed() }) return null
 
@@ -83,7 +83,7 @@ class ReplaceGetOrSetIntention : SelfTargetingRangeIntention<KtDotQualifiedExpre
 
         text = "Replace '${target.name.asString()}' call with indexing operator"
 
-        return callExpression.getCalleeExpression()!!.getTextRange()
+        return callExpression.calleeExpression!!.textRange
     }
 
     override fun applyTo(element: KtDotQualifiedExpression, editor: Editor) {
@@ -96,7 +96,7 @@ class ReplaceGetOrSetIntention : SelfTargetingRangeIntention<KtDotQualifiedExpre
         assert(allArguments.isNotEmpty())
 
         val expression = KtPsiFactory(element).buildExpression {
-            appendExpression(element.getReceiverExpression())
+            appendExpression(element.receiverExpression)
 
             appendFixedText("[")
 

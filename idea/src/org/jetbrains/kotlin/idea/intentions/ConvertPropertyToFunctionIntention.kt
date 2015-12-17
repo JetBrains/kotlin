@@ -50,44 +50,44 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.utils.findFunction
 import java.util.*
 
-public class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtProperty>(javaClass(), "Convert property to function"), LowPriorityAction {
+public class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtProperty>(KtProperty::class.java, "Convert property to function"), LowPriorityAction {
     private inner class Converter(
             project: Project,
             descriptor: CallableDescriptor
-    ): CallableRefactoring<CallableDescriptor>(project, descriptor, getText()) {
+    ): CallableRefactoring<CallableDescriptor>(project, descriptor, text) {
         private val newName: String = JvmAbi.getterName(callableDescriptor.name.asString())
 
         private fun convertProperty(originalProperty: KtProperty, psiFactory: KtPsiFactory) {
             val property = originalProperty.copy() as KtProperty;
-            val getter = property.getGetter();
+            val getter = property.getter;
 
             val sampleFunction = psiFactory.createFunction("fun foo() {\n\n}");
 
-            property.getValOrVarKeyword().replace(sampleFunction.getFunKeyword()!!);
-            property.addAfter(psiFactory.createParameterList("()"), property.getNameIdentifier());
-            if (property.getInitializer() == null) {
+            property.valOrVarKeyword.replace(sampleFunction.funKeyword!!);
+            property.addAfter(psiFactory.createParameterList("()"), property.nameIdentifier);
+            if (property.initializer == null) {
                 if (getter != null) {
-                    val dropGetterTo = (getter.getEqualsToken() ?: getter.getBodyExpression())
+                    val dropGetterTo = (getter.equalsToken ?: getter.bodyExpression)
                             ?.siblings(forward = false, withItself = false)
                             ?.firstOrNull { it !is PsiWhiteSpace }
-                    getter.deleteChildRange(getter.getFirstChild(), dropGetterTo)
+                    getter.deleteChildRange(getter.firstChild, dropGetterTo)
 
                     val dropPropertyFrom = getter
                             .siblings(forward = false, withItself = false)
                             .first { it !is PsiWhiteSpace }
-                            .getNextSibling()
-                    property.deleteChildRange(dropPropertyFrom, getter.getPrevSibling())
+                            .nextSibling
+                    property.deleteChildRange(dropPropertyFrom, getter.prevSibling)
                 }
             }
             property.setName(newName)
 
-            originalProperty.replace(psiFactory.createFunction(property.getText()))
+            originalProperty.replace(psiFactory.createFunction(property.text))
         }
 
         override fun performRefactoring(descriptorsForChange: Collection<CallableDescriptor>) {
-            val propertyName = callableDescriptor.getName().asString()
+            val propertyName = callableDescriptor.name.asString()
             val nameChanged = propertyName != newName
-            val getterName = JvmAbi.getterName(callableDescriptor.getName().asString())
+            val getterName = JvmAbi.getterName(callableDescriptor.name.asString())
             val conflicts = MultiMap<PsiElement, String>()
             val callables = getAffectedCallables(project, descriptorsForChange)
             val kotlinRefsToReplaceWithCall = ArrayList<KtSimpleNameExpression>()
@@ -108,10 +108,10 @@ public class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtPrope
                             ?.let { reportDeclarationConflict(conflicts, it) { "$it already exists" } }
                 }
                 else if (callable is PsiMethod) {
-                    callable.getContainingClass()
+                    callable.containingClass
                             ?.findMethodsByName(propertyName, true)
                             // as is necessary here: see KT-10386
-                            ?.firstOrNull { it.getParameterList().getParametersCount() == 0 && it.namedUnwrappedElement as PsiElement? !in callables }
+                            ?.firstOrNull { it.parameterList.parametersCount == 0 && !callables.contains(it.namedUnwrappedElement as PsiElement?) }
                             ?.let { reportDeclarationConflict(conflicts, it) { "$it already exists" } }
                 }
 
@@ -129,18 +129,18 @@ public class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtPrope
                             }
                         }
                         else {
-                            val refElement = usage.getElement()
+                            val refElement = usage.element
                             conflicts.putValue(
                                     refElement,
-                                    "Unrecognized reference will be skipped: " + StringUtil.htmlEmphasize(refElement.getText())
+                                    "Unrecognized reference will be skipped: " + StringUtil.htmlEmphasize(refElement.text)
                             )
                         }
                         continue
                     }
 
-                    val refElement = usage.getElement()
+                    val refElement = usage.element
 
-                    if (refElement.getText().endsWith(getterName)) continue
+                    if (refElement.text.endsWith(getterName)) continue
 
                     if (usage is PsiJavaReference) {
                         if (usage.resolve() is PsiField && usage is PsiReferenceExpression) {
@@ -151,13 +151,13 @@ public class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtPrope
 
                     conflicts.putValue(
                             refElement,
-                            "Can't replace foreign reference with call expression: " + StringUtil.htmlEmphasize(refElement.getText())
+                            "Can't replace foreign reference with call expression: " + StringUtil.htmlEmphasize(refElement.text)
                     )
                 }
             }
 
             project.checkConflictsInteractively(conflicts) {
-                project.executeWriteCommand(getText()) {
+                project.executeWriteCommand(text) {
                     val kotlinPsiFactory = KtPsiFactory(project)
                     val javaPsiFactory = PsiElementFactory.SERVICE.getInstance(project)
                     val newKotlinCallExpr = kotlinPsiFactory.createExpression("$newName()")
@@ -182,14 +182,14 @@ public class ConvertPropertyToFunctionIntention : SelfTargetingIntention<KtPrope
     override fun startInWriteAction(): Boolean = false
 
     override fun isApplicableTo(element: KtProperty, caretOffset: Int): Boolean {
-        val identifier = element.getNameIdentifier() ?: return false
-        if (!identifier.getTextRange().containsOffset(caretOffset)) return false
-        return element.getDelegate() == null && !element.isVar() && !element.isLocal()
+        val identifier = element.nameIdentifier ?: return false
+        if (!identifier.textRange.containsOffset(caretOffset)) return false
+        return element.delegate == null && !element.isVar && !element.isLocal
     }
 
     override fun applyTo(element: KtProperty, editor: Editor) {
         val context = element.analyze()
         val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, element] as? CallableDescriptor ?: return
-        Converter(element.getProject(), descriptor).run()
+        Converter(element.project, descriptor).run()
     }
 }

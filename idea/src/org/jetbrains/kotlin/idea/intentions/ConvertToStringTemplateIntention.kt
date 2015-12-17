@@ -32,11 +32,11 @@ public class ConvertToStringTemplateInspection : IntentionBasedInspection<KtBina
         { ConvertToStringTemplateIntention().shouldSuggestToConvert(it) }
 )
 
-public class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(javaClass(), "Convert concatenation to template") {
+public class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Convert concatenation to template") {
     override fun isApplicableTo(element: KtBinaryExpression): Boolean {
         if (!isApplicableToNoParentCheck(element)) return false
 
-        val parent = element.getParent()
+        val parent = element.parent
         if (parent is KtBinaryExpression && isApplicableToNoParentCheck(parent)) return false
 
         return true
@@ -58,25 +58,25 @@ public class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentIn
     }
 
     private fun isApplicableToNoParentCheck(expression: KtBinaryExpression): Boolean {
-        if (expression.getOperationToken() != KtTokens.PLUS) return false
+        if (expression.operationToken != KtTokens.PLUS) return false
         if (!KotlinBuiltIns.isString(expression.analyze().getType(expression))) return false
 
-        val left = expression.getLeft() ?: return false
-        val right = expression.getRight() ?: return false
+        val left = expression.left ?: return false
+        val right = expression.right ?: return false
         return !PsiUtilCore.hasErrorElementChild(left) && !PsiUtilCore.hasErrorElementChild(right)
     }
 
     private fun buildReplacement(expression: KtBinaryExpression): KtStringTemplateExpression {
-        val rightText = buildText(expression.getRight(), false)
-        return fold(expression.getLeft(), rightText, KtPsiFactory(expression))
+        val rightText = buildText(expression.right, false)
+        return fold(expression.left, rightText, KtPsiFactory(expression))
     }
 
     private fun fold(left: KtExpression?, right: String, factory: KtPsiFactory): KtStringTemplateExpression {
         val forceBraces = !right.isEmpty() && right.first() != '$' && right.first().isJavaIdentifierPart()
 
         if (left is KtBinaryExpression && isApplicableToNoParentCheck(left)) {
-            val leftRight = buildText(left.getRight(), forceBraces)
-            return fold(left.getLeft(), leftRight + right, factory)
+            val leftRight = buildText(left.right, forceBraces)
+            return fold(left.left, leftRight + right, factory)
         }
         else {
             val leftText = buildText(left, forceBraces)
@@ -87,7 +87,7 @@ public class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentIn
     private fun buildText(expr: KtExpression?, forceBraces: Boolean): String {
         if (expr == null) return ""
         val expression = KtPsiUtil.safeDeparenthesize(expr)
-        val expressionText = expression.getText()
+        val expressionText = expression.text
         return when (expression) {
             is KtConstantExpression -> {
                 val bindingContext = expression.analyze()
@@ -97,7 +97,7 @@ public class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentIn
 
             is KtStringTemplateExpression -> {
                 val base = if (expressionText.startsWith("\"\"\"") && expressionText.endsWith("\"\"\"")) {
-                    val unquoted = expressionText.substring(3, expressionText.length() - 3)
+                    val unquoted = expressionText.substring(3, expressionText.length - 3)
                     StringUtil.escapeStringCharacters(unquoted)
                 }
                 else {
@@ -113,8 +113,6 @@ public class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentIn
 
             is KtNameReferenceExpression ->
                 "$" + (if (forceBraces) "{$expressionText}" else expressionText)
-
-            null -> ""
 
             else -> "\${" + expressionText.replace("\n+".toRegex(), " ") + "}"
         }
