@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.core
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.util.FuzzyType
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
@@ -79,7 +80,10 @@ public class IterableTypesDetection(
 
         private fun canBeIterable(type: FuzzyType): Boolean {
             return type.type.memberScope.getContributedFunctions(iteratorName, NoLookupLocation.FROM_IDE).isNotEmpty() ||
-                   typesWithExtensionIterator.any { type.checkIsSubtypeOf(it) != null }
+                   typesWithExtensionIterator.any {
+                       val freeParams = it.arguments.mapNotNull { it.type.constructor.declarationDescriptor as? TypeParameterDescriptor }
+                       type.checkIsSubtypeOf(FuzzyType(it, freeParams)) != null
+                   }
         }
     }
 }

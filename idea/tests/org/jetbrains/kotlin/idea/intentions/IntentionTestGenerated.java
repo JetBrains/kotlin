@@ -5817,9 +5817,33 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/iterateExpression"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("extensionIterator.kt")
+        public void testExtensionIterator() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterateExpression/extensionIterator.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("extensionIteratorWithPartialSubstitution1.kt")
+        public void testExtensionIteratorWithPartialSubstitution1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterateExpression/extensionIteratorWithPartialSubstitution1.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("extensionIteratorWithPartialSubstitution2.kt")
+        public void testExtensionIteratorWithPartialSubstitution2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterateExpression/extensionIteratorWithPartialSubstitution2.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("functionCall.kt")
         public void testFunctionCall() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterateExpression/functionCall.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("mapIterator.kt")
+        public void testMapIterator() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/iterateExpression/mapIterator.kt");
             doTest(fileName);
         }
 
