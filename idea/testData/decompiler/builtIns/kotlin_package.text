@@ -5,6 +5,22 @@ package kotlin
 
 public inline fun <reified T> Array(size: kotlin.Int, init: (kotlin.Int) -> T): kotlin.Array<T> { /* compiled code */ }
 
+public inline fun BooleanArray(size: kotlin.Int, init: (kotlin.Int) -> kotlin.Boolean): kotlin.BooleanArray { /* compiled code */ }
+
+public inline fun ByteArray(size: kotlin.Int, init: (kotlin.Int) -> kotlin.Byte): kotlin.ByteArray { /* compiled code */ }
+
+public inline fun CharArray(size: kotlin.Int, init: (kotlin.Int) -> kotlin.Char): kotlin.CharArray { /* compiled code */ }
+
+public inline fun DoubleArray(size: kotlin.Int, init: (kotlin.Int) -> kotlin.Double): kotlin.DoubleArray { /* compiled code */ }
+
+public inline fun FloatArray(size: kotlin.Int, init: (kotlin.Int) -> kotlin.Float): kotlin.FloatArray { /* compiled code */ }
+
+public inline fun IntArray(size: kotlin.Int, init: (kotlin.Int) -> kotlin.Int): kotlin.IntArray { /* compiled code */ }
+
+public inline fun LongArray(size: kotlin.Int, init: (kotlin.Int) -> kotlin.Long): kotlin.LongArray { /* compiled code */ }
+
+public inline fun ShortArray(size: kotlin.Int, init: (kotlin.Int) -> kotlin.Short): kotlin.ShortArray { /* compiled code */ }
+
 public inline fun <reified T> arrayOf(vararg elements: T): kotlin.Array<T> { /* compiled code */ }
 
 public fun <reified T> arrayOfNulls(size: kotlin.Int): kotlin.Array<T?> { /* compiled code */ }
