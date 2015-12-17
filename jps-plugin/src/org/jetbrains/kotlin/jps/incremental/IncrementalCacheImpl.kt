@@ -105,8 +105,8 @@ class IncrementalCacheImpl(
     private val dependents = arrayListOf<IncrementalCacheImpl>()
     private val outputDir = requireNotNull(target.outputDir) { "Target is expected to have output directory: $target" }
 
-    private val dependentsWithThis: Iterable<IncrementalCacheImpl>
-            get() = dependents + this
+    private val dependentsWithThis: Sequence<IncrementalCacheImpl>
+            get() = sequenceOf(this).plus(dependents.asSequence())
 
     override fun registerInline(fromPath: String, jvmSignature: String, toPath: String) {
         inlinedTo.add(fromPath, jvmSignature, toPath)
@@ -141,6 +141,9 @@ class IncrementalCacheImpl(
 
         return result.map { File(it) }
     }
+
+    fun getSubtypesOf(className: FqName): Sequence<FqName> =
+        dependentsWithThis.flatMap { it.subtypesMap[className].asSequence() }
 
     fun cleanDirtyInlineFunctions() {
         dirtyInlineFunctionsMap.clean()
@@ -600,9 +603,14 @@ class IncrementalCacheImpl(
         val supertypes = classData.classProto.supertypes(TypeTable(classData.classProto.typeTable))
         val parents = supertypes.map { classData.nameResolver.getClassId(it.className).asSingleFqName() }
                                 .filter { it.asString() != "kotlin.Any" }
+                                .toSet()
         val child = kotlinClass.classId.asSingleFqName()
 
         parents.forEach { subtypesMap.add(it, child) }
+
+        val removedSupertypes = supertypesMap[child].filter { it !in parents }
+        removedSupertypes.forEach { subtypesMap.removeValues(it, setOf(child)) }
+
         supertypesMap[child] = parents
     }
 
