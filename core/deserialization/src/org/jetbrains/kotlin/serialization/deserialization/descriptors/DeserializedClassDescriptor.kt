@@ -296,7 +296,7 @@ public class DeserializedClassDescriptor(
             val annotations = enumEntryProtos[name]?.let { proto ->
                 DeserializedAnnotations(c.storageManager) {
                     c.components.annotationAndConstantLoader.loadEnumEntryAnnotations(
-                            ProtoContainer(classProto, null, c.nameResolver, c.typeTable), proto
+                            ProtoContainer.Class(classProto, c.nameResolver, c.typeTable), proto
                     )
                 }
             } ?: if (name in oldEnumEntryNames) Annotations.EMPTY

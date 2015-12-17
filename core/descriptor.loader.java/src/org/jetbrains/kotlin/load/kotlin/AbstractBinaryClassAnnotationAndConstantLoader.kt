@@ -113,7 +113,7 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
     override fun loadEnumEntryAnnotations(container: ProtoContainer, proto: ProtoBuf.EnumEntry): List<A> {
         val signature = MemberSignature.fromFieldNameAndDesc(
                 container.nameResolver.getString(proto.name),
-                ClassMapperLite.mapClass(container.nameResolver.getClassId(container.classProto!!.fqName))
+                ClassMapperLite.mapClass(container.nameResolver.getClassId((container as ProtoContainer.Class).classProto.fqName))
         )
         return findClassAndLoadMemberAnnotations(container, proto, signature)
     }
@@ -132,7 +132,7 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
                 container, getImplClassName(proto, container.nameResolver), isStaticFieldInOuter
         )
         if (kotlinClass == null) {
-            errorReporter.reportLoadingError("Kotlin class for loading member annotations is not found: ${container.getFqName()}", null)
+            errorReporter.reportLoadingError("Kotlin class for loading member annotations is not found: ${container.debugFqName()}", null)
             return listOf()
         }
 
@@ -186,7 +186,7 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
                 container, getImplClassName(proto, nameResolver), isStaticFieldInOuter(proto)
         )
         if (kotlinClass == null) {
-            errorReporter.reportLoadingError("Kotlin class for loading property constant is not found: ${container.getFqName()}", null)
+            errorReporter.reportLoadingError("Kotlin class for loading property constant is not found: ${container.debugFqName()}", null)
             return null
         }
 
@@ -195,33 +195,29 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
 
     private fun findClassWithAnnotationsAndInitializers(
             container: ProtoContainer, implClassName: Name?, isStaticFieldInOuter: Boolean
-    ): KotlinJvmBinaryClass? {
-        val (classProto, packageFqName) = container
-        return when {
-            packageFqName != null -> {
-                implClassName?.let { kotlinClassFinder.findKotlinClass(ClassId(packageFqName, it)) }
+    ): KotlinJvmBinaryClass? = when (container) {
+        is ProtoContainer.Package -> {
+            implClassName?.let { kotlinClassFinder.findKotlinClass(ClassId(container.fqName, it)) }
+        }
+        is ProtoContainer.Class -> {
+            val classId = container.nameResolver.getClassId(container.classProto.fqName)
+
+            if (implClassName != null) {
+                // TODO: store accurate name for nested traits
+                val implClassId =
+                    if (implClassName.asString().endsWith(JvmAbi.DEFAULT_IMPLS_SUFFIX))
+                        ClassId(classId.packageFqName, FqName(implClassName.asString().replace(JvmAbi.DEFAULT_IMPLS_SUFFIX, "." + JvmAbi.DEFAULT_IMPLS_CLASS_NAME)), false)
+                    else
+                        ClassId(classId.packageFqName, implClassName)
+                kotlinClassFinder.findKotlinClass(implClassId)
             }
-            classProto != null -> {
-                val classId = container.nameResolver.getClassId(classProto.fqName)
-
-                if (implClassName != null) {
-                    // TODO: store accurate name for nested traits
-                    val implClassId =
-                        if (implClassName.asString().endsWith(JvmAbi.DEFAULT_IMPLS_SUFFIX))
-                            ClassId(classId.packageFqName, FqName(implClassName.asString().replace(JvmAbi.DEFAULT_IMPLS_SUFFIX, "." + JvmAbi.DEFAULT_IMPLS_CLASS_NAME)), false)
-                        else
-                            ClassId(classId.packageFqName, implClassName)
-                    return kotlinClassFinder.findKotlinClass(implClassId)
-                }
-
-                if (isStaticFieldInOuter && classId.isNestedClass) {
-                    // Backing fields of properties of a companion object are generated in the outer class
-                    return kotlinClassFinder.findKotlinClass(classId.outerClassId)
-                }
-
+            else if (isStaticFieldInOuter && classId.isNestedClass) {
+                // Backing fields of properties of a companion object are generated in the outer class
+                kotlinClassFinder.findKotlinClass(classId.outerClassId)
+            }
+            else {
                 kotlinClassFinder.findKotlinClass(classId)
             }
-            else -> null
         }
     }
 

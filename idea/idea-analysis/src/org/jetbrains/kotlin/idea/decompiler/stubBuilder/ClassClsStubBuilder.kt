@@ -137,7 +137,7 @@ private class ClassClsStubBuilder(
 
         val primaryConstructorProto = classProto.constructorList.find { !Flags.IS_SECONDARY.get(it.flags) } ?: return
 
-        createConstructorStub(classOrObjectStub, primaryConstructorProto, c, ProtoContainer(classProto, null, c.nameResolver, c.typeTable))
+        createConstructorStub(classOrObjectStub, primaryConstructorProto, c, ProtoContainer.Class(classProto, c.nameResolver, c.typeTable))
     }
 
     private fun createDelegationSpecifierList() {
@@ -175,7 +175,7 @@ private class ClassClsStubBuilder(
     private fun createEnumEntryStubs(classBody: KotlinPlaceHolderStubImpl<KtClassBody>) {
         if (classKind != ProtoBuf.Class.Kind.ENUM_CLASS) return
 
-        val container = ProtoContainer(classProto, null, c.nameResolver, c.typeTable)
+        val container = ProtoContainer.Class(classProto, c.nameResolver, c.typeTable)
         val enumEntries: List<Pair<Int, List<ClassId>>> =
                 if (classProto.enumEntryList.isNotEmpty())
                     classProto.enumEntryList.map { enumEntryProto ->
@@ -206,7 +206,7 @@ private class ClassClsStubBuilder(
     }
 
     private fun createCallableMemberStubs(classBody: KotlinPlaceHolderStubImpl<KtClassBody>) {
-        val container = ProtoContainer(classProto, null, c.nameResolver, c.typeTable)
+        val container = ProtoContainer.Class(classProto, c.nameResolver, c.typeTable)
 
         for (secondaryConstructorProto in classProto.constructorList) {
             if (Flags.IS_SECONDARY.get(secondaryConstructorProto.flags)) {
