@@ -23,12 +23,6 @@ public final class ClassVal {
     protected final var property5: kotlin.String
         protected final fun <get-property5>(): kotlin.String
         private final fun <set-property5>(/*0*/ <set-?>: kotlin.String): kotlin.Unit
-    protected final var property6: kotlin.String
-        protected final fun <get-property6>(): kotlin.String
-        internal final fun <set-property6>(/*0*/ <set-?>: kotlin.String): kotlin.Unit
-    protected final var property7: java.util.Date
-        protected final fun <get-property7>(): java.util.Date
-        public final fun <set-property7>(/*0*/ <set-?>: java.util.Date): kotlin.Unit
     public final var property8: kotlin.Int
         public final fun <get-property8>(): kotlin.Int
         public final fun <set-property8>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit

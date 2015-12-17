@@ -17,7 +17,7 @@ class Test: ATest(), ITest {
 
     override var prop2 : Int
         get() = 14
-        <!CANNOT_CHANGE_ACCESS_PRIVILEGE!>internal<!> set(value) {}
+        <!CANNOT_CHANGE_ACCESS_PRIVILEGE, SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY!>internal<!> set(value) {}
 }
 
 fun main(args: Array<String>) {

@@ -16,12 +16,6 @@ class ClassVal() {
     protected var property5: String = ""
       private set
 
-    protected var property6: String = ""
-      internal set
-
-    protected var property7: java.util.Date = java.util.Date()
-      public set
-
     public var property8: Int = 1
       set
 
