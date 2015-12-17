@@ -19,13 +19,11 @@ package org.jetbrains.kotlin.resolve.diagnostics
 import com.google.common.collect.ImmutableSet
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.ExtensionPointName
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.util.containers.ConcurrentWeakValueHashMap
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.psi.KtFile
@@ -52,7 +50,7 @@ interface DiagnosticSuppressor {
     }
 }
 
-abstract class SuppressionManager {
+abstract class KotlinSuppressCache {
     private val LOG = Logger.getInstance(DiagnosticsWithSuppression::class.java)
 
     private val ADDITIONAL_SUPPRESS_STRING_PROVIDERS = ExtensionProvider.create(SuppressStringProvider.EP_NAME)
@@ -259,7 +257,7 @@ abstract class SuppressionManager {
     }
 }
 
-class BindingContextSuppressionManager(val context: BindingContext) : SuppressionManager() {
+class BindingContextSuppressCache(val context: BindingContext) : KotlinSuppressCache() {
     override fun getSuppressionAnnotations(annotated: KtAnnotated): List<AnnotationDescriptor> {
         val descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, annotated)
 

@@ -30,14 +30,14 @@ import java.util.Collection;
 import java.util.Iterator;
 
 public class DiagnosticsWithSuppression implements Diagnostics {
-    private final BindingContextSuppressionManager suppressionManager;
+    private final KotlinSuppressCache kotlinSuppressCache;
     private final Collection<Diagnostic> diagnostics;
     private final DiagnosticsElementsCache elementsCache;
 
     public DiagnosticsWithSuppression(@NotNull BindingContext context, @NotNull Collection<Diagnostic> diagnostics) {
         this.diagnostics = diagnostics;
-        this.suppressionManager = new BindingContextSuppressionManager(context);
-        this.elementsCache = new DiagnosticsElementsCache(this, suppressionManager.getFilter());
+        this.kotlinSuppressCache = new BindingContextSuppressCache(context);
+        this.elementsCache = new DiagnosticsElementsCache(this, kotlinSuppressCache.getFilter());
     }
 
     @NotNull
@@ -52,7 +52,7 @@ public class DiagnosticsWithSuppression implements Diagnostics {
         return new FilteringIterator<Diagnostic, Diagnostic>(diagnostics.iterator(), new Condition<Diagnostic>() {
             @Override
             public boolean value(Diagnostic diagnostic) {
-                return suppressionManager.getFilter().invoke(diagnostic);
+                return kotlinSuppressCache.getFilter().invoke(diagnostic);
             }
         });
     }
@@ -60,7 +60,7 @@ public class DiagnosticsWithSuppression implements Diagnostics {
     @NotNull
     @Override
     public Collection<Diagnostic> all() {
-        return CollectionsKt.filter(diagnostics, suppressionManager.getFilter());
+        return CollectionsKt.filter(diagnostics, kotlinSuppressCache.getFilter());
     }
 
     @NotNull
