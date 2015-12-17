@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.resolve.DescriptorFactory
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
@@ -241,9 +242,13 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         }
     }
 
-    private fun DeclarationDescriptor.asProtoContainer(): ProtoContainer? = when(this) {
+    private fun DeclarationDescriptor.asProtoContainer(): ProtoContainer? = when (this) {
         is PackageFragmentDescriptor -> ProtoContainer.Package(fqName, c.nameResolver, c.typeTable)
-        is DeserializedClassDescriptor -> ProtoContainer.Class(classProto, c.nameResolver, c.typeTable)
+        is DeserializedClassDescriptor -> ProtoContainer.Class(
+                classProto, c.nameResolver, c.typeTable,
+                isCompanionOfClass = DescriptorUtils.isCompanionObject(this) &&
+                                     containingDeclaration.let { DescriptorUtils.isClass(it) || DescriptorUtils.isEnumClass(it) }
+        )
         else -> null // TODO: support annotations on lambdas and their parameters
     }
 }

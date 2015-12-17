@@ -17,7 +17,7 @@
 
 
     private @b(E.E2) companion object {
-
+        @f val field = 42
     }
 
     class Nested @a private @b(E.E1) @b(E.E2) constructor()
@@ -42,5 +42,8 @@ annotation class b(val e: E)
         AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER,
         AnnotationTarget.TYPE, AnnotationTarget.CLASS)
 annotation class c
+
+@Target(AnnotationTarget.FIELD)
+annotation class f
 
 enum class E { E1, E2 }

@@ -44,6 +44,19 @@ PsiJetFileStubImpl[package=]
       OBJECT_DECLARATION:[fqName=Annotations.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST:[private companion]
         CLASS_BODY:
+          PROPERTY:[fqName=Annotations.Companion.field, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=field]
+            MODIFIER_LIST:[public final]
+              ANNOTATION_ENTRY:[hasValueArguments=false, shortName=f]
+                ANNOTATION_TARGET:[useSiteTarget=FIELD]
+                CONSTRUCTOR_CALLEE:
+                  TYPE_REFERENCE:
+                    USER_TYPE:[isAbsoluteInRootPackage=false]
+                      REFERENCE_EXPRESSION:[referencedName=f]
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=kotlin]
+                REFERENCE_EXPRESSION:[referencedName=Int]
       PROPERTY:[fqName=Annotations.c, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
         MODIFIER_LIST:[private final]
         TYPE_REFERENCE:

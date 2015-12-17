@@ -26,7 +26,8 @@ sealed class ProtoContainer(
     class Class(
             val classProto: ProtoBuf.Class,
             nameResolver: NameResolver,
-            typeTable: TypeTable
+            typeTable: TypeTable,
+            val isCompanionOfClass: Boolean
     ) : ProtoContainer(nameResolver, typeTable) {
         override fun debugFqName(): FqName = nameResolver.getClassId(classProto.fqName).asSingleFqName()
     }

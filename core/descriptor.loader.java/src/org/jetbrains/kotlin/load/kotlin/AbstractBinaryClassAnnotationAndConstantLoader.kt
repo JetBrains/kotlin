@@ -91,16 +91,15 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
         if (kind == AnnotatedCallableKind.PROPERTY) {
             proto as ProtoBuf.Property
 
-            val nameResolver = container.nameResolver
-            val syntheticFunctionSignature = getPropertySignature(proto, nameResolver, container.typeTable, synthetic = true)
-            val fieldSignature = getPropertySignature(proto, nameResolver, container.typeTable, field = true)
+            val syntheticFunctionSignature = getPropertySignature(proto, container.nameResolver, container.typeTable, synthetic = true)
+            val fieldSignature = getPropertySignature(proto, container.nameResolver, container.typeTable, field = true)
 
             val propertyAnnotations = syntheticFunctionSignature?.let { sig ->
                 findClassAndLoadMemberAnnotations(container, proto, sig)
             }.orEmpty()
 
             val fieldAnnotations = fieldSignature?.let { sig ->
-                findClassAndLoadMemberAnnotations(container, proto, sig, isStaticFieldInOuter(proto))
+                findClassAndLoadMemberAnnotations(container, proto, sig, field = true)
             }.orEmpty()
 
             return loadPropertyAnnotations(propertyAnnotations, fieldAnnotations)
@@ -123,14 +122,9 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
     protected abstract fun transformAnnotations(annotations: List<A>): List<T>
 
     private fun findClassAndLoadMemberAnnotations(
-            container: ProtoContainer,
-            proto: MessageLite,
-            signature: MemberSignature,
-            isStaticFieldInOuter: Boolean = false
+            container: ProtoContainer, proto: MessageLite, signature: MemberSignature, field: Boolean = false
     ): List<A> {
-        val kotlinClass = findClassWithAnnotationsAndInitializers(
-                container, getImplClassName(proto, container.nameResolver), isStaticFieldInOuter
-        )
+        val kotlinClass = findClassWithAnnotationsAndInitializers(container, getImplClassName(proto, container.nameResolver), field)
         if (kotlinClass == null) {
             errorReporter.reportLoadingError("Kotlin class for loading member annotations is not found: ${container.debugFqName()}", null)
             return listOf()
@@ -182,9 +176,7 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
         val nameResolver = container.nameResolver
         val signature = getCallableSignature(proto, nameResolver, container.typeTable, AnnotatedCallableKind.PROPERTY) ?: return null
 
-        val kotlinClass = findClassWithAnnotationsAndInitializers(
-                container, getImplClassName(proto, nameResolver), isStaticFieldInOuter(proto)
-        )
+        val kotlinClass = findClassWithAnnotationsAndInitializers(container, getImplClassName(proto, nameResolver), field = true)
         if (kotlinClass == null) {
             errorReporter.reportLoadingError("Kotlin class for loading property constant is not found: ${container.debugFqName()}", null)
             return null
@@ -194,7 +186,7 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
     }
 
     private fun findClassWithAnnotationsAndInitializers(
-            container: ProtoContainer, implClassName: Name?, isStaticFieldInOuter: Boolean
+            container: ProtoContainer, implClassName: Name?, field: Boolean
     ): KotlinJvmBinaryClass? = when (container) {
         is ProtoContainer.Package -> {
             implClassName?.let { kotlinClassFinder.findKotlinClass(ClassId(container.fqName, it)) }
@@ -211,8 +203,8 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
                         ClassId(classId.packageFqName, implClassName)
                 kotlinClassFinder.findKotlinClass(implClassId)
             }
-            else if (isStaticFieldInOuter && classId.isNestedClass) {
-                // Backing fields of properties of a companion object are generated in the outer class
+            else if (field && container.isCompanionOfClass) {
+                // Backing fields of properties of a companion object in a class are generated in the outer class
                 kotlinClassFinder.findKotlinClass(classId.outerClassId)
             }
             else {
@@ -229,11 +221,6 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
                     nameResolver.getName(proto.getExtension(propertyImplClassName))
                 else -> null
             }
-
-    private fun isStaticFieldInOuter(proto: MessageLite): Boolean =
-            if (proto is ProtoBuf.Property && proto.hasExtension(propertySignature))
-                proto.getExtension(propertySignature).let { it.hasField() && it.field.isStaticInOuter }
-            else false
 
     private fun loadAnnotationsAndInitializers(kotlinClass: KotlinJvmBinaryClass): Storage<A, C> {
         val memberAnnotations = HashMap<MemberSignature, MutableList<A>>()
