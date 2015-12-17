@@ -134,19 +134,19 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val fsOperations = FSOperationsHelper(context, chunk, LOG)
 
         try {
-            val exitCode = doBuild(chunk, context, dirtyFilesHolder, messageCollector, outputConsumer, fsOperations)
-            LOG.debug("Build result: " + exitCode)
+            val proposedExitCode = doBuild(chunk, context, dirtyFilesHolder, messageCollector, outputConsumer, fsOperations)
 
-            if (exitCode == OK && fsOperations.hasMarkedDirty()) return ADDITIONAL_PASS_REQUIRED
+            val actualExitCode = if (proposedExitCode == OK && fsOperations.hasMarkedDirty()) ADDITIONAL_PASS_REQUIRED else proposedExitCode
 
-            return exitCode
+            LOG.info("Build result: " + actualExitCode)
+            return actualExitCode
         }
         catch (e: StopBuildException) {
-            LOG.debug("Caught exception: " + e)
+            LOG.info("Caught exception: " + e)
             throw e
         }
         catch (e: Throwable) {
-            LOG.debug("Caught exception: " + e)
+            LOG.info("Caught exception: " + e)
 
             messageCollector.report(
                     CompilerMessageSeverity.EXCEPTION,
