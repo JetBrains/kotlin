@@ -4774,12 +4774,6 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 doTest(fileName);
             }
 
-            @TestMetadata("genericProperty.kt")
-            public void testGenericProperty() throws Exception {
-                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/declarations/convertMemberToExtension/genericProperty.kt");
-                doTest(fileName);
-            }
-
             @TestMetadata("inFunctionBody.kt")
             public void testInFunctionBody() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/declarations/convertMemberToExtension/inFunctionBody.kt");
