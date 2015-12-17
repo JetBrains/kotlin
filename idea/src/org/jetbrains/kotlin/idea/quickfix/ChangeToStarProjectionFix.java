@@ -46,7 +46,7 @@ public class ChangeToStarProjectionFix extends KotlinQuickFixAction<KtTypeElemen
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
         for (KtTypeReference typeReference : getElement().getTypeArgumentsAsTypes()) {
             if (typeReference != null) {
                 typeReference.replace(KtPsiFactoryKt.KtPsiFactory(file).createStar());
@@ -57,7 +57,7 @@ public class ChangeToStarProjectionFix extends KotlinQuickFixAction<KtTypeElemen
     public static KotlinSingleIntentionActionFactory createFactory() {
         return new KotlinSingleIntentionActionFactory() {
             @Override
-            public IntentionAction createAction(Diagnostic diagnostic) {
+            public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
                 KtBinaryExpressionWithTypeRHS expression = QuickFixUtil
                         .getParentElementOfType(diagnostic, KtBinaryExpressionWithTypeRHS.class);
                 KtTypeReference typeReference;

@@ -87,7 +87,7 @@ public class CreateClassFromUsageFix<E : KtElement>(
                     directories.firstOrNull { ModuleUtilCore.findModuleForPsiElement(it) == currentModule }
                     ?: directories.firstOrNull()
 
-            val targetDirectory = if (directories.size() > 1 && !ApplicationManager.getApplication().isUnitTestMode) {
+            val targetDirectory = if (directories.size > 1 && !ApplicationManager.getApplication().isUnitTestMode) {
                 DirectoryChooserUtil.chooseDirectory(directories.toTypedArray(), preferredDirectory, project, HashMap())
             }
             else {

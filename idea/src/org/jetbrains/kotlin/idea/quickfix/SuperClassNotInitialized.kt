@@ -49,39 +49,39 @@ public object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
     private val DISPLAY_MAX_PARAMS = 5
 
     override fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction> {
-        val delegator = diagnostic.getPsiElement() as KtSuperTypeEntry
-        val classOrObjectDeclaration = delegator.getParent().getParent() as? KtClassOrObject ?: return emptyList()
+        val delegator = diagnostic.psiElement as KtSuperTypeEntry
+        val classOrObjectDeclaration = delegator.parent.parent as? KtClassOrObject ?: return emptyList()
 
-        val typeRef = delegator.getTypeReference() ?: return emptyList()
+        val typeRef = delegator.typeReference ?: return emptyList()
         val type = typeRef.analyze()[BindingContext.TYPE, typeRef] ?: return emptyList()
-        if (type.isError()) return emptyList()
+        if (type.isError) return emptyList()
 
-        val superClass = (type.getConstructor().getDeclarationDescriptor() as? ClassDescriptor) ?: return emptyList()
+        val superClass = (type.constructor.declarationDescriptor as? ClassDescriptor) ?: return emptyList()
         val classDescriptor = delegator.getResolutionFacade().resolveToDescriptor(classOrObjectDeclaration) as ClassDescriptor
-        val constructors = superClass.getConstructors().filter { it.isVisible(classDescriptor) }
+        val constructors = superClass.constructors.filter { it.isVisible(classDescriptor) }
         if (constructors.isEmpty()) return emptyList() // no accessible constructor
 
         val fixes = ArrayList<IntentionAction>()
 
-        fixes.add(AddParenthesisFix(delegator, putCaretIntoParenthesis = constructors.singleOrNull()?.getValueParameters()?.isNotEmpty() ?: true))
+        fixes.add(AddParenthesisFix(delegator, putCaretIntoParenthesis = constructors.singleOrNull()?.valueParameters?.isNotEmpty() ?: true))
 
         if (classOrObjectDeclaration is KtClass) {
-            val superType = classDescriptor.getTypeConstructor().getSupertypes().firstOrNull { it.getConstructor().getDeclarationDescriptor() == superClass }
+            val superType = classDescriptor.typeConstructor.supertypes.firstOrNull { it.constructor.declarationDescriptor == superClass }
             if (superType != null) {
                 val substitutor = TypeConstructorSubstitution.create(superClass.typeConstructor, superType.arguments).buildSubstitutor()
 
                 val substitutedConstructors = constructors
-                        .filter { it.getValueParameters().isNotEmpty() }
+                        .filter { it.valueParameters.isNotEmpty() }
                         .map { it.substitute(substitutor) }
 
                 if (substitutedConstructors.isNotEmpty()) {
                     val parameterTypes: List<List<KotlinType>> = substitutedConstructors.map {
-                        it.getValueParameters().map { it.getType() }
+                        it.valueParameters.map { it.type }
                     }
 
-                    fun canRenderOnlyFirstParameters(n: Int) = parameterTypes.map { it.take(n) }.toSet().size() == parameterTypes.size()
+                    fun canRenderOnlyFirstParameters(n: Int) = parameterTypes.map { it.take(n) }.toSet().size == parameterTypes.size
 
-                    val maxParams = parameterTypes.map { it.size() }.max()!!
+                    val maxParams = parameterTypes.map { it.size }.max()!!
                     val maxParamsToDisplay = if (maxParams <= DISPLAY_MAX_PARAMS) {
                         maxParams
                     }
@@ -91,8 +91,8 @@ public object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
 
                     for ((constructor, types) in substitutedConstructors.zip(parameterTypes)) {
                         val typesRendered = types.take(maxParamsToDisplay).map { DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(it) }
-                        val parameterString = typesRendered.joinToString(", ", "(", if (types.size() <= maxParamsToDisplay) ")" else ",...)")
-                        val text = "Add constructor parameters from " + superClass.getName().asString() + parameterString
+                        val parameterString = typesRendered.joinToString(", ", "(", if (types.size <= maxParamsToDisplay) ")" else ",...)")
+                        val text = "Add constructor parameters from " + superClass.name.asString() + parameterString
                         fixes.addIfNotNull(AddParametersFix.create(delegator, classOrObjectDeclaration, constructor, text))
                     }
                 }
@@ -109,16 +109,16 @@ public object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
 
         override fun getFamilyName() = "Change to constructor invocation" //TODO?
 
-        override fun getText() = getFamilyName()
+        override fun getText() = familyName
 
         override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-            val newSpecifier = element.replaced(KtPsiFactory(project).createSuperTypeCallEntry(element.getText() + "()"))
+            val newSpecifier = element.replaced(KtPsiFactory(project).createSuperTypeCallEntry(element.text + "()"))
 
             if (putCaretIntoParenthesis) {
                 if (editor != null) {
-                    val offset = newSpecifier.getValueArgumentList()!!.getLeftParenthesis()!!.endOffset
+                    val offset = newSpecifier.valueArgumentList!!.leftParenthesis!!.endOffset
                     editor.moveCaret(offset)
-                    if (!ApplicationManager.getApplication().isUnitTestMode()) {
+                    if (!ApplicationManager.getApplication().isUnitTestMode) {
                         ShowParameterInfoHandler.invoke(project, editor, file, offset - 1, null)
                     }
                 }
@@ -141,7 +141,7 @@ public object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
                     superConstructor: ConstructorDescriptor,
                     text: String
             ): AddParametersFix? {
-                val superParameters = superConstructor.getValueParameters()
+                val superParameters = superConstructor.valueParameters
                 assert(superParameters.isNotEmpty())
 
                 if (superParameters.any { it.type.isError }) return null
@@ -158,11 +158,11 @@ public object SuperClassNotInitialized : KotlinIntentionActionsFactory() {
                     }
                     argumentText.append(if (varargElementType != null) "*$nameRendered" else nameRendered)
 
-                    val nameString = parameter.getName().asString()
-                    val existingParameter = oldParameters.firstOrNull { it.getName() == nameString }
+                    val nameString = parameter.name.asString()
+                    val existingParameter = oldParameters.firstOrNull { it.name == nameString }
                     if (existingParameter != null) {
-                        val type = (existingParameter.resolveToDescriptor() as ValueParameterDescriptor).getType()
-                        if (type.isSubtypeOf(parameter.getType())) continue // use existing parameter
+                        val type = (existingParameter.resolveToDescriptor() as ValueParameterDescriptor).type
+                        if (type.isSubtypeOf(parameter.type)) continue // use existing parameter
                     }
 
                     val parameterText = if (varargElementType != null)

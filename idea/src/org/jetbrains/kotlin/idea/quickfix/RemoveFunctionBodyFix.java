@@ -52,12 +52,12 @@ public class RemoveFunctionBodyFix extends KotlinQuickFixAction<KtFunction> {
     }
 
     @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiFile file) {
         return super.isAvailable(project, editor, file) && getElement().hasBody();
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
         KtFunction function = (KtFunction) getElement().copy();
         assert function instanceof ASTDelegatePsiElement;
         ASTDelegatePsiElement functionElementWithAst = (ASTDelegatePsiElement) function;
@@ -91,7 +91,7 @@ public class RemoveFunctionBodyFix extends KotlinQuickFixAction<KtFunction> {
     public static KotlinSingleIntentionActionFactory createFactory() {
         return new KotlinSingleIntentionActionFactory() {
             @Override
-            public KotlinQuickFixAction<KtFunction> createAction(Diagnostic diagnostic) {
+            public KotlinQuickFixAction<KtFunction> createAction(@NotNull Diagnostic diagnostic) {
                 KtFunction function = QuickFixUtil.getParentElementOfType(diagnostic, KtFunction.class);
                 if (function == null) return null;
                 return new RemoveFunctionBodyFix(function);

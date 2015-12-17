@@ -54,7 +54,7 @@ public class AddOverrideToEqualsHashCodeToStringFix extends KotlinQuickFixAction
     }
 
     @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiFile file) {
         return super.isAvailable(project, editor, file) && isEqualsHashCodeOrToString(getElement());
     }
 
@@ -78,7 +78,7 @@ public class AddOverrideToEqualsHashCodeToStringFix extends KotlinQuickFixAction
     }
 
     @Override
-    protected void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+    protected void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
         Collection<KtFile> files = PluginJetFilesProvider.allFilesInProject(file.getProject());
 
         for (KtFile jetFile : files) {

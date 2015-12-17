@@ -51,44 +51,44 @@ internal fun getTargetParentByQualifier(
         file: KtFile,
         isQualified: Boolean,
         qualifierDescriptor: DeclarationDescriptor?): PsiElement? {
-    val project = file.getProject()
-    val targetParent: PsiElement = when {
+    val project = file.project
+    val targetParent: PsiElement? = when {
         !isQualified ->
             file
         qualifierDescriptor is ClassDescriptor ->
             DescriptorToSourceUtilsIde.getAnyDeclaration(project, qualifierDescriptor)
         qualifierDescriptor is PackageViewDescriptor ->
-            if (qualifierDescriptor.fqName != file.getPackageFqName()) {
+            if (qualifierDescriptor.fqName != file.packageFqName) {
                 JavaPsiFacade.getInstance(project).findPackage(qualifierDescriptor.fqName.asString())
             }
-            else file as PsiElement // KT-9972
+            else file // KT-9972
         else ->
             null
-    } ?: return null
-    return if (targetParent.canRefactor()) return targetParent else null
+    }
+    return if (targetParent?.canRefactor() ?: false) return targetParent else null
 }
 
 internal fun getTargetParentByCall(call: Call, file: KtFile, context: BindingContext): PsiElement? {
-    val receiver = call.getExplicitReceiver()
+    val receiver = call.explicitReceiver
     return when (receiver) {
         null -> getTargetParentByQualifier(file, false, null)
         is Qualifier -> getTargetParentByQualifier(file, true, context[BindingContext.REFERENCE_TARGET, receiver.referenceExpression])
-        is ReceiverValue -> getTargetParentByQualifier(file, true, receiver.getType().getConstructor().getDeclarationDescriptor())
+        is ReceiverValue -> getTargetParentByQualifier(file, true, receiver.type.constructor.declarationDescriptor)
         else -> throw AssertionError("Unexpected receiver: $receiver")
     }
 }
 
-internal fun isInnerClassExpected(call: Call) = call.getExplicitReceiver() is ReceiverValue
+internal fun isInnerClassExpected(call: Call) = call.explicitReceiver is ReceiverValue
 
 internal fun KtExpression.getInheritableTypeInfo(
         context: BindingContext,
         moduleDescriptor: ModuleDescriptor,
         containingDeclaration: PsiElement): Pair<TypeInfo, (ClassKind) -> Boolean> {
     val types = guessTypes(context, moduleDescriptor, coerceUnusedToUnit = false)
-    if (types.size() != 1) return TypeInfo.Empty to { classKind -> true }
+    if (types.size != 1) return TypeInfo.Empty to { classKind -> true }
 
     val type = types.first()
-    val descriptor = type.getConstructor().getDeclarationDescriptor() ?: return TypeInfo.Empty to { classKind -> false }
+    val descriptor = type.constructor.declarationDescriptor ?: return TypeInfo.Empty to { classKind -> false }
 
     val canHaveSubtypes = !(type.constructor.isFinal || type.containsStarProjections())
     val isEnum = DescriptorUtils.isEnumClass(descriptor)
@@ -100,7 +100,7 @@ internal fun KtExpression.getInheritableTypeInfo(
         when (classKind) {
             ClassKind.ENUM_ENTRY -> isEnum && containingDeclaration == DescriptorToSourceUtils.descriptorToDeclaration(descriptor)
             ClassKind.INTERFACE -> containingDeclaration !is PsiClass
-                                   || (descriptor as? ClassDescriptor)?.getKind() == ClassDescriptorKind.INTERFACE
+                                   || (descriptor as? ClassDescriptor)?.kind == ClassDescriptorKind.INTERFACE
             else -> canHaveSubtypes
         }
     }
@@ -110,21 +110,22 @@ internal fun KtSimpleNameExpression.getCreatePackageFixIfApplicable(targetParent
     val name = getReferencedName()
     if (!name.checkPackageName()) return null
 
-    val basePackage: PsiPackage? = when (targetParent) {
-                                      is KtFile -> JavaPsiFacade.getInstance(targetParent.getProject()).findPackage(targetParent.getPackageFqName().asString())
-                                      is PsiPackage -> targetParent
-                                      else -> null
-                                  }
+    val basePackage: PsiPackage? =
+            when (targetParent) {
+                is KtFile -> JavaPsiFacade.getInstance(targetParent.project).findPackage(targetParent.packageFqName.asString())
+                is PsiPackage -> targetParent
+                else -> null
+            }
     if (basePackage == null) return null
 
-    val baseName = basePackage.getQualifiedName()
+    val baseName = basePackage.qualifiedName
     val fullName = if (baseName.isNotEmpty()) "$baseName.$name" else name
 
-    val javaFix = CreateClassOrPackageFix.createFix(fullName, getResolveScope(), this, basePackage, null, null, null) ?: return null
+    val javaFix = CreateClassOrPackageFix.createFix(fullName, resolveScope, this, basePackage, null, null, null) ?: return null
 
     return object: DelegatingIntentionAction(javaFix) {
         override fun getFamilyName(): String = KotlinBundle.message("create.from.usage.family")
 
-        override fun getText(): String = "Create package '${fullName}'"
+        override fun getText(): String = "Create package '$fullName'"
     }
 }

@@ -48,7 +48,7 @@ class ChangeFunctionLiteralSignatureFix private constructor(
                             val validator = CollectingNameValidator()
                             descriptor.clearNonReceiverParameters()
                             for (type in parameterTypes) {
-                                val name = KotlinNameSuggester.suggestNamesByType(type, validator, "param").get(0)
+                                val name = KotlinNameSuggester.suggestNamesByType(type, validator, "param")[0]
                                 descriptor.addParameter(KotlinParameterInfo(functionDescriptor, -1, name, KotlinTypeInfo(false, type)))
                             }
                         }

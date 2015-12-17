@@ -44,7 +44,7 @@ public class RenameParameterToMatchOverriddenMethodFix extends KotlinQuickFixAct
     }
 
     @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiFile file) {
         if (!super.isAvailable(project, editor, file)) {
             return false;
         }
@@ -79,7 +79,7 @@ public class RenameParameterToMatchOverriddenMethodFix extends KotlinQuickFixAct
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
         new RenameProcessor(project, parameter, parameterFromSuperclassName, false, false).run();
     }
 
@@ -88,7 +88,7 @@ public class RenameParameterToMatchOverriddenMethodFix extends KotlinQuickFixAct
         return new KotlinSingleIntentionActionFactory() {
             @Nullable
             @Override
-            public IntentionAction createAction(Diagnostic diagnostic) {
+            public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
                 KtParameter parameter = QuickFixUtil.getParentElementOfType(diagnostic, KtParameter.class);
                 return parameter == null ? null : new RenameParameterToMatchOverriddenMethodFix(parameter);
             }

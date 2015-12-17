@@ -56,20 +56,20 @@ public class ChangeVisibilityModifierFix extends KotlinQuickFixAction<KtDeclarat
     }
 
     @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiFile file) {
         if (!(file instanceof KtFile)) return false;
-        return super.isAvailable(project, editor, file) && (findVisibilityChangeTo((KtFile)file) != null);
+        return super.isAvailable(project, editor, file) && (findVisibilityChangeTo() != null);
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
-        KtModifierKeywordToken modifier = findVisibilityChangeTo(file);
+    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
+        KtModifierKeywordToken modifier = findVisibilityChangeTo();
         assert modifier != null;
         PsiModificationUtilsKt.setVisibility(getElement(), modifier);
     }
 
     @Nullable
-    private KtModifierKeywordToken findVisibilityChangeTo(KtFile file) {
+    private KtModifierKeywordToken findVisibilityChangeTo() {
         BindingContext bindingContext = ResolutionUtils.analyze(getElement());
         DeclarationDescriptor descriptor;
         if (getElement() instanceof KtParameter) {
@@ -110,7 +110,7 @@ public class ChangeVisibilityModifierFix extends KotlinQuickFixAction<KtDeclarat
     public static KotlinSingleIntentionActionFactory createFactory() {
         return new KotlinSingleIntentionActionFactory() {
             @Override
-            public KotlinQuickFixAction<KtDeclaration> createAction(Diagnostic diagnostic) {
+            public KotlinQuickFixAction<KtDeclaration> createAction(@NotNull Diagnostic diagnostic) {
                 PsiElement element = diagnostic.getPsiElement();
                 if (!(element instanceof KtDeclaration)) return null;
                 return new ChangeVisibilityModifierFix((KtDeclaration)element);

@@ -44,7 +44,7 @@ import java.util.*
 
 object CreateParameterByRefActionFactory : CreateParameterFromUsageFactory<KtSimpleNameExpression>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): KtSimpleNameExpression? {
-        val refExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtNameReferenceExpression>()) ?: return null
+        val refExpr = QuickFixUtil.getParentElementOfType(diagnostic, KtNameReferenceExpression::class.java) ?: return null
         if (refExpr.getQualifiedElement() != refExpr) return null
         if (refExpr.getParentOfTypeAndBranch<KtCallableReferenceExpression> { callableReference } != null) return null
         return refExpr
@@ -58,7 +58,7 @@ object CreateParameterByRefActionFactory : CreateParameterFromUsageFactory<KtSim
         val varExpected = element.getAssignmentByLHS() != null
 
         val paramType = element.getExpressionForTypeGuess().guessTypes(context, moduleDescriptor).let {
-            when (it.size()) {
+            when (it.size) {
                 0 -> moduleDescriptor.builtIns.anyType
                 1 -> it.first()
                 else -> return null

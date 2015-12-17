@@ -49,7 +49,7 @@ public class AddNameToArgumentFix(argument: KtValueArgument) : KotlinQuickFixAct
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val possibleNames = calculatePossibleArgumentNames()
         assert(possibleNames.isNotEmpty()) { "isAvailable() should be checked before invoke()" }
-        if (possibleNames.size() == 1 || editor == null || !editor.component.isShowing) {
+        if (possibleNames.size == 1 || editor == null || !editor.component.isShowing) {
             addName(project, element, possibleNames.first())
         }
         else {

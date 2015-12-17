@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.idea.quickfix;
 
-import com.intellij.codeInsight.CodeInsightUtilBase;
+import com.intellij.codeInsight.CodeInsightUtilCore;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -47,7 +47,7 @@ public class MoveWhenElseBranchFix extends KotlinQuickFixAction<KtWhenExpression
     }
 
     @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiFile file) {
         if (!super.isAvailable(project, editor, file)) {
             return false;
         }
@@ -55,7 +55,7 @@ public class MoveWhenElseBranchFix extends KotlinQuickFixAction<KtWhenExpression
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
         KtWhenEntry elseEntry = null;
         KtWhenEntry lastEntry = null;
         for (KtWhenEntry entry : getElement().getEntries()) {
@@ -70,7 +70,7 @@ public class MoveWhenElseBranchFix extends KotlinQuickFixAction<KtWhenExpression
         PsiElement insertedBranch = getElement().addAfter(elseEntry, lastEntry);
         getElement().addAfter(KtPsiFactoryKt.KtPsiFactory(file).createNewLine(), lastEntry);
         getElement().deleteChildRange(elseEntry, elseEntry);
-        KtWhenEntry insertedWhenEntry = (KtWhenEntry) CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(insertedBranch);
+        KtWhenEntry insertedWhenEntry = (KtWhenEntry) CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(insertedBranch);
 
         editor.getCaretModel().moveToOffset(insertedWhenEntry.getTextOffset() + cursorOffset);
     }
@@ -79,7 +79,7 @@ public class MoveWhenElseBranchFix extends KotlinQuickFixAction<KtWhenExpression
         return new KotlinSingleIntentionActionFactory() {
             @Nullable
             @Override
-            public KotlinQuickFixAction createAction(Diagnostic diagnostic) {
+            public KotlinQuickFixAction createAction(@NotNull Diagnostic diagnostic) {
                 PsiElement element = diagnostic.getPsiElement();
                 KtWhenExpression whenExpression = PsiTreeUtil.getParentOfType(element, KtWhenExpression.class, false);
                 if (whenExpression == null) return null;

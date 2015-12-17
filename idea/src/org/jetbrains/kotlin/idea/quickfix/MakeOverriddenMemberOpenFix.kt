@@ -61,17 +61,17 @@ public class MakeOverriddenMemberOpenFix(declaration: KtDeclaration) : KotlinQui
             overriddenNonOverridableMembers.add(overriddenMember)
             containingDeclarationsNames.add(containingDeclarationName)
         }
-        return overriddenNonOverridableMembers.size() > 0
+        return overriddenNonOverridableMembers.size > 0
     }
 
     override fun getText(): String {
-        if (overriddenNonOverridableMembers.size() == 1) {
-            val name = containingDeclarationsNames.get(0) + "." + element.name
+        if (overriddenNonOverridableMembers.size == 1) {
+            val name = containingDeclarationsNames[0] + "." + element.name
             return "Make $name $OPEN_KEYWORD"
         }
 
         Collections.sort(containingDeclarationsNames)
-        val declarations = containingDeclarationsNames.subList(0, containingDeclarationsNames.size()-1).joinToString(", ") + " and " +
+        val declarations = containingDeclarationsNames.subList(0, containingDeclarationsNames.size - 1).joinToString(", ") + " and " +
                            containingDeclarationsNames.last()
         return "Make '${element.name}' in $declarations open"
     }

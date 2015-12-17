@@ -53,14 +53,14 @@ public class RemovePsiElementSimpleFix extends KotlinQuickFixAction<PsiElement> 
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
         element.delete();
     }
 
     public static KotlinSingleIntentionActionFactory createRemoveImportFactory() {
         return new KotlinSingleIntentionActionFactory() {
             @Override
-            public KotlinQuickFixAction<PsiElement> createAction(Diagnostic diagnostic) {
+            public KotlinQuickFixAction<PsiElement> createAction(@NotNull Diagnostic diagnostic) {
                 KtImportDirective directive = QuickFixUtil.getParentElementOfType(diagnostic, KtImportDirective.class);
                 if (directive == null) return null;
                 else {
@@ -79,7 +79,7 @@ public class RemovePsiElementSimpleFix extends KotlinQuickFixAction<PsiElement> 
     public static KotlinSingleIntentionActionFactory createRemoveSpreadFactory() {
         return new KotlinSingleIntentionActionFactory() {
             @Override
-            public KotlinQuickFixAction<PsiElement> createAction(Diagnostic diagnostic) {
+            public KotlinQuickFixAction<PsiElement> createAction(@NotNull Diagnostic diagnostic) {
                 PsiElement element = diagnostic.getPsiElement();
                 if ((element instanceof LeafPsiElement) && ((LeafPsiElement) element).getElementType() == KtTokens.MUL) {
                     return new RemovePsiElementSimpleFix(element, KotlinBundle.message("remove.spread.sign"));
@@ -92,7 +92,7 @@ public class RemovePsiElementSimpleFix extends KotlinQuickFixAction<PsiElement> 
     public static KotlinSingleIntentionActionFactory createRemoveTypeArgumentsFactory() {
         return new KotlinSingleIntentionActionFactory() {
             @Override
-            public KotlinQuickFixAction<PsiElement> createAction(Diagnostic diagnostic) {
+            public KotlinQuickFixAction<PsiElement> createAction(@NotNull Diagnostic diagnostic) {
                 KtTypeArgumentList element = QuickFixUtil.getParentElementOfType(diagnostic, KtTypeArgumentList.class);
                 if (element == null) return null;
                 return new RemovePsiElementSimpleFix(element,
@@ -104,13 +104,13 @@ public class RemovePsiElementSimpleFix extends KotlinQuickFixAction<PsiElement> 
     public static KotlinSingleIntentionActionFactory createRemoveVariableFactory() {
         return new KotlinSingleIntentionActionFactory() {
             @Override
-            public KotlinQuickFixAction<PsiElement> createAction(Diagnostic diagnostic) {
+            public KotlinQuickFixAction<PsiElement> createAction(@NotNull Diagnostic diagnostic) {
                 final KtProperty expression = QuickFixUtil.getParentElementOfType(diagnostic, KtProperty.class);
                 if (expression == null) return null;
                 return new RemovePsiElementSimpleFix(expression,
                                                      KotlinBundle.message("remove.variable.action", (expression.getName()))) {
                     @Override
-                    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+                    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
                         KtExpression initializer = expression.getInitializer();
                         if (initializer != null) {
                             expression.replace(initializer);

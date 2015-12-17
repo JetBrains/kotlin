@@ -45,7 +45,7 @@ public class ChangeToFunctionInvocationFix extends KotlinQuickFixAction<KtExpres
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
         KtExpression reference = (KtExpression) getElement().copy();
         getElement().replace(KtPsiFactoryKt.KtPsiFactory(file).createExpression(reference.getText() + "()"));
     }
@@ -53,7 +53,7 @@ public class ChangeToFunctionInvocationFix extends KotlinQuickFixAction<KtExpres
     public static KotlinSingleIntentionActionFactory createFactory() {
         return new KotlinSingleIntentionActionFactory() {
             @Override
-            public KotlinQuickFixAction<KtExpression> createAction(Diagnostic diagnostic) {
+            public KotlinQuickFixAction<KtExpression> createAction(@NotNull Diagnostic diagnostic) {
                 if (diagnostic.getPsiElement() instanceof KtExpression) {
                     return new ChangeToFunctionInvocationFix((KtExpression) diagnostic.getPsiElement());
                 }

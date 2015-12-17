@@ -36,7 +36,7 @@ import java.util.*
 
 object CreateSetFunctionActionFactory : CreateCallableMemberFromUsageFactory<KtArrayAccessExpression>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): KtArrayAccessExpression? {
-        return QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtArrayAccessExpression>())
+        return QuickFixUtil.getParentElementOfType(diagnostic, KtArrayAccessExpression::class.java)
     }
 
     override fun createCallableInfo(element: KtArrayAccessExpression, diagnostic: Diagnostic): CallableInfo? {
@@ -48,7 +48,7 @@ object CreateSetFunctionActionFactory : CreateCallableMemberFromUsageFactory<KtA
         val parameters = element.indexExpressions.mapTo(ArrayList<ParameterInfo>()) {
             ParameterInfo(TypeInfo(it, Variance.IN_VARIANCE))
         }
-        val assignmentExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtOperationExpression>()) ?: return null
+        val assignmentExpr = QuickFixUtil.getParentElementOfType(diagnostic, KtOperationExpression::class.java) ?: return null
         val valType = when (assignmentExpr) {
             is KtBinaryExpression -> {
                 TypeInfo(assignmentExpr.right ?: return null, Variance.IN_VARIANCE)

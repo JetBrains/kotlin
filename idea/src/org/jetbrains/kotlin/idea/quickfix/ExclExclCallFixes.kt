@@ -25,7 +25,6 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.KotlinBundle
@@ -38,12 +37,11 @@ import org.jetbrains.kotlin.psi.KtPostfixExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.util.OperatorChecks
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 public abstract class ExclExclCallFix : IntentionAction {
-    override fun getFamilyName(): String = getText()
+    override fun getFamilyName(): String = text
 
     override fun startInWriteAction(): Boolean = true
 
@@ -60,13 +58,13 @@ public class RemoveExclExclCallFix(val psiElement: PsiElement) : ExclExclCallFix
         if (!FileModificationService.getInstance().prepareFileForWrite(file)) return
 
         val postfixExpression = getExclExclPostfixExpression() ?: return
-        val expression = KtPsiFactory(project).createExpression(postfixExpression.getBaseExpression()!!.getText())
+        val expression = KtPsiFactory(project).createExpression(postfixExpression.baseExpression!!.text)
         postfixExpression.replace(expression)
     }
 
     private fun getExclExclPostfixExpression(): KtPostfixExpression? {
-        val operationParent = psiElement.getParent()
-        if (operationParent is KtPostfixExpression && operationParent.getBaseExpression() != null) {
+        val operationParent = psiElement.parent
+        if (operationParent is KtPostfixExpression && operationParent.baseExpression != null) {
             return operationParent
         }
         return null
@@ -74,7 +72,7 @@ public class RemoveExclExclCallFix(val psiElement: PsiElement) : ExclExclCallFix
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction
-            = RemoveExclExclCallFix(diagnostic.getPsiElement())
+            = RemoveExclExclCallFix(diagnostic.psiElement)
     }
 }
 
@@ -87,13 +85,13 @@ public class AddExclExclCallFix(val psiElement: PsiElement) : ExclExclCallFix() 
 
     override fun invoke(project: Project, editor: Editor?, file: PsiFile?) {
         val modifiedExpression = getExpressionForIntroduceCall() ?: return
-        val exclExclExpression = KtPsiFactory(project).createExpression(modifiedExpression.getText() + "!!")
+        val exclExclExpression = KtPsiFactory(project).createExpression(modifiedExpression.text + "!!")
         modifiedExpression.replace(exclExclExpression)
     }
 
     protected fun getExpressionForIntroduceCall(): KtExpression? {
-        if (psiElement is LeafPsiElement && psiElement.getElementType() == KtTokens.DOT) {
-            val sibling = psiElement.getPrevSibling()
+        if (psiElement is LeafPsiElement && psiElement.elementType == KtTokens.DOT) {
+            val sibling = psiElement.prevSibling
             if (sibling is KtExpression) {
                 return sibling
             }
@@ -107,7 +105,7 @@ public class AddExclExclCallFix(val psiElement: PsiElement) : ExclExclCallFix() 
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic): IntentionAction
-                = AddExclExclCallFix(diagnostic.getPsiElement())
+                = AddExclExclCallFix(diagnostic.psiElement)
     }
 }
 
@@ -128,7 +126,7 @@ object MissingIteratorExclExclFixFactory : KotlinSingleIntentionActionFactory() 
             val memberScope = descriptor.unsubstitutedMemberScope
             val functions = memberScope.getContributedFunctions(OperatorNameConventions.ITERATOR, NoLookupLocation.FROM_IDE)
 
-            return functions.any { it.isOperator() && OperatorChecks.canBeOperator(it) }
+            return functions.any { it.isOperator && OperatorChecks.canBeOperator(it) }
         }
 
         when (descriptor) {

@@ -51,7 +51,7 @@ public class RemoveSupertypeFix extends KotlinQuickFixAction<KtSuperTypeListEntr
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
         // Find the preceding comma and delete it as well.
         // We must ignore whitespaces and comments when looking for the comma.
         PsiElement prevSibling = superClass.getPrevSibling();
@@ -67,7 +67,7 @@ public class RemoveSupertypeFix extends KotlinQuickFixAction<KtSuperTypeListEntr
     public static KotlinSingleIntentionActionFactory createFactory() {
         return new KotlinSingleIntentionActionFactory() {
             @Override
-            public KotlinQuickFixAction<KtSuperTypeListEntry> createAction(Diagnostic diagnostic) {
+            public KotlinQuickFixAction<KtSuperTypeListEntry> createAction(@NotNull Diagnostic diagnostic) {
                 KtSuperTypeListEntry superClass = QuickFixUtil.getParentElementOfType(diagnostic, KtSuperTypeListEntry.class);
                 if (superClass == null) return null;
                 return new RemoveSupertypeFix(superClass);

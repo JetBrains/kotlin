@@ -84,13 +84,13 @@ public class RemovePartsFromPropertyFix extends KotlinQuickFixAction<KtProperty>
     }
 
     @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiFile file) {
         KotlinType type = QuickFixUtil.getDeclarationReturnType(getElement());
         return super.isAvailable(project, editor, file) && type != null && !type.isError();
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
         KotlinType type = QuickFixUtil.getDeclarationReturnType(getElement());
         KtProperty newElement = (KtProperty) getElement().copy();
         KtPropertyAccessor getter = newElement.getGetter();
@@ -123,7 +123,7 @@ public class RemovePartsFromPropertyFix extends KotlinQuickFixAction<KtProperty>
     public static KotlinSingleIntentionActionFactory createFactory() {
         return new KotlinSingleIntentionActionFactory() {
             @Override
-            public KotlinQuickFixAction<KtProperty> createAction(Diagnostic diagnostic) {
+            public KotlinQuickFixAction<KtProperty> createAction(@NotNull Diagnostic diagnostic) {
                 PsiElement element = diagnostic.getPsiElement();
                 assert element instanceof KtElement;
                 KtProperty property = PsiTreeUtil.getParentOfType(element, KtProperty.class);

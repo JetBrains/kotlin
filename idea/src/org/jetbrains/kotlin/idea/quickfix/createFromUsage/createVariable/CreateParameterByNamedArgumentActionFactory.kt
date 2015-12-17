@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
 public object CreateParameterByNamedArgumentActionFactory: CreateParameterFromUsageFactory<KtValueArgument>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): KtValueArgument? {
-        val argument = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtValueArgument>()) ?: return null
+        val argument = QuickFixUtil.getParentElementOfType(diagnostic, KtValueArgument::class.java) ?: return null
         return if (argument.isNamed()) argument else null
     }
 
@@ -50,7 +50,7 @@ public object CreateParameterByNamedArgumentActionFactory: CreateParameterFromUs
 
         val anyType = functionDescriptor.builtIns.anyType
         val paramType = argumentExpression?.guessTypes(context, result.moduleDescriptor)?.let {
-            when (it.size()) {
+            when (it.size) {
                 0 -> anyType
                 1 -> it.first()
                 else -> return null

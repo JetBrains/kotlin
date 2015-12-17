@@ -28,7 +28,7 @@ import java.util.Collections
 
 object CreateGetFunctionActionFactory : CreateCallableMemberFromUsageFactory<KtArrayAccessExpression>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): KtArrayAccessExpression? {
-        return QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtArrayAccessExpression>())
+        return QuickFixUtil.getParentElementOfType(diagnostic, KtArrayAccessExpression::class.java)
     }
 
     override fun createCallableInfo(element: KtArrayAccessExpression, diagnostic: Diagnostic): CallableInfo? {

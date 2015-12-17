@@ -64,7 +64,7 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
         val diagElement = diagnostic.psiElement
         if (PsiTreeUtil.getParentOfType(
                 diagElement,
-                javaClass<KtTypeReference>(), javaClass<KtAnnotationEntry>(), javaClass<KtImportDirective>()
+                KtTypeReference::class.java, KtAnnotationEntry::class.java, KtImportDirective::class.java
         ) != null) return null
 
         return when (diagnostic.factory) {
@@ -108,9 +108,9 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
     }
 
     private fun getReceiverTypeInfo(context: BindingContext, project: Project, receiver: Receiver?): TypeInfo? {
-        return when {
-            receiver == null -> TypeInfo.Empty
-            receiver is Qualifier -> {
+        return when (receiver) {
+            null -> TypeInfo.Empty
+            is Qualifier -> {
                 val qualifierType = context.getType(receiver.expression)
                 if (qualifierType != null) return TypeInfo(qualifierType, Variance.IN_VARIANCE)
 
@@ -123,7 +123,7 @@ sealed class CreateCallableFromCallActionFactory<E : KtExpression>(
                 if (javaClass == null || !javaClass.canRefactor()) return null
                 TypeInfo.StaticContextRequired(TypeInfo(javaClassifier.defaultType, Variance.IN_VARIANCE))
             }
-            receiver is ReceiverValue -> TypeInfo(receiver.type, Variance.IN_VARIANCE)
+            is ReceiverValue -> TypeInfo(receiver.type, Variance.IN_VARIANCE)
             else -> throw AssertionError("Unexpected receiver: $receiver")
         }
     }

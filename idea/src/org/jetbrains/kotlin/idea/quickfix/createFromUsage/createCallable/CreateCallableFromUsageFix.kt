@@ -52,12 +52,12 @@ public abstract class CreateCallableFromUsageFixBase<E : KtElement>(
 ) : CreateFromUsageFixBase<E>(originalExpression) {
     init {
         assert (callableInfos.isNotEmpty()) { "No CallableInfos: ${originalExpression.getElementTextWithContext()}" }
-        if (callableInfos.size() > 1) {
+        if (callableInfos.size > 1) {
             val receiverSet = callableInfos.mapTo(HashSet<TypeInfo>()) { it.receiverTypeInfo }
-            if (receiverSet.size() > 1) throw AssertionError("All functions must have common receiver: $receiverSet")
+            if (receiverSet.size > 1) throw AssertionError("All functions must have common receiver: $receiverSet")
 
             val possibleContainerSet = callableInfos.mapTo(HashSet<List<KtElement>>()) { it.possibleContainers }
-            if (possibleContainerSet.size() > 1) throw AssertionError("All functions must have common containers: $possibleContainerSet")
+            if (possibleContainerSet.size > 1) throw AssertionError("All functions must have common containers: $possibleContainerSet")
         }
     }
 
@@ -88,7 +88,7 @@ public abstract class CreateCallableFromUsageFixBase<E : KtElement>(
             if (it.name.isNotEmpty()) "$kind '${it.name}'" else kind
         }
 
-        return StringBuilder {
+        return StringBuilder().apply {
             append("Create ")
 
             val receiverInfo = callableInfos.first().receiverTypeInfo

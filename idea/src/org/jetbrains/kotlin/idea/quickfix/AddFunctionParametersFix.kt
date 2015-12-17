@@ -86,19 +86,19 @@ public class AddFunctionParametersFix(
                     val validator = CollectingNameValidator()
 
                     for (i in arguments.indices) {
-                        val argument = arguments.get(i)
+                        val argument = arguments[i]
                         val expression = argument.getArgumentExpression()
 
                         if (i < parameters.size) {
-                            validator.addName(parameters.get(i).name.asString())
+                            validator.addName(parameters[i].name.asString())
                             val argumentType = expression?.let {
                                 val bindingContext = it.analyze()
                                 bindingContext[BindingContext.SMARTCAST, it] ?: bindingContext.getType(it)
                             }
-                            val parameterType = parameters.get(i).type
+                            val parameterType = parameters[i].type
 
                             if (argumentType != null && !KotlinTypeChecker.DEFAULT.isSubtypeOf(argumentType, parameterType)) {
-                                it.parameters.get(i).currentTypeInfo = KotlinTypeInfo(false, argumentType)
+                                it.parameters[i].currentTypeInfo = KotlinTypeInfo(false, argumentType)
                                 typesToShorten.add(argumentType)
                             }
                         }

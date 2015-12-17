@@ -69,16 +69,14 @@ class AddFunctionToSupertypeFix private constructor(
     override fun getFamilyName() = "Add function to supertype"
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        CommandProcessor.getInstance().runUndoTransparentAction(object : Runnable {
-            override fun run() {
-                if (functions.size == 1 || editor == null || !editor.component.isShowing) {
-                    addFunction(functions.first(), project)
-                }
-                else {
-                    JBPopupFactory.getInstance().createListPopup(createFunctionPopup(project)).showInBestPositionFor(editor)
-                }
+        CommandProcessor.getInstance().runUndoTransparentAction {
+            if (functions.size == 1 || editor == null || !editor.component.isShowing) {
+                addFunction(functions.first(), project)
             }
-        })
+            else {
+                JBPopupFactory.getInstance().createListPopup(createFunctionPopup(project)).showInBestPositionFor(editor)
+            }
+        }
     }
 
     private fun addFunction(functionData: FunctionData, project: Project) {
@@ -158,16 +156,16 @@ class AddFunctionToSupertypeFix private constructor(
         }
 
         private fun getSuperClasses(classDescriptor: ClassDescriptor): List<ClassDescriptor> {
-            val supertypes = classDescriptor.defaultType.supertypes().sortedWith(object : Comparator<KotlinType> {
-                override fun compare(o1: KotlinType, o2: KotlinType): Int {
-                    return when {
-                        o1 == o2 -> 0
-                        KotlinTypeChecker.DEFAULT.isSubtypeOf(o1, o2) -> -1
-                        KotlinTypeChecker.DEFAULT.isSubtypeOf(o2, o1) -> 1
-                        else -> o1.toString().compareTo(o2.toString())
+            val supertypes = classDescriptor.defaultType.supertypes().sortedWith(
+                    Comparator<KotlinType> { o1, o2 ->
+                        when {
+                            o1 == o2 -> 0
+                            KotlinTypeChecker.DEFAULT.isSubtypeOf(o1, o2) -> -1
+                            KotlinTypeChecker.DEFAULT.isSubtypeOf(o2, o1) -> 1
+                            else -> o1.toString().compareTo(o2.toString())
+                        }
                     }
-                }
-            })
+            )
 
             return supertypes.mapNotNull { it.constructor.declarationDescriptor as? ClassDescriptor }
         }

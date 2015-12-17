@@ -44,7 +44,7 @@ public class MakeClassAnAnnotationClassFix extends KotlinQuickFixAction<KtAnnota
     }
 
     @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiFile file) {
         if (!super.isAvailable(project, editor, file)) {
             return false;
         }
@@ -102,7 +102,7 @@ public class MakeClassAnAnnotationClassFix extends KotlinQuickFixAction<KtAnnota
         return new KotlinSingleIntentionActionFactory() {
             @Nullable
             @Override
-            public IntentionAction createAction(Diagnostic diagnostic) {
+            public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
                 KtAnnotationEntry annotation = QuickFixUtil.getParentElementOfType(diagnostic, KtAnnotationEntry.class);
                 return annotation == null ? null : new MakeClassAnAnnotationClassFix(annotation);
             }

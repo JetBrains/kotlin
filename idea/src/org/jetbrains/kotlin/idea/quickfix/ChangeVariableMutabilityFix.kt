@@ -30,7 +30,7 @@ public class ChangeVariableMutabilityFix(element: KtNamedDeclaration, private va
 
     override fun getText() = if (makeVar) "Make variable mutable" else "Make variable immutable"
 
-    override fun getFamilyName(): String = getText()
+    override fun getFamilyName(): String = text
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         return when (element) {
@@ -52,15 +52,15 @@ public class ChangeVariableMutabilityFix(element: KtNamedDeclaration, private va
     companion object {
         public val VAL_WITH_SETTER_FACTORY: KotlinSingleIntentionActionFactory = object: KotlinSingleIntentionActionFactory() {
             override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-                val accessor = diagnostic.getPsiElement() as KtPropertyAccessor
-                val property = accessor.getParent() as KtProperty
+                val accessor = diagnostic.psiElement as KtPropertyAccessor
+                val property = accessor.parent as KtProperty
                 return ChangeVariableMutabilityFix(property, true)
             }
         }
 
         public val VAL_REASSIGNMENT_FACTORY: KotlinSingleIntentionActionFactory = object: KotlinSingleIntentionActionFactory() {
             override fun createAction(diagnostic: Diagnostic): IntentionAction? {
-                val propertyDescriptor = Errors.VAL_REASSIGNMENT.cast(diagnostic).getA()
+                val propertyDescriptor = Errors.VAL_REASSIGNMENT.cast(diagnostic).a
                 val declaration = DescriptorToSourceUtils.descriptorToDeclaration(propertyDescriptor) as? KtNamedDeclaration ?: return null
                 return ChangeVariableMutabilityFix(declaration, true)
             }

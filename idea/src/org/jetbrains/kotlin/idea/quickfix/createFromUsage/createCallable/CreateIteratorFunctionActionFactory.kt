@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFullyAndGetResult
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
@@ -35,7 +34,7 @@ import java.util.*
 
 object CreateIteratorFunctionActionFactory : CreateCallableMemberFromUsageFactory<KtForExpression>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): KtForExpression? {
-        return QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtForExpression>())
+        return QuickFixUtil.getParentElementOfType(diagnostic, KtForExpression::class.java)
     }
 
     override fun createCallableInfo(element: KtForExpression, diagnostic: Diagnostic): CallableInfo? {
@@ -48,7 +47,7 @@ object CreateIteratorFunctionActionFactory : CreateCallableMemberFromUsageFactor
 
         val returnJetType = moduleDescriptor.builtIns.iterator.defaultType
         val returnJetTypeParameterTypes = variableExpr.guessTypes(bindingContext, moduleDescriptor)
-        if (returnJetTypeParameterTypes.size() != 1) return null
+        if (returnJetTypeParameterTypes.size != 1) return null
 
         val returnJetTypeParameterType = TypeProjectionImpl(returnJetTypeParameterTypes[0])
         val returnJetTypeArguments = Collections.singletonList(returnJetTypeParameterType)

@@ -101,12 +101,12 @@ public class ChangeFunctionReturnTypeFix extends KotlinQuickFixAction<KtFunction
     }
 
     @Override
-    public boolean isAvailable(@NotNull Project project, @Nullable Editor editor, @Nullable PsiFile file) {
+    public boolean isAvailable(@NotNull Project project, @Nullable Editor editor, @NotNull PsiFile file) {
         return super.isAvailable(project, editor, file) && !ErrorUtils.containsErrorType(type);
     }
 
     @Override
-    public void invoke(@NotNull Project project, @Nullable Editor editor, KtFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, @Nullable Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
         if (changeFunctionLiteralReturnTypeFix != null) {
             changeFunctionLiteralReturnTypeFix.invoke(project, editor, file);
         }

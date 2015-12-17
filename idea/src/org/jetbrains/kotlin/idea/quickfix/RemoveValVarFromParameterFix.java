@@ -52,7 +52,7 @@ public class RemoveValVarFromParameterFix extends KotlinQuickFixAction<KtValVarK
     }
 
     @Override
-    protected void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+    protected void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
         PsiElement keyword = getElement().getValOrVarKeyword();
         if (keyword == null) return;
         keyword.delete();
