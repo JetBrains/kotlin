@@ -20,6 +20,7 @@ import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 
 import java.io.File;
@@ -3206,7 +3207,8 @@ public class JvmRuntimeDescriptorLoaderTestGenerated extends AbstractJvmRuntimeD
         }
 
         @TestMetadata("InnerClassTypeMultipleGeneric.java")
-        public void testInnerClassTypeMultipleGeneric() throws Exception {
+        @Ignore
+        public void ignoreTestInnerClassTypeMultipleGeneric() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/loadJava/compiledJava/InnerClassTypeMultipleGeneric.java");
             doTest(fileName);
         }
