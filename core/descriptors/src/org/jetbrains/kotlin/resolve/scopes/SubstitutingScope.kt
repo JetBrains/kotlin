@@ -45,10 +45,10 @@ public class SubstitutingScope(private val workerScope: MemberScope, private val
     }
 
     private fun <D : DeclarationDescriptor> substitute(descriptors: Collection<D>): Collection<D> {
-        if (substitutor.isEmpty()) return descriptors
+        if (substitutor.isEmpty) return descriptors
         if (descriptors.isEmpty()) return descriptors
 
-        val result = newHashSetWithExpectedSize<D>(descriptors.size())
+        val result = newHashSetWithExpectedSize<D>(descriptors.size)
         for (descriptor in descriptors) {
             val substitute = substitute(descriptor)
             if (substitute != null) {

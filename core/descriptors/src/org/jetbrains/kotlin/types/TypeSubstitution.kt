@@ -29,15 +29,15 @@ public abstract class TypeSubstitution {
         }
     }
 
-    public abstract operator fun get(key: KotlinType): TypeProjection?
+    abstract operator fun get(key: KotlinType): TypeProjection?
 
-    public open fun isEmpty(): Boolean = false
+    open fun isEmpty(): Boolean = false
 
-    public open fun approximateCapturedTypes(): Boolean = false
+    open fun approximateCapturedTypes(): Boolean = false
 
-    public open fun filterAnnotations(annotations: Annotations) = annotations
+    open fun filterAnnotations(annotations: Annotations) = annotations
 
-    public fun buildSubstitutor(): TypeSubstitutor = TypeSubstitutor.create(this)
+    fun buildSubstitutor(): TypeSubstitutor = TypeSubstitutor.create(this)
 }
 
 public abstract class TypeConstructorSubstitution : TypeSubstitution() {
@@ -131,7 +131,7 @@ private class CompositeTypeSubstitution(
     }
 
     override fun isEmpty() = first.isEmpty() && second.isEmpty()
-    //
+
     override fun approximateCapturedTypes() = first.approximateCapturedTypes() || second.approximateCapturedTypes()
 
     override fun filterAnnotations(annotations: Annotations): Annotations = second.filterAnnotations(first.filterAnnotations(annotations))
