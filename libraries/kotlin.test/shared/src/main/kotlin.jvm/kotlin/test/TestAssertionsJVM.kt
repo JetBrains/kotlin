@@ -1,5 +1,5 @@
 @file:kotlin.jvm.JvmMultifileClass
-@file:kotlin.jvm.JvmName("TestAssertionsKt")
+@file:kotlin.jvm.JvmName("AssertionsKt")
 package kotlin.test
 
 import kotlin.reflect.*
