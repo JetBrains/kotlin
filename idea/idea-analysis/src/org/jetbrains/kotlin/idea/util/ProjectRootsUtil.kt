@@ -75,6 +75,11 @@ public object ProjectRootsUtil {
     }
 
     @JvmStatic
+    public fun isProjectSourceFile(project: Project, file: VirtualFile): Boolean {
+        return isInContent(project, file, includeProjectSource = true, includeLibrarySource = false, includeLibraryClasses = false)
+    }
+
+    @JvmStatic
     public fun isInProjectOrLibSource(element: PsiElement): Boolean {
         return isInContent(element, includeProjectSource = true, includeLibrarySource = true, includeLibraryClasses = false)
     }
@@ -92,6 +97,11 @@ public object ProjectRootsUtil {
     @JvmStatic
     public fun isLibraryClassFile(project: Project, file: VirtualFile): Boolean {
         return isInContent(project, file, includeProjectSource = false, includeLibrarySource = false, includeLibraryClasses = true)
+    }
+
+    @JvmStatic
+    public fun isLibrarySourceFile(project: Project, file: VirtualFile): Boolean {
+        return isInContent(project, file, includeProjectSource = false, includeLibrarySource = true, includeLibraryClasses = false)
     }
 
     @JvmStatic
