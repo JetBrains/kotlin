@@ -130,6 +130,7 @@ class DeclarationsChecker(
         declaration.checkTypeReferences()
         modifiersChecker.checkModifiersForDeclaration(declaration, constructorDescriptor)
         identifierChecker.checkDeclaration(declaration, trace)
+        checkVarargParameters(trace, constructorDescriptor)
     }
 
     private fun checkModifiersAndAnnotationsInPackageDirective(file: KtFile) {
@@ -323,11 +324,13 @@ class DeclarationsChecker(
         else if (aClass is KtEnumEntry) {
             checkEnumEntry(aClass, classDescriptor)
         }
+
         for (memberDescriptor in classDescriptor.declaredCallableMembers) {
             if (memberDescriptor.kind != CallableMemberDescriptor.Kind.DECLARATION) continue
             val member = DescriptorToSourceUtils.descriptorToDeclaration(memberDescriptor) as? KtFunction
             if (member != null && memberDescriptor is FunctionDescriptor) {
                 checkFunctionExposedType(member, memberDescriptor)
+                checkVarargParameters(trace, memberDescriptor)
             }
         }
     }
@@ -650,7 +653,9 @@ class DeclarationsChecker(
                 trace.report(IMPLICIT_NOTHING_RETURN_TYPE.on(nameIdentifier ?: function))
             }
         }
+
         checkFunctionExposedType(function, functionDescriptor)
+        checkVarargParameters(trace, functionDescriptor)
     }
 
     private fun checkFunctionExposedType(function: KtFunction, functionDescriptor: FunctionDescriptor) {
@@ -740,6 +745,19 @@ class DeclarationsChecker(
     }
 
     companion object {
+        internal fun checkVarargParameters(trace: BindingTrace, callableDescriptor: CallableDescriptor) {
+            val numberOfVarargParameters = callableDescriptor.valueParameters.count { it.varargElementType != null }
+            if (numberOfVarargParameters > 1) {
+                for (parameter in callableDescriptor.valueParameters) {
+                    if (parameter.varargElementType != null) {
+                        val parameterDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(parameter)
+                        if (parameterDeclaration is KtParameter) {
+                            trace.report(MULTIPLE_VARARG_PARAMETERS.on(parameterDeclaration))
+                        }
+                    }
+                }
+            }
+        }
 
         private fun removeDuplicateTypes(conflictingTypes: MutableSet<KotlinType>) {
             val iterator = conflictingTypes.iterator()

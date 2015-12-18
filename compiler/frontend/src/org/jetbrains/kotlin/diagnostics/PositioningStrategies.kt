@@ -285,6 +285,13 @@ public object PositioningStrategies {
         }
     }
 
+    @JvmField public val PARAMETER_VARARG_MODIFIER: PositioningStrategy<KtParameter> = object : PositioningStrategy<KtParameter>() {
+        override fun mark(element: KtParameter): List<TextRange> {
+            val varargModifier = element.modifierList!!.getModifier(KtTokens.VARARG_KEYWORD)!!
+            return markNode(varargModifier.node)
+        }
+    }
+
     @JvmField public val CALL_ELEMENT: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
         override fun mark(element: PsiElement): List<TextRange> {
             return markElement((element as? KtCallElement)?.getCalleeExpression() ?: element)
