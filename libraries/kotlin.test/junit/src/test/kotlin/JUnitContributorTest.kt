@@ -23,5 +23,5 @@ class JUnitContributorTest {
 
     @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
     private val asserter: java.lang.Object
-        get() = Class.forName("kotlin.test.TestAssertionsKt").getMethod("getAsserter").invoke(null) as java.lang.Object
+        get() = Class.forName("kotlin.test.AssertionsKt").getMethod("getAsserter").invoke(null) as java.lang.Object
 }
