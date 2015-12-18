@@ -20,6 +20,7 @@ package org.jetbrains.kotlin.j2k
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.tree.IElementType
 import com.intellij.psi.util.MethodSignature
 import com.intellij.psi.util.MethodSignatureUtil
 import com.intellij.psi.util.PsiTreeUtil
@@ -109,10 +110,19 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
     override fun visitBinaryExpression(expression: PsiBinaryExpression) {
         val left = expression.lOperand
         val right = expression.rOperand
-        var leftConverted = codeConverter.convertExpression(left, null)
-        var rightConverted = codeConverter.convertExpression(right, null)
 
         val operationTokenType = expression.operationTokenType
+
+        val leftOperandExpectedType = getOperandExpectedType(left, right, operationTokenType)
+        var leftConverted = codeConverter.convertExpression(left, leftOperandExpectedType)
+        var rightConverted = codeConverter.convertExpression(
+                right,
+                if (leftOperandExpectedType == null)
+                    getOperandExpectedType(right, left, operationTokenType)
+                else
+                    null
+        )
+
         if (operationTokenType in NON_NULL_OPERAND_OPS) {
             leftConverted = BangBangExpression.surroundIfNullable(leftConverted)
             rightConverted = BangBangExpression.surroundIfNullable(rightConverted)
@@ -129,6 +139,54 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                 }
             }
             result = BinaryExpression(leftConverted, rightConverted, operator.assignPrototype(expression.operationSign))
+        }
+    }
+
+    private fun getOperandExpectedType(current: PsiExpression?, other: PsiExpression?, operationTokenType: IElementType): PsiType? {
+        val currentType = current?.type
+        val otherType = other?.type
+        if (currentType !is PsiPrimitiveType || otherType !is PsiPrimitiveType) return null
+        if (currentType == PsiType.BOOLEAN || otherType == PsiType.BOOLEAN) return null
+
+        if (operationTokenType == JavaTokenType.EQEQ
+            || operationTokenType == JavaTokenType.NE
+            || currentType == PsiType.CHAR) {
+            if (currentType < otherType) return otherType
+        }
+
+        return null
+    }
+
+    infix operator fun PsiPrimitiveType.compareTo(other: PsiPrimitiveType): Int {
+        return when(this) {
+            other -> 0
+            PsiType.BYTE -> when(other) {
+                PsiType.CHAR -> 1
+                else -> -1
+            }
+            PsiType.SHORT -> when(other) {
+                PsiType.CHAR,
+                PsiType.BYTE -> 1
+                else -> -1
+            }
+            PsiType.INT -> when(other) {
+                PsiType.BYTE,
+                PsiType.SHORT,
+                PsiType.CHAR -> 1
+                else -> -1
+            }
+            PsiType.LONG -> when(other) {
+                PsiType.DOUBLE,
+                PsiType.FLOAT -> -1
+                else -> 1
+            }
+            PsiType.FLOAT -> when(other) {
+                PsiType.DOUBLE -> -1
+                else -> 1
+            }
+            PsiType.DOUBLE -> 1
+            PsiType.CHAR -> -1
+            else -> throw AssertionError("Unknown primitive type $this")
         }
     }
 
