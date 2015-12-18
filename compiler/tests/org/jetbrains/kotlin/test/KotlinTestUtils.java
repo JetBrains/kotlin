@@ -833,9 +833,7 @@ public class KotlinTestUtils {
             @NotNull File testDataDir,
             @NotNull final Pattern filenamePattern
     ) {
-        TestMetadata testClassMetadata = testCaseClass.getAnnotation(TestMetadata.class);
-        Assert.assertNotNull("No metadata for class: " + testCaseClass, testClassMetadata);
-        final File rootFile = new File(testClassMetadata.value());
+        final File rootFile = new File(getTestsRoot(testCaseClass));
 
         final Set<String> filePaths = collectPathsMetadata(testCaseClass);
 

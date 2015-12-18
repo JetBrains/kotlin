@@ -45,8 +45,6 @@ import org.apache.commons.lang.SystemUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLightQuickFixTestCase;
-import org.jetbrains.kotlin.idea.inspections.KotlinUnusedImportInspection;
-import org.jetbrains.kotlin.idea.intentions.IfNullToElvisInspection;
 import org.jetbrains.kotlin.idea.quickfix.utils.QuickfixTestUtilsKt;
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils;
@@ -54,7 +52,6 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.Assert;
 
 import java.io.File;
@@ -308,7 +305,7 @@ public abstract class AbstractQuickFixTest extends KotlinLightQuickFixTestCase {
 
     @Override
     protected String getBasePath() {
-        return getClass().getAnnotation(TestMetadata.class).value();
+        return KotlinTestUtils.getTestsRoot(getClass());
     }
 
     @NotNull

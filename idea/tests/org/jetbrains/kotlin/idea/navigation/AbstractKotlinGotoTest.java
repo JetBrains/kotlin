@@ -32,8 +32,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
+import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.ReferenceUtils;
-import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.Assert;
 
 import java.util.ArrayList;
@@ -55,9 +55,7 @@ public abstract class AbstractKotlinGotoTest extends KotlinLightCodeInsightFixtu
 
     @Override
     protected void setUp() {
-        TestMetadata annotation = getClass().getAnnotation(TestMetadata.class);
-        dirPath = annotation.value();
-
+        dirPath = KotlinTestUtils.getTestsRoot(getClass());
         super.setUp();
     }
 
