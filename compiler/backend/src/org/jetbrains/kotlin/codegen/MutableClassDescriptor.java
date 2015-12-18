@@ -154,7 +154,7 @@ public class MutableClassDescriptor extends ClassDescriptorBase implements Class
         this.typeConstructor = TypeConstructorImpl.createForClass(
                 this,
                 Annotations.Companion.getEMPTY(),
-                ModalityKt.isFinal(this),
+                ModalityKt.isFinalClass(this),
                 getName().asString(),
                 typeParameters,
                 supertypes

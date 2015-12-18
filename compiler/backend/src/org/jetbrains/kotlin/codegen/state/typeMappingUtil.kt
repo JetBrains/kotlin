@@ -40,7 +40,7 @@ private fun KotlinType.canHaveSubtypesIgnoringNullability(): Boolean {
 
     when (descriptor) {
         is TypeParameterDescriptor -> return true
-        is ClassDescriptor -> if (!descriptor.isFinal) return true
+        is ClassDescriptor -> if (!descriptor.isFinalClass) return true
     }
 
     for ((parameter, argument) in constructor.parameters.zip(arguments)) {

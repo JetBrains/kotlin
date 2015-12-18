@@ -171,6 +171,7 @@ public class RenameKotlinPropertyProcessor : RenamePsiElementProcessor() {
                     }
                 }
             }
+            true
         }
     }
 

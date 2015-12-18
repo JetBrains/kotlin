@@ -181,7 +181,7 @@ public class DeserializedClassDescriptor(
 
         override fun getSupertypes() = supertypes()
 
-        override fun isFinal(): Boolean = isFinal
+        override fun isFinal(): Boolean = isFinalClass
 
         override fun isDenotable() = true
 

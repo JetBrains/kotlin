@@ -206,7 +206,7 @@ class LazyJavaClassDescriptor(
 
         override fun getAnnotations() = Annotations.EMPTY
 
-        override fun isFinal(): Boolean = isFinal
+        override fun isFinal(): Boolean = isFinalClass
 
         override fun isDenotable() = true
 

@@ -55,7 +55,7 @@ public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
     }
 
     fun testJavaEntitiesBelongToCorrectModule() {
-        val moduleDirs = File(PATH_TO_TEST_ROOT_DIR).listFiles { it.isDirectory() }!!
+        val moduleDirs = File(PATH_TO_TEST_ROOT_DIR).listFiles { it -> it.isDirectory() }!!
         val environment = createEnvironment(moduleDirs)
         val modules = setupModules(environment, moduleDirs)
         val resolverForProject = JvmAnalyzerFacade.setupResolverForProject(
@@ -85,7 +85,7 @@ public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
         val modules = HashMap<String, TestModule>()
         for (dir in moduleDirs) {
             val name = dir.getName()
-            val kotlinFiles = KotlinTestUtils.loadToJetFiles(environment, dir.listFiles { it.extension == "kt" }?.toList().orEmpty())
+            val kotlinFiles = KotlinTestUtils.loadToJetFiles(environment, dir.listFiles { it -> it.extension == "kt" }?.toList().orEmpty())
             val javaFilesScope = object : DelegatingGlobalSearchScope(GlobalSearchScope.allScope(project)) {
                 override fun contains(file: VirtualFile): Boolean {
                     if (file !in myBaseScope!!) return false
