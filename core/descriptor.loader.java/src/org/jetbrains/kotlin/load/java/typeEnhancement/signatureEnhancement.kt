@@ -31,6 +31,8 @@ fun <D : CallableMemberDescriptor> D.enhanceSignature(): D {
     // TODO use new type parameters while enhancing other types
     // TODO Propagation into generic type arguments
 
+    if (this !is JavaCallableMemberDescriptor) return this
+
     val enhancedReceiverType =
             if (extensionReceiverParameter != null)
                 parts(isCovariant = false) { it.extensionReceiverParameter!!.type }.enhance()
@@ -42,12 +44,8 @@ fun <D : CallableMemberDescriptor> D.enhanceSignature(): D {
 
     val enhancedReturnType = parts(isCovariant = true) { it.returnType!! }.enhance()
 
-    if (this is JavaCallableMemberDescriptor) {
-        @Suppress("UNCHECKED_CAST")
-        return this.enhance(enhancedReceiverType, enhancedValueParametersTypes, enhancedReturnType) as D
-    }
-
-    return this
+    @Suppress("UNCHECKED_CAST")
+    return this.enhance(enhancedReceiverType, enhancedValueParametersTypes, enhancedReturnType) as D
 }
 
 private class SignatureParts(
