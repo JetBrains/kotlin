@@ -63,6 +63,7 @@ internal class ScopeTowerImpl(
                 filter { it.kind.withLocalDescriptors }.
                 mapTo(result) { ScopeBasedTowerLevel(this, it) }
 
+        var isFirstImportingScope = true
         lexicalScope.parentsWithSelf.forEach { scope ->
             if (scope is LexicalScope) {
                 if (!scope.kind.withLocalDescriptors) result.add(ScopeBasedTowerLevel(this, scope))
@@ -70,10 +71,13 @@ internal class ScopeTowerImpl(
                 scope.implicitReceiver?.let { result.add(ReceiverScopeTowerLevel(this, it.value)) }
             }
             else {
+                if (isFirstImportingScope) {
+                    isFirstImportingScope = false
+                    result.add(SyntheticScopeBasedTowerLevel(this, syntheticScopes))
+                }
                 result.add(ImportingScopeBasedTowerLevel(this, scope as ImportingScope))
             }
         }
-        result.add(SyntheticScopeBasedTowerLevel(this, syntheticScopes))
 
         return result
     }

@@ -66,7 +66,7 @@ class FilesTest {
         createTempFile("temp3", ".kt", dir)
 
         // This line works only with Kotlin File.listFiles(filter)
-        val result = dir.listFiles { it.getName().endsWith(".kt") }
+        val result = dir.listFiles { it -> it.getName().endsWith(".kt") } // todo ambiguity on SAM
         assertEquals(2, result!!.size)
         // This line works both with Kotlin File.listFiles(filter) and the same Java function because of SAM
         val result2 = dir.listFiles { it -> it.getName().endsWith(".kt") }

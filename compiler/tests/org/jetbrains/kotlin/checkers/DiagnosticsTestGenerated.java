@@ -13735,6 +13735,18 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/priority/synthesizedMembersVsExtension.kt");
                     doTest(fileName);
                 }
+
+                @TestMetadata("syntheticPropertiesVsExtensions.kt")
+                public void testSyntheticPropertiesVsExtensions() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/priority/syntheticPropertiesVsExtensions.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("syntheticPropertiesVsMembers.kt")
+                public void testSyntheticPropertiesVsMembers() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/resolve/priority/syntheticPropertiesVsMembers.kt");
+                    doTest(fileName);
+                }
             }
 
             @TestMetadata("compiler/testData/diagnostics/tests/resolve/overloadConflicts")
