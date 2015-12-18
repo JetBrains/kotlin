@@ -111,8 +111,8 @@ public class IncrementalPackageFragmentProvider(
                                         it.parts
                                     }
                                     else {
-                                        val packageFqName = it.packageFqName.replace('.', '/')
-                                        it.parts.map { packageFqName + "/" + it }
+                                        val internalNamePrefix = it.packageFqName.replace('.', '/') + "/"
+                                        it.parts.map { internalNamePrefix + it }
                                     }
 
                             allParts.filterNot { it in obsoletePackageParts }

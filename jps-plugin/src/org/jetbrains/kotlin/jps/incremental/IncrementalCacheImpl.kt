@@ -296,8 +296,8 @@ public class IncrementalCacheImpl(
         return obsoletePackageParts
     }
 
-    override fun getPackagePartData(fqName: String): JvmPackagePartProto? {
-        return protoMap[JvmClassName.byInternalName(fqName)]?.let { value ->
+    override fun getPackagePartData(partInternalName: String): JvmPackagePartProto? {
+        return protoMap[JvmClassName.byInternalName(partInternalName)]?.let { value ->
             JvmPackagePartProto(value.bytes, value.strings)
         }
     }

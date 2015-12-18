@@ -29,7 +29,7 @@ public interface IncrementalCache {
 
     public fun getMultifileFacade(partInternalName: String): String?
 
-    public fun getPackagePartData(fqName: String): JvmPackagePartProto?
+    public fun getPackagePartData(partInternalName: String): JvmPackagePartProto?
 
     public fun getModuleMappingData(): ByteArray?
 
