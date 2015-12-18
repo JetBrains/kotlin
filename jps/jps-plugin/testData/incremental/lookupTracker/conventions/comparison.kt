@@ -11,8 +11,8 @@ package foo.bar
     a /*c:foo.bar.A(compareTo)*/>= b
     a /*c:foo.bar.A(compareTo)*/<= b
 
-    a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo)*/> c
-    a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo)*/< c
-    a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo)*/>= c
-    a /*c:foo.bar.A(compareTo) p:foo.bar(compareTo)*/<= c
+    a /*c:foo.bar.A(compareTo) c:foo.bar.A(getCompareTo) c:foo.bar.A(getCOMPARETo) p:foo.bar(compareTo)*/> c
+    a /*c:foo.bar.A(compareTo) c:foo.bar.A(getCompareTo) c:foo.bar.A(getCOMPARETo) p:foo.bar(compareTo)*/< c
+    a /*c:foo.bar.A(compareTo) c:foo.bar.A(getCompareTo) c:foo.bar.A(getCOMPARETo) p:foo.bar(compareTo)*/>= c
+    a /*c:foo.bar.A(compareTo) c:foo.bar.A(getCompareTo) c:foo.bar.A(getCOMPARETo) p:foo.bar(compareTo)*/<= c
 }

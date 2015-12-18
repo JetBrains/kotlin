@@ -18,8 +18,8 @@ import bar.*
     /*p:foo*/A./*c:foo.A*/Companion./*c:foo.A.Companion*/baz()
     /*p:foo*/A./*c:foo.A c:foo.A.Companion*/O
     /*p:foo*/A./*c:foo.A*/O./*c:foo.A.O*/v = "OK"
-    /*p:foo*/A./*c:foo.A c:foo.A.Companion p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io c:foo.A.Companion(getVala) c:foo.A.Companion(getVALA)*/vala
-    /*p:foo*/A./*c:foo.A c:foo.A.Companion p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io c:foo.A.Companion(getVara) c:foo.A.Companion(getVARA)*/vara()
+    /*p:foo*/A./*c:foo.A c:foo.A.Companion c:foo.A.Companion(getVala) c:foo.A.Companion(getVALA) p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io*/vala
+    /*p:foo*/A./*c:foo.A c:foo.A.Companion c:foo.A.Companion(getVara) c:foo.A.Companion(getVARA) p:foo p:bar p:java.lang p:kotlin p:kotlin.annotation p:kotlin.jvm p:kotlin.collections p:kotlin.ranges p:kotlin.sequences p:kotlin.text p:kotlin.io*/vara()
 
     i./*c:foo.I*/a = 2
     /*p:foo*/Obj./*c:foo.Obj*/a
