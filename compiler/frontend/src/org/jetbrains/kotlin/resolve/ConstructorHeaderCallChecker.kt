@@ -19,40 +19,40 @@ package org.jetbrains.kotlin.resolve
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
 import org.jetbrains.kotlin.psi.KtInstanceExpressionWithLabel
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.hasImplicitThisOrSuperDispatchReceiver
-import org.jetbrains.kotlin.resolve.descriptorUtil.getOwnerForEffectiveDispatchReceiverParameter
+import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
+import org.jetbrains.kotlin.resolve.scopes.receivers.Receiver
+import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 
-
-public class ConstructorHeaderCallChecker(constructor: ConstructorDescriptor) : CallChecker {
-    private val containingClass = constructor.getContainingDeclaration()
-
+public object ConstructorHeaderCallChecker : CallChecker {
     override fun <F : CallableDescriptor> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
-        if (resolvedCall.getStatus().isSuccess() &&
-            resolvedCall.hasImplicitThisOrSuperDispatchReceiver(context.trace.getBindingContext()) &&
-            containingClass == resolvedCall.getResultingDescriptor().getOwnerForEffectiveDispatchReceiverParameter()
-        ) {
-            reportError(context, resolvedCall)
-        }
-        else {
-            val callElement = resolvedCall.getCall().getCallElement()
-            if (callElement is KtInstanceExpressionWithLabel) {
-                val descriptor = context.trace.get(BindingContext.REFERENCE_TARGET, callElement.getInstanceReference())
-                if (containingClass == descriptor) {
-                    reportError(context, resolvedCall)
-                }
-            }
-        }
-    }
+        val dispatchReceiverClass = resolvedCall.dispatchReceiver.classDescriptorForImplicitReceiver
+        val extensionReceiverClass = resolvedCall.extensionReceiver.classDescriptorForImplicitReceiver
 
-    private fun reportError(context: BasicCallResolutionContext, resolvedCall: ResolvedCall<*>) {
-        context.trace.report(
-                Errors.INSTANCE_ACCESS_BEFORE_SUPER_CALL.on(context.call.getCalleeExpression(), resolvedCall.getResultingDescriptor()))
+        val labelReferenceClass =
+                (resolvedCall.call.callElement as? KtInstanceExpressionWithLabel)?.let {
+                    instanceExpressionWithLabel ->
+                    context.trace.get(BindingContext.REFERENCE_TARGET, instanceExpressionWithLabel.instanceReference) as? ClassDescriptor
+                }
+
+        if (dispatchReceiverClass == null && extensionReceiverClass == null && labelReferenceClass == null) return
+
+        if (context.scope.parentsWithSelf.any() {
+            it is LexicalScope && it.kind == LexicalScopeKind.CONSTRUCTOR_HEADER
+                && (it.ownerDescriptor as ConstructorDescriptor).containingDeclaration in
+                    setOf(dispatchReceiverClass, extensionReceiverClass, labelReferenceClass)
+        }) {
+            context.trace.report(
+                    Errors.INSTANCE_ACCESS_BEFORE_SUPER_CALL.on(context.call.calleeExpression ?: return, resolvedCall.resultingDescriptor))
+        }
     }
 }
+
+private val Receiver?.classDescriptorForImplicitReceiver: ClassDescriptor?
+    get() = (this as? ImplicitReceiver)?.declarationDescriptor as? ClassDescriptor

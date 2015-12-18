@@ -10,6 +10,8 @@ data class Item(val name: String, val rating: Int) : Comparable<Item> {
     }
 }
 
+val STRING_CASE_INSENSITIVE_ORDER: Comparator<String> = compareBy { it: String -> it.toUpperCase() }.thenBy { it.toLowerCase() }.thenBy { it }
+
 class OrderingTest {
     val v1 = Item("wine", 9)
     val v2 = Item("beer", 10)

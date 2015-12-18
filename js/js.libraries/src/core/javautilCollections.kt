@@ -4,6 +4,7 @@ import java.lang.*
 import java.util.*
 
 public object Collections {
+    @Deprecated("Use collection.maxWith(comparator) instead.", ReplaceWith("col.maxWith(comp)"))
     public fun <T> max(col: Collection<T>, comp: Comparator<in T>): T = java.util.max(col, comp)
 
     @Deprecated("Use list.sort() instead.", ReplaceWith("list.sort()"))

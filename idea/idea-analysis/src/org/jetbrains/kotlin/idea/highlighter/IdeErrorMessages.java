@@ -43,7 +43,7 @@ import static org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.CONFLICTING
  * @see DefaultErrorMessages
  */
 public class IdeErrorMessages {
-    private static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap();
+    private static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap("IDE");
 
     @NotNull
     public static String render(@NotNull Diagnostic diagnostic) {

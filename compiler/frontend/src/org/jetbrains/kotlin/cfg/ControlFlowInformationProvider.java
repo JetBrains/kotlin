@@ -611,9 +611,10 @@ public class ControlFlowInformationProvider {
                                         assert descriptor instanceof FunctionDescriptor : owner.getText();
                                         FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
                                         String functionName = functionDescriptor.getName().asString();
+                                        KtFunction function = (KtFunction) owner;
                                         if (isMain
-                                            || ModalityKt.isOverridable(functionDescriptor)
-                                            || !functionDescriptor.getOverriddenDescriptors().isEmpty()
+                                            || ModalityKt.isOverridableOrOverrides(functionDescriptor)
+                                            || function.hasModifier(KtTokens.OVERRIDE_KEYWORD)
                                             || "getValue".equals(functionName) || "setValue".equals(functionName)
                                             || "propertyDelegated".equals(functionName)
                                                 ) {

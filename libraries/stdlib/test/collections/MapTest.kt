@@ -184,9 +184,17 @@ class MapTest {
     @test fun createWithSelectorForKeyAndValue() {
         val map = listOf("a", "bb", "ccc").toMap({ it.length }, { it.toUpperCase() })
         assertEquals(3, map.size)
-        assertEquals("A", map.get(1))
-        assertEquals("BB", map.get(2))
-        assertEquals("CCC", map.get(3))
+        assertEquals("A", map[1])
+        assertEquals("BB", map[2])
+        assertEquals("CCC", map[3])
+    }
+
+    @test fun createWithPairSelector() {
+        val map = listOf("a", "bb", "ccc").toMap { it.length to it.toUpperCase() }
+        assertEquals(3, map.size)
+        assertEquals("A", map[1])
+        assertEquals("BB", map[2])
+        assertEquals("CCC", map[3])
     }
 
     @test fun createUsingTo() {

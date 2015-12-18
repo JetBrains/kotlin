@@ -30,6 +30,20 @@ public final class DiagnosticFactoryToRendererMap {
     private final Map<DiagnosticFactory<?>, DiagnosticRenderer<?>> map = new HashMap<DiagnosticFactory<?>, DiagnosticRenderer<?>>();
     private boolean immutable = false;
 
+    // TO catch EA-75872
+    private final String name;
+    public DiagnosticFactoryToRendererMap(String name) {
+        this.name = name;
+    }
+    public DiagnosticFactoryToRendererMap() {
+        this("<unnamed>");
+    }
+    @Override
+    public String toString() {
+        return "DiagnosticFactory#" + name;
+    }
+    //
+
     private void checkMutability() {
         if (immutable) {
             throw new IllegalStateException("factory to renderer map is already immutable");

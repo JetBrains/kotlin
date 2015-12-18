@@ -1,6 +1,7 @@
 package test.collections
 
 import test.collections.behaviors.listBehavior
+import test.compare.STRING_CASE_INSENSITIVE_ORDER
 import java.util.*
 import kotlin.test.*
 import org.junit.Test as test
@@ -144,6 +145,28 @@ class ArraysTest {
         expect(3.0F, { floatArrayOf(3.0F, 2.0F).max() })
         expect(3.0, { doubleArrayOf(2.0, 3.0).max() })
         expect('b', { charArrayOf('a', 'b').max() })
+    }
+
+    @test fun minWith() {
+        assertEquals(null, arrayOf<Int>().minWith(naturalOrder()) )
+        assertEquals("a", arrayOf("a", "B").minWith(STRING_CASE_INSENSITIVE_ORDER))
+    }
+
+    @test fun minWithInPrimitiveArrays() {
+        expect(null, { intArrayOf().minWith(naturalOrder()) })
+        expect(1, { intArrayOf(1).minWith(naturalOrder()) })
+        expect(4, { intArrayOf(2, 3, 4).minWith(compareBy { it % 4 }) })
+    }
+
+    @test fun maxWith() {
+        assertEquals(null, arrayOf<Int>().maxWith(naturalOrder()) )
+        assertEquals("B", arrayOf("a", "B").maxWith(STRING_CASE_INSENSITIVE_ORDER))
+    }
+
+    @test fun maxWithInPrimitiveArrays() {
+        expect(null, { intArrayOf().maxWith(naturalOrder()) })
+        expect(1, { intArrayOf(1).maxWith(naturalOrder()) })
+        expect(-4, { intArrayOf(2, 3, -4).maxWith(compareBy { it*it }) })
     }
 
     @test fun minBy() {

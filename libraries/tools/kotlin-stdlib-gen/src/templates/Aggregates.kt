@@ -222,6 +222,36 @@ fun aggregates(): List<GenericFunction> {
         body(Maps) { "return entries.minBy(selector)" }
     }
 
+    templates add f("minWith(comparator: Comparator<in T>)") {
+        doc { f -> "Returns the first ${f.element} having the smallest value according to the provided [comparator] or `null` if there are no ${f.element.pluralize()}." }
+        returns("T?")
+        body {
+            """
+            val iterator = iterator()
+            if (!iterator.hasNext()) return null
+
+            var min = iterator.next()
+            while (iterator.hasNext()) {
+                val e = iterator.next()
+                if (comparator.compare(min, e) > 0) min = e
+            }
+            return min
+            """
+        }
+        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives) {
+            """
+            if (isEmpty()) return null
+            var min = this[0]
+            for (i in 1..lastIndex) {
+                val e = this[i]
+                if (comparator.compare(min, e) > 0) min = e
+            }
+            return min
+            """
+        }
+        body(Maps) { "return entries.minWith(comparator)" }
+    }
+
     templates add f("max()") {
         doc { f -> "Returns the largest ${f.element} or `null` if there are no ${f.element.pluralize()}." }
         returns("T?")
@@ -299,6 +329,37 @@ fun aggregates(): List<GenericFunction> {
             """
         }
         body(Maps) { "return entries.maxBy(selector)" }
+    }
+
+    templates add f("maxWith(comparator: Comparator<in T>)") {
+        doc { f -> "Returns the first ${f.element} having the largest value according to the provided [comparator] or `null` if there are no ${f.element.pluralize()}." }
+        returns("T?")
+        body {
+            """
+            val iterator = iterator()
+            if (!iterator.hasNext()) return null
+
+            var max = iterator.next()
+            while (iterator.hasNext()) {
+                val e = iterator.next()
+                if (comparator.compare(max, e) < 0) max = e
+            }
+            return max
+            """
+        }
+        body(CharSequences, ArraysOfObjects, ArraysOfPrimitives) {
+            """
+            if (isEmpty()) return null
+
+            var max = this[0]
+            for (i in 1..lastIndex) {
+                val e = this[i]
+                if (comparator.compare(max, e) < 0) max = e
+            }
+            return max
+            """
+        }
+        body(Maps) { "return entries.maxWith(comparator)" }
     }
 
     templates add f("fold(initial: R, operation: (R, T) -> R)") {

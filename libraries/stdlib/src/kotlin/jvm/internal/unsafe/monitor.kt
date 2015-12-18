@@ -20,10 +20,10 @@ import kotlin.jvm.internal.Intrinsic
 
 /** @suppress */
 @Intrinsic("kotlin.jvm.internal.unsafe.monitorEnter")
-@Deprecated("This function supports the standard library infrastructure and is not intended to be used directly from user code.")
+@Deprecated("This function supports the standard library infrastructure and is not intended to be used directly from user code.", level = DeprecationLevel.ERROR)
 public fun monitorEnter(monitor: Any): Unit = throw UnsupportedOperationException("This function can only be used privately")
 
 /** @suppress */
 @Intrinsic("kotlin.jvm.internal.unsafe.monitorExit")
-@Deprecated("This function supports the standard library infrastructure and is not intended to be used directly from user code.")
+@Deprecated("This function supports the standard library infrastructure and is not intended to be used directly from user code.", level = DeprecationLevel.ERROR)
 public fun monitorExit(monitor: Any): Unit = throw UnsupportedOperationException("This function can only be used privately")

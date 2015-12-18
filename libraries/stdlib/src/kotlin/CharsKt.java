@@ -17,6 +17,6 @@
 package kotlin;
 
 @java.lang.Deprecated
-@Deprecated(message = "Use kotlin.text.CharsKt instead")
+@Deprecated(message = "Use kotlin.text.CharsKt instead", level = DeprecationLevel.HIDDEN)
 public class CharsKt extends kotlin.text.CharsKt {
 }

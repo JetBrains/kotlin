@@ -395,7 +395,7 @@ public class DataFlowValueFactory {
 
     private static Kind propertyKind(@NotNull PropertyDescriptor propertyDescriptor, @Nullable ModuleDescriptor usageModule) {
         if (propertyDescriptor.isVar()) return MUTABLE_PROPERTY;
-        if (!isFinal(propertyDescriptor)) return PROPERTY_WITH_GETTER;
+        if (ModalityKt.isOverridable(propertyDescriptor)) return PROPERTY_WITH_GETTER;
         if (!hasDefaultGetter(propertyDescriptor)) return PROPERTY_WITH_GETTER;
         if (!invisibleFromOtherModules(propertyDescriptor)) {
             ModuleDescriptor declarationModule = DescriptorUtils.getContainingModule(propertyDescriptor);
@@ -460,20 +460,6 @@ public class DataFlowValueFactory {
         if (variableDescriptor.isVar()) return false;
         if (variableDescriptor instanceof PropertyDescriptor) {
             return propertyKind((PropertyDescriptor) variableDescriptor, usageModule) == STABLE_VALUE;
-        }
-        return true;
-    }
-
-    private static boolean isFinal(PropertyDescriptor propertyDescriptor) {
-        DeclarationDescriptor containingDeclaration = propertyDescriptor.getContainingDeclaration();
-        if (containingDeclaration instanceof ClassDescriptor) {
-            ClassDescriptor classDescriptor = (ClassDescriptor) containingDeclaration;
-            if (!ModalityKt.isFinal(classDescriptor) && ModalityKt.isOverridable(propertyDescriptor)) return false;
-        }
-        else {
-            if (ModalityKt.isOverridable(propertyDescriptor)) {
-                throw new IllegalStateException("Property outside a class must not be overridable: " + propertyDescriptor.getName());
-            }
         }
         return true;
     }

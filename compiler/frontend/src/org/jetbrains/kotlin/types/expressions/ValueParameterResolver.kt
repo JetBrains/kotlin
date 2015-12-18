@@ -36,18 +36,16 @@ public class ValueParameterResolver(
         private val constantExpressionEvaluator: ConstantExpressionEvaluator
 ) {
 
-    @JvmOverloads
     public fun resolveValueParameters(
             valueParameters: List<KtParameter>,
             valueParameterDescriptors: List<ValueParameterDescriptor>,
             declaringScope: LexicalScope,
             dataFlowInfo: DataFlowInfo,
-            trace: BindingTrace,
-            callChecker: CallChecker = CallChecker.DoNothing
+            trace: BindingTrace
     ) {
         val scopeForDefaultValue = LexicalScopeImpl(declaringScope, declaringScope.ownerDescriptor, false, null, LexicalScopeKind.DEFAULT_VALUE)
 
-        val contextForDefaultValue = ExpressionTypingContext.newContext(trace, scopeForDefaultValue, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE, callChecker)
+        val contextForDefaultValue = ExpressionTypingContext.newContext(trace, scopeForDefaultValue, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE, CallChecker.DoNothing)
 
         for ((descriptor, parameter) in valueParameterDescriptors.zip(valueParameters)) {
             ForceResolveUtil.forceResolveAllContents(descriptor.getAnnotations())

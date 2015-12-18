@@ -531,10 +531,20 @@ public inline fun <T, K> Sequence<T>.toMap(selector: (T) -> K): Map<K, T> {
  * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given sequence.
  * If any two elements would have the same key returned by [selector] the last one gets added to the map.
  */
+@Deprecated("Use toMapBy instead.", ReplaceWith("toMapBy(selector, transform)"))
 public inline fun <T, K, V> Sequence<T>.toMap(selector: (T) -> K, transform: (T) -> V): Map<K, V> {
+    return toMapBy(selector, transform)
+}
+
+/**
+ * Returns a [Map] containing key-value pairs provided by [transform] function applied to elements of the given sequence.
+ * If any of two pairs would have the same key the last one gets added to the map.
+ */
+@kotlin.jvm.JvmName("toMapOfPairs")
+public inline fun <T, K, V> Sequence<T>.toMap(transform: (T) -> Pair<K, V>): Map<K, V> {
     val result = LinkedHashMap<K, V>()
     for (element in this) {
-        result.put(selector(element), transform(element))
+        result += transform(element)
     }
     return result
 }
@@ -548,6 +558,18 @@ public inline fun <T, K> Sequence<T>.toMapBy(selector: (T) -> K): Map<K, T> {
     val result = LinkedHashMap<K, T>()
     for (element in this) {
         result.put(selector(element), element)
+    }
+    return result
+}
+
+/**
+ * Returns a [Map] containing the values provided by [transform] and indexed by [selector] functions applied to elements of the given sequence.
+ * If any two elements would have the same key returned by [selector] the last one gets added to the map.
+ */
+public inline fun <T, K, V> Sequence<T>.toMapBy(selector: (T) -> K, transform: (T) -> V): Map<K, V> {
+    val result = LinkedHashMap<K, V>()
+    for (element in this) {
+        result.put(selector(element), transform(element))
     }
     return result
 }
@@ -816,6 +838,20 @@ public inline fun <T, R : Comparable<R>> Sequence<T>.maxBy(selector: (T) -> R): 
 }
 
 /**
+ * Returns the first element having the largest value according to the provided [comparator] or `null` if there are no elements.
+ */
+public fun <T> Sequence<T>.maxWith(comparator: Comparator<in T>): T? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var max = iterator.next()
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        if (comparator.compare(max, e) < 0) max = e
+    }
+    return max
+}
+
+/**
  * Returns the smallest element or `null` if there are no elements.
  */
 public fun <T : Comparable<T>> Sequence<T>.min(): T? {
@@ -846,6 +882,20 @@ public inline fun <T, R : Comparable<R>> Sequence<T>.minBy(selector: (T) -> R): 
         }
     }
     return minElem
+}
+
+/**
+ * Returns the first element having the smallest value according to the provided [comparator] or `null` if there are no elements.
+ */
+public fun <T> Sequence<T>.minWith(comparator: Comparator<in T>): T? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var min = iterator.next()
+    while (iterator.hasNext()) {
+        val e = iterator.next()
+        if (comparator.compare(min, e) > 0) min = e
+    }
+    return min
 }
 
 /**

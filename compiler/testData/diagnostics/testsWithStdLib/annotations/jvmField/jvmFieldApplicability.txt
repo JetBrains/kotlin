@@ -54,6 +54,8 @@ public interface I {
 }
 
 public interface K {
+    public abstract val i: kotlin.Int
+    public abstract val j: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -65,6 +67,24 @@ public interface K {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
+}
+
+public final class KK : K {
+    public constructor KK()
+    @kotlin.jvm.JvmField() public open override /*1*/ val i: kotlin.Int = 0
+    @kotlin.jvm.JvmField() public final override /*1*/ val j: kotlin.Int = 0
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class KKK : K {
+    public constructor KKK()
+    @kotlin.jvm.JvmField() public open override /*1*/ val i: kotlin.Int = 0
+    @kotlin.jvm.JvmField() public final override /*1*/ val j: kotlin.Int = 0
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public object O {

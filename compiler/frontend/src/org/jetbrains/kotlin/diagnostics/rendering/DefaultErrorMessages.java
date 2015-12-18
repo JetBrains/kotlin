@@ -55,7 +55,7 @@ public class DefaultErrorMessages {
         DiagnosticFactoryToRendererMap getMap();
     }
 
-    private static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap();
+    private static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap("Default");
     private static final MappedExtensionProvider<Extension, List<DiagnosticFactoryToRendererMap>> RENDERER_MAPS = MappedExtensionProvider.create(
             Extension.EP_NAME,
             new Function1<List<? extends Extension>, List<DiagnosticFactoryToRendererMap>>() {
@@ -79,7 +79,8 @@ public class DefaultErrorMessages {
                 return renderer.render(diagnostic);
             }
         }
-        throw new IllegalArgumentException("Don't know how to render diagnostic of type " + diagnostic.getFactory().getName());
+        throw new IllegalArgumentException("Don't know how to render diagnostic of type " + diagnostic.getFactory().getName() +
+                                           " with the following renderer maps: " + RENDERER_MAPS.get());
     }
 
     @TestOnly
@@ -210,6 +211,7 @@ public class DefaultErrorMessages {
 
         MAP.put(GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, "Getter visibility must be the same as property visibility");
         MAP.put(SETTER_VISIBILITY_DIFFERS_FROM_LATEINIT_VISIBILITY, "Setter visibility must be the same as lateinit property visibility");
+        MAP.put(SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY, "Setter visibility must be the same or less permissive than property visibility");
         MAP.put(PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY, "Private setters are not allowed for abstract properties");
         MAP.put(PRIVATE_SETTER_FOR_OPEN_PROPERTY, "Private setters are deprecated for open properties");
         MAP.put(BACKING_FIELD_IN_INTERFACE, "Property in an interface cannot have a backing field");

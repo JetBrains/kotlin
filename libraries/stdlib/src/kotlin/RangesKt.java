@@ -17,6 +17,6 @@
 package kotlin;
 
 @java.lang.Deprecated
-@Deprecated(message = "Use kotlin.ranges.RangesKt instead")
+@Deprecated(message = "Use kotlin.ranges.RangesKt instead", level = DeprecationLevel.HIDDEN)
 public class RangesKt extends kotlin.ranges.RangesKt {
 }

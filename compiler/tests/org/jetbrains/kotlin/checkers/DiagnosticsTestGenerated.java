@@ -595,6 +595,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             doTest(fileName);
         }
 
+        @TestMetadata("SetterVisibility.kt")
+        public void testSetterVisibility() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/SetterVisibility.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("ShiftFunctionTypes.kt")
         public void testShiftFunctionTypes() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/ShiftFunctionTypes.kt");
@@ -14825,9 +14831,27 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("lambdaAsArgument.kt")
+                public void testLambdaAsArgument() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/headerCallChecker/lambdaAsArgument.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("memberFunAccess.kt")
                 public void testMemberFunAccess() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/headerCallChecker/memberFunAccess.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("objectLiteralAsArgument.kt")
+                public void testObjectLiteralAsArgument() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/headerCallChecker/objectLiteralAsArgument.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("objectLiteralAsDefaultValueParameter.kt")
+                public void testObjectLiteralAsDefaultValueParameter() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/headerCallChecker/objectLiteralAsDefaultValueParameter.kt");
                     doTest(fileName);
                 }
 
@@ -14864,6 +14888,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("superPropertyAccess.kt")
                 public void testSuperPropertyAccess() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/headerCallChecker/superPropertyAccess.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("thisAsExtensionReceiver.kt")
+                public void testThisAsExtensionReceiver() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/secondaryConstructors/headerCallChecker/thisAsExtensionReceiver.kt");
                     doTest(fileName);
                 }
 
