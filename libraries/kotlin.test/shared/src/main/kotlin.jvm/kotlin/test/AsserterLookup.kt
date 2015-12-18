@@ -23,8 +23,7 @@ internal fun lookup(): Asserter {
 
 private fun initContributors() {
     contributors.clear()
-    @Suppress("DEPRECATION")
-    val loader = ServiceLoader.load(AsserterContributor::class.javaClass)
+    val loader = ServiceLoader.load(AsserterContributor::class.java)
 
     for (contributor in loader) {
         if (contributor != null) {
