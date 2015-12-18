@@ -3,7 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>kotlin.test</artifactId>
+        <artifactId>kotlin.test.parent</artifactId>
         <groupId>org.jetbrains.kotlin</groupId>
         <version>0.1-SNAPSHOT</version>
     </parent>
