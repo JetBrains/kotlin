@@ -19,10 +19,8 @@ package org.jetbrains.kotlin.load.kotlin
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.load.java.descriptors.getImplClassNameForDeserialized
-import org.jetbrains.kotlin.load.java.descriptors.getImplClassNameForProto
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
-
 
 class KotlinJvmBinaryPackageSourceElement(
         private val jPackage: JavaPackage,

@@ -16,17 +16,14 @@
 
 package org.jetbrains.kotlin.fileClasses
 
-import com.google.protobuf.MessageLite
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.getImplClassNameForDeserialized
-import org.jetbrains.kotlin.load.java.descriptors.getImplClassNameForProto
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 
 public object JvmFileClassUtil {
@@ -69,10 +66,6 @@ public object JvmFileClassUtil {
     @JvmStatic
     public fun getImplClassName(callable: DeserializedCallableMemberDescriptor): Name? =
             callable.getImplClassNameForDeserialized()
-
-    @JvmStatic
-    public fun getImplClassName(proto: MessageLite, nameResolver: NameResolver): Name? =
-            getImplClassNameForProto(proto, nameResolver)
 
     @JvmStatic
     public fun getHiddenPartFqName(file: KtFile, jvmFileClassAnnotations: ParsedJmvFileClassAnnotations): FqName =

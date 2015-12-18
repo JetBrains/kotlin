@@ -40,21 +40,17 @@ public abstract class DeserializedMemberScope protected constructor(
 
     private val functionProtos =
             c.storageManager.createLazyValue {
-                groupByKey(filteredFunctionProtos(functionList), { it.name }) { it.receiverType(c.typeTable) != null }
+                groupByKey(functionList, { it.name }) { it.receiverType(c.typeTable) != null }
             }
     private val propertyProtos =
             c.storageManager.createLazyValue {
-                groupByKey(filteredPropertyProtos(propertyList), { it.name }) { it.receiverType(c.typeTable) != null }
+                groupByKey(propertyList, { it.name }) { it.receiverType(c.typeTable) != null }
             }
 
     private val functions =
             c.storageManager.createMemoizedFunction<Name, Collection<FunctionDescriptor>> { computeFunctions(it) }
     private val properties =
             c.storageManager.createMemoizedFunction<Name, Collection<PropertyDescriptor>> { computeProperties(it) }
-
-    protected open fun filteredFunctionProtos(protos: Collection<ProtoBuf.Function>): Collection<ProtoBuf.Function> = protos
-
-    protected open fun filteredPropertyProtos(protos: Collection<ProtoBuf.Property>): Collection<ProtoBuf.Property> = protos
 
     private fun <M : MessageLite> groupByKey(
             protos: Collection<M>, getNameIndex: (M) -> Int, isExtension: (M) -> Boolean
