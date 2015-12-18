@@ -32,5 +32,7 @@
     <orderEntry type="module" module-name="annotation-collector" scope="TEST" />
     <orderEntry type="module" module-name="container" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="kotlin-test" level="project" />
+    <orderEntry type="module" module-name="build-common" scope="TEST" />
+    <orderEntry type="module" module-name="plugins-tests" scope="TEST" />
   </component>
 </module>
