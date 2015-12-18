@@ -8,7 +8,7 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>kotlin.test</artifactId>
+    <artifactId>kotlin.test.parent</artifactId>
     <packaging>pom</packaging>
 
     <modules>
@@ -16,16 +16,6 @@
         <module>junit</module>
         <!--<module>js</module>--> <!-- TODO enable back when js build fixed -->
     </modules>
-
-    <developers>
-        <developer>
-            <name>Sergey Mashkov</name>
-            <organization>JetBrains s.r.o.</organization>
-            <roles>
-                <role>developer</role>
-            </roles>
-        </developer>
-    </developers>
 
     <properties>
     </properties>
