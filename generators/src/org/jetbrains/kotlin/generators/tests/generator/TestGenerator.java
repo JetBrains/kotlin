@@ -40,9 +40,9 @@ import static kotlin.CollectionsKt.single;
 
 public class TestGenerator {
 
-    public static enum TargetBackend {
+    public enum TargetBackend {
         ANY,
-        JVM,
+        @SuppressWarnings("unused") JVM,
         JS
     }
 

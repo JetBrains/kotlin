@@ -19,7 +19,10 @@ package org.jetbrains.kotlin.generators.tests
 import junit.framework.TestCase
 import org.jetbrains.kotlin.AbstractDataFlowValueRenderingTest
 import org.jetbrains.kotlin.addImport.AbstractAddImportTest
-import org.jetbrains.kotlin.android.*
+import org.jetbrains.kotlin.android.AbstractAndroidCompletionTest
+import org.jetbrains.kotlin.android.AbstractAndroidFindUsagesTest
+import org.jetbrains.kotlin.android.AbstractAndroidGotoTest
+import org.jetbrains.kotlin.android.AbstractAndroidRenameTest
 import org.jetbrains.kotlin.annotation.AbstractAnnotationProcessorBoxTest
 import org.jetbrains.kotlin.asJava.AbstractCompilerLightClassTest
 import org.jetbrains.kotlin.cfg.AbstractControlFlowTest
@@ -38,7 +41,6 @@ import org.jetbrains.kotlin.formatter.AbstractFormatterTest
 import org.jetbrains.kotlin.formatter.AbstractTypingIndentationTestBase
 import org.jetbrains.kotlin.generators.tests.generator.*
 import org.jetbrains.kotlin.generators.tests.generator.TestGenerator.TargetBackend
-import org.jetbrains.kotlin.generators.tests.reservedWords.generateTestDataForReservedWords
 import org.jetbrains.kotlin.idea.AbstractExpressionSelectionTest
 import org.jetbrains.kotlin.idea.AbstractSmartSelectionTest
 import org.jetbrains.kotlin.idea.actions.AbstractGotoTestOrCodeActionTest
@@ -96,6 +98,7 @@ import org.jetbrains.kotlin.idea.refactoring.move.AbstractMoveTest
 import org.jetbrains.kotlin.idea.refactoring.pullUp.AbstractPullUpTest
 import org.jetbrains.kotlin.idea.refactoring.pushDown.AbstractPushDownTest
 import org.jetbrains.kotlin.idea.refactoring.rename.AbstractRenameTest
+import org.jetbrains.kotlin.idea.refactoring.safeDelete.AbstractSafeDeleteTest
 import org.jetbrains.kotlin.idea.resolve.*
 import org.jetbrains.kotlin.idea.structureView.AbstractKotlinFileStructureTest
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiFileHighlightingTest
@@ -127,7 +130,6 @@ import org.jetbrains.kotlin.resolve.calls.AbstractResolvedCallsTest
 import org.jetbrains.kotlin.resolve.calls.AbstractResolvedConstructorDelegationCallsTests
 import org.jetbrains.kotlin.resolve.constants.evaluate.AbstractCompileTimeConstantEvaluatorTest
 import org.jetbrains.kotlin.resolve.constraintSystem.AbstractConstraintSystemTest
-import org.jetbrains.kotlin.idea.refactoring.safeDelete.AbstractSafeDeleteTest
 import org.jetbrains.kotlin.serialization.AbstractLocalClassProtoTest
 import org.jetbrains.kotlin.shortenRefs.AbstractShortenRefsTest
 import org.jetbrains.kotlin.types.AbstractTypeBindingTest
@@ -787,7 +789,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractIdeCompiledLightClassTest> {
-            model("asJava/lightClasses", pattern = """^([^\.]+)\.kt$""", withTestRootMethod = true)
+            model("asJava/lightClasses", pattern = """^([^\.]+)\.kt$""")
         }
     }
 
@@ -1097,8 +1099,7 @@ private class TestGroup(val testsRoot: String, val testDataRoot: String) {
                 testClassName: String? = null,
                 targetBackend: TargetBackend = TargetBackend.ANY,
                 excludeDirs: List<String> = listOf(),
-                filenameStartsLowerCase: Boolean? = null,
-                withTestRootMethod: Boolean = false
+                filenameStartsLowerCase: Boolean? = null
         ) {
             val rootFile = File(testDataRoot + "/" + relativeRootPath)
             val compiledPattern = Pattern.compile(pattern)
@@ -1111,7 +1112,7 @@ private class TestGroup(val testsRoot: String, val testDataRoot: String) {
                     else {
                         SimpleTestClassModel(rootFile, recursive, excludeParentDirs,
                                              compiledPattern, filenameStartsLowerCase, testMethod, className, 
-                                             targetBackend, excludeDirs, withTestRootMethod)
+                                             targetBackend, excludeDirs)
                     }
             )
         }
@@ -1128,5 +1129,5 @@ private fun getDefaultSuiteTestClass(baseTestClass:Class<*>): String {
     if (!baseName.startsWith("Abstract")) {
         throw IllegalArgumentException("Doesn't start with \"Abstract\": $baseName")
     }
-    return baseName.substring("Abstract".length()) + "Generated"
+    return baseName.substring("Abstract".length) + "Generated"
 }

@@ -47,10 +47,6 @@ public class IdeCompiledLightClassTestGenerated extends AbstractIdeCompiledLight
         doTest(fileName);
     }
 
-    public String getTestsRoot() {
-        return "compiler/testData/asJava/lightClasses";
-    }
-
     @TestMetadata("compiler/testData/asJava/lightClasses/delegation")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -69,10 +65,6 @@ public class IdeCompiledLightClassTestGenerated extends AbstractIdeCompiledLight
         public void testProperty() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/delegation/Property.kt");
             doTest(fileName);
-        }
-
-        public String getTestsRoot() {
-            return "compiler/testData/asJava/lightClasses/delegation";
         }
     }
 
@@ -94,10 +86,6 @@ public class IdeCompiledLightClassTestGenerated extends AbstractIdeCompiledLight
         public void testSingleJvmClassName() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/facades/SingleJvmClassName.kt");
             doTest(fileName);
-        }
-
-        public String getTestsRoot() {
-            return "compiler/testData/asJava/lightClasses/facades";
         }
     }
 
@@ -216,10 +204,6 @@ public class IdeCompiledLightClassTestGenerated extends AbstractIdeCompiledLight
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/nullabilityAnnotations/VoidReturn.kt");
             doTest(fileName);
         }
-
-        public String getTestsRoot() {
-            return "compiler/testData/asJava/lightClasses/nullabilityAnnotations";
-        }
     }
 
     @TestMetadata("compiler/testData/asJava/lightClasses/object")
@@ -234,10 +218,6 @@ public class IdeCompiledLightClassTestGenerated extends AbstractIdeCompiledLight
         public void testSimpleObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/object/SimpleObject.kt");
             doTest(fileName);
-        }
-
-        public String getTestsRoot() {
-            return "compiler/testData/asJava/lightClasses/object";
         }
     }
 
@@ -259,10 +239,6 @@ public class IdeCompiledLightClassTestGenerated extends AbstractIdeCompiledLight
         public void testSimple() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/asJava/lightClasses/publicField/Simple.kt");
             doTest(fileName);
-        }
-
-        public String getTestsRoot() {
-            return "compiler/testData/asJava/lightClasses/publicField";
         }
     }
 }

@@ -80,7 +80,9 @@ public class SimpleTestMethodModel implements TestMethodModel {
 
     @Override
     public String getDataString() {
-        return KotlinTestUtils.getFilePath(new File(FileUtil.getRelativePath(rootDir, file)));
+        String path = FileUtil.getRelativePath(rootDir, file);
+        assert path != null;
+        return KotlinTestUtils.getFilePath(new File(path));
     }
 
     private boolean isIgnored() {
