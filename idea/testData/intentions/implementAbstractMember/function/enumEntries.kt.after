@@ -1,0 +1,19 @@
+// WITH_RUNTIME
+//DISABLE-ERRORS
+enum class E {
+    A {
+        override fun foo(x: Int): Int {
+            throw UnsupportedOperationException()
+        }
+    }, B {
+        override fun foo(x: Int): Int {
+            throw UnsupportedOperationException()
+        }
+    }, C {
+        override fun foo(x: Int): Int {
+            throw UnsupportedOperationException()
+        }
+    };
+
+    abstract fun <caret>foo(x: Int): Int
+}

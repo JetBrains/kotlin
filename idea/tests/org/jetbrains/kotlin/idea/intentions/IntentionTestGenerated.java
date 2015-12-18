@@ -5230,6 +5230,189 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/implementAbstractMember")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ImplementAbstractMember extends AbstractIntentionTest {
+        public void testAllFilesPresentInImplementAbstractMember() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/implementAbstractMember"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("idea/testData/intentions/implementAbstractMember/function")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Function extends AbstractIntentionTest {
+            public void testAllFilesPresentInFunction() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/implementAbstractMember/function"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+            }
+
+            @TestMetadata("enumClass.kt")
+            public void testEnumClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAbstractMember/function/enumClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("enumClassWithSemicolon.kt")
+            public void testEnumClassWithSemicolon() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAbstractMember/function/enumClassWithSemicolon.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("enumClassWithSemicolonAndMembers.kt")
+            public void testEnumClassWithSemicolonAndMembers() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAbstractMember/function/enumClassWithSemicolonAndMembers.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("enumEntries.kt")
+            public void testEnumEntries() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAbstractMember/function/enumEntries.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("enumEntriesWithArgs.kt")
+            public void testEnumEntriesWithArgs() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAbstractMember/function/enumEntriesWithArgs.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("implementAll.kt")
+            public void testImplementAll() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAbstractMember/function/implementAll.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inFinalClass.kt")
+            public void testInFinalClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAbstractMember/function/inFinalClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inObject.kt")
+            public void testInObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAbstractMember/function/inObject.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noDirectOverridesNeeded.kt")
+            public void testNoDirectOverridesNeeded() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAbstractMember/function/noDirectOverridesNeeded.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noInheritors.kt")
+            public void testNoInheritors() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAbstractMember/function/noInheritors.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("notAbstractInClass.kt")
+            public void testNotAbstractInClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAbstractMember/function/notAbstractInClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("notAbstractInInterface.kt")
+            public void testNotAbstractInInterface() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAbstractMember/function/notAbstractInInterface.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("notAbstractNoBodyInClass.kt")
+            public void testNotAbstractNoBodyInClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAbstractMember/function/notAbstractNoBodyInClass.kt");
+                doTest(fileName);
+            }
+        }
+
+        @TestMetadata("idea/testData/intentions/implementAbstractMember/property")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Property extends AbstractIntentionTest {
+            public void testAllFilesPresentInProperty() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/implementAbstractMember/property"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+            }
+
+            @TestMetadata("enumClass.kt")
+            public void testEnumClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAbstractMember/property/enumClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("enumClassWithSemicolon.kt")
+            public void testEnumClassWithSemicolon() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAbstractMember/property/enumClassWithSemicolon.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("enumClassWithSemicolonAndMembers.kt")
+            public void testEnumClassWithSemicolonAndMembers() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAbstractMember/property/enumClassWithSemicolonAndMembers.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("enumEntries.kt")
+            public void testEnumEntries() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAbstractMember/property/enumEntries.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("enumEntriesWithArgs.kt")
+            public void testEnumEntriesWithArgs() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAbstractMember/property/enumEntriesWithArgs.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("implementAll.kt")
+            public void testImplementAll() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAbstractMember/property/implementAll.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inFinalClass.kt")
+            public void testInFinalClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAbstractMember/property/inFinalClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inObject.kt")
+            public void testInObject() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAbstractMember/property/inObject.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noDirectOverridesNeeded.kt")
+            public void testNoDirectOverridesNeeded() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAbstractMember/property/noDirectOverridesNeeded.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("noInheritors.kt")
+            public void testNoInheritors() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAbstractMember/property/noInheritors.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("notAbstractInClass.kt")
+            public void testNotAbstractInClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAbstractMember/property/notAbstractInClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("notAbstractNoBodyInClass.kt")
+            public void testNotAbstractNoBodyInClass() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAbstractMember/property/notAbstractNoBodyInClass.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("notAbstractWithGetterInInterface.kt")
+            public void testNotAbstractWithGetterInInterface() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAbstractMember/property/notAbstractWithGetterInInterface.kt");
+                doTest(fileName);
+            }
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/importAllMembers")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

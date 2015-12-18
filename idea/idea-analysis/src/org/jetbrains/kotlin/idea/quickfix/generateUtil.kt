@@ -27,7 +27,9 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.utils.ifEmpty
@@ -156,6 +158,22 @@ public fun <T : KtDeclaration> insertMembersAfter(
 
         var afterAnchor = anchor ?: findInsertAfterAnchor(editor, body) ?: return@runWriteAction emptyList()
         val insertedMembers = members.mapTo(SmartList<T>()) {
+            if (classOrObject is KtClass && classOrObject.isEnum()) {
+                val enumEntries = classOrObject.declarations.filterIsInstance<KtEnumEntry>()
+                val bound = (enumEntries.lastOrNull() ?: classOrObject.allChildren.firstOrNull { it.node.elementType == KtTokens.SEMICOLON })
+                if (it !is KtEnumEntry) {
+                    if (bound != null && afterAnchor.startOffset <= bound.startOffset) {
+                        afterAnchor = bound
+                    }
+                }
+                else if (bound == null && body.declarations.isNotEmpty()) {
+                    afterAnchor = body.lBrace!!
+                }
+                else if (bound != null && afterAnchor.startOffset >= bound.startOffset) {
+                    afterAnchor = bound.prevSibling!!
+                }
+            }
+
             @Suppress("UNCHECKED_CAST")
             (body.addAfter(it, afterAnchor) as T).apply { afterAnchor = this }
         }

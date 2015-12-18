@@ -91,7 +91,7 @@ public abstract class OverrideImplementMembersHandler : LanguageCodeInsightActio
     override fun startInWriteAction(): Boolean = false
 
     companion object {
-        public fun generateMembers(editor: Editor, classOrObject: KtClassOrObject, selectedElements: Collection<OverrideMemberChooserObject>) {
+        public fun generateMembers(editor: Editor?, classOrObject: KtClassOrObject, selectedElements: Collection<OverrideMemberChooserObject>) {
             val project = classOrObject.project
             insertMembersAfter(editor, classOrObject, selectedElements.map { it.generateMember(project) })
         }

@@ -22,7 +22,6 @@ import com.intellij.navigation.ItemPresentationProviders
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.CheckUtil
-import com.intellij.psi.impl.source.codeStyle.CodeEditUtil
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -63,8 +62,6 @@ abstract public class KtClassOrObject :
     public fun getAnonymousInitializers(): List<KtAnonymousInitializer> = getBody()?.anonymousInitializers.orEmpty()
 
     public fun getBody(): KtClassBody? = getStubOrPsiChild(KtStubElementTypes.CLASS_BODY)
-
-    public fun getOrCreateBody(): KtClassBody = getBody() ?: add(KtPsiFactory(this).createEmptyClassBody()) as KtClassBody
 
     public fun addDeclaration(declaration: KtDeclaration): KtDeclaration {
         val body = getOrCreateBody()
@@ -116,4 +113,12 @@ abstract public class KtClassOrObject :
             file.delete();
         }
     }
+}
+
+public fun KtClassOrObject.getOrCreateBody(): KtClassBody {
+    getBody()?.let { return it }
+
+    val newBody = KtPsiFactory(this).createEmptyClassBody()
+    if (this is KtEnumEntry) return addAfter(newBody, initializerList ?: nameIdentifier) as KtClassBody
+    return add(newBody) as KtClassBody
 }
