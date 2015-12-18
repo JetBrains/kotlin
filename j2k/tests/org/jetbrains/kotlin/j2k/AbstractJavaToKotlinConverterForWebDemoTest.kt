@@ -28,10 +28,7 @@ import com.intellij.openapi.fileTypes.ContentBasedFileSubstitutor
 import com.intellij.openapi.fileTypes.FileTypeExtensionPoint
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.psi.FileContextProvider
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiElementFinder
-import com.intellij.psi.PsiModifierListOwner
+import com.intellij.psi.*
 import com.intellij.psi.augment.PsiAugmentProvider
 import com.intellij.psi.compiled.ClassFileDecompilers
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
