@@ -245,8 +245,8 @@ public abstract class AbstractIncrementalJpsTest(
             return modifications
         }
 
-        val haveFilesWithoutNumbers = testDataDir.listFiles { it.getName().matches(".+\\.($COMMANDS_AS_REGEX_PART)$".toRegex()) }?.isNotEmpty() ?: false
-        val haveFilesWithNumbers = testDataDir.listFiles { it.getName().matches(".+\\.($COMMANDS_AS_REGEX_PART)\\.\\d+$".toRegex()) }?.isNotEmpty() ?: false
+        val haveFilesWithoutNumbers = testDataDir.listFiles { it -> it.getName().matches(".+\\.($COMMANDS_AS_REGEX_PART)$".toRegex()) }?.isNotEmpty() ?: false
+        val haveFilesWithNumbers = testDataDir.listFiles { it -> it.getName().matches(".+\\.($COMMANDS_AS_REGEX_PART)\\.\\d+$".toRegex()) }?.isNotEmpty() ?: false
 
         if (haveFilesWithoutNumbers && haveFilesWithNumbers) {
             fail("Bad test data format: files ending with both unnumbered and numbered $COMMANDS_AS_MESSAGE_PART were found")
