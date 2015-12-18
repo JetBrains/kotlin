@@ -13,21 +13,5 @@
     <orderEntry type="library" scope="PROVIDED" name="android-plugin" level="project" />
     <orderEntry type="module" module-name="android-extensions-compiler" />
     <orderEntry type="module" module-name="util" scope="PROVIDED" />
-    <orderEntry type="library" scope="TEST" name="jps-test" level="project" />
-    <orderEntry type="library" scope="TEST" name="idea-full" level="project" />
-    <orderEntry type="module" module-name="compiler-tests" scope="TEST" />
-    <orderEntry type="module-library" scope="TEST">
-      <library name="idea-gradle-plugin">
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/../../../ideaSDK/plugins/gradle/lib" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="file://$MODULE_DIR$/../../../ideaSDK/plugins/gradle/lib" />
-        </SOURCES>
-        <jarDirectory url="file://$MODULE_DIR$/../../../ideaSDK/plugins/gradle/lib" recursive="false" />
-        <jarDirectory url="file://$MODULE_DIR$/../../../ideaSDK/plugins/gradle/lib" recursive="false" type="SOURCES" />
-      </library>
-    </orderEntry>
   </component>
 </module>
