@@ -8272,6 +8272,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("noExplicitReceiver.kt")
+        public void testNoExplicitReceiver() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/toInfixCall/noExplicitReceiver.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("notInfix.kt")
         public void testNotInfix() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/toInfixCall/notInfix.kt");

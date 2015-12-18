@@ -20,6 +20,7 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
@@ -28,7 +29,7 @@ public class ToInfixCallIntention : SelfTargetingIntention<KtCallExpression>(KtC
         val calleeExpr = element.calleeExpression as? KtNameReferenceExpression ?: return false
         if (!calleeExpr.textRange.containsOffset(caretOffset)) return false
 
-        val dotQualified = element.parent as? KtDotQualifiedExpression ?: return false
+        val dotQualified = element.getQualifiedExpressionForSelector() ?: return false
 
         if (element.typeArgumentList != null) return false
 
