@@ -80,8 +80,12 @@ public object KotlinModuleMappingIndex : FileBasedIndexExtension<String, Package
         return object : DataIndexer<String, PackageParts, FileContent> {
             override fun map(inputData: FileContent): Map<String, PackageParts> {
                 val content = inputData.getContent()
-                val moduleMapping = ModuleMapping.create(content)
-                return moduleMapping.packageFqName2Parts
+                try {
+                    val moduleMapping = ModuleMapping.create(content)
+                    return moduleMapping.packageFqName2Parts
+                } catch(e : Exception) {
+                    throw RuntimeException("Error on indexing ${inputData.file.path}", e)
+                }
             }
         }
     }
