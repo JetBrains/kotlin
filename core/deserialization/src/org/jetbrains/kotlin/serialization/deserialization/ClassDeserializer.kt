@@ -56,7 +56,7 @@ public class ClassDeserializer(private val components: DeserializationComponents
                 if (!fragment.hasTopLevelClass(classId.shortClassName)) return null
             }
 
-            components.createContext(fragment, nameResolver, TypeTable(classProto.typeTable))
+            components.createContext(fragment, nameResolver, TypeTable(classProto.typeTable), packagePartSource = null)
         }
 
         return DeserializedClassDescriptor(outerContext, classProto, nameResolver, sourceElement)

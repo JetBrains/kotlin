@@ -34,7 +34,13 @@ interface DeserializedCallableMemberDescriptor : CallableMemberDescriptor {
     val nameResolver: NameResolver
 
     val typeTable: TypeTable
+
+    // Information about the origin of this top-level callable or null, if it's not top-level or there's no such information.
+    // On JVM, this is JvmPackagePartSource which contains the internal name of the package part class
+    val packagePartSource: PackagePartSource?
 }
+
+interface PackagePartSource
 
 class DeserializedSimpleFunctionDescriptor(
         containingDeclaration: DeclarationDescriptor,
@@ -44,7 +50,8 @@ class DeserializedSimpleFunctionDescriptor(
         kind: CallableMemberDescriptor.Kind,
         override val proto: ProtoBuf.Function,
         override val nameResolver: NameResolver,
-        override val typeTable: TypeTable
+        override val typeTable: TypeTable,
+        override val packagePartSource: PackagePartSource?
 ) : DeserializedCallableMemberDescriptor,
         SimpleFunctionDescriptorImpl(containingDeclaration, original, annotations, name, kind, SourceElement.NO_SOURCE) {
 
@@ -56,7 +63,8 @@ class DeserializedSimpleFunctionDescriptor(
             preserveSource: Boolean
     ): FunctionDescriptorImpl {
         return DeserializedSimpleFunctionDescriptor(
-                newOwner, original as SimpleFunctionDescriptor?, annotations, newName ?: name, kind, proto, nameResolver, typeTable
+                newOwner, original as SimpleFunctionDescriptor?, annotations, newName ?: name, kind,
+                proto, nameResolver, typeTable, packagePartSource
         )
     }
 }
@@ -74,7 +82,8 @@ class DeserializedPropertyDescriptor(
         isConst: Boolean,
         override val proto: ProtoBuf.Property,
         override val nameResolver: NameResolver,
-        override val typeTable: TypeTable
+        override val typeTable: TypeTable,
+        override val packagePartSource: PackagePartSource?
 ) : DeserializedCallableMemberDescriptor,
         PropertyDescriptorImpl(containingDeclaration, original, annotations,
                                modality, visibility, isVar, name, kind, SourceElement.NO_SOURCE, isLateInit, isConst) {
@@ -88,7 +97,7 @@ class DeserializedPropertyDescriptor(
     ): PropertyDescriptorImpl {
         return DeserializedPropertyDescriptor(
                 newOwner, original, annotations, newModality, newVisibility, isVar, name, kind, isLateInit, isConst,
-                proto, nameResolver, typeTable
+                proto, nameResolver, typeTable, packagePartSource
         )
     }
 }
@@ -101,7 +110,8 @@ class DeserializedConstructorDescriptor(
         kind: CallableMemberDescriptor.Kind,
         override val proto: ProtoBuf.Constructor,
         override val nameResolver: NameResolver,
-        override val typeTable: TypeTable
+        override val typeTable: TypeTable,
+        override val packagePartSource: PackagePartSource?
 ) : DeserializedCallableMemberDescriptor,
         ConstructorDescriptorImpl(containingDeclaration, original, annotations, isPrimary, kind, SourceElement.NO_SOURCE) {
 
@@ -114,7 +124,7 @@ class DeserializedConstructorDescriptor(
     ): DeserializedConstructorDescriptor {
         return DeserializedConstructorDescriptor(
                 newOwner as ClassDescriptor, original as ConstructorDescriptor?, annotations, isPrimary, kind,
-                proto, nameResolver, typeTable
+                proto, nameResolver, typeTable, packagePartSource
         )
     }
 

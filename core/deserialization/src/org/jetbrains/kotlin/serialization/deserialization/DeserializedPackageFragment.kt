@@ -50,7 +50,8 @@ public abstract class DeserializedPackageFragment(
     internal val deserializedMemberScope by storageManager.createLazyValue {
         val packageStream = loadResourceSure(serializedResourcePaths.getPackageFilePath(fqName))
         val packageProto = ProtoBuf.Package.parseFrom(packageStream, serializedResourcePaths.extensionRegistry)
-        DeserializedPackageMemberScope(this, packageProto, nameResolver, components, classNames = { loadClassNames(packageProto) })
+        DeserializedPackageMemberScope(this, packageProto, nameResolver, packagePartSource = null, components = components,
+                                       classNames = { loadClassNames(packageProto) })
     }
 
     override fun getMemberScope() = deserializedMemberScope

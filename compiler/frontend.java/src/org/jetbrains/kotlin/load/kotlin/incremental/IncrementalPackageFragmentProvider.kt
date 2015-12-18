@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
+import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
@@ -112,7 +113,9 @@ public class IncrementalPackageFragmentProvider(
                             allParts.filterNot { it in obsoletePackageParts }
                         } ?: emptyList<String>()
 
-                val scopes = actualPackagePartFiles.mapNotNull { incrementalCache.getPackagePartData(it) }.map { createPackageScope(it) }
+                val scopes = actualPackagePartFiles.mapNotNull { internalName ->
+                    incrementalCache.getPackagePartData(internalName)?.let { internalName to it }
+                }.map { createPackageScope(it.first, it.second) }
 
                 if (scopes.isEmpty()) {
                     MemberScope.Empty
@@ -136,13 +139,15 @@ public class IncrementalPackageFragmentProvider(
                 val partsNames: Collection<String>
         ) : PackageFragmentDescriptorImpl(moduleDescriptor, multifileClassFqName.parent()) {
             val memberScope = storageManager.createLazyValue {
-                val partsData = partsNames.mapNotNull { incrementalCache.getPackagePartData(it) }
+                val partsData = partsNames.mapNotNull { internalName ->
+                    incrementalCache.getPackagePartData(internalName)?.let { internalName to it }
+                }
                 if (partsData.isEmpty())
                     MemberScope.Empty
                 else {
                     ChainedMemberScope(
                             "Member scope for incremental compilation: union of multifile class parts data for $multifileClassFqName",
-                            partsData.map { createPackageScope(it) }
+                            partsData.map { createPackageScope(it.first, it.second) }
                     )
                 }
             }
@@ -150,10 +155,12 @@ public class IncrementalPackageFragmentProvider(
             override fun getMemberScope(): MemberScope = memberScope()
         }
 
-        fun createPackageScope(part: JvmPackagePartProto): DeserializedPackageMemberScope {
+        fun createPackageScope(internalName: String, part: JvmPackagePartProto): DeserializedPackageMemberScope {
             val packageData = JvmProtoBufUtil.readPackageDataFrom(part.data, part.strings)
             return DeserializedPackageMemberScope(
-                    this, packageData.packageProto, packageData.nameResolver, deserializationComponents, { listOf() }
+                    this, packageData.packageProto, packageData.nameResolver,
+                    JvmPackagePartSource(JvmClassName.byInternalName(internalName)),
+                    deserializationComponents, { listOf() }
             )
         }
     }
