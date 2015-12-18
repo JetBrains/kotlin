@@ -130,6 +130,7 @@ class DeclarationsChecker(
         declaration.checkTypeReferences()
         modifiersChecker.checkModifiersForDeclaration(declaration, constructorDescriptor)
         identifierChecker.checkDeclaration(declaration, trace)
+        checkVarargParameters(declaration, constructorDescriptor)
     }
 
     private fun checkModifiersAndAnnotationsInPackageDirective(file: KtFile) {
@@ -323,11 +324,13 @@ class DeclarationsChecker(
         else if (aClass is KtEnumEntry) {
             checkEnumEntry(aClass, classDescriptor)
         }
+
         for (memberDescriptor in classDescriptor.declaredCallableMembers) {
             if (memberDescriptor.kind != CallableMemberDescriptor.Kind.DECLARATION) continue
             val member = DescriptorToSourceUtils.descriptorToDeclaration(memberDescriptor) as? KtFunction
             if (member != null && memberDescriptor is FunctionDescriptor) {
                 checkFunctionExposedType(member, memberDescriptor)
+                checkVarargParameters(member, memberDescriptor)
             }
         }
     }
@@ -650,7 +653,16 @@ class DeclarationsChecker(
                 trace.report(IMPLICIT_NOTHING_RETURN_TYPE.on(nameIdentifier ?: function))
             }
         }
+
         checkFunctionExposedType(function, functionDescriptor)
+        checkVarargParameters(function, functionDescriptor)
+    }
+
+    private fun checkVarargParameters(declaration: KtDeclaration, callableDescriptor: CallableDescriptor) {
+        val numberOfVarargParameters = callableDescriptor.valueParameters.count { it.varargElementType != null }
+        if (numberOfVarargParameters > 1) {
+            trace.report(MULTIPLE_VARARG_PARAMETERS.on(declaration))
+        }
     }
 
     private fun checkFunctionExposedType(function: KtFunction, functionDescriptor: FunctionDescriptor) {
