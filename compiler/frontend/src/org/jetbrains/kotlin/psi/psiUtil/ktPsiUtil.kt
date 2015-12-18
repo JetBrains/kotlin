@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import java.util.*
-import kotlin.test.assertTrue
 import kotlin.text.Regex
 
 // NOTE: in this file we collect only Kotlin-specific methods working with PSI and not modifying it
@@ -225,7 +224,7 @@ public fun StubBasedPsiElementBase<out KotlinClassOrObjectStub<out KtClassOrObje
         }
     }
 
-    assertTrue(this is KtClassOrObject)
+    require(this is KtClassOrObject) { "it should be ${KtClassOrObject::class} but it is a ${this.javaClass.name}" }
 
     val stub = getStub()
     if (stub != null) {

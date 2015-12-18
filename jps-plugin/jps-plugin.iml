@@ -22,5 +22,6 @@
     <orderEntry type="module" module-name="preloader" />
     <orderEntry type="module" module-name="daemon-client" />
     <orderEntry type="module" module-name="daemon-common" />
+    <orderEntry type="library" scope="TEST" name="kotlin-test" level="project" />
   </component>
 </module>
