@@ -10,6 +10,8 @@ class MapTest {
         val data = mapOf<String, Int>()
         val a = data.getOrElse("foo") { 2 }
         assertEquals(2, a)
+        val a1 = data.getOrElse("foo") { data.get("bar") } ?: 1
+        assertEquals(1, a1)
 
         val b = data.getOrElse("foo") { 3 }
         assertEquals(3, b)
@@ -54,6 +56,9 @@ class MapTest {
         val empty = hashMapOf<String, Int?>()
         val c = empty.getOrPut("") { null }
         assertEquals(null, c)
+
+        val d = empty.getOrPut("") { 1 }
+        assertEquals(null, d)  // soon will change to 1
     }
 
     @test fun sizeAndEmpty() {

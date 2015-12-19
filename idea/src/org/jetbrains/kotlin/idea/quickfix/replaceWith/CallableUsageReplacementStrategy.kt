@@ -208,7 +208,7 @@ private fun ConstructedExpressionWrapper.processValueParameterUsages(
 
         //TODO: sometimes we need to add explicit type arguments here because we don't have expected type in the new context
 
-        if (argument.expression.shouldKeepValue(usages.size())) {
+        if (argument.expression.shouldKeepValue(usages.size)) {
             introduceValuesForParameters.add(IntroduceValueForParameter(parameter, argument.expression, argument.expressionType))
         }
     }
@@ -227,7 +227,7 @@ private fun ConstructedExpressionWrapper.processTypeParameterUsages(resolvedCall
     val callElement = resolvedCall.call.callElement
     val callExpression = callElement as? KtCallExpression
     val explicitTypeArgs = callExpression?.typeArgumentList?.arguments
-    if (explicitTypeArgs != null && explicitTypeArgs.size() != typeParameters.size()) return
+    if (explicitTypeArgs != null && explicitTypeArgs.size != typeParameters.size) return
 
     for ((index, typeParameter) in typeParameters.withIndex()) {
         val parameterName = typeParameter.name

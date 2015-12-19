@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.js.inline.util
 
 import com.google.dart.compiler.backend.js.ast.*
 
-import kotlin.test.assertTrue
 import org.jetbrains.kotlin.js.inline.context.NamingContext
 import org.jetbrains.kotlin.js.inline.util.rewriters.LabelNameRefreshingVisitor
 
@@ -27,7 +26,7 @@ public fun aliasArgumentsIfNeeded(
         arguments: List<JsExpression>,
         parameters: List<JsParameter>
 ) {
-    assertTrue { arguments.size() <= parameters.size() }
+    require(arguments.size <= parameters.size) { "arguments.size (${arguments.size}) should be less or equal to parameters.size (${parameters.size})" }
 
     for ((arg, param) in arguments.zip(parameters)) {
         val paramName = param.getName()

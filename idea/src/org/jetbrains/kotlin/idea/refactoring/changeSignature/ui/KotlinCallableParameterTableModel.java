@@ -23,9 +23,7 @@ import com.intellij.refactoring.changeSignature.ParameterTableModelBase;
 import com.intellij.refactoring.changeSignature.ParameterTableModelItemBase;
 import com.intellij.util.ui.ColumnInfo;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo;
-import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar;
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.*;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtPsiFactory;
 import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
@@ -48,10 +46,17 @@ public abstract class KotlinCallableParameterTableModel extends ParameterTableMo
     @Override
     protected ParameterTableModelItemBase<KotlinParameterInfo> createRowItem(@Nullable KotlinParameterInfo parameterInfo) {
         if (parameterInfo == null) {
-            parameterInfo = new KotlinParameterInfo(methodDescriptor.getBaseDescriptor(), -1, "", null, null, null, KotlinValVar.None, null);
+            parameterInfo = new KotlinParameterInfo(methodDescriptor.getBaseDescriptor(),
+                                                    -1,
+                                                    "",
+                                                    new KotlinTypeInfo(false, null, null),
+                                                    null,
+                                                    null,
+                                                    KotlinValVar.None,
+                                                    null);
         }
         KtPsiFactory psiFactory = KtPsiFactoryKt.KtPsiFactory(project);
-        PsiCodeFragment paramTypeCodeFragment = psiFactory.createTypeCodeFragment(parameterInfo.getTypeText(), myTypeContext);
+        PsiCodeFragment paramTypeCodeFragment = psiFactory.createTypeCodeFragment(KotlinTypeInfoKt.render(parameterInfo.getCurrentTypeInfo()), myTypeContext);
         KtExpression defaultValueForCall = parameterInfo.getDefaultValueForCall();
         PsiCodeFragment defaultValueCodeFragment = psiFactory.createExpressionCodeFragment(
                 defaultValueForCall != null ? defaultValueForCall.getText() : "",

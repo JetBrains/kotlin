@@ -25,7 +25,7 @@ import com.intellij.ui.table.JBTable;
 import com.intellij.util.Function;
 import com.intellij.util.ui.AbstractTableCellEditor;
 import com.intellij.util.ui.EditableModel;
-import kotlin.CollectionsKt;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -110,7 +110,9 @@ public class KotlinParameterTablePanel extends JPanel {
     public void init(@Nullable Parameter receiver, @NotNull List<Parameter> parameters) {
         parameterInfos = CollectionsKt.mapTo(
                 parameters,
-                receiver != null ? CollectionsKt.arrayListOf(new ParameterInfo(receiver, true)) : new ArrayList<ParameterInfo>(),
+                receiver != null
+                ? CollectionsKt.arrayListOf(new ParameterInfo(receiver, true))
+                : new ArrayList<ParameterInfo>(),
                 new Function1<Parameter, ParameterInfo>() {
                     @Override
                     public ParameterInfo invoke(Parameter parameter) {
@@ -345,7 +347,7 @@ public class KotlinParameterTablePanel extends JPanel {
                 }
                 case PARAMETER_NAME_COLUMN: {
                     String name = (String) aValue;
-                    if (KotlinNameSuggester.INSTANCE$.isIdentifier(name)) {
+                    if (KotlinNameSuggester.INSTANCE.isIdentifier(name)) {
                         info.setName(name);
                     }
                     updateSignature();

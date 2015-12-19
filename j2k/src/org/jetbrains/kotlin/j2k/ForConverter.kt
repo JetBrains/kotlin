@@ -154,6 +154,10 @@ class ForConverter(
 
                 val left = condition.lOperand as? PsiReferenceExpression ?: return null
                 val right = condition.rOperand ?: return null
+                if (right.type == PsiType.DOUBLE || right.type == PsiType.FLOAT || right.type == PsiType.CHAR) {
+                    return null
+                }
+
                 if (left.resolve() == loopVar) {
                     val start = loopVar.initializer ?: return null
                     val operationType = (update as? PsiExpressionStatement)?.expression?.isVariableIncrementOrDecrement(loopVar)

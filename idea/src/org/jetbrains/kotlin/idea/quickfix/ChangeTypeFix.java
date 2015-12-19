@@ -59,7 +59,7 @@ public class ChangeTypeFix extends KotlinQuickFixAction<KtTypeReference> {
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
         KtTypeReference newTypeRef = (KtTypeReference) getElement().replace(KtPsiFactoryKt.KtPsiFactory(file).createType(renderedType));
         ShortenReferences.DEFAULT.process(newTypeRef);
     }

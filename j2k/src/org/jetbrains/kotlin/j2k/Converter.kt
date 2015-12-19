@@ -445,6 +445,11 @@ class Converter private constructor(
     public fun shouldDeclareVariableType(variable: PsiVariable, type: Type, canChangeType: Boolean): Boolean {
         val initializer = variable.initializer
         if (initializer == null || initializer.isNullLiteral()) return true
+        if (initializer.type is PsiPrimitiveType && type is PrimitiveType) {
+            if (createDefaultCodeConverter().convertedExpressionType(initializer, variable.type) != type) {
+                return true
+            }
+        }
 
         if (canChangeType) return false
 

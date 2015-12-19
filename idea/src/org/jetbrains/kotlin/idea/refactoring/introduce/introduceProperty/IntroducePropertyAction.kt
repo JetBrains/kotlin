@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable
+package org.jetbrains.kotlin.idea.refactoring.introduce.introduceProperty
 
 import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.lang.refactoring.RefactoringSupportProvider

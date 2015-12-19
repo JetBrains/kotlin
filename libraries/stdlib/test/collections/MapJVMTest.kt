@@ -1,6 +1,7 @@
 package test.collections
 
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentMap
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.expect
@@ -51,14 +52,13 @@ class MapJVMTest {
         assertEquals(listOf(1, 3, 5), map.keys.toList())
         assertEquals(listOf('b', 'd', 'f'), map.values.toList())
     }
-
+    
     @test fun getOrPutFailsOnConcurrentMap() {
         val map = ConcurrentHashMap<String, Int>()
 
-        // now this is an error
-        // map.getOrPut("x") { 1 }
+        // not an error anymore
         expect(1) {
-            map.concurrentGetOrPut("x") { 1 }
+            map.getOrPut("x") { 1 }
         }
         expect(1) {
             (map as MutableMap<String, Int>).getOrPut("x") { 1 }

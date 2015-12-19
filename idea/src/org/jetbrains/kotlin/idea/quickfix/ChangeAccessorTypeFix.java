@@ -38,7 +38,7 @@ public class ChangeAccessorTypeFix extends KotlinQuickFixAction<KtPropertyAccess
     }
 
     @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiFile file) {
         KtProperty property = PsiTreeUtil.getParentOfType(getElement(), KtProperty.class);
         if (property == null) return false;
         KotlinType type = QuickFixUtil.getDeclarationReturnType(property);
@@ -65,7 +65,7 @@ public class ChangeAccessorTypeFix extends KotlinQuickFixAction<KtPropertyAccess
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
         KtTypeReference newTypeReference = KtPsiFactoryKt
                 .KtPsiFactory(file).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
 

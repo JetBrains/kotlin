@@ -31,31 +31,31 @@ import org.jetbrains.kotlin.idea.references.mainReference
 
 public class MoveJavaInnerClassKotlinUsagesHandler: MoveInnerClassUsagesHandler {
     override fun correctInnerClassUsage(usage: UsageInfo, outerClass: PsiClass) {
-        val innerCall = usage.getElement()?.getParent() as? KtCallExpression ?: return
+        val innerCall = usage.element?.parent as? KtCallExpression ?: return
 
-        val receiver = (innerCall.getParent() as? KtQualifiedExpression)?.getReceiverExpression()
+        val receiver = (innerCall.parent as? KtQualifiedExpression)?.receiverExpression
         val outerClassRef = when (receiver) {
-            is KtCallExpression -> receiver.getCalleeExpression()
+            is KtCallExpression -> receiver.calleeExpression
             is KtQualifiedExpression -> receiver.getQualifiedElementSelector()
             else -> null
         } as? KtSimpleNameExpression
         if (outerClassRef?.mainReference?.resolve() != outerClass) return
 
-        val outerCall = outerClassRef!!.getParent() as? KtCallExpression ?: return
+        val outerCall = outerClassRef!!.parent as? KtCallExpression ?: return
 
-        val psiFactory = KtPsiFactory(usage.getProject())
+        val psiFactory = KtPsiFactory(usage.project)
 
-        val argumentList = innerCall.getValueArgumentList()
+        val argumentList = innerCall.valueArgumentList
         if (argumentList != null) {
             val newArguments = ArrayList<String>()
-            newArguments.add(outerCall.getText()!!)
-            argumentList.getArguments().mapTo(newArguments) { it.getText()!! }
+            newArguments.add(outerCall.text!!)
+            argumentList.arguments.mapTo(newArguments) { it.text!! }
             argumentList.replace(psiFactory.createCallArguments(newArguments.joinToString(prefix = "(", postfix = ")")))
         }
         else {
-            innerCall.getLambdaArguments().firstOrNull()?.let { lambdaArg ->
-                val anchor = PsiTreeUtil.skipSiblingsBackward(lambdaArg, javaClass<PsiWhiteSpace>())
-                innerCall.addAfter(psiFactory.createCallArguments("(${outerCall.getText()})"), anchor)
+            innerCall.lambdaArguments.firstOrNull()?.let { lambdaArg ->
+                val anchor = PsiTreeUtil.skipSiblingsBackward(lambdaArg, PsiWhiteSpace::class.java)
+                innerCall.addAfter(psiFactory.createCallArguments("(${outerCall.text})"), anchor)
             }
         }
     }

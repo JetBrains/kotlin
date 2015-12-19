@@ -89,7 +89,7 @@ public class KotlinReferenceImporter : ReferenceImporter {
 
             var suggestions = AutoImportFix(this).computeSuggestions()
 
-            if (suggestions.distinctBy { it.importableFqName!! }.size() != 1) return false
+            if (suggestions.distinctBy { it.importableFqName!! }.size != 1) return false
 
             // we do not auto-import nested classes because this will probably add qualification into the text and this will confuse the user
             if (suggestions.any { it is ClassDescriptor && it.containingDeclaration is ClassDescriptor }) return false

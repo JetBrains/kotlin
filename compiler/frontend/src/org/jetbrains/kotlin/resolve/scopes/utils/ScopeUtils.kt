@@ -98,18 +98,6 @@ public fun HierarchicalScope.findFunction(name: Name, location: LookupLocation, 
     return null
 }
 
-public fun HierarchicalScope.collectSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
-        = collectAllFromImportingScopes { it.getContributedSyntheticExtensionProperties(receiverTypes, name, location) }
-
-public fun HierarchicalScope.collectSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
-        = collectAllFromImportingScopes { it.getContributedSyntheticExtensionFunctions(receiverTypes, name, location) }
-
-public fun HierarchicalScope.collectSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>)
-        = collectAllFromImportingScopes { it.getContributedSyntheticExtensionProperties(receiverTypes) }
-
-public fun HierarchicalScope.collectSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>)
-        = collectAllFromImportingScopes { it.getContributedSyntheticExtensionFunctions(receiverTypes) }
-
 public fun HierarchicalScope.takeSnapshot(): HierarchicalScope = if (this is LexicalWritableScope) takeSnapshot() else this
 
 @JvmOverloads
@@ -117,18 +105,6 @@ public fun MemberScope.memberScopeAsImportingScope(parentScope: ImportingScope? 
 
 private class MemberScopeToImportingScopeAdapter(override val parent: ImportingScope?, val memberScope: MemberScope) : ImportingScope {
     override fun getContributedPackage(name: Name): PackageViewDescriptor? = null
-
-    override fun getContributedSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
-            = emptyList<PropertyDescriptor>()
-
-    override fun getContributedSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation)
-            = emptyList<FunctionDescriptor>()
-
-    override fun getContributedSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>)
-            = emptyList<PropertyDescriptor>()
-
-    override fun getContributedSyntheticExtensionFunctions(receiverTypes: Collection<KotlinType>)
-            = emptyList<FunctionDescriptor>()
 
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
             = memberScope.getContributedDescriptors(kindFilter, nameFilter)

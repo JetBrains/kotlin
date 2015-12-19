@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
-import org.jetbrains.kotlin.idea.core.refactoring.JetRefactoringUtilKt;
+import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtilKt;
 import org.jetbrains.kotlin.idea.references.ReferenceUtilKt;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
@@ -44,7 +44,7 @@ public class MakeClassAnAnnotationClassFix extends KotlinQuickFixAction<KtAnnota
     }
 
     @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiFile file) {
         if (!super.isAvailable(project, editor, file)) {
             return false;
         }
@@ -102,7 +102,7 @@ public class MakeClassAnAnnotationClassFix extends KotlinQuickFixAction<KtAnnota
         return new KotlinSingleIntentionActionFactory() {
             @Nullable
             @Override
-            public IntentionAction createAction(Diagnostic diagnostic) {
+            public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
                 KtAnnotationEntry annotation = QuickFixUtil.getParentElementOfType(diagnostic, KtAnnotationEntry.class);
                 return annotation == null ? null : new MakeClassAnAnnotationClassFix(annotation);
             }

@@ -26,11 +26,11 @@ import org.jetbrains.kotlin.psi.KtWhenExpression
 
 public class IntroduceWhenSubjectInspection : IntentionBasedInspection<KtWhenExpression>(IntroduceWhenSubjectIntention())
 
-public class IntroduceWhenSubjectIntention : SelfTargetingRangeIntention<KtWhenExpression>(javaClass(), "Introduce argument to 'when'") {
+public class IntroduceWhenSubjectIntention : SelfTargetingRangeIntention<KtWhenExpression>(KtWhenExpression::class.java, "Introduce argument to 'when'") {
     override fun applicabilityRange(element: KtWhenExpression): TextRange? {
         val subject = element.getSubjectToIntroduce() ?: return null
-        setText("Introduce '${subject.getText()}' as argument to 'when'")
-        return element.getWhenKeyword().getTextRange()
+        text = "Introduce '${subject.text}' as argument to 'when'"
+        return element.whenKeyword.textRange
     }
 
     override fun applyTo(element: KtWhenExpression, editor: Editor) {

@@ -54,7 +54,7 @@ public class AddConstModifierFix(val property: KtProperty) : AddModifierFix(prop
     }
 }
 
-public class AddConstModifierIntention : SelfTargetingIntention<KtProperty>(javaClass(), "Add 'const' modifier") {
+public class AddConstModifierIntention : SelfTargetingIntention<KtProperty>(KtProperty::class.java, "Add 'const' modifier") {
     override fun applyTo(element: KtProperty, editor: Editor) {
         AddConstModifierFix.addConstModifier(element)
     }

@@ -81,27 +81,27 @@ public class KotlinMethodNode(
     override fun customizeRendererText(renderer: ColoredTreeCellRenderer) {
         val descriptor = when (myMethod) {
             is KtFunction -> myMethod.resolveToDescriptor() as FunctionDescriptor
-            is KtClass -> (myMethod.resolveToDescriptor() as ClassDescriptor).getUnsubstitutedPrimaryConstructor() ?: return
+            is KtClass -> (myMethod.resolveToDescriptor() as ClassDescriptor).unsubstitutedPrimaryConstructor ?: return
             is PsiMethod -> myMethod.getJavaMethodDescriptor() ?: return
             else -> throw AssertionError("Invalid declaration: ${myMethod.getElementTextWithContext()}")
         }
-        val containerName = sequence<DeclarationDescriptor>(descriptor) { it.getContainingDeclaration() }
+        val containerName = sequence<DeclarationDescriptor>(descriptor) { it.containingDeclaration }
                 .firstOrNull { it is ClassDescriptor }
-                ?.getName()
+                ?.name
 
         val renderedFunction = KotlinCallHierarchyNodeDescriptor.renderNamedFunction(descriptor)
         val renderedFunctionWithContainer =
                 containerName?.let {
-                    "${if (it.isSpecial()) "[Anonymous]" else it.asString()}.$renderedFunction"
+                    "${if (it.isSpecial) "[Anonymous]" else it.asString()}.$renderedFunction"
                 } ?: renderedFunction
 
-        val attributes = if (isEnabled())
+        val attributes = if (isEnabled)
             SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, UIUtil.getTreeForeground())
         else
             SimpleTextAttributes.EXCLUDED_ATTRIBUTES
         renderer.append(renderedFunctionWithContainer, attributes)
 
-        val packageName = (myMethod.getContainingFile() as? PsiClassOwner)?.getPackageName() ?: ""
+        val packageName = (myMethod.containingFile as? PsiClassOwner)?.packageName ?: ""
         renderer.append("  ($packageName)", SimpleTextAttributes(SimpleTextAttributes.STYLE_ITALIC, JBColor.GRAY))
     }
 
@@ -117,8 +117,8 @@ public class KotlinMethodNode(
                 }
             }
         }
-        val query = myMethod.getRepresentativeLightMethod()?.let { MethodReferencesSearch.search(it, it.getUseScope(), true) }
-                    ?: ReferencesSearch.search(myMethod, myMethod.getUseScope())
+        val query = myMethod.getRepresentativeLightMethod()?.let { MethodReferencesSearch.search(it, it.useScope, true) }
+                    ?: ReferencesSearch.search(myMethod, myMethod.useScope)
         query.forEach { processor.process(it) }
         return callers.toList()
     }

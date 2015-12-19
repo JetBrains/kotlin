@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getExp
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getTypeParameters
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.guessTypes
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinParameterInfo
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinTypeInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -43,7 +44,7 @@ import java.util.*
 
 object CreateParameterByRefActionFactory : CreateParameterFromUsageFactory<KtSimpleNameExpression>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): KtSimpleNameExpression? {
-        val refExpr = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtNameReferenceExpression>()) ?: return null
+        val refExpr = QuickFixUtil.getParentElementOfType(diagnostic, KtNameReferenceExpression::class.java) ?: return null
         if (refExpr.getQualifiedElement() != refExpr) return null
         if (refExpr.getParentOfTypeAndBranch<KtCallableReferenceExpression> { callableReference } != null) return null
         return refExpr
@@ -57,7 +58,7 @@ object CreateParameterByRefActionFactory : CreateParameterFromUsageFactory<KtSim
         val varExpected = element.getAssignmentByLHS() != null
 
         val paramType = element.getExpressionForTypeGuess().guessTypes(context, moduleDescriptor).let {
-            when (it.size()) {
+            when (it.size) {
                 0 -> moduleDescriptor.builtIns.anyType
                 1 -> it.first()
                 else -> return null
@@ -118,7 +119,7 @@ object CreateParameterByRefActionFactory : CreateParameterFromUsageFactory<KtSim
                 context,
                 KotlinParameterInfo(callableDescriptor = functionDescriptor,
                                     name = element.getReferencedName(),
-                                    type = paramType,
+                                    originalTypeInfo = KotlinTypeInfo(false, paramType),
                                     valOrVar = valOrVar),
                 element
         )

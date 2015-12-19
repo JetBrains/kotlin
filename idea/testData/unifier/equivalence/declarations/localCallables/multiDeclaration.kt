@@ -1,4 +1,7 @@
-data class A(val a: Int, val b: String)
+class A(val a: Int, val b: String)
+
+operator fun A.component1() = a
+operator fun A.component2() = b
 
 fun foo1() {
     <selection>val (a, b) = A(1, "2")</selection>

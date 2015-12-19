@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasLowPriorityInOverloadResolution
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
@@ -53,7 +54,8 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 public class TaskPrioritizer(
         private val storageManager: StorageManager,
         private val smartCastManager: SmartCastManager,
-        private val dynamicCallableDescriptors: DynamicCallableDescriptors
+        private val dynamicCallableDescriptors: DynamicCallableDescriptors,
+        private val syntheticScopes: SyntheticScopes
 ) {
 
     public fun <D : CallableDescriptor, F : D> computePrioritizedTasks(
@@ -201,7 +203,7 @@ public class TaskPrioritizer(
             //extensions
             c.result.addCandidates {
                 val extensions = callableDescriptorCollector.getExtensionsByName(
-                        c.scope, c.name, explicitReceiver.types, createLookupLocation(c))
+                        c.scope, syntheticScopes, c.name, explicitReceiver.types, createLookupLocation(c))
                 val filteredExtensions = if (filter == null) extensions else extensions.filter(filter)
 
                 convertWithImpliedThis(
@@ -294,7 +296,7 @@ public class TaskPrioritizer(
     ) {
         c.result.addCandidates {
             val memberExtensions =
-                    callableDescriptorCollector.getExtensionsByName(dispatchReceiver.type.memberScope.memberScopeAsImportingScope(), c.name, receiverParameter.types, createLookupLocation(c))
+                    callableDescriptorCollector.getExtensionsByName(dispatchReceiver.type.memberScope.memberScopeAsImportingScope(), syntheticScopes, c.name, receiverParameter.types, createLookupLocation(c))
             convertWithReceivers(memberExtensions, dispatchReceiver, receiverParameter.value, receiverKind, c.context.call)
         }
     }

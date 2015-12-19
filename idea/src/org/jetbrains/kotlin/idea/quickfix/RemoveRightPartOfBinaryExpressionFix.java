@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 
 public class RemoveRightPartOfBinaryExpressionFix<T extends KtExpression> extends KotlinQuickFixAction<T> implements CleanupFix {
     private final String message;
@@ -34,6 +35,7 @@ public class RemoveRightPartOfBinaryExpressionFix<T extends KtExpression> extend
         this.message = message;
     }
 
+    @NotNull
     @Override
     public String getText() {
         return message;
@@ -46,7 +48,7 @@ public class RemoveRightPartOfBinaryExpressionFix<T extends KtExpression> extend
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
         invoke();
     }
 
@@ -67,13 +69,17 @@ public class RemoveRightPartOfBinaryExpressionFix<T extends KtExpression> extend
             newExpression = (KtExpression) parent.replace(newExpression);
         }
 
+        if (newExpression == null) {
+            throw new IncorrectOperationException("Unexpected element: " + PsiUtilsKt.getElementTextWithContext(getElement()));
+        }
+
         return newExpression;
     }
 
     public static KotlinSingleIntentionActionFactory createRemoveTypeFromBinaryExpressionFactory(final String message) {
         return new KotlinSingleIntentionActionFactory() {
             @Override
-            public KotlinQuickFixAction<KtBinaryExpressionWithTypeRHS> createAction(Diagnostic diagnostic) {
+            public KotlinQuickFixAction<KtBinaryExpressionWithTypeRHS> createAction(@NotNull Diagnostic diagnostic) {
                 KtBinaryExpressionWithTypeRHS expression = QuickFixUtil.getParentElementOfType(diagnostic, KtBinaryExpressionWithTypeRHS.class);
                 if (expression == null) return null;
                 return new RemoveRightPartOfBinaryExpressionFix<KtBinaryExpressionWithTypeRHS>(expression, message);
@@ -84,7 +90,7 @@ public class RemoveRightPartOfBinaryExpressionFix<T extends KtExpression> extend
     public static KotlinSingleIntentionActionFactory createRemoveElvisOperatorFactory() {
         return new KotlinSingleIntentionActionFactory() {
             @Override
-            public KotlinQuickFixAction<KtBinaryExpression> createAction(Diagnostic diagnostic) {
+            public KotlinQuickFixAction<KtBinaryExpression> createAction(@NotNull Diagnostic diagnostic) {
                 KtBinaryExpression expression = (KtBinaryExpression) diagnostic.getPsiElement();
                 return new RemoveRightPartOfBinaryExpressionFix<KtBinaryExpression>(expression, KotlinBundle.message("remove.elvis.operator"));
             }

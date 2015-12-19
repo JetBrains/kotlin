@@ -110,7 +110,7 @@ public class QuickFixFactoryForTypeMismatchError extends KotlinIntentionActionsF
             KtPropertyAccessor getter = property.getGetter();
             KtExpression initializer = property.getInitializer();
             if (QuickFixUtil.canEvaluateTo(initializer, expression) ||
-                (getter != null && QuickFixUtil.canFunctionOrGetterReturnExpression(property.getGetter(), expression))) {
+                (getter != null && QuickFixUtil.canFunctionOrGetterReturnExpression(getter, expression))) {
                 LexicalScope scope = ScopeUtils.getResolutionScope(property, context, ResolutionUtils.getResolutionFacade(property));
                 KotlinType typeToInsert = TypeUtils.approximateWithResolvableType(expressionType, scope, false);
                 actions.add(new ChangeVariableTypeFix(property, typeToInsert));
@@ -161,9 +161,11 @@ public class QuickFixFactoryForTypeMismatchError extends KotlinIntentionActionsF
             ValueArgument valueArgument = CallUtilKt.getValueArgumentForExpression(resolvedCall.getCall(), argumentExpression);
             if (valueArgument != null) {
                 KtParameter correspondingParameter = QuickFixUtil.getParameterDeclarationForValueArgument(resolvedCall, valueArgument);
-                KotlinType valueArgumentType = diagnostic.getFactory() == Errors.NULL_FOR_NONNULL_TYPE
-                                            ? expressionType
-                                            : context.getType(valueArgument.getArgumentExpression());
+                KtExpression expressionFromArgument = valueArgument.getArgumentExpression();
+                KotlinType valueArgumentType =
+                        diagnostic.getFactory() == Errors.NULL_FOR_NONNULL_TYPE
+                        ? expressionType
+                        : expressionFromArgument != null ? context.getType(expressionFromArgument) : null;
                 if (correspondingParameter != null && valueArgumentType != null) {
                     KtCallableDeclaration callable = PsiTreeUtil.getParentOfType(correspondingParameter, KtCallableDeclaration.class, true);
                     LexicalScope scope = callable != null ? ScopeUtils.getResolutionScope(callable, context, ResolutionUtils

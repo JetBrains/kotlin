@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.idea.quickfix;
 
-import com.intellij.codeInsight.CodeInsightUtilBase;
+import com.intellij.codeInsight.CodeInsightUtilCore;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
@@ -51,12 +51,12 @@ public class AddWhenElseBranchFix extends KotlinQuickFixAction<KtWhenExpression>
     }
 
     @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiFile file) {
         return super.isAvailable(project, editor, file) && getElement().getCloseBrace() != null;
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
         PsiElement whenCloseBrace = getElement().getCloseBrace();
         assert (whenCloseBrace != null) : "isAvailable should check if close brace exist";
 
@@ -66,7 +66,7 @@ public class AddWhenElseBranchFix extends KotlinQuickFixAction<KtWhenExpression>
         PsiElement insertedBranch = getElement().addBefore(entry, whenCloseBrace);
         getElement().addAfter(psiFactory.createNewLine(), insertedBranch);
 
-        KtWhenEntry insertedWhenEntry = (KtWhenEntry) CodeInsightUtilBase.forcePsiPostprocessAndRestoreElement(insertedBranch);
+        KtWhenEntry insertedWhenEntry = (KtWhenEntry) CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(insertedBranch);
         TextRange textRange = insertedWhenEntry.getTextRange();
 
         int indexOfOpenBrace = insertedWhenEntry.getText().indexOf('{');

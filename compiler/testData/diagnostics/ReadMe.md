@@ -30,13 +30,16 @@ Must be
 
 The directive adds the following declarations to the file:
 
-    class _<T>
-    fun <T> T.checkType(f: (_<T>) -> Unit) = f
+    fun <T> checkSubtype(t: T) = t
+
+    class Inv<T>
+    fun <E> Inv<E>._() {}
+    infix fun <T> T.checkType(f: Inv<T>.() -> Unit) {}
 
 With that, an exact type of an expression can be checked in the following way:
 
     fun test(expr: A) {
-       expr checkType { it: _<A> }
+       expr checkType { _<A>() }
     }
 
 #### Usage:

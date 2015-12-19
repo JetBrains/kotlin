@@ -100,7 +100,7 @@ public class DeprecatedSymbolUsageInWholeProjectFix(
                         //TODO: keep the import if we don't know how to replace some of the usages
                         val importDirective = usage.getStrictParentOfType<KtImportDirective>()
                         if (importDirective != null) {
-                            if (!importDirective.isAllUnder && importDirective.targetDescriptors().size() == 1) {
+                            if (!importDirective.isAllUnder && importDirective.targetDescriptors().size == 1) {
                                 importsToDelete.add(importDirective)
                             }
                             continue

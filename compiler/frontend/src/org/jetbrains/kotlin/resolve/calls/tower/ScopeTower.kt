@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -35,6 +36,8 @@ interface ScopeTower {
     val lexicalScope: LexicalScope
 
     val dynamicScope: MemberScope
+
+    val syntheticScopes: SyntheticScopes
 
     val location: LookupLocation
 
@@ -74,7 +77,8 @@ data class ResolutionCandidateStatus(val diagnostics: List<ResolutionDiagnostic>
 
 enum class ResolutionCandidateApplicability {
     RESOLVED, // call success or has uncompleted inference or in other words possible successful candidate
-    RESOLVED_SYNTHESIZED,
+    RESOLVED_SYNTHESIZED, // todo remove it (need for SAM adapters which created inside some MemberScope)
+    RESOLVED_LOW_PRIORITY,
     CONVENTION_ERROR, // missing infix, operator etc
     MAY_THROW_RUNTIME_ERROR, // unsafe call or unstable smart cast
     RUNTIME_ERROR, // problems with visibility
@@ -94,8 +98,9 @@ class UnsupportedInnerClassCall(val message: String): ResolutionDiagnostic(Resol
 class UsedSmartCastForDispatchReceiver(val smartCastType: KotlinType): ResolutionDiagnostic(ResolutionCandidateApplicability.RESOLVED)
 
 object ErrorDescriptorDiagnostic : ResolutionDiagnostic(ResolutionCandidateApplicability.RESOLVED) // todo discuss and change to INAPPLICABLE
-object SynthesizedDescriptorDiagnostic: ResolutionDiagnostic(ResolutionCandidateApplicability.RESOLVED_SYNTHESIZED)
-object DynamicDescriptorDiagnostic: ResolutionDiagnostic(ResolutionCandidateApplicability.RESOLVED_SYNTHESIZED)
+object LowPriorityDescriptorDiagnostic : ResolutionDiagnostic(ResolutionCandidateApplicability.RESOLVED_LOW_PRIORITY)
+object SynthesizedDescriptorDiagnostic : ResolutionDiagnostic(ResolutionCandidateApplicability.RESOLVED_SYNTHESIZED)
+object DynamicDescriptorDiagnostic: ResolutionDiagnostic(ResolutionCandidateApplicability.RESOLVED_LOW_PRIORITY)
 object UnstableSmartCastDiagnostic: ResolutionDiagnostic(ResolutionCandidateApplicability.MAY_THROW_RUNTIME_ERROR)
 object ExtensionWithStaticTypeWithDynamicReceiver: ResolutionDiagnostic(ResolutionCandidateApplicability.HIDDEN)
 object HiddenDescriptor: ResolutionDiagnostic(ResolutionCandidateApplicability.HIDDEN)

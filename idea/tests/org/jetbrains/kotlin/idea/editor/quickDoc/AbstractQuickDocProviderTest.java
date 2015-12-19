@@ -34,7 +34,7 @@ import java.util.List;
 
 public abstract class AbstractQuickDocProviderTest extends KotlinLightCodeInsightFixtureTestCase {
     public void doTest(@NotNull String path) throws Exception {
-        JetTestUtilsKt.configureWithExtraFile(myFixture, path, "_Data");
+        JetTestUtilsKt.configureWithExtraFileAbs(myFixture, path, "_Data");
 
         PsiElement element = myFixture.getFile().findElementAt(myFixture.getEditor().getCaretModel().getOffset());
         assertNotNull("Can't find element at caret in file: " + path, element);

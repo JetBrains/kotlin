@@ -24,10 +24,9 @@ import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectori
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.codeInsight.shorten.runWithElementsToShortenIsEmptyIgnored
-import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.core.packageMatchesDirectory
-import org.jetbrains.kotlin.idea.core.refactoring.hasIdentifiersOnly
+import org.jetbrains.kotlin.idea.refactoring.hasIdentifiersOnly
 import org.jetbrains.kotlin.idea.refactoring.move.*
 import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.*
 import org.jetbrains.kotlin.name.FqNameUnsafe
@@ -133,7 +132,7 @@ public class MoveKotlinFileHandler : MoveFileHandler() {
     }
 
     override fun retargetUsages(usageInfos: List<UsageInfo>?, oldToNewMap: Map<PsiElement, PsiElement>) {
-        val moveContext = oldToNewMap.keySet().firstIsInstanceOrNull<MoveContext>() ?: return
+        val moveContext = oldToNewMap.keys.firstIsInstanceOrNull<MoveContext>() ?: return
         retargetUsages(usageInfos, moveContext.declarationMoveProcessor)
     }
 

@@ -117,6 +117,9 @@ class CodeConverter(
                     }
                     convertedExpression = LiteralExpression(text)
                 }
+                else if (expectedTypeStr == "char") {
+                    convertedExpression = MethodCallExpression.build(convertedExpression, "toChar", emptyList(), emptyList(), false)
+                }
             }
             else if (expression is PsiPrefixExpression && expression.isLiteralWithSign()) {
                 val operandConverted = convertExpression(expression.operand, expectedType)

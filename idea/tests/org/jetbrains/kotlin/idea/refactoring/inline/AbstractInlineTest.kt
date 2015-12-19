@@ -22,18 +22,30 @@ import com.intellij.codeInsight.TargetElementUtil.REFERENCED_ELEMENT_ACCEPTED
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.testFramework.UsefulTestCase
+import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractInlineTest : KotlinLightCodeInsightFixtureTestCase() {
+    val fixture: JavaCodeInsightTestFixture
+        get() = myFixture
+
     protected fun doTest(path: String) {
+        val mainFile = File(path)
         val afterFile = File(path + ".after")
 
-        myFixture.configureByFile(path)
+        val mainFileName = mainFile.name
+        val mainFileBaseName = FileUtil.getNameWithoutExtension(mainFileName)
+        val extraFiles = mainFile.parentFile.listFiles { file, name ->
+            name != mainFileName && name.startsWith("$mainFileBaseName.") && (name.endsWith(".kt") || name.endsWith(".java"))
+        }
+        val extraFilesToPsi = extraFiles.toMapBy { fixture.configureByFile(path.replace(mainFileName, it.name)) }
+        val file = myFixture.configureByFile(path)
 
         val afterFileExists = afterFile.exists()
 
@@ -47,7 +59,10 @@ abstract class AbstractInlineTest : KotlinLightCodeInsightFixtureTestCase() {
 
                 TestCase.assertTrue(afterFileExists)
                 UsefulTestCase.assertEmpty(expectedErrors)
-                myFixture.checkResult(FileUtil.loadFile(afterFile, true))
+                KotlinTestUtils.assertEqualsToFile(afterFile, file.text)
+                for ((extraPsiFile, extraFile) in extraFilesToPsi) {
+                    KotlinTestUtils.assertEqualsToFile(File("${extraFile.path}.after"), extraPsiFile.text)
+                }
             }
             catch (e: CommonRefactoringUtil.RefactoringErrorHintException) {
                 TestCase.assertFalse(afterFileExists)

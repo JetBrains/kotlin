@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 public class RenameKotlinImplicitLambdaParameter: VariableInplaceRenameHandler() {
     override fun isAvailable(element: PsiElement?, editor: Editor, file: PsiFile): Boolean {
         val nameExpression = PsiTreeUtil.findElementOfClassAtOffset(
-                file, editor.getCaretModel().getOffset(), javaClass<KtNameReferenceExpression>(), false)
+                file, editor.caretModel.offset, KtNameReferenceExpression::class.java, false)
 
         return nameExpression != null && isAutoCreatedItUsage(nameExpression)
     }

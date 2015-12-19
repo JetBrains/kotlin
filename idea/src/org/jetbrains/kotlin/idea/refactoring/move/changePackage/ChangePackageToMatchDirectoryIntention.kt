@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.refactoring.move.changePackage
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.idea.core.getFqNameByDirectory
 import org.jetbrains.kotlin.idea.core.packageMatchesDirectory
-import org.jetbrains.kotlin.idea.core.refactoring.hasIdentifiersOnly
+import org.jetbrains.kotlin.idea.refactoring.hasIdentifiersOnly
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingOffsetIndependentIntention
 import org.jetbrains.kotlin.psi.KtPackageDirective
 

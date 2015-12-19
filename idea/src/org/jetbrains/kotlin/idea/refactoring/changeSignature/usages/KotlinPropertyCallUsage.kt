@@ -38,8 +38,8 @@ public class KotlinPropertyCallUsage(element: KtSimpleNameExpression): KotlinUsa
     }
 
     private fun updateName(changeInfo: KotlinChangeInfo, element: KtSimpleNameExpression) {
-        if (changeInfo.isNameChanged()) {
-            element.mainReference.handleElementRename(changeInfo.getNewName())
+        if (changeInfo.isNameChanged) {
+            element.mainReference.handleElementRename(changeInfo.newName)
         }
     }
 
@@ -53,10 +53,10 @@ public class KotlinPropertyCallUsage(element: KtSimpleNameExpression): KotlinUsa
         // Do not add extension receiver to calls with explicit dispatch receiver
         if (newReceiver != null
             && elementToReplace is KtQualifiedExpression
-            && resolvedCall?.getDispatchReceiver() is ExpressionReceiver) return
+            && resolvedCall?.dispatchReceiver is ExpressionReceiver) return
 
         val replacingElement = newReceiver?.let {
-            val psiFactory = KtPsiFactory(getProject())
+            val psiFactory = KtPsiFactory(project)
             val receiver = it.defaultValueForCall ?: psiFactory.createExpression("_")
             psiFactory.createExpressionByPattern("$0.$1", receiver, element)
         } ?: element

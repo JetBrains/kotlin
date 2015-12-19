@@ -70,7 +70,7 @@ public class RemoveModifierFix(
         public fun createRemoveModifierFromListOwnerFactory(modifier: KtModifierKeywordToken, isRedundant: Boolean = false): KotlinSingleIntentionActionFactory {
             return object : KotlinSingleIntentionActionFactory() {
                 override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtModifierListOwner>? {
-                    val modifierListOwner = QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtModifierListOwner>()) ?: return null
+                    val modifierListOwner = QuickFixUtil.getParentElementOfType(diagnostic, KtModifierListOwner::class.java) ?: return null
                     return RemoveModifierFix(modifierListOwner, modifier, isRedundant)
                 }
             }

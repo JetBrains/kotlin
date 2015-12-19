@@ -22,12 +22,12 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtSimpleNameStringTemplateEntry
 
 public class InsertCurlyBracesToTemplateIntention : SelfTargetingOffsetIndependentIntention<KtSimpleNameStringTemplateEntry> (
-        javaClass(), "Insert curly braces around variable"), LowPriorityAction {
+        KtSimpleNameStringTemplateEntry::class.java, "Insert curly braces around variable"), LowPriorityAction {
 
     override fun isApplicableTo(element: KtSimpleNameStringTemplateEntry): Boolean = true
 
     override fun applyTo(element: KtSimpleNameStringTemplateEntry, editor: Editor) {
-        val expression = element.getExpression() ?: return
+        val expression = element.expression ?: return
         element.replace(KtPsiFactory(element).createBlockStringTemplateEntry(expression))
     }
 }

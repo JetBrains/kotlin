@@ -62,7 +62,7 @@ public class CastExpressionFix extends KotlinQuickFixAction<KtExpression> {
     }
 
     @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiFile file) {
         if (!super.isAvailable(project, editor, file)) return false;
         KotlinType expressionType = ResolutionUtils.analyze(getElement()).getType(getElement());
         return expressionType != null
@@ -73,7 +73,7 @@ public class CastExpressionFix extends KotlinQuickFixAction<KtExpression> {
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
         String renderedType = IdeDescriptorRenderers.SOURCE_CODE.renderType(type);
 
         KtPsiFactory psiFactory = KtPsiFactoryKt.KtPsiFactory(file);

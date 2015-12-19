@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.Modality;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
+import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils;
@@ -283,4 +284,7 @@ public final class WhenChecker {
         }
     }
 
+    public static void checkReservedPrefix(@NotNull BindingTrace trace, @NotNull KtWhenExpression expression) {
+        KtPsiUtilKt.checkReservedPrefixWord(trace, expression.getWhenKeyword(), "sealed", "sealed when");
+    }
 }

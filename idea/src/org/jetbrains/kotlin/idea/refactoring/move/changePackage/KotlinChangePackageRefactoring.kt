@@ -33,20 +33,20 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
 public class KotlinChangePackageRefactoring(val file: KtFile) {
-    private val project = file.getProject()
+    private val project = file.project
 
     fun run(newFqName: FqName) {
-        val packageDirective = file.getPackageDirective() ?: return
-        val currentFqName = packageDirective.getFqName()
+        val packageDirective = file.packageDirective ?: return
+        val currentFqName = packageDirective.fqName
 
         val declarationProcessor = MoveKotlinTopLevelDeclarationsProcessor(
                 project,
                 MoveKotlinTopLevelDeclarationsOptions(
-                        elementsToMove = file.getDeclarations().filterIsInstance<KtNamedDeclaration>(),
+                        elementsToMove = file.declarations.filterIsInstance<KtNamedDeclaration>(),
                         moveTarget = object: KotlinMoveTarget {
-                            override val packageWrapper = PackageWrapper(file.getManager(), newFqName.asString())
+                            override val packageWrapper = PackageWrapper(file.manager, newFqName.asString())
 
-                            override fun getOrCreateTargetPsi(originalPsi: PsiElement) = originalPsi.getContainingFile()
+                            override fun getOrCreateTargetPsi(originalPsi: PsiElement) = originalPsi.containingFile
 
                             override fun getTargetPsiIfExists(originalPsi: PsiElement) = null
 
@@ -61,7 +61,7 @@ public class KotlinChangePackageRefactoring(val file: KtFile) {
         val internalUsages = file.getInternalReferencesToUpdateOnPackageNameChange(PackageNameInfo(currentFqName, newFqName.toUnsafe()))
 
         project.executeWriteCommand("Change file's package to '${newFqName.asString()}'") {
-            packageDirective.setFqName(newFqName)
+            packageDirective.fqName = newFqName
             postProcessMoveUsages(internalUsages)
             project.runWithElementsToShortenIsEmptyIgnored { declarationProcessor.execute(declarationUsages) }
         }

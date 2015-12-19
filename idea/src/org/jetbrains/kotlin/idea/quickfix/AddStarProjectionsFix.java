@@ -54,7 +54,7 @@ public abstract class AddStarProjectionsFix extends KotlinQuickFixAction<KtUserT
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
         assert getElement().getTypeArguments().isEmpty();
 
         String typeString = TypeReconstructionUtil.getTypeNameAndStarProjectionsString(getElement().getText(), argumentCount);
@@ -72,7 +72,7 @@ public abstract class AddStarProjectionsFix extends KotlinQuickFixAction<KtUserT
     public static KotlinSingleIntentionActionFactory createFactoryForIsExpression() {
         return new KotlinSingleIntentionActionFactory() {
             @Override
-            public IntentionAction createAction(Diagnostic diagnostic) {
+            public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
                 DiagnosticWithParameters2<KtTypeReference, Integer, String> diagnosticWithParameters =
                         Errors.NO_TYPE_ARGUMENTS_ON_RHS.cast(diagnostic);
                 KtTypeElement typeElement = diagnosticWithParameters.getPsiElement().getTypeElement();
@@ -89,7 +89,7 @@ public abstract class AddStarProjectionsFix extends KotlinQuickFixAction<KtUserT
     public static KotlinSingleIntentionActionFactory createFactoryForJavaClass() {
         return new KotlinSingleIntentionActionFactory() {
             @Override
-            public IntentionAction createAction(Diagnostic diagnostic) {
+            public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
                 DiagnosticWithParameters1<KtElement, Integer> diagnosticWithParameters = Errors.WRONG_NUMBER_OF_TYPE_ARGUMENTS.cast(diagnostic);
 
                 Integer size = diagnosticWithParameters.getA();
@@ -99,9 +99,7 @@ public abstract class AddStarProjectionsFix extends KotlinQuickFixAction<KtUserT
 
                 return new AddStarProjectionsFix(userType, size) {
                     @Override
-                    public boolean isAvailable(
-                            @NotNull Project project, Editor editor, PsiFile file
-                    ) {
+                    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiFile file) {
                         // We are looking for the occurrence of Type in javaClass<Type>()
                         return super.isAvailable(project, editor, file) && isZeroTypeArguments() && isInsideJavaClassCall();
                     }

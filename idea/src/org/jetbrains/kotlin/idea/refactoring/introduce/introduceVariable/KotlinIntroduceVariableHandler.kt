@@ -30,6 +30,7 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.HelpID
+import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.refactoring.introduce.inplace.OccurrencesChooser
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.ui.components.JBList
@@ -42,12 +43,8 @@ import org.jetbrains.kotlin.idea.analysis.computeTypeInfoInContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.*
-import org.jetbrains.kotlin.idea.core.refactoring.Pass
-import org.jetbrains.kotlin.idea.core.refactoring.chooseContainerElementIfNecessary
-import org.jetbrains.kotlin.idea.core.refactoring.removeTemplateEntryBracesIfPossible
 import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyIntention
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtil
+import org.jetbrains.kotlin.idea.refactoring.*
 import org.jetbrains.kotlin.idea.refactoring.introduce.*
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
@@ -76,7 +73,7 @@ import org.jetbrains.kotlin.utils.ifEmpty
 import org.jetbrains.kotlin.utils.sure
 import java.util.*
 
-object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
+object KotlinIntroduceVariableHandler : RefactoringActionHandler {
     val INTRODUCE_VARIABLE = KotlinRefactoringBundle.message("introduce.variable")
 
     private val EXPRESSION_KEY = Key.create<Boolean>("EXPRESSION_KEY")
@@ -411,7 +408,9 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
             project: Project,
             editor: Editor,
             declaration: KtDestructuringDeclaration,
-            suggestedNames: List<Collection<String>>) {
+            suggestedNames: List<Collection<String>>,
+            postProcess: (KtDeclaration) -> Unit
+    ) {
         StartMarkAction.canStart(project)?.let { return }
 
         val builder = TemplateBuilderImpl(declaration)
@@ -441,6 +440,9 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
                         }
 
                         override fun templateFinished(template: Template?, brokenOff: Boolean) {
+                            if (!brokenOff) {
+                                postProcess(declaration)
+                            }
                             finishMarkAction()
                         }
 
@@ -518,11 +520,23 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
             return showErrorHint(project, editor, KotlinRefactoringBundle.message("cannot.refactor.expression.has.unit.type"))
         }
 
+        val typeArgumentList = getQualifiedTypeArgumentList(KtPsiUtil.safeDeparenthesize(physicalExpression))
+
         val isInplaceAvailable = editor != null
                                  && editor.settings.isVariableInplaceRenameEnabled
                                  && !ApplicationManager.getApplication().isUnitTestMode
 
         val allOccurrences = occurrencesToReplace ?: expression.findOccurrences(occurrenceContainer)
+
+        fun postProcess(declaration: KtDeclaration) {
+            if (typeArgumentList == null) return
+            val initializer = when (declaration) {
+                is KtProperty -> declaration.initializer
+                is KtDestructuringDeclaration -> declaration.initializer
+                else -> null
+            } ?: return
+            runWriteAction { addTypeArgumentsIfNeeded(initializer, typeArgumentList) }
+        }
 
         val callback = Pass<OccurrencesChooser.ReplaceChoice> { replaceChoice ->
             val allReplaces = when (replaceChoice) {
@@ -545,6 +559,7 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
                         calculateAnchor(commonParent, commonContainer, allReplaces),
                         NewDeclarationNameValidator.Target.VARIABLES
                 )
+
                 val suggestedNames = if (componentFunctions.isNotEmpty()) {
                     val collectingValidator = CollectingNameValidator(filter = validator)
                     componentFunctions.map { suggestNamesForComponent(it, project, collectingValidator) }
@@ -556,10 +571,12 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
                                                                         validator,
                                                                         "value").singletonList()
                 }
+
                 val introduceVariableContext = IntroduceVariableContext(
                         expression, suggestedNames, allReplaces, commonContainer, commonParent,
                         replaceOccurrence, noTypeInference, expressionType, componentFunctions, bindingContext, resolutionFacade
                 )
+
                 project.executeCommand(INTRODUCE_VARIABLE, null) {
                     runWriteAction { introduceVariableContext.runRefactoring() }
 
@@ -573,7 +590,10 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
                     editor.caretModel.moveToOffset(property.textOffset)
                     editor.selectionModel.removeSelection()
 
-                    if (!isInplaceAvailable) return@executeCommand
+                    if (!isInplaceAvailable) {
+                        postProcess(property)
+                        return@executeCommand
+                    }
 
                     PsiDocumentManager.getInstance(project).commitDocument(editor.document)
                     PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)
@@ -590,12 +610,13 @@ object KotlinIntroduceVariableHandler : KotlinIntroduceHandlerBase() {
                                     expressionType,
                                     noTypeInference,
                                     project,
-                                    editor
+                                    editor,
+                                    ::postProcess
                             ).startInplaceIntroduceTemplate()
                         }
 
                         is KtDestructuringDeclaration -> {
-                            executeMultiDeclarationTemplate(project, editor, property, suggestedNames)
+                            executeMultiDeclarationTemplate(project, editor, property, suggestedNames, ::postProcess)
                         }
 
                         else -> throw AssertionError("Unexpected declaration: ${property.getElementTextWithContext()}")

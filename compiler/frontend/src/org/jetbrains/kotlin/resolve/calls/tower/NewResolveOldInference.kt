@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategyForInvoke
 import org.jetbrains.kotlin.resolve.isHiddenInResolution
+import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.DeferredType
 import org.jetbrains.kotlin.types.ErrorUtils
@@ -53,10 +54,11 @@ import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.utils.sure
 
 class NewResolveOldInference(
-        val candidateResolver: CandidateResolver,
-        val towerResolver: TowerResolver,
-        val resolutionResultsHandler: ResolutionResultsHandler,
-        val dynamicCallableDescriptors: DynamicCallableDescriptors
+        private val candidateResolver: CandidateResolver,
+        private val towerResolver: TowerResolver,
+        private val resolutionResultsHandler: ResolutionResultsHandler,
+        private val dynamicCallableDescriptors: DynamicCallableDescriptors,
+        private val syntheticScopes: SyntheticScopes
 ) {
 
     fun runResolve(
@@ -68,7 +70,7 @@ class NewResolveOldInference(
         val explicitReceiver = context.call.explicitReceiver
 
         val dynamicScope = dynamicCallableDescriptors.createDynamicDescriptorScope(context.call, context.scope.ownerDescriptor)
-        val scopeTower = ScopeTowerImpl(context, dynamicScope, context.call.createLookupLocation())
+        val scopeTower = ScopeTowerImpl(context, dynamicScope, syntheticScopes, context.call.createLookupLocation())
 
         val baseContext = Context(scopeTower, name, context, tracing)
 

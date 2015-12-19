@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode;
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 
 import java.util.Collection;
@@ -191,6 +192,10 @@ public class ResolutionResultsHandler {
     ) {
         if (candidates.size() == 1) {
             return OverloadResolutionResultsImpl.success(candidates.iterator().next());
+        }
+
+        if (candidates.iterator().next() instanceof VariableAsFunctionResolvedCall) {
+            candidates = overloadingConflictResolver.findMaximallySpecificVariableAsFunctionCalls(candidates, discriminateGenerics);
         }
 
         Set<MutableResolvedCall<D>> noOverrides = OverrideResolver.filterOutOverridden(candidates, MAP_TO_RESULT);

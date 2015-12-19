@@ -23,16 +23,16 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class ToInfixCallIntention : SelfTargetingIntention<KtCallExpression>(javaClass(), "Replace with infix function call") {
+public class ToInfixCallIntention : SelfTargetingIntention<KtCallExpression>(KtCallExpression::class.java, "Replace with infix function call") {
     override fun isApplicableTo(element: KtCallExpression, caretOffset: Int): Boolean {
-        val calleeExpr = element.getCalleeExpression() as? KtNameReferenceExpression ?: return false
-        if (!calleeExpr.getTextRange().containsOffset(caretOffset)) return false
+        val calleeExpr = element.calleeExpression as? KtNameReferenceExpression ?: return false
+        if (!calleeExpr.textRange.containsOffset(caretOffset)) return false
 
-        val dotQualified = element.getParent() as? KtDotQualifiedExpression ?: return false
+        val dotQualified = element.parent as? KtDotQualifiedExpression ?: return false
 
-        if (element.getTypeArgumentList() != null) return false
+        if (element.typeArgumentList != null) return false
 
-        val argument = element.getValueArguments().singleOrNull() ?: return false
+        val argument = element.valueArguments.singleOrNull() ?: return false
         if (argument.isNamed()) return false
         if (argument.getArgumentExpression() == null) return false
 
@@ -48,10 +48,10 @@ public class ToInfixCallIntention : SelfTargetingIntention<KtCallExpression>(jav
     }
 
     override fun applyTo(element: KtCallExpression, editor: Editor) {
-        val dotQualified = element.getParent() as KtDotQualifiedExpression
-        val receiver = dotQualified.getReceiverExpression()
-        val argument = element.getValueArguments().single().getArgumentExpression()!!
-        val name = element.getCalleeExpression()!!.getText()
+        val dotQualified = element.parent as KtDotQualifiedExpression
+        val receiver = dotQualified.receiverExpression
+        val argument = element.valueArguments.single().getArgumentExpression()!!
+        val name = element.calleeExpression!!.text
 
         val newCall = KtPsiFactory(element).createExpressionByPattern("$0 $name $1", receiver, argument)
         dotQualified.replace(newCall)

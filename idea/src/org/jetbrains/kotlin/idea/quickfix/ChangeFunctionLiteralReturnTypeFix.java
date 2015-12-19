@@ -127,13 +127,13 @@ public class ChangeFunctionLiteralReturnTypeFix extends KotlinQuickFixAction<KtL
     }
 
     @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiFile file) {
         return super.isAvailable(project, editor, file) &&
             (functionLiteralReturnTypeRef != null || (appropriateQuickFix != null && appropriateQuickFix.isAvailable(project, editor, file)));
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
         if (functionLiteralReturnTypeRef != null) {
             KtTypeReference newTypeRef = KtPsiFactoryKt.KtPsiFactory(file).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
             newTypeRef = (KtTypeReference) functionLiteralReturnTypeRef.replace(newTypeRef);

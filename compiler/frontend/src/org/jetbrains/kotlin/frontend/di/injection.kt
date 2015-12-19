@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.frontend.di
 import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.context.LazyResolveToken
 import org.jetbrains.kotlin.context.ModuleContext
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.resolve.*
@@ -28,7 +27,10 @@ import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.NoTopLevelDescriptorProvider
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
-import org.jetbrains.kotlin.types.expressions.*
+import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
+import org.jetbrains.kotlin.types.expressions.DeclarationScopeProviderForLocalClassifierAnalyzer
+import org.jetbrains.kotlin.types.expressions.LocalClassDescriptorHolder
+import org.jetbrains.kotlin.types.expressions.LocalLazyDeclarationResolver
 
 public fun StorageComponentContainer.configureModule(
         moduleContext: ModuleContext, platform: TargetPlatform
@@ -70,6 +72,7 @@ public fun createContainerForBodyResolve(
 
     useInstance(statementFilter)
 
+    useInstance(LookupTracker.DO_NOTHING)
     useInstance(BodyResolveCache.ThrowException)
 
     useImpl<BodyResolver>()
@@ -82,6 +85,7 @@ public fun createContainerForLazyBodyResolve(
 ): StorageComponentContainer = createContainer("LazyBodyResolve") {
     configureModule(moduleContext, platform, bindingTrace)
 
+    useInstance(LookupTracker.DO_NOTHING)
     useInstance(kotlinCodeAnalyzer)
     useInstance(kotlinCodeAnalyzer.getFileScopeProvider())
     useInstance(bodyResolveCache)
@@ -92,11 +96,13 @@ public fun createContainerForLazyLocalClassifierAnalyzer(
         moduleContext: ModuleContext,
         bindingTrace: BindingTrace,
         platform: TargetPlatform,
+        lookupTracker: LookupTracker,
         localClassDescriptorHolder: LocalClassDescriptorHolder
 ): StorageComponentContainer = createContainer("LocalClassifierAnalyzer") {
     configureModule(moduleContext, platform, bindingTrace)
 
     useInstance(localClassDescriptorHolder)
+    useInstance(lookupTracker)
 
     useImpl<LazyTopDownAnalyzer>()
 

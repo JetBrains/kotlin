@@ -55,7 +55,7 @@ fun UsefulTestCase.createAndroidTestEnvironment(configuration: CompilerConfigura
 }
 
 fun getResPaths(path: String): List<String> {
-    return File(path).listFiles { it.name.startsWith("res") && it.isDirectory }!!.map { "$path${it.name}/" }
+    return File(path).listFiles { it -> it.name.startsWith("res") && it.isDirectory }!!.map { "$path${it.name}/" }
 }
 
 fun <T> ComponentManager.registerServiceInstance(interfaceClass: Class<T>, instance: T) {

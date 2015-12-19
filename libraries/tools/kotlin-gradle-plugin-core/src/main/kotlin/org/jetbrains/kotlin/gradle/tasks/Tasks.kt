@@ -62,7 +62,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractCo
         afterCompileHook(args)
     }
 
-    private fun getKotlinSources(): List<File> = getSource().filter { it.isKotlinFile() }
+    private fun getKotlinSources(): List<File> = (getSource() as Iterable<File>).filter { it.isKotlinFile() }
 
     private fun File.isKotlinFile(): Boolean {
         return when (FilenameUtils.getExtension(getName()).toLowerCase()) {
@@ -158,7 +158,7 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
         testsMap.get(this.name)?.let {
             addFriendPathForTestTask(it)
         }
-9
+
         getLogger().kotlinDebug("args.moduleName = ${args.moduleName}")
     }
 

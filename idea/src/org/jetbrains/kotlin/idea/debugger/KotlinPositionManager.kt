@@ -461,6 +461,7 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
                             }
                         }
                     }
+                    true
                 }
             }
             result

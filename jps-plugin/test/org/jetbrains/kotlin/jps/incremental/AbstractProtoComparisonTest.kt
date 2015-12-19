@@ -65,7 +65,7 @@ public abstract class AbstractProtoComparisonTest : UsefulTestCase() {
     }
 
     private fun compileFileAndGetClasses(testPath: String, testDir: File, prefix: String): List<File> {
-        val files = File(testPath).listFiles { it.name.startsWith(prefix) }!!
+        val files = File(testPath).listFiles { it -> it.name.startsWith(prefix) }!!
         val sourcesDirectory = testDir.createSubDirectory("sources")
         val classesDirectory = testDir.createSubDirectory("$prefix.src")
 
@@ -74,7 +74,7 @@ public abstract class AbstractProtoComparisonTest : UsefulTestCase() {
         }
         MockLibraryUtil.compileKotlin(sourcesDirectory.path, classesDirectory)
 
-        return File(classesDirectory, "test").listFiles() { it.name.endsWith(".class") }?.sortedBy { it.name }!!
+        return File(classesDirectory, "test").listFiles() { it -> it.name.endsWith(".class") }?.sortedBy { it.name }!!
     }
 
     private fun Printer.printDifference(oldClassFile: File, newClassFile: File) {

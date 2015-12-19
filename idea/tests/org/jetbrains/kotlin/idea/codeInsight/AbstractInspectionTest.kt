@@ -70,7 +70,7 @@ public abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTest
         with(myFixture) {
             setTestDataPath("${KotlinTestUtils.getHomeDirectory()}/$srcDir")
 
-            val afterFiles = srcDir.listFiles { it.name == "inspectionData" }?.single()?.listFiles { it.extension == "after" } ?: emptyArray()
+            val afterFiles = srcDir.listFiles { it -> it.name == "inspectionData" }?.single()?.listFiles { it -> it.extension == "after" } ?: emptyArray()
             val psiFiles = srcDir.walkTopDown().treeFilter { it.name != "inspectionData" }.mapNotNull {
                 file ->
                 if (file.isDirectory) {

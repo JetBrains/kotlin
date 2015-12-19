@@ -27,7 +27,7 @@ import com.intellij.refactoring.RefactoringActionHandler
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.lang.ElementsHandler
 import com.intellij.refactoring.util.CommonRefactoringUtil
-import org.jetbrains.kotlin.idea.core.refactoring.canRefactor
+import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
@@ -98,6 +98,6 @@ public abstract class AbstractPullPushMembersHandler(
                 is KtClassOrObject -> it
                 else -> null
             } ?: return false
-        }.size() == 1
+        }.size == 1
     }
 }

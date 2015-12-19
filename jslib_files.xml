@@ -20,6 +20,10 @@
             <include name="kotlin/annotation/Annotations.kt"/>
         </fileset>
 
+        <fileset dir="${basedir}/libraries/kotlin.test/shared">
+            <include name="src/main/kotlin/kotlin/test/TestAssertions.kt" />
+        </fileset>
+
         <fileset dir="${basedir}/${intermediate-sources}/stdlib/js">
             <include name="**/*.kt" />
 

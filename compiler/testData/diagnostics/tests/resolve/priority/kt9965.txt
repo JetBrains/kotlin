@@ -1,0 +1,30 @@
+package
+
+public fun test(): kotlin.Unit
+
+public final enum class Foo : kotlin.Enum<Foo> {
+    enum entry FOO
+
+    private constructor Foo()
+    public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: Foo): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion {
+        private constructor Companion()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        public final fun valueOf(/*0*/ something: kotlin.String): kotlin.Int
+        public final fun values(): kotlin.Int
+    }
+
+    // Static members
+    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use 'values()' function instead", replaceWith = kotlin.ReplaceWith(expression = "this.values()", imports = {})) public final /*synthesized*/ val values: kotlin.Array<Foo>
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): Foo
+    public final /*synthesized*/ fun values(): kotlin.Array<Foo>
+}

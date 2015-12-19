@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
-import org.jetbrains.kotlin.idea.core.refactoring.createPrimaryConstructorIfAbsent
-import org.jetbrains.kotlin.idea.core.refactoring.dropOverrideKeywordIfNecessary
-import org.jetbrains.kotlin.idea.core.refactoring.replaceListPsiAndKeepDelimiters
+import org.jetbrains.kotlin.idea.refactoring.createPrimaryConstructorIfAbsent
+import org.jetbrains.kotlin.idea.refactoring.dropOverrideKeywordIfNecessary
+import org.jetbrains.kotlin.idea.refactoring.replaceListPsiAndKeepDelimiters
 import org.jetbrains.kotlin.idea.core.setVisibility
 import org.jetbrains.kotlin.idea.core.toKeywordToken
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeInfo
@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.substitutions.getTypeSubstitutor
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.sure
 
 class KotlinCallableDefinitionUsage<T : PsiElement>(
@@ -119,12 +120,10 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
             processParameterListWithStructuralChanges(changeInfo, element, parameterList, psiFactory)
         }
         else if (parameterList != null) {
-            var paramIndex = if (originalCallableDescriptor.extensionReceiverParameter != null) 1 else 0
-
-            for (parameter in parameterList.parameters) {
-                val parameterInfo = changeInfo.newParameters[paramIndex]
+            val offset = if (originalCallableDescriptor.extensionReceiverParameter != null) 1 else 0
+            for ((paramIndex, parameter) in parameterList.parameters.withIndex()) {
+                val parameterInfo = changeInfo.newParameters[paramIndex + offset]
                 changeParameter(paramIndex, parameter, parameterInfo)
-                paramIndex++
             }
 
             parameterList.addToShorteningWaitSet(Options.DEFAULT)
@@ -162,11 +161,9 @@ class KotlinCallableDefinitionUsage<T : PsiElement>(
         if (changeInfo.isReturnTypeChanged && returnTypeIsNeeded) {
             element.setTypeReference(null)
             val returnTypeText = changeInfo.renderReturnType(this)
-
-            //TODO use ChangeFunctionReturnTypeFix.invoke when JetTypeCodeFragment.getType() is ready
-            if (!(returnTypeText == "Unit" || returnTypeText == "kotlin.Unit")) {
-                element.setTypeReference(KtPsiFactory(element).createType(returnTypeText))!!.addToShorteningWaitSet(
-                        Options.DEFAULT)
+            val returnType = changeInfo.newReturnTypeInfo.type
+            if (returnType == null || !returnType.isUnit()) {
+                element.setTypeReference(KtPsiFactory(element).createType(returnTypeText))!!.addToShorteningWaitSet(Options.DEFAULT)
             }
         }
     }

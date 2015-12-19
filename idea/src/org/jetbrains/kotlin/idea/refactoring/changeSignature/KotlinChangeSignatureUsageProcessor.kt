@@ -47,8 +47,8 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.codeInsight.KotlinFileReferencesResolver
 import org.jetbrains.kotlin.idea.core.compareDescriptors
-import org.jetbrains.kotlin.idea.core.refactoring.createTempCopy
-import org.jetbrains.kotlin.idea.core.refactoring.isTrueJavaMethod
+import org.jetbrains.kotlin.idea.refactoring.createTempCopy
+import org.jetbrains.kotlin.idea.refactoring.isTrueJavaMethod
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.*
 import org.jetbrains.kotlin.idea.refactoring.getBodyScope
 import org.jetbrains.kotlin.idea.refactoring.getContainingScope
@@ -91,8 +91,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             methodDescriptor: KotlinMethodDescriptor
     ) : KotlinChangeInfo(methodDescriptor = methodDescriptor,
                          name = "",
-                         newReturnType = null,
-                         newReturnTypeText = "",
+                         newReturnTypeInfo = KotlinTypeInfo(true),
                          newVisibility = Visibilities.DEFAULT_VISIBILITY,
                          parameterInfos = emptyList<KotlinParameterInfo>(),
                          receiver = null,
@@ -691,7 +690,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
             val psiFactory = KtPsiFactory(callable.project)
             val tempFile = (callable.containingFile as KtFile).createTempCopy()
             val functionWithReceiver = tempFile.findElementAt(callable.textOffset)?.getNonStrictParentOfType<KtNamedFunction>() ?: return
-            val receiverTypeRef = psiFactory.createType(newReceiverInfo.currentTypeText)
+            val receiverTypeRef = psiFactory.createType(newReceiverInfo.currentTypeInfo.render())
             functionWithReceiver.setReceiverTypeReference(receiverTypeRef)
             val newContext = functionWithReceiver.bodyExpression!!.analyze(BodyResolveMode.FULL)
 

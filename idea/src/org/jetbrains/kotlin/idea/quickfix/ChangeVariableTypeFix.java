@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.quickfix;
 
 import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
@@ -48,8 +47,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class ChangeVariableTypeFix extends KotlinQuickFixAction<KtVariableDeclaration> {
-    private final static Logger LOG = Logger.getInstance(ChangeVariableTypeFix.class);
-
     private final KotlinType type;
 
     public ChangeVariableTypeFix(@NotNull KtVariableDeclaration element, @NotNull KotlinType type) {
@@ -75,19 +72,19 @@ public class ChangeVariableTypeFix extends KotlinQuickFixAction<KtVariableDeclar
     }
 
     @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiFile file) {
         return super.isAvailable(project, editor, file) && !ErrorUtils.containsErrorType(type);
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
         KtPsiFactory psiFactory = KtPsiFactoryKt.KtPsiFactory(file);
 
         PsiElement nameIdentifier = getElement().getNameIdentifier();
         assert nameIdentifier != null : "ChangeVariableTypeFix applied to variable without name";
 
         KtTypeReference replacingTypeReference = psiFactory.createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
-        ArrayList<KtTypeReference> toShorten = new ArrayList<KtTypeReference>();
+        List<KtTypeReference> toShorten = new ArrayList<KtTypeReference>();
         toShorten.add(getElement().setTypeReference(replacingTypeReference));
 
         if (getElement() instanceof KtProperty) {

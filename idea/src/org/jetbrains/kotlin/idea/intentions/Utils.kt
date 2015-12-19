@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 
 fun KtCallableDeclaration.setType(type: KotlinType, shortenReferences: Boolean = true) {
-    if (type.isError()) return
+    if (type.isError) return
     setType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type), shortenReferences)
 }
 
@@ -49,18 +49,18 @@ fun KtCallableDeclaration.setType(typeString: String, shortenReferences: Boolean
 }
 
 fun KtCallableDeclaration.setReceiverType(type: KotlinType) {
-    if (type.isError()) return
-    val typeReference = KtPsiFactory(getProject()).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type))
+    if (type.isError) return
+    val typeReference = KtPsiFactory(project).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type))
     setReceiverTypeReference(typeReference)
-    ShortenReferences.DEFAULT.process(getReceiverTypeReference()!!)
+    ShortenReferences.DEFAULT.process(receiverTypeReference!!)
 }
 
 fun KtContainerNode.description(): String? {
-    when (getNode().getElementType()) {
+    when (node.elementType) {
         KtNodeTypes.THEN -> return "if"
         KtNodeTypes.ELSE -> return "else"
         KtNodeTypes.BODY -> {
-            when (getParent()) {
+            when (parent) {
                 is KtWhileExpression -> return "while"
                 is KtDoWhileExpression -> return "do...while"
                 is KtForExpression -> return "for"
@@ -79,14 +79,14 @@ fun isAutoCreatedItUsage(expression: KtNameReferenceExpression): Boolean {
 
 // returns assignment which replaces initializer
 fun splitPropertyDeclaration(property: KtProperty): KtBinaryExpression {
-    val parent = property.getParent()!!
+    val parent = property.parent!!
 
-    val initializer = property.getInitializer()!!
+    val initializer = property.initializer!!
 
-    val explicitTypeToSet = if (property.getTypeReference() != null) null else initializer.analyze().getType(initializer)
+    val explicitTypeToSet = if (property.typeReference != null) null else initializer.analyze().getType(initializer)
 
     val psiFactory = KtPsiFactory(property)
-    var assignment = psiFactory.createExpressionByPattern("$0 = $1", property.getNameAsName()!!, initializer)
+    var assignment = psiFactory.createExpressionByPattern("$0 = $1", property.nameAsName!!, initializer)
 
     assignment = parent.addAfter(assignment, property) as KtBinaryExpression
     parent.addAfter(psiFactory.createNewLine(), property)
@@ -101,10 +101,10 @@ fun splitPropertyDeclaration(property: KtProperty): KtBinaryExpression {
 }
 
 val KtQualifiedExpression.callExpression: KtCallExpression?
-    get() = getSelectorExpression() as? KtCallExpression
+    get() = selectorExpression as? KtCallExpression
 
 val KtQualifiedExpression.calleeName: String?
-    get() = (callExpression?.getCalleeExpression() as? KtNameReferenceExpression)?.getText()
+    get() = (callExpression?.calleeExpression as? KtNameReferenceExpression)?.text
 
 fun KtQualifiedExpression.toResolvedCall(bodyResolveMode: BodyResolveMode): ResolvedCall<out CallableDescriptor>? {
     val callExpression = callExpression ?: return null
@@ -120,7 +120,7 @@ fun KtExpression.isExitStatement(): Boolean {
 
 // returns false for call of super, static method or method from package
 fun KtQualifiedExpression.isReceiverExpressionWithValue(): Boolean {
-    val receiver = getReceiverExpression()
+    val receiver = receiverExpression
     if (receiver is KtSuperExpression) return false
     return analyze().getType(receiver) != null
 }
@@ -135,8 +135,8 @@ private fun KtExpression.specialNegation(): KtExpression? {
     val factory = KtPsiFactory(this)
     when (this) {
         is KtPrefixExpression -> {
-            if (getOperationReference().getReferencedName() == "!") {
-                val baseExpression = getBaseExpression()
+            if (operationReference.getReferencedName() == "!") {
+                val baseExpression = baseExpression
                 if (baseExpression != null) {
                     val context = baseExpression.analyzeAndGetResult().bindingContext
                     val type = context.getType(baseExpression)
@@ -148,15 +148,15 @@ private fun KtExpression.specialNegation(): KtExpression? {
         }
 
         is KtBinaryExpression -> {
-            val operator = getOperationToken()
+            val operator = operationToken
             if (operator !in NEGATABLE_OPERATORS) return null
-            val left = getLeft() ?: return null
-            val right = getRight() ?: return null
+            val left = left ?: return null
+            val right = right ?: return null
             return factory.createExpressionByPattern("$0 $1 $2", left, getNegatedOperatorText(operator), right)
         }
 
         is KtConstantExpression -> {
-            return when (getText()) {
+            return when (text) {
                 "true" -> factory.createExpression("false")
                 "false" -> factory.createExpression("true")
                 else -> null
@@ -172,18 +172,18 @@ private val NEGATABLE_OPERATORS = setOf(KtTokens.EQEQ, KtTokens.EXCLEQ, KtTokens
 
 private fun getNegatedOperatorText(token: IElementType): String {
     return when(token) {
-        KtTokens.EQEQ -> KtTokens.EXCLEQ.getValue()
-        KtTokens.EXCLEQ -> KtTokens.EQEQ.getValue()
-        KtTokens.EQEQEQ -> KtTokens.EXCLEQEQEQ.getValue()
-        KtTokens.EXCLEQEQEQ -> KtTokens.EQEQEQ.getValue()
-        KtTokens.IS_KEYWORD -> KtTokens.NOT_IS.getValue()
-        KtTokens.NOT_IS -> KtTokens.IS_KEYWORD.getValue()
-        KtTokens.IN_KEYWORD -> KtTokens.NOT_IN.getValue()
-        KtTokens.NOT_IN -> KtTokens.IN_KEYWORD.getValue()
-        KtTokens.LT -> KtTokens.GTEQ.getValue()
-        KtTokens.LTEQ -> KtTokens.GT.getValue()
-        KtTokens.GT -> KtTokens.LTEQ.getValue()
-        KtTokens.GTEQ -> KtTokens.LT.getValue()
+        KtTokens.EQEQ -> KtTokens.EXCLEQ.value
+        KtTokens.EXCLEQ -> KtTokens.EQEQ.value
+        KtTokens.EQEQEQ -> KtTokens.EXCLEQEQEQ.value
+        KtTokens.EXCLEQEQEQ -> KtTokens.EQEQEQ.value
+        KtTokens.IS_KEYWORD -> KtTokens.NOT_IS.value
+        KtTokens.NOT_IS -> KtTokens.IS_KEYWORD.value
+        KtTokens.IN_KEYWORD -> KtTokens.NOT_IN.value
+        KtTokens.NOT_IN -> KtTokens.IN_KEYWORD.value
+        KtTokens.LT -> KtTokens.GTEQ.value
+        KtTokens.LTEQ -> KtTokens.GT.value
+        KtTokens.GT -> KtTokens.LTEQ.value
+        KtTokens.GTEQ -> KtTokens.LT.value
         else -> throw IllegalArgumentException("The token $token does not have a negated equivalent.")
     }
 }

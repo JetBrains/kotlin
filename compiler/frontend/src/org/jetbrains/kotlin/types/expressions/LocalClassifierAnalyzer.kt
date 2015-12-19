@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.PsiBasedClassMemberDeclara
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope
+import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 
@@ -57,6 +58,7 @@ public class LocalClassifierAnalyzer(
         private val annotationResolver: AnnotationResolver,
         private val platform: TargetPlatform,
         private val dynamicTypesSettings: DynamicTypesSettings,
+        private val lookupTracker: LookupTracker,
         private val supertypeLoopChecker: SupertypeLoopChecker
 ) {
     fun processClassOrObject(
@@ -71,6 +73,7 @@ public class LocalClassifierAnalyzer(
                 moduleContext,
                 context.trace,
                 platform,
+                lookupTracker,
                 LocalClassDescriptorHolder(
                         scope,
                         classOrObject,

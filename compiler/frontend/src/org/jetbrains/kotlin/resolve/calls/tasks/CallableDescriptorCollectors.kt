@@ -27,9 +27,7 @@ import org.jetbrains.kotlin.resolve.LibrarySourceHacks
 import org.jetbrains.kotlin.resolve.calls.tasks.createSynthesizedInvokes
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassValueDescriptor
-import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
-import org.jetbrains.kotlin.resolve.scopes.LexicalChainedScope
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope
+import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.utils.*
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
@@ -49,7 +47,7 @@ public interface CallableDescriptorCollector<D : CallableDescriptor> {
 
     public fun getStaticMembersByName(receiver: KotlinType, name: Name, location: LookupLocation): Collection<D>
 
-    public fun getExtensionsByName(scope: HierarchicalScope, name: Name, receiverTypes: Collection<KotlinType>, location: LookupLocation): Collection<D>
+    public fun getExtensionsByName(scope: HierarchicalScope, syntheticScopes: SyntheticScopes, name: Name, receiverTypes: Collection<KotlinType>, location: LookupLocation): Collection<D>
 }
 
 private fun <D : CallableDescriptor> CallableDescriptorCollector<D>.withDefaultFilter() = filtered { !LibrarySourceHacks.shouldSkip(it) }
@@ -127,10 +125,10 @@ private object FunctionCollector : CallableDescriptorCollector<FunctionDescripto
         return getConstructors(receiver.memberScope.memberScopeAsImportingScope(), name, location, { isStaticNestedClass(it) })
     }
 
-    override fun getExtensionsByName(scope: HierarchicalScope, name: Name, receiverTypes: Collection<KotlinType>, location: LookupLocation): Collection<FunctionDescriptor> {
+    override fun getExtensionsByName(scope: HierarchicalScope, syntheticScopes: SyntheticScopes, name: Name, receiverTypes: Collection<KotlinType>, location: LookupLocation): Collection<FunctionDescriptor> {
         val functions = scope.collectFunctions(name, location)
         val (extensions, nonExtensions) = functions.partition { it.extensionReceiverParameter != null }
-        val syntheticExtensions = scope.collectSyntheticExtensionFunctions(receiverTypes, name, location)
+        val syntheticExtensions = syntheticScopes.collectSyntheticExtensionFunctions(receiverTypes, name, location)
 
         if (name == OperatorNameConventions.INVOKE) {
             // Create synthesized "invoke" extensions for each non-extension "invoke" found in the scope
@@ -215,10 +213,10 @@ private object VariableCollector : CallableDescriptorCollector<VariableDescripto
         return listOf()
     }
 
-    override fun getExtensionsByName(scope: HierarchicalScope, name: Name, receiverTypes: Collection<KotlinType>, location: LookupLocation): Collection<VariableDescriptor> {
+    override fun getExtensionsByName(scope: HierarchicalScope, syntheticScopes: SyntheticScopes, name: Name, receiverTypes: Collection<KotlinType>, location: LookupLocation): Collection<VariableDescriptor> {
         // property may have an extension function type, we check the applicability later to avoid an early computing of deferred types
         return scope.collectVariables(name, location) +
-               scope.collectSyntheticExtensionProperties(receiverTypes, name, location)
+               syntheticScopes.collectSyntheticExtensionProperties(receiverTypes, name, location)
     }
 
     override fun toString() = "VARIABLES"
@@ -247,8 +245,8 @@ private fun <D : CallableDescriptor> CallableDescriptorCollector<D>.filtered(fil
             return delegate.getStaticMembersByName(receiver, name, location).filter(filter)
         }
 
-        override fun getExtensionsByName(scope: HierarchicalScope, name: Name, receiverTypes: Collection<KotlinType>, location: LookupLocation): Collection<D> {
-            return delegate.getExtensionsByName(scope, name, receiverTypes, location).filter(filter)
+        override fun getExtensionsByName(scope: HierarchicalScope, syntheticScopes: SyntheticScopes, name: Name, receiverTypes: Collection<KotlinType>, location: LookupLocation): Collection<D> {
+            return delegate.getExtensionsByName(scope, syntheticScopes, name, receiverTypes, location).filter(filter)
         }
 
         override fun toString(): String {

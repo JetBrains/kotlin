@@ -25,6 +25,8 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
@@ -35,7 +37,6 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import java.util.*
-import kotlin.test.assertTrue
 import kotlin.text.Regex
 
 // NOTE: in this file we collect only Kotlin-specific methods working with PSI and not modifying it
@@ -225,7 +226,7 @@ public fun StubBasedPsiElementBase<out KotlinClassOrObjectStub<out KtClassOrObje
         }
     }
 
-    assertTrue(this is KtClassOrObject)
+    require(this is KtClassOrObject) { "it should be ${KtClassOrObject::class} but it is a ${this.javaClass.name}" }
 
     val stub = getStub()
     if (stub != null) {
@@ -432,3 +433,10 @@ fun canPlaceAfterSimpleNameEntry(element: PsiElement?): Boolean {
     val entryText = element?.text ?: return true
     return !BAD_NEIGHBOUR_FOR_SIMPLE_TEMPLATE_ENTRY_PATTERN.matches(entryText)
 }
+
+fun checkReservedPrefixWord(sink: DiagnosticSink, element: PsiElement, word: String, message: String) {
+    KtPsiUtil.getPreviousWord(element, word)?.let {
+        sink.report(Errors.UNSUPPORTED.on(it, message))
+    }
+}
+

@@ -40,11 +40,13 @@ public class ChangeParameterTypeFix extends KotlinQuickFixAction<KtParameter> {
         KtNamedDeclaration declaration = PsiTreeUtil.getParentOfType(element, KtNamedDeclaration.class);
         isPrimaryConstructorParameter = declaration instanceof KtPrimaryConstructor;
         FqName declarationFQName = declaration == null ? null : declaration.getFqName();
-        containingDeclarationName = declarationFQName == null ? declaration.getName() : declarationFQName.asString();
+        containingDeclarationName = declarationFQName != null ? declarationFQName.asString()
+                                                              : declaration != null ? declaration.getName()
+                                                                                    : null;
     }
 
     @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiFile file) {
         return super.isAvailable(project, editor, file) && containingDeclarationName != null;
     }
 
@@ -65,7 +67,7 @@ public class ChangeParameterTypeFix extends KotlinQuickFixAction<KtParameter> {
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
         KtTypeReference newTypeRef = KtPsiFactoryKt.KtPsiFactory(file).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
         newTypeRef = getElement().setTypeReference(newTypeRef);
         assert newTypeRef != null;

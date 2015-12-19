@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object CreateHasNextFunctionActionFactory : CreateCallableMemberFromUsageFactory<KtForExpression>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): KtForExpression? {
-        return QuickFixUtil.getParentElementOfType(diagnostic, javaClass<KtForExpression>())
+        return QuickFixUtil.getParentElementOfType(diagnostic, KtForExpression::class.java)
     }
 
     override fun createCallableInfo(element: KtForExpression, diagnostic: Diagnostic): CallableInfo? {

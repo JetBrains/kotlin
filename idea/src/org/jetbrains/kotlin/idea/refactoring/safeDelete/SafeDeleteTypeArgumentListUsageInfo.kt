@@ -24,6 +24,6 @@ public class SafeDeleteTypeArgumentListUsageInfo(
         typeProjection: KtTypeProjection, parameter: KtTypeParameter
 ) : SafeDeleteReferenceSimpleDeleteUsageInfo(typeProjection, parameter, true) {
     public override fun deleteElement() {
-        getElement()?.deleteElementAndCleanParent()
+        element?.deleteElementAndCleanParent()
     }
 }

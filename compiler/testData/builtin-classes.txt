@@ -1,6 +1,14 @@
 package-fragment kotlin
 
 public inline fun </*0*/ reified T> Array(/*0*/ size: kotlin.Int, /*1*/ init: kotlin.Function1<kotlin.Int, T>): kotlin.Array<T>
+public inline fun BooleanArray(/*0*/ size: kotlin.Int, /*1*/ init: kotlin.Function1<kotlin.Int, kotlin.Boolean>): kotlin.BooleanArray
+public inline fun ByteArray(/*0*/ size: kotlin.Int, /*1*/ init: kotlin.Function1<kotlin.Int, kotlin.Byte>): kotlin.ByteArray
+public inline fun CharArray(/*0*/ size: kotlin.Int, /*1*/ init: kotlin.Function1<kotlin.Int, kotlin.Char>): kotlin.CharArray
+public inline fun DoubleArray(/*0*/ size: kotlin.Int, /*1*/ init: kotlin.Function1<kotlin.Int, kotlin.Double>): kotlin.DoubleArray
+public inline fun FloatArray(/*0*/ size: kotlin.Int, /*1*/ init: kotlin.Function1<kotlin.Int, kotlin.Float>): kotlin.FloatArray
+public inline fun IntArray(/*0*/ size: kotlin.Int, /*1*/ init: kotlin.Function1<kotlin.Int, kotlin.Int>): kotlin.IntArray
+public inline fun LongArray(/*0*/ size: kotlin.Int, /*1*/ init: kotlin.Function1<kotlin.Int, kotlin.Long>): kotlin.LongArray
+public inline fun ShortArray(/*0*/ size: kotlin.Int, /*1*/ init: kotlin.Function1<kotlin.Int, kotlin.Short>): kotlin.ShortArray
 public inline fun </*0*/ reified T> arrayOf(/*0*/ vararg elements: T /*kotlin.Array<out T>*/): kotlin.Array<T>
 public fun </*0*/ reified T> arrayOfNulls(/*0*/ size: kotlin.Int): kotlin.Array<T?>
 public fun booleanArrayOf(/*0*/ vararg elements: kotlin.Boolean /*kotlin.BooleanArray*/): kotlin.BooleanArray

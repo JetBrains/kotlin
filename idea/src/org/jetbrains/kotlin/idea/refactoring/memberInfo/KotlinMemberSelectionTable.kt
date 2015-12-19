@@ -46,7 +46,7 @@ public class KotlinMemberSelectionTable(
     }
 
     override fun isAbstractColumnEditable(rowIndex: Int): Boolean {
-        val memberInfo = myMemberInfos.get(rowIndex)
+        val memberInfo = myMemberInfos[rowIndex]
 
         if (memberInfo.isStatic()) return false
 

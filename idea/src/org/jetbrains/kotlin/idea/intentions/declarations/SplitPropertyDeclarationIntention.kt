@@ -24,10 +24,10 @@ import org.jetbrains.kotlin.idea.intentions.splitPropertyDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-public class SplitPropertyDeclarationIntention : SelfTargetingRangeIntention<KtProperty>(javaClass(), "Split property declaration"), LowPriorityAction {
+public class SplitPropertyDeclarationIntention : SelfTargetingRangeIntention<KtProperty>(KtProperty::class.java, "Split property declaration"), LowPriorityAction {
     override fun applicabilityRange(element: KtProperty): TextRange? {
-        if (!element.isLocal()) return null
-        val initializer = element.getInitializer() ?: return null
+        if (!element.isLocal) return null
+        val initializer = element.initializer ?: return null
         return TextRange(element.startOffset, initializer.startOffset)
     }
 

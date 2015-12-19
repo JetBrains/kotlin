@@ -25,21 +25,21 @@ fun KtWhenCondition.toExpression(subject: KtExpression?): KtExpression {
     val factory = KtPsiFactory(this)
     when (this) {
         is KtWhenConditionIsPattern -> {
-            val op = if (isNegated()) "!is" else "is"
-            return factory.createExpressionByPattern("$0 $op $1", subject ?: "_", getTypeReference() ?: "")
+            val op = if (isNegated) "!is" else "is"
+            return factory.createExpressionByPattern("$0 $op $1", subject ?: "_", typeReference ?: "")
         }
 
         is KtWhenConditionInRange -> {
-            val op = getOperationReference().getText()
-            return factory.createExpressionByPattern("$0 $op $1", subject ?: "_", getRangeExpression() ?: "")
+            val op = operationReference.text
+            return factory.createExpressionByPattern("$0 $op $1", subject ?: "_", rangeExpression ?: "")
         }
 
         is KtWhenConditionWithExpression -> {
             return if (subject != null) {
-                factory.createExpressionByPattern("$0 == $1", subject, getExpression() ?: "")
+                factory.createExpressionByPattern("$0 == $1", subject, expression ?: "")
             }
             else {
-                getExpression()!!
+                expression!!
             }
         }
 
@@ -48,17 +48,17 @@ fun KtWhenCondition.toExpression(subject: KtExpression?): KtExpression {
 }
 
 public fun KtWhenExpression.getSubjectToIntroduce(): KtExpression?  {
-    if (getSubjectExpression() != null) return null
+    if (subjectExpression != null) return null
 
     var lastCandidate: KtExpression? = null
-    for (entry in getEntries()) {
-        val conditions = entry.getConditions()
-        if (!entry.isElse() && conditions.isEmpty()) return null
+    for (entry in entries) {
+        val conditions = entry.conditions
+        if (!entry.isElse && conditions.isEmpty()) return null
 
         for (condition in conditions) {
             if (condition !is KtWhenConditionWithExpression) return null
 
-            val candidate = condition.getExpression()?.getWhenConditionSubjectCandidate() as? KtNameReferenceExpression ?: return null
+            val candidate = condition.expression?.getWhenConditionSubjectCandidate() as? KtNameReferenceExpression ?: return null
 
             if (lastCandidate == null) {
                 lastCandidate = candidate
@@ -75,14 +75,14 @@ public fun KtWhenExpression.getSubjectToIntroduce(): KtExpression?  {
 
 private fun KtExpression?.getWhenConditionSubjectCandidate(): KtExpression? {
     return when(this) {
-        is KtIsExpression -> getLeftHandSide()
+        is KtIsExpression -> leftHandSide
 
         is KtBinaryExpression -> {
-            val lhs = getLeft()
-            val op = getOperationToken()
+            val lhs = left
+            val op = operationToken
             when (op) {
                 KtTokens.IN_KEYWORD, KtTokens.NOT_IN -> lhs
-                KtTokens.EQEQ -> lhs as? KtNameReferenceExpression ?: getRight()
+                KtTokens.EQEQ -> lhs as? KtNameReferenceExpression ?: right
                 KtTokens.OROR -> {
                     val leftCandidate = lhs.getWhenConditionSubjectCandidate()
                     val rightCandidate = right.getWhenConditionSubjectCandidate()
@@ -103,17 +103,17 @@ public fun KtWhenExpression.introduceSubject(): KtWhenExpression {
     val whenExpression = KtPsiFactory(this).buildExpression {
         appendFixedText("when(").appendExpression(subject).appendFixedText("){\n")
 
-        for (entry in getEntries()) {
-            val branchExpression = entry.getExpression()
+        for (entry in entries) {
+            val branchExpression = entry.expression
 
-            if (entry.isElse()) {
+            if (entry.isElse) {
                 appendFixedText("else")
             }
             else {
-                for ((i, condition) in entry.getConditions().withIndex()) {
+                for ((i, condition) in entry.conditions.withIndex()) {
                     if (i > 0) appendFixedText(",")
 
-                    val conditionExpression = (condition as KtWhenConditionWithExpression).getExpression()
+                    val conditionExpression = (condition as KtWhenConditionWithExpression).expression
                     appendConditionWithSubjectRemoved(conditionExpression, subject)
                 }
             }
@@ -132,17 +132,17 @@ public fun KtWhenExpression.introduceSubject(): KtWhenExpression {
 private fun BuilderByPattern<KtExpression>.appendConditionWithSubjectRemoved(conditionExpression: KtExpression?, subject: KtExpression) {
     when (conditionExpression) {
         is KtIsExpression -> {
-            if (conditionExpression.isNegated()) {
+            if (conditionExpression.isNegated) {
                 appendFixedText("!")
             }
             appendFixedText("is ")
-            appendNonFormattedText(conditionExpression.getTypeReference()?.getText() ?: "")
+            appendNonFormattedText(conditionExpression.typeReference?.text ?: "")
         }
 
         is KtBinaryExpression -> {
-            val lhs = conditionExpression.getLeft()
-            val rhs = conditionExpression.getRight()
-            val op = conditionExpression.getOperationToken()
+            val lhs = conditionExpression.left
+            val rhs = conditionExpression.right
+            val op = conditionExpression.operationToken
             when (op) {
                 KtTokens.IN_KEYWORD -> appendFixedText("in ").appendExpression(rhs)
                 KtTokens.NOT_IN -> appendFixedText("!in ").appendExpression(rhs)

@@ -58,7 +58,7 @@ public class RemoveNullableFix extends KotlinQuickFixAction<KtNullableType> {
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
         KtTypeElement type = super.getElement().getInnerType();
         assert type != null : "No inner type " + getElement().getText() + ", should have been rejected in createFactory()";
         super.getElement().replace(type);
@@ -67,7 +67,7 @@ public class RemoveNullableFix extends KotlinQuickFixAction<KtNullableType> {
     public static KotlinSingleIntentionActionFactory createFactory(final NullableKind typeOfError) {
         return new KotlinSingleIntentionActionFactory() {
             @Override
-            public KotlinQuickFixAction<KtNullableType> createAction(Diagnostic diagnostic) {
+            public KotlinQuickFixAction<KtNullableType> createAction(@NotNull Diagnostic diagnostic) {
                 KtNullableType nullType = QuickFixUtil.getParentElementOfType(diagnostic, KtNullableType.class);
                 if (nullType == null || nullType.getInnerType() == null) return null;
                 return new RemoveNullableFix(nullType, typeOfError);

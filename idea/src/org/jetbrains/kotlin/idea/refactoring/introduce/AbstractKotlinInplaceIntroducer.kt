@@ -40,11 +40,11 @@ public abstract class AbstractKotlinInplaceIntroducer<D: KtNamedDeclaration>(
         editor: Editor
 ): AbstractInplaceIntroducer<D, KtExpression>(project, editor, expression, localVariable, occurrences, title, KotlinFileType.INSTANCE) {
     protected fun initFormComponents(init: FormBuilder.() -> Unit) {
-        myWholePanel.setLayout(BorderLayout())
+        myWholePanel.layout = BorderLayout()
 
         with(FormBuilder.createFormBuilder()) {
             init()
-            myWholePanel.add(getPanel(), BorderLayout.CENTER)
+            myWholePanel.add(panel, BorderLayout.CENTER)
         }
     }
 
@@ -52,7 +52,7 @@ public abstract class AbstractKotlinInplaceIntroducer<D: KtNamedDeclaration>(
         myEditor.putUserData(InplaceRefactoring.INTRODUCE_RESTART, true)
         try {
             stopIntroduce(myEditor)
-            myProject.executeWriteCommand(getCommandName(), getCommandName(), action)
+            myProject.executeWriteCommand(commandName, commandName, action)
             // myExprMarker was invalidated by stopIntroduce()
             myExprMarker = myExpr?.let { createMarker(it) }
             startInplaceIntroduceTemplate()
@@ -70,7 +70,7 @@ public abstract class AbstractKotlinInplaceIntroducer<D: KtNamedDeclaration>(
             marker: RangeMarker,
             exprText: String?
     ): KtExpression? {
-        if (exprText == null || !declaration.isValid()) return null
+        if (exprText == null || !declaration.isValid) return null
 
         val leaf = containingFile.findElementAt(marker.startOffset) ?: return null
 

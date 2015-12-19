@@ -50,12 +50,12 @@ public class AddFunctionBodyFix extends KotlinQuickFixAction<KtFunction> {
     }
 
     @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
+    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiFile file) {
         return super.isAvailable(project, editor, file) && !getElement().hasBody();
     }
 
     @Override
-    public void invoke(@NotNull Project project, Editor editor, KtFile file) throws IncorrectOperationException {
+    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
         KtFunction newElement = (KtFunction) getElement().copy();
         KtPsiFactory psiFactory = KtPsiFactoryKt.KtPsiFactory(file);
         if (!(newElement.getLastChild() instanceof PsiWhiteSpace)) {
@@ -71,7 +71,7 @@ public class AddFunctionBodyFix extends KotlinQuickFixAction<KtFunction> {
         return new KotlinSingleIntentionActionFactory() {
             @Nullable
             @Override
-            public KotlinQuickFixAction createAction(Diagnostic diagnostic) {
+            public KotlinQuickFixAction createAction(@NotNull Diagnostic diagnostic) {
                 PsiElement element = diagnostic.getPsiElement();
                 KtFunction function = PsiTreeUtil.getParentOfType(element, KtFunction.class, false);
                 if (function == null) return null;

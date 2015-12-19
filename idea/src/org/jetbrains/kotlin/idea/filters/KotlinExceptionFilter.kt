@@ -28,8 +28,8 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.codegen.inline.FileMapping
 import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
 import org.jetbrains.kotlin.codegen.inline.SMAPParser
-import org.jetbrains.kotlin.idea.core.refactoring.getLineCount
-import org.jetbrains.kotlin.idea.core.refactoring.toPsiFile
+import org.jetbrains.kotlin.idea.refactoring.getLineCount
+import org.jetbrains.kotlin.idea.refactoring.toPsiFile
 import org.jetbrains.kotlin.idea.util.DebuggerUtils
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.load.kotlin.JvmVirtualFileFinder

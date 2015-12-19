@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
@@ -42,6 +43,7 @@ internal class CandidateWithBoundDispatchReceiverImpl<D : CallableDescriptor>(
 internal class ScopeTowerImpl(
         resolutionContext: ResolutionContext<*>,
         override val dynamicScope: MemberScope,
+        override val syntheticScopes: SyntheticScopes,
         override val location: LookupLocation
 ): ScopeTower {
     override val dataFlowInfo: DataFlowDecorator = DataFlowDecoratorImpl(resolutionContext)
@@ -61,6 +63,7 @@ internal class ScopeTowerImpl(
                 filter { it.kind.withLocalDescriptors }.
                 mapTo(result) { ScopeBasedTowerLevel(this, it) }
 
+        var isFirstImportingScope = true
         lexicalScope.parentsWithSelf.forEach { scope ->
             if (scope is LexicalScope) {
                 if (!scope.kind.withLocalDescriptors) result.add(ScopeBasedTowerLevel(this, scope))
@@ -68,6 +71,10 @@ internal class ScopeTowerImpl(
                 scope.implicitReceiver?.let { result.add(ReceiverScopeTowerLevel(this, it.value)) }
             }
             else {
+                if (isFirstImportingScope) {
+                    isFirstImportingScope = false
+                    result.add(SyntheticScopeBasedTowerLevel(this, syntheticScopes))
+                }
                 result.add(ImportingScopeBasedTowerLevel(this, scope as ImportingScope))
             }
         }
