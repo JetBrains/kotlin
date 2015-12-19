@@ -356,5 +356,7 @@ public class QuickFixRegistrar : QuickFixContributor {
         DEPRECATED_UNARY_PLUS_MINUS.registerFactory(DeprecatedFunctionConventionFix)
 
         COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT.registerFactory(CommaInWhenConditionWithoutArgumentFix)
+
+        UNSUPPORTED.registerFactory(UnsupportedAsyncFix)
     }
 }
