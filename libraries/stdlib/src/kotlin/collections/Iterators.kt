@@ -20,6 +20,12 @@ public operator fun <T> Enumeration<T>.iterator(): Iterator<T> = object : Iterat
 public operator fun <T> Iterator<T>.iterator(): Iterator<T> = this
 
 /**
+ * Returns an [Iterator] wrapping each value produced by this [Iterator] with the [IndexedValue],
+ * containing value and it's index.
+ */
+public fun <T> Iterator<T>.withIndex(): Iterator<IndexedValue<T>> = IndexingIterator(this)
+
+/**
  * Performs the given [operation] on each element of this [Iterator].
  */
 public inline fun <T> Iterator<T>.forEach(operation: (T) -> Unit) : Unit {
