@@ -1,0 +1,7 @@
+fun async (p: Int, a: () -> Unit) {}
+
+fun test() {
+    async(<caret>)
+}
+
+// ELEMENT: async
