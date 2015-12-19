@@ -55,7 +55,6 @@ public class StdlibTest extends KotlinTestWithEnvironment {
         JvmContentRootsKt.addJvmClasspathRoot(configuration, junitJar);
 
         ContentRootsKt.addKotlinSourceRoot(configuration, KotlinTestUtils.getHomeDirectory() + "/libraries/stdlib/test");
-        ContentRootsKt.addKotlinSourceRoot(configuration, KotlinTestUtils.getHomeDirectory() + "/libraries/kunit/src");
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, PrintingMessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR);
 
         return KotlinCoreEnvironment.createForTests(getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
