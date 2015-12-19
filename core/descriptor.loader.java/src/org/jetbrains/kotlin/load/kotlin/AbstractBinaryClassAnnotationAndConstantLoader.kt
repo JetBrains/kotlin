@@ -21,13 +21,13 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.jvm.ClassMapperLite
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.*
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.index
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.propertySignature
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.KotlinType
@@ -95,26 +95,26 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
             val fieldSignature = getPropertySignature(proto, container.nameResolver, container.typeTable, field = true)
 
             val propertyAnnotations = syntheticFunctionSignature?.let { sig ->
-                findClassAndLoadMemberAnnotations(container, proto, sig)
+                findClassAndLoadMemberAnnotations(container, sig, property = true)
             }.orEmpty()
 
             val fieldAnnotations = fieldSignature?.let { sig ->
-                findClassAndLoadMemberAnnotations(container, proto, sig, field = true)
+                findClassAndLoadMemberAnnotations(container, sig, property = true, field = true)
             }.orEmpty()
 
             return loadPropertyAnnotations(propertyAnnotations, fieldAnnotations)
         }
 
         val signature = getCallableSignature(proto, container.nameResolver, container.typeTable, kind) ?: return emptyList()
-        return transformAnnotations(findClassAndLoadMemberAnnotations(container, proto, signature))
+        return transformAnnotations(findClassAndLoadMemberAnnotations(container, signature))
     }
 
     override fun loadEnumEntryAnnotations(container: ProtoContainer, proto: ProtoBuf.EnumEntry): List<A> {
         val signature = MemberSignature.fromFieldNameAndDesc(
                 container.nameResolver.getString(proto.name),
-                ClassMapperLite.mapClass(container.nameResolver.getClassId((container as ProtoContainer.Class).classProto.fqName))
+                ClassMapperLite.mapClass((container as ProtoContainer.Class).classId)
         )
-        return findClassAndLoadMemberAnnotations(container, proto, signature)
+        return findClassAndLoadMemberAnnotations(container, signature)
     }
 
     protected abstract fun loadPropertyAnnotations(propertyAnnotations: List<A>, fieldAnnotations: List<A>): List<T>
@@ -122,13 +122,10 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
     protected abstract fun transformAnnotations(annotations: List<A>): List<T>
 
     private fun findClassAndLoadMemberAnnotations(
-            container: ProtoContainer, proto: MessageLite, signature: MemberSignature, field: Boolean = false
+            container: ProtoContainer, signature: MemberSignature, property: Boolean = false, field: Boolean = false
     ): List<A> {
-        val kotlinClass = findClassWithAnnotationsAndInitializers(container, getImplClassName(proto, container.nameResolver), field)
-        if (kotlinClass == null) {
-            errorReporter.reportLoadingError("Kotlin class for loading member annotations is not found: ${container.debugFqName()}", null)
-            return listOf()
-        }
+        val kotlinClass = findClassWithAnnotationsAndInitializers(container, getImplClassName(container, property), field)
+                          ?: return listOf()
 
         return storage(kotlinClass).memberAnnotations[signature] ?: listOf()
     }
@@ -144,7 +141,7 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
         if (methodSignature != null) {
             val index = if (proto.hasExtension(index)) proto.getExtension(index) else parameterIndex
             val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, index)
-            return findClassAndLoadMemberAnnotations(container, message, paramSignature)
+            return findClassAndLoadMemberAnnotations(container, paramSignature)
         }
 
         return listOf()
@@ -158,7 +155,7 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
         val methodSignature = getCallableSignature(message, container.nameResolver, container.typeTable, kind)
         if (methodSignature != null) {
             val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, 0)
-            return findClassAndLoadMemberAnnotations(container, message, paramSignature)
+            return findClassAndLoadMemberAnnotations(container, paramSignature)
         }
 
         return emptyList()
@@ -173,54 +170,41 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
     }
 
     override fun loadPropertyConstant(container: ProtoContainer, proto: ProtoBuf.Property, expectedType: KotlinType): C? {
-        val nameResolver = container.nameResolver
-        val signature = getCallableSignature(proto, nameResolver, container.typeTable, AnnotatedCallableKind.PROPERTY) ?: return null
+        val signature = getCallableSignature(proto, container.nameResolver, container.typeTable, AnnotatedCallableKind.PROPERTY)
+                        ?: return null
 
-        val kotlinClass = findClassWithAnnotationsAndInitializers(container, getImplClassName(proto, nameResolver), field = true)
-        if (kotlinClass == null) {
-            errorReporter.reportLoadingError("Kotlin class for loading property constant is not found: ${container.debugFqName()}", null)
-            return null
-        }
+        val kotlinClass = findClassWithAnnotationsAndInitializers(container, getImplClassName(container, property = true), field = true)
+                          ?: return null
 
         return storage(kotlinClass).propertyConstants[signature]
     }
 
     private fun findClassWithAnnotationsAndInitializers(
-            container: ProtoContainer, implClassName: Name?, field: Boolean
-    ): KotlinJvmBinaryClass? = when (container) {
-        is ProtoContainer.Package -> {
-            implClassName?.let { kotlinClassFinder.findKotlinClass(ClassId(container.fqName, it)) }
+            container: ProtoContainer, implClassName: ClassId?, field: Boolean
+    ): KotlinJvmBinaryClass? {
+        if (implClassName != null) {
+            return kotlinClassFinder.findKotlinClass(implClassName)
         }
-        is ProtoContainer.Class -> {
-            val classId = container.nameResolver.getClassId(container.classProto.fqName)
 
-            if (implClassName != null) {
-                // TODO: store accurate name for nested traits
-                val implClassId =
-                    if (implClassName.asString().endsWith(JvmAbi.DEFAULT_IMPLS_SUFFIX))
-                        ClassId(classId.packageFqName, FqName(implClassName.asString().replace(JvmAbi.DEFAULT_IMPLS_SUFFIX, "." + JvmAbi.DEFAULT_IMPLS_CLASS_NAME)), false)
-                    else
-                        ClassId(classId.packageFqName, implClassName)
-                kotlinClassFinder.findKotlinClass(implClassId)
-            }
-            else if (field && container.isCompanionOfClass) {
+        if (container is ProtoContainer.Class) {
+            if (field && container.isCompanionOfClass) {
                 // Backing fields of properties of a companion object in a class are generated in the outer class
-                kotlinClassFinder.findKotlinClass(classId.outerClassId)
+                return kotlinClassFinder.findKotlinClass(container.classId.outerClassId)
             }
-            else {
-                kotlinClassFinder.findKotlinClass(classId)
-            }
+
+            return kotlinClassFinder.findKotlinClass(container.classId)
         }
+
+        return null
     }
 
-    private fun getImplClassName(proto: MessageLite, nameResolver: NameResolver): Name? =
-            when {
-                proto is ProtoBuf.Function && proto.hasExtension(methodImplClassName) ->
-                    nameResolver.getName(proto.getExtension(methodImplClassName))
-                proto is ProtoBuf.Property && proto.hasExtension(propertyImplClassName) ->
-                    nameResolver.getName(proto.getExtension(propertyImplClassName))
-                else -> null
-            }
+    private fun getImplClassName(container: ProtoContainer, property: Boolean): ClassId? {
+        if (property && container is ProtoContainer.Class && container.isInterface) {
+            return container.classId.createNestedClassId(Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME))
+        }
+        return ((container as? ProtoContainer.Package)?.packagePartSource as? JvmPackagePartSource)
+                ?.className?.fqNameForClassNameWithoutDollars?.let { ClassId.topLevel(it) }
+    }
 
     private fun loadAnnotationsAndInitializers(kotlinClass: KotlinJvmBinaryClass): Storage<A, C> {
         val memberAnnotations = HashMap<MemberSignature, MutableList<A>>()

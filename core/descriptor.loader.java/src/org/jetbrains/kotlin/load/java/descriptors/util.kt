@@ -21,12 +21,11 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaStaticClassScope
+import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.types.KotlinType
 
 fun copyValueParameters(
@@ -34,7 +33,7 @@ fun copyValueParameters(
         oldValueParameters: Collection<ValueParameterDescriptor>,
         newOwner: CallableDescriptor
 ): List<ValueParameterDescriptor> {
-    assert(newValueParametersTypes.size() == oldValueParameters.size()) {
+    assert(newValueParametersTypes.size == oldValueParameters.size) {
         "Different value parameters sizes: Enhanced = ${newValueParametersTypes.size}, Old = ${oldValueParameters.size}"
     }
 
@@ -45,14 +44,14 @@ fun copyValueParameters(
                 newOwner,
                 oldParameter,
                 oldParameter.index,
-                oldParameter.getAnnotations(),
-                oldParameter.getName(),
+                oldParameter.annotations,
+                oldParameter.name,
                 newType,
                 oldParameter.declaresDefaultValue(),
                 oldParameter.isCrossinline,
                 oldParameter.isNoinline,
                 if (oldParameter.varargElementType != null) newOwner.module.builtIns.getArrayElementType(newType) else null,
-                oldParameter.getSource()
+                oldParameter.source
         )
     }
 }
@@ -68,19 +67,5 @@ fun ClassDescriptor.getParentJavaStaticClassScope(): LazyJavaStaticClassScope? {
 }
 
 fun DeserializedCallableMemberDescriptor.getImplClassNameForDeserialized(): Name? {
-    val proto = proto
-    return when (proto) {
-        is ProtoBuf.Constructor ->
-            null
-        is ProtoBuf.Function ->
-            if (proto.hasExtension(JvmProtoBuf.methodImplClassName))
-                proto.getExtension(JvmProtoBuf.methodImplClassName)
-            else null
-        is ProtoBuf.Property ->
-            if (proto.hasExtension(JvmProtoBuf.propertyImplClassName))
-                proto.getExtension(JvmProtoBuf.propertyImplClassName)
-            else null
-        else ->
-            error("Unknown message: $proto")
-    }?.let { nameResolver.getName(it) }
+    return (packagePartSource as? JvmPackagePartSource)?.className?.fqNameForClassNameWithoutDollars?.shortName()
 }

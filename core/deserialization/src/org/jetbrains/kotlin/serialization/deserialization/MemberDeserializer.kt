@@ -248,7 +248,8 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         is DeserializedClassDescriptor -> ProtoContainer.Class(
                 classProto, c.nameResolver, c.typeTable,
                 isCompanionOfClass = DescriptorUtils.isCompanionObject(this) &&
-                                     containingDeclaration.let { DescriptorUtils.isClass(it) || DescriptorUtils.isEnumClass(it) }
+                                     containingDeclaration.let { DescriptorUtils.isClass(it) || DescriptorUtils.isEnumClass(it) },
+                isInterface = kind == ClassKind.INTERFACE
         )
         else -> null // TODO: support annotations on lambdas and their parameters
     }

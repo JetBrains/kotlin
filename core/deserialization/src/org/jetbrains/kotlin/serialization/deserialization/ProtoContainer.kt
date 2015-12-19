@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.PackagePartSource
@@ -28,9 +29,12 @@ sealed class ProtoContainer(
             val classProto: ProtoBuf.Class,
             nameResolver: NameResolver,
             typeTable: TypeTable,
-            val isCompanionOfClass: Boolean
+            val isCompanionOfClass: Boolean,
+            val isInterface: Boolean
     ) : ProtoContainer(nameResolver, typeTable) {
-        override fun debugFqName(): FqName = nameResolver.getClassId(classProto.fqName).asSingleFqName()
+        val classId: ClassId = nameResolver.getClassId(classProto.fqName)
+
+        override fun debugFqName(): FqName = classId.asSingleFqName()
     }
 
     class Package(
