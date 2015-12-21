@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.builtins;
 
-import kotlin.DeprecationLevel;
 import kotlin.SetsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
@@ -393,8 +392,8 @@ public abstract class KotlinBuiltIns {
     }
 
     @Nullable
-    public ClassDescriptor getDeprecationLevelEnumEntry(@NotNull DeprecationLevel level) {
-        return getEnumEntry(getDeprecationLevelEnum(), level.name());
+    public ClassDescriptor getDeprecationLevelEnumEntry(@NotNull String level) {
+        return getEnumEntry(getDeprecationLevelEnum(), level);
     }
 
     @NotNull
