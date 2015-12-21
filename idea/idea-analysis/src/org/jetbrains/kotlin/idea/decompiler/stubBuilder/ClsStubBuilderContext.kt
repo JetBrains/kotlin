@@ -77,25 +77,15 @@ internal fun ClsStubBuilderContext.child(
         typeParameterList: List<ProtoBuf.TypeParameter>,
         classKind: ProtoBuf.Class.Kind? = null,
         name: Name? = null,
+        nameResolver: NameResolver = this.nameResolver,
         typeTable: TypeTable = this.typeTable
 ): ClsStubBuilderContext {
     return ClsStubBuilderContext(
             this.components,
-            this.nameResolver,
+            nameResolver,
             if (name != null) this.containerFqName.child(name) else this.containerFqName,
             this.typeParameters.child(nameResolver, typeParameterList),
             typeTable,
             classKind
-    )
-}
-
-internal fun ClsStubBuilderContext.child(nameResolver: NameResolver, typeTable: TypeTable): ClsStubBuilderContext {
-    return ClsStubBuilderContext(
-            this.components,
-            nameResolver,
-            this.containerFqName,
-            this.typeParameters,
-            typeTable,
-            classKind = null
     )
 }

@@ -42,8 +42,8 @@ import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 
 fun createTopLevelClassStub(classId: ClassId, classProto: ProtoBuf.Class, context: ClsStubBuilderContext): KotlinFileStubImpl {
-    val fileStub = createFileStub(classId.getPackageFqName())
-    createClassStub(fileStub, classProto, classId, context)
+    val fileStub = createFileStub(classId.packageFqName)
+    createClassStub(fileStub, classProto, context.nameResolver, classId, context)
     return fileStub
 }
 

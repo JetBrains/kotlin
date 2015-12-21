@@ -35,23 +35,32 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinObjectStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.deserialization.supertypes
 import org.jetbrains.kotlin.utils.sure
 
-fun createClassStub(parent: StubElement<out PsiElement>, classProto: ProtoBuf.Class, classId: ClassId, context: ClsStubBuilderContext) {
-    ClassClsStubBuilder(parent, classProto, classId, context).build()
+fun createClassStub(
+        parent: StubElement<out PsiElement>,
+        classProto: ProtoBuf.Class,
+        nameResolver: NameResolver,
+        classId: ClassId,
+        context: ClsStubBuilderContext
+) {
+    ClassClsStubBuilder(parent, classProto, nameResolver, classId, context).build()
 }
 
 private class ClassClsStubBuilder(
         private val parentStub: StubElement<out PsiElement>,
         private val classProto: ProtoBuf.Class,
+        private val nameResolver: NameResolver,
         private val classId: ClassId,
         private val outerContext: ClsStubBuilderContext
 ) {
     private val classKind = Flags.CLASS_KIND[classProto.flags]
-    private val c = outerContext.child(classProto.typeParameterList, classKind, classId.shortClassName, TypeTable(classProto.typeTable))
+    private val c = outerContext.child(classProto.typeParameterList, classKind, classId.shortClassName, nameResolver,
+                                       TypeTable(classProto.typeTable))
     private val typeStubBuilder = TypeClsStubBuilder(c)
     private val supertypeIds = run {
         val supertypeIds = classProto.supertypes(c.typeTable).map { c.nameResolver.getClassId(it.className) }
@@ -105,7 +114,7 @@ private class ClassClsStubBuilder(
 
     private fun doCreateClassOrObjectStub(): StubElement<out PsiElement> {
         val isCompanionObject = classKind == ProtoBuf.Class.Kind.COMPANION_OBJECT
-        val fqName = outerContext.containerFqName.child(classId.getShortClassName())
+        val fqName = classId.asSingleFqName()
         val shortName = fqName.shortName().ref()
         val superTypeRefs = supertypeIds.filterNot {
             //TODO: filtering function types should go away
@@ -254,7 +263,7 @@ private class ClassClsStubBuilder(
             return
         }
         val (nameResolver, classProto) = classDataWithSource.classData
-        createClassStub(classBody, classProto, nestedClassId, c.child(nameResolver, TypeTable(classProto.typeTable)))
+        createClassStub(classBody, classProto, nameResolver, nestedClassId, c)
     }
 
     companion object {
