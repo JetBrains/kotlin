@@ -23,6 +23,7 @@ import com.intellij.psi.PsiParameter
 import com.intellij.psi.PsiParameterList
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.tree.TokenSet
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
@@ -434,8 +435,8 @@ fun canPlaceAfterSimpleNameEntry(element: PsiElement?): Boolean {
     return !BAD_NEIGHBOUR_FOR_SIMPLE_TEMPLATE_ENTRY_PATTERN.matches(entryText)
 }
 
-fun checkReservedPrefixWord(sink: DiagnosticSink, element: PsiElement, word: String, message: String) {
-    KtPsiUtil.getPreviousWord(element, word)?.let {
+fun checkReservedPrefixWord(sink: DiagnosticSink, element: PsiElement, word: String, suffixTokens: TokenSet, message: String) {
+    KtPsiUtil.getPreviousWord(element, word, suffixTokens)?.let {
         sink.report(Errors.UNSUPPORTED.on(it, message))
     }
 }

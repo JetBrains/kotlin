@@ -79,6 +79,9 @@ fun infixTest() {
 
 fun async(f: () -> Unit) {}
 infix fun Any.async(f: () -> Unit) {}
+object async {
+    operator fun times(f: () -> Unit) = f()
+}
 
 fun test(foo: Any) {
     async {  }
@@ -94,5 +97,7 @@ fun test(foo: Any) {
     foo async (fun () {})
 
     async (fun () {})
+
+    async* {}
 }
 
