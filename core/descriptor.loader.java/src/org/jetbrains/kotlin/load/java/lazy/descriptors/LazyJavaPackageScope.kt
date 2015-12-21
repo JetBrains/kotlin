@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.storage.NullableLazyValue
-import org.jetbrains.kotlin.storage.getValue
 
 class LazyJavaPackageScope(
         c: LazyJavaResolverContext,
@@ -45,33 +44,6 @@ class LazyJavaPackageScope(
     // But for compiler though we can determine full list of class names by getting all class-file names in classpath and sources
     private val knownClassNamesInPackage: NullableLazyValue<Set<String>> = c.storageManager.createNullableLazyValue {
         c.components.finder.knownClassNamesInPackage(ownerDescriptor.fqName)
-    }
-
-    private val partToFacade = c.storageManager.createLazyValue {
-        val result = hashMapOf<String, String>()
-        kotlinClasses@for (kotlinClass in ownerDescriptor.kotlinBinaryClasses) {
-            val header = kotlinClass.classHeader
-            when (header.kind) {
-                KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
-                    val partName = kotlinClass.classId.shortClassName.asString()
-                    val facadeName = header.multifileClassName ?: continue@kotlinClasses
-                    result[partName] = facadeName.substringAfterLast('/')
-                }
-                KotlinClassHeader.Kind.FILE_FACADE -> {
-                    val fileFacadeName = kotlinClass.classId.shortClassName.asString()
-                    result[fileFacadeName] = fileFacadeName
-                }
-                else -> {}
-            }
-        }
-        result
-    }
-
-    fun getFacadeSimpleNameForPartSimpleName(partName: String): String? =
-            partToFacade()[partName]
-
-    private val deserializedPackageScope by c.storageManager.createLazyValue {
-        c.components.deserializedDescriptorResolver.createKotlinPackageScope(ownerDescriptor, ownerDescriptor.kotlinBinaryClasses)
     }
 
     private val classes = c.storageManager.createMemoizedFunctionWithNullableValues<FindClassRequest, ClassDescriptor> { request ->
@@ -148,23 +120,7 @@ class LazyJavaPackageScope(
 
     fun findClassifierByJavaClass(javaClass: JavaClass, location: LookupLocation) = findClassifier(javaClass.name, javaClass, location)
 
-    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
-        // We should track lookups here because this scope can be used for kotlin packages too (if it doesn't contain toplevel properties nor functions).
-        recordLookup(name, location)
-        return deserializedPackageScope.getContributedVariables(name, NoLookupLocation.FOR_ALREADY_TRACKED)
-    }
-
-    override fun getContributedFunctions(name: Name, location: LookupLocation): List<SimpleFunctionDescriptor> {
-        // We should track lookups here because this scope can be used for kotlin packages too (if it doesn't contain toplevel properties nor functions).
-        recordLookup(name, location)
-        return deserializedPackageScope.getContributedFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED) + super.getContributedFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED)
-    }
-
-    override fun addExtraDescriptors(result: MutableSet<DeclarationDescriptor>,
-                                     kindFilter: DescriptorKindFilter,
-                                     nameFilter: (Name) -> Boolean) {
-        result.addAll(deserializedPackageScope.getContributedDescriptors(kindFilter, nameFilter))
-    }
+    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> = emptyList()
 
     override fun computeMemberIndex(): MemberIndex = object : MemberIndex by EMPTY_MEMBER_INDEX {
         // For SAM-constructors

@@ -331,15 +331,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
             }
         }
 
-        addExtraDescriptors(result, kindFilter, nameFilter)
-
         return result.toReadOnlyList()
-    }
-
-    protected open fun addExtraDescriptors(result: MutableSet<DeclarationDescriptor>,
-                                           kindFilter: DescriptorKindFilter,
-                                           nameFilter: (Name) -> Boolean) {
-        // Do nothing
     }
 
     protected abstract fun getClassNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name>

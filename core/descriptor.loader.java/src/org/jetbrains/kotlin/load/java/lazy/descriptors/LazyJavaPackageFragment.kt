@@ -21,30 +21,59 @@ import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryPackageSourceElement
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope
+import org.jetbrains.kotlin.resolve.scopes.LazyScopeAdapter
 import org.jetbrains.kotlin.storage.getValue
 
 class LazyJavaPackageFragment(
         private val c: LazyJavaResolverContext,
         private val jPackage: JavaPackage
 ) : PackageFragmentDescriptorImpl(c.module, jPackage.fqName) {
-    private val scope by c.storageManager.createLazyValue {
+    internal val binaryClasses by c.storageManager.createLazyValue {
+        c.components.packageMapper.findPackageParts(fqName.asString()).mapNotNull { partName ->
+            val classId = ClassId(fqName, Name.identifier(partName))
+            c.components.kotlinClassFinder.findKotlinClass(classId)?.let { partName to it }
+        }.toMap()
+    }
+
+    internal val javaScope by c.storageManager.createLazyValue {
         LazyJavaPackageScope(c, jPackage, this)
     }
 
-    internal val kotlinBinaryClasses by c.storageManager.createLazyValue {
-        c.components.packageMapper.findPackageParts(fqName.asString()).mapNotNull {
-            val classId = ClassId(fqName, Name.identifier(it))
-            c.components.kotlinClassFinder.findKotlinClass(classId)
-        }
+    private val scope by c.storageManager.createLazyValue {
+        ChainedMemberScope.create("Java + Deserialized Kotlin scope", listOf(javaScope) + LazyScopeAdapter(c.storageManager.createLazyValue {
+            ChainedMemberScope.create("Deserialized Kotlin scope", binaryClasses.values.mapNotNull { partClass ->
+                c.components.deserializedDescriptorResolver.createKotlinPackagePartScope(this, partClass)
+            })
+        }))
     }
+
+    private val partToFacade by c.storageManager.createLazyValue {
+        val result = hashMapOf<String, String>()
+        kotlinClasses@for ((partName, kotlinClass) in binaryClasses) {
+            val header = kotlinClass.classHeader
+            when (header.kind) {
+                KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
+                    val facadeName = header.multifileClassName ?: continue@kotlinClasses
+                    result[partName] = facadeName.substringAfterLast('/')
+                }
+                KotlinClassHeader.Kind.FILE_FACADE -> {
+                    result[partName] = partName
+                }
+                else -> {}
+            }
+        }
+        result
+    }
+
+    fun getFacadeSimpleNameForPartSimpleName(partName: String): String? = partToFacade[partName]
 
     override fun getMemberScope() = scope
 
-    override fun toString() = "lazy java package fragment: $fqName"
+    override fun toString() = "Lazy Java package fragment: $fqName"
 
-    override fun getSource(): SourceElement {
-        return KotlinJvmBinaryPackageSourceElement(jPackage, kotlinBinaryClasses)
-    }
+    override fun getSource(): SourceElement = KotlinJvmBinaryPackageSourceElement(this)
 }

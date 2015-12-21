@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.load.java.SpecialBuiltinMembers;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment;
-import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageScope;
 import org.jetbrains.kotlin.load.java.typeEnhancement.TypeEnhancementKt;
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass;
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryPackageSourceElement;
@@ -71,8 +70,6 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
-import org.jetbrains.kotlin.resolve.scopes.AbstractScopeAdapter;
-import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.serialization.deserialization.DeserializedType;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor;
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor;
@@ -291,12 +288,10 @@ public class KotlinTypeMapper {
 
         String facadeSimpleName;
 
-        MemberScope scope = packageFragmentDescriptor.getMemberScope();
-        if (scope instanceof AbstractScopeAdapter) {
-            scope = ((AbstractScopeAdapter) scope).getActualScope();
-        }
-        if (scope instanceof LazyJavaPackageScope) {
-            facadeSimpleName = ((LazyJavaPackageScope) scope).getFacadeSimpleNameForPartSimpleName(implClassName.asString());
+        if (packageFragmentDescriptor instanceof LazyJavaPackageFragment) {
+            facadeSimpleName = ((LazyJavaPackageFragment) packageFragmentDescriptor).getFacadeSimpleNameForPartSimpleName(
+                    implClassName.asString()
+            );
         }
         else if (packageFragmentDescriptor instanceof IncrementalPackageFragmentProvider.IncrementalPackageFragment) {
             assert incrementalCache != null
@@ -314,8 +309,8 @@ public class KotlinTypeMapper {
             }
         }
         else {
-            throw new AssertionError("Unexpected package member scope for " + descriptor + ": " +
-                                     scope + " :" + scope.getClass().getSimpleName());
+            throw new AssertionError("Unexpected package fragment for " + descriptor + ": " +
+                                     packageFragmentDescriptor + " (" + packageFragmentDescriptor.getClass().getSimpleName() + ")");
         }
         return ContainingClassesInfo.forPackageMemberOrNull(packageFragmentDescriptor.getFqName(), facadeSimpleName, implSimpleName);
     }
