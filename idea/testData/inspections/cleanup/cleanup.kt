@@ -1,6 +1,3 @@
-import pack.oldFun1
-import pack.oldFun2 // should not be removed for non-deprecated overload used
-import pack.oldFun3
 import kotlin.reflect.KProperty
 
 class A private()
