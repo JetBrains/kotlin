@@ -4,19 +4,17 @@
     <property name="ideaVersion" value="143.1015.7"/>
 
 
-    <property name="kotlin.bootstrap.branch" value=""/>
-    <property name="kotlin.bootstrap.branch.locator" value=""/>
-    <property name="kotlin.bootstrap.locator" value="buildType:bt345,tag:bootstrap,status:SUCCESS${kotlin.bootstrap.branch.locator}"/>
-    <property name="kotlin.bootstrap.locator.force" value="false"/>
+    <property name="kotlin.bootstrap.branch" value="beta4"/>
+    <property name="kotlin.bootstrap.branch.locator" value=",branch:beta4"/>
+    <property name="kotlin.bootstrap.locator" value="buildType:bt345,tag:pre_release,status:SUCCESS${kotlin.bootstrap.branch.locator}"/>
+    <property name="kotlin.bootstrap.locator.force" value="true"/>
 
     <property name="markdown.locator" value="buildType:IntelliJMarkdownParser_Build,status:SUCCESS,tag:forKotlin"/>
 
     <property name="bootstrap.build.no.tests" value="false"/>
 
     <!-- Uncomment to enable force version increment in branch. Set override.version.disabled to temporary disable feature without commits -->
-    <!--
     <property name="override.version.url" value="https://teamcity.jetbrains.com/guestAuth/app/rest/builds/?locator=buildType:bt345,status:SUCCESS,count:1${kotlin.bootstrap.branch.locator}"/>
-    -->
     <!--<property name="override.version.disabled" value="true"/>-->
 
     <condition property="isWindows">
