@@ -743,14 +743,14 @@ private fun doProcessChangesUsingLookups(
     KotlinBuilder.LOG.debug("Start processing changes")
 
     val changedSignatureFqNames = changes.filterIsInstance<ChangeInfo.SignatureChanged>().map { it.fqName }
-    for (classFqName in getSubtypesOf(changedSignatureFqNames, caches)) {
+    for (classFqName in withSubtypes(changedSignatureFqNames, caches)) {
         val scope = classFqName.parent().asString()
         val name = classFqName.shortName().identifier
         dirtyLookupSymbols.add(LookupSymbol(name, scope))
     }
 
     for (change in changes.filterIsInstance<ChangeInfo.MembersChanged>()) {
-        val scopes = getSubtypesOf(listOf(change.fqName), caches).map { it.asString() }
+        val scopes = withSubtypes(listOf(change.fqName), caches).map { it.asString() }
 
         for (name in change.names) {
             for (scope in scopes) {
@@ -779,7 +779,7 @@ private fun doProcessChangesUsingLookups(
 /* TODO: in case of chunk containing more than one target,
    depending targets would be asked about same subtype more than once.
    Can be solved by putting all caches in set */
-private fun getSubtypesOf(
+private fun withSubtypes(
         typeFqNames: Iterable<FqName>,
         caches: Collection<IncrementalCacheImpl>
 ): Set<FqName> {
