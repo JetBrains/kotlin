@@ -969,7 +969,7 @@
     <target name="pack-kotlin-test">
         <pack-runtime-jar jar-name="kotlin-test.jar" implementation-title="${manifest.impl.title.kotlin.test}">
             <jar-content>
-                <fileset dir="${output}/classes/kotlin.test" includes="**/*"/>
+                <fileset dir="${output}/classes/kotlin.test" includes="**/*" excludes="kotlin/internal/OnlyInputTypes*,kotlin/internal"/>
             </jar-content>
         </pack-runtime-jar>
     </target>
