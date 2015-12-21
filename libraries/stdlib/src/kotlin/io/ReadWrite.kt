@@ -116,6 +116,7 @@ public fun Reader.copyTo(out: Writer, bufferSize: Int = defaultBufferSize): Long
  * @param charset a character set to use.
  * @return a string with this URL entire content.
  */
+@Deprecated("Use URL.readText(Charset) instead.", ReplaceWith("this.readText(charset(charset))"))
 public fun URL.readText(charset: String): String = readBytes().toString(charset)
 
 /**

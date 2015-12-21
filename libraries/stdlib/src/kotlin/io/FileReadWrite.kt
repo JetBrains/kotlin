@@ -69,6 +69,7 @@ public fun File.appendBytes(array: ByteArray): Unit = FileOutputStream(this, tru
  * @param charset character set to use.
  * @return the entire content of this file as a String.
  */
+@Deprecated("Use File.readText(Charset) instead.", ReplaceWith("this.readText(charset(charset))"))
 public fun File.readText(charset: String): String = readBytes().toString(charset)
 
 /**
@@ -88,6 +89,7 @@ public fun File.readText(charset: Charset = Charsets.UTF_8): String = readBytes(
  * @param text text to write into file.
  * @param charset character set to use.
  */
+@Deprecated("Use File.writeText(String, Charset) instead.", ReplaceWith("this.writeText(text, charset(charset))"))
 public fun File.writeText(text: String, charset: String): Unit = writeBytes(text.toByteArray(charset))
 
 /**
@@ -113,6 +115,7 @@ public fun File.appendText(text: String, charset: Charset = Charsets.UTF_8): Uni
  * @param text text to append to file.
  * @param charset character set to use.
  */
+@Deprecated("Use File.appendText(String, Charset) instead.", ReplaceWith("this.appendText(text, charset(charset))"))
 public fun File.appendText(text: String, charset: String): Unit = appendBytes(text.toByteArray(charset))
 
 /**
@@ -175,6 +178,7 @@ public fun File.forEachLine(charset: Charset = Charsets.UTF_8, operation: (line:
  * @param charset character set to use.
  * @param operation function to process file lines.
  */
+@Deprecated("Use File.forEachLine(Charset, operation) instead.", ReplaceWith("this.forEachLine(charset(charset), operation)"))
 public fun File.forEachLine(charset: String, operation: (line: String) -> Unit): Unit = forEachLine(Charset.forName(charset), operation)
 
 /**
@@ -185,6 +189,7 @@ public fun File.forEachLine(charset: String, operation: (line: String) -> Unit):
  * @param charset character set to use.
  * @return list of file lines.
  */
+@Deprecated("Use File.readLines(Charset) instead.", ReplaceWith("this.readLines(charset(charset))"))
 public fun File.readLines(charset: String): List<String> = readLines(Charset.forName(charset))
 
 /**

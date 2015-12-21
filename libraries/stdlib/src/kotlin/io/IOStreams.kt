@@ -72,9 +72,11 @@ public fun InputStream.reader(charset: Charset = Charsets.UTF_8): InputStreamRea
 public fun InputStream.bufferedReader(charset: Charset = Charsets.UTF_8): BufferedReader = reader(charset).buffered()
 
 /** Creates a reader on this input stream using the specified [charset]. */
+@Deprecated("Use InputStream.reader(Charset) instead.", ReplaceWith("this.reader(charset(charset))"))
 public fun InputStream.reader(charset: String): InputStreamReader = InputStreamReader(this, charset)
 
 /** Creates a buffered reader on this input stream using the specified [charset]. */
+@Deprecated("Use InputStream.bufferedReader(Charset) instead.", ReplaceWith("this.bufferedReader(charset(charset))"))
 public fun InputStream.bufferedReader(charset: String): BufferedReader = reader(charset).buffered()
 
 /**
@@ -91,9 +93,11 @@ public fun OutputStream.writer(charset: Charset = Charsets.UTF_8): OutputStreamW
 public fun OutputStream.bufferedWriter(charset: Charset = Charsets.UTF_8): BufferedWriter = writer(charset).buffered()
 
 /** Creates a writer on this output stream using the specified [charset]. */
+@Deprecated("Use OutputStream.writer(Charset) instead.", ReplaceWith("this.writer(charset(charset))"))
 public fun OutputStream.writer(charset: String): OutputStreamWriter = OutputStreamWriter(this, charset)
 
 /** Creates a buffered writer on this output stream using the specified [charset]. */
+@Deprecated("Use OutputStream.bufferedWriter(Charset) instead.", ReplaceWith("this.bufferedWriter(charset(charset))"))
 public fun OutputStream.bufferedWriter(charset: String): BufferedWriter = writer(charset).buffered()
 
 /**
