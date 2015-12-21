@@ -35,6 +35,24 @@ public class MultiFileIntentionTestGenerated extends AbstractMultiFileIntentionT
         KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/multiFileIntentions"), Pattern.compile("^(.+)\\.test$"));
     }
 
+    @TestMetadata("implementAbstractMember/implementFunctionInJava/implementAllInJava.test")
+    public void testImplementAbstractMember_implementFunctionInJava_ImplementAllInJava() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/implementAbstractMember/implementFunctionInJava/implementAllInJava.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("implementAbstractMember/implementValInJava/implementAllInJava.test")
+    public void testImplementAbstractMember_implementValInJava_ImplementAllInJava() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/implementAbstractMember/implementValInJava/implementAllInJava.test");
+        doTest(fileName);
+    }
+
+    @TestMetadata("implementAbstractMember/implementVarInJava/implementAllInJava.test")
+    public void testImplementAbstractMember_implementVarInJava_ImplementAllInJava() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/implementAbstractMember/implementVarInJava/implementAllInJava.test");
+        doTest(fileName);
+    }
+
     @TestMetadata("moveDeclarationToSeparateFile/moveClassToExistingFile/moveClassToExistingFile.test")
     public void testMoveDeclarationToSeparateFile_moveClassToExistingFile_MoveClassToExistingFile() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/multiFileIntentions/moveDeclarationToSeparateFile/moveClassToExistingFile/moveClassToExistingFile.test");

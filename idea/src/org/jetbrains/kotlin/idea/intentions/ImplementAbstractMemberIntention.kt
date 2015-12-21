@@ -18,11 +18,13 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.CodeInsightBundle
 import com.intellij.codeInsight.FileModificationService
+import com.intellij.codeInsight.generation.OverrideImplementUtil
 import com.intellij.ide.util.PsiClassListCellRenderer
 import com.intellij.ide.util.PsiElementListCellRenderer
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.PopupChooserBuilder
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiClass
@@ -30,11 +32,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.ui.components.JBList
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.asJava.KtLightClass
-import org.jetbrains.kotlin.asJava.KtLightClassForExplicitDeclaration
-import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideImplementMembersHandler
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject
@@ -81,12 +83,17 @@ class ImplementAbstractMemberIntention :
         if (subMember?.kind?.isReal ?: false) return subMember else return null
     }
 
-    private fun findClassesToProcess(member: KtNamedDeclaration): Sequence<KtClassOrObject> {
+    private fun findClassesToProcess(member: KtNamedDeclaration): Sequence<PsiElement> {
         val baseClass = member.containingClassOrObject as? KtClass ?: return emptySequence()
         val memberDescriptor = member.resolveToDescriptorIfAny() as? CallableMemberDescriptor ?: return emptySequence()
 
-        fun acceptSubClass(classOrObject: KtClassOrObject): Boolean {
-            val classDescriptor = classOrObject.resolveToDescriptorIfAny() as? ClassDescriptor ?: return false
+        fun acceptSubClass(subClass: PsiElement): Boolean {
+            val classDescriptor = when (subClass) {
+                is KtLightClass -> subClass.getOrigin()?.resolveToDescriptorIfAny()
+                is KtEnumEntry -> subClass.resolveToDescriptorIfAny()
+                is PsiClass -> subClass.getJavaClassDescriptor()
+                else -> null
+            } as? ClassDescriptor ?: return false
             return classDescriptor.kind != ClassKind.INTERFACE && findExistingImplementation(classDescriptor, memberDescriptor) == null
         }
 
@@ -100,7 +107,6 @@ class ImplementAbstractMemberIntention :
         return HierarchySearchRequest(baseClass, baseClass.useScope, false)
                 .searchInheritors()
                 .asSequence()
-                .mapNotNull { (it as? KtLightClassForExplicitDeclaration)?.getOrigin() }
                 .filter(::acceptSubClass)
     }
 
@@ -118,6 +124,24 @@ class ImplementAbstractMemberIntention :
         return element.nameIdentifier?.textRange
     }
 
+    private fun implementInKotlinClass(member: KtNamedDeclaration, targetClass: KtClassOrObject) {
+        val subClassDescriptor = targetClass.resolveToDescriptorIfAny() as? ClassDescriptor ?: return
+        val superMemberDescriptor = member.resolveToDescriptorIfAny() as? CallableMemberDescriptor ?: return
+        val superClassDescriptor = superMemberDescriptor.containingDeclaration as? ClassDescriptor ?: return
+        val substitutor = getTypeSubstitutor(superClassDescriptor.defaultType, subClassDescriptor.defaultType)
+                          ?: TypeSubstitutor.EMPTY
+        val descriptorToImplement = superMemberDescriptor.substitute(substitutor) as CallableMemberDescriptor
+        val chooserObject = OverrideMemberChooserObject.create(member.project,
+                                                               descriptorToImplement,
+                                                               descriptorToImplement,
+                                                               OverrideMemberChooserObject.BodyType.EMPTY)
+        OverrideImplementMembersHandler.generateMembers(null, targetClass, chooserObject.singletonList())
+    }
+
+    private fun implementInJavaClass(member: KtNamedDeclaration, targetClass: PsiClass) {
+        member.toLightMethods().forEach { OverrideImplementUtil.overrideOrImplement(targetClass, it) }
+    }
+
     private fun implementInClass(member: KtNamedDeclaration, targetClasses: List<PsiElement>) {
         val project = member.project
         project.executeCommand(CodeInsightBundle.message("intention.implement.abstract.method.command.name")) {
@@ -125,18 +149,11 @@ class ImplementAbstractMemberIntention :
             runWriteAction {
                 for (targetClass in targetClasses) {
                     try {
-                        val subClass = (targetClass as? KtLightClass)?.getOrigin() ?: targetClass as? KtClassOrObject ?: continue
-                        val subClassDescriptor = subClass.resolveToDescriptorIfAny() as? ClassDescriptor ?: continue
-                        val superMemberDescriptor = member.resolveToDescriptorIfAny() as? CallableMemberDescriptor ?: continue
-                        val superClassDescriptor = superMemberDescriptor.containingDeclaration as? ClassDescriptor ?: continue
-                        val substitutor = getTypeSubstitutor(superClassDescriptor.defaultType, subClassDescriptor.defaultType)
-                                          ?: TypeSubstitutor.EMPTY
-                        val descriptorToImplement = superMemberDescriptor.substitute(substitutor) as CallableMemberDescriptor
-                        val chooserObject = OverrideMemberChooserObject.create(project,
-                                                                               descriptorToImplement,
-                                                                               descriptorToImplement,
-                                                                               OverrideMemberChooserObject.BodyType.EMPTY)
-                        OverrideImplementMembersHandler.generateMembers(null, subClass, chooserObject.singletonList())
+                        when (targetClass) {
+                            is KtLightClass -> targetClass.getOrigin()?.let { implementInKotlinClass(member, it) }
+                            is KtEnumEntry -> implementInKotlinClass(member, targetClass)
+                            is PsiClass -> implementInJavaClass(member, targetClass)
+                        }
                     }
                     catch(e: IncorrectOperationException) {
                         LOG.error(e)
@@ -156,7 +173,7 @@ class ImplementAbstractMemberIntention :
                     o1 is KtEnumEntry && o2 is KtEnumEntry -> o1.name!!.compareTo(o2.name!!)
                     o1 is KtEnumEntry -> -1
                     o2 is KtEnumEntry -> 1
-                    o1 is PsiClass && o2 is PsiClass -> baseComparator.compare(o1 as PsiClass, o2 as PsiClass)
+                    o1 is PsiClass && o2 is PsiClass -> baseComparator.compare(o1, o2)
                     else -> 0
                 }
             }
@@ -187,7 +204,7 @@ class ImplementAbstractMemberIntention :
         val classesToProcess = project.runSynchronouslyWithProgress(
                 CodeInsightBundle.message("intention.implement.abstract.method.searching.for.descendants.progress"),
                 true
-        ) { findClassesToProcess(element).map { it.toLightClass() ?: it }.toList() } ?: return
+        ) { findClassesToProcess(element).toList() } ?: return
         if (classesToProcess.isEmpty()) return
 
         classesToProcess.singleOrNull()?.let { return implementInClass(element, it.singletonList()) }
