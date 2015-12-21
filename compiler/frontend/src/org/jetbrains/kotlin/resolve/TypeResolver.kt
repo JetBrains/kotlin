@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.resolve.PossiblyBareType.type
 import org.jetbrains.kotlin.resolve.TypeResolver.FlexibleTypeCapabilitiesProvider
 import org.jetbrains.kotlin.resolve.bindingContextUtil.recordScope
 import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallableDescriptors
+import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity
 import org.jetbrains.kotlin.resolve.scopes.LazyScopeAdapter
@@ -299,7 +300,7 @@ public class TypeResolver(
 
         val projectionFromAllQualifierParts = qualifierResolutionResult.allProjections
         val parameters = typeConstructor.parameters
-        if (c.allowBareTypes && projectionFromAllQualifierParts.isEmpty() && parameters.isNotEmpty()) {
+        if (c.allowBareTypes && projectionFromAllQualifierParts.isEmpty() && isPossibleToSpecifyTypeArgumentsFor(classDescriptor)) {
             // See docs for PossiblyBareType
             return PossiblyBareType.bare(typeConstructor, false)
         }
@@ -357,6 +358,24 @@ public class TypeResolver(
         return type(resultingType)
     }
 
+    // Returns true in case when at least one argument for this class could be specified
+    // It could be always equal to 'typeConstructor.parameters.isNotEmpty()' unless local classes could captured type parameters
+    // from enclosing functions. In such cases you can not specify any argument:
+    // fun <E> foo(x: Any?) {
+    //    class C
+    //    if (x is C) { // 'C' should not be treated as bare type here
+    //       ...
+    //    }
+    // }
+    //
+    // It's needed to determine whether this particular type could be bare
+    private fun isPossibleToSpecifyTypeArgumentsFor(classDescriptor: ClassDescriptor): Boolean {
+        // First parameter relates to the innermost declaration
+        // If it's declared in function there
+        val firstTypeParameter = classDescriptor.typeConstructor.parameters.firstOrNull() ?: return false
+        return firstTypeParameter.original.containingDeclaration is ClassDescriptor
+    }
+
     private fun collectArgumentsForClassTypeConstructor(
             c: TypeResolutionContext,
             classDescriptor: ClassDescriptor,
@@ -406,7 +425,9 @@ public class TypeResolver(
 
         val parameters = classDescriptor.typeConstructor.parameters
         if (result.size < parameters.size) {
-            if (parameters.subList(result.size, parameters.size).any { parameter -> !parameter.isDeclaredInScope(c) }) {
+            val typeParametersToSpecify =
+                    parameters.subList(result.size, parameters.size).takeWhile { it.original.containingDeclaration is ClassDescriptor }
+            if (typeParametersToSpecify.any { parameter -> !parameter.isDeclaredInScope(c) }) {
                 c.trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(qualifierParts.last().expression, parameters.size))
                 return null
             }

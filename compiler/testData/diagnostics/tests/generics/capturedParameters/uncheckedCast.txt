@@ -1,0 +1,4 @@
+package
+
+public fun </*0*/ E> foo(/*0*/ x: kotlin.Any, /*1*/ y: kotlin.Any): kotlin.Any
+public fun noTypeParameters(/*0*/ x: kotlin.Any): kotlin.Any

@@ -17,18 +17,26 @@
 package org.jetbrains.kotlin.descriptors
 
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.parents
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.error.MissingDependencyErrorClass
-import java.util.*
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 fun ClassDescriptor.computeConstructorTypeParameters(): List<TypeParameterDescriptor> {
     val declaredParameters = declaredTypeParameters
 
-    if (!isInner) return declaredParameters
-    val containingTypeConstructor = (containingDeclaration as? ClassDescriptor)?.typeConstructor ?: return emptyList()
+    if (!isInner && containingDeclaration !is CallableDescriptor) return declaredParameters
 
-    val additional = containingTypeConstructor.parameters.map { it.capturedCopyForInnerDeclaration(this, declaredParameters.size) }
-    if (additional.isEmpty()) return declaredParameters
+    val parametersFromContainingFunctions =
+            parents.takeWhile { it is CallableDescriptor }
+                   .flatMap { (it as CallableDescriptor).typeParameters.asSequence() }.toList()
+
+    val containingClassTypeConstructorParameters = parents.firstIsInstanceOrNull<ClassDescriptor>()?.typeConstructor?.parameters.orEmpty()
+    if (parametersFromContainingFunctions.isEmpty() && containingClassTypeConstructorParameters.isEmpty()) return declaredTypeParameters
+
+    val additional =
+            (parametersFromContainingFunctions + containingClassTypeConstructorParameters)
+                .map { it.capturedCopyForInnerDeclaration(this, declaredParameters.size) }
 
     return declaredParameters + additional
 }
@@ -69,14 +77,15 @@ private fun KotlinType.buildPossiblyInnerType(classDescriptor: ClassDescriptor?,
     if (classDescriptor == null || ErrorUtils.isError(classDescriptor)) return null
 
     val toIndex = classDescriptor.declaredTypeParameters.size + index
-    val argumentsSubList = arguments.subList(index, toIndex)
-
     if (!classDescriptor.isInner) {
-        assert(toIndex == arguments.size) { "${arguments.size - toIndex} trailing arguments were found in $this type" }
+        assert(toIndex == arguments.size || DescriptorUtils.isLocal(classDescriptor)) {
+            "${arguments.size - toIndex} trailing arguments were found in $this type"
+        }
 
-        return PossiblyInnerType(classDescriptor, argumentsSubList, null)
+        return PossiblyInnerType(classDescriptor, arguments.subList(index, arguments.size), null)
     }
 
+    val argumentsSubList = arguments.subList(index, toIndex)
     return PossiblyInnerType(
             classDescriptor, argumentsSubList,
             buildPossiblyInnerType(classDescriptor.containingDeclaration as? ClassDescriptor, toIndex))
