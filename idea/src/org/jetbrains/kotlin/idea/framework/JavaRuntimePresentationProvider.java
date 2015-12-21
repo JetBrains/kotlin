@@ -72,4 +72,9 @@ public class JavaRuntimePresentationProvider extends LibraryPresentationProvider
     public static VirtualFile getRuntimeSrcJar(@NotNull Library library) {
         return getRuntimeSrcJar(Arrays.asList(library.getFiles(OrderRootType.SOURCES)));
     }
+
+    @Nullable
+    public static VirtualFile getTestJar(@NotNull Library library) {
+        return LibraryUtils.getJarFile(Arrays.asList(library.getFiles(OrderRootType.CLASSES)), PathUtil.KOTLIN_TEST_JAR);
+    }
 }
