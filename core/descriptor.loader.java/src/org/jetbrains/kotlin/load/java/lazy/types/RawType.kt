@@ -28,7 +28,10 @@ public object RawTypeTag : TypeCapability
 
 public object RawTypeCapabilities : TypeCapabilities {
     private object RawSubstitutionCapability : CustomSubstitutionCapability {
-        override val substitution = RawSubstitution
+        override val substitution: TypeSubstitution?
+            get() = RawSubstitution
+        override val substitutionToComposeWith: TypeSubstitution?
+            get() = RawSubstitution
     }
 
     private object RawFlexibleRendering : CustomFlexibleRendering {

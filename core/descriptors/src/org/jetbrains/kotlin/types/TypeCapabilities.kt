@@ -99,7 +99,8 @@ public fun sameTypeConstructors(first: KotlinType, second: KotlinType): Boolean 
 }
 
 interface CustomSubstitutionCapability : TypeCapability {
-    public val substitution: TypeSubstitution
+    public val substitution: TypeSubstitution?
+    public val substitutionToComposeWith: TypeSubstitution?
 }
 
 interface PossiblyInnerTypeCapability : TypeCapability {
