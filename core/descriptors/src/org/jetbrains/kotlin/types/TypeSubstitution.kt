@@ -105,17 +105,11 @@ public fun KotlinType.computeNewSubstitution(
         typeConstructor: TypeConstructor,
         newArguments: List<TypeProjection>
 ): TypeSubstitution {
-    val previousSubstitution = getSubstitution()
-    if (newArguments.isEmpty()) return previousSubstitution
-
     val newSubstitution = TypeConstructorSubstitution.create(typeConstructor, newArguments)
 
     // If previous substitution was trivial just replace it with indexed one
-    if (previousSubstitution is IndexedParametersSubstitution || previousSubstitution.isEmpty()) {
-        return newSubstitution
-    }
-
-    val composedSubstitution = CompositeTypeSubstitution(newSubstitution, previousSubstitution)
+    val substitutionToComposeWith = getCapability<CustomSubstitutionCapability>()?.substitutionToComposeWith ?: return newSubstitution
+    val composedSubstitution = CompositeTypeSubstitution(newSubstitution, substitutionToComposeWith)
 
     return composedSubstitution
 }
