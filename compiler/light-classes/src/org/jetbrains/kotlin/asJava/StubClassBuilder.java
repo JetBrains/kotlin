@@ -92,7 +92,7 @@ public class StubClassBuilder extends AbstractClassBuilder {
             parentStack.push(v.getResult());
         }
 
-        ((StubBase) v.getResult()).putUserData(ClsWrapperStubPsiFactory.ORIGIN_ELEMENT, origin);
+        ((StubBase) v.getResult()).putUserData(ClsWrapperStubPsiFactory.ORIGIN, LightElementOriginKt.toLightClassOrigin(origin));
     }
 
     @NotNull
@@ -109,7 +109,7 @@ public class StubClassBuilder extends AbstractClassBuilder {
 
         if (internalVisitor != EMPTY_METHOD_VISITOR) {
             // If stub for method generated
-            markLastChild(origin.getElement());
+            markLastChild(origin);
         }
 
         return internalVisitor;
@@ -129,22 +129,24 @@ public class StubClassBuilder extends AbstractClassBuilder {
 
         if (internalVisitor != EMPTY_FIELD_VISITOR) {
             // If stub for field generated
-            markLastChild(origin.getElement());
+            markLastChild(origin);
         }
 
         return internalVisitor;
     }
 
-    private void markLastChild(@Nullable PsiElement origin) {
+    private void markLastChild(@NotNull JvmDeclarationOrigin origin) {
         List children = v.getResult().getChildrenStubs();
         StubBase last = (StubBase) children.get(children.size() - 1);
 
-        PsiElement oldOrigin = last.getUserData(ClsWrapperStubPsiFactory.ORIGIN_ELEMENT);
+        LightElementOrigin oldOrigin = last.getUserData(ClsWrapperStubPsiFactory.ORIGIN);
         if (oldOrigin != null) {
-            throw new IllegalStateException("Rewriting origin element: " + oldOrigin.getText() + " for stub " + last.toString());
+            PsiElement originalElement = oldOrigin.getOriginalElement();
+            throw new IllegalStateException("Rewriting origin element: " +
+                                            (originalElement != null ? originalElement.getText() : null) + " for stub " + last.toString());
         }
 
-        last.putUserData(ClsWrapperStubPsiFactory.ORIGIN_ELEMENT, origin);
+        last.putUserData(ClsWrapperStubPsiFactory.ORIGIN, LightElementOriginKt.toLightMemberOrigin(origin));
     }
 
     @Override

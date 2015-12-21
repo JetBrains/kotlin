@@ -25,14 +25,19 @@ import com.intellij.psi.util.*
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 
-public interface KtLightMethod : PsiMethod, KtLightElement<KtDeclaration, PsiMethod>
+public interface KtLightMethod : PsiMethod, KtLightElement<KtDeclaration, PsiMethod> {
+    val isDelegated: Boolean
+}
 
 sealed class KtLightMethodImpl(
         private val delegate: PsiMethod,
-        private val origin: KtDeclaration?,
+        private val lightMethodOrigin: LightMemberOrigin?,
         containingClass: KtLightClass
-): LightMethod(delegate.manager, delegate, containingClass), KtLightMethod {
+) : LightMethod(delegate.manager, delegate, containingClass), KtLightMethod {
+    private val origin = lightMethodOrigin?.originalElement as? KtDeclaration
+
     override fun getContainingClass(): KtLightClass = super.getContainingClass() as KtLightClass
 
     private val paramsList: CachedValue<PsiParameterList> by lazy {
@@ -70,7 +75,11 @@ sealed class KtLightMethodImpl(
     override fun getOrigin() = origin
     override fun getParent(): PsiElement? = containingClass
     override fun getText() = origin?.text ?: ""
-    override fun getTextRange() = origin?.textRange ?: TextRange.EMPTY_RANGE 
+    override fun getTextRange() = origin?.textRange ?: TextRange.EMPTY_RANGE
+
+    override val isDelegated: Boolean
+        get() = lightMethodOrigin?.originKind == JvmDeclarationOriginKind.DELEGATION
+                || lightMethodOrigin?.originKind == JvmDeclarationOriginKind.DELEGATION_TO_DEFAULT_IMPLS
 
     override fun accept(visitor: PsiElementVisitor) {
         if (visitor is JavaElementVisitor) {
@@ -114,7 +123,7 @@ sealed class KtLightMethodImpl(
     }
 
     override fun copy(): PsiElement {
-        return Factory.create(delegate, origin?.copy() as? KtDeclaration, containingClass)
+        return Factory.create(delegate, lightMethodOrigin?.copy(), containingClass)
     }
 
     override fun getUseScope() = origin?.useScope ?: super.getUseScope()
@@ -143,14 +152,14 @@ sealed class KtLightMethodImpl(
     override fun hashCode(): Int = ((name.hashCode() * 31 + (origin?.hashCode() ?: 0)) * 31 + containingClass.hashCode()) * 31 + delegate.hashCode()
 
     override fun toString(): String = "${this.javaClass.simpleName}:$name"
-    
+
     private class KtLightMethodForDeclaration(
-            delegate: PsiMethod, origin: KtDeclaration?, containingClass: KtLightClass
+            delegate: PsiMethod, origin: LightMemberOrigin?, containingClass: KtLightClass
     ) : KtLightMethodImpl(delegate, origin, containingClass)
 
     private class KtLightAnnotationMethod(
             delegate: PsiAnnotationMethod,
-            origin: KtDeclaration?,
+            origin: LightMemberOrigin?,
             containingClass: KtLightClass
     ) : KtLightMethodImpl(delegate, origin, containingClass), PsiAnnotationMethod {
         override fun getDefaultValue() = getDelegate().defaultValue
@@ -159,7 +168,7 @@ sealed class KtLightMethodImpl(
 
     companion object Factory {
         fun create(
-                delegate: PsiMethod, origin: KtDeclaration?, containingClass: KtLightClass
+                delegate: PsiMethod, origin: LightMemberOrigin?, containingClass: KtLightClass
         ): KtLightMethodImpl {
             return when (delegate) {
                 is PsiAnnotationMethod -> KtLightAnnotationMethod(delegate, origin, containingClass)

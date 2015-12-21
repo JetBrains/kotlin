@@ -27,19 +27,20 @@ import com.intellij.psi.impl.java.stubs.*;
 import com.intellij.psi.stubs.StubBase;
 import com.intellij.psi.stubs.StubElement;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.psi.KtDeclaration;
+import org.jetbrains.annotations.Nullable;
 
 class ClsWrapperStubPsiFactory extends StubPsiFactory {
-    public static final Key<PsiElement> ORIGIN_ELEMENT = Key.create("ORIGIN_ELEMENT");
+    public static final Key<LightElementOrigin> ORIGIN = Key.create("ORIGIN");
     private final StubPsiFactory delegate = new ClsStubPsiFactory();
 
-    public static KtDeclaration getOriginalDeclaration(PsiMember member) {
+    @Nullable
+    public static LightMemberOrigin getMemberOrigin(@NotNull PsiMember member) {
         if (member instanceof ClsRepositoryPsiElement<?>) {
             StubElement stubElement = ((ClsRepositoryPsiElement<?>) member).getStub();
             if (stubElement instanceof UserDataHolder) {
-                PsiElement original = ((UserDataHolder) stubElement).getUserData(ORIGIN_ELEMENT);
-                if (original instanceof KtDeclaration) {
-                    return (KtDeclaration) original;
+                LightElementOrigin origin = ((UserDataHolder) stubElement).getUserData(ORIGIN);
+                if (origin instanceof LightMemberOrigin) {
+                    return (LightMemberOrigin) origin;
                 }
             }
         }
@@ -48,8 +49,8 @@ class ClsWrapperStubPsiFactory extends StubPsiFactory {
     }
 
     @Override
-    public PsiClass createClass(PsiClassStub stub) {
-        final PsiElement origin = ((StubBase) stub).getUserData(ORIGIN_ELEMENT);
+    public PsiClass createClass(@NotNull PsiClassStub stub) {
+        final PsiElement origin = getOriginalElement(stub);
         if (origin == null) return delegate.createClass(stub);
 
         return new ClsClassImpl(stub) {
@@ -59,6 +60,12 @@ class ClsWrapperStubPsiFactory extends StubPsiFactory {
                 return origin;
             }
         };
+    }
+
+    @Nullable
+    private static PsiElement getOriginalElement(@NotNull StubElement stub) {
+        LightElementOrigin origin = ((StubBase) stub).getUserData(ORIGIN);
+        return origin != null ? origin.getOriginalElement() : null;
     }
 
     @Override
@@ -78,7 +85,7 @@ class ClsWrapperStubPsiFactory extends StubPsiFactory {
 
     @Override
     public PsiField createField(PsiFieldStub stub) {
-        final PsiElement origin = ((StubBase) stub).getUserData(ORIGIN_ELEMENT);
+        final PsiElement origin = getOriginalElement(stub);
         if (origin == null) return delegate.createField(stub);
         if (stub.isEnumConstant()) {
             return new ClsEnumConstantImpl(stub) {
