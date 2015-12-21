@@ -65,6 +65,7 @@ public fun booleanArrayOf(vararg elements: Boolean) : BooleanArray = elements
 /**
  * Converts the contents of this byte array to a string using the specified [charset].
  */
+@Deprecated("Use ByteArray.toString(Charset) instead.", ReplaceWith("this.toString(charset(charset))"))
 public fun ByteArray.toString(charset: String): String = String(this, charset)
 
 /**

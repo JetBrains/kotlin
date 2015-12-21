@@ -1,6 +1,14 @@
+@file:JvmName("CharsetsKt")
 package kotlin
 
 import java.nio.charset.*
+
+/**
+ * Returns a named charset with the given [charsetName] name.
+ *
+ * @throws UnsupportedCharsetException If the specified named charset is not available.
+ */
+public fun charset(charsetName: String): Charset = Charset.forName(charsetName)
 
 /**
  * Constant definitions for the standard [charsets](Charset). These
