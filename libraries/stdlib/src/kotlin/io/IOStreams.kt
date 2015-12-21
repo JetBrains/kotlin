@@ -44,7 +44,7 @@ public operator fun BufferedInputStream.iterator(): ByteIterator =
 
 
 /** Creates a new byte input stream for the string. */
-public fun String.byteInputStream(charset: Charset = Charsets.UTF_8): InputStream = ByteArrayInputStream(toByteArray(charset))
+public fun String.byteInputStream(charset: Charset = Charsets.UTF_8): ByteArrayInputStream = ByteArrayInputStream(toByteArray(charset))
 
 /**
  * Creates an input stream for reading data from this byte array.
