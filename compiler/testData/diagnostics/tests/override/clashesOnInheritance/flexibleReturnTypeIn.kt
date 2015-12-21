@@ -1,4 +1,4 @@
-// FILE: InOut.k
+// FILE: InOut.kt
 interface In<in T>
 
 // FILE: J1.java
