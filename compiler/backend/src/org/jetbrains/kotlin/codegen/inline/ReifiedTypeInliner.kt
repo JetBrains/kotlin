@@ -33,7 +33,7 @@ import org.jetbrains.org.objectweb.asm.tree.*
 
 private class ParameterNameAndNullability(val name: String, val nullable: Boolean)
 
-class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParameterMappings?) {
+class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?) {
 
     enum class OperationKind {
         NEW_ARRAY, AS, SAFE_AS, IS, JAVA_CLASS;
@@ -68,13 +68,16 @@ class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParameterMapp
 
     private var maxStackSize = 0
 
+    private val hasReifiedParameters = parametersMapping?.hasReifiedParameters() ?: false
+
     /**
      * @return set of type parameters' identifiers contained in markers that should be reified further
      * e.g. when we're generating inline function containing reified T
      * and another function containing reifiable parts is inlined into that function
      */
     fun reifyInstructions(node: MethodNode): ReifiedTypeParametersUsages {
-        if (parametersMapping == null) return ReifiedTypeParametersUsages()
+        if (!hasReifiedParameters) return ReifiedTypeParametersUsages()
+
         val instructions = node.instructions
         maxStackSize = 0
         var result = ReifiedTypeParametersUsages()
@@ -91,8 +94,10 @@ class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParameterMapp
         return result
     }
 
+
     fun reifySignature(oldSignature: String): SignatureReificationResult {
-        if (parametersMapping == null) return SignatureReificationResult(oldSignature, ReifiedTypeParametersUsages())
+        if (!hasReifiedParameters) return SignatureReificationResult(oldSignature, ReifiedTypeParametersUsages())
+
 
         val signatureRemapper = object : SignatureWriter() {
             var typeParamsToReify = ReifiedTypeParametersUsages()
@@ -117,7 +122,7 @@ class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParameterMapp
                 }
             }
 
-            private fun getMappingByName(name: String?) = parametersMapping[name!!]
+            private fun getMappingByName(name: String?) = parametersMapping!![name!!]
         }
 
         SignatureReader(oldSignature).accept(signatureRemapper)
@@ -251,24 +256,26 @@ private val MethodInsnNode.operationKind: ReifiedTypeInliner.OperationKind? get(
         ReifiedTypeInliner.OperationKind.values().getOrNull(it)
     }
 
-class ReifiedTypeParameterMappings() {
-    private val mappingsByName = hashMapOf<String, ReifiedTypeParameterMapping>()
+class TypeParameterMappings() {
+    private val mappingsByName = hashMapOf<String, TypeParameterMapping>()
 
-    fun addParameterMappingToType(name: String, type: KotlinType, asmType: Type, signature: String) {
-        mappingsByName[name] =  ReifiedTypeParameterMapping(name, type, asmType, newName = null, signature = signature)
+    public fun addParameterMappingToType(name: String, type: KotlinType, asmType: Type, signature: String, isReified: Boolean) {
+        mappingsByName[name] =  TypeParameterMapping(name, type, asmType, newName = null, signature = signature, isReified = isReified)
     }
 
-    fun addParameterMappingToNewParameter(name: String, type: KotlinType, newName: String) {
-        mappingsByName[name] = ReifiedTypeParameterMapping(name, type = type, asmType = null, newName = newName, signature = null)
+    public fun addParameterMappingToNewParameter(name: String, type: KotlinType, newName: String, isReified: Boolean) {
+        mappingsByName[name] = TypeParameterMapping(name, type, asmType = null, newName = newName, signature = null, isReified = isReified)
     }
 
-    operator fun get(name: String): ReifiedTypeParameterMapping? {
+    operator fun get(name: String): TypeParameterMapping? {
         return mappingsByName[name]
     }
+
+    fun hasReifiedParameters() = mappingsByName.values.any { it.isReified }
 }
 
-class ReifiedTypeParameterMapping(
-        val name: String, val type: KotlinType, val asmType: Type?, val newName: String?, val signature: String?
+class TypeParameterMapping(
+        val name: String, val type: KotlinType, val asmType: Type?, val newName: String?, val signature: String?, val isReified: Boolean
 )
 
 class ReifiedTypeParametersUsages {

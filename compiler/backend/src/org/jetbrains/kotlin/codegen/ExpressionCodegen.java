@@ -2432,7 +2432,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     protected CallGenerator getOrCreateCallGenerator(
             @NotNull CallableDescriptor descriptor,
             @Nullable KtElement callElement,
-            @Nullable ReifiedTypeParameterMappings reifiedTypeParameterMappings
+            @Nullable TypeParameterMappings typeParameterMappings
     ) {
         if (callElement == null) return defaultCallGenerator;
 
@@ -2444,7 +2444,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         if (!isInline) return defaultCallGenerator;
 
         SimpleFunctionDescriptor original = DescriptorUtils.unwrapFakeOverride((SimpleFunctionDescriptor) descriptor.getOriginal());
-        return new InlineCodegen(this, state, original, callElement, reifiedTypeParameterMappings);
+        return new InlineCodegen(this, state, original, callElement, typeParameterMappings);
     }
 
     @NotNull
@@ -2455,10 +2455,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     @NotNull
     private CallGenerator getOrCreateCallGenerator(@NotNull ResolvedCall<?> resolvedCall) {
         Map<TypeParameterDescriptor, KotlinType> typeArguments = resolvedCall.getTypeArguments();
-        ReifiedTypeParameterMappings mappings = new ReifiedTypeParameterMappings();
+        TypeParameterMappings mappings = new TypeParameterMappings();
         for (Map.Entry<TypeParameterDescriptor, KotlinType> entry : typeArguments.entrySet()) {
             TypeParameterDescriptor key = entry.getKey();
-            if (!key.isReified()) continue;
 
             KotlinType type = entry.getValue();
             TypeParameterDescriptor parameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(type);
@@ -2471,13 +2470,13 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                         key.getName().getIdentifier(),
                         type,
                         asmType,
-                        signatureWriter.toString()
-                );
+                        signatureWriter.toString(),
+                        key.isReified());
             }
             else {
                 mappings.addParameterMappingToNewParameter(
                         key.getName().getIdentifier(), type,
-                        parameterDescriptor.getName().getIdentifier());
+                        parameterDescriptor.getName().getIdentifier(), key.isReified());
             }
         }
         return getOrCreateCallGenerator(

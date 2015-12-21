@@ -96,7 +96,7 @@ public class InlineCodegen extends CallGenerator {
             @NotNull GenerationState state,
             @NotNull SimpleFunctionDescriptor functionDescriptor,
             @NotNull KtElement callElement,
-            @Nullable ReifiedTypeParameterMappings typeParameterMappings
+            @Nullable TypeParameterMappings typeParameterMappings
     ) {
         assert InlineUtil.isInline(functionDescriptor) : "InlineCodegen could inline only inline function: " + functionDescriptor;
 
