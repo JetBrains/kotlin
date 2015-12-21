@@ -742,18 +742,18 @@ private fun doProcessChangesUsingLookups(
 
     KotlinBuilder.LOG.debug("Start processing changes")
 
-    val changedSignatureFqNames = changes.filterIsInstance<ChangeInfo.SignatureChanged>().map { it.fqName }
-    for (classFqName in withSubtypes(changedSignatureFqNames, caches)) {
-        val scope = classFqName.parent().asString()
-        val name = classFqName.shortName().identifier
-        dirtyLookupSymbols.add(LookupSymbol(name, scope))
-    }
+    for (change in changes) {
+        if (change is ChangeInfo.SignatureChanged) {
+            for (classFqName in withSubtypes(change.fqName, caches)) {
+                val scope = classFqName.parent().asString()
+                val name = classFqName.shortName().identifier
+                dirtyLookupSymbols.add(LookupSymbol(name, scope))
+            }
+        }
+        else if (change is ChangeInfo.MembersChanged) {
+            val scopes = withSubtypes(change.fqName, caches).map { it.asString() }
 
-    for (change in changes.filterIsInstance<ChangeInfo.MembersChanged>()) {
-        val scopes = withSubtypes(listOf(change.fqName), caches).map { it.asString() }
-
-        for (name in change.names) {
-            for (scope in scopes) {
+            change.names.forAllPairs(scopes) { name, scope ->
                 dirtyLookupSymbols.add(LookupSymbol(name, scope))
             }
         }
@@ -774,16 +774,22 @@ private fun doProcessChangesUsingLookups(
 }
 
 /**
- * Gets subtypes of given types inclusively
+ * Returns type with its subtypes transitively
+ *
+ * For example:
+ *    open class A
+ *    open class B : A()
+ *    class C : B()
+ * withSubtypes(A) will return [A, B, C]
  */
 /* TODO: in case of chunk containing more than one target,
    depending targets would be asked about same subtype more than once.
    Can be solved by putting all caches in set */
 private fun withSubtypes(
-        typeFqNames: Iterable<FqName>,
+        typeFqName: FqName,
         caches: Collection<IncrementalCacheImpl>
 ): Set<FqName> {
-    val types = typeFqNames.toCollection(LinkedList())
+    val types = linkedListOf(typeFqName)
     val subtypes = hashSetOf<FqName>()
 
     while (types.isNotEmpty()) {
@@ -912,6 +918,14 @@ class GeneratedJvmClass (
 ) : GeneratedFile(target, sourceFiles, outputFile) {
     val outputClass = LocalFileKotlinClass.create(outputFile).sure {
         "Couldn't load KotlinClass from $outputFile; it may happen because class doesn't have valid Kotlin annotations"
+    }
+}
+
+private inline fun <T, R> Iterable<T>.forAllPairs(other: Iterable<R>, fn: (T, R)->Unit) {
+    for (t in this) {
+        for (r in other) {
+            fn(t, r)
+        }
     }
 }
 
