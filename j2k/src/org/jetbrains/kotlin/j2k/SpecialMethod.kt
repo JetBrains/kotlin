@@ -333,8 +333,16 @@ enum class SpecialMethod(val qualifiedClassName: String?, val methodName: String
     },
 
     STRING_GET_BYTES(JAVA_LANG_STRING, "getBytes", null) {
-        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter)
-                = MethodCallExpression.build(codeConverter.convertExpression(qualifier), "toByteArray", codeConverter.convertExpressions(arguments), emptyList(), false)
+        override fun convertCall(qualifier: PsiExpression?, arguments: Array<PsiExpression>, typeArgumentsConverted: List<Type>, codeConverter: CodeConverter): MethodCallExpression {
+            val charsetArg = arguments.lastOrNull()?.check { it.type?.canonicalText == JAVA_LANG_STRING }
+            val convertedArguments = codeConverter.convertExpressions(arguments).map {
+                if (charsetArg != null && it.prototypes?.singleOrNull()?.element == charsetArg)
+                    MethodCallExpression.buildNotNull(null, "charset", listOf(it)).assignNoPrototype()
+                else
+                    it
+            }
+            return MethodCallExpression.build(codeConverter.convertExpression(qualifier), "toByteArray", convertedArguments, emptyList(), false)
+        }
     },
 
     STRING_GET_CHARS(JAVA_LANG_STRING, "getChars", 4) {
