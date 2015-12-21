@@ -109,6 +109,9 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
         if (!function.hasBody() && !function.hasModifier(KtTokens.EXTERNAL_KEYWORD)) {
             context.trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor))
         }
+        if (functionDescriptor.valueParameters.count { it.varargElementType != null } > 1) {
+            context.trace.report(MULTIPLE_VARARG_PARAMETERS.on(function))
+        }
 
         if (isStatement) {
             return createTypeInfo(components.dataFlowAnalyzer.checkStatementType(function, context), context)

@@ -4224,6 +4224,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("mulitpleVarargParameters.kt")
+            public void testMulitpleVarargParameters() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/mulitpleVarargParameters.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("MultiDeclarationErrors.kt")
             public void testMultiDeclarationErrors() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/declarationChecks/MultiDeclarationErrors.kt");

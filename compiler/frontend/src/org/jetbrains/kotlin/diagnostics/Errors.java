@@ -420,6 +420,8 @@ public interface Errors {
 
     DiagnosticFactory0<KtParameter> USELESS_VARARG_ON_PARAMETER = DiagnosticFactory0.create(WARNING);
 
+    DiagnosticFactory0<KtDeclaration> MULTIPLE_VARARG_PARAMETERS = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+
     // Named parameters
 
     DiagnosticFactory0<KtParameter> DEFAULT_VALUE_NOT_ALLOWED_IN_OVERRIDE = DiagnosticFactory0.create(ERROR, PARAMETER_DEFAULT_VALUE);
