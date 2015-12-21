@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.cfg;
 
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -285,6 +286,6 @@ public final class WhenChecker {
     }
 
     public static void checkReservedPrefix(@NotNull BindingTrace trace, @NotNull KtWhenExpression expression) {
-        KtPsiUtilKt.checkReservedPrefixWord(trace, expression.getWhenKeyword(), "sealed", "sealed when");
+        KtPsiUtilKt.checkReservedPrefixWord(trace, expression.getWhenKeyword(), "sealed", TokenSet.EMPTY, "sealed when");
     }
 }
