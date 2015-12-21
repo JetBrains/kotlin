@@ -88,6 +88,8 @@ public class AnonymousObjectTransformer {
         reader.accept(new ClassVisitor(InlineCodegenUtil.API, classBuilder.getVisitor()) {
             @Override
             public void visit(int version, int access, @NotNull String name, String signature, String superName, String[] interfaces) {
+                InlineCodegenUtil.assertVersionNotGreaterThanJava6(version);
+
                 if (signature != null) {
                     ReifiedTypeInliner.SignatureReificationResult signatureResult = inliningContext.reifedTypeInliner.reifySignature(signature);
                     signature = signatureResult.getNewSignature();
@@ -97,7 +99,7 @@ public class AnonymousObjectTransformer {
             }
 
             @Override
-            public void visitInnerClass(String name, String outerName, String innerName, int access) {
+            public void visitInnerClass(@NotNull String name, String outerName, String innerName, int access) {
                 innerClassNodes.add(new InnerClassNode(name, outerName, innerName, access));
             }
 
@@ -162,7 +164,7 @@ public class AnonymousObjectTransformer {
             }
             else {
                 //seems we can't do any clever mapping cause we don't know any about original class name
-                sourceMapper = IdenticalSourceMapper.INSTANCE$;
+                sourceMapper = IdenticalSourceMapper.INSTANCE;
             }
             if (sourceInfo != null && !InlineCodegenUtil.GENERATE_SMAP) {
                 classBuilder.visitSource(sourceInfo, debugInfo);
@@ -172,7 +174,7 @@ public class AnonymousObjectTransformer {
             if (sourceInfo != null) {
                 classBuilder.visitSource(sourceInfo, debugInfo);
             }
-            sourceMapper = IdenticalSourceMapper.INSTANCE$;
+            sourceMapper = IdenticalSourceMapper.INSTANCE;
         }
 
         ParametersBuilder allCapturedParamBuilder = ParametersBuilder.newBuilder();
@@ -180,7 +182,7 @@ public class AnonymousObjectTransformer {
         List<CapturedParamInfo> additionalFakeParams =
                 extractParametersMappingAndPatchConstructor(constructor, allCapturedParamBuilder, constructorParamBuilder,
                                                             anonymousObjectGen, parentRemapper);
-        List<MethodVisitor> deferringMethods = new ArrayList();
+        List<MethodVisitor> deferringMethods = new ArrayList<MethodVisitor>();
 
         for (MethodNode next : methodsToTransform) {
             MethodVisitor deferringVisitor = newMethod(classBuilder, next);

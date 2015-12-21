@@ -16,11 +16,10 @@
 
 package org.jetbrains.kotlin.codegen.inline;
 
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import kotlin.StringsKt;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
@@ -92,6 +91,10 @@ public class InlineCodegenUtil {
         lines[0] = Integer.MAX_VALUE;
         lines[1] = Integer.MIN_VALUE;
         cr.accept(new ClassVisitor(API) {
+            @Override
+            public void visit(int version, int access, @NotNull String name, String signature, String superName, String[] interfaces) {
+                assertVersionNotGreaterThanJava6(version);
+            }
 
             @Override
             public void visitSource(String source, String debug) {
@@ -127,40 +130,44 @@ public class InlineCodegenUtil {
         return new SMAPAndMethodNode(node[0], smap);
     }
 
-    public static void initDefaultSourceMappingIfNeeded(@NotNull CodegenContext context, @NotNull MemberCodegen codegen, @NotNull GenerationState state) {
-        if (state.isInlineEnabled()) {
-            CodegenContext<?> parentContext = context.getParentContext();
-            while (parentContext != null) {
-                if (parentContext instanceof MethodContext) {
-                    if (((MethodContext) parentContext).isInlineMethodContext()) {
-                        //just init default one to one mapping
-                        codegen.getOrCreateSourceMapper();
-                        break;
-                    }
-                }
-                parentContext = parentContext.getParentContext();
-            }
+    public static void assertVersionNotGreaterThanJava6(int version) {
+        // TODO: report a proper diagnostic
+        if (version > Opcodes.V1_6) {
+            throw new UnsupportedOperationException(
+                    "Cannot inline bytecode of version " + version + ". " +
+                    "This compiler can only inline Java 1.6 bytecode (version " + Opcodes.V1_6 + ")"
+            );
         }
     }
 
-    @NotNull
-    public static VirtualFile getVirtualFileForCallable(@NotNull ClassId containerClassId, @NotNull GenerationState state) {
-        JvmVirtualFileFinder fileFinder = JvmVirtualFileFinder.SERVICE.getInstance(state.getProject());
-        VirtualFile file = fileFinder.findVirtualFileWithHeader(containerClassId);
-        if (file == null) {
-            throw new IllegalStateException("Couldn't find declaration file for " + containerClassId);
+    public static void initDefaultSourceMappingIfNeeded(
+            @NotNull CodegenContext context, @NotNull MemberCodegen codegen, @NotNull GenerationState state
+    ) {
+        if (!state.isInlineEnabled()) return;
+
+        CodegenContext<?> parentContext = context.getParentContext();
+        while (parentContext != null) {
+            if (parentContext.isInlineMethodContext()) {
+                //just init default one to one mapping
+                codegen.getOrCreateSourceMapper();
+                break;
+            }
+            parentContext = parentContext.getParentContext();
         }
-        return file;
     }
 
     @Nullable
-    public static VirtualFile findVirtualFile(@NotNull Project project, @NotNull String internalClassName) {
+    public static VirtualFile findVirtualFile(@NotNull GenerationState state, @NotNull ClassId classId) {
+        return JvmVirtualFileFinder.SERVICE.getInstance(state.getProject()).findVirtualFileWithHeader(classId);
+    }
+
+    @Nullable
+    public static VirtualFile findVirtualFileImprecise(@NotNull GenerationState state, @NotNull String internalClassName) {
         FqName packageFqName = JvmClassName.byInternalName(internalClassName).getPackageFqName();
         String classNameWithDollars = StringsKt.substringAfterLast(internalClassName, "/", internalClassName);
-        JvmVirtualFileFinder fileFinder = JvmVirtualFileFinder.SERVICE.getInstance(project);
         //TODO: we cannot construct proper classId at this point, we need to read InnerClasses info from class file
         // we construct valid.package.name/RelativeClassNameAsSingleName that should work in compiler, but fails for inner classes in IDE
-        return fileFinder.findVirtualFileWithHeader(new ClassId(packageFqName, Name.identifier(classNameWithDollars)));
+        return findVirtualFile(state, new ClassId(packageFqName, Name.identifier(classNameWithDollars)));
     }
 
     public static String getInlineName(
@@ -362,8 +369,9 @@ public class InlineCodegenUtil {
             OutputFile outputFile = state.getFactory().get(internalName + ".class");
             if (outputFile != null) {
                 return new ClassReader(outputFile.asByteArray());
-            } else {
-                VirtualFile file = findVirtualFile(state.getProject(), internalName);
+            }
+            else {
+                VirtualFile file = findVirtualFileImprecise(state, internalName);
                 if (file == null) {
                     throw new RuntimeException("Couldn't find virtual file for " + internalName);
                 }

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache;
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents;
 import org.jetbrains.kotlin.modules.TargetId;
+import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.renderer.DescriptorRenderer;
@@ -192,11 +193,15 @@ public class InlineCodegen extends CallGenerator {
             JetTypeMapper.ContainingClassesInfo containingClasses = typeMapper.getContainingClassesForDeserializedCallable(
                     (DeserializedSimpleFunctionDescriptor) functionDescriptor);
 
-            VirtualFile file = InlineCodegenUtil.getVirtualFileForCallable(containingClasses.getImplClassId(), state);
-            nodeAndSMAP = InlineCodegenUtil.getMethodNode(file.contentsToByteArray(),
-                                                          asmMethod.getName(),
-                                                          asmMethod.getDescriptor(),
-                                                          containingClasses.getFacadeClassId());
+            ClassId containerId = containingClasses.getImplClassId();
+            VirtualFile file = InlineCodegenUtil.findVirtualFile(state, containerId);
+            if (file == null) {
+                throw new IllegalStateException("Couldn't find declaration file for " + containerId);
+            }
+
+            nodeAndSMAP = InlineCodegenUtil.getMethodNode(
+                    file.contentsToByteArray(), asmMethod.getName(), asmMethod.getDescriptor(), containingClasses.getFacadeClassId()
+            );
 
             if (nodeAndSMAP == null) {
                 throw new RuntimeException("Couldn't obtain compiled function body for " + descriptorName(functionDescriptor));
