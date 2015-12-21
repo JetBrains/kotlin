@@ -6789,6 +6789,45 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("compiler/testData/diagnostics/tests/generics/capturedParameters")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class CapturedParameters extends AbstractDiagnosticsTest {
+                public void testAllFilesPresentInCapturedParameters() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/generics/capturedParameters"), Pattern.compile("^(.+)\\.kt$"), true);
+                }
+
+                @TestMetadata("innerLocalClass.kt")
+                public void testInnerLocalClass() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/capturedParameters/innerLocalClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("localClass.kt")
+                public void testLocalClass() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/capturedParameters/localClass.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("localWithTypeParameter.kt")
+                public void testLocalWithTypeParameter() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/capturedParameters/localWithTypeParameter.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("objectLiteral.kt")
+                public void testObjectLiteral() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/capturedParameters/objectLiteral.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("uncheckedCast.kt")
+                public void testUncheckedCast() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/capturedParameters/uncheckedCast.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/diagnostics/tests/generics/cyclicBounds")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
