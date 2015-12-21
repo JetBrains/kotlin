@@ -8,7 +8,7 @@
         <version>0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>kotlin.test.parent</artifactId>
+    <artifactId>kotlin-test-parent</artifactId>
     <packaging>pom</packaging>
 
     <modules>
