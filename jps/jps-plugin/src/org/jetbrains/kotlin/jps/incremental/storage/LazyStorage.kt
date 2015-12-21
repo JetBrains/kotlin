@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.jps.incremental.storage
 
 import com.intellij.util.io.DataExternalizer
+import com.intellij.util.io.IOUtil
 import com.intellij.util.io.KeyDescriptor
 import com.intellij.util.io.PersistentHashMap
 import java.io.DataOutput
@@ -73,8 +74,12 @@ internal class LazyStorage<K, V>(
         getStorageIfExists()?.remove(key)
     }
 
-    fun append(key: K, append: (DataOutput)->Unit) {
-        getStorageOrCreateNew().appendData(key, append)
+    fun append(key: K, value: String) {
+        append(key) { out -> IOUtil.writeUTF(out, value) }
+    }
+
+    fun append(key: K, value: Int) {
+        append(key) { out -> out.writeInt(value) }
     }
 
     @Synchronized
@@ -110,4 +115,8 @@ internal class LazyStorage<K, V>(
 
     private fun createMap(): PersistentHashMap<K, V> =
             PersistentHashMap(storageFile, keyDescriptor, valueExternalizer)
+
+    private fun append(key: K, append: (DataOutput)->Unit) {
+        getStorageOrCreateNew().appendData(key, append)
+    }
 }

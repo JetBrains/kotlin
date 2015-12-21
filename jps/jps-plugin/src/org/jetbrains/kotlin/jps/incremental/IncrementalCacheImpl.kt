@@ -21,7 +21,6 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtil.toSystemIndependentName
 import com.intellij.util.io.BooleanDataDescriptor
 import com.intellij.util.io.EnumeratorStringDescriptor
-import com.intellij.util.io.IOUtil
 import gnu.trove.THashSet
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.jps.builders.storage.BuildDataPaths
@@ -581,7 +580,7 @@ class IncrementalCacheImpl(
         }
 
         fun add(sourceFile: File, className: JvmClassName) {
-            storage.append(sourceFile.absolutePath, { out -> IOUtil.writeUTF(out, className.internalName) })
+            storage.append(sourceFile.absolutePath, className.internalName)
         }
 
         operator fun get(sourceFile: File): Collection<JvmClassName> =
@@ -684,9 +683,7 @@ class IncrementalCacheImpl(
     private inner class InlineFunctionsFilesMap(storageFile: File) : BasicMap<PathFunctionPair, Collection<String>>(storageFile, PathFunctionPairKeyDescriptor, PathCollectionExternalizer) {
         fun add(sourcePath: String, jvmSignature: String, targetPath: String) {
             val key = PathFunctionPair(sourcePath, jvmSignature)
-            storage.append(key) { out ->
-                IOUtil.writeUTF(out, targetPath)
-            }
+            storage.append(key, targetPath)
         }
 
         operator fun get(sourcePath: String, jvmSignature: String): Collection<String> {
