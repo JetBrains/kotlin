@@ -11,31 +11,31 @@ import java.nio.charset.Charset
 /**
  * Returns a new [FileReader] for reading the content of this file.
  */
-public fun File.reader(): FileReader = FileReader(this)
+public fun File.reader(charset: Charset = Charsets.UTF_8): InputStreamReader = inputStream().reader(charset)
 
 /**
  * Returns a new [BufferedReader] for reading the content of this file.
  *
  * @param bufferSize necessary size of the buffer.
  */
-public fun File.bufferedReader(bufferSize: Int = defaultBufferSize): BufferedReader = reader().buffered(bufferSize)
+public fun File.bufferedReader(charset: Charset = Charsets.UTF_8, bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedReader = reader(charset).buffered(bufferSize)
 
 /**
  * Returns a new [FileWriter] for writing the content of this file.
  */
-public fun File.writer(): FileWriter = FileWriter(this)
+public fun File.writer(charset: Charset = Charsets.UTF_8): OutputStreamWriter = outputStream().writer(charset)
 
 /**
  * Returns a new [BufferedWriter] for writing the content of this file.
  *
  * @param bufferSize necessary size of the buffer.
  */
-public fun File.bufferedWriter(bufferSize: Int = defaultBufferSize): BufferedWriter = writer().buffered(bufferSize)
+public fun File.bufferedWriter(charset: Charset = Charsets.UTF_8, bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedWriter = writer(charset).buffered(bufferSize)
 
 /**
  * Returns a new [PrintWriter] for writing the content of this file.
  */
-public fun File.printWriter(): PrintWriter = PrintWriter(bufferedWriter())
+public fun File.printWriter(charset: Charset = Charsets.UTF_8): PrintWriter = PrintWriter(bufferedWriter(charset))
 
 /**
  * Gets the entire content of this file as a byte array.
