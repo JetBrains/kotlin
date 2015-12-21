@@ -540,6 +540,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/asyncUnsupported/asyncWithLambdaAndComment.kt");
             doTest(fileName);
         }
+
+        @TestMetadata("asyncWithTimes.kt")
+        public void testAsyncWithTimes() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/asyncUnsupported/asyncWithTimes.kt");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("idea/testData/quickfix/autoImports")
