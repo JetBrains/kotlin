@@ -16,17 +16,22 @@
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeInsight.daemon.impl.quickfix.OrderEntryFix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ExternalLibraryDescriptor
+import com.intellij.openapi.roots.JavaProjectModelModificationService
 import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils
 import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator
 import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator
@@ -46,8 +51,9 @@ public class AddReflectionQuickFix(element: KtElement) : AddKotlinLibQuickFix(el
     override fun getFamilyName() = text
 
     override fun libraryPath(): String = PathUtil.KOTLIN_JAVA_REFLECT_JAR
-    override fun getLibFile(): File = PathUtil.getKotlinPathsForIdeaPlugin().getReflectPath()
+    override fun getLibFile(): File = PathUtil.getKotlinPathsForIdeaPlugin().reflectPath
     override fun hasLibJarInLibrary(library: Library): Boolean = JavaRuntimePresentationProvider.getReflectJar(library) != null
+    override fun getLibraryDescriptor() = MavenExternalLibraryDescriptor("org.jetbrains.kotlin", "kotlin-reflect")
 
     companion object : KotlinSingleIntentionActionFactory() {
         override fun createAction(diagnostic: Diagnostic) = diagnostic.createIntentionForFirstParentOfType(::AddReflectionQuickFix)
@@ -61,6 +67,7 @@ public class AddTestLibQuickFix(element: KtElement) : AddKotlinLibQuickFix(eleme
     override fun libraryPath(): String = PathUtil.KOTLIN_TEST_JAR
     override fun getLibFile(): File = PathUtil.getKotlinPathsForIdeaPlugin().kotlinTestPath
     override fun hasLibJarInLibrary(library: Library): Boolean = JavaRuntimePresentationProvider.getTestJar(library) != null
+    override fun getLibraryDescriptor() = MavenExternalLibraryDescriptor("org.jetbrains.kotlin", "kotlin-test")
 
     companion object : KotlinSingleIntentionActionFactory() {
         val KOTLIN_TEST_UNRESOLVED = setOf(
@@ -86,8 +93,21 @@ public abstract class AddKotlinLibQuickFix(element: KtElement) : KotlinQuickFixA
     protected abstract fun libraryPath(): String
     protected abstract fun getLibFile(): File
     protected abstract fun hasLibJarInLibrary(library: Library): Boolean
+    protected abstract fun getLibraryDescriptor(): MavenExternalLibraryDescriptor
+
+    class MavenExternalLibraryDescriptor(groupId: String, artifactId: String) : ExternalLibraryDescriptor(groupId, artifactId) {
+        override fun getLibraryClassesRoots(): List<String> = emptyList()
+    }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val module = ProjectRootManager.getInstance(project).fileIndex.getModuleForFile(element.containingFile.virtualFile)
+        if (module != null && KotlinPluginUtil.isMavenModule(module)) {
+            val scope = OrderEntryFix.suggestScopeByLocation(module, element)
+            JavaProjectModelModificationService.getInstance(project).addDependency(module, getLibraryDescriptor(), scope)
+
+            return
+        }
+
         val libFile = getLibFile()
         if (!libFile.exists()) return
 
