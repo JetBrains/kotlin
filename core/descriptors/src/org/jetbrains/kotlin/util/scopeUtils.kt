@@ -29,7 +29,7 @@ public fun <T> Collection<T>?.concat(collection: Collection<T>): Collection<T>? 
     if (this == null) {
         return collection
     }
-    if (this is LinkedHashSet<*>) {
+    if (this is LinkedHashSet) {
         addAll(collection)
         return this
     }
