@@ -119,26 +119,26 @@ public fun File.appendText(text: String, charset: Charset = Charsets.UTF_8): Uni
 public fun File.appendText(text: String, charset: String): Unit = appendBytes(text.toByteArray(charset))
 
 /**
- * Reads file by byte blocks and calls [operation] for each block read.
+ * Reads file by byte blocks and calls [action] for each block read.
  * Block has default size which is implementation-dependent.
- * This functions passes the byte array and amount of bytes in the array to the [operation] function.
+ * This functions passes the byte array and amount of bytes in the array to the [action] function.
  *
  * You can use this function for huge files.
  *
- * @param operation function to process file blocks.
+ * @param action function to process file blocks.
  */
-public fun File.forEachBlock(operation: (ByteArray, Int) -> Unit): Unit = forEachBlock(operation, defaultBlockSize)
+public fun File.forEachBlock(action: (ByteArray, Int) -> Unit): Unit = forEachBlock(action, defaultBlockSize)
 
 /**
- * Reads file by byte blocks and calls [operation] for each block read.
- * This functions passes the byte array and amount of bytes in the array to the [operation] function.
+ * Reads file by byte blocks and calls [action] for each block read.
+ * This functions passes the byte array and amount of bytes in the array to the [action] function.
  *
  * You can use this function for huge files.
  *
- * @param operation function to process file blocks.
+ * @param action function to process file blocks.
  * @param blockSize size of a block, replaced by 512 if it's less, 4096 by default.
  */
-public fun File.forEachBlock(operation: (ByteArray, Int) -> Unit, blockSize: Int): Unit {
+public fun File.forEachBlock(action: (ByteArray, Int) -> Unit, blockSize: Int): Unit {
     val arr = ByteArray(if (blockSize < minimumBlockSize) minimumBlockSize else blockSize)
     val fis = FileInputStream(this)
 
@@ -148,7 +148,7 @@ public fun File.forEachBlock(operation: (ByteArray, Int) -> Unit, blockSize: Int
             if (size <= 0) {
                 break
             } else {
-                operation(arr, size)
+                action(arr, size)
             }
         } while (true)
     } finally {
@@ -157,17 +157,17 @@ public fun File.forEachBlock(operation: (ByteArray, Int) -> Unit, blockSize: Int
 }
 
 /**
- * Reads this file line by line using the specified [charset] and calls [operation] for each line.
+ * Reads this file line by line using the specified [charset] and calls [action] for each line.
  * Default charset is UTF-8.
  *
  * You may use this function on huge files.
  *
  * @param charset character set to use.
- * @param operation function to process file lines.
+ * @param action function to process file lines.
  */
-public fun File.forEachLine(charset: Charset = Charsets.UTF_8, operation: (line: String) -> Unit): Unit {
+public fun File.forEachLine(charset: Charset = Charsets.UTF_8, action: (line: String) -> Unit): Unit {
     // Note: close is called at forEachLine
-    BufferedReader(InputStreamReader(FileInputStream(this), charset)).forEachLine(operation)
+    BufferedReader(InputStreamReader(FileInputStream(this), charset)).forEachLine(action)
 }
 
 /**

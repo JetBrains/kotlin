@@ -17,12 +17,12 @@ public fun Writer.buffered(bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedWrite
         = if (this is BufferedWriter) this else BufferedWriter(this, bufferSize)
 
 /**
- * Iterates through each line of this reader, calls [block] for each line read
+ * Iterates through each line of this reader, calls [action] for each line read
  * and closes the [Reader] when it's completed.
  *
- * @param block function to process file lines.
+ * @param action function to process file lines.
  */
-public fun Reader.forEachLine(block: (String) -> Unit): Unit = useLines { it.forEach(block) }
+public fun Reader.forEachLine(action: (String) -> Unit): Unit = useLines { it.forEach(action) }
 
 /**
  * Reads this reader content as a list of lines.
