@@ -20,18 +20,16 @@ class FilesTest {
     @test fun testCreateTempDir() {
         val dirSuf = System.currentTimeMillis().toString()
         val dir1 = createTempDir("temp", dirSuf)
-        assert(dir1.exists() && dir1.isDirectory() && dir1.name.startsWith("temp") && dir1.name.endsWith(dirSuf))
-        try {
+        assertTrue(dir1.exists() && dir1.isDirectory() && dir1.name.startsWith("temp") && dir1.name.endsWith(dirSuf))
+        assertFailsWith(IllegalArgumentException::class) {
             createTempDir("a")
-            assert(false)
-        } catch(e: IllegalArgumentException) {
         }
 
         val dir2 = createTempDir("temp")
-        assert(dir2.exists() && dir2.isDirectory() && dir2.name.endsWith(".tmp"))
+        assertTrue(dir2.exists() && dir2.isDirectory() && dir2.name.endsWith(".tmp"))
 
         val dir3 = createTempDir()
-        assert(dir3.exists() && dir3.isDirectory())
+        assertTrue(dir3.exists() && dir3.isDirectory())
 
         dir1.delete()
         dir2.delete()
@@ -41,17 +39,16 @@ class FilesTest {
     @test fun testCreateTempFile() {
         val fileSuf = System.currentTimeMillis().toString()
         val file1 = createTempFile("temp", fileSuf)
-        assert(file1.exists() && file1.name.startsWith("temp") && file1.name.endsWith(fileSuf))
-        try {
+        assertTrue(file1.exists() && file1.name.startsWith("temp") && file1.name.endsWith(fileSuf))
+        assertFailsWith(IllegalArgumentException::class) {
             createTempFile("a")
-            assert(false)
-        } catch(e: IllegalArgumentException) {
         }
+
         val file2 = createTempFile("temp")
-        assert(file2.exists() && file2.name.endsWith(".tmp"))
+        assertTrue(file2.exists() && file2.name.endsWith(".tmp"))
 
         val file3 = createTempFile()
-        assert(file3.exists())
+        assertTrue(file3.exists())
 
         file1.delete()
         file2.delete()
@@ -375,23 +372,20 @@ class FilesTest {
         val srcFile = createTempFile()
         val dstFile = createTempFile()
         srcFile.writeText("Hello, World!", "UTF8")
-        try {
+        assertFailsWith(FileAlreadyExistsException::class) {
             srcFile.copyTo(dstFile)
-            assert(false)
-        } catch (e: FileAlreadyExistsException) {
-            println(e.message)
         }
 
         var len = srcFile.copyTo(dstFile, overwrite = true)
         assertEquals(13L, len)
         assertEquals(srcFile.readText(), dstFile.readText("UTF8"))
 
-        assert(dstFile.delete())
+        assertTrue(dstFile.delete())
         len = srcFile.copyTo(dstFile)
         assertEquals(13L, len)
         assertEquals(srcFile.readText("UTF8"), dstFile.readText())
 
-        assert(dstFile.delete())
+        assertTrue(dstFile.delete())
         dstFile.mkdir()
         val child = File(dstFile, "child")
         child.createNewFile()
@@ -400,20 +394,17 @@ class FilesTest {
         val copy = dstFile.resolve(srcFile.name)
         assertEquals(srcFile.readText(), copy.readText())
 
-        assert(srcFile.delete())
-        assert(child.delete() && copy.delete() && dstFile.delete())
+        assertTrue(srcFile.delete())
+        assertTrue(child.delete() && copy.delete() && dstFile.delete())
 
-        try {
+        assertFailsWith(NoSuchFileException::class) {
             srcFile.copyTo(dstFile)
-            assert(false)
-        } catch (e: NoSuchFileException) {
         }
 
         srcFile.mkdir()
-        try {
+
+        assertFailsWith(IllegalArgumentException::class) {
             srcFile.copyTo(dstFile)
-            assert(false)
-        } catch (e: IllegalArgumentException) {
         }
         srcFile.delete()
     }
@@ -447,9 +438,9 @@ class FilesTest {
         File(dir, "test1.txt").createNewFile()
         File(subDir, "test2.txt").createNewFile()
 
-        assert(dir.deleteRecursively())
-        assert(!dir.exists())
-        assert(!dir.deleteRecursively())
+        assertTrue(dir.deleteRecursively())
+        assertFalse(dir.exists())
+        assertFalse(dir.deleteRecursively())
     }
 
     @test fun deleteRecursivelyWithFail() {
@@ -482,7 +473,7 @@ class FilesTest {
         fun check() {
             for (file in src.walkTopDown()) {
                 val dstFile = File(dst, file.relativeTo(src))
-                assert(dstFile.exists())
+                assertTrue(dstFile.exists())
                 if (dstFile.isFile()) {
                     assertEquals(file.readText(), dstFile.readText())
                 }
@@ -500,13 +491,11 @@ class FilesTest {
             file2.writeText("wazzup")
             createTempDir(prefix = "d1_", directory = subDir2)
 
-            assert(src.copyRecursively(dst))
+            assertTrue(src.copyRecursively(dst))
             check()
 
-            try {
+            assertFailsWith(FileAlreadyExistsException::class) {
                 src.copyRecursively(dst)
-                assert(false)
-            } catch (e: FileAlreadyExistsException) {
             }
 
             var conflicts = 0
@@ -519,13 +508,13 @@ class FilesTest {
                     throw e
                 }
             }
-            assert(conflicts == 2)
+            assertEquals(2, conflicts)
 
             if (subDir1.setReadable(false)) {
                 try {
                     dst.deleteRecursively()
                     var caught = false
-                    assert(src.copyRecursively(dst) {
+                    assertTrue(src.copyRecursively(dst) {
                         file: File, e: IOException ->
                         if (e is AccessDeniedException) {
                             caught = true
@@ -534,7 +523,7 @@ class FilesTest {
                             throw e
                         }
                     })
-                    assert(caught)
+                    assertTrue(caught)
                     check()
                 } finally {
                     subDir1.setReadable(true)
@@ -543,13 +532,11 @@ class FilesTest {
 
             src.deleteRecursively()
             dst.deleteRecursively()
-            try {
+            assertFailsWith(NoSuchFileException::class) {
                 src.copyRecursively(dst)
-                assert(false)
-            } catch (e: NoSuchFileException) {
             }
 
-            assert(!src.copyRecursively(dst) {
+            assertFalse(src.copyRecursively(dst) {
                 file: File, e: IOException ->
                 OnErrorAction.TERMINATE
             })
