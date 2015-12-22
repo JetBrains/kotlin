@@ -435,13 +435,7 @@ class DeclarationsChecker(
         checkTypeParameterConstraints(property)
         checkPropertyExposedType(property, propertyDescriptor)
         checkPropertyTypeParametersAreUsedInReceiverType(propertyDescriptor)
-        propertyDescriptor.returnType?.let {
-            if (property.typeReference == null) {
-                if (it.constructor is IntersectionTypeConstructor) {
-                    trace.report(IMPLICIT_INTERSECTION_TYPE.on(property.nameIdentifier ?: property, it))
-                }
-            }
-        }
+        checkImplicitCallableType(property, propertyDescriptor)
     }
 
     private fun checkPropertyTypeParametersAreUsedInReceiverType(descriptor: PropertyDescriptor) {
@@ -656,17 +650,7 @@ class DeclarationsChecker(
         if (!function.hasBody() && !hasAbstractModifier && !hasExternalModifier) {
             trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor))
         }
-        functionDescriptor.returnType?.let {
-            if (!function.hasDeclaredReturnType()) {
-                if (it.isNothing()) {
-                    trace.report(IMPLICIT_NOTHING_RETURN_TYPE.on(nameIdentifier ?: function))
-                }
-                if (it.constructor is IntersectionTypeConstructor) {
-                    trace.report(IMPLICIT_INTERSECTION_TYPE.on(nameIdentifier ?: function, it))
-                }
-            }
-        }
-
+        checkImplicitCallableType(function, functionDescriptor)
         checkFunctionExposedType(function, functionDescriptor)
         checkVarargParameters(function, functionDescriptor)
     }
@@ -675,6 +659,22 @@ class DeclarationsChecker(
         val numberOfVarargParameters = callableDescriptor.valueParameters.count { it.varargElementType != null }
         if (numberOfVarargParameters > 1) {
             trace.report(MULTIPLE_VARARG_PARAMETERS.on(declaration))
+        }
+    }
+
+    private fun checkImplicitCallableType(declaration: KtCallableDeclaration, descriptor: CallableDescriptor) {
+        descriptor.returnType?.let {
+            if (declaration.typeReference == null) {
+                val target = declaration.nameIdentifier ?: declaration
+                if (it.isNothing()) {
+                    trace.report(
+                            (if (declaration is KtProperty) IMPLICIT_NOTHING_PROPERTY_TYPE else IMPLICIT_NOTHING_RETURN_TYPE).on(target)
+                    )
+                }
+                if (it.constructor is IntersectionTypeConstructor) {
+                    trace.report(IMPLICIT_INTERSECTION_TYPE.on(target, it))
+                }
+            }
         }
     }
 
