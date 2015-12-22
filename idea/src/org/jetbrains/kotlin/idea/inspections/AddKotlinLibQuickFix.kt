@@ -30,6 +30,7 @@ import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.ui.configuration.projectRoot.LibrariesContainerFactory
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.KotlinBundle
@@ -43,8 +44,10 @@ import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.createIntentionForFirstParentOfType
 import org.jetbrains.kotlin.idea.versions.KotlinRuntimeLibraryUtil
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
@@ -82,11 +85,34 @@ public class AddTestLibQuickFix(element: KtElement) : AddKotlinLibQuickFix(eleme
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val unresolvedReference = Errors.UNRESOLVED_REFERENCE.cast(diagnostic)
 
-            if (unresolvedReference.a.text in KOTLIN_TEST_UNRESOLVED) {
-                val ktFile = (diagnostic.psiElement.containingFile as? KtFile) ?: return null
-                if (ktFile.importDirectives.none { it.text.contains("kotlin.test.") }) return null
+            if (PsiTreeUtil.getParentOfType(diagnostic.psiElement, KtImportDirective::class.java) != null) return null
 
-                return diagnostic.createIntentionForFirstParentOfType(::AddTestLibQuickFix)
+            val unresolvedText = unresolvedReference.a.text
+            if (unresolvedText in KOTLIN_TEST_UNRESOLVED) {
+                val ktFile = (diagnostic.psiElement.containingFile as? KtFile) ?: return null
+
+                val exactImportFqName = FqName("kotlin.test.$unresolvedText")
+                val kotlinTestAllUnder = FqName("kotlin.test")
+
+                var hasExactImport = false
+                var hasKotlinTestAllUnder = false
+
+                for (importDirective in ktFile.importDirectives.filter { it.text.contains("kotlin.test.") }) {
+                    if (importDirective.importedFqName == exactImportFqName) {
+                        hasExactImport = true
+                        break
+                    }
+
+                    if (importDirective.importedFqName == kotlinTestAllUnder && importDirective.isAllUnder) {
+                        hasKotlinTestAllUnder = true
+                        break
+                    }
+                }
+
+                if (hasExactImport || hasKotlinTestAllUnder) {
+                    return diagnostic.createIntentionForFirstParentOfType(::AddTestLibQuickFix)
+                }
+
             }
 
             return null
