@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
 
 public fun expandIsCalls(node: JsNode, context: TranslationContext) {
     val visitor = object : JsVisitorWithContextImpl() {
-        override fun visit(x: JsInvocation, ctx: JsContext<*>): Boolean {
+        override fun visit(x: JsInvocation, ctx: JsContext<JsNode>): Boolean {
             val callee = x.getQualifier() as? JsInvocation
             val instance = x.getArguments().firstOrNull()
             val type = callee?.getArguments()?.firstOrNull()
