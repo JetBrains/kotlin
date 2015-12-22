@@ -1,0 +1,16 @@
+package
+
+public fun foo(/*0*/ o: Observable<out kotlin.CharSequence>, /*1*/ y: Subscriber<in kotlin.CharSequence>): kotlin.Unit
+
+public interface Observable</*0*/ T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun subscribe(/*0*/ s: Subscriber<in T>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Subscriber</*0*/ T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

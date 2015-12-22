@@ -104,10 +104,11 @@ public class TypeSubstitutor {
     @Nullable
     public TypeProjection substitute(@NotNull TypeProjection typeProjection) {
         TypeProjection substitutedTypeProjection = substituteWithoutApproximation(typeProjection);
-        if (!substitution.approximateCapturedTypes()) {
+        if (!substitution.approximateCapturedTypes() && !substitution.approximateContravariantCapturedTypes()) {
             return substitutedTypeProjection;
         }
-        return CapturedTypeApproximationKt.approximateCapturedTypesIfNecessary(substitutedTypeProjection);
+        return CapturedTypeApproximationKt.approximateCapturedTypesIfNecessary(
+                substitutedTypeProjection, substitution.approximateContravariantCapturedTypes());
     }
 
     @Nullable

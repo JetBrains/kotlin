@@ -37,6 +37,7 @@ public class DisjointKeysUnionTypeSubstitution private constructor(
     override fun isEmpty() = false
 
     override fun approximateCapturedTypes() = first.approximateCapturedTypes() || second.approximateCapturedTypes()
+    override fun approximateContravariantCapturedTypes() = first.approximateContravariantCapturedTypes() || second.approximateContravariantCapturedTypes()
 
     override fun filterAnnotations(annotations: Annotations) = second.filterAnnotations(first.filterAnnotations(annotations))
 }

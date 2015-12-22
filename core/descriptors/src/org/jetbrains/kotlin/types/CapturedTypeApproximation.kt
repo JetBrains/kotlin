@@ -59,7 +59,7 @@ private fun TypeProjection.toTypeArgument(typeParameter: TypeParameterDescriptor
             Variance.OUT_VARIANCE -> TypeArgument(typeParameter, typeParameter.builtIns.nothingType, type)
         }
 
-public fun approximateCapturedTypesIfNecessary(typeProjection: TypeProjection?): TypeProjection? {
+public fun approximateCapturedTypesIfNecessary(typeProjection: TypeProjection?, approximateContravariant: Boolean): TypeProjection? {
     if (typeProjection == null) return null
     if (typeProjection.isStarProjection()) return typeProjection
 
@@ -73,10 +73,17 @@ public fun approximateCapturedTypesIfNecessary(typeProjection: TypeProjection?):
         val approximation = approximateCapturedTypes(type)
         return TypeProjectionImpl(howThisTypeIsUsed, approximation.upper)
     }
-    return substituteCapturedTypes(typeProjection)
+
+    if (approximateContravariant) {
+        // TODO: assert that howThisTypeIsUsed is always IN
+        val approximation = approximateCapturedTypes(type).lower
+        return TypeProjectionImpl(howThisTypeIsUsed, approximation)
+    }
+
+    return substituteCapturedTypesWithProjections(typeProjection)
 }
 
-private fun substituteCapturedTypes(typeProjection: TypeProjection): TypeProjection? {
+private fun substituteCapturedTypesWithProjections(typeProjection: TypeProjection): TypeProjection? {
     val typeSubstitutor = TypeSubstitutor.create(object : TypeConstructorSubstitution() {
         override fun get(key: TypeConstructor): TypeProjection? {
             return (key as? CapturedTypeConstructor)?.typeProjection

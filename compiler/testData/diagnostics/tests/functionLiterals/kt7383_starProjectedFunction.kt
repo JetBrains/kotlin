@@ -2,5 +2,5 @@
 
 fun foo() {
     val f : Function1<*, *> = { x -> x.toString() }
-    <!FUNCTION_EXPECTED, UNUSED_EXPRESSION!>f<!>(1)
+    f(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>)
 }

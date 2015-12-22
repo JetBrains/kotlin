@@ -16,26 +16,25 @@
 
 package org.jetbrains.kotlin.resolve.typeApproximation
 
-import org.jetbrains.kotlin.test.KotlinLiteFixture
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.test.ConfigurationKind
-import java.io.File
-import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.resolve.calls.inference.createCapturedType
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
+import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.KotlinLiteFixture
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.types.TypeProjectionImpl
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance.*
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.resolve.calls.inference.createCapturedType
-import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypesIfNecessary
-import java.util.ArrayList
-import org.jetbrains.kotlin.types.TypeProjection
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import java.io.File
+import java.util.*
 
 public class CapturedTypeApproximationTest() : KotlinLiteFixture() {
 
@@ -85,7 +84,7 @@ public class CapturedTypeApproximationTest() : KotlinLiteFixture() {
         fun createTestSubstitutor(testSubstitution: Map<TypeParameterDescriptor, TypeProjection>): TypeSubstitutor {
             val substitutionContext = testSubstitution.map {
                 val (typeParameter, typeProjection) = it
-                typeParameter.getTypeConstructor() to TypeProjectionImpl(createCapturedType(typeProjection))
+                typeParameter.typeConstructor to TypeProjectionImpl(createCapturedType(typeProjection))
             }.toMap()
             return TypeSubstitutor.create(substitutionContext)
         }
@@ -111,7 +110,9 @@ public class CapturedTypeApproximationTest() : KotlinLiteFixture() {
                     val typeWithCapturedType = typeSubstitutor.substituteWithoutApproximation(TypeProjectionImpl(INVARIANT, type!!))!!.getType()
 
                     val (lower, upper) = approximateCapturedTypes(typeWithCapturedType)
-                    val substitution = approximateCapturedTypesIfNecessary(TypeProjectionImpl(INVARIANT, typeWithCapturedType))
+                    val substitution =
+                            approximateCapturedTypesIfNecessary(
+                                    TypeProjectionImpl(INVARIANT, typeWithCapturedType), approximateContravariant = false)
 
                     append("  ")
                     for (typeParameter in testSubstitution.keySet()) {

@@ -36,13 +36,13 @@ fun testInOut() {
 
     Inv<Int>().f(1)
     (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<in Int>).f(1)
-    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<out Int>).<!UNRESOLVED_REFERENCE!>f<!>(1) // !!
-    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<*>).<!UNRESOLVED_REFERENCE!>f<!>(1) // !!
+    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<out Int>).f(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>) // !!
+    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<*>).f(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>) // !!
 
     Inv<Int>().inf(1)
     (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<in Int>).inf(1)
-    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<out Int>).<!UNRESOLVED_REFERENCE!>inf<!>(1) // !!
-    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<*>).<!UNRESOLVED_REFERENCE!>inf<!>(1) // !!
+    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<out Int>).inf(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>) // !!
+    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<*>).inf(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>) // !!
 
     Inv<Int>().outf()
     checkSubtype<Int>(<!TYPE_MISMATCH!>(null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<in Int>).outf()<!>) // Type mismatch
