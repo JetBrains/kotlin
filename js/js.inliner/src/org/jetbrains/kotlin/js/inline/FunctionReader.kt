@@ -179,7 +179,7 @@ private fun replaceExternalNames(function: JsFunction, externalReplacements: Map
     if (replacements.isEmpty()) return
 
     val visitor = object: JsVisitorWithContextImpl() {
-        override fun endVisit(x: JsNameRef, ctx: JsContext<*>) {
+        override fun endVisit(x: JsNameRef, ctx: JsContext<JsNode>) {
             if (x.getQualifier() != null) return
 
             replacements[x.getIdent()]?.let {

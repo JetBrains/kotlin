@@ -16,19 +16,14 @@
 
 package org.jetbrains.kotlin.js.inline.util.rewriters
 
-import com.google.dart.compiler.backend.js.ast.JsContext
-import com.google.dart.compiler.backend.js.ast.JsExpression
-import com.google.dart.compiler.backend.js.ast.JsFunction
-import com.google.dart.compiler.backend.js.ast.JsLiteral
-import com.google.dart.compiler.backend.js.ast.JsObjectLiteral
-import com.google.dart.compiler.backend.js.ast.JsVisitorWithContextImpl
+import com.google.dart.compiler.backend.js.ast.*
 
 class ThisReplacingVisitor(private val thisReplacement: JsExpression) : JsVisitorWithContextImpl() {
-    override fun endVisit(x: JsLiteral.JsThisRef, ctx: JsContext<*>) {
+    override fun endVisit(x: JsLiteral.JsThisRef, ctx: JsContext<JsNode>) {
         ctx.replaceMe(thisReplacement)
     }
 
-    override fun visit(x: JsFunction, ctx: JsContext<*>) = false
+    override fun visit(x: JsFunction, ctx: JsContext<JsNode>) = false
 
-    override fun visit(x: JsObjectLiteral, ctx: JsContext<*>) = false
+    override fun visit(x: JsObjectLiteral, ctx: JsContext<JsNode>) = false
 }
