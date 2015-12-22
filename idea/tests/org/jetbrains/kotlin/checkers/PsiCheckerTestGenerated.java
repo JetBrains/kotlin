@@ -418,6 +418,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTest(fileName);
         }
 
+        @TestMetadata("javaStyleClassLiteralInAnnotationArguments.kt")
+        public void testJavaStyleClassLiteralInAnnotationArguments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/javaStyleClassLiteralInAnnotationArguments.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("Jet11.kt")
         public void testJet11() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/Jet11.kt");
@@ -493,6 +499,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         @TestMetadata("kt303.kt")
         public void testKt303() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/kt303.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("objectLiteralInSupertypeList.kt")
+        public void testObjectLiteralInSupertypeList() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/objectLiteralInSupertypeList.kt");
             doTest(fileName);
         }
 
