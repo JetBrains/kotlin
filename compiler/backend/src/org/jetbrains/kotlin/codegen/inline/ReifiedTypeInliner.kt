@@ -27,8 +27,6 @@ import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
-import org.jetbrains.org.objectweb.asm.signature.SignatureReader
-import org.jetbrains.org.objectweb.asm.signature.SignatureWriter
 import org.jetbrains.org.objectweb.asm.tree.*
 
 private class ParameterNameAndNullability(val name: String, val nullable: Boolean)
@@ -93,44 +91,6 @@ class ReifiedTypeInliner(private val parametersMapping: TypeParameterMappings?) 
         node.maxStack = node.maxStack + maxStackSize
         return result
     }
-
-
-    fun reifySignature(oldSignature: String): SignatureReificationResult {
-        if (!hasReifiedParameters) return SignatureReificationResult(oldSignature, ReifiedTypeParametersUsages())
-
-
-        val signatureRemapper = object : SignatureWriter() {
-            var typeParamsToReify = ReifiedTypeParametersUsages()
-            override fun visitTypeVariable(name: String?) {
-                val mapping = getMappingByName(name) ?:
-                              return super.visitTypeVariable(name)
-                if (mapping.newName != null) {
-                    typeParamsToReify.addUsedReifiedParameter(mapping.newName)
-                    return super.visitTypeVariable(mapping.newName)
-                }
-
-                // else TypeVariable is replaced by concrete type
-                SignatureReader(mapping.signature).accept(this)
-            }
-
-            override fun visitFormalTypeParameter(name: String?) {
-                val mapping = getMappingByName(name) ?:
-                              return super.visitFormalTypeParameter(name)
-                if (mapping.newName != null) {
-                    typeParamsToReify.addUsedReifiedParameter(mapping.newName)
-                    super.visitFormalTypeParameter(mapping.newName)
-                }
-            }
-
-            private fun getMappingByName(name: String?) = parametersMapping!![name!!]
-        }
-
-        SignatureReader(oldSignature).accept(signatureRemapper)
-
-        return SignatureReificationResult(signatureRemapper.toString(), signatureRemapper.typeParamsToReify)
-    }
-
-    data class SignatureReificationResult(val newSignature: String, val typeParametersUsages: ReifiedTypeParametersUsages)
 
     /**
      * @return new type parameter identifier if this marker should be reified further

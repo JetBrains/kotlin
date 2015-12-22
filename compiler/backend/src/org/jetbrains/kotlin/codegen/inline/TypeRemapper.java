@@ -17,12 +17,11 @@
 package org.jetbrains.kotlin.codegen.inline;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.org.objectweb.asm.commons.Remapper;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class TypeRemapper extends Remapper {
+public class TypeRemapper {
     //typeMapping field could be changed outside through method processing
     private final Map<String, String> typeMapping;
 
@@ -60,7 +59,6 @@ public class TypeRemapper extends Remapper {
         return typeMapping.containsKey(type);
     }
 
-    @Override
     public String map(String type) {
         String newType = typeMapping.get(type);
         if (newType != null) {

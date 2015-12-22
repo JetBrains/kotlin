@@ -86,6 +86,7 @@ public class InlineCodegen extends CallGenerator {
     private final Map<Integer, LambdaInfo> expressionMap = new HashMap<Integer, LambdaInfo>();
 
     private final ReifiedTypeInliner reifiedTypeInliner;
+    @Nullable private final TypeParameterMappings typeParameterMappings;
 
     private LambdaInfo activeLambda;
 
@@ -105,6 +106,7 @@ public class InlineCodegen extends CallGenerator {
         this.codegen = codegen;
         this.callElement = callElement;
         this.functionDescriptor = functionDescriptor.getOriginal();
+        this.typeParameterMappings = typeParameterMappings;
 
         reifiedTypeInliner = new ReifiedTypeInliner(typeParameterMappings);
 
@@ -267,7 +269,8 @@ public class InlineCodegen extends CallGenerator {
                                                                .subGenerator(functionDescriptor.getName().asString()),
                                                        codegen.getContext(),
                                                        callElement,
-                                                       codegen.getParentCodegen().getClassName(), reifiedTypeInliner);
+                                                       codegen.getParentCodegen().getClassName(), reifiedTypeInliner,
+                                                       typeParameterMappings);
 
         MethodInliner inliner = new MethodInliner(node, parameters, info, new FieldRemapper(null, null, parameters), isSameModule,
                                                   "Method inlining " + callElement.getText(),

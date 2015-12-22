@@ -89,12 +89,6 @@ public class AnonymousObjectTransformer {
             @Override
             public void visit(int version, int access, @NotNull String name, String signature, String superName, String[] interfaces) {
                 InlineCodegenUtil.assertVersionNotGreaterThanJava6(version);
-
-                if (signature != null) {
-                    ReifiedTypeInliner.SignatureReificationResult signatureResult = inliningContext.reifedTypeInliner.reifySignature(signature);
-                    signature = signatureResult.getNewSignature();
-                    transformationResult.getReifiedTypeParametersUsages().mergeAll(signatureResult.getTypeParametersUsages());
-                }
                 super.visit(version, access, name, signature, superName, interfaces);
             }
 
@@ -350,7 +344,11 @@ public class AnonymousObjectTransformer {
     @NotNull
     private ClassBuilder createClassBuilder() {
         ClassBuilder classBuilder = state.getFactory().newVisitor(NO_ORIGIN, newLambdaType, inliningContext.getRoot().callElement.getContainingFile());
-        return new RemappingClassBuilder(classBuilder, inliningContext.typeRemapper);
+
+        return new RemappingClassBuilder(
+                classBuilder,
+                new AsmTypeRemapper(inliningContext.typeRemapper, inliningContext.getRoot().typeParameterMappings, transformationResult)
+        );
     }
 
     @NotNull

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen.inline;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.psi.KtElement;
@@ -26,6 +27,7 @@ import java.util.Map;
 public class RootInliningContext extends InliningContext {
     public final CodegenContext startContext;
     private final String classNameToInline;
+    public final TypeParameterMappings typeParameterMappings;
     public final KtElement callElement;
 
     public RootInliningContext(
@@ -35,12 +37,14 @@ public class RootInliningContext extends InliningContext {
             @NotNull CodegenContext startContext,
             @NotNull KtElement callElement,
             @NotNull String classNameToInline,
-            @NotNull ReifiedTypeInliner inliner
+            @NotNull ReifiedTypeInliner inliner,
+            @Nullable TypeParameterMappings typeParameterMappings
     ) {
         super(null, map, state, nameGenerator, TypeRemapper.createEmpty(), inliner, false, false);
         this.callElement = callElement;
         this.startContext = startContext;
         this.classNameToInline = classNameToInline;
+        this.typeParameterMappings = typeParameterMappings;
     }
 
     @Override

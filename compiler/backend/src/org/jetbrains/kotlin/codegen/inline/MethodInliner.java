@@ -154,8 +154,12 @@ public class MethodInliner {
         final Iterator<AnonymousObjectGeneration> iterator = anonymousObjectGenerations.iterator();
 
         final TypeRemapper remapper = TypeRemapper.createFrom(currentTypeMapping);
-        RemappingMethodAdapter remappingMethodAdapter = new RemappingMethodAdapter(resultNode.access, resultNode.desc, resultNode,
-                                                                                   remapper);
+        RemappingMethodAdapter remappingMethodAdapter = new RemappingMethodAdapter(
+                resultNode.access,
+                resultNode.desc,
+                resultNode,
+                new AsmTypeRemapper(remapper, inliningContext.getRoot().typeParameterMappings, result)
+        );
 
         final int markerShift = InlineCodegenUtil.calcMarkerShift(parameters, node);
         InlineAdapter lambdaInliner = new InlineAdapter(remappingMethodAdapter, parameters.getArgsSizeOnStack(), sourceMapper) {

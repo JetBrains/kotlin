@@ -52,7 +52,10 @@ public class RemappingClassBuilder extends DelegatingClassBuilder {
             @Nullable String signature,
             @Nullable Object value
     ) {
-        return new RemappingFieldAdapter(builder.newField(origin, access, name, remapper.mapDesc(desc), signature, value), remapper);
+        return new RemappingFieldAdapter(
+                builder.newField(origin, access, name, remapper.mapDesc(desc), remapper.mapSignature(signature, true), value),
+                remapper
+        );
     }
 
     @Override
@@ -65,9 +68,11 @@ public class RemappingClassBuilder extends DelegatingClassBuilder {
             @Nullable String signature,
             @Nullable String[] exceptions
     ) {
-        return new RemappingMethodAdapter(access, desc,
-                                          builder.newMethod(origin, access, name, remapper.mapMethodDesc(desc), signature, exceptions),
-                                          remapper);
+        return new RemappingMethodAdapter(
+                access, desc,
+                builder.newMethod(origin, access, name, remapper.mapMethodDesc(desc), remapper.mapSignature(signature, false), exceptions),
+                remapper
+        );
     }
 
     @Override
@@ -81,5 +86,4 @@ public class RemappingClassBuilder extends DelegatingClassBuilder {
     public ClassVisitor getVisitor() {
         return new RemappingClassAdapter(builder.getVisitor(), remapper);
     }
-
 }
