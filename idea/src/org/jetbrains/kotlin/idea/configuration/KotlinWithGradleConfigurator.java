@@ -23,7 +23,6 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.DependencyScope;
-import com.intellij.openapi.roots.ExternalLibraryDescriptor;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -107,7 +106,7 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
         }
     }
 
-    public static void addKotlinLibraryToModule(final Module module, final DependencyScope scope, final ExternalLibraryDescriptor libraryDescriptor) {
+    public static void addKotlinLibraryToModule(final Module module, final DependencyScope scope, final String groupId, final String artifactId, final String version) {
         String gradleFilePath = getDefaultPathToBuildGradleFile(module);
         final GroovyFile gradleFile = getBuildGradleFile(module.getProject(), gradleFilePath);
 
@@ -141,7 +140,7 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
 
                     String dependencyString = String.format(
                             "%s \"%s:%s:%s\"",
-                            groovyScope, libraryDescriptor.getLibraryGroupId(), libraryDescriptor.getLibraryArtifactId(), libraryDescriptor.getMaxVersion());
+                            groovyScope, groupId, artifactId, version);
 
                     GrClosableBlock dependenciesBlock = getDependenciesBlock(gradleFile);
                     addLastExpressionInBlockIfNeeded(dependencyString, dependenciesBlock);
