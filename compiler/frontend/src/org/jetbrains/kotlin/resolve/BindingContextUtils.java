@@ -49,6 +49,16 @@ public class BindingContextUtils {
     }
 
     @Nullable
+    public static VariableDescriptor extractVariableFromResolvedCall(
+            @NotNull BindingContext bindingContext,
+            @Nullable KtElement callElement
+    ) {
+        ResolvedCall<? extends CallableDescriptor> resolvedCall = CallUtilKt.getResolvedCall(callElement, bindingContext);
+        if (resolvedCall == null || !(resolvedCall.getResultingDescriptor() instanceof VariableDescriptor)) return null;
+        return (VariableDescriptor) resolvedCall.getResultingDescriptor();
+    }
+
+    @Nullable
     public static VariableDescriptor extractVariableDescriptorIfAny(@NotNull BindingContext bindingContext, @Nullable KtElement element, boolean onlyReference) {
         DeclarationDescriptor descriptor = null;
         if (!onlyReference && (element instanceof KtVariableDeclaration || element instanceof KtParameter)) {
