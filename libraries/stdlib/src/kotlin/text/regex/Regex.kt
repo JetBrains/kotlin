@@ -19,8 +19,8 @@ package kotlin.text
 /**
  * Represents a collection of captured groups in a single match of a regular expression.
  *
- * Groups are indexed from 1 to the count of groups in the regular expression.
- * The first group (with the index 0) corresponds to the entire match.
+ * This collection has size of `groupCount + 1` where `groupCount` is the count of groups in the regular expression.
+ * Groups are indexed from 1 to `groupCount` and group with the index 0 corresponds to the entire match.
  *
  * An element of the collection at the particular index can be `null`,
  * if the corresponding group in the regular expression is optional and
@@ -48,9 +48,23 @@ public interface MatchResult {
     public val range: IntRange
     /** The substring from the input string captured by this match. */
     public val value: String
-    /** A collection of groups matched by the regular expression. */
+    /**
+     * A collection of groups matched by the regular expression.
+     *
+     * This collection has size of `groupCount + 1` where `groupCount` is the count of groups in the regular expression.
+     * Groups are indexed from 1 to `groupCount` and group with the index 0 corresponds to the entire match.
+     */
     public val groups: MatchGroupCollection
-    // TODO: Should we have groupCount (equals groups.size()-1)?
+    /**
+     * A list of matched indexed group values except zeroth group corresponding to the entire match.
+     *
+     * Unlike [groups] collection this list contains exactly `groupCount` items where `groupCount` is the count of groups in the regular expression.
+     * Groups are are indexed from *zero* to the `groupCount - 1`.
+     *
+     * If the group in the regular expression is optional and there was not match captured by that group,
+     * corresponding item in [groupValues] would be an empty string.
+     */
+    public val groupValues: List<String>
 
     /** Returns a new [MatchResult] with the results for the next match, starting at the position
      *  at which the last match ended (at the character after the last matched character).

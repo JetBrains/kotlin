@@ -74,9 +74,13 @@ class RegexTest {
         assertEquals("1", m1.groups[1]?.value)
         assertEquals("a", m1.groups[2]?.value)
 
+        assertEquals(listOf("1", "a"), m1.groupValues)
+
         val m2 = matches[1]
         assertEquals("2", m2.groups[1]?.value)
         assertEquals("b", m2.groups[2]?.value)
+
+        assertEquals(listOf("2", "b"), m2.groupValues)
     }
 
     @test fun matchOptionalGroup() {
@@ -87,10 +91,14 @@ class RegexTest {
         assertEquals("Hi", m1.groups[1]?.value)
         assertEquals(null, m1.groups[2])
 
+        assertEquals(listOf("Hi", ""), m1.groupValues)
+
         val m2 = pattern.find("bye...")!!
         assertEquals(3, m2.groups.size)
         assertEquals(null, m2.groups[1])
         assertEquals("bye", m2.groups[2]?.value)
+
+        assertEquals(listOf("", "bye"), m2.groupValues)
     }
 
     @test fun matchMultiline() {

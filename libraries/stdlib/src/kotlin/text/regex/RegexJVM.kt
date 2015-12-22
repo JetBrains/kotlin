@@ -257,6 +257,19 @@ private class MatcherMatchResult(private val matcher: Matcher, private val input
         }
     }
 
+    private var groupValues_: List<String>? = null
+
+    override val groupValues: List<String>
+        get() {
+            if (groupValues_ == null) {
+                groupValues_ = object : AbstractList<String>() {
+                    override val size: Int get() = matchResult.groupCount()
+                    override fun get(index: Int): String = matchResult.group(index + 1) ?: ""
+                }
+            }
+            return groupValues_!!
+        }
+
     override fun next(): MatchResult? {
         val nextIndex = matchResult.end() + if (matchResult.end() == matchResult.start()) 1 else 0
         return if (nextIndex <= input.length) matcher.findNext(nextIndex, input) else null

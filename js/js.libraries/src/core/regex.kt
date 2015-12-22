@@ -198,8 +198,8 @@ private fun RegExp.findNext(input: String, from: Int): MatchResult? {
             get() = match[0]!!
 
         override val groups: MatchGroupCollection = object : MatchGroupCollection {
-            override val size: Int get() = match.size()
-            override fun isEmpty(): Boolean = size() == 0
+            override val size: Int get() = match.size
+            override fun isEmpty(): Boolean = size == 0
 
             override fun contains(o: MatchGroup?): Boolean = this.any { it == o }
             override fun containsAll(c: Collection<MatchGroup?>): Boolean = c.all({contains(it)})
@@ -208,6 +208,20 @@ private fun RegExp.findNext(input: String, from: Int): MatchResult? {
 
             override fun get(index: Int): MatchGroup? = match[index]?.let { MatchGroup(it) }
         }
+
+
+        private var groupValues_: List<String>? = null
+
+        override val groupValues: List<String>
+            get() {
+                if (groupValues_ == null) {
+                    groupValues_ = object : java.util.AbstractList<String>() {
+                        override val size: Int get() = match.size - 1
+                        override fun get(index: Int): String = match[index + 1] ?: ""
+                    }
+                }
+                return groupValues_!!
+            }
 
         override fun next(): MatchResult? = this@findNext.findNext(input, if (range.isEmpty()) range.start + 1 else range.end + 1)
     }
