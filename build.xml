@@ -602,8 +602,7 @@
         </jar>
     </target>
 
-    <target name="kotlin-build"
-            depends="daemon-client,preloader">
+    <target name="kotlin-build">
         <cleandir dir="${output}/classes/kotlin-build"/>
 
         <javac2 destdir="${output}/classes/kotlin-build" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false"
@@ -617,21 +616,15 @@
                 <pathelement path="${bootstrap.runtime}"/>
                 <pathelement path="${bootstrap.reflect}"/>
                 <pathelement path="${intellij.util.jar}"/>
-                <pathelement path="${trove4j.jar}"/>
-                <pathelement path="${kotlin-home}/lib/kotlin-preloader.jar"/>
+                <!--<pathelement path="${trove4j.jar}"/>-->
                 <pathelement path="${kotlin-home}/lib/kotlin-compiler.jar"/>
-                <pathelement path="${kotlin-home}/lib/kotlin-daemon-client.jar"/>
             </classpath>
         </javac2>
 
         <jar destfile="${kotlin-home}/lib/kotlin-build.jar">
             <fileset dir="${output}/classes/kotlin-build"/>
             <zipfileset file="${kotlin-home}/build.txt" prefix="META-INF"/>
-            <zipfileset src="${intellij.util.jar}"/>
-            <zipfileset src="${kotlin-home}/lib/kotlin-preloader.jar"/>
-            <zipfileset src="${kotlin-home}/lib/kotlin-daemon-client.jar"/>
-            <zipfileset src="${trove4j.jar}"/>
-            <zipfileset src="${dependencies.dir}/cli-parser-1.1.1.jar"/>
+            <!--<zipfileset src="${intellij.util.jar}"/>-->
 
             <manifest>
                 <attribute name="Built-By" value="${manifest.impl.vendor}"/>

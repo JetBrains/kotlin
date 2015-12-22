@@ -114,6 +114,11 @@ messages/**)
 -keep class com.intellij.util.containers.ComparatorUtil { *; }
 -keep class com.intellij.util.io.PersistentHashMapValueStorage { *; }
 -keep class com.intellij.util.io.PersistentHashMap { *; }
+-keep class com.intellij.util.io.BooleanDataDescriptor { *; }
+-keep class com.intellij.util.io.EnumeratorStringDescriptor { *; }
+-keep class com.intellij.util.io.ExternalIntegerKeyDescriptor { *; }
+-keep class com.intellij.util.containers.hash.EqualityPolicy { *; }
+-keep class com.intellij.util.containers.hash.EqualityPolicy.* { *; }
 -keep class gnu.trove.TIntHashSet { *; }
 -keep class gnu.trove.TIntIterator { *; }
 

@@ -57,6 +57,11 @@ public abstract class CLICompiler<A extends CommonCompilerArguments> {
         return exec(errStream, Services.EMPTY, MessageRenderer.PLAIN_RELATIVE_PATHS, args);
     }
 
+    @NotNull
+    public ExitCode exec(@NotNull PrintStream errStream, @NotNull Services services, @NotNull String... args) {
+        return exec(errStream, services, MessageRenderer.PLAIN_RELATIVE_PATHS, args);
+    }
+
     @SuppressWarnings("UnusedDeclaration") // Used via reflection in CompilerRunnerUtil#invokeExecMethod
     @NotNull
     public ExitCode execAndOutputXml(@NotNull PrintStream errStream, @NotNull Services services, @NotNull String... args) {

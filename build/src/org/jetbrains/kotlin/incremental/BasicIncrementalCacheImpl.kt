@@ -51,7 +51,7 @@ val KOTLIN_CACHE_DIRECTORY_NAME = "kotlin"
 public fun getCacheDirectoryName(): String =
         KOTLIN_CACHE_DIRECTORY_NAME
 
-public class IncrementalCacheImpl<TargetId>(
+public class BasicIncrementalCacheImpl<TargetId>(
         targetDataRoot: File,
         targetOutputDir: File,
         private val target: TargetId
@@ -97,17 +97,17 @@ public class IncrementalCacheImpl<TargetId>(
     private val subtypesMap = registerExperimentalMap(SubtypesMap(SUBTYPES.storageFile))
     private val supertypesMap = registerExperimentalMap(SupertypesMap(SUPERTYPES.storageFile))
 
-    private val dependents = arrayListOf<IncrementalCacheImpl<TargetId>>()
+    private val dependents = arrayListOf<BasicIncrementalCacheImpl<TargetId>>()
     private val outputDir = requireNotNull(targetOutputDir) { "Target is expected to have output directory: $target" }
 
-    private val dependentsWithThis: Iterable<IncrementalCacheImpl<TargetId>>
+    private val dependentsWithThis: Iterable<BasicIncrementalCacheImpl<TargetId>>
             get() = dependents + this
 
     override fun registerInline(fromPath: String, jvmSignature: String, toPath: String) {
         inlinedTo.add(fromPath, jvmSignature, toPath)
     }
 
-    public fun addDependentCache(cache: IncrementalCacheImpl<TargetId>) {
+    public fun addDependentCache(cache: BasicIncrementalCacheImpl<TargetId>) {
         dependents.add(cache)
     }
 
@@ -291,8 +291,8 @@ public class IncrementalCacheImpl<TargetId>(
         return obsoletePackageParts
     }
 
-    override fun getPackagePartData(fqName: String): JvmPackagePartProto? {
-        return protoMap[JvmClassName.byInternalName(fqName)]?.let { value ->
+    override fun getPackagePartData(partInternalName: String): JvmPackagePartProto? {
+        return protoMap[JvmClassName.byInternalName(partInternalName)]?.let { value ->
             JvmPackagePartProto(value.bytes, value.strings)
         }
     }

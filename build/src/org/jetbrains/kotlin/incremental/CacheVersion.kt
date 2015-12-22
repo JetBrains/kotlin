@@ -67,7 +67,7 @@ class CacheVersion(
         versionFile.delete()
     }
 
-    @TestOnly
+    @get:TestOnly
     val formatVersionFile: File
         get() = versionFile
 
@@ -98,3 +98,22 @@ fun experimentalCacheVersion(dataRoot: File): CacheVersion =
                      whenTurnedOff = CacheVersion.Action.CLEAN_EXPERIMENTAL_CACHES,
                      isEnabled = { IncrementalCompilation.isExperimental() })
 
+fun dataContainerCacheVersion(dataRoot: File): CacheVersion =
+        CacheVersion(ownVersion = DATA_CONTAINER_VERSION,
+                     versionFile = File(dataRoot, DATA_CONTAINER_VERSION_FILE_NAME),
+                     whenVersionChanged = CacheVersion.Action.REBUILD_ALL_KOTLIN,
+                     whenTurnedOn = CacheVersion.Action.REBUILD_ALL_KOTLIN,
+                     whenTurnedOff = CacheVersion.Action.CLEAN_DATA_CONTAINER,
+                     isEnabled = { IncrementalCompilation.isExperimental() })
+
+fun allCachesVersions(containerDataRoot: File, dataRoots: Iterable<File>): Iterable<CacheVersion> {
+    val versions = arrayListOf<CacheVersion>()
+    versions.add(dataContainerCacheVersion(containerDataRoot))
+
+    for (dataRoot in dataRoots) {
+        versions.add(normalCacheVersion(dataRoot))
+        versions.add(experimentalCacheVersion(dataRoot))
+    }
+
+    return versions
+}

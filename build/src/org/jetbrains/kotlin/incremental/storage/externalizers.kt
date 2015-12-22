@@ -22,8 +22,6 @@ import com.intellij.util.io.EnumeratorStringDescriptor
 import com.intellij.util.io.IOUtil
 import com.intellij.util.io.KeyDescriptor
 import gnu.trove.THashSet
-import gnu.trove.TIntHashSet
-import gnu.trove.decorator.TIntHashSetDecorator
 import java.io.DataInput
 import java.io.DataInputStream
 import java.io.DataOutput
@@ -127,23 +125,6 @@ object StringToLongMapExternalizer : StringMapExternalizer<Long>() {
 }
 
 
-object StringListExternalizer : DataExternalizer<List<String>> {
-    override fun save(output: DataOutput, value: List<String>) {
-        value.forEach { IOUtil.writeUTF(output, it) }
-    }
-
-    override fun read(input: DataInput): List<String> {
-        val result = ArrayList<String>()
-
-        while ((input as DataInputStream).available() > 0) {
-            result.add(IOUtil.readUTF(input))
-        }
-
-        return result
-    }
-}
-
-
 object PathCollectionExternalizer : DataExternalizer<Collection<String>> {
     override fun save(output: DataOutput, value: Collection<String>) {
         for (str in value) {
@@ -220,25 +201,6 @@ object ConstantsMapExternalizer : DataExternalizer<Map<String, Any>> {
 
     private enum class Kind {
         INT, FLOAT, LONG, DOUBLE, STRING
-    }
-}
-
-
-object IntSetExternalizer : DataExternalizer<Set<Int>> {
-    override fun save(output: DataOutput, value: Set<Int>) {
-        value.forEach { output.writeInt(it) }
-    }
-
-    override fun read(input: DataInput): Set<Int> {
-        val result = TIntHashSet()
-        val stream = input as DataInputStream
-
-        while (stream.available() > 0) {
-            val str = stream.readInt()
-            result.add(str)
-        }
-
-        return TIntHashSetDecorator(result)
     }
 }
 

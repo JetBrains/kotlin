@@ -24,11 +24,6 @@ import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.build.isModuleMappingFile
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.compilerRunner.CompilerEnvironment
-import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
@@ -38,45 +33,9 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompil
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
-import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.keysToMap
 import java.io.File
 import java.util.*
-
-fun<Target> compileChanged(
-        kotlinPaths: KotlinPaths,
-        moduleName: String,
-        isTest: Boolean,
-        targets: Iterable<Target>,
-        getDependencies: (Target) -> Iterable<Target>,
-        commonArguments: CommonCompilerArguments,
-        k2JvmArguments: K2JVMCompilerArguments,
-        additionalArguments: Iterable<String>,
-        outputDir: File,
-        sourcesToCompile: List<File>,
-        javaSourceRoots: Iterable<File>,
-        classpath: Iterable<File>,
-        friendDirs: Iterable<File>,
-        compilationCanceledStatus: CompilationCanceledStatus,
-        getIncrementalCache: (Target) -> IncrementalCacheImpl<Target>,
-        lookupTracker: LookupTracker,
-        getTargetId: Target.() -> TargetId,
-        messageCollector: MessageCollector, outputItemCollector: OutputItemsCollectorImpl
-)
-{
-    val moduleFile = makeModuleFile(moduleName, isTest, outputDir, sourcesToCompile, javaSourceRoots, classpath, friendDirs)
-    println("module file created: $moduleFile")
-    println(moduleFile.readText())
-
-    val incrementalCaches = getIncrementalCaches(targets, getDependencies, getIncrementalCache, getTargetId)
-    val environment = createCompileEnvironment(kotlinPaths, incrementalCaches, lookupTracker, compilationCanceledStatus)
-
-    commonArguments.verbose = true // Make compiler report source to output files mapping
-
-    KotlinCompilerRunner.runK2JvmCompiler(commonArguments, k2JvmArguments, additionalArguments, messageCollector, environment, moduleFile, outputItemCollector)
-
-    moduleFile.delete()
-}
 
 
 fun getJavaSourceRoots(sources: Iterable<File>, roots: Iterable<File>): Iterable<File> =
@@ -88,7 +47,7 @@ fun getJavaSourceRoots(sources: Iterable<File>, roots: Iterable<File>): Iterable
 private fun File.isJavaFile() = extension.equals(JavaFileType.INSTANCE.defaultExtension, ignoreCase = true)
 
 
-private fun makeModuleFile(name: String, isTest: Boolean, outputDir: File, sourcesToCompile: List<File>, javaSourceRoots: Iterable<File>, classpath: Iterable<File>, friendDirs: Iterable<File>): File {
+fun makeModuleFile(name: String, isTest: Boolean, outputDir: File, sourcesToCompile: List<File>, javaSourceRoots: Iterable<File>, classpath: Iterable<File>, friendDirs: Iterable<File>): File {
     val builder = KotlinModuleXmlBuilder()
     builder.addModule(
             name,
@@ -120,44 +79,30 @@ private fun findSrcDirRoot(file: File, roots: Iterable<File>): File? {
     return null
 }
 
-private fun createCompileEnvironment(
-        kotlinPaths: KotlinPaths,
+fun createCompileServices(
         incrementalCaches: Map<TargetId, IncrementalCache>,
         lookupTracker: LookupTracker,
-        compilationCanceledStatus: CompilationCanceledStatus
-): CompilerEnvironment {
-    val compilerServices = Services.Builder()
-            .register(javaClass<IncrementalCompilationComponents>(), IncrementalCompilationComponentsImpl(incrementalCaches, lookupTracker))
-            .register(javaClass<CompilationCanceledStatus>(), compilationCanceledStatus)
-            .build()
-
-    return CompilerEnvironment.getEnvironmentFor(
-            kotlinPaths,
-            { className ->
-                className.startsWith("org.jetbrains.kotlin.load.kotlin.incremental.components.")
-                || className.startsWith("org.jetbrains.kotlin.incremental.components.")
-                || className == "org.jetbrains.kotlin.config.Services"
-                || className.startsWith("org.apache.log4j.") // For logging from compiler
-                || className == "org.jetbrains.kotlin.progress.CompilationCanceledStatus"
-                || className == "org.jetbrains.kotlin.progress.CompilationCanceledException"
-                || className == "org.jetbrains.kotlin.modules.TargetId"
-            },
-            compilerServices
-    )
+        compilationCanceledStatus: CompilationCanceledStatus?
+): Services {
+    val builder = Services.Builder()
+    builder.register(IncrementalCompilationComponents::class.java, IncrementalCompilationComponentsImpl(incrementalCaches, lookupTracker))
+    compilationCanceledStatus?.let {
+        builder.register(CompilationCanceledStatus::class.java, it)
+    }
+    return builder.build()
 }
-
 
 fun makeLookupTracker(parentLookupTracker: LookupTracker = LookupTracker.DO_NOTHING): LookupTracker =
         if (IncrementalCompilation.isExperimental()) LookupTrackerImpl(parentLookupTracker)
         else parentLookupTracker
 
 
-private fun<Target> getIncrementalCaches(
+fun<Target> getIncrementalCaches(
         targets: Iterable<Target>,
         getDependencies: (Target) -> Iterable<Target>,
-        getCache: (Target) -> IncrementalCacheImpl<Target>,
+        getCache: (Target) -> BasicIncrementalCacheImpl<Target>,
         getTargetId: Target.() -> TargetId
-): Map<TargetId, IncrementalCacheImpl<Target>>
+): Map<TargetId, BasicIncrementalCacheImpl<Target>>
 {
     val dependents = targets.keysToMap { hashSetOf<Target>() }
     val targetsWithDependents = targets.toHashSet()
@@ -186,7 +131,7 @@ private fun<Target> getIncrementalCaches(
 fun<Target> updateKotlinIncrementalCache(
         targets: Iterable<Target>,
         compilationErrors: Boolean,
-        getIncrementalCache: (Target) -> IncrementalCacheImpl<Target>,
+        getIncrementalCache: (Target) -> BasicIncrementalCacheImpl<Target>,
         generatedFiles: List<GeneratedFile<Target>>
 ): CompilationResult {
 
@@ -212,19 +157,19 @@ fun<Target> updateKotlinIncrementalCache(
 }
 
 
-fun LookupStorage.update(
+fun updateLookupStorage(
+        lookupStorage: LookupStorage,
         lookupTracker: LookupTracker,
-        filesToCompile: Iterable<File>,
-        removedFiles: Iterable<File>
+        filesToCompile: Iterable<File>, removedFiles: Iterable<File>
 ) {
     if (!IncrementalCompilation.isExperimental()) return
 
     if (lookupTracker !is LookupTrackerImpl) throw AssertionError("Lookup tracker is expected to be LookupTrackerImpl, got ${lookupTracker.javaClass}")
 
-    filesToCompile.forEach { this.removeLookupsFrom(it) }
-    removedFiles.forEach { this.removeLookupsFrom(it) }
+    filesToCompile.forEach { lookupStorage.removeLookupsFrom(it) }
+    removedFiles.forEach { lookupStorage.removeLookupsFrom(it) }
 
-    lookupTracker.lookups.entrySet().forEach { this.add(it.key, it.value) }
+    lookupTracker.lookups.entrySet().forEach { lookupStorage.add(it.key, it.value) }
 }
 
 
