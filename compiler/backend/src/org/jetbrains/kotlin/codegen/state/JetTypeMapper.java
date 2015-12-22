@@ -404,10 +404,11 @@ public class JetTypeMapper {
         }
 
         TypeConstructor constructor = jetType.getConstructor();
-        DeclarationDescriptor descriptor = constructor.getDeclarationDescriptor();
         if (constructor instanceof IntersectionTypeConstructor) {
             jetType = CommonSupertypes.commonSupertype(new ArrayList<KotlinType>(constructor.getSupertypes()));
+            constructor = jetType.getConstructor();
         }
+        DeclarationDescriptor descriptor = constructor.getDeclarationDescriptor();
 
         if (descriptor == null) {
             throw new UnsupportedOperationException("no descriptor for type constructor of " + jetType);
