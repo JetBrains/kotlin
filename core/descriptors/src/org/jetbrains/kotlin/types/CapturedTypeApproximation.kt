@@ -116,10 +116,8 @@ public fun approximateCapturedTypes(type: KotlinType): ApproximationBounds<Kotli
 }
 
 private fun KotlinType.replaceTypeArguments(newTypeArguments: List<TypeArgument>): KotlinType {
-    assert(getArguments().size() == newTypeArguments.size()) { "Incorrect type arguments $newTypeArguments" }
-    return KotlinTypeImpl.create(
-            getAnnotations(), getConstructor(), isMarkedNullable(), newTypeArguments.map { it.toTypeProjection() }, getMemberScope()
-    )
+    assert(arguments.size == newTypeArguments.size) { "Incorrect type arguments $newTypeArguments" }
+    return replace(newTypeArguments.map { it.toTypeProjection() })
 }
 
 private fun approximateProjection(typeArgument: TypeArgument): ApproximationBounds<TypeArgument> {
