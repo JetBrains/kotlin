@@ -68,10 +68,15 @@ public class CapturedType(
 
     override fun getDelegate(): KotlinType = delegateType
 
+    override fun getCapabilities(): TypeCapabilities = object : TypeCapabilities {
+        override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>) =
+            this@CapturedType.getCapability(capabilityClass)
+    }
+
     override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? {
         @Suppress("UNCHECKED_CAST")
-        return if (capabilityClass == javaClass<SubtypingRepresentatives>()) this as T
-        else super<DelegatingType>.getCapability(capabilityClass)
+        return if (capabilityClass == SubtypingRepresentatives::class.java) this as T
+        else super.getCapability(capabilityClass)
     }
 
     override val subTypeRepresentative: KotlinType
