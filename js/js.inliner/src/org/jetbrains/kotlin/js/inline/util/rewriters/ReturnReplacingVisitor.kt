@@ -16,15 +16,7 @@
 
 package org.jetbrains.kotlin.js.inline.util.rewriters
 
-import com.google.dart.compiler.backend.js.ast.JsBreak
-import com.google.dart.compiler.backend.js.ast.JsContext
-import com.google.dart.compiler.backend.js.ast.JsExpression
-import com.google.dart.compiler.backend.js.ast.JsExpressionStatement
-import com.google.dart.compiler.backend.js.ast.JsFunction
-import com.google.dart.compiler.backend.js.ast.JsNameRef
-import com.google.dart.compiler.backend.js.ast.JsObjectLiteral
-import com.google.dart.compiler.backend.js.ast.JsReturn
-import com.google.dart.compiler.backend.js.ast.JsVisitorWithContextImpl
+import com.google.dart.compiler.backend.js.ast.*
 import org.jetbrains.kotlin.js.inline.util.canHaveSideEffect
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
@@ -33,14 +25,14 @@ public class ReturnReplacingVisitor(private val resultRef: JsNameRef?, private v
     /**
      * Prevents replacing returns in object literal
      */
-    override fun visit(x: JsObjectLiteral, ctx: JsContext<*>): Boolean = false
+    override fun visit(x: JsObjectLiteral, ctx: JsContext<JsNode>): Boolean = false
 
     /**
      * Prevents replacing returns in inner function
      */
-    override fun visit(x: JsFunction, ctx: JsContext<*>): Boolean = false
+    override fun visit(x: JsFunction, ctx: JsContext<JsNode>): Boolean = false
 
-    override fun endVisit(x: JsReturn, ctx: JsContext<*>) {
+    override fun endVisit(x: JsReturn, ctx: JsContext<JsNode>) {
         ctx.removeMe()
 
         val returnReplacement = getReturnReplacement(x.getExpression())
