@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.configuration.ConfigureKotlinInProjectUtils
 import org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator
 import org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator
+import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator
 import org.jetbrains.kotlin.idea.framework.JavaRuntimePresentationProvider
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
@@ -99,7 +100,7 @@ public abstract class AddKotlinLibQuickFix(element: KtElement) : KotlinQuickFixA
     protected abstract fun hasLibJarInLibrary(library: Library): Boolean
     protected abstract fun getLibraryDescriptor(module: Module): MavenExternalLibraryDescriptor
 
-    class MavenExternalLibraryDescriptor(groupId: String, artifactId: String, version: String? = null) :
+    class MavenExternalLibraryDescriptor(groupId: String, artifactId: String, version: String) :
             ExternalLibraryDescriptor(groupId, artifactId, version, version) {
         override fun getLibraryClassesRoots(): List<String> = emptyList()
     }
@@ -110,6 +111,13 @@ public abstract class AddKotlinLibQuickFix(element: KtElement) : KotlinQuickFixA
             if (KotlinPluginUtil.isMavenModule(module)) {
                 val scope = OrderEntryFix.suggestScopeByLocation(module, element)
                 JavaProjectModelModificationService.getInstance(project).addDependency(module, getLibraryDescriptor(module), scope)
+
+                return
+            }
+
+            if (KotlinPluginUtil.isGradleModule(module) || KotlinPluginUtil.isAndroidGradleModule(module)) {
+                val scope = OrderEntryFix.suggestScopeByLocation(module, element)
+                KotlinWithGradleConfigurator.addKotlinLibraryToModule(module, scope, getLibraryDescriptor(module))
 
                 return
             }
@@ -146,12 +154,25 @@ public abstract class AddKotlinLibQuickFix(element: KtElement) : KotlinQuickFixA
     }
 
     companion object {
-        fun getKotlinStdlibVersion(module: Module): String? {
+        fun getKotlinStdlibVersion(module: Module): String {
             if (KotlinPluginUtil.isMavenModule(module)) {
-                return getMavenKotlinStdlibVersion(module)
+                val mavenVersion = getMavenKotlinStdlibVersion(module)
+                if (mavenVersion != null) {
+                    return mavenVersion
+                }
+            }
+            else if (KotlinPluginUtil.isGradleModule(module) || KotlinPluginUtil.isAndroidGradleModule(module)) {
+                val gradleVersion = KotlinWithGradleConfigurator.getKotlinStdlibVersion(module)
+                if (gradleVersion != null) {
+                    return gradleVersion
+                }
             }
 
-            return null
+            val pluginVersion = KotlinRuntimeLibraryUtil.bundledRuntimeVersion()
+            if ("@snapshot@" == pluginVersion) {
+                return "0.1-SNAPSHOT"
+            }
+            return pluginVersion
         }
 
         fun getMavenKotlinStdlibVersion(module: Module): String? {
