@@ -22,6 +22,8 @@ import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.DependencyScope;
+import com.intellij.openapi.roots.ExternalLibraryDescriptor;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -33,6 +35,7 @@ import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.idea.KotlinPluginUtil;
 import org.jetbrains.kotlin.idea.framework.ui.ConfigureDialogWithModulesAndVersion;
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
@@ -102,6 +105,83 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
                 showErrorMessage(project, "Cannot find build.gradle file for module " + module.getName());
             }
         }
+    }
+
+    public static void addKotlinLibraryToModule(final Module module, final DependencyScope scope, final ExternalLibraryDescriptor libraryDescriptor) {
+        String gradleFilePath = getDefaultPathToBuildGradleFile(module);
+        final GroovyFile gradleFile = getBuildGradleFile(module.getProject(), gradleFilePath);
+
+        if (gradleFile != null && canConfigureFile(gradleFile)) {
+            new WriteCommandAction(gradleFile.getProject()) {
+                @Override
+                protected void run(@NotNull Result result) {
+                    String groovyScope;
+                    switch (scope) {
+                        case COMPILE:
+                            groovyScope = "compile";
+                            break;
+                        case TEST:
+                            if (KotlinPluginUtil.isAndroidGradleModule(module)) {
+                                // TODO we should add testCompile or androidTestCompile
+                                groovyScope = "compile";
+                            }
+                            else {
+                                groovyScope = "testCompile";
+                            }
+                            break;
+                        case RUNTIME:
+                            groovyScope = "runtime";
+                            break;
+                        case PROVIDED:
+                            groovyScope = "compile";
+                            break;
+                        default:
+                            groovyScope = "compile";
+                    }
+
+                    String dependencyString = String.format(
+                            "%s \"%s:%s:%s\"",
+                            groovyScope, libraryDescriptor.getLibraryGroupId(), libraryDescriptor.getLibraryArtifactId(), libraryDescriptor.getMaxVersion());
+
+                    GrClosableBlock dependenciesBlock = getDependenciesBlock(gradleFile);
+                    addLastExpressionInBlockIfNeeded(dependencyString, dependenciesBlock);
+
+                    CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(gradleFile);
+                }
+            }.execute();
+
+            VirtualFile virtualFile = gradleFile.getVirtualFile();
+            if (virtualFile != null) {
+                showInfoNotification(gradleFile.getProject(), virtualFile.getPath() + " was modified");
+            }
+        }
+    }
+
+    @Nullable
+    public static String getKotlinStdlibVersion(@NotNull Module module) {
+        String gradleFilePath = getDefaultPathToBuildGradleFile(module);
+        GroovyFile gradleFile = getBuildGradleFile(module.getProject(), gradleFilePath);
+
+        if (gradleFile == null) return null;
+
+        String versionProperty = "$kotlin_version";
+        GrClosableBlock block = getBuildScriptBlock(gradleFile);
+        if (block.getText().contains("ext.kotlin_version = ")) {
+            return versionProperty;
+        }
+
+        GrStatement[] dependencies = getDependenciesBlock(gradleFile).getStatements();
+        String stdlibArtifactPrefix = "org.jetbrains.kotlin:kotlin-stdlib:";
+        for (GrStatement dependency : dependencies) {
+            String dependencyText = dependency.getText();
+            int startIndex = dependencyText.indexOf(stdlibArtifactPrefix) + stdlibArtifactPrefix.length();
+            int endIndex = dependencyText.length() - 1;
+            if (startIndex != -1 && endIndex != -1) {
+                return dependencyText.substring(startIndex, endIndex);
+            }
+        }
+
+        return null;
     }
 
     private void addElements(@NotNull GroovyFile file, @NotNull String version) {
@@ -180,7 +260,7 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
     protected void changeGradleFile(@NotNull final GroovyFile groovyFile, @NotNull final String version) {
         new WriteCommandAction(groovyFile.getProject()) {
             @Override
-            protected void run(Result result) {
+            protected void run(@NotNull Result result) {
                 addElements(groovyFile, version);
 
                 CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(groovyFile);
@@ -258,7 +338,6 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
         if (allExpressions != null) {
             for (GrMethodCallExpression expression : allExpressions) {
                 GrExpression invokedExpression = expression.getInvokedExpression();
-                if (invokedExpression == null) continue;
                 if (expression.getClosureArguments().length == 0) continue;
 
                 String expressionText = invokedExpression.getText();
@@ -293,7 +372,7 @@ public abstract class KotlinWithGradleConfigurator implements KotlinProjectConfi
         if (applyStatement == null) return null;
         for (GrApplicationStatement callExpression : applyStatement) {
             GrExpression invokedExpression = callExpression.getInvokedExpression();
-            if (invokedExpression != null && invokedExpression.getText().equals("apply")) {
+            if (invokedExpression.getText().equals("apply")) {
                 return callExpression;
             }
         }

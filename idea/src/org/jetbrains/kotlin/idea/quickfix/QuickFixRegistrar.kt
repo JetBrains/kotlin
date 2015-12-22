@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
 import org.jetbrains.kotlin.idea.inspections.AddModifierFixFactory
 import org.jetbrains.kotlin.idea.inspections.AddReflectionQuickFix
+import org.jetbrains.kotlin.idea.inspections.AddTestLibQuickFix
 import org.jetbrains.kotlin.idea.inspections.InfixCallFix
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable.*
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromCallWithConstructorCalleeActionFactory
@@ -125,6 +126,8 @@ public class QuickFixRegistrar : QuickFixContributor {
         REPEATED_MODIFIER.registerFactory(removeModifierFactory)
 
         UNRESOLVED_REFERENCE.registerFactory(AutoImportFix)
+        UNRESOLVED_REFERENCE.registerFactory(AddTestLibQuickFix)
+
         UNRESOLVED_REFERENCE_WRONG_RECEIVER.registerFactory(AutoImportFix)
 
         FUNCTION_EXPECTED.registerFactory(MissingInvokeAutoImportFix)
