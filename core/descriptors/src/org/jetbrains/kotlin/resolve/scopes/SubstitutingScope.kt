@@ -19,29 +19,37 @@ package org.jetbrains.kotlin.resolve.scopes
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.calls.inference.wrapWithCapturingSubstitution
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.newHashSetWithExpectedSize
+import org.jetbrains.kotlin.utils.sure
 import java.util.*
 
-public class SubstitutingScope(private val workerScope: MemberScope, private val substitutor: TypeSubstitutor) : MemberScope {
+public class SubstitutingScope(private val workerScope: MemberScope, givenSubstitutor: TypeSubstitutor) : MemberScope {
 
-    private var substitutedDescriptors: MutableMap<DeclarationDescriptor, DeclarationDescriptor?>? = null
+    private val substitutor = givenSubstitutor.substitution.wrapWithCapturingSubstitution().buildSubstitutor()
+
+    private var substitutedDescriptors: MutableMap<DeclarationDescriptor, DeclarationDescriptor>? = null
 
     private val _allDescriptors by lazy { substitute(workerScope.getContributedDescriptors()) }
 
-    private fun <D : DeclarationDescriptor> substitute(descriptor: D?): D? {
-        if (descriptor == null) return null
-        if (substitutor.isEmpty()) return descriptor
+    private fun <D : DeclarationDescriptor> substitute(descriptor: D): D {
+        if (substitutor.isEmpty) return descriptor
 
         if (substitutedDescriptors == null) {
-            substitutedDescriptors = HashMap<DeclarationDescriptor, DeclarationDescriptor?>()
+            substitutedDescriptors = HashMap<DeclarationDescriptor, DeclarationDescriptor>()
         }
 
-        val substituted = substitutedDescriptors!!.getOrPut(descriptor, { descriptor.substitute(substitutor) })
+        val substituted = substitutedDescriptors!!.getOrPut(descriptor, {
+            descriptor.substitute(substitutor).sure {
+                "We expect that no conflict should happen while substitution is guaranteed to generate invariant projection, " +
+                "but $descriptor substitution fails"
+            }
+        })
 
         @Suppress("UNCHECKED_CAST")
-        return substituted as D?
+        return substituted as D
     }
 
     private fun <D : DeclarationDescriptor> substitute(descriptors: Collection<D>): Collection<D> {
@@ -51,9 +59,7 @@ public class SubstitutingScope(private val workerScope: MemberScope, private val
         val result = newHashSetWithExpectedSize<D>(descriptors.size)
         for (descriptor in descriptors) {
             val substitute = substitute(descriptor)
-            if (substitute != null) {
-                result.add(substitute)
-            }
+            result.add(substitute)
         }
 
         return result
@@ -61,7 +67,8 @@ public class SubstitutingScope(private val workerScope: MemberScope, private val
 
     override fun getContributedVariables(name: Name, location: LookupLocation) = substitute(workerScope.getContributedVariables(name, location))
 
-    override fun getContributedClassifier(name: Name, location: LookupLocation) = substitute(workerScope.getContributedClassifier(name, location))
+    override fun getContributedClassifier(name: Name, location: LookupLocation) =
+            workerScope.getContributedClassifier(name, location)?.let { substitute(it) }
 
     override fun getContributedFunctions(name: Name, location: LookupLocation) = substitute(workerScope.getContributedFunctions(name, location))
 

@@ -1,0 +1,10 @@
+package
+
+public fun testA(/*0*/ a: A<*>): kotlin.Unit
+
+public interface A</*0*/ T : A<T?>?> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun foo(): T?
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

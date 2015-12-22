@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.types
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 
@@ -34,6 +35,7 @@ public abstract class TypeSubstitution {
     open fun isEmpty(): Boolean = false
 
     open fun approximateCapturedTypes(): Boolean = false
+    open fun approximateContravariantCapturedTypes(): Boolean = false
 
     open fun filterAnnotations(annotations: Annotations) = annotations
 
@@ -73,9 +75,10 @@ public abstract class TypeConstructorSubstitution : TypeSubstitution() {
     }
 }
 
-public class IndexedParametersSubstitution private constructor(
-    private val parameters: Array<TypeParameterDescriptor>,
-    private val arguments: Array<TypeProjection>
+public class IndexedParametersSubstitution(
+    val parameters: Array<TypeParameterDescriptor>,
+    val arguments: Array<TypeProjection>,
+    private val approximateCapturedTypes: Boolean = false
 ) : TypeSubstitution() {
     init {
         assert(parameters.size() <= arguments.size()) {
@@ -88,6 +91,8 @@ public class IndexedParametersSubstitution private constructor(
     ) : this(parameters.toTypedArray(), argumentsList.toTypedArray())
 
     override fun isEmpty(): Boolean = arguments.isEmpty()
+
+    override fun approximateContravariantCapturedTypes() = approximateCapturedTypes
 
     override fun get(key: KotlinType): TypeProjection? {
         val parameter = key.constructor.declarationDescriptor as? TypeParameterDescriptor ?: return null
@@ -164,6 +169,7 @@ private class CompositeTypeSubstitution(
     override fun isEmpty() = first.isEmpty() && second.isEmpty()
 
     override fun approximateCapturedTypes() = first.approximateCapturedTypes() || second.approximateCapturedTypes()
+    override fun approximateContravariantCapturedTypes() = first.approximateContravariantCapturedTypes() || second.approximateContravariantCapturedTypes()
 
     override fun filterAnnotations(annotations: Annotations): Annotations = second.filterAnnotations(first.filterAnnotations(annotations))
 }
@@ -174,6 +180,7 @@ public open class DelegatedTypeSubstitution(val substitution: TypeSubstitution):
     override fun isEmpty() = substitution.isEmpty()
 
     override fun approximateCapturedTypes() = substitution.approximateCapturedTypes()
+    override fun approximateContravariantCapturedTypes() = substitution.approximateContravariantCapturedTypes()
 
     override fun filterAnnotations(annotations: Annotations) = substitution.filterAnnotations(annotations)
 }

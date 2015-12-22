@@ -31,6 +31,12 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
 public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestWithStdLib {
+    @TestMetadata("addAllProjection.kt")
+    public void testAddAllProjection() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/addAllProjection.kt");
+        doTest(fileName);
+    }
+
     public void testAllFilesPresentInTestsWithStdLib() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib"), Pattern.compile("^(.+)\\.kt$"), true);
     }
