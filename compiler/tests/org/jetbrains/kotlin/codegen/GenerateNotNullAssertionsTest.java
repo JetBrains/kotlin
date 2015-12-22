@@ -157,6 +157,22 @@ public class GenerateNotNullAssertionsTest extends CodegenTestCase {
         assertNoIntrinsicsMethodIsCalledInMyClasses(true);
     }
 
+    public void testNoAssertionForNullableCaptured() {
+        setUpEnvironment(false, true);
+
+        loadFile("notNullAssertions/noAssertionForNullableCaptured.kt");
+
+        assertNoIntrinsicsMethodIsCalledInMyClasses(true);
+    }
+
+    public void testAssertionForNotNullCaptured() {
+        setUpEnvironment(false, true);
+
+        loadFile("notNullAssertions/assertionForNotNullCaptured.kt");
+
+        assertTrue(generateToText().contains("checkExpressionValueIsNotNull"));
+    }
+
     public void testNoAssertionForNullableGenericMethodCall() {
         setUpEnvironment(false, true);
 
