@@ -21,16 +21,13 @@ import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
-import org.jetbrains.kotlin.descriptors.VariableDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.DeclarationsCheckerKt;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.TemporaryBindingTrace;
+import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.context.TemporaryTraceAndCache;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults;
@@ -318,16 +315,36 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
                 basic.resolveArrayAccessSetMethod((KtArrayAccessExpression) left, right, contextForResolve, context.trace);
             }
             rightInfo = facade.getTypeInfo(right, context.replaceDataFlowInfo(leftInfo.getDataFlowInfo()));
-            components.dataFlowAnalyzer.checkType(binaryOperationType, expression, context.replaceExpectedType(leftType).replaceDataFlowInfo(rightInfo.getDataFlowInfo()));
+
+            KotlinType expectedType = refineTypeFromPropertySetterIfPossible(context.trace.getBindingContext(), leftOperand, leftType);
+
+            components.dataFlowAnalyzer.checkType(binaryOperationType, expression, context.replaceExpectedType(expectedType)
+                    .replaceDataFlowInfo(rightInfo.getDataFlowInfo()));
             basic.checkLValue(context.trace, context, leftOperand, right);
         }
         temporary.commit();
         return rightInfo.replaceType(checkAssignmentType(type, expression, contextWithExpectedType));
     }
 
+    @Nullable
+    private static KotlinType refineTypeFromPropertySetterIfPossible(
+            @NotNull BindingContext bindingContext,
+            @Nullable KtElement leftOperand,
+            @Nullable KotlinType leftOperandType
+    ) {
+        VariableDescriptor descriptor = BindingContextUtils.extractVariableFromResolvedCall(bindingContext, leftOperand);
+
+        if (descriptor instanceof PropertyDescriptor) {
+            PropertySetterDescriptor setter = ((PropertyDescriptor) descriptor).getSetter();
+            if (setter != null) return setter.getValueParameters().get(0).getType();
+        }
+
+        return leftOperandType;
+    }
+
     @NotNull
     protected KotlinTypeInfo visitAssignment(KtBinaryExpression expression, ExpressionTypingContext contextWithExpectedType) {
-        final ExpressionTypingContext context =
+        ExpressionTypingContext context =
                 contextWithExpectedType.replaceExpectedType(NO_EXPECTED_TYPE).replaceScope(scope).replaceContextDependency(INDEPENDENT);
         KtExpression leftOperand = expression.getLeft();
         if (leftOperand instanceof KtAnnotatedExpression) {
@@ -346,15 +363,16 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
             return typeInfo.replaceType(checkAssignmentType(typeInfo.getType(), expression, contextWithExpectedType));
         }
         KotlinTypeInfo leftInfo = ExpressionTypingUtils.getTypeInfoOrNullType(left, context, facade);
-        KotlinType leftType = leftInfo.getType();
+        KotlinType expectedType = refineTypeFromPropertySetterIfPossible(context.trace.getBindingContext(), leftOperand, leftInfo.getType());
         DataFlowInfo dataFlowInfo = leftInfo.getDataFlowInfo();
         KotlinTypeInfo resultInfo;
         if (right != null) {
-            resultInfo = facade.getTypeInfo(right, context.replaceDataFlowInfo(dataFlowInfo).replaceExpectedType(leftType));
+            resultInfo = facade.getTypeInfo(right, context.replaceDataFlowInfo(dataFlowInfo).replaceExpectedType(expectedType));
+
             dataFlowInfo = resultInfo.getDataFlowInfo();
             KotlinType rightType = resultInfo.getType();
-            if (left != null && leftType != null && rightType != null) {
-                DataFlowValue leftValue = DataFlowValueFactory.createDataFlowValue(left, leftType, context);
+            if (left != null && expectedType != null && rightType != null) {
+                DataFlowValue leftValue = DataFlowValueFactory.createDataFlowValue(left, expectedType, context);
                 DataFlowValue rightValue = DataFlowValueFactory.createDataFlowValue(right, rightType, context);
                 // We cannot say here anything new about rightValue except it has the same value as leftValue
                 resultInfo = resultInfo.replaceDataFlowInfo(dataFlowInfo.assign(leftValue, rightValue));
@@ -363,7 +381,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         else {
             resultInfo = leftInfo;
         }
-        if (leftType != null && leftOperand != null) { //if leftType == null, some other error has been generated
+        if (expectedType != null && leftOperand != null) { //if expectedType == null, some other error has been generated
             basic.checkLValue(context.trace, context, leftOperand, right);
         }
         return resultInfo.replaceType(components.dataFlowAnalyzer.checkStatementType(expression, contextWithExpectedType));
