@@ -626,6 +626,33 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
         }
     }
 
+    @TestMetadata("compiler/testData/writeFlags/lateinit")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Lateinit extends AbstractWriteFlagsTest {
+        public void testAllFilesPresentInLateinit() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/writeFlags/lateinit"), Pattern.compile("^(.+)\\.kt$"), true);
+        }
+
+        @TestMetadata("lateinitGetter.kt")
+        public void testLateinitGetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/lateinit/lateinitGetter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lateinitProperty.kt")
+        public void testLateinitProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/lateinit/lateinitProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("lateinitPropertyNoSetter.kt")
+        public void testLateinitPropertyNoSetter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/lateinit/lateinitPropertyNoSetter.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/writeFlags/property")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -311,6 +311,7 @@ public class PropertyCodegen {
 
         FieldOwnerContext backingFieldContext = context;
         boolean takeVisibilityFromDescriptor = propertyDescriptor.isLateInit() || propertyDescriptor.isConst();
+        boolean takeVisibilityFromSetter = propertyDescriptor.isLateInit() && propertyDescriptor.getSetter() != null;
         if (AsmUtil.isInstancePropertyWithStaticBackingField(propertyDescriptor) ) {
             modifiers |= ACC_STATIC;
 
@@ -337,6 +338,10 @@ public class PropertyCodegen {
                 (modifiers & ACC_PRIVATE) == 0) {
                 modifiers |= ACC_DEPRECATED;
             }
+        }
+        else if (takeVisibilityFromSetter) {
+            // For lateinits, we take visibility from setter, if any
+            modifiers |= getVisibilityAccessFlag(propertyDescriptor.getSetter());
         }
         else if (takeVisibilityFromDescriptor) {
             modifiers |= getVisibilityAccessFlag(propertyDescriptor);
