@@ -312,6 +312,10 @@ public class DescriptorUtils {
         return isKindOf(descriptor, ClassKind.CLASS);
     }
 
+    public static boolean isClassOrEnumClass(@Nullable DeclarationDescriptor descriptor) {
+        return isClass(descriptor) || isEnumClass(descriptor);
+    }
+
     private static boolean isKindOf(@Nullable DeclarationDescriptor descriptor, @NotNull ClassKind classKind) {
         return descriptor instanceof ClassDescriptor && ((ClassDescriptor) descriptor).getKind() == classKind;
     }

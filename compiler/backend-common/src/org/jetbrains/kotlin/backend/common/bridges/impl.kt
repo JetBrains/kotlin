@@ -90,10 +90,9 @@ public fun findImplementationFromInterface(descriptor: CallableMemberDescriptor)
     val overridden = OverrideResolver.getOverriddenDeclarations(descriptor)
     val filtered = OverrideResolver.filterOutOverridden(overridden)
 
-    val result = filtered.firstOrNull { it.getModality() != Modality.ABSTRACT } ?: return null
+    val result = filtered.firstOrNull { it.modality != Modality.ABSTRACT } ?: return null
 
-    val container = result.getContainingDeclaration()
-    if (DescriptorUtils.isClass(container) || DescriptorUtils.isEnumClass(container)) return null
+    if (DescriptorUtils.isClassOrEnumClass(result.containingDeclaration)) return null
 
     return result
 }

@@ -17,7 +17,10 @@
 package org.jetbrains.kotlin.types.typeUtil
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.*
@@ -170,9 +173,7 @@ private fun constituentTypes(result: MutableSet<KotlinType>, types: Collection<K
 
 fun KotlinType.getImmediateSuperclassNotAny(): KotlinType? {
     val superclasses = constructor.supertypes.filter {
-        val descriptor = it.constructor.declarationDescriptor
-        (DescriptorUtils.isClass(descriptor) || DescriptorUtils.isEnumClass(descriptor)) &&
-        !KotlinBuiltIns.isAnyOrNullableAny(it)
+        DescriptorUtils.isClassOrEnumClass(it.constructor.declarationDescriptor) && !KotlinBuiltIns.isAnyOrNullableAny(it)
     }
     return superclasses.singleOrNull()?.let {
         TypeUtils.createSubstitutedSupertype(this, it, TypeSubstitutor.create(this))
