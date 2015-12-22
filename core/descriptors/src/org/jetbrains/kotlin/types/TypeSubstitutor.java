@@ -26,12 +26,10 @@ import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations;
 import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedTypeConstructorKt;
-import org.jetbrains.kotlin.resolve.scopes.SubstitutingScope;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 import org.jetbrains.kotlin.types.typesApproximation.CapturedTypeApproximationKt;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -217,7 +215,7 @@ public class TypeSubstitutor {
             TypeProjection originalProjection,
             int recursionDepth
     ) throws SubstitutionException {
-        final KotlinType type = originalProjection.getType();
+        KotlinType type = originalProjection.getType();
         Variance projectionKind = originalProjection.getProjectionKind();
         if (type.getConstructor().getDeclarationDescriptor() instanceof TypeParameterDescriptor) {
             // substitution can't change type parameter
@@ -228,25 +226,8 @@ public class TypeSubstitutor {
         List<TypeProjection> substitutedArguments = substituteTypeArguments(
                 type.getConstructor().getParameters(), type.getArguments(), recursionDepth);
 
-        // Only type parameters of the corresponding class (or captured type parameters of outer declaration) are substituted
-        // e.g. for return type Foo of 'add(..)' in 'class Foo { fun <R> add(bar: Bar<R>): Foo }' R shouldn't be substituted in the scope
-        TypeSubstitution substitutionFilteringTypeParameters = new DelegatedTypeSubstitution(substitution) {
-            private final Collection<TypeConstructor> containedOrCapturedTypeParameters =
-                    TypeUtilsKt.getContainedAndCapturedTypeParameterConstructors(type);
-
-            @Nullable
-            @Override
-            public TypeProjection get(@NotNull KotlinType key) {
-                return containedOrCapturedTypeParameters.contains(key.getConstructor()) ? substitution.get(key) : null;
-            }
-        };
-        KotlinType substitutedType = KotlinTypeImpl.create(substitution.filterAnnotations(type.getAnnotations()),   // Old annotations. This is questionable
-                                                           type.getConstructor(),             // The same constructor
-                                                           type.isMarkedNullable(),           // Same nullability
-                                                           substitutedArguments,
-                                                           substitutionFilteringTypeParameters,
-                                                           new SubstitutingScope(type.getMemberScope(), create(substitutionFilteringTypeParameters)),
-                                                           type.getCapabilities());
+        KotlinType substitutedType =
+                TypeSubstitutionKt.replace(type, substitutedArguments, substitution.filterAnnotations(type.getAnnotations()));
         return new TypeProjectionImpl(projectionKind, substitutedType);
     }
 

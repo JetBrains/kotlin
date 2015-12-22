@@ -7997,6 +7997,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("memberScopeOfCaptured.kt")
+                public void testMemberScopeOfCaptured() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/capturedTypes/memberScopeOfCaptured.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("notApproximateWhenCopyDescriptors.kt")
                 public void testNotApproximateWhenCopyDescriptors() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/inference/capturedTypes/notApproximateWhenCopyDescriptors.kt");
