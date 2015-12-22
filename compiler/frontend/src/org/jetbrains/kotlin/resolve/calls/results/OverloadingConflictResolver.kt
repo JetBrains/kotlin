@@ -88,17 +88,9 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
             CandidateCallWithArgumentMapping.create(candidateCall) { it.arguments.filter { it.getArgumentExpression() != null } }
         }
 
-        val (varargCandidates, regularCandidates) = conflictingCandidates.partition { it.resultingDescriptor.hasVarargs }
-        val mostSpecificRegularCandidates = regularCandidates.selectMostSpecificCallsWithArgumentMapping(discriminateGenericDescriptors)
+        val mostSpecificCandidates = conflictingCandidates.selectMostSpecificCallsWithArgumentMapping(discriminateGenericDescriptors)
 
-        return when {
-            mostSpecificRegularCandidates.size > 1 ->
-                null
-            mostSpecificRegularCandidates.size == 1 ->
-                mostSpecificRegularCandidates.single()
-            else ->
-                varargCandidates.selectMostSpecificCallsWithArgumentMapping(discriminateGenericDescriptors).singleOrNull()
-        }
+        return mostSpecificCandidates.singleOrNull()
     }
 
     private fun <D : CallableDescriptor, K> Collection<CandidateCallWithArgumentMapping<D, K>>.selectMostSpecificCallsWithArgumentMapping(
@@ -139,7 +131,7 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
 
     /**
      * Returns `true` if `d1` is definitely not less specific than `d2`,
-     * `false` if `d1` is definitely less specific than `d2` or undecided.
+     * `false` otherwise.
      */
     private fun <D : CallableDescriptor, K> compareCallsWithArgumentMapping(
             call1: CandidateCallWithArgumentMapping<D, K>,
@@ -159,6 +151,11 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
         tryCompareExtensionReceiverType(extensionReceiverType1, extensionReceiverType2)?.let {
             return it
         }
+
+        val hasVarargs1 = call1.resultingDescriptor.hasVarargs
+        val hasVarargs2 = call2.resultingDescriptor.hasVarargs
+        if (hasVarargs1 && !hasVarargs2) return false
+        if (!hasVarargs1 && hasVarargs2) return true
 
         assert(call1.argumentsCount == call2.argumentsCount) {
             "$call1 and $call2 have different number of explicit arguments"
