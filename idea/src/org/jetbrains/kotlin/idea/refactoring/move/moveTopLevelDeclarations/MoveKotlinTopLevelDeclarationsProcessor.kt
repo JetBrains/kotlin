@@ -282,7 +282,7 @@ public class MoveKotlinTopLevelDeclarationsProcessor(
                         override fun computeHashCode(e: PsiElement?): Int {
                             return when (e) {
                                 null -> 0
-                                is KtLightElement<*, *> -> e.getOrigin().hashCode() * 31 + (e.name?.hashCode() ?: 0)
+                                is KtLightElement<*, *> -> (e.getOrigin()?.hashCode() ?: 0) * 31 + (e.name?.hashCode() ?: 0)
                                 else -> e.hashCode()
                             }
                         }
