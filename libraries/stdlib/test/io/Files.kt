@@ -440,7 +440,7 @@ class FilesTest {
 
         assertTrue(dir.deleteRecursively())
         assertFalse(dir.exists())
-        assertFalse(dir.deleteRecursively())
+        assertTrue(dir.deleteRecursively())
     }
 
     @test fun deleteRecursivelyWithFail() {
@@ -449,7 +449,7 @@ class FilesTest {
         try {
             if (restricted.setReadable(false)) {
                 if (File(basedir, "7.txt").setReadable(false)) {
-                    basedir.deleteRecursively()
+                    assertFalse(basedir.deleteRecursively(), "Expected incomplete recursive deletion.")
                     restricted.setReadable(true)
                     File(basedir, "7.txt").setReadable(true)
                     var i = 0
