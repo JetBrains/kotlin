@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.BindingContext.TYPE
 import org.jetbrains.kotlin.resolve.BindingContext.TYPE_PARAMETER
 import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveAbstractMembers
 import org.jetbrains.kotlin.resolve.DescriptorUtils.classCanHaveOpenMembers
+import org.jetbrains.kotlin.types.IntersectionTypeConstructor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SubstitutionUtils
 import org.jetbrains.kotlin.types.TypeUtils
@@ -434,6 +435,13 @@ class DeclarationsChecker(
         checkTypeParameterConstraints(property)
         checkPropertyExposedType(property, propertyDescriptor)
         checkPropertyTypeParametersAreUsedInReceiverType(propertyDescriptor)
+        propertyDescriptor.returnType?.let {
+            if (property.typeReference == null) {
+                if (it.constructor is IntersectionTypeConstructor) {
+                    trace.report(IMPLICIT_INTERSECTION_TYPE.on(property.nameIdentifier ?: property, it))
+                }
+            }
+        }
     }
 
     private fun checkPropertyTypeParametersAreUsedInReceiverType(descriptor: PropertyDescriptor) {
@@ -649,8 +657,13 @@ class DeclarationsChecker(
             trace.report(NON_MEMBER_FUNCTION_NO_BODY.on(function, functionDescriptor))
         }
         functionDescriptor.returnType?.let {
-            if (it.isNothing() && !function.hasDeclaredReturnType()) {
-                trace.report(IMPLICIT_NOTHING_RETURN_TYPE.on(nameIdentifier ?: function))
+            if (!function.hasDeclaredReturnType()) {
+                if (it.isNothing()) {
+                    trace.report(IMPLICIT_NOTHING_RETURN_TYPE.on(nameIdentifier ?: function))
+                }
+                if (it.constructor is IntersectionTypeConstructor) {
+                    trace.report(IMPLICIT_INTERSECTION_TYPE.on(nameIdentifier ?: function, it))
+                }
             }
         }
 
