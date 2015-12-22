@@ -2228,6 +2228,12 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("nonExtensionWithReceiverInCallableRef.kt")
+                public void testNonExtensionWithReceiverInCallableRef() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/callableReferences/nonExtensionWithReceiverInCallableRef.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("withExpectedReturnType.kt")
                 public void testWithExpectedReturnType() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/createFromUsage/createFunction/callableReferences/withExpectedReturnType.kt");

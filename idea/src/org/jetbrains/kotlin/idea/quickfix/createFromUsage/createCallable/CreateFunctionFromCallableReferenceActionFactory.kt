@@ -41,15 +41,19 @@ object CreateFunctionFromCallableReferenceActionFactory : CreateCallableMemberFr
                 .guessTypes(context, resolutionFacade.moduleDescriptor)
                 .filter { KotlinBuiltIns.isExactFunctionType(it) || KotlinBuiltIns.isExactExtensionFunctionType(it) }
                 .mapNotNull {
-                    val receiverTypeInfo = element.typeReference?.let { TypeInfo(it, Variance.IN_VARIANCE) } ?: TypeInfo.Empty
+                    val expectedReceiverType = KotlinBuiltIns.getReceiverType(it)
+                    val actualReceiverTypeRef = element.typeReference
+                    val receiverTypeInfo = actualReceiverTypeRef?.let { TypeInfo(it, Variance.IN_VARIANCE) } ?: TypeInfo.Empty
                     val returnTypeInfo = TypeInfo(KotlinBuiltIns.getReturnTypeFromFunctionType(it), Variance.OUT_VARIANCE)
                     val containers = element.getExtractionContainers(includeAll = true).ifEmpty { return@mapNotNull  null }
                     val parameterInfos = SmartList<ParameterInfo>().apply {
-                        if (element.typeReference == null) {
-                            KotlinBuiltIns.getReceiverType(it)?.let { add(ParameterInfo(TypeInfo(it, Variance.IN_VARIANCE))) }
+                        if (actualReceiverTypeRef == null && expectedReceiverType != null) {
+                            add(ParameterInfo(TypeInfo(expectedReceiverType, Variance.IN_VARIANCE)))
                         }
+
                         KotlinBuiltIns
                                 .getParameterTypeProjectionsFromFunctionType(it)
+                                .let { if (actualReceiverTypeRef != null && expectedReceiverType == null && it.isNotEmpty()) it.subList(1, it.size) else it }
                                 .mapTo(this) { ParameterInfo(TypeInfo(it.type, it.projectionKind)) }
                     }
 
