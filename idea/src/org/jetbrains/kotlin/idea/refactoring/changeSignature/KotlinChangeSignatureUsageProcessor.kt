@@ -64,10 +64,7 @@ import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
-import org.jetbrains.kotlin.psi.psiUtil.getValueParameters
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.psi.typeRefHelpers.setReceiverTypeReference
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -77,6 +74,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 
@@ -268,20 +266,40 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
 
         val newReceiverInfo = changeInfo.receiverParameterInfo
 
-        for (parameterInfo in changeInfo.newParameters) {
+        val isDataClass = functionPsi is KtPrimaryConstructor && (functionPsi.getContainingClassOrObject() as? KtClass)?.isData() ?: false
+
+        for ((i, parameterInfo) in changeInfo.newParameters.withIndex()) {
             if (parameterInfo.oldIndex >= 0 && parameterInfo.oldIndex < oldParameters.size) {
                 val oldParam = oldParameters[parameterInfo.oldIndex]
                 val oldParamName = oldParam.name
 
-                if (parameterInfo == newReceiverInfo || (oldParamName != null && oldParamName != parameterInfo.name)) {
+                if (parameterInfo == newReceiverInfo ||
+                    (oldParamName != null && oldParamName != parameterInfo.name) ||
+                    isDataClass && i != parameterInfo.oldIndex) {
                     for (reference in ReferencesSearch.search(oldParam, oldParam.useScope)) {
                         val element = reference.element
 
+                        if (isDataClass &&
+                            element is KtSimpleNameExpression &&
+                            (element.parent as? KtCallExpression)?.calleeExpression == element &&
+                            element.getReferencedName() != parameterInfo.name &&
+                            OperatorNameConventions.COMPONENT_REGEX.matches(element.getReferencedName())) {
+                            result.add(KotlinDataClassComponentUsage(element, "component${i + 1}"))
+                        }
                         // Usages in named arguments of the calls usage will be changed when the function call is changed
-                        if ((element is KtSimpleNameExpression || element is KDocName) && element.parent !is KtValueArgumentName) {
+                        else if ((element is KtSimpleNameExpression || element is KDocName) && element.parent !is KtValueArgumentName) {
                             result.add(KotlinParameterUsage(element as KtElement, parameterInfo, functionUsageInfo))
                         }
                     }
+                }
+            }
+        }
+
+        if (isDataClass) {
+            (functionPsi as KtPrimaryConstructor).valueParameters.firstOrNull()?.let {
+                ReferencesSearch.search(it).mapNotNullTo(result) {
+                    val destructuringDeclaration = it.element as? KtDestructuringDeclaration ?: return@mapNotNullTo null
+                    KotlinComponentUsageInDestructuring(destructuringDeclaration)
                 }
             }
         }

@@ -722,6 +722,7 @@ fun PsiNamedElement.isInterfaceClass(): Boolean = this is KtClass && isInterface
 fun <ListType : KtElement> replaceListPsiAndKeepDelimiters(
         originalList: ListType,
         newList: ListType,
+        @Suppress("UNCHECKED_CAST") listReplacer: ListType.(ListType) -> ListType = { replace(it) as ListType },
         itemsFun: ListType.() -> List<KtElement>
 ): ListType {
     originalList.children.takeWhile { it is PsiErrorElement }.forEach { it.delete() }
@@ -736,17 +737,13 @@ fun <ListType : KtElement> replaceListPsiAndKeepDelimiters(
         oldParameters[i] = oldParameters[i].replace(newParameters[i]) as KtElement
     }
 
-    @Suppress("UNCHECKED_CAST")
-    if (commonCount == 0) return originalList.replace(newList) as ListType
+    if (commonCount == 0) return originalList.listReplacer(newList)
 
     if (oldCount > commonCount) {
         originalList.deleteChildRange(oldParameters[commonCount - 1].nextSibling, oldParameters.last())
     }
     else if (newCount > commonCount) {
-        originalList.addRangeAfter(newParameters[commonCount - 1].nextSibling,
-                                   newList.lastChild.prevSibling,
-                                   PsiTreeUtil.skipSiblingsBackward(originalList.lastChild,
-                                                                    PsiWhiteSpace::class.java, PsiComment::class.java))
+        originalList.addRangeAfter(newParameters[commonCount - 1].nextSibling, newParameters.last(), oldParameters.last())
     }
 
     return originalList

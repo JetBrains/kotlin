@@ -903,4 +903,45 @@ class KotlinChangeSignatureTest : KotlinCodeInsightTestCase() {
     fun testSetErrorReceiverType() = doTest { receiverParameterInfo!!.currentTypeInfo = KotlinTypeInfo(true, null, "XYZ") }
 
     fun testSetErrorParameterType() = doTest { newParameters[1].currentTypeInfo = KotlinTypeInfo(true, null, "XYZ") }
+
+    fun testSwapDataClassParameters() = doTest {
+        swapParameters(0, 2)
+        swapParameters(1, 2)
+    }
+
+    fun testAddDataClassParameter() = doTest {
+        addParameter(KotlinParameterInfo(originalBaseFunctionDescriptor,
+                                         -1,
+                                         "c",
+                                         KotlinTypeInfo(false, BUILT_INS.intType),
+                                         null,
+                                         KtPsiFactory(project).createExpression("3"),
+                                         KotlinValVar.Val),
+                     1)
+    }
+
+    fun testRemoveDataClassParameter() = doTest { removeParameter(1) }
+
+    fun testRemoveAllOriginalDataClassParameters() = doTest {
+        val psiFactory = KtPsiFactory(project)
+
+        swapParameters(1, 2)
+        setNewParameter(0,
+                        KotlinParameterInfo(originalBaseFunctionDescriptor,
+                                            -1,
+                                            "d",
+                                            KotlinTypeInfo(false, BUILT_INS.intType),
+                                            null,
+                                            psiFactory.createExpression("4"),
+                                            KotlinValVar.Val))
+
+        setNewParameter(2,
+                        KotlinParameterInfo(originalBaseFunctionDescriptor,
+                                            -1,
+                                            "e",
+                                            KotlinTypeInfo(false, BUILT_INS.intType),
+                                            null,
+                                            psiFactory.createExpression("5"),
+                                            KotlinValVar.Val))
+    }
 }

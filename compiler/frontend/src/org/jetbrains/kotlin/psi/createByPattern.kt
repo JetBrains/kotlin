@@ -36,6 +36,9 @@ public fun KtPsiFactory.createExpressionByPattern(pattern: String, vararg args: 
 public fun <TDeclaration : KtDeclaration> KtPsiFactory.createDeclarationByPattern(pattern: String, vararg args: Any): TDeclaration
         = createByPattern(pattern, *args) { createDeclaration<TDeclaration>(it) }
 
+public fun KtPsiFactory.createDestructuringDeclarationByPattern(pattern: String, vararg args: Any): KtDestructuringDeclaration
+        = createByPattern(pattern, *args) { createDestructuringDeclaration(it) }
+
 private abstract class ArgumentType<T : Any>(val klass: Class<T>)
 
 private class PlainTextArgumentType<T : Any>(klass: Class<T>, val toPlainText: (T) -> String) : ArgumentType<T>(klass)
@@ -313,6 +316,10 @@ public fun KtPsiFactory.buildExpression(build: BuilderByPattern<KtExpression>.()
 
 public fun KtPsiFactory.buildDeclaration(build: BuilderByPattern<KtDeclaration>.() -> Unit): KtDeclaration {
     return buildByPattern({ pattern, args -> this.createDeclarationByPattern(pattern, *args) }, build)
+}
+
+public fun KtPsiFactory.buildDestructuringDeclaration(build: BuilderByPattern<KtDestructuringDeclaration>.() -> Unit): KtDestructuringDeclaration {
+    return buildByPattern({ pattern, args -> this.createDestructuringDeclarationByPattern(pattern, *args) }, build)
 }
 
 public fun <TElement> buildByPattern(factory: (String, Array<out Any>) -> TElement, build: BuilderByPattern<TElement>.() -> Unit): TElement {

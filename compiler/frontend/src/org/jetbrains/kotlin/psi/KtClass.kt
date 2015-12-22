@@ -45,6 +45,7 @@ public open class KtClass : KtClassOrObject {
         _stub?.isInterface() ?: (findChildByType<PsiElement>(KtTokens.INTERFACE_KEYWORD) != null)
 
     public fun isEnum(): Boolean = hasModifier(KtTokens.ENUM_KEYWORD)
+    public fun isData(): Boolean = hasModifier(KtTokens.DATA_KEYWORD)
     public fun isSealed(): Boolean = hasModifier(KtTokens.SEALED_KEYWORD)
     public fun isInner(): Boolean = hasModifier(KtTokens.INNER_KEYWORD)
 
