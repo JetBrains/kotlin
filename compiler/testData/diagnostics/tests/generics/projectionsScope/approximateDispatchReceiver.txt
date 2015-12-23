@@ -1,17 +1,18 @@
 package
 
-public fun bar1(/*0*/ x: A<A<*>>): kotlin.Unit
-public fun bar2(/*0*/ x: A<out A<*>>): kotlin.Unit
-public fun bar3(/*0*/ x: A<*>): kotlin.Unit
-public fun foo(/*0*/ x: B<*>): kotlin.Unit
+public fun test(/*0*/ b: B<*>): kotlin.Unit
 
-public interface A</*0*/ T> {
+public abstract class A</*0*/ E> {
+    public constructor A</*0*/ E>()
+    public final fun bar(): kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public interface B</*0*/ T> : A<A<T>> {
+public final class B</*0*/ F> : A<B<F>> {
+    public constructor B</*0*/ F>()
+    public final override /*1*/ /*fake_override*/ fun bar(): kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
