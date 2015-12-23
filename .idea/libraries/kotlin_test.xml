@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="kotlin-test">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/dependencies/bootstrap-compiler/Kotlin/kotlinc/lib/kotlin-test.jar!/" />
+      <root url="jar://$KOTLIN_BUNDLED$/lib/kotlin-test.jar!/"/>
     </CLASSES>
     <JAVADOC />
     <SOURCES>

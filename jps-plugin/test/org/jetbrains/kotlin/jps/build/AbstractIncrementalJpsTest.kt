@@ -59,8 +59,6 @@ import java.io.File
 import java.io.PrintStream
 import java.util.*
 import kotlin.properties.Delegates
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 
 abstract class AbstractIncrementalJpsTest(
         private val allowNoFilesWithSuffixInTestData: Boolean = false,
@@ -189,7 +187,7 @@ abstract class AbstractIncrementalJpsTest(
             UsefulTestCase.assertSameLinesWithFile(initBuildLogFile.absolutePath, makeResult.log)
         }
         else {
-            assertFalse(makeResult.makeFailed, "Initial make failed:\n$makeResult")
+            assertFalse("Initial make failed:\n$makeResult", makeResult.makeFailed)
         }
 
         return makeResult
@@ -212,8 +210,8 @@ abstract class AbstractIncrementalJpsTest(
         }
 
         val rebuildResult = rebuild()
-        assertEquals(rebuildResult.makeFailed, makeOverallResult.makeFailed,
-                     "Rebuild failed: ${rebuildResult.makeFailed}, last make failed: ${makeOverallResult.makeFailed}. Rebuild result: $rebuildResult")
+        assertEquals("Rebuild failed: ${rebuildResult.makeFailed}, last make failed: ${makeOverallResult.makeFailed}. Rebuild result: $rebuildResult",
+                     rebuildResult.makeFailed, makeOverallResult.makeFailed)
 
         if (!outAfterMake.exists()) {
             assertFalse(outDir.exists())
