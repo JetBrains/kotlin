@@ -174,7 +174,6 @@ public class DescriptorSerializer {
         for (DeclarationDescriptor descriptor : sort(DescriptorUtils.getAllDescriptors(classDescriptor.getUnsubstitutedInnerClassesScope()))) {
             int name = getSimpleNameIndex(descriptor.getName());
             if (isEnumEntry(descriptor)) {
-                builder.addEnumEntryName(name);
                 builder.addEnumEntry(enumEntryProto((ClassDescriptor) descriptor));
             }
             else {

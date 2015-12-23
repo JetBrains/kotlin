@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.deserialization.supertypes
-import org.jetbrains.kotlin.utils.sure
 
 fun createClassStub(
         parent: StubElement<out PsiElement>,
@@ -72,12 +71,17 @@ private class ClassClsStubBuilder(
             supertypeIds
         }
     }
-    private val companionObjectName = if (classProto.hasCompanionObjectName()) c.nameResolver.getName(classProto.getCompanionObjectName()) else null
-    private val isCompanionOfClass: Boolean get() {
-        return classKind == ProtoBuf.Class.Kind.COMPANION_OBJECT &&
-               (outerContext.classKind?.let { it == ProtoBuf.Class.Kind.CLASS || it == ProtoBuf.Class.Kind.ENUM_CLASS } ?: false)
-    }
-    private val isInterface: Boolean get() = classKind == ProtoBuf.Class.Kind.INTERFACE
+
+    private val companionObjectName =
+            if (classProto.hasCompanionObjectName()) c.nameResolver.getName(classProto.companionObjectName) else null
+
+    private val thisAsProtoContainer =
+            ProtoContainer.Class(
+                    classProto, c.nameResolver, c.typeTable,
+                    classKind == ProtoBuf.Class.Kind.COMPANION_OBJECT &&
+                    (outerContext.classKind?.let { it == ProtoBuf.Class.Kind.CLASS || it == ProtoBuf.Class.Kind.ENUM_CLASS } ?: false),
+                    classKind == ProtoBuf.Class.Kind.INTERFACE
+            )
 
     private val classOrObjectStub = createClassOrObjectStubAndModifierListStub()
 
@@ -151,8 +155,7 @@ private class ClassClsStubBuilder(
 
         val primaryConstructorProto = classProto.constructorList.find { !Flags.IS_SECONDARY.get(it.flags) } ?: return
 
-        createConstructorStub(classOrObjectStub, primaryConstructorProto, c,
-                              ProtoContainer.Class(classProto, c.nameResolver, c.typeTable, isCompanionOfClass, isInterface))
+        createConstructorStub(classOrObjectStub, primaryConstructorProto, c, thisAsProtoContainer)
     }
 
     private fun createDelegationSpecifierList() {
@@ -190,19 +193,9 @@ private class ClassClsStubBuilder(
     private fun createEnumEntryStubs(classBody: KotlinPlaceHolderStubImpl<KtClassBody>) {
         if (classKind != ProtoBuf.Class.Kind.ENUM_CLASS) return
 
-        val container = ProtoContainer.Class(classProto, c.nameResolver, c.typeTable, isCompanionOfClass, isInterface)
-        val enumEntries: List<Pair<Int, List<ClassId>>> =
-                if (classProto.enumEntryList.isNotEmpty())
-                    classProto.enumEntryList.map { enumEntryProto ->
-                        enumEntryProto.name to c.components.annotationLoader.loadEnumEntryAnnotations(container, enumEntryProto)
-                    }
-                else classProto.enumEntryNameList.map { enumEntryName ->
-                    enumEntryName to listOf<ClassId>()
-                }
-
-        enumEntries.forEach { entry ->
-            val name = c.nameResolver.getName(entry.first)
-            val annotations = entry.second
+        classProto.enumEntryList.forEach { entry ->
+            val name = c.nameResolver.getName(entry.name)
+            val annotations = c.components.annotationLoader.loadEnumEntryAnnotations(thisAsProtoContainer, entry)
             val enumEntryStub = KotlinClassStubImpl(
                     KtStubElementTypes.ENUM_ENTRY,
                     classBody,
@@ -221,15 +214,13 @@ private class ClassClsStubBuilder(
     }
 
     private fun createCallableMemberStubs(classBody: KotlinPlaceHolderStubImpl<KtClassBody>) {
-        val container = ProtoContainer.Class(classProto, c.nameResolver, c.typeTable, isCompanionOfClass, isInterface)
-
         for (secondaryConstructorProto in classProto.constructorList) {
             if (Flags.IS_SECONDARY.get(secondaryConstructorProto.flags)) {
-                createConstructorStub(classBody, secondaryConstructorProto, c, container)
+                createConstructorStub(classBody, secondaryConstructorProto, c, thisAsProtoContainer)
             }
         }
 
-        createCallableStubs(classBody, c, container, classProto.functionList, classProto.propertyList)
+        createCallableStubs(classBody, c, thisAsProtoContainer, classProto.functionList, classProto.propertyList)
     }
 
     private fun isClass(): Boolean {

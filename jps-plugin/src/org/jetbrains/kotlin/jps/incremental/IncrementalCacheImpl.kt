@@ -218,7 +218,7 @@ public class IncrementalCacheImpl(
 
     public fun clearCacheForRemovedClasses(): CompilationResult {
 
-        fun <T> T.getNonPrivateNames(nameResolver: NameResolver, vararg members: T.() -> List<MessageLite>) =
+        fun <T> T.getNonPrivateNames(nameResolver: NameResolver, vararg members: T.() -> List<MessageLite>): Set<String> =
                 members.flatMap { this.it().filterNot { it.isPrivate }.names(nameResolver) }.toSet()
 
         fun createChangeInfo(className: JvmClassName): ChangeInfo? {
@@ -248,8 +248,7 @@ public class IncrementalCacheImpl(
                                     ProtoBuf.Class::getConstructorList,
                                     ProtoBuf.Class::getFunctionList,
                                     ProtoBuf.Class::getPropertyList
-                            ) +
-                            classData.classProto.enumEntryNameList.map { classData.nameResolver.getString(it) }.toSet()
+                            ) + classData.classProto.enumEntryList.map { classData.nameResolver.getString(it.name) }
 
                     ChangeInfo.Removed(className.fqNameForClassNameWithoutDollars, memberNames)
                 }

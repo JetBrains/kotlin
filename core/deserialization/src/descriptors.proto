@@ -192,8 +192,6 @@ message Class {
   repeated Function function = 9;
   repeated Property property = 10;
 
-  repeated int32 enum_entry_name = 12 [packed = true, (name_id_in_table) = true];
-
   repeated EnumEntry enum_entry = 13;
 
   optional TypeTable type_table = 30;

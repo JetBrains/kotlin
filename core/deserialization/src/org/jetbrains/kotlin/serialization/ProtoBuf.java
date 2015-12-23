@@ -7538,20 +7538,6 @@ public final class ProtoBuf {
      */
     int getPropertyCount();
 
-    // repeated int32 enum_entry_name = 12 [packed = true];
-    /**
-     * <code>repeated int32 enum_entry_name = 12 [packed = true];</code>
-     */
-    java.util.List<java.lang.Integer> getEnumEntryNameList();
-    /**
-     * <code>repeated int32 enum_entry_name = 12 [packed = true];</code>
-     */
-    int getEnumEntryNameCount();
-    /**
-     * <code>repeated int32 enum_entry_name = 12 [packed = true];</code>
-     */
-    int getEnumEntryName(int index);
-
     // repeated .org.jetbrains.kotlin.serialization.EnumEntry enum_entry = 13;
     /**
      * <code>repeated .org.jetbrains.kotlin.serialization.EnumEntry enum_entry = 13;</code>
@@ -7717,31 +7703,10 @@ public final class ProtoBuf {
               property_.add(input.readMessage(org.jetbrains.kotlin.serialization.ProtoBuf.Property.PARSER, extensionRegistry));
               break;
             }
-            case 96: {
-              if (!((mutable_bitField0_ & 0x00000400) == 0x00000400)) {
-                enumEntryName_ = new java.util.ArrayList<java.lang.Integer>();
-                mutable_bitField0_ |= 0x00000400;
-              }
-              enumEntryName_.add(input.readInt32());
-              break;
-            }
-            case 98: {
-              int length = input.readRawVarint32();
-              int limit = input.pushLimit(length);
-              if (!((mutable_bitField0_ & 0x00000400) == 0x00000400) && input.getBytesUntilLimit() > 0) {
-                enumEntryName_ = new java.util.ArrayList<java.lang.Integer>();
-                mutable_bitField0_ |= 0x00000400;
-              }
-              while (input.getBytesUntilLimit() > 0) {
-                enumEntryName_.add(input.readInt32());
-              }
-              input.popLimit(limit);
-              break;
-            }
             case 106: {
-              if (!((mutable_bitField0_ & 0x00000800) == 0x00000800)) {
+              if (!((mutable_bitField0_ & 0x00000400) == 0x00000400)) {
                 enumEntry_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry>();
-                mutable_bitField0_ |= 0x00000800;
+                mutable_bitField0_ |= 0x00000400;
               }
               enumEntry_.add(input.readMessage(org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry.PARSER, extensionRegistry));
               break;
@@ -7789,9 +7754,6 @@ public final class ProtoBuf {
           property_ = java.util.Collections.unmodifiableList(property_);
         }
         if (((mutable_bitField0_ & 0x00000400) == 0x00000400)) {
-          enumEntryName_ = java.util.Collections.unmodifiableList(enumEntryName_);
-        }
-        if (((mutable_bitField0_ & 0x00000800) == 0x00000800)) {
           enumEntry_ = java.util.Collections.unmodifiableList(enumEntry_);
         }
         makeExtensionsImmutable();
@@ -8218,30 +8180,6 @@ public final class ProtoBuf {
       return property_.get(index);
     }
 
-    // repeated int32 enum_entry_name = 12 [packed = true];
-    public static final int ENUM_ENTRY_NAME_FIELD_NUMBER = 12;
-    private java.util.List<java.lang.Integer> enumEntryName_;
-    /**
-     * <code>repeated int32 enum_entry_name = 12 [packed = true];</code>
-     */
-    public java.util.List<java.lang.Integer>
-        getEnumEntryNameList() {
-      return enumEntryName_;
-    }
-    /**
-     * <code>repeated int32 enum_entry_name = 12 [packed = true];</code>
-     */
-    public int getEnumEntryNameCount() {
-      return enumEntryName_.size();
-    }
-    /**
-     * <code>repeated int32 enum_entry_name = 12 [packed = true];</code>
-     */
-    public int getEnumEntryName(int index) {
-      return enumEntryName_.get(index);
-    }
-    private int enumEntryNameMemoizedSerializedSize = -1;
-
     // repeated .org.jetbrains.kotlin.serialization.EnumEntry enum_entry = 13;
     public static final int ENUM_ENTRY_FIELD_NUMBER = 13;
     private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry> enumEntry_;
@@ -8305,7 +8243,6 @@ public final class ProtoBuf {
       constructor_ = java.util.Collections.emptyList();
       function_ = java.util.Collections.emptyList();
       property_ = java.util.Collections.emptyList();
-      enumEntryName_ = java.util.Collections.emptyList();
       enumEntry_ = java.util.Collections.emptyList();
       typeTable_ = org.jetbrains.kotlin.serialization.ProtoBuf.TypeTable.getDefaultInstance();
     }
@@ -8412,13 +8349,6 @@ public final class ProtoBuf {
       for (int i = 0; i < property_.size(); i++) {
         output.writeMessage(10, property_.get(i));
       }
-      if (getEnumEntryNameList().size() > 0) {
-        output.writeRawVarint32(98);
-        output.writeRawVarint32(enumEntryNameMemoizedSerializedSize);
-      }
-      for (int i = 0; i < enumEntryName_.size(); i++) {
-        output.writeInt32NoTag(enumEntryName_.get(i));
-      }
       for (int i = 0; i < enumEntry_.size(); i++) {
         output.writeMessage(13, enumEntry_.get(i));
       }
@@ -8493,20 +8423,6 @@ public final class ProtoBuf {
       for (int i = 0; i < property_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(10, property_.get(i));
-      }
-      {
-        int dataSize = 0;
-        for (int i = 0; i < enumEntryName_.size(); i++) {
-          dataSize += com.google.protobuf.CodedOutputStream
-            .computeInt32SizeNoTag(enumEntryName_.get(i));
-        }
-        size += dataSize;
-        if (!getEnumEntryNameList().isEmpty()) {
-          size += 1;
-          size += com.google.protobuf.CodedOutputStream
-              .computeInt32SizeNoTag(dataSize);
-        }
-        enumEntryNameMemoizedSerializedSize = dataSize;
       }
       for (int i = 0; i < enumEntry_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
@@ -8627,12 +8543,10 @@ public final class ProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000100);
         property_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000200);
-        enumEntryName_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000400);
         enumEntry_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000800);
+        bitField0_ = (bitField0_ & ~0x00000400);
         typeTable_ = org.jetbrains.kotlin.serialization.ProtoBuf.TypeTable.getDefaultInstance();
-        bitField0_ = (bitField0_ & ~0x00001000);
+        bitField0_ = (bitField0_ & ~0x00000800);
         return this;
       }
 
@@ -8704,16 +8618,11 @@ public final class ProtoBuf {
         }
         result.property_ = property_;
         if (((bitField0_ & 0x00000400) == 0x00000400)) {
-          enumEntryName_ = java.util.Collections.unmodifiableList(enumEntryName_);
+          enumEntry_ = java.util.Collections.unmodifiableList(enumEntry_);
           bitField0_ = (bitField0_ & ~0x00000400);
         }
-        result.enumEntryName_ = enumEntryName_;
-        if (((bitField0_ & 0x00000800) == 0x00000800)) {
-          enumEntry_ = java.util.Collections.unmodifiableList(enumEntry_);
-          bitField0_ = (bitField0_ & ~0x00000800);
-        }
         result.enumEntry_ = enumEntry_;
-        if (((from_bitField0_ & 0x00001000) == 0x00001000)) {
+        if (((from_bitField0_ & 0x00000800) == 0x00000800)) {
           to_bitField0_ |= 0x00000008;
         }
         result.typeTable_ = typeTable_;
@@ -8802,20 +8711,10 @@ public final class ProtoBuf {
           }
           
         }
-        if (!other.enumEntryName_.isEmpty()) {
-          if (enumEntryName_.isEmpty()) {
-            enumEntryName_ = other.enumEntryName_;
-            bitField0_ = (bitField0_ & ~0x00000400);
-          } else {
-            ensureEnumEntryNameIsMutable();
-            enumEntryName_.addAll(other.enumEntryName_);
-          }
-          
-        }
         if (!other.enumEntry_.isEmpty()) {
           if (enumEntry_.isEmpty()) {
             enumEntry_ = other.enumEntry_;
-            bitField0_ = (bitField0_ & ~0x00000800);
+            bitField0_ = (bitField0_ & ~0x00000400);
           } else {
             ensureEnumEntryIsMutable();
             enumEntry_.addAll(other.enumEntry_);
@@ -9798,79 +9697,13 @@ public final class ProtoBuf {
         return this;
       }
 
-      // repeated int32 enum_entry_name = 12 [packed = true];
-      private java.util.List<java.lang.Integer> enumEntryName_ = java.util.Collections.emptyList();
-      private void ensureEnumEntryNameIsMutable() {
-        if (!((bitField0_ & 0x00000400) == 0x00000400)) {
-          enumEntryName_ = new java.util.ArrayList<java.lang.Integer>(enumEntryName_);
-          bitField0_ |= 0x00000400;
-         }
-      }
-      /**
-       * <code>repeated int32 enum_entry_name = 12 [packed = true];</code>
-       */
-      public java.util.List<java.lang.Integer>
-          getEnumEntryNameList() {
-        return java.util.Collections.unmodifiableList(enumEntryName_);
-      }
-      /**
-       * <code>repeated int32 enum_entry_name = 12 [packed = true];</code>
-       */
-      public int getEnumEntryNameCount() {
-        return enumEntryName_.size();
-      }
-      /**
-       * <code>repeated int32 enum_entry_name = 12 [packed = true];</code>
-       */
-      public int getEnumEntryName(int index) {
-        return enumEntryName_.get(index);
-      }
-      /**
-       * <code>repeated int32 enum_entry_name = 12 [packed = true];</code>
-       */
-      public Builder setEnumEntryName(
-          int index, int value) {
-        ensureEnumEntryNameIsMutable();
-        enumEntryName_.set(index, value);
-        
-        return this;
-      }
-      /**
-       * <code>repeated int32 enum_entry_name = 12 [packed = true];</code>
-       */
-      public Builder addEnumEntryName(int value) {
-        ensureEnumEntryNameIsMutable();
-        enumEntryName_.add(value);
-        
-        return this;
-      }
-      /**
-       * <code>repeated int32 enum_entry_name = 12 [packed = true];</code>
-       */
-      public Builder addAllEnumEntryName(
-          java.lang.Iterable<? extends java.lang.Integer> values) {
-        ensureEnumEntryNameIsMutable();
-        super.addAll(values, enumEntryName_);
-        
-        return this;
-      }
-      /**
-       * <code>repeated int32 enum_entry_name = 12 [packed = true];</code>
-       */
-      public Builder clearEnumEntryName() {
-        enumEntryName_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000400);
-        
-        return this;
-      }
-
       // repeated .org.jetbrains.kotlin.serialization.EnumEntry enum_entry = 13;
       private java.util.List<org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry> enumEntry_ =
         java.util.Collections.emptyList();
       private void ensureEnumEntryIsMutable() {
-        if (!((bitField0_ & 0x00000800) == 0x00000800)) {
+        if (!((bitField0_ & 0x00000400) == 0x00000400)) {
           enumEntry_ = new java.util.ArrayList<org.jetbrains.kotlin.serialization.ProtoBuf.EnumEntry>(enumEntry_);
-          bitField0_ |= 0x00000800;
+          bitField0_ |= 0x00000400;
          }
       }
 
@@ -9975,7 +9808,7 @@ public final class ProtoBuf {
        */
       public Builder clearEnumEntry() {
         enumEntry_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000800);
+        bitField0_ = (bitField0_ & ~0x00000400);
 
         return this;
       }
@@ -9995,7 +9828,7 @@ public final class ProtoBuf {
        * <code>optional .org.jetbrains.kotlin.serialization.TypeTable type_table = 30;</code>
        */
       public boolean hasTypeTable() {
-        return ((bitField0_ & 0x00001000) == 0x00001000);
+        return ((bitField0_ & 0x00000800) == 0x00000800);
       }
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.TypeTable type_table = 30;</code>
@@ -10012,7 +9845,7 @@ public final class ProtoBuf {
         }
         typeTable_ = value;
 
-        bitField0_ |= 0x00001000;
+        bitField0_ |= 0x00000800;
         return this;
       }
       /**
@@ -10022,14 +9855,14 @@ public final class ProtoBuf {
           org.jetbrains.kotlin.serialization.ProtoBuf.TypeTable.Builder builderForValue) {
         typeTable_ = builderForValue.build();
 
-        bitField0_ |= 0x00001000;
+        bitField0_ |= 0x00000800;
         return this;
       }
       /**
        * <code>optional .org.jetbrains.kotlin.serialization.TypeTable type_table = 30;</code>
        */
       public Builder mergeTypeTable(org.jetbrains.kotlin.serialization.ProtoBuf.TypeTable value) {
-        if (((bitField0_ & 0x00001000) == 0x00001000) &&
+        if (((bitField0_ & 0x00000800) == 0x00000800) &&
             typeTable_ != org.jetbrains.kotlin.serialization.ProtoBuf.TypeTable.getDefaultInstance()) {
           typeTable_ =
             org.jetbrains.kotlin.serialization.ProtoBuf.TypeTable.newBuilder(typeTable_).mergeFrom(value).buildPartial();
@@ -10037,7 +9870,7 @@ public final class ProtoBuf {
           typeTable_ = value;
         }
 
-        bitField0_ |= 0x00001000;
+        bitField0_ |= 0x00000800;
         return this;
       }
       /**
@@ -10046,7 +9879,7 @@ public final class ProtoBuf {
       public Builder clearTypeTable() {
         typeTable_ = org.jetbrains.kotlin.serialization.ProtoBuf.TypeTable.getDefaultInstance();
 
-        bitField0_ = (bitField0_ & ~0x00001000);
+        bitField0_ = (bitField0_ & ~0x00000800);
         return this;
       }
 
