@@ -314,7 +314,9 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
             }
         })
 
-        (ext as ExtensionAware).getExtensions().add("kotlinOptions", tasksProvider.kotlinJVMOptionsClass)
+        val extensions = (ext as ExtensionAware).getExtensions()
+        extensions.add("kotlinOptions", tasksProvider.kotlinJVMOptionsClass)
+        AndroidGradleWrapper.setNoJdk(extensions.getByName("kotlinOptions"))
 
         project.createKaptExtension()
 
