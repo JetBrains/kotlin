@@ -18,12 +18,17 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
-import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.KotlinType
 
 class ChangeParameterTypeFix(element: KtParameter, private val type: KotlinType) : KotlinQuickFixAction<KtParameter>(element) {
@@ -52,9 +57,17 @@ class ChangeParameterTypeFix(element: KtParameter, private val type: KotlinType)
     override fun getFamilyName() = KotlinBundle.message("change.type.family")
 
     public override operator fun invoke(project: Project, editor: Editor?, file: KtFile) {
-        val newTypeRef = KtPsiFactory(file).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type))
-        element.setTypeReference(newTypeRef)?.let {
-            ShortenReferences.DEFAULT.process(it)
+        val function = element.getStrictParentOfType<KtFunction>() ?: return
+        val parameterIndex = function.valueParameters.indexOf(element)
+        val context = function.analyze()
+        val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, function] as? FunctionDescriptor ?: return
+        val configuration = object : KotlinChangeSignatureConfiguration {
+            override fun configure(originalDescriptor: KotlinMethodDescriptor) = originalDescriptor.apply {
+                parameters[if (receiver != null) parameterIndex + 1 else parameterIndex].currentTypeInfo = KotlinTypeInfo(false, type)
+            }
+
+            override fun performSilently(affectedFunctions: Collection<PsiElement>) = true
         }
+        runChangeSignature(element.project, descriptor, configuration, element, text)
     }
 }

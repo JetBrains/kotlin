@@ -1490,6 +1490,12 @@ public class QuickFixMultiFileTestGenerated extends AbstractQuickFixMultiFileTes
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/typeMismatch"), Pattern.compile("^(\\w+)\\.((before\\.Main\\.\\w+)|(test))$"), true);
         }
 
+        @TestMetadata("paramTypeInOverrides.before.Main.kt")
+        public void testParamTypeInOverrides() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/typeMismatch/paramTypeInOverrides.before.Main.kt");
+            doTestWithExtraFile(fileName);
+        }
+
         @TestMetadata("idea/testData/quickfix/typeMismatch/genericVarianceViolation")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
