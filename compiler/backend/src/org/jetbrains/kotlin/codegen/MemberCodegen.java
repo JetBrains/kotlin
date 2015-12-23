@@ -18,9 +18,7 @@ package org.jetbrains.kotlin.codegen;
 
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
-import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
@@ -552,20 +550,17 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         return sourceMapper;
     }
 
-    protected void generateConstInstance(
-            @NotNull Type thisAsmType,
-            @NotNull Type fieldAsmType,
-            @NotNull Function1<InstructionAdapter, Unit> initialization
-    ) {
-        v.newField(JvmDeclarationOriginKt.OtherOrigin(element), ACC_STATIC | ACC_FINAL | ACC_PUBLIC, JvmAbi.INSTANCE_FIELD, fieldAsmType.getDescriptor(),
-                   null, null);
+    protected void generateConstInstance(@NotNull Type thisAsmType, @NotNull Type fieldAsmType) {
+        v.newField(
+                JvmDeclarationOriginKt.OtherOrigin(element), ACC_STATIC | ACC_FINAL | ACC_PUBLIC, JvmAbi.INSTANCE_FIELD,
+                fieldAsmType.getDescriptor(), null, null
+        );
 
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
             InstructionAdapter iv = createOrGetClInitCodegen().v;
             iv.anew(thisAsmType);
             iv.dup();
             iv.invokespecial(thisAsmType.getInternalName(), "<init>", "()V", false);
-            initialization.invoke(iv);
             iv.putstatic(thisAsmType.getInternalName(), JvmAbi.INSTANCE_FIELD, fieldAsmType.getDescriptor());
         }
     }

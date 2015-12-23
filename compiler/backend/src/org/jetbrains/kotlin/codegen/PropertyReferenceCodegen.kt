@@ -79,11 +79,7 @@ public class PropertyReferenceCodegen(
 
     // TODO: ImplementationBodyCodegen.markLineNumberForSyntheticFunction?
     override fun generateBody() {
-        generateConstInstance(asmType, wrapperMethod.getReturnType()) { iv ->
-            if (!"true".equals(System.getProperty("kotlin.jvm.optimize.callable.references"), ignoreCase = true)) {
-                iv.invokestatic(REFLECTION, wrapperMethod.getName(), wrapperMethod.getDescriptor(), false)
-            }
-        }
+        generateConstInstance(asmType, wrapperMethod.getReturnType())
 
         generateMethod("property reference init", 0, method("<init>", Type.VOID_TYPE)) {
             load(0, OBJECT_TYPE)

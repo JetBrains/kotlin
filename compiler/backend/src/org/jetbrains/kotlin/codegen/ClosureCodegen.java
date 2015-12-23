@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.serialization.ProtoBuf;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 import org.jetbrains.kotlin.util.OperatorNameConventions;
-import org.jetbrains.kotlin.utils.FunctionsKt;
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -212,7 +211,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         this.constructor = generateConstructor();
 
         if (isConst(closure)) {
-            generateConstInstance(asmType, asmType, FunctionsKt.<InstructionAdapter>doNothing());
+            generateConstInstance(asmType, asmType);
         }
 
         genClosureFields(closure, v, typeMapper);
@@ -257,12 +256,6 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
                             codegen.pushClosureOnStack(classDescriptor, true, codegen.defaultCallGenerator);
                             v.invokespecial(asmType.getInternalName(), "<init>", constructor.getDescriptor(), false);
-                        }
-
-                        if (functionReferenceTarget != null) {
-                            if (!"true".equalsIgnoreCase(System.getProperty("kotlin.jvm.optimize.callable.references"))) {
-                                v.invokestatic(REFLECTION, "function", Type.getMethodDescriptor(K_FUNCTION, FUNCTION_REFERENCE), false);
-                            }
                         }
 
                         return Unit.INSTANCE;
