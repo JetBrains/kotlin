@@ -1,0 +1,27 @@
+Cleaning output files:
+out/production/module/Enum.class
+End of files
+Compiling files:
+src/Enum.kt
+End of files
+Cleaning output files:
+out/production/module/GetRandomEnumEntryKt.class
+out/production/module/META-INF/module.kotlin_module
+out/production/module/UseKt.class
+End of files
+Compiling files:
+src/getRandomEnumEntry.kt
+src/use.kt
+End of files
+COMPILATION FAILED
+'when' expression must be exhaustive or contain an 'else' branch
+
+
+Cleaning output files:
+out/production/module/Enum.class
+End of files
+Compiling files:
+src/Enum.kt
+src/getRandomEnumEntry.kt
+src/use.kt
+End of files
