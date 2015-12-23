@@ -94,8 +94,6 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
 
         if (!checkEqualsClassProperty(old, new)) return false
 
-        if (!checkEqualsClassEnumEntryName(old, new)) return false
-
         if (!checkEqualsClassEnumEntry(old, new)) return false
 
         if (old.hasTypeTable() != new.hasTypeTable()) return false
@@ -122,7 +120,6 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
         CONSTRUCTOR_LIST,
         FUNCTION_LIST,
         PROPERTY_LIST,
-        ENUM_ENTRY_NAME_LIST,
         ENUM_ENTRY_LIST,
         TYPE_TABLE,
         CLASS_ANNOTATION_LIST
@@ -156,8 +153,6 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
         if (!checkEqualsClassFunction(old, new)) result.add(ProtoBufClassKind.FUNCTION_LIST)
 
         if (!checkEqualsClassProperty(old, new)) result.add(ProtoBufClassKind.PROPERTY_LIST)
-
-        if (!checkEqualsClassEnumEntryName(old, new)) result.add(ProtoBufClassKind.ENUM_ENTRY_NAME_LIST)
 
         if (!checkEqualsClassEnumEntry(old, new)) result.add(ProtoBufClassKind.ENUM_ENTRY_LIST)
 
@@ -673,16 +668,6 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
         return true
     }
 
-    open fun checkEqualsClassEnumEntryName(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean {
-        if (old.enumEntryNameCount != new.enumEntryNameCount) return false
-
-        for(i in 0..old.enumEntryNameCount - 1) {
-            if (!checkStringEquals(old.getEnumEntryName(i), new.getEnumEntryName(i))) return false
-        }
-
-        return true
-    }
-
     open fun checkEqualsClassEnumEntry(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean {
         if (old.enumEntryCount != new.enumEntryCount) return false
 
@@ -881,10 +866,6 @@ public fun ProtoBuf.Class.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (
 
     for(i in 0..propertyCount - 1) {
         hashCode = 31 * hashCode + getProperty(i).hashCode(stringIndexes, fqNameIndexes)
-    }
-
-    for(i in 0..enumEntryNameCount - 1) {
-        hashCode = 31 * hashCode + stringIndexes(getEnumEntryName(i))
     }
 
     for(i in 0..enumEntryCount - 1) {
