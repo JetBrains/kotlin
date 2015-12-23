@@ -184,13 +184,3 @@ internal class TypeParameterListExpression(private val mandatoryTypeParameters: 
     // do not offer the user any choices
     override fun calculateLookupItems(context: ExpressionContext?) = arrayOf<LookupElement>()
 }
-
-internal object ValVarExpression: Expression() {
-    private val cachedLookupElements = listOf("val", "var").map { LookupElementBuilder.create(it) }.toTypedArray<LookupElement>()
-
-    override fun calculateResult(context: ExpressionContext?): Result? = TextResult("val")
-
-    override fun calculateQuickResult(context: ExpressionContext?): Result? = calculateResult(context)
-
-    override fun calculateLookupItems(context: ExpressionContext?): Array<LookupElement>? = cachedLookupElements
-}

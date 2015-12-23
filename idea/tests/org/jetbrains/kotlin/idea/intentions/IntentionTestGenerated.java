@@ -362,6 +362,51 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/addValOrVar")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AddValOrVar extends AbstractIntentionTest {
+        @TestMetadata("addVal.kt")
+        public void testAddVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addValOrVar/addVal.kt");
+            doTest(fileName);
+        }
+
+        public void testAllFilesPresentInAddValOrVar() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addValOrVar"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("funParameter.kt")
+        public void testFunParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addValOrVar/funParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("hasVal.kt")
+        public void testHasVal() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addValOrVar/hasVal.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("hasVar.kt")
+        public void testHasVar() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addValOrVar/hasVar.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("outOfRange.kt")
+        public void testOutOfRange() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addValOrVar/outOfRange.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("secondaryConstructorParameter.kt")
+        public void testSecondaryConstructorParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addValOrVar/secondaryConstructorParameter.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/anonymousFunctionToLambda")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
