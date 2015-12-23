@@ -1,22 +1,22 @@
-Class/object property type (6: 21) var nextServer: Server? = new Server()
-Companion object (38: 28) fun Client.bar(s: Server = Server.NAME) {
-Companion object (5: 29) class Client(name: String = Server.NAME): Server() {
-Companion object (7: 16) val name = Server.NAME
-Function return types (14: 26) fun getNextServer(): Server? {
-Function return types (46: 21) fun Any.asServer(): Server? {
-Local variable declaration (10: 21) val server: Server = s
-Parameter type (38: 19) fun Client.bar(s: Server = Server.NAME) {
-Parameter type (9: 16) fun foo(s: Server) {
-Super type qualifier (19: 15) super<Server>.work()
-Supertype (23: 23) companion object: Server() {
-Supertype (28: 22) object ClientObject: Server() {
-Supertype (5: 43) class Client(name: String = Server.NAME): Server() {
-Target type of 'is' operation (48: 12) is Server -> println("Server!")
-Target type of 'is' operation (50: 24) return if (this is Server) this as Server else this as? Server
-Type parameter (32: 25) class Servers: Iterator<Server> {
-Type parameter (36: 14) fun Iterator<Server>.f(p: Iterator<Server>): Iterator<Server> = this
-Type parameter (36: 36) fun Iterator<Server>.f(p: Iterator<Server>): Iterator<Server> = this
-Type parameter (36: 55) fun Iterator<Server>.f(p: Iterator<Server>): Iterator<Server> = this
-Usage in cast target type (50: 40) return if (this is Server) this as Server else this as? Server
-Usage in cast target type (50: 61) return if (this is Server) this as Server else this as? Server
-Usage in import (3: 15) import server.Server
+Class/object property type 6 var nextServer: Server? = new Server()
+Companion object 38 fun Client.bar(s: Server = Server.NAME) {
+Companion object 5 class Client(name: String = Server.NAME): Server() {
+Companion object 7 val name = Server.NAME
+Function return types 14 fun getNextServer(): Server? {
+Function return types 46 fun Any.asServer(): Server? {
+Local variable declaration 10 val server: Server = s
+Parameter type 38 fun Client.bar(s: Server = Server.NAME) {
+Parameter type 9 fun foo(s: Server) {
+Super type qualifier 19 super<Server>.work()
+Supertype 23 companion object: Server() {
+Supertype 28 object ClientObject: Server() {
+Supertype 5 class Client(name: String = Server.NAME): Server() {
+Target type of 'is' operation 48 is Server -> println("Server!")
+Target type of 'is' operation 50 return if (this is Server) this as Server else this as? Server
+Type parameter 32 class Servers: Iterator<Server> {
+Type parameter 36 fun Iterator<Server>.f(p: Iterator<Server>): Iterator<Server> = this
+Type parameter 36 fun Iterator<Server>.f(p: Iterator<Server>): Iterator<Server> = this
+Type parameter 36 fun Iterator<Server>.f(p: Iterator<Server>): Iterator<Server> = this
+Usage in cast target type 50 return if (this is Server) this as Server else this as? Server
+Usage in cast target type 50 return if (this is Server) this as Server else this as? Server
+Usage in import 3 import server.Server

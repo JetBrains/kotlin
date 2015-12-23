@@ -1,3 +1,3 @@
-New instance creation (12: 5) J(2)
-Supertype (7: 10) class B: J(1) {
-Unclassified usage (2: 20) constructor(): super(1) {
+New instance creation 12 J(2)
+Supertype 7 class B: J(1) {
+Unclassified usage 2 constructor(): super(1) {

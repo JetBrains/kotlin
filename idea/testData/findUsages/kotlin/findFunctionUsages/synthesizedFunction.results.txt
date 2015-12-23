@@ -1,1 +1,1 @@
-Function call (12: 10) B(0).copy(1)
+Function call 12 B(0).copy(1)

@@ -1,1 +1,1 @@
-Unclassified usage (3: 18) public interface T: A
+Unclassified usage 3 public interface T: A

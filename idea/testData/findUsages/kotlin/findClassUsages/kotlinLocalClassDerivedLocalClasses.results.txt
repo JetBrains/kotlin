@@ -1,3 +1,3 @@
-Unclassified usage (11: 15) class C: A()
-Unclassified usage (13: 15) class D: T
-Unclassified usage (6: 11) class B: A()
+Unclassified usage 11 class C: A()
+Unclassified usage 13 class D: T
+Unclassified usage 6 class B: A()

@@ -1,4 +1,4 @@
-Unclassified usage (11: 13) Foo.foo(1, 1.0);
-Unclassified usage (15: 13) Foo.foo(1, 1.0, "1");
-Unclassified usage (3: 13) Foo.foo();
-Unclassified usage (7: 13) Foo.foo(1);
+Unclassified usage 11 Foo.foo(1, 1.0);
+Unclassified usage 15 Foo.foo(1, 1.0, "1");
+Unclassified usage 3 Foo.foo();
+Unclassified usage 7 Foo.foo(1);

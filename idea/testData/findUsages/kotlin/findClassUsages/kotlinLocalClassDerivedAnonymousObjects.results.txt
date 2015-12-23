@@ -1,3 +1,3 @@
-Unclassified usage (11: 17) val c = object: A() {}
-Unclassified usage (13: 17) val d = object: T {}
-Unclassified usage (6: 13) val b = object: A() {}
+Unclassified usage 11 val c = object: A() {}
+Unclassified usage 13 val d = object: T {}
+Unclassified usage 6 val b = object: A() {}

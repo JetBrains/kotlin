@@ -1,2 +1,2 @@
-Unclassified usage (13: 43) System.out.println("b.foo = " + b.getFoo());
-Unclassified usage (9: 43) System.out.println("a.foo = " + a.getFoo());
+Unclassified usage 13 System.out.println("b.foo = " + b.getFoo());
+Unclassified usage 9 System.out.println("a.foo = " + a.getFoo());

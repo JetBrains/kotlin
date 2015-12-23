@@ -1,1 +1,1 @@
-Function call (8: 33) open fun processRequest() = doProcessRequest()
+Function call 8 open fun processRequest() = doProcessRequest()

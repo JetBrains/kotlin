@@ -1,4 +1,4 @@
-Value read (1: 33) public class X(bar: String? = A.BAR): A() {
-Value read (3: 28) val myBar: String? = A.BAR
-Value write (12: 12) aa.bar = ""
-Value write (6: 11) A.BAR = ""
+Value read 1 public class X(bar: String? = A.BAR): A() {
+Value read 3 val myBar: String? = A.BAR
+Value write 12 aa.bar = ""
+Value write 6 A.BAR = ""
