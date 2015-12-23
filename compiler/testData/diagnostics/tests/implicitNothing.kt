@@ -12,7 +12,7 @@ val y: Nothing = throw Exception()
 
 fun check() {
     // Error: KT-10449
-    fun local() = bar()
+    fun <!IMPLICIT_NOTHING_RETURN_TYPE!>local<!>() = bar()
     // Unreachable / unused, but not implicit Nothing
     <!UNREACHABLE_CODE!>val <!UNUSED_VARIABLE!>x<!> =<!> null!!
 }

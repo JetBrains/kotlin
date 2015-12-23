@@ -67,12 +67,23 @@ fun KtTypeReference.checkNotEnumEntry(trace: BindingTrace): Boolean {
     return result
 }
 
+internal class DeclarationsCheckerBuilder(
+        private val descriptorResolver: DescriptorResolver,
+        private val originalModifiersChecker: ModifiersChecker,
+        private val annotationChecker: AnnotationChecker,
+        private val identifierChecker: IdentifierChecker
+) {
+    fun withTrace(trace: BindingTrace) =
+            DeclarationsChecker(descriptorResolver, originalModifiersChecker, annotationChecker, identifierChecker, trace)
+}
+
 class DeclarationsChecker(
         private val descriptorResolver: DescriptorResolver,
         modifiersChecker: ModifiersChecker,
         private val annotationChecker: AnnotationChecker,
         private val identifierChecker: IdentifierChecker,
-        private val trace: BindingTrace) {
+        private val trace: BindingTrace
+) {
 
     private val modifiersChecker = modifiersChecker.withTrace(trace)
 
@@ -612,7 +623,7 @@ class DeclarationsChecker(
         checkMemberReceiverExposedType(property.receiverTypeReference, propertyDescriptor)
     }
 
-    private fun checkFunction(function: KtNamedFunction, functionDescriptor: SimpleFunctionDescriptor) {
+    fun checkFunction(function: KtNamedFunction, functionDescriptor: SimpleFunctionDescriptor) {
         val typeParameterList = function.typeParameterList
         val nameIdentifier = function.nameIdentifier
         if (typeParameterList != null && nameIdentifier != null &&
@@ -761,6 +772,20 @@ class DeclarationsChecker(
         }
         else {
             assert(DescriptorUtils.isInterface(declaration)) { "Enum entry should be declared in enum class: " + classDescriptor }
+        }
+    }
+
+    private fun checkVarargParameters(trace: BindingTrace, callableDescriptor: CallableDescriptor) {
+        val numberOfVarargParameters = callableDescriptor.valueParameters.count { it.varargElementType != null }
+        if (numberOfVarargParameters > 1) {
+            for (parameter in callableDescriptor.valueParameters) {
+                if (parameter.varargElementType != null) {
+                    val parameterDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(parameter)
+                    if (parameterDeclaration is KtParameter) {
+                        trace.report(MULTIPLE_VARARG_PARAMETERS.on(parameterDeclaration))
+                    }
+                }
+            }
         }
     }
 

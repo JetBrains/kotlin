@@ -19,5 +19,7 @@ class My(b: B) {
 fun bar(b: B): String {
     // Ok: local variable
     val tmp = if (b is A && b is C) b else null
+    // Error: local function
+    fun <!IMPLICIT_INTERSECTION_TYPE!>foo<!>(b: B) = if (b is A && b is C) b else null
     return tmp.toString()
 }
