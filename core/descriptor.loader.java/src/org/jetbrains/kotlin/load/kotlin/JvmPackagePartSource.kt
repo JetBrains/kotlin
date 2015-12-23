@@ -16,7 +16,13 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.PackagePartSource
 
-class JvmPackagePartSource(val className: JvmClassName) : PackagePartSource
+class JvmPackagePartSource(val className: JvmClassName) : PackagePartSource {
+    val simpleName: Name get() = Name.identifier(className.internalName.substringAfterLast('/'))
+
+    val classId: ClassId get() = ClassId(className.packageFqName, simpleName)
+}

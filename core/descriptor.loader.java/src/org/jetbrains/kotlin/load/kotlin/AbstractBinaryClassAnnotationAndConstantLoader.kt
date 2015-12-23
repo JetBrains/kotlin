@@ -202,8 +202,7 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
         if (property && container is ProtoContainer.Class && container.isInterface) {
             return container.classId.createNestedClassId(Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME))
         }
-        return ((container as? ProtoContainer.Package)?.packagePartSource as? JvmPackagePartSource)
-                ?.className?.fqNameForClassNameWithoutDollars?.let { ClassId.topLevel(it) }
+        return ((container as? ProtoContainer.Package)?.packagePartSource as? JvmPackagePartSource)?.classId
     }
 
     private fun loadAnnotationsAndInitializers(kotlinClass: KotlinJvmBinaryClass): Storage<A, C> {
