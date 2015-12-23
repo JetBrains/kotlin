@@ -296,7 +296,9 @@ class NewResolveOldInference(
             val basicCallResolutionContext = basicCallContext.replaceBindingTrace(variable.resolvedCall.trace)
                     .replaceCall(functionCall)
                     .replaceContextDependency(ContextDependency.DEPENDENT) // todo
-            val newContext = Context(scopeTower, OperatorNameConventions.INVOKE, basicCallResolutionContext, tracingForInvoke)
+
+            val newScopeTower = ScopeTowerImpl(basicCallResolutionContext, scopeTower.dynamicScope, scopeTower.syntheticScopes, scopeTower.location)
+            val newContext = Context(newScopeTower, OperatorNameConventions.INVOKE, basicCallResolutionContext, tracingForInvoke)
 
             return variableReceiver to newContext
         }
