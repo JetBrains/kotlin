@@ -47,6 +47,8 @@ object KotlinJavascriptSerializedResourcePaths : SerializedResourcePaths {
     override fun getStringTableFilePath(fqName: FqName): String =
             fqName.toPath().withSepIfNotEmpty() + shortName(fqName) + "." + STRING_TABLE_FILE_EXTENSION
 
+    override fun getBuiltInsFilePath(fqName: FqName): String? = null
+
     private fun FqName.toPath() = this.asString().replace('.', '/')
 
     private fun String.withSepIfNotEmpty() = if (this.isEmpty()) this else this + "/"

@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.utils.recursePostOrder
 import java.io.ByteArrayOutputStream
+import java.io.DataOutputStream
 import java.io.File
 
 public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
@@ -120,12 +121,15 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
 
         val classifierDescriptors = DescriptorSerializer.sort(packageView.memberScope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS))
 
+        val message = BuiltInsProtoBuf.BuiltIns.newBuilder()
+
         val extension = BuiltInsSerializerExtension()
         serializeClasses(classifierDescriptors, extension) {
             classDescriptor, classProto ->
             val stream = ByteArrayOutputStream()
             classProto.writeTo(stream)
             write(destDir, getFileName(classDescriptor), stream)
+            message.addClass(classProto)
         }
 
         val packageStream = ByteArrayOutputStream()
@@ -133,10 +137,26 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
         val packageProto = DescriptorSerializer.createTopLevel(extension).packageProto(fragments).build()
         packageProto.writeTo(packageStream)
         write(destDir, BuiltInsSerializedResourcePaths.getPackageFilePath(fqName), packageStream)
+        message.setPackage(packageProto)
 
         val nameStream = ByteArrayOutputStream()
-        extension.stringTable.serializeTo(nameStream)
+        val (strings, qualifiedNames) = extension.stringTable.buildProto()
+        strings.writeDelimitedTo(nameStream)
+        qualifiedNames.writeDelimitedTo(nameStream)
         write(destDir, BuiltInsSerializedResourcePaths.getStringTableFilePath(fqName), nameStream)
+        message.setStrings(strings)
+        message.setQualifiedNames(qualifiedNames)
+
+        val builtinsFileStream = ByteArrayOutputStream()
+        with(DataOutputStream(builtinsFileStream)) {
+            // TODO: write version properly
+            writeInt(3)
+            writeInt(1)
+            writeInt(0)
+            writeInt(0)
+        }
+        message.build().writeTo(builtinsFileStream)
+        write(destDir, BuiltInsSerializedResourcePaths.getBuiltInsFilePath(fqName), builtinsFileStream)
     }
 
     private fun write(destDir: File, fileName: String, stream: ByteArrayOutputStream) {
