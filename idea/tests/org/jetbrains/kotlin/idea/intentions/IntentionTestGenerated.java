@@ -376,6 +376,12 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/addValOrVar"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }
 
+        @TestMetadata("dataClass.kt")
+        public void testDataClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addValOrVar/dataClass.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("funParameter.kt")
         public void testFunParameter() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/addValOrVar/funParameter.kt");

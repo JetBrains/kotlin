@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.inspections.AddModifierFixFactory
 import org.jetbrains.kotlin.idea.inspections.AddReflectionQuickFix
 import org.jetbrains.kotlin.idea.inspections.AddTestLibQuickFix
 import org.jetbrains.kotlin.idea.inspections.InfixCallFix
+import org.jetbrains.kotlin.idea.intentions.AddValVarToConstructorParameterAction
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createCallable.*
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromCallWithConstructorCalleeActionFactory
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass.CreateClassFromConstructorCallActionFactory
@@ -360,5 +361,7 @@ public class QuickFixRegistrar : QuickFixContributor {
         COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT.registerFactory(CommaInWhenConditionWithoutArgumentFix)
 
         UNSUPPORTED.registerFactory(UnsupportedAsyncFix)
+
+        DATA_CLASS_NOT_PROPERTY_PARAMETER.registerFactory(AddValVarToConstructorParameterAction.QuickFixFactory)
     }
 }
