@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition;
+import org.jetbrains.kotlin.resolve.OverridingUtil;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 import org.jetbrains.kotlin.types.TypeUtils;
@@ -44,6 +45,11 @@ public class SamAdapterOverridabilityCondition implements ExternalOverridability
         if (superOriginal == null || subOriginal == null) { // super or sub is/overrides DECLARATION
             return subOriginal == null ? Result.UNKNOWN : Result.INCOMPATIBLE; // DECLARATION can override anything
         }
+
+        OverridingUtil.OverrideCompatibilityInfo basicResult = OverridingUtil.DEFAULT
+                .isOverridableByWithoutExternalConditions(superDescriptor, subDescriptor, /* checkReturnType = */ false);
+
+        if (basicResult.getResult() != OverridingUtil.OverrideCompatibilityInfo.Result.OVERRIDABLE) return Result.UNKNOWN;
 
         // inheritor if SYNTHESIZED can override inheritor of SYNTHESIZED if their originals have same erasure
         return equalErasure(superOriginal, subOriginal) ? Result.UNKNOWN : Result.INCOMPATIBLE;
