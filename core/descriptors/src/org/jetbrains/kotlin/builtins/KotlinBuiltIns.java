@@ -67,6 +67,8 @@ public abstract class KotlinBuiltIns {
     private final BuiltinsPackageFragment rangesPackageFragment;
     private final BuiltinsPackageFragment annotationPackageFragment;
 
+    private final Set<BuiltinsPackageFragment> builtinsPackageFragments;
+
     private final Map<PrimitiveType, KotlinType> primitiveTypeToArrayKotlinType;
     private final Map<KotlinType, KotlinType> primitiveKotlinTypeToKotlinArrayType;
     private final Map<KotlinType, KotlinType> kotlinArrayTypeToPrimitiveKotlinType;
@@ -95,12 +97,14 @@ public abstract class KotlinBuiltIns {
         builtInsModule.initialize(packageFragmentProvider);
         builtInsModule.setDependencies(builtInsModule);
 
-        packageNameToPackageFragment = new HashMap<FqName, BuiltinsPackageFragment>();
+        packageNameToPackageFragment = new LinkedHashMap<FqName, BuiltinsPackageFragment>();
 
         builtinsPackageFragment = getBuiltinsPackageFragment(packageFragmentProvider, packageNameToPackageFragment, BUILT_INS_PACKAGE_FQ_NAME);
         collectionsPackageFragment = getBuiltinsPackageFragment(packageFragmentProvider, packageNameToPackageFragment, COLLECTIONS_PACKAGE_FQ_NAME);
         rangesPackageFragment = getBuiltinsPackageFragment(packageFragmentProvider, packageNameToPackageFragment, RANGES_PACKAGE_FQ_NAME);
         annotationPackageFragment = getBuiltinsPackageFragment(packageFragmentProvider, packageNameToPackageFragment, ANNOTATION_PACKAGE_FQ_NAME);
+
+        builtinsPackageFragments = new LinkedHashSet<BuiltinsPackageFragment>(packageNameToPackageFragment.values());
 
         primitiveTypeToArrayKotlinType = new EnumMap<PrimitiveType, KotlinType>(PrimitiveType.class);
         primitiveKotlinTypeToKotlinArrayType = new HashMap<KotlinType, KotlinType>();
@@ -244,6 +248,11 @@ public abstract class KotlinBuiltIns {
     @NotNull
     public ModuleDescriptorImpl getBuiltInsModule() {
         return builtInsModule;
+    }
+
+    @NotNull
+    public Set<BuiltinsPackageFragment> getBuiltinsPackageFragments() {
+        return builtinsPackageFragments;
     }
 
     @NotNull

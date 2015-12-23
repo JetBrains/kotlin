@@ -44,9 +44,11 @@ class AllClassesCompletion(private val parameters: CompletionParameters,
 
         //TODO: this is a temporary solution until we have built-ins in indices
         // we need only nested classes because top-level built-ins are all added through default imports
-        collectClassesFromScope(resolutionFacade.moduleDescriptor.builtIns.builtInsPackageScope) {
-            if (it.containingDeclaration is ClassDescriptor) {
-                classDescriptorCollector(it)
+        for (builtinPackage in resolutionFacade.moduleDescriptor.builtIns.builtinsPackageFragments) {
+            collectClassesFromScope(builtinPackage.getMemberScope()) {
+                if (it.containingDeclaration is ClassDescriptor) {
+                    classDescriptorCollector(it)
+                }
             }
         }
 
