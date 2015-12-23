@@ -1,3 +1,3 @@
-Unclassified usage (2: 23) public open class T: A
-Unclassified usage (4: 19) public object O1: A()
-Unclassified usage (7: 23) public object O2: T()
+Unclassified usage 2 public open class T: A
+Unclassified usage 4 public object O1: A()
+Unclassified usage 7 public object O2: T()

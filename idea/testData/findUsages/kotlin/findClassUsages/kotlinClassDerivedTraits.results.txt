@@ -1,2 +1,2 @@
-Unclassified usage (11: 11) interface Z: A {
-Unclassified usage (15: 11) interface U: Z {
+Unclassified usage 11 interface Z: A {
+Unclassified usage 15 interface U: Z {

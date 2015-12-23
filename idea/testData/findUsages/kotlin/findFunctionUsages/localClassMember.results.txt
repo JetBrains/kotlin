@@ -1,1 +1,1 @@
-Function call (11: 18) LocalClass().f()
+Function call 11 LocalClass().f()

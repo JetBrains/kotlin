@@ -1,1 +1,1 @@
-Unclassified usage (5: 26) return dataClass.component1();
+Unclassified usage 5 return dataClass.component1();

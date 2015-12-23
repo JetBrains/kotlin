@@ -1,2 +1,2 @@
-Value read (4: 15) println(a.foo)
-Value write (3: 7) a.foo = "bar"
+Value read 4 println(a.foo)
+Value write 3 a.foo = "bar"

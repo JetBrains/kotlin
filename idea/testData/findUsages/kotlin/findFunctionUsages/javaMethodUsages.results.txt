@@ -1,2 +1,2 @@
-Unclassified usage (5: 22) new Server().processRequest();
-Unclassified usage (6: 24) new ServerEx().processRequest();
+Unclassified usage 5 new Server().processRequest();
+Unclassified usage 6 new ServerEx().processRequest();

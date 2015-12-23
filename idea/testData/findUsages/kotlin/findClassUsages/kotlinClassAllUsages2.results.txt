@@ -1,2 +1,2 @@
-Annotation (5: 2) @X("")
-Usage in import (3: 15) import server.X
+Annotation 5 @X("")
+Usage in import 3 import server.X

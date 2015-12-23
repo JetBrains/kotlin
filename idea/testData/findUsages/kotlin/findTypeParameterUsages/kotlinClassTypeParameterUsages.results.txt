@@ -1,6 +1,6 @@
-Class/object property type (10: 12) val t: T = foo
-Extension receiver type (5: 13) fun T.bar() {}
-Function return types (11: 20) fun bar(t: T): T = t
-Parameter type (11: 16) fun bar(t: T): T = t
-Parameter type (3: 22) open class A<T>(foo: T, list: List<T>) {
-Type parameter (3: 36) open class A<T>(foo: T, list: List<T>) {
+Class/object property type 10 val t: T = foo
+Extension receiver type 5 fun T.bar() {}
+Function return types 11 fun bar(t: T): T = t
+Parameter type 11 fun bar(t: T): T = t
+Parameter type 3 open class A<T>(foo: T, list: List<T>) {
+Type parameter 3 open class A<T>(foo: T, list: List<T>) {

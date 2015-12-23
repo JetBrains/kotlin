@@ -1,17 +1,17 @@
-[LibraryNestedClassUsages.0.kt] Local variable declaration (16: 14) val a: A.T = A.T()
-[LibraryNestedClassUsages.0.kt] New instance creation (16: 20) val a: A.T = A.T()
-[LibraryNestedClassUsages.0.kt] New instance creation (17: 16) val aa = A.T(1)
-[LibraryNestedClassUsages.0.kt] Supertype (13: 14) class Y(): A.T(1)
-[LibraryNestedClassUsages.0.kt] Supertype (9: 12) class X: A.T {
-[LibraryNestedClassUsages.1.java] Local variable declaration (11: 11) A.T t = new A.T();
-[LibraryNestedClassUsages.1.java] Local variable declaration (12: 11) A.T tt = new A.T(1);
-[LibraryNestedClassUsages.1.java] New instance creation (11: 23) A.T t = new A.T();
-[LibraryNestedClassUsages.1.java] New instance creation (12: 24) A.T tt = new A.T(1);
-[LibraryNestedClassUsages.1.java] Usage in extends/implements clause (5: 19) class J extends A.T {
-[library.kt] New instance creation (63: 15) val t = A.T(1)
-[library.kt] New instance creation (64: 16) val tt = A.T()
-[library.kt] Supertype (22: 16) class U: A.T {
-[library.kt] Supertype (28: 18) class V(): A.T(1)
-[library.kt] Supertype (34: 17) class UU: A.T {
-[library.kt] Supertype (40: 19) class VV(): A.T()
-[library.kt] Unclassified usage (66: 17) val fff = A.T::bar
+[LibraryNestedClassUsages.0.kt] Local variable declaration 16 val a: A.T = A.T()
+[LibraryNestedClassUsages.0.kt] New instance creation 16 val a: A.T = A.T()
+[LibraryNestedClassUsages.0.kt] New instance creation 17 val aa = A.T(1)
+[LibraryNestedClassUsages.0.kt] Supertype 13 class Y(): A.T(1)
+[LibraryNestedClassUsages.0.kt] Supertype 9 class X: A.T {
+[LibraryNestedClassUsages.1.java] Local variable declaration 11 A.T t = new A.T();
+[LibraryNestedClassUsages.1.java] Local variable declaration 12 A.T tt = new A.T(1);
+[LibraryNestedClassUsages.1.java] New instance creation 11 A.T t = new A.T();
+[LibraryNestedClassUsages.1.java] New instance creation 12 A.T tt = new A.T(1);
+[LibraryNestedClassUsages.1.java] Usage in extends/implements clause 5 class J extends A.T {
+[library.kt] New instance creation 63 val t = A.T(1)
+[library.kt] New instance creation 64 val tt = A.T()
+[library.kt] Supertype 22 class U: A.T {
+[library.kt] Supertype 28 class V(): A.T(1)
+[library.kt] Supertype 34 class UU: A.T {
+[library.kt] Supertype 40 class VV(): A.T()
+[library.kt] Unclassified usage 66 val fff = A.T::bar

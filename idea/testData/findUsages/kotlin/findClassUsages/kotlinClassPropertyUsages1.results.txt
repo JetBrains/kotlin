@@ -1,3 +1,3 @@
-Value read (10: 22) println("${x.a} ${x.b}")
-Value read (10: 29) println("${x.a} ${x.b}")
-Value write (11: 11) x.b = 12
+Value read 10 println("${x.a} ${x.b}")
+Value read 10 println("${x.a} ${x.b}")
+Value write 11 x.b = 12

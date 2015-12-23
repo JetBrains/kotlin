@@ -1,4 +1,4 @@
-[javaPropertyGetterUsagesKJ.0.java] Unclassified usage (23: 17) new J().getP();
-[javaPropertyGetterUsagesKJ.0.java] Unclassified usage (26: 17) new B().getP();
-[javaPropertyGetterUsagesKJ.1.kt] Value read (20: 17) val t = J().p
-[javaPropertyGetterUsagesKJ.1.kt] Value read (23: 17) val t = B().p
+[javaPropertyGetterUsagesKJ.0.java] Unclassified usage 23 new J().getP();
+[javaPropertyGetterUsagesKJ.0.java] Unclassified usage 26 new B().getP();
+[javaPropertyGetterUsagesKJ.1.kt] Value read 20 val t = J().p
+[javaPropertyGetterUsagesKJ.1.kt] Value read 23 val t = B().p

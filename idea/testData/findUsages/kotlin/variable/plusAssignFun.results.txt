@@ -1,1 +1,1 @@
-Value read (9: 5) c += 10
+Value read 9 c += 10

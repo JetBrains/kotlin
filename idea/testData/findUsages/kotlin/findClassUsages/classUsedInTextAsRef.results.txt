@@ -1,1 +1,1 @@
-Unclassified usage (1: 18) <foo bar="server.Server"></foo>
+Unclassified usage 1 <foo bar="server.Server"></foo>
