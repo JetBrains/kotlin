@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.psi.KtFile
 abstract class KotlinQuickFixAction<T : PsiElement>(protected val element: T) : IntentionAction {
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
-        return !element.project.isDisposed &&
-               element.isValid &&
+        return element.isValid &&
+               !element.project.isDisposed &&
                (file.manager.isInProject(file) || file is KtCodeFragment) &&
                (file is KtFile)
     }
