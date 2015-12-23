@@ -261,6 +261,13 @@ public class TypeSubstitutor {
     }
 
     @NotNull
+    public static Variance combine(@NotNull Variance typeParameterVariance, @NotNull TypeProjection typeProjection) {
+        if (typeProjection.isStarProjection()) return Variance.OUT_VARIANCE;
+
+        return combine(typeParameterVariance, typeProjection.getProjectionKind());
+    }
+
+    @NotNull
     public static Variance combine(@NotNull Variance typeParameterVariance, @NotNull Variance projectionKind) {
         if (typeParameterVariance == Variance.INVARIANT) return projectionKind;
         if (projectionKind == Variance.INVARIANT) return typeParameterVariance;

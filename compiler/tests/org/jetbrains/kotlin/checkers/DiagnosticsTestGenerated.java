@@ -7154,6 +7154,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("platformSuperClass.kt")
+                public void testPlatformSuperClass() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/projectionsScope/platformSuperClass.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("recursiveUpperBoundStar.kt")
                 public void testRecursiveUpperBoundStar() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/projectionsScope/recursiveUpperBoundStar.kt");

@@ -53,7 +53,7 @@ private fun TypeArgument.toTypeProjection(): TypeProjection {
 }
 
 private fun TypeProjection.toTypeArgument(typeParameter: TypeParameterDescriptor) =
-        when (TypeSubstitutor.combine(typeParameter.variance, projectionKind)) {
+        when (TypeSubstitutor.combine(typeParameter.variance, this)) {
             Variance.INVARIANT -> TypeArgument(typeParameter, type, type)
             Variance.IN_VARIANCE -> TypeArgument(typeParameter, type, typeParameter.builtIns.nullableAnyType)
             Variance.OUT_VARIANCE -> TypeArgument(typeParameter, typeParameter.builtIns.nothingType, type)
@@ -93,10 +93,21 @@ private fun substituteCapturedTypesWithProjections(typeProjection: TypeProjectio
 }
 
 public fun approximateCapturedTypes(type: KotlinType): ApproximationBounds<KotlinType> {
+    if (type.isFlexible()) {
+        val boundsForFlexibleLower = approximateCapturedTypes(type.lowerIfFlexible())
+        val boundsForFlexibleUpper = approximateCapturedTypes(type.upperIfFlexible())
+
+        val extraCapabilities = type.flexibility().extraCapabilities
+        return ApproximationBounds(
+                DelegatingFlexibleType.create(
+                        boundsForFlexibleLower.lower.lowerIfFlexible(), boundsForFlexibleUpper.lower.upperIfFlexible(), extraCapabilities),
+                DelegatingFlexibleType.create(
+                        boundsForFlexibleLower.upper.lowerIfFlexible(), boundsForFlexibleUpper.upper.upperIfFlexible(), extraCapabilities))
+    }
+
     val typeConstructor = type.constructor
     if (type.isCaptured()) {
         val typeProjection = (typeConstructor as CapturedTypeConstructor).typeProjection
-        // todo: preserve flexibility as well
         fun KotlinType.makeNullableIfNeeded() = TypeUtils.makeNullableIfNeeded(this, type.isMarkedNullable)
         val bound = typeProjection.type.makeNullableIfNeeded()
 
@@ -112,9 +123,18 @@ public fun approximateCapturedTypes(type: KotlinType): ApproximationBounds<Kotli
     val lowerBoundArguments = ArrayList<TypeArgument>()
     val upperBoundArguments = ArrayList<TypeArgument>()
     for ((typeProjection, typeParameter) in type.arguments.zip(typeConstructor.parameters)) {
-        val (lower, upper) = approximateProjection(typeProjection.toTypeArgument(typeParameter))
-        lowerBoundArguments.add(lower)
-        upperBoundArguments.add(upper)
+        val typeArgument = typeProjection.toTypeArgument(typeParameter)
+
+        // Protection from infinite recursion caused by star projection
+        if (typeProjection.isStarProjection) {
+            lowerBoundArguments.add(typeArgument)
+            upperBoundArguments.add(typeArgument)
+        }
+        else {
+            val (lower, upper) = approximateProjection(typeArgument)
+            lowerBoundArguments.add(lower)
+            upperBoundArguments.add(upper)
+        }
     }
     val lowerBoundIsTrivial = lowerBoundArguments.any { !it.isConsistent }
     return ApproximationBounds(
