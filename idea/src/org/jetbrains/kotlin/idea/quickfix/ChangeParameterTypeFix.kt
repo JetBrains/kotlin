@@ -14,63 +14,47 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.quickfix;
+package org.jetbrains.kotlin.idea.quickfix
 
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.KotlinBundle;
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
-import org.jetbrains.kotlin.idea.util.ShortenReferences;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.types.KotlinType;
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.types.KotlinType
 
-public class ChangeParameterTypeFix extends KotlinQuickFixAction<KtParameter> {
-    private final KotlinType type;
-    private final String containingDeclarationName;
-    private final boolean isPrimaryConstructorParameter;
+class ChangeParameterTypeFix(element: KtParameter, private val type: KotlinType) : KotlinQuickFixAction<KtParameter>(element) {
+    private val containingDeclarationName: String?
+    private val isPrimaryConstructorParameter: Boolean
 
-    public ChangeParameterTypeFix(@NotNull KtParameter element, @NotNull KotlinType type) {
-        super(element);
-        this.type = type;
-        KtNamedDeclaration declaration = PsiTreeUtil.getParentOfType(element, KtNamedDeclaration.class);
-        isPrimaryConstructorParameter = declaration instanceof KtPrimaryConstructor;
-        FqName declarationFQName = declaration == null ? null : declaration.getFqName();
-        containingDeclarationName = declarationFQName != null ? declarationFQName.asString()
-                                                              : declaration != null ? declaration.getName()
-                                                                                    : null;
+    init {
+        val declaration = PsiTreeUtil.getParentOfType(element, KtNamedDeclaration::class.java)
+        val declarationFQName = declaration?.fqName
+        isPrimaryConstructorParameter = declaration is KtPrimaryConstructor
+        containingDeclarationName = if (declarationFQName != null) declarationFQName.asString() else declaration?.name
     }
 
-    @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiFile file) {
-        return super.isAvailable(project, editor, file) && containingDeclarationName != null;
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        return super.isAvailable(project, editor, file) && containingDeclarationName != null
     }
 
-    @NotNull
-    @Override
-    public String getText() {
-        String renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type);
-        return isPrimaryConstructorParameter ?
-               KotlinBundle
-                       .message("change.primary.constructor.parameter.type", getElement().getName(), containingDeclarationName, renderedType) :
-               KotlinBundle.message("change.function.parameter.type", getElement().getName(), containingDeclarationName, renderedType);
+    override fun getText(): String {
+        val renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
+        return if (isPrimaryConstructorParameter)
+            KotlinBundle.message("change.primary.constructor.parameter.type", element.name, containingDeclarationName, renderedType)
+        else
+            KotlinBundle.message("change.function.parameter.type", element.name, containingDeclarationName, renderedType)
     }
 
-    @NotNull
-    @Override
-    public String getFamilyName() {
-        return KotlinBundle.message("change.type.family");
-    }
+    override fun getFamilyName() = KotlinBundle.message("change.type.family")
 
-    @Override
-    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
-        KtTypeReference newTypeRef = KtPsiFactoryKt.KtPsiFactory(file).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
-        newTypeRef = getElement().setTypeReference(newTypeRef);
-        assert newTypeRef != null;
-        ShortenReferences.DEFAULT.process(newTypeRef);
+    public override operator fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val newTypeRef = KtPsiFactory(file).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type))
+        element.setTypeReference(newTypeRef)?.let {
+            ShortenReferences.DEFAULT.process(it)
+        }
     }
 }
