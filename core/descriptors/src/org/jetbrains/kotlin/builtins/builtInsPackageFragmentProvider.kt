@@ -57,7 +57,7 @@ public fun createBuiltInPackageFragmentProvider(
     localClassResolver.setDeserializationComponents(components)
 
     for (packageFragment in packageFragments) {
-        packageFragment.setDeserializationComponents(components)
+        packageFragment.components = components
     }
 
     return provider

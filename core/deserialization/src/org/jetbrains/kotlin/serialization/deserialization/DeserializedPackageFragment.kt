@@ -22,12 +22,13 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.SerializedResourcePaths
+import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
+import java.io.DataInputStream
 import java.io.InputStream
 import javax.inject.Inject
-import kotlin.properties.Delegates
 
 public abstract class DeserializedPackageFragment(
         fqName: FqName,
@@ -37,21 +38,51 @@ public abstract class DeserializedPackageFragment(
         private val loadResource: (path: String) -> InputStream?
 ) : PackageFragmentDescriptorImpl(module, fqName) {
 
-    val nameResolver = NameResolverImpl.read(loadResourceSure(serializedResourcePaths.getStringTableFilePath(fqName)))
+    val builtinsMessage = serializedResourcePaths.getBuiltInsFilePath(fqName)?.let(loadResource)?.let { stream ->
+        val dataInput = DataInputStream(stream)
+        val version = (1..dataInput.readInt()).map { dataInput.readInt() }
 
-    protected var components: DeserializationComponents by Delegates.notNull()
+        // TODO: check version correctly
+        if (!(version.size == 3 && version.let {
+            val (major, minor, patch) = it
+            major == 1 && minor == 0 && patch == 0
+        })) {
+            throw UnsupportedOperationException(
+                    "Kotlin built-in definition format version is not supported: expected 1.0.0, actual ${version.joinToString(".")}"
+            )
+        }
 
-    // component dependency cycle
-    @Inject
-    public fun setDeserializationComponents(components: DeserializationComponents) {
-        this.components = components
+        BuiltInsProtoBuf.BuiltIns.parseFrom(stream, serializedResourcePaths.extensionRegistry)
     }
 
+    val nameResolver =
+            builtinsMessage?.let { NameResolverImpl(it.strings, it.qualifiedNames) } ?:
+            NameResolverImpl.read(loadResourceSure(serializedResourcePaths.getStringTableFilePath(fqName)))
+
+    val classIdToProto = builtinsMessage?.let { builtins ->
+        builtins.classList.toMapBy { klass ->
+            nameResolver.getClassId(klass.fqName)
+        }
+    }
+
+    // component dependency cycle
+    @set:Inject
+    lateinit var components: DeserializationComponents
+
     internal val deserializedMemberScope by storageManager.createLazyValue {
-        val packageStream = loadResourceSure(serializedResourcePaths.getPackageFilePath(fqName))
-        val packageProto = ProtoBuf.Package.parseFrom(packageStream, serializedResourcePaths.extensionRegistry)
-        DeserializedPackageMemberScope(this, packageProto, nameResolver, packagePartSource = null, components = components,
-                                       classNames = { loadClassNames(packageProto) })
+        builtinsMessage?.let { builtins ->
+            DeserializedPackageMemberScope(
+                    this, builtins.`package`, nameResolver, packagePartSource = null, components = components,
+                    classNames = { classIdToProto!!.keys.filter { classId -> !classId.isNestedClass }.map { it.shortClassName } }
+            )
+        } ?: run {
+            val packageStream = loadResourceSure(serializedResourcePaths.getPackageFilePath(fqName))
+            val packageProto = ProtoBuf.Package.parseFrom(packageStream, serializedResourcePaths.extensionRegistry)
+            DeserializedPackageMemberScope(
+                    this, packageProto, nameResolver, packagePartSource = null, components = components,
+                    classNames = { loadClassNames(packageProto) }
+            )
+        }
     }
 
     override fun getMemberScope() = deserializedMemberScope

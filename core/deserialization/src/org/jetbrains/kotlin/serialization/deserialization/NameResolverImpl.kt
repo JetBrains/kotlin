@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.serialization.ProtoBuf.QualifiedNameTable.QualifiedN
 import java.io.InputStream
 import java.util.*
 
-class NameResolverImpl private constructor(
+class NameResolverImpl(
         private val strings: ProtoBuf.StringTable,
         private val qualifiedNames: ProtoBuf.QualifiedNameTable
 ) : NameResolver {

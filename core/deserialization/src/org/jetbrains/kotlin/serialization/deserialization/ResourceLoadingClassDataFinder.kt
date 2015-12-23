@@ -24,21 +24,20 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.SerializedResourcePaths
 import java.io.InputStream
 
-public open class ResourceLoadingClassDataFinder(
+class ResourceLoadingClassDataFinder(
         private val packageFragmentProvider: PackageFragmentProvider,
         private val serializedResourcePaths: SerializedResourcePaths,
         private val loadResource: (path: String) -> InputStream?
 ) : ClassDataFinder {
     override fun findClassData(classId: ClassId): ClassDataWithSource? {
-        val packageFragment = packageFragmentProvider.getPackageFragments(classId.getPackageFqName()).singleOrNull()
+        val packageFragment = packageFragmentProvider.getPackageFragments(classId.packageFqName).singleOrNull()
                                       as? DeserializedPackageFragment ?: return null
 
-        val stream = loadResource(serializedResourcePaths.getClassMetadataPath(classId)) ?: return null
+        val classProto = packageFragment.classIdToProto?.get(classId) ?: run {
+            val stream = loadResource(serializedResourcePaths.getClassMetadataPath(classId)) ?: return null
+            ProtoBuf.Class.parseFrom(stream, serializedResourcePaths.extensionRegistry)
+        }
 
-        val classData = ClassData(
-                packageFragment.nameResolver,
-                ProtoBuf.Class.parseFrom(stream, serializedResourcePaths.extensionRegistry)
-        )
-        return ClassDataWithSource(classData)
+        return ClassDataWithSource(ClassData(packageFragment.nameResolver, classProto))
     }
 }
