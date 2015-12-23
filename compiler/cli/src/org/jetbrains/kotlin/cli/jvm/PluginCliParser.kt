@@ -20,7 +20,6 @@ import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.utils.valuesToMap
 import java.io.File
 import java.net.URL
 import java.net.URLClassLoader
@@ -60,7 +59,7 @@ public object PluginCliParser {
         commandLineProcessors.addAll(BundledCompilerPlugins.commandLineProcessors)
 
         for (processor in commandLineProcessors) {
-            val declaredOptions = processor.pluginOptions.valuesToMap { it.name }
+            val declaredOptions = processor.pluginOptions.toMapBy { it.name }
             val optionsToValues = MultiMap<CliOption, CliOptionValue>()
 
             for (optionValue in optionValuesByPlugin[processor.pluginId].orEmpty()) {

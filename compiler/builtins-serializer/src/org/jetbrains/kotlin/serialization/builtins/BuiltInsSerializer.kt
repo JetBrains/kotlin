@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
-import org.jetbrains.kotlin.utils.recursePostOrder
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 import java.io.File
@@ -99,9 +98,7 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
 
         val moduleDescriptor = resolver.descriptorForModule(builtInModule)
 
-        // We don't use FileUtil because it spawns JNA initialization, which fails because we don't have (and don't want to have) its
-        // native libraries in the compiler jar (libjnidispatch.so / jnidispatch.dll / ...)
-        destDir.recursePostOrder { it.delete() }
+        destDir.deleteRecursively()
 
         if (!destDir.mkdirs()) {
             System.err.println("Could not make directories: " + destDir)

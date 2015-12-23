@@ -36,11 +36,11 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.getJavaMethodDescriptor
-import org.jetbrains.kotlin.idea.refactoring.j2k
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinMethodDescriptor.Kind
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallableDefinitionUsage
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallerUsage
+import org.jetbrains.kotlin.idea.refactoring.j2k
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
@@ -50,7 +50,6 @@ import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmOverloadsAnnotation
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import org.jetbrains.kotlin.utils.keysToMap
-import org.jetbrains.kotlin.utils.removeLast
 import java.util.*
 
 public open class KotlinChangeInfo(
@@ -333,6 +332,11 @@ public open class KotlinChangeInfo(
                 defaultValues.add(getDefaultValue(param)!!)
             }
         }
+    }
+
+    private fun <T> MutableList<T>.removeLast(condition: (T) -> Boolean): T? {
+        val index = indexOfLast(condition)
+        return if (index >= 0) removeAt(index) else null
     }
 
     public fun getOrCreateJavaChangeInfos(): List<JavaChangeInfo>? {

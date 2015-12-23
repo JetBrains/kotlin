@@ -17,8 +17,7 @@
 package org.jetbrains.kotlin.utils.addToStdlib
 
 import java.lang.reflect.Modifier
-import java.util.Collections
-import java.util.NoSuchElementException
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 public fun <T: Any> T?.singletonOrEmptyList(): List<T> = if (this != null) Collections.singletonList(this) else Collections.emptyList()

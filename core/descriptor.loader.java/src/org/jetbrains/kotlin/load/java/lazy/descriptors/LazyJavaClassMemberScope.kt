@@ -604,11 +604,11 @@ public class LazyJavaClassMemberScope(
     }
 
     private val nestedClassIndex = c.storageManager.createLazyValue {
-        jClass.getInnerClasses().valuesToMap { c -> c.getName() }
+        jClass.innerClasses.toMapBy { c -> c.name }
     }
 
     private val enumEntryIndex = c.storageManager.createLazyValue {
-        jClass.getFields().filter { it.isEnumEntry() }.valuesToMap { f -> f.getName() }
+        jClass.fields.filter { it.isEnumEntry }.toMapBy { f -> f.name }
     }
 
     private val nestedClasses = c.storageManager.createMemoizedFunctionWithNullableValues {

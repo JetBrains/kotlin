@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.keysToMapExceptNulls
-import org.jetbrains.kotlin.utils.valuesToMap
 
 fun LazyJavaResolverContext.resolveAnnotation(annotation: JavaAnnotation): LazyJavaAnnotationDescriptor? {
     val classId = annotation.getClassId()
@@ -78,7 +77,7 @@ class LazyJavaAnnotationDescriptor(
         val constructors = getAnnotationClass().getConstructors()
         if (constructors.isEmpty()) return mapOf()
 
-        val nameToArg = javaAnnotation.getArguments().valuesToMap { it.name }
+        val nameToArg = javaAnnotation.getArguments().toMapBy { it.name }
 
         return constructors.first().getValueParameters().keysToMapExceptNulls { valueParameter ->
             var javaAnnotationArgument = nameToArg[valueParameter.getName()]

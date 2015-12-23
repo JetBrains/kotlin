@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
-import org.jetbrains.kotlin.utils.HammingComparator
 import org.jetbrains.kotlin.utils.ifEmpty
 import java.util.*
 
@@ -131,5 +130,15 @@ class RenameUnresolvedReferenceFix(element: KtNameReferenceExpression): KotlinQu
 
         editor.caretModel.moveToOffset(container.startOffset)
         TemplateManager.getInstance(project).startTemplate(editor, builder.buildInlineTemplate())
+    }
+}
+
+private class HammingComparator<T>(private val referenceString: String, private val asString: T.() -> String) : Comparator<T> {
+    private fun countDifference(s1: String): Int {
+        return (0..Math.min(s1.lastIndex, referenceString.lastIndex)).count { s1[it] != referenceString[it] }
+    }
+
+    override fun compare(lookupItem1: T, lookupItem2: T): Int {
+        return countDifference(lookupItem1.asString()) - countDifference(lookupItem2.asString())
     }
 }
