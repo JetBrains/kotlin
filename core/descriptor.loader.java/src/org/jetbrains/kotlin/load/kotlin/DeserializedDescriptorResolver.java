@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName;
 import org.jetbrains.kotlin.resolve.scopes.ChainedMemberScope;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.serialization.ClassData;
@@ -80,7 +79,7 @@ public final class DeserializedDescriptorResolver {
             String[] strings = kotlinClass.getClassHeader().getStrings();
             assert strings != null : "String table not found in " + kotlinClass;
             PackageData packageData = JvmProtoBufUtil.readPackageDataFrom(data, strings);
-            JvmPackagePartSource source = new JvmPackagePartSource(JvmClassName.byClassId(kotlinClass.getClassId()));
+            JvmPackagePartSource source = new JvmPackagePartSource(kotlinClass.getClassId());
             return new DeserializedPackageMemberScope(
                     descriptor, packageData.getPackageProto(), packageData.getNameResolver(), source, components,
                     new Function0<Collection<Name>>() {

@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.PackagePartSource
 
 class JvmPackagePartSource(val className: JvmClassName) : PackagePartSource {
+    constructor(classId: ClassId) : this(JvmClassName.byClassId(classId))
+
     val simpleName: Name get() = Name.identifier(className.internalName.substringAfterLast('/'))
 
     val classId: ClassId get() = ClassId(className.packageFqName, simpleName)

@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.serialization.ClassDataWithSource
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
@@ -81,8 +80,7 @@ public class DeserializerForClassfileDecompiler(
         val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(annotationData, strings)
         val membersScope = DeserializedPackageMemberScope(
                 createDummyPackageFragment(packageFqName), packageProto, nameResolver,
-                JvmPackagePartSource(JvmClassName.byClassId(binaryClassForPackageClass!!.classId)),
-                deserializationComponents
+                JvmPackagePartSource(binaryClassForPackageClass!!.classId), deserializationComponents
         ) { emptyList() }
         return membersScope.getContributedDescriptors().toList()
     }
