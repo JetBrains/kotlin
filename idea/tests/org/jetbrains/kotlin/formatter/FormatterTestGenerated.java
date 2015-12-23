@@ -517,6 +517,12 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ValVarSpaces.after.kt")
+        public void testValVarSpaces() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/ValVarSpaces.after.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("When.after.kt")
         public void testWhen() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/formatter/When.after.kt");
