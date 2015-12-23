@@ -1,1 +1,1 @@
-New instance creation (10: 33) open fun processRequest() = Foo()
+New instance creation 10 open fun processRequest() = Foo()

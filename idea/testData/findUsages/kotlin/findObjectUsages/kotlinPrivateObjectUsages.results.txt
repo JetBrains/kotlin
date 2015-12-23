@@ -1,1 +1,1 @@
-Value read (10: 33) open fun processRequest() = Foo
+Value read 10 open fun processRequest() = Foo

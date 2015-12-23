@@ -1,6 +1,6 @@
-Value read (4: 22) println("${a.a} ${a.b}")
-Value read (4: 29) println("${a.a} ${a.b}")
-Value read (5: 22) println("${a.t} ${a.u}")
-Value read (5: 29) println("${a.t} ${a.u}")
-Value write (6: 11) a.b = 12
-Value write (7: 11) a.u = 13
+Value read 4 println("${a.a} ${a.b}")
+Value read 4 println("${a.a} ${a.b}")
+Value read 5 println("${a.t} ${a.u}")
+Value read 5 println("${a.t} ${a.u}")
+Value write 6 a.b = 12
+Value write 7 a.u = 13

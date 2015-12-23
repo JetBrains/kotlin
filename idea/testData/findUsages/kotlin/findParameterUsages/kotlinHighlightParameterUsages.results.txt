@@ -1,1 +1,1 @@
-Value read (9: 17) println(foo) // not highlighted `foo`
+Value read 9 println(foo) // not highlighted `foo`

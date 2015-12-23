@@ -1,4 +1,4 @@
-[LibraryPrimaryConstructorUsages.0.kt] New instance creation (17: 14) val aa = A(1)
-[LibraryPrimaryConstructorUsages.0.kt] Supertype (13: 12) class Y(): A(1)
-[library.kt] New instance creation (57: 13) val a = A(1)
-[library.kt] Supertype (27: 12) class C(): A(1) {
+[LibraryPrimaryConstructorUsages.0.kt] New instance creation 17 val aa = A(1)
+[LibraryPrimaryConstructorUsages.0.kt] Supertype 13 class Y(): A(1)
+[library.kt] New instance creation 57 val a = A(1)
+[library.kt] Supertype 27 class C(): A(1) {

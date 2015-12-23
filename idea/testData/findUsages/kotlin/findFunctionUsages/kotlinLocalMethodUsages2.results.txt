@@ -1,2 +1,1 @@
-Function call (9: 9) bar()
-
+Function call 9 bar()

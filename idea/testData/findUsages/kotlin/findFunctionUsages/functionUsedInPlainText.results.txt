@@ -1,1 +1,1 @@
-Unclassified usage (1: 10) Function foo is defined in class Foo
+Unclassified usage 1 Function foo is defined in class Foo

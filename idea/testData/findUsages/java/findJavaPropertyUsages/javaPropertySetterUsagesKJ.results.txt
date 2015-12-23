@@ -1,4 +1,4 @@
-[javaPropertySetterUsagesKJ.0.java] Unclassified usage (24: 17) new J().setP(1);
-[javaPropertySetterUsagesKJ.0.java] Unclassified usage (27: 17) new B().setP(1);
-[javaPropertySetterUsagesKJ.1.kt] Value write (21: 9) J().p = 1
-[javaPropertySetterUsagesKJ.1.kt] Value write (24: 9) B().p = 1
+[javaPropertySetterUsagesKJ.0.java] Unclassified usage 24 new J().setP(1);
+[javaPropertySetterUsagesKJ.0.java] Unclassified usage 27 new B().setP(1);
+[javaPropertySetterUsagesKJ.1.kt] Value write 21 J().p = 1
+[javaPropertySetterUsagesKJ.1.kt] Value write 24 B().p = 1
