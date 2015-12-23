@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.SerializedResourcePaths
 
-public object KotlinJavascriptSerializedResourcePaths : SerializedResourcePaths() {
-    public override val extensionRegistry: ExtensionRegistryLite = ExtensionRegistryLite.newInstance()
+object KotlinJavascriptSerializedResourcePaths : SerializedResourcePaths {
+    override val extensionRegistry: ExtensionRegistryLite = ExtensionRegistryLite.newInstance()
 
     init {
         JsProtoBuf.registerAllExtensions(extensionRegistry)
@@ -32,7 +32,7 @@ public object KotlinJavascriptSerializedResourcePaths : SerializedResourcePaths(
     private val CLASSES_FILE_EXTENSION = "kotlin_classes"
     private val STRING_TABLE_FILE_EXTENSION = "kotlin_string_table"
 
-    public fun getClassesInPackageFilePath(fqName: FqName): String =
+    fun getClassesInPackageFilePath(fqName: FqName): String =
             fqName.toPath().withSepIfNotEmpty() + shortName(fqName) + "." + CLASSES_FILE_EXTENSION
 
 
