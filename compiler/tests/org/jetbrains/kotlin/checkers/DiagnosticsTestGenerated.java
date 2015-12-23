@@ -7130,9 +7130,21 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/tests/generics/projectionsScope"), Pattern.compile("^(.+)\\.kt$"), true);
                 }
 
+                @TestMetadata("approximateDispatchReceiver.kt")
+                public void testApproximateDispatchReceiver() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/projectionsScope/approximateDispatchReceiver.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("extensionResultSubstitution.kt")
                 public void testExtensionResultSubstitution() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/projectionsScope/extensionResultSubstitution.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("flexibleProjectedScope.kt")
+                public void testFlexibleProjectedScope() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/projectionsScope/flexibleProjectedScope.kt");
                     doTest(fileName);
                 }
 
@@ -7169,6 +7181,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 @TestMetadata("recursiveUpperBoundStar.kt")
                 public void testRecursiveUpperBoundStar() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/projectionsScope/recursiveUpperBoundStar.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("recursiveUpperBoundStarOut.kt")
+                public void testRecursiveUpperBoundStarOut() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/generics/projectionsScope/recursiveUpperBoundStarOut.kt");
                     doTest(fileName);
                 }
 
