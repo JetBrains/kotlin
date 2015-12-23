@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticRenderer;
 import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.KtReferenceExpression;
+import org.jetbrains.kotlin.psi.KtWhenExpression;
 import org.jetbrains.kotlin.resolve.AnalyzingUtils;
 import org.jetbrains.kotlin.resolve.BindingContext;
 
@@ -163,6 +164,11 @@ public class CheckerTestUtil {
         for (KtExpression expression : bindingContext.getSliceContents(BindingContext.SMARTCAST_NULL).keySet()) {
             if (PsiTreeUtil.isAncestor(root, expression, false)) {
                 debugAnnotations.add(new DebugInfoDiagnostic(expression, DebugInfoDiagnosticFactory.CONSTANT));
+            }
+        }
+        for (KtWhenExpression expression : bindingContext.getSliceContents(BindingContext.IMPLICIT_EXHAUSTIVE_WHEN).keySet()) {
+            if (PsiTreeUtil.isAncestor(root, expression, false)) {
+                debugAnnotations.add(new DebugInfoDiagnostic(expression, DebugInfoDiagnosticFactory.IMPLICIT_EXHAUSTIVE));
             }
         }
         return debugAnnotations;
@@ -527,6 +533,7 @@ public class CheckerTestUtil {
         public static final DebugInfoDiagnosticFactory SMARTCAST = new DebugInfoDiagnosticFactory("SMARTCAST");
         public static final DebugInfoDiagnosticFactory IMPLICIT_RECEIVER_SMARTCAST = new DebugInfoDiagnosticFactory("IMPLICIT_RECEIVER_SMARTCAST");
         public static final DebugInfoDiagnosticFactory CONSTANT = new DebugInfoDiagnosticFactory("CONSTANT");
+        public static final DebugInfoDiagnosticFactory IMPLICIT_EXHAUSTIVE = new DebugInfoDiagnosticFactory("IMPLICIT_EXHAUSTIVE");
         public static final DebugInfoDiagnosticFactory ELEMENT_WITH_ERROR_TYPE = new DebugInfoDiagnosticFactory("ELEMENT_WITH_ERROR_TYPE");
         public static final DebugInfoDiagnosticFactory UNRESOLVED_WITH_TARGET = new DebugInfoDiagnosticFactory("UNRESOLVED_WITH_TARGET");
         public static final DebugInfoDiagnosticFactory MISSING_UNRESOLVED = new DebugInfoDiagnosticFactory("MISSING_UNRESOLVED");
