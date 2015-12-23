@@ -96,8 +96,15 @@ public class InliningContext {
             boolean isInliningLambda,
             boolean isRegeneration
     ) {
+        //isInliningLambda && !this.isInliningLambda for root inline lambda
         return new InliningContext(this, expressionMap, state, generator,
-                                   TypeRemapper.createFrom(typeRemapper, additionalTypeMappings), reifedTypeInliner, isInliningLambda, isRegeneration);
+                                   TypeRemapper.createFrom(
+                                           typeRemapper,
+                                           additionalTypeMappings,
+                                           //root inline lambda
+                                           isInliningLambda && !this.isInliningLambda
+                                   ),
+                                   reifedTypeInliner, isInliningLambda, isRegeneration);
     }
 
     public boolean isRoot() {

@@ -21,7 +21,7 @@ import java.util.HashMap
 class TypeParameter(val oldName: String, val  newName: String?, val isReified: Boolean, val signature: String?)
 
 //typeMapping data could be changed outside through method processing
-class TypeRemapper private constructor(private val typeMapping: MutableMap<String, String>, val parent: TypeRemapper?) {
+class TypeRemapper private constructor(private val typeMapping: MutableMap<String, String>, val parent: TypeRemapper?, val isInlineLambda: Boolean = false) {
 
     private var additionalMappings: MutableMap<String, String> = hashMapOf()
 
@@ -56,7 +56,7 @@ class TypeRemapper private constructor(private val typeMapping: MutableMap<Strin
     }
 
     fun mapTypeParameter(name: String): TypeParameter? {
-        return typeParametersMapping[name] ?: parent?.mapTypeParameter(name)
+        return typeParametersMapping[name] ?: if (!isInlineLambda) parent?.mapTypeParameter(name) else null
     }
 
     companion object {
@@ -76,8 +76,9 @@ class TypeRemapper private constructor(private val typeMapping: MutableMap<Strin
         }
 
         @JvmStatic
-        fun createFrom(remapper: TypeRemapper, mappings: MutableMap<String, String>): TypeRemapper {
-            return TypeRemapper(createNewAndMerge(remapper, mappings), remapper)
+        @JvmOverloads
+        fun createFrom(remapper: TypeRemapper, mappings: MutableMap<String, String>, isInlineLambda: Boolean = false): TypeRemapper {
+            return TypeRemapper(createNewAndMerge(remapper, mappings), remapper, isInlineLambda)
         }
 
         private fun createNewAndMerge(remapper: TypeRemapper, additionalTypeMappings: Map<String, String>): MutableMap<String, String> {
