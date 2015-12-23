@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.jps.incremental
 import com.google.protobuf.MessageLite
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtil.toSystemIndependentName
+import com.intellij.util.SmartList
 import com.intellij.util.io.BooleanDataDescriptor
 import com.intellij.util.io.EnumeratorStringDescriptor
 import gnu.trove.THashSet
@@ -371,20 +372,19 @@ class IncrementalCacheImpl(
 
             if (oldData == null || !checkChangesIsOpenPart) return CompilationResult(protoChanged = true)
 
-            val diff = difference(oldData, data)
-
-            if (!IncrementalCompilation.isExperimental()) return CompilationResult(protoChanged = diff != DifferenceKind.NONE)
-
+            val difference = difference(oldData, data)
             val fqName = if (isPackage) className.packageFqName else className.fqNameForClassNameWithoutDollars
+            val changeList = SmartList<ChangeInfo>()
 
-            val changes =
-                    when (diff) {
-                        is DifferenceKind.NONE -> emptySequence<ChangeInfo>()
-                        is DifferenceKind.CLASS_SIGNATURE -> sequenceOf(ChangeInfo.SignatureChanged(fqName))
-                        is DifferenceKind.MEMBERS -> sequenceOf(ChangeInfo.MembersChanged(fqName, diff.names))
-                    }
+            if (difference.isClassSignatureChanged) {
+                changeList.add(ChangeInfo.SignatureChanged(fqName))
+            }
 
-            return CompilationResult(protoChanged = diff != DifferenceKind.NONE, changes = changes)
+            if (difference.changedMembersNames.isNotEmpty()) {
+                changeList.add(ChangeInfo.MembersChanged(fqName, difference.changedMembersNames))
+            }
+
+            return CompilationResult(protoChanged = changeList.isNotEmpty(), changes = changeList.asSequence())
         }
 
         operator fun contains(className: JvmClassName): Boolean =

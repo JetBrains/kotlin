@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.jps.incremental
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.UsefulTestCase
+import com.intellij.util.SmartList
 import org.jetbrains.kotlin.jps.incremental.storage.ProtoMapValue
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleFileFacadeKind
@@ -112,16 +113,21 @@ abstract class AbstractProtoComparisonTest : UsefulTestCase() {
             }
         }
 
-        val changes = when (diff) {
-            is DifferenceKind.NONE ->
-                "NONE"
-            is DifferenceKind.CLASS_SIGNATURE ->
-                "CLASS_SIGNATURE"
-            is DifferenceKind.MEMBERS ->
-                "MEMBERS\n    ${diff.names.sorted()}"
+        val changes = SmartList<String>()
+
+        if (diff.isClassSignatureChanged) {
+            changes.add("CLASS_SIGNATURE")
         }
 
-        println("changes in ${oldLocalFileKotlinClass.classId}: $changes")
+        if (diff.changedMembersNames.isNotEmpty()) {
+            changes.add("MEMBERS\n    ${diff.changedMembersNames.sorted()}")
+        }
+
+        if (changes.isEmpty()) {
+            changes.add("NONE")
+        }
+
+        println("changes in ${oldLocalFileKotlinClass.classId}: ${changes.joinToString()}")
     }
 
     private fun File.createSubDirectory(relativePath: String): File {

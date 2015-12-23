@@ -1,1 +1,2 @@
-changes in test/ClassWithClassAnnotationListChanged: CLASS_SIGNATURE
+changes in test/ClassWithClassAnnotationListChanged: CLASS_SIGNATURE, MEMBERS
+    [<init>]
