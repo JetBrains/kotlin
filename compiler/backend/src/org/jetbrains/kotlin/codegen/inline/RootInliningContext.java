@@ -40,7 +40,7 @@ public class RootInliningContext extends InliningContext {
             @NotNull ReifiedTypeInliner inliner,
             @Nullable TypeParameterMappings typeParameterMappings
     ) {
-        super(null, map, state, nameGenerator, TypeRemapper.createEmpty(), inliner, false, false);
+        super(null, map, state, nameGenerator, TypeRemapper.createRoot(typeParameterMappings), inliner, false, false);
         this.callElement = callElement;
         this.startContext = startContext;
         this.classNameToInline = classNameToInline;

@@ -158,7 +158,7 @@ public class MethodInliner {
                 resultNode.access,
                 resultNode.desc,
                 resultNode,
-                new AsmTypeRemapper(remapper, inliningContext.getRoot().typeParameterMappings, result)
+                new AsmTypeRemapper(remapper, inliningContext.getRoot().typeParameterMappings == null, result)
         );
 
         final int markerShift = InlineCodegenUtil.calcMarkerShift(parameters, node);

@@ -21,24 +21,22 @@ import org.jetbrains.org.objectweb.asm.commons.RemappingSignatureAdapter
 import org.jetbrains.org.objectweb.asm.signature.SignatureReader
 import org.jetbrains.org.objectweb.asm.signature.SignatureVisitor
 
-class AsmTypeRemapper(val typeRemapper: TypeRemapper, val mappings: TypeParameterMappings?, val result: InlineResult) : Remapper() {
+class AsmTypeRemapper(val typeRemapper: TypeRemapper, val isDefaultGeneration: Boolean, val result: InlineResult) : Remapper() {
 
     override fun map(type: String): String {
         return typeRemapper.map(type)
     }
 
-
     override fun createRemappingSignatureAdapter(v: SignatureVisitor?): SignatureVisitor {
-        if (mappings == null) {
-            //don't remap default generation
+        if (isDefaultGeneration) {
             return super.createRemappingSignatureAdapter(v);
         }
 
         return object : RemappingSignatureAdapter(v, this) {
 
             override fun visitTypeVariable(name: String) {
-                val mapping = getMappingByName(name) ?:
-                              return super.visitTypeVariable(name)
+                /*TODO try to erase absent type variable*/
+                val mapping = typeRemapper.mapTypeParameter(name) ?: return super.visitTypeVariable(name)
 
                 if (mapping.newName != null) {
                     if (mapping.isReified) {
@@ -51,19 +49,9 @@ class AsmTypeRemapper(val typeRemapper: TypeRemapper, val mappings: TypeParamete
             }
 
             override fun visitFormalTypeParameter(name: String) {
-                val mapping: TypeParameterMapping = getMappingByName(name) ?:
-                                   return super.visitFormalTypeParameter(name)
-                if (mapping.newName != null ) {
-                    if (mapping.isReified) {
-                        result.reifiedTypeParametersUsages.addUsedReifiedParameter(mapping.newName)
-                    }
-                    super.visitFormalTypeParameter(mapping.newName)
-                }
+                typeRemapper.registerTypeParameter(name)
+                super.visitFormalTypeParameter(name)
             }
-
-            private fun getMappingByName(name: String): TypeParameterMapping? = mappings[name]
         }
     }
-
-
 }

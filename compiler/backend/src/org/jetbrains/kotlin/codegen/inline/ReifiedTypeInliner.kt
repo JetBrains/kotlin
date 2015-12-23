@@ -232,6 +232,10 @@ class TypeParameterMappings() {
     }
 
     fun hasReifiedParameters() = mappingsByName.values.any { it.isReified }
+
+    internal inline fun forEach(l: (TypeParameterMapping) -> Unit)  {
+        mappingsByName.values.forEach(l)
+    }
 }
 
 class TypeParameterMapping(

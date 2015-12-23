@@ -82,7 +82,7 @@ public class InliningContext {
             @NotNull AnonymousObjectGeneration anonymousObjectGeneration
     ) {
         return new RegeneratedClassContext(this, expressionMap, state, generator,
-                                           new TypeRemapper(typeRemapper, newTypeMappings),
+                                           TypeRemapper.createFrom(typeRemapper, newTypeMappings),
                                            reifedTypeInliner, isInliningLambda, anonymousObjectGeneration);
     }
 
@@ -97,7 +97,7 @@ public class InliningContext {
             boolean isRegeneration
     ) {
         return new InliningContext(this, expressionMap, state, generator,
-                                   new TypeRemapper(typeRemapper, additionalTypeMappings), reifedTypeInliner, isInliningLambda, isRegeneration);
+                                   TypeRemapper.createFrom(typeRemapper, additionalTypeMappings), reifedTypeInliner, isInliningLambda, isRegeneration);
     }
 
     public boolean isRoot() {

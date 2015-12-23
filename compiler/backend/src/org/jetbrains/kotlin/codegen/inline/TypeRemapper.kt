@@ -14,69 +14,76 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.codegen.inline;
+package org.jetbrains.kotlin.codegen.inline
 
-import org.jetbrains.annotations.NotNull;
+import java.util.HashMap
 
-import java.util.HashMap;
-import java.util.Map;
+class TypeParameter(val oldName: String, val  newName: String?, val isReified: Boolean, val signature: String?)
 
-public class TypeRemapper {
-    //typeMapping field could be changed outside through method processing
-    private final Map<String, String> typeMapping;
+//typeMapping data could be changed outside through method processing
+class TypeRemapper private constructor(private val typeMapping: MutableMap<String, String>, val parent: TypeRemapper?) {
 
-    private Map<String, String> additionalMappings;
+    private var additionalMappings: MutableMap<String, String> = hashMapOf()
 
-    //typeMapping field could be changed outside through method processing
-    private TypeRemapper(@NotNull Map<String, String> typeMapping) {
-        this.typeMapping = typeMapping;
+
+    private val typeParametersMapping: MutableMap<String, TypeParameter> = hashMapOf()
+
+    fun addMapping(type: String, newType: String) {
+        typeMapping.put(type, newType)
     }
 
-    public TypeRemapper(@NotNull TypeRemapper remapper, @NotNull Map<String, String> newTypeMappings) {
-        this(createNewAndMerge(remapper, newTypeMappings));
+    fun hasNoAdditionalMapping(type: String): Boolean {
+        return typeMapping.containsKey(type)
     }
 
-    public static TypeRemapper createEmpty() {
-        return new TypeRemapper(new HashMap<String, String>());
+    fun map(type: String): String {
+        return typeMapping[type] ?: additionalMappings?.get(type) ?: type
     }
 
-    public static TypeRemapper createFrom(Map<String, String> mappings) {
-        return new TypeRemapper(mappings);
+    fun addAdditionalMappings(oldName: String, newName: String) {
+        additionalMappings!!.put(oldName, newName)
     }
 
-    @NotNull
-    private static Map<String, String> createNewAndMerge(@NotNull TypeRemapper remapper, @NotNull Map<String, String> additionalTypeMappings) {
-        Map<String, String> map = new HashMap<String, String>(remapper.typeMapping);
-        map.putAll(additionalTypeMappings);
-        return map;
-    }
-
-    public void addMapping(String type, String newType) {
-        typeMapping.put(type, newType);
-    }
-
-    public boolean hasNoAdditionalMapping(String type) {
-        return typeMapping.containsKey(type);
-    }
-
-    public String map(String type) {
-        String newType = typeMapping.get(type);
-        if (newType != null) {
-            return newType;
+    fun registerTypeParameter(name: String) {
+        assert(typeParametersMapping[name] == null) {
+            "Type parameter already registered $name"
         }
+        typeParametersMapping[name] = TypeParameter(name, name, false, null)
+    }
 
-        if (additionalMappings != null) {
-            newType = additionalMappings.get(type);
-            if (newType != null) {
-                return newType;
+    fun registerTypeParameter(mapping: TypeParameterMapping) {
+        typeParametersMapping[mapping.name] = TypeParameter(mapping.name, mapping.newName, mapping.isReified, mapping.signature)
+    }
+
+    fun mapTypeParameter(name: String): TypeParameter? {
+        return typeParametersMapping[name] ?: parent?.mapTypeParameter(name)
+    }
+
+    companion object {
+
+        @JvmStatic
+        fun createRoot(formalTypeParameters: TypeParameterMappings?): TypeRemapper {
+            val typeRemapper = TypeRemapper(HashMap<String, String>(), null)
+            formalTypeParameters?.forEach {
+                typeRemapper.registerTypeParameter(it)
             }
+            return typeRemapper
         }
 
-        return type;
-    }
+        @JvmStatic
+        fun createFrom(mappings: MutableMap<String, String>): TypeRemapper {
+            return TypeRemapper(mappings, null)
+        }
 
-    public void addAdditionalMappings(String oldName, String newName) {
-        if (additionalMappings == null) additionalMappings = new HashMap<String, String>();
-        additionalMappings.put(oldName, newName);
+        @JvmStatic
+        fun createFrom(remapper: TypeRemapper, mappings: MutableMap<String, String>): TypeRemapper {
+            return TypeRemapper(createNewAndMerge(remapper, mappings), remapper)
+        }
+
+        private fun createNewAndMerge(remapper: TypeRemapper, additionalTypeMappings: Map<String, String>): MutableMap<String, String> {
+            val map = HashMap(remapper.typeMapping)
+            map += additionalTypeMappings
+            return map
+        }
     }
 }
