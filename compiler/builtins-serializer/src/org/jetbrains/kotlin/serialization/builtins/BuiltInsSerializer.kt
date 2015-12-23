@@ -22,6 +22,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.ModuleContent
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.builtins.BuiltInsSerializedResourcePaths
+import org.jetbrains.kotlin.builtins.BuiltinsPackageFragment
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -149,11 +150,9 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
 
         val builtinsFileStream = ByteArrayOutputStream()
         with(DataOutputStream(builtinsFileStream)) {
-            // TODO: write version properly
-            writeInt(3)
-            writeInt(1)
-            writeInt(0)
-            writeInt(0)
+            val version = BuiltinsPackageFragment.VERSION.toArray()
+            writeInt(version.size)
+            version.forEach { writeInt(it) }
         }
         message.build().writeTo(builtinsFileStream)
         write(destDir, BuiltInsSerializedResourcePaths.getBuiltInsFilePath(fqName), builtinsFileStream)

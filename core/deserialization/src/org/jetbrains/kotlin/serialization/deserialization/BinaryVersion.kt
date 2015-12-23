@@ -25,6 +25,17 @@ data class BinaryVersion private constructor(
     fun toArray(): IntArray =
             intArrayOf(major, minor, patch, *rest.toIntArray())
 
+    /**
+     * Returns true if this version of some format loaded from some binaries is compatible
+     * to the expected version of that format in the current compiler.
+     *
+     * @param ourVersion the version of this format in the current compiler
+     */
+    fun isCompatibleTo(ourVersion: BinaryVersion): Boolean {
+        return if (major == 0) ourVersion.major == 0 && minor == ourVersion.minor
+        else major == ourVersion.major && minor <= ourVersion.minor
+    }
+
     override fun toString(): String {
         val versions = toArray().takeWhile { it != UNKNOWN }
         return if (versions.isEmpty()) "unknown" else versions.joinToString(".")

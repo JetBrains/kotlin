@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+import org.jetbrains.kotlin.builtins.BuiltinsPackageFragment
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
@@ -40,15 +41,14 @@ public abstract class DeserializedPackageFragment(
 
     val builtinsMessage = serializedResourcePaths.getBuiltInsFilePath(fqName)?.let(loadResource)?.let { stream ->
         val dataInput = DataInputStream(stream)
-        val version = (1..dataInput.readInt()).map { dataInput.readInt() }
+        val version = BinaryVersion.create((1..dataInput.readInt()).map { dataInput.readInt() }.toIntArray())
 
-        // TODO: check version correctly
-        if (!(version.size == 3 && version.let {
-            val (major, minor, patch) = it
-            major == 1 && minor == 0 && patch == 0
-        })) {
+        if (!version.isCompatibleTo(BuiltinsPackageFragment.VERSION)) {
+            // TODO: report a proper diagnostic
             throw UnsupportedOperationException(
-                    "Kotlin built-in definition format version is not supported: expected 1.0.0, actual ${version.joinToString(".")}"
+                    "Kotlin built-in definition format version is not supported: " +
+                    "expected ${BuiltinsPackageFragment.VERSION}, actual $version. " +
+                    "Please update Kotlin"
             )
         }
 
