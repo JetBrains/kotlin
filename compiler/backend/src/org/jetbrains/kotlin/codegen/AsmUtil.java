@@ -836,13 +836,6 @@ public class AsmUtil {
     }
 
     @NotNull
-    public static String shortNameByAsmType(@NotNull Type type) {
-        String internalName = type.getInternalName();
-        int lastSlash = internalName.lastIndexOf('/');
-        return lastSlash < 0 ? internalName : internalName.substring(lastSlash + 1);
-    }
-
-    @NotNull
     public static Type asmTypeByFqNameWithoutInnerClasses(@NotNull FqName fqName) {
         return Type.getObjectType(internalNameByFqNameWithoutInnerClasses(fqName));
     }

@@ -36,12 +36,6 @@ public final class JvmSerializationBindings {
             SerializationMappingSlice.create();
     public static final SerializationMappingSlice<PropertyDescriptor, Method> SYNTHETIC_METHOD_FOR_PROPERTY =
             SerializationMappingSlice.create();
-    public static final SerializationMappingSlice<FunctionDescriptor, String> METHOD_IMPL_CLASS_NAME =
-            SerializationMappingSlice.create();
-    public static final SerializationMappingSlice<PropertyDescriptor, String> PROPERTY_IMPL_CLASS_NAME =
-            SerializationMappingSlice.create();
-    public static final SerializationMappingSetSlice<PropertyDescriptor> STATIC_FIELD_IN_OUTER_CLASS =
-            SerializationMappingSetSlice.create();
     public static final SerializationMappingSlice<ValueParameterDescriptor, Integer> INDEX_FOR_VALUE_PARAMETER =
             SerializationMappingSlice.create();
 

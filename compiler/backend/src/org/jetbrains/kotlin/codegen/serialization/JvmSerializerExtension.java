@@ -109,11 +109,6 @@ public class JvmSerializerExtension extends SerializerExtension {
                 proto.setExtension(JvmProtoBuf.methodSignature, signature);
             }
         }
-
-        String name = bindings.get(METHOD_IMPL_CLASS_NAME, descriptor);
-        if (name != null) {
-            proto.setExtension(JvmProtoBuf.methodImplClassName, stringTable.getStringIndex(name));
-        }
     }
 
     @Override
@@ -126,35 +121,18 @@ public class JvmSerializerExtension extends SerializerExtension {
         Method setterMethod = setter == null ? null : bindings.get(METHOD_FOR_FUNCTION, setter);
 
         Pair<Type, String> field = bindings.get(FIELD_FOR_PROPERTY, descriptor);
-        String fieldName;
-        String fieldDesc;
-        boolean isStaticInOuter;
-        if (field != null) {
-            fieldName = field.second;
-            fieldDesc = field.first.getDescriptor();
-            isStaticInOuter = bindings.get(STATIC_FIELD_IN_OUTER_CLASS, descriptor);
-        }
-        else {
-            fieldName = null;
-            fieldDesc = null;
-            isStaticInOuter = false;
-        }
-
         Method syntheticMethod = bindings.get(SYNTHETIC_METHOD_FOR_PROPERTY, descriptor);
 
         JvmProtoBuf.JvmPropertySignature signature = signatureSerializer.propertySignature(
-                descriptor, fieldName, fieldDesc, isStaticInOuter,
+                descriptor,
+                field != null ? field.second : null,
+                field != null ? field.first.getDescriptor() : null,
                 syntheticMethod != null ? signatureSerializer.methodSignature(null, syntheticMethod) : null,
                 getterMethod != null ? signatureSerializer.methodSignature(null, getterMethod) : null,
                 setterMethod != null ? signatureSerializer.methodSignature(null, setterMethod) : null
         );
 
         proto.setExtension(JvmProtoBuf.propertySignature, signature);
-
-        String name = bindings.get(PROPERTY_IMPL_CLASS_NAME, descriptor);
-        if (name != null) {
-            proto.setExtension(JvmProtoBuf.propertyImplClassName, stringTable.getStringIndex(name));
-        }
     }
 
     private class SignatureSerializer {
@@ -230,7 +208,6 @@ public class JvmSerializerExtension extends SerializerExtension {
                 @NotNull PropertyDescriptor descriptor,
                 @Nullable String fieldName,
                 @Nullable String fieldDesc,
-                boolean isStaticInOuter,
                 @Nullable JvmProtoBuf.JvmMethodSignature syntheticMethod,
                 @Nullable JvmProtoBuf.JvmMethodSignature getter,
                 @Nullable JvmProtoBuf.JvmMethodSignature setter
@@ -239,7 +216,7 @@ public class JvmSerializerExtension extends SerializerExtension {
 
             if (fieldDesc != null) {
                 assert fieldName != null : "Field name shouldn't be null when there's a field type: " + fieldDesc;
-                signature.setField(fieldSignature(descriptor, fieldName, fieldDesc, isStaticInOuter));
+                signature.setField(fieldSignature(descriptor, fieldName, fieldDesc));
             }
 
             if (syntheticMethod != null) {
@@ -260,8 +237,7 @@ public class JvmSerializerExtension extends SerializerExtension {
         public JvmProtoBuf.JvmFieldSignature fieldSignature(
                 @NotNull PropertyDescriptor descriptor,
                 @NotNull String name,
-                @NotNull String desc,
-                boolean isStaticInOuter
+                @NotNull String desc
         ) {
             JvmProtoBuf.JvmFieldSignature.Builder builder = JvmProtoBuf.JvmFieldSignature.newBuilder();
             if (!descriptor.getName().asString().equals(name)) {
@@ -269,9 +245,6 @@ public class JvmSerializerExtension extends SerializerExtension {
             }
             if (requiresSignature(descriptor, desc)) {
                 builder.setDesc(stringTable.getStringIndex(desc));
-            }
-            if (isStaticInOuter) {
-                builder.setIsStaticInOuter(true);
             }
             return builder.build();
         }

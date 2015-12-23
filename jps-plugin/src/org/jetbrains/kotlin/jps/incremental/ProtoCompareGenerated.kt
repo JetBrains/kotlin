@@ -212,11 +212,6 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
             if (!checkEquals(old.getExtension(JvmProtoBuf.methodSignature), new.getExtension(JvmProtoBuf.methodSignature))) return false
         }
 
-        if (old.hasExtension(JvmProtoBuf.methodImplClassName) != new.hasExtension(JvmProtoBuf.methodImplClassName)) return false
-        if (old.hasExtension(JvmProtoBuf.methodImplClassName)) {
-            if (!checkStringEquals(old.getExtension(JvmProtoBuf.methodImplClassName), new.getExtension(JvmProtoBuf.methodImplClassName))) return false
-        }
-
         return true
     }
 
@@ -268,11 +263,6 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
         if (old.hasExtension(JvmProtoBuf.propertySignature) != new.hasExtension(JvmProtoBuf.propertySignature)) return false
         if (old.hasExtension(JvmProtoBuf.propertySignature)) {
             if (!checkEquals(old.getExtension(JvmProtoBuf.propertySignature), new.getExtension(JvmProtoBuf.propertySignature))) return false
-        }
-
-        if (old.hasExtension(JvmProtoBuf.propertyImplClassName) != new.hasExtension(JvmProtoBuf.propertyImplClassName)) return false
-        if (old.hasExtension(JvmProtoBuf.propertyImplClassName)) {
-            if (!checkStringEquals(old.getExtension(JvmProtoBuf.propertyImplClassName), new.getExtension(JvmProtoBuf.propertyImplClassName))) return false
         }
 
         return true
@@ -522,11 +512,6 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
         if (old.hasDesc() != new.hasDesc()) return false
         if (old.hasDesc()) {
             if (!checkStringEquals(old.desc, new.desc)) return false
-        }
-
-        if (old.hasIsStaticInOuter() != new.hasIsStaticInOuter()) return false
-        if (old.hasIsStaticInOuter()) {
-            if (old.isStaticInOuter != new.isStaticInOuter) return false
         }
 
         return true
@@ -924,10 +909,6 @@ public fun ProtoBuf.Function.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes
         hashCode = 31 * hashCode + getExtension(JvmProtoBuf.methodSignature).hashCode(stringIndexes, fqNameIndexes)
     }
 
-    if (hasExtension(JvmProtoBuf.methodImplClassName)) {
-        hashCode = 31 * hashCode + stringIndexes(getExtension(JvmProtoBuf.methodImplClassName))
-    }
-
     return hashCode
 }
 
@@ -974,10 +955,6 @@ public fun ProtoBuf.Property.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes
 
     if (hasExtension(JvmProtoBuf.propertySignature)) {
         hashCode = 31 * hashCode + getExtension(JvmProtoBuf.propertySignature).hashCode(stringIndexes, fqNameIndexes)
-    }
-
-    if (hasExtension(JvmProtoBuf.propertyImplClassName)) {
-        hashCode = 31 * hashCode + stringIndexes(getExtension(JvmProtoBuf.propertyImplClassName))
     }
 
     return hashCode
@@ -1226,10 +1203,6 @@ public fun JvmProtoBuf.JvmFieldSignature.hashCode(stringIndexes: (Int) -> Int, f
 
     if (hasDesc()) {
         hashCode = 31 * hashCode + stringIndexes(desc)
-    }
-
-    if (hasIsStaticInOuter()) {
-        hashCode = 31 * hashCode + isStaticInOuter.hashCode()
     }
 
     return hashCode

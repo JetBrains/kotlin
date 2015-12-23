@@ -77,11 +77,13 @@ import java.util.Set;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isNullableAny;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
-import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*;
+import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.INDEX_FOR_VALUE_PARAMETER;
+import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.METHOD_FOR_FUNCTION;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
 import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*;
 import static org.jetbrains.kotlin.resolve.DescriptorToSourceUtils.getSourceFromDescriptor;
-import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.getSuperClassDescriptor;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.*;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -172,10 +174,6 @@ public class FunctionCodegen {
                                        jvmSignature.getGenericsSignature(),
                                        getThrownExceptions(functionDescriptor, typeMapper));
 
-        String implClassName = CodegenContextUtil.getImplementationClassShortName(owner);
-        if (implClassName != null) {
-            v.getSerializationBindings().put(METHOD_IMPL_CLASS_NAME, functionDescriptor, implClassName);
-        }
         if (CodegenContextUtil.isImplClassOwner(owner)) {
             v.getSerializationBindings().put(METHOD_FOR_FUNCTION, functionDescriptor, asmMethod);
         }

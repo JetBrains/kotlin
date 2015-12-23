@@ -57,7 +57,8 @@ import java.util.List;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConstOrHasJvmFieldAnnotation;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
-import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*;
+import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.FIELD_FOR_PROPERTY;
+import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.SYNTHETIC_METHOD_FOR_PROPERTY;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.K_PROPERTY_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.hasJvmFieldAnnotation;
@@ -110,11 +111,6 @@ public class PropertyCodegen {
     ) {
         assert kind == OwnerKind.PACKAGE || kind == OwnerKind.IMPLEMENTATION || kind == OwnerKind.DEFAULT_IMPLS
                 : "Generating property with a wrong kind (" + kind + "): " + descriptor;
-
-        String implClassName = CodegenContextUtil.getImplementationClassShortName(context);
-        if (implClassName != null) {
-            v.getSerializationBindings().put(PROPERTY_IMPL_CLASS_NAME, descriptor, implClassName);
-        }
 
         if (CodegenContextUtil.isImplClassOwner(context)) {
             assert declaration != null : "Declaration is null for different context: " + context;
@@ -266,10 +262,6 @@ public class PropertyCodegen {
             mv.visitInsn(Opcodes.RETURN);
             mv.visitEnd();
         }
-        else {
-            Type tImplType = typeMapper.mapDefaultImpls((ClassDescriptor) context.getContextDescriptor());
-            v.getSerializationBindings().put(PROPERTY_IMPL_CLASS_NAME, descriptor, shortNameByAsmType(tImplType));
-        }
 
         if (kind != OwnerKind.DEFAULT_IMPLS) {
             v.getSerializationBindings().put(SYNTHETIC_METHOD_FOR_PROPERTY, descriptor, new Method(name, desc));
@@ -330,7 +322,6 @@ public class PropertyCodegen {
                 ImplementationBodyCodegen codegen = (ImplementationBodyCodegen) memberCodegen.getParentCodegen();
                 builder = codegen.v;
                 backingFieldContext = codegen.context;
-                v.getSerializationBindings().put(STATIC_FIELD_IN_OUTER_CLASS, propertyDescriptor);
             }
 
             if (isObject(propertyDescriptor.getContainingDeclaration()) &&
