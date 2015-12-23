@@ -63,6 +63,10 @@ class AndroidGradleWrapper {
     return androidSourceSet.getJava().getSrcDirs()
   }
 
+  static def setNoJdk(Object kotlinOptionsExtension) {
+    kotlinOptionsExtension.noJdk = true
+  }
+
   @NotNull
   static def List<String> getProductFlavorsNames(ApkVariant variant) {
       return variant.getProductFlavors().iterator().collect { it.getName() }
