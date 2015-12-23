@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 
+import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -30,7 +31,8 @@ data class ClassIdWithTarget(val classId: ClassId, val target: AnnotationUseSite
 
 class ClsStubBuilderComponents(
         val classDataFinder: ClassDataFinder,
-        val annotationLoader: AnnotationAndConstantLoader<ClassId, Unit, ClassIdWithTarget>
+        val annotationLoader: AnnotationAndConstantLoader<ClassId, Unit, ClassIdWithTarget>,
+        val virtualFileForDebug: VirtualFile
 ) {
     fun createContext(
             nameResolver: NameResolver,
