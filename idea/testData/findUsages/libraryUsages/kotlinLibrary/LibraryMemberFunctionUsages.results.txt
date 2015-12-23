@@ -1,4 +1,4 @@
-[LibraryMemberFunctionUsages.0.kt] Callable reference (10: 16) val f = A::foo
-[LibraryMemberFunctionUsages.0.kt] Function call (11: 9) A().foo(1)
-[library.kt] Callable reference (61: 17) val ff = A::foo
-[library.kt] Function call (60: 7) a.foo(2)
+[LibraryMemberFunctionUsages.0.kt] Callable reference 10 val f = A::foo
+[LibraryMemberFunctionUsages.0.kt] Function call 11 A().foo(1)
+[library.kt] Callable reference 61 val ff = A::foo
+[library.kt] Function call 60 a.foo(2)

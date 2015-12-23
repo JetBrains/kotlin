@@ -1,1 +1,1 @@
-Value read (9: 7) E.ONE
+Value read 9 E.ONE

@@ -1,2 +1,2 @@
-Local variable declaration (9: 14) val foo: Foo
-Usage in import (6: 16) import library.Foo
+Local variable declaration 9 val foo: Foo
+Usage in import 6 import library.Foo

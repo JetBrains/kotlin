@@ -1,1 +1,1 @@
-Unclassified usage (3: 12) open class B: A() {
+Unclassified usage 3 open class B: A() {

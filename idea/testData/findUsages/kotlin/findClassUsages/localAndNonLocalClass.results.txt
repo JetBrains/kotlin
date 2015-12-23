@@ -1,1 +1,1 @@
-New instance creation (10: 5) C()
+New instance creation 10 C()

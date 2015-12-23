@@ -1,4 +1,4 @@
-[LibrarySecondaryConstructorUsages.0.kt] New instance creation (16: 16) val a: A = A()
-[LibrarySecondaryConstructorUsages.0.kt] Supertype (13: 12) class Y(): A()
-[library.kt] New instance creation (58: 14) val aa = A()
-[library.kt] Supertype (39: 13) class CC(): A() {
+[LibrarySecondaryConstructorUsages.0.kt] New instance creation 16 val a: A = A()
+[LibrarySecondaryConstructorUsages.0.kt] Supertype 13 class Y(): A()
+[library.kt] New instance creation 58 val aa = A()
+[library.kt] Supertype 39 class CC(): A() {

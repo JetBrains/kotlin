@@ -1,2 +1,2 @@
-Function call (8: 5) foo()
-Usage in import (5: 15) import server.foo
+Function call 8 foo()
+Usage in import 5 import server.foo

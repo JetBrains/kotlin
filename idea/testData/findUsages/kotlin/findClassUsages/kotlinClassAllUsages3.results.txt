@@ -1,4 +1,4 @@
-Type constraint (5: 17) class Client<T: Data, X> where X: Data {
-Type constraint (5: 35) class Client<T: Data, X> where X: Data {
-Type parameter (9: 16) val c = Client<Data/*, [ERROR]*/>()
-Usage in import (3: 15) import server.Data
+Type constraint 5 class Client<T: Data, X> where X: Data {
+Type constraint 5 class Client<T: Data, X> where X: Data {
+Type parameter 9 val c = Client<Data/*, [ERROR]*/>()
+Usage in import 3 import server.Data

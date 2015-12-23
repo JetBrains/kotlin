@@ -1,1 +1,1 @@
-Unclassified usage (7: 27) new Outer.Inner().foo();
+Unclassified usage 7 new Outer.Inner().foo();

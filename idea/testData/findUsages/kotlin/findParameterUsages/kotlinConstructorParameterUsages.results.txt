@@ -1,4 +1,4 @@
-Named argument (11: 18) return A(foo = ":)")
-Named argument (16: 7) A(foo = ":)")
-Value read (5: 17) println(foo)
-Value read (8: 16) val t: T = foo
+Named argument 11 return A(foo = ":)")
+Named argument 16 A(foo = ":)")
+Value read 5 println(foo)
+Value read 8 val t: T = foo

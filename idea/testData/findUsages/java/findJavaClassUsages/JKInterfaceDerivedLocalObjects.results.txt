@@ -1,3 +1,3 @@
-Unclassified usage (2: 16) open class T: A
-Unclassified usage (4: 12) object O1: A
-Unclassified usage (7: 16) object O2: T()
+Unclassified usage 2 open class T: A
+Unclassified usage 4 object O1: A
+Unclassified usage 7 object O2: T()
