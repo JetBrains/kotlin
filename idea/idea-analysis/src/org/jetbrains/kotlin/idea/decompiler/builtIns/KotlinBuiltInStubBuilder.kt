@@ -81,7 +81,7 @@ public class KotlinBuiltInStubBuilder : ClsStubBuilder() {
     private fun createStubBuilderComponents(file: VirtualFile, packageFqName: FqName, nameResolver: NameResolver): ClsStubBuilderComponents {
         val finder = DirectoryBasedClassDataFinder(file.parent!!, packageFqName, nameResolver, BuiltInsSerializedResourcePaths)
         val annotationLoader = AnnotationLoaderForStubBuilderImpl(BuiltInSerializerProtocol)
-        return ClsStubBuilderComponents(finder, annotationLoader)
+        return ClsStubBuilderComponents(finder, annotationLoader, file)
     }
 
     companion object {

@@ -82,6 +82,6 @@ public class KotlinJavaScriptStubBuilder : ClsStubBuilder() {
                 file.parent!!, packageFqName, nameResolver, KotlinJavascriptSerializedResourcePaths
         )
         val annotationLoader = AnnotationLoaderForStubBuilderImpl(JsSerializerProtocol)
-        return ClsStubBuilderComponents(classDataFinder, annotationLoader)
+        return ClsStubBuilderComponents(classDataFinder, annotationLoader, file)
     }
 }

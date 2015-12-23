@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -233,10 +234,24 @@ private class ClassClsStubBuilder(
     }
 
     private fun createNestedClassStub(classBody: StubElement<out PsiElement>, nestedClassId: ClassId) {
-        val classDataWithSource = c.components.classDataFinder.findClassData(nestedClassId).sure {
-            "Could not find class data for nested class ${nestedClassId.shortClassName} of class ${nestedClassId.outerClassId}"
+        val classDataWithSource = c.components.classDataFinder.findClassData(nestedClassId)
+        if (classDataWithSource == null) {
+            val rootFile = c.components.virtualFileForDebug
+            LOG.error(
+                    "Could not find class data for nested class $nestedClassId of class ${nestedClassId.outerClassId}\n" +
+                    "Root file: ${rootFile.canonicalPath}\n" +
+                    "Dir: ${rootFile.parent.canonicalPath}\n" +
+                    "Children:\n" +
+                    "${rootFile.parent.children.sortedBy { it.name }.joinToString(separator = "\n") {
+                        it.name + " (valid: ${it.isValid})"
+                    } }")
+            return
         }
         val (nameResolver, classProto) = classDataWithSource.classData
         createClassStub(classBody, classProto, nestedClassId, c.child(nameResolver, TypeTable(classProto.typeTable)))
+    }
+
+    companion object {
+        private val LOG = Logger.getInstance(ClassClsStubBuilder::class.java)
     }
 }

@@ -102,7 +102,7 @@ public open class KotlinClsStubBuilder : ClsStubBuilder() {
         val classFinder = DirectoryBasedClassFinder(file.getParent()!!, packageFqName)
         val classDataFinder = DirectoryBasedDataFinder(classFinder, LOG)
         val annotationLoader = AnnotationLoaderForClassFileStubBuilder(classFinder, LoggingErrorReporter(LOG))
-        return ClsStubBuilderComponents(classDataFinder, annotationLoader)
+        return ClsStubBuilderComponents(classDataFinder, annotationLoader, file)
     }
 
     companion object {
