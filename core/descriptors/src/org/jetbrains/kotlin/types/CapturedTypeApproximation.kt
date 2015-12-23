@@ -117,7 +117,7 @@ public fun approximateCapturedTypes(type: KotlinType): ApproximationBounds<Kotli
             else -> throw AssertionError("Only nontrivial projections should have been captured, not: $typeProjection")
         }
     }
-    if (type.arguments.isEmpty()) {
+    if (type.arguments.isEmpty() || type.arguments.size != typeConstructor.parameters.size) {
         return ApproximationBounds(type, type)
     }
     val lowerBoundArguments = ArrayList<TypeArgument>()
