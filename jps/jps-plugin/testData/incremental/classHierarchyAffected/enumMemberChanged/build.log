@@ -1,0 +1,24 @@
+Cleaning output files:
+out/production/module/Enum.class
+End of files
+Compiling files:
+src/Enum.kt
+End of files
+Cleaning output files:
+out/production/module/META-INF/module.kotlin_module
+out/production/module/UseBecameNullableKt.class
+End of files
+Compiling files:
+src/useBecameNullable.kt
+End of files
+COMPILATION FAILED
+Only safe (?.) or non-null asserted (!!.) calls are allowed on a nullable receiver of type kotlin.Any?
+
+
+Cleaning output files:
+out/production/module/Enum.class
+End of files
+Compiling files:
+src/Enum.kt
+src/useBecameNullable.kt
+End of files

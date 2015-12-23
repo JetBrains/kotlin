@@ -201,8 +201,9 @@ private class DifferenceCalculatorForClass(oldData: ProtoMapValue, newData: Prot
                     names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Class::getFunctionList))
                 ProtoBufClassKind.PROPERTY_LIST ->
                     names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Class::getPropertyList))
-                ProtoBufClassKind.ENUM_ENTRY_LIST ->
-                    names.addAll(calcDifferenceForNames(oldProto.enumEntryList.map { it.name }, newProto.enumEntryList.map { it.name }))
+                ProtoBufClassKind.ENUM_ENTRY_LIST -> {
+                    isClassSignatureChanged = true
+                }
                 ProtoBufClassKind.TYPE_TABLE -> {
                     // TODO
                 }
