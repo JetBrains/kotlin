@@ -968,7 +968,7 @@ class ArraysTest {
         assertTrue(arrayOf<Long>().sorted().none())
         assertEquals(listOf(1), arrayOf(1).sorted())
 
-        fun arrayData<A, T: Comparable<T>>(vararg values: T, toArray: Array<out T>.() -> A) = ArraySortedChecker<A, T>(values.toArray(), naturalOrder())
+        fun <A, T: Comparable<T>> arrayData(vararg values: T, toArray: Array<out T>.() -> A) = ArraySortedChecker<A, T>(values.toArray(), naturalOrder())
 
         with (arrayData("ac", "aD", "aba") { toList().toTypedArray() }) {
             checkSorted<List<String>>({ sorted() }, { sortedDescending() }, { iterator() })
