@@ -28,11 +28,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.PropertyImportedFromObject
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
@@ -45,14 +45,13 @@ public class PropertyReferenceCodegen(
         context: ClassContext,
         expression: KtElement,
         classBuilder: ClassBuilder,
-        private val classDescriptor: ClassDescriptor,
-        private val target: VariableDescriptor,
-        dispatchReceiver: ReceiverValue?
+        resolvedCall: ResolvedCall<*>
 ) : MemberCodegen<KtElement>(state, parentCodegen, context, expression, classBuilder) {
+    private val classDescriptor = context.contextDescriptor
     private val asmType = typeMapper.mapClass(classDescriptor)
 
-    private val dispatchReceiverType = dispatchReceiver?.type
-
+    private val target = resolvedCall.resultingDescriptor as VariableDescriptor
+    private val dispatchReceiverType = resolvedCall.dispatchReceiver?.type
     private val extensionReceiverType = target.extensionReceiverParameter?.type
 
     private val receiverCount =

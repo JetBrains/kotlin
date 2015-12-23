@@ -2732,19 +2732,17 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         VariableDescriptor variableDescriptor = bindingContext.get(VARIABLE, expression);
         if (variableDescriptor != null) {
-            return generatePropertyReference(expression, variableDescriptor, (VariableDescriptor) resolvedCall.getResultingDescriptor(),
-                                             resolvedCall.getDispatchReceiver());
+            return generatePropertyReference(expression, variableDescriptor, resolvedCall);
         }
 
         throw new UnsupportedOperationException("Unsupported callable reference expression: " + expression.getText());
     }
 
     @NotNull
-    public StackValue generatePropertyReference(
+    private StackValue generatePropertyReference(
             @NotNull KtElement element,
             @NotNull VariableDescriptor variableDescriptor,
-            @NotNull VariableDescriptor target,
-            @Nullable ReceiverValue dispatchReceiver
+            @NotNull ResolvedCall<?> resolvedCall
     ) {
         ClassDescriptor classDescriptor = CodegenBinding.anonymousClassForCallable(bindingContext, variableDescriptor);
 
@@ -2756,7 +2754,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         PropertyReferenceCodegen codegen = new PropertyReferenceCodegen(
                 state, parentCodegen, context.intoAnonymousClass(classDescriptor, this, OwnerKind.IMPLEMENTATION),
-                element, classBuilder, classDescriptor, target, dispatchReceiver
+                element, classBuilder, resolvedCall
         );
         codegen.generate();
 
