@@ -1291,7 +1291,6 @@ public open class Throwable {
         public final fun <get-cause>(): kotlin.Throwable?
     public final val message: kotlin.String?
         public final fun <get-message>(): kotlin.String?
-    public final fun printStackTrace(): kotlin.Unit
 }
 
 public object Unit {
