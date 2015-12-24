@@ -9,10 +9,6 @@ public final class A {
     @org.jetbrains.annotations.NotNull
     public static java.lang.String v;
     public static final pack.A INSTANCE;
-    /**
-     * @deprecated
-     */
-    public static final pack.A INSTANCE$;
 
     public final int getC() { /* compiled code */ }
 

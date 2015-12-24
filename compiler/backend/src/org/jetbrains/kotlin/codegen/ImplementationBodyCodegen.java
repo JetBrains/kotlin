@@ -849,11 +849,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                        ACC_PUBLIC | ACC_STATIC | ACC_FINAL | (isCompanionObject ? ACC_DEPRECATED : 0),
                        field.name, field.type.getDescriptor(), null, null);
 
-            if (isNonCompanionObject(descriptor)) {
-                StackValue.Field oldField = StackValue.oldSingleton(descriptor, typeMapper);
-                v.newField(JvmDeclarationOriginKt.OtherOrigin(myClass), ACC_PUBLIC | ACC_STATIC | ACC_FINAL | ACC_DEPRECATED, oldField.name, oldField.type.getDescriptor(), null, null);
-            }
-
             if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
             // Invoke the object constructor but ignore the result because INSTANCE$ will be initialized in the first line of <init>
             InstructionAdapter v = createOrGetClInitCodegen().v;
@@ -1009,9 +1004,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         if (isObject(descriptor)) {
             StackValue.singletonViaInstance(descriptor, typeMapper).store(StackValue.LOCAL_0, iv);
-            if (isNonCompanionObject(descriptor)) {
-                StackValue.oldSingleton(descriptor, typeMapper).store(StackValue.LOCAL_0, iv);
-            }
         }
 
         for (KtSuperTypeListEntry specifier : myClass.getSuperTypeListEntries()) {

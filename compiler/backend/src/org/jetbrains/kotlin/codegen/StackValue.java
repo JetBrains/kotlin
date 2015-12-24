@@ -597,11 +597,7 @@ public abstract class StackValue {
     }
 
     public static Field singletonViaInstance(ClassDescriptor classDescriptor, JetTypeMapper typeMapper) {
-        return field(FieldInfo.createSingletonViaInstance(classDescriptor, typeMapper, false), none());
-    }
-
-    public static Field oldSingleton(ClassDescriptor classDescriptor, JetTypeMapper typeMapper) {
-        return field(FieldInfo.createForSingleton(classDescriptor, typeMapper, true), none());
+        return field(FieldInfo.createSingletonViaInstance(classDescriptor, typeMapper), none());
     }
 
     public static StackValue operation(Type type, Function1<InstructionAdapter, Unit> lambda) {
