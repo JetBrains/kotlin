@@ -88,3 +88,19 @@ public open class KtClass : KtClassOrObject {
 
     public fun getClassOrInterfaceKeyword(): PsiElement? = findChildByType(TokenSet.create(KtTokens.CLASS_KEYWORD, KtTokens.INTERFACE_KEYWORD))
 }
+
+public fun KtClass.createPrimaryConstructorIfAbsent(): KtPrimaryConstructor {
+    val constructor = getPrimaryConstructor()
+    if (constructor != null) return constructor
+    var anchor: PsiElement? = typeParameterList
+    if (anchor == null) anchor = nameIdentifier
+    if (anchor == null) anchor = lastChild
+    return addAfter(KtPsiFactory(project).createPrimaryConstructor(), anchor) as KtPrimaryConstructor
+}
+
+public fun KtClass.createPrimaryConstructorParameterListIfAbsent(): KtParameterList {
+    val constructor = createPrimaryConstructorIfAbsent()
+    val parameterList = constructor.valueParameterList
+    if (parameterList != null) return parameterList
+    return constructor.add(KtPsiFactory(project).createParameterList("()")) as KtParameterList
+}

@@ -24,7 +24,6 @@ import com.intellij.ide.util.PsiElementListCellRenderer
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.PopupChooserBuilder
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiClass
@@ -40,7 +39,6 @@ import org.jetbrains.kotlin.idea.caches.resolve.getJavaClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideImplementMembersHandler
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject
-import org.jetbrains.kotlin.idea.refactoring.canRefactor
 import org.jetbrains.kotlin.idea.refactoring.isInterfaceClass
 import org.jetbrains.kotlin.idea.refactoring.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
@@ -48,6 +46,7 @@ import org.jetbrains.kotlin.idea.search.declarationsSearch.searchInheritors
 import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.types.TypeSubstitutor
@@ -57,10 +56,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import java.util.*
 import javax.swing.ListSelectionModel
 
-class ImplementAbstractMemberIntention :
+abstract class ImplementAbstractMemberIntentionBase :
         SelfTargetingRangeIntention<KtNamedDeclaration>(KtNamedDeclaration::class.java, "", "Implement abstract member") {
     companion object {
-        private val LOG = Logger.getInstance("#${ImplementAbstractMemberIntention::class.java.canonicalName}")
+        private val LOG = Logger.getInstance("#${ImplementAbstractMemberIntentionBase::class.java.canonicalName}")
     }
 
     private fun isAbstract(element: KtNamedDeclaration): Boolean {
@@ -73,7 +72,7 @@ class ImplementAbstractMemberIntention :
         }
     }
 
-    private fun findExistingImplementation(
+    protected fun findExistingImplementation(
             subClass: ClassDescriptor,
             superMember: CallableMemberDescriptor
     ): CallableMemberDescriptor? {
@@ -82,6 +81,8 @@ class ImplementAbstractMemberIntention :
         val subMember = subClass.findCallableMemberBySignature(superMember.substitute(substitutor) as CallableMemberDescriptor)
         if (subMember?.kind?.isReal ?: false) return subMember else return null
     }
+
+    protected abstract fun acceptSubClass(subClassDescriptor: ClassDescriptor, memberDescriptor: CallableMemberDescriptor): Boolean
 
     private fun findClassesToProcess(member: KtNamedDeclaration): Sequence<PsiElement> {
         val baseClass = member.containingClassOrObject as? KtClass ?: return emptySequence()
@@ -94,7 +95,7 @@ class ImplementAbstractMemberIntention :
                 is PsiClass -> subClass.getJavaClassDescriptor()
                 else -> null
             } as? ClassDescriptor ?: return false
-            return classDescriptor.kind != ClassKind.INTERFACE && findExistingImplementation(classDescriptor, memberDescriptor) == null
+            return acceptSubClass(classDescriptor, memberDescriptor)
         }
 
         if (baseClass.isEnum()) {
@@ -110,19 +111,19 @@ class ImplementAbstractMemberIntention :
                 .filter(::acceptSubClass)
     }
 
+    protected abstract fun computeText(element: KtNamedDeclaration): String?
+
     override fun applicabilityRange(element: KtNamedDeclaration): TextRange? {
         if (!isAbstract(element)) return null
 
-        text = when(element) {
-            is KtProperty -> "Implement abstract property"
-            is KtNamedFunction -> "Implement abstract function"
-            else -> return null
-        }
+        text = computeText(element) ?: return null
 
         if (!findClassesToProcess(element).any()) return null
 
         return element.nameIdentifier?.textRange
     }
+
+    protected abstract val preferConstructorParameters: Boolean
 
     private fun implementInKotlinClass(member: KtNamedDeclaration, targetClass: KtClassOrObject) {
         val subClassDescriptor = targetClass.resolveToDescriptorIfAny() as? ClassDescriptor ?: return
@@ -134,7 +135,8 @@ class ImplementAbstractMemberIntention :
         val chooserObject = OverrideMemberChooserObject.create(member.project,
                                                                descriptorToImplement,
                                                                descriptorToImplement,
-                                                               OverrideMemberChooserObject.BodyType.EMPTY)
+                                                               OverrideMemberChooserObject.BodyType.EMPTY,
+                                                               preferConstructorParameters)
         OverrideImplementMembersHandler.generateMembers(null, targetClass, chooserObject.singletonList())
     }
 
@@ -228,5 +230,44 @@ class ImplementAbstractMemberIntention :
                 }
                 .createPopup()
                 .showInBestPositionFor(editor)
+    }
+}
+
+class ImplementAbstractMemberIntention : ImplementAbstractMemberIntentionBase() {
+    override fun computeText(element: KtNamedDeclaration): String? {
+        return when(element) {
+            is KtProperty -> "Implement abstract property"
+            is KtNamedFunction -> "Implement abstract function"
+            else -> null
+        }
+    }
+
+    override fun acceptSubClass(subClassDescriptor: ClassDescriptor, memberDescriptor: CallableMemberDescriptor): Boolean {
+        return subClassDescriptor.kind != ClassKind.INTERFACE && findExistingImplementation(subClassDescriptor, memberDescriptor) == null
+    }
+
+    override val preferConstructorParameters: Boolean
+        get() = false
+}
+
+class ImplementAbstractMemberAsConstructorParameterIntention : ImplementAbstractMemberIntentionBase() {
+    override fun computeText(element: KtNamedDeclaration): String? {
+        if (element !is KtProperty) return null
+        return "Implement as constructor parameter"
+    }
+
+    override fun acceptSubClass(subClassDescriptor: ClassDescriptor, memberDescriptor: CallableMemberDescriptor): Boolean {
+        val kind = subClassDescriptor.kind
+        return (kind == ClassKind.CLASS || kind == ClassKind.ENUM_CLASS)
+               && subClassDescriptor !is JavaClassDescriptor
+               && findExistingImplementation(subClassDescriptor, memberDescriptor) == null
+    }
+
+    override val preferConstructorParameters: Boolean
+        get() = true
+
+    override fun applicabilityRange(element: KtNamedDeclaration): TextRange? {
+        if (element !is KtProperty) return null
+        return super.applicabilityRange(element)
     }
 }

@@ -153,29 +153,42 @@ public fun <T : KtDeclaration> insertMembersAfter(
 ): List<T> {
     members.ifEmpty { return emptyList() }
 
-    return runWriteAction<List<T>> {
-        val body = classOrObject.getOrCreateBody()
+    return runWriteAction {
+        val insertedMembers = SmartList<T>()
 
-        var afterAnchor = anchor ?: findInsertAfterAnchor(editor, body) ?: return@runWriteAction emptyList()
-        val insertedMembers = members.mapTo(SmartList<T>()) {
-            if (classOrObject is KtClass && classOrObject.isEnum()) {
-                val enumEntries = classOrObject.declarations.filterIsInstance<KtEnumEntry>()
-                val bound = (enumEntries.lastOrNull() ?: classOrObject.allChildren.firstOrNull { it.node.elementType == KtTokens.SEMICOLON })
-                if (it !is KtEnumEntry) {
-                    if (bound != null && afterAnchor.startOffset <= bound.startOffset) {
-                        afterAnchor = bound
-                    }
-                }
-                else if (bound == null && body.declarations.isNotEmpty()) {
-                    afterAnchor = body.lBrace!!
-                }
-                else if (bound != null && afterAnchor.startOffset >= bound.startOffset) {
-                    afterAnchor = bound.prevSibling!!
-                }
-            }
+        val (parameters, otherMembers) = members.partition { it is KtParameter }
+
+        parameters.mapNotNullTo(insertedMembers) {
+            if (classOrObject !is KtClass) return@mapNotNullTo null
 
             @Suppress("UNCHECKED_CAST")
-            (body.addAfter(it, afterAnchor) as T).apply { afterAnchor = this }
+            (classOrObject.createPrimaryConstructorParameterListIfAbsent().addParameter(it as KtParameter) as T)
+        }
+
+        if (otherMembers.isNotEmpty()) {
+            val body = classOrObject.getOrCreateBody()
+
+            var afterAnchor = anchor ?: findInsertAfterAnchor(editor, body) ?: return@runWriteAction emptyList()
+            otherMembers.mapNotNullTo(insertedMembers) {
+                if (classOrObject is KtClass && classOrObject.isEnum()) {
+                    val enumEntries = classOrObject.declarations.filterIsInstance<KtEnumEntry>()
+                    val bound = (enumEntries.lastOrNull() ?: classOrObject.allChildren.firstOrNull { it.node.elementType == KtTokens.SEMICOLON })
+                    if (it !is KtEnumEntry) {
+                        if (bound != null && afterAnchor.startOffset <= bound.startOffset) {
+                            afterAnchor = bound
+                        }
+                    }
+                    else if (bound == null && body.declarations.isNotEmpty()) {
+                        afterAnchor = body.lBrace!!
+                    }
+                    else if (bound != null && afterAnchor.startOffset >= bound.startOffset) {
+                        afterAnchor = bound.prevSibling!!
+                    }
+                }
+
+                @Suppress("UNCHECKED_CAST")
+                (body.addAfter(it, afterAnchor) as T).apply { afterAnchor = this }
+            }
         }
 
         ShortenReferences.DEFAULT.process(insertedMembers)

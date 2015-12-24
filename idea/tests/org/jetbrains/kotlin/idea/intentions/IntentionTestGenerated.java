@@ -5464,6 +5464,81 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/implementAsConstructorParameter")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ImplementAsConstructorParameter extends AbstractIntentionTest {
+        public void testAllFilesPresentInImplementAsConstructorParameter() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/implementAsConstructorParameter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("enumClass.kt")
+        public void testEnumClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAsConstructorParameter/enumClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("function.kt")
+        public void testFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAsConstructorParameter/function.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("implementAll.kt")
+        public void testImplementAll() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAsConstructorParameter/implementAll.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inEnumClass.kt")
+        public void testInEnumClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAsConstructorParameter/inEnumClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inFinalClass.kt")
+        public void testInFinalClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAsConstructorParameter/inFinalClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("inObject.kt")
+        public void testInObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAsConstructorParameter/inObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noDirectOverridesNeeded.kt")
+        public void testNoDirectOverridesNeeded() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAsConstructorParameter/noDirectOverridesNeeded.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("noInheritors.kt")
+        public void testNoInheritors() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAsConstructorParameter/noInheritors.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notAbstractInClass.kt")
+        public void testNotAbstractInClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAsConstructorParameter/notAbstractInClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notAbstractNoBodyInClass.kt")
+        public void testNotAbstractNoBodyInClass() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAsConstructorParameter/notAbstractNoBodyInClass.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("notAbstractWithGetterInInterface.kt")
+        public void testNotAbstractWithGetterInInterface() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/implementAsConstructorParameter/notAbstractWithGetterInInterface.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/importAllMembers")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

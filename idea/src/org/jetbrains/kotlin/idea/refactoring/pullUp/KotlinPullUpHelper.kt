@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.core.dropDefaultValue
 import org.jetbrains.kotlin.idea.intentions.setType
 import org.jetbrains.kotlin.idea.refactoring.createJavaField
-import org.jetbrains.kotlin.idea.refactoring.createPrimaryConstructorIfAbsent
 import org.jetbrains.kotlin.idea.refactoring.safeDelete.removeOverrideModifier
 import org.jetbrains.kotlin.idea.util.anonymousObjectSuperTypeOrNull
 import org.jetbrains.kotlin.idea.util.psi.patternMatching.KotlinPsiUnifier

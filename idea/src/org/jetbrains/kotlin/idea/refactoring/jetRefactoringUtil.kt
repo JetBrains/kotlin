@@ -701,22 +701,6 @@ public fun String.quoteIfNeeded(): String = if (KotlinNameSuggester.isIdentifier
 
 public fun FqNameUnsafe.hasIdentifiersOnly(): Boolean = pathSegments().all { KotlinNameSuggester.isIdentifier(it.asString()) }
 
-public fun KtClass.createPrimaryConstructorIfAbsent(): KtPrimaryConstructor {
-    val constructor = getPrimaryConstructor()
-    if (constructor != null) return constructor
-    var anchor: PsiElement? = typeParameterList
-    if (anchor == null) anchor = nameIdentifier
-    if (anchor == null) anchor = lastChild
-    return addAfter(KtPsiFactory(project).createPrimaryConstructor(), anchor) as KtPrimaryConstructor
-}
-
-public fun KtClass.createPrimaryConstructorParameterListIfAbsent(): KtParameterList {
-    val constructor = createPrimaryConstructorIfAbsent()
-    val parameterList = constructor.valueParameterList
-    if (parameterList != null) return parameterList
-    return constructor.add(KtPsiFactory(project).createParameterList("()")) as KtParameterList
-}
-
 fun PsiNamedElement.isInterfaceClass(): Boolean = this is KtClass && isInterface() || this is PsiClass && isInterface
 
 fun <ListType : KtElement> replaceListPsiAndKeepDelimiters(

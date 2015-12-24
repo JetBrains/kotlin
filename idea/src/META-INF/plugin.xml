@@ -1116,6 +1116,11 @@
     </intentionAction>
 
     <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.ImplementAbstractMemberAsConstructorParameterIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.AddValVarToConstructorParameterAction$Intention</className>
       <category>Kotlin</category>
     </intentionAction>
