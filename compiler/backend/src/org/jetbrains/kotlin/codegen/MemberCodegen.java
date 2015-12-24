@@ -672,7 +672,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         }
     }
 
-    private StackValue generateMethodCallTo(
+    protected StackValue generateMethodCallTo(
             @NotNull FunctionDescriptor functionDescriptor,
             @Nullable FunctionDescriptor accessorDescriptor,
             @NotNull InstructionAdapter iv
