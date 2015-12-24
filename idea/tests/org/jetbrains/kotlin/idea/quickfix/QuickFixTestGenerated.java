@@ -5364,6 +5364,24 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             doTest(fileName);
         }
 
+        @TestMetadata("implemenAsConstructorParameter.kt")
+        public void testImplemenAsConstructorParameter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/override/implemenAsConstructorParameter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("implemenAsConstructorParameterFunction.kt")
+        public void testImplemenAsConstructorParameterFunction() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/override/implemenAsConstructorParameterFunction.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("implemenAsConstructorParameterInObject.kt")
+        public void testImplemenAsConstructorParameterInObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/override/implemenAsConstructorParameterInObject.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("implementMember.kt")
         public void testImplementMember() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/override/implementMember.kt");

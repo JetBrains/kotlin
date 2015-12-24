@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import java.util.*
 
-public class OverrideMembersHandler : OverrideImplementMembersHandler() {
+public class OverrideMembersHandler(private val preferConstructorParameters: Boolean = false) : OverrideImplementMembersHandler() {
     override fun collectMembersToGenerate(descriptor: ClassDescriptor, project: Project): Collection<OverrideMemberChooserObject> {
         val result = ArrayList<OverrideMemberChooserObject>()
         for (member in descriptor.unsubstitutedMemberScope.getContributedDescriptors()) {
@@ -73,7 +73,7 @@ public class OverrideMembersHandler : OverrideImplementMembersHandler() {
                     else
                         OverrideMemberChooserObject.BodyType.QUALIFIED_SUPER
 
-                    result.add(OverrideMemberChooserObject.create(project, realSuper, immediateSuperToUse, bodyType))
+                    result.add(OverrideMemberChooserObject.create(project, realSuper, immediateSuperToUse, bodyType, preferConstructorParameters))
                 }
             }
         }

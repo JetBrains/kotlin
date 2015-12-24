@@ -51,11 +51,13 @@ public abstract class OverrideImplementMembersHandler : LanguageCodeInsightActio
 
     protected abstract fun getChooserTitle(): String
 
+    protected open fun isValidForClass(classOrObject: KtClassOrObject) = true
+
     override fun isValidFor(editor: Editor, file: PsiFile): Boolean {
         if (file !is KtFile) return false
         val elementAtCaret = file.findElementAt(editor.caretModel.offset)
         val classOrObject = elementAtCaret?.getNonStrictParentOfType<KtClassOrObject>()
-        return classOrObject != null
+        return classOrObject != null && isValidForClass(classOrObject)
     }
 
     protected abstract fun getNoMembersFoundHint(): String

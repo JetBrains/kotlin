@@ -39,15 +39,21 @@ interface OverrideMemberChooserObject : ClassMember {
     val descriptor: CallableMemberDescriptor
     val immediateSuper: CallableMemberDescriptor
     val bodyType: BodyType
+    val preferConstructorParameter: Boolean
 
     companion object {
-        fun create(project: Project, descriptor: CallableMemberDescriptor, immediateSuper: CallableMemberDescriptor, bodyType: BodyType): OverrideMemberChooserObject {
+        fun create(project: Project,
+                   descriptor: CallableMemberDescriptor,
+                   immediateSuper: CallableMemberDescriptor,
+                   bodyType: BodyType,
+                   preferConstructorParameter: Boolean = false
+        ): OverrideMemberChooserObject {
             val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)
             if (declaration != null) {
-                return WithDeclaration(descriptor, declaration, immediateSuper, bodyType)
+                return WithDeclaration(descriptor, declaration, immediateSuper, bodyType, preferConstructorParameter)
             }
             else {
-                return WithoutDeclaration(descriptor, immediateSuper, bodyType)
+                return WithoutDeclaration(descriptor, immediateSuper, bodyType, preferConstructorParameter)
             }
         }
 
@@ -55,7 +61,8 @@ interface OverrideMemberChooserObject : ClassMember {
                 descriptor: CallableMemberDescriptor,
                 declaration: PsiElement,
                 override val immediateSuper: CallableMemberDescriptor,
-                override val bodyType: BodyType
+                override val bodyType: BodyType,
+                override val preferConstructorParameter: Boolean
         ) : DescriptorMemberChooserObject(declaration, descriptor), OverrideMemberChooserObject {
 
             override val descriptor: CallableMemberDescriptor
@@ -65,7 +72,8 @@ interface OverrideMemberChooserObject : ClassMember {
         private class WithoutDeclaration(
                 override val descriptor: CallableMemberDescriptor,
                 override val immediateSuper: CallableMemberDescriptor,
-                override val bodyType: BodyType
+                override val bodyType: BodyType,
+                override val preferConstructorParameter: Boolean
         ) : MemberChooserObjectBase(DescriptorMemberChooserObject.getText(descriptor), DescriptorMemberChooserObject.getIcon(null, descriptor)), OverrideMemberChooserObject {
 
             override fun getParentNodeDelegate(): MemberChooserObject? {
@@ -76,12 +84,9 @@ interface OverrideMemberChooserObject : ClassMember {
     }
 }
 
-fun OverrideMemberChooserObject.generateMember(project: Project, asConstructorParameter: Boolean = false): KtCallableDeclaration {
+fun OverrideMemberChooserObject.generateMember(project: Project): KtCallableDeclaration {
     val descriptor = immediateSuper
-    if (asConstructorParameter) {
-        assert(descriptor is PropertyDescriptor) { "asConstructorParameter is valid only for PropertyDescriptor" }
-        return generateConstructorParameter(project, descriptor as PropertyDescriptor)
-    }
+    if (preferConstructorParameter && descriptor is PropertyDescriptor) return generateConstructorParameter(project, descriptor)
 
     return when (descriptor) {
         is SimpleFunctionDescriptor -> generateFunction(project, descriptor, bodyType)

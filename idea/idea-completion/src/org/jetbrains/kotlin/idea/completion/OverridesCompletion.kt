@@ -60,7 +60,7 @@ class OverridesCompletion(
 
         val classOrObject = position.getNonStrictParentOfType<KtClassOrObject>() ?: return
 
-        val members = OverrideMembersHandler().collectMembersToGenerate(classOrObject)
+        val members = OverrideMembersHandler(isConstructorParameter).collectMembersToGenerate(classOrObject)
 
         for (memberObject in members) {
             if (isConstructorParameter && memberObject.descriptor !is PropertyDescriptor) continue
@@ -114,7 +114,7 @@ class OverridesCompletion(
                     // keep original modifiers
                     val modifierList = KtPsiFactory(context.project).createModifierList(dummyMember.modifierList!!.text)
 
-                    val prototype = memberObject.generateMember(context.project, isConstructorParameter)
+                    val prototype = memberObject.generateMember(context.project)
                     prototype.modifierList!!.replace(modifierList)
                     val insertedMember = dummyMember.replaced(prototype)
 
