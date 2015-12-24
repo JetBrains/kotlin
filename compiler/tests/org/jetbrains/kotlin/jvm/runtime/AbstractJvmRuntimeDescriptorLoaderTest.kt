@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.jvm.runtime
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.common.output.outputUtils.writeAllTo
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.descriptors.*
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.jvm.compiler.ExpectedLoadErrorsUtil
 import org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KOTLIN_LOCAL_CLASS
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.structure.reflect.classId
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -48,6 +50,10 @@ import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.Configuratio
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.sure
+import org.jetbrains.org.objectweb.asm.AnnotationVisitor
+import org.jetbrains.org.objectweb.asm.ClassReader
+import org.jetbrains.org.objectweb.asm.ClassVisitor
+import org.jetbrains.org.objectweb.asm.Opcodes
 import java.io.File
 import java.net.URLClassLoader
 import java.util.*
@@ -104,7 +110,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
         }
 
         val expected = LoadDescriptorUtil.loadTestPackageAndBindingContextFromJavaRoot(
-                tmpdir, getTestRootDisposable(), jdkKind, ConfigurationKind.ALL, true
+                tmpdir, testRootDisposable, jdkKind, ConfigurationKind.ALL, true
         ).first
 
         RecursiveDescriptorComparator.validateAndCompareDescriptors(expected, actual, comparatorConfiguration, null)
@@ -112,13 +118,11 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
 
     private fun DeclarationDescriptor.isJavaAnnotationConstructor() =
             this is ConstructorDescriptor &&
-            getContainingDeclaration().let { container ->
-                container is JavaClassDescriptor &&
-                container.getKind() == ClassKind.ANNOTATION_CLASS
-            }
+            containingDeclaration is JavaClassDescriptor &&
+            containingDeclaration.kind == ClassKind.ANNOTATION_CLASS
 
     private fun compileFile(file: File, text: String, jdkKind: TestJdkKind) {
-        val fileName = file.getName()
+        val fileName = file.name
         when {
             fileName.endsWith(".java") -> {
                 val sources = KotlinTestUtils.createTestFiles(fileName, text, object : TestFileFactoryNoModules<File>() {
@@ -134,7 +138,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
                 val environment = KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
                         myTestRootDisposable, ConfigurationKind.ALL, jdkKind
                 )
-                val jetFile = KotlinTestUtils.createFile(file.getPath(), text, environment.project)
+                val jetFile = KotlinTestUtils.createFile(file.path, text, environment.project)
                 GenerationUtils.compileFileGetClassFileFactoryForTest(jetFile, environment).writeAllTo(tmpdir)
             }
         }
@@ -145,17 +149,17 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
         moduleData.packageFacadeProvider.registerModule(moduleName)
         val module = moduleData.module
 
-
         val generatedPackageDir = File(tmpdir, LoadDescriptorUtil.TEST_PACKAGE_FQNAME.pathSegments().single().asString())
         val allClassFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.class"), generatedPackageDir)
 
         val packageScopes = arrayListOf<MemberScope>()
         val classes = arrayListOf<ClassDescriptor>()
         for (classFile in allClassFiles) {
-            val className = classFile.relativeTo(tmpdir).substringBeforeLast(".class").replace('/', '.').replace('\\', '.')
+            val className = classFile.toRelativeString(tmpdir).substringBeforeLast(".class").replace('/', '.').replace('\\', '.')
 
             val klass = classLoader.loadClass(className).sure { "Couldn't load class $className" }
-            val header = ReflectKotlinClass.create(klass)?.getClassHeader()
+            val binaryClass = ReflectKotlinClass.create(klass)
+            val header = binaryClass?.classHeader
 
             if (header?.kind == KotlinClassHeader.Kind.FILE_FACADE || header?.kind == KotlinClassHeader.Kind.MULTIFILE_CLASS) {
                 val packageView = module.getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME)
@@ -163,7 +167,7 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
                     packageScopes.add(packageView.memberScope)
                 }
             }
-            else if (header == null || (header.kind == KotlinClassHeader.Kind.CLASS && !header.isLocalClass)) {
+            else if (header == null || (header.kind == KotlinClassHeader.Kind.CLASS && !classFile.isLocalClass())) {
                 // Either a normal Kotlin class or a Java class
                 val classId = klass.classId
                 if (!classId.isLocal) {
@@ -178,6 +182,21 @@ public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdi
         // Since runtime package view descriptor doesn't support getAllDescriptors(), we construct a synthetic package view here.
         // It has in its scope descriptors for all the classes and top level members generated by the compiler
         return SyntheticPackageViewForTest(module, packageScopes, classes)
+    }
+
+    private fun File.isLocalClass(): Boolean {
+        var result = false
+
+        ClassReader(inputStream()).accept(object : ClassVisitor(Opcodes.ASM5) {
+            override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
+                if (desc == AsmUtil.asmDescByFqNameWithoutInnerClasses(KOTLIN_LOCAL_CLASS)) {
+                    result = true
+                }
+                return super.visitAnnotation(desc, visible)
+            }
+        }, ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
+
+        return result
     }
 
     private fun adaptJavaSource(text: String): String {

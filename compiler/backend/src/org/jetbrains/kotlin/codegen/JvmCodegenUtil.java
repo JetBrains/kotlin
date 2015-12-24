@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.codegen;
 
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
-import kotlin.CollectionsKt;
-import kotlin.StringsKt;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
@@ -224,9 +224,6 @@ public class JvmCodegenUtil {
 
     public static void writeAbiVersion(@NotNull AnnotationVisitor av) {
         av.visit(JvmAnnotationNames.VERSION_FIELD_NAME, JvmAbi.VERSION.toArray());
-
-        // TODO: drop after some time
-        av.visit(JvmAnnotationNames.OLD_ABI_VERSION_FIELD_NAME, 32);
     }
 
     public static void writeModuleName(@NotNull AnnotationVisitor av, @NotNull GenerationState state) {

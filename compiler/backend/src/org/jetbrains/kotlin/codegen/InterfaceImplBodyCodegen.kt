@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KOTLIN_INTERFACE_DEFAULT_IMPLS
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.name.Name
@@ -151,9 +150,7 @@ public class InterfaceImplBodyCodegen(
     override fun generateKotlinAnnotation() {
         (v as InterfaceImplClassBuilder).stopCounting()
 
-        val av = v.newAnnotation(AsmUtil.asmDescByFqNameWithoutInnerClasses(KOTLIN_INTERFACE_DEFAULT_IMPLS), true)
-        av.visit(JvmAnnotationNames.VERSION_FIELD_NAME, JvmAbi.VERSION.toArray())
-        av.visitEnd()
+        v.newAnnotation(AsmUtil.asmDescByFqNameWithoutInnerClasses(KOTLIN_INTERFACE_DEFAULT_IMPLS), true).visitEnd()
         AsmUtil.writeKotlinSyntheticClassAnnotation(v, state)
     }
 

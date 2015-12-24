@@ -62,8 +62,6 @@ public final class JvmAnnotationNames {
     public static final FqName ENHANCED_NULLABILITY_ANNOTATION = new FqName("kotlin.jvm.internal.EnhancedNullability");
     public static final FqName ENHANCED_MUTABILITY_ANNOTATION = new FqName("kotlin.jvm.internal.EnhancedMutability");
 
-    public static final String OLD_ABI_VERSION_FIELD_NAME = "abiVersion";
-
     // When these annotations appear on a declaration, they are copied to the _type_ of the declaration, becoming type annotations
     // See also DescriptorRendererOptions#excludedTypeAnnotationClasses
     public static final Set<FqName> ANNOTATIONS_COPIED_TO_TYPES = SetsKt.setOf(

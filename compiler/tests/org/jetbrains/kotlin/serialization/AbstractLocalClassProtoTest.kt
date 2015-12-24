@@ -81,8 +81,5 @@ public abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
         checkNotNull(clazz.getAnnotation(
                 clazz.classLoader.loadClass(JvmAnnotationNames.KOTLIN_CLASS.asString()) as Class<Annotation>
         )) { "KotlinClass annotation is not found for class $clazz" }
-        checkNotNull(clazz.getAnnotation(
-                clazz.classLoader.loadClass(JvmAnnotationNames.KOTLIN_LOCAL_CLASS.asString()) as Class<Annotation>
-        )) { "KotlinLocalClass annotation is not found for class $clazz" }
     }
 }

@@ -136,11 +136,6 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             else if (MULTIFILE_CLASS_NAME_FIELD_NAME.equals(string)) {
                 multifileClassName = value instanceof String ? (String) value : null;
             }
-            else if (OLD_ABI_VERSION_FIELD_NAME.equals(string)) {
-                if (version == AbiVersionUtil.INVALID_VERSION && value instanceof Integer && (Integer) value > 0) {
-                    version = BinaryVersion.create(0, (Integer) value, 0);
-                }
-            }
         }
 
         @Override

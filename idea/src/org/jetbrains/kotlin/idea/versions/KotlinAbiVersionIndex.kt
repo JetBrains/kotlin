@@ -59,13 +59,8 @@ public object KotlinAbiVersionIndex : KotlinAbiVersionIndexBase<KotlinAbiVersion
                     annotationPresent = true
                     return object : AnnotationVisitor(Opcodes.ASM5) {
                         override fun visit(name: String, value: Any) {
-                            when (name) {
-                                VERSION_FIELD_NAME -> if (value is IntArray) {
-                                    version = BinaryVersion.create(value)
-                                }
-                                OLD_ABI_VERSION_FIELD_NAME -> if (version == null && value is Int) {
-                                    version = BinaryVersion.create(0, value, 0)
-                                }
+                            if (name == VERSION_FIELD_NAME && value is IntArray) {
+                                version = BinaryVersion.create(value)
                             }
                         }
                     }

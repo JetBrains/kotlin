@@ -117,14 +117,10 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
     }
 
     private void doTestKotlinClass(@NotNull String code, @NotNull String classFilePart) {
-        doTest(code, classFilePart, KOTLIN_CLASS, KOTLIN_LOCAL_CLASS);
+        doTest(code, classFilePart, KOTLIN_CLASS);
     }
 
-    private void doTest(
-            @NotNull String code,
-            @NotNull final String classFilePart,
-            @NotNull FqName... annotationFqNames
-    ) {
+    private void doTest(@NotNull String code, @NotNull final String classFilePart, @NotNull FqName annotationFqName) {
         loadText("package " + PACKAGE_NAME + "\n\n" + code);
         List<OutputFile> output = generateClassesInFile().asList();
         Collection<OutputFile> files = Collections2.filter(output, new Predicate<OutputFile>() {
@@ -139,9 +135,7 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
         String path = files.iterator().next().getRelativePath();
         String fqName = path.substring(0, path.length() - ".class".length()).replace('/', '.');
         Class<?> aClass = generateClass(fqName);
-        for (FqName annotationFqName : annotationFqNames) {
-            assertAnnotatedWith(aClass, annotationFqName.asString());
-        }
+        assertAnnotatedWith(aClass, annotationFqName.asString());
     }
 
     private void assertAnnotatedWith(@NotNull Class<?> aClass, @NotNull String annotationFqName) {
