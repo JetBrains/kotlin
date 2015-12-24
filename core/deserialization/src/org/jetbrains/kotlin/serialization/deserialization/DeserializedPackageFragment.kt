@@ -16,18 +16,16 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
-import org.jetbrains.kotlin.builtins.BuiltinsPackageFragment
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.SerializedResourcePaths
-import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
-import java.io.DataInputStream
 import java.io.InputStream
 import javax.inject.Inject
 
@@ -39,50 +37,25 @@ public abstract class DeserializedPackageFragment(
         private val loadResource: (path: String) -> InputStream?
 ) : PackageFragmentDescriptorImpl(module, fqName) {
 
-    val builtinsMessage = serializedResourcePaths.getBuiltInsFilePath(fqName)?.let(loadResource)?.let { stream ->
-        val dataInput = DataInputStream(stream)
-        val version = BinaryVersion.create((1..dataInput.readInt()).map { dataInput.readInt() }.toIntArray())
+    abstract val nameResolver: NameResolver
 
-        if (!version.isCompatibleTo(BuiltinsPackageFragment.VERSION)) {
-            // TODO: report a proper diagnostic
-            throw UnsupportedOperationException(
-                    "Kotlin built-in definition format version is not supported: " +
-                    "expected ${BuiltinsPackageFragment.VERSION}, actual $version. " +
-                    "Please update Kotlin"
-            )
-        }
-
-        BuiltInsProtoBuf.BuiltIns.parseFrom(stream, serializedResourcePaths.extensionRegistry)
-    }
-
-    val nameResolver =
-            builtinsMessage?.let { NameResolverImpl(it.strings, it.qualifiedNames) } ?:
-            NameResolverImpl.read(loadResourceSure(serializedResourcePaths.getStringTableFilePath(fqName)))
-
-    val classIdToProto = builtinsMessage?.let { builtins ->
-        builtins.classList.toMapBy { klass ->
-            nameResolver.getClassId(klass.fqName)
-        }
-    }
+    abstract val classIdToProto: Map<ClassId, ProtoBuf.Class>?
 
     // component dependency cycle
     @set:Inject
     lateinit var components: DeserializationComponents
 
-    internal val deserializedMemberScope by storageManager.createLazyValue {
-        builtinsMessage?.let { builtins ->
-            DeserializedPackageMemberScope(
-                    this, builtins.`package`, nameResolver, packagePartSource = null, components = components,
-                    classNames = { classIdToProto!!.keys.filter { classId -> !classId.isNestedClass }.map { it.shortClassName } }
-            )
-        } ?: run {
-            val packageStream = loadResourceSure(serializedResourcePaths.getPackageFilePath(fqName))
-            val packageProto = ProtoBuf.Package.parseFrom(packageStream, serializedResourcePaths.extensionRegistry)
-            DeserializedPackageMemberScope(
-                    this, packageProto, nameResolver, packagePartSource = null, components = components,
-                    classNames = { loadClassNames(packageProto) }
-            )
-        }
+    private val deserializedMemberScope by storageManager.createLazyValue {
+        computeMemberScope()
+    }
+
+    protected open fun computeMemberScope(): DeserializedPackageMemberScope {
+        val packageStream = loadResourceSure(serializedResourcePaths.getPackageFilePath(fqName))
+        val packageProto = ProtoBuf.Package.parseFrom(packageStream, serializedResourcePaths.extensionRegistry)
+        return DeserializedPackageMemberScope(
+                this, packageProto, nameResolver, packagePartSource = null, components = components,
+                classNames = { loadClassNames(packageProto) }
+        )
     }
 
     override fun getMemberScope() = deserializedMemberScope

@@ -28,6 +28,4 @@ interface SerializedResourcePaths {
     fun getPackageFilePath(fqName: FqName): String
 
     fun getStringTableFilePath(fqName: FqName): String
-
-    fun getBuiltInsFilePath(fqName: FqName): String?
 }

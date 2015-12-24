@@ -36,7 +36,7 @@ object BuiltInsSerializedResourcePaths : SerializedResourcePaths {
     val BUILTINS_FILE_EXTENSION = "kotlin_builtins"
 
     override fun getClassMetadataPath(classId: ClassId): String {
-        return packageFqNameToPath(classId.getPackageFqName()) + "/" + classId.getRelativeClassName().asString() +
+        return packageFqNameToPath(classId.packageFqName) + "/" + classId.relativeClassName.asString() +
                "." + CLASS_METADATA_FILE_EXTENSION
     }
 
@@ -46,7 +46,7 @@ object BuiltInsSerializedResourcePaths : SerializedResourcePaths {
     override fun getStringTableFilePath(fqName: FqName): String =
             packageFqNameToPath(fqName) + "/" + shortName(fqName) + "." + STRING_TABLE_FILE_EXTENSION
 
-    override fun getBuiltInsFilePath(fqName: FqName): String =
+    fun getBuiltInsFilePath(fqName: FqName): String =
             packageFqNameToPath(fqName) + "/" + shortName(fqName) + "." + BUILTINS_FILE_EXTENSION
 
 
@@ -54,5 +54,5 @@ object BuiltInsSerializedResourcePaths : SerializedResourcePaths {
             fqName.asString().replace('.', '/')
 
     private fun shortName(fqName: FqName): String =
-            if (fqName.isRoot()) "default-package" else fqName.shortName().asString()
+            if (fqName.isRoot) "default-package" else fqName.shortName().asString()
 }
