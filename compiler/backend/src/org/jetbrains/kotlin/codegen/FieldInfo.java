@@ -33,17 +33,12 @@ public class FieldInfo {
 
     @NotNull
     public static FieldInfo createForSingleton(@NotNull ClassDescriptor classDescriptor, @NotNull JetTypeMapper typeMapper) {
-        return createForSingleton(classDescriptor, typeMapper, false);
-    }
-
-    @NotNull
-    public static FieldInfo createForSingleton(@NotNull ClassDescriptor classDescriptor, @NotNull JetTypeMapper typeMapper, boolean oldSingleton) {
         if (!classDescriptor.getKind().isSingleton() || DescriptorUtils.isEnumEntry(classDescriptor)) {
             throw new UnsupportedOperationException("Can't create singleton field for class: " + classDescriptor);
         }
 
         if (isNonCompanionObject(classDescriptor) || COMPANION_OBJECT_MAPPING.hasMappingToObject(classDescriptor)) {
-            return createSingletonViaInstance(classDescriptor, typeMapper, oldSingleton);
+            return createSingletonViaInstance(classDescriptor, typeMapper);
         }
         else {
             ClassDescriptor ownerDescriptor = DescriptorUtils.getParentOfType(classDescriptor, ClassDescriptor.class);
@@ -56,11 +51,10 @@ public class FieldInfo {
     @NotNull
     public static FieldInfo createSingletonViaInstance(
             @NotNull ClassDescriptor classDescriptor,
-            @NotNull JetTypeMapper typeMapper,
-            boolean oldSingleton
+            @NotNull JetTypeMapper typeMapper
     ) {
         Type type = typeMapper.mapType(classDescriptor);
-        return new FieldInfo(type, type, oldSingleton ? JvmAbi.DEPRECATED_INSTANCE_FIELD : JvmAbi.INSTANCE_FIELD, true);
+        return new FieldInfo(type, type, JvmAbi.INSTANCE_FIELD, true);
     }
 
     @NotNull

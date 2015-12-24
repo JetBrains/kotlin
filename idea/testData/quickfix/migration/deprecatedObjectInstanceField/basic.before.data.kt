@@ -1,4 +1,0 @@
-package a
-
-object A {
-}

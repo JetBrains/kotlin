@@ -1,6 +1,6 @@
 public class ObjectInstance {
     public static void foo() {
-        k.KotlinObject.INSTANCE<caret>$.f();
+        k.KotlinObject.INSTANC<caret>E.f();
     }
 }
 

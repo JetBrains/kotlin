@@ -7,5 +7,5 @@ object A {
 //check that constant initializers inlined
 
 // 0 GETSTATIC
-// 2 PUTSTATIC A.INSTANCE
-// 2 PUTSTATIC
+// 1 PUTSTATIC A.INSTANCE
+// 1 PUTSTATIC
