@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget;
 import org.jetbrains.kotlin.jvm.RuntimeAssertionInfo;
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature;
 import org.jetbrains.kotlin.load.java.JvmAbi;
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.java.SpecialBuiltinMembers;
 import org.jetbrains.kotlin.load.kotlin.nativeDeclarations.NativeKt;
 import org.jetbrains.kotlin.name.FqName;
@@ -162,7 +161,7 @@ public class FunctionCodegen {
         int flags = getMethodAsmFlags(functionDescriptor, contextKind);
         boolean isNative = NativeKt.hasNativeAnnotation(functionDescriptor);
 
-        if (isNative && owner instanceof DelegatingFacadeContext) {
+        if (isNative && owner instanceof MultifileClassFacadeContext) {
             // Native methods are only defined in facades and do not need package part implementations
             return;
         }
@@ -233,22 +232,6 @@ public class FunctionCodegen {
         }
         else {
             annotationCodegen.genAnnotations(functionDescriptor, asmMethod.getReturnType());
-        }
-
-        writePackageFacadeMethodAnnotationsIfNeeded(mv);
-    }
-
-    private void writePackageFacadeMethodAnnotationsIfNeeded(MethodVisitor mv) {
-        if (owner instanceof PackageFacadeContext) {
-            PackageFacadeContext packageFacadeContext = (PackageFacadeContext) owner;
-            Type delegateToClassType = packageFacadeContext.getPublicFacadeType();
-            if (delegateToClassType != null) {
-                String className = delegateToClassType.getClassName();
-                AnnotationVisitor
-                        av = mv.visitAnnotation(AsmUtil.asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_DELEGATED_METHOD), true);
-                av.visit(JvmAnnotationNames.IMPLEMENTATION_CLASS_NAME_FIELD_NAME, className);
-                av.visitEnd();
-            }
         }
     }
 
@@ -358,8 +341,8 @@ public class FunctionCodegen {
         int functionFakeIndex = -1;
         int lambdaFakeIndex = -1;
 
-        if (context.getParentContext() instanceof DelegatingFacadeContext) {
-            generateFacadeDelegateMethodBody(mv, signature.getAsmMethod(), (DelegatingFacadeContext) context.getParentContext());
+        if (context.getParentContext() instanceof MultifileClassFacadeContext) {
+            generateFacadeDelegateMethodBody(mv, signature.getAsmMethod(), (MultifileClassFacadeContext) context.getParentContext());
             methodEnd = new Label();
         }
         else {
@@ -462,9 +445,9 @@ public class FunctionCodegen {
     private static void generateFacadeDelegateMethodBody(
             @NotNull MethodVisitor mv,
             @NotNull Method asmMethod,
-            @NotNull DelegatingFacadeContext context
+            @NotNull MultifileClassFacadeContext context
     ) {
-        generateDelegateToMethodBody(true, mv, asmMethod, context.getDelegateToClassType().getInternalName());
+        generateDelegateToMethodBody(true, mv, asmMethod, context.getFilePartType().getInternalName());
     }
 
     private static void generateDelegateToMethodBody(
@@ -687,9 +670,9 @@ public class FunctionCodegen {
         AnnotationCodegen.forMethod(mv, typeMapper).genAnnotations(functionDescriptor, defaultMethod.getReturnType());
 
         if (state.getClassBuilderMode() == ClassBuilderMode.FULL) {
-            if (this.owner instanceof DelegatingFacadeContext) {
+            if (this.owner instanceof MultifileClassFacadeContext) {
                 mv.visitCode();
-                generateFacadeDelegateMethodBody(mv, defaultMethod, (DelegatingFacadeContext) this.owner);
+                generateFacadeDelegateMethodBody(mv, defaultMethod, (MultifileClassFacadeContext) this.owner);
                 endVisit(mv, "default method delegation", getSourceFromDescriptor(functionDescriptor));
             }
             else {

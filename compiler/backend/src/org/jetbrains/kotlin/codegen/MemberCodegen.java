@@ -302,7 +302,7 @@ public abstract class MemberCodegen<T extends KtElement/* TODO: & JetDeclaration
         if (outermost instanceof ClassContext) {
             return typeMapper.mapType(((ClassContext) outermost).getContextDescriptor());
         }
-        else if (outermost instanceof DelegatingFacadeContext || outermost instanceof DelegatingToPartContext) {
+        else if (outermost instanceof MultifileClassFacadeContext || outermost instanceof DelegatingToPartContext) {
             Type implementationOwnerType = CodegenContextUtil.getImplementationOwnerClassType(outermost);
             if (implementationOwnerType != null) {
                 return implementationOwnerType;

@@ -16,11 +16,10 @@
 
 package org.jetbrains.kotlin.codegen.context;
 
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.org.objectweb.asm.Type;
 
-public class MultifileClassFacadeContext extends MultifileClassContextBase implements DelegatingFacadeContext {
+public class MultifileClassFacadeContext extends MultifileClassContextBase {
     public MultifileClassFacadeContext(
             PackageFragmentDescriptor descriptor,
             CodegenContext parent,
@@ -28,11 +27,5 @@ public class MultifileClassFacadeContext extends MultifileClassContextBase imple
             Type filePartType
     ) {
         super(descriptor, parent, multifileClassType, filePartType);
-    }
-
-    @Nullable
-    @Override
-    public Type getDelegateToClassType() {
-        return getFilePartType();
     }
 }

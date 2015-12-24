@@ -25,7 +25,7 @@ import org.jetbrains.org.objectweb.asm.Type;
 
 public class PackageContext extends FieldOwnerContext<PackageFragmentDescriptor> implements DelegatingToPartContext, FacadePartWithSourceFile {
     private final Type packagePartType;
-    @Nullable private KtFile sourceFile;
+    private final KtFile sourceFile;
 
     public PackageContext(
             @NotNull PackageFragmentDescriptor contextDescriptor,
