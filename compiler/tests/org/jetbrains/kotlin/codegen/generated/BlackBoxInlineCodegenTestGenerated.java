@@ -1645,6 +1645,12 @@ public class BlackBoxInlineCodegenTestGenerated extends AbstractBlackBoxInlineCo
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/syntheticAccessors"), Pattern.compile("^(.+)\\.1.kt$"), true);
         }
 
+        @TestMetadata("constField.1.kt")
+        public void testConstField() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/syntheticAccessors/constField.1.kt");
+            doTestMultiFileWithInlineCheck(fileName);
+        }
+
         @TestMetadata("packagePrivateMembers.1.kt")
         public void testPackagePrivateMembers() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/syntheticAccessors/packagePrivateMembers.1.kt");
