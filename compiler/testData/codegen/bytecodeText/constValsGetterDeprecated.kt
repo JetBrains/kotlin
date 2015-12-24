@@ -11,8 +11,7 @@ class B {
 }
 
 /*
-  1 DEPRECATED is for INSTANCE temporarily
-  3 others are for getCONST_VAL
+  3 DEPRECATED are for getCONST_VAL
 */
 
-// 4 DEPRECATED
+// 3 DEPRECATED

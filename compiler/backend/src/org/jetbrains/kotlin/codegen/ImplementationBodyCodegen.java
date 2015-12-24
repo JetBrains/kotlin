@@ -840,17 +840,16 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateFieldForSingleton() {
-        if (isEnumEntry(descriptor)) return;
+        if (isEnumEntry(descriptor) || isCompanionObject(descriptor)) return;
 
-        boolean isCompanionObject = isCompanionObject(descriptor);
-        if (isNonCompanionObject(descriptor) || isCompanionObject) {
+        if (isNonCompanionObject(descriptor)) {
             StackValue.Field field = StackValue.singletonViaInstance(descriptor, typeMapper);
             v.newField(JvmDeclarationOriginKt.OtherOrigin(myClass),
-                       ACC_PUBLIC | ACC_STATIC | ACC_FINAL | (isCompanionObject ? ACC_DEPRECATED : 0),
+                       ACC_PUBLIC | ACC_STATIC | ACC_FINAL,
                        field.name, field.type.getDescriptor(), null, null);
 
             if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
-            // Invoke the object constructor but ignore the result because INSTANCE$ will be initialized in the first line of <init>
+            // Invoke the object constructor but ignore the result because INSTANCE will be initialized in the first line of <init>
             InstructionAdapter v = createOrGetClInitCodegen().v;
             markLineNumberForElement(element, v);
             v.anew(classAsmType);
@@ -869,12 +868,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
         StackValue.Field field = StackValue.singleton(companionObjectDescriptor, typeMapper);
         v.newField(JvmDeclarationOriginKt.OtherOrigin(companionObject), ACC_PUBLIC | ACC_STATIC | ACC_FINAL, field.name, field.type.getDescriptor(), null, null);
-
-        if (state.getClassBuilderMode() != ClassBuilderMode.FULL) return;
-
-        if (!isCompanionObjectWithBackingFieldsInOuter(companionObjectDescriptor)) {
-            generateCompanionObjectInitializer(companionObjectDescriptor);
-        }
     }
 
     private void generateCompanionObjectBackingFieldCopies() {
@@ -926,13 +919,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
 
     private void generateCompanionObjectInitializer(@NotNull ClassDescriptor companionObject) {
         ExpressionCodegen codegen = createOrGetClInitCodegen();
-        //TODO: uncomment when DEPRECATED INSTANCE is removed
-        //FunctionDescriptor constructor = (FunctionDescriptor) context.accessibleDescriptor(
-        //        CollectionsKt.single(companionObject.getConstructors()), /* superCallExpression = */ null
-        //);
-        //generateMethodCallTo(constructor, null, codegen.v);
-        //StackValue instance = StackValue.onStack(typeMapper.mapClass(companionObject));
-        StackValue.singleton(companionObject, typeMapper).store(StackValue.singletonViaInstance(companionObject, typeMapper), codegen.v, true);
+
+        FunctionDescriptor constructor = (FunctionDescriptor) context.accessibleDescriptor(
+                CollectionsKt.single(companionObject.getConstructors()), /* superCallExpression = */ null
+        );
+        generateMethodCallTo(constructor, null, codegen.v);
+        StackValue instance = StackValue.onStack(typeMapper.mapClass(companionObject));
+        StackValue.singleton(companionObject, typeMapper).store(instance, codegen.v, true);
     }
 
     private void generatePrimaryConstructor(final DelegationFieldsInfo delegationFieldsInfo) {
@@ -1002,7 +995,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         generateDelegatorToConstructorCall(iv, codegen, constructorDescriptor,
                                            getDelegationConstructorCall(bindingContext, constructorDescriptor));
 
-        if (isObject(descriptor)) {
+        if (isNonCompanionObject(descriptor)) {
             StackValue.singletonViaInstance(descriptor, typeMapper).store(StackValue.LOCAL_0, iv);
         }
 
@@ -1027,9 +1020,13 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             curParam++;
         }
 
+        if (isCompanionObject(descriptor)) {
+            ImplementationBodyCodegen parentCodegen = (ImplementationBodyCodegen) getParentCodegen();
+            parentCodegen.generateCompanionObjectInitializer(descriptor);
+        }
+
         if (isCompanionObjectWithBackingFieldsInOuter(descriptor)) {
             final ImplementationBodyCodegen parentCodegen = (ImplementationBodyCodegen) getParentCodegen();
-            parentCodegen.generateCompanionObjectInitializer(descriptor);
             generateInitializers(new Function0<ExpressionCodegen>() {
                 @Override
                 public ExpressionCodegen invoke() {
