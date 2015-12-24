@@ -43,7 +43,7 @@ public class KotlinCallHierarchyProvider implements HierarchyProvider {
         if (element == null) return null;
 
         element = HierarchyUtils.getCallHierarchyElement(element);
-        if (element instanceof KtFile || element.getLanguage() != KotlinLanguage.INSTANCE) return null;
+        if (element instanceof KtFile || element == null || element.getLanguage() != KotlinLanguage.INSTANCE) return null;
 
         return element;
     }
