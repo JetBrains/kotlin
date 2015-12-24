@@ -753,8 +753,9 @@ private fun CompilationResult.doProcessChangesUsingLookups(
         KotlinBuilder.LOG.debug("Process $change")
 
         if (change is ChangeInfo.SignatureChanged) {
-            for (classFqName in withSubtypes(change.fqName, allCaches)) {
+            val fqNames = if (!change.areSubclassesAffected) listOf(change.fqName) else withSubtypes(change.fqName, allCaches)
 
+            for (classFqName in fqNames) {
                 assert(!classFqName.isRoot) { "classFqName is root when processing $change" }
 
                 val scope = classFqName.parent().asString()

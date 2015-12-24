@@ -30,12 +30,15 @@ import org.jetbrains.kotlin.utils.HashSetUtil
 import java.util.*
 
 data class Difference(
-        val isClassSignatureChanged: Boolean = false,
+        val isClassAffected: Boolean = false,
+        val areSubclassesAffected: Boolean = false,
         val changedMembersNames: Set<String> = emptySet()
 )
 
 fun difference(oldData: ProtoMapValue, newData: ProtoMapValue): Difference {
-    if (oldData.isPackageFacade != newData.isPackageFacade) return Difference(isClassSignatureChanged = true)
+    if (!oldData.isPackageFacade && newData.isPackageFacade) return Difference(isClassAffected = true, areSubclassesAffected = true)
+
+    if (oldData.isPackageFacade && !newData.isPackageFacade) return Difference(isClassAffected = true)
 
     val differenceObject =
             if (oldData.isPackageFacade) {
@@ -174,7 +177,8 @@ private class DifferenceCalculatorForClass(oldData: ProtoMapValue, newData: Prot
     val diff = compareObject.difference(oldProto, newProto)
 
     override fun difference(): Difference {
-        var isClassSignatureChanged = false
+        var isClassAffected = false
+        var areSubclassesAffected = false
         val names = hashSetOf<String>()
         val classIsSealed = newProto.isSealed && oldProto.isSealed
 
@@ -197,31 +201,37 @@ private class DifferenceCalculatorForClass(oldData: ProtoMapValue, newData: Prot
                     if (classIsSealed) {
                         // when class is sealed, adding an implementation can break exhaustive when expressions
                         // the workaround is to recompile all class usages
-                        isClassSignatureChanged = true
+                        isClassAffected = true
                     }
 
                     names.addAll(calcDifferenceForNames(oldProto.nestedClassNameList, newProto.nestedClassNameList))
                 }
-                ProtoBufClassKind.CONSTRUCTOR_LIST ->
-                    names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Class::getConstructorList))
+                ProtoBufClassKind.CONSTRUCTOR_LIST -> {
+                    val differentNonPrivateConstructors = calcDifferenceForNonPrivateMembers(ProtoBuf.Class::getConstructorList)
+
+                    if (differentNonPrivateConstructors.isNotEmpty()) {
+                        isClassAffected = true
+                    }
+                }
                 ProtoBufClassKind.FUNCTION_LIST ->
                     names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Class::getFunctionList))
                 ProtoBufClassKind.PROPERTY_LIST ->
                     names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Class::getPropertyList))
                 ProtoBufClassKind.ENUM_ENTRY_LIST -> {
-                    isClassSignatureChanged = true
+                    isClassAffected = true
                 }
                 ProtoBufClassKind.TYPE_TABLE -> {
                     // TODO
                 }
                 in CLASS_SIGNATURE_ENUMS -> {
-                    isClassSignatureChanged = true
+                    isClassAffected = true
+                    areSubclassesAffected = true
                 }
                 else -> throw IllegalArgumentException("Unsupported kind: $kind")
             }
         }
 
-        return Difference(isClassSignatureChanged, names)
+        return Difference(isClassAffected, areSubclassesAffected, names)
     }
 }
 
@@ -259,7 +269,7 @@ private class DifferenceCalculatorForPackageFacade(oldData: ProtoMapValue, newDa
             }
         }
 
-        return Difference(isClassSignatureChanged = false, changedMembersNames = names)
+        return Difference(changedMembersNames = names)
     }
 }
 

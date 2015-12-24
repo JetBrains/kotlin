@@ -1,10 +1,5 @@
-changes in test/ClassWithPrimaryConstructorChanged: MEMBERS
-    [<init>]
-changes in test/ClassWithPrimaryConstructorVisibilityChanged: MEMBERS
-    [<init>]
-changes in test/ClassWithSecondaryConstructorVisibilityChanged: MEMBERS
-    [<init>]
-changes in test/ClassWithSecondaryConstructorsAdded: MEMBERS
-    [<init>]
-changes in test/ClassWithSecondaryConstructorsRemoved: MEMBERS
-    [<init>]
+changes in test/ClassWithPrimaryConstructorChanged: CLASS_SIGNATURE
+changes in test/ClassWithPrimaryConstructorVisibilityChanged: CLASS_SIGNATURE
+changes in test/ClassWithSecondaryConstructorVisibilityChanged: CLASS_SIGNATURE
+changes in test/ClassWithSecondaryConstructorsAdded: CLASS_SIGNATURE
+changes in test/ClassWithSecondaryConstructorsRemoved: CLASS_SIGNATURE
