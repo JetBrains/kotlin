@@ -918,6 +918,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                 val initializer = declaration.setInitializer(KtPsiFactory(declaration).createExpression(defaultValue))!!
                 val range = initializer.textRange
                 containingFileEditor.selectionModel.setSelection(range.startOffset, range.endOffset)
+                containingFileEditor.caretModel.moveToOffset(range.endOffset)
                 return
             }
             setupEditorSelection(containingFileEditor, declaration)
