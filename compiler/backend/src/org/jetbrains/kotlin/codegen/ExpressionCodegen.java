@@ -92,15 +92,13 @@ import java.util.*;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isInt;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
-import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.couldUseDirectAccessToProperty;
-import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.*;
 import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isObject;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
-import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.hasJvmFieldAnnotation;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionExpression;
 import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.isFunctionLiteral;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -2168,7 +2166,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 propertyDescriptor = context.accessibleDescriptor(propertyDescriptor, superCallTarget);
 
                 PropertyGetterDescriptor getter = propertyDescriptor.getGetter();
-                if (getter != null && !hasJvmFieldAnnotation(propertyDescriptor)) {
+                if (getter != null && !isConstOrHasJvmFieldAnnotation(propertyDescriptor)) {
                     callableGetter = typeMapper.mapToCallableMethod(getter, isSuper);
                 }
             }
@@ -2177,7 +2175,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 PropertySetterDescriptor setter = propertyDescriptor.getSetter();
                 if (setter != null &&
                     !couldUseDirectAccessToProperty(propertyDescriptor, false, isDelegatedProperty, context) &&
-                    !hasJvmFieldAnnotation(propertyDescriptor)) {
+                    !isConstOrHasJvmFieldAnnotation(propertyDescriptor)) {
                     callableSetter = typeMapper.mapToCallableMethod(setter, isSuper);
                 }
             }

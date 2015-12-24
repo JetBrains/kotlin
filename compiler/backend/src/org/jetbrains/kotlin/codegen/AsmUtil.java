@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
 import org.jetbrains.kotlin.resolve.DeprecationUtilKt;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
@@ -298,9 +299,6 @@ public class AsmUtil {
 
     public static int getDeprecatedAccessFlag(@NotNull MemberDescriptor descriptor) {
         if (descriptor instanceof PropertyAccessorDescriptor) {
-            if (((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty().isConst()) {
-                return ACC_DEPRECATED;
-            }
             return KotlinBuiltIns.isDeprecated(descriptor)
                    ? ACC_DEPRECATED
                    : getDeprecatedAccessFlag(((PropertyAccessorDescriptor) descriptor).getCorrespondingProperty());
@@ -680,14 +678,8 @@ public class AsmUtil {
     }
 
     public static boolean isInstancePropertyWithStaticBackingField(@NotNull PropertyDescriptor propertyDescriptor) {
-        if (propertyDescriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-            return false;
-        }
-
-        DeclarationDescriptor container = propertyDescriptor.getContainingDeclaration();
-        return isNonCompanionObject(container) ||
-               isPropertyWithBackingFieldInOuterClass(propertyDescriptor) ||
-               (isCompanionObject(container) && isInterface(container.getContainingDeclaration()));
+        return propertyDescriptor.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&
+               isObject(propertyDescriptor.getContainingDeclaration());
     }
 
     public static boolean isPropertyWithBackingFieldInOuterClass(@NotNull PropertyDescriptor propertyDescriptor) {
@@ -727,7 +719,9 @@ public class AsmUtil {
     }
 
     public static boolean isCompanionObjectWithBackingFieldsInOuter(@NotNull DeclarationDescriptor companionObject) {
-        return isCompanionObject(companionObject) && isClassOrEnumClass(companionObject.getContainingDeclaration());
+        return isCompanionObject(companionObject) &&
+               isClassOrEnumClass(companionObject.getContainingDeclaration()) &&
+               !JavaToKotlinClassMap.INSTANCE.isMappedCompanion((ClassDescriptor) companionObject);
     }
 
     private static boolean areBothAccessorDefault(@NotNull PropertyDescriptor propertyDescriptor) {

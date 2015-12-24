@@ -55,6 +55,7 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConstOrHasJvmFieldAnnotation;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
@@ -155,7 +156,7 @@ public class PropertyCodegen {
             @NotNull PropertyDescriptor descriptor,
             @Nullable KtPropertyAccessor accessor
     ) {
-        if (hasJvmFieldAnnotation(descriptor)) return false;
+        if (isConstOrHasJvmFieldAnnotation(descriptor)) return false;
 
         boolean isDefaultAccessor = accessor == null || !accessor.hasBody();
 

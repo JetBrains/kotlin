@@ -101,12 +101,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         doTest(fileName);
     }
 
-    @TestMetadata("constValsGetterDeprecated.kt")
-    public void testConstValsGetterDeprecated() throws Exception {
-        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/constValsGetterDeprecated.kt");
-        doTest(fileName);
-    }
-
     @TestMetadata("falseSmartCast.kt")
     public void testFalseSmartCast() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/bytecodeText/falseSmartCast.kt");

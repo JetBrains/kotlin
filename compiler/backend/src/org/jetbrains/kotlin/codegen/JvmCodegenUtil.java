@@ -50,6 +50,7 @@ import java.io.File;
 
 import static org.jetbrains.kotlin.descriptors.Modality.ABSTRACT;
 import static org.jetbrains.kotlin.descriptors.Modality.FINAL;
+import static org.jetbrains.kotlin.resolve.jvm.annotations.AnnotationUtilKt.hasJvmFieldAnnotation;
 
 public class JvmCodegenUtil {
 
@@ -128,6 +129,10 @@ public class JvmCodegenUtil {
                                      }
                                  }
         );
+    }
+
+    public static boolean isConstOrHasJvmFieldAnnotation(@NotNull PropertyDescriptor propertyDescriptor) {
+        return propertyDescriptor.isConst() || hasJvmFieldAnnotation(propertyDescriptor);
     }
 
     public static boolean couldUseDirectAccessToProperty(
