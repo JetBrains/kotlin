@@ -50,14 +50,14 @@ public class TargetPlatformDetector {
     @NotNull
     public static TargetPlatform getPlatform(@NotNull Module module) {
         if (ProjectStructureUtil.isJsKotlinModule(module)) {
-            return JsPlatform.INSTANCE$;
+            return JsPlatform.INSTANCE;
         }
-        return JvmPlatform.INSTANCE$;
+        return JvmPlatform.INSTANCE;
     }
 
     @NotNull
     public static TargetPlatform getDefaultPlatform() {
         LOG.info("Using default platform");
-        return JvmPlatform.INSTANCE$;
+        return JvmPlatform.INSTANCE;
     }
 }

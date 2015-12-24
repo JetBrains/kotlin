@@ -37,7 +37,7 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull DataFlowInfo dataFlowInfo,
             @NotNull KotlinType expectedType
     ) {
-        return newContext(trace, scope, dataFlowInfo, expectedType, CallChecker.DoNothing.INSTANCE$);
+        return newContext(trace, scope, dataFlowInfo, expectedType, CallChecker.DoNothing.INSTANCE);
     }
 
     @NotNull

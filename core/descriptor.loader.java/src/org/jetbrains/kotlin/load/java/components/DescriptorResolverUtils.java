@@ -56,7 +56,7 @@ public final class DescriptorResolverUtils {
                             @Override
                             public Unit invoke(@NotNull CallableMemberDescriptor descriptor) {
                                 errorReporter.reportCannotInferVisibility(descriptor);
-                                return Unit.INSTANCE$;
+                                return Unit.INSTANCE;
                             }
                         });
                         result.add((D) fakeOverride);

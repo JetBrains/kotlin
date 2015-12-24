@@ -175,7 +175,7 @@ public class CompileEnvironmentUtil {
                             }
                         }
                     }
-                    return Unit.INSTANCE$;
+                    return Unit.INSTANCE;
                 }
             });
         }

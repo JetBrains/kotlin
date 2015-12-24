@@ -42,13 +42,13 @@ public abstract class AbstractMultiFileHighlightingTest extends CompletionTestCa
     public void doTest(@NotNull String filePath) throws Exception {
         configureByFile(new File(filePath).getName(), "");
         boolean shouldFail = getName().contains("UnspecifiedType");
-        AstAccessControl.INSTANCE$.testWithControlledAccessToAst(
+        AstAccessControl.INSTANCE.testWithControlledAccessToAst(
                 shouldFail, getFile().getVirtualFile(), getProject(), getTestRootDisposable(),
                 new Function0<Unit>() {
                     @Override
                     public Unit invoke() {
                         checkHighlighting(myEditor, true, false);
-                        return Unit.INSTANCE$;
+                        return Unit.INSTANCE;
                     }
                 }
         );

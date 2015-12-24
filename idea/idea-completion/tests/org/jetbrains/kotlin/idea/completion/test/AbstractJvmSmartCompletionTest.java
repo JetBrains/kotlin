@@ -33,7 +33,7 @@ public abstract class AbstractJvmSmartCompletionTest extends KotlinFixtureComple
     @NotNull
     @Override
     public TargetPlatform getPlatform() {
-        return JvmPlatform.INSTANCE$;
+        return JvmPlatform.INSTANCE;
     }
 
     @NotNull

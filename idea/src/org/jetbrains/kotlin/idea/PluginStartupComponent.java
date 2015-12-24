@@ -52,8 +52,8 @@ public class PluginStartupComponent implements ApplicationComponent {
     public void initComponent() {
         registerPathVariable();
 
-        JarUserDataManager.INSTANCE$.register(KotlinJavaScriptLibraryDetectionUtil.HasKotlinJSMetadataInJar.INSTANCE$);
-        JarUserDataManager.INSTANCE$.register(HasCompiledKotlinInJar.INSTANCE$);
+        JarUserDataManager.INSTANCE.register(KotlinJavaScriptLibraryDetectionUtil.HasKotlinJSMetadataInJar.INSTANCE);
+        JarUserDataManager.INSTANCE.register(HasCompiledKotlinInJar.INSTANCE);
 
         DebuggerFiltersUtilKt.addKotlinStdlibDebugFilterIfNeeded();
 

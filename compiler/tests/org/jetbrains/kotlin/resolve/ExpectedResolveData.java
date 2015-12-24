@@ -145,7 +145,7 @@ public abstract class ExpectedResolveData {
     }
 
     public final void checkResult(BindingContext bindingContext) {
-        KotlinBuiltIns builtIns = JvmPlatform.INSTANCE$.getBuiltIns();
+        KotlinBuiltIns builtIns = JvmPlatform.INSTANCE.getBuiltIns();
 
         Set<PsiElement> unresolvedReferences = Sets.newHashSet();
         for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {

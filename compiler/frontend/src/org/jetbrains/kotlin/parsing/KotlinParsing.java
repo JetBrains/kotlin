@@ -217,7 +217,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             packageDirective = mark();
             packageDirective.done(PACKAGE_DIRECTIVE);
             // this is necessary to allow comments at the start of the file to be bound to the first declaration
-            packageDirective.setCustomEdgeTokenBinders(DoNotBindAnything.INSTANCE$, null);
+            packageDirective.setCustomEdgeTokenBinders(DoNotBindAnything.INSTANCE, null);
         }
 
         parseImportDirectives();
@@ -347,7 +347,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         }
         consumeIf(SEMICOLON);
         importDirective.done(IMPORT_DIRECTIVE);
-        importDirective.setCustomEdgeTokenBinders(null, TrailingCommentsBinder.INSTANCE$);
+        importDirective.setCustomEdgeTokenBinders(null, TrailingCommentsBinder.INSTANCE);
     }
 
     private boolean closeImportWithErrorIfNewline(PsiBuilder.Marker importDirective, String errorMessage) {
@@ -363,7 +363,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         PsiBuilder.Marker importList = mark();
         if (!at(IMPORT_KEYWORD)) {
             // this is necessary to allow comments at the start of the file to be bound to the first declaration
-            importList.setCustomEdgeTokenBinders(DoNotBindAnything.INSTANCE$, null);
+            importList.setCustomEdgeTokenBinders(DoNotBindAnything.INSTANCE, null);
         }
         while (at(IMPORT_KEYWORD)) {
             parseImportDirective();

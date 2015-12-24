@@ -83,7 +83,7 @@ public class KotlinTestNgConfigurationProducer extends TestNGConfigurationProduc
             KtElement owner = PsiTreeUtil.getParentOfType(function, KtFunction.class, KtClass.class);
 
             if (owner instanceof KtClass) {
-                PsiClass delegate = LightClassUtil.INSTANCE$.getPsiClass((KtClass) owner);
+                PsiClass delegate = LightClassUtil.INSTANCE.getPsiClass((KtClass) owner);
                 if (delegate != null) {
                     for (PsiMethod method : delegate.getMethods()) {
                         if (method.getNavigationElement() == function) {
@@ -98,7 +98,7 @@ public class KotlinTestNgConfigurationProducer extends TestNGConfigurationProduc
         }
 
         if (declarationToRun instanceof KtClass) {
-            PsiClass delegate = LightClassUtil.INSTANCE$.getPsiClass((KtClassOrObject) declarationToRun);
+            PsiClass delegate = LightClassUtil.INSTANCE.getPsiClass((KtClassOrObject) declarationToRun);
             if (!isTestNGClass(delegate)) {
                 return false;
             }

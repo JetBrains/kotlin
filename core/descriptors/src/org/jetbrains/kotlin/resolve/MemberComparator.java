@@ -40,7 +40,7 @@ public class MemberComparator implements Comparator<DeclarationDescriptor> {
                     options.setWithDefinedIn(false);
                     options.setVerbose(true);
                     options.setModifiers(DescriptorRendererModifier.ALL);
-                    return Unit.INSTANCE$;
+                    return Unit.INSTANCE;
                 }
             });
 

@@ -83,7 +83,7 @@ public class FunctionDescriptorUtil {
                                             for (ValueParameterDescriptor valueParameterDescriptor : descriptor.getValueParameters()) {
                                                 handler.addVariableDescriptor(valueParameterDescriptor);
                                             }
-                                            return Unit.INSTANCE$;
+                                            return Unit.INSTANCE;
                                         }
                                     });
     }

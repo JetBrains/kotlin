@@ -180,7 +180,7 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
                     boolean actionShouldBeAvailable = pair.getSecond();
 
                     if (psiFile instanceof KtFile) {
-                        DirectiveBasedActionUtils.INSTANCE$.checkForUnexpectedErrors((KtFile) psiFile);
+                        DirectiveBasedActionUtils.INSTANCE.checkForUnexpectedErrors((KtFile) psiFile);
                     }
 
                     doAction(text, actionShouldBeAvailable, getTestName(false));
@@ -270,7 +270,7 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
                         boolean actionShouldBeAvailable = pair.getSecond();
 
                         if (psiFile instanceof KtFile) {
-                            DirectiveBasedActionUtils.INSTANCE$.checkForUnexpectedErrors((KtFile) psiFile);
+                            DirectiveBasedActionUtils.INSTANCE.checkForUnexpectedErrors((KtFile) psiFile);
                         }
 
                         doAction(text, actionShouldBeAvailable, beforeFileName);
@@ -341,7 +341,7 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
                      "Infos:" + infos);
             }
             else {
-                DirectiveBasedActionUtils.INSTANCE$.checkAvailableActionsAreExpected(getFile(), availableActions);
+                DirectiveBasedActionUtils.INSTANCE.checkAvailableActionsAreExpected(getFile(), availableActions);
             }
         }
         else {

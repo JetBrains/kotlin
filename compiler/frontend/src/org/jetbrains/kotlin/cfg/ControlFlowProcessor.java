@@ -271,7 +271,7 @@ public class ControlFlowProcessor {
         @NotNull
         private AccessTarget getResolvedCallAccessTarget(KtElement element) {
             ResolvedCall<?> resolvedCall = CallUtilKt.getResolvedCall(element, trace.getBindingContext());
-            return resolvedCall != null ? new AccessTarget.Call(resolvedCall) : AccessTarget.BlackBox.INSTANCE$;
+            return resolvedCall != null ? new AccessTarget.Call(resolvedCall) : AccessTarget.BlackBox.INSTANCE;
         }
 
         @NotNull
@@ -279,7 +279,7 @@ public class ControlFlowProcessor {
             DeclarationDescriptor descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element);
             return descriptor instanceof VariableDescriptor
                    ? new AccessTarget.Declaration((VariableDescriptor) descriptor)
-                   : AccessTarget.BlackBox.INSTANCE$;
+                   : AccessTarget.BlackBox.INSTANCE;
         }
 
         @Override
@@ -465,7 +465,7 @@ public class ControlFlowProcessor {
             }
 
             Map<PseudoValue, ReceiverValue> receiverValues = SmartFMap.emptyMap();
-            AccessTarget accessTarget = AccessTarget.BlackBox.INSTANCE$;
+            AccessTarget accessTarget = AccessTarget.BlackBox.INSTANCE;
             if (left instanceof KtSimpleNameExpression || left instanceof KtQualifiedExpression) {
                 accessTarget = getResolvedCallAccessTarget(KtPsiUtilKt.getQualifiedElementSelector(left));
                 if (accessTarget instanceof AccessTarget.Call) {
@@ -476,7 +476,7 @@ public class ControlFlowProcessor {
                 accessTarget = getDeclarationAccessTarget(left);
             }
 
-            if (accessTarget == AccessTarget.BlackBox.INSTANCE$ && !(left instanceof KtProperty)) {
+            if (accessTarget == AccessTarget.BlackBox.INSTANCE && !(left instanceof KtProperty)) {
                 generateInstructions(left);
                 createSyntheticValue(left, MagicKind.VALUE_CONSUMER, left);
             }

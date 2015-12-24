@@ -480,7 +480,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
                 markLineNumber(expression, isStatement);
                 v.mark(end);
-                return Unit.INSTANCE$;
+                return Unit.INSTANCE;
             }
         });
     }
@@ -1294,7 +1294,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                         }
                     }
                     v.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false);
-                    return Unit.INSTANCE$;
+                    return Unit.INSTANCE;
                 }
             });
         }
@@ -1433,7 +1433,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
                 JvmMethodSignature constructor = typeMapper.mapSignature(SamCodegenUtil.resolveSamAdapter(constructorDescriptor));
                 v.invokespecial(type.getInternalName(), "<init>", constructor.getAsmMethod().getDescriptor(), false);
-                return Unit.INSTANCE$;
+                return Unit.INSTANCE;
             }
         });
     }
@@ -1551,7 +1551,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 for (Function<StackValue, Void> task : Lists.reverse(leaveTasks)) {
                     task.fun(value);
                 }
-                return Unit.INSTANCE$;
+                return Unit.INSTANCE;
             }
         });
     }
@@ -2789,7 +2789,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 putJavaLangClassInstance(v, classAsmType);
                 wrapJavaClassIntoKClass(v);
 
-                return Unit.INSTANCE$;
+                return Unit.INSTANCE;
             }
         });
     }
@@ -3248,7 +3248,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 }
 
                 value.store(StackValue.onStack(storeType), v, true);
-                return Unit.INSTANCE$;
+                return Unit.INSTANCE;
             }
         });
     }
@@ -3373,7 +3373,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 CallableMethod method = typeMapper.mapToCallableMethod(constructor, false);
                 invokeMethodWithArguments(method, resolvedCall, StackValue.none());
 
-                return Unit.INSTANCE$;
+                return Unit.INSTANCE;
             }
         });
     }
@@ -3389,7 +3389,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             public Unit invoke(InstructionAdapter v) {
                 gen(sizeExpression, Type.INT_TYPE);
                 newArrayInstruction(arrayType);
-                return Unit.INSTANCE$;
+                return Unit.INSTANCE;
             }
         });
     }
@@ -3628,7 +3628,7 @@ The "returned" value of try expression with no finally is either the last expres
                 if (finallyBlock != null) {
                     blockStackElements.pop();
                 }
-                return Unit.INSTANCE$;
+                return Unit.INSTANCE;
             }
         });
     }
@@ -3692,7 +3692,7 @@ The "returned" value of try expression with no finally is either the last expres
                 }
 
                 generateCheckCastInstruction(rightType, opToken == KtTokens.AS_SAFE);
-                return Unit.INSTANCE$;
+                return Unit.INSTANCE;
             }
         });
     }
@@ -3808,7 +3808,7 @@ The "returned" value of try expression with no finally is either the last expres
                         SwitchCodegenUtil.buildAppropriateSwitchCodegenIfPossible(expression, isStatement, ExpressionCodegen.this);
                 if (switchCodegen != null) {
                     switchCodegen.generate();
-                    return Unit.INSTANCE$;
+                    return Unit.INSTANCE;
                 }
 
                 int subjectLocal = expr != null ? myFrameMap.enterTemp(subjectType) : -1;

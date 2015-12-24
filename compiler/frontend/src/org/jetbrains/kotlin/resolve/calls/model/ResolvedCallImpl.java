@@ -304,7 +304,7 @@ public class ResolvedCallImpl<D extends CallableDescriptor> implements MutableRe
             if (ArgumentMappingKt.isReallySuccess(this)) {
                 LOG.error("ArgumentUnmapped for " + valueArgument + " in successfully resolved call: " + call.getCallElement().getText());
             }
-            return ArgumentUnmapped.INSTANCE$;
+            return ArgumentUnmapped.INSTANCE;
         }
         return argumentMatch;
     }

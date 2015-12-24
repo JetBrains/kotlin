@@ -86,7 +86,7 @@ public class KotlinDefinitionsSearcher implements QueryExecutor<PsiElement, Defi
         PsiClass psiClass = ApplicationManager.getApplication().runReadAction(new Computable<PsiClass>() {
             @Override
             public PsiClass compute() {
-                return LightClassUtil.INSTANCE$.getPsiClass(klass);
+                return LightClassUtil.INSTANCE.getPsiClass(klass);
             }
         });
         if (psiClass != null) {
@@ -99,7 +99,7 @@ public class KotlinDefinitionsSearcher implements QueryExecutor<PsiElement, Defi
         PsiMethod psiMethod = ApplicationManager.getApplication().runReadAction(new Computable<PsiMethod>() {
             @Override
             public PsiMethod compute() {
-                return LightClassUtil.INSTANCE$.getLightClassMethod(function);
+                return LightClassUtil.INSTANCE.getLightClassMethod(function);
             }
         });
 
@@ -115,7 +115,7 @@ public class KotlinDefinitionsSearcher implements QueryExecutor<PsiElement, Defi
                 new Computable<LightClassUtil.PropertyAccessorsPsiMethods>() {
                     @Override
                     public LightClassUtil.PropertyAccessorsPsiMethods compute() {
-                        return LightClassUtil.INSTANCE$.getLightClassPropertyMethods(parameter);
+                        return LightClassUtil.INSTANCE.getLightClassPropertyMethods(parameter);
                     }
                 });
 
@@ -127,7 +127,7 @@ public class KotlinDefinitionsSearcher implements QueryExecutor<PsiElement, Defi
                 new Computable<LightClassUtil.PropertyAccessorsPsiMethods>() {
                     @Override
                     public LightClassUtil.PropertyAccessorsPsiMethods compute() {
-                        return LightClassUtil.INSTANCE$.getLightClassPropertyMethods(property);
+                        return LightClassUtil.INSTANCE.getLightClassPropertyMethods(property);
                     }
                 });
 

@@ -135,7 +135,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             @Override
             public Unit invoke(String message) {
                 messageSeverityCollector.report(CompilerMessageSeverity.ERROR, message, CompilerMessageLocation.NO_LOCATION);
-                return Unit.INSTANCE$;
+                return Unit.INSTANCE;
             }
         })) {
             return COMPILATION_ERROR;

@@ -580,7 +580,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                     @Override
                     public Unit invoke(@NotNull Supertypes supertypes) {
                         findAndDisconnectLoopsInTypeHierarchy(supertypes.trueSupertypes);
-                        return Unit.INSTANCE$;
+                        return Unit.INSTANCE;
                     }
                 }
         );

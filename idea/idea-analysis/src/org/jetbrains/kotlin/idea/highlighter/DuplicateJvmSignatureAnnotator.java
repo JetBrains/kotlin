@@ -40,7 +40,7 @@ public class DuplicateJvmSignatureAnnotator implements Annotator {
         if (!ProjectRootsUtil.isInProjectSource(element)) return;
 
         PsiFile file = element.getContainingFile();
-        if (!(file instanceof KtFile) || TargetPlatformDetector.getPlatform((KtFile) file) != JvmPlatform.INSTANCE$) return;
+        if (!(file instanceof KtFile) || TargetPlatformDetector.getPlatform((KtFile) file) != JvmPlatform.INSTANCE) return;
 
         Diagnostics otherDiagnostics = ResolutionUtils.analyzeFully((KtElement) element).getDiagnostics();
         GlobalSearchScope moduleScope = GetModuleInfoKt.getModuleInfo(element).contentScope();

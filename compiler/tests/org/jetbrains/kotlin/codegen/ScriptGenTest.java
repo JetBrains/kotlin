@@ -37,7 +37,7 @@ public class ScriptGenTest extends CodegenTestCase {
     private static final KotlinScriptDefinition FIB_SCRIPT_DEFINITION =
             new TestScriptDefinition(
                     ".lang.kt",
-                    singletonList(new ScriptParameter(Name.identifier("num"), JvmPlatform.INSTANCE$.getBuiltIns().getIntType()))
+                    singletonList(new ScriptParameter(Name.identifier("num"), JvmPlatform.INSTANCE.getBuiltIns().getIntType()))
             );
     private static final KotlinScriptDefinition NO_PARAM_SCRIPT_DEFINITION =
             new TestScriptDefinition(

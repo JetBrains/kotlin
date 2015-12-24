@@ -930,7 +930,7 @@ public class KotlinTestUtils {
 
     @NotNull
     public static ModuleDescriptorImpl createEmptyModule(@NotNull String name) {
-        return createEmptyModule(name, JvmPlatform.INSTANCE$);
+        return createEmptyModule(name, JvmPlatform.INSTANCE);
     }
 
     @NotNull

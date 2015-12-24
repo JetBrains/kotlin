@@ -133,7 +133,7 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
 
         for (KtClassOrObject declaration : classOrObjectDeclarations) {
             if (!(declaration instanceof KtEnumEntry)) {
-                PsiClass lightClass = LightClassUtil.INSTANCE$.getPsiClass(declaration);
+                PsiClass lightClass = LightClassUtil.INSTANCE.getPsiClass(declaration);
                 if (lightClass != null) {
                     answer.add(lightClass);
                 }
@@ -149,7 +149,7 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
         for (KtClassOrObject classOrObject : lightClassGenerationSupport.findClassOrObjectDeclarations(qualifiedName.parent(), scope)) {
             //NOTE: can't filter out more interfaces right away because decompiled declarations do not have member bodies
             if (classOrObject instanceof KtClass && ((KtClass) classOrObject).isInterface()) {
-                PsiClass interfaceClass = LightClassUtil.INSTANCE$.getPsiClass(classOrObject);
+                PsiClass interfaceClass = LightClassUtil.INSTANCE.getPsiClass(classOrObject);
                 if (interfaceClass != null) {
                     PsiClass implsClass = interfaceClass.findInnerClassByName(JvmAbi.DEFAULT_IMPLS_CLASS_NAME, false);
                     if (implsClass != null) {
@@ -224,7 +224,7 @@ public class JavaElementFinder extends PsiElementFinder implements KotlinFinderM
 
         Collection<KtClassOrObject> declarations = lightClassGenerationSupport.findClassOrObjectDeclarationsInPackage(packageFQN, scope);
         for (KtClassOrObject declaration : declarations) {
-            PsiClass aClass = LightClassUtil.INSTANCE$.getPsiClass(declaration);
+            PsiClass aClass = LightClassUtil.INSTANCE.getPsiClass(declaration);
             if (aClass != null) {
                 answer.add(aClass);
             }

@@ -35,7 +35,7 @@ public abstract class AbstractKotlinType implements KotlinType {
     @NotNull
     @Override
     public TypeCapabilities getCapabilities() {
-        return TypeCapabilities.NONE.INSTANCE$;
+        return TypeCapabilities.NONE.INSTANCE;
     }
 
     @Override
