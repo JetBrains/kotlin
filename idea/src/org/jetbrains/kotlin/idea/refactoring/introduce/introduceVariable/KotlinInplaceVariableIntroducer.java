@@ -356,7 +356,7 @@ public class KotlinInplaceVariableIntroducer<D extends KtCallableDeclaration> ex
         if (typeReference != null) {
             builder.replaceElement(typeReference,
                                    TYPE_REFERENCE_VARIABLE_NAME,
-                                   SpecifyTypeExplicitlyIntention.Companion.createTypeExpressionForTemplate(myExprType),
+                                   SpecifyTypeExplicitlyIntention.Companion.createTypeExpressionForTemplate(myExprType, myDeclaration),
                                    false);
         }
     }

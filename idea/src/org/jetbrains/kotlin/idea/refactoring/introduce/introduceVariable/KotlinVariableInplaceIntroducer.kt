@@ -109,7 +109,7 @@ public class KotlinVariableInplaceIntroducer(
         addedVariable.typeReference?.let {
             builder.replaceElement(it,
                                    "TypeReferenceVariable",
-                                   SpecifyTypeExplicitlyIntention.createTypeExpressionForTemplate(expressionType!!),
+                                   SpecifyTypeExplicitlyIntention.createTypeExpressionForTemplate(expressionType!!, addedVariable),
                                    false)
         }
     }
