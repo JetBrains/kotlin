@@ -35,10 +35,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinObjectStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.NameResolver
-import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
-import org.jetbrains.kotlin.serialization.deserialization.TypeTable
-import org.jetbrains.kotlin.serialization.deserialization.supertypes
+import org.jetbrains.kotlin.serialization.deserialization.*
 
 fun createClassStub(
         parent: StubElement<out PsiElement>,
@@ -76,12 +73,7 @@ private class ClassClsStubBuilder(
             if (classProto.hasCompanionObjectName()) c.nameResolver.getName(classProto.companionObjectName) else null
 
     private val thisAsProtoContainer =
-            ProtoContainer.Class(
-                    classProto, c.nameResolver, c.typeTable,
-                    classKind == ProtoBuf.Class.Kind.COMPANION_OBJECT &&
-                    (outerContext.classKind?.let { it == ProtoBuf.Class.Kind.CLASS || it == ProtoBuf.Class.Kind.ENUM_CLASS } ?: false),
-                    classKind == ProtoBuf.Class.Kind.INTERFACE
-            )
+            ProtoContainer.Class(classProto, c.nameResolver, c.typeTable, outerContext.classKind?.let { Deserialization.classKind(it) })
 
     private val classOrObjectStub = createClassOrObjectStubAndModifierListStub()
 

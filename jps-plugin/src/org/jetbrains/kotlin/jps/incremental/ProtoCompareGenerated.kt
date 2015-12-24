@@ -430,11 +430,6 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
             if (old.varargElementTypeId != new.varargElementTypeId) return false
         }
 
-        if (old.hasExtension(JvmProtoBuf.index) != new.hasExtension(JvmProtoBuf.index)) return false
-        if (old.hasExtension(JvmProtoBuf.index)) {
-            if (old.getExtension(JvmProtoBuf.index) != new.getExtension(JvmProtoBuf.index)) return false
-        }
-
         return true
     }
 
@@ -1121,10 +1116,6 @@ public fun ProtoBuf.ValueParameter.hashCode(stringIndexes: (Int) -> Int, fqNameI
 
     if (hasVarargElementTypeId()) {
         hashCode = 31 * hashCode + varargElementTypeId
-    }
-
-    if (hasExtension(JvmProtoBuf.index)) {
-        hashCode = 31 * hashCode + getExtension(JvmProtoBuf.index)
     }
 
     return hashCode

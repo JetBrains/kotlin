@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.resolve.DescriptorFactory
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.serialization.Flags
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
@@ -219,7 +218,11 @@ public class MemberDeserializer(private val c: DeserializationContext) {
             val flags = if (proto.hasFlags()) proto.flags else 0
             ValueParameterDescriptorImpl(
                     callableDescriptor, null, i,
-                    containerOfCallable?.let { getParameterAnnotations(it, callable, kind, i, proto) } ?: Annotations.EMPTY,
+                    containerOfCallable?.let { container ->
+                        DeserializedAnnotations(c.storageManager) {
+                            c.components.annotationAndConstantLoader.loadValueParameterAnnotations(container, callable, kind, i, proto)
+                        }
+                    } ?: Annotations.EMPTY,
                     c.nameResolver.getName(proto.name),
                     c.typeDeserializer.type(proto.type(c.typeTable)),
                     Flags.DECLARES_DEFAULT_VALUE.get(flags),
@@ -231,24 +234,10 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         }.toReadOnlyList()
     }
 
-    private fun getParameterAnnotations(
-            container: ProtoContainer,
-            callable: MessageLite,
-            kind: AnnotatedCallableKind,
-            index: Int,
-            valueParameter: ProtoBuf.ValueParameter
-    ): Annotations {
-        return DeserializedAnnotations(c.storageManager) {
-            c.components.annotationAndConstantLoader.loadValueParameterAnnotations(container, callable, kind, index, valueParameter)
-        }
-    }
-
     private fun DeclarationDescriptor.asProtoContainer(): ProtoContainer? = when (this) {
         is PackageFragmentDescriptor -> ProtoContainer.Package(fqName, c.nameResolver, c.typeTable, c.packagePartSource)
         is DeserializedClassDescriptor -> ProtoContainer.Class(
-                classProto, c.nameResolver, c.typeTable,
-                isCompanionOfClass = DescriptorUtils.isCompanionObject(this) && DescriptorUtils.isClassOrEnumClass(containingDeclaration),
-                isInterface = kind == ClassKind.INTERFACE
+                classProto, c.nameResolver, c.typeTable, (containingDeclaration as? ClassDescriptor)?.kind
         )
         else -> null // TODO: support annotations on lambdas and their parameters
     }

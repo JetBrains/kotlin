@@ -13,7 +13,6 @@ public final class DebugJvmProtoBuf {
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.typeAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.isRaw);
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.typeParameterAnnotation);
-    registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.index);
     registry.add(org.jetbrains.kotlin.serialization.jvm.DebugJvmProtoBuf.classAnnotation);
   }
   public interface StringTableTypesOrBuilder
@@ -4591,17 +4590,6 @@ public final class DebugJvmProtoBuf {
           .newFileScopedGeneratedExtension(
         org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.class,
         org.jetbrains.kotlin.serialization.DebugProtoBuf.Annotation.getDefaultInstance());
-  public static final int INDEX_FIELD_NUMBER = 100;
-  /**
-   * <code>extend .org.jetbrains.kotlin.serialization.ValueParameter { ... }</code>
-   */
-  public static final
-    com.google.protobuf.GeneratedMessage.GeneratedExtension<
-      org.jetbrains.kotlin.serialization.DebugProtoBuf.ValueParameter,
-      java.lang.Integer> index = com.google.protobuf.GeneratedMessage
-          .newFileScopedGeneratedExtension(
-        java.lang.Integer.class,
-        null);
   public static final int CLASS_ANNOTATION_FIELD_NUMBER = 100;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.Class { ... }</code>
@@ -4692,12 +4680,10 @@ public final class DebugJvmProtoBuf {
       "rameter_annotation\0221.org.jetbrains.kotli" +
       "n.serialization.TypeParameter\030d \003(\0132..or" +
       "g.jetbrains.kotlin.serialization.Annotat" +
-      "ion:A\n\005index\0222.org.jetbrains.kotlin.seri" +
-      "alization.ValueParameter\030d \001(\005:s\n\020class_" +
-      "annotation\022).org.jetbrains.kotlin.serial" +
-      "ization.Class\030d \003(\0132..org.jetbrains.kotl" +
-      "in.serialization.AnnotationB\022B\020DebugJvmP",
-      "rotoBuf"
+      "ion:s\n\020class_annotation\022).org.jetbrains." +
+      "kotlin.serialization.Class\030d \003(\0132..org.j" +
+      "etbrains.kotlin.serialization.Annotation" +
+      "B\022B\020DebugJvmProtoBuf"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -4740,8 +4726,7 @@ public final class DebugJvmProtoBuf {
           typeAnnotation.internalInit(descriptor.getExtensions().get(3));
           isRaw.internalInit(descriptor.getExtensions().get(4));
           typeParameterAnnotation.internalInit(descriptor.getExtensions().get(5));
-          index.internalInit(descriptor.getExtensions().get(6));
-          classAnnotation.internalInit(descriptor.getExtensions().get(7));
+          classAnnotation.internalInit(descriptor.getExtensions().get(6));
           com.google.protobuf.ExtensionRegistry registry =
             com.google.protobuf.ExtensionRegistry.newInstance();
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.stringIdInTable);

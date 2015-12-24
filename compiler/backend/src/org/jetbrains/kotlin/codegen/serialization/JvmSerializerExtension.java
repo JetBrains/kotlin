@@ -61,14 +61,6 @@ public class JvmSerializerExtension extends SerializerExtension {
     }
 
     @Override
-    public void serializeValueParameter(@NotNull ValueParameterDescriptor descriptor, @NotNull ProtoBuf.ValueParameter.Builder proto) {
-        Integer index = bindings.get(INDEX_FOR_VALUE_PARAMETER, descriptor);
-        if (index != null) {
-            proto.setExtension(JvmProtoBuf.index, index);
-        }
-    }
-
-    @Override
     public void serializeType(@NotNull KotlinType type, @NotNull ProtoBuf.Type.Builder proto) {
         // TODO: don't store type annotations in our binary metadata on Java 8, use *TypeAnnotations attributes instead
         for (AnnotationDescriptor annotation : type.getAnnotations()) {

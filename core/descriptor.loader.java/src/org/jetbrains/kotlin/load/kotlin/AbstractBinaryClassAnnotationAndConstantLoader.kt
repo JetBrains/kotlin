@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.load.kotlin
 
 import com.google.protobuf.MessageLite
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.serialization.jvm.ClassMapperLite
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
-import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.index
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.propertySignature
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import org.jetbrains.kotlin.storage.StorageManager
@@ -139,12 +139,25 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
     ): List<A> {
         val methodSignature = getCallableSignature(message, container.nameResolver, container.typeTable, kind)
         if (methodSignature != null) {
-            val index = if (proto.hasExtension(index)) proto.getExtension(index) else parameterIndex
+            val index = parameterIndex + computeJvmParameterIndexShift(container, message)
             val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, index)
             return findClassAndLoadMemberAnnotations(container, paramSignature)
         }
 
         return listOf()
+    }
+
+    private fun computeJvmParameterIndexShift(container: ProtoContainer, message: MessageLite): Int {
+        return when (message) {
+            is ProtoBuf.Function -> if (message.hasReceiver()) 1 else 0
+            is ProtoBuf.Property -> if (message.hasReceiver()) 1 else 0
+            is ProtoBuf.Constructor -> when {
+                (container as ProtoContainer.Class).kind == ProtoBuf.Class.Kind.ENUM_CLASS -> 2
+                container.isInner -> 1
+                else -> 0
+            }
+            else -> throw UnsupportedOperationException("Unsupported message: ${message.javaClass}")
+        }
     }
 
     override fun loadExtensionReceiverParameterAnnotations(
@@ -187,7 +200,8 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
         }
 
         if (container is ProtoContainer.Class) {
-            if (field && container.isCompanionOfClass) {
+            if (field && container.kind == ProtoBuf.Class.Kind.COMPANION_OBJECT &&
+                (container.outerClassKind == ClassKind.CLASS || container.outerClassKind == ClassKind.ENUM_CLASS)) {
                 // Backing fields of properties of a companion object in a class are generated in the outer class
                 return kotlinClassFinder.findKotlinClass(container.classId.outerClassId)
             }
@@ -199,7 +213,7 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
     }
 
     private fun getImplClassName(container: ProtoContainer, property: Boolean): ClassId? {
-        if (property && container is ProtoContainer.Class && container.isInterface) {
+        if (property && container is ProtoContainer.Class && container.kind == ProtoBuf.Class.Kind.INTERFACE) {
             return container.classId.createNestedClassId(Name.identifier(JvmAbi.DEFAULT_IMPLS_CLASS_NAME))
         }
         return ((container as? ProtoContainer.Package)?.packagePartSource as? JvmPackagePartSource)?.classId

@@ -288,19 +288,19 @@ public class DeserializedClassDescriptor(
 
     private inner class EnumEntryClassDescriptors {
         private val enumEntryProtos = classProto.enumEntryList.toMapBy { c.nameResolver.getName(it.name) }
+        private val protoContainer =
+                ProtoContainer.Class(classProto, c.nameResolver, c.typeTable, (containingDeclaration as? ClassDescriptor)?.kind)
 
         val enumEntryByName = c.storageManager.createMemoizedFunctionWithNullableValues<Name, ClassDescriptor> {
             name ->
 
             enumEntryProtos[name]?.let { proto ->
-                val annotations = DeserializedAnnotations(c.storageManager) {
-                    c.components.annotationAndConstantLoader.loadEnumEntryAnnotations(
-                            ProtoContainer.Class(classProto, c.nameResolver, c.typeTable, isCompanionOfClass = false, isInterface = false),
-                            proto
-                    )
-                }
                 EnumEntrySyntheticClassDescriptor.create(
-                        c.storageManager, this@DeserializedClassDescriptor, name, enumMemberNames, annotations, SourceElement.NO_SOURCE
+                        c.storageManager, this@DeserializedClassDescriptor, name, enumMemberNames,
+                        DeserializedAnnotations(c.storageManager) {
+                            c.components.annotationAndConstantLoader.loadEnumEntryAnnotations(protoContainer, proto)
+                        },
+                        SourceElement.NO_SOURCE
                 )
             }
         }

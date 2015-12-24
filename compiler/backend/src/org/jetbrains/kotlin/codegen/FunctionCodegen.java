@@ -77,7 +77,6 @@ import java.util.Set;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isNullableAny;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
-import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.INDEX_FOR_VALUE_PARAMETER;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.METHOD_FOR_FUNCTION;
 import static org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION;
 import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*;
@@ -271,9 +270,6 @@ public class FunctionCodegen {
 
             if (kind == JvmMethodParameterKind.VALUE) {
                 ValueParameterDescriptor parameter = iterator.next();
-                if (parameter.getIndex() != i) {
-                    v.getSerializationBindings().put(INDEX_FOR_VALUE_PARAMETER, parameter, i);
-                }
                 AnnotationCodegen annotationCodegen = AnnotationCodegen.forParameter(i, mv, typeMapper);
 
                 if (functionDescriptor instanceof PropertySetterDescriptor) {

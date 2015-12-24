@@ -109,11 +109,6 @@ extend TypeParameter {
   repeated Annotation type_parameter_annotation = 100;
 }
 
-extend ValueParameter {
-  // Index of the corresponding parameter of this method in JVM (counting receiver parameters, enum constructor synthetic parameters, etc.)
-  optional int32 index = 100;
-}
-
 extend Class {
   repeated Annotation class_annotation = 100;
 }

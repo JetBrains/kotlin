@@ -13,7 +13,6 @@ public final class JvmProtoBuf {
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.typeAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.isRaw);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.typeParameterAnnotation);
-    registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.index);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.classAnnotation);
   }
   public interface StringTableTypesOrBuilder
@@ -3802,21 +3801,6 @@ public final class JvmProtoBuf {
         100,
         com.google.protobuf.WireFormat.FieldType.MESSAGE,
         false);
-  public static final int INDEX_FIELD_NUMBER = 100;
-  /**
-   * <code>extend .org.jetbrains.kotlin.serialization.ValueParameter { ... }</code>
-   */
-  public static final
-    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
-      org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter,
-      java.lang.Integer> index = com.google.protobuf.GeneratedMessageLite
-          .newSingularGeneratedExtension(
-        org.jetbrains.kotlin.serialization.ProtoBuf.ValueParameter.getDefaultInstance(),
-        0,
-        null,
-        null,
-        100,
-        com.google.protobuf.WireFormat.FieldType.INT32);
   public static final int CLASS_ANNOTATION_FIELD_NUMBER = 100;
   /**
    * <code>extend .org.jetbrains.kotlin.serialization.Class { ... }</code>
