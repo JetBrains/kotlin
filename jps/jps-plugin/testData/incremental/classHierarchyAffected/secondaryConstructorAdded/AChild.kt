@@ -1,0 +1,1 @@
+class AChild(x: Int) : A(x)

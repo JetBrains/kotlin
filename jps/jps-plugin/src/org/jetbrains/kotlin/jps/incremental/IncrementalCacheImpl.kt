@@ -353,8 +353,8 @@ open class IncrementalCacheImpl(
             val fqName = if (isPackage) className.packageFqName else className.fqNameForClassNameWithoutDollars
             val changeList = SmartList<ChangeInfo>()
 
-            if (difference.isClassSignatureChanged) {
-                changeList.add(ChangeInfo.SignatureChanged(fqName))
+            if (difference.isClassAffected) {
+                changeList.add(ChangeInfo.SignatureChanged(fqName, difference.areSubclassesAffected))
             }
 
             if (difference.changedMembersNames.isNotEmpty()) {
@@ -566,7 +566,7 @@ sealed class ChangeInfo(val fqName: FqName) {
 
     class Removed(fqName: FqName, names: Collection<String>) : MembersChanged(fqName, names)
 
-    class SignatureChanged(fqName: FqName) : ChangeInfo(fqName)
+    class SignatureChanged(fqName: FqName, val areSubclassesAffected: Boolean) : ChangeInfo(fqName)
 
 
     protected open fun toStringProperties(): String = "fqName = $fqName"

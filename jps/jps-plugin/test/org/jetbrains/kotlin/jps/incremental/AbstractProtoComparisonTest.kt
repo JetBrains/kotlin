@@ -104,7 +104,7 @@ abstract class AbstractProtoComparisonTest : UsefulTestCase() {
 
         val changes = SmartList<String>()
 
-        if (diff.isClassSignatureChanged) {
+        if (diff.isClassAffected) {
             changes.add("CLASS_SIGNATURE")
         }
 
