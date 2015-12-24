@@ -52,21 +52,21 @@ public class KtValueArgumentList extends KtElementImpl {
 
     @NotNull
     public KtValueArgument addArgument(@NotNull KtValueArgument argument) {
-        return EditCommaSeparatedListHelper.INSTANCE$.addItem(this, getArguments(), argument);
+        return EditCommaSeparatedListHelper.INSTANCE.addItem(this, getArguments(), argument);
     }
 
     @NotNull
     public KtValueArgument addArgumentAfter(@NotNull KtValueArgument argument, @Nullable KtValueArgument anchor) {
-        return EditCommaSeparatedListHelper.INSTANCE$.addItemAfter(this, getArguments(), argument, anchor);
+        return EditCommaSeparatedListHelper.INSTANCE.addItemAfter(this, getArguments(), argument, anchor);
     }
 
     @NotNull
     public KtValueArgument addArgumentBefore(@NotNull KtValueArgument argument, @Nullable KtValueArgument anchor) {
-        return EditCommaSeparatedListHelper.INSTANCE$.addItemBefore(this, getArguments(), argument, anchor);
+        return EditCommaSeparatedListHelper.INSTANCE.addItemBefore(this, getArguments(), argument, anchor);
     }
 
     public void removeArgument(@NotNull KtValueArgument argument) {
         assert argument.getParent() == this;
-        EditCommaSeparatedListHelper.INSTANCE$.removeItem(argument);
+        EditCommaSeparatedListHelper.INSTANCE.removeItem(argument);
     }
 }

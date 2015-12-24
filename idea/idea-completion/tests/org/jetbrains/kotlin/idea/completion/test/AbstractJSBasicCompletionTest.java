@@ -33,7 +33,7 @@ public abstract class AbstractJSBasicCompletionTest extends KotlinFixtureComplet
     @NotNull
     @Override
     public TargetPlatform getPlatform() {
-        return JsPlatform.INSTANCE$;
+        return JsPlatform.INSTANCE;
     }
 
     @NotNull

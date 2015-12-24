@@ -545,7 +545,7 @@ public class BodyResolver {
 
     private void processModifiersOnInitializer(@NotNull KtModifierListOwner owner, @NotNull LexicalScope scope) {
         annotationChecker.check(owner, trace, null);
-        ModifierCheckerCore.INSTANCE$.check(owner, trace, null);
+        ModifierCheckerCore.INSTANCE.check(owner, trace, null);
         KtModifierList modifierList = owner.getModifierList();
         if (modifierList == null) return;
 
@@ -582,7 +582,7 @@ public class BodyResolver {
                                                     valueParameterDescriptor : unsubstitutedPrimaryConstructor.getValueParameters()) {
                                                 handler.addVariableDescriptor(valueParameterDescriptor);
                                             }
-                                            return Unit.INSTANCE$;
+                                            return Unit.INSTANCE;
                                         }
                                     });
     }
@@ -814,7 +814,7 @@ public class BodyResolver {
                 @Override
                 public Unit invoke(LexicalScopeImpl.InitializeHandler handler) {
                     handler.addVariableDescriptor(fieldDescriptor);
-                    return Unit.INSTANCE$;
+                    return Unit.INSTANCE;
                 }
             });
             // Check parameter name shadowing

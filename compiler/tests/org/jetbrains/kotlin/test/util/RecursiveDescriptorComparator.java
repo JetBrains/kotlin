@@ -57,7 +57,7 @@ public class RecursiveDescriptorComparator {
                     options.setNameShortness(NameShortness.FULLY_QUALIFIED);
                     options.setVerbose(true);
                     options.setModifiers(DescriptorRendererModifier.ALL);
-                    return Unit.INSTANCE$;
+                    return Unit.INSTANCE;
                 }
             }
     );

@@ -102,7 +102,7 @@ public class DefaultErrorMessages {
                     options.setWithoutTypeParameters(false);
                     options.setReceiverAfterName(false);
                     options.setRenderAccessors(true);
-                    return Unit.INSTANCE$;
+                    return Unit.INSTANCE;
                 }
             }
     );

@@ -351,12 +351,12 @@ public abstract class AbstractDiagnosticsTest extends BaseDiagnosticsTest {
 
     @NotNull
     protected TargetPlatform getPlatform() {
-        return JvmPlatform.INSTANCE$;
+        return JvmPlatform.INSTANCE;
     }
 
     @NotNull
     protected ModuleDescriptorImpl createModule(@NotNull String moduleName, @NotNull StorageManager storageManager) {
-        return TargetPlatformKt.createModule(JvmPlatform.INSTANCE$, Name.special(moduleName), storageManager);
+        return TargetPlatformKt.createModule(JvmPlatform.INSTANCE, Name.special(moduleName), storageManager);
     }
 
     @NotNull

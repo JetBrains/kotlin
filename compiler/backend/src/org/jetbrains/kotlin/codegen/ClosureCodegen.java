@@ -265,7 +265,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
                             }
                         }
 
-                        return Unit.INSTANCE$;
+                        return Unit.INSTANCE;
                     }
                 }
         );

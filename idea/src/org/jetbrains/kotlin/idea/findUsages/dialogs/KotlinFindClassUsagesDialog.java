@@ -62,7 +62,7 @@ public class KotlinFindClassUsagesDialog extends FindClassUsagesDialog {
 
     @NotNull
     private static PsiClass getRepresentingPsiClass(@NotNull KtClassOrObject classOrObject) {
-        PsiClass lightClass = LightClassUtil.INSTANCE$.getPsiClass(classOrObject);
+        PsiClass lightClass = LightClassUtil.INSTANCE.getPsiClass(classOrObject);
         if (lightClass != null) return lightClass;
 
         // TODO: Remove this code when light classes are generated for builtins

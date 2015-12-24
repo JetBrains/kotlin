@@ -239,7 +239,7 @@ public class SourceNavigationHelper {
             @NotNull Project project
     ) {
 
-        TargetPlatform platform = TargetPlatform.Default.INSTANCE$;
+        TargetPlatform platform = TargetPlatform.Default.INSTANCE;
         MutableModuleContext newModuleContext = ContextKt.ContextForNewModule(
                 project, Name.special("<library module>"),
                 ModuleDescriptorKt.ModuleParameters(
@@ -375,13 +375,13 @@ public class SourceNavigationHelper {
                 );
             }
         }
-        return LightClassUtil.INSTANCE$.getPsiClass(classOrObject);
+        return LightClassUtil.INSTANCE.getPsiClass(classOrObject);
     }
 
     @Nullable
     public static PsiClass getOriginalClass(@NotNull KtClassOrObject classOrObject) {
         // Copied from JavaPsiImplementationHelperImpl:getOriginalClass()
-        String internalName = PsiCodegenPredictor.getPredefinedJvmInternalName(classOrObject, NoResolveFileClassesProvider.INSTANCE$);
+        String internalName = PsiCodegenPredictor.getPredefinedJvmInternalName(classOrObject, NoResolveFileClassesProvider.INSTANCE);
         if (internalName == null) {
             return null;
         }

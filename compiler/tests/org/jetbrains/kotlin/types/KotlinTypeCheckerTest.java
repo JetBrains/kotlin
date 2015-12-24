@@ -76,7 +76,7 @@ public class KotlinTypeCheckerTest extends KotlinLiteFixture {
         builtIns = module.getBuiltIns();
         ContainerForTests container = InjectionKt.createContainerForTests(getProject(), module);
         module.setDependencies(Collections.singletonList(module));
-        module.initialize(PackageFragmentProvider.Empty.INSTANCE$);
+        module.initialize(PackageFragmentProvider.Empty.INSTANCE);
         typeResolver = container.getTypeResolver();
         expressionTypingServices = container.getExpressionTypingServices();
 

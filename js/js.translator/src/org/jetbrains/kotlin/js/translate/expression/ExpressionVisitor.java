@@ -159,7 +159,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         if (expressionInside != null) {
             return Translation.translateExpression(expressionInside, context);
         }
-        return JsEmpty.INSTANCE$;
+        return JsEmpty.INSTANCE;
     }
 
     @Override
@@ -191,7 +191,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
     @Override
     @NotNull
     public JsNode visitCallableReferenceExpression(@NotNull KtCallableReferenceExpression expression, @NotNull TranslationContext context) {
-        return CallableReferenceTranslator.INSTANCE$.translate(expression, context);
+        return CallableReferenceTranslator.INSTANCE.translate(expression, context);
     }
 
     @Override

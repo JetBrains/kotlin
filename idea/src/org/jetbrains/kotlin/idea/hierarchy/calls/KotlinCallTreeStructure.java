@@ -92,17 +92,17 @@ public abstract class KotlinCallTreeStructure extends HierarchyTreeStructure {
         }
 
         if (element instanceof KtNamedFunction || element instanceof KtSecondaryConstructor) {
-            return LightClassUtil.INSTANCE$.getLightClassMethod((KtFunction) element);
+            return LightClassUtil.INSTANCE.getLightClassMethod((KtFunction) element);
         }
 
         if (element instanceof KtProperty) {
             LightClassUtil.PropertyAccessorsPsiMethods propertyMethods =
-                    LightClassUtil.INSTANCE$.getLightClassPropertyMethods((KtProperty) element);
+                    LightClassUtil.INSTANCE.getLightClassPropertyMethods((KtProperty) element);
             return (propertyMethods.getGetter() != null) ? propertyMethods.getGetter() : propertyMethods.getSetter();
         }
 
         if (element instanceof KtClassOrObject) {
-            PsiClass psiClass = LightClassUtil.INSTANCE$.getPsiClass((KtClassOrObject) element);
+            PsiClass psiClass = LightClassUtil.INSTANCE.getPsiClass((KtClassOrObject) element);
             if (psiClass == null) return null;
 
             PsiMethod[] constructors = psiClass.getConstructors();

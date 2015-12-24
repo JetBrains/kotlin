@@ -63,7 +63,7 @@ public final class WhenTranslator extends AbstractTranslator {
 
     private JsStatement translate() {
         if (expressionToMatch != null && JsAstUtils.isEmptyExpression(expressionToMatch)) {
-            return JsEmpty.INSTANCE$;
+            return JsEmpty.INSTANCE;
         }
 
         JsIf currentIf = null;

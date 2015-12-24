@@ -42,7 +42,7 @@ public class KotlinJsModuleConfigurator extends KotlinWithLibraryConfigurator {
     @NotNull
     @Override
     public TargetPlatform getTargetPlatform() {
-        return JsPlatform.INSTANCE$;
+        return JsPlatform.INSTANCE;
     }
 
     @NotNull

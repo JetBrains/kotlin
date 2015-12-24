@@ -264,7 +264,7 @@ public class KotlinBlock extends AbstractBlock {
             }
         }
 
-        return WrappingStrategy.NoWrapping.INSTANCE$;
+        return WrappingStrategy.NoWrapping.INSTANCE;
     }
 
     private NodeAlignmentStrategy getChildrenAlignmentStrategy() {

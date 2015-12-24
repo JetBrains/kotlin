@@ -54,7 +54,7 @@ public class ExpectedResolveDataUtil {
     }
 
     public static Map<String, DeclarationDescriptor> prepareDefaultNameToDescriptors(Project project, KotlinCoreEnvironment environment) {
-        KotlinBuiltIns builtIns = JvmPlatform.INSTANCE$.getBuiltIns();
+        KotlinBuiltIns builtIns = JvmPlatform.INSTANCE.getBuiltIns();
 
         Map<String, DeclarationDescriptor> nameToDescriptor = new HashMap<String, DeclarationDescriptor>();
         nameToDescriptor.put("kotlin::Int.plus(Int)", standardFunction(builtIns.getInt(), "plus", project, builtIns.getIntType()));
@@ -135,7 +135,7 @@ public class ExpectedResolveDataUtil {
         ModuleDescriptorImpl emptyModule = KotlinTestUtils.createEmptyModule();
         ContainerForTests container = InjectionKt.createContainerForTests(project, emptyModule);
         emptyModule.setDependencies(emptyModule);
-        emptyModule.initialize(PackageFragmentProvider.Empty.INSTANCE$);
+        emptyModule.initialize(PackageFragmentProvider.Empty.INSTANCE);
 
         LexicalScopeImpl lexicalScope = new LexicalScopeImpl(ImportingScope.Empty.INSTANCE, classDescriptor, false,
                                                              classDescriptor.getThisAsReceiverParameter(),

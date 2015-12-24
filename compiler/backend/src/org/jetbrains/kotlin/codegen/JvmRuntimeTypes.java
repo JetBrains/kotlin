@@ -40,7 +40,7 @@ public class JvmRuntimeTypes {
 
     public JvmRuntimeTypes() {
         ModuleDescriptorImpl module = TargetPlatformKt.createModule(
-                JvmPlatform.INSTANCE$,
+                JvmPlatform.INSTANCE,
                 Name.special("<jvm functions impl>"),
                 LockBasedStorageManager.NO_LOCKS
         );

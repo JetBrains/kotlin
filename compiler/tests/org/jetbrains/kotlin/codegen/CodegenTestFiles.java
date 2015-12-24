@@ -131,7 +131,7 @@ public class CodegenTestFiles {
                 Object value;
 
                 KotlinType jetType;
-                KotlinBuiltIns builtIns = JvmPlatform.INSTANCE$.getBuiltIns();
+                KotlinBuiltIns builtIns = JvmPlatform.INSTANCE.getBuiltIns();
                 if (type.equals("kotlin.String")) {
                     value = valueString;
                     jetType = builtIns.getStringType();

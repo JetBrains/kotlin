@@ -287,7 +287,7 @@ public class CallResolver {
         return resolveFunctionCall(
                 BasicCallResolutionContext.create(
                         trace, scope, call, expectedType, dataFlowInfo, ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-                        CallChecker.DoNothing.INSTANCE$, isAnnotationContext
+                        CallChecker.DoNothing.INSTANCE, isAnnotationContext
                 )
         );
     }
@@ -721,7 +721,7 @@ public class CallResolver {
                         candidateResolver.performResolutionForCandidateCall(context, task.checkArguments);
                         candidateResolutionContexts.add(context);
                     }
-                    return Unit.INSTANCE$;
+                    return Unit.INSTANCE;
                 }
             });
         }

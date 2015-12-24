@@ -100,15 +100,15 @@ public class KotlinModuleSettingStep extends ModuleWizardStep {
 
     @NotNull
     protected String getLibraryLabelText() {
-        if (targetPlatform == JvmPlatform.INSTANCE$) return "\u001BKotlin runtime:";
-        if (targetPlatform == JsPlatform.INSTANCE$) return "\u001BKotlin JS library:";
+        if (targetPlatform == JvmPlatform.INSTANCE) return "\u001BKotlin runtime:";
+        if (targetPlatform == JsPlatform.INSTANCE) return "\u001BKotlin JS library:";
         throw new IllegalStateException("Only JS and JVM target are supported");
     }
 
     @NotNull
     protected CustomLibraryDescription getCustomLibraryDescription(@Nullable Project project) {
-        if (targetPlatform == JvmPlatform.INSTANCE$) return new JavaRuntimeLibraryDescription(project);
-        if (targetPlatform == JsPlatform.INSTANCE$) return new JSLibraryStdDescription(project);
+        if (targetPlatform == JvmPlatform.INSTANCE) return new JavaRuntimeLibraryDescription(project);
+        if (targetPlatform == JsPlatform.INSTANCE) return new JSLibraryStdDescription(project);
         throw new IllegalStateException("Only JS and JVM target are supported");
     }
 

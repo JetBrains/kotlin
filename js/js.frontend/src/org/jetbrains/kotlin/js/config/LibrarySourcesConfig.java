@@ -114,7 +114,7 @@ public class LibrarySourcesConfig extends Config {
                     metadata.addAll(KotlinJavascriptMetadataUtils.loadMetadata(libraryPath));
                 }
 
-                return Unit.INSTANCE$;
+                return Unit.INSTANCE;
             }
         };
 

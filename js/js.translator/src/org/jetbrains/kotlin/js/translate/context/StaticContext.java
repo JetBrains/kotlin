@@ -243,7 +243,7 @@ public final class StaticContext {
                 public JsName apply(@NotNull DeclarationDescriptor descriptor) {
                     if (isDynamic(descriptor)) {
                         String name = descriptor.getName().asString();
-                        return JsDynamicScope.INSTANCE$.declareName(name);
+                        return JsDynamicScope.INSTANCE.declareName(name);
                     }
 
                     return null;

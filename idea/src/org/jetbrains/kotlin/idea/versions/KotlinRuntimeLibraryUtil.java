@@ -67,7 +67,7 @@ public class KotlinRuntimeLibraryUtil {
     @NotNull
     public static Collection<VirtualFile> getLibraryRootsWithAbiIncompatibleKotlinClasses(@NotNull Project project) {
         return getLibraryRootsWithAbiIncompatibleVersion(
-                project, KotlinAbiVersionIndex.INSTANCE$,
+                project, KotlinAbiVersionIndex.INSTANCE,
                 new Function1<Module, Boolean>() {
                     @Override
                     public Boolean invoke(@Nullable Module module) {
@@ -85,7 +85,7 @@ public class KotlinRuntimeLibraryUtil {
     @NotNull
     public static Collection<VirtualFile> getLibraryRootsWithAbiIncompatibleForKotlinJs(@NotNull Project project) {
         return getLibraryRootsWithAbiIncompatibleVersion(
-                project, KotlinJavaScriptAbiVersionIndex.INSTANCE$,
+                project, KotlinJavaScriptAbiVersionIndex.INSTANCE,
                 new Function1<Module, Boolean>() {
                     @Override
                     public Boolean invoke(@Nullable Module module) {

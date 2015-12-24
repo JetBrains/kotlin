@@ -51,7 +51,7 @@ public final class ScopeUtils {
                                             for (TypeParameterDescriptor typeParameterDescriptor : propertyDescriptor.getTypeParameters()) {
                                                 handler.addClassifierDescriptor(typeParameterDescriptor);
                                             }
-                                            return Unit.INSTANCE$;
+                                            return Unit.INSTANCE;
                                         }
                                     });
     }

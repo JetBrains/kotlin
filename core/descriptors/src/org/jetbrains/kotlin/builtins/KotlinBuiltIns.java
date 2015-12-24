@@ -71,7 +71,7 @@ public abstract class KotlinBuiltIns {
     protected KotlinBuiltIns() {
         LockBasedStorageManager storageManager = new LockBasedStorageManager();
         builtInsModule = new ModuleDescriptorImpl(
-                Name.special("<built-ins module>"), storageManager, ModuleParameters.Empty.INSTANCE$, this
+                Name.special("<built-ins module>"), storageManager, ModuleParameters.Empty.INSTANCE, this
         );
 
         PackageFragmentProvider packageFragmentProvider = BuiltInsPackageFragmentProviderKt.createBuiltInPackageFragmentProvider(
@@ -102,7 +102,7 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     protected AdditionalSupertypes getAdditionalSupertypesProvider() {
-        return AdditionalSupertypes.None.INSTANCE$;
+        return AdditionalSupertypes.None.INSTANCE;
     }
 
     private void makePrimitive(@NotNull PrimitiveType primitiveType) {

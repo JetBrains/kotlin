@@ -74,7 +74,7 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
                                         options.setVerbose(true);
                                         options.setPrettyFunctionTypes(false);
                                         options.setModifiers(DescriptorRendererModifier.ALL);
-                                        return Unit.INSTANCE$;
+                                        return Unit.INSTANCE;
                                     }
                                 }
                         )
@@ -104,13 +104,13 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
     private static PackageFragmentDescriptor createBuiltInsPackageFragment() {
         LockBasedStorageManager storageManager = new LockBasedStorageManager();
         ModuleDescriptorImpl builtInsModule = new ModuleDescriptorImpl(
-                Name.special("<built-ins module>"), storageManager, ModuleParameters.Empty.INSTANCE$, DefaultBuiltIns.getInstance()
+                Name.special("<built-ins module>"), storageManager, ModuleParameters.Empty.INSTANCE, DefaultBuiltIns.getInstance()
         );
 
         PackageFragmentProvider packageFragmentProvider = createBuiltInPackageFragmentProvider(
                 storageManager, builtInsModule, BUILT_INS_PACKAGE_FQ_NAMES,
                 new BuiltInFictitiousFunctionClassFactory(storageManager, builtInsModule),
-                AdditionalSupertypes.None.INSTANCE$,
+                AdditionalSupertypes.None.INSTANCE,
                 new Function1<String, InputStream>() {
                     @Override
                     public InputStream invoke(String path) {

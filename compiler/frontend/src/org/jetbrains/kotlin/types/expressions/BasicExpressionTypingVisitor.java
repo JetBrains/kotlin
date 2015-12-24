@@ -979,7 +979,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         KtSimpleNameExpression labelExpression = expression.getTargetLabel();
         if (labelExpression != null) {
             PsiElement labelIdentifier = labelExpression.getIdentifier();
-            UnderscoreChecker.INSTANCE$.checkIdentifier(labelIdentifier, context.trace);
+            UnderscoreChecker.INSTANCE.checkIdentifier(labelIdentifier, context.trace);
         }
         KtExpression baseExpression = expression.getBaseExpression();
         if (baseExpression == null) return TypeInfoFactoryKt.noTypeInfo(context);
