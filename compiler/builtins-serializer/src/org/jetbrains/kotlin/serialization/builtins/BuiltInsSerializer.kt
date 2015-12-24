@@ -34,17 +34,16 @@ import org.jetbrains.kotlin.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
-import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.utils.recursePostOrder
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
@@ -110,85 +109,82 @@ public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
 
         files.map { it.packageFqName }.toSet().forEach {
             fqName ->
-            serializePackage(moduleDescriptor, fqName, destDir)
+            PackageSerializer(moduleDescriptor.getPackage(fqName), destDir, { bytesWritten ->
+                totalSize += bytesWritten
+                totalFiles++
+            }).run()
         }
     }
 
-    private fun serializePackage(module: ModuleDescriptor, fqName: FqName, destDir: File) {
-        val packageView = module.getPackage(fqName)
+    private class PackageSerializer(
+            private val packageView: PackageViewDescriptor,
+            private val destDir: File,
+            private val onFileWrite: (bytesWritten: Int) -> Unit
+    ) {
+        private val fqName = packageView.fqName
+        private val builtinsMessage = BuiltInsProtoBuf.BuiltIns.newBuilder()
+        private val extension = BuiltInsSerializerExtension()
 
-        // TODO: perform some kind of validation? At the moment not possible because DescriptorValidator is in compiler-tests
-        // DescriptorValidator.validate(packageView)
+        fun run() {
+            serializeClasses(packageView.memberScope)
+            serializePackageFragments(packageView.fragments)
+            serializeStringTable()
+            serializeBuiltInsFile()
+        }
 
-        val classifierDescriptors = DescriptorSerializer.sort(packageView.memberScope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS))
+        private fun serializeClass(classDescriptor: ClassDescriptor) {
+            val classProto = DescriptorSerializer.createTopLevel(extension).classProto(classDescriptor).build()
 
-        val message = BuiltInsProtoBuf.BuiltIns.newBuilder()
-
-        val extension = BuiltInsSerializerExtension()
-        serializeClasses(classifierDescriptors, extension) {
-            classDescriptor, classProto ->
             val stream = ByteArrayOutputStream()
             classProto.writeTo(stream)
-            write(destDir, getFileName(classDescriptor), stream)
-            message.addClass(classProto)
+            write(BuiltInsSerializedResourcePaths.getClassMetadataPath(classDescriptor.classId), stream)
+            builtinsMessage.addClass(classProto)
+
+            serializeClasses(classDescriptor.unsubstitutedInnerClassesScope)
         }
 
-        val packageStream = ByteArrayOutputStream()
-        val fragments = packageView.fragments
-        val packageProto = DescriptorSerializer.createTopLevel(extension).packageProto(fragments).build()
-        packageProto.writeTo(packageStream)
-        write(destDir, BuiltInsSerializedResourcePaths.getPackageFilePath(fqName), packageStream)
-        message.setPackage(packageProto)
-
-        val nameStream = ByteArrayOutputStream()
-        val (strings, qualifiedNames) = extension.stringTable.buildProto()
-        strings.writeDelimitedTo(nameStream)
-        qualifiedNames.writeDelimitedTo(nameStream)
-        write(destDir, BuiltInsSerializedResourcePaths.getStringTableFilePath(fqName), nameStream)
-        message.setStrings(strings)
-        message.setQualifiedNames(qualifiedNames)
-
-        val builtinsFileStream = ByteArrayOutputStream()
-        with(DataOutputStream(builtinsFileStream)) {
-            val version = BuiltinsPackageFragment.VERSION.toArray()
-            writeInt(version.size)
-            version.forEach { writeInt(it) }
-        }
-        message.build().writeTo(builtinsFileStream)
-        write(destDir, BuiltInsSerializedResourcePaths.getBuiltInsFilePath(fqName), builtinsFileStream)
-    }
-
-    private fun write(destDir: File, fileName: String, stream: ByteArrayOutputStream) {
-        totalSize += stream.size()
-        totalFiles++
-        File(destDir, fileName).parentFile.mkdirs()
-        File(destDir, fileName).writeBytes(stream.toByteArray())
-    }
-
-    private fun serializeClass(
-            classDescriptor: ClassDescriptor,
-            serializer: BuiltInsSerializerExtension,
-            writeClass: (ClassDescriptor, ProtoBuf.Class) -> Unit
-    ) {
-        val classProto = DescriptorSerializer.createTopLevel(serializer).classProto(classDescriptor).build()
-        writeClass(classDescriptor, classProto)
-
-        serializeClasses(classDescriptor.unsubstitutedInnerClassesScope.getContributedDescriptors(), serializer, writeClass)
-    }
-
-    private fun serializeClasses(
-            descriptors: Collection<DeclarationDescriptor>,
-            serializer: BuiltInsSerializerExtension,
-            writeClass: (ClassDescriptor, ProtoBuf.Class) -> Unit
-    ) {
-        for (descriptor in descriptors) {
-            if (descriptor is ClassDescriptor && descriptor.kind != ClassKind.ENUM_ENTRY) {
-                serializeClass(descriptor, serializer, writeClass)
+        private fun serializeClasses(scope: MemberScope) {
+            for (descriptor in DescriptorSerializer.sort(scope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS))) {
+                if (descriptor is ClassDescriptor && descriptor.kind != ClassKind.ENUM_ENTRY) {
+                    serializeClass(descriptor)
+                }
             }
         }
-    }
 
-    private fun getFileName(classDescriptor: ClassDescriptor): String {
-        return BuiltInsSerializedResourcePaths.getClassMetadataPath(classDescriptor.classId)
+        private fun serializePackageFragments(fragments: List<PackageFragmentDescriptor>) {
+            val stream = ByteArrayOutputStream()
+            val packageProto = DescriptorSerializer.createTopLevel(extension).packageProto(fragments).build()
+            packageProto.writeTo(stream)
+            write(BuiltInsSerializedResourcePaths.getPackageFilePath(fqName), stream)
+            builtinsMessage.setPackage(packageProto)
+        }
+
+        private fun serializeStringTable() {
+            val stream = ByteArrayOutputStream()
+            val (strings, qualifiedNames) = extension.stringTable.buildProto()
+            strings.writeDelimitedTo(stream)
+            qualifiedNames.writeDelimitedTo(stream)
+            write(BuiltInsSerializedResourcePaths.getStringTableFilePath(fqName), stream)
+            builtinsMessage.setStrings(strings)
+            builtinsMessage.setQualifiedNames(qualifiedNames)
+        }
+
+        private fun serializeBuiltInsFile() {
+            val stream = ByteArrayOutputStream()
+            with(DataOutputStream(stream)) {
+                val version = BuiltinsPackageFragment.VERSION.toArray()
+                writeInt(version.size)
+                version.forEach { writeInt(it) }
+            }
+            builtinsMessage.build().writeTo(stream)
+            write(BuiltInsSerializedResourcePaths.getBuiltInsFilePath(fqName), stream)
+        }
+
+        private fun write(fileName: String, stream: ByteArrayOutputStream) {
+            onFileWrite(stream.size())
+            val file = File(destDir, fileName)
+            file.parentFile.mkdirs()
+            file.writeBytes(stream.toByteArray())
+        }
     }
 }
