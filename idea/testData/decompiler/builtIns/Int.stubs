@@ -28,23 +28,23 @@ PsiJetFileStubImpl[package=kotlin]
                       REFERENCE_EXPRESSION:[referencedName=kotlin]
                     REFERENCE_EXPRESSION:[referencedName=Int]
     CLASS_BODY:
-      OBJECT_DECLARATION:[fqName=kotlin.Int.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[IntegerConstants]]
+      OBJECT_DECLARATION:[fqName=kotlin.Int.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST:[public companion]
-        SUPER_TYPE_LIST:
-          SUPER_TYPE_ENTRY:
+        CLASS_BODY:
+          PROPERTY:[fqName=kotlin.Int.Companion.MAX_VALUE, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MAX_VALUE]
+            MODIFIER_LIST:[public final const]
             TYPE_REFERENCE:
               USER_TYPE:[isAbsoluteInRootPackage=false]
                 USER_TYPE:[isAbsoluteInRootPackage=false]
                   REFERENCE_EXPRESSION:[referencedName=kotlin]
-                REFERENCE_EXPRESSION:[referencedName=IntegerConstants]
-                TYPE_ARGUMENT_LIST:
-                  TYPE_PROJECTION:[projectionKind=NONE]
-                    TYPE_REFERENCE:
-                      USER_TYPE:[isAbsoluteInRootPackage=false]
-                        USER_TYPE:[isAbsoluteInRootPackage=false]
-                          REFERENCE_EXPRESSION:[referencedName=kotlin]
-                        REFERENCE_EXPRESSION:[referencedName=Int]
-        CLASS_BODY:
+                REFERENCE_EXPRESSION:[referencedName=Int]
+          PROPERTY:[fqName=kotlin.Int.Companion.MIN_VALUE, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MIN_VALUE]
+            MODIFIER_LIST:[public final const]
+            TYPE_REFERENCE:
+              USER_TYPE:[isAbsoluteInRootPackage=false]
+                USER_TYPE:[isAbsoluteInRootPackage=false]
+                  REFERENCE_EXPRESSION:[referencedName=kotlin]
+                REFERENCE_EXPRESSION:[referencedName=Int]
       FUN:[fqName=kotlin.Int.and, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, name=and]
         MODIFIER_LIST:[public final infix]
         VALUE_PARAMETER_LIST:

@@ -51,20 +51,68 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             PrimitiveType.CHAR to "16-bit Unicode character"
     )
 
+    private fun primitiveConstants(type: PrimitiveType): List<Any> = when (type) {
+        PrimitiveType.INT -> listOf(java.lang.Integer.MIN_VALUE, java.lang.Integer.MAX_VALUE)
+        PrimitiveType.BYTE -> listOf(java.lang.Byte.MIN_VALUE, java.lang.Byte.MAX_VALUE)
+        PrimitiveType.SHORT -> listOf(java.lang.Short.MIN_VALUE, java.lang.Short.MAX_VALUE)
+        PrimitiveType.LONG ->listOf((java.lang.Long.MIN_VALUE + 1).toString() + "L - 1L", java.lang.Long.MAX_VALUE.toString() + "L")
+//        PrimitiveType.DOUBLE -> listOf(java.lang.Double.MIN_VALUE, java.lang.Double.MAX_VALUE, "1.0/0.0", "-1.0/0.0", "0.0/0.0")
+//        PrimitiveType.FLOAT -> listOf(java.lang.Float.MIN_VALUE, java.lang.Float.MAX_VALUE, "1.0F/0.0F", "-1.0F/0.0F", "0.0F/0.0F").map { it as? String ?: "${it}F" }
+        else -> throw IllegalArgumentException("type: $type")
+    }
+
     override fun generateBody() {
         for (kind in PrimitiveType.onlyNumeric) {
             val className = kind.capitalized
             generateDoc(kind)
             out.println("public class $className private () : Number, Comparable<$className> {")
 
-            out.print("    companion object")
+            out.print("    companion object ")
             if (kind == PrimitiveType.FLOAT || kind == PrimitiveType.DOUBLE) {
-                out.print(" : FloatingPointConstants<$className>")
+                //val (minValue, maxValue, posInf, negInf, nan) = primitiveConstants(kind)
+                out.println("""{
+        /**
+         * A constant holding the smallest *positive* nonzero value of $className.
+         */
+        public val MIN_VALUE: $className
+
+        /**
+         * A constant holding the largest positive finite value of $className.
+         */
+        public val MAX_VALUE: $className
+
+        /**
+         * A constant holding the positive infinity value of $className.
+         */
+        public val POSITIVE_INFINITY: $className
+
+        /**
+         * A constant holding the negative infinity value of $className.
+         */
+        public val NEGATIVE_INFINITY: $className
+
+        /**
+         * A constant holding the "not a number" value of $className.
+         */
+        public val NaN: $className
+    }
+""")
             }
             if (kind == PrimitiveType.INT || kind == PrimitiveType.LONG || kind == PrimitiveType.SHORT || kind == PrimitiveType.BYTE) {
-                out.print(" : IntegerConstants<$className>")
+                val (minValue, maxValue) = primitiveConstants(kind)
+                out.println("""{
+        /**
+         * A constant holding the minimum value an instance of $className can have.
+         */
+        public const val MIN_VALUE: $className = $minValue
+
+        /**
+         * A constant holding the maximum value an instance of $className can have.
+         */
+        public const val MAX_VALUE: $className = $maxValue
+    }
+""")
             }
-            out.println(" {}\n")
 
             generateCompareTo(kind)
 

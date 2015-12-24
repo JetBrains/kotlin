@@ -23,7 +23,17 @@ package kotlin
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `byte`.
  */
 public class Byte private () : Number, Comparable<Byte> {
-    companion object : IntegerConstants<Byte> {}
+    companion object {
+        /**
+         * A constant holding the minimum value an instance of Byte can have.
+         */
+        public const val MIN_VALUE: Byte = -128
+
+        /**
+         * A constant holding the maximum value an instance of Byte can have.
+         */
+        public const val MAX_VALUE: Byte = 127
+    }
 
 /**
  * Compares this value with the specified value for order.
@@ -159,7 +169,17 @@ public class Byte private () : Number, Comparable<Byte> {
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `short`.
  */
 public class Short private () : Number, Comparable<Short> {
-    companion object : IntegerConstants<Short> {}
+    companion object {
+        /**
+         * A constant holding the minimum value an instance of Short can have.
+         */
+        public const val MIN_VALUE: Short = -32768
+
+        /**
+         * A constant holding the maximum value an instance of Short can have.
+         */
+        public const val MAX_VALUE: Short = 32767
+    }
 
 /**
  * Compares this value with the specified value for order.
@@ -295,7 +315,17 @@ public class Short private () : Number, Comparable<Short> {
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `int`.
  */
 public class Int private () : Number, Comparable<Int> {
-    companion object : IntegerConstants<Int> {}
+    companion object {
+        /**
+         * A constant holding the minimum value an instance of Int can have.
+         */
+        public const val MIN_VALUE: Int = -2147483648
+
+        /**
+         * A constant holding the maximum value an instance of Int can have.
+         */
+        public const val MAX_VALUE: Int = 2147483647
+    }
 
 /**
  * Compares this value with the specified value for order.
@@ -446,7 +476,17 @@ public class Int private () : Number, Comparable<Int> {
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `long`.
  */
 public class Long private () : Number, Comparable<Long> {
-    companion object : IntegerConstants<Long> {}
+    companion object {
+        /**
+         * A constant holding the minimum value an instance of Long can have.
+         */
+        public const val MIN_VALUE: Long = -9223372036854775807L - 1L
+
+        /**
+         * A constant holding the maximum value an instance of Long can have.
+         */
+        public const val MAX_VALUE: Long = 9223372036854775807L
+    }
 
 /**
  * Compares this value with the specified value for order.
@@ -597,7 +637,32 @@ public class Long private () : Number, Comparable<Long> {
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `float`.
  */
 public class Float private () : Number, Comparable<Float> {
-    companion object : FloatingPointConstants<Float> {}
+    companion object {
+        /**
+         * A constant holding the smallest *positive* nonzero value of Float.
+         */
+        public val MIN_VALUE: Float
+
+        /**
+         * A constant holding the largest positive finite value of Float.
+         */
+        public val MAX_VALUE: Float
+
+        /**
+         * A constant holding the positive infinity value of Float.
+         */
+        public val POSITIVE_INFINITY: Float
+
+        /**
+         * A constant holding the negative infinity value of Float.
+         */
+        public val NEGATIVE_INFINITY: Float
+
+        /**
+         * A constant holding the "not a number" value of Float.
+         */
+        public val NaN: Float
+    }
 
 /**
  * Compares this value with the specified value for order.
@@ -725,7 +790,32 @@ public class Float private () : Number, Comparable<Float> {
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `double`.
  */
 public class Double private () : Number, Comparable<Double> {
-    companion object : FloatingPointConstants<Double> {}
+    companion object {
+        /**
+         * A constant holding the smallest *positive* nonzero value of Double.
+         */
+        public val MIN_VALUE: Double
+
+        /**
+         * A constant holding the largest positive finite value of Double.
+         */
+        public val MAX_VALUE: Double
+
+        /**
+         * A constant holding the positive infinity value of Double.
+         */
+        public val POSITIVE_INFINITY: Double
+
+        /**
+         * A constant holding the negative infinity value of Double.
+         */
+        public val NEGATIVE_INFINITY: Double
+
+        /**
+         * A constant holding the "not a number" value of Double.
+         */
+        public val NaN: Double
+    }
 
 /**
  * Compares this value with the specified value for order.

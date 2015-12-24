@@ -3,12 +3,30 @@ package numbers
 import org.junit.Test as test
 import kotlin.test.*
 
+object NumbersTestConstants {
+    public const val byteMinSucc: Byte = (Byte.MIN_VALUE + 1).toByte()
+    public const val byteMaxPred: Byte = (Byte.MAX_VALUE - 1).toByte()
+
+    public const val shortMinSucc: Short = (Short.MIN_VALUE + 1).toShort()
+    public const val shortMaxPred: Short = (Short.MAX_VALUE - 1).toShort()
+
+    public const val intMinSucc: Int = Int.MIN_VALUE + 1
+    public const val intMaxPred: Int = Int.MAX_VALUE - 1
+
+    public const val longMinSucc: Long = Long.MIN_VALUE + 1L
+    public const val longMaxPred: Long = Long.MAX_VALUE - 1L
+}
+
 class NumbersTest {
 
+    var one: Int = 1
 
     @test fun intMinMaxValues() {
         assertTrue(Int.MIN_VALUE < 0)
         assertTrue(Int.MAX_VALUE > 0)
+
+        assertEquals(NumbersTestConstants.intMinSucc, Int.MIN_VALUE + one)
+        assertEquals(NumbersTestConstants.intMaxPred, Int.MAX_VALUE - one)
 
         // overflow behavior
         // doesn't hold for JS Number
@@ -19,6 +37,10 @@ class NumbersTest {
     @test fun longMinMaxValues() {
         assertTrue(Long.MIN_VALUE < 0)
         assertTrue(Long.MAX_VALUE > 0)
+
+        assertEquals(NumbersTestConstants.longMinSucc, Long.MIN_VALUE + one)
+        assertEquals(NumbersTestConstants.longMaxPred, Long.MAX_VALUE - one)
+
         // overflow behavior
         expect(Long.MIN_VALUE) { Long.MAX_VALUE + 1 }
         expect(Long.MAX_VALUE) { Long.MIN_VALUE - 1 }
@@ -27,6 +49,10 @@ class NumbersTest {
     @test fun shortMinMaxValues() {
         assertTrue(Short.MIN_VALUE < 0)
         assertTrue(Short.MAX_VALUE > 0)
+
+        assertEquals(NumbersTestConstants.shortMinSucc, Short.MIN_VALUE.inc())
+        assertEquals(NumbersTestConstants.shortMaxPred, Short.MAX_VALUE.dec())
+
         // overflow behavior
         expect(Short.MIN_VALUE) { (Short.MAX_VALUE + 1).toShort() }
         expect(Short.MAX_VALUE) { (Short.MIN_VALUE - 1).toShort() }
@@ -35,6 +61,10 @@ class NumbersTest {
     @test fun byteMinMaxValues() {
         assertTrue(Byte.MIN_VALUE < 0)
         assertTrue(Byte.MAX_VALUE > 0)
+
+        assertEquals(NumbersTestConstants.byteMinSucc, Byte.MIN_VALUE.inc())
+        assertEquals(NumbersTestConstants.byteMaxPred, Byte.MAX_VALUE.dec())
+
         // overflow behavior
         expect(Byte.MIN_VALUE) { (Byte.MAX_VALUE + 1).toByte() }
         expect(Byte.MAX_VALUE) { (Byte.MIN_VALUE - 1).toByte() }
@@ -43,6 +73,7 @@ class NumbersTest {
     @test fun doubleMinMaxValues() {
         assertTrue(Double.MIN_VALUE > 0)
         assertTrue(Double.MAX_VALUE > 0)
+
         // overflow behavior
         expect(Double.POSITIVE_INFINITY) { Double.MAX_VALUE * 2 }
         expect(Double.NEGATIVE_INFINITY) {-Double.MAX_VALUE * 2 }
@@ -52,6 +83,7 @@ class NumbersTest {
     @test fun floatMinMaxValues() {
         assertTrue(Float.MIN_VALUE > 0)
         assertTrue(Float.MAX_VALUE > 0)
+
         // overflow behavior
         expect(Float.POSITIVE_INFINITY) { Float.MAX_VALUE * 2 }
         expect(Float.NEGATIVE_INFINITY) { -Float.MAX_VALUE * 2 }

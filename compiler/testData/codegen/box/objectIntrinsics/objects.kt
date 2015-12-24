@@ -6,7 +6,6 @@ fun box(): String {
         testInCall()
         testDoubleConstants()
         testFloatConstants()
-        testCallInterface()
         testLocalFun()
         testTopLevelFun()
         testVarTopField()
@@ -58,20 +57,6 @@ fun testFloatConstants() {
 
     myAssertEquals(pi, Float.POSITIVE_INFINITY)
     myAssertEquals(ni, Float.NEGATIVE_INFINITY)
-}
-
-fun testCallInterface() {
-    fun <T> floatPointConstants(a: FloatingPointConstants<T>) {
-        val pi = a.POSITIVE_INFINITY
-        val ni = a.NEGATIVE_INFINITY
-        val nan = a.NaN
-
-        myAssertEquals(pi, a.POSITIVE_INFINITY)
-        myAssertEquals(ni, a.NEGATIVE_INFINITY)
-    }
-
-    floatPointConstants(Double)
-    floatPointConstants(Float)
 }
 
 fun testLocalFun() {

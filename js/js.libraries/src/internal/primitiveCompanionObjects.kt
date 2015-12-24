@@ -16,40 +16,40 @@
 
 package kotlin.js.internal
 
-private object DoubleCompanionObject : FloatingPointConstants<Double> {
-    override val MIN_VALUE: Double = js("Number.MIN_VALUE")
-    override val MAX_VALUE: Double = js("Number.MAX_VALUE")
-    override val POSITIVE_INFINITY: Double = js("Number.POSITIVE_INFINITY")
-    override val NEGATIVE_INFINITY: Double = js("Number.NEGATIVE_INFINITY")
-    override val NaN: Double = js("Number.NaN")
+private object DoubleCompanionObject {
+    val MIN_VALUE: Double = js("Number.MIN_VALUE")
+    val MAX_VALUE: Double = js("Number.MAX_VALUE")
+    val POSITIVE_INFINITY: Double = js("Number.POSITIVE_INFINITY")
+    val NEGATIVE_INFINITY: Double = js("Number.NEGATIVE_INFINITY")
+    val NaN: Double = js("Number.NaN")
 }
 
-private object FloatCompanionObject : FloatingPointConstants<Float> {
-    override val MIN_VALUE: Float = js("Number.MIN_VALUE")
-    override val MAX_VALUE: Float = js("Number.MAX_VALUE")
-    override val POSITIVE_INFINITY : Float = js("Number.POSITIVE_INFINITY")
-    override val NEGATIVE_INFINITY : Float = js("Number.NEGATIVE_INFINITY")
-    override val NaN : Float = js("Number.NaN")
+private object FloatCompanionObject {
+    val MIN_VALUE: Float = js("Number.MIN_VALUE")
+    val MAX_VALUE: Float = js("Number.MAX_VALUE")
+    val POSITIVE_INFINITY : Float = js("Number.POSITIVE_INFINITY")
+    val NEGATIVE_INFINITY : Float = js("Number.NEGATIVE_INFINITY")
+    val NaN : Float = js("Number.NaN")
 }
 
-private object IntCompanionObject : IntegerConstants<Int> {
-    override val MIN_VALUE: Int = -0x80000000
-    override val MAX_VALUE: Int =  0x7FFFFFFF
+private object IntCompanionObject {
+    val MIN_VALUE: Int = -2147483647 - 1
+    val MAX_VALUE: Int = 2147483647
 }
 
-private object LongCompanionObject : IntegerConstants<Long> {
-    override val MIN_VALUE: Long = js("Kotlin.Long.MIN_VALUE")
-    override val MAX_VALUE: Long = js("Kotlin.Long.MAX_VALUE")
+private object LongCompanionObject {
+    val MIN_VALUE: Long = js("Kotlin.Long.MIN_VALUE")
+    val MAX_VALUE: Long = js("Kotlin.Long.MAX_VALUE")
 }
 
-private object ShortCompanionObject : IntegerConstants<Short> {
-    override val MIN_VALUE: Short = -0x8000
-    override val MAX_VALUE: Short = 0x7FFF
+private object ShortCompanionObject {
+    val MIN_VALUE: Short = -32768
+    val MAX_VALUE: Short = 32767
 }
 
-private object ByteCompanionObject : IntegerConstants<Byte> {
-    override val MIN_VALUE: Byte = -0x80
-    override val MAX_VALUE: Byte = 0x7F
+private object ByteCompanionObject {
+    val MIN_VALUE: Byte = -128
+    val MAX_VALUE: Byte = 127
 }
 
 private object CharCompanionObject {}

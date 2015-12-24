@@ -4,7 +4,10 @@
 package kotlin
 
 public final class Int private constructor() : kotlin.Number, kotlin.Comparable<kotlin.Int> {
-    public companion object : kotlin.IntegerConstants<kotlin.Int> {
+    public companion object {
+        public const final val MAX_VALUE: kotlin.Int /* compiled code */
+
+        public const final val MIN_VALUE: kotlin.Int /* compiled code */
     }
 
     public final infix fun and(other: kotlin.Int): kotlin.Int { /* compiled code */ }

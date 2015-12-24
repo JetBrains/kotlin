@@ -121,12 +121,12 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
     public final operator fun unaryMinus(): kotlin.Int
     public final operator fun unaryPlus(): kotlin.Int
 
-    public companion object Companion : kotlin.IntegerConstants<kotlin.Byte> {
+    public companion object Companion {
         /*primary*/ private constructor Companion()
-        public abstract override /*1*/ /*fake_override*/ val MAX_VALUE: kotlin.Byte
-            public abstract override /*1*/ /*fake_override*/ fun <get-MAX_VALUE>(): kotlin.Byte
-        public abstract override /*1*/ /*fake_override*/ val MIN_VALUE: kotlin.Byte
-            public abstract override /*1*/ /*fake_override*/ fun <get-MIN_VALUE>(): kotlin.Byte
+        public const final val MAX_VALUE: kotlin.Byte
+            public final fun <get-MAX_VALUE>(): kotlin.Byte
+        public const final val MIN_VALUE: kotlin.Byte
+            public final fun <get-MIN_VALUE>(): kotlin.Byte
     }
 }
 
@@ -437,18 +437,18 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
     public final operator fun unaryMinus(): kotlin.Double
     public final operator fun unaryPlus(): kotlin.Double
 
-    public companion object Companion : kotlin.FloatingPointConstants<kotlin.Double> {
+    public companion object Companion {
         /*primary*/ private constructor Companion()
-        public abstract override /*1*/ /*fake_override*/ val MAX_VALUE: kotlin.Double
-            public abstract override /*1*/ /*fake_override*/ fun <get-MAX_VALUE>(): kotlin.Double
-        public abstract override /*1*/ /*fake_override*/ val MIN_VALUE: kotlin.Double
-            public abstract override /*1*/ /*fake_override*/ fun <get-MIN_VALUE>(): kotlin.Double
-        public abstract override /*1*/ /*fake_override*/ val NEGATIVE_INFINITY: kotlin.Double
-            public abstract override /*1*/ /*fake_override*/ fun <get-NEGATIVE_INFINITY>(): kotlin.Double
-        public abstract override /*1*/ /*fake_override*/ val NaN: kotlin.Double
-            public abstract override /*1*/ /*fake_override*/ fun <get-NaN>(): kotlin.Double
-        public abstract override /*1*/ /*fake_override*/ val POSITIVE_INFINITY: kotlin.Double
-            public abstract override /*1*/ /*fake_override*/ fun <get-POSITIVE_INFINITY>(): kotlin.Double
+        public final val MAX_VALUE: kotlin.Double
+            public final fun <get-MAX_VALUE>(): kotlin.Double
+        public final val MIN_VALUE: kotlin.Double
+            public final fun <get-MIN_VALUE>(): kotlin.Double
+        public final val NEGATIVE_INFINITY: kotlin.Double
+            public final fun <get-NEGATIVE_INFINITY>(): kotlin.Double
+        public final val NaN: kotlin.Double
+            public final fun <get-NaN>(): kotlin.Double
+        public final val POSITIVE_INFINITY: kotlin.Double
+            public final fun <get-POSITIVE_INFINITY>(): kotlin.Double
     }
 }
 
@@ -541,18 +541,18 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
     public final operator fun unaryMinus(): kotlin.Float
     public final operator fun unaryPlus(): kotlin.Float
 
-    public companion object Companion : kotlin.FloatingPointConstants<kotlin.Float> {
+    public companion object Companion {
         /*primary*/ private constructor Companion()
-        public abstract override /*1*/ /*fake_override*/ val MAX_VALUE: kotlin.Float
-            public abstract override /*1*/ /*fake_override*/ fun <get-MAX_VALUE>(): kotlin.Float
-        public abstract override /*1*/ /*fake_override*/ val MIN_VALUE: kotlin.Float
-            public abstract override /*1*/ /*fake_override*/ fun <get-MIN_VALUE>(): kotlin.Float
-        public abstract override /*1*/ /*fake_override*/ val NEGATIVE_INFINITY: kotlin.Float
-            public abstract override /*1*/ /*fake_override*/ fun <get-NEGATIVE_INFINITY>(): kotlin.Float
-        public abstract override /*1*/ /*fake_override*/ val NaN: kotlin.Float
-            public abstract override /*1*/ /*fake_override*/ fun <get-NaN>(): kotlin.Float
-        public abstract override /*1*/ /*fake_override*/ val POSITIVE_INFINITY: kotlin.Float
-            public abstract override /*1*/ /*fake_override*/ fun <get-POSITIVE_INFINITY>(): kotlin.Float
+        public final val MAX_VALUE: kotlin.Float
+            public final fun <get-MAX_VALUE>(): kotlin.Float
+        public final val MIN_VALUE: kotlin.Float
+            public final fun <get-MIN_VALUE>(): kotlin.Float
+        public final val NEGATIVE_INFINITY: kotlin.Float
+            public final fun <get-NEGATIVE_INFINITY>(): kotlin.Float
+        public final val NaN: kotlin.Float
+            public final fun <get-NaN>(): kotlin.Float
+        public final val POSITIVE_INFINITY: kotlin.Float
+            public final fun <get-POSITIVE_INFINITY>(): kotlin.Float
     }
 }
 
@@ -571,19 +571,6 @@ public abstract class FloatIterator : kotlin.Iterator<kotlin.Float> {
     public abstract override /*1*/ /*fake_override*/ fun hasNext(): kotlin.Boolean
     public final override /*1*/ fun next(): kotlin.Float
     public abstract fun nextFloat(): kotlin.Float
-}
-
-public interface FloatingPointConstants</*0*/ T> {
-    public abstract val MAX_VALUE: T
-        public abstract fun <get-MAX_VALUE>(): T
-    public abstract val MIN_VALUE: T
-        public abstract fun <get-MIN_VALUE>(): T
-    public abstract val NEGATIVE_INFINITY: T
-        public abstract fun <get-NEGATIVE_INFINITY>(): T
-    public abstract val NaN: T
-        public abstract fun <get-NaN>(): T
-    public abstract val POSITIVE_INFINITY: T
-        public abstract fun <get-POSITIVE_INFINITY>(): T
 }
 
 public interface Function</*0*/ out R> {
@@ -654,12 +641,12 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
     public final infix fun ushr(/*0*/ bitCount: kotlin.Int): kotlin.Int
     public final infix fun xor(/*0*/ other: kotlin.Int): kotlin.Int
 
-    public companion object Companion : kotlin.IntegerConstants<kotlin.Int> {
+    public companion object Companion {
         /*primary*/ private constructor Companion()
-        public abstract override /*1*/ /*fake_override*/ val MAX_VALUE: kotlin.Int
-            public abstract override /*1*/ /*fake_override*/ fun <get-MAX_VALUE>(): kotlin.Int
-        public abstract override /*1*/ /*fake_override*/ val MIN_VALUE: kotlin.Int
-            public abstract override /*1*/ /*fake_override*/ fun <get-MIN_VALUE>(): kotlin.Int
+        public const final val MAX_VALUE: kotlin.Int
+            public final fun <get-MAX_VALUE>(): kotlin.Int
+        public const final val MIN_VALUE: kotlin.Int
+            public final fun <get-MIN_VALUE>(): kotlin.Int
     }
 }
 
@@ -745,13 +732,6 @@ public final class IntRange : kotlin.IntProgression, kotlin.ClosedRange<kotlin.I
         public final val EMPTY: kotlin.IntRange
             public final fun <get-EMPTY>(): kotlin.IntRange
     }
-}
-
-public interface IntegerConstants</*0*/ T> {
-    public abstract val MAX_VALUE: T
-        public abstract fun <get-MAX_VALUE>(): T
-    public abstract val MIN_VALUE: T
-        public abstract fun <get-MIN_VALUE>(): T
 }
 
 public interface Iterable</*0*/ out T> {
@@ -848,12 +828,12 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
     public final infix fun ushr(/*0*/ bitCount: kotlin.Int): kotlin.Long
     public final infix fun xor(/*0*/ other: kotlin.Long): kotlin.Long
 
-    public companion object Companion : kotlin.IntegerConstants<kotlin.Long> {
+    public companion object Companion {
         /*primary*/ private constructor Companion()
-        public abstract override /*1*/ /*fake_override*/ val MAX_VALUE: kotlin.Long
-            public abstract override /*1*/ /*fake_override*/ fun <get-MAX_VALUE>(): kotlin.Long
-        public abstract override /*1*/ /*fake_override*/ val MIN_VALUE: kotlin.Long
-            public abstract override /*1*/ /*fake_override*/ fun <get-MIN_VALUE>(): kotlin.Long
+        public const final val MAX_VALUE: kotlin.Long
+            public final fun <get-MAX_VALUE>(): kotlin.Long
+        public const final val MIN_VALUE: kotlin.Long
+            public final fun <get-MIN_VALUE>(): kotlin.Long
     }
 }
 
@@ -1177,12 +1157,12 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
     public final operator fun unaryMinus(): kotlin.Int
     public final operator fun unaryPlus(): kotlin.Int
 
-    public companion object Companion : kotlin.IntegerConstants<kotlin.Short> {
+    public companion object Companion {
         /*primary*/ private constructor Companion()
-        public abstract override /*1*/ /*fake_override*/ val MAX_VALUE: kotlin.Short
-            public abstract override /*1*/ /*fake_override*/ fun <get-MAX_VALUE>(): kotlin.Short
-        public abstract override /*1*/ /*fake_override*/ val MIN_VALUE: kotlin.Short
-            public abstract override /*1*/ /*fake_override*/ fun <get-MIN_VALUE>(): kotlin.Short
+        public const final val MAX_VALUE: kotlin.Short
+            public final fun <get-MAX_VALUE>(): kotlin.Short
+        public const final val MIN_VALUE: kotlin.Short
+            public final fun <get-MIN_VALUE>(): kotlin.Short
     }
 }
 
