@@ -187,7 +187,7 @@ class QuickFixRegistrar : QuickFixContributor {
         AMBIGUOUS_ANONYMOUS_TYPE_INFERRED.registerActions(SpecifyTypeExplicitlyFix())
 
         ELSE_MISPLACED_IN_WHEN.registerFactory(MoveWhenElseBranchFix.createFactory())
-        NO_ELSE_IN_WHEN.registerFactory(AddWhenElseBranchFix.createFactory())
+        NO_ELSE_IN_WHEN.registerFactory(AddWhenElseBranchFix)
         NO_ELSE_IN_WHEN.registerFactory(AddWhenRemainingBranchesFix)
         BREAK_OR_CONTINUE_IN_WHEN.registerFactory(AddLoopLabelFix)
 

@@ -14,75 +14,36 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.quickfix;
+package org.jetbrains.kotlin.idea.quickfix
 
-import com.intellij.codeInsight.CodeInsightUtilCore;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.KotlinBundle;
-import org.jetbrains.kotlin.psi.*;
+import com.intellij.codeInsight.CodeInsightUtilCore
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
-public class AddWhenElseBranchFix extends KotlinQuickFixAction<KtWhenExpression> {
-    private static final String ELSE_ENTRY_TEXT = "else -> {}";
+class AddWhenElseBranchFix(element: KtWhenExpression) : KotlinQuickFixAction<KtWhenExpression>(element) {
+    override fun getFamilyName() = "Add else branch"
+    override fun getText() = familyName
 
-    public AddWhenElseBranchFix(@NotNull KtWhenExpression element) {
-        super(element);
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        return super.isAvailable(project, editor, file) && element.closeBrace != null
     }
 
-
-    @NotNull
-    @Override
-    public String getText() {
-        return KotlinBundle.message("add.when.else.branch.action");
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val psiFactory = KtPsiFactory(file)
+        val entry = psiFactory.createWhenEntry("else -> {}")
+        val whenCloseBrace = element.closeBrace ?: error("isAvailable should check if close brace exist")
+        val insertedWhenEntry = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(element.addBefore(entry, whenCloseBrace)) as KtWhenEntry
+        editor!!.caretModel.moveToOffset((insertedWhenEntry.expression as KtBlockExpression).lBrace!!.endOffset)
     }
 
-    @NotNull
-    @Override
-    public String getFamilyName() {
-        return KotlinBundle.message("add.when.else.branch.action.family.name");
-    }
-
-    @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiFile file) {
-        return super.isAvailable(project, editor, file) && getElement().getCloseBrace() != null;
-    }
-
-    @Override
-    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
-        PsiElement whenCloseBrace = getElement().getCloseBrace();
-        assert (whenCloseBrace != null) : "isAvailable should check if close brace exist";
-
-        KtPsiFactory psiFactory = KtPsiFactoryKt.KtPsiFactory(file);
-        KtWhenEntry entry = psiFactory.createWhenEntry(ELSE_ENTRY_TEXT);
-
-        PsiElement insertedBranch = getElement().addBefore(entry, whenCloseBrace);
-        getElement().addAfter(psiFactory.createNewLine(), insertedBranch);
-
-        KtWhenEntry insertedWhenEntry = (KtWhenEntry) CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(insertedBranch);
-        TextRange textRange = insertedWhenEntry.getTextRange();
-
-        int indexOfOpenBrace = insertedWhenEntry.getText().indexOf('{');
-        editor.getCaretModel().moveToOffset(textRange.getStartOffset() + indexOfOpenBrace + 1);
-    }
-
-    public static KotlinSingleIntentionActionFactory createFactory() {
-        return new KotlinSingleIntentionActionFactory() {
-            @Nullable
-            @Override
-            public KotlinQuickFixAction createAction(@NotNull Diagnostic diagnostic) {
-                PsiElement element = diagnostic.getPsiElement();
-                KtWhenExpression whenExpression = PsiTreeUtil.getParentOfType(element, KtWhenExpression.class, false);
-                if (whenExpression == null) return null;
-                return new AddWhenElseBranchFix(whenExpression);
-            }
-        };
+    companion object : KotlinSingleIntentionActionFactory() {
+        public override fun createAction(diagnostic: Diagnostic): AddWhenElseBranchFix? {
+            return diagnostic.psiElement.getNonStrictParentOfType<KtWhenExpression>()?.let { AddWhenElseBranchFix(it) }
+        }
     }
 }
