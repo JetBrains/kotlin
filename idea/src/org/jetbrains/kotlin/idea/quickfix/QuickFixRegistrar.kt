@@ -236,7 +236,7 @@ class QuickFixRegistrar : QuickFixContributor {
         UNUSED_PARAMETER.registerFactory(RemoveUnusedFunctionParameterFix)
         EXPECTED_PARAMETERS_NUMBER_MISMATCH.registerFactory(ChangeFunctionLiteralSignatureFix)
 
-        EXPECTED_PARAMETER_TYPE_MISMATCH.registerFactory(ChangeTypeFix.createFactoryForExpectedParameterTypeMismatch())
+        EXPECTED_PARAMETER_TYPE_MISMATCH.registerFactory(ChangeTypeFix)
 
         EXTENSION_PROPERTY_WITH_BACKING_FIELD.registerFactory(ConvertExtensionPropertyInitializerToGetterFix)
 

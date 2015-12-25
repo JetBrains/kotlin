@@ -14,67 +14,42 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.quickfix;
+package org.jetbrains.kotlin.idea.quickfix
 
-import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters1;
-import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.idea.KotlinBundle;
-import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
-import org.jetbrains.kotlin.idea.util.ShortenReferences;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtParameter;
-import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
-import org.jetbrains.kotlin.psi.KtTypeReference;
-import org.jetbrains.kotlin.types.KotlinType;
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtTypeReference
+import org.jetbrains.kotlin.types.KotlinType
 
-public class ChangeTypeFix extends KotlinQuickFixAction<KtTypeReference> {
-    private final KotlinType type;
-    private final String renderedType;
+class ChangeTypeFix(element: KtTypeReference, private val type: KotlinType) : KotlinQuickFixAction<KtTypeReference>(element) {
+    override fun getFamilyName() = "Change type"
 
-    public ChangeTypeFix(@NotNull KtTypeReference element, KotlinType type) {
-        super(element);
-        this.type = type;
-        renderedType = IdeDescriptorRenderers.SOURCE_CODE.renderType(type);
+    override fun getText(): String {
+        val currentTypeText = element.text
+        return "Change type from '$currentTypeText' to '${QuickFixUtil.renderTypeWithFqNameOnClash(type, currentTypeText)}'"
     }
 
-    @NotNull
-    @Override
-    public String getText() {
-        String currentTypeText = getElement().getText();
-        return KotlinBundle.message("change.type", currentTypeText, QuickFixUtil.renderTypeWithFqNameOnClash(type, currentTypeText));
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val newTypeRef = element.replaced(KtPsiFactory(file).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type)))
+        ShortenReferences.DEFAULT.process(newTypeRef)
     }
 
-    @NotNull
-    @Override
-    public String getFamilyName() {
-        return KotlinBundle.message("change.type.family");
-    }
+    companion object : KotlinSingleIntentionActionFactoryWithDelegate<KtTypeReference, KotlinType>() {
+        override fun getElementOfInterest(diagnostic: Diagnostic) =
+                Errors.EXPECTED_PARAMETER_TYPE_MISMATCH.cast(diagnostic).psiElement.typeReference
 
-    @Override
-    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
-        KtTypeReference newTypeRef = (KtTypeReference) getElement().replace(KtPsiFactoryKt.KtPsiFactory(file).createType(renderedType));
-        ShortenReferences.DEFAULT.process(newTypeRef);
-    }
+        override fun extractFixData(element: KtTypeReference, diagnostic: Diagnostic) =
+                Errors.EXPECTED_PARAMETER_TYPE_MISMATCH.cast(diagnostic).a
 
-    @NotNull
-    public static KotlinSingleIntentionActionFactory createFactoryForExpectedParameterTypeMismatch() {
-        return new KotlinSingleIntentionActionFactory() {
-            @Nullable
-            @Override
-            public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                DiagnosticWithParameters1<KtParameter, KotlinType> diagnosticWithParameters = Errors.EXPECTED_PARAMETER_TYPE_MISMATCH.cast(diagnostic);
-                KtTypeReference typeReference = diagnosticWithParameters.getPsiElement().getTypeReference();
-                assert typeReference != null : "EXPECTED_PARAMETER_TYPE_MISMATCH reported on parameter without explicitly declared type";
-                return new ChangeTypeFix(typeReference, diagnosticWithParameters.getA());
-            }
-        };
+        override fun createFix(originalElement: KtTypeReference, data: KotlinType) =
+                ChangeTypeFix(originalElement, data)
     }
 }
