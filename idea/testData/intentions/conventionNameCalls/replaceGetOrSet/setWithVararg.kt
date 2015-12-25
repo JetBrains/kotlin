@@ -1,4 +1,5 @@
 // IS_APPLICABLE: false
+// ERROR: operator modifier is inapplicable on this function: last parameter must not have a default value or be a vararg
 
 class C {
     operator fun set(s: String, vararg value: Int): Boolean = true

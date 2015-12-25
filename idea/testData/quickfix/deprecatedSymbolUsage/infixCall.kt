@@ -1,4 +1,5 @@
 // "Replace with 'newFun(p, this)'" "true"
+// ERROR: 'infix' modifier is inapplicable on this function
 
 @Deprecated("", ReplaceWith("newFun(p, this)"))
 infix fun String.oldFun(p: Int) {
