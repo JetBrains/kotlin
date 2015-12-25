@@ -478,7 +478,7 @@ public class ControlFlowInformationProvider {
     }
 
     private boolean checkAssignmentBeforeDeclaration(@NotNull VariableInitContext ctxt, @NotNull KtExpression expression) {
-        if (!ctxt.enterInitState.isDeclared && !ctxt.exitInitState.isDeclared
+        if (!ctxt.enterInitState.isDeclared() && !ctxt.exitInitState.isDeclared()
             && !ctxt.enterInitState.mayBeInitialized() && ctxt.exitInitState.mayBeInitialized()) {
             report(Errors.INITIALIZATION_BEFORE_DECLARATION.on(expression, ctxt.variableDescriptor), ctxt);
             return true;
