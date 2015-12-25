@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.load.java;
+package org.jetbrains.kotlin.builtins
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion;
+import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 
-public final class AbiVersionUtil {
-    public static boolean isAbiVersionCompatible(@NotNull BinaryVersion actual) {
-        return actual.isCompatibleTo(JvmAbi.VERSION);
-    }
+class BuiltInsBinaryVersion protected constructor(
+        major: Int, minor: Int, patch: Int, rest: List<Int>
+) : BinaryVersion(major, minor, patch, rest) {
+    companion object {
+        @JvmStatic
+        fun create(version: IntArray) = create(version, ::BuiltInsBinaryVersion)
 
-    private AbiVersionUtil() {
+        @JvmStatic
+        fun create(major: Int, minor: Int, patch: Int) = create(major, minor, patch, ::BuiltInsBinaryVersion)
     }
 }

@@ -21,16 +21,17 @@ import com.intellij.util.indexing.DataIndexer
 import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses
-import org.jetbrains.kotlin.load.java.AbiVersionUtil
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.*
+import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 
-object KotlinAbiVersionIndex : KotlinAbiVersionIndexBase<KotlinAbiVersionIndex>(KotlinAbiVersionIndex::class.java) {
-
+object KotlinAbiVersionIndex : KotlinAbiVersionIndexBase<KotlinAbiVersionIndex>(
+        KotlinAbiVersionIndex::class.java, { JvmBytecodeBinaryVersion.create(it) }
+) {
     override fun getIndexer() = INDEXER
 
     override fun getInputFilter() = FileBasedIndex.InputFilter() { file -> file.fileType == StdFileTypes.CLASS }
@@ -60,7 +61,7 @@ object KotlinAbiVersionIndex : KotlinAbiVersionIndexBase<KotlinAbiVersionIndex>(
                     return object : AnnotationVisitor(Opcodes.ASM5) {
                         override fun visit(name: String, value: Any) {
                             if (name == VERSION_FIELD_NAME && value is IntArray) {
-                                version = BinaryVersion.create(value)
+                                version = JvmBytecodeBinaryVersion.create(value)
                             }
                         }
                     }
@@ -70,7 +71,7 @@ object KotlinAbiVersionIndex : KotlinAbiVersionIndexBase<KotlinAbiVersionIndex>(
 
         if (annotationPresent && version == null) {
             // No version at all because the class is too old, or version is set to something weird
-            version = AbiVersionUtil.INVALID_VERSION
+            version = JvmBytecodeBinaryVersion.INVALID_VERSION
         }
 
         if (version != null) mapOf(version!! to null) else mapOf()

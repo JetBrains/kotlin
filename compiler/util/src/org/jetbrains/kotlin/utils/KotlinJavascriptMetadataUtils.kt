@@ -16,12 +16,26 @@
 
 package org.jetbrains.kotlin.utils
 
+import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import java.io.File
 import javax.xml.bind.DatatypeConverter.parseBase64Binary
 import javax.xml.bind.DatatypeConverter.printBase64Binary
 
 class KotlinJavascriptMetadata(val abiVersion: Int, val moduleName: String, val body: ByteArray) {
     val isAbiVersionCompatible: Boolean = KotlinJavascriptMetadataUtils.isAbiVersionCompatible(abiVersion)
+}
+
+// TODO: move to JS modules
+class JsBinaryVersion protected constructor(
+        major: Int, minor: Int, patch: Int, rest: List<Int>
+) : BinaryVersion(major, minor, patch, rest) {
+    companion object {
+        @JvmField val INVALID_VERSION = JsBinaryVersion.create(IntArray(0))
+
+        @JvmStatic fun create(version: IntArray) = create(version, ::JsBinaryVersion)
+
+        @JvmStatic fun create(major: Int, minor: Int, patch: Int) = create(major, minor, patch, ::JsBinaryVersion)
+    }
 }
 
 object KotlinJavascriptMetadataUtils {
@@ -36,7 +50,7 @@ object KotlinJavascriptMetadataUtils {
      */
     private val METADATA_PATTERN = "(?m)\\w+\\.$KOTLIN_JAVASCRIPT_METHOD_NAME\\((\\d+),\\s*(['\"])([^'\"]*)\\2,\\s*(['\"])([^'\"]*)\\4\\)".toPattern()
 
-    @JvmField val ABI_VERSION: Int = 3
+    @JvmField val ABI_VERSION: Int = JsBinaryVersion.create(0, 3, 0).minor
 
     fun replaceSuffix(filePath: String): String = filePath.substringBeforeLast(JS_EXT) + META_JS_SUFFIX
 

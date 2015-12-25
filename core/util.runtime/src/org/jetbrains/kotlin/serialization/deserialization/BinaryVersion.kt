@@ -16,11 +16,11 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
-data class BinaryVersion private constructor(
+abstract class BinaryVersion protected constructor(
         val major: Int,
         val minor: Int,
         val patch: Int,
-        val rest: List<Int> = listOf()
+        val rest: List<Int>
 ) {
     fun toArray(): IntArray =
             intArrayOf(major, minor, patch, *rest.toIntArray())
@@ -41,20 +41,37 @@ data class BinaryVersion private constructor(
         return if (versions.isEmpty()) "unknown" else versions.joinToString(".")
     }
 
+    override fun equals(other: Any?) =
+            this.javaClass == other?.javaClass &&
+            major == (other as BinaryVersion).major && minor == other.minor && patch == other.patch && rest == other.rest
+
+    override fun hashCode(): Int{
+        var result = major
+        result += 31 * result + minor
+        result += 31 * result + patch
+        result += 31 * result + rest.hashCode()
+        return result
+    }
+
     companion object {
         private val UNKNOWN = -1
 
         @JvmStatic
-        fun create(version: IntArray): BinaryVersion {
-            return BinaryVersion(
-                    major = version.getOrNull(0) ?: UNKNOWN,
-                    minor = version.getOrNull(1) ?: UNKNOWN,
-                    patch = version.getOrNull(2) ?: UNKNOWN,
-                    rest = if (version.size > 3) version.asList().subList(3, version.size).toList() else listOf()
+        fun <T : BinaryVersion> create(
+                version: IntArray,
+                factory: (major: Int, minor: Int, patch: Int, rest: List<Int>) -> T
+        ): T {
+            return factory(
+                    version.getOrNull(0) ?: UNKNOWN,
+                    version.getOrNull(1) ?: UNKNOWN,
+                    version.getOrNull(2) ?: UNKNOWN,
+                    if (version.size > 3) version.asList().subList(3, version.size).toList() else emptyList()
             )
         }
 
         @JvmStatic
-        fun create(major: Int, minor: Int, patch: Int) = BinaryVersion(major, minor, patch)
+        fun <T : BinaryVersion> create(
+                major: Int, minor: Int, patch: Int, factory: (major: Int, minor: Int, patch: Int, rest: List<Int>) -> T
+        ): T = factory(major, minor, patch, emptyList())
     }
 }

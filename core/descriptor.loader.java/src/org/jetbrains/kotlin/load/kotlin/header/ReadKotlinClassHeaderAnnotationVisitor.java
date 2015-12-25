@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.load.java.AbiVersionUtil;
+import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -45,7 +46,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         HEADER_KINDS.put(ClassId.topLevel(KOTLIN_SYNTHETIC_CLASS), SYNTHETIC_CLASS);
     }
 
-    private BinaryVersion version = AbiVersionUtil.INVALID_VERSION;
+    private BinaryVersion version = JvmBytecodeBinaryVersion.INVALID_VERSION;
     private String multifileClassName = null;
     private String[] filePartClassNames = null;
     private String[] annotationData = null;
@@ -131,7 +132,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
 
             String string = name.asString();
             if (VERSION_FIELD_NAME.equals(string)) {
-                version = value instanceof int[] ? BinaryVersion.create((int[]) value) : AbiVersionUtil.INVALID_VERSION;
+                version = value instanceof int[] ? JvmBytecodeBinaryVersion.create((int[]) value) : JvmBytecodeBinaryVersion.INVALID_VERSION;
             }
             else if (MULTIFILE_CLASS_NAME_FIELD_NAME.equals(string)) {
                 multifileClassName = value instanceof String ? (String) value : null;

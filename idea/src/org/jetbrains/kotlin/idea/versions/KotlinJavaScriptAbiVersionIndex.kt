@@ -21,14 +21,15 @@ import com.intellij.util.indexing.DataIndexer
 import com.intellij.util.indexing.FileBasedIndex
 import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.js.JavaScript
-import org.jetbrains.kotlin.load.java.AbiVersionUtil
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
+import org.jetbrains.kotlin.utils.JsBinaryVersion
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.util.*
 
-object KotlinJavaScriptAbiVersionIndex : KotlinAbiVersionIndexBase<KotlinJavaScriptAbiVersionIndex>(KotlinJavaScriptAbiVersionIndex::class.java) {
-
+object KotlinJavaScriptAbiVersionIndex : KotlinAbiVersionIndexBase<KotlinJavaScriptAbiVersionIndex>(
+        KotlinJavaScriptAbiVersionIndex::class.java, { JsBinaryVersion.create(it) }
+) {
     override fun getIndexer() = INDEXER
 
     override fun getInputFilter() = FileBasedIndex.InputFilter() { file -> JavaScript.EXTENSION == file.extension }
@@ -46,11 +47,11 @@ object KotlinJavaScriptAbiVersionIndex : KotlinAbiVersionIndexBase<KotlinJavaScr
             KotlinJavascriptMetadataUtils.parseMetadata(text, metadataList)
             for (metadata in metadataList) {
                 val version = if (KotlinJavascriptMetadataUtils.isAbiVersionCompatible(metadata.abiVersion)) {
-                    BinaryVersion.create(0, metadata.abiVersion, 0)
+                    JsBinaryVersion.create(0, metadata.abiVersion, 0)
                 }
                 else {
                     // Version is set to something weird
-                    AbiVersionUtil.INVALID_VERSION
+                    JsBinaryVersion.INVALID_VERSION
                 }
                 result[version] = null
             }

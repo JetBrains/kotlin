@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
-import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion;
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.CapitalizeDecapitalizeKt;
 
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isClassOrEnumClass;
@@ -43,7 +42,7 @@ public final class JvmAbi {
      * - Patch version can be increased freely and is only supposed to be used for debugging. Increase the patch version when you
      *   make a change to the metadata format or the bytecode which is both forward- and backward compatible.
      */
-    public static final BinaryVersion VERSION = BinaryVersion.create(1, 0, 2);
+    public static final JvmBytecodeBinaryVersion VERSION = JvmBytecodeBinaryVersion.create(1, 0, 2);
 
     public static final String DEFAULT_IMPLS_CLASS_NAME = "DefaultImpls";
     public static final String DEFAULT_IMPLS_SUFFIX = "$" + DEFAULT_IMPLS_CLASS_NAME;

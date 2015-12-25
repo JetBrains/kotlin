@@ -29,7 +29,10 @@ import java.io.DataOutput
 /**
  * Important! This is not a stub-based index. And it has its own version
  */
-abstract class KotlinAbiVersionIndexBase<T>(private val classOfIndex: Class<T>) : ScalarIndexExtension<BinaryVersion>() {
+abstract class KotlinAbiVersionIndexBase<T>(
+        private val classOfIndex: Class<T>,
+        private val createBinaryVersion: (IntArray) -> BinaryVersion
+) : ScalarIndexExtension<BinaryVersion>() {
 
     override fun getName() = ID.create<BinaryVersion, Void>(classOfIndex.canonicalName)
 
@@ -40,7 +43,7 @@ abstract class KotlinAbiVersionIndexBase<T>(private val classOfIndex: Class<T>) 
 
         override fun read(input: DataInput): BinaryVersion {
             val size = DataInputOutputUtil.readINT(input)
-            return BinaryVersion.create((0..size - 1).map { DataInputOutputUtil.readINT(input) }.toIntArray())
+            return createBinaryVersion((0..size - 1).map { DataInputOutputUtil.readINT(input) }.toIntArray())
         }
 
         override fun save(output: DataOutput, value: BinaryVersion) {
