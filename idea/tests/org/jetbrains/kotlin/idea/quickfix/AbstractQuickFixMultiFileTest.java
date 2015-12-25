@@ -30,7 +30,9 @@ import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import com.intellij.testFramework.VfsTestUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
@@ -39,8 +41,8 @@ import kotlin.collections.ArraysKt;
 import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.KotlinDaemonAnalyzerTestCase;
+import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.quickfix.utils.QuickfixTestUtilsKt;
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils;
@@ -290,18 +292,13 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
                                 String fileName = file.getName();
                                 if (fileName.equals(mainFileName) || !fileName.startsWith(extraFileNamePrefix(myFile.getName()))) continue;
 
-                                myFile = file;
                                 String extraFileFullPath = beforeFileName.replace(mainFileName, fileName);
-                                try {
-                                    checkResultByFile(extraFileFullPath.replace(".before.", ".after."));
+                                File afterFile = new File(extraFileFullPath.replace(".before.", ".after."));
+                                if (afterFile.exists()) {
+                                    KotlinTestUtils.assertEqualsToFile(afterFile, file.getText());
                                 }
-                                catch (AssertionError e) {
-                                    if (e.getMessage().startsWith("Cannot find file")) {
-                                        checkResultByFile(extraFileFullPath);
-                                    }
-                                    else {
-                                        throw e;
-                                    }
+                                else {
+                                    KotlinTestUtils.assertEqualsToFile(new File(extraFileFullPath), file.getText());
                                 }
                             }
                         }
@@ -395,5 +392,11 @@ public abstract class AbstractQuickFixMultiFileTest extends KotlinDaemonAnalyzer
             this.name = name;
             this.content = content;
         }
+    }
+
+    @NotNull
+    private VirtualFile findVirtualFile(@NotNull String filePath) {
+        String absolutePath = getTestDataPath() + filePath;
+        return VfsTestUtil.findFileByCaseSensitivePath(absolutePath);
     }
 }
