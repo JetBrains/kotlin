@@ -34,8 +34,16 @@ public class IncrementalConstantSearchTest : AbstractIncrementalJpsTest() {
         doTest("jps-plugin/testData/incremental/custom/kotlinConstantChangedUsedInJava/")
     }
 
+    fun testKotlinJvmFieldChangedUsedInJava() {
+        doTest("jps-plugin/testData/incremental/custom/kotlinJvmFieldChangedUsedInJava/")
+    }
+
     fun testKotlinConstantUnchangedUsedInJava() {
         doTest("jps-plugin/testData/incremental/custom/kotlinConstantUnchangedUsedInJava/")
+    }
+
+    fun testKotlinJvmFieldUnchangedUsedInJava() {
+        doTest("jps-plugin/testData/incremental/custom/kotlinJvmFieldUnchangedUsedInJava/")
     }
 
     override val mockConstantSearch: Callbacks.ConstantAffectionResolver?
