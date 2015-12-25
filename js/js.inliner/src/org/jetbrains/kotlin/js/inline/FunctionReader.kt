@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.js.inline
 import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.inlineStrategy
 import com.google.gwt.dev.js.ThrowExceptionOnErrorReporter
-import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.containers.SLRUCache
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -33,8 +32,7 @@ import org.jetbrains.kotlin.js.translate.reference.CallExpressionTranslator
 import org.jetbrains.kotlin.js.translate.utils.JsDescriptorUtils.getExternalModuleName
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.inline.InlineStrategy
-import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
-import org.jetbrains.kotlin.utils.LibraryUtils
+import org.jetbrains.kotlin.utils.JsLibraryUtils
 import org.jetbrains.kotlin.utils.sure
 import java.io.File
 
@@ -68,7 +66,7 @@ class FunctionReader(private val context: TranslationContext) {
         val config = context.config as LibrarySourcesConfig
         val libs = config.libraries.map { File(it) }
 
-        LibraryUtils.traverseJsLibraries(libs) { fileContent, path ->
+        JsLibraryUtils.traverseJsLibraries(libs) { fileContent, path ->
             val matcher = DEFINE_MODULE_PATTERN.toPattern().matcher(fileContent)
 
             while (matcher.find()) {

@@ -30,6 +30,7 @@ object KotlinJavascriptMetadataUtils {
     const val VFS_PROTOCOL: String = "kotlin-js-meta"
     private val KOTLIN_JAVASCRIPT_METHOD_NAME = "kotlin_module_metadata"
     private val KOTLIN_JAVASCRIPT_METHOD_NAME_PATTERN = "\\.kotlin_module_metadata\\(".toPattern()
+
     /**
      * Matches string like <name>.kotlin_module_metadata(<abi version>, <module name>, <base64 data>)
      */
@@ -44,28 +45,13 @@ object KotlinJavascriptMetadataUtils {
     @JvmStatic fun hasMetadata(text: String): Boolean =
             KOTLIN_JAVASCRIPT_METHOD_NAME_PATTERN.matcher(text).find() && METADATA_PATTERN.matcher(text).find()
 
-    fun hasMetadataWithIncompatibleAbiVersion(text: String): Boolean {
-        val matcher = METADATA_PATTERN.matcher(text)
-        while (matcher.find()) {
-            var abiVersion = matcher.group(1).toInt()
-            if (abiVersion != ABI_VERSION) return true
-        }
-        return false
-    }
-
     fun formatMetadataAsString(moduleName: String, content: ByteArray): String =
         "// Kotlin.$KOTLIN_JAVASCRIPT_METHOD_NAME($ABI_VERSION, \"$moduleName\", \"${printBase64Binary(content)}\");\n"
 
     @JvmStatic fun loadMetadata(file: File): List<KotlinJavascriptMetadata> {
-        assert(file.exists()) { "Library " + file + " not found" }
+        assert(file.exists()) { "Library $file not found" }
         val metadataList = arrayListOf<KotlinJavascriptMetadata>()
-        LibraryUtils.traverseJsLibrary(file) { content, relativePath ->
-            var path = file.path
-
-            if (relativePath.isNotBlank()) {
-                path += "/$relativePath"
-            }
-
+        JsLibraryUtils.traverseJsLibrary(file) { content, relativePath ->
             parseMetadata(content, metadataList)
         }
 
