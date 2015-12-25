@@ -14,287 +14,192 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.cfg;
+package org.jetbrains.kotlin.cfg
 
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode;
-import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtil;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.LexicalScope;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicInstruction;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicKind;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.ReadValueInstruction;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.WriteValueInstruction;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction;
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.VariableDeclarationInstruction;
-import org.jetbrains.kotlin.cfg.pseudocodeTraverser.Edges;
-import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.VariableDescriptor;
-import org.jetbrains.kotlin.psi.KtDeclaration;
-import org.jetbrains.kotlin.psi.KtProperty;
-import org.jetbrains.kotlin.resolve.BindingContext;
+import com.google.common.collect.Maps
+import com.google.common.collect.Sets
+import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
+import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtil
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicInstruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicKind
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.ReadValueInstruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.WriteValueInstruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.VariableDeclarationInstruction
+import org.jetbrains.kotlin.cfg.pseudocodeTraverser.Edges
+import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.resolve.BindingContext
+import java.util.Collections
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
+class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingContext: BindingContext) {
+    private val pseudocodeVariableDataCollector: PseudocodeVariableDataCollector
 
-public class PseudocodeVariablesData {
-    private final Pseudocode pseudocode;
-    private final BindingContext bindingContext;
-    private final PseudocodeVariableDataCollector pseudocodeVariableDataCollector;
+    private val declaredVariablesForDeclaration = Maps.newHashMap<Pseudocode, Set<VariableDescriptor>>()
 
-    private final Map<Pseudocode, Set<VariableDescriptor>> declaredVariablesForDeclaration = Maps.newHashMap();
-
-    private Map<Instruction, Edges<Map<VariableDescriptor, VariableControlFlowState>>> variableInitializers;
-
-    public PseudocodeVariablesData(@NotNull Pseudocode pseudocode, @NotNull BindingContext bindingContext) {
-        this.pseudocode = pseudocode;
-        this.bindingContext = bindingContext;
-        this.pseudocodeVariableDataCollector = new PseudocodeVariableDataCollector(bindingContext, pseudocode);
+    val variableInitializers: MutableMap<Instruction, Edges<MutableMap<VariableDescriptor, VariableControlFlowState>>> by lazy {
+        computeVariableInitializers()
     }
 
-    @NotNull
-    public Pseudocode getPseudocode() {
-        return pseudocode;
+    init {
+        this.pseudocodeVariableDataCollector = PseudocodeVariableDataCollector(bindingContext, pseudocode)
     }
 
-    @NotNull
-    public LexicalScopeVariableInfo getLexicalScopeVariableInfo() {
-        return pseudocodeVariableDataCollector.getLexicalScopeVariableInfo();
-    }
+    val lexicalScopeVariableInfo: LexicalScopeVariableInfo
+        get() = pseudocodeVariableDataCollector.lexicalScopeVariableInfo
 
-    @NotNull
-    public Set<VariableDescriptor> getDeclaredVariables(@NotNull Pseudocode pseudocode, boolean includeInsideLocalDeclarations) {
+    fun getDeclaredVariables(pseudocode: Pseudocode, includeInsideLocalDeclarations: Boolean): Set<VariableDescriptor> {
         if (!includeInsideLocalDeclarations) {
-            return getUpperLevelDeclaredVariables(pseudocode);
+            return getUpperLevelDeclaredVariables(pseudocode)
         }
-        Set<VariableDescriptor> declaredVariables = Sets.newHashSet();
-        declaredVariables.addAll(getUpperLevelDeclaredVariables(pseudocode));
+        val declaredVariables = Sets.newHashSet<VariableDescriptor>()
+        declaredVariables.addAll(getUpperLevelDeclaredVariables(pseudocode))
 
-        for (LocalFunctionDeclarationInstruction localFunctionDeclarationInstruction : pseudocode.getLocalDeclarations()) {
-            Pseudocode localPseudocode = localFunctionDeclarationInstruction.getBody();
-            declaredVariables.addAll(getUpperLevelDeclaredVariables(localPseudocode));
+        for (localFunctionDeclarationInstruction in pseudocode.localDeclarations) {
+            val localPseudocode = localFunctionDeclarationInstruction.body
+            declaredVariables.addAll(getUpperLevelDeclaredVariables(localPseudocode))
         }
-        return declaredVariables;
+        return declaredVariables
     }
 
-    @NotNull
-    private Set<VariableDescriptor> getUpperLevelDeclaredVariables(@NotNull Pseudocode pseudocode) {
-        Set<VariableDescriptor> declaredVariables = declaredVariablesForDeclaration.get(pseudocode);
+    private fun getUpperLevelDeclaredVariables(pseudocode: Pseudocode): Set<VariableDescriptor> {
+        var declaredVariables: Set<VariableDescriptor>? = declaredVariablesForDeclaration[pseudocode]
         if (declaredVariables == null) {
-            declaredVariables = computeDeclaredVariablesForPseudocode(pseudocode);
-            declaredVariablesForDeclaration.put(pseudocode, declaredVariables);
+            declaredVariables = computeDeclaredVariablesForPseudocode(pseudocode)
+            declaredVariablesForDeclaration.put(pseudocode, declaredVariables)
         }
-        return declaredVariables;
+        return declaredVariables
     }
 
-    @NotNull
-    private Set<VariableDescriptor> computeDeclaredVariablesForPseudocode(Pseudocode pseudocode) {
-        Set<VariableDescriptor> declaredVariables = Sets.newHashSet();
-        for (Instruction instruction : pseudocode.getInstructions()) {
-            if (instruction instanceof VariableDeclarationInstruction) {
-                KtDeclaration variableDeclarationElement = ((VariableDeclarationInstruction) instruction).getVariableDeclarationElement();
-                DeclarationDescriptor descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, variableDeclarationElement);
+    private fun computeDeclaredVariablesForPseudocode(pseudocode: Pseudocode): Set<VariableDescriptor> {
+        val declaredVariables = Sets.newHashSet<VariableDescriptor>()
+        for (instruction in pseudocode.instructions) {
+            if (instruction is VariableDeclarationInstruction) {
+                val variableDeclarationElement = instruction.variableDeclarationElement
+                val descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, variableDeclarationElement)
                 if (descriptor != null) {
-                    assert descriptor instanceof VariableDescriptor;
-                    declaredVariables.add((VariableDescriptor) descriptor);
+                    assert(descriptor is VariableDescriptor)
+                    declaredVariables.add(descriptor as VariableDescriptor?)
                 }
             }
         }
-        return Collections.unmodifiableSet(declaredVariables);
+        return Collections.unmodifiableSet(declaredVariables)
     }
 
     // variable initializers
 
-    @NotNull
-    public Map<Instruction, Edges<Map<VariableDescriptor, VariableControlFlowState>>> getVariableInitializers() {
-        if (variableInitializers == null) {
-            variableInitializers = computeVariableInitializers();
-        }
+    private fun computeVariableInitializers(): MutableMap<Instruction, Edges<MutableMap<VariableDescriptor, VariableControlFlowState>>> {
 
-        return variableInitializers;
-    }
-
-    @NotNull
-    private Map<Instruction, Edges<Map<VariableDescriptor, VariableControlFlowState>>> computeVariableInitializers() {
-
-        final LexicalScopeVariableInfo lexicalScopeVariableInfo = pseudocodeVariableDataCollector.getLexicalScopeVariableInfo();
+        val lexicalScopeVariableInfo = pseudocodeVariableDataCollector.lexicalScopeVariableInfo
 
         return pseudocodeVariableDataCollector.collectData(
                 TraversalOrder.FORWARD, /*mergeDataWithLocalDeclarations=*/ true,
-                new InstructionDataMergeStrategy<VariableControlFlowState>() {
-                    @NotNull
-                    @Override
-                    public Edges<Map<VariableDescriptor, VariableControlFlowState>> invoke(
-                            @NotNull Instruction instruction,
-                            @NotNull Collection<? extends Map<VariableDescriptor, VariableControlFlowState>> incomingEdgesData
-                    ) {
+                object : InstructionDataMergeStrategy<VariableControlFlowState> {
+                    override operator fun invoke(
+                            instruction: Instruction,
+                            incomingEdgesData: Collection<MutableMap<VariableDescriptor, VariableControlFlowState>>
+                    ): Edges<MutableMap<VariableDescriptor, VariableControlFlowState>> {
 
-                        Map<VariableDescriptor, VariableControlFlowState> enterInstructionData =
-                                mergeIncomingEdgesDataForInitializers(incomingEdgesData);
-                        Map<VariableDescriptor, VariableControlFlowState> exitInstructionData = addVariableInitStateFromCurrentInstructionIfAny(
-                                instruction, enterInstructionData, lexicalScopeVariableInfo);
-                        return new Edges<Map<VariableDescriptor, VariableControlFlowState>>(enterInstructionData, exitInstructionData);
+                        val enterInstructionData = mergeIncomingEdgesDataForInitializers(incomingEdgesData)
+                        val exitInstructionData = addVariableInitStateFromCurrentInstructionIfAny(
+                                instruction, enterInstructionData, lexicalScopeVariableInfo)
+                        return Edges(enterInstructionData, exitInstructionData)
                     }
-                }
-        );
+                })
     }
 
-    public static VariableControlFlowState getDefaultValueForInitializers(
-            @NotNull VariableDescriptor variable,
-            @NotNull Instruction instruction,
-            @NotNull LexicalScopeVariableInfo lexicalScopeVariableInfo
-    ) {
-        //todo: think of replacing it with "MapWithDefaultValue"
-        LexicalScope declaredIn = lexicalScopeVariableInfo.getDeclaredIn().get(variable);
-        boolean declaredOutsideThisDeclaration =
-                declaredIn == null //declared outside this pseudocode
-                || declaredIn.getLexicalScopeForContainingDeclaration() != instruction.getLexicalScope().getLexicalScopeForContainingDeclaration();
-        return VariableControlFlowState.create(/*initState=*/declaredOutsideThisDeclaration);
-    }
-
-    @NotNull
-    private static Map<VariableDescriptor, VariableControlFlowState> mergeIncomingEdgesDataForInitializers(
-            @NotNull Collection<? extends Map<VariableDescriptor, VariableControlFlowState>> incomingEdgesData
-    ) {
-        Set<VariableDescriptor> variablesInScope = Sets.newHashSet();
-        for (Map<VariableDescriptor, VariableControlFlowState> edgeData : incomingEdgesData) {
-            variablesInScope.addAll(edgeData.keySet());
-        }
-
-        Map<VariableDescriptor, VariableControlFlowState> enterInstructionData = Maps.newHashMap();
-        for (VariableDescriptor variable : variablesInScope) {
-            InitState initState = null;
-            boolean isDeclared = true;
-            for (Map<VariableDescriptor, VariableControlFlowState> edgeData : incomingEdgesData) {
-                VariableControlFlowState varControlFlowState = edgeData.get(variable);
-                if (varControlFlowState != null) {
-                    initState = initState != null ? initState.merge(varControlFlowState.initState) : varControlFlowState.initState;
-                    if (!varControlFlowState.isDeclared) {
-                        isDeclared = false;
+    private fun addVariableInitStateFromCurrentInstructionIfAny(
+            instruction: Instruction,
+            enterInstructionData: MutableMap<VariableDescriptor, VariableControlFlowState>,
+            lexicalScopeVariableInfo: LexicalScopeVariableInfo
+    ): MutableMap<VariableDescriptor, VariableControlFlowState> {
+        if (instruction is MagicInstruction) {
+            if (instruction.kind === MagicKind.EXHAUSTIVE_WHEN_ELSE) {
+                val exitInstructionData = Maps.newHashMap(enterInstructionData)
+                for (entry in enterInstructionData.entries) {
+                    if (!entry.value.definitelyInitialized()) {
+                        exitInstructionData.put(entry.key,
+                                                VariableControlFlowState.createInitializedExhaustively(entry.value.isDeclared))
                     }
                 }
-            }
-            if (initState == null) {
-                throw new AssertionError("An empty set of incoming edges data");
-            }
-            enterInstructionData.put(variable, VariableControlFlowState.create(initState, isDeclared));
-        }
-        return enterInstructionData;
-    }
-
-    @NotNull
-    private Map<VariableDescriptor, VariableControlFlowState> addVariableInitStateFromCurrentInstructionIfAny(
-            @NotNull Instruction instruction,
-            @NotNull Map<VariableDescriptor, VariableControlFlowState> enterInstructionData,
-            @NotNull LexicalScopeVariableInfo lexicalScopeVariableInfo
-    ) {
-        if (instruction instanceof MagicInstruction) {
-            MagicInstruction magicInstruction = (MagicInstruction) instruction;
-            if (magicInstruction.getKind() == MagicKind.EXHAUSTIVE_WHEN_ELSE) {
-                Map<VariableDescriptor, VariableControlFlowState> exitInstructionData = Maps.newHashMap(enterInstructionData);
-                for (Map.Entry<VariableDescriptor, VariableControlFlowState> entry: enterInstructionData.entrySet()) {
-                    if (!entry.getValue().definitelyInitialized()) {
-                        exitInstructionData.put(entry.getKey(),
-                                                VariableControlFlowState.createInitializedExhaustively(entry.getValue().isDeclared));
-                    }
-                }
-                return exitInstructionData;
+                return exitInstructionData
             }
         }
-        if (!(instruction instanceof WriteValueInstruction) && !(instruction instanceof VariableDeclarationInstruction)) {
-            return enterInstructionData;
+        if (instruction !is WriteValueInstruction && instruction !is VariableDeclarationInstruction) {
+            return enterInstructionData
         }
-        VariableDescriptor variable = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false, bindingContext);
-        if (variable == null) {
-            return enterInstructionData;
-        }
-        Map<VariableDescriptor, VariableControlFlowState> exitInstructionData = Maps.newHashMap(enterInstructionData);
-        if (instruction instanceof WriteValueInstruction) {
+        val variable = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false, bindingContext) ?: return enterInstructionData
+        val exitInstructionData = Maps.newHashMap(enterInstructionData)
+        if (instruction is WriteValueInstruction) {
             // if writing to already initialized object
-            if (!PseudocodeUtil.isThisOrNoDispatchReceiver((WriteValueInstruction) instruction, bindingContext)) {
-                return enterInstructionData;
+            if (!PseudocodeUtil.isThisOrNoDispatchReceiver(instruction, bindingContext)) {
+                return enterInstructionData
             }
 
-            VariableControlFlowState enterInitState = enterInstructionData.get(variable);
-            VariableControlFlowState initializationAtThisElement =
-                    VariableControlFlowState
-                            .create(((WriteValueInstruction) instruction).getElement() instanceof KtProperty, enterInitState);
-            exitInstructionData.put(variable, initializationAtThisElement);
+            val enterInitState = enterInstructionData[variable]
+            val initializationAtThisElement = VariableControlFlowState.create(instruction.element is KtProperty, enterInitState)
+            exitInstructionData.put(variable, initializationAtThisElement)
         }
-        else { // instruction instanceof VariableDeclarationInstruction
-            VariableControlFlowState enterInitState = enterInstructionData.get(variable);
+        else {
+            // instruction instanceof VariableDeclarationInstruction
+            var enterInitState: VariableControlFlowState? = enterInstructionData[variable]
             if (enterInitState == null) {
-                enterInitState = getDefaultValueForInitializers(variable, instruction, lexicalScopeVariableInfo);
+                enterInitState = getDefaultValueForInitializers(variable, instruction, lexicalScopeVariableInfo)
             }
-            if (enterInitState == null || !enterInitState.mayBeInitialized() || !enterInitState.isDeclared) {
-                boolean isInitialized = enterInitState != null && enterInitState.mayBeInitialized();
-                VariableControlFlowState variableDeclarationInfo = VariableControlFlowState.create(isInitialized, true);
-                exitInstructionData.put(variable, variableDeclarationInfo);
+            if (!enterInitState.mayBeInitialized() || !enterInitState.isDeclared) {
+                val isInitialized = enterInitState.mayBeInitialized()
+                val variableDeclarationInfo = VariableControlFlowState.create(isInitialized, true)
+                exitInstructionData.put(variable, variableDeclarationInfo)
             }
         }
-        return exitInstructionData;
+        return exitInstructionData
     }
 
-// variable use
+    // variable use
 
-    @NotNull
-    public Map<Instruction, Edges<Map<VariableDescriptor, VariableUseState>>> getVariableUseStatusData() {
-        return pseudocodeVariableDataCollector.collectData(
-                TraversalOrder.BACKWARD, /*mergeDataWithLocalDeclarations=*/ true,
-                new InstructionDataMergeStrategy<VariableUseState>() {
-                    @NotNull
-                    @Override
-                    public Edges<Map<VariableDescriptor, VariableUseState>> invoke(
-                            @NotNull Instruction instruction,
-                            @NotNull Collection<? extends Map<VariableDescriptor, VariableUseState>> incomingEdgesData
-                    ) {
+    /*mergeDataWithLocalDeclarations=*///instruction instanceof WriteValueInstruction
+    val variableUseStatusData: MutableMap<Instruction, Edges<MutableMap<VariableDescriptor, VariableUseState>>>
+        get() = pseudocodeVariableDataCollector.collectData(
+                TraversalOrder.BACKWARD, true,
+                object : InstructionDataMergeStrategy<VariableUseState> {
+                    override operator fun invoke(
+                            instruction: Instruction,
+                            incomingEdgesData: Collection<MutableMap<VariableDescriptor, VariableUseState>>
+                    ): Edges<MutableMap<VariableDescriptor, VariableUseState>> {
 
-                        Map<VariableDescriptor, VariableUseState> enterResult = Maps.newHashMap();
-                        for (Map<VariableDescriptor, VariableUseState> edgeData : incomingEdgesData) {
-                            for (Map.Entry<VariableDescriptor, VariableUseState> entry : edgeData.entrySet()) {
-                                VariableDescriptor variableDescriptor = entry.getKey();
-                                VariableUseState variableUseState = entry.getValue();
-                                enterResult.put(variableDescriptor, variableUseState.merge(enterResult.get(variableDescriptor)));
+                        val enterResult = Maps.newHashMap<VariableDescriptor, VariableUseState>()
+                        for (edgeData in incomingEdgesData) {
+                            for (entry in edgeData.entries) {
+                                val variableDescriptor = entry.key
+                                val variableUseState = entry.value
+                                enterResult.put(variableDescriptor, variableUseState.merge(enterResult[variableDescriptor]))
                             }
                         }
-                        VariableDescriptor variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(
-                                instruction, true, bindingContext);
-                        if (variableDescriptor == null ||
-                            (!(instruction instanceof ReadValueInstruction) && !(instruction instanceof WriteValueInstruction))) {
-                            return new Edges<Map<VariableDescriptor, VariableUseState>>(enterResult, enterResult);
+                        val variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(
+                                instruction, true, bindingContext)
+                        if (variableDescriptor == null || instruction !is ReadValueInstruction && instruction !is WriteValueInstruction) {
+                            return Edges(enterResult, enterResult)
                         }
-                        Map<VariableDescriptor, VariableUseState> exitResult = Maps.newHashMap(enterResult);
-                        if (instruction instanceof ReadValueInstruction) {
-                            exitResult.put(variableDescriptor, VariableUseState.READ);
+                        val exitResult = Maps.newHashMap(enterResult)
+                        if (instruction is ReadValueInstruction) {
+                            exitResult.put(variableDescriptor, VariableUseState.READ)
                         }
-                        else { //instruction instanceof WriteValueInstruction
-                            VariableUseState variableUseState = enterResult.get(variableDescriptor);
+                        else {
+                            var variableUseState: VariableUseState? = enterResult[variableDescriptor]
                             if (variableUseState == null) {
-                                variableUseState = VariableUseState.UNUSED;
+                                variableUseState = VariableUseState.UNUSED
                             }
-                            switch (variableUseState) {
-                                case UNUSED:
-                                case ONLY_WRITTEN_NEVER_READ:
-                                    exitResult.put(variableDescriptor, VariableUseState.ONLY_WRITTEN_NEVER_READ);
-                                    break;
-                                case WRITTEN_AFTER_READ:
-                                case READ:
-                                    exitResult.put(variableDescriptor, VariableUseState.WRITTEN_AFTER_READ);
+                            when (variableUseState) {
+                                PseudocodeVariablesData.VariableUseState.UNUSED, PseudocodeVariablesData.VariableUseState.ONLY_WRITTEN_NEVER_READ -> exitResult.put(variableDescriptor, VariableUseState.ONLY_WRITTEN_NEVER_READ)
+                                PseudocodeVariablesData.VariableUseState.WRITTEN_AFTER_READ, PseudocodeVariablesData.VariableUseState.READ -> exitResult.put(variableDescriptor, VariableUseState.WRITTEN_AFTER_READ)
                             }
                         }
-                        return new Edges<Map<VariableDescriptor, VariableUseState>>(enterResult, exitResult);
+                        return Edges(enterResult, exitResult)
                     }
-                }
-        );
-    }
+                })
 
-    private enum InitState {
+    private enum class InitState private constructor(private val s: String) {
         // Definitely initialized
         INITIALIZED("I"),
         // Fake initializer in else branch of "exhaustive when without else", see MagicKind.EXHAUSTIVE_WHEN_ELSE
@@ -304,106 +209,130 @@ public class PseudocodeVariablesData {
         // Definitely not initialized
         NOT_INITIALIZED("");
 
-        private final String s;
-
-        InitState(String s) {
-            this.s = s;
-        }
-
-        private InitState merge(@NotNull InitState other) {
+        fun merge(other: InitState): InitState {
             // X merge X = X
             // X merge IE = IE merge X = X
             // else X merge Y = I?
-            if (this == other || other == INITIALIZED_EXHAUSTIVELY) return this;
-            if (this == INITIALIZED_EXHAUSTIVELY) return other;
-            return UNKNOWN;
+            if (this == other || other == INITIALIZED_EXHAUSTIVELY) return this
+            if (this == INITIALIZED_EXHAUSTIVELY) return other
+            return UNKNOWN
         }
 
-        @Override
-        public String toString() {
-            return s;
+        override fun toString(): String {
+            return s
         }
     }
 
-    public static class VariableControlFlowState {
+    class VariableControlFlowState private constructor(val initState: InitState, val isDeclared: Boolean) {
 
-        public final InitState initState;
-        public final boolean isDeclared;
-
-        private VariableControlFlowState(InitState initState, boolean isDeclared) {
-            this.initState = initState;
-            this.isDeclared = isDeclared;
+        fun definitelyInitialized(): Boolean {
+            return initState == InitState.INITIALIZED
         }
 
-        private static final VariableControlFlowState VS_IT = new VariableControlFlowState(InitState.INITIALIZED, true);
-        private static final VariableControlFlowState VS_IF = new VariableControlFlowState(InitState.INITIALIZED, false);
-        private static final VariableControlFlowState VS_ET = new VariableControlFlowState(InitState.INITIALIZED_EXHAUSTIVELY, true);
-        private static final VariableControlFlowState VS_EF = new VariableControlFlowState(InitState.INITIALIZED_EXHAUSTIVELY, false);
-        private static final VariableControlFlowState VS_UT = new VariableControlFlowState(InitState.UNKNOWN, true);
-        private static final VariableControlFlowState VS_UF = new VariableControlFlowState(InitState.UNKNOWN, false);
-        private static final VariableControlFlowState VS_NT = new VariableControlFlowState(InitState.NOT_INITIALIZED, true);
-        private static final VariableControlFlowState VS_NF = new VariableControlFlowState(InitState.NOT_INITIALIZED, false);
+        fun mayBeInitialized(): Boolean {
+            return initState != InitState.NOT_INITIALIZED
+        }
 
+        override fun toString(): String {
+            if (initState == InitState.NOT_INITIALIZED && !isDeclared) return "-"
+            return "$initState${if (isDeclared) "D" else ""}"
+        }
 
-        private static VariableControlFlowState create(InitState initState, boolean isDeclared) {
-            switch (initState) {
-                case INITIALIZED: return isDeclared ? VS_IT : VS_IF;
-                case INITIALIZED_EXHAUSTIVELY: return isDeclared ? VS_ET : VS_EF;
-                case UNKNOWN: return isDeclared ? VS_UT : VS_UF;
-                default: return isDeclared ? VS_NT : VS_NF;
+        companion object {
+
+            private val VS_IT = VariableControlFlowState(InitState.INITIALIZED, true)
+            private val VS_IF = VariableControlFlowState(InitState.INITIALIZED, false)
+            private val VS_ET = VariableControlFlowState(InitState.INITIALIZED_EXHAUSTIVELY, true)
+            private val VS_EF = VariableControlFlowState(InitState.INITIALIZED_EXHAUSTIVELY, false)
+            private val VS_UT = VariableControlFlowState(InitState.UNKNOWN, true)
+            private val VS_UF = VariableControlFlowState(InitState.UNKNOWN, false)
+            private val VS_NT = VariableControlFlowState(InitState.NOT_INITIALIZED, true)
+            private val VS_NF = VariableControlFlowState(InitState.NOT_INITIALIZED, false)
+
+            fun create(initState: InitState, isDeclared: Boolean): VariableControlFlowState {
+                when (initState) {
+                    PseudocodeVariablesData.InitState.INITIALIZED -> return if (isDeclared) VS_IT else VS_IF
+                    PseudocodeVariablesData.InitState.INITIALIZED_EXHAUSTIVELY -> return if (isDeclared) VS_ET else VS_EF
+                    PseudocodeVariablesData.InitState.UNKNOWN -> return if (isDeclared) VS_UT else VS_UF
+                    else -> return if (isDeclared) VS_NT else VS_NF
+                }
+            }
+
+            fun createInitializedExhaustively(isDeclared: Boolean): VariableControlFlowState {
+                return create(InitState.INITIALIZED_EXHAUSTIVELY, isDeclared)
+            }
+
+            fun create(isInitialized: Boolean, isDeclared: Boolean = false): VariableControlFlowState {
+                return create(if (isInitialized) InitState.INITIALIZED else InitState.NOT_INITIALIZED, isDeclared)
+            }
+
+            fun create(isDeclaredHere: Boolean, mergedEdgesData: VariableControlFlowState?): VariableControlFlowState {
+                return create(true, isDeclaredHere || mergedEdgesData != null && mergedEdgesData.isDeclared)
             }
         }
-
-        private static VariableControlFlowState createInitializedExhaustively(boolean isDeclared) {
-            return create(InitState.INITIALIZED_EXHAUSTIVELY, isDeclared);
-        }
-
-        private static VariableControlFlowState create(boolean isInitialized, boolean isDeclared) {
-            return create(isInitialized ? InitState.INITIALIZED : InitState.NOT_INITIALIZED, isDeclared);
-        }
-
-        private static VariableControlFlowState create(boolean isInitialized) {
-            return create(isInitialized, false);
-        }
-
-        private static VariableControlFlowState create(boolean isDeclaredHere, @Nullable VariableControlFlowState mergedEdgesData) {
-            return create(true, isDeclaredHere || (mergedEdgesData != null && mergedEdgesData.isDeclared));
-        }
-
-        public boolean definitelyInitialized() {
-            return initState == InitState.INITIALIZED;
-        }
-
-        public boolean mayBeInitialized() {
-            return initState != InitState.NOT_INITIALIZED;
-        }
-
-        @Override
-        public String toString() {
-            if (initState == InitState.NOT_INITIALIZED && !isDeclared) return "-";
-            return initState + (isDeclared ? "D" : "");
-        }
     }
 
-    public enum VariableUseState {
+    enum class VariableUseState private constructor(private val priority: Int) {
         READ(3),
         WRITTEN_AFTER_READ(2),
         ONLY_WRITTEN_NEVER_READ(1),
         UNUSED(0);
 
-        private final int priority;
-
-        VariableUseState(int priority) {
-            this.priority = priority;
+        fun merge(variableUseState: VariableUseState?): VariableUseState {
+            if (variableUseState == null || priority > variableUseState.priority) return this
+            return variableUseState
         }
 
-        private VariableUseState merge(@Nullable VariableUseState variableUseState) {
-            if (variableUseState == null || priority > variableUseState.priority) return this;
-            return variableUseState;
+        companion object {
+
+            @JvmStatic
+            fun isUsed(variableUseState: VariableUseState?): Boolean {
+                return variableUseState != null && variableUseState != UNUSED
+            }
+        }
+    }
+
+    companion object {
+
+        @JvmStatic
+        fun getDefaultValueForInitializers(
+                variable: VariableDescriptor,
+                instruction: Instruction,
+                lexicalScopeVariableInfo: LexicalScopeVariableInfo): VariableControlFlowState {
+            //todo: think of replacing it with "MapWithDefaultValue"
+            val declaredIn = lexicalScopeVariableInfo.declaredIn[variable]
+            val declaredOutsideThisDeclaration = declaredIn == null //declared outside this pseudocode
+                                                 || declaredIn.lexicalScopeForContainingDeclaration != instruction.lexicalScope.lexicalScopeForContainingDeclaration
+            return VariableControlFlowState.create(/*initState=*/declaredOutsideThisDeclaration)
         }
 
-        public static boolean isUsed(@Nullable VariableUseState variableUseState) {
-            return variableUseState != null && variableUseState != UNUSED;
+        private fun mergeIncomingEdgesDataForInitializers(
+                incomingEdgesData: Collection<MutableMap<VariableDescriptor, VariableControlFlowState>>
+        ): MutableMap<VariableDescriptor, VariableControlFlowState> {
+            val variablesInScope = Sets.newHashSet<VariableDescriptor>()
+            for (edgeData in incomingEdgesData) {
+                variablesInScope.addAll(edgeData.keys)
+            }
+
+            val enterInstructionData = Maps.newHashMap<VariableDescriptor, VariableControlFlowState>()
+            for (variable in variablesInScope) {
+                var initState: InitState? = null
+                var isDeclared = true
+                for (edgeData in incomingEdgesData) {
+                    val varControlFlowState = edgeData[variable]
+                    if (varControlFlowState != null) {
+                        initState = if (initState != null) initState.merge(varControlFlowState.initState) else varControlFlowState.initState
+                        if (!varControlFlowState.isDeclared) {
+                            isDeclared = false
+                        }
+                    }
+                }
+                if (initState == null) {
+                    throw AssertionError("An empty set of incoming edges data")
+                }
+                enterInstructionData.put(variable, VariableControlFlowState.create(initState, isDeclared))
+            }
+            return enterInstructionData
         }
     }
 }
