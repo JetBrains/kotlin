@@ -14,114 +14,63 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.quickfix;
+package org.jetbrains.kotlin.idea.quickfix
 
-import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters1;
-import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters2;
-import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.idea.KotlinBundle;
-import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.types.expressions.TypeReconstructionUtil;
+import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.types.expressions.TypeReconstructionUtil
+import org.jetbrains.kotlin.utils.sure
 
-public abstract class AddStarProjectionsFix extends KotlinQuickFixAction<KtUserType> {
+open class AddStarProjectionsFix private constructor(element: KtUserType,
+                                                     private val argumentCount: Int) : KotlinQuickFixAction<KtUserType>(element) {
+    override fun getFamilyName() = "Add star projections"
+    override fun getText() = "Add '${TypeReconstructionUtil.getTypeNameAndStarProjectionsString("", argumentCount)}'"
 
-    private final int argumentCount;
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        assert(element.typeArguments.isEmpty())
 
-    private AddStarProjectionsFix(@NotNull KtUserType element, int count) {
-        super(element);
-        argumentCount = count;
+        val typeString = TypeReconstructionUtil.getTypeNameAndStarProjectionsString(element.text, argumentCount)
+        val replacement = KtPsiFactory(file).createType(typeString).typeElement.sure { "No type element after parsing " + typeString }
+        element.replace(replacement)
     }
 
-    @NotNull
-    @Override
-    public String getText() {
-        return KotlinBundle.message("add.star.projections", TypeReconstructionUtil.getTypeNameAndStarProjectionsString("", argumentCount));
+    object IsExpressionFactory : KotlinSingleIntentionActionFactory() {
+        public override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+            val diagnosticWithParameters = Errors.NO_TYPE_ARGUMENTS_ON_RHS.cast(diagnostic)
+            val typeElement: KtTypeElement = diagnosticWithParameters.psiElement.typeElement ?: return null
+            val unwrappedType = sequence(typeElement) { (it as? KtNullableType)?.innerType }.lastOrNull() as? KtUserType ?: return null
+            return AddStarProjectionsFix(unwrappedType, diagnosticWithParameters.a)
+        }
     }
 
-    @NotNull
-    @Override
-    public String getFamilyName() {
-        return "Add star projections";
-    }
-
-    @Override
-    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
-        assert getElement().getTypeArguments().isEmpty();
-
-        String typeString = TypeReconstructionUtil.getTypeNameAndStarProjectionsString(getElement().getText(), argumentCount);
-        KtTypeElement replacement = KtPsiFactoryKt.KtPsiFactory(file).createType(typeString).getTypeElement();
-        assert replacement != null : "No type element after parsing " + typeString;
-
-        getElement().replace(replacement);
-    }
-
-    @Override
-    public boolean startInWriteAction() {
-        return true;
-    }
-
-    public static KotlinSingleIntentionActionFactory createFactoryForIsExpression() {
-        return new KotlinSingleIntentionActionFactory() {
-            @Override
-            public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                DiagnosticWithParameters2<KtTypeReference, Integer, String> diagnosticWithParameters =
-                        Errors.NO_TYPE_ARGUMENTS_ON_RHS.cast(diagnostic);
-                KtTypeElement typeElement = diagnosticWithParameters.getPsiElement().getTypeElement();
-                while (typeElement instanceof KtNullableType) {
-                    typeElement = ((KtNullableType) typeElement).getInnerType();
+    object JavaClassFactory : KotlinSingleIntentionActionFactory() {
+        public override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+            val diagnosticWithParameters = Errors.WRONG_NUMBER_OF_TYPE_ARGUMENTS.cast(diagnostic)
+            val size = diagnosticWithParameters.a
+            val userType = QuickFixUtil.getParentElementOfType(diagnostic, KtUserType::class.java) ?: return null
+            return object : AddStarProjectionsFix(userType, size) {
+                override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+                    // We are looking for the occurrence of Type in javaClass<Type>()
+                    return super.isAvailable(project, editor, file) && isZeroTypeArguments && isInsideJavaClassCall
                 }
-                if (!(typeElement instanceof KtUserType)) return null;
-                Integer size = diagnosticWithParameters.getA();
-                return new AddStarProjectionsFix((KtUserType) typeElement, size) {};
+
+                private val isZeroTypeArguments: Boolean
+                    get() = element.typeArguments.isEmpty()
+
+                // Resolve is expensive so we use a heuristic here: the case is rare enough not to be annoying
+                private val isInsideJavaClassCall: Boolean
+                    get() {
+                        val call = element.parent.parent.parent.parent as? KtCallExpression
+                        val callee = call?.calleeExpression as? KtSimpleNameExpression
+                        return callee?.getReferencedName() == "javaClass"
+                    }
             }
-        };
-    }
-
-    public static KotlinSingleIntentionActionFactory createFactoryForJavaClass() {
-        return new KotlinSingleIntentionActionFactory() {
-            @Override
-            public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                DiagnosticWithParameters1<KtElement, Integer> diagnosticWithParameters = Errors.WRONG_NUMBER_OF_TYPE_ARGUMENTS.cast(diagnostic);
-
-                Integer size = diagnosticWithParameters.getA();
-
-                KtUserType userType = QuickFixUtil.getParentElementOfType(diagnostic, KtUserType.class);
-                if (userType == null) return null;
-
-                return new AddStarProjectionsFix(userType, size) {
-                    @Override
-                    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiFile file) {
-                        // We are looking for the occurrence of Type in javaClass<Type>()
-                        return super.isAvailable(project, editor, file) && isZeroTypeArguments() && isInsideJavaClassCall();
-                    }
-
-                    private boolean isZeroTypeArguments() {
-                        return getElement().getTypeArguments().isEmpty();
-                    }
-
-                    private boolean isInsideJavaClassCall() {
-                        PsiElement parent = getElement().getParent().getParent().getParent().getParent();
-                        if (parent instanceof KtCallExpression) {
-                            KtExpression calleeExpression = ((KtCallExpression) parent).getCalleeExpression();
-                            if (calleeExpression instanceof KtSimpleNameExpression) {
-                                KtSimpleNameExpression simpleNameExpression = (KtSimpleNameExpression) calleeExpression;
-                                // Resolve is expensive so we use a heuristic here: the case is rare enough not to be annoying
-                                return "javaClass".equals(simpleNameExpression.getReferencedName());
-                            }
-                        }
-                        return false;
-                    }
-                };
-            }
-        };
+        }
     }
 }
