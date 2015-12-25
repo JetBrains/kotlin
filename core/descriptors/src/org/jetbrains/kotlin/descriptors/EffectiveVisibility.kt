@@ -247,7 +247,7 @@ private fun KotlinType.effectiveVisibility(types: Set<KotlinType>): EffectiveVis
 private fun TypeConstructor.effectiveVisibility() =
         this.declarationDescriptor?.effectiveVisibility() ?: Public
 
-fun MemberDescriptor.effectiveVisibility() =
+fun MemberDescriptor.effectiveVisibility(): EffectiveVisibility =
         lowerBound(visibility.effectiveVisibility(this.containingDeclaration as? ClassDescriptor),
                    (this.containingDeclaration as? ClassDescriptor)?.effectiveVisibility() ?: Public)
 
