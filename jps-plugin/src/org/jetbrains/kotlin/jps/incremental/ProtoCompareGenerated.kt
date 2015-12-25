@@ -388,7 +388,7 @@ open class ProtoCompareGenerated(public val oldNameResolver: NameResolver, publi
     open fun checkEquals(old: ProtoBuf.EnumEntry, new: ProtoBuf.EnumEntry): Boolean {
         if (old.hasName() != new.hasName()) return false
         if (old.hasName()) {
-            if (old.name != new.name) return false
+            if (!checkStringEquals(old.name, new.name)) return false
         }
 
         return true
@@ -1075,7 +1075,7 @@ public fun ProtoBuf.EnumEntry.hashCode(stringIndexes: (Int) -> Int, fqNameIndexe
     var hashCode = 1
 
     if (hasName()) {
-        hashCode = 31 * hashCode + name
+        hashCode = 31 * hashCode + stringIndexes(name)
     }
 
     return hashCode

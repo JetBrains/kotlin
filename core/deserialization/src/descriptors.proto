@@ -321,7 +321,7 @@ message ValueParameter {
 }
 
 message EnumEntry {
-  optional int32 name = 1;
+  optional int32 name = 1 [(name_id_in_table) = true];
 
   extensions 100 to 199;
 }

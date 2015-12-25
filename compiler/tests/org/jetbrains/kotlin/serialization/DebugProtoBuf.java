@@ -21667,15 +21667,15 @@ public final class DebugProtoBuf {
       "ins.kotlin.serialization.Type\022\017\n\007type_id",
       "\030\005 \001(\005\022E\n\023vararg_element_type\030\004 \001(\0132(.or" +
       "g.jetbrains.kotlin.serialization.Type\022\036\n" +
-      "\026vararg_element_type_id\030\006 \001(\005*\005\010d\020\310\001\" \n\t" +
-      "EnumEntry\022\014\n\004name\030\001 \001(\005*\005\010d\020\310\001*9\n\010Modali" +
-      "ty\022\t\n\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010ABSTRACT\020\002\022\n\n" +
-      "\006SEALED\020\003*b\n\nVisibility\022\014\n\010INTERNAL\020\000\022\013\n" +
-      "\007PRIVATE\020\001\022\r\n\tPROTECTED\020\002\022\n\n\006PUBLIC\020\003\022\023\n" +
-      "\017PRIVATE_TO_THIS\020\004\022\t\n\005LOCAL\020\005*Q\n\nMemberK" +
-      "ind\022\017\n\013DECLARATION\020\000\022\021\n\rFAKE_OVERRIDE\020\001\022" +
-      "\016\n\nDELEGATION\020\002\022\017\n\013SYNTHESIZED\020\003B\022B\rDebu",
-      "gProtoBuf\210\001\000"
+      "\026vararg_element_type_id\030\006 \001(\005*\005\010d\020\310\001\"&\n\t" +
+      "EnumEntry\022\022\n\004name\030\001 \001(\005B\004\210\265\030\001*\005\010d\020\310\001*9\n\010" +
+      "Modality\022\t\n\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010ABSTRAC" +
+      "T\020\002\022\n\n\006SEALED\020\003*b\n\nVisibility\022\014\n\010INTERNA" +
+      "L\020\000\022\013\n\007PRIVATE\020\001\022\r\n\tPROTECTED\020\002\022\n\n\006PUBLI" +
+      "C\020\003\022\023\n\017PRIVATE_TO_THIS\020\004\022\t\n\005LOCAL\020\005*Q\n\nM" +
+      "emberKind\022\017\n\013DECLARATION\020\000\022\021\n\rFAKE_OVERR" +
+      "IDE\020\001\022\016\n\nDELEGATION\020\002\022\017\n\013SYNTHESIZED\020\003B\022",
+      "B\rDebugProtoBuf\210\001\000"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -21796,6 +21796,7 @@ public final class DebugProtoBuf {
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.nameIdInTable);
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.nameIdInTable);
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.fqNameIdInTable);
+          registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.nameIdInTable);
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.nameIdInTable);
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.nameIdInTable);
           registry.add(org.jetbrains.kotlin.serialization.DebugExtOptionsProtoBuf.nameIdInTable);
