@@ -24,43 +24,42 @@ import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
+import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
+import org.jetbrains.kotlin.resolve.calls.inference.toHandle
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionMutableResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.Specificity
-import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.getSpecificityRelationTo
 import org.jetbrains.kotlin.utils.addToStdlib.check
 
 class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
 
     fun <D : CallableDescriptor> findMaximallySpecific(
             candidates: Set<MutableResolvedCall<D>>,
-            discriminateGenericDescriptors: Boolean,
-            checkArgumentsMode: CheckArgumentTypesMode
+            checkArgumentsMode: CheckArgumentTypesMode,
+            discriminateGenerics: Boolean
     ): MutableResolvedCall<D>? =
             if (candidates.size <= 1)
                 candidates.firstOrNull()
             else when (checkArgumentsMode) {
                 CheckArgumentTypesMode.CHECK_CALLABLE_TYPE ->
                     uniquifyCandidatesSet(candidates).filter {
-                        isMaxSpecific(it, candidates) {
+                        isDefinitelyMostSpecific(it, candidates) {
                             call1, call2 ->
                             isNotLessSpecificCallableReference(call1.resultingDescriptor, call2.resultingDescriptor)
                         }
                     }.singleOrNull()
 
                 CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS ->
-                    findMaximallySpecificCall(candidates, discriminateGenericDescriptors)
+                    findMaximallySpecificCall(candidates, discriminateGenerics)
             }
 
-    fun <D : CallableDescriptor> findMaximallySpecificVariableAsFunctionCalls(
-            candidates: Set<MutableResolvedCall<D>>,
-            discriminateGenericDescriptors: Boolean
-    ): Set<MutableResolvedCall<D>> {
+    fun <D : CallableDescriptor> findMaximallySpecificVariableAsFunctionCalls(candidates: Set<MutableResolvedCall<D>>): Set<MutableResolvedCall<D>> {
         val variableCalls = candidates.mapTo(newResolvedCallSet<MutableResolvedCall<VariableDescriptor>>(candidates.size)) {
             if (it is VariableAsFunctionMutableResolvedCall)
                 it.variableCall
@@ -68,17 +67,14 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
                 throw AssertionError("Regular call among variable-as-function calls: $it")
         }
 
-        val maxSpecificVariableCall = findMaximallySpecificCall(variableCalls, discriminateGenericDescriptors) ?: return emptySet()
+        val maxSpecificVariableCall = findMaximallySpecificCall(variableCalls, false) ?: return emptySet()
 
         return candidates.filterTo(newResolvedCallSet<MutableResolvedCall<D>>(2)) {
             it.resultingVariableDescriptor == maxSpecificVariableCall.resultingDescriptor
         }
     }
 
-    private fun <D : CallableDescriptor> findMaximallySpecificCall(
-            candidates: Set<MutableResolvedCall<D>>,
-            discriminateGenericDescriptors: Boolean
-    ): MutableResolvedCall<D>? {
+    private fun <D : CallableDescriptor> findMaximallySpecificCall(candidates: Set<MutableResolvedCall<D>>, discriminateGenerics: Boolean): MutableResolvedCall<D>? {
         val filteredCandidates = uniquifyCandidatesSet(candidates)
 
         if (filteredCandidates.size <= 1) return filteredCandidates.singleOrNull()
@@ -88,29 +84,41 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
             CandidateCallWithArgumentMapping.create(candidateCall) { it.arguments.filter { it.getArgumentExpression() != null } }
         }
 
-        val mostSpecificCandidates = conflictingCandidates.selectMostSpecificCallsWithArgumentMapping(discriminateGenericDescriptors)
+        val bestCandidatesByParameterTypes = conflictingCandidates.mapNotNull {
+            candidate ->
+            candidate.check {
+                isMostSpecific(candidate, conflictingCandidates) {
+                    call1, call2 ->
+                    isNotLessSpecificCallWithArgumentMapping(call1, call2, discriminateGenerics)
+                }
+            }
+        }
 
-        return mostSpecificCandidates.singleOrNull()
+        return bestCandidatesByParameterTypes.exactMaxWith { call1, call2 -> isOfNotLessSpecificShape(call1, call2) }?.resolvedCall
     }
 
-    private fun <D : CallableDescriptor, K> Collection<CandidateCallWithArgumentMapping<D, K>>.selectMostSpecificCallsWithArgumentMapping(
-            discriminateGenericDescriptors: Boolean
-    ): Collection<MutableResolvedCall<D>> =
-            this.mapNotNull {
-                candidate ->
-                candidate.check {
-                    isMaxSpecific(candidate, this) {
-                        call1, call2 ->
-                        isNotLessSpecificCallWithArgumentMapping(call1, call2, discriminateGenericDescriptors)
-                    }
-                }?.resolvedCall
+    private inline fun <C : Any> Collection<C>.exactMaxWith(isNotWorse: (C, C) -> Boolean): C? {
+        var result: C? = null
+        for (candidate in this) {
+            if (result == null || isNotWorse(candidate, result)) {
+                result = candidate
+            }
+        }
+        if (result == null) return null
+        if (any { it != result && isNotWorse(it, result!!) }) {
+            return null
+        }
+        return result
+    }
+
+    private inline fun <C> isMostSpecific(candidate: C, candidates: Collection<C>, isNotLessSpecific: (C, C) -> Boolean): Boolean =
+            candidates.all {
+                other ->
+                candidate === other ||
+                isNotLessSpecific(candidate, other)
             }
 
-    private inline fun <C> isMaxSpecific(
-            candidate: C,
-            candidates: Collection<C>,
-            isNotLessSpecific: (C, C) -> Boolean
-    ): Boolean =
+    private inline fun <C> isDefinitelyMostSpecific(candidate: C, candidates: Collection<C>, isNotLessSpecific: (C, C) -> Boolean): Boolean =
             candidates.all {
                 other ->
                 candidate === other ||
@@ -123,52 +131,89 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
     private fun <D : CallableDescriptor, K> isNotLessSpecificCallWithArgumentMapping(
             call1: CandidateCallWithArgumentMapping<D, K>,
             call2: CandidateCallWithArgumentMapping<D, K>,
-            discriminateGenericDescriptors: Boolean
+            discriminateGenerics: Boolean
     ): Boolean {
         return tryCompareDescriptorsFromScripts(call1.resultingDescriptor, call2.resultingDescriptor) ?:
-               compareCallsWithArgumentMapping(call1, call2, discriminateGenericDescriptors)
+               compareCallsByUsedArguments(call1, call2, discriminateGenerics)
     }
 
     /**
      * Returns `true` if `d1` is definitely not less specific than `d2`,
      * `false` otherwise.
      */
-    private fun <D : CallableDescriptor, K> compareCallsWithArgumentMapping(
+    private fun <D : CallableDescriptor, K> compareCallsByUsedArguments(
             call1: CandidateCallWithArgumentMapping<D, K>,
             call2: CandidateCallWithArgumentMapping<D, K>,
-            discriminateGenericDescriptors: Boolean
+            discriminateGenerics: Boolean
     ): Boolean {
-        val substituteParameterTypes =
-                if (discriminateGenericDescriptors) {
-                    if (!call1.isGeneric && call2.isGeneric) return true
-                    if (call1.isGeneric && !call2.isGeneric) return false
-                    call1.isGeneric && call2.isGeneric
-                }
-                else false
-
-        val extensionReceiverType1 = call1.getExtensionReceiverType(substituteParameterTypes)
-        val extensionReceiverType2 = call2.getExtensionReceiverType(substituteParameterTypes)
-        tryCompareExtensionReceiverType(extensionReceiverType1, extensionReceiverType2)?.let {
-            return it
+        if (discriminateGenerics) {
+            val isGeneric1 = call1.isGeneric
+            val isGeneric2 = call2.isGeneric
+            if (isGeneric1 && !isGeneric2) return false
+            if (!isGeneric1 && isGeneric2) return true
+            if (isGeneric1 && isGeneric2) return false
         }
 
-        val hasVarargs1 = call1.resultingDescriptor.hasVarargs
-        val hasVarargs2 = call2.resultingDescriptor.hasVarargs
-        if (hasVarargs1 && !hasVarargs2) return false
-        if (!hasVarargs1 && hasVarargs2) return true
+        val typeParameters = call2.resolvedCall.resultingDescriptor.typeParameters
+        val constraintSystemBuilder: ConstraintSystem.Builder = ConstraintSystemBuilderImpl()
+        var hasConstraints = false
+        val typeSubstitutor = constraintSystemBuilder.registerTypeVariables(call1.resolvedCall.call.toHandle(), typeParameters)
+
+        fun compareTypesAndUpdateConstraints(type1: KotlinType?, type2: KotlinType?, constraintPosition: ConstraintPosition): Boolean {
+            if (type1 == null || type2 == null) return true
+
+            if (typeParameters.isEmpty() || !TypeUtils.dependsOnTypeParameters(type2, typeParameters)) {
+                if (!typeNotLessSpecific(type1, type2)) {
+                    return false
+                }
+            }
+            else {
+                val substitutedType2 = typeSubstitutor.safeSubstitute(type2, Variance.INVARIANT)
+                constraintSystemBuilder.addSubtypeConstraint(type1, substitutedType2, constraintPosition)
+                hasConstraints = true
+            }
+            return true
+        }
+
+        val extensionReceiverType1 = call1.getExtensionReceiverType(false)
+        val extensionReceiverType2 = call2.getExtensionReceiverType(false)
+        if (!compareTypesAndUpdateConstraints(extensionReceiverType1, extensionReceiverType2, ConstraintPositionKind.RECEIVER_POSITION.position())) {
+            return false
+        }
 
         assert(call1.argumentsCount == call2.argumentsCount) {
             "$call1 and $call2 have different number of explicit arguments"
         }
 
+        var index = 0
         for (argumentKey in call1.argumentKeys) {
-            val type1 = call1.getValueParameterType(argumentKey, substituteParameterTypes) ?: continue
-            val type2 = call2.getValueParameterType(argumentKey, substituteParameterTypes) ?: continue
+            val type1 = call1.getValueParameterType(argumentKey, false)
+            val type2 = call2.getValueParameterType(argumentKey, false)
 
-            if (!typeNotLessSpecific(type1, type2)) {
+            if (!compareTypesAndUpdateConstraints(type1, type2, ConstraintPositionKind.VALUE_PARAMETER_POSITION.position(index++))) {
                 return false
             }
         }
+
+        if (hasConstraints) {
+            constraintSystemBuilder.fixVariables()
+            val constraintSystem = constraintSystemBuilder.build()
+            if (constraintSystem.status.hasContradiction()) {
+                return false
+            }
+        }
+
+        return true
+    }
+
+    private fun <D: CallableDescriptor, K> isOfNotLessSpecificShape(
+            call1: CandidateCallWithArgumentMapping<D, K>,
+            call2: CandidateCallWithArgumentMapping<D, K>
+    ): Boolean {
+        val hasVarargs1 = call1.resultingDescriptor.hasVarargs
+        val hasVarargs2 = call2.resultingDescriptor.hasVarargs
+        if (hasVarargs1 && !hasVarargs2) return false
+        if (!hasVarargs1 && hasVarargs2) return true
 
         if (call1.parametersWithDefaultValuesCount > call2.parametersWithDefaultValuesCount) {
             return false

@@ -195,7 +195,7 @@ public class ResolutionResultsHandler {
         }
 
         if (candidates.iterator().next() instanceof VariableAsFunctionResolvedCall) {
-            candidates = overloadingConflictResolver.findMaximallySpecificVariableAsFunctionCalls(candidates, discriminateGenerics);
+            candidates = overloadingConflictResolver.findMaximallySpecificVariableAsFunctionCalls(candidates);
         }
 
         Set<MutableResolvedCall<D>> noOverrides = OverrideResolver.filterOutOverridden(candidates, MAP_TO_RESULT);
@@ -203,14 +203,14 @@ public class ResolutionResultsHandler {
             return OverloadResolutionResultsImpl.success(noOverrides.iterator().next());
         }
 
-        MutableResolvedCall<D> maximallySpecific = overloadingConflictResolver.findMaximallySpecific(noOverrides, false, checkArgumentsMode);
+        MutableResolvedCall<D> maximallySpecific = overloadingConflictResolver.findMaximallySpecific(noOverrides, checkArgumentsMode, false);
         if (maximallySpecific != null) {
             return OverloadResolutionResultsImpl.success(maximallySpecific);
         }
 
         if (discriminateGenerics) {
             MutableResolvedCall<D> maximallySpecificGenericsDiscriminated = overloadingConflictResolver.findMaximallySpecific(
-                    noOverrides, true, checkArgumentsMode);
+                    noOverrides, checkArgumentsMode, true);
             if (maximallySpecificGenericsDiscriminated != null) {
                 return OverloadResolutionResultsImpl.success(maximallySpecificGenericsDiscriminated);
             }
