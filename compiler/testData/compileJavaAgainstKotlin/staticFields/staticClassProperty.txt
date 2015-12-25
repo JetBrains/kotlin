@@ -5,8 +5,8 @@ public final class Test {
 
     public companion object Companion {
         private constructor Companion()
-        public final val valProp: kotlin.Int
-        public final var varProp: kotlin.Int
+        public const final val valProp: kotlin.Int
+        @field:kotlin.jvm.JvmField() public final var varProp: kotlin.Int
     }
 }
 

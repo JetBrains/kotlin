@@ -9,15 +9,15 @@ import kotlinx.android.synthetic.main.layout1.*
 class R {
     class id {
         companion object {
-            val item_detail_container = 0
-            val textView1 = 1
-            val password = 2
-            val textView2 = 3
-            val passwordConfirmation = 4
-            val login = 5
-            val passwordField = 6
-            val passwordCaption = 7
-            val loginButton = 8
+            const val item_detail_container = 0
+            const val textView1 = 1
+            const val password = 2
+            const val textView2 = 3
+            const val passwordConfirmation = 4
+            const val login = 5
+            const val passwordField = 6
+            const val passwordCaption = 7
+            const val loginButton = 8
          }
     }
 }

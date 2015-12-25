@@ -892,6 +892,18 @@ public class IncrementalJpsTestGenerated extends AbstractIncrementalJpsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("jvmFieldChanged")
+            public void testJvmFieldChanged() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/kotlinUsedInJava/jvmFieldChanged/");
+                doTest(fileName);
+            }
+
+            @TestMetadata("jvmFieldUnchanged")
+            public void testJvmFieldUnchanged() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/kotlinUsedInJava/jvmFieldUnchanged/");
+                doTest(fileName);
+            }
+
             @TestMetadata("methodAddedInSuper")
             public void testMethodAddedInSuper() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/incremental/withJava/kotlinUsedInJava/methodAddedInSuper/");

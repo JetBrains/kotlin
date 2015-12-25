@@ -1,6 +1,7 @@
 class Klass {
     companion object {
-        val NAME = "Klass"
+        const val NAME = "Klass"
+        @JvmField val JVM_NAME = "JvmKlass"
     }
 }
 
@@ -14,6 +15,7 @@ enum class Enoom {
     ;
     companion object {
         const val NAME = "Enum"
+        @JvmField val JVM_NAME = "JvmEnum"
     }
 }
 

@@ -12,7 +12,7 @@ public interface ErrorsJvmTrait {
 
 public class ErrorsJvmClass {
     companion object {
-        public val param : G<String> = G("STRING")
+        @JvmField public val param : G<String> = G("STRING")
     }
 }
 

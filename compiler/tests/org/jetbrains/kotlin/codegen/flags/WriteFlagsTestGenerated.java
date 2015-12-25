@@ -875,6 +875,12 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("protectedConstVal.kt")
+                public void testProtectedConstVal() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/protectedConstVal.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("protectedVal.kt")
                 public void testProtectedVal() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/writeFlags/property/classObject/trait/protectedVal.kt");

@@ -2140,7 +2140,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         PropertyDescriptor originalPropertyDescriptor = DescriptorUtils.unwrapFakeOverride(propertyDescriptor);
         if (fieldAccessorKind != FieldAccessorKind.NORMAL) {
-            int flags = AsmUtil.getVisibilityForSpecialPropertyBackingField(propertyDescriptor, isDelegatedProperty);
+            int flags = AsmUtil.getVisibilityForBackingField(propertyDescriptor, isDelegatedProperty);
             skipPropertyAccessors = (flags & ACC_PRIVATE) == 0 || skipAccessorsForPrivateFieldInOuterClass;
             if (!skipPropertyAccessors) {
                 //noinspection ConstantConditions
