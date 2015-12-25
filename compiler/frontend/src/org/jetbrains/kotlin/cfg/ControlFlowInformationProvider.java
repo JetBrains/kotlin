@@ -301,7 +301,7 @@ public class ControlFlowInformationProvider {
         final boolean processClassOrObject = subroutine instanceof KtClassOrObject;
 
         PseudocodeVariablesData pseudocodeVariablesData = getPseudocodeVariablesData();
-        Map<Instruction, Edges<Map<VariableDescriptor, VariableControlFlowState>>> initializers =
+        Map<Instruction, Edges<InitControlFlowInfo>> initializers =
                 pseudocodeVariablesData.getVariableInitializers();
         final Set<VariableDescriptor> declaredVariables = pseudocodeVariablesData.getDeclaredVariables(pseudocode, true);
         final LexicalScopeVariableInfo lexicalScopeVariableInfo = pseudocodeVariablesData.getLexicalScopeVariableInfo();
@@ -350,8 +350,7 @@ public class ControlFlowInformationProvider {
     public void recordInitializedVariables() {
         PseudocodeVariablesData pseudocodeVariablesData = getPseudocodeVariablesData();
         Pseudocode pseudocode = pseudocodeVariablesData.getPseudocode();
-        Map<Instruction, Edges<Map<VariableDescriptor, VariableControlFlowState>>> initializers =
-                pseudocodeVariablesData.getVariableInitializers();
+        Map<Instruction, Edges<InitControlFlowInfo>> initializers = pseudocodeVariablesData.getVariableInitializers();
         recordInitializedVariables(pseudocode, initializers);
         for (LocalFunctionDeclarationInstruction instruction : pseudocode.getLocalDeclarations()) {
             recordInitializedVariables(instruction.getBody(), initializers);
@@ -517,9 +516,9 @@ public class ControlFlowInformationProvider {
 
     private void recordInitializedVariables(
             @NotNull Pseudocode pseudocode,
-            @NotNull Map<Instruction, Edges<Map<VariableDescriptor, VariableControlFlowState>>> initializersMap
+            @NotNull Map<Instruction, Edges<InitControlFlowInfo>> initializersMap
     ) {
-        Edges<Map<VariableDescriptor, VariableControlFlowState>> initializers = initializersMap.get(pseudocode.getExitInstruction());
+        Edges<InitControlFlowInfo> initializers = initializersMap.get(pseudocode.getExitInstruction());
         if (initializers == null) return;
         Set<VariableDescriptor> declaredVariables = getPseudocodeVariablesData().getDeclaredVariables(pseudocode, false);
         for (VariableDescriptor variable : declaredVariables) {
@@ -536,8 +535,7 @@ public class ControlFlowInformationProvider {
 
     public void markUnusedVariables() {
         final PseudocodeVariablesData pseudocodeVariablesData = getPseudocodeVariablesData();
-        Map<Instruction, Edges<Map<VariableDescriptor, VariableUseState>>> variableStatusData =
-                pseudocodeVariablesData.getVariableUseStatusData();
+        Map<Instruction, Edges<UseControlFlowInfo>> variableStatusData = pseudocodeVariablesData.getVariableUseStatusData();
         final Map<Instruction, DiagnosticFactory<?>> reportedDiagnosticMap = Maps.newHashMap();
         InstructionDataAnalyzeStrategy<Map<VariableDescriptor, VariableUseState>> variableStatusAnalyzeStrategy =
                 new InstructionDataAnalyzeStrategy<Map<VariableDescriptor, VariableUseState>>() {

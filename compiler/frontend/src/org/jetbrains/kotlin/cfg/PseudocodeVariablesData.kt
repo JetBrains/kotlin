@@ -21,10 +21,7 @@ import com.google.common.collect.Sets
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtil
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicInstruction
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicKind
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.ReadValueInstruction
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.WriteValueInstruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.VariableDeclarationInstruction
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.Edges
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
@@ -38,7 +35,7 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
 
     private val declaredVariablesForDeclaration = Maps.newHashMap<Pseudocode, Set<VariableDescriptor>>()
 
-    val variableInitializers: MutableMap<Instruction, Edges<MutableMap<VariableDescriptor, VariableControlFlowState>>> by lazy {
+    val variableInitializers: Map<Instruction, Edges<InitControlFlowInfo>> by lazy {
         computeVariableInitializers()
     }
 
@@ -64,7 +61,7 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
     }
 
     private fun getUpperLevelDeclaredVariables(pseudocode: Pseudocode): Set<VariableDescriptor> {
-        var declaredVariables: Set<VariableDescriptor>? = declaredVariablesForDeclaration[pseudocode]
+        var declaredVariables = declaredVariablesForDeclaration[pseudocode]
         if (declaredVariables == null) {
             declaredVariables = computeDeclaredVariablesForPseudocode(pseudocode)
             declaredVariablesForDeclaration.put(pseudocode, declaredVariables)
@@ -89,34 +86,29 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
 
     // variable initializers
 
-    private fun computeVariableInitializers(): MutableMap<Instruction, Edges<MutableMap<VariableDescriptor, VariableControlFlowState>>> {
+    private fun computeVariableInitializers(): Map<Instruction, Edges<InitControlFlowInfo>> {
 
         val lexicalScopeVariableInfo = pseudocodeVariableDataCollector.lexicalScopeVariableInfo
 
         return pseudocodeVariableDataCollector.collectData(
-                TraversalOrder.FORWARD, /*mergeDataWithLocalDeclarations=*/ true,
-                object : InstructionDataMergeStrategy<VariableControlFlowState> {
-                    override operator fun invoke(
-                            instruction: Instruction,
-                            incomingEdgesData: Collection<MutableMap<VariableDescriptor, VariableControlFlowState>>
-                    ): Edges<MutableMap<VariableDescriptor, VariableControlFlowState>> {
+                TraversalOrder.FORWARD, /*mergeDataWithLocalDeclarations=*/ true, InitControlFlowInfo()
+        ) {
+            instruction: Instruction, incomingEdgesData: Collection<InitControlFlowInfo> ->
 
-                        val enterInstructionData = mergeIncomingEdgesDataForInitializers(incomingEdgesData)
-                        val exitInstructionData = addVariableInitStateFromCurrentInstructionIfAny(
-                                instruction, enterInstructionData, lexicalScopeVariableInfo)
-                        return Edges(enterInstructionData, exitInstructionData)
-                    }
-                })
+            val enterInstructionData = mergeIncomingEdgesDataForInitializers(incomingEdgesData)
+            val exitInstructionData = addVariableInitStateFromCurrentInstructionIfAny(
+                    instruction, enterInstructionData, lexicalScopeVariableInfo)
+            Edges(enterInstructionData, exitInstructionData)
+        }
     }
 
     private fun addVariableInitStateFromCurrentInstructionIfAny(
             instruction: Instruction,
-            enterInstructionData: MutableMap<VariableDescriptor, VariableControlFlowState>,
-            lexicalScopeVariableInfo: LexicalScopeVariableInfo
-    ): MutableMap<VariableDescriptor, VariableControlFlowState> {
+            enterInstructionData: InitControlFlowInfo,
+            lexicalScopeVariableInfo: LexicalScopeVariableInfo): InitControlFlowInfo {
         if (instruction is MagicInstruction) {
             if (instruction.kind === MagicKind.EXHAUSTIVE_WHEN_ELSE) {
-                val exitInstructionData = Maps.newHashMap(enterInstructionData)
+                val exitInstructionData = enterInstructionData.copy()
                 for (entry in enterInstructionData.entries) {
                     if (!entry.value.definitelyInitialized()) {
                         exitInstructionData.put(entry.key,
@@ -130,7 +122,7 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
             return enterInstructionData
         }
         val variable = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, false, bindingContext) ?: return enterInstructionData
-        val exitInstructionData = Maps.newHashMap(enterInstructionData)
+        val exitInstructionData = enterInstructionData.copy()
         if (instruction is WriteValueInstruction) {
             // if writing to already initialized object
             if (!PseudocodeUtil.isThisOrNoDispatchReceiver(instruction, bindingContext)) {
@@ -158,48 +150,43 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
 
     // variable use
 
-    /*mergeDataWithLocalDeclarations=*///instruction instanceof WriteValueInstruction
-    val variableUseStatusData: MutableMap<Instruction, Edges<MutableMap<VariableDescriptor, VariableUseState>>>
+    val variableUseStatusData: Map<Instruction, Edges<UseControlFlowInfo>>
         get() = pseudocodeVariableDataCollector.collectData(
-                TraversalOrder.BACKWARD, true,
-                object : InstructionDataMergeStrategy<VariableUseState> {
-                    override operator fun invoke(
-                            instruction: Instruction,
-                            incomingEdgesData: Collection<MutableMap<VariableDescriptor, VariableUseState>>
-                    ): Edges<MutableMap<VariableDescriptor, VariableUseState>> {
-
-                        val enterResult = Maps.newHashMap<VariableDescriptor, VariableUseState>()
-                        for (edgeData in incomingEdgesData) {
-                            for (entry in edgeData.entries) {
-                                val variableDescriptor = entry.key
-                                val variableUseState = entry.value
-                                enterResult.put(variableDescriptor, variableUseState.merge(enterResult[variableDescriptor]))
-                            }
-                        }
-                        val variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(
-                                instruction, true, bindingContext)
-                        if (variableDescriptor == null || instruction !is ReadValueInstruction && instruction !is WriteValueInstruction) {
-                            return Edges(enterResult, enterResult)
-                        }
-                        val exitResult = Maps.newHashMap(enterResult)
-                        if (instruction is ReadValueInstruction) {
-                            exitResult.put(variableDescriptor, VariableUseState.READ)
-                        }
-                        else {
-                            var variableUseState: VariableUseState? = enterResult[variableDescriptor]
-                            if (variableUseState == null) {
-                                variableUseState = VariableUseState.UNUSED
-                            }
-                            when (variableUseState) {
-                                VariableUseState.UNUSED, VariableUseState.ONLY_WRITTEN_NEVER_READ ->
-                                    exitResult.put(variableDescriptor, VariableUseState.ONLY_WRITTEN_NEVER_READ)
-                                VariableUseState.WRITTEN_AFTER_READ, VariableUseState.READ ->
-                                    exitResult.put(variableDescriptor, VariableUseState.WRITTEN_AFTER_READ)
-                            }
-                        }
-                        return Edges(enterResult, exitResult)
+                TraversalOrder.BACKWARD, true, UseControlFlowInfo()
+        ) {
+            instruction: Instruction, incomingEdgesData: Collection<UseControlFlowInfo> ->
+            val enterResult = UseControlFlowInfo()
+            for (edgeData in incomingEdgesData) {
+                for (entry in edgeData.entries) {
+                    val variableDescriptor = entry.key
+                    val variableUseState = entry.value
+                    enterResult.put(variableDescriptor, variableUseState.merge(enterResult[variableDescriptor]))
+                }
+            }
+            val variableDescriptor = PseudocodeUtil.extractVariableDescriptorIfAny(instruction, true, bindingContext)
+            if (variableDescriptor == null || instruction !is ReadValueInstruction && instruction !is WriteValueInstruction) {
+                Edges(enterResult, enterResult)
+            }
+            else {
+                val exitResult = enterResult.copy()
+                if (instruction is ReadValueInstruction) {
+                    exitResult.put(variableDescriptor, VariableUseState.READ)
+                }
+                else {
+                    var variableUseState: VariableUseState? = enterResult[variableDescriptor]
+                    if (variableUseState == null) {
+                        variableUseState = VariableUseState.UNUSED
                     }
-                })
+                    when (variableUseState) {
+                        VariableUseState.UNUSED, VariableUseState.ONLY_WRITTEN_NEVER_READ ->
+                            exitResult.put(variableDescriptor, VariableUseState.ONLY_WRITTEN_NEVER_READ)
+                        VariableUseState.WRITTEN_AFTER_READ, VariableUseState.READ ->
+                            exitResult.put(variableDescriptor, VariableUseState.WRITTEN_AFTER_READ)
+                    }
+                }
+                Edges(enterResult, exitResult)
+            }
+        }
 
     companion object {
 
@@ -207,30 +194,32 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
         fun getDefaultValueForInitializers(
                 variable: VariableDescriptor,
                 instruction: Instruction,
-                lexicalScopeVariableInfo: LexicalScopeVariableInfo): VariableControlFlowState {
+                lexicalScopeVariableInfo: LexicalScopeVariableInfo
+        ): VariableControlFlowState {
             //todo: think of replacing it with "MapWithDefaultValue"
             val declaredIn = lexicalScopeVariableInfo.declaredIn[variable]
-            val declaredOutsideThisDeclaration = declaredIn == null //declared outside this pseudocode
-                                                 || declaredIn.lexicalScopeForContainingDeclaration != instruction.lexicalScope.lexicalScopeForContainingDeclaration
+            val declaredOutsideThisDeclaration =
+                    declaredIn == null //declared outside this pseudocode
+                    || declaredIn.lexicalScopeForContainingDeclaration != instruction.lexicalScope.lexicalScopeForContainingDeclaration
             return VariableControlFlowState.create(/*initState=*/declaredOutsideThisDeclaration)
         }
 
         private fun mergeIncomingEdgesDataForInitializers(
-                incomingEdgesData: Collection<MutableMap<VariableDescriptor, VariableControlFlowState>>
-        ): MutableMap<VariableDescriptor, VariableControlFlowState> {
+                incomingEdgesData: Collection<InitControlFlowInfo>
+        ): InitControlFlowInfo {
             val variablesInScope = Sets.newHashSet<VariableDescriptor>()
             for (edgeData in incomingEdgesData) {
                 variablesInScope.addAll(edgeData.keys)
             }
 
-            val enterInstructionData = Maps.newHashMap<VariableDescriptor, VariableControlFlowState>()
+            val enterInstructionData = InitControlFlowInfo()
             for (variable in variablesInScope) {
                 var initState: InitState? = null
                 var isDeclared = true
                 for (edgeData in incomingEdgesData) {
                     val varControlFlowState = edgeData[variable]
                     if (varControlFlowState != null) {
-                        initState = if (initState != null) initState.merge(varControlFlowState.initState) else varControlFlowState.initState
+                        initState = initState?.merge(varControlFlowState.initState) ?: varControlFlowState.initState
                         if (!varControlFlowState.isDeclared) {
                             isDeclared = false
                         }
