@@ -89,7 +89,20 @@ public class InlineUtil {
             @NotNull BindingContext bindingContext,
             boolean checkNonLocalReturn
     ) {
-        if (!canBeInlineArgument(argument)) return false;
+        ValueParameterDescriptor descriptor = getInlineArgumentDescriptor(argument, bindingContext);
+        if (descriptor != null) {
+            return !checkNonLocalReturn || allowsNonLocalReturns(descriptor);
+        }
+
+        return false;
+    }
+
+    @Nullable
+    public static ValueParameterDescriptor getInlineArgumentDescriptor(
+            @NotNull KtFunction argument,
+            @NotNull BindingContext bindingContext
+    ) {
+        if (!canBeInlineArgument(argument)) return null;
 
         KtExpression call = KtPsiUtil.getParentCallIfPresent(argument);
         if (call != null) {
@@ -101,13 +114,13 @@ public class InlineUtil {
                     if (mapping instanceof ArgumentMatch) {
                         ValueParameterDescriptor parameter = ((ArgumentMatch) mapping).getValueParameter();
                         if (isInlineLambdaParameter(parameter)) {
-                            return !checkNonLocalReturn || allowsNonLocalReturns(parameter);
+                            return parameter;
                         }
                     }
                 }
             }
         }
-        return false;
+        return null;
     }
 
     public static boolean canBeInlineArgument(@Nullable PsiElement functionalExpression) {
