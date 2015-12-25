@@ -42,7 +42,7 @@ public class BuiltInFictitiousFunctionClassFactory(
             val prefix = kind.classNamePrefix
             if (!className.startsWith(prefix)) return null
 
-            val arity = toInt(className.substring(prefix.length())) ?: return null
+            val arity = toInt(className.substring(prefix.length)) ?: return null
 
             // TODO: validate arity, should be <= 255
             return KindWithArity(kind, arity)

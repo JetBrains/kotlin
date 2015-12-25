@@ -98,7 +98,7 @@ private object ReflectClassStructure {
 
             for ((parameterIndex, annotations) in method.getParameterAnnotations().withIndex()) {
                 for (annotation in annotations) {
-                    val annotationType = annotation.annotationType()
+                    val annotationType = annotation.annotationClass.java
                     visitor.visitParameterAnnotation(parameterIndex, annotationType.classId, ReflectAnnotationSource(annotation))?.let {
                         processAnnotationArguments(it, annotation, annotationType)
                     }
@@ -125,11 +125,11 @@ private object ReflectClassStructure {
                 // - local/anonymous classes may have many parameters for captured values
                 // At the moment this seems like a working heuristic for computing number of synthetic parameters for Kotlin classes,
                 // although this is wrong and likely to change, see KT-6886
-                val shift = constructor.getParameterTypes().size() - parameterAnnotations.size()
+                val shift = constructor.getParameterTypes().size - parameterAnnotations.size
 
                 for ((parameterIndex, annotations) in parameterAnnotations.withIndex()) {
                     for (annotation in annotations) {
-                        val annotationType = annotation.annotationType()
+                        val annotationType = annotation.annotationClass.java
                         visitor.visitParameterAnnotation(
                                 parameterIndex + shift, annotationType.classId, ReflectAnnotationSource(annotation)
                         )?.let {
@@ -156,7 +156,7 @@ private object ReflectClassStructure {
     }
 
     private fun processAnnotation(visitor: KotlinJvmBinaryClass.AnnotationVisitor, annotation: Annotation) {
-        val annotationType = annotation.annotationType()
+        val annotationType = annotation.annotationClass.java
         visitor.visitAnnotation(annotationType.classId, ReflectAnnotationSource(annotation))?.let {
             processAnnotationArguments(it, annotation, annotationType)
         }
@@ -182,9 +182,9 @@ private object ReflectClassStructure {
             clazz.isEnumClassOrSpecializedEnumEntryClass() -> {
                 // isEnum returns false for specialized enum constants (enum entries which are anonymous enum subclasses)
                 val classId = (if (clazz.isEnum()) clazz else clazz.getEnclosingClass()).classId
-                visitor.visitEnum(name, classId, Name.identifier((value as Enum<*>).name()))
+                visitor.visitEnum(name, classId, Name.identifier((value as Enum<*>).name))
             }
-            javaClass<Annotation>().isAssignableFrom(clazz) -> {
+            Annotation::class.java.isAssignableFrom(clazz) -> {
                 val annotationClass = clazz.getInterfaces().single()
                 val v = visitor.visitAnnotation(name, annotationClass.classId) ?: return
                 processAnnotationArguments(v, value as Annotation, annotationClass)
@@ -195,7 +195,7 @@ private object ReflectClassStructure {
                 if (componentType.isEnum()) {
                     val enumClassId = componentType.classId
                     for (element in value as Array<*>) {
-                        v.visitEnum(enumClassId, Name.identifier((element as Enum<*>).name()))
+                        v.visitEnum(enumClassId, Name.identifier((element as Enum<*>).name))
                     }
                 }
                 else {

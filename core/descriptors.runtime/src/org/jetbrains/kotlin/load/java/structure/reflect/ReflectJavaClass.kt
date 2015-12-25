@@ -47,8 +47,8 @@ public class ReflectJavaClass(
     override fun getOuterClass() = klass.getDeclaringClass()?.let(::ReflectJavaClass)
 
     override fun getSupertypes(): Collection<JavaClassifierType> {
-        if (klass == javaClass<Any>()) return emptyList()
-        return listOf(klass.genericSuperclass ?: javaClass<Any>(), *klass.genericInterfaces).map(::ReflectJavaClassifierType)
+        if (klass == Any::class.java) return emptyList()
+        return listOf(klass.genericSuperclass ?: Any::class.java, *klass.genericInterfaces).map(::ReflectJavaClassifierType)
     }
 
     override fun getMethods() = klass.getDeclaredMethods()
@@ -66,7 +66,7 @@ public class ReflectJavaClass(
     private fun isEnumValuesOrValueOf(method: Method): Boolean {
         return when (method.getName()) {
             "values" -> method.getParameterTypes().isEmpty()
-            "valueOf" -> Arrays.equals(method.getParameterTypes(), arrayOf(javaClass<String>()))
+            "valueOf" -> Arrays.equals(method.getParameterTypes(), arrayOf(String::class.java))
             else -> false
         }
     }

@@ -61,7 +61,7 @@ class SmartSet<T> private constructor() : AbstractSet<T>() {
                 val arr = data as Array<T>
                 if (e in arr) return false
                 data = if (size == ARRAY_THRESHOLD - 1) linkedSetOf(*arr).apply { add(e) }
-                else Arrays.copyOf(arr, size + 1).apply { set(size() - 1, e) }
+                else Arrays.copyOf(arr, size + 1).apply { set(size - 1, e) }
             }
             else -> {
                 val set = data as MutableSet<T>

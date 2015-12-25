@@ -28,7 +28,7 @@ public enum class AnnotationUseSiteTarget(renderName: String? = null) {
     CONSTRUCTOR_PARAMETER("param"),
     SETTER_PARAMETER("setparam");
 
-    public val renderName: String = renderName ?: name().toLowerCase()
+    public val renderName: String = renderName ?: name.toLowerCase()
 
     public companion object {
         public fun getAssociatedUseSiteTarget(descriptor: DeclarationDescriptor): AnnotationUseSiteTarget? = when (descriptor) {

@@ -47,7 +47,7 @@ public open class SubpackagesScope(private val moduleDescriptor: ModuleDescripto
         if (fqName.isRoot() && kindFilter.excludes.contains(DescriptorKindExclude.TopLevelPackages)) return listOf()
 
         val subFqNames = moduleDescriptor.getSubPackagesOf(fqName, nameFilter)
-        val result = ArrayList<DeclarationDescriptor>(subFqNames.size())
+        val result = ArrayList<DeclarationDescriptor>(subFqNames.size)
         for (subFqName in subFqNames) {
             val shortName = subFqName.shortName()
             if (nameFilter(shortName)) {

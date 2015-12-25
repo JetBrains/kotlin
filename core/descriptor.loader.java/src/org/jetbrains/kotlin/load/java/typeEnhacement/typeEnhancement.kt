@@ -118,7 +118,7 @@ private fun KotlinType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers
     return Result(enhancedType, globalArgIndex - index)
 }
 
-private fun List<Annotations>.compositeAnnotationsOrSingle() = when (size()) {
+private fun List<Annotations>.compositeAnnotationsOrSingle() = when (size) {
     0 -> error("At least one Annotations object expected")
     1 -> single()
     else -> CompositeAnnotations(this.toReadOnlyList())

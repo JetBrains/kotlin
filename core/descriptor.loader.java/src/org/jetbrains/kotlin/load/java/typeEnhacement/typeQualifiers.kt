@@ -118,7 +118,7 @@ fun KotlinType.computeIndexedQualifiersForOverride(fromSupertypes: Collection<Ko
     // Note that `this` is flexible here, so it's equal to it's bounds
     val onlyHeadTypeConstructor = isCovariant && fromSupertypes.any { !KotlinTypeChecker.DEFAULT.equalTypes(it, this) }
 
-    val treeSize = if (onlyHeadTypeConstructor) 1 else indexedThisType.size()
+    val treeSize = if (onlyHeadTypeConstructor) 1 else indexedThisType.size
     val computedResult = Array(treeSize) {
         index ->
         val isHeadTypeConstructor = index == 0

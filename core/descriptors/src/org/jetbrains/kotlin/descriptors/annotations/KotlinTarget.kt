@@ -77,7 +77,7 @@ public enum class KotlinTarget(val description: String, val isDefault: Boolean =
 
         init {
             for (target in KotlinTarget.values()) {
-                map[target.name()] = target
+                map[target.name] = target
             }
         }
 

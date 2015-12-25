@@ -45,7 +45,7 @@ object BuiltinSpecialProperties {
     private val GETTER_JVM_NAME_TO_PROPERTIES_SHORT_NAME_MAP: Map<Name, List<Name>> =
             PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.getInversedShortNamesMap()
 
-    private val FQ_NAMES = PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.keySet()
+    private val FQ_NAMES = PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.keys
     internal val SHORT_NAMES = FQ_NAMES.map { it.shortName() }.toSet()
 
     fun hasBuiltinSpecialPropertyFqName(callableMemberDescriptor: CallableMemberDescriptor): Boolean {
@@ -166,7 +166,7 @@ object BuiltinMethodsWithDifferentJvmName {
             FqName("kotlin.CharSequence.get") to Name.identifier("charAt")
     )
 
-    val ORIGINAL_SHORT_NAMES: List<Name> = FQ_NAMES_TO_JVM_MAP.keySet().map { it.shortName() }
+    val ORIGINAL_SHORT_NAMES: List<Name> = FQ_NAMES_TO_JVM_MAP.keys.map { it.shortName() }
 
     val JVM_SHORT_NAME_TO_BUILTIN_SHORT_NAMES_MAP: Map<Name, List<Name>> = FQ_NAMES_TO_JVM_MAP.getInversedShortNamesMap()
 
@@ -298,4 +298,4 @@ public fun CallableMemberDescriptor.isFromBuiltins(): Boolean {
 public fun CallableMemberDescriptor.isFromJavaOrBuiltins() = isFromJava || isFromBuiltins()
 
 private fun Map<FqName, Name>.getInversedShortNamesMap(): Map<Name, List<Name>> =
-        entrySet().groupBy { it.value }.mapValues { entry -> entry.value.map { it.key.shortName() } }
+        entries.groupBy { it.value }.mapValues { entry -> entry.value.map { it.key.shortName() } }

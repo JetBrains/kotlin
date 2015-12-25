@@ -31,14 +31,14 @@ public class ReflectJavaConstructor(override val member: Constructor<*>) : Refle
         val klass = member.getDeclaringClass()
 
         val realTypes = when {
-            klass.getDeclaringClass() != null && !Modifier.isStatic(klass.getModifiers()) -> types.copyOfRange(1, types.size())
+            klass.getDeclaringClass() != null && !Modifier.isStatic(klass.getModifiers()) -> types.copyOfRange(1, types.size)
             else -> types
         }
 
         val annotations = member.getParameterAnnotations()
         val realAnnotations = when {
-            annotations.size() < realTypes.size() -> throw IllegalStateException("Illegal generic signature: $member")
-            annotations.size() > realTypes.size() -> annotations.copyOfRange(annotations.size() - realTypes.size(), annotations.size())
+            annotations.size < realTypes.size -> throw IllegalStateException("Illegal generic signature: $member")
+            annotations.size > realTypes.size -> annotations.copyOfRange(annotations.size - realTypes.size, annotations.size)
             else -> annotations
         }
 

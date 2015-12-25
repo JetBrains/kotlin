@@ -280,7 +280,7 @@ public class DeserializedClassDescriptor(
         }
 
         fun all(): Collection<ClassDescriptor> {
-            val result = ArrayList<ClassDescriptor>(nestedClassNames.size())
+            val result = ArrayList<ClassDescriptor>(nestedClassNames.size)
             nestedClassNames.forEach { name -> result.addIfNotNull(findNestedClass(name)) }
             return result
         }

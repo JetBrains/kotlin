@@ -48,7 +48,7 @@ public class ClassDeserializer(private val components: DeserializationComponents
         }
         else {
             val fragments = components.packageFragmentProvider.getPackageFragments(classId.packageFqName)
-            assert(fragments.size() == 1) { "There should be exactly one package: $fragments, class id is $classId" }
+            assert(fragments.size == 1) { "There should be exactly one package: $fragments, class id is $classId" }
 
             val fragment = fragments.single()
             if (fragment is DeserializedPackageFragment) {

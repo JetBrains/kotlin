@@ -213,7 +213,7 @@ class LazyJavaTypeResolver(
                 return getConstructorTypeParameterSubstitute().getArguments()
             }
 
-            if (typeParameters.size() != javaType.getTypeArguments().size()) {
+            if (typeParameters.size != javaType.getTypeArguments().size) {
                 // Most of the time this means there is an error in the Java code
                 return typeParameters.map { p -> TypeProjectionImpl(ErrorUtils.createErrorType(p.getName().asString())) }
             }
@@ -221,7 +221,7 @@ class LazyJavaTypeResolver(
             return javaType.getTypeArguments().withIndex().map {
                 javaTypeParameter ->
                 val (i, t) = javaTypeParameter
-                val parameter = if (i >= typeParameters.size())
+                val parameter = if (i >= typeParameters.size)
                                     ErrorUtils.createErrorTypeParameter(i, "#$i for ${typeConstructor}")
                                 else typeParameters[i]
                 transformToTypeProjection(t, howTheProjectionIsUsed.toAttributes(), parameter)
@@ -287,7 +287,7 @@ class LazyJavaTypeResolver(
         override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>, jetType: KotlinType, flexibility: Flexibility): T? {
             @Suppress("UNCHECKED_CAST")
             return when (capabilityClass) {
-                javaClass<CustomTypeVariable>(), javaClass<Specificity>() -> Impl(flexibility) as T
+                CustomTypeVariable::class.java, Specificity::class.java -> Impl(flexibility) as T
                 else -> null
             }
         }

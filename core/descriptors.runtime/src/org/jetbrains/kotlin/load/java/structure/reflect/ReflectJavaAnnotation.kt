@@ -23,20 +23,20 @@ import java.lang.reflect.Method
 
 public class ReflectJavaAnnotation(private val annotation: Annotation) : ReflectJavaElement(), JavaAnnotation {
     override fun findArgument(name: Name): JavaAnnotationArgument? {
-        return getArgumentValue(annotation.annotationType().getDeclaredMethod(name.asString()))
+        return getArgumentValue(annotation.annotationClass.java.getDeclaredMethod(name.asString()))
     }
 
     override fun getArguments(): Collection<JavaAnnotationArgument> {
-        return annotation.annotationType().getDeclaredMethods().map { getArgumentValue(it) }
+        return annotation.annotationClass.java.getDeclaredMethods().map { getArgumentValue(it) }
     }
 
     private fun getArgumentValue(argument: Method): ReflectJavaAnnotationArgument {
         return argument.invoke(annotation).let { ReflectJavaAnnotationArgument.create(it, Name.identifier(argument.getName())) }
     }
 
-    override fun resolve() = ReflectJavaClass(annotation.annotationType())
+    override fun resolve() = ReflectJavaClass(annotation.annotationClass.java)
 
-    override fun getClassId() = annotation.annotationType().classId
+    override fun getClassId() = annotation.annotationClass.java.classId
 
     override fun equals(other: Any?) = other is ReflectJavaAnnotation && annotation == other.annotation
 

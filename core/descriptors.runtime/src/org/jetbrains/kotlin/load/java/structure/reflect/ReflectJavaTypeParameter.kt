@@ -30,7 +30,7 @@ public class ReflectJavaTypeParameter(
 ) : ReflectJavaElement(), JavaTypeParameter {
     override fun getUpperBounds(): List<ReflectJavaClassifierType> {
         val bounds = typeVariable.getBounds().map { bound -> ReflectJavaClassifierType(bound) }
-        if (bounds.singleOrNull()?.type == javaClass<Any>()) return emptyList()
+        if (bounds.singleOrNull()?.type == Any::class.java) return emptyList()
         return bounds
     }
 

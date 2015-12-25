@@ -76,7 +76,7 @@ public class LazyJavaClassMemberScope(
 
     internal val constructors = c.storageManager.createLazyValue {
         val constructors = jClass.getConstructors()
-        val result = ArrayList<JavaConstructorDescriptor>(constructors.size())
+        val result = ArrayList<JavaConstructorDescriptor>(constructors.size)
         for (constructor in constructors) {
             val descriptor = resolveConstructor(constructor)
             result.add(descriptor)
@@ -482,7 +482,7 @@ public class LazyJavaClassMemberScope(
     private fun SimpleFunctionDescriptor.doesOverrideBuiltinFunctionWithErasedValueParameters(
             builtinWithErasedParameters: FunctionDescriptor
     ): Boolean {
-        if (this.valueParameters.size() != builtinWithErasedParameters.valueParameters.size()) return false
+        if (this.valueParameters.size != builtinWithErasedParameters.valueParameters.size) return false
         if (!this.typeParameters.isEmpty() || !builtinWithErasedParameters.typeParameters.isEmpty()) return false
         if (this.extensionReceiverParameter != null || builtinWithErasedParameters.extensionReceiverParameter != null) return false
 
@@ -549,14 +549,14 @@ public class LazyJavaClassMemberScope(
 
     private fun createAnnotationConstructorParameters(constructor: ConstructorDescriptorImpl): List<ValueParameterDescriptor> {
         val methods = jClass.getMethods()
-        val result = ArrayList<ValueParameterDescriptor>(methods.size())
+        val result = ArrayList<ValueParameterDescriptor>(methods.size)
 
         val attr = TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes(allowFlexible = false, isForAnnotationParameter = true)
 
         val (methodsNamedValue, otherMethods) = methods.
                 partition { it.getName() == JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME }
 
-        assert(methodsNamedValue.size() <= 1) { "There can't be more than one method named 'value' in annotation class: $jClass" }
+        assert(methodsNamedValue.size <= 1) { "There can't be more than one method named 'value' in annotation class: $jClass" }
         val methodNamedValue = methodsNamedValue.firstOrNull()
         if (methodNamedValue != null) {
             val parameterNamedValueJavaType = methodNamedValue.getReturnType()
@@ -641,7 +641,7 @@ public class LazyJavaClassMemberScope(
     }
 
     override fun getClassNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name>
-            = nestedClassIndex().keySet() + enumEntryIndex().keySet()
+            = nestedClassIndex().keys + enumEntryIndex().keys
 
     override fun getPropertyNames(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<Name> {
         if (jClass.isAnnotationType()) return memberIndex().getMethodNames(nameFilter)

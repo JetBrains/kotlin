@@ -35,8 +35,8 @@ private fun propertyNameFromAccessorMethodName(methodName: Name, prefix: String,
     if (methodName.isSpecial()) return null
     val identifier = methodName.getIdentifier()
     if (!identifier.startsWith(prefix)) return null
-    if (identifier.length() == prefix.length()) return null
-    if (identifier[prefix.length()] in 'a'..'z') return null
+    if (identifier.length == prefix.length) return null
+    if (identifier[prefix.length] in 'a'..'z') return null
 
     if (addPrefix != null) {
         assert(removePrefix)

@@ -25,7 +25,7 @@ public val Class<*>.safeClassLoader: ClassLoader
     get() = classLoader ?: ClassLoader.getSystemClassLoader()
 
 public fun Class<*>.isEnumClassOrSpecializedEnumEntryClass(): Boolean =
-        javaClass<Enum<*>>().isAssignableFrom(this)
+        Enum::class.java.isAssignableFrom(this)
 
 /**
  * NOTE: does not perform a Java -> Kotlin mapping. If this is not expected, consider using KClassImpl#classId instead

@@ -84,8 +84,8 @@ public class IndexedParametersSubstitution(
     private val approximateCapturedTypes: Boolean = false
 ) : TypeSubstitution() {
     init {
-        assert(parameters.size() <= arguments.size()) {
-            "Number of arguments should not be less then number of parameters, but: parameters=${parameters.size()}, args=${arguments.size()}"
+        assert(parameters.size <= arguments.size) {
+            "Number of arguments should not be less then number of parameters, but: parameters=${parameters.size}, args=${arguments.size}"
         }
     }
 
@@ -101,7 +101,7 @@ public class IndexedParametersSubstitution(
         val parameter = key.constructor.declarationDescriptor as? TypeParameterDescriptor ?: return null
         val index = parameter.index
 
-        if (index < parameters.size() && parameters[index].typeConstructor == parameter.typeConstructor) {
+        if (index < parameters.size && parameters[index].typeConstructor == parameter.typeConstructor) {
             return arguments[index]
         }
 

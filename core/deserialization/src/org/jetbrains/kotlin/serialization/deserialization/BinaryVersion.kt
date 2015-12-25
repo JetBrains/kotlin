@@ -50,7 +50,7 @@ data class BinaryVersion private constructor(
                     major = version.getOrNull(0) ?: UNKNOWN,
                     minor = version.getOrNull(1) ?: UNKNOWN,
                     patch = version.getOrNull(2) ?: UNKNOWN,
-                    rest = if (version.size() > 3) version.asList().subList(3, version.size()).toList() else listOf()
+                    rest = if (version.size > 3) version.asList().subList(3, version.size).toList() else listOf()
             )
         }
 

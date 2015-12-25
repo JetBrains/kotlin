@@ -143,12 +143,12 @@ public abstract class DeserializedMemberScope protected constructor(
             location: LookupLocation
     ) {
         if (kindFilter.acceptsKinds(DescriptorKindFilter.VARIABLES_MASK)) {
-            val keys = propertyProtos().keySet().filter { nameFilter(it.name) }
+            val keys = propertyProtos().keys.filter { nameFilter(it.name) }
             addMembers(result, keys) { getContributedVariables(it, location) }
         }
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.FUNCTIONS_MASK)) {
-            val keys = functionProtos().keySet().filter { nameFilter(it.name) }
+            val keys = functionProtos().keys.filter { nameFilter(it.name) }
             addMembers(result, keys) { getContributedFunctions(it, location) }
         }
     }

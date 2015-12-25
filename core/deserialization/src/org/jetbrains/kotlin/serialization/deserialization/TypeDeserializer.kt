@@ -50,7 +50,7 @@ public class TypeDeserializer(
     }
 
     val ownTypeParameters: List<TypeParameterDescriptor>
-            get() = typeParameterDescriptors().values().toReadOnlyList()
+            get() = typeParameterDescriptors().values.toReadOnlyList()
 
     // TODO: don't load identical types from TypeTable more than once
     fun type(proto: ProtoBuf.Type, additionalAnnotations: Annotations = Annotations.EMPTY): KotlinType {

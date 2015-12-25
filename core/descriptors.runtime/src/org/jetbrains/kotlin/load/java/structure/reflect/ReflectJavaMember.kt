@@ -42,7 +42,7 @@ public abstract class ReflectJavaMember : ReflectJavaElement(), ReflectJavaAnnot
             parameterAnnotations: Array<Array<Annotation>>,
             isVararg: Boolean
     ): List<JavaValueParameter> {
-        val result = ArrayList<JavaValueParameter>(parameterTypes.size())
+        val result = ArrayList<JavaValueParameter>(parameterTypes.size)
         val names = Java8ParameterNamesLoader.loadParameterNames(member)
         for (i in parameterTypes.indices) {
             val type = ReflectJavaType.create(parameterTypes[i])

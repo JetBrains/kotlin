@@ -138,7 +138,7 @@ class LazyJavaClassDescriptor(
 
         private val supertypes = c.storageManager.createLazyValue<Collection<KotlinType>> {
             val javaTypes = jClass.getSupertypes()
-            val result = ArrayList<KotlinType>(javaTypes.size())
+            val result = ArrayList<KotlinType>(javaTypes.size)
             val incomplete = ArrayList<JavaType>(0)
 
             val purelyImplementedSupertype: KotlinType? = getPurelyImplementedSupertype()
@@ -179,7 +179,7 @@ class LazyJavaClassDescriptor(
 
             val classDescriptor = c.module.builtIns.getBuiltInClassByNameNullable(purelyImplementedFqName.shortName()) ?: return null
 
-            if (classDescriptor.getTypeConstructor().getParameters().size() != getParameters().size()) return null
+            if (classDescriptor.getTypeConstructor().getParameters().size != getParameters().size) return null
 
             val parametersAsTypeProjections = getParameters().map {
                 parameter -> TypeProjectionImpl(Variance.INVARIANT, parameter.getDefaultType())
@@ -196,7 +196,7 @@ class LazyJavaClassDescriptor(
                     getAnnotations().
                     findAnnotation(JvmAnnotationNames.PURELY_IMPLEMENTS_ANNOTATION) ?: return null
 
-            val fqNameString = (annotation.getAllValueArguments().values().singleOrNull() as? StringValue)?.value ?: return null
+            val fqNameString = (annotation.getAllValueArguments().values.singleOrNull() as? StringValue)?.value ?: return null
             if (!isValidJavaFqName(fqNameString)) return null
 
             return FqName(fqNameString)

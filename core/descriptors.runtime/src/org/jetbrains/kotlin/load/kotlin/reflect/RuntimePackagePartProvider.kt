@@ -40,6 +40,6 @@ class RuntimePackagePartProvider(val classLoader : ClassLoader) : PackagePartPro
 
 
     override fun findPackageParts(packageFqName: String): List<String> {
-        return module2Mapping.values().map { it.value.findPackageParts(packageFqName) }.filterNotNull().flatMap { it.parts }.distinct()
+        return module2Mapping.values.map { it.value.findPackageParts(packageFqName) }.filterNotNull().flatMap { it.parts }.distinct()
     }
 }

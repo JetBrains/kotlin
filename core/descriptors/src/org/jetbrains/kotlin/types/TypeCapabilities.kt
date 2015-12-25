@@ -41,7 +41,7 @@ class SingletonTypeCapabilities(private val clazz: Class<*>, private val typeCap
     }
 }
 
-public inline fun <reified T : TypeCapability> KotlinType.getCapability(): T? = getCapability(javaClass<T>())
+public inline fun <reified T : TypeCapability> KotlinType.getCapability(): T? = getCapability(T::class.java)
 
 public interface Specificity : TypeCapability {
 
@@ -55,7 +55,7 @@ public interface Specificity : TypeCapability {
 }
 
 fun KotlinType.getSpecificityRelationTo(otherType: KotlinType) =
-        this.getCapability(javaClass<Specificity>())?.getSpecificityRelationTo(otherType) ?: Specificity.Relation.DONT_KNOW
+        this.getCapability(Specificity::class.java)?.getSpecificityRelationTo(otherType) ?: Specificity.Relation.DONT_KNOW
 
 fun oneMoreSpecificThanAnother(a: KotlinType, b: KotlinType) =
         a.getSpecificityRelationTo(b) != Specificity.Relation.DONT_KNOW || b.getSpecificityRelationTo(a) != Specificity.Relation.DONT_KNOW
@@ -73,9 +73,9 @@ public interface CustomTypeVariable : TypeCapability {
     public fun substitutionResult(replacement: KotlinType): KotlinType
 }
 
-public fun KotlinType.isCustomTypeVariable(): Boolean = this.getCapability(javaClass<CustomTypeVariable>())?.isTypeVariable ?: false
+public fun KotlinType.isCustomTypeVariable(): Boolean = this.getCapability(CustomTypeVariable::class.java)?.isTypeVariable ?: false
 public fun KotlinType.getCustomTypeVariable(): CustomTypeVariable? =
-        this.getCapability(javaClass<CustomTypeVariable>())?.let {
+        this.getCapability(CustomTypeVariable::class.java)?.let {
             if (it.isTypeVariable) it else null
         }
 
@@ -87,13 +87,13 @@ public interface SubtypingRepresentatives : TypeCapability {
 }
 
 public fun KotlinType.getSubtypeRepresentative(): KotlinType =
-        this.getCapability(javaClass<SubtypingRepresentatives>())?.subTypeRepresentative ?: this
+        this.getCapability(SubtypingRepresentatives::class.java)?.subTypeRepresentative ?: this
 
 public fun KotlinType.getSupertypeRepresentative(): KotlinType =
-        this.getCapability(javaClass<SubtypingRepresentatives>())?.superTypeRepresentative ?: this
+        this.getCapability(SubtypingRepresentatives::class.java)?.superTypeRepresentative ?: this
 
 public fun sameTypeConstructors(first: KotlinType, second: KotlinType): Boolean {
-    val typeRangeCapability = javaClass<SubtypingRepresentatives>()
+    val typeRangeCapability = SubtypingRepresentatives::class.java
     return first.getCapability(typeRangeCapability)?.sameTypeConstructor(second) ?: false
            || second.getCapability(typeRangeCapability)?.sameTypeConstructor(first) ?: false
 }

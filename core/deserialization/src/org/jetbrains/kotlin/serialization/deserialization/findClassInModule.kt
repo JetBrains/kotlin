@@ -26,7 +26,7 @@ public fun ModuleDescriptor.findClassAcrossModuleDependencies(classId: ClassId):
     val segments = classId.relativeClassName.pathSegments()
     val topLevelClass = packageViewDescriptor.memberScope.getContributedClassifier(segments.first(), NoLookupLocation.FROM_DESERIALIZATION) as? ClassDescriptor ?: return null
     var result = topLevelClass
-    for (name in segments.subList(1, segments.size())) {
+    for (name in segments.subList(1, segments.size)) {
         result = result.unsubstitutedInnerClassesScope.getContributedClassifier(name, NoLookupLocation.FROM_DESERIALIZATION) as? ClassDescriptor ?: return null
     }
     return result

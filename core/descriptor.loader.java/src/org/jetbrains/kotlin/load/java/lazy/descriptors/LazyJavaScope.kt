@@ -182,7 +182,7 @@ public abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : 
                     }
 
             val name = if (function.getName().asString() == "equals" &&
-                           jValueParameters.size() == 1 &&
+                           jValueParameters.size == 1 &&
                            c.module.builtIns.getNullableAnyType() == outType) {
                 // This is a hack to prevent numerous warnings on Kotlin classes that inherit Java classes: if you override "equals" in such
                 // class without this hack, you'll be warned that in the superclass the name is "p0" (regardless of the fact that it's

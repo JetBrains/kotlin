@@ -55,11 +55,11 @@ public interface Flexibility : TypeCapability, SubtypingRepresentatives {
     override fun sameTypeConstructor(type: KotlinType) = false
 }
 
-public fun KotlinType.isFlexible(): Boolean = this.getCapability(javaClass<Flexibility>()) != null
-public fun KotlinType.flexibility(): Flexibility = this.getCapability(javaClass<Flexibility>())!!
+public fun KotlinType.isFlexible(): Boolean = this.getCapability(Flexibility::class.java) != null
+public fun KotlinType.flexibility(): Flexibility = this.getCapability(Flexibility::class.java)!!
 
 public fun KotlinType.isNullabilityFlexible(): Boolean {
-    val flexibility = this.getCapability(javaClass<Flexibility>()) ?: return false
+    val flexibility = this.getCapability(Flexibility::class.java) ?: return false
     return TypeUtils.isNullableType(flexibility.lowerBound) != TypeUtils.isNullableType(flexibility.upperBound)
 }
 
@@ -72,7 +72,7 @@ public fun KotlinType.isNullabilityFlexible(): Boolean {
 // So, we are looking for a type among this set such that it is equal to all others semantically
 // (by KotlinTypeChecker.DEFAULT.equalsTypes()), and fits at least as well as they do.
 fun Collection<KotlinType>.singleBestRepresentative(): KotlinType? {
-    if (this.size() == 1) return this.first()
+    if (this.size == 1) return this.first()
 
     return this.firstOrNull {
         candidate ->
@@ -86,10 +86,10 @@ fun Collection<KotlinType>.singleBestRepresentative(): KotlinType? {
 }
 
 fun Collection<TypeProjection>.singleBestRepresentative(): TypeProjection? {
-    if (this.size() == 1) return this.first()
+    if (this.size == 1) return this.first()
 
     val projectionKinds = this.map { it.getProjectionKind() }.toSet()
-    if (projectionKinds.size() != 1) return null
+    if (projectionKinds.size != 1) return null
 
     val bestType = this.map { it.getType() }.singleBestRepresentative()
     if (bestType == null) return null
@@ -116,10 +116,10 @@ public open class DelegatingFlexibleType protected constructor(
 ) : DelegatingType(), NullAwareness, Flexibility, FlexibleTypeDelegation {
     companion object {
         internal val capabilityClasses = hashSetOf(
-                javaClass<NullAwareness>(),
-                javaClass<Flexibility>(),
-                javaClass<SubtypingRepresentatives>(),
-                javaClass<FlexibleTypeDelegation>()
+                NullAwareness::class.java,
+                Flexibility::class.java,
+                SubtypingRepresentatives::class.java,
+                FlexibleTypeDelegation::class.java
         )
 
         @JvmStatic
@@ -168,7 +168,7 @@ public open class DelegatingFlexibleType protected constructor(
 
     override fun computeIsNullable() = delegateType.isMarkedNullable()
 
-    override fun isMarkedNullable(): Boolean = getCapability(javaClass<NullAwareness>())!!.computeIsNullable()
+    override fun isMarkedNullable(): Boolean = getCapability(NullAwareness::class.java)!!.computeIsNullable()
 
     override val delegateType: KotlinType
         get() {
@@ -176,7 +176,7 @@ public open class DelegatingFlexibleType protected constructor(
             return lowerBound
         }
 
-    override fun getDelegate() = getCapability(javaClass<FlexibleTypeDelegation>())!!.delegateType
+    override fun getDelegate() = getCapability(FlexibleTypeDelegation::class.java)!!.delegateType
 
     override fun toString() = "('$lowerBound'..'$upperBound')"
 }

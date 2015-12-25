@@ -100,7 +100,7 @@ public val DeclarationDescriptorWithVisibility.isEffectivelyPublicApi: Boolean
         while (parent != null) {
             if (!parent.getVisibility().isPublicAPI) return false
 
-            parent = DescriptorUtils.getParentOfType(parent, javaClass<DeclarationDescriptorWithVisibility>())
+            parent = DescriptorUtils.getParentOfType(parent, DeclarationDescriptorWithVisibility::class.java)
         }
 
         return true
@@ -185,9 +185,9 @@ public fun Annotated.isDocumentedAnnotation(): Boolean =
 
 public fun Annotated.getAnnotationRetention(): KotlinRetention? {
     val annotationEntryDescriptor = annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.retention) ?: return null
-    val retentionArgumentValue = annotationEntryDescriptor.allValueArguments.entrySet().firstOrNull {
+    val retentionArgumentValue = annotationEntryDescriptor.allValueArguments.entries.firstOrNull {
         it.key.name.asString() == "value"
-    }?.getValue() as? EnumValue ?: return null
+    }?.value as? EnumValue ?: return null
     return KotlinRetention.valueOf(retentionArgumentValue.value.name.asString())
 }
 

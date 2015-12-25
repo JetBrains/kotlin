@@ -25,7 +25,7 @@ public fun FqName.isSubpackageOf(packageName: FqName): Boolean {
 }
 
 private fun isSubpackageOf(subpackageNameStr: String, packageNameStr: String): Boolean {
-    return subpackageNameStr.startsWith(packageNameStr) && subpackageNameStr[packageNameStr.length()] == '.'
+    return subpackageNameStr.startsWith(packageNameStr) && subpackageNameStr[packageNameStr.length] == '.'
 }
 
 public fun FqName.isOneSegmentFQN(): Boolean = !isRoot() && parent().isRoot()
@@ -43,7 +43,7 @@ public fun FqName.tail(prefix: FqName): FqName {
     return when {
         !isSubpackageOf(prefix) || prefix.isRoot() -> this
         this == prefix -> FqName.ROOT
-        else -> FqName(asString().substring(prefix.asString().length() + 1))
+        else -> FqName(asString().substring(prefix.asString().length + 1))
     }
 }
 

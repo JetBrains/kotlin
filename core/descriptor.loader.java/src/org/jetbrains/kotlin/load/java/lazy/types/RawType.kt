@@ -45,11 +45,11 @@ public object RawTypeCapabilities : TypeCapabilities {
         override fun renderInflexible(type: KotlinType, renderer: DescriptorRenderer): String? {
             if (type.arguments.isNotEmpty()) return null
 
-            return StringBuilder {
+            return buildString {
                 append(renderer.renderTypeConstructor(type.constructor))
                 append("(raw)")
                 if (type.isMarkedNullable) append('?')
-            }.toString()
+            }
         }
 
         override fun renderBounds(flexibility: Flexibility, renderer: DescriptorRenderer): Pair<String, String>? {
@@ -75,9 +75,9 @@ public object RawTypeCapabilities : TypeCapabilities {
     override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? {
         @Suppress("UNCHECKED_CAST")
         return when(capabilityClass) {
-            javaClass<CustomSubstitutionCapability>() -> RawSubstitutionCapability as T
-            javaClass<CustomFlexibleRendering>() -> RawFlexibleRendering as T
-            javaClass<RawTypeTag>() -> RawTypeTag as T
+            CustomSubstitutionCapability::class.java -> RawSubstitutionCapability as T
+            CustomFlexibleRendering::class.java -> RawFlexibleRendering as T
+            RawTypeTag::class.java -> RawTypeTag as T
             else -> null
         }
     }

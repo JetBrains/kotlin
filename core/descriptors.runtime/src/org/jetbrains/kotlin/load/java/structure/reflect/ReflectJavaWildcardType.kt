@@ -24,17 +24,17 @@ public class ReflectJavaWildcardType(override val type: WildcardType): ReflectJa
     override fun getBound(): ReflectJavaType? {
         val upperBounds = type.getUpperBounds()
         val lowerBounds = type.getLowerBounds()
-        if (upperBounds.size() > 1 || lowerBounds.size() > 1) {
+        if (upperBounds.size > 1 || lowerBounds.size > 1) {
             throw UnsupportedOperationException("Wildcard types with many bounds are not yet supported: $type")
         }
         return when {
-            lowerBounds.size() == 1 -> ReflectJavaType.create(lowerBounds.single())
-            upperBounds.size() == 1 -> upperBounds.single().let { ub -> if (ub != javaClass<Any>()) ReflectJavaType.create(ub) else null }
+            lowerBounds.size == 1 -> ReflectJavaType.create(lowerBounds.single())
+            upperBounds.size == 1 -> upperBounds.single().let { ub -> if (ub != Any::class.java) ReflectJavaType.create(ub) else null }
             else -> null
         }
     }
 
-    override fun isExtends() = type.getUpperBounds().firstOrNull() != javaClass<Any>()
+    override fun isExtends() = type.getUpperBounds().firstOrNull() != Any::class.java
 
     override fun getTypeProvider(): JavaTypeProvider = throw UnsupportedOperationException()
 }
