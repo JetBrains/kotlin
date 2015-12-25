@@ -9,7 +9,9 @@ external fun externalFlagRemovedFun()
 external fun externalFlagUnchangedFun()
 
 fun infixFlagAddedFun() {}
+@Suppress("INAPPLICABLE_INFIX_MODIFIER")
 infix fun infixFlagRemovedFun() {}
+@Suppress("INAPPLICABLE_INFIX_MODIFIER")
 infix fun infixFlagUnchangedFun() {}
 
 fun inlineFlagAddedFun() {}
@@ -24,7 +26,9 @@ internal fun internalFlagRemovedFun() {}
 internal fun internalFlagUnchangedFun() {}
 
 fun operatorFlagAddedFun() {}
+@Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
 operator fun operatorFlagRemovedFun() {}
+@Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
 operator fun operatorFlagUnchangedFun() {}
 
 val privateFlagAddedVal = ""

@@ -960,6 +960,7 @@ public fun CharSequence.lastIndexOf(string: String, startIndex: Int = lastIndex,
  *
  * @param ignoreCase `true` to ignore character case when comparing strings. By default `false`.
  */
+@Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
 public operator fun CharSequence.contains(other: CharSequence, ignoreCase: Boolean = false): Boolean =
     if (other is String)
         indexOf(other, ignoreCase = ignoreCase) >= 0
@@ -973,6 +974,7 @@ public operator fun CharSequence.contains(other: CharSequence, ignoreCase: Boole
  *
  * @param ignoreCase `true` to ignore character case when comparing characters. By default `false`.
  */
+@Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
 public operator fun CharSequence.contains(char: Char, ignoreCase: Boolean = false): Boolean =
         indexOf(char, ignoreCase = ignoreCase) >= 0
 
