@@ -81,14 +81,13 @@ class QuickFixRegistrar : QuickFixContributor {
         val removeFunctionBodyFactory = RemoveFunctionBodyFix.createFactory()
         ABSTRACT_FUNCTION_WITH_BODY.registerFactory(removeAbstractModifierFactory, removeFunctionBodyFactory)
 
-        val addFunctionBodyFactory = AddFunctionBodyFix.createFactory()
-        NON_ABSTRACT_FUNCTION_WITH_NO_BODY.registerFactory(addAbstractModifierFactory, addFunctionBodyFactory)
+        NON_ABSTRACT_FUNCTION_WITH_NO_BODY.registerFactory(addAbstractModifierFactory, AddFunctionBodyFix)
 
         NON_VARARG_SPREAD.registerFactory(RemovePsiElementSimpleFix.createRemoveSpreadFactory())
 
         MIXING_NAMED_AND_POSITIONED_ARGUMENTS.registerFactory(AddNameToArgumentFix)
 
-        NON_MEMBER_FUNCTION_NO_BODY.registerFactory(addFunctionBodyFactory)
+        NON_MEMBER_FUNCTION_NO_BODY.registerFactory(AddFunctionBodyFix)
 
         NOTHING_TO_OVERRIDE.registerFactory( RemoveModifierFix.createRemoveModifierFromListOwnerFactory(OVERRIDE_KEYWORD),
                                         ChangeMemberFunctionSignatureFix,

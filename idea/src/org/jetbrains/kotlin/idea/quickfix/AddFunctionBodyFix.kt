@@ -14,69 +14,34 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.quickfix;
+package org.jetbrains.kotlin.idea.quickfix
 
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.KotlinBundle;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtFunction;
-import org.jetbrains.kotlin.psi.KtPsiFactory;
-import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
-public class AddFunctionBodyFix extends KotlinQuickFixAction<KtFunction> {
-    public AddFunctionBodyFix(@NotNull KtFunction element) {
-        super(element);
+class AddFunctionBodyFix(element: KtFunction) : KotlinQuickFixAction<KtFunction>(element) {
+    override fun getFamilyName() = "Add function body"
+    override fun getText() = familyName
+
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        return super.isAvailable(project, editor, file) && !element.hasBody()
     }
 
-    @NotNull
-    @Override
-    public String getText() {
-        return KotlinBundle.message("add.function.body");
-    }
-
-    @NotNull
-    @Override
-    public String getFamilyName() {
-        return KotlinBundle.message("add.function.body");
-    }
-
-    @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiFile file) {
-        return super.isAvailable(project, editor, file) && !getElement().hasBody();
-    }
-
-    @Override
-    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
-        KtFunction newElement = (KtFunction) getElement().copy();
-        KtPsiFactory psiFactory = KtPsiFactoryKt.KtPsiFactory(file);
-        if (!(newElement.getLastChild() instanceof PsiWhiteSpace)) {
-            newElement.add(psiFactory.createWhiteSpace());
+    public override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        if (!element.hasBody()) {
+            element.add(KtPsiFactory(project).createEmptyBody())
         }
-        if (!newElement.hasBody()) {
-            newElement.add(psiFactory.createEmptyBody());
-        }
-        getElement().replace(newElement);
     }
-    
-    public static KotlinSingleIntentionActionFactory createFactory() {
-        return new KotlinSingleIntentionActionFactory() {
-            @Nullable
-            @Override
-            public KotlinQuickFixAction createAction(@NotNull Diagnostic diagnostic) {
-                PsiElement element = diagnostic.getPsiElement();
-                KtFunction function = PsiTreeUtil.getParentOfType(element, KtFunction.class, false);
-                if (function == null) return null;
-                return new AddFunctionBodyFix(function);
-            }
-        };
+
+    companion object : KotlinSingleIntentionActionFactory() {
+        public override fun createAction(diagnostic: Diagnostic): AddFunctionBodyFix? {
+            return diagnostic.psiElement.getNonStrictParentOfType<KtFunction>()?.let { AddFunctionBodyFix(it) }
+        }
     }
 }
