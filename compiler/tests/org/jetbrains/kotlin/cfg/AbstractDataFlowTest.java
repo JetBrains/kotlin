@@ -30,9 +30,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.kotlin.cfg.PseudocodeVariablesData.VariableControlFlowState;
-import static org.jetbrains.kotlin.cfg.PseudocodeVariablesData.VariableUseState;
-
 public abstract class AbstractDataFlowTest extends AbstractPseudocodeTest {
 
     @Override

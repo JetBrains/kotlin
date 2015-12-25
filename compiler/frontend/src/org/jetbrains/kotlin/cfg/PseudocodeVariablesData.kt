@@ -191,106 +191,15 @@ class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingCon
                                 variableUseState = VariableUseState.UNUSED
                             }
                             when (variableUseState) {
-                                PseudocodeVariablesData.VariableUseState.UNUSED, PseudocodeVariablesData.VariableUseState.ONLY_WRITTEN_NEVER_READ -> exitResult.put(variableDescriptor, VariableUseState.ONLY_WRITTEN_NEVER_READ)
-                                PseudocodeVariablesData.VariableUseState.WRITTEN_AFTER_READ, PseudocodeVariablesData.VariableUseState.READ -> exitResult.put(variableDescriptor, VariableUseState.WRITTEN_AFTER_READ)
+                                VariableUseState.UNUSED, VariableUseState.ONLY_WRITTEN_NEVER_READ ->
+                                    exitResult.put(variableDescriptor, VariableUseState.ONLY_WRITTEN_NEVER_READ)
+                                VariableUseState.WRITTEN_AFTER_READ, VariableUseState.READ ->
+                                    exitResult.put(variableDescriptor, VariableUseState.WRITTEN_AFTER_READ)
                             }
                         }
                         return Edges(enterResult, exitResult)
                     }
                 })
-
-    private enum class InitState private constructor(private val s: String) {
-        // Definitely initialized
-        INITIALIZED("I"),
-        // Fake initializer in else branch of "exhaustive when without else", see MagicKind.EXHAUSTIVE_WHEN_ELSE
-        INITIALIZED_EXHAUSTIVELY("IE"),
-        // Initialized in some branches, not initialized in other branches
-        UNKNOWN("I?"),
-        // Definitely not initialized
-        NOT_INITIALIZED("");
-
-        fun merge(other: InitState): InitState {
-            // X merge X = X
-            // X merge IE = IE merge X = X
-            // else X merge Y = I?
-            if (this == other || other == INITIALIZED_EXHAUSTIVELY) return this
-            if (this == INITIALIZED_EXHAUSTIVELY) return other
-            return UNKNOWN
-        }
-
-        override fun toString(): String {
-            return s
-        }
-    }
-
-    class VariableControlFlowState private constructor(val initState: InitState, val isDeclared: Boolean) {
-
-        fun definitelyInitialized(): Boolean {
-            return initState == InitState.INITIALIZED
-        }
-
-        fun mayBeInitialized(): Boolean {
-            return initState != InitState.NOT_INITIALIZED
-        }
-
-        override fun toString(): String {
-            if (initState == InitState.NOT_INITIALIZED && !isDeclared) return "-"
-            return "$initState${if (isDeclared) "D" else ""}"
-        }
-
-        companion object {
-
-            private val VS_IT = VariableControlFlowState(InitState.INITIALIZED, true)
-            private val VS_IF = VariableControlFlowState(InitState.INITIALIZED, false)
-            private val VS_ET = VariableControlFlowState(InitState.INITIALIZED_EXHAUSTIVELY, true)
-            private val VS_EF = VariableControlFlowState(InitState.INITIALIZED_EXHAUSTIVELY, false)
-            private val VS_UT = VariableControlFlowState(InitState.UNKNOWN, true)
-            private val VS_UF = VariableControlFlowState(InitState.UNKNOWN, false)
-            private val VS_NT = VariableControlFlowState(InitState.NOT_INITIALIZED, true)
-            private val VS_NF = VariableControlFlowState(InitState.NOT_INITIALIZED, false)
-
-            fun create(initState: InitState, isDeclared: Boolean): VariableControlFlowState {
-                when (initState) {
-                    PseudocodeVariablesData.InitState.INITIALIZED -> return if (isDeclared) VS_IT else VS_IF
-                    PseudocodeVariablesData.InitState.INITIALIZED_EXHAUSTIVELY -> return if (isDeclared) VS_ET else VS_EF
-                    PseudocodeVariablesData.InitState.UNKNOWN -> return if (isDeclared) VS_UT else VS_UF
-                    else -> return if (isDeclared) VS_NT else VS_NF
-                }
-            }
-
-            fun createInitializedExhaustively(isDeclared: Boolean): VariableControlFlowState {
-                return create(InitState.INITIALIZED_EXHAUSTIVELY, isDeclared)
-            }
-
-            fun create(isInitialized: Boolean, isDeclared: Boolean = false): VariableControlFlowState {
-                return create(if (isInitialized) InitState.INITIALIZED else InitState.NOT_INITIALIZED, isDeclared)
-            }
-
-            fun create(isDeclaredHere: Boolean, mergedEdgesData: VariableControlFlowState?): VariableControlFlowState {
-                return create(true, isDeclaredHere || mergedEdgesData != null && mergedEdgesData.isDeclared)
-            }
-        }
-    }
-
-    enum class VariableUseState private constructor(private val priority: Int) {
-        READ(3),
-        WRITTEN_AFTER_READ(2),
-        ONLY_WRITTEN_NEVER_READ(1),
-        UNUSED(0);
-
-        fun merge(variableUseState: VariableUseState?): VariableUseState {
-            if (variableUseState == null || priority > variableUseState.priority) return this
-            return variableUseState
-        }
-
-        companion object {
-
-            @JvmStatic
-            fun isUsed(variableUseState: VariableUseState?): Boolean {
-                return variableUseState != null && variableUseState != UNUSED
-            }
-        }
-    }
 
     companion object {
 

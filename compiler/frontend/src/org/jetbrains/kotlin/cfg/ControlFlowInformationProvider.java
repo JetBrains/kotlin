@@ -28,8 +28,6 @@ import kotlin.jvm.functions.Function3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
-import org.jetbrains.kotlin.cfg.PseudocodeVariablesData.VariableControlFlowState;
-import org.jetbrains.kotlin.cfg.PseudocodeVariablesData.VariableUseState;
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue;
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode;
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtil;
@@ -65,7 +63,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.cfg.PseudocodeVariablesData.VariableUseState.*;
+import static org.jetbrains.kotlin.cfg.VariableUseState.*;
 import static org.jetbrains.kotlin.cfg.TailRecursionKind.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.UNREACHABLE_CODE;
@@ -560,7 +558,7 @@ public class ControlFlowInformationProvider {
                                 || !ExpressionTypingUtils.isLocal(variableDescriptor.getContainingDeclaration(), variableDescriptor)) {
                             return;
                         }
-                        PseudocodeVariablesData.VariableUseState variableUseState = in.get(variableDescriptor);
+                        VariableUseState variableUseState = in.get(variableDescriptor);
                         if (instruction instanceof WriteValueInstruction) {
                             if (trace.get(CAPTURED_IN_CLOSURE, variableDescriptor) != null) return;
                             KtElement element = ((WriteValueInstruction) instruction).getElement();
