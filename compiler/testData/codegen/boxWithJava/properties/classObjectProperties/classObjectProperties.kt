@@ -7,7 +7,6 @@ class Klass {
 interface Trait {
     companion object {
         const val NAME = "Trait"
-        val DEPRECATED = "DEPRECATED"
     }
 }
 

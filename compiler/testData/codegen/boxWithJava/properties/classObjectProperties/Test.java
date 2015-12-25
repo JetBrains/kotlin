@@ -8,9 +8,6 @@ class Test {
         s = Trait.NAME;
         if (!s.equals("Trait")) throw new AssertionError("Fail interface: " + s);
 
-        s = Trait.DEPRECATED;
-        if (!s.equals("DEPRECATED")) throw new AssertionError("Fail interface: " + s);
-
         s = Enoom.NAME;
         if (!s.equals("Enum")) throw new AssertionError("Fail enum: " + s);
 
