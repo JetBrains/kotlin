@@ -37,8 +37,8 @@ import org.jetbrains.kotlin.psi.KtPostfixExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.util.OperatorChecks
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.util.isValidOperator
 
 abstract class ExclExclCallFix : IntentionAction {
     override fun getFamilyName(): String = text
@@ -126,7 +126,7 @@ object MissingIteratorExclExclFixFactory : KotlinSingleIntentionActionFactory() 
             val memberScope = descriptor.unsubstitutedMemberScope
             val functions = memberScope.getContributedFunctions(OperatorNameConventions.ITERATOR, NoLookupLocation.FROM_IDE)
 
-            return functions.any { it.isOperator && OperatorChecks.canBeOperator(it) }
+            return functions.any { it.isValidOperator() }
         }
 
         when (descriptor) {
