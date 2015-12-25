@@ -61,13 +61,19 @@ public class CallableDescriptorCollectors<D : CallableDescriptor>(val collectors
 
     @Suppress("UNCHECKED_CAST")
     companion object {
+
+        @JvmField
         public val FUNCTIONS_AND_VARIABLES: CallableDescriptorCollectors<CallableDescriptor> =
                 CallableDescriptorCollectors(listOf(
                         FUNCTIONS_COLLECTOR as CallableDescriptorCollector<CallableDescriptor>,
                         VARIABLES_COLLECTOR as CallableDescriptorCollector<CallableDescriptor>
                 ))
+
+        @JvmField
         public val FUNCTIONS: CallableDescriptorCollectors<CallableDescriptor> =
                 CallableDescriptorCollectors(listOf(FUNCTIONS_COLLECTOR as CallableDescriptorCollector<CallableDescriptor>))
+
+        @JvmField
         public val VARIABLES: CallableDescriptorCollectors<VariableDescriptor> = CallableDescriptorCollectors(listOf(VARIABLES_COLLECTOR))
     }
 }

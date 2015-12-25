@@ -29,8 +29,10 @@ public class ModuleMapping private constructor(val packageFqName2Parts: Map<Stri
     }
 
     companion object {
+        @JvmField
         public val MAPPING_FILE_EXT: String = "kotlin_module"
 
+        @JvmField
         public val EMPTY: ModuleMapping = ModuleMapping(emptyMap())
 
         fun create(proto: ByteArray? = null): ModuleMapping {

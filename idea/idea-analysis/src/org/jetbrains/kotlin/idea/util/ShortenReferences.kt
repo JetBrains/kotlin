@@ -55,6 +55,7 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
     }
 
     companion object {
+        @JvmField
         val DEFAULT = ShortenReferences()
 
         private fun DeclarationDescriptor.asString()

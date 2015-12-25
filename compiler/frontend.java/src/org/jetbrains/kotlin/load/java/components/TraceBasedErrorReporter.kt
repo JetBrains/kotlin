@@ -32,8 +32,11 @@ public class TraceBasedErrorReporter(private val trace: BindingTrace) : ErrorRep
     companion object {
         private val LOG = Logger.getInstance(TraceBasedErrorReporter::class.java)
 
+        @JvmField
         public val ABI_VERSION_ERRORS: WritableSlice<String, AbiVersionErrorData> = Slices.createCollectiveSlice()
+
         // TODO: MutableList is a workaround for KT-5792 Covariant types in Kotlin translated to wildcard types in Java
+        @JvmField
         public val INCOMPLETE_HIERARCHY: WritableSlice<ClassDescriptor, MutableList<String>> = Slices.createCollectiveSlice()
     }
 

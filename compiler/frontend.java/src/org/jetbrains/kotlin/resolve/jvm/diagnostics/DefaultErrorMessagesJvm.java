@@ -38,7 +38,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
             for (JvmDeclarationOrigin origin : data.getSignatureOrigins()) {
                 DeclarationDescriptor descriptor = origin.getDescriptor();
                 if (descriptor != null) {
-                    renderedDescriptors.add(DescriptorRenderer.Companion.getCOMPACT().render(descriptor));
+                    renderedDescriptors.add(DescriptorRenderer.COMPACT.render(descriptor));
                 }
             }
             Collections.sort(renderedDescriptors);

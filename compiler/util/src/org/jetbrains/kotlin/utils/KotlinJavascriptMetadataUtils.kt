@@ -25,9 +25,9 @@ public class KotlinJavascriptMetadata(public val abiVersion: Int, public val mod
 }
 
 public object KotlinJavascriptMetadataUtils {
-    public val JS_EXT: String = ".js"
-    public val META_JS_SUFFIX: String = ".meta.js"
-    public val VFS_PROTOCOL: String = "kotlin-js-meta"
+    public const val JS_EXT: String = ".js"
+    public const val META_JS_SUFFIX: String = ".meta.js"
+    public const val VFS_PROTOCOL: String = "kotlin-js-meta"
     private val KOTLIN_JAVASCRIPT_METHOD_NAME = "kotlin_module_metadata"
     private val KOTLIN_JAVASCRIPT_METHOD_NAME_PATTERN = "\\.kotlin_module_metadata\\(".toPattern()
     /**
@@ -35,7 +35,7 @@ public object KotlinJavascriptMetadataUtils {
      */
     private val METADATA_PATTERN = "(?m)\\w+\\.$KOTLIN_JAVASCRIPT_METHOD_NAME\\((\\d+),\\s*(['\"])([^'\"]*)\\2,\\s*(['\"])([^'\"]*)\\4\\)".toPattern()
 
-    @JvmStatic
+    @JvmField
     public val ABI_VERSION: Int = 3
 
     public fun replaceSuffix(filePath: String): String = filePath.substringBeforeLast(JS_EXT) + META_JS_SUFFIX

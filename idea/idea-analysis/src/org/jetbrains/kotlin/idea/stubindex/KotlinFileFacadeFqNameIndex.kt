@@ -30,7 +30,10 @@ public class KotlinFileFacadeFqNameIndex private constructor() : StringStubIndex
 
     companion object {
         private val KEY = KotlinIndexUtil.createIndexKey(KotlinFileFacadeFqNameIndex::class.java)
+
+        @JvmField
         public val INSTANCE: KotlinFileFacadeFqNameIndex = KotlinFileFacadeFqNameIndex()
+
         @JvmStatic
         public fun getInstance(): KotlinFileFacadeFqNameIndex = INSTANCE
     }

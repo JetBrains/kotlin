@@ -54,6 +54,7 @@ public object Renderers {
 
     private val LOG = Logger.getInstance(javaClass<Renderers>())
 
+    @JvmField
     public val TO_STRING: Renderer<Any> = Renderer {
         element ->
         if (element is DeclarationDescriptor) {
@@ -64,16 +65,20 @@ public object Renderers {
         element.toString()
     }
 
+    @JvmField
     public val STRING: Renderer<String> = Renderer { it }
 
+    @JvmField
     public val THROWABLE: Renderer<Throwable> = Renderer {
         val writer = StringWriter()
         it.printStackTrace(PrintWriter(writer))
         StringUtil.first(writer.toString(), 2048, true)
     }
 
+    @JvmField
     public val NAME: Renderer<Named> = Renderer { it.getName().asString() }
 
+    @JvmField
     public val NAME_OF_PARENT_OR_FILE: Renderer<DeclarationDescriptor> = Renderer {
         if (DescriptorUtils.isTopLevelDeclaration(it) && it is DeclarationDescriptorWithVisibility && it.visibility == Visibilities.PRIVATE) {
             "file"
@@ -83,21 +88,26 @@ public object Renderers {
         }
     }
 
+    @JvmField
     public val ELEMENT_TEXT: Renderer<PsiElement> = Renderer { it.getText() }
 
+    @JvmField
     public val DECLARATION_NAME: Renderer<KtNamedDeclaration> = Renderer { it.getNameAsSafeName().asString() }
 
+    @JvmField
     public val RENDER_CLASS_OR_OBJECT: Renderer<KtClassOrObject> = Renderer {
         classOrObject: KtClassOrObject ->
         val name = if (classOrObject.getName() != null) " '" + classOrObject.getName() + "'" else ""
         if (classOrObject is KtClass) "Class" + name else "Object" + name
     }
 
+    @JvmField
     public val RENDER_CLASS_OR_OBJECT_NAME: Renderer<ClassDescriptor> = Renderer { it.renderKindWithName() }
 
     @JvmField
     public val RENDER_TYPE: Renderer<KotlinType> = Renderer { DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(it) }
 
+    @JvmField
     public val RENDER_POSITION_VARIANCE: Renderer<Variance> = Renderer {
         variance: Variance ->
         when (variance) {
@@ -107,6 +117,7 @@ public object Renderers {
         }
     }
 
+    @JvmField
     public val AMBIGUOUS_CALLS: Renderer<Collection<ResolvedCall<*>>> = Renderer {
         calls: Collection<ResolvedCall<*>> ->
         calls
@@ -130,22 +141,27 @@ public object Renderers {
         }.toString()
     }
 
+    @JvmField
     public val TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS_RENDERER: Renderer<InferenceErrorData> = Renderer {
         renderConflictingSubstitutionsInferenceError(it, TabledDescriptorRenderer.create()).toString()
     }
 
+    @JvmField
     public val TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR_RENDERER: Renderer<InferenceErrorData> = Renderer {
         renderParameterConstraintError(it, TabledDescriptorRenderer.create()).toString()
     }
 
+    @JvmField
     public val TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER_RENDERER: Renderer<InferenceErrorData> = Renderer {
         renderNoInformationForParameterError(it, TabledDescriptorRenderer.create()).toString()
     }
 
+    @JvmField
     public val TYPE_INFERENCE_UPPER_BOUND_VIOLATED_RENDERER: Renderer<InferenceErrorData> = Renderer {
         renderUpperBoundViolatedInferenceError(it, TabledDescriptorRenderer.create()).toString()
     }
 
+    @JvmField
     public val TYPE_INFERENCE_CANNOT_CAPTURE_TYPES_RENDERER: Renderer<InferenceErrorData> = Renderer {
         renderCannotCaptureTypeParameterError(it, TabledDescriptorRenderer.create()).toString()
     }
@@ -341,6 +357,7 @@ public object Renderers {
         return result
     }
 
+    @JvmField
     public val CLASSES_OR_SEPARATED: Renderer<Collection<ClassDescriptor>> = Renderer {
         descriptors ->
         StringBuilder {
@@ -360,6 +377,7 @@ public object Renderers {
 
     private fun renderTypes(types: Collection<KotlinType>) = StringUtil.join(types, { RENDER_TYPE.render(it) }, ", ")
 
+    @JvmField
     public val RENDER_COLLECTION_OF_TYPES: Renderer<Collection<KotlinType>> = Renderer { renderTypes(it) }
 
     private fun renderConstraintSystem(constraintSystem: ConstraintSystem, renderTypeBounds: Renderer<TypeBounds>): String {
@@ -372,7 +390,10 @@ public object Renderers {
                ConstraintsUtil.getDebugMessageForStatus(constraintSystem.status)
     }
 
+    @JvmField
     public val RENDER_CONSTRAINT_SYSTEM: Renderer<ConstraintSystem> = Renderer { renderConstraintSystem(it, RENDER_TYPE_BOUNDS) }
+
+    @JvmField
     public val RENDER_CONSTRAINT_SYSTEM_SHORT: Renderer<ConstraintSystem> = Renderer { renderConstraintSystem(it, RENDER_TYPE_BOUNDS_SHORT) }
 
     private fun renderTypeBounds(typeBounds: TypeBounds, short: Boolean): String {
@@ -390,7 +411,10 @@ public object Renderers {
             "$typeVariableName ${StringUtil.join(typeBounds.bounds, renderBound, ", ")}"
     }
 
+    @JvmField
     public val RENDER_TYPE_BOUNDS: Renderer<TypeBounds> = Renderer { renderTypeBounds(it, short = false) }
+
+    @JvmField
     public val RENDER_TYPE_BOUNDS_SHORT: Renderer<TypeBounds> = Renderer { renderTypeBounds(it, short = true) }
 
     private fun renderDebugMessage(message: String, inferenceErrorData: InferenceErrorData) = StringBuilder {
