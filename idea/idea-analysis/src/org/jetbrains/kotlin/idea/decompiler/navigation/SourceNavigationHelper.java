@@ -243,7 +243,7 @@ public class SourceNavigationHelper {
         MutableModuleContext newModuleContext = ContextKt.ContextForNewModule(
                 project, Name.special("<library module>"),
                 ModuleDescriptorKt.ModuleParameters(
-                        JvmPlatform.defaultModuleParameters.getDefaultImports(),
+                        JvmPlatform.INSTANCE.getDefaultModuleParameters().getDefaultImports(),
                         PlatformToKotlinClassMap.EMPTY
                 ),
                 DefaultBuiltIns.getInstance()

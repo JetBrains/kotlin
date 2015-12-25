@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 
 class SyntheticFieldDescriptor private constructor(
@@ -40,6 +39,7 @@ class SyntheticFieldDescriptor private constructor(
     fun getDispatchReceiverForBackend() = propertyDescriptor.dispatchReceiverParameter?.value
 
     companion object {
+        @JvmField
         val NAME = Name.identifier("field")
     }
 }

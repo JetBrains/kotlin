@@ -30,7 +30,10 @@ public class KotlinFileFacadeShortNameIndex private constructor() : StringStubIn
 
     companion object {
         private val KEY = KotlinIndexUtil.createIndexKey(KotlinFileFacadeShortNameIndex::class.java)
+
+        @JvmField
         public val INSTANCE: KotlinFileFacadeShortNameIndex = KotlinFileFacadeShortNameIndex()
+
         @JvmStatic
         public fun getInstance(): KotlinFileFacadeShortNameIndex = INSTANCE
     }

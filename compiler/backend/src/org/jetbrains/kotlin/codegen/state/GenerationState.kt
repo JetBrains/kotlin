@@ -76,6 +76,7 @@ public class GenerationState @JvmOverloads constructor(
         public abstract fun shouldGenerateScript(script: KtScript): Boolean
 
         companion object {
+            @JvmField
             public val GENERATE_ALL: GenerateClassFilter = object : GenerateClassFilter() {
                 override fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject): Boolean = true
 

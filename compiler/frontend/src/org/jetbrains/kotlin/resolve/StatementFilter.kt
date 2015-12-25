@@ -27,6 +27,7 @@ public open class StatementFilter {
         get() = null
 
     companion object {
+        @JvmField
         public val NONE: StatementFilter = StatementFilter()
     }
 }

@@ -31,7 +31,10 @@ public class KotlinFilePartClassIndex private constructor() : StringStubIndexExt
 
     companion object {
         private val KEY = KotlinIndexUtil.createIndexKey(KotlinFilePartClassIndex::class.java)
+
+        @JvmField
         public val INSTANCE: KotlinFilePartClassIndex = KotlinFilePartClassIndex()
+
         @JvmStatic
         public fun getInstance(): KotlinFilePartClassIndex = INSTANCE
     }

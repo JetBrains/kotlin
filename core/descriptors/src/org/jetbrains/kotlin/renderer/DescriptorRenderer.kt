@@ -92,21 +92,25 @@ public abstract class DescriptorRenderer : Renderer<DeclarationDescriptor> {
             return DescriptorRendererImpl(options)
         }
 
+        @JvmField
         public val COMPACT_WITH_MODIFIERS: DescriptorRenderer = withOptions {
             withDefinedIn = false
         }
 
+        @JvmField
         public val COMPACT: DescriptorRenderer = withOptions {
             withDefinedIn = false
             modifiers = emptySet()
         }
 
+        @JvmField
         public val COMPACT_WITH_SHORT_TYPES: DescriptorRenderer = withOptions {
             modifiers = emptySet()
             nameShortness = NameShortness.SHORT
             parameterNameRenderingPolicy = ParameterNameRenderingPolicy.ONLY_NON_SYNTHESIZED
         }
 
+        @JvmField
         public val ONLY_NAMES_WITH_SHORT_TYPES: DescriptorRenderer = withOptions {
             withDefinedIn = false
             modifiers = emptySet()
@@ -119,25 +123,30 @@ public abstract class DescriptorRenderer : Renderer<DeclarationDescriptor> {
             startFromName = true
         }
 
+        @JvmField
         public val FQ_NAMES_IN_TYPES: DescriptorRenderer = withOptions {
             modifiers = DescriptorRendererModifier.ALL
         }
 
+        @JvmField
         public val SHORT_NAMES_IN_TYPES: DescriptorRenderer = withOptions {
             nameShortness = NameShortness.SHORT
             parameterNameRenderingPolicy = ParameterNameRenderingPolicy.ONLY_NON_SYNTHESIZED
         }
 
+        @JvmField
         public val DEBUG_TEXT: DescriptorRenderer = withOptions {
             debugMode = true
             nameShortness = NameShortness.FULLY_QUALIFIED
             modifiers = DescriptorRendererModifier.ALL
         }
 
+        @JvmField
         public val FLEXIBLE_TYPES_FOR_CODE: DescriptorRenderer = withOptions {
             flexibleTypesForCode = true
         }
 
+        @JvmField
         public val HTML: DescriptorRenderer = withOptions {
             textFormat = RenderingFormat.HTML
             modifiers = DescriptorRendererModifier.ALL
@@ -240,7 +249,10 @@ public enum class DescriptorRendererModifier(val includeByDefault: Boolean) {
     ;
 
     companion object {
-        @JvmField val DEFAULTS = DescriptorRendererModifier.values().filter { it.includeByDefault }.toSet()
-        @JvmField val ALL = DescriptorRendererModifier.values().toSet()
+        @JvmField
+        val DEFAULTS = DescriptorRendererModifier.values().filter { it.includeByDefault }.toSet()
+
+        @JvmField
+        val ALL = DescriptorRendererModifier.values().toSet()
     }
 }

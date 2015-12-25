@@ -20,6 +20,7 @@ import java.util.HashMap
 
 public class Services private constructor(private val map: Map<Class<*>, Any>) {
     companion object {
+        @JvmField
         public val EMPTY: Services = Builder().build()
     }
 

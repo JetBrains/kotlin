@@ -74,6 +74,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
 ) : ParameterInfoHandlerWithTabActionSupport<TArgumentList, FunctionDescriptor, TArgument> {
 
     companion object {
+        @JvmField
         val GREEN_BACKGROUND: Color = JBColor(Color(231, 254, 234), Gray._100)
     }
 
