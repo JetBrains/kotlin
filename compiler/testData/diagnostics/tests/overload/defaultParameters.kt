@@ -51,9 +51,9 @@ fun test() {
     h checkType { _<Int>() }
 
 
-    <!OVERLOAD_RESOLUTION_AMBIGUITY!>wrongTwoDefault<!>(1)
+    wrongTwoDefault(1)
 
-    <!CANNOT_COMPLETE_RESOLVE!>wrongWithDefaultGeneric<!>("")
+    wrongWithDefaultGeneric("")
 
     <!UNREACHABLE_CODE!><!OVERLOAD_RESOLUTION_AMBIGUITY!>wrong<!>(<!>null!!<!UNREACHABLE_CODE!>)<!>
 }
