@@ -484,7 +484,7 @@ public fun String.lastIndexOf(string: String, startIndex: Int = lastIndex, ignor
  * @param ignoreCase `true` to ignore character case when comparing strings. By default `false`.
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public operator fun String.contains(seq: CharSequence, ignoreCase: Boolean = false): Boolean =
+public fun String.contains(seq: CharSequence, ignoreCase: Boolean = false): Boolean =
         indexOf(seq.toString(), ignoreCase = ignoreCase) >= 0
 
 
@@ -494,7 +494,7 @@ public operator fun String.contains(seq: CharSequence, ignoreCase: Boolean = fal
  * @param ignoreCase `true` to ignore character case when comparing characters. By default `false`.
  */
 @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
-public operator fun String.contains(char: Char, ignoreCase: Boolean = false): Boolean =
+public fun String.contains(char: Char, ignoreCase: Boolean = false): Boolean =
         indexOf(char, ignoreCase = ignoreCase) >= 0
 
 
