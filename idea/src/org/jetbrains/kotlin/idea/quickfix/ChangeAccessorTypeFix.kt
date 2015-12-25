@@ -14,84 +14,54 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.quickfix;
+package org.jetbrains.kotlin.idea.quickfix
 
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.KotlinBundle;
-import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
-import org.jetbrains.kotlin.idea.util.ShortenReferences;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.types.KotlinType;
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPropertyAccessor
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.types.KotlinType
 
-public class ChangeAccessorTypeFix extends KotlinQuickFixAction<KtPropertyAccessor> {
-    private KotlinType type;
-
-    public ChangeAccessorTypeFix(@NotNull KtPropertyAccessor element) {
-        super(element);
+class ChangeAccessorTypeFix(element: KtPropertyAccessor) : KotlinQuickFixAction<KtPropertyAccessor>(element) {
+    private fun getType(): KotlinType? {
+        val type = (element.property.resolveToDescriptor() as VariableDescriptor).type
+        if (type.isError) return null
+        return type
     }
 
-    @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiFile file) {
-        KtProperty property = PsiTreeUtil.getParentOfType(getElement(), KtProperty.class);
-        if (property == null) return false;
-        KotlinType type = QuickFixUtil.getDeclarationReturnType(property);
-        if (super.isAvailable(project, editor, file) && type != null && !type.isError()) {
-            this.type = type;
-            return true;
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile) = super.isAvailable(project, editor, file) && getType() != null
+
+    override fun getFamilyName() = "Change accessor type"
+
+    override fun getText(): String {
+        val type = getType() ?: return familyName
+        val renderedType = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
+        val target = if (element.isGetter) "getter" else "setter parameter"
+        return "Change $target type to $renderedType"
+    }
+
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val type = getType()!!
+        val newTypeReference = KtPsiFactory(file).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type))
+
+        val typeReference = if (element.isGetter) element.returnTypeReference else element.parameter!!.typeReference
+
+        val insertedTypeRef = typeReference!!.replaced(newTypeReference)
+        ShortenReferences.DEFAULT.process(insertedTypeRef)
+    }
+
+    companion object : KotlinSingleIntentionActionFactory() {
+        public override fun createAction(diagnostic: Diagnostic): ChangeAccessorTypeFix? {
+            return diagnostic.psiElement.getNonStrictParentOfType<KtPropertyAccessor>()?.let { ChangeAccessorTypeFix(it) }
         }
-        return false;
-    }
-
-    @NotNull
-    @Override
-    public String getText() {
-        return KotlinBundle.message(
-                getElement().isGetter() ? "change.getter.type" : "change.setter.type",
-                IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
-        );
-    }
-
-    @NotNull
-    @Override
-    public String getFamilyName() {
-        return KotlinBundle.message("change.accessor.type");
-    }
-
-    @Override
-    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
-        KtTypeReference newTypeReference = KtPsiFactoryKt
-                .KtPsiFactory(file).createType(IdeDescriptorRenderers.SOURCE_CODE.renderType(type));
-
-        KtTypeReference typeReference;
-        if (getElement().isGetter()) {
-            typeReference = getElement().getReturnTypeReference();
-        }
-        else {
-            KtParameter parameter = getElement().getParameter();
-            assert parameter != null;
-            typeReference = parameter.getTypeReference();
-        }
-        assert typeReference != null;
-
-        newTypeReference = (KtTypeReference) typeReference.replace(newTypeReference);
-        ShortenReferences.DEFAULT.process(newTypeReference);
-    }
-
-    public static KotlinSingleIntentionActionFactory createFactory() {
-        return new KotlinSingleIntentionActionFactory() {
-            @Override
-            public KotlinQuickFixAction<KtPropertyAccessor> createAction(@NotNull Diagnostic diagnostic) {
-                KtPropertyAccessor accessor = QuickFixUtil.getParentElementOfType(diagnostic, KtPropertyAccessor.class);
-                if (accessor == null) return null;
-                return new ChangeAccessorTypeFix(accessor);
-            }
-        };
     }
 }

@@ -96,9 +96,8 @@ class QuickFixRegistrar : QuickFixContributor {
 
         USELESS_CAST.registerFactory(RemoveRightPartOfBinaryExpressionFix.createRemoveTypeFromBinaryExpressionFactory("Remove cast"))
 
-        val changeAccessorTypeFactory = ChangeAccessorTypeFix.createFactory()
-        WRONG_SETTER_PARAMETER_TYPE.registerFactory(changeAccessorTypeFactory)
-        WRONG_GETTER_RETURN_TYPE.registerFactory(changeAccessorTypeFactory)
+        WRONG_SETTER_PARAMETER_TYPE.registerFactory(ChangeAccessorTypeFix)
+        WRONG_GETTER_RETURN_TYPE.registerFactory(ChangeAccessorTypeFix)
 
         USELESS_ELVIS.registerFactory(RemoveRightPartOfBinaryExpressionFix.createRemoveElvisOperatorFactory())
 
