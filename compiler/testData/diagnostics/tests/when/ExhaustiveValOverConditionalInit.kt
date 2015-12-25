@@ -3,10 +3,10 @@ fun foo(a: Boolean, b: Boolean): Int {
     if (a) {
         x = 1
     }
-    when (b) {
+    <!DEBUG_INFO_IMPLICIT_EXHAUSTIVE!>when (b) {
         true -> <!VAL_REASSIGNMENT!>x<!> = 2
         false -> x = 3
-    }
+    }<!>
     return x
 }
 

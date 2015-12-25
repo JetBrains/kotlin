@@ -38,6 +38,19 @@ open class ControlFlowInfo<D> internal constructor(protected val map: MutableMap
 class InitControlFlowInfo(map: MutableMap<VariableDescriptor, VariableControlFlowState> = hashMapOf()) :
         ControlFlowInfo<VariableControlFlowState>(map) {
     override fun copy() = InitControlFlowInfo(HashMap(map))
+
+    // this = output of EXHAUSTIVE_WHEN_ELSE instruction
+    // merge = input of MergeInstruction
+    // returns true if definite initialization in when happens here
+    fun checkDefiniteInitializationInWhen(merge: InitControlFlowInfo): Boolean {
+        for (entry in entries) {
+            if (entry.value.initState == InitState.INITIALIZED_EXHAUSTIVELY &&
+                merge[entry.key]?.initState == InitState.INITIALIZED) {
+                return true
+            }
+        }
+        return false
+    }
 }
 
 class UseControlFlowInfo(map: MutableMap<VariableDescriptor, VariableUseState> = hashMapOf()) :

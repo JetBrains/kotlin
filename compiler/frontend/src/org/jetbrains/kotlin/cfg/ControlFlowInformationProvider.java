@@ -713,10 +713,28 @@ public class ControlFlowInformationProvider {
     }
 
     public void markWhenWithoutElse() {
+        final Map<Instruction, Edges<InitControlFlowInfo>> initializers = pseudocodeVariablesData.getVariableInitializers();
         PseudocodeTraverserKt.traverse(
                 pseudocode, TraversalOrder.FORWARD, new ControlFlowInformationProvider.FunctionVoid1<Instruction>() {
                     @Override
                     public void execute(@NotNull Instruction instruction) {
+                        if (instruction instanceof MagicInstruction) {
+                            MagicInstruction magicInstruction = (MagicInstruction) instruction;
+                            if (magicInstruction.getKind() == MagicKind.EXHAUSTIVE_WHEN_ELSE) {
+                                Instruction next = magicInstruction.getNext();
+                                if (next instanceof MergeInstruction) {
+                                    MergeInstruction mergeInstruction = (MergeInstruction) next;
+                                    if (initializers.containsKey(mergeInstruction) && initializers.containsKey(magicInstruction)) {
+                                        InitControlFlowInfo mergeInfo = initializers.get(mergeInstruction).getIncoming();
+                                        InitControlFlowInfo magicInfo = initializers.get(magicInstruction).getOutgoing();
+                                        if (mergeInstruction.getElement() instanceof KtWhenExpression &&
+                                            magicInfo.checkDefiniteInitializationInWhen(mergeInfo)) {
+                                            trace.record(IMPLICIT_EXHAUSTIVE_WHEN, (KtWhenExpression) mergeInstruction.getElement());
+                                        }
+                                    }
+                                }
+                            }
+                        }
                         PseudoValue value = instruction instanceof InstructionWithValue
                                             ? ((InstructionWithValue) instruction).getOutputValue()
                                             : null;
