@@ -318,7 +318,7 @@ public class PropertyCodegen {
                 modifiers |= getVisibilityForSpecialPropertyBackingField(propertyDescriptor, isDelegate);
             }
 
-            if (AsmUtil.isPropertyWithBackingFieldInOuterClass(propertyDescriptor)) {
+            if (JvmAbi.isPropertyWithBackingFieldInOuterClass(propertyDescriptor)) {
                 ImplementationBodyCodegen codegen = (ImplementationBodyCodegen) memberCodegen.getParentCodegen();
                 builder = codegen.v;
                 backingFieldContext = codegen.context;

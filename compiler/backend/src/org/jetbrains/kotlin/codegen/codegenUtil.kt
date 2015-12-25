@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.codegen.context.FieldOwnerContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.SpecialSignatureInfo
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -82,7 +83,7 @@ fun populateCompanionBackingFieldNamesToOuterContextIfNeeded(companion: KtObject
         return
     }
 
-    if (!AsmUtil.isCompanionObjectWithBackingFieldsInOuter(descriptor)) {
+    if (!JvmAbi.isCompanionObjectWithBackingFieldsInOuter(descriptor)) {
         return
     }
     val properties = companion.declarations.filterIsInstance<KtProperty>()

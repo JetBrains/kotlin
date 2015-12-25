@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.KtTokens;
+import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.name.Name;
@@ -1020,7 +1021,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             parentCodegen.generateCompanionObjectInitializer(descriptor);
         }
 
-        if (isCompanionObjectWithBackingFieldsInOuter(descriptor)) {
+        if (JvmAbi.isCompanionObjectWithBackingFieldsInOuter(descriptor)) {
             final ImplementationBodyCodegen parentCodegen = (ImplementationBodyCodegen) getParentCodegen();
             generateInitializers(new Function0<ExpressionCodegen>() {
                 @Override

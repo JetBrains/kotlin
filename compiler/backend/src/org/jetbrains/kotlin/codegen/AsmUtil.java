@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
 import org.jetbrains.kotlin.resolve.DeprecationUtilKt;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.annotations.AnnotationUtilKt;
@@ -682,11 +681,6 @@ public class AsmUtil {
                isObject(propertyDescriptor.getContainingDeclaration());
     }
 
-    public static boolean isPropertyWithBackingFieldInOuterClass(@NotNull PropertyDescriptor propertyDescriptor) {
-        return propertyDescriptor.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&
-               isCompanionObjectWithBackingFieldsInOuter(propertyDescriptor.getContainingDeclaration());
-    }
-
     public static int getVisibilityForSpecialPropertyBackingField(@NotNull PropertyDescriptor propertyDescriptor, boolean isDelegate) {
         boolean isExtensionProperty = propertyDescriptor.getExtensionReceiverParameter() != null;
         if (isDelegate || isExtensionProperty) {
@@ -716,12 +710,6 @@ public class AsmUtil {
                && isCompanionObject(propertyContainer) && isInterface(propertyContainer.getContainingDeclaration())
                && areBothAccessorDefault(propertyDescriptor)
                && getVisibilityForSpecialPropertyBackingField(propertyDescriptor, false) == ACC_PUBLIC;
-    }
-
-    public static boolean isCompanionObjectWithBackingFieldsInOuter(@NotNull DeclarationDescriptor companionObject) {
-        return isCompanionObject(companionObject) &&
-               isClassOrEnumClass(companionObject.getContainingDeclaration()) &&
-               !JavaToKotlinClassMap.INSTANCE.isMappedCompanion((ClassDescriptor) companionObject);
     }
 
     private static boolean areBothAccessorDefault(@NotNull PropertyDescriptor propertyDescriptor) {

@@ -16,13 +16,21 @@
 
 package org.jetbrains.kotlin.load.java;
 
-import kotlin.StringsKt;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.platform.JavaToKotlinClassMap;
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion;
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.CapitalizeDecapitalizeKt;
+
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isClassOrEnumClass;
+import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
 
 public final class JvmAbi {
     /**
@@ -96,6 +104,17 @@ public final class JvmAbi {
     @NotNull
     public static String sanitizeAsJavaIdentifier(@NotNull String str) {
         return StringsKt.replace(str, StringsKt.toRegex("[^\\p{L}\\p{Digit}]"), "_");
+    }
+
+    public static boolean isPropertyWithBackingFieldInOuterClass(@NotNull PropertyDescriptor propertyDescriptor) {
+        return propertyDescriptor.getKind() != CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&
+               isCompanionObjectWithBackingFieldsInOuter(propertyDescriptor.getContainingDeclaration());
+    }
+
+    public static boolean isCompanionObjectWithBackingFieldsInOuter(@NotNull DeclarationDescriptor companionObject) {
+        return isCompanionObject(companionObject) &&
+               isClassOrEnumClass(companionObject.getContainingDeclaration()) &&
+               !JavaToKotlinClassMap.INSTANCE.isMappedCompanion((ClassDescriptor) companionObject);
     }
 }
 
