@@ -87,7 +87,7 @@ public class JavaMethodDescriptor extends SimpleFunctionDescriptorImpl implement
         SimpleFunctionDescriptorImpl descriptor = super.initialize(
                 receiverParameterType, dispatchReceiverParameter, typeParameters, unsubstitutedValueParameters,
                 unsubstitutedReturnType, modality, visibility);
-        setOperator(OperatorChecks.INSTANCE.canBeOperator(descriptor));
+        setOperator(OperatorChecks.INSTANCE.checkOperator(descriptor).isSuccess());
         return descriptor;
     }
 
