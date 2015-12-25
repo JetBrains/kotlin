@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.resolve.calls.smartcasts;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import kotlin.CollectionsKt;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

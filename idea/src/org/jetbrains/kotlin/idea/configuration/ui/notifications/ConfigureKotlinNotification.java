@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.idea.configuration.ui.NonConfiguredKotlinProjectComp
 import javax.swing.event.HyperlinkEvent;
 import java.util.Collection;
 
-import static kotlin.CollectionsKt.first;
+import static kotlin.collections.CollectionsKt.first;
 
 public class ConfigureKotlinNotification extends Notification {
     private static final String TITLE = "Configure Kotlin";

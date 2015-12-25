@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen.state;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
-import kotlin.CollectionsKt;
+import kotlin.collections.CollectionsKt;
 import kotlin.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

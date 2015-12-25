@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.codegen.intrinsics;
 
 import com.google.common.collect.ImmutableList;
-import kotlin.StringsKt;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;

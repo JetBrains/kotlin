@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.maven;
 
 import com.intellij.util.ArrayUtil;
 import com.sampullara.cli.Args;
-import kotlin.CollectionsKt;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;

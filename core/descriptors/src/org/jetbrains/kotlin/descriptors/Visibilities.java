@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.descriptors;
 
-import kotlin.SetsKt;
+import kotlin.collections.SetsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;

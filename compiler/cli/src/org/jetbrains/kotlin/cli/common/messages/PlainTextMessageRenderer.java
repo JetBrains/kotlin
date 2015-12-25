@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.cli.common.messages;
 
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.util.LineSeparator;
-import kotlin.StringsKt;
+import kotlin.text.StringsKt;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.internal.CLibrary;
 import org.jetbrains.annotations.NotNull;

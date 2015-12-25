@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.name;
 
-import kotlin.ArraysKt;
+import kotlin.collections.ArraysKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

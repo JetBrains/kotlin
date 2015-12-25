@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.lazy.descriptors;
 
-import kotlin.CollectionsKt;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker;
 import org.jetbrains.kotlin.descriptors.impl.AbstractLazyTypeParameterDescriptor;

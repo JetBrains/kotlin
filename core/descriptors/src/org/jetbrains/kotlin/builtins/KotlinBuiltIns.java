@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.builtins;
 
-import kotlin.SetsKt;
+import kotlin.collections.SetsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,8 +41,8 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import java.io.InputStream;
 import java.util.*;
 
-import static kotlin.CollectionsKt.*;
-import static kotlin.SetsKt.setOf;
+import static kotlin.collections.CollectionsKt.*;
+import static kotlin.collections.SetsKt.setOf;
 import static org.jetbrains.kotlin.builtins.PrimitiveType.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName;
 

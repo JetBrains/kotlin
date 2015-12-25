@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.maven;
 
 import com.intellij.util.ArrayUtil;
-import kotlin.StringsKt;
+import kotlin.text.StringsKt;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;

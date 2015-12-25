@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.serialization;
 
 import com.google.protobuf.MessageLite;
-import kotlin.CollectionsKt;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

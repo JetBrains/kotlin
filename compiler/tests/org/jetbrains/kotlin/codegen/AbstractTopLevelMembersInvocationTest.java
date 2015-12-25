@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import kotlin.CollectionsKt;
+import kotlin.collections.CollectionsKt;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Processor;

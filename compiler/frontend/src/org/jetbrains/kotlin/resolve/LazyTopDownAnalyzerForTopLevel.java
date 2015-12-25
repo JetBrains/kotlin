@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.resolve;
 
 import com.intellij.psi.PsiElement;
-import kotlin.CollectionsKt;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider;

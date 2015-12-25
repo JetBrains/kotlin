@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil;
 import javax.inject.Inject;
 import java.util.*;
 
-import static kotlin.SetsKt.setOf;
+import static kotlin.collections.SetsKt.setOf;
 import static org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.*;
 
 public final class DeserializedDescriptorResolver {

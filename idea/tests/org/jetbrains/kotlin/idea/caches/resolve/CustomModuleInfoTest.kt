@@ -28,7 +28,7 @@ public class CustomModuleInfoTest : KotlinLightCodeInsightFixtureTestCase() {
 
     fun testModuleInfoForMembersOfLightClassForDecompiledFile() {
         //NOTE: any class with methods from stdlib will do
-        val collectionsKtClass = JavaPsiFacade.getInstance(project).findClass("kotlin.CollectionsKt", GlobalSearchScope.allScope(project))!!
+        val collectionsKtClass = JavaPsiFacade.getInstance(project).findClass("kotlin.collections.CollectionsKt", GlobalSearchScope.allScope(project))!!
         val classModuleInfo = collectionsKtClass.getModuleInfo()
         Assert.assertTrue(classModuleInfo is LibraryInfo)
         val methods = collectionsKtClass.methods
