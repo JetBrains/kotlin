@@ -523,6 +523,12 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/stepping/custom"), Pattern.compile("^(.+)\\.kt$"), true);
         }
 
+        @TestMetadata("crossinlineLiteral.kt")
+        public void testCrossinlineLiteral() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/crossinlineLiteral.kt");
+            doCustomTest(fileName);
+        }
+
         @TestMetadata("funLiteral.kt")
         public void testFunLiteral() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/debugger/tinyApp/src/stepping/custom/funLiteral.kt");

@@ -41,10 +41,12 @@ import com.sun.jdi.request.ClassPrepareRequest
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
+import org.jetbrains.kotlin.codegen.inline.InlineCodegenUtil
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JetTypeMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.NoResolveFileClassesProvider
 import org.jetbrains.kotlin.fileClasses.getFileClassInternalName
@@ -63,9 +65,14 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.utils.addToStdlib.check
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
 import com.intellij.debugger.engine.DebuggerUtils as JDebuggerUtils
@@ -168,7 +175,7 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
 
         val currentLocationClassName = JvmClassName.byFqNameWithoutInnerClasses(FqName(currentLocationFqName)).internalName
         for (literal in literalsOrFunctions) {
-            if (isInlinedLambda(literal, typeMapper.bindingContext)) {
+            if (InlineUtil.isInlinedArgument(literal, typeMapper.bindingContext, true)) {
                 if (isInsideInlineArgument(literal, location, myDebugProcess as DebugProcessImpl)) {
                     return literal
                 }
@@ -201,8 +208,9 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
         try {
             if (location.declaringType().containsKotlinStrata()) {
                 //replace is required for windows
-                referenceInternalName = location.sourcePath().replace('\\','/')
-            } else {
+                referenceInternalName = location.sourcePath().replace('\\', '/')
+            }
+            else {
                 referenceInternalName = defaultInternalName(location)
             }
         }
@@ -353,14 +361,24 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
     private fun getInternalClassNameForElement(notPositionedElement: PsiElement?, typeMapper: JetTypeMapper, file: KtFile, isInLibrary: Boolean): Collection<String> {
         val element = getElementToCalculateClassName(notPositionedElement)
         when {
-            element is KtClassOrObject -> return getJvmInternalNameForImpl(typeMapper, element).toCollection()
+            element is KtClassOrObject -> return getJvmInternalNameForImpl(typeMapper, element).toSet()
             element is KtFunctionLiteral -> {
-                if (isInlinedLambda(element, typeMapper.bindingContext)) {
-                    return getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary)
+                val descriptor = InlineUtil.getInlineArgumentDescriptor(element, typeMapper.bindingContext)
+                if (descriptor != null) {
+                    val classNamesForParent = getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary)
+                    if (descriptor.isCrossinline) {
+                        return findCrossInlineArguments(element, descriptor, typeMapper.bindingContext) + classNamesForParent
+                    }
+                    return classNamesForParent
                 }
                 else {
+                    val crossInlineParameterUsages = element.containsCrossInlineParameterUsages(typeMapper.bindingContext)
+                    if (crossInlineParameterUsages.isNotEmpty()) {
+                        return classNamesForCrossInlineParameters(crossInlineParameterUsages, typeMapper.bindingContext)
+                    }
+
                     val asmType = CodegenBinding.asmTypeForAnonymousClass(typeMapper.bindingContext, element)
-                    return asmType.internalName.toCollection()
+                    return asmType.internalName.toSet()
                 }
             }
             element is KtAnonymousInitializer -> {
@@ -375,7 +393,7 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
                 if (isInPropertyAccessor(notPositionedElement)) {
                     val classOrObject = PsiTreeUtil.getParentOfType(element, KtClassOrObject::class.java)
                     if (classOrObject != null) {
-                        return getJvmInternalNameForImpl(typeMapper, classOrObject).toCollection()
+                        return getJvmInternalNameForImpl(typeMapper, classOrObject).toSet()
                     }
                 }
 
@@ -384,14 +402,18 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
                     return getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary)
                 }
 
-                return getJvmInternalNameForPropertyOwner(typeMapper, descriptor).toCollection()
+                return getJvmInternalNameForPropertyOwner(typeMapper, descriptor).toSet()
             }
             element is KtNamedFunction -> {
                 if (isInlinedLambda(element, typeMapper.bindingContext)) {
                     return getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary)
                 }
 
-                val inlinedCalls = findInlinedCalls(element, typeMapper.bindingContext)
+                val crossInlineParameterUsages = element.containsCrossInlineParameterUsages(typeMapper.bindingContext)
+                if (crossInlineParameterUsages.isNotEmpty()) {
+                    return classNamesForCrossInlineParameters(crossInlineParameterUsages, typeMapper.bindingContext)
+                }
+
                 val parent = getElementToCalculateClassName(element.parent)
                 val parentInternalName = if (parent is KtClassOrObject) {
                     getJvmInternalNameForImpl(typeMapper, parent)
@@ -404,11 +426,12 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
                     NoResolveFileClassesProvider.getFileClassInternalName(file)
                 }
 
-                return (inlinedCalls + parentInternalName.toCollection()).toSet()
+                val inlinedCalls = findInlinedCalls(element, typeMapper.bindingContext)
+                return inlinedCalls + parentInternalName.toSet()
             }
         }
 
-        return NoResolveFileClassesProvider.getFileClassInternalName(file).toCollection()
+        return NoResolveFileClassesProvider.getFileClassInternalName(file).toSet()
     }
 
     private val TYPES_TO_CALCULATE_CLASSNAME: Array<Class<out KtElement>> =
@@ -463,8 +486,7 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
 
     private fun createKeyForTypeMapper(file: KtFile) = NoResolveFileClassesProvider.getFileClassInternalName(file)
 
-
-    private fun findInlinedCalls(function: KtNamedFunction, context: BindingContext): Collection<String> {
+    private fun findInlinedCalls(function: KtNamedFunction, context: BindingContext): Set<String> {
         return runReadAction {
             val result = hashSetOf<String>()
 
@@ -485,9 +507,87 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
         }
     }
 
+    private fun findCrossInlineArguments(argument: KtFunction, parameterDescriptor: ValueParameterDescriptor, context: BindingContext): Set<String> {
+        return runReadAction {
+            val source = parameterDescriptor.source.getPsi() as? KtParameter
+            val functionName = source?.ownerFunction?.name
+            if (functionName != null) {
+                return@runReadAction setOf(getCrossInlineArgumentClassName(argument, functionName, context))
+            }
+            return@runReadAction emptySet()
+        }
+    }
+
+    private fun getCrossInlineArgumentClassName(argument: KtFunction, inlineFunctionName: String, context: BindingContext): String {
+        val anonymousClassNameForArgument = CodegenBinding.asmTypeForAnonymousClass(context, argument).internalName
+        val newName = anonymousClassNameForArgument.substringIndex() + InlineCodegenUtil.INLINE_TRANSFORMATION_SUFFIX + "$" + inlineFunctionName
+        return "$newName$*"
+    }
+
+    private fun KtFunction.containsCrossInlineParameterUsages(context: BindingContext): Collection<ValueParameterDescriptor> {
+        fun KtFunction.hasParameterCall(parameter: KtParameter): Boolean {
+            return ReferencesSearch.search(parameter).any {
+                this.textRange.contains(it.element.textRange)
+            }
+        }
+
+        val inlineFunction = this.parents.firstIsInstanceOrNull<KtNamedFunction>() ?: return emptySet()
+
+        val inlineFunctionDescriptor = context[BindingContext.FUNCTION, inlineFunction]
+        if (inlineFunctionDescriptor == null || !InlineUtil.isInline(inlineFunctionDescriptor)) return emptySet()
+
+        return inlineFunctionDescriptor.valueParameters
+                .filter { it.isCrossinline }
+                .mapNotNull {
+                    val psiParameter = it.source.getPsi() as? KtParameter
+                    if (psiParameter != null && this@containsCrossInlineParameterUsages.hasParameterCall(psiParameter))
+                        it
+                    else
+                        null
+                }
+    }
+
+    private fun classNamesForCrossInlineParameters(usedParameters: Collection<ValueParameterDescriptor>, context: BindingContext): Set<String> {
+        // We could calculate className only for one of parameters, because we add '*' to match all crossInlined parameter calls
+        val parameter = usedParameters.first()
+        val result = hashSetOf<String>()
+        val inlineFunction = parameter.containingDeclaration.source.getPsi() as? KtNamedFunction ?: return emptySet()
+
+        ReferencesSearch.search(inlineFunction).forEach {
+            if (!it.isImportUsage()) {
+                val call = (it.element as? KtExpression)?.let { KtPsiUtil.getParentCallIfPresent(it) }
+                if (call != null) {
+                    val resolvedCall = call.getResolvedCall(context)
+                    val argument = resolvedCall?.valueArguments?.get(parameter)
+                    if (argument != null) {
+                        val argumentExpression = getArgumentExpression(argument.arguments.first())
+                        if (argumentExpression is KtFunction) {
+                            result.add(getCrossInlineArgumentClassName(argumentExpression, inlineFunction.name!!, context))
+                        }
+                    }
+                }
+            }
+            true
+        }
+
+        return result
+    }
+
+    private fun getArgumentExpression(it: ValueArgument) = (it.getArgumentExpression() as? KtLambdaExpression)?.functionLiteral ?: it.getArgumentExpression()
+
+    private fun String.substringIndex(): String {
+        if (lastIndexOf("$") < 0) return this
+
+        val suffix = substringAfterLast("$")
+        if (suffix.all { it.isDigit() }) {
+            return substringBeforeLast("$") + "$"
+        }
+        return this
+    }
+
     private fun ReferenceType.containsKotlinStrata() = availableStrata().contains("Kotlin")
 
-    private fun String?.toCollection() = if (this == null) emptySet() else setOf(this)
+    private fun String?.toSet() = if (this == null) emptySet() else setOf(this)
 
     companion object {
         public fun createTypeMapper(file: KtFile): JetTypeMapper {
