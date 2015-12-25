@@ -85,6 +85,7 @@ public class KotlinHighlightingColors {
     public static final TextAttributesKey SMART_CAST_VALUE = createTextAttributesKey("KOTLIN_SMART_CAST_VALUE");
     public static final TextAttributesKey SMART_CONSTANT = createTextAttributesKey("KOTLIN_SMART_CONSTANT");
     public static final TextAttributesKey SMART_CAST_RECEIVER = createTextAttributesKey("KOTLIN_SMART_CAST_RECEIVER");
+    public static final TextAttributesKey IMPLICIT_EXHAUSTIVE_WHEN = createTextAttributesKey("KOTLIN_IMPLICIT_EXHAUSTIVE_WHEN");
     public static final TextAttributesKey LABEL = createTextAttributesKey("KOTLIN_LABEL");
     public static final TextAttributesKey DEBUG_INFO = createTextAttributesKey("KOTLIN_DEBUG_INFO");
     public static final TextAttributesKey RESOLVED_TO_ERROR = createTextAttributesKey("KOTLIN_RESOLVED_TO_ERROR");

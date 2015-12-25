@@ -40,6 +40,11 @@
       <option name="BACKGROUND" value="dbffdb" />
     </value>
   </option>
+  <option name="KOTLIN_IMPLICIT_EXHAUSTIVE_WHEN">
+    <value>
+      <option name="BACKGROUND" value="d3faf8" />
+    </value>
+  </option>
   <option name="KOTLIN_LABEL">
     <value>
       <option name="FOREGROUND" value="4a86e8" />

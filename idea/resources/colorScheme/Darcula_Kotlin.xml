@@ -40,6 +40,11 @@
       <option name="BACKGROUND" value="223c23" />
     </value>
   </option>
+  <option name="KOTLIN_IMPLICIT_EXHAUSTIVE_WHEN">
+    <value>
+      <option name="BACKGROUND" value="0321ab" />
+    </value>
+  </option>
   <option name="KOTLIN_LABEL">
     <value>
       <option name="FOREGROUND" value="467cda" />
