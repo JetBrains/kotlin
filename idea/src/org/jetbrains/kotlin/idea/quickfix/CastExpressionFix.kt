@@ -14,116 +14,56 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.quickfix;
+package org.jetbrains.kotlin.idea.quickfix
 
-import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiFile;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters2;
-import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters3;
-import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.idea.KotlinBundle;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers;
-import org.jetbrains.kotlin.idea.util.ShortenReferences;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm;
-import org.jetbrains.kotlin.types.FlexibleTypesKt;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
+import org.jetbrains.kotlin.idea.util.ShortenReferences
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.flexibility
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
-public class CastExpressionFix extends KotlinQuickFixAction<KtExpression> {
-    private final KotlinType type;
+class CastExpressionFix(element: KtExpression, private val type: KotlinType) : KotlinQuickFixAction<KtExpression>(element) {
+    override fun getFamilyName() = "Cast expression"
+    override fun getText() = "Cast expression '${element.text}' to '${IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)}'"
 
-    public CastExpressionFix(@NotNull KtExpression element, @NotNull KotlinType type) {
-        super(element);
-        this.type = type;
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        if (!super.isAvailable(project, editor, file)) return false
+
+        val expressionType = element.analyze(BodyResolveMode.PARTIAL).getType(element) ?: return false
+        return type.isSubtypeOf(expressionType) || expressionType.isSubtypeOf(type) // donwcast/upcast
     }
 
-    @NotNull
-    @Override
-    public String getText() {
-        return KotlinBundle.message(
-                "cast.expression.to.type",
-                getElement().getText(),
-                IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.renderType(type)
-        );
+    public override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val renderedType = IdeDescriptorRenderers.SOURCE_CODE.renderType(type)
+        val expressionToInsert = KtPsiFactory(file).createExpressionByPattern("$0 as $1", element, renderedType)
+        val newExpression = element.replaced(expressionToInsert)
+        ShortenReferences.DEFAULT.process((KtPsiUtil.safeDeparenthesize(newExpression) as KtBinaryExpressionWithTypeRHS).right!!)
+        editor?.caretModel?.moveToOffset(newExpression.endOffset)
     }
 
-    @NotNull
-    @Override
-    public String getFamilyName() {
-        return KotlinBundle.message("cast.expression.family");
+    abstract class Factory : KotlinSingleIntentionActionFactoryWithDelegate<KtExpression, KotlinType>() {
+        override fun getElementOfInterest(diagnostic: Diagnostic) = diagnostic.psiElement as? KtExpression
+        override fun createFix(originalElement: KtExpression, data: KotlinType) = CastExpressionFix(originalElement, data)
     }
 
-    @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiFile file) {
-        if (!super.isAvailable(project, editor, file)) return false;
-        KotlinType expressionType = ResolutionUtils.analyze(getElement()).getType(getElement());
-        return expressionType != null
-               && (
-                       KotlinTypeChecker.DEFAULT.isSubtypeOf(type, expressionType) // downcast
-                       || KotlinTypeChecker.DEFAULT.isSubtypeOf(expressionType, type) // upcast
-               );
+    object SmartCastImpossibleFactory: Factory() {
+        override fun extractFixData(element: KtExpression, diagnostic: Diagnostic) = Errors.SMARTCAST_IMPOSSIBLE.cast(diagnostic).a
     }
 
-    @Override
-    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
-        String renderedType = IdeDescriptorRenderers.SOURCE_CODE.renderType(type);
-
-        KtPsiFactory psiFactory = KtPsiFactoryKt.KtPsiFactory(file);
-        KtBinaryExpressionWithTypeRHS castExpression =
-                (KtBinaryExpressionWithTypeRHS) psiFactory.createExpression("(" + getElement().getText() + ") as " + renderedType);
-        if (KtPsiUtil.areParenthesesUseless((KtParenthesizedExpression) castExpression.getLeft())) {
-            castExpression = (KtBinaryExpressionWithTypeRHS) psiFactory.createExpression(getElement().getText() + " as " + renderedType);
+    object GenericVarianceConversion : Factory() {
+        override fun extractFixData(element: KtExpression, diagnostic: Diagnostic): KotlinType? {
+            return ErrorsJvm.JAVA_TYPE_MISMATCH.cast(diagnostic).b.flexibility().upperBound
         }
-
-        KtParenthesizedExpression castExpressionInParentheses =
-                (KtParenthesizedExpression) getElement().replace(psiFactory.createExpression("(" + castExpression.getText() + ")"));
-
-        if (KtPsiUtil.areParenthesesUseless(castExpressionInParentheses)) {
-            castExpression = (KtBinaryExpressionWithTypeRHS) castExpressionInParentheses.replace(castExpression);
-        }
-        else {
-            castExpression = (KtBinaryExpressionWithTypeRHS) castExpressionInParentheses.getExpression();
-            assert castExpression != null;
-        }
-
-        KtTypeReference typeRef = castExpression.getRight();
-        assert typeRef != null;
-        ShortenReferences.DEFAULT.process(typeRef);
-    }
-
-    @NotNull
-    public static KotlinSingleIntentionActionFactory createFactoryForSmartCastImpossible() {
-        return new KotlinSingleIntentionActionFactory() {
-            @Nullable
-            @Override
-            public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                DiagnosticWithParameters3<KtExpression, KotlinType, String, String> diagnosticWithParameters =
-                        Errors.SMARTCAST_IMPOSSIBLE.cast(diagnostic);
-                return new CastExpressionFix(diagnosticWithParameters.getPsiElement(), diagnosticWithParameters.getA());
-            }
-        };
-    }
-
-    @NotNull
-    public static KotlinSingleIntentionActionFactory createFactoryForGenericVarianceConversion() {
-        return new KotlinSingleIntentionActionFactory() {
-            @Nullable
-            @Override
-            public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                DiagnosticWithParameters2<KtExpression, KotlinType, KotlinType> diagnosticWithParameters =
-                        ErrorsJvm.JAVA_TYPE_MISMATCH.cast(diagnostic);
-                return new CastExpressionFix(
-                        diagnosticWithParameters.getPsiElement(), FlexibleTypesKt.flexibility(diagnosticWithParameters.getB()).getUpperBound()
-                );
-            }
-        };
     }
 }

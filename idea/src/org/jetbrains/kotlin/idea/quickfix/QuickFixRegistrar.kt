@@ -288,7 +288,7 @@ class QuickFixRegistrar : QuickFixContributor {
         NULL_FOR_NONNULL_TYPE.registerFactory(factoryForTypeMismatchError)
         CONSTANT_EXPECTED_TYPE_MISMATCH.registerFactory(factoryForTypeMismatchError)
 
-        SMARTCAST_IMPOSSIBLE.registerFactory(CastExpressionFix.createFactoryForSmartCastImpossible())
+        SMARTCAST_IMPOSSIBLE.registerFactory(CastExpressionFix.SmartCastImpossibleFactory)
 
         PLATFORM_CLASS_MAPPED_TO_KOTLIN.registerFactory(MapPlatformClassToKotlinFix)
 
@@ -331,7 +331,7 @@ class QuickFixRegistrar : QuickFixContributor {
 
         NO_REFLECTION_IN_CLASS_PATH.registerFactory(AddReflectionQuickFix)
 
-        ErrorsJvm.JAVA_TYPE_MISMATCH.registerFactory(CastExpressionFix.createFactoryForGenericVarianceConversion())
+        ErrorsJvm.JAVA_TYPE_MISMATCH.registerFactory(CastExpressionFix.GenericVarianceConversion)
 
         UPPER_BOUND_VIOLATED.registerFactory(AddGenericUpperBoundFix.Factory)
         TYPE_INFERENCE_UPPER_BOUND_VIOLATED.registerFactory(AddGenericUpperBoundFix.Factory)
