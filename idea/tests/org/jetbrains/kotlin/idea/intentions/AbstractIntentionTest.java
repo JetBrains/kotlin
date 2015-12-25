@@ -29,7 +29,6 @@ import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Convertor;
-import junit.framework.ComparisonFailure;
 import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil;
@@ -41,6 +40,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.junit.Assert;
+import org.junit.ComparisonFailure;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -95,7 +95,7 @@ public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
         }
         sourceFilePaths.add(path);
 
-        Map<String, PsiFile> pathToFile = ContainerUtil.newMapFromKeys(
+        Map<String, PsiFile> pathToFiles = ContainerUtil.newMapFromKeys(
                 sourceFilePaths.iterator(),
                 new Convertor<String, PsiFile>() {
                     @Override
@@ -127,7 +127,7 @@ public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
                 DirectiveBasedActionUtils.INSTANCE.checkForUnexpectedErrors((KtFile) getFile());
             }
 
-            doTestFor(pathToFile, intentionAction, fileText);
+            doTestFor(path, pathToFiles, intentionAction, fileText);
 
             if (getFile() instanceof KtFile && !InTextDirectivesUtils.isDirectiveDefined(fileText, "// SKIP_ERRORS_AFTER")) {
                 DirectiveBasedActionUtils.INSTANCE.checkForUnexpectedErrors((KtFile) getFile());
@@ -140,7 +140,7 @@ public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
         }
     }
 
-    private void doTestFor(Map<String, PsiFile> pathToFile, final IntentionAction intentionAction, String fileText) throws Exception {
+    private void doTestFor(String mainFilePath, Map<String, PsiFile> pathToFiles, final IntentionAction intentionAction, String fileText) throws Exception {
         String isApplicableString = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// IS_APPLICABLE: ");
         boolean isApplicableExpected = isApplicableString == null || isApplicableString.equals("true");
 
@@ -171,17 +171,20 @@ public abstract class AbstractIntentionTest extends KotlinCodeInsightTestCase {
                         }
                 );
                 // Don't bother checking if it should have failed.
-                if (shouldFailString.isEmpty()) {
-                    for (Map.Entry<String, PsiFile> entry: pathToFile.entrySet()) {
-                        //noinspection AssignmentToStaticFieldFromInstanceMethod
-                        myFile = entry.getValue();
-                        String canonicalPathToExpectedFile = PathUtil.getCanonicalPath(entry.getKey() + ".after");
-
-                        try {
-                            checkResultByFile(canonicalPathToExpectedFile);
+                if (shouldFailString == null) {
+                    for (Map.Entry<String, PsiFile> entry: pathToFiles.entrySet()) {
+                        String filePath = entry.getKey();
+                        String canonicalPathToExpectedFile = PathUtil.getCanonicalPath(filePath + ".after");
+                        if (filePath.equals(mainFilePath)) {
+                            try {
+                                checkResultByFile(canonicalPathToExpectedFile);
+                            }
+                            catch (ComparisonFailure e) {
+                                KotlinTestUtils.assertEqualsToFile(new File(canonicalPathToExpectedFile), getEditor().getDocument().getText());
+                            }
                         }
-                        catch (ComparisonFailure e) {
-                            KotlinTestUtils.assertEqualsToFile(new File(canonicalPathToExpectedFile), getEditor().getDocument().getText());
+                        else {
+                            KotlinTestUtils.assertEqualsToFile(new File(canonicalPathToExpectedFile), entry.getValue().getText());
                         }
                     }
                 }
