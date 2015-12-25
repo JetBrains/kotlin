@@ -16,6 +16,35 @@
 
 package org.jetbrains.kotlin.cfg
 
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import java.util.*
+
+open class ControlFlowInfo<D> internal constructor(protected val map: MutableMap<VariableDescriptor, D> = hashMapOf()) :
+        MutableMap<VariableDescriptor, D> by map {
+    open fun copy() = ControlFlowInfo(HashMap(map))
+
+    fun retainAll(predicate: (VariableDescriptor) -> Boolean): ControlFlowInfo<D> {
+        map.keys.retainAll(predicate)
+        return this
+    }
+
+    override fun equals(other: Any?) = map == (other as? ControlFlowInfo<*>)?.map
+
+    override fun hashCode() = map.hashCode()
+
+    override fun toString() = map.toString()
+}
+
+class InitControlFlowInfo(map: MutableMap<VariableDescriptor, VariableControlFlowState> = hashMapOf()) :
+        ControlFlowInfo<VariableControlFlowState>(map) {
+    override fun copy() = InitControlFlowInfo(HashMap(map))
+}
+
+class UseControlFlowInfo(map: MutableMap<VariableDescriptor, VariableUseState> = hashMapOf()) :
+        ControlFlowInfo<VariableUseState>(map) {
+    override fun copy() = UseControlFlowInfo(HashMap(map))
+}
+
 enum class InitState(private val s: String) {
     // Definitely initialized
     INITIALIZED("I"),
