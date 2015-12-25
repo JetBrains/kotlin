@@ -56,14 +56,16 @@ public class ExtraSteppingFilter : com.intellij.debugger.engine.ExtraSteppingFil
 
         if (sourcePosition == null) return false
 
-        val className = positionManager.classNameForPosition(sourcePosition)?.replace('/', '.') ?: return false
+        val classNames = positionManager.classNamesForPosition(sourcePosition).map { it.replace('/', '.') }
 
-        val settings = DebuggerSettings.getInstance()
-        if (settings.TRACING_FILTERS_ENABLED) {
-            for (filter in settings.getSteppingFilters()) {
-                if (filter.isEnabled()) {
-                    if (filter.matches(className)) {
-                        return true;
+        classNames.forEach { className ->
+            val settings = DebuggerSettings.getInstance()
+            if (settings.TRACING_FILTERS_ENABLED) {
+                for (filter in settings.steppingFilters) {
+                    if (filter.isEnabled) {
+                        if (filter.matches(className)) {
+                            return true
+                        }
                     }
                 }
             }

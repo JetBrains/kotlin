@@ -70,8 +70,6 @@ import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
 import com.intellij.debugger.engine.DebuggerUtils as JDebuggerUtils
 
-class PositionedElement(val className: String?, val element: PsiElement?)
-
 public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiRequestPositionManager, PositionManagerEx() {
 
     private val myTypeMappers = WeakHashMap<String, CachedValue<JetTypeMapper>>()
@@ -177,8 +175,8 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
                 continue
             }
 
-            val internalClassName = getInternalClassNameForElement(literal.firstChild, typeMapper, file, isInLibrary).className
-            if (internalClassName == currentLocationClassName) {
+            val internalClassNames = getInternalClassNameForElement(literal.firstChild, typeMapper, file, isInLibrary)
+            if (internalClassNames.any { it == currentLocationClassName }) {
                 return literal
             }
         }
@@ -233,7 +231,7 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
 
             if (!ProjectRootsUtil.isInProjectOrLibSource(psiFile)) return result
 
-            val names = classNameForPositionAndInlinedOnes(sourcePosition)
+            val names = classNamesForPositionAndInlinedOnes(sourcePosition)
             for (name in names) {
                 result.addAll(myDebugProcess.virtualMachineProxy.classesByName(name))
             }
@@ -252,14 +250,10 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
         throw NoDataException.INSTANCE
     }
 
-    private fun classNameForPositionAndInlinedOnes(sourcePosition: SourcePosition): List<String> {
+    private fun classNamesForPositionAndInlinedOnes(sourcePosition: SourcePosition): List<String> {
         val result = hashSetOf<String>()
-        val name = classNameForPosition(sourcePosition)
-        if (name != null) {
-            result.add(name)
-        }
-        val list = findInlinedCalls(sourcePosition.elementAt, sourcePosition.file)
-        result.addAll(list)
+        val names = classNamesForPosition(sourcePosition)
+        result.addAll(names)
 
         val lambdas = findLambdas(sourcePosition)
         result.addAll(lambdas)
@@ -267,33 +261,33 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
         return result.toReadOnlyList();
     }
 
-    private fun findLambdas(sourcePosition: SourcePosition): List<String> {
+    private fun findLambdas(sourcePosition: SourcePosition): Collection<String> {
         return runReadAction {
             val lambdas = getLambdasAtLineIfAny(sourcePosition)
             val file = sourcePosition.file.containingFile as KtFile
             val isInLibrary = LibraryUtil.findLibraryEntry(file.virtualFile, file.project) != null
-            lambdas.mapNotNull {
+            lambdas.flatMap {
                 val typeMapper = if (!isInLibrary) prepareTypeMapper(file) else createTypeMapperForLibraryFile(it, file)
-                getInternalClassNameForElement(it, typeMapper, file, isInLibrary).className
+                getInternalClassNameForElement(it, typeMapper, file, isInLibrary)
             }
         }
     }
 
-    public fun classNameForPosition(sourcePosition: SourcePosition): String? {
-        val psiElement = runReadAction { sourcePosition.elementAt } ?: return null
-        return classNameForPosition(psiElement)
+    public fun classNamesForPosition(sourcePosition: SourcePosition): Collection<String> {
+        val psiElement = runReadAction { sourcePosition.elementAt } ?: return emptyList()
+        return classNamesForPosition(psiElement)
     }
 
-    private fun classNameForPosition(element: PsiElement): String? {
+    private fun classNamesForPosition(element: PsiElement): Collection<String> {
         return runReadAction {
             if (DumbService.getInstance(element.project).isDumb) {
-                null
+                emptySet()
             }
             else {
                 val file = element.containingFile as KtFile
                 val isInLibrary = LibraryUtil.findLibraryEntry(file.virtualFile, file.project) != null
                 val typeMapper = if (!isInLibrary) prepareTypeMapper(file) else createTypeMapperForLibraryFile(element, file)
-                getInternalClassNameForElement(element, typeMapper, file, isInLibrary).className
+                getInternalClassNameForElement(element, typeMapper, file, isInLibrary)
             }
         }
     }
@@ -335,11 +329,7 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
 
     @Deprecated("Since Idea 14.0.3 use createPrepareRequests fun")
     override fun createPrepareRequest(classPrepareRequestor: ClassPrepareRequestor, sourcePosition: SourcePosition): ClassPrepareRequest? {
-        if (sourcePosition.file !is KtFile) {
-            throw NoDataException.INSTANCE
-        }
-        val className = classNameForPosition(sourcePosition) ?: return null
-        return myDebugProcess.requestsManager.createClassPrepareRequest(classPrepareRequestor, className.replace('/', '.'))
+        return createPrepareRequests(classPrepareRequestor, sourcePosition).firstOrNull()
     }
 
     override fun createPrepareRequests(requestor: ClassPrepareRequestor, position: SourcePosition): List<ClassPrepareRequest> {
@@ -347,7 +337,7 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
             throw NoDataException.INSTANCE
         }
 
-        return classNameForPositionAndInlinedOnes(position).mapNotNull {
+        return classNamesForPositionAndInlinedOnes(position).mapNotNull {
             className -> myDebugProcess.requestsManager.createClassPrepareRequest(requestor, className.replace('/', '.'))
         }
     }
@@ -360,24 +350,24 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
         myTypeMappers.put(key, value)
     }
 
-    private fun getInternalClassNameForElement(notPositionedElement: PsiElement?, typeMapper: JetTypeMapper, file: KtFile, isInLibrary: Boolean): PositionedElement {
+    private fun getInternalClassNameForElement(notPositionedElement: PsiElement?, typeMapper: JetTypeMapper, file: KtFile, isInLibrary: Boolean): Collection<String> {
         val element = getElementToCalculateClassName(notPositionedElement)
         when {
-            element is KtClassOrObject -> return PositionedElement(getJvmInternalNameForImpl(typeMapper, element), element)
+            element is KtClassOrObject -> return getJvmInternalNameForImpl(typeMapper, element).toCollection()
             element is KtFunctionLiteral -> {
                 if (isInlinedLambda(element, typeMapper.bindingContext)) {
                     return getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary)
                 }
                 else {
                     val asmType = CodegenBinding.asmTypeForAnonymousClass(typeMapper.bindingContext, element)
-                    return PositionedElement(asmType.internalName, element)
+                    return asmType.internalName.toCollection()
                 }
             }
             element is KtAnonymousInitializer -> {
                 val parent = getElementToCalculateClassName(element.parent)
                 // Class-object initializer
                 if (parent is KtObjectDeclaration && parent.isCompanion()) {
-                    return PositionedElement(getInternalClassNameForElement(parent.parent, typeMapper, file, isInLibrary).className, parent)
+                    return getInternalClassNameForElement(parent.parent, typeMapper, file, isInLibrary)
                 }
                 return getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary)
             }
@@ -385,7 +375,7 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
                 if (isInPropertyAccessor(notPositionedElement)) {
                     val classOrObject = PsiTreeUtil.getParentOfType(element, KtClassOrObject::class.java)
                     if (classOrObject != null) {
-                        return PositionedElement(getJvmInternalNameForImpl(typeMapper, classOrObject), element)
+                        return getJvmInternalNameForImpl(typeMapper, classOrObject).toCollection()
                     }
                 }
 
@@ -394,25 +384,31 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
                     return getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary)
                 }
 
-                return PositionedElement(getJvmInternalNameForPropertyOwner(typeMapper, descriptor), element)
+                return getJvmInternalNameForPropertyOwner(typeMapper, descriptor).toCollection()
             }
             element is KtNamedFunction -> {
                 if (isInlinedLambda(element, typeMapper.bindingContext)) {
                     return getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary)
                 }
 
+                val inlinedCalls = findInlinedCalls(element, typeMapper.bindingContext)
                 val parent = getElementToCalculateClassName(element.parent)
-                if (parent is KtClassOrObject) {
-                    return PositionedElement(getJvmInternalNameForImpl(typeMapper, parent), element)
+                val parentInternalName = if (parent is KtClassOrObject) {
+                    getJvmInternalNameForImpl(typeMapper, parent)
                 }
                 else if (parent != null) {
                     val asmType = CodegenBinding.asmTypeForAnonymousClass(typeMapper.bindingContext, element)
-                    return PositionedElement(asmType.internalName, element)
+                    asmType.internalName
                 }
+                else {
+                    NoResolveFileClassesProvider.getFileClassInternalName(file)
+                }
+
+                return (inlinedCalls + parentInternalName.toCollection()).toSet()
             }
         }
 
-        return PositionedElement(NoResolveFileClassesProvider.getFileClassInternalName(file), element)
+        return NoResolveFileClassesProvider.getFileClassInternalName(file).toCollection()
     }
 
     private val TYPES_TO_CALCULATE_CLASSNAME: Array<Class<out KtElement>> =
@@ -468,29 +464,18 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
     private fun createKeyForTypeMapper(file: KtFile) = NoResolveFileClassesProvider.getFileClassInternalName(file)
 
 
-    private fun findInlinedCalls(element: PsiElement?, jetFile: PsiFile?): List<String> {
-        if (element == null || jetFile !is KtFile) {
-            return emptyList()
-        }
-
+    private fun findInlinedCalls(function: KtNamedFunction, context: BindingContext): Collection<String> {
         return runReadAction {
-            val result = arrayListOf<String>()
-            val isInLibrary = LibraryUtil.findLibraryEntry(jetFile.virtualFile, jetFile.project) != null
-            val typeMapper = if (!isInLibrary) prepareTypeMapper(jetFile) else createTypeMapperForLibraryFile(element, jetFile)
-            val psiElement = getInternalClassNameForElement(element, typeMapper, jetFile, isInLibrary).element;
+            val result = hashSetOf<String>()
 
-            if (psiElement is KtNamedFunction &&
-                InlineUtil.isInline(typeMapper.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, psiElement))
-            ) {
-                ReferencesSearch.search(psiElement).forEach {
+            if (InlineUtil.isInline(context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, function))) {
+                ReferencesSearch.search(function).forEach {
                     if (!it.isImportUsage()) {
                         val usage = it.element
                         if (usage is KtElement) {
                             //TODO recursive search
-                            val name = classNameForPosition(usage)
-                            if (name != null) {
-                                result.add(name)
-                            }
+                            val names = classNamesForPosition(usage)
+                            result.addAll(names)
                         }
                     }
                     true
@@ -501,6 +486,8 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
     }
 
     private fun ReferenceType.containsKotlinStrata() = availableStrata().contains("Kotlin")
+
+    private fun String?.toCollection() = if (this == null) emptySet() else setOf(this)
 
     companion object {
         public fun createTypeMapper(file: KtFile): JetTypeMapper {
