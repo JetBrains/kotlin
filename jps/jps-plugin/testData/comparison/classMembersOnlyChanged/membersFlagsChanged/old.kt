@@ -20,7 +20,9 @@ abstract class A {
     final fun finalFlagUnchangedFun() {}
 
     fun infixFlagAddedFun() {}
+    @Suppress("INAPPLICABLE_INFIX_MODIFIER")
     infix fun infixFlagRemovedFun() {}
+    @Suppress("INAPPLICABLE_INFIX_MODIFIER")
     infix fun infixFlagUnchangedFun() {}
 
     fun inlineFlagAddedFun() {}
@@ -46,7 +48,9 @@ abstract class A {
     open fun openFlagUnchangedFun() {}
 
     fun operatorFlagAddedFun() {}
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
     operator fun operatorFlagRemovedFun() {}
+    @Suppress("INAPPLICABLE_OPERATOR_MODIFIER")
     operator fun operatorFlagUnchangedFun() {}
 
     val privateFlagAddedVal = ""
