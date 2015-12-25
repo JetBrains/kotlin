@@ -360,130 +360,113 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
         myTypeMappers.put(key, value)
     }
 
-    companion object {
-        public fun createTypeMapper(file: KtFile): JetTypeMapper {
-            val project = file.project
-
-            val analysisResult = file.analyzeFullyAndGetResult()
-            analysisResult.throwIfError()
-
-            val state = GenerationState(
-                    project,
-                    ClassBuilderFactories.THROW_EXCEPTION,
-                    analysisResult.moduleDescriptor,
-                    analysisResult.bindingContext,
-                    listOf(file))
-            state.beforeCompile()
-            return state.typeMapper
-        }
-
-        public fun getInternalClassNameForElement(notPositionedElement: PsiElement?, typeMapper: JetTypeMapper, file: KtFile, isInLibrary: Boolean): PositionedElement {
-            val element = getElementToCalculateClassName(notPositionedElement)
-            when {
-                element is KtClassOrObject -> return PositionedElement(getJvmInternalNameForImpl(typeMapper, element), element)
-                element is KtFunctionLiteral -> {
-                    if (isInlinedLambda(element, typeMapper.bindingContext)) {
-                        return getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary)
-                    }
-                    else {
-                        val asmType = CodegenBinding.asmTypeForAnonymousClass(typeMapper.bindingContext, element)
-                        return PositionedElement(asmType.internalName, element)
-                    }
-                }
-                element is KtAnonymousInitializer -> {
-                    val parent = getElementToCalculateClassName(element.parent)
-                    // Class-object initializer
-                    if (parent is KtObjectDeclaration && parent.isCompanion()) {
-                        return PositionedElement(getInternalClassNameForElement(parent.parent, typeMapper, file, isInLibrary).className, parent)
-                    }
+    private fun getInternalClassNameForElement(notPositionedElement: PsiElement?, typeMapper: JetTypeMapper, file: KtFile, isInLibrary: Boolean): PositionedElement {
+        val element = getElementToCalculateClassName(notPositionedElement)
+        when {
+            element is KtClassOrObject -> return PositionedElement(getJvmInternalNameForImpl(typeMapper, element), element)
+            element is KtFunctionLiteral -> {
+                if (isInlinedLambda(element, typeMapper.bindingContext)) {
                     return getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary)
                 }
-                element is KtProperty && (!element.isTopLevel || !isInLibrary) -> {
-                    if (isInPropertyAccessor(notPositionedElement)) {
-                        val classOrObject = PsiTreeUtil.getParentOfType(element, KtClassOrObject::class.java)
-                        if (classOrObject != null) {
-                            return PositionedElement(getJvmInternalNameForImpl(typeMapper, classOrObject), element)
-                        }
-                    }
-
-                    val descriptor = typeMapper.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
-                    if (descriptor !is PropertyDescriptor) {
-                        return getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary)
-                    }
-
-                    return PositionedElement(getJvmInternalNameForPropertyOwner(typeMapper, descriptor), element)
-                }
-                element is KtNamedFunction -> {
-                    if (isInlinedLambda(element, typeMapper.bindingContext)) {
-                        return getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary)
-                    }
-
-                    val parent = getElementToCalculateClassName(element.parent)
-                    if (parent is KtClassOrObject) {
-                        return PositionedElement(getJvmInternalNameForImpl(typeMapper, parent), element)
-                    }
-                    else if (parent != null) {
-                        val asmType = CodegenBinding.asmTypeForAnonymousClass(typeMapper.bindingContext, element)
-                        return PositionedElement(asmType.internalName, element)
-                    }
+                else {
+                    val asmType = CodegenBinding.asmTypeForAnonymousClass(typeMapper.bindingContext, element)
+                    return PositionedElement(asmType.internalName, element)
                 }
             }
-
-            return PositionedElement(NoResolveFileClassesProvider.getFileClassInternalName(file), element)
-        }
-
-        private val TYPES_TO_CALCULATE_CLASSNAME: Array<Class<out KtElement>> =
-                arrayOf(KtClassOrObject::class.java,
-                        KtFunctionLiteral::class.java,
-                        KtNamedFunction::class.java,
-                        KtProperty::class.java,
-                        KtAnonymousInitializer::class.java)
-
-        private fun getElementToCalculateClassName(notPositionedElement: PsiElement?): KtElement? {
-            if (notPositionedElement?.javaClass as Class<*> in TYPES_TO_CALCULATE_CLASSNAME) return notPositionedElement as KtElement
-
-            return PsiTreeUtil.getParentOfType(notPositionedElement, *TYPES_TO_CALCULATE_CLASSNAME)
-        }
-
-        public fun getJvmInternalNameForPropertyOwner(typeMapper: JetTypeMapper, descriptor: PropertyDescriptor): String {
-            return typeMapper.mapOwner(
-                    if (JvmAbi.isPropertyWithBackingFieldInOuterClass(descriptor)) descriptor.containingDeclaration else descriptor
-            ).internalName
-        }
-
-        private fun isInPropertyAccessor(element: PsiElement?) =
-                element is KtPropertyAccessor ||
-                PsiTreeUtil.getParentOfType(element, KtProperty::class.java, KtPropertyAccessor::class.java) is KtPropertyAccessor
-
-        private fun getElementToCreateTypeMapperForLibraryFile(element: PsiElement?) =
-                if (element is KtElement) element else PsiTreeUtil.getParentOfType(element, KtElement::class.java)
-
-        private fun getJvmInternalNameForImpl(typeMapper: JetTypeMapper, ktClass: KtClassOrObject): String? {
-            val classDescriptor = typeMapper.bindingContext.get<PsiElement, ClassDescriptor>(BindingContext.CLASS, ktClass) ?: return null
-
-            if (ktClass is KtClass && ktClass.isInterface()) {
-                return typeMapper.mapDefaultImpls(classDescriptor).internalName
+            element is KtAnonymousInitializer -> {
+                val parent = getElementToCalculateClassName(element.parent)
+                // Class-object initializer
+                if (parent is KtObjectDeclaration && parent.isCompanion()) {
+                    return PositionedElement(getInternalClassNameForElement(parent.parent, typeMapper, file, isInLibrary).className, parent)
+                }
+                return getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary)
             }
+            element is KtProperty && (!element.isTopLevel || !isInLibrary) -> {
+                if (isInPropertyAccessor(notPositionedElement)) {
+                    val classOrObject = PsiTreeUtil.getParentOfType(element, KtClassOrObject::class.java)
+                    if (classOrObject != null) {
+                        return PositionedElement(getJvmInternalNameForImpl(typeMapper, classOrObject), element)
+                    }
+                }
 
-            return typeMapper.mapClass(classDescriptor).internalName
+                val descriptor = typeMapper.bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, element)
+                if (descriptor !is PropertyDescriptor) {
+                    return getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary)
+                }
+
+                return PositionedElement(getJvmInternalNameForPropertyOwner(typeMapper, descriptor), element)
+            }
+            element is KtNamedFunction -> {
+                if (isInlinedLambda(element, typeMapper.bindingContext)) {
+                    return getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary)
+                }
+
+                val parent = getElementToCalculateClassName(element.parent)
+                if (parent is KtClassOrObject) {
+                    return PositionedElement(getJvmInternalNameForImpl(typeMapper, parent), element)
+                }
+                else if (parent != null) {
+                    val asmType = CodegenBinding.asmTypeForAnonymousClass(typeMapper.bindingContext, element)
+                    return PositionedElement(asmType.internalName, element)
+                }
+            }
         }
 
-        private fun createTypeMapperForLibraryFile(notPositionedElement: PsiElement?, file: KtFile): JetTypeMapper {
-            val element = getElementToCreateTypeMapperForLibraryFile(notPositionedElement)
-            val analysisResult = element!!.analyzeAndGetResult()
-
-            val state = GenerationState(file.project, ClassBuilderFactories.THROW_EXCEPTION,
-                                        analysisResult.moduleDescriptor, analysisResult.bindingContext, listOf(file))
-            state.beforeCompile()
-            return state.typeMapper
-        }
-
-        public fun isInlinedLambda(functionLiteral: KtFunction, context: BindingContext): Boolean {
-            return InlineUtil.isInlinedArgument(functionLiteral, context, false)
-        }
-
-        private fun createKeyForTypeMapper(file: KtFile) = NoResolveFileClassesProvider.getFileClassInternalName(file)
+        return PositionedElement(NoResolveFileClassesProvider.getFileClassInternalName(file), element)
     }
+
+    private val TYPES_TO_CALCULATE_CLASSNAME: Array<Class<out KtElement>> =
+            arrayOf(KtClassOrObject::class.java,
+                    KtFunctionLiteral::class.java,
+                    KtNamedFunction::class.java,
+                    KtProperty::class.java,
+                    KtAnonymousInitializer::class.java)
+
+    private fun getElementToCalculateClassName(notPositionedElement: PsiElement?): KtElement? {
+        if (notPositionedElement?.javaClass as Class<*> in TYPES_TO_CALCULATE_CLASSNAME) return notPositionedElement as KtElement
+
+        return PsiTreeUtil.getParentOfType(notPositionedElement, *TYPES_TO_CALCULATE_CLASSNAME)
+    }
+
+    public fun getJvmInternalNameForPropertyOwner(typeMapper: JetTypeMapper, descriptor: PropertyDescriptor): String {
+        return typeMapper.mapOwner(
+                if (JvmAbi.isPropertyWithBackingFieldInOuterClass(descriptor)) descriptor.containingDeclaration else descriptor
+        ).internalName
+    }
+
+    private fun isInPropertyAccessor(element: PsiElement?) =
+            element is KtPropertyAccessor ||
+            PsiTreeUtil.getParentOfType(element, KtProperty::class.java, KtPropertyAccessor::class.java) is KtPropertyAccessor
+
+    private fun getElementToCreateTypeMapperForLibraryFile(element: PsiElement?) =
+            if (element is KtElement) element else PsiTreeUtil.getParentOfType(element, KtElement::class.java)
+
+    private fun getJvmInternalNameForImpl(typeMapper: JetTypeMapper, ktClass: KtClassOrObject): String? {
+        val classDescriptor = typeMapper.bindingContext.get<PsiElement, ClassDescriptor>(BindingContext.CLASS, ktClass) ?: return null
+
+        if (ktClass is KtClass && ktClass.isInterface()) {
+            return typeMapper.mapDefaultImpls(classDescriptor).internalName
+        }
+
+        return typeMapper.mapClass(classDescriptor).internalName
+    }
+
+    private fun createTypeMapperForLibraryFile(notPositionedElement: PsiElement?, file: KtFile): JetTypeMapper {
+        val element = getElementToCreateTypeMapperForLibraryFile(notPositionedElement)
+        val analysisResult = element!!.analyzeAndGetResult()
+
+        val state = GenerationState(file.project, ClassBuilderFactories.THROW_EXCEPTION,
+                                    analysisResult.moduleDescriptor, analysisResult.bindingContext, listOf(file))
+        state.beforeCompile()
+        return state.typeMapper
+    }
+
+    public fun isInlinedLambda(functionLiteral: KtFunction, context: BindingContext): Boolean {
+        return InlineUtil.isInlinedArgument(functionLiteral, context, false)
+    }
+
+    private fun createKeyForTypeMapper(file: KtFile) = NoResolveFileClassesProvider.getFileClassInternalName(file)
+
 
     private fun findInlinedCalls(element: PsiElement?, jetFile: PsiFile?): List<String> {
         if (element == null || jetFile !is KtFile) {
@@ -518,4 +501,22 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
     }
 
     private fun ReferenceType.containsKotlinStrata() = availableStrata().contains("Kotlin")
+
+    companion object {
+        public fun createTypeMapper(file: KtFile): JetTypeMapper {
+            val project = file.project
+
+            val analysisResult = file.analyzeFullyAndGetResult()
+            analysisResult.throwIfError()
+
+            val state = GenerationState(
+                    project,
+                    ClassBuilderFactories.THROW_EXCEPTION,
+                    analysisResult.moduleDescriptor,
+                    analysisResult.bindingContext,
+                    listOf(file))
+            state.beforeCompile()
+            return state.typeMapper
+        }
+    }
 }
