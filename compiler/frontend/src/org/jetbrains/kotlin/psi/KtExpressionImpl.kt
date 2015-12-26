@@ -26,7 +26,7 @@ public abstract class KtExpressionImpl(node: ASTNode) : KtElementImpl(node), KtE
 
     protected fun findExpressionUnder(type: KtNodeType): KtExpression? {
         val containerNode = findChildByType<KtContainerNode>(type) ?: return null
-        return containerNode.findChildByClass<KtExpression>(javaClass())
+        return containerNode.findChildByClass<KtExpression>(KtExpression::class.java)
     }
 
     override fun replace(newElement: PsiElement): PsiElement {

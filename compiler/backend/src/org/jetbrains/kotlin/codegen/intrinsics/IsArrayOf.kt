@@ -32,7 +32,7 @@ class IsArrayOf : IntrinsicMethod() {
         val method = typeMapper.mapToCallableMethod(fd, false)
 
         val builtIns = fd.module.builtIns
-        val elementType = typeArguments.values().first()
+        val elementType = typeArguments.values.first()
         val arrayKtType = builtIns.getArrayType(Variance.INVARIANT, elementType)
         val arrayType = typeMapper.mapType(arrayKtType)
 

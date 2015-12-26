@@ -42,10 +42,10 @@ public fun KtReturnExpression.getTargetFunctionDescriptor(context: BindingContex
     if (targetLabel != null) return context[LABEL_TARGET, targetLabel]?.let { context[FUNCTION, it] }
 
     val declarationDescriptor = context[DECLARATION_TO_DESCRIPTOR, getNonStrictParentOfType<KtDeclarationWithBody>()]
-    val containingFunctionDescriptor = DescriptorUtils.getParentOfType(declarationDescriptor, javaClass<FunctionDescriptor>(), false)
+    val containingFunctionDescriptor = DescriptorUtils.getParentOfType(declarationDescriptor, FunctionDescriptor::class.java, false)
     if (containingFunctionDescriptor == null) return null
 
-    return sequence(containingFunctionDescriptor) { DescriptorUtils.getParentOfType(it, javaClass<FunctionDescriptor>()) }
+    return sequence(containingFunctionDescriptor) { DescriptorUtils.getParentOfType(it, FunctionDescriptor::class.java) }
             .dropWhile { it is AnonymousFunctionDescriptor }
             .firstOrNull()
 }

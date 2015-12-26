@@ -30,7 +30,7 @@ public class KtStringTemplateExpressionManipulator : AbstractElementManipulator<
         val newText = oldText.substring(0, range.getStartOffset()) + content + oldText.substring(range.getEndOffset())
         val expression = KtPsiFactory(element.getProject()).createExpression(newText)
         node.replaceAllChildrenToChildrenOf(expression.getNode())
-        return node.getPsi(javaClass())
+        return node.getPsi(KtStringTemplateExpression::class.java)
     }
 
     override fun getRangeInElement(element: KtStringTemplateExpression): TextRange {

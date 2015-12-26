@@ -52,7 +52,7 @@ public class KotlinStringLiteralTextEscaper(host: KtStringTemplateExpression): L
                     }
                     val unescaped = child.getUnescapedValue()
                     outChars.append(unescaped)
-                    repeat(unescaped.length()) {
+                    repeat(unescaped.length) {
                         sourceOffsetsList.add(sourceOffset)
                     }
                     sourceOffset += child.getTextLength()
@@ -67,7 +67,7 @@ public class KotlinStringLiteralTextEscaper(host: KtStringTemplateExpression): L
 
     override fun getOffsetInHost(offsetInDecoded: Int, rangeInsideHost: TextRange): Int {
         val offsets = sourceOffsets
-        if (offsets == null || offsetInDecoded >= offsets.size()) return -1
+        if (offsets == null || offsetInDecoded >= offsets.size) return -1
         return Math.min(offsets[offsetInDecoded], rangeInsideHost.getLength()) + rangeInsideHost.getStartOffset()
     }
 

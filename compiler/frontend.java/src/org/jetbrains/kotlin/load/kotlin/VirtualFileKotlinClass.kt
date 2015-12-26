@@ -50,7 +50,7 @@ public class VirtualFileKotlinClass private constructor(
     override fun toString() = "${javaClass.getSimpleName()}: $file"
 
     companion object Factory {
-        private val LOG = Logger.getInstance(javaClass<VirtualFileKotlinClass>())
+        private val LOG = Logger.getInstance(VirtualFileKotlinClass::class.java)
         private val perfCounter = PerformanceCounter.create("Binary class from Kotlin file")
 
         @Deprecated("Use KotlinBinaryClassCache")

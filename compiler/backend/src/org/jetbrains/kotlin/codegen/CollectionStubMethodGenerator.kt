@@ -214,7 +214,7 @@ class CollectionStubMethodGenerator(
     private fun Collection<KotlinType>.findMostSpecificTypeForClass(klass: ClassDescriptor): KotlinType {
         val types = this.filter { it.getConstructor().getDeclarationDescriptor() == klass }
         if (types.isEmpty()) error("No supertype of $klass in $this")
-        if (types.size() == 1) return types.first()
+        if (types.size == 1) return types.first()
         // Find the first type in the list such that it's a subtype of every other type in that list
         return types.first { type ->
             types.all { other -> KotlinTypeChecker.DEFAULT.isSubtypeOf(type, other) }
@@ -227,7 +227,7 @@ class CollectionStubMethodGenerator(
         child.setModality(Modality.FINAL)
         child.setVisibility(Visibilities.PUBLIC)
         val typeParameters = descriptor.getTypeConstructor().getParameters()
-        val newTypeParameters = ArrayList<TypeParameterDescriptor>(typeParameters.size())
+        val newTypeParameters = ArrayList<TypeParameterDescriptor>(typeParameters.size)
         DescriptorSubstitutor.substituteTypeParameters(typeParameters, TypeSubstitution.EMPTY, child, newTypeParameters)
         child.setTypeParameterDescriptors(typeParameters)
         return Pair(child, newTypeParameters)

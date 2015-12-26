@@ -72,7 +72,7 @@ public open class KtClass : KtClassOrObject {
         var current: KtClassOrObject? = this
         while (current != null) {
             parts.add(current.getName()!!)
-            current = PsiTreeUtil.getParentOfType<KtClassOrObject>(current, javaClass<KtClassOrObject>())
+            current = PsiTreeUtil.getParentOfType<KtClassOrObject>(current, KtClassOrObject::class.java)
         }
         val file = getContainingFile()
         if (file !is KtFile) return null

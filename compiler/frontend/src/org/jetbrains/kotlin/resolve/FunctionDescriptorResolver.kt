@@ -195,7 +195,7 @@ class FunctionDescriptorResolver(
     ): List<ValueParameterDescriptor> {
         val expectedValueParameters = expectedFunctionType.getValueParameters(functionDescriptor)
         if (expectedValueParameters != null) {
-            if (expectedValueParameters.size() == 1 && function is KtFunctionLiteral && function.getValueParameterList() == null) {
+            if (expectedValueParameters.size == 1 && function is KtFunctionLiteral && function.getValueParameterList() == null) {
                 // it parameter for lambda
                 val valueParameterDescriptor = expectedValueParameters.first()
                 val it = ValueParameterDescriptorImpl(functionDescriptor, null, 0, Annotations.EMPTY, Name.identifier("it"),
@@ -205,9 +205,9 @@ class FunctionDescriptorResolver(
                 trace.record(BindingContext.AUTO_CREATED_IT, it)
                 return listOf(it)
             }
-            if (function.getValueParameters().size() != expectedValueParameters.size()) {
+            if (function.getValueParameters().size != expectedValueParameters.size) {
                 val expectedParameterTypes = ExpressionTypingUtils.getValueParametersTypes(expectedValueParameters)
-                trace.report(EXPECTED_PARAMETERS_NUMBER_MISMATCH.on(function, expectedParameterTypes.size(), expectedParameterTypes))
+                trace.report(EXPECTED_PARAMETERS_NUMBER_MISMATCH.on(function, expectedParameterTypes.size, expectedParameterTypes))
             }
         }
 
@@ -313,7 +313,7 @@ class FunctionDescriptorResolver(
         for (i in valueParameters.indices) {
             val valueParameter = valueParameters.get(i)
             val typeReference = valueParameter.getTypeReference()
-            val expectedType = expectedValueParameters?.let { if (i < it.size()) it[i].getType() else null }
+            val expectedType = expectedValueParameters?.let { if (i < it.size) it[i].getType() else null }
 
             val type: KotlinType
             if (typeReference != null) {

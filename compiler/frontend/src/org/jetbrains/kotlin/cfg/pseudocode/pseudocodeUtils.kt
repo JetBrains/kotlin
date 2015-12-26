@@ -123,7 +123,7 @@ public fun getExpectedTypePredicate(
             val candidateArgumentMap = candidateCall.getValueArguments()
             val callArguments = call.getValueArguments()
             val i = inputValueIndex - argValueOffset
-            if (i < 0 || i >= callArguments.size()) continue
+            if (i < 0 || i >= callArguments.size) continue
 
             val mapping = candidateCall.getArgumentMapping(callArguments.get(i))
             if (mapping !is ArgumentMatch) continue
@@ -288,7 +288,7 @@ fun Pseudocode.getElementValuesRecursively(element: KtElement): List<PseudoValue
 
 public fun KtElement.getContainingPseudocode(context: BindingContext): Pseudocode? {
     val pseudocodeDeclaration =
-            PsiTreeUtil.getParentOfType(this, javaClass<KtDeclarationWithBody>(), javaClass<KtClassOrObject>(), javaClass<KtScript>())
+            PsiTreeUtil.getParentOfType(this, KtDeclarationWithBody::class.java, KtClassOrObject::class.java, KtScript::class.java)
             ?: getNonStrictParentOfType<KtProperty>()
             ?: return null
 

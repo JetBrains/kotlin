@@ -24,6 +24,6 @@ public interface JvmVirtualFileFinder : VirtualFileFinder, KotlinClassFinder {
     public object SERVICE {
         @JvmStatic
         public fun getInstance(project: Project): JvmVirtualFileFinder =
-            ServiceManager.getService(project, javaClass<JvmVirtualFileFinderFactory>()).create(GlobalSearchScope.allScope(project))
+            ServiceManager.getService(project, JvmVirtualFileFinderFactory::class.java).create(GlobalSearchScope.allScope(project))
     }
 }

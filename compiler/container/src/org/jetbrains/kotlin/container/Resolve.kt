@@ -58,7 +58,7 @@ fun Method.bindToMethod(context: ValueResolveContext): MethodBinding {
 }
 
 private fun Member.bindArguments(parameters: List<Type>, context: ValueResolveContext): List<ValueDescriptor> {
-    val bound = ArrayList<ValueDescriptor>(parameters.size())
+    val bound = ArrayList<ValueDescriptor>(parameters.size)
     var unsatisfied: MutableList<Type>? = null
 
     for (parameter in parameters) {

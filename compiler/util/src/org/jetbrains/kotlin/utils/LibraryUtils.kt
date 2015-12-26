@@ -29,7 +29,7 @@ import java.util.jar.Manifest
 import java.util.zip.ZipFile
 
 public object LibraryUtils {
-    private val LOG = Logger.getInstance(javaClass<LibraryUtils>())
+    private val LOG = Logger.getInstance(LibraryUtils::class.java)
 
     public val KOTLIN_JS_MODULE_NAME: String = "Kotlin-JS-Module-Name"
     private var TITLE_KOTLIN_JAVASCRIPT_STDLIB: String
@@ -43,7 +43,7 @@ public object LibraryUtils {
         var jsStdLib = ""
         var jsLib = ""
 
-        val manifestProperties = javaClass<LibraryUtils>().getResourceAsStream("/kotlinManifest.properties")
+        val manifestProperties = LibraryUtils::class.java.getResourceAsStream("/kotlinManifest.properties")
         if (manifestProperties != null) {
             try {
                 val properties = Properties()
@@ -157,7 +157,7 @@ public object LibraryUtils {
             processDirectory(dir, action)
         }
         catch (ex: IOException) {
-            LOG.error("Could not read files from directory ${dir.getName()}: ${ex.getMessage()}")
+            LOG.error("Could not read files from directory ${dir.getName()}: ${ex.message}")
         }
     }
 
@@ -185,7 +185,7 @@ public object LibraryUtils {
             }
         }
         catch (ex: IOException) {
-            LOG.error("Could not extract files from archive ${file.getName()}: ${ex.getMessage()}")
+            LOG.error("Could not extract files from archive ${file.getName()}: ${ex.message}")
         }
         finally {
             zipFile.close()
@@ -196,7 +196,7 @@ public object LibraryUtils {
         val systemIndependentPath = FileUtil.toSystemIndependentName(path)
         if (systemIndependentPath.startsWith(METAINF)) {
             if (systemIndependentPath.startsWith(METAINF_RESOURCES)) {
-                return path.substring(METAINF_RESOURCES.length())
+                return path.substring(METAINF_RESOURCES.length)
             }
             return null
         }

@@ -65,7 +65,7 @@ public interface AbstractSMAPBaseTest {
         val compiledData = extractSMAPFromClasses(outputFiles).groupBy {
             it.sourceFile
         }.map {
-            val smap = it.getValue().mapNotNull { it.smap?.replaceHash() }.joinToString("\n")
+            val smap = it.value.mapNotNull { it.smap?.replaceHash() }.joinToString("\n")
             SMAPAndFile(if (smap.isNotEmpty()) smap else null, it.key)
         }.toMapBy { it.sourceFile }
 

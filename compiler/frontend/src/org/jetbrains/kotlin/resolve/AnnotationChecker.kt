@@ -157,7 +157,7 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
             val targetEntryDescriptor = classDescriptor.annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.target)
                                         ?: return null
             val valueArguments = targetEntryDescriptor.allValueArguments
-            val valueArgument = valueArguments.entrySet().firstOrNull()?.getValue() as? ArrayValue ?: return null
+            val valueArgument = valueArguments.entries.firstOrNull()?.value as? ArrayValue ?: return null
             return valueArgument.value.filterIsInstance<EnumValue>().mapNotNull {
                 KotlinTarget.valueOrNull(it.value.name.asString())
             }.toSet()

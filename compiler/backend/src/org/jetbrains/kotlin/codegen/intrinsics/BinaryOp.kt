@@ -31,7 +31,7 @@ public class BinaryOp(private val opcode: Int) : IntrinsicMethod() {
 
     override fun toCallable(method: CallableMethod): Callable {
         val returnType = method.returnType
-        assert(method.getValueParameters().size() == 1)
+        assert(method.getValueParameters().size == 1)
         val operandType = numberFunctionOperandType(returnType)
         val paramType = if (shift()) Type.INT_TYPE else operandType
 

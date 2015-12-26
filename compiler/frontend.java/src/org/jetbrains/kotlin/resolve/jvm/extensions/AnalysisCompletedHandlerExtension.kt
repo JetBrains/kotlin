@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 public interface AnalysisCompletedHandlerExtension {
     companion object : ProjectExtensionDescriptor<AnalysisCompletedHandlerExtension>(
             "org.jetbrains.kotlin.analyzeCompleteHandlerExtension",
-            javaClass<AnalysisCompletedHandlerExtension>()
+            AnalysisCompletedHandlerExtension::class.java
     )
 
     public fun analysisCompleted(

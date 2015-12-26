@@ -152,7 +152,7 @@ public fun KtExpression.isDotReceiver(): Boolean =
 public fun KtElement.getCalleeHighlightingRange(): TextRange {
     val annotationEntry: KtAnnotationEntry =
             PsiTreeUtil.getParentOfType<KtAnnotationEntry>(
-                    this, javaClass<KtAnnotationEntry>(), /* strict = */false, javaClass<KtValueArgumentList>()
+                    this, KtAnnotationEntry::class.java, /* strict = */false, KtValueArgumentList::class.java
             ) ?: return getTextRange()
 
     val startOffset = annotationEntry.getAtSymbol()?.getTextRange()?.getStartOffset()

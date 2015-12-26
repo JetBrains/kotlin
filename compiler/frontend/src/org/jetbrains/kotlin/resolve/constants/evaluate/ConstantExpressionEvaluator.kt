@@ -367,7 +367,7 @@ private class ConstantExpressionEvaluatorVisitor(
         val leftExpression = expression.left ?: return null
 
         val operationToken = expression.operationToken
-        if (OperatorConventions.BOOLEAN_OPERATIONS.containsKeyRaw(operationToken)) {
+        if (OperatorConventions.BOOLEAN_OPERATIONS.containsKey(operationToken)) {
             val booleanType = constantExpressionEvaluator.builtIns.booleanType
             val leftConstant = evaluate(leftExpression, booleanType) ?: return null
 

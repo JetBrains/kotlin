@@ -67,7 +67,7 @@ public object DescriptorToSourceUtils {
     @JvmStatic
     public fun descriptorToDeclaration(descriptor: DeclarationDescriptor): PsiElement? {
         val effectiveReferencedDescriptors = getEffectiveReferencedDescriptors(descriptor)
-        return if (effectiveReferencedDescriptors.size() == 1) getSourceFromDescriptor(effectiveReferencedDescriptors.firstOrNull()!!) else null
+        return if (effectiveReferencedDescriptors.size == 1) getSourceFromDescriptor(effectiveReferencedDescriptors.firstOrNull()!!) else null
     }
 
     @JvmStatic

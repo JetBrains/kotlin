@@ -49,7 +49,7 @@ public class ComponentStorage(val myId: String) : ValueResolver {
         if (entry.isNotEmpty()) {
             registerDependency(request, context)
 
-            if (entry.size() > 1)
+            if (entry.size > 1)
                 throw InvalidCardinalityException("Request $request cannot be satisfied because there is more than one type registered", entry)
             return entry.singleOrNull()
         }
@@ -68,7 +68,7 @@ public class ComponentStorage(val myId: String) : ValueResolver {
     public fun dump(printer: PrintStream): Unit = with (printer) {
         val heading = "Container: $myId"
         println(heading)
-        println("=".repeat(heading.length()))
+        println("=".repeat(heading.length))
         println()
         getDescriptorsInDisposeOrder().forEach { descriptor ->
             println(descriptor)

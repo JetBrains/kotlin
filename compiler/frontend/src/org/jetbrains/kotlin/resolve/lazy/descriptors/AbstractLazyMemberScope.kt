@@ -127,7 +127,7 @@ protected constructor(
             location: LookupLocation
     ): List<DeclarationDescriptor> {
         val declarations = declarationProvider.getDeclarations(kindFilter, nameFilter)
-        val result = LinkedHashSet<DeclarationDescriptor>(declarations.size())
+        val result = LinkedHashSet<DeclarationDescriptor>(declarations.size)
         for (declaration in declarations) {
             if (declaration is KtClassOrObject) {
                 val name = declaration.nameAsSafeName

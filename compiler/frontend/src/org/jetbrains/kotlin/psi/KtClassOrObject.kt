@@ -51,7 +51,7 @@ abstract public class KtClassOrObject :
         val specifierList = getSuperTypeList() ?: return
         assert(superTypeListEntry.getParent() === specifierList)
 
-        if (specifierList.getEntries().size() > 1) {
+        if (specifierList.getEntries().size > 1) {
             EditCommaSeparatedListHelper.removeItem<KtElement>(superTypeListEntry)
         }
         else {
@@ -65,7 +65,7 @@ abstract public class KtClassOrObject :
 
     public fun addDeclaration(declaration: KtDeclaration): KtDeclaration {
         val body = getOrCreateBody()
-        val anchor = PsiTreeUtil.skipSiblingsBackward(body.rBrace ?: body.getLastChild()!!, javaClass<PsiWhiteSpace>())
+        val anchor = PsiTreeUtil.skipSiblingsBackward(body.rBrace ?: body.getLastChild()!!, PsiWhiteSpace::class.java)
         return body.addAfter(declaration, anchor) as KtDeclaration
     }
 
@@ -106,7 +106,7 @@ abstract public class KtClassOrObject :
         CheckUtil.checkWritable(this);
 
         val file = getContainingKtFile();
-        if (!isTopLevel() || file.getDeclarations().size() > 1) {
+        if (!isTopLevel() || file.getDeclarations().size > 1) {
             super.delete()
         }
         else {

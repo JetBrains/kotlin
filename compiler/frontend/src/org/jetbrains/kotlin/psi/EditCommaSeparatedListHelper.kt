@@ -62,7 +62,7 @@ object EditCommaSeparatedListHelper {
                 anchorAfter = if (index > 0) allItems.get(index - 1) else null
             }
             else {
-                anchorAfter = allItems.get(allItems.size() - 1)
+                anchorAfter = allItems.get(allItems.size - 1)
             }
         }
         return addItemAfter(list, allItems, item, anchorAfter)

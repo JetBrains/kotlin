@@ -76,8 +76,8 @@ private class ExplicitTypeBinding(
     override fun getArgumentBindings(): List<TypeArgumentBinding<KtTypeElement>?> {
         val psiTypeArguments = psiElement.getTypeArgumentsAsTypes()
         val isErrorBinding = run {
-            val sizeIsEqual = psiTypeArguments.size() == kotlinType.getArguments().size()
-                              && psiTypeArguments.size() == kotlinType.getConstructor().getParameters().size()
+            val sizeIsEqual = psiTypeArguments.size == kotlinType.getArguments().size
+                              && psiTypeArguments.size == kotlinType.getConstructor().getParameters().size
             kotlinType.isError() || !sizeIsEqual
         }
 
@@ -115,7 +115,7 @@ private class NoTypeElementBinding<out P : PsiElement>(
 ): TypeBinding<P> {
 
     override fun getArgumentBindings(): List<TypeArgumentBinding<P>?> {
-        val isErrorBinding = kotlinType.isError() || kotlinType.getConstructor().getParameters().size() != kotlinType.getArguments().size()
+        val isErrorBinding = kotlinType.isError() || kotlinType.getConstructor().getParameters().size != kotlinType.getArguments().size
         return kotlinType.getArguments().indices.map {
             val typeProjection = kotlinType.getArguments()[it]
             TypeArgumentBindingImpl(

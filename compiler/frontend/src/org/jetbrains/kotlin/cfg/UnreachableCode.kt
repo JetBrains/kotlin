@@ -58,7 +58,7 @@ class UnreachableCodeImpl(
         acceptChildren(object : PsiElementVisitor() {
             override fun visitElement(element: PsiElement) {
                 val isReachable = element is KtElement && reachableElements.contains(element) && !element.hasChildrenInSet(unreachableElements)
-                if (isReachable || element.getChildren().size() == 0) {
+                if (isReachable || element.getChildren().size == 0) {
                     children.add(element)
                 }
                 else {
@@ -77,7 +77,7 @@ class UnreachableCodeImpl(
         val childrenToRemove = HashSet<PsiElement>()
         fun collectSiblingsIfMeaningless(elementIndex: Int, direction: Int) {
             val index = elementIndex + direction
-            if (index !in 0..(size() - 1)) return
+            if (index !in 0..(size - 1)) return
 
             val element = this[index]
             if (element.isMeaningless()) {

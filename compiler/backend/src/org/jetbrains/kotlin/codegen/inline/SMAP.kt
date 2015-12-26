@@ -202,7 +202,7 @@ public open class DefaultSourceMapper(val sourceInfo: SourceInfo, override val p
     private fun createKey(name: String, path: String) = "$name#$path"
 
     override val resultMappings: List<FileMapping>
-        get() = fileMappings.values().map { it.toFileMapping() }
+        get() = fileMappings.values.map { it.toFileMapping() }
 
     override fun visitSource(name: String, path: String) {
         lastVisited = fileMappings.getOrPut(createKey(name, path), { RawFileMapping(name, path) })

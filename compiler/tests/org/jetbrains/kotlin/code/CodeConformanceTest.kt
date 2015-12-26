@@ -109,15 +109,15 @@ public class CodeConformanceTest : TestCase() {
         }
 
         if (tests.flatMap { it.result }.isNotEmpty()) {
-            fail(StringBuilder {
+            fail(buildString {
                 for (test in tests) {
                     if (test.result.isNotEmpty()) {
-                        append(test.message.format(test.result.size(), test.result.joinToString("\n")))
+                        append(test.message.format(test.result.size, test.result.joinToString("\n")))
                         appendln()
                         appendln()
                     }
                 }
-            }.toString())
+            })
         }
     }
 }

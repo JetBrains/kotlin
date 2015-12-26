@@ -123,7 +123,7 @@ public class InterfaceImplBodyCodegen(
                         val myParameters = signature.getValueParameters()
                         val calleeParameters = method.getValueParameters()
 
-                        if (myParameters.size() != calleeParameters.size()) {
+                        if (myParameters.size != calleeParameters.size) {
                             throw AssertionError(
                                     "Method from super interface has a different signature.\n" +
                                     "This method:\n%s\n%s\n%s\nSuper method:\n%s\n%s\n%s".format(

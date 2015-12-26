@@ -110,10 +110,10 @@ public open class MethodAnalyzer<V : Value>(
 
             }
             catch (e: AnalyzerException) {
-                throw AnalyzerException(e.node, "Error at instruction " + insn + ": " + e.getMessage(), e)
+                throw AnalyzerException(e.node, "Error at instruction " + insn + ": " + e.message, e)
             }
             catch (e: Exception) {
-                throw AnalyzerException(insnNode, "Error at instruction " + insn + ": " + e.getMessage(), e)
+                throw AnalyzerException(insnNode, "Error at instruction " + insn + ": " + e.message, e)
             }
 
         }

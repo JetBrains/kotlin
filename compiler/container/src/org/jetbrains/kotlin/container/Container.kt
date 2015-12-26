@@ -70,14 +70,14 @@ public class StorageComponentContainer(id: String) : ComponentContainer, Compone
     private fun resolveIterable(request: Type, context: ValueResolveContext): ValueDescriptor? {
         if (request !is ParameterizedType) return null
         val rawType = request.getRawType()
-        if (rawType != javaClass<Iterable<*>>()) return null
+        if (rawType != Iterable::class.java) return null
         val typeArguments = request.getActualTypeArguments()
-        if (typeArguments.size() != 1) return null
+        if (typeArguments.size != 1) return null
         val iterableTypeArgument = typeArguments[0]
         val iterableType = when (iterableTypeArgument) {
             is WildcardType -> {
                 val upperBounds = iterableTypeArgument.getUpperBounds()
-                if (upperBounds.size() != 1) return null
+                if (upperBounds.size != 1) return null
                 upperBounds[0]
             }
             is Class<*> -> iterableTypeArgument
@@ -112,9 +112,9 @@ public fun StorageComponentContainer.registerInstance(instance: Any): StorageCom
 }
 
 public inline fun <reified T : Any> StorageComponentContainer.resolve(context: ValueResolveContext = unknownContext): ValueDescriptor? {
-    return resolve(javaClass<T>(), context)
+    return resolve(T::class.java, context)
 }
 
 public inline fun <reified T : Any> StorageComponentContainer.resolveMultiple(context: ValueResolveContext = unknownContext): Iterable<ValueDescriptor> {
-    return resolveMultiple(javaClass<T>(), context)
+    return resolveMultiple(T::class.java, context)
 }

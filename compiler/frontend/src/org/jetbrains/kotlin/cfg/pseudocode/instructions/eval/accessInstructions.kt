@@ -64,7 +64,7 @@ public class ReadValueInstruction private constructor(
     }
 
     override val inputValues: List<PseudoValue>
-        get() = receiverValues.keySet().toList()
+        get() = receiverValues.keys.toList()
 
     override val outputValue: PseudoValue
         get() = _outputValue!!
@@ -78,7 +78,7 @@ public class ReadValueInstruction private constructor(
     }
 
     override fun toString(): String {
-        val inVal = if (receiverValues.isEmpty()) "" else "|${receiverValues.keySet().joinToString()}"
+        val inVal = if (receiverValues.isEmpty()) "" else "|${receiverValues.keys.joinToString()}"
         val targetName = when (target) {
             is AccessTarget.Declaration -> target.descriptor
             is AccessTarget.Call -> target.resolvedCall.getResultingDescriptor()
@@ -104,7 +104,7 @@ public class WriteValueInstruction(
 ) : AccessValueInstruction(assignment, lexicalScope, target, receiverValues) {
     override val inputValues: List<PseudoValue>
         // as is necessary: see KT-10384
-        get() = (receiverValues.keySet() as Collection<PseudoValue>) + rValue
+        get() = (receiverValues.keys as Collection<PseudoValue>) + rValue
 
     override fun accept(visitor: InstructionVisitor) {
         visitor.visitWriteValue(this)

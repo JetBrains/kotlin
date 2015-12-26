@@ -110,7 +110,7 @@ class LazyImportResolver(
         }
         for (alias in explicitClassImports.keySet()) {
             val imports = explicitClassImports.get(alias)
-            if (imports.size() > 1) {
+            if (imports.size > 1) {
                 imports.forEach {
                     traceForImportResolve.report(Errors.CONFLICTING_IMPORT.on(it, alias))
                 }

@@ -52,7 +52,7 @@ private fun CallableDescriptor.isPlatformStaticIn(predicate: (DeclarationDescrip
         }
 
 public fun AnnotationDescriptor.argumentValue(parameterName: String): Any? {
-    return getAllValueArguments().entrySet()
+    return getAllValueArguments().entries
             .singleOrNull { it.key.getName().asString() == parameterName }
             ?.value?.value
 }

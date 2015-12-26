@@ -25,7 +25,7 @@ public fun File?.readTextOrEmpty(): String = this?.readText() ?: ""
 public fun File.withReplacedExtensionOrNull(oldExt: String, newExt: String): File? {
     if (getName().endsWith(oldExt)) {
         val path = getPath()
-        val pathWithoutExt = path.substring(0, path.length() - oldExt.length())
+        val pathWithoutExt = path.substring(0, path.length - oldExt.length)
         val pathWithNewExt = pathWithoutExt + newExt
         return File(pathWithNewExt)
     }

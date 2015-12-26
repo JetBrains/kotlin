@@ -45,7 +45,7 @@ public fun <D : CallableDescriptor> ResolvedCall<D>.hasUnmappedArguments(): Bool
 
 public fun <D : CallableDescriptor> ResolvedCall<D>.hasUnmappedParameters(): Boolean {
     val parameterToArgumentMap = getValueArguments()
-    return !parameterToArgumentMap.keySet().containsAll(getResultingDescriptor().getValueParameters())
+    return !parameterToArgumentMap.keys.containsAll(getResultingDescriptor().getValueParameters())
 }
 
 public fun <D : CallableDescriptor> ResolvedCall<D>.allArgumentsMapped()
@@ -144,8 +144,8 @@ public fun KtElement.getCall(context: BindingContext): Call? {
 
 public fun KtElement.getParentCall(context: BindingContext, strict: Boolean = true): Call? {
     val callExpressionTypes = arrayOf<Class<out KtElement>?>(
-            javaClass<KtSimpleNameExpression>(), javaClass<KtCallElement>(), javaClass<KtBinaryExpression>(),
-            javaClass<KtUnaryExpression>(), javaClass<KtArrayAccessExpression>())
+            KtSimpleNameExpression::class.java, KtCallElement::class.java, KtBinaryExpression::class.java,
+            KtUnaryExpression::class.java, KtArrayAccessExpression::class.java)
 
     val parent = if (strict) {
         PsiTreeUtil.getParentOfType(this, *callExpressionTypes)

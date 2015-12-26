@@ -493,7 +493,7 @@ public class TypeResolver(
             ModifierCheckerCore.check(argumentElement, c.trace, null)
             if (projectionKind == KtProjectionKind.STAR) {
                 val parameters = constructor.getParameters()
-                if (parameters.size() > i) {
+                if (parameters.size > i) {
                     val parameterDescriptor = parameters[i]
                     TypeUtils.makeStarProjection(parameterDescriptor)
                 }
@@ -504,7 +504,7 @@ public class TypeResolver(
             else {
                 val type = resolveType(c.noBareTypes(), argumentElement.getTypeReference()!!)
                 val kind = resolveProjectionKind(projectionKind)
-                if (constructor.getParameters().size() > i) {
+                if (constructor.getParameters().size > i) {
                     val parameterDescriptor = constructor.getParameters()[i]
                     if (kind != INVARIANT && parameterDescriptor.getVariance() != INVARIANT) {
                         if (kind == parameterDescriptor.getVariance()) {

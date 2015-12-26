@@ -67,7 +67,7 @@ public abstract class SignatureCollectingClassBuilderFactory(
 
         override fun done() {
             for ((signature, elementsAndDescriptors) in signatures.entrySet()) {
-                if (elementsAndDescriptors.size() == 1) continue // no clash
+                if (elementsAndDescriptors.size == 1) continue // no clash
                 handleClashingSignatures(ConflictingJvmDeclarationsData(
                         classInternalName,
                         classCreatedFor,

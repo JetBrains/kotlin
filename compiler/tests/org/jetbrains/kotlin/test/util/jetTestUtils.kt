@@ -48,7 +48,7 @@ public fun CodeInsightTestFixture.configureWithExtraFile(path: String, vararg ex
 }
 
 public fun PsiFile.findElementByCommentPrefix(commentText: String): PsiElement? =
-        findElementsByCommentPrefix(commentText).keySet().singleOrNull()
+        findElementsByCommentPrefix(commentText).keys.singleOrNull()
 
 public fun PsiFile.findElementsByCommentPrefix(prefix: String): Map<PsiElement, String> {
     var result = SmartFMap.emptyMap<PsiElement, String>()
@@ -63,11 +63,11 @@ public fun PsiFile.findElementsByCommentPrefix(prefix: String): Map<PsiElement, 
                             is PsiMember -> parent
                             else -> PsiTreeUtil.skipSiblingsForward(
                                     comment,
-                                    javaClass<PsiWhiteSpace>(), javaClass<PsiComment>(), javaClass<KtPackageDirective>()
+                                    PsiWhiteSpace::class.java, PsiComment::class.java, KtPackageDirective::class.java
                             )
                         } as? PsiElement ?: return
 
-                        result = result.plus(elementToAdd, commentText.substring(prefix.length()).trim())
+                        result = result.plus(elementToAdd, commentText.substring(prefix.length).trim())
                     }
                 }
             }

@@ -26,6 +26,6 @@ public interface JvmVirtualFileFinderFactory : VirtualFileFinderFactory {
     public object SERVICE {
         @JvmStatic
         public fun getInstance(project: Project): JvmVirtualFileFinderFactory =
-            ServiceManager.getService(project, javaClass<JvmVirtualFileFinderFactory>())
+            ServiceManager.getService(project, JvmVirtualFileFinderFactory::class.java)
     }
 }

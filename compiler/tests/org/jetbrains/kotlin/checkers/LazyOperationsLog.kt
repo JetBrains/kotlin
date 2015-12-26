@@ -45,7 +45,7 @@ class LazyOperationsLog(
         val stringSanitizer: (String) -> String
 ) {
     val ids = IdentityHashMap<Any, Int>()
-    private fun objectId(o: Any): Int = ids.getOrPut(o, { ids.size() })
+    private fun objectId(o: Any): Int = ids.getOrPut(o, { ids.size })
 
     private class Record(
             val lambda: Any,
@@ -62,7 +62,7 @@ class LazyOperationsLog(
     public fun getText(): String {
         val groupedByOwner = records.groupByTo(IdentityHashMap()) {
             it.data.fieldOwner
-        }.map { Pair(it.getKey(), it.getValue()) }
+        }.map { Pair(it.key, it.value) }
 
         return groupedByOwner.map {
             val (owner, records) = it
@@ -79,7 +79,7 @@ class LazyOperationsLog(
     private fun String.renumberObjects(): String {
         val ids = HashMap<String, String>()
         fun newId(objectId: String): String {
-            return ids.getOrPut(objectId, { "@" + ids.size() })
+            return ids.getOrPut(objectId, { "@" + ids.size })
         }
 
         val m = Pattern.compile("@\\d+").matcher(this)
@@ -181,10 +181,10 @@ class LazyOperationsLog(
                 }
             }
             o is KotlinTypeImpl -> {
-                StringBuilder {
+                StringBuilder().apply {
                     append(o.getConstructor())
                     if (!o.getArguments().isEmpty()) {
-                        append("<${o.getArguments().size()}>")
+                        append("<${o.getArguments().size}>")
                     }
                 }.appendQuoted()
             }

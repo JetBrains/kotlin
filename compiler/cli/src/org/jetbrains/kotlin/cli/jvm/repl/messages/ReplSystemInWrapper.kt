@@ -31,7 +31,7 @@ public class ReplSystemInWrapper(
     private var inputByteArray = byteArrayOf()
 
     private val isAtBufferEnd: Boolean
-        get() = curBytePos == inputByteArray.size()
+        get() = curBytePos == inputByteArray.size
 
     @Volatile var isReplScriptExecuting = false
 

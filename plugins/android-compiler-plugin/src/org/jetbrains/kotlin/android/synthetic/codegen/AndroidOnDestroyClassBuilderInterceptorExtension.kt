@@ -98,7 +98,7 @@ public class AndroidOnDestroyClassBuilderInterceptorExtension : ClassBuilderInte
                     super.visitCode()
 
                     if (name != AndroidExpressionCodegenExtension.ON_DESTROY_METHOD_NAME || currentClass == null) return
-                    if (Type.getArgumentTypes(desc).size() != 0) return
+                    if (Type.getArgumentTypes(desc).size != 0) return
                     if (Type.getReturnType(desc) != Type.VOID_TYPE) return
 
                     val classType = currentClassName?.let { Type.getObjectType(it) } ?: return

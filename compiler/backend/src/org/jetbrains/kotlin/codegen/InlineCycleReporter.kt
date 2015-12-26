@@ -32,9 +32,9 @@ public class InlineCycleReporter(val diagnostics: DiagnosticSink) {
         if (call != null) {
             val callElement = call.getCall().getCallElement()
             if (processingFunctions.contains(callElement)) {
-                val cycle = processingFunctions.asSequence().dropWhile { it.getKey() != callElement }
+                val cycle = processingFunctions.asSequence().dropWhile { it.key != callElement }
                 cycle.forEach {
-                    diagnostics.report(Errors.INLINE_CALL_CYCLE.on(it.getKey(), it.getValue()))
+                    diagnostics.report(Errors.INLINE_CALL_CYCLE.on(it.key, it.value))
                 }
                 return false
             }

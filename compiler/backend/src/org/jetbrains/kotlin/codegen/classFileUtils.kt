@@ -47,7 +47,7 @@ private fun List<PackageParts>.addCompiledParts(state: GenerationState): List<Pa
         mapping.findPackageParts(qualifier)?.run { parts.remove(name) }
     }
 
-    return (this + mapping.packageFqName2Parts.values())
+    return (this + mapping.packageFqName2Parts.values)
             .groupBy { it.packageFqName }
             .map {
                 val (packageFqName, packageParts) = it

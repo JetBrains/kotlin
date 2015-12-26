@@ -41,9 +41,9 @@ public fun cliPluginUsageString(pluginId: String, options: Collection<CliOption>
 
     val renderedOptions = options.map {
         val name = "${it.name} ${it.valueDescription}"
-        val margin = if (name.length() > MAX_OPTION_WIDTH) {
+        val margin = if (name.length > MAX_OPTION_WIDTH) {
             "\n" + " ".repeat(MAX_OPTION_WIDTH + LEFT_INDENT + 1)
-        } else " ".repeat(1 + MAX_OPTION_WIDTH - name.length())
+        } else " ".repeat(1 + MAX_OPTION_WIDTH - name.length)
 
         val modifiers = listOfNotNull(
                 if (it.required) "required" else null,

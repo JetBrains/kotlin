@@ -61,11 +61,11 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageSeverityCollector)
 
         if (IncrementalCompilation.isEnabled()) {
-            val incrementalCompilationComponents = services.get(javaClass<IncrementalCompilationComponents>())
+            val incrementalCompilationComponents = services.get(IncrementalCompilationComponents::class.java)
             configuration.put(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS, incrementalCompilationComponents)
         }
 
-        val locator = services.get(javaClass<CompilerJarLocator>())
+        val locator = services.get(CompilerJarLocator::class.java)
         configuration.put(JVMConfigurationKeys.COMPILER_JAR_LOCATOR, locator)
 
         try {
@@ -83,12 +83,12 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             PluginCliParser.loadPlugins(arguments, configuration)
         }
         catch (e: PluginCliOptionProcessingException) {
-            val message = e.getMessage() + "\n\n" + cliPluginUsageString(e.pluginId, e.options)
+            val message = e.message + "\n\n" + cliPluginUsageString(e.pluginId, e.options)
             messageSeverityCollector.report(CompilerMessageSeverity.ERROR, message, CompilerMessageLocation.NO_LOCATION)
             return INTERNAL_ERROR
         }
         catch (e: CliOptionProcessingException) {
-            messageSeverityCollector.report(CompilerMessageSeverity.ERROR, e.getMessage()!!, CompilerMessageLocation.NO_LOCATION)
+            messageSeverityCollector.report(CompilerMessageSeverity.ERROR, e.message!!, CompilerMessageLocation.NO_LOCATION)
             return INTERNAL_ERROR
         }
         catch (t: Throwable) {
@@ -169,7 +169,7 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 KotlinToJVMBytecodeCompiler.compileModules(environment, configuration, moduleScript.getModules(), directory, jar, friendPaths, arguments.includeRuntime)
             }
             else if (arguments.script) {
-                val scriptArgs = arguments.freeArgs.subList(1, arguments.freeArgs.size())
+                val scriptArgs = arguments.freeArgs.subList(1, arguments.freeArgs.size)
                 environment = createCoreEnvironment(rootDisposable, configuration)
 
                 if (messageSeverityCollector.anyReported(CompilerMessageSeverity.ERROR)) return COMPILATION_ERROR

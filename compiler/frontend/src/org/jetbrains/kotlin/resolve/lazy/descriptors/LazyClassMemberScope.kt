@@ -131,7 +131,7 @@ public open class LazyClassMemberScope(
         }
         result.addAll(generateDelegatingDescriptors(name, EXTRACT_FUNCTIONS, result))
         generateDataClassMethods(result, name, location)
-        generateFakeOverrides(name, fromSupertypes, result, javaClass<FunctionDescriptor>())
+        generateFakeOverrides(name, fromSupertypes, result, FunctionDescriptor::class.java)
     }
 
     private fun generateDataClassMethods(result: MutableCollection<FunctionDescriptor>, name: Name, location: LookupLocation) {
@@ -140,7 +140,7 @@ public open class LazyClassMemberScope(
         val constructor = getPrimaryConstructor() ?: return
 
         val primaryConstructorParameters = declarationProvider.getOwnerInfo().getPrimaryConstructorParameters()
-        assert(constructor.getValueParameters().size() == primaryConstructorParameters.size()) { "From descriptor: " + constructor.getValueParameters().size() + " but from PSI: " + primaryConstructorParameters.size() }
+        assert(constructor.getValueParameters().size == primaryConstructorParameters.size) { "From descriptor: " + constructor.getValueParameters().size + " but from PSI: " + primaryConstructorParameters.size }
 
         if (isComponentLike(name)) {
             var componentIndex = 0
@@ -200,7 +200,7 @@ public open class LazyClassMemberScope(
             fromSupertypes.addAll(supertype.memberScope.getContributedVariables(name, NoLookupLocation.FOR_ALREADY_TRACKED))
         }
         result.addAll(generateDelegatingDescriptors(name, EXTRACT_PROPERTIES, result))
-        generateFakeOverrides(name, fromSupertypes, result, javaClass<PropertyDescriptor>())
+        generateFakeOverrides(name, fromSupertypes, result, PropertyDescriptor::class.java)
     }
 
     protected open fun createPropertiesFromPrimaryConstructorParameters(name: Name, result: MutableSet<PropertyDescriptor>) {
@@ -211,8 +211,8 @@ public open class LazyClassMemberScope(
 
         val valueParameterDescriptors = primaryConstructor.getValueParameters()
         val primaryConstructorParameters = classInfo.getPrimaryConstructorParameters()
-        assert(valueParameterDescriptors.size() == primaryConstructorParameters.size()) {
-            "From descriptor: ${valueParameterDescriptors.size()} but from PSI: ${primaryConstructorParameters.size()}"
+        assert(valueParameterDescriptors.size == primaryConstructorParameters.size) {
+            "From descriptor: ${valueParameterDescriptors.size} but from PSI: ${primaryConstructorParameters.size}"
         }
 
         for (valueParameterDescriptor in valueParameterDescriptors) {

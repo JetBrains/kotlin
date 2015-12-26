@@ -109,7 +109,7 @@ public fun <Function : FunctionHandle> findConcreteSuperDeclaration(function: Fu
     result.removeAll(toRemove)
 
     val concreteRelevantDeclarations = result.filter { !it.isAbstract }
-    if (concreteRelevantDeclarations.size() != 1) {
+    if (concreteRelevantDeclarations.size != 1) {
         error("Concrete fake override $function should have exactly one concrete super-declaration: $concreteRelevantDeclarations")
     }
 

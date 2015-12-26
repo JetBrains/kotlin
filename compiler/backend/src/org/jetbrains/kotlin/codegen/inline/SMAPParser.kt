@@ -44,7 +44,7 @@ object SMAPParser {
     public fun parse(mappingInfo: String): SMAP {
         val fileMappings = linkedMapOf<Int, FileMapping>()
 
-        val fileSectionStart = mappingInfo.indexOf(SMAP.FILE_SECTION) + SMAP.FILE_SECTION.length()
+        val fileSectionStart = mappingInfo.indexOf(SMAP.FILE_SECTION) + SMAP.FILE_SECTION.length
         val lineSectionAnchor = mappingInfo.indexOf(SMAP.LINE_SECTION)
         val files = mappingInfo.substring(fileSectionStart, lineSectionAnchor)
 
@@ -63,7 +63,7 @@ object SMAPParser {
         }
 
 
-        val lines = mappingInfo.substring(lineSectionAnchor + SMAP.LINE_SECTION.length(), mappingInfo.indexOf(SMAP.END)).trim().split('\n')
+        val lines = mappingInfo.substring(lineSectionAnchor + SMAP.LINE_SECTION.length, mappingInfo.indexOf(SMAP.END)).trim().split('\n')
         for (lineMapping in lines) {
             /*only simple mapping now*/
             val targetSplit = lineMapping.indexOf(':')
@@ -79,6 +79,6 @@ object SMAPParser {
             fileMappings[fileIndex]!!.addRangeMapping(RangeMapping(originalIndex, targetIndex, range))
         }
 
-        return SMAP(fileMappings.values().toList())
+        return SMAP(fileMappings.values.toList())
     }
 }

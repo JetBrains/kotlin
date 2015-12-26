@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.KtFile
 public interface ExternalDeclarationsProvider {
     companion object : ProjectExtensionDescriptor<ExternalDeclarationsProvider>(
             "org.jetbrains.kotlin.externalDeclarationsProvider",
-            javaClass<ExternalDeclarationsProvider>()
+            ExternalDeclarationsProvider::class.java
     )
 
     public fun getExternalDeclarations(moduleInfo: ModuleInfo?): Collection<KtFile>

@@ -54,10 +54,10 @@ internal class Parameters(val real: List<ParameterInfo>, val captured: List<Capt
     }
 
     private fun get(index: Int): ParameterInfo {
-        if (index < real.size()) {
+        if (index < real.size) {
             return real.get(index)
         }
-        return captured.get(index - real.size())
+        return captured.get(index - real.size)
     }
 
     override fun iterator(): Iterator<ParameterInfo> {

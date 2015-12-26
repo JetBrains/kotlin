@@ -46,7 +46,7 @@ public class FakeCallResolver(
         val traceWithFakeArgumentInfo = TemporaryBindingTrace.create(context.trace, "trace to store fake argument for", name)
         val fakeArguments = ArrayList<KtExpression>()
         for (type in argumentTypes) {
-            fakeArguments.add(ExpressionTypingUtils.createFakeExpressionOfType(project, traceWithFakeArgumentInfo, "fakeArgument" + fakeArguments.size(), type))
+            fakeArguments.add(ExpressionTypingUtils.createFakeExpressionOfType(project, traceWithFakeArgumentInfo, "fakeArgument" + fakeArguments.size, type))
         }
         return makeAndResolveFakeCall(receiver, context.replaceBindingTrace(traceWithFakeArgumentInfo), fakeArguments, name, callElement).second
     }

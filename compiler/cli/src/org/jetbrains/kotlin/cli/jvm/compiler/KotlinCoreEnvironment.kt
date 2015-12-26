@@ -119,14 +119,14 @@ public class KotlinCoreEnvironment private constructor(
 
     init {
         val project = projectEnvironment.getProject()
-        project.registerService(javaClass<DeclarationProviderFactoryService>(), CliDeclarationProviderFactoryService(sourceFiles))
+        project.registerService(DeclarationProviderFactoryService::class.java, CliDeclarationProviderFactoryService(sourceFiles))
         project.registerService(ModuleVisibilityManager::class.java, CliModuleVisibilityManagerImpl())
 
         registerProjectServicesForCLI(projectEnvironment)
         registerProjectServices(projectEnvironment)
 
         fillClasspath(configuration)
-        val fileManager = ServiceManager.getService(project, javaClass<CoreJavaFileManager>())
+        val fileManager = ServiceManager.getService(project, CoreJavaFileManager::class.java)
         val index = JvmDependenciesIndex(javaRoots)
         (fileManager as KotlinCliJavaFileManagerImpl).initIndex(index)
 
@@ -142,7 +142,7 @@ public class KotlinCoreEnvironment private constructor(
 
         KotlinScriptDefinitionProvider.getInstance(project).setScriptDefinitions(configuration.getList(CommonConfigurationKeys.SCRIPT_DEFINITIONS_KEY))
 
-        project.registerService(javaClass<JvmVirtualFileFinderFactory>(), JvmCliVirtualFileFinderFactory(index))
+        project.registerService(JvmVirtualFileFinderFactory::class.java, JvmCliVirtualFileFinderFactory(index))
 
         ExternalDeclarationsProvider.registerExtensionPoint(project)
         ExpressionCodegenExtension.registerExtensionPoint(project)
@@ -342,16 +342,16 @@ public class KotlinCoreEnvironment private constructor(
         }
 
         private fun registerAppExtensionPoints() {
-            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), BinaryFileStubBuilders.EP_NAME, javaClass<FileTypeExtensionPoint<Any>>())
-            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), FileContextProvider.EP_NAME, javaClass<FileContextProvider>())
+            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), BinaryFileStubBuilders.EP_NAME, FileTypeExtensionPoint::class.java)
+            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), FileContextProvider.EP_NAME, FileContextProvider::class.java)
             //
-            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), MetaDataContributor.EP_NAME, javaClass<MetaDataContributor>())
-            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), PsiAugmentProvider.EP_NAME, javaClass<PsiAugmentProvider>())
-            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), JavaMainMethodProvider.EP_NAME, javaClass<JavaMainMethodProvider>())
+            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), MetaDataContributor.EP_NAME, MetaDataContributor::class.java)
+            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), PsiAugmentProvider.EP_NAME, PsiAugmentProvider::class.java)
+            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), JavaMainMethodProvider.EP_NAME, JavaMainMethodProvider::class.java)
             //
-            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ContainerProvider.EP_NAME, javaClass<ContainerProvider>())
-            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ClsCustomNavigationPolicy.EP_NAME, javaClass<ClsCustomNavigationPolicy>())
-            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ClassFileDecompilers.EP_NAME, javaClass<ClassFileDecompilers.Decompiler>())
+            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ContainerProvider.EP_NAME, ContainerProvider::class.java)
+            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ClsCustomNavigationPolicy.EP_NAME, ClsCustomNavigationPolicy::class.java)
+            CoreApplicationEnvironment.registerExtensionPoint(Extensions.getRootArea(), ClassFileDecompilers.EP_NAME, ClassFileDecompilers.Decompiler::class.java)
         }
 
         private fun registerApplicationExtensionPointsAndExtensionsFrom(configuration: CompilerConfiguration, configFilePath: String) {
@@ -384,40 +384,40 @@ public class KotlinCoreEnvironment private constructor(
                 registerFileType(KotlinFileType.INSTANCE, "kt")
                 registerFileType(KotlinFileType.INSTANCE, KotlinParserDefinition.STD_SCRIPT_SUFFIX)
                 registerParserDefinition(KotlinParserDefinition())
-                getApplication().registerService(javaClass<KotlinBinaryClassCache>(), KotlinBinaryClassCache())
-                getApplication().registerService(javaClass<JavaClassSupers>(), javaClass<JavaClassSupersImpl>())
+                getApplication().registerService(KotlinBinaryClassCache::class.java, KotlinBinaryClassCache())
+                getApplication().registerService(JavaClassSupers::class.java, JavaClassSupersImpl::class.java)
             }
         }
 
         private fun registerProjectExtensionPoints(area: ExtensionsArea) {
-            CoreApplicationEnvironment.registerExtensionPoint(area, PsiTreeChangePreprocessor.EP_NAME, javaClass<PsiTreeChangePreprocessor>())
-            CoreApplicationEnvironment.registerExtensionPoint(area, PsiElementFinder.EP_NAME, javaClass<PsiElementFinder>())
+            CoreApplicationEnvironment.registerExtensionPoint(area, PsiTreeChangePreprocessor.EP_NAME, PsiTreeChangePreprocessor::class.java)
+            CoreApplicationEnvironment.registerExtensionPoint(area, PsiElementFinder.EP_NAME, PsiElementFinder::class.java)
         }
 
         // made public for Upsource
         @JvmStatic
         public fun registerProjectServices(projectEnvironment: JavaCoreProjectEnvironment) {
             with (projectEnvironment.getProject()) {
-                registerService(javaClass<KotlinScriptDefinitionProvider>(), KotlinScriptDefinitionProvider())
-                registerService(javaClass<KotlinJavaPsiFacade>(), KotlinJavaPsiFacade(this))
-                registerService(javaClass<KtLightClassForFacade.FacadeStubCache>(), KtLightClassForFacade.FacadeStubCache(this))
+                registerService(KotlinScriptDefinitionProvider::class.java, KotlinScriptDefinitionProvider())
+                registerService(KotlinJavaPsiFacade::class.java, KotlinJavaPsiFacade(this))
+                registerService(KtLightClassForFacade.FacadeStubCache::class.java, KtLightClassForFacade.FacadeStubCache(this))
             }
         }
 
         private fun registerProjectServicesForCLI(projectEnvironment: JavaCoreProjectEnvironment) {
             with (projectEnvironment.getProject()) {
-                registerService(javaClass<CoreJavaFileManager>(), ServiceManager.getService(this, javaClass<JavaFileManager>()) as CoreJavaFileManager)
+                registerService(CoreJavaFileManager::class.java, ServiceManager.getService(this, JavaFileManager::class.java) as CoreJavaFileManager)
 
                 val cliLightClassGenerationSupport = CliLightClassGenerationSupport(this)
-                registerService(javaClass<LightClassGenerationSupport>(), cliLightClassGenerationSupport)
-                registerService(javaClass<CliLightClassGenerationSupport>(), cliLightClassGenerationSupport)
-                registerService(javaClass<CodeAnalyzerInitializer>(), cliLightClassGenerationSupport)
+                registerService(LightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
+                registerService(CliLightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
+                registerService(CodeAnalyzerInitializer::class.java, cliLightClassGenerationSupport)
 
                 val area = Extensions.getArea(this)
 
                 area.getExtensionPoint(PsiElementFinder.EP_NAME).registerExtension(JavaElementFinder(this, cliLightClassGenerationSupport))
                 area.getExtensionPoint(PsiElementFinder.EP_NAME).registerExtension(
-                        PsiElementFinderImpl(this, ServiceManager.getService(this, javaClass<JavaFileManager>())))
+                        PsiElementFinderImpl(this, ServiceManager.getService(this, JavaFileManager::class.java)))
             }
         }
     }

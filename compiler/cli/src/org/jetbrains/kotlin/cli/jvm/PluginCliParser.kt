@@ -38,7 +38,7 @@ public object PluginCliParser {
                 javaClass.getClassLoader()
         )
 
-        val componentRegistrars = ServiceLoader.load(javaClass<ComponentRegistrar>(), classLoader).toArrayList()
+        val componentRegistrars = ServiceLoader.load(ComponentRegistrar::class.java, classLoader).toArrayList()
         componentRegistrars.addAll(BundledCompilerPlugins.componentRegistrars)
         configuration.addAll(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, componentRegistrars)
 
@@ -55,7 +55,7 @@ public object PluginCliParser {
             it.pluginId
         } ?: mapOf()
 
-        val commandLineProcessors = ServiceLoader.load(javaClass<CommandLineProcessor>(), classLoader).toArrayList()
+        val commandLineProcessors = ServiceLoader.load(CommandLineProcessor::class.java, classLoader).toArrayList()
         commandLineProcessors.addAll(BundledCompilerPlugins.commandLineProcessors)
 
         for (processor in commandLineProcessors) {
@@ -78,7 +78,7 @@ public object PluginCliParser {
                             processor.pluginOptions,
                             "Required plugin option not present: ${processor.pluginId}:${option.name}")
                 }
-                if (!option.allowMultipleOccurrences && values.size() > 1) {
+                if (!option.allowMultipleOccurrences && values.size > 1) {
                     throw PluginCliOptionProcessingException(
                             processor.pluginId,
                             processor.pluginOptions,

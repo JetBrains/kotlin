@@ -107,7 +107,7 @@ internal class FixStackContext(val methodNode: MethodNode) {
         if (saveNodes.isEmpty()) {
             throw AssertionError("${indexOf(insnNode)}: in handler ${indexOf(restoreLabel)} restore is not matched with save")
         }
-        else if (saveNodes.size() > 1) {
+        else if (saveNodes.size > 1) {
             throw AssertionError("${indexOf(insnNode)}: in handler ${indexOf(restoreLabel)} restore is matched with several saves")
         }
         val saveNode = saveNodes.first()

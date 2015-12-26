@@ -83,12 +83,12 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
             ) as? ClassifierDescriptor
             return TypeQualifierResolutionResult(qualifierPartList, descriptor)
         }
-        assert(qualifierPartList.size() >= 1) {
+        assert(qualifierPartList.size >= 1) {
             "Too short qualifier list for user type $userType : ${qualifierPartList.joinToString()}"
         }
 
         val qualifier = resolveToPackageOrClass(
-                qualifierPartList.subList(0, qualifierPartList.size() - 1), module,
+                qualifierPartList.subList(0, qualifierPartList.size - 1), module,
                 trace, scope.ownerDescriptor, scope.check { !userType.startWithPackage }, position = QualifierPosition.TYPE
         ) ?: return TypeQualifierResolutionResult(qualifierPartList, null)
 
@@ -170,7 +170,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
         }
 
         val packageOrClassDescriptor = resolveToPackageOrClass(
-                path.subList(0, path.size() - 1), moduleDescriptor, trace,
+                path.subList(0, path.size - 1), moduleDescriptor, trace,
                 packageFragmentForVisibilityCheck, scopeForFirstPart = null, position = QualifierPosition.IMPORT
         ) ?: return null
 
@@ -480,7 +480,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
             trace: BindingTrace,
             position: QualifierPosition
     ): Pair<PackageViewDescriptor, Int> {
-        val possiblePackagePrefixSize = path.indexOfFirst { it.typeArguments != null }.let { if (it == -1) path.size() else it + 1 }
+        val possiblePackagePrefixSize = path.indexOfFirst { it.typeArguments != null }.let { if (it == -1) path.size else it + 1 }
         var fqName = path.subList(0, possiblePackagePrefixSize).fold(FqName.ROOT) { fqName, qualifierPart ->
             fqName.child(qualifierPart.name)
         }
@@ -522,13 +522,13 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
             position: QualifierPosition,
             isQualifier: Boolean = true
     ) {
-        if (descriptors.size() > 1) {
+        if (descriptors.size > 1) {
             val visibleDescriptors = descriptors.filter { isVisible(it, shouldBeVisibleFrom, position) }
             if (visibleDescriptors.isEmpty()) {
                 val descriptor = descriptors.first() as DeclarationDescriptorWithVisibility
                 trace.report(Errors.INVISIBLE_REFERENCE.on(referenceExpression, descriptor, descriptor.visibility, descriptor))
             }
-            else if (visibleDescriptors.size() > 1) {
+            else if (visibleDescriptors.size > 1) {
                 trace.record(BindingContext.AMBIGUOUS_REFERENCE_TARGET, referenceExpression, visibleDescriptors)
             }
             else {

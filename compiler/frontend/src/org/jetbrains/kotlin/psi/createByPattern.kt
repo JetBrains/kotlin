@@ -59,7 +59,7 @@ private class PsiElementArgumentType<T : PsiElement>(klass: Class<T>) : PsiEleme
     }
 }
 
-private object PsiChildRangeArgumentType : PsiElementPlaceholderArgumentType<PsiChildRange, KtElement>(javaClass(), javaClass()) {
+private object PsiChildRangeArgumentType : PsiElementPlaceholderArgumentType<PsiChildRange, KtElement>(PsiChildRange::class.java, KtElement::class.java) {
     override fun replacePlaceholderElement(placeholder: KtElement, argument: PsiChildRange) {
         val project = placeholder.getProject()
         val codeStyleManager = CodeStyleManager.getInstance(project)
@@ -81,10 +81,10 @@ private object PsiChildRangeArgumentType : PsiElementPlaceholderArgumentType<Psi
 }
 
 private val SUPPORTED_ARGUMENT_TYPES = listOf(
-        PsiElementArgumentType<KtExpression>(javaClass()),
-        PsiElementArgumentType<KtTypeReference>(javaClass()),
-        PlainTextArgumentType<String>(javaClass(), toPlainText = { it }),
-        PlainTextArgumentType<Name>(javaClass(), toPlainText = { it.render() }),
+        PsiElementArgumentType<KtExpression>(KtExpression::class.java),
+        PsiElementArgumentType<KtTypeReference>(KtTypeReference::class.java),
+        PlainTextArgumentType<String>(String::class.java, toPlainText = { it }),
+        PlainTextArgumentType<Name>(Name::class.java, toPlainText = { it.render() }),
         PsiChildRangeArgumentType
 )
 
@@ -184,7 +184,7 @@ private data class PatternData(val processedText: String, val placeholders: Map<
 private fun processPattern(pattern: String, args: List<Any>): PatternData {
     val ranges = LinkedHashMap<Int, MutableList<Placeholder>>()
 
-    fun charOrNull(i: Int) = if (0 <= i && i < pattern.length()) pattern[i] else null
+    fun charOrNull(i: Int) = if (0 <= i && i < pattern.length) pattern[i] else null
 
     fun check(condition: Boolean, message: String) {
         if (!condition) {
@@ -192,9 +192,9 @@ private fun processPattern(pattern: String, args: List<Any>): PatternData {
         }
     }
 
-    val text = StringBuilder {
+    val text = buildString {
         var i = 0
-        while (i < pattern.length()) {
+        while (i < pattern.length) {
             var c = pattern[i]
 
             if (c == '$') {
@@ -205,12 +205,12 @@ private fun processPattern(pattern: String, args: List<Any>): PatternData {
                 else {
                     check(nextChar?.isDigit() ?: false, "unclosed '$'")
 
-                    val lastIndex = (i..pattern.length() - 1).firstOrNull { !pattern[it].isDigit() } ?: pattern.length()
+                    val lastIndex = (i..pattern.length - 1).firstOrNull { !pattern[it].isDigit() } ?: pattern.length
                     val n = pattern.substring(i, lastIndex).toInt()
                     check(n >= 0, "invalid placeholder number: $n")
                     i = lastIndex
 
-                    val arg: Any? = if (n < args.size()) args[n] else null /* report wrong number of arguments later */
+                    val arg: Any? = if (n < args.size) args[n] else null /* report wrong number of arguments later */
                     val placeholderText = if (charOrNull(i) != ':' || charOrNull(i + 1) != '\'') {
                         if (arg is String) arg else "xyz"
                     }
@@ -226,7 +226,7 @@ private fun processPattern(pattern: String, args: List<Any>): PatternData {
                     }
 
                     append(placeholderText)
-                    val range = TextRange(length() - placeholderText.length(), length())
+                    val range = TextRange(length - placeholderText.length, length)
                     ranges.getOrPut(n, { ArrayList() }).add(Placeholder(range, placeholderText))
                     continue
                 }
@@ -236,17 +236,17 @@ private fun processPattern(pattern: String, args: List<Any>): PatternData {
             }
             i++
         }
-    }.toString()
+    }
 
     if (!ranges.isEmpty()) {
-        val max = ranges.keySet().max()!!
+        val max = ranges.keys.max()!!
         for (i in 0..max) {
             check(ranges.contains(i), "no '$$i' placeholder")
         }
     }
 
-    if (args.size() != ranges.size()) {
-        throw IllegalArgumentException("Wrong number of arguments, expected: ${ranges.size()}, passed: ${args.size()}")
+    if (args.size != ranges.size) {
+        throw IllegalArgumentException("Wrong number of arguments, expected: ${ranges.size}, passed: ${args.size}")
     }
 
     return PatternData(text, ranges)
@@ -262,14 +262,14 @@ public class BuilderByPattern<TElement> {
     }
 
     public fun appendNonFormattedText(text: String): BuilderByPattern<TElement> {
-        patternBuilder.append("$" + arguments.size())
+        patternBuilder.append("$" + arguments.size)
         arguments.add(text)
         return this
     }
 
     public fun appendExpression(expression: KtExpression?): BuilderByPattern<TElement> {
         if (expression != null) {
-            patternBuilder.append("$" + arguments.size())
+            patternBuilder.append("$" + arguments.size)
             arguments.add(expression)
         }
         return this
@@ -287,20 +287,20 @@ public class BuilderByPattern<TElement> {
 
     public fun appendTypeReference(typeRef: KtTypeReference?): BuilderByPattern<TElement> {
         if (typeRef != null) {
-            patternBuilder.append("$" + arguments.size())
+            patternBuilder.append("$" + arguments.size)
             arguments.add(typeRef)
         }
         return this
     }
 
     public fun appendName(name: Name): BuilderByPattern<TElement> {
-        patternBuilder.append("$" + arguments.size())
+        patternBuilder.append("$" + arguments.size)
         arguments.add(name)
         return this
     }
 
     public fun appendChildRange(range: PsiChildRange): BuilderByPattern<TElement> {
-        patternBuilder.append("$" + arguments.size())
+        patternBuilder.append("$" + arguments.size)
         arguments.add(range)
         return this
     }

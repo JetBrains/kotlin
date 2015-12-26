@@ -169,13 +169,13 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
 
     override fun getSyntheticExtensionProperties(receiverTypes: Collection<KotlinType>, name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
         var result: SmartList<PropertyDescriptor>? = null
-        val processedTypes: MutableSet<TypeConstructor>? = if (receiverTypes.size() > 1) HashSet<TypeConstructor>() else null
+        val processedTypes: MutableSet<TypeConstructor>? = if (receiverTypes.size > 1) HashSet<TypeConstructor>() else null
         for (type in receiverTypes) {
             result = collectSyntheticPropertiesByName(result, type.constructor, name, processedTypes, location)
         }
         return when {
             result == null -> emptyList()
-            result.size() > 1 -> result.toSet()
+            result.size > 1 -> result.toSet()
             else -> result
         }
     }
@@ -304,7 +304,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
                 descriptor.setMethod = setMethod
 
                 val classTypeParams = ownerClass.typeConstructor.parameters
-                val typeParameters = ArrayList<TypeParameterDescriptor>(classTypeParams.size())
+                val typeParameters = ArrayList<TypeParameterDescriptor>(classTypeParams.size)
                 val typeSubstitutor = DescriptorSubstitutor.substituteTypeParameters(classTypeParams, TypeSubstitution.EMPTY, descriptor, typeParameters)
 
                 val propertyType = typeSubstitutor.safeSubstitute(type, Variance.INVARIANT)

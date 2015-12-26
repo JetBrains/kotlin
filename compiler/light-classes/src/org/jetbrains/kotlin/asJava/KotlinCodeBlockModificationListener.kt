@@ -142,8 +142,8 @@ public class KotlinCodeBlockModificationListener(modificationTracker: PsiModific
         }
 
         private val BLOCK_DECLARATION_TYPES = arrayOf<Class<out KtDeclaration>>(
-                javaClass<KtProperty>(),
-                javaClass<KtNamedFunction>()
+                KtProperty::class.java,
+                KtNamedFunction::class.java
         )
     }
 }

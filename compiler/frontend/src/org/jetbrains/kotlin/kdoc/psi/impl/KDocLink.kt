@@ -30,9 +30,9 @@ public class KDocLink(node: ASTNode) : KtElementImpl(node) {
     public fun getLinkTextRange(): TextRange {
         val text = getText()
         if (text.startsWith('[') && text.endsWith(']')) {
-            return TextRange(1, text.length() - 1)
+            return TextRange(1, text.length - 1)
         }
-        return TextRange(0, text.length())
+        return TextRange(0, text.length)
     }
 
     /**

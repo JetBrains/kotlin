@@ -155,7 +155,7 @@ class DynamicCallableDescriptors(private val builtIns: KotlinBuiltIns) {
         val parameters = ArrayList<ValueParameterDescriptor>()
 
         fun addParameter(arg : ValueArgument, outType: KotlinType, varargElementType: KotlinType?) {
-            val index = parameters.size()
+            val index = parameters.size
 
             parameters.add(ValueParameterDescriptorImpl(
                     owner,

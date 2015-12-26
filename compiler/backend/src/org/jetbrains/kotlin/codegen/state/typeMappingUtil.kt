@@ -76,7 +76,7 @@ val CallableDescriptor?.isMethodWithDeclarationSiteWildcards: Boolean
     get() {
         if (this !is CallableMemberDescriptor) return false
         return firstOverridden {
-            METHODS_WITH_DECLARATION_SITE_WILDCARDS.containsRaw(it.propertyIfAccessor.fqNameOrNull())
+            METHODS_WITH_DECLARATION_SITE_WILDCARDS.contains(it.propertyIfAccessor.fqNameOrNull())
         } != null
     }
 

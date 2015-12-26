@@ -67,7 +67,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : SyntheticScope 
         }
         return when {
             result == null -> emptyList()
-            result.size() > 1 -> result.toSet()
+            result.size > 1 -> result.toSet()
             else -> result
         }
     }
@@ -118,7 +118,7 @@ class SamAdapterFunctionsScope(storageManager: StorageManager) : SyntheticScope 
                 }
                 //TODO: duplicated parameter names
 
-                val typeParameters = ArrayList<TypeParameterDescriptor>(sourceTypeParams.size())
+                val typeParameters = ArrayList<TypeParameterDescriptor>(sourceTypeParams.size)
                 val typeSubstitutor = DescriptorSubstitutor.substituteTypeParameters(sourceTypeParams, TypeSubstitution.EMPTY, descriptor, typeParameters)
 
                 descriptor.toSourceFunctionTypeParameters = typeParameters.zip(sourceTypeParams).toMap()

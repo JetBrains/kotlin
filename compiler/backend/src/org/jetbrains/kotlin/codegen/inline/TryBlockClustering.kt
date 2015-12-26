@@ -97,5 +97,5 @@ fun <T : IntervalWithHandler> doClustering(blocks: List<T>): List<TryBlockCluste
         cluster.blocks.add(block)
     }
 
-    return clusters.values().toList()
+    return clusters.values.toList()
 }

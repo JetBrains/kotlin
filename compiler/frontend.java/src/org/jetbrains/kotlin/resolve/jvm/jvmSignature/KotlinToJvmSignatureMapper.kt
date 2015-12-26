@@ -26,7 +26,7 @@ fun erasedSignaturesEqualIgnoringReturnTypes(subFunction: JvmMethodSignature, su
     val subParams = subFunction.getValueParameters()
     val superParams = superFunction.getValueParameters()
 
-    if (subParams.size() != superParams.size()) return false
+    if (subParams.size != superParams.size) return false
 
     return subParams.zip(superParams).all {
         p -> val (subParam, superParam) = p

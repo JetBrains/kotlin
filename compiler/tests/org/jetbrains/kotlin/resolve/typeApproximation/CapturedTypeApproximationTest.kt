@@ -43,8 +43,8 @@ public class CapturedTypeApproximationTest() : KotlinLiteFixture() {
     override fun createEnvironment(): KotlinCoreEnvironment = createEnvironmentWithMockJdk(ConfigurationKind.JDK_ONLY)
 
     public fun doTest(filePath: String, vararg substitutions: String) {
-        assert(substitutions.size() in 1..2) { "Captured type approximation test requires substitutions for (T) or (T, R)" }
-        val oneTypeVariable = substitutions.size() == 1
+        assert(substitutions.size in 1..2) { "Captured type approximation test requires substitutions for (T) or (T, R)" }
+        val oneTypeVariable = substitutions.size == 1
 
         val declarationsText = KotlinTestUtils.doLoadFile(File(getTestDataPath() + "/declarations.kt"))
 
@@ -53,7 +53,7 @@ public class CapturedTypeApproximationTest() : KotlinLiteFixture() {
             val testFile = KtPsiFactory(getProject()).createFile(test)
             val bindingContext = JvmResolveUtil.analyzeOneFileWithJavaIntegration(testFile).bindingContext
             val functions = bindingContext.getSliceContents(BindingContext.FUNCTION)
-            val functionFoo = functions.values().firstOrNull { it.getName().asString() == "foo" } ?:
+            val functionFoo = functions.values.firstOrNull { it.getName().asString() == "foo" } ?:
                               throw AssertionError("Function 'foo' is not declared")
             Pair(bindingContext, functionFoo)
         }
@@ -90,7 +90,7 @@ public class CapturedTypeApproximationTest() : KotlinLiteFixture() {
         }
 
         val testTypes = if (oneTypeVariable) getTestTypesForOneTypeVariable() else getTestTypesForTwoTypeVariables()
-        val result = StringBuilder {
+        val result = buildString {
             for ((index, testTypeWithUnsubstitutedTypeVars) in testTypes.withIndex()) {
                 val testType = createTestType(testTypeWithUnsubstitutedTypeVars)
                 val (bindingContext, functionFoo) = analyzeTestFile(testType)
@@ -115,8 +115,8 @@ public class CapturedTypeApproximationTest() : KotlinLiteFixture() {
                                     TypeProjectionImpl(INVARIANT, typeWithCapturedType), approximateContravariant = false)
 
                     append("  ")
-                    for (typeParameter in testSubstitution.keySet()) {
-                        if (testSubstitution.size() > 1) append("${typeParameter.getName()} = ")
+                    for (typeParameter in testSubstitution.keys) {
+                        if (testSubstitution.size > 1) append("${typeParameter.getName()} = ")
                         append("${testSubstitution[typeParameter]}. ")
                     }
                     appendln("lower: $lower; upper: $upper; substitution: $substitution")
@@ -125,7 +125,7 @@ public class CapturedTypeApproximationTest() : KotlinLiteFixture() {
             }
         }
 
-        KotlinTestUtils.assertEqualsToFile(File(getTestDataPath() + "/" + filePath), result.toString())
+        KotlinTestUtils.assertEqualsToFile(File(getTestDataPath() + "/" + filePath), result)
     }
 
     private fun getTypePatternsForOneTypeVariable() = listOf("In<#T#>", "Out<#T#>", "Inv<#T#>", "Inv<in #T#>", "Inv<out #T#>")
@@ -142,7 +142,7 @@ public class CapturedTypeApproximationTest() : KotlinLiteFixture() {
         fun addRandomVariants(vararg randomVariants: String) {
             variants.addAll(randomVariants.map { digits -> digits.map { digit -> digit - '0' } })
         }
-        assert(typePatterns.size() == 5) { "Generated random variants below depend on size 5" }
+        assert(typePatterns.size == 5) { "Generated random variants below depend on size 5" }
         //From 021 the following is generated: In<Inv<Out<T>>>, where In = typePatterns[0], Inv = typePatterns[2], Out = typePatterns[1]
         addRandomVariants("021", "111", "230", "421", "322", "120", "411", "102", "401", "012")
         addRandomVariants("4243", "3103", "3043", "2003", "4442", "4143", "1440", "0303", "1302", "1332")

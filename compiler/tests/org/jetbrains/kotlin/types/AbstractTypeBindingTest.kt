@@ -44,14 +44,14 @@ abstract class AbstractTypeBindingTest : KotlinLiteFixture() {
 
         assertEqualsToFile(
                 testFile,
-                StringBuilder {
+                buildString {
                     append(removeLastComment(testKtFile))
                     append("/*\n")
 
                     MyPrinter(this).print(typeBinding)
 
                     append("*/")
-                }.toString()
+                }
         )
     }
 

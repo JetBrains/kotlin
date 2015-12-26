@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinEnumEntrySuperclassReferenceExp
 public class KtEnumEntrySuperClassReferenceExpressionElementType(@NonNls debugName: String)
     : KtStubElementType<KotlinEnumEntrySuperclassReferenceExpressionStub, KtEnumEntrySuperclassReferenceExpression>(
         debugName,
-        javaClass<KtEnumEntrySuperclassReferenceExpression>(),
-        javaClass<KotlinEnumEntrySuperclassReferenceExpressionStub>()
+        KtEnumEntrySuperclassReferenceExpression::class.java,
+        KotlinEnumEntrySuperclassReferenceExpressionStub::class.java
     ) {
 
     override fun createStub(psi: KtEnumEntrySuperclassReferenceExpression, parentStub: StubElement<*>): KotlinEnumEntrySuperclassReferenceExpressionStub {

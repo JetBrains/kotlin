@@ -102,7 +102,7 @@ public class MultiModuleJavaAnalysisCustomTest : UsefulTestCase() {
                 }
             }
         }
-        return modules.values().toList()
+        return modules.values.toList()
     }
 
     private fun performChecks(resolverForProject: ResolverForProject<TestModule>, modules: List<TestModule>) {

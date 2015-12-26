@@ -52,7 +52,7 @@ import java.io.StringWriter
 
 public object Renderers {
 
-    private val LOG = Logger.getInstance(javaClass<Renderers>())
+    private val LOG = Logger.getInstance(Renderers::class.java)
 
     @JvmField
     public val TO_STRING: Renderer<Any> = Renderer {
@@ -129,7 +129,7 @@ public object Renderers {
     @JvmStatic
     public fun <T> commaSeparated(itemRenderer: Renderer<T>): Renderer<Collection<T>> = Renderer {
         collection ->
-        StringBuilder {
+        buildString {
             val iterator = collection.iterator()
             while (iterator.hasNext()) {
                 val next = iterator.next()
@@ -138,7 +138,7 @@ public object Renderers {
                     append(", ")
                 }
             }
-        }.toString()
+        }
     }
 
     @JvmField
@@ -201,7 +201,7 @@ public object Renderers {
             val parameterTypes = Lists.newArrayList<KotlinType>()
             for (valueParameterDescriptor in substitutedDescriptor.getValueParameters()) {
                 parameterTypes.add(valueParameterDescriptor.getType())
-                if (valueParameterDescriptor.index >= inferenceErrorData.valueArgumentsTypes.size()) continue
+                if (valueParameterDescriptor.index >= inferenceErrorData.valueArgumentsTypes.size) continue
                 val actualType = inferenceErrorData.valueArgumentsTypes.get(valueParameterDescriptor.index)
                 if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(actualType, valueParameterDescriptor.getType())) {
                     errorPositions.add(VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.index))
@@ -360,19 +360,19 @@ public object Renderers {
     @JvmField
     public val CLASSES_OR_SEPARATED: Renderer<Collection<ClassDescriptor>> = Renderer {
         descriptors ->
-        StringBuilder {
+        buildString {
             var index = 0
             for (descriptor in descriptors) {
                 append(DescriptorUtils.getFqName(descriptor).asString())
                 index++
-                if (index <= descriptors.size() - 2) {
+                if (index <= descriptors.size - 2) {
                     append(", ")
                 }
-                else if (index == descriptors.size() - 1) {
+                else if (index == descriptors.size - 1) {
                     append(" or ")
                 }
             }
-        }.toString()
+        }
     }
 
     private fun renderTypes(types: Collection<KotlinType>) = StringUtil.join(types, { RENDER_TYPE.render(it) }, ", ")
@@ -417,7 +417,7 @@ public object Renderers {
     @JvmField
     public val RENDER_TYPE_BOUNDS_SHORT: Renderer<TypeBounds> = Renderer { renderTypeBounds(it, short = true) }
 
-    private fun renderDebugMessage(message: String, inferenceErrorData: InferenceErrorData) = StringBuilder {
+    private fun renderDebugMessage(message: String, inferenceErrorData: InferenceErrorData) = buildString {
         append(message)
         append("\nConstraint system: \n")
         append(RENDER_CONSTRAINT_SYSTEM.render(inferenceErrorData.constraintSystem))
@@ -435,5 +435,5 @@ public object Renderers {
             append(RENDER_TYPE.render(inferenceErrorData.receiverArgumentType)).append(".")
         }
         append("(").append(renderTypes(inferenceErrorData.valueArgumentsTypes)).append(")")
-    }.toString()
+    }
 }

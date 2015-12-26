@@ -26,11 +26,11 @@ import org.jetbrains.kotlin.psi.stubs.KotlinAnnotationUseSiteTargetStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinAnnotationUseSiteTargetStubImpl
 
 public class KtAnnotationUseSiteTargetElementType(debugName: String) : KtStubElementType<KotlinAnnotationUseSiteTargetStub, KtAnnotationUseSiteTarget>(
-        debugName, javaClass<KtAnnotationUseSiteTarget>(), javaClass<KotlinAnnotationUseSiteTargetStub>()
+        debugName, KtAnnotationUseSiteTarget::class.java, KotlinAnnotationUseSiteTargetStub::class.java
 ) {
 
     override fun createStub(psi: KtAnnotationUseSiteTarget, parentStub: StubElement<PsiElement>): KotlinAnnotationUseSiteTargetStub {
-        val useSiteTarget = psi.getAnnotationUseSiteTarget().name()
+        val useSiteTarget = psi.getAnnotationUseSiteTarget().name
         return KotlinAnnotationUseSiteTargetStubImpl(parentStub, StringRef.fromString(useSiteTarget)!!)
     }
 

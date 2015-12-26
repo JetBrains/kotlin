@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.resolve.TargetPlatform
 
 public interface StorageComponentContainerContributor {
     companion object : ProjectExtensionDescriptor<StorageComponentContainerContributor>(
-            "org.jetbrains.kotlin.storageComponentContainerContributor", javaClass<StorageComponentContainerContributor>()
+            "org.jetbrains.kotlin.storageComponentContainerContributor", StorageComponentContainerContributor::class.java
     )
 
     public fun addDeclarations(container: StorageComponentContainer, platform: TargetPlatform)

@@ -42,7 +42,7 @@ class LexicalWritableScope(
     private var lastSnapshot: Snapshot? = null
 
     public fun changeLockLevel(lockLevel: LockLevel) {
-        if (lockLevel.ordinal() < this.lockLevel.ordinal()) {
+        if (lockLevel.ordinal < this.lockLevel.ordinal) {
             throw IllegalStateException("cannot lower lock level from " + this.lockLevel + " to " + lockLevel + " at " + toString())
         }
         this.lockLevel = lockLevel
@@ -50,8 +50,8 @@ class LexicalWritableScope(
 
     public fun takeSnapshot(): LexicalScope {
         checkMayRead()
-        if (lastSnapshot == null || lastSnapshot!!.descriptorLimit != addedDescriptors.size()) {
-            lastSnapshot = Snapshot(addedDescriptors.size())
+        if (lastSnapshot == null || lastSnapshot!!.descriptorLimit != addedDescriptors.size) {
+            lastSnapshot = Snapshot(addedDescriptors.size)
         }
         return lastSnapshot!!
     }

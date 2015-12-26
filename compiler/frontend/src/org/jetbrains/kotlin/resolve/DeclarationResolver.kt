@@ -51,7 +51,7 @@ public class DeclarationResolver(
     }
 
     public fun checkRedeclarations(c: TopDownAnalysisContext) {
-        for (classDescriptor in c.getDeclaredClasses().values()) {
+        for (classDescriptor in c.getDeclaredClasses().values) {
             val descriptorMap = HashMultimap.create<Name, DeclarationDescriptor>()
             for (desc in classDescriptor.getUnsubstitutedMemberScope().getContributedDescriptors()) {
                 if (desc is ClassDescriptor || desc is PropertyDescriptor) {
@@ -67,7 +67,7 @@ public class DeclarationResolver(
         val redeclarations = Sets.newHashSet<Pair<PsiElement, Name>>()
         for (name in descriptorMap.keySet()) {
             val descriptors = descriptorMap[name]
-            if (descriptors.size() <= 1) {
+            if (descriptors.size <= 1) {
                 continue
             }
             // We mustn't compare PropertyDescriptor with PropertyDescriptor because we do this at OverloadResolver
@@ -97,7 +97,7 @@ public class DeclarationResolver(
 
             val descriptors = getTopLevelDescriptorsByFqName(topLevelDescriptorProvider, fqName, NoLookupLocation.WHEN_CHECK_REDECLARATIONS)
 
-            if (descriptors.size() > 1) {
+            if (descriptors.size > 1) {
                 for (declarationOrPackageDirective in declarationsOrPackageDirectives) {
                     val reportAt =
                             if (declarationOrPackageDirective is KtPackageDirective) declarationOrPackageDirective.getNameIdentifier()

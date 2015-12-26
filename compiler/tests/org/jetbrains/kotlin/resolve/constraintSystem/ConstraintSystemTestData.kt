@@ -44,7 +44,7 @@ public class ConstraintSystemTestData(
 
     init {
         val functions = context.getSliceContents(BindingContext.FUNCTION)
-        functionFoo = findFunctionByName(functions.values(), "foo")
+        functionFoo = findFunctionByName(functions.values, "foo")
         val function = DescriptorToSourceUtils.descriptorToDeclaration(functionFoo) as KtFunction
         val fooBody = function.getBodyExpression()
         scopeToResolveTypeParameters = context.get(BindingContext.LEXICAL_SCOPE, fooBody)!!

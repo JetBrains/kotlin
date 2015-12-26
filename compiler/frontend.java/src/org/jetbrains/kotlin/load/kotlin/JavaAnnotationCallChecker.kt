@@ -73,7 +73,7 @@ public class JavaAnnotationCallChecker : CallChecker {
             argument: Map.Entry<ValueParameterDescriptor, ResolvedValueArgument>,
             diagnostic: DiagnosticFactory0<KtExpression>
     ) {
-        argument.getValue().getArguments().forEach {
+        argument.value.getArguments().forEach {
             if (it.getArgumentExpression() != null) {
                 context.trace.report(
                         diagnostic.on(

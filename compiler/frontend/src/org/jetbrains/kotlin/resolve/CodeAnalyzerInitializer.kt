@@ -27,7 +27,7 @@ public interface CodeAnalyzerInitializer {
     
     companion object {
         public fun getInstance(project: Project): CodeAnalyzerInitializer =
-                ServiceManager.getService<CodeAnalyzerInitializer>(project, javaClass<CodeAnalyzerInitializer>())!!
+                ServiceManager.getService<CodeAnalyzerInitializer>(project, CodeAnalyzerInitializer::class.java)!!
     }
 }
 

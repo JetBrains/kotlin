@@ -96,7 +96,7 @@ internal class FixStackAnalyzer(
             }
             else {
                 extraStack.add(value)
-                maxExtraStackSize = Math.max(maxExtraStackSize, extraStack.size())
+                maxExtraStackSize = Math.max(maxExtraStackSize, extraStack.size)
             }
         }
 

@@ -67,7 +67,7 @@ public object SamConversionResolverImpl : SamConversionResolver {
     }
 
     private fun findFunctionWithMostSpecificReturnType(supertypes: Set<KotlinType>): SimpleFunctionDescriptor {
-        val candidates = ArrayList<SimpleFunctionDescriptor>(supertypes.size())
+        val candidates = ArrayList<SimpleFunctionDescriptor>(supertypes.size)
         for (supertype in supertypes) {
             val abstractMembers = SingleAbstractMethodUtils.getAbstractMembers(supertype)
             if (!abstractMembers.isEmpty()) {

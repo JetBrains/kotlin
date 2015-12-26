@@ -63,7 +63,7 @@ private fun getSetterInfos(c: Class<*>): List<SetterInfo> {
     val setterInfos = ArrayList<SetterInfo>()
     for (method in c.getMethods()) {
         for (annotation in method.getDeclaredAnnotations()) {
-            if (annotation.annotationType().getName().endsWith(".Inject")) {
+            if (annotation.annotationClass.java.getName().endsWith(".Inject")) {
                 setterInfos.add(SetterInfo(method, method.getGenericParameterTypes().toList()))
             }
         }
@@ -114,6 +114,6 @@ private fun getRegistrations(klass: Class<*>): List<Type> {
     val interfaces = LinkedHashSet<Type>()
     superClasses.forEach { collectInterfacesRecursive(it, interfaces) }
     registrations.addAll(interfaces)
-    registrations.remove(javaClass<Any>())
+    registrations.remove(Any::class.java)
     return registrations
 }

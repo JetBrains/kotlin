@@ -104,8 +104,8 @@ class FilteredJvmDiagnostics(val jvmDiagnostics: Diagnostics, val otherDiagnosti
         conflicting.groupBy {
             it.data().signature.name
         }.forEach {
-            val diagnostics = it.getValue()
-            if (diagnostics.size() <= 1) {
+            val diagnostics = it.value
+            if (diagnostics.size <= 1) {
                 filtered.addAll(diagnostics)
             }
             else {

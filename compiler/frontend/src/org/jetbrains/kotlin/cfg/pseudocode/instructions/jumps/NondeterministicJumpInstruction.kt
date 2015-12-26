@@ -54,7 +54,7 @@ public class NondeterministicJumpInstruction(
 
     override val nextInstructions: Collection<Instruction>
         get() {
-            val targetInstructions = Lists.newArrayList(resolvedTargets.values())
+            val targetInstructions = Lists.newArrayList(resolvedTargets.values)
             targetInstructions.add(next)
             return targetInstructions
         }

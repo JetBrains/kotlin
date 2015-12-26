@@ -68,7 +68,7 @@ public class KtLightClassForFacade private constructor(
 
         companion object {
             public fun getInstance(project: Project): FacadeStubCache {
-                return ServiceManager.getService<FacadeStubCache>(project, javaClass<FacadeStubCache>())
+                return ServiceManager.getService<FacadeStubCache>(project, FacadeStubCache::class.java)
             }
         }
     }

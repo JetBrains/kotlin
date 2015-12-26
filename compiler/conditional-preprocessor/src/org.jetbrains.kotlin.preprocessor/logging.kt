@@ -38,7 +38,7 @@ public object SystemOutLogger : Logger {
 public fun Logger.withPrefix(prefix: String): Logger = PrefixedLogger(prefix, this)
 
 public class PrefixedLogger(val prefix: String, val logger: Logger) : Logger {
-    private fun prefix(msg: CharSequence): CharSequence = StringBuilder {
+    private fun prefix(msg: CharSequence): CharSequence = StringBuilder().apply {
         append(prefix)
         append(": ")
         append(msg)

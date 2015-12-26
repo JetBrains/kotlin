@@ -38,12 +38,12 @@ public class TraitDefaultMethodCallChecker : CallChecker {
 
         if (containerDescriptor is JavaClassDescriptor && DescriptorUtils.isInterface(containerDescriptor)) {
             //is java interface default method called from trait
-            val classifier = DescriptorUtils.getParentOfType(context.scope.ownerDescriptor, javaClass<ClassifierDescriptor>())
+            val classifier = DescriptorUtils.getParentOfType(context.scope.ownerDescriptor, ClassifierDescriptor::class.java)
 
             if (classifier != null && DescriptorUtils.isInterface(classifier)) {
                 context.trace.report(
                         ErrorsJvm.INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER.on(
-                                PsiTreeUtil.getParentOfType(resolvedCall.getCall().getCallElement(), javaClass<KtExpression>())
+                                PsiTreeUtil.getParentOfType(resolvedCall.getCall().getCallElement(), KtExpression::class.java)
                         )
                 )
             }

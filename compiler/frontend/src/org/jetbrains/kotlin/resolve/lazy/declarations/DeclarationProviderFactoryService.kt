@@ -42,7 +42,7 @@ public abstract class DeclarationProviderFactoryService {
                 syntheticFiles: Collection<KtFile>,
                 filesScope: GlobalSearchScope
         ): DeclarationProviderFactory {
-            return ServiceManager.getService(project, javaClass<DeclarationProviderFactoryService>())!!
+            return ServiceManager.getService(project, DeclarationProviderFactoryService::class.java)!!
                     .create(project, storageManager, syntheticFiles, filteringScope(syntheticFiles, filesScope))
         }
 

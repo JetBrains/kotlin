@@ -312,7 +312,7 @@ public class MultifileClassCodegen(
                     fragments.add(fragment)
                 }
             }
-            if (fragments.size() > 1) {
+            if (fragments.size > 1) {
                 throw IllegalStateException("More than one package fragment, files: $files | fragments: $fragments")
             }
             return fragments.firstOrNull()

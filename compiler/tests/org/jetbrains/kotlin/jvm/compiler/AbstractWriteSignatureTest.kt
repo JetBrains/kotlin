@@ -91,7 +91,7 @@ public abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
 
         fun check() {
             Assert.assertTrue(classSuitesByClassName.isNotEmpty())
-            classSuitesByClassName.values().forEach { it.check() }
+            classSuitesByClassName.values.forEach { it.check() }
         }
 
     }
@@ -135,7 +135,7 @@ public abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
             methodExpectations.filterNotTo(uncheckedExpectations) { it.isChecked() }
             fieldExpectations.filterNotTo(uncheckedExpectations) { it.isChecked() }
             Assert.assertTrue(
-                    "Unchecked expectations (${uncheckedExpectations.size()} total):\n  " + uncheckedExpectations.joinToString("\n  "),
+                    "Unchecked expectations (${uncheckedExpectations.size} total):\n  " + uncheckedExpectations.joinToString("\n  "),
                     uncheckedExpectations.isEmpty())
         }
 
@@ -185,7 +185,7 @@ public abstract class AbstractWriteSignatureTest : TestCaseWithTmpdir() {
 
         val lines = Files.readLines(ktFile, Charset.forName("utf-8"))
         var lineNo = 0
-        while (lineNo < lines.size()) {
+        while (lineNo < lines.size) {
             val line = lines[lineNo]
             val expectationMatch = expectationRegex.matchExact(line)
 

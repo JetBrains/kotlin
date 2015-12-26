@@ -29,11 +29,11 @@ public class KtSecondaryConstructor : KtConstructor<KtSecondaryConstructor> {
 
     override fun getContainingClassOrObject() = getParent().getParent() as KtClassOrObject
 
-    override fun getBodyExpression() = findChildByClass(javaClass<KtBlockExpression>())
+    override fun getBodyExpression() = findChildByClass(KtBlockExpression::class.java)
 
     override fun getConstructorKeyword() = notNullChild<PsiElement>(super.getConstructorKeyword())
 
-    public fun getDelegationCall(): KtConstructorDelegationCall = findNotNullChildByClass(javaClass<KtConstructorDelegationCall>())
+    public fun getDelegationCall(): KtConstructorDelegationCall = findNotNullChildByClass(KtConstructorDelegationCall::class.java)
 
     public fun hasImplicitDelegationCall(): Boolean = getDelegationCall().isImplicit()
 

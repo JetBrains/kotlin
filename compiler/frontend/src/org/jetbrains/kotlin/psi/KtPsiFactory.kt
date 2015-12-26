@@ -224,7 +224,7 @@ public class KtPsiFactory(private val project: Project) {
     public fun <TDeclaration : KtDeclaration> createDeclaration(text: String): TDeclaration {
         val file = createFile(text)
         val declarations = file.getDeclarations()
-        assert(declarations.size() == 1) { "${declarations.size()} declarations in $text" }
+        assert(declarations.size == 1) { "${declarations.size} declarations in $text" }
         @Suppress("UNCHECKED_CAST")
         val result = declarations.first() as TDeclaration
         return result
@@ -305,7 +305,7 @@ public class KtPsiFactory(private val project: Project) {
 
     public fun createWhenEntry(entryText: String): KtWhenEntry {
         val function = createFunction("fun foo() { when(12) { " + entryText + " } }")
-        val whenEntry = PsiTreeUtil.findChildOfType(function, javaClass<KtWhenEntry>())
+        val whenEntry = PsiTreeUtil.findChildOfType(function, KtWhenEntry::class.java)
 
         assert(whenEntry != null) { "Couldn't generate when entry" }
         assert(entryText == whenEntry!!.text) { "Generate when entry text differs from the given text" }
@@ -453,7 +453,7 @@ public class KtPsiFactory(private val project: Project) {
         private fun placeKeyword() {
             assert(state == State.MODIFIERS)
 
-            if (sb.length() != 0) {
+            if (sb.length != 0) {
                 sb.append(" ")
             }
             val keyword = when (target) {

@@ -38,7 +38,7 @@ class JvmStringTable(private val typeMapper: JetTypeMapper) : StringTable {
 
     override fun getStringIndex(string: String): Int =
             map.getOrPut(string) {
-                strings.size().apply {
+                strings.size.apply {
                     strings.add(string)
 
                     val lastRecord = records.lastOrNull()
@@ -78,7 +78,7 @@ class JvmStringTable(private val typeMapper: JetTypeMapper) : StringTable {
             }
         }
 
-        val index = strings.size()
+        val index = strings.size
         if (classId.isLocal) {
             localNames.add(index)
         }

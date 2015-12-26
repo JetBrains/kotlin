@@ -71,7 +71,7 @@ private fun insertSaveRestoreStackMarkers(
     val doneTryStartLabels = hashSetOf<LabelNode>()
     val doneHandlerLabels = hashSetOf<LabelNode>()
 
-    for (decompiledTryDescriptor in decompiledTryDescriptorForStart.values()) {
+    for (decompiledTryDescriptor in decompiledTryDescriptorForStart.values) {
         with(decompiledTryDescriptor) {
             if (!doneTryStartLabels.contains(tryStartLabel)) {
                 doneTryStartLabels.add(tryStartLabel)

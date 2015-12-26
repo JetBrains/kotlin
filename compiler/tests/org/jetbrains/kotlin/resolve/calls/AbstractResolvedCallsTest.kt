@@ -85,7 +85,7 @@ private fun ValueArgument.getText() = this.getArgumentExpression()?.getText()?.r
 private fun ArgumentMapping.getText() = when (this) {
     is ArgumentMatch -> {
         val parameterType = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(valueParameter.getType())
-        "${status.name()}  ${valueParameter.getName()} : ${parameterType} ="
+        "${status.name}  ${valueParameter.getName()} : ${parameterType} ="
     }
     else -> "ARGUMENT UNMAPPED: "
 }
@@ -96,7 +96,7 @@ private fun DeclarationDescriptor.getText(): String = when (this) {
 }
 
 private fun ResolvedCall<*>.renderToText(): String {
-    return StringBuilder {
+    return buildString {
         appendln("Resolved call:")
         appendln()
 
@@ -123,5 +123,5 @@ private fun ResolvedCall<*>.renderToText(): String {
                 appendln("$argumentMappingText $argumentText")
             }
         }
-    }.toString()
+    }
 }

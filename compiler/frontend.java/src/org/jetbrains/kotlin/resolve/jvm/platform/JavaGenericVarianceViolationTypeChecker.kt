@@ -59,14 +59,14 @@ public object JavaGenericVarianceViolationTypeChecker : AdditionalTypeChecker {
 
         val correspondingSubType = TypeCheckingProcedure.findCorrespondingSupertype(expressionTypeWithSmartCast, lowerBound) ?: return
 
-        assert(lowerBound.arguments.size() == upperBound.arguments.size()) {
+        assert(lowerBound.arguments.size == upperBound.arguments.size) {
             "Different arguments count in flexible bounds: " +
-            "($lowerBound(${lowerBound.arguments.size()})..$upperBound(${upperBound.arguments.size()})"
+            "($lowerBound(${lowerBound.arguments.size})..$upperBound(${upperBound.arguments.size})"
         }
 
-        assert(lowerBound.arguments.size() == correspondingSubType.arguments.size()) {
+        assert(lowerBound.arguments.size == correspondingSubType.arguments.size) {
             "Different arguments count in corresponding subtype and supertype: " +
-            "($lowerBound(${lowerBound.arguments.size()})..$correspondingSubType(${correspondingSubType.arguments.size()})"
+            "($lowerBound(${lowerBound.arguments.size})..$correspondingSubType(${correspondingSubType.arguments.size})"
         }
 
 

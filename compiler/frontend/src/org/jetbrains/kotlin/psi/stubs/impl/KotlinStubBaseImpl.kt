@@ -75,8 +75,8 @@ public open class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubEleme
     }
 
     companion object {
-        private val LOGGER: Logger = Logger.getInstance(javaClass<KotlinStubBaseImpl<KtElementImplStub<*>>>())
+        private val LOGGER: Logger = Logger.getInstance(KotlinStubBaseImpl::class.java)
 
-        private val BASE_STUB_INTERFACES = listOf(javaClass<KotlinStubWithFqName<*>>(), javaClass<KotlinClassOrObjectStub<*>>(), javaClass<NamedStub<*>>(), javaClass<KotlinCallableStubBase<*>>())
+        private val BASE_STUB_INTERFACES = listOf(KotlinStubWithFqName::class.java, KotlinClassOrObjectStub::class.java, NamedStub::class.java, KotlinCallableStubBase::class.java)
     }
 }

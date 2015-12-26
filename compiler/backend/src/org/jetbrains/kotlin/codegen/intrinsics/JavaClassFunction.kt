@@ -28,7 +28,7 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 public class JavaClassFunction : IntrinsicMethod() {
     override fun toCallable(fd: FunctionDescriptor, isSuper: Boolean, resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): Callable {
         val javaClass = resolvedCall.getResultingDescriptor().getReturnType()!!.getArguments().first().getType()
-        return object : IntrinsicCallable(getType(javaClass<Class<Any>>()), listOf(), null, null) {
+        return object : IntrinsicCallable(getType(Class::class.java), listOf(), null, null) {
             override fun invokeIntrinsic(v: InstructionAdapter) {
                 codegen.putReifiedOperationMarkerIfTypeIsReifiedParameter(javaClass, ReifiedTypeInliner.OperationKind.JAVA_CLASS)
                 putJavaLangClassInstance(v, codegen.getState().typeMapper.mapType(javaClass))

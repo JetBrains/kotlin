@@ -67,7 +67,7 @@ public object CodegenUtilKt {
                             }
                             else null
                         }
-                assert(actualDelegates.size() <= 1) { "Many delegates found for $delegatingMember: $actualDelegates" }
+                assert(actualDelegates.size <= 1) { "Many delegates found for $delegatingMember: $actualDelegates" }
 
                 actualDelegates.firstOrNull()
             }

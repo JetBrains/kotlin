@@ -121,15 +121,15 @@ public class CandidateResolver(
                 typeArguments.add(type)
             }
 
-            val expectedTypeArgumentCount = candidateDescriptor.getTypeParameters().size()
-            for (index in jetTypeArguments.size()..expectedTypeArgumentCount - 1) {
+            val expectedTypeArgumentCount = candidateDescriptor.getTypeParameters().size
+            for (index in jetTypeArguments.size..expectedTypeArgumentCount - 1) {
                 typeArguments.add(ErrorUtils.createErrorType(
                         "Explicit type argument expected for " + candidateDescriptor.getTypeParameters().get(index).getName()))
             }
             val substitution = FunctionDescriptorUtil.createSubstitution(candidateDescriptor as FunctionDescriptor, typeArguments)
             val substitutor = TypeSubstitutor.create(SubstitutionFilteringInternalResolveAnnotations(substitution))
 
-            if (expectedTypeArgumentCount != jetTypeArguments.size()) {
+            if (expectedTypeArgumentCount != jetTypeArguments.size) {
                 candidateCall.addStatus(OTHER_ERROR)
                 tracing.wrongNumberOfTypeArguments(trace, expectedTypeArgumentCount)
             }
@@ -315,9 +315,9 @@ public class CandidateResolver(
         var resultStatus = SUCCESS
         val argumentTypes = Lists.newArrayList<KotlinType>()
         val infoForArguments = candidateCall.getDataFlowInfoForArguments()
-        for (entry in candidateCall.getValueArguments().entrySet()) {
-            val parameterDescriptor = entry.getKey()
-            val resolvedArgument = entry.getValue()
+        for (entry in candidateCall.getValueArguments().entries) {
+            val parameterDescriptor = entry.key
+            val resolvedArgument = entry.value
 
 
             for (argument in resolvedArgument.getArguments()) {
@@ -507,7 +507,7 @@ public class CandidateResolver(
             substitutor: TypeSubstitutor,
             trace: BindingTrace) {
         val typeParameters = functionDescriptor.getTypeParameters()
-        for (i in 0..Math.min(typeParameters.size(), jetTypeArguments.size()) - 1) {
+        for (i in 0..Math.min(typeParameters.size, jetTypeArguments.size) - 1) {
             val typeParameterDescriptor = typeParameters.get(i)
             val typeArgument = typeArguments.get(i)
             val typeReference = jetTypeArguments.get(i).getTypeReference()

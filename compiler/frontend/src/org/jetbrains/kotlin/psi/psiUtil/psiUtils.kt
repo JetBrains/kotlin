@@ -117,23 +117,23 @@ public fun <T : PsiElement> PsiElement.getNonStrictParentOfType(parentClass: Cla
 }
 
 inline public fun <reified T : PsiElement> PsiElement.getParentOfType(strict: Boolean): T? {
-    return PsiTreeUtil.getParentOfType(this, javaClass<T>(), strict)
+    return PsiTreeUtil.getParentOfType(this, T::class.java, strict)
 }
 
 inline public fun <reified T : PsiElement> PsiElement.getStrictParentOfType(): T? {
-    return PsiTreeUtil.getParentOfType(this, javaClass<T>(), true)
+    return PsiTreeUtil.getParentOfType(this, T::class.java, true)
 }
 
 inline public fun <reified T : PsiElement> PsiElement.getNonStrictParentOfType(): T? {
-    return PsiTreeUtil.getParentOfType(this, javaClass<T>(), false)
+    return PsiTreeUtil.getParentOfType(this, T::class.java, false)
 }
 
 inline public fun <reified T : PsiElement> PsiElement.getChildOfType(): T? {
-    return PsiTreeUtil.getChildOfType(this, javaClass<T>())
+    return PsiTreeUtil.getChildOfType(this, T::class.java)
 }
 
 inline public fun <reified T : PsiElement> PsiElement.getChildrenOfType(): Array<T> {
-    return PsiTreeUtil.getChildrenOfType(this, javaClass<T>()) ?: arrayOf()
+    return PsiTreeUtil.getChildrenOfType(this, T::class.java) ?: arrayOf()
 }
 
 public fun PsiElement.getNextSiblingIgnoringWhitespaceAndComments(): PsiElement? {

@@ -69,22 +69,22 @@ public abstract class AbstractPseudoValueTest : AbstractPseudocodeTest() {
                 .mapNotNull { (it as? InstructionWithValue)?.outputValue }
                 .filter { it.element == null }
                 .sortedBy { it.debugName }
-        val allValues = elementToValues.values() + unboundValues
+        val allValues = elementToValues.values + unboundValues
         if (allValues.isEmpty()) return
 
         val valueDescriptions = LinkedHashMap<Pair<PseudoValue, KtElement?>, String>()
         for (value in unboundValues) {
             valueDescriptions[value to null] = valueDescription(null, value)
         }
-        for ((element, value) in elementToValues.entrySet()) {
+        for ((element, value) in elementToValues.entries) {
             valueDescriptions[value to element] = valueDescription(element, value)
         }
 
-        val elementColumnWidth = elementToValues.keySet().map { elementText(it).length() }.max() ?: 1
-        val valueColumnWidth = allValues.map { valueDecl(it).length() }.max()!!
-        val valueDescColumnWidth = valueDescriptions.values().map { it.length() }.max()!!
+        val elementColumnWidth = elementToValues.keys.map { elementText(it).length }.max() ?: 1
+        val valueColumnWidth = allValues.map { valueDecl(it).length }.max()!!
+        val valueDescColumnWidth = valueDescriptions.values.map { it.length }.max()!!
 
-        for ((ve, description) in valueDescriptions.entrySet()) {
+        for ((ve, description) in valueDescriptions.entries) {
             val (value, element) = ve
             out
                     .append("%1$-${elementColumnWidth}s".format(elementText(element)))
