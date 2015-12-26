@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -145,8 +146,6 @@ public abstract class ExpectedResolveData {
     }
 
     public final void checkResult(BindingContext bindingContext) {
-        KotlinBuiltIns builtIns = JvmPlatform.INSTANCE.getBuiltIns();
-
         Set<PsiElement> unresolvedReferences = Sets.newHashSet();
         for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
             if (Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS.contains(diagnostic.getFactory())) {
@@ -246,8 +245,7 @@ public abstract class ExpectedResolveData {
 
                 KotlinType actualType = bindingContext.get(BindingContext.TYPE, typeReference);
                 assertNotNull("Type " + name + " not resolved for reference " + name, actualType);
-                ClassifierDescriptor expectedClass = builtIns.getBuiltInClassByName(Name.identifier(name.substring(STANDARD_PREFIX.length())));
-                assertNotNull("Expected class not found: " + name);
+                ClassifierDescriptor expectedClass = getBuiltinClass(name.substring(STANDARD_PREFIX.length()));
                 assertSame("Type resolution mismatch: ", expectedClass.getTypeConstructor(), actualType.getConstructor());
                 continue;
             }
@@ -303,9 +301,7 @@ public abstract class ExpectedResolveData {
             TypeConstructor expectedTypeConstructor;
             if (typeName.startsWith(STANDARD_PREFIX)) {
                 String name = typeName.substring(STANDARD_PREFIX.length());
-                ClassifierDescriptor expectedClass = builtIns.getBuiltInClassByName(Name.identifier(name));
-
-                assertNotNull("Expected class not found: " + typeName, expectedClass);
+                ClassifierDescriptor expectedClass = getBuiltinClass(name);
                 expectedTypeConstructor = expectedClass.getTypeConstructor();
             }
             else {
@@ -332,6 +328,21 @@ public abstract class ExpectedResolveData {
             assertNotNull(expression.getText() + " type is null", expressionType);
             assertSame("At " + position + ": ", expectedTypeConstructor, expressionType.getConstructor());
         }
+    }
+
+    @NotNull
+    public static ClassifierDescriptor getBuiltinClass(String nameOrFqName) {
+        ClassifierDescriptor expectedClass;
+
+        if (nameOrFqName.indexOf('.') >= 0) {
+            expectedClass = JvmPlatform.INSTANCE.getBuiltIns().getBuiltInClassByFqNameNullable(FqName.fromSegments(Arrays.asList(nameOrFqName.split("\\."))));
+        }
+        else {
+            expectedClass = JvmPlatform.INSTANCE.getBuiltIns().getBuiltInClassByNameNullable(Name.identifier(nameOrFqName));
+        }
+        assertNotNull("Expected class not found: " + nameOrFqName, expectedClass);
+
+        return expectedClass;
     }
 
     private static String renderReferenceInContext(KtReferenceExpression referenceExpression) {
