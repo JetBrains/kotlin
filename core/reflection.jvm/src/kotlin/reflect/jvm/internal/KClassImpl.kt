@@ -120,7 +120,8 @@ internal class KClassImpl<T : Any>(override val jClass: Class<T>) : KDeclaration
         }
 
     override val nestedClasses: Collection<KClass<*>>
-        get() = descriptor.unsubstitutedInnerClassesScope.getContributedDescriptors().map { nestedClass ->
+        get() = descriptor.unsubstitutedInnerClassesScope.getContributedDescriptors().filterNot(DescriptorUtils::isEnumEntry).map {
+            nestedClass ->
             val source = (nestedClass as DeclarationDescriptorWithSource).source
             when (source) {
                 is KotlinJvmBinarySourceElement ->
