@@ -324,23 +324,6 @@ fun PsiElement.getLineCount(): Int {
 
 fun PsiElement.isMultiLine(): Boolean = getLineCount() > 1
 
-fun KtElement.getContextForContainingDeclarationBody(): BindingContext? {
-    val enclosingDeclaration = getStrictParentOfType<KtDeclaration>()
-    val bodyElement = when (enclosingDeclaration) {
-        is KtDeclarationWithBody -> enclosingDeclaration.bodyExpression
-        is KtWithExpressionInitializer -> enclosingDeclaration.initializer
-        is KtDestructuringDeclaration -> enclosingDeclaration.initializer
-        is KtParameter -> enclosingDeclaration.defaultValue
-        is KtAnonymousInitializer -> enclosingDeclaration.body
-        is KtClass -> {
-            val delegationSpecifierList = enclosingDeclaration.getSuperTypeList()
-            if (delegationSpecifierList.isAncestor(this)) this else null
-        }
-        else -> null
-    }
-    return bodyElement?.let { it.analyze() }
-}
-
 fun <T> chooseContainerElement(
         containers: List<T>,
         editor: Editor,
