@@ -61,6 +61,9 @@ public final class PsiCodegenPredictor {
         // TODO: Method won't work for declarations inside companion objects
         // TODO: Method won't give correct class name for traits implementations
 
+        if (declaration instanceof KtPropertyAccessor) {
+            return getPredefinedJvmInternalName(((KtPropertyAccessor) declaration).getProperty(), fileClassesProvider);
+        }
         KtDeclaration parentDeclaration = KtStubbedPsiUtil.getContainingDeclaration(declaration);
 
         String parentInternalName;
@@ -73,8 +76,8 @@ public final class PsiCodegenPredictor {
         else {
             KtFile containingFile = declaration.getContainingKtFile();
 
-            if (declaration instanceof KtNamedFunction) {
-                Name name = ((KtNamedFunction) declaration).getNameAsName();
+            if (declaration instanceof KtNamedFunction || declaration instanceof KtProperty) {
+                Name name = ((KtNamedDeclaration) declaration).getNameAsName();
                 return name == null ? null : FileClasses.getFileClassInternalName(fileClassesProvider, containingFile) + "$" + name.asString();
             }
 
