@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.util.psi.patternMatching
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.refactoring.getContextForContainingDeclarationBody
@@ -877,9 +876,7 @@ class KotlinPsiUnifier(
         }
     }
 
-    private val descriptorToParameter = ContainerUtil.newMapFromValues(parameters.iterator()) {
-        (it!!.descriptor as? DeclarationDescriptorWithSource)?.source?.getPsi()
-    }
+    private val descriptorToParameter = parameters.toMapBy { (it.descriptor as? DeclarationDescriptorWithSource)?.source?.getPsi() }
 
     private fun PsiElement.unwrap(): PsiElement? {
         return when (this) {
