@@ -107,6 +107,9 @@ class IncrementalCacheImpl(
     private val dependentsWithThis: Sequence<IncrementalCacheImpl>
             get() = sequenceOf(this).plus(dependents.asSequence())
 
+    internal val dependentCaches: Iterable<IncrementalCacheImpl>
+            get() = dependents
+
     override fun registerInline(fromPath: String, jvmSignature: String, toPath: String) {
         if (!IncrementalCompilation.isExperimental()) {
             inlinedTo.add(fromPath, jvmSignature, toPath)
@@ -144,7 +147,7 @@ class IncrementalCacheImpl(
     }
 
     fun getSubtypesOf(className: FqName): Sequence<FqName> =
-        dependentsWithThis.flatMap { it.subtypesMap[className].asSequence() }
+            subtypesMap[className].asSequence()
 
     fun cleanDirtyInlineFunctions() {
         dirtyInlineFunctionsMap.clean()
