@@ -16,6 +16,7 @@
 package org.jetbrains.kotlin.cli.jvm
 
 import com.intellij.ide.highlighter.JavaFileType
+import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.PlatformTestCase
@@ -144,7 +145,11 @@ class KotlinCliJavaFileManagerTest : PsiTestCase() {
         val dir = myPsiManager.findDirectory(pkg)
         TestCase.assertNotNull(dir)
         dir!!
-        dir.add(PsiFileFactory.getInstance(project).createFileFromText(className + ".java", JavaFileType.INSTANCE, text))
+
+        WriteCommandAction.runWriteCommandAction(project) {
+            dir.add(PsiFileFactory.getInstance(project).createFileFromText(className + ".java", JavaFileType.INSTANCE, text))
+        }
+
         val coreJavaFileManagerExt = KotlinCliJavaFileManagerImpl(myPsiManager)
         coreJavaFileManagerExt.initIndex(JvmDependenciesIndex(listOf(JavaRoot(root, JavaRoot.RootType.SOURCE))))
         coreJavaFileManagerExt.addToClasspath(root)
