@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.diagnostics.*;
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages;
 import org.jetbrains.kotlin.load.java.JavaBindingContext;
-import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion;
 import org.jetbrains.kotlin.load.java.components.TraceBasedErrorReporter;
 import org.jetbrains.kotlin.load.java.components.TraceBasedErrorReporter.AbiVersionErrorData;
 import org.jetbrains.kotlin.psi.KtFile;
@@ -165,7 +165,7 @@ public final class AnalyzerWithCompilerReport {
             messageCollector.report(
                     CompilerMessageSeverity.ERROR,
                     "Class '" + JvmClassName.byClassId(data.getClassId()) + "' was compiled with an incompatible version of Kotlin. " +
-                    "Its ABI version is " + data.getActualVersion() + ", expected ABI version is " + JvmAbi.VERSION,
+                    "Its ABI version is " + data.getActualVersion() + ", expected ABI version is " + JvmBytecodeBinaryVersion.INSTANCE,
                     CompilerMessageLocation.create(path, -1, -1, null)
             );
         }

@@ -23,6 +23,9 @@ class JvmBytecodeBinaryVersion protected constructor(
 ) : BinaryVersion(major, minor, patch, rest) {
     companion object {
         @JvmField
+        val INSTANCE = create(1, 0, 2)
+
+        @JvmField
         val INVALID_VERSION = JvmBytecodeBinaryVersion.create(IntArray(0))
 
         @JvmStatic

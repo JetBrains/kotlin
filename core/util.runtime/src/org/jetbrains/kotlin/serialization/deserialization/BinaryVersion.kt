@@ -16,6 +16,15 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+/**
+ * Subclasses of this class are used to identify different versions of the binary output of the compiler and their compatibility guarantees.
+ * - Major version should be increased only when the new binary format is neither forward- nor backward compatible.
+ *   This shouldn't really ever happen at all.
+ * - Minor version should be increased when the new format is backward compatible,
+ *   i.e. the new compiler can process old data, but the old compiler will not be able to process new data.
+ * - Patch version can be increased freely and is only supposed to be used for debugging. Increase the patch version when you
+ *   make a change to binaries which is both forward- and backward compatible.
+ */
 abstract class BinaryVersion protected constructor(
         val major: Int,
         val minor: Int,

@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode;
 import org.jetbrains.kotlin.cli.common.KotlinVersion;
 import org.jetbrains.kotlin.cli.js.K2JSCompiler;
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler;
-import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.Tmpdir;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
@@ -72,7 +72,7 @@ public class CliBaseTest {
     public static String getNormalizedCompilerOutput(@NotNull String pureOutput, @NotNull ExitCode exitCode, @NotNull String testDataDir) {
         String normalizedOutputWithoutExitCode = pureOutput
                 .replace(new File(testDataDir).getAbsolutePath(), "$TESTDATA_DIR$")
-                .replace("expected ABI version is " + JvmAbi.VERSION, "expected ABI version is $ABI_VERSION$")
+                .replace("expected ABI version is " + JvmBytecodeBinaryVersion.INSTANCE, "expected ABI version is $ABI_VERSION$")
                 .replace("\\", "/")
                 .replace(KotlinVersion.VERSION, "$VERSION$");
 

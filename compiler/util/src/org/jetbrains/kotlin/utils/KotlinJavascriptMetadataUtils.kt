@@ -30,6 +30,8 @@ class JsBinaryVersion protected constructor(
         major: Int, minor: Int, patch: Int, rest: List<Int>
 ) : BinaryVersion(major, minor, patch, rest) {
     companion object {
+        @JvmField val INSTANCE = create(0, 3, 0)
+
         @JvmField val INVALID_VERSION = JsBinaryVersion.create(IntArray(0))
 
         @JvmStatic fun create(version: IntArray) = create(version, ::JsBinaryVersion)
@@ -50,7 +52,7 @@ object KotlinJavascriptMetadataUtils {
      */
     private val METADATA_PATTERN = "(?m)\\w+\\.$KOTLIN_JAVASCRIPT_METHOD_NAME\\((\\d+),\\s*(['\"])([^'\"]*)\\2,\\s*(['\"])([^'\"]*)\\4\\)".toPattern()
 
-    @JvmField val ABI_VERSION: Int = JsBinaryVersion.create(0, 3, 0).minor
+    @JvmField val ABI_VERSION: Int = JsBinaryVersion.INSTANCE.minor
 
     fun replaceSuffix(filePath: String): String = filePath.substringBeforeLast(JS_EXT) + META_JS_SUFFIX
 

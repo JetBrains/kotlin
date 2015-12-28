@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion;
 
 public final class AbiVersionUtil {
     public static boolean isAbiVersionCompatible(@NotNull BinaryVersion actual) {
-        return actual.isCompatibleTo(JvmAbi.VERSION);
+        return actual.isCompatibleTo(JvmBytecodeBinaryVersion.INSTANCE);
     }
 
     private AbiVersionUtil() {

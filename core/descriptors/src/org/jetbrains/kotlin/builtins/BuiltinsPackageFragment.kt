@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.builtins.BuiltInsProtoBuf
-import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import org.jetbrains.kotlin.serialization.deserialization.DeserializedPackageFragment
 import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
@@ -39,11 +38,11 @@ class BuiltinsPackageFragment(
         val dataInput = DataInputStream(stream)
         val version = BuiltInsBinaryVersion.create((1..dataInput.readInt()).map { dataInput.readInt() }.toIntArray())
 
-        if (!version.isCompatibleTo(BuiltinsPackageFragment.VERSION)) {
+        if (!version.isCompatibleTo(BuiltInsBinaryVersion.INSTANCE)) {
             // TODO: report a proper diagnostic
             throw UnsupportedOperationException(
                     "Kotlin built-in definition format version is not supported: " +
-                    "expected ${BuiltinsPackageFragment.VERSION}, actual $version. " +
+                    "expected ${BuiltInsBinaryVersion.INSTANCE}, actual $version. " +
                     "Please update Kotlin"
             )
         }
@@ -70,10 +69,5 @@ class BuiltinsPackageFragment(
 
     override fun loadClassNames(packageProto: ProtoBuf.Package): Collection<Name> {
         return packageProto.getExtension(BuiltInsProtoBuf.className)?.map { id -> nameResolver.getName(id) } ?: listOf()
-    }
-
-    companion object {
-        // Advance this version when the common or builtins-specific binary metadata format is changed
-        val VERSION = BuiltInsBinaryVersion.create(1, 0, 0)
     }
 }

@@ -22,7 +22,7 @@ import org.jetbrains.jps.builders.storage.BuildDataPaths
 import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.jps.incremental.CacheVersion.Action
-import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion
 import java.io.File
 
 private val NORMAL_VERSION = 8
@@ -47,7 +47,7 @@ class CacheVersion(
         get() = versionFile.readText().toInt()
 
     private val expectedVersion: Int
-        get() = ownVersion * 1000000 + JvmAbi.VERSION.major * 1000 + JvmAbi.VERSION.minor
+        get() = ownVersion * 1000000 + JvmBytecodeBinaryVersion.INSTANCE.major * 1000 + JvmBytecodeBinaryVersion.INSTANCE.minor
 
     fun checkVersion(): Action =
             when (versionFile.exists() to isEnabled) {

@@ -32,18 +32,6 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.isClassOrEnumClass;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.isCompanionObject;
 
 public final class JvmAbi {
-    /**
-     * This constant is used to identify binary format (class file) versions
-     * If you change class file metadata format and/or naming conventions, please change this version.
-     * - Major version should be increased only when the new binary format is neither forward- nor backward compatible.
-     *   This shouldn't really ever happen at all.
-     * - Minor version should be increased when the new format is backward compatible,
-     *   i.e. the new compiler can process old class files, but the old compiler will not be able to process new class files.
-     * - Patch version can be increased freely and is only supposed to be used for debugging. Increase the patch version when you
-     *   make a change to the metadata format or the bytecode which is both forward- and backward compatible.
-     */
-    public static final JvmBytecodeBinaryVersion VERSION = JvmBytecodeBinaryVersion.create(1, 0, 2);
-
     public static final String DEFAULT_IMPLS_CLASS_NAME = "DefaultImpls";
     public static final String DEFAULT_IMPLS_SUFFIX = "$" + DEFAULT_IMPLS_CLASS_NAME;
 

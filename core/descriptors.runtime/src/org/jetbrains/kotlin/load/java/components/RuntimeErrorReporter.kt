@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.load.java.components
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
@@ -31,7 +31,7 @@ object RuntimeErrorReporter : ErrorReporter {
 
     override fun reportIncompatibleAbiVersion(classId: ClassId, filePath: String, actualVersion: BinaryVersion) {
         throw IllegalStateException("Incompatible ABI version of $classId: $actualVersion " +
-                                    "(expected version is ${JvmAbi.VERSION})")
+                                    "(expected version is ${JvmBytecodeBinaryVersion.INSTANCE})")
     }
 
     override fun reportCannotInferVisibility(descriptor: CallableMemberDescriptor) {
