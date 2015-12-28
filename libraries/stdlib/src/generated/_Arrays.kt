@@ -11258,14 +11258,6 @@ public fun ShortArray.binarySearch(element: Short, fromIndex: Int = 0, toIndex: 
  * Returns new array which is a copy of the original array.
  */
 @kotlin.jvm.JvmVersion
-public fun <T> Array<out T>.copyOf(): Array<out T> {
-    return Arrays.copyOf(this, size)
-}
-
-/**
- * Returns new array which is a copy of the original array.
- */
-@kotlin.jvm.JvmVersion
 public fun BooleanArray.copyOf(): BooleanArray {
     return Arrays.copyOf(this, size)
 }
@@ -11339,14 +11331,6 @@ public fun <T> Array<T>.copyOf(): Array<T> {
  * Returns new array which is a copy of the original array.
  */
 @kotlin.jvm.JvmVersion
-public fun <T> Array<out T>.copyOf(newSize: Int): Array<out T?> {
-    return Arrays.copyOf(this, newSize)
-}
-
-/**
- * Returns new array which is a copy of the original array.
- */
-@kotlin.jvm.JvmVersion
 public fun BooleanArray.copyOf(newSize: Int): BooleanArray {
     return Arrays.copyOf(this, newSize)
 }
@@ -11414,14 +11398,6 @@ public fun ShortArray.copyOf(newSize: Int): ShortArray {
 @JvmName("mutableCopyOf")
 public fun <T> Array<T>.copyOf(newSize: Int): Array<T?> {
     return Arrays.copyOf(this, newSize)
-}
-
-/**
- * Returns new array which is a copy of range of original array.
- */
-@kotlin.jvm.JvmVersion
-public fun <T> Array<out T>.copyOfRange(fromIndex: Int, toIndex: Int): Array<out T> {
-    return Arrays.copyOfRange(this, fromIndex, toIndex)
 }
 
 /**
