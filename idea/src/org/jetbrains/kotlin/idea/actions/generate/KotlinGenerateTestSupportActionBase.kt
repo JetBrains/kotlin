@@ -144,7 +144,7 @@ abstract class KotlinGenerateTestSupportActionBase(
                 val fileTemplate = FileTemplateManager.getInstance(project).getCodeTemplate(fileTemplateDescriptor.fileName)
                 var templateText = fileTemplate.text.replace(BODY_VAR, "")
                 if (templateText.contains(NAME_VAR)) {
-                    var name = "Name"
+                    var name = if (templateText.contains("test$NAME_VAR")) "Name" else "name"
                     if (!ApplicationManager.getApplication().isUnitTestMode) {
                         name = Messages.showInputDialog("Choose test name: ", commandName, null, name, NAME_VALIDATOR)
                                 ?: return@executeWriteCommand
