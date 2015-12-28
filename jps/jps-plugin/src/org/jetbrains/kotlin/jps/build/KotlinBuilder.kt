@@ -738,19 +738,21 @@ private fun CompilationResult.doProcessChangesUsingLookups(
 ) {
     val dirtyLookupSymbols = HashSet<LookupSymbol>()
     val lookupStorage = dataManager.getStorage(KotlinDataContainerTarget, LookupStorageProvider)
+    val allCaches = caches.toHashSet()
+    allCaches.addAll(caches.flatMap { it.dependentCaches })
 
     KotlinBuilder.LOG.debug("Start processing changes")
 
     for (change in changes) {
         if (change is ChangeInfo.SignatureChanged) {
-            for (classFqName in withSubtypes(change.fqName, caches)) {
+            for (classFqName in withSubtypes(change.fqName, allCaches)) {
                 val scope = classFqName.parent().asString()
                 val name = classFqName.shortName().identifier
                 dirtyLookupSymbols.add(LookupSymbol(name, scope))
             }
         }
         else if (change is ChangeInfo.MembersChanged) {
-            val scopes = withSubtypes(change.fqName, caches).map { it.asString() }
+            val scopes = withSubtypes(change.fqName, allCaches).map { it.asString() }
 
             change.names.forAllPairs(scopes) { name, scope ->
                 dirtyLookupSymbols.add(LookupSymbol(name, scope))
@@ -781,9 +783,6 @@ private fun CompilationResult.doProcessChangesUsingLookups(
  *    class C : B()
  * withSubtypes(A) will return [A, B, C]
  */
-/* TODO: in case of chunk containing more than one target,
-   depending targets would be asked about same subtype more than once.
-   Can be solved by putting all caches in set */
 private fun withSubtypes(
         typeFqName: FqName,
         caches: Collection<IncrementalCacheImpl>
