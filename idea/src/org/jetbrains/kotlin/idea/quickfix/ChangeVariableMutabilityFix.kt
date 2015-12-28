@@ -53,8 +53,7 @@ public class ChangeVariableMutabilityFix(element: KtNamedDeclaration, private va
         public val VAL_WITH_SETTER_FACTORY: KotlinSingleIntentionActionFactory = object: KotlinSingleIntentionActionFactory() {
             override fun createAction(diagnostic: Diagnostic): IntentionAction? {
                 val accessor = diagnostic.psiElement as KtPropertyAccessor
-                val property = accessor.parent as KtProperty
-                return ChangeVariableMutabilityFix(property, true)
+                return ChangeVariableMutabilityFix(accessor.property, true)
             }
         }
 

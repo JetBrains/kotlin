@@ -354,7 +354,7 @@ public fun <T> chooseContainerElement(
             object : PsiElementListCellRenderer<PsiElement>() {
                 private fun PsiElement.renderName(): String {
                     if (this is KtPropertyAccessor) {
-                        return (parent as KtProperty).renderName() + if (isGetter) ".get" else ".set"
+                        return property.renderName() + if (isGetter) ".get" else ".set"
                     }
                     if (this is KtObjectDeclaration && this.isCompanion()) {
                         return "Companion object of ${getStrictParentOfType<KtClassOrObject>()?.renderName() ?: "<anonymous>"}"

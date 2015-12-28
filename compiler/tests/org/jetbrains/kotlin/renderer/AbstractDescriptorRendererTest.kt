@@ -97,8 +97,8 @@ public abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment
             }
 
             override fun visitPropertyAccessor(accessor: KtPropertyAccessor) {
-                val parent = accessor.getParent() as KtProperty
-                val propertyDescriptor = getDescriptor(parent, container) as PropertyDescriptor
+                val property = accessor.property
+                val propertyDescriptor = getDescriptor(property, container) as PropertyDescriptor
                 if (accessor.isGetter()) {
                     descriptors.add(propertyDescriptor.getGetter()!!)
                 }
