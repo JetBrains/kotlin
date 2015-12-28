@@ -159,6 +159,12 @@ public class ProtoComparisonTestGenerated extends AbstractProtoComparisonTest {
             doTest(fileName);
         }
 
+        @TestMetadata("sealedClassImplAdded")
+        public void testSealedClassImplAdded() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classMembersOnlyChanged/sealedClassImplAdded/");
+            doTest(fileName);
+        }
+
     }
 
     @TestMetadata("jps-plugin/testData/comparison/packageMembers")

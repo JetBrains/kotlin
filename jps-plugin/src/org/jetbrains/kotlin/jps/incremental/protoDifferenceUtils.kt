@@ -177,6 +177,7 @@ private class DifferenceCalculatorForClass(oldData: ProtoMapValue, newData: Prot
     override fun difference(): Difference {
         var isClassSignatureChanged = false
         val names = hashSetOf<String>()
+        val classIsSealed = newProto.isSealed && oldProto.isSealed
 
         fun Int.oldToNames() = names.add(oldNameResolver.getString(this))
         fun Int.newToNames() = names.add(newNameResolver.getString(this))
@@ -193,8 +194,15 @@ private class DifferenceCalculatorForClass(oldData: ProtoMapValue, newData: Prot
                     if (oldProto.hasCompanionObjectName()) oldProto.companionObjectName.oldToNames()
                     if (newProto.hasCompanionObjectName()) newProto.companionObjectName.newToNames()
                 }
-                ProtoBufClassKind.NESTED_CLASS_NAME_LIST ->
+                ProtoBufClassKind.NESTED_CLASS_NAME_LIST -> {
+                    if (classIsSealed) {
+                        // when class is sealed, adding an implementation can break exhaustive when expressions
+                        // the workaround is to recompile all class usages
+                        isClassSignatureChanged = true
+                    }
+
                     names.addAll(calcDifferenceForNames(oldProto.nestedClassNameList, newProto.nestedClassNameList))
+                }
                 ProtoBufClassKind.CONSTRUCTOR_LIST ->
                     names.addAll(calcDifferenceForNonPrivateMembers(ProtoBuf.Class::getConstructorList))
                 ProtoBufClassKind.FUNCTION_LIST ->
@@ -255,3 +263,6 @@ private class DifferenceCalculatorForPackageFacade(oldData: ProtoMapValue, newDa
         return Difference(isClassSignatureChanged = false, changedMembersNames = names)
     }
 }
+
+private val ProtoBuf.Class.isSealed: Boolean
+    get() = ProtoBuf.Modality.SEALED == Flags.MODALITY.get(flags)
