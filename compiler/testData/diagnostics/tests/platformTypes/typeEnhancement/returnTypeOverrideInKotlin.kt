@@ -27,5 +27,5 @@ class C2 : A() {
 }
 
 class C3 : A() {
-    override fun foo(): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>Derived<String?><!> { return bar2(); }
+    override fun foo(): Derived<String?> { return bar2(); }
 }
