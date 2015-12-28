@@ -29,9 +29,7 @@ import org.jetbrains.kotlin.idea.decompiler.textBuilder.ResolverForDecompiler
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.defaultDecompilerRendererOptions
 import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion
-import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
-import org.jetbrains.kotlin.load.kotlin.header.isCompatibleFileFacadeKind
-import org.jetbrains.kotlin.load.kotlin.header.isCompatibleMultifileClassKind
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.flexibility
 import org.jetbrains.kotlin.types.isFlexible
@@ -79,30 +77,33 @@ fun buildDecompiledTextForClassFile(
         classFile: VirtualFile,
         resolver: ResolverForDecompiler = DeserializerForClassfileDecompiler(classFile)
 ): DecompiledText {
-    val kotlinClassHeaderInfo = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(classFile)
-    assert(kotlinClassHeaderInfo != null) { "Decompiled data factory shouldn't be called on an unsupported file: " + classFile }
-    val classId = kotlinClassHeaderInfo!!.classId
-    val classHeader = kotlinClassHeaderInfo.classHeader
-    val packageFqName = classId.packageFqName
+    val (classHeader, classId) = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(classFile)
+                                 ?: error("Decompiled data factory shouldn't be called on an unsupported file: " + classFile)
 
-    return when {
-        !classHeader.version.isCompatible() -> {
-            DecompiledText(
-                    INCOMPATIBLE_ABI_VERSION_COMMENT
-                            .replace(CURRENT_ABI_VERSION_MARKER, JvmBytecodeBinaryVersion.INSTANCE.toString())
-                            .replace(FILE_ABI_VERSION_MARKER, classHeader.version.toString()),
-                    mapOf())
-        }
-        classHeader.isCompatibleFileFacadeKind() ->
-            buildDecompiledText(packageFqName, ArrayList(resolver.resolveDeclarationsInFacade(classId.asSingleFqName())), decompilerRendererForClassFiles)
-        classHeader.isCompatibleClassKind() ->
-            buildDecompiledText(packageFqName, listOfNotNull(resolver.resolveTopLevelClass(classId)), decompilerRendererForClassFiles)
-        classHeader.isCompatibleMultifileClassKind() -> {
+    if (!classHeader.metadataVersion.isCompatible()) {
+        return DecompiledText(
+                INCOMPATIBLE_ABI_VERSION_COMMENT
+                        .replace(CURRENT_ABI_VERSION_MARKER, JvmBytecodeBinaryVersion.INSTANCE.toString())
+                        .replace(FILE_ABI_VERSION_MARKER, classHeader.metadataVersion.toString()),
+                mapOf()
+        )
+    }
+
+    return when (classHeader.kind) {
+        KotlinClassHeader.Kind.FILE_FACADE ->
+            buildDecompiledText(classId.packageFqName, ArrayList(resolver.resolveDeclarationsInFacade(classId.asSingleFqName())),
+                                decompilerRendererForClassFiles)
+        KotlinClassHeader.Kind.CLASS ->
+            buildDecompiledText(classId.packageFqName, listOfNotNull(resolver.resolveTopLevelClass(classId)),
+                                decompilerRendererForClassFiles)
+        KotlinClassHeader.Kind.MULTIFILE_CLASS -> {
             val partClasses = findMultifileClassParts(classFile, classId, classHeader)
-            val partMembers = partClasses.flatMap { partClass -> resolver.resolveDeclarationsInFacade(partClass.classId.asSingleFqName()) }
-            buildDecompiledText(packageFqName, partMembers, decompilerRendererForClassFiles)
+            val partMembers = partClasses.flatMap { partClass ->
+                resolver.resolveDeclarationsInFacade(partClass.classId.asSingleFqName())
+            }
+            buildDecompiledText(classId.packageFqName, partMembers, decompilerRendererForClassFiles)
         }
         else ->
-            throw UnsupportedOperationException("Unknown header kind: ${classHeader.kind} ${classHeader.version.isCompatible()}")
+            throw UnsupportedOperationException("Unknown header kind: $classHeader, class $classId")
     }
 }

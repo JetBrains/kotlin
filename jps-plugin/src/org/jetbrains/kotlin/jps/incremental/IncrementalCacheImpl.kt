@@ -30,10 +30,7 @@ import org.jetbrains.kotlin.jps.build.GeneratedJvmClass
 import org.jetbrains.kotlin.jps.build.KotlinBuilder
 import org.jetbrains.kotlin.jps.incremental.storage.*
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
-import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
-import org.jetbrains.kotlin.load.kotlin.header.isCompatibleFileFacadeKind
-import org.jetbrains.kotlin.load.kotlin.header.isCompatibleMultifileClassKind
-import org.jetbrains.kotlin.load.kotlin.header.isCompatibleMultifileClassPartKind
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.name.FqName
@@ -147,8 +144,12 @@ open class IncrementalCacheImpl(
         }
 
         val header = kotlinClass.classHeader
-        val changesInfo = when {
-            header.isCompatibleFileFacadeKind() -> {
+        if (header.isLocalClass) {
+            return CompilationResult.NO_CHANGES
+        }
+
+        val changesInfo = when (header.kind) {
+            KotlinClassHeader.Kind.FILE_FACADE -> {
                 assert(sourceFiles.size == 1) { "Package part from several source files: $sourceFiles" }
                 packagePartMap.addPackagePart(className)
 
@@ -156,7 +157,7 @@ open class IncrementalCacheImpl(
                 constantsMap.process(kotlinClass) +
                 additionalProcessChangedClass(kotlinClass, isPackage = true)
             }
-            header.isCompatibleMultifileClassKind() -> {
+            KotlinClassHeader.Kind.MULTIFILE_CLASS -> {
                 val partNames = kotlinClass.classHeader.filePartClassNames?.toList()
                                 ?: throw AssertionError("Multifile class has no parts: ${kotlinClass.className}")
                 multifileClassFacadeMap.add(className, partNames)
@@ -165,7 +166,7 @@ open class IncrementalCacheImpl(
                 constantsMap.process(kotlinClass) +
                 additionalProcessChangedClass(kotlinClass, isPackage = true)
             }
-            header.isCompatibleMultifileClassPartKind() -> {
+            KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
                 assert(sourceFiles.size == 1) { "Multifile class part from several source files: $sourceFiles" }
                 packagePartMap.addPackagePart(className)
                 multifileClassPartMap.add(className.internalName, header.multifileClassName!!)
@@ -174,7 +175,7 @@ open class IncrementalCacheImpl(
                 constantsMap.process(kotlinClass) +
                 additionalProcessChangedClass(kotlinClass, isPackage = true)
             }
-            header.isCompatibleClassKind() && !header.isLocalClass -> {
+            KotlinClassHeader.Kind.CLASS -> {
                 addToClassStorage(kotlinClass)
 
                 protoMap.process(kotlinClass, isPackage = false) +

@@ -115,8 +115,8 @@ public final class DeserializedDescriptorResolver {
     @Nullable
     public String[] readData(@NotNull KotlinJvmBinaryClass kotlinClass, @NotNull Set<KotlinClassHeader.Kind> expectedKinds) {
         KotlinClassHeader header = kotlinClass.getClassHeader();
-        if (!header.getVersion().isCompatible()) {
-            errorReporter.reportIncompatibleAbiVersion(kotlinClass.getClassId(), kotlinClass.getLocation(), header.getVersion());
+        if (!header.getMetadataVersion().isCompatible()) {
+            errorReporter.reportIncompatibleAbiVersion(kotlinClass.getClassId(), kotlinClass.getLocation(), header.getMetadataVersion());
         }
         else if (expectedKinds.contains(header.getKind())) {
             return header.getAnnotationData();

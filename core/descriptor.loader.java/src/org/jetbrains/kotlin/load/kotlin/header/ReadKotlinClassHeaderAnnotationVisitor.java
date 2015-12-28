@@ -20,10 +20,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion;
+import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,7 +45,8 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         HEADER_KINDS.put(ClassId.topLevel(KOTLIN_SYNTHETIC_CLASS), SYNTHETIC_CLASS);
     }
 
-    private BinaryVersion version = JvmBytecodeBinaryVersion.INVALID_VERSION;
+    private JvmMetadataVersion metadataVersion = null;
+    private JvmBytecodeBinaryVersion bytecodeVersion = null;
     private String multifileClassName = null;
     private String[] filePartClassNames = null;
     private String[] annotationData = null;
@@ -60,7 +61,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             return null;
         }
 
-        if (!version.isCompatible()) {
+        if (metadataVersion == null || !metadataVersion.isCompatible()) {
             annotationData = null;
         }
         else if (shouldHaveData() && annotationData == null) {
@@ -70,7 +71,10 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         }
 
         return new KotlinClassHeader(
-                headerKind, version, annotationData, strings, filePartClassNames, multifileClassName, isInterfaceDefaultImpls, isLocalClass
+                headerKind,
+                metadataVersion != null ? metadataVersion : JvmMetadataVersion.INVALID_VERSION,
+                bytecodeVersion != null ? bytecodeVersion : JvmBytecodeBinaryVersion.INVALID_VERSION,
+                annotationData, strings, filePartClassNames, multifileClassName, isInterfaceDefaultImpls, isLocalClass
         );
     }
 
@@ -118,7 +122,14 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
 
             String string = name.asString();
             if (VERSION_FIELD_NAME.equals(string)) {
-                version = value instanceof int[] ? JvmBytecodeBinaryVersion.create((int[]) value) : JvmBytecodeBinaryVersion.INVALID_VERSION;
+                if (value instanceof int[]) {
+                    metadataVersion = JvmMetadataVersion.create((int[]) value);
+
+                    // If there's no bytecode binary version in the class file, we assume it to be equal to the metadata version
+                    if (bytecodeVersion == null) {
+                        bytecodeVersion = JvmBytecodeBinaryVersion.create((int[]) value);
+                    }
+                }
             }
             else if (MULTIFILE_CLASS_NAME_FIELD_NAME.equals(string)) {
                 multifileClassName = value instanceof String ? (String) value : null;

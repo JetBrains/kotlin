@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.load.java
+package org.jetbrains.kotlin.load.kotlin
 
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 
 /**
- * The version of conventions used in bytecode of generated .class files, such as default method naming & signatures,
- * internal member name mangling specifics, property getter/setter names, etc.
+ * The version of the metadata serialized by the compiler and deserialized by the compiler and reflection.
+ * This version includes the version of the core protobuf messages (descriptors.proto) as well as JVM extensions (jvm_descriptors.proto).
  */
-class JvmBytecodeBinaryVersion protected constructor(
+class JvmMetadataVersion protected constructor(
         major: Int, minor: Int, patch: Int, rest: List<Int>
 ) : BinaryVersion(major, minor, patch, rest) {
     override fun isCompatible() = this.isCompatibleTo(INSTANCE)
@@ -32,12 +32,12 @@ class JvmBytecodeBinaryVersion protected constructor(
         val INSTANCE = create(1, 0, 2)
 
         @JvmField
-        val INVALID_VERSION = JvmBytecodeBinaryVersion.create(IntArray(0))
+        val INVALID_VERSION = JvmMetadataVersion.create(IntArray(0))
 
         @JvmStatic
-        fun create(version: IntArray) = create(version, ::JvmBytecodeBinaryVersion)
+        fun create(version: IntArray) = create(version, ::JvmMetadataVersion)
 
         @JvmStatic
-        fun create(major: Int, minor: Int, patch: Int) = create(major, minor, patch, ::JvmBytecodeBinaryVersion)
+        fun create(major: Int, minor: Int, patch: Int) = create(major, minor, patch, ::JvmMetadataVersion)
     }
 }

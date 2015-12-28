@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.load.kotlin.header
 
-import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
+import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion
+import org.jetbrains.kotlin.load.kotlin.JvmMetadataVersion
 
 class KotlinClassHeader(
         val kind: KotlinClassHeader.Kind,
-        val version: BinaryVersion,
+        val metadataVersion: JvmMetadataVersion,
+        val bytecodeVersion: JvmBytecodeBinaryVersion,
         val annotationData: Array<String>?,
         val strings: Array<String>?,
         val filePartClassNames: Array<String>?,
@@ -36,10 +38,5 @@ class KotlinClassHeader(
         SYNTHETIC_CLASS
     }
 
-    override fun toString() = "$kind " + (if (isLocalClass) "(local) " else "") + "version=$version"
+    override fun toString() = "$kind " + (if (isLocalClass) "(local) " else "") + "version=$metadataVersion"
 }
-
-fun KotlinClassHeader.isCompatibleClassKind(): Boolean = version.isCompatible() && kind == KotlinClassHeader.Kind.CLASS
-fun KotlinClassHeader.isCompatibleFileFacadeKind(): Boolean = version.isCompatible() && kind == KotlinClassHeader.Kind.FILE_FACADE
-fun KotlinClassHeader.isCompatibleMultifileClassKind(): Boolean = version.isCompatible() && kind == KotlinClassHeader.Kind.MULTIFILE_CLASS
-fun KotlinClassHeader.isCompatibleMultifileClassPartKind(): Boolean = version.isCompatible() && kind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART
