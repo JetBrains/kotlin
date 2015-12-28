@@ -1,11 +1,14 @@
+@kotlin.Metadata
 @kotlin.jvm.internal.KotlinClass
 public abstract class A
 
+@kotlin.Metadata
 @kotlin.jvm.internal.KotlinClass
 public abstract class B {
     public abstract method foo(): void
 }
 
+@kotlin.Metadata
 @kotlin.jvm.internal.KotlinClass
 public abstract class C {
     public abstract method getBar(): int
@@ -13,23 +16,27 @@ public abstract class C {
 
 @kotlin.jvm.internal.KotlinInterfaceDefaultImpls
 @kotlin.jvm.internal.KotlinSyntheticClass
+@kotlin.Metadata
 public final class D$DefaultImpls {
     inner class D$DefaultImpls
     public static method baz(p0: D): int
 }
 
+@kotlin.Metadata
 @kotlin.jvm.internal.KotlinClass
 public abstract class D {
     inner class D$DefaultImpls
     public abstract method baz(): int
 }
 
+@kotlin.Metadata
 @kotlin.jvm.internal.KotlinClass
 public final class E$InsideE {
     inner class E$InsideE
     public method <init>(): void
 }
 
+@kotlin.Metadata
 @kotlin.jvm.internal.KotlinClass
 public abstract class E {
     inner class E$InsideE

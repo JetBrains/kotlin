@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.PackageParts
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackageFragmentProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
@@ -48,6 +49,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
+import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -271,17 +273,24 @@ class MultifileClassCodegen(
         if (state.classBuilderMode != ClassBuilderMode.FULL) return
         if (files.any { it.isScript }) return
 
+        val partInternalNames = partFqNames.map(AsmUtil::internalNameByFqNameWithoutInnerClasses).sorted()
+
+        fun writePartNames(av: AnnotationVisitor, fieldName: String) {
+            val arv = av.visitArray(fieldName)
+            for (internalName in partInternalNames) {
+                arv.visit(null, internalName)
+            }
+            arv.visitEnd()
+        }
+
+        writeKotlinMetadata(classBuilder, KotlinClassHeader.Kind.MULTIFILE_CLASS) { av ->
+            writePartNames(av, JvmAnnotationNames.METADATA_DATA_FIELD_NAME)
+        }
+
         val av = classBuilder.newAnnotation(AsmUtil.asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_MULTIFILE_CLASS), true)
         JvmCodegenUtil.writeAbiVersion(av)
         JvmCodegenUtil.writeModuleName(av, state)
-
-        val partInternalNames = partFqNames.map { JvmClassName.byFqNameWithoutInnerClasses(it).internalName }.sorted()
-        val arv = av.visitArray(JvmAnnotationNames.FILE_PART_CLASS_NAMES_FIELD_NAME)
-        for (internalName in partInternalNames) {
-            arv.visit(null, internalName)
-        }
-        arv.visitEnd()
-
+        writePartNames(av, JvmAnnotationNames.FILE_PART_CLASS_NAMES_FIELD_NAME)
         av.visitEnd()
     }
 

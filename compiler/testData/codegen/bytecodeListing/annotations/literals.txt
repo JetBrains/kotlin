@@ -1,22 +1,26 @@
 @kotlin.annotation.Target
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
+@kotlin.Metadata
 @kotlin.jvm.internal.KotlinClass
 public abstract class ClsAnn
 
 @kotlin.annotation.Target
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
+@kotlin.Metadata
 @kotlin.jvm.internal.KotlinClass
 public abstract class ExprAnn
 
 @kotlin.annotation.Target
 @java.lang.annotation.Retention
 @java.lang.annotation.Target
+@kotlin.Metadata
 @kotlin.jvm.internal.KotlinClass
 public abstract class FunAnn
 
 @kotlin.jvm.internal.KotlinSyntheticClass
+@kotlin.Metadata
 @kotlin.jvm.internal.KotlinFunction
 final class LiteralsKt$foo$1 {
     synthetic final field $arg: int
@@ -27,6 +31,7 @@ final class LiteralsKt$foo$1 {
 }
 
 @kotlin.jvm.internal.KotlinSyntheticClass
+@kotlin.Metadata
 @kotlin.jvm.internal.KotlinFunction
 final class LiteralsKt$foo$2 {
     synthetic final field $arg: int
@@ -37,6 +42,7 @@ final class LiteralsKt$foo$2 {
 }
 
 @kotlin.jvm.internal.KotlinLocalClass
+@kotlin.Metadata
 @kotlin.jvm.internal.KotlinClass
 public final class LiteralsKt$foo$3 {
     inner class LiteralsKt$foo$3
@@ -44,6 +50,7 @@ public final class LiteralsKt$foo$3 {
 }
 
 @kotlin.jvm.internal.KotlinSyntheticClass
+@kotlin.Metadata
 @kotlin.jvm.internal.KotlinFunction
 final class LiteralsKt$foo$x$1 {
     synthetic final field $arg: int
@@ -53,6 +60,7 @@ final class LiteralsKt$foo$x$1 {
     public synthetic method invoke(): java.lang.Object
 }
 
+@kotlin.Metadata
 @kotlin.jvm.internal.KotlinFileFacade
 public final class LiteralsKt {
     inner class LiteralsKt$foo$1
@@ -63,6 +71,7 @@ public final class LiteralsKt {
     public final static @org.jetbrains.annotations.NotNull method foo(p0: int): My
 }
 
+@kotlin.Metadata
 @kotlin.jvm.internal.KotlinClass
 public class My {
     public method <init>(): void

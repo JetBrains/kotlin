@@ -96,6 +96,8 @@ public class SamWrapperCodegen {
 
         writeKotlinSyntheticClassAnnotation(cv, state);
 
+        WriteAnnotationUtilKt.writeSyntheticClassMetadata(cv, null);
+
         // e.g. ASM type for Function2
         Type functionAsmType = typeMapper.mapType(functionType);
 

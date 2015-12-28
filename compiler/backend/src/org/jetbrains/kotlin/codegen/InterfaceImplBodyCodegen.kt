@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.KOTLIN_INTERFACE_DEFAULT_IMPLS
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -152,6 +153,8 @@ class InterfaceImplBodyCodegen(
 
         v.newAnnotation(AsmUtil.asmDescByFqNameWithoutInnerClasses(KOTLIN_INTERFACE_DEFAULT_IMPLS), true).visitEnd()
         AsmUtil.writeKotlinSyntheticClassAnnotation(v, state)
+
+        writeSyntheticClassMetadata(v, KotlinClassHeader.SyntheticClassKind.INTERFACE_DEFAULT_IMPLS);
     }
 
     override fun done() {

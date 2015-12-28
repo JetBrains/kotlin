@@ -23,7 +23,7 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
 /**
- * Removes kotlin.jvm.internal.* annotations from Kotlin classes
+ * Removes metadata annotations from Kotlin classes
  */
 
 fun main(args: Array<String>) {

@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.codegen;
 
 import com.google.common.collect.Lists;
 import com.intellij.util.ArrayUtil;
-import kotlin.collections.CollectionsKt;
 import kotlin.Unit;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -58,8 +59,7 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.ExpressionCodegen.generateClassLiteralReference;
-import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConst;
-import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.writeModuleName;
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLOSURE;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
@@ -221,15 +221,25 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
     protected void generateKotlinAnnotation() {
         writeKotlinSyntheticClassAnnotation(v, state);
 
-        DescriptorSerializer serializer =
+        final DescriptorSerializer serializer =
                 DescriptorSerializer.createForLambda(
                         new JvmSerializerExtension(v.getSerializationBindings(), typeMapper, state.getUseTypeTableInSerializer())
                 );
 
-        ProtoBuf.Function functionProto = serializer.functionProto(funDescriptor).build();
+        final ProtoBuf.Function functionProto = serializer.functionProto(funDescriptor).build();
+
+        WriteAnnotationUtilKt.writeKotlinMetadata(v, KotlinClassHeader.Kind.SYNTHETIC_CLASS, new Function1<AnnotationVisitor, Unit>() {
+            @Override
+            public Unit invoke(AnnotationVisitor av) {
+                writeAnnotationData(av, serializer, functionProto, false);
+                av.visit(JvmAnnotationNames.SYNTHETIC_CLASS_KIND_FIELD_NAME, KotlinClassHeader.SyntheticClassKind.FUNCTION.getId());
+                return Unit.INSTANCE;
+            }
+        });
 
         AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_FUNCTION), true);
-        writeAnnotationData(av, serializer, functionProto);
+        writeAbiVersion(av);
+        writeAnnotationData(av, serializer, functionProto, true);
         writeModuleName(av, state);
         av.visitEnd();
     }

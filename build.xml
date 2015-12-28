@@ -553,6 +553,7 @@
                 source="${java.target}" target="${java.target}">
             <withKotlin modulename="kotlin-compiler"/>
             <skip pattern="kotlin/jvm/internal/.*"/>
+            <skip pattern="kotlin/Metadata"/>
             <src refid="compilerSources.path"/>
             <classpath refid="classpath"/>
         </javac2>
@@ -630,6 +631,7 @@
         <javac2 destdir="${output}/classes/android-compiler-plugin" debug="true" debuglevel="lines,vars,source" includeAntRuntime="false">
             <withKotlin modulename="kotlin-android-compiler-plugin"/>
             <skip pattern="kotlin/jvm/internal/.*"/>
+            <skip pattern="kotlin/Metadata"/>
             <src>
                 <pathelement path="plugins/android-compiler-plugin/src"/>
             </src>
@@ -654,6 +656,7 @@
                 source="${java.target}" target="${java.target}">
             <withKotlin modulename="kotlin-ant-tools"/>
             <skip pattern="kotlin/jvm/internal/.*"/>
+            <skip pattern="kotlin/Metadata"/>
             <src>
                 <dirset dir="${basedir}/ant">
                     <include name="src"/>
@@ -756,6 +759,7 @@
             <javac2 srcdir="${toString:src.dirset}" destdir="@{output}" debug="true" debuglevel="lines,vars,source"
                     includeAntRuntime="false" source="${java.target}" target="${java.target}">
                 <skip pattern="kotlin/jvm/internal/.*"/>
+                <skip pattern="kotlin/Metadata"/>
                 <classpath>
                     <path refid="classpath.path"/>
                     <!-- Include @{output} here for Java compiler to resolve symbols from Kotlin sources -->
@@ -930,7 +934,7 @@
 
             <kotlinc src="${basedir}/generators/infrastructure/strip-kotlin-annotations.kts" output="">
                 <compilerarg value="-script"/>
-                <compilerarg value="kotlin/jvm/internal/.*"/> <!-- Annotations to strip -->
+                <compilerarg value="kotlin/jvm/internal/.*|kotlin/Metadata"/> <!-- Annotations to strip -->
                 <compilerarg value="kotlin/reflect/jvm/internal/impl/.*"/> <!-- Classes to strip from -->
                 <compilerarg value="${output}/kotlin-reflect-jarjar.jar"/>
                 <compilerarg value="${kotlin-home}/lib/kotlin-reflect.jar"/>
@@ -1025,6 +1029,7 @@
                 source="${java.target}" target="${java.target}">
             <withKotlin modulename="kotlin-for-upsource"/>
             <skip pattern="kotlin/jvm/internal/.*"/>
+            <skip pattern="kotlin/Metadata"/>
             <src>
                 <dirset dir="${basedir}/idea/ide-common" includes="src"/>
                 <dirset dir="${basedir}/idea/idea-analysis" includes="src"/>

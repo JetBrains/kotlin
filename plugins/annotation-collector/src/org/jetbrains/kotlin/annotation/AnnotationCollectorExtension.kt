@@ -28,11 +28,9 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.*
 import java.io.File
 import java.io.IOException
-import java.io.StringWriter
 import java.io.Writer
 import java.util.regex.Pattern
 import java.util.regex.PatternSyntaxException
-import kotlin.properties.Delegates
 
 abstract class AnnotationCollectorExtensionBase(val supportInheritedAnnotations: Boolean) : ClassBuilderInterceptorExtension {
 
@@ -167,7 +165,7 @@ abstract class AnnotationCollectorExtensionBase(val supportInheritedAnnotations:
         private fun isAnnotationHandled(annotationFqName: String): Boolean {
             return if (annotationFilterEnabled)
                 annotationFilters.any { it.matcher(annotationFqName).matches() }
-            else !annotationFqName.startsWith("kotlin.jvm.internal.") //apply to all
+            else !annotationFqName.startsWith("kotlin.jvm.internal.") && annotationFqName != "kotlin.Metadata" //apply to all
         }
 
         private fun recordClass(packageName: String, className: String) {

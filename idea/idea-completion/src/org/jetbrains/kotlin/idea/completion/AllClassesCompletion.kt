@@ -20,12 +20,15 @@ import com.intellij.codeInsight.completion.AllClassesGetter
 import com.intellij.codeInsight.completion.CompletionParameters
 import com.intellij.codeInsight.completion.PrefixMatcher
 import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiLiteral
 import org.jetbrains.kotlin.asJava.KtLightClass
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.project.ProjectStructureUtil
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -87,7 +90,14 @@ class AllClassesCompletion(private val parameters: CompletionParameters,
     }
 
     private fun PsiClass.isSyntheticKotlinClass(): Boolean {
-        if (!name!!.contains('$')) return false // optimization to not analyze annotations of all classes
-        return modifierList?.findAnnotation(kotlin.jvm.internal.KotlinSyntheticClass::class.java.name) != null
+        if ('$' !in name!!) return false // optimization to not analyze annotations of all classes
+        val metadata = modifierList?.findAnnotation(JvmAnnotationNames.METADATA.asString())
+        if (metadata != null &&
+               (metadata.findAttributeValue(JvmAnnotationNames.KIND_FIELD_NAME) as? PsiLiteral)?.value ==
+                       KotlinClassHeader.Kind.SYNTHETIC_CLASS.id) {
+            return true
+        }
+
+        return modifierList?.findAnnotation(JvmAnnotationNames.KOTLIN_SYNTHETIC_CLASS.asString()) != null
     }
 }

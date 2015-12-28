@@ -1,3 +1,4 @@
+@kotlin.Metadata
 @kotlin.jvm.internal.KotlinClass
 public final class A {
     public method <init>(): void
@@ -6,9 +7,11 @@ public final class A {
 }
 
 @java.lang.annotation.Retention
+@kotlin.Metadata
 @kotlin.jvm.internal.KotlinClass
 public abstract class Ann
 
+@kotlin.Metadata
 @kotlin.jvm.internal.KotlinFileFacade
 public final class OnReceiverKt {
     public final static @org.jetbrains.annotations.NotNull method getTopLevelP(@Ann p0: java.lang.String): java.lang.String

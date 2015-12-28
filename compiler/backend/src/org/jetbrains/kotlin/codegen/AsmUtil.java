@@ -792,17 +792,19 @@ public class AsmUtil {
     public static void writeAnnotationData(
             @NotNull AnnotationVisitor av,
             @NotNull DescriptorSerializer serializer,
-            @NotNull MessageLite message
+            @NotNull MessageLite message,
+            boolean old
     ) {
         byte[] bytes = serializer.serialize(message);
 
-        JvmCodegenUtil.writeAbiVersion(av);
-        AnnotationVisitor data = av.visitArray(JvmAnnotationNames.DATA_FIELD_NAME);
+        AnnotationVisitor data = av.visitArray(old ? JvmAnnotationNames.DATA_FIELD_NAME : JvmAnnotationNames.METADATA_DATA_FIELD_NAME);
         for (String string : BitEncoding.encodeBytes(bytes)) {
             data.visit(null, string);
         }
         data.visitEnd();
-        AnnotationVisitor strings = av.visitArray(JvmAnnotationNames.STRINGS_FIELD_NAME);
+        AnnotationVisitor strings = av.visitArray(
+                old ? JvmAnnotationNames.STRINGS_FIELD_NAME : JvmAnnotationNames.METADATA_STRINGS_FIELD_NAME
+        );
         for (String string : ((JvmStringTable) serializer.getStringTable()).getStrings()) {
             strings.visit(null, string);
         }

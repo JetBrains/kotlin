@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.codegen;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.ArrayUtil;
-import kotlin.collections.CollectionsKt;
 import kotlin.Unit;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 import kotlin.jvm.functions.Function2;
@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -250,15 +251,27 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
             v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_LOCAL_CLASS), true).visitEnd();
         }
 
-        DescriptorSerializer serializer =
+        final DescriptorSerializer serializer =
                 DescriptorSerializer.create(descriptor, new JvmSerializerExtension(
                         v.getSerializationBindings(), typeMapper, state.getUseTypeTableInSerializer()
                 ));
 
-        ProtoBuf.Class classProto = serializer.classProto(descriptor).build();
+        final ProtoBuf.Class classProto = serializer.classProto(descriptor).build();
+
+        WriteAnnotationUtilKt.writeKotlinMetadata(v, KotlinClassHeader.Kind.CLASS, new Function1<AnnotationVisitor, Unit>() {
+            @Override
+            public Unit invoke(AnnotationVisitor av) {
+                writeAnnotationData(av, serializer, classProto, false);
+                if (!isTopLevelOrInnerClass(descriptor)) {
+                    av.visit(JvmAnnotationNames.SYNTHETIC_CLASS_KIND_FIELD_NAME, KotlinClassHeader.SyntheticClassKind.LOCAL_CLASS.getId());
+                }
+                return Unit.INSTANCE;
+            }
+        });
 
         AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CLASS), true);
-        writeAnnotationData(av, serializer, classProto);
+        writeAbiVersion(av);
+        writeAnnotationData(av, serializer, classProto, true);
         writeModuleName(av, state);
         av.visitEnd();
     }

@@ -1,3 +1,4 @@
+@kotlin.Metadata
 @kotlin.jvm.internal.KotlinClass
 public final class Example {
     private field prop2: int

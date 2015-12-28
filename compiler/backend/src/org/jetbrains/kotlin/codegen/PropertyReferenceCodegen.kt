@@ -160,6 +160,8 @@ class PropertyReferenceCodegen(
 
     override fun generateKotlinAnnotation() {
         writeKotlinSyntheticClassAnnotation(v, state)
+
+        writeSyntheticClassMetadata(v, null)
     }
 
     fun putInstanceOnStack(): StackValue =

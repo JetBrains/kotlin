@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.codegen;
 
 import com.intellij.util.ArrayUtil;
+import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.annotation.AnnotatedSimple;
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext;
@@ -31,6 +33,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationsImpl;
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames;
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
@@ -43,6 +46,7 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
 import static org.jetbrains.kotlin.codegen.AsmUtil.writeAnnotationData;
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.writeAbiVersion;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.writeModuleName;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
@@ -121,13 +125,22 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
 
         JvmSerializationBindings bindings = v.getSerializationBindings();
 
-        DescriptorSerializer serializer = DescriptorSerializer.createTopLevel(new JvmSerializerExtension(
+        final DescriptorSerializer serializer = DescriptorSerializer.createTopLevel(new JvmSerializerExtension(
                 bindings, state.getTypeMapper(), state.getUseTypeTableInSerializer()
         ));
-        ProtoBuf.Package packageProto = serializer.packagePartProto(members).build();
+        final ProtoBuf.Package packageProto = serializer.packagePartProto(members).build();
+
+        WriteAnnotationUtilKt.writeKotlinMetadata(v, KotlinClassHeader.Kind.FILE_FACADE, new Function1<AnnotationVisitor, Unit>() {
+            @Override
+            public Unit invoke(AnnotationVisitor av) {
+                writeAnnotationData(av, serializer, packageProto, false);
+                return Unit.INSTANCE;
+            }
+        });
 
         AnnotationVisitor av = v.newAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_FILE_FACADE), true);
-        writeAnnotationData(av, serializer, packageProto);
+        writeAbiVersion(av);
+        writeAnnotationData(av, serializer, packageProto, true);
         writeModuleName(av, state);
         av.visitEnd();
     }
