@@ -4,7 +4,7 @@ import org.junit.Test
 // CONFIGURE_LIBRARY: JUnit@lib/junit-4.12.jar
 class A {
     @Test
-    fun testName() {
+    fun Name() {
         throw UnsupportedOperationException()
     }
 }
