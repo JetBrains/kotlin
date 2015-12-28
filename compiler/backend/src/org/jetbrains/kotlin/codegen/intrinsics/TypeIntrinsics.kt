@@ -108,40 +108,6 @@ public object TypeIntrinsics {
         v.checkcast(asmType)
     }
 
-    @JvmStatic
-    public fun checkcast(
-            checkcastInsn: TypeInsnNode,
-            instructions: InsnList,
-            kotlinType: KotlinType, asmType: Type,
-            safe: Boolean) {
-        if (safe) {
-            checkcastInsn.desc = asmType.internalName
-            return
-        }
-
-        val functionTypeArity = getFunctionTypeArity(kotlinType)
-        if (functionTypeArity >= 0) {
-            instructions.insertBefore(checkcastInsn, iconstNode(functionTypeArity))
-
-            val beforeCheckcast = typeIntrinsicNode(BEFORE_CHECKCAST_TO_FUNCTION_OF_ARITY, BEFORE_CHECKCAST_TO_FUNCTION_OF_ARITY_DESCRIPTOR)
-            instructions.insertBefore(checkcastInsn, beforeCheckcast)
-
-            instructions.insertBefore(checkcastInsn, TypeInsnNode(Opcodes.CHECKCAST, asmType.internalName))
-            instructions.remove(checkcastInsn)
-            return
-        }
-
-        val asMutableCollectionMethodName = getAsMutableCollectionMethodName(kotlinType)
-        if (asMutableCollectionMethodName != null) {
-            instructions.insertBefore(checkcastInsn,
-                                      typeIntrinsicNode(asMutableCollectionMethodName, getAsMutableCollectionDescriptor(asmType)))
-            instructions.remove(checkcastInsn)
-            return
-        }
-
-        checkcastInsn.desc = asmType.internalName
-    }
-
     private val INTRINSICS_CLASS = "kotlin/jvm/internal/TypeIntrinsics"
 
     private val IS_FUNCTON_OF_ARITY_METHOD_NAME = "isFunctionOfArity"
