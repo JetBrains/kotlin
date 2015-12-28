@@ -9804,13 +9804,13 @@ public inline fun ShortArray.sumByDouble(selector: (Short) -> Double): Double {
 /**
  * Returns an original collection containing all the non-`null` elements, throwing an [IllegalArgumentException] if there are any `null` elements.
  */
-public fun <T : Any> Array<out T?>.requireNoNulls(): Array<out T> {
+public fun <T : Any> Array<T?>.requireNoNulls(): Array<T> {
     for (element in this) {
         if (element == null) {
             throw IllegalArgumentException("null element found in $this.")
         }
     }
-    return this as Array<out T>
+    return this as Array<T>
 }
 
 /**
