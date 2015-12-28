@@ -2780,7 +2780,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                             "Non-reified type parameter under ::class should be rejected by type checker: " + typeParameterDescriptor;
                     assert codegen != null :
                             "Reference to member of reified type should be rejected by type checker " + typeParameterDescriptor;
-                    codegen.putReifierMarkerIfTypeIsReifiedParameter(type, ReifiedTypeInliner.JAVA_CLASS_MARKER_METHOD_NAME);
+                    codegen.putReifiedOperationMarkerIfTypeIsReifiedParameter(type, ReifiedTypeInliner.OperationKind.JAVA_CLASS);
                 }
 
                 putJavaLangClassInstance(v, classAsmType);
@@ -3394,9 +3394,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     public void newArrayInstruction(@NotNull KotlinType arrayType) {
         if (KotlinBuiltIns.isArray(arrayType)) {
             KotlinType elementJetType = arrayType.getArguments().get(0).getType();
-            putReifierMarkerIfTypeIsReifiedParameter(
+            putReifiedOperationMarkerIfTypeIsReifiedParameter(
                     elementJetType,
-                    ReifiedTypeInliner.NEW_ARRAY_MARKER_METHOD_NAME
+                    ReifiedTypeInliner.OperationKind.NEW_ARRAY
             );
             v.newarray(boxType(asmType(elementJetType)));
         }
@@ -3753,32 +3753,35 @@ The "returned" value of try expression with no finally is either the last expres
 
     private void generateInstanceOfInstruction(@NotNull KotlinType jetType) {
         Type type = boxType(asmType(jetType));
-        putReifierMarkerIfTypeIsReifiedParameter(jetType, ReifiedTypeInliner.INSTANCEOF_MARKER_METHOD_NAME);
+        putReifiedOperationMarkerIfTypeIsReifiedParameter(jetType, ReifiedTypeInliner.OperationKind.INSTANCEOF);
         TypeIntrinsics.instanceOf(v, jetType, type);
     }
 
     @NotNull
     private StackValue generateCheckCastInstruction(@NotNull KotlinType jetType, boolean safeAs) {
         Type type = boxType(asmType(jetType));
-        putReifierMarkerIfTypeIsReifiedParameter(jetType,
-                                                 safeAs ? ReifiedTypeInliner.SAFE_CHECKCAST_MARKER_METHOD_NAME
-                                                        : ReifiedTypeInliner.CHECKCAST_MARKER_METHOD_NAME);
+        putReifiedOperationMarkerIfTypeIsReifiedParameter(jetType,
+                                                 safeAs ? ReifiedTypeInliner.OperationKind.SAFE_CHECKCAST
+                                                        : ReifiedTypeInliner.OperationKind.CHECKCAST);
         TypeIntrinsics.checkcast(v, jetType, type, safeAs);
         return StackValue.onStack(type);
     }
 
-    public void putReifierMarkerIfTypeIsReifiedParameter(@NotNull KotlinType type, @NotNull String markerMethodName) {
+    public void putReifiedOperationMarkerIfTypeIsReifiedParameter(
+            @NotNull KotlinType type, @NotNull ReifiedTypeInliner.OperationKind operationKind
+    ) {
         TypeParameterDescriptor typeParameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(type);
         if (typeParameterDescriptor != null && typeParameterDescriptor.isReified()) {
             if (typeParameterDescriptor.getContainingDeclaration() != context.getContextDescriptor()) {
                 parentCodegen.getReifiedTypeParametersUsages().
                         addUsedReifiedParameter(typeParameterDescriptor.getName().asString());
             }
-            boolean putNullableFlag = ReifiedTypeInliner.isNullableMarkerInstruction(markerMethodName) && type.isMarkedNullable();
+            v.iconst(operationKind.getId());
+            boolean putNullableFlag = operationKind.isTypeNullabilityAware() && type.isMarkedNullable();
             v.visitLdcInsn(typeParameterDescriptor.getName().asString() + (putNullableFlag ? "?" : ""));
             v.invokestatic(
-                    IntrinsicMethods.INTRINSICS_CLASS_NAME, markerMethodName,
-                    Type.getMethodDescriptor(Type.VOID_TYPE, Type.getType(String.class)), false
+                    IntrinsicMethods.INTRINSICS_CLASS_NAME, ReifiedTypeInliner.REIFIED_OPERATION_MARKER_METHOD_NAME,
+                    Type.getMethodDescriptor(Type.VOID_TYPE, Type.INT_TYPE, Type.getType(String.class)), false
             );
         }
     }
