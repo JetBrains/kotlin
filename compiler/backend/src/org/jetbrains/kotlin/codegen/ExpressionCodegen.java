@@ -3673,8 +3673,17 @@ The "returned" value of try expression with no finally is either the last expres
                     StackValue.putUnitInstance(v);
                 }
 
+                boolean safeAs = opToken == KtTokens.AS_SAFE;
+                if (TypeUtils.isReifiedTypeParameter(rightType)) {
+                    putReifiedOperationMarkerIfTypeIsReifiedParameter(rightType,
+                                                                      safeAs ? ReifiedTypeInliner.OperationKind.SAFE_AS
+                                                                             : ReifiedTypeInliner.OperationKind.AS);
+                    v.checkcast(boxType(asmType(rightType)));
+                    return Unit.INSTANCE;
+                }
+
                 if (opToken != KtTokens.AS_SAFE) {
-                    if (!TypeUtils.isNullableType(rightType) && !TypeUtils.isReifiedTypeParameter(rightType)) {
+                    if (!TypeUtils.isNullableType(rightType)) {
                         CodegenUtilKt.generateNullCheckForNonSafeAs(v, rightType);
                     }
                 }
@@ -3688,7 +3697,7 @@ The "returned" value of try expression with no finally is either the last expres
                     v.mark(ok);
                 }
 
-                generateCheckCastInstruction(rightType, opToken == KtTokens.AS_SAFE);
+                generateCheckCastInstruction(rightType, safeAs);
                 return Unit.INSTANCE;
             }
         });
@@ -3727,11 +3736,11 @@ The "returned" value of try expression with no finally is either the last expres
     private StackValue generateIsCheck(StackValue expressionToMatch, KtTypeReference typeReference, boolean negated) {
         KotlinType jetType = bindingContext.get(TYPE, typeReference);
         markStartLineNumber(typeReference);
-        StackValue value = generateInstanceOf(expressionToMatch, jetType, false);
+        StackValue value = generateIsCheck(expressionToMatch, jetType, false);
         return negated ? StackValue.not(value) : value;
     }
 
-    private StackValue generateInstanceOf(final StackValue expressionToGen, final KotlinType kotlinType, final boolean leaveExpressionOnStack) {
+    private StackValue generateIsCheck(final StackValue expressionToGen, final KotlinType kotlinType, final boolean leaveExpressionOnStack) {
         return StackValue.operation(Type.BOOLEAN_TYPE, new Function1<InstructionAdapter, Unit>() {
             @Override
             public Unit invoke(InstructionAdapter v) {
@@ -3739,7 +3748,14 @@ The "returned" value of try expression with no finally is either the last expres
                 if (leaveExpressionOnStack) {
                     v.dup();
                 }
-                CodegenUtilKt.generateIsCheck(v, kotlinType.isMarkedNullable() && !TypeUtils.isReifiedTypeParameter(kotlinType), new Function1<InstructionAdapter, Unit>() {
+
+                if (TypeUtils.isReifiedTypeParameter(kotlinType)) {
+                    putReifiedOperationMarkerIfTypeIsReifiedParameter(kotlinType, ReifiedTypeInliner.OperationKind.IS);
+                    v.instanceOf(boxType(asmType(kotlinType)));
+                    return null;
+                }
+
+                CodegenUtilKt.generateIsCheck(v, kotlinType.isMarkedNullable(), new Function1<InstructionAdapter, Unit>() {
                     @Override
                     public Unit invoke(InstructionAdapter adapter) {
                         generateInstanceOfInstruction(kotlinType);
@@ -3751,19 +3767,17 @@ The "returned" value of try expression with no finally is either the last expres
         });
     }
 
-    private void generateInstanceOfInstruction(@NotNull KotlinType jetType) {
-        Type type = boxType(asmType(jetType));
-        putReifiedOperationMarkerIfTypeIsReifiedParameter(jetType, ReifiedTypeInliner.OperationKind.INSTANCEOF);
-        TypeIntrinsics.instanceOf(v, jetType, type);
+    private void generateInstanceOfInstruction(@NotNull KotlinType kotlinType) {
+        Type type = boxType(asmType(kotlinType));
+        assert !TypeUtils.isReifiedTypeParameter(kotlinType) : "This method should not be called with type based on reified type parameter, but found " + kotlinType;
+        TypeIntrinsics.instanceOf(v, kotlinType, type);
     }
 
     @NotNull
-    private StackValue generateCheckCastInstruction(@NotNull KotlinType jetType, boolean safeAs) {
-        Type type = boxType(asmType(jetType));
-        putReifiedOperationMarkerIfTypeIsReifiedParameter(jetType,
-                                                 safeAs ? ReifiedTypeInliner.OperationKind.SAFE_CHECKCAST
-                                                        : ReifiedTypeInliner.OperationKind.CHECKCAST);
-        TypeIntrinsics.checkcast(v, jetType, type, safeAs);
+    private StackValue generateCheckCastInstruction(@NotNull KotlinType kotlinType, boolean safeAs) {
+        Type type = boxType(asmType(kotlinType));
+        assert !TypeUtils.isReifiedTypeParameter(kotlinType) : "This method should not be called with type based on reified type parameter, but found " + kotlinType;
+        TypeIntrinsics.checkcast(v, kotlinType, type, safeAs);
         return StackValue.onStack(type);
     }
 

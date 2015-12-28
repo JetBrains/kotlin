@@ -37,10 +37,10 @@ private class ParameterNameAndNullability(val name: String, val nullable: Boolea
 public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParameterMappings?) {
 
     enum class OperationKind {
-        NEW_ARRAY, CHECKCAST, SAFE_CHECKCAST, INSTANCEOF, JAVA_CLASS;
+        NEW_ARRAY, AS, SAFE_AS, IS, JAVA_CLASS;
 
         val id: Int get() = ordinal
-        val isTypeNullabilityAware: Boolean get() = this == CHECKCAST || this == INSTANCEOF
+        val isTypeNullabilityAware: Boolean get() = this == AS || this == IS
     }
 
     companion object {
@@ -154,9 +154,9 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
             // they return true if instruction is reified and marker can be deleted
             if (when (operationKind) {
                 OperationKind.NEW_ARRAY -> processNewArray(insn, asmType)
-                OperationKind.CHECKCAST -> processCheckcast(insn, instructions, kotlinType, asmType, safe = false)
-                OperationKind.SAFE_CHECKCAST -> processCheckcast(insn, instructions, kotlinType, asmType, safe = true)
-                OperationKind.INSTANCEOF -> processInstanceof(insn, instructions, kotlinType, asmType)
+                OperationKind.AS -> processAs(insn, instructions, kotlinType, asmType, safe = false)
+                OperationKind.SAFE_AS -> processAs(insn, instructions, kotlinType, asmType, safe = true)
+                OperationKind.IS -> processIs(insn, instructions, kotlinType, asmType)
                 OperationKind.JAVA_CLASS -> processJavaClass(insn, asmType)
             }) {
                 instructions.remove(insn.previous.previous!!) // PUSH operation ID
@@ -175,11 +175,11 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
     private fun processNewArray(insn: MethodInsnNode, parameter: Type) =
             processNextTypeInsn(insn, parameter, Opcodes.ANEWARRAY)
 
-    private fun processCheckcast(insn: MethodInsnNode,
-                                 instructions: InsnList,
-                                 jetType: KotlinType,
-                                 asmType: Type,
-                                 safe: Boolean) =
+    private fun processAs(insn: MethodInsnNode,
+                          instructions: InsnList,
+                          jetType: KotlinType,
+                          asmType: Type,
+                          safe: Boolean) =
             rewriteNextTypeInsn(insn, Opcodes.CHECKCAST) { instanceofInsn: AbstractInsnNode ->
                 if (instanceofInsn !is TypeInsnNode) return false
 
@@ -198,7 +198,7 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
         }
     }
 
-    private fun processInstanceof(insn: MethodInsnNode, instructions: InsnList, jetType: KotlinType, asmType: Type) =
+    private fun processIs(insn: MethodInsnNode, instructions: InsnList, jetType: KotlinType, asmType: Type) =
             rewriteNextTypeInsn(insn, Opcodes.INSTANCEOF) { instanceofInsn: AbstractInsnNode ->
                 if (instanceofInsn !is TypeInsnNode) return false
 
