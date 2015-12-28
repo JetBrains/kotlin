@@ -20,7 +20,6 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
-import org.jetbrains.kotlin.load.java.AbiVersionUtil;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion;
 import org.jetbrains.kotlin.name.FqName;
@@ -147,6 +146,6 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
         int[] version = (int[]) CodegenTestUtil.getAnnotationAttribute(annotation, VERSION_FIELD_NAME);
         assertNotNull(version);
         assertTrue("Annotation " + annotationFqName + " is written with an unsupported format",
-                   AbiVersionUtil.isAbiVersionCompatible(JvmBytecodeBinaryVersion.create(version)));
+                   JvmBytecodeBinaryVersion.create(version).isCompatible());
     }
 }

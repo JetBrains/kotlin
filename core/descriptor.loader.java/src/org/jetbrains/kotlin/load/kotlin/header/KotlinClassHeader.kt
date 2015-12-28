@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.load.kotlin.header
 
-import org.jetbrains.kotlin.load.java.AbiVersionUtil
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 
 class KotlinClassHeader(
@@ -30,8 +29,6 @@ class KotlinClassHeader(
         val isInterfaceDefaultImpls: Boolean,
         val isLocalClass: Boolean
 ) {
-    val isCompatibleAbiVersion: Boolean get() = AbiVersionUtil.isAbiVersionCompatible(version)
-
     enum class Kind {
         CLASS,
         FILE_FACADE,
@@ -47,7 +44,7 @@ class KotlinClassHeader(
             "version=$version"
 }
 
-fun KotlinClassHeader.isCompatibleClassKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.CLASS
-fun KotlinClassHeader.isCompatibleFileFacadeKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.FILE_FACADE
-fun KotlinClassHeader.isCompatibleMultifileClassKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.MULTIFILE_CLASS
-fun KotlinClassHeader.isCompatibleMultifileClassPartKind(): Boolean = isCompatibleAbiVersion && kind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART
+fun KotlinClassHeader.isCompatibleClassKind(): Boolean = version.isCompatible() && kind == KotlinClassHeader.Kind.CLASS
+fun KotlinClassHeader.isCompatibleFileFacadeKind(): Boolean = version.isCompatible() && kind == KotlinClassHeader.Kind.FILE_FACADE
+fun KotlinClassHeader.isCompatibleMultifileClassKind(): Boolean = version.isCompatible() && kind == KotlinClassHeader.Kind.MULTIFILE_CLASS
+fun KotlinClassHeader.isCompatibleMultifileClassPartKind(): Boolean = version.isCompatible() && kind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART

@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 class JvmBytecodeBinaryVersion protected constructor(
         major: Int, minor: Int, patch: Int, rest: List<Int>
 ) : BinaryVersion(major, minor, patch, rest) {
+    override fun isCompatible() = this.isCompatibleTo(INSTANCE)
+
     companion object {
         @JvmField
         val INSTANCE = create(1, 0, 2)

@@ -31,6 +31,8 @@ abstract class BinaryVersion protected constructor(
         val patch: Int,
         val rest: List<Int>
 ) {
+    abstract fun isCompatible(): Boolean
+
     fun toArray(): IntArray =
             intArrayOf(major, minor, patch, *rest.toIntArray())
 
@@ -40,7 +42,7 @@ abstract class BinaryVersion protected constructor(
      *
      * @param ourVersion the version of this format in the current compiler
      */
-    fun isCompatibleTo(ourVersion: BinaryVersion): Boolean {
+    protected fun isCompatibleTo(ourVersion: BinaryVersion): Boolean {
         return if (major == 0) ourVersion.major == 0 && minor == ourVersion.minor
         else major == ourVersion.major && minor <= ourVersion.minor
     }

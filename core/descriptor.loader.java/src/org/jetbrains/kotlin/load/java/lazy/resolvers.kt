@@ -70,7 +70,7 @@ fun LazyJavaResolverContext.resolveKotlinBinaryClass(kotlinClass: KotlinJvmBinar
 
     val header = kotlinClass.classHeader
     return when {
-        !header.isCompatibleAbiVersion -> {
+        !header.version.isCompatible() -> {
             components.errorReporter.reportIncompatibleAbiVersion(kotlinClass.classId, kotlinClass.location, header.version)
             KotlinClassLookupResult.NotFound
         }

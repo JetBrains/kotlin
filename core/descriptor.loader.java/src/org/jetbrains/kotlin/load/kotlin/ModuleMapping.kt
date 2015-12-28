@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
-import org.jetbrains.kotlin.load.java.AbiVersionUtil
 import org.jetbrains.kotlin.load.java.JvmBytecodeBinaryVersion
 import org.jetbrains.kotlin.serialization.jvm.JvmPackageTable
 import java.io.ByteArrayInputStream
@@ -43,7 +42,7 @@ class ModuleMapping private constructor(val packageFqName2Parts: Map<String, Pac
 
             val version = JvmBytecodeBinaryVersion.create((0..size - 1).map { inputStream.readInt() }.toIntArray())
 
-            if (AbiVersionUtil.isAbiVersionCompatible(version)) {
+            if (version.isCompatible()) {
                 val parseFrom = JvmPackageTable.PackageTable.parseFrom(inputStream)
                 if (parseFrom != null) {
                     val packageFqNameParts = hashMapOf<String, PackageParts>()

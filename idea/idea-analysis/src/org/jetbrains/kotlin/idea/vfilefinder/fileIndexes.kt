@@ -78,8 +78,8 @@ object KotlinClassFileIndex : KotlinFileIndexBase<KotlinClassFileIndex>(KotlinCl
     private val VERSION = 2
 
     private val INDEXER = indexer() { fileContent ->
-        val kotlinClassHeaderInfo = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(fileContent.file, fileContent.content)
-        if (kotlinClassHeaderInfo != null && kotlinClassHeaderInfo.classHeader.isCompatibleAbiVersion) kotlinClassHeaderInfo.classId.asSingleFqName() else null
+        val headerInfo = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(fileContent.file, fileContent.content)
+        if (headerInfo != null && headerInfo.classHeader.version.isCompatible()) headerInfo.classId.asSingleFqName() else null
     }
 }
 

@@ -29,6 +29,8 @@ class KotlinJavascriptMetadata(val abiVersion: Int, val moduleName: String, val 
 class JsBinaryVersion protected constructor(
         major: Int, minor: Int, patch: Int, rest: List<Int>
 ) : BinaryVersion(major, minor, patch, rest) {
+    override fun isCompatible() = this.isCompatibleTo(INSTANCE)
+
     companion object {
         @JvmField val INSTANCE = create(0, 3, 0)
 

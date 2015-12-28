@@ -38,7 +38,7 @@ class BuiltinsPackageFragment(
         val dataInput = DataInputStream(stream)
         val version = BuiltInsBinaryVersion.create((1..dataInput.readInt()).map { dataInput.readInt() }.toIntArray())
 
-        if (!version.isCompatibleTo(BuiltInsBinaryVersion.INSTANCE)) {
+        if (!version.isCompatible()) {
             // TODO: report a proper diagnostic
             throw UnsupportedOperationException(
                     "Kotlin built-in definition format version is not supported: " +
