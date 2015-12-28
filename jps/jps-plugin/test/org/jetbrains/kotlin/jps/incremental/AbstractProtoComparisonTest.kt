@@ -20,9 +20,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.jps.incremental.storage.ProtoMapValue
-import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
-import org.jetbrains.kotlin.load.kotlin.header.isCompatibleFileFacadeKind
-import org.jetbrains.kotlin.load.kotlin.header.isCompatibleMultifileClassPartKind
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
@@ -93,19 +91,22 @@ abstract class AbstractProtoComparisonTest : UsefulTestCase() {
         val oldProtoBytes = BitEncoding.decodeBytes(oldClassHeader.annotationData!!)
         val newProtoBytes = BitEncoding.decodeBytes(newClassHeader.annotationData!!)
 
+        assert(oldClassHeader.metadataVersion.isCompatible()) { "Incompatible class ($oldClassHeader): $oldClassFile" }
+        assert(newClassHeader.metadataVersion.isCompatible()) { "Incompatible class ($newClassHeader): $newClassFile" }
+
         val oldProto = ProtoMapValue(
-                oldClassHeader.isCompatibleFileFacadeKind() || oldClassHeader.isCompatibleMultifileClassPartKind(),
+                oldClassHeader.kind == KotlinClassHeader.Kind.FILE_FACADE ||
+                oldClassHeader.kind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART,
                 oldProtoBytes, oldClassHeader.strings!!
         )
         val newProto = ProtoMapValue(
-                newClassHeader.isCompatibleFileFacadeKind() || newClassHeader.isCompatibleMultifileClassPartKind(),
+                newClassHeader.kind == KotlinClassHeader.Kind.FILE_FACADE ||
+                newClassHeader.kind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART,
                 newProtoBytes, newClassHeader.strings!!
         )
 
-        val diff = when {
-            newClassHeader.isCompatibleClassKind() ||
-            newClassHeader.isCompatibleFileFacadeKind() ||
-            newClassHeader.isCompatibleMultifileClassPartKind() ->
+        val diff = when (newClassHeader.kind) {
+            KotlinClassHeader.Kind.CLASS, KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART ->
                 difference(oldProto, newProto)
             else ->  {
                 println("ignore ${oldLocalFileKotlinClass.classId}")
