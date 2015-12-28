@@ -35,7 +35,7 @@ public class KotlinBasicStepMethodFilter(
         myTargetMethodName = when (resolvedElement) {
             is KtAnonymousInitializer -> "<init>"
             is KtConstructor<*> -> "<init>"
-            is KtPropertyAccessor -> JvmAbi.getterName((resolvedElement.parent as KtProperty).name!!)
+            is KtPropertyAccessor -> JvmAbi.getterName((resolvedElement.property).name!!)
             else -> resolvedElement.name!!
         }
     }
