@@ -57,7 +57,7 @@ fun specialJVM(): List<GenericFunction> {
 
 
     templates add f("copyOfRange(fromIndex: Int, toIndex: Int)") {
-        only(ArraysOfObjects, InvariantArraysOfObjects, ArraysOfPrimitives)
+        only(InvariantArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns new array which is a copy of range of original array." }
         returns("SELF")
         annotations(InvariantArraysOfObjects) { """@JvmName("mutableCopyOfRange")"""}
@@ -67,7 +67,7 @@ fun specialJVM(): List<GenericFunction> {
     }
 
     templates add f("copyOf()") {
-        only(ArraysOfObjects, InvariantArraysOfObjects, ArraysOfPrimitives)
+        only(InvariantArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns new array which is a copy of the original array." }
         returns("SELF")
         annotations(InvariantArraysOfObjects) { """@JvmName("mutableCopyOf")"""}
@@ -78,7 +78,7 @@ fun specialJVM(): List<GenericFunction> {
 
     // This overload can cause nulls if array size is expanding, hence different return overload
     templates add f("copyOf(newSize: Int)") {
-        only(ArraysOfObjects, InvariantArraysOfObjects, ArraysOfPrimitives)
+        only(InvariantArraysOfObjects, ArraysOfPrimitives)
         doc { "Returns new array which is a copy of the original array." }
         returns("SELF")
         body {
