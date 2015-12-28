@@ -51,7 +51,6 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     private String[] annotationData = null;
     private String[] strings = null;
     private KotlinClassHeader.Kind headerKind = null;
-    private String syntheticClassKind = null;
     private boolean isInterfaceDefaultImpls = false;
     private boolean isLocalClass = false;
 
@@ -71,8 +70,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         }
 
         return new KotlinClassHeader(
-                headerKind, version, annotationData, strings, syntheticClassKind, filePartClassNames, multifileClassName,
-                isInterfaceDefaultImpls, isLocalClass
+                headerKind, version, annotationData, strings, filePartClassNames, multifileClassName, isInterfaceDefaultImpls, isLocalClass
         );
     }
 
@@ -103,18 +101,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         KotlinClassHeader.Kind newKind = HEADER_KINDS.get(classId);
         if (newKind != null) {
             headerKind = newKind;
-
-            switch (newKind) {
-                case CLASS:
-                case FILE_FACADE:
-                case MULTIFILE_CLASS:
-                case MULTIFILE_CLASS_PART:
-                    return new HeaderAnnotationArgumentVisitor();
-                case SYNTHETIC_CLASS:
-                    return new SyntheticClassHeaderReader();
-                default:
-                    return null;
-            }
+            return new HeaderAnnotationArgumentVisitor();
         }
 
         return null;
@@ -225,18 +212,6 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             }
 
             protected abstract void visitEnd(@NotNull String[] data);
-        }
-    }
-
-    private class SyntheticClassHeaderReader extends HeaderAnnotationArgumentVisitor {
-        @Override
-        public void visitEnum(@NotNull Name name, @NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
-            if ("Kind".equals(enumClassId.getShortClassName().asString()) &&
-                enumClassId.isNestedClass() &&
-                enumClassId.getOuterClassId().equals(ClassId.topLevel(KOTLIN_SYNTHETIC_CLASS)) &&
-                "kind".equals(name.asString())) {
-                syntheticClassKind = enumEntryName.asString();
-            }
         }
     }
 }

@@ -23,7 +23,6 @@ class KotlinClassHeader(
         val version: BinaryVersion,
         val annotationData: Array<String>?,
         val strings: Array<String>?,
-        val syntheticClassKind: String?,
         val filePartClassNames: Array<String>?,
         val multifileClassName: String?,
         val isInterfaceDefaultImpls: Boolean,
@@ -37,11 +36,7 @@ class KotlinClassHeader(
         SYNTHETIC_CLASS
     }
 
-    override fun toString() =
-            "$kind " +
-            (if (isLocalClass) "(local) " else "") +
-            (if (syntheticClassKind != null) "$syntheticClassKind " else "") +
-            "version=$version"
+    override fun toString() = "$kind " + (if (isLocalClass) "(local) " else "") + "version=$version"
 }
 
 fun KotlinClassHeader.isCompatibleClassKind(): Boolean = version.isCompatible() && kind == KotlinClassHeader.Kind.CLASS

@@ -73,7 +73,7 @@ fun isKotlinInternalCompiledFile(file: VirtualFile): Boolean {
 
     return header.kind == KotlinClassHeader.Kind.SYNTHETIC_CLASS ||
            header.kind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART ||
-           header.isLocalClass || header.syntheticClassKind == "PACKAGE_PART"
+           header.isLocalClass
 }
 
 fun findMultifileClassParts(file: VirtualFile, classId: ClassId, kotlinClassHeader: KotlinClassHeader): List<KotlinJvmBinaryClass> {
