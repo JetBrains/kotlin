@@ -1290,14 +1290,6 @@
                        level="WARNING"
       />
 
-    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.DeprecatedUsageOfStaticFieldInspection"
-                     displayName="This field will not be generated in future versions of Kotlin. Use 'const' modifier, '@JvmField' annotation or access data through corresponding object."
-                     groupName="Kotlin"
-                     language="JAVA"
-                     enabledByDefault="true"
-                     cleanupTool="true"
-                     level="WARNING"/>
-
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.EqualsOrHashCodeInspection"
                      displayName="equals() and hashCode() not paired"
                      groupName="Kotlin"
