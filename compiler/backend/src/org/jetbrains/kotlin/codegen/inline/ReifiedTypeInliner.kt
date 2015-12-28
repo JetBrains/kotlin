@@ -17,10 +17,9 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.codegen.context.MethodContext
+import org.jetbrains.kotlin.codegen.generateAsCheck
 import org.jetbrains.kotlin.codegen.generateIsCheck
-import org.jetbrains.kotlin.codegen.generateNullCheckForNonSafeAs
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
-import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -177,63 +176,41 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
 
     private fun processAs(insn: MethodInsnNode,
                           instructions: InsnList,
-                          jetType: KotlinType,
+                          kotlinType: KotlinType,
                           asmType: Type,
                           safe: Boolean) =
-            rewriteNextTypeInsn(insn, Opcodes.CHECKCAST) { instanceofInsn: AbstractInsnNode ->
-                if (instanceofInsn !is TypeInsnNode) return false
+            rewriteNextTypeInsn(insn, Opcodes.CHECKCAST) { stubCheckcast: AbstractInsnNode ->
+                if (stubCheckcast !is TypeInsnNode) return false
 
-                addNullCheckForAsIfNeeded(insn.previous.previous, instructions, jetType, safe)
-                TypeIntrinsics.checkcast(instanceofInsn, instructions, jetType, asmType, safe)
+                val newMethodNode = MethodNode(InlineCodegenUtil.API)
+                generateAsCheck(InstructionAdapter(newMethodNode), kotlinType, asmType, safe)
+
+                instructions.insert(insn, newMethodNode.instructions)
+                instructions.remove(stubCheckcast)
+
+                // TODO: refine max stack calculation (it's not always as big as +4)
+                maxStackSize = Math.max(maxStackSize, 4)
+
                 return true
             }
 
-    private fun addNullCheckForAsIfNeeded(insn: AbstractInsnNode, instructions: InsnList, jetType: KotlinType, safe: Boolean) {
-        if (!safe && !TypeUtils.isNullableType(jetType)) {
-            val methodNode = MethodNode(InlineCodegenUtil.API)
-            generateNullCheckForNonSafeAs(InstructionAdapter(methodNode), jetType)
+    private fun processIs(insn: MethodInsnNode,
+                          instructions: InsnList,
+                          kotlinType: KotlinType,
+                          asmType: Type) =
+            rewriteNextTypeInsn(insn, Opcodes.INSTANCEOF) { stubInstanceOf: AbstractInsnNode ->
+                if (stubInstanceOf !is TypeInsnNode) return false
 
-            InlineCodegenUtil.insertNodeBefore(methodNode, instructions, insn)
-            maxStackSize = Math.max(maxStackSize, 4)
-        }
-    }
+                val newMethodNode = MethodNode(InlineCodegenUtil.API)
+                generateIsCheck(InstructionAdapter(newMethodNode), kotlinType, asmType)
 
-    private fun processIs(insn: MethodInsnNode, instructions: InsnList, jetType: KotlinType, asmType: Type) =
-            rewriteNextTypeInsn(insn, Opcodes.INSTANCEOF) { instanceofInsn: AbstractInsnNode ->
-                if (instanceofInsn !is TypeInsnNode) return false
+                instructions.insert(insn, newMethodNode.instructions)
+                instructions.remove(stubInstanceOf)
 
-                addNullCheckForIsIfNeeded(insn, instructions, jetType)
-                TypeIntrinsics.instanceOf(instanceofInsn, instructions, jetType, asmType)
+                // TODO: refine max stack calculation (it's not always as big as +2)
+                maxStackSize = Math.max(maxStackSize, 2)
                 return true
             }
-
-    private fun addNullCheckForIsIfNeeded(insn: AbstractInsnNode, instructions: InsnList, type: KotlinType) {
-        if (TypeUtils.isNullableType(type)) {
-            val instanceOf = insn.next
-            insertNullCheckAround(instructions, insn.previous.previous, instanceOf)
-            maxStackSize = Math.max(maxStackSize, 2)
-        }
-    }
-
-    private fun insertNullCheckAround(instructions: InsnList, start: AbstractInsnNode, end: AbstractInsnNode) {
-        val methodNode = MethodNode(InlineCodegenUtil.API)
-        var splitIndex: Int = -1
-        generateIsCheck(InstructionAdapter(methodNode), true) {
-            splitIndex = methodNode.instructions.size()
-        }
-        assert(splitIndex >= 0) {
-            "Split index should be non-negative, but $splitIndex"
-        }
-
-        val nullCheckInsns = methodNode.instructions.toArray()
-        nullCheckInsns.take(splitIndex).forEach {
-            instructions.insertBefore(start, it)
-        }
-
-        nullCheckInsns.drop(splitIndex).reversed().forEach {
-            instructions.insert(end, it)
-        }
-    }
 
     inline private fun rewriteNextTypeInsn(
             marker: MethodInsnNode,
