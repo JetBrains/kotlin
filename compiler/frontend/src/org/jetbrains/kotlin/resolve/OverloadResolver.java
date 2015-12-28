@@ -81,7 +81,7 @@ public class OverloadResolver {
             else if (containingDeclaration instanceof ScriptDescriptor) {
                 // TODO: check overload conflicts of functions with constructors in scripts
             }
-            else if (!(containingDeclaration instanceof FunctionDescriptor)) {
+            else if (!(containingDeclaration instanceof FunctionDescriptor || containingDeclaration instanceof PropertyDescriptor)) {
                 throw new IllegalStateException("Illegal class container: " + containingDeclaration);
             }
         }

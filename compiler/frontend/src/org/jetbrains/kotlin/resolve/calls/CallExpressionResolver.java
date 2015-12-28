@@ -321,6 +321,7 @@ public class CallExpressionResolver {
             return getSimpleNameExpressionTypeInfo((KtSimpleNameExpression) selectorExpression, receiver, callOperationNode, context);
         }
         else if (selectorExpression != null) {
+            expressionTypingServices.getTypeInfo(selectorExpression, context);
             context.trace.report(ILLEGAL_SELECTOR.on(selectorExpression, selectorExpression.getText()));
         }
         return TypeInfoFactoryKt.noTypeInfo(context);

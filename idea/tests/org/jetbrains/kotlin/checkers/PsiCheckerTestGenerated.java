@@ -394,6 +394,36 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTest(fileName);
         }
 
+        @TestMetadata("ClassDeclarationAfterDot.kt")
+        public void testClassDeclarationAfterDot() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/ClassDeclarationAfterDot.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ClassDeclarationAfterDot2.kt")
+        public void testClassDeclarationAfterDot2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/ClassDeclarationAfterDot2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ClassDeclarationAsExpression.kt")
+        public void testClassDeclarationAsExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/ClassDeclarationAsExpression.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ClassDeclarationAsExpression2.kt")
+        public void testClassDeclarationAsExpression2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/ClassDeclarationAsExpression2.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("ClassDeclarationAsExpression3.kt")
+        public void testClassDeclarationAsExpression3() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/ClassDeclarationAsExpression3.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("CoercionToUnit.kt")
         public void testCoercionToUnit() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/CoercionToUnit.kt");
@@ -415,6 +445,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
         @TestMetadata("extensionMemberInClassObject.kt")
         public void testExtensionMemberInClassObject() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/extensionMemberInClassObject.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("FunDeclarationAfterDot.kt")
+        public void testFunDeclarationAfterDot() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/FunDeclarationAfterDot.kt");
             doTest(fileName);
         }
 

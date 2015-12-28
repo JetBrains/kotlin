@@ -1,4 +1,4 @@
 fun foo(s: String) {
     s.
-    <!ILLEGAL_SELECTOR!>val b = 42<!>
+    <!DECLARATION_IN_ILLEGAL_CONTEXT, ILLEGAL_SELECTOR!>val b = 42<!>
 }

@@ -1448,6 +1448,26 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         return components.dataFlowAnalyzer.checkType(resolveArrayAccessGetMethod(expression, context), expression, context);
     }
 
+    @Override
+    public KotlinTypeInfo visitClass(@NotNull KtClass klass, ExpressionTypingContext context) {
+        // analyze class in illegal position and write descriptor to trace but do not write to any scope
+        components.localClassifierAnalyzer.processClassOrObject(
+                null, context.replaceContextDependency(INDEPENDENT),
+                context.scope.getOwnerDescriptor(),
+                klass
+        );
+        return declarationInIllegalContext(klass, context);
+    }
+
+    @NotNull
+    private static KotlinTypeInfo declarationInIllegalContext(
+            @NotNull  KtDeclaration declaration,
+            @NotNull  ExpressionTypingContext context
+    ) {
+        context.trace.report(DECLARATION_IN_ILLEGAL_CONTEXT.on(declaration));
+        return TypeInfoFactoryKt.noTypeInfo(context);
+    }
+
     @NotNull
     public KotlinTypeInfo getTypeInfoForBinaryCall(
             @NotNull Name name,
@@ -1486,8 +1506,7 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
 
     @Override
     public KotlinTypeInfo visitDeclaration(@NotNull KtDeclaration dcl, ExpressionTypingContext context) {
-        context.trace.report(DECLARATION_IN_ILLEGAL_CONTEXT.on(dcl));
-        return TypeInfoFactoryKt.noTypeInfo(context);
+        return declarationInIllegalContext(dcl, context);
     }
 
     @Override
