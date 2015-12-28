@@ -173,35 +173,11 @@ public class Intrinsics {
         throw new UnsupportedOperationException(message);
     }
 
-    public static void reifyNewArray(String typeParameterIdentifier) {
+    public static void reifiedOperationMarker(int id, String typeParameterIdentifier) {
         throwUndefinedForReified();
     }
 
-    public static void reifyNewArray(String typeParameterIdentifier, String message) {
-        throwUndefinedForReified(message);
-    }
-
-    public static void reifyCheckcast(String typeParameterIdentifier) {
-        throwUndefinedForReified();
-    }
-
-    public static void reifyCheckcast(String typeParameterIdentifier, String message) {
-        throwUndefinedForReified(message);
-    }
-
-    public static void reifyInstanceof(String typeParameterIdentifier) {
-        throwUndefinedForReified();
-    }
-
-    public static void reifyInstanceof(String typeParameterIdentifier, String message) {
-        throwUndefinedForReified(message);
-    }
-
-    public static void reifyJavaClass(String typeParameterIdentifier) {
-        throwUndefinedForReified();
-    }
-
-    public static void reifyJavaClass(String typeParameterIdentifier, String message) {
+    public static void reifiedOperationMarker(int id, String typeParameterIdentifier, String message) {
         throwUndefinedForReified(message);
     }
 
