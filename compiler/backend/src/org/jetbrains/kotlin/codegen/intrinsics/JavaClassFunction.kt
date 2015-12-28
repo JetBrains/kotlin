@@ -30,7 +30,7 @@ public class JavaClassFunction : IntrinsicMethod() {
         val javaClass = resolvedCall.getResultingDescriptor().getReturnType()!!.getArguments().first().getType()
         return object : IntrinsicCallable(getType(javaClass<Class<Any>>()), listOf(), null, null) {
             override fun invokeIntrinsic(v: InstructionAdapter) {
-                codegen.putReifierMarkerIfTypeIsReifiedParameter(javaClass, ReifiedTypeInliner.JAVA_CLASS_MARKER_METHOD_NAME)
+                codegen.putReifiedOperationMarkerIfTypeIsReifiedParameter(javaClass, ReifiedTypeInliner.OperationKind.JAVA_CLASS)
                 putJavaLangClassInstance(v, codegen.getState().typeMapper.mapType(javaClass))
             }
         }

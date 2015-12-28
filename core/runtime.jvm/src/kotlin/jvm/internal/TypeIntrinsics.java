@@ -361,12 +361,4 @@ public class TypeIntrinsics {
         }
         return obj;
     }
-
-    public static Object beforeSafeCheckcastToFunctionOfArity(Object obj, int arity) {
-        // TODO should we instead inline bytecode for this in TypeIntrinsics.kt?
-        if (obj == null || !isFunctionOfArity(obj, arity)) {
-            return null;
-        }
-        return obj;
-    }
 }

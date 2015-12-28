@@ -16,9 +16,8 @@
 
 package org.jetbrains.kotlin.codegen.optimization.common
 
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
-import org.jetbrains.org.objectweb.asm.tree.InsnList
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import org.jetbrains.org.objectweb.asm.Opcodes.*
+import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 
 val AbstractInsnNode.isMeaningful: Boolean get() =
@@ -97,3 +96,24 @@ inline fun AbstractInsnNode.findPreviousOrNull(predicate: (AbstractInsnNode) -> 
 
 fun AbstractInsnNode.hasOpcode(): Boolean =
         getOpcode() >= 0
+
+//   See InstructionAdapter
+//
+//   public void iconst(final int cst) {
+//       if (cst >= -1 && cst <= 5) {
+//           mv.visitInsn(Opcodes.ICONST_0 + cst);
+//       } else if (cst >= Byte.MIN_VALUE && cst <= Byte.MAX_VALUE) {
+//           mv.visitIntInsn(Opcodes.BIPUSH, cst);
+//       } else if (cst >= Short.MIN_VALUE && cst <= Short.MAX_VALUE) {
+//           mv.visitIntInsn(Opcodes.SIPUSH, cst);
+//       } else {
+//           mv.visitLdcInsn(new Integer(cst));
+//       }
+//   }
+val AbstractInsnNode.intConstant: Int? get() =
+    when (opcode) {
+        in ICONST_0..ICONST_5 -> opcode - ICONST_0
+        BIPUSH, SIPUSH -> (this as IntInsnNode).operand
+        LDC -> (this as LdcInsnNode).cst as? Int?
+        else -> null
+    }

@@ -78,64 +78,34 @@ public object TypeIntrinsics {
         instanceofInsn.desc = asmType.internalName
     }
 
-    public @JvmStatic fun checkcast(v: InstructionAdapter, jetType: KotlinType, asmType: Type, safe: Boolean) {
+    @JvmStatic
+    public fun checkcast(
+            v: InstructionAdapter,
+            kotlinType: KotlinType, asmType: Type,
+            // This parameter is just for sake of optimization:
+            // when we generate 'as?' we do necessary intrinsic checks
+            // when calling TypeIntrinsics.instanceOf, so here we can just make checkcast
+            safe: Boolean) {
         if (safe) {
             v.checkcast(asmType)
             return
         }
 
-        val functionTypeArity = getFunctionTypeArity(jetType)
+        val functionTypeArity = getFunctionTypeArity(kotlinType)
         if (functionTypeArity >= 0) {
             v.iconst(functionTypeArity)
-            if (safe) {
-                v.typeIntrinsic(BEFORE_SAFE_CHECKCAST_TO_FUNCTION_OF_ARITY, BEFORE_SAFE_CHECKCAST_TO_FUNCTION_OF_ARITY_DESCRIPTOR)
-            }
-            else {
-                v.typeIntrinsic(BEFORE_CHECKCAST_TO_FUNCTION_OF_ARITY, BEFORE_CHECKCAST_TO_FUNCTION_OF_ARITY_DESCRIPTOR)
-            }
+            v.typeIntrinsic(BEFORE_CHECKCAST_TO_FUNCTION_OF_ARITY, BEFORE_CHECKCAST_TO_FUNCTION_OF_ARITY_DESCRIPTOR)
             v.checkcast(asmType)
             return
         }
 
-        val asMutableCollectionMethodName = getAsMutableCollectionMethodName(jetType)
+        val asMutableCollectionMethodName = getAsMutableCollectionMethodName(kotlinType)
         if (asMutableCollectionMethodName != null) {
             v.typeIntrinsic(asMutableCollectionMethodName, getAsMutableCollectionDescriptor(asmType))
             return
         }
 
         v.checkcast(asmType)
-    }
-
-    public @JvmStatic fun checkcast(checkcastInsn: TypeInsnNode, instructions: InsnList, jetType: KotlinType, asmType: Type, safe: Boolean) {
-        if (safe) {
-            checkcastInsn.desc = asmType.internalName
-            return
-        }
-
-        val functionTypeArity = getFunctionTypeArity(jetType)
-        if (functionTypeArity >= 0) {
-            instructions.insertBefore(checkcastInsn, iconstNode(functionTypeArity))
-
-            val beforeCheckcast = if (safe)
-                typeIntrinsicNode(BEFORE_SAFE_CHECKCAST_TO_FUNCTION_OF_ARITY, BEFORE_SAFE_CHECKCAST_TO_FUNCTION_OF_ARITY_DESCRIPTOR)
-            else
-                typeIntrinsicNode(BEFORE_CHECKCAST_TO_FUNCTION_OF_ARITY, BEFORE_CHECKCAST_TO_FUNCTION_OF_ARITY_DESCRIPTOR)
-            instructions.insertBefore(checkcastInsn, beforeCheckcast)
-
-            instructions.insertBefore(checkcastInsn, TypeInsnNode(Opcodes.CHECKCAST, asmType.internalName))
-            instructions.remove(checkcastInsn)
-            return
-        }
-
-        val asMutableCollectionMethodName = getAsMutableCollectionMethodName(jetType)
-        if (asMutableCollectionMethodName != null) {
-            instructions.insertBefore(checkcastInsn,
-                                      typeIntrinsicNode(asMutableCollectionMethodName, getAsMutableCollectionDescriptor(asmType)))
-            instructions.remove(checkcastInsn)
-            return
-        }
-
-        checkcastInsn.desc = asmType.internalName
     }
 
     private val INTRINSICS_CLASS = "kotlin/jvm/internal/TypeIntrinsics"
@@ -210,10 +180,5 @@ public object TypeIntrinsics {
     private val BEFORE_CHECKCAST_TO_FUNCTION_OF_ARITY = "beforeCheckcastToFunctionOfArity"
 
     private val BEFORE_CHECKCAST_TO_FUNCTION_OF_ARITY_DESCRIPTOR =
-            Type.getMethodDescriptor(OBJECT_TYPE, OBJECT_TYPE, Type.INT_TYPE)
-
-    private val BEFORE_SAFE_CHECKCAST_TO_FUNCTION_OF_ARITY = "beforeSafeCheckcastToFunctionOfArity"
-
-    private val BEFORE_SAFE_CHECKCAST_TO_FUNCTION_OF_ARITY_DESCRIPTOR =
             Type.getMethodDescriptor(OBJECT_TYPE, OBJECT_TYPE, Type.INT_TYPE)
 }
