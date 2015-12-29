@@ -115,6 +115,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
             doTest(fileName);
         }
 
+        @TestMetadata("dynamicVsGeneric.kt")
+        public void testDynamicVsGeneric() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/dynamicVsGeneric.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("extensionVals.kt")
         public void testExtensionVals() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/extensionVals.kt");
