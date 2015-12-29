@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
+import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmOverloadsAnnotation
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
@@ -89,6 +90,10 @@ public class PlatformStaticAnnotationChecker : DeclarationChecker {
 
         if (insideObject && checkDeclaration.getModifierList()?.hasModifier(KtTokens.OVERRIDE_KEYWORD) == true) {
             diagnosticHolder.report(ErrorsJvm.OVERRIDE_CANNOT_BE_STATIC.on(declaration))
+        }
+
+        if (descriptor is PropertyDescriptor && (descriptor.isConst || descriptor.hasJvmFieldAnnotation())) {
+            diagnosticHolder.report(ErrorsJvm.JVM_STATIC_ON_CONST_OR_JVM_FIELD.on(declaration))
         }
     }
 }

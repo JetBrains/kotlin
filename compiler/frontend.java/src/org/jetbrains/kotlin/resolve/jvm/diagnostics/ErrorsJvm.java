@@ -44,6 +44,7 @@ public interface ErrorsJvm {
 
     DiagnosticFactory0<KtDeclaration> OVERRIDE_CANNOT_BE_STATIC = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory0<KtDeclaration> JVM_STATIC_NOT_IN_OBJECT = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<KtDeclaration> JVM_STATIC_ON_CONST_OR_JVM_FIELD = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
 
     DiagnosticFactory0<PsiElement> INAPPLICABLE_JVM_NAME = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtAnnotationEntry> ILLEGAL_JVM_NAME = DiagnosticFactory0.create(ERROR);
