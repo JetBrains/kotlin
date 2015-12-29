@@ -36,7 +36,7 @@ abstract class ImportInsertHelper {
     companion object {
         @JvmStatic
         public fun getInstance(project: Project): ImportInsertHelper
-            = ServiceManager.getService<ImportInsertHelper>(project, javaClass<ImportInsertHelper>())
+            = ServiceManager.getService<ImportInsertHelper>(project, ImportInsertHelper::class.java)
     }
 }
 

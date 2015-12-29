@@ -164,7 +164,7 @@ public class IDELightClassGenerationSupport(private val project: Project) : Ligh
 
         val lightClasses = ArrayList<PsiClass>()
         lightClasses.add(lightClassForFacade)
-        if (facadeFiles.size() > 1) {
+        if (facadeFiles.size > 1) {
             lightClasses.addAll(facadeFiles.map {
                 FakeLightClassForFileOfPackage(lightClassForFacade, it)
             })

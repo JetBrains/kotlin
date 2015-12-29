@@ -28,7 +28,7 @@ class KDocElementFactory(val project: Project) {
     public fun createKDocFromText(text: String): KDoc {
         val fileText = text + " fun foo { }"
         val function = KtPsiFactory(project).createDeclaration<KtFunction>(fileText)
-        return PsiTreeUtil.findChildOfType(function, javaClass<KDoc>())!!
+        return PsiTreeUtil.findChildOfType(function, KDoc::class.java)!!
     }
 
     public fun createNameFromText(text: String): KDocName {

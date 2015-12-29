@@ -40,7 +40,7 @@ public class KotlinIndexPatternBuilder: IndexPatternBuilder {
     override fun getCommentStartDelta(tokenType: IElementType?): Int = 0
 
     override fun getCommentEndDelta(tokenType: IElementType?): Int = when(tokenType) {
-        KtTokens.BLOCK_COMMENT -> "*/".length()
+        KtTokens.BLOCK_COMMENT -> "*/".length
         else -> 0
     }
 }

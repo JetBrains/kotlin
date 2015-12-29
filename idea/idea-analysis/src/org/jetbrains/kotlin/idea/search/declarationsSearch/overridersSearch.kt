@@ -83,7 +83,7 @@ public object KotlinPsiMethodOverridersSearch : HierarchySearch<PsiMethod>(PsiMe
             }
         }
 
-        return classToMethod.values()
+        return classToMethod.values
     }
 
     override fun isApplicable(request: HierarchySearchRequest<PsiMethod>): Boolean =

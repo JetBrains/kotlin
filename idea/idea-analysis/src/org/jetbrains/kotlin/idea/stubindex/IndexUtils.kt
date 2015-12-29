@@ -59,7 +59,7 @@ private fun <TDeclaration : KtCallableDeclaration> KtTypeElement.index(declarati
         is KtNullableType -> getInnerType()?.index(declaration, sink)
 
         is KtFunctionType -> {
-            val arity = getParameters().size() + (if (getReceiverTypeReference() != null) 1 else 0)
+            val arity = getParameters().size + (if (getReceiverTypeReference() != null) 1 else 0)
             occurrence("Function$arity")
         }
 

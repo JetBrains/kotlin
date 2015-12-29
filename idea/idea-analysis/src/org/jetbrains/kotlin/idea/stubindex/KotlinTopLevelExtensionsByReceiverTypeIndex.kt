@@ -29,7 +29,7 @@ public class KotlinTopLevelExtensionsByReceiverTypeIndex private constructor() :
             = super.get(s, project, KotlinSourceFilterScope.sourcesAndLibraries(scope, project))
 
     companion object {
-        private val KEY = KotlinIndexUtil.createIndexKey<String, KtCallableDeclaration>(javaClass<KotlinTopLevelExtensionsByReceiverTypeIndex>())
+        private val KEY = KotlinIndexUtil.createIndexKey<String, KtCallableDeclaration>(KotlinTopLevelExtensionsByReceiverTypeIndex::class.java)
         private val SEPARATOR = '\n'
 
         public val INSTANCE: KotlinTopLevelExtensionsByReceiverTypeIndex = KotlinTopLevelExtensionsByReceiverTypeIndex()

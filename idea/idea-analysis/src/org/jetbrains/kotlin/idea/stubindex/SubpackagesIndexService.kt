@@ -67,7 +67,7 @@ public class SubpackagesIndexService(private val project: Project) {
         fun getSubpackages(fqName: FqName, scope: GlobalSearchScope, nameFilter: (Name) -> Boolean): Collection<FqName> {
             val possibleFilesFqNames = fqNameByPrefix[fqName]
             val existingSubPackagesShortNames = HashSet<Name>()
-            val len = fqName.pathSegments().size()
+            val len = fqName.pathSegments().size
             for (filesFqName in possibleFilesFqNames) {
                 val candidateSubPackageShortName = filesFqName.pathSegments()[len]
                 if (candidateSubPackageShortName in existingSubPackagesShortNames || !nameFilter(candidateSubPackageShortName)) continue
@@ -84,7 +84,7 @@ public class SubpackagesIndexService(private val project: Project) {
 
     companion object {
         public fun getInstance(project: Project): SubpackagesIndex {
-            return ServiceManager.getService(project, javaClass<SubpackagesIndexService>())!!.cachedValue.getValue()!!
+            return ServiceManager.getService(project, SubpackagesIndexService::class.java)!!.cachedValue.getValue()!!
         }
     }
 }

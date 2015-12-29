@@ -66,7 +66,7 @@ public object PackageIndexUtil {
     ): Boolean {
         var result = false
         StubIndex.getInstance().processElements<String, KtFile>(
-                KotlinExactPackagesIndex.getInstance().getKey(), packageFqName.asString(), project, searchScope, javaClass<KtFile>()
+                KotlinExactPackagesIndex.getInstance().getKey(), packageFqName.asString(), project, searchScope, KtFile::class.java
         ) {
             result = true
             false

@@ -176,7 +176,7 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
 
     private fun dropNestedElements(elements: List<KtElement>): LinkedHashSet<KtElement> {
         val elementSet = elements.toSet()
-        val newElements = LinkedHashSet<KtElement>(elementSet.size())
+        val newElements = LinkedHashSet<KtElement>(elementSet.size)
         for (element in elementSet) {
             if (!element.parents.any { it in elementSet }) {
                 newElements.add(element)
@@ -337,7 +337,7 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
 
             if (PsiTreeUtil.getParentOfType(
                     qualifiedExpression,
-                    javaClass<KtImportDirective>(), javaClass<KtPackageDirective>()) != null) return true
+                    KtImportDirective::class.java, KtPackageDirective::class.java) != null) return true
 
             val selector = qualifiedExpression.getSelectorExpression() ?: return false
             val callee = selector.getCalleeExpressionIfAny() as? KtReferenceExpression ?: return false
@@ -441,7 +441,7 @@ public class ShortenReferences(val options: (KtElement) -> Options = { Options.D
 
             if (PsiTreeUtil.getParentOfType(
                     qualifiedExpression,
-                    javaClass<KtImportDirective>(), javaClass<KtPackageDirective>()) != null) return false
+                    KtImportDirective::class.java, KtPackageDirective::class.java) != null) return false
 
             val receiverTarget = receiver.singleTarget(bindingContext) ?: return false
             if (receiverTarget !is ClassDescriptor) return false

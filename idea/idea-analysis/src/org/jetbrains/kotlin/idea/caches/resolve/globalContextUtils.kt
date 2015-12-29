@@ -44,7 +44,7 @@ private class ExceptionTrackerWithProcessCanceledReport() : ExceptionTracker() {
 
 
     companion object {
-        val LOG = Logger.getInstance(javaClass<ExceptionTrackerWithProcessCanceledReport>())
+        val LOG = Logger.getInstance(ExceptionTrackerWithProcessCanceledReport::class.java)
     }
 }
 

@@ -107,7 +107,7 @@ public fun buildDecompiledText(
                     // descriptor instanceof PropertyDescriptor
                     builder.append(" ").append(DECOMPILED_CODE_COMMENT)
                 }
-                endOffset = builder.length()
+                endOffset = builder.length
             }
         }
         else if (descriptor is ClassDescriptor && !isEnumEntry(descriptor)) {
@@ -160,7 +160,7 @@ public fun buildDecompiledText(
             }
 
             builder.append(indent).append("}")
-            endOffset = builder.length()
+            endOffset = builder.length
         }
 
         builder.append("\n")

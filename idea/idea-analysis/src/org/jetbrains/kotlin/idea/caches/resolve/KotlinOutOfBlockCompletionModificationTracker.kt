@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.asJava.KotlinCodeBlockModificationListener
 public class KotlinOutOfBlockCompletionModificationTracker() : SimpleModificationTracker() {
     companion object {
         public fun getInstance(project: Project): KotlinOutOfBlockCompletionModificationTracker
-                = ServiceManager.getService(project, javaClass<KotlinOutOfBlockCompletionModificationTracker>())!!
+                = ServiceManager.getService(project, KotlinOutOfBlockCompletionModificationTracker::class.java)!!
     }
 }
 

@@ -38,8 +38,8 @@ public class IDEVirtualFileFinder(private val scope: GlobalSearchScope) : Virtua
         val files = FileBasedIndex.getInstance().getContainingFiles<FqName, Void>(key, classId.asSingleFqName(), scope)
         if (files.isEmpty()) return null
 
-        if (files.size() > 1) {
-            LOG.warn("There are " + files.size() + " classes with same fqName: " + classId + " found.")
+        if (files.size > 1) {
+            LOG.warn("There are " + files.size + " classes with same fqName: " + classId + " found.")
         }
         return files.iterator().next()
     }
@@ -47,6 +47,6 @@ public class IDEVirtualFileFinder(private val scope: GlobalSearchScope) : Virtua
     override fun findVirtualFileWithHeader(classId: ClassId): VirtualFile? = findVirtualFileWithHeader(classId, KotlinClassFileIndex.KEY)
 
     companion object {
-        private val LOG = Logger.getInstance(javaClass<IDEVirtualFileFinder>())
+        private val LOG = Logger.getInstance(IDEVirtualFileFinder::class.java)
     }
 }

@@ -86,7 +86,7 @@ class KotlinFilterLexer(private val occurrenceConsumer: OccurrenceConsumer): Bas
         }
 
         if (tokenType != TokenType.WHITE_SPACE && tokenType !in commentTokens) {
-            if (prevTokens.size() == MAX_PREV_TOKENS) {
+            if (prevTokens.size == MAX_PREV_TOKENS) {
                 prevTokens.removeLast()
             }
             prevTokens.addFirst(tokenType)

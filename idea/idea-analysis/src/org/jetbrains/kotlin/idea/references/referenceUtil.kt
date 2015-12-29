@@ -101,7 +101,7 @@ public fun PsiReference.matchesTarget(candidateTarget: PsiElement): Boolean {
         }
         if ((parent as? PsiNewExpression)?.resolveConstructor()?.unwrapped == unwrappedCandidate) return true
     }
-    if (this is PsiJavaCodeReferenceElement && candidateTarget is KtObjectDeclaration && unwrappedTargets.size() == 1) {
+    if (this is PsiJavaCodeReferenceElement && candidateTarget is KtObjectDeclaration && unwrappedTargets.size == 1) {
         val referredClass = unwrappedTargets.first()
         if (referredClass is KtClass && candidateTarget in referredClass.getCompanionObjects()) {
             if (getParent() is PsiImportStaticStatement) return true
@@ -173,7 +173,7 @@ public fun KtExpression.readWriteAccess(useResolveForReadWrite: Boolean): Refere
                 val bindingContext = assignment.analyze(BodyResolveMode.PARTIAL)
                 val resolvedCall = assignment.getResolvedCall(bindingContext) ?: return ReferenceAccess.READ_WRITE
                 if (!resolvedCall.isReallySuccess()) return ReferenceAccess.READ_WRITE
-                return if (resolvedCall.resultingDescriptor.name in OperatorConventions.ASSIGNMENT_OPERATIONS.values())
+                return if (resolvedCall.resultingDescriptor.name in OperatorConventions.ASSIGNMENT_OPERATIONS.values)
                     ReferenceAccess.READ
                 else
                     ReferenceAccess.READ_WRITE

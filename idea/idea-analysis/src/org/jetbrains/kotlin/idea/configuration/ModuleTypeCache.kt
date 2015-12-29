@@ -33,7 +33,7 @@ import com.intellij.openapi.util.SimpleModificationTracker
 class ModuleTypeCacheManager private constructor(project: Project) {
     companion object {
         @JvmStatic
-        fun getInstance(project: Project) = ServiceManager.getService(project, javaClass<ModuleTypeCacheManager>())
+        fun getInstance(project: Project) = ServiceManager.getService(project, ModuleTypeCacheManager::class.java)
     }
 
     private val vfsModificationTracker = VfsModificationTracker(project)

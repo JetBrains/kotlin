@@ -37,8 +37,8 @@ private fun findVirtualFileWithHeader(classId: ClassId, key: ID<FqName, Void>, s
     val files = FileBasedIndex.getInstance().getContainingFiles<FqName, Void>(key, classId.asSingleFqName(), scope)
     if (files.isEmpty()) return null
 
-    if (files.size() > 1) {
-        logger.warn("There are " + files.size() + " classes with same fqName: " + classId + " found.")
+    if (files.size > 1) {
+        logger.warn("There are " + files.size + " classes with same fqName: " + classId + " found.")
     }
     return files.iterator().next()
 }
@@ -51,7 +51,7 @@ public class JsIDEVirtualFileFinder(private val scope: GlobalSearchScope) : JsVi
             findVirtualFileWithHeader(classId, KotlinJavaScriptMetaFileIndex.KEY, scope, LOG)
 
     companion object {
-        private val LOG = Logger.getInstance(javaClass<JsIDEVirtualFileFinder>())
+        private val LOG = Logger.getInstance(JsIDEVirtualFileFinder::class.java)
     }
 }
 
@@ -63,7 +63,7 @@ public class JvmIDEVirtualFileFinder(private val scope: GlobalSearchScope) : Vir
             findVirtualFileWithHeader(classId, KotlinClassFileIndex.KEY, scope, LOG)
 
     companion object {
-        private val LOG = Logger.getInstance(javaClass<JvmIDEVirtualFileFinder>())
+        private val LOG = Logger.getInstance(JvmIDEVirtualFileFinder::class.java)
     }
 }
 

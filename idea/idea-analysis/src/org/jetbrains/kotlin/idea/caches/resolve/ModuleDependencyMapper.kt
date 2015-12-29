@@ -46,7 +46,7 @@ fun createModuleResolverProvider(
     val allModuleInfos = collectAllModuleInfosFromIdeaModel(project).toHashSet()
 
     val syntheticFilesByModule = syntheticFiles.groupBy { it.getModuleInfo() }
-    val syntheticFilesModules = syntheticFilesByModule.keySet()
+    val syntheticFilesModules = syntheticFilesByModule.keys
     allModuleInfos.addAll(syntheticFilesModules)
 
     val modulesToCreateResolversFor = allModuleInfos.filter(moduleFilter)

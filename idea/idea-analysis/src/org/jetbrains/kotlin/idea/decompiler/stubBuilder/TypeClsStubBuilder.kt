@@ -107,7 +107,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         val typeArgumentsListStub = KotlinPlaceHolderStubImpl<KtTypeArgumentList>(typeStub, KtStubElementTypes.TYPE_ARGUMENT_LIST)
         typeArgumentProtoList.forEach { typeArgumentProto ->
             val projectionKind = typeArgumentProto.projection.toProjectionKind()
-            val typeProjection = KotlinTypeProjectionStubImpl(typeArgumentsListStub, projectionKind.ordinal())
+            val typeProjection = KotlinTypeProjectionStubImpl(typeArgumentsListStub, projectionKind.ordinal)
             if (projectionKind != KtProjectionKind.STAR) {
                 val modifierKeywordToken = projectionKind.token as? KtModifierKeywordToken
                 createModifierListStub(typeProjection, modifierKeywordToken.singletonOrEmptyList())
@@ -135,7 +135,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
         val parameterList = KotlinPlaceHolderStubImpl<KtParameterList>(functionType, KtStubElementTypes.VALUE_PARAMETER_LIST)
         val typeArgumentsWithoutReceiverAndReturnType
-                = typeArgumentList.subList(if (isExtensionFunctionType) 1 else 0, typeArgumentList.size() - 1)
+                = typeArgumentList.subList(if (isExtensionFunctionType) 1 else 0, typeArgumentList.size - 1)
         typeArgumentsWithoutReceiverAndReturnType.forEach { argument ->
             val parameter = KotlinParameterStubImpl(
                     parameterList, fqName = null, name = null, isMutable = false, hasValOrVar = false, hasDefaultValue = false

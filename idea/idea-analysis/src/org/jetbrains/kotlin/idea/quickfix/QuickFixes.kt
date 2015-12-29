@@ -53,7 +53,7 @@ public class QuickFixes {
     }
 
     companion object {
-        public fun getInstance(): QuickFixes = ServiceManager.getService(javaClass<QuickFixes>())
+        public fun getInstance(): QuickFixes = ServiceManager.getService(QuickFixes::class.java)
     }
 }
 

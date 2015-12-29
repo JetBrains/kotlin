@@ -60,7 +60,7 @@ internal class PerFileAnalysisCache(val file: KtFile, val componentProvider: Com
             descendantsOfCurrent.add(current)
         }
 
-        cache.keySet().removeAll(toRemove)
+        cache.keys.removeAll(toRemove)
 
         return result
     }
@@ -109,18 +109,18 @@ internal class PerFileAnalysisCache(val file: KtFile, val componentProvider: Com
 
 private object KotlinResolveDataProvider {
     private val topmostElementTypes = arrayOf<Class<out PsiElement?>?>(
-            javaClass<KtNamedFunction>(),
-            javaClass<KtAnonymousInitializer>(),
-            javaClass<KtProperty>(),
-            javaClass<KtImportDirective>(),
-            javaClass<KtPackageDirective>(),
-            javaClass<KtCodeFragment>(),
+            KtNamedFunction::class.java,
+            KtAnonymousInitializer::class.java,
+            KtProperty::class.java,
+            KtImportDirective::class.java,
+            KtPackageDirective::class.java,
+            KtCodeFragment::class.java,
             // TODO: Non-analyzable so far, add more granular analysis
-            javaClass<KtAnnotationEntry>(),
-            javaClass<KtTypeConstraint>(),
-            javaClass<KtSuperTypeList>(),
-            javaClass<KtTypeParameter>(),
-            javaClass<KtParameter>()
+            KtAnnotationEntry::class.java,
+            KtTypeConstraint::class.java,
+            KtSuperTypeList::class.java,
+            KtTypeParameter::class.java,
+            KtParameter::class.java
     )
 
     fun findAnalyzableParent(element: KtElement): KtElement {
@@ -134,12 +134,12 @@ private object KotlinResolveDataProvider {
             is KtTypeConstraint,
             is KtSuperTypeList,
             is KtTypeParameter,
-            is KtParameter -> PsiTreeUtil.getParentOfType(topmostElement, javaClass<KtClassOrObject>(), javaClass<KtCallableDeclaration>())
+            is KtParameter -> PsiTreeUtil.getParentOfType(topmostElement, KtClassOrObject::class.java, KtCallableDeclaration::class.java)
             else -> topmostElement
         }
         return analyzableElement
                     // if none of the above worked, take the outermost declaration
-                    ?: PsiTreeUtil.getTopmostParentOfType(element, javaClass<KtDeclaration>())
+                    ?: PsiTreeUtil.getTopmostParentOfType(element, KtDeclaration::class.java)
                     // if even that didn't work, take the whole file
                     ?: element.getContainingKtFile()
     }

@@ -27,9 +27,9 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 public val ALL_SEARCHABLE_OPERATIONS: ImmutableSet<KtToken> = ImmutableSet
         .builder<KtToken>()
-        .addAll(UNARY_OPERATION_NAMES.keySet())
-        .addAll(BINARY_OPERATION_NAMES.keySet())
-        .addAll(ASSIGNMENT_OPERATIONS.keySet())
+        .addAll(UNARY_OPERATION_NAMES.keys)
+        .addAll(BINARY_OPERATION_NAMES.keys)
+        .addAll(ASSIGNMENT_OPERATIONS.keys)
         .addAll(COMPARISON_OPERATIONS)
         .addAll(EQUALS_OPERATIONS)
         .addAll(IDENTITY_EQUALS_OPERATIONS)

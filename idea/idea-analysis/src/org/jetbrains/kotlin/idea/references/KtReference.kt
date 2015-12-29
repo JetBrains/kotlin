@@ -48,7 +48,7 @@ public abstract class AbstractKtReference<T : KtElement>(element: T)
 
     override fun resolve(): PsiElement? {
         val psiElements = resolveToPsiElements()
-        if (psiElements.size() == 1) {
+        if (psiElements.size == 1) {
             return psiElements.iterator().next()
         }
         return null

@@ -26,7 +26,7 @@ import java.util.*
 
 public object PsiPrecedences {
 
-    private val LOG = Logger.getInstance(javaClass<PsiPrecedences>())
+    private val LOG = Logger.getInstance(PsiPrecedences::class.java)
 
     private val precedence: Map<IElementType, Int>
     init {
@@ -40,8 +40,8 @@ public object PsiPrecedences {
     }
 
     public val PRECEDENCE_OF_ATOMIC_EXPRESSION: Int = -1
-    public val PRECEDENCE_OF_PREFIX_EXPRESSION: Int = PREFIX.ordinal()
-    public val PRECEDENCE_OF_POSTFIX_EXPRESSION: Int = POSTFIX.ordinal()
+    public val PRECEDENCE_OF_PREFIX_EXPRESSION: Int = PREFIX.ordinal
+    public val PRECEDENCE_OF_POSTFIX_EXPRESSION: Int = POSTFIX.ordinal
 
     public fun getPrecedence(expression: KtExpression): Int {
         return when (expression) {
@@ -54,7 +54,7 @@ public object PsiPrecedences {
                 val precedenceNumber = precedence[operation]
                 if (precedenceNumber == null) {
                     LOG.error("No precedence for operation: " + operation)
-                    precedence.size()
+                    precedence.size
                 }
                 else precedenceNumber
             }

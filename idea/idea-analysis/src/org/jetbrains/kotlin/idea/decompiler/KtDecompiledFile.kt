@@ -74,7 +74,7 @@ open class KtDecompiledFile(
 
     private fun DeclarationDescriptor.findElementForDescriptor(): KtDeclaration? {
         return decompiledText.get().renderedDescriptorsToRange[descriptorToKey(this)]?.let { range ->
-            PsiTreeUtil.findElementOfClassAtRange(this@KtDecompiledFile, range.getStartOffset(), range.getEndOffset(), javaClass<KtDeclaration>())
+            PsiTreeUtil.findElementOfClassAtRange(this@KtDecompiledFile, range.getStartOffset(), range.getEndOffset(), KtDeclaration::class.java)
         }
     }
 

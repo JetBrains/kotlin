@@ -98,7 +98,7 @@ internal class ResolutionFacadeImpl(
         get() = projectFacade.findModuleDescriptor(moduleInfo)
 
     override fun analyze(element: KtElement, bodyResolveMode: BodyResolveMode): BindingContext {
-        val resolveElementCache = getFrontendService(element, javaClass<ResolveElementCache>())
+        val resolveElementCache = getFrontendService(element, ResolveElementCache::class.java)
         return resolveElementCache.resolveToElement(element, bodyResolveMode)
     }
 

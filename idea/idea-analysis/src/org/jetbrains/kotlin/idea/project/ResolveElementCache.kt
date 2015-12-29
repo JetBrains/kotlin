@@ -204,19 +204,19 @@ public class ResolveElementCache(
     private fun findElementOfAdditionalResolve(element: KtElement): KtElement? {
         val elementOfAdditionalResolve = KtPsiUtil.getTopmostParentOfTypes(
                 element,
-                javaClass<KtNamedFunction>(),
-                javaClass<KtAnonymousInitializer>(),
-                javaClass<KtSecondaryConstructor>(),
-                javaClass<KtProperty>(),
-                javaClass<KtParameter>(),
-                javaClass<KtSuperTypeList>(),
-                javaClass<KtInitializerList>(),
-                javaClass<KtImportList>(),
-                javaClass<KtAnnotationEntry>(),
-                javaClass<KtTypeParameter>(),
-                javaClass<KtTypeConstraint>(),
-                javaClass<KtPackageDirective>(),
-                javaClass<KtCodeFragment>()) as KtElement?
+                KtNamedFunction::class.java,
+                KtAnonymousInitializer::class.java,
+                KtSecondaryConstructor::class.java,
+                KtProperty::class.java,
+                KtParameter::class.java,
+                KtSuperTypeList::class.java,
+                KtInitializerList::class.java,
+                KtImportList::class.java,
+                KtAnnotationEntry::class.java,
+                KtTypeParameter::class.java,
+                KtTypeConstraint::class.java,
+                KtPackageDirective::class.java,
+                KtCodeFragment::class.java) as KtElement?
 
         when (elementOfAdditionalResolve) {
             null -> {

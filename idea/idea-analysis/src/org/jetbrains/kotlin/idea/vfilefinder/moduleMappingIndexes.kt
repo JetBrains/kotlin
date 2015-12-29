@@ -27,7 +27,7 @@ import java.io.DataOutput
 
 public object KotlinModuleMappingIndex : FileBasedIndexExtension<String, PackageParts>() {
 
-    private val classOfIndex = javaClass<KotlinModuleMappingIndex>().getCanonicalName()
+    private val classOfIndex = KotlinModuleMappingIndex::class.java.getCanonicalName()
 
     public val KEY: ID<String, PackageParts> = ID.create(classOfIndex)
 
@@ -55,7 +55,7 @@ public object KotlinModuleMappingIndex : FileBasedIndexExtension<String, Package
 
         override fun save(out: DataOutput, value: PackageParts?) {
             out.writeUTF(value!!.packageFqName)
-            out.writeInt(value.parts.size())
+            out.writeInt(value.parts.size)
             value.parts.forEach { out.writeUTF(it) }
         }
     }

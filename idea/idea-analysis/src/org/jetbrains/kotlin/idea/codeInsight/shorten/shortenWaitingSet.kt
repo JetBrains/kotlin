@@ -79,7 +79,7 @@ public fun performDelayedShortening(project: Project) {
     }
 }
 
-private val LOG = Logger.getInstance(javaClass<Project>().getCanonicalName())
+private val LOG = Logger.getInstance(Project::class.java.getCanonicalName())
 
 public fun prepareElementsToShorten(project: Project) {
     val elementsToShorten = project.elementsToShorten
