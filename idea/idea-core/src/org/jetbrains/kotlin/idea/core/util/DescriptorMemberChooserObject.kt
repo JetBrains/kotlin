@@ -46,8 +46,8 @@ public open class DescriptorMemberChooserObject(
         val parent = descriptor.containingDeclaration ?: error("No parent for $descriptor")
 
         val declaration = if (psiElement is KtDeclaration) { // kotlin
-            PsiTreeUtil.getStubOrPsiParentOfType(psiElement, javaClass<KtNamedDeclaration>())
-                ?: PsiTreeUtil.getStubOrPsiParentOfType(psiElement, javaClass<KtFile>())
+            PsiTreeUtil.getStubOrPsiParentOfType(psiElement, KtNamedDeclaration::class.java)
+                ?: PsiTreeUtil.getStubOrPsiParentOfType(psiElement, KtFile::class.java)
         }
         else { // java or compiled
             (psiElement as PsiMember).containingClass

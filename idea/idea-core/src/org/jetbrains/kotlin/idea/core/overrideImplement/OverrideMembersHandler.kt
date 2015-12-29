@@ -46,7 +46,7 @@ public class OverrideMembersHandler : OverrideImplementMembersHandler() {
                     }
                 }
 
-                val realSupers = byOriginalRealSupers.values().map { it.realSuper }
+                val realSupers = byOriginalRealSupers.values.map { it.realSuper }
                 val nonAbstractRealSupers = realSupers.filter { it.modality != Modality.ABSTRACT }
                 val realSupersToUse = if (nonAbstractRealSupers.isNotEmpty()) {
                     nonAbstractRealSupers
@@ -59,7 +59,7 @@ public class OverrideMembersHandler : OverrideImplementMembersHandler() {
                     val immediateSupers = byOriginalRealSupers[realSuper.original]!!.immediateSupers
                     assert(immediateSupers.isNotEmpty())
 
-                    val immediateSuperToUse = if (immediateSupers.size() == 1) {
+                    val immediateSuperToUse = if (immediateSupers.size == 1) {
                         immediateSupers.single()
                     }
                     else {
@@ -68,7 +68,7 @@ public class OverrideMembersHandler : OverrideImplementMembersHandler() {
 
                     val bodyType = if (immediateSuperToUse.modality == Modality.ABSTRACT)
                         OverrideMemberChooserObject.BodyType.EMPTY
-                    else if (realSupersToUse.size() == 1)
+                    else if (realSupersToUse.size == 1)
                         OverrideMemberChooserObject.BodyType.SUPER
                     else
                         OverrideMemberChooserObject.BodyType.QUALIFIED_SUPER

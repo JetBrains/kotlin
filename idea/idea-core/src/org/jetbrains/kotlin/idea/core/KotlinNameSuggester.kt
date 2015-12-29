@@ -244,16 +244,16 @@ public object KotlinNameSuggester {
         for (prefix in ACCESSOR_PREFIXES) {
             if (!s.startsWith(prefix)) continue
 
-            val len = prefix.length()
-            if (len < s.length() && Character.isUpperCase(s.charAt(len))) {
+            val len = prefix.length
+            if (len < s.length && Character.isUpperCase(s[len])) {
                 s = s.substring(len)
                 break
             }
         }
 
         var upperCaseLetterBefore = false
-        for (i in 0..s.length() - 1) {
-            val c = s.charAt(i)
+        for (i in 0..s.length - 1) {
+            val c = s[i]
             val upperCaseLetter = Character.isUpperCase(c)
 
             if (i == 0) {
@@ -335,7 +335,7 @@ public object KotlinNameSuggester {
         if (name == null || name.isEmpty()) return false
 
         val lexer = KotlinLexer()
-        lexer.start(name, 0, name.length())
+        lexer.start(name, 0, name.length)
         if (lexer.getTokenType() !== KtTokens.IDENTIFIER) return false
         lexer.advance()
         return lexer.getTokenType() == null

@@ -304,7 +304,7 @@ public class KotlinIndicesHelper(
         val fqName = descriptor.importableFqName?.asString() ?: return false
 
         return CodeInsightSettings.getInstance().EXCLUDED_PACKAGES
-                .any { excluded -> fqName == excluded || (fqName.startsWith(excluded) && fqName[excluded.length()] == '.') }
+                .any { excluded -> fqName == excluded || (fqName.startsWith(excluded) && fqName[excluded.length] == '.') }
     }
 
     private fun KtCallableDeclaration.resolveToDescriptorsWithHack(): Collection<CallableDescriptor> {

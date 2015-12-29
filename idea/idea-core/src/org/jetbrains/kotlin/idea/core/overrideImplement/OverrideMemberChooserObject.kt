@@ -105,7 +105,7 @@ private fun generateProperty(project: Project, descriptor: PropertyDescriptor, b
                                         descriptor.kind, /* copyOverrides = */ true) as PropertyDescriptor
     newDescriptor.addOverriddenDescriptor(descriptor)
 
-    val body = StringBuilder {
+    val body = buildString {
         append("\nget()")
         append(" = ")
         append(generateUnsupportedOrSuperCall(descriptor, bodyType))
@@ -143,7 +143,7 @@ public fun generateUnsupportedOrSuperCall(descriptor: CallableMemberDescriptor, 
         return "throw UnsupportedOperationException()"
     }
     else {
-        return StringBuilder {
+        return buildString {
             append("super")
             if (bodyType == OverrideMemberChooserObject.BodyType.QUALIFIED_SUPER) {
                 val superClassFqName = IdeDescriptorRenderers.SOURCE_CODE.renderClassifierName(descriptor.containingDeclaration as ClassifierDescriptor)
@@ -158,7 +158,7 @@ public fun generateUnsupportedOrSuperCall(descriptor: CallableMemberDescriptor, 
                 }
                 paramTexts.joinTo(this, prefix="(", postfix=")")
             }
-        }.toString()
+        }
     }
 }
 

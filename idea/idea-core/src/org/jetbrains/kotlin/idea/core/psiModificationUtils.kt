@@ -93,7 +93,7 @@ public fun KtCallExpression.moveFunctionLiteralOutsideParentheses() {
     val dummyCall = KtPsiFactory(this).createExpressionByPattern("foo()$0:'{}'", expression) as KtCallExpression
     val functionLiteralArgument = dummyCall.getLambdaArguments().single()
     this.add(functionLiteralArgument)
-    if (argumentList.getArguments().size() > 1) {
+    if (argumentList.getArguments().size > 1) {
         argumentList.removeArgument(argument)
     }
     else {

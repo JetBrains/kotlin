@@ -73,7 +73,7 @@ public fun Call.mapArgumentsToParameters(targetDescriptor: CallableDescriptor): 
                 positionalArgumentIndex = null
             }
             else {
-                if (positionalArgumentIndex != null && positionalArgumentIndex < parameters.size()) {
+                if (positionalArgumentIndex != null && positionalArgumentIndex < parameters.size) {
                     val parameter = parameters[positionalArgumentIndex]
                     map[argument] = parameter
 
@@ -90,7 +90,7 @@ public fun Call.mapArgumentsToParameters(targetDescriptor: CallableDescriptor): 
 
 public fun ImplicitReceiver.asExpression(resolutionScope: LexicalScope, psiFactory: KtPsiFactory): KtExpression? {
     val expressionFactory = resolutionScope.getImplicitReceiversWithInstanceToExpression()
-                                    .entrySet()
+                                    .entries
                                     .firstOrNull { it.key.getContainingDeclaration() == this.declarationDescriptor }
                                     ?.value ?: return null
     return expressionFactory.createExpression(psiFactory)

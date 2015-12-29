@@ -378,7 +378,7 @@ class ExpectedInfos(
             = getArgumentExpression()?.let { bindingContext.getType(it) }?.isError ?: true
 
     private fun namedArgumentTail(argumentToParameter: Map<ValueArgument, ValueParameterDescriptor>, argumentName: Name, descriptor: FunctionDescriptor): Tail? {
-        val usedParameterNames = (argumentToParameter.values().map { it.getName() } + listOf(argumentName)).toSet()
+        val usedParameterNames = (argumentToParameter.values.map { it.getName() } + listOf(argumentName)).toSet()
         val notUsedParameters = descriptor.getValueParameters().filter { it.getName() !in usedParameterNames }
         return if (notUsedParameters.isEmpty())
             Tail.RPARENTH // named arguments no supported for []
