@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.framework;
 
+import com.intellij.CommonBundle;
 import com.intellij.facet.impl.ui.libraries.LibraryCompositionSettings;
 import com.intellij.facet.impl.ui.libraries.LibraryOptionsPanel;
 import com.intellij.framework.library.FrameworkLibraryVersionFilter;
@@ -40,7 +41,6 @@ import com.intellij.ui.components.panels.VerticalLayout;
 import com.intellij.util.ui.RadioButtonEnumModel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.js.resolve.JsPlatform;
 import org.jetbrains.kotlin.resolve.TargetPlatform;
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform;
@@ -142,9 +142,11 @@ public class KotlinModuleSettingStep extends ModuleWizardStep {
 
         Boolean selected = isLibrarySelected();
         if (selected != null && !selected) {
-            int result = Messages.showYesNoDialog("Do you want to continue with no Kotlin Runtime library?",
-                                                  "No Kotlin Runtime Specified", Messages.getWarningIcon());
-            if (result != Messages.YES) {
+            if (Messages.showDialog(
+                    "Do you want to continue with no Kotlin Runtime library?",
+                    "No Kotlin Runtime Specified",
+                    new String[] {CommonBundle.getYesButtonText(), CommonBundle.getNoButtonText()}, 1,
+                    Messages.getWarningIcon()) != Messages.YES) {
                 return false;
             }
         }
