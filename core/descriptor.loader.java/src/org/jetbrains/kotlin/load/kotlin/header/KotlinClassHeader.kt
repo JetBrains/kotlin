@@ -31,17 +31,32 @@ class KotlinClassHeader(
 ) {
     // See kotlin.Metadata
     enum class Kind(val id: Int) {
+        UNKNOWN(0),
         CLASS(1),
         FILE_FACADE(2),
         SYNTHETIC_CLASS(3),
         MULTIFILE_CLASS(4),
         MULTIFILE_CLASS_PART(5);
+
+        companion object {
+            private val entryById = values().toMapBy(Kind::id)
+
+            @JvmStatic
+            fun getById(id: Int) = entryById[id] ?: UNKNOWN
+        }
     }
 
     enum class SyntheticClassKind(val id: Int) {
         FUNCTION(1),
         LOCAL_CLASS(2),
         INTERFACE_DEFAULT_IMPLS(3);
+
+        companion object {
+            private val entryById = values().toMapBy(SyntheticClassKind::id)
+
+            @JvmStatic
+            fun getById(id: Int) = entryById[id]
+        }
     }
 
     override fun toString() = "$kind " + (if (isLocalClass) "(local) " else "") + "version=$metadataVersion"

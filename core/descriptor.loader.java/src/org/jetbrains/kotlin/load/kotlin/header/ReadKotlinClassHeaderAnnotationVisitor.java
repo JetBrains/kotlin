@@ -35,6 +35,8 @@ import static org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass.*;
 import static org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.*;
 
 public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor {
+    private static final boolean IGNORE_OLD_METADATA = "true".equals(System.getProperty("kotlin.ignore.old.metadata"));
+
     private static final Map<ClassId, KotlinClassHeader.Kind> HEADER_KINDS = new HashMap<ClassId, KotlinClassHeader.Kind>();
 
     static {
@@ -51,6 +53,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     private String[] data = null;
     private String[] strings = null;
     private KotlinClassHeader.Kind headerKind = null;
+    private KotlinClassHeader.SyntheticClassKind syntheticClassKind = null;
     private boolean isInterfaceDefaultImpls = false;
     private boolean isLocalClass = false;
 
@@ -73,7 +76,11 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
                 headerKind,
                 metadataVersion != null ? metadataVersion : JvmMetadataVersion.INVALID_VERSION,
                 bytecodeVersion != null ? bytecodeVersion : JvmBytecodeBinaryVersion.INVALID_VERSION,
-                data, strings, multifileClassName, isInterfaceDefaultImpls, isLocalClass
+                data,
+                strings,
+                multifileClassName,
+                isInterfaceDefaultImpls || syntheticClassKind == KotlinClassHeader.SyntheticClassKind.INTERFACE_DEFAULT_IMPLS,
+                isLocalClass || syntheticClassKind == KotlinClassHeader.SyntheticClassKind.LOCAL_CLASS
         );
     }
 
@@ -87,6 +94,12 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     @Override
     public AnnotationArgumentVisitor visitAnnotation(@NotNull ClassId classId, @NotNull SourceElement source) {
         FqName fqName = classId.asSingleFqName();
+        if (fqName.equals(METADATA)) {
+            return new KotlinMetadataArgumentVisitor();
+        }
+
+        if (IGNORE_OLD_METADATA) return null;
+
         if (KOTLIN_INTERFACE_DEFAULT_IMPLS.equals(fqName)) {
             isInterfaceDefaultImpls = true;
             return null;
@@ -112,6 +125,89 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
 
     @Override
     public void visitEnd() {
+    }
+
+    private class KotlinMetadataArgumentVisitor implements AnnotationArgumentVisitor {
+        @Override
+        public void visit(@Nullable Name name, @Nullable Object value) {
+            if (name == null) return;
+
+            String string = name.asString();
+            if (KIND_FIELD_NAME.equals(string)) {
+                if (value instanceof Integer) {
+                    headerKind = KotlinClassHeader.Kind.getById((Integer) value);
+                }
+            }
+            else if (METADATA_VERSION_FIELD_NAME.equals(string)) {
+                if (value instanceof int[]) {
+                    metadataVersion = JvmMetadataVersion.create((int[]) value);
+                }
+            }
+            else if (BYTECODE_VERSION_FIELD_NAME.equals(string)) {
+                if (value instanceof int[]) {
+                    bytecodeVersion = JvmBytecodeBinaryVersion.create((int[]) value);
+                }
+            }
+            else if (SYNTHETIC_CLASS_KIND_FIELD_NAME.equals(string)) {
+                if (value instanceof Integer) {
+                    syntheticClassKind = KotlinClassHeader.SyntheticClassKind.getById((Integer) value);
+                }
+            }
+            else if (METADATA_MULTIFILE_CLASS_NAME_FIELD_NAME.equals(string)) {
+                if (value instanceof String) {
+                    multifileClassName = (String) value;
+                }
+            }
+        }
+
+        @Override
+        @Nullable
+        public AnnotationArrayArgumentVisitor visitArray(@NotNull Name name) {
+            String string = name.asString();
+            if (METADATA_DATA_FIELD_NAME.equals(string)) {
+                return dataArrayVisitor();
+            }
+            else if (METADATA_STRINGS_FIELD_NAME.equals(string)) {
+                return stringsArrayVisitor();
+            }
+            else {
+                return null;
+            }
+        }
+
+        @NotNull
+        private AnnotationArrayArgumentVisitor dataArrayVisitor() {
+            return new CollectStringArrayAnnotationVisitor() {
+                @Override
+                protected void visitEnd(@NotNull String[] result) {
+                    data = result;
+                }
+            };
+        }
+
+        @NotNull
+        private AnnotationArrayArgumentVisitor stringsArrayVisitor() {
+            return new CollectStringArrayAnnotationVisitor() {
+                @Override
+                protected void visitEnd(@NotNull String[] result) {
+                    strings = result;
+                }
+            };
+        }
+
+        @Override
+        public void visitEnum(@NotNull Name name, @NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
+        }
+
+        @Nullable
+        @Override
+        public AnnotationArgumentVisitor visitAnnotation(@NotNull Name name, @NotNull ClassId classId) {
+            return null;
+        }
+
+        @Override
+        public void visitEnd() {
+        }
     }
 
     private class HeaderAnnotationArgumentVisitor implements AnnotationArgumentVisitor {
@@ -183,32 +279,32 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         @Override
         public void visitEnd() {
         }
+    }
 
-        private abstract class CollectStringArrayAnnotationVisitor implements AnnotationArrayArgumentVisitor {
-            private final List<String> strings;
+    private abstract static class CollectStringArrayAnnotationVisitor implements AnnotationArrayArgumentVisitor {
+        private final List<String> strings;
 
-            public CollectStringArrayAnnotationVisitor() {
-                this.strings = new ArrayList<String>();
-            }
-
-            @Override
-            public void visit(@Nullable Object value) {
-                if (value instanceof String) {
-                    strings.add((String) value);
-                }
-            }
-
-            @Override
-            public void visitEnum(@NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
-            }
-
-            @Override
-            public void visitEnd() {
-                //noinspection SSBasedInspection
-                visitEnd(strings.toArray(new String[strings.size()]));
-            }
-
-            protected abstract void visitEnd(@NotNull String[] data);
+        public CollectStringArrayAnnotationVisitor() {
+            this.strings = new ArrayList<String>();
         }
+
+        @Override
+        public void visit(@Nullable Object value) {
+            if (value instanceof String) {
+                strings.add((String) value);
+            }
+        }
+
+        @Override
+        public void visitEnum(@NotNull ClassId enumClassId, @NotNull Name enumEntryName) {
+        }
+
+        @Override
+        public void visitEnd() {
+            //noinspection SSBasedInspection
+            visitEnd(strings.toArray(new String[strings.size()]));
+        }
+
+        protected abstract void visitEnd(@NotNull String[] data);
     }
 }

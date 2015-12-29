@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
+@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER") // kotlin.Metadata
+
 package kotlin.reflect.jvm
 
 import org.jetbrains.kotlin.load.kotlin.JvmNameResolver
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
@@ -24,7 +27,6 @@ import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
-import kotlin.jvm.internal.KotlinFunction
 import kotlin.reflect.KFunction
 import kotlin.reflect.jvm.internal.EmptyContainerForLocal
 import kotlin.reflect.jvm.internal.KFunctionImpl
@@ -36,11 +38,11 @@ import kotlin.reflect.jvm.internal.getOrCreateModule
  * Not all features are currently supported, in particular [KCallable.call] and [KCallable.callBy] will fail at the moment.
  */
 fun <R> Function<R>.reflect(): KFunction<R>? {
-    val callable = javaClass.getAnnotation(KotlinFunction::class.java) ?: return null
-    val input = BitEncoding.decodeBytes(callable.data).inputStream()
+    val annotation = javaClass.getAnnotation(Metadata::class.java) ?: return null
+    if (annotation.xi != KotlinClassHeader.SyntheticClassKind.FUNCTION.id) return null
+    val input = BitEncoding.decodeBytes(annotation.d1).inputStream()
     val nameResolver = JvmNameResolver(
-            JvmProtoBuf.StringTableTypes.parseDelimitedFrom(input, JvmProtoBufUtil.EXTENSION_REGISTRY),
-            callable.strings
+            JvmProtoBuf.StringTableTypes.parseDelimitedFrom(input, JvmProtoBufUtil.EXTENSION_REGISTRY), annotation.d2
     )
     val proto = ProtoBuf.Function.parseFrom(input, JvmProtoBufUtil.EXTENSION_REGISTRY)
     val moduleData = javaClass.getOrCreateModule()
