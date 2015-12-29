@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
+import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
 import org.jetbrains.kotlin.resolve.calls.inference.toHandle
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -149,8 +149,10 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
         if (discriminateGenerics) {
             val isGeneric1 = call1.isGeneric
             val isGeneric2 = call2.isGeneric
+            // generic loses to non-generic
             if (isGeneric1 && !isGeneric2) return false
             if (!isGeneric1 && isGeneric2) return true
+            // two generics are non-comparable
             if (isGeneric1 && isGeneric2) return false
         }
 
@@ -167,17 +169,20 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
                     return false
                 }
             }
+            else if (isDefinitelyLessSpecificByTypeSpecificity(type1, type2)) {
+                return false
+            }
             else {
+                hasConstraints = true
                 val substitutedType2 = typeSubstitutor.safeSubstitute(type2, Variance.INVARIANT)
                 constraintSystemBuilder.addSubtypeConstraint(type1, substitutedType2, constraintPosition)
-                hasConstraints = true
             }
             return true
         }
 
         val extensionReceiverType1 = call1.getExtensionReceiverType(false)
         val extensionReceiverType2 = call2.getExtensionReceiverType(false)
-        if (!compareTypesAndUpdateConstraints(extensionReceiverType1, extensionReceiverType2, ConstraintPositionKind.RECEIVER_POSITION.position())) {
+        if (!compareTypesAndUpdateConstraints(extensionReceiverType1, extensionReceiverType2, RECEIVER_POSITION.position())) {
             return false
         }
 
@@ -190,7 +195,7 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
             val type1 = call1.getValueParameterType(argumentKey, false)
             val type2 = call2.getValueParameterType(argumentKey, false)
 
-            if (!compareTypesAndUpdateConstraints(type1, type2, ConstraintPositionKind.VALUE_PARAMETER_POSITION.position(index++))) {
+            if (!compareTypesAndUpdateConstraints(type1, type2, VALUE_PARAMETER_POSITION.position(index++))) {
                 return false
             }
         }
@@ -306,14 +311,16 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
 
         if (!isSubtype) return false
 
-        val sThanG = specific.getSpecificityRelationTo(general)
-        val gThanS = general.getSpecificityRelationTo(specific)
-        if (sThanG == Specificity.Relation.LESS_SPECIFIC &&
-            gThanS != Specificity.Relation.LESS_SPECIFIC) {
-            return false
-        }
+        if (isDefinitelyLessSpecificByTypeSpecificity(specific, general)) return false
 
         return true
+    }
+
+    private fun isDefinitelyLessSpecificByTypeSpecificity(specific: KotlinType, general: KotlinType): Boolean {
+        val sThanG = specific.getSpecificityRelationTo(general)
+        val gThanS = general.getSpecificityRelationTo(specific)
+        return sThanG == Specificity.Relation.LESS_SPECIFIC &&
+               gThanS != Specificity.Relation.LESS_SPECIFIC
     }
 
     private fun numericTypeMoreSpecific(specific: KotlinType, general: KotlinType): Boolean {
