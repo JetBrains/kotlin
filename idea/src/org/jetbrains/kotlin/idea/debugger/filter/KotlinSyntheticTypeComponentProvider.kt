@@ -47,6 +47,9 @@ public class KotlinSyntheticTypeComponentProvider: SyntheticTypeComponentProvide
         catch(e: AbsentInformationException) {
             return false
         }
+        catch(e: UnsupportedOperationException) {
+            return false
+        }
     }
 
     private fun Method.isDelegateToDefaultInterfaceImpl(): Boolean {
