@@ -79,7 +79,7 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
 
                 val samConstructorCalls = samConstructorCallsToBeConverted(expression)
                 if (samConstructorCalls.isEmpty()) return
-                if (samConstructorCalls.size() == 1) {
+                if (samConstructorCalls.size == 1) {
                     val single = samConstructorCalls.single()
                     val problemDescriptor = holder.manager.
                             createProblemDescriptor(single.calleeExpression!!,
@@ -177,7 +177,7 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
             // SAM adapters for static functions
             for (staticFunWithSameName in containingClass.staticScope.getContributedFunctions(functionResolvedCall.resultingDescriptor.name, NoLookupLocation.FROM_IDE)) {
                 if (staticFunWithSameName is SamAdapterDescriptor<*>) {
-                    if (isSamAdapterSuitableForCall(staticFunWithSameName, originalFunctionDescriptor, samConstructorCallArguments.size())) {
+                    if (isSamAdapterSuitableForCall(staticFunWithSameName, originalFunctionDescriptor, samConstructorCallArguments.size)) {
                         return samConstructorCallArguments.check { canBeReplaced(functionCall, it) } ?: emptyList()
                     }
                 }
@@ -191,7 +191,7 @@ class RedundantSamConstructorInspection : AbstractKotlinInspection() {
                         NoLookupLocation.FROM_IDE)
             for (syntheticExtension in syntheticExtensions) {
                 val samAdapter = syntheticExtension as? SamAdapterExtensionFunctionDescriptor ?: continue
-                if (isSamAdapterSuitableForCall(samAdapter, originalFunctionDescriptor, samConstructorCallArguments.size())) {
+                if (isSamAdapterSuitableForCall(samAdapter, originalFunctionDescriptor, samConstructorCallArguments.size)) {
                     return samConstructorCallArguments.check { canBeReplaced(functionCall, it) } ?: emptyList()
                 }
             }
