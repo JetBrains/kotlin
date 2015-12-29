@@ -454,6 +454,12 @@ public class PsiCheckerTestGenerated extends AbstractPsiCheckerTest {
             doTest(fileName);
         }
 
+        @TestMetadata("InterfaceDeclarationAsExpression.kt")
+        public void testInterfaceDeclarationAsExpression() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/InterfaceDeclarationAsExpression.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("javaStyleClassLiteralInAnnotationArguments.kt")
         public void testJavaStyleClassLiteralInAnnotationArguments() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/checker/regression/javaStyleClassLiteralInAnnotationArguments.kt");
