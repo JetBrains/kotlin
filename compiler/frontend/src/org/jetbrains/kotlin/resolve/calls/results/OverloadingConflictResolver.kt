@@ -74,7 +74,10 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
         }
     }
 
-    private fun <D : CallableDescriptor> findMaximallySpecificCall(candidates: Set<MutableResolvedCall<D>>, discriminateGenerics: Boolean): MutableResolvedCall<D>? {
+    private fun <D : CallableDescriptor> findMaximallySpecificCall(
+            candidates: Set<MutableResolvedCall<D>>,
+            discriminateGenerics: Boolean
+    ): MutableResolvedCall<D>? {
         val filteredCandidates = uniquifyCandidatesSet(candidates)
 
         if (filteredCandidates.size <= 1) return filteredCandidates.singleOrNull()
@@ -180,8 +183,8 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
             return true
         }
 
-        val extensionReceiverType1 = call1.getExtensionReceiverType(false)
-        val extensionReceiverType2 = call2.getExtensionReceiverType(false)
+        val extensionReceiverType1 = call1.extensionReceiverType
+        val extensionReceiverType2 = call2.extensionReceiverType
         if (!compareTypesAndUpdateConstraints(extensionReceiverType1, extensionReceiverType2, RECEIVER_POSITION.position())) {
             return false
         }
@@ -190,12 +193,13 @@ class OverloadingConflictResolver(private val builtIns: KotlinBuiltIns) {
             "$call1 and $call2 have different number of explicit arguments"
         }
 
-        var index = 0
         for (argumentKey in call1.argumentKeys) {
-            val type1 = call1.getValueParameterType(argumentKey, false)
-            val type2 = call2.getValueParameterType(argumentKey, false)
+            val type1 = call1.getValueParameterType(argumentKey)
+            val type2 = call2.getValueParameterType(argumentKey)
 
-            if (!compareTypesAndUpdateConstraints(type1, type2, VALUE_PARAMETER_POSITION.position(index++))) {
+            // We use this constraint system for subtyping relation check only,
+            // so exact value parameter position doesn't matter.
+            if (!compareTypesAndUpdateConstraints(type1, type2, VALUE_PARAMETER_POSITION.position(0))) {
                 return false
             }
         }
