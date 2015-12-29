@@ -2160,6 +2160,12 @@ public class ParsingTestGenerated extends AbstractParsingTest {
                 doParsingTest(fileName);
             }
 
+            @TestMetadata("InterfaceInExpressionPosition.kt")
+            public void testInterfaceInExpressionPosition() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/recovery/InterfaceInExpressionPosition.kt");
+                doParsingTest(fileName);
+            }
+
             @TestMetadata("InvalidCharAfterPropertyName.kt")
             public void testInvalidCharAfterPropertyName() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/psi/recovery/InvalidCharAfterPropertyName.kt");

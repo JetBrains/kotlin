@@ -669,7 +669,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         else if (at(DO_KEYWORD)) {
             parseDoWhile();
         }
-        else if (atSet(CLASS_KEYWORD, FUN_KEYWORD, VAL_KEYWORD,
+        else if (atSet(CLASS_KEYWORD, INTERFACE_KEYWORD, FUN_KEYWORD, VAL_KEYWORD,
                        VAR_KEYWORD, TYPE_ALIAS_KEYWORD)) {
             parseLocalDeclaration();
         }
