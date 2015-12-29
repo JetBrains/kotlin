@@ -53,7 +53,7 @@ public abstract class KotlinLightCodeInsightFixtureTestCase : LightCodeInsightFi
         kotlinInternalModeOriginalValue = KotlinInternalMode.enabled
         KotlinInternalMode.enabled = true
 
-        getProject().getComponent(javaClass<EditorTracker>())?.projectOpened()
+        getProject().getComponent(EditorTracker::class.java)?.projectOpened()
 
         invalidateLibraryCache(project)
 

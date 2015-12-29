@@ -96,7 +96,7 @@ public fun unInvalidateBuiltinsAndStdLib(project: Project, runnable: RunnableWit
 
     // Base tearDown() invalidates builtins and std-lib files. Restore them with brute force.
     fun unInvalidateFile(file: PsiFileImpl) {
-        val field = javaClass<PsiFileImpl>().getDeclaredField("myInvalidated")!!
+        val field = PsiFileImpl::class.java.getDeclaredField("myInvalidated")!!
         field.setAccessible(true)
         field.set(file, false)
     }

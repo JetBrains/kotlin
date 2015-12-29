@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.psi.KtExpression
 
 fun getReferenceExpression(element: PsiElement?): KtSimpleNameExpression? {
-    return PsiTreeUtil.getParentOfType<KtSimpleNameExpression>(element, javaClass<KtSimpleNameExpression>())
+    return PsiTreeUtil.getParentOfType<KtSimpleNameExpression>(element, KtSimpleNameExpression::class.java)
 }
 
 // given 'R.a.b' returns info for all three parts of the expression 'a', 'b', 'R'

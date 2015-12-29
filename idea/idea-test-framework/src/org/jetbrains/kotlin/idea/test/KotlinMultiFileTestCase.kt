@@ -30,7 +30,7 @@ public abstract class KotlinMultiFileTestCase : MultiFileTestCase() {
             val offset = text.indexOf("<caret>")
 
             if (offset >= 0) {
-                text.delete(offset, offset + "<caret>".length())
+                text.delete(offset, offset + "<caret>".length)
                 doc.setText(text.toString())
             }
 

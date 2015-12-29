@@ -129,7 +129,7 @@ private fun Int.skipDriveOnWin(line: String): Int {
 private fun addMessage(message: Any?, messages: MutableList<Any>): Boolean {
     if (message == null) return false
     var duplicatesPrevious = false
-    val messageCount = messages.size()
+    val messageCount = messages.size
     if (messageCount > 0) {
         val lastMessage = messages.get(messageCount - 1)
         duplicatesPrevious = lastMessage == message
