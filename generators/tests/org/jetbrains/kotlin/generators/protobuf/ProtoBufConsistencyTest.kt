@@ -34,7 +34,7 @@ public class ProtoBufConsistencyTest : TestCase() {
             val classFqName = protoPath.packageName + "." + protoPath.debugClassName
             val klass = javaClass.getClassLoader().loadClass(classFqName) ?: error("Class not found: $classFqName")
             for (field in klass.getDeclaredFields()) {
-                if (Modifier.isStatic(field.getModifiers()) && field.getType() == javaClass<GeneratedExtension<*, *>>()) {
+                if (Modifier.isStatic(field.getModifiers()) && field.getType() == GeneratedExtension::class.java) {
                     // The only place where type information for an extension is stored is the field's declared generic type.
                     // The message type which this extension extends is the first argument to GeneratedExtension<*, *>
                     val containingType = (field.getGenericType() as ParameterizedType).getActualTypeArguments().first() as Class<*>
@@ -45,8 +45,8 @@ public class ProtoBufConsistencyTest : TestCase() {
             }
         }
 
-        for ((key, descriptors) in extensions.asMap().entrySet()) {
-            if (descriptors.size() > 1) {
+        for ((key, descriptors) in extensions.asMap().entries) {
+            if (descriptors.size > 1) {
                 fail("""
 Several extensions to the same message type with the same index were found.
 This will cause different hard-to-debug problems if these extensions are used at the same time during (de-)serialization of the message.

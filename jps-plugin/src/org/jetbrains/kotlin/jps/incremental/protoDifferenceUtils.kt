@@ -82,7 +82,7 @@ private abstract class DifferenceCalculator() {
         val newMap =
                 newList.groupBy { it.getHashCode({ compareObject.newGetIndexOfString(it) }, { compareObject.newGetIndexOfClassId(it) }) }
 
-        val hashes = oldMap.keySet() + newMap.keySet()
+        val hashes = oldMap.keys + newMap.keys
         for (hash in hashes) {
             val oldMembers = oldMap[hash]
             val newMembers = newMap[hash]

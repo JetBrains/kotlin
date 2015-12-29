@@ -54,7 +54,7 @@ public abstract class KotlinCompilerBaseTask : Task() {
     }
 
     public fun setSrcRef(ref: Reference) {
-        createSrc().setRefid(ref)
+        createSrc().refid = ref
     }
 
     public fun createCompilerArg(): Commandline.Argument {
@@ -75,7 +75,7 @@ public abstract class KotlinCompilerBaseTask : Task() {
         if (verbose) args.add("-verbose")
         if (printVersion) args.add("-version")
 
-        args.addAll(additionalArguments.flatMap { it.getParts().toList() })
+        args.addAll(additionalArguments.flatMap { it.parts.toList() })
 
         fillSpecificArguments()
     }
@@ -85,12 +85,12 @@ public abstract class KotlinCompilerBaseTask : Task() {
 
         val compilerClass = KotlinAntTaskUtil.getOrCreateClassLoader().loadClass(compilerFqName)
         val compiler = compilerClass.newInstance()
-        val exec = compilerClass.getMethod("execFullPathsInMessages", javaClass<PrintStream>(), javaClass<Array<String>>())
+        val exec = compilerClass.getMethod("execFullPathsInMessages", PrintStream::class.java, Array<String>::class.java)
 
         log("Compiling ${src!!.list().toList()} => [${output!!.canonicalPath}]");
 
         val result = exec(compiler, System.err, args.toTypedArray())
-        exitCode = (result as Enum<*>).ordinal()
+        exitCode = (result as Enum<*>).ordinal
 
         if (failOnError && exitCode != 0) {
             throw BuildException("Compile failed; see the compiler error output for details.")

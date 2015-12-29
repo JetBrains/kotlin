@@ -188,7 +188,7 @@ private class PropertyDetector(
 
         dropPropertiesWithConflictingAccessors(memberToPropertyInfo)
 
-        val mappedFields = memberToPropertyInfo.values()
+        val mappedFields = memberToPropertyInfo.values
                 .mapNotNull { it.field }
                 .toSet()
 

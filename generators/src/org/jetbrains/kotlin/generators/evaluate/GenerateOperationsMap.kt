@@ -63,7 +63,7 @@ fun generate(): String {
         for (function in functions) {
             val parametersTypes = function.getParametersTypes()
 
-            when (parametersTypes.size()) {
+            when (parametersTypes.size) {
                 1 -> unaryOperationsMap.add(Triple(function.getName().asString(), parametersTypes, function is FunctionDescriptor))
                 2 -> binaryOperationsMap.add(function.getName().asString() to parametersTypes)
                 else -> throw IllegalStateException("Couldn't add following method from builtins to operations map: ${function.getName()} in class ${descriptor.getName()}")

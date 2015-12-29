@@ -171,7 +171,7 @@ public class IncrementalCacheImpl(
         val header = kotlinClass.classHeader
         val changesInfo = when {
             header.isCompatibleFileFacadeKind() -> {
-                assert(sourceFiles.size() == 1) { "Package part from several source files: $sourceFiles" }
+                assert(sourceFiles.size == 1) { "Package part from several source files: $sourceFiles" }
                 packagePartMap.addPackagePart(className)
 
                 protoMap.process(kotlinClass, isPackage = true) +
@@ -188,7 +188,7 @@ public class IncrementalCacheImpl(
                 inlineFunctionsMap.process(kotlinClass, isPackage = true)
             }
             header.isCompatibleMultifileClassPartKind() -> {
-                assert(sourceFiles.size() == 1) { "Multifile class part from several source files: $sourceFiles" }
+                assert(sourceFiles.size == 1) { "Multifile class part from several source files: $sourceFiles" }
                 packagePartMap.addPackagePart(className)
                 multifileClassPartMap.add(className.internalName, header.multifileClassName!!)
 
@@ -481,7 +481,7 @@ public class IncrementalCacheImpl(
 
             val added = hashSetOf<String>()
             val changed = hashSetOf<String>()
-            val allFunctions = oldMap.keySet() + newMap.keySet()
+            val allFunctions = oldMap.keys + newMap.keys
 
             for (fn in allFunctions) {
                 val oldHash = oldMap[fn]
@@ -653,7 +653,7 @@ public class IncrementalCacheImpl(
 
     private inner class DirtyInlineFunctionsMap(storageFile: File) : BasicStringMap<Collection<String>>(storageFile, StringCollectionExternalizer) {
         public fun getEntries(): Map<JvmClassName, Collection<String>> =
-            storage.keys.toMap(JvmClassName::byInternalName) { storage[it]!! }
+                storage.keys.toMapBy(JvmClassName::byInternalName) { storage[it]!! }
 
         public fun put(className: JvmClassName, changedFunctions: List<String>) {
             storage[className.internalName] = changedFunctions
@@ -759,10 +759,10 @@ private fun ByteArray.md5(): Long {
 
 @TestOnly
 private fun <K : Comparable<K>, V> Map<K, V>.dumpMap(dumpValue: (V)->String): String =
-        StringBuilder {
+        buildString {
             append("{")
-            for (key in keySet().sorted()) {
-                if (length() != 1) {
+            for (key in keys.sorted()) {
+                if (length != 1) {
                     append(", ")
                 }
 
@@ -770,7 +770,7 @@ private fun <K : Comparable<K>, V> Map<K, V>.dumpMap(dumpValue: (V)->String): St
                 append("$key -> $value")
             }
             append("}")
-        }.toString()
+        }
 
 @TestOnly
 public fun <T : Comparable<T>> Collection<T>.dumpCollection(): String =

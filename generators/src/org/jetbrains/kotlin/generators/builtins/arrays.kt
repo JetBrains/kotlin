@@ -25,7 +25,7 @@ class GenerateArrays(out: PrintWriter) : BuiltInsSourceGenerator(out) {
 
     override fun generateBody() {
         for (kind in PrimitiveType.values()) {
-            val typeLower = kind.name().toLowerCase()
+            val typeLower = kind.name.toLowerCase()
             val s = kind.capitalized
             val defaultValue = when(kind) { PrimitiveType.BOOLEAN -> "false"; else -> "zero" }
             out.println("/**")

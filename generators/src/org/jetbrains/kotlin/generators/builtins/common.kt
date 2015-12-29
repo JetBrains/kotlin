@@ -29,7 +29,7 @@ enum class PrimitiveType {
     DOUBLE,
     BOOLEAN;
 
-    val capitalized: String get() = name().toLowerCase().capitalize()
+    val capitalized: String get() = name.toLowerCase().capitalize()
     companion object {
         val exceptBoolean = PrimitiveType.values().filterNot { it == BOOLEAN }
         val onlyNumeric = PrimitiveType.values().filterNot { it == BOOLEAN || it == CHAR }
@@ -45,7 +45,7 @@ enum class ProgressionKind {
     FLOAT,
     DOUBLE;
 
-    val capitalized: String get() = name().toLowerCase().capitalize()
+    val capitalized: String get() = name.toLowerCase().capitalize()
 }
 
 fun progressionIncrementType(kind: ProgressionKind) = when (kind) {

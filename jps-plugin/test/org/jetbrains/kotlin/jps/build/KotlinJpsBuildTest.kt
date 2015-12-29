@@ -277,7 +277,7 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
             ZipUtil.extract(jslibJar, jslibDir, null)
         }
         catch (ex: IOException) {
-            throw IllegalStateException(ex.getMessage())
+            throw IllegalStateException(ex.message)
         }
 
         addKotlinJavaScriptDependency("KotlinJavaScript", jslibDir)
@@ -587,10 +587,10 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
             zip.close()
         }
         catch (ex: FileNotFoundException) {
-            throw IllegalStateException(ex.getMessage())
+            throw IllegalStateException(ex.message)
         }
         catch (ex: IOException) {
-            throw IllegalStateException(ex.getMessage())
+            throw IllegalStateException(ex.message)
         }
 
     }
@@ -656,11 +656,11 @@ public class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
             public override fun isCanceled(): Boolean {
                 val messages = buildResult.getMessages(BuildMessage.Kind.INFO)
-                for (i in checkFromIndex..messages.size()-1) {
+                for (i in checkFromIndex..messages.size - 1) {
                     if (messages.get(i).getMessageText().startsWith("Kotlin JPS plugin version")) return true;
                 }
 
-                checkFromIndex = messages.size();
+                checkFromIndex = messages.size;
                 return false;
             }
         }
