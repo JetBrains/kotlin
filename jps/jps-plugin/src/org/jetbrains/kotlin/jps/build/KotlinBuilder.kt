@@ -412,7 +412,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
     ): OutputItemsCollectorImpl? {
 
         if (JpsUtils.isJsKotlinModule(chunk.representativeTarget())) {
-            LOG.debug("Compiling to JS ${filesToCompile.values().size()} files in ${filesToCompile.keySet().joinToString { it.presentableName }}")
+            LOG.debug("Compiling to JS ${filesToCompile.values().size} files in ${filesToCompile.keySet().joinToString { it.presentableName }}")
             return compileToJs(chunk, commonArguments, environment, null, messageCollector, project)
         }
 
@@ -428,7 +428,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         fun concatenate(strings: Array<String>?, cp: List<String>) = arrayOf(*(strings ?: emptyArray()), *cp.toTypedArray())
 
-        for (argumentProvider in ServiceLoader.load(javaClass<KotlinJpsCompilerArgumentsProvider>())) {
+        for (argumentProvider in ServiceLoader.load(KotlinJpsCompilerArgumentsProvider::class.java)) {
             // appending to pluginOptions
             commonArguments.pluginOptions = concatenate(commonArguments.pluginOptions,
                                                         argumentProvider.getExtraArguments(representativeTarget, context))
@@ -452,8 +452,8 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             context: CompileContext
     ): CompilerEnvironment {
         val compilerServices = Services.Builder()
-                .register(javaClass<IncrementalCompilationComponents>(), IncrementalCompilationComponentsImpl(incrementalCaches, lookupTracker))
-                .register(javaClass<CompilationCanceledStatus>(), object : CompilationCanceledStatus {
+                .register(IncrementalCompilationComponents::class.java, IncrementalCompilationComponentsImpl(incrementalCaches, lookupTracker))
+                .register(CompilationCanceledStatus::class.java, object : CompilationCanceledStatus {
                     override fun checkCanceled() {
                         if (context.getCancelStatus().isCanceled()) throw CompilationCanceledException()
                     }
@@ -481,7 +481,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
     ): List<GeneratedFile> {
         // If there's only one target, this map is empty: get() always returns null, and the representativeTarget will be used below
         val sourceToTarget = HashMap<File, ModuleBuildTarget>()
-        if (chunk.getTargets().size() > 1) {
+        if (chunk.getTargets().size > 1) {
             for (target in chunk.getTargets()) {
                 for (file in KotlinSourceFileCollector.getAllKotlinSourceFiles(target)) {
                     sourceToTarget.put(file, target)
@@ -567,7 +567,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         }
 
         if (!compilationErrors) {
-            incrementalCaches.values().forEach {
+            incrementalCaches.values.forEach {
                 val newChangesInfo = it.clearCacheForRemovedClasses()
                 changesInfo += newChangesInfo
             }
@@ -608,7 +608,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val outputItemCollector = OutputItemsCollectorImpl()
 
         val representativeTarget = chunk.representativeTarget()
-        if (chunk.getModules().size() > 1) {
+        if (chunk.getModules().size > 1) {
             // We do not support circular dependencies, but if they are present, we do our best should not break the build,
             // so we simply yield a warning and report NOTHING_DONE
             messageCollector.report(
@@ -661,7 +661,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
     ): OutputItemsCollectorImpl? {
         val outputItemCollector = OutputItemsCollectorImpl()
 
-        if (chunk.getModules().size() > 1) {
+        if (chunk.getModules().size > 1) {
             messageCollector.report(
                     WARNING,
                     "Circular dependencies are only partially supported. The following modules depend on each other: "
@@ -680,7 +680,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             val removedFilesInTarget = KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, target)
             if (!removedFilesInTarget.isEmpty()) {
                 if (processedTargetsWithRemoved.add(target)) {
-                    totalRemovedFiles += removedFilesInTarget.size()
+                    totalRemovedFiles += removedFilesInTarget.size
                 }
             }
         }
@@ -696,7 +696,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val k2JvmArguments = JpsKotlinCompilerSettings.getK2JvmCompilerArguments(project)
         val compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(project)
 
-        KotlinBuilder.LOG.debug("Compiling to JVM ${filesToCompile.values().size()} files"
+        KotlinBuilder.LOG.debug("Compiling to JVM ${filesToCompile.values().size} files"
                                 + (if (totalRemovedFiles == 0) "" else " ($totalRemovedFiles removed files)")
                                 + " in " + filesToCompile.keySet().joinToString { it.presentableName })
 
@@ -746,7 +746,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 }
 
 private val Iterable<BuildTarget<*>>.moduleTargets: Iterable<ModuleBuildTarget>
-    get() = filterIsInstance(javaClass<ModuleBuildTarget>())
+    get() = filterIsInstance(ModuleBuildTarget::class.java)
 
 private fun getLookupTracker(project: JpsProject): LookupTracker {
     var lookupTracker = LookupTracker.DO_NOTHING

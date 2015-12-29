@@ -96,7 +96,7 @@ public abstract class AbstractIncrementalJpsTest(
     protected open val experimentalBuildLogFileName = "experimental-ic-build.log"
 
     private fun enableDebugLogging() {
-        com.intellij.openapi.diagnostic.Logger.setFactory(javaClass<TestLoggerFactory>())
+        com.intellij.openapi.diagnostic.Logger.setFactory(TestLoggerFactory::class.java)
         TestLoggerFactory.dumpLogToStdout("")
         TestLoggerFactory.enableDebugLogging(myTestRootDisposable, "#org")
 
@@ -315,7 +315,7 @@ public abstract class AbstractIncrementalJpsTest(
         for (line in dependenciesTxt.readLines()) {
             val split = line.split("->")
             val module = split[0]
-            val dependencies = if (split.size() > 1) split[1] else ""
+            val dependencies = if (split.size > 1) split[1] else ""
             val dependencyList = dependencies.split(",").filterNot { it.isEmpty() }
             result[module] = dependencyList.map(::parseDependency)
         }
@@ -369,13 +369,13 @@ public abstract class AbstractIncrementalJpsTest(
             createJavaMappingsDump(project)
 
     private fun createKotlinIncrementalCacheDump(project: ProjectDescriptor): String {
-        return StringBuilder {
+        return buildString {
             for (target in project.allModuleTargets.sortedBy { it.presentableName }) {
                 append("<target $target>\n")
                 append(project.dataManager.getKotlinCache(target).dump())
                 append("</target $target>\n\n\n")
             }
-        }.toString()
+        }
     }
 
     private fun createLookupCacheDump(project: ProjectDescriptor): String {
@@ -480,7 +480,7 @@ public abstract class AbstractIncrementalJpsTest(
             moduleNames = null
         }
         else {
-            val nameToModule = moduleDependencies.keySet()
+            val nameToModule = moduleDependencies.keys
                     .keysToMap { addModule(it, arrayOf(getAbsolutePath("$it/src")), null, null, jdk)!! }
 
             for ((moduleName, dependencies) in moduleDependencies) {
@@ -492,12 +492,12 @@ public abstract class AbstractIncrementalJpsTest(
                 }
             }
 
-            for (module in nameToModule.values()) {
+            for (module in nameToModule.values) {
                 val moduleName = module.name
                 prepareSources(relativePathToSrc = "$moduleName/src", filePrefix = moduleName + "_")
             }
 
-            moduleNames = nameToModule.keySet()
+            moduleNames = nameToModule.keys
         }
         AbstractKotlinJpsBuildTestCase.addKotlinRuntimeDependency(myProject)
         AbstractKotlinJpsBuildTestCase.addKotlinTestRuntimeDependency(myProject)

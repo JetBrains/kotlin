@@ -69,9 +69,9 @@ object PathFunctionPairKeyDescriptor : KeyDescriptor<PathFunctionPair> {
 object ProtoMapValueExternalizer : DataExternalizer<ProtoMapValue> {
     override fun save(output: DataOutput, value: ProtoMapValue) {
         output.writeBoolean(value.isPackageFacade)
-        output.writeInt(value.bytes.size())
+        output.writeInt(value.bytes.size)
         output.write(value.bytes)
-        output.writeInt(value.strings.size())
+        output.writeInt(value.strings.size)
 
         for (string in value.strings) {
             output.writeUTF(string)
@@ -92,9 +92,9 @@ object ProtoMapValueExternalizer : DataExternalizer<ProtoMapValue> {
 
 abstract class StringMapExternalizer<T> : DataExternalizer<Map<String, T>> {
     override fun save(output: DataOutput, map: Map<String, T>?) {
-        output.writeInt(map!!.size())
+        output.writeInt(map!!.size)
 
-        for ((key, value) in map.entrySet()) {
+        for ((key, value) in map.entries) {
             IOUtil.writeString(key, output)
             writeValue(output, value)
         }
@@ -127,29 +127,29 @@ object StringToLongMapExternalizer : StringMapExternalizer<Long>() {
 
 object ConstantsMapExternalizer : DataExternalizer<Map<String, Any>> {
     override fun save(output: DataOutput, map: Map<String, Any>?) {
-        output.writeInt(map!!.size())
-        for (name in map.keySet().sorted()) {
+        output.writeInt(map!!.size)
+        for (name in map.keys.sorted()) {
             IOUtil.writeString(name, output)
             val value = map[name]!!
             when (value) {
                 is Int -> {
-                    output.writeByte(Kind.INT.ordinal())
+                    output.writeByte(Kind.INT.ordinal)
                     output.writeInt(value)
                 }
                 is Float -> {
-                    output.writeByte(Kind.FLOAT.ordinal())
+                    output.writeByte(Kind.FLOAT.ordinal)
                     output.writeFloat(value)
                 }
                 is Long -> {
-                    output.writeByte(Kind.LONG.ordinal())
+                    output.writeByte(Kind.LONG.ordinal)
                     output.writeLong(value)
                 }
                 is Double -> {
-                    output.writeByte(Kind.DOUBLE.ordinal())
+                    output.writeByte(Kind.DOUBLE.ordinal)
                     output.writeDouble(value)
                 }
                 is String -> {
-                    output.writeByte(Kind.STRING.ordinal())
+                    output.writeByte(Kind.STRING.ordinal)
                     IOUtil.writeString(value, output)
                 }
                 else -> throw IllegalStateException("Unexpected constant class: ${value.javaClass}")
