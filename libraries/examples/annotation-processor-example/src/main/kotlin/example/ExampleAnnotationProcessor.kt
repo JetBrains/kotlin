@@ -11,14 +11,14 @@ import javax.tools.Diagnostic
 public class ExampleAnnotationProcessor : AbstractProcessor() {
 
     private companion object {
-        val ANNOTATION_FQ_NAME = javaClass<ExampleAnnotation>().getCanonicalName()
+        val ANNOTATION_FQ_NAME = ExampleAnnotation::class.java.getCanonicalName()
         val SUFFIX_OPTION = "suffix"
         val GENERATE_KOTLIN_CODE_OPTION = "generate.kotlin.code"
         val KAPT_KOTLIN_GENERATED_OPTION = "kapt.kotlin.generated"
     }
 
     override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment): Boolean {
-        val elements = roundEnv.getElementsAnnotatedWith(javaClass<ExampleAnnotation>())
+        val elements = roundEnv.getElementsAnnotatedWith(ExampleAnnotation::class.java)
 
         val elementUtils = processingEnv.getElementUtils()
         val filer = processingEnv.getFiler()

@@ -187,7 +187,7 @@ class MapTest {
     }
 
     @test fun createWithSelectorForKeyAndValue() {
-        val map = listOf("a", "bb", "ccc").toMap({ it.length }, { it.toUpperCase() })
+        val map = listOf("a", "bb", "ccc").toMapBy({ it.length }, { it.toUpperCase() })
         assertEquals(3, map.size)
         assertEquals("A", map[1])
         assertEquals("BB", map[2])

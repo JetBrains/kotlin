@@ -6,7 +6,6 @@ package kotlin.io
 import java.io.File
 import java.io.IOException
 import java.util.Stack
-import kotlin.support.AbstractIterator
 
 /**
  * An enumeration to describe possible walk directions.

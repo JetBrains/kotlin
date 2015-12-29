@@ -7,6 +7,6 @@ public class TestClass {
     public val testVal: String = "text"
 
     @example.ExampleAnnotation
-    public fun testFunction(): Class<*> = javaClass<TestClassGenerated>()
+    public fun testFunction(): Class<*> = TestClassGenerated::class.java
 
 }

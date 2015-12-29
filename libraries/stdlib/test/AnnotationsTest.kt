@@ -1,7 +1,6 @@
 package test.annotations
 
-import kotlin.*
-import kotlin.test.assertTrue
+import kotlin.test.*
 import org.junit.Test as test
 
 @Retention(AnnotationRetention.RUNTIME)
@@ -14,21 +13,10 @@ class AnnotatedClass
 
 class AnnotationTest {
     @test fun annotationType() {
-        val annotations = javaClass<AnnotatedClass>().getAnnotations()!!
-        
-        var foundMyAnno = false
-        var foundDeprecated = false
-        
-        for (annotation in annotations) {
-            val clazz = annotation!!.annotationType()
-            when {
-                clazz == javaClass<MyAnno>() -> foundMyAnno = true
-                clazz == javaClass<java.lang.Deprecated>() -> foundDeprecated = true
-                else -> {}
-            }
-        }
-        
-        assertTrue(foundMyAnno)
-        assertTrue(foundDeprecated)
+        val kAnnotations = AnnotatedClass::class.java.annotations.map { it!!.annotationClass }
+        val jAnnotations = AnnotatedClass::class.java.annotations.map { it!!.annotationClass.java }
+
+        assertTrue(kAnnotations.containsAll(listOf(MyAnno::class,       java.lang.Deprecated::class)))
+        assertTrue(jAnnotations.containsAll(listOf(MyAnno::class.java,  java.lang.Deprecated::class.java)))
     }
 }

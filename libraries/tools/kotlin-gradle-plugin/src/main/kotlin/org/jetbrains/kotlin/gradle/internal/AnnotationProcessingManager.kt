@@ -35,7 +35,7 @@ fun Project.initKapt(
         subpluginEnvironment: SubpluginEnvironment,
         taskFactory: (suffix: String) -> AbstractCompile
 ): AbstractCompile? {
-    val kaptExtension = extensions.getByType(javaClass<KaptExtension>())
+    val kaptExtension = extensions.getByType(KaptExtension::class.java)
     val kotlinAfterJavaTask: AbstractCompile?
 
     if (kaptExtension.generateStubs) {
@@ -193,7 +193,7 @@ public class AnnotationProcessingManager(
     }
 
     private fun appendAdditionalComplerArgs() {
-        val kaptExtension = project.extensions.getByType(javaClass<KaptExtension>())
+        val kaptExtension = project.extensions.getByType(KaptExtension::class.java)
         val args = kaptExtension.getAdditionalArguments(project, androidVariant, getAndroidExtension())
         if (args.isEmpty()) return
 

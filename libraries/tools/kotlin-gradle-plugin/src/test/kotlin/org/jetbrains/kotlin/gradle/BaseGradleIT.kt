@@ -126,7 +126,7 @@ abstract class BaseGradleIT {
         val tailParameters = params.asList() +
                 listOf( pathToKotlinPlugin,
                         if (options.withDaemon) "--daemon" else "--no-daemon",
-                        "--${minLogLevel.name().toLowerCase()}",
+                        "--${minLogLevel.name.toLowerCase()}",
                         "-Pkotlin.gradle.test=true")
 
         return createGradleCommand(tailParameters)

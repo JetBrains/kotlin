@@ -86,7 +86,7 @@ internal class RoundEnvironmentWrapper(
 
         if (kotlinAnnotationsProvider.supportInheritedAnnotations) {
             val isInherited = processingEnv.getElementUtils().getTypeElement(annotationFqName)
-                    ?.hasAnnotation(javaClass<Inherited>().getCanonicalName()) ?: false
+                    ?.hasAnnotation(Inherited::class.java.getCanonicalName()) ?: false
 
             if (isInherited) {
                 kotlinAnnotationsProvider.kotlinClasses.forEach { classFqName ->

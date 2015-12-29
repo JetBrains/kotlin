@@ -218,7 +218,7 @@ class Kotlin2JsSourceSetProcessor(
 
     private fun createCleanSourceMapTask() {
         val taskName = sourceSet.getTaskName("clean", "sourceMap")
-        val task = project.getTasks().create(taskName, javaClass<Delete>())
+        val task = project.getTasks().create(taskName, Delete::class.java)
         task.onlyIf { kotlinTask.property("sourceMap") as Boolean }
         task.delete(object : Closure<String>(this) {
             override fun call(): String? = (kotlinTask.property("outputFile") as String) + ".map"
@@ -232,10 +232,10 @@ abstract class AbstractKotlinPlugin @Inject constructor(val scriptHandler: Scrip
     abstract fun buildSourceSetProcessor(project: ProjectInternal, javaBasePlugin: JavaBasePlugin, sourceSet: SourceSet): KotlinSourceSetProcessor<*>
 
     public override fun apply(project: Project) {
-        val javaBasePlugin = project.getPlugins().apply(javaClass<JavaBasePlugin>())
-        val javaPluginConvention = project.getConvention().getPlugin(javaClass<JavaPluginConvention>())
+        val javaBasePlugin = project.getPlugins().apply(JavaBasePlugin::class.java)
+        val javaPluginConvention = project.getConvention().getPlugin(JavaPluginConvention::class.java)
 
-        project.getPlugins().apply(javaClass<JavaPlugin>())
+        project.getPlugins().apply(JavaPlugin::class.java)
 
         configureSourceSetDefaults(project as ProjectInternal, javaBasePlugin, javaPluginConvention)
     }
@@ -456,7 +456,7 @@ open class KotlinAndroidPlugin @Inject constructor(val scriptHandler: ScriptHand
 private fun loadSubplugins(project: Project): SubpluginEnvironment {
     try {
         val subplugins = ServiceLoader.load(
-            javaClass<KotlinGradleSubplugin>(), project.getBuildscript().getClassLoader()).toList()
+                KotlinGradleSubplugin::class.java, project.getBuildscript().getClassLoader()).toList()
         val subpluginDependencyNames =
             subplugins.mapTo(hashSetOf<String>()) { it.getGroupName() + ":" + it.getArtifactName() }
 
@@ -556,13 +556,13 @@ private fun Project.createAptConfiguration(sourceSetName: String, kotlinAnnotati
 }
 
 private fun Project.createKaptExtension() {
-    getExtensions().create("kapt", javaClass<KaptExtension>())
+    getExtensions().create("kapt", KaptExtension::class.java)
 }
 
 //copied from BasePlugin.getLocalVersion
 private fun loadAndroidPluginVersion(): String? {
     try {
-        val clazz = javaClass<BasePlugin>()
+        val clazz = BasePlugin::class.java
         val className = clazz.getSimpleName() + ".class"
         val classPath = clazz.getResource(className).toString()
         if (!classPath.startsWith("jar")) {

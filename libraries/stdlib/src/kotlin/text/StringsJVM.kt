@@ -438,7 +438,7 @@ public fun String.toPattern(flags: Int = 0): java.util.regex.Pattern {
  * @sample test.text.StringTest.capitalize
  */
 public fun String.capitalize(): String {
-    return if (isNotEmpty() && charAt(0).isLowerCase()) substring(0, 1).toUpperCase() + substring(1) else this
+    return if (isNotEmpty() && this[0].isLowerCase()) substring(0, 1).toUpperCase() + substring(1) else this
 }
 
 /**
@@ -448,7 +448,7 @@ public fun String.capitalize(): String {
  * @sample test.text.StringTest.decapitalize
  */
 public fun String.decapitalize(): String {
-    return if (isNotEmpty() && charAt(0).isUpperCase()) substring(0, 1).toLowerCase() + substring(1) else this
+    return if (isNotEmpty() && this[0].isUpperCase()) substring(0, 1).toLowerCase() + substring(1) else this
 }
 
 /**
