@@ -58,7 +58,10 @@ public class PlatformStaticAnnotationChecker : DeclarationChecker {
             bindingContext: BindingContext
     ) {
         if (descriptor.hasJvmStaticAnnotation()) {
-            if (declaration is KtNamedFunction || declaration is KtProperty || declaration is KtPropertyAccessor) {
+            if (declaration is KtNamedFunction ||
+                declaration is KtProperty ||
+                declaration is KtPropertyAccessor ||
+                declaration is KtParameter) {
                 checkDeclaration(declaration, descriptor, diagnosticHolder)
             }
         }
