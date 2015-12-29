@@ -75,7 +75,7 @@ public class ShadowedDeclarationsFilter(
     public fun <TDescriptor : DeclarationDescriptor> filter(declarations: Collection<TDescriptor>): Collection<TDescriptor> {
         return declarations
                 .groupBy { signature(it) }
-                .values()
+                .values
                 .flatMap { group -> filterEqualSignatureGroup(group) }
     }
 
@@ -129,7 +129,7 @@ public class ShadowedDeclarationsFilter(
         val name = first.getName()
         val parameters = (first as CallableDescriptor).getValueParameters()
 
-        val dummyArgumentExpressions = dummyExpressionFactory.createDummyExpressions(parameters.size())
+        val dummyArgumentExpressions = dummyExpressionFactory.createDummyExpressions(parameters.size)
 
         val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace for filtering shadowed declarations")
         for ((expression, parameter) in dummyArgumentExpressions.zip(parameters)) {
@@ -138,7 +138,7 @@ public class ShadowedDeclarationsFilter(
         }
 
         val firstVarargIndex = parameters.withIndex().firstOrNull { it.value.varargElementType != null }?.index
-        val useNamedFromIndex = if (firstVarargIndex != null && firstVarargIndex != parameters.lastIndex) firstVarargIndex else parameters.size()
+        val useNamedFromIndex = if (firstVarargIndex != null && firstVarargIndex != parameters.lastIndex) firstVarargIndex else parameters.size
 
         class DummyArgument(val index: Int) : ValueArgument {
             private val expression = dummyArgumentExpressions[index]
@@ -219,7 +219,7 @@ public class ShadowedDeclarationsFilter(
         private val expressions = ArrayList<KtExpression>()
 
         fun createDummyExpressions(count: Int): List<KtExpression> {
-            while (expressions.size() < count) {
+            while (expressions.size < count) {
                 expressions.add(factory.createExpression("dummy"))
             }
             return expressions.take(count)
@@ -233,7 +233,7 @@ public class ShadowedDeclarationsFilter(
             if (function.getName() != other.function.getName()) return false
             val parameters1 = function.getValueParameters()
             val parameters2 = other.function.getValueParameters()
-            if (parameters1.size() != parameters2.size()) return false
+            if (parameters1.size != parameters2.size) return false
             for (i in parameters1.indices) {
                 val p1 = parameters1[i]
                 val p2 = parameters2[i]
@@ -243,6 +243,6 @@ public class ShadowedDeclarationsFilter(
             return true
         }
 
-        override fun hashCode() = function.getName().hashCode() * 17 + function.getValueParameters().size()
+        override fun hashCode() = function.getName().hashCode() * 17 + function.getValueParameters().size
     }
 }

@@ -51,7 +51,7 @@ public fun descriptorsEqualWithSubstitution(descriptor1: DeclarationDescriptor?,
 
     val parameters1 = descriptor1.getValueParameters()
     val parameters2 = descriptor2.getValueParameters()
-    if (parameters1.size() != parameters2.size()) return false
+    if (parameters1.size != parameters2.size) return false
     for ((param1, param2) in parameters1.zip(parameters2)) {
         if (!typeChecker.equalTypes(param1.getType(), param2.getType())) return false
     }

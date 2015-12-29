@@ -25,7 +25,7 @@ import java.util.LinkedHashMap
 public fun getTypeSubstitution(baseType: KotlinType, derivedType: KotlinType): LinkedHashMap<TypeConstructor, TypeProjection>? {
     val substitutedType = TypeCheckingProcedure.findCorrespondingSupertype(derivedType, baseType) ?: return null
 
-    val substitution = LinkedHashMap<TypeConstructor, TypeProjection>(substitutedType.getArguments().size())
+    val substitution = LinkedHashMap<TypeConstructor, TypeProjection>(substitutedType.getArguments().size)
     for ((param, arg) in baseType.getConstructor().getParameters().zip(substitutedType.getArguments())) {
         substitution[param.getTypeConstructor()] = arg
     }

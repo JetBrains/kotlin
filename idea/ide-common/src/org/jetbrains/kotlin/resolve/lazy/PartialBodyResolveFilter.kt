@@ -113,7 +113,7 @@ class PartialBodyResolveFilter(
                 val smartCastPlaces = potentialSmartCastPlaces(statement, { it.affectsNames(nameFilter) })
                 if (!smartCastPlaces.isEmpty()) {
                     //TODO: do we really need correct resolve for ALL smart cast places?
-                    smartCastPlaces.values()
+                    smartCastPlaces.values
                             .flatMap { it }
                             .forEach { statementMarks.mark(it, MarkLevel.NEED_REFERENCE_RESOLVE) }
                     updateNameFilter()
@@ -149,7 +149,7 @@ class PartialBodyResolveFilter(
 
         fun addPlaces(name: SmartCastName, places: Collection<KtExpression>) {
             if (places.isNotEmpty()) {
-                map.getOrPut(name, { ArrayList(places.size()) }).addAll(places)
+                map.getOrPut(name, { ArrayList(places.size) }).addAll(places)
             }
         }
 
@@ -597,7 +597,7 @@ class PartialBodyResolveFilter(
                 = statementMarks[statement] ?: MarkLevel.NONE
 
         fun allMarkedStatements(): Collection<KtExpression>
-                = statementMarks.keySet()
+                = statementMarks.keys
 
         fun lastMarkedStatement(block: KtBlockExpression, minLevel: MarkLevel): KtExpression? {
             val level = blockLevels[block] ?: MarkLevel.NONE

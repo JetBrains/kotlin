@@ -50,7 +50,7 @@ public interface ResolutionFacade {
 }
 
 public inline fun <reified T : Any> ResolutionFacade.frontendService(): T
-        = this.getFrontendService(javaClass<T>())
+        = this.getFrontendService(T::class.java)
 
 public inline fun <reified T : Any> ResolutionFacade.ideService(): T
-        = this.getIdeService(javaClass<T>())
+        = this.getIdeService(T::class.java)
