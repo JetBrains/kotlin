@@ -495,6 +495,12 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/platformStatic"), Pattern.compile("^(.+)\\.kt$"), true);
             }
 
+            @TestMetadata("constOrJvmFieldProperty.kt")
+            public void testConstOrJvmFieldProperty() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/platformStatic/constOrJvmFieldProperty.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("constructorProperty.kt")
             public void testConstructorProperty() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/testsWithStdLib/annotations/platformStatic/constructorProperty.kt");
