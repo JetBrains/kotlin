@@ -98,7 +98,7 @@ sealed class KotlinFunctionInsertHandler : KotlinCallableInsertHandler() {
 
             if (completionChar == Lookup.REPLACE_SELECT_CHAR) {
                 val offset1 = chars.skipSpaces(offset)
-                if (offset1 < chars.length()) {
+                if (offset1 < chars.length) {
                     if (chars[offset1] == '<') {
                         PsiDocumentManager.getInstance(project).commitDocument(document)
                         val token = context.getFile().findElementAt(offset1)!!
@@ -167,7 +167,7 @@ sealed class KotlinFunctionInsertHandler : KotlinCallableInsertHandler() {
 
             document.insertString(openingBracketOffset + 1, argumentText)
             if (closeBracketOffset != null) {
-                closeBracketOffset += argumentText.length()
+                closeBracketOffset += argumentText.length
             }
 
             if (!insertTypeArguments) {
@@ -190,7 +190,7 @@ sealed class KotlinFunctionInsertHandler : KotlinCallableInsertHandler() {
         }
 
         private fun isInsertSpacesInOneLineFunctionEnabled(project: Project)
-                = CodeStyleSettingsManager.getSettings(project).getCustomSettings(javaClass<KotlinCodeStyleSettings>())!!.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD
+                = CodeStyleSettingsManager.getSettings(project).getCustomSettings(KotlinCodeStyleSettings::class.java)!!.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD
     }
 
     object Infix : KotlinFunctionInsertHandler() {

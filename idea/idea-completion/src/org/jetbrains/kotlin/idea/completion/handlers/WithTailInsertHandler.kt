@@ -58,7 +58,7 @@ class WithTailInsertHandler(val tailText: String,
             var offset = document.charsSequence.skipSpacesAndLineBreaks(tailOffset)
             if (document.isTextAt(offset, tailText)) {
                 insert = false
-                offset += tailText.length()
+                offset += tailText.length
                 tailOffset = offset
 
                 if (spaceAfter && document.charsSequence.isCharAt(offset, ' ')) {
@@ -77,7 +77,7 @@ class WithTailInsertHandler(val tailText: String,
         document.insertString(tailOffset, textToInsert)
 
         if (moveCaret) {
-            context.getEditor().getCaretModel().moveToOffset(tailOffset + textToInsert.length())
+            context.getEditor().getCaretModel().moveToOffset(tailOffset + textToInsert.length)
 
             if (tailText == ",") {
                 AutoPopupController.getInstance(context.getProject())?.autoPopupParameterInfo(context.getEditor(), null)

@@ -45,14 +45,14 @@ class InsertHandlerProvider(
                     CallType.DEFAULT, CallType.DOT, CallType.SAFE, CallType.SUPER_MEMBERS -> {
                         val needTypeArguments = needTypeArguments(descriptor)
                         val parameters = descriptor.valueParameters
-                        when (parameters.size()) {
+                        when (parameters.size) {
                             0 -> KotlinFunctionInsertHandler.Normal(needTypeArguments, inputValueArguments = false)
 
                             1 -> {
                                 if (callType != CallType.SUPER_MEMBERS) { // for super call we don't suggest to generate "super.foo { ... }" (seems to be non-typical use)
                                     val parameterType = parameters.single().getType()
                                     if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameterType)) {
-                                        val parameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size()
+                                        val parameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size
                                         if (parameterCount <= 1) {
                                             // otherwise additional item with lambda template is to be added
                                             return KotlinFunctionInsertHandler.Normal(needTypeArguments, inputValueArguments = false, lambdaInfo = GenerateLambdaInfo(parameterType, false))
@@ -96,7 +96,7 @@ class InsertHandlerProvider(
                 potentiallyInferred.add(descriptor)
             }
 
-            if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(type) && KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(type).size() <= 1) {
+            if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(type) && KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(type).size <= 1) {
                 // do not rely on inference from input of function type with one or no arguments - use only return type of functional type
                 addPotentiallyInferred(KotlinBuiltIns.getReturnTypeFromFunctionType(type))
                 return

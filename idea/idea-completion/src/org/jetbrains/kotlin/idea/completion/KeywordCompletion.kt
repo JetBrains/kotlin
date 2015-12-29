@@ -108,8 +108,8 @@ object KeywordCompletion {
 
     private val GENERAL_FILTER = NotFilter(OrFilter(
             CommentFilter(),
-            ParentFilter(ClassFilter(javaClass<KtLiteralStringTemplateEntry>())),
-            ParentFilter(ClassFilter(javaClass<KtConstantExpression>())),
+            ParentFilter(ClassFilter(KtLiteralStringTemplateEntry::class.java)),
+            ParentFilter(ClassFilter(KtConstantExpression::class.java)),
             LeftNeighbour(TextFilter(".")),
             LeftNeighbour(TextFilter("?."))
     ))
@@ -202,7 +202,7 @@ object KeywordCompletion {
         return fun (keywordTokenType): Boolean {
             val postfix = if (prefixText.endsWith("@")) ":X" else " X"
             val file = psiFactory.createFile(prefixText + keywordTokenType.getValue() + postfix)
-            val elementAt = file.findElementAt(prefixText.length())!!
+            val elementAt = file.findElementAt(prefixText.length)!!
 
             when {
                 !elementAt.getNode()!!.getElementType().matchesKeyword(keywordTokenType) -> return false

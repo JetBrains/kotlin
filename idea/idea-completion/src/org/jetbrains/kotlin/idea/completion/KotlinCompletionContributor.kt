@@ -220,7 +220,7 @@ public class KotlinCompletionContributor : CompletionContributor() {
                 val text = builder.toString()
                 val file = KtPsiFactory(tokenBefore.getProject()).createFile(text)
                 val declaration = file.getDeclarations().singleOrNull() ?: return null
-                if (declaration.getTextLength() != text.length()) return null
+                if (declaration.getTextLength() != text.length) return null
                 val containsErrorElement = !PsiTreeUtil.processElements(file, PsiElementProcessor<PsiElement>{ it !is PsiErrorElement })
                 return if (containsErrorElement) null else tail + "$"
             }
@@ -395,8 +395,8 @@ public class KotlinCompletionContributor : CompletionContributor() {
     private fun isAtEndOfLine(offset: Int, document: Document): Boolean {
         var i = offset
         val chars = document.getCharsSequence()
-        while (i < chars.length()) {
-            val c = chars.charAt(i)
+        while (i < chars.length) {
+            val c = chars[i]
             if (c == '\n') return true
             if (!Character.isWhitespace(c)) return false
             i++

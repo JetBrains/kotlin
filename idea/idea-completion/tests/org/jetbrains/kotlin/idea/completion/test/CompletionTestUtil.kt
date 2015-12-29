@@ -40,13 +40,13 @@ fun testCompletion(fileText: String, platform: TargetPlatform?, complete: (Compl
         val itemsNumber = ExpectedCompletionUtils.getExpectedNumber(fileText, platform)
         val nothingElse = ExpectedCompletionUtils.isNothingElseExpected(fileText)
 
-        Assert.assertTrue("Should be some assertions about completion", expected.size() != 0 || unexpected.size() != 0 || itemsNumber != null || nothingElse)
+        Assert.assertTrue("Should be some assertions about completion", expected.size != 0 || unexpected.size != 0 || itemsNumber != null || nothingElse)
         ExpectedCompletionUtils.assertContainsRenderedItems(expected, items, ExpectedCompletionUtils.isWithOrder(fileText), nothingElse)
         ExpectedCompletionUtils.assertNotContainsRenderedItems(unexpected, items)
 
         if (itemsNumber != null) {
             val expectedItems = ExpectedCompletionUtils.listToString(ExpectedCompletionUtils.getItemsInformation(items))
-            Assert.assertEquals("Invalid number of completion items: ${expectedItems}", itemsNumber, items.size())
+            Assert.assertEquals("Invalid number of completion items: ${expectedItems}", itemsNumber, items.size)
         }
     }
 }

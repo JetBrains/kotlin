@@ -74,7 +74,7 @@ fun lambdaPresentation(lambdaType: KotlinType?): String {
 private fun needExplicitParameterTypes(context: InsertionContext, placeholderRange: TextRange, lambdaType: KotlinType): Boolean {
     PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments()
     val file = context.getFile() as KtFile
-    val expression = PsiTreeUtil.findElementOfClassAtRange(file, placeholderRange.getStartOffset(), placeholderRange.getEndOffset(), javaClass<KtExpression>())
+    val expression = PsiTreeUtil.findElementOfClassAtRange(file, placeholderRange.getStartOffset(), placeholderRange.getEndOffset(), KtExpression::class.java)
                      ?: return false
 
     val resolutionFacade = file.getResolutionFacade()
@@ -85,10 +85,10 @@ private fun needExplicitParameterTypes(context: InsertionContext, placeholderRan
             .mapNotNull { it.fuzzyType?.type }
             .filter { KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(it) }
             .toSet()
-    if (functionTypes.size() <= 1) return false
+    if (functionTypes.size <= 1) return false
 
-    val lambdaParameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(lambdaType).size()
-    return functionTypes.filter { KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(it).size() == lambdaParameterCount }.size() > 1
+    val lambdaParameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(lambdaType).size
+    return functionTypes.filter { KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(it).size() == lambdaParameterCount }.size > 1
 }
 
 private fun buildTemplate(lambdaType: KotlinType, explicitParameterTypes: Boolean, project: Project): Template {
@@ -124,7 +124,7 @@ private class ParameterNameExpression(val nameSuggestions: Array<String>) : Expr
     override fun calculateQuickResult(context: ExpressionContext?): Result? = null
 
     override fun calculateLookupItems(context: ExpressionContext?)
-            = Array<LookupElement>(nameSuggestions.size(), { LookupElementBuilder.create(nameSuggestions[it]) })
+            = Array<LookupElement>(nameSuggestions.size, { LookupElementBuilder.create(nameSuggestions[it]) })
 }
 
 fun functionParameterTypes(functionType: KotlinType): List<KotlinType>

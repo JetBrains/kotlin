@@ -44,7 +44,7 @@ public class SmartCompletionMultifileHandlerTest : KotlinCompletionTestCase() {
 
         complete(1)
         if (myItems != null) {
-            assertTrue(myItems.size() == 1, "Multiple items in completion")
+            assertTrue(myItems.size == 1, "Multiple items in completion")
             selectItem(myItems[0])
         }
 

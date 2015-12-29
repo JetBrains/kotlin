@@ -44,8 +44,8 @@ import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 
 class KDocCompletionContributor(): CompletionContributor() {
     init {
-        extend(CompletionType.BASIC, psiElement().inside(javaClass<KDocName>()),
-                KDocNameCompletionProvider)
+        extend(CompletionType.BASIC, psiElement().inside(KDocName::class.java),
+               KDocNameCompletionProvider)
 
         extend(CompletionType.BASIC,
                psiElement().afterLeaf(
@@ -128,12 +128,12 @@ object KDocTagCompletionProvider: CompletionProvider<CompletionParameters>() {
                 StandardPatterns.character().javaIdentifierPart() or singleCharPattern('@'),
                 StandardPatterns.character().javaIdentifierStart() or singleCharPattern('@'))
 
-        if (prefix.length() > 0 && !prefix.startsWith('@')) {
+        if (prefix.length > 0 && !prefix.startsWith('@')) {
             return
         }
         val resultWithPrefix = result.withPrefixMatcher(prefix)
         KDocKnownTag.values().forEach {
-            resultWithPrefix.addElement(LookupElementBuilder.create("@" + it.name().toLowerCase()))
+            resultWithPrefix.addElement(LookupElementBuilder.create("@" + it.name.toLowerCase()))
         }
     }
 }

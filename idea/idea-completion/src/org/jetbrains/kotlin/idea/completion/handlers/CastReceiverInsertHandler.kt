@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.psi.*
 
 object CastReceiverInsertHandler {
     fun postHandleInsert(context: InsertionContext, item: LookupElement) {
-        val expression = PsiTreeUtil.findElementOfClassAtOffset(context.getFile(), context.getStartOffset(), javaClass<KtSimpleNameExpression>(), false)
-        val qualifiedExpression = PsiTreeUtil.getParentOfType(expression, javaClass<KtQualifiedExpression>(), true)
+        val expression = PsiTreeUtil.findElementOfClassAtOffset(context.getFile(), context.getStartOffset(), KtSimpleNameExpression::class.java, false)
+        val qualifiedExpression = PsiTreeUtil.getParentOfType(expression, KtQualifiedExpression::class.java, true)
         if (qualifiedExpression != null) {
             val receiver = qualifiedExpression.getReceiverExpression()
 

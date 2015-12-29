@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
  */
 object PackageDirectiveCompletion {
     val DUMMY_IDENTIFIER = "___package___"
-    val ACTIVATION_PATTERN = PlatformPatterns.psiElement().inside(javaClass<KtPackageDirective>())
+    val ACTIVATION_PATTERN = PlatformPatterns.psiElement().inside(KtPackageDirective::class.java)
 
     fun perform(parameters: CompletionParameters, result: CompletionResultSet): Boolean {
         val position = parameters.getPosition()

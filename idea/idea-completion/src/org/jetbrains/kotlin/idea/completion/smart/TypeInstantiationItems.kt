@@ -182,16 +182,16 @@ class TypeInstantiationItems(
                 context.document.replaceString(startOffset, context.tailOffset, text)
 
                 if (allTypeArgsKnown) {
-                    context.editor.caretModel.moveToOffset(startOffset + text.length() - 1)
+                    context.editor.caretModel.moveToOffset(startOffset + text.length - 1)
 
-                    shortenReferences(context, startOffset, startOffset + text.length())
+                    shortenReferences(context, startOffset, startOffset + text.length)
 
                     ImplementMembersHandler().invoke(context.project, context.editor, context.file, true)
                 }
                 else {
-                    context.editor.caretModel.moveToOffset(startOffset + text1.length() + 1) // put caret into "<>"
+                    context.editor.caretModel.moveToOffset(startOffset + text1.length + 1) // put caret into "<>"
 
-                    shortenReferences(context, startOffset, startOffset + text.length())
+                    shortenReferences(context, startOffset, startOffset + text.length)
                 }
             }
             lookupElement = lookupElement.suppressAutoInsertion()
@@ -199,7 +199,7 @@ class TypeInstantiationItems(
         }
         else {
             //TODO: when constructor has one parameter of lambda type with more than one parameter, generate special additional item
-            signatureText = when (visibleConstructors.size()) {
+            signatureText = when (visibleConstructors.size) {
                 0 -> "()"
                 1 -> DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderFunctionParameters(visibleConstructors.single())
                 else -> "(...)"
@@ -217,7 +217,7 @@ class TypeInstantiationItems(
             insertHandler = object : InsertHandler<LookupElement> {
                 override fun handleInsert(context: InsertionContext, item: LookupElement) {
                     context.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), typeText)
-                    context.setTailOffset(context.getStartOffset() + typeText.length())
+                    context.setTailOffset(context.getStartOffset() + typeText.length)
 
                     baseInsertHandler.handleInsert(context, item)
 

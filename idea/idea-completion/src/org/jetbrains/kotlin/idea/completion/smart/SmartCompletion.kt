@@ -222,7 +222,7 @@ class SmartCompletion(
                         val entry = whenCondition.parent as KtWhenEntry
                         val whenExpression = entry.parent as KtWhenExpression
                         val entries = whenExpression.entries
-                        if (whenExpression.elseExpression == null && entry == entries.last() && entries.size() != 1) {
+                        if (whenExpression.elseExpression == null && entry == entries.last() && entries.size != 1) {
                             val lookupElement = LookupElementBuilder.create("else").bold().withTailText(" ->")
                             items.add(object: LookupElementDecorator<LookupElement>(lookupElement) {
                                 override fun handleInsert(context: InsertionContext) {

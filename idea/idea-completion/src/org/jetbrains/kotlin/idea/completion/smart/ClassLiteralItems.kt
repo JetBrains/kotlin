@@ -75,7 +75,7 @@ object ClassLiteralItems {
                     super.handleInsert(context)
                     val offset = context.tailOffset
                     context.document.insertString(offset, suffix)
-                    context.editor.moveCaret(offset + suffix.length())
+                    context.editor.moveCaret(offset + suffix.length)
                 }
             }
             lookupElement.assignSmartCompletionPriority(SmartCompletionItemPriority.CLASS_LITERAL)

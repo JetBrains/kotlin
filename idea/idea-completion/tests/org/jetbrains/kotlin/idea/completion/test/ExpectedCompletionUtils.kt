@@ -51,7 +51,7 @@ public object ExpectedCompletionUtils {
 
         public constructor(map: MutableMap<String, String?>) {
             this.map = map
-            for (key in map.keySet()) {
+            for (key in map.keys) {
                 if (key !in validKeys) {
                     throw RuntimeException("Invalid key '$key'")
                 }
@@ -61,7 +61,7 @@ public object ExpectedCompletionUtils {
         public constructor(json: JsonObject) {
             map = HashMap<String, String?>()
             for (entry in json.entrySet()) {
-                val key = entry.getKey()
+                val key = entry.key
                 if (key !in validKeys) {
                     throw RuntimeException("Invalid json property '$key'")
                 }
@@ -71,7 +71,7 @@ public object ExpectedCompletionUtils {
         }
 
         public fun matches(expectedProposal: CompletionProposal): Boolean
-                = expectedProposal.map.entrySet().none { it.value != map[it.key] }
+                = expectedProposal.map.entries.none { it.value != map[it.key] }
 
         override fun toString(): String {
             val jsonObject = JsonObject()
@@ -168,7 +168,7 @@ public object ExpectedCompletionUtils {
                 proposals.add(CompletionProposal(json as JsonObject))
             }
             else if (proposalStr.startsWith("\"") && proposalStr.endsWith("\"")) {
-                proposals.add(CompletionProposal(proposalStr.substring(1, proposalStr.length() - 1)))
+                proposals.add(CompletionProposal(proposalStr.substring(1, proposalStr.length - 1)))
             }
             else {
                 for (item in proposalStr.split(",")) {
@@ -177,7 +177,7 @@ public object ExpectedCompletionUtils {
             }
         }
 
-        return ArrayUtil.toObjectArray(proposals, javaClass<CompletionProposal>())
+        return ArrayUtil.toObjectArray(proposals, CompletionProposal::class.java)
     }
 
     public fun getExpectedNumber(fileText: String, platform: TargetPlatform?): Int? {
@@ -287,7 +287,7 @@ public object ExpectedCompletionUtils {
     public fun getItemsInformation(items: Array<LookupElement>): List<CompletionProposal> {
         val presentation = LookupElementPresentation()
 
-        val result = ArrayList<CompletionProposal>(items.size())
+        val result = ArrayList<CompletionProposal>(items.size)
         for (item in items) {
             item.renderElement(presentation)
 
@@ -315,25 +315,25 @@ public object ExpectedCompletionUtils {
     }
 
     private fun textAttributes(presentation: LookupElementPresentation): String {
-        return StringBuilder {
+        return buildString {
             if (presentation.isItemTextBold) {
                 append("bold")
             }
             if (presentation.isItemTextUnderlined) {
-                if (length() > 0) append(" ")
+                if (length > 0) append(" ")
                 append("underlined")
             }
             val foreground = presentation.itemTextForeground
             if (foreground != JBColor.foreground()) {
                 assert(foreground == LookupCellRenderer.getGrayedForeground(false))
-                if (length() > 0) append(" ")
+                if (length > 0) append(" ")
                 append("grayed")
             }
             if (presentation.isStrikeout) {
-                if (length() > 0) append(" ")
+                if (length > 0) append(" ")
                 append("strikeout")
             }
-        }.toString()
+        }
     }
 
     public fun listToString(items: Collection<CompletionProposal>): String = items.joinToString("\n")

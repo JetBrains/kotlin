@@ -31,6 +31,6 @@ public class LeafElementFilter(private val elementType: IElementType) : ElementF
             = LEAF_CLASS_FILTER.isClassAcceptable(hintClass)
 
     companion object {
-        private val LEAF_CLASS_FILTER = ClassFilter(javaClass<LeafPsiElement>())
+        private val LEAF_CLASS_FILTER = ClassFilter(LeafPsiElement::class.java)
     }
 }

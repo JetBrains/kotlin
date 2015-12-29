@@ -45,13 +45,13 @@ class ArtificialElementInsertHandler(
         val textBeforeCaret: String, val textAfterCaret: String, val shortenRefs: Boolean) : InsertHandler<LookupElement>{
     override fun handleInsert(context: InsertionContext, item: LookupElement) {
         val offset = context.getEditor().getCaretModel().getOffset()
-        val startOffset = offset - item.getLookupString().length()
+        val startOffset = offset - item.getLookupString().length
         context.getDocument().deleteString(startOffset, offset) // delete inserted lookup string
         context.getDocument().insertString(startOffset, textBeforeCaret + textAfterCaret)
-        context.getEditor().getCaretModel().moveToOffset(startOffset + textBeforeCaret.length())
+        context.getEditor().getCaretModel().moveToOffset(startOffset + textBeforeCaret.length)
 
         if (shortenRefs) {
-            shortenReferences(context, startOffset, startOffset + textBeforeCaret.length() + textAfterCaret.length())
+            shortenReferences(context, startOffset, startOffset + textBeforeCaret.length + textAfterCaret.length)
         }
     }
 }

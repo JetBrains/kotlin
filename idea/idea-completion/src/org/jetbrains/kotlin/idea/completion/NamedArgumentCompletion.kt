@@ -73,7 +73,7 @@ object NamedArgumentCompletion {
             val editor = context.getEditor()
             val text = parameterName.render()
             editor.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), text)
-            editor.getCaretModel().moveToOffset(context.getStartOffset() + text.length())
+            editor.getCaretModel().moveToOffset(context.getStartOffset() + text.length)
 
             WithTailInsertHandler.EQ.postHandleInsert(context, item)
         }

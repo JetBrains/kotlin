@@ -76,10 +76,10 @@ object KotlinClassifierInsertHandler : BaseDeclarationInsertHandler() {
 
                 psiDocumentManager.commitAllDocuments()
 
-                val classNameStart = startOffset + tempPrefix.length()
-                val classNameEnd = classNameStart + qualifiedName.length()
+                val classNameStart = startOffset + tempPrefix.length
+                val classNameEnd = classNameStart + qualifiedName.length
                 val rangeMarker = document.createRangeMarker(classNameStart, classNameEnd)
-                val wholeRangeMarker = document.createRangeMarker(startOffset, classNameEnd + tempSuffix.length())
+                val wholeRangeMarker = document.createRangeMarker(startOffset, classNameEnd + tempSuffix.length)
 
                 ShortenReferences.DEFAULT.process(file, classNameStart, classNameEnd)
                 psiDocumentManager.doPostponedOperationsAndUnblockDocument(document)

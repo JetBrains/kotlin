@@ -58,7 +58,7 @@ class MultipleArgumentsItemProvider(
             val additionalData = expectedInfo.additionalData
             if (additionalData is ArgumentPositionData.Positional && additionalData.argumentIndex == 0) {
                 val parameters = additionalData.function.valueParameters
-                if (parameters.size() > 1) {
+                if (parameters.size > 1) {
                     val tail = when (additionalData.callType) {
                         Call.CallType.ARRAY_GET_METHOD, Call.CallType.ARRAY_SET_METHOD -> Tail.RBRACKET
                         else -> Tail.RPARENTH

@@ -38,8 +38,8 @@ class ToFromOriginalFileMapper(
         val syntheticText = syntheticFile.getText()
         assert(originalText.subSequence(0, completionOffset) == syntheticText.subSequence(0, completionOffset))
 
-        syntheticLength = syntheticText.length()
-        originalLength = originalText.length()
+        syntheticLength = syntheticText.length
+        originalLength = originalText.length
         val minLength = Math.min(originalLength, syntheticLength)
         tailLength = (0..minLength-1).firstOrNull {
             syntheticText[syntheticLength - it - 1] != originalText[originalLength - it - 1]
@@ -66,12 +66,12 @@ class ToFromOriginalFileMapper(
     public fun toOriginalFile(declaration: KtDeclaration): KtDeclaration? {
         if (declaration.getContainingFile() != syntheticFile) return declaration
         val offset = toOriginalFile(declaration.startOffset) ?: return null
-        return PsiTreeUtil.findElementOfClassAtOffset(originalFile, offset, javaClass<KtDeclaration>(), true)
+        return PsiTreeUtil.findElementOfClassAtOffset(originalFile, offset, KtDeclaration::class.java, true)
     }
 
     public fun toSyntheticFile(declaration: KtDeclaration): KtDeclaration? {
         if (declaration.getContainingFile() != originalFile) return declaration
         val offset = toSyntheticFile(declaration.startOffset) ?: return null
-        return PsiTreeUtil.findElementOfClassAtOffset(syntheticFile, offset, javaClass<KtDeclaration>(), true)
+        return PsiTreeUtil.findElementOfClassAtOffset(syntheticFile, offset, KtDeclaration::class.java, true)
     }
 }

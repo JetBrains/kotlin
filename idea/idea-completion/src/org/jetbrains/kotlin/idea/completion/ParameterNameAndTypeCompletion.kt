@@ -144,7 +144,7 @@ class ParameterNameAndTypeCompletion(
             if (prefixMatcher.isStartMatch(parameterName)) {
                 val lookupElement = MyLookupElement.create(parameterName, type, lookupElementFactory)
                 if (lookupElement != null) {
-                    lookupElement.putUserData(PRIORITY_KEY, userPrefix.length()) // suggestions with longer user prefix get lower priority
+                    lookupElement.putUserData(PRIORITY_KEY, userPrefix.length) // suggestions with longer user prefix get lower priority
                     collector.addElement(lookupElement, notImported)
                     suggestionsByTypesAdded.add(type)
                 }
@@ -214,7 +214,7 @@ class ParameterNameAndTypeCompletion(
             context.getDocument().insertString(startOffset, text)
 
             // update start offset so that it does not include the text we inserted
-            context.getOffsetMap().addOffset(CompletionInitializationContext.START_OFFSET, startOffset + text.length())
+            context.getOffsetMap().addOffset(CompletionInitializationContext.START_OFFSET, startOffset + text.length)
 
             super.handleInsert(context)
         }

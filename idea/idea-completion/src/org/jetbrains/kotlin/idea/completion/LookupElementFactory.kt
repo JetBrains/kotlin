@@ -136,7 +136,7 @@ class LookupElementFactory(
 
         // render only the last parameter because all other should be optional and will be omitted
         var parametersRenderer = DescriptorRenderer.SHORT_NAMES_IN_TYPES
-        if (descriptor.valueParameters.size() > 1) {
+        if (descriptor.valueParameters.size > 1) {
             parametersRenderer = parametersRenderer.withOptions {
                 valueParametersHandler = object: DescriptorRenderer.ValueParametersHandler by this.valueParametersHandler {
                     override fun appendBeforeValueParameter(parameter: ValueParameterDescriptor, parameterIndex: Int, parameterCount: Int, builder: StringBuilder) {
