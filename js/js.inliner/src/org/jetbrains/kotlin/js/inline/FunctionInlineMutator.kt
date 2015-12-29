@@ -84,7 +84,7 @@ private constructor(
     private fun removeStatementsAfterTopReturn() {
         val statements = body.getStatements()
 
-        val statementsSize = statements.size()
+        val statementsSize = statements.size
         for (i in 0..statementsSize - 1) {
             val statement = statements.get(i)
 
@@ -101,7 +101,7 @@ private constructor(
             return
         }
 
-        val returnCount = collectInstances(javaClass<JsReturn>(), body).size()
+        val returnCount = collectInstances(JsReturn::class.java, body).size
         if (returnCount == 0) {
             // TODO return Unit (KT-5647)
             resultExpr = JsLiteral.UNDEFINED
@@ -114,7 +114,7 @@ private constructor(
 
             if (lastTopLevelStatement is JsReturn) {
                 resultExpr = lastTopLevelStatement.getExpression()
-                statements.remove(statements.lastIndex)
+                statements.removeAt(statements.lastIndex)
                 return
             }
         }
@@ -139,7 +139,7 @@ private constructor(
         val last = statements.lastOrNull() as? JsBreak
 
         if (last?.getLabel()?.getName() === breakLabel?.getName()) {
-            statements.remove(statements.lastIndex)
+            statements.removeAt(statements.lastIndex)
         }
     }
 
@@ -175,7 +175,7 @@ private constructor(
         // var a = expr1 + call() is ok, but we don't want to reuse 'a' for result,
         // as it means to replace every 'return expr2' to 'a = expr1 + expr2'.
         // If there is more than one return, expr1 copies are undesirable.
-        if (variable.initExpression !== call || vars.size() > 1) return null
+        if (variable.initExpression !== call || vars.size > 1) return null
 
         val varName = variable.getName()
         with (inliningContext.statementContext) {
@@ -189,7 +189,7 @@ private constructor(
     private fun getArguments(): List<JsExpression> {
         val arguments = call.getArguments()
         if (isCallInvocation(call)) {
-            return arguments.subList(1, arguments.size())
+            return arguments.subList(1, arguments.size)
         }
 
         return arguments
@@ -257,7 +257,7 @@ private constructor(
         }
 
         private fun hasThisReference(body: JsBlock): Boolean {
-            val thisRefs = collectInstances(javaClass<JsLiteral.JsThisRef>(), body)
+            val thisRefs = collectInstances(JsLiteral.JsThisRef::class.java, body)
             return !thisRefs.isEmpty()
         }
 
@@ -268,7 +268,7 @@ private constructor(
 
         private fun canBeExpression(body: JsBlock): Boolean {
             val statements = body.getStatements()
-            return statements.size() == 1 && statements.get(0) is JsReturn
+            return statements.size == 1 && statements.get(0) is JsReturn
         }
     }
 }

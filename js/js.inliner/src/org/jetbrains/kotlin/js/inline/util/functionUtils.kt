@@ -35,7 +35,7 @@ public fun isFunctionCreator(outer: JsFunction): Boolean =
  */
 public fun JsFunction.getInnerFunction(): JsFunction? {
     val statements = getBody().getStatements()
-    if (statements.size() != 1) return null
+    if (statements.size != 1) return null
 
     val statement = statements.get(0)
     val returnExpr = (statement as? JsReturn)?.getExpression()

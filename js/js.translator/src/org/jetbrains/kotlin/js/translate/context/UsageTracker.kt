@@ -82,7 +82,7 @@ public fun UsageTracker.getNameForCapturedDescriptor(descriptor: DeclarationDesc
 public fun UsageTracker.hasCapturedExceptContaining(): Boolean {
     val hasNotCaptured =
             capturedDescriptorToJsName.isEmpty() ||
-            (capturedDescriptorToJsName.size() == 1 && capturedDescriptorToJsName.containsKey(containingDescriptor))
+            (capturedDescriptorToJsName.size == 1 && capturedDescriptorToJsName.containsKey(containingDescriptor))
 
     return !hasNotCaptured
 }

@@ -180,7 +180,7 @@ public class ClassTranslator private constructor(
         if (supertypes.isEmpty()) {
             return emptyList()
         }
-        if (supertypes.size() == 1) {
+        if (supertypes.size == 1) {
             val type = supertypes.get(0)
             val supertypeDescriptor = getClassDescriptorForType(type)
             return listOf<JsExpression>(getClassReference(supertypeDescriptor))
@@ -232,9 +232,9 @@ public class ClassTranslator private constructor(
     }
 
     private fun generateBridgesToTraitImpl(properties: MutableList<JsPropertyInitializer>) {
-        for (entry in CodegenUtil.getNonPrivateTraitMethods(descriptor).entrySet()) {
-            if (!areNamesEqual(entry.getKey(), entry.getValue())) {
-                properties.add(generateDelegateCall(entry.getValue(), entry.getKey(), JsLiteral.THIS, context()))
+        for (entry in CodegenUtil.getNonPrivateTraitMethods(descriptor).entries) {
+            if (!areNamesEqual(entry.key, entry.value)) {
+                properties.add(generateDelegateCall(entry.value, entry.key, JsLiteral.THIS, context()))
             }
         }
     }

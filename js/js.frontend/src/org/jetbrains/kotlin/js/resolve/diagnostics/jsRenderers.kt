@@ -68,7 +68,7 @@ public fun String.underlineAsText(from: Int, to: Int): String {
     var lineWasMarked = false
 
     for (i in indices) {
-        val c = charAt(i)
+        val c = this[i]
         val mark: Char
 
         mark = when (i) {
@@ -105,7 +105,7 @@ public fun String.underlineAsHtml(from: Int, to: Int): String {
     val underlineEnd = "</u>"
 
     for (i in indices) {
-        val c = charAt(i)
+        val c = this[i]
 
         val mark = when (i) {
             from -> {

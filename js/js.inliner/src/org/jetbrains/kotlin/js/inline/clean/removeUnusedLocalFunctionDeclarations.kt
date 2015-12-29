@@ -34,7 +34,7 @@ public fun removeUnusedLocalFunctionDeclarations(root: JsNode) {
                 removableDeclarations
             }
 
-    NodeRemover(javaClass<JsStatement>()) {
+    NodeRemover(JsStatement::class.java) {
         it in removable
     }.accept(root)
 }

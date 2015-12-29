@@ -71,7 +71,7 @@ public object LongOperationFIF : FunctionIntrinsicFactory {
     class BaseBinaryIntrinsic(val applyFun: (left: JsExpression, right: JsExpression) -> JsExpression) : FunctionIntrinsic() {
         override fun apply(receiver: JsExpression?, arguments: List<JsExpression>, context: TranslationContext): JsExpression {
             assert(receiver != null)
-            assert(arguments.size() == 1)
+            assert(arguments.size == 1)
             return applyFun(receiver!!, arguments.get(0))
         }
     }

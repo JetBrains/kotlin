@@ -440,7 +440,7 @@ private fun JsNode.withParentsOfNodes(nodes: Set<JsNode>): Set<JsNode> {
                 addAllUntilMatchedOrStatement(stack)
             }
 
-            stack.remove(stack.lastIndex)
+            stack.removeAt(stack.lastIndex)
         }
 
         fun addAllUntilMatchedOrStatement(nodesOnStack: List<JsNode>) {
@@ -459,7 +459,7 @@ private fun JsNode.withParentsOfNodes(nodes: Set<JsNode>): Set<JsNode> {
 }
 
 private fun List<JsStatement>.toStatement(): JsStatement =
-        when (size()) {
+        when (size) {
             0 -> JsEmpty
             1 -> get(0)
             else -> JsBlock(this)

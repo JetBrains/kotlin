@@ -57,7 +57,7 @@ abstract class FunctionContext(
     }
 
     public fun declareFunctionConstructorCalls(arguments: List<JsExpression>) {
-        val calls = ContainerUtil.findAll<JsExpression, JsInvocation>(arguments, javaClass<JsInvocation>())
+        val calls = ContainerUtil.findAll<JsExpression, JsInvocation>(arguments, JsInvocation::class.java)
 
         for (call in calls) {
             val callName = getSimpleName(call)

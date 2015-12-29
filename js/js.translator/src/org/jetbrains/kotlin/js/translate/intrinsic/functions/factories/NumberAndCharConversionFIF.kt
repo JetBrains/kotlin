@@ -65,7 +65,7 @@ public object NumberAndCharConversionFIF : CompositeFIF() {
     class ConversionUnaryIntrinsic(val applyFun: (receiver: JsExpression) -> JsExpression) : FunctionIntrinsic() {
         override fun apply(receiver: JsExpression?, arguments: List<JsExpression>, context: TranslationContext): JsExpression {
             assert(receiver != null)
-            assert(arguments.size() == 0)
+            assert(arguments.size == 0)
             return applyFun(receiver!!)
         }
     }

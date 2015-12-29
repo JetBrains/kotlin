@@ -74,7 +74,7 @@ internal abstract class AbstractNativeIndexerChecker(
     override fun additionalCheck(declaration: KtNamedFunction, descriptor: FunctionDescriptor, diagnosticHolder: DiagnosticSink) {
         val parameters = descriptor.getValueParameters()
         val builtIns = descriptor.builtIns
-        if (parameters.size() > 0) {
+        if (parameters.size > 0) {
             val firstParamClassDescriptor = DescriptorUtils.getClassDescriptorForType(parameters.get(0).getType())
             if (firstParamClassDescriptor != builtIns.string &&
                 !DescriptorUtils.isSubclass(firstParamClassDescriptor, builtIns.number)
@@ -83,7 +83,7 @@ internal abstract class AbstractNativeIndexerChecker(
             }
         }
 
-        if (parameters.size() != requiredParametersCount) {
+        if (parameters.size != requiredParametersCount) {
             diagnosticHolder.report(ErrorsJs.NATIVE_INDEXER_WRONG_PARAMETER_COUNT.on(declaration, requiredParametersCount, indexerKind))
         }
 
@@ -114,7 +114,7 @@ internal class NativeSetterChecker : AbstractNativeIndexerChecker(PredefinedAnno
         if (returnType == null || KotlinBuiltIns.isUnit(returnType)) return
 
         val parameters = descriptor.getValueParameters()
-        if (parameters.size() < 2) return
+        if (parameters.size < 2) return
 
         val secondParameterType = parameters.get(1).getType()
         if (secondParameterType.isSubtypeOf(returnType)) return

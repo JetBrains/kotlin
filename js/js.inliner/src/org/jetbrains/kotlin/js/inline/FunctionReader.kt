@@ -112,8 +112,8 @@ public class FunctionReader(private val context: TranslationContext) {
         if (index < 0) return null
 
         // + 1 for closing quote
-        var offset = index + tag.length() + 1
-        while (offset < source.length() && source.charAt(offset).isWhitespaceOrComma) {
+        var offset = index + tag.length + 1
+        while (offset < source.length && source[offset].isWhitespaceOrComma) {
             offset++
         }
 

@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.ArrayList
 
 public fun CallArgumentTranslator.ArgumentsInfo.argsWithReceiver(receiver: JsExpression): List<JsExpression> {
-    val allArguments = ArrayList<JsExpression>(1 + reifiedArguments.size() + valueArguments.size())
+    val allArguments = ArrayList<JsExpression>(1 + reifiedArguments.size + valueArguments.size)
     allArguments.addAll(reifiedArguments)
     allArguments.add(receiver)
     allArguments.addAll(valueArguments)
@@ -165,7 +165,7 @@ object InvokeIntrinsic : FunctionCallCase() {
         val callableDescriptor = callInfo.callableDescriptor
         if (callableDescriptor.getName() != OperatorNameConventions.INVOKE)
             return false
-        val parameterCount = callableDescriptor.getValueParameters().size()
+        val parameterCount = callableDescriptor.getValueParameters().size
         val funDeclaration = callableDescriptor.getContainingDeclaration()
 
         val reflectionTypes = callInfo.context.getReflectionTypes()

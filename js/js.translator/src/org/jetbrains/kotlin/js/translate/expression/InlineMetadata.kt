@@ -44,7 +44,7 @@ public class InlineMetadata(val tag: JsStringLiteral, val function: JsFunction) 
             if (Namer.CREATE_INLINE_FUNCTION != call.getQualifier()) return null
 
             val arguments = call.getArguments()
-            if (arguments.size() != METADATA_PROPERTIES_COUNT) return null
+            if (arguments.size != METADATA_PROPERTIES_COUNT) return null
 
             val tag = arguments[0] as? JsStringLiteral
             val function = arguments[1] as? JsFunction

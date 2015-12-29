@@ -37,7 +37,7 @@ public fun removeUnusedFunctionDefinitions(root: JsNode, functions: Map<JsName, 
         removableFunctions
     }
 
-    NodeRemover(javaClass<JsPropertyInitializer>()) {
+    NodeRemover(JsPropertyInitializer::class.java) {
         val function = it.getValueExpr() as? JsFunction
         function != null && function in removable
     }.accept(root)

@@ -85,7 +85,7 @@ public object KotlinJavascriptSerializationUtil {
     public fun contentMapToByteArray(contentMap: Map<String, ByteArray>): ByteArray {
         val contentBuilder = JsProtoBuf.Library.newBuilder()
         contentMap.forEach {
-            val entry = JsProtoBuf.Library.FileEntry.newBuilder().setPath(it.getKey()).setContent(ByteString.copyFrom(it.getValue())).build()
+            val entry = JsProtoBuf.Library.FileEntry.newBuilder().setPath(it.key).setContent(ByteString.copyFrom(it.value)).build()
             contentBuilder.addEntry(entry)
         }
 
@@ -201,7 +201,7 @@ public object KotlinJavascriptSerializationUtil {
     }
 
     private fun getPackages(contentMap: Map<String, ByteArray>): Set<String> {
-        val keys = contentMap.keySet().map { (if (it.startsWith('/')) it else "/" + it).substringBeforeLast('/') }.toSet()
+        val keys = contentMap.keys.map { (if (it.startsWith('/')) it else "/" + it).substringBeforeLast('/') }.toSet()
 
         val result = hashSetOf<String>()
 
@@ -222,7 +222,7 @@ public object KotlinJavascriptSerializationUtil {
 }
 
 public fun KotlinJavascriptMetadata.forEachFile(operation: (filePath: String, fileContent: ByteArray) -> Unit): Unit =
-        this.body.toContentMap().forEach { operation(it.getKey(), it.getValue()) }
+        this.body.toContentMap().forEach { operation(it.key, it.value) }
 
 private fun ByteArray.toContentMap(): Map<String, ByteArray> {
     val gzipInputStream = GZIPInputStream(ByteArrayInputStream(this))

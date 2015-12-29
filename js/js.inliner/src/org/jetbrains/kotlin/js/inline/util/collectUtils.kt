@@ -41,7 +41,7 @@ public fun collectLocalNames(function: JsFunction): List<JsName> {
 
     return with(NameCollector(functionScope)) {
         accept(function.getBody())
-        names.values().toList()
+        names.values.toList()
     }
 }
 

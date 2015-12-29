@@ -92,7 +92,7 @@ public class JsCallChecker(
             val parserScope = JsFunctionScope(JsRootScope(JsProgram("<js checker>")), "<js fun>")
             val statements = parse(code, errorReporter, parserScope)
 
-            if (statements.size() == 0) {
+            if (statements.size == 0) {
                 context.trace.report(ErrorsJs.JSCODE_NO_JAVASCRIPT_PRODUCED.on(argument))
             }
         } catch (e: AbortParsingException) {
@@ -153,8 +153,8 @@ private fun String.offsetOf(position: CodePosition): Int {
     var lineCount = 0
     var offsetInLine = 0
 
-    while (i < length()) {
-        val c = charAt(i)
+    while (i < length) {
+        val c = this[i]
 
         if (lineCount == position.line && offsetInLine == position.offset) {
             return i
@@ -170,7 +170,7 @@ private fun String.offsetOf(position: CodePosition): Int {
         }
     }
 
-    return length()
+    return length
 }
 
 private val KtExpression.isConstantStringLiteral: Boolean

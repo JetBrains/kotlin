@@ -42,7 +42,7 @@ public fun aliasArgumentsIfNeeded(
         context.replaceName(paramName, replacement)
     }
 
-    val defaultParams = parameters.subList(arguments.size(), parameters.size())
+    val defaultParams = parameters.subList(arguments.size, parameters.size)
     for (defaultParam in defaultParams) {
         val paramName = defaultParam.getName()
         val freshName = context.getFreshName(paramName)

@@ -177,7 +177,7 @@ private class PropertyTranslator(
         val containingScope = context().getScopeForDescriptor(setterDescriptor.getContainingDeclaration())
         val function = JsFunction(containingScope, JsBlock(), accessorDescription(setterDescriptor))
 
-        assert(setterDescriptor.getValueParameters().size() == 1) { "Setter must have 1 parameter" }
+        assert(setterDescriptor.getValueParameters().size == 1) { "Setter must have 1 parameter" }
         val correspondingPropertyName = setterDescriptor.getCorrespondingProperty().getName().asString()
         val valueParameter = function.addParameter(correspondingPropertyName).getName()
         val withAliased = context().innerContextWithAliased(setterDescriptor.getValueParameters().get(0), valueParameter.makeRef())
