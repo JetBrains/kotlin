@@ -145,7 +145,7 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
                 val startOffset = bounds.getStartOffset()
                 document.replaceString(startOffset, bounds.getEndOffset(), text)
 
-                val endOffsetAfterCopy = startOffset + text.length()
+                val endOffsetAfterCopy = startOffset + text.length
                 editor.getCaretModel().moveToOffset(endOffsetAfterCopy)
 
                 var newBounds = insertImports(TextRange(startOffset, endOffsetAfterCopy), referenceData, explicitImports)
@@ -211,7 +211,7 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
     private fun buildReferenceData(text: String, parseContext: ParseContext, importsAndPackage: String, targetFile: KtFile): Collection<KotlinReferenceData> {
         var blockStart: Int? = null
         var blockEnd: Int? = null
-        val fileText = StringBuilder {
+        val fileText = buildString {
             append(importsAndPackage)
 
             val (contextPrefix, contextSuffix) = when (parseContext) {
@@ -221,12 +221,12 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
 
             append(contextPrefix)
 
-            blockStart = length()
+            blockStart = length
             append(text)
-            blockEnd = length()
+            blockEnd = length
 
             append(contextSuffix)
-        }.toString()
+        }
 
         val dummyFile = KtPsiFactory(targetFile.getProject()).createAnalyzableFile("dummy.kt", fileText, targetFile)
 

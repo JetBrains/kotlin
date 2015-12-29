@@ -34,7 +34,7 @@ public class RegisteredFindersTest : KotlinLightCodeInsightFixtureTestCase() {
                 val name = finder.javaClass.getSimpleName()
                 val removed = expectedFindersNames.remove(name)
                 Assert.assertTrue("Unknown finder found: $finder, class name: $name, search in $expectedFindersNames.\n" +
-                                  "Consider updating ${javaClass<KotlinJavaPsiFacade>()}",
+                                  "Consider updating ${KotlinJavaPsiFacade::class.java}",
                                   removed)
             }
         }

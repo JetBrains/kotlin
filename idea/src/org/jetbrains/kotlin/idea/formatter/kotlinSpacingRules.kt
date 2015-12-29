@@ -44,7 +44,7 @@ fun SpacingBuilder.afterInside(element: IElementType, tokenSet: TokenSet, spacin
 }
 
 fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
-    val jetSettings = settings.getCustomSettings(javaClass<KotlinCodeStyleSettings>())!!
+    val jetSettings = settings.getCustomSettings(KotlinCodeStyleSettings::class.java)!!
     val jetCommonSettings = settings.getCommonSettings(KotlinLanguage.INSTANCE)!!
 
     return rules(settings) {

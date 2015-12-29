@@ -168,7 +168,7 @@ private fun collectOverriddenPropertyAccessors(properties: Collection<KtProperty
         }
     }
 
-    val classes = collectContainingClasses(mappingToJava.keySet())
+    val classes = collectContainingClasses(mappingToJava.keys)
 
     for (property in getOverriddenDeclarations(mappingToJava, classes)) {
         ProgressManager.checkCanceled()
@@ -198,7 +198,7 @@ private fun collectOverriddenFunctions(functions: Collection<KtNamedFunction>, r
         }
     }
 
-    val classes = collectContainingClasses(mappingToJava.keySet())
+    val classes = collectContainingClasses(mappingToJava.keys)
 
     for (function in getOverriddenDeclarations(mappingToJava, classes)) {
         ProgressManager.checkCanceled()

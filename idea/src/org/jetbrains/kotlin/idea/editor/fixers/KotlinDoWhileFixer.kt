@@ -34,16 +34,16 @@ public class KotlinDoWhileFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmar
         val whileKeyword = psiElement.getWhileKeyword()
         if (body == null) {
             if (whileKeyword == null) {
-                doc.replaceString(start, start + "do".length(), "do {} while()")
+                doc.replaceString(start, start + "do".length, "do {} while()")
             }
             else {
-                doc.insertString(start + "do".length(), "{}")
+                doc.insertString(start + "do".length, "{}")
             }
             return
         }
         else if (whileKeyword != null && body !is KtBlockExpression && body.startLine(doc) > psiElement.startLine(doc)) {
             doc.insertString(whileKeyword.range.start, "}")
-            doc.insertString(start + "do".length(), "{")
+            doc.insertString(start + "do".length, "{")
 
             return
         }

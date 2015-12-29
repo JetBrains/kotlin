@@ -87,7 +87,7 @@ public abstract class AbstractMemberPullPushTest : KotlinLightCodeInsightFixture
         catch(e: Exception) {
             val message = when (e) {
                 is BaseRefactoringProcessor.ConflictsInTestsException -> e.messages.sorted().joinToString("\n")
-                is CommonRefactoringUtil.RefactoringErrorHintException -> e.getMessage()!!
+                is CommonRefactoringUtil.RefactoringErrorHintException -> e.message!!
                 else -> throw e
             }
             KotlinTestUtils.assertEqualsToFile(conflictFile, message)

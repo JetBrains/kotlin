@@ -185,7 +185,7 @@ class RunConfigurationTest: KotlinCodeInsightTestCase() {
                             val text = comment.getText() ?: return
                             if (!text.startsWith(RUN_PREFIX)) return
 
-                            val expectedClass = text.substring(RUN_PREFIX.length()).trim()
+                            val expectedClass = text.substring(RUN_PREFIX.length).trim()
                             if (expectedClass.isNotEmpty()) expectedClasses.add(expectedClass)
 
                             val dataContext = MapDataContext()

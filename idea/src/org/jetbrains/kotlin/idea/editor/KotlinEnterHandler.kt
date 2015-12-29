@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 
 public class KotlinEnterHandler: EnterHandlerDelegateAdapter() {
     companion object {
-        private val LOG = Logger.getInstance(javaClass<KotlinEnterHandler>())
+        private val LOG = Logger.getInstance(KotlinEnterHandler::class.java)
         private val FORCE_INDENT_IN_LAMBDA_AFTER = TokenSet.create(KtTokens.ARROW, KtTokens.LBRACE)
     }
 
@@ -61,7 +61,7 @@ public class KotlinEnterHandler: EnterHandlerDelegateAdapter() {
         val text = document.getCharsSequence()
         val caretOffset = caretOffsetRef.get()!!.toInt()
 
-        if (caretOffset !in 0..text.length()) return EnterHandlerDelegate.Result.Continue
+        if (caretOffset !in 0..text.length) return EnterHandlerDelegate.Result.Continue
 
         val elementAt = file.findElementAt(caretOffset)
         if (elementAt is PsiWhiteSpace && ("\n" in elementAt.getText()!!)) return EnterHandlerDelegate.Result.Continue

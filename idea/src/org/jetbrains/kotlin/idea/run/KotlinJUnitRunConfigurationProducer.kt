@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 public class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfiguration>(JUnitConfigurationType.getInstance()) {
     override fun isConfigurationFromContext(configuration: JUnitConfiguration,
                                             context: ConfigurationContext): Boolean {
-        if (RunConfigurationProducer.getInstance(javaClass<PatternConfigurationProducer>()).isMultipleElementsSelected(context)) {
+        if (RunConfigurationProducer.getInstance(PatternConfigurationProducer::class.java).isMultipleElementsSelected(context)) {
             return false
         }
 
@@ -134,7 +134,7 @@ public class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUni
 
     private fun getTestMethodLocation(leaf: PsiElement): Location<PsiMethod>? {
         val function = leaf.getParentOfType<KtNamedFunction>(false) ?: return null
-        val owner = PsiTreeUtil.getParentOfType(function, javaClass<KtFunction>(), javaClass<KtClass>())
+        val owner = PsiTreeUtil.getParentOfType(function, KtFunction::class.java, KtClass::class.java)
 
         if (owner is KtClass) {
             val delegate = LightClassUtil.getPsiClass(owner) ?: return null

@@ -35,7 +35,7 @@ public class FileAttributeServiceImpl : FileAttributeService {
 
         attribute.writeAttribute(file).use {
             DataInputOutputUtil.writeTIME(it, data.timeStamp)
-            DataInputOutputUtil.writeINT(it, data.value?.ordinal() ?: -1)
+            DataInputOutputUtil.writeINT(it, data.value?.ordinal ?: -1)
         }
 
         return data

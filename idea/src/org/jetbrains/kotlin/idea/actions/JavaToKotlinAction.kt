@@ -68,7 +68,7 @@ public class JavaToKotlinAction : AnAction() {
                     result.add(virtualFile)
                 }
                 catch (e: IOException) {
-                    MessagesEx.error(psiFile.getProject(), e.getMessage()).showLater()
+                    MessagesEx.error(psiFile.getProject(), e.message).showLater()
                 }
             }
             return result

@@ -43,7 +43,7 @@ class LightClassesClasspathSortingTest : KotlinCodeInsightTestCase() {
         getModule().configureAs(getProjectDescriptor(dirName))
 
         val testDirRoot = File(getTestDataPath())
-        val filePaths = File(testDirRoot, dirName).listFiles().map { it.relativeTo(testDirRoot) }.toArrayList().toTypedArray()
+        val filePaths = File(testDirRoot, dirName).listFiles().map { it.toRelativeString(testDirRoot) }.toTypedArray()
         configureByFiles(null, *filePaths)
 
         checkLightClassBeforeDecompiled(fqName)

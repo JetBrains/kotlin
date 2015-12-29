@@ -85,7 +85,7 @@ class KotlinUnusedImportInspection : AbstractKotlinInspection() {
 
         val problems = ArrayList<ProblemDescriptor>()
 
-        val importPaths = HashSet<ImportPath>(directives.size())
+        val importPaths = HashSet<ImportPath>(directives.size)
 
         for (directive in directives) {
             val importPath = directive.importPath ?: continue

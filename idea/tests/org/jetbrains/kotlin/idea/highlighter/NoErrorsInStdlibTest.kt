@@ -49,12 +49,12 @@ public class NoErrorsInStdlibTest : KotlinLightCodeInsightFixtureTestCase() {
                     val errors = bindingContext.getDiagnostics().all().filter { it.getSeverity() == Severity.ERROR }
 
                     if (errors.isNotEmpty()) {
-                        System.err.println("${psiFile.getName()}: ${errors.size()} errors")
+                        System.err.println("${psiFile.getName()}: ${errors.size} errors")
                         AnalyzerWithCompilerReport.reportDiagnostics(
                                 bindingContext.getDiagnostics(), PrintingMessageCollector.PLAIN_TEXT_TO_SYSTEM_ERR
                         )
 
-                        totalErrors += errors.size()
+                        totalErrors += errors.size
                     }
                 }
             }

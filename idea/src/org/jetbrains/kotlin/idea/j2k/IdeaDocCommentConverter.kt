@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.j2k.content
 
 object IdeaDocCommentConverter : DocCommentConverter {
     override fun convertDocComment(docComment: PsiDocComment): String {
-        val html = StringBuilder {
+        val html = buildString {
             appendJavadocElements(docComment.getDescriptionElements())
 
             tagsLoop@
@@ -46,7 +46,7 @@ object IdeaDocCommentConverter : DocCommentConverter {
                     else -> appendJavadocElements(tag.getChildren()).append("\n")
                 }
             }
-        }.toString()
+        }
 
         if (html.trim().isEmpty() && docComment.findTagByName("deprecated") != null) {
             // @deprecated was the only content of the doc comment; we can drop the comment

@@ -40,7 +40,7 @@ public abstract class AbstractUsageHighlightingTest: KotlinLightCodeInsightFixtu
         assert(caret != -1) { "Caret marker '$CARET_TAG' expected" }
 
         WriteCommandAction.runWriteCommandAction(myFixture.getProject()) {
-            document.deleteString(caret, caret + CARET_TAG.length())
+            document.deleteString(caret, caret + CARET_TAG.length)
         }
 
         getEditor().getCaretModel().moveToOffset(caret)
@@ -52,8 +52,8 @@ public abstract class AbstractUsageHighlightingTest: KotlinLightCodeInsightFixtu
             var startOffset = highlighter.getStartOffset()
             var endOffset = highlighter.getEndOffset()
 
-            if (startOffset > caret) startOffset += CARET_TAG.length()
-            if (endOffset > caret) endOffset += CARET_TAG.length()
+            if (startOffset > caret) startOffset += CARET_TAG.length
+            if (endOffset > caret) endOffset += CARET_TAG.length
 
             HighlightInfo.newHighlightInfo(HighlightInfoType.INFORMATION).range(startOffset, endOffset).create()
         }

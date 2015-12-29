@@ -78,7 +78,7 @@ public abstract class AbstractNavigateToLibrarySourceTest : KotlinCodeInsightTes
 
             refs.forEach { referenceContainersToReferences.addReference(it) }
         }
-        return referenceContainersToReferences.values()
+        return referenceContainersToReferences.values
     }
 
     private fun MutableMap<PsiElement, KtReference>.addReference(ref: KtReference) {

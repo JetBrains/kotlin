@@ -36,7 +36,7 @@ public abstract class AbstractAddImportTest : AbstractImportsTest() {
         var filter: (DeclarationDescriptor) -> Boolean = { true }
         if (descriptorName.startsWith("class:")) {
             filter = { it is ClassDescriptor }
-            descriptorName = descriptorName.substring("class:".length()).trim()
+            descriptorName = descriptorName.substring("class:".length).trim()
         }
 
         val descriptors = file.resolveImportReference(FqName(descriptorName)).filter(filter)
@@ -45,7 +45,7 @@ public abstract class AbstractAddImportTest : AbstractImportsTest() {
             descriptors.isEmpty() ->
                 error("No descriptor $descriptorName found")
 
-            descriptors.size() > 1 ->
+            descriptors.size > 1 ->
                 error("Multiple descriptors found:\n    " + descriptors.map { DescriptorRenderer.FQ_NAMES_IN_TYPES.render(it) }.joinToString("\n    "))
 
             else -> {

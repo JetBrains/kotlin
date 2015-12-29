@@ -126,9 +126,9 @@ private fun JavaCodeInsightTestFixture.configureByCodeFragment(filePath: String)
     val typeStr = InTextDirectivesUtils.findStringWithPrefixes(getFile().getText(), "// ${ExpectedCompletionUtils.RUNTIME_TYPE} ")
     if (typeStr != null) {
         file.putCopyableUserData(KtCodeFragment.RUNTIME_TYPE_EVALUATOR, {
-            val codeFragment = KtPsiFactory(getProject()).createBlockCodeFragment("val xxx: $typeStr" , PsiTreeUtil.getParentOfType(elementAt, javaClass<KtElement>()))
+            val codeFragment = KtPsiFactory(getProject()).createBlockCodeFragment("val xxx: $typeStr" , PsiTreeUtil.getParentOfType(elementAt, KtElement::class.java))
             val context = codeFragment.analyzeFully()
-            val typeReference: KtTypeReference = PsiTreeUtil.getChildOfType(codeFragment.getContentElement().getFirstChild(), javaClass())!!
+            val typeReference: KtTypeReference = PsiTreeUtil.getChildOfType(codeFragment.getContentElement().getFirstChild(), KtTypeReference::class.java)!!
             context[BindingContext.TYPE, typeReference]
         })
     }
@@ -140,7 +140,7 @@ private fun createCodeFragment(filePath: String, contextElement: PsiElement): Kt
     val fileForFragment = File(filePath + ".fragment")
     val codeFragmentText = FileUtil.loadFile(fileForFragment, true).trim()
     val psiFactory = KtPsiFactory(contextElement.getProject())
-    if (fileForFragment.readLines().size() == 1) {
+    if (fileForFragment.readLines().size == 1) {
         return psiFactory.createExpressionCodeFragment(
                 codeFragmentText,
                 KotlinCodeFragmentFactory.getContextElement(contextElement)

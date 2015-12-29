@@ -35,7 +35,7 @@ public class KotlinReferencesSearchTest(): AbstractSearcherTest() {
 
     public fun testPlus() {
         val refs = doTest<KtFunction>()
-        Assert.assertEquals(3, refs.size())
+        Assert.assertEquals(3, refs.size)
         Assert.assertEquals("+", refs[0].getCanonicalText())
         Assert.assertEquals("plus", refs[1].getCanonicalText())
         Assert.assertEquals("plus", refs[2].getCanonicalText())
@@ -43,7 +43,7 @@ public class KotlinReferencesSearchTest(): AbstractSearcherTest() {
 
     public fun testParam() {
         val refs = doTest<KtParameter>()
-        Assert.assertEquals(3, refs.size())
+        Assert.assertEquals(3, refs.size)
         Assert.assertEquals("n", refs[0].getCanonicalText())
         Assert.assertEquals("component1", refs[1].getCanonicalText())
         Assert.assertTrue(refs[2] is KtDestructuringDeclarationReference)

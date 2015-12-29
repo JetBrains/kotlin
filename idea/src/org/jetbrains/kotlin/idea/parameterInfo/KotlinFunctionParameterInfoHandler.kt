@@ -160,7 +160,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
 
         var boldStartOffset = -1
         var boldEndOffset = -1
-        val text = StringBuilder {
+        val text = buildString {
             val usedParameterIndices = HashSet<Int>()
             var namedMode = false
 
@@ -172,19 +172,19 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
             val includeParameterNames = !substitutedDescriptor.hasSynthesizedParameterNames()
 
             fun appendParameter(parameter: ValueParameterDescriptor) {
-                if (length() > 0) {
+                if (length > 0) {
                     append(", ")
                 }
 
                 val highlightParameter = parameter.index == highlightParameterIndex
                 if (highlightParameter) {
-                    boldStartOffset = length()
+                    boldStartOffset = length
                 }
 
                 append(renderParameter(parameter, includeParameterNames, namedMode, project))
 
                 if (highlightParameter) {
-                    boldEndOffset = length()
+                    boldEndOffset = length
                 }
             }
 
@@ -206,10 +206,10 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
                 }
             }
 
-            if (length() == 0) {
+            if (length == 0) {
                 append(CodeInsightBundle.message("parameter.info.no.parameters"))
             }
-        }.toString()
+        }
 
 
         val color = if (isResolvedToDescriptor(call, itemToShow, bindingContext))
@@ -234,7 +234,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
     override fun getParametersForDocumentation(item: FunctionDescriptor, context: ParameterInfoContext) = emptyArray<Any>()
 
     private fun renderParameter(parameter: ValueParameterDescriptor, includeName: Boolean, named: Boolean, project: Project): String {
-        return StringBuilder {
+        return buildString {
             if (named) append("[")
 
             if (parameter.varargElementType != null) {
@@ -254,14 +254,14 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
             }
 
             if (named) append("]")
-        }.toString()
+        }
     }
 
     private fun ValueParameterDescriptor.renderDefaultValue(project: Project): String {
         val expression = OptionalParametersHelper.defaultParameterValueExpression(this, project)
         if (expression != null) {
             val text = expression.text
-            if (text.length() <= 32) {
+            if (text.length <= 32) {
                 return text
             }
 
@@ -313,13 +313,13 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
             return SignatureInfo(overload, { null }, null, isGrey = false)
         }
 
-        assert(call.valueArguments.size() >= currentArgumentIndex)
+        assert(call.valueArguments.size >= currentArgumentIndex)
 
         val argumentsBeforeCurrent = call.valueArguments.subList(0, currentArgumentIndex)
 
         val callToUse: Call
         val currentArgument: ValueArgument
-        if (call.valueArguments.size() > currentArgumentIndex) {
+        if (call.valueArguments.size > currentArgumentIndex) {
             currentArgument = call.valueArguments[currentArgumentIndex]
             callToUse = call
         }

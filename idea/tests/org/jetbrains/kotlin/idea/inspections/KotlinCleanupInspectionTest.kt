@@ -32,7 +32,7 @@ class KotlinCleanupInspectionTest(): KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     private fun doTest(result: String, vararg files: String) {
-        myFixture.enableInspections(javaClass<KotlinCleanupInspection>())
+        myFixture.enableInspections(KotlinCleanupInspection::class.java)
         myFixture.configureByFiles(*files)
 
         val project = myFixture.getProject()

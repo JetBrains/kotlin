@@ -62,7 +62,7 @@ public class FindImplicitNothingAction : AnAction() {
         val progressIndicator = ProgressManager.getInstance().getProgressIndicator()
         val found = ArrayList<KtCallExpression>()
         for ((i, file) in files.withIndex()) {
-            progressIndicator?.setText("Scanning files: $i of ${files.size()} file. ${found.size()} occurences found")
+            progressIndicator?.setText("Scanning files: $i of ${files.size} file. ${found.size} occurences found")
             progressIndicator?.setText2(file.getVirtualFile().getPath())
 
             val resolutionFacade = file.getResolutionFacade()
@@ -91,7 +91,7 @@ public class FindImplicitNothingAction : AnAction() {
                 }
             })
 
-            progressIndicator?.setFraction((i + 1) / files.size().toDouble())
+            progressIndicator?.setFraction((i + 1) / files.size.toDouble())
         }
 
         SwingUtilities.invokeLater {
@@ -102,7 +102,7 @@ public class FindImplicitNothingAction : AnAction() {
                 UsageViewManager.getInstance(project).showUsages(arrayOf<UsageTarget>(), usages, presentation)
             }
             else {
-                Messages.showInfoMessage(project, "Not found in ${files.size()} file(s)", "Not Found")
+                Messages.showInfoMessage(project, "Not found in ${files.size} file(s)", "Not Found")
             }
         }
     }

@@ -97,7 +97,7 @@ public class KotlinNameSuggesterTest : LightCodeInsightFixtureTestCase() {
             })
         }
         catch (e: KotlinRefactoringUtil.IntroduceRefactoringException) {
-            throw AssertionError("Failed to find expression: " + e.getMessage())
+            throw AssertionError("Failed to find expression: " + e.message)
         }
         finally {
             if (withRuntime) {

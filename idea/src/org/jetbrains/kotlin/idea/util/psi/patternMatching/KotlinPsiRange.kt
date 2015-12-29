@@ -68,7 +68,7 @@ public interface KotlinPsiRange {
                         val range = element
                                 .siblings()
                                 .filter(SIGNIFICANT_FILTER)
-                                .take(elements.size())
+                                .take(elements.size)
                                 .toList()
                                 .toRange()
 
@@ -78,9 +78,9 @@ public interface KotlinPsiRange {
                             matches.add(result)
                         }
                         else {
-                            val matchCountSoFar = matches.size()
+                            val matchCountSoFar = matches.size
                             super.visitKtElement(element)
-                            if (result is UnificationResult.WeaklyMatched && matches.size() == matchCountSoFar) {
+                            if (result is UnificationResult.WeaklyMatched && matches.size == matchCountSoFar) {
                                 matches.add(result)
                             }
                         }

@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
 public class KotlinCoverageExtension(): JavaCoverageEngineExtension() {
-    private val LOG = Logger.getInstance(javaClass<KotlinCoverageExtension>())
+    private val LOG = Logger.getInstance(KotlinCoverageExtension::class.java)
 
     override fun isApplicableTo(conf: RunConfigurationBase?): Boolean = conf is JetRunConfiguration
 
@@ -96,7 +96,7 @@ public class KotlinCoverageExtension(): JavaCoverageEngineExtension() {
     }
 
     companion object {
-        private val LOG = Logger.getInstance(javaClass<KotlinCoverageExtension>())
+        private val LOG = Logger.getInstance(KotlinCoverageExtension::class.java)
 
         fun collectGeneratedClassQualifiedNames(outputRoot: VirtualFile?, file: KtFile): List<String>? {
             val existingClassFiles = getClassesGeneratedFromFile(outputRoot, file)

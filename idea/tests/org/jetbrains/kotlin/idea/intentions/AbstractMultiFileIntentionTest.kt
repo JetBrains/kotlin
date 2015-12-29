@@ -72,7 +72,7 @@ public abstract class AbstractMultiFileIntentionTest : KotlinMultiFileTestCase()
                        assert(conflictFile == null) { "Conflict file $conflictFile should not exist" }
                    }
                    catch (e: CommonRefactoringUtil.RefactoringErrorHintException) {
-                       KotlinTestUtils.assertEqualsToFile(File(conflictFile!!.path), e.getMessage()!!)
+                       KotlinTestUtils.assertEqualsToFile(File(conflictFile!!.path), e.message!!)
                    }
                    finally {
                        PsiDocumentManager.getInstance(getProject()!!).commitAllDocuments()

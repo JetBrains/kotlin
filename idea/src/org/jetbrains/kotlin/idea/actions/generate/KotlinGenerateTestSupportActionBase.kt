@@ -179,7 +179,7 @@ abstract class KotlinGenerateTestSupportActionBase(
                 setupEditorSelection(editor, functionInPlace)
             }
             catch (e: IncorrectOperationException) {
-                HintManager.getInstance().showErrorHint(editor, "Cannot generate method: " + e.getMessage())
+                HintManager.getInstance().showErrorHint(editor, "Cannot generate method: " + e.message)
             }
         }
     }

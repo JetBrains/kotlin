@@ -80,7 +80,7 @@ public class KotlinQuickDocumentationProvider : AbstractDocumentationProvider() 
     }
 
     companion object {
-        private val LOG = Logger.getInstance(javaClass<KotlinQuickDocumentationProvider>())
+        private val LOG = Logger.getInstance(KotlinQuickDocumentationProvider::class.java)
 
         private val DESCRIPTOR_RENDERER = DescriptorRenderer.HTML.withOptions {
             nameShortness = NameShortness.SHORT

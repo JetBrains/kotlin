@@ -42,7 +42,7 @@ abstract class MissingConditionFixer<T: PsiElement>() : SmartEnterProcessorWithF
                 stopOffset = Math.min(stopOffset, workElement.range.end)
 
                 doc.replaceString(workElement.range.start, stopOffset, "$keyword ()")
-                processor.registerUnresolvedError(workElement.range.start + "$keyword (".length())
+                processor.registerUnresolvedError(workElement.range.start + "$keyword (".length)
             }
             else {
                 processor.registerUnresolvedError(lParen.range.end)

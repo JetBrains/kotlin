@@ -122,7 +122,7 @@ public abstract class AbstractOverrideImplementTest : KotlinLightCodeInsightFixt
 
     private fun doOverrideImplement(handler: OverrideImplementMembersHandler, memberToOverride: String?) {
         val elementAtCaret = myFixture.file.findElementAt(myFixture.editor.caretModel.offset)
-        val classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, javaClass<KtClassOrObject>())
+        val classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, KtClassOrObject::class.java)
                             ?: error("Caret should be inside class or object")
 
         val chooserObjects = handler.collectMembersToGenerate(classOrObject)
@@ -133,7 +133,7 @@ public abstract class AbstractOverrideImplementTest : KotlinLightCodeInsightFixt
                     !KotlinBuiltIns.isAny(it)
                 } ?: true
             }
-            assertEquals(1, filtered.size(), "Invalid number of available chooserObjects for override")
+            assertEquals(1, filtered.size, "Invalid number of available chooserObjects for override")
             filtered.single()
         }
         else {
@@ -157,7 +157,7 @@ public abstract class AbstractOverrideImplementTest : KotlinLightCodeInsightFixt
 
     private fun doMultiOverrideImplement(handler: OverrideImplementMembersHandler) {
         val elementAtCaret = myFixture.file.findElementAt(myFixture.editor.caretModel.offset)
-        val classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, javaClass<KtClassOrObject>())
+        val classOrObject = PsiTreeUtil.getParentOfType(elementAtCaret, KtClassOrObject::class.java)
                             ?: error("Caret should be inside class or object")
 
         val chooserObjects = handler.collectMembersToGenerate(classOrObject).sortedBy { it.descriptor.name.asString() + " in " + it.immediateSuper.containingDeclaration.name.asString() }

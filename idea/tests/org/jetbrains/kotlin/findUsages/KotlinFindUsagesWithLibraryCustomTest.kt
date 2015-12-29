@@ -27,6 +27,6 @@ public class KotlinFindUsagesWithLibraryCustomTest : AbstractKotlinFindUsagesWit
         val indexOf = libraryFile.getText().indexOf("localClassProperty")
         val jetParameter = libraryFile.findElementAt(indexOf)!!.getStrictParentOfType<KtParameter>()!!
         val usages = findUsages(jetParameter.getOriginalElement(), null, false)
-        assertEquals(2, usages.size())
+        assertEquals(2, usages.size)
     }
 }

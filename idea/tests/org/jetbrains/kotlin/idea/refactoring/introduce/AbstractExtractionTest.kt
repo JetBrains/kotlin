@@ -251,7 +251,7 @@ public abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTe
                 if (it.isNotEmpty()) {
                     @Suppress("CAST_NEVER_SUCCEEDS")
                     val args = it.map { it.toBoolean() }.toTypedArray() as Array<Any?>
-                    javaClass<ExtractionOptions>().getConstructors().first { it.getParameterTypes().size() == args.size() }.newInstance(*args) as ExtractionOptions
+                    ExtractionOptions::class.java.getConstructors().first { it.getParameterTypes().size == args.size }.newInstance(*args) as ExtractionOptions
                 } else ExtractionOptions.DEFAULT
             }
 
@@ -281,10 +281,10 @@ public abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTe
                                 it.getParameterTypeCandidates(false).map { renderer.renderType(it) }.joinToString(", ", "[", "]")
                             }.joinToString()
 
-                            if (actualNames.size() != 1 || expectedNames.isNotEmpty()) {
+                            if (actualNames.size != 1 || expectedNames.isNotEmpty()) {
                                 assertEquals(expectedNames, actualNames, "Expected names mismatch.")
                             }
-                            if (actualReturnTypes.size() != 1 || expectedReturnTypes.isNotEmpty()) {
+                            if (actualReturnTypes.size != 1 || expectedReturnTypes.isNotEmpty()) {
                                 assertEquals(expectedReturnTypes, actualReturnTypes, "Expected return types mismatch.")
                             }
                             assertEquals("Expected descriptors mismatch.", expectedDescriptors, actualDescriptors)

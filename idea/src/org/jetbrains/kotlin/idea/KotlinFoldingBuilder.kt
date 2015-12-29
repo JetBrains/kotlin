@@ -42,7 +42,7 @@ public class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
             return
         }
         val imports = root.getImportDirectives()
-        if (imports.size() > 1) {
+        if (imports.size > 1) {
             val importKeyword = imports.get(0).getFirstChild()
             val startOffset = importKeyword.endOffset + 1
 

@@ -129,7 +129,7 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
         catch (e : Exception) {
             if (e !is RefactoringErrorHintException && e !is ConflictsInTestsException) throw e
 
-            val hintExceptionUnquoted = StringUtil.unquoteString(e.getMessage()!!)
+            val hintExceptionUnquoted = StringUtil.unquoteString(e.message!!)
             if (hintDirective != null) {
                 Assert.assertEquals(hintDirective, hintExceptionUnquoted)
             }
@@ -153,11 +153,11 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
 
             val toRename = if (renameParamsObject["byRef"]?.getAsBoolean() ?: false) {
                 val editor = createEditor(mainFile)
-                editor.getCaretModel().moveToOffset(marker + MARKER_TEXT.length())
+                editor.getCaretModel().moveToOffset(marker + MARKER_TEXT.length)
                 TargetElementUtilBase.findTargetElement(editor, TargetElementUtilBase.getInstance().getAllAccepted())!!
             }
             else {
-                psiFile.findElementAt(marker + MARKER_TEXT.length())!!.getNonStrictParentOfType<PsiNamedElement>()!!
+                psiFile.findElementAt(marker + MARKER_TEXT.length)!!.getNonStrictParentOfType<PsiNamedElement>()!!
             }
             val substitution = RenamePsiElementProcessor.forElement(toRename).substituteElementToRename(toRename, null)
 
@@ -228,7 +228,7 @@ public abstract class AbstractRenameTest : KotlinMultiFileTestCase() {
             val fileFqn = jetFile.getPackageFqName()
             Assert.assertTrue("File '${mainFilePath}' should have package containing ${fqn}", fileFqn.isSubpackageOf(fqn))
 
-            val packageSegment = jetFile.getPackageDirective()!!.getPackageNames()[fqn.pathSegments().size() - 1]
+            val packageSegment = jetFile.getPackageDirective()!!.getPackageNames()[fqn.pathSegments().size - 1]
             val segmentReference = packageSegment.mainReference
 
             val psiElement = segmentReference.resolve()!!

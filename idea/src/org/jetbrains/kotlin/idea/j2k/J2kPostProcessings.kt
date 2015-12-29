@@ -118,7 +118,7 @@ object J2KPostProcessingRegistrar {
     ) {
         _processings.add(object : J2kPostProcessing {
             override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
-                if (!javaClass<TElement>().isInstance(element)) return null
+                if (!TElement::class.java.isInstance(element)) return null
                 val tElement = element as TElement
                 if (intention.applicabilityRange(tElement) == null) return null
                 if (!additionalChecker(tElement)) return null
@@ -140,7 +140,7 @@ object J2KPostProcessingRegistrar {
     ) {
         _processings.add(object : J2kPostProcessing {
             override fun createAction(element: KtElement, diagnostics: Diagnostics): (() -> Unit)? {
-                if (!javaClass<TElement>().isInstance(element)) return null
+                if (!TElement::class.java.isInstance(element)) return null
                 val diagnostic = diagnostics.forElement(element).firstOrNull { it.factory == diagnosticFactory } ?: return null
                 return fixFactory(element as TElement, diagnostic)
             }

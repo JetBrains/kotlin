@@ -36,7 +36,7 @@ public class KotlinDeclarationGroupRuleProvider : FileStructureGroupRuleProvider
             val containingFile = element.getContainingFile()
             if (containingFile !is KtFile) return null
 
-            return PsiTreeUtil.getTopmostParentOfType(element, javaClass<KtNamedDeclaration>())?.let { container ->
+            return PsiTreeUtil.getTopmostParentOfType(element, KtNamedDeclaration::class.java)?.let { container ->
                 PsiNamedElementUsageGroupBase(container)
             }
         }

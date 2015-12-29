@@ -120,7 +120,7 @@ public fun navigateToOverriddenMethod(e: MouseEvent?, method: PsiMethod) {
     PsiElementListNavigator.openTargets(
             e,
             overridingJavaMethods.toTypedArray(),
-            methodsUpdater.getCaption(overridingJavaMethods.size()),
+            methodsUpdater.getCaption(overridingJavaMethods.size),
             "Overriding declarations of " + method.getName(),
             renderer,
             methodsUpdater)

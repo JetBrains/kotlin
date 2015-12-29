@@ -83,7 +83,7 @@ public abstract class AbstractReferenceResolveTest : KotlinLightPlatformCodeInsi
 
     private fun forEachCaret(action: (index: Int, offset: Int) -> Unit) {
         val offsets = myFixture.getEditor().getCaretModel().getAllCarets().map { it.getOffset() }
-        val singleCaret = offsets.size() == 1
+        val singleCaret = offsets.size == 1
         for ((index, offset) in offsets.withIndex()) {
             action(if (singleCaret) -1 else index + 1, offset)
         }
@@ -107,7 +107,7 @@ public abstract class AbstractReferenceResolveTest : KotlinLightPlatformCodeInsi
                 referenceToString = "<empty>"
             }
             else {
-                assertTrue(refs.size() == 1, "Must be a single ref: $refs.\nUse $MULTIRESOLVE if you need multiple refs\nUse $REF_EMPTY for an unresolved reference")
+                assertTrue(refs.size == 1, "Must be a single ref: $refs.\nUse $MULTIRESOLVE if you need multiple refs\nUse $REF_EMPTY for an unresolved reference")
                 referenceToString = refs.get(0)
                 Assert.assertNotNull("Test data wasn't found, use \"// REF: \" directive", referenceToString)
             }

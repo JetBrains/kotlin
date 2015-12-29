@@ -93,7 +93,7 @@ var <PROPERTY_WITH_BACKING_FIELD><PACKAGE_PROPERTY><MUTABLE_VARIABLE>globalCount
 
     override fun getAdditionalHighlightingTagToDescriptorMap(): Map<String, TextAttributesKey> {
         val map = HashMap<String, TextAttributesKey>()
-        for (field in javaClass<KotlinHighlightingColors>().getFields()) {
+        for (field in KotlinHighlightingColors::class.java.getFields()) {
             if (Modifier.isStatic(field.getModifiers())) {
                 try {
                     map.put(field.getName(), field.get(null) as TextAttributesKey)

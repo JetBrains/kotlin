@@ -72,7 +72,7 @@ public abstract class AbstractPartialBodyResolveTest : KotlinLightCodeInsightFix
         val editor = myFixture.getEditor()
         val selectionModel = editor.getSelectionModel()
         val expression = if (selectionModel.hasSelection()) {
-            PsiTreeUtil.findElementOfClassAtRange(file, selectionModel.getSelectionStart(), selectionModel.getSelectionEnd(), javaClass<KtExpression>())
+            PsiTreeUtil.findElementOfClassAtRange(file, selectionModel.getSelectionStart(), selectionModel.getSelectionEnd(), KtExpression::class.java)
                 ?: error("No JetExpression at selection range")
         }
         else {

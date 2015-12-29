@@ -55,7 +55,7 @@ private fun createEmptyFile(dir: VirtualFile, relativePath: String) {
     var currentDir = dir
     val segments = relativePath.split('/')
     segments.forEachIndexed { i, s ->
-        if (i < segments.size() - 1) {
+        if (i < segments.size - 1) {
             currentDir = currentDir.createChildDirectory(null, s)
         } else {
             currentDir.createChildData(null, s)

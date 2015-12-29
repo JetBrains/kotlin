@@ -29,7 +29,7 @@ public class KotlinReferenceTransferableData(
 
     override fun getFlavor() = KotlinReferenceData.dataFlavor
 
-    override fun getOffsetCount() = data.size() * 2
+    override fun getOffsetCount() = data.size * 2
 
     override fun getOffsets(offsets: IntArray, index: Int): Int {
         var i = index
@@ -49,7 +49,7 @@ public class KotlinReferenceTransferableData(
         return i
     }
 
-    public override fun clone() = KotlinReferenceTransferableData(Array(data.size(), {  data[it].clone() }))
+    public override fun clone() = KotlinReferenceTransferableData(Array(data.size, {  data[it].clone() }))
 }
 
 public class KotlinReferenceData(
@@ -100,7 +100,7 @@ public class KotlinReferenceData(
     companion object {
         public val dataFlavor: DataFlavor? by lazy {
             try {
-                val dataClass = javaClass<KotlinReferenceData>()
+                val dataClass = KotlinReferenceData::class.java
                 DataFlavor(DataFlavor.javaJVMLocalObjectMimeType + ";class=" + dataClass.getName(),
                            "KotlinReferenceData",
                            dataClass.getClassLoader())

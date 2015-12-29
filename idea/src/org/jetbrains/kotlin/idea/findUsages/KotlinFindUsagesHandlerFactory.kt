@@ -120,7 +120,7 @@ public class KotlinFindUsagesHandlerFactory(project: Project) : FindUsagesHandle
     }
 
     private fun handlerForMultiple(originalDeclaration: KtNamedDeclaration, declarations: Collection<PsiElement>): FindUsagesHandler {
-        return when (declarations.size()) {
+        return when (declarations.size) {
             0 -> FindUsagesHandler.NULL_HANDLER
 
             1 -> {

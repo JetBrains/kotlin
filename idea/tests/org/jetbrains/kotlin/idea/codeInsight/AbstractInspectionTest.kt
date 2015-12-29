@@ -71,13 +71,13 @@ public abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTest
             setTestDataPath("${KotlinTestUtils.getHomeDirectory()}/$srcDir")
 
             val afterFiles = srcDir.listFiles { it -> it.name == "inspectionData" }?.single()?.listFiles { it -> it.extension == "after" } ?: emptyArray()
-            val psiFiles = srcDir.walkTopDown().treeFilter { it.name != "inspectionData" }.mapNotNull {
+            val psiFiles = srcDir.walkTopDown().onEnter { it.name != "inspectionData" }.mapNotNull {
                 file ->
                 if (file.isDirectory) {
                      null
                 }
                 else if (file.extension != "kt") {
-                    val filePath = file.relativeTo(srcDir).replace('\\', '/')
+                    val filePath = file.relativeToFile(srcDir).invariantSeparatorsPath
                     configureByFile(filePath)
                 }
                 else {

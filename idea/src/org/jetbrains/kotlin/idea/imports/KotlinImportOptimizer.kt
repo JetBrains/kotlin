@@ -239,13 +239,13 @@ public class KotlinImportOptimizer() : ImportOptimizer {
             }
 
             //TODO: drop unused aliases?
-            aliasImports.mapTo(importsToGenerate) { ImportPath(it.getValue(), false, it.getKey())}
+            aliasImports.mapTo(importsToGenerate) { ImportPath(it.value, false, it.key)}
 
             val sortedImportsToGenerate = importsToGenerate.sortedWith(importInsertHelper.importSortComparator)
 
             // check if no changes to imports required
             val oldImports = file.importDirectives
-            if (oldImports.size() == sortedImportsToGenerate.size() && oldImports.map { it.importPath } == sortedImportsToGenerate) return null
+            if (oldImports.size == sortedImportsToGenerate.size && oldImports.map { it.importPath } == sortedImportsToGenerate) return null
 
             return sortedImportsToGenerate
         }

@@ -113,9 +113,9 @@ public class KotlinRunConfigurationProducer : RunConfigurationProducer<JetRunCon
 
         private fun PsiElement.declarationContainer(strict: Boolean): KtDeclarationContainer? {
             val element = if (strict)
-                PsiTreeUtil.getParentOfType(this, javaClass<KtClassOrObject>(), javaClass<KtFile>())
+                PsiTreeUtil.getParentOfType(this, KtClassOrObject::class.java, KtFile::class.java)
             else
-                PsiTreeUtil.getNonStrictParentOfType(this, javaClass<KtClassOrObject>(), javaClass<KtFile>())
+                PsiTreeUtil.getNonStrictParentOfType(this, KtClassOrObject::class.java, KtFile::class.java)
             return element as KtDeclarationContainer?
         }
 

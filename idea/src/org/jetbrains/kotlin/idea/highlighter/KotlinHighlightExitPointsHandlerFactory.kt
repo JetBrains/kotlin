@@ -44,8 +44,8 @@ public class KotlinHighlightExitPointsHandlerFactory: HighlightUsagesHandlerFact
         if (target is LeafPsiElement && (target.getElementType() in RETURN_AND_THROW)) {
             val returnOrThrow = PsiTreeUtil.getParentOfType<KtExpression>(
                     target,
-                    javaClass<KtReturnExpression>(),
-                    javaClass<KtThrowExpression>()
+                    KtReturnExpression::class.java,
+                    KtThrowExpression::class.java
             ) ?: return null
 
             return MyHandler(editor, file, returnOrThrow)

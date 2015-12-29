@@ -53,7 +53,7 @@ private val PROPERTY_KEY = FqName(AnnotationUtil.PROPERTY_KEY)
 private val PROPERTY_KEY_RESOURCE_BUNDLE = Name.identifier(AnnotationUtil.PROPERTY_KEY_RESOURCE_BUNDLE_PARAMETER)
 
 private fun AnnotationDescriptor.getBundleName(): String? {
-    return allValueArguments.entrySet().singleOrNull { it.key.name == PROPERTY_KEY_RESOURCE_BUNDLE }?.value?.value as? String
+    return allValueArguments.entries.singleOrNull { it.key.name == PROPERTY_KEY_RESOURCE_BUNDLE }?.value?.value as? String
 }
 
 private fun DeclarationDescriptor.getBundleNameByAnnotation(): String? {
@@ -83,7 +83,7 @@ private fun KtExpression.getBundleNameByContext(): String? {
                 ?.getBundleName()
     }
 
-    return resolvedCall.valueArguments.entrySet()
+    return resolvedCall.valueArguments.entries
             .singleOrNull { it.value.arguments.any { it.getArgumentExpression() == expression } }
             ?.key
             ?.getBundleNameByAnnotation()

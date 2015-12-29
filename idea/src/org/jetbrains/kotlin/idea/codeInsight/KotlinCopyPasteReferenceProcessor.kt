@@ -65,7 +65,7 @@ import java.util.*
 
 //NOTE: this class is based on CopyPasteReferenceProcessor and JavaCopyPasteReferenceProcessor
 public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<KotlinReferenceTransferableData>() {
-    private val LOG = Logger.getInstance(javaClass<KotlinCopyPasteReferenceProcessor>())
+    private val LOG = Logger.getInstance(KotlinCopyPasteReferenceProcessor::class.java)
 
     private val IGNORE_REFERENCES_INSIDE: Array<Class<out KtElement>> = arrayOf(
             KtImportList::class.java,
@@ -144,7 +144,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
 
             val descriptors = reference.resolveToDescriptors(element.analyze()) //TODO: we could use partial body resolve for all references together
             //check whether this reference is unambiguous
-            if (reference !is KtMultiReference<*> && descriptors.size() > 1) return@forEachDescendantOfType
+            if (reference !is KtMultiReference<*> && descriptors.size > 1) return@forEachDescendantOfType
 
             for (descriptor in descriptors) {
                 val declarations = DescriptorToSourceUtilsIde.getAllDeclarations(file.getProject(), descriptor)
@@ -302,7 +302,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
     private fun findImportableDescriptors(fqName: FqName, file: KtFile): Collection<DeclarationDescriptor> {
         return file.resolveImportReference(fqName).filterNot {
             /*TODO: temporary hack until we don't have ability to insert qualified reference into root package*/
-            DescriptorUtils.getParentOfType(it, javaClass<PackageFragmentDescriptor>())?.fqName?.isRoot() ?: false
+            DescriptorUtils.getParentOfType(it, PackageFragmentDescriptor::class.java)?.fqName?.isRoot() ?: false
         }
     }
 
@@ -329,7 +329,7 @@ public class KotlinCopyPasteReferenceProcessor() : CopyPastePostProcessor<Kotlin
     }
 
     private fun toTextRanges(startOffsets: IntArray, endOffsets: IntArray): List<TextRange> {
-        assert(startOffsets.size() == endOffsets.size())
+        assert(startOffsets.size == endOffsets.size)
         return startOffsets.indices.map { TextRange(startOffsets[it], endOffsets[it]) }
     }
 

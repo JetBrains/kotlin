@@ -59,7 +59,7 @@ public class DebugTextByStubTest : LightCodeInsightFixtureTestCase() {
         val (file, tree) = createFileAndStubTree(text)
         val function = tree.findChildStubByType(KtStubElementTypes.FUNCTION)
         val psi = KtNamedFunction(function as KotlinFunctionStub)
-        Assert.assertEquals("STUB: " + file.findChildByClass(javaClass<KtNamedFunction>())!!.getText(), psi.getDebugText())
+        Assert.assertEquals("STUB: " + file.findChildByClass(KtNamedFunction::class.java)!!.getText(), psi.getDebugText())
     }
 
     fun typeReference(text: String) {
@@ -69,7 +69,7 @@ public class DebugTextByStubTest : LightCodeInsightFixtureTestCase() {
         val valueParameter = parameterList.findChildStubByType(KtStubElementTypes.VALUE_PARAMETER)!!
         val typeReferenceStub = valueParameter.findChildStubByType(KtStubElementTypes.TYPE_REFERENCE)
         val psiFromStub = KtTypeReference(typeReferenceStub as KotlinPlaceHolderStub)
-        val typeReferenceByPsi = file.findChildByClass(javaClass<KtNamedFunction>())!!.getValueParameters()[0].getTypeReference()
+        val typeReferenceByPsi = file.findChildByClass(KtNamedFunction::class.java)!!.getValueParameters()[0].getTypeReference()
         Assert.assertEquals(typeReferenceByPsi!!.getText(), psiFromStub.getDebugText())
     }
 
@@ -77,7 +77,7 @@ public class DebugTextByStubTest : LightCodeInsightFixtureTestCase() {
         val (file, tree) = createFileAndStubTree(text)
         val clazz = tree.findChildStubByType(KtStubElementTypes.CLASS)!!
         val psiFromStub = KtClass(clazz as KotlinClassStub)
-        val classByPsi = file.findChildByClass(javaClass<KtClass>())
+        val classByPsi = file.findChildByClass(KtClass::class.java)
         val toCheckAgainst = "STUB: " + (expectedText ?: classByPsi!!.getText())
         Assert.assertEquals(toCheckAgainst, psiFromStub.getDebugText())
         if (expectedText != null) {
@@ -89,7 +89,7 @@ public class DebugTextByStubTest : LightCodeInsightFixtureTestCase() {
         val (file, tree) = createFileAndStubTree(text)
         val obj = tree.findChildStubByType(KtStubElementTypes.OBJECT_DECLARATION)!!
         val psiFromStub = KtObjectDeclaration(obj as KotlinObjectStub)
-        val objectByPsi = file.findChildByClass(javaClass<KtObjectDeclaration>())
+        val objectByPsi = file.findChildByClass(KtObjectDeclaration::class.java)
         val toCheckAgainst = "STUB: " + (expectedText ?: objectByPsi!!.getText())
         Assert.assertEquals(toCheckAgainst, psiFromStub.getDebugText())
     }
@@ -98,7 +98,7 @@ public class DebugTextByStubTest : LightCodeInsightFixtureTestCase() {
         val (file, tree) = createFileAndStubTree(text)
         val property = tree.findChildStubByType(KtStubElementTypes.PROPERTY)!!
         val psiFromStub = KtProperty(property as KotlinPropertyStub)
-        val propertyByPsi = file.findChildByClass(javaClass<KtProperty>())
+        val propertyByPsi = file.findChildByClass(KtProperty::class.java)
         val toCheckAgainst = "STUB: " + (expectedText ?: propertyByPsi!!.getText())
         Assert.assertEquals(toCheckAgainst, psiFromStub.getDebugText())
     }

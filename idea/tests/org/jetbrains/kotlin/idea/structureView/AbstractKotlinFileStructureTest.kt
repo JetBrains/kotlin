@@ -59,7 +59,7 @@ public abstract class AbstractKotlinFileStructureTest : KotlinLightCodeInsightFi
         val fileText = FileUtil.loadFile(File(getTestDataPath(), fileName()), true)
 
         val withInherited = InTextDirectivesUtils.isDirectiveDefined(fileText, "WITH_INHERITED")
-        setTreeActionState(javaClass<KotlinInheritedMembersNodeProvider>(), withInherited)
+        setTreeActionState(KotlinInheritedMembersNodeProvider::class.java, withInherited)
     }
 
     public fun FileStructurePopup.update() {

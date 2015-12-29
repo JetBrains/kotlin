@@ -47,7 +47,7 @@ abstract class AbstractParameterInfoTest : LightCodeInsightFixtureTestCase() {
 
         val lastChild = file.allChildren.filter { it !is PsiWhiteSpace }.last()
         val expectedResultText = when (lastChild.node.elementType) {
-            KtTokens.BLOCK_COMMENT -> lastChild.text.substring(2, lastChild.text.length() - 2).trim()
+            KtTokens.BLOCK_COMMENT -> lastChild.text.substring(2, lastChild.text.length - 2).trim()
             KtTokens.EOL_COMMENT -> lastChild.text.substring(2).trim()
             else -> error("Unexpected last file child")
         }

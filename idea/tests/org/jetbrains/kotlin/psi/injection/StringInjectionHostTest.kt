@@ -133,13 +133,13 @@ public class StringInjectionHostTest: KotlinLiteFixture() {
             val chars = StringBuilder(prefix)
             val range = rangeInHost ?: escaper.getRelevantTextRange()
             assertTrue(escaper.decode(range, chars))
-            assertEquals(decoded, chars.substring(prefix.length()))
+            assertEquals(decoded, chars.substring(prefix.length))
             val extendedOffsets = HashMap(targetToSourceOffsets)
-            val beforeStart = targetToSourceOffsets.keySet().min()!! - 1
+            val beforeStart = targetToSourceOffsets.keys.min()!! - 1
             if (beforeStart >= 0) {
                 extendedOffsets[beforeStart] = -1
             }
-            extendedOffsets[targetToSourceOffsets.keySet().max()!! + 1] = -1
+            extendedOffsets[targetToSourceOffsets.keys.max()!! + 1] = -1
             for ((target, source) in extendedOffsets) {
                 assertEquals("Wrong source offset for $target", source, escaper.getOffsetInHost(target, range))
             }

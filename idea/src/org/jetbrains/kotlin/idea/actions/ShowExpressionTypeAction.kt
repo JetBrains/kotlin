@@ -46,7 +46,7 @@ public class ShowExpressionTypeAction : AnAction() {
         val type = if (editor.getSelectionModel().hasSelection()) {
             val startOffset = editor.getSelectionModel().getSelectionStart()
             val endOffset = editor.getSelectionModel().getSelectionEnd()
-            val expression = CodeInsightUtilCore.findElementInRange<KtExpression>(psiFile, startOffset, endOffset, javaClass<KtExpression>(), KotlinLanguage.INSTANCE) ?: return
+            val expression = CodeInsightUtilCore.findElementInRange<KtExpression>(psiFile, startOffset, endOffset, KtExpression::class.java, KotlinLanguage.INSTANCE) ?: return
             typeByExpression(expression)
         }
         else {

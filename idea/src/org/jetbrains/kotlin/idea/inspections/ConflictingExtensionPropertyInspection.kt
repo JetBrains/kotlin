@@ -197,7 +197,7 @@ public class ConflictingExtensionPropertyInspection : AbstractKotlinInspection()
                                     ReferencesSearch.search(declaration, searchScope)
                                             .filterIsInstance<KtSimpleNameReference>()
                                             .mapNotNull { ref -> ref.expression.getStrictParentOfType<KtImportDirective>() }
-                                            .filter { import -> !import.isAllUnder && import.targetDescriptors().size() == 1 }
+                                            .filter { import -> !import.isAllUnder && import.targetDescriptors().size == 1 }
                                 }
                                 UIUtil.invokeLaterIfNeeded {
                                     project.executeWriteCommand(text) {

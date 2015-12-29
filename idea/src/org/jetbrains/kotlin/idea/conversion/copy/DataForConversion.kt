@@ -33,7 +33,7 @@ data class DataForConversion private constructor(
         fun prepare(copiedCode: CopiedJavaCode, project: Project): DataForConversion  {
             val startOffsets = copiedCode.startOffsets.clone()
             val endOffsets = copiedCode.endOffsets.clone()
-            assert(startOffsets.size() == endOffsets.size()) { "Must have the same size" }
+            assert(startOffsets.size == endOffsets.size) { "Must have the same size" }
 
             var fileText = copiedCode.fileText
             var file = PsiFileFactory.getInstance(project).createFileFromText(JavaLanguage.INSTANCE, fileText) as PsiJavaFile
@@ -98,15 +98,15 @@ data class DataForConversion private constructor(
 
             if (rangesToDrop.isEmpty()) return null
 
-            val newFileText = StringBuilder {
+            val newFileText = buildString {
                 var offset = 0
                 for (range in rangesToDrop) {
                     assert(range.start >= offset)
                     append(fileText.substring(offset, range.start))
                     offset = range.end
                 }
-                append(fileText.substring(offset, fileText.length()))
-            }.toString()
+                append(fileText.substring(offset, fileText.length))
+            }
 
             fun IntArray.update() {
                 for (range in rangesToDrop.asReversed()) {
@@ -226,7 +226,7 @@ data class DataForConversion private constructor(
         private fun shouldExpandToChildren(element: PsiElement) = element is PsiModifierList
 
         private fun buildImportsAndPackage(sourceFile: PsiJavaFile): String {
-            return StringBuilder {
+            return buildString {
                 val packageName = sourceFile.getPackageName()
                 if (!packageName.isEmpty()) {
                     append("package $packageName\n")
@@ -248,7 +248,7 @@ data class DataForConversion private constructor(
                     }
                     //TODO: static imports
                 }
-            }.toString()
+            }
         }
     }
 }

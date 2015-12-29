@@ -66,7 +66,7 @@ public class CheckPartialBodyResolveAction : AnAction() {
         //TODO: drop resolve caches if any
         val progressIndicator = ProgressManager.getInstance().getProgressIndicator()
         for ((i, file) in files.withIndex()) {
-            progressIndicator?.setText("Checking resolve $i of ${files.size()}...")
+            progressIndicator?.setText("Checking resolve $i of ${files.size}...")
             progressIndicator?.setText2(file.getVirtualFile().getPath())
 
             val partialResolveDump = dumpResolve(file) { element, resolutionFacade ->
@@ -96,11 +96,11 @@ public class CheckPartialBodyResolveAction : AnAction() {
                 return
             }
 
-            progressIndicator?.setFraction((i + 1) / files.size().toDouble())
+            progressIndicator?.setFraction((i + 1) / files.size.toDouble())
         }
 
         SwingUtilities.invokeLater {
-            Messages.showInfoMessage(project, "Analyzed ${files.size()} file(s). No resolve difference found. ", "Success")
+            Messages.showInfoMessage(project, "Analyzed ${files.size} file(s). No resolve difference found. ", "Success")
         }
     }
 

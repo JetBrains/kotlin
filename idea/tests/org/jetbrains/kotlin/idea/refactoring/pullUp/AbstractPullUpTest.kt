@@ -57,7 +57,7 @@ public abstract class AbstractPullUpTest : AbstractMemberPullPushTest() {
     protected fun doJavaTest(path: String) {
         doTest(path) { file ->
             val elementAt = getFile().findElementAt(getEditor().caretModel.offset)
-            val sourceClass = PsiTreeUtil.getParentOfType(elementAt, javaClass<PsiClass>())!!
+            val sourceClass = PsiTreeUtil.getParentOfType(elementAt, PsiClass::class.java)!!
 
             val targetClassName = getTargetClassName(file)
             val superClasses = RefactoringHierarchyUtil.createBasesList(sourceClass, false, true)

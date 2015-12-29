@@ -45,7 +45,7 @@ abstract class KotlinAbiVersionIndexBase<T>(private val classOfIndex: Class<T>) 
 
         override fun save(output: DataOutput, value: BinaryVersion) {
             val array = value.toArray()
-            DataInputOutputUtil.writeINT(output, array.size())
+            DataInputOutputUtil.writeINT(output, array.size)
             for (number in array) {
                 DataInputOutputUtil.writeINT(output, number)
             }
@@ -61,7 +61,7 @@ abstract class KotlinAbiVersionIndexBase<T>(private val classOfIndex: Class<T>) 
             body()
         }
         catch (e: Throwable) {
-            LOG.warn("Could not index ABI version for file " + inputData.file + ": " + e.getMessage())
+            LOG.warn("Could not index ABI version for file " + inputData.file + ": " + e.message)
         }
     }
 }
