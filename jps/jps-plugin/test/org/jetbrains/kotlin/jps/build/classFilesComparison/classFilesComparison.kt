@@ -132,7 +132,7 @@ fun classFileToString(classFile: File): String {
 
     val classHeader = LocalFileKotlinClass.create(classFile)?.classHeader
 
-    val annotationDataEncoded = classHeader?.annotationData
+    val annotationDataEncoded = classHeader?.data
     if (annotationDataEncoded != null) {
         ByteArrayInputStream(BitEncoding.decodeBytes(annotationDataEncoded)).use {
             input ->
