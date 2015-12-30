@@ -21,6 +21,7 @@ import com.intellij.testFramework.PlatformTestCase
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.console.KotlinConsoleKeeper
 import org.jetbrains.kotlin.console.KotlinConsoleRunner
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.junit.FixMethodOrder
 import org.junit.Test
 import org.junit.runners.MethodSorters
@@ -43,7 +44,7 @@ import kotlin.test.assertTrue
     }
 
     private fun sendCommand(command: String) {
-        consoleRunner.consoleView.editorDocument.setText(command)
+        runWriteAction { consoleRunner.consoleView.editorDocument.setText(command) }
         consoleRunner.executor.executeCommand()
         commandsSent++
     }
