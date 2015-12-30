@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.filters
 
 import com.intellij.execution.filters.FileHyperlinkInfo
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.OrderRootType
@@ -52,7 +53,9 @@ abstract class AbstractKotlinExceptionFilterTest: KotlinCodeInsightTestCase() {
 
         val fileText = file.text
 
-        val outDir = project.baseDir.findChild("out") ?: project.baseDir.createChildDirectory(this, "out")
+        val outDir = runWriteAction {
+            project.baseDir.findChild("out") ?: project.baseDir.createChildDirectory(this, "out")
+        }
         PsiTestUtil.setCompilerOutputPath(module, outDir.url, false)
 
         val classLoader: URLClassLoader
