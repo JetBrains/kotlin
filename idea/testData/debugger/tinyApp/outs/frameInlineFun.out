@@ -32,7 +32,7 @@ class A {
 // RESULT: 1: I
 
 
- frame    = main():14, FrameInlineFunKt {frameInlineFun}
+ frame    = main:14, FrameInlineFunKt {frameInlineFun}
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = null)
    local    = element: int = 1 (sp = frameInlineFun.kt, 12)
    local    = this_$iv: frameInlineFun.A = {frameInlineFun.A@uniqueID} (sp = null)

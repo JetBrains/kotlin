@@ -25,7 +25,7 @@ fun foo(i: Int) {}
 
 // PRINT_FRAME
 Compile bytecode for a2.prop
- frame    = main():15, EvLineRangeKt {evLineRange}
+ frame    = main:15, EvLineRangeKt {evLineRange}
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = evLineRange.kt, 7)
    local    = a1: evLineRange.A = {evLineRange.A@uniqueID} (sp = evLineRange.kt, 8)
      field    = prop: int = 1 (sp = evLineRange.kt, 4)

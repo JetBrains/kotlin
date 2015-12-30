@@ -16,7 +16,7 @@ class A {
 
 // PRINT_FRAME
 Compile bytecode for args.size
- frame    = main():6, ToStringRendererKt {toStringRenderer}
+ frame    = main:6, ToStringRendererKt {toStringRenderer}
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = toStringRenderer.kt, 3)
    local    = a: toStringRenderer.A = {toStringRenderer.A@uniqueID}myA (sp = toStringRenderer.kt, 4)
               - Class has no fields
