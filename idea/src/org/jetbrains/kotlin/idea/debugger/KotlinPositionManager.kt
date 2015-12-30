@@ -360,9 +360,10 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
 
     private fun getInternalClassNameForElement(notPositionedElement: PsiElement?, typeMapper: JetTypeMapper, file: KtFile, isInLibrary: Boolean): Collection<String> {
         val element = getElementToCalculateClassName(notPositionedElement)
-        when {
-            element is KtClassOrObject -> return getJvmInternalNameForImpl(typeMapper, element).toSet()
-            element is KtFunctionLiteral -> {
+
+        when (element) {
+            is KtClassOrObject -> return getJvmInternalNameForImpl(typeMapper, element).toSet()
+            is KtFunction -> {
                 val descriptor = InlineUtil.getInlineArgumentDescriptor(element, typeMapper.bindingContext)
                 if (descriptor != null) {
                     val classNamesForParent = getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary)
@@ -371,15 +372,18 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
                     }
                     return classNamesForParent
                 }
-                else {
-                    val crossInlineParameterUsages = element.containsCrossInlineParameterUsages(typeMapper.bindingContext)
-                    if (crossInlineParameterUsages.isNotEmpty()) {
-                        return classNamesForCrossInlineParameters(crossInlineParameterUsages, typeMapper.bindingContext)
-                    }
+            }
+        }
 
-                    val asmType = CodegenBinding.asmTypeForAnonymousClass(typeMapper.bindingContext, element)
-                    return asmType.internalName.toSet()
-                }
+        val crossInlineParameterUsages = element?.containsCrossInlineParameterUsages(typeMapper.bindingContext)
+        if (crossInlineParameterUsages != null && crossInlineParameterUsages.isNotEmpty()) {
+            return classNamesForCrossInlineParameters(crossInlineParameterUsages, typeMapper.bindingContext)
+        }
+
+        when {
+            element is KtFunctionLiteral -> {
+                val asmType = CodegenBinding.asmTypeForAnonymousClass(typeMapper.bindingContext, element)
+                return asmType.internalName.toSet()
             }
             element is KtAnonymousInitializer -> {
                 val parent = getElementToCalculateClassName(element.parent)
@@ -405,15 +409,6 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
                 return getJvmInternalNameForPropertyOwner(typeMapper, descriptor).toSet()
             }
             element is KtNamedFunction -> {
-                if (isInlinedLambda(element, typeMapper.bindingContext)) {
-                    return getInternalClassNameForElement(element.parent, typeMapper, file, isInLibrary)
-                }
-
-                val crossInlineParameterUsages = element.containsCrossInlineParameterUsages(typeMapper.bindingContext)
-                if (crossInlineParameterUsages.isNotEmpty()) {
-                    return classNamesForCrossInlineParameters(crossInlineParameterUsages, typeMapper.bindingContext)
-                }
-
                 val parent = getElementToCalculateClassName(element.parent)
                 val parentInternalName = if (parent is KtClassOrObject) {
                     getJvmInternalNameForImpl(typeMapper, parent)
@@ -524,8 +519,8 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
         return "$newName$*"
     }
 
-    private fun KtFunction.containsCrossInlineParameterUsages(context: BindingContext): Collection<ValueParameterDescriptor> {
-        fun KtFunction.hasParameterCall(parameter: KtParameter): Boolean {
+    private fun KtElement.containsCrossInlineParameterUsages(context: BindingContext): Collection<ValueParameterDescriptor> {
+        fun KtElement.hasParameterCall(parameter: KtParameter): Boolean {
             return ReferencesSearch.search(parameter).any {
                 this.textRange.contains(it.element.textRange)
             }

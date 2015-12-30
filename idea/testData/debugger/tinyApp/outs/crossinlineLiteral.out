@@ -3,37 +3,57 @@ LineBreakpoint created at crossinlineLiteral.kt:17
 LineBreakpoint created at crossinlineLiteral.kt:22
 LineBreakpoint created at crossinlineLiteral.kt:27
 LineBreakpoint created at crossinlineLiteral.kt:32
-LineBreakpoint created at crossinlineLiteral.kt:35
-LineBreakpoint created at crossinlineLiteral.kt:40
-LineBreakpoint created at crossinlineLiteral.kt:48
-LineBreakpoint created at crossinlineLiteral.kt:56
-LineBreakpoint created at crossinlineLiteral.kt:64
-LineBreakpoint created at crossinlineLiteral.kt:70
-LineBreakpoint created at crossinlineLiteral.kt:79
-LineBreakpoint created at crossinlineLiteral.kt:87
+LineBreakpoint created at crossinlineLiteral.kt:37
+LineBreakpoint created at crossinlineLiteral.kt:42
+LineBreakpoint created at crossinlineLiteral.kt:45
+LineBreakpoint created at crossinlineLiteral.kt:50
+LineBreakpoint created at crossinlineLiteral.kt:58
+LineBreakpoint created at crossinlineLiteral.kt:66
+LineBreakpoint created at crossinlineLiteral.kt:74
+LineBreakpoint created at crossinlineLiteral.kt:80
+LineBreakpoint created at crossinlineLiteral.kt:89
 LineBreakpoint created at crossinlineLiteral.kt:97
-LineBreakpoint created at crossinlineLiteral.kt:104
-LineBreakpoint created at crossinlineLiteral.kt:114
+LineBreakpoint created at crossinlineLiteral.kt:102
+LineBreakpoint created at crossinlineLiteral.kt:108
+LineBreakpoint created at crossinlineLiteral.kt:120
+LineBreakpoint created at crossinlineLiteral.kt:127
+LineBreakpoint created at crossinlineLiteral.kt:137
 !JDK_HOME!\bin\java -agentlib:jdwp=transport=dt_socket,address=!HOST_NAME!:!HOST_PORT!,suspend=y,server=n -Dfile.encoding=!FILE_ENCODING! -classpath !OUTPUT_PATH!;!KOTLIN_RUNTIME!;!CUSTOM_LIBRARY!;!RT_JAR! crossinlineLiteral.CrossinlineLiteralKt
 Connected to the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
-crossinlineLiteral.kt:64
+crossinlineLiteral.kt:74
 crossinlineLiteral.kt:12
-crossinlineLiteral.kt:70
+crossinlineLiteral.kt:74
 crossinlineLiteral.kt:17
-crossinlineLiteral.kt:79
+crossinlineLiteral.kt:80
 crossinlineLiteral.kt:22
-crossinlineLiteral.kt:87
+crossinlineLiteral.kt:80
 crossinlineLiteral.kt:27
-crossinlineLiteral.kt:97
+crossinlineLiteral.kt:89
 crossinlineLiteral.kt:32
-crossinlineLiteral.kt:104
-crossinlineLiteral.kt:35
-crossinlineLiteral.kt:114
-crossinlineLiteral.kt:40
-crossinlineLiteral.kt:87
-crossinlineLiteral.kt:48
-crossinlineLiteral.kt:87
-crossinlineLiteral.kt:56
+crossinlineLiteral.kt:97
+crossinlineLiteral.kt:37
+crossinlineLiteral.kt:102
+crossinlineLiteral.kt:37
+crossinlineLiteral.kt:108
+crossinlineLiteral.kt:37
+crossinlineLiteral.kt:120
+crossinlineLiteral.kt:42
+crossinlineLiteral.kt:127
+crossinlineLiteral.kt:45
+crossinlineLiteral.kt:137
+crossinlineLiteral.kt:50
+crossinlineLiteral.kt:97
+crossinlineLiteral.kt:58
+crossinlineLiteral.kt:102
+crossinlineLiteral.kt:58
+crossinlineLiteral.kt:108
+crossinlineLiteral.kt:58
+crossinlineLiteral.kt:97
+crossinlineLiteral.kt:66
+crossinlineLiteral.kt:102
+crossinlineLiteral.kt:66
+crossinlineLiteral.kt:108
+crossinlineLiteral.kt:66
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
 Process finished with exit code 0

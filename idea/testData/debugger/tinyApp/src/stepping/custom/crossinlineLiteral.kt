@@ -12,10 +12,20 @@ fun callFromTopLevel() {
         val a = 1
     }
 
+    simpleCall(fun(i) {
+        //Breakpoint!
+        val a = 1
+    })
+
     lambdaCall {
         //Breakpoint!
         val a = 1
     }
+
+    lambdaCall(fun(i) {
+        //Breakpoint!
+        val a = 1
+    })
 
     inlinedLambdaCall {
         //Breakpoint!
@@ -28,12 +38,12 @@ fun callFromTopLevel() {
     }
 
     multipleCrossInline({
-        //Breakpoint!
-        val a = 1
-    }, {
-        //Breakpoint!
-        val a = 1
-    })
+                            //Breakpoint!
+                            val a = 1
+                        }, {
+                            //Breakpoint!
+                            val a = 1
+                        })
 
     lambdaInInlinedLambdaCall {
         //Breakpoint!
@@ -82,13 +92,26 @@ inline fun inlinedLambdaCall(crossinline f: (Int) -> Unit) {
 
 inline fun objectCall(crossinline f: (Int) -> Unit) {
     val a = object {
+        init {
+            //Breakpoint!
+            f(1)
+        }
+
         fun objFun() {
             //Breakpoint!
             f(1)
         }
+
+        val a: Int
+            get() {
+                //Breakpoint!
+                f(1)
+                return 1
+            }
     }
 
     a.objFun()
+    a.a
 }
 
 inline fun multipleCrossInline(crossinline f1: (Int) -> Unit, crossinline f2: (Int) -> Unit) {
@@ -117,4 +140,4 @@ inline fun lambdaInInlinedLambdaCall(crossinline f: (Int) -> Unit) {
     }
 }
 
-// RESUME: 17
+// RESUME: 35
