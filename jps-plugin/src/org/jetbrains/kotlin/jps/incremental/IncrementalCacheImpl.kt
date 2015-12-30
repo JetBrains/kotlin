@@ -158,7 +158,7 @@ open class IncrementalCacheImpl(
                 additionalProcessChangedClass(kotlinClass, isPackage = true)
             }
             KotlinClassHeader.Kind.MULTIFILE_CLASS -> {
-                val partNames = kotlinClass.classHeader.filePartClassNames?.toList()
+                val partNames = kotlinClass.classHeader.data?.toList()
                                 ?: throw AssertionError("Multifile class has no parts: ${kotlinClass.className}")
                 multifileClassFacadeMap.add(className, partNames)
 
@@ -324,7 +324,7 @@ open class IncrementalCacheImpl(
 
         fun process(kotlinClass: LocalFileKotlinClass, isPackage: Boolean): CompilationResult {
             val header = kotlinClass.classHeader
-            val bytes = BitEncoding.decodeBytes(header.annotationData!!)
+            val bytes = BitEncoding.decodeBytes(header.data!!)
             return put(kotlinClass.className, bytes, header.strings!!, isPackage, checkChangesIsOpenPart = true)
         }
 
@@ -498,7 +498,7 @@ open class IncrementalCacheImpl(
     private fun addToClassStorage(kotlinClass: LocalFileKotlinClass) {
         if (!IncrementalCompilation.isExperimental()) return
 
-        val classData = JvmProtoBufUtil.readClassDataFrom(kotlinClass.classHeader.annotationData!!, kotlinClass.classHeader.strings!!)
+        val classData = JvmProtoBufUtil.readClassDataFrom(kotlinClass.classHeader.data!!, kotlinClass.classHeader.strings!!)
         val supertypes = classData.classProto.supertypes(TypeTable(classData.classProto.typeTable))
         val parents = supertypes.map { classData.nameResolver.getClassId(it.className).asSingleFqName() }
                                 .filter { it.asString() != "kotlin.Any" }

@@ -48,8 +48,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     private JvmMetadataVersion metadataVersion = null;
     private JvmBytecodeBinaryVersion bytecodeVersion = null;
     private String multifileClassName = null;
-    private String[] filePartClassNames = null;
-    private String[] annotationData = null;
+    private String[] data = null;
     private String[] strings = null;
     private KotlinClassHeader.Kind headerKind = null;
     private boolean isInterfaceDefaultImpls = false;
@@ -62,9 +61,9 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         }
 
         if (metadataVersion == null || !metadataVersion.isCompatible()) {
-            annotationData = null;
+            data = null;
         }
-        else if (shouldHaveData() && annotationData == null) {
+        else if (shouldHaveData() && data == null) {
             // This means that the annotation is found and its ABI version is compatible, but there's no "data" string array in it.
             // We tell the outside world that there's really no annotation at all
             return null;
@@ -74,7 +73,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
                 headerKind,
                 metadataVersion != null ? metadataVersion : JvmMetadataVersion.INVALID_VERSION,
                 bytecodeVersion != null ? bytecodeVersion : JvmBytecodeBinaryVersion.INVALID_VERSION,
-                annotationData, strings, filePartClassNames, multifileClassName, isInterfaceDefaultImpls, isLocalClass
+                data, strings, multifileClassName, isInterfaceDefaultImpls, isLocalClass
         );
     }
 
@@ -140,14 +139,11 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         @Nullable
         public AnnotationArrayArgumentVisitor visitArray(@NotNull Name name) {
             String string = name.asString();
-            if (DATA_FIELD_NAME.equals(string)) {
+            if (DATA_FIELD_NAME.equals(string) || FILE_PART_CLASS_NAMES_FIELD_NAME.equals(string)) {
                 return dataArrayVisitor();
             }
             else if (STRINGS_FIELD_NAME.equals(string)) {
                 return stringsArrayVisitor();
-            }
-            else if (FILE_PART_CLASS_NAMES_FIELD_NAME.equals(string)) {
-                return filePartClassNamesVisitor();
             }
             else {
                 return null;
@@ -155,21 +151,11 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         }
 
         @NotNull
-        private AnnotationArrayArgumentVisitor filePartClassNamesVisitor() {
-            return new CollectStringArrayAnnotationVisitor() {
-                @Override
-                protected void visitEnd(@NotNull String[] data) {
-                    filePartClassNames = data;
-                }
-            };
-        }
-
-        @NotNull
         private AnnotationArrayArgumentVisitor dataArrayVisitor() {
             return new CollectStringArrayAnnotationVisitor() {
                 @Override
                 protected void visitEnd(@NotNull String[] data) {
-                    annotationData = data;
+                    ReadKotlinClassHeaderAnnotationVisitor.this.data = data;
                 }
             };
         }

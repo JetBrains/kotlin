@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 
 fun inlineFunctionsJvmNames(bytes: ByteArray): Set<String> {
     val header = readKotlinHeader(bytes)
-    val annotationData = header.annotationData
+    val annotationData = header.data
     val strings = header.strings
 
     if (annotationData == null || strings == null) return emptySet()

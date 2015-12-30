@@ -76,10 +76,10 @@ fun isKotlinInternalCompiledFile(file: VirtualFile): Boolean {
            header.isLocalClass
 }
 
-fun findMultifileClassParts(file: VirtualFile, classId: ClassId, kotlinClassHeader: KotlinClassHeader): List<KotlinJvmBinaryClass> {
+fun findMultifileClassParts(file: VirtualFile, classId: ClassId, header: KotlinClassHeader): List<KotlinJvmBinaryClass> {
     val packageFqName = classId.packageFqName
     val partsFinder = DirectoryBasedClassFinder(file.parent!!, packageFqName)
-    val partNames = kotlinClassHeader.filePartClassNames ?: return emptyList()
+    val partNames = header.data ?: return emptyList()
     return partNames.mapNotNull {
         partsFinder.findKotlinClass(ClassId(packageFqName, Name.identifier(it.substringAfterLast('/'))))
     }

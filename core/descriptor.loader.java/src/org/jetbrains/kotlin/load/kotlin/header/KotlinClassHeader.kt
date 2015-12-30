@@ -23,9 +23,8 @@ class KotlinClassHeader(
         val kind: KotlinClassHeader.Kind,
         val metadataVersion: JvmMetadataVersion,
         val bytecodeVersion: JvmBytecodeBinaryVersion,
-        val annotationData: Array<String>?,
+        val data: Array<String>?,
         val strings: Array<String>?,
-        val filePartClassNames: Array<String>?,
         val multifileClassName: String?,
         val isInterfaceDefaultImpls: Boolean,
         val isLocalClass: Boolean

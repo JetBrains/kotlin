@@ -119,7 +119,7 @@ public final class DeserializedDescriptorResolver {
             errorReporter.reportIncompatibleMetadataVersion(kotlinClass.getClassId(), kotlinClass.getLocation(), header.getMetadataVersion());
         }
         else if (expectedKinds.contains(header.getKind())) {
-            return header.getAnnotationData();
+            return header.getData();
         }
 
         return null;

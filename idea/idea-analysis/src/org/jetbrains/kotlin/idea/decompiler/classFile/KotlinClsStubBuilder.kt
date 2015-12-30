@@ -70,7 +70,7 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
             return createMultifileClassStub(header, partFiles, classId.asSingleFqName(), components)
         }
 
-        val annotationData = header.annotationData
+        val annotationData = header.data
         if (annotationData == null) {
             LOG.error("Corrupted kotlin header for file ${file.name}")
             return null

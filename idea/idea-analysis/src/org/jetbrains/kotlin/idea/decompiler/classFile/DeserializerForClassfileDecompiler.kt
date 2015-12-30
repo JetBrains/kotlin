@@ -72,7 +72,7 @@ class DeserializerForClassfileDecompiler(
         }
         val binaryClassForPackageClass = classFinder.findKotlinClass(ClassId.topLevel(facadeFqName))
         val header = binaryClassForPackageClass?.classHeader
-        val annotationData = header?.annotationData
+        val annotationData = header?.data
         val strings = header?.strings
         if (annotationData == null || strings == null) {
             LOG.error("Could not read annotation data for $facadeFqName from ${binaryClassForPackageClass?.classId}")
@@ -117,7 +117,7 @@ class DirectoryBasedDataFinder(
     override fun findClassData(classId: ClassId): ClassDataWithSource? {
         val binaryClass = classFinder.findKotlinClass(classId) ?: return null
         val classHeader = binaryClass.classHeader
-        val data = classHeader.annotationData
+        val data = classHeader.data
         if (data == null) {
             log.error("Annotation data missing for ${binaryClass.classId}")
             return null
