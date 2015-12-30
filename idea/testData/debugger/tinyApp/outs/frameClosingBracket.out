@@ -14,7 +14,7 @@ fun main(args: Array<String>) {
 // EXPRESSION: a
 // RESULT: 1: I
 
- frame    = main():6, FrameClosingBracketKt {frameClosingBracket}
+ frame    = main:6, FrameClosingBracketKt {frameClosingBracket}
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = frameClosingBracket.kt, 3)
    local    = a: int = 1 (sp = frameClosingBracket.kt, 4)
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'

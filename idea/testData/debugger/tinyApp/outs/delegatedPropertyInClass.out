@@ -29,7 +29,7 @@ class MyDelegateThrowsException {
 // PRINT_FRAME
 
 Compile bytecode for args.size
- frame    = main():9, DelegatedPropertyInClassKt {delegatedPropertyInClass}
+ frame    = main:9, DelegatedPropertyInClassKt {delegatedPropertyInClass}
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = delegatedPropertyInClass.kt, 6)
    local    = a: delegatedPropertyInClass.A = {delegatedPropertyInClass.A@uniqueID} (sp = delegatedPropertyInClass.kt, 7)
      field    = prop$delegate: delegatedPropertyInClass.MyDelegate = {delegatedPropertyInClass.MyDelegate@uniqueID} (sp = delegatedPropertyInClass.kt, 13)
@@ -40,7 +40,8 @@ Compile bytecode for args.size
      field    = propEx: int = {java.lang.IllegalStateException@uniqueID}java.lang.IllegalStateException (sp = delegatedPropertyInClass.kt, 14)
        field    = detailMessage: java.lang.String = null (sp = Throwable.!EXT!)
        field    = cause: java.lang.Throwable = {java.lang.IllegalStateException@uniqueID}java.lang.IllegalStateException (sp = Throwable.!EXT!)
-       field    = stackTrace: java.lang.StackTraceElement[] = null (sp = Throwable.!EXT!)
+       field    = stackTrace: java.lang.StackTraceElement[] = {java.lang.StackTraceElement[0]@uniqueID} (sp = Throwable.!EXT!)
+       field    = suppressedExceptions: java.util.List = {java.util.Collections$UnmodifiableRandomAccessList@uniqueID} size = 0 (sp = Throwable.!EXT!)
    extra    = args.size
 Disconnected from the target VM, address: '!HOST_NAME!:PORT_NAME!', transport: 'socket'
 
