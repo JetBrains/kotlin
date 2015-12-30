@@ -51,20 +51,20 @@ class GenerateProtoBufCompare {
     )
 
     private val RESULT_NAME = "result"
-    private val STRING_INDEXES_NANE = "StringIndexes"
-    private val CLASS_ID_INDEXES_NANE = "ClassIdIndexes"
+    private val STRING_INDEXES_NAME = "StringIndexes"
+    private val CLASS_ID_INDEXES_NAME = "ClassIdIndexes"
     private val OLD_PREFIX = "old"
     private val NEW_PREFIX = "new"
-    private val CHECK_EQAULS_NAME = "checkEquals"
-    private val CHECK_STRING_EQAULS_NAME = "checkStringEquals"
-    private val CHECK_CLASS_ID_EQAULS_NAME = "checkClassIdEquals"
+    private val CHECK_EQUALS_NAME = "checkEquals"
+    private val CHECK_STRING_EQUALS_NAME = "checkStringEquals"
+    private val CHECK_CLASS_ID_EQUALS_NAME = "checkClassIdEquals"
     private val HASH_CODE_NAME = "hashCode"
 
-    val extentionsMap = DebugJvmProtoBuf.getDescriptor().extensions.groupBy { it.containingType }
+    private val extensionsMap = DebugJvmProtoBuf.getDescriptor().extensions.groupBy { it.containingType }
 
-    val allMessages: MutableSet<Descriptors.Descriptor> = linkedSetOf()
-    val messagesToProcess: Queue<Descriptors.Descriptor> = linkedListOf()
-    val repeatedFields: MutableSet<Descriptors.FieldDescriptor> = linkedSetOf()
+    private val allMessages: MutableSet<Descriptors.Descriptor> = linkedSetOf()
+    private val messagesToProcess: Queue<Descriptors.Descriptor> = linkedListOf()
+    private val repeatedFields: MutableSet<Descriptors.FieldDescriptor> = linkedSetOf()
 
     fun generate(): String {
         val sb = StringBuilder()
@@ -87,10 +87,10 @@ class GenerateProtoBufCompare {
         p.pushIndent()
 
         p.println("private val strings = Interner<String>()")
-        p.println("val $OLD_PREFIX${STRING_INDEXES_NANE}Map: MutableMap<Int, Int> = hashMapOf()")
-        p.println("val $NEW_PREFIX${STRING_INDEXES_NANE}Map: MutableMap<Int, Int> = hashMapOf()")
-        p.println("val $OLD_PREFIX${CLASS_ID_INDEXES_NANE}Map: MutableMap<Int, Int> = hashMapOf()")
-        p.println("val $NEW_PREFIX${CLASS_ID_INDEXES_NANE}Map: MutableMap<Int, Int> = hashMapOf()")
+        p.println("val $OLD_PREFIX${STRING_INDEXES_NAME}Map: MutableMap<Int, Int> = hashMapOf()")
+        p.println("val $NEW_PREFIX${STRING_INDEXES_NAME}Map: MutableMap<Int, Int> = hashMapOf()")
+        p.println("val $OLD_PREFIX${CLASS_ID_INDEXES_NAME}Map: MutableMap<Int, Int> = hashMapOf()")
+        p.println("val $NEW_PREFIX${CLASS_ID_INDEXES_NAME}Map: MutableMap<Int, Int> = hashMapOf()")
 
         p.println()
         p.println("private val classIds = Interner<ClassId>()")
@@ -152,12 +152,12 @@ class GenerateProtoBufCompare {
         p.println("}")
         p.println()
 
-        p.println("private fun $CHECK_STRING_EQAULS_NAME(old: Int, new: Int): Boolean {")
+        p.println("private fun $CHECK_STRING_EQUALS_NAME(old: Int, new: Int): Boolean {")
         p.println("   return oldGetIndexOfString(old) == newGetIndexOfString(new)")
         p.println("}")
         p.println()
 
-        p.println("private fun $CHECK_CLASS_ID_EQAULS_NAME(old: Int, new: Int): Boolean {")
+        p.println("private fun $CHECK_CLASS_ID_EQUALS_NAME(old: Int, new: Int): Boolean {")
         p.println("   return oldGetIndexOfClassId(old) == newGetIndexOfClassId(new)")
         p.println("}")
 
@@ -167,7 +167,7 @@ class GenerateProtoBufCompare {
         val typeName = descriptor.typeName
 
         val fields = descriptor.fields.filter { !it.isSkip }
-        val extFields = extentionsMap[descriptor]?.filter { !it.isSkip } ?: emptyList()
+        val extFields = extensionsMap[descriptor]?.filter { !it.isSkip } ?: emptyList()
 
         p.println()
         p.println("fun $typeName.$HASH_CODE_NAME(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int): Int {")
@@ -215,9 +215,9 @@ class GenerateProtoBufCompare {
         val typeName = descriptor.typeName
 
         val fields = descriptor.fields.filter { !it.isSkip }
-        val extFields = extentionsMap[descriptor]?.filter { !it.isSkip } ?: emptyList()
+        val extFields = extensionsMap[descriptor]?.filter { !it.isSkip } ?: emptyList()
 
-        p.println("open fun $CHECK_EQAULS_NAME(old: $typeName, new: $typeName): Boolean {")
+        p.println("open fun $CHECK_EQUALS_NAME(old: $typeName, new: $typeName): Boolean {")
         p.pushIndent()
 
         fields.forEach { field -> FieldGeneratorImpl(field, p).generate() }
@@ -234,7 +234,7 @@ class GenerateProtoBufCompare {
         val className = typeName.replace(".", "")
 
         val fields = descriptor.fields.filter { !it.isSkip }
-        val extFields = extentionsMap[descriptor]?.filter { !it.isSkip } ?: emptyList()
+        val extFields = extensionsMap[descriptor]?.filter { !it.isSkip } ?: emptyList()
         val allFields = fields + extFields
 
         p.println("enum class ${className}Kind {")
@@ -389,13 +389,13 @@ class GenerateProtoBufCompare {
         val line = when {
             field.options.getExtension(DebugExtOptionsProtoBuf.stringIdInTable) ||
             field.options.getExtension(DebugExtOptionsProtoBuf.nameIdInTable) ->
-                "if (!$CHECK_STRING_EQAULS_NAME(old.$expr, new.$expr)) $statement"
+                "if (!$CHECK_STRING_EQUALS_NAME(old.$expr, new.$expr)) $statement"
             field.options.getExtension(DebugExtOptionsProtoBuf.fqNameIdInTable) ->
-                "if (!$CHECK_CLASS_ID_EQAULS_NAME(old.$expr, new.$expr)) $statement"
+                "if (!$CHECK_CLASS_ID_EQUALS_NAME(old.$expr, new.$expr)) $statement"
             field.javaType in JAVA_TYPES_WITH_INLINED_EQUALS ->
                 "if (old.$expr != new.$expr) $statement"
             else ->
-                "if (!$CHECK_EQAULS_NAME(old.$expr, new.$expr)) $statement"
+                "if (!$CHECK_EQUALS_NAME(old.$expr, new.$expr)) $statement"
         }
         this.println(line)
     }
@@ -436,7 +436,7 @@ class GenerateProtoBufCompare {
         val descriptor = this.containingType
         val className = descriptor.fullName.removePrefix(packageHeader).replace(".", "")
         val capFieldName = this.name.javaName.capitalize()
-        return "$CHECK_EQAULS_NAME$className$capFieldName"
+        return "$CHECK_EQUALS_NAME$className$capFieldName"
     }
 
     private val String.javaName: String
