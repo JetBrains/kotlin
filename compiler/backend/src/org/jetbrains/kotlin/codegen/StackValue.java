@@ -23,6 +23,7 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.intrinsics.JavaClassProperty;
@@ -45,6 +46,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor;
+import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
@@ -1090,6 +1092,12 @@ public abstract class StackValue {
             else {
                 getter.genInvokeInstruction(v);
                 coerce(getter.getReturnType(), type, v);
+
+                KotlinType returnType = descriptor.getReturnType();
+                if (returnType != null && KotlinBuiltIns.isNothing(returnType)) {
+                    v.aconst(null);
+                    v.athrow();
+                }
             }
         }
 
