@@ -31,6 +31,7 @@ import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.CommonShortcuts
 import com.intellij.openapi.actionSystem.DefaultActionGroup
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.colors.EditorColors
 import com.intellij.openapi.editor.ex.EditorEx
@@ -46,9 +47,9 @@ import com.intellij.psi.PsiManager
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.console.actions.BuildAndRestartConsoleAction
 import org.jetbrains.kotlin.console.actions.KtExecuteCommandAction
-import org.jetbrains.kotlin.console.gutter.IconWithTooltip
 import org.jetbrains.kotlin.console.gutter.ConsoleGutterContentProvider
 import org.jetbrains.kotlin.console.gutter.ConsoleIndicatorRenderer
+import org.jetbrains.kotlin.console.gutter.IconWithTooltip
 import org.jetbrains.kotlin.console.gutter.ReplIcons
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.completion.doNotComplete
@@ -67,6 +68,15 @@ class KotlinConsoleRunner(
         title: String,
         path: String?
 ) : AbstractConsoleRunnerWithHistory<LanguageConsoleView>(myProject, title, path) {
+    override fun finishConsole() {
+        if (ApplicationManager.getApplication().isUnitTestMode) {
+            // Ignore super with myConsoleView.setEditable(false)
+            return
+        }
+
+        super.finishConsole()
+    }
+
     val commandHistory = CommandHistory()
 
     var isReadLineMode: Boolean = false
