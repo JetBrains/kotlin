@@ -18,13 +18,13 @@ class A {
 
     fun test() {
         val <warning descr="[UNUSED_VARIABLE] Variable 's' is never used">s</warning> = object {
-            <error descr="[JVM_STATIC_NOT_IN_OBJECT] Only functions in named objects and companion objects of classes can be annotated with 'JvmStatic'">@JvmStatic fun a3()</error> {
+            <error descr="[JVM_STATIC_NOT_IN_OBJECT] Only functions in named objects and companion objects of classes can be annotated with ''@JvmStatic''">@JvmStatic fun a3()</error> {
 
             }
         }
     }
 
-    <error descr="[JVM_STATIC_NOT_IN_OBJECT] Only functions in named objects and companion objects of classes can be annotated with 'JvmStatic'">@JvmStatic fun a4()</error> {
+    <error descr="[JVM_STATIC_NOT_IN_OBJECT] Only functions in named objects and companion objects of classes can be annotated with ''@JvmStatic''">@JvmStatic fun a4()</error> {
 
     }
 }
@@ -32,7 +32,7 @@ class A {
 <error descr="[WRONG_ANNOTATION_TARGET] This annotation is not applicable to target 'interface'">@JvmStatic</error>
 interface B {
     companion object {
-        <error descr="[JVM_STATIC_NOT_IN_OBJECT] Only functions in named objects and companion objects of classes can be annotated with 'JvmStatic'">@JvmStatic fun a1()</error> {
+        <error descr="[JVM_STATIC_NOT_IN_OBJECT] Only functions in named objects and companion objects of classes can be annotated with ''@JvmStatic''">@JvmStatic fun a1()</error> {
 
         }
     }
@@ -45,13 +45,13 @@ interface B {
 
     fun test() {
         val <warning descr="[UNUSED_VARIABLE] Variable 's' is never used">s</warning> = object {
-            <error descr="[JVM_STATIC_NOT_IN_OBJECT] Only functions in named objects and companion objects of classes can be annotated with 'JvmStatic'">@JvmStatic fun a3()</error> {
+            <error descr="[JVM_STATIC_NOT_IN_OBJECT] Only functions in named objects and companion objects of classes can be annotated with ''@JvmStatic''">@JvmStatic fun a3()</error> {
 
             }
         }
     }
 
-    <error descr="[JVM_STATIC_NOT_IN_OBJECT] Only functions in named objects and companion objects of classes can be annotated with 'JvmStatic'">@JvmStatic fun a4()</error> {
+    <error descr="[JVM_STATIC_NOT_IN_OBJECT] Only functions in named objects and companion objects of classes can be annotated with ''@JvmStatic''">@JvmStatic fun a4()</error> {
 
     }
 }
