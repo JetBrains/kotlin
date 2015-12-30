@@ -2422,6 +2422,45 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/box/controlStructures/returnsNothing")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ReturnsNothing extends AbstractBlackBoxCodegenTest {
+            public void testAllFilesPresentInReturnsNothing() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/controlStructures/returnsNothing"), Pattern.compile("^(.+)\\.kt$"), true);
+            }
+
+            @TestMetadata("ifElse.kt")
+            public void testIfElse() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/returnsNothing/ifElse.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("inlineMethod.kt")
+            public void testInlineMethod() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/returnsNothing/inlineMethod.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("propertyGetter.kt")
+            public void testPropertyGetter() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/returnsNothing/propertyGetter.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("tryCatch.kt")
+            public void testTryCatch() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/returnsNothing/tryCatch.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("when.kt")
+            public void testWhen() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/controlStructures/returnsNothing/when.kt");
+                doTest(fileName);
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
