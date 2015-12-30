@@ -28,7 +28,7 @@ class A {
 // RESULT: 1: I
 
 
- frame    = main():7, FrameInlineArgumentKt {frameInlineArgument}
+ frame    = main:7, FrameInlineArgumentKt {frameInlineArgument}
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = frameInlineArgument.kt, 3)
    local    = element: int = 1 (sp = frameInlineArgument.kt, 4)
    local    = this_$iv: frameInlineArgument.A = {frameInlineArgument.A@uniqueID} (sp = null)

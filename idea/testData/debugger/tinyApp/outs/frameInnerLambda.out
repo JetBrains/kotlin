@@ -32,7 +32,7 @@ fun foo(f: () -> Unit) {
 
 // EXPRESSION: val1 + val2
 // RESULT: 2: I
- frame    = invoke():9, FrameInnerLambdaKt$main$1$1 {frameInnerLambda}
+ frame    = invoke:9, FrameInnerLambdaKt$main$1$1 {frameInnerLambda}
    this     = this = {frameInnerLambda.FrameInnerLambdaKt$main$1$1@uniqueID}Function0<kotlin.Unit>
      field    = this$0: frameInnerLambda.FrameInnerLambdaKt$main$1 = {frameInnerLambda.FrameInnerLambdaKt$main$1@uniqueID}Function0<kotlin.Unit> (sp = null)
        field    = $val1: int = 1 (sp = null)

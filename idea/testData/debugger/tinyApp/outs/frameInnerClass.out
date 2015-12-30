@@ -40,7 +40,7 @@ class A {
 
 // EXPRESSION: myFun2()
 // RESULT: 1: I
- frame    = test():17, A$Inner {frameInnerClass}
+ frame    = test:17, A$Inner {frameInnerClass}
    this     = this = {frameInnerClass.A$Inner@uniqueID}
      field    = prop2: int = 1 (sp = frameInnerClass.kt, 12)
      field    = this$0: frameInnerClass.A = {frameInnerClass.A@uniqueID} (sp = null)

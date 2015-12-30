@@ -21,7 +21,7 @@ fun foo(f: () -> Unit) {
 
 // EXPRESSION: val1
 // RESULT: 1: I
- frame    = invoke():7, FrameLambdaKt$main$1 {frameLambda}
+ frame    = invoke:7, FrameLambdaKt$main$1 {frameLambda}
    this     = this = {frameLambda.FrameLambdaKt$main$1@uniqueID}Function0<kotlin.Unit>
      field    = $val1: int = 1 (sp = null)
      field    = arity: int = 0 (sp = Lambda.!EXT!)

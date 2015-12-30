@@ -236,14 +236,11 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
             return "null"
         }
 
-        val virtualFile = sourcePosition.file.virtualFile
-        if (virtualFile == null) {
-            return "VirtualFile for position is null"
-        }
+        val virtualFile = sourcePosition.file.originalFile.virtualFile ?: sourcePosition.file.viewProvider.virtualFile ?:
+                          return "VirtualFile for position is null"
 
         val libraryEntry = LibraryUtil.findLibraryEntry(virtualFile, project)
-        if (libraryEntry != null && (libraryEntry is JdkOrderEntry ||
-                                     libraryEntry.presentableName == KOTLIN_LIBRARY_NAME)) {
+        if (libraryEntry != null && (libraryEntry is JdkOrderEntry || libraryEntry.presentableName == KOTLIN_LIBRARY_NAME)) {
             return FileUtil.getNameWithoutExtension(virtualFile.name) + ".!EXT!"
         }
 
