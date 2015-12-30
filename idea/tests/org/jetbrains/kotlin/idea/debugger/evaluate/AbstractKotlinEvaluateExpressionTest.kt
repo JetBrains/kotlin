@@ -31,6 +31,8 @@ import com.intellij.debugger.ui.tree.LocalVariableDescriptor
 import com.intellij.debugger.ui.tree.StackFrameDescriptor
 import com.intellij.debugger.ui.tree.StaticDescriptor
 import com.intellij.execution.process.ProcessOutputTypes
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiElement
@@ -120,8 +122,13 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
 
         doStepping(path)
 
-        val variablesView = createVariablesView()
-        val watchesView = createWatchesView()
+        var variablesView: XVariablesView? = null
+        var watchesView: XWatchesViewImpl? = null
+
+        ApplicationManager.getApplication().invokeAndWait({
+            variablesView = createVariablesView()
+            watchesView = createWatchesView()
+        }, ModalityState.any())
 
         doOnBreakpoint {
             val exceptions = linkedMapOf<String, Throwable>()
@@ -139,8 +146,8 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
                 }
             }
             finally {
-               if (shouldPrintFrame) {
-                    printFrame(variablesView, watchesView)
+                if (shouldPrintFrame) {
+                    printFrame(variablesView!!, watchesView!!)
                     println(fileText, ProcessOutputTypes.SYSTEM)
                 }
                 else {
@@ -150,6 +157,7 @@ abstract class AbstractKotlinEvaluateExpressionTest : KotlinDebuggerTestBase() {
 
             checkExceptions(exceptions)
         }
+
         finish()
     }
 
