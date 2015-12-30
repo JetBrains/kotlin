@@ -20,8 +20,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.types.KotlinType;
 
-import java.util.Collection;
-
 public abstract class SerializerExtension {
     @NotNull
     public abstract StringTable getStringTable();
@@ -33,7 +31,7 @@ public abstract class SerializerExtension {
     public void serializeClass(@NotNull ClassDescriptor descriptor, @NotNull ProtoBuf.Class.Builder proto) {
     }
 
-    public void serializePackage(@NotNull Collection<PackageFragmentDescriptor> packageFragments, @NotNull ProtoBuf.Package.Builder proto) {
+    public void serializePackage(@NotNull ProtoBuf.Package.Builder proto) {
     }
 
     public void serializeConstructor(@NotNull ConstructorDescriptor descriptor, @NotNull ProtoBuf.Constructor.Builder proto) {

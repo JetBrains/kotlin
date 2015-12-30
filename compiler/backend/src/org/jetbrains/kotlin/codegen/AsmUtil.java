@@ -785,7 +785,6 @@ public class AsmUtil {
     public static void writeKotlinSyntheticClassAnnotation(@NotNull ClassBuilder v, @NotNull GenerationState state) {
         AnnotationVisitor av = v.newAnnotation(asmDescByFqNameWithoutInnerClasses(KOTLIN_SYNTHETIC_CLASS), true);
         JvmCodegenUtil.writeAbiVersion(av);
-        JvmCodegenUtil.writeModuleName(av, state);
         av.visitEnd();
     }
 

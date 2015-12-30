@@ -14,6 +14,8 @@ public final class JvmProtoBuf {
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.isRaw);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.typeParameterAnnotation);
     registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.classAnnotation);
+    registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.classModuleName);
+    registry.add(org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf.packageModuleName);
   }
   public interface StringTableTypesOrBuilder
       extends com.google.protobuf.MessageLiteOrBuilder {
@@ -3816,6 +3818,36 @@ public final class JvmProtoBuf {
         100,
         com.google.protobuf.WireFormat.FieldType.MESSAGE,
         false);
+  public static final int CLASS_MODULE_NAME_FIELD_NUMBER = 101;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Class { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.ProtoBuf.Class,
+      java.lang.Integer> classModuleName = com.google.protobuf.GeneratedMessageLite
+          .newSingularGeneratedExtension(
+        org.jetbrains.kotlin.serialization.ProtoBuf.Class.getDefaultInstance(),
+        0,
+        null,
+        null,
+        101,
+        com.google.protobuf.WireFormat.FieldType.INT32);
+  public static final int PACKAGE_MODULE_NAME_FIELD_NUMBER = 101;
+  /**
+   * <code>extend .org.jetbrains.kotlin.serialization.Package { ... }</code>
+   */
+  public static final
+    com.google.protobuf.GeneratedMessageLite.GeneratedExtension<
+      org.jetbrains.kotlin.serialization.ProtoBuf.Package,
+      java.lang.Integer> packageModuleName = com.google.protobuf.GeneratedMessageLite
+          .newSingularGeneratedExtension(
+        org.jetbrains.kotlin.serialization.ProtoBuf.Package.getDefaultInstance(),
+        0,
+        null,
+        null,
+        101,
+        com.google.protobuf.WireFormat.FieldType.INT32);
 
   static {
   }

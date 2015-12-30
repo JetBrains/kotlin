@@ -17,12 +17,16 @@
 @file:JvmName("ReflectJvmMapping")
 package kotlin.reflect.jvm
 
+import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.load.kotlin.reflect.ReflectKotlinClass
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
+import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import java.lang.reflect.*
 import java.util.*
 import kotlin.jvm.internal.KotlinFileFacade
 import kotlin.jvm.internal.Reflection
 import kotlin.reflect.*
-import kotlin.reflect.jvm.internal.KCallableImpl
 import kotlin.reflect.jvm.internal.KTypeImpl
 import kotlin.reflect.jvm.internal.asKCallableImpl
 import kotlin.reflect.jvm.internal.asKPropertyImpl
@@ -100,9 +104,19 @@ val Field.kotlinProperty: KProperty<*>?
 
 private fun Member.getKPackage(): KDeclarationContainer? {
     // TODO: support multifile classes
-    val fileFacade = declaringClass.getAnnotation(KotlinFileFacade::class.java)
-    return if (fileFacade != null)
-        Reflection.getOrCreateKotlinPackage(declaringClass, fileFacade.moduleName)
+    return if (declaringClass.getAnnotation(KotlinFileFacade::class.java) != null) {
+        val header = ReflectKotlinClass.create(declaringClass)?.classHeader
+        if (header != null && header.kind == KotlinClassHeader.Kind.FILE_FACADE && header.metadataVersion.isCompatible()) {
+            // TODO: avoid reading and parsing metadata twice (here and later in KPackageImpl#descriptor)
+            val (nameResolver, proto) = JvmProtoBufUtil.readPackageDataFrom(header.data!!, header.strings!!)
+            val moduleName =
+                    if (proto.hasExtension(JvmProtoBuf.packageModuleName))
+                        nameResolver.getString(proto.getExtension(JvmProtoBuf.packageModuleName))
+                    else JvmAbi.DEFAULT_MODULE_NAME
+            Reflection.getOrCreateKotlinPackage(declaringClass, moduleName)
+        }
+        else null
+    }
     else null
 }
 
@@ -121,7 +135,7 @@ val Method.kotlinFunction: KFunction<*>?
                 return kotlinPackage.members.filterIsInstance<KFunction<*>>().firstOrNull { it.javaMethod == this }
             }
 
-            // For static bridge method generated for a jvmStatic function in the companion object, also try to find the latter
+            // For static bridge method generated for a @JvmStatic function in the companion object, also try to find the latter
             val companion = declaringClass.kotlin.companionObject
             if (companion != null) {
                 companion.functions.firstOrNull {

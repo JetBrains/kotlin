@@ -252,9 +252,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         }
 
         final DescriptorSerializer serializer =
-                DescriptorSerializer.create(descriptor, new JvmSerializerExtension(
-                        v.getSerializationBindings(), typeMapper, state.getUseTypeTableInSerializer()
-                ));
+                DescriptorSerializer.create(descriptor, new JvmSerializerExtension(v.getSerializationBindings(), state));
 
         final ProtoBuf.Class classProto = serializer.classProto(descriptor).build();
 
@@ -272,7 +270,6 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_CLASS), true);
         writeAbiVersion(av);
         writeAnnotationData(av, serializer, classProto, true);
-        writeModuleName(av, state);
         av.visitEnd();
     }
 

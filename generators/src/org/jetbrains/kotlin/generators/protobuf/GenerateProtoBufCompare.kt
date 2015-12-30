@@ -349,7 +349,7 @@ class GenerateProtoBufCompare {
         }
 
         override fun printOptionalField() {
-            p.println("if (old.hasExtension($fullFieldName) != new.hasExtension($fullFieldName)) return false")
+            p.println("if (old.hasExtension($fullFieldName) != new.hasExtension($fullFieldName)) $statement")
             p.println("if (old.hasExtension($fullFieldName)) {")
             p.printlnIfWithComparisonIndent(field, "getExtension($fullFieldName)", statement)
             p.println("}")

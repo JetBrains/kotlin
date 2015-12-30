@@ -289,7 +289,6 @@ class MultifileClassCodegen(
 
         val av = classBuilder.newAnnotation(AsmUtil.asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_MULTIFILE_CLASS), true)
         JvmCodegenUtil.writeAbiVersion(av)
-        JvmCodegenUtil.writeModuleName(av, state)
         writePartNames(av, JvmAnnotationNames.FILE_PART_CLASS_NAMES_FIELD_NAME)
         av.visitEnd()
     }

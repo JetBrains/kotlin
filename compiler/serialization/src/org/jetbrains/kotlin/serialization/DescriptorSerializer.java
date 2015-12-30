@@ -587,7 +587,7 @@ public class DescriptorSerializer {
             builder.setTypeTable(typeTableProto);
         }
 
-        extension.serializePackage(fragments, builder);
+        extension.serializePackage(builder);
 
         return builder;
     }
@@ -609,6 +609,8 @@ public class DescriptorSerializer {
         if (typeTableProto != null) {
             builder.setTypeTable(typeTableProto);
         }
+
+        extension.serializePackage(builder);
 
         return builder;
     }

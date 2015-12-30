@@ -19,9 +19,10 @@ package org.jetbrains.kotlin.codegen.serialization;
 import com.intellij.openapi.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.codegen.state.JetTypeMapper;
+import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.load.java.lazy.types.RawTypeCapabilities;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.serialization.AnnotationSerializer;
@@ -41,12 +42,14 @@ public class JvmSerializerExtension extends SerializerExtension {
     private final StringTable stringTable;
     private final AnnotationSerializer annotationSerializer;
     private final boolean useTypeTable;
+    private final String moduleName;
 
-    public JvmSerializerExtension(@NotNull JvmSerializationBindings bindings, @NotNull JetTypeMapper typeMapper, boolean useTypeTable) {
+    public JvmSerializerExtension(@NotNull JvmSerializationBindings bindings, @NotNull GenerationState state) {
         this.bindings = bindings;
-        this.stringTable = new JvmStringTable(typeMapper);
+        this.stringTable = new JvmStringTable(state.getTypeMapper());
         this.annotationSerializer = new AnnotationSerializer(stringTable);
-        this.useTypeTable = useTypeTable;
+        this.useTypeTable = state.getUseTypeTableInSerializer();
+        this.moduleName = state.getModuleName();
     }
 
     @NotNull
@@ -58,6 +61,20 @@ public class JvmSerializerExtension extends SerializerExtension {
     @Override
     public boolean shouldUseTypeTable() {
         return useTypeTable;
+    }
+
+    @Override
+    public void serializeClass(@NotNull ClassDescriptor descriptor, @NotNull ProtoBuf.Class.Builder proto) {
+        if (!moduleName.equals(JvmAbi.DEFAULT_MODULE_NAME)) {
+            proto.setExtension(JvmProtoBuf.classModuleName, stringTable.getStringIndex(moduleName));
+        }
+    }
+
+    @Override
+    public void serializePackage(@NotNull ProtoBuf.Package.Builder proto) {
+        if (!moduleName.equals(JvmAbi.DEFAULT_MODULE_NAME)) {
+            proto.setExtension(JvmProtoBuf.packageModuleName, stringTable.getStringIndex(moduleName));
+        }
     }
 
     @Override

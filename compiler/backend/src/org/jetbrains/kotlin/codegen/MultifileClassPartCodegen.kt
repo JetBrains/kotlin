@@ -84,11 +84,7 @@ class MultifileClassPartCodegen(
             }
         }
 
-        val bindings = v.serializationBindings
-
-        val serializer = DescriptorSerializer.createTopLevel(
-                JvmSerializerExtension(bindings, state.typeMapper, state.useTypeTableInSerializer)
-        )
+        val serializer = DescriptorSerializer.createTopLevel(JvmSerializerExtension(v.serializationBindings, state))
         val packageProto = serializer.packagePartProto(members).build()
 
         writeKotlinMetadata(v, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART) { av ->

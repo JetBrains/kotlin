@@ -23,7 +23,6 @@ import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.annotation.AnnotatedSimple;
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext;
-import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings;
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
@@ -47,7 +46,6 @@ import java.util.List;
 import static org.jetbrains.kotlin.codegen.AsmUtil.asmDescByFqNameWithoutInnerClasses;
 import static org.jetbrains.kotlin.codegen.AsmUtil.writeAnnotationData;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.writeAbiVersion;
-import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.writeModuleName;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class PackagePartCodegen extends MemberCodegen<KtFile> {
@@ -123,11 +121,8 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
             }
         }
 
-        JvmSerializationBindings bindings = v.getSerializationBindings();
-
-        final DescriptorSerializer serializer = DescriptorSerializer.createTopLevel(new JvmSerializerExtension(
-                bindings, state.getTypeMapper(), state.getUseTypeTableInSerializer()
-        ));
+        final DescriptorSerializer serializer =
+                DescriptorSerializer.createTopLevel(new JvmSerializerExtension(v.getSerializationBindings(), state));
         final ProtoBuf.Package packageProto = serializer.packagePartProto(members).build();
 
         WriteAnnotationUtilKt.writeKotlinMetadata(v, KotlinClassHeader.Kind.FILE_FACADE, new Function1<AnnotationVisitor, Unit>() {
@@ -141,7 +136,6 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
         AnnotationVisitor av = v.newAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_FILE_FACADE), true);
         writeAbiVersion(av);
         writeAnnotationData(av, serializer, packageProto, true);
-        writeModuleName(av, state);
         av.visitEnd();
     }
 

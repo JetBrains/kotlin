@@ -24,10 +24,12 @@ import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
 import org.jetbrains.kotlin.serialization.ProtoBuf
 
-class BuiltInsSerializerExtension : KotlinSerializerExtensionBase(BuiltInSerializerProtocol) {
+class BuiltInsSerializerExtension(
+        private val packageFragments: Collection<PackageFragmentDescriptor>
+) : KotlinSerializerExtensionBase(BuiltInSerializerProtocol) {
     override fun shouldUseTypeTable(): Boolean = true
 
-    override fun serializePackage(packageFragments: Collection<PackageFragmentDescriptor>, proto: ProtoBuf.Package.Builder) {
+    override fun serializePackage(proto: ProtoBuf.Package.Builder) {
         if (packageFragments.isEmpty()) return
 
         val classes = packageFragments.flatMap {

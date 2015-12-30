@@ -44,12 +44,18 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (!checkEquals(old.typeTable, new.typeTable)) return false
         }
 
+        if (old.hasExtension(JvmProtoBuf.packageModuleName) != new.hasExtension(JvmProtoBuf.packageModuleName)) return false
+        if (old.hasExtension(JvmProtoBuf.packageModuleName)) {
+            if (!checkStringEquals(old.getExtension(JvmProtoBuf.packageModuleName), new.getExtension(JvmProtoBuf.packageModuleName))) return false
+        }
+
         return true
     }
     enum class ProtoBufPackageKind {
         FUNCTION_LIST,
         PROPERTY_LIST,
-        TYPE_TABLE
+        TYPE_TABLE,
+        PACKAGE_MODULE_NAME
     }
 
     fun difference(old: ProtoBuf.Package, new: ProtoBuf.Package): EnumSet<ProtoBufPackageKind> {
@@ -62,6 +68,11 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         if (old.hasTypeTable() != new.hasTypeTable()) result.add(ProtoBufPackageKind.TYPE_TABLE)
         if (old.hasTypeTable()) {
             if (!checkEquals(old.typeTable, new.typeTable)) result.add(ProtoBufPackageKind.TYPE_TABLE)
+        }
+
+        if (old.hasExtension(JvmProtoBuf.packageModuleName) != new.hasExtension(JvmProtoBuf.packageModuleName)) result.add(ProtoBufPackageKind.PACKAGE_MODULE_NAME)
+        if (old.hasExtension(JvmProtoBuf.packageModuleName)) {
+            if (!checkStringEquals(old.getExtension(JvmProtoBuf.packageModuleName), new.getExtension(JvmProtoBuf.packageModuleName))) result.add(ProtoBufPackageKind.PACKAGE_MODULE_NAME)
         }
 
         return result
@@ -107,6 +118,11 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
             if (!checkEquals(old.getExtension(JvmProtoBuf.classAnnotation, i), new.getExtension(JvmProtoBuf.classAnnotation, i))) return false
         }
 
+        if (old.hasExtension(JvmProtoBuf.classModuleName) != new.hasExtension(JvmProtoBuf.classModuleName)) return false
+        if (old.hasExtension(JvmProtoBuf.classModuleName)) {
+            if (!checkStringEquals(old.getExtension(JvmProtoBuf.classModuleName), new.getExtension(JvmProtoBuf.classModuleName))) return false
+        }
+
         return true
     }
     enum class ProtoBufClassKind {
@@ -122,7 +138,8 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
         PROPERTY_LIST,
         ENUM_ENTRY_LIST,
         TYPE_TABLE,
-        CLASS_ANNOTATION_LIST
+        CLASS_ANNOTATION_LIST,
+        CLASS_MODULE_NAME
     }
 
     fun difference(old: ProtoBuf.Class, new: ProtoBuf.Class): EnumSet<ProtoBufClassKind> {
@@ -165,6 +182,11 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
 
         for(i in 0..old.getExtensionCount(JvmProtoBuf.classAnnotation) - 1) {
             if (!checkEquals(old.getExtension(JvmProtoBuf.classAnnotation, i), new.getExtension(JvmProtoBuf.classAnnotation, i))) result.add(ProtoBufClassKind.CLASS_ANNOTATION_LIST)
+        }
+
+        if (old.hasExtension(JvmProtoBuf.classModuleName) != new.hasExtension(JvmProtoBuf.classModuleName)) result.add(ProtoBufClassKind.CLASS_MODULE_NAME)
+        if (old.hasExtension(JvmProtoBuf.classModuleName)) {
+            if (!checkStringEquals(old.getExtension(JvmProtoBuf.classModuleName), new.getExtension(JvmProtoBuf.classModuleName))) result.add(ProtoBufClassKind.CLASS_MODULE_NAME)
         }
 
         return result
@@ -804,6 +826,10 @@ fun ProtoBuf.Package.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) 
         hashCode = 31 * hashCode + typeTable.hashCode(stringIndexes, fqNameIndexes)
     }
 
+    if (hasExtension(JvmProtoBuf.packageModuleName)) {
+        hashCode = 31 * hashCode + stringIndexes(getExtension(JvmProtoBuf.packageModuleName))
+    }
+
     return hashCode
 }
 
@@ -858,6 +884,10 @@ fun ProtoBuf.Class.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) ->
 
     for(i in 0..getExtensionCount(JvmProtoBuf.classAnnotation) - 1) {
         hashCode = 31 * hashCode + getExtension(JvmProtoBuf.classAnnotation, i).hashCode(stringIndexes, fqNameIndexes)
+    }
+
+    if (hasExtension(JvmProtoBuf.classModuleName)) {
+        hashCode = 31 * hashCode + stringIndexes(getExtension(JvmProtoBuf.classModuleName))
     }
 
     return hashCode

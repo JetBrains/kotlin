@@ -119,12 +119,13 @@ class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
             private val onFileWrite: (bytesWritten: Int) -> Unit
     ) {
         private val fqName = packageView.fqName
+        private val fragments = packageView.fragments
         private val builtinsMessage = BuiltInsProtoBuf.BuiltIns.newBuilder()
-        private val extension = BuiltInsSerializerExtension()
+        private val extension = BuiltInsSerializerExtension(fragments)
 
         fun run() {
             serializeClasses(packageView.memberScope)
-            serializePackageFragments(packageView.fragments)
+            serializePackageFragments(fragments)
             serializeStringTable()
             serializeBuiltInsFile()
         }

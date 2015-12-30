@@ -59,7 +59,8 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.ExpressionCodegen.generateClassLiteralReference;
-import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.*;
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConst;
+import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.writeAbiVersion;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLOSURE;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClass;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
@@ -222,9 +223,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         writeKotlinSyntheticClassAnnotation(v, state);
 
         final DescriptorSerializer serializer =
-                DescriptorSerializer.createForLambda(
-                        new JvmSerializerExtension(v.getSerializationBindings(), typeMapper, state.getUseTypeTableInSerializer())
-                );
+                DescriptorSerializer.createForLambda(new JvmSerializerExtension(v.getSerializationBindings(), state));
 
         final ProtoBuf.Function functionProto = serializer.functionProto(funDescriptor).build();
 
@@ -240,7 +239,6 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         AnnotationVisitor av = v.getVisitor().visitAnnotation(asmDescByFqNameWithoutInnerClasses(JvmAnnotationNames.KOTLIN_FUNCTION), true);
         writeAbiVersion(av);
         writeAnnotationData(av, serializer, functionProto, true);
-        writeModuleName(av, state);
         av.visitEnd();
     }
 
