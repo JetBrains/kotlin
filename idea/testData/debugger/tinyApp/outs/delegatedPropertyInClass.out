@@ -31,7 +31,7 @@ class MyDelegateThrowsException {
 // SKIP: stackTrace
 
 Compile bytecode for args.size
- frame    = main():9, DelegatedPropertyInClassKt {delegatedPropertyInClass}
+ frame    = main:9, DelegatedPropertyInClassKt {delegatedPropertyInClass}
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = delegatedPropertyInClass.kt, 6)
    local    = a: delegatedPropertyInClass.A = {delegatedPropertyInClass.A@uniqueID} (sp = delegatedPropertyInClass.kt, 7)
      field    = prop$delegate: delegatedPropertyInClass.MyDelegate = {delegatedPropertyInClass.MyDelegate@uniqueID} (sp = delegatedPropertyInClass.kt, 13)

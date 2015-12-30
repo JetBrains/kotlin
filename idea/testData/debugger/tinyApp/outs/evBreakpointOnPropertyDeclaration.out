@@ -21,7 +21,7 @@ fun main(args: Array<String>) {
 
 // PRINT_FRAME
 Compile bytecode for a2.prop
- frame    = main():14, EvBreakpointOnPropertyDeclarationKt {evBreakpointOnPropertyDeclaration}
+ frame    = main:14, EvBreakpointOnPropertyDeclarationKt {evBreakpointOnPropertyDeclaration}
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = evBreakpointOnPropertyDeclaration.kt, 7)
    local    = a1: evBreakpointOnPropertyDeclaration.A = {evBreakpointOnPropertyDeclaration.A@uniqueID} (sp = evBreakpointOnPropertyDeclaration.kt, 8)
      field    = prop: int = 1 (sp = evBreakpointOnPropertyDeclaration.kt, 4)
