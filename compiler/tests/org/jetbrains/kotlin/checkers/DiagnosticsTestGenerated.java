@@ -17022,9 +17022,21 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("recurisveStarProjectionsNullability.kt")
+            public void testRecurisveStarProjectionsNullability() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/substitutions/recurisveStarProjectionsNullability.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("starProjections.kt")
             public void testStarProjections() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/substitutions/starProjections.kt");
+                doTest(fileName);
+            }
+
+            @TestMetadata("starProjectionsNullability.kt")
+            public void testStarProjectionsNullability() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/substitutions/starProjectionsNullability.kt");
                 doTest(fileName);
             }
 

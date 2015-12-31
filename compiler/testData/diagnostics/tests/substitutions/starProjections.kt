@@ -22,3 +22,10 @@ fun testB(b: B<*, *>) {
     b.t().r().size
 }
 
+interface C<T : C<T?>?> {
+    fun t(): T
+}
+
+fun testC(c: C<*>) {
+    c.t().checkType { _<C<*>?>() }
+}
