@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+
+class A(val x: String)
+
+fun foo(a: A) {
+    a.x.substringBefore('x')
+}

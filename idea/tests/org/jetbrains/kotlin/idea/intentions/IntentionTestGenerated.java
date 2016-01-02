@@ -7573,6 +7573,165 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
         }
     }
 
+    @TestMetadata("idea/testData/intentions/replaceSubstringWithDrop")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ReplaceSubstringWithDrop extends AbstractIntentionTest {
+        public void testAllFilesPresentInReplaceSubstringWithDrop() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/replaceSubstringWithDrop"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("replaceWithDrop.kt")
+        public void testReplaceWithDrop() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithDrop/replaceWithDrop.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("semicolon.kt")
+        public void testSemicolon() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithDrop/semicolon.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("substringWithTwoArguments.kt")
+        public void testSubstringWithTwoArguments() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithDrop/substringWithTwoArguments.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/intentions/replaceSubstringWithDropLast")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ReplaceSubstringWithDropLast extends AbstractIntentionTest {
+        public void testAllFilesPresentInReplaceSubstringWithDropLast() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/replaceSubstringWithDropLast"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("immutableProperty.kt")
+        public void testImmutableProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithDropLast/immutableProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonZeroFirstArgument.kt")
+        public void testNonZeroFirstArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithDropLast/nonZeroFirstArgument.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("replaceWithDropLast.kt")
+        public void testReplaceWithDropLast() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithDropLast/replaceWithDropLast.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("semicolon.kt")
+        public void testSemicolon() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithDropLast/semicolon.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/intentions/replaceSubstringWithSubstringAfter")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ReplaceSubstringWithSubstringAfter extends AbstractIntentionTest {
+        public void testAllFilesPresentInReplaceSubstringWithSubstringAfter() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/replaceSubstringWithSubstringAfter"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("immutableProperty.kt")
+        public void testImmutableProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithSubstringAfter/immutableProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("replaceWithSubstringAfter.kt")
+        public void testReplaceWithSubstringAfter() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithSubstringAfter/replaceWithSubstringAfter.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("semicolon.kt")
+        public void testSemicolon() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithSubstringAfter/semicolon.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/intentions/replaceSubstringWithSubstringBefore")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ReplaceSubstringWithSubstringBefore extends AbstractIntentionTest {
+        public void testAllFilesPresentInReplaceSubstringWithSubstringBefore() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/replaceSubstringWithSubstringBefore"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("immutableProperty.kt")
+        public void testImmutableProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithSubstringBefore/immutableProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonZeroFirstArgument.kt")
+        public void testNonZeroFirstArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithSubstringBefore/nonZeroFirstArgument.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("replaceWithSubstringBefore.kt")
+        public void testReplaceWithSubstringBefore() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithSubstringBefore/replaceWithSubstringBefore.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("semicolon.kt")
+        public void testSemicolon() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithSubstringBefore/semicolon.kt");
+            doTest(fileName);
+        }
+    }
+
+    @TestMetadata("idea/testData/intentions/replaceSubstringWithTake")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ReplaceSubstringWithTake extends AbstractIntentionTest {
+        public void testAllFilesPresentInReplaceSubstringWithTake() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/replaceSubstringWithTake"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
+        }
+
+        @TestMetadata("constantAsFirstArgument.kt")
+        public void testConstantAsFirstArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithTake/constantAsFirstArgument.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("expressionAsFirstArgument.kt")
+        public void testExpressionAsFirstArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithTake/expressionAsFirstArgument.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("nonZeroFirstArgument.kt")
+        public void testNonZeroFirstArgument() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithTake/nonZeroFirstArgument.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("replaceWithTake.kt")
+        public void testReplaceWithTake() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithTake/replaceWithTake.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("semicolon.kt")
+        public void testSemicolon() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/replaceSubstringWithTake/semicolon.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("idea/testData/intentions/replaceWithOperatorAssignment")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
