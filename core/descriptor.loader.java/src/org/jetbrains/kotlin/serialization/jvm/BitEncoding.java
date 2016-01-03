@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BitEncoding {
+    private static boolean NEW = true;
+
     private BitEncoding() {
     }
 
@@ -34,6 +36,10 @@ public class BitEncoding {
      */
     @NotNull
     public static String[] encodeBytes(@NotNull byte[] data) {
+        if (NEW) {
+            List<String> strings = UtfEncodingKt.bytesToStrings(data);
+            return strings.toArray(new String[strings.size()]);
+        }
         byte[] bytes = encode8to7(data);
         // Since 0x0 byte is encoded as two bytes in the Modified UTF-8 (0xc0 0x80) and zero is rather common to byte arrays, we increment
         // every byte by one modulo max byte value, so that the less common value 0x7f will be represented as two bytes instead.
@@ -157,6 +163,9 @@ public class BitEncoding {
      */
     @NotNull
     public static byte[] decodeBytes(@NotNull String[] data) {
+        if (NEW) {
+            return UtfEncodingKt.stringsToBytes(data);
+        }
         byte[] bytes = combineStringArrayIntoBytes(data);
         // Adding 0x7f modulo max byte value is equivalent to subtracting 1 the same modulo, which is inverse to what happens in encodeBytes
         addModuloByte(bytes, 0x7f);
