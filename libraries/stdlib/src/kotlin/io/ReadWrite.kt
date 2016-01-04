@@ -145,7 +145,7 @@ public fun URL.readBytes(): ByteArray = openStream().use { it.readBytes() }
  * @param block a function to process this closable resource.
  * @return the result of [block] function on this closable resource.
  */
-public inline fun <T : Closeable, R> T.use(block: (T) -> R): R {
+public inline fun <T : AutoCloseable, R> T.use(block: (T) -> R): R {
     var closed = false
     try {
         return block(this)
