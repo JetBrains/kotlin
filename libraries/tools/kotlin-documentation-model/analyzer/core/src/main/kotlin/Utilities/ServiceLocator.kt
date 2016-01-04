@@ -9,8 +9,8 @@ data class ServiceDescriptor(val name: String, val category: String, val descrip
 
 class ServiceLookupException(message: String) : Exception(message)
 
-public object ServiceLocator {
-    public fun <T : Any> lookup(clazz: Class<T>, category: String, implementationName: String): T {
+object ServiceLocator {
+    fun <T : Any> lookup(clazz: Class<T>, category: String, implementationName: String): T {
         val descriptor = lookupDescriptor(category, implementationName)
         val loadedClass = javaClass.classLoader.loadClass(descriptor.className)
         val constructor = loadedClass.constructors
@@ -66,7 +66,7 @@ public object ServiceLocator {
     }
 }
 
-public inline fun <reified T : Any> ServiceLocator.lookup(category: String, implementationName: String): T = lookup(T::class.java, category, implementationName)
+inline fun <reified T : Any> ServiceLocator.lookup(category: String, implementationName: String): T = lookup(T::class.java, category, implementationName)
 
 private val ZipEntry.fileName: String
     get() = name.substringAfterLast("/", name)
