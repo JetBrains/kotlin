@@ -27,7 +27,7 @@ import java.util.*
 
 class GenerateProtoBufCompare {
     companion object {
-        val DEST_FILE: File = File("jps-plugin/src/org/jetbrains/kotlin/jps/incremental/ProtoCompareGenerated.kt")
+        val DEST_FILE: File = File("build/src/org/jetbrains/kotlin/incremental/ProtoCompareGenerated.kt")
 
         @JvmStatic
         fun main(args: Array<String>) {
@@ -70,7 +70,7 @@ class GenerateProtoBufCompare {
         val sb = StringBuilder()
         val p = Printer(sb)
         p.println(File("license/LICENSE.txt").readText())
-        p.println("package org.jetbrains.kotlin.jps.incremental")
+        p.println("package org.jetbrains.kotlin.incremental")
         p.println()
 
         p.println("import org.jetbrains.kotlin.name.ClassId")
