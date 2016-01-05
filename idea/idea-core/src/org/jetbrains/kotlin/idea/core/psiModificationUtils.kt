@@ -166,6 +166,17 @@ public fun KtClass.getOrCreateCompanionObject() : KtObjectDeclaration {
 
 //TODO: code style option whether to insert redundant 'public' keyword or not
 public fun KtDeclaration.setVisibility(visibilityModifier: KtModifierKeywordToken) {
+    val defaultVisibilityKeyword = implicitVisibility()
+
+    if (visibilityModifier == defaultVisibilityKeyword) {
+        this.visibilityModifierType()?.let { removeModifier(it) }
+        return
+    }
+
+    addModifier(visibilityModifier)
+}
+
+fun KtDeclaration.implicitVisibility(): KtModifierKeywordToken? {
     val defaultVisibilityKeyword = if (hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
         (resolveToDescriptor() as? CallableMemberDescriptor)
                 ?.overriddenDescriptors
@@ -175,13 +186,7 @@ public fun KtDeclaration.setVisibility(visibilityModifier: KtModifierKeywordToke
     else {
         KtTokens.DEFAULT_VISIBILITY_KEYWORD
     }
-
-    if (visibilityModifier == defaultVisibilityKeyword) {
-        this.visibilityModifierType()?.let { removeModifier(it) }
-        return
-    }
-
-    addModifier(visibilityModifier)
+    return defaultVisibilityKeyword
 }
 
 fun KtSecondaryConstructor.getOrCreateBody(): KtBlockExpression {
