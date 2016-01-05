@@ -14,51 +14,29 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.quickfix;
+package org.jetbrains.kotlin.idea.quickfix
 
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.KotlinBundle;
-import org.jetbrains.kotlin.psi.KtExpression;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.createExpressionByPattern
 
-public class ChangeToFunctionInvocationFix extends KotlinQuickFixAction<KtExpression> {
+class ChangeToFunctionInvocationFix(element: KtExpression) : KotlinQuickFixAction<KtExpression>(element) {
+    override fun getFamilyName() = "Change to function invocation"
 
-    public ChangeToFunctionInvocationFix(@NotNull KtExpression element) {
-        super(element);
+    override fun getText() = familyName
+
+    public override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        element.replace(KtPsiFactory(file).createExpressionByPattern("$0()", element))
     }
 
-    @NotNull
-    @Override
-    public String getText() {
-        return KotlinBundle.message("change.to.function.invocation");
-    }
-
-    @NotNull
-    @Override
-    public String getFamilyName() {
-        return KotlinBundle.message("change.to.function.invocation");
-    }
-
-    @Override
-    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
-        KtExpression reference = (KtExpression) getElement().copy();
-        getElement().replace(KtPsiFactoryKt.KtPsiFactory(file).createExpression(reference.getText() + "()"));
-    }
-
-    public static KotlinSingleIntentionActionFactory createFactory() {
-        return new KotlinSingleIntentionActionFactory() {
-            @Override
-            public KotlinQuickFixAction<KtExpression> createAction(@NotNull Diagnostic diagnostic) {
-                if (diagnostic.getPsiElement() instanceof KtExpression) {
-                    return new ChangeToFunctionInvocationFix((KtExpression) diagnostic.getPsiElement());
-                }
-                return null;
-            }
-        };
+    companion object : KotlinSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtExpression>? {
+            val expression = diagnostic.psiElement as? KtExpression ?: return null
+            return ChangeToFunctionInvocationFix(expression)
+        }
     }
 }
