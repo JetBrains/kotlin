@@ -14,99 +14,42 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.quickfix;
+package org.jetbrains.kotlin.idea.quickfix
 
-import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiReference;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.KotlinBundle;
-import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
-import org.jetbrains.kotlin.idea.refactoring.JetRefactoringUtilKt;
-import org.jetbrains.kotlin.idea.references.ReferenceUtilKt;
-import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.psi.*;
+import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.refactoring.canRefactor
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class MakeClassAnAnnotationClassFix extends KotlinQuickFixAction<KtAnnotationEntry> {
-    private final KtAnnotationEntry annotationEntry;
-    private KtClass annotationClass;
+class MakeClassAnAnnotationClassFix(annotationClass: KtClass) : KotlinQuickFixAction<KtClass>(annotationClass) {
+    override fun getFamilyName() = "Make class an annotation class"
 
-    public MakeClassAnAnnotationClassFix(@NotNull KtAnnotationEntry annotationEntry) {
-        super(annotationEntry);
-        this.annotationEntry = annotationEntry;
+    override fun getText() = "Make '${element.name}' an annotation class"
+
+    public override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        element.addModifier(KtTokens.ANNOTATION_KEYWORD)
     }
 
-    @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiFile file) {
-        if (!super.isAvailable(project, editor, file)) {
-            return false;
+    companion object : KotlinSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+            val typeReference = diagnostic.psiElement.getNonStrictParentOfType<KtAnnotationEntry>()?.typeReference ?: return null
+            val bindingContext = typeReference.analyze(BodyResolveMode.PARTIAL)
+            val type = bindingContext[BindingContext.TYPE, typeReference] ?: return null
+            val classDescriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return null
+            val klass = DescriptorToSourceUtils.descriptorToDeclaration(classDescriptor) as? KtClass ?: return null
+            if (!klass.canRefactor()) return null
+            return MakeClassAnAnnotationClassFix(klass)
         }
-
-        KtTypeReference typeReference = annotationEntry.getTypeReference();
-        if (typeReference == null) {
-            return false;
-        }
-
-        KtSimpleNameExpression referenceExpression = PsiTreeUtil.findChildOfType(typeReference, KtSimpleNameExpression.class);
-        if (referenceExpression == null) {
-            return false;
-        }
-
-        PsiReference reference = ReferenceUtilKt.getMainReference(referenceExpression);
-        PsiElement target = reference.resolve();
-        if (target instanceof KtClass) {
-            annotationClass = (KtClass) target;
-            return JetRefactoringUtilKt.canRefactor(annotationClass);
-        }
-
-        return false;
-    }
-
-    @NotNull
-    @Override
-    public String getText() {
-        return KotlinBundle.message("make.class.annotation.class", annotationClass.getName());
-    }
-
-    @NotNull
-    @Override
-    public String getFamilyName() {
-        return KotlinBundle.message("make.class.annotation.class.family");
-    }
-
-    @Override
-    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
-        KtPsiFactory factory = new KtPsiFactory(annotationClass.getProject());
-        KtModifierList list = annotationClass.getModifierList();
-        PsiElement added;
-        if (list == null) {
-            KtModifierList newModifierList = factory.createModifierList(KtTokens.ANNOTATION_KEYWORD);
-            added = annotationClass.addBefore(newModifierList, annotationClass.getClassOrInterfaceKeyword());
-        }
-        else {
-            PsiElement entry = factory.createModifier(KtTokens.ANNOTATION_KEYWORD);
-            added = list.addBefore(entry, list.getFirstChild());
-        }
-        annotationClass.addAfter(factory.createWhiteSpace(), added);
-    }
-
-    @NotNull
-    public static KotlinSingleIntentionActionFactory createFactory() {
-        return new KotlinSingleIntentionActionFactory() {
-            @Nullable
-            @Override
-            public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                KtAnnotationEntry annotation = QuickFixUtil.getParentElementOfType(diagnostic, KtAnnotationEntry.class);
-                return annotation == null ? null : new MakeClassAnAnnotationClassFix(annotation);
-            }
-        };
     }
 }
-

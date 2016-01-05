@@ -213,7 +213,7 @@ class QuickFixRegistrar : QuickFixContributor {
         PROJECTION_ON_NON_CLASS_TYPE_ARGUMENT.registerFactory(RemoveModifierFix.createRemoveProjectionFactory(false))
         PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE.registerFactory(RemoveModifierFix.createRemoveProjectionFactory(false))
 
-        NOT_AN_ANNOTATION_CLASS.registerFactory(MakeClassAnAnnotationClassFix.createFactory())
+        NOT_AN_ANNOTATION_CLASS.registerFactory(MakeClassAnAnnotationClassFix)
 
         val changeVariableTypeFix = ChangeVariableTypeFix.createFactoryForPropertyOrReturnTypeMismatchOnOverride()
         RETURN_TYPE_MISMATCH_ON_OVERRIDE.registerFactory(changeVariableTypeFix)
