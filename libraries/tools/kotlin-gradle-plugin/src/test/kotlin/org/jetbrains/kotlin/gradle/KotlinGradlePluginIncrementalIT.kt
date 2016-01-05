@@ -2,11 +2,11 @@ package org.jetbrains.kotlin.gradle
 
 import org.junit.Test
 
-class KotlinGradleIncrementalIT: BaseGradleIT() {
+class KotlinGradleIncrementalIT: BaseIncrementalGradleIT() {
 
     @Test
     fun testIncrementalKotlinOnlyCompile() {
-        val project = Project("kotlinProject", "2.4")
+        val project = IncrementalTestProject("kotlinProject", "2.4")
 
         project.build("build") {
             assertSuccessful()

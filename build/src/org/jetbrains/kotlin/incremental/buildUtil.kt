@@ -162,8 +162,6 @@ fun updateLookupStorage(
         lookupTracker: LookupTracker,
         filesToCompile: Iterable<File>, removedFiles: Iterable<File>
 ) {
-    if (!IncrementalCompilation.isExperimental()) return
-
     if (lookupTracker !is LookupTrackerImpl) throw AssertionError("Lookup tracker is expected to be LookupTrackerImpl, got ${lookupTracker.javaClass}")
 
     filesToCompile.forEach { lookupStorage.removeLookupsFrom(it) }

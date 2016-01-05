@@ -203,13 +203,21 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
     }
 
     override fun callCompiler(args: K2JVMCompilerArguments, sources: List<File>, isIncremental: Boolean, modified: List<File>, removed: List<File>, cachesBaseDir: File) {
+
+        // TODO: consider other ways to pass incremental flag to compiler/builder
+        System.setProperty("kotlin.incremental.compilation", "true")
+        if (isIncremental) {
+            // TODO: experimental should be removed as soon as it becomes standard
+            System.setProperty("kotlin.incremental.compilation.experimental", "true")
+        }
+
         val targetType = "java-production"
         val moduleName = args.moduleName
         val targets = listOf(TargetId(moduleName, targetType))
         val outputDir = File(args.destination)
         val caches = hashMapOf<TargetId, BasicIncrementalCacheImpl<TargetId>>()
         val lookupStorage = BasicLookupStorage(File(cachesBaseDir, "lookups"))
-        val lookupTracker = makeLookupTracker()
+        val lookupTracker = LookupTrackerImpl(LookupTracker.DO_NOTHING)
         var currentRemoved = removed
 
         fun getOrCreateIncrementalCache(target: TargetId): BasicIncrementalCacheImpl<TargetId> {
@@ -237,6 +245,10 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
             if (isIncremental && !isClassPathChanged()) dirtySourcesFromGradle().distinct()
             else sources
 
+        if (isIncremental) {
+            args.classpath = args.classpath + File.pathSeparator + outputDir.absolutePath
+        }
+
         while (sourcesToCompile.any()) {
             logger.kotlinDebug("compile iteration: ${sourcesToCompile.joinToString(", ")}")
 
@@ -258,24 +270,41 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
 
             caches.values.forEach { it.cleanDirtyInlineFunctions() }
 
-            updateLookupStorage(lookupStorage, lookupTracker, sourcesToCompile, currentRemoved)
+            lookupTracker.lookups.entrySet().forEach {
+                logger.kotlinDebug("lookups to ${it.key.name} from ${it.value.joinToString()}")
+            }
 
-            logger.kotlinDebug("generated ${generatedFiles.joinToString { it.outputFile.path }}")
-            logger.kotlinDebug("changes: ${changes.changes.joinToString { it.fqName.toString() }}")
-            logger.kotlinDebug("dirty: ${changes.dirtyFiles(lookupStorage).joinToString()}")
+            updateLookupStorage(lookupStorage, lookupTracker, sourcesToCompile, currentRemoved)
 
             when (exitCode) {
                 ExitCode.COMPILATION_ERROR -> throw GradleException("Compilation error. See log for more details")
                 ExitCode.INTERNAL_ERROR -> throw GradleException("Internal compiler error. See log for more details")
             }
 
+            logger.kotlinDebug("generated ${generatedFiles.joinToString { it.outputFile.path }}")
+            logger.kotlinDebug("changes: ${changes.changes.joinToString { it.fqName.toString() }}")
+
+            logger.kotlinLazyDebug({
+                "known lookups:\n${lookupStorage.dump(changes.changes.flatMap {
+                    change ->
+                        if (change is ChangeInfo.MembersChanged)
+                            change.names.asSequence().map { LookupSymbol(it, change.fqName.asString()) }
+                        else
+                            sequenceOf<LookupSymbol>()
+                }.toSet())}" })
+
+            if (!isIncremental) break;
+
             // TODO: consider using some order-preserving set for sourcesToCompile instead
-            val sourcesSet = sourcesToCompile.toHashSet()
-            val dirty = changes.dirtyFiles(lookupStorage).filterNot { it in sourcesSet }
+            val compiledSourcesSet = sourcesToCompile.toHashSet()
+
+            val dirty = changes.dirtyFiles(lookupStorage).filter { it !in compiledSourcesSet }
             sourcesToCompile = dirty.filter { it in sources }.toList()
             if (currentRemoved.any()) {
                 currentRemoved = listOf()
             }
+            logger.kotlinDebug("dirty: ${dirty.joinToString()}")
+            logger.kotlinDebug("to compile: ${sourcesToCompile.joinToString()}")
         }
         lookupStorage.flush(false)
         lookupStorage.close()
@@ -532,4 +561,9 @@ class GradleMessageCollector(val logger: Logger, val outputCollector: OutputItem
 
 fun Logger.kotlinDebug(message: String) {
     this.debug("[KOTLIN] $message")
+}
+
+fun Logger.kotlinLazyDebug(makeMessage: () -> String) {
+    if (this.isDebugEnabled)
+        kotlinDebug(makeMessage())
 }
