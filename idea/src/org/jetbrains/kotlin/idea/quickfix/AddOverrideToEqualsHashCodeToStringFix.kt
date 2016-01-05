@@ -14,95 +14,45 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.quickfix;
+package org.jetbrains.kotlin.idea.quickfix
 
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.idea.KotlinBundle;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.idea.project.PluginJetFilesProvider;
-import org.jetbrains.kotlin.psi.*;
+import com.intellij.codeInsight.intention.IntentionAction
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.lexer.KtTokens.OVERRIDE_KEYWORD
+import org.jetbrains.kotlin.lexer.KtTokens.PUBLIC_KEYWORD
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-import java.util.Collection;
-import java.util.List;
+object AddOverrideToEqualsHashCodeToStringActionFactory : KotlinSingleIntentionActionFactory() {
+    private val NAME = "Add 'override' to equals, hashCode, toString in project"
 
-import static org.jetbrains.kotlin.lexer.KtTokens.OVERRIDE_KEYWORD;
-import static org.jetbrains.kotlin.lexer.KtTokens.PUBLIC_KEYWORD;
-
-public class AddOverrideToEqualsHashCodeToStringFix extends KotlinQuickFixAction<PsiElement> {
-    public AddOverrideToEqualsHashCodeToStringFix(@NotNull PsiElement element) {
-        super(element);
-    }
-
-    @NotNull
-    @Override
-    public String getText() {
-        return KotlinBundle.message("add.override.to.equals.hashCode.toString");
-    }
-
-    @NotNull
-    @Override
-    public String getFamilyName() {
-        return KotlinBundle.message("add.override.to.equals.hashCode.toString");
-    }
-
-    @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiFile file) {
-        return super.isAvailable(project, editor, file) && isEqualsHashCodeOrToString(getElement());
-    }
-
-    private static boolean isEqualsHashCodeOrToString(@Nullable PsiElement element) {
-        if (!(element instanceof KtNamedFunction)) return false;
-        KtNamedFunction function = (KtNamedFunction) element;
-        String name = function.getName();
-
-        if ("equals".equals(name)) {
-            List<KtParameter> parameters = function.getValueParameters();
-            if (parameters.size() != 1) return false;
-            KtTypeReference parameterType = parameters.iterator().next().getTypeReference();
-            return parameterType != null && "Any?".equals(parameterType.getText());
-        }
-
-        if ("hashCode".equals(name) || "toString".equals(name)) {
-            return function.getValueParameters().isEmpty();
-        }
-
-        return false;
-    }
-
-    @Override
-    protected void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
-        Collection<KtFile> files = PluginJetFilesProvider.allFilesInProject(file.getProject());
-
-        for (KtFile jetFile : files) {
-            for (Diagnostic diagnostic : ResolutionUtils.analyzeFully(jetFile).getDiagnostics()) {
-                if (diagnostic.getFactory() != Errors.VIRTUAL_MEMBER_HIDDEN) continue;
-
-                KtModifierListOwner element = (KtModifierListOwner) diagnostic.getPsiElement();
-                if (!isEqualsHashCodeOrToString(element)) continue;
-
-                element.addModifier(OVERRIDE_KEYWORD);
-                element.removeModifier(PUBLIC_KEYWORD);
+    private fun isEqualsHashCodeOrToString(element: KtNamedFunction): Boolean {
+        return when (element.name) {
+            "equals" -> {
+                val paramTypeRef = element.valueParameters.singleOrNull()?.typeReference ?: return false
+                val paramType = paramTypeRef.analyze(BodyResolveMode.PARTIAL)[BindingContext.TYPE, paramTypeRef] ?: return false
+                KotlinBuiltIns.isNullableAny(paramType)
             }
+
+            "hashCode", "toString" -> element.valueParameters.isEmpty()
+
+            else -> false
         }
     }
 
-    @NotNull
-    public static KotlinSingleIntentionActionFactory createFactory() {
-        return new KotlinSingleIntentionActionFactory() {
-            @Nullable
-            @Override
-            public AddOverrideToEqualsHashCodeToStringFix createAction(@NotNull Diagnostic diagnostic) {
-                return new AddOverrideToEqualsHashCodeToStringFix(diagnostic.getPsiElement());
-            }
-        };
+    private fun KtNamedFunction.doInvoke() {
+        addModifier(OVERRIDE_KEYWORD)
+        removeModifier(PUBLIC_KEYWORD)
     }
 
+    override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+        return WholeProjectForEachElementOfTypeFix.createByPredicate<KtNamedFunction>(
+                predicate = { isEqualsHashCodeOrToString(it) },
+                taskProcessor = { it.doInvoke() },
+                name = NAME
+        )
+    }
 }
