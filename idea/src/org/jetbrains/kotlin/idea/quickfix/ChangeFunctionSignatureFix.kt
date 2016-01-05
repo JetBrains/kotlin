@@ -76,44 +76,39 @@ abstract class ChangeFunctionSignatureFix(
         }
     }
 
-    companion object : KotlinSingleIntentionActionFactoryWithDelegate<KtCallElement, Companion.Data>() {
-        data class Data(val callElement: KtCallElement, val descriptor: CallableDescriptor)
-
+    companion object : KotlinSingleIntentionActionFactoryWithDelegate<KtCallElement, CallableDescriptor>() {
         override fun getElementOfInterest(diagnostic: Diagnostic): KtCallElement? {
             return diagnostic.psiElement.getNonStrictParentOfType<KtCallElement>()
         }
 
-        override fun extractFixData(element: KtCallElement, diagnostic: Diagnostic): Data? {
-            val descriptor = DiagnosticFactory.cast(diagnostic, Errors.TOO_MANY_ARGUMENTS, Errors.NO_VALUE_FOR_PARAMETER).a
-            return Data(element, descriptor)
+        override fun extractFixData(element: KtCallElement, diagnostic: Diagnostic): CallableDescriptor? {
+            return DiagnosticFactory.cast(diagnostic, Errors.TOO_MANY_ARGUMENTS, Errors.NO_VALUE_FOR_PARAMETER).a
         }
 
-        override fun createFix(data: Data) = createFix(data.callElement, data.descriptor)
-
-        private fun createFix(callElement: KtCallElement, descriptor: CallableDescriptor): ChangeFunctionSignatureFix? {
-            val functionDescriptor = descriptor as? FunctionDescriptor
-                    ?: (descriptor as? ValueParameterDescriptor)?.containingDeclaration as? FunctionDescriptor
-                    ?: return null
+        override fun createFix(originalElement: KtCallElement, data: CallableDescriptor): ChangeFunctionSignatureFix? {
+            val functionDescriptor = data as? FunctionDescriptor
+                                     ?: (data as? ValueParameterDescriptor)?.containingDeclaration as? FunctionDescriptor
+                                     ?: return null
 
             if (functionDescriptor.kind == SYNTHESIZED) return null
 
-            if (descriptor is ValueParameterDescriptor) {
-                return RemoveParameterFix(callElement, functionDescriptor, descriptor)
+            if (data is ValueParameterDescriptor) {
+                return RemoveParameterFix(originalElement, functionDescriptor, data)
             }
             else {
                 val parameters = functionDescriptor.valueParameters
-                val arguments = callElement.valueArguments
+                val arguments = originalElement.valueArguments
 
                 if (arguments.size > parameters.size) {
-                    val bindingContext = callElement.analyze()
-                    val call = callElement.getCall(bindingContext) ?: return null
+                    val bindingContext = originalElement.analyze()
+                    val call = originalElement.getCall(bindingContext) ?: return null
                     val argumentToParameter = call.mapArgumentsToParameters(functionDescriptor)
                     val hasTypeMismatches = argumentToParameter.any {
                         val (argument, parameter) = it
                         val argumentType = argument.getArgumentExpression()?.let { bindingContext.getType(it) }
                         argumentType == null || !KotlinTypeChecker.DEFAULT.isSubtypeOf(argumentType, parameter.type)
                     }
-                    return AddFunctionParametersFix(callElement, functionDescriptor, hasTypeMismatches)
+                    return AddFunctionParametersFix(originalElement, functionDescriptor, hasTypeMismatches)
                 }
             }
 

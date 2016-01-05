@@ -30,7 +30,7 @@ abstract class KotlinSingleIntentionActionFactoryWithDelegate<E : KtElement, D :
         private val actionPriority: IntentionActionPriority = IntentionActionPriority.NORMAL
 ) : KotlinIntentionActionFactoryWithDelegate<E, D>() {
 
-    protected abstract fun createFix(data: D): IntentionAction?
+    protected abstract fun createFix(originalElement: E, data: D): IntentionAction?
 
     override final fun createFixes(
             originalElementPointer: SmartPsiElementPointer<E>,
@@ -38,8 +38,9 @@ abstract class KotlinSingleIntentionActionFactoryWithDelegate<E : KtElement, D :
             quickFixDataFactory: () -> D?
     ): List<QuickFixWithDelegateFactory> {
         fun createAction(): IntentionAction? {
+            val originalElement = originalElementPointer.element ?: return null
             val data = quickFixDataFactory() ?: return null
-            return createFix(data)
+            return createFix(originalElement, data)
         }
 
         val delegateFactory = when (actionPriority) {
