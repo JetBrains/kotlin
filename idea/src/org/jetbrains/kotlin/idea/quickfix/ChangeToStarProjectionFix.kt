@@ -14,64 +14,31 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.quickfix;
+package org.jetbrains.kotlin.idea.quickfix
 
-import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.KotlinBundle;
-import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.types.expressions.TypeReconstructionUtil;
+import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
-public class ChangeToStarProjectionFix extends KotlinQuickFixAction<KtTypeElement> {
-    public ChangeToStarProjectionFix(@NotNull KtTypeElement element) {
-        super(element);
+class ChangeToStarProjectionFix(element: KtTypeElement) : KotlinQuickFixAction<KtTypeElement>(element) {
+    override fun getFamilyName() = "Change to star projection"
+
+    override fun getText() = "Change type arguments to <${element.typeArgumentsAsTypes.joinToString { "*" }}>"
+
+    public override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val star = KtPsiFactory(file).createStar()
+        element.typeArgumentsAsTypes.forEach { it?.replace(star) }
     }
 
-    @NotNull
-    @Override
-    public String getText() {
-        String stars = TypeReconstructionUtil.getTypeNameAndStarProjectionsString("", getElement().getTypeArgumentsAsTypes().size());
-        return KotlinBundle.message("change.to.star.projection", stars);
-    }
-
-    @NotNull
-    @Override
-    public String getFamilyName() {
-        return KotlinBundle.message("change.to.star.projection.family");
-    }
-
-    @Override
-    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
-        for (KtTypeReference typeReference : getElement().getTypeArgumentsAsTypes()) {
-            if (typeReference != null) {
-                typeReference.replace(KtPsiFactoryKt.KtPsiFactory(file).createStar());
-            }
+    companion object : KotlinSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+            val typeReference = diagnostic.psiElement.getNonStrictParentOfType<KtBinaryExpressionWithTypeRHS>()?.right
+                                ?: diagnostic.psiElement.getNonStrictParentOfType<KtTypeReference>()
+            val typeElement = typeReference?.typeElement ?: return null
+            return ChangeToStarProjectionFix(typeElement)
         }
-    }
-
-    public static KotlinSingleIntentionActionFactory createFactory() {
-        return new KotlinSingleIntentionActionFactory() {
-            @Override
-            public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                KtBinaryExpressionWithTypeRHS expression = QuickFixUtil
-                        .getParentElementOfType(diagnostic, KtBinaryExpressionWithTypeRHS.class);
-                KtTypeReference typeReference;
-                if (expression == null) {
-                    typeReference = QuickFixUtil.getParentElementOfType(diagnostic, KtTypeReference.class);
-                }
-                else {
-                    typeReference = expression.getRight();
-                }
-                if (typeReference == null) return null;
-                KtTypeElement typeElement = typeReference.getTypeElement();
-                assert typeElement != null;
-                return new ChangeToStarProjectionFix(typeElement);
-            }
-        };
     }
 }

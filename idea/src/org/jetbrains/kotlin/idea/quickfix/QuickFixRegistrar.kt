@@ -195,9 +195,8 @@ class QuickFixRegistrar : QuickFixContributor {
 
         TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER.registerFactory(RemovePsiElementSimpleFix.createRemoveTypeArgumentsFactory())
 
-        val changeToStarProjectionFactory = ChangeToStarProjectionFix.createFactory()
-        UNCHECKED_CAST.registerFactory(changeToStarProjectionFactory)
-        CANNOT_CHECK_FOR_ERASED.registerFactory(changeToStarProjectionFactory)
+        UNCHECKED_CAST.registerFactory(ChangeToStarProjectionFix)
+        CANNOT_CHECK_FOR_ERASED.registerFactory(ChangeToStarProjectionFix)
 
         INACCESSIBLE_OUTER_CLASS_EXPRESSION.registerFactory(AddModifierFix.createFactory(INNER_KEYWORD, KtClass::class.java))
 
