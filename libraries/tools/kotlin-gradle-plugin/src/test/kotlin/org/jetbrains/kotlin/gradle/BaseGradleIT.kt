@@ -33,7 +33,14 @@ abstract class BaseGradleIT {
 
     class Project(val projectName: String, val wrapperVersion: String = "1.4", val minLogLevel: LogLevel = LogLevel.DEBUG)
 
-    class CompiledProject(val project: Project, val output: String, val resultCode: Int)
+    class CompiledProject(val project: Project, val output: String, val resultCode: Int) {
+        companion object {
+            val kotlinSourcesListRegex = Regex("\\[KOTLIN\\] compile iteration: ([^\\r\\n]*)")
+            val javaSourcesListRegex = Regex("\\[DEBUG\\] \\[[^\\]]*JavaCompiler\\] Compiler arguments: ([^\\r\\n]*)")
+        }
+        val compiledKotlinSources : Iterable<File> by lazy { kotlinSourcesListRegex.findAll(output).asIterable().flatMap { it.groups[1]!!.value.split(", ").map { File(it) } } }
+        val compiledJavaSources : Iterable<File> by lazy { javaSourcesListRegex.findAll(output).asIterable().flatMap { it.groups[1]!!.value.split(" ").filter { it.endsWith(".java", ignoreCase = true) }.map { File(it) } } }
+    }
 
     fun Project.setupWorkingDir() {
         copyRecursively(File(resourcesRootFile, "testProject/$projectName"), workingDir)
@@ -46,6 +53,31 @@ abstract class BaseGradleIT {
         println("<=== Test build: ${this.projectName} $cmd ===>")
 
         runAndCheck(cmd, check)
+    }
+
+    fun Project.modify() {
+        val projectDir = File(workingDir, projectName)
+        assert(projectDir.exists())
+
+        projectDir.walk().filter { it.isFile }.forEach {
+            val ext = it.extension
+            val orig = File(it.parent, it.name.removeSuffix("." + ext))
+            when (ext) {
+                "touch" -> {
+                    assert(orig.exists())
+                    orig.delete()
+                    it.renameTo(orig)
+                }
+                "new" -> {
+                    assertFalse { orig.exists() }
+                    it.renameTo(orig)
+                }
+                "delete" -> {
+                    assert(orig.exists())
+                    orig.delete()
+                }
+            }
+        }
     }
 
     fun stopDaemon(ver: String) {
@@ -120,6 +152,30 @@ abstract class BaseGradleIT {
         }
         return this
     }
+
+    private fun Iterable<File>.projectRelativePaths(project: Project): Iterable<String> {
+        val canonicalProjectDir = File(workingDir.canonicalFile, project.projectName)
+        return map { it.canonicalFile.toRelativeString(canonicalProjectDir) }
+    }
+
+    fun CompiledProject.assertSameFiles(actual: Iterable<String>, expected: Iterable<String>, messagePrefix: String = ""): CompiledProject {
+        assertTrue(actual.sorted() == expected.sorted(), messagePrefix + "expected files: $expected}\n  actual files: $actual")
+        return this
+    }
+
+    fun CompiledProject.assertContainFiles(actual: Iterable<String>, expected: Iterable<String>, messagePrefix: String = ""): CompiledProject {
+        assertTrue(expected.sorted().containsAll(actual.toList()), messagePrefix + "expected files: $expected}\n  actual files: $actual")
+        return this
+    }
+
+    fun CompiledProject.assertCompiledKotlinSources(vararg sources: String): CompiledProject = assertSameFiles(sources.asIterable(), compiledKotlinSources.projectRelativePaths(this.project), "Compiled Kotlin files differ: ")
+
+    fun CompiledProject.assertCompiledKotlinSourcesContain(vararg sources: String): CompiledProject = assertContainFiles(sources.asIterable(), compiledKotlinSources.projectRelativePaths(this.project), "Compiled Kotlin files differ: ")
+
+    fun CompiledProject.assertCompiledJavaSources(vararg sources: String): CompiledProject = assertSameFiles(sources.asIterable(), compiledJavaSources.projectRelativePaths(this.project), "Compiled Java files differ: ")
+
+    fun CompiledProject.assertCompiledJavaSourcesContain(vararg sources: String): CompiledProject = assertContainFiles(sources.asIterable(), compiledJavaSources.projectRelativePaths(this.project), "Compiled Java files differ: ")
+
 
     private fun Project.createBuildCommand(params: Array<out String>, options: BuildOptions): List<String> {
         val pathToKotlinPlugin = "-PpathToKotlinPlugin=" + File("local-repo").getAbsolutePath()

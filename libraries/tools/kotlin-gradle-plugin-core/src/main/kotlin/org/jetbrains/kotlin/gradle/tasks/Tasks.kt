@@ -294,6 +294,8 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
     {
         val moduleFile = makeModuleFile(args.moduleName, isTest = false, outputDir = outputDir, sourcesToCompile = sourcesToCompile, javaSourceRoots = getJavaSourceRoots(), classpath = classpath, friendDirs = listOf())
 
+        logger.kotlinDebug("module file:\n${moduleFile.readText()}")
+
         args.module = moduleFile.absolutePath
 
         val outputItemCollector = OutputItemsCollectorImpl()

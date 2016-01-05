@@ -1,0 +1,22 @@
+package demo
+
+import com.google.common.primitives.Ints
+import com.google.common.base.Joiner
+import java.util.ArrayList
+
+class KotlinGreetingJoiner(val greeter : Greeter) {
+
+    val names1 = ArrayList<String?>()
+
+    fun addName(name : String?): Unit{
+        names1.add(name)
+    }
+
+    fun getJoinedGreeting() : String? {
+        val joiner = Joiner.on(" and ").skipNulls();
+        return "${greeter.greeting} ${joiner.join(names1)}"
+    }
+}
+
+public open class Greeter(val greeting : String)
+
