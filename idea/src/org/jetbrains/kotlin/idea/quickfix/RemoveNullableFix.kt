@@ -14,64 +14,37 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.quickfix;
+package org.jetbrains.kotlin.idea.quickfix
 
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.KotlinBundle;
-import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtNullableType;
-import org.jetbrains.kotlin.psi.KtTypeElement;
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNullableType
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
-public class RemoveNullableFix extends KotlinQuickFixAction<KtNullableType> {
-    public enum NullableKind {
-        REDUNDANT, SUPERTYPE, USELESS
-    }
-    private final NullableKind typeOfError;
-
-    public RemoveNullableFix(@NotNull KtNullableType element, @NotNull NullableKind type) {
-        super(element);
-        typeOfError = type;
+class RemoveNullableFix(element: KtNullableType,
+                        private val typeOfError: RemoveNullableFix.NullableKind) : KotlinQuickFixAction<KtNullableType>(element) {
+    enum class NullableKind(val message: String) {
+        REDUNDANT("Remove redundant '?'"),
+        SUPERTYPE("Remove '?'"),
+        USELESS("Remove useless '?'")
     }
 
-    @NotNull
-    @Override
-    public String getText() {
-        switch (typeOfError) {
-            case REDUNDANT:
-                return KotlinBundle.message("remove.redundant.nullable");
-            case SUPERTYPE:
-                return KotlinBundle.message("remove.supertype.nullable");
-            default:
-                return KotlinBundle.message("remove.useless.nullable");
+    override fun getFamilyName() = "Remove '?'"
+
+    override fun getText() = typeOfError.message
+
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val type = element.innerType ?: error("No inner type " + element.text + ", should have been rejected in createFactory()")
+        element.replace(type)
+    }
+
+    class Factory(private val typeOfError: NullableKind) : KotlinSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtNullableType>? {
+            val nullType = diagnostic.psiElement.getNonStrictParentOfType<KtNullableType>()
+            if (nullType == null || nullType.innerType == null) return null
+            return RemoveNullableFix(nullType, typeOfError)
         }
-    }
-
-    @NotNull
-    @Override
-    public String getFamilyName() {
-        return KotlinBundle.message("remove.nullable.family");
-    }
-
-    @Override
-    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
-        KtTypeElement type = super.getElement().getInnerType();
-        assert type != null : "No inner type " + getElement().getText() + ", should have been rejected in createFactory()";
-        super.getElement().replace(type);
-    }
-
-    public static KotlinSingleIntentionActionFactory createFactory(final NullableKind typeOfError) {
-        return new KotlinSingleIntentionActionFactory() {
-            @Override
-            public KotlinQuickFixAction<KtNullableType> createAction(@NotNull Diagnostic diagnostic) {
-                KtNullableType nullType = QuickFixUtil.getParentElementOfType(diagnostic, KtNullableType.class);
-                if (nullType == null || nullType.getInnerType() == null) return null;
-                return new RemoveNullableFix(nullType, typeOfError);
-            }
-        };
     }
 }

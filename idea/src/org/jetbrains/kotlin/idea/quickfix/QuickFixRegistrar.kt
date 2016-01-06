@@ -150,9 +150,9 @@ class QuickFixRegistrar : QuickFixContributor {
         INVISIBLE_MEMBER.registerFactory(ChangePrivateTopLevelToInternalFix)
         INVISIBLE_SETTER.registerFactory(ChangePrivateTopLevelToInternalFix)
 
-        REDUNDANT_NULLABLE.registerFactory(RemoveNullableFix.createFactory(RemoveNullableFix.NullableKind.REDUNDANT))
-        NULLABLE_SUPERTYPE.registerFactory(RemoveNullableFix.createFactory(RemoveNullableFix.NullableKind.SUPERTYPE))
-        USELESS_NULLABLE_CHECK.registerFactory(RemoveNullableFix.createFactory(RemoveNullableFix.NullableKind.USELESS))
+        REDUNDANT_NULLABLE.registerFactory(RemoveNullableFix.Factory(RemoveNullableFix.NullableKind.REDUNDANT))
+        NULLABLE_SUPERTYPE.registerFactory(RemoveNullableFix.Factory(RemoveNullableFix.NullableKind.SUPERTYPE))
+        USELESS_NULLABLE_CHECK.registerFactory(RemoveNullableFix.Factory(RemoveNullableFix.NullableKind.USELESS))
 
 
         val implementMembersHandler = ImplementMembersHandler()
