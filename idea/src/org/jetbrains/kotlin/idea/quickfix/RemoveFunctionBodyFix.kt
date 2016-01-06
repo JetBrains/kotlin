@@ -14,88 +14,44 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.quickfix;
+package org.jetbrains.kotlin.idea.quickfix
 
-import com.intellij.extapi.psi.ASTDelegatePsiElement;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.impl.source.tree.LeafPsiElement;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.KotlinBundle;
-import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
-import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.psi.KtExpression;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtFunction;
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.util.CommentSaver
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.psiUtil.PsiChildRange
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
-public class RemoveFunctionBodyFix extends KotlinQuickFixAction<KtFunction> {
+class RemoveFunctionBodyFix(element: KtFunction) : KotlinQuickFixAction<KtFunction>(element) {
+    override fun getFamilyName() = "Remove function body"
 
-    public RemoveFunctionBodyFix(@NotNull KtFunction element) {
-        super(element);
+    override fun getText() = familyName
+
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        return super.isAvailable(project, editor, file) && element.hasBody()
     }
 
-    @NotNull
-    @Override
-    public String getText() {
-        return KotlinBundle.message("remove.function.body");
-    }
-
-    @NotNull
-    @Override
-    public String getFamilyName() {
-        return KotlinBundle.message("remove.function.body");
-    }
-
-    @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiFile file) {
-        return super.isAvailable(project, editor, file) && getElement().hasBody();
-    }
-
-    @Override
-    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
-        KtFunction function = (KtFunction) getElement().copy();
-        assert function instanceof ASTDelegatePsiElement;
-        ASTDelegatePsiElement functionElementWithAst = (ASTDelegatePsiElement) function;
-        KtExpression bodyExpression = function.getBodyExpression();
-        assert bodyExpression != null;
-        if (function.hasBlockBody()) {
-            PsiElement prevElement = bodyExpression.getPrevSibling();
-            QuickFixUtil.removePossiblyWhiteSpace(functionElementWithAst, prevElement);
-            functionElementWithAst.deleteChildInternal(bodyExpression.getNode());
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val bodyExpression = element.bodyExpression!!
+        val equalsToken = element.equalsToken
+        if (equalsToken != null) {
+            val commentSaver = CommentSaver(PsiChildRange(equalsToken.nextSibling, bodyExpression.prevSibling), true)
+            element.deleteChildRange(equalsToken, bodyExpression)
+            commentSaver.restore(element)
         }
         else {
-            PsiElement prevElement = bodyExpression.getPrevSibling();
-            PsiElement prevPrevElement = prevElement.getPrevSibling();
-            QuickFixUtil.removePossiblyWhiteSpace(functionElementWithAst, prevElement);
-            removePossiblyEquationSign(functionElementWithAst, prevElement);
-            removePossiblyEquationSign(functionElementWithAst, prevPrevElement);
-            functionElementWithAst.deleteChildInternal(bodyExpression.getNode());
+            bodyExpression.delete()
         }
-        getElement().replace(function);
     }
 
-    private static boolean removePossiblyEquationSign(@NotNull ASTDelegatePsiElement element, @Nullable PsiElement possiblyEq) {
-        if (possiblyEq instanceof LeafPsiElement && ((LeafPsiElement)possiblyEq).getElementType() == KtTokens.EQ) {
-            QuickFixUtil.removePossiblyWhiteSpace(element, possiblyEq.getNextSibling());
-            element.deleteChildInternal(possiblyEq.getNode());
-            return true;
+    companion object : KotlinSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtFunction>? {
+            val function = diagnostic.psiElement.getNonStrictParentOfType<KtFunction>() ?: return null
+            return RemoveFunctionBodyFix(function)
         }
-        return false;
-    }
-
-    public static KotlinSingleIntentionActionFactory createFactory() {
-        return new KotlinSingleIntentionActionFactory() {
-            @Override
-            public KotlinQuickFixAction<KtFunction> createAction(@NotNull Diagnostic diagnostic) {
-                KtFunction function = QuickFixUtil.getParentElementOfType(diagnostic, KtFunction.class);
-                if (function == null) return null;
-                return new RemoveFunctionBodyFix(function);
-            }
-        };
     }
 }

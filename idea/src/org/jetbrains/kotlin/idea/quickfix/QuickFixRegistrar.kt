@@ -78,8 +78,7 @@ class QuickFixRegistrar : QuickFixContributor {
 
         ABSTRACT_FUNCTION_IN_NON_ABSTRACT_CLASS.registerFactory(removeAbstractModifierFactory, addAbstractToClassFactory)
 
-        val removeFunctionBodyFactory = RemoveFunctionBodyFix.createFactory()
-        ABSTRACT_FUNCTION_WITH_BODY.registerFactory(removeAbstractModifierFactory, removeFunctionBodyFactory)
+        ABSTRACT_FUNCTION_WITH_BODY.registerFactory(removeAbstractModifierFactory, RemoveFunctionBodyFix)
 
         NON_ABSTRACT_FUNCTION_WITH_NO_BODY.registerFactory(addAbstractModifierFactory, AddFunctionBodyFix)
 
