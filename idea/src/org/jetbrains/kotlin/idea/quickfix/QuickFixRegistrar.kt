@@ -165,12 +165,11 @@ class QuickFixRegistrar : QuickFixContributor {
         VAL_REASSIGNMENT.registerFactory(ChangeVariableMutabilityFix.VAL_REASSIGNMENT_FACTORY)
         VAR_OVERRIDDEN_BY_VAL.registerFactory(ChangeVariableMutabilityFix.VAR_OVERRIDDEN_BY_VAL_FACTORY)
 
-        val removeValVarFromParameterFixFactory = RemoveValVarFromParameterFix.createFactory()
-        VAL_OR_VAR_ON_FUN_PARAMETER.registerFactory(removeValVarFromParameterFixFactory)
-        VAL_OR_VAR_ON_LOOP_PARAMETER.registerFactory(removeValVarFromParameterFixFactory)
-        VAL_OR_VAR_ON_LOOP_MULTI_PARAMETER.registerFactory(removeValVarFromParameterFixFactory)
-        VAL_OR_VAR_ON_CATCH_PARAMETER.registerFactory(removeValVarFromParameterFixFactory)
-        VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER.registerFactory(removeValVarFromParameterFixFactory)
+        VAL_OR_VAR_ON_FUN_PARAMETER.registerFactory(RemoveValVarFromParameterFix)
+        VAL_OR_VAR_ON_LOOP_PARAMETER.registerFactory(RemoveValVarFromParameterFix)
+        VAL_OR_VAR_ON_LOOP_MULTI_PARAMETER.registerFactory(RemoveValVarFromParameterFix)
+        VAL_OR_VAR_ON_CATCH_PARAMETER.registerFactory(RemoveValVarFromParameterFix)
+        VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER.registerFactory(RemoveValVarFromParameterFix)
 
         VIRTUAL_MEMBER_HIDDEN.registerFactory(AddOverrideToEqualsHashCodeToStringActionFactory)
 
