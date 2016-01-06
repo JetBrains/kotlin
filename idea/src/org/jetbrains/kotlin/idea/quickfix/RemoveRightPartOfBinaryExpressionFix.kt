@@ -14,87 +14,54 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.quickfix;
+package org.jetbrains.kotlin.idea.quickfix
 
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.KotlinBundle;
-import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
-public class RemoveRightPartOfBinaryExpressionFix<T extends KtExpression> extends KotlinQuickFixAction<T> implements CleanupFix {
-    private final String message;
-    
-    public RemoveRightPartOfBinaryExpressionFix(@NotNull T element, String message) {
-        super(element);
-        this.message = message;
+class RemoveRightPartOfBinaryExpressionFix<T : KtExpression>(
+        element: T,
+        private val message: String
+) : KotlinQuickFixAction<T>(element), CleanupFix {
+    override fun getFamilyName() = "Remove right part of a binary expression"
+
+    override fun getText(): String = message
+
+    public override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        invoke()
     }
 
-    @NotNull
-    @Override
-    public String getText() {
-        return message;
-    }
-
-    @NotNull
-    @Override
-    public String getFamilyName() {
-        return KotlinBundle.message("remove.right.part.of.binary.expression");
-    }
-
-    @Override
-    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
-        invoke();
-    }
-
-    @NotNull
-    public KtExpression invoke() throws IncorrectOperationException {
-        KtExpression newExpression = null;
-
-        if (getElement() instanceof KtBinaryExpression) {
-            //noinspection ConstantConditions
-            newExpression = (KtExpression) getElement().replace(((KtBinaryExpression) getElement().copy()).getLeft());
-        }
-        else if (getElement() instanceof KtBinaryExpressionWithTypeRHS) {
-            newExpression = (KtExpression) getElement().replace(((KtBinaryExpressionWithTypeRHS) getElement().copy()).getLeft());
+    fun invoke(): KtExpression {
+        val newExpression = when (element) {
+            is KtBinaryExpression -> element.replace((element.copy() as KtBinaryExpression).left!!) as KtExpression
+            is KtBinaryExpressionWithTypeRHS -> element.replace((element.copy() as KtBinaryExpressionWithTypeRHS).left) as KtExpression
+            else -> throw IncorrectOperationException("Unexpected element: " + element.getElementTextWithContext())
         }
 
-        PsiElement parent = newExpression != null ? newExpression.getParent() : null;
-        if (parent instanceof KtParenthesizedExpression && KtPsiUtil.areParenthesesUseless((KtParenthesizedExpression) parent)) {
-            newExpression = (KtExpression) parent.replace(newExpression);
+        val parent = newExpression.parent
+        if (parent is KtParenthesizedExpression && KtPsiUtil.areParenthesesUseless(parent)) {
+            return parent.replace(newExpression) as KtExpression
         }
-
-        if (newExpression == null) {
-            throw new IncorrectOperationException("Unexpected element: " + PsiUtilsKt.getElementTextWithContext(getElement()));
-        }
-
-        return newExpression;
+        return newExpression
     }
 
-    public static KotlinSingleIntentionActionFactory createRemoveTypeFromBinaryExpressionFactory(final String message) {
-        return new KotlinSingleIntentionActionFactory() {
-            @Override
-            public KotlinQuickFixAction<KtBinaryExpressionWithTypeRHS> createAction(@NotNull Diagnostic diagnostic) {
-                KtBinaryExpressionWithTypeRHS expression = QuickFixUtil.getParentElementOfType(diagnostic, KtBinaryExpressionWithTypeRHS.class);
-                if (expression == null) return null;
-                return new RemoveRightPartOfBinaryExpressionFix<KtBinaryExpressionWithTypeRHS>(expression, message);
-            }
-        };
+    object RemoveCastFactory : KotlinSingleIntentionActionFactory() {
+        public override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtBinaryExpressionWithTypeRHS>? {
+            val expression = diagnostic.psiElement.getNonStrictParentOfType<KtBinaryExpressionWithTypeRHS>() ?: return null
+            return RemoveRightPartOfBinaryExpressionFix(expression, "Remove cast")
+        }
     }
 
-    public static KotlinSingleIntentionActionFactory createRemoveElvisOperatorFactory() {
-        return new KotlinSingleIntentionActionFactory() {
-            @Override
-            public KotlinQuickFixAction<KtBinaryExpression> createAction(@NotNull Diagnostic diagnostic) {
-                KtBinaryExpression expression = (KtBinaryExpression) diagnostic.getPsiElement();
-                return new RemoveRightPartOfBinaryExpressionFix<KtBinaryExpression>(expression, KotlinBundle.message("remove.elvis.operator"));
-            }
-        };
+    object RemoveElvisOperatorFactory : KotlinSingleIntentionActionFactory() {
+        public override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtBinaryExpression>? {
+            val expression = diagnostic.psiElement as? KtBinaryExpression ?: return null
+            return RemoveRightPartOfBinaryExpressionFix(expression, "Remove elvis operator")
+        }
     }
 }
 

@@ -94,12 +94,12 @@ class QuickFixRegistrar : QuickFixContributor {
                                         AddFunctionToSupertypeFix)
         VIRTUAL_MEMBER_HIDDEN.registerFactory(AddModifierFix.createFactory(OVERRIDE_KEYWORD))
 
-        USELESS_CAST.registerFactory(RemoveRightPartOfBinaryExpressionFix.createRemoveTypeFromBinaryExpressionFactory("Remove cast"))
+        USELESS_CAST.registerFactory(RemoveRightPartOfBinaryExpressionFix.RemoveCastFactory)
 
         WRONG_SETTER_PARAMETER_TYPE.registerFactory(ChangeAccessorTypeFix)
         WRONG_GETTER_RETURN_TYPE.registerFactory(ChangeAccessorTypeFix)
 
-        USELESS_ELVIS.registerFactory(RemoveRightPartOfBinaryExpressionFix.createRemoveElvisOperatorFactory())
+        USELESS_ELVIS.registerFactory(RemoveRightPartOfBinaryExpressionFix.RemoveElvisOperatorFactory)
 
         val removeRedundantModifierFactory = RemoveModifierFix.createRemoveModifierFactory(true)
         REDUNDANT_MODIFIER.registerFactory(removeRedundantModifierFactory)
