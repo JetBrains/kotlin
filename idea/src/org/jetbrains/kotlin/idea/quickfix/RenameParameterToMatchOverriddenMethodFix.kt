@@ -14,84 +14,41 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.quickfix;
+package org.jetbrains.kotlin.idea.quickfix
 
-import com.intellij.codeInsight.intention.IntentionAction;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiFile;
-import com.intellij.refactoring.rename.RenameProcessor;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.descriptors.VariableDescriptor;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.KotlinBundle;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtParameter;
-import org.jetbrains.kotlin.resolve.BindingContext;
+import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import com.intellij.refactoring.rename.RenameProcessor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtParameter
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
-public class RenameParameterToMatchOverriddenMethodFix extends KotlinQuickFixAction<KtParameter>{
-    private final KtParameter parameter;
-    private String parameterFromSuperclassName;
+class RenameParameterToMatchOverriddenMethodFix(
+        private val parameter: KtParameter,
+        private val newName: String
+) : KotlinQuickFixAction<KtParameter>(parameter) {
+    override fun getFamilyName() = "Rename"
 
-    public RenameParameterToMatchOverriddenMethodFix(@NotNull KtParameter parameter) {
-        super(parameter);
-        this.parameter = parameter;
+    override fun getText() = "Rename parameter to match overridden method"
+
+    public override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        RenameProcessor(project, parameter, newName, false, false).run()
     }
 
-    @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiFile file) {
-        if (!super.isAvailable(project, editor, file)) {
-            return false;
+    companion object : KotlinSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): IntentionAction? {
+            val parameter = diagnostic.psiElement.getNonStrictParentOfType<KtParameter>() ?: return null
+            val parameterDescriptor = parameter.resolveToDescriptor() as ValueParameterDescriptor
+            val parameterFromSuperclassName = parameterDescriptor
+                    .overriddenDescriptors
+                    .map { it.name.asString() }
+                    .distinct()
+                    .singleOrNull() ?: return null
+            return RenameParameterToMatchOverriddenMethodFix(parameter, parameterFromSuperclassName)
         }
-
-        BindingContext context = ResolutionUtils.analyze(parameter);
-        VariableDescriptor parameterDescriptor = context.get(BindingContext.VALUE_PARAMETER, parameter);
-        if (parameterDescriptor == null) {
-            return false;
-        }
-        for (CallableDescriptor parameterFromSuperclass : parameterDescriptor.getOverriddenDescriptors()) {
-            if (parameterFromSuperclassName == null) {
-                parameterFromSuperclassName = parameterFromSuperclass.getName().asString();
-            }
-            else if (!parameterFromSuperclassName.equals(parameterFromSuperclass.getName().asString())) {
-                return false;
-            }
-        }
-
-        return parameterFromSuperclassName != null;
-    }
-
-    @NotNull
-    @Override
-    public String getText() {
-        return KotlinBundle.message("rename.parameter.to.match.overridden.method");
-    }
-
-    @NotNull
-    @Override
-    public String getFamilyName() {
-        return KotlinBundle.message("rename.family");
-    }
-
-    @Override
-    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
-        new RenameProcessor(project, parameter, parameterFromSuperclassName, false, false).run();
-    }
-
-    @NotNull
-    public static KotlinSingleIntentionActionFactory createFactory() {
-        return new KotlinSingleIntentionActionFactory() {
-            @Nullable
-            @Override
-            public IntentionAction createAction(@NotNull Diagnostic diagnostic) {
-                KtParameter parameter = QuickFixUtil.getParentElementOfType(diagnostic, KtParameter.class);
-                return parameter == null ? null : new RenameParameterToMatchOverriddenMethodFix(parameter);
-            }
-        };
     }
 }
