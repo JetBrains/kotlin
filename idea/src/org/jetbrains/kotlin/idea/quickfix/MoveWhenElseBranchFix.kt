@@ -14,77 +14,46 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.quickfix;
+package org.jetbrains.kotlin.idea.quickfix
 
-import com.intellij.codeInsight.CodeInsightUtilCore;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.util.PsiTreeUtil;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.KotlinBundle;
-import org.jetbrains.kotlin.psi.*;
+import com.intellij.codeInsight.CodeInsightUtilCore
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPsiUtil
+import org.jetbrains.kotlin.psi.KtWhenEntry
+import org.jetbrains.kotlin.psi.KtWhenExpression
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
-public class MoveWhenElseBranchFix extends KotlinQuickFixAction<KtWhenExpression> {
-    public MoveWhenElseBranchFix(@NotNull KtWhenExpression element) {
-        super(element);
+class MoveWhenElseBranchFix(element: KtWhenExpression) : KotlinQuickFixAction<KtWhenExpression>(element) {
+    override fun getFamilyName() = "Move else branch to the end"
+
+    override fun getText() = familyName
+
+    override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
+        return super.isAvailable(project, editor, file) && KtPsiUtil.checkWhenExpressionHasSingleElse(element)
     }
 
-    @NotNull
-    @Override
-    public String getText() {
-        return KotlinBundle.message("move.when.else.branch.to.the.end.action");
+    override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        val entries = element.entries
+        val lastEntry = entries.lastOrNull() ?: return
+        val elseEntry = entries.singleOrNull { it.isElse } ?: return
+
+        val cursorOffset = editor!!.caretModel.offset - elseEntry.textOffset
+
+        val insertedBranch = element.addAfter(elseEntry, lastEntry) as KtWhenEntry
+        elseEntry.delete()
+        val insertedWhenEntry = CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(insertedBranch)
+
+        editor.caretModel.moveToOffset(insertedWhenEntry.textOffset + cursorOffset)
     }
 
-    @NotNull
-    @Override
-    public String getFamilyName() {
-        return KotlinBundle.message("move.when.else.branch.to.the.end.family.name");
-    }
-
-    @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiFile file) {
-        if (!super.isAvailable(project, editor, file)) {
-            return false;
+    companion object : KotlinSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): MoveWhenElseBranchFix? {
+            val whenExpression = diagnostic.psiElement.getNonStrictParentOfType<KtWhenExpression>() ?: return null
+            return MoveWhenElseBranchFix(whenExpression)
         }
-        return KtPsiUtil.checkWhenExpressionHasSingleElse(getElement());
-    }
-
-    @Override
-    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
-        KtWhenEntry elseEntry = null;
-        KtWhenEntry lastEntry = null;
-        for (KtWhenEntry entry : getElement().getEntries()) {
-            if (entry.isElse()) {
-                elseEntry = entry;
-            }
-            lastEntry = entry;
-        }
-        assert (elseEntry != null) : "isAvailable should check whether there is only one else branch";
-        int cursorOffset = editor.getCaretModel().getOffset() - elseEntry.getTextOffset();
-
-        PsiElement insertedBranch = getElement().addAfter(elseEntry, lastEntry);
-        getElement().addAfter(KtPsiFactoryKt.KtPsiFactory(file).createNewLine(), lastEntry);
-        getElement().deleteChildRange(elseEntry, elseEntry);
-        KtWhenEntry insertedWhenEntry = (KtWhenEntry) CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(insertedBranch);
-
-        editor.getCaretModel().moveToOffset(insertedWhenEntry.getTextOffset() + cursorOffset);
-    }
-
-    public static KotlinSingleIntentionActionFactory createFactory() {
-        return new KotlinSingleIntentionActionFactory() {
-            @Nullable
-            @Override
-            public KotlinQuickFixAction createAction(@NotNull Diagnostic diagnostic) {
-                PsiElement element = diagnostic.getPsiElement();
-                KtWhenExpression whenExpression = PsiTreeUtil.getParentOfType(element, KtWhenExpression.class, false);
-                if (whenExpression == null) return null;
-                return new MoveWhenElseBranchFix(whenExpression);
-            }
-        };
     }
 }

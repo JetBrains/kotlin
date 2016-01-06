@@ -222,6 +222,8 @@ fun createSpacingBuilder(settings: CodeStyleSettings): KotlinSpacingBuilder {
             between(VALUE_ARGUMENT_LIST, LAMBDA_ARGUMENT).spaces(1)
             betweenInside(REFERENCE_EXPRESSION, LAMBDA_ARGUMENT, CALL_EXPRESSION).spaces(1)
             betweenInside(TYPE_ARGUMENT_LIST, LAMBDA_ARGUMENT, CALL_EXPRESSION).spaces(1)
+
+            between(WHEN_ENTRY, WHEN_ENTRY).lineBreakInCode()
         }
         custom {
 
