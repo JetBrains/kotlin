@@ -14,108 +14,28 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.quickfix;
+package org.jetbrains.kotlin.idea.quickfix
 
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.Visibilities;
-import org.jetbrains.kotlin.descriptors.Visibility;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.KotlinBundle;
-import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
-import org.jetbrains.kotlin.idea.core.DescriptorUtilsKt;
-import org.jetbrains.kotlin.idea.core.PsiModificationUtilsKt;
-import org.jetbrains.kotlin.lexer.KtModifierKeywordToken;
-import org.jetbrains.kotlin.psi.KtDeclaration;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.psi.KtParameter;
-import org.jetbrains.kotlin.resolve.BindingContext;
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 
-public class ChangeVisibilityModifierFix extends KotlinQuickFixAction<KtDeclaration> {
-    public ChangeVisibilityModifierFix(@NotNull KtDeclaration element) {
-        super(element);
+class ChangeVisibilityModifierFix(element: KtDeclaration) : KotlinQuickFixAction<KtDeclaration>(element) {
+    override fun getFamilyName() = "Use inherited visibility"
+
+    override fun getText() = familyName
+
+    public override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        element.removeModifier(element.visibilityModifierType()!!)
     }
 
-    @NotNull
-    @Override
-    public String getText() {
-        return KotlinBundle.message("change.visibility.modifier");
-    }
-
-    @NotNull
-    @Override
-    public String getFamilyName() {
-        return KotlinBundle.message("change.visibility.modifier");
-    }
-
-    @Override
-    public boolean isAvailable(@NotNull Project project, Editor editor, @NotNull PsiFile file) {
-        if (!(file instanceof KtFile)) return false;
-        return super.isAvailable(project, editor, file) && (findVisibilityChangeTo() != null);
-    }
-
-    @Override
-    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
-        KtModifierKeywordToken modifier = findVisibilityChangeTo();
-        assert modifier != null;
-        PsiModificationUtilsKt.setVisibility(getElement(), modifier);
-    }
-
-    @Nullable
-    private KtModifierKeywordToken findVisibilityChangeTo() {
-        BindingContext bindingContext = ResolutionUtils.analyze(getElement());
-        DeclarationDescriptor descriptor;
-        if (getElement() instanceof KtParameter) {
-            descriptor = bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, getElement());
+    companion object : KotlinSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtDeclaration>? {
+            val element = diagnostic.psiElement as? KtDeclaration ?: return null
+            return ChangeVisibilityModifierFix(element)
         }
-        else {
-            descriptor = bindingContext.get(BindingContext.DECLARATION_TO_DESCRIPTOR, getElement());
-        }
-        if (!(descriptor instanceof CallableMemberDescriptor)) return null;
-
-        CallableMemberDescriptor memberDescriptor = (CallableMemberDescriptor)descriptor;
-        Visibility maxVisibility = null;
-        for (CallableMemberDescriptor overriddenDescriptor : memberDescriptor.getOverriddenDescriptors()) {
-            Visibility overriddenDescriptorVisibility = overriddenDescriptor.getVisibility();
-            if (maxVisibility == null) {
-                maxVisibility = overriddenDescriptorVisibility;
-                continue;
-            }
-            Integer compare = Visibilities.compare(maxVisibility, overriddenDescriptorVisibility);
-            if (compare == null) {
-                maxVisibility = Visibilities.PUBLIC;
-            }
-            else if (compare < 0) {
-                maxVisibility = overriddenDescriptorVisibility;
-            }
-        }
-        if (maxVisibility == memberDescriptor.getVisibility()) {
-            return null;
-        }
-
-        if (maxVisibility == null) {
-            return null;
-        }
-
-        return DescriptorUtilsKt.toKeywordToken(maxVisibility);
     }
-
-    public static KotlinSingleIntentionActionFactory createFactory() {
-        return new KotlinSingleIntentionActionFactory() {
-            @Override
-            public KotlinQuickFixAction<KtDeclaration> createAction(@NotNull Diagnostic diagnostic) {
-                PsiElement element = diagnostic.getPsiElement();
-                if (!(element instanceof KtDeclaration)) return null;
-                return new ChangeVisibilityModifierFix((KtDeclaration)element);
-            }
-        };
-    }
-
 }

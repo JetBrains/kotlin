@@ -1,4 +1,4 @@
-// "Change visibility modifier" "true"
+// "Use inherited visibility" "true"
 open class A {
     protected open fun run() {}
 }
