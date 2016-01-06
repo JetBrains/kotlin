@@ -25,6 +25,17 @@ public fun Writer.buffered(bufferSize: Int = defaultBufferSize): BufferedWriter
 public fun Reader.forEachLine(block: (String) -> Unit): Unit = useLines { it.forEach(block) }
 
 /**
+ * Reads this reader content as a list of lines.
+ *
+ * Do not use this function for huge files.
+ */
+public fun Reader.readLines(): List<String> {
+    val result = arrayListOf<String>()
+    forEachLine { result.add(it) }
+    return result
+}
+
+/**
  * Calls the [block] callback giving it a sequence of all the lines in this file and closes the reader once
  * the processing is complete.
  * @return the value returned by [block].

@@ -41,7 +41,14 @@ class ReadWriteTest {
         sample().forEachLine {
             list.add(it)
         }
-        assertEquals(arrayListOf("Hello", "World"), list)
+        assertEquals(listOf("Hello", "World"), list)
+
+        assertEquals(listOf("Hello", "World"), sample().readLines())
+
+        sample().useLines {
+            assertEquals(listOf("Hello", "World"), it.toList())
+        }
+
 
         var reader = StringReader("")
         var c = 0
@@ -78,10 +85,17 @@ class ReadWriteTest {
             assertTrue(arr.contains('W'.toByte()))
         }
         val list = ArrayList<String>()
-        file.forEachLine("UTF8", {
+        file.forEachLine(Charsets.UTF_8, {
             list.add(it)
         })
         assertEquals(arrayListOf("Hello", "World"), list)
+
+        assertEquals(arrayListOf("Hello", "World"), file.readLines())
+
+        file.useLines {
+            assertEquals(arrayListOf("Hello", "World"), it.toList())
+        }
+
         val text = file.inputStream().reader().readText()
         assertTrue(text.contains("Hello"))
         assertTrue(text.contains("World"))

@@ -207,11 +207,11 @@ public fun File.outputStream(): FileOutputStream {
 }
 
 /**
- * Reads the file content as a list of lines. By default uses UTF-8 charset.
+ * Reads the file content as a list of lines.
  *
  * Do not use this function for huge files.
  *
- * @param charset character set to use.
+ * @param charset character set to use. By default uses UTF-8 charset.
  * @return list of file lines.
  */
 public fun File.readLines(charset: Charset = Charsets.UTF_8): List<String> {
@@ -220,3 +220,12 @@ public fun File.readLines(charset: Charset = Charsets.UTF_8): List<String> {
     return result
 }
 
+/**
+ * Calls the [block] callback giving it a sequence of all the lines in this file and closes the reader once
+ * the processing is complete.
+
+ * @param charset character set to use. By default uses UTF-8 charset.
+ * @return the value returned by [block].
+ */
+public inline fun <T> File.useLines(charset: Charset = Charsets.UTF_8, block: (Sequence<String>) -> T): T =
+        bufferedReader(charset).use { block(it.lineSequence()) }
