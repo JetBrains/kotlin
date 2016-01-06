@@ -289,7 +289,7 @@ class QuickFixRegistrar : QuickFixContributor {
 
         PLATFORM_CLASS_MAPPED_TO_KOTLIN.registerFactory(MapPlatformClassToKotlinFix)
 
-        MANY_CLASSES_IN_SUPERTYPE_LIST.registerFactory(RemoveSupertypeFix.createFactory())
+        MANY_CLASSES_IN_SUPERTYPE_LIST.registerFactory(RemoveSupertypeFix)
 
         NO_GET_METHOD.registerFactory(CreateGetFunctionActionFactory)
         NO_SET_METHOD.registerFactory(CreateSetFunctionActionFactory)

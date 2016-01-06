@@ -14,64 +14,30 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.quickfix;
+package org.jetbrains.kotlin.idea.quickfix
 
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.impl.PsiImplUtil;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.idea.KotlinBundle;
-import org.jetbrains.kotlin.idea.core.quickfix.QuickFixUtil;
-import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.psi.KtSuperTypeListEntry;
-import org.jetbrains.kotlin.psi.KtFile;
+import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtSuperTypeListEntry
+import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
-public class RemoveSupertypeFix extends KotlinQuickFixAction<KtSuperTypeListEntry> {
-    private final KtSuperTypeListEntry superClass;
+class RemoveSupertypeFix(superClass: KtSuperTypeListEntry) : KotlinQuickFixAction<KtSuperTypeListEntry>(superClass) {
+    override fun getFamilyName() = "Remove supertype"
 
-    public RemoveSupertypeFix(@NotNull KtSuperTypeListEntry superClass) {
-        super(superClass);
-        this.superClass = superClass;
+    override fun getText() = familyName
+
+    public override fun invoke(project: Project, editor: Editor?, file: KtFile) {
+        element.getStrictParentOfType<KtClassOrObject>()?.removeSuperTypeListEntry(element)
     }
 
-    @NotNull
-    @Override
-    public String getText() {
-        return KotlinBundle.message("remove.supertype", superClass.getText());
-    }
-
-    @NotNull
-    @Override
-    public String getFamilyName() {
-        return KotlinBundle.message("remove.supertype.family");
-    }
-
-    @Override
-    public void invoke(@NotNull Project project, Editor editor, @NotNull KtFile file) throws IncorrectOperationException {
-        // Find the preceding comma and delete it as well.
-        // We must ignore whitespaces and comments when looking for the comma.
-        PsiElement prevSibling = superClass.getPrevSibling();
-        assert prevSibling != null: "A PSI element should exist before supertype declaration";
-        ASTNode prev = PsiImplUtil.skipWhitespaceAndCommentsBack(prevSibling.getNode());
-        assert prev != null: "A non-whitespace element should exist before supertype declaration";
-        if (prev.getElementType() == KtTokens.COMMA) {
-            prev.getPsi().delete();
+    companion object : KotlinSingleIntentionActionFactory() {
+        override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtSuperTypeListEntry>? {
+            val superClass = diagnostic.psiElement.getNonStrictParentOfType<KtSuperTypeListEntry>() ?: return null
+            return RemoveSupertypeFix(superClass)
         }
-        superClass.delete();
-    }
-
-    public static KotlinSingleIntentionActionFactory createFactory() {
-        return new KotlinSingleIntentionActionFactory() {
-            @Override
-            public KotlinQuickFixAction<KtSuperTypeListEntry> createAction(@NotNull Diagnostic diagnostic) {
-                KtSuperTypeListEntry superClass = QuickFixUtil.getParentElementOfType(diagnostic, KtSuperTypeListEntry.class);
-                if (superClass == null) return null;
-                return new RemoveSupertypeFix(superClass);
-            }
-        };
     }
 }
