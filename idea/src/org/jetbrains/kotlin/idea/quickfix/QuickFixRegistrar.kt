@@ -83,7 +83,7 @@ class QuickFixRegistrar : QuickFixContributor {
 
         NON_ABSTRACT_FUNCTION_WITH_NO_BODY.registerFactory(addAbstractModifierFactory, AddFunctionBodyFix)
 
-        NON_VARARG_SPREAD.registerFactory(RemovePsiElementSimpleFix.createRemoveSpreadFactory())
+        NON_VARARG_SPREAD.registerFactory(RemovePsiElementSimpleFix.RemoveSpreadFactory)
 
         MIXING_NAMED_AND_POSITIONED_ARGUMENTS.registerFactory(AddNameToArgumentFix)
 
@@ -137,8 +137,7 @@ class QuickFixRegistrar : QuickFixContributor {
         NO_GET_METHOD.registerFactory(MissingArrayAccessorAutoImportFix)
         NO_SET_METHOD.registerFactory(MissingArrayAccessorAutoImportFix)
 
-        val removeImportFixFactory = RemovePsiElementSimpleFix.createRemoveImportFactory()
-        CONFLICTING_IMPORT.registerFactory(removeImportFixFactory)
+        CONFLICTING_IMPORT.registerFactory(RemovePsiElementSimpleFix.RemoveImportFactory)
 
         SUPERTYPE_NOT_INITIALIZED.registerFactory(SuperClassNotInitialized)
         FUNCTION_CALL_EXPECTED.registerFactory(ChangeToFunctionInvocationFix)
@@ -173,7 +172,7 @@ class QuickFixRegistrar : QuickFixContributor {
 
         VIRTUAL_MEMBER_HIDDEN.registerFactory(AddOverrideToEqualsHashCodeToStringActionFactory)
 
-        UNUSED_VARIABLE.registerFactory(RemovePsiElementSimpleFix.createRemoveVariableFactory())
+        UNUSED_VARIABLE.registerFactory(RemovePsiElementSimpleFix.RemoveVariableFactory)
 
         UNNECESSARY_SAFE_CALL.registerFactory(ReplaceWithDotCallFix)
         UNSAFE_CALL.registerFactory(ReplaceWithSafeCallFix)
@@ -192,7 +191,7 @@ class QuickFixRegistrar : QuickFixContributor {
         NO_TYPE_ARGUMENTS_ON_RHS.registerFactory(AddStarProjectionsFix.IsExpressionFactory)
         WRONG_NUMBER_OF_TYPE_ARGUMENTS.registerFactory(AddStarProjectionsFix.JavaClassFactory)
 
-        TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER.registerFactory(RemovePsiElementSimpleFix.createRemoveTypeArgumentsFactory())
+        TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER.registerFactory(RemovePsiElementSimpleFix.RemoveTypeArgumentsFactory)
 
         UNCHECKED_CAST.registerFactory(ChangeToStarProjectionFix)
         CANNOT_CHECK_FOR_ERASED.registerFactory(ChangeToStarProjectionFix)
