@@ -19,22 +19,22 @@ package org.jetbrains.kotlin.ant
 import org.apache.tools.ant.types.Path
 import java.io.File
 
-public class Kotlin2JsTask : KotlinCompilerBaseTask() {
+class Kotlin2JsTask : KotlinCompilerBaseTask() {
     override val compilerFqName = "org.jetbrains.kotlin.cli.js.K2JSCompiler"
 
-    public var library: Path? = null
-    public var outputPrefix: File? = null
-    public var outputPostfix: File? = null
-    public var sourceMap: Boolean = false
-    public var metaInfo: Boolean = false
+    var library: Path? = null
+    var outputPrefix: File? = null
+    var outputPostfix: File? = null
+    var sourceMap: Boolean = false
+    var metaInfo: Boolean = false
 
     /**
      * {@link K2JsArgumentConstants.CALL} (default) if need generate a main function call (main function will be auto detected)
      * {@link K2JsArgumentConstants.NO_CALL} otherwise.
      */
-    public var main: String? = null
+    var main: String? = null
 
-    public fun createLibrary(): Path {
+    fun createLibrary(): Path {
         val libraryPath = library
         if (libraryPath == null) {
             val t = Path(getProject())

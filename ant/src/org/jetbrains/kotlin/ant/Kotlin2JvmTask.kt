@@ -20,15 +20,15 @@ import org.apache.tools.ant.types.Path
 import org.apache.tools.ant.types.Reference
 import java.io.File.pathSeparator
 
-public class Kotlin2JvmTask : KotlinCompilerBaseTask() {
+class Kotlin2JvmTask : KotlinCompilerBaseTask() {
     override val compilerFqName = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
 
-    public var includeRuntime: Boolean = true
-    public var moduleName: String? = null
+    var includeRuntime: Boolean = true
+    var moduleName: String? = null
 
     private var compileClasspath: Path? = null
 
-    public fun setClasspath(classpath: Path) {
+    fun setClasspath(classpath: Path) {
         if (compileClasspath == null) {
             compileClasspath = classpath
         }
@@ -37,14 +37,14 @@ public class Kotlin2JvmTask : KotlinCompilerBaseTask() {
         }
     }
 
-    public fun setClasspathRef(ref: Reference) {
+    fun setClasspathRef(ref: Reference) {
         if (compileClasspath == null) {
             compileClasspath = Path(getProject())
         }
-        compileClasspath!!.createPath().setRefid(ref)
+        compileClasspath!!.createPath().refid = ref
     }
 
-    public fun addConfiguredClasspath(classpath: Path) {
+    fun addConfiguredClasspath(classpath: Path) {
         setClasspath(classpath)
     }
 

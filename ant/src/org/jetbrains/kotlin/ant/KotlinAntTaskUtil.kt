@@ -29,12 +29,12 @@ object KotlinAntTaskUtil {
 
     private val libPath: File by lazy {
         // Find path of kotlin-ant.jar in the filesystem and find kotlin-compiler.jar in the same directory
-        val resourcePath = "/" + javaClass.getName().replace('.', '/') + ".class"
+        val resourcePath = "/" + javaClass.name.replace('.', '/') + ".class"
         val jarConnection = javaClass.getResource(resourcePath).openConnection() as? JarURLConnection
                             ?: throw UnsupportedOperationException("Kotlin compiler Ant task should be loaded from the JAR file")
-        val antTaskJarPath = File(jarConnection.getJarFileURL().toURI())
+        val antTaskJarPath = File(jarConnection.jarFileURL.toURI())
 
-        antTaskJarPath.getParentFile()
+        antTaskJarPath.parentFile
     }
 
     val compilerJar: File by lazy {
@@ -47,7 +47,7 @@ object KotlinAntTaskUtil {
 
     private fun File.assertExists(): File {
         if (!this.exists()) {
-            throw IllegalStateException("${getName()} is not found in the directory of Kotlin Ant task")
+            throw IllegalStateException("${name} is not found in the directory of Kotlin Ant task")
         }
         return this
     }
@@ -68,5 +68,5 @@ object KotlinAntTaskUtil {
 
 }
 
-public val Task.defaultModuleName: String?
+val Task.defaultModuleName: String?
     get() = owningTarget?.name ?: project?.name
