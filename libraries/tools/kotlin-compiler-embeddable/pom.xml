@@ -54,7 +54,19 @@
     <build>
         <testSourceDirectory>test/kotlin</testSourceDirectory>
         <plugins>
-
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-sources-for-shade-plugin</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -68,11 +80,6 @@
                         </goals>
                         <configuration>
                             <artifacts>
-                                <artifact>
-                                    <file>${kotlin-dist}/kotlin-compiler-sources.jar</file>
-                                    <type>jar</type>
-                                    <classifier>sources</classifier>
-                                </artifact>
                                 <artifact>
                                     <file>${kotlin-dist}/kotlin-compiler-javadoc.jar</file>
                                     <type>jar</type>
@@ -110,6 +117,7 @@
                             <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
                             <shadedArtifactAttached>false</shadedArtifactAttached>
                             <createDependencyReducedPom>true</createDependencyReducedPom>
+                            <createSourcesJar>true</createSourcesJar>
                             <filters>
                                 <filter>
                                     <artifact>*:kotlin-runtime</artifact>
@@ -189,6 +197,11 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${surefire-version}</version>
+                <configuration>
+                    <systemPropertyVariables>
+                        <compilerJar>${artifactId}-${parent.version}.jar</compilerJar>
+                    </systemPropertyVariables>
+                </configuration>
                 <executions>
                     <execution>
                         <id>integration-test</id>
