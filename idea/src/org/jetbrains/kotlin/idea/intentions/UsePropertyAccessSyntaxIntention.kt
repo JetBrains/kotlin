@@ -69,7 +69,7 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
         val arguments = element.valueArguments
         return when (arguments.size) {
             0 -> replaceWithPropertyGet(element, propertyName)
-            1 -> replaceWithPropertySet(element, propertyName, arguments.single())
+            1 -> replaceWithPropertySet(element, propertyName)
             else -> error("More than one argument in call to accessor")
         }
     }
@@ -158,15 +158,27 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
     }
 
     //TODO: what if it was used as expression (of type Unit)?
-    private fun replaceWithPropertySet(callExpression: KtCallExpression, propertyName: Name, argument: KtValueArgument): KtExpression {
-        val qualifiedExpression = callExpression.getQualifiedExpressionForSelector()
+    private fun replaceWithPropertySet(callExpression: KtCallExpression, propertyName: Name): KtExpression {
+        val call = callExpression.getQualifiedExpressionForSelector() ?: callExpression
+        val callParent = call.parent
+        var callToConvert = callExpression
+        if (callParent is KtDeclarationWithBody && call == callParent.bodyExpression) {
+            ConvertToBlockBodyIntention.convert(callParent)
+            val firstStatement = (callParent.bodyExpression as? KtBlockExpression)?.statements?.first()
+            callToConvert = (firstStatement as? KtQualifiedExpression)?.selectorExpression as? KtCallExpression
+                ?: firstStatement as? KtCallExpression
+                ?: throw IllegalStateException("Unexpected contents of function after conversion: ${callParent.text}")
+        }
+
+        val qualifiedExpression = callToConvert.getQualifiedExpressionForSelector()
+        val argument = callToConvert.valueArguments.single()
         if (qualifiedExpression != null) {
             val pattern = when (qualifiedExpression) {
                 is KtDotQualifiedExpression -> "$0.$1=$2"
                 is KtSafeQualifiedExpression -> "$0?.$1=$2"
                 else -> error(qualifiedExpression) //TODO: make it sealed?
             }
-            val newExpression = KtPsiFactory(callExpression).createExpressionByPattern(
+            val newExpression = KtPsiFactory(callToConvert).createExpressionByPattern(
                     pattern,
                     qualifiedExpression.receiverExpression,
                     propertyName,
@@ -175,8 +187,8 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
             return qualifiedExpression.replaced(newExpression)
         }
         else {
-            val newExpression = KtPsiFactory(callExpression).createExpressionByPattern("$0=$1", propertyName, argument.getArgumentExpression()!!)
-            return callExpression.replaced(newExpression)
+            val newExpression = KtPsiFactory(callToConvert).createExpressionByPattern("$0=$1", propertyName, argument.getArgumentExpression()!!)
+            return callToConvert.replaced(newExpression)
         }
     }
 }

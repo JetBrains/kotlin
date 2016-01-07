@@ -8740,6 +8740,24 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             doTest(fileName);
         }
 
+        @TestMetadata("setAsExpressionBody.kt")
+        public void testSetAsExpressionBody() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/setAsExpressionBody.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("setAsExpressionBodyProperty.kt")
+        public void testSetAsExpressionBodyProperty() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/setAsExpressionBodyProperty.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("setAsExpressionBodyUnqualified.kt")
+        public void testSetAsExpressionBodyUnqualified() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/setAsExpressionBodyUnqualified.kt");
+            doTest(fileName);
+        }
+
         @TestMetadata("setImplicitReceiver.kt")
         public void testSetImplicitReceiver() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("idea/testData/intentions/usePropertyAccessSyntax/setImplicitReceiver.kt");
