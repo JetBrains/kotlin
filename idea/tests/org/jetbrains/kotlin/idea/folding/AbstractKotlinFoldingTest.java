@@ -24,9 +24,9 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.LightProjectDescriptor;
 import com.intellij.testFramework.PlatformTestCase;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCaseBase;
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor;
 import org.jetbrains.kotlin.test.SettingsConfigurator;
 import org.junit.Assert;
@@ -36,7 +36,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
-public abstract class AbstractKotlinFoldingTest extends LightCodeInsightFixtureTestCase {
+public abstract class AbstractKotlinFoldingTest extends KotlinLightCodeInsightFixtureTestCaseBase {
     protected void doTest(@NotNull String path) {
         myFixture.testFolding(path);
     }

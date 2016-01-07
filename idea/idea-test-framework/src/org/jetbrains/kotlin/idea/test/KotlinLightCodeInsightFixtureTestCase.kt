@@ -23,6 +23,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.Presentation
 import com.intellij.openapi.actionSystem.ex.ActionManagerEx
 import com.intellij.openapi.editor.ex.EditorEx
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupManager
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
@@ -40,7 +41,7 @@ import java.io.File
 import java.io.IOException
 import java.util.*
 
-abstract class KotlinLightCodeInsightFixtureTestCase : LightCodeInsightFixtureTestCase() {
+abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFixtureTestCaseBase() {
     private var kotlinInternalModeOriginalValue = false
 
     private val exceptions = ArrayList<Throwable>()
