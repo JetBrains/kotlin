@@ -24,29 +24,29 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.util.Printer
 import java.util.*
 
-public interface InterpreterResult {
+interface InterpreterResult {
     override fun toString(): String
 }
 
-public class ExceptionThrown(public val exception: ObjectValue, public val kind: ExceptionKind): InterpreterResult {
+class ExceptionThrown(val exception: ObjectValue, val kind: ExceptionKind): InterpreterResult {
     override fun toString(): String = "Thrown $exception: $kind"
 
-    public enum class ExceptionKind {
+    enum class ExceptionKind {
         FROM_EVALUATED_CODE,
         FROM_EVALUATOR,
         BROKEN_CODE
     }
 }
 
-public data class ValueReturned(public val result: Value): InterpreterResult {
+data class ValueReturned(val result: Value): InterpreterResult {
     override fun toString(): String = "Returned $result"
 }
 
-public class AbnormalTermination(public val message: String): InterpreterResult {
+class AbnormalTermination(val message: String): InterpreterResult {
     override fun toString(): String = "Terminated abnormally: $message"
 }
 
-public interface InterpretationEventHandler {
+interface InterpretationEventHandler {
     object NONE : InterpretationEventHandler {
         override fun instructionProcessed(insn: AbstractInsnNode): InterpreterResult? = null
         override fun exceptionThrown(currentState: Frame<Value>, currentInsn: AbstractInsnNode, exception: Value): InterpreterResult? = null
@@ -71,7 +71,7 @@ class ThrownFromEvaluatedCodeException(val exception: ObjectValue): RuntimeExcep
     override fun toString(): String = "Thrown from evaluated code: $exception"
 }
 
-public fun interpreterLoop(
+fun interpreterLoop(
         m: MethodNode,
         initialState: Frame<Value>,
         eval: Eval,
