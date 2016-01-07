@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.renderer.KeywordStringsGenerated
 import java.io.File
 
-val MODIFIER_KEYWORDS = KtTokens.MODIFIER_KEYWORDS_ARRAY.map { it.getValue() }.toSet()
+val MODIFIER_KEYWORDS = KtTokens.MODIFIER_KEYWORDS_ARRAY.map { it.value }.toSet()
 
 val commonCases: CaseBuilder.(String, String) -> Unit = { testByName, testByRef ->
     case("val", "val $KEYWORD_MARKER: Int", " = 0", testByName)

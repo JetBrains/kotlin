@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.generators.evaluate.DEST_FILE
 import org.jetbrains.kotlin.generators.evaluate.generate
 import org.jetbrains.kotlin.test.KotlinTestUtils
 
-public class GenerateOperationsMapTest : UsefulTestCase() {
-    public fun testGeneratedDataIsUpToDate(): Unit {
+class GenerateOperationsMapTest : UsefulTestCase() {
+    fun testGeneratedDataIsUpToDate(): Unit {
         val text = generate()
         KotlinTestUtils.assertEqualsToFile(DEST_FILE, text)
     }
