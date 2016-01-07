@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.KtAnnotationUseSiteTarget
 import org.jetbrains.kotlin.psi.stubs.KotlinAnnotationUseSiteTargetStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinAnnotationUseSiteTargetStubImpl
 
-public class KtAnnotationUseSiteTargetElementType(debugName: String) : KtStubElementType<KotlinAnnotationUseSiteTargetStub, KtAnnotationUseSiteTarget>(
+class KtAnnotationUseSiteTargetElementType(debugName: String) : KtStubElementType<KotlinAnnotationUseSiteTargetStub, KtAnnotationUseSiteTarget>(
         debugName, KtAnnotationUseSiteTarget::class.java, KotlinAnnotationUseSiteTargetStub::class.java
 ) {
 

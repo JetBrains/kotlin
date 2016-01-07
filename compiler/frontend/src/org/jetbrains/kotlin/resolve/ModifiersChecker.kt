@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.KtModifierListOwner
 import java.util.*
 
-public object ModifierCheckerCore {
+object ModifierCheckerCore {
     private enum class Compatibility {
         // modifier pair is compatible: ok (default)
         COMPATIBLE,
@@ -286,7 +286,7 @@ public object ModifierCheckerCore {
         }
     }
 
-    public fun check(listOwner: KtModifierListOwner, trace: BindingTrace, descriptor: DeclarationDescriptor?) {
+    fun check(listOwner: KtModifierListOwner, trace: BindingTrace, descriptor: DeclarationDescriptor?) {
         if (listOwner is KtDeclarationWithBody) {
             // JetFunction or JetPropertyAccessor
             for (parameter in listOwner.valueParameters) {

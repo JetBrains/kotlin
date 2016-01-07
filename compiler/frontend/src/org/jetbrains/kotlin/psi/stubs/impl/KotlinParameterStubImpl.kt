@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.name.FqName
 import com.intellij.psi.PsiElement
 
-public class KotlinParameterStubImpl(
+class KotlinParameterStubImpl(
         parent: StubElement<out PsiElement>?,
         private val fqName: StringRef?,
         private val name: StringRef?,
@@ -37,7 +37,7 @@ public class KotlinParameterStubImpl(
     }
 
     override fun getFqName(): FqName? {
-        return if (fqName != null) FqName(fqName.getString()) else null
+        return if (fqName != null) FqName(fqName.string) else null
     }
 
     override fun isMutable() = isMutable

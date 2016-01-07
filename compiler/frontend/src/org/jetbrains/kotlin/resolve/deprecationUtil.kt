@@ -33,7 +33,7 @@ fun DeclarationDescriptor.getDeprecatedAnnotation(): Pair<AnnotationDescriptor, 
 
     when (this) {
         is ConstructorDescriptor -> {
-            val classDescriptor = getContainingDeclaration()
+            val classDescriptor = containingDeclaration
             val classAnnotation = classDescriptor.getDeclaredDeprecatedAnnotation()
             if (classAnnotation != null)
                 return classAnnotation to classDescriptor

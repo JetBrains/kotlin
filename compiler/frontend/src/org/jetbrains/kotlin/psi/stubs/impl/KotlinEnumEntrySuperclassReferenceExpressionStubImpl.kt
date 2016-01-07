@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.psi.KtEnumEntrySuperclassReferenceExpression
 import org.jetbrains.kotlin.psi.stubs.KotlinEnumEntrySuperclassReferenceExpressionStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
-public class KotlinEnumEntrySuperclassReferenceExpressionStubImpl(parent: StubElement<*>, private val referencedName: StringRef)
+class KotlinEnumEntrySuperclassReferenceExpressionStubImpl(parent: StubElement<*>, private val referencedName: StringRef)
     : KotlinStubBaseImpl<KtEnumEntrySuperclassReferenceExpression>(parent, KtStubElementTypes.ENUM_ENTRY_SUPERCLASS_REFERENCE_EXPRESSION), KotlinEnumEntrySuperclassReferenceExpressionStub {
 
-    override fun getReferencedName() = referencedName.getString()
+    override fun getReferencedName() = referencedName.string
 }

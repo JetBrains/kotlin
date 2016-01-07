@@ -44,8 +44,8 @@ import kotlin.text.Regex
 
 // ----------- Calls and qualified expressions ---------------------------------------------------------------------------------------------
 
-public fun KtCallElement.getCallNameExpression(): KtSimpleNameExpression? {
-    val calleeExpression = getCalleeExpression() ?: return null
+fun KtCallElement.getCallNameExpression(): KtSimpleNameExpression? {
+    val calleeExpression = calleeExpression ?: return null
 
     return when (calleeExpression) {
         is KtSimpleNameExpression -> calleeExpression
@@ -58,7 +58,7 @@ public fun KtCallElement.getCallNameExpression(): KtSimpleNameExpression? {
  * Returns enclosing qualifying element for given [[KtSimpleNameExpression]]
  * ([[KtQualifiedExpression]] or [[KtUserType]] or original expression)
  */
-public fun KtSimpleNameExpression.getQualifiedElement(): KtElement {
+fun KtSimpleNameExpression.getQualifiedElement(): KtElement {
     val baseExpression = (parent as? KtCallExpression) ?: this
     val parent = baseExpression.parent
     return when (parent) {
@@ -68,34 +68,34 @@ public fun KtSimpleNameExpression.getQualifiedElement(): KtElement {
     }
 }
 
-public fun KtSimpleNameExpression.getTopmostParentQualifiedExpressionForSelector(): KtQualifiedExpression? {
+fun KtSimpleNameExpression.getTopmostParentQualifiedExpressionForSelector(): KtQualifiedExpression? {
     return sequence<KtExpression>(this) {
-        val parentQualified = it.getParent() as? KtQualifiedExpression
-        if (parentQualified?.getSelectorExpression() == it) parentQualified else null
+        val parentQualified = it.parent as? KtQualifiedExpression
+        if (parentQualified?.selectorExpression == it) parentQualified else null
     }.last() as? KtQualifiedExpression
 }
 
 /**
  * Returns rightmost selector of the qualified element (null if there is no such selector)
  */
-public fun KtElement.getQualifiedElementSelector(): KtElement? {
+fun KtElement.getQualifiedElementSelector(): KtElement? {
     return when (this) {
         is KtSimpleNameExpression -> this
-        is KtCallExpression -> getCalleeExpression()
+        is KtCallExpression -> calleeExpression
         is KtQualifiedExpression -> {
-            val selector = getSelectorExpression()
-            if (selector is KtCallExpression) selector.getCalleeExpression() else selector
+            val selector = selectorExpression
+            if (selector is KtCallExpression) selector.calleeExpression else selector
         }
         is KtUserType -> getReferenceExpression()
         else -> null
     }
 }
 
-public fun KtSimpleNameExpression.getReceiverExpression(): KtExpression? {
-    val parent = getParent()
+fun KtSimpleNameExpression.getReceiverExpression(): KtExpression? {
+    val parent = parent
     when {
         parent is KtQualifiedExpression -> {
-            val receiverExpression = parent.getReceiverExpression()
+            val receiverExpression = parent.receiverExpression
             // Name expression can't be receiver for itself
             if (receiverExpression != this) {
                 return receiverExpression
@@ -106,17 +106,17 @@ public fun KtSimpleNameExpression.getReceiverExpression(): KtExpression? {
             val callExpression = parent
             val grandParent = callExpression.getParent()
             if (grandParent is KtQualifiedExpression) {
-                val parentsReceiver = grandParent.getReceiverExpression()
+                val parentsReceiver = grandParent.receiverExpression
                 if (parentsReceiver != callExpression) {
                     return parentsReceiver
                 }
             }
         }
-        parent is KtBinaryExpression && parent.getOperationReference() == this -> {
-            return if (parent.getOperationToken() in OperatorConventions.IN_OPERATIONS) parent.getRight() else parent.getLeft()
+        parent is KtBinaryExpression && parent.operationReference == this -> {
+            return if (parent.getOperationToken() in OperatorConventions.IN_OPERATIONS) parent.right else parent.left
         }
-        parent is KtUnaryExpression && parent.getOperationReference() == this -> {
-            return parent.getBaseExpression()!!
+        parent is KtUnaryExpression && parent.operationReference == this -> {
+            return parent.baseExpression!!
         }
         parent is KtUserType -> {
             val qualifier = parent.getQualifier()
@@ -128,32 +128,32 @@ public fun KtSimpleNameExpression.getReceiverExpression(): KtExpression? {
     return null
 }
 
-public fun KtElement.getQualifiedExpressionForSelector(): KtQualifiedExpression? {
-    val parent = getParent()
-    return if (parent is KtQualifiedExpression && parent.getSelectorExpression() == this) parent else null
+fun KtElement.getQualifiedExpressionForSelector(): KtQualifiedExpression? {
+    val parent = parent
+    return if (parent is KtQualifiedExpression && parent.selectorExpression == this) parent else null
 }
 
-public fun KtExpression.getQualifiedExpressionForSelectorOrThis(): KtExpression {
+fun KtExpression.getQualifiedExpressionForSelectorOrThis(): KtExpression {
     return getQualifiedExpressionForSelector() ?: this
 }
 
-public fun KtExpression.getQualifiedExpressionForReceiver(): KtQualifiedExpression? {
-    val parent = getParent()
-    return if (parent is KtQualifiedExpression && parent.getReceiverExpression() == this) parent else null
+fun KtExpression.getQualifiedExpressionForReceiver(): KtQualifiedExpression? {
+    val parent = parent
+    return if (parent is KtQualifiedExpression && parent.receiverExpression == this) parent else null
 }
 
-public fun KtExpression.getQualifiedExpressionForReceiverOrThis(): KtExpression {
+fun KtExpression.getQualifiedExpressionForReceiverOrThis(): KtExpression {
     return getQualifiedExpressionForReceiver() ?: this
 }
 
-public fun KtExpression.isDotReceiver(): Boolean =
-        (getParent() as? KtDotQualifiedExpression)?.getReceiverExpression() == this
+fun KtExpression.isDotReceiver(): Boolean =
+        (parent as? KtDotQualifiedExpression)?.getReceiverExpression() == this
 
-public fun KtElement.getCalleeHighlightingRange(): TextRange {
+fun KtElement.getCalleeHighlightingRange(): TextRange {
     val annotationEntry: KtAnnotationEntry =
             PsiTreeUtil.getParentOfType<KtAnnotationEntry>(
                     this, KtAnnotationEntry::class.java, /* strict = */false, KtValueArgumentList::class.java
-            ) ?: return getTextRange()
+            ) ?: return textRange
 
     val startOffset = annotationEntry.getAtSymbol()?.getTextRange()?.getStartOffset()
                       ?: annotationEntry.getCalleeExpression()!!.startOffset
@@ -163,17 +163,17 @@ public fun KtElement.getCalleeHighlightingRange(): TextRange {
 
 // ---------- Block expression -------------------------------------------------------------------------------------------------------------
 
-public fun KtElement.blockExpressionsOrSingle(): Sequence<KtElement> =
-        if (this is KtBlockExpression) getStatements().asSequence() else sequenceOf(this)
+fun KtElement.blockExpressionsOrSingle(): Sequence<KtElement> =
+        if (this is KtBlockExpression) statements.asSequence() else sequenceOf(this)
 
-public fun KtExpression.lastBlockStatementOrThis(): KtExpression
-        = (this as? KtBlockExpression)?.getStatements()?.lastOrNull() ?: this
+fun KtExpression.lastBlockStatementOrThis(): KtExpression
+        = (this as? KtBlockExpression)?.statements?.lastOrNull() ?: this
 
-public fun KtBlockExpression.contentRange(): PsiChildRange {
-    val first = (getLBrace()?.getNextSibling() ?: getFirstChild())
+fun KtBlockExpression.contentRange(): PsiChildRange {
+    val first = (lBrace?.nextSibling ?: firstChild)
             ?.siblings(withItself = false)
             ?.firstOrNull { it !is PsiWhiteSpace }
-    val rBrace = getRBrace()
+    val rBrace = rBrace
     if (first == rBrace) return PsiChildRange.EMPTY
     val last = rBrace!!
             .siblings(forward = false, withItself = false)
@@ -183,15 +183,15 @@ public fun KtBlockExpression.contentRange(): PsiChildRange {
 
 // ----------- Inheritance -----------------------------------------------------------------------------------------------------------------
 
-public fun KtClass.isInheritable(): Boolean {
+fun KtClass.isInheritable(): Boolean {
     return isInterface() || hasModifier(KtTokens.OPEN_KEYWORD) || hasModifier(KtTokens.ABSTRACT_KEYWORD)
 }
 
-public fun KtDeclaration.isOverridable(): Boolean {
-    val parent = getParent()
+fun KtDeclaration.isOverridable(): Boolean {
+    val parent = parent
     if (!(parent is KtClassBody || parent is KtParameterList)) return false
 
-    val klass = parent.getParent() as? KtClass ?: return false
+    val klass = parent.parent as? KtClass ?: return false
     if (!klass.isInheritable() && !klass.isEnum()) return false
 
     if (hasModifier(KtTokens.FINAL_KEYWORD) || hasModifier(KtTokens.PRIVATE_KEYWORD)) return false
@@ -200,7 +200,7 @@ public fun KtDeclaration.isOverridable(): Boolean {
            hasModifier(KtTokens.ABSTRACT_KEYWORD) || hasModifier(KtTokens.OPEN_KEYWORD) || hasModifier(KtTokens.OVERRIDE_KEYWORD)
 }
 
-public fun KtClass.isAbstract(): Boolean = isInterface() || hasModifier(KtTokens.ABSTRACT_KEYWORD)
+fun KtClass.isAbstract(): Boolean = isInterface() || hasModifier(KtTokens.ABSTRACT_KEYWORD)
 
 /**
  * Returns the list of unqualified names that are indexed as the superclass names of this class. For the names that might be imported
@@ -208,7 +208,7 @@ public fun KtClass.isAbstract(): Boolean = isInterface() || hasModifier(KtTokens
  *
  * @return the list of possible superclass names
  */
-public fun StubBasedPsiElementBase<out KotlinClassOrObjectStub<out KtClassOrObject>>.getSuperNames(): List<String> {
+fun StubBasedPsiElementBase<out KotlinClassOrObjectStub<out KtClassOrObject>>.getSuperNames(): List<String> {
     fun addSuperName(result: MutableList<String>, referencedName: String): Unit {
         result.add(referencedName)
 
@@ -254,16 +254,16 @@ public fun StubBasedPsiElementBase<out KotlinClassOrObjectStub<out KtClassOrObje
 // ------------ Annotations ----------------------------------------------------------------------------------------------------------------
 
 // Annotations on labeled expression lies on it's base expression
-public fun KtExpression.getAnnotationEntries(): List<KtAnnotationEntry> {
-    val parent = getParent()
+fun KtExpression.getAnnotationEntries(): List<KtAnnotationEntry> {
+    val parent = parent
     return when (parent) {
-        is KtAnnotatedExpression -> parent.getAnnotationEntries()
+        is KtAnnotatedExpression -> parent.annotationEntries
         is KtLabeledExpression -> parent.getAnnotationEntries()
         else -> emptyList<KtAnnotationEntry>()
     }
 }
 
-public fun KtAnnotationsContainer.collectAnnotationEntriesFromStubOrPsi(): List<KtAnnotationEntry> {
+fun KtAnnotationsContainer.collectAnnotationEntriesFromStubOrPsi(): List<KtAnnotationEntry> {
     return when (this) {
         is StubBasedPsiElementBase<*> -> getStub()?.collectAnnotationEntriesFromStubElement() ?: collectAnnotationEntriesFromPsi()
         else -> collectAnnotationEntriesFromPsi()
@@ -271,18 +271,18 @@ public fun KtAnnotationsContainer.collectAnnotationEntriesFromStubOrPsi(): List<
 }
 
 private fun StubElement<*>.collectAnnotationEntriesFromStubElement(): List<KtAnnotationEntry> {
-    return getChildrenStubs().flatMap {
+    return childrenStubs.flatMap {
         child ->
-        when (child.getStubType()) {
-            KtNodeTypes.ANNOTATION_ENTRY -> listOf(child.getPsi() as KtAnnotationEntry)
-            KtNodeTypes.ANNOTATION -> (child.getPsi() as KtAnnotation).getEntries()
+        when (child.stubType) {
+            KtNodeTypes.ANNOTATION_ENTRY -> listOf(child.psi as KtAnnotationEntry)
+            KtNodeTypes.ANNOTATION -> (child.psi as KtAnnotation).getEntries()
             else -> emptyList<KtAnnotationEntry>()
         }
     }
 }
 
 private fun KtAnnotationsContainer.collectAnnotationEntriesFromPsi(): List<KtAnnotationEntry> {
-    return getChildren().flatMap { child ->
+    return children.flatMap { child ->
         when (child) {
             is KtAnnotationEntry -> listOf(child)
             is KtAnnotation -> child.getEntries()
@@ -295,7 +295,7 @@ private fun KtAnnotationsContainer.collectAnnotationEntriesFromPsi(): List<KtAnn
 
 // Calls `block` on each descendant of T type
 // Note, that calls happen in order of DFS-exit, so deeper nodes are applied earlier
-public inline fun <reified T : KtElement> forEachDescendantOfTypeVisitor(noinline block: (T) -> Unit): KtVisitorVoid {
+inline fun <reified T : KtElement> forEachDescendantOfTypeVisitor(noinline block: (T) -> Unit): KtVisitorVoid {
     return object : KtTreeVisitorVoid() {
         override fun visitKtElement(element: KtElement) {
             super.visitKtElement(element)
@@ -306,34 +306,34 @@ public inline fun <reified T : KtElement> forEachDescendantOfTypeVisitor(noinlin
     }
 }
 
-public inline fun <reified T : KtElement, R> flatMapDescendantsOfTypeVisitor(accumulator: MutableCollection<R>, noinline map: (T) -> Collection<R>): KtVisitorVoid {
+inline fun <reified T : KtElement, R> flatMapDescendantsOfTypeVisitor(accumulator: MutableCollection<R>, noinline map: (T) -> Collection<R>): KtVisitorVoid {
     return forEachDescendantOfTypeVisitor<T> { accumulator.addAll(map(it)) }
 }
 
 // ----------- Other -----------------------------------------------------------------------------------------------------------------------
 
-public fun KtClassOrObject.effectiveDeclarations(): List<KtDeclaration> {
+fun KtClassOrObject.effectiveDeclarations(): List<KtDeclaration> {
     return when(this) {
         is KtClass -> getDeclarations() + getPrimaryConstructorParameters().filter { p -> p.hasValOrVar() }
         else -> getDeclarations()
     }
 }
 
-public fun PsiElement.isExtensionDeclaration(): Boolean {
+fun PsiElement.isExtensionDeclaration(): Boolean {
     val callable: KtCallableDeclaration? = when (this) {
         is KtNamedFunction, is KtProperty -> this as KtCallableDeclaration
         is KtPropertyAccessor -> getNonStrictParentOfType<KtProperty>()
         else -> null
     }
 
-    return callable?.getReceiverTypeReference() != null
+    return callable?.receiverTypeReference != null
 }
 
-public fun KtClassOrObject.isObjectLiteral(): Boolean = this is KtObjectDeclaration && isObjectLiteral()
+fun KtClassOrObject.isObjectLiteral(): Boolean = this is KtObjectDeclaration && isObjectLiteral()
 
 //TODO: strange method, and not only Kotlin specific (also Java)
-public fun PsiElement.parameterIndex(): Int {
-    val parent = getParent()
+fun PsiElement.parameterIndex(): Int {
+    val parent = parent
     return when {
         this is KtParameter && parent is KtParameterList -> parent.getParameters().indexOf(this)
         this is PsiParameter && parent is PsiParameterList -> parent.getParameterIndex(this)
@@ -341,20 +341,20 @@ public fun PsiElement.parameterIndex(): Int {
     }
 }
 
-public fun KtModifierListOwner.isPrivate(): Boolean = hasModifier(KtTokens.PRIVATE_KEYWORD)
+fun KtModifierListOwner.isPrivate(): Boolean = hasModifier(KtTokens.PRIVATE_KEYWORD)
 
-public fun KtSimpleNameExpression.isImportDirectiveExpression(): Boolean {
-    val parent = getParent()
-    return parent is KtImportDirective || parent?.getParent() is KtImportDirective
+fun KtSimpleNameExpression.isImportDirectiveExpression(): Boolean {
+    val parent = parent
+    return parent is KtImportDirective || parent?.parent is KtImportDirective
 }
 
-public fun KtSimpleNameExpression.isPackageDirectiveExpression(): Boolean {
-    val parent = getParent()
-    return parent is KtPackageDirective || parent?.getParent() is KtPackageDirective
+fun KtSimpleNameExpression.isPackageDirectiveExpression(): Boolean {
+    val parent = parent
+    return parent is KtPackageDirective || parent?.parent is KtPackageDirective
 }
 
-public fun KtExpression.isLambdaOutsideParentheses(): Boolean {
-    val parent = getParent()
+fun KtExpression.isLambdaOutsideParentheses(): Boolean {
+    val parent = parent
     return when (parent) {
         is KtLambdaArgument -> true
         is KtLabeledExpression -> parent.isLambdaOutsideParentheses()
@@ -362,43 +362,43 @@ public fun KtExpression.isLambdaOutsideParentheses(): Boolean {
     }
 }
 
-public fun KtExpression.getAssignmentByLHS(): KtBinaryExpression? {
-    val parent = getParent() as? KtBinaryExpression ?: return null
-    return if (KtPsiUtil.isAssignment(parent) && parent.getLeft() == this) parent else null
+fun KtExpression.getAssignmentByLHS(): KtBinaryExpression? {
+    val parent = parent as? KtBinaryExpression ?: return null
+    return if (KtPsiUtil.isAssignment(parent) && parent.left == this) parent else null
 }
 
-public fun KtStringTemplateExpression.getContentRange(): TextRange {
-    val start = getNode().getFirstChildNode().getTextLength()
-    val lastChild = getNode().getLastChildNode()
-    val length = getTextLength()
-    return TextRange(start, if (lastChild.getElementType() == KtTokens.CLOSING_QUOTE) length - lastChild.getTextLength() else length)
+fun KtStringTemplateExpression.getContentRange(): TextRange {
+    val start = node.firstChildNode.textLength
+    val lastChild = node.lastChildNode
+    val length = textLength
+    return TextRange(start, if (lastChild.elementType == KtTokens.CLOSING_QUOTE) length - lastChild.textLength else length)
 }
 
-public fun KtStringTemplateExpression.isSingleQuoted(): Boolean
-        = getNode().getFirstChildNode().getTextLength() == 1
+fun KtStringTemplateExpression.isSingleQuoted(): Boolean
+        = node.firstChildNode.textLength == 1
 
-public fun KtNamedDeclaration.getValueParameters(): List<KtParameter> {
+fun KtNamedDeclaration.getValueParameters(): List<KtParameter> {
     return getValueParameterList()?.getParameters() ?: Collections.emptyList()
 }
 
-public fun KtNamedDeclaration.getValueParameterList(): KtParameterList? {
+fun KtNamedDeclaration.getValueParameterList(): KtParameterList? {
     return when (this) {
-        is KtCallableDeclaration -> getValueParameterList()
+        is KtCallableDeclaration -> valueParameterList
         is KtClass -> getPrimaryConstructorParameterList()
         else -> null
     }
 }
 
-public fun KtLambdaArgument.getLambdaArgumentName(bindingContext: BindingContext): Name? {
-    val callExpression = getParent() as KtCallExpression
+fun KtLambdaArgument.getLambdaArgumentName(bindingContext: BindingContext): Name? {
+    val callExpression = parent as KtCallExpression
     val resolvedCall = callExpression.getResolvedCall(bindingContext)
-    return (resolvedCall?.getArgumentMapping(this) as? ArgumentMatch)?.valueParameter?.getName()
+    return (resolvedCall?.getArgumentMapping(this) as? ArgumentMatch)?.valueParameter?.name
 }
 
-public fun KtExpression.asAssignment(): KtBinaryExpression? =
+fun KtExpression.asAssignment(): KtBinaryExpression? =
         if (KtPsiUtil.isAssignment(this)) this as KtBinaryExpression else null
 
-public fun KtDeclaration.visibilityModifier(): PsiElement? {
+fun KtDeclaration.visibilityModifier(): PsiElement? {
     val modifierList = modifierList ?: return null
     return KtTokens.VISIBILITY_MODIFIERS.types
                    .asSequence()
@@ -406,15 +406,15 @@ public fun KtDeclaration.visibilityModifier(): PsiElement? {
                    .firstOrNull { it != null }
 }
 
-public fun KtDeclaration.visibilityModifierType(): KtModifierKeywordToken?
+fun KtDeclaration.visibilityModifierType(): KtModifierKeywordToken?
         = visibilityModifier()?.node?.elementType as KtModifierKeywordToken?
 
-public fun KtStringTemplateExpression.isPlain() = entries.all { it is KtLiteralStringTemplateEntry }
+fun KtStringTemplateExpression.isPlain() = entries.all { it is KtLiteralStringTemplateEntry }
 
-public val KtDeclaration.containingClassOrObject: KtClassOrObject?
+val KtDeclaration.containingClassOrObject: KtClassOrObject?
         get() = (parent as? KtClassBody)?.parent as? KtClassOrObject
 
-public fun KtExpression.getOutermostParenthesizerOrThis(): KtExpression {
+fun KtExpression.getOutermostParenthesizerOrThis(): KtExpression {
     return (parentsWithSelf.zip(parents)).firstOrNull {
         val (element, parent) = it
         when (parent) {
@@ -426,7 +426,7 @@ public fun KtExpression.getOutermostParenthesizerOrThis(): KtExpression {
     }?.first as KtExpression? ?: this
 }
 
-public fun PsiElement.isFunctionalExpression(): Boolean = this is KtNamedFunction && nameIdentifier == null
+fun PsiElement.isFunctionalExpression(): Boolean = this is KtNamedFunction && nameIdentifier == null
 
 private val BAD_NEIGHBOUR_FOR_SIMPLE_TEMPLATE_ENTRY_PATTERN = Regex("[a-zA-Z0-9_].*")
 

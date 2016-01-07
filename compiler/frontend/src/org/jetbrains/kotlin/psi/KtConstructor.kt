@@ -26,11 +26,11 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtPlaceHolderStubElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
-public abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinPlaceHolderStub<T>>, KtFunction {
+abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinPlaceHolderStub<T>>, KtFunction {
     protected constructor(node: ASTNode) : super(node)
     protected constructor(stub: KotlinPlaceHolderStub<T>, nodeType: KtPlaceHolderStubElementType<T>) : super(stub, nodeType)
 
-    public abstract fun getContainingClassOrObject(): KtClassOrObject
+    abstract fun getContainingClassOrObject(): KtClassOrObject
 
     override fun isLocal() = false
 
@@ -80,9 +80,9 @@ public abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<Ko
 
     override fun getPresentation() = ItemPresentationProviders.getItemPresentation(this)
 
-    public open fun getConstructorKeyword(): PsiElement? = findChildByType(KtTokens.CONSTRUCTOR_KEYWORD)
+    open fun getConstructorKeyword(): PsiElement? = findChildByType(KtTokens.CONSTRUCTOR_KEYWORD)
 
-    public fun hasConstructorKeyword(): Boolean = getStub() != null || getConstructorKeyword() != null
+    fun hasConstructorKeyword(): Boolean = getStub() != null || getConstructorKeyword() != null
 
     override fun getTextOffset(): Int {
         return getConstructorKeyword()?.getTextOffset()

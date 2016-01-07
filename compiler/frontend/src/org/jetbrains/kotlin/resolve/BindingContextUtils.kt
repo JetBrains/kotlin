@@ -35,9 +35,9 @@ import org.jetbrains.kotlin.resolve.scopes.utils.takeSnapshot
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 import org.jetbrains.kotlin.util.slicedMap.ReadOnlySlice
 
-public operator fun <K, V: Any> BindingContext.get(slice: ReadOnlySlice<K, V>, key: K): V? = get(slice, key)
+operator fun <K, V: Any> BindingContext.get(slice: ReadOnlySlice<K, V>, key: K): V? = get(slice, key)
 
-public fun KtReturnExpression.getTargetFunctionDescriptor(context: BindingContext): FunctionDescriptor? {
+fun KtReturnExpression.getTargetFunctionDescriptor(context: BindingContext): FunctionDescriptor? {
     val targetLabel = getTargetLabel()
     if (targetLabel != null) return context[LABEL_TARGET, targetLabel]?.let { context[FUNCTION, it] }
 
@@ -50,15 +50,15 @@ public fun KtReturnExpression.getTargetFunctionDescriptor(context: BindingContex
             .firstOrNull()
 }
 
-public fun KtReturnExpression.getTargetFunction(context: BindingContext): KtCallableDeclaration? {
+fun KtReturnExpression.getTargetFunction(context: BindingContext): KtCallableDeclaration? {
     return getTargetFunctionDescriptor(context)?.let { DescriptorToSourceUtils.descriptorToDeclaration(it) as? KtCallableDeclaration }
 }
 
-public fun KtExpression.isUsedAsExpression(context: BindingContext): Boolean = context[BindingContext.USED_AS_EXPRESSION, this]!!
-public fun KtExpression.isUsedAsStatement(context: BindingContext): Boolean = !isUsedAsExpression(context)
+fun KtExpression.isUsedAsExpression(context: BindingContext): Boolean = context[BindingContext.USED_AS_EXPRESSION, this]!!
+fun KtExpression.isUsedAsStatement(context: BindingContext): Boolean = !isUsedAsExpression(context)
 
 
-public fun <C : ResolutionContext<C>> ResolutionContext<C>.recordDataFlowInfo(expression: KtExpression?) {
+fun <C : ResolutionContext<C>> ResolutionContext<C>.recordDataFlowInfo(expression: KtExpression?) {
     if (expression == null) return
 
     val typeInfo = trace.get(BindingContext.EXPRESSION_TYPE_INFO, expression)
@@ -71,13 +71,13 @@ public fun <C : ResolutionContext<C>> ResolutionContext<C>.recordDataFlowInfo(ex
     }
 }
 
-public fun BindingTrace.recordScope(scope: LexicalScope, element: KtElement?) {
+fun BindingTrace.recordScope(scope: LexicalScope, element: KtElement?) {
     if (element != null) {
         record(BindingContext.LEXICAL_SCOPE, element, scope.takeSnapshot() as LexicalScope)
     }
 }
 
-public fun BindingContext.getDataFlowInfo(position: PsiElement): DataFlowInfo {
+fun BindingContext.getDataFlowInfo(position: PsiElement): DataFlowInfo {
     for (element in position.parentsWithSelf) {
         (element as? KtExpression)?.let {
             val parent = it.parent
@@ -89,9 +89,9 @@ public fun BindingContext.getDataFlowInfo(position: PsiElement): DataFlowInfo {
     return DataFlowInfo.EMPTY
 }
 
-public fun KtExpression.isUnreachableCode(context: BindingContext): Boolean = context[BindingContext.UNREACHABLE_CODE, this]!!
+fun KtExpression.isUnreachableCode(context: BindingContext): Boolean = context[BindingContext.UNREACHABLE_CODE, this]!!
 
-public fun KtExpression.getReferenceTargets(context: BindingContext): Collection<DeclarationDescriptor> {
+fun KtExpression.getReferenceTargets(context: BindingContext): Collection<DeclarationDescriptor> {
     val targetDescriptor = if (this is KtReferenceExpression) context[BindingContext.REFERENCE_TARGET, this] else null
     return targetDescriptor?.let { listOf(it) } ?: context[BindingContext.AMBIGUOUS_REFERENCE_TARGET, this].orEmpty()
 }

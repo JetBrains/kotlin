@@ -90,7 +90,7 @@ abstract class PlatformConfigurator(
     private val typeCheckers: List<AdditionalTypeChecker> = DEFAULT_TYPE_CHECKERS + additionalTypeCheckers
     private val symbolUsageValidator: SymbolUsageValidator = SymbolUsageValidator.Composite(DEFAULT_VALIDATORS + additionalSymbolUsageValidators)
 
-    public open fun configure(container: StorageComponentContainer) {
+    open fun configure(container: StorageComponentContainer) {
         with (container) {
             useInstance(dynamicTypesSettings)
             declarationCheckers.forEach { useInstance(it) }

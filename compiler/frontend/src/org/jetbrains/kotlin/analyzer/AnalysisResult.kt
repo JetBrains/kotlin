@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.ErrorUtils
 
-public open class AnalysisResult protected constructor(
-        public val bindingContext: BindingContext,
-        public val moduleDescriptor: ModuleDescriptor,
-        public val shouldGenerateCode: Boolean = true
+open class AnalysisResult protected constructor(
+        val bindingContext: BindingContext,
+        val moduleDescriptor: ModuleDescriptor,
+        val shouldGenerateCode: Boolean = true
 ) {
 
     override fun equals(other: Any?): Boolean {
@@ -46,12 +46,12 @@ public open class AnalysisResult protected constructor(
 
     operator fun component3() = shouldGenerateCode
 
-    public val error: Throwable
+    val error: Throwable
         get() = if (this is Error) this.exception else throw IllegalStateException("Should only be called for error analysis result")
 
-    public fun isError(): Boolean = this is Error
+    fun isError(): Boolean = this is Error
 
-    public fun throwIfError() {
+    fun throwIfError() {
         if (isError()) {
             throw IllegalStateException("failed to analyze: " + error, error)
         }
@@ -60,20 +60,17 @@ public open class AnalysisResult protected constructor(
     private class Error(bindingContext: BindingContext, val exception: Throwable) : AnalysisResult(bindingContext, ErrorUtils.getErrorModule())
 
     companion object {
-        public val EMPTY: AnalysisResult = success(BindingContext.EMPTY, ErrorUtils.getErrorModule())
+        val EMPTY: AnalysisResult = success(BindingContext.EMPTY, ErrorUtils.getErrorModule())
 
-        @JvmStatic
-        public fun success(bindingContext: BindingContext, module: ModuleDescriptor): AnalysisResult {
+        @JvmStatic fun success(bindingContext: BindingContext, module: ModuleDescriptor): AnalysisResult {
             return AnalysisResult(bindingContext, module, true)
         }
 
-        @JvmStatic
-        public fun success(bindingContext: BindingContext, module: ModuleDescriptor, shouldGenerateCode: Boolean): AnalysisResult {
+        @JvmStatic fun success(bindingContext: BindingContext, module: ModuleDescriptor, shouldGenerateCode: Boolean): AnalysisResult {
             return AnalysisResult(bindingContext, module, shouldGenerateCode)
         }
 
-        @JvmStatic
-        public fun error(bindingContext: BindingContext, error: Throwable): AnalysisResult {
+        @JvmStatic fun error(bindingContext: BindingContext, error: Throwable): AnalysisResult {
             return Error(bindingContext, error)
         }
     }

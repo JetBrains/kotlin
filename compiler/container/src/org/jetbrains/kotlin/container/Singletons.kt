@@ -29,12 +29,12 @@ enum class ComponentState {
     Disposed
 }
 
-public abstract class SingletonDescriptor(val container: ComponentContainer) : ComponentDescriptor, Closeable {
+abstract class SingletonDescriptor(val container: ComponentContainer) : ComponentDescriptor, Closeable {
     private var instance: Any? = null
     protected var state: ComponentState = ComponentState.Null
     private val disposableObjects by lazy { ArrayList<Closeable>() }
 
-    public override fun getValue(): Any {
+    override fun getValue(): Any {
         when {
             state == ComponentState.Corrupted -> throw ContainerConsistencyException("Component descriptor $this is corrupted and cannot be accessed")
             state == ComponentState.Disposed -> throw ContainerConsistencyException("Component descriptor $this is disposed and cannot be accessed")
@@ -115,9 +115,9 @@ public abstract class SingletonDescriptor(val container: ComponentContainer) : C
         get() = true
 }
 
-public open class SingletonTypeComponentDescriptor(container: ComponentContainer, val klass: Class<*>) : SingletonDescriptor(container) {
+open class SingletonTypeComponentDescriptor(container: ComponentContainer, val klass: Class<*>) : SingletonDescriptor(container) {
     override fun createInstance(context: ValueResolveContext): Any = createInstanceOf(klass, context)
-    public override fun getRegistrations(): Iterable<Type> = klass.getInfo().registrations
+    override fun getRegistrations(): Iterable<Type> = klass.getInfo().registrations
 
     private fun createInstanceOf(klass: Class<*>, context: ValueResolveContext): Any {
         val binding = klass.bindToConstructor(context)
@@ -141,11 +141,11 @@ public open class SingletonTypeComponentDescriptor(container: ComponentContainer
         return classInfo.constructorInfo?.parameters.orEmpty() + classInfo.setterInfos.flatMap { it.parameters }
     }
 
-    override fun toString(): String = "Singleton: ${klass.getSimpleName()}"
+    override fun toString(): String = "Singleton: ${klass.simpleName}"
 }
 
 class ImplicitSingletonTypeComponentDescriptor(container: ComponentContainer, klass: Class<*>) : SingletonTypeComponentDescriptor(container, klass) {
     override fun toString(): String {
-        return "Implicit: ${klass.getSimpleName()}"
+        return "Implicit: ${klass.simpleName}"
     }
 }

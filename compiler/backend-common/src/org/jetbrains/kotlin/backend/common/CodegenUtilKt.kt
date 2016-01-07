@@ -27,15 +27,14 @@ import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.utils.keysToMapExceptNulls
 import java.util.Comparator
 
-public object CodegenUtilKt {
+object CodegenUtilKt {
 
     // class Foo : Bar by baz
     //   descriptor = Foo
     //   toInterface = Bar
     //   delegateExpressionType = typeof(baz)
     // return Map<member of Foo, corresponding member of typeOf(baz)>
-    @JvmStatic
-    public fun getDelegates(
+    @JvmStatic fun getDelegates(
             descriptor: ClassDescriptor,
             toInterface: ClassDescriptor,
             delegateExpressionType: KotlinType? = null

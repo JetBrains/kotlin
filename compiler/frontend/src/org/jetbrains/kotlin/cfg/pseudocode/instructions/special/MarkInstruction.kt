@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionWithNext
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
 
-public class MarkInstruction(
+class MarkInstruction(
         element: KtElement,
         lexicalScope: LexicalScope
 ) : InstructionWithNext(element, lexicalScope) {

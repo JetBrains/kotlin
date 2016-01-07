@@ -27,33 +27,33 @@ import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 /**
  * A single part of a qualified name in the tag subject or link.
  */
-public class KDocName(node: ASTNode): KtElementImpl(node) {
-    public fun getContainingDoc(): KDoc {
+class KDocName(node: ASTNode): KtElementImpl(node) {
+    fun getContainingDoc(): KDoc {
         val kdoc = getStrictParentOfType<KDoc>()
         return kdoc ?: throw IllegalStateException("KDocName must be inside a KDoc")
     }
 
-    public fun getContainingSection(): KDocSection {
+    fun getContainingSection(): KDocSection {
         val kdoc = getStrictParentOfType<KDocSection>()
         return kdoc ?: throw IllegalStateException("KDocName must be inside a KDocSection")
     }
 
-    public fun getQualifier(): KDocName? = getChildOfType()
+    fun getQualifier(): KDocName? = getChildOfType()
 
     /**
      * Returns the range within the element containing the name (in other words,
      * the range of the element excluding the qualifier and dot, if present).
      */
-    public fun getNameTextRange(): TextRange {
-        val dot = getNode().findChildByType(KtTokens.DOT)
-        val textRange = getTextRange()
-        val nameStart = if (dot != null) dot.getTextRange().getEndOffset() - textRange.getStartOffset() else 0
-        return TextRange(nameStart, textRange.getLength())
+    fun getNameTextRange(): TextRange {
+        val dot = node.findChildByType(KtTokens.DOT)
+        val textRange = textRange
+        val nameStart = if (dot != null) dot.textRange.endOffset - textRange.startOffset else 0
+        return TextRange(nameStart, textRange.length)
     }
 
-    public fun getNameText(): String = getNameTextRange().substring(getText())
+    fun getNameText(): String = getNameTextRange().substring(text)
 
-    public fun getQualifiedName(): List<String> {
+    fun getQualifiedName(): List<String> {
         val qualifier = getQualifier()
         val nameAsList = listOf(getNameText())
         return if (qualifier != null) qualifier.getQualifiedName() + nameAsList else nameAsList

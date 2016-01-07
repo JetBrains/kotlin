@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 
-public class Equals : IntrinsicMethod() {
+class Equals : IntrinsicMethod() {
     override fun toCallable(method: CallableMethod): Callable =
             createBinaryIntrinsicCallable(
                     method.returnType,

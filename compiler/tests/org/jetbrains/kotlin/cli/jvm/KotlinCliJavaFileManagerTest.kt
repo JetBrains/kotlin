@@ -30,8 +30,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 //Partial copy of CoreJavaFileManagerTest
-public class KotlinCliJavaFileManagerTest : PsiTestCase() {
-    public fun testCommon() {
+class KotlinCliJavaFileManagerTest : PsiTestCase() {
+    fun testCommon() {
         val manager = configureManager("package foo;\n\n" + "public class TopLevel {\n" + "public class Inner {\n" + "   public class Inner {}\n" + "}\n" + "\n" + "}", "TopLevel")
 
         assertCanFind(manager, "foo", "TopLevel")
@@ -43,7 +43,7 @@ public class KotlinCliJavaFileManagerTest : PsiTestCase() {
         assertCannotFind(manager, "foo", "TopLevel.Inner.Inner.Inner")
     }
 
-    public fun testInnerClassesWithDollars() {
+    fun testInnerClassesWithDollars() {
         val manager = configureManager("package foo;\n\n" + "public class TopLevel {\n" +
                                        "public class I\$nner {" + "   public class I\$nner{}" + "   public class \$Inner{}" + "   public class In\$ne\$r\${}" + "   public class Inner\$\${}" + "   public class \$\$\$\$\${}" + "}\n" + "public class Inner\$ {" + "   public class I\$nner{}" + "   public class \$Inner{}" + "   public class In\$ne\$r\${}" + "   public class Inner\$\${}" + "   public class \$\$\$\$\${}" + "}\n" + "public class In\$ner\$\$ {" + "   public class I\$nner{}" + "   public class \$Inner{}" + "   public class In\$ne\$r\${}" + "   public class Inner\$\${}" + "   public class \$\$\$\$\${}" + "}\n" + "\n" + "}", "TopLevel")
 
@@ -77,7 +77,7 @@ public class KotlinCliJavaFileManagerTest : PsiTestCase() {
         assertCannotFind(manager, "foo", "TopLevel.In.ner\$\$.\$\$\$\$\$")
     }
 
-    public fun testTopLevelClassesWithDollars() {
+    fun testTopLevelClassesWithDollars() {
         val inTheMiddle = configureManager("package foo;\n\n public class Top\$Level {}", "Top\$Level")
         assertCanFind(inTheMiddle, "foo", "Top\$Level")
 
@@ -92,7 +92,7 @@ public class KotlinCliJavaFileManagerTest : PsiTestCase() {
         assertCanFind(twoBucks, "foo", "\$\$")
     }
 
-    public fun testTopLevelClassWithDollarsAndInners() {
+    fun testTopLevelClassWithDollarsAndInners() {
         val manager = configureManager("package foo;\n\n" + "public class Top\$Level\$\$ {\n" +
                                        "public class I\$nner {" + "   public class I\$nner{}" + "   public class In\$ne\$r\${}" + "   public class Inner\$\$\$\$\${}" + "   public class \$Inner{}" + "   public class \${}" + "   public class \$\$\$\$\${}" + "}\n" + "public class Inner {" + "   public class Inner{}" + "}\n" + "\n" + "}", "Top\$Level\$\$")
 
@@ -112,16 +112,16 @@ public class KotlinCliJavaFileManagerTest : PsiTestCase() {
         assertCannotFind(manager, "foo", "Top.Level\$\$.I\$nner.\$\$\$\$\$")
     }
 
-    public fun testDoNotThrowOnMalformedInput() {
+    fun testDoNotThrowOnMalformedInput() {
         val fileWithEmptyName = configureManager("package foo;\n\n public class Top\$Level {}", "")
-        val allScope = GlobalSearchScope.allScope(getProject())
+        val allScope = GlobalSearchScope.allScope(project)
         fileWithEmptyName.findClass("foo.", allScope)
         fileWithEmptyName.findClass(".", allScope)
         fileWithEmptyName.findClass("..", allScope)
         fileWithEmptyName.findClass(".foo", allScope)
     }
 
-    public fun testSeveralClassesInOneFile() {
+    fun testSeveralClassesInOneFile() {
         val manager = configureManager("package foo;\n\n" + "public class One {}\n" + "class Two {}\n" + "class Three {}", "One")
 
         assertCanFind(manager, "foo", "One")
@@ -131,10 +131,10 @@ public class KotlinCliJavaFileManagerTest : PsiTestCase() {
         assertCannotFind(manager, "foo", "Three")
     }
 
-    public fun testScopeCheck() {
+    fun testScopeCheck() {
         val manager = configureManager("package foo;\n\n" + "public class Test {}\n", "Test")
 
-        TestCase.assertNotNull("Should find class in all scope", manager.findClass("foo.Test", GlobalSearchScope.allScope(getProject())))
+        TestCase.assertNotNull("Should find class in all scope", manager.findClass("foo.Test", GlobalSearchScope.allScope(project)))
         TestCase.assertNull("Should not find class in empty scope", manager.findClass("foo.Test", GlobalSearchScope.EMPTY_SCOPE))
     }
 
@@ -144,7 +144,7 @@ public class KotlinCliJavaFileManagerTest : PsiTestCase() {
         val dir = myPsiManager.findDirectory(pkg)
         TestCase.assertNotNull(dir)
         dir!!
-        dir.add(PsiFileFactory.getInstance(getProject()).createFileFromText(className + ".java", JavaFileType.INSTANCE, text))
+        dir.add(PsiFileFactory.getInstance(project).createFileFromText(className + ".java", JavaFileType.INSTANCE, text))
         val coreJavaFileManagerExt = KotlinCliJavaFileManagerImpl(myPsiManager)
         coreJavaFileManagerExt.initIndex(JvmDependenciesIndex(listOf(JavaRoot(root, JavaRoot.RootType.SOURCE))))
         coreJavaFileManagerExt.addToClasspath(root)
@@ -152,7 +152,7 @@ public class KotlinCliJavaFileManagerTest : PsiTestCase() {
     }
 
     private fun assertCanFind(manager: KotlinCliJavaFileManagerImpl, packageFQName: String, classFqName: String) {
-        val allScope = GlobalSearchScope.allScope(getProject())
+        val allScope = GlobalSearchScope.allScope(project)
 
         val classId = ClassId(FqName(packageFQName), FqName(classFqName), false)
         val stringRequest = classId.asSingleFqName().asString()
@@ -164,13 +164,13 @@ public class KotlinCliJavaFileManagerTest : PsiTestCase() {
         TestCase.assertNotNull("Could not find: $stringRequest", foundByString)
 
         TestCase.assertEquals(foundByClassId, foundByString)
-        TestCase.assertEquals("Found ${foundByClassId!!.getQualifiedName()} instead of $packageFQName", packageFQName + "." + classFqName,
-                              foundByClassId.getQualifiedName())
+        TestCase.assertEquals("Found ${foundByClassId!!.qualifiedName} instead of $packageFQName", packageFQName + "." + classFqName,
+                              foundByClassId.qualifiedName)
     }
 
     private fun assertCannotFind(manager: KotlinCliJavaFileManagerImpl, packageFQName: String, classFqName: String) {
         val classId = ClassId(FqName(packageFQName), FqName(classFqName), false)
-        val foundClass = manager.findClass(classId, GlobalSearchScope.allScope(getProject()))
+        val foundClass = manager.findClass(classId, GlobalSearchScope.allScope(project))
         TestCase.assertNull("Found, but shouldn't have: $classId", foundClass)
     }
 }

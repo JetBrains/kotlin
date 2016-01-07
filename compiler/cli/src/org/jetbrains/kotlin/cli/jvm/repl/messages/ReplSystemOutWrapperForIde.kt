@@ -23,7 +23,7 @@ import java.io.PrintStream
 val END_LINE: String = LineSeparator.getSystemLineSeparator().separatorString
 val XML_PREAMBLE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
 
-public class ReplSystemOutWrapperForIde(standardOut: PrintStream) : PrintStream(standardOut, true), ReplWriter {
+class ReplSystemOutWrapperForIde(standardOut: PrintStream) : PrintStream(standardOut, true), ReplWriter {
     private enum class EscapeType {
         INITIAL_PROMPT,
         HELP_PROMPT,

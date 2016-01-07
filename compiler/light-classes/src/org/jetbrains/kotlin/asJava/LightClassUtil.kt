@@ -31,11 +31,11 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
-public object LightClassUtil {
+object LightClassUtil {
 
     fun findClass(fqn: FqName, stub: StubElement<*>): PsiClass? {
         if (stub is PsiClassStub<*> && Comparing.equal(fqn.asString(), stub.qualifiedName)) {
-            return stub.getPsi()
+            return stub.psi
         }
 
         if (stub is PsiClassStub<*> || stub is PsiFileStub<*>) {
@@ -48,22 +48,22 @@ public object LightClassUtil {
         return null
     }/*package*/
 
-    public fun getPsiClass(classOrObject: KtClassOrObject?): PsiClass? {
+    fun getPsiClass(classOrObject: KtClassOrObject?): PsiClass? {
         if (classOrObject == null) return null
         return LightClassGenerationSupport.getInstance(classOrObject.project).getPsiClass(classOrObject)
     }
 
-    public fun getLightClassAccessorMethod(accessor: KtPropertyAccessor): PsiMethod? =
+    fun getLightClassAccessorMethod(accessor: KtPropertyAccessor): PsiMethod? =
             getLightClassAccessorMethods(accessor).firstOrNull()
 
-    public fun getLightClassAccessorMethods(accessor: KtPropertyAccessor): List<PsiMethod> {
+    fun getLightClassAccessorMethods(accessor: KtPropertyAccessor): List<PsiMethod> {
         val property = accessor.getNonStrictParentOfType<KtProperty>() ?: return emptyList()
         val wrappers = getPsiMethodWrappers(property, true)
         return wrappers.filter { wrapper -> (accessor.isGetter && !JvmAbi.isSetterName(wrapper.name)) ||
                                             (accessor.isSetter && JvmAbi.isSetterName(wrapper.name)) }
     }
 
-    public fun getLightFieldForCompanionObject(companionObject: KtClassOrObject): PsiField? {
+    fun getLightFieldForCompanionObject(companionObject: KtClassOrObject): PsiField? {
         val outerPsiClass = getWrappingClass(companionObject)
         if (outerPsiClass != null) {
             for (fieldOfParent in outerPsiClass.fields) {
@@ -75,7 +75,7 @@ public object LightClassUtil {
         return null
     }
 
-    public fun getLightClassPropertyMethods(property: KtProperty): PropertyAccessorsPsiMethods {
+    fun getLightClassPropertyMethods(property: KtProperty): PropertyAccessorsPsiMethods {
         val getter = property.getter
         val setter = property.setter
 
@@ -109,15 +109,15 @@ public object LightClassUtil {
         return null
     }
 
-    public fun getLightClassPropertyMethods(parameter: KtParameter): PropertyAccessorsPsiMethods {
+    fun getLightClassPropertyMethods(parameter: KtParameter): PropertyAccessorsPsiMethods {
         return extractPropertyAccessors(parameter, null, null)
     }
 
-    public fun getLightClassMethod(function: KtFunction): PsiMethod? {
+    fun getLightClassMethod(function: KtFunction): PsiMethod? {
         return getPsiMethodWrapper(function)
     }
 
-    public fun getLightClassMethods(function: KtFunction): List<PsiMethod> {
+    fun getLightClassMethods(function: KtFunction): List<PsiMethod> {
         return getPsiMethodWrappers(function, true)
     }
 
@@ -189,7 +189,7 @@ public object LightClassUtil {
         return null
     }
 
-    public fun canGenerateLightClass(declaration: KtDeclaration): Boolean {
+    fun canGenerateLightClass(declaration: KtDeclaration): Boolean {
         //noinspection unchecked
         return PsiTreeUtil.getParentOfType(declaration, KtFunction::class.java, KtProperty::class.java) == null
     }
@@ -206,7 +206,7 @@ public object LightClassUtil {
         }
 
         for (wrapper in wrappers) {
-            if (JvmAbi.isSetterName(wrapper.getName())) {
+            if (JvmAbi.isSetterName(wrapper.name)) {
                 if (setterWrapper == null || setterWrapper === specialSetter) {
                     setterWrapper = wrapper
                 }
@@ -228,7 +228,7 @@ public object LightClassUtil {
         return PropertyAccessorsPsiMethods(getterWrapper, setterWrapper, backingField, additionalAccessors)
     }
 
-    public fun buildLightTypeParameterList(
+    fun buildLightTypeParameterList(
             owner: PsiTypeParameterListOwner,
             declaration: KtDeclaration): PsiTypeParameterList {
         val builder = KotlinLightTypeParameterListBuilder(owner.manager)
@@ -244,9 +244,9 @@ public object LightClassUtil {
         return builder
     }
 
-    public class PropertyAccessorsPsiMethods(public val getter: PsiMethod?,
-                                             public val setter: PsiMethod?,
-                                             public val backingField: PsiField?,
+    class PropertyAccessorsPsiMethods(val getter: PsiMethod?,
+                                             val setter: PsiMethod?,
+                                             val backingField: PsiField?,
                                              additionalAccessors: List<PsiMethod>) : Iterable<PsiMethod> {
         private val allMethods: List<PsiMethod>
         val allDeclarations: List<PsiNamedElement>

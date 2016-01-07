@@ -22,13 +22,13 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
-public interface SymbolUsageValidator {
+interface SymbolUsageValidator {
 
-    public fun validateTypeUsage(targetDescriptor: ClassifierDescriptor, trace: BindingTrace, element: PsiElement) { }
+    fun validateTypeUsage(targetDescriptor: ClassifierDescriptor, trace: BindingTrace, element: PsiElement) { }
 
-    public fun validateCall(resolvedCall: ResolvedCall<*>?, targetDescriptor: CallableDescriptor, trace: BindingTrace, element: PsiElement) { }
+    fun validateCall(resolvedCall: ResolvedCall<*>?, targetDescriptor: CallableDescriptor, trace: BindingTrace, element: PsiElement) { }
 
-    public open class Composite(val validators: List<SymbolUsageValidator>) : SymbolUsageValidator {
+    open class Composite(val validators: List<SymbolUsageValidator>) : SymbolUsageValidator {
         override fun validateCall(resolvedCall: ResolvedCall<*>?, targetDescriptor: CallableDescriptor, trace: BindingTrace, element: PsiElement) {
             validators.forEach { it.validateCall(resolvedCall, targetDescriptor, trace, element) }
         }

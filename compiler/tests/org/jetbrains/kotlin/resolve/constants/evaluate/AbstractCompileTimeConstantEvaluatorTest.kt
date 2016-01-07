@@ -31,13 +31,13 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import java.util.regex.Pattern
 
-public abstract class AbstractCompileTimeConstantEvaluatorTest : AbstractAnnotationDescriptorResolveTest() {
+abstract class AbstractCompileTimeConstantEvaluatorTest : AbstractAnnotationDescriptorResolveTest() {
 
     // Test directives should look like [// val testedPropertyName: expectedValue]
     fun doConstantTest(path: String) {
         doTest(path) {
             property, context ->
-            val compileTimeConstant = property.getCompileTimeInitializer()
+            val compileTimeConstant = property.compileTimeInitializer
             if (compileTimeConstant is StringValue) {
                 "\\\"${compileTimeConstant.value}\\\""
             } else {
@@ -65,9 +65,9 @@ public abstract class AbstractCompileTimeConstantEvaluatorTest : AbstractAnnotat
     private fun evaluateInitializer(context: BindingContext, property: VariableDescriptor): CompileTimeConstant<*>? {
         val propertyDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(property) as KtProperty
         val compileTimeConstant = ConstantExpressionEvaluator(property.builtIns).evaluateExpression(
-                propertyDeclaration.getInitializer()!!,
+                propertyDeclaration.initializer!!,
                 DelegatingBindingTrace(context, "trace for evaluating compile time constant"),
-                property.getType()
+                property.type
         )
         return compileTimeConstant
     }

@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
 import java.io.File
 import java.net.URLClassLoader
 
-public abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
+abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
     protected fun doTest(filename: String) {
         val source = File(filename)
         LoadDescriptorUtil.compileKotlinToDirAndGetAnalysisResult(listOf(source), tmpdir, testRootDisposable, ConfigurationKind.ALL, false)

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.RawSignature
 import org.jetbrains.org.objectweb.asm.FieldVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 
-public abstract class SignatureCollectingClassBuilderFactory(
+abstract class SignatureCollectingClassBuilderFactory(
         delegate: ClassBuilderFactory
 ) : DelegatingClassBuilderFactory(delegate) {
 

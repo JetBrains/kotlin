@@ -20,6 +20,6 @@ import org.jetbrains.kotlin.resolve.TypeResolver.FlexibleTypeCapabilitiesProvide
 import org.jetbrains.kotlin.types.FlexibleTypeCapabilities
 import org.jetbrains.kotlin.load.java.lazy.types.LazyJavaTypeResolver
 
-public class JavaFlexibleTypeCapabilitiesProvider : FlexibleTypeCapabilitiesProvider() {
+class JavaFlexibleTypeCapabilitiesProvider : FlexibleTypeCapabilitiesProvider() {
     override fun getCapabilities(): FlexibleTypeCapabilities = LazyJavaTypeResolver.FlexibleJavaClassifierTypeCapabilities
 }

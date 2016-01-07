@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 
-public class DeadCodeEliminationMethodTransformer : MethodTransformer() {
+class DeadCodeEliminationMethodTransformer : MethodTransformer() {
     override fun transform(internalClassName: String, methodNode: MethodNode) {
         val frames = MethodTransformer.analyze(internalClassName, methodNode, OptimizationBasicInterpreter())
         val insnList = methodNode.instructions

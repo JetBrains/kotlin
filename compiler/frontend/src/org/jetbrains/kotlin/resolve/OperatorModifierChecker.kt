@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.util.OperatorChecks
 
-public class OperatorModifierChecker : DeclarationChecker {
+class OperatorModifierChecker : DeclarationChecker {
     override fun check(
             declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,

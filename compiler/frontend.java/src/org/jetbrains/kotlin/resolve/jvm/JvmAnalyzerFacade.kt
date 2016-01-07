@@ -39,12 +39,12 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import java.util.*
 
-public class JvmPlatformParameters(
-        public val moduleByJavaClass: (JavaClass) -> ModuleInfo?
+class JvmPlatformParameters(
+        val moduleByJavaClass: (JavaClass) -> ModuleInfo?
 ) : PlatformAnalysisParameters
 
 
-public object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
+object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
     override fun <M : ModuleInfo> createResolverForModule(
             moduleInfo: M,
             moduleDescriptor: ModuleDescriptorImpl,
@@ -105,8 +105,7 @@ public object JvmAnalyzerFacade : AnalyzerFacade<JvmPlatformParameters>() {
         return ResolverForModule(CompositePackageFragmentProvider(providersForModule), container)
     }
 
-    @JvmStatic
-    public fun getAllFilesToAnalyze(project: Project, moduleInfo: ModuleInfo?, baseFiles: Collection<KtFile>): List<KtFile> {
+    @JvmStatic fun getAllFilesToAnalyze(project: Project, moduleInfo: ModuleInfo?, baseFiles: Collection<KtFile>): List<KtFile> {
         val allFiles = ArrayList(baseFiles)
         for (externalDeclarationsProvider in ExternalDeclarationsProvider.getInstances(project)) {
             allFiles.addAll(externalDeclarationsProvider.getExternalDeclarations(moduleInfo))

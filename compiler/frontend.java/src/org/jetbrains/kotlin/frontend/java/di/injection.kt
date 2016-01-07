@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.resolve.lazy.FileScopeProviderImpl
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 
-public fun StorageComponentContainer.configureJavaTopDownAnalysis(moduleContentScope: GlobalSearchScope, project: Project, lookupTracker: LookupTracker) {
+fun StorageComponentContainer.configureJavaTopDownAnalysis(moduleContentScope: GlobalSearchScope, project: Project, lookupTracker: LookupTracker) {
     useInstance(moduleContentScope)
     useInstance(lookupTracker)
     useImpl<ResolveSession>()
@@ -66,7 +66,7 @@ public fun StorageComponentContainer.configureJavaTopDownAnalysis(moduleContentS
     useImpl<JavaFlexibleTypeCapabilitiesProvider>()
 }
 
-public fun createContainerForLazyResolveWithJava(
+fun createContainerForLazyResolveWithJava(
         moduleContext: ModuleContext, bindingTrace: BindingTrace, declarationProviderFactory: DeclarationProviderFactory,
         moduleContentScope: GlobalSearchScope, moduleClassResolver: ModuleClassResolver,
         targetEnvironment: TargetEnvironment = CompilerEnvironment,
@@ -91,7 +91,7 @@ public fun createContainerForLazyResolveWithJava(
 }
 
 
-public fun createContainerForTopDownAnalyzerForJvm(
+fun createContainerForTopDownAnalyzerForJvm(
         moduleContext: ModuleContext,
         bindingTrace: BindingTrace,
         declarationProviderFactory: DeclarationProviderFactory,
@@ -121,7 +121,7 @@ private fun StorageComponentContainer.javaAnalysisInit() {
     get<JavaClassFinderPostConstruct>().postCreate()
 }
 
-public class ContainerForTopDownAnalyzerForJvm(container: StorageComponentContainer) {
+class ContainerForTopDownAnalyzerForJvm(container: StorageComponentContainer) {
     val lazyTopDownAnalyzerForTopLevel: LazyTopDownAnalyzerForTopLevel by container
     val javaDescriptorResolver: JavaDescriptorResolver by container
     val deserializationComponentsForJava: DeserializationComponentsForJava by container

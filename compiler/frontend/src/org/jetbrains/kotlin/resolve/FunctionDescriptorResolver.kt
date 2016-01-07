@@ -61,7 +61,7 @@ class FunctionDescriptorResolver(
         private val builtIns: KotlinBuiltIns,
         private val modifiersChecker: ModifiersChecker
 ) {
-    public fun resolveFunctionDescriptor(
+    fun resolveFunctionDescriptor(
             containingDescriptor: DeclarationDescriptor,
             scope: LexicalScope,
             function: KtNamedFunction,
@@ -75,7 +75,7 @@ class FunctionDescriptorResolver(
     }
 
 
-    public fun resolveFunctionExpressionDescriptor(
+    fun resolveFunctionExpressionDescriptor(
             containingDescriptor: DeclarationDescriptor,
             scope: LexicalScope,
             function: KtNamedFunction,
@@ -114,12 +114,12 @@ class FunctionDescriptorResolver(
             trace: BindingTrace,
             dataFlowInfo: DataFlowInfo
     ) {
-        if (functionDescriptor.getReturnType() != null) return
+        if (functionDescriptor.returnType != null) return
         assert(function.getTypeReference() == null) {
             "Return type must be initialized early for function: " + function.getText() + ", at: " + DiagnosticUtils.atLocation(function) }
 
         val returnType = if (function.hasBlockBody()) {
-            builtIns.getUnitType()
+            builtIns.unitType
         }
         else if (function.hasBody()) {
             DeferredType.createRecursionIntolerant(storageManager, trace) {
@@ -146,11 +146,11 @@ class FunctionDescriptorResolver(
                                               TraceBasedRedeclarationHandler(trace), LexicalScopeKind.FUNCTION_HEADER)
 
         val typeParameterDescriptors = descriptorResolver.
-                resolveTypeParametersForCallableDescriptor(functionDescriptor, innerScope, scope, function.getTypeParameters(), trace)
+                resolveTypeParametersForCallableDescriptor(functionDescriptor, innerScope, scope, function.typeParameters, trace)
         innerScope.changeLockLevel(LexicalWritableScope.LockLevel.BOTH)
         descriptorResolver.resolveGenericBounds(function, functionDescriptor, innerScope, typeParameterDescriptors, trace)
 
-        val receiverTypeRef = function.getReceiverTypeReference()
+        val receiverTypeRef = function.receiverTypeReference
         val receiverType =
                 if (receiverTypeRef != null)
                     typeResolver.resolveType(innerScope, receiverTypeRef, trace, true)
@@ -162,7 +162,7 @@ class FunctionDescriptorResolver(
 
         innerScope.changeLockLevel(LexicalWritableScope.LockLevel.READING)
 
-        val returnType = function.getTypeReference()?.let { typeResolver.resolveType(innerScope, it, trace, true) }
+        val returnType = function.typeReference?.let { typeResolver.resolveType(innerScope, it, trace, true) }
 
         val visibility = resolveVisibilityFromModifiers(function, getDefaultVisibility(function, containingDescriptor))
         val modality = resolveModalityFromModifiers(function, getDefaultModality(containingDescriptor, visibility, function.hasBody()))
@@ -182,7 +182,7 @@ class FunctionDescriptorResolver(
         functionDescriptor.isTailrec = function.hasModifier(KtTokens.TAILREC_KEYWORD)
         receiverType?.let { ForceResolveUtil.forceResolveAllContents(it.getAnnotations()) }
         for (valueParameterDescriptor in valueParameterDescriptors) {
-            ForceResolveUtil.forceResolveAllContents(valueParameterDescriptor.getType().getAnnotations())
+            ForceResolveUtil.forceResolveAllContents(valueParameterDescriptor.type.annotations)
         }
     }
 
@@ -199,13 +199,13 @@ class FunctionDescriptorResolver(
                 // it parameter for lambda
                 val valueParameterDescriptor = expectedValueParameters.first()
                 val it = ValueParameterDescriptorImpl(functionDescriptor, null, 0, Annotations.EMPTY, Name.identifier("it"),
-                                                      valueParameterDescriptor.getType(), valueParameterDescriptor.declaresDefaultValue(),
+                                                      valueParameterDescriptor.type, valueParameterDescriptor.declaresDefaultValue(),
                                                       valueParameterDescriptor.isCrossinline, valueParameterDescriptor.isNoinline,
                                                       valueParameterDescriptor.varargElementType, SourceElement.NO_SOURCE)
                 trace.record(BindingContext.AUTO_CREATED_IT, it)
                 return listOf(it)
             }
-            if (function.getValueParameters().size != expectedValueParameters.size) {
+            if (function.valueParameters.size != expectedValueParameters.size) {
                 val expectedParameterTypes = ExpressionTypingUtils.getValueParametersTypes(expectedValueParameters)
                 trace.report(EXPECTED_PARAMETERS_NUMBER_MISMATCH.on(function, expectedParameterTypes.size, expectedParameterTypes))
             }
@@ -216,7 +216,7 @@ class FunctionDescriptorResolver(
         return resolveValueParameters(
                 functionDescriptor,
                 innerScope,
-                function.getValueParameters(),
+                function.valueParameters,
                 trace,
                 expectedValueParameters
         )
@@ -229,7 +229,7 @@ class FunctionDescriptorResolver(
     private fun KotlinType.getValueParameters(owner: FunctionDescriptor): List<ValueParameterDescriptor>? =
             if (functionTypeExpected()) KotlinBuiltIns.getValueParameters(owner, this) else null
 
-    public fun resolvePrimaryConstructorDescriptor(
+    fun resolvePrimaryConstructorDescriptor(
             scope: LexicalScope,
             classDescriptor: ClassDescriptor,
             classElement: KtClassOrObject,
@@ -247,7 +247,7 @@ class FunctionDescriptorResolver(
         )
     }
 
-    public fun resolveSecondaryConstructorDescriptor(
+    fun resolveSecondaryConstructorDescriptor(
             scope: LexicalScope,
             classDescriptor: ClassDescriptor,
             constructor: KtSecondaryConstructor,
@@ -313,7 +313,7 @@ class FunctionDescriptorResolver(
         for (i in valueParameters.indices) {
             val valueParameter = valueParameters.get(i)
             val typeReference = valueParameter.getTypeReference()
-            val expectedType = expectedValueParameters?.let { if (i < it.size) it[i].getType() else null }
+            val expectedType = expectedValueParameters?.let { if (i < it.size) it[i].type else null }
 
             val type: KotlinType
             if (typeReference != null) {
@@ -345,7 +345,7 @@ class FunctionDescriptorResolver(
                 }
             }
 
-            if (functionDescriptor !is ConstructorDescriptor || !functionDescriptor.isPrimary()) {
+            if (functionDescriptor !is ConstructorDescriptor || !functionDescriptor.isPrimary) {
                 val isConstructor = functionDescriptor is ConstructorDescriptor
                 with (modifiersChecker.withTrace(trace)) {
                     checkParameterHasNoValOrVar(

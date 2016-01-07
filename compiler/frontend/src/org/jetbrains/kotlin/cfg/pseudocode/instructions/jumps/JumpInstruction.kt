@@ -18,4 +18,4 @@ package org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps
 
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 
-public interface JumpInstruction : Instruction
+interface JumpInstruction : Instruction

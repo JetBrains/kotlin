@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-public class IteratorNext : IntrinsicMethod() {
+class IteratorNext : IntrinsicMethod() {
     private fun getIteratorName(returnType: Type): String {
         return when (returnType) {
             Type.CHAR_TYPE -> "Char"
@@ -47,7 +47,7 @@ public class IteratorNext : IntrinsicMethod() {
                 v.invokevirtual(
                         BUILT_INS_PACKAGE_FQ_NAME.asString() + "/" + name + "Iterator",
                         "next$name",
-                        "()" + returnType.getDescriptor(),
+                        "()" + returnType.descriptor,
                         false
                 )
             }

@@ -20,6 +20,6 @@ import com.intellij.psi.PsiClass;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
-public interface KtLightClass : PsiClass, KtLightElement<KtClassOrObject, PsiClass> {
-    public fun getFqName(): FqName
+interface KtLightClass : PsiClass, KtLightElement<KtClassOrObject, PsiClass> {
+    fun getFqName(): FqName
 }

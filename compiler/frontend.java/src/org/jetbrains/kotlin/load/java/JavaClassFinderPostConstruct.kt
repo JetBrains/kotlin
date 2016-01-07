@@ -23,22 +23,22 @@ import javax.annotation.PostConstruct
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.CodeAnalyzerInitializer
 
-public open class JavaClassFinderPostConstruct {
+open class JavaClassFinderPostConstruct {
     @PostConstruct
-    public open fun postCreate() {}
+    open fun postCreate() {}
 }
 
-public class JavaLazyAnalyzerPostConstruct : JavaClassFinderPostConstruct() {
-    public var project: Project? = null
+class JavaLazyAnalyzerPostConstruct : JavaClassFinderPostConstruct() {
+    var project: Project? = null
         @Inject set
 
-    public var trace: BindingTrace? = null
+    var trace: BindingTrace? = null
         @Inject set
 
-    public var codeAnalyzer: KotlinCodeAnalyzer? = null
+    var codeAnalyzer: KotlinCodeAnalyzer? = null
         @Inject set
 
     @PostConstruct override fun postCreate() {
-        CodeAnalyzerInitializer.getInstance(project!!).initialize(trace!!, codeAnalyzer!!.getModuleDescriptor(), codeAnalyzer!!)
+        CodeAnalyzerInitializer.getInstance(project!!).initialize(trace!!, codeAnalyzer!!.moduleDescriptor, codeAnalyzer!!)
     }
 }

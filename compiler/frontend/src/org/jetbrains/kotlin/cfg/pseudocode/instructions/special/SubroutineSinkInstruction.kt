@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
 
-public class SubroutineSinkInstruction(
-        public val subroutine: KtElement,
+class SubroutineSinkInstruction(
+        val subroutine: KtElement,
         lexicalScope: LexicalScope,
         private val debugLabel: String) : InstructionImpl(lexicalScope) {
     override val nextInstructions: Collection<Instruction>

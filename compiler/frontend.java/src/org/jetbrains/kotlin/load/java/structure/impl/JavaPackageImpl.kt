@@ -25,17 +25,17 @@ import org.jetbrains.kotlin.load.java.structure.impl.JavaElementCollectionFromPs
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-public class JavaPackageImpl(psiPackage: PsiPackage, private val scope: GlobalSearchScope) : JavaElementImpl<PsiPackage>(psiPackage), JavaPackage {
+class JavaPackageImpl(psiPackage: PsiPackage, private val scope: GlobalSearchScope) : JavaElementImpl<PsiPackage>(psiPackage), JavaPackage {
 
     override fun getClasses(nameFilter: (Name) -> Boolean): Collection<JavaClass> {
-        val psiClasses = getPsi().getClasses(scope).filter {
-            val name = it.getName()
+        val psiClasses = psi.getClasses(scope).filter {
+            val name = it.name
             name != null && nameFilter(Name.identifier(name))
         }
         return classes(psiClasses)
     }
 
-    override fun getSubPackages() = packages(getPsi().getSubPackages(scope), scope)
+    override fun getSubPackages() = packages(psi.getSubPackages(scope), scope)
 
-    override fun getFqName() = FqName(getPsi().getQualifiedName())
+    override fun getFqName() = FqName(psi.qualifiedName)
 }

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 
-public class IdentityEquals : IntrinsicMethod() {
+class IdentityEquals : IntrinsicMethod() {
     override fun toCallable(method: CallableMethod): Callable =
             object : IntrinsicCallable(method) {
                 override fun invokeMethodWithArguments(
@@ -34,17 +34,17 @@ public class IdentityEquals : IntrinsicMethod() {
                         receiver: StackValue,
                         codegen: ExpressionCodegen
                 ): StackValue {
-                    val element = resolvedCall.getCall().getCallElement()
+                    val element = resolvedCall.call.callElement
                     val left: StackValue
                     val right: StackValue
                     if (element is KtCallExpression) {
                         left = StackValue.receiver(resolvedCall, receiver, codegen, this)
-                        right = codegen.gen(resolvedCall.getValueArgumentsByIndex()!!.single().getArguments().single().getArgumentExpression())
+                        right = codegen.gen(resolvedCall.valueArgumentsByIndex!!.single().arguments.single().getArgumentExpression())
                     }
                     else {
                         element as KtBinaryExpression
-                        left = codegen.gen(element.getLeft())
-                        right = codegen.gen(element.getRight())
+                        left = codegen.gen(element.left)
+                        right = codegen.gen(element.right)
                     }
                     return StackValue.cmp(KtTokens.EQEQEQ, OBJECT_TYPE, left, right)
                 }

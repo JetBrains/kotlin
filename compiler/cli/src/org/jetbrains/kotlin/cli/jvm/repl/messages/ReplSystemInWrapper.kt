@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.cli.jvm.repl.messages
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 
-public class ReplSystemInWrapper(
+class ReplSystemInWrapper(
         private val stdin: InputStream,
         private val replWriter: ReplWriter
 ) : InputStream() {

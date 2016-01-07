@@ -20,9 +20,9 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.Renderer
 
-public fun <P : Any> renderParameter(parameter: P, renderer: Renderer<P>?): Any = renderer?.render(parameter) ?: parameter
+fun <P : Any> renderParameter(parameter: P, renderer: Renderer<P>?): Any = renderer?.render(parameter) ?: parameter
 
-public fun ClassDescriptor.renderKindWithName(): String = DescriptorRenderer.getClassKindPrefix(this) + " '" + getName() + "'"
+fun ClassDescriptor.renderKindWithName(): String = DescriptorRenderer.getClassKindPrefix(this) + " '" + name + "'"
 
-public fun ClassDescriptor.renderKind(): String = DescriptorRenderer.getClassKindPrefix(this)
+fun ClassDescriptor.renderKind(): String = DescriptorRenderer.getClassKindPrefix(this)
 

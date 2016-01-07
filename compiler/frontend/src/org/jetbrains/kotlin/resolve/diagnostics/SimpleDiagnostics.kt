@@ -21,7 +21,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import java.util.ArrayList
 
-public class SimpleDiagnostics(diagnostics: Collection<Diagnostic>) : Diagnostics {
+class SimpleDiagnostics(diagnostics: Collection<Diagnostic>) : Diagnostics {
     //copy to prevent external change
     private val diagnostics = ArrayList(diagnostics)
 

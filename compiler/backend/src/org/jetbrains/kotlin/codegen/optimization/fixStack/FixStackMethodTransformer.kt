@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.codegen.pseudoInsns.parsePseudoInsnOrNull
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
-public class FixStackMethodTransformer : MethodTransformer() {
-    public override fun transform(internalClassName: String, methodNode: MethodNode) {
+class FixStackMethodTransformer : MethodTransformer() {
+    override fun transform(internalClassName: String, methodNode: MethodNode) {
         val context = FixStackContext(methodNode)
 
         if (!context.hasAnyMarkers()) return
@@ -73,19 +73,19 @@ public class FixStackMethodTransformer : MethodTransformer() {
             val labelIndex = methodNode.instructions.indexOf(gotoNode.label)
 
             val DEAD_CODE = -1 // Stack size is always non-negative
-            val actualStackSize = analyzer.frames[gotoIndex]?.getStackSize() ?: DEAD_CODE
-            val expectedStackSize = analyzer.frames[labelIndex]?.getStackSize() ?: DEAD_CODE
+            val actualStackSize = analyzer.frames[gotoIndex]?.stackSize ?: DEAD_CODE
+            val expectedStackSize = analyzer.frames[labelIndex]?.stackSize ?: DEAD_CODE
 
             if (actualStackSize != DEAD_CODE && expectedStackSize != DEAD_CODE) {
                 assert(expectedStackSize <= actualStackSize) { "Label at $labelIndex, jump at $gotoIndex: stack underflow: $expectedStackSize > $actualStackSize" }
                 val frame = analyzer.frames[gotoIndex]!!
-                actions.add({ replaceMarkerWithPops(methodNode, gotoNode.getPrevious(), expectedStackSize, frame) })
+                actions.add({ replaceMarkerWithPops(methodNode, gotoNode.previous, expectedStackSize, frame) })
             }
             else if (actualStackSize != DEAD_CODE && expectedStackSize == DEAD_CODE) {
                 throw AssertionError("Live jump $gotoIndex to dead label $labelIndex")
             }
             else {
-                val marker = gotoNode.getPrevious()
+                val marker = gotoNode.previous
                 actions.add({ methodNode.instructions.remove(marker) })
             }
         }
@@ -153,8 +153,8 @@ public class FixStackMethodTransformer : MethodTransformer() {
         val savedStackDescriptor = localVariablesManager.getBeforeInlineDescriptor(inlineMarker)
         val afterInlineFrame = analyzer.getFrame(inlineMarker) as FixStackAnalyzer.FixStackFrame?
         if (afterInlineFrame != null && savedStackDescriptor.isNotEmpty()) {
-            assert(afterInlineFrame.getStackSize() <= 1) { "Inline method should not leave more than 1 value on stack" }
-            if (afterInlineFrame.getStackSize() == 1) {
+            assert(afterInlineFrame.stackSize <= 1) { "Inline method should not leave more than 1 value on stack" }
+            if (afterInlineFrame.stackSize == 1) {
                 val afterInlineStackValues = afterInlineFrame.getStackContent()
                 val returnValue = afterInlineStackValues.last()
                 val returnValueLocalVarIndex = localVariablesManager.createReturnValueVariable(returnValue)

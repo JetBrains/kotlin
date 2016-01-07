@@ -24,22 +24,22 @@ import java.util.ArrayList
 import java.util.EnumSet
 import java.util.HashMap
 
-public data class JavaRoot(public val file: VirtualFile, public val type: JavaRoot.RootType, public val prefixFqName: FqName? = null) {
-    public enum class RootType {
+data class JavaRoot(val file: VirtualFile, val type: JavaRoot.RootType, val prefixFqName: FqName? = null) {
+    enum class RootType {
         SOURCE,
         BINARY
     }
 
     companion object RootTypes {
-        public val OnlyBinary: Set<RootType> = EnumSet.of(RootType.BINARY)
-        public val SourceAndBinary: Set<RootType> = EnumSet.of(RootType.BINARY, RootType.SOURCE)
+        val OnlyBinary: Set<RootType> = EnumSet.of(RootType.BINARY)
+        val SourceAndBinary: Set<RootType> = EnumSet.of(RootType.BINARY, RootType.SOURCE)
     }
 }
 
 // speeds up finding files/classes in classpath/java source roots
 // NOT THREADSAFE, needs to be adapted/removed if we want compiler to be multithreaded
 // the main idea of this class is for each package to store roots which contains it to avoid excessive file system traversal
-public class JvmDependenciesIndex(_roots: List<JavaRoot>) {
+class JvmDependenciesIndex(_roots: List<JavaRoot>) {
 
     //these fields are computed based on _roots passed to constructor which are filled in later
     private val roots: List<JavaRoot> by lazy { _roots.toList() }
@@ -78,7 +78,7 @@ public class JvmDependenciesIndex(_roots: List<JavaRoot>) {
 
 
     // findClassGivenDirectory MUST check whether the class with this classId exists in given package
-    public fun <T : Any> findClass(
+    fun <T : Any> findClass(
             classId: ClassId,
             acceptedRootTypes: Set<JavaRoot.RootType> = JavaRoot.SourceAndBinary,
             findClassGivenDirectory: (VirtualFile, JavaRoot.RootType) -> T?
@@ -89,7 +89,7 @@ public class JvmDependenciesIndex(_roots: List<JavaRoot>) {
         }
     }
 
-    public fun traverseDirectoriesInPackage(
+    fun traverseDirectoriesInPackage(
             packageFqName: FqName,
             acceptedRootTypes: Set<JavaRoot.RootType> = JavaRoot.SourceAndBinary,
             continueSearch: (VirtualFile, JavaRoot.RootType) -> Boolean

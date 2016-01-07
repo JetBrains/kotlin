@@ -37,10 +37,10 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.check
 
-public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator) {
+class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageValidator) {
 
 
-    public fun resolvePackageHeader(
+    fun resolvePackageHeader(
             packageDirective: KtPackageDirective,
             module: ModuleDescriptor,
             trace: BindingTrace
@@ -60,7 +60,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
             get() = qualifierParts.flatMap { it.typeArguments?.arguments.orEmpty() }
     }
 
-    public fun resolveDescriptorForType(
+    fun resolveDescriptorForType(
             userType: KtUserType,
             scope: LexicalScope,
             trace: BindingTrace
@@ -129,7 +129,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
         return result.asReversed() to hasError
     }
 
-    public fun processImportReference(
+    fun processImportReference(
             importDirective: KtImportDirective,
             moduleDescriptor: ModuleDescriptor,
             trace: BindingTrace,
@@ -390,7 +390,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
         return Pair(currentDescriptor, path.size)
     }
 
-    public fun resolveNameExpressionAsQualifierForDiagnostics(
+    fun resolveNameExpressionAsQualifierForDiagnostics(
             expression: KtSimpleNameExpression,
             receiver: Receiver?,
             context: ExpressionTypingContext
@@ -420,7 +420,7 @@ public class QualifiedExpressionResolver(val symbolUsageValidator: SymbolUsageVa
         return null
     }
 
-    public fun resolveQualifierInExpressionAndUnroll(
+    fun resolveQualifierInExpressionAndUnroll(
             expression: KtQualifiedExpression,
             context: ExpressionTypingContext,
             isValue: (KtSimpleNameExpression) -> Boolean

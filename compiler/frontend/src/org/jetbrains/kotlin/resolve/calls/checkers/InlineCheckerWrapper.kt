@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import java.lang.ref.WeakReference
 
-public class InlineCheckerWrapper : CallChecker {
+class InlineCheckerWrapper : CallChecker {
     private var checkersCache: WeakReference<MutableMap<DeclarationDescriptor, CallChecker>>? = null
 
     override fun <F : CallableDescriptor> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
@@ -38,7 +38,7 @@ public class InlineCheckerWrapper : CallChecker {
                 checker.check(resolvedCall, context)
             }
 
-            parentDescriptor = parentDescriptor.getContainingDeclaration()
+            parentDescriptor = parentDescriptor.containingDeclaration
         }
     }
 

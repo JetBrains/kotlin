@@ -31,12 +31,12 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.types.TypeUtils
 
-public class ValueParameterResolver(
+class ValueParameterResolver(
         private val expressionTypingServices: ExpressionTypingServices,
         private val constantExpressionEvaluator: ConstantExpressionEvaluator
 ) {
 
-    public fun resolveValueParameters(
+    fun resolveValueParameters(
             valueParameters: List<KtParameter>,
             valueParameterDescriptors: List<ValueParameterDescriptor>,
             declaringScope: LexicalScope,
@@ -48,7 +48,7 @@ public class ValueParameterResolver(
         val contextForDefaultValue = ExpressionTypingContext.newContext(trace, scopeForDefaultValue, dataFlowInfo, TypeUtils.NO_EXPECTED_TYPE, CallChecker.DoNothing)
 
         for ((descriptor, parameter) in valueParameterDescriptors.zip(valueParameters)) {
-            ForceResolveUtil.forceResolveAllContents(descriptor.getAnnotations())
+            ForceResolveUtil.forceResolveAllContents(descriptor.annotations)
             resolveDefaultValue(descriptor, parameter, contextForDefaultValue)
         }
     }
@@ -60,9 +60,9 @@ public class ValueParameterResolver(
     ) {
         if (!valueParameterDescriptor.declaresDefaultValue()) return
         val defaultValue = jetParameter.getDefaultValue() ?: return
-        expressionTypingServices.getTypeInfo(defaultValue, context.replaceExpectedType(valueParameterDescriptor.getType()))
+        expressionTypingServices.getTypeInfo(defaultValue, context.replaceExpectedType(valueParameterDescriptor.type))
         if (DescriptorUtils.isAnnotationClass(DescriptorResolver.getContainingClass(context.scope))) {
-            constantExpressionEvaluator.evaluateExpression(defaultValue, context.trace, valueParameterDescriptor.getType())
+            constantExpressionEvaluator.evaluateExpression(defaultValue, context.trace, valueParameterDescriptor.type)
             ?: context.trace.report(Errors.ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT.on(defaultValue))
         }
     }

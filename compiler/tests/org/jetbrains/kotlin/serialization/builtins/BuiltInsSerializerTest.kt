@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
 import java.io.File
 import java.io.FileInputStream
 
-public class BuiltInsSerializerTest : TestCaseWithTmpdir() {
+class BuiltInsSerializerTest : TestCaseWithTmpdir() {
     private fun doTest(fileName: String) {
         val source = "compiler/testData/serialization/builtinsSerializer/$fileName"
         BuiltInsSerializer(dependOnOldBuiltIns = true).serialize(

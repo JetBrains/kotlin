@@ -22,16 +22,16 @@ import org.jetbrains.kotlin.codegen.filterClassFiles
 import java.io.File
 import java.util.Collections
 
-public abstract class AbstractCompileKotlinAgainstInlineKotlinTest : AbstractCompileKotlinAgainstKotlinTest(), AbstractSMAPBaseTest {
+abstract class AbstractCompileKotlinAgainstInlineKotlinTest : AbstractCompileKotlinAgainstKotlinTest(), AbstractSMAPBaseTest {
 
-    public fun doBoxTestWithInlineCheck(firstFileName: String) {
+    fun doBoxTestWithInlineCheck(firstFileName: String) {
         val inputFiles = listOf(firstFileName, firstFileName.substringBeforeLast("1.kt") + "2.kt")
 
         val (factory1, factory2) = doBoxTest(inputFiles)
         val allGeneratedFiles = factory1.asList() + factory2.asList()
 
         try {
-            val sourceFiles = factory1.getInputFiles() + factory2.getInputFiles()
+            val sourceFiles = factory1.inputFiles + factory2.inputFiles
             InlineTestUtil.checkNoCallsToInline(allGeneratedFiles.filterClassFiles(), sourceFiles)
             checkSMAP(sourceFiles, allGeneratedFiles.filterClassFiles())
         }

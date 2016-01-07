@@ -29,14 +29,14 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
-public abstract class KtCodeFragment(
+abstract class KtCodeFragment(
         private val _project: Project,
         name: String,
         text: CharSequence,
         imports: String?, // Should be separated by JetCodeFragment.IMPORT_SEPARATOR
         elementType: IElementType,
         private val context: PsiElement?
-): KtFile((PsiManager.getInstance(_project) as PsiManagerEx).getFileManager().createFileViewProvider(LightVirtualFile(name, KotlinFileType.INSTANCE, text), true), false), JavaCodeFragment {
+): KtFile((PsiManager.getInstance(_project) as PsiManagerEx).fileManager.createFileViewProvider(LightVirtualFile(name, KotlinFileType.INSTANCE, text), true), false), JavaCodeFragment {
 
     private var viewProvider = super<KtFile>.getViewProvider() as SingleRootFileViewProvider
     private var imports = LinkedHashSet<String>()
@@ -54,7 +54,7 @@ public abstract class KtCodeFragment(
     private var superType: PsiType? = null
     private var exceptionHandler: JavaCodeFragment.ExceptionHandler? = null
 
-    public abstract fun getContentElement(): KtElement?
+    abstract fun getContentElement(): KtElement?
 
     override fun forceResolveScope(scope: GlobalSearchScope?) {
         resolveScope = scope
@@ -68,13 +68,13 @@ public abstract class KtCodeFragment(
 
     override fun getContext() = context
 
-    override fun getResolveScope() = context?.getResolveScope() ?: super<KtFile>.getResolveScope()
+    override fun getResolveScope() = context?.resolveScope ?: super<KtFile>.getResolveScope()
 
     override fun clone(): KtCodeFragment {
         val clone = cloneImpl(calcTreeElement().clone() as FileElement) as KtCodeFragment
-        clone.setOriginalFile(this)
+        clone.originalFile = this
         clone.imports = imports
-        clone.viewProvider = SingleRootFileViewProvider(PsiManager.getInstance(_project), LightVirtualFile(getName(), KotlinFileType.INSTANCE, getText()), true)
+        clone.viewProvider = SingleRootFileViewProvider(PsiManager.getInstance(_project), LightVirtualFile(name, KotlinFileType.INSTANCE, text), true)
         clone.viewProvider.forceCachedPsi(clone)
         return clone
     }
@@ -106,7 +106,7 @@ public abstract class KtCodeFragment(
         add(tempElement).delete()
     }
 
-    public fun importsAsImportList(): KtImportList? {
+    fun importsAsImportList(): KtImportList? {
         if (!imports.isEmpty() && context != null) {
             return KtPsiFactory(this).createAnalyzableFile("imports_for_codeFragment.kt", imports.joinToString("\n"), context).importList
         }
@@ -131,11 +131,11 @@ public abstract class KtCodeFragment(
         return true
     }
 
-    public fun getContextContainingFile(): KtFile? {
+    fun getContextContainingFile(): KtFile? {
         return (getOriginalContext() as? KtElement)?.getContainingKtFile()
     }
 
-    public fun getOriginalContext(): KtElement? {
+    fun getOriginalContext(): KtElement? {
         val contextElement = getContext() as? KtElement
         val contextFile = contextElement?.getContainingKtFile()
         if (contextFile is KtCodeFragment) {
@@ -151,8 +151,8 @@ public abstract class KtCodeFragment(
     }
 
     companion object {
-        public val IMPORT_SEPARATOR: String = ","
-        public val RUNTIME_TYPE_EVALUATOR: Key<Function1<KtExpression, KotlinType?>> = Key.create("RUNTIME_TYPE_EVALUATOR")
-        public val ADDITIONAL_CONTEXT_FOR_LAMBDA: Key<Function0<KtElement?>> = Key.create("ADDITIONAL_CONTEXT_FOR_LAMBDA")
+        val IMPORT_SEPARATOR: String = ","
+        val RUNTIME_TYPE_EVALUATOR: Key<Function1<KtExpression, KotlinType?>> = Key.create("RUNTIME_TYPE_EVALUATOR")
+        val ADDITIONAL_CONTEXT_FOR_LAMBDA: Key<Function0<KtElement?>> = Key.create("ADDITIONAL_CONTEXT_FOR_LAMBDA")
     }
 }

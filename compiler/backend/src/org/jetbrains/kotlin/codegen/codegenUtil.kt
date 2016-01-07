@@ -103,7 +103,7 @@ private fun generateNullCheckForNonSafeAs(
     }
 }
 
-public fun SpecialSignatureInfo.replaceValueParametersIn(sourceSignature: String?): String?
+fun SpecialSignatureInfo.replaceValueParametersIn(sourceSignature: String?): String?
         = valueParametersSignature?.let { sourceSignature?.replace("^\\(.*\\)".toRegex(), "($it)") }
 
 fun populateCompanionBackingFieldNamesToOuterContextIfNeeded(companion: KtObjectDeclaration, outerContext: FieldOwnerContext<*>, state: GenerationState) {

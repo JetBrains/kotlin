@@ -26,13 +26,13 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.Value
 
-public inline fun InsnList.forEachPseudoInsn(block: (PseudoInsn, AbstractInsnNode) -> Unit) {
+inline fun InsnList.forEachPseudoInsn(block: (PseudoInsn, AbstractInsnNode) -> Unit) {
     InsnSequence(this).forEach { insn ->
         parsePseudoInsnOrNull(insn)?.let { block(it, insn) }
     }
 }
 
-public inline fun InsnList.forEachInlineMarker(block: (String, MethodInsnNode) -> Unit) {
+inline fun InsnList.forEachInlineMarker(block: (String, MethodInsnNode) -> Unit) {
     InsnSequence(this).forEach { insn ->
         if (InlineCodegenUtil.isInlineMarker(insn)) {
             val methodInsnNode = insn as MethodInsnNode
@@ -41,15 +41,15 @@ public inline fun InsnList.forEachInlineMarker(block: (String, MethodInsnNode) -
     }
 }
 
-public fun <V : Value> Frame<V>.top(): V? {
-    val stackSize = getStackSize()
+fun <V : Value> Frame<V>.top(): V? {
+    val stackSize = stackSize
     if (stackSize == 0)
         return null
     else
         return getStack(stackSize - 1)
 }
 
-public fun MethodNode.updateMaxLocals(newMaxLocals: Int) {
+fun MethodNode.updateMaxLocals(newMaxLocals: Int) {
     maxLocals = Math.max(maxLocals, newMaxLocals)
 }
 
@@ -57,10 +57,10 @@ class SavedStackDescriptor(
         val savedValues: List<BasicValue>,
         val firstLocalVarIndex: Int
 ) {
-    val savedValuesSize = savedValues.fold(0, { size, value -> size + value.getSize() })
+    val savedValuesSize = savedValues.fold(0, { size, value -> size + value.size })
     val firstUnusedLocalVarIndex = firstLocalVarIndex + savedValuesSize
 
-    public override fun toString(): String =
+    override fun toString(): String =
             "@$firstLocalVarIndex: [$savedValues]"
 
     fun isNotEmpty(): Boolean = savedValues.isNotEmpty()
@@ -93,9 +93,9 @@ fun restoreStackWithReturnValue(
         returnValueLocalVarIndex: Int
 ) {
     with(methodNode.instructions) {
-        insertBefore(nodeToReplace, VarInsnNode(returnValue.getType().getOpcode(Opcodes.ISTORE), returnValueLocalVarIndex))
+        insertBefore(nodeToReplace, VarInsnNode(returnValue.type.getOpcode(Opcodes.ISTORE), returnValueLocalVarIndex))
         generateLoadInstructions(methodNode, nodeToReplace, savedStackDescriptor)
-        insertBefore(nodeToReplace, VarInsnNode(returnValue.getType().getOpcode(Opcodes.ILOAD), returnValueLocalVarIndex))
+        insertBefore(nodeToReplace, VarInsnNode(returnValue.type.getOpcode(Opcodes.ILOAD), returnValueLocalVarIndex))
         remove(nodeToReplace)
     }
 }
@@ -104,22 +104,22 @@ fun generateLoadInstructions(methodNode: MethodNode, location: AbstractInsnNode,
     var localVarIndex = savedStackDescriptor.firstLocalVarIndex
     for (value in savedStackDescriptor.savedValues) {
         methodNode.instructions.insertBefore(location,
-                                             VarInsnNode(value.getType().getOpcode(Opcodes.ILOAD), localVarIndex))
-        localVarIndex += value.getSize()
+                                             VarInsnNode(value.type.getOpcode(Opcodes.ILOAD), localVarIndex))
+        localVarIndex += value.size
     }
 }
 
 fun generateStoreInstructions(methodNode: MethodNode, location: AbstractInsnNode, savedStackDescriptor: SavedStackDescriptor) {
     var localVarIndex = savedStackDescriptor.firstUnusedLocalVarIndex
     for (value in savedStackDescriptor.savedValues.asReversed()) {
-        localVarIndex -= value.getSize()
+        localVarIndex -= value.size
         methodNode.instructions.insertBefore(location,
-                                             VarInsnNode(value.getType().getOpcode(Opcodes.ISTORE), localVarIndex))
+                                             VarInsnNode(value.type.getOpcode(Opcodes.ISTORE), localVarIndex))
     }
 }
 
 fun getPopInstruction(top: BasicValue) =
-        InsnNode(when (top.getSize()) {
+        InsnNode(when (top.size) {
                      1 -> Opcodes.POP
                      2 -> Opcodes.POP2
                      else -> throw AssertionError("Unexpected value type size")
@@ -127,14 +127,14 @@ fun getPopInstruction(top: BasicValue) =
 
 fun removeAlwaysFalseIfeq(methodNode: MethodNode, node: AbstractInsnNode) {
     with (methodNode.instructions) {
-        remove(node.getNext())
+        remove(node.next)
         remove(node)
     }
 }
 
 fun replaceAlwaysTrueIfeqWithGoto(methodNode: MethodNode, node: AbstractInsnNode) {
     with (methodNode.instructions) {
-        val next = node.getNext() as JumpInsnNode
+        val next = node.next as JumpInsnNode
         insertBefore(node, JumpInsnNode(Opcodes.GOTO, next.label))
         remove(node)
         remove(next)
@@ -143,7 +143,7 @@ fun replaceAlwaysTrueIfeqWithGoto(methodNode: MethodNode, node: AbstractInsnNode
 
 fun replaceMarkerWithPops(methodNode: MethodNode, node: AbstractInsnNode, expectedStackSize: Int, frame: Frame<BasicValue>) {
     with (methodNode.instructions) {
-        while (frame.getStackSize() > expectedStackSize) {
+        while (frame.stackSize > expectedStackSize) {
             val top = frame.pop()
             insertBefore(node, getPopInstruction(top))
         }

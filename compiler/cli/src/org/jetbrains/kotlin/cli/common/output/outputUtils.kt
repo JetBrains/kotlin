@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import java.io.File
 import com.intellij.openapi.util.io.FileUtil
 
-public fun OutputFileCollection.writeAll(outputDir: File, report: (sources: List<File>, output: File) -> Unit) {
+fun OutputFileCollection.writeAll(outputDir: File, report: (sources: List<File>, output: File) -> Unit) {
     for (file in asList()) {
         val sources = file.sourceFiles
         val output = File(outputDir, file.relativePath)
@@ -35,11 +35,11 @@ public fun OutputFileCollection.writeAll(outputDir: File, report: (sources: List
 
 private val REPORT_NOTHING = { sources: List<File>, output: File -> }
 
-public fun OutputFileCollection.writeAllTo(outputDir: File) {
+fun OutputFileCollection.writeAllTo(outputDir: File) {
     writeAll(outputDir, REPORT_NOTHING)
 }
 
-public fun OutputFileCollection.writeAll(outputDir: File, messageCollector: MessageCollector) {
+fun OutputFileCollection.writeAll(outputDir: File, messageCollector: MessageCollector) {
     writeAll(outputDir) { sources, output ->
         messageCollector.report(CompilerMessageSeverity.OUTPUT, OutputMessageUtil.formatOutputMessage(sources, output), CompilerMessageLocation.NO_LOCATION)
     }

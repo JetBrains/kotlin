@@ -20,7 +20,7 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.util.*
 
-public object Main {
+object Main {
     private val KOTLIN_HOME: File
 
     init {
@@ -99,8 +99,7 @@ public object Main {
         runner.run(classpath, arguments)
     }
 
-    @JvmStatic
-    public fun main(args: Array<String>) {
+    @JvmStatic fun main(args: Array<String>) {
         try {
             run(args)
         }

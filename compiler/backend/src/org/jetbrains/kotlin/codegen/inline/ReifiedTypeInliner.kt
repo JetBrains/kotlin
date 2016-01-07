@@ -33,7 +33,7 @@ import org.jetbrains.org.objectweb.asm.tree.*
 
 private class ParameterNameAndNullability(val name: String, val nullable: Boolean)
 
-public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParameterMappings?) {
+class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParameterMappings?) {
 
     enum class OperationKind {
         NEW_ARRAY, AS, SAFE_AS, IS, JAVA_CLASS;
@@ -43,25 +43,21 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
     }
 
     companion object {
-        @JvmField
-        public val REIFIED_OPERATION_MARKER_METHOD_NAME = "reifiedOperationMarker"
-        @JvmField
-        public val NEED_CLASS_REIFICATION_MARKER_METHOD_NAME = "needClassReification"
+        @JvmField val REIFIED_OPERATION_MARKER_METHOD_NAME = "reifiedOperationMarker"
+        @JvmField val NEED_CLASS_REIFICATION_MARKER_METHOD_NAME = "needClassReification"
 
         private fun isOperationReifiedMarker(insn: AbstractInsnNode) =
                 isReifiedMarker(insn) { it == REIFIED_OPERATION_MARKER_METHOD_NAME }
 
         private fun isReifiedMarker(insn: AbstractInsnNode, namePredicate: (String) -> Boolean): Boolean {
-            if (insn.getOpcode() != Opcodes.INVOKESTATIC || insn !is MethodInsnNode) return false
+            if (insn.opcode != Opcodes.INVOKESTATIC || insn !is MethodInsnNode) return false
             return insn.owner == IntrinsicMethods.INTRINSICS_CLASS_NAME && namePredicate(insn.name)
         }
 
-        @JvmStatic
-        public fun isNeedClassReificationMarker(insn: AbstractInsnNode): Boolean =
+        @JvmStatic fun isNeedClassReificationMarker(insn: AbstractInsnNode): Boolean =
                 isReifiedMarker(insn) { s -> s == NEED_CLASS_REIFICATION_MARKER_METHOD_NAME }
 
-        @JvmStatic
-        public fun putNeedClassReificationMarker(v: MethodVisitor) {
+        @JvmStatic fun putNeedClassReificationMarker(v: MethodVisitor) {
             v.visitMethodInsn(
                     Opcodes.INVOKESTATIC,
                     IntrinsicMethods.INTRINSICS_CLASS_NAME, NEED_CLASS_REIFICATION_MARKER_METHOD_NAME,
@@ -77,7 +73,7 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
      * e.g. when we're generating inline function containing reified T
      * and another function containing reifiable parts is inlined into that function
      */
-    public fun reifyInstructions(node: MethodNode): ReifiedTypeParametersUsages {
+    fun reifyInstructions(node: MethodNode): ReifiedTypeParametersUsages {
         if (parametersMapping == null) return ReifiedTypeParametersUsages()
         val instructions = node.instructions
         maxStackSize = 0
@@ -95,7 +91,7 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
         return result
     }
 
-    public fun reifySignature(oldSignature: String): SignatureReificationResult {
+    fun reifySignature(oldSignature: String): SignatureReificationResult {
         if (parametersMapping == null) return SignatureReificationResult(oldSignature, ReifiedTypeParametersUsages())
 
         val signatureRemapper = object : SignatureWriter() {
@@ -223,13 +219,13 @@ public class ReifiedTypeInliner(private val parametersMapping: ReifiedTypeParame
     }
 
     private fun processNextTypeInsn(insn: MethodInsnNode, parameter: Type, expectedNextOpcode: Int): Boolean {
-        if (insn.getNext()?.getOpcode() != expectedNextOpcode) return false
-        (insn.getNext() as TypeInsnNode).desc = parameter.getInternalName()
+        if (insn.next?.opcode != expectedNextOpcode) return false
+        (insn.next as TypeInsnNode).desc = parameter.internalName
         return true
     }
 
     private fun processJavaClass(insn: MethodInsnNode, parameter: Type): Boolean {
-        val next = insn.getNext()
+        val next = insn.next
         if (next !is LdcInsnNode) return false
         next.cst = parameter
         return true
@@ -255,14 +251,14 @@ private val MethodInsnNode.operationKind: ReifiedTypeInliner.OperationKind? get(
         ReifiedTypeInliner.OperationKind.values().getOrNull(it)
     }
 
-public class ReifiedTypeParameterMappings() {
+class ReifiedTypeParameterMappings() {
     private val mappingsByName = hashMapOf<String, ReifiedTypeParameterMapping>()
 
-    public fun addParameterMappingToType(name: String, type: KotlinType, asmType: Type, signature: String) {
+    fun addParameterMappingToType(name: String, type: KotlinType, asmType: Type, signature: String) {
         mappingsByName[name] =  ReifiedTypeParameterMapping(name, type, asmType, newName = null, signature = signature)
     }
 
-    public fun addParameterMappingToNewParameter(name: String, type: KotlinType, newName: String) {
+    fun addParameterMappingToNewParameter(name: String, type: KotlinType, newName: String) {
         mappingsByName[name] = ReifiedTypeParameterMapping(name, type = type, asmType = null, newName = newName, signature = null)
     }
 
@@ -271,20 +267,20 @@ public class ReifiedTypeParameterMappings() {
     }
 }
 
-public class ReifiedTypeParameterMapping(
+class ReifiedTypeParameterMapping(
         val name: String, val type: KotlinType, val asmType: Type?, val newName: String?, val signature: String?
 )
 
-public class ReifiedTypeParametersUsages {
+class ReifiedTypeParametersUsages {
     val usedTypeParameters: MutableSet<String> = hashSetOf()
 
-    public fun wereUsedReifiedParameters(): Boolean = usedTypeParameters.isNotEmpty()
+    fun wereUsedReifiedParameters(): Boolean = usedTypeParameters.isNotEmpty()
 
-    public fun addUsedReifiedParameter(name: String) {
+    fun addUsedReifiedParameter(name: String) {
         usedTypeParameters.add(name)
     }
 
-    public fun propagateChildUsagesWithinContext(child: ReifiedTypeParametersUsages, context: MethodContext) {
+    fun propagateChildUsagesWithinContext(child: ReifiedTypeParametersUsages, context: MethodContext) {
         if (!child.wereUsedReifiedParameters()) return
         // used for propagating reified TP usages from children member codegen to parent's
         // mark enclosing object-literal/lambda as needed reification iff
@@ -298,7 +294,7 @@ public class ReifiedTypeParametersUsages {
         }.forEach { usedTypeParameters.add(it) }
     }
 
-    public fun mergeAll(other: ReifiedTypeParametersUsages) {
+    fun mergeAll(other: ReifiedTypeParametersUsages) {
         if (!other.wereUsedReifiedParameters()) return
         usedTypeParameters.addAll(other.usedTypeParameters)
     }

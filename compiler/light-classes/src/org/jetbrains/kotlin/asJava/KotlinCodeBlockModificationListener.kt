@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 /**
  * Tested in OutOfBlockModificationTestGenerated
  */
-public class KotlinCodeBlockModificationListener(modificationTracker: PsiModificationTracker) : PsiTreeChangePreprocessor {
+class KotlinCodeBlockModificationListener(modificationTracker: PsiModificationTracker) : PsiTreeChangePreprocessor {
     private val myModificationTracker = modificationTracker as PsiModificationTrackerImpl
 
     override fun treeChanged(event: PsiTreeChangeEventImpl) {
@@ -106,7 +106,7 @@ public class KotlinCodeBlockModificationListener(modificationTracker: PsiModific
             return false
         }
 
-        public fun isInsideCodeBlock(element: PsiElement?): Boolean {
+        fun isInsideCodeBlock(element: PsiElement?): Boolean {
             if (element is PsiFileSystemItem) return false
             if (element == null || element.parent == null) return true
 
@@ -137,7 +137,7 @@ public class KotlinCodeBlockModificationListener(modificationTracker: PsiModific
             return false
         }
 
-        public fun isBlockDeclaration(declaration: KtDeclaration): Boolean {
+        fun isBlockDeclaration(declaration: KtDeclaration): Boolean {
             return BLOCK_DECLARATION_TYPES.any { it.isInstance(declaration) }
         }
 

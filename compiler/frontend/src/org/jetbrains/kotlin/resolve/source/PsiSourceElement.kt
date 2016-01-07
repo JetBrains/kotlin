@@ -21,13 +21,13 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.SourceFile
 
-public interface PsiSourceElement : SourceElement {
-    public val psi: PsiElement?
+interface PsiSourceElement : SourceElement {
+    val psi: PsiElement?
 
     override fun getContainingFile(): SourceFile = psi?.containingFile?.let { PsiSourceFile(it) } ?: SourceFile.NO_SOURCE_FILE
 }
 
-public class PsiSourceFile(private val psiFile: PsiFile): SourceFile {
+class PsiSourceFile(private val psiFile: PsiFile): SourceFile {
     override fun equals(other: Any?): Boolean = other is PsiSourceFile && psiFile == other.psiFile
     override fun hashCode(): Int = psiFile.hashCode()
 }

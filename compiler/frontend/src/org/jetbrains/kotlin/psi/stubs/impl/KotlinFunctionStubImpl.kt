@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.name.FqName
 import com.intellij.psi.PsiElement
 
-public class KotlinFunctionStubImpl(
+class KotlinFunctionStubImpl(
         parent: StubElement<out PsiElement>?,
         private val nameRef: StringRef?,
         private val isTopLevel: Boolean,

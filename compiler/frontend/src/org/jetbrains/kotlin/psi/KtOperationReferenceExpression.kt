@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parsing.KotlinExpressionParsing
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-public class KtOperationReferenceExpression(node: ASTNode) : KtSimpleNameExpressionImpl(node) {
+class KtOperationReferenceExpression(node: ASTNode) : KtSimpleNameExpressionImpl(node) {
     override fun getReferencedNameElement() = findChildByType<PsiElement?>(KotlinExpressionParsing.ALL_OPERATIONS) ?: this
 
     fun getNameForConventionalOperation(unaryOperations: Boolean = true, binaryOperations: Boolean = true): Name? {

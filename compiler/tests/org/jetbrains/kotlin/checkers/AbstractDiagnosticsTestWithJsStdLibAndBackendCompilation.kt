@@ -24,17 +24,17 @@ import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingTrace
 
-public abstract class AbstractDiagnosticsTestWithJsStdLibAndBackendCompilation : AbstractDiagnosticsTestWithJsStdLib() {
+abstract class AbstractDiagnosticsTestWithJsStdLibAndBackendCompilation : AbstractDiagnosticsTestWithJsStdLib() {
     override fun analyzeModuleContents(
             moduleContext: ModuleContext,
             jetFiles: MutableList<KtFile>,
             moduleTrace: BindingTrace
     ) {
-        val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(jetFiles, moduleTrace, moduleContext, getConfig())
-        val diagnostics = analysisResult.bindingTrace.getBindingContext().getDiagnostics()
+        val analysisResult = TopDownAnalyzerFacadeForJS.analyzeFilesWithGivenTrace(jetFiles, moduleTrace, moduleContext, config)
+        val diagnostics = analysisResult.bindingTrace.bindingContext.diagnostics
 
         if (!hasError(diagnostics)) {
-            val translator = K2JSTranslator(getConfig())
+            val translator = K2JSTranslator(config)
             translator.translate(jetFiles, MainCallParameters.noCall(), analysisResult)
         }
     }

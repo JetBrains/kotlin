@@ -51,7 +51,7 @@ class LazyAnnotationsContextImpl(
         override val scope: LexicalScope
 ) : LazyAnnotationsContext(annotationResolver, storageManager, trace)
 
-public class LazyAnnotations(
+class LazyAnnotations(
         val c: LazyAnnotationsContext,
         val annotationEntries: List<KtAnnotationEntry>
 ) : Annotations, LazyEntity {
@@ -69,10 +69,10 @@ public class LazyAnnotations(
         // We can not efficiently check short names here:
         // an annotation class may be renamed on import
         for (annotationDescriptor in iterator()) {
-            val annotationType = annotationDescriptor.getType()
-            if (annotationType.isError()) continue
+            val annotationType = annotationDescriptor.type
+            if (annotationType.isError) continue
 
-            val descriptor = annotationType.getConstructor().getDeclarationDescriptor() ?: continue
+            val descriptor = annotationType.constructor.declarationDescriptor ?: continue
 
             if (DescriptorUtils.getFqNameSafe(descriptor) == fqName) {
                 return annotationDescriptor
@@ -109,7 +109,7 @@ public class LazyAnnotations(
     }
 }
 
-public class LazyAnnotationDescriptor(
+class LazyAnnotationDescriptor(
         val c: LazyAnnotationsContext,
         val annotationEntry: KtAnnotationEntry
 ) : AnnotationDescriptor, LazyEntity {
@@ -140,10 +140,10 @@ public class LazyAnnotationDescriptor(
         val resolutionResults = c.annotationResolver.resolveAnnotationCall(annotationEntry, c.scope, c.trace)
         AnnotationResolver.checkAnnotationType(annotationEntry, c.trace, resolutionResults)
 
-        if (!resolutionResults.isSingleResult()) return mapOf()
+        if (!resolutionResults.isSingleResult) return mapOf()
 
         @Suppress("UNCHECKED_CAST")
-        return resolutionResults.getResultingCall().getValueArguments()
+        return resolutionResults.resultingCall.valueArguments
                 .mapValues { val (valueParameter, resolvedArgument) = it;
                     if (resolvedArgument == null) null
                     else c.annotationResolver.getAnnotationArgumentValue(c.trace, valueParameter, resolvedArgument)
@@ -155,6 +155,6 @@ public class LazyAnnotationDescriptor(
 
     override fun forceResolveAllContents() {
         ForceResolveUtil.forceResolveAllContents(getType())
-        getAllValueArguments()
+        allValueArguments
     }
 }

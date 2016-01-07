@@ -22,23 +22,21 @@ import java.io.File
 import java.io.FileInputStream
 import java.util.zip.ZipInputStream
 
-public class TestStdlibWithDxTest {
-    @Test
-    public fun testRuntimeWithDx() {
+class TestStdlibWithDxTest {
+    @Test fun testRuntimeWithDx() {
         doTest(ForTestCompileRuntime.runtimeJarForTests())
     }
 
-    @Test
-    public fun testReflectWithDx() {
+    @Test fun testReflectWithDx() {
         doTest(ForTestCompileRuntime.reflectJarForTests())
     }
 
     private fun doTest(file: File) {
         val zip = ZipInputStream(FileInputStream(file))
         zip.use {
-            sequence { zip.getNextEntry() }.forEach {
-                if (it.getName().endsWith(".class")) {
-                    DxChecker.checkFileWithDx(zip.readBytes(), it.getName())
+            sequence { zip.nextEntry }.forEach {
+                if (it.name.endsWith(".class")) {
+                    DxChecker.checkFileWithDx(zip.readBytes(), it.name)
                 }
             }
         }

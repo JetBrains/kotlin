@@ -18,16 +18,14 @@ package org.jetbrains.kotlin.codegen.context
 
 import org.jetbrains.org.objectweb.asm.Type
 
-public object CodegenContextUtil {
-    @JvmStatic
-    public fun getImplementationOwnerClassType(owner: CodegenContext<*>): Type? =
+object CodegenContextUtil {
+    @JvmStatic fun getImplementationOwnerClassType(owner: CodegenContext<*>): Type? =
             when (owner) {
                 is MultifileClassFacadeContext -> owner.filePartType
                 is DelegatingToPartContext -> owner.implementationOwnerClassType
                 else -> null
             }
 
-    @JvmStatic
-    public fun isImplClassOwner(owner: CodegenContext<*>): Boolean =
+    @JvmStatic fun isImplClassOwner(owner: CodegenContext<*>): Boolean =
             owner !is MultifileClassFacadeContext
 }

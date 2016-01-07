@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResultsImpl
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import java.util.*
 
-public interface ResolutionResultsCache {
-    public data class CachedData(
+interface ResolutionResultsCache {
+    data class CachedData(
             val resolutionResults: OverloadResolutionResultsImpl<*>,
             val deferredComputation: BasicCallResolutionContext,
             val tracing: TracingStrategy,
@@ -63,7 +63,7 @@ class ResolutionResultsCacheImpl : ResolutionResultsCache {
     }
 }
 
-public class TemporaryResolutionResultsCache(private val parentCache: ResolutionResultsCache) : ResolutionResultsCache {
+class TemporaryResolutionResultsCache(private val parentCache: ResolutionResultsCache) : ResolutionResultsCache {
     private val innerCache = ResolutionResultsCacheImpl()
 
     override fun record(
@@ -78,7 +78,7 @@ public class TemporaryResolutionResultsCache(private val parentCache: Resolution
 
     override fun get(call: Call): CachedData? = innerCache[call] ?: parentCache[call]
 
-    public fun commit() {
+    fun commit() {
         when (parentCache) {
             is ResolutionResultsCacheImpl -> parentCache.addData(innerCache)
             is TemporaryResolutionResultsCache -> parentCache.innerCache.addData(innerCache)

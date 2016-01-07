@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 
-public class LocalClassifierAnalyzer(
+class LocalClassifierAnalyzer(
         private val globalContext: GlobalContext,
         private val storageManager: StorageManager,
         private val descriptorResolver: DescriptorResolver,

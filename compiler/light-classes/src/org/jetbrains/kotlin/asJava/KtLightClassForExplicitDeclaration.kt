@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.util.*
 import javax.swing.Icon
 
-public open class KtLightClassForExplicitDeclaration(
+open class KtLightClassForExplicitDeclaration(
         protected val classFqName: FqName, // FqName of (possibly inner) class
         protected val classOrObject: KtClassOrObject)
 : KtWrappingLightClass(classOrObject.manager), KtJavaMirrorMarker, StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
@@ -395,7 +395,7 @@ public open class KtLightClassForExplicitDeclaration(
                 FINAL_KEYWORD to PsiModifier.FINAL)
 
 
-        public fun create(classOrObject: KtClassOrObject): KtLightClassForExplicitDeclaration? {
+        fun create(classOrObject: KtClassOrObject): KtLightClassForExplicitDeclaration? {
             val fqName = predictFqName(classOrObject) ?: return null
 
             if (classOrObject is KtObjectDeclaration && classOrObject.isObjectLiteral()) {
@@ -414,11 +414,11 @@ public open class KtLightClassForExplicitDeclaration(
             return if (internalName == null) null else JvmClassName.byInternalName(internalName).fqNameForClassNameWithoutDollars
         }
 
-        public fun getLightClassData(classOrObject: KtClassOrObject): LightClassData {
+        fun getLightClassData(classOrObject: KtClassOrObject): LightClassData {
             return getLightClassCachedValue(classOrObject).value
         }
 
-        public fun getLightClassCachedValue(classOrObject: KtClassOrObject): CachedValue<WithFileStubAndExtraDiagnostics> {
+        fun getLightClassCachedValue(classOrObject: KtClassOrObject): CachedValue<WithFileStubAndExtraDiagnostics> {
             val outermostClassOrObject = getOutermostClassOrObject(classOrObject)
             var value = outermostClassOrObject.getUserData(JAVA_API_STUB)
             if (value == null) {

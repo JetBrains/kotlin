@@ -18,8 +18,8 @@ package org.jetbrains.kotlin.container
 
 import java.lang.reflect.*
 
-public interface ValueDescriptor {
-    public fun getValue(): Any
+interface ValueDescriptor {
+    fun getValue(): Any
 }
 
 internal interface ComponentDescriptor : ValueDescriptor {
@@ -29,7 +29,7 @@ internal interface ComponentDescriptor : ValueDescriptor {
         get() = false
 }
 
-public class IterableDescriptor(val descriptors: Iterable<ValueDescriptor>) : ValueDescriptor {
+class IterableDescriptor(val descriptors: Iterable<ValueDescriptor>) : ValueDescriptor {
     override fun getValue(): Any {
         return descriptors.map { it.getValue() }
     }

@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.resolve.lazy
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 
-public interface FileScopeProvider {
+interface FileScopeProvider {
     fun getFileResolutionScope(file: KtFile): LexicalScope
     fun getImportResolver(file: KtFile): ImportResolver
 
-    public object ThrowException : FileScopeProvider {
+    object ThrowException : FileScopeProvider {
         override fun getFileResolutionScope(file: KtFile) = throw UnsupportedOperationException("Should not be called")
         override fun getImportResolver(file: KtFile) = throw UnsupportedOperationException("Should not be called")
     }

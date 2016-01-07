@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.modules
 
 import java.io.Serializable
 
-public data class TargetId(public val name: String, public val type: String) : Serializable
+data class TargetId(val name: String, val type: String) : Serializable
 
-public fun TargetId(module: Module): TargetId =
+fun TargetId(module: Module): TargetId =
         TargetId(module.getModuleName(), module.getModuleType())

@@ -33,7 +33,7 @@ object OverloadUtil {
     /**
      * Does not check names.
      */
-    public @JvmStatic fun isOverloadable(a: CallableDescriptor, b: CallableDescriptor): Boolean {
+    @JvmStatic fun isOverloadable(a: CallableDescriptor, b: CallableDescriptor): Boolean {
         val abc = braceCount(a)
         val bbc = braceCount(b)
 
@@ -80,7 +80,7 @@ object OverloadUtil {
             }
         }
 
-    public @JvmStatic fun groupModulePackageMembersByFqName(
+    @JvmStatic fun groupModulePackageMembersByFqName(
             c: BodiesResolveContext,
             constructorsInPackages: MultiMap<FqNameUnsafe, ConstructorDescriptor>,
             overloadFilter: OverloadFilter
@@ -146,7 +146,7 @@ object OverloadUtil {
 
     private fun MemberDescriptor.isPrivate() = Visibilities.isPrivate(this.visibility)
 
-    public @JvmStatic fun getPossibleRedeclarationGroups(members: Collection<CallableMemberDescriptor>): Collection<Collection<CallableMemberDescriptor>> {
+    @JvmStatic fun getPossibleRedeclarationGroups(members: Collection<CallableMemberDescriptor>): Collection<Collection<CallableMemberDescriptor>> {
         val result = arrayListOf<Collection<CallableMemberDescriptor>>()
 
         val nonPrivates = members.filter { !it.isPrivate() }

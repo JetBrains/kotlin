@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtScript
 
-public class KtScriptInfo(
+class KtScriptInfo(
         val script: KtScript
 ) : KtClassLikeInfo {
     override fun getContainingPackageFqName() = script.fqName.parent()

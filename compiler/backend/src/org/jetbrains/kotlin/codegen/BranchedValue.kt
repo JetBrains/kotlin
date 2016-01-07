@@ -147,8 +147,8 @@ open class BranchedValue(
             }, IFEQ)
         }
 
-        public fun cmp(opToken: IElementType, operandType: Type, left: StackValue, right: StackValue): StackValue =
-                if (operandType.getSort() == Type.OBJECT)
+        fun cmp(opToken: IElementType, operandType: Type, left: StackValue, right: StackValue): StackValue =
+                if (operandType.sort == Type.OBJECT)
                     ObjectCompare(opToken, operandType, left, right)
                 else
                     NumberCompare(opToken, operandType, left, right)

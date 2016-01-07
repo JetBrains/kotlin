@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.psi
 
-public interface KotlinDeclarationNavigationPolicy {
-    public fun getOriginalElement(declaration: KtDeclaration): KtElement
-    public fun getNavigationElement(declaration: KtDeclaration): KtElement
+interface KotlinDeclarationNavigationPolicy {
+    fun getOriginalElement(declaration: KtDeclaration): KtElement
+    fun getNavigationElement(declaration: KtDeclaration): KtElement
 }

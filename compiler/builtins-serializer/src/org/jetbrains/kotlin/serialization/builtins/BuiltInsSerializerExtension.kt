@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
 import org.jetbrains.kotlin.serialization.ProtoBuf
 
-public class BuiltInsSerializerExtension : KotlinSerializerExtensionBase(BuiltInSerializerProtocol) {
+class BuiltInsSerializerExtension : KotlinSerializerExtensionBase(BuiltInSerializerProtocol) {
     override fun shouldUseTypeTable(): Boolean = true
 
     override fun serializePackage(packageFragments: Collection<PackageFragmentDescriptor>, proto: ProtoBuf.Package.Builder) {

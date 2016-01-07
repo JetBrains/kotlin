@@ -28,13 +28,13 @@ import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
 import org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
-public open class KotlinFileStubImpl(
+open class KotlinFileStubImpl(
         jetFile: KtFile?,
         private val packageName: StringRef,
         private val isScript: Boolean
 ) : PsiFileStubImpl<KtFile>(jetFile), KotlinFileStub, PsiClassHolderFileStub<KtFile> {
 
-    public constructor(jetFile: KtFile?, packageName: String, isScript: Boolean)
+    constructor(jetFile: KtFile?, packageName: String, isScript: Boolean)
         : this(jetFile, StringRef.fromString(packageName)!!, isScript)
 
     override fun getPackageFqName(): FqName = FqName(StringRef.toString(packageName)!!)

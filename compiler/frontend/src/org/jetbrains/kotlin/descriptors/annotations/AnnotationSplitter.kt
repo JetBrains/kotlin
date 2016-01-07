@@ -37,16 +37,15 @@ import org.jetbrains.kotlin.storage.getValue
              other -> [T].
  */
 
-public class AnnotationSplitter(
+class AnnotationSplitter(
         val storageManager: StorageManager,
         allAnnotations: Annotations,
         applicableTargetsLazy: () -> Set<AnnotationUseSiteTarget>
 ) {
-    public companion object {
+    companion object {
         private val TARGET_PRIORITIES = setOf(CONSTRUCTOR_PARAMETER, PROPERTY, FIELD)
 
-        @JvmStatic
-        public fun create(
+        @JvmStatic fun create(
                 storageManager: StorageManager,
                 annotations: Annotations,
                 targets: Set<AnnotationUseSiteTarget>
@@ -54,16 +53,14 @@ public class AnnotationSplitter(
             return AnnotationSplitter(storageManager, annotations, { targets })
         }
 
-        @JvmStatic
-        public fun getTargetSet(parameter: Boolean, context: BindingContext, wrapper: PropertyWrapper): Set<AnnotationUseSiteTarget> {
+        @JvmStatic fun getTargetSet(parameter: Boolean, context: BindingContext, wrapper: PropertyWrapper): Set<AnnotationUseSiteTarget> {
             val property = wrapper.property
             assert(property != null)
             val hasBackingField = context[BindingContext.BACKING_FIELD_REQUIRED, property] ?: false
             return getTargetSet(parameter, property!!.isVar, hasBackingField)
         }
 
-        @JvmStatic
-        public fun getTargetSet(parameter: Boolean, isVar: Boolean, hasBackingField: Boolean): Set<AnnotationUseSiteTarget> {
+        @JvmStatic fun getTargetSet(parameter: Boolean, isVar: Boolean, hasBackingField: Boolean): Set<AnnotationUseSiteTarget> {
             return hashSetOf(PROPERTY, PROPERTY_GETTER).apply {
                 if (parameter) add(CONSTRUCTOR_PARAMETER)
                 if (hasBackingField) add(FIELD)
@@ -72,7 +69,7 @@ public class AnnotationSplitter(
         }
     }
 
-    public class PropertyWrapper(public var property: PropertyDescriptor? = null)
+    class PropertyWrapper(var property: PropertyDescriptor? = null)
 
     private val splitAnnotations = storageManager.createLazyValue {
         val map = hashMapOf<AnnotationUseSiteTarget, MutableList<AnnotationWithTarget>>()
@@ -108,11 +105,11 @@ public class AnnotationSplitter(
         map to AnnotationsImpl.create(other)
     }
 
-    public fun getOtherAnnotations(): Annotations = LazySplitAnnotations(storageManager, null)
+    fun getOtherAnnotations(): Annotations = LazySplitAnnotations(storageManager, null)
 
-    public fun getAnnotationsForTarget(target: AnnotationUseSiteTarget): Annotations = LazySplitAnnotations(storageManager, target)
+    fun getAnnotationsForTarget(target: AnnotationUseSiteTarget): Annotations = LazySplitAnnotations(storageManager, target)
 
-    public fun getAnnotationsForTargets(vararg targets: AnnotationUseSiteTarget): Annotations {
+    fun getAnnotationsForTargets(vararg targets: AnnotationUseSiteTarget): Annotations {
         return CompositeAnnotations(targets.map { getAnnotationsForTarget(it) })
     }
 

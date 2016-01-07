@@ -48,23 +48,23 @@ fun ResolvedCall<*>.hasThisOrNoDispatchReceiver(
         val expression = KtPsiUtil.deparenthesize(dispatchReceiverValue.expression)
         if (expression is KtThisExpression) {
             // this.foo() -- explicit receiver
-            dispatchReceiverDescriptor = context.get(BindingContext.REFERENCE_TARGET, expression.getInstanceReference())
+            dispatchReceiverDescriptor = context.get(BindingContext.REFERENCE_TARGET, expression.instanceReference)
         }
     }
 
-    return dispatchReceiverDescriptor == getResultingDescriptor().getOwnerForEffectiveDispatchReceiverParameter()
+    return dispatchReceiverDescriptor == resultingDescriptor.getOwnerForEffectiveDispatchReceiverParameter()
 }
 
-public fun ResolvedCall<*>.getExplicitReceiverValue(): ReceiverValue? {
-    return when (getExplicitReceiverKind()) {
+fun ResolvedCall<*>.getExplicitReceiverValue(): ReceiverValue? {
+    return when (explicitReceiverKind) {
         ExplicitReceiverKind.DISPATCH_RECEIVER -> dispatchReceiver!!
         ExplicitReceiverKind.EXTENSION_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS -> extensionReceiver as ReceiverValue
         else -> null
     }
 }
 
-public fun ResolvedCall<*>.getImplicitReceiverValue(): ReceiverValue? {
-    return when (getExplicitReceiverKind()) {
+fun ResolvedCall<*>.getImplicitReceiverValue(): ReceiverValue? {
+    return when (explicitReceiverKind) {
         ExplicitReceiverKind.NO_EXPLICIT_RECEIVER -> if (extensionReceiver != null) extensionReceiver as ReceiverValue else dispatchReceiver
         ExplicitReceiverKind.DISPATCH_RECEIVER -> extensionReceiver as ReceiverValue?
         ExplicitReceiverKind.EXTENSION_RECEIVER -> dispatchReceiver
@@ -72,4 +72,4 @@ public fun ResolvedCall<*>.getImplicitReceiverValue(): ReceiverValue? {
     }
 }
 
-public fun ResolvedCall<*>.hasBothReceivers() = dispatchReceiver != null && extensionReceiver != null
+fun ResolvedCall<*>.hasBothReceivers() = dispatchReceiver != null && extensionReceiver != null

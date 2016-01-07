@@ -25,16 +25,16 @@ import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-public open class PositioningStrategy<E : PsiElement> {
-    public open fun markDiagnostic(diagnostic: ParametrizedDiagnostic<out E>): List<TextRange> {
-        return mark(diagnostic.getPsiElement())
+open class PositioningStrategy<E : PsiElement> {
+    open fun markDiagnostic(diagnostic: ParametrizedDiagnostic<out E>): List<TextRange> {
+        return mark(diagnostic.psiElement)
     }
 
     protected open fun mark(element: E): List<TextRange> {
         return markElement(element)
     }
 
-    public open fun isValid(element: E): Boolean {
+    open fun isValid(element: E): Boolean {
         return !hasSyntaxErrors(element)
     }
 }
@@ -44,7 +44,7 @@ fun markElement(element: PsiElement): List<TextRange> {
 }
 
 fun markNode(node: ASTNode): List<TextRange> {
-    return markElement(node.getPsi())
+    return markElement(node.psi)
 }
 
 fun markRange(range: TextRange): List<TextRange> {
@@ -56,10 +56,10 @@ fun markRange(from: PsiElement, to: PsiElement): List<TextRange> {
 }
 
 private fun getStartOffset(element: PsiElement): Int {
-    var child = element.getFirstChild()
+    var child = element.firstChild
     if (child != null) {
         while (child is PsiComment || child is PsiWhiteSpace) {
-            child = child.getNextSibling()
+            child = child.nextSibling
         }
         if (child != null) {
             return getStartOffset(child)
@@ -69,10 +69,10 @@ private fun getStartOffset(element: PsiElement): Int {
 }
 
 private fun getEndOffset(element: PsiElement): Int {
-    var child = element.getLastChild()
+    var child = element.lastChild
     if (child != null) {
         while (child is PsiComment || child is PsiWhiteSpace) {
-            child = child.getPrevSibling()
+            child = child.prevSibling
         }
         if (child != null) {
             return getEndOffset(child)
@@ -84,7 +84,7 @@ private fun getEndOffset(element: PsiElement): Int {
 fun hasSyntaxErrors(psiElement: PsiElement): Boolean {
     if (psiElement is PsiErrorElement) return true
 
-    val children = psiElement.getChildren()
+    val children = psiElement.children
     return children.isNotEmpty() && hasSyntaxErrors(children.last())
 }
 

@@ -18,11 +18,11 @@ package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.psi.KtNamedFunction
 
-public interface BodyResolveCache {
-    public open fun resolveFunctionBody(function: KtNamedFunction): BindingContext
+interface BodyResolveCache {
+    open fun resolveFunctionBody(function: KtNamedFunction): BindingContext
 
-    public object ThrowException : BodyResolveCache {
-        public override fun resolveFunctionBody(function: KtNamedFunction): BindingContext {
+    object ThrowException : BodyResolveCache {
+        override fun resolveFunctionBody(function: KtNamedFunction): BindingContext {
             throw UnsupportedOperationException()
         }
     }

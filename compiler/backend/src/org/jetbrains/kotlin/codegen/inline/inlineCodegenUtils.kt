@@ -27,14 +27,14 @@ import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 
-public val FunctionDescriptor.sourceFilePath: String
+val FunctionDescriptor.sourceFilePath: String
     get() {
         val source = source as PsiSourceElement
         val containingFile = source.psi?.containingFile
         return containingFile?.virtualFile?.canonicalPath!!
     }
 
-public fun FunctionDescriptor.getClassFilePath(typeMapper: JetTypeMapper, cache: IncrementalCache): String {
+fun FunctionDescriptor.getClassFilePath(typeMapper: JetTypeMapper, cache: IncrementalCache): String {
     val container = containingDeclaration as? DeclarationDescriptorWithSource
     val source = container?.source
 

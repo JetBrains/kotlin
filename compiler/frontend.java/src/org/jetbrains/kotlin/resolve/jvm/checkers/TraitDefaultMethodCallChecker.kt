@@ -28,13 +28,13 @@ import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
-public class TraitDefaultMethodCallChecker : CallChecker {
+class TraitDefaultMethodCallChecker : CallChecker {
 
     override fun <F : CallableDescriptor> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
         if (getSuperCallExpression(resolvedCall.getCall()) == null) return
 
-        val targetDescriptor = resolvedCall.getResultingDescriptor().getOriginal()
-        val containerDescriptor = targetDescriptor.getContainingDeclaration()
+        val targetDescriptor = resolvedCall.resultingDescriptor.original
+        val containerDescriptor = targetDescriptor.containingDeclaration
 
         if (containerDescriptor is JavaClassDescriptor && DescriptorUtils.isInterface(containerDescriptor)) {
             //is java interface default method called from trait

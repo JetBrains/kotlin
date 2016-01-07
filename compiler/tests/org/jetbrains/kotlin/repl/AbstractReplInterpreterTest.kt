@@ -38,7 +38,7 @@ private val TRAILING_NEWLINE_REGEX = Regex("\n$")
 
 private val INCOMPLETE_LINE_MESSAGE = "incomplete line"
 
-public abstract class AbstractReplInterpreterTest : UsefulTestCase() {
+abstract class AbstractReplInterpreterTest : UsefulTestCase() {
     init {
         System.setProperty("java.awt.headless", "true")
     }
@@ -82,7 +82,7 @@ public abstract class AbstractReplInterpreterTest : UsefulTestCase() {
 
     protected fun doTest(path: String) {
         val configuration = KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK)
-        val repl = ReplInterpreter(getTestRootDisposable()!!, configuration, false, null)
+        val repl = ReplInterpreter(testRootDisposable!!, configuration, false, null)
 
         for ((code, expected) in loadLines(File(path))) {
             val lineResult = repl.eval(code)
@@ -91,10 +91,10 @@ public abstract class AbstractReplInterpreterTest : UsefulTestCase() {
                 repl.dumpClasses(PrintWriter(System.out))
             }
 
-            val actual = when (lineResult.getType()) {
+            val actual = when (lineResult.type) {
                 ReplInterpreter.LineResultType.SUCCESS -> if (!lineResult.isUnit) "${lineResult.value}" else ""
                 ReplInterpreter.LineResultType.RUNTIME_ERROR,
-                ReplInterpreter.LineResultType.COMPILE_ERROR -> lineResult.getErrorText()
+                ReplInterpreter.LineResultType.COMPILE_ERROR -> lineResult.errorText
                 ReplInterpreter.LineResultType.INCOMPLETE -> INCOMPLETE_LINE_MESSAGE
             }
 

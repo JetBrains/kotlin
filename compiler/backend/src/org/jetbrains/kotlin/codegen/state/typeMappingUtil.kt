@@ -56,7 +56,7 @@ private fun KotlinType.canHaveSubtypesIgnoringNullability(): Boolean {
     return false
 }
 
-public fun getEffectiveVariance(parameterVariance: Variance, projectionKind: Variance): Variance {
+fun getEffectiveVariance(parameterVariance: Variance, projectionKind: Variance): Variance {
     if (parameterVariance === Variance.INVARIANT) {
         return projectionKind
     }

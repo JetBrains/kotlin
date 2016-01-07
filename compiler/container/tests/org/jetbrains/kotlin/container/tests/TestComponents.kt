@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.container.tests
 import java.io.*
 
 interface TestComponentInterface {
-    public val disposed: Boolean
+    val disposed: Boolean
     fun foo()
 }
 
@@ -27,7 +27,7 @@ interface TestClientComponentInterface {
 }
 
 class TestComponent : TestComponentInterface, Closeable {
-    public override var disposed: Boolean = false
+    override var disposed: Boolean = false
     override fun close() {
         disposed = true
     }
@@ -38,7 +38,7 @@ class TestComponent : TestComponentInterface, Closeable {
 }
 
 class ManualTestComponent(val name: String) : TestComponentInterface, Closeable {
-    public override var disposed: Boolean = false
+    override var disposed: Boolean = false
     override fun close() {
         disposed = true
     }

@@ -18,14 +18,14 @@ package org.jetbrains.kotlin.fileClasses
 
 import org.jetbrains.kotlin.name.FqName
 
-public interface JvmFileClassInfo {
-    public val fileClassFqName: FqName
-    public val facadeClassFqName: FqName
-    public val withJvmName: Boolean
-    public val withJvmMultifileClass: Boolean
+interface JvmFileClassInfo {
+    val fileClassFqName: FqName
+    val facadeClassFqName: FqName
+    val withJvmName: Boolean
+    val withJvmMultifileClass: Boolean
 }
 
-public class JvmSimpleFileClassInfo(
+class JvmSimpleFileClassInfo(
         override val fileClassFqName: FqName,
         override val withJvmName: Boolean
 ) : JvmFileClassInfo {
@@ -33,7 +33,7 @@ public class JvmSimpleFileClassInfo(
     override val withJvmMultifileClass: Boolean get() = false
 }
 
-public class JvmMultifileClassPartInfo(
+class JvmMultifileClassPartInfo(
         override val fileClassFqName: FqName,
         override val facadeClassFqName: FqName
 ) : JvmFileClassInfo {

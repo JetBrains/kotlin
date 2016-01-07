@@ -54,12 +54,12 @@ class LazyOperationsLog(
 
     private val records = ArrayList<Record>()
 
-    public val addRecordFunction: (lambda: Any, LoggingStorageManager.CallData) -> Unit = {
+    val addRecordFunction: (lambda: Any, LoggingStorageManager.CallData) -> Unit = {
         lambda, data ->
         records.add(Record(lambda, data))
     }
 
-    public fun getText(): String {
+    fun getText(): String {
         val groupedByOwner = records.groupByTo(IdentityHashMap()) {
             it.data.fieldOwner
         }.map { Pair(it.key, it.value) }
@@ -109,7 +109,7 @@ class LazyOperationsLog(
         val data = record.data
         val sb = StringBuilder()
 
-        sb.append(data.field?.getName() ?: "in ${data.lambdaCreatedIn.getDeclarationName()}")
+        sb.append(data.field?.name ?: "in ${data.lambdaCreatedIn.getDeclarationName()}")
 
         if (!data.arguments.isEmpty()) {
             data.arguments.joinTo(sb, ", ", "(", ")") { render(it) }
@@ -135,23 +135,23 @@ class LazyOperationsLog(
         val id = objectId(o)
 
         val aClass = o.javaClass
-        sb.append(if (aClass.isAnonymousClass()) aClass.getName().substringAfterLast('.') else aClass.getSimpleName()).append("@$id")
+        sb.append(if (aClass.isAnonymousClass) aClass.name.substringAfterLast('.') else aClass.simpleName).append("@$id")
 
         fun Any.appendQuoted() {
             sb.append("['").append(this).append("']")
         }
 
         when {
-            o is Named -> o.getName().appendQuoted()
-            o.javaClass.getSimpleName() == "LazyJavaClassifierType" -> {
+            o is Named -> o.name.appendQuoted()
+            o.javaClass.simpleName == "LazyJavaClassifierType" -> {
                 val javaType = o.field<JavaTypeImpl<*>>("javaType")
-                javaType.getPsi().getPresentableText().appendQuoted()
+                javaType.psi.presentableText.appendQuoted()
             }
-            o.javaClass.getSimpleName() == "LazyJavaClassTypeConstructor" -> {
+            o.javaClass.simpleName == "LazyJavaClassTypeConstructor" -> {
                 val javaClass = o.field<Any>("this\$0").field<JavaClassImpl>("jClass")
-                javaClass.getPsi().getName()!!.appendQuoted()
+                javaClass.psi.name!!.appendQuoted()
             }
-            o.javaClass.getSimpleName() == "DeserializedType" -> {
+            o.javaClass.simpleName == "DeserializedType" -> {
                 val typeDeserializer = o.field<TypeDeserializer>("typeDeserializer")
                 val context = typeDeserializer.field<DeserializationContext>("c")
                 val typeProto = o.field<ProtoBuf.Type>("typeProto")
@@ -166,10 +166,10 @@ class LazyOperationsLog(
                 text.appendQuoted()
             }
             o is JavaNamedElement -> {
-                o.getName().appendQuoted()
+                o.name.appendQuoted()
             }
             o is JavaTypeImpl<*> -> {
-                o.getPsi().getPresentableText().appendQuoted()
+                o.psi.presentableText.appendQuoted()
             }
             o is Collection<*> -> {
                 if (o.isEmpty()) {
@@ -182,14 +182,14 @@ class LazyOperationsLog(
             }
             o is KotlinTypeImpl -> {
                 StringBuilder().apply {
-                    append(o.getConstructor())
-                    if (!o.getArguments().isEmpty()) {
-                        append("<${o.getArguments().size}>")
+                    append(o.constructor)
+                    if (!o.arguments.isEmpty()) {
+                        append("<${o.arguments.size}>")
                     }
                 }.appendQuoted()
             }
-            o is ResolutionCandidate<*> -> DescriptorRenderer.COMPACT.render(o.getDescriptor()).appendQuoted()
-            o is ResolutionTaskHolder<*, *> -> o.field<BasicCallResolutionContext>("basicCallResolutionContext").call.getCallElement().getDebugText().appendQuoted()
+            o is ResolutionCandidate<*> -> DescriptorRenderer.COMPACT.render(o.descriptor).appendQuoted()
+            o is ResolutionTaskHolder<*, *> -> o.field<BasicCallResolutionContext>("basicCallResolutionContext").call.callElement.getDebugText().appendQuoted()
         }
         return sb.toString()
     }
@@ -197,7 +197,7 @@ class LazyOperationsLog(
 
 private fun <T> Any.field(name: String): T {
     val field = this.javaClass.getDeclaredField(name)
-    field.setAccessible(true)
+    field.isAccessible = true
     @Suppress("UNCHECKED_CAST")
     return field.get(this) as T
 }
@@ -212,7 +212,7 @@ private fun Printer.indent(body: Printer.() -> Unit): Printer {
 private fun GenericDeclaration?.getDeclarationName(): String? {
     return when (this) {
         is Class<*> -> getName().substringAfterLast(".")
-        is Method -> getDeclaringClass().getDeclarationName() + "::" + getName() + "()"
+        is Method -> declaringClass.getDeclarationName() + "::" + name + "()"
         is Constructor<*> -> getDeclaringClass().getDeclarationName() + "::" + getName() + "()"
         else -> "<no name>"
     }

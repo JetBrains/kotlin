@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-public class KClassJavaProperty : IntrinsicPropertyGetter() {
+class KClassJavaProperty : IntrinsicPropertyGetter() {
     override fun generate(resolvedCall: ResolvedCall<*>?, codegen: ExpressionCodegen, returnType: Type, receiver: StackValue): StackValue? {
         val extensionReceiver = resolvedCall!!.extensionReceiver as ReceiverValue
         val type = extensionReceiver.type.arguments.single().type

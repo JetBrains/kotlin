@@ -22,12 +22,12 @@ import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 
-public interface VariableAsFunctionResolvedCall {
-    public val functionCall: ResolvedCall<FunctionDescriptor>
-    public val variableCall: ResolvedCall<VariableDescriptor>
+interface VariableAsFunctionResolvedCall {
+    val functionCall: ResolvedCall<FunctionDescriptor>
+    val variableCall: ResolvedCall<VariableDescriptor>
 }
 
-public interface VariableAsFunctionMutableResolvedCall : VariableAsFunctionResolvedCall {
+interface VariableAsFunctionMutableResolvedCall : VariableAsFunctionResolvedCall {
     override val functionCall: MutableResolvedCall<FunctionDescriptor>
     override val variableCall: MutableResolvedCall<VariableDescriptor>
 }
@@ -42,16 +42,16 @@ class VariableAsFunctionResolvedCallImpl(
         variableCall.markCallAsCompleted()
     }
 
-    override fun isCompleted(): Boolean = functionCall.isCompleted() && variableCall.isCompleted()
+    override fun isCompleted(): Boolean = functionCall.isCompleted && variableCall.isCompleted
 
-    override fun getStatus(): ResolutionStatus = variableCall.getStatus().combine(functionCall.getStatus())
+    override fun getStatus(): ResolutionStatus = variableCall.status.combine(functionCall.status)
 
     override fun getTrace(): DelegatingBindingTrace {
         //functionCall.trace is temporary trace above variableCall.trace and is committed already
         if (CallResolver.useNewResolve) {
             return functionCall.trace
         }
-        return variableCall.getTrace()
+        return variableCall.trace
     }
 
 }

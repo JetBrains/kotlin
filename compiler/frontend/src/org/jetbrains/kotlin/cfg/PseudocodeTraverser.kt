@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDec
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineEnterInstruction
 
-public fun Pseudocode.traverse(
+fun Pseudocode.traverse(
         traversalOrder: TraversalOrder,
         analyzeInstruction: (Instruction) -> Unit
 ) {
@@ -38,7 +38,7 @@ public fun Pseudocode.traverse(
     }
 }
 
-public fun <D> Pseudocode.traverse(
+fun <D> Pseudocode.traverse(
         traversalOrder: TraversalOrder,
         edgesMap: Map<Instruction, Edges<D>>,
         analyzeInstruction: (Instruction, D, D) -> Unit
@@ -55,7 +55,7 @@ public fun <D> Pseudocode.traverse(
     }
 }
 
-public fun <I : ControlFlowInfo<*>> Pseudocode.collectData(
+fun <I : ControlFlowInfo<*>> Pseudocode.collectData(
         traversalOrder: TraversalOrder,
         mergeDataWithLocalDeclarations: Boolean,
         mergeEdges: (Instruction, Collection<I>) -> Edges<I>,
@@ -81,7 +81,7 @@ private fun <I> Pseudocode.initializeEdgesMap(
         edgesMap: MutableMap<Instruction, Edges<I>>,
         initialInfo: I
 ) {
-    val instructions = getInstructions()
+    val instructions = instructions
     val initialEdge = Edges(initialInfo, initialInfo)
     for (instruction in instructions) {
         edgesMap.put(instruction, initialEdge)
@@ -175,7 +175,7 @@ enum class TraverseInstructionResult {
 }
 
 // returns false when interrupted by handler
-public fun traverseFollowingInstructions(
+fun traverseFollowingInstructions(
         rootInstruction: Instruction,
         visited: MutableSet<Instruction>,
         order: TraversalOrder,
@@ -197,19 +197,19 @@ public fun traverseFollowingInstructions(
     return true
 }
 
-public enum class TraversalOrder {
+enum class TraversalOrder {
     FORWARD,
     BACKWARD
 }
 
 fun Pseudocode.getStartInstruction(traversalOrder: TraversalOrder): Instruction =
-        if (traversalOrder == FORWARD) getEnterInstruction() else getSinkInstruction()
+        if (traversalOrder == FORWARD) enterInstruction else sinkInstruction
 
 fun Pseudocode.getLastInstruction(traversalOrder: TraversalOrder): Instruction =
-        if (traversalOrder == FORWARD) getSinkInstruction() else getEnterInstruction()
+        if (traversalOrder == FORWARD) sinkInstruction else enterInstruction
 
 fun Pseudocode.getInstructions(traversalOrder: TraversalOrder): MutableList<Instruction> =
-        if (traversalOrder == FORWARD) getInstructions() else getReversedInstructions()
+        if (traversalOrder == FORWARD) instructions else reversedInstructions
 
 fun Instruction.getNextInstructions(traversalOrder: TraversalOrder): Collection<Instruction> =
         if (traversalOrder == FORWARD) nextInstructions else previousInstructions

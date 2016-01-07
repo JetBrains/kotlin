@@ -27,15 +27,15 @@ import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
  * Functions in this file are intended to create type info instances in different circumstances
  */
 
-public fun createTypeInfo(type: KotlinType?, dataFlowInfo: DataFlowInfo): KotlinTypeInfo = KotlinTypeInfo(type, dataFlowInfo)
+fun createTypeInfo(type: KotlinType?, dataFlowInfo: DataFlowInfo): KotlinTypeInfo = KotlinTypeInfo(type, dataFlowInfo)
 
-public fun createTypeInfo(type: KotlinType?, dataFlowInfo: DataFlowInfo, jumpPossible: Boolean, jumpFlowInfo: DataFlowInfo): KotlinTypeInfo =
+fun createTypeInfo(type: KotlinType?, dataFlowInfo: DataFlowInfo, jumpPossible: Boolean, jumpFlowInfo: DataFlowInfo): KotlinTypeInfo =
         KotlinTypeInfo(type, dataFlowInfo, jumpPossible, jumpFlowInfo)
 
-public fun createTypeInfo(type: KotlinType?): KotlinTypeInfo = createTypeInfo(type, DataFlowInfo.EMPTY)
+fun createTypeInfo(type: KotlinType?): KotlinTypeInfo = createTypeInfo(type, DataFlowInfo.EMPTY)
 
-public fun createTypeInfo(type: KotlinType?, context: ResolutionContext<*>): KotlinTypeInfo = createTypeInfo(type, context.dataFlowInfo)
+fun createTypeInfo(type: KotlinType?, context: ResolutionContext<*>): KotlinTypeInfo = createTypeInfo(type, context.dataFlowInfo)
 
-public fun noTypeInfo(dataFlowInfo: DataFlowInfo): KotlinTypeInfo = createTypeInfo(null, dataFlowInfo)
+fun noTypeInfo(dataFlowInfo: DataFlowInfo): KotlinTypeInfo = createTypeInfo(null, dataFlowInfo)
 
-public fun noTypeInfo(context: ResolutionContext<*>): KotlinTypeInfo = noTypeInfo(context.dataFlowInfo)
+fun noTypeInfo(context: ResolutionContext<*>): KotlinTypeInfo = noTypeInfo(context.dataFlowInfo)

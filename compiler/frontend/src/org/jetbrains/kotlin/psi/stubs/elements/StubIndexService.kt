@@ -25,48 +25,47 @@ import org.jetbrains.kotlin.psi.stubs.*
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 import java.io.IOException
 
-public open class StubIndexService protected constructor() {
-    public open fun indexFile(stub: KotlinFileStub, sink: IndexSink) {
+open class StubIndexService protected constructor() {
+    open fun indexFile(stub: KotlinFileStub, sink: IndexSink) {
     }
 
-    public open fun indexClass(stub: KotlinClassStub, sink: IndexSink) {
+    open fun indexClass(stub: KotlinClassStub, sink: IndexSink) {
     }
 
-    public open fun indexFunction(stub: KotlinFunctionStub, sink: IndexSink) {
+    open fun indexFunction(stub: KotlinFunctionStub, sink: IndexSink) {
     }
 
-    public open fun indexObject(stub: KotlinObjectStub, sink: IndexSink) {
+    open fun indexObject(stub: KotlinObjectStub, sink: IndexSink) {
     }
 
-    public open fun indexProperty(stub: KotlinPropertyStub, sink: IndexSink) {
+    open fun indexProperty(stub: KotlinPropertyStub, sink: IndexSink) {
     }
 
-    public open fun indexAnnotation(stub: KotlinAnnotationEntryStub, sink: IndexSink) {
+    open fun indexAnnotation(stub: KotlinAnnotationEntryStub, sink: IndexSink) {
     }
 
-    public open fun indexScript(stub: KotlinScriptStub, sink: IndexSink) {
+    open fun indexScript(stub: KotlinScriptStub, sink: IndexSink) {
     }
 
-    public open fun createFileStub(file: KtFile): KotlinFileStub {
+    open fun createFileStub(file: KtFile): KotlinFileStub {
         return KotlinFileStubImpl(file, file.packageFqNameByTree.asString(), file.isScriptByTree)
     }
 
     @Throws(IOException::class)
-    public open fun serializeFileStub(stub: KotlinFileStub, dataStream: StubOutputStream) {
+    open fun serializeFileStub(stub: KotlinFileStub, dataStream: StubOutputStream) {
         dataStream.writeName(stub.getPackageFqName().asString())
         dataStream.writeBoolean(stub.isScript())
     }
 
     @Throws(IOException::class)
-    public open fun deserializeFileStub(dataStream: StubInputStream): KotlinFileStub {
+    open fun deserializeFileStub(dataStream: StubInputStream): KotlinFileStub {
         val packageFqNameAsString = dataStream.readName()
         val isScript = dataStream.readBoolean()
         return KotlinFileStubImpl(null, packageFqNameAsString!!, isScript)
     }
 
     companion object {
-        @JvmStatic
-        public fun getInstance(): StubIndexService {
+        @JvmStatic fun getInstance(): StubIndexService {
             return ServiceManager.getService(StubIndexService::class.java) ?: NO_INDEX
         }
 

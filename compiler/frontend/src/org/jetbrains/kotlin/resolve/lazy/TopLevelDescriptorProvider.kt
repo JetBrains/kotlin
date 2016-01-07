@@ -21,13 +21,13 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor
 
-public interface TopLevelDescriptorProvider {
+interface TopLevelDescriptorProvider {
     fun getPackageFragment(fqName: FqName): LazyPackageDescriptor?
 
     fun getTopLevelClassDescriptors(fqName: FqName, location: LookupLocation): Collection<ClassDescriptor>
 }
 
-public object NoTopLevelDescriptorProvider : TopLevelDescriptorProvider {
+object NoTopLevelDescriptorProvider : TopLevelDescriptorProvider {
     private fun shouldNotBeCalled(): Nothing = throw UnsupportedOperationException("Should not be called")
 
     override fun getPackageFragment(fqName: FqName): LazyPackageDescriptor? {

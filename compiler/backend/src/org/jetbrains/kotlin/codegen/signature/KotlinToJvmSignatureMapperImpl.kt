@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.KotlinToJvmSignatureMapper
 
-public class KotlinToJvmSignatureMapperImpl : KotlinToJvmSignatureMapper {
+class KotlinToJvmSignatureMapperImpl : KotlinToJvmSignatureMapper {
     // We use empty BindingContext, because it is only used by JetTypeMapper for purposes irrelevant to the needs of this class
     private val typeMapper: JetTypeMapper = JetTypeMapper(BindingContext.EMPTY, ClassBuilderMode.LIGHT_CLASSES, NoResolveFileClassesProvider, null, JvmAbi.DEFAULT_MODULE_NAME)
 

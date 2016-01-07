@@ -30,16 +30,16 @@ import org.jetbrains.kotlin.psi.*
 
 class MutableDiagnosticsTest : KotlinTestWithEnvironment() {
     override fun createEnvironment(): KotlinCoreEnvironment? {
-        return KotlinCoreEnvironment.createForTests(getTestRootDisposable()!!, CompilerConfiguration(), EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        return KotlinCoreEnvironment.createForTests(testRootDisposable!!, CompilerConfiguration(), EnvironmentConfigFiles.JVM_CONFIG_FILES)
     }
 
     private val BindingTrace.diagnostics: Diagnostics
-        get() = getBindingContext().getDiagnostics()
+        get() = bindingContext.diagnostics
 
     fun testPropagatingModification() {
         val base = BindingTraceContext()
-        val middle = DelegatingBindingTrace(base.getBindingContext(), "middle")
-        val derived = DelegatingBindingTrace(middle.getBindingContext(), "derived")
+        val middle = DelegatingBindingTrace(base.bindingContext, "middle")
+        val derived = DelegatingBindingTrace(middle.bindingContext, "derived")
 
         Assert.assertTrue(base.diagnostics.isEmpty())
         Assert.assertTrue(middle.diagnostics.isEmpty())
@@ -81,8 +81,8 @@ class MutableDiagnosticsTest : KotlinTestWithEnvironment() {
 
     fun testCaching() {
         val base = BindingTraceContext()
-        val middle = DelegatingBindingTrace(base.getBindingContext(), "middle")
-        val derived = DelegatingBindingTrace(middle.getBindingContext(), "derived")
+        val middle = DelegatingBindingTrace(base.bindingContext, "middle")
+        val derived = DelegatingBindingTrace(middle.bindingContext, "derived")
 
         base.reportDiagnostic()
         middle.reportDiagnostic()
@@ -128,14 +128,14 @@ class MutableDiagnosticsTest : KotlinTestWithEnvironment() {
 
     //NOTE: cannot simply call all() since it applies filter on every query and produces new collection
     private fun Diagnostics.contents(): MutableCollection<Diagnostic> {
-        return (this as MutableDiagnosticsWithSuppression).getReadonlyView().getDiagnostics()
+        return (this as MutableDiagnosticsWithSuppression).getReadonlyView().diagnostics
     }
 
     private class DummyDiagnosticFactory : DiagnosticFactory<DummyDiagnostic>("DUMMY", Severity.ERROR)
 
     private inner class DummyDiagnostic : Diagnostic {
         private val factory = DummyDiagnosticFactory()
-        private val dummyElement = KtPsiFactory(getEnvironment().project).createType("Int")
+        private val dummyElement = KtPsiFactory(environment.project).createType("Int")
 
         init {
             dummyElement.getContainingKtFile().doNotAnalyze = null

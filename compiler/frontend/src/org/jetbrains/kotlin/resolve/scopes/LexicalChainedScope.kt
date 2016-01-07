@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.util.collectionUtils.getFirstMatch
 import org.jetbrains.kotlin.util.collectionUtils.getFromAllScopes
 import org.jetbrains.kotlin.utils.Printer
 
-public class LexicalChainedScope @JvmOverloads constructor(
+class LexicalChainedScope @JvmOverloads constructor(
         parent: LexicalScope,
         override val ownerDescriptor: DeclarationDescriptor,
         override val isOwnerDescriptorAccessibleByLabel: Boolean,

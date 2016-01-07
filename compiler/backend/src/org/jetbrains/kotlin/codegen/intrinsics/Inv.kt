@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.CallableMethod
 import org.jetbrains.org.objectweb.asm.Type
 
-public class Inv : IntrinsicMethod() {
+class Inv : IntrinsicMethod() {
     override fun toCallable(method: CallableMethod): Callable {
         val type = numberFunctionOperandType(method.returnType)
         return createUnaryIntrinsicCallable(method, newThisType = type) {

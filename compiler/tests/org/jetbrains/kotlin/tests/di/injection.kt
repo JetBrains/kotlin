@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.FakeCallResolver
 
-public fun createContainerForTests(project: Project, module: ModuleDescriptor): ContainerForTests {
+fun createContainerForTests(project: Project, module: ModuleDescriptor): ContainerForTests {
     return ContainerForTests(createContainer("Tests") {
         configureModule(ModuleContext(module, project), JvmPlatform)
         useInstance(LookupTracker.DO_NOTHING)

@@ -59,7 +59,7 @@ import java.net.URLClassLoader
 import java.util.*
 import java.util.regex.Pattern
 
-public abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
+abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
     companion object {
         private val renderer = DescriptorRenderer.withOptions {
             withDefinedIn = false

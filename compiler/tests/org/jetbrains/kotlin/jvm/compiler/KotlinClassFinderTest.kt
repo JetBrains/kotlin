@@ -34,7 +34,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-public class KotlinClassFinderTest : KotlinTestWithEnvironmentManagement() {
+class KotlinClassFinderTest : KotlinTestWithEnvironmentManagement() {
     fun testAbsentClass() {
         val tmpdir = KotlinTestUtils.tmpDirForTest(this)
 
@@ -49,7 +49,7 @@ public class KotlinClassFinderTest : KotlinTestWithEnvironmentManagement() {
     fun testNestedClass() {
         val tmpdir = KotlinTestUtils.tmpDirForTest(this)
         KotlinTestUtils.compileKotlinWithJava(
-                listOf(), listOf(File("compiler/testData/kotlinClassFinder/nestedClass.kt")), tmpdir, getTestRootDisposable()!!, null
+                listOf(), listOf(File("compiler/testData/kotlinClassFinder/nestedClass.kt")), tmpdir, testRootDisposable!!, null
         )
 
         val environment = createEnvironment(tmpdir)
@@ -63,11 +63,11 @@ public class KotlinClassFinderTest : KotlinTestWithEnvironmentManagement() {
         val binaryClass = JvmVirtualFileFinder.SERVICE.getInstance(project).findKotlinClass(JavaClassImpl(psiClass!!))
         assertNotNull(binaryClass, "No binary class for $className")
 
-        assertEquals("test/A.B.C", binaryClass?.getClassId()?.toString())
+        assertEquals("test/A.B.C", binaryClass?.classId?.toString())
     }
 
     private fun createEnvironment(tmpdir: File?): KotlinCoreEnvironment {
-        val environment = KotlinCoreEnvironment.createForTests(getTestRootDisposable()!!,
+        val environment = KotlinCoreEnvironment.createForTests(testRootDisposable!!,
                                                                KotlinTestUtils.compilerConfigurationForTests(
                                                                        ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir),
                                                                EnvironmentConfigFiles.JVM_CONFIG_FILES)

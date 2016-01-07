@@ -21,8 +21,7 @@ import com.intellij.util.SmartFMap
 object SMAPParser {
 
     @JvmStatic
-    /*null smap means that there is no any debug info in file (e.g. sourceName)*/
-    public fun parseOrCreateDefault(mappingInfo: String?, source: String?, path: String, methodStartLine: Int, methodEndLine: Int): SMAP {
+    /*null smap means that there is no any debug info in file (e.g. sourceName)*/ fun parseOrCreateDefault(mappingInfo: String?, source: String?, path: String, methodStartLine: Int, methodEndLine: Int): SMAP {
         if (mappingInfo == null || mappingInfo.isEmpty()) {
             val fm: FileMapping
             if (source == null || source.isEmpty()) {
@@ -40,8 +39,7 @@ object SMAPParser {
         return parse(mappingInfo)
     }
 
-    @JvmStatic
-    public fun parse(mappingInfo: String): SMAP {
+    @JvmStatic fun parse(mappingInfo: String): SMAP {
         val fileMappings = linkedMapOf<Int, FileMapping>()
 
         val fileSectionStart = mappingInfo.indexOf(SMAP.FILE_SECTION) + SMAP.FILE_SECTION.length

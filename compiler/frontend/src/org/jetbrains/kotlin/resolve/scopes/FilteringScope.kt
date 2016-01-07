@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.Printer
 
-public class FilteringScope(private val workerScope: MemberScope, private val predicate: (DeclarationDescriptor) -> Boolean) : MemberScope {
+class FilteringScope(private val workerScope: MemberScope, private val predicate: (DeclarationDescriptor) -> Boolean) : MemberScope {
 
     override fun getContributedFunctions(name: Name, location: LookupLocation) = workerScope.getContributedFunctions(name, location).filter(predicate)
 
@@ -36,7 +36,7 @@ public class FilteringScope(private val workerScope: MemberScope, private val pr
                                            nameFilter: (Name) -> Boolean) = workerScope.getContributedDescriptors(kindFilter, nameFilter).filter(predicate)
 
     override fun printScopeStructure(p: Printer) {
-        p.println(javaClass.getSimpleName(), " {")
+        p.println(javaClass.simpleName, " {")
         p.pushIndent()
 
         p.print("workerScope = ")

@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.codegen.generated.AbstractBlackBoxCodegenTest
 import java.io.File
 
 
-public abstract class AbstractBlackBoxMultifileClassCodegenTest: AbstractBlackBoxCodegenTest() {
-    public fun doTestMultifileClassAgainstSources(firstFileName: String) {
+abstract class AbstractBlackBoxMultifileClassCodegenTest: AbstractBlackBoxCodegenTest() {
+    fun doTestMultifileClassAgainstSources(firstFileName: String) {
         val fileName = relativePath(File(firstFileName))
         val inputFiles = listOf(fileName, fileName.substringBeforeLast("1.kt") + "2.kt")
 

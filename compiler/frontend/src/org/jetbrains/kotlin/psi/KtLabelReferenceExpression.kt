@@ -20,6 +20,6 @@ import com.intellij.lang.ASTNode
 import org.jetbrains.kotlin.lexer.KtTokens
 import com.intellij.psi.PsiElement
 
-public class KtLabelReferenceExpression(node: ASTNode) : KtSimpleNameExpressionImpl(node) {
-     public override fun getReferencedNameElement() = getIdentifier() ?: this
+class KtLabelReferenceExpression(node: ASTNode) : KtSimpleNameExpressionImpl(node) {
+     override fun getReferencedNameElement() = getIdentifier() ?: this
 }

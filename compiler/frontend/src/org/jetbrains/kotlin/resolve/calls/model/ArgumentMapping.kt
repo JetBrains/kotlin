@@ -19,15 +19,15 @@ package org.jetbrains.kotlin.resolve.calls.model
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.types.ErrorUtils
 
-public interface ArgumentMapping {
-    public fun isError(): Boolean
+interface ArgumentMapping {
+    fun isError(): Boolean
 }
 
-public object ArgumentUnmapped: ArgumentMapping {
+object ArgumentUnmapped: ArgumentMapping {
     override fun isError(): Boolean = true
 }
 
-public enum class ArgumentMatchStatus(val isError: Boolean = true) {
+enum class ArgumentMatchStatus(val isError: Boolean = true) {
     SUCCESS(false),
     TYPE_MISMATCH(),
     ARGUMENT_HAS_NO_TYPE(),
@@ -39,9 +39,9 @@ public enum class ArgumentMatchStatus(val isError: Boolean = true) {
     UNKNOWN()
 }
 
-public interface ArgumentMatch : ArgumentMapping {
-    public val valueParameter: ValueParameterDescriptor
-    public val status: ArgumentMatchStatus
+interface ArgumentMatch : ArgumentMapping {
+    val valueParameter: ValueParameterDescriptor
+    val status: ArgumentMatchStatus
 
     override fun isError(): Boolean = status.isError
 }

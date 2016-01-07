@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 
-public class IncrementalPackageFragmentProvider(
+class IncrementalPackageFragmentProvider(
         sourceFiles: Collection<KtFile>,
         val moduleDescriptor: ModuleDescriptor,
         val storageManager: StorageManager,
@@ -51,7 +51,7 @@ public class IncrementalPackageFragmentProvider(
 ) : PackageFragmentProvider {
 
     companion object {
-        public fun fqNamesToLoad(obsoletePackageParts: Collection<String>, sourceFiles: Collection<KtFile>): Set<FqName> =
+        fun fqNamesToLoad(obsoletePackageParts: Collection<String>, sourceFiles: Collection<KtFile>): Set<FqName> =
                 (obsoletePackageParts.map { JvmClassName.byInternalName(it).packageFqName }
                  + PackagePartClassUtils.getFilesWithCallables(sourceFiles).map { it.packageFqName }).toSet()
     }
@@ -67,7 +67,7 @@ public class IncrementalPackageFragmentProvider(
                 return
             }
 
-            if (!fqName.isRoot()) {
+            if (!fqName.isRoot) {
                 val parent = fqName.parent()
                 createPackageFragment(parent)
                 fqNameToSubFqNames.putValue(parent, fqName)
@@ -88,8 +88,8 @@ public class IncrementalPackageFragmentProvider(
     }
 
 
-    public inner class IncrementalPackageFragment(fqName: FqName) : PackageFragmentDescriptorImpl(moduleDescriptor, fqName) {
-        public val target: TargetId
+    inner class IncrementalPackageFragment(fqName: FqName) : PackageFragmentDescriptorImpl(moduleDescriptor, fqName) {
+        val target: TargetId
             get() = this@IncrementalPackageFragmentProvider.target
 
         val memberScope: NotNullLazyValue<MemberScope> = storageManager.createLazyValue {
@@ -126,7 +126,7 @@ public class IncrementalPackageFragmentProvider(
             }
         }
 
-        public fun getPackageFragmentForMultifileClass(multifileClassFqName: FqName): IncrementalMultifileClassPackageFragment? {
+        fun getPackageFragmentForMultifileClass(multifileClassFqName: FqName): IncrementalMultifileClassPackageFragment? {
             val facadeInternalName = JvmClassName.byFqNameWithoutInnerClasses(multifileClassFqName).internalName
             val partsNames = incrementalCache.getStableMultifileFacadeParts(facadeInternalName) ?: return null
             return IncrementalMultifileClassPackageFragment(multifileClassFqName, partsNames)
@@ -134,7 +134,7 @@ public class IncrementalPackageFragmentProvider(
 
         override fun getMemberScope(): MemberScope = memberScope()
 
-        public inner class IncrementalMultifileClassPackageFragment(
+        inner class IncrementalMultifileClassPackageFragment(
                 val multifileClassFqName: FqName,
                 val partsNames: Collection<String>
         ) : PackageFragmentDescriptorImpl(moduleDescriptor, multifileClassFqName.parent()) {

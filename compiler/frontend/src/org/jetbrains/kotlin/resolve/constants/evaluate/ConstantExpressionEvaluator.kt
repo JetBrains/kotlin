@@ -41,12 +41,12 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.math.BigInteger
 import java.util.*
 
-public class ConstantExpressionEvaluator(
+class ConstantExpressionEvaluator(
         internal val builtIns: KotlinBuiltIns
 ) {
     internal val constantValueFactory = ConstantValueFactory(builtIns)
 
-    public fun updateNumberType(
+    fun updateNumberType(
             numberType: KotlinType,
             expression: KtExpression?,
             statementFilter: StatementFilter,
@@ -80,7 +80,7 @@ public class ConstantExpressionEvaluator(
         return arguments
     }
 
-    public fun getAnnotationArgumentValue(
+    fun getAnnotationArgumentValue(
             trace: BindingTrace,
             parameterDescriptor: ValueParameterDescriptor,
             resolvedArgument: ResolvedValueArgument
@@ -193,7 +193,7 @@ public class ConstantExpressionEvaluator(
         return constants
     }
 
-    public fun evaluateExpression(
+    fun evaluateExpression(
             expression: KtExpression,
             trace: BindingTrace,
             expectedType: KotlinType? = TypeUtils.NO_EXPECTED_TYPE
@@ -204,7 +204,7 @@ public class ConstantExpressionEvaluator(
         return if (!constant.isError) constant else null
     }
 
-    public fun evaluateToConstantValue(
+    fun evaluateToConstantValue(
             expression: KtExpression,
             trace: BindingTrace,
             expectedType: KotlinType
@@ -214,8 +214,7 @@ public class ConstantExpressionEvaluator(
 
 
     companion object {
-        @JvmStatic
-        public fun getConstant(expression: KtExpression, bindingContext: BindingContext): CompileTimeConstant<*>? {
+        @JvmStatic fun getConstant(expression: KtExpression, bindingContext: BindingContext): CompileTimeConstant<*>? {
             val constant = getPossiblyErrorConstant(expression, bindingContext) ?: return null
             return if (!constant.isError) constant else null
         }
@@ -753,7 +752,7 @@ private class ConstantExpressionEvaluatorVisitor(
 
 private fun hasLongSuffix(text: String) = text.endsWith('l') || text.endsWith('L')
 
-public fun parseLong(text: String): Long? {
+fun parseLong(text: String): Long? {
     try {
         fun substringLongSuffix(s: String) = if (hasLongSuffix(text)) s.substring(0, s.length - 1) else s
         fun parseLong(text: String, radix: Int) = java.lang.Long.parseLong(substringLongSuffix(text), radix)

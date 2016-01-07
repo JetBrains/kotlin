@@ -122,7 +122,7 @@ class LazyImportResolver(
         getImportScope(importDirective)
     }
 
-    public fun <D : DeclarationDescriptor> selectSingleFromImports(
+    fun <D : DeclarationDescriptor> selectSingleFromImports(
             name: Name,
             descriptorSelector: (ImportingScope, Name) -> D?
     ): D? {
@@ -140,7 +140,7 @@ class LazyImportResolver(
         return storageManager.compute(::compute)
     }
 
-    public fun <D : DeclarationDescriptor> collectFromImports(
+    fun <D : DeclarationDescriptor> collectFromImports(
             name: Name,
             descriptorsSelector: (ImportingScope, Name) -> Collection<D>
     ): Collection<D> {
@@ -155,7 +155,7 @@ class LazyImportResolver(
         }
     }
 
-    public fun getImportScope(directive: KtImportDirective): ImportingScope {
+    fun getImportScope(directive: KtImportDirective): ImportingScope {
         return importedScopesProvider(directive) ?: ImportingScope.Empty
     }
 }
@@ -175,7 +175,7 @@ class LazyImportScope(
 
     fun isClassVisible(descriptor: ClassDescriptor): Boolean {
         if (filteringKind == FilteringKind.ALL) return true
-        val visibility = descriptor.getVisibility()
+        val visibility = descriptor.visibility
         val includeVisible = filteringKind == FilteringKind.VISIBLE_CLASSES
         if (!visibility.mustCheckInImports()) return includeVisible
         return Visibilities.isVisibleWithIrrelevantReceiver(descriptor, importResolver.moduleDescriptor) == includeVisible
@@ -220,7 +220,7 @@ class LazyImportScope(
     override fun toString() = "LazyImportScope: " + debugName
 
     override fun printStructure(p: Printer) {
-        p.println(javaClass.getSimpleName(), ": ", debugName, " {")
+        p.println(javaClass.simpleName, ": ", debugName, " {")
         p.pushIndent()
 
         p.popIndent()

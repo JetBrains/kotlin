@@ -23,4 +23,4 @@ import org.jetbrains.kotlin.util.slicedMap.RewritePolicy
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 import org.jetbrains.kotlin.utils.DO_NOTHING
 
-public val RUNTIME_ASSERTION_INFO: WritableSlice<KtExpression, RuntimeAssertionInfo> = BasicWritableSlice(RewritePolicy.DO_NOTHING)
+val RUNTIME_ASSERTION_INFO: WritableSlice<KtExpression, RuntimeAssertionInfo> = BasicWritableSlice(RewritePolicy.DO_NOTHING)

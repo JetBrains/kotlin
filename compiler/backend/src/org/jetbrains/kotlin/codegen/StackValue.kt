@@ -44,7 +44,7 @@ class CoercionValue(
 }
 
 
-public class StackValueWithLeaveTask(
+class StackValueWithLeaveTask(
         val stackValue: StackValue,
         val leaveTasks: (StackValue) -> Unit
 ) : StackValue(stackValue.type) {

@@ -19,23 +19,21 @@ package org.jetbrains.kotlin.progress
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 
-public class CompilationCanceledException : ProcessCanceledException()
+class CompilationCanceledException : ProcessCanceledException()
 
-public interface CompilationCanceledStatus {
+interface CompilationCanceledStatus {
     fun checkCanceled(): Unit
 }
 
-public object ProgressIndicatorAndCompilationCanceledStatus {
+object ProgressIndicatorAndCompilationCanceledStatus {
     private var canceledStatus: CompilationCanceledStatus? = null
 
     @JvmStatic
-    @Synchronized
-    public fun setCompilationCanceledStatus(newCanceledStatus: CompilationCanceledStatus?): Unit {
+    @Synchronized fun setCompilationCanceledStatus(newCanceledStatus: CompilationCanceledStatus?): Unit {
         canceledStatus = newCanceledStatus
     }
 
-    @JvmStatic
-    public fun checkCanceled(): Unit {
+    @JvmStatic fun checkCanceled(): Unit {
         ProgressIndicatorProvider.checkCanceled()
         canceledStatus?.checkCanceled()
     }

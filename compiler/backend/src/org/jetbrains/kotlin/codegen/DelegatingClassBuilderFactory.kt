@@ -25,18 +25,18 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.RawSignature
 import org.jetbrains.org.objectweb.asm.FieldVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 
-public abstract class DelegatingClassBuilderFactory(
+abstract class DelegatingClassBuilderFactory(
         protected val delegate: ClassBuilderFactory
 
 ) : ClassBuilderFactory by delegate {
 
     abstract override fun newClassBuilder(origin: JvmDeclarationOrigin): DelegatingClassBuilder
 
-    public override fun asBytes(builder: ClassBuilder?): ByteArray? {
+    override fun asBytes(builder: ClassBuilder?): ByteArray? {
         return delegate.asBytes((builder as DelegatingClassBuilder).getDelegate())
     }
 
-    public override fun asText(builder: ClassBuilder?): String? {
+    override fun asText(builder: ClassBuilder?): String? {
         return delegate.asText((builder as DelegatingClassBuilder).getDelegate())
     }
 }

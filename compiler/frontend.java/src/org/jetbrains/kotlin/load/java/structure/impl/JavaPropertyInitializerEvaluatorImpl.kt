@@ -25,16 +25,16 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValueFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
-public class JavaPropertyInitializerEvaluatorImpl : JavaPropertyInitializerEvaluator {
+class JavaPropertyInitializerEvaluatorImpl : JavaPropertyInitializerEvaluator {
     override fun getInitializerConstant(field: JavaField, descriptor: PropertyDescriptor): ConstantValue<*>? {
-        val initializer = (field as JavaFieldImpl).getInitializer()
+        val initializer = (field as JavaFieldImpl).initializer
         val evaluated = JavaConstantExpressionEvaluator.computeConstantExpression(initializer, false) ?: return null
         val factory = ConstantValueFactory(descriptor.builtIns)
         when (evaluated) {
             //Note: evaluated expression may be of class that does not match field type in some cases
             // tested for Int, left other checks just in case
             is Byte, is Short, is Int, is Long -> {
-                return factory.createIntegerConstantValue((evaluated as Number).toLong(), descriptor.getType())
+                return factory.createIntegerConstantValue((evaluated as Number).toLong(), descriptor.type)
             }
             else -> {
                 return factory.createConstantValue(evaluated)
@@ -45,6 +45,6 @@ public class JavaPropertyInitializerEvaluatorImpl : JavaPropertyInitializerEvalu
     override fun isNotNullCompileTimeConstant(field: JavaField): Boolean {
         // PsiUtil.isCompileTimeConstant returns false for null-initialized fields,
         // see com.intellij.psi.util.IsConstantExpressionVisitor.visitLiteralExpression()
-        return PsiUtil.isCompileTimeConstant((field as JavaFieldImpl).getPsi())
+        return PsiUtil.isCompileTimeConstant((field as JavaFieldImpl).psi)
     }
 }

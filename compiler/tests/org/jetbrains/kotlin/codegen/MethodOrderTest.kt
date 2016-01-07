@@ -24,8 +24,8 @@ import org.jetbrains.asm4.Opcodes
 import org.jetbrains.kotlin.test.ConfigurationKind
 import java.util.*
 
-public class MethodOrderTest: CodegenTestCase() {
-    public fun testDelegatedMethod() {
+class MethodOrderTest: CodegenTestCase() {
+    fun testDelegatedMethod() {
         doTest(
                 """
                     interface Trait {
@@ -48,7 +48,7 @@ public class MethodOrderTest: CodegenTestCase() {
         )
     }
 
-    public fun testLambdaClosureOrdering() {
+    fun testLambdaClosureOrdering() {
         doTest(
                 """
                     class Klass {
@@ -62,7 +62,7 @@ public class MethodOrderTest: CodegenTestCase() {
         )
     }
 
-    public fun testAnonymousObjectClosureOrdering() {
+    fun testAnonymousObjectClosureOrdering() {
         doTest(
                 """
                     class Klass {
@@ -80,7 +80,7 @@ public class MethodOrderTest: CodegenTestCase() {
         )
     }
 
-    public fun testMemberAccessor() {
+    fun testMemberAccessor() {
         doTest(
                 """
                     class Outer(private val a: Int, private var b: String) {

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 
-public interface KtLightMethod : PsiMethod, KtLightElement<KtDeclaration, PsiMethod> {
+interface KtLightMethod : PsiMethod, KtLightElement<KtDeclaration, PsiMethod> {
     val isDelegated: Boolean
 }
 
@@ -96,7 +96,7 @@ sealed class KtLightMethodImpl(
         return this
     }
 
-    public override fun delete() {
+    override fun delete() {
         origin?.let {
             if (it.isValid) {
                 it.delete()

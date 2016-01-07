@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
-public object RepeatableAnnotationChecker: AdditionalAnnotationChecker {
+object RepeatableAnnotationChecker: AdditionalAnnotationChecker {
     override fun checkEntries(entries: List<KtAnnotationEntry>, actualTargets: List<KotlinTarget>, trace: BindingTrace) {
         val entryTypesWithAnnotations = hashMapOf<KotlinType, MutableList<AnnotationUseSiteTarget?>>()
 
@@ -57,7 +57,7 @@ public object RepeatableAnnotationChecker: AdditionalAnnotationChecker {
     }
 }
 
-public object FileClassAnnotationsChecker: AdditionalAnnotationChecker {
+object FileClassAnnotationsChecker: AdditionalAnnotationChecker {
     // JvmName & JvmMultifileClass annotations are applicable to multi-file class parts regardless of their retention.
     private val ALWAYS_APPLICABLE = hashSetOf(JvmFileClassUtil.JVM_NAME, JvmFileClassUtil.JVM_MULTIFILE_CLASS)
 

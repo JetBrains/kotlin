@@ -20,14 +20,14 @@ import java.io.File
 import javax.xml.bind.DatatypeConverter.parseBase64Binary
 import javax.xml.bind.DatatypeConverter.printBase64Binary
 
-public class KotlinJavascriptMetadata(public val abiVersion: Int, public val moduleName: String, public val body: ByteArray) {
-    public val isAbiVersionCompatible: Boolean = KotlinJavascriptMetadataUtils.isAbiVersionCompatible(abiVersion)
+class KotlinJavascriptMetadata(val abiVersion: Int, val moduleName: String, val body: ByteArray) {
+    val isAbiVersionCompatible: Boolean = KotlinJavascriptMetadataUtils.isAbiVersionCompatible(abiVersion)
 }
 
-public object KotlinJavascriptMetadataUtils {
-    public const val JS_EXT: String = ".js"
-    public const val META_JS_SUFFIX: String = ".meta.js"
-    public const val VFS_PROTOCOL: String = "kotlin-js-meta"
+object KotlinJavascriptMetadataUtils {
+    const val JS_EXT: String = ".js"
+    const val META_JS_SUFFIX: String = ".meta.js"
+    const val VFS_PROTOCOL: String = "kotlin-js-meta"
     private val KOTLIN_JAVASCRIPT_METHOD_NAME = "kotlin_module_metadata"
     private val KOTLIN_JAVASCRIPT_METHOD_NAME_PATTERN = "\\.kotlin_module_metadata\\(".toPattern()
     /**
@@ -35,19 +35,16 @@ public object KotlinJavascriptMetadataUtils {
      */
     private val METADATA_PATTERN = "(?m)\\w+\\.$KOTLIN_JAVASCRIPT_METHOD_NAME\\((\\d+),\\s*(['\"])([^'\"]*)\\2,\\s*(['\"])([^'\"]*)\\4\\)".toPattern()
 
-    @JvmField
-    public val ABI_VERSION: Int = 3
+    @JvmField val ABI_VERSION: Int = 3
 
-    public fun replaceSuffix(filePath: String): String = filePath.substringBeforeLast(JS_EXT) + META_JS_SUFFIX
+    fun replaceSuffix(filePath: String): String = filePath.substringBeforeLast(JS_EXT) + META_JS_SUFFIX
 
-    @JvmStatic
-    public fun isAbiVersionCompatible(abiVersion: Int): Boolean = abiVersion == ABI_VERSION
+    @JvmStatic fun isAbiVersionCompatible(abiVersion: Int): Boolean = abiVersion == ABI_VERSION
 
-    @JvmStatic
-    public fun hasMetadata(text: String): Boolean =
+    @JvmStatic fun hasMetadata(text: String): Boolean =
             KOTLIN_JAVASCRIPT_METHOD_NAME_PATTERN.matcher(text).find() && METADATA_PATTERN.matcher(text).find()
 
-    public fun hasMetadataWithIncompatibleAbiVersion(text: String): Boolean {
+    fun hasMetadataWithIncompatibleAbiVersion(text: String): Boolean {
         val matcher = METADATA_PATTERN.matcher(text)
         while (matcher.find()) {
             var abiVersion = matcher.group(1).toInt()
@@ -56,15 +53,14 @@ public object KotlinJavascriptMetadataUtils {
         return false
     }
 
-    public fun formatMetadataAsString(moduleName: String, content: ByteArray): String =
+    fun formatMetadataAsString(moduleName: String, content: ByteArray): String =
         "// Kotlin.$KOTLIN_JAVASCRIPT_METHOD_NAME($ABI_VERSION, \"$moduleName\", \"${printBase64Binary(content)}\");\n"
 
-    @JvmStatic
-    public fun loadMetadata(file: File): List<KotlinJavascriptMetadata> {
+    @JvmStatic fun loadMetadata(file: File): List<KotlinJavascriptMetadata> {
         assert(file.exists()) { "Library " + file + " not found" }
         val metadataList = arrayListOf<KotlinJavascriptMetadata>()
         LibraryUtils.traverseJsLibrary(file) { content, relativePath ->
-            var path = file.getPath()
+            var path = file.path
 
             if (relativePath.isNotBlank()) {
                 path += "/$relativePath"
@@ -76,11 +72,9 @@ public object KotlinJavascriptMetadataUtils {
         return metadataList
     }
 
-    @JvmStatic
-    public fun loadMetadata(path: String): List<KotlinJavascriptMetadata> = loadMetadata(File(path))
+    @JvmStatic fun loadMetadata(path: String): List<KotlinJavascriptMetadata> = loadMetadata(File(path))
 
-    @JvmStatic
-    public fun parseMetadata(text: String, metadataList: MutableList<KotlinJavascriptMetadata>) {
+    @JvmStatic fun parseMetadata(text: String, metadataList: MutableList<KotlinJavascriptMetadata>) {
         // Check for literal pattern first in order to reduce time for large files without metadata
         if (!KOTLIN_JAVASCRIPT_METHOD_NAME_PATTERN.matcher(text).find()) return
 

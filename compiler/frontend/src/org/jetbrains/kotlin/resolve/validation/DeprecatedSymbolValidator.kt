@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.getDeprecatedAnnotation
 import org.jetbrains.kotlin.resolve.getDeprecatedAnnotationLevel
 
-public class DeprecatedSymbolValidator : SymbolUsageValidator {
+class DeprecatedSymbolValidator : SymbolUsageValidator {
 
     override fun validateCall(resolvedCall: ResolvedCall<*>?, targetDescriptor: CallableDescriptor, trace: BindingTrace, element: PsiElement) {
         val deprecated = targetDescriptor.getDeprecatedAnnotation()
@@ -88,9 +88,9 @@ public class DeprecatedSymbolValidator : SymbolUsageValidator {
         // property getters do not come as callable yet, so we analyse surroundings to check for deprecation annotation on getter
         val binaryExpression = PsiTreeUtil.getParentOfType<KtBinaryExpression>(expression, KtBinaryExpression::class.java)
         if (binaryExpression != null) {
-            val left = binaryExpression.getLeft()
+            val left = binaryExpression.left
             if (left == expression) {
-                val operation = binaryExpression.getOperationToken()
+                val operation = binaryExpression.operationToken
                 if (operation != null && operation in PROPERTY_SET_OPERATIONS)
                     return
             }
@@ -99,7 +99,7 @@ public class DeprecatedSymbolValidator : SymbolUsageValidator {
             if (jetReferenceExpressions != null) {
                 for (expr in jetReferenceExpressions) {
                     if (expr == expression) {
-                        val operation = binaryExpression.getOperationToken()
+                        val operation = binaryExpression.operationToken
                         if (operation != null && operation in PROPERTY_SET_OPERATIONS)
                             return // skip binary set operations
                     }
@@ -109,7 +109,7 @@ public class DeprecatedSymbolValidator : SymbolUsageValidator {
 
         val unaryExpression = PsiTreeUtil.getParentOfType(expression, KtUnaryExpression::class.java)
         if (unaryExpression != null) {
-            val operation = unaryExpression.getOperationReference().getReferencedNameElementType()
+            val operation = unaryExpression.operationReference.getReferencedNameElementType()
             if (operation != null && operation in PROPERTY_SET_OPERATIONS)
                 return // skip unary set operations
 
@@ -120,6 +120,6 @@ public class DeprecatedSymbolValidator : SymbolUsageValidator {
             return // skip Type::property
         }
 
-        propertyDescriptor.getGetter()?.let { validateCall(resolvedCall, it, trace, expression) }
+        propertyDescriptor.getter?.let { validateCall(resolvedCall, it, trace, expression) }
     }
 }

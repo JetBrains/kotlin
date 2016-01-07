@@ -18,6 +18,6 @@ package org.jetbrains.kotlin.resolve.lazy.declarations
 
 import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo
 
-public interface ClassMemberDeclarationProvider : DeclarationProvider {
-    public fun getOwnerInfo(): KtClassLikeInfo
+interface ClassMemberDeclarationProvider : DeclarationProvider {
+    fun getOwnerInfo(): KtClassLikeInfo
 }

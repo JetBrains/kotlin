@@ -26,17 +26,17 @@ import org.jetbrains.kotlin.psi.KtPackageDirective
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 import java.io.File
 
-public fun String.trimTrailingWhitespacesAndAddNewlineAtEOF(): String =
+fun String.trimTrailingWhitespacesAndAddNewlineAtEOF(): String =
         this.split('\n').map { it.trimEnd() }.joinToString(separator = "\n").let {
             result -> if (result.endsWith("\n")) result else result + "\n"
         }
 
-public fun CodeInsightTestFixture.configureWithExtraFileAbs(path: String, vararg extraNameParts: String) {
+fun CodeInsightTestFixture.configureWithExtraFileAbs(path: String, vararg extraNameParts: String) {
     configureWithExtraFile(path, *extraNameParts, relativePaths = false)
 }
 
-public fun CodeInsightTestFixture.configureWithExtraFile(path: String, vararg extraNameParts: String = arrayOf(".Data"), relativePaths: Boolean = false) {
-    fun String.toFile(): File = if (relativePaths) File(getTestDataPath(), this) else File(this)
+fun CodeInsightTestFixture.configureWithExtraFile(path: String, vararg extraNameParts: String = arrayOf(".Data"), relativePaths: Boolean = false) {
+    fun String.toFile(): File = if (relativePaths) File(testDataPath, this) else File(this)
 
     val noExtensionPath = FileUtil.getNameWithoutExtension(path)
     val extensions = arrayOf("kt", "java")
@@ -47,17 +47,17 @@ public fun CodeInsightTestFixture.configureWithExtraFile(path: String, vararg ex
     configureByFiles(*(listOf(path) + extraPaths).toTypedArray())
 }
 
-public fun PsiFile.findElementByCommentPrefix(commentText: String): PsiElement? =
+fun PsiFile.findElementByCommentPrefix(commentText: String): PsiElement? =
         findElementsByCommentPrefix(commentText).keys.singleOrNull()
 
-public fun PsiFile.findElementsByCommentPrefix(prefix: String): Map<PsiElement, String> {
+fun PsiFile.findElementsByCommentPrefix(prefix: String): Map<PsiElement, String> {
     var result = SmartFMap.emptyMap<PsiElement, String>()
     accept(
             object : KtTreeVisitorVoid() {
                 override fun visitComment(comment: PsiComment) {
-                    val commentText = comment.getText()
+                    val commentText = comment.text
                     if (commentText.startsWith(prefix)) {
-                        val parent = comment.getParent()
+                        val parent = comment.parent
                         val elementToAdd = when (parent) {
                             is KtDeclaration -> parent
                             is PsiMember -> parent

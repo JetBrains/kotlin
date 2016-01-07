@@ -20,11 +20,11 @@ import java.io.File
 
 // TODO: move to stdlib as:
 // public fun File?.readTextOrEmpty(encoding: String = Charset.defaultCharset().name()): String = this?.readText(encoding) ?: ""
-public fun File?.readTextOrEmpty(): String = this?.readText() ?: ""
+fun File?.readTextOrEmpty(): String = this?.readText() ?: ""
 
-public fun File.withReplacedExtensionOrNull(oldExt: String, newExt: String): File? {
-    if (getName().endsWith(oldExt)) {
-        val path = getPath()
+fun File.withReplacedExtensionOrNull(oldExt: String, newExt: String): File? {
+    if (name.endsWith(oldExt)) {
+        val path = path
         val pathWithoutExt = path.substring(0, path.length - oldExt.length)
         val pathWithNewExt = pathWithoutExt + newExt
         return File(pathWithNewExt)

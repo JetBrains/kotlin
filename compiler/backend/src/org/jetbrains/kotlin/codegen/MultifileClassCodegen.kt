@@ -54,9 +54,9 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import java.util.*
 
-public class MultifileClassCodegen(
+class MultifileClassCodegen(
         private val state: GenerationState,
-        public val files: Collection<KtFile>,
+        val files: Collection<KtFile>,
         private val facadeFqName: FqName
 ) {
     private val facadeClassType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(facadeFqName)
@@ -74,7 +74,7 @@ public class MultifileClassCodegen(
     private fun getDeserializedCallables(compiledPackageFragment: PackageFragmentDescriptor) =
             compiledPackageFragment.getMemberScope().getContributedDescriptors(DescriptorKindFilter.CALLABLES, MemberScope.ALL_NAME_FILTER).filterIsInstance<DeserializedCallableMemberDescriptor>()
 
-    public val packageParts = PackageParts(facadeFqName.parent().asString())
+    val packageParts = PackageParts(facadeFqName.parent().asString())
 
     private val classBuilder = ClassBuilderOnDemand {
         val originFile = files.firstOrNull()
@@ -103,7 +103,7 @@ public class MultifileClassCodegen(
         classBuilder
     }
 
-    public fun generate(errorHandler: CompilationErrorHandler) {
+    fun generate(errorHandler: CompilationErrorHandler) {
         val generateCallableMemberTasks = HashMap<CallableMemberDescriptor, () -> Unit>()
         val partFqNames = arrayListOf<FqName>()
 
@@ -152,7 +152,7 @@ public class MultifileClassCodegen(
         writeKotlinMultifileFacadeAnnotationIfNeeded(partFqNames)
     }
 
-    public fun generateClassOrObject(classOrObject: KtClassOrObject, packagePartContext: FieldOwnerContext<PackageFragmentDescriptor>) {
+    fun generateClassOrObject(classOrObject: KtClassOrObject, packagePartContext: FieldOwnerContext<PackageFragmentDescriptor>) {
         MemberCodegen.genClassOrObject(packagePartContext, classOrObject, state, null)
     }
 
@@ -292,7 +292,7 @@ public class MultifileClassCodegen(
                 override fun generateKotlinAnnotation() = throw UnsupportedOperationException()
             }
 
-    public fun done() {
+    fun done() {
         classBuilder.done()
     }
 

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.psi.KtPrefixExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
-public class Not : IntrinsicMethod() {
+class Not : IntrinsicMethod() {
     override fun toCallable(method: CallableMethod): Callable =
             object : IntrinsicCallable(method) {
                 override fun invokeMethodWithArguments(
@@ -31,10 +31,10 @@ public class Not : IntrinsicMethod() {
                         receiver: StackValue,
                         codegen: ExpressionCodegen
                 ): StackValue {
-                    val element = resolvedCall.getCall().getCallElement()
+                    val element = resolvedCall.call.callElement
                     val stackValue =
                             if (element is KtPrefixExpression) {
-                                codegen.gen(element.getBaseExpression())
+                                codegen.gen(element.baseExpression)
                             }
                             else {
                                 StackValue.receiver(resolvedCall, receiver, codegen, this)

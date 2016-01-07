@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.psi.stubs.KotlinScriptStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
-public class KotlinScriptStubImpl(
+class KotlinScriptStubImpl(
         parent: StubElement<out PsiElement>?,
         private val _fqName: StringRef?
 ) : KotlinStubBaseImpl<KtScript>(parent, KtStubElementTypes.SCRIPT), KotlinScriptStub {

@@ -39,7 +39,7 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
 
-public class PropertyReferenceCodegen(
+class PropertyReferenceCodegen(
         state: GenerationState,
         parentCodegen: MemberCodegen<*>,
         context: ClassContext,
@@ -68,22 +68,22 @@ public class PropertyReferenceCodegen(
                 element,
                 V1_6,
                 ACC_FINAL or ACC_SUPER or AsmUtil.getVisibilityAccessFlagForAnonymous(classDescriptor),
-                asmType.getInternalName(),
+                asmType.internalName,
                 null,
-                superAsmType.getInternalName(),
+                superAsmType.internalName,
                 emptyArray()
         )
 
-        v.visitSource(element.getContainingFile().getName(), null)
+        v.visitSource(element.containingFile.name, null)
     }
 
     // TODO: ImplementationBodyCodegen.markLineNumberForSyntheticFunction?
     override fun generateBody() {
-        generateConstInstance(asmType, wrapperMethod.getReturnType())
+        generateConstInstance(asmType, wrapperMethod.returnType)
 
         generateMethod("property reference init", 0, method("<init>", Type.VOID_TYPE)) {
             load(0, OBJECT_TYPE)
-            invokespecial(superAsmType.getInternalName(), "<init>", "()V", false)
+            invokespecial(superAsmType.internalName, "<init>", "()V", false)
         }
 
         generateMethod("property reference getOwner", ACC_PUBLIC, method("getOwner", K_DECLARATION_CONTAINER_TYPE)) {
@@ -91,7 +91,7 @@ public class PropertyReferenceCodegen(
         }
 
         generateMethod("property reference getName", ACC_PUBLIC, method("getName", JAVA_STRING_TYPE)) {
-            aconst(target.getName().asString())
+            aconst(target.name.asString())
         }
 
         generateMethod("property reference getSignature", ACC_PUBLIC, method("getSignature", JAVA_STRING_TYPE)) {
@@ -108,11 +108,11 @@ public class PropertyReferenceCodegen(
                 // return type and value parameter types. However, it's created only to be able to use
                 // ExpressionCodegen#intermediateValueForProperty, which is poorly coupled with everything else.
                 val fakeDescriptor = SimpleFunctionDescriptorImpl.create(
-                        classDescriptor, Annotations.EMPTY, Name.identifier(method.getName()), CallableMemberDescriptor.Kind.DECLARATION,
+                        classDescriptor, Annotations.EMPTY, Name.identifier(method.name), CallableMemberDescriptor.Kind.DECLARATION,
                         SourceElement.NO_SOURCE
                 )
-                fakeDescriptor.initialize(null, classDescriptor.getThisAsReceiverParameter(), emptyList(), emptyList(),
-                                          classDescriptor.builtIns.getAnyType(), Modality.OPEN, Visibilities.PUBLIC)
+                fakeDescriptor.initialize(null, classDescriptor.thisAsReceiverParameter, emptyList(), emptyList(),
+                                          classDescriptor.builtIns.anyType, Modality.OPEN, Visibilities.PUBLIC)
 
                 val fakeCodegen = ExpressionCodegen(
                         this, FrameMap(), OBJECT_TYPE, context.intoFunction(fakeDescriptor), state, this@PropertyReferenceCodegen
@@ -147,13 +147,13 @@ public class PropertyReferenceCodegen(
     }
 
     private fun generateMethod(debugString: String, access: Int, method: Method, generate: InstructionAdapter.() -> Unit) {
-        val mv = v.newMethod(JvmDeclarationOrigin.NO_ORIGIN, access, method.getName(), method.getDescriptor(), null, null)
+        val mv = v.newMethod(JvmDeclarationOrigin.NO_ORIGIN, access, method.name, method.descriptor, null, null)
 
         if (state.classBuilderMode == ClassBuilderMode.FULL) {
             val iv = InstructionAdapter(mv)
             iv.visitCode()
             iv.generate()
-            iv.areturn(method.getReturnType())
+            iv.areturn(method.returnType)
             FunctionCodegen.endVisit(mv, debugString, element)
         }
     }
@@ -162,9 +162,9 @@ public class PropertyReferenceCodegen(
         writeKotlinSyntheticClassAnnotation(v, state)
     }
 
-    public fun putInstanceOnStack(): StackValue =
-            StackValue.operation(wrapperMethod.getReturnType()) { iv ->
-                iv.getstatic(asmType.getInternalName(), JvmAbi.INSTANCE_FIELD, wrapperMethod.getReturnType().getDescriptor())
+    fun putInstanceOnStack(): StackValue =
+            StackValue.operation(wrapperMethod.returnType) { iv ->
+                iv.getstatic(asmType.internalName, JvmAbi.INSTANCE_FIELD, wrapperMethod.returnType.descriptor)
             }
 
     companion object {

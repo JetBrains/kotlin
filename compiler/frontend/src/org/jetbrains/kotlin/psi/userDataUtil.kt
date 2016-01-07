@@ -21,13 +21,13 @@ import com.intellij.openapi.util.UserDataHolder
 import com.intellij.psi.PsiElement
 import kotlin.reflect.KProperty
 
-public class UserDataProperty<in R : UserDataHolder, T : Any>(val key: Key<T>) {
+class UserDataProperty<in R : UserDataHolder, T : Any>(val key: Key<T>) {
     operator fun getValue(thisRef: R, desc: KProperty<*>) = thisRef.getUserData(key)
 
     operator fun setValue(thisRef: R, desc: KProperty<*>, value: T?) = thisRef.putUserData(key, value)
 }
 
-public class NotNullableUserDataProperty<in R : UserDataHolder, T : Any>(val key: Key<T>, val defaultValue: T) {
+class NotNullableUserDataProperty<in R : UserDataHolder, T : Any>(val key: Key<T>, val defaultValue: T) {
     operator fun getValue(thisRef: R, desc: KProperty<*>) = thisRef.getUserData(key) ?: defaultValue
 
     operator fun setValue(thisRef: R, desc: KProperty<*>, value: T) {
@@ -35,13 +35,13 @@ public class NotNullableUserDataProperty<in R : UserDataHolder, T : Any>(val key
     }
 }
 
-public class CopyableUserDataProperty<in R : PsiElement, T : Any>(val key: Key<T>) {
+class CopyableUserDataProperty<in R : PsiElement, T : Any>(val key: Key<T>) {
     operator fun getValue(thisRef: R, property: KProperty<*>) = thisRef.getCopyableUserData(key)
 
     operator fun setValue(thisRef: R, property: KProperty<*>, value: T?) = thisRef.putCopyableUserData(key, value)
 }
 
-public class NotNullableCopyableUserDataProperty<in R : PsiElement, T : Any>(val key: Key<T>, val defaultValue: T) {
+class NotNullableCopyableUserDataProperty<in R : PsiElement, T : Any>(val key: Key<T>, val defaultValue: T) {
     operator fun getValue(thisRef: R, property: KProperty<*>) = thisRef.getCopyableUserData(key) ?: defaultValue
 
     operator fun setValue(thisRef: R, property: KProperty<*>, value: T) {
@@ -49,7 +49,7 @@ public class NotNullableCopyableUserDataProperty<in R : PsiElement, T : Any>(val
     }
 }
 
-public class NotNullableCopyableUserDataPropertyWithLazyDefault<in R : PsiElement, T : Any>(val key: Key<T>,
+class NotNullableCopyableUserDataPropertyWithLazyDefault<in R : PsiElement, T : Any>(val key: Key<T>,
                                                                                             val computeDefaultValue: () -> T) {
     private val delegate by lazy { NotNullableCopyableUserDataProperty<R, T>(key, computeDefaultValue()) }
 

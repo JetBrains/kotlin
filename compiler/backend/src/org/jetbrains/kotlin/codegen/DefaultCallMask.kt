@@ -50,7 +50,7 @@ class DefaultCallMask(val size: Int) {
         return masks
     }
 
-    public fun generateOnStackIfNeeded(callGenerator: CallGenerator): Boolean {
+    fun generateOnStackIfNeeded(callGenerator: CallGenerator): Boolean {
         val toInts = toInts()
         for (mask in toInts) {
             callGenerator.putValueIfNeeded(null, Type.INT_TYPE, StackValue.constant(mask, Type.INT_TYPE))

@@ -18,14 +18,14 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.lang.ASTNode
 
-public class KtLambdaArgument(node: ASTNode) : KtValueArgument(node), LambdaArgument {
+class KtLambdaArgument(node: ASTNode) : KtValueArgument(node), LambdaArgument {
 
     override fun getArgumentExpression() = super.getArgumentExpression()!!
 
     override fun getLambdaExpression(): KtLambdaExpression = getArgumentExpression().unpackFunctionLiteral()!!
 }
 
-public fun KtExpression.unpackFunctionLiteral(allowParentheses: Boolean = false): KtLambdaExpression? {
+fun KtExpression.unpackFunctionLiteral(allowParentheses: Boolean = false): KtLambdaExpression? {
     return when (this) {
         is KtLambdaExpression -> this
         is KtLabeledExpression -> baseExpression?.unpackFunctionLiteral(allowParentheses)

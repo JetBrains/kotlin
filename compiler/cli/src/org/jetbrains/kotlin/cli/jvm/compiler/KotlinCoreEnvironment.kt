@@ -94,7 +94,7 @@ import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.*
 
-public class KotlinCoreEnvironment private constructor(
+class KotlinCoreEnvironment private constructor(
         parentDisposable: Disposable, 
         applicationEnvironment: JavaCoreApplicationEnvironment, 
         configuration: CompilerConfiguration
@@ -108,7 +108,7 @@ public class KotlinCoreEnvironment private constructor(
     private val sourceFiles = ArrayList<KtFile>()
     private val javaRoots = ArrayList<JavaRoot>()
 
-    public val configuration: CompilerConfiguration = configuration.copy().let {
+    val configuration: CompilerConfiguration = configuration.copy().let {
         it.setReadOnly(true)
         it
     }
@@ -118,7 +118,7 @@ public class KotlinCoreEnvironment private constructor(
     }
 
     init {
-        val project = projectEnvironment.getProject()
+        val project = projectEnvironment.project
         project.registerService(DeclarationProviderFactoryService::class.java, CliDeclarationProviderFactoryService(sourceFiles))
         project.registerService(ModuleVisibilityManager::class.java, CliModuleVisibilityManagerImpl())
 
@@ -136,7 +136,7 @@ public class KotlinCoreEnvironment private constructor(
         }))
         sourceFiles.sortedWith(object : Comparator<KtFile> {
             override fun compare(o1: KtFile, o2: KtFile): Int {
-                return o1.getVirtualFile().getPath().compareTo(o2.getVirtualFile().getPath(), ignoreCase = true)
+                return o1.virtualFile.path.compareTo(o2.virtualFile.path, ignoreCase = true)
             }
         })
 
@@ -157,20 +157,20 @@ public class KotlinCoreEnvironment private constructor(
     }
 
     private val applicationEnvironment: CoreApplicationEnvironment
-        get() = projectEnvironment.getEnvironment()
+        get() = projectEnvironment.environment
 
-    public val application: MockApplication
-        get() = applicationEnvironment.getApplication()
+    val application: MockApplication
+        get() = applicationEnvironment.application
 
-    public val project: Project
-        get() = projectEnvironment.getProject()
+    val project: Project
+        get() = projectEnvironment.project
 
-    public val sourceLinesOfCode: Int by lazy { countLinesOfCode(sourceFiles) }
+    val sourceLinesOfCode: Int by lazy { countLinesOfCode(sourceFiles) }
 
-    public fun countLinesOfCode(sourceFiles: List<KtFile>): Int  =
+    fun countLinesOfCode(sourceFiles: List<KtFile>): Int  =
             sourceFiles.sumBy {
-                val text = it.getText()
-                StringUtil.getLineBreakCount(it.getText()) + (if (StringUtil.endsWithLineBreak(text)) 0 else 1)
+                val text = it.text
+                StringUtil.getLineBreakCount(it.text) + (if (StringUtil.endsWithLineBreak(text)) 0 else 1)
             }
 
     private fun fillClasspath(configuration: CompilerConfiguration) {
@@ -203,10 +203,10 @@ public class KotlinCoreEnvironment private constructor(
     fun contentRootToVirtualFile(root: JvmContentRoot): VirtualFile? {
         when (root) {
             is JvmClasspathRoot -> {
-                return if (root.file.isFile()) findJarRoot(root) else findLocalDirectory(root)
+                return if (root.file.isFile) findJarRoot(root) else findLocalDirectory(root)
             }
             is JavaSourceRoot -> {
-                return if (root.file.isDirectory()) findLocalDirectory(root) else null
+                return if (root.file.isDirectory) findLocalDirectory(root) else null
             }
             else -> throw IllegalStateException("Unexpected root: $root")
         }
@@ -214,7 +214,7 @@ public class KotlinCoreEnvironment private constructor(
 
     private fun findLocalDirectory(root: JvmContentRoot): VirtualFile? {
         val path = root.file
-        val localFile = applicationEnvironment.getLocalFileSystem().findFileByPath(path.getAbsolutePath())
+        val localFile = applicationEnvironment.localFileSystem.findFileByPath(path.absolutePath)
         if (localFile == null) {
             report(WARNING, "Classpath entry points to a non-existent location: $path")
             return null
@@ -224,7 +224,7 @@ public class KotlinCoreEnvironment private constructor(
 
     private fun findJarRoot(root: JvmClasspathRoot): VirtualFile? {
         val path = root.file
-        val jarFile = applicationEnvironment.getJarFileSystem().findFileByPath("${path}!/")
+        val jarFile = applicationEnvironment.jarFileSystem.findFileByPath("${path}!/")
         if (jarFile == null) {
             report(WARNING, "Classpath entry points to a file that is not a JAR archive: $path")
             return null
@@ -244,7 +244,7 @@ public class KotlinCoreEnvironment private constructor(
         return uniqueSourceRoots
     }
 
-    public fun getSourceFiles(): List<KtFile> = sourceFiles
+    fun getSourceFiles(): List<KtFile> = sourceFiles
 
     private fun report(severity: CompilerMessageSeverity, message: String) {
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
@@ -258,8 +258,7 @@ public class KotlinCoreEnvironment private constructor(
         private var ourApplicationEnvironment: JavaCoreApplicationEnvironment? = null
         private var ourProjectCount = 0
 
-        @JvmStatic
-        public fun createForProduction(
+        @JvmStatic fun createForProduction(
                 parentDisposable: Disposable, configuration: CompilerConfiguration, configFilePaths: List<String>
         ): KotlinCoreEnvironment {
             val appEnv = getOrCreateApplicationEnvironmentForProduction(configuration, configFilePaths)
@@ -287,8 +286,7 @@ public class KotlinCoreEnvironment private constructor(
         }
 
         @TestOnly
-        @JvmStatic
-        public fun createForTests(
+        @JvmStatic fun createForTests(
                 parentDisposable: Disposable, configuration: CompilerConfiguration, extensionConfigs: List<String>
         ): KotlinCoreEnvironment {
             // Tests are supposed to create a single project and dispose it right after use
@@ -296,7 +294,7 @@ public class KotlinCoreEnvironment private constructor(
         }
 
         // used in the daemon for jar cache cleanup
-        public val applicationEnvironment: JavaCoreApplicationEnvironment? get() = ourApplicationEnvironment
+        val applicationEnvironment: JavaCoreApplicationEnvironment? get() = ourApplicationEnvironment
 
         private fun getOrCreateApplicationEnvironmentForProduction(configuration: CompilerConfiguration, configFilePaths: List<String>): JavaCoreApplicationEnvironment {
             synchronized (APPLICATION_LOCK) {
@@ -317,11 +315,11 @@ public class KotlinCoreEnvironment private constructor(
             }
         }
 
-        public fun disposeApplicationEnvironment() {
+        fun disposeApplicationEnvironment() {
             synchronized (APPLICATION_LOCK) {
                 val environment = ourApplicationEnvironment ?: return
                 ourApplicationEnvironment = null
-                Disposer.dispose(environment.getParentDisposable())
+                Disposer.dispose(environment.parentDisposable)
             }
         }
 
@@ -356,15 +354,15 @@ public class KotlinCoreEnvironment private constructor(
 
         private fun registerApplicationExtensionPointsAndExtensionsFrom(configuration: CompilerConfiguration, configFilePath: String) {
             val locator = configuration.get(JVMConfigurationKeys.COMPILER_JAR_LOCATOR)
-            var pluginRoot = if (locator == null) PathUtil.getPathUtilJar() else locator.getCompilerJar()
+            var pluginRoot = if (locator == null) PathUtil.getPathUtilJar() else locator.compilerJar
 
             val app = ApplicationManager.getApplication()
-            val parentFile = pluginRoot.getParentFile()
+            val parentFile = pluginRoot.parentFile
 
-            if (pluginRoot.isDirectory() && app != null && app.isUnitTestMode()
-                && FileUtil.toCanonicalPath(parentFile.getPath()).endsWith("out/production")) {
+            if (pluginRoot.isDirectory && app != null && app.isUnitTestMode
+                && FileUtil.toCanonicalPath(parentFile.path).endsWith("out/production")) {
                 // hack for load extensions when compiler run directly from out directory(e.g. in tests)
-                val srcDir = parentFile.getParentFile().getParentFile()
+                val srcDir = parentFile.parentFile.parentFile
                 pluginRoot = File(srcDir, "idea/src")
             }
 
@@ -378,14 +376,13 @@ public class KotlinCoreEnvironment private constructor(
         }
 
         // made public for Upsource
-        @JvmStatic
-        public fun registerApplicationServices(applicationEnvironment: JavaCoreApplicationEnvironment) {
+        @JvmStatic fun registerApplicationServices(applicationEnvironment: JavaCoreApplicationEnvironment) {
             with(applicationEnvironment) {
                 registerFileType(KotlinFileType.INSTANCE, "kt")
                 registerFileType(KotlinFileType.INSTANCE, KotlinParserDefinition.STD_SCRIPT_SUFFIX)
                 registerParserDefinition(KotlinParserDefinition())
-                getApplication().registerService(KotlinBinaryClassCache::class.java, KotlinBinaryClassCache())
-                getApplication().registerService(JavaClassSupers::class.java, JavaClassSupersImpl::class.java)
+                application.registerService(KotlinBinaryClassCache::class.java, KotlinBinaryClassCache())
+                application.registerService(JavaClassSupers::class.java, JavaClassSupersImpl::class.java)
             }
         }
 
@@ -395,9 +392,8 @@ public class KotlinCoreEnvironment private constructor(
         }
 
         // made public for Upsource
-        @JvmStatic
-        public fun registerProjectServices(projectEnvironment: JavaCoreProjectEnvironment) {
-            with (projectEnvironment.getProject()) {
+        @JvmStatic fun registerProjectServices(projectEnvironment: JavaCoreProjectEnvironment) {
+            with (projectEnvironment.project) {
                 registerService(KotlinScriptDefinitionProvider::class.java, KotlinScriptDefinitionProvider())
                 registerService(KotlinJavaPsiFacade::class.java, KotlinJavaPsiFacade(this))
                 registerService(KtLightClassForFacade.FacadeStubCache::class.java, KtLightClassForFacade.FacadeStubCache(this))
@@ -405,7 +401,7 @@ public class KotlinCoreEnvironment private constructor(
         }
 
         private fun registerProjectServicesForCLI(projectEnvironment: JavaCoreProjectEnvironment) {
-            with (projectEnvironment.getProject()) {
+            with (projectEnvironment.project) {
                 registerService(CoreJavaFileManager::class.java, ServiceManager.getService(this, JavaFileManager::class.java) as CoreJavaFileManager)
 
                 val cliLightClassGenerationSupport = CliLightClassGenerationSupport(this)

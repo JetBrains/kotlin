@@ -18,10 +18,9 @@ package org.jetbrains.kotlin.compiler.plugin
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
 
-public interface CommandLineProcessor {
-    public val pluginId: String
-    public val pluginOptions: Collection<CliOption>
+interface CommandLineProcessor {
+    val pluginId: String
+    val pluginOptions: Collection<CliOption>
 
-    @Throws(CliOptionProcessingException::class)
-    public fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration)
+    @Throws(CliOptionProcessingException::class) fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration)
 }

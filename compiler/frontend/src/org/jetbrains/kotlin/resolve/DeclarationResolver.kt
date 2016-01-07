@@ -37,25 +37,25 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.keysToMap
 import java.util.*
 
-public class DeclarationResolver(
+class DeclarationResolver(
         private val annotationResolver: AnnotationResolver,
         private val trace: BindingTrace
 ) {
 
-    public fun resolveAnnotationsOnFiles(c: TopDownAnalysisContext, scopeProvider: FileScopeProvider) {
-        val filesToScope = c.getFiles().keysToMap { scopeProvider.getFileResolutionScope(it) }
+    fun resolveAnnotationsOnFiles(c: TopDownAnalysisContext, scopeProvider: FileScopeProvider) {
+        val filesToScope = c.files.keysToMap { scopeProvider.getFileResolutionScope(it) }
         for ((file, fileScope) in filesToScope) {
-            annotationResolver.resolveAnnotationsWithArguments(fileScope, file.getAnnotationEntries(), trace)
-            annotationResolver.resolveAnnotationsWithArguments(fileScope, file.getDanglingAnnotations(), trace)
+            annotationResolver.resolveAnnotationsWithArguments(fileScope, file.annotationEntries, trace)
+            annotationResolver.resolveAnnotationsWithArguments(fileScope, file.danglingAnnotations, trace)
         }
     }
 
-    public fun checkRedeclarations(c: TopDownAnalysisContext) {
-        for (classDescriptor in c.getDeclaredClasses().values) {
+    fun checkRedeclarations(c: TopDownAnalysisContext) {
+        for (classDescriptor in c.declaredClasses.values) {
             val descriptorMap = HashMultimap.create<Name, DeclarationDescriptor>()
-            for (desc in classDescriptor.getUnsubstitutedMemberScope().getContributedDescriptors()) {
+            for (desc in classDescriptor.unsubstitutedMemberScope.getContributedDescriptors()) {
                 if (desc is ClassDescriptor || desc is PropertyDescriptor) {
-                    descriptorMap.put(desc.getName(), desc)
+                    descriptorMap.put(desc.name, desc)
                 }
             }
 
@@ -91,9 +91,9 @@ public class DeclarationResolver(
         }
     }
 
-    public fun checkRedeclarationsInPackages(topLevelDescriptorProvider: TopLevelDescriptorProvider, topLevelFqNames: Multimap<FqName, KtElement>) {
+    fun checkRedeclarationsInPackages(topLevelDescriptorProvider: TopLevelDescriptorProvider, topLevelFqNames: Multimap<FqName, KtElement>) {
         for ((fqName, declarationsOrPackageDirectives) in topLevelFqNames.asMap()) {
-            if (fqName.isRoot()) continue
+            if (fqName.isRoot) continue
 
             val descriptors = getTopLevelDescriptorsByFqName(topLevelDescriptorProvider, fqName, NoLookupLocation.WHEN_CHECK_REDECLARATIONS)
 

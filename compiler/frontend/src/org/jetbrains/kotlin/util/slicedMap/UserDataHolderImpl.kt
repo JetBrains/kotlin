@@ -21,5 +21,5 @@ import com.intellij.openapi.util.UserDataHolderBase
 
 class UserDataHolderImpl : UserDataHolderBase() {
     val keys: Array<Key<*>>
-        get() = getUserMap().getKeys()
+        get() = userMap.keys
 }

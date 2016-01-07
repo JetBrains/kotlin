@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.cli.jvm.repl.reader
 
 import org.jetbrains.kotlin.cli.jvm.repl.ReplFromTerminal
 
-public interface ReplCommandReader {
-    public fun readLine(next: ReplFromTerminal.WhatNextAfterOneLine): String?
-    public fun flushHistory()
+interface ReplCommandReader {
+    fun readLine(next: ReplFromTerminal.WhatNextAfterOneLine): String?
+    fun flushHistory()
 }

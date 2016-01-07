@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.MINUS
 import org.jetbrains.kotlin.util.OperatorNameConventions.UNARY_PLUS
 import org.jetbrains.kotlin.util.OperatorNameConventions.UNARY_MINUS
 
-public class OperatorValidator : SymbolUsageValidator {
+class OperatorValidator : SymbolUsageValidator {
 
     override fun validateCall(resolvedCall: ResolvedCall<*>?, targetDescriptor: CallableDescriptor, trace: BindingTrace, element: PsiElement) {
         val functionDescriptor = targetDescriptor as? FunctionDescriptor ?: return

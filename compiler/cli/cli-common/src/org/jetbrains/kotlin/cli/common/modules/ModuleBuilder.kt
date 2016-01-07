@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.JavaRootPath
 import java.util.*
 
-public class ModuleBuilder(
+class ModuleBuilder(
         private val name: String,
         private val outputDir: String,
         private val type: String
@@ -30,19 +30,19 @@ public class ModuleBuilder(
     private val javaSourceRoots = ArrayList<JavaRootPath>()
     private val friendDirs = ArrayList<String>()
 
-    public fun addSourceFiles(pattern: String) {
+    fun addSourceFiles(pattern: String) {
         sourceFiles.add(pattern)
     }
 
-    public fun addClasspathEntry(name: String) {
+    fun addClasspathEntry(name: String) {
         classpathRoots.add(name)
     }
 
-    public fun addJavaSourceRoot(rootPath: JavaRootPath) {
+    fun addJavaSourceRoot(rootPath: JavaRootPath) {
         javaSourceRoots.add(rootPath)
     }
 
-    public fun addFriendDir(friendDir: String) {
+    fun addFriendDir(friendDir: String) {
         friendDirs.add(friendDir)
     }
 

@@ -28,7 +28,7 @@ import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.types.KotlinType
 
-public class LockBasedLazyResolveStorageManager(private val storageManager: StorageManager): StorageManager by storageManager, LazyResolveStorageManager {
+class LockBasedLazyResolveStorageManager(private val storageManager: StorageManager): StorageManager by storageManager, LazyResolveStorageManager {
     override fun <K, V : Any> createSoftlyRetainedMemoizedFunction(compute: Function1<K, V>) =
         storageManager.createMemoizedFunction<K, V>(compute, ContainerUtil.createConcurrentSoftValueMap<K, Any>())
 
@@ -41,7 +41,7 @@ public class LockBasedLazyResolveStorageManager(private val storageManager: Stor
     private class LockProtectedContext(private val storageManager: StorageManager, private val context: BindingContext) : BindingContext {
         override fun getType(expression: KtExpression): KotlinType? = storageManager.compute { context.getType(expression) }
 
-        override fun getDiagnostics(): Diagnostics = storageManager.compute { context.getDiagnostics() }
+        override fun getDiagnostics(): Diagnostics = storageManager.compute { context.diagnostics }
 
         override fun <K, V> get(slice: ReadOnlySlice<K, V>, key: K) = storageManager.compute { context.get<K, V>(slice, key) }
 
@@ -62,7 +62,7 @@ public class LockBasedLazyResolveStorageManager(private val storageManager: Stor
 
         override fun getType(expression: KtExpression): KotlinType? = storageManager.compute { trace.getType(expression) }
 
-        private val context: BindingContext = LockProtectedContext(storageManager, trace.getBindingContext())
+        private val context: BindingContext = LockProtectedContext(storageManager, trace.bindingContext)
 
         override fun getBindingContext() = context
 

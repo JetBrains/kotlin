@@ -45,7 +45,7 @@ object InlineTestUtil {
 
         val skipParameterChecking =
                 sourceFiles.asSequence().filter {
-                    InTextDirectivesUtils.isDirectiveDefined(it.getText(), "NO_CHECK_LAMBDA_INLINING")
+                    InTextDirectivesUtils.isDirectiveDefined(it.text, "NO_CHECK_LAMBDA_INLINING")
                 }.any()
 
         if (!skipParameterChecking) {
@@ -105,7 +105,7 @@ object InlineTestUtil {
                     }
 
                     return object : MethodNode(Opcodes.ASM5, access, name, desc, signature, exceptions) {
-                        public override fun visitMethodInsn(opcode: Int, owner: String, name: String, desc: String, itf: Boolean) {
+                        override fun visitMethodInsn(opcode: Int, owner: String, name: String, desc: String, itf: Boolean) {
                             val methodCall = MethodInfo(owner, name, desc)
                             if (inlinedMethods.contains(methodCall)) {
                                 val fromCall = MethodInfo(className, this.name, this.desc)
@@ -136,7 +136,7 @@ object InlineTestUtil {
                 cr.accept(object : ClassVisitorWithName() {
 
                     override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?): MethodVisitor? {
-                        JvmClassName.byInternalName(className).getFqNameForClassNameWithoutDollars()
+                        JvmClassName.byInternalName(className).fqNameForClassNameWithoutDollars
                         val declaration = MethodInfo(className, name, desc)
                         //do not check anonymous object creation in inline functions and in package facades
                         if (declaration in inlinedMethods) {
@@ -146,7 +146,7 @@ object InlineTestUtil {
                         return object : MethodNode(Opcodes.ASM5, access, name, desc, signature, exceptions) {
                             private fun isInlineParameterLikeOwner(owner: String) = owner.contains("$") && !isTopLevelOrInnerOrPackageClass(owner, inlineInfo)
 
-                            public override fun visitMethodInsn(opcode: Int, owner: String, name: String, desc: String, itf: Boolean) {
+                            override fun visitMethodInsn(opcode: Int, owner: String, name: String, desc: String, itf: Boolean) {
                                 if ("<init>".equals(name) && isInlineParameterLikeOwner(owner)) {
                                     /*constuctor creation*/
                                     val fromCall = MethodInfo(className, this.name, this.desc)
@@ -191,7 +191,7 @@ object InlineTestUtil {
                 override fun equals(other: Any?): Boolean = throw UnsupportedOperationException()
                 override fun toString(): String = throw UnsupportedOperationException()
             }
-        }!!.getClassHeader()
+        }!!.classHeader
     }
 
     private class InlineInfo(val inlineMethods: Set<MethodInfo>, val classHeaders: Map<String, KotlinClassHeader>)

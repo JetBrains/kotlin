@@ -24,10 +24,10 @@ internal class Parameters(val real: List<ParameterInfo>, val captured: List<Capt
     private val actualDeclShifts: Array<ParameterInfo?>
     private val paramToDeclByteCodeIndex: HashMap<ParameterInfo, Int> = hashMapOf()
 
-    public val realArgsSizeOnStack = real.sumBy { it.type.size }
-    public val capturedArgsSizeOnStack = captured.sumBy { it.type.size }
+    val realArgsSizeOnStack = real.sumBy { it.type.size }
+    val capturedArgsSizeOnStack = captured.sumBy { it.type.size }
 
-    public val argsSizeOnStack = realArgsSizeOnStack + capturedArgsSizeOnStack
+    val argsSizeOnStack = realArgsSizeOnStack + capturedArgsSizeOnStack
 
     init {
         val declIndexesToActual = arrayOfNulls<Int>(argsSizeOnStack)

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.name.FqName
 import java.util.ArrayList
 import com.intellij.psi.PsiElement
 
-public class KotlinClassStubImpl(
+class KotlinClassStubImpl(
         type: KtClassElementType,
         parent: StubElement<out PsiElement>?,
         private val qualifiedName: StringRef?,

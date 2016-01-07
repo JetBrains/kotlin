@@ -24,7 +24,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.JumpInsnNode
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 
-public class RedundantGotoMethodTransformer : MethodTransformer() {
+class RedundantGotoMethodTransformer : MethodTransformer() {
     /**
      * Removes redundant GOTO's, i.e. to subsequent labels
      */
@@ -35,7 +35,7 @@ public class RedundantGotoMethodTransformer : MethodTransformer() {
         val currentLabels = hashSetOf<LabelNode>()
         for (insn in insns) {
             if (insn.isMeaningful) {
-                if (insn.getOpcode() == Opcodes.GOTO && (insn as JumpInsnNode).label in currentLabels) {
+                if (insn.opcode == Opcodes.GOTO && (insn as JumpInsnNode).label in currentLabels) {
                     insnsToRemove.add(insn)
                 }
                 else {

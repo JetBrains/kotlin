@@ -45,7 +45,7 @@ import java.io.File
 import java.lang.management.ManagementFactory
 import java.util.concurrent.TimeUnit
 
-public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
+open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
     override fun doExecute(arguments: K2JVMCompilerArguments, services: Services, messageCollector: MessageCollector, rootDisposable: Disposable): ExitCode {
         val messageSeverityCollector = MessageSeverityCollector(messageCollector)
@@ -54,7 +54,7 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         else
             PathUtil.getKotlinPathsForCompiler()
 
-        messageSeverityCollector.report(CompilerMessageSeverity.LOGGING, "Using Kotlin home directory " + paths.getHomePath(), CompilerMessageLocation.NO_LOCATION)
+        messageSeverityCollector.report(CompilerMessageSeverity.LOGGING, "Using Kotlin home directory " + paths.homePath, CompilerMessageLocation.NO_LOCATION)
         PerformanceCounter.setTimeCounterEnabled(arguments.reportPerf);
 
         val configuration = CompilerConfiguration()
@@ -108,7 +108,7 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             for (arg in arguments.freeArgs) {
                 configuration.addKotlinSourceRoot(arg)
                 val file = File(arg)
-                if (file.isDirectory()) {
+                if (file.isDirectory) {
                     configuration.addJavaSourceRoot(file)
                 }
             }
@@ -159,14 +159,14 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                     messageSeverityCollector.report(CompilerMessageSeverity.WARNING, "The '-d' option with a directory destination is ignored because '-module' is specified", CompilerMessageLocation.NO_LOCATION)
                 }
 
-                val directory = File(arguments.module).getAbsoluteFile().getParentFile()
+                val directory = File(arguments.module).absoluteFile.parentFile
 
-                val compilerConfiguration = KotlinToJVMBytecodeCompiler.createCompilerConfiguration(configuration, moduleScript.getModules(), directory)
+                val compilerConfiguration = KotlinToJVMBytecodeCompiler.createCompilerConfiguration(configuration, moduleScript.modules, directory)
                 environment = createCoreEnvironment(rootDisposable, compilerConfiguration)
 
                 if (messageSeverityCollector.anyReported(CompilerMessageSeverity.ERROR)) return COMPILATION_ERROR
 
-                KotlinToJVMBytecodeCompiler.compileModules(environment, configuration, moduleScript.getModules(), directory, jar, friendPaths, arguments.includeRuntime)
+                KotlinToJVMBytecodeCompiler.compileModules(environment, configuration, moduleScript.modules, directory, jar, friendPaths, arguments.includeRuntime)
             }
             else if (arguments.script) {
                 val scriptArgs = arguments.freeArgs.subList(1, arguments.freeArgs.size)
@@ -200,7 +200,7 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             return OK
         }
         catch (e: CompilationException) {
-            messageSeverityCollector.report(CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(e), MessageUtil.psiElementToMessageLocation(e.getElement()))
+            messageSeverityCollector.report(CompilerMessageSeverity.EXCEPTION, OutputMessageUtil.renderException(e), MessageUtil.psiElementToMessageLocation(e.element))
             return INTERNAL_ERROR
         }
 
@@ -235,18 +235,17 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
         private var elapsedJITTime = 0L
         private var shouldReportPerf = true
 
-        public fun resetInitStartTime() {
+        fun resetInitStartTime() {
             if (initStartNanos == 0L) {
                 initStartNanos = System.nanoTime()
             }
         }
 
-        @JvmStatic
-        public fun main(args: Array<String>) {
+        @JvmStatic fun main(args: Array<String>) {
             CLICompiler.doMain(K2JVMCompiler(), args)
         }
 
-        public fun reportPerf(configuration: CompilerConfiguration, message: String) {
+        fun reportPerf(configuration: CompilerConfiguration, message: String) {
             if (!shouldReportPerf) return
 
             val collector = configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]!!
@@ -255,17 +254,17 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
         fun reportGCTime(configuration: CompilerConfiguration) {
             ManagementFactory.getGarbageCollectorMXBeans().forEach {
-                val currentTime = it.getCollectionTime()
-                val elapsedTime = elapsedGCTime.getOrElse(it.getName()) { 0 }
+                val currentTime = it.collectionTime
+                val elapsedTime = elapsedGCTime.getOrElse(it.name) { 0 }
                 val time = currentTime - elapsedTime
-                reportPerf(configuration, "GC time for ${it.getName()} is $time ms")
-                elapsedGCTime[it.getName()] = currentTime
+                reportPerf(configuration, "GC time for ${it.name} is $time ms")
+                elapsedGCTime[it.name] = currentTime
             }
         }
 
         fun reportCompilationTime(configuration: CompilerConfiguration) {
             val bean = ManagementFactory.getCompilationMXBean() ?: return
-            val currentTime = bean.getTotalCompilationTime()
+            val currentTime = bean.totalCompilationTime
             reportPerf(configuration, "JIT time is ${currentTime - elapsedJITTime} ms")
             elapsedJITTime = currentTime
         }
@@ -284,7 +283,7 @@ public open class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 classpath.addAll(arguments.classpath.split(File.pathSeparatorChar).map { File(it) })
             }
             if (!arguments.noStdlib) {
-                classpath.add(paths.getRuntimePath())
+                classpath.add(paths.runtimePath)
             }
             return classpath
         }

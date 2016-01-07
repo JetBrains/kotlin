@@ -20,7 +20,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtNodeTypes
 
-public class KtExpressionCodeFragment(
+class KtExpressionCodeFragment(
         project: Project,
         name: String,
         text: CharSequence,

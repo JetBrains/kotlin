@@ -20,32 +20,32 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-public interface Callable {
-    public val owner: Type
+interface Callable {
+    val owner: Type
 
-    public val dispatchReceiverType: Type?
+    val dispatchReceiverType: Type?
 
-    public val extensionReceiverType: Type?
+    val extensionReceiverType: Type?
 
-    public val generateCalleeType: Type?
+    val generateCalleeType: Type?
 
-    public val valueParameterTypes: List<Type>
+    val valueParameterTypes: List<Type>
 
-    public val parameterTypes: Array<Type>
+    val parameterTypes: Array<Type>
 
-    public val returnType: Type
+    val returnType: Type
 
-    public fun genInvokeInstruction(v: InstructionAdapter)
+    fun genInvokeInstruction(v: InstructionAdapter)
 
-    public fun isStaticCall(): Boolean
+    fun isStaticCall(): Boolean
 
-    public fun invokeMethodWithArguments(resolvedCall: ResolvedCall<*>, receiver: StackValue, codegen: ExpressionCodegen): StackValue {
+    fun invokeMethodWithArguments(resolvedCall: ResolvedCall<*>, receiver: StackValue, codegen: ExpressionCodegen): StackValue {
         return StackValue.functionCall(returnType) {
             codegen.invokeMethodWithArguments(this, resolvedCall, receiver)
         }
     }
 
-    public fun afterReceiverGeneration(v: InstructionAdapter) {
+    fun afterReceiverGeneration(v: InstructionAdapter) {
     }
 
 }

@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Variance.*
 import org.jetbrains.kotlin.types.typeUtil.isArrayOfNothing
 
-public class TypeResolver(
+class TypeResolver(
         private val annotationResolver: AnnotationResolver,
         private val qualifiedExpressionResolver: QualifiedExpressionResolver,
         private val moduleDescriptor: ModuleDescriptor,
@@ -56,13 +56,13 @@ public class TypeResolver(
         private val identifierChecker: IdentifierChecker
 ) {
 
-    public open class FlexibleTypeCapabilitiesProvider {
-        public open fun getCapabilities(): FlexibleTypeCapabilities {
+    open class FlexibleTypeCapabilitiesProvider {
+        open fun getCapabilities(): FlexibleTypeCapabilities {
             return FlexibleTypeCapabilities.NONE
         }
     }
 
-    public fun resolveType(scope: LexicalScope, typeReference: KtTypeReference, trace: BindingTrace, checkBounds: Boolean): KotlinType {
+    fun resolveType(scope: LexicalScope, typeReference: KtTypeReference, trace: BindingTrace, checkBounds: Boolean): KotlinType {
         // bare types are not allowed
         return resolveType(TypeResolutionContext(scope, trace, checkBounds, false), typeReference)
     }
@@ -72,7 +72,7 @@ public class TypeResolver(
         return resolvePossiblyBareType(c, typeReference).getActualType()
     }
 
-    public fun resolvePossiblyBareType(c: TypeResolutionContext, typeReference: KtTypeReference): PossiblyBareType {
+    fun resolvePossiblyBareType(c: TypeResolutionContext, typeReference: KtTypeReference): PossiblyBareType {
         val cachedType = c.trace.getBindingContext().get(BindingContext.TYPE, typeReference)
         if (cachedType != null) return type(cachedType)
 
@@ -189,7 +189,7 @@ public class TypeResolver(
             override fun visitNullableType(nullableType: KtNullableType) {
                 val innerType = nullableType.getInnerType()
                 val baseType = resolveTypeElement(c, annotations, innerType)
-                if (baseType.isNullable() || innerType is KtNullableType || innerType is KtDynamicType) {
+                if (baseType.isNullable || innerType is KtNullableType || innerType is KtDynamicType) {
                     c.trace.report(REDUNDANT_NULLABLE.on(nullableType))
                 }
                 result = baseType.makeNullable()
@@ -206,7 +206,7 @@ public class TypeResolver(
                 val returnTypeRef = type.getReturnTypeReference()
                 val returnType = if (returnTypeRef != null)
                                      resolveType(c.noBareTypes(), returnTypeRef)
-                                 else moduleDescriptor.builtIns.getUnitType()
+                                 else moduleDescriptor.builtIns.unitType
                 result = type(moduleDescriptor.builtIns.getFunctionType(annotations, receiverType, parameterTypes, returnType))
             }
 
@@ -492,7 +492,7 @@ public class TypeResolver(
             val projectionKind = argumentElement.getProjectionKind()
             ModifierCheckerCore.check(argumentElement, c.trace, null)
             if (projectionKind == KtProjectionKind.STAR) {
-                val parameters = constructor.getParameters()
+                val parameters = constructor.parameters
                 if (parameters.size > i) {
                     val parameterDescriptor = parameters[i]
                     TypeUtils.makeStarProjection(parameterDescriptor)
@@ -504,10 +504,10 @@ public class TypeResolver(
             else {
                 val type = resolveType(c.noBareTypes(), argumentElement.getTypeReference()!!)
                 val kind = resolveProjectionKind(projectionKind)
-                if (constructor.getParameters().size > i) {
-                    val parameterDescriptor = constructor.getParameters()[i]
-                    if (kind != INVARIANT && parameterDescriptor.getVariance() != INVARIANT) {
-                        if (kind == parameterDescriptor.getVariance()) {
+                if (constructor.parameters.size > i) {
+                    val parameterDescriptor = constructor.parameters[i]
+                    if (kind != INVARIANT && parameterDescriptor.variance != INVARIANT) {
+                        if (kind == parameterDescriptor.variance) {
                             c.trace.report(REDUNDANT_PROJECTION.on(argumentElement, constructor.getDeclarationDescriptor()))
                         }
                         else {
@@ -521,11 +521,11 @@ public class TypeResolver(
         }
     }
 
-    public fun resolveClass(
+    fun resolveClass(
             scope: LexicalScope, userType: KtUserType, trace: BindingTrace
     ): ClassifierDescriptor? = resolveDescriptorForType(scope, userType, trace).classifierDescriptor
 
-    public fun resolveDescriptorForType(
+    fun resolveDescriptorForType(
             scope: LexicalScope, userType: KtUserType, trace: BindingTrace
     ): QualifiedExpressionResolver.TypeQualifierResolutionResult {
         if (userType.qualifier != null) { // we must resolve all type references in arguments of qualifier type
@@ -545,8 +545,7 @@ public class TypeResolver(
     }
 
     companion object {
-        @JvmStatic
-        public fun resolveProjectionKind(projectionKind: KtProjectionKind): Variance {
+        @JvmStatic fun resolveProjectionKind(projectionKind: KtProjectionKind): Variance {
             return when (projectionKind) {
                 KtProjectionKind.IN -> IN_VARIANCE
                 KtProjectionKind.OUT -> OUT_VARIANCE

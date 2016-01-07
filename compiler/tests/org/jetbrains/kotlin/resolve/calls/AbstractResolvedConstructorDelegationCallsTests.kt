@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParentResolvedCall
 
 
-abstract public class AbstractResolvedConstructorDelegationCallsTests : AbstractResolvedCallsTest() {
+abstract class AbstractResolvedConstructorDelegationCallsTests : AbstractResolvedCallsTest() {
     override fun buildCachedCall(
             bindingContext: BindingContext, jetFile: KtFile, text: String
     ): Pair<PsiElement?, ResolvedCall<out CallableDescriptor>?> {

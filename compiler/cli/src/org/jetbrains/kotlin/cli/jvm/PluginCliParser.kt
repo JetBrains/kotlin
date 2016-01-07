@@ -26,7 +26,7 @@ import java.net.URLClassLoader
 import java.util.*
 
 
-public object PluginCliParser {
+object PluginCliParser {
 
     @JvmStatic
     fun loadPlugins(arguments: CommonCompilerArguments, configuration: CompilerConfiguration) {
@@ -35,7 +35,7 @@ public object PluginCliParser {
                         ?.map { File(it).toURI().toURL() }
                         ?.toTypedArray()
                         ?: arrayOf<URL>(),
-                javaClass.getClassLoader()
+                javaClass.classLoader
         )
 
         val componentRegistrars = ServiceLoader.load(ComponentRegistrar::class.java, classLoader).toArrayList()
@@ -93,7 +93,7 @@ public object PluginCliParser {
     }
 }
 
-private class PluginURLClassLoader(urls: Array<URL>, parent: ClassLoader) : ClassLoader(Thread.currentThread().getContextClassLoader()) {
+private class PluginURLClassLoader(urls: Array<URL>, parent: ClassLoader) : ClassLoader(Thread.currentThread().contextClassLoader) {
     private val childClassLoader: SelfThenParentURLClassLoader = SelfThenParentURLClassLoader(urls, parent)
 
     @Synchronized

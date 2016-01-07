@@ -32,7 +32,7 @@ abstract class WritableScopeStorage(val redeclarationHandler: RedeclarationHandl
     private var variablesAndClassifiersByName: MutableMap<Name, IntList>? = null
 
     protected fun addVariableOrClassDescriptor(descriptor: DeclarationDescriptor) {
-        val name = descriptor.getName()
+        val name = descriptor.name
 
         val originalDescriptor = variableOrClassDescriptorByName(name)
         if (originalDescriptor != null) {
@@ -55,7 +55,7 @@ abstract class WritableScopeStorage(val redeclarationHandler: RedeclarationHandl
         if (functionsByName == null) {
             functionsByName = HashMap(1)
         }
-        val name = functionDescriptor.getName()
+        val name = functionDescriptor.name
         //TODO: could not use += because of KT-8050
         functionsByName!![name] = functionsByName!![name] + descriptorIndex
     }

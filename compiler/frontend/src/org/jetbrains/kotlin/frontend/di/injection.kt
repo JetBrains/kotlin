@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.types.expressions.DeclarationScopeProviderForLocalCl
 import org.jetbrains.kotlin.types.expressions.LocalClassDescriptorHolder
 import org.jetbrains.kotlin.types.expressions.LocalLazyDeclarationResolver
 
-public fun StorageComponentContainer.configureModule(
+fun StorageComponentContainer.configureModule(
         moduleContext: ModuleContext, platform: TargetPlatform
 ) {
     useInstance(moduleContext)
@@ -57,14 +57,14 @@ private fun StorageComponentContainer.configurePlatformIndependentComponents() {
     useImpl<SupertypeLoopCheckerImpl>()
 }
 
-public fun StorageComponentContainer.configureModule(
+fun StorageComponentContainer.configureModule(
         moduleContext: ModuleContext, platform: TargetPlatform, trace: BindingTrace
 ) {
     configureModule(moduleContext, platform)
     useInstance(trace)
 }
 
-public fun createContainerForBodyResolve(
+fun createContainerForBodyResolve(
         moduleContext: ModuleContext, bindingTrace: BindingTrace,
         platform: TargetPlatform, statementFilter: StatementFilter
 ): StorageComponentContainer = createContainer("BodyResolve") {
@@ -78,7 +78,7 @@ public fun createContainerForBodyResolve(
     useImpl<BodyResolver>()
 }
 
-public fun createContainerForLazyBodyResolve(
+fun createContainerForLazyBodyResolve(
         moduleContext: ModuleContext, kotlinCodeAnalyzer: KotlinCodeAnalyzer,
         bindingTrace: BindingTrace, platform: TargetPlatform,
         bodyResolveCache: BodyResolveCache
@@ -92,7 +92,7 @@ public fun createContainerForLazyBodyResolve(
     useImpl<LazyTopDownAnalyzerForTopLevel>()
 }
 
-public fun createContainerForLazyLocalClassifierAnalyzer(
+fun createContainerForLazyLocalClassifierAnalyzer(
         moduleContext: ModuleContext,
         bindingTrace: BindingTrace,
         platform: TargetPlatform,
@@ -116,7 +116,7 @@ public fun createContainerForLazyLocalClassifierAnalyzer(
     useImpl<LocalLazyDeclarationResolver>()
 }
 
-public fun createContainerForLazyResolve(
+fun createContainerForLazyResolve(
         moduleContext: ModuleContext,
         declarationProviderFactory: DeclarationProviderFactory,
         bindingTrace: BindingTrace,
@@ -134,8 +134,7 @@ public fun createContainerForLazyResolve(
     useImpl<ResolveSession>()
 }
 
-@JvmOverloads
-public fun createLazyResolveSession(
+@JvmOverloads fun createLazyResolveSession(
         moduleContext: ModuleContext,
         declarationProviderFactory: DeclarationProviderFactory,
         bindingTrace: BindingTrace,

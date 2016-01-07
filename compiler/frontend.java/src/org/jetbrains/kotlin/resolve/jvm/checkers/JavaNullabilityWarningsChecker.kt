@@ -42,22 +42,22 @@ import org.jetbrains.kotlin.types.expressions.SenselessComparisonChecker
 import org.jetbrains.kotlin.types.flexibility
 import org.jetbrains.kotlin.types.isFlexible
 
-public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
+class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
     private fun KotlinType.mayBeNull(): ErrorsJvm.NullabilityInformationSource? {
-        if (!isError() && !isFlexible() && TypeUtils.isNullableType(this)) return ErrorsJvm.NullabilityInformationSource.KOTLIN
+        if (!isError && !isFlexible() && TypeUtils.isNullableType(this)) return ErrorsJvm.NullabilityInformationSource.KOTLIN
 
         if (isFlexible() && TypeUtils.isNullableType(flexibility().lowerBound)) return ErrorsJvm.NullabilityInformationSource.KOTLIN
 
-        if (getAnnotations().isMarkedNullable()) return ErrorsJvm.NullabilityInformationSource.JAVA
+        if (annotations.isMarkedNullable()) return ErrorsJvm.NullabilityInformationSource.JAVA
         return null
     }
 
     private fun KotlinType.mustNotBeNull(): ErrorsJvm.NullabilityInformationSource? {
-        if (!isError() && !isFlexible() && !TypeUtils.isNullableType(this)) return ErrorsJvm.NullabilityInformationSource.KOTLIN
+        if (!isError && !isFlexible() && !TypeUtils.isNullableType(this)) return ErrorsJvm.NullabilityInformationSource.KOTLIN
 
         if (isFlexible() && !TypeUtils.isNullableType(flexibility().upperBound)) return ErrorsJvm.NullabilityInformationSource.KOTLIN
 
-        if (!isMarkedNullable() && getAnnotations().isMarkedNotNull()) return ErrorsJvm.NullabilityInformationSource.JAVA
+        if (!isMarkedNullable && annotations.isMarkedNotNull()) return ErrorsJvm.NullabilityInformationSource.JAVA
         return null
     }
 
@@ -99,10 +99,10 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
 
         when (expression) {
             is KtWhenExpression ->
-                    if (expression.getElseExpression() == null) {
+                    if (expression.elseExpression == null) {
                         // Check for conditionally-exhaustive when on platform enums, see KT-6399
-                        val type = expression.getSubjectExpression()?.let { c.trace.getType(it) } ?: return
-                        if (type.isFlexible() && TypeUtils.isNullableType(type.flexibility().upperBound) && !type.getAnnotations().isMarkedNotNull()) {
+                        val type = expression.subjectExpression?.let { c.trace.getType(it) } ?: return
+                        if (type.isFlexible() && TypeUtils.isNullableType(type.flexibility().upperBound) && !type.annotations.isMarkedNotNull()) {
                             val enumClassDescriptor = WhenChecker.getClassDescriptorOfTypeIfEnum(type) ?: return
 
                             if (WhenChecker.isWhenOnEnumExhaustive(expression, c.trace, enumClassDescriptor)
@@ -113,8 +113,8 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
                         }
                     }
             is KtPostfixExpression ->
-                    if (expression.getOperationToken() == KtTokens.EXCLEXCL) {
-                        val baseExpression = expression.getBaseExpression() ?: return
+                    if (expression.operationToken == KtTokens.EXCLEXCL) {
+                        val baseExpression = expression.baseExpression ?: return
                         val baseExpressionType = c.trace.getType(baseExpression) ?: return
                         doIfNotNull(
                                 DataFlowValueFactory.createDataFlowValue(baseExpression, baseExpressionType, c),
@@ -124,9 +124,9 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
                         }
                     }
             is KtBinaryExpression ->
-                when (expression.getOperationToken()) {
+                when (expression.operationToken) {
                     KtTokens.ELVIS -> {
-                        val baseExpression = expression.getLeft()
+                        val baseExpression = expression.left
                         val baseExpressionType = baseExpression?.let{ c.trace.getType(it) } ?: return
                         doIfNotNull(
                                 DataFlowValueFactory.createDataFlowValue(baseExpression!!, baseExpressionType, c),
@@ -139,9 +139,9 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
                     KtTokens.EXCLEQ,
                     KtTokens.EQEQEQ,
                     KtTokens.EXCLEQEQEQ -> {
-                        if (expression.getLeft() != null && expression.getRight() != null) {
+                        if (expression.left != null && expression.right != null) {
                             SenselessComparisonChecker.checkSenselessComparisonWithNull(
-                                    expression, expression.getLeft()!!, expression.getRight()!!, c,
+                                    expression, expression.left!!, expression.right!!, c,
                                     { c.trace.getType(it) },
                                     {
                                         value ->
@@ -171,8 +171,8 @@ public class JavaNullabilityWarningsChecker : AdditionalTypeChecker {
         val dataFlowValue = DataFlowValueFactory.createDataFlowValue(receiverArgument, c)
         if (!safeAccess) {
             doCheckType(
-                    receiverArgument.getType(),
-                    receiverParameter.getType(),
+                    receiverArgument.type,
+                    receiverParameter.type,
                     dataFlowValue,
                     c.dataFlowInfo
             ) {

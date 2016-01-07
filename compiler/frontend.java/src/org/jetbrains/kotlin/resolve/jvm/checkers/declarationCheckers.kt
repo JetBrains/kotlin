@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmOverloadsAnnotation
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
-public class LocalFunInlineChecker : DeclarationChecker {
+class LocalFunInlineChecker : DeclarationChecker {
 
     override fun check(
             declaration: KtDeclaration,
@@ -44,13 +44,13 @@ public class LocalFunInlineChecker : DeclarationChecker {
         if (InlineUtil.isInline(descriptor) &&
             declaration is KtNamedFunction &&
             descriptor is FunctionDescriptor &&
-            descriptor.getVisibility() == Visibilities.LOCAL) {
+            descriptor.visibility == Visibilities.LOCAL) {
             diagnosticHolder.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(declaration, declaration, descriptor))
         }
     }
 }
 
-public class PlatformStaticAnnotationChecker : DeclarationChecker {
+class PlatformStaticAnnotationChecker : DeclarationChecker {
 
     override fun check(
             declaration: KtDeclaration,
@@ -98,7 +98,7 @@ public class PlatformStaticAnnotationChecker : DeclarationChecker {
     }
 }
 
-public class JvmNameAnnotationChecker : DeclarationChecker {
+class JvmNameAnnotationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, diagnosticHolder: DiagnosticSink, bindingContext: BindingContext) {
         val platformNameAnnotation = DescriptorUtils.getJvmNameAnnotation(descriptor)
         if (platformNameAnnotation != null) {
@@ -135,7 +135,7 @@ public class JvmNameAnnotationChecker : DeclarationChecker {
     }
 }
 
-public class VolatileAnnotationChecker : DeclarationChecker {
+class VolatileAnnotationChecker : DeclarationChecker {
 
     override fun check(declaration: KtDeclaration,
                        descriptor: DeclarationDescriptor,
@@ -150,7 +150,7 @@ public class VolatileAnnotationChecker : DeclarationChecker {
     }
 }
 
-public class SynchronizedAnnotationChecker : DeclarationChecker {
+class SynchronizedAnnotationChecker : DeclarationChecker {
 
     override fun check(declaration: KtDeclaration,
                        descriptor: DeclarationDescriptor,
@@ -165,7 +165,7 @@ public class SynchronizedAnnotationChecker : DeclarationChecker {
     }
 }
 
-public class OverloadsAnnotationChecker: DeclarationChecker {
+class OverloadsAnnotationChecker: DeclarationChecker {
     override fun check(
             declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,
@@ -181,20 +181,20 @@ public class OverloadsAnnotationChecker: DeclarationChecker {
         if (descriptor !is CallableDescriptor) {
             return
         }
-        if (descriptor is FunctionDescriptor && descriptor.getModality() == Modality.ABSTRACT) {
+        if (descriptor is FunctionDescriptor && descriptor.modality == Modality.ABSTRACT) {
             diagnosticHolder.report(ErrorsJvm.OVERLOADS_ABSTRACT.on(declaration))
         }
-        else if ((!descriptor.getVisibility().isPublicAPI && descriptor.getVisibility() != Visibilities.INTERNAL) ||
+        else if ((!descriptor.visibility.isPublicAPI && descriptor.visibility != Visibilities.INTERNAL) ||
                  DescriptorUtils.isLocal(descriptor)) {
             diagnosticHolder.report(ErrorsJvm.OVERLOADS_PRIVATE.on(declaration))
         }
-        else if (descriptor.getValueParameters().none { it.declaresDefaultValue() }) {
+        else if (descriptor.valueParameters.none { it.declaresDefaultValue() }) {
             diagnosticHolder.report(ErrorsJvm.OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS.on(declaration))
         }
     }
 }
 
-public class TypeParameterBoundIsNotArrayChecker : DeclarationChecker {
+class TypeParameterBoundIsNotArrayChecker : DeclarationChecker {
     override fun check(
             declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,
@@ -214,7 +214,7 @@ public class TypeParameterBoundIsNotArrayChecker : DeclarationChecker {
     }
 }
 
-public class ReifiedTypeParameterAnnotationChecker : DeclarationChecker {
+class ReifiedTypeParameterAnnotationChecker : DeclarationChecker {
 
     override fun check(
             declaration: KtDeclaration,
@@ -223,7 +223,7 @@ public class ReifiedTypeParameterAnnotationChecker : DeclarationChecker {
             bindingContext: BindingContext
     ) {
         if (descriptor is CallableDescriptor && !InlineUtil.isInline(descriptor)) {
-            checkTypeParameterDescriptorsAreNotReified(descriptor.getTypeParameters(), diagnosticHolder)
+            checkTypeParameterDescriptorsAreNotReified(descriptor.typeParameters, diagnosticHolder)
         }
 
         if (descriptor is ClassDescriptor) {
@@ -236,7 +236,7 @@ public class ReifiedTypeParameterAnnotationChecker : DeclarationChecker {
             typeParameterDescriptors: List<TypeParameterDescriptor>,
             diagnosticHolder: DiagnosticSink
     ) {
-        for (reifiedTypeParameterDescriptor in typeParameterDescriptors.filter { it.isReified() }) {
+        for (reifiedTypeParameterDescriptor in typeParameterDescriptors.filter { it.isReified }) {
             val typeParameterDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(reifiedTypeParameterDescriptor)
             if (typeParameterDeclaration !is KtTypeParameter) throw AssertionError("JetTypeParameter expected")
 

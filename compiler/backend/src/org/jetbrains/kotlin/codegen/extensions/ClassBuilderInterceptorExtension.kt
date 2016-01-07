@@ -21,11 +21,11 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 
-public interface ClassBuilderInterceptorExtension {
+interface ClassBuilderInterceptorExtension {
     companion object : ProjectExtensionDescriptor<ClassBuilderInterceptorExtension>(
             "org.jetbrains.kotlin.classBuilderFactoryInterceptorExtension", ClassBuilderInterceptorExtension::class.java)
 
-    public fun interceptClassBuilderFactory(
+    fun interceptClassBuilderFactory(
             interceptedFactory: ClassBuilderFactory,
             bindingContext: BindingContext,
             diagnostics: DiagnosticSink

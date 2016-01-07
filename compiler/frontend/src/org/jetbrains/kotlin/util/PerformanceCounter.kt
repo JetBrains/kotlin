@@ -26,26 +26,26 @@ import java.util.concurrent.atomic.AtomicLong
  * This counter is thread-safe for initialization and usage.
  * But it may calculate time and number of runs not precisely.
  */
-public abstract class PerformanceCounter protected constructor(val name: String) {
+abstract class PerformanceCounter protected constructor(val name: String) {
     companion object {
         private val allCounters = arrayListOf<PerformanceCounter>()
 
         private var enabled = false
 
-        public fun currentTime(): Long = System.nanoTime()
+        fun currentTime(): Long = System.nanoTime()
 
-        public fun report(consumer: (String) -> Unit) {
+        fun report(consumer: (String) -> Unit) {
             val countersCopy = synchronized(allCounters) {
                 allCounters.toTypedArray()
             }
             countersCopy.forEach { it.report(consumer) }
         }
 
-        public fun setTimeCounterEnabled(enable: Boolean) {
+        fun setTimeCounterEnabled(enable: Boolean) {
             enabled = enable
         }
 
-        public fun resetAllCounters() {
+        fun resetAllCounters() {
             synchronized(allCounters) {
                 allCounters.forEach {
                     it.reset()
@@ -53,15 +53,14 @@ public abstract class PerformanceCounter protected constructor(val name: String)
             }
         }
 
-        @JvmOverloads
-        public fun create(name: String, reenterable: Boolean = false): PerformanceCounter {
+        @JvmOverloads fun create(name: String, reenterable: Boolean = false): PerformanceCounter {
             return if (reenterable)
                 ReenterableCounter(name)
             else
                 SimpleCounter(name)
         }
 
-        public fun create(name: String, vararg excluded: PerformanceCounter): PerformanceCounter = CounterWithExclude(name, *excluded)
+        fun create(name: String, vararg excluded: PerformanceCounter): PerformanceCounter = CounterWithExclude(name, *excluded)
 
         internal inline fun <T> getOrPut(threadLocal: ThreadLocal<T>, default: () -> T) : T {
             var value = threadLocal.get()
@@ -84,11 +83,11 @@ public abstract class PerformanceCounter protected constructor(val name: String)
         }
     }
 
-    public final fun increment() {
+    final fun increment() {
         count++
     }
 
-    public final fun <T> time(block: () -> T): T {
+    final fun <T> time(block: () -> T): T {
         count++
         if (!enabled) return block()
 
@@ -101,7 +100,7 @@ public abstract class PerformanceCounter protected constructor(val name: String)
         }
     }
 
-    public fun reset() {
+    fun reset() {
         count = 0
         totalTimeNanos = 0
     }
@@ -112,7 +111,7 @@ public abstract class PerformanceCounter protected constructor(val name: String)
 
     protected abstract fun <T> countTime(block: () -> T): T
 
-    public fun report(consumer: (String) -> Unit) {
+    fun report(consumer: (String) -> Unit) {
         if (totalTimeNanos == 0L) {
             consumer("$name performed $count times")
         }

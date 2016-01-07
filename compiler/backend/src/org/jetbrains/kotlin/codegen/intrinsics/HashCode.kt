@@ -22,7 +22,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-public class HashCode : IntrinsicMethod() {
+class HashCode : IntrinsicMethod() {
     override fun toCallable(method: CallableMethod): Callable =
             object : IntrinsicCallable(
                     Type.INT_TYPE,

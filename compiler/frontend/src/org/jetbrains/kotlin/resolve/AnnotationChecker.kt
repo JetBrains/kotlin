@@ -37,9 +37,9 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 
-public class AnnotationChecker(private val additionalCheckers: Iterable<AdditionalAnnotationChecker>) {
+class AnnotationChecker(private val additionalCheckers: Iterable<AdditionalAnnotationChecker>) {
 
-    public fun check(annotated: KtAnnotated, trace: BindingTrace, descriptor: DeclarationDescriptor? = null) {
+    fun check(annotated: KtAnnotated, trace: BindingTrace, descriptor: DeclarationDescriptor? = null) {
         val actualTargets = getActualTargetList(annotated, descriptor, trace)
         checkEntries(annotated.annotationEntries, actualTargets, trace)
         if (annotated is KtCallableDeclaration) {
@@ -66,7 +66,7 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
         }
     }
 
-    public fun checkExpression(expression: KtExpression, trace: BindingTrace) {
+    fun checkExpression(expression: KtExpression, trace: BindingTrace) {
         checkEntries(expression.getAnnotationEntries(), getActualTargetList(expression, null, trace), trace)
         if (expression is KtLambdaExpression) {
             for (parameter in expression.valueParameters) {
@@ -147,13 +147,12 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
             return applicableTargetSet(classDescriptor) ?: KotlinTarget.DEFAULT_TARGET_SET
         }
 
-        @JvmStatic
-        public fun applicableTargetSet(descriptor: AnnotationDescriptor): Set<KotlinTarget> {
+        @JvmStatic fun applicableTargetSet(descriptor: AnnotationDescriptor): Set<KotlinTarget> {
             val classDescriptor = descriptor.type.constructor.declarationDescriptor as? ClassDescriptor ?: return emptySet()
             return applicableTargetSet(classDescriptor) ?: KotlinTarget.DEFAULT_TARGET_SET
         }
 
-        public fun applicableTargetSet(classDescriptor: ClassDescriptor): Set<KotlinTarget>? {
+        fun applicableTargetSet(classDescriptor: ClassDescriptor): Set<KotlinTarget>? {
             val targetEntryDescriptor = classDescriptor.annotations.findAnnotation(KotlinBuiltIns.FQ_NAMES.target)
                                         ?: return null
             val valueArguments = targetEntryDescriptor.allValueArguments
@@ -163,7 +162,7 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
             }.toSet()
         }
 
-        public fun getDeclarationSiteActualTargetList(annotated: KtElement, descriptor: ClassDescriptor?, trace: BindingTrace):
+        fun getDeclarationSiteActualTargetList(annotated: KtElement, descriptor: ClassDescriptor?, trace: BindingTrace):
                 List<KotlinTarget> {
             return getActualTargetList(annotated, descriptor, trace).defaultTargets
         }
@@ -318,6 +317,6 @@ public class AnnotationChecker(private val additionalCheckers: Iterable<Addition
     }
 }
 
-public interface AdditionalAnnotationChecker {
-    public fun checkEntries(entries: List<KtAnnotationEntry>, actualTargets: List<KotlinTarget>, trace: BindingTrace)
+interface AdditionalAnnotationChecker {
+    fun checkEntries(entries: List<KtAnnotationEntry>, actualTargets: List<KotlinTarget>, trace: BindingTrace)
 }

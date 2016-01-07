@@ -48,15 +48,15 @@ class ReflectionAPICallChecker(private val module: ModuleDescriptor, storageMana
     override fun <F : CallableDescriptor> check(resolvedCall: ResolvedCall<F>, context: BasicCallResolutionContext) {
         if (isReflectionAvailable) return
 
-        val descriptor = resolvedCall.getResultingDescriptor()
-        val containingClass = descriptor.getContainingDeclaration() as? ClassDescriptor ?: return
+        val descriptor = resolvedCall.resultingDescriptor
+        val containingClass = descriptor.containingDeclaration as? ClassDescriptor ?: return
         if (!ReflectionTypes.isReflectionClass(containingClass)) return
 
         // Skip some symbols which are supposed to work fine without kotlin-reflect.jar:
         // - 'name' on anything
         // - 'invoke' on functions (or on anything else for that matter)
         // - 'get'/'set' on properties
-        val name = descriptor.getName()
+        val name = descriptor.name
         when {
             name == OperatorNameConventions.INVOKE -> return
             name.asString() == "name" -> return

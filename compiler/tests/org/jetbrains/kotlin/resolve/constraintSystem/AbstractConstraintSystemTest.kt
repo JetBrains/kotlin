@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import java.io.File
 
-abstract public class AbstractConstraintSystemTest() : KotlinLiteFixture() {
+abstract class AbstractConstraintSystemTest() : KotlinLiteFixture() {
 
     private var _typeResolver: TypeResolver? = null
     private val typeResolver: TypeResolver
@@ -51,7 +51,7 @@ abstract public class AbstractConstraintSystemTest() : KotlinLiteFixture() {
     override fun setUp() {
         super.setUp()
 
-        _typeResolver = createContainerForTests(getProject(), KotlinTestUtils.createEmptyModule()).typeResolver
+        _typeResolver = createContainerForTests(project, KotlinTestUtils.createEmptyModule()).typeResolver
         _testDeclarations = analyzeDeclarations()
     }
 
@@ -70,10 +70,10 @@ abstract public class AbstractConstraintSystemTest() : KotlinLiteFixture() {
 
         val psiFile = createPsiFile(null, fileName, loadFile(fileName))!!
         val bindingContext = JvmResolveUtil.analyzeOneFileWithJavaIntegrationAndCheckForErrors(psiFile).bindingContext
-        return ConstraintSystemTestData(bindingContext, getProject(), typeResolver)
+        return ConstraintSystemTestData(bindingContext, project, typeResolver)
     }
 
-    public fun doTest(filePath: String) {
+    fun doTest(filePath: String) {
         val constraintsFile = File(filePath)
         val constraintsFileText = constraintsFile.readLines()
 
@@ -114,9 +114,9 @@ abstract public class AbstractConstraintSystemTest() : KotlinLiteFixture() {
 
         val resultingSubstitutor = system.resultingSubstitutor
         val result = typeParameterDescriptors.map {
-            val parameterType = testDeclarations.getType(it.getName().asString())
+            val parameterType = testDeclarations.getType(it.name.asString())
             val resultType = resultingSubstitutor.substitute(parameterType, Variance.INVARIANT)
-            "${it.getName()}=${resultType?.let { DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(it) }}"
+            "${it.name}=${resultType?.let { DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(it) }}"
         }.joinToString("\n", prefix = "result:\n")
 
         val boundsFile = File(filePath.replace("constraints", "bounds"))

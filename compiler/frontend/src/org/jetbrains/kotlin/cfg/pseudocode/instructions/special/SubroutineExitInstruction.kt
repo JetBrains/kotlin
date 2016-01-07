@@ -20,14 +20,14 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.*
 import org.jetbrains.kotlin.psi.KtElement
 import java.util.*
 
-public class SubroutineExitInstruction(
-        public val subroutine: KtElement,
+class SubroutineExitInstruction(
+        val subroutine: KtElement,
         lexicalScope: LexicalScope,
-        public val isError: Boolean
+        val isError: Boolean
 ) : InstructionImpl(lexicalScope) {
     private var _sink: SubroutineSinkInstruction? = null
 
-    public var sink: SubroutineSinkInstruction
+    var sink: SubroutineSinkInstruction
         get() = _sink!!
         set(value: SubroutineSinkInstruction) {
             _sink = outgoingEdgeTo(value) as SubroutineSinkInstruction

@@ -25,8 +25,8 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.*
 import kotlin.text.Regex
 
-public object TypeIntrinsics {
-    public @JvmStatic fun instanceOf(v: InstructionAdapter, jetType: KotlinType, boxedAsmType: Type) {
+object TypeIntrinsics {
+    @JvmStatic fun instanceOf(v: InstructionAdapter, jetType: KotlinType, boxedAsmType: Type) {
         val functionTypeArity = getFunctionTypeArity(jetType)
         if (functionTypeArity >= 0) {
             v.iconst(functionTypeArity)
@@ -57,7 +57,7 @@ public object TypeIntrinsics {
                 LdcInsnNode(Integer(value))
             }
 
-    public @JvmStatic fun instanceOf(instanceofInsn: TypeInsnNode, instructions: InsnList, jetType: KotlinType, asmType: Type) {
+    @JvmStatic fun instanceOf(instanceofInsn: TypeInsnNode, instructions: InsnList, jetType: KotlinType, asmType: Type) {
         val functionTypeArity = getFunctionTypeArity(jetType)
         if (functionTypeArity >= 0) {
             instructions.insertBefore(instanceofInsn, iconstNode(functionTypeArity))
@@ -78,8 +78,7 @@ public object TypeIntrinsics {
         instanceofInsn.desc = asmType.internalName
     }
 
-    @JvmStatic
-    public fun checkcast(
+    @JvmStatic fun checkcast(
             v: InstructionAdapter,
             kotlinType: KotlinType, asmType: Type,
             // This parameter is just for sake of optimization:

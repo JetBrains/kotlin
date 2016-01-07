@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.*
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.cfg.Label
 
-public class UnconditionalJumpInstruction(
+class UnconditionalJumpInstruction(
         element: KtElement,
         targetLabel: Label,
         lexicalScope: LexicalScope
@@ -33,7 +33,7 @@ public class UnconditionalJumpInstruction(
         return visitor.visitUnconditionalJump(this)
     }
 
-    override fun toString(): String = "jmp(${targetLabel.getName()})"
+    override fun toString(): String = "jmp(${targetLabel.name})"
 
     override fun createCopy(newLabel: Label, lexicalScope: LexicalScope): AbstractJumpInstruction =
             UnconditionalJumpInstruction(element, newLabel, lexicalScope)

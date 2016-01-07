@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import com.intellij.psi.PsiElement
 
-public class KotlinUserTypeStubImpl(
+class KotlinUserTypeStubImpl(
         parent: StubElement<out PsiElement>?,
         private val isAbsoluteInRootPackage: Boolean
 ) : KotlinStubBaseImpl<KtUserType>(parent, KtStubElementTypes.USER_TYPE), KotlinUserTypeStub {

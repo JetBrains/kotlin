@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.psi.KtAnnotationUseSiteTarget
 import org.jetbrains.kotlin.psi.stubs.KotlinAnnotationUseSiteTargetStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
-public class KotlinAnnotationUseSiteTargetStubImpl(
+class KotlinAnnotationUseSiteTargetStubImpl(
         parent: StubElement<out PsiElement>?,
         private val target: StringRef
 ) : KotlinStubBaseImpl<KtAnnotationUseSiteTarget>(parent, KtStubElementTypes.ANNOTATION_TARGET), KotlinAnnotationUseSiteTargetStub {

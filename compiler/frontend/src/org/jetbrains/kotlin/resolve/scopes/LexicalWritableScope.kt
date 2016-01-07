@@ -30,7 +30,7 @@ class LexicalWritableScope(
         redeclarationHandler: RedeclarationHandler,
         override val kind: LexicalScopeKind
 ) : LexicalScope, WritableScopeStorage(redeclarationHandler) {
-    public enum class LockLevel {
+    enum class LockLevel {
         WRITING,
         BOTH,
         READING
@@ -41,14 +41,14 @@ class LexicalWritableScope(
     private var lockLevel: LockLevel = LockLevel.WRITING
     private var lastSnapshot: Snapshot? = null
 
-    public fun changeLockLevel(lockLevel: LockLevel) {
+    fun changeLockLevel(lockLevel: LockLevel) {
         if (lockLevel.ordinal < this.lockLevel.ordinal) {
             throw IllegalStateException("cannot lower lock level from " + this.lockLevel + " to " + lockLevel + " at " + toString())
         }
         this.lockLevel = lockLevel
     }
 
-    public fun takeSnapshot(): LexicalScope {
+    fun takeSnapshot(): LexicalScope {
         checkMayRead()
         if (lastSnapshot == null || lastSnapshot!!.descriptorLimit != addedDescriptors.size) {
             lastSnapshot = Snapshot(addedDescriptors.size)
@@ -56,17 +56,17 @@ class LexicalWritableScope(
         return lastSnapshot!!
     }
 
-    public fun addVariableDescriptor(variableDescriptor: VariableDescriptor) {
+    fun addVariableDescriptor(variableDescriptor: VariableDescriptor) {
         checkMayWrite()
         addVariableOrClassDescriptor(variableDescriptor)
     }
 
-    public fun addFunctionDescriptor(functionDescriptor: FunctionDescriptor) {
+    fun addFunctionDescriptor(functionDescriptor: FunctionDescriptor) {
         checkMayWrite()
         addFunctionDescriptorInternal(functionDescriptor)
     }
 
-    public fun addClassifierDescriptor(classifierDescriptor: ClassifierDescriptor) {
+    fun addClassifierDescriptor(classifierDescriptor: ClassifierDescriptor) {
         checkMayWrite()
         addVariableOrClassDescriptor(classifierDescriptor)
     }

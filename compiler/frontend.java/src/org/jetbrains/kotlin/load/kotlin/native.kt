@@ -26,11 +26,11 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
-public fun DeclarationDescriptor.hasNativeAnnotation(): Boolean {
+fun DeclarationDescriptor.hasNativeAnnotation(): Boolean {
     return this is FunctionDescriptor && this.isExternal
 }
 
-public class NativeFunChecker : DeclarationChecker {
+class NativeFunChecker : DeclarationChecker {
     override fun check(
             declaration: KtDeclaration,
             descriptor: DeclarationDescriptor,
@@ -39,11 +39,11 @@ public class NativeFunChecker : DeclarationChecker {
     ) {
         if (!descriptor.hasNativeAnnotation()) return
 
-        if (DescriptorUtils.isInterface(descriptor.getContainingDeclaration())) {
+        if (DescriptorUtils.isInterface(descriptor.containingDeclaration)) {
             diagnosticHolder.report(ErrorsJvm.EXTERNAL_DECLARATION_IN_INTERFACE.on(declaration))
         }
         else if (descriptor is CallableMemberDescriptor &&
-            descriptor.getModality() == Modality.ABSTRACT) {
+            descriptor.modality == Modality.ABSTRACT) {
             diagnosticHolder.report(ErrorsJvm.EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT.on(declaration))
         }
 

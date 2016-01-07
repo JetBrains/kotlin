@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 
-public object JavaGenericVarianceViolationTypeChecker : AdditionalTypeChecker {
+object JavaGenericVarianceViolationTypeChecker : AdditionalTypeChecker {
     // Prohibits covariant type argument conversions `List<String> -> (MutableList<Any>..List<Any>)` when expected type's lower bound is invariant.
     // It's needed to prevent accident unsafe covariant conversions of mutable collections.
     //

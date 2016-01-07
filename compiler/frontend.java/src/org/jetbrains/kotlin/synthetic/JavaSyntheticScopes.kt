@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.storage.StorageManager
 
-public class JavaSyntheticScopes(storageManager: StorageManager, lookupTracker: LookupTracker): SyntheticScopes {
+class JavaSyntheticScopes(storageManager: StorageManager, lookupTracker: LookupTracker): SyntheticScopes {
 
     override val scopes = listOf(JavaSyntheticPropertiesScope(storageManager, lookupTracker), SamAdapterFunctionsScope(storageManager))
 }

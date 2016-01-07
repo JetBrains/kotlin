@@ -21,94 +21,94 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.*
 
-public abstract class InstructionVisitorWithResult<R>() {
-    public abstract fun visitInstruction(instruction: Instruction): R
+abstract class InstructionVisitorWithResult<R>() {
+    abstract fun visitInstruction(instruction: Instruction): R
 
-    public open fun visitAccessInstruction(instruction: AccessValueInstruction): R {
+    open fun visitAccessInstruction(instruction: AccessValueInstruction): R {
         return visitInstructionWithNext(instruction)
     }
 
-    public open fun visitReadValue(instruction: ReadValueInstruction): R {
+    open fun visitReadValue(instruction: ReadValueInstruction): R {
         return visitAccessInstruction(instruction)
     }
 
-    public open fun visitLocalFunctionDeclarationInstruction(instruction: LocalFunctionDeclarationInstruction): R {
+    open fun visitLocalFunctionDeclarationInstruction(instruction: LocalFunctionDeclarationInstruction): R {
         return visitInstructionWithNext(instruction)
     }
 
-    public open fun visitVariableDeclarationInstruction(instruction: VariableDeclarationInstruction): R {
+    open fun visitVariableDeclarationInstruction(instruction: VariableDeclarationInstruction): R {
         return visitInstructionWithNext(instruction)
     }
 
-    public open fun visitUnconditionalJump(instruction: UnconditionalJumpInstruction): R {
+    open fun visitUnconditionalJump(instruction: UnconditionalJumpInstruction): R {
         return visitJump(instruction)
     }
 
-    public open fun visitConditionalJump(instruction: ConditionalJumpInstruction): R {
+    open fun visitConditionalJump(instruction: ConditionalJumpInstruction): R {
         return visitJump(instruction)
     }
 
-    public open fun visitReturnValue(instruction: ReturnValueInstruction): R {
+    open fun visitReturnValue(instruction: ReturnValueInstruction): R {
         return visitJump(instruction)
     }
 
-    public open fun visitReturnNoValue(instruction: ReturnNoValueInstruction): R {
+    open fun visitReturnNoValue(instruction: ReturnNoValueInstruction): R {
         return visitJump(instruction)
     }
 
-    public open fun visitThrowExceptionInstruction(instruction: ThrowExceptionInstruction): R {
+    open fun visitThrowExceptionInstruction(instruction: ThrowExceptionInstruction): R {
         return visitJump(instruction)
     }
 
-    public open fun visitNondeterministicJump(instruction: NondeterministicJumpInstruction): R {
+    open fun visitNondeterministicJump(instruction: NondeterministicJumpInstruction): R {
         return visitInstruction(instruction)
     }
 
-    public open fun visitSubroutineExit(instruction: SubroutineExitInstruction): R {
+    open fun visitSubroutineExit(instruction: SubroutineExitInstruction): R {
         return visitInstruction(instruction)
     }
 
-    public open fun visitSubroutineSink(instruction: SubroutineSinkInstruction): R {
+    open fun visitSubroutineSink(instruction: SubroutineSinkInstruction): R {
         return visitInstruction(instruction)
     }
 
-    public open fun visitJump(instruction: AbstractJumpInstruction): R {
+    open fun visitJump(instruction: AbstractJumpInstruction): R {
         return visitInstruction(instruction)
     }
 
-    public open fun visitInstructionWithNext(instruction: InstructionWithNext): R {
+    open fun visitInstructionWithNext(instruction: InstructionWithNext): R {
         return visitInstruction(instruction)
     }
 
-    public open fun visitSubroutineEnter(instruction: SubroutineEnterInstruction): R {
+    open fun visitSubroutineEnter(instruction: SubroutineEnterInstruction): R {
         return visitInstructionWithNext(instruction)
     }
 
-    public open fun visitWriteValue(instruction: WriteValueInstruction): R {
+    open fun visitWriteValue(instruction: WriteValueInstruction): R {
         return visitAccessInstruction(instruction)
     }
 
-    public open fun visitLoadUnitValue(instruction: LoadUnitValueInstruction): R {
+    open fun visitLoadUnitValue(instruction: LoadUnitValueInstruction): R {
         return visitInstructionWithNext(instruction)
     }
 
-    public open fun visitOperation(instruction: OperationInstruction): R {
+    open fun visitOperation(instruction: OperationInstruction): R {
         return visitInstructionWithNext(instruction)
     }
 
-    public open fun visitCallInstruction(instruction: CallInstruction): R {
+    open fun visitCallInstruction(instruction: CallInstruction): R {
         return visitOperation(instruction)
     }
 
-    public open fun visitMerge(instruction: MergeInstruction): R {
+    open fun visitMerge(instruction: MergeInstruction): R {
         return visitOperation(instruction)
     }
 
-    public open fun visitMarkInstruction(instruction: MarkInstruction): R {
+    open fun visitMarkInstruction(instruction: MarkInstruction): R {
         return visitInstructionWithNext(instruction)
     }
 
-    public open fun visitMagic(instruction: MagicInstruction): R {
+    open fun visitMagic(instruction: MagicInstruction): R {
         return visitOperation(instruction)
     }
 }

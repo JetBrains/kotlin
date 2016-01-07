@@ -62,5 +62,5 @@ object LightClassTestCommon {
     // Actual text for light class is generated with ClsElementImpl.appendMirrorText() that can find empty DefaultImpl inner class in stubs
     // for all interfaces. This inner class can't be used in Java as it generally is not seen from light classes built from Kotlin sources.
     // It is also omitted during classes generation in backend so it also absent in light classes built from compiled code.
-    public  fun removeEmptyDefaultImpls(text: String) : String = text.replace("\n    final class DefaultImpls {\n    }\n", "")
+    fun removeEmptyDefaultImpls(text: String) : String = text.replace("\n    final class DefaultImpls {\n    }\n", "")
 }

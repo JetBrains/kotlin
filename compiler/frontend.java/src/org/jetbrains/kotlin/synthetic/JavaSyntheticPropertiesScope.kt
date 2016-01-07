@@ -49,12 +49,12 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor {
 
     companion object {
         fun findByGetterOrSetter(getterOrSetter: FunctionDescriptor, syntheticScopes: SyntheticScopes): SyntheticJavaPropertyDescriptor? {
-            val name = getterOrSetter.getName()
-            if (name.isSpecial()) return null
-            val identifier = name.getIdentifier()
+            val name = getterOrSetter.name
+            if (name.isSpecial) return null
+            val identifier = name.identifier
             if (!identifier.startsWith("get") && !identifier.startsWith("is") && !identifier.startsWith("set")) return null // optimization
 
-            val owner = getterOrSetter.getContainingDeclaration() as? ClassDescriptor ?: return null
+            val owner = getterOrSetter.containingDeclaration as? ClassDescriptor ?: return null
 
             val originalGetterOrSetter = getterOrSetter.original
             return syntheticScopes.collectSyntheticExtensionProperties(listOf(owner.defaultType))
@@ -209,7 +209,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
 
         val classifier = type.declarationDescriptor
         if (classifier is ClassDescriptor) {
-            for (descriptor in classifier.getUnsubstitutedMemberScope().getContributedDescriptors(DescriptorKindFilter.FUNCTIONS)) {
+            for (descriptor in classifier.unsubstitutedMemberScope.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS)) {
                 if (descriptor is FunctionDescriptor) {
                     val propertyName = SyntheticJavaPropertyDescriptor.propertyNameByGetMethodName(descriptor.getName()) ?: continue
                     addIfNotNull(syntheticPropertyInClass(Pair(classifier, propertyName)).descriptor)

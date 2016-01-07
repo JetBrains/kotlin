@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
 
-public fun createResolveSessionForFiles(
+fun createResolveSessionForFiles(
         project: Project,
         syntheticFiles: Collection<KtFile>,
         addBuiltIns: Boolean

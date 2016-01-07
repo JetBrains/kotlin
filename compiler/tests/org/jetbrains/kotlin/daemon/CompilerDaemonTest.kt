@@ -32,7 +32,7 @@ import kotlin.test.fail
 
 val TIMEOUT_DAEMON_RUNNER_EXIT_MS = 10000L
 
-public class CompilerDaemonTest : KotlinIntegrationTestBase() {
+class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
     data class CompilerResults(val resultCode: Int, val out: String)
 
@@ -65,7 +65,7 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
     private fun run(logName: String, vararg args: String): Int = runJava(getTestBaseDir(), logName, *args)
 
 
-    public fun testHelloApp() {
+    fun testHelloApp() {
         withFlagFile(getTestName(true), ".alive") { flagFile ->
             val daemonOptions = DaemonOptions(runFilesPath = File(tmpdir, getTestName(true)).absolutePath,
                                               verbose = true,
@@ -113,7 +113,7 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
         }
     }
 
-    public fun testDaemonJvmOptionsParsing() {
+    fun testDaemonJvmOptionsParsing() {
         val backupJvmOptions = System.getProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY)
         try {
             System.setProperty(COMPILE_DAEMON_JVM_OPTIONS_PROPERTY, "-aaa,-bbb\\,ccc,-ddd,-Xmx200m,-XX:MaxPermSize=10k,-XX:ReservedCodeCacheSize=100,-xxx\\,yyy")
@@ -128,7 +128,7 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
         }
     }
 
-    public fun testDaemonOptionsParsing() {
+    fun testDaemonOptionsParsing() {
         val backupOptions = System.getProperty(COMPILE_DAEMON_OPTIONS_PROPERTY)
         try {
             System.setProperty(COMPILE_DAEMON_OPTIONS_PROPERTY, "runFilesPath=abcd,autoshutdownIdleSeconds=1111")
@@ -141,7 +141,7 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
         }
     }
 
-    public fun testDaemonInstancesSimple() {
+    fun testDaemonInstancesSimple() {
         withFlagFile(getTestName(true), ".alive") { flagFile ->
             val daemonOptions = DaemonOptions(runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
             val compilerId2 = CompilerId.makeCompilerId(compilerClassPath +
@@ -185,7 +185,7 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
         }
     }
 
-    public fun testDaemonAutoshutdownOnUnused() {
+    fun testDaemonAutoshutdownOnUnused() {
         withFlagFile(getTestName(true), ".alive") { flagFile ->
             val daemonOptions = DaemonOptions(autoshutdownUnusedSeconds = 1, runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
             KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
@@ -212,7 +212,7 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
         }
     }
 
-    public fun testDaemonAutoshutdownOnIdle() {
+    fun testDaemonAutoshutdownOnIdle() {
         withFlagFile(getTestName(true), ".alive") { flagFile ->
             val daemonOptions = DaemonOptions(autoshutdownIdleSeconds = 1, runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
             KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
@@ -244,7 +244,7 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
         }
     }
 
-    public fun testDaemonGracefulShutdown() {
+    fun testDaemonGracefulShutdown() {
         withFlagFile(getTestName(true), ".alive") { flagFile ->
             val daemonOptions = DaemonOptions(autoshutdownIdleSeconds = 1, runFilesPath = File(tmpdir, getTestName(true)).absolutePath)
             KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
@@ -291,7 +291,7 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
      *  This seems a known problem, e.g. gradle uses a library with native code that prevents io handles inheritance when launching it's daemon
      *  (the same solution is used in kotlin daemon client - see next commit)
      */
-    public fun testDaemonExecutionViaIntermediateProcess() {
+    fun testDaemonExecutionViaIntermediateProcess() {
         val clientAliveFile = createTempFile("kotlin-daemon-transitive-run-test", ".run")
         val runFilesPath = File(tmpdir, getTestName(true)).absolutePath
         val daemonOptions = DaemonOptions(runFilesPath = runFilesPath)
@@ -329,7 +329,7 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
         }
     }
 
-    private class SynchronizationTracer(public val startSignal: CountDownLatch, public val doneSignal: CountDownLatch, port: Int) : RemoteOperationsTracer,
+    private class SynchronizationTracer(val startSignal: CountDownLatch, val doneSignal: CountDownLatch, port: Int) : RemoteOperationsTracer,
             java.rmi.server.UnicastRemoteObject(port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory)
     {
         override fun before(id: String) {
@@ -343,7 +343,7 @@ public class CompilerDaemonTest : KotlinIntegrationTestBase() {
     private val PARALLEL_THREADS_TO_COMPILE = 10
     private val PARALLEL_WAIT_TIMEOUT_S = 60L
 
-    public fun testParallelCompilationOnDaemon() {
+    fun testParallelCompilationOnDaemon() {
 
         assertTrue(PARALLEL_THREADS_TO_COMPILE <= LoopbackNetworkInterface.SERVER_SOCKET_BACKLOG_SIZE)
 

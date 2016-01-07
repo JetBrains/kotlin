@@ -19,12 +19,12 @@ package org.jetbrains.kotlin.cfg.pseudocode
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.InstructionWithValue
 
-public interface PseudoValue {
-    public val debugName: String
-    public val element: KtElement?
-    public val createdAt: InstructionWithValue?
+interface PseudoValue {
+    val debugName: String
+    val element: KtElement?
+    val createdAt: InstructionWithValue?
 }
 
-public interface PseudoValueFactory {
-    public fun newValue(element: KtElement?, instruction: InstructionWithValue?): PseudoValue
+interface PseudoValueFactory {
+    fun newValue(element: KtElement?, instruction: InstructionWithValue?): PseudoValue
 }

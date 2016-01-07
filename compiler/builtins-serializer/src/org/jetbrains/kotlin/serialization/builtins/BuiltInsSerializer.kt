@@ -48,11 +48,11 @@ import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 import java.io.File
 
-public class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
+class BuiltInsSerializer(private val dependOnOldBuiltIns: Boolean) {
     private var totalSize = 0
     private var totalFiles = 0
 
-    public fun serialize(
+    fun serialize(
             destDir: File,
             srcDirs: List<File>,
             extraClassPath: List<File>,

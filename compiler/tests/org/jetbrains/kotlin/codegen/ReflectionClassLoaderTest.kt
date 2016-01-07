@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.test.ConfigurationKind
 
-public class ReflectionClassLoaderTest : CodegenTestCase() {
+class ReflectionClassLoaderTest : CodegenTestCase() {
     override fun getPrefix() = "reflection/classLoaders"
 
     override fun setUp() {
@@ -26,7 +26,7 @@ public class ReflectionClassLoaderTest : CodegenTestCase() {
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL)
     }
 
-    private fun Class<*>.methodByName(name: String) = getDeclaredMethods().single { it.getName() == name }
+    private fun Class<*>.methodByName(name: String) = declaredMethods.single { it.name == name }
 
     fun doTest(cl1: ClassLoader, cl2: ClassLoader) {
         val t1 = cl1.loadClass("test.Test")
@@ -38,7 +38,7 @@ public class ReflectionClassLoaderTest : CodegenTestCase() {
     }
 
     fun testSimpleDifferentClassLoaders() {
-        loadFile(getPrefix() + "/differentClassLoaders.kt")
+        loadFile(prefix + "/differentClassLoaders.kt")
 
         doTest(
                 createClassLoader(),
@@ -49,7 +49,7 @@ public class ReflectionClassLoaderTest : CodegenTestCase() {
     fun testClassLoaderWithNonTrivialEqualsAndHashCode() {
         // Check that class loaders do not participate as keys in hash maps (use identity hash maps instead)
 
-        loadFile(getPrefix() + "/differentClassLoaders.kt")
+        loadFile(prefix + "/differentClassLoaders.kt")
 
         class BrokenEqualsClassLoader(parent: ClassLoader) : ClassLoader(parent) {
             override fun equals(other: Any?) = true
@@ -65,7 +65,7 @@ public class ReflectionClassLoaderTest : CodegenTestCase() {
     fun testParentFirst() {
         // Check that for a child class loader, a class reference would be the same as for his parent
 
-        loadFile(getPrefix() + "/parentFirst.kt")
+        loadFile(prefix + "/parentFirst.kt")
 
         class ChildClassLoader(parent: ClassLoader) : ClassLoader(parent)
 

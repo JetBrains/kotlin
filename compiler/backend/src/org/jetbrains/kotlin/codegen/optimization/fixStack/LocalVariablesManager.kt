@@ -91,7 +91,7 @@ internal class LocalVariablesManager(val context: FixStackContext, val methodNod
 
     fun createReturnValueVariable(returnValue: BasicValue): Int {
         val returnValueIndex = getFirstUnusedLocalVariableIndex()
-        updateMaxLocals(returnValueIndex + returnValue.getSize())
+        updateMaxLocals(returnValueIndex + returnValue.size)
         return returnValueIndex
     }
 }

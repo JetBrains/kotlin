@@ -29,13 +29,13 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import java.util.ArrayList
 import java.util.HashMap
 
-public class PseudocodeVariableDataCollector(
+class PseudocodeVariableDataCollector(
         private val bindingContext: BindingContext,
         private val pseudocode: Pseudocode
 ) {
     val lexicalScopeVariableInfo = computeLexicalScopeVariableInfo(pseudocode)
 
-    public fun <I : ControlFlowInfo<*>> collectData(
+    fun <I : ControlFlowInfo<*>> collectData(
             traversalOrder: TraversalOrder,
             mergeDataWithLocalDeclarations: Boolean,
             initialInfo: I,
@@ -80,7 +80,7 @@ public class PseudocodeVariableDataCollector(
                     descriptor.toString()
 
                     assert(descriptor is VariableDescriptor) {
-                        "Variable descriptor should correspond to the instruction for ${instruction.element.getText()}.\n" +
+                        "Variable descriptor should correspond to the instruction for ${instruction.element.text}.\n" +
                         "Descriptor: $descriptor"
                     }
                     lexicalScopeVariableInfo.registerVariableDeclaredInScope(
@@ -93,12 +93,12 @@ public class PseudocodeVariableDataCollector(
     }
 }
 
-public interface LexicalScopeVariableInfo {
+interface LexicalScopeVariableInfo {
     val declaredIn : Map<VariableDescriptor, LexicalScope>
     val scopeVariables : Map<LexicalScope, Collection<VariableDescriptor>>
 }
 
-public class LexicalScopeVariableInfoImpl : LexicalScopeVariableInfo {
+class LexicalScopeVariableInfoImpl : LexicalScopeVariableInfo {
     override val declaredIn = HashMap<VariableDescriptor, LexicalScope>()
     override val scopeVariables = HashMap<LexicalScope, MutableCollection<VariableDescriptor>>()
 

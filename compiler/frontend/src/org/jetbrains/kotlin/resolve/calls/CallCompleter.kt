@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.DataFlowAnalyzer
 import java.util.*
 
-public class CallCompleter(
+class CallCompleter(
         private val argumentTypeResolver: ArgumentTypeResolver,
         private val candidateResolver: CandidateResolver,
         private val symbolUsageValidator: SymbolUsageValidator,

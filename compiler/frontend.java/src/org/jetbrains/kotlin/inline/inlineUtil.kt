@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.serialization.jvm.BitEncoding
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 
-public fun inlineFunctionsJvmNames(bytes: ByteArray): Set<String> {
+fun inlineFunctionsJvmNames(bytes: ByteArray): Set<String> {
     val header = readKotlinHeader(bytes)
     val annotationData = header.annotationData
     val strings = header.strings

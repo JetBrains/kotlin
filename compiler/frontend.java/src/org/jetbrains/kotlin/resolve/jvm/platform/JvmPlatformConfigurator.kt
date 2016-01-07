@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.synthetic.JavaSyntheticScopes
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 
 
-public object JvmPlatformConfigurator : PlatformConfigurator(
+object JvmPlatformConfigurator : PlatformConfigurator(
         DynamicTypesSettings(),
         additionalDeclarationCheckers = listOf(
                 PlatformStaticAnnotationChecker(),

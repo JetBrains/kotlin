@@ -21,7 +21,7 @@ import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 import java.nio.ByteBuffer
 
-public class ReplTerminalDiagnosticMessageHolder() : MessageCollectorBasedReporter, DiagnosticMessageHolder {
+class ReplTerminalDiagnosticMessageHolder() : MessageCollectorBasedReporter, DiagnosticMessageHolder {
     private val outputStream = ByteArrayOutputStream()
     override val messageCollector = PrintingMessageCollector(PrintStream(outputStream), MessageRenderer.WITHOUT_PATHS, false)
 

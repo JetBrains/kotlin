@@ -16,20 +16,20 @@
 
 package org.jetbrains.kotlin.modules
 
-public interface Module {
-    public fun getModuleName(): String
+interface Module {
+    fun getModuleName(): String
 
-    public fun getModuleType(): String
+    fun getModuleType(): String
 
-    public fun getOutputDirectory(): String
+    fun getOutputDirectory(): String
 
-    public fun getFriendPaths(): List<String>
+    fun getFriendPaths(): List<String>
 
-    public fun getSourceFiles(): List<String>
+    fun getSourceFiles(): List<String>
 
-    public fun getClasspathRoots(): List<String>
+    fun getClasspathRoots(): List<String>
 
-    public fun getJavaSourceRoots(): List<JavaRootPath>
+    fun getJavaSourceRoots(): List<JavaRootPath>
 }
 
 data class JavaRootPath(val path: String, val packagePrefix: String? = null)

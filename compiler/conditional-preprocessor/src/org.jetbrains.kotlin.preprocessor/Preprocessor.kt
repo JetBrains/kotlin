@@ -30,21 +30,21 @@ import java.io.IOException
 
 
 
-public data class Profile(val name: String, val evaluator: Evaluator, val targetRoot: File)
+data class Profile(val name: String, val evaluator: Evaluator, val targetRoot: File)
 
-public fun createJvmProfile(targetRoot: File, version: Int): Profile = Profile("JVM$version", JvmPlatformEvaluator(version), File(targetRoot, "jvm$version"))
-public fun createJsProfile(targetRoot: File): Profile = Profile("JS", JsPlatformEvaluator(), File(targetRoot, "js"))
+fun createJvmProfile(targetRoot: File, version: Int): Profile = Profile("JVM$version", JvmPlatformEvaluator(version), File(targetRoot, "jvm$version"))
+fun createJsProfile(targetRoot: File): Profile = Profile("JS", JsPlatformEvaluator(), File(targetRoot, "js"))
 
-public val profileEvaluators: Map<String, () -> Evaluator> =
+val profileEvaluators: Map<String, () -> Evaluator> =
         listOf(6, 7, 8).toMapBy({ version -> "JVM$version" }, { version -> { JvmPlatformEvaluator(version) } }) + ("JS" to { JsPlatformEvaluator() })
 
-public fun createProfile(name: String, targetRoot: File): Profile {
+fun createProfile(name: String, targetRoot: File): Profile {
     val (profileName, evaluator) = profileEvaluators.entries.firstOrNull { it.key.equals(name, ignoreCase = true) } ?: throw IllegalArgumentException("Profile with name '$name' is not supported")
     return Profile(profileName, evaluator(), targetRoot)
 }
 
 
-public class Preprocessor(val logger: Logger = SystemOutLogger) {
+class Preprocessor(val logger: Logger = SystemOutLogger) {
 
     val fileType = KotlinFileType.INSTANCE
     val jetPsiFactory: KtPsiFactory
@@ -70,7 +70,7 @@ public class Preprocessor(val logger: Logger = SystemOutLogger) {
         override fun toString() = this.javaClass.simpleName
     }
 
-    public fun processSources(sourceRoot: File, profile: Profile) {
+    fun processSources(sourceRoot: File, profile: Profile) {
         processDirectorySingleEvaluator(sourceRoot, profile.targetRoot, profile.evaluator)
     }
 

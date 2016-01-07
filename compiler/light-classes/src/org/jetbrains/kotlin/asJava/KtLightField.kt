@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtEnumEntry
 
-public interface KtLightField : PsiField, KtLightElement<KtDeclaration, PsiField>
+interface KtLightField : PsiField, KtLightElement<KtDeclaration, PsiField>
 
 // Copied from com.intellij.psi.impl.light.LightField
 sealed class KtLightFieldImpl(
@@ -108,14 +108,14 @@ sealed class KtLightFieldImpl(
 
         override fun getInitializingClass(): PsiEnumConstantInitializer? = initializingClass
         override fun getOrCreateInitializingClass(): PsiEnumConstantInitializer =
-                initializingClass ?: throw UnsupportedOperationException("Can't create enum constant body: ${getDelegate().getName()}")
+                initializingClass ?: throw UnsupportedOperationException("Can't create enum constant body: ${getDelegate().name}")
 
         override fun resolveConstructor() = getDelegate().resolveConstructor()
         override fun resolveMethod() = getDelegate().resolveMethod()
         override fun resolveMethodGenerics() = getDelegate().resolveMethodGenerics()
     }
 
-    public class KtLightFieldForDeclaration(origin: KtDeclaration?, delegate: PsiField, containingClass: KtLightClass)
+    class KtLightFieldForDeclaration(origin: KtDeclaration?, delegate: PsiField, containingClass: KtLightClass)
     : KtLightFieldImpl(origin, delegate, containingClass)
 
     companion object Factory {

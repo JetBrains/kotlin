@@ -22,15 +22,15 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 
-public interface WrappedAnnotated : Annotated {
-    public val originalAnnotated: Annotated
+interface WrappedAnnotated : Annotated {
+    val originalAnnotated: Annotated
 }
 
-public class AnnotatedWithFakeAnnotations(override val originalAnnotated: Annotated, private val actual: Annotations) : WrappedAnnotated {
+class AnnotatedWithFakeAnnotations(override val originalAnnotated: Annotated, private val actual: Annotations) : WrappedAnnotated {
     override fun getAnnotations() = actual
 }
 
-public class AnnotatedWithOnlyTargetedAnnotations(private val original: Annotated) : Annotated {
+class AnnotatedWithOnlyTargetedAnnotations(private val original: Annotated) : Annotated {
     private val annotations: Annotations = UseSiteTargetedAnnotations(original.annotations)
 
     override fun getAnnotations() = annotations
@@ -52,4 +52,4 @@ public class AnnotatedWithOnlyTargetedAnnotations(private val original: Annotate
     }
 }
 
-public class AnnotatedSimple(annotations: Annotations) : AnnotatedImpl(annotations)
+class AnnotatedSimple(annotations: Annotations) : AnnotatedImpl(annotations)

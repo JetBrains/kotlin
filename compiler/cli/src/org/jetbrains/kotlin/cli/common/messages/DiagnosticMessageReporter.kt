@@ -19,6 +19,6 @@ package org.jetbrains.kotlin.cli.common.messages
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 
-public interface DiagnosticMessageReporter {
+interface DiagnosticMessageReporter {
     fun report(diagnostic: Diagnostic, file: PsiFile, render: String)
 }

@@ -25,11 +25,11 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitor
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionVisitorWithResult
 import org.jetbrains.kotlin.psi.KtReturnExpression
 
-public class ReturnValueInstruction(
+class ReturnValueInstruction(
         returnExpression: KtExpression,
         lexicalScope: LexicalScope,
         targetLabel: Label,
-        public val returnedValue: PseudoValue
+        val returnedValue: PseudoValue
 ) : AbstractJumpInstruction(returnExpression, targetLabel, lexicalScope) {
     override val inputValues: List<PseudoValue> get() = Collections.singletonList(returnedValue)
 
@@ -49,5 +49,5 @@ public class ReturnValueInstruction(
         return ReturnValueInstruction((element as KtExpression), lexicalScope, newLabel, returnedValue)
     }
 
-    public val returnExpressionIfAny: KtReturnExpression? = element as? KtReturnExpression
+    val returnExpressionIfAny: KtReturnExpression? = element as? KtReturnExpression
 }

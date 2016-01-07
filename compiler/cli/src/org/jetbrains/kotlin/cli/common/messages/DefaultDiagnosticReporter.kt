@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 /**
  * This class behaviour is the same as [MessageCollector.report] in [AnalyzerWithCompilerReport.reportDiagnostic].
  */
-public class DefaultDiagnosticReporter(override val messageCollector: MessageCollector) : MessageCollectorBasedReporter
+class DefaultDiagnosticReporter(override val messageCollector: MessageCollector) : MessageCollectorBasedReporter
 
-public interface MessageCollectorBasedReporter : DiagnosticMessageReporter {
+interface MessageCollectorBasedReporter : DiagnosticMessageReporter {
 
     val messageCollector: MessageCollector
 

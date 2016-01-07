@@ -30,13 +30,13 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.renderer.render
 import java.util.*
 
-public fun KtPsiFactory.createExpressionByPattern(pattern: String, vararg args: Any): KtExpression
+fun KtPsiFactory.createExpressionByPattern(pattern: String, vararg args: Any): KtExpression
         = createByPattern(pattern, *args) { createExpression(it) }
 
-public fun <TDeclaration : KtDeclaration> KtPsiFactory.createDeclarationByPattern(pattern: String, vararg args: Any): TDeclaration
+fun <TDeclaration : KtDeclaration> KtPsiFactory.createDeclarationByPattern(pattern: String, vararg args: Any): TDeclaration
         = createByPattern(pattern, *args) { createDeclaration<TDeclaration>(it) }
 
-public fun KtPsiFactory.createDestructuringDeclarationByPattern(pattern: String, vararg args: Any): KtDestructuringDeclaration
+fun KtPsiFactory.createDestructuringDeclarationByPattern(pattern: String, vararg args: Any): KtDestructuringDeclaration
         = createByPattern(pattern, *args) { createDestructuringDeclaration(it) }
 
 private abstract class ArgumentType<T : Any>(val klass: Class<T>)
@@ -51,30 +51,30 @@ private class PsiElementArgumentType<T : PsiElement>(klass: Class<T>) : PsiEleme
     override fun replacePlaceholderElement(placeholder: T, argument: T) {
         // if argument element has generated flag then it has not been formatted yet and we should do this manually
         // (because we cleared this flag for the whole tree above and PostprocessReformattingAspect won't format anything)
-        val reformat = CodeEditUtil.isNodeGenerated(argument.getNode())
+        val reformat = CodeEditUtil.isNodeGenerated(argument.node)
         val result = placeholder.replace(argument)
         if (reformat) {
-            CodeStyleManager.getInstance(result.getProject()).reformat(result, true)
+            CodeStyleManager.getInstance(result.project).reformat(result, true)
         }
     }
 }
 
 private object PsiChildRangeArgumentType : PsiElementPlaceholderArgumentType<PsiChildRange, KtElement>(PsiChildRange::class.java, KtElement::class.java) {
     override fun replacePlaceholderElement(placeholder: KtElement, argument: PsiChildRange) {
-        val project = placeholder.getProject()
+        val project = placeholder.project
         val codeStyleManager = CodeStyleManager.getInstance(project)
 
         if (argument.isEmpty) {
             placeholder.delete()
         }
         else {
-            val first = placeholder.getParent().addRangeBefore(argument.first!!, argument.last!!, placeholder)
-            val last = placeholder.getPrevSibling()
+            val first = placeholder.parent.addRangeBefore(argument.first!!, argument.last!!, placeholder)
+            val last = placeholder.prevSibling
             placeholder.delete()
 
-            codeStyleManager.reformatNewlyAddedElement(first.getNode().getTreeParent(), first.getNode())
+            codeStyleManager.reformatNewlyAddedElement(first.node.treeParent, first.node)
             if (last != first) {
-                codeStyleManager.reformatNewlyAddedElement(last.getNode().getTreeParent(), last.getNode())
+                codeStyleManager.reformatNewlyAddedElement(last.node.treeParent, last.node)
             }
         }
     }
@@ -88,10 +88,10 @@ private val SUPPORTED_ARGUMENT_TYPES = listOf(
         PsiChildRangeArgumentType
 )
 
-public fun <TElement : KtElement> createByPattern(pattern: String, vararg args: Any, factory: (String) -> TElement): TElement {
+fun <TElement : KtElement> createByPattern(pattern: String, vararg args: Any, factory: (String) -> TElement): TElement {
     val argumentTypes = args.map { arg ->
         SUPPORTED_ARGUMENT_TYPES.firstOrNull { it.klass.isInstance(arg) }
-            ?: throw IllegalArgumentException("Unsupported argument type: ${arg.javaClass}, should be one of: ${SUPPORTED_ARGUMENT_TYPES.map { it.klass.getSimpleName() }.joinToString()}")
+            ?: throw IllegalArgumentException("Unsupported argument type: ${arg.javaClass}, should be one of: ${SUPPORTED_ARGUMENT_TYPES.map { it.klass.simpleName }.joinToString()}")
     }
 
     // convert arguments that can be converted into plain text
@@ -107,7 +107,7 @@ public fun <TElement : KtElement> createByPattern(pattern: String, vararg args: 
     val (processedText, allPlaceholders) = processPattern(pattern, args)
 
     var resultElement = factory(processedText.trim())
-    val project = resultElement.getProject()
+    val project = resultElement.project
 
     val start = resultElement.startOffset
 
@@ -122,7 +122,7 @@ public fun <TElement : KtElement> createByPattern(pattern: String, vararg args: 
         val expectedElementType = (argumentTypes[n] as PsiElementPlaceholderArgumentType<*, *>).placeholderClass
 
         for ((range, text) in placeholders) {
-            val token = resultElement.findElementAt(range.getStartOffset())!!
+            val token = resultElement.findElementAt(range.startOffset)!!
             for (element in token.parentsWithSelf) {
                 val elementRange = element.getTextRange().shiftRight(-start)
                 if (elementRange == range && expectedElementType.isInstance(element)) {
@@ -132,7 +132,7 @@ public fun <TElement : KtElement> createByPattern(pattern: String, vararg args: 
                 }
 
                 if (!range.contains(elementRange)) {
-                    throw IllegalArgumentException("Invalid pattern '$pattern' - no ${expectedElementType.getSimpleName()} found for $$n, text = '$processedText'")
+                    throw IllegalArgumentException("Invalid pattern '$pattern' - no ${expectedElementType.simpleName} found for $$n, text = '$processedText'")
                 }
             }
         }
@@ -144,7 +144,7 @@ public fun <TElement : KtElement> createByPattern(pattern: String, vararg args: 
             .filter { args[it.key] is String }
             .flatMap { it.value }
             .map { it.range }
-            .filterNot { it.isEmpty() }
+            .filterNot { it.isEmpty }
             .sortedByDescending { it.startOffset }
 
     // reformat whole text except for String arguments (as they can contain user's formatting to be preserved)
@@ -155,24 +155,24 @@ public fun <TElement : KtElement> createByPattern(pattern: String, vararg args: 
         var bound = resultElement.endOffset - 1
         for (range in stringPlaceholderRanges) {
             // we extend reformatting range by 1 to the right because otherwise some of spaces are not reformatted
-            resultElement = codeStyleManager.reformatRange(resultElement, range.getEndOffset() + start, bound + 1, true) as TElement
-            bound = range.getStartOffset() + start
+            resultElement = codeStyleManager.reformatRange(resultElement, range.endOffset + start, bound + 1, true) as TElement
+            bound = range.startOffset + start
         }
         resultElement = codeStyleManager.reformatRange(resultElement, start, bound + 1, true) as TElement
     }
 
     // do not reformat the whole expression in PostprocessReformattingAspect
-    CodeEditUtil.setNodeGeneratedRecursively(resultElement.getNode(), false)
+    CodeEditUtil.setNodeGeneratedRecursively(resultElement.node, false)
 
     for ((pointer, n) in pointers) {
-        var element = pointer.getElement()!!
+        var element = pointer.element!!
         if (element is KtFunctionLiteral) {
             element = element.getParent() as KtLambdaExpression
         }
         (argumentTypes[n] as PsiElementPlaceholderArgumentType<in Any, in PsiElement>).replacePlaceholderElement(element, args[n])
     }
 
-    codeStyleManager.adjustLineIndent(resultElement.getContainingFile(), resultElement.getTextRange())
+    codeStyleManager.adjustLineIndent(resultElement.containingFile, resultElement.textRange)
 
     return resultElement
 }
@@ -252,22 +252,22 @@ private fun processPattern(pattern: String, args: List<Any>): PatternData {
     return PatternData(text, ranges)
 }
 
-public class BuilderByPattern<TElement> {
+class BuilderByPattern<TElement> {
     private val patternBuilder = StringBuilder()
     private val arguments = ArrayList<Any>()
 
-    public fun appendFixedText(text: String): BuilderByPattern<TElement> {
+    fun appendFixedText(text: String): BuilderByPattern<TElement> {
         patternBuilder.append(text)
         return this
     }
 
-    public fun appendNonFormattedText(text: String): BuilderByPattern<TElement> {
+    fun appendNonFormattedText(text: String): BuilderByPattern<TElement> {
         patternBuilder.append("$" + arguments.size)
         arguments.add(text)
         return this
     }
 
-    public fun appendExpression(expression: KtExpression?): BuilderByPattern<TElement> {
+    fun appendExpression(expression: KtExpression?): BuilderByPattern<TElement> {
         if (expression != null) {
             patternBuilder.append("$" + arguments.size)
             arguments.add(expression)
@@ -275,7 +275,7 @@ public class BuilderByPattern<TElement> {
         return this
     }
 
-    public fun appendExpressions(expressions: Iterable<KtExpression?>, separator: String = ","): BuilderByPattern<TElement> {
+    fun appendExpressions(expressions: Iterable<KtExpression?>, separator: String = ","): BuilderByPattern<TElement> {
         for ((index, expression) in expressions.withIndex()) {
             if (index > 0) {
                 appendFixedText(separator)
@@ -285,7 +285,7 @@ public class BuilderByPattern<TElement> {
         return this
     }
 
-    public fun appendTypeReference(typeRef: KtTypeReference?): BuilderByPattern<TElement> {
+    fun appendTypeReference(typeRef: KtTypeReference?): BuilderByPattern<TElement> {
         if (typeRef != null) {
             patternBuilder.append("$" + arguments.size)
             arguments.add(typeRef)
@@ -293,36 +293,36 @@ public class BuilderByPattern<TElement> {
         return this
     }
 
-    public fun appendName(name: Name): BuilderByPattern<TElement> {
+    fun appendName(name: Name): BuilderByPattern<TElement> {
         patternBuilder.append("$" + arguments.size)
         arguments.add(name)
         return this
     }
 
-    public fun appendChildRange(range: PsiChildRange): BuilderByPattern<TElement> {
+    fun appendChildRange(range: PsiChildRange): BuilderByPattern<TElement> {
         patternBuilder.append("$" + arguments.size)
         arguments.add(range)
         return this
     }
 
-    public fun create(factory: (String, Array<out Any>) -> TElement): TElement {
+    fun create(factory: (String, Array<out Any>) -> TElement): TElement {
         return factory(patternBuilder.toString(), arguments.toArray())
     }
 }
 
-public fun KtPsiFactory.buildExpression(build: BuilderByPattern<KtExpression>.() -> Unit): KtExpression {
+fun KtPsiFactory.buildExpression(build: BuilderByPattern<KtExpression>.() -> Unit): KtExpression {
     return buildByPattern({ pattern, args -> this.createExpressionByPattern(pattern, *args) }, build)
 }
 
-public fun KtPsiFactory.buildDeclaration(build: BuilderByPattern<KtDeclaration>.() -> Unit): KtDeclaration {
+fun KtPsiFactory.buildDeclaration(build: BuilderByPattern<KtDeclaration>.() -> Unit): KtDeclaration {
     return buildByPattern({ pattern, args -> this.createDeclarationByPattern(pattern, *args) }, build)
 }
 
-public fun KtPsiFactory.buildDestructuringDeclaration(build: BuilderByPattern<KtDestructuringDeclaration>.() -> Unit): KtDestructuringDeclaration {
+fun KtPsiFactory.buildDestructuringDeclaration(build: BuilderByPattern<KtDestructuringDeclaration>.() -> Unit): KtDestructuringDeclaration {
     return buildByPattern({ pattern, args -> this.createDestructuringDeclarationByPattern(pattern, *args) }, build)
 }
 
-public fun <TElement> buildByPattern(factory: (String, Array<out Any>) -> TElement, build: BuilderByPattern<TElement>.() -> Unit): TElement {
+fun <TElement> buildByPattern(factory: (String, Array<out Any>) -> TElement, build: BuilderByPattern<TElement>.() -> Unit): TElement {
     val builder = BuilderByPattern<TElement>()
     builder.build()
     return builder.create(factory)

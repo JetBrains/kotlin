@@ -30,8 +30,8 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
-public class RuntimeAssertionInfo(public val needNotNullAssertion: Boolean, public val message: String) {
-    public interface DataFlowExtras {
+class RuntimeAssertionInfo(val needNotNullAssertion: Boolean, val message: String) {
+    interface DataFlowExtras {
         class OnlyMessage(message: String) : DataFlowExtras {
             override val canBeNull: Boolean get() = true
             override val possibleTypes: Set<KotlinType> get() = setOf()
@@ -44,8 +44,7 @@ public class RuntimeAssertionInfo(public val needNotNullAssertion: Boolean, publ
     }
 
     companion object {
-        @JvmStatic
-        public fun create(
+        @JvmStatic fun create(
                 expectedType: KotlinType,
                 expressionType: KotlinType,
                 dataFlowExtras: DataFlowExtras
@@ -77,11 +76,11 @@ public class RuntimeAssertionInfo(public val needNotNullAssertion: Boolean, publ
         }
 
         private fun KotlinType.hasEnhancedNullability()
-                = getAnnotations().findAnnotation(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION) != null
+                = annotations.findAnnotation(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION) != null
     }
 }
 
-public object RuntimeAssertionsTypeChecker : AdditionalTypeChecker {
+object RuntimeAssertionsTypeChecker : AdditionalTypeChecker {
     override fun checkType(expression: KtExpression, expressionType: KotlinType, expressionTypeWithSmartCast: KotlinType, c: ResolutionContext<*>) {
         if (TypeUtils.noExpectedType(c.expectedType)) return
 
@@ -94,7 +93,7 @@ public object RuntimeAssertionsTypeChecker : AdditionalTypeChecker {
                     override val possibleTypes: Set<KotlinType>
                         get() = c.dataFlowInfo.getCollectedTypes(dataFlowValue)
                     override val presentableText: String
-                        get() = StringUtil.trimMiddle(expression.getText(), 50)
+                        get() = StringUtil.trimMiddle(expression.text, 50)
 
                     private val dataFlowValue = DataFlowValueFactory.createDataFlowValue(expression, expressionType, c)
                 }

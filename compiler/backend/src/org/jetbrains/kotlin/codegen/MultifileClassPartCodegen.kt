@@ -31,7 +31,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import java.util.*
 
-public class MultifileClassPartCodegen(
+class MultifileClassPartCodegen(
         v: ClassBuilder,
         file: KtFile,
         private val filePartType: Type,

@@ -18,24 +18,24 @@ package org.jetbrains.kotlin.backend.common.output
 
 import java.io.File
 
-public interface OutputFileCollection {
-    public fun get(relativePath: String): OutputFile?
-    public fun asList(): List<OutputFile>
+interface OutputFileCollection {
+    fun get(relativePath: String): OutputFile?
+    fun asList(): List<OutputFile>
 }
 
-public class SimpleOutputFileCollection(private val outputFiles: List<OutputFile>) : OutputFileCollection {
+class SimpleOutputFileCollection(private val outputFiles: List<OutputFile>) : OutputFileCollection {
     override fun get(relativePath: String): OutputFile? = outputFiles.firstOrNull { it.relativePath == relativePath }
     override fun asList(): List<OutputFile> = outputFiles
 }
 
-public interface OutputFile {
-    public val relativePath: String
-    public val sourceFiles: List<File>
-    public fun asByteArray(): ByteArray
-    public fun asText(): String
+interface OutputFile {
+    val relativePath: String
+    val sourceFiles: List<File>
+    fun asByteArray(): ByteArray
+    fun asText(): String
 }
 
-public class SimpleOutputFile(
+class SimpleOutputFile(
         override val sourceFiles: List<File>,
         override val relativePath: String,
         private val content: String
@@ -46,7 +46,7 @@ public class SimpleOutputFile(
     override fun toString() = "$relativePath (compiled from $sourceFiles)"
 }
 
-public class SimpleOutputBinaryFile(
+class SimpleOutputBinaryFile(
         override val sourceFiles: List<File>,
         override val relativePath: String,
         private val content: ByteArray

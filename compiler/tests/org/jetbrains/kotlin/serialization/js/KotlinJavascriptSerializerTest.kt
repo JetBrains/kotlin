@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import org.jetbrains.kotlin.utils.sure
 import java.io.File
 
-public class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
+class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
     private final val MODULE_NAME = "module"
     private final val BASE_DIR = "compiler/testData/serialization"
 

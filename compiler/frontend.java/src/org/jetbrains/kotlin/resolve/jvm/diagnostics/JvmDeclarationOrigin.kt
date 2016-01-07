@@ -24,11 +24,11 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.*
 
-public enum class MemberKind { FIELD, METHOD }
+enum class MemberKind { FIELD, METHOD }
 
-public data class RawSignature(public val name: String, public val desc: String, public val kind: MemberKind)
+data class RawSignature(val name: String, val desc: String, val kind: MemberKind)
 
-public enum class JvmDeclarationOriginKind {
+enum class JvmDeclarationOriginKind {
     OTHER,
     PACKAGE_PART,
     INTERFACE_DEFAULT_IMPL,
@@ -40,43 +40,42 @@ public enum class JvmDeclarationOriginKind {
     SYNTHETIC // this means that there's no proper descriptor for this jvm declaration
 }
 
-public class JvmDeclarationOrigin(
-        public val originKind: JvmDeclarationOriginKind,
-        public val element: PsiElement?,
-        public val descriptor: DeclarationDescriptor?
+class JvmDeclarationOrigin(
+        val originKind: JvmDeclarationOriginKind,
+        val element: PsiElement?,
+        val descriptor: DeclarationDescriptor?
 ) {
     companion object {
-        @JvmField
-        public val NO_ORIGIN: JvmDeclarationOrigin = JvmDeclarationOrigin(OTHER, null, null)
+        @JvmField val NO_ORIGIN: JvmDeclarationOrigin = JvmDeclarationOrigin(OTHER, null, null)
     }
 }
 
-public fun OtherOrigin(element: PsiElement?, descriptor: DeclarationDescriptor?): JvmDeclarationOrigin =
+fun OtherOrigin(element: PsiElement?, descriptor: DeclarationDescriptor?): JvmDeclarationOrigin =
         if (element == null && descriptor == null)
             JvmDeclarationOrigin.NO_ORIGIN
         else JvmDeclarationOrigin(OTHER, element, descriptor)
 
-public fun OtherOrigin(element: PsiElement): JvmDeclarationOrigin = OtherOrigin(element, null)
+fun OtherOrigin(element: PsiElement): JvmDeclarationOrigin = OtherOrigin(element, null)
 
-public fun OtherOrigin(descriptor: DeclarationDescriptor): JvmDeclarationOrigin = OtherOrigin(null, descriptor)
+fun OtherOrigin(descriptor: DeclarationDescriptor): JvmDeclarationOrigin = OtherOrigin(null, descriptor)
 
-public fun Bridge(descriptor: DeclarationDescriptor, element: PsiElement? = DescriptorToSourceUtils.descriptorToDeclaration(descriptor)): JvmDeclarationOrigin =
+fun Bridge(descriptor: DeclarationDescriptor, element: PsiElement? = DescriptorToSourceUtils.descriptorToDeclaration(descriptor)): JvmDeclarationOrigin =
         JvmDeclarationOrigin(BRIDGE, element, descriptor)
 
-public fun PackagePart(file: KtFile, descriptor: PackageFragmentDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(PACKAGE_PART, file, descriptor)
+fun PackagePart(file: KtFile, descriptor: PackageFragmentDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(PACKAGE_PART, file, descriptor)
 
 /**
  * @param representativeFile one of the files representing this multifile class (will be used for diagnostics)
  */
-public fun MultifileClass(representativeFile: KtFile?, descriptor: PackageFragmentDescriptor, multifileClassFqName: FqName): JvmDeclarationOrigin =
+fun MultifileClass(representativeFile: KtFile?, descriptor: PackageFragmentDescriptor, multifileClassFqName: FqName): JvmDeclarationOrigin =
         JvmDeclarationOrigin(MULTIFILE_CLASS, representativeFile, descriptor)
-public fun MultifileClassPart(file: KtFile, descriptor: PackageFragmentDescriptor, multifileClassFqName: FqName): JvmDeclarationOrigin =
+fun MultifileClassPart(file: KtFile, descriptor: PackageFragmentDescriptor, multifileClassFqName: FqName): JvmDeclarationOrigin =
         JvmDeclarationOrigin(MULTIFILE_CLASS_PART, file, descriptor)
 
-public fun TraitImpl(element: KtClassOrObject, descriptor: ClassDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(INTERFACE_DEFAULT_IMPL, element, descriptor)
-public fun DelegationToTraitImpl(element: PsiElement?, descriptor: FunctionDescriptor): JvmDeclarationOrigin =
+fun TraitImpl(element: KtClassOrObject, descriptor: ClassDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(INTERFACE_DEFAULT_IMPL, element, descriptor)
+fun DelegationToTraitImpl(element: PsiElement?, descriptor: FunctionDescriptor): JvmDeclarationOrigin =
         JvmDeclarationOrigin(DELEGATION_TO_DEFAULT_IMPLS, element, descriptor)
 
-public fun Delegation(element: PsiElement?, descriptor: FunctionDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(DELEGATION, element, descriptor)
+fun Delegation(element: PsiElement?, descriptor: FunctionDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(DELEGATION, element, descriptor)
 
-public fun Synthetic(element: PsiElement?, descriptor: CallableMemberDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(SYNTHETIC, element, descriptor)
+fun Synthetic(element: PsiElement?, descriptor: CallableMemberDescriptor): JvmDeclarationOrigin = JvmDeclarationOrigin(SYNTHETIC, element, descriptor)

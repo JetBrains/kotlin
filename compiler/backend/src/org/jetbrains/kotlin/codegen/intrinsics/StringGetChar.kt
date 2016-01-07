@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen.intrinsics
 import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.CallableMethod
 
-public class StringGetChar : IntrinsicMethod() {
+class StringGetChar : IntrinsicMethod() {
     override fun toCallable(method: CallableMethod): Callable =
             createIntrinsicCallable(method) {
                 it.invokevirtual("java/lang/String", "charAt", "(I)C", false)

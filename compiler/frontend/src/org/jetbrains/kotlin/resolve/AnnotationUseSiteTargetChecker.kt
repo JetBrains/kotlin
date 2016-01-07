@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.psi.*
 
-public object AnnotationUseSiteTargetChecker {
+object AnnotationUseSiteTargetChecker {
 
-    public fun check(annotated: KtAnnotated, descriptor: DeclarationDescriptor, trace: BindingTrace) {
+    fun check(annotated: KtAnnotated, descriptor: DeclarationDescriptor, trace: BindingTrace) {
         trace.checkDeclaration(annotated, descriptor)
 
         if (annotated is KtFunction) {

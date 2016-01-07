@@ -18,4 +18,4 @@ package org.jetbrains.kotlin.cli.jvm.config
 
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 
-public fun KotlinCoreEnvironment.getModuleName(): String = configuration.get(JVMConfigurationKeys.MODULE_NAME)!!
+fun KotlinCoreEnvironment.getModuleName(): String = configuration.get(JVMConfigurationKeys.MODULE_NAME)!!

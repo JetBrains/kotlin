@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes.getType
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-public class JavaClassProperty : IntrinsicPropertyGetter() {
-    public override fun generate(
+class JavaClassProperty : IntrinsicPropertyGetter() {
+    override fun generate(
             resolvedCall: ResolvedCall<*>?,
             codegen: ExpressionCodegen,
             returnType: Type,
@@ -47,7 +47,7 @@ public class JavaClassProperty : IntrinsicPropertyGetter() {
                 receiver.put(type, v)
                 AsmUtil.pop(v, type)
             }
-            v.getstatic(boxType(type).getInternalName(), "TYPE", "Ljava/lang/Class;")
+            v.getstatic(boxType(type).internalName, "TYPE", "Ljava/lang/Class;")
         }
         else {
             receiver.put(type, v)
@@ -58,11 +58,11 @@ public class JavaClassProperty : IntrinsicPropertyGetter() {
     }
 
     override fun toCallable(fd: FunctionDescriptor, isSuper: Boolean, resolvedCall: ResolvedCall<*>, codegen: ExpressionCodegen): Callable {
-        val classType = codegen.getState().typeMapper.mapType(resolvedCall.getCall().getDispatchReceiver()!!.getType())
+        val classType = codegen.getState().typeMapper.mapType(resolvedCall.call.dispatchReceiver!!.type)
         return object : IntrinsicCallable(getType(Class::class.java), listOf(), classType, null) {
             override fun invokeIntrinsic(v: InstructionAdapter) {
                 if (isPrimitive(classType)) {
-                    v.getstatic(boxType(classType).getInternalName(), "TYPE", "Ljava/lang/Class;")
+                    v.getstatic(boxType(classType).internalName, "TYPE", "Ljava/lang/Class;")
                 }
                 else {
                     v.invokevirtual("java/lang/Object", "getClass", "()Ljava/lang/Class;", false)

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import java.util.*
 
-public fun unrollToLeftMostQualifiedExpression(expression: KtQualifiedExpression): List<KtQualifiedExpression> {
+fun unrollToLeftMostQualifiedExpression(expression: KtQualifiedExpression): List<KtQualifiedExpression> {
     val unrolled = arrayListOf<KtQualifiedExpression>()
 
     var finger = expression
@@ -38,7 +38,7 @@ public fun unrollToLeftMostQualifiedExpression(expression: KtQualifiedExpression
     return unrolled.asReversed()
 }
 
-public data class CallExpressionElement internal constructor (val qualified: KtQualifiedExpression) {
+data class CallExpressionElement internal constructor (val qualified: KtQualifiedExpression) {
 
     val receiver: KtExpression
         get() = qualified.receiverExpression

@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
 
-public abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : DeclarationProvider>
+abstract class AbstractLazyMemberScope<D : DeclarationDescriptor, DP : DeclarationProvider>
 protected constructor(
         protected val c: LazyClassContext,
         protected val declarationProvider: DP,
@@ -99,7 +99,7 @@ protected constructor(
         return propertyDescriptors(name)
     }
 
-    public fun doGetProperties(name: Name): Collection<PropertyDescriptor> {
+    fun doGetProperties(name: Name): Collection<PropertyDescriptor> {
         val result = LinkedHashSet<PropertyDescriptor>()
 
         val declarations = declarationProvider.getPropertyDeclarations(name)
@@ -176,7 +176,7 @@ protected constructor(
     abstract override fun toString(): String
 
     override fun printScopeStructure(p: Printer) {
-        p.println(javaClass.getSimpleName(), " {")
+        p.println(javaClass.simpleName, " {")
         p.pushIndent()
 
         p.println("thisDescriptor = ", thisDescriptor)

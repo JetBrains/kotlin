@@ -34,20 +34,20 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-public interface CallableDescriptorCollector<D : CallableDescriptor> {
+interface CallableDescriptorCollector<D : CallableDescriptor> {
 
-    public fun getLocalNonExtensionsByName(lexicalScope: LexicalScope, name: Name, location: LookupLocation): Collection<D>
+    fun getLocalNonExtensionsByName(lexicalScope: LexicalScope, name: Name, location: LookupLocation): Collection<D>
 
-    public fun getNonExtensionsByName(scope: HierarchicalScope, name: Name, location: LookupLocation): Collection<D>
+    fun getNonExtensionsByName(scope: HierarchicalScope, name: Name, location: LookupLocation): Collection<D>
 
     // todo this is hack for static members priority
-    public fun getStaticInheritanceByName(lexicalScope: LexicalScope, name: Name, location: LookupLocation): Collection<D>
+    fun getStaticInheritanceByName(lexicalScope: LexicalScope, name: Name, location: LookupLocation): Collection<D>
 
-    public fun getMembersByName(receiver: KotlinType, name: Name, location: LookupLocation): Collection<D>
+    fun getMembersByName(receiver: KotlinType, name: Name, location: LookupLocation): Collection<D>
 
-    public fun getStaticMembersByName(receiver: KotlinType, name: Name, location: LookupLocation): Collection<D>
+    fun getStaticMembersByName(receiver: KotlinType, name: Name, location: LookupLocation): Collection<D>
 
-    public fun getExtensionsByName(scope: HierarchicalScope, syntheticScopes: SyntheticScopes, name: Name, receiverTypes: Collection<KotlinType>, location: LookupLocation): Collection<D>
+    fun getExtensionsByName(scope: HierarchicalScope, syntheticScopes: SyntheticScopes, name: Name, receiverTypes: Collection<KotlinType>, location: LookupLocation): Collection<D>
 }
 
 private fun <D : CallableDescriptor> CallableDescriptorCollector<D>.withDefaultFilter() = filtered { !LibrarySourceHacks.shouldSkip(it) }
@@ -55,30 +55,27 @@ private fun <D : CallableDescriptor> CallableDescriptorCollector<D>.withDefaultF
 private val FUNCTIONS_COLLECTOR = FunctionCollector.withDefaultFilter()
 private val VARIABLES_COLLECTOR = VariableCollector.withDefaultFilter()
 
-public class CallableDescriptorCollectors<D : CallableDescriptor>(val collectors: List<CallableDescriptorCollector<D>>) :
+class CallableDescriptorCollectors<D : CallableDescriptor>(val collectors: List<CallableDescriptorCollector<D>>) :
         Iterable<CallableDescriptorCollector<D>> {
     override fun iterator(): Iterator<CallableDescriptorCollector<D>> = collectors.iterator()
 
     @Suppress("UNCHECKED_CAST")
     companion object {
 
-        @JvmField
-        public val FUNCTIONS_AND_VARIABLES: CallableDescriptorCollectors<CallableDescriptor> =
+        @JvmField val FUNCTIONS_AND_VARIABLES: CallableDescriptorCollectors<CallableDescriptor> =
                 CallableDescriptorCollectors(listOf(
                         FUNCTIONS_COLLECTOR as CallableDescriptorCollector<CallableDescriptor>,
                         VARIABLES_COLLECTOR as CallableDescriptorCollector<CallableDescriptor>
                 ))
 
-        @JvmField
-        public val FUNCTIONS: CallableDescriptorCollectors<CallableDescriptor> =
+        @JvmField val FUNCTIONS: CallableDescriptorCollectors<CallableDescriptor> =
                 CallableDescriptorCollectors(listOf(FUNCTIONS_COLLECTOR as CallableDescriptorCollector<CallableDescriptor>))
 
-        @JvmField
-        public val VARIABLES: CallableDescriptorCollectors<VariableDescriptor> = CallableDescriptorCollectors(listOf(VARIABLES_COLLECTOR))
+        @JvmField val VARIABLES: CallableDescriptorCollectors<VariableDescriptor> = CallableDescriptorCollectors(listOf(VARIABLES_COLLECTOR))
     }
 }
 
-public fun <D : CallableDescriptor> CallableDescriptorCollectors<D>.filtered(filter: (D) -> Boolean): CallableDescriptorCollectors<D> =
+fun <D : CallableDescriptor> CallableDescriptorCollectors<D>.filtered(filter: (D) -> Boolean): CallableDescriptorCollectors<D> =
         CallableDescriptorCollectors(this.collectors.map { it.filtered(filter) })
 
 private object FunctionCollector : CallableDescriptorCollector<FunctionDescriptor> {

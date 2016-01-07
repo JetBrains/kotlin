@@ -25,34 +25,34 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-public fun DeclarationDescriptor.hasJvmStaticAnnotation(): Boolean {
-    return getAnnotations().findAnnotation(FqName("kotlin.jvm.JvmStatic")) != null
+fun DeclarationDescriptor.hasJvmStaticAnnotation(): Boolean {
+    return annotations.findAnnotation(FqName("kotlin.jvm.JvmStatic")) != null
 }
 
-public fun DeclarationDescriptor.hasJvmSyntheticAnnotation(): Boolean {
+fun DeclarationDescriptor.hasJvmSyntheticAnnotation(): Boolean {
     val jvmSyntheticName = FqName("kotlin.jvm.JvmSynthetic")
     return annotations.findAnnotation(jvmSyntheticName) != null ||
            Annotations.findUseSiteTargetedAnnotation(annotations, AnnotationUseSiteTarget.FIELD, jvmSyntheticName) != null
 }
 
-public fun CallableDescriptor.isPlatformStaticInObjectOrClass(): Boolean =
+fun CallableDescriptor.isPlatformStaticInObjectOrClass(): Boolean =
         isPlatformStaticIn { DescriptorUtils.isNonCompanionObject(it) || DescriptorUtils.isClassOrEnumClass(it) }
 
-public fun CallableDescriptor.isPlatformStaticInCompanionObject(): Boolean =
+fun CallableDescriptor.isPlatformStaticInCompanionObject(): Boolean =
         isPlatformStaticIn { DescriptorUtils.isCompanionObject(it) }
 
 private fun CallableDescriptor.isPlatformStaticIn(predicate: (DeclarationDescriptor) -> Boolean): Boolean =
         when (this) {
             is PropertyAccessorDescriptor -> {
-                val propertyDescriptor = getCorrespondingProperty()
-                predicate(propertyDescriptor.getContainingDeclaration()) &&
+                val propertyDescriptor = correspondingProperty
+                predicate(propertyDescriptor.containingDeclaration) &&
                 (hasJvmStaticAnnotation() || propertyDescriptor.hasJvmStaticAnnotation())
             }
-            else -> predicate(getContainingDeclaration()) && hasJvmStaticAnnotation()
+            else -> predicate(containingDeclaration) && hasJvmStaticAnnotation()
         }
 
-public fun AnnotationDescriptor.argumentValue(parameterName: String): Any? {
-    return getAllValueArguments().entries
-            .singleOrNull { it.key.getName().asString() == parameterName }
+fun AnnotationDescriptor.argumentValue(parameterName: String): Any? {
+    return allValueArguments.entries
+            .singleOrNull { it.key.name.asString() == parameterName }
             ?.value?.value
 }
