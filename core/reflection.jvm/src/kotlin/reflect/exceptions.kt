@@ -24,7 +24,7 @@ package kotlin.reflect
  *
  * @see [kotlin.reflect.jvm.isAccessible]
  */
-public class IllegalCallableAccessException(cause: IllegalAccessException) : Exception(cause.message) {
+class IllegalCallableAccessException(cause: IllegalAccessException) : Exception(cause.message) {
     init {
         @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
         (this as java.lang.Throwable).initCause(cause)
@@ -35,7 +35,7 @@ public class IllegalCallableAccessException(cause: IllegalAccessException) : Exc
  * An exception that is thrown when the code tries to introspect a property of a class or a package
  * and that class or the package no longer has that property.
  */
-public class NoSuchPropertyException(cause: Exception? = null) : Exception() {
+class NoSuchPropertyException(cause: Exception? = null) : Exception() {
     init {
         @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
         if (cause != null) {
@@ -47,4 +47,4 @@ public class NoSuchPropertyException(cause: Exception? = null) : Exception() {
 /**
  * Signals that Kotlin reflection had reached an inconsistent state from which it cannot recover.
  */
-public class KotlinReflectionInternalError(message: String) : Error(message)
+class KotlinReflectionInternalError(message: String) : Error(message)

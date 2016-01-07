@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.descriptors.annotations
 
 import org.jetbrains.kotlin.descriptors.*
 
-public enum class AnnotationUseSiteTarget(renderName: String? = null) {
+enum class AnnotationUseSiteTarget(renderName: String? = null) {
     FIELD(),
     FILE(),
     PROPERTY(),
@@ -28,10 +28,10 @@ public enum class AnnotationUseSiteTarget(renderName: String? = null) {
     CONSTRUCTOR_PARAMETER("param"),
     SETTER_PARAMETER("setparam");
 
-    public val renderName: String = renderName ?: name.toLowerCase()
+    val renderName: String = renderName ?: name.toLowerCase()
 
-    public companion object {
-        public fun getAssociatedUseSiteTarget(descriptor: DeclarationDescriptor): AnnotationUseSiteTarget? = when (descriptor) {
+    companion object {
+        fun getAssociatedUseSiteTarget(descriptor: DeclarationDescriptor): AnnotationUseSiteTarget? = when (descriptor) {
             is PropertyDescriptor -> PROPERTY
             is ValueParameterDescriptor -> CONSTRUCTOR_PARAMETER
             is PropertyGetterDescriptor -> PROPERTY_GETTER

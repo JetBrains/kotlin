@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.types
 import org.jetbrains.kotlin.descriptors.PossiblyInnerType
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 
-public interface TypeCapability
+interface TypeCapability
 
-public interface TypeCapabilities {
+interface TypeCapabilities {
     object NONE : TypeCapabilities {
         override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>): T? = null
     }
@@ -41,17 +41,17 @@ class SingletonTypeCapabilities(private val clazz: Class<*>, private val typeCap
     }
 }
 
-public inline fun <reified T : TypeCapability> KotlinType.getCapability(): T? = getCapability(T::class.java)
+inline fun <reified T : TypeCapability> KotlinType.getCapability(): T? = getCapability(T::class.java)
 
-public interface Specificity : TypeCapability {
+interface Specificity : TypeCapability {
 
-    public enum class Relation {
+    enum class Relation {
         LESS_SPECIFIC,
         MORE_SPECIFIC,
         DONT_KNOW
     }
 
-    public fun getSpecificityRelationTo(otherType: KotlinType): Relation
+    fun getSpecificityRelationTo(otherType: KotlinType): Relation
 }
 
 fun KotlinType.getSpecificityRelationTo(otherType: KotlinType) =
@@ -63,46 +63,46 @@ fun oneMoreSpecificThanAnother(a: KotlinType, b: KotlinType) =
 // To facilitate laziness, any KotlinType implementation may inherit from this trait,
 // even if it turns out that the type an instance represents is not actually a type variable
 // (i.e. it is not derived from a type parameter), see isTypeVariable
-public interface CustomTypeVariable : TypeCapability {
-    public val isTypeVariable: Boolean
+interface CustomTypeVariable : TypeCapability {
+    val isTypeVariable: Boolean
 
     // If typeParameterDescriptor != null <=> isTypeVariable == true, this is not a type variable
-    public val typeParameterDescriptor: TypeParameterDescriptor?
+    val typeParameterDescriptor: TypeParameterDescriptor?
 
     // Throws an exception when isTypeVariable == false
-    public fun substitutionResult(replacement: KotlinType): KotlinType
+    fun substitutionResult(replacement: KotlinType): KotlinType
 }
 
-public fun KotlinType.isCustomTypeVariable(): Boolean = this.getCapability(CustomTypeVariable::class.java)?.isTypeVariable ?: false
-public fun KotlinType.getCustomTypeVariable(): CustomTypeVariable? =
+fun KotlinType.isCustomTypeVariable(): Boolean = this.getCapability(CustomTypeVariable::class.java)?.isTypeVariable ?: false
+fun KotlinType.getCustomTypeVariable(): CustomTypeVariable? =
         this.getCapability(CustomTypeVariable::class.java)?.let {
             if (it.isTypeVariable) it else null
         }
 
-public interface SubtypingRepresentatives : TypeCapability {
-    public val subTypeRepresentative: KotlinType
-    public val superTypeRepresentative: KotlinType
+interface SubtypingRepresentatives : TypeCapability {
+    val subTypeRepresentative: KotlinType
+    val superTypeRepresentative: KotlinType
 
-    public fun sameTypeConstructor(type: KotlinType): Boolean
+    fun sameTypeConstructor(type: KotlinType): Boolean
 }
 
-public fun KotlinType.getSubtypeRepresentative(): KotlinType =
+fun KotlinType.getSubtypeRepresentative(): KotlinType =
         this.getCapability(SubtypingRepresentatives::class.java)?.subTypeRepresentative ?: this
 
-public fun KotlinType.getSupertypeRepresentative(): KotlinType =
+fun KotlinType.getSupertypeRepresentative(): KotlinType =
         this.getCapability(SubtypingRepresentatives::class.java)?.superTypeRepresentative ?: this
 
-public fun sameTypeConstructors(first: KotlinType, second: KotlinType): Boolean {
+fun sameTypeConstructors(first: KotlinType, second: KotlinType): Boolean {
     val typeRangeCapability = SubtypingRepresentatives::class.java
     return first.getCapability(typeRangeCapability)?.sameTypeConstructor(second) ?: false
            || second.getCapability(typeRangeCapability)?.sameTypeConstructor(first) ?: false
 }
 
 interface CustomSubstitutionCapability : TypeCapability {
-    public val substitution: TypeSubstitution?
-    public val substitutionToComposeWith: TypeSubstitution?
+    val substitution: TypeSubstitution?
+    val substitutionToComposeWith: TypeSubstitution?
 }
 
 interface PossiblyInnerTypeCapability : TypeCapability {
-    public val possiblyInnerType: PossiblyInnerType?
+    val possiblyInnerType: PossiblyInnerType?
 }

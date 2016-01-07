@@ -20,10 +20,9 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 
-public abstract class TypeSubstitution {
+abstract class TypeSubstitution {
     companion object {
-        @JvmField
-        public val EMPTY: TypeSubstitution = object : TypeSubstitution() {
+        @JvmField val EMPTY: TypeSubstitution = object : TypeSubstitution() {
             override fun get(key: KotlinType) = null
             override fun isEmpty() = true
             override fun toString() = "Empty TypeSubstitution"
@@ -42,31 +41,27 @@ public abstract class TypeSubstitution {
     fun buildSubstitutor(): TypeSubstitutor = TypeSubstitutor.create(this)
 }
 
-public abstract class TypeConstructorSubstitution : TypeSubstitution() {
+abstract class TypeConstructorSubstitution : TypeSubstitution() {
     override fun get(key: KotlinType) = get(key.constructor)
 
-    public abstract fun get(key: TypeConstructor): TypeProjection?
+    abstract fun get(key: TypeConstructor): TypeProjection?
 
     companion object {
-        @JvmStatic
-        public fun createByConstructorsMap(map: Map<TypeConstructor, TypeProjection>): TypeConstructorSubstitution =
+        @JvmStatic fun createByConstructorsMap(map: Map<TypeConstructor, TypeProjection>): TypeConstructorSubstitution =
             object : TypeConstructorSubstitution() {
                 override fun get(key: TypeConstructor) = map[key]
                 override fun isEmpty() = map.isEmpty()
             }
 
-        @JvmStatic
-        public fun createByParametersMap(map: Map<TypeParameterDescriptor, TypeProjection>): TypeConstructorSubstitution =
+        @JvmStatic fun createByParametersMap(map: Map<TypeParameterDescriptor, TypeProjection>): TypeConstructorSubstitution =
             object : TypeConstructorSubstitution() {
                 override fun get(key: TypeConstructor) = map[key.declarationDescriptor]
                 override fun isEmpty() = map.isEmpty()
             }
 
-        @JvmStatic
-        public fun create(kotlinType: KotlinType) = create(kotlinType.constructor, kotlinType.arguments)
+        @JvmStatic fun create(kotlinType: KotlinType) = create(kotlinType.constructor, kotlinType.arguments)
 
-        @JvmStatic
-        public fun create(typeConstructor: TypeConstructor, arguments: List<TypeProjection>): TypeSubstitution {
+        @JvmStatic fun create(typeConstructor: TypeConstructor, arguments: List<TypeProjection>): TypeSubstitution {
             val parameters = typeConstructor.parameters
 
             if (parameters.lastOrNull()?.isCapturedFromOuterDeclaration ?: false) {
@@ -78,7 +73,7 @@ public abstract class TypeConstructorSubstitution : TypeSubstitution() {
     }
 }
 
-public class IndexedParametersSubstitution(
+class IndexedParametersSubstitution(
     val parameters: Array<TypeParameterDescriptor>,
     val arguments: Array<TypeProjection>,
     private val approximateCapturedTypes: Boolean = false
@@ -109,7 +104,7 @@ public class IndexedParametersSubstitution(
     }
 }
 
-public fun KotlinType.computeNewSubstitution(
+fun KotlinType.computeNewSubstitution(
         typeConstructor: TypeConstructor,
         newArguments: List<TypeProjection>
 ): TypeSubstitution {
@@ -122,7 +117,7 @@ public fun KotlinType.computeNewSubstitution(
     return composedSubstitution
 }
 
-public fun KotlinType.replace(
+fun KotlinType.replace(
         newArguments: List<TypeProjection>,
         annotations: Annotations = this@replace.annotations
 ): KotlinType {
@@ -177,7 +172,7 @@ private class CompositeTypeSubstitution(
     override fun filterAnnotations(annotations: Annotations): Annotations = second.filterAnnotations(first.filterAnnotations(annotations))
 }
 
-public open class DelegatedTypeSubstitution(val substitution: TypeSubstitution): TypeSubstitution() {
+open class DelegatedTypeSubstitution(val substitution: TypeSubstitution): TypeSubstitution() {
     override fun get(key: KotlinType) = substitution.get(key)
 
     override fun isEmpty() = substitution.isEmpty()

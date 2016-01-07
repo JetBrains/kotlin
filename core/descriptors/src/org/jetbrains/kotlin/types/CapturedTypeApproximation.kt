@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import java.util.*
 
-public data class ApproximationBounds<T>(
-        public val lower: T,
-        public val upper: T
+data class ApproximationBounds<T>(
+        val lower: T,
+        val upper: T
 )
 
 private class TypeArgument(
@@ -42,10 +42,10 @@ private class TypeArgument(
 
 private fun TypeArgument.toTypeProjection(): TypeProjection {
     assert(isConsistent) { "Only consistent enhanced type propection can be converted to type projection" }
-    fun removeProjectionIfRedundant(variance: Variance) = if (variance == typeParameter.getVariance()) Variance.INVARIANT else variance
+    fun removeProjectionIfRedundant(variance: Variance) = if (variance == typeParameter.variance) Variance.INVARIANT else variance
     return when {
         inProjection == outProjection -> TypeProjectionImpl(inProjection)
-        KotlinBuiltIns.isNothing(inProjection) && typeParameter.getVariance() != Variance.IN_VARIANCE ->
+        KotlinBuiltIns.isNothing(inProjection) && typeParameter.variance != Variance.IN_VARIANCE ->
             TypeProjectionImpl(removeProjectionIfRedundant(Variance.OUT_VARIANCE), outProjection)
         KotlinBuiltIns.isNullableAny(outProjection) -> TypeProjectionImpl(removeProjectionIfRedundant(Variance.IN_VARIANCE), inProjection)
         else -> TypeProjectionImpl(removeProjectionIfRedundant(Variance.OUT_VARIANCE), outProjection)
@@ -59,15 +59,15 @@ private fun TypeProjection.toTypeArgument(typeParameter: TypeParameterDescriptor
             Variance.OUT_VARIANCE -> TypeArgument(typeParameter, typeParameter.builtIns.nothingType, type)
         }
 
-public fun approximateCapturedTypesIfNecessary(typeProjection: TypeProjection?, approximateContravariant: Boolean): TypeProjection? {
+fun approximateCapturedTypesIfNecessary(typeProjection: TypeProjection?, approximateContravariant: Boolean): TypeProjection? {
     if (typeProjection == null) return null
-    if (typeProjection.isStarProjection()) return typeProjection
+    if (typeProjection.isStarProjection) return typeProjection
 
-    val type = typeProjection.getType()
+    val type = typeProjection.type
     if (!TypeUtils.containsSpecialType(type, { it.isCaptured() })) {
         return typeProjection
     }
-    val howThisTypeIsUsed = typeProjection.getProjectionKind()
+    val howThisTypeIsUsed = typeProjection.projectionKind
     if (howThisTypeIsUsed == Variance.OUT_VARIANCE) {
         // only 'return' type containing captured types should be over-approximated
         val approximation = approximateCapturedTypes(type)
@@ -92,7 +92,7 @@ private fun substituteCapturedTypesWithProjections(typeProjection: TypeProjectio
     return typeSubstitutor.substituteWithoutApproximation(typeProjection)
 }
 
-public fun approximateCapturedTypes(type: KotlinType): ApproximationBounds<KotlinType> {
+fun approximateCapturedTypes(type: KotlinType): ApproximationBounds<KotlinType> {
     if (type.isFlexible()) {
         val boundsForFlexibleLower = approximateCapturedTypes(type.lowerIfFlexible())
         val boundsForFlexibleUpper = approximateCapturedTypes(type.upperIfFlexible())

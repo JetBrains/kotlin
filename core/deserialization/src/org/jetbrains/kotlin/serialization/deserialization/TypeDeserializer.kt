@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
 
-public class TypeDeserializer(
+class TypeDeserializer(
         private val c: DeserializationContext,
         private val parent: TypeDeserializer?,
         private val typeParameterProtos: List<ProtoBuf.TypeParameter>,

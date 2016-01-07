@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.types.Variance
 
-public fun KotlinBuiltIns.createDeprecatedAnnotation(
+fun KotlinBuiltIns.createDeprecatedAnnotation(
         message: String,
         replaceWith: String,
         level: String = "WARNING"

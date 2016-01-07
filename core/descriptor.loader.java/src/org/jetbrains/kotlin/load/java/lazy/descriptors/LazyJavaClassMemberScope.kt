@@ -60,14 +60,14 @@ import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.util.*
 
-public class LazyJavaClassMemberScope(
+class LazyJavaClassMemberScope(
         c: LazyJavaResolverContext,
         override val ownerDescriptor: ClassDescriptor,
         private val jClass: JavaClass
 ) : LazyJavaScope(c) {
 
     override fun computeMemberIndex(): MemberIndex {
-        return object : ClassMemberIndex(jClass, { !it.isStatic() }) {
+        return object : ClassMemberIndex(jClass, { !it.isStatic }) {
             // For SAM-constructors
             override fun getMethodNames(nameFilter: (Name) -> Boolean): Collection<Name>
                     = super.getMethodNames(nameFilter) + getClassNames(DescriptorKindFilter.CLASSIFIERS, nameFilter)
@@ -341,7 +341,7 @@ public class LazyJavaClassMemberScope(
       }
 
     override fun computeNonDeclaredProperties(name: Name, result: MutableCollection<PropertyDescriptor>) {
-        if (jClass.isAnnotationType()) {
+        if (jClass.isAnnotationType) {
             computeAnnotationProperties(name, result)
         }
 
@@ -506,13 +506,13 @@ public class LazyJavaClassMemberScope(
                 classDescriptor, c.resolveAnnotations(constructor), /* isPrimary = */ false, c.components.sourceElementFactory.source(constructor)
         )
 
-        val valueParameters = resolveValueParameters(c, constructorDescriptor, constructor.getValueParameters())
+        val valueParameters = resolveValueParameters(c, constructorDescriptor, constructor.valueParameters)
 
         constructorDescriptor.initialize(valueParameters.descriptors, constructor.visibility)
         constructorDescriptor.setHasStableParameterNames(false)
         constructorDescriptor.setHasSynthesizedParameterNames(valueParameters.hasSynthesizedNames)
 
-        constructorDescriptor.setReturnType(classDescriptor.getDefaultType())
+        constructorDescriptor.returnType = classDescriptor.defaultType
 
         c.components.javaResolverCache.recordConstructor(constructor, constructorDescriptor)
 
@@ -520,8 +520,8 @@ public class LazyJavaClassMemberScope(
     }
 
     private fun createDefaultConstructor(): ConstructorDescriptor? {
-        val isAnnotation: Boolean = jClass.isAnnotationType()
-        if (jClass.isInterface() && !isAnnotation)
+        val isAnnotation: Boolean = jClass.isAnnotationType
+        if (jClass.isInterface && !isAnnotation)
             return null
 
         val classDescriptor = ownerDescriptor
@@ -534,13 +534,13 @@ public class LazyJavaClassMemberScope(
 
         constructorDescriptor.initialize(valueParameters, getConstructorVisibility(classDescriptor))
         constructorDescriptor.setHasStableParameterNames(true)
-        constructorDescriptor.setReturnType(classDescriptor.getDefaultType())
+        constructorDescriptor.returnType = classDescriptor.defaultType
         c.components.javaResolverCache.recordConstructor(jClass, constructorDescriptor);
         return constructorDescriptor
     }
 
     private fun getConstructorVisibility(classDescriptor: ClassDescriptor): Visibility {
-        val visibility = classDescriptor.getVisibility()
+        val visibility = classDescriptor.visibility
         if (visibility == JavaVisibilities.PROTECTED_STATIC_VISIBILITY) {
             return JavaVisibilities.PROTECTED_AND_PACKAGE
         }
@@ -548,22 +548,22 @@ public class LazyJavaClassMemberScope(
     }
 
     private fun createAnnotationConstructorParameters(constructor: ConstructorDescriptorImpl): List<ValueParameterDescriptor> {
-        val methods = jClass.getMethods()
+        val methods = jClass.methods
         val result = ArrayList<ValueParameterDescriptor>(methods.size)
 
         val attr = TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes(allowFlexible = false, isForAnnotationParameter = true)
 
         val (methodsNamedValue, otherMethods) = methods.
-                partition { it.getName() == JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME }
+                partition { it.name == JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME }
 
         assert(methodsNamedValue.size <= 1) { "There can't be more than one method named 'value' in annotation class: $jClass" }
         val methodNamedValue = methodsNamedValue.firstOrNull()
         if (methodNamedValue != null) {
-            val parameterNamedValueJavaType = methodNamedValue.getReturnType()
+            val parameterNamedValueJavaType = methodNamedValue.returnType
             val (parameterType, varargType) =
                     if (parameterNamedValueJavaType is JavaArrayType)
                         Pair(c.typeResolver.transformArrayType(parameterNamedValueJavaType, attr, isVararg = true),
-                             c.typeResolver.transformJavaType(parameterNamedValueJavaType.getComponentType(), attr))
+                             c.typeResolver.transformJavaType(parameterNamedValueJavaType.componentType, attr))
                     else
                         Pair(c.typeResolver.transformJavaType(parameterNamedValueJavaType, attr), null)
 
@@ -572,7 +572,7 @@ public class LazyJavaClassMemberScope(
 
         val startIndex = if (methodNamedValue != null) 1 else 0
         for ((index, method) in otherMethods.withIndex()) {
-            val parameterType = c.typeResolver.transformJavaType(method.getReturnType(), attr)
+            val parameterType = c.typeResolver.transformJavaType(method.returnType, attr)
             result.addAnnotationValueParameter(constructor, index + startIndex, method, parameterType, null)
         }
 
@@ -591,7 +591,7 @@ public class LazyJavaClassMemberScope(
                 null,
                 index,
                 Annotations.EMPTY,
-                method.getName(),
+                method.name,
                 // Parameters of annotation constructors in Java are never nullable
                 TypeUtils.makeNotNullable(returnType),
                 method.hasAnnotationParameterDefaultValue(),
@@ -654,5 +654,5 @@ public class LazyJavaClassMemberScope(
         }
     }
 
-    override fun toString() = "Lazy java member scope for " + jClass.getFqName()
+    override fun toString() = "Lazy java member scope for " + jClass.fqName
 }

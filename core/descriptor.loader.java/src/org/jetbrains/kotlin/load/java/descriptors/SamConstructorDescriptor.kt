@@ -21,19 +21,19 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude
 
-public class SamConstructorDescriptor(
+class SamConstructorDescriptor(
         containingDeclaration: DeclarationDescriptor,
         samInterface: JavaClassDescriptor
 ) : SimpleFunctionDescriptorImpl(
         containingDeclaration,
         null,
-        samInterface.getAnnotations(),
-        samInterface.getName(),
+        samInterface.annotations,
+        samInterface.name,
         CallableMemberDescriptor.Kind.SYNTHESIZED,
-        samInterface.getSource()
+        samInterface.source
 )
 
-public object SamConstructorDescriptorKindExclude : DescriptorKindExclude() {
+object SamConstructorDescriptorKindExclude : DescriptorKindExclude() {
     override fun excludes(descriptor: DeclarationDescriptor) = descriptor is SamConstructorDescriptor
 
     override val fullyExcludedDescriptorKinds: Int get() = 0

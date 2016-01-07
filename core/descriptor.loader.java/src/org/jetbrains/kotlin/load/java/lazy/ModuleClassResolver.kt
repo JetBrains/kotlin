@@ -23,11 +23,11 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import kotlin.properties.Delegates
 import javax.inject.Inject
 
-public interface ModuleClassResolver {
-    public fun resolveClass(javaClass: JavaClass): ClassDescriptor?
+interface ModuleClassResolver {
+    fun resolveClass(javaClass: JavaClass): ClassDescriptor?
 }
 
-public class SingleModuleClassResolver() : ModuleClassResolver {
+class SingleModuleClassResolver() : ModuleClassResolver {
     override fun resolveClass(javaClass: JavaClass): ClassDescriptor? {
         return resolver!!.resolveClass(javaClass)
     }
@@ -37,6 +37,6 @@ public class SingleModuleClassResolver() : ModuleClassResolver {
         @Inject set
 }
 
-public class ModuleClassResolverImpl(private val descriptorResolverByJavaClass: (JavaClass) -> JavaDescriptorResolver): ModuleClassResolver {
+class ModuleClassResolverImpl(private val descriptorResolverByJavaClass: (JavaClass) -> JavaDescriptorResolver): ModuleClassResolver {
     override fun resolveClass(javaClass: JavaClass): ClassDescriptor? = descriptorResolverByJavaClass(javaClass).resolveClass(javaClass)
 }

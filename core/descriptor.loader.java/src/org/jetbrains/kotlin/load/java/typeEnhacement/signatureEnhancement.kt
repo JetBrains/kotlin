@@ -20,27 +20,27 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 
-public fun <D : CallableMemberDescriptor> enhanceSignatures(platformSignatures: Collection<D>): Collection<D> {
+fun <D : CallableMemberDescriptor> enhanceSignatures(platformSignatures: Collection<D>): Collection<D> {
     return platformSignatures.map {
         it.enhanceSignature()
     }
 }
 
-public fun <D : CallableMemberDescriptor> D.enhanceSignature(): D {
+fun <D : CallableMemberDescriptor> D.enhanceSignature(): D {
     // TODO type parameters
     // TODO use new type parameters while enhancing other types
     // TODO Propagation into generic type arguments
 
     val enhancedReceiverType =
-            if (getExtensionReceiverParameter() != null)
-                parts(isCovariant = false) { it.getExtensionReceiverParameter()!!.getType() }.enhance()
+            if (extensionReceiverParameter != null)
+                parts(isCovariant = false) { it.extensionReceiverParameter!!.type }.enhance()
             else null
 
-    val enhancedValueParametersTypes = getValueParameters().map {
-        p -> parts(isCovariant = false) { it.getValueParameters()[p.index].getType() }.enhance()
+    val enhancedValueParametersTypes = valueParameters.map {
+        p -> parts(isCovariant = false) { it.valueParameters[p.index].type }.enhance()
     }
 
-    val enhancedReturnType = parts(isCovariant = true) { it.getReturnType()!! }.enhance()
+    val enhancedReturnType = parts(isCovariant = true) { it.returnType!! }.enhance()
 
     if (this is JavaCallableMemberDescriptor) {
         @Suppress("UNCHECKED_CAST")
@@ -64,7 +64,7 @@ private class SignatureParts(
 private fun <D : CallableMemberDescriptor> D.parts(isCovariant: Boolean, collector: (D) -> KotlinType): SignatureParts {
     return SignatureParts(
             collector(this),
-            this.getOverriddenDescriptors().map {
+            this.overriddenDescriptors.map {
                 @Suppress("UNCHECKED_CAST")
                 collector(it as D)
             },

@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import java.io.DataInputStream
 import java.io.InputStream
 
-public class BuiltinsPackageFragment(
+class BuiltinsPackageFragment(
         fqName: FqName,
         storageManager: StorageManager,
         module: ModuleDescriptor,
@@ -68,7 +68,7 @@ public class BuiltinsPackageFragment(
         )
     } ?: super.computeMemberScope()
 
-    protected override fun loadClassNames(packageProto: ProtoBuf.Package): Collection<Name> {
+    override fun loadClassNames(packageProto: ProtoBuf.Package): Collection<Name> {
         return packageProto.getExtension(BuiltInsProtoBuf.className)?.map { id -> nameResolver.getName(id) } ?: listOf()
     }
 

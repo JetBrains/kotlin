@@ -22,7 +22,7 @@ import java.lang.reflect.GenericArrayType
 import java.lang.reflect.Type
 import java.lang.reflect.WildcardType
 
-public abstract class ReflectJavaType : JavaType {
+abstract class ReflectJavaType : JavaType {
     protected abstract val type: Type
 
     override fun createArrayType(): JavaArrayType = throw UnsupportedOperationException()
@@ -30,8 +30,8 @@ public abstract class ReflectJavaType : JavaType {
     companion object Factory {
         fun create(type: Type): ReflectJavaType {
             return when {
-                type is Class<*> && type.isPrimitive() -> ReflectJavaPrimitiveType(type)
-                type is GenericArrayType || type is Class<*> && type.isArray() -> ReflectJavaArrayType(type)
+                type is Class<*> && type.isPrimitive -> ReflectJavaPrimitiveType(type)
+                type is GenericArrayType || type is Class<*> && type.isArray -> ReflectJavaArrayType(type)
                 type is WildcardType -> ReflectJavaWildcardType(type)
                 else -> ReflectJavaClassifierType(type)
             }
@@ -42,5 +42,5 @@ public abstract class ReflectJavaType : JavaType {
 
     override fun hashCode() = type.hashCode()
 
-    override fun toString() = javaClass.getName() + ": " + type
+    override fun toString() = javaClass.name + ": " + type
 }

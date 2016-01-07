@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.load.kotlin
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.SourceFile
 
-public class KotlinJvmBinarySourceElement(public val binaryClass: KotlinJvmBinaryClass) : SourceElement {
+class KotlinJvmBinarySourceElement(val binaryClass: KotlinJvmBinaryClass) : SourceElement {
     override fun toString() = javaClass.name + ": " + binaryClass.toString()
     override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
 }

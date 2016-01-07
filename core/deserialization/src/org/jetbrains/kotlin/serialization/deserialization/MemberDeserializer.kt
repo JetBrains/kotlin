@@ -30,9 +30,9 @@ import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
 import org.jetbrains.kotlin.utils.toReadOnlyList
 
-public class MemberDeserializer(private val c: DeserializationContext) {
-    public fun loadProperty(proto: ProtoBuf.Property): PropertyDescriptor {
-        val flags = proto.getFlags()
+class MemberDeserializer(private val c: DeserializationContext) {
+    fun loadProperty(proto: ProtoBuf.Property): PropertyDescriptor {
+        val flags = proto.flags
 
         val property = DeserializedPropertyDescriptor(
                 c.containingDeclaration, null,
@@ -50,7 +50,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
                 c.packagePartSource
         )
 
-        val local = c.childContext(property, proto.getTypeParameterList())
+        val local = c.childContext(property, proto.typeParameterList)
 
         val hasGetter = Flags.HAS_GETTER.get(flags)
         val receiverAnnotations = if (hasGetter && proto.hasReceiver())
@@ -66,7 +66,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         )
 
         val getter = if (hasGetter) {
-            val getterFlags = proto.getGetterFlags()
+            val getterFlags = proto.getterFlags
             val isNotDefault = proto.hasGetterFlags() && Flags.IS_NOT_DEFAULT.get(getterFlags)
             val isExternal = proto.hasGetterFlags() && Flags.IS_EXTERNAL_ACCESSOR.get(getterFlags)
             val getter = if (isNotDefault) {
@@ -92,7 +92,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         }
 
         val setter = if (Flags.HAS_SETTER.get(flags)) {
-            val setterFlags = proto.getSetterFlags()
+            val setterFlags = proto.setterFlags
             val isNotDefault = proto.hasSetterFlags() && Flags.IS_NOT_DEFAULT.get(setterFlags)
             val isExternal = proto.hasSetterFlags() && Flags.IS_EXTERNAL_ACCESSOR.get(setterFlags)
             if (isNotDefault) {
@@ -135,7 +135,7 @@ public class MemberDeserializer(private val c: DeserializationContext) {
         return property
     }
 
-    public fun loadFunction(proto: ProtoBuf.Function): FunctionDescriptor {
+    fun loadFunction(proto: ProtoBuf.Function): FunctionDescriptor {
         val annotations = getAnnotations(proto, proto.flags, AnnotatedCallableKind.FUNCTION)
         val receiverAnnotations = if (proto.hasReceiver())
             getReceiverParameterAnnotations(proto, AnnotatedCallableKind.FUNCTION)
@@ -163,10 +163,10 @@ public class MemberDeserializer(private val c: DeserializationContext) {
     }
 
     private fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? {
-        return (c.containingDeclaration as? ClassDescriptor)?.getThisAsReceiverParameter()
+        return (c.containingDeclaration as? ClassDescriptor)?.thisAsReceiverParameter
     }
 
-    public fun loadConstructor(proto: ProtoBuf.Constructor, isPrimary: Boolean): ConstructorDescriptor {
+    fun loadConstructor(proto: ProtoBuf.Constructor, isPrimary: Boolean): ConstructorDescriptor {
         val classDescriptor = c.containingDeclaration as ClassDescriptor
         val descriptor = DeserializedConstructorDescriptor(
                 classDescriptor, null, getAnnotations(proto, proto.flags, AnnotatedCallableKind.FUNCTION),

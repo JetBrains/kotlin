@@ -45,7 +45,7 @@ class LazyJavaTypeParameterResolver(
         private val containingDeclaration: DeclarationDescriptor,
         typeParameterOwner: JavaTypeParameterListOwner
 ) : TypeParameterResolver {
-    private val typeParameters: Map<JavaTypeParameter, Int> = typeParameterOwner.getTypeParameters().mapToIndex()
+    private val typeParameters: Map<JavaTypeParameter, Int> = typeParameterOwner.typeParameters.mapToIndex()
 
     private val resolve = c.storageManager.createMemoizedFunctionWithNullableValues {
         typeParameter: JavaTypeParameter ->

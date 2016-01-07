@@ -95,11 +95,11 @@ fun KotlinType.computeIndexedQualifiersForOverride(fromSupertypes: Collection<Ko
         fun add(type: KotlinType) {
             list.add(type)
             for (arg in type.getArguments()) {
-                if (arg.isStarProjection()) {
-                    list.add(arg.getType())
+                if (arg.isStarProjection) {
+                    list.add(arg.type)
                 }
                 else {
-                    add(arg.getType())
+                    add(arg.type)
                 }
             }
         }

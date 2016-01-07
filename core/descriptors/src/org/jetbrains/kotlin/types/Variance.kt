@@ -16,24 +16,24 @@
 
 package org.jetbrains.kotlin.types
 
-public enum class Variance(
-        public val label: String,
-        public val allowsInPosition: Boolean,
-        public val allowsOutPosition: Boolean,
+enum class Variance(
+        val label: String,
+        val allowsInPosition: Boolean,
+        val allowsOutPosition: Boolean,
         private val superpositionFactor: Int
 ) {
     INVARIANT("", true, true, 0),
     IN_VARIANCE("in", true, false, -1),
     OUT_VARIANCE("out", false, true, +1);
 
-    public fun allowsPosition(position: Variance): Boolean
+    fun allowsPosition(position: Variance): Boolean
             = when (position) {
                 IN_VARIANCE -> allowsInPosition
                 OUT_VARIANCE -> allowsOutPosition
                 INVARIANT -> allowsInPosition && allowsOutPosition
             }
 
-    public fun superpose(other: Variance): Variance {
+    fun superpose(other: Variance): Variance {
         val r = this.superpositionFactor * other.superpositionFactor
         return when (r) {
             0 -> INVARIANT
@@ -43,7 +43,7 @@ public enum class Variance(
         }
     }
 
-    public fun opposite(): Variance {
+    fun opposite(): Variance {
         return when (this) {
             INVARIANT -> INVARIANT
             IN_VARIANCE -> OUT_VARIANCE

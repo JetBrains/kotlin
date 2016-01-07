@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.utils.newHashSetWithExpectedSize
 import org.jetbrains.kotlin.utils.sure
 import java.util.*
 
-public class SubstitutingScope(private val workerScope: MemberScope, givenSubstitutor: TypeSubstitutor) : MemberScope {
+class SubstitutingScope(private val workerScope: MemberScope, givenSubstitutor: TypeSubstitutor) : MemberScope {
 
     private val substitutor = givenSubstitutor.substitution.wrapWithCapturingSubstitution().buildSubstitutor()
 
@@ -76,7 +76,7 @@ public class SubstitutingScope(private val workerScope: MemberScope, givenSubsti
                                            nameFilter: (Name) -> Boolean) = _allDescriptors
 
     override fun printScopeStructure(p: Printer) {
-        p.println(javaClass.getSimpleName(), " {")
+        p.println(javaClass.simpleName, " {")
         p.pushIndent()
 
         p.println("substitutor = ")

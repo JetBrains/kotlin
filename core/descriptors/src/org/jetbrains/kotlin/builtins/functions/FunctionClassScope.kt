@@ -47,24 +47,24 @@ class FunctionClassScope(
     }
 
     override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
-        return allDescriptors().filterIsInstance<FunctionDescriptor>().filter { it.getName() == name }
+        return allDescriptors().filterIsInstance<FunctionDescriptor>().filter { it.name == name }
     }
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
-        return allDescriptors().filterIsInstance<PropertyDescriptor>().filter { it.getName() == name }
+        return allDescriptors().filterIsInstance<PropertyDescriptor>().filter { it.name == name }
     }
 
     private fun createFakeOverrides(invoke: FunctionDescriptor?): List<DeclarationDescriptor> {
         val result = ArrayList<DeclarationDescriptor>(3)
-        val allSuperDescriptors = functionClass.getTypeConstructor().getSupertypes()
-                .flatMap { it.getMemberScope().getContributedDescriptors() }
+        val allSuperDescriptors = functionClass.typeConstructor.supertypes
+                .flatMap { it.memberScope.getContributedDescriptors() }
                 .filterIsInstance<CallableMemberDescriptor>()
-        for ((name, group) in allSuperDescriptors.groupBy { it.getName() }) {
+        for ((name, group) in allSuperDescriptors.groupBy { it.name }) {
             for ((isFunction, descriptors) in group.groupBy { it is FunctionDescriptor }) {
                 OverridingUtil.generateOverridesInFunctionGroup(
                         name,
                         /* membersFromSupertypes = */ descriptors,
-                        /* membersFromCurrent = */ if (isFunction && name == invoke?.getName()) listOf(invoke) else listOf(),
+                        /* membersFromCurrent = */ if (isFunction && name == invoke?.name) listOf(invoke) else listOf(),
                         functionClass,
                         object : OverridingUtil.DescriptorSink {
                             override fun addFakeOverride(fakeOverride: CallableMemberDescriptor) {

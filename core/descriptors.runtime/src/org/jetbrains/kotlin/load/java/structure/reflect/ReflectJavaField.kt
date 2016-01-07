@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.load.java.structure.reflect
 import org.jetbrains.kotlin.load.java.structure.JavaField
 import java.lang.reflect.Field
 
-public class ReflectJavaField(override val member: Field) : ReflectJavaMember(), JavaField {
-    override fun isEnumEntry() = member.isEnumConstant()
+class ReflectJavaField(override val member: Field) : ReflectJavaMember(), JavaField {
+    override fun isEnumEntry() = member.isEnumConstant
 
-    override fun getType() = ReflectJavaType.create(member.getGenericType())
+    override fun getType() = ReflectJavaType.create(member.genericType)
 }

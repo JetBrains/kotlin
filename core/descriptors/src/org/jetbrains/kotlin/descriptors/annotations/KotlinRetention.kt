@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.descriptors.annotations
 
-public enum class KotlinRetention {
+enum class KotlinRetention {
     RUNTIME,
     BINARY,
     SOURCE

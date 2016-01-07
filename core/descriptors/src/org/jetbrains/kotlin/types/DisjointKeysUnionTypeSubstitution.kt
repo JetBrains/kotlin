@@ -18,13 +18,12 @@ package org.jetbrains.kotlin.types;
 
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 
-public class DisjointKeysUnionTypeSubstitution private constructor(
+class DisjointKeysUnionTypeSubstitution private constructor(
     private val first: TypeSubstitution,
     private val second: TypeSubstitution
 ) : TypeSubstitution() {
     companion object {
-        @JvmStatic
-        public fun create(first: TypeSubstitution, second: TypeSubstitution): TypeSubstitution {
+        @JvmStatic fun create(first: TypeSubstitution, second: TypeSubstitution): TypeSubstitution {
             if (first.isEmpty()) return second
             if (second.isEmpty()) return first
 

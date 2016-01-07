@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNullable
 import org.jetbrains.kotlin.utils.emptyOrSingletonList
 
-public class LazyJavaPackageFragmentProvider(
+class LazyJavaPackageFragmentProvider(
         components: JavaResolverComponents,
         module: ModuleDescriptor,
         reflectionTypes: ReflectionTypes

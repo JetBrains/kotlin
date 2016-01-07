@@ -36,13 +36,13 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
-public class AnnotationDeserializer(private val module: ModuleDescriptor) {
+class AnnotationDeserializer(private val module: ModuleDescriptor) {
     private val builtIns: KotlinBuiltIns
         get() = module.builtIns
 
     private val factory = ConstantValueFactory(builtIns)
 
-    public fun deserializeAnnotation(proto: Annotation, nameResolver: NameResolver): AnnotationDescriptor {
+    fun deserializeAnnotation(proto: Annotation, nameResolver: NameResolver): AnnotationDescriptor {
         val annotationClass = resolveClass(nameResolver.getClassId(proto.id))
 
         var arguments = emptyMap<ValueParameterDescriptor, ConstantValue<*>>()
@@ -62,40 +62,40 @@ public class AnnotationDeserializer(private val module: ModuleDescriptor) {
             parameterByName: Map<Name, ValueParameterDescriptor>,
             nameResolver: NameResolver
     ): Pair<ValueParameterDescriptor, ConstantValue<*>>? {
-        val parameter = parameterByName[nameResolver.getName(proto.getNameId())] ?: return null
-        return Pair(parameter, resolveValue(parameter.getType(), proto.getValue(), nameResolver))
+        val parameter = parameterByName[nameResolver.getName(proto.nameId)] ?: return null
+        return Pair(parameter, resolveValue(parameter.type, proto.value, nameResolver))
     }
 
-    public fun resolveValue(
+    fun resolveValue(
             expectedType: KotlinType,
             value: Value,
             nameResolver: NameResolver
     ): ConstantValue<*> {
-        val result: ConstantValue<*> = when (value.getType()) {
-            Type.BYTE -> factory.createByteValue(value.getIntValue().toByte())
-            Type.CHAR -> factory.createCharValue(value.getIntValue().toChar())
-            Type.SHORT -> factory.createShortValue(value.getIntValue().toShort())
-            Type.INT -> factory.createIntValue(value.getIntValue().toInt())
-            Type.LONG -> factory.createLongValue(value.getIntValue())
-            Type.FLOAT -> factory.createFloatValue(value.getFloatValue())
-            Type.DOUBLE -> factory.createDoubleValue(value.getDoubleValue())
-            Type.BOOLEAN -> factory.createBooleanValue(value.getIntValue() != 0L)
+        val result: ConstantValue<*> = when (value.type) {
+            Type.BYTE -> factory.createByteValue(value.intValue.toByte())
+            Type.CHAR -> factory.createCharValue(value.intValue.toChar())
+            Type.SHORT -> factory.createShortValue(value.intValue.toShort())
+            Type.INT -> factory.createIntValue(value.intValue.toInt())
+            Type.LONG -> factory.createLongValue(value.intValue)
+            Type.FLOAT -> factory.createFloatValue(value.floatValue)
+            Type.DOUBLE -> factory.createDoubleValue(value.doubleValue)
+            Type.BOOLEAN -> factory.createBooleanValue(value.intValue != 0L)
             Type.STRING -> {
-                factory.createStringValue(nameResolver.getString(value.getStringValue()))
+                factory.createStringValue(nameResolver.getString(value.stringValue))
             }
             Type.CLASS -> {
                 // TODO: support class literals
-                error("Class literal annotation arguments are not supported yet (${nameResolver.getClassId(value.getClassId())})")
+                error("Class literal annotation arguments are not supported yet (${nameResolver.getClassId(value.classId)})")
             }
             Type.ENUM -> {
-                resolveEnumValue(nameResolver.getClassId(value.getClassId()), nameResolver.getName(value.getEnumValueId()))
+                resolveEnumValue(nameResolver.getClassId(value.classId), nameResolver.getName(value.enumValueId))
             }
             Type.ANNOTATION -> {
-                AnnotationValue(deserializeAnnotation(value.getAnnotation(), nameResolver))
+                AnnotationValue(deserializeAnnotation(value.annotation, nameResolver))
             }
             Type.ARRAY -> {
                 val expectedIsArray = KotlinBuiltIns.isArray(expectedType) || KotlinBuiltIns.isPrimitiveArray(expectedType)
-                val arrayElements = value.getArrayElementList()
+                val arrayElements = value.arrayElementList
 
                 val actualArrayType =
                         if (arrayElements.isNotEmpty()) {
@@ -119,7 +119,7 @@ public class AnnotationDeserializer(private val module: ModuleDescriptor) {
                         actualArrayType
                 )
             }
-            else -> error("Unsupported annotation argument type: ${value.getType()} (expected $expectedType)")
+            else -> error("Unsupported annotation argument type: ${value.type} (expected $expectedType)")
         }
 
         if (result.type.isSubtypeOf(expectedType)) {
@@ -134,8 +134,8 @@ public class AnnotationDeserializer(private val module: ModuleDescriptor) {
     // NOTE: see analogous code in BinaryClassAnnotationAndConstantLoaderImpl
     private fun resolveEnumValue(enumClassId: ClassId, enumEntryName: Name): ConstantValue<*> {
         val enumClass = resolveClass(enumClassId)
-        if (enumClass.getKind() == ClassKind.ENUM_CLASS) {
-            val enumEntry = enumClass.getUnsubstitutedInnerClassesScope().getContributedClassifier(enumEntryName, NoLookupLocation.FROM_DESERIALIZATION)
+        if (enumClass.kind == ClassKind.ENUM_CLASS) {
+            val enumEntry = enumClass.unsubstitutedInnerClassesScope.getContributedClassifier(enumEntryName, NoLookupLocation.FROM_DESERIALIZATION)
             if (enumEntry is ClassDescriptor) {
                 return factory.createEnumValue(enumEntry)
             }
@@ -145,7 +145,7 @@ public class AnnotationDeserializer(private val module: ModuleDescriptor) {
 
     private fun resolveArrayElementType(value: Value, nameResolver: NameResolver): KotlinType =
             with(builtIns) {
-                when (value.getType()) {
+                when (value.type) {
                     Type.BYTE -> getByteType()
                     Type.CHAR -> getCharType()
                     Type.SHORT -> getShortType()
@@ -156,10 +156,10 @@ public class AnnotationDeserializer(private val module: ModuleDescriptor) {
                     Type.BOOLEAN -> getBooleanType()
                     Type.STRING -> getStringType()
                     Type.CLASS -> error("Arrays of class literals are not supported yet") // TODO: support arrays of class literals
-                    Type.ENUM -> resolveClass(nameResolver.getClassId(value.getClassId())).getDefaultType()
-                    Type.ANNOTATION -> resolveClass(nameResolver.getClassId(value.getAnnotation().getId())).getDefaultType()
+                    Type.ENUM -> resolveClass(nameResolver.getClassId(value.classId)).defaultType
+                    Type.ANNOTATION -> resolveClass(nameResolver.getClassId(value.annotation.id)).defaultType
                     Type.ARRAY -> error("Array of arrays is impossible")
-                    else -> error("Unknown type: ${value.getType()}")
+                    else -> error("Unknown type: ${value.type}")
                 }
             }
 

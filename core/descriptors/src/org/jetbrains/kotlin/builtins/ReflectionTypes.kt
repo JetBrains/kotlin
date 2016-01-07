@@ -32,7 +32,7 @@ import kotlin.reflect.KProperty
 
 val KOTLIN_REFLECT_FQ_NAME = FqName("kotlin.reflect")
 
-public class ReflectionTypes(private val module: ModuleDescriptor) {
+class ReflectionTypes(private val module: ModuleDescriptor) {
     private val kotlinReflectScope: MemberScope by lazy {
         module.getPackage(KOTLIN_REFLECT_FQ_NAME).memberScope
     }
@@ -49,16 +49,16 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
         }
     }
 
-    public fun getKFunction(n: Int): ClassDescriptor = find("KFunction$n")
+    fun getKFunction(n: Int): ClassDescriptor = find("KFunction$n")
 
-    public val kClass: ClassDescriptor by ClassLookup
-    public val kProperty0: ClassDescriptor by ClassLookup
-    public val kProperty1: ClassDescriptor by ClassLookup
-    public val kProperty2: ClassDescriptor by ClassLookup
-    public val kMutableProperty0: ClassDescriptor by ClassLookup
-    public val kMutableProperty1: ClassDescriptor by ClassLookup
+    val kClass: ClassDescriptor by ClassLookup
+    val kProperty0: ClassDescriptor by ClassLookup
+    val kProperty1: ClassDescriptor by ClassLookup
+    val kProperty2: ClassDescriptor by ClassLookup
+    val kMutableProperty0: ClassDescriptor by ClassLookup
+    val kMutableProperty1: ClassDescriptor by ClassLookup
 
-    public fun getKClassType(annotations: Annotations, type: KotlinType): KotlinType {
+    fun getKClassType(annotations: Annotations, type: KotlinType): KotlinType {
         val descriptor = kClass
         if (ErrorUtils.isError(descriptor)) {
             return descriptor.defaultType
@@ -68,7 +68,7 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
         return KotlinTypeImpl.create(annotations, descriptor, false, arguments)
     }
 
-    public fun getKFunctionType(
+    fun getKFunctionType(
             annotations: Annotations,
             receiverType: KotlinType?,
             parameterTypes: List<KotlinType>,
@@ -85,7 +85,7 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
         return KotlinTypeImpl.create(annotations, classDescriptor, false, arguments)
     }
 
-    public fun getKPropertyType(annotations: Annotations, receiverType: KotlinType?, returnType: KotlinType, mutable: Boolean): KotlinType {
+    fun getKPropertyType(annotations: Annotations, receiverType: KotlinType?, returnType: KotlinType, mutable: Boolean): KotlinType {
         val classDescriptor =
                 when {
                     receiverType != null -> when {
@@ -111,12 +111,12 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
     }
 
     companion object {
-        public fun isReflectionClass(descriptor: ClassDescriptor): Boolean {
+        fun isReflectionClass(descriptor: ClassDescriptor): Boolean {
             val containingPackage = DescriptorUtils.getParentOfType(descriptor, PackageFragmentDescriptor::class.java)
             return containingPackage != null && containingPackage.fqName == KOTLIN_REFLECT_FQ_NAME
         }
 
-        public fun isCallableType(type: KotlinType): Boolean =
+        fun isCallableType(type: KotlinType): Boolean =
                 KotlinBuiltIns.isFunctionOrExtensionFunctionType(type) || isKCallableType(type)
 
         private fun isKCallableType(type: KotlinType): Boolean =
@@ -128,7 +128,7 @@ public class ReflectionTypes(private val module: ModuleDescriptor) {
             return descriptor is ClassDescriptor && DescriptorUtils.getFqName(descriptor) == KotlinBuiltIns.FQ_NAMES.kCallable
         }
 
-        public fun createKPropertyStarType(module: ModuleDescriptor): KotlinType? {
+        fun createKPropertyStarType(module: ModuleDescriptor): KotlinType? {
             val kPropertyClass = module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.kProperty) ?: return null
             return KotlinTypeImpl.create(
                     Annotations.EMPTY, kPropertyClass, false,

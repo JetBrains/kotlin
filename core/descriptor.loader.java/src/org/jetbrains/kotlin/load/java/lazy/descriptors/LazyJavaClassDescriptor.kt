@@ -57,18 +57,18 @@ class LazyJavaClassDescriptor(
     }
 
     private val kind = when {
-        jClass.isAnnotationType() -> ClassKind.ANNOTATION_CLASS
-        jClass.isInterface() -> ClassKind.INTERFACE
-        jClass.isEnum() -> ClassKind.ENUM_CLASS
+        jClass.isAnnotationType -> ClassKind.ANNOTATION_CLASS
+        jClass.isInterface -> ClassKind.INTERFACE
+        jClass.isEnum -> ClassKind.ENUM_CLASS
         else -> ClassKind.CLASS
     }
 
-    private val modality = if (jClass.isAnnotationType())
+    private val modality = if (jClass.isAnnotationType)
                                Modality.FINAL
-                           else Modality.convertFromFlags(jClass.isAbstract() || jClass.isInterface(), !jClass.isFinal())
+                           else Modality.convertFromFlags(jClass.isAbstract || jClass.isInterface, !jClass.isFinal)
 
-    private val visibility = jClass.getVisibility()
-    private val isInner = jClass.getOuterClass() != null && !jClass.isStatic()
+    private val visibility = jClass.visibility
+    private val isInner = jClass.outerClass != null && !jClass.isStatic
 
     override fun getKind() = kind
     override fun getModality() = modality

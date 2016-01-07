@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.load.java.structure.JavaTypeProvider
 import org.jetbrains.kotlin.load.java.structure.JavaWildcardType
 import java.lang.reflect.WildcardType
 
-public class ReflectJavaWildcardType(override val type: WildcardType): ReflectJavaType(), JavaWildcardType {
+class ReflectJavaWildcardType(override val type: WildcardType): ReflectJavaType(), JavaWildcardType {
     override fun getBound(): ReflectJavaType? {
-        val upperBounds = type.getUpperBounds()
-        val lowerBounds = type.getLowerBounds()
+        val upperBounds = type.upperBounds
+        val lowerBounds = type.lowerBounds
         if (upperBounds.size > 1 || lowerBounds.size > 1) {
             throw UnsupportedOperationException("Wildcard types with many bounds are not yet supported: $type")
         }
@@ -34,7 +34,7 @@ public class ReflectJavaWildcardType(override val type: WildcardType): ReflectJa
         }
     }
 
-    override fun isExtends() = type.getUpperBounds().firstOrNull() != Any::class.java
+    override fun isExtends() = type.upperBounds.firstOrNull() != Any::class.java
 
     override fun getTypeProvider(): JavaTypeProvider = throw UnsupportedOperationException()
 }

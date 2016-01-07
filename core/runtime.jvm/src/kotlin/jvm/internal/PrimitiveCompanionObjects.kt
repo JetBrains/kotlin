@@ -54,12 +54,12 @@ private object ByteCompanionObject {
 
 
 private object CharCompanionObject {
-    public const val MIN_HIGH_SURROGATE: Char = '\uD800'
-    public const val MAX_HIGH_SURROGATE: Char = '\uDBFF'
-    public const val MIN_LOW_SURROGATE: Char = '\uDC00'
-    public const val MAX_LOW_SURROGATE: Char = '\uDFFF'
-    public const val MIN_SURROGATE: Char = MIN_HIGH_SURROGATE
-    public const val MAX_SURROGATE: Char = MAX_LOW_SURROGATE
+    const val MIN_HIGH_SURROGATE: Char = '\uD800'
+    const val MAX_HIGH_SURROGATE: Char = '\uDBFF'
+    const val MIN_LOW_SURROGATE: Char = '\uDC00'
+    const val MAX_LOW_SURROGATE: Char = '\uDFFF'
+    const val MIN_SURROGATE: Char = MIN_HIGH_SURROGATE
+    const val MAX_SURROGATE: Char = MAX_LOW_SURROGATE
 }
 
 private object StringCompanionObject {}

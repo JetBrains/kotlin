@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.ErrorUtils
 import java.util.*
 
-public class BinaryClassAnnotationAndConstantLoaderImpl(
+class BinaryClassAnnotationAndConstantLoaderImpl(
         private val module: ModuleDescriptor,
         storageManager: StorageManager,
         kotlinClassFinder: KotlinClassFinder,
@@ -131,7 +131,7 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
                         val parameter = DescriptorResolverUtils.getAnnotationParameterByName(name, annotationClass)
                         if (parameter != null) {
                             elements.trimToSize()
-                            arguments[parameter] = factory.createArrayValue(elements, parameter.getType())
+                            arguments[parameter] = factory.createArrayValue(elements, parameter.type)
                         }
                     }
                 }
@@ -151,8 +151,8 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
             // NOTE: see analogous code in AnnotationDeserializer
             private fun enumEntryValue(enumClassId: ClassId, name: Name): ConstantValue<*> {
                 val enumClass = resolveClass(enumClassId)
-                if (enumClass.getKind() == ClassKind.ENUM_CLASS) {
-                    val classifier = enumClass.getUnsubstitutedInnerClassesScope().getContributedClassifier(name, NoLookupLocation.FROM_JAVA_LOADER)
+                if (enumClass.kind == ClassKind.ENUM_CLASS) {
+                    val classifier = enumClass.unsubstitutedInnerClassesScope.getContributedClassifier(name, NoLookupLocation.FROM_JAVA_LOADER)
                     if (classifier is ClassDescriptor) {
                         return factory.createEnumValue(classifier)
                     }
@@ -161,7 +161,7 @@ public class BinaryClassAnnotationAndConstantLoaderImpl(
             }
 
             override fun visitEnd() {
-                result.add(AnnotationDescriptorImpl(annotationClass.getDefaultType(), arguments, source))
+                result.add(AnnotationDescriptorImpl(annotationClass.defaultType, arguments, source))
             }
 
             private fun createConstant(name: Name?, value: Any?): ConstantValue<*> {

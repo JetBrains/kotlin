@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.incremental.components.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
-public fun LookupTracker.record(from: LookupLocation, scopeOwner: DeclarationDescriptor, name: Name) {
+fun LookupTracker.record(from: LookupLocation, scopeOwner: DeclarationDescriptor, name: Name) {
     if (this == LookupTracker.DO_NOTHING || from is NoLookupLocation) return
 
     val location = from.location ?: return

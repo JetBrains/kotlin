@@ -21,13 +21,13 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.ClassDataWithSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 
-public class ClassDeserializer(private val components: DeserializationComponents) {
+class ClassDeserializer(private val components: DeserializationComponents) {
     private val classes: (ClassKey) -> ClassDescriptor? =
             components.storageManager.createMemoizedFunctionWithNullableValues { key -> createClass(key) }
 
     // Additional ClassDataWithSource parameter is needed to avoid calling ClassDataFinder#findClassData()
     // if it is already computed at the call site
-    public fun deserializeClass(classId: ClassId, classDataWithSource: ClassDataWithSource? = null): ClassDescriptor? =
+    fun deserializeClass(classId: ClassId, classDataWithSource: ClassDataWithSource? = null): ClassDescriptor? =
             classes(ClassKey(classId, classDataWithSource))
 
     private fun createClass(key: ClassKey): ClassDescriptor? {

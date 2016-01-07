@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.renderer.CustomFlexibleRendering
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.*
 
-public object RawTypeTag : TypeCapability
+object RawTypeTag : TypeCapability
 
-public object RawTypeCapabilities : TypeCapabilities {
+object RawTypeCapabilities : TypeCapabilities {
     private object RawSubstitutionCapability : CustomSubstitutionCapability {
         override val substitution: TypeSubstitution?
             get() = RawSubstitution
@@ -89,7 +89,7 @@ internal object RawSubstitution : TypeSubstitution() {
     private val lowerTypeAttr = TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes().toFlexible(JavaTypeFlexibility.FLEXIBLE_LOWER_BOUND)
     private val upperTypeAttr = TypeUsage.MEMBER_SIGNATURE_INVARIANT.toAttributes().toFlexible(JavaTypeFlexibility.FLEXIBLE_UPPER_BOUND)
 
-    public fun eraseType(type: KotlinType): KotlinType {
+    fun eraseType(type: KotlinType): KotlinType {
         val declaration = type.constructor.declarationDescriptor
         return when (declaration) {
             is TypeParameterDescriptor -> eraseType(declaration.getErasedUpperBound())

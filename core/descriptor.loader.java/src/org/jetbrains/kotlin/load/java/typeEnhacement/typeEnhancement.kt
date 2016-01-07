@@ -71,7 +71,7 @@ private fun KotlinType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers
     val shouldEnhance = position.shouldEnhance()
     if (!shouldEnhance && getArguments().isEmpty()) return Result(this, 1)
 
-    val originalClass = getConstructor().getDeclarationDescriptor()
+    val originalClass = getConstructor().declarationDescriptor
                         ?: return Result(this, 1)
 
     val effectiveQualifiers = qualifiers(index)
@@ -82,12 +82,12 @@ private fun KotlinType.enhanceInflexible(qualifiers: (Int) -> JavaTypeQualifiers
     var globalArgIndex = index + 1
     val enhancedArguments = getArguments().mapIndexed {
         localArgIndex, arg ->
-        if (arg.isStarProjection()) {
+        if (arg.isStarProjection) {
             globalArgIndex++
-            TypeUtils.makeStarProjection(enhancedClassifier.getTypeConstructor().getParameters()[localArgIndex])
+            TypeUtils.makeStarProjection(enhancedClassifier.typeConstructor.parameters[localArgIndex])
         }
         else {
-            val (enhancedType, subtreeSize) = arg.getType().enhancePossiblyFlexible(qualifiers, globalArgIndex)
+            val (enhancedType, subtreeSize) = arg.type.enhancePossiblyFlexible(qualifiers, globalArgIndex)
             globalArgIndex += subtreeSize
             createProjection(enhancedType, arg.projectionKind, typeParameterDescriptor = typeConstructor.parameters[localArgIndex])
         }

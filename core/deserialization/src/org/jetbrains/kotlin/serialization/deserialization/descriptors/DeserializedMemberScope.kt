@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
 
-public abstract class DeserializedMemberScope protected constructor(
+abstract class DeserializedMemberScope protected constructor(
         protected val c: DeserializationContext,
         functionList: Collection<ProtoBuf.Function>,
         propertyList: Collection<ProtoBuf.Property>

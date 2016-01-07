@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
-public interface FlexibleTypeCapabilities {
+interface FlexibleTypeCapabilities {
     fun <T: TypeCapability> getCapability(capabilityClass: Class<T>, jetType: KotlinType, flexibility: Flexibility): T?
     val id: String
 
@@ -31,20 +31,20 @@ public interface FlexibleTypeCapabilities {
     }
 }
 
-public interface Flexibility : TypeCapability, SubtypingRepresentatives {
+interface Flexibility : TypeCapability, SubtypingRepresentatives {
     companion object {
         // This is a "magic" classifier: when type resolver sees it in the code, e.g. ft<Foo, Foo?>, instead of creating a normal type,
         // it creates a flexible type, e.g. (Foo..Foo?).
         // This is used in tests and Evaluate Expression to have flexible types in the code,
         // but normal users should not be referencing this classifier
-        public val FLEXIBLE_TYPE_CLASSIFIER: ClassId = ClassId.topLevel(FqName("kotlin.internal.flexible.ft"))
+        val FLEXIBLE_TYPE_CLASSIFIER: ClassId = ClassId.topLevel(FqName("kotlin.internal.flexible.ft"))
     }
 
     // lowerBound is a subtype of upperBound
-    public val lowerBound: KotlinType
-    public val upperBound: KotlinType
+    val lowerBound: KotlinType
+    val upperBound: KotlinType
 
-    public val extraCapabilities: FlexibleTypeCapabilities
+    val extraCapabilities: FlexibleTypeCapabilities
 
     override val subTypeRepresentative: KotlinType
         get() = lowerBound
@@ -55,10 +55,10 @@ public interface Flexibility : TypeCapability, SubtypingRepresentatives {
     override fun sameTypeConstructor(type: KotlinType) = false
 }
 
-public fun KotlinType.isFlexible(): Boolean = this.getCapability(Flexibility::class.java) != null
-public fun KotlinType.flexibility(): Flexibility = this.getCapability(Flexibility::class.java)!!
+fun KotlinType.isFlexible(): Boolean = this.getCapability(Flexibility::class.java) != null
+fun KotlinType.flexibility(): Flexibility = this.getCapability(Flexibility::class.java)!!
 
-public fun KotlinType.isNullabilityFlexible(): Boolean {
+fun KotlinType.isNullabilityFlexible(): Boolean {
     val flexibility = this.getCapability(Flexibility::class.java) ?: return false
     return TypeUtils.isNullableType(flexibility.lowerBound) != TypeUtils.isNullableType(flexibility.upperBound)
 }
@@ -88,28 +88,28 @@ fun Collection<KotlinType>.singleBestRepresentative(): KotlinType? {
 fun Collection<TypeProjection>.singleBestRepresentative(): TypeProjection? {
     if (this.size == 1) return this.first()
 
-    val projectionKinds = this.map { it.getProjectionKind() }.toSet()
+    val projectionKinds = this.map { it.projectionKind }.toSet()
     if (projectionKinds.size != 1) return null
 
-    val bestType = this.map { it.getType() }.singleBestRepresentative()
+    val bestType = this.map { it.type }.singleBestRepresentative()
     if (bestType == null) return null
 
     return TypeProjectionImpl(projectionKinds.single(), bestType)
 }
 
-public fun KotlinType.lowerIfFlexible(): KotlinType = if (this.isFlexible()) this.flexibility().lowerBound else this
-public fun KotlinType.upperIfFlexible(): KotlinType = if (this.isFlexible()) this.flexibility().upperBound else this
+fun KotlinType.lowerIfFlexible(): KotlinType = if (this.isFlexible()) this.flexibility().lowerBound else this
+fun KotlinType.upperIfFlexible(): KotlinType = if (this.isFlexible()) this.flexibility().upperBound else this
 
-public interface NullAwareness : TypeCapability {
-    public fun makeNullableAsSpecified(nullable: Boolean): KotlinType
-    public fun computeIsNullable(): Boolean
+interface NullAwareness : TypeCapability {
+    fun makeNullableAsSpecified(nullable: Boolean): KotlinType
+    fun computeIsNullable(): Boolean
 }
 
 interface FlexibleTypeDelegation : TypeCapability {
-    public val delegateType: KotlinType
+    val delegateType: KotlinType
 }
 
-public open class DelegatingFlexibleType protected constructor(
+open class DelegatingFlexibleType protected constructor(
         override val lowerBound: KotlinType,
         override val upperBound: KotlinType,
         override val extraCapabilities: FlexibleTypeCapabilities
@@ -166,7 +166,7 @@ public open class DelegatingFlexibleType protected constructor(
                 extraCapabilities)
     }
 
-    override fun computeIsNullable() = delegateType.isMarkedNullable()
+    override fun computeIsNullable() = delegateType.isMarkedNullable
 
     override fun isMarkedNullable(): Boolean = getCapability(NullAwareness::class.java)!!.computeIsNullable()
 

@@ -27,7 +27,7 @@ import kotlin.reflect.KClass
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR)
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
-public annotation class JvmOverloads
+annotation class JvmOverloads
 
 
 /**
@@ -38,7 +38,7 @@ public annotation class JvmOverloads
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
-public annotation class JvmStatic
+annotation class JvmStatic
 
 /**
  * Specifies the name for the Java class or method which is generated from this element.
@@ -49,7 +49,7 @@ public annotation class JvmStatic
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FILE)
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
-public annotation class JvmName(public val name: String)
+annotation class JvmName(val name: String)
 
 /**
  * Instructs the Kotlin compiler to generate a multifile class with top-level functions and properties declared in this file as one of its parts.
@@ -58,11 +58,11 @@ public annotation class JvmName(public val name: String)
 @Target(AnnotationTarget.FILE)
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
-public annotation class JvmMultifileClass
+annotation class JvmMultifileClass
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.SOURCE)
-public annotation class JvmSynthetic
+annotation class JvmSynthetic
 
 /**
  * This annotation indicates what exceptions should be declared by a function when compiled to a JVM method.
@@ -84,7 +84,7 @@ public annotation class JvmSynthetic
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.CONSTRUCTOR)
 @Retention(AnnotationRetention.SOURCE)
-public annotation class Throws(public vararg val exceptionClasses: KClass<out Throwable>)
+annotation class Throws(vararg val exceptionClasses: KClass<out Throwable>)
 
 
 /**
@@ -93,7 +93,7 @@ public annotation class Throws(public vararg val exceptionClasses: KClass<out Th
 @Target(AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
-public annotation class JvmField
+annotation class JvmField
 
 /**
  * Instructs compiler to generate or omit wildcards for type arguments corresponding to parameters with declaration-site variance.

@@ -20,19 +20,19 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 
-public interface ResolutionScope {
+interface ResolutionScope {
 
-    public fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor?
+    fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor?
 
-    public fun getContributedVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor>
+    fun getContributedVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor>
 
-    public fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor>
+    fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor>
 
     /**
      * All visible descriptors from current scope possibly filtered by the given name and kind filters
      * (that means that the implementation is not obliged to use the filters but may do so when it gives any performance advantage).
      */
-    public fun getContributedDescriptors(
+    fun getContributedDescriptors(
             kindFilter: DescriptorKindFilter = DescriptorKindFilter.ALL,
             nameFilter: (Name) -> Boolean = MemberScope.ALL_NAME_FILTER
     ): Collection<DeclarationDescriptor>

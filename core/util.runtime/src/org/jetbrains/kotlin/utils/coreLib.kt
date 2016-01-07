@@ -16,4 +16,4 @@
 
 package org.jetbrains.kotlin.utils
 
-public inline fun <T : Any> T?.sure(message: () -> String): T = this ?: throw AssertionError(message())
+inline fun <T : Any> T?.sure(message: () -> String): T = this ?: throw AssertionError(message())

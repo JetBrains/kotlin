@@ -33,20 +33,20 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.KotlinType
 
-public class LazyJavaStaticClassScope(
+class LazyJavaStaticClassScope(
         c: LazyJavaResolverContext,
         private val jClass: JavaClass,
         override val ownerDescriptor: LazyJavaClassDescriptor
 ) : LazyJavaStaticScope(c) {
 
     override fun computeMemberIndex(): MemberIndex {
-        val delegate = ClassMemberIndex(jClass) { it.isStatic() }
+        val delegate = ClassMemberIndex(jClass) { it.isStatic }
         return object : MemberIndex by delegate {
             override fun getMethodNames(nameFilter: (Name) -> Boolean): Collection<Name> {
                 // Should be a super call, but KT-2860
                 return delegate.getMethodNames(nameFilter) +
                        // For SAM-constructors
-                       jClass.getInnerClasses().map { it.getName() }
+                       jClass.innerClasses.map { it.name }
             }
         }
     }
@@ -78,7 +78,7 @@ public class LazyJavaStaticClassScope(
         val functionsFromSupertypes = getStaticFunctionsFromJavaSuperClasses(name, ownerDescriptor)
         result.addAll(DescriptorResolverUtils.resolveOverrides(name, functionsFromSupertypes, result, ownerDescriptor, c.components.errorReporter))
 
-        if (jClass.isEnum()) {
+        if (jClass.isEnum) {
             when (name) {
                 DescriptorUtils.ENUM_VALUE_OF -> result.add(createEnumValueOfMethod(ownerDescriptor))
                 DescriptorUtils.ENUM_VALUES -> result.add(createEnumValuesMethod(ownerDescriptor))

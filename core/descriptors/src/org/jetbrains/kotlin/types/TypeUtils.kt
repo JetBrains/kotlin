@@ -24,13 +24,13 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import java.util.*
 
-public enum class TypeNullability {
+enum class TypeNullability {
     NOT_NULL,
     NULLABLE,
     FLEXIBLE
 }
 
-public fun KotlinType.nullability(): TypeNullability {
+fun KotlinType.nullability(): TypeNullability {
     return when {
         isNullabilityFlexible() -> TypeNullability.FLEXIBLE
         TypeUtils.isNullableType(this) -> TypeNullability.NULLABLE
@@ -62,14 +62,14 @@ fun KotlinType?.isArrayOfNothing(): Boolean {
 }
 
 
-public fun KotlinType.isSubtypeOf(superType: KotlinType): Boolean = KotlinTypeChecker.DEFAULT.isSubtypeOf(this, superType)
+fun KotlinType.isSubtypeOf(superType: KotlinType): Boolean = KotlinTypeChecker.DEFAULT.isSubtypeOf(this, superType)
 
-public fun KotlinType.cannotBeReified(): Boolean = KotlinBuiltIns.isNothingOrNullableNothing(this) || this.isDynamic()
+fun KotlinType.cannotBeReified(): Boolean = KotlinBuiltIns.isNothingOrNullableNothing(this) || this.isDynamic()
 
 fun TypeProjection.substitute(doSubstitute: (KotlinType) -> KotlinType): TypeProjection {
-    return if (isStarProjection())
+    return if (isStarProjection)
         this
-    else TypeProjectionImpl(getProjectionKind(), doSubstitute(getType()))
+    else TypeProjectionImpl(projectionKind, doSubstitute(type))
 }
 
 fun KotlinType.replaceAnnotations(newAnnotations: Annotations): KotlinType {
@@ -81,7 +81,7 @@ fun KotlinType.replaceAnnotations(newAnnotations: Annotations): KotlinType {
     }
 }
 
-public fun KotlinTypeChecker.equalTypesOrNulls(type1: KotlinType?, type2: KotlinType?): Boolean {
+fun KotlinTypeChecker.equalTypesOrNulls(type1: KotlinType?, type2: KotlinType?): Boolean {
     if (type1 === type2) return true
     if (type1 == null || type2 == null) return false
     return equalTypes(type1, type2)
@@ -89,11 +89,11 @@ public fun KotlinTypeChecker.equalTypesOrNulls(type1: KotlinType?, type2: Kotlin
 
 fun KotlinType.containsError() = ErrorUtils.containsErrorType(this)
 
-public fun List<KotlinType>.defaultProjections(): List<TypeProjection> = map { TypeProjectionImpl(it) }
+fun List<KotlinType>.defaultProjections(): List<TypeProjection> = map { TypeProjectionImpl(it) }
 
-public fun KotlinType.isDefaultBound(): Boolean = KotlinBuiltIns.isDefaultBound(getSupertypeRepresentative())
+fun KotlinType.isDefaultBound(): Boolean = KotlinBuiltIns.isDefaultBound(getSupertypeRepresentative())
 
-public fun createProjection(type: KotlinType, projectionKind: Variance, typeParameterDescriptor: TypeParameterDescriptor?): TypeProjection =
+fun createProjection(type: KotlinType, projectionKind: Variance, typeParameterDescriptor: TypeParameterDescriptor?): TypeProjection =
         TypeProjectionImpl(if (typeParameterDescriptor?.variance == projectionKind) Variance.INVARIANT else projectionKind, type)
 
 fun Collection<KotlinType>.closure(f: (KotlinType) -> Collection<KotlinType>): Collection<KotlinType> {

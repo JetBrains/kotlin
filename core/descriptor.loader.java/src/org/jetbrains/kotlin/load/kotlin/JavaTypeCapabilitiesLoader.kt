@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.serialization.deserialization.TypeCapabilitiesLoader
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.types.TypeCapabilities
 
-public object JavaTypeCapabilitiesLoader : TypeCapabilitiesLoader() {
+object JavaTypeCapabilitiesLoader : TypeCapabilitiesLoader() {
     override fun loadCapabilities(type: ProtoBuf.Type): TypeCapabilities =
             if (type.hasExtension(JvmProtoBuf.isRaw)) RawTypeCapabilities else TypeCapabilities.NONE
 }

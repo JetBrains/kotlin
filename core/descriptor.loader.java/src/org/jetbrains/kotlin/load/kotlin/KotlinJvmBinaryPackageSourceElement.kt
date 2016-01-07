@@ -37,11 +37,11 @@ class KotlinJvmBinaryPackageSourceElement(
     override fun toString(): String = "Binary package ${jPackage.getFqName()}: ${implClassNameToBinaryClass.keys}"
     override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE
 
-    public fun getRepresentativeBinaryClass(): KotlinJvmBinaryClass {
+    fun getRepresentativeBinaryClass(): KotlinJvmBinaryClass {
         return implClassNameToBinaryClass.values.first()
     }
 
-    public fun getContainingBinaryClass(descriptor: DeserializedCallableMemberDescriptor): KotlinJvmBinaryClass? {
+    fun getContainingBinaryClass(descriptor: DeserializedCallableMemberDescriptor): KotlinJvmBinaryClass? {
         val name = descriptor.getImplClassNameForDeserialized() ?: return null
         return implClassNameToBinaryClass[name.asString()]
     }

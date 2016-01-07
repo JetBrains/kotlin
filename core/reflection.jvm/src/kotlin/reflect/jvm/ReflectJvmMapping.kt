@@ -33,21 +33,21 @@ import kotlin.reflect.jvm.internal.asKPropertyImpl
  * Returns a Java [Field] instance corresponding to the backing field of the given property,
  * or `null` if the property has no backing field.
  */
-public val KProperty<*>.javaField: Field?
+val KProperty<*>.javaField: Field?
     get() = this.asKPropertyImpl()?.javaField
 
 /**
  * Returns a Java [Method] instance corresponding to the getter of the given property,
  * or `null` if the property has no getter, for example in case of a simple private `val` in a class.
  */
-public val KProperty<*>.javaGetter: Method?
+val KProperty<*>.javaGetter: Method?
     get() = getter.javaMethod
 
 /**
  * Returns a Java [Method] instance corresponding to the setter of the given mutable property,
  * or `null` if the property has no setter, for example in case of a simple private `var` in a class.
  */
-public val KMutableProperty<*>.javaSetter: Method?
+val KMutableProperty<*>.javaSetter: Method?
     get() = setter.javaMethod
 
 
@@ -55,15 +55,14 @@ public val KMutableProperty<*>.javaSetter: Method?
  * Returns a Java [Method] instance corresponding to the given Kotlin function,
  * or `null` if this function is a constructor or cannot be represented by a Java [Method].
  */
-public val KFunction<*>.javaMethod: Method?
+val KFunction<*>.javaMethod: Method?
     get() = this.asKCallableImpl()?.caller?.member as? Method
 
 /**
  * Returns a Java [Constructor] instance corresponding to the given Kotlin function,
  * or `null` if this function is not a constructor or cannot be represented by a Java [Constructor].
  */
-@Suppress("UNCHECKED_CAST")
-public val <T> KFunction<T>.javaConstructor: Constructor<T>?
+@Suppress("UNCHECKED_CAST") val <T> KFunction<T>.javaConstructor: Constructor<T>?
     get() = this.asKCallableImpl()?.caller?.member as? Constructor<T>
 
 
@@ -72,7 +71,7 @@ public val <T> KFunction<T>.javaConstructor: Constructor<T>?
  * Note that one Kotlin type may correspond to different JVM types depending on where it appears. For example, [Unit] corresponds to
  * the JVM class [Unit] when it's the type of a parameter, or to `void` when it's the return type of a function.
  */
-public val KType.javaType: Type
+val KType.javaType: Type
     get() = (this as KTypeImpl).javaType
 
 
@@ -84,9 +83,9 @@ public val KType.javaType: Type
  * or `null` if this field cannot be represented by a Kotlin property
  * (for example, if it is a synthetic field).
  */
-public val Field.kotlinProperty: KProperty<*>?
+val Field.kotlinProperty: KProperty<*>?
     get() {
-        if (isSynthetic()) return null
+        if (isSynthetic) return null
 
         // TODO: optimize (search by name)
 
@@ -95,7 +94,7 @@ public val Field.kotlinProperty: KProperty<*>?
             return kotlinPackage.members.filterIsInstance<KProperty<*>>().firstOrNull { it.javaField == this }
         }
 
-        return getDeclaringClass().kotlin.memberProperties.firstOrNull { it.javaField == this }
+        return declaringClass.kotlin.memberProperties.firstOrNull { it.javaField == this }
     }
 
 
@@ -112,7 +111,7 @@ private fun Member.getKPackage(): KDeclarationContainer? {
  * or `null` if this method cannot be represented by a Kotlin function
  * (for example, if it is a synthetic method).
  */
-public val Method.kotlinFunction: KFunction<*>?
+val Method.kotlinFunction: KFunction<*>?
     get() {
         if (isSynthetic) return null
 
@@ -141,9 +140,9 @@ public val Method.kotlinFunction: KFunction<*>?
  * or `null` if this constructor cannot be represented by a Kotlin function
  * (for example, if it is a synthetic constructor).
  */
-public val <T : Any> Constructor<T>.kotlinFunction: KFunction<T>?
+val <T : Any> Constructor<T>.kotlinFunction: KFunction<T>?
     get() {
-        if (isSynthetic()) return null
+        if (isSynthetic) return null
 
-        return getDeclaringClass().kotlin.constructors.firstOrNull { it.javaConstructor == this }
+        return declaringClass.kotlin.constructors.firstOrNull { it.javaConstructor == this }
     }

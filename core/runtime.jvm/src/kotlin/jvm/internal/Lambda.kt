@@ -16,9 +16,9 @@
 
 package kotlin.jvm.internal
 
-public abstract class Lambda(private val arity: Int) : FunctionImpl() {
+abstract class Lambda(private val arity: Int) : FunctionImpl() {
     override fun getArity() = arity
 
     @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
-    override fun toString() = "${(this as Object).getClass().getGenericInterfaces()[0]}"
+    override fun toString() = "${(this as Object).`class`.genericInterfaces[0]}"
 }

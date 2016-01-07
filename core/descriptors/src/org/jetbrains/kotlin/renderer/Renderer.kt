@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.renderer
 
-public interface Renderer<in O> {
+interface Renderer<in O> {
     fun render(obj: O): String
 }
 

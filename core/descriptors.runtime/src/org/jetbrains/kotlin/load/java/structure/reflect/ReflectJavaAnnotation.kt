@@ -21,17 +21,17 @@ import org.jetbrains.kotlin.load.java.structure.JavaAnnotationArgument
 import org.jetbrains.kotlin.name.Name
 import java.lang.reflect.Method
 
-public class ReflectJavaAnnotation(private val annotation: Annotation) : ReflectJavaElement(), JavaAnnotation {
+class ReflectJavaAnnotation(private val annotation: Annotation) : ReflectJavaElement(), JavaAnnotation {
     override fun findArgument(name: Name): JavaAnnotationArgument? {
         return getArgumentValue(annotation.annotationClass.java.getDeclaredMethod(name.asString()))
     }
 
     override fun getArguments(): Collection<JavaAnnotationArgument> {
-        return annotation.annotationClass.java.getDeclaredMethods().map { getArgumentValue(it) }
+        return annotation.annotationClass.java.declaredMethods.map { getArgumentValue(it) }
     }
 
     private fun getArgumentValue(argument: Method): ReflectJavaAnnotationArgument {
-        return argument.invoke(annotation).let { ReflectJavaAnnotationArgument.create(it, Name.identifier(argument.getName())) }
+        return argument.invoke(annotation).let { ReflectJavaAnnotationArgument.create(it, Name.identifier(argument.name)) }
     }
 
     override fun resolve() = ReflectJavaClass(annotation.annotationClass.java)
@@ -42,5 +42,5 @@ public class ReflectJavaAnnotation(private val annotation: Annotation) : Reflect
 
     override fun hashCode() = annotation.hashCode()
 
-    override fun toString() = javaClass.getName() + ": " + annotation
+    override fun toString() = javaClass.name + ": " + annotation
 }

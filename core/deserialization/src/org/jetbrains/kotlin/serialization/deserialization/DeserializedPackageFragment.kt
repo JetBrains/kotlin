@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.storage.getValue
 import java.io.InputStream
 import javax.inject.Inject
 
-public abstract class DeserializedPackageFragment(
+abstract class DeserializedPackageFragment(
         fqName: FqName,
         protected val storageManager: StorageManager,
         module: ModuleDescriptor,

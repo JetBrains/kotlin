@@ -39,7 +39,7 @@ fun createDynamicType(builtIns: KotlinBuiltIns) = object : DelegatingFlexibleTyp
         DynamicTypeCapabilities
 ) {}
 
-public object DynamicTypeCapabilities : FlexibleTypeCapabilities {
+object DynamicTypeCapabilities : FlexibleTypeCapabilities {
     override val id: String get() = "kotlin.DynamicType"
 
     override fun <T : TypeCapability> getCapability(capabilityClass: Class<T>, jetType: KotlinType, flexibility: Flexibility): T? {

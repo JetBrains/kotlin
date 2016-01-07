@@ -21,7 +21,7 @@ package org.jetbrains.kotlin.util.capitalizeDecapitalize
  * "FOOBar" -> "fooBar"
  * "FOO" -> "foo"
  */
-public fun String.decapitalizeSmart(asciiOnly: Boolean = false): String {
+fun String.decapitalizeSmart(asciiOnly: Boolean = false): String {
     fun isUpperCaseCharAt(index: Int): Boolean {
         val c = this[index]
         return if (asciiOnly) c in 'A'..'Z' else c.isUpperCase()
@@ -45,7 +45,7 @@ public fun String.decapitalizeSmart(asciiOnly: Boolean = false): String {
  * "FooBar" -> "FOOBar"
  * "foo" -> "FOO"
  */
-public fun String.capitalizeFirstWord(asciiOnly: Boolean = false): String {
+fun String.capitalizeFirstWord(asciiOnly: Boolean = false): String {
     fun toUpperCase(string: String) = if (asciiOnly) string.toUpperCaseAsciiOnly() else string.toUpperCase()
 
     fun isLowerCaseCharAt(index: Int): Boolean {
@@ -58,7 +58,7 @@ public fun String.capitalizeFirstWord(asciiOnly: Boolean = false): String {
     return toUpperCase(substring(0, secondWordStart)) + substring(secondWordStart)
 }
 
-public fun String.capitalizeAsciiOnly(): String {
+fun String.capitalizeAsciiOnly(): String {
     if (isEmpty()) return this
     val c = this[0]
     return if (c in 'a'..'z')
@@ -67,7 +67,7 @@ public fun String.capitalizeAsciiOnly(): String {
         this
 }
 
-public fun String.decapitalizeAsciiOnly(): String {
+fun String.decapitalizeAsciiOnly(): String {
     if (isEmpty()) return this
     val c = this[0]
     return if (c in 'A'..'Z')
@@ -76,7 +76,7 @@ public fun String.decapitalizeAsciiOnly(): String {
         this
 }
 
-public fun String.toLowerCaseAsciiOnly(): String {
+fun String.toLowerCaseAsciiOnly(): String {
     val builder = StringBuilder(length)
     for (c in this) {
         builder.append(if (c in 'A'..'Z') c.toLowerCase() else c)
@@ -84,7 +84,7 @@ public fun String.toLowerCaseAsciiOnly(): String {
     return builder.toString()
 }
 
-public fun String.toUpperCaseAsciiOnly(): String {
+fun String.toUpperCaseAsciiOnly(): String {
     val builder = StringBuilder(length)
     for (c in this) {
         builder.append(if (c in 'a'..'z') c.toUpperCase() else c)

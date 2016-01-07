@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.keysToMapExceptNulls
 
 fun LazyJavaResolverContext.resolveAnnotation(annotation: JavaAnnotation): LazyJavaAnnotationDescriptor? {
-    val classId = annotation.getClassId()
+    val classId = annotation.classId
     if (classId == null || isSpecialAnnotation(classId, false)) return null
     return LazyJavaAnnotationDescriptor(this, annotation)
 }
@@ -74,12 +74,12 @@ class LazyJavaAnnotationDescriptor(
     override fun getSource() = source
 
     private fun computeValueArguments(): Map<ValueParameterDescriptor, ConstantValue<*>> {
-        val constructors = getAnnotationClass().getConstructors()
+        val constructors = getAnnotationClass().constructors
         if (constructors.isEmpty()) return mapOf()
 
-        val nameToArg = javaAnnotation.getArguments().toMapBy { it.name }
+        val nameToArg = javaAnnotation.arguments.toMapBy { it.name }
 
-        return constructors.first().getValueParameters().keysToMapExceptNulls { valueParameter ->
+        return constructors.first().valueParameters.keysToMapExceptNulls { valueParameter ->
             var javaAnnotationArgument = nameToArg[valueParameter.getName()]
             if (javaAnnotationArgument == null && valueParameter.getName() == DEFAULT_ANNOTATION_MEMBER_NAME) {
                 javaAnnotationArgument = nameToArg[null]
@@ -89,7 +89,7 @@ class LazyJavaAnnotationDescriptor(
         }
     }
 
-    private fun getAnnotationClass() = getType().getConstructor().getDeclarationDescriptor() as ClassDescriptor
+    private fun getAnnotationClass() = getType().getConstructor().declarationDescriptor as ClassDescriptor
 
     private fun resolveAnnotationArgument(argument: JavaAnnotationArgument?): ConstantValue<*>? {
         return when (argument) {
@@ -116,18 +116,18 @@ class LazyJavaAnnotationDescriptor(
         val values = elements.map {
             argument -> resolveAnnotationArgument(argument) ?: factory.createNullValue()
         }
-        return factory.createArrayValue(values, valueParameter.getType())
+        return factory.createArrayValue(values, valueParameter.type)
     }
 
     private fun resolveFromEnumValue(element: JavaField?): ConstantValue<*>? {
-        if (element == null || !element.isEnumEntry()) return null
+        if (element == null || !element.isEnumEntry) return null
 
-        val containingJavaClass = element.getContainingClass()
+        val containingJavaClass = element.containingClass
 
         //TODO: (module refactoring) moduleClassResolver should be used here
         val enumClass = c.javaClassResolver.resolveClass(containingJavaClass) ?: return null
 
-        val classifier = enumClass.getUnsubstitutedInnerClassesScope().getContributedClassifier(element.getName(), NoLookupLocation.FROM_JAVA_LOADER)
+        val classifier = enumClass.unsubstitutedInnerClassesScope.getContributedClassifier(element.name, NoLookupLocation.FROM_JAVA_LOADER)
         if (classifier !is ClassDescriptor) return null
 
         return factory.createEnumValue(classifier)

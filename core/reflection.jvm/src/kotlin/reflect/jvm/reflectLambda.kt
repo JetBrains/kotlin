@@ -35,7 +35,7 @@ import kotlin.reflect.jvm.internal.getOrCreateModule
  * returns a [KFunction] instance providing introspection capabilities for that lambda or function expression and its parameters.
  * Not all features are currently supported, in particular [KCallable.call] and [KCallable.callBy] will fail at the moment.
  */
-public fun <R> Function<R>.reflect(): KFunction<R>? {
+fun <R> Function<R>.reflect(): KFunction<R>? {
     val callable = javaClass.getAnnotation(KotlinFunction::class.java) ?: return null
     val input = BitEncoding.decodeBytes(callable.data).inputStream()
     val nameResolver = JvmNameResolver(

@@ -19,10 +19,10 @@ package org.jetbrains.kotlin.serialization.deserialization
 import org.jetbrains.kotlin.serialization.ProtoBuf
 import org.jetbrains.kotlin.types.TypeCapabilities
 
-public abstract class TypeCapabilitiesLoader {
-    public object NONE : TypeCapabilitiesLoader() {
+abstract class TypeCapabilitiesLoader {
+    object NONE : TypeCapabilitiesLoader() {
         override fun loadCapabilities(type: ProtoBuf.Type): TypeCapabilities = TypeCapabilities.NONE
     }
 
-    public abstract fun loadCapabilities(type: ProtoBuf.Type): TypeCapabilities
+    abstract fun loadCapabilities(type: ProtoBuf.Type): TypeCapabilities
 }

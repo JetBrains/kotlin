@@ -25,31 +25,27 @@ import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.io.ByteArrayInputStream
 
-public object JvmProtoBufUtil {
-    public val EXTENSION_REGISTRY: ExtensionRegistryLite = run {
+object JvmProtoBufUtil {
+    val EXTENSION_REGISTRY: ExtensionRegistryLite = run {
         val registry = ExtensionRegistryLite.newInstance()
         JvmProtoBuf.registerAllExtensions(registry)
         registry
     }
 
-    @JvmStatic
-    public fun readClassDataFrom(data: Array<String>, strings: Array<String>): ClassData =
+    @JvmStatic fun readClassDataFrom(data: Array<String>, strings: Array<String>): ClassData =
             readClassDataFrom(BitEncoding.decodeBytes(data), strings)
 
-    @JvmStatic
-    public fun readClassDataFrom(bytes: ByteArray, strings: Array<String>): ClassData {
+    @JvmStatic fun readClassDataFrom(bytes: ByteArray, strings: Array<String>): ClassData {
         val input = ByteArrayInputStream(bytes)
         val nameResolver = JvmNameResolver(JvmProtoBuf.StringTableTypes.parseDelimitedFrom(input, EXTENSION_REGISTRY), strings)
         val classProto = ProtoBuf.Class.parseFrom(input, EXTENSION_REGISTRY)
         return ClassData(nameResolver, classProto)
     }
 
-    @JvmStatic
-    public fun readPackageDataFrom(data: Array<String>, strings: Array<String>): PackageData =
+    @JvmStatic fun readPackageDataFrom(data: Array<String>, strings: Array<String>): PackageData =
             readPackageDataFrom(BitEncoding.decodeBytes(data), strings)
 
-    @JvmStatic
-    public fun readPackageDataFrom(bytes: ByteArray, strings: Array<String>): PackageData {
+    @JvmStatic fun readPackageDataFrom(bytes: ByteArray, strings: Array<String>): PackageData {
         val input = ByteArrayInputStream(bytes)
         val nameResolver = JvmNameResolver(JvmProtoBuf.StringTableTypes.parseDelimitedFrom(input, EXTENSION_REGISTRY), strings)
         val packageProto = ProtoBuf.Package.parseFrom(input, EXTENSION_REGISTRY)

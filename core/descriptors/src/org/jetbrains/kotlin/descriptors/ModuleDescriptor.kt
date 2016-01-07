@@ -23,12 +23,12 @@ import org.jetbrains.kotlin.platform.PlatformToKotlinClassMap
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
-public interface ModuleDescriptor : DeclarationDescriptor, ModuleParameters {
+interface ModuleDescriptor : DeclarationDescriptor, ModuleParameters {
     override fun getContainingDeclaration(): DeclarationDescriptor? = null
 
-    public val builtIns: KotlinBuiltIns
+    val builtIns: KotlinBuiltIns
 
-    public fun isFriend(other: ModuleDescriptor): Boolean
+    fun isFriend(other: ModuleDescriptor): Boolean
 
     override fun substitute(substitutor: TypeSubstitutor): ModuleDescriptor {
         return this
@@ -38,9 +38,9 @@ public interface ModuleDescriptor : DeclarationDescriptor, ModuleParameters {
         return visitor.visitModuleDeclaration(this, data)
     }
 
-    public fun getPackage(fqName: FqName): PackageViewDescriptor
+    fun getPackage(fqName: FqName): PackageViewDescriptor
 
-    public fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName>
+    fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName>
 
     fun <T> getCapability(capability: Capability<T>): T?
 
@@ -48,8 +48,8 @@ public interface ModuleDescriptor : DeclarationDescriptor, ModuleParameters {
 }
 
 interface ModuleParameters {
-    public val defaultImports: List<ImportPath>
-    public val platformToKotlinClassMap: PlatformToKotlinClassMap
+    val defaultImports: List<ImportPath>
+    val platformToKotlinClassMap: PlatformToKotlinClassMap
 
     object Empty: ModuleParameters {
         override val defaultImports: List<ImportPath> = emptyList()
@@ -57,7 +57,7 @@ interface ModuleParameters {
     }
 }
 
-public fun ModuleParameters(defaultImports: List<ImportPath>, platformToKotlinClassMap: PlatformToKotlinClassMap): ModuleParameters =
+fun ModuleParameters(defaultImports: List<ImportPath>, platformToKotlinClassMap: PlatformToKotlinClassMap): ModuleParameters =
         object : ModuleParameters {
             override val defaultImports: List<ImportPath> = defaultImports
             override val platformToKotlinClassMap: PlatformToKotlinClassMap = platformToKotlinClassMap

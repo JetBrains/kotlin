@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
-public class ConstantValueFactory(
+class ConstantValueFactory(
         private val builtins: KotlinBuiltIns
 ) {
     fun createLongValue(value: Long) = LongValue(value, builtins)
@@ -77,7 +77,7 @@ public class ConstantValueFactory(
         }
     }
 
-    public fun createIntegerConstantValue(
+    fun createIntegerConstantValue(
             value: Long,
             expectedType: KotlinType
     ): ConstantValue<*>? {

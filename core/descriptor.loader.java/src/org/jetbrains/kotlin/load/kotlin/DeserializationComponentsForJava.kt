@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 
 // This class is needed only for easier injection: exact types of needed components are specified in the constructor here.
 // Otherwise injector generator is not smart enough to deduce, for example, which package fragment provider DeserializationComponents needs
-public class DeserializationComponentsForJava(
+class DeserializationComponentsForJava(
         storageManager: StorageManager,
         moduleDescriptor: ModuleDescriptor,
         classDataFinder: JavaClassDataFinder,

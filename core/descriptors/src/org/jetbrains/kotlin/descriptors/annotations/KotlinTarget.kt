@@ -23,7 +23,7 @@ import java.util.*
 
 // NOTE: this enum must have the same entries with kotlin.annotation.AnnotationTarget,
 // and may also have some additional entries
-public enum class KotlinTarget(val description: String, val isDefault: Boolean = true) {
+enum class KotlinTarget(val description: String, val isDefault: Boolean = true) {
     CLASS("class"),                            // includes CLASS_ONLY, OBJECT, COMPANION_OBJECT, OBJECT_LITERAL, INTERFACE, *_CLASS but not ENUM_ENTRY
     ANNOTATION_CLASS("annotation class"),
     TYPE_PARAMETER("type parameter", false),
@@ -81,13 +81,13 @@ public enum class KotlinTarget(val description: String, val isDefault: Boolean =
             }
         }
 
-        public fun valueOrNull(name: String): KotlinTarget? = map[name]
+        fun valueOrNull(name: String): KotlinTarget? = map[name]
 
-        public val DEFAULT_TARGET_SET: Set<KotlinTarget> = values().filter { it.isDefault }.toSet()
+        val DEFAULT_TARGET_SET: Set<KotlinTarget> = values().filter { it.isDefault }.toSet()
 
-        public val ALL_TARGET_SET: Set<KotlinTarget> = values().toSet()
+        val ALL_TARGET_SET: Set<KotlinTarget> = values().toSet()
 
-        public fun classActualTargets(descriptor: ClassDescriptor): List<KotlinTarget> = when (descriptor.kind) {
+        fun classActualTargets(descriptor: ClassDescriptor): List<KotlinTarget> = when (descriptor.kind) {
             ClassKind.ANNOTATION_CLASS -> listOf(ANNOTATION_CLASS, CLASS)
             ClassKind.CLASS ->
                 if (descriptor.isInner) {
@@ -117,7 +117,7 @@ public enum class KotlinTarget(val description: String, val isDefault: Boolean =
             ClassKind.ENUM_ENTRY -> listOf(ENUM_ENTRY, PROPERTY, FIELD)
         }
 
-        public val USE_SITE_MAPPING: Map<AnnotationUseSiteTarget, KotlinTarget> = mapOf(
+        val USE_SITE_MAPPING: Map<AnnotationUseSiteTarget, KotlinTarget> = mapOf(
                 AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER to VALUE_PARAMETER,
                 AnnotationUseSiteTarget.FIELD to FIELD,
                 AnnotationUseSiteTarget.PROPERTY to PROPERTY,

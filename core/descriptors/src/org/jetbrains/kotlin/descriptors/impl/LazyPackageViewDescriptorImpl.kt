@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.TypeSubstitutor
 
-public class LazyPackageViewDescriptorImpl(
+class LazyPackageViewDescriptorImpl(
         override val module: ModuleDescriptorImpl,
         override val fqName: FqName,
         storageManager: StorageManager
@@ -51,7 +51,7 @@ public class LazyPackageViewDescriptorImpl(
     })
 
     override fun getContainingDeclaration(): PackageViewDescriptor? {
-        return if (fqName.isRoot()) null else module.getPackage(fqName.parent())
+        return if (fqName.isRoot) null else module.getPackage(fqName.parent())
     }
 
     override fun equals(other: Any?): Boolean {

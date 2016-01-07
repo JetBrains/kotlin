@@ -35,7 +35,7 @@ import kotlin.reflect.jvm.internal.asKCallableImpl
  *
  * @see [java.lang.reflect.AccessibleObject]
  */
-public var KCallable<*>.isAccessible: Boolean
+var KCallable<*>.isAccessible: Boolean
     get() {
         return when (this) {
             is KMutableProperty ->

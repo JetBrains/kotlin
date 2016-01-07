@@ -22,18 +22,16 @@ import org.jetbrains.kotlin.serialization.jvm.JvmPackageTable
 import java.io.ByteArrayInputStream
 import java.io.DataInputStream
 
-public class ModuleMapping private constructor(val packageFqName2Parts: Map<String, PackageParts>) {
+class ModuleMapping private constructor(val packageFqName2Parts: Map<String, PackageParts>) {
 
     fun findPackageParts(packageFqName: String): PackageParts? {
         return packageFqName2Parts[packageFqName]
     }
 
     companion object {
-        @JvmField
-        public val MAPPING_FILE_EXT: String = "kotlin_module"
+        @JvmField val MAPPING_FILE_EXT: String = "kotlin_module"
 
-        @JvmField
-        public val EMPTY: ModuleMapping = ModuleMapping(emptyMap())
+        @JvmField val EMPTY: ModuleMapping = ModuleMapping(emptyMap())
 
         fun create(proto: ByteArray? = null): ModuleMapping {
             if (proto == null) {
@@ -68,7 +66,7 @@ public class ModuleMapping private constructor(val packageFqName2Parts: Map<Stri
     }
 }
 
-public class PackageParts(val packageFqName: String) {
+class PackageParts(val packageFqName: String) {
 
     val parts = linkedSetOf<String>()
 
@@ -79,8 +77,7 @@ public class PackageParts(val packageFqName: String) {
             packageFqName.hashCode() * 31 + parts.hashCode()
 
     companion object {
-        @JvmStatic
-        public fun PackageParts.serialize(builder: JvmPackageTable.PackageTable.Builder) {
+        @JvmStatic fun PackageParts.serialize(builder: JvmPackageTable.PackageTable.Builder) {
             if (this.parts.isNotEmpty()) {
                 val packageParts = JvmPackageTable.PackageParts.newBuilder()
                 packageParts.setPackageFqName(this.packageFqName)

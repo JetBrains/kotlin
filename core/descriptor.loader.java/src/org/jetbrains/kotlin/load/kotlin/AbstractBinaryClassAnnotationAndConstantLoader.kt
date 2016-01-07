@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
-public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, T : Any>(
+abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any, T : Any>(
         storageManager: StorageManager,
         private val kotlinClassFinder: KotlinClassFinder,
         private val errorReporter: ErrorReporter
@@ -322,7 +322,7 @@ public abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C 
     }
 
     private class Storage<A, C>(
-            public val memberAnnotations: Map<MemberSignature, List<A>>,
-            public val propertyConstants: Map<MemberSignature, C>
+            val memberAnnotations: Map<MemberSignature, List<A>>,
+            val propertyConstants: Map<MemberSignature, C>
     )
 }

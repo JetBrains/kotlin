@@ -23,10 +23,10 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.deserialization.BinaryVersion
 import org.jetbrains.kotlin.serialization.deserialization.ErrorReporter
 
-public object RuntimeErrorReporter : ErrorReporter {
+object RuntimeErrorReporter : ErrorReporter {
     // TODO: specialized exceptions
     override fun reportIncompleteHierarchy(descriptor: ClassDescriptor, unresolvedSuperClasses: MutableList<String>) {
-        throw IllegalStateException("Incomplete hierarchy for class ${descriptor.getName()}, unresolved classes $unresolvedSuperClasses")
+        throw IllegalStateException("Incomplete hierarchy for class ${descriptor.name}, unresolved classes $unresolvedSuperClasses")
     }
 
     override fun reportIncompatibleAbiVersion(classId: ClassId, filePath: String, actualVersion: BinaryVersion) {
@@ -36,7 +36,7 @@ public object RuntimeErrorReporter : ErrorReporter {
 
     override fun reportCannotInferVisibility(descriptor: CallableMemberDescriptor) {
         // TODO: use DescriptorRenderer
-        throw IllegalStateException("Cannot infer visibility for class ${descriptor.getName()}")
+        throw IllegalStateException("Cannot infer visibility for class ${descriptor.name}")
     }
 
     override fun reportLoadingError(message: String, exception: Exception?) {

@@ -79,7 +79,7 @@ object BuiltinMethodsWithSpecialGenericSignature {
             FqName("kotlin.MutableCollection.retainAll")
     )
 
-    public enum class DefaultValue(val value: Any?) {
+    enum class DefaultValue(val value: Any?) {
         NULL(null), INDEX(-1), FALSE(false)
     }
 
@@ -258,7 +258,7 @@ private fun getOverriddenBuiltinThatAffectsJvmName(
     return null
 }
 
-public fun ClassDescriptor.hasRealKotlinSuperClassWithOverrideOf(
+fun ClassDescriptor.hasRealKotlinSuperClassWithOverrideOf(
         specialCallableDescriptor: CallableDescriptor
 ): Boolean {
     val builtinContainerDefaultType = (specialCallableDescriptor.containingDeclaration as ClassDescriptor).defaultType
@@ -286,16 +286,16 @@ public fun ClassDescriptor.hasRealKotlinSuperClassWithOverrideOf(
 }
 
 // Util methods
-public val CallableMemberDescriptor.isFromJava: Boolean
+val CallableMemberDescriptor.isFromJava: Boolean
     get() = propertyIfAccessor is JavaCallableMemberDescriptor && propertyIfAccessor.containingDeclaration is JavaClassDescriptor
 
-public fun CallableMemberDescriptor.isFromBuiltins(): Boolean {
+fun CallableMemberDescriptor.isFromBuiltins(): Boolean {
     val fqName = propertyIfAccessor.fqNameOrNull() ?: return false
     return fqName.toUnsafe().startsWith(KotlinBuiltIns.BUILT_INS_PACKAGE_NAME) &&
             this.module == this.builtIns.builtInsModule
 }
 
-public fun CallableMemberDescriptor.isFromJavaOrBuiltins() = isFromJava || isFromBuiltins()
+fun CallableMemberDescriptor.isFromJavaOrBuiltins() = isFromJava || isFromBuiltins()
 
 private fun Map<FqName, Name>.getInversedShortNamesMap(): Map<Name, List<Name>> =
         entries.groupBy { it.value }.mapValues { entry -> entry.value.map { it.key.shortName() } }

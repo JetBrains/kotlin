@@ -18,11 +18,11 @@ package org.jetbrains.kotlin.utils
 
 import java.util.*
 
-public fun <K, V> Iterable<K>.keysToMap(value: (K) -> V): Map<K, V> {
+fun <K, V> Iterable<K>.keysToMap(value: (K) -> V): Map<K, V> {
     return toMapBy({ it }, value)
 }
 
-public fun <K, V: Any> Iterable<K>.keysToMapExceptNulls(value: (K) -> V?): Map<K, V> {
+fun <K, V: Any> Iterable<K>.keysToMapExceptNulls(value: (K) -> V?): Map<K, V> {
     val map = LinkedHashMap<K, V>()
     for (k in this) {
         val v = value(k)
@@ -33,7 +33,7 @@ public fun <K, V: Any> Iterable<K>.keysToMapExceptNulls(value: (K) -> V?): Map<K
     return map
 }
 
-public fun <K> Iterable<K>.mapToIndex(): Map<K, Int> {
+fun <K> Iterable<K>.mapToIndex(): Map<K, Int> {
     val map = LinkedHashMap<K, Int>()
     for ((index, k) in this.withIndex()) {
         map[k] = index
@@ -41,30 +41,30 @@ public fun <K> Iterable<K>.mapToIndex(): Map<K, Int> {
     return map
 }
 
-public inline fun <T, C: Collection<T>> C.ifEmpty(body: () -> C): C = if (isEmpty()) body() else this
+inline fun <T, C: Collection<T>> C.ifEmpty(body: () -> C): C = if (isEmpty()) body() else this
 
-public inline fun <T> Array<out T>.ifEmpty(body: () -> Array<out T>): Array<out T> = if (isEmpty()) body() else this
+inline fun <T> Array<out T>.ifEmpty(body: () -> Array<out T>): Array<out T> = if (isEmpty()) body() else this
 
-public fun <T: Any> emptyOrSingletonList(item: T?): List<T> = listOfNotNull(item)
+fun <T: Any> emptyOrSingletonList(item: T?): List<T> = listOfNotNull(item)
 
-public fun <T: Any> MutableCollection<T>.addIfNotNull(t: T?) {
+fun <T: Any> MutableCollection<T>.addIfNotNull(t: T?) {
     if (t != null) add(t)
 }
 
-public fun <K, V> newHashMapWithExpectedSize(expectedSize: Int): HashMap<K, V> {
+fun <K, V> newHashMapWithExpectedSize(expectedSize: Int): HashMap<K, V> {
     return HashMap(if (expectedSize < 3) 3 else expectedSize + expectedSize / 3 + 1)
 }
 
-public fun <E> newHashSetWithExpectedSize(expectedSize: Int): HashSet<E> {
+fun <E> newHashSetWithExpectedSize(expectedSize: Int): HashSet<E> {
     return HashSet(if (expectedSize < 3) 3 else expectedSize + expectedSize / 3 + 1)
 }
 
-public fun <T> Collection<T>.toReadOnlyList(): List<T> =
+fun <T> Collection<T>.toReadOnlyList(): List<T> =
         when (size) {
             0 -> emptyList()
             1 -> listOf(first())
             else -> ArrayList(this)
         }
 
-public fun <T: Any> T?.singletonOrEmptyList(): List<T> =
+fun <T: Any> T?.singletonOrEmptyList(): List<T> =
         if (this != null) listOf(this) else emptyList()

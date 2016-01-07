@@ -21,12 +21,11 @@ import org.jetbrains.kotlin.name.ClassId
 import javax.inject.Inject
 import kotlin.properties.Delegates
 
-public class LocalClassResolverImpl : LocalClassResolver {
-    public var components: DeserializationComponents by Delegates.notNull()
+class LocalClassResolverImpl : LocalClassResolver {
+    var components: DeserializationComponents by Delegates.notNull()
 
     // component dependency cycle
-    @Inject
-    public fun setDeserializationComponents(components: DeserializationComponents) {
+    @Inject fun setDeserializationComponents(components: DeserializationComponents) {
         this.components = components
     }
 

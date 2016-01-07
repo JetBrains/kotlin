@@ -46,7 +46,7 @@ fun <D : CallableDescriptor> D.findOriginalTopMostOverriddenDescriptors(): Set<D
 /**
  * @param <H> is something that handles CallableDescriptor inside
  */
-public fun <H : Any> Collection<H>.selectMostSpecificInEachOverridableGroup(
+fun <H : Any> Collection<H>.selectMostSpecificInEachOverridableGroup(
         descriptorByHandle: H.() -> CallableDescriptor
 ): Collection<H> {
     if (size <= 1) return this

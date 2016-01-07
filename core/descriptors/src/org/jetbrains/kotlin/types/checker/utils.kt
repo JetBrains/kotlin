@@ -26,19 +26,19 @@ import java.util.*
 
 private class SubtypePathNode(val type: KotlinType, val previous: SubtypePathNode?)
 
-public fun findCorrespondingSupertype(
+fun findCorrespondingSupertype(
         subtype: KotlinType, supertype: KotlinType,
         typeCheckingProcedureCallbacks: TypeCheckingProcedureCallbacks
 ): KotlinType? {
     val queue = ArrayDeque<SubtypePathNode>()
     queue.add(SubtypePathNode(subtype, null))
 
-    val supertypeConstructor = supertype.getConstructor()
+    val supertypeConstructor = supertype.constructor
 
     while (!queue.isEmpty()) {
         val lastPathNode = queue.poll()
         val currentSubtype = lastPathNode.type
-        val constructor = currentSubtype.getConstructor()
+        val constructor = currentSubtype.constructor
 
         if (typeCheckingProcedureCallbacks.assertEqualTypeConstructors(constructor, supertypeConstructor)) {
             var substituted = currentSubtype
@@ -68,7 +68,7 @@ public fun findCorrespondingSupertype(
             return TypeUtils.makeNullableAsSpecified(substituted, isAnyMarkedNullable)
         }
 
-        for (immediateSupertype in constructor.getSupertypes()) {
+        for (immediateSupertype in constructor.supertypes) {
             queue.add(SubtypePathNode(immediateSupertype, lastPathNode))
         }
     }

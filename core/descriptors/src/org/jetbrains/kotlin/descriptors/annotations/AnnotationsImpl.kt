@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-public class AnnotationsImpl : Annotations {
+class AnnotationsImpl : Annotations {
     private val annotations: List<AnnotationDescriptor>
     private val targetedAnnotations: List<AnnotationWithTarget>
 
@@ -41,7 +41,7 @@ public class AnnotationsImpl : Annotations {
     override fun isEmpty() = annotations.isEmpty()
 
     override fun findAnnotation(fqName: FqName) = annotations.firstOrNull {
-        val descriptor = it.getType().getConstructor().getDeclarationDescriptor()
+        val descriptor = it.type.constructor.declarationDescriptor
         descriptor is ClassDescriptor && fqName.toUnsafe() == DescriptorUtils.getFqName(descriptor)
     }
 
@@ -60,13 +60,11 @@ public class AnnotationsImpl : Annotations {
     override fun toString() = annotations.toString()
 
     companion object {
-        @JvmStatic
-        public fun create(annotationsWithTargets: List<AnnotationWithTarget>): AnnotationsImpl {
+        @JvmStatic fun create(annotationsWithTargets: List<AnnotationWithTarget>): AnnotationsImpl {
             return AnnotationsImpl(annotationsWithTargets, 0)
         }
 
-        @JvmStatic
-        public fun createWithNoTarget(vararg annotations: AnnotationDescriptor): AnnotationsImpl {
+        @JvmStatic fun createWithNoTarget(vararg annotations: AnnotationDescriptor): AnnotationsImpl {
             return create(annotations.map { AnnotationWithTarget(it, null) })
         }
     }

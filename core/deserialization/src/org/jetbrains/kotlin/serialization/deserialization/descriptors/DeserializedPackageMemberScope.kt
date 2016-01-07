@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-public open class DeserializedPackageMemberScope(
+open class DeserializedPackageMemberScope(
         packageDescriptor: PackageFragmentDescriptor,
         proto: ProtoBuf.Package,
         nameResolver: NameResolver,

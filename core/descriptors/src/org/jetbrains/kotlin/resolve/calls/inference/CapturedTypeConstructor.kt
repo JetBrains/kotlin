@@ -24,11 +24,11 @@ import org.jetbrains.kotlin.types.Variance.IN_VARIANCE
 import org.jetbrains.kotlin.types.Variance.OUT_VARIANCE
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
-public class CapturedTypeConstructor(
-        public val typeProjection: TypeProjection
+class CapturedTypeConstructor(
+        val typeProjection: TypeProjection
 ): TypeConstructor {
     init {
-        assert(typeProjection.getProjectionKind() != Variance.INVARIANT) {
+        assert(typeProjection.projectionKind != Variance.INVARIANT) {
             "Only nontrivial projections can be captured, not: $typeProjection"
         }
     }
@@ -36,8 +36,8 @@ public class CapturedTypeConstructor(
     override fun getParameters(): List<TypeParameterDescriptor> = listOf()
 
     override fun getSupertypes(): Collection<KotlinType> {
-        val superType = if (typeProjection.getProjectionKind() == Variance.OUT_VARIANCE)
-            typeProjection.getType()
+        val superType = if (typeProjection.projectionKind == Variance.OUT_VARIANCE)
+            typeProjection.type
         else
             builtIns.nullableAnyType
         return listOf(superType)
@@ -56,7 +56,7 @@ public class CapturedTypeConstructor(
     override fun getBuiltIns(): KotlinBuiltIns = typeProjection.type.constructor.builtIns
 }
 
-public class CapturedType(
+class CapturedType(
         private val typeProjection: TypeProjection
 ): DelegatingType(), SubtypingRepresentatives {
 
@@ -86,18 +86,18 @@ public class CapturedType(
         get() = representative(IN_VARIANCE, builtIns.nothingType)
 
     private fun representative(variance: Variance, default: KotlinType) =
-        if (typeProjection.getProjectionKind() == variance) typeProjection.getType() else default
+        if (typeProjection.projectionKind == variance) typeProjection.type else default
 
-    override fun sameTypeConstructor(type: KotlinType) = delegateType.getConstructor() === type.getConstructor()
+    override fun sameTypeConstructor(type: KotlinType) = delegateType.constructor === type.constructor
 
     override fun toString() = "Captured($typeProjection)"
 }
 
-public fun createCapturedType(typeProjection: TypeProjection): KotlinType = CapturedType(typeProjection)
+fun createCapturedType(typeProjection: TypeProjection): KotlinType = CapturedType(typeProjection)
 
-public fun KotlinType.isCaptured(): Boolean = getConstructor() is CapturedTypeConstructor
+fun KotlinType.isCaptured(): Boolean = constructor is CapturedTypeConstructor
 
-public fun TypeSubstitution.wrapWithCapturingSubstitution(): TypeSubstitution =
+fun TypeSubstitution.wrapWithCapturingSubstitution(): TypeSubstitution =
     if (this is IndexedParametersSubstitution)
         IndexedParametersSubstitution(
                 this.parameters,

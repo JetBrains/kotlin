@@ -81,12 +81,12 @@ private fun <M : JavaMember> JavaClass.getAllMemberNames(filter: (M) -> Boolean,
 
         for (member in getMembers()) {
             if (filter(member)) {
-                result.add(member.getName())
+                result.add(member.name)
             }
         }
 
-        for (supertype in getSupertypes()) {
-            val classifier = supertype.getClassifier()
+        for (supertype in supertypes) {
+            val classifier = supertype.classifier
             if (classifier is JavaClass) {
                 result.addAll(classifier.getNonDeclaredMethodNames())
                 classifier.visit()

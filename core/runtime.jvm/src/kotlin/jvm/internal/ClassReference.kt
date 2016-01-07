@@ -20,7 +20,7 @@ import kotlin.reflect.KCallable
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 
-public class ClassReference(override val jClass: Class<*>) : KClass<Any>, ClassBasedDeclarationContainer {
+class ClassReference(override val jClass: Class<*>) : KClass<Any>, ClassBasedDeclarationContainer {
     override val simpleName: String?
         get() = error()
 
