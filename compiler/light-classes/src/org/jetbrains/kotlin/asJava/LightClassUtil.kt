@@ -35,7 +35,7 @@ object LightClassUtil {
 
     fun findClass(fqn: FqName, stub: StubElement<*>): PsiClass? {
         if (stub is PsiClassStub<*> && Comparing.equal(fqn.asString(), stub.qualifiedName)) {
-            return stub.psi
+            return stub.getPsi()
         }
 
         if (stub is PsiClassStub<*> || stub is PsiFileStub<*>) {

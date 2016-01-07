@@ -243,13 +243,13 @@ internal class ExpressionDecomposer private constructor(
     private class CallableInvocationAdapter(val invocation: JsInvocation) : Callable(invocation) {
         override var qualifier: JsExpression
             get() = invocation.qualifier
-            set(value) = invocation.qualifier = value
+            set(value) { invocation.qualifier = value }
     }
 
     private class CallableNewAdapter(val jsnew: JsNew) : Callable(jsnew) {
         override var qualifier: JsExpression
             get() = jsnew.constructorExpression
-            set(value) = jsnew.constructorExpression = value
+            set(value) { jsnew.constructorExpression = value }
     }
 
     private fun Callable.process() {

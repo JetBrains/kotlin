@@ -79,24 +79,24 @@ fun JsExpression.toInvocationWith(thisExpr: JsExpression): JsExpression {
 
 var JsWhile.test: JsExpression
     get() = condition
-    set(value) = condition = value
+    set(value) { condition = value }
 
 var JsArrayAccess.index: JsExpression
     get() = indexExpression
-    set(value) = indexExpression = value
+    set(value) { indexExpression = value }
 
 var JsArrayAccess.array: JsExpression
     get() = arrayExpression
-    set(value) = arrayExpression = value
+    set(value) { arrayExpression = value }
 
 var JsConditional.test: JsExpression
     get() = testExpression
-    set(value) = testExpression = value
+    set(value) { testExpression = value }
 
 var JsConditional.then: JsExpression
     get() = thenExpression
-    set(value) = thenExpression = value
+    set(value) { thenExpression = value }
 
 var JsConditional.otherwise: JsExpression
     get() = elseExpression
-    set(value) = elseExpression = value
+    set(value) { elseExpression = value }

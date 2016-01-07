@@ -102,7 +102,7 @@ abstract class IntentionBasedInspection<TElement : KtElement>(
 
         override fun startInWriteAction() = true
 
-        override fun isAvailable(project: Project, editor: Editor?, file: PsiFile?) = isAvailable
+        override fun isAvailable(project: Project, editor: Editor?, file: PsiFile?) = isAvailable()
 
         override fun isAvailable(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement): Boolean {
             assert(startElement == endElement)
