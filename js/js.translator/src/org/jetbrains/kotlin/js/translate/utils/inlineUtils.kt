@@ -71,7 +71,7 @@ fun setInlineCallMetadata(
 
 fun TranslationContext.aliasedName(descriptor: CallableDescriptor): JsName {
     val alias = getAliasForDescriptor(descriptor)
-    val aliasName = (alias as? JsNameRef)?.getName()
+    val aliasName = (alias as? JsNameRef)?.name
 
     return aliasName ?: getNameForDescriptor(descriptor)
 }
@@ -79,13 +79,13 @@ fun TranslationContext.aliasedName(descriptor: CallableDescriptor): JsName {
 val JsExpression?.name: JsName?
     get() = when (this) {
         is JsInvocation -> {
-            val qualifier = this.getQualifier()
+            val qualifier = this.qualifier
 
             when {
-                isCallInvocation(this) -> (qualifier as JsNameRef).getQualifier().name
+                isCallInvocation(this) -> (qualifier as JsNameRef).qualifier.name
                 else -> qualifier.name
             }
         }
-        is JsNameRef -> this.getName()
+        is JsNameRef -> this.name
         else -> null
     }

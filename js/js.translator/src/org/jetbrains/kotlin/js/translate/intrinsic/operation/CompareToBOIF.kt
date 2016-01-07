@@ -64,9 +64,9 @@ object CompareToBOIF : BinaryOperationIntrinsicFactory {
         }
     }
 
-    override public fun getSupportTokens() = OperatorConventions.COMPARISON_OPERATIONS
+    override fun getSupportTokens() = OperatorConventions.COMPARISON_OPERATIONS
 
-    override public fun getIntrinsic(descriptor: FunctionDescriptor): BinaryOperationIntrinsic? {
+    override fun getIntrinsic(descriptor: FunctionDescriptor): BinaryOperationIntrinsic? {
         if (descriptor.isDynamic()) return CompareToIntrinsic
 
         if (!JsDescriptorUtils.isBuiltin(descriptor)) return null

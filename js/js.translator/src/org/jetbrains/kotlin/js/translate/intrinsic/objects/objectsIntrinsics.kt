@@ -37,20 +37,20 @@ class DefaultClassObjectIntrinsic(val fqName: FqName, val moduleName: String): O
     }
 }
 
-public class ObjectIntrinsics {
+class ObjectIntrinsics {
     private val companionObjectMapping = CompanionObjectMapping(JsPlatform.builtIns)
 
-    public fun getIntrinsic(classDescriptor: ClassDescriptor): ObjectIntrinsic {
+    fun getIntrinsic(classDescriptor: ClassDescriptor): ObjectIntrinsic {
         if (!companionObjectMapping.hasMappingToObject(classDescriptor)) return NO_OBJECT_INTRINSIC
 
-        val containingDeclaration = classDescriptor.getContainingDeclaration()
-        val name = Name.identifier(containingDeclaration.getName().asString() + "CompanionObject")
+        val containingDeclaration = classDescriptor.containingDeclaration
+        val name = Name.identifier(containingDeclaration.name.asString() + "CompanionObject")
 
         return DefaultClassObjectIntrinsic(FqName("kotlin.js.internal").child(name), LibrarySourcesConfig.STDLIB_JS_MODULE_NAME)
     }
 }
 
-public interface ObjectIntrinsic {
+interface ObjectIntrinsic {
     fun apply(context: TranslationContext): JsExpression
     fun exists(): Boolean = true
 }

@@ -27,13 +27,13 @@ import java.util.*
 
 private val FAKE_SOURCE_INFO = SourceInfoImpl(null, 0, 0, 0, 0)
 
-public fun parse(code: String, reporter: ErrorReporter, scope: JsScope): List<JsStatement> {
+fun parse(code: String, reporter: ErrorReporter, scope: JsScope): List<JsStatement> {
         val insideFunction = scope is JsFunctionScope
         val node = parse(code, 0, reporter, insideFunction, Parser::parse)
         return node.toJsAst(scope, JsAstMapper::mapStatements)
 }
 
-public fun parseFunction(code: String, offset: Int, reporter: ErrorReporter, scope: JsScope): JsFunction =
+fun parseFunction(code: String, offset: Int, reporter: ErrorReporter, scope: JsScope): JsFunction =
         parse(code, offset, reporter, insideFunction = false) {
             addObserver(FunctionParsingObserver())
             primaryExpr(it)
@@ -69,7 +69,7 @@ private fun parse(
     Context.enter().setErrorReporter(reporter)
 
     try {
-        val ts = TokenStream(StringReader(code, offset), "<parser>", FAKE_SOURCE_INFO.getLine())
+        val ts = TokenStream(StringReader(code, offset), "<parser>", FAKE_SOURCE_INFO.line)
         val parser = Parser(IRFactory(ts), insideFunction)
         return parser.parseAction(ts) as Node
     } finally {

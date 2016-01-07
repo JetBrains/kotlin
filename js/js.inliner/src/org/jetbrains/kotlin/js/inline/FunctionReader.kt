@@ -45,7 +45,7 @@ import java.io.File
  */
 private val DEFINE_MODULE_PATTERN = "(\\w+)\\.defineModule\\(\\s*(['\"])(\\w+)\\2\\s*,\\s*(\\w+)\\s*\\)".toRegex()
 
-public class FunctionReader(private val context: TranslationContext) {
+class FunctionReader(private val context: TranslationContext) {
     /**
      * Maps module name to .js file content, that contains this module definition.
      * One file can contain more than one module definition.
@@ -65,8 +65,8 @@ public class FunctionReader(private val context: TranslationContext) {
     private val moduleKotlinVariable = hashMapOf<String, String>()
 
     init {
-        val config = context.getConfig() as LibrarySourcesConfig
-        val libs = config.getLibraries().map { File(it) }
+        val config = context.config as LibrarySourcesConfig
+        val libs = config.libraries.map { File(it) }
 
         LibraryUtils.traverseJsLibraries(libs) { fileContent, path ->
             val matcher = DEFINE_MODULE_PATTERN.toPattern().matcher(fileContent)
@@ -90,7 +90,7 @@ public class FunctionReader(private val context: TranslationContext) {
 
     operator fun contains(descriptor: CallableDescriptor): Boolean {
         val moduleName = getExternalModuleName(descriptor)
-        val currentModuleName = context.getConfig().getModuleId()
+        val currentModuleName = context.config.moduleId
         return currentModuleName != moduleName && moduleName != null && moduleName in moduleJsDefinition
     }
 
@@ -133,8 +133,8 @@ private val Char.isWhitespaceOrComma: Boolean
     get() = this == ',' || this.isWhitespace()
 
 private fun JsFunction.markInlineArguments(descriptor: CallableDescriptor) {
-    val params = descriptor.getValueParameters()
-    val paramsJs = getParameters()
+    val params = descriptor.valueParameters
+    val paramsJs = parameters
     val inlineFuns = IdentitySet<JsName>()
     val inlineExtensionFuns = IdentitySet<JsName>()
     val offset = if (descriptor.isExtension) 1 else 0
@@ -142,11 +142,11 @@ private fun JsFunction.markInlineArguments(descriptor: CallableDescriptor) {
     for ((i, param) in params.withIndex()) {
         if (!CallExpressionTranslator.shouldBeInlined(descriptor)) continue
 
-        val type = param.getType()
+        val type = param.type
         if (!KotlinBuiltIns.isFunctionOrExtensionFunctionType(type)) continue
 
         val namesSet = if (KotlinBuiltIns.isExtensionFunctionType(type)) inlineExtensionFuns else inlineFuns
-        namesSet.add(paramsJs[i + offset].getName())
+        namesSet.add(paramsJs[i + offset].name)
     }
 
     val visitor = object: JsVisitorWithContextImpl() {
@@ -155,10 +155,10 @@ private fun JsFunction.markInlineArguments(descriptor: CallableDescriptor) {
             val namesSet: Set<JsName>
 
             if (isCallInvocation(x)) {
-                qualifier = (x.getQualifier() as? JsNameRef)?.getQualifier()
+                qualifier = (x.qualifier as? JsNameRef)?.qualifier
                 namesSet = inlineExtensionFuns
             } else {
-                qualifier = x.getQualifier()
+                qualifier = x.qualifier
                 namesSet = inlineFuns
             }
 
@@ -174,15 +174,15 @@ private fun JsFunction.markInlineArguments(descriptor: CallableDescriptor) {
 }
 
 private fun replaceExternalNames(function: JsFunction, externalReplacements: Map<String, JsExpression>) {
-    val replacements = externalReplacements.filterKeys { !function.getScope().hasOwnName(it) }
+    val replacements = externalReplacements.filterKeys { !function.scope.hasOwnName(it) }
 
     if (replacements.isEmpty()) return
 
     val visitor = object: JsVisitorWithContextImpl() {
         override fun endVisit(x: JsNameRef, ctx: JsContext<JsNode>) {
-            if (x.getQualifier() != null) return
+            if (x.qualifier != null) return
 
-            replacements[x.getIdent()]?.let {
+            replacements[x.ident]?.let {
                 ctx.replaceMe(it)
             }
         }

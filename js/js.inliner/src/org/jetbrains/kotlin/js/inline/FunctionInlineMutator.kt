@@ -38,13 +38,13 @@ private constructor(
     private val body: JsBlock
     private var resultExpr: JsExpression? = null
     private var breakLabel: JsLabel? = null
-    private val currentStatement = inliningContext.statementContext.getCurrentNode()
+    private val currentStatement = inliningContext.statementContext.currentNode
 
     init {
 
         val functionContext = inliningContext.functionContext
         invokedFunction = functionContext.getFunctionDefinition(call)
-        body = invokedFunction.getBody().deepCopy()
+        body = invokedFunction.body.deepCopy()
         isResultNeeded = isResultNeeded(call)
         namingContext = inliningContext.newNamingContext()
     }
@@ -82,7 +82,7 @@ private constructor(
     }
 
     private fun removeStatementsAfterTopReturn() {
-        val statements = body.getStatements()
+        val statements = body.statements
 
         val statementsSize = statements.size
         for (i in 0..statementsSize - 1) {
@@ -96,7 +96,7 @@ private constructor(
     }
 
     private fun processReturns() {
-        if (currentStatement is JsReturn && currentStatement.getExpression() === call) {
+        if (currentStatement is JsReturn && currentStatement.expression === call) {
             inliningContext.statementContext.removeMe()
             return
         }
@@ -109,11 +109,11 @@ private constructor(
         }
 
         if (returnCount == 1) {
-            val statements = body.getStatements()
+            val statements = body.statements
             val lastTopLevelStatement = statements[statements.lastIndex]
 
             if (lastTopLevelStatement is JsReturn) {
-                resultExpr = lastTopLevelStatement.getExpression()
+                resultExpr = lastTopLevelStatement.expression
                 statements.removeAt(statements.lastIndex)
                 return
             }
@@ -135,10 +135,10 @@ private constructor(
         val visitor = ReturnReplacingVisitor(resultExpr as? JsNameRef, breakName.makeRef())
         visitor.accept(body)
 
-        val statements = body.getStatements()
+        val statements = body.statements
         val last = statements.lastOrNull() as? JsBreak
 
-        if (last?.getLabel()?.getName() === breakLabel?.getName()) {
+        if (last?.label?.name === breakLabel?.name) {
             statements.removeAt(statements.lastIndex)
         }
     }
@@ -148,7 +148,7 @@ private constructor(
 
         val existingReference = when (currentStatement) {
             is JsExpressionStatement -> {
-                val expression = currentStatement.getExpression() as? JsBinaryOperation
+                val expression = currentStatement.expression as? JsBinaryOperation
                 expression?.getResultReference()
             }
             is JsVars -> currentStatement.getResultReference()
@@ -169,7 +169,7 @@ private constructor(
     }
 
     private fun JsVars.getResultReference(): JsNameRef? {
-        val vars = getVars()
+        val vars = vars
         val variable = vars.first()
 
         // var a = expr1 + call() is ok, but we don't want to reuse 'a' for result,
@@ -177,7 +177,7 @@ private constructor(
         // If there is more than one return, expr1 copies are undesirable.
         if (variable.initExpression !== call || vars.size > 1) return null
 
-        val varName = variable.getName()
+        val varName = variable.name
         with (inliningContext.statementContext) {
             removeMe()
             addPrevious(newVar(varName, null))
@@ -187,7 +187,7 @@ private constructor(
     }
 
     private fun getArguments(): List<JsExpression> {
-        val arguments = call.getArguments()
+        val arguments = call.arguments
         if (isCallInvocation(call)) {
             return arguments.subList(1, arguments.size)
         }
@@ -196,11 +196,11 @@ private constructor(
     }
 
     private fun isResultNeeded(call: JsInvocation): Boolean {
-        return currentStatement !is JsExpressionStatement || call != currentStatement.getExpression()
+        return currentStatement !is JsExpressionStatement || call != currentStatement.expression
     }
 
     private fun getParameters(): List<JsParameter> {
-        return invokedFunction.getParameters()
+        return invokedFunction.parameters
     }
 
     private fun getResultLabel(): String {
@@ -228,15 +228,14 @@ private constructor(
 
     companion object {
 
-        @JvmStatic
-        public fun getInlineableCallReplacement(call: JsInvocation, inliningContext: InliningContext): InlineableResult {
+        @JvmStatic fun getInlineableCallReplacement(call: JsInvocation, inliningContext: InliningContext): InlineableResult {
             val mutator = FunctionInlineMutator(call, inliningContext)
             mutator.process()
 
             var inlineableBody: JsStatement = mutator.body
             val breakLabel = mutator.breakLabel
             if (breakLabel != null) {
-                breakLabel.setStatement(inlineableBody)
+                breakLabel.statement = inlineableBody
                 inlineableBody = breakLabel
             }
 
@@ -246,7 +245,7 @@ private constructor(
         @JvmStatic
         private fun getThisReplacement(call: JsInvocation): JsExpression? {
             if (isCallInvocation(call)) {
-                return call.getArguments().get(0)
+                return call.arguments.get(0)
             }
 
             if (hasCallerQualifier(call)) {
@@ -261,13 +260,12 @@ private constructor(
             return !thisRefs.isEmpty()
         }
 
-        @JvmStatic
-        public fun canBeExpression(function: JsFunction): Boolean {
-            return canBeExpression(function.getBody())
+        @JvmStatic fun canBeExpression(function: JsFunction): Boolean {
+            return canBeExpression(function.body)
         }
 
         private fun canBeExpression(body: JsBlock): Boolean {
-            val statements = body.getStatements()
+            val statements = body.statements
             return statements.size == 1 && statements.get(0) is JsReturn
         }
     }

@@ -23,7 +23,7 @@ import com.google.dart.compiler.backend.js.ast.RecursiveJsVisitor
 import java.util.ArrayList
 
 class InstanceCollector<T : JsNode>(val klass: Class<T>, val visitNestedDeclarations: Boolean) : RecursiveJsVisitor() {
-    public val collected: MutableList<T> = ArrayList()
+    val collected: MutableList<T> = ArrayList()
 
     override fun visitFunction(x: JsFunction) {
         if (visitNestedDeclarations) {

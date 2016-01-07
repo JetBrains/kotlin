@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 import org.jetbrains.kotlin.serialization.ProtoBuf
 
-public object ClassSerializationUtil {
-    public interface Sink {
+object ClassSerializationUtil {
+    interface Sink {
         fun writeClass(classDescriptor: ClassDescriptor, classProto: ProtoBuf.Class)
     }
 
@@ -32,10 +32,10 @@ public object ClassSerializationUtil {
         val classProto = serializer.classProto(classDescriptor).build() ?: error("Class not serialized: $classDescriptor")
         sink.writeClass(classDescriptor, classProto)
 
-        serializeClasses(classDescriptor.getUnsubstitutedInnerClassesScope().getContributedDescriptors(), serializer, sink, skip)
+        serializeClasses(classDescriptor.unsubstitutedInnerClassesScope.getContributedDescriptors(), serializer, sink, skip)
     }
 
-    public fun serializeClasses(descriptors: Collection<DeclarationDescriptor>, serializer: DescriptorSerializer, sink: Sink, skip: (DeclarationDescriptor) -> Boolean) {
+    fun serializeClasses(descriptors: Collection<DeclarationDescriptor>, serializer: DescriptorSerializer, sink: Sink, skip: (DeclarationDescriptor) -> Boolean) {
         for (descriptor in descriptors) {
             if (descriptor is ClassDescriptor) {
                 serializeClass(descriptor, serializer, sink, skip)

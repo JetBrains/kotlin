@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.js.translate.context.TranslationContext
 import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntrinsic
 
 
-public object ProgressionCompanionFIF : CompositeFIF() {
+object ProgressionCompanionFIF : CompositeFIF() {
     init {
         val numberProgressionConstructor = CallProgressionConstructorIntrinsic("NumberProgression")
         for (type in arrayOf(PrimitiveType.BYTE, PrimitiveType.SHORT, PrimitiveType.INT)) {

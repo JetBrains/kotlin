@@ -37,19 +37,19 @@ import org.jetbrains.kotlin.types.KotlinType
 import java.util.ArrayList
 import java.util.Collections
 
-public class CallArgumentTranslator private constructor(
+class CallArgumentTranslator private constructor(
         private val resolvedCall: ResolvedCall<*>,
         private val receiver: JsExpression?,
         context: TranslationContext
 ) : AbstractTranslator(context) {
 
-    public data class ArgumentsInfo(
-            public val valueArguments: List<JsExpression>,
-            public val hasSpreadOperator: Boolean,
-            public val cachedReceiver: TemporaryConstVariable?,
-            public val reifiedArguments: List<JsExpression> = listOf()
+    data class ArgumentsInfo(
+            val valueArguments: List<JsExpression>,
+            val hasSpreadOperator: Boolean,
+            val cachedReceiver: TemporaryConstVariable?,
+            val reifiedArguments: List<JsExpression> = listOf()
     ) {
-        public val translateArguments: List<JsExpression>
+        val translateArguments: List<JsExpression>
             get() = reifiedArguments + valueArguments
     }
 
@@ -58,13 +58,13 @@ public class CallArgumentTranslator private constructor(
         HAS_NOT_EMPTY_EXPRESSION_ARGUMENT
     }
 
-    private val isNativeFunctionCall = AnnotationsUtils.isNativeObject(resolvedCall.getCandidateDescriptor())
+    private val isNativeFunctionCall = AnnotationsUtils.isNativeObject(resolvedCall.candidateDescriptor)
 
     private fun removeLastUndefinedArguments(result: MutableList<JsExpression>) {
         var i = result.size - 1
 
         while (i >= 0) {
-            if (result.get(i) != context().namer().getUndefinedExpression()) {
+            if (result.get(i) != context().namer().undefinedExpression) {
                 break
             }
             i--
@@ -74,7 +74,7 @@ public class CallArgumentTranslator private constructor(
     }
 
     private fun translate(): ArgumentsInfo {
-        val valueParameters = resolvedCall.getResultingDescriptor().getValueParameters()
+        val valueParameters = resolvedCall.resultingDescriptor.valueParameters
         if (valueParameters.isEmpty()) {
             return ArgumentsInfo(listOf<JsExpression>(), false, null)
         }
@@ -82,9 +82,9 @@ public class CallArgumentTranslator private constructor(
         var cachedReceiver: TemporaryConstVariable? = null
 
         var result: MutableList<JsExpression> = ArrayList(valueParameters.size)
-        val valueArgumentsByIndex = resolvedCall.getValueArgumentsByIndex()
+        val valueArgumentsByIndex = resolvedCall.valueArgumentsByIndex
         if (valueArgumentsByIndex == null) {
-            throw IllegalStateException("Failed to arrange value arguments by index: " + resolvedCall.getResultingDescriptor())
+            throw IllegalStateException("Failed to arrange value arguments by index: " + resolvedCall.resultingDescriptor)
         }
         var argsBeforeVararg: List<JsExpression>? = null
         var argumentsShouldBeExtractedToTmpVars = false
@@ -169,21 +169,19 @@ public class CallArgumentTranslator private constructor(
 
     companion object {
 
-        @JvmStatic
-        public fun translate(resolvedCall: ResolvedCall<*>, receiver: JsExpression?, context: TranslationContext): ArgumentsInfo {
+        @JvmStatic fun translate(resolvedCall: ResolvedCall<*>, receiver: JsExpression?, context: TranslationContext): ArgumentsInfo {
             return translate(resolvedCall, receiver, context, context.dynamicContext().jsBlock())
         }
 
-        @JvmStatic
-        public fun translate(resolvedCall: ResolvedCall<*>, receiver: JsExpression?, context: TranslationContext, block: JsBlock): ArgumentsInfo {
+        @JvmStatic fun translate(resolvedCall: ResolvedCall<*>, receiver: JsExpression?, context: TranslationContext, block: JsBlock): ArgumentsInfo {
             val innerContext = context.innerBlock(block)
             val argumentTranslator = CallArgumentTranslator(resolvedCall, receiver, innerContext)
             val result = argumentTranslator.translate()
             context.moveVarsFrom(innerContext)
-            val callDescriptor = resolvedCall.getCandidateDescriptor()
+            val callDescriptor = resolvedCall.candidateDescriptor
 
             if (CallExpressionTranslator.shouldBeInlined(callDescriptor)) {
-                val typeArgs = resolvedCall.getTypeArguments()
+                val typeArgs = resolvedCall.typeArguments
                 return typeArgs.addReifiedTypeArgsTo(result, context)
             }
 
@@ -191,10 +189,10 @@ public class CallArgumentTranslator private constructor(
         }
 
         private fun translateSingleArgument(actualArgument: ResolvedValueArgument, result: MutableList<JsExpression>, context: TranslationContext): ArgumentsKind {
-            val valueArguments = actualArgument.getArguments()
+            val valueArguments = actualArgument.arguments
 
             if (actualArgument is DefaultValueArgument) {
-                result.add(context.namer().getUndefinedExpression())
+                result.add(context.namer().undefinedExpression)
                 return ArgumentsKind.HAS_NOT_EMPTY_EXPRESSION_ARGUMENT
             }
 
@@ -344,8 +342,8 @@ private fun Map<TypeParameterDescriptor, KotlinType>.addReifiedTypeArgsTo(
     val reifiedTypeArguments = SmartList<JsExpression>()
     val patternTranslator = PatternTranslator.newInstance(context)
 
-    for (param in keys.sortedBy { it.getIndex() }) {
-        if (!param.isReified()) continue
+    for (param in keys.sortedBy { it.index }) {
+        if (!param.isReified) continue
 
         val argumentType = get(param)
         if (argumentType == null) continue

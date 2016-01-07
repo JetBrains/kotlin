@@ -63,16 +63,16 @@ class CatchTranslator(
      *      }
      *  }
      */
-    public fun translate(): JsCatch? {
+    fun translate(): JsCatch? {
         if (catches.isEmpty()) return null
 
         val firstCatch = catches.first()
-        val catchParameter = firstCatch.getCatchParameter()
+        val catchParameter = firstCatch.catchParameter
         val parameterName = context().getNameForElement(catchParameter!!)
         val parameterRef = parameterName.makeRef()
 
         return JsCatch(context().scope(),
-                       parameterRef.getIdent(),
+                       parameterRef.ident,
                        translateCatches(parameterRef, catches.iterator()))
     }
 
@@ -80,13 +80,13 @@ class CatchTranslator(
         if (!catches.hasNext()) return JsThrow(parameterRef)
 
         val catch = catches.next()
-        val param = catch.getCatchParameter()!!
+        val param = catch.catchParameter!!
         val paramName = context().getNameForElement(param)
-        val paramType = param.getTypeReference()!!
+        val paramType = param.typeReference!!
 
         val thenBlock = translateCatchBody(context(), catch)
-        if (paramName.getIdent() != parameterRef.getIdent())
-            thenBlock.getStatements().add(0, JsAstUtils.newVar(paramName, parameterRef))
+        if (paramName.ident != parameterRef.ident)
+            thenBlock.statements.add(0, JsAstUtils.newVar(paramName, parameterRef))
 
         if (paramType.isThrowable) return thenBlock
 
@@ -99,12 +99,12 @@ class CatchTranslator(
     }
 
     private fun translateCatchBody(context: TranslationContext, catchClause: KtCatchClause): JsBlock {
-        val catchBody = catchClause.getCatchBody()
+        val catchBody = catchClause.catchBody
         val jsCatchBody =
                 if (catchBody != null)
                     translateAsStatementAndMergeInBlockIfNeeded(catchBody, context)
                 else
-                    context.getEmptyExpression().makeStmt()
+                    context.emptyExpression.makeStmt()
 
         return convertToBlock(jsCatchBody)
     }

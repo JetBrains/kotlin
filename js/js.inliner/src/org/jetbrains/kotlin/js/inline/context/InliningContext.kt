@@ -20,8 +20,8 @@ import com.google.dart.compiler.backend.js.ast.JsContext
 import com.google.dart.compiler.backend.js.ast.JsStatement
 
 interface InliningContext {
-    public val statementContext: JsContext<JsStatement>
-    public val functionContext: FunctionContext
+    val statementContext: JsContext<JsStatement>
+    val functionContext: FunctionContext
 
-    public fun newNamingContext(): NamingContext
+    fun newNamingContext(): NamingContext
 }

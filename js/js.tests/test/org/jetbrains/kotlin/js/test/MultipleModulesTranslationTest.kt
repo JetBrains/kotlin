@@ -28,7 +28,7 @@ import java.io.File
 import java.util.ArrayList
 import java.util.LinkedHashMap
 
-public abstract class MultipleModulesTranslationTest(main: String) : BasicTest(main) {
+abstract class MultipleModulesTranslationTest(main: String) : BasicTest(main) {
 
     private val MAIN_MODULE_NAME: String = "main"
     private var dependencies: Map<String, List<String>>? = null
@@ -86,7 +86,7 @@ public abstract class MultipleModulesTranslationTest(main: String) : BasicTest(m
 
     private fun readModuleDependencies(testDataDir: String): Map<String, List<String>> {
         val dependenciesTxt = upsearchFile(testDataDir, "dependencies.txt")
-        assert(dependenciesTxt.isFile()) { "moduleDependencies should not be null" }
+        assert(dependenciesTxt.isFile) { "moduleDependencies should not be null" }
 
         val result = LinkedHashMap<String, List<String>>()
         for (line in dependenciesTxt.readLines()) {
@@ -105,7 +105,7 @@ public abstract class MultipleModulesTranslationTest(main: String) : BasicTest(m
         var dir: File? = File(startingDir)
         var file = File(dir, name)
 
-        while (dir != null && dir.isDirectory() && !file.isFile()) {
+        while (dir != null && dir.isDirectory && !file.isFile) {
             dir = dir.parentFile
             file = File(dir, name)
         }

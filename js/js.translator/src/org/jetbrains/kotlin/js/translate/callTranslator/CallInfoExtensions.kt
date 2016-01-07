@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 
 
 val CallInfo.callableDescriptor: CallableDescriptor
-    get() = resolvedCall.getResultingDescriptor().getOriginal()
+    get() = resolvedCall.resultingDescriptor.original
 
 fun CallInfo.isExtension(): Boolean = extensionReceiver != null
 
@@ -40,7 +40,7 @@ fun CallInfo.isMemberCall(): Boolean = dispatchReceiver != null
 fun CallInfo.isNative(): Boolean = AnnotationsUtils.isNativeObject(callableDescriptor)
 
 fun CallInfo.isSuperInvocation(): Boolean {
-    val dispatchReceiver = resolvedCall.getDispatchReceiver()
+    val dispatchReceiver = resolvedCall.dispatchReceiver
     return dispatchReceiver is ExpressionReceiver && dispatchReceiver.expression is KtSuperExpression
 }
 
@@ -55,11 +55,11 @@ fun VariableAccessInfo.isGetAccess(): Boolean = value == null
 fun VariableAccessInfo.getAccessFunctionName(): String {
     val descriptor = variableDescriptor
     if (descriptor is PropertyDescriptor && descriptor.isExtension) {
-        val propertyAccessorDescriptor = if (isGetAccess()) descriptor.getGetter() else descriptor.getSetter()
-        return context.getNameForDescriptor(propertyAccessorDescriptor!!).getIdent()
+        val propertyAccessorDescriptor = if (isGetAccess()) descriptor.getter else descriptor.setter
+        return context.getNameForDescriptor(propertyAccessorDescriptor!!).ident
     }
     else {
-        return Namer.getNameForAccessor(variableName.getIdent(), isGetAccess(), false)
+        return Namer.getNameForAccessor(variableName.ident, isGetAccess(), false)
     }
 }
 

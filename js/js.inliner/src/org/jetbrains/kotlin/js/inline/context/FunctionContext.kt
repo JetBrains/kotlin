@@ -44,19 +44,19 @@ abstract class FunctionContext(
 
     protected abstract fun lookUpStaticFunction(functionName: JsName?): JsFunction?
 
-    public fun getFunctionDefinition(call: JsInvocation): JsFunction {
+    fun getFunctionDefinition(call: JsInvocation): JsFunction {
         return getFunctionDefinitionImpl(call)!!
     }
 
-    public fun hasFunctionDefinition(call: JsInvocation): Boolean {
+    fun hasFunctionDefinition(call: JsInvocation): Boolean {
         return getFunctionDefinitionImpl(call) != null
     }
 
-    public fun getScope(): JsScope {
-        return function.getScope()
+    fun getScope(): JsScope {
+        return function.scope
     }
 
-    public fun declareFunctionConstructorCalls(arguments: List<JsExpression>) {
+    fun declareFunctionConstructorCalls(arguments: List<JsExpression>) {
         val calls = ContainerUtil.findAll<JsExpression, JsInvocation>(arguments, JsInvocation::class.java)
 
         for (call in calls) {
@@ -73,7 +73,7 @@ abstract class FunctionContext(
         }
     }
 
-    public fun declareFunctionConstructorCall(call: JsInvocation) {
+    fun declareFunctionConstructorCall(call: JsInvocation) {
         functionsWithClosure.put(call, null)
     }
 
@@ -112,16 +112,16 @@ abstract class FunctionContext(
         if (descriptor != null && descriptor in functionReader) return functionReader[descriptor]
 
         /** remove ending `()` */
-        var callQualifier = call.getQualifier()
+        var callQualifier = call.qualifier
 
         /** remove ending `.call()` */
         if (isCallInvocation(call)) {
-            callQualifier = (callQualifier as JsNameRef).getQualifier()!!
+            callQualifier = (callQualifier as JsNameRef).qualifier!!
         }
 
         /** in case 4, 5 get ref (reduce 4, 5 to 2, 3 accordingly) */
         if (callQualifier is JsNameRef) {
-            val staticRef = callQualifier.getName()?.staticRef
+            val staticRef = callQualifier.name?.staticRef
 
             callQualifier = when (staticRef) {
                 is JsNameRef -> staticRef
@@ -135,7 +135,7 @@ abstract class FunctionContext(
         val qualifier = callQualifier
         return when (qualifier) {
             is JsInvocation -> getFunctionWithClosure(qualifier)
-            is JsNameRef -> lookUpStaticFunction(qualifier.getName())
+            is JsNameRef -> lookUpStaticFunction(qualifier.name)
             else -> null
         }
     }
@@ -180,8 +180,8 @@ abstract class FunctionContext(
         val innerClone = inner.deepCopy()
 
         val namingContext = inliningContext.newNamingContext()
-        val arguments = call.getArguments()
-        val parameters = outer.getParameters()
+        val arguments = call.arguments
+        val parameters = outer.parameters
         aliasArgumentsIfNeeded(namingContext, arguments, parameters)
         namingContext.applyRenameTo(innerClone)
 

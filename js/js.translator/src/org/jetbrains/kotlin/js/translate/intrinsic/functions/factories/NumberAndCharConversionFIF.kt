@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.js.translate.intrinsic.functions.basic.FunctionIntri
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
 import org.jetbrains.kotlin.utils.identity
 
-public object NumberAndCharConversionFIF : CompositeFIF() {
+object NumberAndCharConversionFIF : CompositeFIF() {
     val USE_AS_IS = Predicates.or(
             pattern("Int.toInt|toFloat|toDouble"), pattern("Short.toShort|toInt|toFloat|toDouble"),
             pattern("Byte.toByte|toShort|toInt|toFloat|toDouble"), pattern("Float|Double.toFloat|toDouble"),

@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.js.inline.util
 import java.util.Collections
 import java.util.IdentityHashMap
 
-public fun <T> IdentitySet(): MutableSet<T> {
+fun <T> IdentitySet(): MutableSet<T> {
     return Collections.newSetFromMap(IdentityHashMap<T, Boolean>())
 }
 
-public fun <T> Collection<T>.toIdentitySet(): MutableSet<T> {
+fun <T> Collection<T>.toIdentitySet(): MutableSet<T> {
     val result = IdentitySet<T>()
     for (element in this) {
         result.add(element)
@@ -32,7 +32,7 @@ public fun <T> Collection<T>.toIdentitySet(): MutableSet<T> {
     return result
 }
 
-public fun <T> Sequence<T>.toIdentitySet(): MutableSet<T> {
+fun <T> Sequence<T>.toIdentitySet(): MutableSet<T> {
     val result = IdentitySet<T>()
     for (element in this) {
         result.add(element)
@@ -41,7 +41,7 @@ public fun <T> Sequence<T>.toIdentitySet(): MutableSet<T> {
     return result
 }
 
-public fun <T, R> Iterable<T>.zipWithDefault(
+fun <T, R> Iterable<T>.zipWithDefault(
         other: Iterable<R>,
         defaultT: T
 ): List<Pair<T, R>> {

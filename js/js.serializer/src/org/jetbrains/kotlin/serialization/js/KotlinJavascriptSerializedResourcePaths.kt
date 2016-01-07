@@ -60,17 +60,17 @@ private val PACKAGE_CLASS_NAME_SUFFIX: String = "Package"
 private val DEFAULT_PACKAGE_CLASS_NAME: String = "_Default" + PACKAGE_CLASS_NAME_SUFFIX
 private val DEFAULT_PACKAGE_METAFILE_NAME: String = DEFAULT_PACKAGE_CLASS_NAME + "." + KotlinJavascriptSerializationUtil.CLASS_METADATA_FILE_EXTENSION
 
-public fun FqName.isPackageClassFqName(): Boolean = !this.isRoot && getPackageClassFqName(this.parent()) == this
+fun FqName.isPackageClassFqName(): Boolean = !this.isRoot && getPackageClassFqName(this.parent()) == this
 
-public fun isDefaultPackageMetafile(fileName: String): Boolean = fileName == DEFAULT_PACKAGE_METAFILE_NAME
+fun isDefaultPackageMetafile(fileName: String): Boolean = fileName == DEFAULT_PACKAGE_METAFILE_NAME
 
-public fun isPackageMetadataFile(fileName: String): Boolean =
+fun isPackageMetadataFile(fileName: String): Boolean =
         KotlinJavascriptSerializedResourcePaths.getPackageFilePath(getPackageFqName(fileName)) == fileName
 
-public fun isStringTableFile(fileName: String): Boolean =
+fun isStringTableFile(fileName: String): Boolean =
         KotlinJavascriptSerializedResourcePaths.getStringTableFilePath(getPackageFqName(fileName)) == fileName
 
-public fun isClassesInPackageFile(fileName: String): Boolean =
+fun isClassesInPackageFile(fileName: String): Boolean =
         KotlinJavascriptSerializedResourcePaths.getClassesInPackageFilePath(getPackageFqName(fileName)) == fileName
 
 private fun getPackageFqName(fileName: String): FqName = FqName(getPackageName(fileName))

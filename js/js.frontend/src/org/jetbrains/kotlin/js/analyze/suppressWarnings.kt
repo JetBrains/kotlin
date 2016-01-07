@@ -33,27 +33,27 @@ import org.jetbrains.kotlin.resolve.diagnostics.SuppressDiagnosticsByAnnotations
 
 private val NATIVE_ANNOTATIONS = arrayOf(NATIVE.fqName, NATIVE_INVOKE.fqName, NATIVE_GETTER.fqName, NATIVE_SETTER.fqName)
 
-public class SuppressUnusedParameterForJsNative : SuppressDiagnosticsByAnnotations(listOf(Errors.UNUSED_PARAMETER), *NATIVE_ANNOTATIONS)
+class SuppressUnusedParameterForJsNative : SuppressDiagnosticsByAnnotations(listOf(Errors.UNUSED_PARAMETER), *NATIVE_ANNOTATIONS)
 
-public class SuppressNoBodyErrorsForNativeDeclarations : SuppressDiagnosticsByAnnotations(FUNCTION_NO_BODY_ERRORS + PROPERTY_NOT_INITIALIZED_ERRORS, *NATIVE_ANNOTATIONS)
+class SuppressNoBodyErrorsForNativeDeclarations : SuppressDiagnosticsByAnnotations(FUNCTION_NO_BODY_ERRORS + PROPERTY_NOT_INITIALIZED_ERRORS, *NATIVE_ANNOTATIONS)
 
-public class SuppressUninitializedErrorsForNativeDeclarations : DiagnosticSuppressor {
+class SuppressUninitializedErrorsForNativeDeclarations : DiagnosticSuppressor {
     override fun isSuppressed(diagnostic: Diagnostic): Boolean {
-        if (diagnostic.getFactory() != Errors.UNINITIALIZED_VARIABLE) return false
+        if (diagnostic.factory != Errors.UNINITIALIZED_VARIABLE) return false
 
         @Suppress("UNCHECKED_CAST")
         val diagnosticWithParameters = diagnostic as DiagnosticWithParameters1<KtSimpleNameExpression, VariableDescriptor>
 
-        val variableDescriptor = diagnosticWithParameters.getA()
+        val variableDescriptor = diagnosticWithParameters.a
 
         return AnnotationsUtils.isNativeObject(variableDescriptor)
     }
 }
 
-public class SuppressWarningsFromExternalModules : DiagnosticSuppressor {
+class SuppressWarningsFromExternalModules : DiagnosticSuppressor {
     override fun isSuppressed(diagnostic: Diagnostic): Boolean {
-        val file = diagnostic.getPsiFile()
-        return diagnostic.getSeverity() == Severity.WARNING &&
+        val file = diagnostic.psiFile
+        return diagnostic.severity == Severity.WARNING &&
                file is KtFile && file.getUserData(LibrarySourcesConfig.EXTERNAL_MODULE_NAME) != null
     }
 }

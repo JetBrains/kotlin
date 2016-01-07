@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.PlatformConfigurator
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.types.DynamicTypesAllowed
 
-public object JsPlatformConfigurator : PlatformConfigurator(
+object JsPlatformConfigurator : PlatformConfigurator(
         DynamicTypesAllowed(),
         additionalDeclarationCheckers = listOf(NativeInvokeChecker(), NativeGetterChecker(), NativeSetterChecker(), ClassDeclarationChecker()),
         additionalCallCheckers = listOf(),

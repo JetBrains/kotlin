@@ -53,8 +53,7 @@ internal class ExpressionDecomposer private constructor(
     private var additionalStatements: MutableList<JsStatement> = SmartList()
 
     companion object {
-        @JvmStatic
-        public fun preserveEvaluationOrder(
+        @JvmStatic fun preserveEvaluationOrder(
                 scope: JsScope, statement: JsStatement, canBeExtractedByInliner: (JsNode)->Boolean
         ): List<JsStatement> {
             val decomposer = with (statement) {
@@ -73,12 +72,12 @@ internal class ExpressionDecomposer private constructor(
 
     // TODO: add test case (after KT-7371 fix): var a = foo(), b = foo() + inlineBar()
     override fun visit(x: JsVars, ctx: JsContext<JsNode>): Boolean {
-        val vars = x.getVars()
+        val vars = x.vars
         var prevVars = SmartList<JsVars.JsVar>()
 
         for (jsVar in vars) {
             if (jsVar in containsExtractable && prevVars.isNotEmpty()) {
-                addStatement(JsVars(prevVars, x.isMultiline()))
+                addStatement(JsVars(prevVars, x.isMultiline))
                 prevVars = SmartList<JsVars.JsVar>()
             }
 
@@ -163,7 +162,7 @@ internal class ExpressionDecomposer private constructor(
             return
         }
 
-        if (operator.isAssignment()) {
+        if (operator.isAssignment) {
             // Must be (someThingWithSideEffect).x = arg2, because arg1 can have side effect
             assert(arg1 is JsNameRef) { "Valid JavaScript left-hand side must be JsNameRef, got: $this" }
             val arg1AsRef = arg1 as JsNameRef
@@ -177,7 +176,7 @@ internal class ExpressionDecomposer private constructor(
     }
 
     override fun visit(x: JsArrayLiteral, ctx: JsContext<JsNode>): Boolean {
-        val elements = x.getExpressions()
+        val elements = x.expressions
         processByIndices(elements, elements.indicesOfExtractable)
         return false
     }
@@ -238,19 +237,19 @@ internal class ExpressionDecomposer private constructor(
 
     private abstract class Callable(hasArguments: HasArguments) {
         abstract var qualifier: JsExpression
-        val arguments = hasArguments.getArguments()
+        val arguments = hasArguments.arguments
     }
 
     private class CallableInvocationAdapter(val invocation: JsInvocation) : Callable(invocation) {
         override var qualifier: JsExpression
-            get() = invocation.getQualifier()
-            set(value) = invocation.setQualifier(value)
+            get() = invocation.qualifier
+            set(value) = invocation.qualifier = value
     }
 
     private class CallableNewAdapter(val jsnew: JsNew) : Callable(jsnew) {
         override var qualifier: JsExpression
-            get() = jsnew.getConstructorExpression()
-            set(value) = jsnew.setConstructorExpression(value)
+            get() = jsnew.constructorExpression
+            set(value) = jsnew.constructorExpression = value
     }
 
     private fun Callable.process() {
@@ -373,8 +372,8 @@ internal open class JsExpressionVisitor() : JsVisitorWithContextImpl() {
     override fun visit(x: JsFor, ctx: JsContext<JsNode>): Boolean = false
 
     override fun visit(x: JsIf, ctx: JsContext<JsNode>): Boolean {
-        val test = x.getIfExpression()
-        x.setIfExpression(accept(test))
+        val test = x.ifExpression
+        x.ifExpression = accept(test)
         return false
     }
 

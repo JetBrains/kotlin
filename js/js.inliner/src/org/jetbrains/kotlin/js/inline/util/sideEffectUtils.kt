@@ -21,25 +21,25 @@ import com.google.dart.compiler.backend.js.ast.*
 import com.google.dart.compiler.backend.js.ast.metadata.typeCheck
 import org.jetbrains.kotlin.js.translate.utils.jsAstUtils.any
 
-public fun JsExpression.canHaveSideEffect(): Boolean =
+fun JsExpression.canHaveSideEffect(): Boolean =
         any { it is JsExpression && it.canHaveOwnSideEffect() }
 
-public fun JsExpression.canHaveOwnSideEffect(): Boolean =
+fun JsExpression.canHaveOwnSideEffect(): Boolean =
     when (this) {
         is JsValueLiteral,
         is JsConditional,
         is JsArrayAccess,
         is JsArrayLiteral,
         is JsNameRef -> false
-        is JsBinaryOperation -> getOperator().isAssignment()
+        is JsBinaryOperation -> operator.isAssignment
         is JsInvocation -> !isFunctionCreatorInvocation(this)
         else -> true
     }
 
-public fun JsExpression.needToAlias(): Boolean =
+fun JsExpression.needToAlias(): Boolean =
         any { it is JsExpression && it.shouldHaveOwnAlias() }
 
-public fun JsExpression.shouldHaveOwnAlias(): Boolean =
+fun JsExpression.shouldHaveOwnAlias(): Boolean =
         when (this) {
             is JsThisRef,
             is JsConditional,

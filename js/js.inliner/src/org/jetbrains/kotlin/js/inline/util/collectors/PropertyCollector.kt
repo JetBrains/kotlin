@@ -22,16 +22,16 @@ import org.jetbrains.kotlin.js.translate.expression.InlineMetadata
 import java.util.IdentityHashMap
 
 class PropertyCollector : RecursiveJsVisitor() {
-    public val properties: IdentityHashMap<JsName, JsExpression> = IdentityHashMap()
+    val properties: IdentityHashMap<JsName, JsExpression> = IdentityHashMap()
 
     override fun visitPropertyInitializer(x: JsPropertyInitializer) {
         super.visitPropertyInitializer(x)
 
-        val label = x.getLabelExpr() as? JsNameRef
-        val name = label?.getName()
+        val label = x.labelExpr as? JsNameRef
+        val name = label?.name
         if (name == null) return
 
-        val value = x.getValueExpr()
+        val value = x.valueExpr
         properties[name] = value
     }
 }

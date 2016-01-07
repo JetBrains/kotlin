@@ -32,20 +32,20 @@ import java.util.ArrayList
 object CallableReferenceTranslator {
 
     fun translate(expression: KtCallableReferenceExpression, context: TranslationContext): JsExpression {
-        val descriptor = BindingUtils.getDescriptorForReferenceExpression(context.bindingContext(), expression.getCallableReference())
+        val descriptor = BindingUtils.getDescriptorForReferenceExpression(context.bindingContext(), expression.callableReference)
         return when (descriptor) {
             is PropertyDescriptor ->
                 translateForProperty(descriptor, context, expression)
             is FunctionDescriptor ->
                 translateForFunction(descriptor, context, expression)
             else ->
-                throw IllegalArgumentException("Expected property or function: ${descriptor}, expression=${expression.getText()}")
+                throw IllegalArgumentException("Expected property or function: ${descriptor}, expression=${expression.text}")
         }
     }
 
     private fun reportNotSupported(context: TranslationContext, expression: KtCallableReferenceExpression): JsExpression {
         context.bindingTrace().report(ErrorsJs.REFERENCE_TO_BUILTIN_MEMBERS_NOT_SUPPORTED.on(expression, expression))
-        return context.getEmptyExpression()
+        return context.emptyExpression
     }
 
     private fun translateForFunction(descriptor: FunctionDescriptor, context: TranslationContext, expression: KtCallableReferenceExpression): JsExpression {
@@ -84,7 +84,7 @@ object CallableReferenceTranslator {
 
     private fun isMember(descriptor: CallableDescriptor): Boolean = JsDescriptorUtils.getContainingDeclaration(descriptor) is ClassDescriptor
 
-    private fun isVar(descriptor: PropertyDescriptor): JsExpression = if (descriptor.isVar()) JsLiteral.TRUE else JsLiteral.FALSE
+    private fun isVar(descriptor: PropertyDescriptor): JsExpression = if (descriptor.isVar) JsLiteral.TRUE else JsLiteral.FALSE
 
     private fun translateForTopLevelProperty(descriptor: PropertyDescriptor, context: TranslationContext): JsExpression {
         val packageDescriptor = JsDescriptorUtils.getContainingDeclaration(descriptor)
@@ -104,14 +104,14 @@ object CallableReferenceTranslator {
     }
 
     private fun translateForExtensionProperty(descriptor: PropertyDescriptor, context: TranslationContext): JsExpression {
-        val jsGetterNameRef = context.getQualifiedReference(descriptor.getGetter()!!)
-        val propertyName = descriptor.getName()
+        val jsGetterNameRef = context.getQualifiedReference(descriptor.getter!!)
+        val propertyName = descriptor.name
         val jsPropertyNameAsString = context.program().getStringLiteral(propertyName.asString())
         val argumentList = ArrayList<JsExpression>(3)
         argumentList.add(jsPropertyNameAsString)
         argumentList.add(jsGetterNameRef)
-        if (descriptor.isVar()) {
-            val jsSetterNameRef = context.getQualifiedReference(descriptor.getSetter()!!)
+        if (descriptor.isVar) {
+            val jsSetterNameRef = context.getQualifiedReference(descriptor.setter!!)
             argumentList.add(jsSetterNameRef)
         }
         if (AnnotationsUtils.isNativeObject(descriptor))
@@ -126,16 +126,16 @@ object CallableReferenceTranslator {
     }
 
     private fun translateForExtensionFunction(descriptor: FunctionDescriptor, context: TranslationContext): JsExpression {
-        val receiverParameterDescriptor = descriptor.getExtensionReceiverParameter()
+        val receiverParameterDescriptor = descriptor.extensionReceiverParameter
         assert(receiverParameterDescriptor != null) { "receiverParameter for extension should not be null" }
 
         val jsFunctionRef = ReferenceTranslator.translateAsFQReference(descriptor, context)
-        if (descriptor.getVisibility() == Visibilities.LOCAL) {
+        if (descriptor.visibility == Visibilities.LOCAL) {
             return JsInvocation(context.namer().callableRefForLocalExtensionFunctionReference(), jsFunctionRef)
         }
 
         else if (AnnotationsUtils.isNativeObject(descriptor)) {
-            val jetType = receiverParameterDescriptor!!.getType()
+            val jetType = receiverParameterDescriptor!!.type
             val receiverClassDescriptor = DescriptorUtils.getClassDescriptorForType(jetType)
             return translateAsMemberFunctionReference(descriptor, receiverClassDescriptor, context)
         }

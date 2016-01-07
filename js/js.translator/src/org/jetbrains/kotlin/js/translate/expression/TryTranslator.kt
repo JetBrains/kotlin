@@ -24,17 +24,17 @@ import org.jetbrains.kotlin.js.translate.general.AbstractTranslator
 import org.jetbrains.kotlin.js.translate.general.Translation.translateAsStatementAndMergeInBlockIfNeeded
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.convertToBlock
 
-public class TryTranslator(
+class TryTranslator(
         val expression: KtTryExpression,
         context: TranslationContext
 ) : AbstractTranslator(context) {
-    public fun translate(): JsTry {
-        val tryBlock = translateAsBlock(expression.getTryBlock())
+    fun translate(): JsTry {
+        val tryBlock = translateAsBlock(expression.tryBlock)
 
-        val catchTranslator = CatchTranslator(expression.getCatchClauses(), context())
+        val catchTranslator = CatchTranslator(expression.catchClauses, context())
         val catchBlock = catchTranslator.translate()
 
-        val finallyExpression = expression.getFinallyBlock()?.getFinalExpression()
+        val finallyExpression = expression.finallyBlock?.finalExpression
         val finallyBlock = translateAsBlock(finallyExpression)
 
         return JsTry(tryBlock, catchBlock, finallyBlock)

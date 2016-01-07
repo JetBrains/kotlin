@@ -21,7 +21,7 @@ import com.google.dart.compiler.backend.js.ast.*
 import org.jetbrains.kotlin.js.inline.context.NamingContext
 import org.jetbrains.kotlin.js.inline.util.rewriters.LabelNameRefreshingVisitor
 
-public fun aliasArgumentsIfNeeded(
+fun aliasArgumentsIfNeeded(
         context: NamingContext,
         arguments: List<JsExpression>,
         parameters: List<JsParameter>
@@ -29,7 +29,7 @@ public fun aliasArgumentsIfNeeded(
     require(arguments.size <= parameters.size) { "arguments.size (${arguments.size}) should be less or equal to parameters.size (${parameters.size})" }
 
     for ((arg, param) in arguments.zip(parameters)) {
-        val paramName = param.getName()
+        val paramName = param.name
         val replacement =
                 if (arg.needToAlias()) {
                     val freshName = context.getFreshName(paramName)
@@ -44,7 +44,7 @@ public fun aliasArgumentsIfNeeded(
 
     val defaultParams = parameters.subList(arguments.size, parameters.size)
     for (defaultParam in defaultParams) {
-        val paramName = defaultParam.getName()
+        val paramName = defaultParam.name
         val freshName = context.getFreshName(paramName)
         context.newVar(freshName)
 
@@ -55,7 +55,7 @@ public fun aliasArgumentsIfNeeded(
 /**
  * Makes function local names fresh in context
  */
-public fun renameLocalNames(
+fun renameLocalNames(
         context: NamingContext,
         function: JsFunction
 ) {
@@ -65,14 +65,14 @@ public fun renameLocalNames(
     }
 }
 
-public fun refreshLabelNames(
+fun refreshLabelNames(
         context: NamingContext,
         function: JsFunction
 ) {
-    val scope = function.getScope()
+    val scope = function.scope
     if (scope !is JsFunctionScope) throw AssertionError("JsFunction is expected to have JsFunctionScope")
 
     val visitor = LabelNameRefreshingVisitor(context, scope)
-    visitor.accept(function.getBody())
+    visitor.accept(function.body)
     context.applyRenameTo(function)
 }

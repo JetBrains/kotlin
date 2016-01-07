@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
 import org.jetbrains.kotlin.utils.identity as ID
 
 // TODO Move to FunctionCallCases
-public object LongOperationFIF : FunctionIntrinsicFactory {
+object LongOperationFIF : FunctionIntrinsicFactory {
 
     val LONG_EQUALS_ANY = pattern("Long.equals")
     val LONG_BINARY_OPERATION_LONG = pattern("Long.compareTo|rangeTo|plus|minus|times|div|mod|and|or|xor(Long)")
@@ -83,7 +83,7 @@ public object LongOperationFIF : FunctionIntrinsicFactory {
         if (intrinsic != null) BaseBinaryIntrinsic() { left, right -> intrinsic.applyFun(toLeft(left), toRight(right)) }  else null
 
    override fun getIntrinsic(descriptor: FunctionDescriptor): FunctionIntrinsic? {
-       val operationName = descriptor.getName().asString()
+       val operationName = descriptor.name.asString()
        return when {
            LONG_EQUALS_ANY.apply(descriptor) || LONG_BINARY_OPERATION_LONG.apply(descriptor) || LONG_BIT_SHIFTS.apply(descriptor) ->
                longBinaryIntrinsics[operationName]

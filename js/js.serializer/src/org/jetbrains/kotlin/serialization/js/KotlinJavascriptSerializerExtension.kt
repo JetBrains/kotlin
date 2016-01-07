@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.serialization.js
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 
-public class KotlinJavascriptSerializerExtension : KotlinSerializerExtensionBase(JsSerializerProtocol)
+class KotlinJavascriptSerializerExtension : KotlinSerializerExtensionBase(JsSerializerProtocol)
 
 object JsSerializerProtocol : SerializerExtensionProtocol(
         JsProtoBuf.constructorAnnotation, JsProtoBuf.classAnnotation, JsProtoBuf.functionAnnotation, JsProtoBuf.propertyAnnotation,

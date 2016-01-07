@@ -22,14 +22,13 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.ErrorUtils
 
-public class JsAnalysisResult(
-        public val bindingTrace: BindingTrace,
+class JsAnalysisResult(
+        val bindingTrace: BindingTrace,
         moduleDescriptor: ModuleDescriptor
-) : AnalysisResult(bindingTrace.getBindingContext(), moduleDescriptor) {
+) : AnalysisResult(bindingTrace.bindingContext, moduleDescriptor) {
 
     companion object {
-        @JvmStatic
-        public fun success(trace: BindingTrace, module: ModuleDescriptor): JsAnalysisResult {
+        @JvmStatic fun success(trace: BindingTrace, module: ModuleDescriptor): JsAnalysisResult {
             return JsAnalysisResult(trace, module)
         }
     }

@@ -44,19 +44,19 @@ internal abstract class AbstractNativeAnnotationsChecker(private val requiredAnn
             diagnosticHolder: DiagnosticSink,
             bindingContext: BindingContext
     ) {
-        val annotationDescriptor = descriptor.getAnnotations().findAnnotation(requiredAnnotation.fqName) ?: return
+        val annotationDescriptor = descriptor.annotations.findAnnotation(requiredAnnotation.fqName) ?: return
 
         if (declaration !is KtNamedFunction || descriptor !is FunctionDescriptor) {
             return
         }
 
-        val isMember = !DescriptorUtils.isTopLevelDeclaration(descriptor) && descriptor.getVisibility() != Visibilities.LOCAL
+        val isMember = !DescriptorUtils.isTopLevelDeclaration(descriptor) && descriptor.visibility != Visibilities.LOCAL
         val isExtension = DescriptorUtils.isExtension(descriptor)
 
         if (isMember && (isExtension || !AnnotationsUtils.isNativeObject(descriptor)) ||
             !isMember && !isExtension
         ) {
-            diagnosticHolder.report(ErrorsJs.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN.on(declaration, annotationDescriptor.getType()))
+            diagnosticHolder.report(ErrorsJs.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN.on(declaration, annotationDescriptor.type))
         }
 
         additionalCheck(declaration, descriptor, diagnosticHolder)
@@ -72,14 +72,14 @@ internal abstract class AbstractNativeIndexerChecker(
 ) : AbstractNativeAnnotationsChecker(requiredAnnotation) {
 
     override fun additionalCheck(declaration: KtNamedFunction, descriptor: FunctionDescriptor, diagnosticHolder: DiagnosticSink) {
-        val parameters = descriptor.getValueParameters()
+        val parameters = descriptor.valueParameters
         val builtIns = descriptor.builtIns
         if (parameters.size > 0) {
-            val firstParamClassDescriptor = DescriptorUtils.getClassDescriptorForType(parameters.get(0).getType())
+            val firstParamClassDescriptor = DescriptorUtils.getClassDescriptorForType(parameters.get(0).type)
             if (firstParamClassDescriptor != builtIns.string &&
                 !DescriptorUtils.isSubclass(firstParamClassDescriptor, builtIns.number)
             ) {
-                diagnosticHolder.report(ErrorsJs.NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER.on(declaration.getValueParameters().firstOrNull(), indexerKind))
+                diagnosticHolder.report(ErrorsJs.NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER.on(declaration.valueParameters.firstOrNull(), indexerKind))
             }
         }
 
@@ -87,7 +87,7 @@ internal abstract class AbstractNativeIndexerChecker(
             diagnosticHolder.report(ErrorsJs.NATIVE_INDEXER_WRONG_PARAMETER_COUNT.on(declaration, requiredParametersCount, indexerKind))
         }
 
-        for (parameter in declaration.getValueParameters()) {
+        for (parameter in declaration.valueParameters) {
             if (parameter.hasDefaultValue()) {
                 diagnosticHolder.report(ErrorsJs.NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS.on(parameter, indexerKind))
             }
@@ -99,7 +99,7 @@ internal class NativeGetterChecker : AbstractNativeIndexerChecker(PredefinedAnno
     override fun additionalCheck(declaration: KtNamedFunction, descriptor: FunctionDescriptor, diagnosticHolder: DiagnosticSink) {
         super.additionalCheck(declaration, descriptor, diagnosticHolder)
 
-        val returnType = descriptor.getReturnType()
+        val returnType = descriptor.returnType
         if (returnType != null && !TypeUtils.isNullableType(returnType)) {
             diagnosticHolder.report(ErrorsJs.NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE.on(declaration))
         }
@@ -110,13 +110,13 @@ internal class NativeSetterChecker : AbstractNativeIndexerChecker(PredefinedAnno
     override fun additionalCheck(declaration: KtNamedFunction, descriptor: FunctionDescriptor, diagnosticHolder: DiagnosticSink) {
         super.additionalCheck(declaration, descriptor, diagnosticHolder)
 
-        val returnType = descriptor.getReturnType()
+        val returnType = descriptor.returnType
         if (returnType == null || KotlinBuiltIns.isUnit(returnType)) return
 
-        val parameters = descriptor.getValueParameters()
+        val parameters = descriptor.valueParameters
         if (parameters.size < 2) return
 
-        val secondParameterType = parameters.get(1).getType()
+        val secondParameterType = parameters.get(1).type
         if (secondParameterType.isSubtypeOf(returnType)) return
 
         diagnosticHolder.report(ErrorsJs.NATIVE_SETTER_WRONG_RETURN_TYPE.on(declaration))

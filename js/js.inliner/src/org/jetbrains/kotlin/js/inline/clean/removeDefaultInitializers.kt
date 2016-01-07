@@ -31,11 +31,11 @@ import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.flattenStatement
  *
  * @see isInitializer
  */
-public fun removeDefaultInitializers(arguments: List<JsExpression>, parameters: List<JsParameter>, body: JsBlock) {
+fun removeDefaultInitializers(arguments: List<JsExpression>, parameters: List<JsParameter>, body: JsBlock) {
     val toRemove = getDefaultParamsNames(arguments, parameters, initialized = true)
     val toExpand = getDefaultParamsNames(arguments, parameters, initialized = false)
 
-    val statements = body.getStatements()
+    val statements = body.statements
     val newStatements = statements.flatMap {
         val name = getNameFromInitializer(it)
         if (name != null && !isNameInitialized(name, it)) {
@@ -46,7 +46,7 @@ public fun removeDefaultInitializers(arguments: List<JsExpression>, parameters: 
             name != null && name in toRemove ->
                 listOf<JsStatement>()
             name != null && name in toExpand ->
-                flattenStatement((it as JsIf).getThenStatement()!!)
+                flattenStatement((it as JsIf).thenStatement!!)
             else ->
                 listOf(it)
         }
@@ -58,9 +58,9 @@ public fun removeDefaultInitializers(arguments: List<JsExpression>, parameters: 
 
 private fun getNameFromInitializer(statement: JsStatement): JsName? {
     val ifStmt = (statement as? JsIf)
-    val testExpr = ifStmt?.getIfExpression()
+    val testExpr = ifStmt?.ifExpression
 
-    val elseStmt = ifStmt?.getElseStatement()
+    val elseStmt = ifStmt?.elseStatement
     if (elseStmt == null && testExpr is JsBinaryOperation)
         return getNameFromInitializer(testExpr)
 
@@ -68,16 +68,16 @@ private fun getNameFromInitializer(statement: JsStatement): JsName? {
 }
 
 private fun getNameFromInitializer(isInitializedExpr: JsBinaryOperation): JsName? {
-    val arg1 = isInitializedExpr.getArg1()
-    val arg2 = isInitializedExpr.getArg2()
-    val op = isInitializedExpr.getOperator()
+    val arg1 = isInitializedExpr.arg1
+    val arg2 = isInitializedExpr.arg2
+    val op = isInitializedExpr.operator
 
     if (arg1 == null || arg2 == null || op == null) {
         return null
     }
 
     if (op == JsBinaryOperator.REF_EQ && isUndefined(arg2)) {
-        return (arg1 as? JsNameRef)?.getName()
+        return (arg1 as? JsNameRef)?.name
     }
 
     return null
@@ -91,17 +91,17 @@ private fun isNameInitialized(
     name: JsName,
     initializer: JsStatement
 ): Boolean {
-    val thenStmt = (initializer as JsIf).getThenStatement()!!
+    val thenStmt = (initializer as JsIf).thenStatement!!
     val lastThenStmt = flattenStatement(thenStmt).last()
 
-    val expr = (lastThenStmt as? JsExpressionStatement)?.getExpression()
+    val expr = (lastThenStmt as? JsExpressionStatement)?.expression
     if (expr !is JsBinaryOperation) return false
 
-    val op = expr.getOperator()
-    if (!op.isAssignment()) return false
+    val op = expr.operator
+    if (!op.isAssignment) return false
 
-    val arg1 = expr.getArg1()
-    if (arg1 is HasName && arg1.getName() === name) return true
+    val arg1 = expr.arg1
+    if (arg1 is HasName && arg1.name === name) return true
 
     return false
 }
@@ -117,7 +117,7 @@ private fun getDefaultParamsNames(
                                    .filter { it.second.hasDefaultValue }
                                    .filter { initialized == !isUndefined(it.first) }
 
-    val names = relevantParams.map { it.second.getName() }
+    val names = relevantParams.map { it.second.name }
     return names.toIdentitySet()
 }
 

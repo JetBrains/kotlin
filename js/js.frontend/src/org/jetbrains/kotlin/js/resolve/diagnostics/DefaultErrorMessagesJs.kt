@@ -42,6 +42,6 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
     }
 }
 
-public class DefaultErrorMessagesJs : DefaultErrorMessages.Extension {
+class DefaultErrorMessagesJs : DefaultErrorMessages.Extension {
     override fun getMap(): DiagnosticFactoryToRendererMap = DIAGNOSTIC_FACTORY_TO_RENDERER
 }

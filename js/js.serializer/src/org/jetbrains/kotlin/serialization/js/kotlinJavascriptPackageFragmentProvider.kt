@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.storage.StorageManager
 import java.io.InputStream
 
-public fun createKotlinJavascriptPackageFragmentProvider(
+fun createKotlinJavascriptPackageFragmentProvider(
         storageManager: StorageManager,
         module: ModuleDescriptor,
         packageFqNames: Set<FqName>,

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.storage.StorageManager
 import java.io.InputStream
 
-public class KotlinJavascriptPackageFragment(
+class KotlinJavascriptPackageFragment(
         fqName: FqName,
         storageManager: StorageManager,
         module: ModuleDescriptor,
@@ -36,7 +36,7 @@ public class KotlinJavascriptPackageFragment(
 
     override val classIdToProto: Map<ClassId, ProtoBuf.Class>? get() = null
 
-    protected override fun loadClassNames(packageProto: ProtoBuf.Package): Collection<Name> {
+    override fun loadClassNames(packageProto: ProtoBuf.Package): Collection<Name> {
         val classesStream = loadResourceSure(KotlinJavascriptSerializedResourcePaths.getClassesInPackageFilePath(fqName))
         val classesProto = JsProtoBuf.Classes.parseFrom(classesStream, serializedResourcePaths.extensionRegistry)
         return classesProto.classNameList?.map { id -> nameResolver.getName(id) } ?: listOf()
