@@ -23,11 +23,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 
-public object StaticFacadeIndexUtil {
+object StaticFacadeIndexUtil {
 
     // TODO change as we introduce multi-file facades (this will require a separate index)
-    @JvmStatic
-    public fun findFilesForFilePart(
+    @JvmStatic fun findFilesForFilePart(
             partFqName: FqName,
             searchScope: GlobalSearchScope,
             project: Project
@@ -35,7 +34,7 @@ public object StaticFacadeIndexUtil {
             PackagePartClassUtils.getFilesWithCallables(
                     KotlinFileFacadeFqNameIndex.INSTANCE.get(partFqName.asString(), project, searchScope))
 
-    @JvmStatic public fun getMultifileClassForPart(
+    @JvmStatic fun getMultifileClassForPart(
             partFqName: FqName,
             searchScope: GlobalSearchScope,
             project: Project

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.KtIfExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 
-public class FoldIfToAssignmentIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpression::class.java, "Replace 'if' expression with assignment") {
+class FoldIfToAssignmentIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpression::class.java, "Replace 'if' expression with assignment") {
     override fun applicabilityRange(element: KtIfExpression): TextRange? {
         val thenAssignment = BranchedFoldingUtils.getFoldableBranchedAssignment(element.then) ?: return null
         val elseAssignment = BranchedFoldingUtils.getFoldableBranchedAssignment(element.`else`) ?: return null

@@ -34,8 +34,7 @@ abstract class ImportInsertHelper {
     abstract fun importDescriptor(file: KtFile, descriptor: DeclarationDescriptor, forceAllUnderImport: Boolean = false): ImportDescriptorResult
 
     companion object {
-        @JvmStatic
-        public fun getInstance(project: Project): ImportInsertHelper
+        @JvmStatic fun getInstance(project: Project): ImportInsertHelper
             = ServiceManager.getService<ImportInsertHelper>(project, ImportInsertHelper::class.java)
     }
 }

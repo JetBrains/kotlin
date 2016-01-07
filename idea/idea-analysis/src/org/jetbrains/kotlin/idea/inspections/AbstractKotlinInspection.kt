@@ -26,15 +26,15 @@ import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.idea.highlighter.createSuppressWarningActions
 import org.jetbrains.kotlin.idea.caches.resolve.KotlinCacheService
 
-public abstract class AbstractKotlinInspection: LocalInspectionTool(), CustomSuppressableInspectionTool {
-    public override fun getSuppressActions(element: PsiElement?): Array<SuppressIntentionAction>? {
+abstract class AbstractKotlinInspection: LocalInspectionTool(), CustomSuppressableInspectionTool {
+    override fun getSuppressActions(element: PsiElement?): Array<SuppressIntentionAction>? {
         if (element == null) return emptyArray()
 
         return createSuppressWarningActions(element, toSeverity(defaultLevel), suppressionKey).toTypedArray()
     }
 
-    public override fun isSuppressedFor(element: PsiElement): Boolean {
-        if (SuppressManager.getInstance()!!.isSuppressedFor(element, getID())) {
+    override fun isSuppressedFor(element: PsiElement): Boolean {
+        if (SuppressManager.getInstance()!!.isSuppressedFor(element, id)) {
             return true
         }
 

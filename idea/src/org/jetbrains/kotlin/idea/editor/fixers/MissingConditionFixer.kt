@@ -26,7 +26,7 @@ abstract class MissingConditionFixer<T: PsiElement>() : SmartEnterProcessorWithF
         val workElement = getElement(element)
         if (workElement == null) return
 
-        val doc = editor.getDocument()
+        val doc = editor.document
         val lParen = getLeftParenthesis(workElement)
         val rParen = getRightParenthesis(workElement)
         val condition = getCondition(workElement)

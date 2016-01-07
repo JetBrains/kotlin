@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
 import javax.swing.Icon
 
-public class KotlinMemberSelectionTable(
+class KotlinMemberSelectionTable(
         memberInfos: List<KotlinMemberInfo>,
         memberInfoModel: MemberInfoModel<KtNamedDeclaration, KotlinMemberInfo>?,
         abstractColumnHeader: String?

@@ -26,13 +26,11 @@ import org.jetbrains.kotlin.idea.caches.JarUserDataManager
 import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 
-public object KotlinJavaScriptLibraryDetectionUtil {
-    @JvmStatic
-    public fun isKotlinJavaScriptLibrary(library: Library): Boolean =
+object KotlinJavaScriptLibraryDetectionUtil {
+    @JvmStatic fun isKotlinJavaScriptLibrary(library: Library): Boolean =
             isKotlinJavaScriptLibrary(library.getFiles(OrderRootType.CLASSES).toList())
 
-    @JvmStatic
-    public fun isKotlinJavaScriptLibrary(classesRoots: List<VirtualFile>): Boolean {
+    @JvmStatic fun isKotlinJavaScriptLibrary(classesRoots: List<VirtualFile>): Boolean {
         // Prevent clashing with java runtime
         if (JavaRuntimeDetectionUtil.getJavaRuntimeVersion(classesRoots) != null) return false
 
@@ -51,11 +49,11 @@ public object KotlinJavaScriptLibraryDetectionUtil {
     }
 
     private fun isJsFileWithMetadata(file: VirtualFile): Boolean =
-            !file.isDirectory() &&
-            JavaScript.EXTENSION == file.getExtension() &&
+            !file.isDirectory &&
+            JavaScript.EXTENSION == file.extension &&
             KotlinJavascriptMetadataUtils.hasMetadata(String(file.contentsToByteArray(false)))
 
-    public object HasKotlinJSMetadataInJar : JarUserDataManager.JarBooleanPropertyCounter(HasKotlinJSMetadataInJar::class.simpleName!!) {
+    object HasKotlinJSMetadataInJar : JarUserDataManager.JarBooleanPropertyCounter(HasKotlinJSMetadataInJar::class.simpleName!!) {
         override fun hasProperty(file: VirtualFile) = KotlinJavaScriptLibraryDetectionUtil.isJsFileWithMetadata(file)
 
         fun hasMetadataFromCache(root: VirtualFile): Boolean? = JarUserDataManager.hasFileWithProperty(HasKotlinJSMetadataInJar, root)

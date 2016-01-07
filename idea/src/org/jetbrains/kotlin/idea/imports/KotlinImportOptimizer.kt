@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.resolve.scopes.HierarchicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.*
 import java.util.*
 
-public class KotlinImportOptimizer() : ImportOptimizer {
+class KotlinImportOptimizer() : ImportOptimizer {
 
     override fun supports(file: PsiFile?) = file is KtFile
 
@@ -52,7 +52,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
     }
 
     private class OptimizeProcess(private val file: KtFile) {
-        public fun execute() {
+        fun execute() {
             val oldImports = file.importDirectives
             if (oldImports.isEmpty()) return
 
@@ -70,7 +70,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
         private val _descriptors = HashSet<DeclarationDescriptor>()
         private val currentPackageName = file.packageFqName
 
-        public val descriptors: Set<DeclarationDescriptor>
+        val descriptors: Set<DeclarationDescriptor>
             get() = _descriptors
 
         override fun visitElement(element: PsiElement) {
@@ -145,13 +145,13 @@ public class KotlinImportOptimizer() : ImportOptimizer {
     }
 
     companion object {
-        public fun collectDescriptorsToImport(file: KtFile): Set<DeclarationDescriptor> {
+        fun collectDescriptorsToImport(file: KtFile): Set<DeclarationDescriptor> {
             val visitor = CollectUsedDescriptorsVisitor(file)
             file.accept(visitor)
             return visitor.descriptors
         }
 
-        public fun prepareOptimizedImports(
+        fun prepareOptimizedImports(
                 file: KtFile,
                 descriptorsToImport: Collection<DeclarationDescriptor>
         ): List<ImportPath>? {
@@ -263,7 +263,7 @@ public class KotlinImportOptimizer() : ImportOptimizer {
             return aliasImports
         }
 
-        public fun replaceImports(file: KtFile, imports: List<ImportPath>) {
+        fun replaceImports(file: KtFile, imports: List<ImportPath>) {
             val importList = file.importList!!
             val oldImports = importList.imports
             val psiFactory = KtPsiFactory(file.project)

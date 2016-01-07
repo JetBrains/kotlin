@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinUsageI
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinWrapperForJavaUsageInfos
 import java.util.*
 
-public class KotlinChangeSignatureProcessor(project: Project,
+class KotlinChangeSignatureProcessor(project: Project,
                                             changeInfo: KotlinChangeInfo,
                                             private val commandName: String) : ChangeSignatureProcessorBase(project, changeInfo) {
     override fun createUsageViewDescriptor(usages: Array<UsageInfo>): UsageViewDescriptor {

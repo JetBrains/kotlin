@@ -23,7 +23,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 
-public open class QuickFixWithDelegateFactory(
+open class QuickFixWithDelegateFactory(
         private val delegateFactory: () -> IntentionAction?
 ) : IntentionAction {
     private val familyName: String
@@ -59,11 +59,11 @@ public open class QuickFixWithDelegateFactory(
     }
 }
 
-public class LowPriorityQuickFixWithDelegateFactory(
+class LowPriorityQuickFixWithDelegateFactory(
         delegateFactory: () -> IntentionAction?
 ): QuickFixWithDelegateFactory(delegateFactory), LowPriorityAction
 
-public class HighPriorityQuickFixWithDelegateFactory(
+class HighPriorityQuickFixWithDelegateFactory(
         delegateFactory: () -> IntentionAction?
 ): QuickFixWithDelegateFactory(delegateFactory), HighPriorityAction
 

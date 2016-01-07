@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-public class FlattenWhenIntention : SelfTargetingIntention<KtWhenExpression>(KtWhenExpression::class.java, "Flatten 'when' expression") {
+class FlattenWhenIntention : SelfTargetingIntention<KtWhenExpression>(KtWhenExpression::class.java, "Flatten 'when' expression") {
     override fun isApplicableTo(element: KtWhenExpression, caretOffset: Int): Boolean {
         val subject = element.subjectExpression
         if (subject != null && subject !is KtNameReferenceExpression) return false

@@ -44,17 +44,16 @@ import org.jetbrains.kotlin.utils.keysToMap
 
 internal val LOG = Logger.getInstance(KotlinCacheService::class.java)
 
-public class KotlinCacheService(val project: Project) {
+class KotlinCacheService(val project: Project) {
     companion object {
-        @JvmStatic
-        public fun getInstance(project: Project): KotlinCacheService = ServiceManager.getService(project, KotlinCacheService::class.java)!!
+        @JvmStatic fun getInstance(project: Project): KotlinCacheService = ServiceManager.getService(project, KotlinCacheService::class.java)!!
     }
 
-    public fun getResolutionFacade(elements: List<KtElement>): ResolutionFacade {
+    fun getResolutionFacade(elements: List<KtElement>): ResolutionFacade {
         return getFacadeToAnalyzeFiles(elements.map { it.getContainingKtFile() })
     }
 
-    public fun getSuppressionCache(): KotlinSuppressCache = kotlinSuppressCache.value
+    fun getSuppressionCache(): KotlinSuppressCache = kotlinSuppressCache.value
 
     private val globalFacadesPerPlatform = listOf(JvmPlatform, JsPlatform).keysToMap { platform -> GlobalFacade(platform) }
 
@@ -84,8 +83,7 @@ public class KotlinCacheService(val project: Project) {
         }
     }
 
-    @Deprecated("Use JetElement.getResolutionFacade(), please avoid introducing new usages")
-    public fun <T : Any> getProjectService(platform: TargetPlatform, ideaModuleInfo: IdeaModuleInfo, serviceClass: Class<T>): T {
+    @Deprecated("Use JetElement.getResolutionFacade(), please avoid introducing new usages") fun <T : Any> getProjectService(platform: TargetPlatform, ideaModuleInfo: IdeaModuleInfo, serviceClass: Class<T>): T {
         return globalFacade(platform).resolverForModuleInfo(ideaModuleInfo).componentProvider.getService(serviceClass)
     }
 
@@ -219,7 +217,7 @@ public class KotlinCacheService(val project: Project) {
     }.toSet()
 
     private fun KtCodeFragment.getContextFile(): KtFile? {
-        val contextElement = getContext() ?: return null
+        val contextElement = context ?: return null
         val contextFile = (contextElement as? KtElement)?.getContainingKtFile()
                           ?: throw AssertionError("Analyzing kotlin code fragment of type $javaClass with java context of type ${contextElement.javaClass}")
         return if (contextFile is KtCodeFragment) contextFile.getContextFile() else contextFile

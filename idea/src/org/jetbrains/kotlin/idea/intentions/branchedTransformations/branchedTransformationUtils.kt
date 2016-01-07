@@ -47,7 +47,7 @@ fun KtWhenCondition.toExpression(subject: KtExpression?): KtExpression {
     }
 }
 
-public fun KtWhenExpression.getSubjectToIntroduce(): KtExpression?  {
+fun KtWhenExpression.getSubjectToIntroduce(): KtExpression?  {
     if (subjectExpression != null) return null
 
     var lastCandidate: KtExpression? = null
@@ -97,7 +97,7 @@ private fun KtExpression?.getWhenConditionSubjectCandidate(): KtExpression? {
     }
 }
 
-public fun KtWhenExpression.introduceSubject(): KtWhenExpression {
+fun KtWhenExpression.introduceSubject(): KtWhenExpression {
     val subject = getSubjectToIntroduce()!!
 
     val whenExpression = KtPsiFactory(this).buildExpression {

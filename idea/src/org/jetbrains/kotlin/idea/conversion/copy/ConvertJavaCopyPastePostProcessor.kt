@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.awt.datatransfer.Transferable
 import java.util.*
 
-public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBlockTransferableData>() {
+class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBlockTransferableData>() {
     private val LOG = Logger.getInstance("#org.jetbrains.kotlin.idea.conversion.copy.ConvertJavaCopyPastePostProcessor")
 
     override fun extractTransferableData(content: Transferable): List<TextBlockTransferableData> {
@@ -65,21 +65,21 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
         return listOf()
     }
 
-    public override fun collectTransferableData(file: PsiFile, editor: Editor, startOffsets: IntArray, endOffsets: IntArray): List<TextBlockTransferableData> {
+    override fun collectTransferableData(file: PsiFile, editor: Editor, startOffsets: IntArray, endOffsets: IntArray): List<TextBlockTransferableData> {
         if (file !is PsiJavaFile) return listOf()
 
         return listOf(CopiedJavaCode(file.getText()!!, startOffsets, endOffsets))
     }
 
-    public override fun processTransferableData(project: Project, editor: Editor, bounds: RangeMarker, caretOffset: Int, indented: Ref<Boolean>, values: List<TextBlockTransferableData>) {
-        if (DumbService.getInstance(project).isDumb()) return
+    override fun processTransferableData(project: Project, editor: Editor, bounds: RangeMarker, caretOffset: Int, indented: Ref<Boolean>, values: List<TextBlockTransferableData>) {
+        if (DumbService.getInstance(project).isDumb) return
         val jetEditorOptions = KotlinEditorOptions.getInstance()
-        if (!jetEditorOptions.isEnableJavaToKotlinConversion()) return
+        if (!jetEditorOptions.isEnableJavaToKotlinConversion) return
 
         val data = values.single()
         if (data !is CopiedJavaCode) return
 
-        val document = editor.getDocument()
+        val document = editor.document
         val targetFile = PsiDocumentManager.getInstance(project).getPsiFile(document) as? KtFile ?: return
 
         val elementAt = targetFile.findElementAt(caretOffset)
@@ -103,8 +103,8 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
             PsiDocumentManager.getInstance(project).commitAllDocuments()
 
             val rangeMarker = document.createRangeMarker(bounds)
-            rangeMarker.setGreedyToLeft(true)
-            rangeMarker.setGreedyToRight(true)
+            rangeMarker.isGreedyToLeft = true
+            rangeMarker.isGreedyToRight = true
 
             KotlinCopyPasteReferenceProcessor().processReferenceData(project, targetFile, bounds.start, referenceData.toTypedArray())
 
@@ -133,7 +133,7 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
             if (doConversionAndInsertImportsIfUnchanged()) return
         }
 
-        val needConvert = jetEditorOptions.isDonTShowConversionDialog() || okFromDialog(project)
+        val needConvert = jetEditorOptions.isDonTShowConversionDialog || okFromDialog(project)
         if (needConvert) {
             if (conversionResult == null) {
                 if (doConversionAndInsertImportsIfUnchanged()) return
@@ -142,11 +142,11 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
             text!! // otherwise we should get true from doConversionAndInsertImportsIfUnchanged and return above
 
             runWriteAction {
-                val startOffset = bounds.getStartOffset()
-                document.replaceString(startOffset, bounds.getEndOffset(), text)
+                val startOffset = bounds.startOffset
+                document.replaceString(startOffset, bounds.endOffset, text)
 
                 val endOffsetAfterCopy = startOffset + text.length
-                editor.getCaretModel().moveToOffset(endOffsetAfterCopy)
+                editor.caretModel.moveToOffset(endOffsetAfterCopy)
 
                 var newBounds = insertImports(TextRange(startOffset, endOffsetAfterCopy), referenceData, explicitImports)
 
@@ -182,7 +182,7 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
         var parseContext: ParseContext? = null
         for (o in elementsAndTexts) {
             if (o is PsiElement) {
-                val originalText = o.getText()
+                val originalText = o.text
                 originalCodeBuilder.append(originalText)
 
                 val result = results[resultIndex++]
@@ -228,7 +228,7 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
             append(contextSuffix)
         }
 
-        val dummyFile = KtPsiFactory(targetFile.getProject()).createAnalyzableFile("dummy.kt", fileText, targetFile)
+        val dummyFile = KtPsiFactory(targetFile.project).createAnalyzableFile("dummy.kt", fileText, targetFile)
 
         return KotlinCopyPasteReferenceProcessor().collectReferenceData(dummyFile, intArrayOf(blockStart!!), intArrayOf(blockEnd!!))
     }
@@ -245,11 +245,10 @@ public class ConvertJavaCopyPastePostProcessor : CopyPastePostProcessor<TextBloc
     private fun okFromDialog(project: Project): Boolean {
         val dialog = KotlinPasteFromJavaDialog(project)
         dialog.show()
-        return dialog.isOK()
+        return dialog.isOK
     }
 
     companion object {
-        @TestOnly
-        public var conversionPerformed: Boolean = false
+        @TestOnly var conversionPerformed: Boolean = false
     }
 }

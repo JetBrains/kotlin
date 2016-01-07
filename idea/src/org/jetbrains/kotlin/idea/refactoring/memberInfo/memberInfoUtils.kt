@@ -35,7 +35,7 @@ fun PsiNamedElement.getClassDescriptorIfAny(resolutionFacade: ResolutionFacade? 
 }
 
 // Applies to JetClassOrObject and PsiClass
-public fun PsiNamedElement.qualifiedClassNameForRendering(): String {
+fun PsiNamedElement.qualifiedClassNameForRendering(): String {
     val fqName = when (this) {
         is KtClassOrObject -> fqName?.asString()
         is PsiClass -> qualifiedName

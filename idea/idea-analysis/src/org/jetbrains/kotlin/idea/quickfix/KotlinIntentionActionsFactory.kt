@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 
-public abstract class KotlinIntentionActionsFactory {
+abstract class KotlinIntentionActionsFactory {
     protected open fun isApplicableForCodeFragment(): Boolean = false
 
     protected abstract fun doCreateActions(diagnostic: Diagnostic): List<IntentionAction>
@@ -29,17 +29,17 @@ public abstract class KotlinIntentionActionsFactory {
     protected open fun doCreateActionsForAllProblems(
             sameTypeDiagnostics: Collection<Diagnostic>): List<IntentionAction> = emptyList()
 
-    public fun createActions(diagnostic: Diagnostic): List<IntentionAction> =
+    fun createActions(diagnostic: Diagnostic): List<IntentionAction> =
             createActions(diagnostic.singletonOrEmptyList(), false)
 
-    public fun createActionsForAllProblems(sameTypeDiagnostics: Collection<Diagnostic>): List<IntentionAction> =
+    fun createActionsForAllProblems(sameTypeDiagnostics: Collection<Diagnostic>): List<IntentionAction> =
             createActions(sameTypeDiagnostics, true)
 
     private fun createActions(sameTypeDiagnostics: Collection<Diagnostic>, createForAll: Boolean): List<IntentionAction> {
         if (sameTypeDiagnostics.isEmpty()) return emptyList()
         val first = sameTypeDiagnostics.first()
 
-        if (first.psiElement.getContainingFile() is KtCodeFragment && !isApplicableForCodeFragment()) {
+        if (first.psiElement.containingFile is KtCodeFragment && !isApplicableForCodeFragment()) {
             return emptyList()
         }
 

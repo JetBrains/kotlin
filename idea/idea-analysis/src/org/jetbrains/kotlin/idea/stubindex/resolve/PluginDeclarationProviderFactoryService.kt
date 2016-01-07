@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
 import org.jetbrains.kotlin.storage.StorageManager
 
-public class PluginDeclarationProviderFactoryService : DeclarationProviderFactoryService() {
+class PluginDeclarationProviderFactoryService : DeclarationProviderFactoryService() {
 
     override fun create(
             project: Project,

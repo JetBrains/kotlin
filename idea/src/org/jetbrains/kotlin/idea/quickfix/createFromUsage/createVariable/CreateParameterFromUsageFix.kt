@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.source.getPsi
 
-public open class CreateParameterFromUsageFix<E : KtElement>(
+open class CreateParameterFromUsageFix<E : KtElement>(
         val functionDescriptor: FunctionDescriptor,
         val parameterInfo: KotlinParameterInfo,
         val defaultValueContext: E
@@ -60,7 +60,7 @@ public open class CreateParameterFromUsageFix<E : KtElement>(
     }
 
     companion object {
-        public fun <E : KtElement> createFixForPrimaryConstructorPropertyParameter(
+        fun <E : KtElement> createFixForPrimaryConstructorPropertyParameter(
                 element: E,
                 info: PropertyInfo
         ) : CreateParameterFromUsageFix<E>? {

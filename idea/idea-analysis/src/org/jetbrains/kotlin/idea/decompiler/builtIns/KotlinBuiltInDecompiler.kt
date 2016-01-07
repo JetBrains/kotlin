@@ -65,7 +65,7 @@ class KotlinBuiltInDecompiler : ClassFileDecompilers.Full() {
 
 private val decompilerRendererForBuiltIns = DescriptorRenderer.withOptions { defaultDecompilerRendererOptions() }
 
-public fun buildDecompiledTextForBuiltIns(
+fun buildDecompiledTextForBuiltIns(
         builtInFile: VirtualFile
 ): DecompiledText {
     val directory = builtInFile.parent!!

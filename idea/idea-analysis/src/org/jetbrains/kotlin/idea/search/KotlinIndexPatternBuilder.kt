@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
 
-public class KotlinIndexPatternBuilder: IndexPatternBuilder {
+class KotlinIndexPatternBuilder: IndexPatternBuilder {
     private val TODO_COMMENT_TOKENS = TokenSet.orSet(KtTokens.COMMENTS, TokenSet.create(KDocTokens.KDOC))
 
     override fun getCommentTokenSet(file: PsiFile): TokenSet? {

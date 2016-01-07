@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.idea.core.replaced
 
-public class IfThenToElvisInspection : IntentionBasedInspection<KtIfExpression>(IfThenToElvisIntention())
+class IfThenToElvisInspection : IntentionBasedInspection<KtIfExpression>(IfThenToElvisIntention())
 
-public class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpression>(KtIfExpression::class.java, "Replace 'if' expression with elvis expression") {
+class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<KtIfExpression>(KtIfExpression::class.java, "Replace 'if' expression with elvis expression") {
 
     override fun isApplicableTo(element: KtIfExpression): Boolean {
         val condition = element.condition as? KtBinaryExpression ?: return false
@@ -61,7 +61,7 @@ public class IfThenToElvisIntention : SelfTargetingOffsetIndependentIntention<Kt
         elvis.inlineLeftSideIfApplicableWithPrompt(editor)
     }
 
-    public fun applyTo(element: KtIfExpression): KtBinaryExpression {
+    fun applyTo(element: KtIfExpression): KtBinaryExpression {
         val condition = element.condition as KtBinaryExpression
 
         val thenClause = element.then!!

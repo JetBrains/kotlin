@@ -45,7 +45,7 @@ import javax.swing.JComponent
 import javax.swing.JLabel
 import javax.swing.JPanel
 
-public class KotlinIntroduceParameterDialog private constructor(
+class KotlinIntroduceParameterDialog private constructor(
         project: Project,
         val editor: Editor,
         val descriptor: IntroduceParameterDescriptor,
@@ -238,7 +238,7 @@ public class KotlinIntroduceParameterDialog private constructor(
         performRefactoring()
     }
 
-    public fun performRefactoring() {
+    fun performRefactoring() {
         invokeRefactoring(
                 object : BaseRefactoringProcessor(myProject) {
                     override fun findUsages() = UsageInfo.EMPTY_ARRAY

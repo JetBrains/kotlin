@@ -194,7 +194,7 @@ class KotlinPluginUpdater(val propertiesComponent: PropertiesComponent) : Dispos
         ProgressManager.getInstance().run(object : Task.Backgroundable(null, "Downloading plugins", true) {
             override fun run(indicator: ProgressIndicator) {
                 if (pluginDownloader.prepareToInstall(indicator)) {
-                    val pluginDescriptor = pluginDownloader.getDescriptor()
+                    val pluginDescriptor = pluginDownloader.descriptor
                     if (pluginDescriptor != null) {
                         pluginDownloader.install()
 

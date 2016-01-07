@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
-public abstract class AbstractDecompiledTextBaseTest(
+abstract class AbstractDecompiledTextBaseTest(
         baseDirectory: String,
         private val isJsLibrary: Boolean = false
 ) : KotlinLightCodeInsightFixtureTestCase() {
@@ -42,7 +42,7 @@ public abstract class AbstractDecompiledTextBaseTest(
 
     protected abstract fun checkPsiFile(psiFile: PsiFile)
 
-    public fun doTest(path: String) {
+    fun doTest(path: String) {
         val fileToDecompile = getFileToDecompile()
         val psiFile = PsiManager.getInstance(project).findFile(fileToDecompile)!!
         checkPsiFile(psiFile)

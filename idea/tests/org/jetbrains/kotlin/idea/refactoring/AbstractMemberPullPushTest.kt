@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.util.findElementsByCommentPrefix
 import java.io.File
 
-public abstract class AbstractMemberPullPushTest : KotlinLightCodeInsightFixtureTestCase() {
+abstract class AbstractMemberPullPushTest : KotlinLightCodeInsightFixtureTestCase() {
     private data class ElementInfo(val checked: Boolean, val toAbstract: Boolean)
 
     companion object {
@@ -47,21 +47,21 @@ public abstract class AbstractMemberPullPushTest : KotlinLightCodeInsightFixture
 
     val fixture: JavaCodeInsightTestFixture get() = myFixture
 
-    protected override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase()
+    override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase()
 
     protected fun doTest(path: String, action: (mainFile: PsiFile) -> Unit) {
         val mainFile = File(path)
         val afterFile = File("$path.after")
         val conflictFile = File("$path.messages")
 
-        fixture.testDataPath = "${KotlinTestUtils.getHomeDirectory()}/${mainFile.getParent()}"
+        fixture.testDataPath = "${KotlinTestUtils.getHomeDirectory()}/${mainFile.parent}"
 
-        val mainFileName = mainFile.getName()
+        val mainFileName = mainFile.name
         val mainFileBaseName = FileUtil.getNameWithoutExtension(mainFileName)
         val extraFiles = mainFile.parentFile.listFiles { file, name ->
             name != mainFileName && name.startsWith("$mainFileBaseName.") && (name.endsWith(".kt") || name.endsWith(".java"))
         }
-        val extraFilesToPsi = extraFiles.toMapBy { fixture.configureByFile(it.getName()) }
+        val extraFilesToPsi = extraFiles.toMapBy { fixture.configureByFile(it.name) }
         val file = fixture.configureByFile(mainFileName)
 
         val addKotlinRuntime = InTextDirectivesUtils.findStringWithPrefixes(file.text, "// WITH_RUNTIME") != null
@@ -81,7 +81,7 @@ public abstract class AbstractMemberPullPushTest : KotlinLightCodeInsightFixture
             assert(!conflictFile.exists()) { "Conflict file $conflictFile should not exist" }
             KotlinTestUtils.assertEqualsToFile(afterFile, file.text!!)
             for ((extraPsiFile, extraFile) in extraFilesToPsi) {
-                KotlinTestUtils.assertEqualsToFile(File("${extraFile.getPath()}.after"), extraPsiFile.text)
+                KotlinTestUtils.assertEqualsToFile(File("${extraFile.path}.after"), extraPsiFile.text)
             }
         }
         catch(e: Exception) {

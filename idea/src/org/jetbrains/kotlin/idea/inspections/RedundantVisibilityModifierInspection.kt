@@ -42,7 +42,7 @@ class RedundantVisibilityModifierInspection : AbstractKotlinInspection(), Cleanu
     class RemoveVisibilityModifierFix : LocalQuickFix {
         override fun getName(): String = "Remove redundant visibility modifier"
 
-        override fun getFamilyName(): String = getName()
+        override fun getFamilyName(): String = name
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             descriptor.psiElement.delete()

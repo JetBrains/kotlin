@@ -56,17 +56,17 @@ import java.util.*
 data class ReplaceWith(val pattern: String, val imports: List<String>)
 
 object ReplaceWithAnnotationAnalyzer {
-    public val PARAMETER_USAGE_KEY: Key<Name> = Key("PARAMETER_USAGE")
-    public val TYPE_PARAMETER_USAGE_KEY: Key<Name> = Key("TYPE_PARAMETER_USAGE")
+    val PARAMETER_USAGE_KEY: Key<Name> = Key("PARAMETER_USAGE")
+    val TYPE_PARAMETER_USAGE_KEY: Key<Name> = Key("TYPE_PARAMETER_USAGE")
 
-    public data class ReplacementExpression(
+    data class ReplacementExpression(
             val expression: KtExpression,
             val fqNamesToImport: Collection<FqName>
     ) {
         fun copy() = ReplacementExpression(expression.copied(), fqNamesToImport)
     }
 
-    public fun analyzeCallableReplacement(
+    fun analyzeCallableReplacement(
             annotation: ReplaceWith,
             symbolDescriptor: CallableDescriptor,
             resolutionFacade: ResolutionFacade
@@ -162,7 +162,7 @@ object ReplaceWithAnnotationAnalyzer {
         return ReplacementExpression(expression, importFqNames)
     }
 
-    public fun analyzeClassReplacement(
+    fun analyzeClassReplacement(
             annotation: ReplaceWith,
             symbolDescriptor: ClassDescriptor,
             resolutionFacade: ResolutionFacade

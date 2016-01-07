@@ -77,7 +77,7 @@ import org.jetbrains.kotlin.utils.toReadOnlyList
 import java.util.*
 import com.intellij.debugger.engine.DebuggerUtils as JDebuggerUtils
 
-public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiRequestPositionManager, PositionManagerEx() {
+class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiRequestPositionManager, PositionManagerEx() {
 
     private val myTypeMappers = WeakHashMap<String, CachedValue<JetTypeMapper>>()
 
@@ -281,7 +281,7 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
         }
     }
 
-    public fun classNamesForPosition(sourcePosition: SourcePosition): Collection<String> {
+    fun classNamesForPosition(sourcePosition: SourcePosition): Collection<String> {
         val psiElement = runReadAction { sourcePosition.elementAt } ?: return emptyList()
         return classNamesForPosition(psiElement)
     }
@@ -350,8 +350,7 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
         }
     }
 
-    @TestOnly
-    public fun addTypeMapper(file: KtFile, typeMapper: JetTypeMapper) {
+    @TestOnly fun addTypeMapper(file: KtFile, typeMapper: JetTypeMapper) {
         val value = CachedValuesManager.getManager(file.project).createCachedValue<JetTypeMapper>(
                 { CachedValueProvider.Result(typeMapper, PsiModificationTracker.MODIFICATION_COUNT) }, false)
         val key = createKeyForTypeMapper(file)
@@ -442,7 +441,7 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
         return PsiTreeUtil.getParentOfType(notPositionedElement, *TYPES_TO_CALCULATE_CLASSNAME)
     }
 
-    public fun getJvmInternalNameForPropertyOwner(typeMapper: JetTypeMapper, descriptor: PropertyDescriptor): String {
+    fun getJvmInternalNameForPropertyOwner(typeMapper: JetTypeMapper, descriptor: PropertyDescriptor): String {
         return typeMapper.mapOwner(
                 if (JvmAbi.isPropertyWithBackingFieldInOuterClass(descriptor)) descriptor.containingDeclaration else descriptor
         ).internalName
@@ -475,7 +474,7 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
         return state.typeMapper
     }
 
-    public fun isInlinedLambda(functionLiteral: KtFunction, context: BindingContext): Boolean {
+    fun isInlinedLambda(functionLiteral: KtFunction, context: BindingContext): Boolean {
         return InlineUtil.isInlinedArgument(functionLiteral, context, false)
     }
 
@@ -585,7 +584,7 @@ public class KotlinPositionManager(private val myDebugProcess: DebugProcess) : M
     private fun String?.toSet() = if (this == null) emptySet() else setOf(this)
 
     companion object {
-        public fun createTypeMapper(file: KtFile): JetTypeMapper {
+        fun createTypeMapper(file: KtFile): JetTypeMapper {
             val project = file.project
 
             val analysisResult = file.analyzeFullyAndGetResult()

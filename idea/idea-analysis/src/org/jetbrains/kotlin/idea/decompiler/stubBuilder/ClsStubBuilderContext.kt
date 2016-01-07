@@ -59,7 +59,7 @@ class TypeParametersImpl(
         typeParameterProtos: Collection<ProtoBuf.TypeParameter>,
         private val parent: TypeParameters
 ) : TypeParameters {
-    private val typeParametersById = typeParameterProtos.map { Pair(it.getId(), nameResolver.getName(it.getName())) }.toMap()
+    private val typeParametersById = typeParameterProtos.map { Pair(it.id, nameResolver.getName(it.name)) }.toMap()
 
     override fun get(id: Int): Name = typeParametersById[id] ?: parent[id]
 }

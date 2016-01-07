@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.utils.addToStdlib.check
 
 object BranchedFoldingUtils {
-    public fun getFoldableBranchedAssignment(branch: KtExpression?): KtBinaryExpression? {
+    fun getFoldableBranchedAssignment(branch: KtExpression?): KtBinaryExpression? {
         fun checkAssignment(expression: KtBinaryExpression): Boolean {
             if (expression.operationToken !in KtTokens.ALL_ASSIGNMENTS) return false
 
@@ -39,11 +39,11 @@ object BranchedFoldingUtils {
         return (branch?.lastBlockStatementOrThis() as? KtBinaryExpression)?.check(::checkAssignment)
     }
 
-    public fun getFoldableBranchedReturn(branch: KtExpression?): KtReturnExpression? {
+    fun getFoldableBranchedReturn(branch: KtExpression?): KtReturnExpression? {
         return (branch?.lastBlockStatementOrThis() as? KtReturnExpression)?.check { it.returnedExpression != null }
     }
 
-    public fun checkAssignmentsMatch(a1: KtBinaryExpression, a2: KtBinaryExpression): Boolean {
+    fun checkAssignmentsMatch(a1: KtBinaryExpression, a2: KtBinaryExpression): Boolean {
         return a1.left?.text == a2.left?.text && a1.operationToken == a2.operationToken
     }
 }

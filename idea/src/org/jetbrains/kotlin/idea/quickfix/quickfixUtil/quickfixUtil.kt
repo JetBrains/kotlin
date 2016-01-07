@@ -36,7 +36,7 @@ fun createIntentionFactory(
     override fun createAction(diagnostic: Diagnostic) = factory(diagnostic)
 }
 
-public fun KtPrimaryConstructor.addConstructorKeyword(): PsiElement? {
+fun KtPrimaryConstructor.addConstructorKeyword(): PsiElement? {
     val keyword = KtPsiFactory(this).createConstructorKeyword()
     return addAfter(keyword, modifierList ?: return null)
 }

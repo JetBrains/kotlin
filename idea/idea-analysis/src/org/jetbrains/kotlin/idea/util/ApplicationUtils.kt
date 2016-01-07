@@ -21,23 +21,23 @@ import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 
-public fun <T> runReadAction(action: () -> T): T {
+fun <T> runReadAction(action: () -> T): T {
     return ApplicationManager.getApplication().runReadAction<T>(action)
 }
 
-public fun <T> runWriteAction(action: () -> T): T {
+fun <T> runWriteAction(action: () -> T): T {
     return ApplicationManager.getApplication().runWriteAction<T>(action)
 }
 
-public fun Project.executeWriteCommand(name: String, command: () -> Unit) {
+fun Project.executeWriteCommand(name: String, command: () -> Unit) {
     CommandProcessor.getInstance().executeCommand(this, { runWriteAction(command) }, name, null)
 }
 
-public fun <T> Project.executeWriteCommand(name: String, groupId: Any? = null, command: () -> T): T {
+fun <T> Project.executeWriteCommand(name: String, groupId: Any? = null, command: () -> T): T {
     return executeCommand<T>(name, groupId) { runWriteAction(command) }
 }
 
-public fun <T> Project.executeCommand(name: String, groupId: Any? = null, command: () -> T): T {
+fun <T> Project.executeCommand(name: String, groupId: Any? = null, command: () -> T): T {
     var result: T = null as T
     CommandProcessor.getInstance().executeCommand(this, { result = command() }, name, groupId)
     @Suppress("USELESS_CAST")

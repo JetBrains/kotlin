@@ -22,14 +22,14 @@ import com.intellij.psi.PsiElement
 
 //NOTE: should be moved to some "util" place
 
-public val TextRange.start: Int
-    get() = getStartOffset()
+val TextRange.start: Int
+    get() = startOffset
 
-public val TextRange.end: Int
-    get() = getEndOffset()
+val TextRange.end: Int
+    get() = endOffset
 
-public val PsiElement.range: TextRange
-    get() = getTextRange()!!
+val PsiElement.range: TextRange
+    get() = textRange!!
 
-public val RangeMarker.range: TextRange?
-    get() = if (isValid()) TextRange(getStartOffset(), getEndOffset()) else null
+val RangeMarker.range: TextRange?
+    get() = if (isValid) TextRange(startOffset, endOffset) else null

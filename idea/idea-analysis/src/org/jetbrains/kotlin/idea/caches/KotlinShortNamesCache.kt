@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import java.util.*
 
-public class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache() {
+class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache() {
     /**
      * Return kotlin class names from project sources which should be visible from java.
      */
@@ -80,7 +80,7 @@ public class KotlinShortNamesCache(private val project: Project) : PsiShortNames
     }
 
     override fun getAllClassNames(dest: HashSet<String>) {
-        dest.addAll(getAllClassNames())
+        dest.addAll(allClassNames)
     }
 
     override fun getMethodsByName(name: String, scope: GlobalSearchScope): Array<PsiMethod>

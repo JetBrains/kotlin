@@ -37,19 +37,19 @@ import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
-public class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfiguration>(JUnitConfigurationType.getInstance()) {
+class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUnitConfiguration>(JUnitConfigurationType.getInstance()) {
     override fun isConfigurationFromContext(configuration: JUnitConfiguration,
                                             context: ConfigurationContext): Boolean {
         if (RunConfigurationProducer.getInstance(PatternConfigurationProducer::class.java).isMultipleElementsSelected(context)) {
             return false
         }
 
-        val leaf = context.getLocation()?.getPsiElement() ?: return false
+        val leaf = context.location?.psiElement ?: return false
         val methodLocation = getTestMethodLocation(leaf)
         val testClass = getTestClass(leaf)
-        val testObject = configuration.getTestObject()
+        val testObject = configuration.testObject
 
-        if (!testObject.isConfiguredByElement(configuration, testClass, methodLocation?.getPsiElement(), null, null)) {
+        if (!testObject.isConfiguredByElement(configuration, testClass, methodLocation?.psiElement, null, null)) {
             return false
         }
 
@@ -60,32 +60,32 @@ public class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUni
     private fun settingsMatchTemplate(configuration: JUnitConfiguration, context: ConfigurationContext): Boolean {
         val predefinedConfiguration = context.getOriginalConfiguration(JUnitConfigurationType.getInstance())
 
-        val vmParameters = (predefinedConfiguration as? CommonJavaRunConfigurationParameters)?.getVMParameters()
-        if (vmParameters != null && configuration.getVMParameters() != vmParameters) return false
+        val vmParameters = (predefinedConfiguration as? CommonJavaRunConfigurationParameters)?.vmParameters
+        if (vmParameters != null && configuration.vmParameters != vmParameters) return false
 
-        val template = RunManager.getInstance(configuration.getProject()).getConfigurationTemplate(getConfigurationFactory())
-        val predefinedModule = (template.getConfiguration() as ModuleBasedConfiguration<*>).getConfigurationModule().getModule()
-        val configurationModule = configuration.getConfigurationModule().getModule()
-        return configurationModule == context.getLocation()?.getModule() || configurationModule == predefinedModule
+        val template = RunManager.getInstance(configuration.project).getConfigurationTemplate(configurationFactory)
+        val predefinedModule = (template.configuration as ModuleBasedConfiguration<*>).configurationModule.module
+        val configurationModule = configuration.configurationModule.module
+        return configurationModule == context.location?.module || configurationModule == predefinedModule
     }
 
     override fun setupConfigurationFromContext(configuration: JUnitConfiguration,
                                                context: ConfigurationContext,
                                                sourceElement: Ref<PsiElement>): Boolean {
-        if (DumbService.getInstance(context.getProject()).isDumb()) return false
+        if (DumbService.getInstance(context.project).isDumb) return false
 
-        val location = context.getLocation() ?: return false
-        val leaf = location.getPsiElement()
+        val location = context.location ?: return false
+        val leaf = location.psiElement
 
         if (!ProjectRootsUtil.isInProjectOrLibSource(leaf)) {
             return false
         }
 
-        if (leaf.getContainingFile() !is KtFile) {
+        if (leaf.containingFile !is KtFile) {
             return false
         }
 
-        val jetFile = leaf.getContainingFile() as KtFile
+        val jetFile = leaf.containingFile as KtFile
 
         if (ProjectStructureUtil.isJsKotlinModule(jetFile)) {
             return false
@@ -93,7 +93,7 @@ public class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUni
 
         val methodLocation = getTestMethodLocation(leaf)
         if (methodLocation != null) {
-            val originalModule = configuration.getConfigurationModule().getModule()
+            val originalModule = configuration.configurationModule.module
             configuration.beMethodConfiguration(methodLocation)
             configuration.restoreOriginalModule(originalModule)
             JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, location)
@@ -102,7 +102,7 @@ public class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUni
 
         val testClass = getTestClass(leaf)
         if (testClass != null) {
-            val originalModule = configuration.getConfigurationModule().getModule()
+            val originalModule = configuration.configurationModule.module
             configuration.beClassConfiguration(testClass)
             configuration.restoreOriginalModule(originalModule)
             JavaRunConfigurationExtensionManager.getInstance().extendCreatedConfiguration(configuration, location)
@@ -138,7 +138,7 @@ public class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUni
 
         if (owner is KtClass) {
             val delegate = LightClassUtil.getPsiClass(owner) ?: return null
-            val method = delegate.getMethods().firstOrNull() { it.getNavigationElement() == function } ?: return null
+            val method = delegate.methods.firstOrNull() { it.navigationElement == function } ?: return null
             val methodLocation = PsiLocation.fromPsiElement(method)
             if (JUnitUtil.isTestMethod(methodLocation, false)) {
                 return methodLocation
@@ -148,7 +148,7 @@ public class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUni
     }
 
     private fun getTestClass(leaf: PsiElement): PsiClass? {
-        val containingFile = leaf.getContainingFile() as? KtFile ?: return null
+        val containingFile = leaf.containingFile as? KtFile ?: return null
         var jetClass = leaf.getParentOfType<KtClass>(false)
         if (!jetClass.isJUnitTestClass()) {
             jetClass = getTestClassInFile(containingFile)
@@ -163,5 +163,5 @@ public class KotlinJUnitRunConfigurationProducer : RunConfigurationProducer<JUni
             LightClassUtil.getPsiClass(this)?.let { JUnitUtil.isTestClass(it, false, true) } ?: false
 
     private fun getTestClassInFile(jetFile: KtFile) =
-            jetFile.getDeclarations().filterIsInstance<KtClass>().singleOrNull { it.isJUnitTestClass() }
+            jetFile.declarations.filterIsInstance<KtClass>().singleOrNull { it.isJUnitTestClass() }
 }

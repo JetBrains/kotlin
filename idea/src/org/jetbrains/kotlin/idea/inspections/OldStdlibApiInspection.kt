@@ -72,7 +72,7 @@ class OldStdlibApiInspection : AbstractKotlinInspection(), CleanupLocalInspectio
     }
 }
 
-public class OldStdlibApiFix(val newElementCallback: (Project, GlobalSearchScope) -> PsiElement?) : LocalQuickFix {
+class OldStdlibApiFix(val newElementCallback: (Project, GlobalSearchScope) -> PsiElement?) : LocalQuickFix {
     override fun getName(): String = "Replace with new qualified name"
     override fun getFamilyName(): String = name
 

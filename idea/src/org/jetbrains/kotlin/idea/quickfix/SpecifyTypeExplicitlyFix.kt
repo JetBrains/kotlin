@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
 
-public class SpecifyTypeExplicitlyFix : PsiElementBaseIntentionAction() {
+class SpecifyTypeExplicitlyFix : PsiElementBaseIntentionAction() {
     override fun getFamilyName() = "Specify type explicitly"
 
     override fun invoke(project: Project, editor: Editor, element: PsiElement) {

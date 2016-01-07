@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.util.findCallableMemberBySignature
 import org.jetbrains.kotlin.utils.keysToMap
 import java.util.ArrayList
 
-public class KotlinPushDownContext(
+class KotlinPushDownContext(
         val sourceClass: KtClass,
         val membersToMove: List<KotlinMemberInfo>
 ) {
@@ -64,7 +64,7 @@ public class KotlinPushDownContext(
             .keysToMap { sourceClassContext[BindingContext.DECLARATION_TO_DESCRIPTOR, it]!! }
 }
 
-public class KotlinPushDownProcessor(
+class KotlinPushDownProcessor(
         project: Project,
         sourceClass: KtClass,
         membersToMove: List<KotlinMemberInfo>

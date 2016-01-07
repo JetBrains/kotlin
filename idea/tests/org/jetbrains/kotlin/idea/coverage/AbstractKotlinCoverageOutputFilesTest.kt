@@ -25,14 +25,14 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 
-public abstract class AbstractKotlinCoverageOutputFilesTest(): KotlinLightCodeInsightFixtureTestCase() {
+abstract class AbstractKotlinCoverageOutputFilesTest(): KotlinLightCodeInsightFixtureTestCase() {
     private val TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/coverage/outputFiles"
 
     override fun getTestDataPath(): String? = TEST_DATA_PATH
 
-    public fun doTest(path: String) {
+    fun doTest(path: String) {
         val kotlinFile = myFixture.configureByFile(path) as KtFile
-        val outDir = myFixture.getTempDirFixture().findOrCreateDir("coverageTestOut")
+        val outDir = myFixture.tempDirFixture.findOrCreateDir("coverageTestOut")
         try {
             FileUtil.loadLines(File(path.replace(".kt", ".classes.txt"))).forEach {
                 runWriteAction {

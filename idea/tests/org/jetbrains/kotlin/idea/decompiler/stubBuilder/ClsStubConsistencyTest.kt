@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-public class ClsStubConsistencyTest : StubConsistencyBaseTest() {
-    override fun getVirtualFileFinder(): VirtualFileFinder = JvmVirtualFileFinder.SERVICE.getInstance(getProject())
+class ClsStubConsistencyTest : StubConsistencyBaseTest() {
+    override fun getVirtualFileFinder(): VirtualFileFinder = JvmVirtualFileFinder.SERVICE.getInstance(project)
     override fun getFileIds(): List<ClassId> = listOf(ClassId.topLevel(FqName("kotlin.collections.CollectionsKt")))
 
     override fun createStubBuilder() = KotlinClsStubBuilder()

@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
-public class RedundantSamConstructorInspection : AbstractKotlinInspection() {
+class RedundantSamConstructorInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
         return object : KtVisitorVoid() {
             private fun createQuickFix(expression: KtCallExpression): LocalQuickFix {
@@ -106,7 +106,7 @@ public class RedundantSamConstructorInspection : AbstractKotlinInspection() {
     }
 
     companion  object {
-        public fun replaceSamConstructorCall(callExpression: KtCallExpression): KtExpression {
+        fun replaceSamConstructorCall(callExpression: KtCallExpression): KtExpression {
             val functionalArgument = callExpression.samConstructorValueArgument()?.getArgumentExpression()
                                      ?: throw AssertionError("SAM-constructor should have a FunctionLiteralExpression as single argument: ${callExpression.getElementTextWithContext()}")
             return callExpression.getQualifiedExpressionForSelectorOrThis().replace(functionalArgument) as KtExpression
@@ -150,7 +150,7 @@ public class RedundantSamConstructorInspection : AbstractKotlinInspection() {
             override fun getValueArguments() = newArguments
         }
 
-        public fun samConstructorCallsToBeConverted(functionCall: KtCallExpression): List<KtCallExpression> {
+        fun samConstructorCallsToBeConverted(functionCall: KtCallExpression): List<KtCallExpression> {
             return samConstructorArgumentsToBeConverted(functionCall).map { it.toCallExpression()!! }
         }
 

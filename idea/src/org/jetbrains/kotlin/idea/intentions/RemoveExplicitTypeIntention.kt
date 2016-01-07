@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.psi.*
 
-public class RemoveExplicitTypeIntention : SelfTargetingIntention<KtCallableDeclaration>(KtCallableDeclaration::class.java, "Remove explicit type specification") {
+class RemoveExplicitTypeIntention : SelfTargetingIntention<KtCallableDeclaration>(KtCallableDeclaration::class.java, "Remove explicit type specification") {
     override fun isApplicableTo(element: KtCallableDeclaration, caretOffset: Int): Boolean {
         if (element.containingFile is KtCodeFragment) return false
         if (element.typeReference == null) return false

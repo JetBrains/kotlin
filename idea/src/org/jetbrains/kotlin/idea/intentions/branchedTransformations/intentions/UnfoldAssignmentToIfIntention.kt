@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.KtIfExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-public class UnfoldAssignmentToIfIntention : SelfTargetingRangeIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Replace assignment with 'if' expression"), LowPriorityAction {
+class UnfoldAssignmentToIfIntention : SelfTargetingRangeIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Replace assignment with 'if' expression"), LowPriorityAction {
     override fun applicabilityRange(element: KtBinaryExpression): TextRange? {
         if (element.operationToken !in KtTokens.ALL_ASSIGNMENTS) return null
         if (element.left == null) return null

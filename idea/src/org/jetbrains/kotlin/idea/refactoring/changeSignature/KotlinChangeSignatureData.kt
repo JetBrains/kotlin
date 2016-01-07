@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.utils.findVariable
 import java.util.*
 
-public class KotlinChangeSignatureData(
+class KotlinChangeSignatureData(
         override val baseDescriptor: CallableDescriptor,
         override val baseDeclaration: PsiElement,
         private val descriptorsForSignatureChange: Collection<CallableDescriptor>

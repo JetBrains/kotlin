@@ -107,36 +107,36 @@ fun createKotlinFile(fileName: String,
     return targetDir.add(file) as KtFile
 }
 
-public fun File.toVirtualFile(): VirtualFile? = LocalFileSystem.getInstance().findFileByIoFile(this)
+fun File.toVirtualFile(): VirtualFile? = LocalFileSystem.getInstance().findFileByIoFile(this)
 
-public fun File.toPsiFile(project: Project): PsiFile? = toVirtualFile()?.toPsiFile(project)
+fun File.toPsiFile(project: Project): PsiFile? = toVirtualFile()?.toPsiFile(project)
 
-public fun File.toPsiDirectory(project: Project): PsiDirectory? {
+fun File.toPsiDirectory(project: Project): PsiDirectory? {
     return toVirtualFile()?.let { vfile -> PsiManager.getInstance(project).findDirectory(vfile) }
 }
 
-public fun VirtualFile.toPsiFile(project: Project): PsiFile? = PsiManager.getInstance(project).findFile(this)
+fun VirtualFile.toPsiFile(project: Project): PsiFile? = PsiManager.getInstance(project).findFile(this)
 
-public fun VirtualFile.toPsiDirectory(project: Project): PsiDirectory? = PsiManager.getInstance(project).findDirectory(this)
+fun VirtualFile.toPsiDirectory(project: Project): PsiDirectory? = PsiManager.getInstance(project).findDirectory(this)
 
-public fun PsiElement.getUsageContext(): PsiElement {
+fun PsiElement.getUsageContext(): PsiElement {
     return when (this) {
         is KtElement -> PsiTreeUtil.getParentOfType(this, KtNamedDeclaration::class.java, KtFile::class.java)!!
         else -> ConflictsUtil.getContainer(this)
     }
 }
 
-public fun PsiElement.isInJavaSourceRoot(): Boolean =
+fun PsiElement.isInJavaSourceRoot(): Boolean =
         !JavaProjectRootsUtil.isOutsideJavaSourceRoot(containingFile)
 
-public fun KtFile.createTempCopy(text: String? = null): KtFile {
+fun KtFile.createTempCopy(text: String? = null): KtFile {
     val tmpFile = KtPsiFactory(this).createAnalyzableFile(name, text ?: this.text ?: "", this)
     tmpFile.originalFile = this
     tmpFile.suppressDiagnosticsInDebugMode = suppressDiagnosticsInDebugMode
     return tmpFile
 }
 
-public fun PsiElement.getAllExtractionContainers(strict: Boolean = true): List<KtElement> {
+fun PsiElement.getAllExtractionContainers(strict: Boolean = true): List<KtElement> {
     val containers = ArrayList<KtElement>()
 
     var objectFound = false
@@ -158,7 +158,7 @@ public fun PsiElement.getAllExtractionContainers(strict: Boolean = true): List<K
     return containers
 }
 
-public fun PsiElement.getExtractionContainers(strict: Boolean = true, includeAll: Boolean = false): List<KtElement> {
+fun PsiElement.getExtractionContainers(strict: Boolean = true, includeAll: Boolean = false): List<KtElement> {
     fun getEnclosingDeclaration(element: PsiElement, strict: Boolean): PsiElement? {
         return (if (strict) element.parents else element.parentsWithSelf)
                 .filter {
@@ -190,7 +190,7 @@ public fun PsiElement.getExtractionContainers(strict: Boolean = true, includeAll
     }
 }
 
-public fun Project.checkConflictsInteractively(
+fun Project.checkConflictsInteractively(
         conflicts: MultiMap<PsiElement, String>,
         onShowConflicts: () -> Unit = {},
         onAccept: () -> Unit) {
@@ -210,7 +210,7 @@ public fun Project.checkConflictsInteractively(
     onAccept()
 }
 
-public fun reportDeclarationConflict(
+fun reportDeclarationConflict(
         conflicts: MultiMap<PsiElement, String>,
         declaration: PsiElement,
         message: (renderedDeclaration: String) -> String
@@ -218,7 +218,7 @@ public fun reportDeclarationConflict(
     conflicts.putValue(declaration, message(RefactoringUIUtil.getDescription(declaration, true).capitalize()))
 }
 
-public fun <T, E: PsiElement> getPsiElementPopup(
+fun <T, E: PsiElement> getPsiElementPopup(
         editor: Editor,
         elements: List<T>,
         renderer: PsiElementListCellRenderer<E>,
@@ -257,7 +257,7 @@ public fun <T, E: PsiElement> getPsiElementPopup(
     }
 }
 
-public class SelectionAwareScopeHighlighter(val editor: Editor) {
+class SelectionAwareScopeHighlighter(val editor: Editor) {
     private val highlighters = ArrayList<RangeHighlighter>()
 
     private fun addHighlighter(r: TextRange, attr: TextAttributes) {
@@ -272,7 +272,7 @@ public class SelectionAwareScopeHighlighter(val editor: Editor) {
         )
     }
 
-    public fun highlight(wholeAffected: PsiElement) {
+    fun highlight(wholeAffected: PsiElement) {
         dropHighlight()
 
         val attributes = EditorColorsManager.getInstance().globalScheme.getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES)!!
@@ -282,7 +282,7 @@ public class SelectionAwareScopeHighlighter(val editor: Editor) {
         }
     }
 
-    public fun dropHighlight() {
+    fun dropHighlight() {
         highlighters.forEach { it.dispose() }
         highlighters.clear()
     }
@@ -324,7 +324,7 @@ fun PsiElement.getLineCount(): Int {
 
 fun PsiElement.isMultiLine(): Boolean = getLineCount() > 1
 
-public fun KtElement.getContextForContainingDeclarationBody(): BindingContext? {
+fun KtElement.getContextForContainingDeclarationBody(): BindingContext? {
     val enclosingDeclaration = getStrictParentOfType<KtDeclaration>()
     val bodyElement = when (enclosingDeclaration) {
         is KtDeclarationWithBody -> enclosingDeclaration.bodyExpression
@@ -341,7 +341,7 @@ public fun KtElement.getContextForContainingDeclarationBody(): BindingContext? {
     return bodyElement?.let { it.analyze() }
 }
 
-public fun <T> chooseContainerElement(
+fun <T> chooseContainerElement(
         containers: List<T>,
         editor: Editor,
         title: String,
@@ -414,7 +414,7 @@ public fun <T> chooseContainerElement(
     ).showInBestPositionFor(editor)
 }
 
-public fun <T> chooseContainerElementIfNecessary(
+fun <T> chooseContainerElementIfNecessary(
         containers: List<T>,
         editor: Editor,
         title: String,
@@ -429,9 +429,9 @@ public fun <T> chooseContainerElementIfNecessary(
     }
 }
 
-public fun PsiElement.isTrueJavaMethod(): Boolean = this is PsiMethod && this !is KtLightMethod
+fun PsiElement.isTrueJavaMethod(): Boolean = this is PsiMethod && this !is KtLightMethod
 
-public fun PsiElement.canRefactor(): Boolean {
+fun PsiElement.canRefactor(): Boolean {
     return when {
         this is PsiPackage ->
             directories.any { it.canRefactor() }
@@ -483,13 +483,13 @@ private fun <T> copyTypeParameters(
     }
 }
 
-public fun createJavaMethod(function: KtFunction, targetClass: PsiClass): PsiMethod {
+fun createJavaMethod(function: KtFunction, targetClass: PsiClass): PsiMethod {
     val template = LightClassUtil.getLightClassMethod(function)
                    ?: throw AssertionError("Can't generate light method: ${function.getElementTextWithContext()}")
     return createJavaMethod(template, targetClass)
 }
 
-public fun createJavaMethod(template: PsiMethod, targetClass: PsiClass): PsiMethod {
+fun createJavaMethod(template: PsiMethod, targetClass: PsiClass): PsiMethod {
     val factory = PsiElementFactory.SERVICE.getInstance(template.project)
     val methodToAdd = if (template.isConstructor) {
         factory.createConstructor(template.name)
@@ -634,7 +634,7 @@ fun PsiMember.j2k(): KtNamedDeclaration? {
     return KtPsiFactory(project).createDeclaration(text)
 }
 
-public fun (() -> Any).runRefactoringWithPostprocessing(
+fun (() -> Any).runRefactoringWithPostprocessing(
         project: Project,
         targetRefactoringId: String,
         finishAction: () -> Unit
@@ -668,8 +668,7 @@ public fun (() -> Any).runRefactoringWithPostprocessing(
     this()
 }
 
-@Throws(ConfigurationException::class)
-public fun KtElement?.validateElement(errorMessage: String) {
+@Throws(ConfigurationException::class) fun KtElement?.validateElement(errorMessage: String) {
     if (this == null) throw ConfigurationException(errorMessage)
 
     try {
@@ -680,13 +679,13 @@ public fun KtElement?.validateElement(errorMessage: String) {
     }
 }
 
-public fun <T : Any> Project.runSynchronouslyWithProgress(progressTitle: String, canBeCanceled: Boolean, action: () -> T): T? {
+fun <T : Any> Project.runSynchronouslyWithProgress(progressTitle: String, canBeCanceled: Boolean, action: () -> T): T? {
     var result: T? = null
     ProgressManager.getInstance().runProcessWithProgressSynchronously({ result = action() }, progressTitle, canBeCanceled, this)
     return result
 }
 
-public fun invokeOnceOnCommandFinish(action: () -> Unit) {
+fun invokeOnceOnCommandFinish(action: () -> Unit) {
     val commandProcessor = CommandProcessor.getInstance()
     val listener = object: CommandAdapter() {
         override fun beforeCommandFinished(event: CommandEvent?) {
@@ -697,9 +696,9 @@ public fun invokeOnceOnCommandFinish(action: () -> Unit) {
     commandProcessor.addCommandListener(listener)
 }
 
-public fun String.quoteIfNeeded(): String = if (KotlinNameSuggester.isIdentifier(this)) this else "`$this`"
+fun String.quoteIfNeeded(): String = if (KotlinNameSuggester.isIdentifier(this)) this else "`$this`"
 
-public fun FqNameUnsafe.hasIdentifiersOnly(): Boolean = pathSegments().all { KotlinNameSuggester.isIdentifier(it.asString()) }
+fun FqNameUnsafe.hasIdentifiersOnly(): Boolean = pathSegments().all { KotlinNameSuggester.isIdentifier(it.asString()) }
 
 fun PsiNamedElement.isInterfaceClass(): Boolean = this is KtClass && isInterface() || this is PsiClass && isInterface
 

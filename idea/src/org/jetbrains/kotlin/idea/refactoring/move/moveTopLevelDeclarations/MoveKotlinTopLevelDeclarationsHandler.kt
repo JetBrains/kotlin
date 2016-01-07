@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.idea.refactoring.move.moveTopLevelDeclarations.ui.Mo
 import org.jetbrains.kotlin.psi.*
 import java.util.*
 
-public class MoveKotlinTopLevelDeclarationsHandler : MoveHandlerDelegate() {
+class MoveKotlinTopLevelDeclarationsHandler : MoveHandlerDelegate() {
     private fun getSourceDirectories(elements: Array<out PsiElement>) = elements.mapTo(LinkedHashSet()) { it.containingFile?.parent }
 
     private fun doMoveWithCheck(

@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.KtUnaryExpression
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
-public object CreateUnaryOperationActionFactory: CreateCallableMemberFromUsageFactory<KtUnaryExpression>() {
+object CreateUnaryOperationActionFactory: CreateCallableMemberFromUsageFactory<KtUnaryExpression>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): KtUnaryExpression? {
         return diagnostic.psiElement.parent as? KtUnaryExpression
     }

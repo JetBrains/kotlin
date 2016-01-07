@@ -22,16 +22,16 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtWhenExpression
 
-public class KotlinMissingWhenBodyFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
+class KotlinMissingWhenBodyFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, element: PsiElement) {
         if (element !is KtWhenExpression) return
 
-        val doc = editor.getDocument()
+        val doc = editor.document
 
-        val openBrace = element.getOpenBrace()
-        val closeBrace = element.getCloseBrace()
+        val openBrace = element.openBrace
+        val closeBrace = element.closeBrace
 
-        if (openBrace == null && closeBrace == null && element.getEntries().isEmpty()) {
+        if (openBrace == null && closeBrace == null && element.entries.isEmpty()) {
             val openBraceAfter = element.insertOpenBraceAfter()
             if (openBraceAfter != null) {
                 doc.insertString(openBraceAfter.range.end, "{}")
@@ -40,9 +40,9 @@ public class KotlinMissingWhenBodyFixer : SmartEnterProcessorWithFixers.Fixer<Ko
     }
 
     fun KtWhenExpression.insertOpenBraceAfter(): PsiElement? = when {
-        getRightParenthesis() != null -> getRightParenthesis()
-        getSubjectExpression() != null -> null
-        getLeftParenthesis() != null -> null
-        else -> getWhenKeyword()
+        rightParenthesis != null -> rightParenthesis
+        subjectExpression != null -> null
+        leftParenthesis != null -> null
+        else -> whenKeyword
     }
 }

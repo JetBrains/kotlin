@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import java.util.*
 
-public object KotlinJavaScriptAbiVersionIndex : KotlinAbiVersionIndexBase<KotlinJavaScriptAbiVersionIndex>(KotlinJavaScriptAbiVersionIndex::class.java) {
+object KotlinJavaScriptAbiVersionIndex : KotlinAbiVersionIndexBase<KotlinJavaScriptAbiVersionIndex>(KotlinJavaScriptAbiVersionIndex::class.java) {
 
     override fun getIndexer() = INDEXER
 

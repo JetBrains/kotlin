@@ -77,7 +77,7 @@ interface Mover: (KtNamedDeclaration, KtFile) -> KtNamedDeclaration {
     }
 }
 
-public class MoveKotlinTopLevelDeclarationsOptions(
+class MoveKotlinTopLevelDeclarationsOptions(
         val elementsToMove: Collection<KtNamedDeclaration>,
         val moveTarget: KotlinMoveTarget,
         val searchInCommentsAndStrings: Boolean = true,
@@ -87,7 +87,7 @@ public class MoveKotlinTopLevelDeclarationsOptions(
         val moveCallback: MoveCallback? = null
 )
 
-public class MoveKotlinTopLevelDeclarationsProcessor(
+class MoveKotlinTopLevelDeclarationsProcessor(
         val project: Project,
         val options: MoveKotlinTopLevelDeclarationsOptions,
         val mover: Mover = Mover.Default) : BaseRefactoringProcessor(project) {

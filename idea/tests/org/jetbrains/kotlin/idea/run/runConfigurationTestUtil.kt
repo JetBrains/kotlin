@@ -39,18 +39,18 @@ fun getJavaRunParameters(configuration: RunConfiguration): JavaParameters {
     Assert.assertTrue(state is JavaCommandLine)
 
     configuration.checkConfiguration()
-    return (state as JavaCommandLine).getJavaParameters()!!
+    return (state as JavaCommandLine).javaParameters!!
 }
 
 fun createConfigurationFromElement(element: PsiElement, save: Boolean = false): RunConfiguration {
     val dataContext = MapDataContext()
     dataContext.put(Location.DATA_KEY, PsiLocation(element.project, element))
 
-    val runnerAndConfigurationSettings = ConfigurationContext.getFromContext(dataContext).getConfiguration()
+    val runnerAndConfigurationSettings = ConfigurationContext.getFromContext(dataContext).configuration
     if (save) {
         RunManagerEx.getInstanceEx(element.project).setTemporaryConfiguration(runnerAndConfigurationSettings)
     }
-    return runnerAndConfigurationSettings!!.getConfiguration()
+    return runnerAndConfigurationSettings!!.configuration
 }
 
 

@@ -37,7 +37,7 @@ fun parse(line: String, reader: OutputLineReader, messages: MutableList<Any>, lo
     if (colonIndex2 >= 0) {
         val path = lineWoSeverity.substringBeforeAndTrim(colonIndex2)
         val file = File(path)
-        if (!file.isFile() && FileUtilRt.getExtension(file.getName()) != "kt") {
+        if (!file.isFile && FileUtilRt.getExtension(file.name) != "kt") {
             return addMessage(KotlinOutputParserHelper.createMessage(logger, severity, lineWoSeverity.amendNextLinesIfNeeded(reader)), messages)
         }
 
@@ -223,7 +223,7 @@ object KotlinOutputParserHelper {
                                else
                                     Class.forName("$packagePrefix.GradleMessage\$Kind")
 
-        val messageKindConstants = messageKindClass.getEnumConstants() as Array<Any>
+        val messageKindConstants = messageKindClass.enumConstants as Array<Any>
         for (kind in messageKindConstants) {
             when(kind.toString()) {
                 "ERROR" -> severityObjectMap.put("e", kind)

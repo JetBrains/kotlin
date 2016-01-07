@@ -39,7 +39,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.zip.ZipOutputStream
 
-public class CreateIncrementalCompilationBackup: AnAction("Create backup for debugging Kotlin incremental compilation") {
+class CreateIncrementalCompilationBackup: AnAction("Create backup for debugging Kotlin incremental compilation") {
     companion object {
         val BACKUP_DIR_NAME = ".backup"
         val PATCHES_TO_CREATE = 5
@@ -51,8 +51,8 @@ public class CreateIncrementalCompilationBackup: AnAction("Create backup for deb
     }
 
     override fun actionPerformed(e: AnActionEvent) {
-        val project = e.getProject()!!
-        val projectBaseDir = File(project.getBaseDir()!!.getPath())
+        val project = e.project!!
+        val projectBaseDir = File(project.baseDir!!.path)
         val backupDir = File(FileUtil.createTempDirectory("makeBackup", null), BACKUP_DIR_NAME)
 
         ProgressManager.getInstance().run(
@@ -71,24 +71,24 @@ public class CreateIncrementalCompilationBackup: AnAction("Create backup for deb
     private fun createPatches(backupDir: File, project: Project, indicator: ProgressIndicator) {
         runReadAction {
             val localHistoryImpl = LocalHistoryImpl.getInstanceImpl()!!
-            val gateway = localHistoryImpl.getGateway()!!
-            val localHistoryFacade = localHistoryImpl.getFacade()
+            val gateway = localHistoryImpl.gateway!!
+            val localHistoryFacade = localHistoryImpl.facade
 
-            val revisionsCollector = RevisionsCollector(localHistoryFacade, gateway.createTransientRootEntry(), project.getBaseDir()!!.getPath(), project.getLocationHash(), null)
+            val revisionsCollector = RevisionsCollector(localHistoryFacade, gateway.createTransientRootEntry(), project.baseDir!!.path, project.locationHash, null)
 
             var patchesCreated = 0
 
             val patchesDir = File(backupDir, "patches")
             patchesDir.mkdirs()
 
-            val revisions = revisionsCollector.getResult()!!
+            val revisions = revisionsCollector.result!!
             for (rev in revisions) {
-                val label = rev.getLabel()
+                val label = rev.label
                 if (label != null && label.startsWith(HISTORY_LABEL_PREFIX)) {
                     val patchFile = File(patchesDir, label.removePrefix(HISTORY_LABEL_PREFIX) + ".patch")
 
-                    indicator.setText("Creating patch $patchFile")
-                    indicator.setFraction(PATCHES_FRACTION * patchesCreated / PATCHES_TO_CREATE)
+                    indicator.text = "Creating patch $patchFile"
+                    indicator.fraction = PATCHES_FRACTION * patchesCreated / PATCHES_TO_CREATE
 
                     val differences = revisions[0].getDifferencesWith(rev)!!
                     val changes = differences.map {
@@ -96,7 +96,7 @@ public class CreateIncrementalCompilationBackup: AnAction("Create backup for deb
                         Change(d.getLeftContentRevision(gateway), d.getRightContentRevision(gateway))
                     }
 
-                    PatchCreator.create(project, changes, patchFile.getPath(), false, null)
+                    PatchCreator.create(project, changes, patchFile.path, false, null)
 
                     if (++patchesCreated >= PATCHES_TO_CREATE) {
                         break
@@ -107,13 +107,13 @@ public class CreateIncrementalCompilationBackup: AnAction("Create backup for deb
     }
 
     private fun copyLogs(backupDir: File, indicator: ProgressIndicator) {
-        indicator.setText("Copying logs")
-        indicator.setFraction(PATCHES_FRACTION)
+        indicator.text = "Copying logs"
+        indicator.fraction = PATCHES_FRACTION
 
         val logsDir = File(backupDir, "logs")
         FileUtil.copyDir(File(PathManager.getLogPath()), logsDir)
 
-        indicator.setFraction(PATCHES_FRACTION + LOGS_FRACTION)
+        indicator.fraction = PATCHES_FRACTION + LOGS_FRACTION
     }
 
     private fun copyProjectSystemDir(backupDir: File, project: Project, indicator: ProgressIndicator) {
@@ -132,16 +132,16 @@ public class CreateIncrementalCompilationBackup: AnAction("Create backup for deb
         val files = ArrayList<Pair<File, String>>() // files and relative paths
         var totalBytes = 0L
 
-        for (dir in listOf(projectDir, backupDir.getParentFile()!!)) {
+        for (dir in listOf(projectDir, backupDir.parentFile!!)) {
             FileUtil.processFilesRecursively(
                     dir,
                     /*processor*/ {
-                        if (it!!.isFile()
-                            && !it.getName().endsWith(".hprof")
-                            && !(it.getName().startsWith("make_backup_") && it.getName().endsWith(".zip"))
+                        if (it!!.isFile
+                            && !it.name.endsWith(".hprof")
+                            && !(it.name.startsWith("make_backup_") && it.name.endsWith(".zip"))
                         ) {
 
-                            indicator.setText("Scanning project dir: $it")
+                            indicator.text = "Scanning project dir: $it"
 
                             files.add(Pair(it, FileUtil.getRelativePath(dir, it)!!))
                             totalBytes += it.length()
@@ -149,7 +149,7 @@ public class CreateIncrementalCompilationBackup: AnAction("Create backup for deb
                         true
                     },
                     /*directoryFilter*/ {
-                        val name = it!!.getName()
+                        val name = it!!.name
                         name != ".git" && name != "out"
                     }
             )
@@ -165,8 +165,8 @@ public class CreateIncrementalCompilationBackup: AnAction("Create backup for deb
 
         zos.use {
             for ((file, relativePath) in files) {
-                indicator.setText("Adding file to backup: $relativePath")
-                indicator.setFraction(PATCHES_FRACTION + LOGS_FRACTION + processedBytes.toDouble() / totalBytes * ZIP_FRACTION)
+                indicator.text = "Adding file to backup: $relativePath"
+                indicator.fraction = PATCHES_FRACTION + LOGS_FRACTION + processedBytes.toDouble() / totalBytes * ZIP_FRACTION
 
                 ZipUtil.addFileToZip(zos, file, relativePath, null, null)
 
@@ -179,7 +179,7 @@ public class CreateIncrementalCompilationBackup: AnAction("Create backup for deb
         WaitForProgressToShow.runOrInvokeLaterAboveProgress({
             ShowFilePathAction.showDialog(
                     project,
-                    "Successfully created backup " + backupFile.getAbsolutePath(),
+                    "Successfully created backup " + backupFile.absolutePath,
                     "Created backup",
                     backupFile,
                     null

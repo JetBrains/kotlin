@@ -35,8 +35,8 @@ class KotlinDecompiledFileViewProvider(
         private val factory: (KotlinDecompiledFileViewProvider) -> KtDecompiledFile?
 ) : SingleRootFileViewProvider(manager, file, physical, KotlinLanguage.INSTANCE) {
     val content : LockedClearableLazyValue<String> = LockedClearableLazyValue(Any()) {
-        val psiFile = createFile(manager.getProject(), file, KotlinFileType.INSTANCE)
-        val text = psiFile?.getText() ?: ""
+        val psiFile = createFile(manager.project, file, KotlinFileType.INSTANCE)
+        val text = psiFile?.text ?: ""
 
         DebugUtil.startPsiModification("Invalidating throw-away copy of file that was used for getting text")
         try {
@@ -53,7 +53,7 @@ class KotlinDecompiledFileViewProvider(
         return factory(this)
     }
 
-    override fun createCopy(copy: VirtualFile) = KotlinDecompiledFileViewProvider(getManager(), copy, false, factory)
+    override fun createCopy(copy: VirtualFile) = KotlinDecompiledFileViewProvider(manager, copy, false, factory)
 
     override fun getContents() = content.get()
 }

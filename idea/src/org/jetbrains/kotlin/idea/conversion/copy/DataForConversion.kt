@@ -134,8 +134,8 @@ data class DataForConversion private constructor(
         }
 
         private fun PsiElement.minimizedTextRange(): TextRange {
-            val firstChild = getFirstChild()?.siblings()?.firstOrNull { !canDropElementFromText(it) } ?: return range
-            val lastChild = getLastChild().siblings(forward = false).first { !canDropElementFromText(it) }
+            val firstChild = firstChild?.siblings()?.firstOrNull { !canDropElementFromText(it) } ?: return range
+            val lastChild = lastChild.siblings(forward = false).first { !canDropElementFromText(it) }
             return TextRange(firstChild.minimizedTextRange().start, lastChild.minimizedTextRange().end)
         }
 
@@ -145,7 +145,7 @@ data class DataForConversion private constructor(
                 is PsiWhiteSpace, is PsiComment, is PsiModifierList, is PsiAnnotation -> true
 
                 is PsiJavaToken -> {
-                    when (element.getTokenType()) {
+                    when (element.tokenType) {
                         // modifiers
                         JavaTokenType.PUBLIC_KEYWORD, JavaTokenType.PROTECTED_KEYWORD, JavaTokenType.PRIVATE_KEYWORD,
                         JavaTokenType.STATIC_KEYWORD, JavaTokenType.ABSTRACT_KEYWORD, JavaTokenType.FINAL_KEYWORD,
@@ -160,7 +160,7 @@ data class DataForConversion private constructor(
 
                 is PsiCodeBlock -> element.getParent() is PsiMethod
 
-                else -> element.getFirstChild() == null
+                else -> element.firstChild == null
             }
         }
 
@@ -170,7 +170,7 @@ data class DataForConversion private constructor(
         private fun tryClipRightSide(element: PsiElement, rightBound: Int): Int? {
             fun Int.transform() = Int.MAX_VALUE - this
             fun TextRange.transform() = TextRange(end.transform(), start.transform())
-            return tryClipSide(element, rightBound.transform(), { range.transform() }, { getLastChild().siblings(forward = false) })?.transform()
+            return tryClipSide(element, rightBound.transform(), { range.transform() }, { lastChild.siblings(forward = false) })?.transform()
         }
 
         private fun tryClipSide(
@@ -179,7 +179,7 @@ data class DataForConversion private constructor(
                 rangeFunction: PsiElement.() -> TextRange,
                 childrenFunction: PsiElement.() -> Sequence<PsiElement>
         ): Int? {
-            if (element.getFirstChild() == null) return null
+            if (element.firstChild == null) return null
 
             val elementRange = element.rangeFunction()
             assert(elementRange.start < rangeBound && rangeBound < elementRange.end)
@@ -227,22 +227,22 @@ data class DataForConversion private constructor(
 
         private fun buildImportsAndPackage(sourceFile: PsiJavaFile): String {
             return buildString {
-                val packageName = sourceFile.getPackageName()
+                val packageName = sourceFile.packageName
                 if (!packageName.isEmpty()) {
                     append("package $packageName\n")
                 }
 
-                val importList = sourceFile.getImportList()
+                val importList = sourceFile.importList
                 if (importList != null) {
-                    for (import in importList.getImportStatements()) {
-                        val qualifiedName = import.getQualifiedName() ?: continue
-                        if (import.isOnDemand()) {
+                    for (import in importList.importStatements) {
+                        val qualifiedName = import.qualifiedName ?: continue
+                        if (import.isOnDemand) {
                             append("import $qualifiedName.*\n")
                         }
                         else {
                             val fqName = FqNameUnsafe(qualifiedName)
                             // skip explicit imports of platform classes mapped into Kotlin classes
-                            if (fqName.isSafe() && JavaToKotlinClassMap.INSTANCE.mapPlatformClass(fqName.toSafe()).isNotEmpty()) continue
+                            if (fqName.isSafe && JavaToKotlinClassMap.INSTANCE.mapPlatformClass(fqName.toSafe()).isNotEmpty()) continue
                             append("import $qualifiedName\n")
                         }
                     }

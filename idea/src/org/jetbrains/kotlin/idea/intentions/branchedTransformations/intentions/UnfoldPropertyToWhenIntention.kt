@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-public class UnfoldPropertyToWhenIntention : SelfTargetingRangeIntention<KtProperty>(KtProperty::class.java, "Replace property initializer with 'when' expression"), LowPriorityAction {
+class UnfoldPropertyToWhenIntention : SelfTargetingRangeIntention<KtProperty>(KtProperty::class.java, "Replace property initializer with 'when' expression"), LowPriorityAction {
     override fun applicabilityRange(element: KtProperty): TextRange? {
         if (!element.isLocal) return null
         val initializer = element.initializer as? KtWhenExpression ?: return null

@@ -71,7 +71,7 @@ class ParameterNameAndTypeCompletion(
 
     private val suggestionsByTypesAdded = HashSet<Type>()
 
-    public fun addFromImportedClasses(position: PsiElement, bindingContext: BindingContext, visibilityFilter: (DeclarationDescriptor) -> Boolean) {
+    fun addFromImportedClasses(position: PsiElement, bindingContext: BindingContext, visibilityFilter: (DeclarationDescriptor) -> Boolean) {
         for ((classNameMatcher, userPrefix) in classNamePrefixMatchers.zip(userPrefixes)) {
             val resolutionScope = position.getResolutionScope(bindingContext, resolutionFacade)
             val classifiers = resolutionScope.collectDescriptorsFiltered(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS, classNameMatcher.asNameFilter())
@@ -86,10 +86,10 @@ class ParameterNameAndTypeCompletion(
         }
     }
 
-    public fun addFromAllClasses(parameters: CompletionParameters, indicesHelper: KotlinIndicesHelper) {
+    fun addFromAllClasses(parameters: CompletionParameters, indicesHelper: KotlinIndicesHelper) {
         for ((classNameMatcher, userPrefix) in classNamePrefixMatchers.zip(userPrefixes)) {
             AllClassesCompletion(
-                    parameters, indicesHelper, classNameMatcher, resolutionFacade, { !it.isSingleton() }
+                    parameters, indicesHelper, classNameMatcher, resolutionFacade, { !it.isSingleton }
             ).collect(
                     { addSuggestionsForClassifier(it, userPrefix, notImported = true) },
                     { addSuggestionsForJavaClass(it, userPrefix, notImported = true) }
@@ -99,18 +99,18 @@ class ParameterNameAndTypeCompletion(
         }
     }
 
-    public fun addFromParametersInFile(position: PsiElement, resolutionFacade: ResolutionFacade, visibilityFilter: (DeclarationDescriptor) -> Boolean) {
+    fun addFromParametersInFile(position: PsiElement, resolutionFacade: ResolutionFacade, visibilityFilter: (DeclarationDescriptor) -> Boolean) {
         val lookupElementToCount = LinkedHashMap<LookupElement, Int>()
-        position.getContainingFile().forEachDescendantOfType<KtParameter>(
+        position.containingFile.forEachDescendantOfType<KtParameter>(
                 canGoInside = { it !is KtExpression || it is KtDeclaration } // we analyze parameters inside bodies to not resolve too much
         ) { parameter ->
             ProgressManager.checkCanceled()
 
-            val name = parameter.getName()
+            val name = parameter.name
             if (name != null && prefixMatcher.isStartMatch(name)) {
                 val descriptor = resolutionFacade.analyze(parameter)[BindingContext.VALUE_PARAMETER, parameter]
                 if (descriptor != null) {
-                    val parameterType = descriptor.getType()
+                    val parameterType = descriptor.type
                     if (parameterType.isVisible(visibilityFilter)) {
                         val lookupElement = MyLookupElement.create(name, ArbitraryType(parameterType), lookupElementFactory)!!
                         val count = lookupElementToCount[lookupElement] ?: 0
@@ -127,11 +127,11 @@ class ParameterNameAndTypeCompletion(
     }
 
     private fun addSuggestionsForClassifier(classifier: DeclarationDescriptor, userPrefix: String, notImported: Boolean) {
-        addSuggestions(classifier.getName().asString(), userPrefix, DescriptorType(classifier as ClassifierDescriptor), notImported)
+        addSuggestions(classifier.name.asString(), userPrefix, DescriptorType(classifier as ClassifierDescriptor), notImported)
     }
 
     private fun addSuggestionsForJavaClass(psiClass: PsiClass, userPrefix: String, notImported: Boolean) {
-        addSuggestions(psiClass.getName()!!, userPrefix, JavaClassType(psiClass), notImported)
+        addSuggestions(psiClass.name!!, userPrefix, JavaClassType(psiClass), notImported)
     }
 
     private fun addSuggestions(className: String, userPrefix: String, type: Type, notImported: Boolean) {
@@ -153,9 +153,9 @@ class ParameterNameAndTypeCompletion(
     }
 
     private fun KotlinType.isVisible(visibilityFilter: (DeclarationDescriptor) -> Boolean): Boolean {
-        if (isError()) return false
-        val classifier = getConstructor().getDeclarationDescriptor() ?: return false
-        return visibilityFilter(classifier) && getArguments().all { it.isStarProjection || it.getType().isVisible(visibilityFilter) }
+        if (isError) return false
+        val classifier = constructor.declarationDescriptor ?: return false
+        return visibilityFilter(classifier) && arguments.all { it.isStarProjection || it.type.isVisible(visibilityFilter) }
     }
 
     private abstract class Type(private val idString: String) {
@@ -170,7 +170,7 @@ class ParameterNameAndTypeCompletion(
                 = lookupElementFactory.createLookupElement(classifier, qualifyNestedClasses = true)
     }
 
-    private class JavaClassType(private val psiClass: PsiClass) : Type(psiClass.getQualifiedName()!!) {
+    private class JavaClassType(private val psiClass: PsiClass) : Type(psiClass.qualifiedName!!) {
         override fun createTypeLookupElement(lookupElementFactory: BasicLookupElementFactory)
                 = lookupElementFactory.createLookupElementForJavaClass(psiClass, qualifyNestedClasses = true)
     }
@@ -202,19 +202,19 @@ class ParameterNameAndTypeCompletion(
 
         override fun renderElement(presentation: LookupElementPresentation) {
             super.renderElement(presentation)
-            presentation.setItemText(parameterName + ": " + presentation.getItemText())
+            presentation.itemText = parameterName + ": " + presentation.itemText
         }
 
         override fun handleInsert(context: InsertionContext) {
-            val settings = CodeStyleSettingsManager.getInstance(context.getProject()).getCurrentSettings().getCustomSettings(KotlinCodeStyleSettings::class.java)
+            val settings = CodeStyleSettingsManager.getInstance(context.project).currentSettings.getCustomSettings(KotlinCodeStyleSettings::class.java)
             val spaceBefore = if (settings.SPACE_BEFORE_TYPE_COLON) " " else ""
             val spaceAfter = if (settings.SPACE_AFTER_TYPE_COLON) " " else ""
             val text = parameterName + spaceBefore + ":" + spaceAfter
-            val startOffset = context.getStartOffset()
-            context.getDocument().insertString(startOffset, text)
+            val startOffset = context.startOffset
+            context.document.insertString(startOffset, text)
 
             // update start offset so that it does not include the text we inserted
-            context.getOffsetMap().addOffset(CompletionInitializationContext.START_OFFSET, startOffset + text.length)
+            context.offsetMap.addOffset(CompletionInitializationContext.START_OFFSET, startOffset + text.length)
 
             super.handleInsert(context)
         }

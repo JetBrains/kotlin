@@ -33,8 +33,8 @@ import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeSmart
 import java.util.*
 
-public object KotlinNameSuggester {
-    public fun suggestNamesByExpressionAndType(
+object KotlinNameSuggester {
+    fun suggestNamesByExpressionAndType(
             expression: KtExpression,
             type: KotlinType?,
             bindingContext: BindingContext?,
@@ -56,7 +56,7 @@ public object KotlinNameSuggester {
         return result
     }
 
-    public fun suggestNamesByType(type: KotlinType, validator: (String) -> Boolean, defaultName: String? = null): List<String> {
+    fun suggestNamesByType(type: KotlinType, validator: (String) -> Boolean, defaultName: String? = null): List<String> {
         val result = ArrayList<String>()
 
         result.addNamesByType(type, validator)
@@ -68,7 +68,7 @@ public object KotlinNameSuggester {
         return result
     }
 
-    public fun suggestNamesByExpressionOnly(
+    fun suggestNamesByExpressionOnly(
             expression: KtExpression,
             bindingContext: BindingContext?,
             validator: (String) -> Boolean, defaultName: String? = null): List<String> {
@@ -83,7 +83,7 @@ public object KotlinNameSuggester {
         return result
     }
 
-    public fun suggestIterationVariableNames(
+    fun suggestIterationVariableNames(
             collection: KtExpression,
             elementType: KotlinType,
             bindingContext: BindingContext?,
@@ -105,7 +105,7 @@ public object KotlinNameSuggester {
 
     private val COMMON_TYPE_PARAMETER_NAMES = listOf("T", "U", "V", "W", "X", "Y", "Z")
 
-    public fun suggestNamesForTypeParameters(count: Int, validator: (String) -> Boolean): List<String> {
+    fun suggestNamesForTypeParameters(count: Int, validator: (String) -> Boolean): List<String> {
         val result = ArrayList<String>()
         for (i in 0..count - 1) {
             result.add(suggestNameByMultipleNames(COMMON_TYPE_PARAMETER_NAMES, validator))
@@ -118,7 +118,7 @@ public object KotlinNameSuggester {
      * @param name to check it in scope
      * @return name or nameI, where I is number
      */
-    public fun suggestNameByName(name: String, validator: (String) -> Boolean): String {
+    fun suggestNameByName(name: String, validator: (String) -> Boolean): String {
         if (validator(name)) return name
         var i = 1
         while (!validator(name + i)) {
@@ -134,7 +134,7 @@ public object KotlinNameSuggester {
      * @param names to check it in scope
      * @return name or nameI, where name is one of variants and I is a number
      */
-    public fun suggestNameByMultipleNames(names: Collection<String>, validator: (String) -> Boolean): String {
+    fun suggestNameByMultipleNames(names: Collection<String>, validator: (String) -> Boolean): String {
         var i = 0
         while (true) {
             for (name in names) {
@@ -151,66 +151,66 @@ public object KotlinNameSuggester {
         val typeChecker = KotlinTypeChecker.DEFAULT
         if (ErrorUtils.containsErrorType(type)) return
 
-        if (typeChecker.equalTypes(builtIns.getBooleanType(), type)) {
+        if (typeChecker.equalTypes(builtIns.booleanType, type)) {
             addName("b", validator)
         }
-        else if (typeChecker.equalTypes(builtIns.getIntType(), type)) {
+        else if (typeChecker.equalTypes(builtIns.intType, type)) {
             addName("i", validator)
         }
-        else if (typeChecker.equalTypes(builtIns.getByteType(), type)) {
+        else if (typeChecker.equalTypes(builtIns.byteType, type)) {
             addName("byte", validator)
         }
-        else if (typeChecker.equalTypes(builtIns.getLongType(), type)) {
+        else if (typeChecker.equalTypes(builtIns.longType, type)) {
             addName("l", validator)
         }
-        else if (typeChecker.equalTypes(builtIns.getFloatType(), type)) {
+        else if (typeChecker.equalTypes(builtIns.floatType, type)) {
             addName("fl", validator)
         }
-        else if (typeChecker.equalTypes(builtIns.getDoubleType(), type)) {
+        else if (typeChecker.equalTypes(builtIns.doubleType, type)) {
             addName("d", validator)
         }
-        else if (typeChecker.equalTypes(builtIns.getShortType(), type)) {
+        else if (typeChecker.equalTypes(builtIns.shortType, type)) {
             addName("sh", validator)
         }
-        else if (typeChecker.equalTypes(builtIns.getCharType(), type)) {
+        else if (typeChecker.equalTypes(builtIns.charType, type)) {
             addName("c", validator)
         }
-        else if (typeChecker.equalTypes(builtIns.getStringType(), type)) {
+        else if (typeChecker.equalTypes(builtIns.stringType, type)) {
             addName("s", validator)
         }
         else if (KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type)) {
             val elementType = builtIns.getArrayElementType(type)
-            if (typeChecker.equalTypes(builtIns.getBooleanType(), elementType)) {
+            if (typeChecker.equalTypes(builtIns.booleanType, elementType)) {
                 addName("booleans", validator)
             }
-            else if (typeChecker.equalTypes(builtIns.getIntType(), elementType)) {
+            else if (typeChecker.equalTypes(builtIns.intType, elementType)) {
                 addName("ints", validator)
             }
-            else if (typeChecker.equalTypes(builtIns.getByteType(), elementType)) {
+            else if (typeChecker.equalTypes(builtIns.byteType, elementType)) {
                 addName("bytes", validator)
             }
-            else if (typeChecker.equalTypes(builtIns.getLongType(), elementType)) {
+            else if (typeChecker.equalTypes(builtIns.longType, elementType)) {
                 addName("longs", validator)
             }
-            else if (typeChecker.equalTypes(builtIns.getFloatType(), elementType)) {
+            else if (typeChecker.equalTypes(builtIns.floatType, elementType)) {
                 addName("floats", validator)
             }
-            else if (typeChecker.equalTypes(builtIns.getDoubleType(), elementType)) {
+            else if (typeChecker.equalTypes(builtIns.doubleType, elementType)) {
                 addName("doubles", validator)
             }
-            else if (typeChecker.equalTypes(builtIns.getShortType(), elementType)) {
+            else if (typeChecker.equalTypes(builtIns.shortType, elementType)) {
                 addName("shorts", validator)
             }
-            else if (typeChecker.equalTypes(builtIns.getCharType(), elementType)) {
+            else if (typeChecker.equalTypes(builtIns.charType, elementType)) {
                 addName("chars", validator)
             }
-            else if (typeChecker.equalTypes(builtIns.getStringType(), elementType)) {
+            else if (typeChecker.equalTypes(builtIns.stringType, elementType)) {
                 addName("strings", validator)
             }
             else {
                 val classDescriptor = TypeUtils.getClassDescriptor(elementType)
                 if (classDescriptor != null) {
-                    val className = classDescriptor.getName()
+                    val className = classDescriptor.name
                     addName("arrayOf" + StringUtil.capitalize(className.asString()) + "s", validator)
                 }
             }
@@ -219,10 +219,10 @@ public object KotlinNameSuggester {
             addName("function", validator)
         }
         else {
-            val descriptor = type.getConstructor().getDeclarationDescriptor()
+            val descriptor = type.constructor.declarationDescriptor
             if (descriptor != null) {
-                val className = descriptor.getName()
-                if (!className.isSpecial()) {
+                val className = descriptor.name
+                if (!className.isSpecial) {
                     addCamelNames(className.asString(), validator)
                 }
             }
@@ -231,7 +231,7 @@ public object KotlinNameSuggester {
 
     private val ACCESSOR_PREFIXES = arrayOf("get", "is", "set")
 
-    public fun getCamelNames(name: String, validator: (String) -> Boolean, startLowerCase: Boolean): List<String> {
+    fun getCamelNames(name: String, validator: (String) -> Boolean, startLowerCase: Boolean): List<String> {
         val result = ArrayList<String>()
         result.addCamelNames(name, validator, startLowerCase)
         return result
@@ -331,13 +331,13 @@ public object KotlinNameSuggester {
         add(suggestNameByName(correctedName, validator))
     }
 
-    public fun isIdentifier(name: String?): Boolean {
+    fun isIdentifier(name: String?): Boolean {
         if (name == null || name.isEmpty()) return false
 
         val lexer = KotlinLexer()
         lexer.start(name, 0, name.length)
-        if (lexer.getTokenType() !== KtTokens.IDENTIFIER) return false
+        if (lexer.tokenType !== KtTokens.IDENTIFIER) return false
         lexer.advance()
-        return lexer.getTokenType() == null
+        return lexer.tokenType == null
     }
 }

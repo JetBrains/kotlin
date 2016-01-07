@@ -84,7 +84,7 @@ internal class PerFileAnalysisCache(val file: KtFile, val componentProvider: Com
     }
 
     private fun analyze(analyzableElement: KtElement): AnalysisResult {
-        val project = analyzableElement.getProject()
+        val project = analyzableElement.project
         if (DumbService.isDumb(project)) {
             return AnalysisResult.EMPTY
         }
@@ -158,7 +158,7 @@ private object KotlinResolveDataProvider {
             }
 
             val resolveSession = componentProvider.get<ResolveSession>()
-            val trace = DelegatingBindingTrace(resolveSession.getBindingContext(), "Trace for resolution of " + analyzableElement)
+            val trace = DelegatingBindingTrace(resolveSession.bindingContext, "Trace for resolution of " + analyzableElement)
 
             val targetPlatform = TargetPlatformDetector.getPlatform(analyzableElement.getContainingKtFile())
 
@@ -176,7 +176,7 @@ private object KotlinResolveDataProvider {
                     listOf(analyzableElement)
             )
             return AnalysisResult.success(
-                    trace.getBindingContext(),
+                    trace.bindingContext,
                     module
             )
         }

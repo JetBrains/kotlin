@@ -38,7 +38,7 @@ class StaticMembers(
         private val lookupElementFactory: LookupElementFactory,
         private val resolutionFacade: ResolutionFacade
 ) {
-    public fun addToCollection(collection: MutableCollection<LookupElement>,
+    fun addToCollection(collection: MutableCollection<LookupElement>,
                                expectedInfos: Collection<ExpectedInfo>,
                                context: KtSimpleNameExpression,
                                enumEntriesToSkip: Set<DeclarationDescriptor>) {
@@ -47,7 +47,7 @@ class StaticMembers(
             expectedInfo -> expectedInfo.fuzzyType?.type?.let { TypeUtils.getClassDescriptor(it) }
         }
         for ((classDescriptor, expectedInfosForClass) in expectedInfosByClass) {
-            if (classDescriptor != null && !classDescriptor.getName().isSpecial()) {
+            if (classDescriptor != null && !classDescriptor.name.isSpecial) {
                 addToCollection(collection, classDescriptor, expectedInfosForClass, context, enumEntriesToSkip)
             }
         }
@@ -78,17 +78,17 @@ class StaticMembers(
             collection.addLookupElements(descriptor, expectedInfos, matcher) { createLookupElements(it) }
         }
 
-        classDescriptor.getStaticScope().getContributedDescriptors().forEach(::processMember)
+        classDescriptor.staticScope.getContributedDescriptors().forEach(::processMember)
 
-        val companionObject = classDescriptor.getCompanionObjectDescriptor()
+        val companionObject = classDescriptor.companionObjectDescriptor
         if (companionObject != null) {
-            companionObject.getDefaultType().getMemberScope().getContributedDescriptors()
+            companionObject.defaultType.memberScope.getContributedDescriptors()
                     .filter { !it.isExtension }
                     .forEach(::processMember)
         }
 
-        var members = classDescriptor.getDefaultType().getMemberScope().getContributedDescriptors()
-        if (classDescriptor.getKind() != ClassKind.ENUM_CLASS) {
+        var members = classDescriptor.defaultType.memberScope.getContributedDescriptors()
+        if (classDescriptor.kind != ClassKind.ENUM_CLASS) {
             members = members.filter { DescriptorUtils.isNonCompanionObject(it) }
         }
         members.forEach(::processMember)

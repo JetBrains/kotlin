@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.util.descriptorsEqualWithSubstitution
 import java.util.*
 
-public class ShadowedDeclarationsFilter(
+class ShadowedDeclarationsFilter(
         private val bindingContext: BindingContext,
         private val resolutionFacade: ResolutionFacade,
         private val context: PsiElement,
@@ -72,14 +72,14 @@ public class ShadowedDeclarationsFilter(
     private val psiFactory = KtPsiFactory(resolutionFacade.project)
     private val dummyExpressionFactory = DummyExpressionFactory(psiFactory)
 
-    public fun <TDescriptor : DeclarationDescriptor> filter(declarations: Collection<TDescriptor>): Collection<TDescriptor> {
+    fun <TDescriptor : DeclarationDescriptor> filter(declarations: Collection<TDescriptor>): Collection<TDescriptor> {
         return declarations
                 .groupBy { signature(it) }
                 .values
                 .flatMap { group -> filterEqualSignatureGroup(group) }
     }
 
-    public fun <TDescriptor : DeclarationDescriptor> createNonImportedDeclarationsFilter(
+    fun <TDescriptor : DeclarationDescriptor> createNonImportedDeclarationsFilter(
             importedDeclarations: Collection<DeclarationDescriptor>
     ): (Collection<TDescriptor>) -> Collection<TDescriptor> {
         val importedDeclarationsSet = importedDeclarations.toSet()
@@ -126,14 +126,14 @@ public class ShadowedDeclarationsFilter(
         }
 
         val isFunction = first is FunctionDescriptor
-        val name = first.getName()
-        val parameters = (first as CallableDescriptor).getValueParameters()
+        val name = first.name
+        val parameters = (first as CallableDescriptor).valueParameters
 
         val dummyArgumentExpressions = dummyExpressionFactory.createDummyExpressions(parameters.size)
 
         val bindingTrace = DelegatingBindingTrace(bindingContext, "Temporary trace for filtering shadowed declarations")
         for ((expression, parameter) in dummyArgumentExpressions.zip(parameters)) {
-            bindingTrace.recordType(expression, parameter.varargElementType ?: parameter.getType())
+            bindingTrace.recordType(expression, parameter.varargElementType ?: parameter.type)
             bindingTrace.record(BindingContext.PROCESSED, expression, true)
         }
 
@@ -145,7 +145,7 @@ public class ShadowedDeclarationsFilter(
 
             private val argumentName: ValueArgumentName? = if (isNamed()) {
                 object : ValueArgumentName {
-                    override val asName = parameters[index].getName()
+                    override val asName = parameters[index].name
                     override val referenceExpression = null
                 }
             }
@@ -206,11 +206,11 @@ public class ShadowedDeclarationsFilter(
                                                         CallChecker.DoNothing, false)
         val callResolver = resolutionFacade.frontendService<CallResolver>()
         val results = if (isFunction) callResolver.resolveFunctionCall(context) else callResolver.resolveSimpleProperty(context)
-        val resultingDescriptors = results.getResultingCalls().map { it.getResultingDescriptor() }
-        val resultingOriginals = resultingDescriptors.mapTo(HashSet<DeclarationDescriptor>()) { it.getOriginal() }
+        val resultingDescriptors = results.resultingCalls.map { it.resultingDescriptor }
+        val resultingOriginals = resultingDescriptors.mapTo(HashSet<DeclarationDescriptor>()) { it.original }
         val filtered = descriptors.filter { candidateDescriptor ->
-            candidateDescriptor.getOriginal() in resultingOriginals /* optimization */
-                && resultingDescriptors.any { descriptorsEqualWithSubstitution(it, candidateDescriptor) }
+            candidateDescriptor.original in resultingOriginals /* optimization */
+            && resultingDescriptors.any { descriptorsEqualWithSubstitution(it, candidateDescriptor) }
         }
         return if (filtered.isNotEmpty()) filtered else descriptors /* something went wrong, none of our declarations among resolve candidates, let's not filter anything */
     }
@@ -230,19 +230,19 @@ public class ShadowedDeclarationsFilter(
         override fun equals(other: Any?): Boolean {
             if (other === this) return true
             if (other !is FunctionSignature) return false
-            if (function.getName() != other.function.getName()) return false
-            val parameters1 = function.getValueParameters()
-            val parameters2 = other.function.getValueParameters()
+            if (function.name != other.function.name) return false
+            val parameters1 = function.valueParameters
+            val parameters2 = other.function.valueParameters
             if (parameters1.size != parameters2.size) return false
             for (i in parameters1.indices) {
                 val p1 = parameters1[i]
                 val p2 = parameters2[i]
                 if (p1.varargElementType != p2.varargElementType) return false // both should be vararg or or both not
-                if (p1.getType() != p2.getType()) return false
+                if (p1.type != p2.type) return false
             }
             return true
         }
 
-        override fun hashCode() = function.getName().hashCode() * 17 + function.getValueParameters().size
+        override fun hashCode() = function.name.hashCode() * 17 + function.valueParameters.size
     }
 }

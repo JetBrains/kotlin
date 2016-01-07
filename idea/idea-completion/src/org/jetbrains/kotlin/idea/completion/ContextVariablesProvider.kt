@@ -61,7 +61,7 @@ class RealContextVariablesProvider(
 class CollectRequiredTypesContextVariablesProvider : ContextVariablesProvider {
     private val _requiredTypes = HashSet<FuzzyType>()
 
-    public val requiredTypes: Set<FuzzyType>
+    val requiredTypes: Set<FuzzyType>
         get() = _requiredTypes
 
     override fun functionTypeVariables(requiredType: FuzzyType): Collection<Pair<VariableDescriptor, TypeSubstitutor>> {

@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import java.util.ArrayList
 import kotlin.test.assertEquals
 
-public class QualifiedNamesTest: LightCodeInsightTestCase() {
+class QualifiedNamesTest: LightCodeInsightTestCase() {
     fun testClassRef() {
         LightPlatformCodeInsightTestCase.configureFromFileText(
                 "class.kt",

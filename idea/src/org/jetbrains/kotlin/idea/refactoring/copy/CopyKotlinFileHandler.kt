@@ -22,7 +22,7 @@ import com.intellij.refactoring.copy.CopyFilesOrDirectoriesHandler
 import com.intellij.refactoring.copy.CopyHandlerDelegateBase
 import org.jetbrains.kotlin.psi.KtFile
 
-public class CopyKotlinFileHandler : CopyHandlerDelegateBase() {
+class CopyKotlinFileHandler : CopyHandlerDelegateBase() {
     private val delegate = CopyFilesOrDirectoriesHandler()
 
     private fun adjustElements(elements: Array<out PsiElement>): Array<PsiElement>? {

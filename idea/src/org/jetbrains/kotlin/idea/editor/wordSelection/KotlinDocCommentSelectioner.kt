@@ -23,11 +23,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.codeInsight.editorActions.ExtendWordSelectionHandlerBase
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 
-public class KotlinDocCommentSelectioner : ExtendWordSelectionHandlerBase() {
+class KotlinDocCommentSelectioner : ExtendWordSelectionHandlerBase() {
     override fun canSelect(e: PsiElement)
             = e is KDoc
 
     override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange>? {
-        return ExtendWordSelectionHandlerBase.expandToWholeLine(editorText, e.getTextRange())
+        return ExtendWordSelectionHandlerBase.expandToWholeLine(editorText, e.textRange)
     }
 }

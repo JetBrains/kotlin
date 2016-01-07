@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.idea.refactoring.isInterfaceClass
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.*
 import org.jetbrains.kotlin.psi.*
 
-public class KotlinPullUpDialog(
+class KotlinPullUpDialog(
         project: Project,
         private val classOrObject: KtClassOrObject,
         superClasses: List<PsiNamedElement>,

@@ -126,7 +126,7 @@ private fun KtStringTemplateExpression.isBundleName(): Boolean {
     return false
 }
 
-public object KotlinPropertyKeyReferenceProvider : PsiReferenceProvider() {
+object KotlinPropertyKeyReferenceProvider : PsiReferenceProvider() {
     override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<out PsiReference> {
         if (!(element is KtStringTemplateExpression && element.isPlain())) return PsiReference.EMPTY_ARRAY
         val bundleName = element.getBundleNameByContext() ?: return PsiReference.EMPTY_ARRAY
@@ -134,7 +134,7 @@ public object KotlinPropertyKeyReferenceProvider : PsiReferenceProvider() {
     }
 }
 
-public object KotlinResourceBundleNameReferenceProvider : PsiReferenceProvider() {
+object KotlinResourceBundleNameReferenceProvider : PsiReferenceProvider() {
     override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<out PsiReference> {
         if (!(element is KtStringTemplateExpression && element.isPlain() && element.isBundleName())) return PsiReference.EMPTY_ARRAY
         return arrayOf(ResourceBundleReference(element))

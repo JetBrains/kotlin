@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-public class MoveDeclarationToSeparateFileIntention :
+class MoveDeclarationToSeparateFileIntention :
         SelfTargetingRangeIntention<KtClassOrObject>(KtClassOrObject::class.java, "Move declaration to separate file"),
         LowPriorityAction {
     override fun applicabilityRange(element: KtClassOrObject): TextRange? {

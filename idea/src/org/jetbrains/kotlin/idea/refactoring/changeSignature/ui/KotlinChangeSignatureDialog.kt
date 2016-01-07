@@ -64,7 +64,7 @@ import java.awt.event.ItemEvent
 import java.util.*
 import javax.swing.*
 
-public class KotlinChangeSignatureDialog(
+class KotlinChangeSignatureDialog(
         project: Project,
         methodDescriptor: KotlinMethodDescriptor,
         context: PsiElement,
@@ -163,7 +163,7 @@ public class KotlinChangeSignatureDialog(
     override fun getTableEditor(table: JTable, item: ParameterTableModelItemBase<KotlinParameterInfo>): JBTableRowEditor? {
         return object : JBTableRowEditor() {
             private val components = ArrayList<JComponent>()
-            private val nameEditor = EditorTextField(item.parameter.name, getProject(), getFileType())
+            private val nameEditor = EditorTextField(item.parameter.name, project, fileType)
 
             private fun updateNameEditor() {
                 nameEditor.isEnabled = item.parameter != parametersTableModel.receiver
@@ -183,8 +183,8 @@ public class KotlinChangeSignatureDialog(
                     val columnFinal = column
 
                     if (KotlinCallableParameterTableModel.isTypeColumn(columnInfo)) {
-                        val document = PsiDocumentManager.getInstance(getProject()).getDocument(item.typeCodeFragment)
-                        editor = EditorTextField(document, getProject(), getFileType())
+                        val document = PsiDocumentManager.getInstance(project).getDocument(item.typeCodeFragment)
+                        editor = EditorTextField(document, project, fileType)
                         component = editor
                     }
                     else if (KotlinCallableParameterTableModel.isNameColumn(columnInfo)) {
@@ -193,8 +193,8 @@ public class KotlinChangeSignatureDialog(
                         updateNameEditor()
                     }
                     else if (KotlinCallableParameterTableModel.isDefaultValueColumn(columnInfo) && isDefaultColumnEnabled()) {
-                        val document = PsiDocumentManager.getInstance(getProject()).getDocument(item.defaultValueCodeFragment)
-                        editor = EditorTextField(document, getProject(), getFileType())
+                        val document = PsiDocumentManager.getInstance(project).getDocument(item.defaultValueCodeFragment)
+                        editor = EditorTextField(document, project, fileType)
                         component = editor
                     }
                     else if (KotlinPrimaryConstructorParameterTableModel.isValVarColumn(columnInfo)) {
@@ -390,7 +390,7 @@ public class KotlinChangeSignatureDialog(
         return KotlinChangeSignatureProcessor(myProject, changeInfo, commandName ?: title)
     }
 
-    public fun getMethodDescriptor(): KotlinMethodDescriptor = myMethod
+    fun getMethodDescriptor(): KotlinMethodDescriptor = myMethod
 
     override fun getSelectedIdx(): Int {
         return myMethod.parameters.withIndex().firstOrNull { it.value.isNewParameter }?.index
@@ -409,7 +409,7 @@ public class KotlinChangeSignatureDialog(
         private fun createReturnTypeCodeFragment(project: Project, method: KotlinMethodDescriptor) =
                 KtPsiFactory(project).createTypeCodeFragment(method.returnTypeInfo.render(), method.baseDeclaration)
 
-        public fun createRefactoringProcessorForSilentChangeSignature(project: Project,
+        fun createRefactoringProcessorForSilentChangeSignature(project: Project,
                                                                       commandName: String,
                                                                       method: KotlinMethodDescriptor,
                                                                       defaultValueContext: PsiElement): BaseRefactoringProcessor {

@@ -56,15 +56,15 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import java.util.*
 
-public class KotlinFindClassUsagesHandler(
+class KotlinFindClassUsagesHandler(
         ktClass: KtClassOrObject,
         factory: KotlinFindUsagesHandlerFactory
 ) : KotlinFindUsagesHandler<KtClassOrObject>(ktClass, factory) {
-    public override fun getFindUsagesDialog(
+    override fun getFindUsagesDialog(
             isSingleFile: Boolean, toShowInNewTab: Boolean, mustOpenInNewTab: Boolean
     ): AbstractFindUsagesDialog {
         return KotlinFindClassUsagesDialog(getElement(),
-                                           getProject(),
+                                           project,
                                            factory.findClassOptions,
                                            toShowInNewTab,
                                            mustOpenInNewTab,
@@ -72,7 +72,7 @@ public class KotlinFindClassUsagesHandler(
                                            this)
     }
 
-    protected override fun searchReferences(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Boolean {
+    override fun searchReferences(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Boolean {
         val kotlinOptions = options as KotlinClassFindUsagesOptions
 
         fun processInheritors(): Boolean {
@@ -80,11 +80,11 @@ public class KotlinFindClassUsagesHandler(
             return request.searchInheritors().forEach(
                     PsiElementProcessorAdapter(
                             object : PsiElementProcessor<PsiClass> {
-                                public override fun execute(element: PsiClass): Boolean {
-                                    val isInterface = element.isInterface()
+                                override fun execute(element: PsiClass): Boolean {
+                                    val isInterface = element.isInterface
                                     return when {
                                         isInterface && options.isDerivedInterfaces || !isInterface && options.isDerivedClasses ->
-                                            KotlinFindUsagesHandler.processUsage(processor, element.getNavigationElement())
+                                            KotlinFindUsagesHandler.processUsage(processor, element.navigationElement)
                                         else -> true
                                     }
                                 }
@@ -112,10 +112,10 @@ public class KotlinFindClassUsagesHandler(
 
         if (kotlinOptions.searchConstructorUsages) {
             val result = runReadAction {
-                val constructors = classOrObject.toLightClass()?.getConstructors() ?: PsiMethod.EMPTY_ARRAY
+                val constructors = classOrObject.toLightClass()?.constructors ?: PsiMethod.EMPTY_ARRAY
                 constructors.filterIsInstance<KtLightMethod>().all { constructor ->
-                    constructor.processDelegationCallConstructorUsages(constructor.getUseScope().intersectWith(options.searchScope)) {
-                        it.getCalleeExpression()?.mainReference?.let { referenceProcessor.process(it) } ?: false
+                    constructor.processDelegationCallConstructorUsages(constructor.useScope.intersectWith(options.searchScope)) {
+                        it.calleeExpression?.mainReference?.let { referenceProcessor.process(it) } ?: false
                     }
                 }
             }
@@ -164,9 +164,9 @@ public class KotlinFindClassUsagesHandler(
 
                     val bindingContext = element.analyze()
                     val resolvedCall = bindingContext[BindingContext.CALL, element]?.getResolvedCall(bindingContext) ?: return
-                    if ((resolvedCall.getDispatchReceiver() as? ImplicitClassReceiver)?.declarationDescriptor == companionObjectDescriptor
-                        || (resolvedCall.getExtensionReceiver() as? ImplicitClassReceiver)?.declarationDescriptor == companionObjectDescriptor) {
-                        element.getReferences().forEach {
+                    if ((resolvedCall.dispatchReceiver as? ImplicitClassReceiver)?.declarationDescriptor == companionObjectDescriptor
+                        || (resolvedCall.extensionReceiver as? ImplicitClassReceiver)?.declarationDescriptor == companionObjectDescriptor) {
+                        element.references.forEach {
                             if (!stop && !processor.process(it)) {
                                 stop = true
                             }
@@ -190,7 +190,7 @@ public class KotlinFindClassUsagesHandler(
         return true
     }
 
-    protected override fun getStringsToSearch(element: PsiElement): Collection<String> {
+    override fun getStringsToSearch(element: PsiElement): Collection<String> {
         val psiClass = when (element) {
                            is PsiClass -> element
                            is KtClassOrObject -> LightClassUtil.getPsiClass(getElement())
@@ -200,11 +200,11 @@ public class KotlinFindClassUsagesHandler(
         return JavaFindUsagesHelper.getElementNames(psiClass)
     }
 
-    protected override fun isSearchForTextOccurencesAvailable(psiElement: PsiElement, isSingleFile: Boolean): Boolean {
+    override fun isSearchForTextOccurencesAvailable(psiElement: PsiElement, isSingleFile: Boolean): Boolean {
         return !isSingleFile
     }
 
-    public override fun getFindUsagesOptions(dataContext: DataContext?): FindUsagesOptions {
+    override fun getFindUsagesOptions(dataContext: DataContext?): FindUsagesOptions {
         return factory.findClassOptions
     }
 }

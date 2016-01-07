@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Type as AsmType
 
-public abstract class KotlinRuntimeTypeEvaluator(
+abstract class KotlinRuntimeTypeEvaluator(
         editor: Editor?,
         expression: KtExpression,
         context: DebuggerContextImpl,

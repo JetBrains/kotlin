@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.types.flexibility
 import org.jetbrains.kotlin.types.isFlexible
 import java.util.*
 
-public class KotlinClassFileDecompiler : ClassFileDecompilers.Full() {
+class KotlinClassFileDecompiler : ClassFileDecompilers.Full() {
     private val stubBuilder = KotlinClsStubBuilder()
 
     override fun accepts(file: VirtualFile) = isKotlinJvmCompiledFile(file)
@@ -68,22 +68,22 @@ private val decompilerRendererForClassFiles = DescriptorRenderer.withOptions {
 private val FILE_ABI_VERSION_MARKER: String = "FILE_ABI"
 private val CURRENT_ABI_VERSION_MARKER: String = "CURRENT_ABI"
 
-public val INCOMPATIBLE_ABI_VERSION_GENERAL_COMMENT: String = "// This class file was compiled with different version of Kotlin compiler and can't be decompiled."
-public val INCOMPATIBLE_ABI_VERSION_COMMENT: String =
+val INCOMPATIBLE_ABI_VERSION_GENERAL_COMMENT: String = "// This class file was compiled with different version of Kotlin compiler and can't be decompiled."
+val INCOMPATIBLE_ABI_VERSION_COMMENT: String =
         "$INCOMPATIBLE_ABI_VERSION_GENERAL_COMMENT\n" +
         "//\n" +
         "// Current compiler ABI version is $CURRENT_ABI_VERSION_MARKER\n" +
         "// File ABI version is $FILE_ABI_VERSION_MARKER"
 
-public fun buildDecompiledTextForClassFile(
+fun buildDecompiledTextForClassFile(
         classFile: VirtualFile,
         resolver: ResolverForDecompiler = DeserializerForClassfileDecompiler(classFile)
 ): DecompiledText {
     val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(classFile)
     assert(kotlinClass != null) { "Decompiled data factory shouldn't be called on an unsupported file: " + classFile }
-    val classId = kotlinClass!!.getClassId()
-    val classHeader = kotlinClass.getClassHeader()
-    val packageFqName = classId.getPackageFqName()
+    val classId = kotlinClass!!.classId
+    val classHeader = kotlinClass.classHeader
+    val packageFqName = classId.packageFqName
 
     return when {
         !classHeader.isCompatibleAbiVersion -> {

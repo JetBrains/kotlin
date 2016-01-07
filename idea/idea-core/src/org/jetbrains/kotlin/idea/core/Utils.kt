@@ -47,16 +47,16 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import java.util.*
 
-public fun Call.mapArgumentsToParameters(targetDescriptor: CallableDescriptor): Map<ValueArgument, ValueParameterDescriptor> {
-    val parameters = targetDescriptor.getValueParameters()
+fun Call.mapArgumentsToParameters(targetDescriptor: CallableDescriptor): Map<ValueArgument, ValueParameterDescriptor> {
+    val parameters = targetDescriptor.valueParameters
     if (parameters.isEmpty()) return emptyMap()
 
     val map = HashMap<ValueArgument, ValueParameterDescriptor>()
-    val parametersByName = parameters.toMapBy { it.getName() }
+    val parametersByName = parameters.toMapBy { it.name }
 
     var positionalArgumentIndex: Int? = 0
 
-    for (argument in getValueArguments()) {
+    for (argument in valueArguments) {
         if (argument is LambdaArgument) {
             map[argument] = parameters.last()
         }
@@ -88,22 +88,22 @@ public fun Call.mapArgumentsToParameters(targetDescriptor: CallableDescriptor): 
     return map
 }
 
-public fun ImplicitReceiver.asExpression(resolutionScope: LexicalScope, psiFactory: KtPsiFactory): KtExpression? {
+fun ImplicitReceiver.asExpression(resolutionScope: LexicalScope, psiFactory: KtPsiFactory): KtExpression? {
     val expressionFactory = resolutionScope.getImplicitReceiversWithInstanceToExpression()
                                     .entries
-                                    .firstOrNull { it.key.getContainingDeclaration() == this.declarationDescriptor }
+                                    .firstOrNull { it.key.containingDeclaration == this.declarationDescriptor }
                                     ?.value ?: return null
     return expressionFactory.createExpression(psiFactory)
 }
 
-public fun KtImportDirective.targetDescriptors(resolutionFacade: ResolutionFacade = this.getResolutionFacade()): Collection<DeclarationDescriptor> {
+fun KtImportDirective.targetDescriptors(resolutionFacade: ResolutionFacade = this.getResolutionFacade()): Collection<DeclarationDescriptor> {
     // For codeFragments imports are created in dummy file
     if (this.getContainingKtFile().doNotAnalyze != null) return emptyList()
     val nameExpression = importedReference?.getQualifiedElementSelector() as? KtSimpleNameExpression ?: return emptyList()
     return nameExpression.mainReference.resolveToDescriptors(resolutionFacade.analyze(nameExpression))
 }
 
-public fun Call.resolveCandidates(
+fun Call.resolveCandidates(
         bindingContext: BindingContext,
         resolutionFacade: ResolutionFacade,
         expectedType: KotlinType = expectedType(this, bindingContext),

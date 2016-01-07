@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-public class KotlinLambdaMethodFilter(
+class KotlinLambdaMethodFilter(
         private val lambda: KtFunction,
         private val myCallingExpressionLines: Range<Int>,
         private val isInline: Boolean
@@ -73,7 +73,7 @@ public class KotlinLambdaMethodFilter(
     override fun getCallingExpressionLines() = if (isInline) Range(0, 999) else myCallingExpressionLines
 
     companion object {
-        public fun isLambdaName(name: String?): Boolean {
+        fun isLambdaName(name: String?): Boolean {
             return name == OperatorNameConventions.INVOKE.asString()
         }
     }

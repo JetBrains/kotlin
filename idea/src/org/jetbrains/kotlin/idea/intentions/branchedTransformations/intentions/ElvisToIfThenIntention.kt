@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtPsiUtil
 
-public class ElvisToIfThenIntention : SelfTargetingRangeIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Replace elvis expression with 'if' expression"), LowPriorityAction {
+class ElvisToIfThenIntention : SelfTargetingRangeIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Replace elvis expression with 'if' expression"), LowPriorityAction {
     override fun applicabilityRange(element: KtBinaryExpression): TextRange? {
         return if (element.operationToken == KtTokens.ELVIS && element.left != null && element.right != null)
             element.operationReference.textRange

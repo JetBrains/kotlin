@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.js.resolve.JsPlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
-public class KotlinTemplatesFactory : ProjectTemplatesFactory() {
+class KotlinTemplatesFactory : ProjectTemplatesFactory() {
     companion object {
-        public val KOTLIN_GROUP_NAME: String = "Kotlin"
+        val KOTLIN_GROUP_NAME: String = "Kotlin"
     }
 
     override fun getGroups() = arrayOf(KOTLIN_GROUP_NAME)

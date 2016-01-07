@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import java.util.ArrayList
 import java.util.HashMap
 
-public class KotlinMoveDirectoryWithClassesHelper : MoveDirectoryWithClassesHelper() {
+class KotlinMoveDirectoryWithClassesHelper : MoveDirectoryWithClassesHelper() {
     private class FileUsagesWrapper(
             val psiFile: PsiFile,
             val usages: List<UsageInfo>,

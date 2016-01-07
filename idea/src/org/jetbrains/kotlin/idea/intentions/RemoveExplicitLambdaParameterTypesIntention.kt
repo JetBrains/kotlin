@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 
-public class RemoveExplicitLambdaParameterTypesIntention : SelfTargetingIntention<KtLambdaExpression>(KtLambdaExpression::class.java, "Remove explicit lambda parameter types (may break code)") {
+class RemoveExplicitLambdaParameterTypesIntention : SelfTargetingIntention<KtLambdaExpression>(KtLambdaExpression::class.java, "Remove explicit lambda parameter types (may break code)") {
     override fun isApplicableTo(element: KtLambdaExpression, caretOffset: Int): Boolean {
         if (element.valueParameters.none { it.typeReference != null }) return false
         val arrow = element.functionLiteral.arrow ?: return false

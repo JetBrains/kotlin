@@ -116,9 +116,9 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
     }
 
     protected val dp: DebugProcessImpl
-        get() = getDebugProcess() ?: throw AssertionError("createLocalProcess() should be called before getDebugProcess()")
+        get() = debugProcess ?: throw AssertionError("createLocalProcess() should be called before getDebugProcess()")
 
-    public fun doOnBreakpoint(action: SuspendContextImpl.() -> Unit) {
+    fun doOnBreakpoint(action: SuspendContextImpl.() -> Unit) {
         super.onBreakpoint(SuspendContextRunnable {
             try {
                 initContexts(it)
@@ -141,7 +141,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
     }
 
     protected fun SuspendContextImpl.doStepInto(ignoreFilters: Boolean, smartStepFilter: MethodFilter?) {
-        dp.getManagerThread()!!.schedule(dp.createStepIntoCommand(this, ignoreFilters, smartStepFilter))
+        dp.managerThread!!.schedule(dp.createStepIntoCommand(this, ignoreFilters, smartStepFilter))
     }
 
     protected fun SuspendContextImpl.doStepOut() {
@@ -190,12 +190,12 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         val filters = createSmartStepIntoFilters()
         if (chooseFromList == 0) {
             filters.forEach {
-                dp.getManagerThread()!!.schedule(dp.createStepIntoCommand(this, ignoreFilters, it))
+                dp.managerThread!!.schedule(dp.createStepIntoCommand(this, ignoreFilters, it))
             }
         }
         else {
             try {
-                dp.getManagerThread()!!.schedule(dp.createStepIntoCommand(this, ignoreFilters, filters.get(chooseFromList - 1)))
+                dp.managerThread!!.schedule(dp.createStepIntoCommand(this, ignoreFilters, filters.get(chooseFromList - 1)))
             }
             catch(e: IndexOutOfBoundsException) {
                 throw AssertionError("Couldn't find smart step into command at: \n" +
@@ -220,7 +220,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
                 when (stepTarget) {
                     is KotlinLambdaSmartStepTarget -> KotlinLambdaMethodFilter(stepTarget.getLambda(), stepTarget.getCallingExpressionLines()!!, stepTarget.isInline)
                     is KotlinMethodSmartStepTarget -> KotlinBasicStepMethodFilter(stepTarget.resolvedElement, stepTarget.getCallingExpressionLines()!!)
-                    is MethodSmartStepTarget -> BasicStepMethodFilter(stepTarget.getMethod(), stepTarget.getCallingExpressionLines())
+                    is MethodSmartStepTarget -> BasicStepMethodFilter(stepTarget.method, stepTarget.getCallingExpressionLines())
                     else -> null
                 }
             }
@@ -229,7 +229,7 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
 
     protected fun SuspendContextImpl.printContext() {
         runReadAction {
-            if (this.getFrameProxy() == null) {
+            if (this.frameProxy == null) {
                 return@runReadAction println("Context thread is null", ProcessOutputTypes.SYSTEM)
             }
 
@@ -243,18 +243,18 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
             return "null"
         }
 
-        val virtualFile = sourcePosition.getFile().getVirtualFile()
+        val virtualFile = sourcePosition.file.virtualFile
         if (virtualFile == null) {
             return "VirtualFile for position is null"
         }
 
-        val libraryEntry = LibraryUtil.findLibraryEntry(virtualFile, getProject())
+        val libraryEntry = LibraryUtil.findLibraryEntry(virtualFile, project)
         if (libraryEntry != null && (libraryEntry is JdkOrderEntry ||
-                                     libraryEntry.getPresentableName() == KOTLIN_LIBRARY_NAME)) {
-            return FileUtil.getNameWithoutExtension(virtualFile.getName()) + ".!EXT!"
+                                     libraryEntry.presentableName == KOTLIN_LIBRARY_NAME)) {
+            return FileUtil.getNameWithoutExtension(virtualFile.name) + ".!EXT!"
         }
 
-        return virtualFile.getName() + ":" + (sourcePosition.getLine() + 1)
+        return virtualFile.name + ":" + (sourcePosition.line + 1)
     }
 
     protected fun finish() {
@@ -267,14 +267,14 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         if (file == null) return
 
         val document = runReadAction { PsiDocumentManager.getInstance(myProject).getDocument(file) } ?: return
-        val breakpointManager = XDebuggerManager.getInstance(myProject).getBreakpointManager()
+        val breakpointManager = XDebuggerManager.getInstance(myProject).breakpointManager
         val kotlinFieldBreakpointType = findBreakpointType(KotlinFieldBreakpointType::class.java)
-        val virtualFile = file.getVirtualFile()
+        val virtualFile = file.virtualFile
 
         val runnable = {
             var offset = -1;
             while (true) {
-                val fileText = document.getText()
+                val fileText = document.text
                 offset = fileText.indexOf("point!", offset + 1)
                 if (offset == -1) break
 
@@ -402,10 +402,10 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
     }
 
     private fun createBreakpoint(fileName: String, lineMarker: String, ordinal: Int?) {
-        val project = getProject()!!
+        val project = project!!
         val sourceFiles = runReadAction {
             FilenameIndex.getAllFilesByExt(project, "kt").filter {
-                it.getName().contains(fileName) &&
+                it.name.contains(fileName) &&
                 it.contentsToByteArray().toString("UTF-8").contains(lineMarker)
             }
         }
@@ -415,10 +415,10 @@ abstract class KotlinDebuggerTestBase : KotlinDebuggerTestCase() {
         val runnable = Runnable() {
             val psiSourceFile = PsiManager.getInstance(project).findFile(sourceFiles.first())!!
 
-            val breakpointManager = XDebuggerManager.getInstance(myProject).getBreakpointManager()
+            val breakpointManager = XDebuggerManager.getInstance(myProject).breakpointManager
             val document = PsiDocumentManager.getInstance(project).getDocument(psiSourceFile)!!
 
-            val index = psiSourceFile.getText()!!.indexOf(lineMarker)
+            val index = psiSourceFile.text!!.indexOf(lineMarker)
             val lineNumber = document.getLineNumber(index) + 1 // lineMarker is for previous line
 
             createLineBreakpoint(breakpointManager, psiSourceFile, lineNumber, ordinal, null)

@@ -27,16 +27,16 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
-public class KotlinQualifiedNameProvider: QualifiedNameProvider {
+class KotlinQualifiedNameProvider: QualifiedNameProvider {
     override fun adjustElementToCopy(element: PsiElement?) = null
 
     override fun getQualifiedName(element: PsiElement?): String? {
         when (element) {
-            is KtClassOrObject -> return element.getFqName()?.asString()
+            is KtClassOrObject -> return element.fqName?.asString()
             is KtNamedFunction, is KtProperty -> {
                 val descriptor = (element as KtDeclaration).resolveToDescriptor()
                 val fqNameUnsafe = DescriptorUtils.getFqName(descriptor)
-                if (fqNameUnsafe.isSafe()) {
+                if (fqNameUnsafe.isSafe) {
                     return fqNameUnsafe.asString()
                 }
             }

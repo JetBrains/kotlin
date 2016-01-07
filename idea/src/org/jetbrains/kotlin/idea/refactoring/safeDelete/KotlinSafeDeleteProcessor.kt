@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.ifEmpty
 import java.util.*
 
-public class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
+class KotlinSafeDeleteProcessor : JavaSafeDeleteProcessor() {
     override fun handlesElement(element: PsiElement): Boolean = element.canDeleteElement()
 
     override fun findUsages(

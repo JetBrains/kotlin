@@ -25,13 +25,13 @@ import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAbstract
 
-public class KotlinTargetElementEvaluator : TargetElementEvaluatorEx {
+class KotlinTargetElementEvaluator : TargetElementEvaluatorEx {
     override fun includeSelfInGotoImplementation(element: PsiElement): Boolean = !(element is KtClass && element.isAbstract())
 
     override fun getElementByReference(ref: PsiReference, flags: Int): PsiElement? = null
 
     override fun isIdentifierPart(file: PsiFile, text: CharSequence?, offset: Int): Boolean {
         // '(' is considered identifier part if it belongs to primary constructor without 'constructor' keyword
-        return file.findElementAt(offset)?.getNonStrictParentOfType<KtPrimaryConstructor>()?.getTextOffset() == offset
+        return file.findElementAt(offset)?.getNonStrictParentOfType<KtPrimaryConstructor>()?.textOffset == offset
     }
 }

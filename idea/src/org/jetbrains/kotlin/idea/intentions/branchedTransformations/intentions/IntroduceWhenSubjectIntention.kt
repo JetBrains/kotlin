@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.getSubjectTo
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceSubject
 import org.jetbrains.kotlin.psi.KtWhenExpression
 
-public class IntroduceWhenSubjectInspection : IntentionBasedInspection<KtWhenExpression>(IntroduceWhenSubjectIntention())
+class IntroduceWhenSubjectInspection : IntentionBasedInspection<KtWhenExpression>(IntroduceWhenSubjectIntention())
 
-public class IntroduceWhenSubjectIntention : SelfTargetingRangeIntention<KtWhenExpression>(KtWhenExpression::class.java, "Introduce argument to 'when'") {
+class IntroduceWhenSubjectIntention : SelfTargetingRangeIntention<KtWhenExpression>(KtWhenExpression::class.java, "Introduce argument to 'when'") {
     override fun applicabilityRange(element: KtWhenExpression): TextRange? {
         val subject = element.getSubjectToIntroduce() ?: return null
         text = "Introduce '${subject.text}' as argument to 'when'"

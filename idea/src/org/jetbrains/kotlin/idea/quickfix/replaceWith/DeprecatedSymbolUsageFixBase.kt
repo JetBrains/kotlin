@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.hasDefaultValue
 
 //TODO: different replacements for property accessors
 
-public abstract class DeprecatedSymbolUsageFixBase(
+abstract class DeprecatedSymbolUsageFixBase(
         element: KtSimpleNameExpression,
         val replaceWith: ReplaceWith
 ) : KotlinQuickFixAction<KtSimpleNameExpression>(element) {

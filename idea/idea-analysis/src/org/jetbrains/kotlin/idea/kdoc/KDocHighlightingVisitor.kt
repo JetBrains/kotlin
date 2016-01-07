@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 class KDocHighlightingVisitor(private val holder: AnnotationHolder): PsiElementVisitor() {
     override fun visitElement(element: PsiElement) {
         if (element is KDocLink) {
-            holder.createInfoAnnotation(element, null).setTextAttributes(KotlinHighlightingColors.KDOC_LINK)
+            holder.createInfoAnnotation(element, null).textAttributes = KotlinHighlightingColors.KDOC_LINK
         }
     }
 }

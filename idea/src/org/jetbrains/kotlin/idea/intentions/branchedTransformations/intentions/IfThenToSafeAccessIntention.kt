@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.idea.core.replaced
 
-public class IfThenToSafeAccessInspection : IntentionBasedInspection<KtIfExpression>(IfThenToSafeAccessIntention())
+class IfThenToSafeAccessInspection : IntentionBasedInspection<KtIfExpression>(IfThenToSafeAccessIntention())
 
-public class IfThenToSafeAccessIntention : SelfTargetingOffsetIndependentIntention<KtIfExpression>(KtIfExpression::class.java, "Replace 'if' expression with safe access expression") {
+class IfThenToSafeAccessIntention : SelfTargetingOffsetIndependentIntention<KtIfExpression>(KtIfExpression::class.java, "Replace 'if' expression with safe access expression") {
 
     override fun isApplicableTo(element: KtIfExpression): Boolean {
         val condition = element.condition as? KtBinaryExpression ?: return false
@@ -55,7 +55,7 @@ public class IfThenToSafeAccessIntention : SelfTargetingOffsetIndependentIntenti
         safeAccessExpr.inlineReceiverIfApplicableWithPrompt(editor)
     }
 
-    public fun applyTo(element: KtIfExpression): KtSafeQualifiedExpression {
+    fun applyTo(element: KtIfExpression): KtSafeQualifiedExpression {
         val condition = element.condition as KtBinaryExpression
         val receiverExpression = condition.expressionComparedToNull()!!
 

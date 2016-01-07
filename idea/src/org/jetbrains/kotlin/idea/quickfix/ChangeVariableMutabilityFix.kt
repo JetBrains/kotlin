@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
-public class ChangeVariableMutabilityFix(element: KtNamedDeclaration, private val makeVar: Boolean) : KotlinQuickFixAction<KtNamedDeclaration>(element) {
+class ChangeVariableMutabilityFix(element: KtNamedDeclaration, private val makeVar: Boolean) : KotlinQuickFixAction<KtNamedDeclaration>(element) {
 
     override fun getText() = if (makeVar) "Make variable mutable" else "Make variable immutable"
 
@@ -50,14 +50,14 @@ public class ChangeVariableMutabilityFix(element: KtNamedDeclaration, private va
     }
 
     companion object {
-        public val VAL_WITH_SETTER_FACTORY: KotlinSingleIntentionActionFactory = object: KotlinSingleIntentionActionFactory() {
+        val VAL_WITH_SETTER_FACTORY: KotlinSingleIntentionActionFactory = object: KotlinSingleIntentionActionFactory() {
             override fun createAction(diagnostic: Diagnostic): IntentionAction? {
                 val accessor = diagnostic.psiElement as KtPropertyAccessor
                 return ChangeVariableMutabilityFix(accessor.property, true)
             }
         }
 
-        public val VAL_REASSIGNMENT_FACTORY: KotlinSingleIntentionActionFactory = object: KotlinSingleIntentionActionFactory() {
+        val VAL_REASSIGNMENT_FACTORY: KotlinSingleIntentionActionFactory = object: KotlinSingleIntentionActionFactory() {
             override fun createAction(diagnostic: Diagnostic): IntentionAction? {
                 val propertyDescriptor = Errors.VAL_REASSIGNMENT.cast(diagnostic).a
                 val declaration = DescriptorToSourceUtils.descriptorToDeclaration(propertyDescriptor) as? KtNamedDeclaration ?: return null
@@ -65,7 +65,7 @@ public class ChangeVariableMutabilityFix(element: KtNamedDeclaration, private va
             }
         }
 
-        public val VAR_OVERRIDDEN_BY_VAL_FACTORY: KotlinSingleIntentionActionFactory = object: KotlinSingleIntentionActionFactory() {
+        val VAR_OVERRIDDEN_BY_VAL_FACTORY: KotlinSingleIntentionActionFactory = object: KotlinSingleIntentionActionFactory() {
             override fun createAction(diagnostic: Diagnostic): IntentionAction? {
                 val element = diagnostic.psiElement
                 return when (element) {

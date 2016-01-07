@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class ToInfixCallIntention : SelfTargetingIntention<KtCallExpression>(KtCallExpression::class.java, "Replace with infix function call") {
+class ToInfixCallIntention : SelfTargetingIntention<KtCallExpression>(KtCallExpression::class.java, "Replace with infix function call") {
     override fun isApplicableTo(element: KtCallExpression, caretOffset: Int): Boolean {
         val calleeExpr = element.calleeExpression as? KtNameReferenceExpression ?: return false
         if (!calleeExpr.textRange.containsOffset(caretOffset)) return false

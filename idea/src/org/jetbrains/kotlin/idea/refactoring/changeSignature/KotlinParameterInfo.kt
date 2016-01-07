@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import java.util.*
 
-public class KotlinParameterInfo @JvmOverloads constructor (
+class KotlinParameterInfo @JvmOverloads constructor (
         val callableDescriptor: CallableDescriptor,
         val originalIndex: Int = -1,
         private var name: String,
@@ -46,7 +46,7 @@ public class KotlinParameterInfo @JvmOverloads constructor (
 ): ParameterInfo {
     var currentTypeInfo: KotlinTypeInfo = originalTypeInfo
 
-    public val defaultValueParameterReferences: Map<PsiReference, DeclarationDescriptor>
+    val defaultValueParameterReferences: Map<PsiReference, DeclarationDescriptor>
 
     init {
         val file = defaultValueForCall?.containingFile as? KtFile
@@ -124,7 +124,7 @@ public class KotlinParameterInfo @JvmOverloads constructor (
 
     override fun getOldIndex(): Int = originalIndex
 
-    public val isNewParameter: Boolean
+    val isNewParameter: Boolean
         get() = originalIndex == -1
 
     override fun getDefaultValue(): String? = null
@@ -137,7 +137,7 @@ public class KotlinParameterInfo @JvmOverloads constructor (
 
     override fun getTypeText(): String = currentTypeInfo.render()
 
-    public val isTypeChanged: Boolean get() = !currentTypeInfo.isEquivalentTo(originalTypeInfo)
+    val isTypeChanged: Boolean get() = !currentTypeInfo.isEquivalentTo(originalTypeInfo)
 
     override fun isUseAnySingleVariable(): Boolean = false
 
@@ -145,7 +145,7 @@ public class KotlinParameterInfo @JvmOverloads constructor (
         throw UnsupportedOperationException()
     }
 
-    public fun renderType(parameterIndex: Int, inheritedCallable: KotlinCallableDefinitionUsage<*>): String {
+    fun renderType(parameterIndex: Int, inheritedCallable: KotlinCallableDefinitionUsage<*>): String {
         val defaultRendering = currentTypeInfo.render()
         val typeSubstitutor = inheritedCallable.typeSubstitutor ?: return defaultRendering
         val currentBaseFunction = inheritedCallable.baseFunction.currentCallableDescriptor ?: return defaultRendering
@@ -154,7 +154,7 @@ public class KotlinParameterInfo @JvmOverloads constructor (
         return parameterType.renderTypeWithSubstitution(typeSubstitutor, defaultRendering, true)
     }
 
-    public fun getInheritedName(inheritedCallable: KotlinCallableDefinitionUsage<*>): String {
+    fun getInheritedName(inheritedCallable: KotlinCallableDefinitionUsage<*>): String {
         if (!inheritedCallable.isInherited) return name
 
         val baseFunction = inheritedCallable.baseFunction
@@ -175,7 +175,7 @@ public class KotlinParameterInfo @JvmOverloads constructor (
         }
     }
 
-    public fun requiresExplicitType(inheritedCallable: KotlinCallableDefinitionUsage<*>): Boolean {
+    fun requiresExplicitType(inheritedCallable: KotlinCallableDefinitionUsage<*>): Boolean {
         val inheritedFunctionDescriptor = inheritedCallable.originalCallableDescriptor
         if (inheritedFunctionDescriptor !is AnonymousFunctionDescriptor) return true
 
@@ -186,7 +186,7 @@ public class KotlinParameterInfo @JvmOverloads constructor (
         return parameter.typeReference != null
     }
 
-    public fun getDeclarationSignature(parameterIndex: Int, inheritedCallable: KotlinCallableDefinitionUsage<*>): String {
+    fun getDeclarationSignature(parameterIndex: Int, inheritedCallable: KotlinCallableDefinitionUsage<*>): String {
         val buffer = StringBuilder()
 
         if (modifierList != null) {

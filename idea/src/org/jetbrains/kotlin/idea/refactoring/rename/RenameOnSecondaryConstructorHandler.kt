@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 import org.jetbrains.kotlin.psi.KtValueArgumentList
 
 
-public class RenameOnSecondaryConstructorHandler : RenameHandler {
+class RenameOnSecondaryConstructorHandler : RenameHandler {
     override fun isAvailableOnDataContext(dataContext: DataContext?): Boolean {
         if (dataContext == null) return false
 

@@ -20,6 +20,6 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.psi.KtElement
 
-public abstract class CreateFromUsageFixBase<T: KtElement>(element: T) : KotlinQuickFixAction<T>(element) {
+abstract class CreateFromUsageFixBase<T: KtElement>(element: T) : KotlinQuickFixAction<T>(element) {
     override fun getFamilyName(): String = KotlinBundle.message("create.from.usage.family")
 }

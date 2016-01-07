@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.KotlinCallab
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 
-public interface KotlinMethodDescriptor : MethodDescriptor<KotlinParameterInfo, Visibility> {
+interface KotlinMethodDescriptor : MethodDescriptor<KotlinParameterInfo, Visibility> {
     enum class Kind(val isConstructor: Boolean) {
         FUNCTION(false),
         PRIMARY_CONSTRUCTOR(true),

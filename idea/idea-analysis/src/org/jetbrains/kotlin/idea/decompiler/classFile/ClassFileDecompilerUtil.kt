@@ -29,8 +29,8 @@ import org.jetbrains.kotlin.name.Name
 /**
  * Checks if this file is a compiled Kotlin class file (not necessarily ABI-compatible with the current plugin)
  */
-public fun isKotlinJvmCompiledFile(file: VirtualFile): Boolean {
-    if (file.getExtension() != JavaClassFileType.INSTANCE!!.getDefaultExtension()) {
+fun isKotlinJvmCompiledFile(file: VirtualFile): Boolean {
+    if (file.extension != JavaClassFileType.INSTANCE!!.defaultExtension) {
         return false
     }
 
@@ -45,10 +45,10 @@ public fun isKotlinJvmCompiledFile(file: VirtualFile): Boolean {
 /**
  * Checks if this file is a compiled Kotlin class file ABI-compatible with the current plugin
  */
-public fun isKotlinWithCompatibleAbiVersion(file: VirtualFile): Boolean {
+fun isKotlinWithCompatibleAbiVersion(file: VirtualFile): Boolean {
     if (!isKotlinJvmCompiledFile(file)) return false
 
-    val header = KotlinBinaryClassCache.getKotlinBinaryClass(file)?.getClassHeader()
+    val header = KotlinBinaryClassCache.getKotlinBinaryClass(file)?.classHeader
     return header != null && header.isCompatibleAbiVersion
 }
 
@@ -56,7 +56,7 @@ public fun isKotlinWithCompatibleAbiVersion(file: VirtualFile): Boolean {
  * Checks if this file is a compiled "internal" Kotlin class, i.e. a Kotlin class (not necessarily ABI-compatible with the current plugin)
  * which should NOT be decompiled (and, as a result, shown under the library in the Project view, be searchable via Find class, etc.)
  */
-public fun isKotlinInternalCompiledFile(file: VirtualFile): Boolean {
+fun isKotlinInternalCompiledFile(file: VirtualFile): Boolean {
     if (!isKotlinJvmCompiledFile(file)) {
         return false
     }
@@ -71,14 +71,14 @@ public fun isKotlinInternalCompiledFile(file: VirtualFile): Boolean {
            header.isLocalClass || header.syntheticClassKind == "PACKAGE_PART"
 }
 
-public object HasCompiledKotlinInJar : JarUserDataManager.JarBooleanPropertyCounter(HasCompiledKotlinInJar::class.simpleName!!) {
+object HasCompiledKotlinInJar : JarUserDataManager.JarBooleanPropertyCounter(HasCompiledKotlinInJar::class.simpleName!!) {
     override fun hasProperty(file: VirtualFile) = isKotlinJvmCompiledFile(file)
 
     fun isInNoKotlinJar(file: VirtualFile): Boolean =
             JarUserDataManager.hasFileWithProperty(HasCompiledKotlinInJar, file) == false
 }
 
-public fun findMultifileClassParts(file: VirtualFile, multifileClass: KotlinJvmBinaryClass): List<KotlinJvmBinaryClass> {
+fun findMultifileClassParts(file: VirtualFile, multifileClass: KotlinJvmBinaryClass): List<KotlinJvmBinaryClass> {
     val packageFqName = multifileClass.classId.packageFqName
     val partsFinder = DirectoryBasedClassFinder(file.parent!!, packageFqName)
     val partNames = multifileClass.classHeader.filePartClassNames ?: return emptyList()

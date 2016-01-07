@@ -34,9 +34,9 @@ interface DeclarationSearchRequest<in T> {
     val searchScope: SearchScope
 }
 
-public interface SearchRequestWithElement<T : PsiElement> : DeclarationSearchRequest<T> {
+interface SearchRequestWithElement<T : PsiElement> : DeclarationSearchRequest<T> {
     val originalElement: T
-    override val project: Project get() = originalElement.getProject()
+    override val project: Project get() = originalElement.project
 }
 
 abstract class DeclarationsSearch<T: PsiElement, R: DeclarationSearchRequest<T>>: QueryFactory<T, R>() {
@@ -56,7 +56,7 @@ abstract class DeclarationsSearch<T: PsiElement, R: DeclarationSearchRequest<T>>
     fun search(request: R): Query<T> = if (isApplicable(request)) createUniqueResultsQuery(request) else EmptyQuery.getEmptyQuery<T>()
 }
 
-public class HierarchySearchRequest<T: PsiElement> (
+class HierarchySearchRequest<T: PsiElement> (
         override val originalElement: T,
         override val searchScope: SearchScope,
         val searchDeeply: Boolean = true
@@ -110,7 +110,7 @@ abstract class HierarchySearch<T: PsiElement>(
 
     protected abstract fun doSearchDirect(request: HierarchySearchRequest<T>, consumer: Processor<T>)
 
-    protected override fun doSearch(request: HierarchySearchRequest<T>, consumer: Processor<T>) {
+    override fun doSearch(request: HierarchySearchRequest<T>, consumer: Processor<T>) {
         if (request.searchDeeply) {
             doSearchAll(request, consumer)
         }

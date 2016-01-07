@@ -25,7 +25,7 @@ import org.junit.Assert
 object PsiElementChecker {
     val TEST_DATA_KEY = Key.create<Int>("Test Key")
 
-    public fun checkPsiElementStructure(lightClass: PsiClass) {
+    fun checkPsiElementStructure(lightClass: PsiClass) {
         checkPsiElement(lightClass)
 
         lightClass.innerClasses.forEach { checkPsiElementStructure(it) }

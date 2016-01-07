@@ -32,10 +32,10 @@ class KotlinSuppressableWarningProblemGroup(
 ) : SuppressableProblemGroup {
 
     init {
-        assert (diagnosticFactory.getSeverity() == Severity.WARNING)
+        assert (diagnosticFactory.severity == Severity.WARNING)
     }
 
-    override fun getProblemName() = diagnosticFactory.getName()
+    override fun getProblemName() = diagnosticFactory.name
 
     override fun getSuppressActions(element: PsiElement?): Array<SuppressIntentionAction> {
         if (element == null)
@@ -99,10 +99,10 @@ private object DeclarationKindDetector : KtVisitor<AnnotationHostKind?, Unit?>()
 
     override fun visitNamedFunction(d: KtNamedFunction, data: Unit?) = detect(d, "fun")
 
-    override fun visitProperty(d: KtProperty, data: Unit?) = detect(d, d.getValOrVarKeyword().getText()!!)
+    override fun visitProperty(d: KtProperty, data: Unit?) = detect(d, d.valOrVarKeyword.text!!)
 
-    override fun visitDestructuringDeclaration(d: KtDestructuringDeclaration, data: Unit?) = detect(d, d.getValOrVarKeyword()?.getText() ?: "val",
-                                                                                                    name = d.getEntries().map { it.getName()!! }.joinToString(", ", "(", ")"))
+    override fun visitDestructuringDeclaration(d: KtDestructuringDeclaration, data: Unit?) = detect(d, d.valOrVarKeyword?.text ?: "val",
+                                                                                                    name = d.entries.map { it.name!! }.joinToString(", ", "(", ")"))
 
     override fun visitTypeParameter(d: KtTypeParameter, data: Unit?) = detect(d, "type parameter", newLineNeeded = false)
 
@@ -111,11 +111,11 @@ private object DeclarationKindDetector : KtVisitor<AnnotationHostKind?, Unit?>()
     override fun visitParameter(d: KtParameter, data: Unit?) = detect(d, "parameter", newLineNeeded = false)
 
     override fun visitObjectDeclaration(d: KtObjectDeclaration, data: Unit?): AnnotationHostKind? {
-        if (d.isCompanion()) return detect(d, "companion object", name = "${d.getName()} of ${d.getStrictParentOfType<KtClass>()?.getName()}")
-        if (d.getParent() is KtObjectLiteralExpression) return null
+        if (d.isCompanion()) return detect(d, "companion object", name = "${d.name} of ${d.getStrictParentOfType<KtClass>()?.name}")
+        if (d.parent is KtObjectLiteralExpression) return null
         return detect(d, "object")
     }
 
-    private fun detect(declaration: KtDeclaration, kind: String, name: String = declaration.getName() ?: "<anonymous>", newLineNeeded: Boolean = true)
+    private fun detect(declaration: KtDeclaration, kind: String, name: String = declaration.name ?: "<anonymous>", newLineNeeded: Boolean = true)
         = AnnotationHostKind(kind, name, newLineNeeded)
 }

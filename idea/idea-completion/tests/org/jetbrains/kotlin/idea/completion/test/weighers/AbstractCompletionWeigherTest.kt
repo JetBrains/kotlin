@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.test.util.configureWithExtraFile
 import org.junit.Assert
 import java.io.File
 
-public abstract class AbstractCompletionWeigherTest(val completionType: CompletionType, val relativeTestDataPath: String) : KotlinLightCodeInsightFixtureTestCase() {
+abstract class AbstractCompletionWeigherTest(val completionType: CompletionType, val relativeTestDataPath: String) : KotlinLightCodeInsightFixtureTestCase() {
     fun doTest(path: String) {
         val pathPrefix = RELATIVE_COMPLETION_TEST_DATA_BASE_PATH + "/" + relativeTestDataPath
         assert(path.startsWith(pathPrefix))
@@ -35,7 +35,7 @@ public abstract class AbstractCompletionWeigherTest(val completionType: Completi
 
         myFixture.configureWithExtraFile(relativePath, ".Data", ".Data1", ".Data2", ".Data3", ".Data4", ".Data5", ".Data6", relativePaths = true)
 
-        val text = myFixture.getEditor().getDocument().getText()
+        val text = myFixture.editor.document.text
 
         val items = InTextDirectivesUtils.findArrayWithPrefixes(text, "// ORDER:")
         Assert.assertTrue("""Some items should be defined with "// ORDER:" directive""", !items.isEmpty())
@@ -44,13 +44,13 @@ public abstract class AbstractCompletionWeigherTest(val completionType: Completi
         myFixture.assertPreferredCompletionItems(InTextDirectivesUtils.getPrefixedInt(text, "// SELECTED:") ?: 0, *items)
     }
 
-    override fun getTestDataPath() = File(COMPLETION_TEST_DATA_BASE_PATH, relativeTestDataPath).getPath() + File.separator
+    override fun getTestDataPath() = File(COMPLETION_TEST_DATA_BASE_PATH, relativeTestDataPath).path + File.separator
 }
 
-public abstract class AbstractBasicCompletionWeigherTest() : AbstractCompletionWeigherTest(CompletionType.BASIC, "weighers/basic") {
+abstract class AbstractBasicCompletionWeigherTest() : AbstractCompletionWeigherTest(CompletionType.BASIC, "weighers/basic") {
     override fun getProjectDescriptor() = KotlinLightProjectDescriptor.INSTANCE
 }
 
-public abstract class AbstractSmartCompletionWeigherTest() : AbstractCompletionWeigherTest(CompletionType.SMART, "weighers/smart") {
+abstract class AbstractSmartCompletionWeigherTest() : AbstractCompletionWeigherTest(CompletionType.SMART, "weighers/smart") {
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 }

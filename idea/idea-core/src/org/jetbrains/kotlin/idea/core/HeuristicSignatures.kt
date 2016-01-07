@@ -41,16 +41,16 @@ internal class HeuristicSignatures(
         private val project: Project,
         private val typeResolver: TypeResolver
 ) {
-    public fun correctedParameterType(function: FunctionDescriptor, parameter: ValueParameterDescriptor): KotlinType? {
-        val parameterIndex = function.getValueParameters().indexOf(parameter)
+    fun correctedParameterType(function: FunctionDescriptor, parameter: ValueParameterDescriptor): KotlinType? {
+        val parameterIndex = function.valueParameters.indexOf(parameter)
         assert(parameterIndex >= 0)
         return correctedParameterType(function, parameterIndex)
     }
 
     private fun correctedParameterType(function: FunctionDescriptor, parameterIndex: Int): KotlinType? {
-        val ownerType = function.getDispatchReceiverParameter()?.getType() ?: return null
+        val ownerType = function.dispatchReceiverParameter?.type ?: return null
 
-        val superFunctions = function.getOverriddenDescriptors()
+        val superFunctions = function.overriddenDescriptors
         if (superFunctions.isNotEmpty()) {
             for (superFunction in superFunctions) {
                 val correctedType = correctedParameterType(superFunction, parameterIndex) ?: continue
@@ -60,12 +60,12 @@ internal class HeuristicSignatures(
             return null
         }
         else {
-            val ownerClass = ownerType.getConstructor().getDeclarationDescriptor() ?: return null
+            val ownerClass = ownerType.constructor.declarationDescriptor ?: return null
             val classFqName = DescriptorUtils.getFqName(ownerClass)
-            if (!classFqName.isSafe()) return null
-            val parameterTypes = signatures[classFqName.toSafe() to function.getName()] ?: return null
+            if (!classFqName.isSafe) return null
+            val parameterTypes = signatures[classFqName.toSafe() to function.name] ?: return null
             val typeStr = parameterTypes[parameterIndex]
-            val typeParameters = ownerClass.getTypeConstructor().getParameters()
+            val typeParameters = ownerClass.typeConstructor.parameters
 
             val type = typeFromText(typeStr, typeParameters)
 
@@ -81,7 +81,7 @@ internal class HeuristicSignatures(
             typeParameters.forEach { addClassifierDescriptor(it) }
         }
         val type = typeResolver.resolveType(scope, typeRef, BindingTraceContext(), false)
-        assert(!type.isError()) { "No type resolved from '$text'" }
+        assert(!type.isError) { "No type resolved from '$text'" }
         return type
     }
 

@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 
-public class SpecifyTypeExplicitlyIntention : SelfTargetingIntention<KtCallableDeclaration>(KtCallableDeclaration::class.java, "Specify type explicitly"), LowPriorityAction {
+class SpecifyTypeExplicitlyIntention : SelfTargetingIntention<KtCallableDeclaration>(KtCallableDeclaration::class.java, "Specify type explicitly"), LowPriorityAction {
     override fun isApplicableTo(element: KtCallableDeclaration, caretOffset: Int): Boolean {
         if (element.containingFile is KtCodeFragment) return false
         if (element is KtFunctionLiteral) return false // TODO: should JetFunctionLiteral be JetCallableDeclaration at all?
@@ -58,13 +58,13 @@ public class SpecifyTypeExplicitlyIntention : SelfTargetingIntention<KtCallableD
     }
 
     companion object {
-        public fun getTypeForDeclaration(declaration: KtCallableDeclaration): KotlinType {
+        fun getTypeForDeclaration(declaration: KtCallableDeclaration): KotlinType {
             val descriptor = declaration.analyze()[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
             val type = (descriptor as? CallableDescriptor)?.returnType
             return type ?: ErrorUtils.createErrorType("null type")
         }
 
-        public fun createTypeExpressionForTemplate(exprType: KotlinType, contextElement: KtElement): Expression {
+        fun createTypeExpressionForTemplate(exprType: KotlinType, contextElement: KtElement): Expression {
             val resolutionFacade = contextElement.getResolutionFacade()
             val bindingContext = resolutionFacade.analyze(contextElement, BodyResolveMode.PARTIAL)
             val scope = contextElement.getResolutionScope(bindingContext, resolutionFacade)
@@ -98,7 +98,7 @@ public class SpecifyTypeExplicitlyIntention : SelfTargetingIntention<KtCallableD
             }
         }
 
-        public fun addTypeAnnotation(editor: Editor?, declaration: KtCallableDeclaration, exprType: KotlinType) {
+        fun addTypeAnnotation(editor: Editor?, declaration: KtCallableDeclaration, exprType: KotlinType) {
             if (editor != null) {
                 addTypeAnnotationWithTemplate(editor, declaration, exprType)
             }
@@ -107,7 +107,7 @@ public class SpecifyTypeExplicitlyIntention : SelfTargetingIntention<KtCallableD
             }
         }
 
-        public fun createTypeReferencePostprocessor(declaration: KtCallableDeclaration): TemplateEditingAdapter {
+        fun createTypeReferencePostprocessor(declaration: KtCallableDeclaration): TemplateEditingAdapter {
             return object : TemplateEditingAdapter() {
                 override fun templateFinished(template: Template?, brokenOff: Boolean) {
                     val typeRef = declaration.typeReference

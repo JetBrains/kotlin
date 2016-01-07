@@ -113,7 +113,7 @@ object KindWeigher : LookupElementWeigher("kotlin.kind") {
     }
 
     override fun weigh(element: LookupElement): Weight {
-        val o = element.getObject()
+        val o = element.`object`
 
         return when (o) {
             is PackageLookupObject -> Weight.packages
@@ -156,7 +156,7 @@ object VariableOrFunctionWeigher : LookupElementWeigher("kotlin.variableOrFuncti
 
 object DeprecatedWeigher : LookupElementWeigher("kotlin.deprecated") {
     override fun weigh(element: LookupElement): Int {
-        val o = element.getObject() as? DeclarationLookupObject ?: return 0
+        val o = element.`object` as? DeclarationLookupObject ?: return 0
         return if (o.isDeprecated) 1 else 0
     }
 }

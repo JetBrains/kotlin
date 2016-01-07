@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.utils.KotlinJavascriptMetadataUtils
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.sure
 
-public class KotlinJavaScriptDecompiledTextConsistencyTest : TextConsistencyBaseTest() {
+class KotlinJavaScriptDecompiledTextConsistencyTest : TextConsistencyBaseTest() {
     override fun getPackages(): List<FqName> = listOf(
             "java.util", "jquery", "jquery.ui", "kotlin", "kotlin.browser", "kotlin.dom", "kotlin.js"
     ).map { FqName(it) }

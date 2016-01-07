@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 
-public class ReplaceObsoleteLabelSyntaxFix(element: KtAnnotationEntry) : KotlinQuickFixAction<KtAnnotationEntry>(element), CleanupFix {
+class ReplaceObsoleteLabelSyntaxFix(element: KtAnnotationEntry) : KotlinQuickFixAction<KtAnnotationEntry>(element), CleanupFix {
     override fun getFamilyName(): String = "Update obsolete label syntax"
     override fun getText(): String = "Replace with label ${element.calleeExpression?.text ?: ""}@"
 
@@ -44,7 +44,7 @@ public class ReplaceObsoleteLabelSyntaxFix(element: KtAnnotationEntry) : KotlinQ
             return ReplaceObsoleteLabelSyntaxFix(annotationEntry)
         }
 
-        public fun createWholeProjectFixFactory(): KotlinSingleIntentionActionFactory = createIntentionFactory factory@ {
+        fun createWholeProjectFixFactory(): KotlinSingleIntentionActionFactory = createIntentionFactory factory@ {
             diagnostic ->
 
             if (!(diagnostic.psiElement.getNonStrictParentOfType<KtAnnotationEntry>()?.looksLikeObsoleteLabelWithReferencesInCode()
@@ -75,7 +75,7 @@ public class ReplaceObsoleteLabelSyntaxFix(element: KtAnnotationEntry) : KotlinQ
             } && analyze().diagnostics.forElement(nameExpression).any { it.factory == Errors.UNRESOLVED_REFERENCE }
         }
 
-        public fun looksLikeObsoleteLabel(entry: KtAnnotationEntry): Boolean =
+        fun looksLikeObsoleteLabel(entry: KtAnnotationEntry): Boolean =
                 entry.atSymbol != null &&
                 entry.parent is KtAnnotatedExpression &&
                 (entry.parent as KtAnnotatedExpression).annotationEntries.size == 1 &&

@@ -34,9 +34,9 @@ import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 
-public class IfNullToElvisInspection : IntentionBasedInspection<KtIfExpression>(IfNullToElvisIntention())
+class IfNullToElvisInspection : IntentionBasedInspection<KtIfExpression>(IfNullToElvisIntention())
 
-public class IfNullToElvisIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpression::class.java, "Replace 'if' with elvis operator"){
+class IfNullToElvisIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpression::class.java, "Replace 'if' with elvis operator"){
     override fun applicabilityRange(element: KtIfExpression): TextRange? {
         val data = calcData(element) ?: return null
 
@@ -52,7 +52,7 @@ public class IfNullToElvisIntention : SelfTargetingRangeIntention<KtIfExpression
         editor.caretModel.moveToOffset(newElvis.right!!.textOffset)
     }
 
-    public fun applyTo(element: KtIfExpression): KtBinaryExpression {
+    fun applyTo(element: KtIfExpression): KtBinaryExpression {
         val (initializer, declaration, ifNullExpr) = calcData(element)!!
         val factory = KtPsiFactory(element)
 

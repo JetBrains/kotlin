@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelectorOrThis
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 
-public class KotlinPropertyCallUsage(element: KtSimpleNameExpression): KotlinUsageInfo<KtSimpleNameExpression>(element) {
+class KotlinPropertyCallUsage(element: KtSimpleNameExpression): KotlinUsageInfo<KtSimpleNameExpression>(element) {
     private val resolvedCall = element.getResolvedCall(element.analyze())
 
     override fun processUsage(changeInfo: KotlinChangeInfo, element: KtSimpleNameExpression, allUsages: Array<out UsageInfo>): Boolean {

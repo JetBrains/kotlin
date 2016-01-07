@@ -26,10 +26,10 @@ import org.jetbrains.kotlin.load.kotlin.VirtualFileKotlinClassFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-public class IDEVirtualFileFinder(private val scope: GlobalSearchScope) : VirtualFileKotlinClassFinder(), VirtualFileFinder {
+class IDEVirtualFileFinder(private val scope: GlobalSearchScope) : VirtualFileKotlinClassFinder(), VirtualFileFinder {
 
     init {
-        if (scope != GlobalSearchScope.EMPTY_SCOPE && scope.getProject() == null) {
+        if (scope != GlobalSearchScope.EMPTY_SCOPE && scope.project == null) {
             LOG.warn("Scope with null project " + scope)
         }
     }

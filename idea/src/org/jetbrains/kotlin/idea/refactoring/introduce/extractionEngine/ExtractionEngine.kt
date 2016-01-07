@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.showErrorHint
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import javax.swing.event.HyperlinkEvent
 
-public abstract class ExtractionEngineHelper(val operationName: String) {
+abstract class ExtractionEngineHelper(val operationName: String) {
     open fun adjustExtractionData(data: ExtractionData): ExtractionData = data
 
     fun doRefactor(config: ExtractionGeneratorConfiguration, onFinish: (ExtractionResult) -> Unit = {}) {
@@ -45,7 +45,7 @@ public abstract class ExtractionEngineHelper(val operationName: String) {
     )
 }
 
-public class ExtractionEngine(
+class ExtractionEngine(
         val helper: ExtractionEngineHelper
 ) {
     fun run(editor: Editor,

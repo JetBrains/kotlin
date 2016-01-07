@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.Variance
 import java.util.*
 
-public object CreateClassFromTypeReferenceActionFactory : CreateClassFromUsageFactory<KtUserType>() {
+object CreateClassFromTypeReferenceActionFactory : CreateClassFromUsageFactory<KtUserType>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): KtUserType? {
         return QuickFixUtil.getParentElementOfType(diagnostic, KtUserType::class.java)
     }

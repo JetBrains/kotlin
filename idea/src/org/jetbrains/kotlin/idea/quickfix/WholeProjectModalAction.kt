@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.psi.psiUtil.flatMapDescendantsOfTypeVisitor
 import org.jetbrains.kotlin.utils.singletonOrEmptyList
 import java.util.*
 
-public abstract class WholeProjectModalAction<TData : Any>(val title: String) : IntentionAction {
+abstract class WholeProjectModalAction<TData : Any>(val title: String) : IntentionAction {
     private val LOG = Logger.getInstance(WholeProjectModalAction::class.java);
 
     override final fun startInWriteAction() = false
@@ -98,7 +98,7 @@ public abstract class WholeProjectModalAction<TData : Any>(val title: String) : 
     protected abstract fun applyChangesForFile(project: Project, file: KtFile, data: TData)
 }
 
-public abstract class WholeProjectModalByCollectionAction<TTask : Any>(modalTitle: String)
+abstract class WholeProjectModalByCollectionAction<TTask : Any>(modalTitle: String)
 : WholeProjectModalAction<Collection<TTask>>(modalTitle) {
     override fun collectDataForFile(project: Project, file: KtFile): Collection<TTask>? {
         val accumulator = arrayListOf<TTask>()

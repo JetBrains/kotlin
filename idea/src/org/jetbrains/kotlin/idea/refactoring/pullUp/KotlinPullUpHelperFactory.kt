@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-public class KotlinPullUpHelperFactory : PullUpHelperFactory {
+class KotlinPullUpHelperFactory : PullUpHelperFactory {
     private fun PullUpData.toKotlinPullUpData(): KotlinPullUpData? {
         val sourceClass = sourceClass.unwrapped as? KtClassOrObject ?: return null
         val targetClass = targetClass.unwrapped as? PsiNamedElement ?: return null
@@ -55,7 +55,7 @@ public class KotlinPullUpHelperFactory : PullUpHelperFactory {
     }
 }
 
-public class JavaToKotlinPullUpHelperFactory : PullUpHelperFactory {
+class JavaToKotlinPullUpHelperFactory : PullUpHelperFactory {
     private fun createJavaToKotlinPullUpHelper(data: PullUpData): JavaToKotlinPreconversionPullUpHelper? {
         if (!data.sourceClass.isInheritor(data.targetClass, true)) return null
         val dummyTargetClass = createDummyTargetClass(data) ?: return null

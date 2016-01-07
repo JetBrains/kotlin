@@ -24,10 +24,10 @@ import org.jetbrains.kotlin.idea.util.ShortenReferences
 import org.jetbrains.kotlin.idea.codeInsight.shorten.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 
-public class KotlinShortenReferencesRefactoringHelper: RefactoringHelper<Any> {
+class KotlinShortenReferencesRefactoringHelper: RefactoringHelper<Any> {
     override fun prepareOperation(usages: Array<out UsageInfo>?): Any? {
         if (usages != null && usages.isNotEmpty()) {
-            val project = usages[0].getProject()
+            val project = usages[0].project
             prepareElementsToShorten(project)
         }
         return null

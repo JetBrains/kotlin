@@ -43,10 +43,10 @@ internal class TypesWithContainsDetector(
 
     private val typesWithExtensionContains: Collection<KotlinType> = scope
             .collectFunctions(containsName, NoLookupLocation.FROM_IDE)
-            .filter { it.getExtensionReceiverParameter() != null && isGoodContainsFunction(it, listOf()) }
-            .map { it.getExtensionReceiverParameter()!!.getType() }
+            .filter { it.extensionReceiverParameter != null && isGoodContainsFunction(it, listOf()) }
+            .map { it.extensionReceiverParameter!!.type }
 
-    public fun hasContains(type: FuzzyType): Boolean {
+    fun hasContains(type: FuzzyType): Boolean {
         return cache.getOrPut(type, { hasContainsNoCache(type) })
     }
 
@@ -57,10 +57,10 @@ internal class TypesWithContainsDetector(
     }
 
     private fun isGoodContainsFunction(function: FunctionDescriptor, freeTypeParams: Collection<TypeParameterDescriptor>): Boolean {
-        if (!TypeUtils.equalTypes(function.getReturnType()!!, booleanType)) return false
-        val parameter = function.getValueParameters().singleOrNull() ?: return false
-        val parameterType = heuristicSignatures.correctedParameterType(function, parameter) ?: parameter.getType()
-        val fuzzyParameterType = FuzzyType(parameterType, function.getTypeParameters() + freeTypeParams)
+        if (!TypeUtils.equalTypes(function.returnType!!, booleanType)) return false
+        val parameter = function.valueParameters.singleOrNull() ?: return false
+        val parameterType = heuristicSignatures.correctedParameterType(function, parameter) ?: parameter.type
+        val fuzzyParameterType = FuzzyType(parameterType, function.typeParameters + freeTypeParams)
         return fuzzyParameterType.checkIsSuperTypeOf(argumentType) != null
     }
 }

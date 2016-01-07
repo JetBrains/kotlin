@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import java.util.*
 
-public class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMethodUsagesProcessor {
+class KotlinIntroduceParameterMethodUsageProcessor : IntroduceParameterMethodUsagesProcessor {
     override fun isMethodUsage(usage: UsageInfo): Boolean = (usage.element as? KtElement)?.let {
         it.getParentOfTypeAndBranch<KtCallElement>(true) { calleeExpression } != null
     } ?: false

@@ -23,30 +23,30 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtIfExpression
 import org.jetbrains.kotlin.psi.KtBlockExpression
 
-public class KotlinMissingIfBranchFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
+class KotlinMissingIfBranchFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, element: PsiElement) {
         if (element !is KtIfExpression) return
 
-        val document = editor.getDocument()
-        val elseBranch = element.getElse()
-        val elseKeyword = element.getElseKeyword()
+        val document = editor.document
+        val elseBranch = element.`else`
+        val elseKeyword = element.elseKeyword
 
         if (elseKeyword != null) {
-            if (elseBranch == null || elseBranch !is KtBlockExpression && elseBranch.startLine(editor.getDocument()) > elseKeyword.startLine(editor.getDocument())) {
+            if (elseBranch == null || elseBranch !is KtBlockExpression && elseBranch.startLine(editor.document) > elseKeyword.startLine(editor.document)) {
                 document.insertString(elseKeyword.range.end, "{}")
                 return
             }
         }
 
-        val thenBranch = element.getThen()
+        val thenBranch = element.then
         if (thenBranch is KtBlockExpression) return
 
-        val rParen = element.getRightParenthesis()
+        val rParen = element.rightParenthesis
         if (rParen == null) return
 
         var transformingOneLiner = false
-        if (thenBranch != null && thenBranch.startLine(editor.getDocument()) == element.startLine(editor.getDocument())) {
-            if (element.getCondition() != null) return
+        if (thenBranch != null && thenBranch.startLine(editor.document) == element.startLine(editor.document)) {
+            if (element.condition != null) return
             transformingOneLiner = true
         }
 

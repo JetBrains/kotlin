@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtStringTemplateEntryWithExpression
 import org.jetbrains.kotlin.psi.psiUtil.canPlaceAfterSimpleNameEntry
 
-public class RemoveCurlyBracesFromTemplateInspection : IntentionBasedInspection<KtBlockStringTemplateEntry>(RemoveCurlyBracesFromTemplateIntention())
+class RemoveCurlyBracesFromTemplateInspection : IntentionBasedInspection<KtBlockStringTemplateEntry>(RemoveCurlyBracesFromTemplateIntention())
 
-public class RemoveCurlyBracesFromTemplateIntention : SelfTargetingOffsetIndependentIntention<KtBlockStringTemplateEntry>(KtBlockStringTemplateEntry::class.java, "Remove curly braces") {
+class RemoveCurlyBracesFromTemplateIntention : SelfTargetingOffsetIndependentIntention<KtBlockStringTemplateEntry>(KtBlockStringTemplateEntry::class.java, "Remove curly braces") {
     override fun isApplicableTo(element: KtBlockStringTemplateEntry): Boolean {
         if (element.expression !is KtNameReferenceExpression) return false
         return canPlaceAfterSimpleNameEntry(element.nextSibling)
@@ -37,7 +37,7 @@ public class RemoveCurlyBracesFromTemplateIntention : SelfTargetingOffsetIndepen
         applyTo(element)
     }
 
-    public fun applyTo(element: KtBlockStringTemplateEntry): KtStringTemplateEntryWithExpression {
+    fun applyTo(element: KtBlockStringTemplateEntry): KtStringTemplateEntryWithExpression {
         val name = (element.expression as KtNameReferenceExpression).getReferencedName()
         val newEntry = KtPsiFactory(element).createSimpleNameStringTemplateEntry(name)
         return element.replaced(newEntry)

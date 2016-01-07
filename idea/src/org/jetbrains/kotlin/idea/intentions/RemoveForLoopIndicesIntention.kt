@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class RemoveForLoopIndicesInspection : IntentionBasedInspection<KtForExpression>(
+class RemoveForLoopIndicesInspection : IntentionBasedInspection<KtForExpression>(
         listOf(IntentionBasedInspection.IntentionData(RemoveForLoopIndicesIntention())),
         "Index is not used in the loop body",
         KtForExpression::class.java
@@ -40,7 +40,7 @@ public class RemoveForLoopIndicesInspection : IntentionBasedInspection<KtForExpr
         get() = ProblemHighlightType.LIKE_UNUSED_SYMBOL
 }
 
-public class RemoveForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpression>(KtForExpression::class.java, "Remove indices in 'for' loop") {
+class RemoveForLoopIndicesIntention : SelfTargetingRangeIntention<KtForExpression>(KtForExpression::class.java, "Remove indices in 'for' loop") {
     private val WITH_INDEX_NAME = "withIndex"
     private val WITH_INDEX_FQ_NAMES = listOf("collections", "sequences", "text", "ranges").map { "kotlin.$it.$WITH_INDEX_NAME" }.toSet()
 

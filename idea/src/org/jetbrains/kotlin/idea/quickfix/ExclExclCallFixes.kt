@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.util.OperatorChecks
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-public abstract class ExclExclCallFix : IntentionAction {
+abstract class ExclExclCallFix : IntentionAction {
     override fun getFamilyName(): String = text
 
     override fun startInWriteAction(): Boolean = true
@@ -48,7 +48,7 @@ public abstract class ExclExclCallFix : IntentionAction {
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile) = file is KtFile
 }
 
-public class RemoveExclExclCallFix(val psiElement: PsiElement) : ExclExclCallFix(), CleanupFix {
+class RemoveExclExclCallFix(val psiElement: PsiElement) : ExclExclCallFix(), CleanupFix {
     override fun getText(): String = KotlinBundle.message("remove.unnecessary.non.null.assertion")
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean
@@ -76,7 +76,7 @@ public class RemoveExclExclCallFix(val psiElement: PsiElement) : ExclExclCallFix
     }
 }
 
-public class AddExclExclCallFix(val psiElement: PsiElement) : ExclExclCallFix() {
+class AddExclExclCallFix(val psiElement: PsiElement) : ExclExclCallFix() {
     override fun getText() = KotlinBundle.message("introduce.non.null.assertion")
 
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean

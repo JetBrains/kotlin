@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.psi.psiUtil.contentRange
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 
-public class ConvertToForEachFunctionCallIntention : SelfTargetingIntention<KtForExpression>(KtForExpression::class.java, "Replace with a 'forEach' function call") {
+class ConvertToForEachFunctionCallIntention : SelfTargetingIntention<KtForExpression>(KtForExpression::class.java, "Replace with a 'forEach' function call") {
     override fun isApplicableTo(element: KtForExpression, caretOffset: Int): Boolean {
         val rParen = element.rightParenthesis ?: return false
         if (caretOffset > rParen.endOffset) return false // available only on the loop header, not in the body

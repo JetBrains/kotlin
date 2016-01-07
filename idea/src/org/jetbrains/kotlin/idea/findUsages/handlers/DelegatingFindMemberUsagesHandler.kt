@@ -56,16 +56,16 @@ class DelegatingFindMemberUsagesHandler(
     }
 
     override fun getFindUsagesDialog(isSingleFile: Boolean, toShowInNewTab: Boolean, mustOpenInNewTab: Boolean): AbstractFindUsagesDialog {
-        return getHandlerAndOptions(getPsiElement(), null)?.handler?.getFindUsagesDialog(isSingleFile, toShowInNewTab, mustOpenInNewTab)
+        return getHandlerAndOptions(psiElement, null)?.handler?.getFindUsagesDialog(isSingleFile, toShowInNewTab, mustOpenInNewTab)
                ?: super.getFindUsagesDialog(isSingleFile, toShowInNewTab, mustOpenInNewTab)
     }
 
     override fun getPrimaryElements(): Array<PsiElement> {
-        return kotlinHandler.getPrimaryElements()
+        return kotlinHandler.primaryElements
     }
 
     override fun getSecondaryElements(): Array<out PsiElement> {
-        return kotlinHandler.getSecondaryElements()
+        return kotlinHandler.secondaryElements
     }
 
     override fun getFindUsagesOptions(dataContext: DataContext?): FindUsagesOptions {

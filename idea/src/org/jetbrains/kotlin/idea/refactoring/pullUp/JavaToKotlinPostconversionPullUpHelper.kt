@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import java.util.LinkedHashSet
 
-public class JavaToKotlinPostconversionPullUpHelper(private val data: PullUpData) : PullUpHelper<MemberInfo> {
+class JavaToKotlinPostconversionPullUpHelper(private val data: PullUpData) : PullUpHelper<MemberInfo> {
     override fun setCorrectVisibility(info: MemberInfo?) { }
 
     override fun encodeContextInfo(info: MemberInfo?) { }

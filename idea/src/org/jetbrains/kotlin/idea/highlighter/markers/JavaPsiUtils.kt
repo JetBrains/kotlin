@@ -32,8 +32,8 @@ fun collectContainingClasses(methods: Collection<PsiMethod>): Set<PsiClass> {
     val classes = HashSet<PsiClass>()
     for (method in methods) {
         ProgressManager.checkCanceled()
-        val parentClass = method.getContainingClass()
-        if (parentClass != null && CommonClassNames.JAVA_LANG_OBJECT != parentClass.getQualifiedName()) {
+        val parentClass = method.containingClass
+        if (parentClass != null && CommonClassNames.JAVA_LANG_OBJECT != parentClass.qualifiedName) {
             classes.add(parentClass)
         }
     }
@@ -46,13 +46,13 @@ internal fun getPsiClass(element: PsiElement?): PsiClass? {
         element == null -> null
         element is PsiClass -> element
         element is KtClass -> LightClassUtil.getPsiClass(element)
-        element.getParent() is KtClass -> LightClassUtil.getPsiClass(element.getParent() as KtClass)
+        element.parent is KtClass -> LightClassUtil.getPsiClass(element.parent as KtClass)
         else -> null
     }
 }
 
 internal fun getPsiMethod(element: PsiElement?): PsiMethod? {
-    val parent = element?.getParent()
+    val parent = element?.parent
     return when {
         element == null -> null
         element is PsiMethod -> element

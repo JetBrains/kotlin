@@ -20,7 +20,7 @@ import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 
-public object KotlinJavaScriptMetaFileType : FileType {
+object KotlinJavaScriptMetaFileType : FileType {
 
     override fun getName() = "KJSM"
 

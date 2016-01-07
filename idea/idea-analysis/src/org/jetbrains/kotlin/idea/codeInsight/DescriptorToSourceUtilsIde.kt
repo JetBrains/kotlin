@@ -23,19 +23,19 @@ import org.jetbrains.kotlin.idea.decompiler.navigation.findDecompiledDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.utils.addToStdlib.sequenceOfLazyValues
 
-public object DescriptorToSourceUtilsIde {
+object DescriptorToSourceUtilsIde {
     // Returns PSI element for descriptor. If there are many relevant elements (e.g. it is fake override
     // with multiple declarations), finds any of them. It can find declarations in builtins or decompiled code.
-    public fun getAnyDeclaration(project: Project, descriptor: DeclarationDescriptor): PsiElement? {
+    fun getAnyDeclaration(project: Project, descriptor: DeclarationDescriptor): PsiElement? {
         return getDeclarationsStream(project, descriptor).firstOrNull()
     }
 
     // Returns all PSI elements for descriptor. It can find declarations in builtins or decompiled code.
-    public fun getAllDeclarations(project: Project, targetDescriptor: DeclarationDescriptor): Collection<PsiElement> {
+    fun getAllDeclarations(project: Project, targetDescriptor: DeclarationDescriptor): Collection<PsiElement> {
         val result = getDeclarationsStream(project, targetDescriptor).toHashSet()
         // filter out elements which are navigate to some other element of the result
         // this is needed to avoid duplicated results for references to declaration in same library source file
-        return result.filter { element -> result.none { element != it && it.getNavigationElement() == element } }
+        return result.filter { element -> result.none { element != it && it.navigationElement == element } }
     }
 
     private fun getDeclarationsStream(project: Project, targetDescriptor: DeclarationDescriptor): Sequence<PsiElement> {

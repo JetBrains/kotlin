@@ -59,7 +59,7 @@ import kotlin.properties.Delegates
 
 private val KOTLIN_SHELL_EXECUTE_ACTION_ID = "KotlinShellExecute"
 
-public class KotlinConsoleRunner(
+class KotlinConsoleRunner(
         val module: Module,
         private val cmdLine: GeneralCommandLine,
         internal val previousCompilationFailed: Boolean,

@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.serialization.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.serialization.deserialization.TypeTable
 import java.io.ByteArrayInputStream
 
-public class KotlinBuiltInStubBuilder : ClsStubBuilder() {
+class KotlinBuiltInStubBuilder : ClsStubBuilder() {
     override fun getStubVersion() = ClassFileStubBuilder.STUB_VERSION + 1
 
     override fun buildFileStub(content: FileContent): PsiFileStub<*>? {

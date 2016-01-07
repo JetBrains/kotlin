@@ -27,12 +27,12 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 
-public class ConvertToStringTemplateInspection : IntentionBasedInspection<KtBinaryExpression>(
+class ConvertToStringTemplateInspection : IntentionBasedInspection<KtBinaryExpression>(
         ConvertToStringTemplateIntention(),
         { ConvertToStringTemplateIntention().shouldSuggestToConvert(it) }
 )
 
-public class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Convert concatenation to template") {
+class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Convert concatenation to template") {
     override fun isApplicableTo(element: KtBinaryExpression): Boolean {
         if (!isApplicableToNoParentCheck(element)) return false
 
@@ -46,11 +46,11 @@ public class ConvertToStringTemplateIntention : SelfTargetingOffsetIndependentIn
         applyTo(element)
     }
 
-    public fun applyTo(element: KtBinaryExpression): KtStringTemplateExpression {
+    fun applyTo(element: KtBinaryExpression): KtStringTemplateExpression {
         return element.replaced(buildReplacement(element))
     }
 
-    public fun shouldSuggestToConvert(expression: KtBinaryExpression): Boolean {
+    fun shouldSuggestToConvert(expression: KtBinaryExpression): Boolean {
         val entries = buildReplacement(expression).entries
         return entries.none { it is KtBlockStringTemplateEntry } &&
                !entries.all { it is KtLiteralStringTemplateEntry || it is KtEscapeStringTemplateEntry }

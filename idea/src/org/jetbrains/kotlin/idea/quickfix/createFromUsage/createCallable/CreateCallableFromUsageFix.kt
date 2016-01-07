@@ -35,17 +35,17 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import java.util.HashSet
 
-public class CreateCallableFromUsageFix<E : KtElement>(
+class CreateCallableFromUsageFix<E : KtElement>(
         originalExpression: E,
         callableInfos: List<CallableInfo>
 ) : CreateCallableFromUsageFixBase<E>(originalExpression, callableInfos, false)
 
-public class CreateExtensionCallableFromUsageFix<E : KtElement>(
+class CreateExtensionCallableFromUsageFix<E : KtElement>(
         originalExpression: E,
         callableInfos: List<CallableInfo>
 ) : CreateCallableFromUsageFixBase<E>(originalExpression, callableInfos, true), LowPriorityAction
 
-public abstract class CreateCallableFromUsageFixBase<E : KtElement>(
+abstract class CreateCallableFromUsageFixBase<E : KtElement>(
         originalExpression: E,
         val callableInfos: List<CallableInfo>,
         val isExtension: Boolean

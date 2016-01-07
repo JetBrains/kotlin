@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class KotlinChangeSignatureHandler : ChangeSignatureHandler {
+class KotlinChangeSignatureHandler : ChangeSignatureHandler {
 
     override fun findTargetMember(file: PsiFile, editor: Editor) =
             file.findElementAt(editor.caretModel.offset)?.let { findTargetMember(it) }
@@ -75,7 +75,7 @@ public class KotlinChangeSignatureHandler : ChangeSignatureHandler {
             KotlinRefactoringBundle.message("error.wrong.caret.position.function.or.constructor.name")
 
     companion object {
-        public fun findTargetForRefactoring(element: PsiElement): PsiElement? {
+        fun findTargetForRefactoring(element: PsiElement): PsiElement? {
             val elementParent = element.parent
 
             if ((elementParent is KtNamedFunction || elementParent is KtClass || elementParent is KtProperty)
@@ -120,7 +120,7 @@ public class KotlinChangeSignatureHandler : ChangeSignatureHandler {
             return null
         }
 
-        public fun invokeChangeSignature(element: KtElement, context: PsiElement, project: Project, editor: Editor?) {
+        fun invokeChangeSignature(element: KtElement, context: PsiElement, project: Project, editor: Editor?) {
             val bindingContext = element.analyze(BodyResolveMode.FULL)
 
             val callableDescriptor = findDescriptor(element, project, editor, bindingContext) ?: return
@@ -160,7 +160,7 @@ public class KotlinChangeSignatureHandler : ChangeSignatureHandler {
             return if (descriptor is ClassDescriptor) descriptor.unsubstitutedPrimaryConstructor else descriptor
         }
 
-        public fun findDescriptor(element: PsiElement, project: Project, editor: Editor?, bindingContext: BindingContext): CallableDescriptor? {
+        fun findDescriptor(element: PsiElement, project: Project, editor: Editor?, bindingContext: BindingContext): CallableDescriptor? {
             if (!CommonRefactoringUtil.checkReadOnlyStatus(project, element)) return null
 
             var descriptor = getDescriptor(bindingContext, element)

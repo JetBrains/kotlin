@@ -60,4 +60,4 @@ fun CharSequence.skipSpacesAndLineBreaks(index: Int): Int
 
 fun CharSequence.isCharAt(offset: Int, c: Char) = offset < length && this[offset] == c
 
-fun Document.isTextAt(offset: Int, text: String) = offset + text.length <= getTextLength() && getText(TextRange(offset, offset + text.length)) == text
+fun Document.isTextAt(offset: Int, text: String) = offset + text.length <= textLength && getText(TextRange(offset, offset + text.length)) == text

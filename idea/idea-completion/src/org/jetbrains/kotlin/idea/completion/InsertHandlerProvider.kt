@@ -34,7 +34,7 @@ class InsertHandlerProvider(
 ) {
     private val expectedInfos by lazy(LazyThreadSafetyMode.NONE) { expectedInfosCalculator() }
 
-    public fun insertHandler(descriptor: DeclarationDescriptor): InsertHandler<LookupElement> {
+    fun insertHandler(descriptor: DeclarationDescriptor): InsertHandler<LookupElement> {
         if (callType == null) {
             error("Cannot create InsertHandler when no CallType known")
         }
@@ -50,7 +50,7 @@ class InsertHandlerProvider(
 
                             1 -> {
                                 if (callType != CallType.SUPER_MEMBERS) { // for super call we don't suggest to generate "super.foo { ... }" (seems to be non-typical use)
-                                    val parameterType = parameters.single().getType()
+                                    val parameterType = parameters.single().type
                                     if (KotlinBuiltIns.isExactFunctionOrExtensionFunctionType(parameterType)) {
                                         val parameterCount = KotlinBuiltIns.getParameterTypeProjectionsFromFunctionType(parameterType).size
                                         if (parameterCount <= 1) {

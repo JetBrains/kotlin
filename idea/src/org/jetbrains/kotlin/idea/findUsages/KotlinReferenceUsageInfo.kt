@@ -20,11 +20,11 @@ import com.intellij.psi.PsiReference
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-public class KotlinReferenceUsageInfo(reference: PsiReference) : UsageInfo(reference) {
+class KotlinReferenceUsageInfo(reference: PsiReference) : UsageInfo(reference) {
     private val referenceType = reference.javaClass
 
     override fun getReference(): PsiReference? {
-        val element = getElement() ?: return null
-        return element.getReferences().singleOrNull { it.javaClass == referenceType }
+        val element = element ?: return null
+        return element.references.singleOrNull { it.javaClass == referenceType }
     }
 }

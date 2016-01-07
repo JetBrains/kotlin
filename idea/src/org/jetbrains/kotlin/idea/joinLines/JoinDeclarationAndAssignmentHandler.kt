@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 
-public class JoinDeclarationAndAssignmentHandler : JoinRawLinesHandlerDelegate {
+class JoinDeclarationAndAssignmentHandler : JoinRawLinesHandlerDelegate {
 
     override fun tryJoinRawLines(document: Document, file: PsiFile, start: Int, end: Int): Int {
         if (file !is KtFile) return -1
@@ -46,7 +46,7 @@ public class JoinDeclarationAndAssignmentHandler : JoinRawLinesHandlerDelegate {
         val (property, assignment) = pair
 
         doJoin(property, assignment)
-        return property.getTextRange()!!.getStartOffset()
+        return property.textRange!!.startOffset
     }
 
     override fun tryJoinLines(document: Document, file: PsiFile, start: Int, end: Int)
@@ -58,24 +58,24 @@ public class JoinDeclarationAndAssignmentHandler : JoinRawLinesHandlerDelegate {
 
         val assignment = element.siblings(forward = true, withItself = false)
                                  .firstOrNull { !isToSkip(it) } as? KtBinaryExpression ?: return null
-        if (assignment.getOperationToken() != KtTokens.EQ) return null
+        if (assignment.operationToken != KtTokens.EQ) return null
 
-        val left = assignment.getLeft() as? KtSimpleNameExpression ?: return null
-        if (assignment.getRight() == null) return null
-        if (left.getReferencedName() != property.getName()) return null
+        val left = assignment.left as? KtSimpleNameExpression ?: return null
+        if (assignment.right == null) return null
+        if (left.getReferencedName() != property.name) return null
 
         return property to assignment
     }
 
     private fun doJoin(property: KtProperty, assignment: KtBinaryExpression) {
-        property.setInitializer(assignment.getRight())
-        property.getParent()!!.deleteChildRange(property.getNextSibling(), assignment) //TODO: should we delete range?
+        property.setInitializer(assignment.right)
+        property.parent!!.deleteChildRange(property.nextSibling, assignment) //TODO: should we delete range?
     }
 
     private fun isToSkip(element: PsiElement): Boolean {
         return when (element) {
             is PsiWhiteSpace -> StringUtil.getLineBreakCount(element.getText()!!) <= 1 // do not skip blank line
-            else -> element.getNode()!!.getElementType() == KtTokens.SEMICOLON
+            else -> element.node!!.elementType == KtTokens.SEMICOLON
         }
     }
 }

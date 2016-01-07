@@ -47,7 +47,7 @@ val KtDeclaration.constructor: ConstructorDescriptor?
     get() {
         val context = this.analyze()
         return when (this) {
-            is KtClassOrObject -> context[BindingContext.CLASS, this]?.getUnsubstitutedPrimaryConstructor()
+            is KtClassOrObject -> context[BindingContext.CLASS, this]?.unsubstitutedPrimaryConstructor
             is KtFunction -> context[BindingContext.CONSTRUCTOR, this]
             else -> null
         }
@@ -70,12 +70,12 @@ fun PsiReference.checkUsageVsOriginalDescriptor(
 }
 
 fun PsiReference.isImportUsage(): Boolean =
-        getElement()!!.getNonStrictParentOfType<KtImportDirective>() != null
+        element!!.getNonStrictParentOfType<KtImportDirective>() != null
 
-fun PsiReference.isConstructorUsage(ktClassOrObject: KtClassOrObject): Boolean = with (getElement()!!) {
+fun PsiReference.isConstructorUsage(ktClassOrObject: KtClassOrObject): Boolean = with (element!!) {
     fun checkJavaUsage(): Boolean {
         val call = getNonStrictParentOfType<PsiConstructorCall>()
-        return call == getParent() && call?.resolveConstructor()?.getContainingClass()?.getNavigationElement() == ktClassOrObject
+        return call == parent && call?.resolveConstructor()?.containingClass?.navigationElement == ktClassOrObject
     }
 
     fun checkKotlinUsage(): Boolean {
@@ -84,7 +84,7 @@ fun PsiReference.isConstructorUsage(ktClassOrObject: KtClassOrObject): Boolean =
         val descriptor = getConstructorCallDescriptor()
         if (descriptor !is ConstructorDescriptor) return false
 
-        val declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor.getContainingDeclaration())
+        val declaration = DescriptorToSourceUtils.descriptorToDeclaration(descriptor.containingDeclaration)
         return declaration == ktClassOrObject || (declaration is KtConstructor<*> && declaration.getContainingClassOrObject() == ktClassOrObject)
     }
 
@@ -95,12 +95,12 @@ private fun KtElement.getConstructorCallDescriptor(): DeclarationDescriptor? {
     val bindingContext = this.analyze()
     val constructorCalleeExpression = getNonStrictParentOfType<KtConstructorCalleeExpression>()
     if (constructorCalleeExpression != null) {
-        return bindingContext.get(BindingContext.REFERENCE_TARGET, constructorCalleeExpression.getConstructorReferenceExpression())
+        return bindingContext.get(BindingContext.REFERENCE_TARGET, constructorCalleeExpression.constructorReferenceExpression)
     }
 
     val callExpression = getNonStrictParentOfType<KtCallElement>()
     if (callExpression != null) {
-        val callee = callExpression.getCalleeExpression()
+        val callee = callExpression.calleeExpression
         if (callee is KtReferenceExpression) {
             return bindingContext.get(BindingContext.REFERENCE_TARGET, callee)
         }
@@ -109,7 +109,7 @@ private fun KtElement.getConstructorCallDescriptor(): DeclarationDescriptor? {
     return null
 }
 
-public fun PsiElement.processDelegationCallConstructorUsages(scope: SearchScope, process: (KtCallElement) -> Boolean): Boolean {
+fun PsiElement.processDelegationCallConstructorUsages(scope: SearchScope, process: (KtCallElement) -> Boolean): Boolean {
     if (!processDelegationCallKotlinConstructorUsages(scope, process)) return false
     return processDelegationCallJavaConstructorUsages(scope, process)
 }
@@ -135,8 +135,8 @@ private fun PsiElement.processDelegationCallJavaConstructorUsages(scope: SearchS
     if (this is KtLightElement<*, *>) return true
     // TODO: Temporary hack to avoid NPE while KotlinNoOriginLightMethod is around
     if (this is KtLightMethod && this.getOrigin() == null) return true
-    if (!(this is PsiMethod && isConstructor())) return true
-    val klass = getContainingClass() ?: return true
+    if (!(this is PsiMethod && isConstructor)) return true
+    val klass = containingClass ?: return true
     val descriptor = getJavaMethodDescriptor() as? ConstructorDescriptor ?: return true
     return processInheritorsDelegatingCallToSpecifiedConstructor(klass, scope, descriptor, process)
 }
@@ -188,8 +188,8 @@ fun PsiReference.isExtensionOfDeclarationClassUsage(declaration: KtNamedDeclarat
             usageDescriptor !is FunctionDescriptor -> false
             else -> {
                 val receiverDescriptor =
-                        usageDescriptor.getExtensionReceiverParameter()?.getType()?.getConstructor()?.getDeclarationDescriptor()
-                val containingDescriptor = targetDescriptor.getContainingDeclaration()
+                        usageDescriptor.extensionReceiverParameter?.type?.constructor?.declarationDescriptor
+                val containingDescriptor = targetDescriptor.containingDeclaration
 
                 containingDescriptor == receiverDescriptor
                 || (containingDescriptor is ClassDescriptor
@@ -206,7 +206,7 @@ fun PsiReference.isUsageInContainingDeclaration(declaration: KtNamedDeclaration)
     val descriptor = declaration.descriptor ?: return false
     return checkUsageVsOriginalDescriptor(descriptor) { usageDescriptor, targetDescriptor ->
         usageDescriptor != targetDescriptor
-        && usageDescriptor.getContainingDeclaration() == targetDescriptor.getContainingDeclaration()
+        && usageDescriptor.containingDeclaration == targetDescriptor.containingDeclaration
     }
 }
 

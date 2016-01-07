@@ -40,7 +40,7 @@ import java.io.File
 import kotlin.test.assertFalse
 import java.util.*
 
-public abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() {
+abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTestCase() {
     companion object {
         val ENTRY_POINT_ANNOTATION = "test.anno.EntryPoint"
     }
@@ -49,11 +49,11 @@ public abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTest
 
     override fun setUp() {
         super.setUp()
-        EntryPointsManagerBase.getInstance(getProject()).ADDITIONAL_ANNOTATIONS.add(ENTRY_POINT_ANNOTATION)
+        EntryPointsManagerBase.getInstance(project).ADDITIONAL_ANNOTATIONS.add(ENTRY_POINT_ANNOTATION)
     }
 
     override fun tearDown() {
-        EntryPointsManagerBase.getInstance(getProject()).ADDITIONAL_ANNOTATIONS.remove(ENTRY_POINT_ANNOTATION)
+        EntryPointsManagerBase.getInstance(project).ADDITIONAL_ANNOTATIONS.remove(ENTRY_POINT_ANNOTATION)
         super.tearDown()
     }
 
@@ -64,11 +64,11 @@ public abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTest
         val inspectionClass = Class.forName(InTextDirectivesUtils.findStringWithPrefixes(options, "// INSPECTION_CLASS: ")!!)
         val toolWrapper = LocalInspectionToolWrapper(inspectionClass.newInstance() as LocalInspectionTool)
 
-        val inspectionsTestDir = optionsFile.getParentFile()!!
-        val srcDir = inspectionsTestDir.getParentFile()!!
+        val inspectionsTestDir = optionsFile.parentFile!!
+        val srcDir = inspectionsTestDir.parentFile!!
 
         with(myFixture) {
-            setTestDataPath("${KotlinTestUtils.getHomeDirectory()}/$srcDir")
+            testDataPath = "${KotlinTestUtils.getHomeDirectory()}/$srcDir"
 
             val afterFiles = srcDir.listFiles { it -> it.name == "inspectionData" }?.single()?.listFiles { it -> it.extension == "after" } ?: emptyArray()
             val psiFiles = srcDir.walkTopDown().onEnter { it.name != "inspectionData" }.mapNotNull {
@@ -93,8 +93,8 @@ public abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTest
 
             val isJs = srcDir.endsWith("js")
 
-            val isWithRuntime = psiFiles.any { InTextDirectivesUtils.findStringWithPrefixes(it.getText(), "// WITH_RUNTIME") != null }
-            val fullJdk = psiFiles.any { InTextDirectivesUtils.findStringWithPrefixes(it.getText(), "// FULL_JDK") != null }
+            val isWithRuntime = psiFiles.any { InTextDirectivesUtils.findStringWithPrefixes(it.text, "// WITH_RUNTIME") != null }
+            val fullJdk = psiFiles.any { InTextDirectivesUtils.findStringWithPrefixes(it.text, "// FULL_JDK") != null }
 
             if (isJs) {
                 assertFalse(isWithRuntime)
@@ -103,23 +103,23 @@ public abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTest
 
             try {
                 if (isJs) {
-                    ConfigLibraryUtil.configureKotlinJsRuntime(myFixture.getModule())
+                    ConfigLibraryUtil.configureKotlinJsRuntime(myFixture.module)
                 }
                 if (isWithRuntime) {
                     ConfigLibraryUtil.configureKotlinRuntimeAndSdk(
-                            myFixture.getModule(),
+                            myFixture.module,
                             if (fullJdk) PluginTestCaseBase.fullJdk() else PluginTestCaseBase.mockJdk()
                     )
                 }
 
-                val scope = AnalysisScope(getProject(), psiFiles.map { it.getVirtualFile()!! })
+                val scope = AnalysisScope(project, psiFiles.map { it.virtualFile!! })
                 scope.invalidate()
 
-                val inspectionManager = (InspectionManager.getInstance(getProject()) as InspectionManagerEx)
-                val globalContext = CodeInsightTestFixtureImpl.createGlobalContextForTool(scope, getProject(), inspectionManager, toolWrapper)
+                val inspectionManager = (InspectionManager.getInstance(project) as InspectionManagerEx)
+                val globalContext = CodeInsightTestFixtureImpl.createGlobalContextForTool(scope, project, inspectionManager, toolWrapper)
 
                 InspectionTestUtil.runTool(toolWrapper, scope, globalContext)
-                InspectionTestUtil.compareToolResults(globalContext, toolWrapper, false, inspectionsTestDir.getPath())
+                InspectionTestUtil.compareToolResults(globalContext, toolWrapper, false, inspectionsTestDir.path)
 
                 if (afterFiles.isNotEmpty()) {
                     globalContext.getPresentation(toolWrapper).problemDescriptors.forEach {
@@ -140,10 +140,10 @@ public abstract class AbstractInspectionTest : KotlinLightCodeInsightFixtureTest
             }
             finally {
                 if (isWithRuntime) {
-                    ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(myFixture.getModule(), IdeaTestUtil.getMockJdk17())
+                    ConfigLibraryUtil.unConfigureKotlinRuntimeAndSdk(myFixture.module, IdeaTestUtil.getMockJdk17())
                 }
                 if (isJs) {
-                    ConfigLibraryUtil.unConfigureKotlinJsRuntimeAndSdk(myFixture.getModule(), IdeaTestUtil.getMockJdk17())
+                    ConfigLibraryUtil.unConfigureKotlinJsRuntimeAndSdk(myFixture.module, IdeaTestUtil.getMockJdk17())
                 }
             }
         }

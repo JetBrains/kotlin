@@ -23,21 +23,21 @@ import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescrip
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 
-public abstract class AbstractSmartStepIntoTest : KotlinLightCodeInsightFixtureTestCase() {
+abstract class AbstractSmartStepIntoTest : KotlinLightCodeInsightFixtureTestCase() {
     private val fixture: JavaCodeInsightTestFixture
         get() = myFixture
 
     protected fun doTest(path: String) {
         fixture.configureByFile(path)
 
-        val offset = fixture.getCaretOffset()
-        val line = fixture.getDocument(fixture.getFile()!!)!!.getLineNumber(offset)
+        val offset = fixture.caretOffset
+        val line = fixture.getDocument(fixture.file!!)!!.getLineNumber(offset)
 
-        val position = MockSourcePosition(_file = fixture.getFile(), _line = line, _offset = offset, _editor = fixture.getEditor())
+        val position = MockSourcePosition(_file = fixture.file, _line = line, _offset = offset, _editor = fixture.editor)
 
-        val actual = KotlinSmartStepIntoHandler().findSmartStepTargets(position).map { it.getPresentation() }
+        val actual = KotlinSmartStepIntoHandler().findSmartStepTargets(position).map { it.presentation }
 
-        val expected = InTextDirectivesUtils.findListWithPrefixes(fixture.getFile()?.getText()!!.replace("\\,", "+++"), "// EXISTS: ").map { it.replace("+++", ",") }
+        val expected = InTextDirectivesUtils.findListWithPrefixes(fixture.file?.text!!.replace("\\,", "+++"), "// EXISTS: ").map { it.replace("+++", ",") }
 
         for (actualTargetName in actual) {
             assert(actualTargetName in expected) {

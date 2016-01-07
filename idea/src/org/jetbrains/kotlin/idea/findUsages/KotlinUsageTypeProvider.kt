@@ -23,12 +23,12 @@ import com.intellij.usages.impl.rules.UsageTypeProviderEx
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.findUsages.UsageTypeEnum.*
 
-public object KotlinUsageTypeProvider : UsageTypeProviderEx {
-    public override fun getUsageType(element: PsiElement?): UsageType? {
+object KotlinUsageTypeProvider : UsageTypeProviderEx {
+    override fun getUsageType(element: PsiElement?): UsageType? {
         return getUsageType(element, UsageTarget.EMPTY_ARRAY)
     }
 
-    public override fun getUsageType(element: PsiElement?, targets: Array<out UsageTarget>): UsageType? {
+    override fun getUsageType(element: PsiElement?, targets: Array<out UsageTarget>): UsageType? {
         val usageType = UsageTypeUtils.getUsageType(element)
         if (usageType == null) return null
         return convertEnumToUsageType(usageType)

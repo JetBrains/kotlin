@@ -66,7 +66,7 @@ import java.util.*
 
 val UNKNOWN_PACKAGE_FQ_NAME = FqNameUnsafe("org.jetbrains.kotlin.idea.refactoring.move.<unknown-package>")
 
-public class PackageNameInfo(val oldPackageName: FqName, val newPackageName: FqNameUnsafe)
+class PackageNameInfo(val oldPackageName: FqName, val newPackageName: FqNameUnsafe)
 
 fun KtElement.getInternalReferencesToUpdateOnPackageNameChange(packageNameInfo: PackageNameInfo): List<UsageInfo> {
     val usages = ArrayList<UsageInfo>()
@@ -198,7 +198,7 @@ private fun isUnqualifiedExtensionReference(reference: PsiReference, referencedE
            && reference.element.getNonStrictParentOfType<KtImportDirective>() == null
 }
 
-public fun guessNewFileName(declarationsToMove: Collection<KtNamedDeclaration>): String? {
+fun guessNewFileName(declarationsToMove: Collection<KtNamedDeclaration>): String? {
     if (declarationsToMove.isEmpty()) return null
 
     val representative = declarationsToMove.singleOrNull()
@@ -314,7 +314,7 @@ fun postProcessMoveUsages(usages: List<UsageInfo>,
 var KtFile.updatePackageDirective: Boolean? by UserDataProperty(Key.create("UPDATE_PACKAGE_DIRECTIVE"))
 
 // Mostly copied from MoveFilesOrDirectoriesUtil.doMove()
-public fun moveFilesOrDirectories(
+fun moveFilesOrDirectories(
         project: Project,
         elements: Array<PsiElement>,
         targetElement: PsiElement?,

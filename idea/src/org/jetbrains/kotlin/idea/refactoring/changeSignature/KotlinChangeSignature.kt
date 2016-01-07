@@ -47,7 +47,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.resolve.OverrideResolver
 
-public interface KotlinChangeSignatureConfiguration {
+interface KotlinChangeSignatureConfiguration {
     fun configure(originalDescriptor: KotlinMethodDescriptor): KotlinMethodDescriptor = originalDescriptor
     fun performSilently(affectedFunctions: Collection<PsiElement>): Boolean = false
     fun forcePerformForSelectedFunctionOnly(): Boolean = false
@@ -61,7 +61,7 @@ fun KotlinMethodDescriptor.modify(action: (KotlinMutableMethodDescriptor) -> Uni
     return newDescriptor
 }
 
-public fun runChangeSignature(project: Project,
+fun runChangeSignature(project: Project,
                               callableDescriptor: CallableDescriptor,
                               configuration: KotlinChangeSignatureConfiguration,
                               defaultValueContext: PsiElement,
@@ -69,7 +69,7 @@ public fun runChangeSignature(project: Project,
     return KotlinChangeSignature(project, callableDescriptor, configuration, defaultValueContext, commandName).run()
 }
 
-public class KotlinChangeSignature(project: Project,
+class KotlinChangeSignature(project: Project,
                                    callableDescriptor: CallableDescriptor,
                                    val configuration: KotlinChangeSignatureConfiguration,
                                    val defaultValueContext: PsiElement,
@@ -218,8 +218,7 @@ public class KotlinChangeSignature(project: Project,
     }
 }
 
-@TestOnly
-public fun createChangeInfo(
+@TestOnly fun createChangeInfo(
         project: Project,
         callableDescriptor: CallableDescriptor,
         configuration: KotlinChangeSignatureConfiguration,

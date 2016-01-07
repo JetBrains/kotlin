@@ -97,7 +97,7 @@ private fun JavaDescriptorResolver.resolveMethod(method: JavaMethod): FunctionDe
 }
 
 private fun JavaDescriptorResolver.resolveConstructor(constructor: JavaConstructor): ConstructorDescriptor? {
-    return resolveClass(constructor.getContainingClass())?.getConstructors()?.findByJavaElement(constructor)
+    return resolveClass(constructor.containingClass)?.constructors?.findByJavaElement(constructor)
 }
 
 private fun JavaDescriptorResolver.resolveField(field: JavaField): PropertyDescriptor? {
@@ -105,21 +105,21 @@ private fun JavaDescriptorResolver.resolveField(field: JavaField): PropertyDescr
 }
 
 private fun JavaDescriptorResolver.getContainingScope(member: JavaMember): MemberScope? {
-    val containingClass = resolveClass(member.getContainingClass())
-    return if (member.isStatic())
-        containingClass?.getStaticScope()
+    val containingClass = resolveClass(member.containingClass)
+    return if (member.isStatic)
+        containingClass?.staticScope
     else
-        containingClass?.getDefaultType()?.getMemberScope()
+        containingClass?.defaultType?.memberScope
 }
 
 private fun <T : DeclarationDescriptorWithSource> Collection<T>.findByJavaElement(javaElement: JavaElement): T? {
     return firstOrNull { member ->
-        val memberJavaElement = (member.getOriginal().getSource() as? JavaSourceElement)?.javaElement
+        val memberJavaElement = (member.original.source as? JavaSourceElement)?.javaElement
         when {
             memberJavaElement == javaElement ->
                 true
             memberJavaElement is JavaElementImpl<*> && javaElement is JavaElementImpl<*> ->
-                memberJavaElement.getPsi().isEquivalentTo(javaElement.getPsi())
+                memberJavaElement.psi.isEquivalentTo(javaElement.psi)
             else ->
                 false
         }

@@ -280,7 +280,7 @@ class IdeaModuleInfoTest : ModuleTestCase() {
         get() = testSourceInfo()
 
     private val Library.classes: LibraryInfo
-        get() = LibraryInfo(getProject()!!, this)
+        get() = LibraryInfo(project!!, this)
 
     private fun Module.addDependency(
             lib: Library,
@@ -289,7 +289,7 @@ class IdeaModuleInfoTest : ModuleTestCase() {
     ) = ModuleRootModificationUtil.addDependency(this, lib, dependencyScope, exported)
 
     private fun module(name: String): Module {
-        return createModuleFromTestData(createTempDirectory()!!.getAbsolutePath(), name, StdModuleTypes.JAVA, false)!!
+        return createModuleFromTestData(createTempDirectory()!!.absolutePath, name, StdModuleTypes.JAVA, false)!!
     }
 
     private fun modules(name1: String = "a", name2: String = "b", name3: String = "c") = Triple(module(name1), module(name2), module(name3))

@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import java.util.*
 
-public object CreateClassFromConstructorCallActionFactory: CreateClassFromUsageFactory<KtCallExpression>() {
+object CreateClassFromConstructorCallActionFactory: CreateClassFromUsageFactory<KtCallExpression>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): KtCallExpression? {
         val diagElement = diagnostic.psiElement
         if (diagElement.getNonStrictParentOfType<KtTypeReference>() != null) return null

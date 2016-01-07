@@ -39,17 +39,17 @@ import java.util.*
  * Extract a number of statements about completion from the given text. Those statements
  * should be asserted during test execution.
  */
-public object ExpectedCompletionUtils {
+object ExpectedCompletionUtils {
 
-    public class CompletionProposal {
+    class CompletionProposal {
         private val map: Map<String, String?>
 
-        public constructor(lookupString: String) {
+        constructor(lookupString: String) {
             map = HashMap<String, String?>()
             map.put(LOOKUP_STRING, lookupString)
         }
 
-        public constructor(map: MutableMap<String, String?>) {
+        constructor(map: MutableMap<String, String?>) {
             this.map = map
             for (key in map.keys) {
                 if (key !in validKeys) {
@@ -58,7 +58,7 @@ public object ExpectedCompletionUtils {
             }
         }
 
-        public constructor(json: JsonObject) {
+        constructor(json: JsonObject) {
             map = HashMap<String, String?>()
             for (entry in json.entrySet()) {
                 val key = entry.key
@@ -70,7 +70,7 @@ public object ExpectedCompletionUtils {
             }
         }
 
-        public fun matches(expectedProposal: CompletionProposal): Boolean
+        fun matches(expectedProposal: CompletionProposal): Boolean
                 = expectedProposal.map.entries.none { it.value != map[it.key] }
 
         override fun toString(): String {
@@ -82,13 +82,13 @@ public object ExpectedCompletionUtils {
         }
 
         companion object {
-            public val LOOKUP_STRING: String = "lookupString"
-            public val ALL_LOOKUP_STRINGS: String = "allLookupStrings"
-            public val PRESENTATION_ITEM_TEXT: String = "itemText"
-            public val PRESENTATION_TYPE_TEXT: String = "typeText"
-            public val PRESENTATION_TAIL_TEXT: String = "tailText"
-            public val PRESENTATION_TEXT_ATTRIBUTES: String = "attributes"
-            public val validKeys: Set<String> = setOf(LOOKUP_STRING, ALL_LOOKUP_STRINGS, PRESENTATION_ITEM_TEXT, PRESENTATION_TYPE_TEXT, PRESENTATION_TAIL_TEXT, PRESENTATION_TEXT_ATTRIBUTES)
+            val LOOKUP_STRING: String = "lookupString"
+            val ALL_LOOKUP_STRINGS: String = "allLookupStrings"
+            val PRESENTATION_ITEM_TEXT: String = "itemText"
+            val PRESENTATION_TYPE_TEXT: String = "typeText"
+            val PRESENTATION_TAIL_TEXT: String = "tailText"
+            val PRESENTATION_TEXT_ATTRIBUTES: String = "attributes"
+            val validKeys: Set<String> = setOf(LOOKUP_STRING, ALL_LOOKUP_STRINGS, PRESENTATION_ITEM_TEXT, PRESENTATION_TYPE_TEXT, PRESENTATION_TAIL_TEXT, PRESENTATION_TEXT_ATTRIBUTES)
         }
     }
 
@@ -113,11 +113,11 @@ public object ExpectedCompletionUtils {
     private val WITH_ORDER_PREFIX = "WITH_ORDER"
     private val AUTOCOMPLETE_SETTING_PREFIX = "AUTOCOMPLETE_SETTING:"
 
-    public val RUNTIME_TYPE: String = "RUNTIME_TYPE:"
+    val RUNTIME_TYPE: String = "RUNTIME_TYPE:"
 
     private val COMPLETION_TYPE_PREFIX = "COMPLETION_TYPE:"
 
-    public val KNOWN_PREFIXES: List<String> = ImmutableList.of(
+    val KNOWN_PREFIXES: List<String> = ImmutableList.of(
             EXIST_LINE_PREFIX,
             ABSENT_LINE_PREFIX,
             ABSENT_JS_LINE_PREFIX,
@@ -136,7 +136,7 @@ public object ExpectedCompletionUtils {
             LightClassComputationControl.LIGHT_CLASS_DIRECTIVE,
             AstAccessControl.ALLOW_AST_ACCESS_DIRECTIVE)
 
-    public fun itemsShouldExist(fileText: String, platform: TargetPlatform?): Array<CompletionProposal> {
+    fun itemsShouldExist(fileText: String, platform: TargetPlatform?): Array<CompletionProposal> {
         return when (platform) {
             JvmPlatform -> processProposalAssertions(fileText, EXIST_LINE_PREFIX, EXIST_JAVA_ONLY_LINE_PREFIX)
             JsPlatform -> processProposalAssertions(fileText, EXIST_LINE_PREFIX, EXIST_JS_ONLY_LINE_PREFIX)
@@ -145,7 +145,7 @@ public object ExpectedCompletionUtils {
         }
     }
 
-    public fun itemsShouldAbsent(fileText: String, platform: TargetPlatform?): Array<CompletionProposal> {
+    fun itemsShouldAbsent(fileText: String, platform: TargetPlatform?): Array<CompletionProposal> {
         return when (platform) {
             JvmPlatform -> processProposalAssertions(fileText, ABSENT_LINE_PREFIX, ABSENT_JAVA_LINE_PREFIX, EXIST_JS_ONLY_LINE_PREFIX)
             JsPlatform -> processProposalAssertions(fileText, ABSENT_LINE_PREFIX, ABSENT_JS_LINE_PREFIX, EXIST_JAVA_ONLY_LINE_PREFIX)
@@ -154,7 +154,7 @@ public object ExpectedCompletionUtils {
         }
     }
 
-    public fun processProposalAssertions(fileText: String, vararg prefixes: String): Array<CompletionProposal> {
+    fun processProposalAssertions(fileText: String, vararg prefixes: String): Array<CompletionProposal> {
         val proposals = ArrayList<CompletionProposal>()
         for (proposalStr in InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, *prefixes)) {
             if (proposalStr.startsWith("{")) {
@@ -180,7 +180,7 @@ public object ExpectedCompletionUtils {
         return ArrayUtil.toObjectArray(proposals, CompletionProposal::class.java)
     }
 
-    public fun getExpectedNumber(fileText: String, platform: TargetPlatform?): Int? {
+    fun getExpectedNumber(fileText: String, platform: TargetPlatform?): Int? {
         return when (platform) {
             null -> InTextDirectivesUtils.getPrefixedInt(fileText, NUMBER_LINE_PREFIX)
             JvmPlatform -> getPlatformExpectedNumber(fileText, NUMBER_JAVA_LINE_PREFIX)
@@ -189,15 +189,15 @@ public object ExpectedCompletionUtils {
         }
     }
 
-    public fun isNothingElseExpected(fileText: String): Boolean {
+    fun isNothingElseExpected(fileText: String): Boolean {
         return !InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, NOTHING_ELSE_PREFIX).isEmpty()
     }
 
-    public fun getInvocationCount(fileText: String): Int? {
+    fun getInvocationCount(fileText: String): Int? {
         return InTextDirectivesUtils.getPrefixedInt(fileText, INVOCATION_COUNT_PREFIX)
     }
 
-    public fun getCompletionType(fileText: String): CompletionType? {
+    fun getCompletionType(fileText: String): CompletionType? {
         val completionTypeString = InTextDirectivesUtils.findStringWithPrefixes(fileText, COMPLETION_TYPE_PREFIX)
         return when (completionTypeString) {
             "BASIC" -> CompletionType.BASIC
@@ -207,19 +207,19 @@ public object ExpectedCompletionUtils {
         }
     }
 
-    public fun getAutocompleteSetting(fileText: String): Boolean? {
+    fun getAutocompleteSetting(fileText: String): Boolean? {
         return InTextDirectivesUtils.getPrefixedBoolean(fileText, AUTOCOMPLETE_SETTING_PREFIX)
     }
 
-    public fun isWithOrder(fileText: String): Boolean {
+    fun isWithOrder(fileText: String): Boolean {
         return !InTextDirectivesUtils.findLinesWithPrefixesRemoved(fileText, WITH_ORDER_PREFIX).isEmpty()
     }
 
-    public fun assertDirectivesValid(fileText: String) {
+    fun assertDirectivesValid(fileText: String) {
         InTextDirectivesUtils.assertHasUnknownPrefixes(fileText, KNOWN_PREFIXES)
     }
 
-    public fun assertContainsRenderedItems(expected: Array<CompletionProposal>, items: Array<LookupElement>, checkOrder: Boolean, nothingElse: Boolean) {
+    fun assertContainsRenderedItems(expected: Array<CompletionProposal>, items: Array<LookupElement>, checkOrder: Boolean, nothingElse: Boolean) {
         val itemsInformation = getItemsInformation(items)
         val allItemsString = listToString(itemsInformation)
 
@@ -272,7 +272,7 @@ public object ExpectedCompletionUtils {
         return InTextDirectivesUtils.getPrefixedInt(fileText, NUMBER_LINE_PREFIX)
     }
 
-    public fun assertNotContainsRenderedItems(unexpected: Array<CompletionProposal>, items: Array<LookupElement>) {
+    fun assertNotContainsRenderedItems(unexpected: Array<CompletionProposal>, items: Array<LookupElement>) {
         val itemsInformation = getItemsInformation(items)
         val allItemsString = listToString(itemsInformation)
 
@@ -284,7 +284,7 @@ public object ExpectedCompletionUtils {
         }
     }
 
-    public fun getItemsInformation(items: Array<LookupElement>): List<CompletionProposal> {
+    fun getItemsInformation(items: Array<LookupElement>): List<CompletionProposal> {
         val presentation = LookupElementPresentation()
 
         val result = ArrayList<CompletionProposal>(items.size)
@@ -336,5 +336,5 @@ public object ExpectedCompletionUtils {
         }
     }
 
-    public fun listToString(items: Collection<CompletionProposal>): String = items.joinToString("\n")
+    fun listToString(items: Collection<CompletionProposal>): String = items.joinToString("\n")
 }

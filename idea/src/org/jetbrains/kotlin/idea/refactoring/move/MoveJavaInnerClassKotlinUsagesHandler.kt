@@ -29,7 +29,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.idea.references.mainReference
 
-public class MoveJavaInnerClassKotlinUsagesHandler: MoveInnerClassUsagesHandler {
+class MoveJavaInnerClassKotlinUsagesHandler: MoveInnerClassUsagesHandler {
     override fun correctInnerClassUsage(usage: UsageInfo, outerClass: PsiClass) {
         val innerCall = usage.element?.parent as? KtCallExpression ?: return
 

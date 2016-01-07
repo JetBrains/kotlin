@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.junit.Assert
 
-public abstract class AbstractInternalCompiledClassesTest : KotlinLightCodeInsightFixtureTestCase() {
+abstract class AbstractInternalCompiledClassesTest : KotlinLightCodeInsightFixtureTestCase() {
     private fun isFileWithHeader(predicate: (KotlinClassHeader) -> Boolean) : VirtualFile.() -> Boolean = {
-        val header = KotlinBinaryClassCache.getKotlinBinaryClass(this)?.getClassHeader()
+        val header = KotlinBinaryClassCache.getKotlinBinaryClass(this)?.classHeader
         header != null && predicate(header)
     }
 
@@ -40,10 +40,10 @@ public abstract class AbstractInternalCompiledClassesTest : KotlinLightCodeInsig
             doTestNoPsiFilesAreBuiltFor("synthetic", isSyntheticClass())
 
     protected fun doTestNoPsiFilesAreBuiltFor(fileKind: String, acceptFile: VirtualFile.() -> Boolean) {
-        val project = getProject()
+        val project = project
         doTest(fileKind, acceptFile) {
             val psiFile = PsiManager.getInstance(project).findFile(this)
-            Assert.assertNull("PSI files for $fileKind classes should not be build, is was build for: ${this.getPresentableName()}",
+            Assert.assertNull("PSI files for $fileKind classes should not be build, is was build for: ${this.presentableName}",
                               psiFile)
         }
     }
@@ -63,11 +63,11 @@ public abstract class AbstractInternalCompiledClassesTest : KotlinLightCodeInsig
     }
 
     protected fun VirtualFile.checkRecursively(body: VirtualFile.() -> Unit) {
-        if (!isDirectory()) {
+        if (!isDirectory) {
             body()
         }
         else {
-            for (file in getChildren()!!) {
+            for (file in children!!) {
                 file.checkRecursively(body)
             }
         }

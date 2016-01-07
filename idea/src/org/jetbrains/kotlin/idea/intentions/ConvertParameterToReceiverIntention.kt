@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 
-public class ConvertParameterToReceiverIntention : SelfTargetingIntention<KtParameter>(KtParameter::class.java, "Convert parameter to receiver") {
+class ConvertParameterToReceiverIntention : SelfTargetingIntention<KtParameter>(KtParameter::class.java, "Convert parameter to receiver") {
     override fun isApplicableTo(element: KtParameter, caretOffset: Int): Boolean {
         val identifier = element.nameIdentifier ?: return false
         if (!identifier.textRange.containsOffset(caretOffset)) return false

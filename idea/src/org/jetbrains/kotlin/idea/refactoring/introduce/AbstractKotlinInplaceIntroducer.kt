@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import java.awt.BorderLayout
 
-public abstract class AbstractKotlinInplaceIntroducer<D: KtNamedDeclaration>(
+abstract class AbstractKotlinInplaceIntroducer<D: KtNamedDeclaration>(
         localVariable: D?,
         expression: KtExpression?,
         occurrences: Array<KtExpression>,

@@ -137,7 +137,7 @@ fun createStubForTypeName(
         onUserTypeLevel: (KotlinUserTypeStub, Int) -> Unit = { x, y -> }
 ): KotlinUserTypeStub {
     val fqName =
-            if (typeClassId.isLocal()) KotlinBuiltIns.FQ_NAMES.any
+            if (typeClassId.isLocal) KotlinBuiltIns.FQ_NAMES.any
             else typeClassId.asSingleFqName().toUnsafe()
     val segments = fqName.pathSegments().asReversed()
     assert(segments.isNotEmpty())
@@ -288,7 +288,7 @@ fun createTargetedAnnotationStubs(
         val (annotationClassId, target) = annotation
         val annotationEntryStubImpl = KotlinAnnotationEntryStubImpl(
                 parent,
-                shortName = annotationClassId.getShortClassName().ref(),
+                shortName = annotationClassId.shortClassName.ref(),
                 hasValueArguments = false
         )
         if (target != null) {

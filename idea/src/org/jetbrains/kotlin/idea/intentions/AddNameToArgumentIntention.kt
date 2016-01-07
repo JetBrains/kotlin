@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatchStatus
 import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class AddNameToArgumentIntention
+class AddNameToArgumentIntention
   : SelfTargetingIntention<KtValueArgument>(KtValueArgument::class.java, "Add name to argument"), LowPriorityAction {
 
     override fun isApplicableTo(element: KtValueArgument, caretOffset: Int): Boolean {

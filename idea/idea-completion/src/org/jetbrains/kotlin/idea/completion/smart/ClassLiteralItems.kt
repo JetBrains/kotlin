@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.types.Variance
 import java.util.*
 
 object ClassLiteralItems {
-    public fun addToCollection(
+    fun addToCollection(
             collection: MutableCollection<LookupElement>,
             expectedInfos: Collection<ExpectedInfo>,
             lookupElementFactory: BasicLookupElementFactory,

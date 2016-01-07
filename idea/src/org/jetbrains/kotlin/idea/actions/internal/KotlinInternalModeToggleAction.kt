@@ -20,7 +20,7 @@ import com.intellij.openapi.actionSystem.ToggleAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 
-public class KotlinInternalModeToggleAction: ToggleAction("Kotlin Internal Mode", "Show debug highlighting", null) {
+class KotlinInternalModeToggleAction: ToggleAction("Kotlin Internal Mode", "Show debug highlighting", null) {
     override fun isSelected(e: AnActionEvent?): Boolean {
         return KotlinInternalMode.enabled
     }
@@ -28,6 +28,6 @@ public class KotlinInternalModeToggleAction: ToggleAction("Kotlin Internal Mode"
     override fun setSelected(e: AnActionEvent?, state: Boolean) {
         KotlinInternalMode.enabled = state
 
-        DaemonCodeAnalyzer.getInstance(e!!.getProject())!!.settingsChanged()
+        DaemonCodeAnalyzer.getInstance(e!!.project)!!.settingsChanged()
     }
 }

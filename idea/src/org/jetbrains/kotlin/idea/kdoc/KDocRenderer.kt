@@ -120,7 +120,7 @@ object KDocRenderer {
         }
     }
 
-    public fun MarkdownNode.toHtml(): String {
+    fun MarkdownNode.toHtml(): String {
         val sb = StringBuilder()
         visit { node, processChildren ->
             fun wrapChildren(tag: String, newline: Boolean = false) {

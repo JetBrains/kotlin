@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class KotlinReferenceImporter : ReferenceImporter {
+class KotlinReferenceImporter : ReferenceImporter {
     override fun autoImportReferenceAtCursor(editor: Editor, file: PsiFile)
             = autoImportReferenceAtCursor(editor, file, allowCaretNearRef = false)
 
@@ -51,7 +51,7 @@ public class KotlinReferenceImporter : ReferenceImporter {
     companion object {
 
         // TODO: use in table cell
-        public fun autoImportReferenceAtCursor(editor: Editor, file: PsiFile, allowCaretNearRef: Boolean): Boolean {
+        fun autoImportReferenceAtCursor(editor: Editor, file: PsiFile, allowCaretNearRef: Boolean): Boolean {
             if (file !is KtFile) return false
 
             val caretOffset = editor.caretModel.offset

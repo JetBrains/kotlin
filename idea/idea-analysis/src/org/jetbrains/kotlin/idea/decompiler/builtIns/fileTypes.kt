@@ -21,7 +21,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.builtins.BuiltInsSerializedResourcePaths
 import org.jetbrains.kotlin.idea.KotlinIcons
 
-public object KotlinBuiltInClassFileType : FileType {
+object KotlinBuiltInClassFileType : FileType {
     override fun getName() = "kotlin_class"
 
     override fun getDescription() = "Kotlin builtin class"
@@ -37,7 +37,7 @@ public object KotlinBuiltInClassFileType : FileType {
     override fun getCharset(file: VirtualFile, content: ByteArray) = null
 }
 
-public object KotlinBuiltInPackageFileType : FileType {
+object KotlinBuiltInPackageFileType : FileType {
     override fun getName() = "kotlin_package"
 
     override fun getDescription() = "Kotlin builtin package"

@@ -21,10 +21,10 @@ import com.intellij.refactoring.safeDelete.usageInfo.SafeDeleteReferenceSimpleDe
 import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.psi.KtValueArgumentList
 
-public class SafeDeleteValueArgumentListUsageInfo(
+class SafeDeleteValueArgumentListUsageInfo(
         valueArgument: KtValueArgument, parameter: PsiElement
 ) : SafeDeleteReferenceSimpleDeleteUsageInfo(valueArgument, parameter, true) {
-    public override fun deleteElement() {
+    override fun deleteElement() {
         val element = element as? KtValueArgument ?: return
         val parent = element.parent
         if (parent is KtValueArgumentList) {

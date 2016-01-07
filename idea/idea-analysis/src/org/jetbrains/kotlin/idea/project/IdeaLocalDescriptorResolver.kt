@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.lazy.LocalDescriptorResolver
 import org.jetbrains.kotlin.resolve.lazy.NoDescriptorForDeclarationException
 
-public class IdeaLocalDescriptorResolver(
+class IdeaLocalDescriptorResolver(
         private val resolveElementCache: ResolveElementCache
 ): LocalDescriptorResolver {
     override fun resolveLocalDeclaration(declaration: KtDeclaration): DeclarationDescriptor {

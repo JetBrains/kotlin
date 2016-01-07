@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.singletonList
 import java.util.*
 
-public object CreateClassFromCallWithConstructorCalleeActionFactory : CreateClassFromUsageFactory<KtCallElement>() {
+object CreateClassFromCallWithConstructorCalleeActionFactory : CreateClassFromUsageFactory<KtCallElement>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): KtCallElement? {
         val diagElement = diagnostic.psiElement
 

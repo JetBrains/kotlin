@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.*
 
-public abstract class ReplaceCallFix protected constructor(val psiElement: PsiElement) : IntentionAction {
+abstract class ReplaceCallFix protected constructor(val psiElement: PsiElement) : IntentionAction {
 
     override fun getFamilyName(): String = text
 
@@ -59,7 +59,7 @@ public abstract class ReplaceCallFix protected constructor(val psiElement: PsiEl
     abstract val classToReplace: Class<out KtQualifiedExpression>
 }
 
-public class ReplaceWithSafeCallFix(psiElement: PsiElement): ReplaceCallFix(psiElement) {
+class ReplaceWithSafeCallFix(psiElement: PsiElement): ReplaceCallFix(psiElement) {
     override fun getText(): String = "Replace with safe (?.) call"
     override val operation: String get() = "?."
     override val classToReplace: Class<out KtQualifiedExpression> get() = KtDotQualifiedExpression::class.java
@@ -70,7 +70,7 @@ public class ReplaceWithSafeCallFix(psiElement: PsiElement): ReplaceCallFix(psiE
     }
 }
 
-public class ReplaceWithDotCallFix(psiElement: PsiElement): ReplaceCallFix(psiElement), CleanupFix {
+class ReplaceWithDotCallFix(psiElement: PsiElement): ReplaceCallFix(psiElement), CleanupFix {
     override fun getText(): String = KotlinBundle.message("replace.with.dot.call")
     override val operation: String get() = "."
     override val classToReplace: Class<out KtQualifiedExpression> get() = KtSafeQualifiedExpression::class.java

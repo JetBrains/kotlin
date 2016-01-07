@@ -34,8 +34,8 @@ import org.jetbrains.kotlin.psi.psiUtil.containsInside
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import java.util.*
 
-public abstract class SelfTargetingIntention<TElement : KtElement>(
-        public val elementType: Class<TElement>,
+abstract class SelfTargetingIntention<TElement : KtElement>(
+        val elementType: Class<TElement>,
         private var text: String,
         private val familyName: String = text
 ) : IntentionAction {
@@ -49,12 +49,12 @@ public abstract class SelfTargetingIntention<TElement : KtElement>(
     final override fun getText() = text
     final override fun getFamilyName() = familyName
 
-    public abstract fun isApplicableTo(element: TElement, caretOffset: Int): Boolean
+    abstract fun isApplicableTo(element: TElement, caretOffset: Int): Boolean
 
-    public abstract fun applyTo(element: TElement, editor: Editor)
+    abstract fun applyTo(element: TElement, editor: Editor)
 
     private fun getTarget(editor: Editor, file: PsiFile): TElement? {
-        val offset = editor.getCaretModel().getOffset()
+        val offset = editor.caretModel.offset
         val leaf1 = file.findElementAt(offset)
         val leaf2 = file.findElementAt(offset - 1)
         val commonParent = if (leaf1 != null && leaf2 != null) PsiTreeUtil.findCommonParent(leaf1, leaf2) else null
@@ -75,7 +75,7 @@ public abstract class SelfTargetingIntention<TElement : KtElement>(
             if (elementType.isInstance(element) && isApplicableTo(element as TElement, offset)) {
                 return element
             }
-            if (!allowCaretInsideElement(element) && element.getTextRange().containsInside(offset)) break
+            if (!allowCaretInsideElement(element) && element.textRange.containsInside(offset)) break
         }
         return null
     }
@@ -131,13 +131,13 @@ public abstract class SelfTargetingIntention<TElement : KtElement>(
     }
 }
 
-public abstract class SelfTargetingRangeIntention<TElement : KtElement>(
+abstract class SelfTargetingRangeIntention<TElement : KtElement>(
         elementType: Class<TElement>,
         text: String,
         familyName: String = text
 ) : SelfTargetingIntention<TElement>(elementType, text, familyName) {
 
-    public abstract fun applicabilityRange(element: TElement): TextRange?
+    abstract fun applicabilityRange(element: TElement): TextRange?
 
     override final fun isApplicableTo(element: TElement, caretOffset: Int): Boolean {
         val range = applicabilityRange(element) ?: return false
@@ -145,15 +145,15 @@ public abstract class SelfTargetingRangeIntention<TElement : KtElement>(
     }
 }
 
-public abstract class SelfTargetingOffsetIndependentIntention<TElement : KtElement>(
+abstract class SelfTargetingOffsetIndependentIntention<TElement : KtElement>(
         elementType: Class<TElement>,
         text: String,
         familyName: String = text
 ) : SelfTargetingRangeIntention<TElement>(elementType, text, familyName) {
 
-    public abstract fun isApplicableTo(element: TElement): Boolean
+    abstract fun isApplicableTo(element: TElement): Boolean
 
     override final fun applicabilityRange(element: TElement): TextRange? {
-        return if (isApplicableTo(element)) element.getTextRange() else null
+        return if (isApplicableTo(element)) element.textRange else null
     }
 }

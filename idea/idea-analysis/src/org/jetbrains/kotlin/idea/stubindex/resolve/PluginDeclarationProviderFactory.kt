@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo
 import org.jetbrains.kotlin.resolve.lazy.declarations.*
 import org.jetbrains.kotlin.storage.StorageManager
 
-public class PluginDeclarationProviderFactory(
+class PluginDeclarationProviderFactory(
         private val project: Project,
         private val indexedFilesScope: GlobalSearchScope,
         private val storageManager: StorageManager,

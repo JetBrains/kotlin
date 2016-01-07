@@ -25,14 +25,14 @@ import org.jetbrains.kotlin.load.kotlin.OldPackageFacadeClassUtils
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.name.FqName
 
-public class KotlinJavaScriptStubConsistencyTest : StubConsistencyBaseTest() {
+class KotlinJavaScriptStubConsistencyTest : StubConsistencyBaseTest() {
     override fun getFileIds() = listOf(
             "java.util", "jquery", "jquery.ui",
             "kotlin", "kotlin.browser", "kotlin.dom", "kotlin.js"
     ).map { OldPackageFacadeClassUtils.getPackageClassId(FqName(it)) }
 
     override fun getVirtualFileFinder(): VirtualFileFinder =
-        JsVirtualFileFinder.SERVICE.getInstance(getProject())
+        JsVirtualFileFinder.SERVICE.getInstance(project)
 
     override fun createStubBuilder() = KotlinJavaScriptStubBuilder()
 

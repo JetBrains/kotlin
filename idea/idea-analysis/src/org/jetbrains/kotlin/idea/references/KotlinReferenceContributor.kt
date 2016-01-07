@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
-public class KotlinReferenceContributor() : PsiReferenceContributor() {
-    public override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
+class KotlinReferenceContributor() : PsiReferenceContributor() {
+    override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
         with(registrar) {
             registerProvider(KtSimpleNameExpression::class.java) {
                 KtSimpleNameReference(it)

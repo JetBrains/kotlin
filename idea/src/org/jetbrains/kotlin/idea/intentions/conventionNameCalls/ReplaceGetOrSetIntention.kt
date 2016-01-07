@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.isValidOperator
 
-public class ReplaceGetOrSetInspection : IntentionBasedInspection<KtDotQualifiedExpression>(
+class ReplaceGetOrSetInspection : IntentionBasedInspection<KtDotQualifiedExpression>(
         ReplaceGetOrSetIntention(), ReplaceGetOrSetInspection.additionalChecker
 
 ) {

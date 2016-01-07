@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.idea.intentions.isAutoCreatedItUsage
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 
-public class RenameKotlinImplicitLambdaParameter: VariableInplaceRenameHandler() {
+class RenameKotlinImplicitLambdaParameter: VariableInplaceRenameHandler() {
     override fun isAvailable(element: PsiElement?, editor: Editor, file: PsiFile): Boolean {
         val nameExpression = PsiTreeUtil.findElementOfClassAtOffset(
                 file, editor.caretModel.offset, KtNameReferenceExpression::class.java, false)

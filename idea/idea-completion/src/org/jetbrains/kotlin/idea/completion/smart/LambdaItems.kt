@@ -28,13 +28,13 @@ import org.jetbrains.kotlin.idea.core.fuzzyType
 import java.util.*
 
 object LambdaItems {
-    public fun collect(functionExpectedInfos: Collection<ExpectedInfo>): Collection<LookupElement> {
+    fun collect(functionExpectedInfos: Collection<ExpectedInfo>): Collection<LookupElement> {
         val list = ArrayList<LookupElement>()
         addToCollection(list, functionExpectedInfos)
         return list
     }
 
-    public fun addToCollection(collection: MutableCollection<LookupElement>, expectedInfos: Collection<ExpectedInfo>) {
+    fun addToCollection(collection: MutableCollection<LookupElement>, expectedInfos: Collection<ExpectedInfo>) {
         val functionExpectedInfos = expectedInfos.filterFunctionExpected()
         if (functionExpectedInfos.isEmpty()) return
 
@@ -59,9 +59,9 @@ object LambdaItems {
                 val lookupString = lambdaPresentation(functionType)
                 val lookupElement = LookupElementBuilder.create(lookupString)
                         .withInsertHandler({ context, lookupElement ->
-                                               val offset = context.getStartOffset()
+                                               val offset = context.startOffset
                                                val placeholder = "{}"
-                                               context.getDocument().replaceString(offset, context.getTailOffset(), placeholder)
+                                               context.document.replaceString(offset, context.tailOffset, placeholder)
                                                insertLambdaTemplate(context, TextRange(offset, offset + placeholder.length), functionType)
                                            })
                         .suppressAutoInsertion()

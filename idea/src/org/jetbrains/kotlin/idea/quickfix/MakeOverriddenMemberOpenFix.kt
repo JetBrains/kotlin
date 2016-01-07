@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import java.util.*
 
-public class MakeOverriddenMemberOpenFix(declaration: KtDeclaration) : KotlinQuickFixAction<KtDeclaration>(declaration) {
+class MakeOverriddenMemberOpenFix(declaration: KtDeclaration) : KotlinQuickFixAction<KtDeclaration>(declaration) {
     private val overriddenNonOverridableMembers = ArrayList<KtCallableDeclaration>()
     private val containingDeclarationsNames = ArrayList<String>()
 

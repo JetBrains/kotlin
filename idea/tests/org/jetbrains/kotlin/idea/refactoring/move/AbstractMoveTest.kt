@@ -57,7 +57,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
-public abstract class AbstractMoveTest : KotlinMultiFileTestCase() {
+abstract class AbstractMoveTest : KotlinMultiFileTestCase() {
     protected fun doTest(path: String) {
         val config = JsonParser().parse(FileUtil.loadFile(File(path), true)) as JsonObject
 
@@ -68,16 +68,16 @@ public abstract class AbstractMoveTest : KotlinMultiFileTestCase() {
 
         val conflictFile = File(testDir + "/conflicts.txt")
 
-        val withRuntime = config["withRuntime"]?.getAsBoolean() ?: false
+        val withRuntime = config["withRuntime"]?.asBoolean ?: false
         if (withRuntime) {
             ConfigLibraryUtil.configureKotlinRuntimeAndSdk(myModule, PluginTestCaseBase.mockJdk())
         }
 
         doTest({ rootDir, rootAfter ->
             val mainFile = rootDir.findFileByRelativePath(mainFilePath)!!
-            val mainPsiFile = PsiManager.getInstance(getProject()!!).findFile(mainFile)!!
+            val mainPsiFile = PsiManager.getInstance(project!!).findFile(mainFile)!!
             val document = FileDocumentManager.getInstance().getDocument(mainFile)!!
-            val editor = EditorFactory.getInstance()!!.createEditor(document, getProject()!!)!!
+            val editor = EditorFactory.getInstance()!!.createEditor(document, project!!)!!
 
             val caretOffset = extractCaretOffset(document)
             val elementAtCaret = if (caretOffset >= 0) {
@@ -95,10 +95,10 @@ public abstract class AbstractMoveTest : KotlinMultiFileTestCase() {
                 assert(!conflictFile.exists())
             }
             catch(e: ConflictsInTestsException) {
-                KotlinTestUtils.assertEqualsToFile(conflictFile, e.getMessages().sorted().joinToString("\n"))
+                KotlinTestUtils.assertEqualsToFile(conflictFile, e.messages.sorted().joinToString("\n"))
             }
             finally {
-                PsiDocumentManager.getInstance(getProject()!!).commitAllDocuments()
+                PsiDocumentManager.getInstance(project!!).commitAllDocuments()
                 FileDocumentManager.getInstance().saveAllDocuments()
 
                 EditorFactory.getInstance()!!.releaseEditor(editor)
@@ -116,11 +116,11 @@ public abstract class AbstractMoveTest : KotlinMultiFileTestCase() {
         return testName.substring(0, testName.lastIndexOf('_')).replace('_', '/')
     }
 
-    protected override fun getTestRoot() : String {
+    override fun getTestRoot() : String {
         return "/refactoring/move/"
     }
 
-    protected override fun getTestDataPath() : String {
+    override fun getTestDataPath() : String {
         return PluginTestCaseBase.getTestDataPathBase()
     }
 }
@@ -134,10 +134,10 @@ enum class MoveAction {
 
             val options = MockMoveMembersOptions(targetClassName, arrayOf(member))
             if (visibility != null) {
-                options.setMemberVisibility(visibility)
+                options.memberVisibility = visibility
             }
 
-            MoveMembersProcessor(elementAtCaret.getProject(), options).run()
+            MoveMembersProcessor(elementAtCaret.project, options).run()
         }
     },
 
@@ -147,9 +147,9 @@ enum class MoveAction {
             val targetPackage = config.getString("targetPackage")
 
             MoveClassesOrPackagesProcessor(
-                    mainFile.getProject(),
+                    mainFile.project,
                     arrayOf(classToMove),
-                    MultipleRootsMoveDestination(PackageWrapper(mainFile.getManager(), targetPackage)),
+                    MultipleRootsMoveDestination(PackageWrapper(mainFile.manager, targetPackage)),
                     /* searchInComments = */ false,
                     /* searchInNonJavaFiles = */ true,
                     /* moveCallback = */ null
@@ -159,14 +159,14 @@ enum class MoveAction {
 
     MOVE_PACKAGES {
         override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
-            val project = mainFile.getProject()
+            val project = mainFile.project
             val sourcePackage = config.getString("sourcePackage")
             val targetPackage = config.getString("targetPackage")
 
             MoveClassesOrPackagesProcessor(
                     project,
                     arrayOf(JavaPsiFacade.getInstance(project).findPackage(sourcePackage)!!),
-                    MultipleRootsMoveDestination(PackageWrapper(mainFile.getManager(), targetPackage)),
+                    MultipleRootsMoveDestination(PackageWrapper(mainFile.manager, targetPackage)),
                     /* searchInComments = */ false,
                     /* searchInNonJavaFiles = */ true,
                     /* moveCallback = */ null
@@ -176,7 +176,7 @@ enum class MoveAction {
 
     MOVE_TOP_LEVEL_CLASSES_TO_INNER {
         override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
-            val project = mainFile.getProject()
+            val project = mainFile.project
 
             val classToMove = elementAtCaret!!.getNonStrictParentOfType<PsiClass>()!!
             val targetClass = config.getString("targetClass")
@@ -194,10 +194,10 @@ enum class MoveAction {
 
     MOVE_INNER_CLASS {
         override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
-            val project = mainFile.getProject()
+            val project = mainFile.project
 
             val classToMove = elementAtCaret!!.getNonStrictParentOfType<PsiClass>()!!
-            val newClassName = config.getNullableString("newClassName") ?: classToMove.getName()!!
+            val newClassName = config.getNullableString("newClassName") ?: classToMove.name!!
             val outerInstanceParameterName = config.getNullableString("outerInstanceParameterName")
             val targetPackage = config.getString("targetPackage")
 
@@ -207,14 +207,14 @@ enum class MoveAction {
                     newClassName,
                     outerInstanceParameterName != null,
                     outerInstanceParameterName,
-                    JavaPsiFacade.getInstance(project).findPackage(targetPackage)!!.getDirectories()[0]
+                    JavaPsiFacade.getInstance(project).findPackage(targetPackage)!!.directories[0]
             ).run()
         }
     },
 
     MOVE_FILES {
         override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
-            val project = mainFile.getProject()
+            val project = mainFile.project
 
             val targetPackage = config.getNullableString("targetPackage")
             if (targetPackage != null) {
@@ -222,7 +222,7 @@ enum class MoveAction {
                 MoveFilesOrDirectoriesProcessor(
                         project,
                         arrayOf(mainFile),
-                        JavaPsiFacade.getInstance(project).findPackage(targetPackage)!!.getDirectories()[0],
+                        JavaPsiFacade.getInstance(project).findPackage(targetPackage)!!.directories[0],
                         /* searchInComments = */ false,
                         /* searchInNonJavaFiles = */ true,
                         /* moveCallback = */ null,
@@ -245,7 +245,7 @@ enum class MoveAction {
 
     MOVE_KOTLIN_TOP_LEVEL_DECLARATIONS {
         override fun runRefactoring(rootDir: VirtualFile, mainFile: PsiFile, elementAtCaret: PsiElement?, config: JsonObject) {
-            val project = mainFile.getProject()
+            val project = mainFile.project
             val elementToMove = elementAtCaret!!.getNonStrictParentOfType<KtNamedDeclaration>()!!
 
             val moveTarget = config.getNullableString("targetPackage")?.let { packageName ->

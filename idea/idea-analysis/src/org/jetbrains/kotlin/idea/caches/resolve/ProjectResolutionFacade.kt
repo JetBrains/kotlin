@@ -67,7 +67,7 @@ internal class ProjectResolutionFacade(
     fun getAnalysisResultsForElements(elements: Collection<KtElement>): AnalysisResult {
         assert(elements.isNotEmpty()) { "elements collection should not be empty" }
         val slruCache = synchronized(analysisResults) {
-            analysisResults.getValue()!!
+            analysisResults.value!!
         }
         val results = elements.map {
             val perFileCache = synchronized(slruCache) {

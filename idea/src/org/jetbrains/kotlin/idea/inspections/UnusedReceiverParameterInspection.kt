@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
-public class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
+class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
     override val suppressionKey: String get() = "unused"
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {

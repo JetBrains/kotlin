@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 
-public class KotlinNamesValidator : NamesValidator {
+class KotlinNamesValidator : NamesValidator {
     private val KEYWORD_SET = KtTokens.KEYWORDS.types.filterIsInstance<KtKeywordToken>().map { it.value }.toSet()
 
     override fun isKeyword(name: String, project: Project?): Boolean = name in KEYWORD_SET

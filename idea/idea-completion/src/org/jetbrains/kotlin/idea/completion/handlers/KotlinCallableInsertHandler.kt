@@ -28,22 +28,22 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 abstract class KotlinCallableInsertHandler : BaseDeclarationInsertHandler() {
-    public override fun handleInsert(context: InsertionContext, item: LookupElement) {
+    override fun handleInsert(context: InsertionContext, item: LookupElement) {
         super.handleInsert(context, item)
 
         addImport(context, item)
     }
 
     private fun addImport(context : InsertionContext, item : LookupElement) {
-        PsiDocumentManager.getInstance(context.getProject()).commitAllDocuments()
+        PsiDocumentManager.getInstance(context.project).commitAllDocuments()
 
-        val file = context.getFile()
-        val o = item.getObject()
+        val file = context.file
+        val o = item.`object`
         if (file is KtFile && o is DeclarationLookupObject) {
             val descriptor = o.descriptor as? CallableDescriptor
             if (descriptor != null) {
                 // for completion after dot, import insertion may be required only for extensions
-                if (context.isAfterDot() && descriptor.getExtensionReceiverParameter() == null) {
+                if (context.isAfterDot() && descriptor.extensionReceiverParameter == null) {
                     return
                 }
 

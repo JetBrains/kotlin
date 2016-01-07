@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.NameShortness
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 
-public class DeprecatedSymbolUsageInWholeProjectFix(
+class DeprecatedSymbolUsageInWholeProjectFix(
         element: KtSimpleNameExpression,
         replaceWith: ReplaceWith,
         private val text: String

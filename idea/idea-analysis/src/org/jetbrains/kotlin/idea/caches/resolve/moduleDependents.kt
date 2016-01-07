@@ -30,7 +30,7 @@ import com.intellij.openapi.roots.ProjectRootModificationTracker
 import java.util.HashSet
 
 //NOTE: this is an approximation that may contain more module infos then the exact solution
-public fun ModuleSourceInfo.getDependentModules(): Set<ModuleSourceInfo> {
+fun ModuleSourceInfo.getDependentModules(): Set<ModuleSourceInfo> {
     val dependents = getDependents(module)
     if (isTests()) {
         return dependents.mapTo(HashSet<ModuleSourceInfo>()) { it.testSourceInfo() }
@@ -47,12 +47,12 @@ private fun getDependents(module: Module): Set<Module> {
 
     val processedExporting = THashSet<Module>()
 
-    val index = getModuleIndex(module.getProject())
+    val index = getModuleIndex(module.project)
 
     val walkingQueue = Queue<Module>(10)
     walkingQueue.addLast(module)
 
-    while (!walkingQueue.isEmpty()) {
+    while (!walkingQueue.isEmpty) {
         val current = walkingQueue.pullFirst()
         processedExporting.add(current!!)
         result.addAll(index.plainUsages[current])
@@ -74,12 +74,12 @@ private class ModuleIndex {
 private fun getModuleIndex(project: Project): ModuleIndex {
     return CachedValuesManager.getManager(project).getCachedValue(project) {
         val index = ModuleIndex()
-        for (module in ModuleManager.getInstance(project).getModules()) {
-            for (orderEntry in ModuleRootManager.getInstance(module).getOrderEntries()) {
+        for (module in ModuleManager.getInstance(project).modules) {
+            for (orderEntry in ModuleRootManager.getInstance(module).orderEntries) {
                 if (orderEntry is ModuleOrderEntry) {
-                    val referenced = orderEntry.getModule()
+                    val referenced = orderEntry.module
                     if (referenced != null) {
-                        val map = if (orderEntry.isExported()) index.exportingUsages else index.plainUsages
+                        val map = if (orderEntry.isExported) index.exportingUsages else index.plainUsages
                         map.putValue(referenced, module)
                     }
                 }

@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getParentCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 
-public class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
+class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
 
     override fun isAvailable(position: SourcePosition?) = position?.file is KtFile
 

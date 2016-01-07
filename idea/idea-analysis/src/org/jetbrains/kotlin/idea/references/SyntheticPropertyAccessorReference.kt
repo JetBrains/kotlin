@@ -47,7 +47,7 @@ sealed class SyntheticPropertyAccessorReference(expression: KtNameReferenceExpre
         return result
     }
 
-    override fun getRangeInElement() = TextRange(0, expression.getTextLength())
+    override fun getRangeInElement() = TextRange(0, expression.textLength)
 
     override fun canRename() = true
 
@@ -65,11 +65,11 @@ sealed class SyntheticPropertyAccessorReference(expression: KtNameReferenceExpre
         }
         if (newName == null) return expression //TODO: handle the case when get/set becomes ordinary method
 
-        val nameIdentifier = KtPsiFactory(expression).createNameIdentifier(newName.getIdentifier())
+        val nameIdentifier = KtPsiFactory(expression).createNameIdentifier(newName.identifier)
         expression.getReferencedNameElement().replace(nameIdentifier)
         return expression
     }
 
-    public class Getter(expression: KtNameReferenceExpression) : SyntheticPropertyAccessorReference(expression, true)
-    public class Setter(expression: KtNameReferenceExpression) : SyntheticPropertyAccessorReference(expression, false)
+    class Getter(expression: KtNameReferenceExpression) : SyntheticPropertyAccessorReference(expression, true)
+    class Setter(expression: KtNameReferenceExpression) : SyntheticPropertyAccessorReference(expression, false)
 }

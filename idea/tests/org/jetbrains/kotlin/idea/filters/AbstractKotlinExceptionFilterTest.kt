@@ -41,7 +41,7 @@ import java.net.URLClassLoader
 private var MOCK_LIBRARY_JAR: File? = null
 private val MOCK_LIBRARY_SOURCES = PluginTestCaseBase.getTestDataPathBase() + "/debugger/mockLibraryForExceptionFilter"
 
-public abstract class AbstractKotlinExceptionFilterTest: KotlinCodeInsightTestCase() {
+abstract class AbstractKotlinExceptionFilterTest: KotlinCodeInsightTestCase() {
     override fun getTestDataPath() = ""
 
     protected fun doTest(path: String) {

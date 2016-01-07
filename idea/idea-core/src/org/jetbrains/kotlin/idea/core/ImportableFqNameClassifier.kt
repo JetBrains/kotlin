@@ -30,10 +30,10 @@ class ImportableFqNameClassifier(private val file: KtFile) {
     private val allUnderImports = HashSet<FqName>()
 
     init {
-        for (import in file.getImportDirectives()) {
-            val importPath = import.getImportPath() ?: continue
+        for (import in file.importDirectives) {
+            val importPath = import.importPath ?: continue
             val fqName = importPath.fqnPart()
-            if (importPath.isAllUnder()) {
+            if (importPath.isAllUnder) {
                 allUnderImports.add(fqName)
             }
             else {

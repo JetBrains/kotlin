@@ -37,27 +37,27 @@ import org.jetbrains.kotlin.resolve.scopes.utils.collectFunctions
 import org.jetbrains.kotlin.resolve.scopes.utils.collectVariables
 
 
-public fun LexicalScope.getAllAccessibleVariables(name: Name): Collection<VariableDescriptor> {
+fun LexicalScope.getAllAccessibleVariables(name: Name): Collection<VariableDescriptor> {
     return getVariablesFromImplicitReceivers(name) + collectVariables(name, NoLookupLocation.FROM_IDE)
 }
 
-public fun LexicalScope.getAllAccessibleFunctions(name: Name): Collection<FunctionDescriptor> {
+fun LexicalScope.getAllAccessibleFunctions(name: Name): Collection<FunctionDescriptor> {
     return getImplicitReceiversWithInstance().flatMap { it.type.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_IDE) } +
            collectFunctions(name, NoLookupLocation.FROM_IDE)
 }
 
-public fun LexicalScope.getVariablesFromImplicitReceivers(name: Name): Collection<VariableDescriptor> = getImplicitReceiversWithInstance().flatMap {
+fun LexicalScope.getVariablesFromImplicitReceivers(name: Name): Collection<VariableDescriptor> = getImplicitReceiversWithInstance().flatMap {
     it.type.memberScope.getContributedVariables(name, NoLookupLocation.FROM_IDE)
 }
 
-public fun LexicalScope.getVariableFromImplicitReceivers(name: Name): VariableDescriptor? {
+fun LexicalScope.getVariableFromImplicitReceivers(name: Name): VariableDescriptor? {
     getImplicitReceiversWithInstance().forEach {
         it.type.memberScope.getContributedVariables(name, NoLookupLocation.FROM_IDE).singleOrNull()?.let { return it }
     }
     return null
 }
 
-public fun PsiElement.getResolutionScope(bindingContext: BindingContext, resolutionFacade: ResolutionFacade/*TODO: get rid of this parameter*/): LexicalScope {
+fun PsiElement.getResolutionScope(bindingContext: BindingContext, resolutionFacade: ResolutionFacade/*TODO: get rid of this parameter*/): LexicalScope {
     for (parent in parentsWithSelf) {
         if (parent is KtElement) {
             val scope = bindingContext[BindingContext.LEXICAL_SCOPE, parent]
@@ -67,7 +67,7 @@ public fun PsiElement.getResolutionScope(bindingContext: BindingContext, resolut
         if (parent is KtClassBody) {
             val classDescriptor = bindingContext[BindingContext.CLASS, parent.getParent()] as? ClassDescriptorWithResolutionScopes
             if (classDescriptor != null) {
-                return classDescriptor.getScopeForMemberDeclarationResolution()
+                return classDescriptor.scopeForMemberDeclarationResolution
             }
         }
 
@@ -78,6 +78,6 @@ public fun PsiElement.getResolutionScope(bindingContext: BindingContext, resolut
     error("Not in KtFile")
 }
 
-public fun ResolutionFacade.getFileResolutionScope(file: KtFile): LexicalScope {
+fun ResolutionFacade.getFileResolutionScope(file: KtFile): LexicalScope {
     return frontendService<FileScopeProvider>().getFileResolutionScope(file)
 }

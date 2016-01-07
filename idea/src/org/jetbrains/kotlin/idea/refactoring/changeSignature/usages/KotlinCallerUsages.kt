@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.isInsideOfCallerBod
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
-public class KotlinCallerUsage(element: KtNamedDeclaration): KotlinUsageInfo<KtNamedDeclaration>(element) {
+class KotlinCallerUsage(element: KtNamedDeclaration): KotlinUsageInfo<KtNamedDeclaration>(element) {
     override fun processUsage(changeInfo: KotlinChangeInfo, element: KtNamedDeclaration, allUsages: Array<out UsageInfo>): Boolean {
         // Do not process function twice
         if (changeInfo.getAffectedCallables().any { it is KotlinCallableDefinitionUsage<*> && it.element == element }) return true
@@ -49,7 +49,7 @@ public class KotlinCallerUsage(element: KtNamedDeclaration): KotlinUsageInfo<KtN
     }
 }
 
-public class KotlinCallerCallUsage(element: KtCallElement): KotlinUsageInfo<KtCallElement>(element) {
+class KotlinCallerCallUsage(element: KtCallElement): KotlinUsageInfo<KtCallElement>(element) {
     override fun processUsage(changeInfo: KotlinChangeInfo, element: KtCallElement, allUsages: Array<out UsageInfo>): Boolean {
         val argumentList = element.valueArgumentList ?: return true
         val psiFactory = KtPsiFactory(project)

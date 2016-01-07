@@ -26,19 +26,19 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.internal.KotlinBytecodeToolWindow
 
-public class ShowKotlinBytecodeAction(): AnAction() {
+class ShowKotlinBytecodeAction(): AnAction() {
     val TOOLWINDOW_ID = "Kotlin Bytecode"
 
     override fun actionPerformed(e: AnActionEvent) {
-        val project = e.getProject() ?: return
+        val project = e.project ?: return
         val toolWindowManager = ToolWindowManager.getInstance(project)
 
         var toolWindow = toolWindowManager.getToolWindow(TOOLWINDOW_ID)
         if (toolWindow == null) {
             toolWindow = toolWindowManager.registerToolWindow("Kotlin Bytecode", true, ToolWindowAnchor.RIGHT)
-            toolWindow.setIcon(KotlinIcons.SMALL_LOGO_13)
+            toolWindow.icon = KotlinIcons.SMALL_LOGO_13
 
-            val contentManager = toolWindow.getContentManager()
+            val contentManager = toolWindow.contentManager
             val contentFactory = ContentFactory.SERVICE.getInstance()
             contentManager.addContent(contentFactory.createContent(KotlinBytecodeToolWindow(project, toolWindow), "", false))
         }
@@ -47,6 +47,6 @@ public class ShowKotlinBytecodeAction(): AnAction() {
 
     override fun update(e: AnActionEvent) {
         val file = e.getData(CommonDataKeys.PSI_FILE)
-        e.getPresentation().setEnabled(e.getProject() != null && file?.getFileType() == KotlinFileType.INSTANCE)
+        e.presentation.isEnabled = e.project != null && file?.fileType == KotlinFileType.INSTANCE
     }
 }

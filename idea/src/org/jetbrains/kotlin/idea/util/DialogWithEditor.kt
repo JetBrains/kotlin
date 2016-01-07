@@ -30,7 +30,7 @@ import com.intellij.openapi.editor.colors.*
 import java.awt.event.*
 import com.intellij.psi.*
 
-public open class DialogWithEditor(
+open class DialogWithEditor(
         val project: Project,
         title: String,
         val initialText: String
@@ -48,31 +48,31 @@ public open class DialogWithEditor(
         val document = FileDocumentManager.getInstance().getDocument(virtualFile)!!
 
         val editor = editorFactory.createEditor(document, project, KotlinFileType.INSTANCE, false)
-        val settings = editor.getSettings()
-        settings.setVirtualSpace(false)
-        settings.setLineMarkerAreaShown(false)
-        settings.setFoldingOutlineShown(false)
-        settings.setRightMarginShown(false)
-        settings.setAdditionalPageAtBottom(false)
-        settings.setAdditionalLinesCount(2)
-        settings.setAdditionalColumnsCount(12)
+        val settings = editor.settings
+        settings.isVirtualSpace = false
+        settings.isLineMarkerAreaShown = false
+        settings.isFoldingOutlineShown = false
+        settings.isRightMarginShown = false
+        settings.isAdditionalPageAtBottom = false
+        settings.additionalLinesCount = 2
+        settings.additionalColumnsCount = 12
 
         assert(editor is EditorEx)
-        (editor as EditorEx).setEmbeddedIntoDialogWrapper(true)
+        (editor as EditorEx).isEmbeddedIntoDialogWrapper = true
 
-        editor.getColorsScheme().setColor(EditorColors.CARET_ROW_COLOR, editor.getColorsScheme().getDefaultBackground())
+        editor.getColorsScheme().setColor(EditorColors.CARET_ROW_COLOR, editor.getColorsScheme().defaultBackground)
 
         return editor
     }
 
     override fun createCenterPanel(): JComponent {
         val panel = JPanel(BorderLayout())
-        panel.add(editor.getComponent(), BorderLayout.CENTER)
+        panel.add(editor.component, BorderLayout.CENTER)
         return panel
     }
 
     override fun getPreferredFocusedComponent(): JComponent {
-        return editor.getContentComponent()
+        return editor.contentComponent
     }
 
     override fun dispose() {

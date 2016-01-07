@@ -30,8 +30,8 @@ import javax.xml.parsers.DocumentBuilderFactory
 
 private val XML_PREFIX = "<?xml"
 
-public val XML_REPLACEMENTS: Array<String> = arrayOf("#n", "#diez")
-public val SOURCE_CHARS: Array<String>     = arrayOf("\n", "#")
+val XML_REPLACEMENTS: Array<String> = arrayOf("#n", "#diez")
+val SOURCE_CHARS: Array<String>     = arrayOf("\n", "#")
 
 data class SeverityDetails(val severity: Severity, val description: String, val range: TextRange)
 

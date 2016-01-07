@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 
-public class AutomaticOverloadsRenamer(function: KtNamedFunction, newName: String) : AutomaticRenamer() {
+class AutomaticOverloadsRenamer(function: KtNamedFunction, newName: String) : AutomaticRenamer() {
     init {
         myElements.addAll(function.getOverloads().filter { it != function })
         suggestAllNames(function.name, newName)
@@ -61,7 +61,7 @@ private fun KtNamedFunction.getOverloads(): Collection<KtNamedFunction> {
     return emptyList()
 }
 
-public class AutomaticOverloadsRenamerFactory : AutomaticRenamerFactory {
+class AutomaticOverloadsRenamerFactory : AutomaticRenamerFactory {
     override fun isApplicable(element: PsiElement): Boolean {
         return element is KtNamedFunction && element.name != null
                && (element.parent is KtFile || element.parent is KtClassBody)

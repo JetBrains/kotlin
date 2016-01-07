@@ -65,7 +65,7 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
         applyTo(element, detectPropertyNameToUse(element)!!)
     }
 
-    public fun applyTo(element: KtCallExpression, propertyName: Name): KtExpression {
+    fun applyTo(element: KtCallExpression, propertyName: Name): KtExpression {
         val arguments = element.valueArguments
         return when (arguments.size) {
             0 -> replaceWithPropertyGet(element, propertyName)
@@ -74,7 +74,7 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
         }
     }
 
-    public fun detectPropertyNameToUse(callExpression: KtCallExpression): Name? {
+    fun detectPropertyNameToUse(callExpression: KtCallExpression): Name? {
         if (callExpression.getQualifiedExpressionForSelector()?.receiverExpression is KtSuperExpression) return null // cannot call extensions on "super"
 
         val callee = callExpression.calleeExpression as? KtNameReferenceExpression ?: return null

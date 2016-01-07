@@ -23,7 +23,7 @@ import com.intellij.psi.stubs.StubIndexKey
 import org.jetbrains.kotlin.psi.KtFile
 
 
-public class KotlinMultifileClassPartIndex private constructor() : StringStubIndexExtension<KtFile>() {
+class KotlinMultifileClassPartIndex private constructor() : StringStubIndexExtension<KtFile>() {
     override fun getKey(): StubIndexKey<String, KtFile> = KEY
 
     override fun get(key: String, project: Project, scope: GlobalSearchScope) =
@@ -32,10 +32,8 @@ public class KotlinMultifileClassPartIndex private constructor() : StringStubInd
     companion object {
         private val KEY = KotlinIndexUtil.createIndexKey(KotlinMultifileClassPartIndex::class.java)
 
-        @JvmField
-        public val INSTANCE: KotlinMultifileClassPartIndex = KotlinMultifileClassPartIndex()
+        @JvmField val INSTANCE: KotlinMultifileClassPartIndex = KotlinMultifileClassPartIndex()
 
-        @JvmStatic
-        public fun getInstance(): KotlinMultifileClassPartIndex = INSTANCE
+        @JvmStatic fun getInstance(): KotlinMultifileClassPartIndex = INSTANCE
     }
 }

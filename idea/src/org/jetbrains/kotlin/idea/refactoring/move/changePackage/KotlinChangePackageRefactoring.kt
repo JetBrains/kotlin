@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
-public class KotlinChangePackageRefactoring(val file: KtFile) {
+class KotlinChangePackageRefactoring(val file: KtFile) {
     private val project = file.project
 
     fun run(newFqName: FqName) {

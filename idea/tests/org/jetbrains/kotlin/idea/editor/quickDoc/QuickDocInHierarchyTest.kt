@@ -32,25 +32,25 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.KotlinQuickDocumentationProvider
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 
-public class QuickDocInHierarchyTest() : CodeInsightTestCase() {
+class QuickDocInHierarchyTest() : CodeInsightTestCase() {
     override fun getTestDataPath(): String {
         return PluginTestCaseBase.getTestDataPathBase() + "/kdoc/inTypeHierarchy/"
     }
 
-    public fun testSimple() {
+    fun testSimple() {
         configureByFile(getTestName(true) + ".kt")
 
         val context = MapDataContext()
-        context.put<Project>(CommonDataKeys.PROJECT, getProject())
-        context.put<Editor>(CommonDataKeys.EDITOR, getEditor())
+        context.put<Project>(CommonDataKeys.PROJECT, project)
+        context.put<Editor>(CommonDataKeys.EDITOR, editor)
 
         val hierarchyTreeStructure = TypeHierarchyTreeStructure(
-                getProject(),
+                project,
                 LanguageTypeHierarchy.INSTANCE.forLanguage(KotlinLanguage.INSTANCE).getTarget(context) as PsiClass?,
                 HierarchyBrowserBaseEx.SCOPE_PROJECT
         )
-        val hierarchyNodeDescriptor = hierarchyTreeStructure.getBaseDescriptor() as TypeHierarchyNodeDescriptor
-        val doc = KotlinQuickDocumentationProvider().generateDoc(hierarchyNodeDescriptor.getPsiClass() as PsiElement, null)!!
+        val hierarchyNodeDescriptor = hierarchyTreeStructure.baseDescriptor as TypeHierarchyNodeDescriptor
+        val doc = KotlinQuickDocumentationProvider().generateDoc(hierarchyNodeDescriptor.psiClass as PsiElement, null)!!
 
         TestCase.assertTrue("Invalid doc\n: $doc", doc.contains("Very special class"))
     }

@@ -78,7 +78,7 @@ sealed class KotlinFunctionInsertHandler : KotlinCallableInsertHandler() {
         }
 
         private fun addArguments(context: InsertionContext, offsetElement: PsiElement, item: LookupElement) {
-            val completionChar = context.getCompletionChar()
+            val completionChar = context.completionChar
             if (completionChar == '(') { //TODO: more correct behavior related to braces type
                 context.setAddCompletionChar(false)
             }
@@ -101,9 +101,9 @@ sealed class KotlinFunctionInsertHandler : KotlinCallableInsertHandler() {
                 if (offset1 < chars.length) {
                     if (chars[offset1] == '<') {
                         PsiDocumentManager.getInstance(project).commitDocument(document)
-                        val token = context.getFile().findElementAt(offset1)!!
-                        if (token.getNode().getElementType() == KtTokens.LT) {
-                            val parent = token.getParent()
+                        val token = context.file.findElementAt(offset1)!!
+                        if (token.node.elementType == KtTokens.LT) {
+                            val parent = token.parent
                             if (parent is KtTypeArgumentList && parent.getText().indexOf('\n') < 0/* if type argument list is on multiple lines this is more likely wrong parsing*/) {
                                 offset = parent.endOffset
                                 insertTypeArguments = false
@@ -194,7 +194,7 @@ sealed class KotlinFunctionInsertHandler : KotlinCallableInsertHandler() {
     }
 
     object Infix : KotlinFunctionInsertHandler() {
-        public override fun handleInsert(context: InsertionContext, item: LookupElement) {
+        override fun handleInsert(context: InsertionContext, item: LookupElement) {
             super.handleInsert(context, item)
 
             if (context.completionChar == ' ') {
@@ -209,7 +209,7 @@ sealed class KotlinFunctionInsertHandler : KotlinCallableInsertHandler() {
 
     object OnlyName : KotlinFunctionInsertHandler()
 
-    public override fun handleInsert(context: InsertionContext, item: LookupElement) {
+    override fun handleInsert(context: InsertionContext, item: LookupElement) {
         super.handleInsert(context, item)
 
         val psiDocumentManager = PsiDocumentManager.getInstance(context.project)

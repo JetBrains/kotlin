@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.idea.quickfix.moveCaret
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
-public class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallableDeclaration>(KtCallableDeclaration::class.java, "Convert member to extension"), LowPriorityAction {
+class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallableDeclaration>(KtCallableDeclaration::class.java, "Convert member to extension"), LowPriorityAction {
     override fun applicabilityRange(element: KtCallableDeclaration): TextRange? {
         val classBody = element.parent as? KtClassBody ?: return null
         if (classBody.parent !is KtClass) return null

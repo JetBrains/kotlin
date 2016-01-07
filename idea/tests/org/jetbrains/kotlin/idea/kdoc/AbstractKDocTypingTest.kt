@@ -21,13 +21,13 @@ import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 
-public abstract class AbstractKDocTypingTest : KotlinLightCodeInsightFixtureTestCase() {
+abstract class AbstractKDocTypingTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath(): String = KotlinTestUtils.getHomeDirectory()
     override fun getProjectDescriptor() = KotlinLightProjectDescriptor.INSTANCE
 
     protected fun doTest(fileName: String) {
         myFixture.configureByFile(fileName)
-        val textToType = InTextDirectivesUtils.findStringWithPrefixes(myFixture.getFile().getText(), "// TYPE:")
+        val textToType = InTextDirectivesUtils.findStringWithPrefixes(myFixture.file.text, "// TYPE:")
         if (textToType == null) {
             throw IllegalArgumentException("Cannot find directive TYPE in input file")
         }

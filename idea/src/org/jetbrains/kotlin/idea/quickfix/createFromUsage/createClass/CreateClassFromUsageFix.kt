@@ -48,7 +48,7 @@ enum class ClassKind(val keyword: String, val description: String) {
     DEFAULT("", "") // Used as a placeholder and must be replaced with one of the kinds above
 }
 
-public data class ClassInfo(
+data class ClassInfo(
         val kind: ClassKind = ClassKind.DEFAULT,
         val name: String,
         val targetParent: PsiElement,
@@ -59,7 +59,7 @@ public data class ClassInfo(
         val parameterInfos: List<ParameterInfo> = Collections.emptyList()
 )
 
-public class CreateClassFromUsageFix<E : KtElement>(
+class CreateClassFromUsageFix<E : KtElement>(
         element: E,
         val classInfo: ClassInfo
 ): CreateFromUsageFixBase<E>(element) {

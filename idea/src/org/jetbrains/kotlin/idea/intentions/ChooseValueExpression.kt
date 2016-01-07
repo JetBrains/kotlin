@@ -25,7 +25,7 @@ import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil
 
 //TODO: move it somewhere else and reuse
-public abstract class ChooseValueExpression<T : Any>(
+abstract class ChooseValueExpression<T : Any>(
         lookupItems: Collection<T>,
         protected val defaultItem: T,
         private val advertisementText: String? = null
@@ -57,7 +57,7 @@ public abstract class ChooseValueExpression<T : Any>(
     override fun getAdvertisingText() = advertisementText
 }
 
-public class ChooseStringExpression(
+class ChooseStringExpression(
         suggestions: Collection<String>,
         default: String = suggestions.first(),
         advertisementText: String? = null

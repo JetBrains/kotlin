@@ -40,7 +40,7 @@ private val INSTALLED_KOTLIN_VERSION = "installed.kotlin.plugin.version"
  */
 class KotlinUpdatePluginComponent : ApplicationComponent {
     override fun initComponent() {
-        if (ApplicationManager.getApplication()?.isUnitTestMode() == true) {
+        if (ApplicationManager.getApplication()?.isUnitTestMode == true) {
             return
         }
 
@@ -50,20 +50,20 @@ class KotlinUpdatePluginComponent : ApplicationComponent {
             val ideaPluginPaths = PathUtil.getKotlinPathsForIdeaPlugin()
 
             // Force refresh jar handlers
-            requestFullJarUpdate(ideaPluginPaths.getRuntimePath())
-            requestFullJarUpdate(ideaPluginPaths.getReflectPath())
-            requestFullJarUpdate(ideaPluginPaths.getRuntimeSourcesPath())
+            requestFullJarUpdate(ideaPluginPaths.runtimePath)
+            requestFullJarUpdate(ideaPluginPaths.reflectPath)
+            requestFullJarUpdate(ideaPluginPaths.runtimeSourcesPath)
 
-            requestFullJarUpdate(ideaPluginPaths.getJsStdLibJarPath())
-            requestFullJarUpdate(ideaPluginPaths.getJsStdLibSrcJarPath())
+            requestFullJarUpdate(ideaPluginPaths.jsStdLibJarPath)
+            requestFullJarUpdate(ideaPluginPaths.jsStdLibSrcJarPath)
 
-            requestFullJarUpdate(ideaPluginPaths.getJdkAnnotationsPath())
-            requestFullJarUpdate(ideaPluginPaths.getAndroidSdkAnnotationsPath())
+            requestFullJarUpdate(ideaPluginPaths.jdkAnnotationsPath)
+            requestFullJarUpdate(ideaPluginPaths.androidSdkAnnotationsPath)
 
             // Force update indices for files under config directory
             val fileBasedIndex = FileBasedIndex.getInstance()
-            fileBasedIndex.requestRebuild(KotlinAbiVersionIndex.getName())
-            fileBasedIndex.requestRebuild(KotlinJavaScriptAbiVersionIndex.getName())
+            fileBasedIndex.requestRebuild(KotlinAbiVersionIndex.name)
+            fileBasedIndex.requestRebuild(KotlinJavaScriptAbiVersionIndex.name)
             fileBasedIndex.requestRebuild(KotlinClassFileIndex.KEY)
             fileBasedIndex.requestRebuild(KotlinJavaScriptMetaFileIndex.KEY)
             fileBasedIndex.requestRebuild(KotlinModuleMappingIndex.KEY)

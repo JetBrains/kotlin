@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.utils.addToStdlib.check
 
-public class ConvertToExpressionBodyIntention : SelfTargetingOffsetIndependentIntention<KtDeclarationWithBody>(
+class ConvertToExpressionBodyIntention : SelfTargetingOffsetIndependentIntention<KtDeclarationWithBody>(
         KtDeclarationWithBody::class.java, "Convert to expression body"
 ) {
     override fun isApplicableTo(element: KtDeclarationWithBody): Boolean {
@@ -51,7 +51,7 @@ public class ConvertToExpressionBodyIntention : SelfTargetingOffsetIndependentIn
         }
     }
 
-    public fun applyTo(declaration: KtDeclarationWithBody, canDeleteTypeRef: Boolean) {
+    fun applyTo(declaration: KtDeclarationWithBody, canDeleteTypeRef: Boolean) {
         val deleteTypeHandler: (KtCallableDeclaration) -> Unit = {
             it.deleteChildRange(it.colon!!, it.typeReference!!)
         }

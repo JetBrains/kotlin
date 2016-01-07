@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 
-public class ConvertReceiverToParameterIntention : SelfTargetingOffsetIndependentIntention<KtTypeReference>(KtTypeReference::class.java, "Convert receiver to parameter"), LowPriorityAction {
+class ConvertReceiverToParameterIntention : SelfTargetingOffsetIndependentIntention<KtTypeReference>(KtTypeReference::class.java, "Convert receiver to parameter"), LowPriorityAction {
     override fun isApplicableTo(element: KtTypeReference): Boolean {
         return (element.parent as? KtNamedFunction)?.receiverTypeReference == element
     }

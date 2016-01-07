@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 
-public object BranchedUnfoldingUtils {
-    public fun unfoldAssignmentToIf(assignment: KtBinaryExpression, editor: Editor) {
+object BranchedUnfoldingUtils {
+    fun unfoldAssignmentToIf(assignment: KtBinaryExpression, editor: Editor) {
         val op = assignment.operationReference.text
         val left = assignment.left!!
         val ifExpression = assignment.right as KtIfExpression
@@ -41,7 +41,7 @@ public object BranchedUnfoldingUtils {
         editor.caretModel.moveToOffset(resultIf.textOffset)
     }
 
-    public fun unfoldAssignmentToWhen(assignment: KtBinaryExpression, editor: Editor) {
+    fun unfoldAssignmentToWhen(assignment: KtBinaryExpression, editor: Editor) {
         val op = assignment.operationReference.text
         val left = assignment.left!!
         val whenExpression = assignment.right as KtWhenExpression

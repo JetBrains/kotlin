@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.utils.sure
 import java.util.*
 
-public class IDELightClassGenerationSupport(private val project: Project) : LightClassGenerationSupport() {
+class IDELightClassGenerationSupport(private val project: Project) : LightClassGenerationSupport() {
     private val scopeFileComparator = JavaElementFinder.byClasspathComparator(GlobalSearchScope.allScope(project))
     private val psiManager: PsiManager = PsiManager.getInstance(project)
 
@@ -182,7 +182,7 @@ public class IDELightClassGenerationSupport(private val project: Project) : Ligh
         }
     }
 
-    public fun createLightClassForFileFacade(
+    fun createLightClassForFileFacade(
             facadeFqName: FqName,
             facadeFiles: List<KtFile>,
             moduleInfo: IdeaModuleInfo

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.name.FqName
 
 
 private fun checkScopeForFinder(scope: GlobalSearchScope, logger: Logger) {
-    if (scope != GlobalSearchScope.EMPTY_SCOPE && scope.getProject() == null) {
+    if (scope != GlobalSearchScope.EMPTY_SCOPE && scope.project == null) {
         logger.warn("Scope with null project " + scope)
     }
 }
@@ -43,7 +43,7 @@ private fun findVirtualFileWithHeader(classId: ClassId, key: ID<FqName, Void>, s
     return files.iterator().next()
 }
 
-public class JsIDEVirtualFileFinder(private val scope: GlobalSearchScope) : JsVirtualFileFinder {
+class JsIDEVirtualFileFinder(private val scope: GlobalSearchScope) : JsVirtualFileFinder {
 
     init { checkScopeForFinder(scope, LOG) }
 
@@ -55,7 +55,7 @@ public class JsIDEVirtualFileFinder(private val scope: GlobalSearchScope) : JsVi
     }
 }
 
-public class JvmIDEVirtualFileFinder(private val scope: GlobalSearchScope) : VirtualFileKotlinClassFinder(), JvmVirtualFileFinder {
+class JvmIDEVirtualFileFinder(private val scope: GlobalSearchScope) : VirtualFileKotlinClassFinder(), JvmVirtualFileFinder {
 
     init { checkScopeForFinder(scope, LOG) }
 

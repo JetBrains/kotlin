@@ -24,16 +24,16 @@ import com.sun.jdi.request.StepRequest
 import org.jetbrains.kotlin.idea.debugger.KotlinPositionManager
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 
-public class ExtraSteppingFilter : com.intellij.debugger.engine.ExtraSteppingFilter {
+class ExtraSteppingFilter : com.intellij.debugger.engine.ExtraSteppingFilter {
 
     override fun isApplicable(context: SuspendContext?): Boolean {
         if (context == null) {
             return false;
         }
 
-        val debugProcess = context.getDebugProcess()
+        val debugProcess = context.debugProcess
         val positionManager = KotlinPositionManager(debugProcess!!)
-        val location = context.getFrameProxy()!!.location()
+        val location = context.frameProxy!!.location()
         return runReadAction {
             shouldFilter(positionManager, location)
         }

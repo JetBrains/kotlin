@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.KtConstructorDelegationCall
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtSecondaryConstructor
 
-public class KotlinConstructorDelegationCallUsage(
+class KotlinConstructorDelegationCallUsage(
         call: KtConstructorDelegationCall,
         changeInfo: KotlinChangeInfo
 ) : KotlinUsageInfo<KtConstructorDelegationCall>(call) {

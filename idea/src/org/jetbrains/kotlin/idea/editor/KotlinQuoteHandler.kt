@@ -22,13 +22,13 @@ import com.intellij.openapi.editor.highlighter.HighlighterIterator
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.lexer.KtTokens
 
-public class KotlinQuoteHandler : QuoteHandler {
+class KotlinQuoteHandler : QuoteHandler {
     override fun isClosingQuote(iterator: HighlighterIterator, offset: Int): Boolean {
-        val tokenType = iterator.getTokenType()
+        val tokenType = iterator.tokenType
 
         if (tokenType == KtTokens.CHARACTER_LITERAL) {
-            val start = iterator.getStart()
-            val end = iterator.getEnd()
+            val start = iterator.start
+            val end = iterator.end
             return end - start >= 1 && offset == end - 1
         }
         else if (tokenType == KtTokens.CLOSING_QUOTE) {
@@ -38,10 +38,10 @@ public class KotlinQuoteHandler : QuoteHandler {
     }
 
     override fun isOpeningQuote(iterator: HighlighterIterator, offset: Int): Boolean {
-        val tokenType = iterator.getTokenType()
+        val tokenType = iterator.tokenType
 
         if (tokenType == KtTokens.OPEN_QUOTE) {
-            val start = iterator.getStart()
+            val start = iterator.start
             return offset == start
         }
         return false
@@ -52,7 +52,7 @@ public class KotlinQuoteHandler : QuoteHandler {
     }
 
     override fun isInsideLiteral(iterator: HighlighterIterator): Boolean {
-        val tokenType = iterator.getTokenType()
+        val tokenType = iterator.tokenType
         return tokenType == KtTokens.REGULAR_STRING_PART ||
                tokenType == KtTokens.OPEN_QUOTE ||
                tokenType == KtTokens.CLOSING_QUOTE ||

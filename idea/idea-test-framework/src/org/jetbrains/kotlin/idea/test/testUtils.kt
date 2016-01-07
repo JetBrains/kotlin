@@ -37,19 +37,19 @@ import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
 import org.jetbrains.kotlin.psi.KtFile
 import java.util.*
 
-public enum class ModuleKind {
+enum class ModuleKind {
     KOTLIN_JVM_WITH_STDLIB_SOURCES,
     KOTLIN_JAVASCRIPT
 }
 
-public fun Module.configureAs(descriptor: KotlinLightProjectDescriptor) {
+fun Module.configureAs(descriptor: KotlinLightProjectDescriptor) {
     val module = this
     updateModel(module, object : Consumer<ModifiableRootModel> {
         override fun consume(model: ModifiableRootModel) {
-            if (descriptor.getSdk() != null) {
-                model.setSdk(descriptor.getSdk())
+            if (descriptor.sdk != null) {
+                model.sdk = descriptor.sdk
             }
-            val entries = model.getContentEntries()
+            val entries = model.contentEntries
             if (entries.isEmpty()) {
                 descriptor.configureModule(module, model)
             }
@@ -60,7 +60,7 @@ public fun Module.configureAs(descriptor: KotlinLightProjectDescriptor) {
     })
 }
 
-public fun Module.configureAs(kind: ModuleKind) {
+fun Module.configureAs(kind: ModuleKind) {
     when(kind) {
         ModuleKind.KOTLIN_JVM_WITH_STDLIB_SOURCES ->
             this.configureAs(ProjectDescriptorWithStdlibSources.INSTANCE)
@@ -72,18 +72,18 @@ public fun Module.configureAs(kind: ModuleKind) {
     }
 }
 
-public fun KtFile.dumpTextWithErrors(): String {
+fun KtFile.dumpTextWithErrors(): String {
     val diagnostics = analyzeFullyAndGetResult().bindingContext.getDiagnostics()
     val errors = diagnostics.filter { it.getSeverity() == Severity.ERROR }
-    if (errors.isEmpty()) return getText()
+    if (errors.isEmpty()) return text
     val header = errors.map { "// ERROR: " + DefaultErrorMessages.render(it).replace('\n', ' ') }.joinToString("\n", postfix = "\n")
-    return header + getText()
+    return header + text
 }
 
-public fun closeAndDeleteProject(): Unit =
+fun closeAndDeleteProject(): Unit =
     ApplicationManager.getApplication().runWriteAction() { LightPlatformTestCase.closeAndDeleteProject() }
 
-public fun unInvalidateBuiltinsAndStdLib(project: Project, runnable: RunnableWithException) {
+fun unInvalidateBuiltinsAndStdLib(project: Project, runnable: RunnableWithException) {
     val stdLibViewProviders = HashSet<KotlinDecompiledFileViewProvider>()
     val vFileToViewProviderMap = ((PsiManager.getInstance(project) as PsiManagerEx).fileManager as FileManagerImpl).vFileToViewProviderMap
     for ((file, viewProvider) in vFileToViewProviderMap) {
@@ -97,7 +97,7 @@ public fun unInvalidateBuiltinsAndStdLib(project: Project, runnable: RunnableWit
     // Base tearDown() invalidates builtins and std-lib files. Restore them with brute force.
     fun unInvalidateFile(file: PsiFileImpl) {
         val field = PsiFileImpl::class.java.getDeclaredField("myInvalidated")!!
-        field.setAccessible(true)
+        field.isAccessible = true
         field.set(file, false)
     }
 
@@ -109,10 +109,10 @@ public fun unInvalidateBuiltinsAndStdLib(project: Project, runnable: RunnableWit
 
 private val VirtualFile.isStdLibFile: Boolean get() = presentableUrl.contains("kotlin-runtime.jar")
 
-public fun unInvalidateBuiltinsAndStdLib(project: Project, runnable: () -> Unit) {
+fun unInvalidateBuiltinsAndStdLib(project: Project, runnable: () -> Unit) {
     unInvalidateBuiltinsAndStdLib(project, RunnableWithException { runnable() })
 }
 
-public fun invalidateLibraryCache(project: Project) {
+fun invalidateLibraryCache(project: Project) {
     LibraryModificationTracker.getInstance(project).incModificationCount()
 }

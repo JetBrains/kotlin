@@ -46,17 +46,17 @@ open class KtDecompiledFile(
         buildDecompiledText(provider.virtualFile)
     }
 
-    public fun getDeclarationForDescriptor(descriptor: DeclarationDescriptor): KtDeclaration? {
-        val original = descriptor.getOriginal()
+    fun getDeclarationForDescriptor(descriptor: DeclarationDescriptor): KtDeclaration? {
+        val original = descriptor.original
 
         if (original is ValueParameterDescriptor) {
-            val callable = original.getContainingDeclaration()
+            val callable = original.containingDeclaration
             val callableDeclaration = getDeclarationForDescriptor(callable) as? KtCallableDeclaration ?: return null
-            return callableDeclaration.getValueParameters()[original.index]
+            return callableDeclaration.valueParameters[original.index]
         }
 
-        if (original is ConstructorDescriptor && original.isPrimary()) {
-            val classOrObject = getDeclarationForDescriptor(original.getContainingDeclaration()) as? KtClassOrObject
+        if (original is ConstructorDescriptor && original.isPrimary) {
+            val classOrObject = getDeclarationForDescriptor(original.containingDeclaration) as? KtClassOrObject
             return classOrObject?.getPrimaryConstructor() ?: classOrObject
         }
 
@@ -74,7 +74,7 @@ open class KtDecompiledFile(
 
     private fun DeclarationDescriptor.findElementForDescriptor(): KtDeclaration? {
         return decompiledText.get().renderedDescriptorsToRange[descriptorToKey(this)]?.let { range ->
-            PsiTreeUtil.findElementOfClassAtRange(this@KtDecompiledFile, range.getStartOffset(), range.getEndOffset(), KtDeclaration::class.java)
+            PsiTreeUtil.findElementOfClassAtRange(this@KtDecompiledFile, range.startOffset, range.endOffset, KtDeclaration::class.java)
         }
     }
 

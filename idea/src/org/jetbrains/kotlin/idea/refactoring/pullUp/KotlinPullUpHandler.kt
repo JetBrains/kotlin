@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 
-public class KotlinPullUpHandler : AbstractPullPushMembersHandler(
+class KotlinPullUpHandler : AbstractPullPushMembersHandler(
         refactoringName = PULL_MEMBERS_UP,
         helpId = HelpID.MEMBERS_PULL_UP,
         wrongPositionMessage = RefactoringBundle.message("the.caret.should.be.positioned.inside.a.class.to.pull.members.from")

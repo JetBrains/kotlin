@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isInheritable
 
 val PUSH_MEMBERS_DOWN = "Push Members Down"
 
-public class KotlinPushDownHandler : AbstractPullPushMembersHandler(
+class KotlinPushDownHandler : AbstractPullPushMembersHandler(
         refactoringName = PUSH_MEMBERS_DOWN,
         helpId = HelpID.MEMBERS_PUSH_DOWN,
         wrongPositionMessage = RefactoringBundle.message("the.caret.should.be.positioned.inside.a.class.to.push.members.from")

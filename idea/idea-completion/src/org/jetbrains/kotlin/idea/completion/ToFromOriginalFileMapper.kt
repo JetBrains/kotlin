@@ -34,8 +34,8 @@ class ToFromOriginalFileMapper(
     //TODO: lazy initialization?
 
     init {
-        val originalText = originalFile.getText()
-        val syntheticText = syntheticFile.getText()
+        val originalText = originalFile.text
+        val syntheticText = syntheticFile.text
         assert(originalText.subSequence(0, completionOffset) == syntheticText.subSequence(0, completionOffset))
 
         syntheticLength = syntheticText.length
@@ -47,7 +47,7 @@ class ToFromOriginalFileMapper(
         shift = syntheticLength - originalLength
     }
 
-    public fun toOriginalFile(offset: Int): Int? {
+    fun toOriginalFile(offset: Int): Int? {
         return when {
             offset <= completionOffset -> offset
             offset >= syntheticLength - tailLength -> offset - shift
@@ -55,7 +55,7 @@ class ToFromOriginalFileMapper(
         }
     }
 
-    public fun toSyntheticFile(offset: Int): Int? {
+    fun toSyntheticFile(offset: Int): Int? {
         return when {
             offset <= completionOffset -> offset
             offset >= originalLength - tailLength -> offset + shift
@@ -63,14 +63,14 @@ class ToFromOriginalFileMapper(
         }
     }
 
-    public fun toOriginalFile(declaration: KtDeclaration): KtDeclaration? {
-        if (declaration.getContainingFile() != syntheticFile) return declaration
+    fun toOriginalFile(declaration: KtDeclaration): KtDeclaration? {
+        if (declaration.containingFile != syntheticFile) return declaration
         val offset = toOriginalFile(declaration.startOffset) ?: return null
         return PsiTreeUtil.findElementOfClassAtOffset(originalFile, offset, KtDeclaration::class.java, true)
     }
 
-    public fun toSyntheticFile(declaration: KtDeclaration): KtDeclaration? {
-        if (declaration.getContainingFile() != originalFile) return declaration
+    fun toSyntheticFile(declaration: KtDeclaration): KtDeclaration? {
+        if (declaration.containingFile != originalFile) return declaration
         val offset = toSyntheticFile(declaration.startOffset) ?: return null
         return PsiTreeUtil.findElementOfClassAtOffset(syntheticFile, offset, KtDeclaration::class.java, true)
     }

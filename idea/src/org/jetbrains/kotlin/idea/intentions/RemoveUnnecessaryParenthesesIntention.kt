@@ -21,7 +21,7 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.psi.KtParenthesizedExpression
 import org.jetbrains.kotlin.psi.KtPsiUtil
 
-public class RemoveUnnecessaryParenthesesIntention : SelfTargetingRangeIntention<KtParenthesizedExpression>(KtParenthesizedExpression::class.java, "Remove unnecessary parentheses") {
+class RemoveUnnecessaryParenthesesIntention : SelfTargetingRangeIntention<KtParenthesizedExpression>(KtParenthesizedExpression::class.java, "Remove unnecessary parentheses") {
     override fun applicabilityRange(element: KtParenthesizedExpression): TextRange? {
         element.expression ?: return null
         if (!KtPsiUtil.areParenthesesUseless(element)) return null

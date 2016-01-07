@@ -21,12 +21,12 @@ import com.intellij.lang.refactoring.RefactoringSupportProvider
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSupportProvider
 import org.jetbrains.kotlin.idea.refactoring.introduce.*
 
-public class ExtractFunctionAction: AbstractIntroduceAction() {
+class ExtractFunctionAction: AbstractIntroduceAction() {
     override fun getRefactoringHandler(provider: RefactoringSupportProvider): RefactoringActionHandler? =
             (provider as? KotlinRefactoringSupportProvider)?.getExtractFunctionHandler()
 }
 
-public class ExtractFunctionToScopeAction: AbstractIntroduceAction() {
+class ExtractFunctionToScopeAction: AbstractIntroduceAction() {
     override fun getRefactoringHandler(provider: RefactoringSupportProvider): RefactoringActionHandler? =
             (provider as? KotlinRefactoringSupportProvider)?.getExtractFunctionToScopeHandler()
 }

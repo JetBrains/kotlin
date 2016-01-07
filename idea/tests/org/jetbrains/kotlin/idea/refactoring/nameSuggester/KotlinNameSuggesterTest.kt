@@ -29,66 +29,66 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 
-public class KotlinNameSuggesterTest : LightCodeInsightFixtureTestCase() {
-    public fun testArrayList() { doTest() }
+class KotlinNameSuggesterTest : LightCodeInsightFixtureTestCase() {
+    fun testArrayList() { doTest() }
 
-    public fun testGetterSure() { doTest() }
+    fun testGetterSure() { doTest() }
 
-    public fun testNameArrayOfClasses() { doTest() }
+    fun testNameArrayOfClasses() { doTest() }
 
-    public fun testNameArrayOfStrings() { doTest() }
+    fun testNameArrayOfStrings() { doTest() }
 
-    public fun testNamePrimitiveArray() { doTest() }
+    fun testNamePrimitiveArray() { doTest() }
 
-    public fun testNameCallExpression() { doTest() }
+    fun testNameCallExpression() { doTest() }
 
-    public fun testNameClassCamelHump() { doTest() }
+    fun testNameClassCamelHump() { doTest() }
 
-    public fun testNameLong() { doTest() }
+    fun testNameLong() { doTest() }
 
-    public fun testNameReferenceExpression() { doTest() }
+    fun testNameReferenceExpression() { doTest() }
 
-    public fun testNameString() { doTest() }
+    fun testNameString() { doTest() }
 
-    public fun testAnonymousObject() { doTest() }
+    fun testAnonymousObject() { doTest() }
 
-    public fun testAnonymousObjectWithSuper() { doTest() }
+    fun testAnonymousObjectWithSuper() { doTest() }
 
-    public fun testArrayOfObjectsType() { doTest() }
+    fun testArrayOfObjectsType() { doTest() }
 
-    public fun testURL() { doTest() }
+    fun testURL() { doTest() }
 
-    public fun testParameterNameByArgumentExpression() { doTest() }
+    fun testParameterNameByArgumentExpression() { doTest() }
 
-    public fun testParameterNameByParenthesizedArgumentExpression() { doTest() }
+    fun testParameterNameByParenthesizedArgumentExpression() { doTest() }
 
-    public fun testIdWithDigits() { doTest() }
+    fun testIdWithDigits() { doTest() }
 
-    public fun testIdWithNonASCII() { doTest() }
+    fun testIdWithNonASCII() { doTest() }
 
-    public fun testFunction1() { doTest() }
+    fun testFunction1() { doTest() }
 
-    public fun testFunction2() { doTest() }
+    fun testFunction2() { doTest() }
 
-    public fun testExtensionFunction1() { doTest() }
+    fun testExtensionFunction1() { doTest() }
 
-    public fun testExtensionFunction2() { doTest() }
+    fun testExtensionFunction2() { doTest() }
 
     override fun setUp() {
         super.setUp()
-        myFixture.setTestDataPath(PluginTestCaseBase.getTestDataPathBase() + "/refactoring/nameSuggester")
+        myFixture.testDataPath = PluginTestCaseBase.getTestDataPathBase() + "/refactoring/nameSuggester"
     }
 
     private fun doTest() {
         myFixture.configureByFile(getTestName(false) + ".kt")
-        val file = myFixture.getFile() as KtFile
+        val file = myFixture.file as KtFile
         val expectedResultText = KotlinTestUtils.getLastCommentInFile(file)
         val withRuntime = InTextDirectivesUtils.isDirectiveDefined(file.text, "//WITH_RUNTIME")
         try {
             if (withRuntime) {
                 ConfigLibraryUtil.configureKotlinRuntimeAndSdk(myModule, PluginTestCaseBase.mockJdk())
             }
-            KotlinRefactoringUtil.selectExpression(myFixture.getEditor(), file, object : KotlinRefactoringUtil.SelectExpressionCallback {
+            KotlinRefactoringUtil.selectExpression(myFixture.editor, file, object : KotlinRefactoringUtil.SelectExpressionCallback {
                 override fun run(expression: KtExpression?) {
                     val names = KotlinNameSuggester.suggestNamesByExpressionAndType(expression!!, null, expression.analyze(BodyResolveMode.PARTIAL), { true }, "value").sorted()
                     val result = StringUtil.join(names, "\n").trim()

@@ -72,22 +72,22 @@ abstract class CompletionSession(
         protected val parameters: CompletionParameters,
         resultSet: CompletionResultSet
 ) {
-    protected val position = parameters.getPosition()
-    protected val file = position.getContainingFile() as KtFile
+    protected val position = parameters.position
+    protected val file = position.containingFile as KtFile
     protected val resolutionFacade = file.getResolutionFacade()
     protected val moduleDescriptor = resolutionFacade.moduleDescriptor
-    protected val project = position.getProject()
+    protected val project = position.project
     protected val isJvmModule = !ProjectStructureUtil.isJsKotlinModule(parameters.originalFile as KtFile)
 
     protected val nameExpression: KtSimpleNameExpression?
     protected val expression: KtExpression?
 
     init {
-        val reference = (position.getParent() as? KtSimpleNameExpression)?.mainReference
+        val reference = (position.parent as? KtSimpleNameExpression)?.mainReference
         if (reference != null) {
             if (reference.expression is KtLabelReferenceExpression) {
                 this.nameExpression = null
-                this.expression = reference.expression.getParent().getParent() as? KtExpressionWithLabel
+                this.expression = reference.expression.parent.parent as? KtExpressionWithLabel
             }
             else {
                 this.nameExpression = reference.expression
@@ -107,8 +107,8 @@ abstract class CompletionSession(
     private val kotlinIdentifierPartPattern = StandardPatterns.character().javaIdentifierPart().andNot(singleCharPattern('$'))
 
     protected val prefix = CompletionUtil.findIdentifierPrefix(
-            parameters.getPosition().getContainingFile(),
-            parameters.getOffset(),
+            parameters.position.containingFile,
+            parameters.offset,
             kotlinIdentifierPartPattern or singleCharPattern('@'),
             kotlinIdentifierStartPattern)
 
@@ -151,7 +151,7 @@ abstract class CompletionSession(
 
     // we need to exclude the original file from scope because our resolve session is built with this file replaced by synthetic one
     protected val searchScope: GlobalSearchScope = object : DelegatingGlobalSearchScope(originalSearchScope) {
-        override fun contains(file: VirtualFile) = super.contains(file) && file != parameters.getOriginalFile().getVirtualFile()
+        override fun contains(file: VirtualFile) = super.contains(file) && file != parameters.originalFile.virtualFile
     }
 
     protected fun indicesHelper(mayIncludeInaccessible: Boolean): KotlinIndicesHelper {
@@ -208,12 +208,12 @@ abstract class CompletionSession(
     }
 
     private fun isTypeParameterVisible(typeParameter: TypeParameterDescriptor): Boolean {
-        val owner = typeParameter.getContainingDeclaration()
+        val owner = typeParameter.containingDeclaration
         var parent: DeclarationDescriptor? = inDescriptor
         while (parent != null) {
             if (parent == owner) return true
-            if (parent is ClassDescriptor && !parent.isInner()) return false
-            parent = parent.getContainingDeclaration()
+            if (parent is ClassDescriptor && !parent.isInner) return false
+            parent = parent.containingDeclaration
         }
         return true
     }
@@ -222,7 +222,7 @@ abstract class CompletionSession(
         collector.flushToResultSet()
     }
 
-    public fun complete(): Boolean {
+    fun complete(): Boolean {
         val statisticsContext = calcContextForStatisticsInfo()
         if (statisticsContext != null) {
             collector.addLookupElementPostProcessor { lookupElement ->
@@ -237,7 +237,7 @@ abstract class CompletionSession(
         return !collector.isResultEmpty
     }
 
-    public fun addLookupElementPostProcessor(processor: (LookupElement) -> LookupElement) {
+    fun addLookupElementPostProcessor(processor: (LookupElement) -> LookupElement) {
         collector.addLookupElementPostProcessor(processor)
     }
 

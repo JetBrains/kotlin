@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 /**
  * Originally from IDEA platform: CodeBlockOrInitializerSelectioner
  */
-public class KotlinCodeBlockSelectioner : ExtendWordSelectionHandlerBase() {
+class KotlinCodeBlockSelectioner : ExtendWordSelectionHandlerBase() {
     override fun canSelect(e: PsiElement)
             = e is KtBlockExpression || e is KtWhenExpression
 
@@ -47,14 +47,14 @@ public class KotlinCodeBlockSelectioner : ExtendWordSelectionHandlerBase() {
             result.addAll(ExtendWordSelectionHandlerBase.expandToWholeLine(editorText, TextRange(start, end)))
         }
 
-        result.addAll(ExtendWordSelectionHandlerBase.expandToWholeLine(editorText, e.getTextRange()!!))
+        result.addAll(ExtendWordSelectionHandlerBase.expandToWholeLine(editorText, e.textRange!!))
 
         return result
     }
 
     private fun findBlockContentStart(block: PsiElement): Int {
         val element = block.allChildren
-                              .dropWhile { it.getNode().getElementType() != KtTokens.LBRACE } // search for '{'
+                              .dropWhile { it.node.elementType != KtTokens.LBRACE } // search for '{'
                               .drop(1) // skip it
                               .dropWhile { it is PsiWhiteSpace } // and skip all whitespaces
                               .firstOrNull() ?: block
@@ -66,7 +66,7 @@ public class KotlinCodeBlockSelectioner : ExtendWordSelectionHandlerBase() {
                            .toList()
                            .asReversed()
                            .asSequence()
-                           .dropWhile { it.getNode().getElementType() != KtTokens.RBRACE } // search for '}'
+                           .dropWhile { it.node.elementType != KtTokens.RBRACE } // search for '}'
                            .drop(1) // skip it
                            .dropWhile { it is PsiWhiteSpace } // and skip all whitespaces
                            .firstOrNull() ?: block

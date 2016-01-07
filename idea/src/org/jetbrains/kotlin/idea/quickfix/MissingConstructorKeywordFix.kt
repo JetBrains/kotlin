@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.idea.quickfix.quickfixUtil.addConstructorKeyword
 
-public class MissingConstructorKeywordFix(element: KtPrimaryConstructor) : KotlinQuickFixAction<KtPrimaryConstructor>(element), CleanupFix {
+class MissingConstructorKeywordFix(element: KtPrimaryConstructor) : KotlinQuickFixAction<KtPrimaryConstructor>(element), CleanupFix {
     override fun getFamilyName(): String = text
     override fun getText(): String = "Add 'constructor' keyword"
 
@@ -38,7 +38,7 @@ public class MissingConstructorKeywordFix(element: KtPrimaryConstructor) : Kotli
         override fun createAction(diagnostic: Diagnostic): IntentionAction? =
                 diagnostic.createIntentionForFirstParentOfType(::MissingConstructorKeywordFix)
 
-        public fun createWholeProjectFixFactory(): KotlinSingleIntentionActionFactory = createIntentionFactory {
+        fun createWholeProjectFixFactory(): KotlinSingleIntentionActionFactory = createIntentionFactory {
             WholeProjectForEachElementOfTypeFix.createByPredicate<KtPrimaryConstructor>(
                     predicate = { it.modifierList != null && !it.hasConstructorKeyword() },
                     taskProcessor = { it.addConstructorKeyword() },

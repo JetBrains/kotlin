@@ -102,7 +102,7 @@ internal class ParameterNameExpression(
 /**
  * An <code>Expression</code> for type references and delegation specifiers.
  */
-internal abstract class TypeExpression(public val typeCandidates: List<TypeCandidate>) : Expression() {
+internal abstract class TypeExpression(val typeCandidates: List<TypeCandidate>) : Expression() {
     class ForTypeReference(typeCandidates: List<TypeCandidate>) : TypeExpression(typeCandidates) {
         override val cachedLookupElements: Array<LookupElement> =
                 typeCandidates.map { LookupElementBuilder.create(it, it.renderedType!!) }.toTypedArray()
@@ -137,7 +137,7 @@ internal class TypeParameterListExpression(private val mandatoryTypeParameters: 
                                           insertLeadingSpace: Boolean) : Expression() {
     private val prefix = if (insertLeadingSpace) " <" else "<"
 
-    public var currentTypeParameters: List<TypeParameterDescriptor> = Collections.emptyList()
+    var currentTypeParameters: List<TypeParameterDescriptor> = Collections.emptyList()
         private set
 
     override fun calculateResult(context: ExpressionContext?): Result {

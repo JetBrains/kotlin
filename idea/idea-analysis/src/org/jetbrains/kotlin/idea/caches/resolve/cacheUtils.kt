@@ -26,9 +26,9 @@ class SynchronizedCachedValue<V>(project: Project, provider: () -> CachedValuePr
             trackValue
     )
 
-    public fun getValue(): V {
+    fun getValue(): V {
         return synchronized(cachedValue) {
-            cachedValue.getValue()
+            cachedValue.value
         }
     }
 }

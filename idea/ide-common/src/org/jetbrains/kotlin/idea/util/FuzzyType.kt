@@ -28,13 +28,13 @@ import org.jetbrains.kotlin.types.typeUtil.*
 import java.util.*
 
 fun CallableDescriptor.fuzzyReturnType(): FuzzyType? {
-    val returnType = getReturnType() ?: return null
-    return FuzzyType(returnType, getTypeParameters())
+    val returnType = returnType ?: return null
+    return FuzzyType(returnType, typeParameters)
 }
 
 fun CallableDescriptor.fuzzyExtensionReceiverType(): FuzzyType? {
-    val receiverParameter = getExtensionReceiverParameter()
-    return if (receiverParameter != null) FuzzyType(receiverParameter.getType(), getTypeParameters()) else null
+    val receiverParameter = extensionReceiverParameter
+    return if (receiverParameter != null) FuzzyType(receiverParameter.type, typeParameters) else null
 }
 
 fun FuzzyType.makeNotNullable() = FuzzyType(type.makeNotNullable(), freeParameters)
@@ -52,7 +52,7 @@ class FuzzyType(
         val type: KotlinType,
         freeParameters: Collection<TypeParameterDescriptor>
 ) {
-    public val freeParameters: Set<TypeParameterDescriptor>
+    val freeParameters: Set<TypeParameterDescriptor>
 
     init {
         if (freeParameters.isNotEmpty()) {
@@ -70,29 +70,29 @@ class FuzzyType(
     override fun hashCode() = type.hashCode()
 
     private fun MutableSet<TypeParameterDescriptor>.addUsedTypeParameters(type: KotlinType) {
-        val typeParameter = type.getConstructor().getDeclarationDescriptor() as? TypeParameterDescriptor
+        val typeParameter = type.constructor.declarationDescriptor as? TypeParameterDescriptor
         if (typeParameter != null && add(typeParameter)) {
-            typeParameter.getLowerBounds().forEach { addUsedTypeParameters(it) }
-            typeParameter.getUpperBounds().forEach { addUsedTypeParameters(it) }
+            typeParameter.lowerBounds.forEach { addUsedTypeParameters(it) }
+            typeParameter.upperBounds.forEach { addUsedTypeParameters(it) }
         }
 
-        for (argument in type.getArguments()) {
+        for (argument in type.arguments) {
             if (!argument.isStarProjection) { // otherwise we can fall into infinite recursion
-                addUsedTypeParameters(argument.getType())
+                addUsedTypeParameters(argument.type)
             }
         }
     }
 
-    public fun checkIsSubtypeOf(otherType: FuzzyType): TypeSubstitutor?
+    fun checkIsSubtypeOf(otherType: FuzzyType): TypeSubstitutor?
             = matchedSubstitutor(otherType, MatchKind.IS_SUBTYPE)
 
-    public fun checkIsSuperTypeOf(otherType: FuzzyType): TypeSubstitutor?
+    fun checkIsSuperTypeOf(otherType: FuzzyType): TypeSubstitutor?
             = matchedSubstitutor(otherType, MatchKind.IS_SUPERTYPE)
 
-    public fun checkIsSubtypeOf(otherType: KotlinType): TypeSubstitutor?
+    fun checkIsSubtypeOf(otherType: KotlinType): TypeSubstitutor?
             = checkIsSubtypeOf(FuzzyType(otherType, emptyList()))
 
-    public fun checkIsSuperTypeOf(otherType: KotlinType): TypeSubstitutor?
+    fun checkIsSuperTypeOf(otherType: KotlinType): TypeSubstitutor?
             = checkIsSuperTypeOf(FuzzyType(otherType, emptyList()))
 
     private enum class MatchKind {
@@ -101,8 +101,8 @@ class FuzzyType(
     }
 
     private fun matchedSubstitutor(otherType: FuzzyType, matchKind: MatchKind): TypeSubstitutor? {
-        if (type.isError()) return null
-        if (otherType.type.isError()) return null
+        if (type.isError) return null
+        if (otherType.type.isError) return null
 
         fun KotlinType.checkInheritance(otherType: KotlinType): Boolean {
             return when (matchKind) {

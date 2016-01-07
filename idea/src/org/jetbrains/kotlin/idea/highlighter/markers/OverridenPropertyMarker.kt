@@ -47,24 +47,24 @@ fun getOverriddenPropertyTooltip(property: KtProperty): String? {
 
     val consumer = AdapterProcessor<PsiMethod, PsiClass>(
             CommonProcessors.UniqueProcessor<PsiClass>(PsiElementProcessorAdapter(overriddenInClassesProcessor)),
-            Function { method: PsiMethod? -> method?.getContainingClass() }
+            Function { method: PsiMethod? -> method?.containingClass }
     )
 
     for (method in LightClassUtil.getLightClassPropertyMethods(property)) {
-        if (!overriddenInClassesProcessor.isOverflow()) {
+        if (!overriddenInClassesProcessor.isOverflow) {
             OverridingMethodsSearch.search(method, true).forEach(consumer)
         }
     }
 
     val isImplemented = isImplemented(property)
-    if (overriddenInClassesProcessor.isOverflow()) {
+    if (overriddenInClassesProcessor.isOverflow) {
         return if (isImplemented)
             KotlinBundle.message("property.is.implemented.too.many")
         else
             KotlinBundle.message("property.is.overridden.too.many")
     }
 
-    val collectedClasses = overriddenInClassesProcessor.getCollection()
+    val collectedClasses = overriddenInClassesProcessor.collection
     if (collectedClasses.isEmpty()) return null
 
     val start = if (isImplemented)
@@ -77,7 +77,7 @@ fun getOverriddenPropertyTooltip(property: KtProperty): String? {
 }
 
 fun navigateToPropertyOverriddenDeclarations(e: MouseEvent?, property: KtProperty) {
-    val project = property.getProject()
+    val project = property.project
 
     if (DumbService.isDumb(project)) {
         DumbService.getInstance(project)?.showDumbModeNotification("Navigation to overriding classes is not possible during index update")
@@ -99,26 +99,26 @@ fun navigateToPropertyOverriddenDeclarations(e: MouseEvent?, property: KtPropert
             MarkerType.SEARCHING_FOR_OVERRIDING_METHODS,
             /* can be canceled */ true,
             project,
-            e?.getComponent() as JComponent?)) {
+            e?.component as JComponent?)) {
         return
     }
 
     val renderer = DefaultPsiElementCellRenderer()
-    val navigatingOverrides = elementProcessor.getResults()
+    val navigatingOverrides = elementProcessor.results
             .sortedWith(renderer.comparator)
             .filterIsInstance<NavigatablePsiElement>()
 
     PsiElementListNavigator.openTargets(e,
                                         navigatingOverrides.toTypedArray(),
-                                        KotlinBundle.message("navigation.title.overriding.property", property.getName()),
-                                        KotlinBundle.message("navigation.findUsages.title.overriding.property", property.getName()), renderer)
+                                        KotlinBundle.message("navigation.title.overriding.property", property.name),
+                                        KotlinBundle.message("navigation.findUsages.title.overriding.property", property.name), renderer)
 }
 
 
-public fun isImplemented(declaration: KtNamedDeclaration): Boolean {
+fun isImplemented(declaration: KtNamedDeclaration): Boolean {
     if (declaration.hasModifier(KtTokens.ABSTRACT_KEYWORD)) return true
 
-    var parent = declaration.getParent()
+    var parent = declaration.parent
     parent = if (parent is KtClassBody) parent.getParent() else parent
 
     if (parent !is KtClass) return false

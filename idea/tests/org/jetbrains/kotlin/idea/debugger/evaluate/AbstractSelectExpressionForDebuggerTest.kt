@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.junit.Assert
 
-public abstract class AbstractSelectExpressionForDebuggerTest : LightCodeInsightFixtureTestCase() {
+abstract class AbstractSelectExpressionForDebuggerTest : LightCodeInsightFixtureTestCase() {
 
     fun doTest(path: String) {
         doTest(path, true)
@@ -35,12 +35,12 @@ public abstract class AbstractSelectExpressionForDebuggerTest : LightCodeInsight
     fun doTest(path: String, allowMethodCalls: Boolean) {
         myFixture.configureByFile(path)
 
-        val elementAt = myFixture.getFile()?.findElementAt(myFixture.getCaretOffset())!!
+        val elementAt = myFixture.file?.findElementAt(myFixture.caretOffset)!!
         val selectedExpression = KotlinEditorTextProvider.findExpressionInner(elementAt, allowMethodCalls)
 
-        val expected = InTextDirectivesUtils.findStringWithPrefixes(myFixture.getFile()?.getText()!!, "// EXPECTED: ")
+        val expected = InTextDirectivesUtils.findStringWithPrefixes(myFixture.file?.text!!, "// EXPECTED: ")
         val actualResult = if (selectedExpression != null)
-            KotlinEditorTextProvider.getElementInfo(selectedExpression) { it.getText() }
+            KotlinEditorTextProvider.getElementInfo(selectedExpression) { it.text }
         else
             "null"
 

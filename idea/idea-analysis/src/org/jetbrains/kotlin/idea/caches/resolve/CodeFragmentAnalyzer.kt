@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import javax.inject.Inject
 
-public class CodeFragmentAnalyzer(
+class CodeFragmentAnalyzer(
         private val resolveSession: ResolveSession,
         private val qualifierResolver: QualifiedExpressionResolver,
         private val expressionTypingServices: ExpressionTypingServices,
@@ -43,10 +43,10 @@ public class CodeFragmentAnalyzer(
 ) {
 
     // component dependency cycle
-    public var resolveElementCache: ResolveElementCache? = null
+    var resolveElementCache: ResolveElementCache? = null
         @Inject set
 
-    public fun analyzeCodeFragment(codeFragment: KtCodeFragment, trace: BindingTrace, bodyResolveMode: BodyResolveMode) {
+    fun analyzeCodeFragment(codeFragment: KtCodeFragment, trace: BindingTrace, bodyResolveMode: BodyResolveMode) {
         val codeFragmentElement = codeFragment.getContentElement()
 
         val (scopeForContextElement, dataFlowInfo) = getScopeAndDataFlowForAnalyzeFragment(codeFragment) {
@@ -76,10 +76,10 @@ public class CodeFragmentAnalyzer(
     //TODO: this code should be moved into debugger which should set correct context for its code fragment
     private fun KtExpression.correctContextForExpression(): KtExpression {
         return when (this) {
-                   is KtProperty -> this.getDelegateExpressionOrInitializer()
-                   is KtFunctionLiteral -> this.getBodyExpression()?.getStatements()?.lastOrNull()
-                   is KtDeclarationWithBody -> this.getBodyExpression()
-                   is KtBlockExpression -> this.getStatements().lastOrNull()
+                   is KtProperty -> this.delegateExpressionOrInitializer
+                   is KtFunctionLiteral -> this.bodyExpression?.statements?.lastOrNull()
+                   is KtDeclarationWithBody -> this.bodyExpression
+                   is KtBlockExpression -> this.statements.lastOrNull()
                    else -> {
                        val previousSibling = this.siblings(forward = false, withItself = false).firstIsInstanceOrNull<KtExpression>()
                        if (previousSibling != null) return previousSibling
@@ -96,7 +96,7 @@ public class CodeFragmentAnalyzer(
             codeFragment: KtCodeFragment,
             resolveToElement: (KtElement) -> BindingContext
     ): Pair<LexicalScope, DataFlowInfo>? {
-        val context = codeFragment.getContext()
+        val context = codeFragment.context
         if (context !is KtExpression) return null
 
         val scopeForContextElement: LexicalScope?
@@ -106,7 +106,7 @@ public class CodeFragmentAnalyzer(
             is KtPrimaryConstructor -> {
                 val descriptor = resolveSession.getClassDescriptor(context.getContainingClassOrObject(), NoLookupLocation.FROM_IDE) as ClassDescriptorWithResolutionScopes
 
-                scopeForContextElement = descriptor.getScopeForInitializerResolution()
+                scopeForContextElement = descriptor.scopeForInitializerResolution
                 dataFlowInfo = DataFlowInfo.EMPTY
             }
             is KtSecondaryConstructor -> {
@@ -120,7 +120,7 @@ public class CodeFragmentAnalyzer(
             is KtClassOrObject -> {
                 val descriptor = resolveSession.getClassDescriptor(context, NoLookupLocation.FROM_IDE) as ClassDescriptorWithResolutionScopes
 
-                scopeForContextElement = descriptor.getScopeForMemberDeclarationResolution()
+                scopeForContextElement = descriptor.scopeForMemberDeclarationResolution
                 dataFlowInfo = DataFlowInfo.EMPTY
             }
             is KtExpression -> {
@@ -132,7 +132,7 @@ public class CodeFragmentAnalyzer(
                 dataFlowInfo = contextForElement.getDataFlowInfo(correctedContext)
             }
             is KtFile -> {
-                scopeForContextElement = resolveSession.getFileScopeProvider().getFileResolutionScope(context)
+                scopeForContextElement = resolveSession.fileScopeProvider.getFileResolutionScope(context)
                 dataFlowInfo = DataFlowInfo.EMPTY
             }
             else -> return null

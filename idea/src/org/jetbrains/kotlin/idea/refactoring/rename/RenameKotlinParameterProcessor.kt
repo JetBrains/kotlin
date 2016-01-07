@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.resolve.OverrideResolver
 
-public class RenameKotlinParameterProcessor : RenameKotlinPsiProcessor() {
+class RenameKotlinParameterProcessor : RenameKotlinPsiProcessor() {
     override fun canProcessElement(element: PsiElement): Boolean {
         return element is KtParameter && element.parent.parent is KtNamedFunction
     }

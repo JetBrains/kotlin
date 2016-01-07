@@ -27,11 +27,11 @@ import com.intellij.psi.NavigatablePsiElement
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 
-public class KotlinInheritedMembersNodeProvider: InheritedMembersNodeProvider<TreeElement>() {
+class KotlinInheritedMembersNodeProvider: InheritedMembersNodeProvider<TreeElement>() {
     override fun provideNodes(node: TreeElement): Collection<TreeElement> {
         if (node !is KotlinStructureViewElement) return listOf()
 
-        val element = node.getElement()
+        val element = node.element
         if (element !is KtClassOrObject) return listOf()
 
         val project = element.project

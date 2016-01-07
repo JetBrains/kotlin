@@ -52,8 +52,8 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import java.util.*
 
-public interface UnificationResult {
-    public enum class Status {
+interface UnificationResult {
+    enum class Status {
         MATCHED {
             override fun and(other: Status): Status = other
         },
@@ -62,7 +62,7 @@ public interface UnificationResult {
             override fun and(other: Status): Status = this
         };
 
-        public abstract infix fun and(other: Status): Status
+        abstract infix fun and(other: Status): Status
     }
 
     object Unmatched : UnificationResult {
@@ -90,12 +90,12 @@ public interface UnificationResult {
     val matched: Boolean get() = status != UNMATCHED
 }
 
-public class UnifierParameter(
+class UnifierParameter(
         val descriptor: DeclarationDescriptor,
         val expectedType: KotlinType
 )
 
-public class KotlinPsiUnifier(
+class KotlinPsiUnifier(
         parameters: Collection<UnifierParameter> = Collections.emptySet(),
         val allowWeakMatches: Boolean = false
 ) {
@@ -117,7 +117,7 @@ public class KotlinPsiUnifier(
 
         private fun KotlinPsiRange.getBindingContext(): BindingContext {
             val element = (this as? KotlinPsiRange.ListRange)?.startElement as? KtElement
-            if ((element?.getContainingFile() as? KtFile)?.doNotAnalyze != null) return BindingContext.EMPTY
+            if ((element?.containingFile as? KtFile)?.doNotAnalyze != null) return BindingContext.EMPTY
             return element?.getContextForContainingDeclarationBody() ?: BindingContext.EMPTY
         }
 
@@ -151,8 +151,8 @@ public class KotlinPsiUnifier(
         }
 
         private fun matchCalls(call1: Call, call2: Call): Boolean {
-            return matchReceivers(call1.getExplicitReceiver(), call2.getExplicitReceiver()) &&
-                   matchReceivers(call1.getDispatchReceiver(), call2.getDispatchReceiver())
+            return matchReceivers(call1.explicitReceiver, call2.explicitReceiver) &&
+                   matchReceivers(call1.dispatchReceiver, call2.dispatchReceiver)
         }
 
         private fun matchArguments(arg1: ValueArgument, arg2: ValueArgument): Status {
@@ -170,8 +170,8 @@ public class KotlinPsiUnifier(
 
         private fun matchResolvedCalls(rc1: ResolvedCall<*>, rc2: ResolvedCall<*>): Status? {
             fun checkSpecialOperations(): Boolean {
-                val op1 = (rc1.getCall().getCalleeExpression() as? KtSimpleNameExpression)?.getReferencedNameElementType()
-                val op2 = (rc2.getCall().getCalleeExpression() as? KtSimpleNameExpression)?.getReferencedNameElementType()
+                val op1 = (rc1.call.calleeExpression as? KtSimpleNameExpression)?.getReferencedNameElementType()
+                val op2 = (rc2.call.calleeExpression as? KtSimpleNameExpression)?.getReferencedNameElementType()
 
                 return when {
                     op1 == op2 ->
@@ -188,17 +188,17 @@ public class KotlinPsiUnifier(
             }
 
             fun checkArguments(): Status? {
-                val args1 = rc1.getResultingDescriptor()?.getValueParameters()?.map { rc1.getValueArguments()[it] } ?: Collections.emptyList()
-                val args2 = rc2.getResultingDescriptor()?.getValueParameters()?.map { rc2.getValueArguments()[it] } ?: Collections.emptyList()
+                val args1 = rc1.resultingDescriptor?.valueParameters?.map { rc1.valueArguments[it] } ?: Collections.emptyList()
+                val args2 = rc2.resultingDescriptor?.valueParameters?.map { rc2.valueArguments[it] } ?: Collections.emptyList()
                 if (args1.size != args2.size) return UNMATCHED
-                if (rc1.getCall().getValueArguments().size != args1.size || rc2.getCall().getValueArguments().size != args2.size) return null
+                if (rc1.call.valueArguments.size != args1.size || rc2.call.valueArguments.size != args2.size) return null
 
                 return (args1.asSequence().zip(args2.asSequence())).fold(MATCHED) { s, p ->
                     val (arg1, arg2) = p
                     s and when {
                         arg1 == arg2 -> MATCHED
                         arg1 == null || arg2 == null -> UNMATCHED
-                        else -> (arg1.getArguments().asSequence().zip(arg2.getArguments().asSequence())).fold(MATCHED) { s, p ->
+                        else -> (arg1.arguments.asSequence().zip(arg2.arguments.asSequence())).fold(MATCHED) { s, p ->
                             s and matchArguments(p.first, p.second)
                         }
                     }
@@ -207,14 +207,14 @@ public class KotlinPsiUnifier(
 
             fun checkImplicitReceiver(implicitCall: ResolvedCall<*>, explicitCall: ResolvedCall<*>): Boolean {
                 val (implicitReceiver, explicitReceiver) =
-                        when (explicitCall.getExplicitReceiverKind()) {
+                        when (explicitCall.explicitReceiverKind) {
                             ExplicitReceiverKind.EXTENSION_RECEIVER ->
-                                (implicitCall.getExtensionReceiver() as? ImplicitReceiver) to
-                                        (explicitCall.getExtensionReceiver() as? ExpressionReceiver)
+                                (implicitCall.extensionReceiver as? ImplicitReceiver) to
+                                        (explicitCall.extensionReceiver as? ExpressionReceiver)
 
                             ExplicitReceiverKind.DISPATCH_RECEIVER ->
-                                (implicitCall.getDispatchReceiver() as? ImplicitReceiver) to
-                                        (explicitCall.getDispatchReceiver() as? ExpressionReceiver)
+                                (implicitCall.dispatchReceiver as? ImplicitReceiver) to
+                                        (explicitCall.dispatchReceiver as? ExpressionReceiver)
 
                             else ->
                                 null to null
@@ -225,28 +225,28 @@ public class KotlinPsiUnifier(
 
                 return matchDescriptors(
                         implicitReceiver.declarationDescriptor,
-                        thisExpression.getAdjustedResolvedCall()?.getCandidateDescriptor()?.getContainingDeclaration()
+                        thisExpression.getAdjustedResolvedCall()?.candidateDescriptor?.containingDeclaration
                 )
             }
 
             fun checkReceivers(): Boolean {
                 return when {
-                    rc1.getExplicitReceiverKind() == rc2.getExplicitReceiverKind() -> {
-                        matchReceivers(rc1.getExtensionReceiver(), rc2.getExtensionReceiver()) &&
-                        (rc1.getExplicitReceiverKind() == ExplicitReceiverKind.BOTH_RECEIVERS || matchReceivers(rc1.getDispatchReceiver(), rc2.getDispatchReceiver()))
+                    rc1.explicitReceiverKind == rc2.explicitReceiverKind -> {
+                        matchReceivers(rc1.extensionReceiver, rc2.extensionReceiver) &&
+                        (rc1.explicitReceiverKind == ExplicitReceiverKind.BOTH_RECEIVERS || matchReceivers(rc1.dispatchReceiver, rc2.dispatchReceiver))
                     }
 
-                    rc1.getExplicitReceiverKind() == ExplicitReceiverKind.NO_EXPLICIT_RECEIVER -> checkImplicitReceiver(rc1, rc2)
+                    rc1.explicitReceiverKind == ExplicitReceiverKind.NO_EXPLICIT_RECEIVER -> checkImplicitReceiver(rc1, rc2)
 
-                    rc2.getExplicitReceiverKind() == ExplicitReceiverKind.NO_EXPLICIT_RECEIVER -> checkImplicitReceiver(rc2, rc1)
+                    rc2.explicitReceiverKind == ExplicitReceiverKind.NO_EXPLICIT_RECEIVER -> checkImplicitReceiver(rc2, rc1)
 
                     else -> false
                 }
             }
 
             fun checkTypeArguments(): Status? {
-                val typeArgs1 = rc1.getTypeArguments().toList()
-                val typeArgs2 = rc2.getTypeArguments().toList()
+                val typeArgs1 = rc1.typeArguments.toList()
+                val typeArgs2 = rc2.typeArguments.toList()
                 if (typeArgs1.size != typeArgs2.size) return UNMATCHED
 
                 for ((typeArg1, typeArg2) in (typeArgs1.zip(typeArgs2))) {
@@ -261,9 +261,9 @@ public class KotlinPsiUnifier(
 
             return when {
                 !checkSpecialOperations() -> UNMATCHED
-                !matchDescriptors(rc1.getCandidateDescriptor(), rc2.getCandidateDescriptor()) -> UNMATCHED
+                !matchDescriptors(rc1.candidateDescriptor, rc2.candidateDescriptor) -> UNMATCHED
                 !checkReceivers() -> UNMATCHED
-                rc1.isSafeCall() != rc2.isSafeCall() -> UNMATCHED
+                rc1.isSafeCall != rc2.isSafeCall -> UNMATCHED
                 else -> {
                     val s = checkTypeArguments()
                     if (s != MATCHED) s else checkArguments()
@@ -288,7 +288,7 @@ public class KotlinPsiUnifier(
             }
 
             return when {
-                rc == null || ErrorUtils.isError(rc.getCandidateDescriptor()) -> null
+                rc == null || ErrorUtils.isError(rc.candidateDescriptor) -> null
                 else -> rc
             }
         }
@@ -323,24 +323,24 @@ public class KotlinPsiUnifier(
 
         private fun KtTypeReference.getType(): KotlinType? {
             val t = bindingContext[BindingContext.TYPE, this]
-            return if (t == null || t.isError()) null else t
+            return if (t == null || t.isError) null else t
         }
 
         private fun matchTypes(type1: KotlinType?, type2: KotlinType?): Status? {
             if (type1 != null && type2 != null) {
-                if (type1.isError() || type2.isError()) return null
+                if (type1.isError || type2.isError) return null
                 if (TypeUtils.equalTypes(type1, type2)) return MATCHED
 
-                if (type1.isMarkedNullable() != type2.isMarkedNullable()) return UNMATCHED
+                if (type1.isMarkedNullable != type2.isMarkedNullable) return UNMATCHED
                 if (!matchDescriptors(
-                        type1.getConstructor().getDeclarationDescriptor(),
-                        type2.getConstructor().getDeclarationDescriptor())) return UNMATCHED
+                        type1.constructor.declarationDescriptor,
+                        type2.constructor.declarationDescriptor)) return UNMATCHED
 
-                val args1 = type1.getArguments()
-                val args2 = type2.getArguments()
+                val args1 = type1.arguments
+                val args2 = type2.arguments
                 if (args1.size != args2.size) return UNMATCHED
                 if (!args1.zip(args2).all {
-                    it.first.getProjectionKind() == it.second.getProjectionKind() && matchTypes(it.first.getType(), it.second.getType()) == MATCHED }
+                    it.first.projectionKind == it.second.projectionKind && matchTypes(it.first.type, it.second.type) == MATCHED }
                 ) return UNMATCHED
 
                 return MATCHED
@@ -361,24 +361,24 @@ public class KotlinPsiUnifier(
                 this is KtConstantExpression -> true
                 this is KtOperationReferenceExpression -> getReferencedNameElementType() == KtTokens.EXCLEXCL
                 this is KtIfExpression -> true
-                this is KtUnaryExpression -> when (getOperationReference().getReferencedNameElementType()) {
+                this is KtUnaryExpression -> when (operationReference.getReferencedNameElementType()) {
                     KtTokens.EXCLEXCL, KtTokens.PLUSPLUS, KtTokens.MINUSMINUS -> true
                     else -> false
                 }
-                this is KtBinaryExpression -> getOperationReference().getReferencedNameElementType() == KtTokens.ELVIS
+                this is KtBinaryExpression -> operationReference.getReferencedNameElementType() == KtTokens.ELVIS
                 else -> false
             }
         }
 
         private fun KtBinaryExpression.matchComplexAssignmentWithSimple(simple: KtBinaryExpression): Status? {
             return when {
-                doUnify(getLeft(), simple.getLeft()) == UNMATCHED -> UNMATCHED
-                else -> simple.getRight()?.let { matchCalls(this, it) } ?: UNMATCHED
+                doUnify(left, simple.left) == UNMATCHED -> UNMATCHED
+                else -> simple.right?.let { matchCalls(this, it) } ?: UNMATCHED
             }
         }
 
         private fun KtBinaryExpression.matchAssignment(e: KtElement): Status? {
-            val operationType = getOperationReference().getReferencedNameElementType() as KtToken
+            val operationType = operationReference.getReferencedNameElementType() as KtToken
             if (operationType == KtTokens.EQ) {
                 if (e.shouldIgnoreResolvedCall()) return UNMATCHED
 
@@ -386,7 +386,7 @@ public class KotlinPsiUnifier(
                     return (e as KtBinaryExpression).matchComplexAssignmentWithSimple(this)
                 }
 
-                val lhs = getLeft()?.unwrap()
+                val lhs = left?.unwrap()
                 if (lhs !is KtArrayAccessExpression) return null
 
                 val setResolvedCall = bindingContext[BindingContext.INDEXED_LVALUE_SET, lhs]
@@ -399,7 +399,7 @@ public class KotlinPsiUnifier(
             if (assignResolvedCall == null) return UNMATCHED
 
             val operationName = OperatorConventions.getNameForOperationSymbol(operationType)
-            if (assignResolvedCall.getResultingDescriptor()?.getName() == operationName) return matchCalls(this, e)
+            if (assignResolvedCall.resultingDescriptor?.name == operationName) return matchCalls(this, e)
 
             return if (KtPsiUtil.isAssignment(e)) null else UNMATCHED
         }
@@ -412,21 +412,21 @@ public class KotlinPsiUnifier(
         }
 
         private fun PsiElement.isIncrement(): Boolean {
-            val parent = getParent()
+            val parent = parent
             return parent is KtUnaryExpression
-                   && this == parent.getOperationReference()
-                   && ((parent.getOperationToken() as KtToken) in OperatorConventions.INCREMENT_OPERATIONS)
+                   && this == parent.operationReference
+                   && ((parent.operationToken as KtToken) in OperatorConventions.INCREMENT_OPERATIONS)
         }
 
         private fun matchCallableReferences(e1: KtCallableReferenceExpression, e2: KtCallableReferenceExpression): Boolean {
-            val d1 = e1.bindingContext[BindingContext.REFERENCE_TARGET, e1.getCallableReference()]
-            val d2 = e2.bindingContext[BindingContext.REFERENCE_TARGET, e2.getCallableReference()]
+            val d1 = e1.bindingContext[BindingContext.REFERENCE_TARGET, e1.callableReference]
+            val d2 = e2.bindingContext[BindingContext.REFERENCE_TARGET, e2.callableReference]
             return matchDescriptors(d1, d2)
         }
 
         private fun matchDestructuringDeclarations(e1: KtDestructuringDeclaration, e2: KtDestructuringDeclaration): Boolean {
-            val entries1 = e1.getEntries()
-            val entries2 = e2.getEntries()
+            val entries1 = e1.entries
+            val entries2 = e2.entries
             if (entries1.size != entries2.size) return false
 
             return entries1.zip(entries2).all { p ->
@@ -445,7 +445,7 @@ public class KotlinPsiUnifier(
             val matchedReceivers = when {
                 receiver1 == null && receiver2 == null -> true
                 matchDescriptors(receiver1, receiver2) -> true
-                receiver1 != null && receiver2 != null -> matchTypes(receiver1.getType(), receiver2.getType()) == MATCHED
+                receiver1 != null && receiver2 != null -> matchTypes(receiver1.type, receiver2.type) == MATCHED
                 else -> false
             }
 
@@ -463,47 +463,47 @@ public class KotlinPsiUnifier(
                 desc2: CallableDescriptor): Status? {
             fun needToCompareReturnTypes(): Boolean {
                 if (decl1 !is KtCallableDeclaration) return true
-                return decl1.getTypeReference() != null || (decl2 as KtCallableDeclaration).getTypeReference() != null
+                return decl1.typeReference != null || (decl2 as KtCallableDeclaration).typeReference != null
             }
 
-            if (desc1 is VariableDescriptor && desc1.isVar() != (desc2 as VariableDescriptor).isVar()) return UNMATCHED
+            if (desc1 is VariableDescriptor && desc1.isVar != (desc2 as VariableDescriptor).isVar) return UNMATCHED
 
             if (!matchNames(decl1, decl2, desc1, desc2)) return UNMATCHED
 
             if (needToCompareReturnTypes()) {
-                val type1 = desc1.getReturnType()
-                val type2 = desc2.getReturnType()
+                val type1 = desc1.returnType
+                val type2 = desc2.returnType
 
                 if (type1 != type2
-                    && (type1 == null || type2 == null || type1.isError() || type2.isError() || matchTypes(type1, type2) != MATCHED)) {
+                    && (type1 == null || type2 == null || type1.isError || type2.isError || matchTypes(type1, type2) != MATCHED)) {
                     return UNMATCHED
                 }
             }
 
-            if (!matchReceiverParameters(desc1.getExtensionReceiverParameter(), desc2.getExtensionReceiverParameter())) return UNMATCHED
-            if (!matchReceiverParameters(desc1.getDispatchReceiverParameter(), desc2.getDispatchReceiverParameter())) return UNMATCHED
+            if (!matchReceiverParameters(desc1.extensionReceiverParameter, desc2.extensionReceiverParameter)) return UNMATCHED
+            if (!matchReceiverParameters(desc1.dispatchReceiverParameter, desc2.dispatchReceiverParameter)) return UNMATCHED
 
-            val params1 = desc1.getValueParameters()
-            val params2 = desc2.getValueParameters()
+            val params1 = desc1.valueParameters
+            val params2 = desc2.valueParameters
             val zippedParams = params1.zip(params2)
             val parametersMatch =
-                    (params1.size == params2.size) && zippedParams.all { matchTypes(it.first.getType(), it.second.getType()) == MATCHED }
+                    (params1.size == params2.size) && zippedParams.all { matchTypes(it.first.type, it.second.type) == MATCHED }
             if (!parametersMatch) return UNMATCHED
 
             zippedParams.forEach { declarationPatternsToTargets.putValue(it.first, it.second) }
 
             return doUnify(
-                    (decl1 as? KtTypeParameterListOwner)?.getTypeParameters()?.toRange() ?: Empty,
-                    (decl2 as? KtTypeParameterListOwner)?.getTypeParameters()?.toRange() ?: Empty
+                    (decl1 as? KtTypeParameterListOwner)?.typeParameters?.toRange() ?: Empty,
+                    (decl2 as? KtTypeParameterListOwner)?.typeParameters?.toRange() ?: Empty
             ) and when (decl1) {
                 is KtDeclarationWithBody ->
-                    doUnify(decl1.getBodyExpression(), (decl2 as KtDeclarationWithBody).getBodyExpression())
+                    doUnify(decl1.bodyExpression, (decl2 as KtDeclarationWithBody).bodyExpression)
 
                 is KtWithExpressionInitializer ->
-                    doUnify(decl1.getInitializer(), (decl2 as KtWithExpressionInitializer).getInitializer())
+                    doUnify(decl1.initializer, (decl2 as KtWithExpressionInitializer).initializer)
 
                 is KtParameter ->
-                    doUnify(decl1.getDefaultValue(), (decl2 as KtParameter).getDefaultValue())
+                    doUnify(decl1.defaultValue, (decl2 as KtParameter).defaultValue)
 
                 else ->
                     UNMATCHED
@@ -513,12 +513,12 @@ public class KotlinPsiUnifier(
         private fun KtDeclaration.isNameRelevant(): Boolean {
             if (this is KtParameter && hasValOrVar()) return true
 
-            val parent = getParent()
+            val parent = parent
             return parent is KtClassBody || parent is KtFile
         }
 
         private fun matchNames(decl1: KtDeclaration, decl2: KtDeclaration, desc1: DeclarationDescriptor, desc2: DeclarationDescriptor): Boolean {
-            return (!decl1.isNameRelevant() && !decl2.isNameRelevant()) || desc1.getName() == desc2.getName()
+            return (!decl1.isNameRelevant() && !decl2.isNameRelevant()) || desc1.name == desc2.name
         }
 
         private fun <T: DeclarationDescriptor> matchContainedDescriptors(
@@ -544,7 +544,7 @@ public class KotlinPsiUnifier(
             )
 
             fun getMemberOrderInfo(cls: KtClassOrObject): OrderInfo<KtDeclaration> {
-                val (orderInsensitive, orderSensitive) = (cls.getBody()?.getDeclarations() ?: Collections.emptyList()).partition {
+                val (orderInsensitive, orderSensitive) = (cls.getBody()?.declarations ?: Collections.emptyList()).partition {
                     it is KtClassOrObject || it is KtFunction
                 }
 
@@ -563,16 +563,16 @@ public class KotlinPsiUnifier(
             }
 
             fun sortDeclarationsByElementType(declarations: List<KtDeclaration>): List<KtDeclaration> {
-                return declarations.sortedBy { it.getNode()?.getElementType()?.getIndex() ?: -1 }
+                return declarations.sortedBy { it.node?.elementType?.index ?: -1 }
             }
 
-            if (desc1.getKind() != desc2.getKind()) return UNMATCHED
+            if (desc1.kind != desc2.kind) return UNMATCHED
             if (!matchNames(decl1, decl2, desc1, desc2)) return UNMATCHED
 
-            declarationPatternsToTargets.putValue(desc1.getThisAsReceiverParameter(), desc2.getThisAsReceiverParameter())
+            declarationPatternsToTargets.putValue(desc1.thisAsReceiverParameter, desc2.thisAsReceiverParameter)
 
-            val constructor1 = desc1.getUnsubstitutedPrimaryConstructor()
-            val constructor2 = desc2.getUnsubstitutedPrimaryConstructor()
+            val constructor1 = desc1.unsubstitutedPrimaryConstructor
+            val constructor2 = desc2.unsubstitutedPrimaryConstructor
             if (constructor1 != null && constructor2 != null) {
                 declarationPatternsToTargets.putValue(constructor1, constructor2)
             }
@@ -590,7 +590,7 @@ public class KotlinPsiUnifier(
             }
 
             val status = doUnify((decl1 as? KtClass)?.getPrimaryConstructorParameterList(), (decl2 as? KtClass)?.getPrimaryConstructorParameterList()) and
-                    doUnify((decl1 as? KtClass)?.getTypeParameterList(), (decl2 as? KtClass)?.getTypeParameterList()) and
+                    doUnify((decl1 as? KtClass)?.typeParameterList, (decl2 as? KtClass)?.typeParameterList) and
                     doUnify(delegationInfo1.orderSensitive.toRange(), delegationInfo2.orderSensitive.toRange())
             if (status == UNMATCHED) return UNMATCHED
 
@@ -615,9 +615,9 @@ public class KotlinPsiUnifier(
                 desc1: TypeParameterDescriptor,
                 desc2: TypeParameterDescriptor
         ): Status {
-            if (desc1.getVariance() != desc2.getVariance()) return UNMATCHED
-            if (!matchTypes(desc1.getLowerBounds(), desc2.getLowerBounds())) return UNMATCHED
-            if (!matchTypes(desc1.getUpperBounds(), desc2.getUpperBounds())) return UNMATCHED
+            if (desc1.variance != desc2.variance) return UNMATCHED
+            if (!matchTypes(desc1.lowerBounds, desc2.lowerBounds)) return UNMATCHED
+            if (!matchTypes(desc1.upperBounds, desc2.upperBounds)) return UNMATCHED
             return MATCHED
         }
 
@@ -782,13 +782,13 @@ public class KotlinPsiUnifier(
         }
 
         private fun ASTNode.getChildrenRange(): KotlinPsiRange =
-                getChildren(null).mapNotNull { it.getPsi() }.toRange()
+                getChildren(null).mapNotNull { it.psi }.toRange()
 
         private fun PsiElement.unwrapWeakly(): KtElement? {
             return when {
-                this is KtReturnExpression -> getReturnedExpression()
-                this is KtProperty -> getInitializer()
-                KtPsiUtil.isOrdinaryAssignment(this) -> (this as KtBinaryExpression).getRight()
+                this is KtReturnExpression -> returnedExpression
+                this is KtProperty -> initializer
+                KtPsiUtil.isOrdinaryAssignment(this) -> (this as KtBinaryExpression).right
                 this is KtExpression && this !is KtDeclaration -> this
                 else -> null
             }
@@ -850,8 +850,8 @@ public class KotlinPsiUnifier(
                 }
             }
 
-            val targetNode = targetElementUnwrapped.getNode()
-            val patternNode = patternElementUnwrapped.getNode()
+            val targetNode = targetElementUnwrapped.node
+            val patternNode = patternElementUnwrapped.node
             if (targetNode == null || patternNode == null) return UNMATCHED
 
             val resolvedStatus = matchResolvedInfo(targetElementUnwrapped, patternElementUnwrapped)
@@ -862,7 +862,7 @@ public class KotlinPsiUnifier(
                 if (weakStatus != UNMATCHED) return weakStatus
             }
 
-            if (targetNode.getElementType() != patternNode.getElementType()) return UNMATCHED
+            if (targetNode.elementType != patternNode.elementType) return UNMATCHED
 
             if (resolvedStatus != null) return resolvedStatus
 
@@ -884,17 +884,17 @@ public class KotlinPsiUnifier(
     private fun PsiElement.unwrap(): PsiElement? {
         return when (this) {
             is KtExpression -> KtPsiUtil.deparenthesize(this)
-            is KtStringTemplateEntryWithExpression -> KtPsiUtil.deparenthesize(getExpression())
+            is KtStringTemplateEntryWithExpression -> KtPsiUtil.deparenthesize(expression)
             else -> this
         }
     }
 
     private fun PsiElement.unquotedText(): String {
-        val text = getText() ?: ""
+        val text = text ?: ""
         return if (this is LeafPsiElement) KtPsiUtil.unquoteIdentifier(text) else text
     }
 
-    public fun unify(target: KotlinPsiRange, pattern: KotlinPsiRange): UnificationResult {
+    fun unify(target: KotlinPsiRange, pattern: KotlinPsiRange): UnificationResult {
         return with(Context(target, pattern)) {
             val status = doUnify(target, pattern)
             when {
@@ -914,9 +914,9 @@ public class KotlinPsiUnifier(
         }
     }
 
-    public fun unify(targetElement: PsiElement?, patternElement: PsiElement?): UnificationResult =
+    fun unify(targetElement: PsiElement?, patternElement: PsiElement?): UnificationResult =
             unify(targetElement.toRange(), patternElement.toRange())
 }
 
-public fun PsiElement?.matches(e: PsiElement?): Boolean = KotlinPsiUnifier.DEFAULT.unify(this, e).matched
-public fun KotlinPsiRange.matches(r: KotlinPsiRange): Boolean = KotlinPsiUnifier.DEFAULT.unify(this, r).matched
+fun PsiElement?.matches(e: PsiElement?): Boolean = KotlinPsiUnifier.DEFAULT.unify(this, e).matched
+fun KotlinPsiRange.matches(r: KotlinPsiRange): Boolean = KotlinPsiUnifier.DEFAULT.unify(this, r).matched

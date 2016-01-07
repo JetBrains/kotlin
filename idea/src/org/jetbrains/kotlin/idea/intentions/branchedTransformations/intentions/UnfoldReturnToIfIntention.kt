@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-public class UnfoldReturnToIfIntention : SelfTargetingRangeIntention<KtReturnExpression>(KtReturnExpression::class.java, "Replace return with 'if' expression"), LowPriorityAction {
+class UnfoldReturnToIfIntention : SelfTargetingRangeIntention<KtReturnExpression>(KtReturnExpression::class.java, "Replace return with 'if' expression"), LowPriorityAction {
     override fun applicabilityRange(element: KtReturnExpression): TextRange? {
         val ifExpression = element.returnedExpression as? KtIfExpression ?: return null
         return TextRange(element.startOffset, ifExpression.ifKeyword.endOffset)

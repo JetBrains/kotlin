@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import java.util.HashSet
 
-public abstract class AbstractPullPushMembersHandler(
+abstract class AbstractPullPushMembersHandler(
         private val refactoringName: String,
         private val helpId: String,
         private  val wrongPositionMessage: String

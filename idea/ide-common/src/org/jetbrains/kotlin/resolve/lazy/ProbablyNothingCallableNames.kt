@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.lazy
 
-public interface ProbablyNothingCallableNames {
-    public fun functionNames(): Collection<String>
-    public fun propertyNames(): Collection<String>
+interface ProbablyNothingCallableNames {
+    fun functionNames(): Collection<String>
+    fun propertyNames(): Collection<String>
 }

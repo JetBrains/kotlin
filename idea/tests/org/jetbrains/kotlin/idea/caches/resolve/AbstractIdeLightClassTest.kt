@@ -40,7 +40,7 @@ abstract class AbstractIdeLightClassTest : KotlinLightCodeInsightFixtureTestCase
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 }
 
-public abstract class AbstractIdeCompiledLightClassTest : KotlinDaemonAnalyzerTestCase() {
+abstract class AbstractIdeCompiledLightClassTest : KotlinDaemonAnalyzerTestCase() {
     override fun setUp() {
         super.setUp()
 

@@ -29,14 +29,13 @@ import com.intellij.xdebugger.settings.DebuggerSettingsCategory
 import com.intellij.xdebugger.settings.XDebuggerSettings
 import org.jetbrains.kotlin.idea.debugger.stepping.KotlinSteppingConfigurableUi
 
-@State(name = "KotlinDebuggerSettings", storages = arrayOf(Storage(file = StoragePathMacros.APP_CONFIG + "/kotlin_debug.xml")))
-public class KotlinDebuggerSettings : XDebuggerSettings<KotlinDebuggerSettings>("kotlin_debugger"), Getter<KotlinDebuggerSettings> {
-    public var DEBUG_RENDER_DELEGATED_PROPERTIES: Boolean = true
-    public var DEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES: Boolean = true
-    public var DEBUG_IS_FILTER_FOR_STDLIB_ALREADY_ADDED: Boolean = false
+@State(name = "KotlinDebuggerSettings", storages = arrayOf(Storage(file = StoragePathMacros.APP_CONFIG + "/kotlin_debug.xml"))) class KotlinDebuggerSettings : XDebuggerSettings<KotlinDebuggerSettings>("kotlin_debugger"), Getter<KotlinDebuggerSettings> {
+    var DEBUG_RENDER_DELEGATED_PROPERTIES: Boolean = true
+    var DEBUG_DISABLE_KOTLIN_INTERNAL_CLASSES: Boolean = true
+    var DEBUG_IS_FILTER_FOR_STDLIB_ALREADY_ADDED: Boolean = false
 
     companion object {
-        public fun getInstance(): KotlinDebuggerSettings {
+        fun getInstance(): KotlinDebuggerSettings {
             return XDebuggerUtil.getInstance()?.getDebuggerSettings(KotlinDebuggerSettings::class.java)!!
         }
     }

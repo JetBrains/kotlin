@@ -23,21 +23,21 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.js.isDefaultPackageMetafile
 import org.jetbrains.kotlin.serialization.js.isPackageClassFqName
 
-public object JsMetaFileUtils {
-    public fun isKotlinJsMetaFile(file: VirtualFile): Boolean = file.getFileType() == KotlinJavaScriptMetaFileType
+object JsMetaFileUtils {
+    fun isKotlinJsMetaFile(file: VirtualFile): Boolean = file.fileType == KotlinJavaScriptMetaFileType
 
-    public fun isKotlinJavaScriptInternalCompiledFile(file: VirtualFile): Boolean =
-            isKotlinJsMetaFile(file) && file.getNameWithoutExtension().contains('.')
+    fun isKotlinJavaScriptInternalCompiledFile(file: VirtualFile): Boolean =
+            isKotlinJsMetaFile(file) && file.nameWithoutExtension.contains('.')
 
-    public fun getPackageFqName(file: VirtualFile): FqName = getPackageFqName(getRelativeToRootPath(file))
+    fun getPackageFqName(file: VirtualFile): FqName = getPackageFqName(getRelativeToRootPath(file))
 
-    public fun getClassFqName(file: VirtualFile): FqName = getClassFqName(getRelativeToRootPath(file))
+    fun getClassFqName(file: VirtualFile): FqName = getClassFqName(getRelativeToRootPath(file))
 
-    public fun getClassId(file: VirtualFile): ClassId = getClassId(getRelativeToRootPath(file))
+    fun getClassId(file: VirtualFile): ClassId = getClassId(getRelativeToRootPath(file))
 
-    public fun isPackageHeader(file: VirtualFile): Boolean = isPackageHeader(getRelativeToRootPath(file))
+    fun isPackageHeader(file: VirtualFile): Boolean = isPackageHeader(getRelativeToRootPath(file))
 
-    public fun getModuleDirectory(file: VirtualFile): VirtualFile =
+    fun getModuleDirectory(file: VirtualFile): VirtualFile =
         getRoot(file).findChild(getModuleName(getRelativeToRootPath(file)))!!
 
     private fun getRelativeToRootPath(file: VirtualFile): String = VfsUtilCore.getRelativePath(file, getRoot(file))!!
@@ -70,6 +70,6 @@ public object JsMetaFileUtils {
         return classFqName.isPackageClassFqName()
     }
 
-    private fun getRoot(file: VirtualFile): VirtualFile = if (file.getParent() == null) file else getRoot(file.getParent())
+    private fun getRoot(file: VirtualFile): VirtualFile = if (file.parent == null) file else getRoot(file.parent)
 }
 

@@ -20,13 +20,13 @@ import com.intellij.refactoring.actions.*
 import com.intellij.psi.*
 import org.jetbrains.kotlin.psi.*
 
-public abstract class AbstractIntroduceAction : BasePlatformRefactoringAction() {
+abstract class AbstractIntroduceAction : BasePlatformRefactoringAction() {
     init {
         setInjectedContext(true)
     }
 
     override fun isAvailableInEditorOnly(): Boolean = true
 
-    protected override fun isEnabledOnElements(elements: Array<out PsiElement>): Boolean =
+    override fun isEnabledOnElements(elements: Array<out PsiElement>): Boolean =
             elements.all { it is KtElement }
 }

@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
-public class SimplifyNegatedBinaryExpressionInspection : IntentionBasedInspection<KtPrefixExpression>(SimplifyNegatedBinaryExpressionIntention())
+class SimplifyNegatedBinaryExpressionInspection : IntentionBasedInspection<KtPrefixExpression>(SimplifyNegatedBinaryExpressionIntention())
 
-public class SimplifyNegatedBinaryExpressionIntention : SelfTargetingRangeIntention<KtPrefixExpression>(KtPrefixExpression::class.java, "Simplify negated binary expression") {
+class SimplifyNegatedBinaryExpressionIntention : SelfTargetingRangeIntention<KtPrefixExpression>(KtPrefixExpression::class.java, "Simplify negated binary expression") {
 
     private fun IElementType.negate(): KtSingleValueToken? = when (this) {
         KtTokens.IN_KEYWORD -> KtTokens.NOT_IN
@@ -51,7 +51,7 @@ public class SimplifyNegatedBinaryExpressionIntention : SelfTargetingRangeIntent
         return if (isApplicableTo(element)) element.operationReference.textRange else null
     }
 
-    public fun isApplicableTo(element: KtPrefixExpression): Boolean {
+    fun isApplicableTo(element: KtPrefixExpression): Boolean {
         if (element.operationToken != KtTokens.EXCL) return false
 
         val expression = KtPsiUtil.deparenthesize(element.baseExpression) as? KtOperationExpression ?: return false
@@ -72,7 +72,7 @@ public class SimplifyNegatedBinaryExpressionIntention : SelfTargetingRangeIntent
         applyTo(element)
     }
 
-    public fun applyTo(element: KtPrefixExpression) {
+    fun applyTo(element: KtPrefixExpression) {
         val expression = KtPsiUtil.deparenthesize(element.baseExpression)!!
         val operation = (expression as KtOperationExpression).operationReference.getReferencedNameElementType().negate()!!.value
 

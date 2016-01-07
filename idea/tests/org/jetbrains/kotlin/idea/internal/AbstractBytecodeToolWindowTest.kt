@@ -24,19 +24,19 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
-public abstract class AbstractBytecodeToolWindowTest: KotlinLightCodeInsightFixtureTestCase() {
+abstract class AbstractBytecodeToolWindowTest: KotlinLightCodeInsightFixtureTestCase() {
     override fun getTestDataPath() = KotlinTestUtils.getHomeDirectory()
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
-    public fun doTest(testPath: String) {
+    fun doTest(testPath: String) {
         val mainDir = File(testPath)
-        val mainFileName = mainDir.getName() + ".kt"
-        mainDir.listFiles { file, name -> name != mainFileName }.forEach { myFixture.configureByFile(testPath + "/" + it.getName()) }
+        val mainFileName = mainDir.name + ".kt"
+        mainDir.listFiles { file, name -> name != mainFileName }.forEach { myFixture.configureByFile(testPath + "/" + it.name) }
 
         val mainFileText = File("$testPath/$mainFileName").readText()
         myFixture.configureByText(KotlinFileType.INSTANCE, mainFileText)
 
-        val file = myFixture.getFile() as KtFile
+        val file = myFixture.file as KtFile
 
         val enableInline = InTextDirectivesUtils.getPrefixedBoolean(mainFileText, "// INLINE:") ?: true
         val bytecodes = KotlinBytecodeToolWindow.getBytecodeForFile(file, enableInline, true, true)

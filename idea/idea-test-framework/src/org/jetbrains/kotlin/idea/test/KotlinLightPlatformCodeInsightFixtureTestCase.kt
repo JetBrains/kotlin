@@ -23,12 +23,12 @@ import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCa
 import org.jetbrains.kotlin.idea.actions.internal.KotlinInternalMode
 import org.jetbrains.kotlin.test.KotlinTestUtils
 
-public abstract class KotlinLightPlatformCodeInsightFixtureTestCase: LightPlatformCodeInsightFixtureTestCase() {
+abstract class KotlinLightPlatformCodeInsightFixtureTestCase: LightPlatformCodeInsightFixtureTestCase() {
     private var kotlinInternalModeOriginalValue: Boolean = false
 
     override fun setUp() {
         super.setUp()
-        (StartupManager.getInstance(getProject()) as StartupManagerImpl).runPostStartupActivities()
+        (StartupManager.getInstance(project) as StartupManagerImpl).runPostStartupActivities()
         VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
         invalidateLibraryCache(project)
 
@@ -40,7 +40,7 @@ public abstract class KotlinLightPlatformCodeInsightFixtureTestCase: LightPlatfo
         KotlinInternalMode.enabled = kotlinInternalModeOriginalValue
         VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
 
-        unInvalidateBuiltinsAndStdLib(getProject()) {
+        unInvalidateBuiltinsAndStdLib(project) {
             super.tearDown()
         }
     }

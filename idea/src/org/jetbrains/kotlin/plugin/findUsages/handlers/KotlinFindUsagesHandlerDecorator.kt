@@ -20,10 +20,10 @@ import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.psi.PsiElement
 import com.intellij.find.findUsages.FindUsagesHandler
 
-public interface KotlinFindUsagesHandlerDecorator {
+interface KotlinFindUsagesHandlerDecorator {
     companion object {
-        public val EP_NAME: ExtensionPointName<KotlinFindUsagesHandlerDecorator> = ExtensionPointName.create("org.jetbrains.kotlin.findUsagesHandlerDecorator")!!
+        val EP_NAME: ExtensionPointName<KotlinFindUsagesHandlerDecorator> = ExtensionPointName.create("org.jetbrains.kotlin.findUsagesHandlerDecorator")!!
     }
 
-    public fun decorateHandler(element: PsiElement, forHighlightUsages: Boolean, delegate: FindUsagesHandler): FindUsagesHandler
+    fun decorateHandler(element: PsiElement, forHighlightUsages: Boolean, delegate: FindUsagesHandler): FindUsagesHandler
 }

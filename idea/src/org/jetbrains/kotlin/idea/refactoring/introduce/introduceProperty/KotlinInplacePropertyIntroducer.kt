@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import javax.swing.*
 import javax.swing.event.PopupMenuEvent
 
-public class KotlinInplacePropertyIntroducer(
+class KotlinInplacePropertyIntroducer(
         property: KtProperty,
         editor: Editor,
         project: Project,

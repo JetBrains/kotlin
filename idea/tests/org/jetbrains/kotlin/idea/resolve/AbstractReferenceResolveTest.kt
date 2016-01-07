@@ -31,10 +31,10 @@ import org.jetbrains.kotlin.test.util.configureWithExtraFile
 import org.junit.Assert
 import kotlin.test.assertTrue
 
-public abstract class AbstractReferenceResolveTest : KotlinLightPlatformCodeInsightFixtureTestCase() {
-    public class ExpectedResolveData(private val shouldBeUnresolved: Boolean?, public val referenceString: String) {
+abstract class AbstractReferenceResolveTest : KotlinLightPlatformCodeInsightFixtureTestCase() {
+    class ExpectedResolveData(private val shouldBeUnresolved: Boolean?, val referenceString: String) {
 
-        public fun shouldBeUnresolved(): Boolean {
+        fun shouldBeUnresolved(): Boolean {
             return shouldBeUnresolved!!
         }
     }
@@ -46,7 +46,7 @@ public abstract class AbstractReferenceResolveTest : KotlinLightPlatformCodeInsi
     }
 
     protected fun performChecks() {
-        if (InTextDirectivesUtils.isDirectiveDefined(myFixture.getFile().getText(), MULTIRESOLVE)) {
+        if (InTextDirectivesUtils.isDirectiveDefined(myFixture.file.text, MULTIRESOLVE)) {
             doMultiResolveTest()
         }
         else {
@@ -56,17 +56,17 @@ public abstract class AbstractReferenceResolveTest : KotlinLightPlatformCodeInsi
 
     protected fun doSingleResolveTest() {
         forEachCaret { index, offset ->
-            val expectedResolveData = readResolveData(myFixture.getFile().getText(), index)
-            val psiReference = myFixture.getFile().findReferenceAt(offset)
+            val expectedResolveData = readResolveData(myFixture.file.text, index)
+            val psiReference = myFixture.file.findReferenceAt(offset)
             checkReferenceResolve(expectedResolveData, offset, psiReference)
         }
     }
 
     protected fun doMultiResolveTest() {
         forEachCaret { index, offset ->
-            val expectedReferences = getExpectedReferences(myFixture.getFile().getText(), index)
+            val expectedReferences = getExpectedReferences(myFixture.file.text, index)
 
-            val psiReference = myFixture.getFile().findReferenceAt(offset)
+            val psiReference = myFixture.file.findReferenceAt(offset)
             assertTrue(psiReference is PsiPolyVariantReference)
             psiReference as PsiPolyVariantReference
 
@@ -74,7 +74,7 @@ public abstract class AbstractReferenceResolveTest : KotlinLightPlatformCodeInsi
 
             val actualResolvedTo = Lists.newArrayList<String>()
             for (result in results) {
-                actualResolvedTo.add(ReferenceUtils.renderAsGotoImplementation(result.getElement()!!))
+                actualResolvedTo.add(ReferenceUtils.renderAsGotoImplementation(result.element!!))
             }
 
             UsefulTestCase.assertOrderedEquals("Not matching for reference #$index", actualResolvedTo.sorted(), expectedReferences.sorted())
@@ -82,7 +82,7 @@ public abstract class AbstractReferenceResolveTest : KotlinLightPlatformCodeInsi
     }
 
     private fun forEachCaret(action: (index: Int, offset: Int) -> Unit) {
-        val offsets = myFixture.getEditor().getCaretModel().getAllCarets().map { it.getOffset() }
+        val offsets = myFixture.editor.caretModel.allCarets.map { it.offset }
         val singleCaret = offsets.size == 1
         for ((index, offset) in offsets.withIndex()) {
             action(if (singleCaret) -1 else index + 1, offset)
@@ -94,10 +94,10 @@ public abstract class AbstractReferenceResolveTest : KotlinLightPlatformCodeInsi
     override fun getTestDataPath() = "./"
 
     companion object {
-        public val MULTIRESOLVE: String = "MULTIRESOLVE"
-        public val REF_EMPTY: String = "REF_EMPTY"
+        val MULTIRESOLVE: String = "MULTIRESOLVE"
+        val REF_EMPTY: String = "REF_EMPTY"
 
-        public fun readResolveData(fileText: String, index: Int): ExpectedResolveData {
+        fun readResolveData(fileText: String, index: Int): ExpectedResolveData {
             val shouldBeUnresolved = InTextDirectivesUtils.isDirectiveDefined(fileText, REF_EMPTY)
             val refs = getExpectedReferences(fileText, index)
 
@@ -126,7 +126,7 @@ public abstract class AbstractReferenceResolveTest : KotlinLightPlatformCodeInsi
             }
         }
 
-        public fun checkReferenceResolve(expectedResolveData: ExpectedResolveData, offset: Int, psiReference: PsiReference?) {
+        fun checkReferenceResolve(expectedResolveData: ExpectedResolveData, offset: Int, psiReference: PsiReference?) {
             if (psiReference != null) {
                 val resolvedTo = psiReference.resolve()
                 if (resolvedTo != null) {

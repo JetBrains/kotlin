@@ -31,7 +31,7 @@ import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import java.util.HashMap
 
-public class KotlinColorSettingsPage : ColorSettingsPage {
+class KotlinColorSettingsPage : ColorSettingsPage {
     override fun getIcon() = KotlinIcons.SMALL_LOGO
     override fun getHighlighter(): SyntaxHighlighter = KotlinHighlighter()
 
@@ -93,10 +93,10 @@ var <PROPERTY_WITH_BACKING_FIELD><PACKAGE_PROPERTY><MUTABLE_VARIABLE>globalCount
 
     override fun getAdditionalHighlightingTagToDescriptorMap(): Map<String, TextAttributesKey> {
         val map = HashMap<String, TextAttributesKey>()
-        for (field in KotlinHighlightingColors::class.java.getFields()) {
-            if (Modifier.isStatic(field.getModifiers())) {
+        for (field in KotlinHighlightingColors::class.java.fields) {
+            if (Modifier.isStatic(field.modifiers)) {
                 try {
-                    map.put(field.getName(), field.get(null) as TextAttributesKey)
+                    map.put(field.name, field.get(null) as TextAttributesKey)
                 }
                 catch (e: IllegalAccessException) {
                     assert(false)

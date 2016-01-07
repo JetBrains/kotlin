@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.jvm.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 
-public class DecompiledTextConsistencyTest : TextConsistencyBaseTest() {
+class DecompiledTextConsistencyTest : TextConsistencyBaseTest() {
 
     override fun getPackages(): List<FqName> = emptyList()
 

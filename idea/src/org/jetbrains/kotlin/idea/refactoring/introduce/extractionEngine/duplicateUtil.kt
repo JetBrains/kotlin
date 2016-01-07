@@ -37,7 +37,7 @@ import com.intellij.refactoring.util.duplicates.MethodDuplicatesHandler
 import com.intellij.refactoring.RefactoringBundle
 import org.jetbrains.kotlin.idea.refactoring.introduce.getPhysicalTextRange
 
-public fun KotlinPsiRange.highlight(project: Project, editor: Editor): RangeHighlighter? {
+fun KotlinPsiRange.highlight(project: Project, editor: Editor): RangeHighlighter? {
     val textRange = getPhysicalTextRange()
     val highlighters = ArrayList<RangeHighlighter>()
     val attributes = EditorColorsManager.getInstance().globalScheme.getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES)!!
@@ -47,7 +47,7 @@ public fun KotlinPsiRange.highlight(project: Project, editor: Editor): RangeHigh
     return highlighters.firstOrNull()
 }
 
-public fun KotlinPsiRange.preview(project: Project, editor: Editor): RangeHighlighter? {
+fun KotlinPsiRange.preview(project: Project, editor: Editor): RangeHighlighter? {
     return highlight(project, editor)?.let {
         val startOffset = getPhysicalTextRange().startOffset
         val foldedRegions =
@@ -63,7 +63,7 @@ public fun KotlinPsiRange.preview(project: Project, editor: Editor): RangeHighli
     }
 }
 
-public fun processDuplicates(
+fun processDuplicates(
         duplicateReplacers: Map<KotlinPsiRange, () -> Unit>,
         project: Project,
         editor: Editor
@@ -115,7 +115,7 @@ public fun processDuplicates(
     }
 }
 
-public fun processDuplicatesSilently(duplicateReplacers: Map<KotlinPsiRange, () -> Unit>, project: Project) {
+fun processDuplicatesSilently(duplicateReplacers: Map<KotlinPsiRange, () -> Unit>, project: Project) {
     project.executeWriteCommand(MethodDuplicatesHandler.REFACTORING_NAME) {
         duplicateReplacers.values.forEach { it() }
     }

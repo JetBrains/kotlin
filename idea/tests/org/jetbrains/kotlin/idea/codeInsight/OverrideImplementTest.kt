@@ -18,217 +18,217 @@ package org.jetbrains.kotlin.idea.codeInsight
 
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 
-public class OverrideImplementTest : AbstractOverrideImplementTest() {
+class OverrideImplementTest : AbstractOverrideImplementTest() {
     override fun setUp() {
         super.setUp()
         myFixture.testDataPath = PluginTestCaseBase.getTestDataPathBase() + "/codeInsight/overrideImplement"
     }
 
-    public fun testEmptyClassBodyFunctionMethod() {
+    fun testEmptyClassBodyFunctionMethod() {
         doImplementFileTest()
     }
 
-    public fun testFunctionMethod() {
+    fun testFunctionMethod() {
         doImplementFileTest()
     }
 
-    public fun testFunctionProperty() {
+    fun testFunctionProperty() {
         doImplementFileTest()
     }
 
-    public fun testFunctionWithTypeParameters() {
+    fun testFunctionWithTypeParameters() {
         doImplementFileTest()
     }
 
-    public fun testGenericTypesSeveralMethods() {
+    fun testGenericTypesSeveralMethods() {
         doImplementFileTest()
     }
 
-    public fun testJavaInterfaceMethod() {
+    fun testJavaInterfaceMethod() {
         doImplementDirectoryTest()
     }
 
-    public fun testJavaParameters() {
+    fun testJavaParameters() {
         doImplementDirectoryTest()
     }
 
-    public fun testFunctionFromTraitInJava() {
+    fun testFunctionFromTraitInJava() {
         doImplementJavaDirectoryTest("foo.KotlinTrait", "bar")
     }
 
-    public fun testGenericMethod() {
+    fun testGenericMethod() {
         doImplementFileTest()
     }
 
-    public fun testImplementJavaRawSubclass() {
+    fun testImplementJavaRawSubclass() {
         doImplementDirectoryTest()
     }
 
-    public fun testProperty() {
+    fun testProperty() {
         doImplementFileTest()
     }
 
-    public fun testTraitGenericImplement() {
+    fun testTraitGenericImplement() {
         doImplementFileTest()
     }
 
-    public fun testDefaultValues() {
+    fun testDefaultValues() {
         doImplementFileTest()
     }
 
-    public fun testRespectCaretPosition() {
+    fun testRespectCaretPosition() {
         doMultiImplementFileTest()
     }
 
-    public fun testGenerateMulti() {
+    fun testGenerateMulti() {
         doMultiImplementFileTest()
     }
 
-    public fun testTraitNullableFunction() {
+    fun testTraitNullableFunction() {
         doImplementFileTest()
     }
 
-    public fun testOverrideUnitFunction() {
+    fun testOverrideUnitFunction() {
         doOverrideFileTest()
     }
 
-    public fun testOverrideNonUnitFunction() {
+    fun testOverrideNonUnitFunction() {
         doOverrideFileTest()
     }
 
-    public fun testOverrideFunctionProperty() {
+    fun testOverrideFunctionProperty() {
         doOverrideFileTest()
     }
 
-    public fun testOverridePrimitiveProperty() {
+    fun testOverridePrimitiveProperty() {
         doMultiImplementFileTest()
     }
 
-    public fun testOverrideGenericFunction() {
+    fun testOverrideGenericFunction() {
         doOverrideFileTest()
     }
 
-    public fun testMultiOverride() {
+    fun testMultiOverride() {
         doMultiOverrideFileTest()
     }
 
-    public fun testDelegatedMembers() {
+    fun testDelegatedMembers() {
         doMultiOverrideFileTest()
     }
 
-    public fun testOverrideExplicitFunction() {
+    fun testOverrideExplicitFunction() {
         doOverrideFileTest()
     }
 
-    public fun testOverrideExtensionProperty() {
+    fun testOverrideExtensionProperty() {
         doOverrideFileTest()
     }
 
-    public fun testOverrideMutableExtensionProperty() {
+    fun testOverrideMutableExtensionProperty() {
         doOverrideFileTest()
     }
 
-    public fun testComplexMultiOverride() {
+    fun testComplexMultiOverride() {
         doMultiOverrideFileTest()
     }
 
-    public fun testOverrideRespectCaretPosition() {
+    fun testOverrideRespectCaretPosition() {
         doMultiOverrideFileTest()
     }
 
-    public fun testOverrideJavaMethod() {
+    fun testOverrideJavaMethod() {
         doOverrideDirectoryTest("getAnswer")
     }
 
-    public fun testJavaMethodWithPackageVisibility() {
+    fun testJavaMethodWithPackageVisibility() {
         doOverrideDirectoryTest("getFooBar")
     }
 
-    public fun testJavaMethodWithPackageProtectedVisibility() {
+    fun testJavaMethodWithPackageProtectedVisibility() {
         doOverrideDirectoryTest("getFooBar")
     }
 
-    public fun testPrivateJavaMethod() {
+    fun testPrivateJavaMethod() {
         doMultiOverrideDirectoryTest()
     }
 
-    public fun testImplementSamAdapters() {
+    fun testImplementSamAdapters() {
         doImplementDirectoryTest()
     }
 
-    public fun testOverrideFromFunctionPosition() {
+    fun testOverrideFromFunctionPosition() {
         doMultiOverrideFileTest()
     }
 
-    public fun testOverrideFromClassName() {
+    fun testOverrideFromClassName() {
         doMultiOverrideFileTest()
     }
 
-    public fun testOverrideFromLBrace() {
+    fun testOverrideFromLBrace() {
         doMultiOverrideFileTest()
     }
 
-    public fun testOverrideSamAdapters() {
+    fun testOverrideSamAdapters() {
         doOverrideDirectoryTest("foo")
     }
 
-    public fun testSameTypeName() {
+    fun testSameTypeName() {
         doOverrideDirectoryTest()
     }
 
-    public fun testPropagationKJK() {
+    fun testPropagationKJK() {
         doOverrideDirectoryTest()
     }
 
-    public fun testMultipleSupers() {
+    fun testMultipleSupers() {
         doMultiOverrideFileTest()
     }
 
-    public fun testNoAnyMembersInInterface() {
+    fun testNoAnyMembersInInterface() {
         doMultiOverrideFileTest()
     }
 
-    public fun testLocalClass() {
+    fun testLocalClass() {
         doImplementFileTest()
     }
 
-    public fun testStarProjections() {
+    fun testStarProjections() {
         doImplementFileTest()
     }
 
-    public fun testEscapeIdentifiers() {
+    fun testEscapeIdentifiers() {
         doOverrideFileTest()
     }
 
-    public fun testVarArgs() {
+    fun testVarArgs() {
         doOverrideFileTest()
     }
 
-    public fun testDoNotOverrideFinal() {
+    fun testDoNotOverrideFinal() {
         doMultiOverrideFileTest()
     }
 
-    public fun testSuperPreference() {
+    fun testSuperPreference() {
         doMultiOverrideFileTest()
     }
 
-    public fun testAmbiguousSuper() {
+    fun testAmbiguousSuper() {
         doMultiOverrideFileTest()
     }
 
-    public fun testImplementFunctionType() {
+    fun testImplementFunctionType() {
         doMultiImplementFileTest()
     }
 
-    public fun testQualifySuperType() {
+    fun testQualifySuperType() {
         doOverrideFileTest("f")
     }
 
-    public fun testGenericSuperClass() {
+    fun testGenericSuperClass() {
         doOverrideFileTest("iterator")
     }
 
-    public fun testDuplicatedAnyMembersBug() {
+    fun testDuplicatedAnyMembersBug() {
         doMultiOverrideFileTest()
     }
 }

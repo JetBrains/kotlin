@@ -29,7 +29,7 @@ import com.intellij.codeInsight.template.impl.TemplateManagerImpl
 import com.intellij.codeInsight.template.TemplateManager
 import com.intellij.openapi.command.WriteCommandAction
 
-public class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
+class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
     init {
         System.setProperty("idea.platform.prefix", "Idea")
     }
@@ -37,23 +37,23 @@ public class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
     override fun isRunInWriteAction(): Boolean = false
     override fun getTestDataPath(): String = PluginTestCaseBase.getTestDataPathBase() + "/refactoring/rename/inplace/"
 
-    public fun testLocalVal() {
+    fun testLocalVal() {
         doTestInplaceRename("y")
     }
 
-    public fun testForLoop() {
+    fun testForLoop() {
         doTestInplaceRename("j")
     }
 
-    public fun testTryCatch() {
+    fun testTryCatch() {
         doTestInplaceRename("e1")
     }
 
-    public fun testFunctionLiteral() {
+    fun testFunctionLiteral() {
         doTestInplaceRename("y")
     }
 
-    public fun testFunctionLiteralIt() {
+    fun testFunctionLiteralIt() {
         configureByFile(getTestName(false) + ".kt")
         val newName = "y"
 
@@ -62,16 +62,16 @@ public class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
 
         val file = LightPlatformCodeInsightTestCase.getFile()!!
         val editor = LightPlatformCodeInsightTestCase.getEditor()!!
-        val element = file.findReferenceAt(editor.getCaretModel().getOffset())!!.getElement()
+        val element = file.findReferenceAt(editor.caretModel.offset)!!.element
         assertNotNull(element)
 
-        val dataContext = SimpleDataContext.getSimpleContext(CommonDataKeys.PSI_ELEMENT.getName(), element!!,
+        val dataContext = SimpleDataContext.getSimpleContext(CommonDataKeys.PSI_ELEMENT.name, element!!,
                                                              LightPlatformCodeInsightTestCase.getCurrentEditorDataContext())
         val handler = RenameKotlinImplicitLambdaParameter()
 
         assertTrue(handler.isRenaming(dataContext), "In-place rename not allowed for " + element)
 
-        val project = editor.getProject()!!
+        val project = editor.project!!
         val templateManager = TemplateManager.getInstance(project) as TemplateManagerImpl
         try {
             templateManager.setTemplateTesting(true)
@@ -84,11 +84,11 @@ public class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
 
             var state = TemplateManagerImpl.getTemplateState(editor)
             assert(state != null)
-            val range = state!!.getCurrentVariableRange()
+            val range = state!!.currentVariableRange
             assert(range != null)
             object : WriteCommandAction.Simple<Any>(project) {
                 override fun run() {
-                    editor.getDocument().replaceString(range!!.getStartOffset(), range.getEndOffset(), newName)
+                    editor.document.replaceString(range!!.startOffset, range.endOffset, newName)
                 }
             }.execute().throwException()
 
@@ -104,31 +104,31 @@ public class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
         checkResultByFile(getTestName(false) + ".kt.after")
     }
 
-    public fun testFunctionLiteralParenthesis() {
+    fun testFunctionLiteralParenthesis() {
         doTestInplaceRename("y")
     }
 
-    public fun testLocalFunction() {
+    fun testLocalFunction() {
         doTestInplaceRename("bar")
     }
 
-    public fun testFunctionParameterNotInplace() {
+    fun testFunctionParameterNotInplace() {
         doTestInplaceRename(null)
     }
 
-    public fun testGlobalFunctionNotInplace() {
+    fun testGlobalFunctionNotInplace() {
         doTestInplaceRename(null)
     }
 
-    public fun testTopLevelValNotInplace() {
+    fun testTopLevelValNotInplace() {
         doTestInplaceRename(null)
     }
 
-    public fun testLabelFromFunction() {
+    fun testLabelFromFunction() {
         doTestInplaceRename("foo")
     }
 
-    public fun testMultiDeclaration() {
+    fun testMultiDeclaration() {
         doTestInplaceRename("foo")
     }
 
@@ -141,7 +141,7 @@ public class InplaceRenameTest : LightPlatformCodeInsightTestCase() {
 
         assertNotNull(element)
 
-        val dataContext = SimpleDataContext.getSimpleContext(CommonDataKeys.PSI_ELEMENT.getName(), element!!,
+        val dataContext = SimpleDataContext.getSimpleContext(CommonDataKeys.PSI_ELEMENT.name, element!!,
                                                              LightPlatformCodeInsightTestCase.getCurrentEditorDataContext())
 
         val handler = VariableInplaceRenameHandler()

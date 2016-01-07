@@ -42,7 +42,7 @@ class LookupElementsCollector(
 
     private val postProcessors = ArrayList<(LookupElement) -> LookupElement>()
 
-    public fun flushToResultSet() {
+    fun flushToResultSet() {
         if (!elements.isEmpty()) {
             resultSet.addAllElements(elements)
             elements.clear()
@@ -50,14 +50,14 @@ class LookupElementsCollector(
         }
     }
 
-    public var isResultEmpty: Boolean = true
+    var isResultEmpty: Boolean = true
         private set
 
-    public fun addLookupElementPostProcessor(processor: (LookupElement) -> LookupElement) {
+    fun addLookupElementPostProcessor(processor: (LookupElement) -> LookupElement) {
         postProcessors.add(processor)
     }
 
-    public fun addDescriptorElements(descriptors: Iterable<DeclarationDescriptor>,
+    fun addDescriptorElements(descriptors: Iterable<DeclarationDescriptor>,
                                      lookupElementFactory: LookupElementFactory,
                                      notImported: Boolean = false,
                                      withReceiverCast: Boolean = false
@@ -67,7 +67,7 @@ class LookupElementsCollector(
         }
     }
 
-    public fun addDescriptorElements(
+    fun addDescriptorElements(
             descriptor: DeclarationDescriptor,
             lookupElementFactory: LookupElementFactory,
             notImported: Boolean = false,
@@ -82,7 +82,7 @@ class LookupElementsCollector(
         addElements(lookupElements, notImported)
     }
 
-    public fun addElement(element: LookupElement, notImported: Boolean = false) {
+    fun addElement(element: LookupElement, notImported: Boolean = false) {
         if (!prefixMatcher.prefixMatches(element)) return
 
         if (notImported) {
@@ -98,13 +98,13 @@ class LookupElementsCollector(
 
         val decorated = object : LookupElementDecorator<LookupElement>(element) {
             override fun handleInsert(context: InsertionContext) {
-                getDelegate().handleInsert(context)
+                delegate.handleInsert(context)
 
                 if (context.shouldAddCompletionChar() && !isJustTyping(context, this)) {
-                    when (context.getCompletionChar()) {
-                        ',' -> WithTailInsertHandler.COMMA.postHandleInsert(context, getDelegate())
+                    when (context.completionChar) {
+                        ',' -> WithTailInsertHandler.COMMA.postHandleInsert(context, delegate)
 
-                        '=' -> WithTailInsertHandler.EQ.postHandleInsert(context, getDelegate())
+                        '=' -> WithTailInsertHandler.EQ.postHandleInsert(context, delegate)
 
                         '!' -> {
                             WithExpressionPrefixInsertHandler("!").postHandleInsert(context)
@@ -133,20 +133,20 @@ class LookupElementsCollector(
 
     // used to avoid insertion of spaces before/after ',', '=' on just typing
     private fun isJustTyping(context: InsertionContext, element: LookupElement): Boolean {
-        if (!completionParameters.isAutoPopup()) return false
-        val insertedText = context.getDocument().getText(TextRange(context.getStartOffset(), context.getTailOffset()))
+        if (!completionParameters.isAutoPopup) return false
+        val insertedText = context.document.getText(TextRange(context.startOffset, context.tailOffset))
         return insertedText == element.getUserDataDeep(KotlinCompletionCharFilter.JUST_TYPING_PREFIX)
     }
 
-    public fun addElements(elements: Iterable<LookupElement>, notImported: Boolean = false) {
+    fun addElements(elements: Iterable<LookupElement>, notImported: Boolean = false) {
         elements.forEach { addElement(it, notImported) }
     }
 
-    public fun advertiseSecondCompletion() {
-        JavaCompletionContributor.advertiseSecondCompletion(completionParameters.getOriginalFile().getProject(), resultSet)
+    fun advertiseSecondCompletion() {
+        JavaCompletionContributor.advertiseSecondCompletion(completionParameters.originalFile.project, resultSet)
     }
 
-    public fun restartCompletionOnPrefixChange(prefixCondition: ElementPattern<String>) {
+    fun restartCompletionOnPrefixChange(prefixCondition: ElementPattern<String>) {
         resultSet.restartCompletionOnPrefixChange(prefixCondition)
     }
 }

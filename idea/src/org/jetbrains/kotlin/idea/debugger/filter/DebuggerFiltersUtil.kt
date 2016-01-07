@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerSettings
 
 private val KOTLIN_STDLIB_FILTER = "kotlin.*"
 
-public fun addKotlinStdlibDebugFilterIfNeeded() {
+fun addKotlinStdlibDebugFilterIfNeeded() {
     if (!KotlinDebuggerSettings.getInstance().DEBUG_IS_FILTER_FOR_STDLIB_ALREADY_ADDED) {
         val settings = DebuggerSettings.getInstance()!!
         val newFilters = (settings.steppingFilters + ClassFilter(KOTLIN_STDLIB_FILTER))

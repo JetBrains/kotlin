@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import java.util.*
 
-public class ConvertNegatedBooleanSequenceIntention : SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(
+class ConvertNegatedBooleanSequenceIntention : SelfTargetingOffsetIndependentIntention<KtBinaryExpression>(
         KtBinaryExpression::class.java, "Replace negated sequence with DeMorgan equivalent"
 ) {
     override fun isApplicableTo(element: KtBinaryExpression): Boolean {

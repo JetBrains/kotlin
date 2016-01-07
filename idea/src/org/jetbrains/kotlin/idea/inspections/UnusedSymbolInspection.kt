@@ -60,11 +60,11 @@ import java.awt.Insets
 import javax.swing.JComponent
 import javax.swing.JPanel
 
-public class UnusedSymbolInspection : AbstractKotlinInspection() {
+class UnusedSymbolInspection : AbstractKotlinInspection() {
     companion object {
         private val javaInspection = UnusedDeclarationInspection()
 
-        public fun isEntryPoint(declaration: KtNamedDeclaration): Boolean {
+        fun isEntryPoint(declaration: KtNamedDeclaration): Boolean {
             val lightElement: PsiElement? = when (declaration) {
                 is KtClassOrObject -> declaration.toLightClass()
                 is KtNamedFunction, is KtSecondaryConstructor -> LightClassUtil.getLightClassMethod(declaration as KtFunction)
@@ -74,7 +74,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                     val entryPointsManager = EntryPointsManager.getInstance(declaration.getProject()) as EntryPointsManagerBase
                     return checkAnnotatedUsingPatterns(
                             descriptor,
-                            entryPointsManager.getAdditionalAnnotations() + entryPointsManager.ADDITIONAL_ANNOTATIONS
+                            entryPointsManager.additionalAnnotations + entryPointsManager.ADDITIONAL_ANNOTATIONS
                     )
                 }
                 else -> return false
@@ -86,21 +86,21 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
             val ownerObject = getNonStrictParentOfType<KtClassOrObject>()
             if (ownerObject is KtObjectDeclaration && ownerObject.isCompanion()) {
                 val lightClass = ownerObject.getNonStrictParentOfType<KtClass>()?.toLightClass() ?: return false
-                return lightClass.getFields().any { it.getName() == getName() && HighlightUtil.isSerializationImplicitlyUsedField(it) }
+                return lightClass.fields.any { it.name == name && HighlightUtil.isSerializationImplicitlyUsedField(it) }
             }
             return false
         }
 
         private fun KtObjectDeclaration.hasSerializationImplicitlyUsedField(): Boolean {
-            return getDeclarations().any { it is KtProperty && it.isSerializationImplicitlyUsedField() }
+            return declarations.any { it is KtProperty && it.isSerializationImplicitlyUsedField() }
         }
 
         // variation of IDEA's AnnotationUtil.checkAnnotatedUsingPatterns()
         private fun checkAnnotatedUsingPatterns(annotated: Annotated, annotationPatterns: Collection<String>): Boolean {
-            val annotationsPresent = annotated.getAnnotations()
-                    .map { it.getType() }
-                    .filter { !it.isError() }
-                    .mapNotNull { it.getConstructor().getDeclarationDescriptor()?.let { DescriptorUtils.getFqName(it).asString() } }
+            val annotationsPresent = annotated.annotations
+                    .map { it.type }
+                    .filter { !it.isError }
+                    .mapNotNull { it.constructor.declarationDescriptor?.let { DescriptorUtils.getFqName(it).asString() } }
 
             if (annotationsPresent.isEmpty()) return false
 
@@ -124,12 +124,12 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
         return object : KtVisitorVoid() {
             private fun createQuickFix(declaration: KtNamedDeclaration): LocalQuickFix {
                 return object : LocalQuickFix {
-                    override fun getName() = QuickFixBundle.message("safe.delete.text", declaration.getName())
+                    override fun getName() = QuickFixBundle.message("safe.delete.text", declaration.name)
 
                     override fun getFamilyName() = "Safe delete"
 
                     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-                        if (!FileModificationService.getInstance().prepareFileForWrite(declaration.getContainingFile())) return
+                        if (!FileModificationService.getInstance().prepareFileForWrite(declaration.containingFile)) return
                         SafeDeleteHandler.invoke(project, arrayOf(declaration), false)
                     }
                 }
@@ -149,11 +149,11 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
 
                 // Simple PSI-based checks
                 val isCompanionObject = declaration is KtObjectDeclaration && declaration.isCompanion()
-                if (declaration.getName() == null) return
+                if (declaration.name == null) return
                 if (declaration is KtEnumEntry) return
                 if (declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
-                if (declaration is KtProperty && declaration.isLocal()) return
-                if (declaration is KtParameter && (declaration.getParent()?.getParent() !is KtPrimaryConstructor || !declaration.hasValOrVar())) return
+                if (declaration is KtProperty && declaration.isLocal) return
+                if (declaration is KtParameter && (declaration.getParent()?.parent !is KtPrimaryConstructor || !declaration.hasValOrVar())) return
                 if (declaration is KtNamedFunction && isConventionalName(declaration)) return
 
                 // More expensive, resolve-based checks
@@ -168,17 +168,17 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
                 if (hasNonTrivialUsages(declaration)) return
                 if (declaration is KtClassOrObject && classOrObjectHasTextUsages(declaration)) return
 
-                val (inspectionTarget, textRange) = if (isCompanionObject && declaration.getNameIdentifier() == null) {
+                val (inspectionTarget, textRange) = if (isCompanionObject && declaration.nameIdentifier == null) {
                     val objectKeyword = (declaration as KtObjectDeclaration).getObjectKeyword()
-                    Pair(declaration, TextRange(0, objectKeyword.getStartOffsetInParent() + objectKeyword.getTextLength()))
+                    Pair(declaration, TextRange(0, objectKeyword.startOffsetInParent + objectKeyword.textLength))
                 } else {
-                    Pair(declaration.getNameIdentifier()!!, null)
+                    Pair(declaration.nameIdentifier!!, null)
                 }
 
-                val problemDescriptor = holder.getManager().createProblemDescriptor(
+                val problemDescriptor = holder.manager.createProblemDescriptor(
                         inspectionTarget,
                         textRange,
-                        KotlinBundle.message(messageKey, declaration.getName()),
+                        KotlinBundle.message(messageKey, declaration.name),
                         ProblemHighlightType.LIKE_UNUSED_SYMBOL,
                         true,
                         createQuickFix(declaration)
@@ -195,12 +195,12 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
         var hasTextUsages = false
 
         // Finding text usages
-        if (classOrObject.getUseScope() is GlobalSearchScope) {
-            val findClassUsagesHandler = KotlinFindClassUsagesHandler(classOrObject, KotlinFindUsagesHandlerFactory(classOrObject.getProject()))
+        if (classOrObject.useScope is GlobalSearchScope) {
+            val findClassUsagesHandler = KotlinFindClassUsagesHandler(classOrObject, KotlinFindUsagesHandlerFactory(classOrObject.project))
             findClassUsagesHandler.processUsagesInText(
                     classOrObject,
                     { hasTextUsages = true; false },
-                    GlobalSearchScope.projectScope(classOrObject.getProject())
+                    GlobalSearchScope.projectScope(classOrObject.project)
             )
         }
 
@@ -208,18 +208,18 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
     }
 
     private fun isConventionalName(namedDeclaration: KtNamedDeclaration): Boolean {
-        val name = namedDeclaration.getNameAsName()
+        val name = namedDeclaration.nameAsName
         return name!!.getOperationSymbolsToSearch().isNotEmpty() || name == OperatorNameConventions.INVOKE
     }
 
     private fun hasNonTrivialUsages(declaration: KtNamedDeclaration): Boolean {
-        val psiSearchHelper = PsiSearchHelper.SERVICE.getInstance(declaration.getProject())
+        val psiSearchHelper = PsiSearchHelper.SERVICE.getInstance(declaration.project)
 
-        val useScope = declaration.getUseScope()
+        val useScope = declaration.useScope
         if (useScope is GlobalSearchScope) {
             var zeroOccurrences = true
 
-            for (name in listOf(declaration.getName()) + declaration.getAccessorNames() + declaration.getClassNameForCompanionObject().singletonOrEmptyList()) {
+            for (name in listOf(declaration.name) + declaration.getAccessorNames() + declaration.getClassNameForCompanionObject().singletonOrEmptyList()) {
                 assert(name != null) { "Name is null for " + declaration.getElementTextWithContext() }
                 when (psiSearchHelper.isCheapEnoughToSearch(name!!, useScope, null, null)) {
                     ZERO_OCCURRENCES -> {} // go on, check other names
@@ -248,7 +248,7 @@ public class UnusedSymbolInspection : AbstractKotlinInspection() {
     private fun hasReferences(declaration: KtNamedDeclaration, useScope: SearchScope): Boolean {
         return !ReferencesSearch.search(declaration, useScope).forEach(Processor {
             assert(it != null, { "Found reference is null, was looking for: " + declaration.getElementTextWithContext() })
-            declaration.isAncestor(it.getElement()) ||
+            declaration.isAncestor(it.element) ||
             it.element.parent is KtValueArgumentName ||
             it.element.getParentOfType<KtImportDirective>(false) != null
         })

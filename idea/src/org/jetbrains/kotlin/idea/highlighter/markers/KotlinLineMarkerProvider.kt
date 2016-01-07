@@ -40,7 +40,7 @@ import java.awt.event.MouseEvent
 import java.util.*
 import javax.swing.Icon
 
-public class KotlinLineMarkerProvider : LineMarkerProvider {
+class KotlinLineMarkerProvider : LineMarkerProvider {
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<PsiElement>? {
         // all Kotlin markers are added in slow marker pass
         return null
@@ -50,7 +50,7 @@ public class KotlinLineMarkerProvider : LineMarkerProvider {
         if (elements.isEmpty()) return
 
         val first = elements.first()
-        if (DumbService.getInstance(first.getProject()).isDumb() || !ProjectRootsUtil.isInProjectOrLibSource(first)) return
+        if (DumbService.getInstance(first.project).isDumb || !ProjectRootsUtil.isInProjectOrLibSource(first)) return
 
         val functions = HashSet<KtNamedFunction>()
         val properties = HashSet<KtProperty>()
@@ -100,15 +100,15 @@ private val OVERRIDDEN_FUNCTION = MarkerType(
         })
 
 private val OVERRIDDEN_PROPERTY = MarkerType(
-        { it?.let { getOverriddenPropertyTooltip(it.getParent() as KtProperty) } },
+        { it?.let { getOverriddenPropertyTooltip(it.parent as KtProperty) } },
         object : LineMarkerNavigator() {
             override fun browse(e: MouseEvent?, element: PsiElement?) {
-                element?.let { navigateToPropertyOverriddenDeclarations(e, it.getParent() as KtProperty) }
+                element?.let { navigateToPropertyOverriddenDeclarations(e, it.parent as KtProperty) }
             }
         })
 
 private fun isImplementsAndNotOverrides(descriptor: CallableMemberDescriptor, overriddenMembers: Collection<CallableMemberDescriptor>): Boolean {
-    return descriptor.getModality() != Modality.ABSTRACT && overriddenMembers.all { it.getModality() == Modality.ABSTRACT }
+    return descriptor.modality != Modality.ABSTRACT && overriddenMembers.all { it.modality == Modality.ABSTRACT }
 }
 
 private fun collectSuperDeclarationMarkers(declaration: KtDeclaration, result: MutableCollection<LineMarkerInfo<*>>) {
@@ -125,7 +125,7 @@ private fun collectSuperDeclarationMarkers(declaration: KtDeclaration, result: M
     // clearing the whole BindingTrace.
     val marker = LineMarkerInfo(
             declaration,
-            declaration.getTextOffset(),
+            declaration.textOffset,
             if (implements) IMPLEMENTING_MARK else OVERRIDING_MARK,
             Pass.UPDATE_OVERRIDEN_MARKERS,
             SuperDeclarationMarkerTooltip,
@@ -145,15 +145,15 @@ private fun collectInheritedClassMarker(element: KtClass, result: MutableCollect
 
     if (ClassInheritorsSearch.search(lightClass, false).findFirst() == null) return
 
-    val anchor = element.getNameIdentifier() ?: element
+    val anchor = element.nameIdentifier ?: element
 
     result.add(LineMarkerInfo(
             anchor,
-            anchor.getTextOffset(),
+            anchor.textOffset,
             if (isTrait) IMPLEMENTED_MARK else OVERRIDDEN_MARK,
             Pass.UPDATE_OVERRIDEN_MARKERS,
-            SUBCLASSED_CLASS.getTooltip(),
-            SUBCLASSED_CLASS.getNavigationHandler()
+            SUBCLASSED_CLASS.tooltip,
+            SUBCLASSED_CLASS.navigationHandler
     ))
 }
 
@@ -173,15 +173,15 @@ private fun collectOverriddenPropertyAccessors(properties: Collection<KtProperty
     for (property in getOverriddenDeclarations(mappingToJava, classes)) {
         ProgressManager.checkCanceled()
 
-        val anchor = property.getNameIdentifier() ?: property
+        val anchor = property.nameIdentifier ?: property
 
         result.add(LineMarkerInfo(
                 anchor,
-                anchor.getTextOffset(),
+                anchor.textOffset,
                 if (isImplemented(property)) IMPLEMENTED_MARK else OVERRIDDEN_MARK,
                 Pass.UPDATE_OVERRIDEN_MARKERS,
-                OVERRIDDEN_PROPERTY.getTooltip(),
-                OVERRIDDEN_PROPERTY.getNavigationHandler(),
+                OVERRIDDEN_PROPERTY.tooltip,
+                OVERRIDDEN_PROPERTY.navigationHandler,
                 GutterIconRenderer.Alignment.RIGHT
         ))
     }
@@ -203,14 +203,14 @@ private fun collectOverriddenFunctions(functions: Collection<KtNamedFunction>, r
     for (function in getOverriddenDeclarations(mappingToJava, classes)) {
         ProgressManager.checkCanceled()
 
-        val anchor = function.getNameIdentifier() ?: function
+        val anchor = function.nameIdentifier ?: function
 
         result.add(LineMarkerInfo(
                 anchor,
-                anchor.getTextOffset(),
+                anchor.textOffset,
                 if (isImplemented(function)) IMPLEMENTED_MARK else OVERRIDDEN_MARK,
-                Pass.UPDATE_OVERRIDEN_MARKERS, OVERRIDDEN_FUNCTION.getTooltip(),
-                OVERRIDDEN_FUNCTION.getNavigationHandler(),
+                Pass.UPDATE_OVERRIDEN_MARKERS, OVERRIDDEN_FUNCTION.tooltip,
+                OVERRIDDEN_FUNCTION.navigationHandler,
                 GutterIconRenderer.Alignment.RIGHT
         ))
     }

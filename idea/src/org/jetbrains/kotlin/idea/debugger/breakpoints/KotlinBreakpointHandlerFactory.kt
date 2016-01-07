@@ -20,17 +20,17 @@ import com.intellij.debugger.engine.DebugProcessImpl
 import com.intellij.debugger.engine.JavaBreakpointHandler
 import com.intellij.debugger.engine.JavaBreakpointHandlerFactory
 
-public class KotlinFieldBreakpointHandlerFactory : JavaBreakpointHandlerFactory {
+class KotlinFieldBreakpointHandlerFactory : JavaBreakpointHandlerFactory {
     override fun createHandler(process: DebugProcessImpl): JavaBreakpointHandler? {
         return KotlinFieldBreakpointHandler(process)
     }
 }
 
-public class KotlinLineBreakpointHandlerFactory: JavaBreakpointHandlerFactory {
+class KotlinLineBreakpointHandlerFactory: JavaBreakpointHandlerFactory {
     override fun createHandler(process: DebugProcessImpl): JavaBreakpointHandler? {
         return KotlinLineBreakpointHandler(process)
     }
 }
 
-public class KotlinFieldBreakpointHandler(process: DebugProcessImpl) : JavaBreakpointHandler(KotlinFieldBreakpointType::class.java, process)
-public class KotlinLineBreakpointHandler(process: DebugProcessImpl) : JavaBreakpointHandler(KotlinLineBreakpointType::class.java, process)
+class KotlinFieldBreakpointHandler(process: DebugProcessImpl) : JavaBreakpointHandler(KotlinFieldBreakpointType::class.java, process)
+class KotlinLineBreakpointHandler(process: DebugProcessImpl) : JavaBreakpointHandler(KotlinLineBreakpointType::class.java, process)

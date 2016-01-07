@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.psi.buildExpression
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-public class EliminateWhenSubjectIntention : SelfTargetingIntention<KtWhenExpression>(KtWhenExpression::class.java, "Eliminate argument of 'when'"), LowPriorityAction {
+class EliminateWhenSubjectIntention : SelfTargetingIntention<KtWhenExpression>(KtWhenExpression::class.java, "Eliminate argument of 'when'"), LowPriorityAction {
     override fun isApplicableTo(element: KtWhenExpression, caretOffset: Int): Boolean {
         if (element.subjectExpression !is KtNameReferenceExpression) return false
         val lBrace = element.openBrace ?: return false

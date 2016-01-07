@@ -74,7 +74,7 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
     private val nameCountToUseStarImportForMembersSelector = NameCountToUseStarImportSelector("Java Statics and Enum Members")
 
     init {
-        setLayout(BorderLayout())
+        layout = BorderLayout()
         add(JBScrollPane(JPanel(GridBagLayout()).apply {
             val constraints = GridBagConstraints().apply {
                 weightx = 1.0
@@ -101,19 +101,19 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
         nameCountToUseStarImportSelector.value = settings.NAME_COUNT_TO_USE_STAR_IMPORT
         nameCountToUseStarImportForMembersSelector.value = settings.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS
 
-        cbImportNestedClasses.setSelected(settings.IMPORT_NESTED_CLASSES)
+        cbImportNestedClasses.isSelected = settings.IMPORT_NESTED_CLASSES
 
         starImportPackageEntryTable.copyFrom(settings.PACKAGES_TO_USE_STAR_IMPORTS)
-        (starImportPackageTable.getModel() as AbstractTableModel).fireTableDataChanged()
-        if (starImportPackageTable.getRowCount() > 0) {
-            starImportPackageTable.getSelectionModel().setSelectionInterval(0, 0)
+        (starImportPackageTable.model as AbstractTableModel).fireTableDataChanged()
+        if (starImportPackageTable.rowCount > 0) {
+            starImportPackageTable.selectionModel.setSelectionInterval(0, 0)
         }
     }
 
     fun apply(settings: KotlinCodeStyleSettings, dropEmptyPackages: Boolean = true) {
         settings.NAME_COUNT_TO_USE_STAR_IMPORT = nameCountToUseStarImportSelector.value
         settings.NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS = nameCountToUseStarImportForMembersSelector.value
-        settings.IMPORT_NESTED_CLASSES = cbImportNestedClasses.isSelected()
+        settings.IMPORT_NESTED_CLASSES = cbImportNestedClasses.isSelected
 
         if (dropEmptyPackages) {
             starImportPackageEntryTable.removeEmptyPackages()
@@ -126,7 +126,7 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
         apply(tempSettings, dropEmptyPackages = false)
         val root = Element("fake")
         tempSettings.writeExternal(root, settings)
-        return root.getChildren().isNotEmpty()
+        return root.children.isNotEmpty()
     }
 
     private class NameCountToUseStarImportSelector(title: String) : OptionGroup(title) {
@@ -154,7 +154,7 @@ class ImportSettingsPanel(private val commonSettings: CodeStyleSettings) : JPane
             }, true)
 
             fun updateEnabled() {
-                starImportLimitField.setEnabled(rbUseStarImportsIfAtLeast.isSelected())
+                starImportLimitField.isEnabled = rbUseStarImportsIfAtLeast.isSelected
             }
             rbUseStarImportsIfAtLeast.addChangeListener { updateEnabled() }
             updateEnabled()

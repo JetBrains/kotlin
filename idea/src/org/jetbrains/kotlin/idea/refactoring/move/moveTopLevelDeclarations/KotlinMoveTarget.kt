@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import java.util.HashMap
 
-public interface KotlinMoveTarget {
+interface KotlinMoveTarget {
     val packageWrapper: PackageWrapper?
     fun getOrCreateTargetPsi(originalPsi: PsiElement): PsiFile?
     fun getTargetPsiIfExists(originalPsi: PsiElement): PsiFile?
@@ -34,14 +34,14 @@ public interface KotlinMoveTarget {
     fun verify(file: PsiFile): String?
 }
 
-public object EmptyKotlinMoveTarget: KotlinMoveTarget {
+object EmptyKotlinMoveTarget: KotlinMoveTarget {
     override val packageWrapper: PackageWrapper? get() = null
     override fun getOrCreateTargetPsi(originalPsi: PsiElement) = null
     override fun getTargetPsiIfExists(originalPsi: PsiElement) = null
     override fun verify(file: PsiFile) = null
 }
 
-public class KotlinMoveTargetForExistingFile(val targetFile: KtFile): KotlinMoveTarget {
+class KotlinMoveTargetForExistingFile(val targetFile: KtFile): KotlinMoveTarget {
     override val packageWrapper: PackageWrapper? = targetFile.packageFqName.asString().let { packageName ->
         PackageWrapper(PsiManager.getInstance(targetFile.project), packageName)
     }
@@ -54,7 +54,7 @@ public class KotlinMoveTargetForExistingFile(val targetFile: KtFile): KotlinMove
     override fun verify(file: PsiFile): String? = null
 }
 
-public class KotlinMoveTargetForDeferredFile(
+class KotlinMoveTargetForDeferredFile(
         project: Project,
         private val packageFqName: FqName,
         private val createFile: (KtFile) -> KtFile?): KotlinMoveTarget {

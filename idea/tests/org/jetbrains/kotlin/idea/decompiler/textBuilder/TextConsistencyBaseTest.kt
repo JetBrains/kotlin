@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.junit.Assert
 
-public abstract class TextConsistencyBaseTest : KotlinLightCodeInsightFixtureTestCase() {
+abstract class TextConsistencyBaseTest : KotlinLightCodeInsightFixtureTestCase() {
 
     protected abstract fun getPackages(): List<FqName>
 
@@ -48,7 +48,7 @@ public abstract class TextConsistencyBaseTest : KotlinLightCodeInsightFixtureTes
 
     protected abstract fun isFromFacade(descriptor: CallableMemberDescriptor, facadeFqName: FqName): Boolean
 
-    public fun testConsistency() {
+    fun testConsistency() {
         getPackages().forEach { doTestPackage(it) }
         getFacades().forEach { doTestFacade(it) }
     }

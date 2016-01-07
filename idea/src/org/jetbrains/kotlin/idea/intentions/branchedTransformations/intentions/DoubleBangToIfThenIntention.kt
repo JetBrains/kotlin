@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.KtThrowExpression
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 
-public class DoubleBangToIfThenIntention : SelfTargetingRangeIntention<KtPostfixExpression>(KtPostfixExpression::class.java, "Replace '!!' expression with 'if' expression"), LowPriorityAction {
+class DoubleBangToIfThenIntention : SelfTargetingRangeIntention<KtPostfixExpression>(KtPostfixExpression::class.java, "Replace '!!' expression with 'if' expression"), LowPriorityAction {
     override fun applicabilityRange(element: KtPostfixExpression): TextRange? {
         return if (element.operationToken == KtTokens.EXCLEXCL && element.baseExpression != null)
             element.operationReference.textRange

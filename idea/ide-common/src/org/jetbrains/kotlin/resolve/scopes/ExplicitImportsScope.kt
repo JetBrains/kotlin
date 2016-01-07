@@ -22,23 +22,23 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-public class ExplicitImportsScope(private val descriptors: Collection<DeclarationDescriptor>) : BaseImportingScope(null) {
+class ExplicitImportsScope(private val descriptors: Collection<DeclarationDescriptor>) : BaseImportingScope(null) {
     override fun getContributedClassifier(name: Name, location: LookupLocation)
-            = descriptors.filter { it.getName() == name }.firstIsInstanceOrNull<ClassifierDescriptor>()
+            = descriptors.filter { it.name == name }.firstIsInstanceOrNull<ClassifierDescriptor>()
 
     override fun getContributedPackage(name: Name)
-            = descriptors.filter { it.getName() == name }.firstIsInstanceOrNull<PackageViewDescriptor>()
+            = descriptors.filter { it.name == name }.firstIsInstanceOrNull<PackageViewDescriptor>()
 
     override fun getContributedVariables(name: Name, location: LookupLocation)
-            = descriptors.filter { it.getName() == name }.filterIsInstance<VariableDescriptor>()
+            = descriptors.filter { it.name == name }.filterIsInstance<VariableDescriptor>()
 
     override fun getContributedFunctions(name: Name, location: LookupLocation)
-            = descriptors.filter { it.getName() == name }.filterIsInstance<FunctionDescriptor>()
+            = descriptors.filter { it.name == name }.filterIsInstance<FunctionDescriptor>()
 
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean)
             = descriptors
 
     override fun printStructure(p: Printer) {
-        p.println(javaClass.getName())
+        p.println(javaClass.name)
     }
 }

@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-public class KotlinElementDescriptionProvider : ElementDescriptionProvider {
-    public override fun getElementDescription(element: PsiElement, location: ElementDescriptionLocation): String? {
+class KotlinElementDescriptionProvider : ElementDescriptionProvider {
+    override fun getElementDescription(element: PsiElement, location: ElementDescriptionLocation): String? {
         val targetElement = element.unwrapped
 
         fun elementKind() = when (targetElement) {
@@ -40,7 +40,7 @@ public class KotlinElementDescriptionProvider : ElementDescriptionProvider {
             is KtObjectDeclaration -> "object"
             is KtNamedFunction -> "function"
             is KtSecondaryConstructor -> "constructor"
-            is KtProperty -> if (targetElement.isLocal()) "variable" else "property"
+            is KtProperty -> if (targetElement.isLocal) "variable" else "property"
             is KtTypeParameter -> "type parameter"
             is KtParameter -> "parameter"
             is KtDestructuringDeclarationEntry -> "variable"
@@ -50,7 +50,7 @@ public class KotlinElementDescriptionProvider : ElementDescriptionProvider {
         fun targetDescriptor(): DeclarationDescriptor? {
             val descriptor = (targetElement as KtDeclaration).descriptor ?: return null
             if (descriptor is ConstructorDescriptor) {
-                return descriptor.getContainingDeclaration()
+                return descriptor.containingDeclaration
             }
             return descriptor
         }
@@ -67,7 +67,7 @@ public class KotlinElementDescriptionProvider : ElementDescriptionProvider {
                             DescriptorUtils.getFqName(descriptor).asString()
                         }
                         else {
-                            descriptor.getName().asString()
+                            descriptor.name.asString()
                         }
 
                 "$kind ${CommonRefactoringUtil.htmlEmphasize(desc)}"
@@ -75,7 +75,7 @@ public class KotlinElementDescriptionProvider : ElementDescriptionProvider {
             is HighlightUsagesDescriptionLocation -> {
                 val kind = elementKind() ?: return null
                 val descriptor = targetDescriptor() ?: return null
-                "$kind ${descriptor.getName().asString()}"
+                "$kind ${descriptor.name.asString()}"
             }
             else -> null
         }

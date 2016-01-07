@@ -23,17 +23,17 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import kotlin.test.assertEquals
 
-public abstract class AbstractHighlightExitPointsTest : LightCodeInsightFixtureTestCase() {
-    public fun doTest(testDataPath: String) {
+abstract class AbstractHighlightExitPointsTest : LightCodeInsightFixtureTestCase() {
+    fun doTest(testDataPath: String) {
         myFixture.configureByFile(testDataPath)
-        HighlightUsagesHandler.invoke(myFixture.getProject(), myFixture.getEditor(), myFixture.getFile());
+        HighlightUsagesHandler.invoke(myFixture.project, myFixture.editor, myFixture.file);
 
-        val text = myFixture.getFile().getText()
+        val text = myFixture.file.text
         val expectedToBeHighlighted = InTextDirectivesUtils.findLinesWithPrefixesRemoved(text, "//HIGHLIGHTED:")
-        val searchResultsTextAttributes = EditorColorsManager.getInstance().getGlobalScheme().getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES)
-        val highlighters = myFixture.getEditor().getMarkupModel().getAllHighlighters()
-                .filter { it.getTextAttributes() == searchResultsTextAttributes }
-        val actual = highlighters.map { text.substring(it.getStartOffset(), it.getEndOffset()) }
+        val searchResultsTextAttributes = EditorColorsManager.getInstance().globalScheme.getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES)
+        val highlighters = myFixture.editor.markupModel.allHighlighters
+                .filter { it.textAttributes == searchResultsTextAttributes }
+        val actual = highlighters.map { text.substring(it.startOffset, it.endOffset) }
         assertEquals(expectedToBeHighlighted, actual)
     }
 }

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.combineWhenConditions
 import org.jetbrains.kotlin.psi.*
 
-public class WhenToIfIntention : SelfTargetingRangeIntention<KtWhenExpression>(KtWhenExpression::class.java, "Replace 'when' with 'if'"), LowPriorityAction {
+class WhenToIfIntention : SelfTargetingRangeIntention<KtWhenExpression>(KtWhenExpression::class.java, "Replace 'when' with 'if'"), LowPriorityAction {
     override fun applicabilityRange(element: KtWhenExpression): TextRange? {
         val entries = element.entries
         if (entries.isEmpty()) return null

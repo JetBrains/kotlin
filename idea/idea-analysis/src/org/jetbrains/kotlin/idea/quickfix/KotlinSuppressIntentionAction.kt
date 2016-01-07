@@ -44,7 +44,7 @@ class KotlinSuppressIntentionAction private constructor(
     override fun getFamilyName() = KotlinBundle.message("suppress.warnings.family")
     override fun getText() = KotlinBundle.message("suppress.warning.for", suppressKey, kind.kind, kind.name)
 
-    override fun isAvailable(project: Project, editor: Editor?, element: PsiElement) = element.isValid()
+    override fun isAvailable(project: Project, editor: Editor?, element: PsiElement) = element.isValid
 
     override fun invoke(project: Project, editor: Editor?, element: PsiElement) {
         val id = "\"$suppressKey\""
@@ -88,7 +88,7 @@ class KotlinSuppressIntentionAction private constructor(
     }
 
     private fun suppressAtModifierListOwner(suppressAt: KtModifierListOwner, id: String) {
-        val modifierList = suppressAt.getModifierList()
+        val modifierList = suppressAt.modifierList
         val psiFactory = KtPsiFactory(suppressAt)
         if (modifierList == null) {
             // create a modifier list from scratch
@@ -102,7 +102,7 @@ class KotlinSuppressIntentionAction private constructor(
             if (entry == null) {
                 // no [suppress] annotation
                 val newAnnotation = psiFactory.createAnnotationEntry(suppressAnnotationText(id))
-                val addedAnnotation = modifierList.addBefore(newAnnotation, modifierList.getFirstChild())
+                val addedAnnotation = modifierList.addBefore(newAnnotation, modifierList.firstChild)
                 val whiteSpace = psiFactory.createWhiteSpace(kind)
                 modifierList.addAfter(whiteSpace, addedAnnotation)
             }
@@ -136,8 +136,8 @@ class KotlinSuppressIntentionAction private constructor(
         val copy = suppressAt.copy()!!
 
         val afterReplace = suppressAt.replace(annotatedExpression) as KtAnnotatedExpression
-        val toReplace = afterReplace.findElementAt(afterReplace.getTextLength() - 2)!!
-        assert (toReplace.getText() == placeholderText)
+        val toReplace = afterReplace.findElementAt(afterReplace.textLength - 2)!!
+        assert (toReplace.text == placeholderText)
         val result = toReplace.replace(copy)!!
 
         caretBox.positionCaretInCopy(result)
@@ -145,19 +145,19 @@ class KotlinSuppressIntentionAction private constructor(
 
     private fun addArgumentToSuppressAnnotation(entry: KtAnnotationEntry, id: String) {
         // add new arguments to an existing entry
-        val args = entry.getValueArgumentList()
+        val args = entry.valueArgumentList
         val psiFactory = KtPsiFactory(entry)
         val newArgList = psiFactory.createCallArguments("($id)")
         if (args == null) {
             // new argument list
-            entry.addAfter(newArgList, entry.getLastChild())
+            entry.addAfter(newArgList, entry.lastChild)
         }
-        else if (args.getArguments().isEmpty()) {
+        else if (args.arguments.isEmpty()) {
             // replace '()' with a new argument list
             args.replace(newArgList)
         }
         else {
-            args.addArgument(newArgList.getArguments()[0])
+            args.addArgument(newArgList.arguments[0])
         }
     }
 
@@ -165,7 +165,7 @@ class KotlinSuppressIntentionAction private constructor(
 
     private fun findSuppressAnnotation(annotated: KtAnnotated): KtAnnotationEntry? {
         val context = annotated.analyze()
-        return findSuppressAnnotation(context, annotated.getAnnotationEntries())
+        return findSuppressAnnotation(context, annotated.annotationEntries)
     }
 
     private fun findSuppressAnnotation(annotationList: KtFileAnnotationList): KtAnnotationEntry? {
@@ -184,7 +184,7 @@ class KotlinSuppressIntentionAction private constructor(
     }
 }
 
-public class AnnotationHostKind(val kind: String, val name: String, val newLineNeeded: Boolean)
+class AnnotationHostKind(val kind: String, val name: String, val newLineNeeded: Boolean)
 
 private fun KtPsiFactory.createWhiteSpace(kind: AnnotationHostKind): PsiElement {
     return if (kind.newLineNeeded) createNewLine() else createWhiteSpace()
@@ -194,10 +194,10 @@ private class CaretBox<out E: KtExpression>(
         val expression: E,
         private val editor: Editor?
 ) {
-    private val offsetInExpression: Int = (editor?.getCaretModel()?.getOffset() ?: 0) - expression.getTextRange()!!.getStartOffset()
+    private val offsetInExpression: Int = (editor?.caretModel?.offset ?: 0) - expression.textRange!!.startOffset
 
     fun positionCaretInCopy(copy: PsiElement) {
         if (editor == null) return
-        editor.getCaretModel().moveToOffset(copy.getTextOffset() + offsetInExpression)
+        editor.caretModel.moveToOffset(copy.textOffset + offsetInExpression)
     }
 }

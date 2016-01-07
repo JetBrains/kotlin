@@ -53,7 +53,7 @@ import java.io.File
 import javax.swing.JComponent
 import javax.swing.event.DocumentEvent
 
-public class KotlinAwareMoveFilesOrDirectoriesDialog(
+class KotlinAwareMoveFilesOrDirectoriesDialog(
         private val project: Project,
         private val callback: (KotlinAwareMoveFilesOrDirectoriesDialog?) -> Unit
 ) : DialogWrapper(project, true) {
@@ -76,7 +76,7 @@ public class KotlinAwareMoveFilesOrDirectoriesDialog(
         init()
     }
 
-    public val updatePackageDirective: Boolean
+    val updatePackageDirective: Boolean
         get() = updatePackageDirectiveCb.isSelected
 
     override fun createActions() = arrayOf(okAction, cancelAction, helpAction)

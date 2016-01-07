@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.dataClassUtils.isComponentLike
 import org.jetbrains.kotlin.types.expressions.OperatorConventions.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-public val ALL_SEARCHABLE_OPERATIONS: ImmutableSet<KtToken> = ImmutableSet
+val ALL_SEARCHABLE_OPERATIONS: ImmutableSet<KtToken> = ImmutableSet
         .builder<KtToken>()
         .addAll(UNARY_OPERATION_NAMES.keys)
         .addAll(BINARY_OPERATION_NAMES.keys)
@@ -38,15 +38,15 @@ public val ALL_SEARCHABLE_OPERATIONS: ImmutableSet<KtToken> = ImmutableSet
         .add(KtTokens.BY_KEYWORD)
         .build()
 
-public val INDEXING_OPERATION_NAMES = setOf(OperatorNameConventions.GET, OperatorNameConventions.SET)
+val INDEXING_OPERATION_NAMES = setOf(OperatorNameConventions.GET, OperatorNameConventions.SET)
 
-public val DELEGATE_ACCESSOR_NAMES = setOf(Name.identifier("getValue"), Name.identifier("setValue"))
+val DELEGATE_ACCESSOR_NAMES = setOf(Name.identifier("getValue"), Name.identifier("setValue"))
 
-public val IN_OPERATIONS_TO_SEARCH = setOf(KtTokens.IN_KEYWORD)
+val IN_OPERATIONS_TO_SEARCH = setOf(KtTokens.IN_KEYWORD)
 
-public val COMPARISON_OPERATIONS_TO_SEARCH = setOf(KtTokens.LT, KtTokens.GT)
+val COMPARISON_OPERATIONS_TO_SEARCH = setOf(KtTokens.LT, KtTokens.GT)
 
-public fun Name.getOperationSymbolsToSearch(): Set<KtToken> {
+fun Name.getOperationSymbolsToSearch(): Set<KtToken> {
     when (this) {
         OperatorNameConventions.COMPARE_TO -> return COMPARISON_OPERATIONS_TO_SEARCH
         OperatorNameConventions.EQUALS -> return EQUALS_OPERATIONS

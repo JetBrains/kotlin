@@ -36,7 +36,7 @@ import javax.swing.JComponent
 import javax.swing.JLabel
 import kotlin.properties.Delegates
 
-public class KotlinChangePropertySignatureDialog(
+class KotlinChangePropertySignatureDialog(
         project: Project,
         private val methodDescriptor: KotlinMethodDescriptor,
         private val commandName: String?

@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
+class KotlinSteppingCommandProvider: JvmSteppingCommandProvider() {
     override fun getStepOverCommand(
             suspendContext: SuspendContextImpl?,
             ignoreBreakpoints: Boolean,

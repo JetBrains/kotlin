@@ -20,13 +20,13 @@ import com.intellij.codeInsight.completion.CompletionType
 import org.jetbrains.kotlin.idea.test.AstAccessControl
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
-public abstract class AbstractMultiFileJvmBasicCompletionTest : KotlinCompletionTestCase() {
+abstract class AbstractMultiFileJvmBasicCompletionTest : KotlinCompletionTestCase() {
     protected fun doTest(testPath: String) {
         configureByFile(getTestName(false) + ".kt", "")
         // several tests require disabling this check after adding InclusiveRange, need to investigate why
 //        val shouldFail = testPath.contains("NoSpecifiedType")
 //        AstAccessControl.testWithControlledAccessToAst(shouldFail, getFile().getVirtualFile(), getProject(), getTestRootDisposable(), {
-            testCompletion(getFile().getText(), JvmPlatform, { completionType, invocationCount ->
+            testCompletion(file.text, JvmPlatform, { completionType, invocationCount ->
                 setType(completionType)
                 complete(invocationCount)
                 myItems

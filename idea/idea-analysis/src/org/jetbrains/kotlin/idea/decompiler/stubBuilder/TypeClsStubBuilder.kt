@@ -46,12 +46,12 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(parent, KtStubElementTypes.TYPE_REFERENCE)
 
         val annotations = c.components.annotationLoader.loadTypeAnnotations(type, c.nameResolver).filterNot {
-            val isTopLevelClass = !it.isNestedClass()
+            val isTopLevelClass = !it.isNestedClass
             isTopLevelClass && it.asSingleFqName() in JvmAnnotationNames.ANNOTATIONS_COPIED_TO_TYPES
         }
 
         val effectiveParent =
-                if (type.getNullable()) KotlinPlaceHolderStubImpl<KtNullableType>(typeReference, KtStubElementTypes.NULLABLE_TYPE)
+                if (type.nullable) KotlinPlaceHolderStubImpl<KtNullableType>(typeReference, KtStubElementTypes.NULLABLE_TYPE)
                 else typeReference
 
         fun createTypeParameterStub(name: Name) {
@@ -68,7 +68,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
     private fun createClassReferenceTypeStub(parent: KotlinStubBaseImpl<*>, type: Type, annotations: List<ClassId>) {
         if (type.hasFlexibleTypeCapabilitiesId()) {
-            val id = c.nameResolver.getString(type.getFlexibleTypeCapabilitiesId())
+            val id = c.nameResolver.getString(type.flexibleTypeCapabilitiesId)
 
             if (id == DynamicTypeCapabilities.id) {
                 KotlinPlaceHolderStubImpl<KtDynamicType>(parent, KtStubElementTypes.DYNAMIC_TYPE)
@@ -78,7 +78,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
         val classId = c.nameResolver.getClassId(type.className)
         val shouldBuildAsFunctionType = KotlinBuiltIns.isNumberedFunctionClassFqName(classId.asSingleFqName().toUnsafe())
-                                        && type.getArgumentList().none { it.getProjection() == Projection.STAR }
+                                        && type.argumentList.none { it.projection == Projection.STAR }
         if (shouldBuildAsFunctionType) {
             val extension = annotations.any { annotation ->
                 val fqName = annotation.asSingleFqName()
@@ -233,11 +233,11 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             typeParameterProto: ProtoBuf.TypeParameter
     ) {
         val modifiers = ArrayList<KtModifierKeywordToken>()
-        when (typeParameterProto.getVariance()) {
+        when (typeParameterProto.variance) {
             Variance.IN -> modifiers.add(KtTokens.IN_KEYWORD)
             Variance.OUT -> modifiers.add(KtTokens.OUT_KEYWORD)
         }
-        if (typeParameterProto.getReified()) {
+        if (typeParameterProto.reified) {
             modifiers.add(KtTokens.REIFIED_KEYWORD)
         }
         createModifierListStub(typeParameterStub, modifiers)

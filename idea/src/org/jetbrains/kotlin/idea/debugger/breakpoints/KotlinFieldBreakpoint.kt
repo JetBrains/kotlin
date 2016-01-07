@@ -71,25 +71,25 @@ class KotlinFieldBreakpoint(
     private var breakpointType: BreakpointType = BreakpointType.FIELD
 
     override fun isValid(): Boolean {
-        if (!BreakpointWithHighlighter.isPositionValid(getXBreakpoint().getSourcePosition())) return false
+        if (!BreakpointWithHighlighter.isPositionValid(xBreakpoint.sourcePosition)) return false
 
         return runReadAction {
             val field = getField()
-            field != null && field.isValid()
+            field != null && field.isValid
         }
     }
 
-    public fun getField(): KtCallableDeclaration? {
-        val sourcePosition = getSourcePosition()
+    fun getField(): KtCallableDeclaration? {
+        val sourcePosition = sourcePosition
         return getProperty(sourcePosition)
     }
 
     private fun getProperty(sourcePosition: SourcePosition?): KtCallableDeclaration? {
-        val property: KtProperty? = PositionUtil.getPsiElementAt(getProject(), KtProperty::class.java, sourcePosition)
+        val property: KtProperty? = PositionUtil.getPsiElementAt(project, KtProperty::class.java, sourcePosition)
         if (property != null) {
             return property
         }
-        val parameter: KtParameter? = PositionUtil.getPsiElementAt(getProject(), KtParameter::class.java, sourcePosition)
+        val parameter: KtParameter? = PositionUtil.getPsiElementAt(project, KtParameter::class.java, sourcePosition)
         if (parameter != null) {
             return parameter
         }
@@ -97,45 +97,45 @@ class KotlinFieldBreakpoint(
     }
 
     override fun reload(psiFile: PsiFile?) {
-        val property = getProperty(getSourcePosition())
+        val property = getProperty(sourcePosition)
         if (property != null) {
-            setFieldName(property.getName()!!)
+            setFieldName(property.name!!)
 
-            if (property is KtProperty && property.isTopLevel()) {
-                getProperties().myClassName = JvmFileClassUtil.getFileClassInfoNoResolve(property.getContainingKtFile()).fileClassFqName.asString()
+            if (property is KtProperty && property.isTopLevel) {
+                properties.myClassName = JvmFileClassUtil.getFileClassInfoNoResolve(property.getContainingKtFile()).fileClassFqName.asString()
             }
             else {
                 val ktClass: KtClassOrObject? = PsiTreeUtil.getParentOfType(property, KtClassOrObject::class.java)
                 if (ktClass is KtClassOrObject) {
-                    val fqName = ktClass.getFqName()
+                    val fqName = ktClass.fqName
                     if (fqName != null) {
-                        getProperties().myClassName = fqName.asString()
+                        properties.myClassName = fqName.asString()
                     }
                 }
             }
-            setInstanceFiltersEnabled(false)
+            isInstanceFiltersEnabled = false
         }
     }
 
     override fun createRequestForPreparedClass(debugProcess: DebugProcessImpl?, refType: ReferenceType?) {
         if (debugProcess == null || refType == null) return
 
-        val property = getProperty(getSourcePosition()) ?: return
+        val property = getProperty(sourcePosition) ?: return
 
         breakpointType = computeBreakpointType(property)
 
-        val vm = debugProcess.getVirtualMachineProxy()
+        val vm = debugProcess.virtualMachineProxy
         try {
-            if (getProperties().WATCH_INITIALIZATION) {
-                val sourcePosition = getSourcePosition()
+            if (properties.WATCH_INITIALIZATION) {
+                val sourcePosition = sourcePosition
                 if (sourcePosition != null) {
-                    debugProcess.getPositionManager()
+                    debugProcess.positionManager
                             .locationsOfLine(refType, sourcePosition)
-                            .filter { it.method().isConstructor() || it.method().isStaticInitializer() }
+                            .filter { it.method().isConstructor || it.method().isStaticInitializer }
                             .forEach {
-                                val request = debugProcess.getRequestsManager().createBreakpointRequest(this, it)
-                                debugProcess.getRequestsManager().enableRequest(request)
-                                if (LOG.isDebugEnabled()) {
+                                val request = debugProcess.requestsManager.createBreakpointRequest(this, it)
+                                debugProcess.requestsManager.enableRequest(request)
+                                if (LOG.isDebugEnabled) {
                                     LOG.debug("Breakpoint request added")
                                 }
                             }
@@ -146,18 +146,18 @@ class KotlinFieldBreakpoint(
                 BreakpointType.FIELD -> {
                     val field = refType.fieldByName(getFieldName())
                     if (field != null) {
-                        val manager = debugProcess.getRequestsManager()
-                        if (getProperties().WATCH_MODIFICATION && vm.canWatchFieldModification()) {
+                        val manager = debugProcess.requestsManager
+                        if (properties.WATCH_MODIFICATION && vm.canWatchFieldModification()) {
                             val request = manager.createModificationWatchpointRequest(this, field)
-                            debugProcess.getRequestsManager().enableRequest(request)
-                            if (LOG.isDebugEnabled()) {
+                            debugProcess.requestsManager.enableRequest(request)
+                            if (LOG.isDebugEnabled) {
                                 LOG.debug("Modification request added")
                             }
                         }
-                        if (getProperties().WATCH_ACCESS && vm.canWatchFieldAccess()) {
+                        if (properties.WATCH_ACCESS && vm.canWatchFieldAccess()) {
                             val request = manager.createAccessWatchpointRequest(this, field)
-                            debugProcess.getRequestsManager().enableRequest(request)
-                            if (LOG.isDebugEnabled()) {
+                            debugProcess.requestsManager.enableRequest(request)
+                            if (LOG.isDebugEnabled) {
                                 LOG.debug("Field access request added (field = ${field.name()}; refType = ${refType.name()})")
                             }
                         }
@@ -166,14 +166,14 @@ class KotlinFieldBreakpoint(
                 BreakpointType.METHOD -> {
                     val fieldName = getFieldName()
 
-                    if (getProperties().WATCH_ACCESS) {
+                    if (properties.WATCH_ACCESS) {
                         val getter = refType.methodsByName(JvmAbi.getterName(fieldName)).firstOrNull()
                         if (getter != null) {
                             createMethodBreakpoint(debugProcess, refType, getter)
                         }
                     }
 
-                    if (getProperties().WATCH_MODIFICATION) {
+                    if (properties.WATCH_MODIFICATION) {
                         val setter = refType.methodsByName(JvmAbi.setterName(fieldName)).firstOrNull()
                         if (setter != null) {
                             createMethodBreakpoint(debugProcess, refType, setter)
@@ -205,12 +205,12 @@ class KotlinFieldBreakpoint(
     }
 
     private fun createMethodBreakpoint(debugProcess: DebugProcessImpl, refType: ReferenceType, accessor: Method) {
-        val manager = debugProcess.getRequestsManager()
+        val manager = debugProcess.requestsManager
         val line = accessor.allLineLocations().firstOrNull()
         if (line != null) {
             val request = manager.createBreakpointRequest(this, line)
-            debugProcess.getRequestsManager().enableRequest(request)
-            if (LOG.isDebugEnabled()) {
+            debugProcess.requestsManager.enableRequest(request)
+            if (LOG.isDebugEnabled) {
                 LOG.debug("Breakpoint request added")
             }
         }
@@ -218,7 +218,7 @@ class KotlinFieldBreakpoint(
             var entryRequest: MethodEntryRequest? = findRequest(debugProcess, MethodEntryRequest::class.java, this)
             if (entryRequest == null) {
                 entryRequest = manager.createMethodEntryRequest(this)!!
-                if (LOG.isDebugEnabled()) {
+                if (LOG.isDebugEnabled) {
                     LOG.debug("Method entry request added (method = ${accessor.name()}; refType = ${refType.name()})")
                 }
             }
@@ -231,7 +231,7 @@ class KotlinFieldBreakpoint(
     }
 
     inline fun <reified T : EventRequest> findRequest(debugProcess: DebugProcessImpl, requestClass: Class<T>, requestor: Requestor): T? {
-        val requests = debugProcess.getRequestsManager().findRequests(requestor)
+        val requests = debugProcess.requestsManager.findRequests(requestor)
         for (eventRequest in requests) {
             if (eventRequest.javaClass == requestClass) {
                 return eventRequest as T
@@ -247,7 +247,7 @@ class KotlinFieldBreakpoint(
         return super.evaluateCondition(context, event)
     }
 
-    public fun matchesEvent(event: LocatableEvent): Boolean {
+    fun matchesEvent(event: LocatableEvent): Boolean {
         val method = event.location().method()
         // TODO check property type
         return method != null && method.name() in getMethodsName()
@@ -320,26 +320,26 @@ class KotlinFieldBreakpoint(
     }
 
     fun setFieldName(fieldName: String) {
-        getProperties().myFieldName = fieldName
+        properties.myFieldName = fieldName
     }
 
     @TestOnly
     fun setWatchAccess(value: Boolean) {
-        getProperties().WATCH_ACCESS = value
+        properties.WATCH_ACCESS = value
     }
 
     @TestOnly
     fun setWatchModification(value: Boolean) {
-        getProperties().WATCH_MODIFICATION = value
+        properties.WATCH_MODIFICATION = value
     }
 
     @TestOnly
     fun setWatchInitialization(value: Boolean) {
-        getProperties().WATCH_INITIALIZATION = value
+        properties.WATCH_INITIALIZATION = value
     }
 
     override fun getDisabledIcon(isMuted: Boolean): Icon {
-        val master = DebuggerManagerEx.getInstanceEx(myProject).getBreakpointManager().findMasterBreakpoint(this)
+        val master = DebuggerManagerEx.getInstanceEx(myProject).breakpointManager.findMasterBreakpoint(this)
         return when {
             isMuted && master == null -> AllIcons.Debugger.Db_muted_disabled_field_breakpoint
             isMuted && master != null -> AllIcons.Debugger.Db_muted_dep_field_breakpoint
@@ -379,16 +379,16 @@ class KotlinFieldBreakpoint(
     override fun getCategory() = CATEGORY
 
     override fun getDisplayName(): String? {
-        if (!isValid()) {
+        if (!isValid) {
             return DebuggerBundle.message("status.breakpoint.invalid")
         }
-        val className = getClassName()
+        val className = className
         return if (className != null && !className.isEmpty()) className + "." + getFieldName() else getFieldName()
     }
 
     private fun getFieldName(): String {
         val declaration = getField()
-        return runReadAction { declaration?.getName() } ?: "unknown"
+        return runReadAction { declaration?.name } ?: "unknown"
     }
 
     override fun getEvaluationElement(): PsiElement? {

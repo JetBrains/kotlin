@@ -22,23 +22,23 @@ import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import java.util.*
 
-public class KtForLoopInReference(element: KtForExpression) : KtMultiReference<KtForExpression>(element) {
+class KtForLoopInReference(element: KtForExpression) : KtMultiReference<KtForExpression>(element) {
 
     override fun getRangeInElement(): TextRange {
-        val inKeywordNode = expression.getInKeywordNode()
+        val inKeywordNode = expression.inKeywordNode
         if (inKeywordNode == null)
             return TextRange.EMPTY_RANGE
 
-        val offset = inKeywordNode.getPsi()!!.getStartOffsetInParent()
-        return TextRange(offset, offset + inKeywordNode.getTextLength())
+        val offset = inKeywordNode.psi!!.startOffsetInParent
+        return TextRange(offset, offset + inKeywordNode.textLength)
     }
 
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
-        val loopRange = expression.getLoopRange()
+        val loopRange = expression.loopRange
         if (loopRange == null) {
             return Collections.emptyList()
         }
-        return LOOP_RANGE_KEYS.mapNotNull { key -> context.get(key, loopRange)?.getCandidateDescriptor() }
+        return LOOP_RANGE_KEYS.mapNotNull { key -> context.get(key, loopRange)?.candidateDescriptor }
     }
 
     companion object {

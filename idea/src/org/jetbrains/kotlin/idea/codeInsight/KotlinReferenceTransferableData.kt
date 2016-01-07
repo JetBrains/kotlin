@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import java.awt.datatransfer.DataFlavor
 import java.io.Serializable
 
-public class KotlinReferenceTransferableData(
+class KotlinReferenceTransferableData(
         val data: Array<KotlinReferenceData>
 ) : TextBlockTransferableData, Cloneable, Serializable {
 
@@ -52,14 +52,14 @@ public class KotlinReferenceTransferableData(
     public override fun clone() = KotlinReferenceTransferableData(Array(data.size, {  data[it].clone() }))
 }
 
-public class KotlinReferenceData(
-        public var startOffset: Int,
-        public var endOffset: Int,
-        public val fqName: String,
-        public val kind: KotlinReferenceData.Kind
+class KotlinReferenceData(
+        var startOffset: Int,
+        var endOffset: Int,
+        val fqName: String,
+        val kind: KotlinReferenceData.Kind
 ) : Cloneable, Serializable {
 
-    public enum class Kind {
+    enum class Kind {
         CLASS,
         PACKAGE,
         NON_EXTENSION_CALLABLE,
@@ -67,7 +67,7 @@ public class KotlinReferenceData(
         EXTENSION_PROPERTY;
 
         companion object {
-            public fun fromDescriptor(descriptor: DeclarationDescriptor): KotlinReferenceData.Kind? {
+            fun fromDescriptor(descriptor: DeclarationDescriptor): KotlinReferenceData.Kind? {
                 return when (descriptor.getImportableDescriptor()) {
                     is ClassDescriptor ->
                         KotlinReferenceData.Kind.CLASS
@@ -98,12 +98,12 @@ public class KotlinReferenceData(
     }
 
     companion object {
-        public val dataFlavor: DataFlavor? by lazy {
+        val dataFlavor: DataFlavor? by lazy {
             try {
                 val dataClass = KotlinReferenceData::class.java
-                DataFlavor(DataFlavor.javaJVMLocalObjectMimeType + ";class=" + dataClass.getName(),
+                DataFlavor(DataFlavor.javaJVMLocalObjectMimeType + ";class=" + dataClass.name,
                            "KotlinReferenceData",
-                           dataClass.getClassLoader())
+                           dataClass.classLoader)
             }
             catch (e: NoClassDefFoundError) {
                 null

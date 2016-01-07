@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
-public abstract class AbstractInsertImportOnPasteTest : AbstractCopyPasteTest() {
+abstract class AbstractInsertImportOnPasteTest : AbstractCopyPasteTest() {
     private val BASE_PATH = PluginTestCaseBase.getTestDataPathBase() + "/copyPaste/imports"
 
     private val NO_ERRORS_DUMP_DIRECTIVE = "// NO_ERRORS_DUMP"
@@ -45,10 +45,10 @@ public abstract class AbstractInsertImportOnPasteTest : AbstractCopyPasteTest() 
     }
 
     private fun doTestAction(cutOrCopy: String, path: String) {
-        myFixture.setTestDataPath(BASE_PATH)
+        myFixture.testDataPath = BASE_PATH
         val testFile = File(path)
         val testFileText = FileUtil.loadFile(testFile, true)
-        val testFileName = testFile.getName()
+        val testFileName = testFile.name
 
         val dependencyPsiFile1 = configureByDependencyIfExists(testFileName.replace(".kt", ".dependency.kt"))
         val dependencyPsiFile2 = configureByDependencyIfExists(testFileName.replace(".kt", ".dependency.java"))
@@ -58,8 +58,8 @@ public abstract class AbstractInsertImportOnPasteTest : AbstractCopyPasteTest() 
         if (InTextDirectivesUtils.isDirectiveDefined(testFileText, DELETE_DEPENDENCIES_BEFORE_PASTE_DIRECTIVE)) {
             assert(dependencyPsiFile1 != null || dependencyPsiFile2 != null)
             runWriteAction {
-                dependencyPsiFile1?.getVirtualFile()?.delete(null)
-                dependencyPsiFile2?.getVirtualFile()?.delete(null)
+                dependencyPsiFile1?.virtualFile?.delete(null)
+                dependencyPsiFile2?.virtualFile?.delete(null)
             }
         }
 
@@ -71,9 +71,9 @@ public abstract class AbstractInsertImportOnPasteTest : AbstractCopyPasteTest() 
         val namesToImportDump = KotlinCopyPasteReferenceProcessor.declarationsToImportSuggested.joinToString("\n")
         KotlinTestUtils.assertEqualsToFile(File(path.replace(".kt", ".expected.names")), namesToImportDump)
 
-        val resultFile = myFixture.getFile() as KtFile
+        val resultFile = myFixture.file as KtFile
         val resultText = if (InTextDirectivesUtils.isDirectiveDefined(testFileText, NO_ERRORS_DUMP_DIRECTIVE))
-            resultFile.getText()
+            resultFile.text
         else
             resultFile.dumpTextWithErrors()
         KotlinTestUtils.assertEqualsToFile(File(path.replace(".kt", ".expected.kt")), resultText)

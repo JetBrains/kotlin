@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.idea.core.targetDescriptors
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtImportDirective
 
-public class SafeDeleteImportDirectiveUsageInfo(
+class SafeDeleteImportDirectiveUsageInfo(
         importDirective: KtImportDirective, declaration: KtDeclaration
 ) : SafeDeleteReferenceSimpleDeleteUsageInfo(importDirective, declaration, importDirective.isSafeToDelete(declaration))
 

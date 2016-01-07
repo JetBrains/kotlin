@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.serialization.deserialization.*
 
-public class KotlinBuiltInDeserializerForDecompiler(
+class KotlinBuiltInDeserializerForDecompiler(
         packageDirectory: VirtualFile,
         packageFqName: FqName,
         private val nameResolver: NameResolver

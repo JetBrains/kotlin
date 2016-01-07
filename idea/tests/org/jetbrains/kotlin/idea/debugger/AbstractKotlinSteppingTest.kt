@@ -20,7 +20,7 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.io.File
 
-public abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestBase() {
+abstract class AbstractKotlinSteppingTest : KotlinDebuggerTestBase() {
     protected fun doStepIntoTest(path: String) {
         doTest(path, "STEP_INTO")
     }

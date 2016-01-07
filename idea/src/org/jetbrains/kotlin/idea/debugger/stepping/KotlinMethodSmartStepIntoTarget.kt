@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import javax.swing.Icon
 
-public class KotlinMethodSmartStepTarget(
+class KotlinMethodSmartStepTarget(
         val resolvedElement: KtElement,
         label: String,
         highlightElement: PsiElement,

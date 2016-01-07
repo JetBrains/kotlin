@@ -232,7 +232,7 @@ private fun KtNamedDeclaration.guessType(context: BindingContext): Array<KotlinT
 /**
  * Encapsulates a single type substitution of a <code>KotlinType</code> by another <code>KotlinType</code>.
  */
-internal class KotlinTypeSubstitution(public val forType: KotlinType, public val byType: KotlinType)
+internal class KotlinTypeSubstitution(val forType: KotlinType, val byType: KotlinType)
 
 internal fun KotlinType.substitute(substitution: KotlinTypeSubstitution, variance: Variance): KotlinType {
     val nullable = isMarkedNullable

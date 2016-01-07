@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.idea.versions.OutdatedKotlinRuntimeNotification
 import org.junit.Assert
 
 
-public class KotlinRuntimeLibraryUtilTest : TestCase() {
-    public fun testKotlinLibraryRelevantVersion() {
+class KotlinRuntimeLibraryUtilTest : TestCase() {
+    fun testKotlinLibraryRelevantVersion() {
         test("0.10.2013", "0.10.2013")
         test("0.10.M.2013", "0.10")
         test("0.10.2.Idea140.2013", "0.10.2")
@@ -55,7 +55,7 @@ public class KotlinRuntimeLibraryUtilTest : TestCase() {
         test("1.2.2123-alpha-023", "1.2.2123-alpha-023")
     }
 
-    public fun testOutdatedRuntime() {
+    fun testOutdatedRuntime() {
         outdated("1.0.0-beta1-001-Idea141-12", "0.12.15")
         outdated("1.0.0-beta1-001-Idea141-1", "0.152.16")
         outdated("1.0.0-beta1-001-Idea141-1", "0.152.16")

@@ -24,17 +24,17 @@ import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.junit.Assert
 
-public class QuickDocNavigationTest() : LightPlatformCodeInsightFixtureTestCase() {
+class QuickDocNavigationTest() : LightPlatformCodeInsightFixtureTestCase() {
     override fun getTestDataPath(): String {
         return PluginTestCaseBase.getTestDataPathBase() + "/kdoc/navigate/"
     }
 
-    public fun testSimple() {
+    fun testSimple() {
         myFixture.configureByFile(getTestName(true) + ".kt")
-        val source = myFixture.getElementAtCaret().getParentOfType<KtFunction>(false)
+        val source = myFixture.elementAtCaret.getParentOfType<KtFunction>(false)
         val target = KotlinQuickDocumentationProvider().getDocumentationElementForLink(
-                myFixture.getPsiManager(), "C", source);
+                myFixture.psiManager, "C", source);
         Assert.assertTrue(target is KtClass)
-        Assert.assertEquals("C", (target as KtClass).getName())
+        Assert.assertEquals("C", (target as KtClass).name)
     }
 }

@@ -29,7 +29,7 @@ import java.io.DataOutput
 import java.util.*
 
 abstract class KotlinFileIndexBase<T>(private val classOfIndex: Class<T>) : ScalarIndexExtension<FqName>() {
-    public val KEY: ID<FqName, Void> = ID.create(classOfIndex.canonicalName)
+    val KEY: ID<FqName, Void> = ID.create(classOfIndex.canonicalName)
 
     private val KEY_DESCRIPTOR : KeyDescriptor<FqName> = object : KeyDescriptor<FqName> {
         override fun save(output: DataOutput, value: FqName) = output.writeUTF(value.asString())
@@ -67,7 +67,7 @@ abstract class KotlinFileIndexBase<T>(private val classOfIndex: Class<T>) : Scal
             }
 }
 
-public object KotlinClassFileIndex : KotlinFileIndexBase<KotlinClassFileIndex>(KotlinClassFileIndex::class.java) {
+object KotlinClassFileIndex : KotlinFileIndexBase<KotlinClassFileIndex>(KotlinClassFileIndex::class.java) {
 
     override fun getIndexer() = INDEXER
 
@@ -83,7 +83,7 @@ public object KotlinClassFileIndex : KotlinFileIndexBase<KotlinClassFileIndex>(K
     }
 }
 
-public object KotlinJavaScriptMetaFileIndex : KotlinFileIndexBase<KotlinJavaScriptMetaFileIndex>(KotlinJavaScriptMetaFileIndex::class.java) {
+object KotlinJavaScriptMetaFileIndex : KotlinFileIndexBase<KotlinJavaScriptMetaFileIndex>(KotlinJavaScriptMetaFileIndex::class.java) {
 
     override fun getIndexer() = INDEXER
 

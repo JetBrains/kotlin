@@ -30,7 +30,7 @@ import javax.swing.JComponent
 import javax.swing.JPanel
 import kotlin.properties.Delegates
 
-public class KotlinFieldBreakpointPropertiesPanel: XBreakpointCustomPropertiesPanel<XLineBreakpoint<KotlinPropertyBreakpointProperties>>() {
+class KotlinFieldBreakpointPropertiesPanel: XBreakpointCustomPropertiesPanel<XLineBreakpoint<KotlinPropertyBreakpointProperties>>() {
     private var myWatchInitializationCheckBox: JCheckBox by Delegates.notNull()
     private var myWatchAccessCheckBox: JCheckBox by Delegates.notNull()
     private var myWatchModificationCheckBox: JCheckBox by Delegates.notNull()

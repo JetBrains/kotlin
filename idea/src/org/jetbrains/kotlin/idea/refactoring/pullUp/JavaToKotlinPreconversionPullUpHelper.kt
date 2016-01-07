@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 import java.util.*
 
-public class JavaToKotlinPreconversionPullUpHelper(
+class JavaToKotlinPreconversionPullUpHelper(
         private val data: PullUpData,
         private val dummyTargetClass: PsiClass,
         private val javaHelper: JavaPullUpHelper

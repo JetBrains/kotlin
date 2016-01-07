@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.addToStdlib.check
 import java.util.*
 
-public class KotlinFrameExtraVariablesProvider : FrameExtraVariablesProvider {
+class KotlinFrameExtraVariablesProvider : FrameExtraVariablesProvider {
     override fun isAvailable(sourcePosition: SourcePosition, evalContext: EvaluationContext): Boolean {
         if (sourcePosition.line < 0) return false
         return sourcePosition.file.fileType == KotlinFileType.INSTANCE && DebuggerSettings.getInstance().AUTO_VARIABLES_MODE

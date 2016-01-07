@@ -21,7 +21,7 @@ import com.intellij.psi.PsiJavaCodeReferenceElement
 import com.intellij.psi.PsiReferenceList
 import com.intellij.psi.PsiReferenceList.Role
 
-public fun PsiElementFactory.createReferenceListWithRole(
+fun PsiElementFactory.createReferenceListWithRole(
         references: Array<PsiJavaCodeReferenceElement>,
         role: Role
 ): PsiReferenceList? {

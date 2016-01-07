@@ -20,7 +20,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.refactoring.changeSignature.JavaChangeInfo
 import com.intellij.usageView.UsageInfo
 
-public class KotlinWrapperForJavaUsageInfos(
+class KotlinWrapperForJavaUsageInfos(
         val javaChangeInfo: JavaChangeInfo,
         val javaUsageInfos: Array<UsageInfo>,
         val primaryMethod: PsiElement

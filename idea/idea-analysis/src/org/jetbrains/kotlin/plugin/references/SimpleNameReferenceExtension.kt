@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
-public interface SimpleNameReferenceExtension {
+interface SimpleNameReferenceExtension {
     companion object {
-        public val EP_NAME: ExtensionPointName<SimpleNameReferenceExtension> =
+        val EP_NAME: ExtensionPointName<SimpleNameReferenceExtension> =
                 ExtensionPointName.create("org.jetbrains.kotlin.simpleNameReferenceExtension")
     }
 

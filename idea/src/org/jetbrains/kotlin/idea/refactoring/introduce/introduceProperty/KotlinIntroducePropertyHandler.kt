@@ -30,7 +30,7 @@ import com.intellij.refactoring.RefactoringActionHandler
 import org.jetbrains.kotlin.idea.refactoring.getExtractionContainers
 import java.util.*
 
-public class KotlinIntroducePropertyHandler(
+class KotlinIntroducePropertyHandler(
         val helper: ExtractionEngineHelper = KotlinIntroducePropertyHandler.InteractiveExtractionHelper
 ): RefactoringActionHandler {
     object InteractiveExtractionHelper : ExtractionEngineHelper(INTRODUCE_PROPERTY) {
@@ -52,7 +52,7 @@ public class KotlinIntroducePropertyHandler(
         }
     }
 
-    public fun selectElements(editor: Editor, file: KtFile, continuation: (elements: List<PsiElement>, targetSibling: PsiElement) -> Unit) {
+    fun selectElements(editor: Editor, file: KtFile, continuation: (elements: List<PsiElement>, targetSibling: PsiElement) -> Unit) {
         selectElementsWithTargetSibling(
                 INTRODUCE_PROPERTY,
                 editor,
@@ -64,7 +64,7 @@ public class KotlinIntroducePropertyHandler(
         )
     }
 
-    public fun doInvoke(project: Project, editor: Editor, file: KtFile, elements: List<PsiElement>, targetSibling: PsiElement) {
+    fun doInvoke(project: Project, editor: Editor, file: KtFile, elements: List<PsiElement>, targetSibling: PsiElement) {
         val adjustedElements = (elements.singleOrNull() as? KtBlockExpression)?.statements ?: elements
         if (adjustedElements.isNotEmpty()) {
             val options = ExtractionOptions(extractAsProperty = true)

@@ -48,7 +48,7 @@ abstract class AbstractGotoTestOrCodeActionTest : KotlinLightCodeInsightFixtureT
             }
             ConfigLibraryUtil.configureLibrariesByDirective(myModule, PlatformTestUtil.getCommunityPath(), fileText)
 
-            myFixture.testDataPath = "${KotlinTestUtils.getHomeDirectory()}/${mainFile.getParent()}"
+            myFixture.testDataPath = "${KotlinTestUtils.getHomeDirectory()}/${mainFile.parent}"
 
             val mainFileName = mainFile.name
             val mainFileBaseName = mainFileName.substring(0, mainFileName.indexOf('.'))

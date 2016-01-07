@@ -21,7 +21,7 @@ import com.intellij.lang.refactoring.RefactoringSupportProvider
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSupportProvider
 import org.jetbrains.kotlin.idea.refactoring.introduce.*
 
-public class IntroducePropertyAction : AbstractIntroduceAction() {
+class IntroducePropertyAction : AbstractIntroduceAction() {
     override fun getRefactoringHandler(provider: RefactoringSupportProvider): RefactoringActionHandler? =
             (provider as? KotlinRefactoringSupportProvider)?.getIntroducePropertyHandler()
 }

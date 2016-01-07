@@ -18,15 +18,15 @@ package org.jetbrains.kotlin.checkers
 
 import com.intellij.codeInspection.ex.EntryPointsManagerBase
 
-public class PsiCheckerCustomTest : AbstractPsiCheckerTest() {
-    public fun testNoUnusedParameterWhenCustom() {
+class PsiCheckerCustomTest : AbstractPsiCheckerTest() {
+    fun testNoUnusedParameterWhenCustom() {
         val testAnnotation = "MyTestAnnotation"
-        EntryPointsManagerBase.getInstance(getProject()).ADDITIONAL_ANNOTATIONS.add(testAnnotation)
+        EntryPointsManagerBase.getInstance(project).ADDITIONAL_ANNOTATIONS.add(testAnnotation)
         try {
             doTest("idea/testData/checker/custom/noUnusedParameterWhenCustom.kt")
         }
         finally {
-            EntryPointsManagerBase.getInstance(getProject()).ADDITIONAL_ANNOTATIONS.remove(testAnnotation)
+            EntryPointsManagerBase.getInstance(project).ADDITIONAL_ANNOTATIONS.remove(testAnnotation)
         }
     }
 }

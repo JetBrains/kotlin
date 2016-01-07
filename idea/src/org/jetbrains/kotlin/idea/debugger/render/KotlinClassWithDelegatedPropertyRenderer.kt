@@ -34,7 +34,7 @@ import java.util.*
 import com.sun.jdi.Type as JdiType
 import org.jetbrains.org.objectweb.asm.Type as AsmType
 
-public class KotlinClassWithDelegatedPropertyRenderer : ClassRenderer() {
+class KotlinClassWithDelegatedPropertyRenderer : ClassRenderer() {
 
     override fun isApplicable(jdiType: Type?): Boolean {
         if (!super.isApplicable(jdiType)) return false

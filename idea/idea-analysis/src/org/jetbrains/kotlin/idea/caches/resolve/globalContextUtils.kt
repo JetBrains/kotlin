@@ -30,7 +30,7 @@ fun GlobalContextImpl.withCompositeExceptionTrackerUnderSameLock(): GlobalContex
 
 private class CompositeExceptionTracker(val delegate: ExceptionTracker) : ExceptionTracker() {
     override fun getModificationCount(): Long {
-        return super.getModificationCount() + delegate.getModificationCount()
+        return super.getModificationCount() + delegate.modificationCount
     }
 }
 
@@ -48,7 +48,7 @@ private class ExceptionTrackerWithProcessCanceledReport() : ExceptionTracker() {
     }
 }
 
-public fun GlobalContext(logProcessCanceled: Boolean): GlobalContextImpl {
+fun GlobalContext(logProcessCanceled: Boolean): GlobalContextImpl {
     val tracker = if (logProcessCanceled) ExceptionTrackerWithProcessCanceledReport() else ExceptionTracker()
     return GlobalContextImpl(LockBasedStorageManager.createWithExceptionHandling(tracker), tracker)
 }

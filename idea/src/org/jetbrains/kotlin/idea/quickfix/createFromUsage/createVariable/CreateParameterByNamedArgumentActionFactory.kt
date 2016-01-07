@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 
-public object CreateParameterByNamedArgumentActionFactory: CreateParameterFromUsageFactory<KtValueArgument>() {
+object CreateParameterByNamedArgumentActionFactory: CreateParameterFromUsageFactory<KtValueArgument>() {
     override fun getElementOfInterest(diagnostic: Diagnostic): KtValueArgument? {
         val argument = QuickFixUtil.getParentElementOfType(diagnostic, KtValueArgument::class.java) ?: return null
         return if (argument.isNamed()) argument else null

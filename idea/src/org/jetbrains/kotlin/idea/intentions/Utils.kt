@@ -125,7 +125,7 @@ fun KtQualifiedExpression.isReceiverExpressionWithValue(): Boolean {
     return analyze().getType(receiver) != null
 }
 
-public fun KtExpression.negate(): KtExpression {
+fun KtExpression.negate(): KtExpression {
     val specialNegation = specialNegation()
     if (specialNegation != null) return specialNegation
     return KtPsiFactory(this).createExpressionByPattern("!$0", this)

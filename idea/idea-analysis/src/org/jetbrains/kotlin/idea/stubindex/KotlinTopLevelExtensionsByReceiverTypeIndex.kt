@@ -21,7 +21,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StringStubIndexExtension
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 
-public class KotlinTopLevelExtensionsByReceiverTypeIndex private constructor() : StringStubIndexExtension<KtCallableDeclaration>() {
+class KotlinTopLevelExtensionsByReceiverTypeIndex private constructor() : StringStubIndexExtension<KtCallableDeclaration>() {
 
     override fun getKey() = KEY
 
@@ -32,12 +32,12 @@ public class KotlinTopLevelExtensionsByReceiverTypeIndex private constructor() :
         private val KEY = KotlinIndexUtil.createIndexKey<String, KtCallableDeclaration>(KotlinTopLevelExtensionsByReceiverTypeIndex::class.java)
         private val SEPARATOR = '\n'
 
-        public val INSTANCE: KotlinTopLevelExtensionsByReceiverTypeIndex = KotlinTopLevelExtensionsByReceiverTypeIndex()
+        val INSTANCE: KotlinTopLevelExtensionsByReceiverTypeIndex = KotlinTopLevelExtensionsByReceiverTypeIndex()
 
-        public fun buildKey(receiverTypeName: String, callableName: String): String = receiverTypeName + SEPARATOR + callableName
+        fun buildKey(receiverTypeName: String, callableName: String): String = receiverTypeName + SEPARATOR + callableName
 
-        public fun receiverTypeNameFromKey(key: String): String = key.substringBefore(SEPARATOR, "")
+        fun receiverTypeNameFromKey(key: String): String = key.substringBefore(SEPARATOR, "")
 
-        public fun callableNameFromKey(key: String): String = key.substringAfter(SEPARATOR, "")
+        fun callableNameFromKey(key: String): String = key.substringAfter(SEPARATOR, "")
     }
 }

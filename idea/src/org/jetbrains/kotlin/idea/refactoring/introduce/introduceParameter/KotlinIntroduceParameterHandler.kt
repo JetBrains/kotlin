@@ -66,7 +66,7 @@ import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
-public data class IntroduceParameterDescriptor(
+data class IntroduceParameterDescriptor(
         val originalRange: KotlinPsiRange,
         val callable: KtNamedDeclaration,
         val callableDescriptor: FunctionDescriptor,
@@ -206,13 +206,13 @@ fun selectNewParameterContext(
     )
 }
 
-public interface KotlinIntroduceParameterHelper {
+interface KotlinIntroduceParameterHelper {
     object Default: KotlinIntroduceParameterHelper
 
     fun configure(descriptor: IntroduceParameterDescriptor): IntroduceParameterDescriptor = descriptor
 }
 
-public open class KotlinIntroduceParameterHandler(
+open class KotlinIntroduceParameterHandler(
         val helper: KotlinIntroduceParameterHelper = KotlinIntroduceParameterHelper.Default
 ): RefactoringActionHandler {
     open fun invoke(project: Project, editor: Editor, expression: KtExpression, targetParent: KtNamedDeclaration) {
@@ -450,7 +450,7 @@ interface KotlinIntroduceLambdaParameterHelper: KotlinIntroduceParameterHelper {
     fun configureExtractLambda(descriptor: ExtractableCodeDescriptor): ExtractableCodeDescriptor = descriptor
 }
 
-public open class KotlinIntroduceLambdaParameterHandler(
+open class KotlinIntroduceLambdaParameterHandler(
         helper: KotlinIntroduceLambdaParameterHelper = KotlinIntroduceLambdaParameterHelper.Default
 ): KotlinIntroduceParameterHandler(helper) {
     val extractLambdaHelper = object: ExtractionEngineHelper(INTRODUCE_LAMBDA_PARAMETER) {

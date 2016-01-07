@@ -18,11 +18,11 @@ package org.jetbrains.kotlin.idea.actions.internal
 
 import com.intellij.ide.util.PropertiesComponent
 
-public class KotlinInternalMode {
-    public companion object Instance {
+class KotlinInternalMode {
+    companion object Instance {
         val INTERNAL_MODE_PROPERTY = "kotlin.internal.mode.enabled"
 
-        public var enabled: Boolean
+        var enabled: Boolean
             get() = PropertiesComponent.getInstance()!!.getBoolean(
                     INTERNAL_MODE_PROPERTY,
                     System.getProperty(INTERNAL_MODE_PROPERTY) == "true"

@@ -21,13 +21,12 @@ import org.jetbrains.kotlin.idea.completion.test.COMPLETION_TEST_DATA_BASE_PATH
 import org.jetbrains.kotlin.idea.completion.test.handlers.CompletionHandlerTestBase
 import java.io.File
 
-@Deprecated("All tests from here to be moved to the generated test")
-public class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
+@Deprecated("All tests from here to be moved to the generated test") class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
     private fun checkResult(){
         fixture.checkResultByFile(getTestName(false) + ".kt.after")
     }
 
-    override fun getTestDataPath() = File(COMPLETION_TEST_DATA_BASE_PATH, "/handlers").getPath() + File.separator
+    override fun getTestDataPath() = File(COMPLETION_TEST_DATA_BASE_PATH, "/handlers").path + File.separator
 
     private fun doTest() {
         doTest(2, "*", null, null, '\n')

@@ -29,7 +29,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ContentEntry
 
-public class HighlightingWithDependentLibrariesTest : KotlinLightCodeInsightFixtureTestCase() {
+class HighlightingWithDependentLibrariesTest : KotlinLightCodeInsightFixtureTestCase() {
     private val TEST_DATA_PATH = PluginTestCaseBase.getTestDataPathBase() + "/highlightingWithDependentLibraries"
 
     override fun getProjectDescriptor() = object : KotlinLightProjectDescriptor() {
@@ -42,15 +42,15 @@ public class HighlightingWithDependentLibrariesTest : KotlinLightCodeInsightFixt
         }
 
         private fun createLibrary(jarFile: File, name: String): Library {
-            val library = LibraryTablesRegistrar.getInstance()!!.getLibraryTable(getProject()).createLibrary(name)!!
-            val model = library.getModifiableModel()
+            val library = LibraryTablesRegistrar.getInstance()!!.getLibraryTable(project).createLibrary(name)!!
+            val model = library.modifiableModel
             model.addRoot(VfsUtil.getUrlForLibraryRoot(jarFile), OrderRootType.CLASSES)
             model.commit()
             return library
         }
     }
 
-    public fun testHighlightingWithDependentLibraries() {
+    fun testHighlightingWithDependentLibraries() {
         myFixture.configureByFile("$TEST_DATA_PATH/module/usingLibs.kt")
         myFixture.checkHighlighting(false, false, false)
     }

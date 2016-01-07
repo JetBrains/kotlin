@@ -61,7 +61,7 @@ class TypeInstantiationItems(
         val lookupElementFactory: LookupElementFactory,
         val forOrdinaryCompletion: Boolean
 ) {
-    public fun addTo(
+    fun addTo(
             items: MutableCollection<LookupElement>,
             inheritanceSearchers: MutableCollection<InheritanceItemsSearcher>,
             expectedInfos: Collection<ExpectedInfo>
@@ -130,21 +130,21 @@ class TypeInstantiationItems(
         }
 
         // not all inner classes can be instantiated and we handle them via constructors returned by ReferenceVariantsHelper
-        if (classifier.isInner()) return null
+        if (classifier.isInner) return null
 
-        val isAbstract = classifier.getModality() == Modality.ABSTRACT
+        val isAbstract = classifier.modality == Modality.ABSTRACT
         if (forOrdinaryCompletion && isAbstract) return null
 
-        val allConstructors = classifier.getConstructors()
+        val allConstructors = classifier.constructors
         val visibleConstructors = allConstructors.filter {
             if (isAbstract)
-                visibilityFilter(it) || it.getVisibility() == Visibilities.PROTECTED
+                visibilityFilter(it) || it.visibility == Visibilities.PROTECTED
             else
                 visibilityFilter(it)
         }
         if (allConstructors.isNotEmpty() && visibleConstructors.isEmpty()) return null
 
-        var lookupString = lookupElement.getLookupString()
+        var lookupString = lookupElement.lookupString
         var allLookupStrings = setOf(lookupString)
         var itemText = lookupString
         var signatureText: String? = null
@@ -164,11 +164,11 @@ class TypeInstantiationItems(
                 itemText += "<...>"
             }
 
-            val constructorParenthesis = if (classifier.getKind() != ClassKind.INTERFACE) "()" else ""
+            val constructorParenthesis = if (classifier.kind != ClassKind.INTERFACE) "()" else ""
             itemText += constructorParenthesis
             itemText = "object: $itemText{...}"
             lookupString = "object"
-            allLookupStrings = setOf(lookupString, lookupElement.getLookupString())
+            allLookupStrings = setOf(lookupString, lookupElement.lookupString)
             insertHandler = InsertHandler<LookupElement> { context, item ->
                 val startOffset = context.startOffset
 
@@ -216,12 +216,12 @@ class TypeInstantiationItems(
 
             insertHandler = object : InsertHandler<LookupElement> {
                 override fun handleInsert(context: InsertionContext, item: LookupElement) {
-                    context.getDocument().replaceString(context.getStartOffset(), context.getTailOffset(), typeText)
-                    context.setTailOffset(context.getStartOffset() + typeText.length)
+                    context.document.replaceString(context.startOffset, context.tailOffset, typeText)
+                    context.tailOffset = context.startOffset + typeText.length
 
                     baseInsertHandler.handleInsert(context, item)
 
-                    shortenReferences(context, context.getStartOffset(), context.getTailOffset())
+                    shortenReferences(context, context.startOffset, context.tailOffset)
                 }
             }
             if (baseInsertHandler.inputValueArguments) {
@@ -240,29 +240,29 @@ class TypeInstantiationItems(
             override fun getAllLookupStrings() = allLookupStrings
 
             override fun renderElement(presentation: LookupElementPresentation) {
-                getDelegate().renderElement(presentation)
-                presentation.setItemText(itemText)
+                delegate.renderElement(presentation)
+                presentation.itemText = itemText
 
                 presentation.clearTail()
                 if (signatureText != null) {
                     presentation.appendTailText(signatureText!!, false)
                 }
-                presentation.appendTailText(" (" + DescriptorUtils.getFqName(classifier.getContainingDeclaration()) + ")", true)
+                presentation.appendTailText(" (" + DescriptorUtils.getFqName(classifier.containingDeclaration) + ")", true)
             }
 
             override fun handleInsert(context: InsertionContext) {
-                insertHandler.handleInsert(context, getDelegate())
+                insertHandler.handleInsert(context, delegate)
             }
 
             override fun equals(other: Any?): Boolean {
                 if (other === this) return true
                 if (other !is InstantiationLookupElement) return false
-                if (getLookupString() != other.getLookupString()) return false
+                if (getLookupString() != other.lookupString) return false
                 val presentation1 = LookupElementPresentation()
                 val presentation2 = LookupElementPresentation()
                 renderElement(presentation1)
                 other.renderElement(presentation2)
-                return presentation1.getItemText() == presentation2.getItemText() && presentation1.getTailText() == presentation2.getTailText()
+                return presentation1.itemText == presentation2.itemText && presentation1.tailText == presentation2.tailText
             }
         }
 
@@ -274,11 +274,11 @@ class TypeInstantiationItems(
     }
 
     private fun addSamConstructorItem(collection: MutableCollection<LookupElement>, `class`: ClassDescriptor, tail: Tail?) {
-        if (`class`.getKind() == ClassKind.INTERFACE) {
-            val container = `class`.getContainingDeclaration()
+        if (`class`.kind == ClassKind.INTERFACE) {
+            val container = `class`.containingDeclaration
             val scope = when (container) {
                 is PackageFragmentDescriptor -> container.getMemberScope()
-                is ClassDescriptor -> container.getStaticScope()
+                is ClassDescriptor -> container.staticScope
                 else -> return
             }
             val samConstructor = scope.getContributedFunctions(`class`.name, NoLookupLocation.FROM_IDE)

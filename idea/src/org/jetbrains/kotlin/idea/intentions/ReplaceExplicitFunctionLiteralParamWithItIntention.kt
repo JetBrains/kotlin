@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-public class ReplaceExplicitFunctionLiteralParamWithItIntention() : PsiElementBaseIntentionAction() {
+class ReplaceExplicitFunctionLiteralParamWithItIntention() : PsiElementBaseIntentionAction() {
     override fun getFamilyName() = "Replace explicit lambda parameter with 'it'"
 
     override fun isAvailable(project: Project, editor: Editor, element: PsiElement): Boolean {
@@ -80,7 +80,7 @@ public class ReplaceExplicitFunctionLiteralParamWithItIntention() : PsiElementBa
                         false,
                         false
     ) {
-        public override fun performRefactoring(usages: Array<out UsageInfo>) {
+        override fun performRefactoring(usages: Array<out UsageInfo>) {
             super.performRefactoring(usages)
 
             functionLiteral.deleteChildRange(functionLiteral.valueParameterList, functionLiteral.arrow!!)

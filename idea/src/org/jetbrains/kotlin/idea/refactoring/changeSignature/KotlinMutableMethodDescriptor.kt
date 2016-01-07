@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.idea.refactoring.changeSignature
 
 import org.jetbrains.kotlin.descriptors.Visibility
 
-public class KotlinMutableMethodDescriptor(override val original: KotlinMethodDescriptor): KotlinMethodDescriptor by original {
+class KotlinMutableMethodDescriptor(override val original: KotlinMethodDescriptor): KotlinMethodDescriptor by original {
     private val parameters: MutableList<KotlinParameterInfo> = original.parameters
 
     override var receiver: KotlinParameterInfo? = original.receiver
@@ -29,22 +29,22 @@ public class KotlinMutableMethodDescriptor(override val original: KotlinMethodDe
             field = value
         }
 
-    public fun addParameter(parameter: KotlinParameterInfo) {
+    fun addParameter(parameter: KotlinParameterInfo) {
         parameters.add(parameter)
     }
 
-    public fun removeParameter(index: Int) {
+    fun removeParameter(index: Int) {
         val paramInfo = parameters.removeAt(index)
         if (paramInfo == receiver) {
             receiver = null
         }
     }
 
-    public fun renameParameter(index: Int, newName: String) {
+    fun renameParameter(index: Int, newName: String) {
         parameters[index].name = newName
     }
 
-    public fun clearNonReceiverParameters() {
+    fun clearNonReceiverParameters() {
         parameters.clear()
         receiver?.let { parameters.add(it) }
     }

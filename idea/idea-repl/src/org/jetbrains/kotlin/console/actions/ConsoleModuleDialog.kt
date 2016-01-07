@@ -24,10 +24,10 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import org.jetbrains.kotlin.console.KotlinConsoleKeeper
 
-public class ConsoleModuleDialog(private val project: Project) {
+class ConsoleModuleDialog(private val project: Project) {
     private val TITLE = "Choose context module..."
 
-    public fun showIfNeeded(dataContext: DataContext) {
+    fun showIfNeeded(dataContext: DataContext) {
         val module = getModule(dataContext)
         if (module != null) return runConsole(module)
 

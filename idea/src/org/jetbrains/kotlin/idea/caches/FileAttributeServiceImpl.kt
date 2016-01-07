@@ -21,7 +21,7 @@ import com.intellij.openapi.vfs.newvfs.FileAttribute
 import com.intellij.util.containers.ContainerUtil
 import com.intellij.util.io.DataInputOutputUtil
 
-public class FileAttributeServiceImpl : FileAttributeService {
+class FileAttributeServiceImpl : FileAttributeService {
     val attributes: MutableMap<String, FileAttribute> = ContainerUtil.newConcurrentMap()
 
     override fun register(id: String, version: Int) {

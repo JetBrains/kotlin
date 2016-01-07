@@ -143,7 +143,7 @@ private fun generateFunction(project: Project, descriptor: FunctionDescriptor, b
     return KtPsiFactory(project).createFunction(OVERRIDE_RENDERER.render(newDescriptor) + body)
 }
 
-public fun generateUnsupportedOrSuperCall(descriptor: CallableMemberDescriptor, bodyType: OverrideMemberChooserObject.BodyType): String {
+fun generateUnsupportedOrSuperCall(descriptor: CallableMemberDescriptor, bodyType: OverrideMemberChooserObject.BodyType): String {
     if (bodyType == OverrideMemberChooserObject.BodyType.EMPTY) {
         return "throw UnsupportedOperationException()"
     }

@@ -42,7 +42,7 @@ fun KtNamedDeclaration.getDeclarationBody(): KtElement? {
     }
 }
 
-public fun PsiElement.isCaller(allUsages: Array<out UsageInfo>): Boolean {
+fun PsiElement.isCaller(allUsages: Array<out UsageInfo>): Boolean {
     val elementToSearch = (this as? KtClass)?.getPrimaryConstructor() ?: this
     return allUsages
             .asSequence()
@@ -56,7 +56,7 @@ public fun PsiElement.isCaller(allUsages: Array<out UsageInfo>): Boolean {
             .any { it.element == elementToSearch }
 }
 
-public fun KtElement.isInsideOfCallerBody(allUsages: Array<out UsageInfo>): Boolean {
+fun KtElement.isInsideOfCallerBody(allUsages: Array<out UsageInfo>): Boolean {
     val container = parentsWithSelf.firstOrNull {
         it is KtNamedFunction || it is KtConstructor<*> || it is KtClassOrObject
     } as? KtNamedDeclaration ?: return false

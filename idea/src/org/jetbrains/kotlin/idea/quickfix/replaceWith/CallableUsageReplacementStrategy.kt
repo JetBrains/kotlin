@@ -615,7 +615,7 @@ private open class ConstructedExpressionWrapper(
 ) {
     val psiFactory = KtPsiFactory(expression)
 
-    public fun replaceExpression(oldExpression: KtExpression, newExpression: KtExpression): KtExpression {
+    fun replaceExpression(oldExpression: KtExpression, newExpression: KtExpression): KtExpression {
         assert(expression.isAncestor(oldExpression))
         val result = oldExpression.replace(newExpression) as KtExpression
         if (oldExpression == expression) {
@@ -632,7 +632,7 @@ private class ConstructedExpressionWrapperWithIntroduceFeature(
 ) : ConstructedExpressionWrapper(expression, bindingContext) {
     val addedStatements = ArrayList<KtExpression>()
 
-    public fun introduceValue(
+    fun introduceValue(
             value: KtExpression,
             valueType: KotlinType?,
             usages: Collection<KtExpression>,

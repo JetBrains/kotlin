@@ -22,7 +22,7 @@ import com.intellij.psi.stubs.StringStubIndexExtension
 import com.intellij.psi.stubs.StubIndexKey
 import org.jetbrains.kotlin.psi.KtFile
 
-public class KotlinFileFacadeClassByPackageIndex private constructor() : StringStubIndexExtension<KtFile>() {
+class KotlinFileFacadeClassByPackageIndex private constructor() : StringStubIndexExtension<KtFile>() {
     override fun getKey(): StubIndexKey<String, KtFile> = KEY
 
     override fun get(key: String, project: Project, scope: GlobalSearchScope) =
@@ -31,10 +31,8 @@ public class KotlinFileFacadeClassByPackageIndex private constructor() : StringS
     companion object {
         private val KEY = KotlinIndexUtil.createIndexKey(KotlinFileFacadeClassByPackageIndex::class.java)
 
-        @JvmField
-        public val INSTANCE: KotlinFileFacadeClassByPackageIndex = KotlinFileFacadeClassByPackageIndex()
+        @JvmField val INSTANCE: KotlinFileFacadeClassByPackageIndex = KotlinFileFacadeClassByPackageIndex()
 
-        @JvmStatic
-        public fun getInstance(): KotlinFileFacadeClassByPackageIndex = INSTANCE
+        @JvmStatic fun getInstance(): KotlinFileFacadeClassByPackageIndex = INSTANCE
     }
 }

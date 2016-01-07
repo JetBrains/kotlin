@@ -58,7 +58,7 @@ class KotlinJavaScriptMetaFileDecompiler : ClassFileDecompilers.Full() {
 
 private val decompilerRendererForJS = DescriptorRenderer.withOptions { defaultDecompilerRendererOptions() }
 
-public fun buildDecompiledTextFromJsMetadata(
+fun buildDecompiledTextFromJsMetadata(
         classFile: VirtualFile,
         resolver: ResolverForDecompiler = KotlinJavaScriptDeserializerForDecompiler(classFile)
 ): DecompiledText {

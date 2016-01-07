@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.psi.KtThisExpression
 
 // Explicit reference to function parameter or outer this
-public abstract class KotlinExplicitReferenceUsage<T : KtElement>(element: T) : KotlinUsageInfo<T>(element) {
+abstract class KotlinExplicitReferenceUsage<T : KtElement>(element: T) : KotlinUsageInfo<T>(element) {
     abstract fun getReplacementText(changeInfo: KotlinChangeInfo): String
 
     protected open fun processReplacedElement(element: KtElement) {
@@ -44,7 +44,7 @@ public abstract class KotlinExplicitReferenceUsage<T : KtElement>(element: T) : 
     }
 }
 
-public class KotlinParameterUsage(
+class KotlinParameterUsage(
         element: KtElement,
         private val parameterInfo: KotlinParameterInfo,
         val containingCallable: KotlinCallableDefinitionUsage<*>
@@ -65,7 +65,7 @@ public class KotlinParameterUsage(
     }
 }
 
-public class KotlinNonQualifiedOuterThisUsage(
+class KotlinNonQualifiedOuterThisUsage(
         element: KtThisExpression,
         val targetDescriptor: DeclarationDescriptor
 ) : KotlinExplicitReferenceUsage<KtThisExpression>(element) {

@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.idea.util.psi.patternMatching.toRange
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtFile
 
-public class ExtractKotlinFunctionHandler(
-        public val allContainersEnabled: Boolean = false,
+class ExtractKotlinFunctionHandler(
+        val allContainersEnabled: Boolean = false,
         private val helper: ExtractionEngineHelper = ExtractKotlinFunctionHandler.InteractiveExtractionHelper) : RefactoringActionHandler {
 
     object InteractiveExtractionHelper : ExtractionEngineHelper(EXTRACT_FUNCTION) {

@@ -23,9 +23,9 @@ import java.io.File
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.roots.OrderRootType
 
-public fun Module.findLibrary(predicate: (Library) -> Boolean): Library? = OrderEnumerator.orderEntries(this).findLibrary(predicate)
+fun Module.findLibrary(predicate: (Library) -> Boolean): Library? = OrderEnumerator.orderEntries(this).findLibrary(predicate)
 
-public fun OrderEnumerator.findLibrary(predicate: (Library) -> Boolean): Library? {
+fun OrderEnumerator.findLibrary(predicate: (Library) -> Boolean): Library? {
     var lib: Library? = null
     forEachLibrary { library ->
         if (predicate(library!!)) {
@@ -40,9 +40,9 @@ public fun OrderEnumerator.findLibrary(predicate: (Library) -> Boolean): Library
     return lib
 }
 
-public fun Module.getModuleDir(): String = File(getModuleFilePath()).getParent()!!.replace(File.separatorChar, '/')
+fun Module.getModuleDir(): String = File(moduleFilePath).parent!!.replace(File.separatorChar, '/')
 
-public fun Library.ModifiableModel.replaceFileRoot(oldFile: File, newFile: File) {
+fun Library.ModifiableModel.replaceFileRoot(oldFile: File, newFile: File) {
     val oldRoot = VfsUtil.getUrlForLibraryRoot(oldFile)
     val newRoot = VfsUtil.getUrlForLibraryRoot(newFile)
 

@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.resolve.OverrideResolver
 
-public open class ImplementMembersHandler : OverrideImplementMembersHandler(), IntentionAction {
+open class ImplementMembersHandler : OverrideImplementMembersHandler(), IntentionAction {
     override fun collectMembersToGenerate(descriptor: ClassDescriptor, project: Project): Collection<OverrideMemberChooserObject> {
         return OverrideResolver.getMissingImplementations(descriptor)
                 .map { OverrideMemberChooserObject.create(project, it, it, OverrideMemberChooserObject.BodyType.EMPTY) }
@@ -45,7 +45,7 @@ public open class ImplementMembersHandler : OverrideImplementMembersHandler(), I
     override fun isAvailable(project: Project, editor: Editor, file: PsiFile) = isValidFor(editor, file)
 }
 
-public class ImplementAsConstructorParameter : ImplementMembersHandler() {
+class ImplementAsConstructorParameter : ImplementMembersHandler() {
     override fun getText() = "Implement as constructor parameters"
 
     override fun isValidForClass(classOrObject: KtClassOrObject): Boolean {

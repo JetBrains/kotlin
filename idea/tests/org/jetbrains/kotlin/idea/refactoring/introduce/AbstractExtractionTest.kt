@@ -59,7 +59,7 @@ import java.io.File
 import java.util.*
 import kotlin.test.assertEquals
 
-public abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTestCase() {
+abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor() = LightCodeInsightFixtureTestCase.JAVA_LATEST
 
     val fixture: JavaCodeInsightTestFixture get() = myFixture
@@ -79,7 +79,7 @@ public abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTe
 
     private fun doIntroduceParameterTest(path: String, asLambda: Boolean) {
         doTest(path) { file ->
-            val fileText = file.getText()
+            val fileText = file.text
 
             open class HelperImpl: KotlinIntroduceParameterHelper {
                 override fun configure(descriptor: IntroduceParameterDescriptor): IntroduceParameterDescriptor {
@@ -135,11 +135,11 @@ public abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTe
 
             var elementToWorkOn: ElementToWorkOn? = null
             ElementToWorkOn.processElementToWorkOn(
-                    getEditor(),
+                    editor,
                     file,
                     "Introduce parameter",
                     null,
-                    getProject(),
+                    project,
                     object : ElementToWorkOn.ElementsProcessor<ElementToWorkOn> {
                         override fun accept(e: ElementToWorkOn): Boolean {
                             return true
@@ -152,8 +152,8 @@ public abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTe
                         }
                     })
 
-            val expr = elementToWorkOn!!.getExpression()
-            val localVar = elementToWorkOn!!.getLocalVariable()
+            val expr = elementToWorkOn!!.expression
+            val localVar = elementToWorkOn!!.localVariable
 
             val context = expr ?: localVar
             val method = Util.getContainingMethod(context) ?: throw AssertionError("No containing method found")
@@ -163,18 +163,18 @@ public abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTe
 
             val (initializer, occurrences) =
                     if (expr == null) {
-                        localVar.getInitializer()!! to CodeInsightUtil.findReferenceExpressions(method, localVar)
+                        localVar.initializer!! to CodeInsightUtil.findReferenceExpressions(method, localVar)
                     }
                     else {
                         expr to ExpressionOccurrenceManager(expr, method, null).findExpressionOccurrences()
                     }
-            val type = initializer.getType()
+            val type = initializer.type
 
             val parametersToRemove = Util.findParametersToRemove(method, initializer, occurrences)
 
-            val codeStyleManager = JavaCodeStyleManager.getInstance(getProject())
+            val codeStyleManager = JavaCodeStyleManager.getInstance(project)
             val info = codeStyleManager.suggestUniqueVariableName(
-                    codeStyleManager.suggestVariableName(VariableKind.PARAMETER, localVar?.getName(), initializer, type),
+                    codeStyleManager.suggestVariableName(VariableKind.PARAMETER, localVar?.name, initializer, type),
                     expr,
                     true
             )
@@ -183,7 +183,7 @@ public abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTe
                     initializer
             )
 
-            IntroduceParameterProcessor(getProject(),
+            IntroduceParameterProcessor(project,
                                         method,
                                         methodToSearchFor,
                                         initializer,
@@ -198,7 +198,7 @@ public abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTe
                                         null,
                                         parametersToRemove).run()
 
-            getEditor().getSelectionModel().removeSelection()
+            editor.selectionModel.removeSelection()
         }
     }
 
@@ -227,9 +227,9 @@ public abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTe
                 }
             }
             val handler = KotlinIntroducePropertyHandler(helper)
-            val editor = fixture.getEditor()
+            val editor = fixture.editor
             handler.selectElements(editor, file) { elements, previousSibling ->
-                handler.doInvoke(getProject(), editor, file, elements, explicitPreviousSibling ?: previousSibling)
+                handler.doInvoke(project, editor, file, elements, explicitPreviousSibling ?: previousSibling)
             }
         }
     }
@@ -251,13 +251,13 @@ public abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTe
                 if (it.isNotEmpty()) {
                     @Suppress("CAST_NEVER_SUCCEEDS")
                     val args = it.map { it.toBoolean() }.toTypedArray() as Array<Any?>
-                    ExtractionOptions::class.java.getConstructors().first { it.getParameterTypes().size == args.size }.newInstance(*args) as ExtractionOptions
+                    ExtractionOptions::class.java.constructors.first { it.parameterTypes.size == args.size }.newInstance(*args) as ExtractionOptions
                 } else ExtractionOptions.DEFAULT
             }
 
             val renderer = DescriptorRenderer.DEBUG_TEXT
 
-            val editor = fixture.getEditor()
+            val editor = fixture.editor
             val handler = ExtractKotlinFunctionHandler(
                     helper = object : ExtractionEngineHelper(EXTRACT_FUNCTION) {
                         override fun adjustExtractionData(data: ExtractionData): ExtractionData {
@@ -312,17 +312,17 @@ public abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTe
         val afterFile = File("$path.after")
         val conflictFile = File("$path.conflicts")
 
-        fixture.setTestDataPath("${KotlinTestUtils.getHomeDirectory()}/${mainFile.getParent()}")
+        fixture.testDataPath = "${KotlinTestUtils.getHomeDirectory()}/${mainFile.parent}"
 
-        val mainFileName = mainFile.getName()
+        val mainFileName = mainFile.name
         val mainFileBaseName = FileUtil.getNameWithoutExtension(mainFileName)
-        val extraFiles = mainFile.getParentFile().listFiles { file, name ->
+        val extraFiles = mainFile.parentFile.listFiles { file, name ->
             name != mainFileName && name.startsWith("$mainFileBaseName.") && (name.endsWith(".kt") || name.endsWith(".java"))
         }
-        val extraFilesToPsi = extraFiles.toMapBy { fixture.configureByFile(it.getName()) }
+        val extraFilesToPsi = extraFiles.toMapBy { fixture.configureByFile(it.name) }
         val file = fixture.configureByFile(mainFileName)
 
-        val addKotlinRuntime = InTextDirectivesUtils.findStringWithPrefixes(file.getText(), "// WITH_RUNTIME") != null
+        val addKotlinRuntime = InTextDirectivesUtils.findStringWithPrefixes(file.text, "// WITH_RUNTIME") != null
         if (addKotlinRuntime) {
             ConfigLibraryUtil.configureKotlinRuntimeAndSdk(myModule, PluginTestCaseBase.mockJdk())
         }
@@ -331,11 +331,11 @@ public abstract class AbstractExtractionTest() : KotlinLightCodeInsightFixtureTe
             action(file)
 
             assert(!conflictFile.exists()) { "Conflict file $conflictFile should not exist" }
-            KotlinTestUtils.assertEqualsToFile(afterFile, file.getText()!!)
+            KotlinTestUtils.assertEqualsToFile(afterFile, file.text!!)
 
             if (checkAdditionalAfterdata) {
                 for ((extraPsiFile, extraFile) in extraFilesToPsi) {
-                    KotlinTestUtils.assertEqualsToFile(File("${extraFile.getPath()}.after"), extraPsiFile.getText())
+                    KotlinTestUtils.assertEqualsToFile(File("${extraFile.path}.after"), extraPsiFile.text)
                 }
             }
         }

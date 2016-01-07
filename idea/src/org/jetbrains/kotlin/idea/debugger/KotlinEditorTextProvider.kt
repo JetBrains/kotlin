@@ -31,14 +31,14 @@ class KotlinEditorTextProvider : EditorTextProvider {
     override fun getEditorText(elementAtCaret: PsiElement): TextWithImports? {
         val expression = findExpressionInner(elementAtCaret, true) ?: return null
 
-        val expressionText = getElementInfo(expression) { it.getText() }
+        val expressionText = getElementInfo(expression) { it.text }
         return TextWithImportsImpl(CodeFragmentKind.EXPRESSION, expressionText, "", KotlinFileType.INSTANCE)
     }
 
     override fun findExpression(elementAtCaret: PsiElement, allowMethodCalls: Boolean): Pair<PsiElement, TextRange>? {
         val expression = findExpressionInner(elementAtCaret, allowMethodCalls) ?: return null
 
-        val expressionRange = getElementInfo(expression) { it.getTextRange() }
+        val expressionRange = getElementInfo(expression) { it.textRange }
         return Pair(expression, expressionRange)
     }
 
@@ -47,7 +47,7 @@ class KotlinEditorTextProvider : EditorTextProvider {
         fun <T> getElementInfo(expr: KtExpression, f: (PsiElement) -> T): T {
             var expressionText = f(expr)
             if (expr is KtProperty) {
-                val nameIdentifier = expr.getNameIdentifier()
+                val nameIdentifier = expr.nameIdentifier
                 if (nameIdentifier != null) {
                     expressionText = f(nameIdentifier)
                 }
@@ -62,34 +62,34 @@ class KotlinEditorTextProvider : EditorTextProvider {
             if (jetElement == null) return null
 
             if (jetElement is KtProperty) {
-                val nameIdentifier = jetElement.getNameIdentifier()
+                val nameIdentifier = jetElement.nameIdentifier
                 if (nameIdentifier == element) {
                     return jetElement
                 }
             }
 
-            val parent = jetElement.getParent()
+            val parent = jetElement.parent
             if (parent == null) return null
 
             val newExpression = when (parent) {
                 is KtThisExpression,
                 is KtSuperExpression,
                 is KtReferenceExpression -> {
-                    val pparent = parent.getParent()
+                    val pparent = parent.parent
                     when (pparent) {
                         is KtQualifiedExpression -> pparent
                         else -> parent
                     }
                 }
                 is KtQualifiedExpression -> {
-                    if (parent.getReceiverExpression() != jetElement) {
+                    if (parent.receiverExpression != jetElement) {
                         parent
                     } else {
                         null
                     }
                 }
                 is KtOperationExpression -> {
-                    if (parent.getOperationReference() == jetElement) {
+                    if (parent.operationReference == jetElement) {
                         parent
                     } else {
                         null
@@ -102,7 +102,7 @@ class KotlinEditorTextProvider : EditorTextProvider {
                 fun PsiElement.isCall() = this is KtCallExpression || this is KtOperationExpression || this is KtArrayAccessExpression
 
                 if (newExpression.isCall() ||
-                        newExpression is KtQualifiedExpression && newExpression.getSelectorExpression()!!.isCall()) {
+                        newExpression is KtQualifiedExpression && newExpression.selectorExpression!!.isCall()) {
                     return null
                 }
             }

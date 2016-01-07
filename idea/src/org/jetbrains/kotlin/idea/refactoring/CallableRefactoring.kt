@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
 import java.util.*
 
-public abstract class CallableRefactoring<T: CallableDescriptor>(
+abstract class CallableRefactoring<T: CallableDescriptor>(
         val project: Project,
         val callableDescriptor: T,
         val commandName: String) {
@@ -107,7 +107,7 @@ public abstract class CallableRefactoring<T: CallableDescriptor>(
 
     protected abstract fun performRefactoring(descriptorsForChange: Collection<CallableDescriptor>)
 
-    public fun run(): Boolean {
+    fun run(): Boolean {
         fun buttonPressed(code: Int, dialogButtons: List<String>, button: String): Boolean {
             return code == dialogButtons.indexOf(button) && button in dialogButtons
         }

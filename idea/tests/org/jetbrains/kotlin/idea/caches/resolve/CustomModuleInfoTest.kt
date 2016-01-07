@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.junit.Assert
 
-public class CustomModuleInfoTest : KotlinLightCodeInsightFixtureTestCase() {
+class CustomModuleInfoTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     fun testModuleInfoForMembersOfLightClassForDecompiledFile() {

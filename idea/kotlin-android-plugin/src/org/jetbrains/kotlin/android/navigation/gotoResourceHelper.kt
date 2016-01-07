@@ -43,12 +43,12 @@ fun getInfo(
     if (info != null) return info
 
     val topMostQualified = referenceExpression.getParentQualified().getParentQualified() ?: return null
-    val selectorCandidate = topMostQualified.getSelectorExpression() as? KtSimpleNameExpression ?: return null
+    val selectorCandidate = topMostQualified.selectorExpression as? KtSimpleNameExpression ?: return null
     return getReferredInfo(selectorCandidate, facet)
 }
 
 private fun KtExpression?.getParentQualified(): KtDotQualifiedExpression? {
-    return this?.getParent() as? KtDotQualifiedExpression
+    return this?.parent as? KtDotQualifiedExpression
 }
 
 // returns info if passed expression is 'b' in 'R.a.b'
@@ -71,19 +71,19 @@ private fun getReferredInfo(
     //the following code is copied from
     // org.jetbrains.android.util.AndroidResourceUtil.getReferredResourceOrManifestField
     // (org.jetbrains.android.facet.AndroidFacet, com.intellij.psi.PsiReferenceExpression, java.lang.String, boolean)
-    val classShortName = resolvedClass.getName()
+    val classShortName = resolvedClass.name
 
     val fromManifest = AndroidUtils.MANIFEST_CLASS_NAME == classShortName
 
     if (!fromManifest && AndroidUtils.R_CLASS_NAME != classShortName) {
         return null
     }
-    val qName = resolvedClass.getQualifiedName()
+    val qName = resolvedClass.qualifiedName
 
     if (SdkConstants.CLASS_R == qName || AndroidPsiElementFinder.INTERNAL_R_CLASS_QNAME == qName) {
         return AndroidResourceUtil.MyReferredResourceFieldInfo(resClassName, resFieldName, true, false)
     }
-    val containingFile = resolvedClass.getContainingFile() ?: return null
+    val containingFile = resolvedClass.containingFile ?: return null
 
     val isFromCorrectFile =
             if (fromManifest) AndroidResourceUtil.isManifestJavaFile(facet, containingFile)
@@ -103,7 +103,7 @@ private fun getReceiverAsSimpleNameExpression(exp: KtSimpleNameExpression): KtSi
             receiver
         }
         is KtDotQualifiedExpression -> {
-            receiver.getSelectorExpression() as? KtSimpleNameExpression
+            receiver.selectorExpression as? KtSimpleNameExpression
         }
         else -> null
     }

@@ -78,7 +78,7 @@ private class ClassClsStubBuilder(
     private val classOrObjectStub = createClassOrObjectStubAndModifierListStub()
 
     fun build() {
-        val typeConstraintListData = typeStubBuilder.createTypeParameterListStub(classOrObjectStub, classProto.getTypeParameterList())
+        val typeConstraintListData = typeStubBuilder.createTypeParameterListStub(classOrObjectStub, classProto.typeParameterList)
         createConstructorStub()
         createDelegationSpecifierList()
         typeStubBuilder.createTypeConstraintListStub(classOrObjectStub, typeConstraintListData)
@@ -105,7 +105,7 @@ private class ClassClsStubBuilder(
             ProtoBuf.Class.Kind.ANNOTATION_CLASS -> listOf(KtTokens.ANNOTATION_KEYWORD)
             else -> listOf<KtModifierKeywordToken>()
         }
-        return createModifierListStubForDeclaration(parent, classProto.getFlags(), relevantFlags, additionalModifiers)
+        return createModifierListStubForDeclaration(parent, classProto.flags, relevantFlags, additionalModifiers)
     }
 
     private fun doCreateClassOrObjectStub(): StubElement<out PsiElement> {
@@ -115,12 +115,12 @@ private class ClassClsStubBuilder(
         val superTypeRefs = supertypeIds.filterNot {
             //TODO: filtering function types should go away
             KotlinBuiltIns.isNumberedFunctionClassFqName(it.asSingleFqName().toUnsafe())
-        }.map { it.getShortClassName().ref() }.toTypedArray()
+        }.map { it.shortClassName.ref() }.toTypedArray()
         return when (classKind) {
             ProtoBuf.Class.Kind.OBJECT, ProtoBuf.Class.Kind.COMPANION_OBJECT -> {
                 KotlinObjectStubImpl(
                         parentStub, shortName, fqName, superTypeRefs,
-                        isTopLevel = !classId.isNestedClass(),
+                        isTopLevel = !classId.isNestedClass,
                         isDefault = isCompanionObject,
                         isLocal = false,
                         isObjectLiteral = false
@@ -136,7 +136,7 @@ private class ClassClsStubBuilder(
                         isTrait = classKind == ProtoBuf.Class.Kind.INTERFACE,
                         isEnumEntry = classKind == ProtoBuf.Class.Kind.ENUM_ENTRY,
                         isLocal = false,
-                        isTopLevel = !classId.isNestedClass()
+                        isTopLevel = !classId.isNestedClass
                 )
             }
         }
@@ -222,7 +222,7 @@ private class ClassClsStubBuilder(
     }
 
     private fun createInnerAndNestedClasses(classBody: KotlinPlaceHolderStubImpl<KtClassBody>) {
-        classProto.getNestedClassNameList().forEach { id ->
+        classProto.nestedClassNameList.forEach { id ->
             val nestedClassName = c.nameResolver.getName(id)
             if (nestedClassName != companionObjectName) {
                 val nestedClassId = classId.createNestedClassId(nestedClassName)

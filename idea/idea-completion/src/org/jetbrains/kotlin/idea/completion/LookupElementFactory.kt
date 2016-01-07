@@ -240,12 +240,12 @@ class LookupElementFactory(
                 override fun renderElement(presentation: LookupElementPresentation) {
                     super.renderElement(presentation)
                     if (style == Style.BOLD) {
-                        presentation.setItemTextBold(true)
+                        presentation.isItemTextBold = true
                     }
                     else {
-                        presentation.setItemTextForeground(LookupCellRenderer.getGrayedForeground(false))
+                        presentation.itemTextForeground = LookupCellRenderer.getGrayedForeground(false)
                         // gray all tail fragments too:
-                        val fragments = presentation.getTailFragments()
+                        val fragments = presentation.tailFragments
                         presentation.clearTail()
                         for (fragment in fragments) {
                             presentation.appendTailText(fragment.text, true)

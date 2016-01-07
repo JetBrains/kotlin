@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 
 // Code is very same to com.intellij.codeInsight.daemon.impl.SetupSDKNotificationProvider
-public class KotlinSetupSDKNotificationProvider(
+class KotlinSetupSDKNotificationProvider(
         private val myProject: Project,
         notifications: EditorNotifications) : EditorNotifications.Provider<EditorNotificationPanel>(), DumbAware {
 

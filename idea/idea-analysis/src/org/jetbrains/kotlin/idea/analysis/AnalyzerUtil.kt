@@ -30,8 +30,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.expressions.PreliminaryDeclarationVisitor
 
-@JvmOverloads
-public fun KtExpression.computeTypeInfoInContext(
+@JvmOverloads fun KtExpression.computeTypeInfoInContext(
         scope: LexicalScope,
         contextExpression: KtExpression = this,
         trace: BindingTrace = BindingTraceContext(),
@@ -44,8 +43,7 @@ public fun KtExpression.computeTypeInfoInContext(
             .getTypeInfo(scope, this, expectedType, dataFlowInfo, trace, isStatement)
 }
 
-@JvmOverloads
-public fun KtExpression.analyzeInContext(
+@JvmOverloads fun KtExpression.analyzeInContext(
         scope: LexicalScope,
         contextExpression: KtExpression = this,
         trace: BindingTrace = BindingTraceContext(),
@@ -54,11 +52,10 @@ public fun KtExpression.analyzeInContext(
         isStatement: Boolean = false
 ): BindingContext {
     computeTypeInfoInContext(scope, contextExpression, trace, dataFlowInfo, expectedType, isStatement)
-    return trace.getBindingContext()
+    return trace.bindingContext
 }
 
-@JvmOverloads
-public fun KtExpression.computeTypeInContext(
+@JvmOverloads fun KtExpression.computeTypeInContext(
         scope: LexicalScope,
         contextExpression: KtExpression = this,
         trace: BindingTrace = BindingTraceContext(),

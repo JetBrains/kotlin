@@ -36,8 +36,8 @@ fun PsiNamedElement.getAccessorNames(readable: Boolean = true, writable: Boolean
         val setter = setter
 
         val result = ArrayList<String>()
-        if (readable && getter != null) result.add(getter.getName())
-        if (writable && setter != null) result.add(setter.getName())
+        if (readable && getter != null) result.add(getter.name)
+        if (writable && setter != null) result.add(setter.name)
         return result
     }
 
@@ -55,25 +55,25 @@ fun PsiNamedElement.getAccessorNames(readable: Boolean = true, writable: Boolean
     return Collections.emptyList()
 }
 
-public fun PsiNamedElement.getClassNameForCompanionObject(): String? {
+fun PsiNamedElement.getClassNameForCompanionObject(): String? {
     return if (this is KtObjectDeclaration && this.isCompanion()) {
-        getNonStrictParentOfType<KtClass>()?.getName()
+        getNonStrictParentOfType<KtClass>()?.name
     } else {
         null
     }
 }
 
-public fun PsiNamedElement.getSpecialNamesToSearch(): List<String> {
-    val name = getName()
+fun PsiNamedElement.getSpecialNamesToSearch(): List<String> {
+    val name = name
     return when {
         name == null || !Name.isValidIdentifier(name) -> Collections.emptyList<String>()
         this is KtParameter -> {
             val componentFunctionName = this.dataClassComponentFunction()?.name
             if (componentFunctionName == null) return Collections.emptyList<String>()
 
-            return listOf(componentFunctionName.asString(), KtTokens.LPAR.getValue())
+            return listOf(componentFunctionName.asString(), KtTokens.LPAR.value)
         }
-        else -> Name.identifier(name).getOperationSymbolsToSearch().map { (it as KtSingleValueToken).getValue() }
+        else -> Name.identifier(name).getOperationSymbolsToSearch().map { (it as KtSingleValueToken).value }
     }
 }
 

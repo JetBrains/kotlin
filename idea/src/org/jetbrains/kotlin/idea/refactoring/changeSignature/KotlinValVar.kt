@@ -20,7 +20,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
-public enum class KotlinValVar(val keywordName: String) {
+enum class KotlinValVar(val keywordName: String) {
     None("none") {
         override fun createKeyword(factory: KtPsiFactory) = null
     },

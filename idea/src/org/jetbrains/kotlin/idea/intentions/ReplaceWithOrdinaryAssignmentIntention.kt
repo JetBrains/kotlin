@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 
-public class ReplaceWithOrdinaryAssignmentIntention : SelfTargetingIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Replace with ordinary assignment"), LowPriorityAction {
+class ReplaceWithOrdinaryAssignmentIntention : SelfTargetingIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Replace with ordinary assignment"), LowPriorityAction {
     override fun isApplicableTo(element: KtBinaryExpression, caretOffset: Int): Boolean {
         if (element.operationToken !in KtTokens.AUGMENTED_ASSIGNMENTS) return false
         if (element.left !is KtNameReferenceExpression) return false

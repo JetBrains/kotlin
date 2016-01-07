@@ -88,7 +88,7 @@ private val ATTRIBUTE_FUNCTION_NAME = "FUNCTION_NAME"
  * Represents a single choice for a type (e.g. parameter type or return type).
  */
 class TypeCandidate(val theType: KotlinType, scope: HierarchicalScope? = null) {
-    public val typeParameters: Array<TypeParameterDescriptor>
+    val typeParameters: Array<TypeParameterDescriptor>
     var renderedType: String? = null
         private set
     var renderedTypeParameters: List<RenderedTypeParameter>? = null
@@ -154,7 +154,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
     private val typeCandidates = HashMap<TypeInfo, List<TypeCandidate>>()
 
-    public var placement: CallablePlacement by Delegates.notNull()
+    var placement: CallablePlacement by Delegates.notNull()
 
     private val elementsToShorten = ArrayList<KtElement>()
 

@@ -44,7 +44,7 @@ object SuperDeclarationMarkerTooltip: Function<KtDeclaration, String> {
         val (elementDescriptor, overriddenDescriptors) = resolveDeclarationWithParents(ktDeclaration!!)
         if (overriddenDescriptors.isEmpty()) return ""
 
-        val isAbstract = elementDescriptor!!.getModality() == Modality.ABSTRACT
+        val isAbstract = elementDescriptor!!.modality == Modality.ABSTRACT
 
         val renderer = DescriptorRenderer.withOptions {
             textFormat = RenderingFormat.HTML
@@ -54,10 +54,10 @@ object SuperDeclarationMarkerTooltip: Function<KtDeclaration, String> {
         }
 
         val containingStrings = overriddenDescriptors.map {
-            val declaration = it.getContainingDeclaration()
+            val declaration = it.containingDeclaration
             val memberKind = if (it is PropertyAccessorDescriptor || it is PropertyDescriptor) "property" else "function"
 
-            val isBaseAbstract = it.getModality() == Modality.ABSTRACT
+            val isBaseAbstract = it.modality == Modality.ABSTRACT
             "${if (!isAbstract && isBaseAbstract) "Implements" else "Overrides"} $memberKind in '${renderer.render(declaration)}'"
         }
 
@@ -65,11 +65,10 @@ object SuperDeclarationMarkerTooltip: Function<KtDeclaration, String> {
     }
 }
 
-public class SuperDeclarationMarkerNavigationHandler : GutterIconNavigationHandler<KtDeclaration> {
+class SuperDeclarationMarkerNavigationHandler : GutterIconNavigationHandler<KtDeclaration> {
     private var testNavigableElements: List<NavigatablePsiElement>? = null
 
-    @TestOnly
-    public fun getNavigationElements(): List<NavigatablePsiElement> {
+    @TestOnly fun getNavigationElements(): List<NavigatablePsiElement> {
         val navigationResult = testNavigableElements!!
         testNavigableElements = null
         return navigationResult
@@ -83,7 +82,7 @@ public class SuperDeclarationMarkerNavigationHandler : GutterIconNavigationHandl
 
         val superDeclarations = ArrayList<NavigatablePsiElement>()
         for (overriddenMember in overriddenDescriptors) {
-            val declarations = DescriptorToSourceUtilsIde.getAllDeclarations(element.getProject(), overriddenMember)
+            val declarations = DescriptorToSourceUtilsIde.getAllDeclarations(element.project, overriddenMember)
             for (declaration in declarations) {
                 if (declaration is NavigatablePsiElement) {
                     superDeclarations.add(declaration)
@@ -91,8 +90,8 @@ public class SuperDeclarationMarkerNavigationHandler : GutterIconNavigationHandl
             }
         }
 
-        if (!ApplicationManager.getApplication()!!.isUnitTestMode()) {
-            val elementName = elementDescriptor!!.getName()
+        if (!ApplicationManager.getApplication()!!.isUnitTestMode) {
+            val elementName = elementDescriptor!!.name
 
             PsiElementListNavigator.openTargets(
                     e,
@@ -108,11 +107,11 @@ public class SuperDeclarationMarkerNavigationHandler : GutterIconNavigationHandl
     }
 }
 
-public data class ResolveWithParentsResult(
+data class ResolveWithParentsResult(
         val descriptor: CallableMemberDescriptor?,
         val overriddenDescriptors: Collection<CallableMemberDescriptor>)
 
-public fun resolveDeclarationWithParents(element: KtDeclaration): ResolveWithParentsResult {
+fun resolveDeclarationWithParents(element: KtDeclaration): ResolveWithParentsResult {
     val descriptor = element.resolveToDescriptorIfAny()
 
     if (descriptor !is CallableMemberDescriptor) return ResolveWithParentsResult(null, listOf())

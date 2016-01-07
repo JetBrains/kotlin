@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 
-public abstract class DeserializerForDecompilerBase(
+abstract class DeserializerForDecompilerBase(
         val packageDirectory: VirtualFile,
         val directoryPackageFqName: FqName
 ) : ResolverForDecompiler {

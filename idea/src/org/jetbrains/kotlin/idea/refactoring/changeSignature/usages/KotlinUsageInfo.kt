@@ -21,12 +21,12 @@ import com.intellij.psi.PsiReference
 import com.intellij.usageView.UsageInfo
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinChangeInfo
 
-public abstract class KotlinUsageInfo<T : PsiElement> : UsageInfo {
-    public constructor(element: T) : super(element)
-    public constructor(reference: PsiReference) : super(reference)
+abstract class KotlinUsageInfo<T : PsiElement> : UsageInfo {
+    constructor(element: T) : super(element)
+    constructor(reference: PsiReference) : super(reference)
 
     @Suppress("UNCHECKED_CAST")
     override fun getElement() = super.getElement() as T?
 
-    public abstract fun processUsage(changeInfo: KotlinChangeInfo, element: T, allUsages: Array<out UsageInfo>): Boolean
+    abstract fun processUsage(changeInfo: KotlinChangeInfo, element: T, allUsages: Array<out UsageInfo>): Boolean
 }

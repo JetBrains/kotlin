@@ -74,9 +74,9 @@ class AllClassesCompletion(private val parameters: CompletionParameters,
                 if (psiClass.isSyntheticKotlinClass()) return@processJavaClasses // filter out synthetic classes produced by Kotlin compiler
 
                 val kind = when {
-                    psiClass.isAnnotationType() -> ClassKind.ANNOTATION_CLASS
-                    psiClass.isInterface() -> ClassKind.INTERFACE
-                    psiClass.isEnum() -> ClassKind.ENUM_CLASS
+                    psiClass.isAnnotationType -> ClassKind.ANNOTATION_CLASS
+                    psiClass.isInterface -> ClassKind.INTERFACE
+                    psiClass.isEnum -> ClassKind.ENUM_CLASS
                     else -> ClassKind.CLASS
                 }
                 if (kindFilter(kind)) {
@@ -87,7 +87,7 @@ class AllClassesCompletion(private val parameters: CompletionParameters,
     }
 
     private fun PsiClass.isSyntheticKotlinClass(): Boolean {
-        if (!getName()!!.contains('$')) return false // optimization to not analyze annotations of all classes
-        return getModifierList()?.findAnnotation(kotlin.jvm.internal.KotlinSyntheticClass::class.java.getName()) != null
+        if (!name!!.contains('$')) return false // optimization to not analyze annotations of all classes
+        return modifierList?.findAnnotation(kotlin.jvm.internal.KotlinSyntheticClass::class.java.name) != null
     }
 }

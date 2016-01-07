@@ -128,7 +128,7 @@ class StandaloneScriptRunConfigurationTest : KotlinCodeInsightTestCase() {
         MoveFilesOrDirectoriesProcessor(
                 project,
                 arrayOf(scriptFile),
-                JavaPsiFacade.getInstance(project).findPackage("dest")!!.getDirectories()[0],
+                JavaPsiFacade.getInstance(project).findPackage("dest")!!.directories[0],
                 false, true, null, null
         ).run()
     }

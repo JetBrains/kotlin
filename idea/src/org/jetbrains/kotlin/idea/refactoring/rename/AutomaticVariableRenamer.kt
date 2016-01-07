@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
-public class AutomaticVariableRenamer(
+class AutomaticVariableRenamer(
         klass: PsiNamedElement, // PsiClass or JetClass
         newClassName: String,
         usages: Collection<UsageInfo>
@@ -116,7 +116,7 @@ private fun KotlinType.isCollectionLikeOf(classPsiElement: PsiNamedElement): Boo
 }
 
 
-public class AutomaticVariableRenamerFactory: AutomaticRenamerFactory {
+class AutomaticVariableRenamerFactory: AutomaticRenamerFactory {
     override fun isApplicable(element: PsiElement) = element is KtClass || element is PsiClass
 
     override fun createRenamer(element: PsiElement, newName: String, usages: Collection<UsageInfo>) =
@@ -128,7 +128,7 @@ public class AutomaticVariableRenamerFactory: AutomaticRenamerFactory {
     override fun getOptionName() = RefactoringBundle.message("rename.variables")
 }
 
-public class AutomaticVariableInJavaRenamerFactory: AutomaticRenamerFactory {
+class AutomaticVariableInJavaRenamerFactory: AutomaticRenamerFactory {
     override fun isApplicable(element: PsiElement) = element is KtClass && element.toLightClass() != null
 
     override fun createRenamer(element: PsiElement, newName: String, usages: Collection<UsageInfo>) =

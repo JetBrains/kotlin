@@ -52,7 +52,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import org.jetbrains.kotlin.utils.keysToMap
 import java.util.*
 
-public open class KotlinChangeInfo(
+open class KotlinChangeInfo(
         val methodDescriptor: KotlinMethodDescriptor,
         private var name: String = methodDescriptor.name,
         var newReturnTypeInfo: KotlinTypeInfo = KotlinTypeInfo(true, methodDescriptor.baseDescriptor.returnType),
@@ -110,7 +110,7 @@ public open class KotlinChangeInfo(
     var originalToCurrentMethods: Map<PsiMethod, PsiMethod> = emptyMap()
         private set
 
-    public fun getOldParameterIndex(oldParameterName: String): Int? = oldNameToParameterIndex[oldParameterName]
+    fun getOldParameterIndex(oldParameterName: String): Int? = oldNameToParameterIndex[oldParameterName]
 
     override fun isParameterTypesChanged(): Boolean = true
 
@@ -118,7 +118,7 @@ public open class KotlinChangeInfo(
 
     override fun isParameterSetOrOrderChanged(): Boolean = isParameterSetOrOrderChangedLazy
 
-    public fun getNewParametersCount(): Int = newParameters.size
+    fun getNewParametersCount(): Int = newParameters.size
 
     override fun getNewParameters(): Array<KotlinParameterInfo> = newParameters.toTypedArray()
 
@@ -129,12 +129,11 @@ public open class KotlinChangeInfo(
         return receiverParameterInfo?.let { receiver -> newParameters.filter { it != receiver } } ?: newParameters
     }
 
-    public fun setNewParameter(index: Int, parameterInfo: KotlinParameterInfo) {
+    fun setNewParameter(index: Int, parameterInfo: KotlinParameterInfo) {
         newParameters[index] = parameterInfo
     }
 
-    @JvmOverloads
-    public fun addParameter(parameterInfo: KotlinParameterInfo, atIndex: Int = -1) {
+    @JvmOverloads fun addParameter(parameterInfo: KotlinParameterInfo, atIndex: Int = -1) {
         if (atIndex >= 0) {
             newParameters.add(atIndex, parameterInfo)
         }
@@ -143,19 +142,19 @@ public open class KotlinChangeInfo(
         }
     }
 
-    public fun removeParameter(index: Int) {
+    fun removeParameter(index: Int) {
         val parameterInfo = newParameters.removeAt(index);
         if (parameterInfo == receiverParameterInfo) {
             receiverParameterInfo = null
         }
     }
 
-    public fun clearParameters() {
+    fun clearParameters() {
         newParameters.clear()
         receiverParameterInfo = null
     }
 
-    public fun hasParameter(parameterInfo: KotlinParameterInfo): Boolean =
+    fun hasParameter(parameterInfo: KotlinParameterInfo): Boolean =
             parameterInfo in newParameters
 
     override fun isGenerateDelegate(): Boolean = false
@@ -168,7 +167,7 @@ public open class KotlinChangeInfo(
 
     override fun isNameChanged(): Boolean = name != methodDescriptor.name
 
-    public fun isVisibilityChanged(): Boolean = newVisibility != methodDescriptor.visibility
+    fun isVisibilityChanged(): Boolean = newVisibility != methodDescriptor.visibility
 
     override fun getMethod(): PsiElement {
         return methodDescriptor.method
@@ -183,10 +182,10 @@ public open class KotlinChangeInfo(
 
     override fun getLanguage(): Language = KotlinLanguage.INSTANCE
 
-    public var propagationTargetUsageInfos: List<UsageInfo> = ArrayList()
+    var propagationTargetUsageInfos: List<UsageInfo> = ArrayList()
         private set
 
-    public var primaryPropagationTargets: Collection<PsiElement> = emptyList()
+    var primaryPropagationTargets: Collection<PsiElement> = emptyList()
         set(value: Collection<PsiElement>) {
             field = value
 
@@ -226,7 +225,7 @@ public open class KotlinChangeInfo(
         return typeInfo.render()
     }
 
-    public fun getNewSignature(inheritedCallable: KotlinCallableDefinitionUsage<PsiElement>): String {
+    fun getNewSignature(inheritedCallable: KotlinCallableDefinitionUsage<PsiElement>): String {
         val buffer = StringBuilder()
 
         val defaultVisibility = if (kind.isConstructor) Visibilities.PUBLIC else Visibilities.DEFAULT_VISIBILITY
@@ -268,16 +267,16 @@ public open class KotlinChangeInfo(
         return buffer.toString()
     }
 
-    public fun isRefactoringTarget(inheritedCallableDescriptor: CallableDescriptor?): Boolean {
+    fun isRefactoringTarget(inheritedCallableDescriptor: CallableDescriptor?): Boolean {
         return inheritedCallableDescriptor != null
                && method == DescriptorToSourceUtils.descriptorToDeclaration(inheritedCallableDescriptor)
     }
 
-    public fun getNewParametersSignature(inheritedCallable: KotlinCallableDefinitionUsage<*>): String {
+    fun getNewParametersSignature(inheritedCallable: KotlinCallableDefinitionUsage<*>): String {
         return "(" + getNewParametersSignatureWithoutParentheses(inheritedCallable) + ")"
     }
 
-    public fun getNewParametersSignatureWithoutParentheses(
+    fun getNewParametersSignatureWithoutParentheses(
             inheritedCallable: KotlinCallableDefinitionUsage<*>
     ): String {
         val signatureParameters = getNonReceiverParameters()
@@ -292,7 +291,7 @@ public open class KotlinChangeInfo(
                 .joinToString(separator = ", ")
     }
 
-    public fun renderReceiverType(inheritedCallable: KotlinCallableDefinitionUsage<*>): String? {
+    fun renderReceiverType(inheritedCallable: KotlinCallableDefinitionUsage<*>): String? {
         val receiverTypeText = receiverParameterInfo?.currentTypeInfo?.render() ?: return null
         val typeSubstitutor = inheritedCallable.typeSubstitutor ?: return receiverTypeText
         val currentBaseFunction = inheritedCallable.baseFunction.currentCallableDescriptor ?: return receiverTypeText
@@ -301,7 +300,7 @@ public open class KotlinChangeInfo(
         return receiverType.renderTypeWithSubstitution(typeSubstitutor, receiverTypeText, false)
     }
 
-    public fun renderReturnType(inheritedCallable: KotlinCallableDefinitionUsage<*>): String {
+    fun renderReturnType(inheritedCallable: KotlinCallableDefinitionUsage<*>): String {
         val defaultRendering = newReturnTypeInfo.render()
         val typeSubstitutor = inheritedCallable.typeSubstitutor ?: return defaultRendering
         val currentBaseFunction = inheritedCallable.baseFunction.currentCallableDescriptor ?: return defaultRendering
@@ -310,7 +309,7 @@ public open class KotlinChangeInfo(
         return returnType.renderTypeWithSubstitution(typeSubstitutor, defaultRendering, false)
     }
 
-    public fun primaryMethodUpdated() {
+    fun primaryMethodUpdated() {
         isPrimaryMethodUpdated = true
         javaChangeInfos = null
     }
@@ -339,7 +338,7 @@ public open class KotlinChangeInfo(
         return if (index >= 0) removeAt(index) else null
     }
 
-    public fun getOrCreateJavaChangeInfos(): List<JavaChangeInfo>? {
+    fun getOrCreateJavaChangeInfos(): List<JavaChangeInfo>? {
         fun initCurrentSignatures(currentPsiMethods: List<PsiMethod>): List<JvmOverloadSignature> {
             val parameterInfoToPsi = methodDescriptor.original.parameters.zip(originalParameters).toMap()
             val dummyParameter = KtPsiFactory(method).createParameter("dummy")
@@ -509,17 +508,17 @@ public open class KotlinChangeInfo(
     }
 }
 
-public val KotlinChangeInfo.originalBaseFunctionDescriptor: CallableDescriptor
+val KotlinChangeInfo.originalBaseFunctionDescriptor: CallableDescriptor
     get() = methodDescriptor.baseDescriptor
 
-public val KotlinChangeInfo.kind: Kind get() = methodDescriptor.kind
+val KotlinChangeInfo.kind: Kind get() = methodDescriptor.kind
 
-public val KotlinChangeInfo.oldName: String?
+val KotlinChangeInfo.oldName: String?
     get() = (methodDescriptor.method as? KtFunction)?.name
 
-public fun KotlinChangeInfo.getAffectedCallables(): Collection<UsageInfo> = methodDescriptor.affectedCallables + propagationTargetUsageInfos
+fun KotlinChangeInfo.getAffectedCallables(): Collection<UsageInfo> = methodDescriptor.affectedCallables + propagationTargetUsageInfos
 
-public fun ChangeInfo.toJetChangeInfo(originalChangeSignatureDescriptor: KotlinMethodDescriptor): KotlinChangeInfo {
+fun ChangeInfo.toJetChangeInfo(originalChangeSignatureDescriptor: KotlinMethodDescriptor): KotlinChangeInfo {
     val method = method as PsiMethod
 
     val functionDescriptor = method.getJavaMethodDescriptor()!!

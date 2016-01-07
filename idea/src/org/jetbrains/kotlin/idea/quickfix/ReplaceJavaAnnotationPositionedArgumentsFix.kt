@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 
-public class ReplaceJavaAnnotationPositionedArgumentsFix(element: KtAnnotationEntry)
+class ReplaceJavaAnnotationPositionedArgumentsFix(element: KtAnnotationEntry)
 : KotlinQuickFixAction<KtAnnotationEntry>(element), CleanupFix {
     override fun getText(): String  = "Replace invalid positioned arguments for annotation"
     override fun getFamilyName(): String = text

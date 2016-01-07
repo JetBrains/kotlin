@@ -85,7 +85,7 @@ private fun compareDescriptorsText(project: Project, d1: DeclarationDescriptor, 
     return false
 }
 
-public fun compareDescriptors(project: Project, currentDescriptor: DeclarationDescriptor?, originalDescriptor: DeclarationDescriptor?): Boolean {
+fun compareDescriptors(project: Project, currentDescriptor: DeclarationDescriptor?, originalDescriptor: DeclarationDescriptor?): Boolean {
     if (currentDescriptor == originalDescriptor) return true
     if (currentDescriptor == null || originalDescriptor == null) return false
 
@@ -110,7 +110,7 @@ public fun compareDescriptors(project: Project, currentDescriptor: DeclarationDe
     return false
 }
 
-public fun Visibility.toKeywordToken(): KtModifierKeywordToken {
+fun Visibility.toKeywordToken(): KtModifierKeywordToken {
     val normalized = normalize()
     when (normalized) {
         Visibilities.PUBLIC -> return KtTokens.PUBLIC_KEYWORD

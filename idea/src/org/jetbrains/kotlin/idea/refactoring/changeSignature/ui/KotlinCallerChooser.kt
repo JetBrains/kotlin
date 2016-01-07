@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import java.util.HashSet
 import java.util.LinkedHashSet
 
-public class KotlinCallerChooser(
+class KotlinCallerChooser(
         declaration: PsiElement,
         project: Project,
         title: String,
@@ -69,7 +69,7 @@ public class KotlinCallerChooser(
             "Callee text would be shown here"
 }
 
-public class KotlinMethodNode(
+class KotlinMethodNode(
         method: PsiElement?,
         called: HashSet<PsiElement>,
         project: Project,

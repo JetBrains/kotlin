@@ -46,7 +46,7 @@ import org.junit.Assert
 import java.io.File
 import kotlin.test.assertEquals
 
-public abstract class AbstractOverrideImplementTest : KotlinLightCodeInsightFixtureTestCase() {
+abstract class AbstractOverrideImplementTest : KotlinLightCodeInsightFixtureTestCase() {
     override fun getProjectDescriptor(): LightProjectDescriptor = KotlinLightProjectDescriptor.INSTANCE
 
     protected fun doImplementFileTest(memberToOverride: String? = null) {
@@ -165,7 +165,7 @@ public abstract class AbstractOverrideImplementTest : KotlinLightCodeInsightFixt
     }
 
     private fun generateImplementation(method: PsiMethod) {
-        getProject().executeWriteCommand("") {
+        project.executeWriteCommand("") {
             val aClass = (myFixture.file as PsiClassOwner).classes[0]
 
             val methodMember = PsiMethodMember(method, PsiSubstitutor.EMPTY)

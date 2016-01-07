@@ -34,11 +34,11 @@ import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.*
 
-public fun approximateFlexibleTypes(jetType: KotlinType, outermost: Boolean = true): KotlinType {
+fun approximateFlexibleTypes(jetType: KotlinType, outermost: Boolean = true): KotlinType {
     if (jetType.isDynamic()) return jetType
     if (jetType.isFlexible()) {
         val flexible = jetType.flexibility()
-        val lowerClass = flexible.lowerBound.getConstructor().getDeclarationDescriptor() as? ClassDescriptor?
+        val lowerClass = flexible.lowerBound.constructor.declarationDescriptor as? ClassDescriptor?
         val isCollection = lowerClass != null && JavaToKotlinClassMap.INSTANCE.isMutable(lowerClass)
         // (Mutable)Collection<T>! -> MutableCollection<T>?
         // Foo<(Mutable)Collection<T>!>! -> Foo<Collection<T>>?
@@ -54,46 +54,46 @@ public fun approximateFlexibleTypes(jetType: KotlinType, outermost: Boolean = tr
 
         approximation = if (jetType.isAnnotatedNotNull()) approximation.makeNotNullable() else approximation
 
-        if (approximation.isMarkedNullable() && !flexible.lowerBound.isMarkedNullable() && TypeUtils.isTypeParameter(approximation) && TypeUtils.hasNullableSuperType(approximation)) {
+        if (approximation.isMarkedNullable && !flexible.lowerBound.isMarkedNullable && TypeUtils.isTypeParameter(approximation) && TypeUtils.hasNullableSuperType(approximation)) {
             approximation = approximation.makeNotNullable()
         }
 
         return approximation
     }
     return KotlinTypeImpl.create(
-            jetType.getAnnotations(),
-            jetType.getConstructor(),
-            jetType.isMarkedNullable(),
-            jetType.getArguments().map { it.substitute { type -> approximateFlexibleTypes(type, false)} },
+            jetType.annotations,
+            jetType.constructor,
+            jetType.isMarkedNullable,
+            jetType.arguments.map { it.substitute { type -> approximateFlexibleTypes(type, false)} },
             ErrorUtils.createErrorScope("This type is not supposed to be used in member resolution", true)
     )
 }
 
-public fun KotlinType.isAnnotatedReadOnly(): Boolean = hasAnnotationMaybeExternal(JETBRAINS_READONLY_ANNOTATION)
-public fun KotlinType.isAnnotatedNotNull(): Boolean = hasAnnotationMaybeExternal(JETBRAINS_NOT_NULL_ANNOTATION)
-public fun KotlinType.isAnnotatedNullable(): Boolean = hasAnnotationMaybeExternal(JETBRAINS_NULLABLE_ANNOTATION)
+fun KotlinType.isAnnotatedReadOnly(): Boolean = hasAnnotationMaybeExternal(JETBRAINS_READONLY_ANNOTATION)
+fun KotlinType.isAnnotatedNotNull(): Boolean = hasAnnotationMaybeExternal(JETBRAINS_NOT_NULL_ANNOTATION)
+fun KotlinType.isAnnotatedNullable(): Boolean = hasAnnotationMaybeExternal(JETBRAINS_NULLABLE_ANNOTATION)
 
-private fun KotlinType.hasAnnotationMaybeExternal(fqName: FqName) = with (getAnnotations()) {
+private fun KotlinType.hasAnnotationMaybeExternal(fqName: FqName) = with (annotations) {
     findAnnotation(fqName) ?: findExternalAnnotation(fqName)
 } != null
 
 fun KotlinType.isResolvableInScope(scope: LexicalScope?, checkTypeParameters: Boolean): Boolean {
     if (canBeReferencedViaImport()) return true
 
-    val descriptor = getConstructor().getDeclarationDescriptor()
-    if (descriptor == null || descriptor.getName().isSpecial()) return false
+    val descriptor = constructor.declarationDescriptor
+    if (descriptor == null || descriptor.name.isSpecial) return false
     if (!checkTypeParameters && descriptor is TypeParameterDescriptor) return true
 
     return scope != null && scope.findClassifier(descriptor.name, NoLookupLocation.FROM_IDE) == descriptor
 }
 
-public fun KotlinType.approximateWithResolvableType(scope: LexicalScope?, checkTypeParameters: Boolean): KotlinType {
-    if (isError() || isResolvableInScope(scope, checkTypeParameters)) return this
+fun KotlinType.approximateWithResolvableType(scope: LexicalScope?, checkTypeParameters: Boolean): KotlinType {
+    if (isError || isResolvableInScope(scope, checkTypeParameters)) return this
     return supertypes().firstOrNull { it.isResolvableInScope(scope, checkTypeParameters) }
            ?: builtIns.anyType
 }
 
-public fun KotlinType.anonymousObjectSuperTypeOrNull(): KotlinType? {
+fun KotlinType.anonymousObjectSuperTypeOrNull(): KotlinType? {
     val classDescriptor = constructor.declarationDescriptor
     if (classDescriptor != null && DescriptorUtils.isAnonymousObject(classDescriptor)) {
         return immediateSupertypes().firstOrNull() ?: classDescriptor.builtIns.anyType

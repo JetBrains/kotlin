@@ -32,7 +32,7 @@ abstract class KotlinSingleIntentionActionFactoryWithDelegate<E : KtElement, D :
 
     protected abstract fun createFix(data: D): IntentionAction?
 
-    protected override final fun createFixes(
+    override final fun createFixes(
             originalElementPointer: SmartPsiElementPointer<E>,
             diagnostic: Diagnostic,
             quickFixDataFactory: () -> D?

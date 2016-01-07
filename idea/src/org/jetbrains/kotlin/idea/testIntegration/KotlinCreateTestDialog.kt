@@ -27,7 +27,7 @@ class KotlinCreateTestDialog(project: Project,
                              targetClass: PsiClass?,
                              targetPackage: PsiPackage?,
                              targetModule: Module) : CreateTestDialog(project, title, targetClass, targetPackage, targetModule) {
-    public var explicitClassName: String? = null
+    var explicitClassName: String? = null
 
     override fun getClassName() = explicitClassName ?: super.getClassName()
 }

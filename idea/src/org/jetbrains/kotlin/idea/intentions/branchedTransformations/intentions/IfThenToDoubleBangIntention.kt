@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 
-public class IfThenToDoubleBangIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpression::class.java, "Replace 'if' expression with '!!' expression") {
+class IfThenToDoubleBangIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpression::class.java, "Replace 'if' expression with '!!' expression") {
     override fun applicabilityRange(element: KtIfExpression): TextRange? {
         val condition = element.condition as? KtBinaryExpression ?: return null
         val thenClause = element.then ?: return null

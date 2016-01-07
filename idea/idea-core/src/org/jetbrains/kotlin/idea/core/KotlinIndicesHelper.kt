@@ -58,7 +58,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 
-public class KotlinIndicesHelper(
+class KotlinIndicesHelper(
         private val resolutionFacade: ResolutionFacade,
         private val scope: GlobalSearchScope,
         visibilityFilter: (DeclarationDescriptor) -> Boolean,
@@ -76,7 +76,7 @@ public class KotlinIndicesHelper(
         true
     }
 
-    public fun getTopLevelCallablesByName(name: String): Collection<CallableDescriptor> {
+    fun getTopLevelCallablesByName(name: String): Collection<CallableDescriptor> {
         val declarations = HashSet<KtCallableDeclaration>()
         declarations.addTopLevelNonExtensionCallablesByName(KotlinFunctionShortNameIndex.getInstance(), name)
         declarations.addTopLevelNonExtensionCallablesByName(KotlinPropertyShortNameIndex.getInstance(), name)
@@ -89,10 +89,10 @@ public class KotlinIndicesHelper(
             index: StringStubIndexExtension<out KtCallableDeclaration>,
             name: String
     ) {
-        index.get(name, project, scope).filterTo(this) { it.getParent() is KtFile && it.getReceiverTypeReference() == null }
+        index.get(name, project, scope).filterTo(this) { it.parent is KtFile && it.receiverTypeReference == null }
     }
 
-    public fun processTopLevelCallables(nameFilter: (String) -> Boolean, processor: (CallableDescriptor) -> Unit) {
+    fun processTopLevelCallables(nameFilter: (String) -> Boolean, processor: (CallableDescriptor) -> Unit) {
         fun processIndex(index: StringStubIndexExtension<out KtCallableDeclaration>) {
             for (key in index.getAllKeys(project)) {
                 ProgressManager.checkCanceled()
@@ -114,7 +114,7 @@ public class KotlinIndicesHelper(
         processIndex(KotlinTopLevelPropertyFqnNameIndex.getInstance())
     }
 
-    public fun getCallableTopLevelExtensions(
+    fun getCallableTopLevelExtensions(
             callTypeAndReceiver: CallTypeAndReceiver<*, *>,
             position: KtExpression,
             bindingContext: BindingContext,
@@ -125,7 +125,7 @@ public class KotlinIndicesHelper(
         return getCallableTopLevelExtensions(callTypeAndReceiver, receiverTypes, nameFilter)
     }
 
-    public fun getCallableTopLevelExtensions(
+    fun getCallableTopLevelExtensions(
             callTypeAndReceiver: CallTypeAndReceiver<*, *>,
             receiverTypes: Collection<KotlinType>,
             nameFilter: (String) -> Boolean
@@ -161,9 +161,9 @@ public class KotlinIndicesHelper(
     }
 
     private fun MutableCollection<String>.addTypeNames(type: KotlinType) {
-        val constructor = type.getConstructor()
-        addIfNotNull(constructor.getDeclarationDescriptor()?.getName()?.asString())
-        constructor.getSupertypes().forEach { addTypeNames(it) }
+        val constructor = type.constructor
+        addIfNotNull(constructor.declarationDescriptor?.name?.asString())
+        constructor.supertypes.forEach { addTypeNames(it) }
     }
 
     /**
@@ -187,14 +187,14 @@ public class KotlinIndicesHelper(
         return result
     }
 
-    public fun getJvmClassesByName(name: String): Collection<ClassDescriptor> {
+    fun getJvmClassesByName(name: String): Collection<ClassDescriptor> {
         return PsiShortNamesCache.getInstance(project).getClassesByName(name, scope)
                 .mapNotNull { it.resolveToDescriptor(resolutionFacade) }
                 .filter(descriptorFilter)
                 .toSet()
     }
 
-    public fun getKotlinClasses(nameFilter: (String) -> Boolean, kindFilter: (ClassKind) -> Boolean): Collection<ClassDescriptor> {
+    fun getKotlinClasses(nameFilter: (String) -> Boolean, kindFilter: (ClassKind) -> Boolean): Collection<ClassDescriptor> {
         return KotlinFullClassNameIndex.getInstance().getAllKeys(project).asSequence()
                 .map { FqName(it) }
                 .filter {
@@ -214,11 +214,11 @@ public class KotlinIndicesHelper(
         }
 
         // Note: Can't search with psi element as analyzer could be built over temp files
-        return ResolveSessionUtils.getClassOrObjectDescriptorsByFqName(moduleDescriptor, classFQName) { kindFilter(it.getKind()) }
+        return ResolveSessionUtils.getClassOrObjectDescriptorsByFqName(moduleDescriptor, classFQName) { kindFilter(it.kind) }
                 .filter(descriptorFilter)
     }
 
-    public fun processObjectMembers(
+    fun processObjectMembers(
             descriptorKindFilter: DescriptorKindFilter,
             nameFilter: (String) -> Boolean,
             filter: (KtCallableDeclaration, KtObjectDeclaration) -> Boolean,
@@ -251,7 +251,7 @@ public class KotlinIndicesHelper(
         }
     }
 
-    public fun processJavaStaticMembers(
+    fun processJavaStaticMembers(
             descriptorKindFilter: DescriptorKindFilter,
             nameFilter: (String) -> Boolean,
             processor: (DeclarationDescriptor) -> Unit
@@ -308,7 +308,7 @@ public class KotlinIndicesHelper(
     }
 
     private fun KtCallableDeclaration.resolveToDescriptorsWithHack(): Collection<CallableDescriptor> {
-        if (getContainingKtFile().isCompiled()) { //TODO: it's temporary while resolveToDescriptor does not work for compiled declarations
+        if (getContainingKtFile().isCompiled) { //TODO: it's temporary while resolveToDescriptor does not work for compiled declarations
             return resolutionFacade.resolveImportReference(moduleDescriptor, fqName!!).filterIsInstance<CallableDescriptor>()
         }
         else {

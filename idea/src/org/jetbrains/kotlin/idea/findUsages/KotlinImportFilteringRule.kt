@@ -22,10 +22,10 @@ import com.intellij.usages.rules.PsiElementUsage
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
-public class KotlinImportFilteringRule : ImportFilteringRule() {
-    public override fun isVisible(usage: Usage): Boolean {
+class KotlinImportFilteringRule : ImportFilteringRule() {
+    override fun isVisible(usage: Usage): Boolean {
         if (usage is PsiElementUsage) {
-            return usage.getElement()?.getNonStrictParentOfType<KtImportDirective>() == null
+            return usage.element?.getNonStrictParentOfType<KtImportDirective>() == null
         }
 
         return true

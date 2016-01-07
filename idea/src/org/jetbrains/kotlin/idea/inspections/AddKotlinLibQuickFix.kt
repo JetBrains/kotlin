@@ -52,7 +52,7 @@ import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 
-public class AddReflectionQuickFix(element: KtElement) : AddKotlinLibQuickFix(element) {
+class AddReflectionQuickFix(element: KtElement) : AddKotlinLibQuickFix(element) {
     override fun getText() = KotlinBundle.message("add.reflection.to.classpath")
     override fun getFamilyName() = text
 
@@ -67,7 +67,7 @@ public class AddReflectionQuickFix(element: KtElement) : AddKotlinLibQuickFix(el
     }
 }
 
-public class AddTestLibQuickFix(element: KtElement) : AddKotlinLibQuickFix(element) {
+class AddTestLibQuickFix(element: KtElement) : AddKotlinLibQuickFix(element) {
     override fun getText() = KotlinBundle.message("add.test.to.classpath")
     override fun getFamilyName() = text
 
@@ -120,7 +120,7 @@ public class AddTestLibQuickFix(element: KtElement) : AddKotlinLibQuickFix(eleme
     }
 }
 
-public abstract class AddKotlinLibQuickFix(element: KtElement) : KotlinQuickFixAction<KtElement>(element) {
+abstract class AddKotlinLibQuickFix(element: KtElement) : KotlinQuickFixAction<KtElement>(element) {
     protected abstract fun libraryPath(): String
     protected abstract fun getLibFile(): File
     protected abstract fun hasLibJarInLibrary(library: Library): Boolean

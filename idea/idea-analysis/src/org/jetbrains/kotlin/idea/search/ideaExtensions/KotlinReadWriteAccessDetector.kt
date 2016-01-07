@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
-public class KotlinReadWriteAccessDetector : ReadWriteAccessDetector() {
+class KotlinReadWriteAccessDetector : ReadWriteAccessDetector() {
     override fun isReadWriteAccessible(element: PsiElement) = element is KtVariableDeclaration || element is KtParameter
 
     override fun isDeclarationWriteAccess(element: PsiElement) = isReadWriteAccessible(element)

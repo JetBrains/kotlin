@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
 import java.util.ArrayList
 
-public class KotlinMemberInfoStorage(
+class KotlinMemberInfoStorage(
         classOrObject: PsiNamedElement,
         filter: (KtNamedDeclaration) -> Boolean = { true }
 ): AbstractMemberInfoStorage<KtNamedDeclaration, PsiNamedElement, KotlinMemberInfo>(classOrObject, filter) {

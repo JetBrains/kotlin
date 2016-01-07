@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
-public class UnsupportedAsyncFix(val psiElement: PsiElement): KotlinQuickFixAction<PsiElement>(psiElement), CleanupFix {
+class UnsupportedAsyncFix(val psiElement: PsiElement): KotlinQuickFixAction<PsiElement>(psiElement), CleanupFix {
     override fun getFamilyName(): String = "Migrate unsupported async syntax"
     override fun getText(): String  = familyName
 

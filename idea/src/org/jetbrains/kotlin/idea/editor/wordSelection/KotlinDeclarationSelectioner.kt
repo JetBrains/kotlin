@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-public class KotlinDeclarationSelectioner : ExtendWordSelectionHandlerBase() {
+class KotlinDeclarationSelectioner : ExtendWordSelectionHandlerBase() {
     override fun canSelect(e: PsiElement)
             = e is KtDeclaration
 
@@ -39,12 +39,12 @@ public class KotlinDeclarationSelectioner : ExtendWordSelectionHandlerBase() {
         }
 
         val result = ArrayList<TextRange>()
-        val firstChild = e.getFirstChild()
+        val firstChild = e.firstChild
         val firstNonComment = firstChild
                 .siblings(forward = true, withItself = true)
                 .first { it !is PsiComment && it !is PsiWhiteSpace }
 
-        val lastChild = e.getLastChild()
+        val lastChild = e.lastChild
         val lastNonComment = lastChild
                 .siblings(forward = false, withItself = true)
                 .first { it !is PsiComment && it !is PsiWhiteSpace }
@@ -53,7 +53,7 @@ public class KotlinDeclarationSelectioner : ExtendWordSelectionHandlerBase() {
             result.addRange(editorText, TextRange(firstNonComment.startOffset, lastNonComment.endOffset))
         }
 
-        result.addRange(editorText, e.getTextRange())
+        result.addRange(editorText, e.textRange)
 
         return result
     }

@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.types.KotlinType
 
-public class KotlinVariableInplaceIntroducer(
+class KotlinVariableInplaceIntroducer(
         val addedVariable: KtProperty,
         val originalExpression: KtExpression?,
         val occurrencesToReplace: Array<KtExpression>,

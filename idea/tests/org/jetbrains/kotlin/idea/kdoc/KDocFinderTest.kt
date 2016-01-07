@@ -25,41 +25,41 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import org.junit.Assert
 
-public class KDocFinderTest() : LightPlatformCodeInsightFixtureTestCase() {
+class KDocFinderTest() : LightPlatformCodeInsightFixtureTestCase() {
     override fun getTestDataPath(): String {
         return PluginTestCaseBase.getTestDataPathBase() + "/kdoc/finder/"
     }
 
-    public fun testConstructor() {
+    fun testConstructor() {
         myFixture.configureByFile(getTestName(false) + ".kt")
-        val declaration = (myFixture.getFile() as KtFile).getDeclarations()[0]
+        val declaration = (myFixture.file as KtFile).declarations[0]
         val descriptor = declaration.resolveToDescriptor() as ClassDescriptor
-        val constructorDescriptor = descriptor.getUnsubstitutedPrimaryConstructor()!!
+        val constructorDescriptor = descriptor.unsubstitutedPrimaryConstructor!!
         val doc = KDocFinder.findKDoc(constructorDescriptor)
         Assert.assertEquals("Doc for constructor of class C.", doc!!.getContent())
     }
 
-    public fun testOverridden() {
+    fun testOverridden() {
         myFixture.configureByFile(getTestName(false) + ".kt")
-        val declaration = (myFixture.getFile() as KtFile).getDeclarations().single { it.getName() == "Bar" }
+        val declaration = (myFixture.file as KtFile).declarations.single { it.name == "Bar" }
         val descriptor = declaration.resolveToDescriptor() as ClassDescriptor
         val overriddenFunctionDescriptor = descriptor.defaultType.memberScope.getContributedFunctions(Name.identifier("xyzzy"), NoLookupLocation.FROM_TEST).single()
         val doc = KDocFinder.findKDoc(overriddenFunctionDescriptor)
         Assert.assertEquals("Doc for method xyzzy", doc!!.getContent())
     }
 
-    public fun testOverriddenWithSubstitutedType() {
+    fun testOverriddenWithSubstitutedType() {
         myFixture.configureByFile(getTestName(false) + ".kt")
-        val declaration = (myFixture.getFile() as KtFile).getDeclarations().single { it.getName() == "Bar" }
+        val declaration = (myFixture.file as KtFile).declarations.single { it.name == "Bar" }
         val descriptor = declaration.resolveToDescriptor() as ClassDescriptor
         val overriddenFunctionDescriptor = descriptor.defaultType.memberScope.getContributedFunctions(Name.identifier("xyzzy"), NoLookupLocation.FROM_TEST).single()
         val doc = KDocFinder.findKDoc(overriddenFunctionDescriptor)
         Assert.assertEquals("Doc for method xyzzy", doc!!.getContent())
     }
 
-    public fun testProperty() {
+    fun testProperty() {
         myFixture.configureByFile(getTestName(false) + ".kt")
-        val declaration = (myFixture.getFile() as KtFile).getDeclarations().single { it.getName() == "Foo" }
+        val declaration = (myFixture.file as KtFile).declarations.single { it.name == "Foo" }
         val descriptor = declaration.resolveToDescriptor() as ClassDescriptor
         val propertyDescriptor = descriptor.defaultType.memberScope.getContributedVariables(Name.identifier("xyzzy"), NoLookupLocation.FROM_TEST).single()
         val doc = KDocFinder.findKDoc(propertyDescriptor)

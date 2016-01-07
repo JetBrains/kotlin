@@ -47,7 +47,7 @@ import java.awt.Color
 import java.util.*
 import javax.swing.JCheckBox
 
-public class KotlinInplaceParameterIntroducer(
+class KotlinInplaceParameterIntroducer(
         val originalDescriptor: IntroduceParameterDescriptor,
         val parameterType: KotlinType,
         val suggestedNames: Array<out String>,
@@ -175,7 +175,7 @@ public class KotlinInplaceParameterIntroducer(
 
     init {
         initFormComponents {
-            addComponent(getPreviewComponent())
+            addComponent(previewComponent)
 
             val defaultValueCheckBox = NonFocusableCheckBox("Introduce default value")
             defaultValueCheckBox.isSelected = descriptor.withDefaultValue

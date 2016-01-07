@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 
-public class ReplaceInfixCallFix(element: KtBinaryExpression) : KotlinQuickFixAction<KtBinaryExpression>(element) {
+class ReplaceInfixCallFix(element: KtBinaryExpression) : KotlinQuickFixAction<KtBinaryExpression>(element) {
 
     override fun getText() = "Replace with safe (?.) call"
 

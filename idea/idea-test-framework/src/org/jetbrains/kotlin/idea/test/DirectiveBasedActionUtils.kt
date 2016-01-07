@@ -25,13 +25,13 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 
-public object DirectiveBasedActionUtils {
-    public fun checkForUnexpectedErrors(file: KtFile) {
-        if (InTextDirectivesUtils.findLinesWithPrefixesRemoved(file.getText(), "// DISABLE-ERRORS").isNotEmpty()) {
+object DirectiveBasedActionUtils {
+    fun checkForUnexpectedErrors(file: KtFile) {
+        if (InTextDirectivesUtils.findLinesWithPrefixesRemoved(file.text, "// DISABLE-ERRORS").isNotEmpty()) {
             return
         }
 
-        val expectedErrors = InTextDirectivesUtils.findLinesWithPrefixesRemoved(file.getText(), "// ERROR:").sorted()
+        val expectedErrors = InTextDirectivesUtils.findLinesWithPrefixesRemoved(file.text, "// ERROR:").sorted()
 
         val actualErrors = file.analyzeFully().getDiagnostics()
                 .filter { it.getSeverity() == Severity.ERROR }
@@ -43,13 +43,13 @@ public object DirectiveBasedActionUtils {
                                            expectedErrors)
     }
 
-    public fun checkAvailableActionsAreExpected(file: PsiFile, availableActions: Collection<IntentionAction>) {
-        val expectedActions = InTextDirectivesUtils.findLinesWithPrefixesRemoved(file.getText(), "// ACTION:").sorted()
+    fun checkAvailableActionsAreExpected(file: PsiFile, availableActions: Collection<IntentionAction>) {
+        val expectedActions = InTextDirectivesUtils.findLinesWithPrefixesRemoved(file.text, "// ACTION:").sorted()
 
         UsefulTestCase.assertEmpty("Irrelevant actions should not be specified in ACTION directive for they are not checked anyway",
                                    expectedActions.filter { isIrrelevantAction(it) })
 
-        val actualActions = availableActions.map { it.getText() }.sorted()
+        val actualActions = availableActions.map { it.text }.sorted()
 
         UsefulTestCase.assertOrderedEquals("Some unexpected actions available at current position. Use // ACTION: directive",
                                            filterOutIrrelevantActions(actualActions),

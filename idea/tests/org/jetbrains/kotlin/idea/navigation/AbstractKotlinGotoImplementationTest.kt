@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
-public abstract class AbstractKotlinGotoImplementationTest : LightCodeInsightTestCase() {
+abstract class AbstractKotlinGotoImplementationTest : LightCodeInsightTestCase() {
 
     override fun getTestDataPath(): String = KotlinTestUtils.getHomeDirectory() + File.separator
 

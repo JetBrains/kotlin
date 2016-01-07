@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToShorteningWaitSet
 import org.jetbrains.kotlin.idea.util.ShortenReferences.Options
 
-public abstract class KotlinImplicitReceiverUsage(callElement: KtElement): KotlinUsageInfo<KtElement>(callElement) {
+abstract class KotlinImplicitReceiverUsage(callElement: KtElement): KotlinUsageInfo<KtElement>(callElement) {
     protected abstract fun getNewReceiverText(): String
 
     protected open fun processReplacedElement(element: KtElement) {
@@ -42,7 +42,7 @@ public abstract class KotlinImplicitReceiverUsage(callElement: KtElement): Kotli
     }
 }
 
-public class KotlinImplicitThisToParameterUsage(
+class KotlinImplicitThisToParameterUsage(
         callElement: KtElement,
         val parameterInfo: KotlinParameterInfo,
         val containingCallable: KotlinCallableDefinitionUsage<*>
@@ -54,13 +54,13 @@ public class KotlinImplicitThisToParameterUsage(
     }
 }
 
-public class KotlinImplicitThisUsage(
+class KotlinImplicitThisUsage(
         callElement: KtElement,
         val targetDescriptor: DeclarationDescriptor
 ): KotlinImplicitReceiverUsage(callElement) {
     override fun getNewReceiverText(): String {
-        val name = targetDescriptor.getName()
-        return if (name.isSpecial()) "this" else "this@${name.asString()}"
+        val name = targetDescriptor.name
+        return if (name.isSpecial) "this" else "this@${name.asString()}"
     }
 
     override fun processReplacedElement(element: KtElement) {

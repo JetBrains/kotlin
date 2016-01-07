@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.utils.addToStdlib.singletonOrEmptyList
 import java.util.*
 
-public abstract class CreateCallableMemberFromUsageFactory<E : KtElement>(
+abstract class CreateCallableMemberFromUsageFactory<E : KtElement>(
         val extensionsSupported: Boolean = true
 ) : KotlinIntentionActionFactoryWithDelegate<E, List<CallableInfo>>() {
     private fun newCallableQuickFix(

@@ -23,16 +23,16 @@ import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.psi.KtClass
 import org.junit.Assert
 
-public class QuickDocInCompletionTest(): LightPlatformCodeInsightFixtureTestCase() {
+class QuickDocInCompletionTest(): LightPlatformCodeInsightFixtureTestCase() {
     override fun getTestDataPath(): String {
         return PluginTestCaseBase.getTestDataPathBase() + "/kdoc/inCompletion/"
     }
-    public fun testSimple() {
+    fun testSimple() {
         myFixture.configureByFile(getTestName(true) + ".kt")
         val lookupElements = myFixture.completeBasic()
-        val lookupObject = lookupElements.first().getObject()
+        val lookupObject = lookupElements.first().`object`
         val element = KotlinQuickDocumentationProvider().getDocumentationElementForLookupItem(
-                myFixture.getPsiManager(), lookupObject, null)
+                myFixture.psiManager, lookupObject, null)
         Assert.assertTrue(element is KtClass)
     }
 }

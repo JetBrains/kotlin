@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 import org.jetbrains.kotlin.resolve.BindingContext
 
-public open class ChangeVisibilityModifierIntention protected constructor(
+open class ChangeVisibilityModifierIntention protected constructor(
         val modifier: KtModifierKeywordToken
 ) : SelfTargetingRangeIntention<KtDeclaration>(KtDeclaration::class.java, "Make ${modifier.value}") {
 
@@ -111,9 +111,9 @@ public open class ChangeVisibilityModifierIntention protected constructor(
         }
     }
 
-    public class Public : ChangeVisibilityModifierIntention(KtTokens.PUBLIC_KEYWORD), HighPriorityAction
+    class Public : ChangeVisibilityModifierIntention(KtTokens.PUBLIC_KEYWORD), HighPriorityAction
 
-    public class Private : ChangeVisibilityModifierIntention(KtTokens.PRIVATE_KEYWORD), HighPriorityAction {
+    class Private : ChangeVisibilityModifierIntention(KtTokens.PRIVATE_KEYWORD), HighPriorityAction {
         override fun applicabilityRange(element: KtDeclaration): TextRange? {
             return if (canBePrivate(element)) super.applicabilityRange(element) else null
         }
@@ -124,7 +124,7 @@ public open class ChangeVisibilityModifierIntention protected constructor(
         }
     }
 
-    public class Protected : ChangeVisibilityModifierIntention(KtTokens.PROTECTED_KEYWORD) {
+    class Protected : ChangeVisibilityModifierIntention(KtTokens.PROTECTED_KEYWORD) {
         override fun applicabilityRange(element: KtDeclaration): TextRange? {
             return if (canBeProtected(element)) super.applicabilityRange(element) else null
         }
@@ -138,5 +138,5 @@ public open class ChangeVisibilityModifierIntention protected constructor(
         }
     }
 
-    public class Internal : ChangeVisibilityModifierIntention(KtTokens.INTERNAL_KEYWORD)
+    class Internal : ChangeVisibilityModifierIntention(KtTokens.INTERNAL_KEYWORD)
 }

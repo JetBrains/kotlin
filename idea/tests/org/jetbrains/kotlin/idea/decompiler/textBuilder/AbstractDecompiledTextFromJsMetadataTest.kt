@@ -24,11 +24,11 @@ import org.jetbrains.kotlin.idea.test.ModuleKind
 import org.jetbrains.kotlin.idea.test.configureAs
 import kotlin.test.assertTrue
 
-public abstract class AbstractDecompiledTextFromJsMetadataTest(baseDirectory: String) : AbstractDecompiledTextBaseTest(baseDirectory, true) {
-    protected override fun getFileToDecompile(): VirtualFile =
+abstract class AbstractDecompiledTextFromJsMetadataTest(baseDirectory: String) : AbstractDecompiledTextBaseTest(baseDirectory, true) {
+    override fun getFileToDecompile(): VirtualFile =
             NavigateToDecompiledLibraryTest.getKjsmFile(TEST_PACKAGE, getTestName(false), myModule!!)
 
-    protected override fun checkPsiFile(psiFile: PsiFile) =
+    override fun checkPsiFile(psiFile: PsiFile) =
             assertTrue(psiFile is KtDecompiledFile, "Expecting decompiled kotlin javascript file, was: " + psiFile.javaClass)
 
     override fun setUp() {
@@ -37,6 +37,6 @@ public abstract class AbstractDecompiledTextFromJsMetadataTest(baseDirectory: St
     }
 }
 
-public abstract class AbstractCommonDecompiledTextFromJsMetadataTest : AbstractDecompiledTextFromJsMetadataTest("/decompiler/decompiledText")
+abstract class AbstractCommonDecompiledTextFromJsMetadataTest : AbstractDecompiledTextFromJsMetadataTest("/decompiler/decompiledText")
 
-public abstract class AbstractJsDecompiledTextFromJsMetadataTest : AbstractDecompiledTextFromJsMetadataTest("/decompiler/decompiledTextJs")
+abstract class AbstractJsDecompiledTextFromJsMetadataTest : AbstractDecompiledTextFromJsMetadataTest("/decompiler/decompiledTextJs")

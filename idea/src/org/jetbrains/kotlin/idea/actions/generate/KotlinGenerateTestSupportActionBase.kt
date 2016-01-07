@@ -93,24 +93,24 @@ abstract class KotlinGenerateTestSupportActionBase(
         }
     }
 
-    public class SetUp : KotlinGenerateTestSupportActionBase(MethodKind.SET_UP) {
+    class SetUp : KotlinGenerateTestSupportActionBase(MethodKind.SET_UP) {
         override fun isApplicableTo(framework: TestFramework, targetClass: KtClassOrObject): Boolean {
             return framework.findSetUpMethod(targetClass.toLightClass()!!) == null
         }
     }
 
-    public class Test : KotlinGenerateTestSupportActionBase(MethodKind.TEST) {
+    class Test : KotlinGenerateTestSupportActionBase(MethodKind.TEST) {
         override fun isApplicableTo(framework: TestFramework, targetClass: KtClassOrObject) = true
     }
 
-    public class Data : KotlinGenerateTestSupportActionBase(MethodKind.DATA) {
+    class Data : KotlinGenerateTestSupportActionBase(MethodKind.DATA) {
         override fun isApplicableTo(framework: TestFramework, targetClass: KtClassOrObject): Boolean {
             if (framework !is JavaTestFramework) return false
             return framework.findParametersMethod(targetClass.toLightClass()) == null
         }
     }
 
-    public class TearDown : KotlinGenerateTestSupportActionBase(MethodKind.TEAR_DOWN) {
+    class TearDown : KotlinGenerateTestSupportActionBase(MethodKind.TEAR_DOWN) {
         override fun isApplicableTo(framework: TestFramework, targetClass: KtClassOrObject): Boolean {
             return framework.findTearDownMethod(targetClass.toLightClass()!!) == null
         }

@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 
-public class KotlinBasicStepMethodFilter(
+class KotlinBasicStepMethodFilter(
         val resolvedElement: KtElement,
         val myCallingExpressionLines: Range<Int>
 ) : NamedMethodFilter {

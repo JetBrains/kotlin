@@ -26,7 +26,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.search.searches.ClassInheritorsSearch
 import com.intellij.util.EmptyQuery
 
-public fun HierarchySearchRequest<*>.searchInheritors(): Query<PsiClass> {
+fun HierarchySearchRequest<*>.searchInheritors(): Query<PsiClass> {
     val psiClass: PsiClass? = when (originalElement) {
         is KtClassOrObject -> LightClassUtil.getPsiClass(originalElement)
         is PsiClass -> originalElement

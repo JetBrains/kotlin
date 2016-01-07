@@ -44,11 +44,11 @@ import org.jetbrains.kotlin.serialization.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
-public open class KotlinClsStubBuilder : ClsStubBuilder() {
+open class KotlinClsStubBuilder : ClsStubBuilder() {
     override fun getStubVersion() = ClassFileStubBuilder.STUB_VERSION + 1
 
     override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
-        val file = content.getFile()
+        val file = content.file
 
         if (isKotlinInternalCompiledFile(file)) {
             return null
@@ -59,9 +59,9 @@ public open class KotlinClsStubBuilder : ClsStubBuilder() {
 
     fun doBuildFileStub(file: VirtualFile): PsiFileStub<KtFile>? {
         val kotlinBinaryClass = KotlinBinaryClassCache.getKotlinBinaryClass(file)!!
-        val header = kotlinBinaryClass.getClassHeader()
-        val classId = kotlinBinaryClass.getClassId()
-        val packageFqName = classId.getPackageFqName()
+        val header = kotlinBinaryClass.classHeader
+        val classId = kotlinBinaryClass.classId
+        val packageFqName = classId.packageFqName
         if (!header.isCompatibleAbiVersion) {
             return createIncompatibleAbiVersionFileStub()
         }
@@ -74,12 +74,12 @@ public open class KotlinClsStubBuilder : ClsStubBuilder() {
 
         val annotationData = header.annotationData
         if (annotationData == null) {
-            LOG.error("Corrupted kotlin header for file ${file.getName()}")
+            LOG.error("Corrupted kotlin header for file ${file.name}")
             return null
         }
         val strings = header.strings
         if (strings == null) {
-            LOG.error("String table not found in file ${file.getName()}")
+            LOG.error("String table not found in file ${file.name}")
             return null
         }
         return when {
@@ -94,12 +94,12 @@ public open class KotlinClsStubBuilder : ClsStubBuilder() {
                 val context = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))
                 createFileFacadeStub(packageProto, classId.asSingleFqName(), context)
             }
-            else -> throw IllegalStateException("Should have processed " + file.getPath() + " with header $header")
+            else -> throw IllegalStateException("Should have processed " + file.path + " with header $header")
         }
     }
 
     private fun createStubBuilderComponents(file: VirtualFile, packageFqName: FqName): ClsStubBuilderComponents {
-        val classFinder = DirectoryBasedClassFinder(file.getParent()!!, packageFqName)
+        val classFinder = DirectoryBasedClassFinder(file.parent!!, packageFqName)
         val classDataFinder = DirectoryBasedDataFinder(classFinder, LOG)
         val annotationLoader = AnnotationLoaderForClassFileStubBuilder(classFinder, LoggingErrorReporter(LOG))
         return ClsStubBuilderComponents(classDataFinder, annotationLoader, file)
@@ -127,7 +127,7 @@ class AnnotationLoaderForClassFileStubBuilder(
     }
 
     override fun loadTypeAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): ClassId =
-            nameResolver.getClassId(proto.getId())
+            nameResolver.getClassId(proto.id)
 
     override fun loadConstant(desc: String, initializer: Any) = null
 

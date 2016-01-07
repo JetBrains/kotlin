@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.serialization.deserialization.NameResolver
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.types.KotlinType
 
-public class AnnotationLoaderForStubBuilderImpl(
+class AnnotationLoaderForStubBuilderImpl(
         private val protocol: SerializerExtensionProtocol
 ) : AnnotationAndConstantLoader<ClassId, Unit, ClassIdWithTarget> {
 

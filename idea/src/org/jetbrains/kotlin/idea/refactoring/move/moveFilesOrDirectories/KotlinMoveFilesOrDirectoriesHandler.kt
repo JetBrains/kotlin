@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.idea.refactoring.move.*
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 
-public class KotlinMoveFilesOrDirectoriesHandler : MoveFilesOrDirectoriesHandler() {
+class KotlinMoveFilesOrDirectoriesHandler : MoveFilesOrDirectoriesHandler() {
     private fun adjustElements(elements: Array<out PsiElement>): Array<PsiElement>? {
         return elements.map {
             when {

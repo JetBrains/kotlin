@@ -23,28 +23,28 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.psi.KtNamedFunction
 
 
-public class KotlinFunctionParametersFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
+class KotlinFunctionParametersFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, psiElement: PsiElement) {
         if (psiElement !is KtNamedFunction) return;
 
-        val parameterList = psiElement.getValueParameterList()
+        val parameterList = psiElement.valueParameterList
         if (parameterList == null) {
-            val identifier = psiElement.getNameIdentifier()
+            val identifier = psiElement.nameIdentifier
             if (identifier == null) return
 
             // Insert () after name or after type parameters list when it placed after name
-            val offset = Math.max(identifier.range.end, psiElement.getTypeParameterList()?.range?.end ?: psiElement.range.start)
-            editor.getDocument().insertString(offset, "()")
+            val offset = Math.max(identifier.range.end, psiElement.typeParameterList?.range?.end ?: psiElement.range.start)
+            editor.document.insertString(offset, "()")
             processor.registerUnresolvedError(offset + 1)
         }
         else {
-            val rParen = parameterList.getLastChild()
+            val rParen = parameterList.lastChild
             if (rParen == null) return
 
-            if (")" != rParen.getText()) {
-                val params = parameterList.getParameters()
+            if (")" != rParen.text) {
+                val params = parameterList.parameters
                 val offset = if (params.isEmpty()) parameterList.range.start + 1 else params.last().range.end
-                editor.getDocument().insertString(offset, ")")
+                editor.document.insertString(offset, ")")
             }
         }
     }

@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.types.expressions.ForLoopConventionsChecker
 import org.jetbrains.kotlin.util.isValidOperator
 import java.util.*
 
-public class IterableTypesDetection(
+class IterableTypesDetection(
         private val project: Project,
         private val forLoopConventionsChecker: ForLoopConventionsChecker
 ) {
@@ -42,7 +42,7 @@ public class IterableTypesDetection(
         private val iteratorName = Name.identifier("iterator")
     }
 
-    public fun createDetector(scope: LexicalScope): IterableTypesDetector {
+    fun createDetector(scope: LexicalScope): IterableTypesDetector {
         return Detector(scope)
     }
     private inner class Detector(private val scope: LexicalScope): IterableTypesDetector {
@@ -89,10 +89,10 @@ public class IterableTypesDetection(
     }
 }
 
-public interface IterableTypesDetector {
-    public fun isIterable(type: KotlinType, loopVarType: KotlinType? = null): Boolean
+interface IterableTypesDetector {
+    fun isIterable(type: KotlinType, loopVarType: KotlinType? = null): Boolean
 
-    public fun isIterable(type: FuzzyType, loopVarType: KotlinType? = null): Boolean
+    fun isIterable(type: FuzzyType, loopVarType: KotlinType? = null): Boolean
 
-    public fun elementType(type: KotlinType): FuzzyType?
+    fun elementType(type: KotlinType): FuzzyType?
 }

@@ -21,7 +21,7 @@ import com.intellij.openapi.editor.Editor
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.KtSimpleNameStringTemplateEntry
 
-public class InsertCurlyBracesToTemplateIntention : SelfTargetingOffsetIndependentIntention<KtSimpleNameStringTemplateEntry> (
+class InsertCurlyBracesToTemplateIntention : SelfTargetingOffsetIndependentIntention<KtSimpleNameStringTemplateEntry> (
         KtSimpleNameStringTemplateEntry::class.java, "Insert curly braces around variable"), LowPriorityAction {
 
     override fun isApplicableTo(element: KtSimpleNameStringTemplateEntry): Boolean = true
