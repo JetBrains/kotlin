@@ -22,28 +22,28 @@ import org.jetbrains.kotlin.j2k.ast.*
 import org.jetbrains.kotlin.utils.addToStdlib.check
 
 class CodeConverter(
-        public val converter: Converter,
+        val converter: Converter,
         private val expressionConverter: ExpressionConverter,
         private val statementConverter: StatementConverter,
-        public val methodReturnType: PsiType?
+        val methodReturnType: PsiType?
 ) {
 
-    public val typeConverter: TypeConverter = converter.typeConverter
-    public val settings: ConverterSettings = converter.settings
+    val typeConverter: TypeConverter = converter.typeConverter
+    val settings: ConverterSettings = converter.settings
 
-    public fun withSpecialExpressionConverter(specialConverter: SpecialExpressionConverter): CodeConverter
+    fun withSpecialExpressionConverter(specialConverter: SpecialExpressionConverter): CodeConverter
             = CodeConverter(converter, expressionConverter.withSpecialConverter(specialConverter), statementConverter, methodReturnType)
 
-    public fun withSpecialStatementConverter(specialConverter: SpecialStatementConverter): CodeConverter
+    fun withSpecialStatementConverter(specialConverter: SpecialStatementConverter): CodeConverter
             = CodeConverter(converter, expressionConverter, statementConverter.withSpecialConverter(specialConverter), methodReturnType)
 
-    public fun withMethodReturnType(methodReturnType: PsiType?): CodeConverter
+    fun withMethodReturnType(methodReturnType: PsiType?): CodeConverter
             = CodeConverter(converter, expressionConverter, statementConverter, methodReturnType)
 
-    public fun withConverter(converter: Converter): CodeConverter
+    fun withConverter(converter: Converter): CodeConverter
             = CodeConverter(converter, expressionConverter, statementConverter, methodReturnType)
 
-    public fun convertBlock(block: PsiCodeBlock?, notEmpty: Boolean = true, statementFilter: (PsiStatement) -> Boolean = { true }): Block {
+    fun convertBlock(block: PsiCodeBlock?, notEmpty: Boolean = true, statementFilter: (PsiStatement) -> Boolean = { true }): Block {
         if (block == null) return Block.Empty
 
         val lBrace = LBrace().assignPrototype(block.lBrace)
@@ -51,19 +51,19 @@ class CodeConverter(
         return Block(block.statements.filter(statementFilter).map { convertStatement(it) }, lBrace, rBrace, notEmpty).assignPrototype(block)
     }
 
-    public fun convertStatement(statement: PsiStatement?): Statement {
+    fun convertStatement(statement: PsiStatement?): Statement {
         if (statement == null) return Statement.Empty
 
         return statementConverter.convertStatement(statement, this).assignPrototype(statement)
     }
 
-    public fun convertExpressions(expressions: Array<PsiExpression>): List<Expression>
+    fun convertExpressions(expressions: Array<PsiExpression>): List<Expression>
             = expressions.map { convertExpression(it) }
 
-    public fun convertExpressions(expressions: List<PsiExpression>): List<Expression>
+    fun convertExpressions(expressions: List<PsiExpression>): List<Expression>
             = expressions.map { convertExpression(it) }
 
-    public fun convertExpression(expression: PsiExpression?, shouldParenthesize: Boolean = false): Expression {
+    fun convertExpression(expression: PsiExpression?, shouldParenthesize: Boolean = false): Expression {
         if (expression == null) return Expression.Empty
 
         val converted = expressionConverter.convertExpression(expression, this).assignPrototype(expression)
@@ -73,7 +73,7 @@ class CodeConverter(
         return converted
     }
 
-    public fun convertLocalVariable(variable: PsiLocalVariable): LocalVariable {
+    fun convertLocalVariable(variable: PsiLocalVariable): LocalVariable {
         val isVal = variable.hasModifierProperty(PsiModifier.FINAL) ||
                     variable.initializer == null/* we do not know actually and prefer val until we have better analysis*/ ||
                     !variable.hasWriteAccesses(converter.referenceSearcher, variable.getContainingMethod())
@@ -87,7 +87,7 @@ class CodeConverter(
                              isVal).assignPrototype(variable)
     }
 
-    public fun convertExpression(expression: PsiExpression?, expectedType: PsiType?): Expression {
+    fun convertExpression(expression: PsiExpression?, expectedType: PsiType?): Expression {
         if (expression == null) return Identifier.Empty
 
         var convertedExpression = convertExpression(expression)
@@ -136,7 +136,7 @@ class CodeConverter(
         return convertedExpression.assignPrototype(expression)
     }
 
-    public fun convertedExpressionType(expression: PsiExpression, expectedType: PsiType): Type {
+    fun convertedExpressionType(expression: PsiExpression, expectedType: PsiType): Type {
         var convertedExpression = convertExpression(expression)
         val actualType = expression.type ?: return ErrorType()
         var resultType = typeConverter.convertType(actualType, if (convertedExpression.isNullable) Nullability.Nullable else Nullability.NotNull)

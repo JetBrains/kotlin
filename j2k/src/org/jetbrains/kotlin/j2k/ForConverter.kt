@@ -36,7 +36,7 @@ class ForConverter(
     private val condition = statement.condition
     private val body = statement.body
 
-    public fun execute(): Statement {
+    fun execute(): Statement {
         val foreach = convertToForeach()
         if (foreach != null) return foreach
 
@@ -114,13 +114,13 @@ class ForConverter(
         return WhileWithInitializationPseudoStatement(initializationConverted, whileStatement, kind)
     }
 
-    public class WhileWithInitializationPseudoStatement(
-            public val initialization: Statement,
-            public val loop: Statement,
-            public val kind: WhileWithInitializationPseudoStatement.Kind
+    class WhileWithInitializationPseudoStatement(
+            val initialization: Statement,
+            val loop: Statement,
+            val kind: WhileWithInitializationPseudoStatement.Kind
     ) : Statement() {
 
-        public enum class Kind {
+        enum class Kind {
             SIMPLE,
             WITH_BLOCK,
             WITH_RUN_BLOCK

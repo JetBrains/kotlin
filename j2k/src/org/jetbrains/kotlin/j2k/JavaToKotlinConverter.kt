@@ -34,35 +34,35 @@ import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import java.util.*
 
-public interface PostProcessor {
-    public fun insertImport(file: KtFile, fqName: FqName)
+interface PostProcessor {
+    fun insertImport(file: KtFile, fqName: FqName)
 
-    public fun doAdditionalProcessing(file: KtFile, rangeMarker: RangeMarker?)
+    fun doAdditionalProcessing(file: KtFile, rangeMarker: RangeMarker?)
 }
 
-public enum class ParseContext {
+enum class ParseContext {
     TOP_LEVEL,
     CODE_BLOCK
 }
 
-public class JavaToKotlinConverter(
+class JavaToKotlinConverter(
         private val project: Project,
         private val settings: ConverterSettings,
         private val services: JavaToKotlinConverterServices
 ) {
     private val LOG = Logger.getInstance("#org.jetbrains.kotlin.j2k.JavaToKotlinConverter")
 
-    public interface ExternalCodeProcessing {
-        public fun prepareWriteOperation(progress: ProgressIndicator): () -> Unit
+    interface ExternalCodeProcessing {
+        fun prepareWriteOperation(progress: ProgressIndicator): () -> Unit
     }
 
-    public data class ElementResult(val text: String, val importsToAdd: Set<FqName>, val parseContext: ParseContext)
+    data class ElementResult(val text: String, val importsToAdd: Set<FqName>, val parseContext: ParseContext)
 
-    public data class Result(val results: List<ElementResult?>, val externalCodeProcessing: ExternalCodeProcessing?)
+    data class Result(val results: List<ElementResult?>, val externalCodeProcessing: ExternalCodeProcessing?)
 
-    public data class FilesResult(val results: List<String>, val externalCodeProcessing: ExternalCodeProcessing?)
+    data class FilesResult(val results: List<String>, val externalCodeProcessing: ExternalCodeProcessing?)
 
-    public fun filesToKotlin(files: List<PsiJavaFile>, postProcessor: PostProcessor, progress: ProgressIndicator = EmptyProgressIndicator()): FilesResult {
+    fun filesToKotlin(files: List<PsiJavaFile>, postProcessor: PostProcessor, progress: ProgressIndicator = EmptyProgressIndicator()): FilesResult {
         val withProgressProcessor = WithProgressProcessor(progress, files)
 
         val (results, externalCodeProcessing) = elementsToKotlin(files, withProgressProcessor)
@@ -90,7 +90,7 @@ public class JavaToKotlinConverter(
         return FilesResult(texts, externalCodeProcessing)
     }
 
-    public fun elementsToKotlin(inputElements: List<PsiElement>): Result {
+    fun elementsToKotlin(inputElements: List<PsiElement>): Result {
         return elementsToKotlin(inputElements, WithProgressProcessor.DEFAULT)
     }
 
@@ -228,7 +228,7 @@ public class JavaToKotlinConverter(
     }
 
     private class WithProgressProcessor(private val progress: ProgressIndicator?, private val files: List<PsiJavaFile>?) {
-        public companion object {
+        companion object {
             val DEFAULT = WithProgressProcessor(null, null)
         }
 
@@ -303,11 +303,11 @@ public class JavaToKotlinConverter(
     private open class DelegatingProgressIndicator : WrappedProgressIndicator, StandardProgressIndicator {
         protected val delegate: ProgressIndicator
 
-        public constructor(indicator: ProgressIndicator) {
+        constructor(indicator: ProgressIndicator) {
             delegate = indicator
         }
 
-        public constructor() {
+        constructor() {
             val indicator = ProgressManager.getInstance().progressIndicator
             delegate = indicator ?: EmptyProgressIndicator()
         }

@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.j2k
 
-public data class ConverterSettings(
+data class ConverterSettings(
         var forceNotNullTypes: Boolean,
         var specifyLocalVariableTypeByDefault: Boolean,
         var specifyFieldTypeByDefault: Boolean,
@@ -24,7 +24,7 @@ public data class ConverterSettings(
 ) {
 
     companion object {
-        public val defaultSettings: ConverterSettings = ConverterSettings(
+        val defaultSettings: ConverterSettings = ConverterSettings(
                 forceNotNullTypes = true,
                 specifyLocalVariableTypeByDefault = false,
                 specifyFieldTypeByDefault = false,

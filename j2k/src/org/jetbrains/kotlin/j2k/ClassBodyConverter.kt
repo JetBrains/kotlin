@@ -51,7 +51,7 @@ class ClassBodyConverter(private val psiClass: PsiClass,
 ) {
     private val fieldsToDrop = HashSet<PsiField>()
 
-    public fun convertBody(): ClassBody {
+    fun convertBody(): ClassBody {
         val memberToPropertyInfo = converter.propertyDetectionCache[psiClass]
 
         for ((member, propertyInfo) in memberToPropertyInfo) {

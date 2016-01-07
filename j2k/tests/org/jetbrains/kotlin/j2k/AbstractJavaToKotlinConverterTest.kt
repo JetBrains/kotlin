@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
-public abstract class AbstractJavaToKotlinConverterTest : LightCodeInsightFixtureTestCase() {
+abstract class AbstractJavaToKotlinConverterTest : LightCodeInsightFixtureTestCase() {
     override fun setUp() {
         super.setUp()
 

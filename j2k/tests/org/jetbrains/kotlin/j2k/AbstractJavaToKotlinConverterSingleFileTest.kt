@@ -31,10 +31,10 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 import java.util.regex.Pattern
 
-public abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJavaToKotlinConverterTest() {
+abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJavaToKotlinConverterTest() {
     val testHeaderPattern = Pattern.compile("//(element|expression|statement|method|class|file|comp)\n")
 
-    public fun doTest(javaPath: String) {
+    fun doTest(javaPath: String) {
         val project = LightPlatformTestCase.getProject()!!
         val javaFile = File(javaPath)
         val fileContents = FileUtil.loadFile(javaFile, true)

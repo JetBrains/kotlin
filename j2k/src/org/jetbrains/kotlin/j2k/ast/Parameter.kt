@@ -27,7 +27,7 @@ class FunctionParameter(identifier: Identifier,
                         val modifiers: Modifiers,
                         val defaultValue: DeferredElement<Expression>? = null
 ): Parameter(identifier, type) {
-    public enum class VarValModifier {
+    enum class VarValModifier {
         None,
         Val,
         Var

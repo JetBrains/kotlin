@@ -144,7 +144,7 @@ class TypeVisitor(
                 CommonClassNames.JAVA_UTIL_MAP to "kotlin.Map"
         )
 
-        public val toKotlinMutableTypesMap: Map<String, String> = mapOf(
+        val toKotlinMutableTypesMap: Map<String, String> = mapOf(
                 CommonClassNames.JAVA_UTIL_LIST to "kotlin.MutableList",
                 CommonClassNames.JAVA_UTIL_COLLECTION to "kotlin.MutableCollection",
                 CommonClassNames.JAVA_UTIL_SET to "kotlin.MutableSet",

@@ -29,7 +29,7 @@ enum class Modifier(private val str: String) {
     OVERRIDE("override"),
     INNER("inner");
 
-    public fun toKotlin(): String = str
+    fun toKotlin(): String = str
 }
 
 val ACCESS_MODIFIERS = setOf(Modifier.PUBLIC, Modifier.PROTECTED, Modifier.PRIVATE, Modifier.INTERNAL)

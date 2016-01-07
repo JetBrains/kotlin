@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.j2k.usageProcessing
 
 import com.intellij.psi.*
 
-public class MethodIntoObjectProcessing(private val method: PsiMethod, private val objectName: String) : UsageProcessing {
+class MethodIntoObjectProcessing(private val method: PsiMethod, private val objectName: String) : UsageProcessing {
     override val targetElement: PsiElement get() = method
 
     override val convertedCodeProcessor: ConvertedCodeProcessor? get() = null

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.j2k
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiUtil
 
-public interface ReferenceSearcher {
+interface ReferenceSearcher {
     fun findLocalUsages(element: PsiElement, scope: PsiElement): Collection<PsiReference>
     fun hasInheritors(`class`: PsiClass): Boolean
     fun hasOverrides(method: PsiMethod): Boolean
@@ -27,10 +27,10 @@ public interface ReferenceSearcher {
     fun findUsagesForExternalCodeProcessing(element: PsiElement, searchJava: Boolean, searchKotlin: Boolean): Collection<PsiReference>
 }
 
-public fun ReferenceSearcher.findVariableUsages(variable: PsiVariable, scope: PsiElement): Collection<PsiReferenceExpression>
+fun ReferenceSearcher.findVariableUsages(variable: PsiVariable, scope: PsiElement): Collection<PsiReferenceExpression>
         = findLocalUsages(variable, scope).filterIsInstance<PsiReferenceExpression>()
 
-public fun ReferenceSearcher.findMethodCalls(method: PsiMethod, scope: PsiElement): Collection<PsiMethodCallExpression> {
+fun ReferenceSearcher.findMethodCalls(method: PsiMethod, scope: PsiElement): Collection<PsiMethodCallExpression> {
     return findLocalUsages(method, scope).mapNotNull {
         if (it is PsiReferenceExpression) {
             val methodCall = it.parent as? PsiMethodCallExpression
@@ -42,7 +42,7 @@ public fun ReferenceSearcher.findMethodCalls(method: PsiMethod, scope: PsiElemen
     }
 }
 
-public fun PsiField.isVar(searcher: ReferenceSearcher): Boolean {
+fun PsiField.isVar(searcher: ReferenceSearcher): Boolean {
     if (hasModifierProperty(PsiModifier.FINAL)) return false
     if (!hasModifierProperty(PsiModifier.PRIVATE)) return true
     val containingClass = containingClass ?: return true
@@ -64,10 +64,10 @@ public fun PsiField.isVar(searcher: ReferenceSearcher): Boolean {
     return true
 }
 
-public fun PsiVariable.hasWriteAccesses(searcher: ReferenceSearcher, scope: PsiElement?): Boolean
+fun PsiVariable.hasWriteAccesses(searcher: ReferenceSearcher, scope: PsiElement?): Boolean
         = if (scope != null) searcher.findVariableUsages(this, scope).any { PsiUtil.isAccessedForWriting(it) } else false
 
-public object EmptyReferenceSearcher: ReferenceSearcher {
+object EmptyReferenceSearcher: ReferenceSearcher {
     override fun findLocalUsages(element: PsiElement, scope: PsiElement): Collection<PsiReference> = emptyList()
     override fun hasInheritors(`class`: PsiClass) = false
     override fun hasOverrides(method: PsiMethod) = false

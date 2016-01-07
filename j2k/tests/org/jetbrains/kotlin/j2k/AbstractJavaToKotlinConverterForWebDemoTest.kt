@@ -44,10 +44,10 @@ import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.net.URLClassLoader
 
-public abstract class AbstractJavaToKotlinConverterForWebDemoTest : TestCase() {
+abstract class AbstractJavaToKotlinConverterForWebDemoTest : TestCase() {
     val DISPOSABLE = Disposer.newDisposable()
 
-    public fun doTest(javaPath: String) {
+    fun doTest(javaPath: String) {
         try {
             val fileContents = FileUtil.loadFile(File(javaPath), true)
             val javaCoreEnvironment: JavaCoreProjectEnvironment = setUpJavaCoreEnvironment()

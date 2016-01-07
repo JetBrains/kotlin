@@ -98,7 +98,7 @@ private class PropertyDetector(
 ) {
     private val isOpenClass = converter.needOpenModifier(psiClass)
 
-    public fun detectProperties(): Map<PsiMember, PropertyInfo> {
+    fun detectProperties(): Map<PsiMember, PropertyInfo> {
         val methodsToCheck = ArrayList<Pair<PsiMethod, SuperInfo.Property?>>()
         for (method in psiClass.methods) {
             val name = method.name

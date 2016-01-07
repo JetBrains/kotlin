@@ -58,10 +58,10 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
 
     private val imports = LinkedHashSet<FqName>()
 
-    public infix fun append(text: String): CodeBuilder
+    infix fun append(text: String): CodeBuilder
             = append(text, false)
 
-    public fun addImport(fqName: FqName) {
+    fun addImport(fqName: FqName) {
         imports.add(fqName)
     }
 
@@ -92,13 +92,13 @@ class CodeBuilder(private val topElement: PsiElement?, private var docConverter:
         return this
     }
 
-    public val resultText: String
+    val resultText: String
         get() = builder.toString()
 
-    public val importsToAdd: Set<FqName>
+    val importsToAdd: Set<FqName>
         get() = imports
 
-    public infix fun append(element: Element): CodeBuilder {
+    infix fun append(element: Element): CodeBuilder {
         if (element.isEmpty) return this // do not insert comment and spaces for empty elements to avoid multiple blank lines
 
         if (element.prototypes == null && topElement != null) {
