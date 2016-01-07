@@ -30,22 +30,22 @@ import java.io.File
  * To test this, we compile a Kotlin+Java module (in two modes: CLI and module-based) where a runtime Java class was replaced
  * with a "newer" version in sources, and check that this class resolves to the one from sources by calling a method absent in the runtime
  */
-public class ClasspathOrderTest : TestCaseWithTmpdir() {
+class ClasspathOrderTest : TestCaseWithTmpdir() {
     companion object {
-        val sourceDir = File(KotlinTestUtils.getTestDataPathBase() + "/classpathOrder").getAbsoluteFile()
+        val sourceDir = File(KotlinTestUtils.getTestDataPathBase() + "/classpathOrder").absoluteFile
     }
 
-    public fun testClasspathOrderForCLI() {
-        MockLibraryUtil.compileKotlin(sourceDir.getPath(), tmpdir)
+    fun testClasspathOrderForCLI() {
+        MockLibraryUtil.compileKotlin(sourceDir.path, tmpdir)
     }
 
-    public fun testClasspathOrderForModuleScriptBuild() {
+    fun testClasspathOrderForModuleScriptBuild() {
         val xmlContent = KotlinModuleXmlBuilder().addModule(
                 "name",
-                File(tmpdir, "output").getAbsolutePath(),
+                File(tmpdir, "output").absolutePath,
                 listOf(sourceDir),
                 listOf(JvmSourceRoot(sourceDir)),
-                listOf(PathUtil.getKotlinPathsForDistDirectory().getRuntimePath()),
+                listOf(PathUtil.getKotlinPathsForDistDirectory().runtimePath),
                 JavaModuleBuildTargetType.PRODUCTION,
                 setOf(),
                 emptyList()
@@ -54,6 +54,6 @@ public class ClasspathOrderTest : TestCaseWithTmpdir() {
         val xml = File(tmpdir, "module.xml")
         xml.writeText(xmlContent)
 
-        MockLibraryUtil.compileKotlinModule(xml.getAbsolutePath())
+        MockLibraryUtil.compileKotlinModule(xml.absolutePath)
     }
 }

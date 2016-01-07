@@ -65,14 +65,14 @@ class LookupStorage(private val targetDataDir: File) : BasicMapsOwner() {
         }
     }
 
-    public fun add(lookupSymbol: LookupSymbol, containingPaths: Collection<String>) {
+    fun add(lookupSymbol: LookupSymbol, containingPaths: Collection<String>) {
         val key = LookupSymbolKey(lookupSymbol.name, lookupSymbol.scope)
         val fileIds = containingPaths.map { addFileIfNeeded(File(it)) }.toHashSet()
         fileIds.addAll(lookupMap[key] ?: emptySet())
         lookupMap[key] = fileIds
     }
 
-    public fun removeLookupsFrom(file: File) {
+    fun removeLookupsFrom(file: File) {
         val id = fileToId[file] ?: return
         idToFile.remove(id)
         fileToId.remove(file)
@@ -149,14 +149,12 @@ class LookupStorage(private val targetDataDir: File) : BasicMapsOwner() {
         }
     }
 
-    @TestOnly
-    public fun forceGC() {
+    @TestOnly fun forceGC() {
         removeGarbageIfNeeded(force = true)
         flush(false)
     }
 
-    @TestOnly
-    public fun dump(lookupSymbols: Set<LookupSymbol>): String {
+    @TestOnly fun dump(lookupSymbols: Set<LookupSymbol>): String {
         flush(false)
 
         val sb = StringBuilder()

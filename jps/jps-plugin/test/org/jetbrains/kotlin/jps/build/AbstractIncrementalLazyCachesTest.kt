@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.jps.incremental.storage.BasicMapsOwner
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
-public abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJpsTest() {
+abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJpsTest() {
     protected open val expectedCachesFileName: String
         get() = "expected-kotlin-caches.txt"
 

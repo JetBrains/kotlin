@@ -62,7 +62,7 @@ import kotlin.properties.Delegates
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
-public abstract class AbstractIncrementalJpsTest(
+abstract class AbstractIncrementalJpsTest(
         private val allowNoFilesWithSuffixInTestData: Boolean = false,
         private val checkDumpsCaseInsensitively: Boolean = false,
         private val allowNoBuildLogFileInTestData: Boolean = false
@@ -230,7 +230,7 @@ public abstract class AbstractIncrementalJpsTest(
 
             val modifications = ArrayList<Modification>()
             for (file in testDataDir.listFiles()!!) {
-                val fileName = file.getName()
+                val fileName = file.name
 
                 if (fileName.endsWith(newSuffix)) {
                     modifications.add(ModifyContent(getDirPrefix(fileName) + "/" + fileName.removeSuffix(newSuffix), file))
@@ -245,8 +245,8 @@ public abstract class AbstractIncrementalJpsTest(
             return modifications
         }
 
-        val haveFilesWithoutNumbers = testDataDir.listFiles { it -> it.getName().matches(".+\\.($COMMANDS_AS_REGEX_PART)$".toRegex()) }?.isNotEmpty() ?: false
-        val haveFilesWithNumbers = testDataDir.listFiles { it -> it.getName().matches(".+\\.($COMMANDS_AS_REGEX_PART)\\.\\d+$".toRegex()) }?.isNotEmpty() ?: false
+        val haveFilesWithoutNumbers = testDataDir.listFiles { it -> it.name.matches(".+\\.($COMMANDS_AS_REGEX_PART)$".toRegex()) }?.isNotEmpty() ?: false
+        val haveFilesWithNumbers = testDataDir.listFiles { it -> it.name.matches(".+\\.($COMMANDS_AS_REGEX_PART)\\.\\d+$".toRegex()) }?.isNotEmpty() ?: false
 
         if (haveFilesWithoutNumbers && haveFilesWithNumbers) {
             fail("Bad test data format: files ending with both unnumbered and numbered $COMMANDS_AS_MESSAGE_PART were found")
@@ -512,7 +512,7 @@ public abstract class AbstractIncrementalJpsTest(
     // TODO replace with org.jetbrains.jps.builders.TestProjectBuilderLogger
     private class MyLogger(val rootPath: String) : ProjectBuilderLoggerBase() {
         private val logBuf = StringBuilder()
-        public val log: String
+        val log: String
             get() = logBuf.toString()
 
         val compiledFiles = hashSetOf<File>()

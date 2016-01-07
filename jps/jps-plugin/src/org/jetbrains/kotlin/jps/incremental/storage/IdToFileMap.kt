@@ -24,15 +24,15 @@ internal class IdToFileMap(file: File) : BasicMap<Int, File>(file, ExternalInteg
 
     override fun dumpValue(value: File): String = value.toString()
 
-    public operator fun get(id: Int): File? = storage[id]
+    operator fun get(id: Int): File? = storage[id]
 
-    public operator fun contains(id: Int): Boolean = id in storage
+    operator fun contains(id: Int): Boolean = id in storage
 
-    public operator fun set(id: Int, file: File) {
+    operator fun set(id: Int, file: File) {
         storage[id] = file
     }
 
-    public fun remove(id: Int) {
+    fun remove(id: Int) {
         storage.remove(id)
     }
 }

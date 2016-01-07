@@ -23,20 +23,20 @@ internal class LookupMap(storage: File) : BasicMap<LookupSymbolKey, Collection<I
 
     override fun dumpValue(value: Collection<Int>): String = value.toString()
 
-    public fun add(name: String, scope: String, fileId: Int) {
+    fun add(name: String, scope: String, fileId: Int) {
         storage.append(LookupSymbolKey(name, scope)) { out -> out.writeInt(fileId) }
     }
 
-    public operator fun get(key: LookupSymbolKey): Collection<Int>? = storage[key]
+    operator fun get(key: LookupSymbolKey): Collection<Int>? = storage[key]
 
-    public operator fun set(key: LookupSymbolKey, fileIds: Set<Int>) {
+    operator fun set(key: LookupSymbolKey, fileIds: Set<Int>) {
         storage[key] = fileIds
     }
 
-    public fun remove(key: LookupSymbolKey) {
+    fun remove(key: LookupSymbolKey) {
         storage.remove(key)
     }
 
-    public val keys: Collection<LookupSymbolKey>
+    val keys: Collection<LookupSymbolKey>
         get() = storage.keys
 }
