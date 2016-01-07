@@ -32,9 +32,9 @@ import java.io.StringWriter
 import java.io.Writer
 import org.junit.Assert.*
 
-public abstract class AbstractAnnotationProcessorBoxTest : CodegenTestCase() {
+abstract class AbstractAnnotationProcessorBoxTest : CodegenTestCase() {
 
-    public fun doTest(path: String) {
+    fun doTest(path: String) {
         val testName = getTestName(true)
         val fileName = path + testName + ".kt"
         val supportInheritedAnnotations = testName.startsWith("inherited")
@@ -55,7 +55,7 @@ public abstract class AbstractAnnotationProcessorBoxTest : CodegenTestCase() {
 
     private fun createTestEnvironment(supportInheritedAnnotations: Boolean): AnnotationCollectorExtensionForTests {
         val configuration = KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK)
-        val environment = KotlinCoreEnvironment.createForTests(getTestRootDisposable()!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+        val environment = KotlinCoreEnvironment.createForTests(testRootDisposable!!, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         val project = environment.project
 
         val collectorExtension = AnnotationCollectorExtensionForTests(supportInheritedAnnotations)

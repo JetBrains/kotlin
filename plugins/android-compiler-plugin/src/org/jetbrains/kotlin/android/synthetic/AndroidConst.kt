@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.android.synthetic
 
 
-public object AndroidConst {
+object AndroidConst {
     val SYNTHETIC_PACKAGE: String = "kotlinx.android.synthetic"
     val SYNTHETIC_PACKAGE_PATH_LENGTH = SYNTHETIC_PACKAGE.count { it == '.' } + 1
 
@@ -55,7 +55,7 @@ public object AndroidConst {
     val FQNAME_RESOLVE_PACKAGES = listOf("android.widget", "android.webkit", "android.view")
 }
 
-public fun androidIdToName(id: String): String? {
+fun androidIdToName(id: String): String? {
     for (prefix in AndroidConst.XML_ID_PREFIXES) {
         if (id.startsWith(prefix)) {
             return id.substring(prefix.length)
@@ -64,7 +64,7 @@ public fun androidIdToName(id: String): String? {
     return null
 }
 
-public fun isWidgetTypeIgnored(xmlType: String): Boolean {
+fun isWidgetTypeIgnored(xmlType: String): Boolean {
     return (xmlType.isEmpty() || xmlType in AndroidConst.IGNORED_XML_WIDGET_TYPES)
 }
 

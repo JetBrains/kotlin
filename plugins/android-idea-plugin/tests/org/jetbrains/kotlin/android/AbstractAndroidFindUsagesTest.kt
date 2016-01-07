@@ -18,11 +18,11 @@ package org.jetbrains.kotlin.android
 
 import com.intellij.codeInsight.TargetElementUtil
 
-public abstract class AbstractAndroidFindUsagesTest : KotlinAndroidTestCase() {
+abstract class AbstractAndroidFindUsagesTest : KotlinAndroidTestCase() {
 
     override fun getTestDataPath() = KotlinAndroidTestCaseBase.getPluginTestDataPathBase() + "/findUsages/" + getTestName(true) + "/"
 
-    public fun doTest(path: String) {
+    fun doTest(path: String) {
         if (true) return // Muted (actually works in IDEA)
 
         val f = myFixture!!

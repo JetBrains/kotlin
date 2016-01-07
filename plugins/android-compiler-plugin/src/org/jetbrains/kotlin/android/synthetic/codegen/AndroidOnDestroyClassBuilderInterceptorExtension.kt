@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-public class AndroidOnDestroyClassBuilderInterceptorExtension : ClassBuilderInterceptorExtension {
+class AndroidOnDestroyClassBuilderInterceptorExtension : ClassBuilderInterceptorExtension {
 
     override fun interceptClassBuilderFactory(
             interceptedFactory: ClassBuilderFactory,

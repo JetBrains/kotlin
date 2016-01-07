@@ -30,9 +30,9 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import java.io.File
 
-public abstract class AbstractAndroidSyntheticPropertyDescriptorTest : UsefulTestCase() {
+abstract class AbstractAndroidSyntheticPropertyDescriptorTest : UsefulTestCase() {
 
-    public fun doTest(path: String) {
+    fun doTest(path: String) {
         val config = KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.ANDROID_API)
         val env = createAndroidTestEnvironment(config, getResPaths(path))
         val project = env.project

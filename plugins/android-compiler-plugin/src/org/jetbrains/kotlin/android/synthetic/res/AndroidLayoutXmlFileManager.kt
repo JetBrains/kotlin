@@ -39,16 +39,16 @@ class AndroidModuleData(val module: AndroidModule, private val variants: List<An
 
 abstract class AndroidLayoutXmlFileManager(val project: Project) {
 
-    public abstract val androidModule: AndroidModule?
+    abstract val androidModule: AndroidModule?
 
-    public open fun propertyToXmlAttributes(propertyDescriptor: PropertyDescriptor): List<PsiElement> = listOf()
+    open fun propertyToXmlAttributes(propertyDescriptor: PropertyDescriptor): List<PsiElement> = listOf()
 
     open fun getModuleData(): AndroidModuleData {
         val androidModule = androidModule ?: return AndroidModuleData.EMPTY
         return AndroidModuleData(androidModule, androidModule.variants.map { getVariantData(it) })
     }
 
-    public fun getVariantData(variant: AndroidVariant): AndroidVariantData {
+    fun getVariantData(variant: AndroidVariant): AndroidVariantData {
         val psiManager = PsiManager.getInstance(project)
         val fileManager = VirtualFileManager.getInstance()
 
@@ -125,7 +125,7 @@ abstract class AndroidLayoutXmlFileManager(val project: Project) {
 
 
     companion object {
-        public fun getInstance(module: Module): AndroidLayoutXmlFileManager? {
+        fun getInstance(module: Module): AndroidLayoutXmlFileManager? {
             val service = ModuleServiceManager.getService(module, AndroidLayoutXmlFileManager::class.java)
             return service ?: module.getComponent(AndroidLayoutXmlFileManager::class.java)
         }

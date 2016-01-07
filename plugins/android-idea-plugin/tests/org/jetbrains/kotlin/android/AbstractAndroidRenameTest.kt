@@ -22,11 +22,11 @@ import com.intellij.refactoring.rename.RenameProcessor
 import com.intellij.psi.impl.source.xml.XmlAttributeValueImpl
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 
-public abstract class AbstractAndroidRenameTest : KotlinAndroidTestCase() {
+abstract class AbstractAndroidRenameTest : KotlinAndroidTestCase() {
     private val NEW_NAME = "NEWNAME"
     private val NEW_ID_NAME = "@+id/$NEW_NAME"
 
-    public fun doTest(path: String) {
+    fun doTest(path: String) {
         val f = myFixture!!
         getResourceDirs(path).forEach { myFixture.copyDirectoryToProject(it.name, it.name) }
         val virtualFile = f.copyFileToProject(path + getTestName(true) + ".kt", "src/" + getTestName(true) + ".kt");

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 
-public class DefaultErrorMessagesAndroid : DefaultErrorMessages.Extension {
+class DefaultErrorMessagesAndroid : DefaultErrorMessages.Extension {
 
     private companion object {
         val MAP = DiagnosticFactoryToRendererMap("Android")

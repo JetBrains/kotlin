@@ -31,7 +31,7 @@ import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlToken
 import org.jetbrains.kotlin.android.synthetic.res.AndroidLayoutXmlFileManager
 
-public class AndroidPsiTreeChangePreprocessor : PsiTreeChangePreprocessor, SimpleModificationTracker() {
+class AndroidPsiTreeChangePreprocessor : PsiTreeChangePreprocessor, SimpleModificationTracker() {
 
     override fun treeChanged(event: PsiTreeChangeEventImpl) {
         if (event.code in HANDLED_EVENTS) {

@@ -34,7 +34,7 @@ import java.util.regex.Pattern
 import java.util.regex.PatternSyntaxException
 import kotlin.properties.Delegates
 
-public abstract class AnnotationCollectorExtensionBase(val supportInheritedAnnotations: Boolean) : ClassBuilderInterceptorExtension {
+abstract class AnnotationCollectorExtensionBase(val supportInheritedAnnotations: Boolean) : ClassBuilderInterceptorExtension {
 
     private object RecordTypes {
         val ANNOTATED_CLASS = "c"
@@ -180,7 +180,7 @@ public abstract class AnnotationCollectorExtensionBase(val supportInheritedAnnot
         }
 
         private fun recordAnnotation(name: String?, type: String, annotationDesc: String) {
-            val annotationFqName = Type.getType(annotationDesc).getClassName()
+            val annotationFqName = Type.getType(annotationDesc).className
             if (!isAnnotationHandled(annotationFqName)) return
 
             try {
@@ -231,7 +231,7 @@ public abstract class AnnotationCollectorExtensionBase(val supportInheritedAnnot
     }
 }
 
-public class AnnotationCollectorExtension(
+class AnnotationCollectorExtension(
         override val annotationFilterList: List<String>? = null,
         val outputFilename: String? = null,
         supportInheritedAnnotations: Boolean
@@ -246,7 +246,7 @@ public class AnnotationCollectorExtension(
     override fun getWriter(diagnostic: DiagnosticSink): Writer {
         return writerInternal ?: try {
             with (File(outputFilename)) {
-                val parent = getParentFile()
+                val parent = parentFile
                 if (!parent.exists()) parent.mkdirs()
                 writerInternal = bufferedWriter()
                 writerInternal!!

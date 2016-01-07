@@ -19,6 +19,6 @@ package org.jetbrains.kotlin.plugin.android
 import com.intellij.diagnostic.ITNReporter
 import com.intellij.openapi.diagnostic.IdeaLoggingEvent
 
-public class AndroidExtensionsReportSubmitter : ITNReporter() {
+class AndroidExtensionsReportSubmitter : ITNReporter() {
     override fun showErrorInRelease(event: IdeaLoggingEvent?) = true
 }

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
-public abstract class AbstractAndroidBytecodeShapeTest : AbstractBytecodeTextTest() {
+abstract class AbstractAndroidBytecodeShapeTest : AbstractBytecodeTextTest() {
 
     private fun createAndroidAPIEnvironment(path: String) {
         return createEnvironmentForConfiguration(KotlinTestUtils.compilerConfigurationForTests(ConfigurationKind.ALL, TestJdkKind.ANDROID_API), path)
@@ -34,7 +34,7 @@ public abstract class AbstractAndroidBytecodeShapeTest : AbstractBytecodeTextTes
         myEnvironment = createAndroidTestEnvironment(configuration, layoutPaths)
     }
 
-    public override fun doTest(path: String) {
+    override fun doTest(path: String) {
         val fileName = path + getTestName(true) + ".kt"
         createAndroidAPIEnvironment(path)
         loadFileByFullPath(fileName)
