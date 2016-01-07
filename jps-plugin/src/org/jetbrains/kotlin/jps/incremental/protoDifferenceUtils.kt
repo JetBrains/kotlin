@@ -29,13 +29,13 @@ import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 import org.jetbrains.kotlin.utils.HashSetUtil
 import java.util.*
 
-public sealed class DifferenceKind() {
-    public object NONE: DifferenceKind()
-    public object CLASS_SIGNATURE: DifferenceKind()
-    public class MEMBERS(val names: Collection<String>): DifferenceKind()
+sealed class DifferenceKind() {
+    object NONE: DifferenceKind()
+    object CLASS_SIGNATURE: DifferenceKind()
+    class MEMBERS(val names: Collection<String>): DifferenceKind()
 }
 
-public fun difference(oldData: ProtoMapValue, newData: ProtoMapValue): DifferenceKind {
+fun difference(oldData: ProtoMapValue, newData: ProtoMapValue): DifferenceKind {
     if (oldData.isPackageFacade != newData.isPackageFacade) return DifferenceKind.CLASS_SIGNATURE
 
     val differenceObject =

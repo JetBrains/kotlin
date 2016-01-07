@@ -69,12 +69,11 @@ import org.jetbrains.org.objectweb.asm.ClassReader
 import java.io.File
 import java.util.*
 
-public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
+class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
     companion object {
-        @JvmField
-        public val KOTLIN_BUILDER_NAME: String = "Kotlin Builder"
+        @JvmField val KOTLIN_BUILDER_NAME: String = "Kotlin Builder"
 
-        public val LOOKUP_TRACKER: JpsElementChildRoleBase<JpsSimpleElement<out LookupTracker>> = JpsElementChildRoleBase.create("lookup tracker")
+        val LOOKUP_TRACKER: JpsElementChildRoleBase<JpsSimpleElement<out LookupTracker>> = JpsElementChildRoleBase.create("lookup tracker")
         val LOG = Logger.getInstance("#org.jetbrains.kotlin.jps.build.KotlinBuilder")
     }
 
@@ -438,7 +437,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
             messageCollector.report(
                     INFO,
-                    "Plugin loaded: ${argumentProvider.javaClass.getSimpleName()}",
+                    "Plugin loaded: ${argumentProvider.javaClass.simpleName}",
                     CompilerMessageLocation.NO_LOCATION
             )
         }
@@ -455,7 +454,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                 .register(IncrementalCompilationComponents::class.java, IncrementalCompilationComponentsImpl(incrementalCaches, lookupTracker))
                 .register(CompilationCanceledStatus::class.java, object : CompilationCanceledStatus {
                     override fun checkCanceled() {
-                        if (context.getCancelStatus().isCanceled()) throw CompilationCanceledException()
+                        if (context.cancelStatus.isCanceled) throw CompilationCanceledException()
                     }
                 })
                 .build()
@@ -481,8 +480,8 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
     ): List<GeneratedFile> {
         // If there's only one target, this map is empty: get() always returns null, and the representativeTarget will be used below
         val sourceToTarget = HashMap<File, ModuleBuildTarget>()
-        if (chunk.getTargets().size > 1) {
-            for (target in chunk.getTargets()) {
+        if (chunk.targets.size > 1) {
+            for (target in chunk.targets) {
                 for (file in KotlinSourceFileCollector.getAllKotlinSourceFiles(target)) {
                     sourceToTarget.put(file, target)
                 }
@@ -492,7 +491,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val result = ArrayList<GeneratedFile>()
 
         val representativeTarget = chunk.representativeTarget()
-        for (outputItem in outputItemCollector.getOutputs()) {
+        for (outputItem in outputItemCollector.outputs) {
             val sourceFiles = outputItem.sourceFiles
             val outputFile = outputItem.outputFile
             val target =
@@ -500,7 +499,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
                     chunk.targets.filter { it.outputDir?.let { outputFile.startsWith(it) } ?: false }.singleOrNull() ?:
                     representativeTarget
 
-            if (outputFile.getName().endsWith(".class")) {
+            if (outputFile.name.endsWith(".class")) {
                 result.add(GeneratedJvmClass(target, sourceFiles, outputFile))
             }
             else {
@@ -518,15 +517,15 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             filesToCompile: MultiMap<ModuleBuildTarget, File>,
             generatedClasses: List<GeneratedJvmClass>
     ) {
-        val previousMappings = context.getProjectDescriptor().dataManager.getMappings()
+        val previousMappings = context.projectDescriptor.dataManager.mappings
         val delta = previousMappings.createDelta()
-        val callback = delta.getCallback()
+        val callback = delta.callback
 
         for (generatedClass in generatedClasses) {
             callback.associate(
-                    FileUtil.toSystemIndependentName(generatedClass.outputFile.getAbsolutePath()),
-                    generatedClass.sourceFiles.map { FileUtil.toSystemIndependentName(it.getAbsolutePath()) },
-                    ClassReader(generatedClass.outputClass.getFileContents())
+                    FileUtil.toSystemIndependentName(generatedClass.outputFile.absolutePath),
+                    generatedClass.sourceFiles.map { FileUtil.toSystemIndependentName(it.absolutePath) },
+                    ClassReader(generatedClass.outputClass.fileContents)
             )
         }
 
@@ -537,7 +536,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
     private fun registerOutputItems(outputConsumer: ModuleLevelBuilder.OutputConsumer, generatedFiles: List<GeneratedFile>) {
         for (generatedFile in generatedFiles) {
-            outputConsumer.registerOutputFile(generatedFile.target, generatedFile.outputFile, generatedFile.sourceFiles.map { it.getPath() })
+            outputConsumer.registerOutputFile(generatedFile.target, generatedFile.outputFile, generatedFile.sourceFiles.map { it.path })
         }
     }
 
@@ -608,13 +607,13 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val outputItemCollector = OutputItemsCollectorImpl()
 
         val representativeTarget = chunk.representativeTarget()
-        if (chunk.getModules().size > 1) {
+        if (chunk.modules.size > 1) {
             // We do not support circular dependencies, but if they are present, we do our best should not break the build,
             // so we simply yield a warning and report NOTHING_DONE
             messageCollector.report(
                     WARNING,
                     "Circular dependencies are not supported. The following JS modules depend on each other: "
-                    + chunk.getModules().map { it.getName() }.joinToString(", ") + ". "
+                    + chunk.modules.map { it.name }.joinToString(", ") + ". "
                     + "Kotlin is not compiled for these modules",
                     CompilerMessageLocation.NO_LOCATION
             )
@@ -628,7 +627,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
 
         val outputDir = KotlinBuilderModuleScriptGenerator.getOutputDirSafe(representativeTarget)
 
-        val moduleName = representativeTarget.getModule().getName()
+        val moduleName = representativeTarget.module.name
         val outputFile = JpsJsModuleUtils.getOutputFile(outputDir, moduleName)
         val libraryFiles = JpsJsModuleUtils.getLibraryFilesAndDependencies(representativeTarget)
         val compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(project)
@@ -643,7 +642,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val outputDir = KotlinBuilderModuleScriptGenerator.getOutputDirSafe(representativeTarget)
         val compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(project)
         if (compilerSettings.copyJsLibraryFiles) {
-            val outputLibraryRuntimeDirectory = File(outputDir, compilerSettings.outputDirectoryForJsLibraryFiles).getAbsolutePath()
+            val outputLibraryRuntimeDirectory = File(outputDir, compilerSettings.outputDirectoryForJsLibraryFiles).absolutePath
             val libraryFilesToCopy = arrayListOf<String>()
             JpsJsModuleUtils.getLibraryFiles(representativeTarget, libraryFilesToCopy)
             LibraryUtils.copyJsFilesFromLibraries(libraryFilesToCopy, outputLibraryRuntimeDirectory)
@@ -661,11 +660,11 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
     ): OutputItemsCollectorImpl? {
         val outputItemCollector = OutputItemsCollectorImpl()
 
-        if (chunk.getModules().size > 1) {
+        if (chunk.modules.size > 1) {
             messageCollector.report(
                     WARNING,
                     "Circular dependencies are only partially supported. The following modules depend on each other: "
-                    + chunk.getModules().map { it.getName() }.joinToString(", ") + ". "
+                    + chunk.modules.map { it.name }.joinToString(", ") + ". "
                     + "Kotlin will compile them, but some strange effect may happen",
                     CompilerMessageLocation.NO_LOCATION
             )
@@ -676,7 +675,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         val processedTargetsWithRemoved = getProcessedTargetsWithRemovedFilesContainer(context)
 
         var totalRemovedFiles = 0
-        for (target in chunk.getTargets()) {
+        for (target in chunk.targets) {
             val removedFilesInTarget = KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, target)
             if (!removedFilesInTarget.isEmpty()) {
                 if (processedTargetsWithRemoved.add(target)) {
@@ -692,7 +691,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
             return null
         }
 
-        val project = context.getProjectDescriptor().getProject()
+        val project = context.projectDescriptor.project
         val k2JvmArguments = JpsKotlinCompilerSettings.getK2JvmCompilerArguments(project)
         val compilerSettings = JpsKotlinCompilerSettings.getCompilerSettings(project)
 
@@ -706,7 +705,7 @@ public class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR
         return outputItemCollector
     }
 
-    public class MessageCollectorAdapter(private val context: CompileContext) : MessageCollector {
+    class MessageCollectorAdapter(private val context: CompileContext) : MessageCollector {
 
         override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageLocation) {
             var prefix = ""
@@ -832,7 +831,7 @@ private fun hasKotlinDirtyOrRemovedFiles(
     return chunk.targets.any { KotlinSourceFileCollector.getRemovedKotlinFiles(dirtyFilesHolder, it).isNotEmpty() }
 }
 
-public open class GeneratedFile internal constructor(
+open class GeneratedFile internal constructor(
         val target: ModuleBuildTarget,
         val sourceFiles: Collection<File>,
         val outputFile: File

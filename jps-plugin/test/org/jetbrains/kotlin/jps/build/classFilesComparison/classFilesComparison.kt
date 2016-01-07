@@ -57,7 +57,7 @@ fun getDirectoryString(dir: File, interestingPaths: List<String>): String {
 
         val children = listFiles!!.sortedWith(compareBy ({ it.isDirectory }, { it.name } ))
         for (child in children) {
-            if (child.isDirectory()) {
+            if (child.isDirectory) {
                 p.println(child.name)
                 addDirContent(child)
             }
@@ -86,7 +86,7 @@ fun getDirectoryString(dir: File, interestingPaths: List<String>): String {
 fun getAllRelativePaths(dir: File): Set<String> {
     val result = HashSet<String>()
     FileUtil.processFilesRecursively(dir) {
-        if (it!!.isFile()) {
+        if (it!!.isFile) {
             result.add(FileUtil.getRelativePath(dir, it)!!)
         }
 
@@ -132,7 +132,7 @@ fun classFileToString(classFile: File): String {
     val traceVisitor = TraceClassVisitor(PrintWriter(out))
     ClassReader(classFile.readBytes()).accept(traceVisitor, 0)
 
-    val classHeader = LocalFileKotlinClass.create(classFile)?.getClassHeader()
+    val classHeader = LocalFileKotlinClass.create(classFile)?.classHeader
 
     val annotationDataEncoded = classHeader?.annotationData
     if (annotationDataEncoded != null) {

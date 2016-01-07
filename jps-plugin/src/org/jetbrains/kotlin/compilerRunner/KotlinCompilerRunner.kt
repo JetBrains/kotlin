@@ -44,12 +44,12 @@ import java.lang.reflect.Modifier
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-public object KotlinCompilerRunner {
+object KotlinCompilerRunner {
     private val K2JVM_COMPILER = "org.jetbrains.kotlin.cli.jvm.K2JVMCompiler"
     private val K2JS_COMPILER = "org.jetbrains.kotlin.cli.js.K2JSCompiler"
     private val INTERNAL_ERROR = ExitCode.INTERNAL_ERROR.toString()
 
-    public fun runK2JvmCompiler(
+    fun runK2JvmCompiler(
             commonArguments: CommonCompilerArguments,
             k2jvmArguments: K2JVMCompilerArguments,
             compilerSettings: CompilerSettings,
@@ -63,7 +63,7 @@ public object KotlinCompilerRunner {
         runCompiler(K2JVM_COMPILER, arguments, compilerSettings.additionalArguments, messageCollector, collector, environment)
     }
 
-    public fun runK2JsCompiler(
+    fun runK2JsCompiler(
             commonArguments: CommonCompilerArguments,
             k2jsArguments: K2JSCompilerArguments,
             compilerSettings: CompilerSettings,
@@ -138,7 +138,7 @@ public object KotlinCompilerRunner {
 
     }
 
-    internal class DaemonConnection(public val daemon: CompileService?, public val sessionId: Int = CompileService.NO_SESSION)
+    internal class DaemonConnection(val daemon: CompileService?, val sessionId: Int = CompileService.NO_SESSION)
 
     internal object getDaemonConnection {
         private @Volatile var connection: DaemonConnection? = null

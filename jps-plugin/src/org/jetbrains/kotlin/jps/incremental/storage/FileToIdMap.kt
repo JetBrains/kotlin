@@ -24,15 +24,15 @@ internal class FileToIdMap(file: File) : BasicMap<File, Int>(file, FileKeyDescri
 
     override fun dumpValue(value: Int): String = value.toString()
 
-    public operator fun get(file: File): Int? = storage[file]
+    operator fun get(file: File): Int? = storage[file]
 
-    public operator fun set(file: File, id: Int) {
+    operator fun set(file: File, id: Int) {
         storage[file] = id
     }
 
-    public fun remove(file: File) {
+    fun remove(file: File) {
         storage.remove(file)
     }
 
-    public fun toMap(): Map<File, Int> = storage.keys.keysToMap { storage[it]!! }
+    fun toMap(): Map<File, Int> = storage.keys.keysToMap { storage[it]!! }
 }

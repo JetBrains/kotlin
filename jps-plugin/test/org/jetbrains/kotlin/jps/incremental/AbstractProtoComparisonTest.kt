@@ -28,9 +28,9 @@ import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 
-public abstract class AbstractProtoComparisonTest : UsefulTestCase() {
+abstract class AbstractProtoComparisonTest : UsefulTestCase() {
 
-    public fun doTest(testDataPath: String) {
+    fun doTest(testDataPath: String) {
         val testDir = KotlinTestUtils.tmpDir("testDirectory")
 
         val oldClassFiles = compileFileAndGetClasses(testDataPath, testDir, "old")

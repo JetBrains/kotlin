@@ -21,7 +21,7 @@ import com.intellij.util.concurrency.FixedFuture
 import java.io.File
 import java.util.concurrent.Future
 
-public class IncrementalConstantSearchTest : AbstractIncrementalJpsTest() {
+class IncrementalConstantSearchTest : AbstractIncrementalJpsTest() {
     fun testJavaConstantChangedUsedInKotlin() {
         doTest("jps-plugin/testData/incremental/custom/javaConstantChangedUsedInKotlin/")
     }

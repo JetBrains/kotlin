@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.jps.incremental.storage
 import com.intellij.openapi.util.io.FileUtil
 
 data class LookupSymbolKey(val nameHash: Int, val scopeHash: Int) : Comparable<LookupSymbolKey> {
-    public constructor(name: String, scope: String) : this(name.hashCode(), scope.hashCode())
+    constructor(name: String, scope: String) : this(name.hashCode(), scope.hashCode())
 
     override fun compareTo(other: LookupSymbolKey): Int {
         val nameCmp = nameHash.compareTo(other.nameHash)
@@ -31,8 +31,8 @@ data class LookupSymbolKey(val nameHash: Int, val scopeHash: Int) : Comparable<L
 }
 
 class PathFunctionPair(
-        public val path: String,
-        public val function: String
+        val path: String,
+        val function: String
 ): Comparable<PathFunctionPair> {
     override fun compareTo(other: PathFunctionPair): Int {
         val pathComp = FileUtil.comparePaths(path, other.path)
