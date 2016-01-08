@@ -1,7 +1,13 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import com.intellij.ide.highlighter.JavaFileType
+import com.intellij.lang.Language
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiFileFactory
+import com.intellij.psi.PsiJavaFile
+import com.intellij.psi.impl.PsiFileFactoryImpl
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.FilenameUtils
 import org.apache.commons.lang.StringUtils
@@ -28,8 +34,11 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollector
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -226,7 +235,36 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
             return BasicIncrementalCacheImpl(targetDataRoot = cacheDir, targetOutputDir = outputDir, target = target)
         }
 
-        fun dirtySourcesFromGradle() = modified.filter { it.isKotlinFile() }
+        fun PsiClass.findLookupSymbols(): Iterable<LookupSymbol> {
+            val fqn = qualifiedName.orEmpty()
+            return listOf(LookupSymbol(name.orEmpty(), if (fqn == name) "" else fqn.removeSuffix("." + name!!))) +
+                    methods.map { LookupSymbol(it.name, fqn) } +
+                    fields.map { LookupSymbol(it.name.orEmpty(), fqn) } +
+                    innerClasses.flatMap { it.findLookupSymbols() }
+        }
+
+        fun dirtyKotlinSourcesFromGradle(): List<File> {
+            val kotlinFiles = modified.filter { it.isKotlinFile() }
+            val javaFiles = modified.filter { it.isJavaFile() }
+            if (javaFiles.any()) {
+                val rootDisposable = Disposer.newDisposable()
+                val configuration = CompilerConfiguration()
+                val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+                val project = environment.project
+                val psiFileFactory = PsiFileFactory.getInstance(project) as PsiFileFactoryImpl
+                val lookupSymbols = javaFiles.flatMap {
+                    val javaFile = psiFileFactory.createFileFromText(it.nameWithoutExtension, Language.findLanguageByID("JAVA")!!, it.readText())
+                    if (javaFile is PsiJavaFile)
+                        javaFile.classes.flatMap { it.findLookupSymbols() }
+                    else listOf()
+                }
+                logger.kotlinDebug("changed java symbols: ${lookupSymbols.joinToString { "${it.name}:${it.scope}" }}")
+                if (lookupSymbols.any()) {
+                    return kotlinFiles + lookupSymbols.flatMap { lookupStorage.get(it) }.map { File(it) }
+                }
+            }
+            return kotlinFiles
+        }
 
         fun isClassPathChanged(): Boolean {
             // TODO: that doesn't look to wise - join it first and then split here, consider storing it somewhere in between
@@ -242,7 +280,7 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
         // TODO: decide what to do if no files are considered dirty - rebuild or skip the module
         // TODO: more precise will be not to rebuild unconditionally on classpath changes, but retrieve lookup info and try to find out which sources are affected by cp changes
         var sourcesToCompile =
-            if (isIncremental && !isClassPathChanged()) dirtySourcesFromGradle().distinct()
+            if (isIncremental && !isClassPathChanged()) dirtyKotlinSourcesFromGradle().distinct()
             else sources
 
         if (isIncremental) {
@@ -271,7 +309,7 @@ public open class KotlinCompile() : AbstractKotlinCompile<K2JVMCompilerArguments
             caches.values.forEach { it.cleanDirtyInlineFunctions() }
 
             lookupTracker.lookups.entrySet().forEach {
-                logger.kotlinDebug("lookups to ${it.key.name} from ${it.value.joinToString()}")
+                logger.kotlinDebug("lookups to ${it.key.name}:${it.key.scope} from ${it.value.joinToString()}")
             }
 
             updateLookupStorage(lookupStorage, lookupTracker, sourcesToCompile, currentRemoved)
@@ -560,10 +598,10 @@ class GradleMessageCollector(val logger: Logger, val outputCollector: OutputItem
 }
 
 fun Logger.kotlinDebug(message: String) {
-    this.debug("[KOTLIN] $message")
+    this.info("[KOTLIN] $message")
 }
 
 fun Logger.kotlinLazyDebug(makeMessage: () -> String) {
-    if (this.isDebugEnabled)
+    if (this.isInfoEnabled)
         kotlinDebug(makeMessage())
 }

@@ -134,12 +134,12 @@ abstract class BaseGradleIT {
     }
 
     fun CompiledProject.assertSameFiles(expected: Iterable<String>, actual: Iterable<String>, messagePrefix: String = ""): CompiledProject {
-        assertTrue(actual.sorted() == expected.sorted(), messagePrefix + "expected files: ${expected.joinToString()}\n  actual files: ${actual.joinToString()}")
+        assertTrue(actual.toSet() == expected.toSet(), messagePrefix + "expected files: ${expected.joinToString()}\n  actual files: ${actual.joinToString()}")
         return this
     }
 
     fun CompiledProject.assertContainFiles(expected: Iterable<String>, actual: Iterable<String>, messagePrefix: String = ""): CompiledProject {
-        assertTrue(expected.sorted().containsAll(actual.toList()), messagePrefix + "expected files: ${expected.joinToString()}\n  actual files: ${actual.joinToString()}")
+        assertTrue(expected.toSet().containsAll(actual.toList()), messagePrefix + "expected files: ${expected.joinToString()}\n  actual files: ${actual.joinToString()}")
         return this
     }
 

@@ -41,6 +41,14 @@ sourceSets {
         srcDir '.'
      }
   }
+  test {
+     kotlin {
+        srcDir '.'
+     }
+     java {
+        srcDir '.'
+     }
+  }
 }
 
 repositories {
