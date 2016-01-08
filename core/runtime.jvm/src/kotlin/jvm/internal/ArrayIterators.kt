@@ -66,11 +66,11 @@ private class ArrayBooleanIterator(private val array: BooleanArray) : BooleanIte
     override fun nextBoolean() = array[index++]
 }
 
-fun iterator(array: ByteArray): ByteIterator = ArrayByteIterator(array)
-fun iterator(array: CharArray): CharIterator = ArrayCharIterator(array)
-fun iterator(array: ShortArray): ShortIterator = ArrayShortIterator(array)
-fun iterator(array: IntArray): IntIterator = ArrayIntIterator(array)
-fun iterator(array: LongArray): LongIterator = ArrayLongIterator(array)
-fun iterator(array: FloatArray): FloatIterator = ArrayFloatIterator(array)
-fun iterator(array: DoubleArray): DoubleIterator = ArrayDoubleIterator(array)
-fun iterator(array: BooleanArray): BooleanIterator = ArrayBooleanIterator(array)
+public fun iterator(array: ByteArray): ByteIterator = ArrayByteIterator(array)
+public fun iterator(array: CharArray): CharIterator = ArrayCharIterator(array)
+public fun iterator(array: ShortArray): ShortIterator = ArrayShortIterator(array)
+public fun iterator(array: IntArray): IntIterator = ArrayIntIterator(array)
+public fun iterator(array: LongArray): LongIterator = ArrayLongIterator(array)
+public fun iterator(array: FloatArray): FloatIterator = ArrayFloatIterator(array)
+public fun iterator(array: DoubleArray): DoubleIterator = ArrayDoubleIterator(array)
+public fun iterator(array: BooleanArray): BooleanIterator = ArrayBooleanIterator(array)
