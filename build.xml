@@ -6,6 +6,9 @@
     <!-- Set to false to disable compiler's javadoc generation. Speeds up the build -->
     <property name="generate.javadoc" value="true"/>
 
+    <!-- Set to false to prevent jarjar and metadata stripping on kotlin-reflect.jar and reflection sources. Use to debug reflection -->
+    <property name="obfuscate.reflect" value="true"/>
+
     <property name="max.heap.size.for.forked.jvm" value="1024m"/>
 
     <property name="bootstrap.home" value="${basedir}/dependencies/bootstrap-compiler"/>
@@ -908,31 +911,46 @@
         </jar>
 
         <delete file="${output}/kotlin-reflect-jarjar.jar" failonerror="false"/>
-        <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="dependencies/jarjar.jar"/>
-        <jarjar jarfile="${output}/kotlin-reflect-jarjar.jar" filesonly="true" filesetmanifest="merge">
-            <zipfileset src="${output}/kotlin-reflect-before-jarjar.jar"/>
-            <rule pattern="org.jetbrains.kotlin.**" result="kotlin.reflect.jvm.internal.impl.@1"/>
-            <rule pattern="com.google.protobuf.**" result="kotlin.reflect.jvm.internal.impl.com.google.protobuf.@1"/>
-            <rule pattern="javax.inject.**" result="kotlin.reflect.jvm.internal.impl.javax.inject.@1"/>
-        </jarjar>
 
-        <kotlinc src="${basedir}/generators/infrastructure/strip-kotlin-annotations.kts" output="">
-            <compilerarg value="-script"/>
-            <compilerarg value="kotlin/jvm/internal/.*"/> <!-- Annotations to strip -->
-            <compilerarg value="kotlin/reflect/jvm/internal/impl/.*"/> <!-- Classes to strip from -->
-            <compilerarg value="${output}/kotlin-reflect-jarjar.jar"/>
-            <compilerarg value="${kotlin-home}/lib/kotlin-reflect.jar"/>
-            <classpath>
-                <pathelement location="${idea.sdk}/lib/asm-all.jar"/>
-            </classpath>
-        </kotlinc>
+        <sequential if:true="${obfuscate.reflect}">
+            <taskdef name="jarjar" classname="com.tonicsystems.jarjar.JarJarTask" classpath="dependencies/jarjar.jar"/>
+            <jarjar jarfile="${output}/kotlin-reflect-jarjar.jar" filesonly="true" filesetmanifest="merge">
+                <zipfileset src="${output}/kotlin-reflect-before-jarjar.jar"/>
+                <rule pattern="org.jetbrains.kotlin.**" result="kotlin.reflect.jvm.internal.impl.@1"/>
+                <rule pattern="com.google.protobuf.**" result="kotlin.reflect.jvm.internal.impl.com.google.protobuf.@1"/>
+                <rule pattern="javax.inject.**" result="kotlin.reflect.jvm.internal.impl.javax.inject.@1"/>
+            </jarjar>
+
+            <kotlinc src="${basedir}/generators/infrastructure/strip-kotlin-annotations.kts" output="">
+                <compilerarg value="-script"/>
+                <compilerarg value="kotlin/jvm/internal/.*"/> <!-- Annotations to strip -->
+                <compilerarg value="kotlin/reflect/jvm/internal/impl/.*"/> <!-- Classes to strip from -->
+                <compilerarg value="${output}/kotlin-reflect-jarjar.jar"/>
+                <compilerarg value="${kotlin-home}/lib/kotlin-reflect.jar"/>
+                <classpath>
+                    <pathelement location="${idea.sdk}/lib/asm-all.jar"/>
+                </classpath>
+            </kotlinc>
+        </sequential>
+
+        <sequential unless:true="${obfuscate.reflect}">
+            <echo message="Obfuscation of kotlin-reflect is disabled"/>
+            <copy file="${output}/kotlin-reflect-before-jarjar.jar" tofile="${output}/kotlin-reflect-jarjar.jar" overwrite="true"/>
+            <copy file="${output}/kotlin-reflect-before-jarjar.jar" tofile="${kotlin-home}/lib/kotlin-reflect.jar" overwrite="true"/>
+        </sequential>
     </target>
 
     <target name="pack-runtime-sources">
-
-        <!-- Rename packages in the sources of reflection impl (core) -->
         <delete dir="${output}/core.src" failonerror="false"/>
-        <copy todir="${output}/core.src/kotlin/reflect/jvm/internal/impl">
+
+        <local name="runtime.sources.base.dir"/>
+        <condition property="runtime.sources.base.dir"
+                   value="${output}/core.src/kotlin/reflect/jvm/internal/impl"
+                   else="${output}/core.src/org/jetbrains/kotlin">
+            <istrue value="${obfuscate.reflect}"/>
+        </condition>
+
+        <copy todir="${runtime.sources.base.dir}">
             <fileset dir="core">
                 <include name="descriptor.loader.java/src/**"/>
                 <include name="descriptors/src/**"/>
@@ -942,9 +960,13 @@
             </fileset>
             <cutdirsmapper dirs="5"/> <!-- module/src/org/jetbrains/kotlin -->
         </copy>
-        <replaceregexp match="org\.jetbrains\.kotlin" replace="kotlin.reflect.jvm.internal.impl" flags="g">
-            <fileset dir="${output}/core.src"/>
-        </replaceregexp>
+
+        <sequential if:true="${obfuscate.reflect}">
+            <!-- Rename packages in the sources of reflection impl (core) -->
+            <replaceregexp match="org\.jetbrains\.kotlin" replace="kotlin.reflect.jvm.internal.impl" flags="g">
+                <fileset dir="${output}/core.src"/>
+            </replaceregexp>
+        </sequential>
 
         <pack-runtime-jar jar-name="kotlin-runtime-sources.jar" implementation-title="${manifest.impl.title.kotlin.jvm.runtime.sources}">
             <jar-content>
