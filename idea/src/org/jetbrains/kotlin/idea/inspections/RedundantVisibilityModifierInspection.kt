@@ -20,8 +20,13 @@ import com.intellij.codeInspection.*
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.idea.core.implicitVisibility
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtModifierList
+import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.psi.KtVisitorVoid
+import org.jetbrains.kotlin.psi.addRemoveModifier.removeModifier
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 
 class RedundantVisibilityModifierInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
@@ -45,7 +50,10 @@ class RedundantVisibilityModifierInspection : AbstractKotlinInspection(), Cleanu
         override fun getFamilyName(): String = name
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-            descriptor.psiElement.delete()
+            val modifierKeyword = descriptor.psiElement.node.elementType as KtModifierKeywordToken
+            val modifierListOwner = descriptor.psiElement.getParentOfType<KtModifierListOwner>(true)
+                                    ?: throw IllegalStateException("Can't find modifier list owner for modifier")
+            removeModifier(modifierListOwner, modifierKeyword)
         }
     }
 }
