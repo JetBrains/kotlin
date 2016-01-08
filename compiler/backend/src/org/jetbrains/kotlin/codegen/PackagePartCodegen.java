@@ -63,7 +63,7 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
     @Override
     protected void generateDeclaration() {
         v.defineClass(element, V1_6,
-                      ACC_PUBLIC | ACC_FINAL,
+                      ACC_PUBLIC | ACC_FINAL | ACC_SUPER,
                       packagePartType.getInternalName(),
                       null,
                       "java/lang/Object",
