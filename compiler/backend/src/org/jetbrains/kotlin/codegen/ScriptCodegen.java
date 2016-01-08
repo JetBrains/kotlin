@@ -88,7 +88,7 @@ public class ScriptCodegen extends MemberCodegen<KtScript> {
 
         v.defineClass(scriptDeclaration,
                       V1_6,
-                      ACC_PUBLIC,
+                      ACC_PUBLIC | ACC_SUPER,
                       classType.getInternalName(),
                       null,
                       "java/lang/Object",

@@ -46,7 +46,7 @@ class MultifileClassPartCodegen(
 
     override fun generateDeclaration() {
         v.defineClass(element, Opcodes.V1_6,
-                      Opcodes.ACC_FINAL or Opcodes.ACC_SYNTHETIC,
+                      Opcodes.ACC_FINAL or Opcodes.ACC_SYNTHETIC or Opcodes.ACC_SUPER,
                       filePartType.internalName,
                       null,
                       "java/lang/Object",

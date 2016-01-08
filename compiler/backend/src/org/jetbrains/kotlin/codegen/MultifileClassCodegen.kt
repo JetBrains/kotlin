@@ -297,8 +297,8 @@ class MultifileClassCodegen(
     }
 
     companion object {
-        private val FACADE_CLASS_ATTRIBUTES = Opcodes.ACC_PUBLIC or Opcodes.ACC_FINAL
-        private val OPEN_FACADE_CLASS_ATTRIBUTES = Opcodes.ACC_PUBLIC
+        private val FACADE_CLASS_ATTRIBUTES = Opcodes.ACC_PUBLIC or Opcodes.ACC_FINAL or Opcodes.ACC_SUPER
+        private val OPEN_FACADE_CLASS_ATTRIBUTES = Opcodes.ACC_PUBLIC or Opcodes.ACC_SUPER
 
         private fun getOnlyPackageFragment(packageFqName: FqName, files: Collection<KtFile>, bindingContext: BindingContext): PackageFragmentDescriptor? {
             val fragments = SmartList<PackageFragmentDescriptor>()
