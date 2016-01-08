@@ -269,12 +269,12 @@ public class InlineCodegen extends CallGenerator {
                                                                .subGenerator(functionDescriptor.getName().asString()),
                                                        codegen.getContext(),
                                                        callElement,
-                                                       codegen.getParentCodegen().getClassName(), reifiedTypeInliner,
+                                                       getInlineCallSiteInfo(), reifiedTypeInliner,
                                                        typeParameterMappings);
 
         MethodInliner inliner = new MethodInliner(node, parameters, info, new FieldRemapper(null, null, parameters), isSameModule,
                                                   "Method inlining " + callElement.getText(),
-                                                  createNestedSourceMapper(nodeAndSmap)); //with captured
+                                                  createNestedSourceMapper(nodeAndSmap), info.getCallSiteInfo()); //with captured
 
         LocalVarRemapper remapper = new LocalVarRemapper(parameters, initialFrameSize);
 
@@ -304,6 +304,13 @@ public class InlineCodegen extends CallGenerator {
         addInlineMarker(codegen.v, false);
 
         return result;
+    }
+
+    private InlineCallSiteInfo getInlineCallSiteInfo() {
+        MemberCodegen<?> parentCodegen = codegen.getParentCodegen();
+        MethodContext context = codegen.getContext();
+        JvmMethodSignature signature = typeMapper.mapSignature(context.getFunctionDescriptor(), context.getContextKind());
+        return new InlineCallSiteInfo(parentCodegen.getClassName(), signature.getAsmMethod().getName(), signature.getAsmMethod().getDescriptor());
     }
 
     private void generateClosuresBodies() {

@@ -587,6 +587,39 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxInline/enclosingInfo")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class EnclosingInfo extends AbstractCompileKotlinAgainstInlineKotlinTest {
+        public void testAllFilesPresentInEnclosingInfo() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxInline/enclosingInfo"), Pattern.compile("^(.+)\\.1.kt$"), true);
+        }
+
+        @TestMetadata("objectInInlineFun.1.kt")
+        public void testObjectInInlineFun() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enclosingInfo/objectInInlineFun.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("transformedConstructor.1.kt")
+        public void testTransformedConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enclosingInfo/transformedConstructor.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("transformedConstructorWithAdditionalObject.1.kt")
+        public void testTransformedConstructorWithAdditionalObject() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enclosingInfo/transformedConstructorWithAdditionalObject.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("transformedConstructorWithNestedInline.1.kt")
+        public void testTransformedConstructorWithNestedInline() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/enclosingInfo/transformedConstructorWithNestedInline.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxInline/functionExpression")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -1399,6 +1432,12 @@ public class CompileKotlinAgainstInlineKotlinTestGenerated extends AbstractCompi
         @TestMetadata("sameReifiedFormalParameterName.1.kt")
         public void testSameReifiedFormalParameterName() throws Exception {
             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/signature/sameReifiedFormalParameterName.1.kt");
+            doBoxTestWithInlineCheck(fileName);
+        }
+
+        @TestMetadata("typeParameterInLambda.1.kt")
+        public void testTypeParameterInLambda() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/boxInline/signature/typeParameterInLambda.1.kt");
             doBoxTestWithInlineCheck(fileName);
         }
 

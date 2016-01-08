@@ -26,7 +26,7 @@ import java.util.Map;
 
 public class RootInliningContext extends InliningContext {
     public final CodegenContext startContext;
-    private final String classNameToInline;
+    private final InlineCallSiteInfo inlineCallSiteInfo;
     public final TypeParameterMappings typeParameterMappings;
     public final KtElement callElement;
 
@@ -36,20 +36,19 @@ public class RootInliningContext extends InliningContext {
             @NotNull NameGenerator nameGenerator,
             @NotNull CodegenContext startContext,
             @NotNull KtElement callElement,
-            @NotNull String classNameToInline,
+            @NotNull InlineCallSiteInfo classNameToInline,
             @NotNull ReifiedTypeInliner inliner,
             @Nullable TypeParameterMappings typeParameterMappings
     ) {
         super(null, map, state, nameGenerator, TypeRemapper.createRoot(typeParameterMappings), inliner, false, false);
         this.callElement = callElement;
         this.startContext = startContext;
-        this.classNameToInline = classNameToInline;
+        this.inlineCallSiteInfo = classNameToInline;
         this.typeParameterMappings = typeParameterMappings;
     }
 
     @Override
-    @NotNull
-    public String getClassNameToInline() {
-        return classNameToInline;
+    public InlineCallSiteInfo getCallSiteInfo() {
+        return inlineCallSiteInfo;
     }
 }
