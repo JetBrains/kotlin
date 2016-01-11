@@ -18,28 +18,25 @@ package org.jetbrains.kotlin.load.kotlin.reflect
 
 import org.jetbrains.kotlin.descriptors.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.ModuleMapping
-import java.io.InputStream
 import java.util.concurrent.ConcurrentHashMap
 
-class RuntimePackagePartProvider(val classLoader : ClassLoader) : PackagePartProvider {
-
-    val module2Mapping = ConcurrentHashMap<String, Lazy<ModuleMapping>>()
+class RuntimePackagePartProvider(private val classLoader: ClassLoader) : PackagePartProvider {
+    private val module2Mapping = ConcurrentHashMap<String, ModuleMapping>()
 
     fun registerModule(moduleName: String) {
-        module2Mapping.putIfAbsent(moduleName, lazy {
-           val resourceAsStream: InputStream = classLoader.getResourceAsStream("META-INF/$moduleName.${ModuleMapping.MAPPING_FILE_EXT}") ?: return@lazy ModuleMapping.create()
-
-            try {
-                return@lazy ModuleMapping.create(resourceAsStream.readBytes())
+        val mapping = try {
+            classLoader.getResourceAsStream("META-INF/$moduleName.${ModuleMapping.MAPPING_FILE_EXT}")?.let { stream ->
+                ModuleMapping.create(stream.readBytes())
             }
-            catch (e: Exception) {
-                return@lazy ModuleMapping.create()
-            }
-        })
+        }
+        catch (e: Exception) {
+            // TODO: do not swallow this exception?
+            null
+        }
+        module2Mapping.putIfAbsent(moduleName, mapping ?: ModuleMapping.EMPTY)
     }
 
-
     override fun findPackageParts(packageFqName: String): List<String> {
-        return module2Mapping.values.map { it.value.findPackageParts(packageFqName) }.filterNotNull().flatMap { it.parts }.distinct()
+        return module2Mapping.values.mapNotNull { it.findPackageParts(packageFqName) }.flatMap { it.parts }.distinct()
     }
 }
