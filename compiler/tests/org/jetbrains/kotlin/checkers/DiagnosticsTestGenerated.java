@@ -16652,6 +16652,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     doTest(fileName);
                 }
 
+                @TestMetadata("simpleNullableReceiver.kt")
+                public void testSimpleNullableReceiver() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/safecalls/simpleNullableReceiver.kt");
+                    doTest(fileName);
+                }
+
                 @TestMetadata("twoArgs.kt")
                 public void testTwoArgs() throws Exception {
                     String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/smartCasts/safecalls/twoArgs.kt");
