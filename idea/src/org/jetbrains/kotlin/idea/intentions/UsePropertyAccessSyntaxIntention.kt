@@ -24,11 +24,11 @@ import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.copied
-import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
+import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
@@ -80,7 +80,7 @@ class UsePropertyAccessSyntaxIntention : SelfTargetingOffsetIndependentIntention
         val callee = callExpression.calleeExpression as? KtNameReferenceExpression ?: return null
 
         val resolutionFacade = callExpression.getResolutionFacade()
-        val bindingContext = resolutionFacade.analyze(callExpression, BodyResolveMode.PARTIAL)
+        val bindingContext = resolutionFacade.analyze(callExpression, BodyResolveMode.PARTIAL_FOR_COMPLETION)
         val resolvedCall = callExpression.getResolvedCall(bindingContext) ?: return null
         if (!resolvedCall.isReallySuccess()) return null
 
