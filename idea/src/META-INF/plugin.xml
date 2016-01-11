@@ -176,6 +176,9 @@
       <action id="KotlinGenerateEqualsAndHashCode"
               class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateEqualsAndHashcodeAction"
               text="equals() and hashCode()" />
+      <action id="KotlinGenerateToString"
+              class="org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateToStringAction"
+              text="toString()" />
 
       <add-to-group group-id="GenerateGroup" anchor="first"/>
     </group>

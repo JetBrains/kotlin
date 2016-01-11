@@ -37,7 +37,7 @@ abstract class AbstractCodeInsightActionTest : KotlinLightCodeInsightFixtureTest
         return Class.forName(actionClassName).newInstance() as CodeInsightAction
     }
 
-    private fun testAction(action: AnAction, forced: Boolean): Presentation {
+    protected open fun testAction(action: AnAction, forced: Boolean): Presentation {
         val e = TestActionEvent(action)
         action.beforeActionPerformedUpdate(e)
         if (forced || (e.presentation.isEnabled && e.presentation.isVisible)) {

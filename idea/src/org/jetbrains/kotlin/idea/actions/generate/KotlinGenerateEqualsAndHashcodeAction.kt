@@ -16,32 +16,26 @@
 
 package org.jetbrains.kotlin.idea.actions.generate
 
-import com.intellij.codeInsight.CodeInsightBundle
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.Messages
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
-import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject
-import org.jetbrains.kotlin.idea.core.overrideImplement.generateMember
 import org.jetbrains.kotlin.idea.quickfix.insertMembersAfter
 import org.jetbrains.kotlin.idea.refactoring.quoteIfNeeded
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
-import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
@@ -50,19 +44,6 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 import java.util.*
-
-private tailrec fun ClassDescriptor.findDeclaredFunction (
-        name: String,
-        checkSuperClasses: Boolean,
-        filter: (FunctionDescriptor) -> Boolean
-): FunctionDescriptor? {
-    unsubstitutedMemberScope
-            .getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_IDE)
-            .firstOrNull { it.containingDeclaration == this && it.kind == CallableMemberDescriptor.Kind.DECLARATION && filter(it) }
-            ?.let { return it }
-
-    return if (checkSuperClasses) getSuperClassOrAny().findDeclaredFunction(name, checkSuperClasses, filter) else null
-}
 
 fun ClassDescriptor.findDeclaredEquals(checkSupers: Boolean): FunctionDescriptor? {
     return findDeclaredFunction("equals", checkSupers) {
@@ -77,12 +58,6 @@ fun ClassDescriptor.findDeclaredHashCode(checkSupers: Boolean): FunctionDescript
 class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<KotlinGenerateEqualsAndHashcodeAction.Info>() {
     companion object {
         private val LOG = Logger.getInstance(KotlinGenerateEqualsAndHashcodeAction::class.java)
-
-        private val MEMBER_RENDERER = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_IN_TYPES.withOptions {
-            modifiers = emptySet()
-            startFromName = true
-            parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
-        }
     }
 
     class Info(
@@ -95,35 +70,8 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
 
     override fun isValidForClass(targetClass: KtClassOrObject): Boolean {
         return targetClass is KtClass && targetClass !is KtEnumEntry && !targetClass.isAnnotation()
-                && !targetClass.hasModifier(KtTokens.DATA_KEYWORD)
-                && targetClass.getPropertiesToUse().isNotEmpty()
-    }
-
-    private fun KtClassOrObject.getPropertiesToUse(): List<KtNamedDeclaration> {
-        return ArrayList<KtNamedDeclaration>().apply {
-            getPrimaryConstructorParameters().filterTo(this) { it.hasValOrVar() }
-            declarations.filterIsInstance<KtProperty>().filterTo(this) f@ {
-                val descriptor = it.resolveToDescriptor()
-                when (descriptor) {
-                    is ValueParameterDescriptor -> true
-                    is PropertyDescriptor -> descriptor.accessors.all { it.isDefault }
-                    else -> false
-                }
-            }
-        }
-    }
-
-    private fun confirmRewrite(
-            targetClass: KtClass,
-            equalsDescriptor: FunctionDescriptor,
-            hashCodeDescriptor: FunctionDescriptor
-    ): Boolean {
-        if (ApplicationManager.getApplication().isUnitTestMode) return true
-        val functionsText = "'${MEMBER_RENDERER.render(equalsDescriptor)}' and '${MEMBER_RENDERER.render(hashCodeDescriptor)}'"
-        val message = "Functions $functionsText are already defined\nfor class ${targetClass.name}. Do you want to delete them and proceed?"
-        return Messages.showYesNoDialog(targetClass.project, message,
-                                        CodeInsightBundle.message("generate.equals.and.hashcode.already.defined.title"),
-                                        Messages.getQuestionIcon()) == Messages.YES
+               && !targetClass.hasModifier(KtTokens.DATA_KEYWORD)
+               && getPropertiesToUseInGeneratedMember(targetClass).isNotEmpty()
     }
 
     override fun prepareMembersInfo(klass: KtClassOrObject, project: Project, editor: Editor?): Info? {
@@ -138,7 +86,7 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
         var needEquals = equalsDescriptor == null
         var needHashCode = hashCodeDescriptor == null
         if (!needEquals && !needHashCode) {
-            if (!confirmRewrite(klass, equalsDescriptor!!, hashCodeDescriptor!!)) return null
+            if (!confirmMemberRewrite(klass, equalsDescriptor!!, hashCodeDescriptor!!)) return null
 
             runWriteAction {
                 try {
@@ -152,7 +100,7 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
             }
         }
 
-        val properties = klass.getPropertiesToUse()
+        val properties = getPropertiesToUseInGeneratedMember(klass)
 
         if (properties.isEmpty() || ApplicationManager.getApplication().isUnitTestMode) {
             val descriptors = properties.map { context[BindingContext.DECLARATION_TO_DESCRIPTOR, it] as VariableDescriptor }
@@ -168,12 +116,6 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
                  getPropertiesForEquals().map { context[BindingContext.DECLARATION_TO_DESCRIPTOR, it] as VariableDescriptor },
                  getPropertiesForHashCode().map { context[BindingContext.DECLARATION_TO_DESCRIPTOR, it] as VariableDescriptor })
         }
-    }
-
-    private fun generateFunctionSkeleton(descriptor: FunctionDescriptor, project: Project): KtNamedFunction {
-        return OverrideMemberChooserObject
-                .create(project, descriptor, descriptor, OverrideMemberChooserObject.BodyType.EMPTY)
-                .generateMember(project) as KtNamedFunction
     }
 
     private fun generateEquals(project: Project, info: Info): KtNamedFunction? {
@@ -230,6 +172,7 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
             return equalsFun
         }
     }
+
     private fun generateHashCode(project: Project, info: Info): KtNamedFunction? {
         fun VariableDescriptor.genVariableHashCode(parenthesesNeeded: Boolean): String {
             val ref = name.asString().quoteIfNeeded()
