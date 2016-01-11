@@ -399,7 +399,6 @@ public class CallExpressionResolver {
 
         boolean unconditional = true;
         DataFlowInfo unconditionalDataFlowInfo = receiverDataFlowInfo;
-        ExpressionTypingContext contextForSelector = currentContext;
 
         for (CallExpressionElement element : elementChain) {
             if (receiverType == null) {
@@ -413,14 +412,14 @@ public class CallExpressionResolver {
 
             boolean lastStage = element.getQualified() == expression;
             // Drop NO_EXPECTED_TYPE / INDEPENDENT at last stage
-            ExpressionTypingContext baseContext = lastStage ? context : currentContext;
+            ExpressionTypingContext contextForSelector = lastStage ? context : currentContext;
             if (TypeUtils.isNullableType(receiverType) && !element.getSafe()) {
                 // Call with nullable receiver: take unconditional data flow info
-                contextForSelector = baseContext.replaceDataFlowInfo(unconditionalDataFlowInfo);
+                contextForSelector = contextForSelector.replaceDataFlowInfo(unconditionalDataFlowInfo);
             }
             else {
                 // Take data flow info from the current receiver
-                contextForSelector = baseContext.replaceDataFlowInfo(receiverDataFlowInfo);
+                contextForSelector = contextForSelector.replaceDataFlowInfo(receiverDataFlowInfo);
             }
 
             if (receiver instanceof ReceiverValue) {
