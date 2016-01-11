@@ -51,7 +51,7 @@ public class InterfaceImplBodyCodegen(
 
     override fun generateDeclaration() {
         v.defineClass(
-                myClass, V1_6, ACC_PUBLIC or ACC_FINAL,
+                myClass, V1_6, ACC_PUBLIC or ACC_FINAL or ACC_SUPER,
                 typeMapper.mapDefaultImpls(descriptor).internalName,
                 null, "java/lang/Object", ArrayUtil.EMPTY_STRING_ARRAY
         )
