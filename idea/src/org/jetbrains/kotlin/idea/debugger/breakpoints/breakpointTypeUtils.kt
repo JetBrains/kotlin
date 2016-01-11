@@ -108,10 +108,8 @@ fun computeVariants(
                 XSourcePositionImpl.createByElement(lambda.bodyExpression), lambda, ordinal))
     }
 
-    if (result.size > 1) {
-        val allBreakpoint = (kotlinBreakpointType as JavaLineBreakpointType).JavaBreakpointVariant(position)
-        result.addFirst(allBreakpoint)
-    }
+    val allBreakpoint = (kotlinBreakpointType as JavaLineBreakpointType).JavaBreakpointVariant(position)
+    result.addFirst(allBreakpoint)
 
     return result
 }

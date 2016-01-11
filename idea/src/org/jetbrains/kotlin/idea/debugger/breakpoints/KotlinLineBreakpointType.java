@@ -35,6 +35,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.java.debugger.breakpoints.properties.JavaBreakpointProperties;
 import org.jetbrains.java.debugger.breakpoints.properties.JavaLineBreakpointProperties;
 import org.jetbrains.kotlin.idea.KotlinIcons;
+import org.jetbrains.kotlin.psi.KtClassInitializer;
 import org.jetbrains.kotlin.psi.KtFunction;
 
 import javax.swing.*;
@@ -96,7 +97,7 @@ public class KotlinLineBreakpointType extends JavaLineBreakpointType {
     @Nullable
     public static PsiElement getContainingMethod(@Nullable PsiElement elem) {
         //noinspection unchecked
-        return PsiTreeUtil.getParentOfType(elem, KtFunction.class);
+        return PsiTreeUtil.getParentOfType(elem, KtFunction.class, KtClassInitializer.class);
     }
 
     public static boolean inTheMethod(@NotNull SourcePosition pos, @NotNull PsiElement method) {
