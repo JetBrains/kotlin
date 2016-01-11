@@ -52,8 +52,8 @@ object JarUserDataManager {
         }
 
         if (stored == null && fileAttributeService != null) {
-            val savedData = fileAttributeService.readAttribute(counter.key.toString(), localJarFile, State::class.java)
-            if (savedData != null && savedData.value != null) {
+            val savedData = fileAttributeService.readEnumAttribute(counter.key.toString(), localJarFile, State::class.java)
+            if (savedData != null) {
                 val hasFileWithProperty = savedData.value == State.HAS_FILE
 
                 storeUserData(counter, localJarFile, hasFileWithProperty, savedData.timeStamp)
@@ -91,7 +91,7 @@ object JarUserDataManager {
 
                 val state = if (hasFileWithProperty) State.HAS_FILE else State.NO_FILE
 
-                val savedData = fileAttributeService?.writeAttribute(counter.key.toString(), localJarFile, state)
+                val savedData = fileAttributeService?.writeEnumAttribute(counter.key.toString(), localJarFile, state)
 
                 storeUserData(counter, localJarFile, hasFileWithProperty, (savedData?.timeStamp ?: localJarFile.timeStamp))
             }

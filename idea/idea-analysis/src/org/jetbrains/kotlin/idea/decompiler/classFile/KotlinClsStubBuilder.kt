@@ -24,10 +24,10 @@ import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.*
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter
 import org.jetbrains.kotlin.load.kotlin.AbstractBinaryClassAnnotationAndConstantLoader
-import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
@@ -58,9 +58,9 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
     }
 
     fun doBuildFileStub(file: VirtualFile): PsiFileStub<KtFile>? {
-        val kotlinBinaryClass = KotlinBinaryClassCache.getKotlinBinaryClass(file)!!
-        val header = kotlinBinaryClass.classHeader
-        val classId = kotlinBinaryClass.classId
+        val kotlinClassHeaderInfo = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(file)!!
+        val header = kotlinClassHeaderInfo.classHeader
+        val classId = kotlinClassHeaderInfo.classId
         val packageFqName = classId.packageFqName
         if (!header.isCompatibleAbiVersion) {
             return createIncompatibleAbiVersionFileStub()
@@ -68,8 +68,8 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
 
         val components = createStubBuilderComponents(file, packageFqName)
         if (header.isCompatibleMultifileClassKind()) {
-            val partFiles = findMultifileClassParts(file, kotlinBinaryClass)
-            return createMultifileClassStub(kotlinBinaryClass, partFiles, classId.asSingleFqName(), components)
+            val partFiles = findMultifileClassParts(file, classId, header)
+            return createMultifileClassStub(header, partFiles, classId.asSingleFqName(), components)
         }
 
         val annotationData = header.annotationData

@@ -21,6 +21,7 @@ import com.intellij.openapi.roots.FileIndexFacade
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.compiled.ClassFileDecompilers
+import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache
 import org.jetbrains.kotlin.idea.decompiler.KotlinDecompiledFileViewProvider
 import org.jetbrains.kotlin.idea.decompiler.KtDecompiledFile
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DecompiledText
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.idea.decompiler.textBuilder.ResolverForDecompiler
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.buildDecompiledText
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.defaultDecompilerRendererOptions
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.load.kotlin.KotlinBinaryClassCache
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleClassKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleFileFacadeKind
 import org.jetbrains.kotlin.load.kotlin.header.isCompatibleMultifileClassKind
@@ -79,10 +79,10 @@ fun buildDecompiledTextForClassFile(
         classFile: VirtualFile,
         resolver: ResolverForDecompiler = DeserializerForClassfileDecompiler(classFile)
 ): DecompiledText {
-    val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(classFile)
-    assert(kotlinClass != null) { "Decompiled data factory shouldn't be called on an unsupported file: " + classFile }
-    val classId = kotlinClass!!.classId
-    val classHeader = kotlinClass.classHeader
+    val kotlinClassHeaderInfo = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(classFile)
+    assert(kotlinClassHeaderInfo != null) { "Decompiled data factory shouldn't be called on an unsupported file: " + classFile }
+    val classId = kotlinClassHeaderInfo!!.classId
+    val classHeader = kotlinClassHeaderInfo.classHeader
     val packageFqName = classId.packageFqName
 
     return when {
@@ -98,7 +98,7 @@ fun buildDecompiledTextForClassFile(
         classHeader.isCompatibleClassKind() ->
             buildDecompiledText(packageFqName, listOfNotNull(resolver.resolveTopLevelClass(classId)), decompilerRendererForClassFiles)
         classHeader.isCompatibleMultifileClassKind() -> {
-            val partClasses = findMultifileClassParts(classFile, kotlinClass)
+            val partClasses = findMultifileClassParts(classFile, classId, classHeader)
             val partMembers = partClasses.flatMap { partClass -> resolver.resolveDeclarationsInFacade(partClass.classId.asSingleFqName()) }
             buildDecompiledText(packageFqName, partMembers, decompilerRendererForClassFiles)
         }

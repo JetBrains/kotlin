@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.decompiler.classFile
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.idea.caches.IDEKotlinBinaryClassCache
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DeserializerForDecompilerBase
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.ResolveEverythingToKotlinAnyLocalClassResolver
@@ -37,9 +38,9 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.jvm.JvmProtoBufUtil
 
 fun DeserializerForClassfileDecompiler(classFile: VirtualFile): DeserializerForClassfileDecompiler {
-    val kotlinClass = KotlinBinaryClassCache.getKotlinBinaryClass(classFile)
-    assert(kotlinClass != null) { "Decompiled data factory shouldn't be called on an unsupported file: " + classFile }
-    val packageFqName = kotlinClass!!.classId.packageFqName
+    val kotlinClassHeaderInfo = IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(classFile)
+    assert(kotlinClassHeaderInfo != null) { "Decompiled data factory shouldn't be called on an unsupported file: " + classFile }
+    val packageFqName = kotlinClassHeaderInfo!!.classId.packageFqName
     return DeserializerForClassfileDecompiler(classFile.parent!!, packageFqName)
 }
 
@@ -103,7 +104,7 @@ class DirectoryBasedClassFinder(
         val targetName = classId.relativeClassName.pathSegments().joinToString("$", postfix = ".class")
         val virtualFile = packageDirectory.findChild(targetName)
         if (virtualFile != null && isKotlinWithCompatibleAbiVersion(virtualFile)) {
-            return KotlinBinaryClassCache.getKotlinBinaryClass(virtualFile)
+            return IDEKotlinBinaryClassCache.getKotlinBinaryClass(virtualFile)
         }
         return null
     }
