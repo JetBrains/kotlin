@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
 class ChangeVariableMutabilityFix(element: KtNamedDeclaration, private val makeVar: Boolean) : KotlinQuickFixAction<KtNamedDeclaration>(element) {
@@ -35,7 +36,9 @@ class ChangeVariableMutabilityFix(element: KtNamedDeclaration, private val makeV
     override fun isAvailable(project: Project, editor: Editor?, file: PsiFile): Boolean {
         return when (element) {
             is KtProperty -> element.isVar != makeVar
-            is KtParameter -> (element.valOrVarKeyword == KtTokens.VAR_KEYWORD) != makeVar
+            is KtParameter ->
+                element.getStrictParentOfType<KtPrimaryConstructor>()?.valueParameterList == element.parent
+                && (element.valOrVarKeyword == KtTokens.VAR_KEYWORD) != makeVar
             else -> false
         }
     }
