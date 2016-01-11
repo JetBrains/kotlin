@@ -28,6 +28,14 @@ fun whenOnEnum(c: Color) {
     }
 }
 
+enum class EnumInt {
+    A0, A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15
+}
+
+fun whenOnLongEnum(i: EnumInt) = <error descr="[NO_ELSE_IN_WHEN] when expression must be exhaustive, add necessary 'A0', 'A1', 'A2', 'A3', 'A4', 'A5', 'A6', ... branches or 'else' branch instead">when</error> (i) {
+    EnumInt.A7 -> 7
+}
+
 sealed class Variant {
     object Singleton : Variant()
    

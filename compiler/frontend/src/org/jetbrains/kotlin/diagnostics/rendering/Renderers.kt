@@ -411,11 +411,14 @@ object Renderers {
         append("(").append(renderTypes(inferenceErrorData.valueArgumentsTypes)).append(")")
     }
 
+    private val WHEN_MISSING_LIMIT = 7
+
     @JvmField val RENDER_WHEN_MISSING_CASES: Renderer<List<WhenMissingCase>> = Renderer {
         if (!it.hasUnknown) {
-            val list = it.map { "'$it'" }.joinToString(", ")
+            val list = it.take(WHEN_MISSING_LIMIT).map { "'$it'" }.joinToString(", ")
             val branches = if (it.size > 1) "branches" else "branch"
-            "$list $branches or 'else' branch instead"
+            val others = if (it.size > WHEN_MISSING_LIMIT) ", ..." else ""
+            "$list$others $branches or 'else' branch instead"
         }
         else {
             "'else' branch"
