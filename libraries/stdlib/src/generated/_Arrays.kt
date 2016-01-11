@@ -3618,8 +3618,8 @@ public fun ShortArray.slice(indices: Iterable<Int>): List<Short> {
 /**
  * Returns an array containing elements of this array at specified [indices].
  */
-public fun <T> Array<out T>.sliceArray(indices: Collection<Int>): Array<out T> {
-    val result = arrayOfNulls(this, indices.size) as Array<T>
+public fun <T> Array<T>.sliceArray(indices: Collection<Int>): Array<T> {
+    val result = arrayOfNulls(this, indices.size)
     var targetIndex = 0
     for (sourceIndex in indices) {
         result[targetIndex++] = this[sourceIndex]
@@ -3726,7 +3726,7 @@ public fun ShortArray.sliceArray(indices: Collection<Int>): ShortArray {
 /**
  * Returns a list containing elements at indices in the specified [indices] range.
  */
-public fun <T> Array<out T>.sliceArray(indices: IntRange): Array<out T> {
+public fun <T> Array<T>.sliceArray(indices: IntRange): Array<T> {
     if (indices.isEmpty()) return copyOfRange(0, 0)
     return copyOfRange(indices.start, indices.endInclusive + 1)
 }
@@ -4302,15 +4302,14 @@ public inline fun ShortArray.takeWhile(predicate: (Short) -> Boolean): List<Shor
 /**
  * Reverses elements in the array in-place.
  */
-public fun <T> Array<out T>.reverse(): Unit {
+public fun <T> Array<T>.reverse(): Unit {
     val midPoint = (size / 2) - 1
     if (midPoint < 0) return
-    val _this = this as Array<T>
     var reverseIndex = lastIndex
     for (index in 0..midPoint) {
-        val tmp = _this[index]
-        _this[index] = _this[reverseIndex]
-        _this[reverseIndex] = tmp
+        val tmp = this[index]
+        this[index] = this[reverseIndex]
+        this[reverseIndex] = tmp
         reverseIndex--
     }
 }
@@ -4528,9 +4527,9 @@ public fun ShortArray.reversed(): List<Short> {
 /**
  * Returns an array with elements of this array in reversed order.
  */
-public fun <T> Array<out T>.reversedArray(): Array<out T> {
+public fun <T> Array<T>.reversedArray(): Array<T> {
     if (isEmpty()) return this
-    val result = arrayOfNulls(this, size) as Array<T>
+    val result = arrayOfNulls(this, size)
     val lastIndex = lastIndex
     for (i in 0..lastIndex)
         result[lastIndex - i] = this[i]
@@ -4783,7 +4782,7 @@ public fun ShortArray.sorted(): List<Short> {
 /**
  * Returns an array with all elements of this array sorted according to their natural sort order.
  */
-public fun <T : Comparable<T>> Array<out T>.sortedArray(): Array<out T> {
+public fun <T : Comparable<T>> Array<T>.sortedArray(): Array<T> {
     if (isEmpty()) return this
     return this.copyOf().apply { sort() }
 }
@@ -4847,7 +4846,7 @@ public fun ShortArray.sortedArray(): ShortArray {
 /**
  * Returns an array with all elements of this array sorted descending according to their natural sort order.
  */
-public fun <T : Comparable<T>> Array<out T>.sortedArrayDescending(): Array<out T> {
+public fun <T : Comparable<T>> Array<T>.sortedArrayDescending(): Array<T> {
     if (isEmpty()) return this
     return this.copyOf().apply { sortWith(reverseOrder()) }
 }

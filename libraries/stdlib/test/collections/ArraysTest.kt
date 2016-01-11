@@ -495,7 +495,9 @@ class ArraysTest {
         val coll: Collection<Int> = listOf(3, 1, 2)
 
         assertArrayNotSameButEquals(arrayOf("B"), arrayOf("A", "B", "C").sliceArray(1..1))
+        assertArrayNotSameButEquals(arrayOf("B"), (arrayOf("A", "B", "C") as Array<out String>).sliceArray(1..1))
         assertArrayNotSameButEquals(arrayOf('E', 'B', 'C'), arrayOf('A', 'B', 'C', 'E').sliceArray(coll))
+
 
         assertArrayNotSameButEquals(arrayOf<Int>(), arrayOf<Int>().sliceArray(5..4))
         assertArrayNotSameButEquals(intArrayOf(), intArrayOf(1, 2, 3).sliceArray(5..1))
@@ -655,6 +657,7 @@ class ArraysTest {
         doTest(build = { map {'a' + it}.toCharArray() },        reverse = { reverse() }, snapshot = { toList() })
         doTest(build = { map {it % 2 == 0}.toBooleanArray() },  reverse = { reverse() }, snapshot = { toList() })
         doTest(build = { map {it.toString()}.toTypedArray() },  reverse = { reverse() }, snapshot = { toList() })
+        doTest(build = { map {it.toString()}.toTypedArray() as Array<out String> },  reverse = { reverse() }, snapshot = { toList() })
     }
 
 
@@ -680,6 +683,7 @@ class ArraysTest {
         assertArrayNotSameButEquals(charArrayOf('3', '2', '1'), charArrayOf('1', '2', '3').reversedArray())
         assertArrayNotSameButEquals(booleanArrayOf(false, false, true), booleanArrayOf(true, false, false).reversedArray())
         assertArrayNotSameButEquals(arrayOf("3", "2", "1"), arrayOf("1", "2", "3").reversedArray())
+        assertArrayNotSameButEquals(arrayOf("3", "2", "1"), (arrayOf("1", "2", "3") as Array<out String>).reversedArray())
     }
 
     @test fun drop() {
@@ -971,6 +975,11 @@ class ArraysTest {
         fun <A, T: Comparable<T>> arrayData(vararg values: T, toArray: Array<out T>.() -> A) = ArraySortedChecker<A, T>(values.toArray(), naturalOrder())
 
         with (arrayData("ac", "aD", "aba") { toList().toTypedArray() }) {
+            checkSorted<List<String>>({ sorted() }, { sortedDescending() }, { iterator() })
+            checkSorted<Array<String>>({ sortedArray() }, { sortedArrayDescending()}, { iterator() } )
+        }
+
+        with (arrayData("ac", "aD", "aba") { toList().toTypedArray() as Array<out String> }) {
             checkSorted<List<String>>({ sorted() }, { sortedDescending() }, { iterator() })
             checkSorted<Array<out String>>({ sortedArray() }, { sortedArrayDescending()}, { iterator() } )
         }
