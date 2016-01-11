@@ -19,18 +19,17 @@ package org.jetbrains.kotlin.serialization.jvm
 import java.util.*
 
 // The maximum possible length of the byte array in the CONSTANT_Utf8_info structure in the bytecode, as per JVMS7 4.4.7
-private val MAX_UTF8_INFO_LENGTH = 65535
+const val MAX_UTF8_INFO_LENGTH = 65535
 
 // Leading bytes are prefixed with 110 in UTF-8
 private val LEADING_BYTE_MASK = 0b11000000
 // Continuation bytes are prefixed with 10 in UTF-8
 private val CONTINUATION_BYTE_MASK = 0b10000000
 
-private val TWO_HIGHER_BITS_MASK = 0b11000000
 private val TWO_LOWER_BITS_MASK = 0b00000011
 private val SIX_LOWER_BITS_MASK = 0b00111111
 
-fun bytesToStrings(bytes: ByteArray): List<String> {
+fun bytesToStrings(bytes: ByteArray): Array<String> {
     val result = ArrayList<String>(1)
     val buffer = StringBuilder()
     var bytesInBuffer = 0
@@ -42,7 +41,7 @@ fun bytesToStrings(bytes: ByteArray): List<String> {
         }
         else {
             val int = b.toInt() and 0xFF
-            val leadingByte = LEADING_BYTE_MASK or ((int and TWO_HIGHER_BITS_MASK) shr 6)
+            val leadingByte = LEADING_BYTE_MASK or (int shr 6)
             val continuationByte = CONTINUATION_BYTE_MASK or (int and SIX_LOWER_BITS_MASK)
             val encodedByte = (leadingByte shl 8) or continuationByte
 
@@ -68,7 +67,7 @@ fun bytesToStrings(bytes: ByteArray): List<String> {
         result.add(buffer.toString())
     }
 
-    return result
+    return result.toTypedArray()
 }
 
 fun stringsToBytes(strings: Array<String>): ByteArray {

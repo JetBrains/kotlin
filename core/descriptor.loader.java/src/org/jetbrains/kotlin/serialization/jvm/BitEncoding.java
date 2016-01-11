@@ -21,8 +21,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.jetbrains.kotlin.serialization.jvm.UtfEncodingKt.MAX_UTF8_INFO_LENGTH;
+
 public class BitEncoding {
-    private static boolean NEW = true;
+    private static final boolean FORCE_8TO7_ENCODING = "true".equals(System.getProperty("kotlin.jvm.serialization.use8to7"));
 
     private BitEncoding() {
     }
@@ -36,9 +38,9 @@ public class BitEncoding {
      */
     @NotNull
     public static String[] encodeBytes(@NotNull byte[] data) {
-        if (NEW) {
-            List<String> strings = UtfEncodingKt.bytesToStrings(data);
-            return strings.toArray(new String[strings.size()]);
+        // TODO: try both encodings here and choose the best one (with the smallest size)
+        if (!FORCE_8TO7_ENCODING) {
+            return UtfEncodingKt.bytesToStrings(data);
         }
         byte[] bytes = encode8to7(data);
         // Since 0x0 byte is encoded as two bytes in the Modified UTF-8 (0xc0 0x80) and zero is rather common to byte arrays, we increment
@@ -111,9 +113,6 @@ public class BitEncoding {
         }
     }
 
-    // The maximum possible length of the byte array in the CONSTANT_Utf8_info structure in the bytecode, as per JVMS7 4.4.7
-    private static final int MAX_UTF8_INFO_LENGTH = 65535;
-
     /**
      * Converts a big byte array into the array of strings, where each string, when written to the constant pool table in bytecode, produces
      * a byte array of not more than MAX_UTF8_INFO_LENGTH. Each byte, except those which are 0x0, occupies exactly one byte in the constant
@@ -163,7 +162,7 @@ public class BitEncoding {
      */
     @NotNull
     public static byte[] decodeBytes(@NotNull String[] data) {
-        if (NEW) {
+        if (!FORCE_8TO7_ENCODING) {
             return UtfEncodingKt.stringsToBytes(data);
         }
         byte[] bytes = combineStringArrayIntoBytes(data);
