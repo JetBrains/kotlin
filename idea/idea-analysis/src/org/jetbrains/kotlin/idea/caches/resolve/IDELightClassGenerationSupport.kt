@@ -345,8 +345,11 @@ class IDELightClassGenerationSupport(private val project: Project) : LightClassG
             override fun getMirror(): PsiElement {
                 return mirrorFile
             }
+
+            override fun isPhysical(): Boolean {
+                return false
+            }
         }
-        fakeFile.isPhysical = false
         javaFileStub.psi = fakeFile
         return fakeFile.classes.single() as ClsClassImpl
     }

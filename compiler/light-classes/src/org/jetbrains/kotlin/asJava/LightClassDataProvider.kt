@@ -143,9 +143,11 @@ abstract class LightClassDataProvider<T : WithFileStubAndExtraDiagnostics>(
             override fun getPackageName(): String {
                 return packageFqName.asString()
             }
-        }
 
-        fakeFile.isPhysical = false
+            override fun isPhysical(): Boolean {
+                return false
+            }
+        }
 
         javaFileStub.psi = fakeFile
         return javaFileStub
