@@ -355,22 +355,22 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
                 parameters: ParametersDescriptor
         ): ClassFileFactory {
             return runReadAction {
-                val jetFile = createFileForDebugger(codeFragment, extractedFunction)
+                val fileForDebugger = createFileForDebugger(codeFragment, extractedFunction)
                 if (LOG.isDebugEnabled) {
-                    LOG.debug("File for eval4j:\n${runReadAction { jetFile.text }}")
+                    LOG.debug("File for eval4j:\n${runReadAction { fileForDebugger.text }}")
                 }
 
-                val (bindingContext, moduleDescriptor, files) = jetFile.checkForErrors(true, codeFragment.getContextContainingFile())
+                val (bindingContext, moduleDescriptor, files) = fileForDebugger.checkForErrors(true, codeFragment.getContextContainingFile())
 
                 val generateClassFilter = object : GenerationState.GenerateClassFilter() {
-                    override fun shouldGeneratePackagePart(jetFile: KtFile) = jetFile == jetFile
+                    override fun shouldGeneratePackagePart(jetFile: KtFile) = jetFile == fileForDebugger
                     override fun shouldAnnotateClass(processingClassOrObject: KtClassOrObject) = true
-                    override fun shouldGenerateClass(processingClassOrObject: KtClassOrObject) = processingClassOrObject.getContainingKtFile() == jetFile
+                    override fun shouldGenerateClass(processingClassOrObject: KtClassOrObject) = processingClassOrObject.getContainingKtFile() == fileForDebugger
                     override fun shouldGenerateScript(script: KtScript) = false
                 }
 
                 val state = GenerationState(
-                        jetFile.project,
+                        fileForDebugger.project,
                         if (!DEBUG_MODE) ClassBuilderFactories.BINARIES else ClassBuilderFactories.TEST,
                         moduleDescriptor,
                         bindingContext,
