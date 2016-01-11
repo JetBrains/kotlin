@@ -24,6 +24,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
 import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeFully
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptor
@@ -31,8 +32,8 @@ import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.overrideImplement.OverrideMemberChooserObject
 import org.jetbrains.kotlin.idea.core.overrideImplement.generateMember
-import org.jetbrains.kotlin.idea.refactoring.quoteIfNeeded
 import org.jetbrains.kotlin.idea.quickfix.insertMembersAfter
+import org.jetbrains.kotlin.idea.refactoring.quoteIfNeeded
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -209,7 +210,13 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
 
                     variablesForEquals.forEach {
                         val propName = it.name.asString()
-                        append("if ($propName != $paramName.$propName) return false\n")
+                        val notEquals = when {
+                            KotlinBuiltIns.isArray(it.type) || KotlinBuiltIns.isPrimitiveArray(it.type) ->
+                                "!java.util.Arrays.equals($propName, $paramName.$propName)"
+                            else ->
+                                "$propName != $paramName.$propName"
+                        }
+                        append("if ($notEquals) return false\n")
                     }
 
                     append('\n')
@@ -230,9 +237,14 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
 
             val builtIns = builtIns
 
-            var text = when (type.constructor.declarationDescriptor) {
-                builtIns.byte, builtIns.short, builtIns.int -> ref
-                else -> if (isNullable) "$ref?.hashCode()" else "$ref.hashCode()"
+            val typeClass = type.constructor.declarationDescriptor
+            var text = when {
+                typeClass == builtIns.byte || typeClass == builtIns.short || typeClass == builtIns.int ->
+                    ref
+                KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type) ->
+                    if (isNullable) "$ref?.let { java.util.Arrays.hashCode(it) }" else "java.util.Arrays.hashCode($ref)"
+                else ->
+                    if (isNullable) "$ref?.hashCode()" else "$ref.hashCode()"
             }
             if (isNullable) {
                 text += " ?: 0"

@@ -41,6 +41,12 @@ public class GenerateHashCodeAndEqualsActionTestGenerated extends AbstractGenera
         doTest(fileName);
     }
 
+    @TestMetadata("arrays.kt")
+    public void testArrays() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/arrays.kt");
+        doTest(fileName);
+    }
+
     @TestMetadata("dataClass.kt")
     public void testDataClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/dataClass.kt");
@@ -110,6 +116,12 @@ public class GenerateHashCodeAndEqualsActionTestGenerated extends AbstractGenera
     @TestMetadata("noVarsForcedWithSuperClass.kt")
     public void testNoVarsForcedWithSuperClass() throws Exception {
         String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/noVarsForcedWithSuperClass.kt");
+        doTest(fileName);
+    }
+
+    @TestMetadata("nullableArrays.kt")
+    public void testNullableArrays() throws Exception {
+        String fileName = KotlinTestUtils.navigationMetadata("idea/testData/codeInsight/generate/equalsWithHashCode/nullableArrays.kt");
         doTest(fileName);
     }
 

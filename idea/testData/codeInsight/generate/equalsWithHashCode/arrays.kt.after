@@ -1,0 +1,29 @@
+import java.util.Arrays
+
+class A(val n: IntArray, val s: Array<String>) {
+    val f: Float = 1.0f
+
+    fun foo() {
+
+    }
+
+    <caret>override fun equals(other: Any?): Boolean{
+        if (this === other) return true
+        if (other?.javaClass != javaClass) return false
+
+        other as A
+
+        if (!Arrays.equals(n, other.n)) return false
+        if (!Arrays.equals(s, other.s)) return false
+        if (f != other.f) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int{
+        var result = Arrays.hashCode(n)
+        result += 31 * result + Arrays.hashCode(s)
+        result += 31 * result + f.hashCode()
+        return result
+    }
+}
