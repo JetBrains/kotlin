@@ -7568,6 +7568,24 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class When extends AbstractQuickFixTest {
+        @TestMetadata("addRemainingBranchesBoolean.kt")
+        public void testAddRemainingBranchesBoolean() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/when/addRemainingBranchesBoolean.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("addRemainingBranchesEnum.kt")
+        public void testAddRemainingBranchesEnum() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/when/addRemainingBranchesEnum.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("addRemainingBranchesSealed.kt")
+        public void testAddRemainingBranchesSealed() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("idea/testData/quickfix/when/addRemainingBranchesSealed.kt");
+            doTest(fileName);
+        }
+
         public void testAllFilesPresentInWhen() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/quickfix/when"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), true);
         }

@@ -1,0 +1,7 @@
+// "Add remaining branches" "true"
+enum class Color { R, G, B }
+fun test(c: Color) = when(c) {
+    Color.B -> 0xff
+    Color.R -> throw AssertionError("")
+    Color.G -> throw AssertionError("")
+}

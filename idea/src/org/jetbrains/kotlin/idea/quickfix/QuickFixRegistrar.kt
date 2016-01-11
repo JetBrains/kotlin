@@ -189,6 +189,7 @@ class QuickFixRegistrar : QuickFixContributor {
 
         ELSE_MISPLACED_IN_WHEN.registerFactory(MoveWhenElseBranchFix.createFactory())
         NO_ELSE_IN_WHEN.registerFactory(AddWhenElseBranchFix.createFactory())
+        NO_ELSE_IN_WHEN.registerFactory(AddWhenRemainingBranchesFix.createFactory())
         BREAK_OR_CONTINUE_IN_WHEN.registerFactory(AddLoopLabelFix)
 
         NO_TYPE_ARGUMENTS_ON_RHS.registerFactory(AddStarProjectionsFix.createFactoryForIsExpression())

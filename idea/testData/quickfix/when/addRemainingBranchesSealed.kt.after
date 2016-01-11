@@ -1,0 +1,14 @@
+// "Add remaining branches" "true"
+sealed class Variant {
+    object Singleton : Variant()
+
+    class Something(val x: Int) : Variant()
+
+    object Another : Variant()
+}
+fun test(v: Variant?) = when(v) {
+    Variant.Singleton -> "s"
+    is Variant.Something -> throw AssertionError("")
+    Variant.Another -> throw AssertionError("")
+    null -> throw AssertionError("")
+}

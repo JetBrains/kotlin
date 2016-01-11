@@ -37,13 +37,19 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumClass
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import java.util.*
 
-interface WhenMissingCase
+interface WhenMissingCase {
+
+    val branchConditionText: String
+}
 
 // Always must be first in the list
 private object UnknownMissingCase : WhenMissingCase {
     override fun toString() = "unknown"
+
+    override val branchConditionText = "else"
 }
 
 val List<WhenMissingCase>.hasUnknown: Boolean
@@ -61,7 +67,9 @@ private interface WhenExhaustivenessChecker {
 }
 
 private object NullMissingCase : WhenMissingCase {
-    override fun toString() = "null"
+    override fun toString() = branchConditionText
+
+    override val branchConditionText = "null"
 }
 
 private object WhenOnNullableExhaustivenessChecker : WhenExhaustivenessChecker {
@@ -88,7 +96,9 @@ private object WhenOnNullableExhaustivenessChecker : WhenExhaustivenessChecker {
 }
 
 private class BooleanMissingCase(val b: Boolean) : WhenMissingCase {
-    override fun toString() = b.toString()
+    override fun toString() = branchConditionText
+
+    override val branchConditionText = b.toString()
 }
 
 private object WhenOnBooleanExhaustivenessChecker : WhenExhaustivenessChecker {
@@ -121,6 +131,8 @@ private object WhenOnBooleanExhaustivenessChecker : WhenExhaustivenessChecker {
 
 private class ClassMissingCase(val descriptor: ClassDescriptor): WhenMissingCase {
     override fun toString() = descriptor.name.identifier.let { if (descriptor.kind.isSingleton) it else "is $it" }
+
+    override val branchConditionText = descriptor.fqNameSafe.asString().let { if (descriptor.kind.isSingleton) it else "is $it" }
 }
 
 private abstract class WhenOnClassExhaustivenessChecker : WhenExhaustivenessChecker {

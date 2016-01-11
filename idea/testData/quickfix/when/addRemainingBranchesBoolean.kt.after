@@ -1,0 +1,5 @@
+// "Add remaining branches" "true"
+fun test(b: Boolean) = when(b) {
+    false -> 0
+    true -> throw AssertionError("")
+}
