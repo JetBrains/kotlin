@@ -63,7 +63,7 @@ class ReplaceContainsIntention : SelfTargetingRangeIntention<KtDotQualifiedExpre
         // Append semicolon to previous statement if needed
         if (argument is KtLambdaExpression) {
             val previousElement = KtPsiUtil.skipSiblingsBackwardByPredicate(expression) {
-                it.node.elementType in KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET
+                it!!.node.elementType in KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET
             }
             if (previousElement != null && previousElement is KtExpression) {
                 previousElement.parent!!.addAfter(psiFactory.createSemicolon(), previousElement)

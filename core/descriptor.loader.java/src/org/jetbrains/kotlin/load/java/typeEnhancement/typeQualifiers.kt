@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.typeEnhancement
 
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.typeEnhancement.MutabilityQualifier.MUTABLE
@@ -64,11 +65,32 @@ private fun KotlinType.extractQualifiers(): JavaTypeQualifiers {
 
 private fun Annotations.extractQualifiers(): JavaTypeQualifiers {
     fun <T: Any> List<FqName>.ifPresent(qualifier: T) = if (any { findAnnotation(it) != null}) qualifier else null
-    fun <T: Any> singleNotNull(x: T?, y: T?) = if (x == null || y == null) x ?: y else null
+
+    // These two overloads are just for sake of optimization as in most cases last parameter in second overload is null
+    fun <T: Any> uniqueNotNull(x: T?, y: T?) = if (x == null || y == null || x == y) x ?: y else null
+    fun <T: Any> uniqueNotNull(a: T?, b: T?, c: T?) =
+            if (c == null)
+                uniqueNotNull(a, b)
+            else
+                listOf(a, b, c).filterNotNull().toSet().singleOrNull()
+
+    // Javax/FundBugs NonNull annotation has parameter `when` that determines actual nullability
+    fun FqName.extractQualifierFromAnnotationWithWhen(): NullabilityQualifier? {
+        val annotationDescriptor = findAnnotation(this) ?: return null
+        return annotationDescriptor.allValueArguments.values.singleOrNull()?.value?.let {
+            enumEntryDescriptor ->
+            if (enumEntryDescriptor !is ClassDescriptor) return@let null
+            if (enumEntryDescriptor.name.asString() == "ALWAYS") NOT_NULL else NULLABLE
+        } ?: NOT_NULL
+    }
 
     return JavaTypeQualifiers(
-            singleNotNull(NULLABLE_ANNOTATIONS.ifPresent(NULLABLE), NOT_NULL_ANNOTATIONS.ifPresent(NOT_NULL)),
-            singleNotNull(READ_ONLY_ANNOTATIONS.ifPresent(READ_ONLY), MUTABLE_ANNOTATIONS.ifPresent(MUTABLE))
+            uniqueNotNull(
+                    NULLABLE_ANNOTATIONS.ifPresent(NULLABLE),
+                    NOT_NULL_ANNOTATIONS.ifPresent(NOT_NULL),
+                    JAVAX_NONNULL_ANNOTATION.extractQualifierFromAnnotationWithWhen()
+            ),
+            uniqueNotNull(READ_ONLY_ANNOTATIONS.ifPresent(READ_ONLY), MUTABLE_ANNOTATIONS.ifPresent(MUTABLE))
     )
 }
 

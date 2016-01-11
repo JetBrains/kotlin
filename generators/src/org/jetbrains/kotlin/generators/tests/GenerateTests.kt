@@ -162,6 +162,10 @@ fun main(args: Array<String>) {
             model("diagnostics/testsWithJsStdLibAndBackendCompilation")
         }
 
+        testClass<AbstractForeignAnnotationsTest>() {
+            model("foreignAnnotations/tests")
+        }
+
         testClass<AbstractResolveTest>() {
             model("resolve", extension = "resolve")
         }

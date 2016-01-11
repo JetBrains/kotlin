@@ -19,11 +19,26 @@ package org.jetbrains.kotlin.load.java
 import org.jetbrains.kotlin.name.FqName
 
 val NULLABLE_ANNOTATIONS = listOf(
-        JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION
+        JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION,
+        FqName("android.support.annotation.Nullable"),
+        FqName("org.eclipse.jdt.annotation.Nullable"),
+        FqName("org.checkerframework.checker.nullness.qual.Nullable"),
+        FqName("javax.annotation.Nullable"),
+        FqName("javax.annotation.CheckForNull"),
+        FqName("edu.umd.cs.findbugs.annotations.CheckForNull"),
+        FqName("edu.umd.cs.findbugs.annotations.Nullable"),
+        FqName("edu.umd.cs.findbugs.annotations.PossiblyNull")
 )
 
+val JAVAX_NONNULL_ANNOTATION = FqName("javax.annotation.Nonnull")
+
 val NOT_NULL_ANNOTATIONS = listOf(
-        JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION
+        JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION,
+        FqName("edu.umd.cs.findbugs.annotations.NonNull"),
+        FqName("android.support.annotation.NonNull"),
+        FqName("org.eclipse.jdt.annotation.NonNull"),
+        FqName("org.checkerframework.checker.nullness.qual.NonNull"),
+        FqName("lombok.NonNull")
 )
 
 val READ_ONLY_ANNOTATIONS = listOf(
@@ -37,5 +52,6 @@ val MUTABLE_ANNOTATIONS = listOf(
 // When these annotations appear on a declaration, they are copied to the _type_ of the declaration, becoming type annotations
 // See also DescriptorRendererOptions#excludedTypeAnnotationClasses
 val ANNOTATIONS_COPIED_TO_TYPES: Set<FqName> = listOf(
-        NULLABLE_ANNOTATIONS, NOT_NULL_ANNOTATIONS, READ_ONLY_ANNOTATIONS, MUTABLE_ANNOTATIONS
+        NULLABLE_ANNOTATIONS, NOT_NULL_ANNOTATIONS, READ_ONLY_ANNOTATIONS, MUTABLE_ANNOTATIONS,
+        listOf(JAVAX_NONNULL_ANNOTATION)
 ).flatMap { it }.toSet()
