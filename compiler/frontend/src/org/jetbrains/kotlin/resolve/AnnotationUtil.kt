@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.constants.ConstantValue
+import org.jetbrains.kotlin.resolve.constants.ErrorValue
 
 public fun DeclarationDescriptor.hasJvmStaticAnnotation(): Boolean {
     return getAnnotations().findAnnotation(FqName("kotlin.jvm.JvmStatic")) != null
@@ -51,8 +53,13 @@ private fun CallableDescriptor.isPlatformStaticIn(predicate: (DeclarationDescrip
             else -> predicate(getContainingDeclaration()) && hasJvmStaticAnnotation()
         }
 
-public fun AnnotationDescriptor.argumentValue(parameterName: String): Any? {
-    return getAllValueArguments().entrySet()
-            .singleOrNull { it.key.getName().asString() == parameterName }
-            ?.value?.value
+fun AnnotationDescriptor.argumentValue(parameterName: String): Any? {
+    val constant: ConstantValue<*>? = allValueArguments.entries
+            .singleOrNull { it.key.name.asString() == parameterName }
+            ?.value
+
+    if (constant == null || constant is ErrorValue)
+        return null
+
+    return constant.value
 }
